@@ -21,6 +21,12 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         $this->model = $model;
     }
 
+    /**
+     * @param array $unidadesGerenciadasIds
+     * @param array $unidadesSubordinadasIds
+     * @param string $usuarioId
+     * @return Collection
+     */
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
         $unidadesGerenciadasIds = array_values(array_unique($unidadesGerenciadasIds));
@@ -119,11 +125,12 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
 
     public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator
     {
-        $query = $filtro->arquivados
-            ? $this->query()->withTrashed()->whereNotNull('deleted_at')
-            : $this->query();
+        /** @var \Illuminate\Database\Eloquent\Builder<PlanoTrabalho> $queryBase */
+        $queryBase = $filtro->arquivados
+            ? PlanoTrabalho::onlyTrashed()
+            : PlanoTrabalho::query();
 
-        $query->select('id', 'numero', 'usuario_id', 'unidade_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
+        $query = $queryBase->select('id', 'numero', 'usuario_id', 'unidade_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
               ->with(['usuario:id,nome', 'tipoModalidade:id,nome', 'unidade:id,nome,sigla']);
 
         if($filtro->hierarquia){
@@ -162,7 +169,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             $now = now();
             $query->where('data_inicio', '<=', $now)
                   ->where('data_fim', '>=', $now)
-                  ->where('status', '==', 'ATIVO');
+                  ->where('status', '=', 'ATIVO');
         }
 
         return $query->paginate(perPage: $filtro->perPage, page: $filtro->page);
@@ -178,18 +185,22 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->exists();
     }
 
-    public function findByIdComRelacoes(string $id): ?Model
+    public function findByIdComRelacoes(string $id): ?PlanoTrabalho
     {
-        return $this->query()
-            ->with([
-                'usuario:id,nome,apelido',
-                'unidade:id,sigla,nome',
-                'programa:id,nome',
-                'tipoModalidade:id,nome',
-                'entregas',
-                'consolidacoes.atividades',
-            ])
-            ->find($id);
+        /** @var PlanoTrabalho|null $plano */
+        $plano = PlanoTrabalho::with([
+            'usuario:id,nome,apelido',
+            'unidade:id,sigla,nome',
+            'programa:id,nome',
+            'tipoModalidade:id,nome',
+            'entregas',
+            'consolidacoes.atividades',
+            'documento.assinaturas.usuario',
+            'entregas.planoEntregaEntrega.entrega',
+            'entregas.planoEntregaEntrega.planoEntrega'
+        ])->find($id);
+        
+        return $plano;
     }
 
     public function possuiAssinatura(string $planoId): bool

@@ -286,6 +286,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subMonth(),
             'data_fim' => now()->addMonth(),
+            'status' => 'ATIVO',
         ]);
 
         PlanoTrabalho::factory()->create([
@@ -294,6 +295,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subYear(),
             'data_fim' => now()->subMonth(),
+            'status' => 'ATIVO',
         ]);
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true]);
@@ -337,6 +339,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subMonth(),
             'data_fim' => now()->addMonth(),
+            'status' => 'ATIVO',
         ]);
 
         PlanoTrabalho::factory()->create([
@@ -345,6 +348,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subMonth(),
             'data_fim' => now()->addMonth(),
+            'status' => 'ATIVO',
         ]);
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray([

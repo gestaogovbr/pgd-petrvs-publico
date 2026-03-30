@@ -9,5 +9,9 @@ namespace App\Repository\PlanoTrabalhoEntrega\Contracts;
  */
 interface PlanoTrabalhoEntregaReadRepositoryContract
 {
-    //
+    /** @return \App\Models\PlanoTrabalhoEntrega|null */
+    public function findById(string|int $id): ?\Illuminate\Database\Eloquent\Model;
+
+    /** @return \App\Models\PlanoTrabalhoEntrega|null */
+    public function find(string|int $id): ?\Illuminate\Database\Eloquent\Model;
 }

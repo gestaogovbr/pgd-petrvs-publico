@@ -13,4 +13,9 @@ interface PlanoTrabalhoEntregaWriteRepositoryContract
 {
     /** @return \App\Models\PlanoTrabalhoEntrega */
     public function create(array $attributes): Model;
+
+    /** @return \App\Models\PlanoTrabalhoEntrega|null */
+    public function update(string $id, array $attributes): ?Model;
+
+    public function delete(string $id): bool;
 }

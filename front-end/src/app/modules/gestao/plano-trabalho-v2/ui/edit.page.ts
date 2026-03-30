@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, of, switchMap, take, timer } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, fromEvent, map, of, switchMap, take, timer } from 'rxjs';
+
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { NavigateService } from 'src/app/services/navigate.service';
@@ -13,15 +14,18 @@ import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
 import { UsuarioService, UsuarioSearchItem } from 'src/app/v2/services/usuario.service';
 import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
-import { GovBrAssetsService } from 'src/app/v2/services/govbr-assets.service';
-import { BrButton, BrCard, BrInput, BrSelect, BrSelectOption, BrTextarea, SelectValueAccessor, TextValueAccessor } from '@govbr-ds/webcomponents-angular/standalone';
 import { AuthService } from 'src/app/services/auth.service';
+
+import { HttpClient } from '@angular/common/http';
+import { GlobalsService } from 'src/app/services/globals.service';
+
+
 
 @Component({
   selector: 'app-plano-trabalho-v2-edit-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, BrButton, BrCard, BrInput, BrSelect, BrSelectOption, BrTextarea, TextValueAccessor, SelectValueAccessor],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './edit.page.html'
 })
 export class PlanoTrabalhoV2EditPage implements OnInit {
@@ -34,8 +38,12 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   private readonly programaService = inject(ProgramaService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly govbr = inject(GovBrAssetsService);
   private readonly route = inject(ActivatedRoute);
+  private readonly http = inject(HttpClient);
+  public readonly gb = inject(GlobalsService);
+  private readonly document = inject(DOCUMENT);
+
+
 
   planoId = signal<string | null>(null);
   loading = signal(true);
@@ -54,8 +62,15 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   entregas = signal<any[]>([]);
   entregasUnidade = signal<{id: string, label: string, planoNome: string, entregaNome: string}[]>([]);
+  entregasOutraUnidade = signal<{id: string, label: string, planoNome: string, entregaNome: string}[]>([]);
+  outrasUnidades = signal<{id: string, sigla: string, nome: string}[]>([]);
+  readonly outraUnidadeQuery = this.fb.control('');
+
+  selectAberto = signal<string | null>(null);
+
   mostrandoFormEntrega = signal(false);
   salvandoEntrega = signal(false);
+  totalForcaTrabalho = signal(0);
 
   readonly joinPrograma = ['template_tcr'];
 
@@ -75,7 +90,10 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   readonly entregaForm = this.fb.group({
     id: this.fb.control<string | null>(null),
-    plano_entrega_entrega_id: this.fb.control('', Validators.required),
+    origem: this.fb.control('PROPRIA_UNIDADE', Validators.required),
+    orgao: this.fb.control(''),
+    outra_unidade_id: this.fb.control(''),
+    plano_entrega_entrega_id: this.fb.control(''),
     descricao: this.fb.control('', Validators.required),
     forca_trabalho: this.fb.control<number>(100, [Validators.required, Validators.min(1), Validators.max(100)])
   });
@@ -86,12 +104,55 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     return this.formStatus() === 'VALID' && !!this.programaId() && !this.saving();
   });
 
+  readonly unidadeSelecionadaLabel = computed(() => {
+    const unidadeId = this.form.controls.unidade_id.value;
+    if (!unidadeId) return '';
+    return this.unidades().find(u => `${u.id}` === unidadeId)?.sigla ?? '';
+  });
+
+  readonly modalidadeSelecionadaLabel = computed(() => {
+    const modalidadeId = this.form.controls.tipo_modalidade_id.value;
+    if (!modalidadeId) return '';
+    return this.modalidades().find(m => `${m.id}` === modalidadeId)?.nome ?? '';
+  });
+
+  readonly origemOptions = [
+    { value: 'PROPRIA_UNIDADE', label: 'Própria Unidade' },
+    { value: 'OUTRA_UNIDADE', label: 'Outra Unidade' },
+    { value: 'OUTRO_ORGAO', label: 'Outro Órgão/Entidade' },
+    { value: 'SEM_ENTREGA', label: 'Não vinculada a entrega' }
+  ] as const;
+
+  readonly origemEntregaSelecionadaLabel = computed(() => {
+    const origem = this.entregaForm.controls.origem.value;
+    return this.origemOptions.find(o => o.value === origem)?.label ?? '';
+  });
+
+  readonly outraUnidadeSelecionadaLabel = computed(() => {
+    const unidadeId = this.entregaForm.controls.outra_unidade_id.value;
+    if (!unidadeId) return '';
+    const unidade = this.outrasUnidades().find(u => u.id === unidadeId);
+    if (!unidade) return '';
+    return `${unidade.sigla} - ${unidade.nome}`;
+  });
+
+  readonly contribuicaoSelecionadaLabel = computed(() => {
+    const entregaId = this.entregaForm.controls.plano_entrega_entrega_id.value;
+    if (!entregaId) return '';
+    const origem = this.entregaForm.controls.origem.value;
+    if (origem === 'PROPRIA_UNIDADE') {
+      return this.entregasUnidade().find(e => e.id === entregaId)?.label ?? '';
+    }
+    return this.entregasOutraUnidade().find(e => e.id === entregaId)?.label ?? '';
+  });
+
   ngOnInit(): void {
-    this.govbr.load();
-    
     this.form.statusChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(status => this.formStatus.set(status));
+    fromEvent(this.document, 'click')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.selectAberto.set(null));
 
     this.route.paramMap.pipe(
       map(params => params.get('id')),
@@ -141,10 +202,99 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
         void this.carregarRegramento(unidadeId);
         this.carregarEntregasUnidade(unidadeId);
       });
+
+    this.entregaForm.controls.origem.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(origem => {
+        const pIdControl = this.entregaForm.controls.plano_entrega_entrega_id;
+        const orgaoControl = this.entregaForm.controls.orgao;
+        const outraUniControl = this.entregaForm.controls.outra_unidade_id;
+        const forcaControl = this.entregaForm.controls.forca_trabalho;
+        
+        if (origem === 'OUTRO_ORGAO') {
+          pIdControl.clearValidators();
+          pIdControl.setValue('');
+          orgaoControl.setValidators(Validators.required);
+          forcaControl.clearValidators();
+          forcaControl.setValue(0);
+        } else if (origem === 'SEM_ENTREGA') {
+          pIdControl.clearValidators();
+          pIdControl.setValue('');
+          orgaoControl.clearValidators();
+          orgaoControl.setValue('');
+          forcaControl.setValidators([Validators.required, Validators.min(1)]);
+        } else {
+          pIdControl.setValidators(Validators.required);
+          orgaoControl.clearValidators();
+          orgaoControl.setValue('');
+          forcaControl.setValidators([Validators.required, Validators.min(1)]);
+        }
+        
+        if (origem !== 'OUTRA_UNIDADE') {
+          outraUniControl.setValue('');
+          this.entregasOutraUnidade.set([]);
+        }
+
+        pIdControl.updateValueAndValidity();
+        orgaoControl.updateValueAndValidity();
+        forcaControl.updateValueAndValidity();
+      });
+
+    this.entregaForm.controls.outra_unidade_id.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(unidadeId => {
+        if (unidadeId && this.entregaForm.controls.origem.value === 'OUTRA_UNIDADE') {
+          this.carregarEntregasOutraUnidade(unidadeId);
+        }
+      });
+
+    this.outraUnidadeQuery.valueChanges
+      .pipe(
+        debounceTime(250),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(term => {
+        if (term && typeof term === 'string') {
+          this.buscarOutrasUnidades(term);
+        }
+      });
   }
 
   voltar() {
     this.go.back();
+  }
+
+  toggleSelect(key: string) {
+    if (this.selectAberto() === key) {
+      this.selectAberto.set(null);
+      return;
+    }
+    this.selectAberto.set(key);
+  }
+
+  selecionarUnidade(unidade: Unidade) {
+    this.form.controls.unidade_id.setValue(`${unidade.id}`);
+    this.selectAberto.set(null);
+  }
+
+  selecionarModalidade(modalidade: TipoModalidade) {
+    this.form.controls.tipo_modalidade_id.setValue(`${modalidade.id}`);
+    this.selectAberto.set(null);
+  }
+
+  selecionarOrigemEntrega(value: typeof this.origemOptions[number]['value']) {
+    this.entregaForm.controls.origem.setValue(value);
+    this.selectAberto.set(null);
+  }
+
+  selecionarOutraUnidadeEntrega(value: string) {
+    this.entregaForm.controls.outra_unidade_id.setValue(value);
+    this.selectAberto.set(null);
+  }
+
+  selecionarContribuicaoEntrega(value: string) {
+    this.entregaForm.controls.plano_entrega_entrega_id.setValue(value);
+    this.selectAberto.set(null);
   }
 
   selecionarUsuario(item: UsuarioSearchItem) {
@@ -197,11 +347,41 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
         planoNome: x.plano_entrega?.nome || 'Plano da Unidade',
         entregaNome: x.entrega?.nome || x.descricao || 'Entrega'
       })));
+
+      if (rows.length > 0 && this.entregaForm.controls.origem.value === 'PROPRIA_UNIDADE' && !this.entregaForm.controls.plano_entrega_entrega_id.value) {
+        this.entregaForm.controls.plano_entrega_entrega_id.setValue(rows[0].id);
+      }
+    });
+  }
+
+  private carregarEntregasOutraUnidade(unidadeId: string) {
+    this.api.queryEntregasUnidade(unidadeId).subscribe(rows => {
+      this.entregasOutraUnidade.set(rows.map(x => ({
+        id: x.id,
+        label: x.descricao || x.entrega?.nome || 'Entrega sem descrição',
+        planoNome: x.plano_entrega?.nome || 'Plano da Unidade',
+        entregaNome: x.entrega?.nome || x.descricao || 'Entrega'
+      })));
+    });
+  }
+
+  buscarOutrasUnidades(term: string) {
+    if (!term || term.length < 3) {
+      this.outrasUnidades.set([]);
+      return;
+    }
+    // We can use api of Unidade if available. Since it's not injected, let's use HttpClient directly or UnidadeDaoService.
+    // I will just use HttpClient to search Unidades.
+    this.http.post<any>(`${this.gb.servidorURL}/api/Unidade/query`, {
+      where: [['nome', 'like', `%${term}%`], ['or', 'sigla', 'like', `%${term}%`]],
+      limit: 10
+    }).subscribe((res: any) => {
+      this.outrasUnidades.set(res.rows || res.data || []);
     });
   }
 
   adicionarEntrega() {
-    this.entregaForm.reset({ id: null, plano_entrega_entrega_id: '', descricao: '', forca_trabalho: 100 });
+    this.entregaForm.reset({ id: null, origem: 'PROPRIA_UNIDADE', orgao: '', outra_unidade_id: '', plano_entrega_entrega_id: '', descricao: '', forca_trabalho: 100 });
     this.mostrandoFormEntrega.set(true);
   }
 
@@ -228,12 +408,29 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   }
 
   editarEntrega(entrega: any) {
+    let origem = 'PROPRIA_UNIDADE';
+    if (entrega.orgao) {
+      origem = 'OUTRO_ORGAO';
+    } else if (!entrega.plano_entrega_entrega_id) {
+      origem = 'SEM_ENTREGA';
+    } else if (entrega.plano_entrega_entrega?.plano_entrega?.unidade_id !== this.form.controls.unidade_id.value) {
+      origem = 'OUTRA_UNIDADE';
+    }
+    
     this.entregaForm.setValue({
       id: entrega.id || null,
+      origem,
+      orgao: entrega.orgao || '',
+      outra_unidade_id: origem === 'OUTRA_UNIDADE' ? entrega.plano_entrega_entrega?.plano_entrega?.unidade_id : '',
       plano_entrega_entrega_id: entrega.plano_entrega_entrega_id || '',
       descricao: entrega.descricao || '',
       forca_trabalho: entrega.forca_trabalho || 100
     });
+    
+    if (origem === 'OUTRA_UNIDADE' && entrega.plano_entrega_entrega?.plano_entrega?.unidade_id) {
+      this.carregarEntregasOutraUnidade(entrega.plano_entrega_entrega.plano_entrega.unidade_id);
+    }
+    
     this.mostrandoFormEntrega.set(true);
   }
 
@@ -246,13 +443,24 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     });
   }
 
-  getPlanoEntregaInfo(id: string | null | undefined): { plano: string, entrega: string } {
-    if (!id) return { plano: '', entrega: '' };
-    const found = this.entregasUnidade().find(x => x.id === id);
+  getPlanoEntregaInfo(e: any): { plano: string, entrega: string } {
+    if (e.orgao) return { plano: 'Outro Órgão/Entidade', entrega: e.orgao };
+    if (!e.plano_entrega_entrega_id) return { plano: 'Não vinculada', entrega: '-' };
+
+    const found = this.entregasUnidade().find(x => x.id === e.plano_entrega_entrega_id) 
+               || this.entregasOutraUnidade().find(x => x.id === e.plano_entrega_entrega_id);
     if (found) {
       return { plano: found.planoNome, entrega: found.entregaNome };
     }
-    // Caso não encontre na lista (ex: entrega de outra unidade já vinculada)
+    
+    // Se a entrega já vem com os dados do back-end (joins)
+    if (e.plano_entrega_entrega) {
+       return { 
+         plano: e.plano_entrega_entrega.plano_entrega?.nome || 'Plano vinculado',
+         entrega: e.plano_entrega_entrega.entrega?.nome || e.plano_entrega_entrega.descricao || 'Entrega vinculada'
+       };
+    }
+    
     return { plano: 'Plano vinculado', entrega: 'Entrega vinculada' };
   }
 

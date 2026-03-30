@@ -1,128 +1,158 @@
-<div class="container-fluid py-3">
+<div class="br-mainpanel" style="padding: 16px;">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Planos de Trabalho</h2>
-    <button type="button" class="btn btn-success" (click)="novoPlano()">
-      <i class="bi bi-plus-lg me-1"></i>Novo plano de trabalho
+    <button class="br-button primary" type="button" (click)="novoPlano()">
+      <i class="fas fa-plus mr-1"></i>Novo plano de trabalho
     </button>
   </div>
 
   <form [formGroup]="filters" class="mb-3">
-    <div class="rounded p-3 mb-3 border bg-body-tertiary text-body">
-      <div class="d-flex align-items-end justify-content-start">
-        <div>
-          <div class="d-flex flex-column">
-            <label class="form-label mb-1">Período: Início</label>
-            <input type="date" class="form-control form-control-sm" formControlName="periodo_inicio" (change)="onFilterChange()" />
-          </div>
-        </div>
-        <div class="ms-2">
-          <div class="d-flex flex-column">
-            <label class="form-label mb-1">Período: Fim</label>
-            <input type="date" class="form-control form-control-sm" formControlName="periodo_fim" (change)="onFilterChange()" />
-          </div>
-        </div>
-        <div class="form-check form-switch ms-2">
-          <label class="form-check-label me-2">Subordinadas</label>
-          <input class="form-check-input" type="checkbox" formControlName="incluir_subordinadas" [disabled]="isParticipante" (change)="onFilterChange()" />
-        </div>
-        <div class="form-check form-switch">
-          <label class="form-check-label me-2">Vigentes</label>
-          <input class="form-check-input" type="checkbox" formControlName="vigentes" (change)="onFilterChange()" />
-        </div>
-        <div class="form-check form-switch">
-          <label class="form-check-label me-2">Arquivados</label>
-          <input class="form-check-input" type="checkbox" formControlName="incluir_arquivados" (change)="onFilterChange()" />
-        </div>
-        <div class="form-check form-switch">
-          <label class="form-check-label me-2">Meus Planos</label>
-          <input class="form-check-input" type="checkbox" formControlName="meus_planos" (change)="onFilterChange()" />
-        </div>
-        <div class="ms-auto d-flex gap-2">
-          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="onConsultar()">
-            <i class="bi bi-search me-1"></i>Consultar
-          </button>
-          <button type="button" class="btn btn-outline-primary btn-sm" (click)="toggleAdvanced()">
-            <i class="bi" [ngClass]="advanced ? 'bi-funnel-fill' : 'bi-funnel'"></i>
-            <span class="ms-1">Filtro avançado</span>
-          </button>
-        </div>
-      </div>
-      <div class="mt-3" [class.d-none]="!advanced">
-        <div class="row">
-          <div class="col-md-1 mb-3">
-            <label class="form-label">#ID</label>
-            <input type="text" class="form-control" formControlName="numero" (input)="onFilterChange()" />
-          </div>
-          <div class="col-md-3 mb-3">
-            <label class="form-label">Usuário</label>
-            <input type="text" class="form-control" formControlName="usuario" [disabled]="isParticipante" (input)="onFilterChange()" />
-          </div>
-          <div class="col-md-3 mb-3">
-            <label class="form-label">Unidade</label>
-            <input type="text" class="form-control" formControlName="unidade_regramento" (input)="onFilterChange()" />
-          </div>
-          <div class="col-md-3 mb-3">
-            <label class="form-label">Modalidade</label>
-            <input type="text" class="form-control" formControlName="modalidade" (input)="onFilterChange()" />
+    <div class="br-card">
+      <div class="card-content">
+        <div class="row align-items-end">
+          <div class="col-md-2 mb-3">
+            <div class="br-input">
+              <label>Período: Início</label>
+              <input type="date" formControlName="periodo_inicio" (change)="onFilterChange()" />
+            </div>
           </div>
           <div class="col-md-2 mb-3">
-            <label class="form-label">Status do Plano</label>
-            <input type="text" class="form-control" formControlName="status" (input)="onFilterChange()" />
+            <div class="br-input">
+              <label>Período: Fim</label>
+              <input type="date" formControlName="periodo_fim" (change)="onFilterChange()" />
+            </div>
+          </div>
+          <div class="col-md-auto mb-3 d-flex gap-3">
+            <div class="br-switch icon">
+              <input type="checkbox" id="incluir_subordinadas" formControlName="incluir_subordinadas" [disabled]="isParticipante" (change)="onFilterChange()" />
+              <label for="incluir_subordinadas">Subordinadas</label>
+            </div>
+            <div class="br-switch icon">
+              <input type="checkbox" id="vigentes" formControlName="vigentes" (change)="onFilterChange()" />
+              <label for="vigentes">Vigentes</label>
+            </div>
+            <div class="br-switch icon">
+              <input type="checkbox" id="incluir_arquivados" formControlName="incluir_arquivados" (change)="onFilterChange()" />
+              <label for="incluir_arquivados">Arquivados</label>
+            </div>
+            <div class="br-switch icon">
+              <input type="checkbox" id="meus_planos" formControlName="meus_planos" (change)="onFilterChange()" />
+              <label for="meus_planos">Meus Planos</label>
+            </div>
+          </div>
+          <div class="col mb-3 text-right">
+            <button class="br-button secondary mr-2" type="button" (click)="onConsultar()">
+              <i class="fas fa-search mr-1"></i>Consultar
+            </button>
+            <button class="br-button tertiary" type="button" (click)="toggleAdvanced()">
+              <i class="fas fa-filter mr-1"></i>Filtro avançado
+            </button>
           </div>
         </div>
+
+        @if (advanced) {
+          <div class="br-divider"></div>
+          <div class="row mt-3">
+            <div class="col-md-1 mb-3">
+              <div class="br-input">
+                <label>#ID</label>
+                <input type="text" formControlName="numero" (input)="onFilterChange()" />
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <div class="br-input">
+                <label>Usuário</label>
+                <input type="text" formControlName="usuario" [disabled]="isParticipante" (input)="onFilterChange()" />
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <div class="br-input">
+                <label>Unidade</label>
+                <input type="text" formControlName="unidade_regramento" (input)="onFilterChange()" />
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <div class="br-input">
+                <label>Modalidade</label>
+                <input type="text" formControlName="modalidade" (input)="onFilterChange()" />
+              </div>
+            </div>
+            <div class="col-md-2 mb-3">
+              <div class="br-input">
+                <label>Status</label>
+                <input type="text" formControlName="status" (input)="onFilterChange()" />
+              </div>
+            </div>
+          </div>
+        }
       </div>
     </div>
   </form>
 
   @if (facade.loading()) {
-    <div>Carregando...</div>
+    <div class="d-flex justify-content-center p-5">
+      <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+    </div>
   }
 
-  <table class="table table-sm table-striped">
-    <thead>
-      <tr>
-        <th>Número</th>
-        <th>Usuário</th>
-        <th>Unidade</th>
-        <th>Modalidade</th>
-        <th>Status</th>
-        <th>Período</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (p of facade.items(); track p.id) {
-        <tr>
-          <td>{{ p.numero }}</td>
-          <td>{{ p.usuario?.nome || '-' }}</td>
-          <td>{{ p.unidade?.sigla || '-' }}</td>
-          <td>{{ p.tipo_modalidade?.nome || '-' }}</td>
-          <td><span class="br-badge" [ngClass]="statusClass(p.status)">{{ statusLabel(p.status) }}</span></td>
-          <td>{{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}</td>
-          <td>
-            <div class="btn-group">
-              <button type="button" class="btn btn-outline-primary btn-sm" (click)="detalhesDoPlano(p)">
-                <i class="bi bi-search me-1"></i>Consultar
-              </button>
-              <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="visually-hidden">Mais</span>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><button class="dropdown-item" (click)="editarPlano(p)"><i class="bi bi-pencil me-2"></i>Editar</button></li>
-                <li><button class="dropdown-item" (click)="assinarPlano(p)"><i class="bi bi-pen me-2"></i>Assinar</button></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><button class="dropdown-item text-danger" (click)="cancelarPlano(p)"><i class="bi bi-x-circle me-2"></i>Cancelar</button></li>
-              </ul>
-            </div>
-          </td>
-        </tr>
-      }
-    </tbody>
-  </table>
+  <div class="br-table">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Número</th>
+            <th scope="col">Usuário</th>
+            <th scope="col">Unidade</th>
+            <th scope="col">Modalidade</th>
+            <th scope="col">Status</th>
+            <th scope="col">Período</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of facade.items(); track p.id) {
+            <tr>
+              <td data-th="Número">{{ p.numero }}</td>
+              <td data-th="Usuário">{{ p.usuario?.nome || '-' }}</td>
+              <td data-th="Unidade">{{ p.unidade?.sigla || '-' }}</td>
+              <td data-th="Modalidade">{{ p.tipo_modalidade?.nome || '-' }}</td>
+              <td data-th="Status"><span class="br-tag" [ngClass]="statusClass(p.status)">{{ statusLabel(p.status) }}</span></td>
+              <td data-th="Período">{{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}</td>
+              <td data-th="Ações">
+                <div class="d-flex gap-1">
+                  <button class="br-button circle" type="button" (click)="detalhesDoPlano(p)" title="Consultar">
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <button class="br-button circle" type="button" (click)="editarPlano(p)" title="Editar">
+                    <i class="fas fa-pen"></i>
+                  </button>
+                  <button class="br-button circle" type="button" (click)="assinarPlano(p)" title="Assinar">
+                    <i class="fas fa-file-signature"></i>
+                  </button>
+                  <button class="br-button circle text-danger" type="button" (click)="cancelarPlano(p)" title="Cancelar">
+                    <i class="fas fa-times-circle"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+          @if (facade.items().length === 0 && !facade.loading()) {
+            <tr>
+              <td colspan="7" class="text-center p-3">Nenhum plano de trabalho encontrado.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-  <div class="d-flex justify-content-between align-items-center">
-    <button class="btn btn-outline-secondary btn-sm" (click)="prev()" [disabled]="facade.page() <= 1">Anterior</button>
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <button class="br-button secondary" type="button" (click)="prev()" [disabled]="facade.page() <= 1">
+      <i class="fas fa-chevron-left mr-1"></i>Anterior
+    </button>
     <span>Página {{ facade.page() }}</span>
-    <button class="btn btn-outline-secondary btn-sm" (click)="next()">Próxima</button>
+    <button class="br-button secondary" type="button" (click)="next()">
+      Próxima<i class="fas fa-chevron-right ml-1"></i>
+    </button>
   </div>
 </div>

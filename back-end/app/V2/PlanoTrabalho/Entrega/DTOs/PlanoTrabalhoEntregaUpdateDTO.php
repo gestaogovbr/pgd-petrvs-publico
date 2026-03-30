@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Entrega\DTOs;
 
-class PlanoTrabalhoEntregaStoreDTO
+class PlanoTrabalhoEntregaUpdateDTO
 {
     public function __construct(
         public readonly string $planoTrabalhoId,

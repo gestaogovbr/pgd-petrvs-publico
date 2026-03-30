@@ -39,6 +39,7 @@ describe('PlanoTrabalhoEntregaStoreDTO', function () {
         expect($dto->toArray())->toBe([
             'plano_trabalho_id' => 'plano-1',
             'plano_entrega_entrega_id' => 'pee-1',
+            'orgao' => null,
             'forca_trabalho' => 30.0,
             'descricao' => 'Teste',
         ]);

@@ -2,84 +2,160 @@
   
   @if (loading()) {
     <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
-      <span class="br-loading"></span>
+      <div class="br-loading" role="progressbar" aria-label="carregando"></div>
     </div>
   } @else {
-    <br-card class="mb-4">
-      <div slot="header" class="text-weight-semi-bold text-up-02">
+    <div class="br-card mb-4">
+      <div class="card-header text-weight-semi-bold text-up-02">
         Informações gerais
       </div>
-      <div slot="content">
+      <div class="card-content">
         <form [formGroup]="form">
             <div class="row">
               <div class="col-md-4 mb-3 position-relative">
                 <div class="d-flex align-items-end gap-2">
-                  <br-input [placeholder]="'Digite nome ou matrícula (mín. 3)'" [formControl]="agentePublicoQuery" label="Agente Público" autocomplete="on"></br-input>
-                  <br-button emphasis="secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+                  <div class="br-input w-100">
+                    <label>Agente Público</label>
+                    <input type="text" [placeholder]="'Digite nome ou matrícula (mín. 3)'" [formControl]="agentePublicoQuery" autocomplete="on" />
+                  </div>
+                  <button type="button" class="br-button secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</button>
                 </div>
                 @if (sugestoesUsuarios().length > 0) {
-                  <br-card class="position-absolute w-100 " style="z-index: 1050;">               
+                  <div class="br-card position-absolute w-100 " style="z-index: 1050;">               
                     @for (u of sugestoesUsuarios(); track u.id) {
-                      <div class="d-flex justify-content-between align-items-center px-2 py-1" slot="content">
+                      <div class="d-flex justify-content-between align-items-center px-2 py-1 card-content">
                         <div class="text-truncate">
                           {{ u.nome }} @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
                         </div>
-                        <br-button emphasis="secondary" (click)="selecionarUsuario(u)">Selecionar</br-button>
+                        <button type="button" class="br-button secondary" (click)="selecionarUsuario(u)">Selecionar</button>
                       </div>
                     }
-                  </br-card>
+                  </div>
                 }
               </div>
 
               <div class="col-md-4 mb-3">
-                <br-select
-                  formControlName="unidade_id"
-                  label="Unidade"
-                >
-                  @for (u of unidades(); track u.id) {
-                    <br-select-option [value]="u.id.toString()" [label]="u.sigla" [selected]="form.controls.unidade_id.value === u.id.toString()"></br-select-option>
-                  }
-                </br-select>
+                <input type="hidden" formControlName="unidade_id" />
+                <div class="br-select w-100" (click)="$event.stopPropagation()">
+                  <div class="br-input">
+                    <label for="unidade_id_display">Unidade</label>
+                    <input
+                      id="unidade_id_display"
+                      type="text"
+                      placeholder="Selecione o item"
+                      readonly
+                      [value]="unidadeSelecionadaLabel()"
+                      (click)="$event.stopPropagation(); toggleSelect('unidade')"
+                    />
+                    <button
+                      class="br-button"
+                      type="button"
+                      tabindex="-1"
+                      data-trigger="data-trigger"
+                      (click)="$event.stopPropagation(); toggleSelect('unidade')"
+                    >
+                      <i class="fas fa-angle-down" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  <div class="br-list" tabindex="0" [attr.expanded]="selectAberto() === 'unidade' ? '' : null">
+                    @for (u of unidades(); track u.id) {
+                      <div class="br-item" tabindex="-1">
+                        <div class="br-radio">
+                          <input
+                            [id]="'unidade_' + u.id"
+                            type="radio"
+                            name="unidade_id_options"
+                            [value]="u.id.toString()"
+                            [checked]="form.controls.unidade_id.value === u.id.toString()"
+                            (change)="selecionarUnidade(u)"
+                          />
+                          <label [for]="'unidade_' + u.id">{{ u.sigla }}</label>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
               </div>
 
               <div class="col-md-4 mb-3">
-                <br-input label="Regramento de Instituição PGD" readonly [value]="programaNome()"></br-input>
+                <div class="br-input">
+                  <label>Regramento de Instituição PGD</label>
+                  <input type="text" readonly [value]="programaNome()" />
+                </div>
               </div>
             </div>
 
             <div class="row mt-2">
               <div class="col-md-3 mb-3">
-                <br-input type="date" formControlName="data_inicio" label="Início"></br-input>
+                <div class="br-input">
+                  <label>Início</label>
+                  <input type="date" formControlName="data_inicio" />
+                </div>
               </div>
 
               <div class="col-md-3 mb-3">
-                <br-input type="date" formControlName="data_fim" label="Final"></br-input>
+                <div class="br-input">
+                  <label>Final</label>
+                  <input type="date" formControlName="data_fim" />
+                </div>
               </div>
 
               <div class="col-md-6 mb-3">
-                <br-select
-                  formControlName="tipo_modalidade_id"
-                  label="Modalidade"
-                >
-                  @for (m of modalidades(); track m.id) {
-                    <br-select-option [value]="m.id.toString()" [label]="m.nome" [selected]="form.controls.tipo_modalidade_id.value === m.id.toString()"></br-select-option>
-                  }
-                </br-select>
+                <input type="hidden" formControlName="tipo_modalidade_id" />
+                <div class="br-select w-100" (click)="$event.stopPropagation()">
+                  <div class="br-input">
+                    <label for="tipo_modalidade_id_display">Modalidade</label>
+                    <input
+                      id="tipo_modalidade_id_display"
+                      type="text"
+                      placeholder="Selecione o item"
+                      readonly
+                      [value]="modalidadeSelecionadaLabel()"
+                      (click)="$event.stopPropagation(); toggleSelect('modalidade')"
+                    />
+                    <button
+                      class="br-button"
+                      type="button"
+                      tabindex="-1"
+                      data-trigger="data-trigger"
+                      (click)="$event.stopPropagation(); toggleSelect('modalidade')"
+                    >
+                      <i class="fas fa-angle-down" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  <div class="br-list" tabindex="0" [attr.expanded]="selectAberto() === 'modalidade' ? '' : null">
+                    @for (m of modalidades(); track m.id) {
+                      <div class="br-item" tabindex="-1">
+                        <div class="br-radio">
+                          <input
+                            [id]="'modalidade_' + m.id"
+                            type="radio"
+                            name="tipo_modalidade_id_options"
+                            [value]="m.id.toString()"
+                            [checked]="form.controls.tipo_modalidade_id.value === m.id.toString()"
+                            (change)="selecionarModalidade(m)"
+                          />
+                          <label [for]="'modalidade_' + m.id">{{ m.nome }}</label>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
               </div>
             </div>
         </form>
       </div>
-    </br-card>
+    </div>
 
-    <br-card class="mb-4">
-      <div slot="header" class="text-weight-semi-bold text-up-02">
+    <div class="br-card mb-4">
+      <div class="card-header text-weight-semi-bold text-up-02">
         Planejamento
       </div>
-      <div slot="content">
+      <div class="card-content">
         <div class="d-flex justify-content-end mb-3">
-          <br-button emphasis="secondary" (click)="adicionarEntrega()" [disabled]="mostrandoFormEntrega()">
+          <button type="button" class="br-button secondary" (click)="adicionarEntrega()" [disabled]="mostrandoFormEntrega()">
             <i class="fas fa-plus mr-1"></i> Adicionar Entrega
-          </br-button>
+          </button>
         </div>
 
         @if (mostrandoFormEntrega()) {
@@ -87,26 +163,187 @@
             <h6 class="mb-3 text-weight-semi-bold">{{ entregaForm.value.id ? 'Editar Entrega' : 'Nova Entrega' }}</h6>
             <form [formGroup]="entregaForm">
               <div class="row">
-                <div class="col-md-9 mb-3">
-                  <br-select formControlName="plano_entrega_entrega_id" label="Contribuição para">
-                    <br-select-option value="" label="- Selecione -" [selected]="!entregaForm.controls.plano_entrega_entrega_id.value"></br-select-option>
-                    @for (eu of entregasUnidade(); track eu.id) {
-                      <br-select-option [value]="eu.id" [label]="eu.label" [selected]="entregaForm.controls.plano_entrega_entrega_id.value === eu.id"></br-select-option>
-                    }
-                  </br-select>
-                </div>
                 <div class="col-md-3 mb-3">
-                  <br-input formControlName="forca_trabalho" type="number" label="% CHD" placeholder="Ex: 100"></br-input>
+                  <input type="hidden" formControlName="origem" />
+                  <div class="br-select w-100" (click)="$event.stopPropagation()">
+                    <div class="br-input">
+                      <label for="origem_display">Origem da Entrega</label>
+                      <input
+                        id="origem_display"
+                        type="text"
+                        placeholder="Selecione o item"
+                        readonly
+                        [value]="origemEntregaSelecionadaLabel()"
+                        (click)="$event.stopPropagation(); toggleSelect('origem')"
+                      />
+                      <button
+                        class="br-button"
+                        type="button"
+                        tabindex="-1"
+                        data-trigger="data-trigger"
+                        (click)="$event.stopPropagation(); toggleSelect('origem')"
+                      >
+                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <div class="br-list" tabindex="0" [attr.expanded]="selectAberto() === 'origem' ? '' : null">
+                      @for (o of origemOptions; track o.value) {
+                        <div class="br-item" tabindex="-1">
+                          <div class="br-radio">
+                            <input
+                              [id]="'origem_' + o.value"
+                              type="radio"
+                              name="origem_options"
+                              [value]="o.value"
+                              [checked]="entregaForm.controls.origem.value === o.value"
+                              (change)="selecionarOrigemEntrega(o.value)"
+                            />
+                            <label [for]="'origem_' + o.value">{{ o.label }}</label>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                @if (entregaForm.value.origem === 'OUTRA_UNIDADE') {
+                  <div class="col-md-6 mb-3">
+                    <div class="br-input">
+                      <label>Buscar Unidade</label>
+                      <input type="text" [formControl]="outraUnidadeQuery" placeholder="Digite para buscar..." />
+                    </div>
+                    <input type="hidden" formControlName="outra_unidade_id" />
+                    <div class="br-select mt-2" (click)="$event.stopPropagation()">
+                      <div class="br-input">
+                        <label for="outra_unidade_id_display">Unidade</label>
+                        <input
+                          id="outra_unidade_id_display"
+                          type="text"
+                          placeholder="Selecione o item"
+                          readonly
+                          [value]="outraUnidadeSelecionadaLabel()"
+                          (click)="$event.stopPropagation(); toggleSelect('outraUnidade')"
+                        />
+                        <button
+                          class="br-button"
+                          type="button"
+                          tabindex="-1"
+                          data-trigger="data-trigger"
+                          (click)="$event.stopPropagation(); toggleSelect('outraUnidade')"
+                        >
+                          <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                      <div class="br-list" tabindex="0" [attr.expanded]="selectAberto() === 'outraUnidade' ? '' : null">
+                        @for (u of outrasUnidades(); track u.id) {
+                          <div class="br-item" tabindex="-1">
+                            <div class="br-radio">
+                              <input
+                                [id]="'outra_unidade_' + u.id"
+                                type="radio"
+                                name="outra_unidade_id_options"
+                                [value]="u.id"
+                                [checked]="entregaForm.controls.outra_unidade_id.value === u.id"
+                                (change)="selecionarOutraUnidadeEntrega(u.id)"
+                              />
+                              <label [for]="'outra_unidade_' + u.id">{{ u.sigla }} - {{ u.nome }}</label>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                @if (entregaForm.value.origem === 'PROPRIA_UNIDADE' || entregaForm.value.origem === 'OUTRA_UNIDADE') {
+                  <div class="col-md-9 mb-3">
+                    <input type="hidden" formControlName="plano_entrega_entrega_id" />
+                    <div class="br-select w-100" (click)="$event.stopPropagation()">
+                      <div class="br-input">
+                        <label for="plano_entrega_entrega_id_display">Contribuição para</label>
+                        <input
+                          id="plano_entrega_entrega_id_display"
+                          type="text"
+                          placeholder="Selecione o item"
+                          readonly
+                          [value]="contribuicaoSelecionadaLabel()"
+                          (click)="$event.stopPropagation(); toggleSelect('contribuicao')"
+                        />
+                        <button
+                          class="br-button"
+                          type="button"
+                          tabindex="-1"
+                          data-trigger="data-trigger"
+                          (click)="$event.stopPropagation(); toggleSelect('contribuicao')"
+                        >
+                          <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                      <div class="br-list" tabindex="0" [attr.expanded]="selectAberto() === 'contribuicao' ? '' : null">
+                        @if (entregaForm.value.origem === 'PROPRIA_UNIDADE') {
+                          @for (eu of entregasUnidade(); track eu.id) {
+                            <div class="br-item" tabindex="-1">
+                              <div class="br-radio">
+                                <input
+                                  [id]="'contribuicao_unidade_' + eu.id"
+                                  type="radio"
+                                  name="plano_entrega_entrega_id_options"
+                                  [value]="eu.id"
+                                  [checked]="entregaForm.controls.plano_entrega_entrega_id.value === eu.id"
+                                  (change)="selecionarContribuicaoEntrega(eu.id)"
+                                />
+                                <label [for]="'contribuicao_unidade_' + eu.id">{{ eu.label }}</label>
+                              </div>
+                            </div>
+                          }
+                        } @else {
+                          @for (eu of entregasOutraUnidade(); track eu.id) {
+                            <div class="br-item" tabindex="-1">
+                              <div class="br-radio">
+                                <input
+                                  [id]="'contribuicao_outra_' + eu.id"
+                                  type="radio"
+                                  name="plano_entrega_entrega_id_options"
+                                  [value]="eu.id"
+                                  [checked]="entregaForm.controls.plano_entrega_entrega_id.value === eu.id"
+                                  (change)="selecionarContribuicaoEntrega(eu.id)"
+                                />
+                                <label [for]="'contribuicao_outra_' + eu.id">{{ eu.label }}</label>
+                              </div>
+                            </div>
+                          }
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                @if (entregaForm.value.origem === 'OUTRO_ORGAO') {
+                  <div class="col-md-9 mb-3">
+                    <div class="br-input">
+                      <label>Órgão/Entidade</label>
+                      <input type="text" formControlName="orgao" placeholder="Nome do Órgão" />
+                    </div>
+                  </div>
+                }
+                <div class="col-md-3 mb-3">
+                  <div class="br-input">
+                    <label>% CHD</label>
+                    <input type="number" formControlName="forca_trabalho" placeholder="Ex: 100" />
+                  </div>
                 </div>
                 <div class="col-md-12 mb-3">
-                  <br-textarea formControlName="descricao" label="Trabalho Planejado" placeholder="Descreva o trabalho planejado..."></br-textarea>
+                  <div class="br-textarea">
+                    <label>Trabalho Planejado</label>
+                    <textarea formControlName="descricao" placeholder="Descreva o trabalho planejado..."></textarea>
+                  </div>
                 </div>
               </div>
               <div class="d-flex justify-content-end gap-2 mt-2">
-                <br-button emphasis="secondary" (click)="cancelarEntrega()">Cancelar</br-button>
-                <br-button emphasis="primary" (click)="salvarEntrega()" [disabled]="entregaForm.invalid || salvandoEntrega()">
+                <button type="button" class="br-button secondary" (click)="cancelarEntrega()">Cancelar</button>
+                <button type="button" class="br-button primary" (click)="salvarEntrega()" [disabled]="entregaForm.invalid || salvandoEntrega()">
                   {{ salvandoEntrega() ? 'Salvando...' : 'Salvar Entrega' }}
-                </br-button>
+                </button>
               </div>
             </form>
           </div>
@@ -126,17 +363,17 @@
             <tbody>
               @for (e of entregas(); track e.id) {
                 <tr>
-                  <td>{{ getPlanoEntregaInfo(e.plano_entrega_entrega_id).plano }}</td>
-                  <td>{{ getPlanoEntregaInfo(e.plano_entrega_entrega_id).entrega }}</td>
-                  <td>{{ e.forca_trabalho }}%</td>
+                  <td>{{ getPlanoEntregaInfo(e).plano }}</td>
+                  <td>{{ getPlanoEntregaInfo(e).entrega }}</td>
+                  <td>{{ e.forca_trabalho ? e.forca_trabalho + '%' : '-' }}</td>
                   <td>{{ e.descricao }}</td>
                   <td class="text-right">
-                    <br-button emphasis="tertiary" circle (click)="editarEntrega(e)" aria-label="Editar" title="Editar">
+                    <button type="button" class="br-button tertiary circle" (click)="editarEntrega(e)" aria-label="Editar" title="Editar">
                       <i class="fas fa-pen"></i>
-                    </br-button>
-                    <br-button emphasis="tertiary" circle class="text-danger" (click)="removerEntrega(e)" aria-label="Excluir" title="Excluir">
+                    </button>
+                    <button type="button" class="br-button tertiary circle text-danger" (click)="removerEntrega(e)" aria-label="Excluir" title="Excluir">
                       <i class="fas fa-trash"></i>
-                    </br-button>
+                    </button>
                   </td>
                 </tr>
               } @empty {
@@ -149,23 +386,24 @@
             </tbody>
           </table>
         </div>
-
-        <div class="row">
-          <div class="col-md-12">
-            <br-textarea
-              label="Justificativa para carga horária insuficiente"
-              placeholder="Descreva a justificativa"
-            ></br-textarea>
+        @if (totalForcaTrabalho() < 100) {
+          <div class="row">
+            <div class="col-md-12">
+              <div class="br-textarea">
+                <label>Justificativa para carga horária insuficiente</label>
+                <textarea placeholder="Descreva a justificativa"></textarea>
+              </div>
+            </div>
           </div>
-        </div>
+        }        
       </div>
-    </br-card>
+    </div>
 
     <div class="d-flex justify-content-center gap-2">
-      <br-button emphasis="secondary" class="text-danger border-danger">Excluir</br-button>
-      <br-button emphasis="secondary" (click)="salvar()" [disabled]="!podeSalvar() || saving()">Salvar Alterações</br-button>
-      <br-button emphasis="primary">Assinar</br-button>
-      <br-button emphasis="secondary" (click)="voltar()">Voltar</br-button>
+      <button type="button" class="br-button secondary text-danger border-danger">Excluir</button>
+      <button type="button" class="br-button secondary" (click)="salvar()" [disabled]="!podeSalvar() || saving()">Salvar Alterações</button>
+      <button type="button" class="br-button primary">Assinar</button>
+      <button type="button" class="br-button secondary" (click)="voltar()">Voltar</button>
     </div>
   }
 </div>

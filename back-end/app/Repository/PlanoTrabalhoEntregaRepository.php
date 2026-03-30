@@ -21,10 +21,34 @@ class PlanoTrabalhoEntregaRepository
         $entrega = $this->writeRepository->create($attributes);
 
         $entrega->load([
-            'planoEntregaEntrega:id,descricao,unidade_id',
-            'planoEntregaEntrega.unidade:id,sigla,nome',
+            'planoEntregaEntrega:id,descricao,entrega_id,plano_entrega_id',
+            'planoEntregaEntrega.entrega:id,nome',
+            'planoEntregaEntrega.planoEntrega:id,nome,unidade_id',
+            'planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome',
         ]);
 
         return $entrega;
+    }
+
+    public function update(string $id, array $attributes): PlanoTrabalhoEntrega
+    {
+        $this->writeRepository->update($id, $attributes);
+
+        /** @var PlanoTrabalhoEntrega */
+        $entrega = $this->readRepository->find($id);
+
+        $entrega->load([
+            'planoEntregaEntrega:id,descricao,entrega_id,plano_entrega_id',
+            'planoEntregaEntrega.entrega:id,nome',
+            'planoEntregaEntrega.planoEntrega:id,nome,unidade_id',
+            'planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome',
+        ]);
+
+        return $entrega;
+    }
+
+    public function delete(string $id): void
+    {
+        $this->writeRepository->delete($id);
     }
 }

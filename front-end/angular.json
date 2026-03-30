@@ -93,6 +93,8 @@
                 "inject": false
               },
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/@govbr-ds/core/dist/core-tokens.min.css",
+              "./node_modules/@govbr-ds/core/dist/core.min.css",
               "./node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/regular.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/solid.scss",

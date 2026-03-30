@@ -184,6 +184,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subMonth(),
             'data_fim' => now()->addMonth(),
+            'status' => 'ATIVO',
         ]);
 
         PlanoTrabalho::factory()->create([
@@ -192,6 +193,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subYear(),
             'data_fim' => now()->subMonths(6),
+            'status' => 'ATIVO',
         ]);
 
         $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([

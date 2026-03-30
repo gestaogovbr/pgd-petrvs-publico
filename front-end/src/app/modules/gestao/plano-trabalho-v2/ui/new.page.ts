@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, of, switchMap, take, timer } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, fromEvent, map, of, switchMap, take, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ProgramaService } from 'src/app/services/programa.service';
@@ -12,16 +12,15 @@ import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
 import { UsuarioService, UsuarioSearchItem } from 'src/app/v2/services/usuario.service';
 import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
-import { GovBrAssetsService } from 'src/app/v2/services/govbr-assets.service';
-import { BrButton, BrCard, BrInput, BrSelect, BrSelectOption, SelectValueAccessor, TextValueAccessor } from '@govbr-ds/webcomponents-angular/standalone';
 import { AuthService } from 'src/app/services/auth.service';
+
 
 
 @Component({
   selector: 'app-plano-trabalho-v2-new-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, BrButton, BrCard, BrInput, BrSelect, BrSelectOption, TextValueAccessor, SelectValueAccessor],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './new.page.html'
 })
 export class PlanoTrabalhoV2NewPage implements OnInit {
@@ -34,7 +33,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   private readonly programaService = inject(ProgramaService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly govbr = inject(GovBrAssetsService);
+  private readonly document = inject(DOCUMENT);
 
   saving = signal(false);
   carregandoRegramento = signal(false);
@@ -47,6 +46,8 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   private selectedUsuario = signal<Usuario | undefined>(undefined);
   unidades = signal<Unidade[]>([]);
   modalidades = signal<TipoModalidade[]>([]);
+
+  selectAberto = signal<string | null>(null);
 
   readonly joinPrograma = ['template_tcr'];
 
@@ -70,12 +71,25 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     return this.formStatus() === 'VALID' && !!this.programaId() && !this.saving();
   });
 
+  readonly unidadeSelecionadaLabel = computed(() => {
+    const unidadeId = this.form.controls.unidade_id.value;
+    if (!unidadeId) return '';
+    return this.unidades().find(u => `${u.id}` === unidadeId)?.sigla ?? '';
+  });
+
+  readonly modalidadeSelecionadaLabel = computed(() => {
+    const modalidadeId = this.form.controls.tipo_modalidade_id.value;
+    if (!modalidadeId) return '';
+    return this.modalidades().find(m => `${m.id}` === modalidadeId)?.nome ?? '';
+  });
+
   ngOnInit(): void {
-    this.govbr.load();
-    
     this.form.statusChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(status => this.formStatus.set(status));
+    fromEvent(this.document, 'click')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.selectAberto.set(null));
     timer(0, 250)
       .pipe(
         map(() => this.auth.usuario),
@@ -109,6 +123,24 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   voltar() {
     this.go.back();
+  }
+
+  toggleSelect(key: string) {
+    if (this.selectAberto() === key) {
+      this.selectAberto.set(null);
+      return;
+    }
+    this.selectAberto.set(key);
+  }
+
+  selecionarUnidade(unidade: Unidade) {
+    this.form.controls.unidade_id.setValue(`${unidade.id}`);
+    this.selectAberto.set(null);
+  }
+
+  selecionarModalidade(modalidade: TipoModalidade) {
+    this.form.controls.tipo_modalidade_id.setValue(`${modalidade.id}`);
+    this.selectAberto.set(null);
   }
 
   selecionarUsuario(item: UsuarioSearchItem) {
