@@ -172,4 +172,5 @@ Observação: operações serão executadas manualmente. Abaixo está o escopo a
 - [x] Migrações criadas (tenant): `2026_03_29_000001_make_usuarios_email_nullable.php` e `2026_03_29_000002_sanitize_petrvs_emails_in_usuarios_table.php`.
 - [x] Teste IntegrationTenant ajustado para os novos nomes das migrations em `EmailNullableUsuariosMigrationsTest.php`.
 - [x] Job `ProcessEmails` removido e envio de e-mail em background desabilitado no `NotificacoesService`.
+- [x] Login GovBR: resolução de usuário exclusivamente por CPF (sem fallback por e-mail) + testes unitários ajustados.
  - Faltou a sanitização na tabela integracao_servidores, fazer posteriormente.
