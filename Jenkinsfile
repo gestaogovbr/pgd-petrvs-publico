@@ -197,14 +197,14 @@ pipeline {
             }
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs-develop'
-                DOCKER_HUB_TAG = 'dsv'
-                SSH_USER = 'root'
-                SSH_HOST = '200.152.47.207'
-                SSH_PORT = '7223'
+                DOCKER_HUB_TAG = 'hmg'
                 DEPLOY_PATH = './'
             }
             steps {
                 withCredentials([
+                    string(credentialsId: 'SSH_USER', variable: 'SSH_USER'),
+                    string(credentialsId: 'SSH_HOST', variable: 'SSH_HOST'),
+                    string(credentialsId: 'SSH_DSV_PORT', variable: 'SSH_PORT'),
                     string(credentialsId: 'SSH_PASSWORD_DSV', variable: 'SSH_PASSWORD'),
                     string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
                 ]) {
@@ -235,13 +235,13 @@ pipeline {
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs-develop'
                 DOCKER_HUB_TAG = 'hmg'
-                SSH_USER = 'root'
-                SSH_HOST = '200.152.47.207'
-                SSH_PORT = '7222'
                 DEPLOY_PATH = './'
             }
             steps {
                 withCredentials([
+                    string(credentialsId: 'SSH_USER', variable: 'SSH_USER'),
+                    string(credentialsId: 'SSH_HOST', variable: 'SSH_HOST'),
+                    string(credentialsId: 'SSH_HMG_PORT', variable: 'SSH_PORT'),
                     string(credentialsId: 'SSH_PASSWORD_HMG', variable: 'SSH_PASSWORD'),
                     string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
                 ]) {
@@ -259,6 +259,7 @@ pipeline {
                             -e SSH_TARGET="$SSH_USER@$SSH_HOST" \
                             alpine:3.20 \
                             sh -lc 'apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_TARGET" "$1"' -- 'sh install-pgd.sh < /dev/null'
+
                         echo "Implantação concluída com sucesso em HMG."
                     '''
                 }
