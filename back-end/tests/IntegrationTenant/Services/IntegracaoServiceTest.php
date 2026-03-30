@@ -41,8 +41,7 @@ test('deve alterar email de usuario existente ativo para liberar email', functio
 
     $usuarioAntigo = DB::table('usuarios')->where('id', $id)->first();
     
-    expect($usuarioAntigo->email)->not->toBe($email)
-        ->and($usuarioAntigo->email)->toContain('@petrvs.gov.br');
+    expect($usuarioAntigo->email)->toBeNull();
 });
 
 test('deve alterar email de usuario existente soft deleted para liberar email', function () {
@@ -69,8 +68,7 @@ test('deve alterar email de usuario existente soft deleted para liberar email', 
 
     $usuarioAntigo = DB::table('usuarios')->where('id', $id)->first();
     
-    expect($usuarioAntigo->email)->not->toBe($email)
-        ->and($usuarioAntigo->email)->toContain('@petrvs.gov.br');
+    expect($usuarioAntigo->email)->toBeNull();
 });
 
 test('nao deve alterar email se for o proprio usuario ignorado', function () {

@@ -44,14 +44,34 @@ describe('PreparaServidor', function () {
             expect($result)->toBe('joao@gov.br');
         });
 
-        test('gera email padrão quando email funcional está vazio', function () {
+        test('normaliza email funcional para minúsculas quando já possui domínio', function () {
+            $preparaServidor = new PreparaServidorTestClass();
+            $matriculas = ['matriculasiape' => '123456'];
+            $dadosFuncionais = ['emailfuncional' => 'JOAO@GOV.BR'];
+
+            $result = $preparaServidor->getEmail($matriculas, $dadosFuncionais);
+
+            expect($result)->toBe('joao@gov.br');
+        });
+
+        test('retorna null quando email funcional está vazio', function () {
             $preparaServidor = new PreparaServidorTestClass();
             $matriculas = ['matriculasiape' => '123456'];
             $dadosFuncionais = ['emailfuncional' => ''];
 
             $result = $preparaServidor->getEmail($matriculas, $dadosFuncionais);
 
-            expect($result)->toBe('123456@petrvs.gov.br');
+            expect($result)->toBeNull();
+        });
+
+        test('normaliza email funcional sem arroba completando domínio', function () {
+            $preparaServidor = new PreparaServidorTestClass();
+            $matriculas = ['matriculasiape' => '123456'];
+            $dadosFuncionais = ['emailfuncional' => 'JOAO'];
+
+            $result = $preparaServidor->getEmail($matriculas, $dadosFuncionais);
+
+            expect($result)->toBe('joao@petrvs.gov.br');
         });
     });
 
