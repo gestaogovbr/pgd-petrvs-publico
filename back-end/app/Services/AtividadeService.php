@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\ComentarioPrivacidadeEnum;
+use App\Enums\ComentarioTipoEnum;
 use App\Enums\StatusEnum;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -474,8 +476,7 @@ class AtividadeService extends ServiceBase
             $this->update($data, $unidade, false);
             $this->statusService->atualizaStatus($atividade, "INICIADO", "Iniciada nessa data manualmente");
             if($suspender) {
-                $unidadeService = app(UnidadeService::class);
-                $dataHora = $unidadeService->hora($unidade->id);
+                $dataHora = $this->unidadeService->hora($unidade->id);
                 $iniciadas = $this->iniciadas($data["usuario_id"]);
                 foreach ($iniciadas as $atividade_id) {
                     // Pausar todas, exceto a atividade que está iniciando
@@ -538,13 +539,12 @@ class AtividadeService extends ServiceBase
                 $comentarioService->destroy($comentarioTecnico->id);
             }
             if(!empty($descricaoTecnica)) {
-                $unidadeService = app(UnidadeService::class);
                 $comentarioService->store([
                     "texto" => $descricaoTecnica,
                     "path" => null,
-                    "data_comentario" => $unidadeService->hora($unidade->id),
-                    "tipo" => "TECNICO",
-                    "privacidade" => "PUBLICO",
+                    "data_comentario" => $this->unidadeService->hora($unidade->id),
+                    "tipo" => ComentarioTipoEnum::TECNICO->value,
+                    "privacidade" => ComentarioPrivacidadeEnum::PUBLICO->value,
                     "usuario_id" => parent::loggedUser()->id,
                     "atividade_id" => $conclusao["id"]
                 ], $unidade, false);
@@ -572,7 +572,9 @@ class AtividadeService extends ServiceBase
                 "documento_entrega_id" => null
             ], $unidade, false);
             $this->statusService->atualizaStatus($atividade, "INICIADO", "Cancelado conclusão nessa data");
-            $comentarioTecnico = Comentario::where("atividade_id", $atividade->id)->where("tipo", "TECNICO")->first();
+            $comentarioTecnico = Comentario::where("atividade_id", $atividade->id)
+                ->where("tipo", ComentarioTipoEnum::TECNICO->value)
+                ->first();
             if(!empty($comentarioTecnico)) {
                 $comentarioService->destroy($comentarioTecnico->id);
             }
