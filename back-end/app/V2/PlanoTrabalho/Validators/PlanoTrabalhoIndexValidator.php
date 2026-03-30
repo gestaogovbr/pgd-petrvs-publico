@@ -6,6 +6,7 @@ namespace App\V2\PlanoTrabalho\Validators;
 
 use App\Enums\PerfilEnum;
 use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
@@ -41,7 +42,7 @@ class PlanoTrabalhoIndexValidator
     private function validarPerfilParticipante(PlanoTrabalhoIndexDTO $filtro): PlanoTrabalhoIndexDTO
     {
         if ($filtro->usuarioId !== null && $filtro->usuarioId !== $filtro->usuarioLogadoId) {
-            throw new ServerException("ValidatePlanoTrabalho", "Usuário de perfil participante só pode consultar seus próprios planos de trabalho.");
+            throw new ValidateException("Usuário de perfil participante só pode consultar seus próprios planos de trabalho.");
         }
 
         return $filtro;
@@ -68,7 +69,7 @@ class PlanoTrabalhoIndexValidator
         $naoPermitidas = array_diff($filtro->unidadesId, $unidadesPermitidas);
 
         if (!empty($naoPermitidas)) {
-            throw new ServerException("ValidatePlanoTrabalho", "Usuário de perfil unidade só pode consultar planos de unidades onde possui atribuição.");
+            throw new ValidateException("Usuário de perfil unidade só pode consultar planos de unidades onde possui atribuição.");
         }
 
         return $filtro;

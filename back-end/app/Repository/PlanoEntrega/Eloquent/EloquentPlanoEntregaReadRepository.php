@@ -84,4 +84,12 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ])
             ->get();
     }
+
+    public function findByUnidadeId(string $unidadeId): Collection
+    {
+        return $this->query()
+            ->where('unidade_id', $unidadeId)
+            ->select('id', 'nome', 'numero', 'status', 'data_inicio', 'data_fim')
+            ->get();
+    }
 }
