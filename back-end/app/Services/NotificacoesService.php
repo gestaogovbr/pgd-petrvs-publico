@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Notificacao;
 use App\Models\NotificacaoDestinatario;
+use App\Models\Usuario;
 
 class NotificacoesService 
 {
@@ -107,6 +108,9 @@ class NotificacoesService
                 ]);
                 $notificacao->save();
                 foreach($destinatarios as $destinatario) {
+                    if (!$destinatario instanceof Usuario) {
+                        continue;
+                    }
                     if($config["petrvs"]["enviar"] && $this->getOrDefault("enviar_petrvs", $destinatario->notificacoes) && !in_array($destinatario->id, $enviados["petrvs"])) {
                         NotificacaoDestinatario::create([
                             "tipo" => "PETRVS",
