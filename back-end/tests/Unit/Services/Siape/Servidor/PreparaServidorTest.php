@@ -36,42 +36,38 @@ describe('PreparaServidor', function () {
     describe('getEmail', function () {
         test('retorna email funcional quando existe', function () {
             $preparaServidor = new PreparaServidorTestClass();
-            $matriculas = ['matriculasiape' => '123456'];
             $dadosFuncionais = ['emailfuncional' => 'joao@gov.br'];
 
-            $result = $preparaServidor->getEmail($matriculas, $dadosFuncionais);
+            $result = $preparaServidor->getEmail($dadosFuncionais);
 
             expect($result)->toBe('joao@gov.br');
         });
 
         test('normaliza email funcional para minúsculas quando já possui domínio', function () {
             $preparaServidor = new PreparaServidorTestClass();
-            $matriculas = ['matriculasiape' => '123456'];
             $dadosFuncionais = ['emailfuncional' => 'JOAO@GOV.BR'];
 
-            $result = $preparaServidor->getEmail($matriculas, $dadosFuncionais);
+            $result = $preparaServidor->getEmail($dadosFuncionais);
 
             expect($result)->toBe('joao@gov.br');
         });
 
         test('retorna null quando email funcional está vazio', function () {
             $preparaServidor = new PreparaServidorTestClass();
-            $matriculas = ['matriculasiape' => '123456'];
             $dadosFuncionais = ['emailfuncional' => ''];
 
-            $result = $preparaServidor->getEmail($matriculas, $dadosFuncionais);
+            $result = $preparaServidor->getEmail($dadosFuncionais);
 
             expect($result)->toBeNull();
         });
 
-        test('normaliza email funcional sem arroba completando domínio', function () {
+        test('retorna null quando email funcional não possui arroba', function () {
             $preparaServidor = new PreparaServidorTestClass();
-            $matriculas = ['matriculasiape' => '123456'];
             $dadosFuncionais = ['emailfuncional' => 'JOAO'];
 
-            $result = $preparaServidor->getEmail($matriculas, $dadosFuncionais);
+            $result = $preparaServidor->getEmail($dadosFuncionais);
 
-            expect($result)->toBe('joao@prf.gov.br');
+            expect($result)->toBeNull();
         });
     });
 

@@ -582,27 +582,7 @@ class IntegracaoService extends ServiceBase
         $servidores = [];
         $servidores = $this->IntegracaoSiapeService->retornarServidores()["Pessoas"];
         SiapeLog::info("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
-
-        DB::transaction(function () use (
-          &$servidores,
-        ) {
-          $integracaoServidorProcessar = null;
-          $integracaoServidoresRepository = app(IntegracaoServidorRepository::class);
-          try {
-            $integracaoServidorProcessar =  new Integracao($integracaoServidoresRepository);
-          } catch (Throwable $e) {
-            LogError::newError("Erro ao truncar a tabela integracao_servidores", $e);
-            SiapeLog::info(sprintf("Erro ao truncar a tabela integracao_servidores: %s", $e->getMessage()), throwableToArray($e));
-          }
-          $this->logSiape("Iniciando processo de atualização de servidores", [], Tipo::INFO);
-          $integracaoServidorProcessar->setServidores($servidores)->setEcho($this->echo)->setIntegracaoConfig($this->integracao_config)
-            ->setResult($this->result);
-          $integracaoServidorProcessar->processar();
-
-          $this->result = $integracaoServidorProcessar->getResult();
-        });
-
-        $this->processadorAtualizacaoDadosSiapeService->processar($this->result, $this->integracao_config["perfilComum"]);
+        $this->processarServidoresTransaction($servidores);
 
         $this->result['servidores']['Resultado'] = 'Sucesso';
         array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' .
@@ -621,7 +601,29 @@ class IntegracaoService extends ServiceBase
     $this->result["gestores"] = $this->integracaoGestorService->atualizarGestores($inputs, $this->integracao_config);
   }
 
-  public function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(?string $email, ?string $matricula, ?string $ignoreId = null): void
+  public function processarServidoresTransaction(array &$servidores): void
+  {
+    DB::transaction(function () use (&$servidores) {
+      $integracaoServidorProcessar = null;
+      $integracaoServidoresRepository = app(IntegracaoServidorRepository::class);
+      try {
+        $integracaoServidorProcessar = new Integracao($integracaoServidoresRepository);
+      } catch (Throwable $e) {
+        LogError::newError("Erro ao truncar a tabela integracao_servidores", $e);
+        SiapeLog::info(sprintf("Erro ao truncar a tabela integracao_servidores: %s", $e->getMessage()), throwableToArray($e));
+      }
+      $this->logSiape("Iniciando processo de atualização de servidores", [], Tipo::INFO);
+      $integracaoServidorProcessar->setServidores($servidores)->setEcho($this->echo)->setIntegracaoConfig($this->integracao_config)
+        ->setResult($this->result);
+      $integracaoServidorProcessar->processar();
+
+      $this->result = $integracaoServidorProcessar->getResult();
+    });
+
+    $this->processadorAtualizacaoDadosSiapeService->processar($this->result, $this->integracao_config["perfilComum"]);
+  }
+
+  public function liberarEmailDuplicadoDefinindoComoNulo(?string $email, ?string $matricula, ?string $ignoreId = null): void
   {
     if (!is_string($email)) {
       return;
@@ -665,7 +667,7 @@ class IntegracaoService extends ServiceBase
       $nivelAcessoService = $this->nivelAcessoService;
       $perfil_nivel_5_id = $nivelAcessoService->getPerfilParticipante()->id;
       $usuario->perfil_id = $perfil_nivel_5_id;
-      $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->email, $usuario->matricula, $usuario->id);
+      $this->liberarEmailDuplicadoDefinindoComoNulo($usuario->email, $usuario->matricula, $usuario->id);
       $usuario->save();
       $usuario->fresh();
       if (!empty($lotacao->unidade_id)) { // se sua Unidade estiver cadastrada, insere-se uma lotação principal pra ele

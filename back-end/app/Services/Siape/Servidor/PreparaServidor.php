@@ -22,7 +22,7 @@ trait PreparaServidor
         return null;
     }
 
-    public function getEmail(array $matriculas, array $dadosFuncionais): ?string
+    public function getEmail(array $dadosFuncionais): ?string
     {
         $emailFuncional = $dadosFuncionais['emailfuncional'] ?? null;
         $email = is_string($emailFuncional) ? trim($emailFuncional) : null;
@@ -31,7 +31,10 @@ trait PreparaServidor
             return null;
         }
 
-        $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
+        if (!str_contains($email, "@")) {
+            return null;
+        }
+
         return mb_strtolower($email, 'UTF-8');
     }
 

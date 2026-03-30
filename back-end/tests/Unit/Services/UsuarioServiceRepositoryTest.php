@@ -585,7 +585,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
             'data_nascimento' => '1990-01-01',
         ];
 
-        $this->integracaoService->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake');
+        $this->integracaoService->shouldReceive('liberarEmailDuplicadoDefinindoComoNulo');
         $this->integracaoService->shouldReceive('validarModalidadePgd')->with('mod-pgd')->andReturn('mod-id');
 
         $this->usuarioRepository->shouldReceive('update')

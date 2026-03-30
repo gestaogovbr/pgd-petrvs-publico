@@ -64,7 +64,7 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
 
         // Mock do IntegracaoService
         $this->mock(IntegracaoService::class, function (MockInterface $mock) {
-            $mock->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake')->andReturnNull();
+            $mock->shouldReceive('liberarEmailDuplicadoDefinindoComoNulo')->andReturnNull();
             $mock->shouldReceive('validarModalidadePgd')->andReturn($this->tipoModalidadeId);
         });
     });

@@ -113,7 +113,7 @@ class UsuarioService extends ServiceBase
 
         SiapeLog::info("Atualizando dados do servidor Matricula: " . $usuario->matriculasiape);
 
-        $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->emailfuncional, $usuario->matriculasiape, $usuario->id);
+        $this->integracaoService->liberarEmailDuplicadoDefinindoComoNulo($usuario->emailfuncional, $usuario->matriculasiape, $usuario->id);
         $modalidadePgdValida = $this->integracaoService->validarModalidadePgd($usuario->modalidade_pgd);
 
         $this->usuarioRepository->update($usuario->id, [
@@ -628,7 +628,7 @@ class UsuarioService extends ServiceBase
                     $data["data_nascimento"] = $alreadyHas->data_nascimento;
 
                     if (isset($this->integracaoService)) {
-                        $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($data['email'], $data['matricula'], $alreadyHas->id);
+                        $this->integracaoService->liberarEmailDuplicadoDefinindoComoNulo($data['email'], $data['matricula'], $alreadyHas->id);
                     }
 
                     $alreadyHas->deleted_at = null;

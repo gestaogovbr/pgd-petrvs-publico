@@ -119,11 +119,16 @@ class Integracao implements InterfaceIntegracao
 
     private function verificaEmailsFuncionaisVazios(entidade $entidade): void
     {
-        str_contains($entidade->matriculasiape, '@petrvs.gov.br') ?
-            array_push($this->cpfsComEmaisFuncionaisVazios,
-                "Matricula   : " . $entidade->matriculasiape .
-                    " (" . $entidade->situacao_funcional . ") - " .
-                    $entidade->emailfuncional) : true;
+        if (!empty($entidade->emailfuncional)) {
+            return;
+        }
+
+        array_push(
+            $this->cpfsComEmaisFuncionaisVazios,
+            "Matricula   : " . $entidade->matriculasiape .
+                " (" . $entidade->situacao_funcional . ") - " .
+                $entidade->emailfuncional
+        );
     }
 
     private function montaEntidadeServidor(array $servidor): array
@@ -136,7 +141,7 @@ class Integracao implements InterfaceIntegracao
                 continue;
             }
 
-            $emailFuncional = $this->getEmail($ativo, $funcional);
+            $emailFuncional = $this->getEmail($funcional);
             $this->setFuncoes($ativo);
 
             if(empty($ativo['matriculasiape'])){

@@ -32,7 +32,7 @@ Diretrizes gerais:
 1) Integração SIAPE
 - PreparaServidor::getEmail
   - Quando `emailfuncional` estiver vazio, retornar `null` (não mais gerar “@petrvs.gov.br”).
-  - Quando houver valor, normalizar em minúsculas e completar domínio apenas se já vier sem “@” (regra atual), mantendo compatibilidade.
+  - Quando houver valor, normalizar em minúsculas; se não possuir “@”, retornar `null` (não inferir domínio).
   - Arquivo-alvo de teste existente para ajuste: [tests/Unit/Services/Siape/Servidor/PreparaServidorTest.php](file:///home/diego/projetos/petrvs-pgd/back-end/tests/Unit/Services/Siape/Servidor/PreparaServidorTest.php).
 - Siape/Servidor/Integracao::montaEntidadeServidor
   - Não descartar servidor por ausência de e-mail; permitir `emailfuncional = null`.
@@ -42,7 +42,7 @@ Diretrizes gerais:
   - Aceitar `email = null` quando origem for SIAPE.
   - E-mails não nulos devem ser validados com regra padrão do Laravel; se inválido, registrar em SiapeLog e salvar `email = null`.
   - Cobrir via testes unitários simulando entradas válidas/invalidas.
-- IntegracaoService::verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake
+- IntegracaoService::liberarEmailDuplicadoDefinindoComoNulo
   - Novo comportamento: quando houver conflito de e-mail entre usuários, não gerar “@petrvs.gov.br”; deve-se liberar o e-mail conflitante definindo `email = null` no(s) usuário(s) conflitante(s) conforme regra de negócio.
   - Cobrir no suite IntegrationTenant: usuário ativo e soft-deleted.
 
@@ -175,4 +175,8 @@ Observação: operações serão executadas manualmente. Abaixo está o escopo a
 - [x] Login GovBR: resolução de usuário exclusivamente por CPF (sem fallback por e-mail) + testes unitários ajustados.
 - [x] Repositórios (Usuário): `findByEmail` e `findByCpfOrEmail` ignoram e-mail nulo/vazio e não consultam com `email = null`.
 - [x] Integração SIAPE: `PreparaServidor::getEmail` sem fallback “@petrvs.gov.br”; `Integracao::montaEntidadeServidor` não descarta sem e-mail; `UsuarioService::gerarUsuario` valida e-mail não nulo e persiste `null` quando inválido; `IntegracaoService` libera conflito definindo `email = null`.
+- [x] Integração SIAPE: `PreparaServidor::getEmail` sem parâmetro `matriculas` e sem inferência de domínio (e-mail sem `@` vira `null`).
+- [x] IntegracaoService: trecho `processar` de servidores (L586-606) extraído para `processarServidoresTransaction` sem alterar o fluxo.
+- [x] IntegracaoService: renomeado método de liberação de conflito de e-mail para `liberarEmailDuplicadoDefinindoComoNulo`.
+- [x] Testes IntegrationTenant: adicionados cenários de transferência de e-mail (usuário antigo perde e-mail → `null`, novo mantém) e idempotência.
  - Faltou a sanitização na tabela integracao_servidores, fazer posteriormente.
