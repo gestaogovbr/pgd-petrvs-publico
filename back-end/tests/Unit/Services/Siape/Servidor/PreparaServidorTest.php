@@ -71,7 +71,7 @@ describe('PreparaServidor', function () {
 
             $result = $preparaServidor->getEmail($matriculas, $dadosFuncionais);
 
-            expect($result)->toBe('joao@petrvs.gov.br');
+            expect($result)->toBe('joao@prf.gov.br');
         });
     });
 

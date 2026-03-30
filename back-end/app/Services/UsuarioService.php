@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Uuid;
 use Throwable;
 
@@ -192,9 +193,27 @@ class UsuarioService extends ServiceBase
              throw new NotFoundException("Nenhum tipo de modalidade foi encontrado para o servidor {$matriculaNova}.");
         }
 
+        $email = $dados['emailfuncional'] ?? null;
+        $email = is_string($email) ? trim($email) : null;
+        $email = $email === '' ? null : $email;
+
+        if ($email !== null) {
+            $email = mb_strtolower($email, 'UTF-8');
+
+            $validator = Validator::make(['email' => $email], ['email' => 'email']);
+
+            if ($validator->fails()) {
+                SiapeLog::info('E-mail funcional inválido recebido do SIAPE; persistindo null.', [
+                    'matricula' => $matriculaNova,
+                    'email' => $email,
+                ]);
+                $email = null;
+            }
+        }
+
         return $this->usuarioRepository->newUsuario([
                     'id' => Uuid::uuid4(),
-                    'email' => UtilService::valueOrDefault($dados['emailfuncional']),
+                    'email' => $email,
                     'nome' => UtilService::valueOrDefault($dados['nome']),
                     'cpf' => UtilService::valueOrDefault($dados['cpf']),
                     'matricula' => UtilService::valueOrDefault($dados['matricula']),

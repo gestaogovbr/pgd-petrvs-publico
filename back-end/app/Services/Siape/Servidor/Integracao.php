@@ -132,11 +132,11 @@ class Integracao implements InterfaceIntegracao
         $pessoal = $servidor['pessoal'];
         foreach($servidor['funcionais'] as $funcional){
             $ativo = $this->getAtivo($funcional);
-            $emailFuncional = $this->getEmail($ativo ,$funcional);
-
-            if (!$ativo || empty($emailFuncional)) {
+            if (!$ativo) {
                 continue;
             }
+
+            $emailFuncional = $this->getEmail($ativo, $funcional);
             $this->setFuncoes($ativo);
 
             if(empty($ativo['matriculasiape'])){
@@ -161,26 +161,26 @@ class Integracao implements InterfaceIntegracao
                 'uf' => UtilService::valueOrDefault($pessoal['uf'], null),
                 'data_nascimento' => $this->getDataNascimento($pessoal, self::SISTEMA_ORIGEM),
                 'telefone' => UtilService::valueOrDefault($pessoal['telefone'], null),
-                'vinculo_ativo' => UtilService::valueOrDefault($ativo['vinculo_ativo'], null),
-                'matriculasiape' => UtilService::valueOrDefault($ativo['matriculasiape'], null),
-                'codigo_cargo' => UtilService::valueOrDefault($ativo['tipo'], null),
-                'coduorgexercicio' => UtilService::valueOrDefault($ativo['coduorgexercicio'], null, $option = "uorg"),
-                'coduorglotacao' => UtilService::valueOrDefault($ativo['coduorglotacao'], null, $option = "uorg"),
-                'codigo_servo_exercicio' => UtilService::valueOrDefault($ativo['codigo_servo_exercicio'], null, $option = "uorg"),
+                'vinculo_ativo' => UtilService::valueOrDefault($ativo['vinculo_ativo'] ?? null, null),
+                'matriculasiape' => UtilService::valueOrDefault($ativo['matriculasiape'] ?? null, null),
+                'codigo_cargo' => UtilService::valueOrDefault($ativo['tipo'] ?? null, null),
+                'coduorgexercicio' => UtilService::valueOrDefault($ativo['coduorgexercicio'] ?? null, null, $option = "uorg"),
+                'coduorglotacao' => UtilService::valueOrDefault($ativo['coduorglotacao'] ?? null, null, $option = "uorg"),
+                'codigo_servo_exercicio' => UtilService::valueOrDefault($ativo['codigo_servo_exercicio'] ?? null, null, $option = "uorg"),
                 'nomeguerra' => $this->getNomeDeGuerra($ativo, $pessoal),
-                'codigo_situacao_funcional' => UtilService::valueOrDefault($ativo['codsitfuncional'], null),
+                'codigo_situacao_funcional' => UtilService::valueOrDefault($ativo['codsitfuncional'] ?? null, null),
                 'situacao_funcional' => $this->getSituacaoFuncional($ativo),
-                'codupag' => UtilService::valueOrDefault($ativo['codupag'], null),
+                'codupag' => UtilService::valueOrDefault($ativo['codupag'] ?? null, null),
                 'dataexercicionoorgao' => $this->getDataExercicio($ativo, self::SISTEMA_ORIGEM),
-                'funcoes' => $ativo['funcoes'],
-                'matricula' => UtilService::valueOrDefault($ativo['matriculasiape'], null),
+                'funcoes' => $ativo['funcoes'] ?? null,
+                'matricula' => UtilService::valueOrDefault($ativo['matriculasiape'] ?? null, null),
                 'cpf_chefia_imediata' => $this->getCPFChefiaImediata($funcional),
                 'email_chefia_imediata' => $this->getEmailChefiaImediata($funcional),
-                'ident_unica' => UtilService::valueOrDefault($ativo['ident_unica'], null),
-                'modalidade_pgd' => UtilService::valueOrDefault($ativo['modalidade_pgd'], null),
-                'participa_pgd' => $this->normalizeParticipaPGD(UtilService::valueOrDefault($ativo['participa_pgd'], null)),
-                'cod_jornada' => UtilService::valueOrDefault($ativo['cod_jornada'], null),
-                'nome_jornada' => UtilService::valueOrDefault($ativo['nome_jornada'], null),
+                'ident_unica' => UtilService::valueOrDefault($ativo['ident_unica'] ?? null, null),
+                'modalidade_pgd' => UtilService::valueOrDefault($ativo['modalidade_pgd'] ?? null, null),
+                'participa_pgd' => $this->normalizeParticipaPGD(UtilService::valueOrDefault($ativo['participa_pgd'] ?? null, null)),
+                'cod_jornada' => UtilService::valueOrDefault($ativo['cod_jornada'] ?? null, null),
+                'nome_jornada' => UtilService::valueOrDefault($ativo['nome_jornada'] ?? null, null),
                 'deleted_at' => null,
             ];
             array_push($entidades, $this->createFromDTO(new ServidorDTO($servidor)));

@@ -62,8 +62,9 @@ describe('UsuarioService::gerarUsuario - email nullable', function () {
         $this->usuarioRepository->shouldReceive('newUsuario')
             ->once()
             ->with(\Mockery::on(function ($payload) use ($perfil, &$capturedEmail) {
-                $capturedEmail = $payload['email'] ?? '__missing__';
-                return $payload['perfil_id'] === $perfil;
+                $payloadArray = is_array($payload) ? $payload : (method_exists($payload, 'toArray') ? $payload->toArray() : []);
+                $capturedEmail = array_key_exists('email', $payloadArray) ? $payloadArray['email'] : '__missing__';
+                return ($payloadArray['perfil_id'] ?? null) === $perfil;
             }))
             ->andReturn($novoUsuarioMock);
 
@@ -101,8 +102,9 @@ describe('UsuarioService::gerarUsuario - email nullable', function () {
         $this->usuarioRepository->shouldReceive('newUsuario')
             ->once()
             ->with(\Mockery::on(function ($payload) use ($perfil, &$capturedEmail) {
-                $capturedEmail = $payload['email'] ?? '__missing__';
-                return $payload['perfil_id'] === $perfil;
+                $payloadArray = is_array($payload) ? $payload : (method_exists($payload, 'toArray') ? $payload->toArray() : []);
+                $capturedEmail = array_key_exists('email', $payloadArray) ? $payloadArray['email'] : '__missing__';
+                return ($payloadArray['perfil_id'] ?? null) === $perfil;
             }))
             ->andReturn($novoUsuarioMock);
 

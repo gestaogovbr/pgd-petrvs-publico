@@ -621,9 +621,17 @@ class IntegracaoService extends ServiceBase
     $this->result["gestores"] = $this->integracaoGestorService->atualizarGestores($inputs, $this->integracao_config);
   }
 
-  public function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, ?string $matricula, string $ignoreId = null): void
+  public function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(?string $email, ?string $matricula, ?string $ignoreId = null): void
   {
+    if (!is_string($email)) {
+      return;
+    }
+
     $email = trim(mb_strtolower($email, 'UTF-8'));
+
+    if ($email === '') {
+      return;
+    }
     
     $usuarios = Usuario::withoutGlobalScopes()
         ->where('email', $email)
@@ -636,18 +644,9 @@ class IntegracaoService extends ServiceBase
       if (!empty($usuario)) {
         LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
         
-        $novoemailBase = $usuario->matricula;
-        if (empty($novoemailBase)) {
-          $novoemailBase = \Illuminate\Support\Str::uuid()->toString();
-        }
+        SiapeLog::info("IntegracaoService: Liberando email duplicado definindo como nulo", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
         
-        $novoemail = $novoemailBase . "@petrvs.gov.br";
-        
-        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula, $usuario->id);
-        
-        SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
-        
-        DB::table('usuarios')->where('id', $usuario->id)->update(['email' => $novoemail]);
+        DB::table('usuarios')->where('id', $usuario->id)->update(['email' => null]);
       }
     }
   }

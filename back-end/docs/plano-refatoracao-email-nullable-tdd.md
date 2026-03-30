@@ -174,4 +174,5 @@ Observação: operações serão executadas manualmente. Abaixo está o escopo a
 - [x] Job `ProcessEmails` removido e envio de e-mail em background desabilitado no `NotificacoesService`.
 - [x] Login GovBR: resolução de usuário exclusivamente por CPF (sem fallback por e-mail) + testes unitários ajustados.
 - [x] Repositórios (Usuário): `findByEmail` e `findByCpfOrEmail` ignoram e-mail nulo/vazio e não consultam com `email = null`.
+- [x] Integração SIAPE: `PreparaServidor::getEmail` sem fallback “@petrvs.gov.br”; `Integracao::montaEntidadeServidor` não descarta sem e-mail; `UsuarioService::gerarUsuario` valida e-mail não nulo e persiste `null` quando inválido; `IntegracaoService` libera conflito definindo `email = null`.
  - Faltou a sanitização na tabela integracao_servidores, fazer posteriormente.
