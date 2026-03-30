@@ -36,12 +36,12 @@ test('não despacha ProcessEmails e não cria destinatário EMAIL quando email d
 
     Bus::assertNothingDispatched();
 
-    $this->assertDatabaseHas('notificacao_destinatarios', [
+    $this->assertDatabaseHas('notificacoes_destinatarios', [
         'tipo' => 'PETRVS',
         'usuario_id' => $usuario->id,
     ]);
 
-    $this->assertDatabaseMissing('notificacao_destinatarios', [
+    $this->assertDatabaseMissing('notificacoes_destinatarios', [
         'tipo' => 'EMAIL',
         'usuario_id' => $usuario->id,
     ]);
