@@ -136,33 +136,36 @@ Body: mesmo do POST
 
 ### Geração de TCR
 
-#### POST /api/v2/plano-trabalho/:id/documento
+#### `POST /api/v2/plano-trabalho/:id/documento`
 
-- Vai ser baseado no método `repactuar()`
+- Gera o documento TCR com template renderizado, dataset e datasource
 - Quem: dono do PT/chefia
-- Guard: Não ter um TCR válido (lembrar que com a edição das entregas do PT o TCR precisa ser refeito)
+- Guard: plano possui ao menos uma entrega; não ter um TCR válido (idempotente)
+- Retorno: documento completo (201)
 
-#### GET /api/v2/plano-trabalho/:id/documento/:documento_id
+#### `GET /api/v2/plano-trabalho/:id/documento`
+
+Retorna o último TCR válido com os campos necessários para o front-end
 
 - Quem: dono do PT/chefia
+- Retorno: `{ numero, titulo, conteudo }` (200)
 
-### Assinatura do Plano de Trabalho
+### Assinatura do TCR
 
 A assinatura segue o fluxo de dupla assinatura (participante + chefia). O endpoint identifica automaticamente se é o 1º ou 2º signatário.
 
-#### `POST /api/v2/plano-trabalho/:id/assinar` `4.10`
+#### `POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr` `4.10`
 
 - Quem: participante dono do PT (1º signatário); chefia titular/substituta da unidade (2º signatário)
-- Guard: ao menos uma entrega cadastrada com informações válidas no bloco Planejamento
+- Guard: PT `INCLUIDO` ou `AGUARDANDO_ASSINATURA`; TCR gerado; ao menos uma entrega; usuário não assinou ainda
+- Ação: registra assinatura; se todas as assinaturas exigidas pelo programa foram satisfeitas → status `ATIVO`, senão → `AGUARDANDO_ASSINATURA`
 - Body:
 	- justificativa_chd`^[SOMA(forca_trabalho)!=100.0]`(string(500))`RN29,30` - obrigatória quando o somatório do %CHD das entregas for diferente de 100%
 
-#### `PATCH /api/v2/plano-trabalho/:id/cancelar-assinatura` `4.12`
+#### `DELETE /api/v2/plano-trabalho/:id/documento/assinatura-tcr` `4.12`
 
 - Quem: exclusivamente o 1º signatário
 - Guard: PT `AGUARDANDO_ASSINATURA`
-
-_(onde ficaria a lógica de buscar quantas assinaturas ainda são necessárias?)_
 
 ### Transições de status do Plano de Trabalho
 
@@ -186,16 +189,6 @@ Cada transição é um endpoint próprio, evitando um service monolítico. Todos
 
 - Quem: participante dono do PT; chefia titular/substituta/delegado da unidade; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master; Colaborador com vinculação à unidade ou superior
 - Guard: PT `CONCLUIDO`, `CANCELADO` ou `ENCERRADO`; sem pendências de avaliação/recurso (30 dias corridos após avaliação)
-
-#### `PATCH /api/v2/plano-trabalho/:id/cancelar-assinatura` `4.12`
-
-- Quem: exclusivamente o 1º signatário
-- Guard: PT `AGUARDANDO_ASSINATURA`
-
-#### `DELETE /api/v2/plano-trabalho/:id` `4.11`
-
-- Quem: usuário que cadastrou o PT; participante dono do PT; chefia titular/substituta do participante; Adm Negocial (unidade instituidora >= unidade do PT); Adm Master
-- Guard: PT sem nenhuma assinatura
 
 ### Entregas do Plano de Trabalho
 

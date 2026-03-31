@@ -4,13 +4,19 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Documento;
 
+use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use App\Models\Documento;
+use App\Models\DocumentoAssinatura;
+use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Services\StatusService;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaDTO;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRDatasourceBuilder;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRDocumentoDTO;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRTemplateRenderer;
+use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAssinarValidator;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAuthorizationValidator;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoStoreValidator;
 use Illuminate\Support\Facades\Auth;
@@ -20,11 +26,14 @@ class PlanoTrabalhoDocumentoService
 {
     public function __construct(
         private readonly DocumentoRepository $documentoRepository,
+        private readonly DocumentoAssinaturaRepository $assinaturaRepository,
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoTrabalhoDocumentoAuthorizationValidator $authValidator,
         private readonly PlanoTrabalhoDocumentoStoreValidator $storeValidator,
+        private readonly PlanoTrabalhoDocumentoAssinarValidator $assinarValidator,
         private readonly TCRDatasourceBuilder $datasourceBuilder,
         private readonly TCRTemplateRenderer $renderer,
+        private readonly StatusService $statusService,
     ) {}
 
     public function show(string $planoTrabalhoId): array
@@ -77,5 +86,27 @@ class PlanoTrabalhoDocumentoService
         ]);
 
         return $documento;
+    }
+
+    public function assinar(string $planoTrabalhoId): DocumentoAssinatura
+    {
+        $usuarioId = Auth::id();
+        $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
+        $documento = $this->assinarValidator->validar($plano, $usuarioId);
+
+        $dto = TCRAssinaturaDTO::fromDocumento($documento, $usuarioId);
+        $assinatura = $this->assinaturaRepository->createFromTCR($dto);
+
+        $status = $this->assinaturaRepository->todasAssinaturasRealizadas($plano, $documento->id)
+            ? StatusEnum::ATIVO->value
+            : StatusEnum::AGUARDANDO_ASSINATURA->value;
+
+        $this->statusService->atualizaStatus(
+            $plano,
+            $status,
+            "Registrada a assinatura do servidor: " . Auth::user()->nome . "."
+        );
+
+        return $assinatura;
     }
 }

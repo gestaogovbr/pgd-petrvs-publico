@@ -32,6 +32,13 @@ beforeEach(function () {
         )->name('__tests.v2.plano-trabalho.documento.show');
     }
 
+    if (!Route::has('__tests.v2.plano-trabalho.documento.assinar')) {
+        Route::middleware(['api'])->post(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/documento/assinatura-tcr',
+            [DocumentoController::class, 'assinar']
+        )->name('__tests.v2.plano-trabalho.documento.assinar');
+    }
+
     $perfil = Perfil::factory()->create(['nivel' => 3]);
     $tipoModalidade = TipoModalidade::factory()->create();
     $this->unidade = Unidade::factory()->create();
@@ -240,5 +247,94 @@ describe('GET /api/v2/plano-trabalho/:id/documento', function () {
             ->json('data');
 
         expect(array_keys($data))->toBe(['numero', 'titulo', 'conteudo']);
+    });
+});
+
+function postAssinar($context, ?string $planoId = null)
+{
+    $id = $planoId ?? $context->plano->id;
+    return $context->postJson("/api/__tests/v2/plano-trabalho/{$id}/documento/assinatura-tcr");
+}
+
+// ── POST assinatura-tcr: guard ──────────────────────────────────────
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (guard)', function () {
+
+    test('retorna 404 quando plano não encontrado', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postAssinar($this, fake()->uuid())
+            ->assertStatus(404);
+    });
+
+    test('retorna 422 quando plano está ATIVO', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->plano->status = 'ATIVO';
+        $this->plano->save();
+
+        postDocumento($this);
+
+        postAssinar($this)
+            ->assertStatus(422);
+    });
+
+    test('retorna 404 quando TCR não foi gerado', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postAssinar($this)
+            ->assertStatus(404);
+    });
+
+    test('retorna 422 quando usuário já assinou', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+        postAssinar($this)->assertStatus(201);
+
+        postAssinar($this)
+            ->assertStatus(422);
+    });
+});
+
+// ── POST assinatura-tcr: happy path ─────────────────────────────────
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (happy path)', function () {
+
+    test('registra assinatura e retorna 201', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+
+        $response = postAssinar($this);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('documentos_assinaturas', [
+            'usuario_id' => $this->usuario->id,
+        ]);
+    });
+
+    test('atualiza status do plano para ATIVO quando participante é o único signatário exigido', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+        postAssinar($this);
+
+        $this->plano->refresh();
+
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+
+    test('assinatura contém hash não vazio', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+
+        $data = postAssinar($this)->json('data');
+
+        expect($data['assinatura'])->toBeString()->not->toBeEmpty();
+        expect($data['usuario_id'])->toBe($this->usuario->id);
     });
 });
