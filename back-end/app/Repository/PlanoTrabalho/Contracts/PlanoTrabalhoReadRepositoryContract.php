@@ -29,6 +29,9 @@ interface PlanoTrabalhoReadRepositoryContract
     /** @return \App\Models\PlanoTrabalho|null */
     public function findById(string|int $id): ?Model;
 
+    /** @return \App\Models\PlanoTrabalho|null */
+    public function findByIdParaTcr(string $id): ?Model;
+
     public function possuiAssinatura(string $planoId): bool;
 
     public function possuiEntregas(string $planoId): bool;

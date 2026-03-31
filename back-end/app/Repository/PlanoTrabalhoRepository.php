@@ -60,6 +60,12 @@ class PlanoTrabalhoRepository
         return $this->readRepository->findByIdComRelacoes($id);
     }
 
+    public function findByIdParaTcr(string $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null */
+        return $this->readRepository->findByIdParaTcr($id);
+    }
+
     public function findById(string $id): ?PlanoTrabalho
     {
         /** @var PlanoTrabalho|null */
