@@ -253,7 +253,7 @@ pipeline {
                     string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
                     file(credentialsId: 'SSH_HMG_KNOWN_HOSTS', variable: 'KNOWN_HOSTS_FILE')
                 ]) {
-                        sshagent(credentials: ['SSH_KEY_HMG']) {
+                        sshagent(credentials: ['SSH_KEY_DSV']) {
                             sh '''
                         set -eu
 
