@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { Subscription } from 'rxjs';
 import { PlanoTrabalho } from '../domain/types';
+import { PlanoTrabalhoApiClient } from '../infra/api-client';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 
 @Component({
@@ -21,6 +22,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly go = inject(NavigateService);
+  private readonly api = inject(PlanoTrabalhoApiClient);
 
   advanced = false;
   private readonly subscriptions: Subscription[] = [];
@@ -228,7 +230,11 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', p.id] });
   }
 
+  /* TODO: Mover para facade e usar action específica */
   cancelarPlano(p: PlanoTrabalho) {
-    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', p.id] });
+    if (!confirm('Deseja realmente cancelar este plano de trabalho?')) return;
+    this.api.update(p.id, { status: 'CANCELADO' }).subscribe(() => {
+      this.applyFiltersAndLoad(false);
+    });
   }
 }

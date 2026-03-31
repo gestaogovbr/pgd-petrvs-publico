@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, fromEvent, map, of, switchMap, take, timer } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, of, switchMap, take, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { ProgramaService } from 'src/app/services/programa.service';
@@ -13,14 +13,14 @@ import { UsuarioService, UsuarioSearchItem } from 'src/app/v2/services/usuario.s
 import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
 import { AuthService } from 'src/app/services/auth.service';
-
-
+import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
+import { SelectOption } from './edit.page';
 
 @Component({
   selector: 'app-plano-trabalho-v2-new-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule],
   templateUrl: './new.page.html'
 })
 export class PlanoTrabalhoV2NewPage implements OnInit {
@@ -33,7 +33,6 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   private readonly programaService = inject(ProgramaService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly document = inject(DOCUMENT);
 
   saving = signal(false);
   carregandoRegramento = signal(false);
@@ -43,11 +42,11 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   readonly agentePublicoQuery = this.fb.nonNullable.control('');
   sugestoesUsuarios = signal<UsuarioSearchItem[]>([]);
-  private selectedUsuario = signal<Usuario | undefined>(undefined);
   unidades = signal<Unidade[]>([]);
   modalidades = signal<TipoModalidade[]>([]);
 
-  selectAberto = signal<string | null>(null);
+  private readonly selectedUnidadeId = signal('');
+  private readonly selectedModalidadeId = signal('');
 
   readonly joinPrograma = ['template_tcr'];
 
@@ -67,29 +66,25 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   readonly formStatus = signal(this.form.status);
 
-  readonly podeSalvar = computed(() => {
-    return this.formStatus() === 'VALID' && !!this.programaId() && !this.saving();
+  readonly podeSalvar = computed(() =>
+    this.formStatus() === 'VALID' && !!this.programaId() && !this.saving()
+  );
+
+  readonly unidadesOptions = computed<SelectOption[]>(() => {
+    const sel = this.selectedUnidadeId();
+    return this.unidades().map(u => ({ value: `${u.id}`, label: u.sigla, selected: `${u.id}` === sel }));
   });
 
-  readonly unidadeSelecionadaLabel = computed(() => {
-    const unidadeId = this.form.controls.unidade_id.value;
-    if (!unidadeId) return '';
-    return this.unidades().find(u => `${u.id}` === unidadeId)?.sigla ?? '';
-  });
-
-  readonly modalidadeSelecionadaLabel = computed(() => {
-    const modalidadeId = this.form.controls.tipo_modalidade_id.value;
-    if (!modalidadeId) return '';
-    return this.modalidades().find(m => `${m.id}` === modalidadeId)?.nome ?? '';
+  readonly modalidadesOptions = computed<SelectOption[]>(() => {
+    const sel = this.selectedModalidadeId();
+    return this.modalidades().map(m => ({ value: `${m.id}`, label: m.nome, selected: `${m.id}` === sel }));
   });
 
   ngOnInit(): void {
     this.form.statusChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(status => this.formStatus.set(status));
-    fromEvent(this.document, 'click')
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.selectAberto.set(null));
+
     timer(0, 250)
       .pipe(
         map(() => this.auth.usuario),
@@ -99,49 +94,29 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       )
       .subscribe(usuario => this.preselectUsuario(usuario));
 
-    this.agentePublicoQuery.valueChanges
-      .pipe(
-        debounceTime(250),
-        distinctUntilChanged(),
-        switchMap(term => this.buscarUsuarios(term)),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(items => {
-        this.sugestoesUsuarios.set(items);
-      });
+    this.agentePublicoQuery.valueChanges.pipe(
+      debounceTime(250),
+      distinctUntilChanged(),
+      switchMap(term => this.buscarUsuarios(term)),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(items => this.sugestoesUsuarios.set(items));
 
-    this.form.controls.unidade_id.valueChanges
-      .pipe(
-        distinctUntilChanged(),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe(unidadeId => {
-        if (!unidadeId) return;
-        void this.carregarRegramento(unidadeId);
-      });
+    this.form.controls.unidade_id.valueChanges.pipe(
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(unidadeId => {
+      if (!unidadeId) return;
+      this.selectedUnidadeId.set(unidadeId);
+      void this.carregarRegramento(unidadeId);
+    });
+
+    this.form.controls.tipo_modalidade_id.valueChanges.pipe(
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(id => this.selectedModalidadeId.set(id ?? ''));
   }
 
-  voltar() {
-    this.go.back();
-  }
-
-  toggleSelect(key: string) {
-    if (this.selectAberto() === key) {
-      this.selectAberto.set(null);
-      return;
-    }
-    this.selectAberto.set(key);
-  }
-
-  selecionarUnidade(unidade: Unidade) {
-    this.form.controls.unidade_id.setValue(`${unidade.id}`);
-    this.selectAberto.set(null);
-  }
-
-  selecionarModalidade(modalidade: TipoModalidade) {
-    this.form.controls.tipo_modalidade_id.setValue(`${modalidade.id}`);
-    this.selectAberto.set(null);
-  }
+  voltar() { this.go.navigate({ route: ['gestao', 'plano-trabalho-v2'] }); }
 
   selecionarUsuario(item: UsuarioSearchItem) {
     this.form.controls.usuario_id.setValue(item.id);
@@ -151,7 +126,6 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   }
 
   limparUsuarioSelecionado() {
-    this.selectedUsuario.set(undefined);
     this.unidades.set([]);
     this.programaId.set('');
     this.programaNome.set('');
@@ -162,9 +136,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   }
 
   salvar() {
-    if (this.saving()) return;
-    if (this.form.invalid) return;
-    if (!this.programaId()) return;
+    if (this.saving() || this.form.invalid || !this.programaId()) return;
 
     const payload = {
       usuario_id: this.form.controls.usuario_id.value,
@@ -176,10 +148,9 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     };
 
     this.saving.set(true);
-    this.api
-      .create(payload)
+    this.api.create(payload)
       .pipe(finalize(() => this.saving.set(false)))
-      .subscribe((res) => {
+      .subscribe(res => {
         this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', res.id] });
       });
   }
@@ -188,9 +159,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     if (this.carregandoRegramento()) return;
     this.carregandoRegramento.set(true);
     try {
-      /* TODO: refatorar para API v2 */ 
       const programas = await this.programaApi.buscarPorUnidadeExecutora(unidadeId, this.joinPrograma);
-
       const programaVigente = this.programaService.selecionaProgramaVigente(programas);
       const programa = programaVigente ?? programas[0];
       this.programaId.set(programa?.id ?? '');
@@ -207,11 +176,9 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   }
 
   private preselectUsuario(usuario: Usuario) {
-    const usuarioId = usuario.id;
-    const usuarioNome = usuario.nome;
-    if (!usuarioId || !usuarioNome) return;
-    this.form.controls.usuario_id.setValue(usuarioId);
-    this.agentePublicoQuery.setValue(usuarioNome, { emitEvent: false });
+    if (!usuario.id || !usuario.nome) return;
+    this.form.controls.usuario_id.setValue(usuario.id);
+    this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
     void this.carregarUnidades(usuario);
   }
 
@@ -222,9 +189,9 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     const unidadeId = usuario.lotacao?.unidade_id;
     if (unidadeId) {
       const unidadeIdValue = unidadeId.trim();
-
       const isValid = this.unidades().some(u => `${u.id}` === unidadeIdValue);
       if (isValid) {
+        this.selectedUnidadeId.set(unidadeIdValue);
         this.form.controls.unidade_id.setValue(unidadeIdValue, { emitEvent: false });
         await this.carregarRegramento(unidadeIdValue);
       }
@@ -237,6 +204,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       const tipoModalidadeValue = tipoModalidadeId.trim();
       const isValid = this.modalidades().some(m => `${m.id}` === tipoModalidadeValue);
       if (isValid) {
+        this.selectedModalidadeId.set(tipoModalidadeValue);
         this.form.controls.tipo_modalidade_id.setValue(tipoModalidadeValue);
         return;
       }
@@ -244,6 +212,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
     if (this.modalidades().length > 0) {
       const firstValue = `${this.modalidades()[0].id}`;
+      this.selectedModalidadeId.set(firstValue);
       this.form.controls.tipo_modalidade_id.setValue(firstValue);
     }
   }

@@ -62,6 +62,22 @@ export class PlanoTrabalhoApiClient {
     return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/entrega/${entregaId}`);
   }
 
+  cancel(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
+    return this.http.post<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/cancelar`, {});
+  }
+
+  archive(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
+    return this.http.post<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/arquivar`, {});
+  }
+
+  cancelAssinatura(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
+    return this.http.post<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/cancelar-assinatura`, {});
+  }
+
+  clone(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
+    return this.http.post<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/clonar`, {});
+  }
+
   
 
   private normalize(params: QueryParams): Record<string, string> {

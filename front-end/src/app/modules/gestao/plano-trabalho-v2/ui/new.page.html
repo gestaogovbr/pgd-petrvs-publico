@@ -1,7 +1,8 @@
 <div class="container-fluid py-3 govbr-v2">
-  
+  <h2 class="mb-0">Novo Plano de Trabalho</h2>
+
   <div class="br-card">
-    <div class="card-header text-weight-semi-bold text-up-02">
+    <div class="card-header text-weight-semi-bold text-up-02 p-2x bg-gray-10">
       Informações gerais
     </div>
     <div class="card-content">
@@ -13,16 +14,16 @@
                   <label>Agente Público</label>
                   <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" />
                 </div>
-                <button class="br-button secondary" type="button" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</button>
+                <br-button emphasis="secondary" type="button" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
               </div>
               @if (sugestoesUsuarios().length > 0) {
-                <div class="br-card position-absolute w-100" style="z-index: 1050;">               
+                <div class="br-card position-absolute w-100" style="z-index: 1050;">
                   @for (u of sugestoesUsuarios(); track u.id) {
                     <div class="card-content d-flex justify-content-between align-items-center px-2 py-1">
                       <div class="text-truncate">
                         {{ u.nome }} @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
                       </div>
-                      <button class="br-button secondary" type="button" (click)="selecionarUsuario(u)">Selecionar</button>
+                      <br-button emphasis="secondary" type="button" (click)="selecionarUsuario(u)">Selecionar</br-button>
                     </div>
                   }
                 </div>
@@ -30,46 +31,7 @@
             </div>
 
             <div class="col-md-4 mb-3">
-              <input type="hidden" formControlName="unidade_id" />
-              <div class="br-select w-100" (click)="$event.stopPropagation()">
-                <div class="br-input">
-                  <label for="unidade_id_display">Unidade</label>
-                  <input
-                    id="unidade_id_display"
-                    type="text"
-                    placeholder="Selecione o item"
-                    readonly
-                    [value]="unidadeSelecionadaLabel()"
-                    (click)="$event.stopPropagation(); toggleSelect('unidade')"
-                  />
-                  <button
-                    class="br-button"
-                    type="button"
-                    tabindex="-1"
-                    data-trigger="data-trigger"
-                    (click)="$event.stopPropagation(); toggleSelect('unidade')"
-                  >
-                    <i class="fas fa-angle-down" aria-hidden="true"></i>
-                  </button>
-                </div>
-                <div class="br-list" tabindex="0" [attr.expanded]="selectAberto() === 'unidade' ? '' : null">
-                  @for (u of unidades(); track u.id) {
-                    <div class="br-item" tabindex="-1">
-                      <div class="br-radio">
-                        <input
-                          [id]="'unidade_' + u.id"
-                          type="radio"
-                          name="unidade_id_options"
-                          [value]="u.id.toString()"
-                          [checked]="form.controls.unidade_id.value === u.id.toString()"
-                          (change)="selecionarUnidade(u)"
-                        />
-                        <label [for]="'unidade_' + u.id">{{ u.sigla }}</label>
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
+              <br-select label="Unidade" formControlName="unidade_id" [options]="unidadesOptions()" />
             </div>
 
             <div class="col-md-4 mb-3">
@@ -96,46 +58,7 @@
             </div>
 
             <div class="col-md-6 mb-3">
-              <input type="hidden" formControlName="tipo_modalidade_id" />
-              <div class="br-select w-100" (click)="$event.stopPropagation()">
-                <div class="br-input">
-                  <label for="tipo_modalidade_id_display">Modalidade</label>
-                  <input
-                    id="tipo_modalidade_id_display"
-                    type="text"
-                    placeholder="Selecione o item"
-                    readonly
-                    [value]="modalidadeSelecionadaLabel()"
-                    (click)="$event.stopPropagation(); toggleSelect('modalidade')"
-                  />
-                  <button
-                    class="br-button"
-                    type="button"
-                    tabindex="-1"
-                    data-trigger="data-trigger"
-                    (click)="$event.stopPropagation(); toggleSelect('modalidade')"
-                  >
-                    <i class="fas fa-angle-down" aria-hidden="true"></i>
-                  </button>
-                </div>
-                <div class="br-list" tabindex="0" [attr.expanded]="selectAberto() === 'modalidade' ? '' : null">
-                  @for (m of modalidades(); track m.id) {
-                    <div class="br-item" tabindex="-1">
-                      <div class="br-radio">
-                        <input
-                          [id]="'modalidade_' + m.id"
-                          type="radio"
-                          name="tipo_modalidade_id_options"
-                          [value]="m.id.toString()"
-                          [checked]="form.controls.tipo_modalidade_id.value === m.id.toString()"
-                          (change)="selecionarModalidade(m)"
-                        />
-                        <label [for]="'modalidade_' + m.id">{{ m.nome }}</label>
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
+              <br-select label="Modalidade" formControlName="tipo_modalidade_id" [options]="modalidadesOptions()" />
             </div>
           </div>
       </form>
@@ -143,8 +66,8 @@
   </div>
 
   <div class="d-flex gap-2 mt-3">
-    <button class="br-button secondary" type="button" (click)="voltar()" [disabled]="saving()">Voltar</button>
-    <button class="br-button primary" type="button" (click)="salvar()" [disabled]="!podeSalvar()">Salvar</button>
+    <br-button type="button" (click)="voltar()" [disabled]="saving()">Voltar</br-button>
+    <br-button emphasis="primary" type="button" (click)="salvar()" [disabled]="!podeSalvar()">Salvar</br-button>
   </div>
 
 </div>
