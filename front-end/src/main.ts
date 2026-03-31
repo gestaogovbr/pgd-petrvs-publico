@@ -9,6 +9,9 @@ if (environment.production) {
 }
 
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { defineCustomElements } from '@govbr-ds/webcomponents/dist/loader';
+
+defineCustomElements();
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));

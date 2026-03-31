@@ -18,6 +18,7 @@ export class PlanoTrabalhoListFacade {
   readonly total = signal(0);
   readonly loading = signal(false);
   readonly lastPage = signal(1);
+  readonly error = signal<string | null>(null);
 
   readonly params = computed<QueryParams>(() => ({
     page: this.page(),
@@ -28,15 +29,21 @@ export class PlanoTrabalhoListFacade {
 
   load() {
     this.loading.set(true);
+    this.error.set(null);
     this.listar
       .execute(this.params())
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((result) => {
-        this.items.set(result.items);
-        this.total.set(result.total);
-        this.page.set(result.page);
-        this.pageSize.set(result.perPage);
-        this.lastPage.set(result.lastPage);
+      .subscribe({
+        next: (result) => {
+          this.items.set(result.items);
+          this.total.set(result.total);
+          this.page.set(result.page);
+          this.pageSize.set(result.perPage);
+          this.lastPage.set(result.lastPage);
+        },
+        error: () => {
+          this.error.set('Não foi possível carregar os planos de trabalho. Tente novamente.');
+        }
       });
   }
 }

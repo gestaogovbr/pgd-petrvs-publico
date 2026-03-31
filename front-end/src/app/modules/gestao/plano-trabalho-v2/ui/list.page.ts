@@ -7,12 +7,13 @@ import { AuthService } from 'src/app/services/auth.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { Subscription } from 'rxjs';
 import { PlanoTrabalho } from '../domain/types';
+import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 
 @Component({
   selector: 'app-plano-trabalho-v2-list-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule],
   templateUrl: './list.page.html'
 })
 export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
@@ -192,12 +193,12 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   }
 
   statusClass(value: string | undefined): string {
-    if (value === 'ATIVO') return 'success';
-    if (value === 'INCLUIDO') return 'secondary';
-    if (value === 'AGUARDANDO_ASSINATURA') return 'warning';
-    if (value === 'SUSPENSO') return 'info';
-    if (value === 'CANCELADO') return 'danger';
-    if (value == 'CONCLUIDO') return 'primary';
+    if (value === 'ATIVO') return '#2a9c2a';
+    if (value === 'INCLUIDO') return '#686868';
+    if (value === 'AGUARDANDO_ASSINATURA') return '#cac704';
+    if (value === 'SUSPENSO') return '#df8e32';
+    if (value === 'CANCELADO') return '#c92c2c';
+    if (value == 'CONCLUIDO') return '#28128a';
     return 'secondary';
   }
 
@@ -215,10 +216,19 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'novo'] });
   }
 
-  detalhesDoPlano(p: PlanoTrabalho) {}
+  detalhesDoPlano(p: PlanoTrabalho) {
+    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', p.id] });
+  }
+
   editarPlano(p: PlanoTrabalho) {
     this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', p.id] });
   }
-  assinarPlano(p: PlanoTrabalho) {}
-  cancelarPlano(p: PlanoTrabalho) {}
+
+  assinarPlano(p: PlanoTrabalho) {
+    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', p.id] });
+  }
+
+  cancelarPlano(p: PlanoTrabalho) {
+    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', p.id] });
+  }
 }

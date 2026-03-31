@@ -1,9 +1,9 @@
 <div class="br-mainpanel" style="padding: 16px;">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Planos de Trabalho</h2>
-    <button class="br-button primary" type="button" (click)="novoPlano()">
+    <br-button emphasis="primary" (click)="novoPlano()">
       <i class="fas fa-plus mr-1"></i>Novo plano de trabalho
-    </button>
+    </br-button>
   </div>
 
   <form [formGroup]="filters" class="mb-3">
@@ -41,12 +41,12 @@
             </div>
           </div>
           <div class="col mb-3 text-right">
-            <button class="br-button secondary mr-2" type="button" (click)="onConsultar()">
+            <br-button emphasis="secondary" (click)="onConsultar()">
               <i class="fas fa-search mr-1"></i>Consultar
-            </button>
-            <button class="br-button tertiary" type="button" (click)="toggleAdvanced()">
+            </br-button>
+            <br-button emphasis="tertiary" (click)="toggleAdvanced()">
               <i class="fas fa-filter mr-1"></i>Filtro avançado
-            </button>
+            </br-button>
           </div>
         </div>
 
@@ -116,22 +116,24 @@
               <td data-th="Usuário">{{ p.usuario?.nome || '-' }}</td>
               <td data-th="Unidade">{{ p.unidade?.sigla || '-' }}</td>
               <td data-th="Modalidade">{{ p.tipo_modalidade?.nome || '-' }}</td>
-              <td data-th="Status"><span class="br-tag" [ngClass]="statusClass(p.status)">{{ statusLabel(p.status) }}</span></td>
+              <td data-th="Status">
+                <br-tag shape="rounded" density="small" [bgColor]="statusClass(p.status)" [label]="statusLabel(p.status)"></br-tag>
+              </td>
               <td data-th="Período">{{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}</td>
               <td data-th="Ações">
                 <div class="d-flex gap-1">
-                  <button class="br-button circle" type="button" (click)="detalhesDoPlano(p)" title="Consultar">
+                  <br-button shape="circle" (click)="detalhesDoPlano(p)" title="Consultar">
                     <i class="fas fa-search"></i>
-                  </button>
-                  <button class="br-button circle" type="button" (click)="editarPlano(p)" title="Editar">
+                  </br-button>
+                  <br-button shape="circle" (click)="editarPlano(p)" title="Editar">
                     <i class="fas fa-pen"></i>
-                  </button>
-                  <button class="br-button circle" type="button" (click)="assinarPlano(p)" title="Assinar">
+                  </br-button>
+                  <br-button shape="circle" (click)="assinarPlano(p)" title="Assinar">
                     <i class="fas fa-file-signature"></i>
-                  </button>
-                  <button class="br-button circle text-danger" type="button" (click)="cancelarPlano(p)" title="Cancelar">
+                  </br-button>
+                  <br-button shape="circle" class="text-danger"  (click)="cancelarPlano(p)" title="Cancelar">
                     <i class="fas fa-times-circle"></i>
-                  </button>
+                  </br-button>
                 </div>
               </td>
             </tr>
@@ -147,12 +149,12 @@
   </div>
 
   <div class="d-flex justify-content-between align-items-center mt-3">
-    <button class="br-button secondary" type="button" (click)="prev()" [disabled]="facade.page() <= 1">
+    <br-button emphasis="secondary" type="button" (click)="prev()" [disabled]="facade.page() <= 1">
       <i class="fas fa-chevron-left mr-1"></i>Anterior
-    </button>
+    </br-button>
     <span>Página {{ facade.page() }}</span>
-    <button class="br-button secondary" type="button" (click)="next()">
+    <br-button emphasis="secondary" type="button" (click)="next()" [disabled]="facade.page() >= facade.lastPage()">
       Próxima<i class="fas fa-chevron-right ml-1"></i>
-    </button>
+    </br-button>
   </div>
 </div>

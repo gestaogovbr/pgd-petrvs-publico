@@ -617,6 +617,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('plano-trabalho/statuses', [PlanoTrabalhoV2::class, 'statuses']);
     Route::get('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'show']);
     Route::post('plano-trabalho', [PlanoTrabalhoV2::class, 'store']);
+    Route::patch('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'update']);
     Route::delete('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'destroy']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/entrega', [EntregaV2::class, 'store']);
@@ -632,4 +633,5 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('unidade', [UnidadeV2::class, 'buscarPorNomeOuCodigo']);
 
     Route::get('plano-entrega', [PlanoEntregaV2::class, 'buscarPorUnidade']);
+    Route::get('plano-entrega/{planoEntregaId}/entrega', [PlanoEntregaV2::class, 'buscarEntregasPorPlano'])->whereUuid('planoEntregaId');
 });

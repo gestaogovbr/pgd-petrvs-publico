@@ -47,6 +47,7 @@ class PlanoTrabalhoStoreDTO
             'data_fim' => $this->dataFim,
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'criacao_usuario_id' => $this->criacaoUsuarioId,
+            'justificativa' => $this->justificativa,
         ];
     }
 }

@@ -92,4 +92,12 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->select('id', 'nome', 'numero', 'status', 'data_inicio', 'data_fim')
             ->get();
     }
+
+    public function findEntregasByPlanoId(string $planoEntregaId): Collection
+    {
+        return PlanoEntregaEntrega::where('plano_entrega_id', $planoEntregaId)
+            ->select('id', 'plano_entrega_id', 'entrega_id', 'descricao', 'descricao_entrega')
+            ->with(['entrega:id,nome'])
+            ->get();
+    }
 }

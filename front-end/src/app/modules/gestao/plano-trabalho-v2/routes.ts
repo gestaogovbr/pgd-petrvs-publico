@@ -4,6 +4,8 @@ import { authTenantVersionInterceptor, errorInterceptor } from './infra/http/int
 import { UsuarioService } from 'src/app/v2/services/usuario.service';
 import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
+import { PlanoEntregaApiService } from 'src/app/v2/services/plano-entrega-api.service';
+import { UnidadeService } from 'src/app/v2/services/unidade.service';
 
 export const routes: Routes = [
   {
@@ -12,7 +14,9 @@ export const routes: Routes = [
       provideHttpClient(withInterceptors([authTenantVersionInterceptor, errorInterceptor])),
       UsuarioService,
       ProgramaApiService,
-      TipoModalidadeService
+      TipoModalidadeService,
+      PlanoEntregaApiService,
+      UnidadeService
     ],
     children: [
       {

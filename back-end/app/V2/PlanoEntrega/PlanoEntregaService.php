@@ -4,6 +4,7 @@ namespace App\V2\PlanoEntrega;
 
 use App\Repository\PlanoEntregaRepository;
 use App\V2\PlanoEntrega\DTOs\PlanoEntregaBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\PlanoEntregaEntregaBuscaDTO;
 use Illuminate\Database\Eloquent\Collection;
 
 class PlanoEntregaService
@@ -18,5 +19,10 @@ class PlanoEntregaService
     public function buscarPorUnidade(PlanoEntregaBuscaDTO $dto): Collection
     {
         return $this->planoEntregaRepository->findByUnidadeId($dto->unidadeId);
+    }
+
+    public function buscarEntregasPorPlano(PlanoEntregaEntregaBuscaDTO $dto): Collection
+    {
+        return $this->planoEntregaRepository->findEntregasByPlanoId($dto->planoEntregaId);
     }
 }

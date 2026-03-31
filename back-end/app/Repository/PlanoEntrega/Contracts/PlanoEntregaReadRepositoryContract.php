@@ -14,4 +14,6 @@ interface PlanoEntregaReadRepositoryContract
     public function getEntregasPlanoEntregaExecucao(array $unidadesIds): Collection;
 
     public function findByUnidadeId(string $unidadeId): Collection;
+
+    public function findEntregasByPlanoId(string $planoEntregaId): Collection;
 }

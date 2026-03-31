@@ -43,7 +43,23 @@ class PlanoTrabalhoController extends Controller
         try {
             $data = PlanoTrabalhoRequestValidator::store($request);
             $entity = $this->service->store($data);
-            return response()->json(['success' => true, 'rows' => [$entity]], Response::HTTP_CREATED);
+            return response()->json(['success' => true, 'data' => $entity], Response::HTTP_CREATED);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function update(Request $request, string $id): JsonResponse
+    {
+        try {
+            $data = PlanoTrabalhoRequestValidator::update($request);
+            $entity = $this->service->update($id, $data);
+            return response()->json(['success' => true, 'data' => $entity]);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (IBaseException $e) {

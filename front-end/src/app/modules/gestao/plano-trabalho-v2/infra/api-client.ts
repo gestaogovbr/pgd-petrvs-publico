@@ -62,15 +62,7 @@ export class PlanoTrabalhoApiClient {
     return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/entrega/${entregaId}`);
   }
 
-  queryEntregasUnidade(unidadeId: string): Observable<any[]> {
-    return this.http.post<any>(`${this.gb.servidorURL}/api/PlanoEntregaEntrega/query`, {
-      join: ['entrega', 'plano_entrega'],
-      where: [
-        ['plano_entrega.unidade_id', '==', unidadeId],
-        ['plano_entrega.status', '==', 'ATIVO']
-      ]
-    }).pipe(map(res => res?.rows ?? res?.data ?? []));
-  }
+  
 
   private normalize(params: QueryParams): Record<string, string> {
     const out: Record<string, string> = {};

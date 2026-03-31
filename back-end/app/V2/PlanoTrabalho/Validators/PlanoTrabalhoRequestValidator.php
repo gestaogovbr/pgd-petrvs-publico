@@ -44,4 +44,26 @@ class PlanoTrabalhoRequestValidator
         ]);
     }
 
+    public static function update(Request $request): array
+    {
+        return $request->validate([
+            'usuario_id' => ['required', 'uuid'],
+            'unidade_id' => ['required', 'uuid'],
+            'programa_id' => ['required', 'uuid'],
+            'data_inicio' => ['required', 'date'],
+            'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
+            'tipo_modalidade_id' => ['required', 'uuid'],
+            'justificativa' => ['nullable', 'string', 'max:500'],
+        ], [
+            'usuario_id.required' => 'O participante é obrigatório.',
+            'unidade_id.required' => 'A unidade executora é obrigatória.',
+            'programa_id.required' => 'O regramento é obrigatório.',
+            'data_inicio.required' => 'A data de início é obrigatória.',
+            'data_fim.required' => 'A data de fim é obrigatória.',
+            'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
+            'tipo_modalidade_id.required' => 'A modalidade é obrigatória.',
+            'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
+        ]);
+    }
+
 }
