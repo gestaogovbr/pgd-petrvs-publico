@@ -2,8 +2,8 @@
 
 use App\V2\PlanoTrabalho\Documento\PlanoTrabalhoDocumentoService;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoStoreValidator;
-use App\V2\PlanoTrabalho\Documento\TcrDatasourceBuilder;
-use App\V2\PlanoTrabalho\Documento\TcrRenderer;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRDatasourceBuilder;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRTemplateRenderer;
 use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Models\Documento;
@@ -18,8 +18,8 @@ beforeEach(function () {
     $this->documentoRepo = Mockery::mock(DocumentoRepository::class);
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->storeValidator = Mockery::mock(PlanoTrabalhoDocumentoStoreValidator::class);
-    $this->datasourceBuilder = Mockery::mock(TcrDatasourceBuilder::class);
-    $this->renderer = Mockery::mock(TcrRenderer::class);
+    $this->datasourceBuilder = Mockery::mock(TCRDatasourceBuilder::class);
+    $this->renderer = Mockery::mock(TCRTemplateRenderer::class);
 
     $this->service = new PlanoTrabalhoDocumentoService(
         $this->documentoRepo,
@@ -132,7 +132,7 @@ describe('PlanoTrabalhoDocumentoService::store', function () {
 
         $this->datasourceBuilder->shouldReceive('getTemplate')->andReturn('');
         $this->datasourceBuilder->shouldReceive('getDataset')->andReturn([]);
-        $this->datasourceBuilder->shouldReceive('getDatasource')->andReturn(null);
+        $this->datasourceBuilder->shouldReceive('getDatasource')->andReturn((object) []);
         $this->datasourceBuilder->shouldReceive('getTemplateId')->andReturn(null);
         $this->renderer->shouldReceive('render')->andReturn('');
 

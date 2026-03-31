@@ -1,8 +1,7 @@
 <?php
 
-use App\V2\PlanoTrabalho\Documento\TcrDatasourceBuilder;
-use App\Services\TemplateDatasetService;
-use App\Services\TemplateService;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRDatasourceBuilder;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRDatasetProvider;
 use App\Models\PlanoTrabalho;
 use App\Models\Programa;
 use App\Models\Template;
@@ -11,20 +10,15 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->templateDatasetService = Mockery::mock(TemplateDatasetService::class);
-    $this->templateService = Mockery::mock(TemplateService::class);
-
-    $this->builder = new TcrDatasourceBuilder(
-        $this->templateDatasetService,
-        $this->templateService,
-    );
+    $this->datasetProvider = new TCRDatasetProvider();
+    $this->builder = new TCRDatasourceBuilder($this->datasetProvider);
 });
 
 afterEach(function () {
     Mockery::close();
 });
 
-describe('TcrDatasourceBuilder', function () {
+describe('TCRDatasourceBuilder', function () {
 
     test('getTemplate retorna conteúdo do templateTcr do programa', function () {
         $template = Mockery::mock(Template::class)->makePartial();
@@ -62,25 +56,28 @@ describe('TcrDatasourceBuilder', function () {
         expect($this->builder->getTemplateId($plano))->toBe('tmpl-123');
     });
 
-    test('getDataset delega ao TemplateDatasetService', function () {
-        $expected = [['field' => 'nome', 'label' => 'nome']];
-
-        $this->templateDatasetService->shouldReceive('getDataset')
-            ->with('PLANO_TRABALHO', true)
-            ->andReturn($expected);
-
-        expect($this->builder->getDataset())->toBe($expected);
+    test('getDataset delega ao TCRDatasetProvider', function () {
+        expect($this->builder->getDataset())->toBeArray()->not->toBeEmpty();
     });
 
-    test('getDatasource delega ao TemplateService', function () {
+    test('getDatasource retorna objeto com campos do plano', function () {
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
-        $expected = (object) ['nome' => 'Teste'];
+        $plano->shouldReceive('toArray')->andReturn([
+            'carga_horaria' => 8,
+            'status' => 'INCLUIDO',
+        ]);
+        $plano->shouldReceive('getAttribute')->with('tipoModalidade')->andReturn(null);
+        $plano->shouldReceive('getAttribute')->with('unidade')->andReturn(null);
+        $plano->shouldReceive('getAttribute')->with('usuario')->andReturn(null);
+        $plano->shouldReceive('getAttribute')->with('programa')->andReturn(null);
+        $plano->shouldReceive('getAttribute')->with('entregas')->andReturn(null);
+        $plano->shouldReceive('getAttribute')->with('criterios_avaliacao')->andReturn(null);
 
-        $this->templateService->shouldReceive('getDatasource')
-            ->with('PLANO_TRABALHO', $plano)
-            ->andReturn($expected);
+        $datasource = $this->builder->getDatasource($plano);
 
-        expect($this->builder->getDatasource($plano))->toBe($expected);
+        expect($datasource)->toBeObject();
+        expect($datasource->carga_horaria)->toBe(8);
+        expect($datasource->status)->toBe('INCLUIDO');
     });
 });

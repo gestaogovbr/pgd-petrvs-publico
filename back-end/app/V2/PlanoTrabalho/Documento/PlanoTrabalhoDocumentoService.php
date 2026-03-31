@@ -7,6 +7,8 @@ namespace App\V2\PlanoTrabalho\Documento;
 use App\Models\Documento;
 use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRDatasourceBuilder;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRTemplateRenderer;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoStoreValidator;
 use Illuminate\Support\Facades\Session;
 
@@ -21,8 +23,8 @@ class PlanoTrabalhoDocumentoService
         private readonly DocumentoRepository $documentoRepository,
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoTrabalhoDocumentoStoreValidator $storeValidator,
-        private readonly TcrDatasourceBuilder $datasourceBuilder,
-        private readonly TcrRenderer $renderer,
+        private readonly TCRDatasourceBuilder $datasourceBuilder,
+        private readonly TCRTemplateRenderer $renderer,
     ) {}
 
     public function store(string $planoTrabalhoId): Documento
