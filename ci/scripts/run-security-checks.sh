@@ -21,7 +21,54 @@ run_backend_audit() {
     exit 1
   fi
 
+  set +e
   composer audit --locked --no-interaction --format=json > "${REPORTS_DIR}/composer-audit.json"
+  AUDIT_EXIT_CODE=$?
+  set -e
+
+  echo "Resumo do Composer Audit:"
+  php -r '
+    $file = "'"${REPORTS_DIR}/composer-audit.json"'";
+    if (!file_exists($file)) {
+        fwrite(STDERR, "Arquivo de relatório não encontrado.\n");
+        exit(1);
+    }
+    $data = json_decode(file_get_contents($file), true);
+    if (!$data) {
+        fwrite(STDERR, "Falha ao interpretar JSON do composer audit.\n");
+        exit(1);
+    }
+
+    $advisories = $data["advisories"] ?? [];
+    $abandoned = $data["abandoned"] ?? [];
+
+    $advisoryCount = 0;
+    foreach ($advisories as $package => $items) {
+        $advisoryCount += count($items);
+    }
+
+    echo "- Pacotes com advisories: " . count($advisories) . PHP_EOL;
+    echo "- Total de advisories: " . $advisoryCount . PHP_EOL;
+    echo "- Pacotes abandonados: " . count($abandoned) . PHP_EOL;
+
+    foreach ($advisories as $package => $items) {
+        foreach ($items as $item) {
+            $title = $item["title"] ?? "Sem título";
+            $severity = $item["severity"] ?? "unknown";
+            echo "  * [$severity] $package - $title" . PHP_EOL;
+        }
+    }
+
+    foreach ($abandoned as $package => $replacement) {
+        $replacementText = $replacement ?: "sem substituto informado";
+        echo "  * [abandoned] $package -> $replacementText" . PHP_EOL;
+    }
+  '
+
+  if [ "${AUDIT_EXIT_CODE}" -ne 0 ]; then
+    echo "Composer Audit encontrou problemas."
+    return "${AUDIT_EXIT_CODE}"
+  fi
 
   log "Backend SCA finalizado."
 }
@@ -35,7 +82,57 @@ run_frontend_audit() {
     exit 1
   fi
 
+  set +e
   npm audit --omit=dev --audit-level=high --package-lock-only --json > "${REPORTS_DIR}/npm-audit.json"
+  AUDIT_EXIT_CODE=$?
+  set -e
+
+  echo "Resumo do npm audit:"
+  node -e '
+    const fs = require("fs");
+    const file = process.argv[1];
+
+    if (!fs.existsSync(file)) {
+      console.error("Arquivo de relatório não encontrado.");
+      process.exit(1);
+    }
+
+    let data;
+    try {
+      data = JSON.parse(fs.readFileSync(file, "utf8"));
+    } catch (e) {
+      console.error("Falha ao interpretar JSON do npm audit.");
+      process.exit(1);
+    }
+
+    const vulnerabilities = data.vulnerabilities || {};
+    const metadata = data.metadata || {};
+    const counts = (metadata.vulnerabilities || {});
+
+    console.log(`- Info: ${counts.info || 0}`);
+    console.log(`- Low: ${counts.low || 0}`);
+    console.log(`- Moderate: ${counts.moderate || 0}`);
+    console.log(`- High: ${counts.high || 0}`);
+    console.log(`- Critical: ${counts.critical || 0}`);
+
+    for (const [pkg, info] of Object.entries(vulnerabilities)) {
+      const severity = info.severity || "unknown";
+      const via = Array.isArray(info.via) ? info.via : [];
+      const titles = via
+        .filter(v => typeof v === "object" && v.title)
+        .map(v => v.title);
+
+      console.log(`  * [${severity}] ${pkg}`);
+      for (const title of titles) {
+        console.log(`      - ${title}`);
+      }
+    }
+  ' "${REPORTS_DIR}/npm-audit.json"
+
+  if [ "${AUDIT_EXIT_CODE}" -ne 0 ]; then
+    echo "npm audit encontrou problemas."
+    return "${AUDIT_EXIT_CODE}"
+  fi
 
   log "Frontend SCA finalizado."
 }
