@@ -1,7 +1,5 @@
 <?php
 
-namespace Tests\IntegrationTenant\Repository;
-
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
@@ -9,277 +7,276 @@ use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Repository\UsuarioRepository;
-use Tests\DatabaseTenantTestCase;
-use App\Enums\ModalidadeParticipacaoEnum;
-use Illuminate\Support\Facades\DB;
-use App\Models\Entidade;
 use App\Models\TipoModalidade;
 use App\Models\Perfil;
 
-class UsuarioRepositoryTest extends DatabaseTenantTestCase
-{
-    protected UsuarioRepository $repository;
-    protected string $tipoModalidadeId;
-    protected string $perfilId;
+beforeEach(function () {
+    $this->repository = app(UsuarioRepository::class);
+    $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
+    $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->repository = app(UsuarioRepository::class);
+test('findById', function () {
+    $usuario = Usuario::factory()->create([
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
 
-        // Create prerequisites
-        $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
-        $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
-    }
+    $found = $this->repository->findById($usuario->id);
 
-    public function testFindById()
-    {
-        $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
-        $found = $this->repository->findById($usuario->id);
-        $this->assertEquals($usuario->id, $found->id);
-    }
+    expect($found->id)->toBe($usuario->id);
+});
 
-    public function testFindByCpfOrEmail()
-    {
-        $cpf = str_pad((string) random_int(1, 99999999999), 11, '0', STR_PAD_LEFT);
-        $email = 'teste-' . uniqid() . '@example.com';
-        $usuario = Usuario::factory()->create([
-            'cpf' => $cpf, 
-            'email' => $email,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
+test('findByCpfOrEmail', function () {
+    $cpf = str_pad((string) random_int(1, 99999999999), 11, '0', STR_PAD_LEFT);
+    $email = 'teste-' . uniqid() . '@example.com';
 
-        $foundCpf = $this->repository->findByCpfOrEmail($cpf, 'other@example.com');
-        $this->assertEquals($usuario->id, $foundCpf->id);
+    $usuario = Usuario::factory()->create([
+        'cpf' => $cpf,
+        'email' => $email,
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
 
-        $foundEmail = $this->repository->findByCpfOrEmail('00000000000', $email);
-        $this->assertEquals($usuario->id, $foundEmail->id);
-    }
+    $foundCpf = $this->repository->findByCpfOrEmail($cpf, 'other@example.com');
+    expect($foundCpf->id)->toBe($usuario->id);
 
-    public function testIsParticipanteHabilitado()
-    {
-        $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
-        $programa = Programa::factory()->create();
-        
-        // Not linked
-        $this->assertFalse($this->repository->isParticipanteHabilitado($usuario->id, $programa->id));
+    $foundEmail = $this->repository->findByCpfOrEmail('00000000000', $email);
+    expect($foundEmail->id)->toBe($usuario->id);
+});
 
-        // Linked but disabled
-        ProgramaParticipante::factory()->create([
-            'usuario_id' => $usuario->id,
-            'programa_id' => $programa->id,
-            'habilitado' => false
-        ]);
-        $this->assertFalse($this->repository->isParticipanteHabilitado($usuario->id, $programa->id));
+test('findByCpfOrEmail ignora email nulo ou vazio', function () {
+    $cpf = str_pad((string) random_int(1, 99999999999), 11, '0', STR_PAD_LEFT);
 
-        // Linked and enabled
-        ProgramaParticipante::where('usuario_id', $usuario->id)
-            ->where('programa_id', $programa->id)
-            ->update(['habilitado' => true]);
-            
-        $this->assertTrue($this->repository->isParticipanteHabilitado($usuario->id, $programa->id));
-    }
+    Usuario::factory()->create([
+        'cpf' => $cpf,
+        'email' => null,
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
 
-    public function testIsIntegrante()
-    {
-        $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
-        $unidade = Unidade::factory()->create();
+    $foundWithNullEmail = $this->repository->findByCpfOrEmail($cpf, null);
+    expect($foundWithNullEmail)->not->toBeNull();
+    expect($foundWithNullEmail->cpf)->toBe($cpf);
 
-        // Not integrante
-        $this->assertFalse($this->repository->isIntegrante($usuario->id, $unidade->id, 'GESTOR'));
+    $foundWithEmptyEmail = $this->repository->findByCpfOrEmail($cpf, '');
+    expect($foundWithEmptyEmail)->not->toBeNull();
+    expect($foundWithEmptyEmail->cpf)->toBe($cpf);
+});
 
-        // Integrante but different atribuicao
-        $integrante = new UnidadeIntegrante();
-        $integrante->usuario_id = $usuario->id;
-        $integrante->unidade_id = $unidade->id;
-        $integrante->save();
+test('isParticipanteHabilitado', function () {
+    $usuario = Usuario::factory()->create([
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
+    $programa = Programa::factory()->create();
 
-        $atribuicao = new UnidadeIntegranteAtribuicao();
-        $atribuicao->unidade_integrante_id = $integrante->id;
-        $atribuicao->atribuicao = 'LOTADO';
-        $atribuicao->save();
+    expect($this->repository->isParticipanteHabilitado($usuario->id, $programa->id))->toBeFalse();
 
-        $this->assertFalse($this->repository->isIntegrante($usuario->id, $unidade->id, 'GESTOR'));
-        $this->assertTrue($this->repository->isIntegrante($usuario->id, $unidade->id, 'LOTADO'));
-    }
+    ProgramaParticipante::factory()->create([
+        'usuario_id' => $usuario->id,
+        'programa_id' => $programa->id,
+        'habilitado' => false,
+    ]);
 
-    public function testGetAtribuicoes()
-    {
-        $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
-        $unidade = Unidade::factory()->create();
+    expect($this->repository->isParticipanteHabilitado($usuario->id, $programa->id))->toBeFalse();
 
-        $integrante = new UnidadeIntegrante();
-        $integrante->usuario_id = $usuario->id;
-        $integrante->unidade_id = $unidade->id;
-        $integrante->save();
+    ProgramaParticipante::where('usuario_id', $usuario->id)
+        ->where('programa_id', $programa->id)
+        ->update(['habilitado' => true]);
 
-        $atribuicao1 = new UnidadeIntegranteAtribuicao();
-        $atribuicao1->unidade_integrante_id = $integrante->id;
-        $atribuicao1->atribuicao = 'LOTADO';
-        $atribuicao1->save();
+    expect($this->repository->isParticipanteHabilitado($usuario->id, $programa->id))->toBeTrue();
+});
 
-        // Use a valid enum value for the second attribution
-        // Assuming 'AVALIADOR_PLANO_TRABALHO' is a valid value based on previous experience
-        $atribuicao2 = new UnidadeIntegranteAtribuicao();
-        $atribuicao2->unidade_integrante_id = $integrante->id;
-        $atribuicao2->atribuicao = 'AVALIADOR_PLANO_TRABALHO';
-        $atribuicao2->save();
+test('isIntegrante', function () {
+    $usuario = Usuario::factory()->create([
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
+    $unidade = Unidade::factory()->create();
 
-        $atribuicoes = $this->repository->getAtribuicoes($usuario->id, $unidade->id);
-        $this->assertCount(2, $atribuicoes);
-        $this->assertContains('LOTADO', $atribuicoes);
-        $this->assertContains('AVALIADOR_PLANO_TRABALHO', $atribuicoes);
-    }
+    expect($this->repository->isIntegrante($usuario->id, $unidade->id, 'GESTOR'))->toBeFalse();
 
-    public function testIsLotacao()
-    {
-        $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
-        $unidade = Unidade::factory()->create();
+    $integrante = new UnidadeIntegrante();
+    $integrante->usuario_id = $usuario->id;
+    $integrante->unidade_id = $unidade->id;
+    $integrante->save();
 
-        $this->assertFalse($this->repository->isLotacao($usuario->id, $unidade->id));
+    $atribuicao = new UnidadeIntegranteAtribuicao();
+    $atribuicao->unidade_integrante_id = $integrante->id;
+    $atribuicao->atribuicao = 'LOTADO';
+    $atribuicao->save();
 
-        $integrante = new UnidadeIntegrante();
-        $integrante->usuario_id = $usuario->id;
-        $integrante->unidade_id = $unidade->id;
-        $integrante->save();
+    expect($this->repository->isIntegrante($usuario->id, $unidade->id, 'GESTOR'))->toBeFalse();
+    expect($this->repository->isIntegrante($usuario->id, $unidade->id, 'LOTADO'))->toBeTrue();
+});
 
-        $atribuicao = new UnidadeIntegranteAtribuicao();
-        $atribuicao->unidade_integrante_id = $integrante->id;
-        $atribuicao->atribuicao = 'LOTADO';
-        $atribuicao->save();
+test('getAtribuicoes', function () {
+    $usuario = Usuario::factory()->create([
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
+    $unidade = Unidade::factory()->create();
 
-        $this->assertTrue($this->repository->isLotacao($usuario->id, $unidade->id));
-    }
+    $integrante = new UnidadeIntegrante();
+    $integrante->usuario_id = $usuario->id;
+    $integrante->unidade_id = $unidade->id;
+    $integrante->save();
 
-    public function testFindAllSemMatricula()
-    {
-        Usuario::factory()->create([
-            'matricula' => '12345',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
-        $semMatricula = Usuario::factory()->create([
-            'matricula' => null,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
+    $atribuicao1 = new UnidadeIntegranteAtribuicao();
+    $atribuicao1->unidade_integrante_id = $integrante->id;
+    $atribuicao1->atribuicao = 'LOTADO';
+    $atribuicao1->save();
 
-        $result = $this->repository->findAllSemMatricula();
-        $this->assertTrue($result->contains('id', $semMatricula->id));
-        $this->assertFalse($result->contains('matricula', '12345'));
-    }
+    $atribuicao2 = new UnidadeIntegranteAtribuicao();
+    $atribuicao2->unidade_integrante_id = $integrante->id;
+    $atribuicao2->atribuicao = 'AVALIADOR_PLANO_TRABALHO';
+    $atribuicao2->save();
 
-    public function testFindByCpfAndLotacao()
-    {
-        $cpf = '99988877766';
-        $usuario = Usuario::factory()->create([
-            'cpf' => $cpf,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
-        $unidade = Unidade::factory()->create();
+    $atribuicoes = $this->repository->getAtribuicoes($usuario->id, $unidade->id);
 
-        $integrante = new UnidadeIntegrante();
-        $integrante->usuario_id = $usuario->id;
-        $integrante->unidade_id = $unidade->id;
-        $integrante->save();
+    expect($atribuicoes)->toHaveCount(2);
+    expect($atribuicoes)->toContain('LOTADO');
+    expect($atribuicoes)->toContain('AVALIADOR_PLANO_TRABALHO');
+});
 
-        $atribuicao = new UnidadeIntegranteAtribuicao();
-        $atribuicao->unidade_integrante_id = $integrante->id;
-        $atribuicao->atribuicao = 'LOTADO';
-        $atribuicao->save();
+test('isLotacao', function () {
+    $usuario = Usuario::factory()->create([
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
+    $unidade = Unidade::factory()->create();
 
-        $found = $this->repository->findByCpfAndLotacao($cpf, $unidade->id);
-        $this->assertEquals($usuario->id, $found->id);
+    expect($this->repository->isLotacao($usuario->id, $unidade->id))->toBeFalse();
 
-        $notFound = $this->repository->findByCpfAndLotacao('00000000000', $unidade->id);
-        $this->assertNull($notFound);
-    }
+    $integrante = new UnidadeIntegrante();
+    $integrante->usuario_id = $usuario->id;
+    $integrante->unidade_id = $unidade->id;
+    $integrante->save();
 
-    public function testFindAllByCpf()
-    {
-        $cpf = '11122233344';
-        Usuario::factory()->count(2)->create([
-            'cpf' => $cpf,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
-        Usuario::factory()->create([
-            'cpf' => '99999999999',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
+    $atribuicao = new UnidadeIntegranteAtribuicao();
+    $atribuicao->unidade_integrante_id = $integrante->id;
+    $atribuicao->atribuicao = 'LOTADO';
+    $atribuicao->save();
 
-        $result = $this->repository->findAllByCpf($cpf);
-        $this->assertCount(2, $result);
-    }
+    expect($this->repository->isLotacao($usuario->id, $unidade->id))->toBeTrue();
+});
 
-    public function testGetUnidadesVinculadas()
-    {
-        $cpf = '55566677788';
-        $usuario = Usuario::factory()->create([
-            'cpf' => $cpf,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ]);
-        $unidade1 = Unidade::factory()->create();
-        $unidade2 = Unidade::factory()->create();
+test('findAllSemMatricula', function () {
+    Usuario::factory()->create([
+        'matricula' => '12345',
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
 
-        $integrante1 = new UnidadeIntegrante();
-        $integrante1->usuario_id = $usuario->id;
-        $integrante1->unidade_id = $unidade1->id;
-        $integrante1->save();
+    $semMatricula = Usuario::factory()->create([
+        'matricula' => null,
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
 
-        $atribuicao1 = new UnidadeIntegranteAtribuicao();
-        $atribuicao1->unidade_integrante_id = $integrante1->id;
-        $atribuicao1->atribuicao = 'LOTADO';
-        $atribuicao1->save();
+    $result = $this->repository->findAllSemMatricula();
 
-        $integrante2 = new UnidadeIntegrante();
-        $integrante2->usuario_id = $usuario->id;
-        $integrante2->unidade_id = $unidade2->id;
-        $integrante2->save();
+    expect($result->contains('id', $semMatricula->id))->toBeTrue();
+    expect($result->contains('matricula', '12345'))->toBeFalse();
+});
 
-        $atribuicao2 = new UnidadeIntegranteAtribuicao();
-        $atribuicao2->unidade_integrante_id = $integrante2->id;
-        $atribuicao2->atribuicao = 'COLABORADOR';
-        $atribuicao2->save();
+test('findByCpfAndLotacao', function () {
+    $cpf = '99988877766';
+    $usuario = Usuario::factory()->create([
+        'cpf' => $cpf,
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
+    $unidade = Unidade::factory()->create();
 
-        $unidades = $this->repository->getUnidadesVinculadas($cpf);
-        $this->assertCount(2, $unidades);
-    }
+    $integrante = new UnidadeIntegrante();
+    $integrante->usuario_id = $usuario->id;
+    $integrante->unidade_id = $unidade->id;
+    $integrante->save();
 
-    public function testCreateAndUpdate()
-    {
-        $attributes = [
-            'nome' => 'Novo Usuário',
-            'cpf' => '12312312312',
-            'email' => 'novo@example.com',
-            'matricula' => '654321',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-            'perfil_id' => $this->perfilId
-        ];
+    $atribuicao = new UnidadeIntegranteAtribuicao();
+    $atribuicao->unidade_integrante_id = $integrante->id;
+    $atribuicao->atribuicao = 'LOTADO';
+    $atribuicao->save();
 
-        $usuario = $this->repository->create($attributes);
-        $this->assertDatabaseHas('usuarios', ['email' => 'novo@example.com']);
+    $found = $this->repository->findByCpfAndLotacao($cpf, $unidade->id);
+    expect($found->id)->toBe($usuario->id);
 
-        $updated = $this->repository->update($usuario->id, ['nome' => 'Nome Atualizado']);
-        $this->assertEquals('Nome Atualizado', $updated->nome);
-    }
-}
+    $notFound = $this->repository->findByCpfAndLotacao('00000000000', $unidade->id);
+    expect($notFound)->toBeNull();
+});
+
+test('findAllByCpf', function () {
+    $cpf = '11122233344';
+
+    Usuario::factory()->count(2)->create([
+        'cpf' => $cpf,
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    Usuario::factory()->create([
+        'cpf' => '99999999999',
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $result = $this->repository->findAllByCpf($cpf);
+
+    expect($result)->toHaveCount(2);
+});
+
+test('getUnidadesVinculadas', function () {
+    $cpf = '55566677788';
+    $usuario = Usuario::factory()->create([
+        'cpf' => $cpf,
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $unidade1 = Unidade::factory()->create();
+    $unidade2 = Unidade::factory()->create();
+
+    $integrante1 = new UnidadeIntegrante();
+    $integrante1->usuario_id = $usuario->id;
+    $integrante1->unidade_id = $unidade1->id;
+    $integrante1->save();
+
+    $atribuicao1 = new UnidadeIntegranteAtribuicao();
+    $atribuicao1->unidade_integrante_id = $integrante1->id;
+    $atribuicao1->atribuicao = 'LOTADO';
+    $atribuicao1->save();
+
+    $integrante2 = new UnidadeIntegrante();
+    $integrante2->usuario_id = $usuario->id;
+    $integrante2->unidade_id = $unidade2->id;
+    $integrante2->save();
+
+    $atribuicao2 = new UnidadeIntegranteAtribuicao();
+    $atribuicao2->unidade_integrante_id = $integrante2->id;
+    $atribuicao2->atribuicao = 'COLABORADOR';
+    $atribuicao2->save();
+
+    $unidades = $this->repository->getUnidadesVinculadas($cpf);
+
+    expect($unidades)->toHaveCount(2);
+});
+
+test('createAndUpdate', function () {
+    $attributes = [
+        'nome' => 'Novo Usuário',
+        'cpf' => '12312312312',
+        'email' => 'novo@example.com',
+        'matricula' => '654321',
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ];
+
+    $usuario = $this->repository->create($attributes);
+
+    $this->assertDatabaseHas('usuarios', ['email' => 'novo@example.com']);
+
+    $updated = $this->repository->update($usuario->id, ['nome' => 'Nome Atualizado']);
+    expect($updated->nome)->toBe('Nome Atualizado');
+});

@@ -1,106 +1,95 @@
 <?php
 
-namespace Tests\Unit\Repository;
-
 use App\Models\UnidadeIntegrante;
 use App\Repository\UnidadeIntegrante\Eloquent\EloquentUnidadeIntegranteReadRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Mockery;
 use Tests\TestCase;
 
-class EloquentUnidadeIntegranteReadRepositoryTest extends TestCase
-{
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
+uses(TestCase::class);
 
-    public function testFindGestorByUnidadeRetornaIntegranteQuandoEloquentRetornaModelCorreto(): void
-    {
-        $unidadeId = 'u-1';
+afterAll(function () {
+    \Mockery::close();
+});
 
-        $builder = Mockery::mock(Builder::class);
-        $builder->shouldReceive('with')->with('gestor')->andReturnSelf();
-        $builder->shouldReceive('where')->with('unidade_id', $unidadeId)->andReturnSelf();
-        $builder->shouldReceive('has')->with('gestor')->andReturnSelf();
+test('findGestorByUnidade retorna integrante quando eloquent retorna model correto', function () {
+    $unidadeId = 'u-1';
 
-        $integrante = new UnidadeIntegrante();
-        $integrante->id = 'ui-1';
+    $builder = \Mockery::mock(Builder::class);
+    $builder->shouldReceive('with')->with('gestor')->andReturnSelf();
+    $builder->shouldReceive('where')->with('unidade_id', $unidadeId)->andReturnSelf();
+    $builder->shouldReceive('has')->with('gestor')->andReturnSelf();
 
-        $builder->shouldReceive('first')->andReturn($integrante);
+    $integrante = new UnidadeIntegrante();
+    $integrante->id = 'ui-1';
 
-        $model = Mockery::mock(UnidadeIntegrante::class);
-        $model->shouldReceive('newQuery')->andReturn($builder);
+    $builder->shouldReceive('first')->andReturn($integrante);
 
-        $repo = new EloquentUnidadeIntegranteReadRepository($model);
+    $model = \Mockery::mock(UnidadeIntegrante::class);
+    $model->shouldReceive('newQuery')->andReturn($builder);
 
-        $result = $repo->findGestorByUnidade($unidadeId);
+    $repo = new EloquentUnidadeIntegranteReadRepository($model);
 
-        $this->assertInstanceOf(UnidadeIntegrante::class, $result);
-        $this->assertSame('ui-1', $result->id);
-    }
+    $result = $repo->findGestorByUnidade($unidadeId);
 
-    public function testFindGestorByUnidadeRetornaNullQuandoEloquentRetornaOutroModel(): void
-    {
-        $unidadeId = 'u-2';
+    expect($result)->toBeInstanceOf(UnidadeIntegrante::class);
+    expect($result->id)->toBe('ui-1');
+});
 
-        $builder = Mockery::mock(Builder::class);
-        $builder->shouldReceive('with')->with('gestor')->andReturnSelf();
-        $builder->shouldReceive('where')->with('unidade_id', $unidadeId)->andReturnSelf();
-        $builder->shouldReceive('has')->with('gestor')->andReturnSelf();
-        $builder->shouldReceive('first')->andReturn(Mockery::mock(Model::class));
+test('findGestorByUnidade retorna null quando eloquent retorna outro model', function () {
+    $unidadeId = 'u-2';
 
-        $model = Mockery::mock(UnidadeIntegrante::class);
-        $model->shouldReceive('newQuery')->andReturn($builder);
+    $builder = \Mockery::mock(Builder::class);
+    $builder->shouldReceive('with')->with('gestor')->andReturnSelf();
+    $builder->shouldReceive('where')->with('unidade_id', $unidadeId)->andReturnSelf();
+    $builder->shouldReceive('has')->with('gestor')->andReturnSelf();
+    $builder->shouldReceive('first')->andReturn(\Mockery::mock(Model::class));
 
-        $repo = new EloquentUnidadeIntegranteReadRepository($model);
+    $model = \Mockery::mock(UnidadeIntegrante::class);
+    $model->shouldReceive('newQuery')->andReturn($builder);
 
-        $this->assertNull($repo->findGestorByUnidade($unidadeId));
-    }
+    $repo = new EloquentUnidadeIntegranteReadRepository($model);
 
-    public function testFindUnidadeIntegranteRetornaIntegranteQuandoEloquentRetornaModelCorreto(): void
-    {
-        $unidadeId = 'u-3';
-        $usuarioId = 'us-1';
+    expect($repo->findGestorByUnidade($unidadeId))->toBeNull();
+});
 
-        $builder = Mockery::mock(Builder::class);
-        $builder->shouldReceive('where')->with('usuario_id', $usuarioId)->andReturnSelf();
-        $builder->shouldReceive('where')->with('unidade_id', $unidadeId)->andReturnSelf();
+test('findUnidadeIntegrante retorna integrante quando eloquent retorna model correto', function () {
+    $unidadeId = 'u-3';
+    $usuarioId = 'us-1';
 
-        $integrante = new UnidadeIntegrante();
-        $integrante->id = 'ui-2';
+    $builder = \Mockery::mock(Builder::class);
+    $builder->shouldReceive('where')->with('usuario_id', $usuarioId)->andReturnSelf();
+    $builder->shouldReceive('where')->with('unidade_id', $unidadeId)->andReturnSelf();
 
-        $builder->shouldReceive('first')->andReturn($integrante);
+    $integrante = new UnidadeIntegrante();
+    $integrante->id = 'ui-2';
 
-        $model = Mockery::mock(UnidadeIntegrante::class);
-        $model->shouldReceive('newQuery')->andReturn($builder);
+    $builder->shouldReceive('first')->andReturn($integrante);
 
-        $repo = new EloquentUnidadeIntegranteReadRepository($model);
+    $model = \Mockery::mock(UnidadeIntegrante::class);
+    $model->shouldReceive('newQuery')->andReturn($builder);
 
-        $result = $repo->findUnidadeIntegrante($usuarioId, $unidadeId);
+    $repo = new EloquentUnidadeIntegranteReadRepository($model);
 
-        $this->assertInstanceOf(UnidadeIntegrante::class, $result);
-        $this->assertSame('ui-2', $result->id);
-    }
+    $result = $repo->findUnidadeIntegrante($usuarioId, $unidadeId);
 
-    public function testFindUnidadeIntegranteRetornaNullQuandoEloquentRetornaNull(): void
-    {
-        $unidadeId = 'u-4';
-        $usuarioId = 'us-2';
+    expect($result)->toBeInstanceOf(UnidadeIntegrante::class);
+    expect($result->id)->toBe('ui-2');
+});
 
-        $builder = Mockery::mock(Builder::class);
-        $builder->shouldReceive('where')->with('usuario_id', $usuarioId)->andReturnSelf();
-        $builder->shouldReceive('where')->with('unidade_id', $unidadeId)->andReturnSelf();
-        $builder->shouldReceive('first')->andReturn(null);
+test('findUnidadeIntegrante retorna null quando eloquent retorna null', function () {
+    $unidadeId = 'u-4';
+    $usuarioId = 'us-2';
 
-        $model = Mockery::mock(UnidadeIntegrante::class);
-        $model->shouldReceive('newQuery')->andReturn($builder);
+    $builder = \Mockery::mock(Builder::class);
+    $builder->shouldReceive('where')->with('usuario_id', $usuarioId)->andReturnSelf();
+    $builder->shouldReceive('where')->with('unidade_id', $unidadeId)->andReturnSelf();
+    $builder->shouldReceive('first')->andReturn(null);
 
-        $repo = new EloquentUnidadeIntegranteReadRepository($model);
+    $model = \Mockery::mock(UnidadeIntegrante::class);
+    $model->shouldReceive('newQuery')->andReturn($builder);
 
-        $this->assertNull($repo->findUnidadeIntegrante($usuarioId, $unidadeId));
-    }
-}
+    $repo = new EloquentUnidadeIntegranteReadRepository($model);
 
+    expect($repo->findUnidadeIntegrante($usuarioId, $unidadeId))->toBeNull();
+});

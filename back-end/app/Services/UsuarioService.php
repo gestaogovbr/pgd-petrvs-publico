@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Ramsey\Uuid\Uuid;
 use Throwable;
 
@@ -47,6 +48,7 @@ class UsuarioService extends ServiceBase
     const LOGIN_GOOGLE = "GOOGLE";
     const LOGIN_MICROSOFT = "AZURE";
     const LOGIN_FIREBASE = "FIREBASE";
+    private const USUARIO_EXTERNO = 1;
 
     protected UsuarioRepository $usuarioRepository;
     protected UnidadeRepository $unidadeRepository;
@@ -86,6 +88,44 @@ class UsuarioService extends ServiceBase
         $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
     }
 
+    private function parseUsuarioExterno(mixed $value): ?bool
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_int($value)) {
+            return $value === self::USUARIO_EXTERNO;
+        }
+
+        if (is_string($value)) {
+            $value = trim($value);
+            if ($value === '') {
+                return null;
+            }
+
+            if (is_numeric($value)) {
+                return ((int) $value) === self::USUARIO_EXTERNO;
+            }
+        }
+
+        return null;
+    }
+
+    private function removerEmailDaRequisicaoSeUsuarioInterno(array &$data, mixed $usuarioExterno): void
+    {
+        $isExterno = $this->parseUsuarioExterno($usuarioExterno);
+        if ($isExterno !== false) {
+            return;
+        }
+
+        unset($data['email']);
+    }
+
     /**
      * @param object{
      *   id: string,
@@ -112,7 +152,7 @@ class UsuarioService extends ServiceBase
 
         SiapeLog::info("Atualizando dados do servidor Matricula: " . $usuario->matriculasiape);
 
-        $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->emailfuncional, $usuario->matriculasiape, $usuario->id);
+        $this->integracaoService->liberarEmailDuplicadoDefinindoComoNulo($usuario->emailfuncional, $usuario->matriculasiape, $usuario->id);
         $modalidadePgdValida = $this->integracaoService->validarModalidadePgd($usuario->modalidade_pgd);
 
         $this->usuarioRepository->update($usuario->id, [
@@ -192,9 +232,27 @@ class UsuarioService extends ServiceBase
              throw new NotFoundException("Nenhum tipo de modalidade foi encontrado para o servidor {$matriculaNova}.");
         }
 
+        $email = $dados['emailfuncional'] ?? null;
+        $email = is_string($email) ? trim($email) : null;
+        $email = $email === '' ? null : $email;
+
+        if ($email !== null) {
+            $email = mb_strtolower($email, 'UTF-8');
+
+            $validator = Validator::make(['email' => $email], ['email' => 'email']);
+
+            if ($validator->fails()) {
+                SiapeLog::info('E-mail funcional inválido recebido do SIAPE; persistindo null.', [
+                    'matricula' => $matriculaNova,
+                    'email' => $email,
+                ]);
+                $email = null;
+            }
+        }
+
         return $this->usuarioRepository->newUsuario([
                     'id' => Uuid::uuid4(),
-                    'email' => UtilService::valueOrDefault($dados['emailfuncional']),
+                    'email' => $email,
                     'nome' => UtilService::valueOrDefault($dados['nome']),
                     'cpf' => UtilService::valueOrDefault($dados['cpf']),
                     'matricula' => UtilService::valueOrDefault($dados['matricula']),
@@ -528,6 +586,7 @@ class UsuarioService extends ServiceBase
         $data["with"] = [];
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
         $this->applyDefaultTipoModalidadeId($data);
+        $this->removerEmailDaRequisicaoSeUsuarioInterno($data, $data['usuario_externo'] ?? null);
 
         unset($data['pedagio']);
 
@@ -544,11 +603,32 @@ class UsuarioService extends ServiceBase
     {
         $data["with"] = [];
         $this->applyDefaultTipoModalidadeId($data);
+
+        if (array_key_exists('email', $data)) {
+            $usuario = !empty($data['id'] ?? null) ? $this->usuarioRepository->findById($data['id']) : null;
+            $this->removerEmailDaRequisicaoSeUsuarioInterno($data, $data['usuario_externo'] ?? ($usuario?->usuario_externo ?? null));
+        }
         unset($data['pedagio']);
         $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
         $this->validarPerfil($data);
         $this->validarColaborador($data);
         return $data;
+    }
+
+    public function proxyUpdateJson($data, $unidade)
+    {
+        $field = $data['field'] ?? null;
+        if ($field !== 'email') {
+            return $data;
+        }
+
+        $usuario = !empty($data['id'] ?? null) ? $this->usuarioRepository->findById($data['id']) : null;
+        $isExterno = $this->parseUsuarioExterno($usuario?->usuario_externo ?? null);
+        if ($isExterno !== false) {
+            return $data;
+        }
+
+        throw new ValidateException("Apenas usuários externos podem alterar o e-mail.", 422);
     }
 
     public function extraUpdate($entity, $unidade)
@@ -573,6 +653,7 @@ class UsuarioService extends ServiceBase
     public function validateStore(&$data, $unidade, $action)
     {
         if($action == ServiceBase::ACTION_EDIT){
+            $user = null;
             if(!empty($data['matricula']) && strlen($data['matricula']) > 50)
                 throw new ValidateException("O campo de matrícula deve ter no máximo 50 caracteres", 422);
             if (empty($data["integrantes"][0]))
@@ -582,8 +663,18 @@ class UsuarioService extends ServiceBase
                 $user = $this->usuarioRepository->findById($data["id"]);
                 $data['tipo_modalidade_id'] = $user?->tipo_modalidade_id;
             }
+
+            if (array_key_exists('email', $data)) {
+                $usuario = $user ?? (!empty($data["id"] ?? null) ? $this->usuarioRepository->findById($data["id"]) : null);
+                $this->removerEmailDaRequisicaoSeUsuarioInterno($data, $data['usuario_externo'] ?? ($usuario?->usuario_externo ?? null));
+            }
         }
         if ($action == ServiceBase::ACTION_INSERT) {
+            $isExterno = $this->parseUsuarioExterno($data['usuario_externo'] ?? null);
+            if ($isExterno === false) {
+                throw new ValidateException("Usuário interno deve ser criado/atualizado via integração SIAPE.", 422);
+            }
+
             if (empty($data["email"]))
                 throw new ValidateException("O campo de e-mail é obrigatório", 422);
             if (empty($data["cpf"]))
@@ -609,7 +700,7 @@ class UsuarioService extends ServiceBase
                     $data["data_nascimento"] = $alreadyHas->data_nascimento;
 
                     if (isset($this->integracaoService)) {
-                        $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($data['email'], $data['matricula'], $alreadyHas->id);
+                        $this->integracaoService->liberarEmailDuplicadoDefinindoComoNulo($data['email'], $data['matricula'], $alreadyHas->id);
                     }
 
                     $alreadyHas->deleted_at = null;
