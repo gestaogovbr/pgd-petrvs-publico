@@ -4,25 +4,15 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Documento\Validators;
 
-use App\Exceptions\ServerException;
-use App\Repository\PlanoTrabalhoRepository;
+use App\Exceptions\ValidateException;
+use App\Models\PlanoTrabalho;
 
 class PlanoTrabalhoDocumentoStoreValidator
 {
-    public function __construct(
-        private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
-    ) {}
-
-    public function validar(string $planoTrabalhoId): void
+    public function validar(PlanoTrabalho $plano): void
     {
-        $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
-
-        if ($plano === null) {
-            throw new ServerException('ValidatePlanoTrabalhoDocumento', 'Plano de Trabalho não encontrado.');
-        }
-
-        if (!$this->planoTrabalhoRepository->possuiEntregas($planoTrabalhoId)) {
-            throw new ServerException('ValidatePlanoTrabalhoDocumento', 'Plano de Trabalho deve possuir ao menos uma entrega para gerar o documento.');
+        if ($plano->entregas()->exists() === false) {
+            throw new ValidateException('Plano de Trabalho deve possuir ao menos uma entrega para gerar o documento.');
         }
     }
 }

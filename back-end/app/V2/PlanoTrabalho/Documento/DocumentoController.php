@@ -17,6 +17,20 @@ class DocumentoController extends Controller
         private readonly PlanoTrabalhoDocumentoService $service,
     ) {}
 
+    public function show(string $planoTrabalhoId): JsonResponse
+    {
+        try {
+            $data = $this->service->show($planoTrabalhoId);
+
+            return response()->json(['success' => true, 'data' => $data]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function store(string $planoTrabalhoId): JsonResponse
     {
         try {
@@ -24,7 +38,7 @@ class DocumentoController extends Controller
 
             return response()->json(['success' => true, 'data' => $documento], Response::HTTP_CREATED);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);

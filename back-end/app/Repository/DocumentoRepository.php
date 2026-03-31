@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Models\Documento;
 use App\Repository\Documento\Contracts\DocumentoReadRepositoryContract;
 use App\Repository\Documento\Contracts\DocumentoWriteRepositoryContract;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRDocumentoDTO;
 
 class DocumentoRepository
 {
@@ -21,9 +22,9 @@ class DocumentoRepository
         return $this->readRepository->findTcrByPlanoTrabalhoId($planoTrabalhoId);
     }
 
-    public function create(array $attributes): Documento
+    public function createFromTCR(TCRDocumentoDTO $dto): Documento
     {
         /** @var Documento */
-        return $this->writeRepository->create($attributes);
+        return $this->writeRepository->create($dto->toArray());
     }
 }
