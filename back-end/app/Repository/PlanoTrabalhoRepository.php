@@ -60,12 +60,6 @@ class PlanoTrabalhoRepository
         return $this->readRepository->findByIdComRelacoes($id);
     }
 
-    public function findByIdParaTcr(string $id): ?PlanoTrabalho
-    {
-        /** @var PlanoTrabalho|null */
-        return $this->readRepository->findByIdParaTcr($id);
-    }
-
     public function findById(string $id): ?PlanoTrabalho
     {
         /** @var PlanoTrabalho|null */
@@ -88,13 +82,19 @@ class PlanoTrabalhoRepository
         return $this->readRepository->possuiAssinatura($planoId);
     }
 
-    public function possuiEntregas(string $planoId): bool
-    {
-        return $this->readRepository->possuiEntregas($planoId);
-    }
-
     public function getStatuses(): array
     {
         return $this->readRepository->getStatuses();
+    }
+
+    public function loadRelacoesTCR(PlanoTrabalho $plano): PlanoTrabalho
+    {
+        return $plano->load([
+            'programa.templateTcr',
+            'tipoModalidade',
+            'unidade',
+            'usuario',
+            'entregas.entrega',
+        ]);
     }
 }

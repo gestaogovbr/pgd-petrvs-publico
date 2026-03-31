@@ -1,17 +1,15 @@
 <?php
 
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoStoreValidator;
-use App\Repository\PlanoTrabalhoRepository;
 use App\Models\PlanoTrabalho;
-use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use Tests\TestCase;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
-    $this->validator = new PlanoTrabalhoDocumentoStoreValidator($this->planoRepo);
+    $this->validator = new PlanoTrabalhoDocumentoStoreValidator();
 });
 
 afterEach(function () {
@@ -20,33 +18,26 @@ afterEach(function () {
 
 describe('PlanoTrabalhoDocumentoStoreValidator', function () {
 
-    test('lança exceção quando plano de trabalho não encontrado', function () {
-        $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn(null);
-        $this->planoRepo->shouldNotReceive('possuiEntregas');
-
-        $this->validator->validar('plano-1');
-    })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
-
     test('lança exceção quando plano não possui entregas', function () {
+        $relation = Mockery::mock(HasMany::class);
+        $relation->shouldReceive('exists')->andReturn(false);
+
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
-        $plano->id = 'plano-1';
+        $plano->shouldReceive('entregas')->andReturn($relation);
 
-        $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn($plano);
-        $this->planoRepo->shouldReceive('possuiEntregas')->with('plano-1')->andReturn(false);
-
-        $this->validator->validar('plano-1');
+        $this->validator->validar($plano);
     })->throws(ValidateException::class, 'Plano de Trabalho deve possuir ao menos uma entrega para gerar o documento.');
 
-    test('permite quando plano existe e possui entregas', function () {
+    test('permite quando plano possui entregas', function () {
+        $relation = Mockery::mock(HasMany::class);
+        $relation->shouldReceive('exists')->andReturn(true);
+
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
-        $plano->id = 'plano-1';
+        $plano->shouldReceive('entregas')->andReturn($relation);
 
-        $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn($plano);
-        $this->planoRepo->shouldReceive('possuiEntregas')->with('plano-1')->andReturn(true);
-
-        $this->validator->validar('plano-1');
+        $this->validator->validar($plano);
 
         expect(true)->toBeTrue();
     });

@@ -192,32 +192,11 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->find($id);
     }
 
-    public function findByIdParaTcr(string $id): ?Model
-    {
-        return $this->query()
-            ->with([
-                'usuario',
-                'unidade',
-                'programa.templateTcr',
-                'tipoModalidade',
-                'entregas.entrega',
-            ])
-            ->find($id);
-    }
-
     public function possuiAssinatura(string $planoId): bool
     {
         return $this->query()
             ->where('id', $planoId)
             ->whereHas('documentos.assinaturas')
-            ->exists();
-    }
-
-    public function possuiEntregas(string $planoId): bool
-    {
-        return $this->query()
-            ->where('id', $planoId)
-            ->whereHas('entregas')
             ->exists();
     }
 
