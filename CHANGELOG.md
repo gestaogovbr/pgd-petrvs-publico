@@ -1,3 +1,6 @@
+## 2.9.20 30/03/2026
+### Corrigido
+- Correção de modalidades para usuários não participantes no PGD no Relatório de Agentes.
 ## 2.9.19 23/03/2026
 ### Corrigido
 - A atualização de chefias não cria mais vínculos repetidos para o mesmo servidor.
