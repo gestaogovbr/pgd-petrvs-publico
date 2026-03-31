@@ -126,3 +126,34 @@ describe('PlanoTrabalhoDocumentoService::store', function () {
         $this->service->store('plano-1');
     });
 });
+
+describe('PlanoTrabalhoDocumentoService::show', function () {
+
+    test('retorna numero, titulo e conteudo do TCR mais recente', function () {
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->numero = 42;
+        $documento->titulo = 'Termo de Ciência e Responsabilidade';
+        $documento->conteudo = '<html>Conteúdo</html>';
+
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')
+            ->with('plano-1')
+            ->andReturn($documento);
+
+        $result = $this->service->show('plano-1');
+
+        expect($result)->toBe([
+            'numero' => 42,
+            'titulo' => 'Termo de Ciência e Responsabilidade',
+            'conteudo' => '<html>Conteúdo</html>',
+        ]);
+    });
+
+    test('lança exceção quando plano não possui documento TCR', function () {
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')
+            ->with('plano-1')
+            ->andReturn(null);
+
+        $this->service->show('plano-1');
+    })->throws(ServerException::class, 'Documento não encontrado para este Plano de Trabalho.');
+});

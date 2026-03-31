@@ -25,6 +25,13 @@ beforeEach(function () {
         )->name('__tests.v2.plano-trabalho.documento.store');
     }
 
+    if (!Route::has('__tests.v2.plano-trabalho.documento.show')) {
+        Route::middleware(['api'])->get(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/documento',
+            [DocumentoController::class, 'show']
+        )->name('__tests.v2.plano-trabalho.documento.show');
+    }
+
     $perfil = Perfil::factory()->create(['nivel' => 3]);
     $tipoModalidade = TipoModalidade::factory()->create();
     $this->unidade = Unidade::factory()->create();
@@ -192,5 +199,46 @@ describe('POST /api/v2/plano-trabalho/:id/documento (happy path)', function () {
         $second = postDocumento($this);
 
         expect($second->json('data.id'))->toBe($first->json('data.id'));
+    });
+});
+
+// ── GET show ────────────────────────────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho/:id/documento', function () {
+
+    test('retorna 404 quando plano não possui documento TCR', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento")
+            ->assertStatus(404);
+    });
+
+    test('retorna numero, titulo e conteudo do TCR', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+
+        $response = $this->getJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento");
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $data = $response->json('data');
+
+        expect($data)->toHaveKeys(['numero', 'titulo', 'conteudo']);
+        expect($data['titulo'])->toBe('Termo de Ciência e Responsabilidade');
+        expect($data['conteudo'])->toContain($this->usuario->nome);
+        expect($data['numero'])->toBeInt();
+    });
+
+    test('retorna apenas os campos necessários para o front', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+
+        $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento")
+            ->json('data');
+
+        expect(array_keys($data))->toBe(['numero', 'titulo', 'conteudo']);
     });
 });

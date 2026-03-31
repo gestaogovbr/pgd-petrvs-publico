@@ -624,6 +624,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::delete('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'destroy']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/documento', [DocumentoV2::class, 'store']);
+    Route::get('plano-trabalho/{planoTrabalhoId}/documento', [DocumentoV2::class, 'show']);
 
     Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
 

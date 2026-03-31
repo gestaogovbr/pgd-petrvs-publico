@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Documento;
 
+use App\Exceptions\ServerException;
 use App\Models\Documento;
 use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
@@ -22,6 +23,21 @@ class PlanoTrabalhoDocumentoService
         private readonly TCRDatasourceBuilder $datasourceBuilder,
         private readonly TCRTemplateRenderer $renderer,
     ) {}
+
+    public function show(string $planoTrabalhoId): array
+    {
+        $documento = $this->documentoRepository->findTcrByPlanoTrabalhoId($planoTrabalhoId);
+
+        if ($documento === null) {
+            throw new ServerException('ValidatePlanoTrabalhoDocumento', 'Documento não encontrado para este Plano de Trabalho.');
+        }
+
+        return [
+            'numero' => $documento->numero,
+            'titulo' => $documento->titulo,
+            'conteudo' => $documento->conteudo,
+        ];
+    }
 
     public function store(string $planoTrabalhoId): Documento
     {
