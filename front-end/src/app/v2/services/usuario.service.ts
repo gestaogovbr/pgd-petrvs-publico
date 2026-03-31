@@ -19,7 +19,7 @@ export type UsuarioSearchItem = {
 export class UsuarioService {
   private readonly http = inject(HttpClient);
   private readonly gb = inject(GlobalsService);
-   private readonly base = 'api/v2/usuario';
+  private readonly base = 'api/v2/usuario';
 
   searchByNomeMatricula(term: string): Observable<UsuarioSearchItem[]> {
     return this.http
