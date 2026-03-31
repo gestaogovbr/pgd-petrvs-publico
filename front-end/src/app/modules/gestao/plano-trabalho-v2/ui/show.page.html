@@ -1,0 +1,123 @@
+<div class="container-fluid py-3 govbr-v2">
+  <app-breadcrumb />
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+      <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+    </div>
+  } @else if (error()) {
+    <div class="br-message danger">
+      <div class="icon"><i class="fas fa-times-circle fa-lg" aria-label="erro"></i></div>
+      <div class="message-body">{{ error() }}</div>
+    </div>
+  } @else {
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">Plano de Trabalho #{{ planoTrabalho()?.numero }}</h2>
+      <div class="d-flex gap-2">
+        <br-button (click)="voltar()">Voltar</br-button>
+        <br-button emphasis="primary" (click)="editarPlano()">
+          <i class="fas fa-edit mr-1"></i>Editar
+        </br-button>
+      </div>
+    </div>
+
+    <!-- Informações gerais -->
+    <div class="br-card mb-4">
+      <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Informações gerais</div>
+      <div class="card-content">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <div class="br-input">
+              <label>Agente Público</label>
+              <input type="text" readonly [value]="planoTrabalho()?.usuario?.nome || '-'" />
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="br-input">
+              <label>Unidade</label>
+              <input type="text" readonly [value]="planoTrabalho()?.unidade?.sigla || '-'" />
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <div class="br-input">
+              <label>Regramento de Instituição PGD</label>
+              <input type="text" readonly [value]="planoTrabalho()?.programa?.nome || '-'" />
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-3 mb-3">
+            <div class="br-input">
+              <label>Início</label>
+              <input type="text" readonly [value]="planoTrabalho()?.data_inicio | date:'dd/MM/yyyy'" />
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="br-input">
+              <label>Final</label>
+              <input type="text" readonly [value]="planoTrabalho()?.data_fim | date:'dd/MM/yyyy'" />
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="br-input">
+              <label>Modalidade</label>
+              <input type="text" readonly [value]="planoTrabalho()?.tipo_modalidade?.nome || '-'" />
+            </div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <div class="br-input">
+              <label>Status</label>
+              <input type="text" readonly [value]="statusLabel(planoTrabalho()?.status)" />
+            </div>
+          </div>
+        </div>
+        @if (planoTrabalho()?.justificativa) {
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="br-textarea">
+                <label>Justificativa</label>
+                <textarea readonly>{{ planoTrabalho()?.justificativa }}</textarea>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Planejamento -->
+    <div class="br-card mb-4">
+      <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Planejamento</div>
+      <div class="card-content">
+        <div class="br-table">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Plano de Entrega</th>
+                  <th scope="col">Entrega</th>
+                  <th scope="col">% CHD</th>
+                  <th scope="col">Trabalho Planejado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (e of planoTrabalho()?.entregas; track e.id) {
+                  <tr>
+                    <td>{{ getPlanoEntregaInfo(e).plano }}</td>
+                    <td>{{ getPlanoEntregaInfo(e).entrega }}</td>
+                    <td>{{ e.forca_trabalho ? e.forca_trabalho + '%' : '-' }}</td>
+                    <td>{{ e.descricao }}</td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="4" class="text-center p-3">Nenhuma entrega cadastrada no planejamento</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

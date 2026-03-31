@@ -9,12 +9,13 @@ import { Subscription } from 'rxjs';
 import { PlanoTrabalho } from '../domain/types';
 import { PlanoTrabalhoApiClient } from '../infra/api-client';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
+import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-plano-trabalho-v2-list-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
   templateUrl: './list.page.html'
 })
 export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
@@ -219,7 +220,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   }
 
   detalhesDoPlano(p: PlanoTrabalho) {
-    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', p.id] });
+    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'consultar', p.id] });
   }
 
   editarPlano(p: PlanoTrabalho) {
@@ -227,7 +228,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   }
 
   assinarPlano(p: PlanoTrabalho) {
-    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', p.id] });
+    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'tcr', p.id] });
   }
 
   /* TODO: Mover para facade e usar action específica */

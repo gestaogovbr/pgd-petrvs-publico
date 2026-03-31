@@ -15,11 +15,10 @@ import { UsuarioService, UsuarioSearchItem } from 'src/app/v2/services/usuario.s
 import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
 import { PlanoEntregaApiService, PlanoEntregaItem } from 'src/app/v2/services/plano-entrega-api.service';
-import { AuthService } from 'src/app/services/auth.service';
-import { HttpClient } from '@angular/common/http';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
+import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -27,7 +26,7 @@ export interface SelectOption { value: string; label: string; selected?: boolean
   selector: 'app-plano-trabalho-v2-edit-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
   templateUrl: './edit.page.html'
 })
 export class PlanoTrabalhoV2EditPage implements OnInit {
@@ -40,10 +39,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   private readonly planoEntregaApi = inject(PlanoEntregaApiService);
   private readonly unidadeService = inject(UnidadeService);
   private readonly programaService = inject(ProgramaService);
-  private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
-  private readonly http = inject(HttpClient);
   public readonly gb = inject(GlobalsService);
   private readonly injector = inject(Injector);
 

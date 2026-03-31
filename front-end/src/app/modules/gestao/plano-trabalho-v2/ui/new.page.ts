@@ -15,12 +15,13 @@ import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.servi
 import { AuthService } from 'src/app/services/auth.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { SelectOption } from './edit.page';
+import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-plano-trabalho-v2-new-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
   templateUrl: './new.page.html'
 })
 export class PlanoTrabalhoV2NewPage implements OnInit {
