@@ -198,32 +198,39 @@ pipeline {
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs-develop'
                 DOCKER_HUB_TAG = 'dsv'
-                SSH_USER = 'root'
-                SSH_HOST = '200.152.47.207'
-                SSH_PORT = '7223'
                 DEPLOY_PATH = './'
             }
             steps {
                 withCredentials([
-                    string(credentialsId: 'SSH_PASSWORD_DSV', variable: 'SSH_PASSWORD'),
-                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
+                    string(credentialsId: 'SSH_USER', variable: 'SSH_USER'),
+                    string(credentialsId: 'SSH_HOST', variable: 'SSH_HOST'),
+                    string(credentialsId: 'SSH_DSV_PORT', variable: 'SSH_PORT'),
+                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
+                    file(credentialsId: 'SSH_DSV_KNOWN_HOSTS', variable: 'KNOWN_HOSTS_FILE')
                 ]) {
-                    sh '''
-                        echo "Iniciando a construção e implantação do DSV..."
-                        echo "Construindo a imagem Docker..."
-                        docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/deploy/Dockerfile .
-                        echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-                        echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-                        docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
-                        echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-                        docker run --rm \
-                            -e SSHPASS="$SSH_PASSWORD" \
-                            -e SSH_PORT="$SSH_PORT" \
-                            -e SSH_TARGET="$SSH_USER@$SSH_HOST" \
-                            alpine:3.20 \
-                            sh -lc 'apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_TARGET" "$1"' -- 'cd /home/marcocoelho && bash ./install-pgd.sh'
-                        echo "Implantação concluída com sucesso em DSV."
-                    '''
+                    sshagent(credentials: ['SSH_KEY_DSV']) {
+                        sh '''
+                            set -eu
+
+                            echo "Iniciando a construção e implantação do DSV..."
+                            echo "Construindo a imagem Docker..."
+                            docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
+
+                            echo "Construção da imagem concluída. Enviando para o Docker Hub..."
+                            echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+                            docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG"
+
+                            echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
+                            ssh -T \
+                                -o StrictHostKeyChecking=yes \
+                                -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
+                                -p "$SSH_PORT" \
+                                "$SSH_USER@$SSH_HOST" \
+                                'cd /home/marcocoelho && bash ./install-pgd.sh'
+
+                            echo "Implantação concluída com sucesso em DSV."
+                        '''
+                    }
                 }
             }
         }
@@ -235,32 +242,42 @@ pipeline {
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs-develop'
                 DOCKER_HUB_TAG = 'hmg'
-                SSH_USER = 'root'
-                SSH_HOST = '200.152.47.207'
-                SSH_PORT = '7222'
                 DEPLOY_PATH = './'
             }
             steps {
                 withCredentials([
+                    string(credentialsId: 'SSH_USER', variable: 'SSH_USER'),
+                    string(credentialsId: 'SSH_HOST', variable: 'SSH_HOST'),
+                    string(credentialsId: 'SSH_HMG_PORT', variable: 'SSH_PORT'),
                     string(credentialsId: 'SSH_PASSWORD_HMG', variable: 'SSH_PASSWORD'),
-                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
+                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
+                    file(credentialsId: 'SSH_HMG_KNOWN_HOSTS', variable: 'KNOWN_HOSTS_FILE')
                 ]) {
-                    sh '''
+                        sshagent(credentials: ['SSH_KEY_DSV']) {
+                            sh '''
+                        set -eu
+
                         echo "Iniciando a construção e implantação do HMG..."
+
                         echo "Construindo a imagem Docker..."
-                        docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/deploy/Dockerfile .
+                        docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
+
                         echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-                        echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-                        docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
+                        echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG"
+
                         echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-                        docker run --rm \
-                            -e SSHPASS="$SSH_PASSWORD" \
-                            -e SSH_PORT="$SSH_PORT" \
-                            -e SSH_TARGET="$SSH_USER@$SSH_HOST" \
-                            alpine:3.20 \
-                            sh -lc 'apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_TARGET" "$1"' -- 'sh install-pgd.sh < /dev/null'
+
+                        ssh -T \
+                            -o StrictHostKeyChecking=yes \
+                            -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
+                            -p "$SSH_PORT" \
+                            "$SSH_USER@$SSH_HOST" \
+                            'cd /home/marcocoelho && bash ./install-pgd.sh'
+
                         echo "Implantação concluída com sucesso em HMG."
                     '''
+                        }
                 }
             }
         }
