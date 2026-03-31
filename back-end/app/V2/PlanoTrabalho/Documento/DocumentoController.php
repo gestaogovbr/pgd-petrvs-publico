@@ -44,4 +44,18 @@ class DocumentoController extends Controller
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function assinar(string $planoTrabalhoId): JsonResponse
+    {
+        try {
+            $assinatura = $this->service->assinar($planoTrabalhoId);
+
+            return response()->json(['success' => true, 'data' => $assinatura], Response::HTTP_CREATED);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

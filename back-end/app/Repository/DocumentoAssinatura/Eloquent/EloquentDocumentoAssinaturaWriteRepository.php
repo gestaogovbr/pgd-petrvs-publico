@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Repository\DocumentoAssinatura\Eloquent;
+
+use App\Models\DocumentoAssinatura;
+use App\Repository\Eloquent\AbstractEloquentWriteRepository;
+use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
+
+/**
+ * @extends AbstractEloquentWriteRepository<DocumentoAssinatura>
+ */
+class EloquentDocumentoAssinaturaWriteRepository extends AbstractEloquentWriteRepository implements DocumentoAssinaturaWriteRepositoryContract
+{
+    public function __construct(DocumentoAssinatura $model)
+    {
+        $this->model = $model;
+    }
+}
