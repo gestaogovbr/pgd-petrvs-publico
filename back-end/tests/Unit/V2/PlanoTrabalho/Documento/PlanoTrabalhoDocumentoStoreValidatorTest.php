@@ -3,7 +3,8 @@
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoStoreValidator;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Models\PlanoTrabalho;
-use App\Exceptions\ServerException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\ValidateException;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -24,7 +25,7 @@ describe('PlanoTrabalhoDocumentoStoreValidator', function () {
         $this->planoRepo->shouldNotReceive('possuiEntregas');
 
         $this->validator->validar('plano-1');
-    })->throws(ServerException::class, 'Plano de Trabalho não encontrado.');
+    })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
 
     test('lança exceção quando plano não possui entregas', function () {
         /** @var PlanoTrabalho $plano */
@@ -35,7 +36,7 @@ describe('PlanoTrabalhoDocumentoStoreValidator', function () {
         $this->planoRepo->shouldReceive('possuiEntregas')->with('plano-1')->andReturn(false);
 
         $this->validator->validar('plano-1');
-    })->throws(ServerException::class, 'Plano de Trabalho deve possuir ao menos uma entrega para gerar o documento.');
+    })->throws(ValidateException::class, 'Plano de Trabalho deve possuir ao menos uma entrega para gerar o documento.');
 
     test('permite quando plano existe e possui entregas', function () {
         /** @var PlanoTrabalho $plano */

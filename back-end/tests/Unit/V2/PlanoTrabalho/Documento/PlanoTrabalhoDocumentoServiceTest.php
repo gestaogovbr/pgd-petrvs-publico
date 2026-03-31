@@ -9,7 +9,7 @@ use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Models\Documento;
 use App\Models\PlanoTrabalho;
-use App\Exceptions\ServerException;
+use App\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\Session;
 use Tests\TestCase;
 
@@ -90,13 +90,13 @@ describe('PlanoTrabalhoDocumentoService::store', function () {
 
     test('não persiste quando validação lança exceção', function () {
         $this->storeValidator->shouldReceive('validar')
-            ->andThrow(new ServerException('ValidatePlanoTrabalhoDocumento', 'Plano de Trabalho não encontrado.'));
+            ->andThrow(new NotFoundException('Plano de Trabalho não encontrado.'));
 
         $this->documentoRepo->shouldNotReceive('findTcrByPlanoTrabalhoId');
         $this->documentoRepo->shouldNotReceive('createFromTCR');
 
         $this->service->store('plano-inexistente');
-    })->throws(ServerException::class, 'Plano de Trabalho não encontrado.');
+    })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
 
     test('atualiza documento_id no plano após criação', function () {
         $this->storeValidator->shouldReceive('validar')->once();
@@ -155,5 +155,5 @@ describe('PlanoTrabalhoDocumentoService::show', function () {
             ->andReturn(null);
 
         $this->service->show('plano-1');
-    })->throws(ServerException::class, 'Documento não encontrado para este Plano de Trabalho.');
+    })->throws(NotFoundException::class, 'Documento não encontrado para este Plano de Trabalho.');
 });

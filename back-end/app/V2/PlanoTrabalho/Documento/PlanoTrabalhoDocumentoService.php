@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Documento;
 
-use App\Exceptions\ServerException;
+use App\Exceptions\NotFoundException;
 use App\Models\Documento;
 use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
@@ -29,7 +29,7 @@ class PlanoTrabalhoDocumentoService
         $documento = $this->documentoRepository->findTcrByPlanoTrabalhoId($planoTrabalhoId);
 
         if ($documento === null) {
-            throw new ServerException('ValidatePlanoTrabalhoDocumento', 'Documento não encontrado para este Plano de Trabalho.');
+            throw new NotFoundException('Documento não encontrado para este Plano de Trabalho.');
         }
 
         return [

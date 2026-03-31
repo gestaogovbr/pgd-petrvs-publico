@@ -89,14 +89,14 @@ function postDocumento($context, ?string $planoId = null)
 
 describe('POST /api/v2/plano-trabalho/:id/documento (guard)', function () {
 
-    test('retorna 400 quando plano não encontrado', function () {
+    test('retorna 404 quando plano não encontrado', function () {
         $this->actingAs($this->usuario, 'web');
 
         postDocumento($this, fake()->uuid())
-            ->assertStatus(400);
+            ->assertStatus(404);
     });
 
-    test('retorna 400 quando plano não possui entregas', function () {
+    test('retorna 422 quando plano não possui entregas', function () {
         $this->actingAs($this->usuario, 'web');
 
         $planoSemEntrega = PlanoTrabalho::factory()->create([
@@ -107,7 +107,7 @@ describe('POST /api/v2/plano-trabalho/:id/documento (guard)', function () {
         ]);
 
         postDocumento($this, $planoSemEntrega->id)
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 });
 
