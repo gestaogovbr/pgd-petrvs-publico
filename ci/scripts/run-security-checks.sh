@@ -47,6 +47,7 @@ run_secrets_scan() {
   gitleaks detect \
     --source=. \
     --no-git \
+    --config="${ROOT_DIR}/.gitleaks.toml" \
     --report-format json \
     --report-path "${REPORTS_DIR}/gitleaks-report.json" \
     --verbose

@@ -1,0 +1,12 @@
+title = "Gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Arquivos e caminhos ignorados na esteira Jenkins"
+paths = [
+  '''back-end/public/.*''',
+  '''.*\.map$''',
+  '''phpstan\.phar$'''
+]
