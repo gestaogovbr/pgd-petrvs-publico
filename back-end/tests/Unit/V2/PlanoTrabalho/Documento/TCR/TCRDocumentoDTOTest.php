@@ -1,6 +1,6 @@
 <?php
 
-use App\V2\PlanoTrabalho\Documento\TCR\TCRDocumentoDTO;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\TCRDocumentoDTO;
 use Tests\TestCase;
 
 uses(TestCase::class);

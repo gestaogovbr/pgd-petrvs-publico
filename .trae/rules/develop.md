@@ -6,16 +6,10 @@
 - metodos grandes devem ser evitados, utilize metodos pequenos.
 - Evite comentários desnecessários, isso não inclui PhpDoc, TODO, @var e comentários relevantes.
 - remover importes não usados
-- Substituir arrays soltos por DTOs tipados com `fromArray()` e `toArray()`
-- DTOs de uma feature ficam em `V2/<Feature>/DTOs/`, próximos do Service que os usa
-- DTOs que recebem dados do request devem ter `fromRequest()` para achatar a estrutura aninhada, delegando ao `fromArray()` para os valores já planos
-- Sufixos de classe em inglês: `Validator` para validações, `DTO` para objetos de transferência
-- Validações de request e de negócio ficam na mesma pasta `Validators/` (ex: `RequestValidator` e `StoreValidator`)
-- Classes de validação de negócio recebem repositories via construtor, NÃO chamam Model::find() diretamente
-- Service é orquestrador: DTO → Validação → Repository. Não contém regras de negócio nem queries
-- Controller não manipula dados (defaults, achatamento) — passa o array validado direto ao service, que delega ao DTO
+- Prefer nomes positivos para métodos booleanos (ex: `isPlanoCriadoParaSi()` em vez de `isPlanoCriadoParaOutraPessoa()`)
+- Early returns são válidos quando evitam chamadas desnecessárias ao banco
+- Siglas devem ser escritas em maiúsculo nos nomes de classe (ex: `TCRDocumentoDTO`, não `TcrDocumentoDTO`)
+- Evitar overengineering: Chain of Responsibility com steps de 2 linhas é overhead — manter inline quando o fluxo é linear
+- Evitar criar service dedicado para uma única action — manter no service do módulo quando a complexidade não justifica
 - Ao quebrar dependência com ServiceBase/V1, remover completamente a referência — não manter delegação parcial
-- Prefer nomes positivos para métodos booleanos (ex: `isPlanoCriadoParaSi()` em vez de `isPlanoCriadoParaOutraPessoa()`), evitando dupla negação no uso
-- DTOs podem ter métodos de consulta derivados dos seus campos (ex: `isPlanoCriadoParaSi()`) para melhorar legibilidade nas validações
-- Early returns são válidos quando evitam chamadas desnecessárias ao banco, mas devem ser justificados pela otimização e não por perfil específico
 - Front-end: não rodar build a menos que solicitado explicitamente

@@ -5,10 +5,10 @@ use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAuthorizatio
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoStoreValidator;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAssinarValidator;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoCancelarAssinaturaValidator;
-use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaDTO;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\TCRAssinaturaDTO;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaPolicy;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRDatasourceBuilder;
-use App\V2\PlanoTrabalho\Documento\TCR\TCRDocumentoDTO;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\TCRDocumentoDTO;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRTemplateRenderer;
 use App\Repository\DocumentoRepository;
 use App\Repository\DocumentoAssinaturaRepository;

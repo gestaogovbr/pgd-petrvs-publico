@@ -1,6 +1,6 @@
 <?php
 
-use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaDTO;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\TCRAssinaturaDTO;
 use App\Models\Documento;
 use Tests\TestCase;
 

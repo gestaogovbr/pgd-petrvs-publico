@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\V2\PlanoTrabalho\Documento\TCR;
+namespace App\V2\PlanoTrabalho\Documento\TCR\DTOs;
 
 class TCRDocumentoDTO
 {

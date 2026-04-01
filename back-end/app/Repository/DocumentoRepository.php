@@ -7,7 +7,7 @@ namespace App\Repository;
 use App\Models\Documento;
 use App\Repository\Documento\Contracts\DocumentoReadRepositoryContract;
 use App\Repository\Documento\Contracts\DocumentoWriteRepositoryContract;
-use App\V2\PlanoTrabalho\Documento\TCR\TCRDocumentoDTO;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\TCRDocumentoDTO;
 
 class DocumentoRepository
 {
