@@ -11,11 +11,11 @@ class UnidadeRequestValidator
     public static function buscarPorNomeOuCodigo(Request $request): array
     {
         return $request->validate([
-            'termo' => ['nullable', 'string', 'min:3'],
+            'nome_codigo' => ['nullable', 'string', 'min:3'],
             'hierarquia' => ['nullable', 'boolean'],
             'todos' => ['nullable', 'boolean'],
         ], [
-            'termo.min' => 'O termo deve ter ao menos 3 caracteres.',
+            'nome_codigo.min' => 'O termo de busca deve ter ao menos 3 caracteres.',
         ]);
     }
 }

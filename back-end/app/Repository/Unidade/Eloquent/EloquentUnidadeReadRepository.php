@@ -154,9 +154,11 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         }
 
         if ($dto->termo) {
-            $query->where(function ($q) use ($dto) {
-                $q->where('nome', 'like', "%{$dto->termo}%")
-                  ->orWhere('codigo', 'like', "%{$dto->termo}%");
+            $termoLower = mb_strtolower($dto->termo);
+            $query->where(function ($q) use ($termoLower) {
+                $q->whereRaw('LOWER(nome) like ?', ["%{$termoLower}%"])
+                  ->orWhereRaw('LOWER(codigo) like ?', ["%{$termoLower}%"])
+                  ->orWhereRaw('LOWER(sigla) like ?', ["%{$termoLower}%"]);
             });
         }
 

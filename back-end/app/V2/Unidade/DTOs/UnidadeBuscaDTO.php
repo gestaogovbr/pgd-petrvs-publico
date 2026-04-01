@@ -15,7 +15,7 @@ class UnidadeBuscaDTO
     public static function fromArray(array $data): self
     {
         return new self(
-            termo: $data['termo'] ?? null,
+            termo: $data['nome_codigo'] ?? null,
             hierarquia: (bool) ($data['hierarquia'] ?? true),
             todos: (bool) ($data['todos'] ?? false),
         );
