@@ -10,4 +10,6 @@ interface DocumentoAssinaturaWriteRepositoryContract
 {
     /** @return \App\Models\DocumentoAssinatura */
     public function create(array $attributes): Model;
+
+    public function deleteByDocumentoAndUsuario(string $documentoId, string $usuarioId): bool;
 }

@@ -4,6 +4,7 @@ use App\V2\PlanoTrabalho\Documento\PlanoTrabalhoDocumentoService;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAuthorizationValidator;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoStoreValidator;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAssinarValidator;
+use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoCancelarAssinaturaValidator;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaDTO;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRDatasourceBuilder;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRDocumentoDTO;
@@ -32,6 +33,7 @@ beforeEach(function () {
     $this->authValidator = Mockery::mock(PlanoTrabalhoDocumentoAuthorizationValidator::class);
     $this->storeValidator = Mockery::mock(PlanoTrabalhoDocumentoStoreValidator::class);
     $this->assinarValidator = Mockery::mock(PlanoTrabalhoDocumentoAssinarValidator::class);
+    $this->cancelarAssinaturaValidator = Mockery::mock(PlanoTrabalhoDocumentoCancelarAssinaturaValidator::class);
     $this->datasourceBuilder = Mockery::mock(TCRDatasourceBuilder::class);
     $this->renderer = Mockery::mock(TCRTemplateRenderer::class);
     $this->statusService = Mockery::mock(StatusService::class);
@@ -43,6 +45,7 @@ beforeEach(function () {
         $this->authValidator,
         $this->storeValidator,
         $this->assinarValidator,
+        $this->cancelarAssinaturaValidator,
         $this->datasourceBuilder,
         $this->renderer,
         $this->statusService,
@@ -200,5 +203,54 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
         $this->assinaturaRepo->shouldNotReceive('createFromTCR');
 
         $this->service->assinar('plano-1');
+    })->throws(ForbiddenException::class);
+});
+
+describe('PlanoTrabalhoDocumentoService::cancelarAssinatura', function () {
+
+    test('remove assinatura e reverte status para INCLUIDO quando não restam assinaturas', function () {
+        $this->authValidator->shouldReceive('validar')->once()->andReturn($this->plano);
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+
+        $this->cancelarAssinaturaValidator->shouldReceive('validar')->once()->andReturn($documento);
+        $this->assinaturaRepo->shouldReceive('deleteAssinaturaUsuario')->once()->with('doc-1', 'user-1')->andReturn(true);
+        $this->assinaturaRepo->shouldReceive('existeAlgumaAssinatura')->with('doc-1')->andReturn(false);
+
+        $this->statusService->shouldReceive('atualizaStatus')
+            ->once()
+            ->with($this->plano, StatusEnum::INCLUIDO->value, Mockery::type('string'));
+
+        $this->service->cancelarAssinatura('plano-1');
+    });
+
+    test('mantém AGUARDANDO_ASSINATURA quando ainda restam assinaturas de outros', function () {
+        $this->authValidator->shouldReceive('validar')->once()->andReturn($this->plano);
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+
+        $this->cancelarAssinaturaValidator->shouldReceive('validar')->once()->andReturn($documento);
+        $this->assinaturaRepo->shouldReceive('deleteAssinaturaUsuario')->once()->andReturn(true);
+        $this->assinaturaRepo->shouldReceive('existeAlgumaAssinatura')->with('doc-1')->andReturn(true);
+
+        $this->statusService->shouldReceive('atualizaStatus')
+            ->once()
+            ->with($this->plano, StatusEnum::AGUARDANDO_ASSINATURA->value, Mockery::type('string'));
+
+        $this->service->cancelarAssinatura('plano-1');
+    });
+
+    test('não remove assinatura quando autorização falha', function () {
+        $this->authValidator->shouldReceive('validar')
+            ->andThrow(new ForbiddenException('Sem permissão.'));
+
+        $this->cancelarAssinaturaValidator->shouldNotReceive('validar');
+        $this->assinaturaRepo->shouldNotReceive('deleteAssinaturaUsuario');
+
+        $this->service->cancelarAssinatura('plano-1');
     })->throws(ForbiddenException::class);
 });

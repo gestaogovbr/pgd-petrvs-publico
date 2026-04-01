@@ -41,4 +41,11 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             })
             ->exists();
     }
+
+    public function existeAlgumaAssinatura(string $documentoId): bool
+    {
+        return $this->query()
+            ->where('documento_id', $documentoId)
+            ->exists();
+    }
 }

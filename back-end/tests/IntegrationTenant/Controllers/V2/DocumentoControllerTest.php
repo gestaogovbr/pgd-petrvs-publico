@@ -39,6 +39,13 @@ beforeEach(function () {
         )->name('__tests.v2.plano-trabalho.documento.assinar');
     }
 
+    if (!Route::has('__tests.v2.plano-trabalho.documento.cancelar-assinatura')) {
+        Route::middleware(['api'])->delete(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/documento/assinatura-tcr',
+            [DocumentoController::class, 'cancelarAssinatura']
+        )->name('__tests.v2.plano-trabalho.documento.cancelar-assinatura');
+    }
+
     $perfil = Perfil::factory()->create(['nivel' => 3]);
     $tipoModalidade = TipoModalidade::factory()->create();
     $this->unidade = Unidade::factory()->create();
@@ -336,5 +343,60 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (happy path)'
 
         expect($data['assinatura'])->toBeString()->not->toBeEmpty();
         expect($data['usuario_id'])->toBe($this->usuario->id);
+    });
+});
+
+function deleteAssinatura($context, ?string $planoId = null)
+{
+    $id = $planoId ?? $context->plano->id;
+    return $context->deleteJson("/api/__tests/v2/plano-trabalho/{$id}/documento/assinatura-tcr");
+}
+
+// ── DELETE assinatura-tcr: guard ────────────────────────────────────
+
+describe('DELETE /api/v2/plano-trabalho/:id/documento/assinatura-tcr (guard)', function () {
+
+    test('retorna 422 quando plano não está AGUARDANDO_ASSINATURA', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+
+        deleteAssinatura($this)
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando usuário não assinou', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+
+        $this->plano->status = 'AGUARDANDO_ASSINATURA';
+        $this->plano->save();
+
+        deleteAssinatura($this)
+            ->assertStatus(422);
+    });
+});
+
+// ── DELETE assinatura-tcr: happy path ───────────────────────────────
+
+describe('DELETE /api/v2/plano-trabalho/:id/documento/assinatura-tcr (happy path)', function () {
+
+    test('remove assinatura e reverte status para INCLUIDO', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+        postAssinar($this);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+
+        $this->plano->status = 'AGUARDANDO_ASSINATURA';
+        $this->plano->save();
+
+        deleteAssinatura($this)->assertStatus(200);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('INCLUIDO');
     });
 });

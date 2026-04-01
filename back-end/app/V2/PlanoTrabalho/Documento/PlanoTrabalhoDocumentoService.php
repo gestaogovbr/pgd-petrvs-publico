@@ -18,6 +18,7 @@ use App\V2\PlanoTrabalho\Documento\TCR\TCRDocumentoDTO;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRTemplateRenderer;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAssinarValidator;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAuthorizationValidator;
+use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoCancelarAssinaturaValidator;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoStoreValidator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -31,6 +32,7 @@ class PlanoTrabalhoDocumentoService
         private readonly PlanoTrabalhoDocumentoAuthorizationValidator $authValidator,
         private readonly PlanoTrabalhoDocumentoStoreValidator $storeValidator,
         private readonly PlanoTrabalhoDocumentoAssinarValidator $assinarValidator,
+        private readonly PlanoTrabalhoDocumentoCancelarAssinaturaValidator $cancelarAssinaturaValidator,
         private readonly TCRDatasourceBuilder $datasourceBuilder,
         private readonly TCRTemplateRenderer $renderer,
         private readonly StatusService $statusService,
@@ -108,5 +110,24 @@ class PlanoTrabalhoDocumentoService
         );
 
         return $assinatura;
+    }
+
+    public function cancelarAssinatura(string $planoTrabalhoId): void
+    {
+        $usuarioId = Auth::id();
+        $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
+        $documento = $this->cancelarAssinaturaValidator->validar($plano, $usuarioId);
+
+        $this->assinaturaRepository->deleteAssinaturaUsuario($documento->id, $usuarioId);
+
+        $status = $this->assinaturaRepository->existeAlgumaAssinatura($documento->id)
+            ? StatusEnum::AGUARDANDO_ASSINATURA->value
+            : StatusEnum::INCLUIDO->value;
+
+        $this->statusService->atualizaStatus(
+            $plano,
+            $status,
+            "Cancelada a assinatura do servidor: " . Auth::user()->nome . "."
+        );
     }
 }

@@ -46,4 +46,14 @@ class DocumentoAssinaturaRepository
         /** @var DocumentoAssinatura */
         return $this->writeRepository->create($dto->toArray());
     }
+
+    public function deleteAssinaturaUsuario(string $documentoId, string $usuarioId): bool
+    {
+        return $this->writeRepository->deleteByDocumentoAndUsuario($documentoId, $usuarioId);
+    }
+
+    public function existeAlgumaAssinatura(string $documentoId): bool
+    {
+        return $this->readRepository->existeAlgumaAssinatura($documentoId);
+    }
 }
