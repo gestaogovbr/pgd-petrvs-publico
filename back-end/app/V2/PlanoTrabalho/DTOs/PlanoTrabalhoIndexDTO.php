@@ -85,7 +85,7 @@ class PlanoTrabalhoIndexDTO
             arquivados: $arquivados,
             usuarioId: $usuarioId,
             unidadesId: $unidadesId,
-            subordinadas: (bool) ($filters['subordinadas'] ?? false),
+            subordinadas: (bool) ($filters['incluir_subordinadas'] ?? false),
             hierarquia: $hierarquia,
             numero: $numero,
             tipoModalidadeId: $tipoModalidadeId,
