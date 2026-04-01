@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\DocumentoAssinatura;
-use App\Models\PlanoTrabalho;
-use App\Models\Unidade;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaDTO;
@@ -23,23 +21,24 @@ class DocumentoAssinaturaRepository
         return $this->readRepository->existsByDocumentoAndUsuario($documentoId, $usuarioId);
     }
 
-    public function todasAssinaturasRealizadas(PlanoTrabalho $plano, string $documentoId): bool
+    public function participanteAssinou(string $documentoId, string $participanteId): bool
     {
-        $programa = $plano->programa;
+        return $this->readRepository->participanteAssinou($documentoId, $participanteId);
+    }
 
-        if ($programa->plano_trabalho_assinatura_participante) {
-            if (!$this->readRepository->participanteAssinou($documentoId, $plano->usuario_id)) {
-                return false;
-            }
-        }
+    public function gestorUnidadeAssinou(string $documentoId, string $unidadeId): bool
+    {
+        return $this->readRepository->gestorUnidadeAssinou($documentoId, $unidadeId);
+    }
 
-        if ($programa->plano_trabalho_assinatura_gestor_unidade) {
-            if (!$this->gestorHierarquicoAssinou($documentoId, $plano)) {
-                return false;
-            }
-        }
+    public function gestorDiferenteDoParticipanteAssinou(string $documentoId, string $unidadeId, string $participanteId): bool
+    {
+        return $this->readRepository->gestorDiferenteDoParticipanteAssinou($documentoId, $unidadeId, $participanteId);
+    }
 
-        return true;
+    public function existeAlgumaAssinatura(string $documentoId): bool
+    {
+        return $this->readRepository->existeAlgumaAssinatura($documentoId);
     }
 
     public function createFromTCR(TCRAssinaturaDTO $dto): DocumentoAssinatura
@@ -51,34 +50,5 @@ class DocumentoAssinaturaRepository
     public function deleteAssinaturaUsuario(string $documentoId, string $usuarioId): bool
     {
         return $this->writeRepository->deleteByDocumentoAndUsuario($documentoId, $usuarioId);
-    }
-
-    public function existeAlgumaAssinatura(string $documentoId): bool
-    {
-        return $this->readRepository->existeAlgumaAssinatura($documentoId);
-    }
-
-    private function gestorHierarquicoAssinou(string $documentoId, PlanoTrabalho $plano): bool # TODO: essas funções estão muito "inteligentes" para o repositoory, parecem-me serem mais pertencentes à vlasse de validação.
-    {
-        $unidade = $plano->unidade ?? Unidade::find($plano->unidade_id);
-
-        while ($unidade !== null) {
-            if ($this->readRepository->gestorDiferenteDoParticipanteAssinou($documentoId, $unidade->id, $plano->usuario_id)) {
-                return true;
-            }
-
-            if ($unidade->unidade_pai_id) {
-                $unidade = Unidade::find($unidade->unidade_pai_id);
-                continue;
-            }
-
-            break;
-        }
-
-        $unidadePt = $plano->unidade ?? Unidade::find($plano->unidade_id);
-        $semSuperior = $unidadePt->unidade_pai_id === null;
-        $participanteEhGestor = $this->readRepository->gestorUnidadeAssinou($documentoId, $unidadePt->id);
-
-        return $semSuperior && $participanteEhGestor;
     }
 }

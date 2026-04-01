@@ -6,6 +6,7 @@ use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoStoreValidat
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAssinarValidator;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoCancelarAssinaturaValidator;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaDTO;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaPolicy;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRDatasourceBuilder;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRDocumentoDTO;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRTemplateRenderer;
@@ -34,6 +35,7 @@ beforeEach(function () {
     $this->storeValidator = Mockery::mock(PlanoTrabalhoDocumentoStoreValidator::class);
     $this->assinarValidator = Mockery::mock(PlanoTrabalhoDocumentoAssinarValidator::class);
     $this->cancelarAssinaturaValidator = Mockery::mock(PlanoTrabalhoDocumentoCancelarAssinaturaValidator::class);
+    $this->assinaturaPolicy = Mockery::mock(TCRAssinaturaPolicy::class);
     $this->datasourceBuilder = Mockery::mock(TCRDatasourceBuilder::class);
     $this->renderer = Mockery::mock(TCRTemplateRenderer::class);
     $this->statusService = Mockery::mock(StatusService::class);
@@ -46,6 +48,7 @@ beforeEach(function () {
         $this->storeValidator,
         $this->assinarValidator,
         $this->cancelarAssinaturaValidator,
+        $this->assinaturaPolicy,
         $this->datasourceBuilder,
         $this->renderer,
         $this->statusService,
@@ -124,14 +127,16 @@ describe('PlanoTrabalhoDocumentoService::show', function () {
         $documento->numero = 42;
         $documento->titulo = 'Termo de Ciência e Responsabilidade';
         $documento->conteudo = '<html>Conteúdo</html>';
+        $documento->shouldReceive('getAttribute')->with('assinaturas')->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
 
-        expect($this->service->show('plano-1'))->toBe([
-            'numero' => 42,
-            'titulo' => 'Termo de Ciência e Responsabilidade',
-            'conteudo' => '<html>Conteúdo</html>',
-        ]);
+        $result = $this->service->show('plano-1');
+
+        expect($result['numero'])->toBe(42);
+        expect($result['titulo'])->toBe('Termo de Ciência e Responsabilidade');
+        expect($result['conteudo'])->toBe('<html>Conteúdo</html>');
+        expect($result)->toHaveKey('assinaturas');
     });
 
     test('lança exceção quando plano não possui documento TCR', function () {
@@ -160,7 +165,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
             ->with(Mockery::type(TCRAssinaturaDTO::class))
             ->andReturn($assinatura);
 
-        $this->assinaturaRepo->shouldReceive('todasAssinaturasRealizadas')
+        $this->assinaturaPolicy->shouldReceive('todasRealizadas')
             ->with($this->plano, 'doc-1')
             ->andReturn(false);
 
@@ -184,7 +189,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
         $assinatura = Mockery::mock(DocumentoAssinatura::class)->makePartial();
         $this->assinaturaRepo->shouldReceive('createFromTCR')->once()->andReturn($assinatura);
 
-        $this->assinaturaRepo->shouldReceive('todasAssinaturasRealizadas')
+        $this->assinaturaPolicy->shouldReceive('todasRealizadas')
             ->with($this->plano, 'doc-1')
             ->andReturn(true);
 

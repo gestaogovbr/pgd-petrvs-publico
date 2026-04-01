@@ -253,7 +253,7 @@ describe('GET /api/v2/plano-trabalho/:id/documento', function () {
         $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento")
             ->json('data');
 
-        expect(array_keys($data))->toBe(['numero', 'titulo', 'conteudo']);
+        expect(array_keys($data))->toBe(['numero', 'titulo', 'conteudo', 'assinaturas']);
     });
 });
 

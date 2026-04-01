@@ -13,6 +13,7 @@ use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Services\StatusService;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaDTO;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaPolicy;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRDatasourceBuilder;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRDocumentoDTO;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRTemplateRenderer;
@@ -33,6 +34,7 @@ class PlanoTrabalhoDocumentoService
         private readonly PlanoTrabalhoDocumentoStoreValidator $storeValidator,
         private readonly PlanoTrabalhoDocumentoAssinarValidator $assinarValidator,
         private readonly PlanoTrabalhoDocumentoCancelarAssinaturaValidator $cancelarAssinaturaValidator,
+        private readonly TCRAssinaturaPolicy $assinaturaPolicy,
         private readonly TCRDatasourceBuilder $datasourceBuilder,
         private readonly TCRTemplateRenderer $renderer,
         private readonly StatusService $statusService,
@@ -106,7 +108,7 @@ class PlanoTrabalhoDocumentoService
         $dto = TCRAssinaturaDTO::fromDocumento($documento, $usuarioId);
         $assinatura = $this->assinaturaRepository->createFromTCR($dto);
 
-        $status = $this->assinaturaRepository->todasAssinaturasRealizadas($plano, $documento->id)
+        $status = $this->assinaturaPolicy->todasRealizadas($plano, $documento->id)
             ? StatusEnum::ATIVO->value
             : StatusEnum::AGUARDANDO_ASSINATURA->value;
 
