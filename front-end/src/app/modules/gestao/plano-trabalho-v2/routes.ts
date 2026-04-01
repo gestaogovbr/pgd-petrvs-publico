@@ -7,6 +7,7 @@ import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.servi
 import { PlanoEntregaApiService } from 'src/app/v2/services/plano-entrega-api.service';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
+import { PlanoTrabalhoPolicy } from './application/plano-trabalho.policy';
 
 export const routes: Routes = [
   {
@@ -19,7 +20,8 @@ export const routes: Routes = [
       TipoModalidadeService,
       PlanoEntregaApiService,
       UnidadeService,
-      BreadcrumbService
+      BreadcrumbService,
+      PlanoTrabalhoPolicy
     ],
     children: [
       {

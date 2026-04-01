@@ -119,5 +119,14 @@
         </div>
       </div>
     </div>
+
+    <!-- Execução -->
+    @if (planoTrabalho()?.status === 'ATIVO') {
+      <div class="br-card mb-4">
+        <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Execução</div>
+        <div class="card-content">
+        </div>
+      </div>
+    }
   }
 </div>

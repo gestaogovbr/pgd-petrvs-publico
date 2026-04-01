@@ -126,15 +126,19 @@
                   <br-button shape="circle" (click)="detalhesDoPlano(p)" title="Consultar">
                     <i class="fas fa-search"></i>
                   </br-button>
-                  <br-button shape="circle" (click)="editarPlano(p)" title="Editar">
-                    <i class="fas fa-pen"></i>
-                  </br-button>
+                  @if (podeEditar(p)) {
+                    <br-button shape="circle" (click)="editarPlano(p)" title="Editar">
+                      <i class="fas fa-pen"></i>
+                    </br-button>
+                  }
                   <br-button shape="circle" (click)="assinarPlano(p)" title="Assinar">
                     <i class="fas fa-file-signature"></i>
                   </br-button>
-                  <br-button shape="circle" class="text-danger"  (click)="cancelarPlano(p)" title="Cancelar">
-                    <i class="fas fa-times-circle"></i>
-                  </br-button>
+                  @if (podeCancelar(p)) {
+                    <br-button shape="circle" class="text-danger" (click)="cancelarPlano(p)" title="Cancelar">
+                      <i class="fas fa-times-circle"></i>
+                    </br-button>
+                  }
                 </div>
               </td>
             </tr>

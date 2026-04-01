@@ -4,7 +4,8 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/f
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
-import { NavigateService } from 'src/app/services/navigate.service';
+import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { PlanoTrabalho } from '../domain/types';
 import { PlanoTrabalhoApiClient } from '../infra/api-client';
@@ -22,7 +23,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   readonly facade = inject(PlanoTrabalhoListFacade);
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
-  private readonly go = inject(NavigateService);
+  readonly policy = inject(PlanoTrabalhoPolicy);
+  private readonly router = inject(Router);
   private readonly api = inject(PlanoTrabalhoApiClient);
 
   advanced = false;
@@ -216,19 +218,27 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   }
 
   novoPlano() {
-    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'novo'] });
+    this.router.navigate(['gestao', 'plano-trabalho-v2', 'novo']);
   }
 
   detalhesDoPlano(p: PlanoTrabalho) {
-    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'consultar', p.id] });
+    this.router.navigate(['gestao', 'plano-trabalho-v2', 'consultar', p.id]);
   }
 
   editarPlano(p: PlanoTrabalho) {
-    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', p.id] });
+    this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', p.id]);
   }
 
   assinarPlano(p: PlanoTrabalho) {
-    this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'tcr', p.id] });
+    this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id]);
+  }
+
+  podeCancelar(p: PlanoTrabalho): boolean {
+    return this.policy.podeCancelar(p);
+  }
+
+  podeEditar(p: PlanoTrabalho): boolean {
+    return this.policy.podeEditar(p);
   }
 
   /* TODO: Mover para facade e usar action específica */
