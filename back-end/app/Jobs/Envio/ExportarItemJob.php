@@ -31,6 +31,7 @@ abstract class ExportarItemJob implements ShouldQueue
     protected const CIRCUIT_BREAKER_TIMEOUT = 300; // 5 minutos
     protected $timestamp = null;
     public bool $reagendado = false;
+    public int $timeout = 30;
     protected ?PgdService $pgdService;
 
     /*
