@@ -12,4 +12,6 @@ interface DocumentoAssinaturaWriteRepositoryContract
     public function create(array $attributes): Model;
 
     public function deleteByDocumentoAndUsuario(string $documentoId, string $usuarioId): bool;
+
+    public function deleteByDocumentoId(string $documentoId): int;
 }

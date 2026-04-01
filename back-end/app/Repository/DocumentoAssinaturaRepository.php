@@ -51,4 +51,9 @@ class DocumentoAssinaturaRepository
     {
         return $this->writeRepository->deleteByDocumentoAndUsuario($documentoId, $usuarioId);
     }
+
+    public function deleteAssinaturasDocumento(string $documentoId): int
+    {
+        return $this->writeRepository->deleteByDocumentoId($documentoId);
+    }
 }

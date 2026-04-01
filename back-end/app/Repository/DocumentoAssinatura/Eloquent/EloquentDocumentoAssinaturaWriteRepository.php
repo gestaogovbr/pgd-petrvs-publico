@@ -25,4 +25,11 @@ class EloquentDocumentoAssinaturaWriteRepository extends AbstractEloquentWriteRe
             ->where('usuario_id', $usuarioId)
             ->delete() >= self::MINIMUM_DELETED_ROWS;
     }
+
+    public function deleteByDocumentoId(string $documentoId): int
+    {
+        return $this->model->newQuery()
+            ->where('documento_id', $documentoId)
+            ->delete();
+    }
 }

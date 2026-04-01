@@ -27,4 +27,9 @@ class DocumentoRepository
         /** @var Documento */
         return $this->writeRepository->create($dto->toArray());
     }
+
+    public function delete(string $id): bool
+    {
+        return $this->writeRepository->delete($id);
+    }
 }
