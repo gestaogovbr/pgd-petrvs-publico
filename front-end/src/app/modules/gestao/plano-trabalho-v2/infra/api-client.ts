@@ -62,6 +62,25 @@ export class PlanoTrabalhoApiClient {
     return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/entrega/${entregaId}`);
   }
 
+  getDocumento(planoTrabalhoId: string): Observable<any> {
+    return this.http.get<any>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/documento`)
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  createDocumento(planoTrabalhoId: string): Observable<any> {
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/documento`, {})
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  assinarDocumento(planoTrabalhoId: string): Observable<any> {
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/documento/assinatura-tcr`, {})
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  cancelarAssinaturaDocumento(planoTrabalhoId: string): Observable<void> {
+    return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/documento/assinatura-tcr`);
+  }
+
   cancel(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
     return this.http.post<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/cancelar`, {});
   }

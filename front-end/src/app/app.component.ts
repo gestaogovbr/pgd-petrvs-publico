@@ -144,7 +144,7 @@ export class AppComponent implements IAppComponent {
       ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
       PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucionais"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
       PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { planejamento: true } },
-      PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('PlanoTrabalho') },
+      PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho-v2'], icon: this.entity.getIcon('PlanoTrabalho') },
       CONSOLIDACOES: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD', route: ['gestao', 'plano-trabalho', 'consolidacao'], icon: this.entity.getIcon('PlanoTrabalhoConsolidacao') },
       PROGRAMAS_GESTAO: { name: this.lex.translate("Programas de Gestão"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
       HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PART', route: ['gestao', 'programa', 'participantes'], icon: this.entity.getIcon('Programa') },
@@ -237,15 +237,12 @@ export class AppComponent implements IAppComponent {
       menu: [
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.CADEIAS_VALORES,
-        // this.menuSchema.SOLUCOES,
-        // this.menuSchema.PRODUTOS,
         this.menuSchema.PROGRAMAS_GESTAO,
         this.menuSchema.HABILITACOES_PROGRAMA,
-        this.menuSchema.PLANOS_ENTREGAS,
-        this.menuSchema.PLANOS_TRABALHOS,
-        
+        this.menuSchema.PLANOS_ENTREGAS,        
       ].sort(this.orderMenu)
-    }, {
+    }, 
+    {
       name: this.lex.translate("Execução"),
       permition: "MENU_GESTAO_ACESSO",
       id: "navbarDropdownGestaoExecucao",
@@ -264,7 +261,9 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO,
         this.menuSchema.AVALIACAO_PLANOS_ENTREGAS
       ].sort(this.orderMenu)
-    }, {
+    }, 
+    Object.assign({}, this.menuSchema.PLANOS_TRABALHOS),
+    {
       name: this.lex.translate("Gerenciamento"),
       permition: "MENU_CONFIG_ACESSO",
       id: "navbarDropdownGestaoGerencial",
@@ -281,13 +280,8 @@ export class AppComponent implements IAppComponent {
       id: "navbarDropdownGestaoCadastros",
       menu: [
         this.menuSchema.EIXOS_TEMATICOS,
-        // this.menuSchema.ENTREGAS,
-        // this.menuSchema.TIPOS_AVALIACOES,
         this.menuSchema.TIPOS_ATIVIDADES,
-        //this.menuSchema.TIPOS_CLIENTES,
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
-        // this.menuSchema.TIPOS_MODALIDADES,
-        // this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
         this.menuSchema.TIPOS_TAREFAS
       ].sort(this.orderMenu)
     }, {

@@ -44,6 +44,12 @@ export const routes: Routes = [
         data: { breadcrumb: 'Consultar' },
         loadComponent: () =>
           import('./ui/show.page').then(m => m.PlanoTrabalhoV2ShowPage)
+      },
+      {
+        path: 'tcr/:id',
+        data: { breadcrumb: 'TCR' },
+        loadComponent: () =>
+          import('./ui/tcr.page').then(m => m.PlanoTrabalhoV2TcrPage) 
       }
     ]
   }
