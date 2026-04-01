@@ -12,9 +12,13 @@ use App\Repository\UsuarioRepository;
 use Tests\DatabaseTenantTestCase;
 use App\Enums\ModalidadeParticipacaoEnum;
 use Illuminate\Support\Facades\DB;
+use App\Models\Documento;
+use App\Models\DocumentoAssinatura;
 use App\Models\Entidade;
+use App\Models\PlanoTrabalho;
 use App\Models\TipoModalidade;
 use App\Models\Perfil;
+use App\Enums\UsuarioSituacaoSiape;
 use Illuminate\Support\Str;
 
 class UsuarioRepositoryTest extends DatabaseTenantTestCase
@@ -323,5 +327,158 @@ class UsuarioRepositoryTest extends DatabaseTenantTestCase
         $this->assertTrue($result->relationLoaded('unidadesIntegrantes'));
         $this->assertCount(1, $result->unidadesIntegrantes);
         $this->assertSame($integranteLotado->id, $result->unidadesIntegrantes->first()->id);
+    }
+
+    public function testFindByMatricula(): void
+    {
+        $matricula = 'MAT-' . uniqid();
+        $usuario = Usuario::factory()->create([
+            'matricula' => $matricula,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+
+        $found = $this->repository->findByMatricula($matricula);
+        $this->assertNotNull($found);
+        $this->assertSame($usuario->id, $found->id);
+        $this->assertNull($this->repository->findByMatricula('inexistente'));
+    }
+
+    public function testFindByEmail(): void
+    {
+        $email = 'email-' . uniqid() . '@example.com';
+        $usuario = Usuario::factory()->create([
+            'email' => $email,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+
+        $found = $this->repository->findByEmail($email);
+        $this->assertNotNull($found);
+        $this->assertSame($usuario->id, $found->id);
+    }
+
+    public function testFindByCpf(): void
+    {
+        $cpf = str_pad((string) random_int(1, 99999999999), 11, '0', STR_PAD_LEFT);
+        $usuario = Usuario::factory()->create([
+            'cpf' => $cpf,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+
+        $found = $this->repository->findByCpf($cpf);
+        $this->assertNotNull($found);
+        $this->assertSame($usuario->id, $found->id);
+    }
+
+    public function testFindActivesByCpf(): void
+    {
+        $cpfAtivo = str_pad((string) random_int(1, 99999999999), 11, '0', STR_PAD_LEFT);
+        $ativo = Usuario::factory()->create([
+            'cpf' => $cpfAtivo,
+            'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $cpfInativo = str_pad((string) random_int(1, 99999999999), 11, '0', STR_PAD_LEFT);
+        Usuario::factory()->create([
+            'cpf' => $cpfInativo,
+            'situacao_siape' => UsuarioSituacaoSiape::INATIVO->value,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+
+        $ativos = $this->repository->findActivesByCpf($cpfAtivo);
+        $this->assertCount(1, $ativos);
+        $this->assertSame($ativo->id, $ativos->first()->id);
+
+        $this->assertCount(0, $this->repository->findActivesByCpf($cpfInativo));
+    }
+
+    public function testNewUsuario(): void
+    {
+        $u = $this->repository->newUsuario(['nome' => 'Instância nova']);
+        $this->assertInstanceOf(Usuario::class, $u);
+        $this->assertSame('Instância nova', $u->nome);
+        $this->assertFalse($u->exists);
+    }
+
+    public function testDelete(): void
+    {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $this->assertTrue($this->repository->delete($usuario->id));
+        $this->assertSoftDeleted('usuarios', ['id' => $usuario->id]);
+    }
+
+    public function testRestore(): void
+    {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $usuario->delete();
+        $this->assertTrue($this->repository->restore($usuario->id));
+        $this->assertDatabaseHas('usuarios', ['id' => $usuario->id, 'deleted_at' => null]);
+    }
+
+    public function testRegistrarTentativa(): void
+    {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $this->assertNull($usuario->fresh()->data_tentativa_envio);
+
+        $this->repository->registrarTentativa($usuario);
+
+        $this->assertNotNull($usuario->fresh()->data_tentativa_envio);
+    }
+
+    public function testFindAllParaEnvioIncluiUsuarioComPlanoTrabalhoEDocumentoAssinatura(): void
+    {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        PlanoTrabalho::factory()->ativo()->create([
+            'usuario_id' => $usuario->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        $documento = Documento::query()->create([
+            'id' => (string) Str::uuid(),
+            'numero' => random_int(2000000, 2999999),
+            'titulo' => 'Doc teste envio',
+            'tipo' => 'HTML',
+            'especie' => 'OUTRO',
+        ]);
+        DocumentoAssinatura::query()->create([
+            'id' => (string) Str::uuid(),
+            'documento_id' => $documento->id,
+            'usuario_id' => $usuario->id,
+            'assinatura' => 'hash-teste',
+        ]);
+
+        $semEnvio = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        PlanoTrabalho::factory()->ativo()->create([
+            'usuario_id' => $semEnvio->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $ids = [];
+        $this->repository->findAllParaEnvio(100, function ($chunk) use (&$ids): void {
+            foreach ($chunk as $row) {
+                $ids[] = $row->id;
+            }
+        });
+
+        $this->assertContains($usuario->id, $ids);
+        $this->assertNotContains($semEnvio->id, $ids);
     }
 }

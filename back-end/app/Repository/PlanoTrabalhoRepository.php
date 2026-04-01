@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\PlanoTrabalho;
+use App\Repository\Interfaces\AbstractEnvioRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
-class PlanoTrabalhoRepository
+/**
+ * @implements AbstractEnvioRepository<PlanoTrabalho>
+ */
+class PlanoTrabalhoRepository implements AbstractEnvioRepository
 {
     public function __construct(
         private readonly PlanoTrabalhoReadRepositoryContract $readRepository,
@@ -54,5 +60,29 @@ class PlanoTrabalhoRepository
     public function chunkEnviosPendentes(int $size, callable $callback): void
     {
         $this->readRepository->chunkEnviosPendentes($size, $callback);
+    }
+
+    public function agendarEnvio(Model $planoTrabalho, Carbon $dataAgendamento): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->agendarEnvio($planoTrabalho, $dataAgendamento);
+    }
+
+    public function registrarTentativa(Model $planoTrabalho): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->registrarTentativa($planoTrabalho);
+    }
+
+    public function registrarSucesso(Model $planoTrabalho): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->registrarSucesso($planoTrabalho);
+    }
+
+    public function registrarInsucesso(Model $planoTrabalho, string $mensagem): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->registrarInsucesso($planoTrabalho, $mensagem);
     }
 }

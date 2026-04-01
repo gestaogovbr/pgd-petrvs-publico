@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\PlanoEntrega;
+use App\Repository\Interfaces\AbstractEnvioRepository;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
-class PlanoEntregaRepository
+/**
+ * @implements AbstractEnvioRepository<PlanoEntrega>
+ */
+class PlanoEntregaRepository implements AbstractEnvioRepository
 {
     public function __construct(
         private readonly PlanoEntregaReadRepositoryContract $readRepository,
@@ -51,4 +57,27 @@ class PlanoEntregaRepository
         return $this->readRepository->getEntregasPlanoEntregaExecucao($unidadesIds);
     }
 
+    public function agendarEnvio(Model $planoEntrega, Carbon $dataAgendamento): void
+    {
+        /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->agendarEnvio($planoEntrega, $dataAgendamento);
+    }
+
+    public function registrarTentativa(Model $planoEntrega): void
+    {
+        /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->registrarTentativa($planoEntrega);
+    }
+
+    public function registrarSucesso(Model $planoEntrega): void
+    {
+        /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->registrarSucesso($planoEntrega);
+    }
+
+    public function registrarInsucesso(Model $planoEntrega, string $mensagem): void
+    {
+        /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->registrarInsucesso($planoEntrega, $mensagem);
+    }
 }

@@ -4,22 +4,27 @@ namespace App\Jobs\Envio;
 
 use App\Exceptions\TokenPgdException;
 use App\Jobs\Contratos\ContratoJobSchedule;
+use App\Repository\Interfaces\AbstractEnvioRepository;
 use App\Services\API_PGD\PgdService;
 use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use App\Models\Usuario;
+use App\Models\PlanoEntrega;
+use App\Models\PlanoTrabalho;
 use Throwable;
 
 /**
  * @phpstan-consistent-constructor
  */
-abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
+abstract class ExportarItemJob implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable;
 
@@ -41,17 +46,16 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         $tenant = tenancy()->find($tenantId);
         tenancy()->initialize($tenant);
 
-        $model = $this->getModel()->first();
+        $model = $this->getRepository()->findOneParaEnvio($id);
         $dataAgendamento = Carbon::now();
-        if ($model) {
-            $model->data_agendamento_envio = $dataAgendamento;
-            $model->saveQuietly();
+        if ($model !== null) {
+            $this->getRepository()->agendarEnvio($model, $dataAgendamento);
         }
 
         $this->timestamp = $dataAgendamento;
     }
 
-    abstract public function getModel();
+    abstract public function getRepository(): AbstractEnvioRepository;
 
     abstract public function getResource(): JsonResource;
 
@@ -81,14 +85,15 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
         tenancy()->initialize($tenant);
 
         try{
-            $model = $this->getModel()->first();
+            /** @var Usuario|PlanoEntrega|PlanoTrabalho $model */
+            $model = $this->getRepository()->findOneParaEnvio($this->id);
 
             if ($this->timestamp && $this->timestamp->lt($model->data_agendamento_envio)) {
                 $this->logInfo("Ignorando envio defasado.");
                 return;
             }
 
-            $this->registrarTentativa();
+            $this->registrarTentativa($model);
 
             $resource = $this->getResource();
 
@@ -117,17 +122,19 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
 
     abstract public function enviar(JsonResource $resource): bool;
 
-    public function registrarTentativa() {
-        $model = $this->getModel()->first();
-        $model->data_tentativa_envio = Carbon::now();
-        $model->saveQuietly();
+    public function registrarTentativa(Model $model): void
+    {
+        $this->getRepository()->registrarTentativa($model);
     }
 
     public function sucesso() {
-        $model = $this->getModel()->first();
-        $model->data_envio_api_pgd = Carbon::now();
-        $model->log_envio = null;
-        $model->saveQuietly();
+        $model = $this->getRepository()->findOneParaEnvio($this->id);
+        if ($model === null) {
+            $this->logError('Modelo não encontrado ao registrar sucesso de envio.');
+            return;
+        }
+
+        $this->getRepository()->registrarSucesso($model);
 
         $this->logInfo("SUCESSO");
     }
@@ -135,10 +142,12 @@ abstract class ExportarItemJob implements ShouldQueue, ContratoJobSchedule
     public function insucesso($message) {
         $this->logError($message);
 
-        $model = $this->getModel()->first();
-        $model->data_tentativa_envio = Carbon::now();
-        $model->log_envio = $message;
-        $model->saveQuietly();
+        $model = $this->getRepository()->findOneParaEnvio($this->id);
+        if ($model === null) {
+            return;
+        }
+
+        $this->getRepository()->registrarInsucesso($model, $message);
     }
 
     public function tags()

@@ -7,8 +7,7 @@ namespace App\Repository\Usuario\Eloquent;
 use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
 use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
-use Illuminate\Support\Facades\Storage;
-use Throwable;
+use Carbon\Carbon;
 
 /**
  * @extends AbstractEloquentWriteRepository<Usuario>
@@ -57,7 +56,7 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
         }
 
         $usuario->foto_perfil = $downloadedUrl;
-        
+
         switch ($tipo) {
             case "GOOGLE":
                 $usuario->foto_google = $url;
@@ -69,7 +68,7 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
                 $usuario->foto_firebase = $url;
                 break;
         }
-        
+
         return $usuario->save();
     }
 
@@ -93,5 +92,29 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
         }
     }
 
+    public function agendarEnvio(Usuario $usuario, Carbon $dataAgendamento): void
+    {
+        $usuario->data_agendamento_envio = $dataAgendamento;
+        $usuario->saveQuietly();
+    }
 
+    public function registrarTentativa(Usuario $usuario): void
+    {
+        $usuario->data_tentativa_envio = Carbon::now();
+        $usuario->saveQuietly();
+    }
+
+    public function registrarSucesso(Usuario $usuario): void
+    {
+        $usuario->data_envio_api_pgd = Carbon::now();
+        $usuario->log_envio = null;
+        $usuario->saveQuietly();
+    }
+
+    public function registrarInsucesso(Usuario $usuario, string $mensagem): void
+    {
+        $usuario->data_tentativa_envio = Carbon::now();
+        $usuario->log_envio = $mensagem;
+        $usuario->saveQuietly();
+    }
 }

@@ -5,16 +5,22 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\Usuario;
+use App\Repository\Interfaces\AbstractEnvioRepository;
 use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
 use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class UsuarioRepository
+/**
+ * @implements AbstractEnvioRepository<Usuario>
+ */
+class UsuarioRepository implements AbstractEnvioRepository
 {
     public function __construct(
         private readonly UsuarioReadRepositoryContract $readRepository,
-        private readonly UsuarioWriteRepositoryContract $writeRepository,
+        private readonly UsuarioWriteRepositoryContract $writeRepository
     ) {
     }
 
@@ -156,5 +162,29 @@ class UsuarioRepository
     public function findOneParaEnvio(string $id): ?Usuario
     {
         return $this->readRepository->findOneParaEnvio($id);
+    }
+
+    public function agendarEnvio(Model $usuario, Carbon $dataAgendamento): void
+    {
+        /** @var Usuario $usuario */
+        $this->writeRepository->agendarEnvio($usuario, $dataAgendamento);
+    }
+
+    public function registrarTentativa(Model $usuario): void
+    {
+        /** @var Usuario $usuario */
+        $this->writeRepository->registrarTentativa($usuario);
+    }
+
+    public function registrarSucesso(Model $usuario): void
+    {
+        /** @var Usuario $usuario */
+        $this->writeRepository->registrarSucesso($usuario);
+    }
+
+    public function registrarInsucesso(Model $usuario, string $mensagem): void
+    {
+        /** @var Usuario $usuario */
+        $this->writeRepository->registrarInsucesso($usuario, $mensagem);
     }
 }

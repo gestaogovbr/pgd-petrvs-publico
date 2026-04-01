@@ -5,6 +5,7 @@ use App\Exceptions\ExportPgdException;
 use App\Jobs\Envio\ExportarItemJob;
 use App\Jobs\Envio\Resources\PlanoTrabalhoResource;
 use App\Models\PlanoTrabalho;
+use App\Repository\Interfaces\AbstractEnvioRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Services\API_PGD\PgdService;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,8 +17,9 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
         return 'Enviar Plano de Trabalho para API';
     }
 
-    public function getModel() {
-        return  PlanoTrabalho::where('id', $this->id);
+    public function getRepository(): AbstractEnvioRepository
+    {
+        return app(PlanoTrabalhoRepository::class);
     }
 
     public function getResource(): PlanoTrabalhoResource {

@@ -18,6 +18,7 @@ use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -40,6 +41,9 @@ use Illuminate\Database\Eloquent\Collection;
  * @property \DateTime|null $avaliado_at
  * @property array $criterios_avaliacao
  * @property mixed $_metadata
+ * @property Carbon|null $data_agendamento_envio
+ * @property Carbon|null $data_envio_api_pgd
+ * @property Carbon|null $data_tentativa_envio
  * @property-read Usuario $usuario
  * @property-read Programa $programa
  * @property-read Unidade $unidade
@@ -95,7 +99,10 @@ class PlanoTrabalho extends ModelBase
     public $delete_cascade = ['documentos','consolidacoes'];
 
     protected $casts = [
-        "criterios_avaliacao" => AsJson::class
+        "criterios_avaliacao" => AsJson::class,
+        'data_agendamento_envio' => 'datetime',
+        'data_tentativa_envio' => 'datetime',
+        'data_envio_api_pgd' => 'datetime',
     ];
 
     protected static function booted()

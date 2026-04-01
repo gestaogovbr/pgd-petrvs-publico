@@ -67,8 +67,6 @@ class UsuarioConfig
     public $notificacoes;
 }
 
-
-
 /**
  * @property string $id
  * @property string $nome
@@ -81,6 +79,9 @@ class UsuarioConfig
  * @property string $situacao_funcional
  * @property string $perfil_id
  * @property string $tipo_modalidade_id
+ * @property Carbon|null $data_agendamento_envio
+ * @property Carbon|null $data_envio_api_pgd
+ * @property Carbon|null $data_tentativa_envio
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
  * @property-read \App\Models\UnidadeIntegrante|null $lotacao
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
@@ -178,6 +179,9 @@ class Usuario extends Authenticatable implements AuditableContract
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'data_agendamento_envio' => 'datetime',
+        'data_tentativa_envio' => 'datetime',
+        'data_envio_api_pgd' => 'datetime',
         'notificacoes' => AsJson::class
     ];
 

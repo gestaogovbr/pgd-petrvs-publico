@@ -8,6 +8,7 @@ use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
+use App\Repository\Interfaces\AbstractEnvioReadRepository;
 use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -15,11 +16,13 @@ use App\Services\UtilService;
 use App\Services\RawWhere;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection as SupportCollection;
+
 
 /**
  * @extends AbstractEloquentReadRepository<Usuario>
  */
-class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository implements UsuarioReadRepositoryContract
+class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository implements UsuarioReadRepositoryContract, AbstractEnvioReadRepository
 {
     public function __construct(Usuario $model)
     {
@@ -348,7 +351,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             })
             ->select('usuarios.id')
             ->orderBy('usuarios.id')
-            ->chunkById($chunkSize, function (Collection $usuarios) use ($onChunk): void {
+            ->chunkById($chunkSize, function (SupportCollection $usuarios) use ($onChunk): void {
                 $onChunk($usuarios);
             });
     }

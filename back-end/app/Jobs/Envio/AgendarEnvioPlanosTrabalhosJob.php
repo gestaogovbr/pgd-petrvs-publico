@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\Envio;
 
+use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Services\Envio\AgendarEnvioPlanosTrabalhosService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,18 +12,20 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class AgendarEnvioPlanosTrabalhosJob implements ShouldQueue
+class AgendarEnvioPlanosTrabalhosJob implements ShouldQueue, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public int|string $tenantId;
 
     public int $timeout = 0;
     public int $tries = 1;
 
-    public function __construct(int|string $tenantId)
+    public function __construct(private readonly ?string $tenantId = null)
     {
-        $this->tenantId = $tenantId;
+    }
+
+    public static function getDescricao(): string
+    {
+        return 'Enviar Planos de Trabalho para API';
     }
 
     public function handle(AgendarEnvioPlanosTrabalhosService $service): void

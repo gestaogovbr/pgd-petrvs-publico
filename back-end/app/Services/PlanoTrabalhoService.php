@@ -212,6 +212,15 @@ class PlanoTrabalhoService extends ServiceBase
         }
 
 
+        $enviosPendentes = $this->extractWhere($data, "envios_pendentes");
+        if (isset($enviosPendentes[2])) {
+            $query->whereRaw("(data_envio_api_pgd < data_agendamento_envio)", []);
+        }
+
+        $where = array_values(array_filter($where, function ($item) {
+                return ($item[0] !== 'envios_pendentes');
+        }));
+
         $data["where"] = $where;
     }
 
@@ -889,7 +898,7 @@ class PlanoTrabalhoService extends ServiceBase
             return "O plano de trabalho não pode ser cancelado porque foi deletado ou não está em nenhum dos seguintes status: INCLUIDO, AGUARDANDO ASSINATURA ou ATIVO.\n[ver RN_PTR_R]";
         if (!$condition2)
             return "O plano de trabalho não pode ser cancelado porque o usuário logado não é um dos gestores da sua unidade executora.\n[ver RN_PTR_R]";
-       
+
         return null;
     }
 

@@ -5,6 +5,7 @@ namespace App\Services\API_PGD\Builder;
 use App\Exceptions\EnvioNaoAgendadoException;
 use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
+use App\Repository\PlanoTrabalhoRepository;
 use Carbon\Carbon;
 
 class PlanoTrabalhoEnvioJobBuilder
@@ -23,8 +24,9 @@ class PlanoTrabalhoEnvioJobBuilder
             );
         }
 
-        $planoTrabalho->data_agendamento_envio = Carbon::now();
-        $planoTrabalho->saveQuietly();
+        /* @var PlanoTrabalho $planoTrabalho */
+        $planoTrabalhoRepository = app()->make(PlanoTrabalhoRepository::class);
+        $planoTrabalhoRepository->agendarEnvio($planoTrabalho, Carbon::now());
 
         return new ExportarPlanoTrabalhoJob($tenantId, $planoTrabalho->id, $origem);
     }

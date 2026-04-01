@@ -26,6 +26,7 @@ class PlanoEntregaEnvioJobBuilder
 
         $planoEntrega->log_envio = 'PE não está em status válido para envio ao PGD.';
         $planoEntrega->saveQuietly();
+
         throw new EnvioNaoAgendadoException(
             tenant('id'),
             'PlanoEntrega',

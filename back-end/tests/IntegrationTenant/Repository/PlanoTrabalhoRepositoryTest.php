@@ -14,6 +14,7 @@ use Tests\DatabaseTenantTestCase;
 use App\Enums\StatusEnum;
 use App\Models\TipoModalidade;
 use App\Models\Perfil;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
@@ -303,5 +304,141 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         $this->assertCount(1, $result->entregas);
         $this->assertCount(1, $result->consolidacoes);
         $this->assertSame($consolidacaoAvaliada->id, $result->consolidacoes->first()->id);
+    }
+
+    public function testFindById(): void
+    {
+        $plano = PlanoTrabalho::factory()->ativo()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        $found = $this->repository->findById($plano->id);
+        $this->assertNotNull($found);
+        $this->assertSame($plano->id, $found->id);
+        $this->assertNull($this->repository->findById(Str::uuid()->toString()));
+    }
+
+    public function testPlanosAtivos(): void
+    {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $ativo = PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuario->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => now()->subDay(),
+            'data_fim' => now()->addMonth(),
+            'status' => StatusEnum::ATIVO->value,
+        ]);
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuario->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => now()->addMonth(),
+            'data_fim' => now()->addMonths(2),
+            'status' => StatusEnum::ATIVO->value,
+        ]);
+
+        $result = $this->repository->planosAtivos($usuario->id);
+        $this->assertCount(1, $result);
+        $this->assertSame($ativo->id, $result->first()->id);
+    }
+
+    public function testPlanosAtivosPorData(): void
+    {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $dentro = PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuario->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-12-31',
+            'status' => StatusEnum::ATIVO->value,
+        ]);
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuario->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => '2026-01-01',
+            'data_fim' => '2026-12-31',
+            'status' => StatusEnum::ATIVO->value,
+        ]);
+
+        $result = $this->repository->planosAtivosPorData('2025-06-01', '2025-06-30', $usuario->id);
+        $this->assertCount(1, $result);
+        $this->assertSame($dentro->id, $result->first()->id);
+    }
+
+    public function testBuscarPlanosPendentes(): void
+    {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $referencia = PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuario->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'status' => StatusEnum::ATIVO->value,
+            'data_fim' => '2025-03-01',
+        ]);
+        $pendente = PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuario->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
+            'data_fim' => '2025-02-01',
+        ]);
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuario->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'status' => StatusEnum::INCLUIDO->value,
+            'data_fim' => '2025-01-01',
+        ]);
+
+        $result = $this->repository->buscarPlanosPendentes($usuario->id, $referencia->id, '2025-03-15');
+        $this->assertCount(1, $result);
+        $this->assertSame($pendente->id, $result->first()->id);
+    }
+
+    public function testChunkEnviosPendentes(): void
+    {
+        $incluido = PlanoTrabalho::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'status' => StatusEnum::INCLUIDO->value,
+            'data_agendamento_envio' => now(),
+            'data_envio_api_pgd' => null,
+        ]);
+        $pendente = PlanoTrabalho::factory()->ativo()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_agendamento_envio' => Carbon::now()->subHour(),
+            'data_envio_api_pgd' => null,
+        ]);
+        $jaEnviado = PlanoTrabalho::factory()->ativo()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_agendamento_envio' => Carbon::now()->subDays(2),
+            'data_envio_api_pgd' => Carbon::now()->subDay(),
+        ]);
+
+        $ids = [];
+        $this->repository->chunkEnviosPendentes(100, function ($chunk) use (&$ids): void {
+            foreach ($chunk as $plano) {
+                $ids[] = $plano->id;
+            }
+        });
+
+        $this->assertContains($pendente->id, $ids);
+        $this->assertNotContains($incluido->id, $ids);
+        $this->assertNotContains($jaEnviado->id, $ids);
+    }
+
+    public function testRegistrarTentativa(): void
+    {
+        $plano = PlanoTrabalho::factory()->ativo()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        $this->assertNull($plano->fresh()->data_tentativa_envio);
+
+        $this->repository->registrarTentativa($plano);
+
+        $this->assertNotNull($plano->fresh()->data_tentativa_envio);
     }
 }

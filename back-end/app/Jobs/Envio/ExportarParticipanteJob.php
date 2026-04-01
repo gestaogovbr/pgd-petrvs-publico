@@ -5,6 +5,7 @@ use App\Exceptions\ExportPgdException;
 use App\Jobs\Envio\ExportarItemJob;
 use App\Jobs\Envio\Resources\ParticipanteResource;
 use App\Models\Usuario;
+use App\Repository\Interfaces\AbstractEnvioRepository;
 use App\Repository\UsuarioRepository;
 use App\Services\API_PGD\PgdService;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,8 +17,9 @@ class ExportarParticipanteJob extends ExportarItemJob
         return 'Enviar Participante para API';
     }
 
-    public function getModel() {
-        return  Usuario::where('id', $this->id);
+    public function getRepository(): AbstractEnvioRepository
+    {
+        return app(UsuarioRepository::class);
     }
 
     public function getResource(): ParticipanteResource
