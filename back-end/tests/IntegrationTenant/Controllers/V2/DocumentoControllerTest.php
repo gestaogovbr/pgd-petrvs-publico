@@ -382,7 +382,7 @@ describe('DELETE /api/v2/plano-trabalho/:id/documento/assinatura-tcr (guard)', f
 
 describe('DELETE /api/v2/plano-trabalho/:id/documento/assinatura-tcr (happy path)', function () {
 
-    test('remove assinatura e reverte status para INCLUIDO', function () {
+    test('remove assinatura (soft delete) e reverte status para INCLUIDO', function () {
         $this->actingAs($this->usuario, 'web');
 
         postDocumento($this);
@@ -396,6 +396,46 @@ describe('DELETE /api/v2/plano-trabalho/:id/documento/assinatura-tcr (happy path
 
         deleteAssinatura($this)->assertStatus(200);
 
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('INCLUIDO');
+
+        $this->assertDatabaseHas('documentos_assinaturas', [
+            'usuario_id' => $this->usuario->id,
+        ]);
+
+        $assinatura = \App\Models\DocumentoAssinatura::withTrashed()
+            ->where('usuario_id', $this->usuario->id)
+            ->first();
+
+        expect($assinatura->deleted_at)->not->toBeNull();
+    });
+
+    test('ciclo completo: assinar → cancelar → assinar → cancelar', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+
+        // 1ª assinatura
+        postAssinar($this)->assertStatus(201);
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+
+        // 1º cancelamento
+        $this->plano->status = 'AGUARDANDO_ASSINATURA';
+        $this->plano->save();
+        deleteAssinatura($this)->assertStatus(200);
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('INCLUIDO');
+
+        // 2ª assinatura
+        postAssinar($this)->assertStatus(201);
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+
+        // 2º cancelamento
+        $this->plano->status = 'AGUARDANDO_ASSINATURA';
+        $this->plano->save();
+        deleteAssinatura($this)->assertStatus(200);
         $this->plano->refresh();
         expect($this->plano->status)->toBe('INCLUIDO');
     });
