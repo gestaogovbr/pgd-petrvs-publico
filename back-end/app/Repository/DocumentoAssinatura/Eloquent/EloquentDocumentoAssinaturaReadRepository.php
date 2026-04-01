@@ -42,6 +42,18 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->exists();
     }
 
+    public function gestorDiferenteDoParticipanteAssinou(string $documentoId, string $unidadeId, string $participanteId): bool
+    {
+        return $this->query()
+            ->where('documento_id', $documentoId)
+            ->where('usuario_id', '!=', $participanteId)
+            ->whereHas('usuario.unidadesIntegrantes', function ($q) use ($unidadeId) {
+                $q->where('unidade_id', $unidadeId)
+                  ->whereHas('atribuicoes', fn ($q2) => $q2->whereIn('atribuicao', ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO']));
+            })
+            ->exists();
+    }
+
     public function existeAlgumaAssinatura(string $documentoId): bool
     {
         return $this->query()

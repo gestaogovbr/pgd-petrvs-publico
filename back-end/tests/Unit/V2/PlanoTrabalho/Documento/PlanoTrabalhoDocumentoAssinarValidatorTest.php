@@ -85,9 +85,13 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
     test('retorna documento quando todas as validações passam', function () {
         $plano = fakePlanoAssinar(StatusEnum::INCLUIDO->value);
 
+        $assinaturasRelation = Mockery::mock(\Illuminate\Database\Eloquent\Relations\HasMany::class);
+        $assinaturasRelation->shouldReceive('count')->andReturn(0);
+
         /** @var Documento $documento */
         $documento = Mockery::mock(Documento::class)->makePartial();
         $documento->id = 'doc-1';
+        $documento->shouldReceive('assinaturas')->andReturn($assinaturasRelation);
 
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
         $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->andReturn(false);
@@ -98,13 +102,34 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
     test('permite com status AGUARDANDO_ASSINATURA', function () {
         $plano = fakePlanoAssinar(StatusEnum::AGUARDANDO_ASSINATURA->value);
 
+        $assinaturasRelation = Mockery::mock(\Illuminate\Database\Eloquent\Relations\HasMany::class);
+        $assinaturasRelation->shouldReceive('count')->andReturn(1);
+
         /** @var Documento $documento */
         $documento = Mockery::mock(Documento::class)->makePartial();
         $documento->id = 'doc-1';
+        $documento->shouldReceive('assinaturas')->andReturn($assinaturasRelation);
 
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
         $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->andReturn(false);
 
         expect($this->validator->validar($plano, 'user-1'))->toBe($documento);
     });
+
+    test('lança exceção quando já atingiu o máximo de assinaturas', function () {
+        $plano = fakePlanoAssinar(StatusEnum::AGUARDANDO_ASSINATURA->value);
+
+        $assinaturasRelation = Mockery::mock(\Illuminate\Database\Eloquent\Relations\HasMany::class);
+        $assinaturasRelation->shouldReceive('count')->andReturn(2);
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+        $documento->shouldReceive('assinaturas')->andReturn($assinaturasRelation);
+
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
+        $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->andReturn(false);
+
+        $this->validator->validar($plano, 'user-1');
+    })->throws(ValidateException::class, 'Todas as assinaturas exigidas já foram realizadas.');
 });

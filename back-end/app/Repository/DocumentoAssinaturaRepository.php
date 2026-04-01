@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Models\DocumentoAssinatura;
 use App\Models\PlanoTrabalho;
+use App\Models\Unidade;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaDTO;
@@ -33,7 +34,7 @@ class DocumentoAssinaturaRepository
         }
 
         if ($programa->plano_trabalho_assinatura_gestor_unidade) {
-            if (!$this->readRepository->gestorUnidadeAssinou($documentoId, $plano->unidade_id)) {
+            if (!$this->gestorHierarquicoAssinou($documentoId, $plano)) {
                 return false;
             }
         }
@@ -55,5 +56,29 @@ class DocumentoAssinaturaRepository
     public function existeAlgumaAssinatura(string $documentoId): bool
     {
         return $this->readRepository->existeAlgumaAssinatura($documentoId);
+    }
+
+    private function gestorHierarquicoAssinou(string $documentoId, PlanoTrabalho $plano): bool # TODO: essas funções estão muito "inteligentes" para o repositoory, parecem-me serem mais pertencentes à vlasse de validação.
+    {
+        $unidade = $plano->unidade ?? Unidade::find($plano->unidade_id);
+
+        while ($unidade !== null) {
+            if ($this->readRepository->gestorDiferenteDoParticipanteAssinou($documentoId, $unidade->id, $plano->usuario_id)) {
+                return true;
+            }
+
+            if ($unidade->unidade_pai_id) {
+                $unidade = Unidade::find($unidade->unidade_pai_id);
+                continue;
+            }
+
+            break;
+        }
+
+        $unidadePt = $plano->unidade ?? Unidade::find($plano->unidade_id);
+        $semSuperior = $unidadePt->unidade_pai_id === null;
+        $participanteEhGestor = $this->readRepository->gestorUnidadeAssinou($documentoId, $unidadePt->id);
+
+        return $semSuperior && $participanteEhGestor;
     }
 }

@@ -19,6 +19,8 @@ class PlanoTrabalhoDocumentoAssinarValidator
         StatusEnum::AGUARDANDO_ASSINATURA,
     ];
 
+    private const MAX_ASSINATURAS_TCR = 2;
+
     public function __construct(
         private readonly DocumentoRepository $documentoRepository,
         private readonly DocumentoAssinaturaRepository $assinaturaRepository,
@@ -37,6 +39,10 @@ class PlanoTrabalhoDocumentoAssinarValidator
 
         if ($this->assinaturaRepository->usuarioJaAssinou($documento->id, $usuarioId)) {
             throw new ValidateException('Usuário já assinou este documento.');
+        }
+
+        if ($documento->assinaturas()->count() >= self::MAX_ASSINATURAS_TCR) {
+            throw new ValidateException('Todas as assinaturas exigidas já foram realizadas.');
         }
 
         return $documento;

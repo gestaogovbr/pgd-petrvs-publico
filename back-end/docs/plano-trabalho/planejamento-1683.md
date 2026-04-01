@@ -152,11 +152,12 @@ Retorna o último TCR válido com os campos necessários para o front-end
 
 ### Assinatura do TCR
 
-A assinatura segue o fluxo de dupla assinatura (participante + chefia). O endpoint identifica automaticamente se é o 1º ou 2º signatário.
+A assinatura segue o fluxo de dupla assinatura (participante + chefia), sem ordem obrigatória. Qualquer um dos signatários pode assinar primeiro.
 
 #### `POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr` `4.10`
 
-- Quem: participante dono do PT (1º signatário); chefia titular/substituta da unidade (2º signatário)
+- Quem: participante dono do PT; chefia titular/substituta da unidade
+- Ordem: livre — qualquer um dos signatários pode assinar primeiro. O sistema verifica, a cada assinatura, se todas as exigidas pelo regramento já foram coletadas
 - Guard: PT `INCLUIDO` ou `AGUARDANDO_ASSINATURA`; TCR gerado; ao menos uma entrega; usuário não assinou ainda
 - Ação: registra assinatura; se todas as assinaturas exigidas pelo programa foram satisfeitas → status `ATIVO`, senão → `AGUARDANDO_ASSINATURA`
 - Body:
@@ -164,7 +165,7 @@ A assinatura segue o fluxo de dupla assinatura (participante + chefia). O endpoi
 
 #### `DELETE /api/v2/plano-trabalho/:id/documento/assinatura-tcr` `4.12`
 
-- Quem: exclusivamente o 1º signatário
+- Quem: exclusivamente o participante dono do PT
 - Guard: PT `AGUARDANDO_ASSINATURA`
 
 ### Transições de status do Plano de Trabalho
@@ -195,7 +196,7 @@ Cada transição é um endpoint próprio, evitando um service monolítico. Todos
 <details>
 <summary>Happy path - bloco 2</summary>
 
-![diagrama de comunicação front-end/back-end bloco 2](fluxo-1638-bloco-2.png)
+![diagrama de comunicação front-end/back-end bloco 2](fluxo-1638-bloco-2-rev3.png)
 </details>
 
 #### `POST /api/v2/plano-trabalho/:id/entrega` `4.5`

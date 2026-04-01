@@ -440,3 +440,195 @@ describe('DELETE /api/v2/plano-trabalho/:id/documento/assinatura-tcr (happy path
         expect($this->plano->status)->toBe('INCLUIDO');
     });
 });
+
+// ── POST assinatura-tcr: dupla assinatura ───────────────────────────
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (dupla assinatura)', function () {
+
+    beforeEach(function () {
+        $this->programa->plano_trabalho_assinatura_participante = 1;
+        $this->programa->plano_trabalho_assinatura_gestor_unidade = 1;
+        $this->programa->save();
+
+        $perfil = Perfil::factory()->create(['nivel' => 3]);
+        $this->chefia = Usuario::factory()->create([
+            'perfil_id' => $perfil->id,
+        ]);
+
+        $integrante = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->chefia->id,
+        ]);
+
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrante->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+    });
+
+    test('participante assina primeiro, chefia completa → ATIVO', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+
+        postAssinar($this)->assertStatus(201);
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+
+        $this->actingAs($this->chefia, 'web');
+        postAssinar($this)->assertStatus(201);
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+
+    test('chefia assina primeiro, participante completa → ATIVO', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+
+        $this->actingAs($this->chefia, 'web');
+        postAssinar($this)->assertStatus(201);
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+
+        $this->actingAs($this->usuario, 'web');
+        postAssinar($this)->assertStatus(201);
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+
+    test('apenas participante assina quando ambas são exigidas → AGUARDANDO_ASSINATURA', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+
+        postAssinar($this)->assertStatus(201);
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+    });
+});
+
+// ── POST assinatura-tcr: participante é chefia ──────────────────────
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (participante é chefia)', function () {
+
+    beforeEach(function () {
+        $this->programa->plano_trabalho_assinatura_participante = 1;
+        $this->programa->plano_trabalho_assinatura_gestor_unidade = 1;
+        $this->programa->save();
+
+        // participante é também gestor da unidade do PT
+        $integrante = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->usuario->id,
+        ]);
+
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrante->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+    });
+
+    test('participante que é chefia sem unidade pai assina uma vez → ATIVO', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+
+        postAssinar($this)->assertStatus(201);
+        $this->plano->refresh();
+
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+
+    test('participante que é chefia com unidade pai assina → AGUARDANDO_ASSINATURA', function () {
+        $this->unidadePai = Unidade::factory()->create();
+        $this->unidade->unidade_pai_id = $this->unidadePai->id;
+        $this->unidade->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+
+        postAssinar($this)->assertStatus(201);
+        $this->plano->refresh();
+
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+    });
+
+    test('chefia da unidade pai completa a assinatura → ATIVO', function () {
+        $this->unidadePai = Unidade::factory()->create();
+        $this->unidade->unidade_pai_id = $this->unidadePai->id;
+        $this->unidade->save();
+
+        $perfil = Perfil::factory()->create(['nivel' => 3]);
+        $chefiaPai = Usuario::factory()->create(['perfil_id' => $perfil->id]);
+
+        $integrantePai = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidadePai->id,
+            'usuario_id' => $chefiaPai->id,
+        ]);
+
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrantePai->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this)->assertStatus(201);
+
+        $this->actingAs($chefiaPai, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+});
+
+// ── POST assinatura-tcr: impede assinaturas excedentes ──────────────
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (assinaturas excedentes)', function () {
+
+    test('rejeita assinatura quando todas as exigidas já foram realizadas', function () {
+        $this->programa->plano_trabalho_assinatura_participante = 1;
+        $this->programa->plano_trabalho_assinatura_gestor_unidade = 1;
+        $this->programa->save();
+
+        $perfil = Perfil::factory()->create(['nivel' => 3]);
+
+        // chefia da unidade
+        $chefia = Usuario::factory()->create(['perfil_id' => $perfil->id]);
+        $integrante = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $chefia->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrante->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+
+        // gestor substituto da mesma unidade
+        $substituto = Usuario::factory()->create(['perfil_id' => $perfil->id]);
+        $integranteSub = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $substituto->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integranteSub->id,
+            'atribuicao' => 'GESTOR_SUBSTITUTO',
+        ]);
+
+        // participante + chefia assinam → ATIVO
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this)->assertStatus(201);
+
+        $this->actingAs($chefia, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+
+        // substituto tenta assinar → rejeitado
+        $this->plano->status = 'AGUARDANDO_ASSINATURA';
+        $this->plano->save();
+
+        $this->actingAs($substituto, 'web');
+        postAssinar($this)->assertStatus(422);
+    });
+});
