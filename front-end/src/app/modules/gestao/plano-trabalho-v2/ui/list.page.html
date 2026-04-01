@@ -113,7 +113,11 @@
         <tbody>
           @for (p of facade.items(); track p.id) {
             <tr>
-              <td data-th="Número">{{ p.numero }}</td>
+              <td data-th="Número">
+                <br-button class="p-0" (click)="detalhesDoPlano(p)">
+                  {{ p.numero }}
+                </br-button>
+              </td>
               <td data-th="Usuário">{{ p.usuario?.nome || '-' }}</td>
               <td data-th="Unidade">{{ p.unidade?.sigla || '-' }}</td>
               <td data-th="Modalidade">{{ p.tipo_modalidade?.nome || '-' }}</td>
@@ -123,19 +127,19 @@
               <td data-th="Período">{{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}</td>
               <td data-th="Ações">
                 <div class="d-flex gap-1">
-                  <br-button shape="circle" (click)="detalhesDoPlano(p)" title="Consultar">
+                  <br-button shape="circle" (click)="detalhesDoPlano(p)" title="Consultar" ariaLabel="Detalhes do plano">
                     <i class="fas fa-search"></i>
                   </br-button>
                   @if (podeEditar(p)) {
-                    <br-button shape="circle" (click)="editarPlano(p)" title="Editar">
+                    <br-button shape="circle" (click)="editarPlano(p)" title="Editar" ariaLabel="Editar plano">
                       <i class="fas fa-pen"></i>
                     </br-button>
                   }
-                  <br-button shape="circle" (click)="assinarPlano(p)" title="Assinar">
+                  <br-button shape="circle" (click)="assinarPlano(p)" title="Assinar" ariaLabel="Assinar plano">
                     <i class="fas fa-file-signature"></i>
                   </br-button>
                   @if (podeCancelar(p)) {
-                    <br-button shape="circle" class="text-danger" (click)="cancelarPlano(p)" title="Cancelar">
+                    <br-button shape="circle" class="text-danger" (click)="cancelarPlano(p)" title="Cancelar" ariaLabel="Cancelar plano">
                       <i class="fas fa-times-circle"></i>
                     </br-button>
                   }

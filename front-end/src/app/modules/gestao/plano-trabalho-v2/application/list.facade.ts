@@ -3,9 +3,7 @@ import { ListarPlanos } from './listar-planos.usecase';
 import { PlanoTrabalho, QueryParams } from '../domain/types';
 import { finalize } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class PlanoTrabalhoListFacade {
   private readonly listar = inject(ListarPlanos);
 

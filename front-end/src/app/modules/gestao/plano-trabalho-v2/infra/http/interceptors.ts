@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { ToastService } from 'src/app/services/toast.service';
+import { MessageService } from 'src/app/v2/services/message.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { API_VERSION, TENANT_ID, TRACE_ID } from './tokens';
@@ -29,15 +29,19 @@ export function authTenantVersionInterceptor(req: HttpRequest<unknown>, next: Ht
 }
 
 export function errorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
-  const toast = inject(ToastService);
+  const message = inject(MessageService);
   return next(req).pipe(
     catchError((error: unknown) => {
       if (error instanceof HttpErrorResponse) {
         if (error.status === 500) {
-          toast.showError('Erro interno do servidor. Por favor, tente novamente mais tarde.');
+          message.error('Erro interno do servidor. Por favor, tente novamente mais tarde.');
         }
         if (error.status === 422 && (error as any)?.error?.errors) {
-          toast.showError('Dados inválidos');
+          message.error('Dados inválidos');
+        }
+        if (error.status === 400) {
+          const msg = (error.error && (error.error.error || error.error.message)) || 'Requisição inválida.';
+          message.error(msg);
         }
       }
       return throwError(() => error);

@@ -3,9 +3,7 @@ import { PlanoTrabalhoApiClient } from '../infra/api-client';
 import { Observable } from 'rxjs';
 import { Page, PlanoTrabalho, QueryParams } from '../domain/types';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ListarPlanos {
   private readonly api = inject(PlanoTrabalhoApiClient);
   execute(params: QueryParams): Observable<Page<PlanoTrabalho>> {

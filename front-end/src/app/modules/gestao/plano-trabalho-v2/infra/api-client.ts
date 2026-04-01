@@ -4,9 +4,7 @@ import { Observable, map } from 'rxjs';
 import { Page, PlanoTrabalho, PlanoTrabalhoCreatePayload, PlanoTrabalhoId, QueryParams } from '../domain/types';
 import { GlobalsService } from 'src/app/services/globals.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class PlanoTrabalhoApiClient {
   private readonly gb = inject(GlobalsService);
   private readonly http = inject(HttpClient);
