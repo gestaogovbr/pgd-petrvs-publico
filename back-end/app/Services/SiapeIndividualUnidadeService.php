@@ -3,12 +3,15 @@
 namespace App\Services;
 
 use App\Facades\SiapeLog;
+use App\Models\Entidade;
 use App\Repository\EntidadeRepository;
 use App\Repository\SiapeDadosUORGRepository;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\Entidade;
+
+use function Symfony\Component\String\s;
 
 class SiapeIndividualUnidadeService extends ServiceBase
 {
@@ -75,8 +78,9 @@ class SiapeIndividualUnidadeService extends ServiceBase
         ];
         $retorno = [];
         foreach ($entidades as $entidade) {
-            $inputs['entidade'] = $entidade->id;
-            $retorno = $integracaoService->sincronizar($inputs);
+            /** @var Entidade $entidade */
+           $inputs['entidade'] = (string) $entidade->id;
+           $retorno = $integracaoService->sincronizar($inputs);
         }
 
         return $retorno;

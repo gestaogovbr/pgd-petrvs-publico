@@ -18,6 +18,14 @@ use Throwable;
 
 class AvaliacaoController extends ControllerBase {
 
+    private UnidadeService $unidadeService;
+
+    public function __construct(?UnidadeService $unidadeService = null)
+    {
+        parent::__construct();
+        $this->unidadeService = $unidadeService ?? app(UnidadeService::class);
+    }
+
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
@@ -40,7 +48,6 @@ class AvaliacaoController extends ControllerBase {
                 $this->canAvaliar($avaliacao->toArray(), $usuario);
                 break;
             case 'RECORRER':
-                $unidadeService = app(UnidadeService::class);
                 $data = $request->validate([
                     'id' => ['required'],
                     'recurso' => ['required'],
@@ -58,7 +65,7 @@ class AvaliacaoController extends ControllerBase {
                 if($planoTrabalho->usuario_id != $usuario->id) throw new ServerException("ValidateAvaliacao", "Apenas o usuário do plano de trabalho poderá recorrer.\n[ver RN_AVL_2]");
 
                 $programa = $planoTrabalho->programa;
-                if($programa->dias_tolerancia_recurso_avaliacao > 0 && (UtilService::daystamp($avaliacao->data_avaliacao) + $programa->dias_tolerancia_recurso_avaliacao < UtilService::daystamp($unidadeService->hora($planoTrabalho->unidade_id))))
+                if($programa->dias_tolerancia_recurso_avaliacao > 0 && (UtilService::daystamp($avaliacao->data_avaliacao) + $programa->dias_tolerancia_recurso_avaliacao < UtilService::daystamp($this->unidadeService->hora($planoTrabalho->unidade_id))))
                     # desabilitado validação enquanto não tiver as notificações
                     #throw new ServerException("ValidateAvaliacao", "O prazo de " . $programa->dias_tolerancia_recurso_avaliacao . " dias para o recurso foi extrapolado.\n[ver RN_AVL_2]");
                 break;
@@ -66,7 +73,6 @@ class AvaliacaoController extends ControllerBase {
     }
 
     public function canAvaliar($data, $usuario) {
-        $unidadeService = app(UnidadeService::class);
         $usuarioService = new UsuarioService();
         /** @var PlanoTrabalhoConsolidacao|null $consolidacao */
         $consolidacao = !empty($data["plano_trabalho_consolidacao_id"]) ? PlanoTrabalhoConsolidacao::find($data["plano_trabalho_consolidacao_id"]) : null;
@@ -83,7 +89,7 @@ class AvaliacaoController extends ControllerBase {
         if(empty($unidade)) throw new ServerException("ValidateAvaliacao", "Unidade do gestor não encontrada no sistema");
         $condicao1 = !empty($consolidacao) && $usuario->hasPermissionTo("MOD_PTR_CSLD_AVAL") && ($avaliador($unidade->id) || $avaliador($unidade->unidade_pai_id));
         $condicao2 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL") && $avaliador($unidade->id);
-        $condicao3 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL_SUBORD") && array_filter($unidadeService->linhaAscendente($unidade->id), fn($u) => $avaliador($u));
+        $condicao3 = !empty($planoEntrega) && $usuario->hasPermissionTo("MOD_PENT_AVAL_SUBORD") && array_filter($this->unidadeService->linhaAscendente($unidade->id), fn($u) => $avaliador($u));
         if(!empty($consolidacao) && !$condicao1) throw new ServerException("ValidateAvaliacao", "Usuário não possui a capacidade MOD_PTR_CSLD_AVAL.\n[ver RN_AVL_1]");
         if(!empty($planoEntrega) && !$condicao2 && !$condicao3) throw new ServerException("ValidateAvaliacao", "Usuário não possui a capacidade MOD_PENT_AVAL ou MOD_PENT_AVAL_SUBORD.\n[ver RN_AVL_1]");
     }
