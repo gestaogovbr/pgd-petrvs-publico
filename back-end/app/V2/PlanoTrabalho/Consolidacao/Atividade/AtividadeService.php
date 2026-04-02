@@ -9,6 +9,7 @@ use App\Exceptions\ValidateException;
 use App\Models\Atividade;
 use App\Repository\AtividadeRepository;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\DTOs\AtividadeStoreDTO;
+use App\V2\PlanoTrabalho\Consolidacao\Atividade\DTOs\AtividadeUpdateDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeStoreValidator;
 use Illuminate\Support\Facades\Auth;
@@ -48,12 +49,9 @@ class AtividadeService
             throw new ValidateException('A atividade não pertence a esta consolidação.');
         }
 
-        $updateData = array_filter([
-            'descricao' => $data['descricao'] ?? null,
-            'plano_trabalho_entrega_id' => $data['plano_trabalho_entrega_id'] ?? null,
-        ], fn($v) => $v !== null);
+        $dto = AtividadeUpdateDTO::fromArray($data);
 
-        $this->atividadeRepository->update($atividadeId, $updateData);
+        $this->atividadeRepository->update($atividadeId, $dto->toArray());
 
         return $this->atividadeRepository->findById($atividadeId);
     }
