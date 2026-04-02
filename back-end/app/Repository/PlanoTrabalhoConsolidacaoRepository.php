@@ -7,13 +7,15 @@ namespace App\Repository;
 use App\DTOs\PlanoTrabalho\PlanoTrabalhoConsolidacaoDataDTO;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoReadRepositoryContract;
+use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoWriteRepositoryContract;
+use Illuminate\Database\Eloquent\Collection;
 
 class PlanoTrabalhoConsolidacaoRepository
 {
     public function __construct(
         private readonly PlanoTrabalhoConsolidacaoReadRepositoryContract $readRepository,
-    ) {
-    }
+        private readonly PlanoTrabalhoConsolidacaoWriteRepositoryContract $writeRepository,
+    ) {}
 
     public function getConsolidacaoData(string $id): ?PlanoTrabalhoConsolidacaoDataDTO
     {
@@ -25,18 +27,39 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->findConsolidacaoById($id);
     }
 
+    public function findByPlanoTrabalhoId(string $planoTrabalhoId): Collection
+    {
+        return $this->readRepository->findByPlanoTrabalhoId($planoTrabalhoId);
+    }
+
     public function getPendentesAvaliacao(
         array $unidadesGerenciadasIds,
         array $unidadesSubordinadasIds,
         string $usuarioId,
         \DateTimeInterface $dataCorte
-    ): \Illuminate\Database\Eloquent\Collection
-    {
+    ): Collection {
         return $this->readRepository->getPendentesAvaliacao(
             $unidadesGerenciadasIds,
             $unidadesSubordinadasIds,
             $usuarioId,
             $dataCorte
         );
+    }
+
+    public function create(array $attributes): PlanoTrabalhoConsolidacao
+    {
+        /** @var PlanoTrabalhoConsolidacao */
+        return $this->writeRepository->create($attributes);
+    }
+
+    public function update(string $id, array $attributes): ?PlanoTrabalhoConsolidacao
+    {
+        /** @var PlanoTrabalhoConsolidacao|null */
+        return $this->writeRepository->update($id, $attributes);
+    }
+
+    public function delete(string $id): bool
+    {
+        return $this->writeRepository->delete($id);
     }
 }

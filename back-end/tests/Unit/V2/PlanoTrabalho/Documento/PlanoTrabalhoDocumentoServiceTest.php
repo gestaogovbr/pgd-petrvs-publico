@@ -14,6 +14,7 @@ use App\Repository\DocumentoRepository;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\V2\StatusService;
+use App\V2\PlanoTrabalho\Consolidacao\GeradorPeriodosAvaliativos;
 use App\Models\Documento;
 use App\Models\DocumentoAssinatura;
 use App\Models\PlanoTrabalho;
@@ -39,6 +40,7 @@ beforeEach(function () {
     $this->datasourceBuilder = Mockery::mock(TCRDatasourceBuilder::class);
     $this->renderer = Mockery::mock(TCRTemplateRenderer::class);
     $this->statusService = Mockery::mock(StatusService::class);
+    $this->geradorPeriodos = Mockery::mock(GeradorPeriodosAvaliativos::class);
 
     $this->service = new PlanoTrabalhoDocumentoService(
         $this->documentoRepo,
@@ -52,6 +54,7 @@ beforeEach(function () {
         $this->datasourceBuilder,
         $this->renderer,
         $this->statusService,
+        $this->geradorPeriodos,
     );
 
     /** @var PlanoTrabalho $plano */
@@ -173,6 +176,8 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
             ->once()
             ->with($this->plano, StatusEnum::AGUARDANDO_ASSINATURA->value, Mockery::type('string'));
 
+        $this->geradorPeriodos->shouldNotReceive('gerar');
+
         expect($this->service->assinar('plano-1'))->toBe($assinatura);
     });
 
@@ -196,6 +201,8 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
         $this->statusService->shouldReceive('atualizaStatus')
             ->once()
             ->with($this->plano, StatusEnum::ATIVO->value, Mockery::type('string'));
+
+        $this->geradorPeriodos->shouldReceive('gerar')->once()->with($this->plano);
 
         expect($this->service->assinar('plano-1'))->toBe($assinatura);
     });

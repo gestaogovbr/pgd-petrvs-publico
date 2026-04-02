@@ -96,6 +96,14 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
      * @param \DateTimeInterface $dataCorte Data limite para considerar pendência.
      * @return \Illuminate\Database\Eloquent\Collection
      */
+    public function findByPlanoTrabalhoId(string $planoTrabalhoId): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->orderBy('data_inicio')
+            ->get();
+    }
+
     public function getPendentesAvaliacao(
         array $unidadesGerenciadasIds,
         array $unidadesSubordinadasIds,

@@ -632,3 +632,43 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (assinaturas 
         postAssinar($this)->assertStatus(422);
     });
 });
+
+// ── POST assinatura-tcr: geração de períodos avaliativos ────────────
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (períodos avaliativos)', function () {
+
+    test('gera consolidações ao ativar o plano', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+        postAssinar($this);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)->get();
+
+        expect($consolidacoes)->not->toBeEmpty();
+        expect($consolidacoes->first()->status)->toBe('INCLUIDO');
+        expect($consolidacoes->first()->plano_trabalho_id)->toBe($this->plano->id);
+    });
+
+    test('não duplica consolidações quando plano já está ativo', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+        postAssinar($this);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+
+        $countOriginal = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)->count();
+        expect($countOriginal)->toBeGreaterThan(0);
+
+        // Simula uma segunda chamada ao gerador (idempotência)
+        app(\App\V2\PlanoTrabalho\Consolidacao\GeradorPeriodosAvaliativos::class)->gerar($this->plano);
+
+        $countDepois = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)->count();
+        expect($countDepois)->toBe($countOriginal);
+    });
+});

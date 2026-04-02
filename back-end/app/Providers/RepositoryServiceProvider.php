@@ -130,7 +130,9 @@ use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorWriteRepositor
 use App\Repository\IntegracaoServidor\Eloquent\EloquentIntegracaoServidorReadRepository;
 use App\Repository\IntegracaoServidor\Eloquent\EloquentIntegracaoServidorWriteRepository;
 use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoReadRepositoryContract;
+use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoWriteRepositoryContract;
 use App\Repository\PlanoTrabalhoConsolidacao\Eloquent\EloquentPlanoTrabalhoConsolidacaoReadRepository;
+use App\Repository\PlanoTrabalhoConsolidacao\Eloquent\EloquentPlanoTrabalhoConsolidacaoWriteRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\Repository\Unidade\Eloquent\EloquentUnidadeReadRepository;
@@ -166,6 +168,10 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             PlanoTrabalhoConsolidacaoReadRepositoryContract::class,
             EloquentPlanoTrabalhoConsolidacaoReadRepository::class,
+        );
+        $this->app->bind(
+            PlanoTrabalhoConsolidacaoWriteRepositoryContract::class,
+            EloquentPlanoTrabalhoConsolidacaoWriteRepository::class,
         );
 
         $this->app->bind(
