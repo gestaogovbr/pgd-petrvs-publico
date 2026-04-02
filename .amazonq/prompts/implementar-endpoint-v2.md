@@ -17,9 +17,16 @@ Se não encontrar o planejamento, perguntar ao usuário.
 
 ## Fluxo por endpoint
 
-### 1. DTO (TDD)
+### 1. RequestValidator
+- Criar `PlanoTrabalho<Entidade>RequestValidator` com métodos estáticos por action
+- Usa `$request->validate()` do Laravel — recebe `Request`, retorna `array`
+- Mensagens de erro customizadas em português
+- Implementar em `V2/<Feature>/Validators/`
+
+### 2. DTO (TDD)
 - Criar teste primeiro → RED → Implementar → GREEN
 - Implementar em `V2/<Feature>/DTOs/` ou `V2/<Feature>/<Subtipo>/`
+- Um DTO por operação quando os campos diferem (ex: `StoreDTO`, `UpdateDTO`)
 
 ### 2. Autorização e Validação de negócio (TDD)
 - Mockar repositories via construtor (NÃO usar `overload:`)
@@ -32,17 +39,22 @@ Se não encontrar o planejamento, perguntar ao usuário.
 - Seguir `.amazonq/rules/repository-rules.md`
 
 ### 4. Service (TDD)
-- Orquestrador: DTO → Validação → Repository
+- Orquestrador: Validação → DTO → Repository
+- Recebe dados já validados pelo controller (primitivos ou DTOs)
 - Reutilizar entidades já carregadas pela validação
 
 ### 5. Controller
 - Sem testes unitários
-- Apenas: validar request → chamar service → retornar JSON
+- Nomenclatura: controller inclui contexto do módulo pai (ex: `PlanoTrabalhoConsolidacaoController`, não `ConsolidacaoController`)
+- Fluxo: RequestValidator → DTO (se aplicável) → Service → JSON
+- Catch order: `ValidationException` (400) → `IBaseException` ($e->getCode()) → `Throwable` (500)
 
 ### 6. E2E (IntegrationTenant)
 - Registrar rotas de teste sem middleware auth
 - `actingAs` + factories reais
 - POST: `assertDatabaseHas`; GET: verificar retorno
+- DELETE com SoftDeletes: usar `assertSoftDeleted`, NÃO `assertDatabaseMissing`
+- Testar input inválido (400) separado de regra de negócio violada (422)
 
 ## Regras operacionais
 - `test()` ao invés de `it()` nos describes do Pest
