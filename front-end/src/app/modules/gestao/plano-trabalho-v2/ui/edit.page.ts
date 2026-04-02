@@ -19,6 +19,8 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { MessageService } from 'src/app/v2/services/message.service';
+import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
+import { PlanoTrabalho } from '../domain/types';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -44,8 +46,10 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   public readonly gb = inject(GlobalsService);
   private readonly injector = inject(Injector);
+  readonly policy = inject(PlanoTrabalhoPolicy);
 
   planoId = signal<string | null>(null);
+  plano = signal<PlanoTrabalho | null>(null);
   loading = signal(true);
   saving = signal(false);
   carregandoRegramento = signal(false);
@@ -205,6 +209,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       }),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(async plano => {
+      this.plano.set(plano);
       this.entregas.set(plano.entregas || []);
       this.form.controls.data_inicio.setValue(plano.data_inicio ? new Date(plano.data_inicio).toISOString().split('T')[0] : '');
       this.form.controls.data_fim.setValue(plano.data_fim ? new Date(plano.data_fim).toISOString().split('T')[0] : '');
@@ -343,6 +348,14 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   }
 
   voltar() { this.router.navigate(['gestao', 'plano-trabalho-v2']); }
+
+  excluir() {
+    if (!this.planoId() || !confirm('Deseja realmente excluir este plano de trabalho?')) return;
+    this.api.delete(this.planoId()!).subscribe(() => {
+      this.message.success('Plano de trabalho excluído com sucesso.');
+      this.router.navigate(['gestao', 'plano-trabalho-v2']);
+    });
+  }
 
   selecionarUsuario(item: UsuarioSearchItem) {
     this.form.controls.usuario_id.setValue(item.id);

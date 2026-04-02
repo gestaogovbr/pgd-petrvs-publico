@@ -233,14 +233,6 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id]);
   }
 
-  podeCancelar(p: PlanoTrabalho): boolean {
-    return this.policy.podeCancelar(p);
-  }
-
-  podeEditar(p: PlanoTrabalho): boolean {
-    return this.policy.podeEditar(p);
-  }
-
   /* TODO: Mover para facade e usar action específica */
   cancelarPlano(p: PlanoTrabalho) {
     if (!confirm('Deseja realmente cancelar este plano de trabalho?')) return;

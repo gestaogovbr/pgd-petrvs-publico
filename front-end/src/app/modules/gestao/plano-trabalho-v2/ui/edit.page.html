@@ -253,7 +253,9 @@
 
     <div class="d-flex justify-content-center gap-2">
       <br-button (click)="voltar()">Voltar</br-button>
-      <br-button emphasis="secondary">Excluir</br-button>
+      @if (plano() && policy.podeExcluir(plano()!)) {
+        <br-button emphasis="secondary" (click)="excluir()">Excluir</br-button>
+      }
       <br-button emphasis="secondary" (click)="salvar()" [disabled]="!podeSalvar() || saving()">Salvar Alterações</br-button>
       <br-button emphasis="primary" (click)="assinar()" [disabled]="!podeAssinar()">Assinar</br-button>
     </div>

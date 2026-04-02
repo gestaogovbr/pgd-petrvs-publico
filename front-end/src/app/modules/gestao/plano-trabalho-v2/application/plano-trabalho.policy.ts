@@ -23,4 +23,13 @@ export class PlanoTrabalhoPolicy {
   podeCancelarAssinatura(p: PlanoTrabalho): boolean {
     return p.status === 'AGUARDANDO_ASSINATURA' && p.usuario_id === this.auth.usuario?.id;
   }
+
+  podeAssinar(p: PlanoTrabalho): boolean {
+    const statusPermitidos = ['INCLUIDO', 'AGUARDANDO_ASSINATURA'];
+    return statusPermitidos.includes(p.status);
+  }
+
+  podeExcluir(p: PlanoTrabalho): boolean {
+    return p.status === 'INCLUIDO' && p.usuario_id === this.auth.usuario?.id;
+  }
 }
