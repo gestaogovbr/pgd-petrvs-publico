@@ -8,7 +8,7 @@ use App\Enums\StatusEnum;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
-use App\Services\StatusService;
+use App\V2\StatusService;
 
 class TCRInvalidador
 {

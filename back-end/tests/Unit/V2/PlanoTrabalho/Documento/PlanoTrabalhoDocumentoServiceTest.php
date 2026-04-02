@@ -13,7 +13,7 @@ use App\V2\PlanoTrabalho\Documento\TCR\TCRTemplateRenderer;
 use App\Repository\DocumentoRepository;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\PlanoTrabalhoRepository;
-use App\Services\StatusService;
+use App\V2\StatusService;
 use App\Models\Documento;
 use App\Models\DocumentoAssinatura;
 use App\Models\PlanoTrabalho;

@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Repository\StatusJustificativa\Eloquent\EloquentStatusJustificativaWriteRepository;
+
+use App\Repository\StatusJustificativa\Contracts\StatusJustificativaWriteRepositoryContract;
+
+use App\Repository\StatusJustificativa\Eloquent\EloquentStatusJustificativaReadRepository;
+
+use App\Repository\StatusJustificativa\Contracts\StatusJustificativaReadRepositoryContract;
+
 use App\Repository\DocumentoAssinatura\Eloquent\EloquentDocumentoAssinaturaWriteRepository;
 
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
@@ -324,6 +332,15 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             DocumentoAssinaturaWriteRepositoryContract::class,
             EloquentDocumentoAssinaturaWriteRepository::class,
+        );
+
+        $this->app->bind(
+            StatusJustificativaReadRepositoryContract::class,
+            EloquentStatusJustificativaReadRepository::class,
+        );
+        $this->app->bind(
+            StatusJustificativaWriteRepositoryContract::class,
+            EloquentStatusJustificativaWriteRepository::class,
         );
     }
 

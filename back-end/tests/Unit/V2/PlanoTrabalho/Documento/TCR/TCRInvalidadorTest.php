@@ -4,7 +4,7 @@ use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
 use App\Repository\DocumentoRepository;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\PlanoTrabalhoRepository;
-use App\Services\StatusService;
+use App\V2\StatusService;
 use App\Models\PlanoTrabalho;
 use App\Models\Documento;
 use App\Enums\StatusEnum;
