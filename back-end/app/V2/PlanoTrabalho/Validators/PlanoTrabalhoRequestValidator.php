@@ -19,6 +19,12 @@ class PlanoTrabalhoRequestValidator
             'filters.vigentes' => ['sometimes', 'boolean'],
             'filters.arquivados' => ['sometimes', 'boolean'],
             'filters.usuario_id' => ['sometimes', 'nullable', 'uuid'],
+            'filters.unidade_id' => ['sometimes', 'nullable', 'uuid'],
+            'filters.incluir_subordinadas' => ['sometimes', 'boolean'],
+            'filters.numero' => ['sometimes', 'nullable', 'integer'],
+            'filters.tipo_modalidade_id' => ['sometimes', 'nullable', 'uuid'],
+            'filters.status' => ['sometimes', 'nullable', 'uuid'],
+            'filters.hierarquia' => ['sometimes', 'boolean'],
         ]);
     }
 
