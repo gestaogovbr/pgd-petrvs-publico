@@ -672,3 +672,350 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (períodos av
         expect($countDepois)->toBe($countOriginal);
     });
 });
+
+// ── POST assinatura-tcr: datas dos períodos avaliativos ─────────────
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (datas dos períodos)', function () {
+
+    test('gera períodos mensais com datas corretas para janeiro a junho', function () {
+        $this->plano->data_inicio = '2025-01-01';
+        $this->plano->data_fim = '2025-06-30';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(6);
+        expect($consolidacoes[0]->data_inicio)->toBe('2025-01-01');
+        expect($consolidacoes[0]->data_fim)->toBe('2025-01-31');
+        expect($consolidacoes[1]->data_inicio)->toBe('2025-02-01');
+        expect($consolidacoes[1]->data_fim)->toBe('2025-02-28');
+        expect($consolidacoes[2]->data_inicio)->toBe('2025-03-01');
+        expect($consolidacoes[2]->data_fim)->toBe('2025-03-31');
+        expect($consolidacoes[5]->data_inicio)->toBe('2025-06-01');
+        expect($consolidacoes[5]->data_fim)->toBe('2025-06-30');
+    });
+
+    test('trata fevereiro em ano bissexto', function () {
+        $this->plano->data_inicio = '2024-02-01';
+        $this->plano->data_fim = '2024-02-29';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(1);
+        expect($consolidacoes[0]->data_inicio)->toBe('2024-02-01');
+        expect($consolidacoes[0]->data_fim)->toBe('2024-02-29');
+    });
+
+    test('trata fevereiro em ano não bissexto', function () {
+        $this->plano->data_inicio = '2025-02-01';
+        $this->plano->data_fim = '2025-02-28';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(1);
+        expect($consolidacoes[0]->data_inicio)->toBe('2025-02-01');
+        expect($consolidacoes[0]->data_fim)->toBe('2025-02-28');
+    });
+
+    test('trata transição julho-agosto (31 dias consecutivos)', function () {
+        $this->plano->data_inicio = '2025-07-01';
+        $this->plano->data_fim = '2025-08-31';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(2);
+        expect($consolidacoes[0]->data_inicio)->toBe('2025-07-01');
+        expect($consolidacoes[0]->data_fim)->toBe('2025-07-31');
+        expect($consolidacoes[1]->data_inicio)->toBe('2025-08-01');
+        expect($consolidacoes[1]->data_fim)->toBe('2025-08-31');
+    });
+
+    test('último período ajustado quando data_fim não coincide com fim do mês', function () {
+        $this->plano->data_inicio = '2025-01-01';
+        $this->plano->data_fim = '2025-03-15';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(3);
+        expect($consolidacoes[0]->data_fim)->toBe('2025-01-31');
+        expect($consolidacoes[1]->data_fim)->toBe('2025-02-28');
+        expect($consolidacoes[2]->data_inicio)->toBe('2025-03-01');
+        expect($consolidacoes[2]->data_fim)->toBe('2025-03-15');
+    });
+
+    test('plano de um único dia gera uma consolidação', function () {
+        $this->plano->data_inicio = '2025-06-15';
+        $this->plano->data_fim = '2025-06-15';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(1);
+        expect($consolidacoes[0]->data_inicio)->toBe('2025-06-15');
+        expect($consolidacoes[0]->data_fim)->toBe('2025-06-15');
+    });
+});
+
+// ── POST assinatura-tcr: periodicidades alternativas ────────────────
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (periodicidades)', function () {
+
+    test('BIMESTRAL: gera períodos de 2 meses', function () {
+        $this->programa->periodicidade_consolidacao = 'BIMESTRAL';
+        $this->programa->periodicidade_valor = 31;
+        $this->programa->save();
+
+        $this->plano->data_inicio = '2025-01-01';
+        $this->plano->data_fim = '2025-06-30';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(3);
+        expect($consolidacoes[0]->data_inicio)->toBe('2025-01-01');
+        expect($consolidacoes[0]->data_fim)->toBe('2025-02-28');
+        expect($consolidacoes[1]->data_inicio)->toBe('2025-03-01');
+        expect($consolidacoes[1]->data_fim)->toBe('2025-04-30');
+        expect($consolidacoes[2]->data_inicio)->toBe('2025-05-01');
+        expect($consolidacoes[2]->data_fim)->toBe('2025-06-30');
+    });
+
+    test('TRIMESTRAL: gera períodos de 3 meses', function () {
+        $this->programa->periodicidade_consolidacao = 'TRIMESTRAL';
+        $this->programa->periodicidade_valor = 31;
+        $this->programa->save();
+
+        $this->plano->data_inicio = '2025-01-01';
+        $this->plano->data_fim = '2025-06-30';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(2);
+        expect($consolidacoes[0]->data_inicio)->toBe('2025-01-01');
+        expect($consolidacoes[0]->data_fim)->toBe('2025-03-31');
+        expect($consolidacoes[1]->data_inicio)->toBe('2025-04-01');
+        expect($consolidacoes[1]->data_fim)->toBe('2025-06-30');
+    });
+
+    test('SEMESTRAL: gera períodos de 6 meses', function () {
+        $this->programa->periodicidade_consolidacao = 'SEMESTRAL';
+        $this->programa->periodicidade_valor = 31;
+        $this->programa->save();
+
+        $this->plano->data_inicio = '2025-01-01';
+        $this->plano->data_fim = '2025-12-31';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(2);
+        expect($consolidacoes[0]->data_inicio)->toBe('2025-01-01');
+        expect($consolidacoes[0]->data_fim)->toBe('2025-06-30');
+        expect($consolidacoes[1]->data_inicio)->toBe('2025-07-01');
+        expect($consolidacoes[1]->data_fim)->toBe('2025-12-31');
+    });
+
+    test('DIAS: gera períodos de N dias', function () {
+        $this->programa->periodicidade_consolidacao = 'DIAS';
+        $this->programa->periodicidade_valor = 15;
+        $this->programa->save();
+
+        $this->plano->data_inicio = '2025-03-01';
+        $this->plano->data_fim = '2025-03-31';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes->count())->toBeGreaterThanOrEqual(2);
+        expect($consolidacoes[0]->data_inicio)->toBe('2025-03-01');
+        expect($consolidacoes->last()->data_fim)->toBe('2025-03-31');
+
+        foreach ($consolidacoes as $c) {
+            expect($c->data_inicio <= $c->data_fim)->toBeTrue();
+        }
+    });
+
+    test('SEMANAL: gera períodos semanais', function () {
+        $this->programa->periodicidade_consolidacao = 'SEMANAL';
+        $this->programa->periodicidade_valor = 1; // segunda-feira
+        $this->programa->save();
+
+        // 2025-03-03 é segunda-feira
+        $this->plano->data_inicio = '2025-03-03';
+        $this->plano->data_fim = '2025-03-23';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes->count())->toBeGreaterThanOrEqual(2);
+
+        foreach ($consolidacoes as $c) {
+            expect($c->data_inicio)->not->toBeNull();
+            expect($c->data_fim)->not->toBeNull();
+            expect($c->data_inicio <= $c->data_fim)->toBeTrue();
+        }
+    });
+
+    test('QUINZENAL: gera períodos quinzenais', function () {
+        $this->programa->periodicidade_consolidacao = 'QUINZENAL';
+        $this->programa->periodicidade_valor = 1; // segunda-feira
+        $this->programa->save();
+
+        $this->plano->data_inicio = '2025-03-03';
+        $this->plano->data_fim = '2025-04-30';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes->count())->toBeGreaterThanOrEqual(2);
+
+        foreach ($consolidacoes as $c) {
+            expect($c->data_inicio <= $c->data_fim)->toBeTrue();
+        }
+    });
+
+    test('BIMESTRAL com fevereiro bissexto: ajusta corretamente', function () {
+        $this->programa->periodicidade_consolidacao = 'BIMESTRAL';
+        $this->programa->periodicidade_valor = 31;
+        $this->programa->save();
+
+        $this->plano->data_inicio = '2024-01-01';
+        $this->plano->data_fim = '2024-04-30';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(2);
+        expect($consolidacoes[0]->data_inicio)->toBe('2024-01-01');
+        expect($consolidacoes[0]->data_fim)->toBe('2024-02-29');
+        expect($consolidacoes[1]->data_inicio)->toBe('2024-03-01');
+        expect($consolidacoes[1]->data_fim)->toBe('2024-04-30');
+    });
+
+    test('TRIMESTRAL com último período truncado pela data_fim do plano', function () {
+        $this->programa->periodicidade_consolidacao = 'TRIMESTRAL';
+        $this->programa->periodicidade_valor = 31;
+        $this->programa->save();
+
+        $this->plano->data_inicio = '2025-01-01';
+        $this->plano->data_fim = '2025-05-15';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        expect($consolidacoes)->toHaveCount(2);
+        expect($consolidacoes[0]->data_fim)->toBe('2025-03-31');
+        expect($consolidacoes[1]->data_inicio)->toBe('2025-04-01');
+        expect($consolidacoes[1]->data_fim)->toBe('2025-05-15');
+    });
+
+    test('sem gaps entre períodos consecutivos', function () {
+        $this->plano->data_inicio = '2025-01-01';
+        $this->plano->data_fim = '2025-12-31';
+        $this->plano->save();
+
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this);
+
+        $consolidacoes = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $this->plano->id)
+            ->orderBy('data_inicio')
+            ->get();
+
+        for ($i = 1; $i < $consolidacoes->count(); $i++) {
+            $fimAnterior = \Carbon\Carbon::parse($consolidacoes[$i - 1]->data_fim);
+            $inicioAtual = \Carbon\Carbon::parse($consolidacoes[$i]->data_inicio);
+
+            expect($inicioAtual->diffInDays($fimAnterior))->toBe(1);
+        }
+    });
+});

@@ -47,7 +47,7 @@ class GeradorPeriodosAvaliativos
 
     private function calcularProximaData(string $data, Programa $programa): string
     {
-        $dayWeek = date('w', strtotime($data));
+        $dayWeek = (int) date('w', strtotime($data));
 
         return match ($programa->periodicidade_consolidacao) {
             'DIAS' => date('Y-m-d', strtotime($data . ' + ' . $programa->periodicidade_valor . ' days')),

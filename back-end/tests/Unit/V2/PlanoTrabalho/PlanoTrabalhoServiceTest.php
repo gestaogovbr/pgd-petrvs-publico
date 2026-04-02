@@ -8,7 +8,6 @@ use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
-use App\V2\CalculadoraPeriodosAvaliativos;
 use App\Models\PlanoTrabalho;
 use App\Exceptions\ServerException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -21,7 +20,6 @@ uses(TestCase::class);
 beforeEach(function () {
     $this->repository = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
-    $this->calculadora = Mockery::mock(CalculadoraPeriodosAvaliativos::class);
     $this->indexValidacao = Mockery::mock(PlanoTrabalhoIndexValidator::class);
     $this->storeValidacao = Mockery::mock(PlanoTrabalhoStoreValidator::class);
     $this->destroyValidator = Mockery::mock(PlanoTrabalhoDestroyValidator::class);
@@ -29,7 +27,6 @@ beforeEach(function () {
     $this->service = new PlanoTrabalhoService(
         $this->repository,
         $this->unidadeRepository,
-        $this->calculadora,
         $this->storeValidacao,
         $this->destroyValidator,
         $this->indexValidacao,

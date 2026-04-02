@@ -6,7 +6,6 @@ use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\UnidadeRepository;
-use App\V2\CalculadoraPeriodosAvaliativos;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
@@ -23,7 +22,6 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoReadRepositoryContract $readRepository,
         private readonly PlanoTrabalhoWriteRepositoryContract $writeRepository,
         private readonly UnidadeRepository $unidadeRepository,
-        private readonly CalculadoraPeriodosAvaliativos $calculadora,
         private readonly PlanoTrabalhoStoreValidator $storeValidacao,
         private readonly PlanoTrabalhoUpdateValidator $updateValidator,
         private readonly PlanoTrabalhoDestroyValidator $destroyValidator,
