@@ -127,7 +127,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         /** @var \Illuminate\Database\Eloquent\Builder<PlanoTrabalho> $queryBase */
         $queryBase = $filtro->arquivados
-            ? PlanoTrabalho::onlyTrashed()
+            ? PlanoTrabalho::withTrashed()
             : PlanoTrabalho::query();
 
         $query = $queryBase->select('id', 'numero', 'usuario_id', 'unidade_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
