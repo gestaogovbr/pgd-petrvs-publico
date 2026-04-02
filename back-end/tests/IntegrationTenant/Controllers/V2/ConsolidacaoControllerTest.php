@@ -3,6 +3,7 @@
 namespace Tests\IntegrationTenant\Controllers\V2;
 
 use App\V2\PlanoTrabalho\Consolidacao\ConsolidacaoController;
+use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController;
 use App\V2\PlanoTrabalho\Documento\DocumentoController;
 use App\Models\Entrega;
 use App\Models\Perfil;
@@ -38,6 +39,20 @@ beforeEach(function () {
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/documento/assinatura-tcr',
             [DocumentoController::class, 'assinar']
         )->name('__tests.v2.consolidacao.assinar');
+    }
+
+    if (!Route::has('__tests.v2.consolidacao.concluir')) {
+        Route::middleware(['api'])->patch(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/concluir',
+            [ConsolidacaoController::class, 'concluir']
+        )->name('__tests.v2.consolidacao.concluir');
+    }
+
+    if (!Route::has('__tests.v2.consolidacao.atividade.store')) {
+        Route::middleware(['api'])->post(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade',
+            [AtividadeController::class, 'store']
+        )->name('__tests.v2.consolidacao.atividade.store');
     }
 
     $perfil = Perfil::factory()->create(['nivel' => 3]);
@@ -84,6 +99,8 @@ beforeEach(function () {
         'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
     ]);
 
+    $this->entrega = PlanoTrabalhoEntrega::where('plano_trabalho_id', $this->plano->id)->first();
+
     Session::put('entidade_id', $this->unidade->entidade_id);
 });
 
@@ -91,6 +108,25 @@ function ativarPlano($context): void
 {
     $context->postJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/documento");
     $context->postJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/documento/assinatura-tcr");
+}
+
+function ativarEObterConsolidacao($context): string
+{
+    ativarPlano($context);
+
+    return $context->getJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao")
+        ->json('data.0.id');
+}
+
+function registrarAtividade($context, string $consolidacaoId): void
+{
+    $context->postJson(
+        "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/atividade",
+        [
+            'plano_trabalho_entrega_id' => $context->entrega->id,
+            'descricao' => 'Trabalho executado',
+        ]
+    );
 }
 
 // ── GET consolidacao ────────────────────────────────────────────────
@@ -168,5 +204,75 @@ describe('GET /api/v2/plano-trabalho/:id/consolidacao', function () {
         expect($data)->toHaveCount(6);
         expect($data[0]['data_inicio'])->toBe('2025-01-01');
         expect($data[5]['data_fim'])->toBe('2025-06-30');
+    });
+});
+
+// ── PATCH concluir ──────────────────────────────────────────────────
+
+describe('PATCH /api/v2/plano-trabalho/:id/consolidacao/:cid/concluir', function () {
+
+    test('conclui consolidação com sucesso quando todas entregas têm RE', function () {
+        $this->actingAs($this->usuario, 'web');
+        $consolidacaoId = ativarEObterConsolidacao($this);
+        registrarAtividade($this, $consolidacaoId);
+
+        $response = $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/concluir"
+        );
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('planos_trabalhos_consolidacoes', [
+            'id' => $consolidacaoId,
+            'status' => 'CONCLUIDO',
+        ]);
+    });
+
+    test('retorna 422 quando entrega sem trabalho executado', function () {
+        $this->actingAs($this->usuario, 'web');
+        $consolidacaoId = ativarEObterConsolidacao($this);
+
+        $response = $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/concluir"
+        );
+
+        $response->assertStatus(422);
+    });
+
+    test('retorna 422 quando plano não está ativo', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/" . fake()->uuid() . "/concluir"
+        );
+
+        $response->assertStatus(422);
+    });
+
+    test('retorna 404 quando plano não existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->patchJson(
+            '/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/consolidacao/' . fake()->uuid() . '/concluir'
+        );
+
+        $response->assertStatus(404);
+    });
+
+    test('retorna 422 ao tentar concluir consolidação já concluída', function () {
+        $this->actingAs($this->usuario, 'web');
+        $consolidacaoId = ativarEObterConsolidacao($this);
+        registrarAtividade($this, $consolidacaoId);
+
+        $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/concluir"
+        )->assertStatus(200);
+
+        $response = $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/concluir"
+        );
+
+        $response->assertStatus(422);
     });
 });
