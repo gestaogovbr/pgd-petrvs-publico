@@ -4,8 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, of, switchMap, take } from 'rxjs';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
-import { NavigateService } from 'src/app/services/navigate.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -19,6 +18,7 @@ import { GlobalsService } from 'src/app/services/globals.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { MessageService } from 'src/app/v2/services/message.service';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -31,7 +31,7 @@ export interface SelectOption { value: string; label: string; selected?: boolean
 })
 export class PlanoTrabalhoV2EditPage implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly go = inject(NavigateService);
+  private readonly router = inject(Router);
   private readonly api = inject(PlanoTrabalhoApiClient);
   private readonly usuarioService = inject(UsuarioService);
   private readonly programaApi = inject(ProgramaApiService);
@@ -39,6 +39,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   private readonly planoEntregaApi = inject(PlanoEntregaApiService);
   private readonly unidadeService = inject(UnidadeService);
   private readonly programaService = inject(ProgramaService);
+  private readonly message = inject(MessageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   public readonly gb = inject(GlobalsService);
@@ -341,7 +342,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     });
   }
 
-  voltar() { this.go.navigate({ route: ['gestao', 'plano-trabalho-v2'] }); }
+  voltar() { this.router.navigate(['gestao', 'plano-trabalho-v2']); }
 
   selecionarUsuario(item: UsuarioSearchItem) {
     this.form.controls.usuario_id.setValue(item.id);
@@ -361,6 +362,14 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   }
 
   salvar() {
+    this.salvarPlano(() => this.message.success('Plano de trabalho salvo com sucesso.'));
+  }
+
+  assinar() {
+    this.salvarPlano(() => this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', this.planoId()]));
+  }
+
+  private salvarPlano(onSuccess: () => void) {
     if (this.saving() || this.form.invalid || !this.programaId() || !this.planoId()) return;
 
     const payload: Partial<any> = {
@@ -376,10 +385,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     this.saving.set(true);
     this.api.update(this.planoId()!, payload)
       .pipe(finalize(() => this.saving.set(false)))
-      .subscribe(() => this.go.navigate({ route: ['gestao', 'plano-trabalho-v2'] }));
+      .subscribe(() => onSuccess());
   }
-
-  assinar() {}
 
   adicionarEntrega() {
     this.entregaForm.reset({

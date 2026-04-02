@@ -19,4 +19,8 @@ export class PlanoTrabalhoPolicy {
     const statusPermitidos = ['INCLUIDO', 'AGUARDANDO_ASSINATURA'];
     return p.usuario_id === this.auth.usuario?.id && statusPermitidos.includes(p.status);
   }
+
+  podeCancelarAssinatura(p: PlanoTrabalho): boolean {
+    return p.status === 'AGUARDANDO_ASSINATURA' && p.usuario_id === this.auth.usuario?.id;
+  }
 }

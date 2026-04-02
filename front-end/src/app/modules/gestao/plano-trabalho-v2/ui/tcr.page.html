@@ -71,12 +71,13 @@
           }
 
           <!-- Ações -->
+          @let p = plano();
           <div class="d-flex gap-2">
             @if (!jaAssinou()) {
               <br-button emphasis="primary" (click)="assinar()" [disabled]="salvando()">
                 @if (salvando()) { Assinando... } @else { <i class="fas fa-pen mr-1"></i>Assinar }
               </br-button>
-            } @else {
+            } @else if (p && policy.podeCancelarAssinatura(p)) {
               <br-button emphasis="secondary" (click)="cancelarAssinatura()" [disabled]="salvando()">
                 @if (salvando()) { Cancelando... } @else { <i class="fas fa-times mr-1"></i>Cancelar Assinatura }
               </br-button>

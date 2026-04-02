@@ -3,12 +3,13 @@ import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal 
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from "src/app/v2/components/breadcrumb/breadcrumb.component";
 import { ActivatedRoute } from "@angular/router";
-import { filter, map, switchMap, take, catchError, of, finalize } from "rxjs";
+import { catchError, filter, finalize, map, of, switchMap, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { NavigateService } from "src/app/services/navigate.service";
 import { PlanoTrabalhoApiClient } from "../infra/api-client";
 import { PlanoTrabalho } from "../domain/types";
 import { AuthService } from "src/app/services/auth.service";
+import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
 
 @Component({
   selector: 'app-plano-trabalho-v2-tcr-page',
@@ -23,6 +24,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
   private readonly go = inject(NavigateService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  readonly policy = inject(PlanoTrabalhoPolicy);
 
   readonly planoId = signal<string | null>(null);
   readonly plano = signal<PlanoTrabalho | null>(null);
@@ -55,7 +57,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
     ).subscribe({
       next: (doc) => {
         this.documento.set(doc);
-        this.atualizarJaAssinou(doc);
+        this.atualizarJaAssinou();
         this.loading.set(false);
       },
       error: () => {
@@ -74,7 +76,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
     ).subscribe({
       next: (doc) => {
         this.documento.set(doc);
-        this.atualizarJaAssinou(doc);
+        this.atualizarJaAssinou();
       },
       error: () => this.error.set('Erro ao gerar o documento.')
     });
@@ -87,9 +89,12 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
     this.api.assinarDocumento(id).pipe(
       finalize(() => this.salvando.set(false))
     ).subscribe({
-      next: (doc) => {
-        this.documento.set(doc);
-        this.atualizarJaAssinou(doc);
+      next: (assinatura) => {
+        this.documento.update(doc => doc
+          ? { ...doc, assinaturas: [...(doc.assinaturas ?? []), assinatura] }
+          : doc
+        );
+        this.jaAssinou.set(true);
       },
       error: () => this.error.set('Erro ao assinar o documento.')
     });
@@ -101,12 +106,14 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
     if (!confirm('Deseja realmente cancelar sua assinatura?')) return;
     this.salvando.set(true);
     this.api.cancelarAssinaturaDocumento(id).pipe(
-      finalize(() => this.salvando.set(false)),
-      switchMap(() => this.api.getDocumento(id))
+      finalize(() => this.salvando.set(false))
     ).subscribe({
-      next: (doc) => {
-        this.documento.set(doc);
-        this.atualizarJaAssinou(doc);
+      next: () => {
+        this.documento.update(doc => doc
+          ? { ...doc, assinaturas: (doc.assinaturas ?? []).filter((a: any) => a.usuario_id !== this.usuarioAtualId) }
+          : doc
+        );
+        this.jaAssinou.set(false);
       },
       error: () => this.error.set('Erro ao cancelar a assinatura.')
     });
@@ -114,8 +121,8 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
 
   voltar() { this.go.back(); }
 
-  private atualizarJaAssinou(doc: any) {
-    const assinaturas: any[] = doc?.assinaturas ?? [];
+  private atualizarJaAssinou() {
+    const assinaturas: any[] = this.documento()?.assinaturas ?? [];
     this.jaAssinou.set(assinaturas.some(a => a.usuario_id === this.usuarioAtualId));
   }
 }
