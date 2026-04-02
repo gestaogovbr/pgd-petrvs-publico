@@ -11,6 +11,7 @@ use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ConcluirConsolidacaoValidator;
+use App\V2\PlanoTrabalho\Consolidacao\Validators\ReabrirConsolidacaoValidator;
 use App\V2\StatusService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,7 @@ class PlanoTrabalhoConsolidacaoService
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly AtividadeAuthorizationValidator $authValidator,
         private readonly ConcluirConsolidacaoValidator $concluirValidator,
+        private readonly ReabrirConsolidacaoValidator $reabrirValidator,
         private readonly StatusService $statusService,
     ) {}
 
@@ -45,6 +47,20 @@ class PlanoTrabalhoConsolidacaoService
             $consolidacao,
             StatusEnum::CONCLUIDO->value,
             'Período concluído pelo servidor: ' . Auth::user()->nome . '.',
+        );
+
+        return $consolidacao;
+    }
+
+    public function reabrir(string $planoTrabalhoId, string $consolidacaoId, string $justificativa): PlanoTrabalhoConsolidacao
+    {
+        $plano = $this->authValidator->validar($planoTrabalhoId, Auth::id());
+        $consolidacao = $this->reabrirValidator->validar($plano, $consolidacaoId);
+
+        $this->statusService->atualizaStatus(
+            $consolidacao,
+            StatusEnum::INCLUIDO->value,
+            $justificativa,
         );
 
         return $consolidacao;

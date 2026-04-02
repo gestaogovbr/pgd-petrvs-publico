@@ -3,6 +3,7 @@
 use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoService;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ConcluirConsolidacaoValidator;
+use App\V2\PlanoTrabalho\Consolidacao\Validators\ReabrirConsolidacaoValidator;
 use App\V2\StatusService;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
@@ -20,6 +21,7 @@ beforeEach(function () {
     $this->consolidacaoRepo = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
     $this->authValidator = Mockery::mock(AtividadeAuthorizationValidator::class);
     $this->concluirValidator = Mockery::mock(ConcluirConsolidacaoValidator::class);
+    $this->reabrirValidator = Mockery::mock(ReabrirConsolidacaoValidator::class);
     $this->statusService = Mockery::mock(StatusService::class);
 
     $this->service = new PlanoTrabalhoConsolidacaoService(
@@ -27,6 +29,7 @@ beforeEach(function () {
         $this->consolidacaoRepo,
         $this->authValidator,
         $this->concluirValidator,
+        $this->reabrirValidator,
         $this->statusService,
     );
 });
@@ -104,6 +107,37 @@ describe('PlanoTrabalhoConsolidacaoService::concluir', function () {
             ->once();
 
         $result = $this->service->concluir('plano-1', 'consolidacao-1');
+
+        expect($result)->toBe($consolidacao);
+    });
+});
+
+describe('PlanoTrabalhoConsolidacaoService::reabrir', function () {
+
+    test('reabre consolidação com sucesso', function () {
+        Auth::shouldReceive('id')->andReturn('usuario-1');
+
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+
+        $this->authValidator->shouldReceive('validar')
+            ->with('plano-1', 'usuario-1')
+            ->andReturn($plano);
+
+        /** @var PlanoTrabalhoConsolidacao $consolidacao */
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->id = 'consolidacao-1';
+
+        $this->reabrirValidator->shouldReceive('validar')
+            ->with($plano, 'consolidacao-1')
+            ->andReturn($consolidacao);
+
+        $this->statusService->shouldReceive('atualizaStatus')
+            ->with($consolidacao, 'INCLUIDO', 'Motivo da reabertura')
+            ->once();
+
+        $result = $this->service->reabrir('plano-1', 'consolidacao-1', 'Motivo da reabertura');
 
         expect($result)->toBe($consolidacao);
     });
