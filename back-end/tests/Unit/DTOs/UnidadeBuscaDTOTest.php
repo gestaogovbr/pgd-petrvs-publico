@@ -21,7 +21,7 @@ describe('UnidadeBuscaDTO', function () {
 
     test('extrai todos os campos corretamente', function () {
         $dto = UnidadeBuscaDTO::fromArray([
-            'termo' => 'Financeiro',
+            'nome_codigo' => 'Financeiro',
             'hierarquia' => false,
             'todos' => true,
         ]);
@@ -49,13 +49,13 @@ describe('UnidadeBuscaDTO', function () {
 
     test('toArray retorna array com todos os campos', function () {
         $dto = UnidadeBuscaDTO::fromArray([
-            'termo' => 'Coord',
+            'nome_codigo' => 'Coord',
             'hierarquia' => false,
             'todos' => true,
         ]);
 
         expect($dto->toArray())->toBe([
-            'termo' => 'Coord',
+            'nome_codigo' => 'Coord',
             'hierarquia' => false,
             'todos' => true,
         ]);

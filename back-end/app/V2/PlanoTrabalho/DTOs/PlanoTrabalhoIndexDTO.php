@@ -63,6 +63,9 @@ class PlanoTrabalhoIndexDTO
         $vigentes = (bool) ($filters['vigentes'] ?? false);
         $arquivados = (bool) ($filters['arquivados'] ?? false);
         $unidadesId = $filters['unidade_id'] ?? null;
+        if (is_string($unidadesId)) {
+            $unidadesId = [$unidadesId];
+        }
         $hierarquia = $filters['hierarquia'] ?? null;
         $numero = isset($filters['numero']) ? (int) $filters['numero'] : null;
         $tipoModalidadeId = $filters['tipo_modalidade_id'] ?? null;

@@ -24,7 +24,7 @@ class UnidadeBuscaDTO
     public function toArray(): array
     {
         return [
-            'termo' => $this->termo,
+            'nome_codigo' => $this->termo,
             'hierarquia' => $this->hierarquia,
             'todos' => $this->todos,
         ];

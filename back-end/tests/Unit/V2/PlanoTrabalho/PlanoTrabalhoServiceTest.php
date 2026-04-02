@@ -6,8 +6,10 @@ use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
-use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
+use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\UnidadeRepository;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateValidator;
 use App\Models\PlanoTrabalho;
 use App\Exceptions\ServerException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -18,16 +20,20 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->repository = Mockery::mock(PlanoTrabalhoRepository::class);
+    $this->readRepository = Mockery::mock(PlanoTrabalhoReadRepositoryContract::class);
+    $this->writeRepository = Mockery::mock(PlanoTrabalhoWriteRepositoryContract::class);
     $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
-    $this->indexValidacao = Mockery::mock(PlanoTrabalhoIndexValidator::class);
     $this->storeValidacao = Mockery::mock(PlanoTrabalhoStoreValidator::class);
+    $this->updateValidator = Mockery::mock(PlanoTrabalhoUpdateValidator::class);
     $this->destroyValidator = Mockery::mock(PlanoTrabalhoDestroyValidator::class);
+    $this->indexValidacao = Mockery::mock(PlanoTrabalhoIndexValidator::class);
 
     $this->service = new PlanoTrabalhoService(
-        $this->repository,
+        $this->readRepository,
+        $this->writeRepository,
         $this->unidadeRepository,
         $this->storeValidacao,
+        $this->updateValidator,
         $this->destroyValidator,
         $this->indexValidacao,
     );
@@ -44,7 +50,7 @@ describe('PlanoTrabalhoService::index', function () {
         $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
-        $this->repository
+        $this->readRepository
             ->shouldReceive('buscarPlanosListagem')
             ->once()
             ->with(Mockery::type(PlanoTrabalhoIndexDTO::class))
@@ -69,7 +75,7 @@ describe('PlanoTrabalhoService::index', function () {
                 (object) ['id' => 'unidade-3'],
             ]));
 
-        $this->repository
+        $this->readRepository
             ->shouldReceive('buscarPlanosListagem')
             ->once()
             ->with(Mockery::on(fn (PlanoTrabalhoIndexDTO $f) =>
@@ -81,7 +87,7 @@ describe('PlanoTrabalhoService::index', function () {
             'filters' => [
                 'vigentes' => true,
                 'unidade_id' => ['unidade-1'],
-                'subordinadas' => true,
+                'incluir_subordinadas' => true,
             ],
         ]);
     });
@@ -93,7 +99,7 @@ describe('PlanoTrabalhoService::index', function () {
 
         $this->unidadeRepository->shouldNotReceive('getSubordinadasRecursivas');
 
-        $this->repository
+        $this->readRepository
             ->shouldReceive('buscarPlanosListagem')
             ->once()
             ->andReturn($paginator);
@@ -118,7 +124,7 @@ describe('PlanoTrabalhoService::store', function () {
             ->once()
             ->with(Mockery::type(PlanoTrabalhoStoreDTO::class));
 
-        $this->repository
+        $this->writeRepository
             ->shouldReceive('create')
             ->once()
             ->with(Mockery::type('array'))
@@ -148,7 +154,7 @@ describe('PlanoTrabalhoService::store', function () {
             ->once()
             ->andThrow(new ServerException('ValidatePlanoTrabalho', 'A unidade está inativa.'));
 
-        $this->repository->shouldNotReceive('create');
+        $this->writeRepository->shouldNotReceive('create');
 
         $this->service->store([
             'usuario_id' => 'user-1',
@@ -168,7 +174,7 @@ describe('PlanoTrabalhoService::store', function () {
         $this->storeValidacao->shouldReceive('validarAutorizacao')->once();
         $this->storeValidacao->shouldReceive('validar')->once();
 
-        $this->repository
+        $this->writeRepository
             ->shouldReceive('create')
             ->once()
             ->with(Mockery::on(fn (array $attrs) =>
@@ -197,7 +203,7 @@ describe('PlanoTrabalhoService::destroy', function () {
             ->once()
             ->with('plano-1', 'user-1');
 
-        $this->repository
+        $this->writeRepository
             ->shouldReceive('delete')
             ->once()
             ->with('plano-1')
@@ -216,7 +222,7 @@ describe('PlanoTrabalhoService::destroy', function () {
             ->once()
             ->andThrow(new ServerException('ValidatePlanoTrabalho', 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.'));
 
-        $this->repository->shouldNotReceive('delete');
+        $this->writeRepository->shouldNotReceive('delete');
 
         $this->service->destroy('plano-1');
     })->throws(ServerException::class, 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.');
@@ -228,7 +234,7 @@ describe('PlanoTrabalhoService::show', function () {
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
 
-        $this->repository
+        $this->readRepository
             ->shouldReceive('findByIdComRelacoes')
             ->once()
             ->with('plano-1')
@@ -246,7 +252,7 @@ describe('PlanoTrabalhoService::show', function () {
             (object) ['id' => 'entrega-1'],
         ]));
 
-        $this->repository
+        $this->readRepository
             ->shouldReceive('findByIdComRelacoes')
             ->once()
             ->with('plano-2')
@@ -258,7 +264,7 @@ describe('PlanoTrabalhoService::show', function () {
     });
 
     test('lança ServerException quando plano não encontrado', function () {
-        $this->repository
+        $this->readRepository
             ->shouldReceive('findByIdComRelacoes')
             ->once()
             ->with('inexistente')
@@ -271,7 +277,7 @@ describe('PlanoTrabalhoService::show', function () {
 describe('PlanoTrabalhoService::statuses', function () {
 
     test('delega ao repository e retorna statuses', function () {
-        $this->repository
+        $this->readRepository
             ->shouldReceive('getStatuses')
             ->once()
             ->andReturn(PlanoTrabalho::STATUSES);
