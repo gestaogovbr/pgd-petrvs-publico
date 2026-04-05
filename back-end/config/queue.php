@@ -76,7 +76,7 @@ return [
         'rabbitmq' => [
             'driver' => 'rabbitmq',
             'worker' => env('RABBITMQ_WORKER', 'horizon'),
-
+            'after_commit' => true,
             'hosts' => [
                 [
                     'host' => env('RABBITMQ_HOST', '127.0.0.1'),
@@ -90,10 +90,6 @@ return [
                 'ssl_options' => [],
                 'queue' => [
                     'durable' => true,   // fila duravel
-                    'arguments' => [
-                        'x-dead-letter-exchange' => ['S', 'dlx'],
-                        'x-dead-letter-routing-key' => ['S', 'jobs.failed'],
-                    ],
                 ],
                 'exchange' => [
                     'durable' => true,
@@ -113,13 +109,13 @@ return [
 
         'pgd_queue' => [
             'driver' => 'rabbitmq',
-            'connection' => 'default',
+            'connection' => 'rabbitmq',
             'queue' => 'pgd_queue',
-            'retry_after' => 60 * 60 * 4,
+            'retry_after' => 60 * 5,
             'block_for' => null,
             'tries' => 1,
             'after_commit' => false,
-            'timeout' => 60 * 60 * 3
+            'timeout' => 30
         ]
     ],
 
