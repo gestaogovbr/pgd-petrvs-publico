@@ -13,11 +13,11 @@ class PlanoTrabalhoObserver
     {
     }
 
-    public function updated(PlanoTrabalho $planoTrabalho): void
+    public function updated(PlanoTrabalho $planoTrabalho)
     {
         if (!tenancy()->initialized) {
             Log::warning('Tentativa de agendar envio de plano de trabalho sem tenant inicializado');
-            return;
+            return true;
         }
 
         try{
@@ -25,5 +25,7 @@ class PlanoTrabalhoObserver
         }catch(EnvioNaoAgendadoException $e) {
             Log::info("Envio do plano de trabalho ID {$planoTrabalho->id} não agendado: " . $e->getMessage());
         }
+
+        return true;
     }
 }

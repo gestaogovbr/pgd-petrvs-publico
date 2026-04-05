@@ -10,12 +10,12 @@ use App\Exceptions\EnvioNaoAgendadoException;
 
 class StatusJustificativaObserver
 {
-    public function created(StatusJustificativa $model): void
+    public function created(StatusJustificativa $model)
     {
         if ($model->isPlanoTrabalho() && $model->isAtivo()) {
             if (!tenancy()->initialized) {
                 Log::warning('Tentativa de agendar envio de plano de trabalho sem tenant inicializado');
-                return;
+                return true;
             }
 
             try{
@@ -28,10 +28,12 @@ class StatusJustificativaObserver
         if ($model->isPlanoEntrega() && $model->isAtivo()) {
             if (!tenancy()->initialized) {
                 Log::warning('Tentativa de agendar envio de plano de entrega sem tenant inicializado');
-                return;
+                return true;
             }
 
             PlanoEntregaEnvioService::processar(tenant('id'), $model->planoEntrega, 'StatusJustificativa');
         }
+
+        return true;
     }
 }
