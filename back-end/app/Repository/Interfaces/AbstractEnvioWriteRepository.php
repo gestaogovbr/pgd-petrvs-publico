@@ -31,4 +31,9 @@ interface AbstractEnvioWriteRepository
      * @param T $model
      */
     public function registrarInsucesso(Model $model, string $mensagem): void;
+
+    /**
+     * @param T $model
+     */
+    public function registrarConclusao(Model $model, string $mensagem): void;
 }
