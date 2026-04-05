@@ -19,13 +19,10 @@ class PlanoTrabalhoEnvioService
     {
         $jobChain = [];
 
-        DB::beginTransaction();
-
         try{
             $jobPlanoTrabalho = PlanoTrabalhoEnvioJobBuilder::make($tenantId, $planoTrabalho, $origem);
 
             if (empty($jobPlanoTrabalho)) {
-                DB::rollBack();
                 Log::info("PT ID {$planoTrabalho->id} não necessita envio");
                 return false;
             }
@@ -33,7 +30,6 @@ class PlanoTrabalhoEnvioService
             // FASE 1 - Envio do Participante do PT
             $jobUsuario = UsuarioEnvioJobBuilder::make($tenantId, $planoTrabalho->usuario, $origem);
             if (empty($jobUsuario)) {
-                DB::rollBack();
                 Log::info("PT #{$planoTrabalho->id} não necessita envio - Usuário não gerou job");
                 return false;
             }
@@ -53,9 +49,8 @@ class PlanoTrabalhoEnvioService
             // FASE 3 - Envio do Plano de Trabalho
             $jobChain[] = $jobPlanoTrabalho;
 
-            DB::commit();
-
-            Bus::chain($jobChain)->dispatch();
+            Bus::chain($jobChain)
+                ->dispatch();
 
             Log::info("PT #{$planoTrabalho->id} agendado", [$origem]);
 
@@ -63,7 +58,6 @@ class PlanoTrabalhoEnvioService
         } catch(EnvioNaoAgendadoException $e) {
             Log::info("Envio do PT #{$planoTrabalho->id} não agendado: " . $e->getMessage(), [$origem]);
         } catch (\Exception $e) {
-            DB::rollBack();
             throw $e;
         }
 
