@@ -5,6 +5,7 @@ namespace App\Services\API_PGD\Builder;
 use App\Exceptions\EnvioNaoAgendadoException;
 use App\Jobs\Envio\ExportarPlanoEntregaJob;
 use App\Models\PlanoEntrega;
+use App\Repository\PlanoEntregaRepository;
 
 // classe responsavel por construir o job de envio do PE
 class PlanoEntregaEnvioJobBuilder
@@ -24,8 +25,8 @@ class PlanoEntregaEnvioJobBuilder
             );
         }
 
-        $planoEntrega->log_envio = 'PE não está em status válido para envio ao PGD.';
-        $planoEntrega->saveQuietly();
+        $planoEntregaRepository = app()->make(PlanoEntregaRepository::class);
+        $planoEntregaRepository->registrarLog($planoEntrega, 'PE não está em status válido para envio ao PGD.');
 
         throw new EnvioNaoAgendadoException(
             tenant('id'),

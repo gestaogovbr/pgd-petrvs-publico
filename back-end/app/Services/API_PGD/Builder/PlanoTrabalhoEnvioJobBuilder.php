@@ -12,10 +12,11 @@ class PlanoTrabalhoEnvioJobBuilder
 {
     public static function make($tenantId, PlanoTrabalho $planoTrabalho, string $origem = '')
     {
+        $planoTrabalhoRepository = app()->make(PlanoTrabalhoRepository::class);
+
         // PlanoTrabalho precisa ter lotação, plano de trabalho e data de assinatura para exportação
         if (!$planoTrabalho->isEmStatusParaEnvio()) {
-            $planoTrabalho->log_envio = 'PT não está em status válido para envio ao PGD.';
-            $planoTrabalho->saveQuietly();
+            $planoTrabalhoRepository->registrarLog($planoTrabalho, 'PT não está em status válido para envio ao PGD.');
             throw new EnvioNaoAgendadoException(
                 tenant('id'),
                 'PlanoTrabalho',
@@ -25,7 +26,6 @@ class PlanoTrabalhoEnvioJobBuilder
         }
 
         /* @var PlanoTrabalho $planoTrabalho */
-        $planoTrabalhoRepository = app()->make(PlanoTrabalhoRepository::class);
         $planoTrabalhoRepository->agendarEnvio($planoTrabalho, Carbon::now());
 
         return new ExportarPlanoTrabalhoJob($tenantId, $planoTrabalho->id, $origem);
