@@ -22,7 +22,7 @@ class PlanoEntregaRepository implements AbstractEnvioRepository
         private readonly PlanoEntregaWriteRepositoryContract $writeRepository
     ) {}
 
-    public function findById(string|int $id): ?PlanoEntrega
+    public function findById(string|int $id, $deleteTrashed = false): ?PlanoEntrega
     {
         return $this->readRepository->findById($id);
     }
@@ -79,5 +79,17 @@ class PlanoEntregaRepository implements AbstractEnvioRepository
     {
         /** @var PlanoEntrega $planoEntrega */
         $this->writeRepository->registrarInsucesso($planoEntrega, $mensagem);
+    }
+
+    public function registrarConclusao(Model $planoEntrega, string $mensagem): void
+    {
+        /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->registrarConclusao($planoEntrega, $mensagem);
+    }
+
+    protected function registrarLog(Model $planoEntrega, string $mensagem): void
+    {
+       /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->registrarLog($planoEntrega, $mensagem);
     }
 }

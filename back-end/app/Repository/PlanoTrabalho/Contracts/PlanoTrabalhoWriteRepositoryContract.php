@@ -16,4 +16,8 @@ interface PlanoTrabalhoWriteRepositoryContract
     public function registrarSucesso(PlanoTrabalho $planoTrabalho): void;
 
     public function registrarInsucesso(PlanoTrabalho $planoTrabalho, string $mensagem): void;
+
+    public function registrarConclusao(PlanoTrabalho $planoTrabalho, string $mensagem): void;
+
+    public function registrarLog(PlanoTrabalho $planoTrabalho, string $mensagem): void;
 }

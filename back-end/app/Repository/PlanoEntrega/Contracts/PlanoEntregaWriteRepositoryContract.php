@@ -16,4 +16,8 @@ interface PlanoEntregaWriteRepositoryContract
     public function registrarSucesso(PlanoEntrega $planoEntrega): void;
 
     public function registrarInsucesso(PlanoEntrega $planoEntrega, string $mensagem): void;
+
+    public function registrarConclusao(PlanoEntrega $planoEntrega, string $mensagem): void;
+
+    public function registrarLog(PlanoEntrega $planoEntrega, string $mensagem): void;
 }

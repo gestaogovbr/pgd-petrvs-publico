@@ -22,7 +22,7 @@ class PlanoTrabalhoRepository implements AbstractEnvioRepository
         private readonly PlanoTrabalhoWriteRepositoryContract $writeRepository
     ) {}
 
-    public function findById(string $id): ?PlanoTrabalho
+    public function findById(string|int $id, $deleteTrashed = false): ?PlanoTrabalho
     {
         return $this->readRepository->findById($id);
     }
@@ -84,5 +84,17 @@ class PlanoTrabalhoRepository implements AbstractEnvioRepository
     {
         /** @var PlanoTrabalho $planoTrabalho */
         $this->writeRepository->registrarInsucesso($planoTrabalho, $mensagem);
+    }
+
+    public function registrarConclusao(Model $planoTrabalho, string $mensagem): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->registrarConclusao($planoTrabalho, $mensagem);
+    }
+
+    public function registrarLog(Model $planoTrabalho, string $mensagem): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->registrarLog($planoTrabalho, $mensagem);
     }
 }

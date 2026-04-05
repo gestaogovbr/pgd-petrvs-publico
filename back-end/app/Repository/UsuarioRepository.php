@@ -24,7 +24,7 @@ class UsuarioRepository implements AbstractEnvioRepository
     ) {
     }
 
-    public function findById(string $id, $deleteTrashed = false): ?Usuario
+    public function findById(string|int $id, $deleteTrashed = false): ?Usuario
     {
         return $this->readRepository->findById($id, $deleteTrashed);
     }
@@ -186,5 +186,17 @@ class UsuarioRepository implements AbstractEnvioRepository
     {
         /** @var Usuario $usuario */
         $this->writeRepository->registrarInsucesso($usuario, $mensagem);
+    }
+
+    public function registrarConclusao(Model $usuario, string $mensagem): void
+    {
+        /** @var Usuario $usuario */
+        $this->writeRepository->registrarConclusao($usuario, $mensagem);
+    }
+
+    public function registrarLog(Model $usuario, string $mensagem): void
+    {
+        /** @var Usuario $usuario */
+        $this->writeRepository->registrarLog($usuario, $mensagem);
     }
 }
