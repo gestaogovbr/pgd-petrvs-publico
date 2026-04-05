@@ -240,7 +240,7 @@ return [
                 'connection' => 'rabbitmq',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
-                'processes' => env('PGD_PROCESSES', 1),
+                'processes' => env('PGD_PROCESSES', 10),
                 'tries' => 0,
                 'backoff' => 0,
                 'timeout' => 120,
