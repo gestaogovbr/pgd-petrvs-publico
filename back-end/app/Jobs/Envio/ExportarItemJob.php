@@ -32,6 +32,8 @@ abstract class ExportarItemJob implements ShouldQueue
     protected $timestamp = null;
     public bool $reagendado = false;
     public int $timeout = 30;
+    public $tries = 1;
+
     protected ?PgdService $pgdService;
 
     /*
@@ -47,13 +49,17 @@ abstract class ExportarItemJob implements ShouldQueue
         $tenant = tenancy()->find($tenantId);
         tenancy()->initialize($tenant);
 
-        $model = $this->getRepository()->findOneParaEnvio($id);
+        $model = $this->getModel();
         $dataAgendamento = Carbon::now();
         if ($model !== null) {
             $this->getRepository()->agendarEnvio($model, $dataAgendamento);
         }
 
         $this->timestamp = $dataAgendamento;
+    }
+
+    public function getModel(): ?Model {
+        return $this->getRepository()->findOneParaEnvio($this->id);
     }
 
     abstract public function getRepository(): AbstractEnvioRepository;
@@ -63,11 +69,11 @@ abstract class ExportarItemJob implements ShouldQueue
     abstract public function tag();
 
     protected function logInfo($message) {
-        Log::info("ENVIO [{$this->tenantId}] ".$this->tag()." #{$this->id} - {$message}".($this->origem ? " (Origem: {$this->origem})" : ''));
+        Log::info("ENVIO [{$this->tenantId}] ".$this->tag()." #{$this->id} - {$message}".($this->origem ? " (Origem: {$this->origem}, Tentativa: {$this->execucoes})" : ''));
     }
 
     protected function logError($message) {
-        Log::error("ENVIO [{$this->tenantId}] ".$this->tag()." #{$this->id} - {$message}".($this->origem ? " (Origem: {$this->origem})" : ''));
+        Log::error("ENVIO [{$this->tenantId}] ".$this->tag()." #{$this->id} - {$message}".($this->origem ? " (Origem: {$this->origem}, Tentativa: {$this->execucoes})" : ''));
     }
 
     public function handle(PgdService $pgdService)
@@ -87,7 +93,7 @@ abstract class ExportarItemJob implements ShouldQueue
 
         try{
             /** @var Usuario|PlanoEntrega|PlanoTrabalho $model */
-            $model = $this->getRepository()->findOneParaEnvio($this->id);
+            $model = $this->getModel();
 
             if ($this->timestamp && $this->timestamp->lt($model->data_agendamento_envio)) {
                 $this->logInfo("Ignorando envio defasado.");
@@ -116,8 +122,13 @@ abstract class ExportarItemJob implements ShouldQueue
             $this->reagendar();
             return;
         } catch(Throwable $exception) {
-            $this->insucesso($exception->getmessage());
-            $this->fail($exception);
+            $this->logError($exception->getmessage());
+            $repository = $this->getRepository();
+            if (!$model) {
+                $model = $repository->findById($this->id);
+                $repository->registrarConclusao($model, $exception->getmessage());
+            }
+            throw $exception;
         }
     }
 
@@ -129,7 +140,7 @@ abstract class ExportarItemJob implements ShouldQueue
     }
 
     public function sucesso() {
-        $model = $this->getRepository()->findOneParaEnvio($this->id);
+        $model = $this->getModel();
         if ($model === null) {
             $this->logError('Modelo não encontrado ao registrar sucesso de envio.');
             return;
@@ -143,7 +154,7 @@ abstract class ExportarItemJob implements ShouldQueue
     public function insucesso($message) {
         $this->logError($message);
 
-        $model = $this->getRepository()->findOneParaEnvio($this->id);
+        $model = $this->getModel();
         if ($model === null) {
             return;
         }
@@ -175,6 +186,6 @@ abstract class ExportarItemJob implements ShouldQueue
         dispatch(new static($this->tenantId, $this->id, $this->origem, $this->execucoes + 1))
             ->delay(now()->addSeconds(300))
             ->onConnection('rabbitmq')
-            ->onQueue('pgd_queue');
+            ->onQueue('pgd_queue_delay');
     }
 }
