@@ -14,6 +14,12 @@ use Carbon\Carbon;
  */
 class PlanoTrabalhoResource extends JsonResource
 {
+    const NENHUMA_ENTREGA = 0;
+    const TAMANHO_MATRICULAS = 7;
+    const CONTRIBUICAO_PROPRIA_UNIDADE = 1;
+    const CONTRIBUICAO_SEM_ENTREGA = 2;
+    const CONTRIBUICAO_OUTRA_UNIDADE = 3;
+
     public function toArray($request)
     {
         $calendarioService = new CalendarioService;
@@ -22,7 +28,7 @@ class PlanoTrabalhoResource extends JsonResource
             $this->unidade_id
         );
 
-        //$participante = new ParticipanteResource($this->usuario);
+        $entregas = $this->entregas ?? [];
 
         return [
             "id"                        => $this->id,
@@ -32,18 +38,15 @@ class PlanoTrabalhoResource extends JsonResource
             "status"                    => $this->converteStatus($this->status),
             "cod_unidade_executora"     => $this->unidade->codigo ?? null,
             "cpf_participante"          => $this->usuario->cpf ?? '',
-            "matricula_siape"           => $this->usuario->matricula ? str_pad($this->usuario->matricula, 7, '0', STR_PAD_LEFT): '',
+            "matricula_siape"           => $this->usuario->matricula ? str_pad($this->usuario->matricula, self::TAMANHO_MATRICULAS, '0', STR_PAD_LEFT): '',
             "cod_unidade_lotacao_participante" => $this->usuario->lotacao?->unidade?->codigo,
             "data_inicio"               => Carbon::parse($this->data_inicio)->format('Y-m-d'),
             "data_termino"              => Carbon::parse($this->data_fim)->format('Y-m-d'),
             "carga_horaria_disponivel"  => $diasUteis * $this->carga_horaria,
-            "contribuicoes"             => $this->entregas
-                ? PlanoTrabalhoContribuicaoResource::collection($this->entregas)
-                : [],
+            "contribuicoes"             => PlanoTrabalhoContribuicaoResource::collection($entregas),
             "avaliacoes_registros_execucao" => $this->consolidacoes
                 ? PlanoTrabalhoAvaliacaoResource::collection($this->consolidacoes)
                 : [],
-            // "participante"              => $participante->toArray($request)
           ];
     }
 
