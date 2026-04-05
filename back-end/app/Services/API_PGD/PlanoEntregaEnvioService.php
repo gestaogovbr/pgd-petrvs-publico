@@ -12,11 +12,13 @@ class PlanoEntregaEnvioService
     public static function processar($tenantId, PlanoEntrega $planoEntrega, string $origem = '')
     {
         $job = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoEntrega, $origem);
-        if ($job) {
-            dispatch($job)->onConnection('rabbitmq')->onQueue('pgd_queue');
-             Log::info('PE agendado');
-        } else {
+        if (!$job) {
             Log::info('PE não selecionável para envio');
+            return false;
         }
+
+        dispatch($job)->onConnection('rabbitmq')->onQueue('pgd_queue')->afterCommit();
+        Log::info('PE agendado');
+        return true;
     }
 }
