@@ -6,14 +6,16 @@ namespace App\Repository\Usuario\Eloquent;
 
 use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
+use App\Repository\Eloquent\EnvioTrait;
 use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
-use Carbon\Carbon;
 
 /**
  * @extends AbstractEloquentWriteRepository<Usuario>
  */
 class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository implements UsuarioWriteRepositoryContract
 {
+    use EnvioTrait;
+
     public function __construct(Usuario $model)
     {
         $this->model = $model;
@@ -90,31 +92,5 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
             }
             // fresh() is called in service, but here we just return void.
         }
-    }
-
-    public function agendarEnvio(Usuario $usuario, Carbon $dataAgendamento): void
-    {
-        $usuario->data_agendamento_envio = $dataAgendamento;
-        $usuario->saveQuietly();
-    }
-
-    public function registrarTentativa(Usuario $usuario): void
-    {
-        $usuario->data_tentativa_envio = Carbon::now();
-        $usuario->saveQuietly();
-    }
-
-    public function registrarSucesso(Usuario $usuario): void
-    {
-        $usuario->data_envio_api_pgd = Carbon::now();
-        $usuario->log_envio = null;
-        $usuario->saveQuietly();
-    }
-
-    public function registrarInsucesso(Usuario $usuario, string $mensagem): void
-    {
-        $usuario->data_tentativa_envio = Carbon::now();
-        $usuario->log_envio = $mensagem;
-        $usuario->saveQuietly();
     }
 }
