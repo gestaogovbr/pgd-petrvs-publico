@@ -45,6 +45,24 @@ describe('IntegracaoSiapeService - processarContratoTemporario (private)', funct
         expect($resultado)->toBeFalse();
     });
 
+    it('retorna true quando for contrato temporario, sigla vazia e codUorgExercicio preenchido', function () {
+        $service = Mockery::mock(IntegracaoSiapeService::class)->makePartial();
+        $service->shouldAllowMockingProtectedMethods();
+        $service->shouldNotReceive('getUnidadeRepository');
+        $method = new ReflectionMethod(IntegracaoSiapeService::class, 'processarContratoTemporario');
+        $method->setAccessible(true);
+
+        $dados = [
+            'codSitFuncional' => IntegracaoSiapeService::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO,
+            'siglaUorgLotacao' => '   ',
+            'codUorgExercicio' => '123',
+        ];
+
+        $resultado = $method->invokeArgs($service, [&$dados]);
+        expect($resultado)->toBeTrue();
+        expect($dados['codUorgExercicio'])->toBe('123');
+    });
+
     it('retorna false quando unidade pela sigla nao for encontrada', function () {
         $repo = Mockery::mock('App\Repository\UnidadeRepository');
         $repo->shouldReceive('findBySigla')->with('ABC')->andReturn(null);

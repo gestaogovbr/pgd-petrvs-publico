@@ -175,7 +175,8 @@ class IntegracaoSiapeService extends ServiceBase
     }
     $sigla = trim($dadosFuncionais['siglaUorgLotacao'] ?? '');
     if ($sigla === '') {
-      return false;
+      $codUorgExercicio = trim((string) ($dadosFuncionais['codUorgExercicio'] ?? ''));
+      return $codUorgExercicio !== '';
     }
     $unidadeServidorTemporario = $this->getUnidadeRepository()->findBySigla($sigla);
     if (!$unidadeServidorTemporario) {
