@@ -508,7 +508,13 @@ class UsuarioService extends ServiceBase
 
         $enviosPendentes = $this->extractWhere($data, "envios_pendentes");
         if (isset($enviosPendentes[2])) {
-            $query->whereRaw("(data_envio_api_pgd < data_agendamento_envio)", []);
+            $query->whereRaw("(data_agendamento_envio IS NOT NULL)", []);
+            $query->whereRaw("((data_conclusao_envio IS NULL) OR (data_conclusao_envio < data_agendamento_envio))", []);
+        }
+
+        $enviosConcluidos = $this->extractWhere($data, "envios_concluidos");
+        if (isset($enviosConcluidos[2])) {
+            $query->whereRaw("data_conclusao_envio IS NOT NULL", []);
         }
 
         $where = array_values(array_filter($where, function ($item) {

@@ -75,6 +75,10 @@ export class EnvioUsuarioListComponent extends PageListBase<Usuario, UsuarioDaoS
       result.push(["envios_pendentes", "==", 1]);
     }
 
+    if (form.status == 'Concluídos') {
+      result.push(["envios_concluidos", "==", 1]);
+    }
+
     if (form.status == 'Com falha') {
       result.push(["log_envio", "!=", null]);
     }

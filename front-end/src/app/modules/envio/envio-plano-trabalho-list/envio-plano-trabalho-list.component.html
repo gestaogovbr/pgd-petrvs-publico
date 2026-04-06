@@ -49,7 +49,7 @@
                 <span>{{ row.programa?.nome || 'Não definido' }} </span>
             </ng-template>
         </column>
-        <column title="VIgência" [template]="columnVigencia">
+        <column title="Vigência" [template]="columnVigencia">
             <ng-template let-row="row" #columnVigencia>
                 <span> {{dao!.getDateFormatted(row.data_inicio)}} {{ " a "+dao!.getDateFormatted(row.data_fim)}}</span>
             </ng-template>
@@ -62,6 +62,9 @@
         </column>
         <column title="Tentativa de Envio" [template]="columnDataTentativaEnvio">
             <ng-template let-row="row" #columnDataTentativaEnvio><span> {{row.data_tentativa_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
+        </column>
+        <column title="Conclusão" [template]="columnDataConclusaoEnvio">
+            <ng-template let-row="row" #columnDataConclusaoEnvio><span> {{row.data_conclusao_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
         </column>
         <column title="Envio bem sucedido" [template]="columnDataEnvioApiPgd">
             <ng-template let-row="row" #columnDataEnvioApiPgd><span> {{row.data_envio_api_pgd | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>

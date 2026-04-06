@@ -1005,6 +1005,7 @@ export class LookupService implements IIndexable {
     { key: 'Agendados', value: "Agendados" },
     { key: 'Pendentes', value: "Pendentes" },
     { key: 'Não enviados', value: "Não enviados" },
+    { key: 'Concluídos', value: "Concluídos" },
     { key: 'Enviados', value: "Enviados" },
     { key: 'Com falha', value: "Com falha" },
   ];
