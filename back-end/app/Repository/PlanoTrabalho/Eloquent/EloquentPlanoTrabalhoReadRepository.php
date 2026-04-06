@@ -165,8 +165,8 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->whereIn('status', StatusEnum::permitemEnvio())
             ->whereNotNull('data_agendamento_envio')
             ->where(function ($query) {
-                $query->whereColumn('data_agendamento_envio', '>', 'data_envio_api_pgd')
-                    ->orWhereNull('data_envio_api_pgd');
+                $query->whereColumn('data_agendamento_envio', '>', 'data_conclusao_envio')
+                    ->orWhereNull('data_conclusao_envio');
             })
             ->chunkById($size, $callback);
     }
