@@ -6,12 +6,13 @@ import { BreadcrumbComponent } from "src/app/v2/components/breadcrumb/breadcrumb
 import { ActivatedRoute } from "@angular/router";
 import { filter, map, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { NavigateService } from "src/app/services/navigate.service";
 import { PlanoTrabalhoApiClient } from "../infra/api-client";
 import { PlanoTrabalho, PlanoTrabalhoEntrega } from "../domain/types";
 import { PlanoTrabalhoStatus } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
 import { UnidadeService } from "src/app/v2/services/unidade.service";
+import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-plano-trabalho-v2-show-page',
@@ -23,10 +24,11 @@ import { UnidadeService } from "src/app/v2/services/unidade.service";
 export class PlanoTrabalhoV2ShowPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PlanoTrabalhoApiClient);
-  private readonly go = inject(NavigateService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly auth = inject(AuthService);
   private readonly unidadeService = inject(UnidadeService);
+  readonly policy = inject(PlanoTrabalhoPolicy);
 
   readonly planoTrabalho = signal<PlanoTrabalho | null>(null);
   readonly consolidacoes = signal<any[]>([]);
@@ -41,6 +43,12 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   /** Salva/atualiza em andamento por chave */
   readonly salvando = signal<Set<string>>(new Set());
+
+  /** ID da consolidação em processo de reabertura (exibe o form de justificativa) */
+  readonly reabrindoId = signal<string | null>(null);
+
+  /** Texto da justificativa de reabertura */
+  readonly justificativaReabrir = signal<string>('');
 
   ngOnInit(): void {
     this.route.paramMap.pipe(
@@ -67,12 +75,14 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     });
   }
 
-  podeRegistrar(): boolean {
+  podeRegistrar(consolidacao?: any): boolean {
     const plano = this.planoTrabalho();
-    if (!plano) return false;
+    if (!plano || plano.status !== 'ATIVO') return false;
+    if (consolidacao?.status === 'CONCLUIDO') return false;
     return plano.usuario_id === this.auth.usuario?.id
       || this.unidadeService.isGestorUnidade(plano.unidade_id);
   }
+
 
   getAtividade(consolidacao: any, entregaId: string): any | null {
     return (consolidacao.atividades ?? []).find((a: any) => a.plano_trabalho_entrega_id === entregaId) ?? null;
@@ -141,11 +151,13 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     });
   }
 
-  voltar() { this.go.back(); }
+  voltar() { 
+    this.router.navigate(['gestao', 'plano-trabalho-v2']);
+  }
 
   editarPlano() {
     const id = this.planoTrabalho()?.id;
-    if (id) this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', id] });
+    if (id) this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', id]);
   }
 
   statusLabel(value: PlanoTrabalhoStatus | undefined): string {
@@ -164,11 +176,85 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   statusConsolidacaoLabel(value: string | undefined): string {
     const labels: Record<string, string> = {
       INCLUIDO: 'Aguardando Registro',
-      CONCLUIDO: 'Concluído',
+      CONCLUIDO: 'Aguardando Avaliação',
       AVALIADO: 'Avaliado',
     };
     return value ? (labels[value] ?? value) : '-';
   }
+
+  statusConsolidacaoDisplay(consolidacao: any): string {
+    if (consolidacao.status === 'INCLUIDO' && this.todasEntregasComAtividade(consolidacao)) {
+      return 'Registro incluído';
+    }
+    return this.statusConsolidacaoLabel(consolidacao.status);
+  }
+
+  todasEntregasComAtividade(consolidacao: any): boolean {
+    const entregas = this.planoTrabalho()?.entregas ?? [];
+    if (!entregas.length) return false;
+    return entregas.every(e => this.getAtividade(consolidacao, e.id) !== null);
+  }
+
+  podeConcluirConsolidacao(consolidacao: any): boolean {
+    return this.podeRegistrar()
+      && consolidacao.status === 'INCLUIDO'
+      && this.todasEntregasComAtividade(consolidacao);
+  }
+
+  concluirConsolidacao(consolidacao: any): void {
+    const planoId = this.planoTrabalho()?.id;
+    if (!planoId) return;
+    this.api.concluirConsolidacao(planoId, consolidacao.id).subscribe({
+      next: (consolidacaoAtualizada) => {
+        this.consolidacoes.update(lista =>
+          lista.map(c => c.id === consolidacao.id ? { ...c, ...consolidacaoAtualizada } : c)
+        );
+      }
+    });
+  }
+
+  podeVisualizarConsolidacoes(): boolean {
+    const plano = this.planoTrabalho();
+    if (!plano) return false;
+    return ['ATIVO', 'CONCLUIDO', 'AVALIADO'].includes(plano.status)
+  }
+
+  podeReabrirConsolidacao(consolidacao: any): boolean {
+    const plano = this.planoTrabalho();
+    if (!plano || plano.status !== 'ATIVO') return false;
+    return consolidacao.status === 'CONCLUIDO'
+      && (plano.usuario_id === this.auth.usuario?.id
+        || this.unidadeService.isGestorUnidade(plano.unidade_id));
+  }
+
+  iniciarReabertura(consolidacao: any): void {
+    this.reabrindoId.set(consolidacao.id);
+    this.justificativaReabrir.set('');
+  }
+
+  cancelarReabertura(): void {
+    this.reabrindoId.set(null);
+    this.justificativaReabrir.set('');
+  }
+
+  confirmarReabertura(consolidacao: any): void {
+    const planoId = this.planoTrabalho()?.id;
+    const justificativa = this.justificativaReabrir().trim();
+    if (!planoId || !justificativa) return;
+
+    this.api.reabrirConsolidacao(planoId, consolidacao.id, justificativa).subscribe({
+      next: (consolidacaoAtualizada) => {
+        this.consolidacoes.update(lista =>
+          lista.map(c => c.id === consolidacao.id ? { ...c, ...consolidacaoAtualizada } : c)
+        );
+        this.reabrindoId.set(null);
+        this.justificativaReabrir.set('');
+      }
+    });
+  }
+
+  
+
 
   getPlanoEntregaInfo(e: PlanoTrabalhoEntrega): { plano: string; entrega: string } {
     if (e.orgao) return { plano: 'Outro Órgão/Entidade', entrega: e.orgao };

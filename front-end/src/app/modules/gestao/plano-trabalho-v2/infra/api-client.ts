@@ -114,6 +114,16 @@ export class PlanoTrabalhoApiClient {
     return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/atividade/${atividadeId}`);
   }
 
+  concluirConsolidacao(planoId: string, consolidacaoId: string): Observable<any> {
+    return this.http.patch<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/concluir`, {})
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  reabrirConsolidacao(planoId: string, consolidacaoId: string, justificativa: string): Observable<any> {
+    return this.http.patch<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/reabrir`, { justificativa })
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
   
 
   private normalize(params: QueryParams): Record<string, string> {

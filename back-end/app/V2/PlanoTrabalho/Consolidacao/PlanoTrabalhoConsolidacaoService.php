@@ -4,17 +4,27 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Consolidacao;
 
+use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
+use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizationValidator;
+use App\V2\PlanoTrabalho\Consolidacao\Validators\ConcluirConsolidacaoValidator;
+use App\V2\PlanoTrabalho\Consolidacao\Validators\ReabrirConsolidacaoValidator;
+use App\V2\StatusService;
 use Illuminate\Database\Eloquent\Collection;
-use App\Enums\StatusEnum;
+use Illuminate\Support\Facades\Auth;
 
 class PlanoTrabalhoConsolidacaoService
 {
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
+        private readonly AtividadeAuthorizationValidator $authValidator,
+        private readonly ConcluirConsolidacaoValidator $concluirValidator,
+        private readonly ReabrirConsolidacaoValidator $reabrirValidator,
+        private readonly StatusService $statusService,
     ) {}
 
     public function index(string $planoTrabalhoId): Collection
@@ -28,28 +38,31 @@ class PlanoTrabalhoConsolidacaoService
         return $this->consolidacaoRepository->findByPlanoTrabalhoId($planoTrabalhoId);
     }
 
-    public function concluir(string $planoTrabalhoId, string $consolidacaoId, string $usuarioId): Collection
+    public function concluir(string $planoTrabalhoId, string $consolidacaoId): PlanoTrabalhoConsolidacao
     {
-        $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($consolidacaoId);
+        $plano = $this->authValidator->validar($planoTrabalhoId, Auth::id());
+        $consolidacao = $this->concluirValidator->validar($plano, $consolidacaoId);
 
-        if ($consolidacao === null || $consolidacao->plano_trabalho_id !== $planoTrabalhoId) {
-            throw new NotFoundException('Consolidação não encontrada para o Plano de Trabalho informado.');
-        }
+        $this->statusService->atualizaStatus(
+            $consolidacao,
+            StatusEnum::CONCLUIDO->value,
+            'Período concluído pelo servidor: ' . Auth::user()->nome . '.',
+        );
 
-        if ($consolidacao->status === StatusEnum::CONCLUIDO->value) {
-            return $consolidacao; // Já está concluída, retorna como está
-        }
+        return $consolidacao;
+    }
 
-        // Lógica para concluir a consolidação (exemplo: atualizar status e data de conclusão)
-        $consolidacao->status = StatusEnum::CONCLUIDO->value;
-        $consolidacao->data_conclusao = now();
-        $consolidacao->usuario_conclusao_id = $usuarioId;
-        $this->consolidacaoRepository->update($consolidacao->id, [
-            'status' => $consolidacao->status,
-            'data_conclusao' => $consolidacao->data_conclusao,
-            'usuario_conclusao_id' => $consolidacao->usuario_conclusao_id,
-        ]);
+    public function reabrir(string $planoTrabalhoId, string $consolidacaoId, string $justificativa): PlanoTrabalhoConsolidacao
+    {
+        $plano = $this->authValidator->validar($planoTrabalhoId, Auth::id());
+        $consolidacao = $this->reabrirValidator->validar($plano, $consolidacaoId);
 
-        return $this->consolidacaoRepository->findConsolidacaoById($consolidacaoId); // Retorna a consolidação atualizada
+        $this->statusService->atualizaStatus(
+            $consolidacao,
+            StatusEnum::INCLUIDO->value,
+            $justificativa,
+        );
+
+        return $consolidacao;
     }
 }
