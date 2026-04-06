@@ -105,8 +105,11 @@ class LoginController extends Controller
 
         $config = $usuario->config ?? [];
         $config['unidade_id'] = $data['unidade_id'];
-        $usuario->config = $config;
-        $usuario->save();
+
+        Usuario::withoutEvents(function () use ($usuario, $config) {
+             $usuario->config = $config;
+             $usuario->save();
+        });
 
         return response()->json([
             'status'  => 'OK',

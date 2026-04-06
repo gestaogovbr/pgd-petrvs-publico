@@ -9,8 +9,6 @@ use App\Repository\SiapeDadosUORGRepository;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use App\Models\Entidade;
-
 use function Symfony\Component\String\s;
 
 class SiapeIndividualUnidadeService extends ServiceBase

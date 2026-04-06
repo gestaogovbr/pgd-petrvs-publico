@@ -12,6 +12,7 @@ use App\Models\Unidade;
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 
 class PlanoEntregaFactory extends Factory
 {
@@ -44,7 +45,7 @@ class PlanoEntregaFactory extends Factory
         ]);
 
         return [
-            'id'   =>  Str::uuid(),
+            'id'   =>  Uuid::uuid4()->toString(),
             'unidade_id' => $unidade->id,
             'programa_id' => $programa->id,
             'status' => 'INCLUIDO',

@@ -2,20 +2,24 @@
 
 namespace Tests\IntegrationTenant\Services;
 
-use App\Services\PlanoEntregaService;
-use App\Models\PlanoEntrega;
-use App\Models\Unidade;
-use App\Models\Programa;
-use App\Models\Usuario;
 use App\Models\Entidade;
-use App\Models\TipoModalidade;
+use App\Models\PlanoEntrega;
+use App\Models\Programa;
 use App\Models\TipoAvaliacao;
 use App\Models\TipoJustificativa;
+use App\Models\TipoModalidade;
+use App\Models\Unidade;
+use App\Models\Usuario;
+use App\Services\PlanoEntregaService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
+
 
 describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () {
 
     it('deve cancelar a avaliação persistindo no banco de dados', function () {
+        Bus::fake();
+
         // Criar dados manualmente (Factories não disponíveis)
 
         // 0. Dependências de Programa
@@ -134,9 +138,9 @@ describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () 
         ];
 
         // Execução
-        $resultado = $service->cancelarAvaliacao($data, $unidade->toArray());
+            $resultado = $service->cancelarAvaliacao($data, $unidade->toArray());
+            expect($resultado)->toBeTrue();
 
-        expect($resultado)->toBeTrue();
 
         // Verificação no banco
         $planoEntrega->refresh();

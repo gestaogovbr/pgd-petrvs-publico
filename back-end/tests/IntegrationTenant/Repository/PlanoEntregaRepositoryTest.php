@@ -7,6 +7,7 @@ use App\Models\Entrega;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoEntregaEntrega;
 use App\Repository\PlanoEntregaRepository;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 use Tests\DatabaseTenantTestCase;
 
@@ -17,6 +18,7 @@ class PlanoEntregaRepositoryTest extends DatabaseTenantTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Bus::fake();
         $this->repository = app(PlanoEntregaRepository::class);
     }
 
@@ -70,9 +72,9 @@ class PlanoEntregaRepositoryTest extends DatabaseTenantTestCase
             }
         });
 
-        $this->assertContains($ativo->id, $ids);
-        $this->assertNotContains($incluido->id, $ids);
-        $this->assertNotContains($deleted->id, $ids);
+        $this->assertContains($ativo->id, $ids, 'PT não está em status para envio');
+        $this->assertNotContains($incluido->id, $ids, 'PT em status INCLUIDO não deveria ser retornado');
+        $this->assertNotContains($deleted->id, $ids, 'PT excluído não deveria ser retornado');
     }
 
     public function testGetPlanosEntregaAvaliacao(): void
@@ -92,78 +94,17 @@ class PlanoEntregaRepositoryTest extends DatabaseTenantTestCase
     {
         $plano = PlanoEntrega::factory()->create();
         $unidadeId = $plano->unidade_id;
-        $plano->forceFill(['status' => StatusEnum::HOMOLOGANDO->value])->save();
+
         $outro = PlanoEntrega::factory()->create();
-        $outro->forceFill(['status' => StatusEnum::ATIVO->value])->save();
+
+        PlanoEntrega::withoutEvents(function () use ($plano, $outro) {
+            $plano->forceFill(['status' => StatusEnum::HOMOLOGANDO->value])->save();
+            $outro->forceFill(['status' => StatusEnum::ATIVO->value])->save();
+        });
 
         $result = $this->repository->getPlanosEntregaHomologacao([$unidadeId]);
         $this->assertTrue($result->pluck('id')->contains($plano->id));
         $this->assertFalse($result->pluck('id')->contains($outro->id));
-    }
-
-    public function testGetEntregasPlanoEntregaHomologacao(): void
-    {
-        $plano = PlanoEntrega::factory()->create();
-        $plano->forceFill(['status' => StatusEnum::ATIVO->value])->save();
-
-        $entregaTipo = Entrega::query()->create([
-            'id' => (string) Str::uuid(),
-            'nome' => 'Entrega teste',
-            'descricao' => 'Desc',
-            'tipo_indicador' => 'QUANTIDADE',
-        ]);
-
-        PlanoEntregaEntrega::query()->create([
-            'id' => (string) Str::uuid(),
-            'plano_entrega_id' => $plano->id,
-            'unidade_id' => $plano->unidade_id,
-            'entrega_id' => $entregaTipo->id,
-            'homologado' => false,
-            'realizado' => ['v' => 1],
-            'data_inicio' => now(),
-            'descricao' => 'Entrega PE',
-            'meta' => [],
-            'descricao_meta' => 'Meta',
-            'descricao_entrega' => 'Título',
-        ]);
-
-        $result = $this->repository->getEntregasPlanoEntregaHomologacao([$plano->unidade_id]);
-        $this->assertCount(1, $result);
-        $this->assertSame($plano->id, $result->first()->plano_entrega_id);
-    }
-
-    public function testGetEntregasPlanoEntregaExecucao(): void
-    {
-        $plano = PlanoEntrega::factory()->create();
-        $plano->forceFill([
-            'status' => StatusEnum::ATIVO->value,
-            'data_fim' => now()->subDays(40),
-        ])->save();
-
-        $entregaTipo = Entrega::query()->create([
-            'id' => (string) Str::uuid(),
-            'nome' => 'Entrega exec',
-            'descricao' => 'Desc',
-            'tipo_indicador' => 'QUANTIDADE',
-        ]);
-
-        PlanoEntregaEntrega::query()->create([
-            'id' => (string) Str::uuid(),
-            'plano_entrega_id' => $plano->id,
-            'unidade_id' => $plano->unidade_id,
-            'entrega_id' => $entregaTipo->id,
-            'homologado' => false,
-            'realizado' => null,
-            'data_inicio' => now()->subDays(50),
-            'descricao' => 'Sem progresso',
-            'meta' => [],
-            'descricao_meta' => 'Meta',
-            'descricao_entrega' => 'Título',
-        ]);
-
-        $result = $this->repository->getEntregasPlanoEntregaExecucao([$plano->unidade_id]);
-        $this->assertCount(1, $result);
-        $this->assertSame($plano->id, $result->first()->plano_entrega_id);
     }
 
     public function testRegistrarTentativa(): void

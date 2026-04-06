@@ -11,29 +11,32 @@ use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UsuarioRepository;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
-use InvalidArgumentException;
 
-describe('UsuarioRepository — envio PGD', function () {
+/** Texto persistido em log_envio por EnvioTrait::registrarSucesso */
+const LOG_ENVIO_SUCESSO_PGD = 'Envio realizado com sucesso.';
+
+describe('UsuarioRepository — escrita de envio PGD', function () {
     beforeEach(function () {
         $this->repository = app(UsuarioRepository::class);
         $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial Pest'])->id;
         $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão Pest'])->id;
     });
 
-    it('registrarSucesso persiste data_envio_api_pgd e zera log_envio', function () {
+    it('registrarSucesso persiste data_envio_api_pgd, data_conclusao_envio e log de sucesso', function () {
         $usuario = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
             'log_envio' => 'erro anterior',
             'data_envio_api_pgd' => null,
+            'data_conclusao_envio' => null,
         ]);
 
         $this->repository->registrarSucesso($usuario);
 
         $fresh = $usuario->fresh();
         expect($fresh->data_envio_api_pgd)->not->toBeNull();
-        expect($fresh->log_envio)->toBeNull();
+        expect($fresh->data_conclusao_envio)->not->toBeNull();
+        expect($fresh->log_envio)->toBe(LOG_ENVIO_SUCESSO_PGD);
     });
 
     it('registrarInsucesso persiste data_tentativa_envio e log_envio', function () {
@@ -49,13 +52,48 @@ describe('UsuarioRepository — envio PGD', function () {
         expect($fresh->log_envio)->toBe('mensagem de falha');
     });
 
-    it('registrarSucesso com modelo inválido lança InvalidArgumentException', function () {
-        $outro = Mockery::mock(Model::class);
+    it('registrarTentativa persiste apenas data_tentativa_envio', function () {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+            'data_tentativa_envio' => null,
+            'log_envio' => null,
+        ]);
 
-        $this->repository->registrarSucesso($outro);
-    })->throws(InvalidArgumentException::class);
+        $this->repository->registrarTentativa($usuario);
 
-    it('agendarEnvio persiste data_agendamento_envio com saveQuietly', function () {
+        $fresh = $usuario->fresh();
+        expect($fresh->data_tentativa_envio)->not->toBeNull();
+        expect($fresh->log_envio)->toBeNull();
+    });
+
+    it('registrarConclusao persiste data_conclusao_envio e log_envio', function () {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+            'data_conclusao_envio' => null,
+        ]);
+
+        $this->repository->registrarConclusao($usuario, 'concluído manualmente');
+
+        $fresh = $usuario->fresh();
+        expect($fresh->data_conclusao_envio)->not->toBeNull();
+        expect($fresh->log_envio)->toBe('concluído manualmente');
+    });
+
+    it('registrarLog persiste apenas log_envio', function () {
+        $usuario = Usuario::factory()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+            'log_envio' => null,
+        ]);
+
+        $this->repository->registrarLog($usuario, 'apenas log');
+
+        expect($usuario->fresh()->log_envio)->toBe('apenas log');
+    });
+
+    it('agendarEnvio persiste data_agendamento_envio', function () {
         $usuario = Usuario::factory()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
@@ -66,33 +104,28 @@ describe('UsuarioRepository — envio PGD', function () {
 
         $this->repository->agendarEnvio($usuario, $quando);
 
-        $fresh = $usuario->fresh();
-        expect($fresh->data_agendamento_envio->equalTo($quando))->toBeTrue();
+        expect($usuario->fresh()->data_agendamento_envio->equalTo($quando))->toBeTrue();
     });
-
-    it('agendarEnvio com modelo inválido lança InvalidArgumentException', function () {
-        $outro = Mockery::mock(Model::class);
-
-        $this->repository->agendarEnvio($outro, Carbon::now());
-    })->throws(InvalidArgumentException::class);
 });
 
-describe('PlanoEntregaRepository — envio PGD', function () {
+describe('PlanoEntregaRepository — escrita de envio PGD', function () {
     beforeEach(function () {
         $this->repository = app(PlanoEntregaRepository::class);
     });
 
-    it('registrarSucesso persiste data_envio_api_pgd e zera log_envio', function () {
+    it('registrarSucesso persiste data_envio_api_pgd, data_conclusao_envio e log de sucesso', function () {
         $plano = PlanoEntrega::factory()->create([
             'log_envio' => 'pendente',
             'data_envio_api_pgd' => null,
+            'data_conclusao_envio' => null,
         ]);
 
         $this->repository->registrarSucesso($plano);
 
         $fresh = $plano->fresh();
         expect($fresh->data_envio_api_pgd)->not->toBeNull();
-        expect($fresh->log_envio)->toBeNull();
+        expect($fresh->data_conclusao_envio)->not->toBeNull();
+        expect($fresh->log_envio)->toBe(LOG_ENVIO_SUCESSO_PGD);
     });
 
     it('registrarInsucesso persiste data_tentativa_envio e log_envio', function () {
@@ -105,13 +138,30 @@ describe('PlanoEntregaRepository — envio PGD', function () {
         expect($fresh->log_envio)->toBe('API indisponível');
     });
 
-    it('registrarInsucesso com modelo inválido lança InvalidArgumentException', function () {
-        $outro = Mockery::mock(Model::class);
+    it('registrarTentativa persiste apenas data_tentativa_envio', function () {
+        $plano = PlanoEntrega::factory()->create([
+            'data_tentativa_envio' => null,
+            'log_envio' => null,
+        ]);
 
-        $this->repository->registrarInsucesso($outro, 'x');
-    })->throws(InvalidArgumentException::class);
+        $this->repository->registrarTentativa($plano);
 
-    it('agendarEnvio persiste data_agendamento_envio com saveQuietly', function () {
+        $fresh = $plano->fresh();
+        expect($fresh->data_tentativa_envio)->not->toBeNull();
+        expect($fresh->log_envio)->toBeNull();
+    });
+
+    it('registrarConclusao persiste data_conclusao_envio e log_envio', function () {
+        $plano = PlanoEntrega::factory()->create(['data_conclusao_envio' => null]);
+
+        $this->repository->registrarConclusao($plano, 'homologação ok');
+
+        $fresh = $plano->fresh();
+        expect($fresh->data_conclusao_envio)->not->toBeNull();
+        expect($fresh->log_envio)->toBe('homologação ok');
+    });
+
+    it('agendarEnvio persiste data_agendamento_envio', function () {
         $plano = PlanoEntrega::factory()->create([
             'data_agendamento_envio' => null,
         ]);
@@ -120,36 +170,31 @@ describe('PlanoEntregaRepository — envio PGD', function () {
 
         $this->repository->agendarEnvio($plano, $quando);
 
-        $fresh = $plano->fresh();
-        expect($fresh->data_agendamento_envio->equalTo($quando))->toBeTrue();
+        expect($plano->fresh()->data_agendamento_envio->equalTo($quando))->toBeTrue();
     });
-
-    it('agendarEnvio com modelo inválido lança InvalidArgumentException', function () {
-        $outro = Mockery::mock(Model::class);
-
-        $this->repository->agendarEnvio($outro, Carbon::now());
-    })->throws(InvalidArgumentException::class);
 });
 
-describe('PlanoTrabalhoRepository — envio PGD', function () {
+describe('PlanoTrabalhoRepository — escrita de envio PGD', function () {
     beforeEach(function () {
         $this->repository = app(PlanoTrabalhoRepository::class);
         $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial PT Pest'])->id;
         $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão PT Pest'])->id;
     });
 
-    it('registrarSucesso persiste data_envio_api_pgd e zera log_envio', function () {
+    it('registrarSucesso persiste data_envio_api_pgd, data_conclusao_envio e log de sucesso', function () {
         $plano = PlanoTrabalho::factory()->ativo()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'log_envio' => 'algo',
             'data_envio_api_pgd' => null,
+            'data_conclusao_envio' => null,
         ]);
 
         $this->repository->registrarSucesso($plano);
 
         $fresh = $plano->fresh();
         expect($fresh->data_envio_api_pgd)->not->toBeNull();
-        expect($fresh->log_envio)->toBeNull();
+        expect($fresh->data_conclusao_envio)->not->toBeNull();
+        expect($fresh->log_envio)->toBe(LOG_ENVIO_SUCESSO_PGD);
     });
 
     it('registrarInsucesso persiste data_tentativa_envio e log_envio', function () {
@@ -164,13 +209,45 @@ describe('PlanoTrabalhoRepository — envio PGD', function () {
         expect($fresh->log_envio)->toBe('timeout');
     });
 
-    it('registrarSucesso com modelo inválido lança InvalidArgumentException', function () {
-        $outro = Mockery::mock(Model::class);
+    it('registrarTentativa persiste apenas data_tentativa_envio', function () {
+        $plano = PlanoTrabalho::factory()->ativo()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_tentativa_envio' => null,
+            'log_envio' => null,
+        ]);
 
-        $this->repository->registrarSucesso($outro);
-    })->throws(InvalidArgumentException::class);
+        $this->repository->registrarTentativa($plano);
 
-    it('agendarEnvio persiste data_agendamento_envio com saveQuietly', function () {
+        $fresh = $plano->fresh();
+        expect($fresh->data_tentativa_envio)->not->toBeNull();
+        expect($fresh->log_envio)->toBeNull();
+    });
+
+    it('registrarConclusao persiste data_conclusao_envio e log_envio', function () {
+        $plano = PlanoTrabalho::factory()->ativo()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_conclusao_envio' => null,
+        ]);
+
+        $this->repository->registrarConclusao($plano, 'fim do fluxo');
+
+        $fresh = $plano->fresh();
+        expect($fresh->data_conclusao_envio)->not->toBeNull();
+        expect($fresh->log_envio)->toBe('fim do fluxo');
+    });
+
+    it('registrarLog persiste apenas log_envio', function () {
+        $plano = PlanoTrabalho::factory()->ativo()->create([
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'log_envio' => null,
+        ]);
+
+        $this->repository->registrarLog($plano, 'só auditoria');
+
+        expect($plano->fresh()->log_envio)->toBe('só auditoria');
+    });
+
+    it('agendarEnvio persiste data_agendamento_envio', function () {
         $plano = PlanoTrabalho::factory()->ativo()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_agendamento_envio' => null,
@@ -180,17 +257,6 @@ describe('PlanoTrabalhoRepository — envio PGD', function () {
 
         $this->repository->agendarEnvio($plano, $quando);
 
-        $fresh = $plano->fresh();
-        expect($fresh->data_agendamento_envio->equalTo($quando))->toBeTrue();
+        expect($plano->fresh()->data_agendamento_envio->equalTo($quando))->toBeTrue();
     });
-
-    it('agendarEnvio com modelo inválido lança InvalidArgumentException', function () {
-        $outro = Mockery::mock(Model::class);
-
-        $this->repository->agendarEnvio($outro, Carbon::now());
-    })->throws(InvalidArgumentException::class);
-});
-
-afterEach(function () {
-    Mockery::close();
 });

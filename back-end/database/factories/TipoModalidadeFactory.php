@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\TipoModalidade;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class TipoModalidadeFactory extends Factory
 {
@@ -12,6 +13,7 @@ class TipoModalidadeFactory extends Factory
     public function definition(): array
     {
         return [
+            'id' => (string) Str::uuid(),
             'nome' => $this->faker->word,
             'exige_pedagio' => false,
             'plano_trabalho_calcula_horas' => true,

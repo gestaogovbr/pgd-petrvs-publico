@@ -2,25 +2,28 @@
 
 namespace Tests\IntegrationTenant\Services;
 
-use App\Services\StatusService;
-use App\Models\PlanoTrabalho;
-use App\Models\Usuario;
-use App\Models\Unidade;
-use App\Models\Programa;
-use App\Models\TipoModalidade;
 use App\Models\Entidade;
-use App\Models\TipoJustificativa;
+use App\Models\PlanoTrabalho;
+use App\Models\Programa;
 use App\Models\TipoAvaliacao;
+use App\Models\TipoJustificativa;
+use App\Models\TipoModalidade;
+use App\Models\Unidade;
+use App\Models\Usuario;
+use App\Services\StatusService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
+use Tests\DatabaseTenantTestCase;
 
 // Uses automatically applies DatabaseTenantTestCase from Pest.php config for IntegrationTenant suite
 // but we explicitly extended it above for clarity, or we can just use uses() if configured.
 // Pest.php usually handles it. Let's follow the doc pattern which uses 'uses(DatabaseTenantTestCase::class)' implicitly or explicitly.
 // The doc says: "Todos os arquivos criados dentro de tests/IntegrationTenant usarão automaticamente a classe base Tests\DatabaseTenantTestCase"
-
 describe('StatusService Integration', function () {
 
     beforeEach(function () {
+        Bus::fake();
+
         // Criar dependências básicas
 
         // Ensure Entidade exists

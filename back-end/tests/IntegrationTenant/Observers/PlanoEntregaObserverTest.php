@@ -10,7 +10,6 @@ use App\Services\API_PGD\PlanoEntregaEnvioService;
 use Illuminate\Support\Facades\Bus;
 use Mockery;
 
-
 beforeEach(function () {
     Bus::fake();
 });

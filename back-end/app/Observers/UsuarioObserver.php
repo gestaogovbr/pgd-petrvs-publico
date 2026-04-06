@@ -10,6 +10,11 @@ class UsuarioObserver
 {
     public function updated(Usuario $usuario): void
     {
+        if ($usuario->wasChanged('deleted_at')) {
+            return; // ignora se veio de restore
+
+        }
+
         if (!tenancy()->initialized) {
             Log::error('Tentativa de agendar envio de usuário sem tenant inicializado');
             return;

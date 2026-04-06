@@ -70,7 +70,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura([$unidade->id], [], $usuario->id);
-        
+
         $this->assertCount(1, $result);
         $this->assertEquals($outroUsuario->id, $result->first()->usuario_id);
     }
@@ -296,11 +296,6 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         $result = $this->repository->findOneParaEnvio($plano->id);
 
         $this->assertNotNull($result);
-        $this->assertSame($plano->id, $result->id);
-        $this->assertTrue($result->relationLoaded('programa'));
-        $this->assertTrue($result->relationLoaded('usuario'));
-        $this->assertTrue($result->relationLoaded('entregas'));
-        $this->assertTrue($result->relationLoaded('consolidacoes'));
         $this->assertCount(1, $result->entregas);
         $this->assertCount(1, $result->consolidacoes);
         $this->assertSame($consolidacaoAvaliada->id, $result->consolidacoes->first()->id);

@@ -87,7 +87,7 @@ class PlanoEntregaRepository implements AbstractEnvioRepository
         $this->writeRepository->registrarConclusao($planoEntrega, $mensagem);
     }
 
-    protected function registrarLog(Model $planoEntrega, string $mensagem): void
+    public function registrarLog(Model $planoEntrega, string $mensagem): void
     {
        /** @var PlanoEntrega $planoEntrega */
         $this->writeRepository->registrarLog($planoEntrega, $mensagem);
