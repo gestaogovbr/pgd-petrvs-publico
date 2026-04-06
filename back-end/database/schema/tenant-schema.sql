@@ -1348,6 +1348,7 @@ CREATE TABLE `planos_entregas` (
   `data_agendamento_envio` timestamp NULL DEFAULT NULL COMMENT 'Data do agendamento para envio para a API',
   `data_tentativa_envio` timestamp NULL DEFAULT NULL COMMENT 'Data da Ultima Tentativa de Envio',
   `log_envio` text DEFAULT NULL,
+  `data_conclusao_envio` timestamp NULL DEFAULT NULL COMMENT 'Data em que o envio foi concluído com sucesso na API PGD',
   PRIMARY KEY (`id`),
   UNIQUE KEY `planos_entregas_numero_unique` (`numero`),
   KEY `planos_entregas_planejamento_id_foreign` (`planejamento_id`),
@@ -1527,6 +1528,7 @@ CREATE TABLE `planos_trabalhos` (
   `data_agendamento_envio` timestamp NULL DEFAULT NULL COMMENT 'Data do agendamento para envio para a API',
   `data_tentativa_envio` timestamp NULL DEFAULT NULL COMMENT 'Data da Ultima Tentativa de Envio',
   `log_envio` text DEFAULT NULL,
+  `data_conclusao_envio` timestamp NULL DEFAULT NULL COMMENT 'Data em que o envio foi concluído com sucesso na API PGD',
   PRIMARY KEY (`id`),
   UNIQUE KEY `planos_trabalhos_numero_unique` (`numero`),
   KEY `planos_trabalhos_programa_id_foreign` (`programa_id`),
@@ -2726,7 +2728,7 @@ CREATE TABLE `usuarios` (
   `email` varchar(100) NOT NULL COMMENT 'E-mail do usuário',
   `nome` varchar(256) NOT NULL COMMENT 'Nome do usuário',
   `password` varchar(255) DEFAULT NULL COMMENT 'Senha do usuário',
-  `cpf` varchar(11) NOT NULL COMMENT 'CPF do usuário',
+  `cpf` varchar(14) NOT NULL,
   `matricula` varchar(50) DEFAULT NULL COMMENT 'Matrícula funcional do usuário',
   `apelido` varchar(255) DEFAULT NULL COMMENT 'Apelido/Nome de guerra/Nome social',
   `telefone` varchar(50) DEFAULT NULL COMMENT 'Telefone do usuário',
@@ -2765,6 +2767,7 @@ CREATE TABLE `usuarios` (
   `data_agendamento_envio` timestamp NULL DEFAULT NULL COMMENT 'Data do agendamento para envio do usuário para a API PGD',
   `data_tentativa_envio` timestamp NULL DEFAULT NULL COMMENT 'Data da Ultima Tentativa de Envio',
   `log_envio` text DEFAULT NULL,
+  `data_conclusao_envio` timestamp NULL DEFAULT NULL COMMENT 'Data em que o envio foi concluído com sucesso na API PGD',
   PRIMARY KEY (`id`),
   UNIQUE KEY `usuarios_email_unique` (`email`),
   UNIQUE KEY `usuarios_matricula_unique` (`matricula`),
@@ -3342,7 +3345,7 @@ DELIMITER ;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
 /*M!999999\- enable the sandbox mode */ 
-set autocommit=0;
+SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (1,'2014_10_12_100000_create_password_resets_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (2,'2019_08_19_000000_create_failed_jobs_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (3,'2019_12_14_000001_create_personal_access_tokens_table',1);
@@ -3745,7 +3748,6 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (400,'2026_01_16_00
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (402,'2026_01_20_184614_alter-usuario-add-datas-envio',50);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (403,'2026_01_22_163701_add-usuarios-envios',51);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (434,'2026_01_22_181817_alter-usuario-add-datas-envio',52);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (435,'2026_01_23_181817_marca_usuarios_envio',52);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (436,'2026_01_27_181817_alter-pe-add-datas-envio',52);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (437,'2026_01_27_191817_alter-pt-add-datas-envio',53);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (438,'2026_01_23_000000_version2_9_10',54);
@@ -3766,4 +3768,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (472,'2026_03_10_00
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (473,'2026_03_12_180933_normalize_cpfs_in_usuarios_table',61);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (474,'2026_03_12_182713_shrink_cpf_column_in_usuarios_table',61);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (475,'2026_03_13_000000_version2_9_18',61);
-commit;
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (476,'2026_03_16_222108_remove_duplicate_lotacao_atribuicoes',62);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (477,'2026_03_23_000000_version2_9_19',62);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (480,'2026_01_23_181817_marca_usuarios_envio',63);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (481,'2026_03_30_000000_version2_9_20',64);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (482,'2026_04_02_120000_add_data_conclusao_envio_to_usuarios_planos_trabalhos_planos_entregas',65);
+COMMIT;
+SET AUTOCOMMIT=@OLD_AUTOCOMMIT;
