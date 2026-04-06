@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { PlanoTrabalhoListFacade } from '../application/list.facade';
 import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -11,6 +11,8 @@ import { PlanoTrabalho } from '../domain/types';
 import { PlanoTrabalhoApiClient } from '../infra/api-client';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
+import { SelectOption } from './edit.page';
 
 @Component({
   selector: 'app-plano-trabalho-v2-list-page',
@@ -26,8 +28,21 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   readonly policy = inject(PlanoTrabalhoPolicy);
   private readonly router = inject(Router);
   private readonly api = inject(PlanoTrabalhoApiClient);
+  private readonly tipoModalidadeApi = inject(TipoModalidadeService);
 
   advanced = false;
+
+  readonly modalidadeOptions = signal<SelectOption[]>([{ value: '', label: 'Todas', selected: true }]);
+
+  readonly statusOptions: SelectOption[] = [
+    { value: '', label: 'Todos', selected: true },
+    { value: 'INCLUIDO', label: 'Incluído' },
+    { value: 'AGUARDANDO_ASSINATURA', label: 'Aguardando assinatura' },
+    { value: 'ATIVO', label: 'Ativo' },
+    { value: 'SUSPENSO', label: 'Suspenso' },
+    { value: 'CONCLUIDO', label: 'Concluído' },
+    { value: 'CANCELADO', label: 'Cancelado' },
+  ];
   private readonly subscriptions: Subscription[] = [];
 
   readonly filters: FormGroup<{
@@ -40,7 +55,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     numero: FormControl<string>;
     usuario: FormControl<string>;
     unidade_regramento: FormControl<string>;
-    modalidade: FormControl<string>;
+    tipo_modalidade_id: FormControl<string>;
     status: FormControl<string>;
   }> = this.fb.group({
     periodo_inicio: this.fb.control<string | null>(null),
@@ -52,7 +67,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     numero: this.fb.nonNullable.control(''),
     usuario: this.fb.nonNullable.control(''),
     unidade_regramento: this.fb.nonNullable.control(''),
-    modalidade: this.fb.nonNullable.control(''),
+    tipo_modalidade_id: this.fb.nonNullable.control(''),
     status: this.fb.nonNullable.control('')
   });
 
@@ -63,6 +78,13 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.tipoModalidadeApi.listar(false).then(modalidades => {
+      this.modalidadeOptions.set([
+        { value: '', label: 'Todas', selected: true },
+        ...modalidades.map(m => ({ value: m.id, label: m.nome }))
+      ]);
+    });
+
     this.setupToggleRules();
 
     if (this.isParticipante) {
@@ -101,7 +123,9 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
     this.subscriptions.push(
       arquivados.valueChanges.subscribe(value => this.onArquivadosToggle(value)),
-      vigentes.valueChanges.subscribe(value => this.onVigentesToggle(value))
+      vigentes.valueChanges.subscribe(value => this.onVigentesToggle(value)),
+      this.filters.controls.tipo_modalidade_id.valueChanges.subscribe(() => this.onFilterChange()),
+      this.filters.controls.status.valueChanges.subscribe(() => this.onFilterChange()),
     );
   }
 
@@ -175,6 +199,9 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     if (raw.incluir_subordinadas) result['incluir_subordinadas'] = true;
 
     if (raw.numero.trim().length) result['numero'] = raw.numero.trim();
+    if (raw.tipo_modalidade_id.length) result['tipo_modalidade_id'] = raw.tipo_modalidade_id;
+    if (raw.status.length) result['status'] = raw.status;
+    result['unidade_id'] = this.auth.unidade?.id;
 
     return result;
   }
@@ -209,7 +236,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   statusLabel(value: string | undefined): string {
     if (value === 'ATIVO') return 'Ativo';
-    if (value === 'INCLUIDO') return 'Incluído';
+    if (value === 'INCLUIDO') return 'Rascunho';
     if (value === 'AGUARDANDO_ASSINATURA') return 'Aguardando assinatura';
     if (value === 'SUSPENSO') return 'Suspenso';
     if (value === 'CANCELADO') return 'Cancelado';

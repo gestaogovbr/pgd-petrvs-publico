@@ -99,6 +99,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
     public function findByPlanoTrabalhoId(string $planoTrabalhoId): \Illuminate\Database\Eloquent\Collection
     {
         return $this->query()
+            ->with(['atividades:id,plano_trabalho_consolidacao_id,plano_trabalho_entrega_id,descricao'])
             ->where('plano_trabalho_id', $planoTrabalhoId)
             ->orderBy('data_inicio')
             ->get();

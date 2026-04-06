@@ -20,7 +20,7 @@
                   <label>Agente Público</label>
                   <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" />
                 </div>
-                <button type="button" class="br-button secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</button>
+                <br-button type="button" emphasis="secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
               </div>
               @if (sugestoesUsuarios().length > 0) {
                 <div class="br-card position-absolute w-100" style="z-index: 1050;">
@@ -30,7 +30,7 @@
                         {{ u.nome }}
                         @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
                       </div>
-                      <button type="button" class="br-button secondary" (click)="selecionarUsuario(u)">Selecionar</button>
+                      <br-button type="button" emphasis="secondary" (click)="selecionarUsuario(u)">Selecionar</br-button>
                     </div>
                   }
                 </div>
@@ -94,16 +94,28 @@
                   <br-select label="Origem da Entrega" formControlName="origem" [options]="origemSelectOptions()" />
                 </div>
 
-                <!-- OUTRA_UNIDADE: busca de unidade + plano -->
+                <!-- OUTRA_UNIDADE: busca de unidade com autocomplete -->
                 @if (entregaForm.value.origem === 'OUTRA_UNIDADE') {
-                  <div class="col-md-3 mb-3">
-                    <div class="br-input">
-                      <label>Buscar Unidade</label>
-                      <input type="text" [formControl]="outraUnidadeQuery" placeholder="Digite para buscar (mín. 3)..." />
+                  <div class="col-md-6 mb-3 position-relative">
+                    <div class="d-flex align-items-end gap-2">
+                      <div class="br-input w-100">
+                        <label>Unidade</label>
+                        <input type="text" [formControl]="outraUnidadeQuery" placeholder="Digite nome ou sigla (mín. 3)..." [disabled]="!!outraUnidadeSelecionada()" />
+                      </div>
+                      @if (outraUnidadeSelecionada()) {
+                        <br-button type="button" emphasis="secondary"  (click)="limparOutraUnidade()">Limpar</br-button>
+                      }
                     </div>
-                  </div>
-                  <div class="col-md-3 mb-3">
-                    <br-select label="Unidade" formControlName="outra_unidade_id" [options]="outrasUnidadesOptions()" />
+                    @if (sugestoesOutrasUnidades().length > 0) {
+                      <div class="br-card position-absolute w-100" style="z-index: 1050;">
+                        @for (u of sugestoesOutrasUnidades(); track u.id) {
+                          <div class="d-flex justify-content-between align-items-center px-2 py-1 card-content">
+                            <span>{{ u.sigla }} - {{ u.nome }}</span>
+                            <br-button type="button" emphasis="secondary" (click)="selecionarOutraUnidade(u)">Selecionar</br-button>
+                          </div>
+                        }
+                      </div>
+                    }
                   </div>
                   @if (entregaForm.value.outra_unidade_id) {
                     <div class="col-md-3 mb-3">
@@ -218,12 +230,12 @@
                     <td>{{ e.descricao }}</td>
                     <td>
                       <div class="d-flex gap-1">
-                        <button type="button" class="br-button tertiary circle" (click)="editarEntrega(e)" title="Editar">
+                        <br-button type="button" shape="circle" emphasis="tertiary" (click)="editarEntrega(e)" title="Editar" ariaLabel="Editar entrega">
                           <i class="fas fa-pen"></i>
-                        </button>
-                        <button type="button" class="br-button tertiary circle text-danger" (click)="removerEntrega(e)" title="Excluir">
-                          <i class="fas fa-trash"></i>
-                        </button>
+                        </br-button>
+                        <br-button type="button" shape="circle" emphasis="tertiary"  (click)="removerEntrega(e)" title="Excluir" ariaLabel="Excluir entrega">
+                          <i class="fas fa-trash "></i>
+                        </br-button>
                       </div>
                     </td>
                   </tr>

@@ -95,6 +95,25 @@ export class PlanoTrabalhoApiClient {
     return this.http.post<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/clonar`, {});
   }
 
+  getConsolidacoes(id: PlanoTrabalhoId): Observable<any[]> {
+    return this.http.get<any>(`${this.gb.servidorURL}${this.base}/${id}/consolidacao`)
+      .pipe(map((r: any) => r?.data ?? []));
+  }
+
+  createAtividade(planoId: string, consolidacaoId: string, payload: { plano_trabalho_entrega_id: string; descricao: string }): Observable<any> {
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/atividade`, payload)
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  updateAtividade(planoId: string, consolidacaoId: string, atividadeId: string, payload: { descricao: string }): Observable<any> {
+    return this.http.put<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/atividade/${atividadeId}`, payload)
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  deleteAtividade(planoId: string, consolidacaoId: string, atividadeId: string): Observable<void> {
+    return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/atividade/${atividadeId}`);
+  }
+
   
 
   private normalize(params: QueryParams): Record<string, string> {

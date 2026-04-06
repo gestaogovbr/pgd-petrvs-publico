@@ -73,16 +73,10 @@
               </div>
             </div>
             <div class="col-md-3 mb-3">
-              <div class="br-input">
-                <label>Modalidade</label>
-                <input type="text" formControlName="modalidade" (input)="onFilterChange()" />
-              </div>
+              <br-select label="Modalidade" formControlName="tipo_modalidade_id" [options]="modalidadeOptions()" />
             </div>
             <div class="col-md-2 mb-3">
-              <div class="br-input">
-                <label>Status</label>
-                <input type="text" formControlName="status" (input)="onFilterChange()" />
-              </div>
+              <br-select label="Status" formControlName="status" [options]="statusOptions" />
             </div>
           </div>
         }

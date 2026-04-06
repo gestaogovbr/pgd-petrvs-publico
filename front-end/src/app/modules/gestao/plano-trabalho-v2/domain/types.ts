@@ -1,9 +1,11 @@
 import { PlanoTrabalho as PlanoTrabalhoModel } from 'src/app/models/plano-trabalho.model';
 import { PlanoTrabalhoEntrega as PlanoTrabalhoEntregaModel } from 'src/app/models/plano-trabalho-entrega.model';
+import { PlanoTrabalhoConsolidacao as PlanoTrabalhoConsolidacaoModel } from 'src/app/models/plano-trabalho-consolidacao.model';
 
 export type PlanoTrabalhoId = string;
 export type PlanoTrabalho = PlanoTrabalhoModel;
 export type PlanoTrabalhoEntrega = PlanoTrabalhoEntregaModel;
+export type PlanoTrabalhoConsolidacao = PlanoTrabalhoConsolidacaoModel;
 
 export type PlanoTrabalhoCreatePayload = {
   usuario_id: string;

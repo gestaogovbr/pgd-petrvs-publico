@@ -9,9 +9,8 @@ export class PlanoTrabalhoPolicy {
   private readonly unidadeService = inject(UnidadeService);
 
   podeCancelar(p: PlanoTrabalho): boolean {
-    const statusPermitidos = ['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO'];
     return this.auth.hasPermissionTo('MOD_PTR_CNC')
-      && statusPermitidos.includes(p.status)
+      && p.status === 'ATIVO'
       && this.unidadeService.isGestorUnidade(p.unidade_id);
   }
 

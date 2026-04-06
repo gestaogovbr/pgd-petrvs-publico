@@ -122,11 +122,109 @@
 
     <!-- Execução -->
     @if (planoTrabalho()?.status === 'ATIVO') {
-      <div class="br-card mb-4">
-        <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Execução</div>
-        <div class="card-content">
-        </div>
+      <div class="mb-2">
+        <h4>Registros de Execução</h4>
       </div>
+
+      @for (consolidacao of consolidacoes(); track consolidacao.id) {
+        <div class="br-card mb-4">
+          <div class="card-header bg-gray-10 p-2x d-flex justify-content-between align-items-center">
+            <span class="text-weight-semi-bold">
+              Período Avaliativo: {{ consolidacao.data_inicio | date:'dd/MM/yyyy' }} à {{ consolidacao.data_fim | date:'dd/MM/yyyy' }}
+            </span>
+            <span>
+              Status do Período:
+              <br-tag shape="rounded" density="small" [label]="statusConsolidacaoLabel(consolidacao.status)" />
+            </span>
+          </div>
+          <div class="card-content">
+            <p class="text-weight-semi-bold mb-3">Detalhamentos</p>
+            <div class="br-table">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Entrega</th>
+                      <th scope="col">Trabalho Planejado</th>
+                      <th scope="col">Trabalho Executado</th>
+                      @if (podeRegistrar()) { <th scope="col"></th> }
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (e of planoTrabalho()?.entregas; track e.id) {
+                      @let atividade = getAtividade(consolidacao, e.id);
+                      @let editando = estaEditando(consolidacao.id, e.id);
+                      <tr>
+                        <td>
+                          {{ getPlanoEntregaInfo(e).entrega }}
+                          <br />
+                          <small class="text-muted">{{ getPlanoEntregaInfo(e).plano }}</small>
+                        </td>
+                        <td>{{ e.descricao || '-' }}</td>
+                        <td>
+                          @if (editando || !atividade) {
+                            <textarea
+                              class="br-textarea w-100"
+                              rows="3"
+                              [value]="getTexto(consolidacao.id, e.id)"
+                              (input)="setTexto(consolidacao.id, e.id, $any($event.target).value)"
+                              placeholder="Descreva o trabalho executado..."
+                            ></textarea>
+                          } @else {
+                            <span>{{ atividade.descricao }}</span>
+                          }
+                        </td>
+                        @if (podeRegistrar()) {
+                          <td class="text-nowrap">
+                            @if (editando || !atividade) {
+                              <div class="d-flex gap-1">
+                                <br-button
+                                  emphasis="primary"
+                                  density="small"
+                                  (click)="confirmar(consolidacao, e)"
+                                  [disabled]="salvando().has(consolidacao.id + '-' + e.id) || !getTexto(consolidacao.id, e.id).trim()"
+                                >Confirmar</br-button>
+                                <br-button
+                                  emphasis="secondary"
+                                  density="small"
+                                  (click)="cancelarEdicao(consolidacao.id, e.id, atividade)"
+                                  [disabled]="salvando().has(consolidacao.id + '-' + e.id)"
+                                >Cancelar</br-button>
+                              </div>
+                            } @else {
+                              <div class="d-flex gap-1">
+                                <br-button
+                                  emphasis="secondary"
+                                  density="small"
+                                  (click)="iniciarEdicao(consolidacao.id, e.id, atividade.descricao)"
+                                >Editar</br-button>
+                                <br-button
+                                  class="text-danger"
+                                  emphasis="secondary"
+                                  density="small"
+                                  (click)="excluir(consolidacao, e)"
+                                >Excluir</br-button>
+                              </div>
+                            }
+                          </td>
+                        }
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td [attr.colspan]="podeRegistrar() ? 4 : 3" class="text-center p-3">Nenhuma entrega cadastrada no planejamento.</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="br-message info">
+          <div class="message-body">Nenhum período avaliativo encontrado.</div>
+        </div>
+      }
     }
   }
 </div>

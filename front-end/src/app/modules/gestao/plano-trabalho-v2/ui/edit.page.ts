@@ -84,7 +84,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   entregasDoPlano = signal<SelectOption[]>([]);
   entregasDoPlanoOutraUnidade = signal<SelectOption[]>([]);
 
-  outrasUnidades = signal<{id: string, sigla: string, nome: string}[]>([]);
+  sugestoesOutrasUnidades = signal<{id: string, sigla: string, nome: string}[]>([]);
+  outraUnidadeSelecionada = signal<{id: string, sigla: string, nome: string} | null>(null);
   readonly outraUnidadeQuery = this.fb.control('');
 
   mostrandoFormEntrega = signal(false);
@@ -166,12 +167,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     return this.planosOutraUnidade().map(p => ({ value: p.id, label: `${p.numero} - ${p.nome}`, selected: p.id === sel }));
   });
 
-  readonly outrasUnidadesOptions = computed<SelectOption[]>(() => {
-    const sel = this.selectedOutraUnidadeId();
-    return this.outrasUnidades().map(u => ({ value: u.id, label: `${u.sigla} - ${u.nome}`, selected: u.id === sel }));
-  });
-
-  readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
+readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedEntregaEntregaId();
     return this.entregasDoPlano().map(o => ({ ...o, selected: o.value === sel }));
   });
@@ -286,6 +282,9 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
         this.selectedOutraUnidadePlanoId.set('');
         this.planosOutraUnidade.set([]);
         this.entregasDoPlanoOutraUnidade.set([]);
+        this.outraUnidadeSelecionada.set(null);
+        this.outraUnidadeQuery.setValue('', { emitEvent: false });
+        this.sugestoesOutrasUnidades.set([]);
       }
 
       if (origem !== 'PROPRIA_UNIDADE') {
@@ -414,6 +413,9 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     this.selectedEntregaEntregaId.set('');
     this.entregasDoPlano.set([]);
     this.entregasDoPlanoOutraUnidade.set([]);
+    this.outraUnidadeSelecionada.set(null);
+    this.outraUnidadeQuery.setValue('', { emitEvent: false });
+    this.sugestoesOutrasUnidades.set([]);
     this.mostrandoFormEntrega.set(true);
   }
 
@@ -499,7 +501,18 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       this.entregaForm.controls.plano_entrega_entrega_id.setValue(entrega.plano_entrega_entrega_id || '');
     }
 
-    if (outraUnidadeId) this.carregarPlanosOutraUnidade(outraUnidadeId);
+    if (outraUnidadeId) {
+      this.sugestoesOutrasUnidades.set([]);
+      this.carregarPlanosOutraUnidade(outraUnidadeId, outraUnidadePlanoId);
+      this.unidadeService.getById(outraUnidadeId).subscribe(unidade => {
+        this.outraUnidadeSelecionada.set({ id: unidade.id, sigla: unidade.sigla, nome: unidade.nome });
+        this.outraUnidadeQuery.setValue(`${unidade.sigla} - ${unidade.nome}`, { emitEvent: false });
+      });
+    } else {
+      this.outraUnidadeSelecionada.set(null);
+      this.outraUnidadeQuery.setValue('', { emitEvent: false });
+      this.sugestoesOutrasUnidades.set([]);
+    }
 
     this.mostrandoFormEntrega.set(true);
   }
@@ -528,12 +541,31 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   buscarOutrasUnidades(term: string) {
     if (!term || term.length < 3) {
-      this.outrasUnidades.set([]);
+      this.sugestoesOutrasUnidades.set([]);
       return;
     }
     this.unidadeService.searchByNomeOuCodigo(term).subscribe((unidades: Unidade[]) => {
-      this.outrasUnidades.set(unidades || []);
+      this.sugestoesOutrasUnidades.set(unidades || []);
     });
+  }
+
+  selecionarOutraUnidade(u: {id: string, sigla: string, nome: string}) {
+    this.outraUnidadeSelecionada.set(u);
+    this.outraUnidadeQuery.setValue(`${u.sigla} - ${u.nome}`, { emitEvent: false });
+    this.sugestoesOutrasUnidades.set([]);
+    this.entregaForm.controls.outra_unidade_id.setValue(u.id);
+  }
+
+  limparOutraUnidade() {
+    this.outraUnidadeSelecionada.set(null);
+    this.outraUnidadeQuery.setValue('', { emitEvent: false });
+    this.sugestoesOutrasUnidades.set([]);
+    this.entregaForm.controls.outra_unidade_id.setValue('');
+    this.entregaForm.controls.outra_unidade_plano_id.setValue('');
+    this.selectedOutraUnidadeId.set('');
+    this.selectedOutraUnidadePlanoId.set('');
+    this.planosOutraUnidade.set([]);
+    this.entregasDoPlanoOutraUnidade.set([]);
   }
 
   private carregarPlanosUnidade(unidadeId: string) {
@@ -544,11 +576,15 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     });
   }
 
-  private carregarPlanosOutraUnidade(unidadeId: string) {
+  private carregarPlanosOutraUnidade(unidadeId: string, planoSelecionadoId?: string) {
     this.planoEntregaApi.buscarPorUnidade(unidadeId).subscribe(planos => {
       this.planosOutraUnidade.set(planos);
-      this.entregaForm.controls.outra_unidade_plano_id.setValue('', { emitEvent: false });
-      this.entregasDoPlanoOutraUnidade.set([]);
+      if (!planoSelecionadoId) {
+        this.entregaForm.controls.outra_unidade_plano_id.setValue('', { emitEvent: false });
+        this.entregasDoPlanoOutraUnidade.set([]);
+      } else {
+        this.selectedOutraUnidadePlanoId.set(planoSelecionadoId);
+      }
     });
   }
 
