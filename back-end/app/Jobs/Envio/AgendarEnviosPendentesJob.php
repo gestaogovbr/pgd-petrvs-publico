@@ -10,8 +10,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use App\Jobs\Contratos\ContratoJobSchedule;
 
-class AgendarEnviosPendentesJob implements ShouldQueue
+class AgendarEnviosPendentesJob implements ShouldQueue, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -23,6 +24,11 @@ class AgendarEnviosPendentesJob implements ShouldQueue
     public function __construct(int|string $tenantId)
     {
         $this->tenantId = $tenantId;
+    }
+
+    public static function getDescricao(): string
+    {
+        return 'Enviar Agendamentos Pendentes para API';
     }
 
     public function handle(AgendarEnviosPendentesService $service): void
