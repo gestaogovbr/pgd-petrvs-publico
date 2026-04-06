@@ -51,4 +51,9 @@ class PlanoTrabalhoEntregaRepository
     {
         $this->writeRepository->delete($id);
     }
+
+    public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId): bool
+    {
+        return $this->readRepository->existeVinculo($planoTrabalhoId, $planoEntregaEntregaId);
+    }
 }

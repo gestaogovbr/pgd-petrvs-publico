@@ -14,4 +14,6 @@ interface PlanoTrabalhoEntregaReadRepositoryContract
 
     /** @return \App\Models\PlanoTrabalhoEntrega|null */
     public function find(string|int $id): ?\Illuminate\Database\Eloquent\Model;
+
+    public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId): bool;
 }

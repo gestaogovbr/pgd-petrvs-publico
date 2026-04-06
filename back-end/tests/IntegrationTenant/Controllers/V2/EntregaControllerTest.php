@@ -39,6 +39,7 @@ beforeEach(function () {
         'unidade_id' => $this->unidade->id,
         'tipo_modalidade_id' => $tipoModalidade->id,
         'criacao_usuario_id' => $this->usuario->id,
+        'programa_id' => $this->programa->id,
         'status' => 'INCLUIDO',
     ]);
 
@@ -70,7 +71,7 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (validação)', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
-            'origem' => 'PROPRIA_UNIDADE',
+            'origem' => 'PLANO_ENTREGA',
             'plano_entrega_entrega_id' => 'nao-uuid',
         ])->assertStatus(400);
     });
@@ -79,7 +80,7 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (validação)', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
-            'origem' => 'PROPRIA_UNIDADE',
+            'origem' => 'PLANO_ENTREGA',
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
             'descricao' => str_repeat('a', 1001),
         ])->assertStatus(400);
@@ -89,7 +90,7 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (validação)', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
-            'origem' => 'PROPRIA_UNIDADE',
+            'origem' => 'PLANO_ENTREGA',
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
             'forca_trabalho' => -1,
         ])->assertStatus(400);
@@ -100,25 +101,25 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (validação)', function () {
 
 describe('POST /api/v2/plano-trabalho/:id/entrega (guard)', function () {
 
-    test('retorna 400 quando plano de trabalho não encontrado', function () {
+    test('retorna 404 quando plano de trabalho não encontrado', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->postJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/entrega', [
-            'origem' => 'PROPRIA_UNIDADE',
+            'origem' => 'PLANO_ENTREGA',
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
-        ])->assertStatus(400);
+        ])->assertStatus(404);
     });
 
-    test('retorna 400 quando plano de trabalho está ATIVO', function () {
+    test('retorna 422 quando plano de trabalho está ATIVO', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->plano->status = 'ATIVO';
         $this->plano->save();
 
         $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
-            'origem' => 'PROPRIA_UNIDADE',
+            'origem' => 'PLANO_ENTREGA',
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
-        ])->assertStatus(400);
+        ])->assertStatus(422);
     });
 });
 
@@ -130,7 +131,7 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (happy path)', function () {
         $this->actingAs($this->usuario, 'web');
 
         $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
-            'origem' => 'PROPRIA_UNIDADE',
+            'origem' => 'PLANO_ENTREGA',
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
             'forca_trabalho' => 50,
             'descricao' => 'Construção da rampa',
@@ -153,7 +154,7 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (happy path)', function () {
         $this->plano->save();
 
         $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
-            'origem' => 'PROPRIA_UNIDADE',
+            'origem' => 'PLANO_ENTREGA',
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
             'forca_trabalho' => 30,
             'descricao' => 'Instalação do piso tátil',
@@ -171,7 +172,7 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (happy path)', function () {
         $this->actingAs($this->usuario, 'web');
 
         $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
-            'origem' => 'PROPRIA_UNIDADE',
+            'origem' => 'PLANO_ENTREGA',
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
             'forca_trabalho' => 25,
             'descricao' => 'Teste retorno',
@@ -187,7 +188,7 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (happy path)', function () {
         $this->actingAs($this->usuario, 'web');
 
         $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
-            'origem' => 'PROPRIA_UNIDADE',
+            'origem' => 'PLANO_ENTREGA',
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
             'forca_trabalho' => 150,
             'descricao' => 'Entrega com CHD alto',

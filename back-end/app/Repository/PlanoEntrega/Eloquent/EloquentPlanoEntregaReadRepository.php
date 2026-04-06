@@ -100,4 +100,9 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->with(['entrega:id,nome'])
             ->get();
     }
+
+    public function findEntregaById(string $entregaId): ?PlanoEntregaEntrega
+    {
+        return PlanoEntregaEntrega::find($entregaId);
+    }
 }

@@ -17,4 +17,12 @@ class EloquentPlanoTrabalhoEntregaReadRepository extends AbstractEloquentReadRep
     {
         $this->model = $model;
     }
+
+    public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId): bool
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->where('plano_entrega_entrega_id', $planoEntregaEntregaId)
+            ->exists();
+    }
 }

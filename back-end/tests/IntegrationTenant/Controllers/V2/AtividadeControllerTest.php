@@ -35,21 +35,27 @@ beforeEach(function () {
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}',
             [AtividadeController::class, 'destroy']
         )->name('__tests.v2.atividade.destroy');
+    }
 
+    if (!Route::has('__tests.v2.documento.store')) {
         Route::middleware(['api'])->post(
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/documento',
             [DocumentoController::class, 'store']
-        )->name('__tests.v2.atividade.documento.store');
+        )->name('__tests.v2.documento.store');
+    }
 
+    if (!Route::has('__tests.v2.documento.assinar')) {
         Route::middleware(['api'])->post(
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/documento/assinatura-tcr',
             [DocumentoController::class, 'assinar']
-        )->name('__tests.v2.atividade.assinar');
+        )->name('__tests.v2.documento.assinar');
+    }
 
+    if (!Route::has('__tests.v2.consolidacao.index')) {
         Route::middleware(['api'])->get(
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao',
             [ConsolidacaoController::class, 'index']
-        )->name('__tests.v2.atividade.consolidacao.index');
+        )->name('__tests.v2.consolidacao.index');
     }
 
     $perfil = Perfil::factory()->create(['nivel' => 3]);
@@ -101,13 +107,15 @@ beforeEach(function () {
 
 function ativarPlanoAtividade($context): string
 {
-    $context->postJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/documento");
-    $context->postJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/documento/assinatura-tcr");
+    $context->postJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/documento")
+        ->assertSuccessful();
+    $context->postJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/documento/assinatura-tcr")
+        ->assertSuccessful();
 
-    $consolidacoes = $context->getJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao")
-        ->json('data');
+    $response = $context->getJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao");
+    $response->assertStatus(200);
 
-    return $consolidacoes[0]['id'];
+    return $response->json('data.0.id');
 }
 
 // ── POST atividade ──────────────────────────────────────────────────

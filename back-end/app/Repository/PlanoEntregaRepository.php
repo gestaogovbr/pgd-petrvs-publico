@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\PlanoEntregaEntrega;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
@@ -43,5 +44,10 @@ class PlanoEntregaRepository
     public function findEntregasByPlanoId(string $planoEntregaId): Collection
     {
         return $this->readRepository->findEntregasByPlanoId($planoEntregaId);
+    }
+
+    public function findEntregaById(string $entregaId): ?PlanoEntregaEntrega
+    {
+        return $this->readRepository->findEntregaById($entregaId);
     }
 }

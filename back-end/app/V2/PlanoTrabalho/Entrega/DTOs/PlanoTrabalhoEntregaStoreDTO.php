@@ -17,11 +17,13 @@ class PlanoTrabalhoEntregaStoreDTO
 
     public static function fromArray(array $data, string $planoTrabalhoId): self
     {
+        $origem = $data['origem'];
+
         return new self(
             planoTrabalhoId: $planoTrabalhoId,
-            origem: $data['origem'] ?? 'PROPRIA_UNIDADE',
-            planoEntregaEntregaId: $data['plano_entrega_entrega_id'] ?? null,
-            orgao: $data['orgao'] ?? null,
+            origem: $origem,
+            planoEntregaEntregaId: $origem === 'PLANO_ENTREGA' ? $data['plano_entrega_entrega_id'] : null,
+            orgao: $origem === 'OUTRO_ORGAO' ? $data['orgao'] : null,
             forcaTrabalho: (float) ($data['forca_trabalho'] ?? 0),
             descricao: $data['descricao'] ?? '',
         );
@@ -31,8 +33,8 @@ class PlanoTrabalhoEntregaStoreDTO
     {
         return [
             'plano_trabalho_id' => $this->planoTrabalhoId,
-            'plano_entrega_entrega_id' => in_array($this->origem, ['PROPRIA_UNIDADE', 'OUTRA_UNIDADE']) ? $this->planoEntregaEntregaId : null,
-            'orgao' => $this->origem === 'OUTRO_ORGAO' ? $this->orgao : null,
+            'plano_entrega_entrega_id' => $this->planoEntregaEntregaId,
+            'orgao' => $this->orgao,
             'forca_trabalho' => $this->forcaTrabalho,
             'descricao' => $this->descricao,
         ];

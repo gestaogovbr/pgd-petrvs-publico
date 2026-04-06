@@ -16,4 +16,7 @@ interface PlanoEntregaReadRepositoryContract
     public function findByUnidadeId(string $unidadeId): Collection;
 
     public function findEntregasByPlanoId(string $planoEntregaId): Collection;
+
+    /** @return \App\Models\PlanoEntregaEntrega|null */
+    public function findEntregaById(string $entregaId): ?\App\Models\PlanoEntregaEntrega;
 }

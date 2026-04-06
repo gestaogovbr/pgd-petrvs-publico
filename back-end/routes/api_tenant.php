@@ -606,8 +606,7 @@ Route::middleware(['auth:sanctum'])->prefix('SystemLogs')->group(function () {
 use App\V2\PlanoTrabalho\PlanoTrabalhoController as PlanoTrabalhoV2;
 use App\V2\PlanoTrabalho\Entrega\EntregaController as EntregaV2;
 use App\V2\PlanoTrabalho\Documento\DocumentoController as DocumentoV2;
-use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController as ConsolidacaoV2;
-use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController as AtividadeV2;
+use App\V2\PlanoTrabalho\Consolidacao\ConsolidacaoController as ConsolidacaoV2;
 use App\V2\TipoModalidade\TipoModalidadeController as TipoModalidadeV2;
 use App\V2\Usuario\UsuarioController as UsuarioV2;
 use App\V2\Unidade\UnidadeController as UnidadeV2;
@@ -632,12 +631,6 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::delete('plano-trabalho/{planoTrabalhoId}/documento/assinatura-tcr', [DocumentoV2::class, 'cancelarAssinatura']);
 
     Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao', [ConsolidacaoV2::class, 'index']);
-    Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/concluir', [ConsolidacaoV2::class, 'concluir']);
-    Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/reabrir', [ConsolidacaoV2::class, 'reabrir']);
-
-    Route::post('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade', [AtividadeV2::class, 'store']);
-    Route::put('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}', [AtividadeV2::class, 'update']);
-    Route::delete('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}', [AtividadeV2::class, 'destroy']);
 
     Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
     Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);

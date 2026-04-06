@@ -8,7 +8,6 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\PlanoTrabalhoEntregaRepository;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
 use App\V2\PlanoTrabalho\Entrega\DTOs\PlanoTrabalhoEntregaStoreDTO;
-use App\V2\PlanoTrabalho\Entrega\DTOs\PlanoTrabalhoEntregaUpdateDTO;
 use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaStoreValidator;
 
 class PlanoTrabalhoEntregaService
@@ -19,33 +18,31 @@ class PlanoTrabalhoEntregaService
         private readonly TCRInvalidador $tcrInvalidador,
     ) {}
 
-    public function store(string $planoTrabalhoId, array $data): PlanoTrabalhoEntrega
+    public function store(PlanoTrabalhoEntregaStoreDTO $dto): PlanoTrabalhoEntrega
     {
-        $this->storeValidator->validar($planoTrabalhoId);
+        $this->storeValidator->validar($dto);
 
-        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray($data, $planoTrabalhoId);
         $entrega = $this->repository->create($dto->toArray());
 
-        $this->tcrInvalidador->invalidar($planoTrabalhoId);
+        $this->tcrInvalidador->invalidar($dto->planoTrabalhoId);
 
         return $entrega;
     }
 
-    public function update(string $planoTrabalhoId, string $entregaId, array $data): PlanoTrabalhoEntrega
+    public function update(string $entregaId, PlanoTrabalhoEntregaStoreDTO $dto): PlanoTrabalhoEntrega
     {
-        $this->storeValidator->validar($planoTrabalhoId);
+        $this->storeValidator->validar($dto);
 
-        $dto = PlanoTrabalhoEntregaUpdateDTO::fromArray($data, $planoTrabalhoId);
         $entrega = $this->repository->update($entregaId, $dto->toArray());
 
-        $this->tcrInvalidador->invalidar($planoTrabalhoId);
+        $this->tcrInvalidador->invalidar($dto->planoTrabalhoId);
 
         return $entrega->refresh();
     }
 
     public function destroy(string $planoTrabalhoId, string $entregaId): void
     {
-        $this->storeValidator->validar($planoTrabalhoId);
+        $this->storeValidator->validarDestroy($planoTrabalhoId);
 
         $this->repository->delete($entregaId);
         $this->tcrInvalidador->invalidar($planoTrabalhoId);

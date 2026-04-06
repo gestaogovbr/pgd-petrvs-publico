@@ -13,3 +13,6 @@
 - Evitar criar service dedicado para uma única action — manter no service do módulo quando a complexidade não justifica
 - Ao quebrar dependência com ServiceBase/V1, remover completamente a referência — não manter delegação parcial
 - Front-end: não rodar build a menos que solicitado explicitamente
+- Antes de commitar, SEMPRE perguntar ao usuário se está satisfeito com as mudanças
+- NÃO commitar automaticamente — aguardar confirmação explícita do usuário
+- Mensagens de commit seguem Conventional Commits em português, com número do ticket extraído do branch name
