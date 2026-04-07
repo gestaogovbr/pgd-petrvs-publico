@@ -285,7 +285,7 @@ pipeline {
                             docker exec petrvs_php_hmg php artisan config:clear
                             docker exec -i petrvs_php_hmg php artisan tinker --execute="
                                 $tenantId = env('PETRVS_ENTIDADE');
-                                $tenant = App\Models\Tenant::find($tenantId);
+                                $tenant = App\\Models\\Tenant::find($tenantId);
                                 if ($tenant) {
                                     $path = public_path('app.json');
                                     if (file_exists($path)) {
