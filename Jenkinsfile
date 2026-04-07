@@ -98,6 +98,10 @@ pipeline {
             steps {
                 dir('front-end') {
                     sh '''
+                    cd "$WORKSPACE"
+                    VERSION=$(node -p "require('./app.json').version")
+                    echo "Versão: $VERSION"
+
                     docker run --rm \
                       -v "$WORKSPACE":/workspace \
                       -w /workspace/front-end \
