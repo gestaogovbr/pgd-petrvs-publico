@@ -4,38 +4,31 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators;
 
-use App\Exceptions\ValidateException;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
 
 class AtividadeRequestValidator
 {
     private const MAX_DESCRICAO_LENGTH = 1500;
 
-    public static function validarStore(array $data): array
+    public static function store(Request $request): array
     {
-        $validator = Validator::make($data, [
-            'plano_trabalho_entrega_id' => 'required|uuid',
-            'descricao' => 'required|string|max:' . self::MAX_DESCRICAO_LENGTH,
+        return $request->validate([
+            'plano_trabalho_entrega_id' => ['required', 'uuid'],
+            'descricao' => ['required', 'string', 'max:' . self::MAX_DESCRICAO_LENGTH],
+        ], [
+            'plano_trabalho_entrega_id.required' => 'A entrega é obrigatória.',
+            'descricao.required' => 'A descrição do trabalho executado é obrigatória.',
+            'descricao.max' => 'A descrição não pode exceder ' . self::MAX_DESCRICAO_LENGTH . ' caracteres.',
         ]);
-
-        if ($validator->fails()) {
-            throw new ValidateException($validator->errors()->first());
-        }
-
-        return $validator->validated();
     }
 
-    public static function validarUpdate(array $data): array
+    public static function update(Request $request): array
     {
-        $validator = Validator::make($data, [
-            'plano_trabalho_entrega_id' => 'sometimes|uuid',
-            'descricao' => 'sometimes|string|max:' . self::MAX_DESCRICAO_LENGTH,
+        return $request->validate([
+            'plano_trabalho_entrega_id' => ['sometimes', 'uuid'],
+            'descricao' => ['sometimes', 'string', 'max:' . self::MAX_DESCRICAO_LENGTH],
+        ], [
+            'descricao.max' => 'A descrição não pode exceder ' . self::MAX_DESCRICAO_LENGTH . ' caracteres.',
         ]);
-
-        if ($validator->fails()) {
-            throw new ValidateException($validator->errors()->first());
-        }
-
-        return $validator->validated();
     }
 }

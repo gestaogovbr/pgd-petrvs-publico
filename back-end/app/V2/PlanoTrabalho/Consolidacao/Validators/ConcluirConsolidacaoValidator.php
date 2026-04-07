@@ -28,15 +28,15 @@ class ConcluirConsolidacaoValidator
         $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($consolidacaoId);
 
         if ($consolidacao === null) {
-            throw new NotFoundException('Consolidação não encontrada.');
+            throw new NotFoundException('Período avaliativo não encontrado.');
         }
 
         if ($consolidacao->plano_trabalho_id !== $plano->id) {
-            throw new ValidateException('A consolidação não pertence a este Plano de Trabalho.');
+            throw new ValidateException('O período avaliativo não pertence a este Plano de Trabalho.');
         }
 
         if ($consolidacao->status !== StatusEnum::INCLUIDO->value) {
-            throw new ValidateException('A consolidação precisa estar com status INCLUIDO para ser concluída.');
+            throw new ValidateException('O período avaliativo precisa estar com status INCLUIDO para ser concluído.');
         }
 
         $this->validarEntregasPreenchidas($plano, $consolidacaoId);

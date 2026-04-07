@@ -74,7 +74,7 @@ describe('ConcluirConsolidacaoValidator', function () {
         $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn(null);
 
         $this->validator->validar($plano, 'c-x');
-    })->throws(NotFoundException::class, 'Consolidação não encontrada.');
+    })->throws(NotFoundException::class, 'Período avaliativo não encontrado.');
 
     test('lança exceção quando consolidação não pertence ao plano', function () {
         /** @var PlanoTrabalho $plano */
@@ -89,7 +89,7 @@ describe('ConcluirConsolidacaoValidator', function () {
         $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn($consolidacao);
 
         $this->validator->validar($plano, 'c-1');
-    })->throws(ValidateException::class, 'A consolidação não pertence a este Plano de Trabalho.');
+    })->throws(ValidateException::class, 'O período avaliativo não pertence a este Plano de Trabalho.');
 
     test('lança exceção quando consolidação não está incluída', function () {
         /** @var PlanoTrabalho $plano */
@@ -105,7 +105,7 @@ describe('ConcluirConsolidacaoValidator', function () {
         $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn($consolidacao);
 
         $this->validator->validar($plano, 'c-1');
-    })->throws(ValidateException::class, 'A consolidação precisa estar com status INCLUIDO para ser concluída.');
+    })->throws(ValidateException::class, 'O período avaliativo precisa estar com status INCLUIDO para ser concluído.');
 
     test('lança exceção quando entrega sem trabalho executado', function () {
         /** @var PlanoTrabalho $plano */

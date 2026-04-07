@@ -26,15 +26,15 @@ class ReabrirConsolidacaoValidator
         $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($consolidacaoId);
 
         if ($consolidacao === null) {
-            throw new NotFoundException('Consolidação não encontrada.');
+            throw new NotFoundException('Período avaliativo não encontrado.');
         }
 
         if ($consolidacao->plano_trabalho_id !== $plano->id) {
-            throw new ValidateException('A consolidação não pertence a este Plano de Trabalho.');
+            throw new ValidateException('O período avaliativo não pertence a este Plano de Trabalho.');
         }
 
         if ($consolidacao->status !== StatusEnum::CONCLUIDO->value) {
-            throw new ValidateException('A consolidação precisa estar com status CONCLUIDO para ser reaberta.');
+            throw new ValidateException('O período avaliativo precisa estar com status CONCLUIDO para ser reaberto.');
         }
 
         $avaliacoes = $consolidacao->relationLoaded('avaliacoes')
@@ -42,7 +42,7 @@ class ReabrirConsolidacaoValidator
             : $consolidacao->load('avaliacoes')->avaliacoes;
 
         if ($avaliacoes->isNotEmpty()) {
-            throw new ValidateException('Não é possível reabrir uma consolidação que já possui avaliação.');
+            throw new ValidateException('Não é possível reabrir um período avaliativo que já possui avaliação.');
         }
 
         return $consolidacao;

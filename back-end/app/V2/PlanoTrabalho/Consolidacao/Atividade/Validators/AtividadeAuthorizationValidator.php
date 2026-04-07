@@ -33,6 +33,6 @@ class AtividadeAuthorizationValidator
             return $plano;
         }
 
-        throw new ForbiddenException('Usuário não tem permissão para registrar atividades neste Plano de Trabalho.');
+        throw new ForbiddenException('Usuário não tem permissão para registrar execuções neste Plano de Trabalho.');
     }
 }

@@ -4,74 +4,47 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Consolidacao\Atividade;
 
-use App\Exceptions\NotFoundException;
-use App\Exceptions\ValidateException;
 use App\Models\Atividade;
 use App\Repository\AtividadeRepository;
+use App\V2\PlanoTrabalho\Consolidacao\Atividade\DTOs\AtividadeDestroyDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\DTOs\AtividadeStoreDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\DTOs\AtividadeUpdateDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizationValidator;
-use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeStoreValidator;
-use Illuminate\Support\Facades\Auth;
+use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeWriteValidator;
 
 class AtividadeService
 {
     public function __construct(
         private readonly AtividadeRepository $atividadeRepository,
         private readonly AtividadeAuthorizationValidator $authValidator,
-        private readonly AtividadeStoreValidator $storeValidator,
+        private readonly AtividadeWriteValidator $writeValidator,
     ) {}
 
-    public function store(string $planoTrabalhoId, string $consolidacaoId, array $data): Atividade
+    public function store(AtividadeStoreDTO $dto): Atividade
     {
-        $usuarioId = Auth::id();
-        $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
-        $this->storeValidator->validar($plano, $consolidacaoId, $data);
+        $plano = $this->authValidator->validar($dto->planoTrabalhoId(), $dto->usuarioId());
+        $this->writeValidator->validar($plano, $dto);
 
-        $dto = AtividadeStoreDTO::fromArray($data, $consolidacaoId, $plano->id, $plano->unidade_id, $usuarioId);
-
-        return $this->atividadeRepository->create($dto->toArray());
+        return $this->atividadeRepository->create($dto->toPersistArray($plano->id, $plano->unidade_id));
     }
 
-    public function update(string $planoTrabalhoId, string $consolidacaoId, string $atividadeId, array $data): Atividade
+    public function update(AtividadeUpdateDTO $dto): Atividade
     {
-        $usuarioId = Auth::id();
-        $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
-        $this->storeValidator->validar($plano, $consolidacaoId, $data);
+        $plano = $this->authValidator->validar($dto->planoTrabalhoId(), $dto->usuarioId());
+        $this->writeValidator->validar($plano, $dto);
+        $this->writeValidator->validarExistencia($dto);
 
-        $atividade = $this->atividadeRepository->findById($atividadeId);
+        $this->atividadeRepository->update($dto->atividadeId, $dto->toArray());
 
-        if ($atividade === null) {
-            throw new NotFoundException('Atividade não encontrada.');
-        }
-
-        if ($atividade->plano_trabalho_consolidacao_id !== $consolidacaoId) {
-            throw new ValidateException('A atividade não pertence a esta consolidação.');
-        }
-
-        $dto = AtividadeUpdateDTO::fromArray($data);
-
-        $this->atividadeRepository->update($atividadeId, $dto->toArray());
-
-        return $this->atividadeRepository->findById($atividadeId);
+        return $this->atividadeRepository->findById($dto->atividadeId);
     }
 
-    public function destroy(string $planoTrabalhoId, string $consolidacaoId, string $atividadeId): void
+    public function destroy(AtividadeDestroyDTO $dto): void
     {
-        $usuarioId = Auth::id();
-        $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
-        $this->storeValidator->validar($plano, $consolidacaoId, []);
+        $plano = $this->authValidator->validar($dto->planoTrabalhoId(), $dto->usuarioId());
+        $this->writeValidator->validar($plano, $dto);
+        $this->writeValidator->validarExistencia($dto);
 
-        $atividade = $this->atividadeRepository->findById($atividadeId);
-
-        if ($atividade === null) {
-            throw new NotFoundException('Atividade não encontrada.');
-        }
-
-        if ($atividade->plano_trabalho_consolidacao_id !== $consolidacaoId) {
-            throw new ValidateException('A atividade não pertence a esta consolidação.');
-        }
-
-        $this->atividadeRepository->delete($atividadeId);
+        $this->atividadeRepository->delete($dto->atividadeId);
     }
 }
