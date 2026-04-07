@@ -23,56 +23,36 @@ class PlanoTrabalhoConsolidacao extends ModelBase
 
   protected static function booted()
   {
-    static::updating(function (PlanoTrabalhoConsolidacao $consolidacao) {
-      $planoTrabalho = $consolidacao->planoTrabalho;
-      if ($consolidacao->isDirty('status') && $consolidacao->status === StatusEnum::AVALIADO->value) {
-        $isAllConsolidacoesAvaliadas = $planoTrabalho->consolidacoes()
-          ->where('status', '!=', StatusEnum::AVALIADO->value)
-          ->where('id', '!=', $consolidacao->id)
-          ->doesntExist();
-        if ($isAllConsolidacoesAvaliadas) {
-          $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
-        }
+    static::updated(function (PlanoTrabalhoConsolidacao $consolidacao) {
+      if (!$consolidacao->isDirty('status')) {
+        return;
       }
 
-      if ($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::AVALIADO->value && !!$planoTrabalho->avaliado_at) {
+      /** @var \App\V2\StatusService $statusService */
+      $statusService = app(\App\V2\StatusService::class);
+      $planoTrabalho = $consolidacao->planoTrabalho()->first();
+
+      $todasAvaliadas = $planoTrabalho->consolidacoes()
+        ->where('status', '!=', StatusEnum::AVALIADO->value)
+        ->doesntExist();
+
+      if ($todasAvaliadas && $planoTrabalho->status === StatusEnum::ATIVO->value) {
+        $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
+        $statusService->atualizaStatus(
+          $planoTrabalho,
+          StatusEnum::CONCLUIDO->value,
+          'Plano de Trabalho concluído: todos os períodos avaliativos foram avaliados.',
+        );
+        return;
+      }
+
+      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
         $planoTrabalho->update(['avaliado_at' => null]);
-      }
-    });
-
-    static::updated(function ($consolidacao) {
-      $planoTrabalho = $consolidacao->planoTrabalho;
-      if ($consolidacao->isDirty('status') && $consolidacao->status === StatusEnum::CONCLUIDO->value && $planoTrabalho->status === StatusEnum::ATIVO->value) {
-        $allConcluido = $planoTrabalho->consolidacoes()
-          ->where('status', '!=', StatusEnum::CONCLUIDO->value)
-          ->doesntExist();
-
-        if ($allConcluido) {
-          $planoTrabalho->status = StatusEnum::CONCLUIDO->value;
-          $planoTrabalho->save();
-        }
-      }
-
-      if ($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::CONCLUIDO->value && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
-        $planoTrabalho->status = 'ATIVO';
-        $planoTrabalho->save();
-      }
-    });
-
-    static::updating(function (PlanoTrabalhoConsolidacao $consolidacao) {
-      $planoTrabalho = $consolidacao->planoTrabalho;
-      if ($consolidacao->isDirty('status') && $consolidacao->status === StatusEnum::AVALIADO->value) {
-        $isAllConsolidacoesAvaliadas = $planoTrabalho->consolidacoes()
-          ->where('status', '!=', StatusEnum::AVALIADO->value)
-          ->where('id', '!=', $consolidacao->id)
-          ->doesntExist();
-        if ($isAllConsolidacoesAvaliadas) {
-          $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
-        }
-      }
-
-      if ($consolidacao->isDirty('status') && $consolidacao->status !== StatusEnum::AVALIADO->value && !!$planoTrabalho->avaliado_at) {
-        $planoTrabalho->update(['avaliado_at' => null]);
+        $statusService->atualizaStatus(
+          $planoTrabalho,
+          StatusEnum::ATIVO->value,
+          'Plano de Trabalho reaberto: um período avaliativo deixou de estar avaliado.',
+        );
       }
     });
   }

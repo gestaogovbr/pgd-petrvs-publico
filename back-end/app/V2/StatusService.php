@@ -39,9 +39,6 @@ class StatusService
         ]);
 
         $entity->status = $novoStatus;
-        // TODO: $entity->save() é operação Eloquent direta, contraditório com o uso de repository.
-        // O campo `status` não está em $fillable dos models, então não pode ser atualizado via repository->update().
-        // Solução: criar método `updateStatus(string $id, string $status)` em cada WriteRepository que faça a atribuição direta.
         $entity->save();
     }
 
