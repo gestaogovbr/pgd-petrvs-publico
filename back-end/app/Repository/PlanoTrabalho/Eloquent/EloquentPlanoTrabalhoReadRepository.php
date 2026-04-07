@@ -172,6 +172,15 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                   ->where('status', StatusEnum::ATIVO->value);
         }
 
+        if ($filtro->usuarioNome !== null && $filtro->usuarioNome !== '') {
+            $query->whereHas('usuario', fn ($q) => $q->where('nome', 'like', '%' . $filtro->usuarioNome . '%'));
+        }
+
+        if ($filtro->unidadeRegramento !== null && $filtro->unidadeRegramento !== '') {
+            $query->whereHas('programa.unidade', fn ($q) => $q->where('sigla', 'like', '%' . $filtro->unidadeRegramento . '%')
+                ->orWhere('nome', 'like', '%' . $filtro->unidadeRegramento . '%'));
+        }
+
         return $query->paginate(perPage: $filtro->perPage, page: $filtro->page);
     }
 

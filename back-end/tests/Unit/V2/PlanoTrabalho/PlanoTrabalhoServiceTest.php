@@ -92,6 +92,28 @@ describe('PlanoTrabalhoService::index', function () {
         ]);
     });
 
+    test('propaga usuario_nome e unidade_regramento no filtro ao repository', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+        $this->indexValidacao->shouldReceive('validar')->once()->andReturnUsing(fn ($f) => $f);
+        $paginator = Mockery::mock(LengthAwarePaginator::class);
+
+        $this->readRepository
+            ->shouldReceive('buscarPlanosListagem')
+            ->once()
+            ->with(Mockery::on(fn (PlanoTrabalhoIndexDTO $f) =>
+                $f->usuarioNome === 'João' && $f->unidadeRegramento === 'COGEP'
+            ))
+            ->andReturn($paginator);
+
+        $this->service->index([
+            'filters' => [
+                'vigentes' => true,
+                'usuario_nome' => 'João',
+                'unidade_regramento' => 'COGEP',
+            ],
+        ]);
+    });
+
     test('não expande subordinadas quando flag subordinadas está ausente', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
         $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);

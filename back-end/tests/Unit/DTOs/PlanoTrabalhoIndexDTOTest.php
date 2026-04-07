@@ -149,4 +149,49 @@ describe('PlanoTrabalhoIndexDTO', function () {
 
         expect($filtro->status)->toBe('CONCLUIDO');
     });
+
+    test('extrai filtro usuario_nome corretamente', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'vigentes' => true,
+            'usuario_nome' => 'João',
+        ]);
+
+        expect($filtro->usuarioNome)->toBe('João');
+    });
+
+    test('usuario_nome é null quando não informado', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true]);
+
+        expect($filtro->usuarioNome)->toBeNull();
+    });
+
+    test('extrai filtro unidade_regramento corretamente', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'vigentes' => true,
+            'unidade_regramento' => 'COGEP',
+        ]);
+
+        expect($filtro->unidadeRegramento)->toBe('COGEP');
+    });
+
+    test('unidade_regramento é null quando não informado', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true]);
+
+        expect($filtro->unidadeRegramento)->toBeNull();
+    });
+
+    test('withUnidadesId preserva usuario_nome e unidade_regramento', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'vigentes' => true,
+            'unidade_id' => 'u-1',
+            'usuario_nome' => 'Maria',
+            'unidade_regramento' => 'DITIC',
+        ]);
+
+        $novo = $filtro->withUnidadesId(['u-1', 'u-2']);
+
+        expect($novo->usuarioNome)->toBe('Maria')
+            ->and($novo->unidadeRegramento)->toBe('DITIC')
+            ->and($novo->unidadesId)->toBe(['u-1', 'u-2']);
+    });
 });

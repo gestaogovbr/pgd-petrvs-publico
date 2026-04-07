@@ -25,6 +25,8 @@ class PlanoTrabalhoRequestValidator
             'filters.tipo_modalidade_id' => ['sometimes', 'nullable', 'uuid'],
             'filters.status' => ['sometimes', 'nullable', 'uuid'],
             'filters.hierarquia' => ['sometimes', 'boolean'],
+            'filters.usuario_nome' => ['sometimes', 'nullable', 'string'],
+            'filters.unidade_regramento' => ['sometimes', 'nullable', 'string'],
         ]);
     }
 
