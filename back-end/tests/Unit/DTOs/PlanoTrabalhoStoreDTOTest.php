@@ -66,6 +66,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'data_fim' => '2024-12-31',
             'tipo_modalidade_id' => 'mod-abc',
             'criacao_usuario_id' => 'criador-999',
+            'justificativa' => 'Justificativa',
         ]);
     });
 });

@@ -71,7 +71,7 @@ class PlanoTrabalhoIndexDTO
         $tipoModalidadeId = $filters['tipo_modalidade_id'] ?? null;
         $status = $filters['status'] ?? null;
         $usuarioLogadoId = $filters['usuarioLogadoId'] ?? null;
-        $usuarioId = $filters['usuario_id'] ?? $usuarioLogadoId;
+        $usuarioId = $filters['usuario_id'] ?? null;
 
         if (($dataInicio === null) !== ($dataFim === null)) {
             throw new ServerException("ValidateFiltros", "As datas de início e fim devem ser preenchidas juntas.");

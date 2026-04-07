@@ -2,7 +2,7 @@
 
 namespace Tests\IntegrationTenant\Controllers\V2;
 
-use App\V2\PlanoTrabalho\Consolidacao\ConsolidacaoController;
+use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController;
 use App\V2\PlanoTrabalho\Documento\DocumentoController;
 use App\Models\Entrega;
 use App\Models\Perfil;
@@ -22,7 +22,7 @@ beforeEach(function () {
     if (!Route::has('__tests.v2.consolidacao.index')) {
         Route::middleware(['api'])->get(
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao',
-            [ConsolidacaoController::class, 'index']
+            [PlanoTrabalhoConsolidacaoController::class, 'index']
         )->name('__tests.v2.consolidacao.index');
     }
 

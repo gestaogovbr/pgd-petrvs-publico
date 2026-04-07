@@ -39,7 +39,7 @@ describe('GET /api/v2/unidade (validação)', function () {
     test('retorna 400 quando termo tem menos de 3 caracteres', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $response = $this->getJson('/api/__tests/v2/unidade?termo=ab');
+        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=ab');
 
         $response->assertStatus(400)
             ->assertJson(fn ($json) =>
@@ -55,7 +55,7 @@ describe('GET /api/v2/unidade (validação)', function () {
                 ->andThrow(new \RuntimeException('Erro inesperado'));
         });
 
-        $response = $this->getJson('/api/__tests/v2/unidade?termo=Coord');
+        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=Coord');
 
         $response->assertStatus(500)
             ->assertJsonPath('error', 'Ocorreu um erro inesperado.');
@@ -83,7 +83,7 @@ describe('GET /api/v2/unidade (happy path)', function () {
     test('retorna unidade ao buscar por nome', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $response = $this->getJson('/api/__tests/v2/unidade?termo=Financeira');
+        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=Financeira');
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true);
@@ -97,7 +97,7 @@ describe('GET /api/v2/unidade (happy path)', function () {
     test('retorna unidade ao buscar por codigo', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $response = $this->getJson('/api/__tests/v2/unidade?termo=00123');
+        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=00123');
 
         $response->assertStatus(200);
 
@@ -111,7 +111,7 @@ describe('GET /api/v2/unidade (happy path)', function () {
 
         $outraUnidade = Unidade::factory()->create(['nome' => 'Unidade Isolada']);
 
-        $response = $this->getJson('/api/__tests/v2/unidade?termo=Isolada');
+        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=Isolada');
 
         $data = $response->json('data');
 
@@ -131,7 +131,7 @@ describe('GET /api/v2/unidade (happy path)', function () {
     test('retorna collection vazia quando termo não corresponde', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $response = $this->getJson('/api/__tests/v2/unidade?termo=XYZNONEXISTENT');
+        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=XYZNONEXISTENT');
 
         $response->assertStatus(200);
 

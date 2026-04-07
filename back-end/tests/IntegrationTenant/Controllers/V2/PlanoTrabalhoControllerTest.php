@@ -329,7 +329,7 @@ describe('POST /api/v2/plano-trabalho (happy path)', function () {
             ->assertJsonPath('success', true);
 
         $this->assertDatabaseHas('planos_trabalhos', [
-            'id' => $response->json('rows.0.id'),
+            'id' => $response->json('data.id'),
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
             'programa_id' => $this->programa->id,
@@ -349,7 +349,7 @@ describe('POST /api/v2/plano-trabalho (happy path)', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
-        $plano = PlanoTrabalho::find($response->json('rows.0.id'));
+        $plano = PlanoTrabalho::find($response->json('data.id'));
 
         expect($plano->numero)->toBeGreaterThan(0);
     });
