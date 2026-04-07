@@ -10,14 +10,14 @@ use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 
-class AtividadeAuthorizationValidator
+class AtividadeAuthorizationValidator # TO-DO: parece que isso aqui pertence muito mais a um PlanoTrabalhoAuthorizationValidator. Pois vê se PT é do usuário ou do gestor
 {
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly UnidadeRepository $unidadeRepository,
     ) {}
 
-    public function validar(string $planoTrabalhoId, string $usuarioLogadoId): PlanoTrabalho
+    public function validar(string $planoTrabalhoId, string $usuarioLogadoId): PlanoTrabalho # TO-DO: fazer um DTO(ptID, AuthID, ErrorMessage)
     {
         $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
 

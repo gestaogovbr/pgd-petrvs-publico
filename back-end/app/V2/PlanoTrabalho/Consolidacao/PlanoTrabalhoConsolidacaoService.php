@@ -7,6 +7,7 @@ namespace App\V2\PlanoTrabalho\Consolidacao;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\TipoAvaliacaoNota;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizationValidator;
@@ -64,5 +65,22 @@ class PlanoTrabalhoConsolidacaoService
         );
 
         return $consolidacao;
+    }
+
+    public function notasAvaliacao(string $planoTrabalhoId): Collection
+    {
+        $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
+
+        if ($plano === null) {
+            throw new NotFoundException('Plano de Trabalho não encontrado.');
+        }
+
+        $programa = $plano->relationLoaded('programa')
+            ? $plano->programa
+            : $plano->load('programa')->programa;
+
+        return TipoAvaliacaoNota::where('tipo_avaliacao_id', $programa->tipo_avaliacao_plano_trabalho_id)
+            ->orderBy('sequencia')
+            ->get(['id', 'sequencia', 'nota', 'descricao', 'justifica']);
     }
 }

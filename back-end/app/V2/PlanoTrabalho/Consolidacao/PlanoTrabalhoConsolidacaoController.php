@@ -34,6 +34,20 @@ class PlanoTrabalhoConsolidacaoController extends Controller
         }
     }
 
+    public function notasAvaliacao(string $planoTrabalhoId): JsonResponse
+    {
+        try {
+            $notas = $this->service->notasAvaliacao($planoTrabalhoId);
+
+            return response()->json(['success' => true, 'data' => $notas]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function concluir(string $planoTrabalhoId, string $consolidacaoId): JsonResponse
     {
         try {
