@@ -276,8 +276,50 @@ pipeline {
                             -o StrictHostKeyChecking=yes \
                             -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
                             -p "$SSH_PORT" \
-                            "$SSH_USER@$SSH_HOST" \
-                            'cd /root && bash ./install-pgd.sh'
+                            "$SSH_USER@$SSH_HOST" << 'EOF'
+                            docker compose down
+                            docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
+                            docker-compose pull
+                            docker compose up -d --remove-orphans'
+                            docker cp /root/.env petrvs_php_hmg:/var/www/.env
+                            docker exec petrvs_php_hmg php artisan config:clear
+                            docker exec -i petrvs_php_hmg php artisan tinker --execute="
+                                \$tenantId = env('PETRVS_ENTIDADE');
+                                \$tenant = App\Models\Tenant::find(\$tenantId);
+                                if (\$tenant) {
+                                    \$path = public_path('app.json');
+                                    if (file_exists(\$path)) {
+                                        \$json = json_decode(file_get_contents(\$path), true);
+                                        if ((\$json['version'] ?? '') !== \$tenant->version) {
+                                            \$json['version'] = \$tenant->version;
+                                            file_put_contents(\$path, json_encode(\$json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                                            echo 'Versão sincronizada para: ' . \$tenant->version . PHP_EOL;
+                                        } else {
+                                            echo 'Versão já está sincronizada: ' . \$tenant->version . PHP_EOL;
+                                        }
+                                    }
+                                } else {
+                                    echo 'Tenant não encontrado: ' . \$tenantId . PHP_EOL;
+                                }"
+                                docker exec petrvs_php_hmg bash -c 'php artisan config:clear'
+                                sleep 10
+                                docker exec petrvs_php_hmg bash -c 'sudo chmod -R 777 /var/www/storage/logs/'
+                                docker exec petrvs_php_hmg bash -c 'sudo chmod -R 777 /var/www/storage/'
+                                docker exec petrvs_php_hmg bash -c 'sudo chown -R www-data:www-data ./storage/logs/'
+                                docker exec petrvs_php_hmg bash -c 'sudo rm -f /var/www/storage/logs/*.log'
+                                docker exec petrvs_php_hmg touch /var/www/storage/logs/laravel.log
+                                docker exec petrvs_php_hmg chmod 777 /var/www/storage/logs/laravel.log
+                                docker exec petrvs_php_hmg bash -c 'php artisan optimize:clear'
+                                docker exec petrvs_php_hmg bash -c 'php artisan cache:clear'
+                                docker exec petrvs_php_hmg bash -c 'php artisan config:clear'
+                                docker exec petrvs_php_hmg bash -c 'composer dump-autoload'
+                                docker exec petrvs_php_hmg bash -c "php artisan migrate"
+                                docker exec petrvs_php_hmg bash -c "php artisan tenants:migrate"
+                                docker exec petrvs_php_hmg bash -c 'php artisan tenants:run db:seed --option="class=DeployHMGSeeder"'
+                                sleep 10
+                                docker restart petrvs_queue
+                                docker exec petrvs_php_hmg bash -c "service cron start"
+EOF
 
                         echo "Implantação concluída com sucesso em HMG."
                     '''
