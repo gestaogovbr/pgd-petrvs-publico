@@ -99,7 +99,7 @@ pipeline {
                 dir('front-end') {
                     sh '''
                     cd "$WORKSPACE"
-                    VERSION=$(node -p "require('./app.json').version")
+                    VERSION=$(node -p "require('./back-end/public/app.json').version")
                     echo "Versão: $VERSION"
 
                     docker run --rm \
