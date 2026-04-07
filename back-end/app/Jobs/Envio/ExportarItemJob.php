@@ -4,6 +4,9 @@ namespace App\Jobs\Envio;
 
 use App\Exceptions\TokenPgdException;
 use App\Jobs\Contratos\ContratoJobSchedule;
+use App\Models\PlanoEntrega;
+use App\Models\PlanoTrabalho;
+use App\Models\Usuario;
 use App\Repository\Interfaces\AbstractEnvioRepository;
 use App\Services\API_PGD\PgdService;
 use Carbon\Carbon;
@@ -14,11 +17,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\TimeoutExceededException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use App\Models\Usuario;
-use App\Models\PlanoEntrega;
-use App\Models\PlanoTrabalho;
 use Throwable;
 
 /**
@@ -46,10 +47,10 @@ abstract class ExportarItemJob implements ShouldQueue
         $this->queue = 'pgd_queue';
         $this->connection = 'rabbitmq';
 
-        $tenant = tenancy()->find($tenantId);
-        tenancy()->initialize($tenant);
+        //$tenant = tenancy()->find($tenantId);
+        //tenancy()->initialize($tenant);
 
-        $model = $this->getModel();
+        $model = $this->getRepository()->findById($this->id);
         $dataAgendamento = Carbon::now();
         if ($model !== null) {
             $this->getRepository()->agendarEnvio($model, $dataAgendamento);
@@ -179,6 +180,11 @@ abstract class ExportarItemJob implements ShouldQueue
 
     public function failed(?Throwable $exception): void {
         $this->insucesso($exception->getMessage());
+
+        if ($exception instanceof TimeoutExceededException) {
+            $this->logInfo('Timeout excedido. Nova tentativa em 5 minutos');
+            $this->reagendar();
+        }
     }
 
     public function reagendar() {

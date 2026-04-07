@@ -16,15 +16,11 @@ class AgendarEnviosPendentesJob implements ShouldQueue, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int|string $tenantId;
-
     public int $timeout = 0;
     public int $tries = 1;
 
-    public function __construct(int|string $tenantId)
-    {
-        $this->tenantId = $tenantId;
-    }
+    public function __construct(private readonly ?string $tenantId = null)
+    {}
 
     public static function getDescricao(): string
     {
