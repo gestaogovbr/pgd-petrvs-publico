@@ -319,7 +319,7 @@ pipeline {
                                 sleep 10
                                 docker restart petrvs_queue
                                 docker exec petrvs_php_hmg bash -c "service cron start"
-EOF
+EOF"
 
                         echo "Implantação concluída com sucesso em HMG."
                     '''
