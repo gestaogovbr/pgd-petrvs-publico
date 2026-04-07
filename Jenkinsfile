@@ -284,22 +284,22 @@ pipeline {
                             docker cp /root/.env petrvs_php_hmg:/var/www/.env
                             docker exec petrvs_php_hmg php artisan config:clear
                             docker exec -i petrvs_php_hmg php artisan tinker --execute="
-                                \$tenantId = env('PETRVS_ENTIDADE');
-                                \$tenant = App\Models\Tenant::find(\$tenantId);
-                                if (\$tenant) {
-                                    \$path = public_path('app.json');
-                                    if (file_exists(\$path)) {
-                                        \$json = json_decode(file_get_contents(\$path), true);
-                                        if ((\$json['version'] ?? '') !== \$tenant->version) {
-                                            \$json['version'] = \$tenant->version;
-                                            file_put_contents(\$path, json_encode(\$json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-                                            echo 'Versão sincronizada para: ' . \$tenant->version . PHP_EOL;
+                                $tenantId = env('PETRVS_ENTIDADE');
+                                $tenant = App\Models\Tenant::find($tenantId);
+                                if ($tenant) {
+                                    $path = public_path('app.json');
+                                    if (file_exists($path)) {
+                                        $json = json_decode(file_get_contents($path), true);
+                                        if (($json['version'] ?? '') !== $tenant->version) {
+                                            $json['version'] = $tenant->version;
+                                            file_put_contents($path, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                                            echo 'Versão sincronizada para: ' . $tenant->version . PHP_EOL;
                                         } else {
-                                            echo 'Versão já está sincronizada: ' . \$tenant->version . PHP_EOL;
+                                            echo 'Versão já está sincronizada: ' . $tenant->version . PHP_EOL;
                                         }
                                     }
                                 } else {
-                                    echo 'Tenant não encontrado: ' . \$tenantId . PHP_EOL;
+                                    echo 'Tenant não encontrado: ' . $tenantId . PHP_EOL;
                                 }"
                                 docker exec petrvs_php_hmg bash -c 'php artisan config:clear'
                                 sleep 10
