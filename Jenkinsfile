@@ -273,7 +273,7 @@ pipeline {
                             -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
                             -p "$SSH_PORT" \
                             "$SSH_USER@$SSH_HOST" \
-                            'cd /home/marcocoelho && bash ./install-pgd.sh'
+                            'cd /root && bash ./install-pgd.sh'
 
                         echo "Implantação concluída com sucesso em HMG."
                     '''
