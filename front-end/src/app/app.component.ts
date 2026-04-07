@@ -306,8 +306,7 @@ export class AppComponent implements IAppComponent {
 
     this.moduloExecucao = [
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, { metadata: { minha_unidade: true } }),
-      this.menuSchema.ATIVIDADES,
-      Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
+     
       //this.menuSchema.AFASTAMENTOS,
       this.menuSchema.OCORRENCIAS,
       {

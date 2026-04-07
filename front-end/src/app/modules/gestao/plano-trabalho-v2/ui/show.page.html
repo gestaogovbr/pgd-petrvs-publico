@@ -137,6 +137,7 @@
             <span>
               Status do Período:
               <br-tag shape="rounded" density="small" [label]="statusConsolidacaoDisplay(consolidacao)" />
+
             </span>
           </div>
           <div class="card-content">
@@ -179,7 +180,9 @@
                           @if (podeRegistrar(consolidacao)) {
                             @if (editando || !atividade) {
                               <br-textarea
-                                class="w-100 h-auto"
+                                show-counter
+                                class="w-100"
+                                [maxlength]="1500"
                                 [value]="getTexto(consolidacao.id, e.id)"
                                 (input)="setTexto(consolidacao.id, e.id, $any($event.target).value)"
                                 placeholder="Descreva o trabalho executado..."
@@ -235,6 +238,9 @@
                 </table>
               </div>
             </div>
+            <br-divider></br-divider>
+            <p class="text-weight-semi-bold mb-3">Avaliação</p>
+
           </div>
           @if (podeConcluirConsolidacao(consolidacao)) {
             <div class="card-footer d-flex justify-content-end p-2x">

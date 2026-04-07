@@ -30,6 +30,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly api = inject(PlanoTrabalhoApiClient);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
 
+  private readonly FILTER_KEY = 'plano-trabalho-v2:filters';
+
   advanced = false;
 
   readonly modalidadeOptions = signal<SelectOption[]>([{ value: '', label: 'Todas', selected: true }]);
@@ -96,6 +98,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       this.filters.controls.meus_planos.disable({ emitEvent: false });
     }
 
+    this.restoreFilters();
     this.applyToggleRules();
     this.applyFiltersAndLoad(true);
   }
@@ -181,8 +184,26 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     }
   }
 
+  private saveFilters() {
+    const raw = this.filters.getRawValue();
+    localStorage.setItem(this.FILTER_KEY, JSON.stringify({ ...raw, advanced: this.advanced }));
+  }
+
+  private restoreFilters() {
+    try {
+      const saved = localStorage.getItem(this.FILTER_KEY);
+      if (!saved) return;
+      const parsed = JSON.parse(saved);
+      this.filters.patchValue(parsed, { emitEvent: false });
+      if (parsed.advanced) this.advanced = true;
+    } catch {
+      localStorage.removeItem(this.FILTER_KEY);
+    }
+  }
+
   private applyFiltersAndLoad(resetPage: boolean) {
     if (resetPage) this.facade.page.set(1);
+    this.saveFilters();
     this.facade.filters.set(this.buildFilters());
     this.facade.load();
   }
@@ -201,6 +222,9 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     if (raw.numero.trim().length) result['numero'] = raw.numero.trim();
     if (raw.tipo_modalidade_id.length) result['tipo_modalidade_id'] = raw.tipo_modalidade_id;
     if (raw.status.length) result['status'] = raw.status;
+    if (raw.usuario.trim().length) result['usuario_nome'] = raw.usuario.trim();
+    if (raw.unidade_regramento.trim().length) result['unidade_regramento'] = raw.unidade_regramento.trim();
+
     result['unidade_id'] = this.auth.unidade?.id;
 
     return result;

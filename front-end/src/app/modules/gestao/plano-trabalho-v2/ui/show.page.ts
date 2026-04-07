@@ -78,7 +78,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   podeRegistrar(consolidacao?: any): boolean {
     const plano = this.planoTrabalho();
     if (!plano || plano.status !== 'ATIVO') return false;
-    if (consolidacao?.status === 'CONCLUIDO') return false;
+    if (['CONCLUIDO', 'AVALIADO'].includes(consolidacao?.status)) return false;
     return plano.usuario_id === this.auth.usuario?.id
       || this.unidadeService.isGestorUnidade(plano.unidade_id);
   }
