@@ -7,9 +7,9 @@ namespace App\V2\PlanoTrabalho\Consolidacao;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use App\Models\PlanoTrabalhoConsolidacao;
-use App\Models\TipoAvaliacaoNota;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\ProgramaRepository;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ConcluirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ReabrirConsolidacaoValidator;
@@ -23,6 +23,7 @@ class PlanoTrabalhoConsolidacaoService
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
+        private readonly ProgramaRepository $programaRepository,
         private readonly AtividadeAuthorizationValidator $authValidator,
         private readonly ConcluirConsolidacaoValidator $concluirValidator,
         private readonly ReabrirConsolidacaoValidator $reabrirValidator,
@@ -102,8 +103,6 @@ class PlanoTrabalhoConsolidacaoService
             ? $plano->programa
             : $plano->load('programa')->programa;
 
-        return TipoAvaliacaoNota::where('tipo_avaliacao_id', $programa->tipo_avaliacao_plano_trabalho_id)
-            ->orderBy('sequencia')
-            ->get(['id', 'sequencia', 'nota', 'descricao', 'justifica']);
+        return $this->programaRepository->findNotasAvaliacao($programa->tipo_avaliacao_plano_trabalho_id);
     }
 }
