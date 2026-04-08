@@ -36,8 +36,9 @@ export function errorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn)
         if (error.status === 500) {
           message.error('Erro interno do servidor. Por favor, tente novamente mais tarde.');
         }
-        if (error.status === 422 && (error as any)?.error?.errors) {
-          message.error('Dados inválidos');
+        if (error.status === 422) {
+          const msg = (error.error && (error.error.error || error.error.message)) || 'Dados inválidos.';
+          message.error(msg);
         }
         if (error.status === 400) {
           const msg = (error.error && (error.error.error || error.error.message)) || 'Requisição inválida.';
