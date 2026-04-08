@@ -1555,6 +1555,7 @@ CREATE TABLE `planos_trabalhos` (
   `forma_contagem_carga_horaria` enum('DIA','SEMANA','MES') NOT NULL DEFAULT 'DIA' COMMENT 'Forma de contagem padrão da carga horária',
   `status` enum('INCLUIDO','AGUARDANDO_ASSINATURA','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO','CANCELADO') NOT NULL DEFAULT 'INCLUIDO' COMMENT 'Status atual do plano de trabalho',
   `justificativa` text DEFAULT NULL COMMENT 'Justificativa para carga horária inferior a 100%',
+  `justificativa_modalidade` varchar(500) DEFAULT NULL COMMENT 'Justificativa para modalidade divergente do SIAPE',
   `programa_id` char(36) NOT NULL,
   `usuario_id` char(36) NOT NULL,
   `unidade_id` char(36) NOT NULL,

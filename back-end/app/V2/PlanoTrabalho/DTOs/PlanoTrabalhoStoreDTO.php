@@ -14,7 +14,7 @@ class PlanoTrabalhoStoreDTO
         public readonly string $dataFim,
         public readonly string $tipoModalidadeId,
         public readonly string $criacaoUsuarioId,
-        public readonly ?string $justificativa = null,
+        public readonly ?string $justificativaModalidade = null,
     ) {}
 
     public function isPlanoCriadoParaSi(): bool
@@ -32,7 +32,7 @@ class PlanoTrabalhoStoreDTO
             dataFim: $data['data_fim'],
             tipoModalidadeId: $data['tipo_modalidade_id'],
             criacaoUsuarioId: $criacaoUsuarioId,
-            justificativa: $data['justificativa'] ?? null,
+            justificativaModalidade: $data['justificativa'] ?? null,
         );
     }
 
@@ -47,7 +47,7 @@ class PlanoTrabalhoStoreDTO
             'data_fim' => $this->dataFim,
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'criacao_usuario_id' => $this->criacaoUsuarioId,
-            'justificativa' => $this->justificativa,
+            'justificativa_modalidade' => $this->justificativaModalidade,
         ];
     }
 }

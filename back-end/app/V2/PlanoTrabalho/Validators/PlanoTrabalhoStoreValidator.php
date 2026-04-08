@@ -27,6 +27,7 @@ class PlanoTrabalhoStoreValidator
         $this->validarUnidadeAtiva($dto->unidadeId);
         $this->validarPeriodoDentroDoRegramento($dto);
         $this->validarConflitoPeriodo($dto);
+        $this->validarModalidadeDivergente($dto);
     }
 
     public function validarAutorizacao(PlanoTrabalhoStoreDTO $dto): void
@@ -85,6 +86,22 @@ class PlanoTrabalhoStoreValidator
     {
         if ($this->planoTrabalhoRepository->existeConflitoPeriodo($dto->usuarioId, $dto->dataInicio, $dto->dataFim)) {
             throw new ServerException("ValidatePlanoTrabalho", "Este participante já possui plano de trabalho cadastrado para o período.");
+        }
+    }
+
+    private function validarModalidadeDivergente(PlanoTrabalhoStoreDTO $dto): void
+    {
+        $agente = $this->usuarioRepository->findById($dto->usuarioId);
+
+        if ($agente->tipo_modalidade_id === $dto->tipoModalidadeId) {
+            return;
+        }
+
+        if (empty($dto->justificativaModalidade)) {
+            throw new ServerException(
+                "ValidatePlanoTrabalho",
+                "Modalidade distinta daquela registrada no SIAPE. A justificativa é obrigatória."
+            );
         }
     }
 }

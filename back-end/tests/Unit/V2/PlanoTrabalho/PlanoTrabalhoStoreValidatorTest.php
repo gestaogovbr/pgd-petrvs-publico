@@ -86,6 +86,70 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         $this->validacao->validar(buildStoreDTO());
     })->throws(ServerException::class, 'Este participante já possui plano de trabalho cadastrado para o período.');
+
+    test('lança exceção quando modalidade diverge do SIAPE sem justificativa', function () {
+        $unidade = Mockery::mock(Unidade::class)->makePartial();
+        $unidade->data_inativacao = null;
+
+        $programa = Mockery::mock(Programa::class)->makePartial();
+        $programa->data_inicio = '2024-01-01';
+        $programa->data_fim = '2024-12-31';
+
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->tipo_modalidade_id = 'mod-siape';
+
+        $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->programaRepo->shouldReceive('findById')->andReturn($programa);
+        $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+
+        $this->validacao->validar(buildStoreDTO(['tipo_modalidade_id' => 'mod-diferente']));
+    })->throws(ServerException::class, 'Modalidade distinta daquela registrada no SIAPE. A justificativa é obrigatória.');
+
+    test('permite quando modalidade diverge do SIAPE com justificativa', function () {
+        $unidade = Mockery::mock(Unidade::class)->makePartial();
+        $unidade->data_inativacao = null;
+
+        $programa = Mockery::mock(Programa::class)->makePartial();
+        $programa->data_inicio = '2024-01-01';
+        $programa->data_fim = '2024-12-31';
+
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->tipo_modalidade_id = 'mod-siape';
+
+        $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->programaRepo->shouldReceive('findById')->andReturn($programa);
+        $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+
+        $this->validacao->validar(buildStoreDTO([
+            'tipo_modalidade_id' => 'mod-diferente',
+            'justificativa' => 'Modalidade ajustada por necessidade do serviço.',
+        ]));
+
+        expect(true)->toBeTrue();
+    });
+
+    test('permite quando modalidade igual ao SIAPE sem justificativa', function () {
+        $unidade = Mockery::mock(Unidade::class)->makePartial();
+        $unidade->data_inativacao = null;
+
+        $programa = Mockery::mock(Programa::class)->makePartial();
+        $programa->data_inicio = '2024-01-01';
+        $programa->data_fim = '2024-12-31';
+
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->tipo_modalidade_id = 'mod-1';
+
+        $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->programaRepo->shouldReceive('findById')->andReturn($programa);
+        $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+
+        $this->validacao->validar(buildStoreDTO());
+
+        expect(true)->toBeTrue();
+    });
 });
 
 describe('PlanoTrabalhoStoreValidator - autorização', function () {

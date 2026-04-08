@@ -309,6 +309,63 @@ describe('POST /api/v2/plano-trabalho (validação)', function () {
     });
 });
 
+// ── POST store: modalidade divergente (RN24) ─────────────────────────
+
+describe('POST /api/v2/plano-trabalho (modalidade divergente)', function () {
+
+    test('retorna 400 quando modalidade diverge do SIAPE sem justificativa', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $outraModalidade = \App\Models\TipoModalidade::factory()->create();
+
+        $this->postJson('/api/__tests/v2/plano-trabalho', [
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2024-06-01',
+            'data_fim' => '2024-12-31',
+            'tipo_modalidade_id' => $outraModalidade->id,
+        ])->assertStatus(400);
+    });
+
+    test('retorna 201 quando modalidade diverge do SIAPE com justificativa', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $outraModalidade = \App\Models\TipoModalidade::factory()->create();
+
+        $this->postJson('/api/__tests/v2/plano-trabalho', [
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2024-06-01',
+            'data_fim' => '2024-12-31',
+            'tipo_modalidade_id' => $outraModalidade->id,
+            'justificativa' => 'Modalidade ajustada por necessidade do serviço.',
+        ])->assertStatus(201);
+    });
+
+    test('persiste justificativa_modalidade quando modalidade diverge', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $outraModalidade = \App\Models\TipoModalidade::factory()->create();
+
+        $response = $this->postJson('/api/__tests/v2/plano-trabalho', [
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2024-06-01',
+            'data_fim' => '2024-12-31',
+            'tipo_modalidade_id' => $outraModalidade->id,
+            'justificativa' => 'Necessidade do serviço.',
+        ]);
+
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $response->json('data.id'),
+            'justificativa_modalidade' => 'Necessidade do serviço.',
+        ]);
+    });
+});
+
 // ── POST store: happy path (sem mock) ───────────────────────────────
 
 describe('POST /api/v2/plano-trabalho (happy path)', function () {
