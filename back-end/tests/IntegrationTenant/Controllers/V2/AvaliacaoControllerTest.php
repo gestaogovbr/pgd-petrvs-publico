@@ -58,6 +58,11 @@ beforeEach(function () {
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/notas-avaliacao',
             [PlanoTrabalhoConsolidacaoController::class, 'notasAvaliacao']
         )->name('__tests.v2.avaliacao.notas');
+
+        Route::middleware(['api'])->patch(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/recurso',
+            [PlanoTrabalhoConsolidacaoController::class, 'recurso']
+        )->name('__tests.v2.avaliacao.recurso');
     }
 
     $perfil = Perfil::factory()->create(['nivel' => 3]);
@@ -151,6 +156,19 @@ beforeEach(function () {
         'tipo_avaliacao_id' => $this->programa->tipo_avaliacao_plano_trabalho_id,
     ]);
 
+    $this->notaReprovada = TipoAvaliacaoNota::create([
+        'id' => fake()->uuid(),
+        'sequencia' => 4,
+        'nota' => json_encode('Inadequado'),
+        'descricao' => 'Inadequado',
+        'pergunta' => 'Abaixo do esperado?',
+        'aprova' => 0,
+        'justifica' => 1,
+        'icone' => 'bi bi-x',
+        'cor' => '#dc3545',
+        'tipo_avaliacao_id' => $this->programa->tipo_avaliacao_plano_trabalho_id,
+    ]);
+
     Session::put('entidade_id', $this->unidade->entidade_id);
 });
 
@@ -194,7 +212,7 @@ describe('GET /api/v2/plano-trabalho/:id/consolidacao/notas-avaliacao', function
 
         $data = $response->json('data');
 
-        expect($data)->toHaveCount(2);
+        expect($data)->toHaveCount(3);
         expect($data[0])->toHaveKeys(['id', 'sequencia', 'nota', 'descricao', 'justifica']);
     });
 
@@ -431,5 +449,87 @@ describe('POST /api/v2/.../avaliacao (reavaliação)', function () {
                 'justificativa' => 'Reavaliação após recurso.',
             ]
         )->assertStatus(201);
+    });
+});
+
+// ── PATCH recurso ───────────────────────────────────────────────────
+
+describe('PATCH /api/v2/.../consolidacao/:cid/recurso', function () {
+
+    function prepararConsolidacaoAvaliada($context, $nota = null): string
+    {
+        $consolidacaoId = prepararConsolidacaoConcluida($context);
+        $nota = $nota ?? $context->notaReprovada;
+
+        $context->postJson(
+            "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $nota->id, 'justificativa' => 'Justificativa da avaliação.']
+        );
+
+        $context->actingAs($context->participante, 'web');
+
+        return $consolidacaoId;
+    }
+
+    test('solicita recurso com sucesso', function () {
+        $consolidacaoId = prepararConsolidacaoAvaliada($this);
+
+        $response = $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/recurso",
+            ['justificativa' => 'Discordo da nota atribuída.']
+        );
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('planos_trabalhos_consolidacoes', [
+            'id' => $consolidacaoId,
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $this->assertDatabaseHas('avaliacoes', [
+            'plano_trabalho_consolidacao_id' => $consolidacaoId,
+            'recurso' => 'Discordo da nota atribuída.',
+        ]);
+    });
+
+    test('retorna 403 quando chefia tenta solicitar recurso', function () {
+        $consolidacaoId = prepararConsolidacaoAvaliada($this);
+
+        $this->actingAs($this->chefia, 'web');
+
+        $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/recurso",
+            ['justificativa' => 'Tentativa indevida.']
+        )->assertStatus(403);
+    });
+
+    test('retorna 422 quando nota aprova', function () {
+        $consolidacaoId = prepararConsolidacaoAvaliada($this, $this->notaSemJustificativa);
+
+        $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/recurso",
+            ['justificativa' => 'Tentativa com nota aprovadora.']
+        )->assertStatus(422);
+    });
+
+    test('retorna 400 quando justificativa ausente', function () {
+        $consolidacaoId = prepararConsolidacaoAvaliada($this);
+
+        $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/recurso",
+            []
+        )->assertStatus(400);
+    });
+
+    test('retorna 422 quando periodo nao esta avaliado', function () {
+        $consolidacaoId = prepararConsolidacaoConcluida($this);
+
+        $this->actingAs($this->participante, 'web');
+
+        $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/recurso",
+            ['justificativa' => 'Tentativa sem avaliação.']
+        )->assertStatus(422);
     });
 });
