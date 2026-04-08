@@ -7,12 +7,13 @@ import { ActivatedRoute } from "@angular/router";
 import { filter, map, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoTrabalhoApiClient } from "../infra/api-client";
-import { PlanoTrabalho, PlanoTrabalhoEntrega } from "../domain/types";
+import { Consolidacao, NotaAvaliacao, PlanoTrabalho, PlanoTrabalhoEntrega } from "../domain/types";
 import { PlanoTrabalhoStatus } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
 import { UnidadeService } from "src/app/v2/services/unidade.service";
 import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
 import { Router } from "@angular/router";
+import { ConsolidacaoPolicy } from "../application/consolidacao.policy";
 
 @Component({
   selector: 'app-plano-trabalho-v2-show-page',
@@ -28,10 +29,13 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly auth = inject(AuthService);
   private readonly unidadeService = inject(UnidadeService);
+  private readonly notaPalette = ['#c0392b', '#e67e22', '#27ae60', '#1589c0', '#1351b4'];
+  private readonly notaIcones = ['fa-frown', 'fa-frown', 'fa-smile', 'fa-smile', 'fa-smile'];
   readonly policy = inject(PlanoTrabalhoPolicy);
-
+  readonly consolidacaoPolicy = inject(ConsolidacaoPolicy);
   readonly planoTrabalho = signal<PlanoTrabalho | null>(null);
-  readonly consolidacoes = signal<any[]>([]);
+  readonly consolidacoes = signal<Consolidacao[]>([]);
+  readonly notas = signal<NotaAvaliacao[]>([]);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
 
@@ -49,6 +53,15 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   /** Texto da justificativa de reabertura */
   readonly justificativaReabrir = signal<string>('');
+
+  /** Chave: consolidacaoId → id da nota selecionada para avaliação */
+  readonly notasSelecionadas = signal<Record<string, string>>({});
+
+  /** Chave: consolidacaoId → texto da justificativa da avaliação */
+  readonly justificativasAvaliacao = signal<Record<string, string>>({});
+
+  /** Conjunto de consolidacaoIds com avaliação em andamento */
+  readonly avaliandoIds = signal<Set<string>>(new Set());
 
   ngOnInit(): void {
     this.route.paramMap.pipe(
@@ -71,6 +84,11 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
       this.api.getConsolidacoes(id!).subscribe(consolidacoes => {
         this.consolidacoes.set(consolidacoes);
         this.inicializarTextos(consolidacoes);
+      });
+
+      this.api.getNotasConsolidacao(id!).subscribe(notas => {
+        notas.sort((a: any, b: any) => b.sequencia - a.sequencia);
+        this.notas.set(notas);
       });
     });
   }
@@ -255,6 +273,122 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   
 
+
+  // --- Avaliação ---
+
+
+  /** ID da avaliação para a qual o recurso está sendo solicitado */
+  readonly solicitandoRecursoAvaliacaoId = signal<string | null>(null);
+
+  /** Justificativa do recurso sendo preenchida */
+  readonly justificativaRecurso = signal<string>('');
+
+  /** IDs de avaliações com envio de recurso em andamento */
+  readonly enviandoRecursoIds = signal<Set<string>>(new Set());
+
+  iniciarSolicitacaoRecurso(avaliacaoId: string): void {
+    this.solicitandoRecursoAvaliacaoId.set(avaliacaoId);
+    this.justificativaRecurso.set('');
+  }
+
+  cancelarSolicitacaoRecurso(): void {
+    this.solicitandoRecursoAvaliacaoId.set(null);
+    this.justificativaRecurso.set('');
+  }
+
+  confirmarSolicitacaoRecurso(consolidacao: Consolidacao, avaliacaoId: string): void {
+    const planoId = this.planoTrabalho()?.id;
+    const justificativa = this.justificativaRecurso().trim();
+    if (!planoId || !justificativa) return;
+
+    if (!confirm('Ao recorrer desta avaliação, o período avaliativo seguirá para reavaliação. Deseja confirmar?')) return;
+
+    this.enviandoRecursoIds.update(s => new Set([...s, avaliacaoId]));
+
+    this.api.solicitarRecurso(planoId, consolidacao.id, justificativa).subscribe({
+      next: (avaliacaoAtualizada) => {
+        this.consolidacoes.update(lista =>
+          lista.map(c => c.id === consolidacao.id
+            ? { ...c, avaliacoes: c.avaliacoes.map(a => a.id === avaliacaoId ? { ...a, ...avaliacaoAtualizada } : a) }
+            : c)
+        );
+        this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+        this.cancelarSolicitacaoRecurso();
+      },
+      error: () => {
+        this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+      }
+    });
+  }
+
+  notaIndexPorId(notaId: string): number {
+    return this.notas().findIndex(n => n.id === notaId);
+  }
+
+  notaColor(index: number, total: number): string {
+    if (total <= 1) return this.notaPalette[2];
+    const step = (this.notaPalette.length - 1) / (total - 1);
+    return this.notaPalette[Math.round(index * step)];
+  }
+
+  notaIcone(index: number, total: number): string {
+    if (total <= 1) return this.notaIcones[2];
+    const step = (this.notaIcones.length - 1) / (total - 1);
+    return this.notaIcones[Math.round(index * step)];
+  }
+
+  getNotaSelecionada(consolidacaoId: string): string {
+    return this.notasSelecionadas()[consolidacaoId] ?? '';
+  }
+
+  selecionarNota(consolidacaoId: string, notaId: string): void {
+    this.notasSelecionadas.update(m => ({ ...m, [consolidacaoId]: notaId }));
+  }
+
+  getJustificativaAvaliacao(consolidacaoId: string): string {
+    return this.justificativasAvaliacao()[consolidacaoId] ?? '';
+  }
+
+  setJustificativaAvaliacao(consolidacaoId: string, valor: string): void {
+    this.justificativasAvaliacao.update(m => ({ ...m, [consolidacaoId]: valor }));
+  }
+
+  notaSelecionadaJustificaObrigatoria(consolidacaoId: string): boolean {
+    const notaId = this.getNotaSelecionada(consolidacaoId);
+    const nota = this.notas().find(n => n.id === notaId);
+    return nota?.justifica === 1;
+  }
+
+  podeSubmeterAvaliacao(consolidacaoId: string): boolean {
+    if (!this.getNotaSelecionada(consolidacaoId)) return false;
+    if (this.notaSelecionadaJustificaObrigatoria(consolidacaoId)) {
+      return !!this.getJustificativaAvaliacao(consolidacaoId).trim();
+    }
+    return true;
+  }
+
+  avaliarConsolidacao(consolidacao: any): void {
+    const planoId = this.planoTrabalho()?.id;
+    const notaId = this.getNotaSelecionada(consolidacao.id);
+    if (!planoId || !notaId) return;
+
+    const justificativa = this.getJustificativaAvaliacao(consolidacao.id).trim() || undefined;
+    this.avaliandoIds.update(s => new Set([...s, consolidacao.id]));
+
+    this.api.avaliarConsolidacao(planoId, consolidacao.id, { tipo_avaliacao_nota_id: notaId, justificativa }).subscribe({
+      next: (avaliacao) => {
+        this.consolidacoes.update(lista =>
+          lista.map(c => c.id === consolidacao.id
+            ? { ...c, status: 'AVALIADO', avaliacao_id: avaliacao.id, avaliacoes: [...(c.avaliacoes ?? []), avaliacao] }
+            : c)
+        );
+        this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
+      },
+      error: () => {
+        this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
+      }
+    });
+  }
 
   getPlanoEntregaInfo(e: PlanoTrabalhoEntrega): { plano: string; entrega: string } {
     if (e.orgao) return { plano: 'Outro Órgão/Entidade', entrega: e.orgao };

@@ -8,6 +8,7 @@ import { PlanoEntregaApiService } from 'src/app/v2/services/plano-entrega-api.se
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
 import { PlanoTrabalhoPolicy } from './application/plano-trabalho.policy';
+import { ConsolidacaoPolicy } from './application/consolidacao.policy';
 import { PlanoTrabalhoApiClient } from './infra/api-client';
 import { ListarPlanos } from './application/listar-planos.usecase';
 import { PlanoTrabalhoListFacade } from './application/list.facade';
@@ -25,6 +26,7 @@ export const routes: Routes = [
       UnidadeService,
       BreadcrumbService,
       PlanoTrabalhoPolicy,
+      ConsolidacaoPolicy,
       PlanoTrabalhoApiClient,
       ListarPlanos,
       PlanoTrabalhoListFacade

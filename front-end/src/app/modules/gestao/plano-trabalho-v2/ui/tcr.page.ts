@@ -90,6 +90,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
       finalize(() => this.salvando.set(false))
     ).subscribe({
       next: (assinatura) => {
+        assinatura.usuario_nome = this.auth.usuario?.nome;
         this.documento.update(doc => doc
           ? { ...doc, assinaturas: [...(doc.assinaturas ?? []), assinatura] }
           : doc

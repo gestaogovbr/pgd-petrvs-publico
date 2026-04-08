@@ -30,3 +30,31 @@ export type QueryParams = {
   sort?: string;
   filters?: Record<string, unknown>;
 };
+
+export type AvaliacaoConsolidacao = {
+  id: string;
+  data_avaliacao: string;
+  nota: number;
+  justificativa: string | null;
+  tipo_avaliacao_nota_id: string;
+  avaliador?: { id: string; nome: string };
+  recurso: string | null;
+  data_recurso: string | null;
+};
+
+export type NotaAvaliacao = {
+  id: string;
+  nota: string;
+  sequencia: number;
+  justifica: number;
+};
+
+export type Consolidacao = {
+  id: string;
+  status: 'INCLUIDO' | 'CONCLUIDO' | 'AVALIADO';
+  data_inicio: string;
+  data_fim: string;
+  atividades: any[];
+  avaliacoes: AvaliacaoConsolidacao[];
+  avaliacao_id: string | null;
+};

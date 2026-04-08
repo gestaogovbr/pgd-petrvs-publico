@@ -238,8 +238,129 @@
                 </table>
               </div>
             </div>
-            <br-divider></br-divider>
-            <p class="text-weight-semi-bold mb-3">Avaliação</p>
+            @if (consolidacao.avaliacoes.length > 0) {
+              <div class="mt-4">
+                <p class="text-weight-semi-bold mb-2">Avaliação do Período</p>
+                <div class="br-table">
+                  <div class="table-wrap">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th scope="col">Data</th>
+                          <th scope="col">Avaliador</th>
+                          <th scope="col">Nota / Justificativa</th>
+                          <th scope="col">Recurso</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (avaliacao of consolidacao.avaliacoes; track avaliacao.id) {
+                          @let notaIdx = notaIndexPorId(avaliacao.tipo_avaliacao_nota_id);
+                          @let notaTotal = notas().length;
+                          <tr>
+                            <td>{{ avaliacao.data_avaliacao | date:'dd/MM/yyyy HH:mm' }}</td>
+                            <td>{{ avaliacao.avaliador?.nome || '-' }}</td>
+                            <td>
+                              <div class="d-flex align-items-center gap-2">
+                                <div [style.color]="notaColor(notaIdx, notaTotal)" style="font-size: 1.5rem; line-height: 1;">
+                                  <i class="fas {{ notaIcone(notaIdx, notaTotal) }}"></i>
+                                </div>
+                                <span>{{ avaliacao.nota }}</span>
+                              </div>
+                              @if (avaliacao.justificativa) {
+                                <div class="mt-1 text-muted"><small>{{ avaliacao.justificativa }}</small></div>
+                              }
+                            </td>
+                            <td>
+                              @if (avaliacao.recurso) {
+                                <div class="d-flex align-items-center gap-2">
+                                  <i class="fas fa-flag text-warning"></i>
+                                  <small>{{ avaliacao.recurso }}</small>
+                                </div>
+                              } @else if (consolidacaoPolicy.podeSolicitarRecurso(consolidacao, avaliacao, planoTrabalho()!)) {
+                                @if (solicitandoRecursoAvaliacaoId() === avaliacao.id) {
+                                  <div class="d-flex flex-column gap-2" style="min-width: 220px;">
+                                    <div class="br-textarea">
+                                      <textarea
+                                        rows="3"
+                                        placeholder="Justificativa do recurso..."
+                                        [value]="justificativaRecurso()"
+                                        (input)="justificativaRecurso.set($any($event.target).value)"
+                                      ></textarea>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                      <br-button
+                                        size="small"
+                                        emphasis="primary"
+                                        [disabled]="!justificativaRecurso().trim() || enviandoRecursoIds().has(avaliacao.id)"
+                                        (click)="confirmarSolicitacaoRecurso(consolidacao, avaliacao.id)"
+                                      >Enviar</br-button>
+                                      <br-button
+                                        size="small"
+                                        (click)="cancelarSolicitacaoRecurso()"
+                                      >Cancelar</br-button>
+                                    </div>
+                                  </div>
+                                } @else {
+                                  <br-button
+                                    size="small"
+                                    emphasis="tertiary"
+                                    (click)="iniciarSolicitacaoRecurso(avaliacao.id)"
+                                  >
+                                    <i class="fas fa-flag mr-1"></i> Solicitar recurso
+                                  </br-button>
+                                }
+                              }
+                            </td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            } @else if (consolidacaoPolicy.podeAvaliarConsolidacao(consolidacao, planoTrabalho()!)) {
+              <br-divider></br-divider>
+              <p class="text-weight-semi-bold mb-3">Avaliação</p>
+              <div class="d-flex justify-content-center gap-3 mb-4">
+                @for (nota of notas(); track nota.id; let i = $index) {
+                  @let cor = notaColor(i, notas().length);
+                  @let icone = notaIcone(i, notas().length);
+                  <div
+                    class="text-center p-3"
+                    style="border-radius: 10px; width: 160px; cursor: pointer; transition: background-color 0.15s;"
+                    [style.border]="'2px solid ' + cor"
+                    [style.background-color]="getNotaSelecionada(consolidacao.id) === nota.id ? cor + '22' : 'white'"
+                    (click)="selecionarNota(consolidacao.id, nota.id)"
+                  >
+                    <div [style.color]="cor" style="font-size: 2rem; line-height: 1;">
+                      <i class="fas {{ icone }}"></i>
+                    </div>
+                    <small class="d-block mt-1 text-weight-semi-bold" [style.color]="cor">{{ nota.nota }}</small>
+                  </div>
+                }
+              </div>
+              <p class="mb-1">
+                Justificativa
+                @if (notaSelecionadaJustificaObrigatoria(consolidacao.id)) {
+                  <span class="text-danger">*</span>
+                }
+              </p>
+              <div class="d-flex gap-3 align-items-start">
+                <div class="br-textarea flex-grow-1">
+                  <textarea
+                    rows="3"
+                    [placeholder]="notaSelecionadaJustificaObrigatoria(consolidacao.id) ? 'Justificativa obrigatória para esta nota...' : 'Justificativa (opcional)...'"
+                    [value]="getJustificativaAvaliacao(consolidacao.id)"
+                    (input)="setJustificativaAvaliacao(consolidacao.id, $any($event.target).value)"
+                  ></textarea>
+                </div>
+                <br-button
+                  emphasis="primary"
+                  [disabled]="!podeSubmeterAvaliacao(consolidacao.id) || avaliandoIds().has(consolidacao.id)"
+                  (click)="avaliarConsolidacao(consolidacao)"
+                >Avaliar</br-button>
+              </div>
+            }
 
           </div>
           @if (podeConcluirConsolidacao(consolidacao)) {

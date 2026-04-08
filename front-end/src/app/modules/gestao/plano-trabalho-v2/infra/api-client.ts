@@ -124,6 +124,21 @@ export class PlanoTrabalhoApiClient {
       .pipe(map((r: any) => r?.data ?? r));
   }
 
+  avaliarConsolidacao(planoId: string, consolidacaoId: string, payload: { tipo_avaliacao_nota_id: string; justificativa?: string }): Observable<any> {
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/avaliacao`, payload)
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  solicitarRecurso(planoId: string, consolidacaoId: string, justificativa: string): Observable<any> {
+    return this.http.patch<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/recurso`, { justificativa })
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  getNotasConsolidacao(planoId: string): Observable<any> {
+    return this.http.get<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/notas-avaliacao`)
+      .pipe(map((r: any) => r?.data ?? []));
+  }
+
   
 
   private normalize(params: QueryParams): Record<string, string> {
