@@ -177,8 +177,9 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         }
 
         if ($filtro->unidadeRegramento !== null && $filtro->unidadeRegramento !== '') {
-            $query->whereHas('programa.unidade', fn ($q) => $q->where('sigla', 'like', '%' . $filtro->unidadeRegramento . '%')
-                ->orWhere('nome', 'like', '%' . $filtro->unidadeRegramento . '%'));
+            $termo = '%' . strtolower($filtro->unidadeRegramento) . '%';
+            $query->whereHas('unidade', fn ($q) => $q->whereRaw('LOWER(sigla) like ?', [$termo])
+                ->orWhereRaw('LOWER(nome) like ?', [$termo]));
         }
 
         return $query->paginate(perPage: $filtro->perPage, page: $filtro->page);
