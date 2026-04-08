@@ -17,9 +17,11 @@ use App\Models\PlanoTrabalho;
 use App\Models\TipoModalidade;
 use App\Models\Perfil;
 use App\Enums\UsuarioSituacaoSiape;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
+    Bus::fake();
     $this->repository = app(UsuarioRepository::class);
     $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
     $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;

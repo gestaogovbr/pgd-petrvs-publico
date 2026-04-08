@@ -2,20 +2,21 @@
 
 namespace Tests\IntegrationTenant\Repository;
 
+use App\Enums\StatusEnum;
+use App\Models\Perfil;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoEntrega;
+use App\Models\TipoModalidade;
 use App\Models\Unidade;
-use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
+use App\Models\Usuario;
 use App\Repository\PlanoTrabalhoRepository;
-use Tests\DatabaseTenantTestCase;
-use App\Enums\StatusEnum;
-use App\Models\TipoModalidade;
-use App\Models\Perfil;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
+use Tests\DatabaseTenantTestCase;
 
 class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
 {
@@ -26,6 +27,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Bus::fake();
         $this->repository = app(PlanoTrabalhoRepository::class);
 
         // Create prerequisites
@@ -410,6 +412,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         $jaEnviado = PlanoTrabalho::factory()->ativo()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_agendamento_envio' => Carbon::now()->subDays(2),
+            'data_conclusao_envio' => Carbon::now()->subDay(),
             'data_envio_api_pgd' => Carbon::now()->subDay(),
         ]);
 

@@ -2,7 +2,7 @@
 
 use App\Services\Siape\Servidor\PreparaServidor;
 
-class PreparaServidorTest
+class PreparaServidorTestClass
 {
     use PreparaServidor;
 }
@@ -11,7 +11,7 @@ class PreparaServidorTest
 describe('PreparaServidor', function () {
     describe('getAtivo', function () {
         test('retorna dados quando matriculas e dados existem', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $servidor = [
                 'matriculas' => [
                     'dados' => ['matricula' => '123456', 'ativo' => true]
@@ -24,7 +24,7 @@ describe('PreparaServidor', function () {
         });
 
         test('retorna null quando matriculas não existe', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $servidor = ['nome' => 'João'];
 
             $result = $preparaServidor->getAtivo($servidor);
@@ -73,7 +73,7 @@ describe('PreparaServidor', function () {
 
     describe('getSexo', function () {
         test('converte M para MASCULINO', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $servidor = ['sexo' => 'M'];
 
             $preparaServidor->getSexo($servidor);
@@ -82,7 +82,7 @@ describe('PreparaServidor', function () {
         });
 
         test('converte F para FEMININO', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $servidor = ['sexo' => 'F'];
 
             $preparaServidor->getSexo($servidor);
@@ -91,7 +91,7 @@ describe('PreparaServidor', function () {
         });
 
         test('define MASCULINO como padrão quando sexo está vazio', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $servidor = ['sexo' => ''];
 
             $preparaServidor->getSexo($servidor);
@@ -102,7 +102,7 @@ describe('PreparaServidor', function () {
 
     describe('getDataNascimento', function () {
         test('retorna data SIAPE quando tipo é SIAPE', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $servidor = ['data_nascimento' => '1990-01-01'];
 
             $result = $preparaServidor->getDataNascimento($servidor, 'SIAPE');
@@ -111,7 +111,7 @@ describe('PreparaServidor', function () {
         });
 
         test('formata data WSO2 quando tipo é WSO2', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $servidor = ['datanascimento' => '1990-01-01'];
 
             $result = $preparaServidor->getDataNascimento($servidor, 'WSO2');
@@ -121,7 +121,7 @@ describe('PreparaServidor', function () {
     });
 
     test('getCPFChefiaImediata retorna CPF da chefia quando existe', function () {
-        $preparaServidor = new PreparaServidorTest();
+        $preparaServidor = new PreparaServidorTestClass();
         $servidor = ['cpf_chefia_imediata' => '12345678901'];
 
         $result = $preparaServidor->getCPFChefiaImediata($servidor);
@@ -131,7 +131,7 @@ describe('PreparaServidor', function () {
 
     describe('getSituacaoFuncional', function () {
         test('retorna situação funcional para código válido', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $ativo = ['codsitfuncional' => '1'];
 
             $result = $preparaServidor->getSituacaoFuncional($ativo);
@@ -140,7 +140,7 @@ describe('PreparaServidor', function () {
         });
 
         test('retorna situação funcional para código numérico', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $ativo = ['codsitfuncional' => 2];
 
             $result = $preparaServidor->getSituacaoFuncional($ativo);
@@ -149,7 +149,7 @@ describe('PreparaServidor', function () {
         });
 
         test('retorna DESCONHECIDO para código inexistente', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $ativo = ['codsitfuncional' => '999'];
 
             $result = $preparaServidor->getSituacaoFuncional($ativo);
@@ -158,7 +158,7 @@ describe('PreparaServidor', function () {
         });
 
         test('retorna DESCONHECIDO para código zero', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $ativo = ['codsitfuncional' => '0'];
 
             $result = $preparaServidor->getSituacaoFuncional($ativo);
@@ -167,7 +167,7 @@ describe('PreparaServidor', function () {
         });
 
         test('retorna DESCONHECIDO para string não numérica', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $ativo = ['codsitfuncional' => 'abc'];
 
             $result = $preparaServidor->getSituacaoFuncional($ativo);
@@ -176,7 +176,7 @@ describe('PreparaServidor', function () {
         });
 
         test('retorna DESCONHECIDO quando codsitfuncional não existe', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $ativo = [];
 
             $result = $preparaServidor->getSituacaoFuncional($ativo);
@@ -185,7 +185,7 @@ describe('PreparaServidor', function () {
         });
 
         test('converte float para int', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $ativo = ['codsitfuncional' => 1.9];
 
             $result = $preparaServidor->getSituacaoFuncional($ativo);
@@ -194,7 +194,7 @@ describe('PreparaServidor', function () {
         });
 
         test('funciona com códigos especiais', function () {
-            $preparaServidor = new PreparaServidorTest();
+            $preparaServidor = new PreparaServidorTestClass();
             $ativo = ['codsitfuncional' => '66'];
 
             $result = $preparaServidor->getSituacaoFuncional($ativo);

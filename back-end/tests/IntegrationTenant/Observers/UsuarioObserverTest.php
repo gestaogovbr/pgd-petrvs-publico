@@ -46,6 +46,7 @@ describe('UsuarioObserver', function () {
             'id' => $usuario->id,
             'nome' => 'Servidor Teste',
             'data_nascimento' => '1990-01-01',
+            'tipo_modalidade_id' => $usuario->tipo_modalidade_id,
             'integrantes' => [
                 [
                     'usuario_id' => $usuario->id,
@@ -59,7 +60,7 @@ describe('UsuarioObserver', function () {
 
         Bus::assertDispatched(ExportarParticipanteJob::class);
     });
-    
+
 
     test('Ao executar atualizarServidor', function () {
         $usuario = Usuario::factory()->create([
