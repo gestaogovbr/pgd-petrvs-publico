@@ -615,6 +615,8 @@ class UsuarioService extends ServiceBase
     {
         if (isset($data["with"])) {
             $data["with"] = [];
+        }
+
         $this->applyDefaultTipoModalidadeId($data);
 
         if (array_key_exists('email', $data)) {
