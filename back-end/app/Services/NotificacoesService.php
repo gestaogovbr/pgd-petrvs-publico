@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Jobs\ProcessEmails;
 use App\Models\Notificacao;
 use App\Models\NotificacaoDestinatario;
+use App\Models\Usuario;
 
 class NotificacoesService 
 {
@@ -108,6 +108,9 @@ class NotificacoesService
                 ]);
                 $notificacao->save();
                 foreach($destinatarios as $destinatario) {
+                    if (!$destinatario instanceof Usuario) {
+                        continue;
+                    }
                     if($config["petrvs"]["enviar"] && $this->getOrDefault("enviar_petrvs", $destinatario->notificacoes) && !in_array($destinatario->id, $enviados["petrvs"])) {
                         NotificacaoDestinatario::create([
                             "tipo" => "PETRVS",
@@ -116,22 +119,14 @@ class NotificacoesService
                         ])->save();
                         $enviados["petrvs"][] = $destinatario->id;
                     }
-                    if($config["email"]["enviar"] && $this->getOrDefault("enviar_email", $destinatario->notificacoes) && !in_array($destinatario->email, $enviados["email"])) {
+                    if($config["email"]["enviar"] && $this->getOrDefault("enviar_email", $destinatario->notificacoes) && !empty($destinatario->email) && !in_array($destinatario->email, $enviados["email"])) {
                         $email = NotificacaoDestinatario::create([
                             "tipo" => "EMAIL",
                             "notificacao_id" => $notificacao->id,
                             "usuario_id" => $destinatario->id
                         ]);
                         $email->save();
-                        $details = [
-                            "tenant" => tenant('id'),
-                            "email" => $destinatario->email,
-                            "message" => $message,
-                            "notificacao_destinatario_id" => $email->id,
-                            "signature" => config("notificacoes.email.signature") ?? ""
-                        ];
                         $enviados["email"][] = $destinatario->email;
-                        ProcessEmails::dispatch($details);
                     }
                     if($config["whatsapp"]["enviar"] && $this->getOrDefault("enviar_whatsapp", $destinatario->notificacoes) && !in_array($destinatario->telefone, $enviados["whatsapp"])) {
                         NotificacaoDestinatario::create([
