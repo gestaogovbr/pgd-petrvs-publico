@@ -128,7 +128,7 @@
         <h4>Registros de Execução</h4>
       </div>
 
-      @for (consolidacao of consolidacoes(); track consolidacao.id) {
+      @for (consolidacao of facade.consolidacoes(); track consolidacao.id) {
         <div class="br-card mb-4">
           <div class="card-header bg-gray-10 p-2x d-flex justify-content-between align-items-center">
             <span class="text-weight-semi-bold">
@@ -137,7 +137,6 @@
             <span>
               Status do Período:
               <br-tag shape="rounded" density="small" [label]="statusConsolidacaoDisplay(consolidacao)" />
-
             </span>
           </div>
           <div class="card-content">
@@ -167,8 +166,8 @@
                   </thead>
                   <tbody>
                     @for (e of planoTrabalho()?.entregas; track e.id) {
-                      @let atividade = getAtividade(consolidacao, e.id);
-                      @let editando = estaEditando(consolidacao.id, e.id);
+                      @let atividade = facade.getAtividade(consolidacao, e.id);
+                      @let editando = facade.estaEditando(consolidacao.id, e.id);
                       <tr>
                         <td>
                           {{ getPlanoEntregaInfo(e).entrega }}
@@ -183,8 +182,8 @@
                                 show-counter
                                 class="w-100"
                                 [maxlength]="1500"
-                                [value]="getTexto(consolidacao.id, e.id)"
-                                (input)="setTexto(consolidacao.id, e.id, $any($event.target).value)"
+                                [value]="facade.getTexto(consolidacao.id, e.id)"
+                                (input)="facade.setTexto(consolidacao.id, e.id, $any($event.target).value)"
                                 placeholder="Descreva o trabalho executado..."
                               ></br-textarea>
                             } @else {
@@ -201,14 +200,14 @@
                                 <br-button
                                   emphasis="primary"
                                   density="small"
-                                  (click)="confirmar(consolidacao, e)"
-                                  [disabled]="salvando().has(consolidacao.id + '-' + e.id) || !getTexto(consolidacao.id, e.id).trim()"
+                                  (click)="facade.confirmarAtividade(consolidacao, e)"
+                                  [disabled]="facade.salvando().has(consolidacao.id + '-' + e.id) || !facade.getTexto(consolidacao.id, e.id).trim()"
                                 >Confirmar</br-button>
                                 <br-button
                                   emphasis="secondary"
                                   density="small"
-                                  (click)="cancelarEdicao(consolidacao.id, e.id, atividade)"
-                                  [disabled]="salvando().has(consolidacao.id + '-' + e.id)"
+                                  (click)="facade.cancelarEdicao(consolidacao.id, e.id, atividade)"
+                                  [disabled]="facade.salvando().has(consolidacao.id + '-' + e.id)"
                                 >Cancelar</br-button>
                               </div>
                             } @else {
@@ -216,13 +215,13 @@
                                 <br-button
                                   emphasis="secondary"
                                   density="small"
-                                  (click)="iniciarEdicao(consolidacao.id, e.id, atividade.descricao)"
+                                  (click)="facade.iniciarEdicao(consolidacao.id, e.id, atividade.descricao)"
                                 >Editar</br-button>
                                 <br-button
                                   class="text-danger"
                                   emphasis="secondary"
                                   density="small"
-                                  (click)="excluir(consolidacao, e)"
+                                  (click)="facade.excluirAtividade(consolidacao, e)"
                                 >Excluir</br-button>
                               </div>
                             }
@@ -255,7 +254,7 @@
                       <tbody>
                         @for (avaliacao of consolidacao.avaliacoes; track avaliacao.id) {
                           @let notaIdx = notaIndexPorId(avaliacao.tipo_avaliacao_nota_id);
-                          @let notaTotal = notas().length;
+                          @let notaTotal = facade.notas().length;
                           <tr>
                             <td>{{ avaliacao.data_avaliacao | date:'dd/MM/yyyy HH:mm' }}</td>
                             <td>{{ avaliacao.avaliador?.nome || '-' }}</td>
@@ -277,38 +276,16 @@
                                   <small>{{ avaliacao.recurso }}</small>
                                 </div>
                               } @else if (consolidacaoPolicy.podeSolicitarRecurso(consolidacao, avaliacao, planoTrabalho()!)) {
-                                @if (solicitandoRecursoAvaliacaoId() === avaliacao.id) {
-                                  <div class="d-flex flex-column gap-2" style="min-width: 220px;">
-                                    <div class="br-textarea">
-                                      <textarea
-                                        rows="3"
-                                        placeholder="Justificativa do recurso..."
-                                        [value]="justificativaRecurso()"
-                                        (input)="justificativaRecurso.set($any($event.target).value)"
-                                      ></textarea>
-                                    </div>
-                                    <div class="d-flex gap-2">
-                                      <br-button
-                                        size="small"
-                                        emphasis="primary"
-                                        [disabled]="!justificativaRecurso().trim() || enviandoRecursoIds().has(avaliacao.id)"
-                                        (click)="confirmarSolicitacaoRecurso(consolidacao, avaliacao.id)"
-                                      >Enviar</br-button>
-                                      <br-button
-                                        size="small"
-                                        (click)="cancelarSolicitacaoRecurso()"
-                                      >Cancelar</br-button>
-                                    </div>
-                                  </div>
-                                } @else {
-                                  <br-button
-                                    size="small"
-                                    emphasis="tertiary"
-                                    (click)="iniciarSolicitacaoRecurso(avaliacao.id)"
-                                  >
-                                    <i class="fas fa-flag mr-1"></i> Solicitar recurso
-                                  </br-button>
-                                }
+                                <app-recurso-form
+                                  [avaliacaoId]="avaliacao.id"
+                                  [ativo]="facade.solicitandoRecursoAvaliacaoId() === avaliacao.id"
+                                  [emAndamento]="facade.enviandoRecursoIds().has(avaliacao.id)"
+                                  [justificativa]="facade.justificativaRecurso()"
+                                  (abrir)="facade.iniciarSolicitacaoRecurso(avaliacao.id)"
+                                  (cancelar)="facade.cancelarSolicitacaoRecurso()"
+                                  (justificativaChange)="facade.justificativaRecurso.set($event)"
+                                  (submeter)="facade.confirmarSolicitacaoRecurso(consolidacao, avaliacao.id)"
+                                />
                               }
                             </td>
                           </tr>
@@ -321,79 +298,51 @@
             } @else if (consolidacaoPolicy.podeAvaliarConsolidacao(consolidacao, planoTrabalho()!)) {
               <br-divider></br-divider>
               <p class="text-weight-semi-bold mb-3">Avaliação</p>
-              <div class="d-flex justify-content-center gap-3 mb-4">
-                @for (nota of notas(); track nota.id; let i = $index) {
-                  @let cor = notaColor(i, notas().length);
-                  @let icone = notaIcone(i, notas().length);
-                  <div
-                    class="text-center p-3"
-                    style="border-radius: 10px; width: 160px; cursor: pointer; transition: background-color 0.15s;"
-                    [style.border]="'2px solid ' + cor"
-                    [style.background-color]="getNotaSelecionada(consolidacao.id) === nota.id ? cor + '22' : 'white'"
-                    (click)="selecionarNota(consolidacao.id, nota.id)"
-                  >
-                    <div [style.color]="cor" style="font-size: 2rem; line-height: 1;">
-                      <i class="fas {{ icone }}"></i>
-                    </div>
-                    <small class="d-block mt-1 text-weight-semi-bold" [style.color]="cor">{{ nota.nota }}</small>
-                  </div>
-                }
-              </div>
-              <p class="mb-1">
-                Justificativa
-                @if (notaSelecionadaJustificaObrigatoria(consolidacao.id)) {
-                  <span class="text-danger">*</span>
-                }
-              </p>
-              <div class="d-flex gap-3 align-items-start">
-                <div class="br-textarea flex-grow-1">
-                  <textarea
-                    rows="3"
-                    [placeholder]="notaSelecionadaJustificaObrigatoria(consolidacao.id) ? 'Justificativa obrigatória para esta nota...' : 'Justificativa (opcional)...'"
-                    [value]="getJustificativaAvaliacao(consolidacao.id)"
-                    (input)="setJustificativaAvaliacao(consolidacao.id, $any($event.target).value)"
-                  ></textarea>
-                </div>
-                <br-button
-                  emphasis="primary"
-                  [disabled]="!podeSubmeterAvaliacao(consolidacao.id) || avaliandoIds().has(consolidacao.id)"
-                  (click)="avaliarConsolidacao(consolidacao)"
-                >Avaliar</br-button>
-              </div>
+              <app-avaliacao-form
+                [consolidacaoId]="consolidacao.id"
+                [notas]="facade.notas()"
+                [notaSelecionadaId]="facade.getNotaSelecionada(consolidacao.id)"
+                [justificativa]="facade.getJustificativaAvaliacao(consolidacao.id)"
+                [justificativaObrigatoria]="facade.notaSelecionadaJustificaObrigatoria(consolidacao.id)"
+                [emAndamento]="facade.avaliandoIds().has(consolidacao.id)"
+                (notaSelecionada)="facade.selecionarNota(consolidacao.id, $event)"
+                (justificativaChange)="facade.setJustificativaAvaliacao(consolidacao.id, $event)"
+                (submeter)="facade.avaliarConsolidacao(consolidacao)"
+              />
             }
 
           </div>
           @if (podeConcluirConsolidacao(consolidacao)) {
             <div class="card-footer d-flex justify-content-end p-2x">
-              <br-button emphasis="primary" (click)="concluirConsolidacao(consolidacao)">
+              <br-button emphasis="primary" (click)="facade.concluirConsolidacao(consolidacao)">
                 Concluir Registro
               </br-button>
             </div>
           }
           @if (podeReabrirConsolidacao(consolidacao)) {
-            @if (reabrindoId() === consolidacao.id) {
+            @if (facade.reabrindoId() === consolidacao.id) {
               <div class="card-footer p-2x">
                 <div class="br-textarea mb-2">
                   <label>Justificativa para reabertura <span class="text-danger">*</span></label>
                   <textarea
                     rows="3"
                     placeholder="Informe o motivo da reabertura..."
-                    [value]="justificativaReabrir()"
-                    (input)="justificativaReabrir.set($any($event.target).value)"
+                    [value]="facade.justificativaReabrir()"
+                    (input)="facade.justificativaReabrir.set($any($event.target).value)"
                   ></textarea>
                 </div>
                 <div class="d-flex justify-content-end gap-2">
-                  <br-button emphasis="secondary" (click)="cancelarReabertura()">Cancelar</br-button>
+                  <br-button emphasis="secondary" (click)="facade.cancelarReabertura()">Cancelar</br-button>
                   <br-button
                     emphasis="primary"
-                    [disabled]="!justificativaReabrir().trim()"
-                    (click)="confirmarReabertura(consolidacao)"
+                    [disabled]="!facade.justificativaReabrir().trim()"
+                    (click)="facade.confirmarReabertura(consolidacao)"
                   >Confirmar Reabertura</br-button>
                 </div>
               </div>
             } @else {
               <div class="card-footer d-flex justify-content-end p-2x">
-                <br-button emphasis="secondary" (click)="iniciarReabertura(consolidacao)">
+                <br-button emphasis="secondary" (click)="facade.iniciarReabertura(consolidacao)">
                   Reabrir Registro
                 </br-button>
               </div>

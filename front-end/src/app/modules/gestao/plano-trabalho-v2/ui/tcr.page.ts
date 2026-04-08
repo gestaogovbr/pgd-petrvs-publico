@@ -6,7 +6,8 @@ import { ActivatedRoute } from "@angular/router";
 import { catchError, filter, finalize, map, of, switchMap, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { NavigateService } from "src/app/services/navigate.service";
-import { PlanoTrabalhoApiClient } from "../infra/api-client";
+import { PlanoApiClient } from "../infra/plano-api.client";
+import { DocumentoApiClient } from "../infra/documento-api.client";
 import { PlanoTrabalho } from "../domain/types";
 import { AuthService } from "src/app/services/auth.service";
 import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
@@ -20,7 +21,8 @@ import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
 })
 export class PlanoTrabalhoV2TcrPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly api = inject(PlanoTrabalhoApiClient);
+  private readonly planoApi = inject(PlanoApiClient);
+  private readonly documentoApi = inject(DocumentoApiClient);
   private readonly go = inject(NavigateService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
@@ -44,10 +46,10 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
       take(1),
       switchMap(id => {
         this.planoId.set(id);
-        return this.api.getById(id!).pipe(
+        return this.planoApi.getById(id!).pipe(
           switchMap(plano => {
             this.plano.set(plano);
-            return this.api.getDocumento(id!).pipe(
+            return this.documentoApi.getDocumento(id!).pipe(
               catchError(() => of(null))
             );
           })
@@ -71,7 +73,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
     const id = this.planoId();
     if (!id || this.salvando()) return;
     this.salvando.set(true);
-    this.api.createDocumento(id).pipe(
+    this.documentoApi.createDocumento(id).pipe(
       finalize(() => this.salvando.set(false))
     ).subscribe({
       next: (doc) => {
@@ -86,7 +88,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
     const id = this.planoId();
     if (!id || this.salvando()) return;
     this.salvando.set(true);
-    this.api.assinarDocumento(id).pipe(
+    this.documentoApi.assinarDocumento(id).pipe(
       finalize(() => this.salvando.set(false))
     ).subscribe({
       next: (assinatura) => {
@@ -106,7 +108,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
     if (!id || this.salvando()) return;
     if (!confirm('Deseja realmente cancelar sua assinatura?')) return;
     this.salvando.set(true);
-    this.api.cancelarAssinaturaDocumento(id).pipe(
+    this.documentoApi.cancelarAssinaturaDocumento(id).pipe(
       finalize(() => this.salvando.set(false))
     ).subscribe({
       next: () => {

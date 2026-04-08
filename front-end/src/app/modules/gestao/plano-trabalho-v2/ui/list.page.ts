@@ -8,7 +8,8 @@ import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { PlanoTrabalho } from '../domain/types';
-import { PlanoTrabalhoApiClient } from '../infra/api-client';
+import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
+import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PaginationV2Component } from 'src/app/v2/components/pagination/pagination.component';
@@ -28,7 +29,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly auth = inject(AuthService);
   readonly policy = inject(PlanoTrabalhoPolicy);
   private readonly router = inject(Router);
-  private readonly api = inject(PlanoTrabalhoApiClient);
+  private readonly cancelarPlanoUC = inject(CancelarPlanoUseCase);
+  private readonly filterStorage = inject(FilterStorageService);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
 
   private readonly FILTER_KEY = 'plano-trabalho-v2:filters';
@@ -187,19 +189,14 @@ readonly filters: FormGroup<{
 
   private saveFilters() {
     const raw = this.filters.getRawValue();
-    localStorage.setItem(this.FILTER_KEY, JSON.stringify({ ...raw, advanced: this.advanced }));
+    this.filterStorage.save(this.FILTER_KEY, { ...raw, advanced: this.advanced });
   }
 
   private restoreFilters() {
-    try {
-      const saved = localStorage.getItem(this.FILTER_KEY);
-      if (!saved) return;
-      const parsed = JSON.parse(saved);
-      this.filters.patchValue(parsed, { emitEvent: false });
-      if (parsed.advanced) this.advanced = true;
-    } catch {
-      localStorage.removeItem(this.FILTER_KEY);
-    }
+    const parsed = this.filterStorage.load<Record<string, unknown>>(this.FILTER_KEY);
+    if (!parsed) return;
+    this.filters.patchValue(parsed, { emitEvent: false });
+    if (parsed['advanced']) this.advanced = true;
   }
 
   private applyFiltersAndLoad(resetPage: boolean) {
@@ -273,10 +270,9 @@ readonly filters: FormGroup<{
     this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id]);
   }
 
-  /* TODO: Mover para facade e usar action específica */
   cancelarPlano(p: PlanoTrabalho) {
     if (!confirm('Deseja realmente cancelar este plano de trabalho?')) return;
-    this.api.update(p.id, { status: 'CANCELADO' }).subscribe(() => {
+    this.cancelarPlanoUC.execute(p.id).subscribe(() => {
       this.applyFiltersAndLoad(false);
     });
   }

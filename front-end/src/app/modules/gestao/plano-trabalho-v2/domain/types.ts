@@ -49,12 +49,20 @@ export type NotaAvaliacao = {
   justifica: number;
 };
 
+export type AtividadeConsolidacao = {
+  id: string;
+  plano_trabalho_entrega_id: string;
+  descricao: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type Consolidacao = {
   id: string;
   status: 'INCLUIDO' | 'CONCLUIDO' | 'AVALIADO';
   data_inicio: string;
   data_fim: string;
-  atividades: any[];
+  atividades: AtividadeConsolidacao[];
   avaliacoes: AvaliacaoConsolidacao[];
   avaliacao_id: string | null;
 };

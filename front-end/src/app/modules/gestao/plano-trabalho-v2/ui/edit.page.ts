@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
-import { PlanoTrabalhoApiClient } from '../infra/api-client';
+import { PlanoApiClient } from '../infra/plano-api.client';
 import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
 import { UsuarioService, UsuarioSearchItem } from 'src/app/v2/services/usuario.service';
 import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
@@ -34,7 +34,7 @@ export interface SelectOption { value: string; label: string; selected?: boolean
 export class PlanoTrabalhoV2EditPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
-  private readonly api = inject(PlanoTrabalhoApiClient);
+  private readonly api = inject(PlanoApiClient);
   private readonly usuarioService = inject(UsuarioService);
   private readonly programaApi = inject(ProgramaApiService);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);

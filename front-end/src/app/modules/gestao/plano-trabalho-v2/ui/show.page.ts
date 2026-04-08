@@ -1,67 +1,45 @@
 import { CommonModule } from "@angular/common";
 import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from "src/app/v2/components/breadcrumb/breadcrumb.component";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { filter, map, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { PlanoTrabalhoApiClient } from "../infra/api-client";
-import { Consolidacao, NotaAvaliacao, PlanoTrabalho, PlanoTrabalhoEntrega } from "../domain/types";
+import { PlanoApiClient } from "../infra/plano-api.client";
+import { Consolidacao, PlanoTrabalho, PlanoTrabalhoEntrega } from "../domain/types";
 import { PlanoTrabalhoStatus } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
 import { UnidadeService } from "src/app/v2/services/unidade.service";
 import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
-import { Router } from "@angular/router";
 import { ConsolidacaoPolicy } from "../application/consolidacao.policy";
+import { ConsolidacaoFacade } from "../application/consolidacao.facade";
+import { AvaliacaoFormComponent } from "./components/avaliacao-form.component";
+import { RecursoFormComponent } from "./components/recurso-form.component";
 
 @Component({
   selector: 'app-plano-trabalho-v2-show-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, FormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, AvaliacaoFormComponent, RecursoFormComponent],
   templateUrl: './show.page.html'
 })
 export class PlanoTrabalhoV2ShowPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
-  private readonly api = inject(PlanoTrabalhoApiClient);
+  private readonly api = inject(PlanoApiClient);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly auth = inject(AuthService);
   private readonly unidadeService = inject(UnidadeService);
   private readonly notaPalette = ['#c0392b', '#e67e22', '#27ae60', '#1589c0', '#1351b4'];
   private readonly notaIcones = ['fa-frown', 'fa-frown', 'fa-smile', 'fa-smile', 'fa-smile'];
+
   readonly policy = inject(PlanoTrabalhoPolicy);
   readonly consolidacaoPolicy = inject(ConsolidacaoPolicy);
+  readonly facade = inject(ConsolidacaoFacade);
+
   readonly planoTrabalho = signal<PlanoTrabalho | null>(null);
-  readonly consolidacoes = signal<Consolidacao[]>([]);
-  readonly notas = signal<NotaAvaliacao[]>([]);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
-
-  /** Chave: `${consolidacaoId}-${entregaId}` → texto digitado no textarea */
-  readonly textos = signal<Record<string, string>>({});
-
-  /** Conjunto de chaves `${consolidacaoId}-${entregaId}` atualmente em modo edição */
-  readonly editando = signal<Set<string>>(new Set());
-
-  /** Salva/atualiza em andamento por chave */
-  readonly salvando = signal<Set<string>>(new Set());
-
-  /** ID da consolidação em processo de reabertura (exibe o form de justificativa) */
-  readonly reabrindoId = signal<string | null>(null);
-
-  /** Texto da justificativa de reabertura */
-  readonly justificativaReabrir = signal<string>('');
-
-  /** Chave: consolidacaoId → id da nota selecionada para avaliação */
-  readonly notasSelecionadas = signal<Record<string, string>>({});
-
-  /** Chave: consolidacaoId → texto da justificativa da avaliação */
-  readonly justificativasAvaliacao = signal<Record<string, string>>({});
-
-  /** Conjunto de consolidacaoIds com avaliação em andamento */
-  readonly avaliandoIds = signal<Set<string>>(new Set());
 
   ngOnInit(): void {
     this.route.paramMap.pipe(
@@ -81,102 +59,47 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
         }
       });
 
-      this.api.getConsolidacoes(id!).subscribe(consolidacoes => {
-        this.consolidacoes.set(consolidacoes);
-        this.inicializarTextos(consolidacoes);
-      });
-
-      this.api.getNotasConsolidacao(id!).subscribe(notas => {
-        notas.sort((a: any, b: any) => b.sequencia - a.sequencia);
-        this.notas.set(notas);
-      });
+      this.facade.init(id!);
     });
   }
 
-  podeRegistrar(consolidacao?: any): boolean {
+  // --- Autorização ---
+
+  podeRegistrar(consolidacao?: Consolidacao): boolean {
     const plano = this.planoTrabalho();
     if (!plano || plano.status !== 'ATIVO') return false;
-    if (['CONCLUIDO', 'AVALIADO'].includes(consolidacao?.status)) return false;
+    if (['CONCLUIDO', 'AVALIADO'].includes(consolidacao?.status ?? '')) return false;
     return plano.usuario_id === this.auth.usuario?.id
       || this.unidadeService.isGestorUnidade(plano.unidade_id);
   }
 
-
-  getAtividade(consolidacao: any, entregaId: string): any | null {
-    return (consolidacao.atividades ?? []).find((a: any) => a.plano_trabalho_entrega_id === entregaId) ?? null;
+  podeVisualizarConsolidacoes(): boolean {
+    const plano = this.planoTrabalho();
+    if (!plano) return false;
+    return ['ATIVO', 'CONCLUIDO', 'AVALIADO'].includes(plano.status);
   }
 
-  estaEditando(consolidacaoId: string, entregaId: string): boolean {
-    return this.editando().has(`${consolidacaoId}-${entregaId}`);
+  todasEntregasComAtividade(consolidacao: Consolidacao): boolean {
+    const entregas = this.planoTrabalho()?.entregas ?? [];
+    if (!entregas.length) return false;
+    return entregas.every(e => this.facade.getAtividade(consolidacao, e.id) !== null);
   }
 
-  getTexto(consolidacaoId: string, entregaId: string): string {
-    return this.textos()[`${consolidacaoId}-${entregaId}`] ?? '';
+  podeConcluirConsolidacao(consolidacao: Consolidacao): boolean {
+    return this.podeRegistrar()
+      && consolidacao.status === 'INCLUIDO'
+      && this.todasEntregasComAtividade(consolidacao);
   }
 
-  setTexto(consolidacaoId: string, entregaId: string, valor: string): void {
-    this.textos.update(t => ({ ...t, [`${consolidacaoId}-${entregaId}`]: valor }));
+  podeReabrirConsolidacao(consolidacao: Consolidacao): boolean {
+    const plano = this.planoTrabalho();
+    if (!plano || plano.status !== 'ATIVO') return false;
+    return consolidacao.status === 'CONCLUIDO'
+      && (plano.usuario_id === this.auth.usuario?.id
+        || this.unidadeService.isGestorUnidade(plano.unidade_id));
   }
 
-  iniciarEdicao(consolidacaoId: string, entregaId: string, textoAtual: string): void {
-    this.textos.update(t => ({ ...t, [`${consolidacaoId}-${entregaId}`]: textoAtual }));
-    this.editando.update(s => new Set([...s, `${consolidacaoId}-${entregaId}`]));
-  }
-
-  cancelarEdicao(consolidacaoId: string, entregaId: string, atividade: any | null): void {
-    const key = `${consolidacaoId}-${entregaId}`;
-    this.textos.update(t => ({ ...t, [key]: atividade?.descricao ?? '' }));
-    this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
-  }
-
-  confirmar(consolidacao: any, entrega: PlanoTrabalhoEntrega): void {
-    const planoId = this.planoTrabalho()?.id;
-    if (!planoId) return;
-
-    const key = `${consolidacao.id}-${entrega.id}`;
-    const descricao = this.textos()[key]?.trim();
-    if (!descricao) return;
-
-    const atividade = this.getAtividade(consolidacao, entrega.id);
-
-    this.salvando.update(s => new Set([...s, key]));
-
-    const obs = atividade
-      ? this.api.updateAtividade(planoId, consolidacao.id, atividade.id, { descricao })
-      : this.api.createAtividade(planoId, consolidacao.id, { plano_trabalho_entrega_id: entrega.id, descricao });
-
-    obs.subscribe({
-      next: (atividadeSalva) => {
-        this.atualizarAtividadeNaConsolidacao(consolidacao.id, entrega.id, atividadeSalva);
-        this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
-        this.salvando.update(s => { const n = new Set(s); n.delete(key); return n; });
-      },
-      error: () => {
-        this.salvando.update(s => { const n = new Set(s); n.delete(key); return n; });
-      }
-    });
-  }
-
-  excluir(consolidacao: any, entrega: PlanoTrabalhoEntrega): void {
-    const planoId = this.planoTrabalho()?.id;
-    const atividade = this.getAtividade(consolidacao, entrega.id);
-    if (!planoId || !atividade || !confirm('Deseja realmente excluir este registro de execução?')) return;
-
-    this.api.deleteAtividade(planoId, consolidacao.id, atividade.id).subscribe(() => {
-      this.atualizarAtividadeNaConsolidacao(consolidacao.id, entrega.id, null);
-      this.textos.update(t => ({ ...t, [`${consolidacao.id}-${entrega.id}`]: '' }));
-      this.editando.update(s => { const n = new Set(s); n.delete(`${consolidacao.id}-${entrega.id}`); return n; });
-    });
-  }
-
-  voltar() { 
-    this.router.navigate(['gestao', 'plano-trabalho-v2']);
-  }
-
-  editarPlano() {
-    const id = this.planoTrabalho()?.id;
-    if (id) this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', id]);
-  }
+  // --- Labels / Display ---
 
   statusLabel(value: PlanoTrabalhoStatus | undefined): string {
     const labels: Record<PlanoTrabalhoStatus, string> = {
@@ -200,194 +123,11 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     return value ? (labels[value] ?? value) : '-';
   }
 
-  statusConsolidacaoDisplay(consolidacao: any): string {
+  statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
     if (consolidacao.status === 'INCLUIDO' && this.todasEntregasComAtividade(consolidacao)) {
       return 'Registro incluído';
     }
     return this.statusConsolidacaoLabel(consolidacao.status);
-  }
-
-  todasEntregasComAtividade(consolidacao: any): boolean {
-    const entregas = this.planoTrabalho()?.entregas ?? [];
-    if (!entregas.length) return false;
-    return entregas.every(e => this.getAtividade(consolidacao, e.id) !== null);
-  }
-
-  podeConcluirConsolidacao(consolidacao: any): boolean {
-    return this.podeRegistrar()
-      && consolidacao.status === 'INCLUIDO'
-      && this.todasEntregasComAtividade(consolidacao);
-  }
-
-  concluirConsolidacao(consolidacao: any): void {
-    const planoId = this.planoTrabalho()?.id;
-    if (!planoId) return;
-    this.api.concluirConsolidacao(planoId, consolidacao.id).subscribe({
-      next: (consolidacaoAtualizada) => {
-        this.consolidacoes.update(lista =>
-          lista.map(c => c.id === consolidacao.id ? { ...c, ...consolidacaoAtualizada } : c)
-        );
-      }
-    });
-  }
-
-  podeVisualizarConsolidacoes(): boolean {
-    const plano = this.planoTrabalho();
-    if (!plano) return false;
-    return ['ATIVO', 'CONCLUIDO', 'AVALIADO'].includes(plano.status)
-  }
-
-  podeReabrirConsolidacao(consolidacao: any): boolean {
-    const plano = this.planoTrabalho();
-    if (!plano || plano.status !== 'ATIVO') return false;
-    return consolidacao.status === 'CONCLUIDO'
-      && (plano.usuario_id === this.auth.usuario?.id
-        || this.unidadeService.isGestorUnidade(plano.unidade_id));
-  }
-
-  iniciarReabertura(consolidacao: any): void {
-    this.reabrindoId.set(consolidacao.id);
-    this.justificativaReabrir.set('');
-  }
-
-  cancelarReabertura(): void {
-    this.reabrindoId.set(null);
-    this.justificativaReabrir.set('');
-  }
-
-  confirmarReabertura(consolidacao: any): void {
-    const planoId = this.planoTrabalho()?.id;
-    const justificativa = this.justificativaReabrir().trim();
-    if (!planoId || !justificativa) return;
-
-    this.api.reabrirConsolidacao(planoId, consolidacao.id, justificativa).subscribe({
-      next: (consolidacaoAtualizada) => {
-        this.consolidacoes.update(lista =>
-          lista.map(c => c.id === consolidacao.id ? { ...c, ...consolidacaoAtualizada } : c)
-        );
-        this.reabrindoId.set(null);
-        this.justificativaReabrir.set('');
-      }
-    });
-  }
-
-  
-
-
-  // --- Avaliação ---
-
-
-  /** ID da avaliação para a qual o recurso está sendo solicitado */
-  readonly solicitandoRecursoAvaliacaoId = signal<string | null>(null);
-
-  /** Justificativa do recurso sendo preenchida */
-  readonly justificativaRecurso = signal<string>('');
-
-  /** IDs de avaliações com envio de recurso em andamento */
-  readonly enviandoRecursoIds = signal<Set<string>>(new Set());
-
-  iniciarSolicitacaoRecurso(avaliacaoId: string): void {
-    this.solicitandoRecursoAvaliacaoId.set(avaliacaoId);
-    this.justificativaRecurso.set('');
-  }
-
-  cancelarSolicitacaoRecurso(): void {
-    this.solicitandoRecursoAvaliacaoId.set(null);
-    this.justificativaRecurso.set('');
-  }
-
-  confirmarSolicitacaoRecurso(consolidacao: Consolidacao, avaliacaoId: string): void {
-    const planoId = this.planoTrabalho()?.id;
-    const justificativa = this.justificativaRecurso().trim();
-    if (!planoId || !justificativa) return;
-
-    if (!confirm('Ao recorrer desta avaliação, o período avaliativo seguirá para reavaliação. Deseja confirmar?')) return;
-
-    this.enviandoRecursoIds.update(s => new Set([...s, avaliacaoId]));
-
-    this.api.solicitarRecurso(planoId, consolidacao.id, justificativa).subscribe({
-      next: (avaliacaoAtualizada) => {
-        this.consolidacoes.update(lista =>
-          lista.map(c => c.id === consolidacao.id
-            ? { ...c, avaliacoes: c.avaliacoes.map(a => a.id === avaliacaoId ? { ...a, ...avaliacaoAtualizada } : a) }
-            : c)
-        );
-        this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
-        this.cancelarSolicitacaoRecurso();
-      },
-      error: () => {
-        this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
-      }
-    });
-  }
-
-  notaIndexPorId(notaId: string): number {
-    return this.notas().findIndex(n => n.id === notaId);
-  }
-
-  notaColor(index: number, total: number): string {
-    if (total <= 1) return this.notaPalette[2];
-    const step = (this.notaPalette.length - 1) / (total - 1);
-    return this.notaPalette[Math.round(index * step)];
-  }
-
-  notaIcone(index: number, total: number): string {
-    if (total <= 1) return this.notaIcones[2];
-    const step = (this.notaIcones.length - 1) / (total - 1);
-    return this.notaIcones[Math.round(index * step)];
-  }
-
-  getNotaSelecionada(consolidacaoId: string): string {
-    return this.notasSelecionadas()[consolidacaoId] ?? '';
-  }
-
-  selecionarNota(consolidacaoId: string, notaId: string): void {
-    this.notasSelecionadas.update(m => ({ ...m, [consolidacaoId]: notaId }));
-  }
-
-  getJustificativaAvaliacao(consolidacaoId: string): string {
-    return this.justificativasAvaliacao()[consolidacaoId] ?? '';
-  }
-
-  setJustificativaAvaliacao(consolidacaoId: string, valor: string): void {
-    this.justificativasAvaliacao.update(m => ({ ...m, [consolidacaoId]: valor }));
-  }
-
-  notaSelecionadaJustificaObrigatoria(consolidacaoId: string): boolean {
-    const notaId = this.getNotaSelecionada(consolidacaoId);
-    const nota = this.notas().find(n => n.id === notaId);
-    return nota?.justifica === 1;
-  }
-
-  podeSubmeterAvaliacao(consolidacaoId: string): boolean {
-    if (!this.getNotaSelecionada(consolidacaoId)) return false;
-    if (this.notaSelecionadaJustificaObrigatoria(consolidacaoId)) {
-      return !!this.getJustificativaAvaliacao(consolidacaoId).trim();
-    }
-    return true;
-  }
-
-  avaliarConsolidacao(consolidacao: any): void {
-    const planoId = this.planoTrabalho()?.id;
-    const notaId = this.getNotaSelecionada(consolidacao.id);
-    if (!planoId || !notaId) return;
-
-    const justificativa = this.getJustificativaAvaliacao(consolidacao.id).trim() || undefined;
-    this.avaliandoIds.update(s => new Set([...s, consolidacao.id]));
-
-    this.api.avaliarConsolidacao(planoId, consolidacao.id, { tipo_avaliacao_nota_id: notaId, justificativa }).subscribe({
-      next: (avaliacao) => {
-        this.consolidacoes.update(lista =>
-          lista.map(c => c.id === consolidacao.id
-            ? { ...c, status: 'AVALIADO', avaliacao_id: avaliacao.id, avaliacoes: [...(c.avaliacoes ?? []), avaliacao] }
-            : c)
-        );
-        this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
-      },
-      error: () => {
-        this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
-      }
-    });
   }
 
   getPlanoEntregaInfo(e: PlanoTrabalhoEntrega): { plano: string; entrega: string } {
@@ -404,22 +144,32 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     return { plano: 'Plano vinculado', entrega: 'Entrega vinculada' };
   }
 
-  private inicializarTextos(consolidacoes: any[]): void {
-    const mapa: Record<string, string> = {};
-    for (const c of consolidacoes) {
-      for (const a of (c.atividades ?? [])) {
-        mapa[`${c.id}-${a.plano_trabalho_entrega_id}`] = a.descricao ?? '';
-      }
-    }
-    this.textos.set(mapa);
+  // --- Display helpers de nota (usados no template) ---
+
+  notaIndexPorId(notaId: string): number {
+    return this.facade.notas().findIndex(n => n.id === notaId);
   }
 
-  private atualizarAtividadeNaConsolidacao(consolidacaoId: string, entregaId: string, atividade: any | null): void {
-    this.consolidacoes.update(lista => lista.map(c => {
-      if (c.id !== consolidacaoId) return c;
-      const atividades = (c.atividades ?? []).filter((a: any) => a.plano_trabalho_entrega_id !== entregaId);
-      if (atividade) atividades.push(atividade);
-      return { ...c, atividades };
-    }));
+  notaColor(index: number, total: number): string {
+    if (total <= 1) return this.notaPalette[2];
+    const step = (this.notaPalette.length - 1) / (total - 1);
+    return this.notaPalette[Math.round(index * step)];
+  }
+
+  notaIcone(index: number, total: number): string {
+    if (total <= 1) return this.notaIcones[2];
+    const step = (this.notaIcones.length - 1) / (total - 1);
+    return this.notaIcones[Math.round(index * step)];
+  }
+
+  // --- Navegação ---
+
+  voltar() {
+    this.router.navigate(['gestao', 'plano-trabalho-v2']);
+  }
+
+  editarPlano() {
+    const id = this.planoTrabalho()?.id;
+    if (id) this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', id]);
   }
 }
