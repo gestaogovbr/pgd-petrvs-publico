@@ -11,6 +11,7 @@ import { PlanoTrabalho } from '../domain/types';
 import { PlanoTrabalhoApiClient } from '../infra/api-client';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { PaginationV2Component } from 'src/app/v2/components/pagination/pagination.component';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
 import { SelectOption } from './edit.page';
 
@@ -18,7 +19,7 @@ import { SelectOption } from './edit.page';
   selector: 'app-plano-trabalho-v2-list-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent, PaginationV2Component],
   templateUrl: './list.page.html'
 })
 export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
@@ -47,7 +48,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   ];
   private readonly subscriptions: Subscription[] = [];
 
-  readonly filters: FormGroup<{
+readonly filters: FormGroup<{
     periodo_inicio: FormControl<string | null>;
     periodo_fim: FormControl<string | null>;
     incluir_subordinadas: FormControl<boolean>;
@@ -230,22 +231,10 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     return result;
   }
 
-  prev() {
-    const p = this.facade.page();
-    if (p > 1) {
-      this.facade.page.set(p - 1);
-      this.facade.filters.set(this.buildFilters());
-      this.facade.load();
-    }
-  }
-  next() {
-    const p = this.facade.page();
-    const last = this.facade.lastPage();
-    if (p < last) {
-      this.facade.page.set(p + 1);
-      this.facade.filters.set(this.buildFilters());
-      this.facade.load();
-    }
+  onPageChange(page: number) {
+    this.facade.page.set(page);
+    this.facade.filters.set(this.buildFilters());
+    this.facade.load();
   }
 
   statusClass(value: string | undefined): string {
