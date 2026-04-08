@@ -36,6 +36,10 @@ beforeEach(function () {
         Route::middleware(['api'])->delete('/api/__tests/v2/plano-trabalho/{id}', [PlanoTrabalhoController::class, 'destroy'])
             ->name('__tests.v2.plano-trabalho.destroy');
     }
+    if (!Route::has('__tests.v2.plano-trabalho.cancelar')) {
+        Route::middleware(['api'])->patch('/api/__tests/v2/plano-trabalho/{id}/cancelar', [PlanoTrabalhoController::class, 'cancelar'])
+            ->name('__tests.v2.plano-trabalho.cancelar');
+    }
 
     $perfil = Perfil::factory()->create(['nivel' => PerfilEnum::PARTICIPANTE]);
     $tipoModalidade = TipoModalidade::factory()->create();
@@ -521,5 +525,109 @@ describe('GET /api/v2/plano-trabalho/statuses', function () {
 
         $data = $response->json('data');
         expect($data)->toBe(PlanoTrabalho::STATUSES);
+    });
+});
+
+// ── PATCH cancelar ──────────────────────────────────────────────────
+
+describe('PATCH /api/v2/plano-trabalho/:id/cancelar', function () {
+
+    function criarPlanoAtivo($context): PlanoTrabalho
+    {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $context->usuario->id,
+            'unidade_id' => $context->unidade->id,
+            'tipo_modalidade_id' => $context->tipoModalidadeId,
+            'criacao_usuario_id' => $context->usuario->id,
+            'programa_id' => $context->programa->id,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-06-30',
+            'status' => 'ATIVO',
+        ]);
+
+        return $plano;
+    }
+
+    test('cancela plano com sucesso', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivo($this);
+
+        $response = $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [
+            'justificativa' => 'Plano não será mais necessário.',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $plano->id,
+            'status' => 'CANCELADO',
+        ]);
+    });
+
+    test('cancela plano que possui consolidacoes', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivo($this);
+
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [
+            'justificativa' => 'Cancelamento.',
+        ])->assertStatus(200);
+
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $plano->id,
+            'status' => 'CANCELADO',
+        ]);
+    });
+
+    test('retorna 422 quando plano nao esta ativo', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [
+            'justificativa' => 'Tentativa.',
+        ])->assertStatus(422);
+    });
+
+    test('retorna 422 quando possui consolidacao finalizada', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivo($this);
+
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [
+            'justificativa' => 'Tentativa.',
+        ])->assertStatus(422);
+    });
+
+    test('retorna 400 quando justificativa ausente', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivo($this);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [])
+            ->assertStatus(400);
+    });
+
+    test('retorna 404 quando plano nao existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/cancelar', [
+            'justificativa' => 'Tentativa.',
+        ])->assertStatus(404);
     });
 });

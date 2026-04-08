@@ -10,8 +10,11 @@ use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
+use App\V2\StatusService;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateValidator;
+use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +28,9 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoStoreValidator $storeValidacao,
         private readonly PlanoTrabalhoUpdateValidator $updateValidator,
         private readonly PlanoTrabalhoDestroyValidator $destroyValidator,
+        private readonly PlanoTrabalhoCancelarValidator $cancelarValidator,
         private readonly PlanoTrabalhoIndexValidator $indexValidator,
+        private readonly StatusService $statusService,
     ) {}
 
 
@@ -93,5 +98,18 @@ class PlanoTrabalhoService
     public function statuses(): array
     {
         return $this->readRepository->getStatuses();
+    }
+
+    public function cancelar(string $id, string $justificativa): PlanoTrabalho
+    {
+        $plano = $this->cancelarValidator->validar($id, Auth::id());
+
+        $this->statusService->atualizaStatus(
+            $plano,
+            StatusEnum::CANCELADO->value,
+            'Plano cancelado. Justificativa: ' . $justificativa,
+        );
+
+        return $plano;
     }
 }

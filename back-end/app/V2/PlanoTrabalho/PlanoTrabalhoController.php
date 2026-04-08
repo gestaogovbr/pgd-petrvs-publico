@@ -100,4 +100,21 @@ class PlanoTrabalhoController extends Controller
     {
         return response()->json(['success' => true, 'data' => $this->service->statuses()]);
     }
+
+    public function cancelar(Request $request, string $id): JsonResponse
+    {
+        try {
+            $data = PlanoTrabalhoRequestValidator::cancelar($request);
+            $plano = $this->service->cancelar($id, $data['justificativa']);
+
+            return response()->json(['success' => true, 'data' => $plano]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

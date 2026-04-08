@@ -5,6 +5,7 @@ use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
@@ -15,6 +16,7 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
+use App\V2\StatusService;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
@@ -27,7 +29,9 @@ beforeEach(function () {
     $this->storeValidacao = Mockery::mock(PlanoTrabalhoStoreValidator::class);
     $this->updateValidator = Mockery::mock(PlanoTrabalhoUpdateValidator::class);
     $this->destroyValidator = Mockery::mock(PlanoTrabalhoDestroyValidator::class);
+    $this->cancelarValidator = Mockery::mock(PlanoTrabalhoCancelarValidator::class);
     $this->indexValidacao = Mockery::mock(PlanoTrabalhoIndexValidator::class);
+    $this->statusService = Mockery::mock(StatusService::class);
 
     $this->service = new PlanoTrabalhoService(
         $this->readRepository,
@@ -36,7 +40,9 @@ beforeEach(function () {
         $this->storeValidacao,
         $this->updateValidator,
         $this->destroyValidator,
+        $this->cancelarValidator,
         $this->indexValidacao,
+        $this->statusService,
     );
 });
 
