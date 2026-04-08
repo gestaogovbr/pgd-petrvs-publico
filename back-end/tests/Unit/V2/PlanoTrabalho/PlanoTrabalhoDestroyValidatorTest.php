@@ -7,7 +7,9 @@ use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Models\Perfil;
 use App\Enums\StatusEnum;
-use App\Exceptions\ServerException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\ValidateException;
+use App\Exceptions\ForbiddenException;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -55,7 +57,7 @@ describe('PlanoTrabalhoDestroyValidator - guard', function () {
         $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn(null);
 
         $this->validator->validar('plano-1', 'user-1');
-    })->throws(ServerException::class, 'Plano de Trabalho não encontrado.');
+    })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
 
     test('lança exceção quando status não é INCLUIDO', function () {
         $plano = fakePlano(StatusEnum::AGUARDANDO_ASSINATURA->value, 'user-1', 'user-1');
@@ -64,7 +66,7 @@ describe('PlanoTrabalhoDestroyValidator - guard', function () {
         $this->planoRepo->shouldNotReceive('possuiAssinatura');
 
         $this->validator->validar('plano-1', 'user-1');
-    })->throws(ServerException::class, 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.');
+    })->throws(ValidateException::class, 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.');
 
     test('lança exceção quando plano de trabalho possui assinatura', function () {
         $plano = fakePlano(StatusEnum::INCLUIDO->value, 'user-1', 'user-1');
@@ -72,7 +74,7 @@ describe('PlanoTrabalhoDestroyValidator - guard', function () {
         $this->planoRepo->shouldReceive('possuiAssinatura')->with('plano-1')->andReturn(true);
 
         $this->validator->validar('plano-1', 'user-1');
-    })->throws(ServerException::class, 'Plano de Trabalho não pode ser excluído pois já possui assinatura.');
+    })->throws(ValidateException::class, 'Plano de Trabalho não pode ser excluído pois já possui assinatura.');
 });
 
 describe('PlanoTrabalhoDestroyValidator - autorização', function () {
@@ -117,5 +119,5 @@ describe('PlanoTrabalhoDestroyValidator - autorização', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('intruso')->andReturn(fakeUsuario('intruso', 5));
 
         $this->validator->validar('plano-1', 'intruso');
-    })->throws(ServerException::class, 'Usuário não tem permissão para excluir este plano de trabalho.');
+    })->throws(ForbiddenException::class, 'Usuário não tem permissão para excluir este plano de trabalho.');
 });

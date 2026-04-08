@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Validators;
 
 use App\Enums\PerfilEnum;
-use App\Exceptions\ServerException;
+use App\Exceptions\ForbiddenException;
+use App\Exceptions\ValidateException;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\ProgramaRepository;
 use App\Repository\UnidadeRepository;
@@ -36,11 +37,11 @@ class PlanoTrabalhoStoreValidator
         $nivelCriador = $criador->perfil->nivel;
 
         if ($nivelCriador >= PerfilEnum::COLABORADOR->value) {
-            throw new ServerException("ValidatePlanoTrabalho", "Usuário com este perfil não pode cadastrar plano de trabalho.");
+            throw new ForbiddenException('Usuário com este perfil não pode cadastrar plano de trabalho.');
         }
 
         if ($nivelCriador === PerfilEnum::PARTICIPANTE->value && !$dto->isPlanoCriadoParaSi()) {
-            throw new ServerException("ValidatePlanoTrabalho", "Participante só pode cadastrar plano para si mesmo.");
+            throw new ForbiddenException('Participante só pode cadastrar plano para si mesmo.');
         }
 
         $agente = $dto->isPlanoCriadoParaSi()
@@ -48,7 +49,7 @@ class PlanoTrabalhoStoreValidator
             : $this->usuarioRepository->findById($dto->usuarioId);
 
         if ($agente->perfil->nivel >= PerfilEnum::COLABORADOR->value) {
-            throw new ServerException("ValidatePlanoTrabalho", "Este usuário não pode ser agente público de um plano de trabalho.");
+            throw new ValidateException('Este usuário não pode ser agente público de um plano de trabalho.');
         }
 
         if (!$dto->isPlanoCriadoParaSi()) {
@@ -59,7 +60,7 @@ class PlanoTrabalhoStoreValidator
     private function validarAgenteLotadoNasUnidadesDoCriador(PlanoTrabalhoStoreDTO $dto): void
     {
         if (!$this->unidadeRepository->hasUsuarioLotacao($dto->unidadeId, $dto->usuarioId, true)) {
-            throw new ServerException("ValidatePlanoTrabalho", "O agente público não está lotado ou vinculado nas unidades do usuário logado.");
+            throw new ForbiddenException('O agente público não está lotado ou vinculado nas unidades do usuário logado.');
         }
     }
 
@@ -67,7 +68,7 @@ class PlanoTrabalhoStoreValidator
     {
         $unidade = $this->unidadeRepository->findById($unidadeId);
         if (!is_null($unidade?->data_inativacao)) {
-            throw new ServerException("ValidatePlanoTrabalho", "A unidade está inativa.");
+            throw new ValidateException('A unidade está inativa.');
         }
     }
 
@@ -78,14 +79,14 @@ class PlanoTrabalhoStoreValidator
         $fimPlano = Carbon::parse($dto->dataFim);
 
         if ($inicioPlano < $programa->data_inicio || $fimPlano > $programa->data_fim) {
-            throw new ServerException("ValidatePlanoTrabalho", "As datas do plano de trabalho estão fora do período de vigência do regramento.");
+            throw new ValidateException('As datas do plano de trabalho estão fora do período de vigência do regramento.');
         }
     }
 
     private function validarConflitoPeriodo(PlanoTrabalhoStoreDTO $dto): void
     {
         if ($this->planoTrabalhoRepository->existeConflitoPeriodo($dto->usuarioId, $dto->dataInicio, $dto->dataFim)) {
-            throw new ServerException("ValidatePlanoTrabalho", "Este participante já possui plano de trabalho cadastrado para o período.");
+            throw new ValidateException('Este participante já possui plano de trabalho cadastrado para o período.');
         }
     }
 
@@ -98,10 +99,7 @@ class PlanoTrabalhoStoreValidator
         }
 
         if (empty($dto->justificativaModalidade)) {
-            throw new ServerException(
-                "ValidatePlanoTrabalho",
-                "Modalidade distinta daquela registrada no SIAPE. A justificativa é obrigatória."
-            );
+            throw new ValidateException('Modalidade distinta daquela registrada no SIAPE. A justificativa é obrigatória.');
         }
     }
 }

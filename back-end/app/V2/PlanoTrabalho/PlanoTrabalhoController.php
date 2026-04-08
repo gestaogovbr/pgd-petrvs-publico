@@ -31,7 +31,7 @@ class PlanoTrabalhoController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -47,7 +47,7 @@ class PlanoTrabalhoController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -63,7 +63,7 @@ class PlanoTrabalhoController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -76,13 +76,12 @@ class PlanoTrabalhoController extends Controller
             $result = $this->service->show($id);
             return response()->json(['success' => true, 'data' => $result]);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
 
     public function destroy(string $id): JsonResponse
     {
@@ -90,7 +89,7 @@ class PlanoTrabalhoController extends Controller
             $this->service->destroy($id);
             return response()->json(['success' => true]);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);

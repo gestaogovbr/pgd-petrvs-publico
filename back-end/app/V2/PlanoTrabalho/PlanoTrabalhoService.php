@@ -12,7 +12,7 @@ use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateValidator;
-use App\Exceptions\ServerException;
+use App\Exceptions\NotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
@@ -57,7 +57,7 @@ class PlanoTrabalhoService
         $plano = $this->readRepository->findById($id);
 
         if ($plano === null) {
-            throw new ServerException('PlanoTrabalhoNaoEncontrado', 'Plano de Trabalho não encontrado.');
+            throw new NotFoundException( 'Plano de Trabalho não encontrado.');
         }
 
         $dto = PlanoTrabalhoStoreDTO::fromArray($data, Auth::id());
@@ -66,7 +66,7 @@ class PlanoTrabalhoService
         $updated = $this->writeRepository->update($id, $dto->toArray());
 
         if ($updated === null) {
-            throw new ServerException('PlanoTrabalhoNaoAtualizado', 'Não foi possível atualizar o Plano de Trabalho.');
+            throw new NotFoundException( 'Não foi possível atualizar o Plano de Trabalho.');
         }
 
         return $updated;
@@ -77,7 +77,7 @@ class PlanoTrabalhoService
         $plano = $this->readRepository->findByIdComRelacoes($id);
 
         if ($plano === null) {
-            throw new ServerException('PlanoTrabalhoNaoEncontrado', 'Plano de Trabalho não encontrado.');
+            throw new NotFoundException( 'Plano de Trabalho não encontrado.');
         }
 
         return $plano;

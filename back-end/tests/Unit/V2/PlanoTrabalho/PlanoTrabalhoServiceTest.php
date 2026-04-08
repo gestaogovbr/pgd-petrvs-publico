@@ -11,7 +11,8 @@ use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateValidator;
 use App\Models\PlanoTrabalho;
-use App\Exceptions\ServerException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\ValidateException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -174,7 +175,7 @@ describe('PlanoTrabalhoService::store', function () {
         $this->storeValidacao
             ->shouldReceive('validar')
             ->once()
-            ->andThrow(new ServerException('ValidatePlanoTrabalho', 'A unidade está inativa.'));
+            ->andThrow(new ValidateException('A unidade está inativa.'));
 
         $this->writeRepository->shouldNotReceive('create');
 
@@ -186,7 +187,7 @@ describe('PlanoTrabalhoService::store', function () {
             'data_fim' => '2024-12-31',
             'tipo_modalidade_id' => 'mod-1',
         ]);
-    })->throws(ServerException::class, 'A unidade está inativa.');
+    })->throws(ValidateException::class, 'A unidade está inativa.');
 
     test('passa criacao_usuario_id do usuário autenticado ao DTO', function () {
         Auth::shouldReceive('id')->andReturn('criador-xyz');
@@ -242,12 +243,12 @@ describe('PlanoTrabalhoService::destroy', function () {
         $this->destroyValidator
             ->shouldReceive('validar')
             ->once()
-            ->andThrow(new ServerException('ValidatePlanoTrabalho', 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.'));
+            ->andThrow(new ValidateException('Plano de Trabalho não pode ser excluído pois não é mais um rascunho.'));
 
         $this->writeRepository->shouldNotReceive('delete');
 
         $this->service->destroy('plano-1');
-    })->throws(ServerException::class, 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.');
+    })->throws(ValidateException::class, 'Plano de Trabalho não pode ser excluído pois não é mais um rascunho.');
 });
 
 describe('PlanoTrabalhoService::show', function () {
@@ -285,7 +286,7 @@ describe('PlanoTrabalhoService::show', function () {
         expect($result)->toBe($plano);
     });
 
-    test('lança ServerException quando plano não encontrado', function () {
+    test('lança NotFoundException quando plano não encontrado', function () {
         $this->readRepository
             ->shouldReceive('findByIdComRelacoes')
             ->once()
@@ -293,7 +294,7 @@ describe('PlanoTrabalhoService::show', function () {
             ->andReturn(null);
 
         $this->service->show('inexistente');
-    })->throws(ServerException::class, 'Plano de Trabalho não encontrado.');
+    })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
 });
 
 describe('PlanoTrabalhoService::statuses', function () {

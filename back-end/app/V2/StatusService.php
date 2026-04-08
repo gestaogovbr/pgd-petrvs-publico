@@ -35,10 +35,10 @@ class StatusService
             'codigo' => $novoStatus,
             'justificativa' => $justificativa,
             'usuario_id' => Auth::id(),
-            $fkColumn => $entity->id,
+            $fkColumn => $entity->getAttribute('id'),
         ]);
 
-        $entity->status = $novoStatus;
+        $entity->setAttribute('status', $novoStatus);
         $entity->save();
     }
 

@@ -10,7 +10,7 @@ use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\Perfil;
-use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Mockery;
@@ -121,12 +121,12 @@ describe('GET /api/v2/plano-trabalho (validação)', function () {
         ]))->assertStatus(400);
     });
 
-    test('retorna 400 quando service lança ServerException', function () {
+    test('retorna 422 quando service lança ValidateException', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->mock(PlanoTrabalhoService::class, function ($mock) {
             $mock->shouldReceive('index')
-                ->andThrow(new ServerException('ValidateFiltros', 'Informe ao menos um filtro para a busca.'));
+                ->andThrow(new ValidateException('Informe ao menos um filtro para a busca.'));
         });
 
         $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
@@ -134,7 +134,7 @@ describe('GET /api/v2/plano-trabalho (validação)', function () {
             'size' => 15,
         ]));
 
-        $response->assertStatus(400)
+        $response->assertStatus(422)
             ->assertJson(fn ($json) =>
                 $json->where('error', fn ($error) => str_contains($error, 'Informe ao menos um filtro'))
             );
@@ -293,16 +293,16 @@ describe('POST /api/v2/plano-trabalho (validação)', function () {
             ->assertStatus(400);
     });
 
-    test('retorna 400 quando service lança ServerException', function () {
+    test('retorna 422 quando service lança ValidateException', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->mock(PlanoTrabalhoService::class, function ($mock) {
             $mock->shouldReceive('store')
-                ->andThrow(new ServerException('ValidatePlanoTrabalho', 'A unidade está inativa.'));
+                ->andThrow(new ValidateException('A unidade está inativa.'));
         });
 
         $this->postJson('/api/__tests/v2/plano-trabalho', validStorePayload())
-            ->assertStatus(400)
+            ->assertStatus(422)
             ->assertJson(fn ($json) =>
                 $json->where('error', fn ($error) => str_contains($error, 'A unidade está inativa.'))
             );
@@ -313,7 +313,7 @@ describe('POST /api/v2/plano-trabalho (validação)', function () {
 
 describe('POST /api/v2/plano-trabalho (modalidade divergente)', function () {
 
-    test('retorna 400 quando modalidade diverge do SIAPE sem justificativa', function () {
+    test('retorna 422 quando modalidade diverge do SIAPE sem justificativa', function () {
         $this->actingAs($this->usuario, 'web');
 
         $outraModalidade = \App\Models\TipoModalidade::factory()->create();
@@ -325,7 +325,7 @@ describe('POST /api/v2/plano-trabalho (modalidade divergente)', function () {
             'data_inicio' => '2024-06-01',
             'data_fim' => '2024-12-31',
             'tipo_modalidade_id' => $outraModalidade->id,
-        ])->assertStatus(400);
+        ])->assertStatus(422);
     });
 
     test('retorna 201 quando modalidade diverge do SIAPE com justificativa', function () {
@@ -450,14 +450,14 @@ describe('DELETE /api/v2/plano-trabalho/:id (validacao)', function () {
         ]);
 
         $this->deleteJson("/api/__tests/v2/plano-trabalho/{$plano->id}")
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
-    test('retorna 400 quando PT nao encontrado', function () {
+    test('retorna 404 quando PT nao encontrado', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->deleteJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid())
-            ->assertStatus(400);
+            ->assertStatus(404);
     });
 });
 

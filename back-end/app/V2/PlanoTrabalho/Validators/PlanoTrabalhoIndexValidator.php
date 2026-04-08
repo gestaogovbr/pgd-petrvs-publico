@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Validators;
 
 use App\Enums\PerfilEnum;
-use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;

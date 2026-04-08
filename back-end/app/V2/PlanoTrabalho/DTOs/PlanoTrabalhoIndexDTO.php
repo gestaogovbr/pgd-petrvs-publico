@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\DTOs;
 
-use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 
 class PlanoTrabalhoIndexDTO
 {
@@ -78,11 +78,11 @@ class PlanoTrabalhoIndexDTO
         $usuarioId = $filters['usuario_id'] ?? null;
 
         if (($dataInicio === null) !== ($dataFim === null)) {
-            throw new ServerException("ValidateFiltros", "As datas de início e fim devem ser preenchidas juntas.");
+            throw new ValidateException("As datas de início e fim devem ser preenchidas juntas.");
         }
 
         if ($dataInicio === null && !$vigentes && !$arquivados && $usuarioId === null && $numero === null && $tipoModalidadeId === null && $status === null && $unidadesId === null) {
-            throw new ServerException("ValidateFiltros", "Informe ao menos um filtro para a busca.");
+            throw new ValidateException("Informe ao menos um filtro para a busca.");
         }
 
         return new self(

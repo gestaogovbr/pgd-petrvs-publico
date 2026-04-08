@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Validators;
 
-use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use App\Repository\ProgramaRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
@@ -27,7 +27,7 @@ class PlanoTrabalhoUpdateValidator
     {
         $unidade = $this->unidadeRepository->findById($unidadeId);
         if (!is_null($unidade?->data_inativacao)) {
-            throw new ServerException('ValidatePlanoTrabalho', 'A unidade está inativa.');
+            throw new ValidateException('A unidade está inativa.');
         }
     }
 
@@ -38,7 +38,7 @@ class PlanoTrabalhoUpdateValidator
         $fimPlano = Carbon::parse($dto->dataFim);
 
         if ($inicioPlano < $programa->data_inicio || $fimPlano > $programa->data_fim) {
-            throw new ServerException('ValidatePlanoTrabalho', 'As datas do plano de trabalho estão fora do período de vigência do regramento.');
+            throw new ValidateException('As datas do plano de trabalho estão fora do período de vigência do regramento.');
         }
     }
 }

@@ -10,7 +10,8 @@ use App\Models\Unidade;
 use App\Models\Programa;
 use App\Models\Usuario;
 use App\Models\Perfil;
-use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
+use App\Exceptions\ForbiddenException;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -54,7 +55,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $this->unidadeRepo->shouldReceive('findById')->with('unidade-1')->andReturn($unidade);
 
         $this->validacao->validar(buildStoreDTO());
-    })->throws(ServerException::class, 'A unidade está inativa.');
+    })->throws(ValidateException::class, 'A unidade está inativa.');
 
     test('lança exceção quando datas fora do período do regramento', function () {
         $unidade = Mockery::mock(Unidade::class)->makePartial();
@@ -68,7 +69,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $this->programaRepo->shouldReceive('findById')->with('programa-1')->andReturn($programa);
 
         $this->validacao->validar(buildStoreDTO());
-    })->throws(ServerException::class, 'As datas do plano de trabalho estão fora do período de vigência do regramento.');
+    })->throws(ValidateException::class, 'As datas do plano de trabalho estão fora do período de vigência do regramento.');
 
     test('lança exceção quando existe conflito de período', function () {
         $unidade = Mockery::mock(Unidade::class)->makePartial();
@@ -85,7 +86,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
             ->andReturn(true);
 
         $this->validacao->validar(buildStoreDTO());
-    })->throws(ServerException::class, 'Este participante já possui plano de trabalho cadastrado para o período.');
+    })->throws(ValidateException::class, 'Este participante já possui plano de trabalho cadastrado para o período.');
 
     test('lança exceção quando modalidade diverge do SIAPE sem justificativa', function () {
         $unidade = Mockery::mock(Unidade::class)->makePartial();
@@ -104,7 +105,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
 
         $this->validacao->validar(buildStoreDTO(['tipo_modalidade_id' => 'mod-diferente']));
-    })->throws(ServerException::class, 'Modalidade distinta daquela registrada no SIAPE. A justificativa é obrigatória.');
+    })->throws(ValidateException::class, 'Modalidade distinta daquela registrada no SIAPE. A justificativa é obrigatória.');
 
     test('permite quando modalidade diverge do SIAPE com justificativa', function () {
         $unidade = Mockery::mock(Unidade::class)->makePartial();
@@ -165,7 +166,7 @@ describe('PlanoTrabalhoStoreValidator - autorização', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
 
         $this->validacao->validarAutorizacao(buildStoreDTO(['usuario_id' => 'outro-user']));
-    })->throws(ServerException::class, 'Participante só pode cadastrar plano para si mesmo.');
+    })->throws(ForbiddenException::class, 'Participante só pode cadastrar plano para si mesmo.');
 
     test('participante pode cadastrar para si mesmo sem erro', function () {
         /** @var Usuario $criador */
@@ -194,7 +195,7 @@ describe('PlanoTrabalhoStoreValidator - autorização', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
 
         $this->validacao->validarAutorizacao(buildStoreDTO());
-    })->throws(ServerException::class, 'Usuário com este perfil não pode cadastrar plano de trabalho.');
+    })->throws(ForbiddenException::class, 'Usuário com este perfil não pode cadastrar plano de trabalho.');
 
     test('consulta não pode cadastrar PT', function () {
         /** @var Usuario $criador */
@@ -207,7 +208,7 @@ describe('PlanoTrabalhoStoreValidator - autorização', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
 
         $this->validacao->validarAutorizacao(buildStoreDTO());
-    })->throws(ServerException::class, 'Usuário com este perfil não pode cadastrar plano de trabalho.');
+    })->throws(ForbiddenException::class, 'Usuário com este perfil não pode cadastrar plano de trabalho.');
 
     test('agente público do PT não pode ser colaborador (RN18.iv)', function () {
         /** @var Usuario $criador */
@@ -228,7 +229,7 @@ describe('PlanoTrabalhoStoreValidator - autorização', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
 
         $this->validacao->validarAutorizacao(buildStoreDTO());
-    })->throws(ServerException::class, 'Este usuário não pode ser agente público de um plano de trabalho.');
+    })->throws(ValidateException::class, 'Este usuário não pode ser agente público de um plano de trabalho.');
 
     test('agente público do PT não pode ser consulta', function () {
         /** @var Usuario $criador */
@@ -249,7 +250,7 @@ describe('PlanoTrabalhoStoreValidator - autorização', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
 
         $this->validacao->validarAutorizacao(buildStoreDTO());
-    })->throws(ServerException::class, 'Este usuário não pode ser agente público de um plano de trabalho.');
+    })->throws(ValidateException::class, 'Este usuário não pode ser agente público de um plano de trabalho.');
 
     test('demais perfis só podem cadastrar para agentes lotados/vinculados nas suas unidades (RN18.ii,iii)', function () {
         /** @var Usuario $criador */
@@ -271,5 +272,5 @@ describe('PlanoTrabalhoStoreValidator - autorização', function () {
         $this->unidadeRepo->shouldReceive('hasUsuarioLotacao')->with('unidade-1', 'user-1', true)->andReturn(false);
 
         $this->validacao->validarAutorizacao(buildStoreDTO());
-    })->throws(ServerException::class, 'O agente público não está lotado ou vinculado nas unidades do usuário logado.');
+    })->throws(ForbiddenException::class, 'O agente público não está lotado ou vinculado nas unidades do usuário logado.');
 });

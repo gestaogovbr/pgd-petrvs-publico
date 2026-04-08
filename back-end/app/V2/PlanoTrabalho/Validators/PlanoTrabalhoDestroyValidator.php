@@ -6,7 +6,9 @@ namespace App\V2\PlanoTrabalho\Validators;
 
 use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
-use App\Exceptions\ServerException;
+use App\Exceptions\ForbiddenException;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\ValidateException;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UsuarioRepository;
 
@@ -22,15 +24,15 @@ class PlanoTrabalhoDestroyValidator
         $plano = $this->planoTrabalhoRepository->findById($planoId);
 
         if ($plano === null) {
-            throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado.");
+            throw new NotFoundException('Plano de Trabalho não encontrado.');
         }
 
         if ($plano->status !== StatusEnum::INCLUIDO->value) {
-            throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não pode ser excluído pois não é mais um rascunho.");
+            throw new ValidateException('Plano de Trabalho não pode ser excluído pois não é mais um rascunho.');
         }
 
         if ($this->planoTrabalhoRepository->possuiAssinatura($planoId)) {
-            throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não pode ser excluído pois já possui assinatura.");
+            throw new ValidateException('Plano de Trabalho não pode ser excluído pois já possui assinatura.');
         }
 
         $this->validarAutorizacao($plano, $usuarioLogadoId);
@@ -53,6 +55,6 @@ class PlanoTrabalhoDestroyValidator
             return;
         }
 
-        throw new ServerException("ValidatePlanoTrabalho", "Usuário não tem permissão para excluir este plano de trabalho.");
+        throw new ForbiddenException('Usuário não tem permissão para excluir este plano de trabalho.');
     }
 }
