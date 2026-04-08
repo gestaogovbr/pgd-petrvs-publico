@@ -76,7 +76,7 @@ describe('PlanoTrabalhoDocumentoService::store', function () {
 
     test('retorna documento existente sem gerar novo', function () {
         $this->authValidator->shouldReceive('validar')->once()->andReturn($this->plano);
-        $this->storeValidator->shouldReceive('validar')->once();
+        $this->storeValidator->shouldReceive('validar')->once()->with($this->plano, null)->andReturn(null);
 
         /** @var Documento $docExistente */
         $docExistente = Mockery::mock(Documento::class)->makePartial();
@@ -91,7 +91,7 @@ describe('PlanoTrabalhoDocumentoService::store', function () {
 
     test('cria documento carregando relações do plano já obtido', function () {
         $this->authValidator->shouldReceive('validar')->once()->andReturn($this->plano);
-        $this->storeValidator->shouldReceive('validar')->once();
+        $this->storeValidator->shouldReceive('validar')->once()->with($this->plano, null)->andReturn(null);
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn(null);
         $this->planoRepo->shouldReceive('loadRelacoesTCR')->once()->andReturn($this->plano);
 
@@ -105,6 +105,8 @@ describe('PlanoTrabalhoDocumentoService::store', function () {
         /** @var Documento $novoDoc */
         $novoDoc = Mockery::mock(Documento::class)->makePartial();
         $novoDoc->id = 'doc-novo';
+
+        $this->planoRepo->shouldReceive('update')->once()->with('plano-1', ['justificativa' => null]);
 
         $this->documentoRepo->shouldReceive('createFromTCR')->once()->with(Mockery::type(TCRDocumentoDTO::class))->andReturn($novoDoc);
         $this->planoRepo->shouldReceive('update')->once()->with('plano-1', ['documento_id' => 'doc-novo']);

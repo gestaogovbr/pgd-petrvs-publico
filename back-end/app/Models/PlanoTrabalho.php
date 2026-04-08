@@ -72,7 +72,7 @@ class PlanoTrabalho extends ModelBase
         'avaliado_at', /* date; data em que o plano teve o status trasicionado para AVALIADO */
         //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
-        'justificativa', /* text; */ // Justificativa para carga horária insuficiente
+        'justificativa', /* text; NULL; */ // Justificativa para carga horária diferente de 100%
     ];
 
   public const STATUSES = [

@@ -88,6 +88,7 @@ beforeEach(function () {
     PlanoTrabalhoEntrega::factory()->create([
         'plano_trabalho_id' => $this->plano->id,
         'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
+        'forca_trabalho' => 100,
     ]);
 
     Session::put('entidade_id', $this->unidade->entidade_id);
@@ -122,6 +123,65 @@ describe('POST /api/v2/plano-trabalho/:id/documento (guard)', function () {
 
         postDocumento($this, $planoSemEntrega->id)
             ->assertStatus(422);
+    });
+});
+
+// ── validação CHD (força de trabalho) ───────────────────────────────
+
+describe('POST /api/v2/plano-trabalho/:id/documento (CHD)', function () {
+
+    test('retorna 422 quando CHD abaixo de 100% sem justificativa', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        \App\Models\PlanoTrabalhoEntrega::where('plano_trabalho_id', $this->plano->id)
+            ->update(['forca_trabalho' => 99]);
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento")
+            ->assertStatus(422);
+    });
+
+    test('retorna 201 quando CHD abaixo de 100% com justificativa', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        \App\Models\PlanoTrabalhoEntrega::where('plano_trabalho_id', $this->plano->id)
+            ->update(['forca_trabalho' => 99]);
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento", [
+            'justificativa' => 'Participante em regime parcial.',
+        ])->assertStatus(201);
+    });
+
+    test('retorna 422 quando CHD acima de 100% sem justificativa', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        \App\Models\PlanoTrabalhoEntrega::where('plano_trabalho_id', $this->plano->id)
+            ->update(['forca_trabalho' => 101]);
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento")
+            ->assertStatus(422);
+    });
+
+    test('retorna 201 quando CHD acima de 100% com justificativa', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        \App\Models\PlanoTrabalhoEntrega::where('plano_trabalho_id', $this->plano->id)
+            ->update(['forca_trabalho' => 101]);
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento", [
+            'justificativa' => 'Acúmulo temporário de entregas.',
+        ])->assertStatus(201);
+    });
+
+    test('limpa justificativa quando CHD corrigido para 100%', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->plano->update(['justificativa' => 'Justificativa anterior.']);
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento")
+            ->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->justificativa)->toBeNull();
     });
 });
 

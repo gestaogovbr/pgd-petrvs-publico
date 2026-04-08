@@ -6,8 +6,11 @@ namespace App\V2\PlanoTrabalho\Documento;
 
 use App\Http\Controllers\Controller;
 use App\Exceptions\Contracts\IBaseException;
+use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoRequestValidator;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -31,12 +34,16 @@ class DocumentoController extends Controller
         }
     }
 
-    public function store(string $planoTrabalhoId): JsonResponse
+    public function store(Request $request, string $planoTrabalhoId): JsonResponse
     {
         try {
-            $documento = $this->service->store($planoTrabalhoId);
+            $data = PlanoTrabalhoDocumentoRequestValidator::store($request);
+
+            $documento = $this->service->store($planoTrabalhoId, $data['justificativa'] ?? null);
 
             return response()->json(['success' => true, 'data' => $documento], Response::HTTP_CREATED);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {

@@ -106,6 +106,7 @@ beforeEach(function () {
     PlanoTrabalhoEntrega::factory()->create([
         'plano_trabalho_id' => $this->plano->id,
         'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
+        'forca_trabalho' => 100,
     ]);
 
     $this->entrega = PlanoTrabalhoEntrega::where('plano_trabalho_id', $this->plano->id)->first();

@@ -100,6 +100,7 @@ beforeEach(function () {
     $this->entrega = PlanoTrabalhoEntrega::factory()->create([
         'plano_trabalho_id' => $this->plano->id,
         'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
+        'forca_trabalho' => 100,
     ]);
 
     Session::put('entidade_id', $this->unidade->entidade_id);

@@ -66,16 +66,20 @@ class PlanoTrabalhoDocumentoService
         ];
     }
 
-    public function store(string $planoTrabalhoId): Documento
+    public function store(string $planoTrabalhoId, ?string $justificativa = null): Documento
     {
         $plano = $this->authValidator->validar($planoTrabalhoId, Auth::id());
-        $this->storeValidator->validar($plano);
+        $justificativa = $this->storeValidator->validar($plano, $justificativa);
 
         $documentoExistente = $this->documentoRepository->findTcrByPlanoTrabalhoId($planoTrabalhoId);
 
         if ($documentoExistente !== null) {
             return $documentoExistente;
         }
+
+        $this->planoTrabalhoRepository->update($planoTrabalhoId, [
+            'justificativa' => $justificativa,
+        ]);
 
         $plano = $this->planoTrabalhoRepository->loadRelacoesTCR($plano);
 
