@@ -148,4 +148,18 @@ class PlanoTrabalhoController extends Controller
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function clonar(string $id): JsonResponse
+    {
+        try {
+            $plano = $this->service->clonar($id);
+
+            return response()->json(['success' => true, 'data' => $plano], Response::HTTP_CREATED);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -48,6 +48,10 @@ beforeEach(function () {
         Route::middleware(['api'])->patch('/api/__tests/v2/plano-trabalho/{id}/arquivar', [PlanoTrabalhoController::class, 'arquivar'])
             ->name('__tests.v2.plano-trabalho.arquivar');
     }
+    if (!Route::has('__tests.v2.plano-trabalho.clonar')) {
+        Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho/{id}/clonar', [PlanoTrabalhoController::class, 'clonar'])
+            ->name('__tests.v2.plano-trabalho.clonar');
+    }
 
     $perfil = Perfil::factory()->create(['nivel' => PerfilEnum::PARTICIPANTE]);
     $tipoModalidade = TipoModalidade::factory()->create();
@@ -944,6 +948,104 @@ describe('PATCH /api/v2/plano-trabalho/:id/arquivar', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/arquivar')
+            ->assertStatus(404);
+    });
+});
+
+// ── POST clonar ─────────────────────────────────────────────────────
+
+describe('POST /api/v2/plano-trabalho/:id/clonar', function () {
+
+    test('clona plano com sucesso', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'ATIVO',
+        ]);
+
+        $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$plano->id}/clonar");
+
+        $response->assertStatus(201)
+            ->assertJsonPath('success', true);
+
+        $cloneId = $response->json('data.id');
+        expect($cloneId)->not->toBe($plano->id);
+
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $cloneId,
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'INCLUIDO',
+        ]);
+    });
+
+    test('clona entregas com forca_trabalho zerada', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $entregaCatalogo = \App\Models\Entrega::factory()->create(['unidade_id' => $this->unidade->id]);
+        $planoEntrega = \App\Models\PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+        ]);
+        $pee = \App\Models\PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $planoEntrega->id,
+            'entrega_id' => $entregaCatalogo->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        \App\Models\PlanoTrabalhoEntrega::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'plano_entrega_entrega_id' => $pee->id,
+            'forca_trabalho' => 80,
+            'descricao' => 'Entrega original',
+        ]);
+
+        $cloneId = $this->postJson("/api/__tests/v2/plano-trabalho/{$plano->id}/clonar")
+            ->json('data.id');
+
+        $entregaClone = \App\Models\PlanoTrabalhoEntrega::where('plano_trabalho_id', $cloneId)->first();
+
+        expect($entregaClone)->not->toBeNull();
+        expect((float) $entregaClone->forca_trabalho)->toBe(0.0);
+        expect($entregaClone->descricao)->toBe('Entrega original');
+    });
+
+    test('retorna 422 quando plano cancelado', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CANCELADO',
+        ]);
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$plano->id}/clonar")
+            ->assertStatus(422);
+    });
+
+    test('retorna 404 quando plano nao existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->postJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/clonar')
             ->assertStatus(404);
     });
 });

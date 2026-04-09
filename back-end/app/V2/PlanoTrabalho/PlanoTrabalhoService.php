@@ -6,12 +6,15 @@ use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\UnidadeRepository;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoCloneDTO;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoEntregaCloneDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoArquivarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoClonarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoEncerrarValidator;
 use App\V2\StatusService;
@@ -33,6 +36,7 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoCancelarValidator $cancelarValidator,
         private readonly PlanoTrabalhoEncerrarValidator $encerrarValidator,
         private readonly PlanoTrabalhoArquivarValidator $arquivarValidator,
+        private readonly PlanoTrabalhoClonarValidator $clonarValidator,
         private readonly PlanoTrabalhoIndexValidator $indexValidator,
         private readonly StatusService $statusService,
     ) {}
@@ -139,5 +143,27 @@ class PlanoTrabalhoService
         $this->writeRepository->update($id, ['data_arquivamento' => now()]);
 
         return $plano->refresh();
+    }
+
+    public function clonar(string $id): PlanoTrabalho
+    {
+        $planoOriginal = $this->clonarValidator->validar($id, Auth::id());
+        $planoDTO = PlanoTrabalhoCloneDTO::fromPlanoTrabalho($planoOriginal, Auth::id());
+
+        $clone = $this->writeRepository->create($planoDTO->toArray());
+
+        $planoOriginal->load('entregas.planoEntregaEntrega');
+
+        foreach ($planoOriginal->entregas as $entrega) {
+            $entregaDTO = PlanoTrabalhoEntregaCloneDTO::fromEntrega($entrega);
+
+            if ($entregaDTO === null) {
+                continue;
+            }
+
+            $clone->entregas()->create($entregaDTO->toArray());
+        }
+
+        return $clone;
     }
 }
