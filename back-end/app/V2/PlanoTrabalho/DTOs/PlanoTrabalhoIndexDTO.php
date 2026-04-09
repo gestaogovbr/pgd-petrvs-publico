@@ -76,12 +76,9 @@ class PlanoTrabalhoIndexDTO
         $status = $filters['status'] ?? null;
         $usuarioLogadoId = $filters['usuarioLogadoId'] ?? null;
         $usuarioId = $filters['usuario_id'] ?? null;
+        $incluirSubordinadas = $filters['incluir_subordinadas'] ?? null;
 
-        if (($dataInicio === null) !== ($dataFim === null)) {
-            throw new ValidateException("As datas de início e fim devem ser preenchidas juntas.");
-        }
-
-        if ($dataInicio === null && !$vigentes && !$arquivados && $usuarioId === null && $numero === null && $tipoModalidadeId === null && $status === null && $unidadesId === null) {
+        if ($dataInicio === null && $dataFim === null && !$vigentes && !$arquivados && $usuarioId === null && $numero === null && $tipoModalidadeId === null && $status === null && $unidadesId === null && $incluirSubordinadas == null) {
             throw new ValidateException("Informe ao menos um filtro para a busca.");
         }
 
@@ -92,7 +89,7 @@ class PlanoTrabalhoIndexDTO
             arquivados: $arquivados,
             usuarioId: $usuarioId,
             unidadesId: $unidadesId,
-            subordinadas: (bool) ($filters['incluir_subordinadas'] ?? false),
+            subordinadas: (bool) ($incluirSubordinadas),
             hierarquia: $hierarquia,
             numero: $numero,
             tipoModalidadeId: $tipoModalidadeId,

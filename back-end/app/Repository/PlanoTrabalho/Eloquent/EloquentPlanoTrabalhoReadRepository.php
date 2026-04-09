@@ -148,9 +148,12 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             $query->where('usuario_id', $filtro->usuarioId);
         }
 
-        if ($filtro->dataInicio !== null && $filtro->dataFim !== null) {
-            $query->where('data_inicio', '<=', $filtro->dataFim)
-                  ->where('data_fim', '>=', $filtro->dataInicio);
+        if ($filtro->dataInicio !== null) {
+            $query->where('data_fim', '>=', $filtro->dataInicio);
+        }
+        
+        if ($filtro->dataFim !== null) {
+            $query->where('data_inicio', '<=', $filtro->dataFim);
         }
 
         if ($filtro->numero !== null) {

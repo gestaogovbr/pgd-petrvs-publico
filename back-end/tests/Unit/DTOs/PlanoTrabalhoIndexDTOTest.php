@@ -1,7 +1,7 @@
 <?php
 
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
-use App\Exceptions\ServerException;
+use App\Exceptions\ValidateException;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -47,17 +47,23 @@ describe('PlanoTrabalhoIndexDTO', function () {
             ->and($filtro->perPage)->toBe(25);
     });
 
-    test('lança exceção quando apenas data_inicio é informada', function () {
-        PlanoTrabalhoIndexDTO::fromArray(['data_inicio' => '2024-01-01']);
-    })->throws(ServerException::class, 'As datas de início e fim devem ser preenchidas juntas.');
+    test('aceita filtro apenas com data_inicio', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['data_inicio' => '2024-01-01']);
 
-    test('lança exceção quando apenas data_fim é informada', function () {
-        PlanoTrabalhoIndexDTO::fromArray(['data_fim' => '2024-12-31']);
-    })->throws(ServerException::class, 'As datas de início e fim devem ser preenchidas juntas.');
+        expect($filtro->dataInicio)->toBe('2024-01-01')
+            ->and($filtro->dataFim)->toBeNull();
+    });
+
+    test('aceita filtro apenas com data_fim', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['data_fim' => '2024-12-31']);
+
+        expect($filtro->dataFim)->toBe('2024-12-31')
+            ->and($filtro->dataInicio)->toBeNull();
+    });
 
     test('lança exceção quando nenhum filtro é informado', function () {
         PlanoTrabalhoIndexDTO::fromArray([]);
-    })->throws(ServerException::class, 'Informe ao menos um filtro para a busca.');
+    })->throws(ValidateException::class, 'Informe ao menos um filtro para a busca.');
 
     test('aceita filtro apenas com usuario_id', function () {
         $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => 'user-1']);

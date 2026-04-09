@@ -28,7 +28,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             ->and($dto->dataInicio)->toBe('2024-01-01')
             ->and($dto->dataFim)->toBe('2024-12-31')
             ->and($dto->tipoModalidadeId)->toBe('mod-abc')
-            ->and($dto->justificativa)->toBe('Justificativa teste')
+            ->and($dto->justificativaModalidade)->toBe('Justificativa teste')
             ->and($dto->criacaoUsuarioId)->toBe('criador-999');
     });
 
@@ -42,7 +42,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'tipo_modalidade_id' => 'mod-1',
         ], 'criador-1');
 
-        expect($dto->justificativa)->toBeNull();
+        expect($dto->justificativaModalidade)->toBeNull();
     });
 
     test('toArray retorna array compatível com o model', function () {
@@ -66,7 +66,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'data_fim' => '2024-12-31',
             'tipo_modalidade_id' => 'mod-abc',
             'criacao_usuario_id' => 'criador-999',
-            'justificativa' => 'Justificativa',
+            'justificativa_modalidade' => 'Justificativa',
         ]);
     });
 });
