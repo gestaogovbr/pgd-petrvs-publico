@@ -16,6 +16,11 @@ use App\Repository\UsuarioRepository;
 
 class PlanoTrabalhoEncerrarValidator
 {
+    private const STATUSES_ENCERRAVEL = [
+        StatusEnum::ATIVO,
+        StatusEnum::CONCLUIDO,
+    ];
+
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly UnidadeRepository $unidadeRepository,
@@ -30,8 +35,10 @@ class PlanoTrabalhoEncerrarValidator
             throw new NotFoundException('Plano de Trabalho não encontrado.');
         }
 
-        if ($plano->status !== StatusEnum::ATIVO->value) {
-            throw new ValidateException('Apenas planos com status ATIVO podem ser encerrados.');
+        $statusPermitidos = array_map(fn (StatusEnum $s) => $s->value, self::STATUSES_ENCERRAVEL);
+
+        if (!in_array($plano->status, $statusPermitidos, true)) {
+            throw new ValidateException('Apenas planos com status ATIVO ou CONCLUÍDO podem ser encerrados.');
         }
 
         $this->validarAutorizacao($plano, $usuarioLogadoId);
