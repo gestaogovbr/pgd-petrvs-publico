@@ -19,6 +19,11 @@ class RecursoValidator
 {
     private const PRAZO_RECURSO_DIAS = 10;
 
+    private const STATUSES_PERMITE_RECURSO = [
+        StatusEnum::ATIVO,
+        StatusEnum::CONCLUIDO,
+    ];
+
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
@@ -41,8 +46,10 @@ class RecursoValidator
 
     public function validar(PlanoTrabalho $plano, string $consolidacaoId): Avaliacao
     {
-        if ($plano->status !== StatusEnum::ATIVO->value) {
-            throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO.');
+        $statusPermitidos = array_map(fn (StatusEnum $s) => $s->value, self::STATUSES_PERMITE_RECURSO);
+
+        if (!in_array($plano->status, $statusPermitidos, true)) {
+            throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO ou CONCLUÍDO.');
         }
 
         $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($consolidacaoId);

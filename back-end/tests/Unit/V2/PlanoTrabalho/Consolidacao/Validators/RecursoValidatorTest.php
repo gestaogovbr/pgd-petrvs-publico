@@ -82,12 +82,12 @@ describe('RecursoValidator::validar', function () {
         expect($this->validator->validar($plano, 'consolidacao-1'))->toBe($avaliacao);
     });
 
-    test('lanca excecao quando PT nao esta ativo', function () {
+    test('lanca excecao quando PT nao esta ativo nem concluido', function () {
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $plano->status = 'INCLUIDO';
 
         $this->validator->validar($plano, 'consolidacao-1');
-    })->throws(ValidateException::class, 'O Plano de Trabalho precisa estar com status ATIVO.');
+    })->throws(ValidateException::class, 'O Plano de Trabalho precisa estar com status ATIVO ou CONCLUÍDO.');
 
     test('lanca excecao quando consolidacao nao esta avaliada', function () {
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
