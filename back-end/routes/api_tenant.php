@@ -604,7 +604,7 @@ Route::middleware(['auth:sanctum'])->prefix('SystemLogs')->group(function () {
 
 /* ── V2 ── */
 use App\V2\PlanoTrabalho\PlanoTrabalhoController as PlanoTrabalhoV2;
-use App\V2\PlanoTrabalho\Entrega\EntregaController as EntregaV2;
+use App\V2\PlanoTrabalho\Entrega\PlanoTrabalhoEntregaController as PlanoTrabalhoEntregaV2;
 use App\V2\PlanoTrabalho\Documento\DocumentoController as DocumentoV2;
 use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController as PlanoTrabalhoConsolidacaoV2;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController as AtividadeV2;
@@ -626,9 +626,9 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::patch('plano-trabalho/{id}/encerrar', [PlanoTrabalhoV2::class, 'encerrar']);
     Route::patch('plano-trabalho/{id}/arquivar', [PlanoTrabalhoV2::class, 'arquivar']);
 
-    Route::post('plano-trabalho/{planoTrabalhoId}/entrega', [EntregaV2::class, 'store']);
-    Route::put('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'update']);
-    Route::delete('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [EntregaV2::class, 'destroy']);
+    Route::post('plano-trabalho/{planoTrabalhoId}/entrega', [PlanoTrabalhoEntregaV2::class, 'store']);
+    Route::put('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [PlanoTrabalhoEntregaV2::class, 'update']);
+    Route::delete('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [PlanoTrabalhoEntregaV2::class, 'destroy']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/documento', [DocumentoV2::class, 'store']);
     Route::get('plano-trabalho/{planoTrabalhoId}/documento', [DocumentoV2::class, 'show']);

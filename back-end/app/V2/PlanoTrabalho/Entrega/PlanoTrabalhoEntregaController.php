@@ -15,7 +15,7 @@ use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class EntregaController extends Controller
+class PlanoTrabalhoEntregaController extends Controller
 {
     public function __construct(
         private readonly PlanoTrabalhoEntregaService $service,

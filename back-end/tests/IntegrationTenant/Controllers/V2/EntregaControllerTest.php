@@ -2,7 +2,7 @@
 
 namespace Tests\IntegrationTenant\Controllers\V2;
 
-use App\V2\PlanoTrabalho\Entrega\EntregaController;
+use App\V2\PlanoTrabalho\Entrega\PlanoTrabalhoEntregaController;
 use App\Models\Entrega;
 use App\Models\Perfil;
 use App\Models\PlanoEntrega;
@@ -18,7 +18,7 @@ beforeEach(function () {
     if (!Route::has('__tests.v2.plano-trabalho.entrega.store')) {
         Route::middleware(['api'])->post(
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/entrega',
-            [EntregaController::class, 'store']
+            [PlanoTrabalhoEntregaController::class, 'store']
         )->name('__tests.v2.plano-trabalho.entrega.store');
     }
 
