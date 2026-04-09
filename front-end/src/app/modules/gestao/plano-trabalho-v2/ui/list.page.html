@@ -135,7 +135,7 @@
                     </br-button>
                   }
                   @if (policy.podeCancelar(p)) {
-                    <br-button shape="circle" class="text-danger" (click)="cancelarPlano(p)" title="Cancelar" ariaLabel="Cancelar plano">
+                    <br-button shape="circle" class="text-danger" (click)="iniciarCancelamento(p)" title="Cancelar" ariaLabel="Cancelar plano">
                       <i class="fas fa-times-circle"></i>
                     </br-button>
                   }
@@ -161,3 +161,34 @@
     (pageChange)="onPageChange($event)"
   />
 </div>
+
+<br-scrim [isOpen]="!!cancelandoPlano()" [disableCloseOnClick]="true">
+  <br-modal
+    [show]="!!cancelandoPlano()"
+    titleText="Cancelar Plano de Trabalho"
+    size="medium"
+    alignFooter="end"
+    initial-focus-selector="#justificativa_cancelamento"
+    (brModalBeforeClose)="cancelarCancelamento()"
+  >
+    <p class="mb-3">Informe o motivo do cancelamento do plano de trabalho de <strong>{{ cancelandoPlano()?.usuario?.nome }}</strong>.</p>
+    <div class="br-textarea">
+      <label>Justificativa <span class="text-danger">*</span></label>
+      <textarea
+        id="justificativa_cancelamento"
+        rows="4"
+        placeholder="Descreva o motivo do cancelamento..."
+        [value]="justificativaCancelamento()"
+        (input)="justificativaCancelamento.set($any($event.target).value)"
+      ></textarea>
+    </div>
+    <div slot="footer">
+      <br-button emphasis="secondary" (click)="cancelarCancelamento()">Voltar</br-button>
+      <br-button
+        emphasis="primary"
+        [disabled]="!justificativaCancelamento().trim()"
+        (click)="confirmarCancelamento()"
+      >Confirmar cancelamento</br-button>
+    </div>
+  </br-modal>
+</br-scrim>

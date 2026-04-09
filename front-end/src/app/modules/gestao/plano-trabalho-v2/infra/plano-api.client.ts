@@ -60,8 +60,8 @@ export class PlanoApiClient {
     return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/entrega/${entregaId}`);
   }
 
-  cancel(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
-    return this.http.post<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/cancelar`, {});
+  cancel(id: PlanoTrabalhoId, justificativa: string): Observable<PlanoTrabalho> {
+    return this.http.patch<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/cancelar`, { justificativa });
   }
 
   archive(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {

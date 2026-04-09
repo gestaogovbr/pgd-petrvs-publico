@@ -37,6 +37,10 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   advanced = false;
 
+  /** Plano aguardando justificativa de cancelamento */
+  readonly cancelandoPlano = signal<PlanoTrabalho | null>(null);
+  readonly justificativaCancelamento = signal('');
+
   readonly modalidadeOptions = signal<SelectOption[]>([{ value: '', label: 'Todas', selected: true }]);
 
   readonly statusOptions: SelectOption[] = [
@@ -270,9 +274,24 @@ readonly filters: FormGroup<{
     this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id]);
   }
 
-  cancelarPlano(p: PlanoTrabalho) {
-    if (!confirm('Deseja realmente cancelar este plano de trabalho?')) return;
-    this.cancelarPlanoUC.execute(p.id).subscribe(() => {
+  iniciarCancelamento(p: PlanoTrabalho) {
+    this.cancelandoPlano.set(p);
+    this.justificativaCancelamento.set('');
+  }
+
+  cancelarCancelamento() {
+    this.cancelandoPlano.set(null);
+    this.justificativaCancelamento.set('');
+  }
+
+  confirmarCancelamento() {
+    const plano = this.cancelandoPlano();
+    const justificativa = this.justificativaCancelamento().trim();
+    if (!plano || !justificativa) return;
+
+    this.cancelarPlanoUC.execute(plano.id, justificativa).subscribe(() => {
+      this.cancelandoPlano.set(null);
+      this.justificativaCancelamento.set('');
       this.applyFiltersAndLoad(false);
     });
   }

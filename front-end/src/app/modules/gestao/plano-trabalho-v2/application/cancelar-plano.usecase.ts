@@ -7,7 +7,7 @@ import { PlanoTrabalho, PlanoTrabalhoId } from '../domain/types';
 export class CancelarPlanoUseCase {
   private readonly api = inject(PlanoApiClient);
 
-  execute(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
-    return this.api.cancel(id);
+  execute(id: PlanoTrabalhoId, justificativa: string): Observable<PlanoTrabalho> {
+    return this.api.cancel(id, justificativa);
   }
 }
