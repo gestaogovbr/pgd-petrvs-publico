@@ -10,6 +10,7 @@ use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoArquivarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoEncerrarValidator;
@@ -31,6 +32,7 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoDestroyValidator $destroyValidator,
         private readonly PlanoTrabalhoCancelarValidator $cancelarValidator,
         private readonly PlanoTrabalhoEncerrarValidator $encerrarValidator,
+        private readonly PlanoTrabalhoArquivarValidator $arquivarValidator,
         private readonly PlanoTrabalhoIndexValidator $indexValidator,
         private readonly StatusService $statusService,
     ) {}
@@ -126,6 +128,15 @@ class PlanoTrabalhoService
             StatusEnum::CONCLUIDO->value,
             'Plano encerrado antecipadamente. Justificativa: ' . $justificativa,
         );
+
+        return $plano->refresh();
+    }
+
+    public function arquivar(string $id): PlanoTrabalho
+    {
+        $plano = $this->arquivarValidator->validar($id, Auth::id());
+
+        $this->writeRepository->update($id, ['data_arquivamento' => now()]);
 
         return $plano->refresh();
     }

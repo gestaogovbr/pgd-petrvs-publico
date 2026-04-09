@@ -44,6 +44,10 @@ beforeEach(function () {
         Route::middleware(['api'])->patch('/api/__tests/v2/plano-trabalho/{id}/encerrar', [PlanoTrabalhoController::class, 'encerrar'])
             ->name('__tests.v2.plano-trabalho.encerrar');
     }
+    if (!Route::has('__tests.v2.plano-trabalho.arquivar')) {
+        Route::middleware(['api'])->patch('/api/__tests/v2/plano-trabalho/{id}/arquivar', [PlanoTrabalhoController::class, 'arquivar'])
+            ->name('__tests.v2.plano-trabalho.arquivar');
+    }
 
     $perfil = Perfil::factory()->create(['nivel' => PerfilEnum::PARTICIPANTE]);
     $tipoModalidade = TipoModalidade::factory()->create();
@@ -764,5 +768,182 @@ describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
         $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/encerrar', [
             'justificativa' => 'Tentativa.',
         ])->assertStatus(404);
+    });
+});
+
+// ── PATCH arquivar ──────────────────────────────────────────────────
+
+describe('PATCH /api/v2/plano-trabalho/:id/arquivar', function () {
+
+    test('arquiva plano cancelado', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CANCELADO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $plano->refresh();
+        expect($plano->data_arquivamento)->not->toBeNull();
+    });
+
+    test('arquiva plano encerrado sem pendencias', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CONCLUIDO',
+            'encerrado_at' => now()->subDays(5)->format('Y-m-d'),
+        ]);
+
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'AVALIADO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(200);
+    });
+
+    test('arquiva plano concluido com todos periodos avaliados fora do prazo de recurso', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $nota = \App\Models\TipoAvaliacaoNota::create([
+            'id' => fake()->uuid(),
+            'sequencia' => 3,
+            'nota' => json_encode('Adequado'),
+            'descricao' => 'Adequado',
+            'pergunta' => '?',
+            'aprova' => 1,
+            'justifica' => 0,
+            'icone' => 'bi bi-check',
+            'cor' => '#28a745',
+            'tipo_avaliacao_id' => $this->programa->tipo_avaliacao_plano_trabalho_id,
+        ]);
+
+        $consolidacao = \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'AVALIADO',
+        ]);
+
+        \App\Models\Avaliacao::create([
+            'data_avaliacao' => now()->subDays(31)->format('Y-m-d H:i:s'),
+            'nota' => $nota->nota,
+            'justificativa' => null,
+            'justificativas' => [],
+            'avaliador_id' => $this->usuario->id,
+            'plano_trabalho_consolidacao_id' => $consolidacao->id,
+            'tipo_avaliacao_id' => $nota->tipo_avaliacao_id,
+            'tipo_avaliacao_nota_id' => $nota->id,
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(200);
+    });
+
+    test('retorna 422 quando plano ativo', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'ATIVO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando avaliacao dentro do prazo de recurso', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $nota = \App\Models\TipoAvaliacaoNota::create([
+            'id' => fake()->uuid(),
+            'sequencia' => 3,
+            'nota' => json_encode('Adequado'),
+            'descricao' => 'Adequado',
+            'pergunta' => '?',
+            'aprova' => 1,
+            'justifica' => 0,
+            'icone' => 'bi bi-check',
+            'cor' => '#28a745',
+            'tipo_avaliacao_id' => $this->programa->tipo_avaliacao_plano_trabalho_id,
+        ]);
+
+        $consolidacao = \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'AVALIADO',
+        ]);
+
+        \App\Models\Avaliacao::create([
+            'data_avaliacao' => now()->subDays(5)->format('Y-m-d H:i:s'),
+            'nota' => $nota->nota,
+            'justificativa' => null,
+            'justificativas' => [],
+            'avaliador_id' => $this->usuario->id,
+            'plano_trabalho_consolidacao_id' => $consolidacao->id,
+            'tipo_avaliacao_id' => $nota->tipo_avaliacao_id,
+            'tipo_avaliacao_nota_id' => $nota->id,
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando ja esta arquivado', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CANCELADO',
+            'data_arquivamento' => now(),
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(422);
+    });
+
+    test('retorna 404 quando plano nao existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/arquivar')
+            ->assertStatus(404);
     });
 });
