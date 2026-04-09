@@ -6,6 +6,7 @@ namespace App\V2\PlanoTrabalho\Consolidacao\Avaliacao;
 
 use App\Enums\StatusEnum;
 use App\Models\Avaliacao;
+use App\Repository\AvaliacaoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\DTOs\AvaliacaoStoreDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoStoreValidator;
@@ -16,6 +17,7 @@ class AvaliacaoService
     public function __construct(
         private readonly AvaliacaoAuthorizationValidator $authValidator,
         private readonly AvaliacaoStoreValidator $storeValidator,
+        private readonly AvaliacaoRepository $avaliacaoRepository,
         private readonly StatusService $statusService,
     ) {}
 
@@ -24,20 +26,11 @@ class AvaliacaoService
         $plano = $this->authValidator->validar($dto->planoTrabalhoId, $dto->avaliadorId);
         $consolidacao = $this->storeValidator->validar($plano, $dto);
         $nota = $this->storeValidator->validarNota($plano, $dto);
+        $dto->setNota($nota);
 
         $isReavaliacao = $consolidacao->avaliacoes->isNotEmpty();
 
-        // TODO: mover Avaliacao::create para AvaliacaoRepository
-        $avaliacao = Avaliacao::create([
-            'data_avaliacao' => now()->format('Y-m-d H:i:s'),
-            'nota' => $nota->nota,
-            'justificativa' => $dto->justificativa,
-            'justificativas' => [],
-            'avaliador_id' => $dto->avaliadorId,
-            'plano_trabalho_consolidacao_id' => $dto->consolidacaoId,
-            'tipo_avaliacao_id' => $nota->tipo_avaliacao_id,
-            'tipo_avaliacao_nota_id' => $dto->tipoAvaliacaoNotaId,
-        ]);
+        $avaliacao = $this->avaliacaoRepository->create($dto->toPersistArray());
 
         $justificativa = $isReavaliacao
             ? 'Período reavaliado pela chefia.'

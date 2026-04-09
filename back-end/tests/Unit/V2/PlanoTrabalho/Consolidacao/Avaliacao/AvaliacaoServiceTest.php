@@ -4,6 +4,7 @@ use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoService;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\DTOs\AvaliacaoStoreDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoStoreValidator;
+use App\Repository\AvaliacaoRepository;
 use App\V2\StatusService;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
@@ -16,11 +17,13 @@ uses(TestCase::class);
 beforeEach(function () {
     $this->authValidator = Mockery::mock(AvaliacaoAuthorizationValidator::class);
     $this->storeValidator = Mockery::mock(AvaliacaoStoreValidator::class);
+    $this->avaliacaoRepo = Mockery::mock(AvaliacaoRepository::class);
     $this->statusService = Mockery::mock(StatusService::class);
 
     $this->service = new AvaliacaoService(
         $this->authValidator,
         $this->storeValidator,
+        $this->avaliacaoRepo,
         $this->statusService,
     );
 });
