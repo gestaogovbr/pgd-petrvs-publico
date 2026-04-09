@@ -210,7 +210,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             'consolidacoes.atividades',
             'documento.assinaturas.usuario',
             'entregas.planoEntregaEntrega.entrega',
-            'entregas.planoEntregaEntrega.planoEntrega'
+            'entregas.planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome'
         ])->find($id);
         
         return $plano;
