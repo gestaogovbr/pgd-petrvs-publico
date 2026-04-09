@@ -22,6 +22,7 @@ interface PlanoTrabalhoReadRepositoryContract
     public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator;
 
     public function existeConflitoPeriodo(string $usuarioId, string $dataInicio, string $dataFim): bool;
+    public function existeConflitoPeriodoExcluindo(string $usuarioId, string $dataInicio, string $dataFim, string $excluirPlanoId): bool;
 
     /** @return \App\Models\PlanoTrabalho|null */
     public function findByIdComRelacoes(string $id): ?Model;

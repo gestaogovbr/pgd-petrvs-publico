@@ -198,6 +198,17 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->exists();
     }
 
+    public function existeConflitoPeriodoExcluindo(string $usuarioId, string $dataInicio, string $dataFim, string $excluirPlanoId): bool
+    {
+        return $this->query()
+            ->where('usuario_id', $usuarioId)
+            ->where('data_inicio', '<=', $dataFim)
+            ->where('data_fim', '>=', $dataInicio)
+            ->where('status', '!=', 'CANCELADO')
+            ->where('id', '!=', $excluirPlanoId)
+            ->exists();
+    }
+
     public function findByIdComRelacoes(string $id): ?PlanoTrabalho
     {
         /** @var PlanoTrabalho|null $plano */

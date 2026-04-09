@@ -54,6 +54,11 @@ class PlanoTrabalhoRepository
         return $this->readRepository->existeConflitoPeriodo($usuarioId, $dataInicio, $dataFim);
     }
 
+    public function existeConflitoPeriodoExcluindo(string $usuarioId, string $dataInicio, string $dataFim, string $excluirPlanoId): bool
+    {
+        return $this->readRepository->existeConflitoPeriodoExcluindo($usuarioId, $dataInicio, $dataFim, $excluirPlanoId);
+    }
+
     public function findByIdComRelacoes(string $id): ?PlanoTrabalho
     {
         /** @var PlanoTrabalho|null */

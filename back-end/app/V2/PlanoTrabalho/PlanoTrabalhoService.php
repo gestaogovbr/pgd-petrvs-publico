@@ -74,7 +74,7 @@ class PlanoTrabalhoService
         }
 
         $dto = PlanoTrabalhoStoreDTO::fromArray($data, Auth::id());
-        $this->updateValidator->validar($dto);
+        $this->updateValidator->validar($dto, $id);
 
         $updated = $this->writeRepository->update($id, $dto->toArray());
 

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Validators;
 
 use App\Exceptions\ValidateException;
+use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\ProgramaRepository;
 use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoStoreDTO;
 use Carbon\Carbon;
 
@@ -15,12 +17,16 @@ class PlanoTrabalhoUpdateValidator
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
         private readonly ProgramaRepository $programaRepository,
+        private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
+        private readonly UsuarioRepository $usuarioRepository,
     ) {}
 
-    public function validar(PlanoTrabalhoStoreDTO $dto): void
+    public function validar(PlanoTrabalhoStoreDTO $dto, string $planoId): void
     {
         $this->validarUnidadeAtiva($dto->unidadeId);
         $this->validarPeriodoDentroDoRegramento($dto);
+        $this->validarConflitoPeriodo($dto, $planoId);
+        $this->validarModalidadeDivergente($dto);
     }
 
     private function validarUnidadeAtiva(string $unidadeId): void
@@ -39,6 +45,26 @@ class PlanoTrabalhoUpdateValidator
 
         if ($inicioPlano < $programa->data_inicio || $fimPlano > $programa->data_fim) {
             throw new ValidateException('As datas do plano de trabalho estão fora do período de vigência do regramento.');
+        }
+    }
+
+    private function validarConflitoPeriodo(PlanoTrabalhoStoreDTO $dto, string $planoId): void
+    {
+        if ($this->planoTrabalhoRepository->existeConflitoPeriodoExcluindo($dto->usuarioId, $dto->dataInicio, $dto->dataFim, $planoId)) {
+            throw new ValidateException('Este participante já possui plano de trabalho cadastrado para o período.');
+        }
+    }
+
+    private function validarModalidadeDivergente(PlanoTrabalhoStoreDTO $dto): void
+    {
+        $agente = $this->usuarioRepository->findById($dto->usuarioId);
+
+        if ($agente->tipo_modalidade_id === $dto->tipoModalidadeId) {
+            return;
+        }
+
+        if (empty($dto->justificativaModalidade)) {
+            throw new ValidateException('Modalidade distinta daquela registrada no SIAPE. A justificativa é obrigatória.');
         }
     }
 }
