@@ -31,4 +31,9 @@ export class PlanoTrabalhoPolicy {
   podeExcluir(p: PlanoTrabalho): boolean {
     return p.status === 'INCLUIDO' && p.usuario_id === this.auth.usuario?.id;
   }
+
+  podeClonar(p: PlanoTrabalho): boolean {
+    const statusPermitidos = ['ATIVO', 'CONCLUIDO'];
+    return statusPermitidos.includes(p.status) && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id);
+  }
 }

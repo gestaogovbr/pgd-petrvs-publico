@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { PlanoTrabalho } from '../domain/types';
 import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
+import { ClonarPlanoUseCase } from '../application/clonar-plano.usecase';
 import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
@@ -30,6 +31,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   readonly policy = inject(PlanoTrabalhoPolicy);
   private readonly router = inject(Router);
   private readonly cancelarPlanoUC = inject(CancelarPlanoUseCase);
+  private readonly clonarPlanoUC = inject(ClonarPlanoUseCase);
   private readonly filterStorage = inject(FilterStorageService);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
 
@@ -272,6 +274,12 @@ readonly filters: FormGroup<{
 
   assinarPlano(p: PlanoTrabalho) {
     this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id]);
+  }
+
+  clonarPlano(p: PlanoTrabalho) {
+    this.clonarPlanoUC.execute(p.id).subscribe(() => {
+      this.applyFiltersAndLoad(false);
+    });
   }
 
   iniciarCancelamento(p: PlanoTrabalho) {
