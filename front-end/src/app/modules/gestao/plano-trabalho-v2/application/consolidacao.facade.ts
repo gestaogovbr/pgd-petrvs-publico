@@ -201,13 +201,11 @@ export class ConsolidacaoFacade {
     this.avaliandoIds.update(s => new Set([...s, consolidacao.id]));
 
     this.avaliarUC.execute(this.planoId, consolidacao.id, { tipo_avaliacao_nota_id: notaId, justificativa }).subscribe({
-      next: (avaliacao) => {
-        this.consolidacoes.update(lista =>
-          lista.map(c => c.id === consolidacao.id
-            ? { ...c, status: 'AVALIADO', avaliacao_id: avaliacao.id, avaliacoes: [...(c.avaliacoes ?? []), avaliacao] }
-            : c)
-        );
+      next: () => {
+        this.loadConsolidacoes();
         this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
+        this.notasSelecionadas.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
+        this.justificativasAvaliacao.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
       },
       error: () => {
         this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
@@ -236,12 +234,8 @@ export class ConsolidacaoFacade {
     this.enviandoRecursoIds.update(s => new Set([...s, avaliacaoId]));
 
     this.solicitarRecursoUC.execute(this.planoId, consolidacao.id, justificativa).subscribe({
-      next: (avaliacaoAtualizada) => {
-        this.consolidacoes.update(lista =>
-          lista.map(c => c.id === consolidacao.id
-            ? { ...c, avaliacoes: c.avaliacoes.map(a => a.id === avaliacaoId ? { ...a, ...avaliacaoAtualizada } : a) }
-            : c)
-        );
+      next: () => {
+        this.loadConsolidacoes();
         this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
         this.cancelarSolicitacaoRecurso();
       },

@@ -277,8 +277,9 @@ readonly filters: FormGroup<{
   }
 
   clonarPlano(p: PlanoTrabalho) {
-    this.clonarPlanoUC.execute(p.id).subscribe(() => {
-      this.applyFiltersAndLoad(false);
+    if (!confirm('Um novo Plano de Trabalho será criado com base neste, preservando suas informações, exceto as datas de início e fim, os percentuais de contribuição e os vínculos com entregas que não estejam mais disponíveis. Deseja confirmar?')) return;
+    this.clonarPlanoUC.execute(p.id).subscribe((novo) => {
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', novo.id]);
     });
   }
 

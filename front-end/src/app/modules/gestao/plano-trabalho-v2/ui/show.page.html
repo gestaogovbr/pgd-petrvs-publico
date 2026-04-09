@@ -14,13 +14,25 @@
     <!-- Cabeçalho -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2 class="mb-0">Plano de Trabalho #{{ planoTrabalho()?.numero }}</h2>
-      <div class="flex-shrink-0 gap-2">
-        <br-button (click)="voltar()">Voltar</br-button>
+      <div class="flex-shrink-0 gap-3">
+        <br-button (click)="voltar()" class="mr-2">Voltar</br-button>
+        @if (planoTrabalho()?.status !== 'INCLUIDO') {
+          <br-button class="mr-2" emphasis="secondary" (click)="irParaTcr()" title="Ver TCR" ariaLabel="Ver Termo de Compromisso de Resultados">
+            <i class="fas fa-file-signature mr-1"></i>TCR
+          </br-button>
+        }
         @if (policy.podeEditar(planoTrabalho()!)) {
-          <br-button emphasis="primary" (click)="editarPlano()">
+          <br-button class="mr-2"emphasis="primary" (click)="editarPlano()" title="Editar plano" ariaLabel="Editar plano">
             <i class="fas fa-edit mr-1"></i>Editar
           </br-button>
         }
+        @if (policy.podeArquivar(planoTrabalho()!)) {
+          <br-button emphasis="secondary" (click)="arquivarPlano()" title="Arquivar plano" ariaLabel="Arquivar plano">
+            <i class="fas fa-archive mr-1"></i>Arquivar
+          </br-button>
+        }
+
+
       </div>
     </div>
 
@@ -253,17 +265,19 @@
                       </thead>
                       <tbody>
                         @for (avaliacao of consolidacao.avaliacoes; track avaliacao.id) {
-                          @let notaIdx = notaIndexPorId(avaliacao.tipo_avaliacao_nota_id);
+                          @let notaIdx = notaIndexPorId(avaliacao.tipo_avaliacao_nota_id, avaliacao.nota);
                           @let notaTotal = facade.notas().length;
                           <tr>
                             <td>{{ avaliacao.data_avaliacao | date:'dd/MM/yyyy HH:mm' }}</td>
                             <td>{{ avaliacao.avaliador?.nome || '-' }}</td>
                             <td>
                               <div class="d-flex align-items-center gap-2">
-                                <div [style.color]="notaColor(notaIdx, notaTotal)" style="font-size: 1.5rem; line-height: 1;">
-                                  <i class="fas {{ notaIcone(notaIdx, notaTotal) }}"></i>
-                                </div>
-                                <span>{{ avaliacao.nota }}</span>
+                                @if (notaIdx !== -1) {
+                                  <div [style.color]="notaColor(notaIdx, notaTotal)" style="font-size: 1.5rem; line-height: 1;">
+                                    <i class="fas {{ notaIcone(notaIdx, notaTotal) }}"></i>
+                                  </div>
+                                }
+                                <strong>{{ notaLabel(avaliacao.nota) }}</strong>
                               </div>
                               @if (avaliacao.justificativa) {
                                 <div class="mt-1 text-muted"><small>{{ avaliacao.justificativa }}</small></div>
@@ -295,6 +309,21 @@
                   </div>
                 </div>
               </div>
+              @if (consolidacaoPolicy.podeReavaliarConsolidacao(consolidacao, planoTrabalho()!)) {
+                <br-divider></br-divider>
+                <p class="text-weight-semi-bold mb-3">Reavaliação</p>
+                <app-avaliacao-form
+                  [consolidacaoId]="consolidacao.id"
+                  [notas]="facade.notas()"
+                  [notaSelecionadaId]="facade.getNotaSelecionada(consolidacao.id)"
+                  [justificativa]="facade.getJustificativaAvaliacao(consolidacao.id)"
+                  [justificativaObrigatoria]="facade.notaSelecionadaJustificaObrigatoria(consolidacao.id)"
+                  [emAndamento]="facade.avaliandoIds().has(consolidacao.id)"
+                  (notaSelecionada)="facade.selecionarNota(consolidacao.id, $event)"
+                  (justificativaChange)="facade.setJustificativaAvaliacao(consolidacao.id, $event)"
+                  (submeter)="facade.avaliarConsolidacao(consolidacao)"
+                />
+              }
             } @else if (consolidacaoPolicy.podeAvaliarConsolidacao(consolidacao, planoTrabalho()!)) {
               <br-divider></br-divider>
               <p class="text-weight-semi-bold mb-3">Avaliação</p>

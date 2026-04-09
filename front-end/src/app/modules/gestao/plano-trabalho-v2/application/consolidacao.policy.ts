@@ -21,4 +21,11 @@ export class ConsolidacaoPolicy {
       && consolidacao.avaliacoes.length === 1
       && avaliacao.recurso === null;
   }
+
+  podeReavaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho): boolean {
+    const ultimaAvaliacao = consolidacao.avaliacoes[consolidacao.avaliacoes.length - 1];
+    return !!ultimaAvaliacao?.recurso
+      && this.auth.usuario?.id != planoTrabalho.usuario_id
+      && this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id);
+  }
 }

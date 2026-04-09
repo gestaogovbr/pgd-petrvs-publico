@@ -5,7 +5,6 @@ import { BreadcrumbComponent } from "src/app/v2/components/breadcrumb/breadcrumb
 import { ActivatedRoute } from "@angular/router";
 import { catchError, filter, finalize, map, of, switchMap, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { NavigateService } from "src/app/services/navigate.service";
 import { PlanoApiClient } from "../infra/plano-api.client";
 import { DocumentoApiClient } from "../infra/documento-api.client";
 import { PlanoTrabalho } from "../domain/types";
@@ -23,7 +22,6 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly planoApi = inject(PlanoApiClient);
   private readonly documentoApi = inject(DocumentoApiClient);
-  private readonly go = inject(NavigateService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   readonly policy = inject(PlanoTrabalhoPolicy);
@@ -122,7 +120,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
     });
   }
 
-  voltar() { this.go.back(); }
+  voltar() {  window.history.back();  }
 
   private atualizarJaAssinou() {
     const assinaturas: any[] = this.documento()?.assinaturas ?? [];

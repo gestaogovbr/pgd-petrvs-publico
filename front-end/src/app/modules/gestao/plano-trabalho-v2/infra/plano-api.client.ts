@@ -65,15 +65,18 @@ export class PlanoApiClient {
   }
 
   archive(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
-    return this.http.post<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/arquivar`, {});
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${id}/arquivar`, {})
+      .pipe(map((r: any) => (r?.data as PlanoTrabalho) ?? r));
   }
 
   cancelAssinatura(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
-    return this.http.post<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/cancelar-assinatura`, {});
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${id}/cancelar-assinatura`, {})
+      .pipe(map((r: any) => (r?.data as PlanoTrabalho) ?? r));
   }
 
   clone(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
-    return this.http.post<PlanoTrabalho>(`${this.gb.servidorURL}${this.base}/${id}/clonar`, {});
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${id}/clonar`, {})
+      .pipe(map((r: any) => (r?.data as PlanoTrabalho) ?? r));
   }
 
   private normalize(params: QueryParams): Record<string, string> {

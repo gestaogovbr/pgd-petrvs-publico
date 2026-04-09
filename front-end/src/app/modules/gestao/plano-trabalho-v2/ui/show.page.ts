@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { filter, map, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoApiClient } from "../infra/plano-api.client";
+import { ArquivarPlanoUseCase } from "../application/arquivar-plano.usecase";
 import { Consolidacao, PlanoTrabalho, PlanoTrabalhoEntrega } from "../domain/types";
 import { PlanoTrabalhoStatus } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
@@ -32,6 +33,8 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   private readonly unidadeService = inject(UnidadeService);
   private readonly notaPalette = ['#c0392b', '#e67e22', '#27ae60', '#1589c0', '#1351b4'];
   private readonly notaIcones = ['fa-frown', 'fa-frown', 'fa-smile', 'fa-smile', 'fa-smile'];
+
+  private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
 
   readonly policy = inject(PlanoTrabalhoPolicy);
   readonly consolidacaoPolicy = inject(ConsolidacaoPolicy);
@@ -146,8 +149,19 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   // --- Display helpers de nota (usados no template) ---
 
-  notaIndexPorId(notaId: string): number {
-    return this.facade.notas().findIndex(n => n.id === notaId);
+  notaLabel(nota: string | number | null | undefined): string {
+    return String(nota ?? '').replace(/^"|"$/g, '');
+  }
+
+  notaIndexPorId(notaId: string, notaTexto?: string | number | null): number {
+    const notas = this.facade.notas();
+    const byId = notas.findIndex(n => n.id === notaId);
+    if (byId !== -1) return byId;
+    if (notaTexto) {
+      const clean = this.notaLabel(notaTexto);
+      return notas.findIndex(n => n.nota === clean);
+    }
+    return -1;
   }
 
   notaColor(index: number, total: number): string {
@@ -171,5 +185,20 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   editarPlano() {
     const id = this.planoTrabalho()?.id;
     if (id) this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', id]);
+  }
+
+  irParaTcr() {
+    const id = this.planoTrabalho()?.id;
+    if (id) this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+  }
+
+  arquivarPlano() {
+    const plano = this.planoTrabalho();
+    if (!plano) return;
+    this.arquivarPlanoUC.execute(plano.id).subscribe({
+      next: (atualizado) => {
+        this.planoTrabalho.set(atualizado);
+      }
+    });
   }
 }

@@ -36,4 +36,11 @@ export class PlanoTrabalhoPolicy {
     const statusPermitidos = ['ATIVO', 'CONCLUIDO'];
     return statusPermitidos.includes(p.status) && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id);
   }
+
+  podeArquivar(p: PlanoTrabalho): boolean {
+    const statusPermitidos = ['CONCLUIDO', 'CANCELADO'];
+    return statusPermitidos.includes(p.status)
+      && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id)
+      && !p.data_arquivamento;
+  }
 }
