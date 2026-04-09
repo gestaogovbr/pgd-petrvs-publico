@@ -42,7 +42,7 @@ describe('GET /api/v2/plano-entrega/{id}/entrega (validação)', function () {
 
         $response = $this->getJson('/api/__tests/v2/plano-entrega/nao-um-uuid/entrega');
 
-        $response->assertStatus(400);
+        $response->assertStatus(404);
     });
 
     test('retorna 500 quando service lança exceção inesperada', function () {
@@ -67,8 +67,11 @@ describe('GET /api/v2/plano-entrega/{id}/entrega (happy path)', function () {
     test('retorna 200 com entregas do plano', function () {
         $this->actingAs($this->usuario, 'web');
 
+        $entregaCatalogo = \App\Models\Entrega::factory()->create(['unidade_id' => $this->unidade->id]);
         $entrega = PlanoEntregaEntrega::factory()->create([
             'plano_entrega_id' => $this->plano->id,
+            'entrega_id' => $entregaCatalogo->id,
+            'unidade_id' => $this->unidade->id,
         ]);
 
         $response = $this->getJson('/api/__tests/v2/plano-entrega/' . $this->plano->id . '/entrega');
@@ -82,8 +85,11 @@ describe('GET /api/v2/plano-entrega/{id}/entrega (happy path)', function () {
     test('retorna campos esperados em cada entrega', function () {
         $this->actingAs($this->usuario, 'web');
 
+        $entregaCatalogo = \App\Models\Entrega::factory()->create(['unidade_id' => $this->unidade->id]);
         PlanoEntregaEntrega::factory()->create([
             'plano_entrega_id' => $this->plano->id,
+            'entrega_id' => $entregaCatalogo->id,
+            'unidade_id' => $this->unidade->id,
         ]);
 
         $data = $this->getJson('/api/__tests/v2/plano-entrega/' . $this->plano->id . '/entrega')
@@ -101,8 +107,11 @@ describe('GET /api/v2/plano-entrega/{id}/entrega (happy path)', function () {
             'criacao_usuario_id' => $this->usuario->id,
         ]);
 
+        $entregaCatalogo = \App\Models\Entrega::factory()->create(['unidade_id' => $this->unidade->id]);
         PlanoEntregaEntrega::factory()->create([
             'plano_entrega_id' => $outroPlano->id,
+            'entrega_id' => $entregaCatalogo->id,
+            'unidade_id' => $this->unidade->id,
         ]);
 
         $response = $this->getJson('/api/__tests/v2/plano-entrega/' . $this->plano->id . '/entrega');
@@ -113,8 +122,11 @@ describe('GET /api/v2/plano-entrega/{id}/entrega (happy path)', function () {
     test('retorna múltiplas entregas do mesmo plano', function () {
         $this->actingAs($this->usuario, 'web');
 
+        $entregaCatalogo = \App\Models\Entrega::factory()->create(['unidade_id' => $this->unidade->id]);
         PlanoEntregaEntrega::factory()->count(3)->create([
             'plano_entrega_id' => $this->plano->id,
+            'entrega_id' => $entregaCatalogo->id,
+            'unidade_id' => $this->unidade->id,
         ]);
 
         $data = $this->getJson('/api/__tests/v2/plano-entrega/' . $this->plano->id . '/entrega')
