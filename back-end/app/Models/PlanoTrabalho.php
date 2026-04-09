@@ -74,6 +74,7 @@ class PlanoTrabalho extends ModelBase
         //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
         'justificativa', /* text; NULL; */ // Justificativa para carga horária diferente de 100%
         'justificativa_modalidade', /* varchar(500); NULL; */ // Justificativa para modalidade divergente do SIAPE
+        'encerrado_at', /* date; NULL; */ // Data de encerramento antecipado do plano de trabalho
     ];
 
   public const STATUSES = [

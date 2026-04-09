@@ -40,6 +40,10 @@ beforeEach(function () {
         Route::middleware(['api'])->patch('/api/__tests/v2/plano-trabalho/{id}/cancelar', [PlanoTrabalhoController::class, 'cancelar'])
             ->name('__tests.v2.plano-trabalho.cancelar');
     }
+    if (!Route::has('__tests.v2.plano-trabalho.encerrar')) {
+        Route::middleware(['api'])->patch('/api/__tests/v2/plano-trabalho/{id}/encerrar', [PlanoTrabalhoController::class, 'encerrar'])
+            ->name('__tests.v2.plano-trabalho.encerrar');
+    }
 
     $perfil = Perfil::factory()->create(['nivel' => PerfilEnum::PARTICIPANTE]);
     $tipoModalidade = TipoModalidade::factory()->create();
@@ -627,6 +631,137 @@ describe('PATCH /api/v2/plano-trabalho/:id/cancelar', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/cancelar', [
+            'justificativa' => 'Tentativa.',
+        ])->assertStatus(404);
+    });
+});
+
+// ── PATCH encerrar ──────────────────────────────────────────────────
+
+describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
+
+    function criarPlanoAtivoComConsolidacoes($context): PlanoTrabalho
+    {
+        $hoje = now();
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $context->usuario->id,
+            'unidade_id' => $context->unidade->id,
+            'tipo_modalidade_id' => $context->tipoModalidadeId,
+            'criacao_usuario_id' => $context->usuario->id,
+            'programa_id' => $context->programa->id,
+            'data_inicio' => $hoje->copy()->subMonths(6)->format('Y-m-d'),
+            'data_fim' => $hoje->copy()->addMonths(6)->format('Y-m-d'),
+            'status' => 'ATIVO',
+        ]);
+
+        // Passada
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => $hoje->copy()->subMonths(6)->format('Y-m-d'),
+            'data_fim' => $hoje->copy()->subMonths(3)->format('Y-m-d'),
+            'status' => 'AVALIADO',
+        ]);
+
+        // Vigente (inclui hoje)
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => $hoje->copy()->subMonths(1)->format('Y-m-d'),
+            'data_fim' => $hoje->copy()->addMonths(1)->format('Y-m-d'),
+            'status' => 'INCLUIDO',
+        ]);
+
+        // Futura 1
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => $hoje->copy()->addMonths(2)->format('Y-m-d'),
+            'data_fim' => $hoje->copy()->addMonths(4)->format('Y-m-d'),
+            'status' => 'INCLUIDO',
+        ]);
+
+        // Futura 2
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => $hoje->copy()->addMonths(4)->addDay()->format('Y-m-d'),
+            'data_fim' => $hoje->copy()->addMonths(6)->format('Y-m-d'),
+            'status' => 'INCLUIDO',
+        ]);
+
+        return $plano;
+    }
+
+    test('encerra plano com sucesso', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivoComConsolidacoes($this);
+        $dataFimOriginal = (string) $plano->data_fim;
+
+        $response = $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
+            'justificativa' => 'Encerramento antecipado por necessidade.',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $plano->refresh();
+        expect($plano->status)->toBe('CONCLUIDO');
+        expect(substr((string) $plano->data_fim, 0, 10))->toBe(substr($dataFimOriginal, 0, 10));
+        expect($plano->encerrado_at)->toBe(now()->format('Y-m-d'));
+    });
+
+    test('preserva todas as consolidacoes', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivoComConsolidacoes($this);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
+            'justificativa' => 'Encerramento.',
+        ])->assertStatus(200);
+
+        $total = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $plano->id)->count();
+        expect($total)->toBe(4);
+    });
+
+    test('registra justificativa no historico de status', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivoComConsolidacoes($this);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
+            'justificativa' => 'Motivo do encerramento.',
+        ])->assertStatus(200);
+
+        $this->assertDatabaseHas('status_justificativas', [
+            'plano_trabalho_id' => $plano->id,
+            'codigo' => 'CONCLUIDO',
+        ]);
+    });
+
+    test('retorna 422 quando plano nao esta ativo', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
+            'justificativa' => 'Tentativa.',
+        ])->assertStatus(422);
+    });
+
+    test('retorna 400 quando justificativa ausente', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivoComConsolidacoes($this);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [])
+            ->assertStatus(400);
+    });
+
+    test('retorna 404 quando plano nao existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/encerrar', [
             'justificativa' => 'Tentativa.',
         ])->assertStatus(404);
     });

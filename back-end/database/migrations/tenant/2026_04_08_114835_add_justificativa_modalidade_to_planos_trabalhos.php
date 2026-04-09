@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('planos_trabalhos', 'justificativa_modalidade')) {
+            return;
+        }
+
         Schema::table('planos_trabalhos', function (Blueprint $table) {
             $table->string('justificativa_modalidade', 500)->nullable()->after('status')
                 ->comment('Justificativa para modalidade divergente do SIAPE');

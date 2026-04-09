@@ -12,6 +12,7 @@ use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoEncerrarValidator;
 use App\V2\StatusService;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateValidator;
 use App\Enums\StatusEnum;
@@ -29,6 +30,7 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoUpdateValidator $updateValidator,
         private readonly PlanoTrabalhoDestroyValidator $destroyValidator,
         private readonly PlanoTrabalhoCancelarValidator $cancelarValidator,
+        private readonly PlanoTrabalhoEncerrarValidator $encerrarValidator,
         private readonly PlanoTrabalhoIndexValidator $indexValidator,
         private readonly StatusService $statusService,
     ) {}
@@ -111,5 +113,20 @@ class PlanoTrabalhoService
         );
 
         return $plano;
+    }
+
+    public function encerrar(string $id, string $justificativa): PlanoTrabalho
+    {
+        $plano = $this->encerrarValidator->validar($id, Auth::id());
+
+        $this->writeRepository->update($id, ['encerrado_at' => now()->format('Y-m-d')]);
+
+        $this->statusService->atualizaStatus(
+            $plano,
+            StatusEnum::CONCLUIDO->value,
+            'Plano encerrado antecipadamente. Justificativa: ' . $justificativa,
+        );
+
+        return $plano->refresh();
     }
 }

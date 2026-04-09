@@ -1438,7 +1438,6 @@ CREATE TABLE `planos_entregas_entregas` (
   KEY `planos_entregas_entregas_entrega_pai_id_foreign` (`entrega_pai_id`),
   KEY `planos_entregas_entregas_unidade_id_foreign` (`unidade_id`),
   CONSTRAINT `planos_entregas_entregas_entrega_id_foreign` FOREIGN KEY (`entrega_id`) REFERENCES `entregas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `planos_entregas_entregas_entrega_pai_id_foreign` FOREIGN KEY (`entrega_pai_id`) REFERENCES `planos_entregas_entregas` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_entregas_entregas_plano_entrega_id_foreign` FOREIGN KEY (`plano_entrega_id`) REFERENCES `planos_entregas` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_entregas_entregas_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1565,6 +1564,7 @@ CREATE TABLE `planos_trabalhos` (
   `criterios_avaliacao` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT json_array() COMMENT 'Critérios para avaliação' CHECK (json_valid(`criterios_avaliacao`)),
   `data_envio_api_pgd` timestamp NULL DEFAULT NULL,
   `avaliado_at` date DEFAULT NULL COMMENT 'Data em que todos os planos_trabalhos_consolidacoes tiveram o status alterado para AVALIADO',
+  `encerrado_at` date DEFAULT NULL COMMENT 'Data de encerramento antecipado do plano de trabalho',
   PRIMARY KEY (`id`),
   UNIQUE KEY `planos_trabalhos_numero_unique` (`numero`),
   KEY `planos_trabalhos_programa_id_foreign` (`programa_id`),
@@ -1592,7 +1592,7 @@ CREATE TABLE `planos_trabalhos_consolidacoes` (
   `data_inicio` date NOT NULL COMMENT 'Data inicial da consolidacão',
   `data_fim` date NOT NULL COMMENT 'Data final da consolidação',
   `data_conclusao` datetime DEFAULT NULL COMMENT 'Data da conclusão (usado como referência para o snapshot das atividades)',
-  `status` enum('AGUARDANDO_REGISTRO','INCLUIDO','CONCLUIDO','AVALIADO') NOT NULL DEFAULT 'AGUARDANDO_REGISTRO' COMMENT 'Status atual da consolidação',
+  `status` enum('INCLUIDO','CONCLUIDO','AVALIADO') NOT NULL DEFAULT 'INCLUIDO' COMMENT 'Status atual da consolidação',
   `plano_trabalho_id` char(36) NOT NULL,
   `avaliacao_id` char(36) DEFAULT NULL,
   `justificativa_conclusao` text DEFAULT NULL,
@@ -2763,7 +2763,7 @@ CREATE TABLE `usuarios` (
   `email` varchar(100) NOT NULL COMMENT 'E-mail do usuário',
   `nome` varchar(256) NOT NULL COMMENT 'Nome do usuário',
   `password` varchar(255) DEFAULT NULL COMMENT 'Senha do usuário',
-  `cpf` varchar(14) NOT NULL COMMENT 'CPF do usuário',
+  `cpf` varchar(11) NOT NULL COMMENT 'CPF do usuário',
   `matricula` varchar(50) DEFAULT NULL COMMENT 'Matrícula funcional do usuário',
   `apelido` varchar(255) DEFAULT NULL COMMENT 'Apelido/Nome de guerra/Nome social',
   `telefone` varchar(50) DEFAULT NULL COMMENT 'Telefone do usuário',
@@ -3804,4 +3804,20 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (389,'2026_01_16_00
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (390,'2026_01_23_000000_version2_9_10',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (391,'2026_01_28_000000_version2_9_11',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (392,'2026_01_29_000000_version2_9_12',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (393,'2026_02_06_000000_version2_9_13',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (394,'2026_02_12_160000_alter_status_aguardando_registro',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (395,'2026_02_13_000000_version2_9_14',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (396,'2026_02_26_085122_remove_fk_pe',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (397,'2026_02_27_000000_version2_9_15',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (398,'2026_03_06_000000_version2_9_16',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (399,'2026_03_06_2000_atualiza_planos_trabalhos',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (400,'2026_03_10_000000_version2_9_17',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (401,'2026_03_12_180933_normalize_cpfs_in_usuarios_table',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (402,'2026_03_12_182713_shrink_cpf_column_in_usuarios_table',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (403,'2026_03_13_000000_version2_9_18',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (404,'2026_03_16_222108_remove_duplicate_lotacao_atribuicoes',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (405,'2026_03_23_000000_version2_9_19',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (406,'2026_03_31_000000_add_justificativa_to_planos_trabalhos',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (407,'2026_04_08_114835_add_justificativa_modalidade_to_planos_trabalhos',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (408,'2026_04_09_114026_add_encerrado_at_to_planos_trabalhos',2);
 commit;

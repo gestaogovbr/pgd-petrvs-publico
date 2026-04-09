@@ -117,4 +117,21 @@ class PlanoTrabalhoController extends Controller
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function encerrar(Request $request, string $id): JsonResponse
+    {
+        try {
+            $data = PlanoTrabalhoRequestValidator::encerrar($request);
+            $plano = $this->service->encerrar($id, $data['justificativa']);
+
+            return response()->json(['success' => true, 'data' => $plano]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

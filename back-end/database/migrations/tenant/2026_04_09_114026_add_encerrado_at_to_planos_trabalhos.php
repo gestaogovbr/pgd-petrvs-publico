@@ -6,21 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        if (Schema::hasColumn('planos_trabalhos', 'justificativa')) {
+        if (Schema::hasColumn('planos_trabalhos', 'encerrado_at')) {
             return;
         }
 
         Schema::table('planos_trabalhos', function (Blueprint $table) {
-            $table->text('justificativa')->nullable()->after('status')->comment("Justificativa para carga horária inferior a 100%");
+            $table->date('encerrado_at')->nullable()->after('avaliado_at')
+                ->comment('Data de encerramento antecipado do plano de trabalho');
         });
     }
 
     public function down(): void
     {
         Schema::table('planos_trabalhos', function (Blueprint $table) {
-            $table->dropColumn('justificativa');
+            $table->dropColumn('encerrado_at');
         });
     }
 };

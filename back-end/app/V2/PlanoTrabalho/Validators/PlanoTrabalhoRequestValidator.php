@@ -84,4 +84,14 @@ class PlanoTrabalhoRequestValidator
             'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
         ]);
     }
+
+    public static function encerrar(Request $request): array
+    {
+        return $request->validate([
+            'justificativa' => ['required', 'string', 'max:500'],
+        ], [
+            'justificativa.required' => 'A justificativa é obrigatória.',
+            'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
+        ]);
+    }
 }

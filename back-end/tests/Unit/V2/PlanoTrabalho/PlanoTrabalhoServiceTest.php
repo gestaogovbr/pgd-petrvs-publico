@@ -7,6 +7,7 @@ use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoIndexValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoEncerrarValidator;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\UnidadeRepository;
@@ -30,6 +31,7 @@ beforeEach(function () {
     $this->updateValidator = Mockery::mock(PlanoTrabalhoUpdateValidator::class);
     $this->destroyValidator = Mockery::mock(PlanoTrabalhoDestroyValidator::class);
     $this->cancelarValidator = Mockery::mock(PlanoTrabalhoCancelarValidator::class);
+    $this->encerrarValidator = Mockery::mock(PlanoTrabalhoEncerrarValidator::class);
     $this->indexValidacao = Mockery::mock(PlanoTrabalhoIndexValidator::class);
     $this->statusService = Mockery::mock(StatusService::class);
 
@@ -41,6 +43,7 @@ beforeEach(function () {
         $this->updateValidator,
         $this->destroyValidator,
         $this->cancelarValidator,
+        $this->encerrarValidator,
         $this->indexValidacao,
         $this->statusService,
     );
