@@ -126,9 +126,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator
     {
         /** @var \Illuminate\Database\Eloquent\Builder<PlanoTrabalho> $queryBase */
-        $queryBase = $filtro->arquivados
-            ? PlanoTrabalho::withTrashed()
-            : PlanoTrabalho::query();
+        $queryBase = PlanoTrabalho::query();
 
         $query = $queryBase->select('id', 'numero', 'usuario_id', 'unidade_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'status')
               ->with(['usuario:id,nome', 'tipoModalidade:id,nome', 'unidade:id,nome,sigla']);
@@ -138,6 +136,12 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
 
             $query->addSelect(DB::raw("$queryHierarquia AS hierarquia"))
                  ->orderBy(DB::raw($queryHierarquia));
+        }
+
+        if($filtro->arquivados){
+            $query->whereNotNull('data_arquivamento');
+        }else{
+            $query->whereNull('data_arquivamento');
         }
 
         if ($filtro->unidadesId !== null) {

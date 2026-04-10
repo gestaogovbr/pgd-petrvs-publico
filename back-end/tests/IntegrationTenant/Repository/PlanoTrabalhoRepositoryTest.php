@@ -360,6 +360,48 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         expect($result->total())->toBe(1);
     });
 
+    test('retorna apenas planos arquivados quando arquivados=true', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_arquivamento' => now(),
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_arquivamento' => null,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id, 'arquivados' => true]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1);
+    });
+
+    test('exclui planos arquivados quando arquivados=false', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_arquivamento' => now(),
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_arquivamento' => null,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1);
+    });
+
     test('respeita paginação', function () {
         PlanoTrabalho::factory()->count(5)->create([
             'usuario_id' => $this->usuario->id,
