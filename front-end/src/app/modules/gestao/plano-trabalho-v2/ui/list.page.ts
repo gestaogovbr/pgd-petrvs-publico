@@ -118,6 +118,7 @@ readonly filters: FormGroup<{
 
   toggleAdvanced() {
     this.advanced = !this.advanced;
+    this.saveFilters();
   }
 
   onConsultar() {

@@ -117,6 +117,9 @@
             <td data-th="Modalidade">{{ p.tipo_modalidade?.nome || '-' }}</td>
             <td data-th="Status">
               <br-tag shape="rounded" density="small" [bgColor]="statusClass(p.status)" [label]="statusLabel(p.status)"></br-tag>
+              @if (p.data_arquivamento) {
+                <br-tag class="ml-1" shape="rounded" density="small" bgColor="#81088b" label="Arquivado" title="Arquivado em {{ p.data_arquivamento | date:'dd/MM/yyyy' }}"></br-tag>
+              }
             </td>
             <td data-th="Período">{{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}</td>
             <td data-th="Ações">
