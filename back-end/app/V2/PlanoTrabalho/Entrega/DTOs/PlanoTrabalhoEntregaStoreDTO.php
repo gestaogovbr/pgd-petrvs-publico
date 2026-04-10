@@ -22,7 +22,7 @@ class PlanoTrabalhoEntregaStoreDTO
         return new self(
             planoTrabalhoId: $planoTrabalhoId,
             origem: $origem,
-            planoEntregaEntregaId: $origem === 'PLANO_ENTREGA' ? $data['plano_entrega_entrega_id'] : null,
+            planoEntregaEntregaId: in_array($origem, ['PROPRIA_UNIDADE', 'OUTRA_UNIDADE']) ? $data['plano_entrega_entrega_id'] : null,
             orgao: $origem === 'OUTRO_ORGAO' ? $data['orgao'] : null,
             forcaTrabalho: (float) ($data['forca_trabalho'] ?? 0),
             descricao: $data['descricao'] ?? '',

@@ -53,7 +53,7 @@ function mockEntregaPE(string $dataInicio, ?string $dataFim): PlanoEntregaEntreg
 function dtoPlanoEntrega(string $planoTrabalhoId = 'plano-1', string $peeId = 'pee-1'): PlanoTrabalhoEntregaStoreDTO
 {
     return PlanoTrabalhoEntregaStoreDTO::fromArray([
-        'origem' => 'PLANO_ENTREGA',
+        'origem' => 'PROPRIA_UNIDADE',
         'plano_entrega_entrega_id' => $peeId,
     ], $planoTrabalhoId);
 }
@@ -89,7 +89,7 @@ describe('PlanoTrabalhoEntregaStoreValidator::validar', function () {
         $this->validator->validar(dtoPlanoEntrega());
     })->throws(ValidateException::class);
 
-    // ── Tipo PLANO_ENTREGA ──
+    // ── Tipo PROPRIA_UNIDADE ──
 
     test('lança exceção quando entrega PE não encontrada', function () {
         $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::INCLUIDO->value));

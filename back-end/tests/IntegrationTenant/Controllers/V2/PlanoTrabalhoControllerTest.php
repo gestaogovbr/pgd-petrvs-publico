@@ -254,6 +254,26 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
         expect($items)->toHaveCount(1)
             ->and($items[0]['id'])->toBe($dentroIntervalo->id);
     });
+
+    test('retorna data_arquivamento na resposta do index', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['usuario_id' => $this->usuario->id],
+        ]));
+
+        $items = $response->json('data.data');
+
+        expect($items[0])->toHaveKey('data_arquivamento');
+    });
 });
 
 // ── POST store: validação ───────────────────────────────────────────

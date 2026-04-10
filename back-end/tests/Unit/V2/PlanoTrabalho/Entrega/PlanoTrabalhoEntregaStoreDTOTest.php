@@ -7,16 +7,16 @@ uses(TestCase::class);
 
 describe('PlanoTrabalhoEntregaStoreDTO', function () {
 
-    test('tipo PLANO_ENTREGA limpa orgao', function () {
+    test('tipo PROPRIA_UNIDADE limpa orgao', function () {
         $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'PLANO_ENTREGA',
+            'origem' => 'PROPRIA_UNIDADE',
             'plano_entrega_entrega_id' => 'pee-1',
             'orgao' => 'deveria ser ignorado',
             'forca_trabalho' => 50,
             'descricao' => 'Desc',
         ], 'plano-1');
 
-        expect($dto->origem)->toBe('PLANO_ENTREGA');
+        expect($dto->origem)->toBe('PROPRIA_UNIDADE');
         expect($dto->planoEntregaEntregaId)->toBe('pee-1');
         expect($dto->orgao)->toBeNull();
     });
@@ -53,7 +53,7 @@ describe('PlanoTrabalhoEntregaStoreDTO', function () {
 
     test('toArray retorna campos para persistência', function () {
         $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'PLANO_ENTREGA',
+            'origem' => 'PROPRIA_UNIDADE',
             'plano_entrega_entrega_id' => 'pee-1',
             'forca_trabalho' => 30,
             'descricao' => 'Teste',

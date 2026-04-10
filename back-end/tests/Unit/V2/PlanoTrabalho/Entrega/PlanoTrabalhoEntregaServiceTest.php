@@ -29,7 +29,7 @@ describe('PlanoTrabalhoEntregaService::store', function () {
 
     test('valida, persiste e invalida TCR', function () {
         $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'PLANO_ENTREGA',
+            'origem' => 'PROPRIA_UNIDADE',
             'plano_entrega_entrega_id' => 'pee-1',
             'descricao' => 'Entrega 1',
         ], 'plano-1');
@@ -47,7 +47,7 @@ describe('PlanoTrabalhoEntregaService::store', function () {
 
     test('não persiste quando validação lança exceção', function () {
         $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'PLANO_ENTREGA',
+            'origem' => 'PROPRIA_UNIDADE',
             'plano_entrega_entrega_id' => 'pee-1',
         ], 'plano-inexistente');
 

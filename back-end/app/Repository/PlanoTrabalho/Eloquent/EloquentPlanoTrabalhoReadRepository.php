@@ -128,7 +128,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         /** @var \Illuminate\Database\Eloquent\Builder<PlanoTrabalho> $queryBase */
         $queryBase = PlanoTrabalho::query();
 
-        $query = $queryBase->select('id', 'numero', 'usuario_id', 'unidade_id', 'tipo_modalidade_id', 'data_arquivamento', 'data_inicio', 'data_fim', 'status')
+        $query = $queryBase->select('id', 'numero', 'usuario_id', 'unidade_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'data_arquivamento', 'status')
               ->with(['usuario:id,nome', 'tipoModalidade:id,nome', 'unidade:id,nome,sigla']);
 
         if($filtro->hierarquia){

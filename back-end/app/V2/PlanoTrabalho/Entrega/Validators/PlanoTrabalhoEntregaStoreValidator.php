@@ -21,6 +21,8 @@ class PlanoTrabalhoEntregaStoreValidator
         StatusEnum::AGUARDANDO_ASSINATURA,
     ];
 
+    private const ORIGENS_VINCULADAS = ['PROPRIA_UNIDADE', 'OUTRA_UNIDADE'];
+
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoEntregaRepository $planoEntregaRepository,
@@ -32,7 +34,7 @@ class PlanoTrabalhoEntregaStoreValidator
         $plano = $this->findPlanoOrFail($dto->planoTrabalhoId);
         $this->validarStatus($plano);
 
-        if ($dto->origem !== 'PLANO_ENTREGA') {
+        if (!in_array($dto->origem, self::ORIGENS_VINCULADAS, true)) {
             return;
         }
 
