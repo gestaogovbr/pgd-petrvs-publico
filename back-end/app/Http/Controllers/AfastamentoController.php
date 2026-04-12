@@ -9,13 +9,13 @@ class AfastamentoController extends ControllerBase {
     public function checkPermissions($action, $request, $service, $unidade, $usuario) {
         switch ($action) {
             case 'STORE':
-                if (!$usuario->hasPermissionTo('MOD_AFT_INCL')) throw new ServerException("CapacidadeStore");
+                if (!$usuario->hasPermissionTo('MOD_OCOR_INCL')) throw new ServerException("CapacidadeStore");
                 break;
             case 'EDIT':
-                if (!$usuario->hasPermissionTo('MOD_AFT_EDT')) throw new ServerException("CapacidadeEdit");
+                if (!$usuario->hasPermissionTo('MOD_OCOR_EDT')) throw new ServerException("CapacidadeEdit");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_AFT_EXCL')) throw new ServerException("CapacidadeDestroy");
+                if (!$usuario->hasPermissionTo('MOD_OCOR_EXCL')) throw new ServerException("CapacidadeDestroy");
                 break;
         }
      }
