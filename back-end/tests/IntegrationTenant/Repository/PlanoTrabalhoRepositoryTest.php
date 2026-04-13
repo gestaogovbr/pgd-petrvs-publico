@@ -410,6 +410,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         $jaEnviado = PlanoTrabalho::factory()->ativo()->create([
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_agendamento_envio' => Carbon::now()->subDays(2),
+            'data_conclusao_envio' => Carbon::now()->subDay(),
             'data_envio_api_pgd' => Carbon::now()->subDay(),
         ]);
 

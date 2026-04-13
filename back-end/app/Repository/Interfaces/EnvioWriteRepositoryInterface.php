@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @template T of Model
  */
-interface AbstractEnvioWriteRepository
+interface EnvioWriteRepositoryInterface
 {
     /**
      * @param T $model

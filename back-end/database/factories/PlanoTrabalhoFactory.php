@@ -15,10 +15,6 @@ class PlanoTrabalhoFactory extends Factory
 
     public function definition(): array
     {
-        /*$usuario = Usuario::factory()->create();
-        $unidade = Unidade::factory()->create();
-        $tipoModalidade = TipoModalidade::factory()->create();*/
-
         return [
             'id' => $this->faker->uuid(),
             'carga_horaria' => 8.00,

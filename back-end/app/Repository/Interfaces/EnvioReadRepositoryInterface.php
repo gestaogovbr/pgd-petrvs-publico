@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @template TModel of Model
  */
-interface AbstractEnvioReadRepository
+interface EnvioReadRepositoryInterface
 {
     /**
      * @return TModel|null

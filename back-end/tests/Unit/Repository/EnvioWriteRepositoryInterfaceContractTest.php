@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Repository\Interfaces\AbstractEnvioWriteRepository;
+use App\Repository\Interfaces\EnvioWriteRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,8 +12,8 @@ afterEach(function () {
     Mockery::close();
 });
 
-test('AbstractEnvioWriteRepository declara agendarEnvio, registrarTentativa, registrarSucesso e registrarInsucesso', function () {
-    $reflection = new ReflectionClass(AbstractEnvioWriteRepository::class);
+test('EnvioWriteRepositoryInterface declara agendarEnvio, registrarTentativa, registrarSucesso e registrarInsucesso', function () {
+    $reflection = new ReflectionClass(EnvioWriteRepositoryInterface::class);
 
     expect($reflection->hasMethod('agendarEnvio'))->toBeTrue();
     $agendar = $reflection->getMethod('agendarEnvio');
@@ -39,10 +39,10 @@ test('AbstractEnvioWriteRepository declara agendarEnvio, registrarTentativa, reg
     expect($insucesso->getParameters()[1]->getType()?->getName())->toBe('string');
 });
 
-test('mock de AbstractEnvioWriteRepository aceita registrarSucesso e registrarInsucesso', function () {
+test('mock de EnvioWriteRepositoryInterface aceita registrarSucesso e registrarInsucesso', function () {
     $model = Mockery::mock(Model::class);
 
-    $repository = Mockery::mock(AbstractEnvioWriteRepository::class);
+    $repository = Mockery::mock(EnvioWriteRepositoryInterface::class);
     $repository->shouldReceive('registrarSucesso')
         ->once()
         ->with($model);
