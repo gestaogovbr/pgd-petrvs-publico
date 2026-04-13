@@ -185,7 +185,7 @@ class TenantService extends ServiceBase
         $tenant = $this->tenantRepository->findById($tenantId);
 
         if (!$tenant) {
-            \Log::error("Tenant não encontrado para ID: " . $tenantId);
+            Log::error("Tenant não encontrado para ID: " . $tenantId);
             throw new NotFoundException("Tenant", "Tenant não encontrado para ID: " . $tenantId);
         }
         $tenant->run($callback);
