@@ -27,6 +27,10 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
     {
         $planoTrabalho = parent::getModel();
 
+        if (!$planoTrabalho) {
+            throw new ExportPgdException("Plano de Trabalho inválido ou sem dados suficientes para envio", $this->id);
+        }
+
         if (!$planoTrabalho->isEmStatusParaEnvio()) {
             throw new ExportPgdException("Plano de Trabalho não está em status para envio", $this->id);
         }
