@@ -40,6 +40,7 @@ class PlanoTrabalhoRequestValidator
             'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
             'tipo_modalidade_id' => ['required', 'uuid'],
             'justificativa' => ['nullable', 'string', 'max:500'],
+            'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
         ], [
             'usuario_id.required' => 'O participante é obrigatório.',
             'unidade_id.required' => 'A unidade executora é obrigatória.',
@@ -49,6 +50,7 @@ class PlanoTrabalhoRequestValidator
             'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
             'tipo_modalidade_id.required' => 'A modalidade é obrigatória.',
             'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
+            'justificativa_modalidade.max' => 'A justificativa da modalidade não pode exceder 500 caracteres.',
         ]);
     }
 
@@ -62,6 +64,7 @@ class PlanoTrabalhoRequestValidator
             'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
             'tipo_modalidade_id' => ['required', 'uuid'],
             'justificativa' => ['nullable', 'string', 'max:500'],
+            'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
         ], [
             'usuario_id.required' => 'O participante é obrigatório.',
             'unidade_id.required' => 'A unidade executora é obrigatória.',
@@ -71,6 +74,7 @@ class PlanoTrabalhoRequestValidator
             'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
             'tipo_modalidade_id.required' => 'A modalidade é obrigatória.',
             'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
+            'justificativa_modalidade.max' => 'A justificativa da modalidade não pode exceder 500 caracteres.',
         ]);
     }
 

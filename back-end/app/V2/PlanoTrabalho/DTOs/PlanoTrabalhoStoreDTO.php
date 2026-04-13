@@ -32,7 +32,7 @@ class PlanoTrabalhoStoreDTO
             dataFim: $data['data_fim'],
             tipoModalidadeId: $data['tipo_modalidade_id'],
             criacaoUsuarioId: $criacaoUsuarioId,
-            justificativaModalidade: $data['justificativa'] ?? null,
+            justificativaModalidade: $data['justificativa_modalidade'] ?? null,
         );
     }
 

@@ -66,6 +66,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   // (necessário porque o br-select/Stencil processa options antes de writeValue)
   private readonly selectedUnidadeId = signal('');
   private readonly selectedModalidadeId = signal('');
+  private readonly usuarioTipoModalidadeId = signal('');
 
   // Sinais de seleção do entregaForm
   private readonly selectedOrigem = signal('PROPRIA_UNIDADE');
@@ -104,13 +105,15 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     data_fim: FormControl<string>;
     tipo_modalidade_id: FormControl<string>;
     justificativa: FormControl<string>;
+    justificativa_modalidade: FormControl<string>;
   }> = this.fb.group({
     usuario_id: this.fb.nonNullable.control('', Validators.required),
     unidade_id: this.fb.nonNullable.control('', Validators.required),
     data_inicio: this.fb.nonNullable.control('', Validators.required),
     data_fim: this.fb.nonNullable.control('', Validators.required),
     tipo_modalidade_id: this.fb.nonNullable.control('', Validators.required),
-    justificativa: this.fb.nonNullable.control('')
+    justificativa: this.fb.nonNullable.control(''),
+    justificativa_modalidade: this.fb.nonNullable.control('')
   });
 
   readonly entregaForm = this.fb.group({
@@ -134,6 +137,12 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly podeAssinar = computed(() =>
     this.podeSalvar()
   );
+
+  readonly modalidadeDivergente = computed(() => {
+    const selecionada = this.selectedModalidadeId();
+    const doUsuario = this.usuarioTipoModalidadeId();
+    return !!selecionada && !!doUsuario && selecionada !== doUsuario;
+  });
 
   // Options para BrSelectComponent — inclui `selected: true` para o item atual,
   // pois o br-select/Stencil processa options antes que writeValue tenha efeito.
@@ -195,6 +204,18 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       ctrl.updateValueAndValidity();
     }, { injector: this.injector });
 
+    // Justificativa de modalidade obrigatória quando diverge do tipo_modalidade_id do usuário
+    effect(() => {
+      const ctrl = this.form.controls.justificativa_modalidade;
+      if (this.modalidadeDivergente()) {
+        ctrl.setValidators(Validators.required);
+      } else {
+        ctrl.clearValidators();
+        ctrl.setValue('');
+      }
+      ctrl.updateValueAndValidity();
+    }, { injector: this.injector });
+
     this.route.paramMap.pipe(
       map(params => params.get('id')),
       filter(id => !!id),
@@ -210,6 +231,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       this.form.controls.data_inicio.setValue(plano.data_inicio ? new Date(plano.data_inicio).toISOString().split('T')[0] : '');
       this.form.controls.data_fim.setValue(plano.data_fim ? new Date(plano.data_fim).toISOString().split('T')[0] : '');
       this.form.controls.justificativa.setValue(plano.justificativa || '');
+      this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '');
 
       if (plano.usuario_id) {
         const usuario = await firstValueFrom(this.usuarioService.getById(plano.usuario_id));
@@ -391,7 +413,8 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       data_inicio: this.form.controls.data_inicio.value,
       data_fim: this.form.controls.data_fim.value,
       tipo_modalidade_id: this.form.controls.tipo_modalidade_id.value,
-      justificativa: this.form.controls.justificativa.value || null
+      justificativa: this.form.controls.justificativa.value || null,
+      justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null
     };
 
     this.saving.set(true);
@@ -648,6 +671,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       const tipoModalidadeValue = tipoModalidadeId.trim();
       const isValid = this.modalidades().some(m => `${m.id}` === tipoModalidadeValue);
       if (isValid) {
+        this.usuarioTipoModalidadeId.set(tipoModalidadeValue);
         this.form.controls.tipo_modalidade_id.setValue(tipoModalidadeValue);
         return;
       }

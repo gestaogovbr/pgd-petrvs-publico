@@ -67,6 +67,17 @@
               <br-select label="Modalidade" formControlName="tipo_modalidade_id" [options]="modalidadesOptions()" />
             </div>
           </div>
+
+          @if (modalidadeDivergente()) {
+            <div class="row mt-2">
+              <div class="col-md-12 mb-3">
+                <div class="br-textarea">
+                  <label>Justificativa para modalidade diferente da prevista <span class="text-danger">*</span></label>
+                  <textarea formControlName="justificativa_modalidade" placeholder="Descreva a justificativa para a modalidade escolhida..."></textarea>
+                </div>
+              </div>
+            </div>
+          }
         </form>
       </div>
     </div>

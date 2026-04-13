@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, Injector, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, of, switchMap, take, timer } from 'rxjs';
@@ -34,6 +34,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   private readonly programaService = inject(ProgramaService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
 
   saving = signal(false);
   carregandoRegramento = signal(false);
@@ -48,6 +49,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   private readonly selectedUnidadeId = signal('');
   private readonly selectedModalidadeId = signal('');
+  private readonly usuarioTipoModalidadeId = signal('');
 
   readonly joinPrograma = ['template_tcr'];
 
@@ -57,12 +59,14 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     data_inicio: FormControl<string>;
     data_fim: FormControl<string>;
     tipo_modalidade_id: FormControl<string>;
+    justificativa_modalidade: FormControl<string>;
   }> = this.fb.group({
     usuario_id: this.fb.nonNullable.control('', Validators.required),
     unidade_id: this.fb.nonNullable.control('', Validators.required),
     data_inicio: this.fb.nonNullable.control('', Validators.required),
     data_fim: this.fb.nonNullable.control('', Validators.required),
-    tipo_modalidade_id: this.fb.nonNullable.control('', Validators.required)
+    tipo_modalidade_id: this.fb.nonNullable.control('', Validators.required),
+    justificativa_modalidade: this.fb.nonNullable.control('')
   });
 
   readonly formStatus = signal(this.form.status);
@@ -70,6 +74,12 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   readonly podeSalvar = computed(() =>
     this.formStatus() === 'VALID' && !!this.programaId() && !this.saving()
   );
+
+  readonly modalidadeDivergente = computed(() => {
+    const selecionada = this.selectedModalidadeId();
+    const doUsuario = this.usuarioTipoModalidadeId();
+    return !!selecionada && !!doUsuario && selecionada !== doUsuario;
+  });
 
   readonly unidadesOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedUnidadeId();
@@ -85,6 +95,17 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.form.statusChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(status => this.formStatus.set(status));
+
+    effect(() => {
+      const ctrl = this.form.controls.justificativa_modalidade;
+      if (this.modalidadeDivergente()) {
+        ctrl.setValidators(Validators.required);
+      } else {
+        ctrl.clearValidators();
+        ctrl.setValue('');
+      }
+      ctrl.updateValueAndValidity();
+    }, { injector: this.injector });
 
     timer(0, 250)
       .pipe(
@@ -130,6 +151,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.unidades.set([]);
     this.programaId.set('');
     this.programaNome.set('');
+    this.usuarioTipoModalidadeId.set('');
     this.agentePublicoQuery.setValue('');
     this.form.controls.usuario_id.setValue('');
     this.form.controls.unidade_id.setValue('');
@@ -145,7 +167,8 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       programa_id: this.programaId(),
       data_inicio: this.form.controls.data_inicio.value,
       data_fim: this.form.controls.data_fim.value,
-      tipo_modalidade_id: this.form.controls.tipo_modalidade_id.value
+      tipo_modalidade_id: this.form.controls.tipo_modalidade_id.value,
+      justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null
     };
 
     this.saving.set(true);
@@ -205,6 +228,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       const tipoModalidadeValue = tipoModalidadeId.trim();
       const isValid = this.modalidades().some(m => `${m.id}` === tipoModalidadeValue);
       if (isValid) {
+        this.usuarioTipoModalidadeId.set(tipoModalidadeValue);
         this.selectedModalidadeId.set(tipoModalidadeValue);
         this.form.controls.tipo_modalidade_id.setValue(tipoModalidadeValue);
         return;
