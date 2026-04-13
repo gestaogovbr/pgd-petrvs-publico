@@ -43,7 +43,6 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly planoTrabalho = signal<PlanoTrabalho | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
-
   ngOnInit(): void {
     this.route.paramMap.pipe(
       map(params => params.get('id')),
