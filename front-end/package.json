@@ -31,6 +31,8 @@
     "@fullcalendar/daygrid": "^6.1.8",
     "@fullcalendar/interaction": "^6.1.8",
     "@govbr-ds/core": "^3.7.0",
+    "@govbr-ds/webcomponents": "2.0.0-next.66",
+    "@govbr-ds/webcomponents-angular": "2.0.0-next.66",
     "@tinymce/tinymce-angular": "^9.1.1",
     "@types/bootstrap": "^5.2.6",
     "@types/chrome": "^0.0.159",
