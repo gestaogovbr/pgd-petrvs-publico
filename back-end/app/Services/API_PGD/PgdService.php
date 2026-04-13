@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 class PgdService
 {
     CONST TIMEOUT = 35;
+    const DURACAO_TOKEN_PGD = 60*10; // 10 minutos
     private mixed $logReponse = null;
     private ?\Exception $exception = null;
 
@@ -221,7 +222,7 @@ class PgdService
     }
 
     public static function setToken($tenantId, $token) {
-        Cache::put("pgd_token_$tenantId", $token, 60*10);
+        Cache::put("pgd_token_$tenantId", $token, self::DURACAO_TOKEN_PGD);
     }
 
     public static function getToken($tenantId) {
