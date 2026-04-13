@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
-use Throwable;
-use Illuminate\Support\Facades\Validator;
 
 class OcorrenciaController extends ControllerBase {
 

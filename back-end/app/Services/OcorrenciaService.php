@@ -5,9 +5,16 @@ namespace App\Services;
 use App\Enums\PerfilEnum;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
-use App\Models\Usuario;
-use App\Repository\OcorrenciaRepository;
+use App\Exceptions\UnauthorizedUserPanelException;
+use App\Models\Ocorrencia;
+use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
+use App\Repository\Ocorrencia\OcorrenciaRepository;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Services\ServiceBase;
+use App\Services\UtilService;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class OcorrenciaService extends ServiceBase {
 
@@ -22,12 +29,29 @@ class OcorrenciaService extends ServiceBase {
         $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function insert(array $attributes): Ocorrencia
+    {
+        return $this->ocorrenciaRepository->insert($attributes);
+    }
+
+    public function afterStore($entity, $action): void
+    {
+        $consolidacao = PlanoTrabalhoConsolidacaoOcorrencia::where('ocorrencia_id', $entity->id)->first();
+        if ($consolidacao && $consolidacao->exists()) {
+            $snapshot = (array) ($consolidacao->snapshot ?? []);
+            $snapshot['data_inicio'] = $entity->data_inicio;
+            $snapshot['data_fim'] = $entity->data_fim;
+            $consolidacao->snapshot = $snapshot;
+            $consolidacao->save();
+        }
+    }
+
     private function ocorrenciasRestritasAoProprioUsuario(): bool
     {
         $usuario = self::loggedUser();
-        if (!$usuario || !$usuario->relationLoaded('perfil')) {
-            $usuario = $usuario ? Usuario::with('perfil')->find($usuario->id) : null;
-        }
         $nivel = $usuario?->perfil?->nivel;
         return $nivel !== null && (int) $nivel === PerfilEnum::PARTICIPANTE->value;
     }
@@ -43,36 +67,27 @@ class OcorrenciaService extends ServiceBase {
         }
     }
 
-    public function proxyQuery($query, &$data)
+    /**
+     * @param array<string, mixed> $params
+     * @return array{count: int, rows: mixed, extra: mixed}
+     */
+    public function query($params)
     {
-        $this->aplicarFiltroUsuarioLogado($data);
-    }
+        $this->aplicarFiltroUsuarioLogado($params);
 
-    public function proxySearch($query, &$data, &$text)
-    {
-        $this->aplicarFiltroUsuarioLogado($data);
+        $result = $this->ocorrenciaRepository->findAll($params);
+
+        return $result->toArray();
     }
 
     public function getById($data)
     {
         $entity = parent::getById($data);
+
         if ($this->ocorrenciasRestritasAoProprioUsuario() && $entity->usuario_id !== self::loggedUser()?->id) {
             throw new NotFoundException("Id não encontrado");
         }
         return $entity;
-    }
-
-    public function searchKey($data)
-    {
-        $result = parent::searchKey($data);
-        if (!$result || !$this->ocorrenciasRestritasAoProprioUsuario()) {
-            return $result;
-        }
-        $entity = $result['entity'] ?? null;
-        if ($entity && $entity->usuario_id !== self::loggedUser()?->id) {
-            return null;
-        }
-        return $result;
     }
 
     public function proxyStore($dataOrEntity, $unidade, $action)
@@ -101,15 +116,6 @@ class OcorrenciaService extends ServiceBase {
             $planoTrabalho = $this->planoTrabalhoRepository->findById((string) $data["plano_trabalho_id"]);
             if (empty($planoTrabalho)) {
                 throw new ServerException("ValidateOcorrencia", "Plano de trabalho da ocorrência não encontrado");
-            }
-            $between = UtilService::asTimestamp($planoTrabalho->data_inicio) <= UtilService::asTimestamp($data["data_fim"]) && UtilService::asTimestamp($planoTrabalho->data_fim) >= UtilService::asTimestamp($data["data_inicio"]);
-            /* RN_OCOR_1 */
-            if ($planoTrabalho->usuario_id != $data["usuario_id"]) {
-                throw new ServerException("ValidateOcorrencia", "Usuário do Plano de Trabalho deve obrigatoriamente ser o mesmo da ocorrência. [RN_OCOR_1]");
-            }
-            /* RN_OCOR_2 */
-            if (!$between) {
-                throw new ServerException("ValidateOcorrencia", "Ocorrência vinculada a plano de trabalho deverá ter algum perído coincidente com o do plano. (de " . UtilService::getDateFormatted($planoTrabalho->data_inicio) . " à " . UtilService::getDateFormatted($planoTrabalho->data_fim) . ") [RN_OCOR_2]");
             }
         }
     }
