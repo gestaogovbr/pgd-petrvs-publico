@@ -7,7 +7,7 @@ use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
-use App\Repository\Interfaces\AbstractEnvioRepository;
+use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Services\API_PGD\PgdService;
 use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
@@ -63,7 +63,7 @@ abstract class ExportarItemJob implements ShouldQueue
         return $this->getRepository()->findOneParaEnvio($this->id);
     }
 
-    abstract public function getRepository(): AbstractEnvioRepository;
+    abstract public function getRepository(): EnvioRepositoryInterface;
 
     abstract public function getResource(): JsonResource;
 
