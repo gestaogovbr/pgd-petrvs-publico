@@ -8,6 +8,15 @@ use Illuminate\Support\Facades\Log;
 use App\Exceptions\EnvioNaoAgendadoException;
 class PlanoEntregaEntregaProgressoObserver
 {
+    public $afterCommit = true;
+
+    public function __construct()
+    {
+        if (app()->environment('testing')) {
+            $this->afterCommit = false;
+        }
+    }
+
     public function created(PlanoEntregaEntregaProgresso $progresso): void
     {
         $this->scheduleExport($progresso);
