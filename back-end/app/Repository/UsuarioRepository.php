@@ -199,4 +199,9 @@ class UsuarioRepository implements EnvioRepositoryInterface
         /** @var Usuario $usuario */
         $this->writeRepository->registrarLog($usuario, $mensagem);
     }
+
+    public function updateConfig(string $usuarioId, string $unidadeId): bool
+    {
+        return $this->writeRepository->updateConfig($usuarioId, $unidadeId);
+    }
 }

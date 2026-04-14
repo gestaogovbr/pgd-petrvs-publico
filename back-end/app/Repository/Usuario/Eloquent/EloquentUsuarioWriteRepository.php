@@ -74,6 +74,24 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
         return $usuario->save();
     }
 
+    public function updateConfig(string $usuarioId, string $unidadeId): bool
+    {
+        $usuario = $this->model->find($usuarioId);
+        if (!$usuario) {
+            return false;
+        }
+
+        $config = $usuario->config ?? [];
+        $config['unidade_id'] = $unidadeId;
+
+        Usuario::withoutEvents(function () use ($usuario, $config): void {
+            $usuario->config = $config;
+            $usuario->save();
+        });
+
+        return true;
+    }
+
     public function removerVinculos(string $usuarioId): void
     {
         $usuario = $this->model->find($usuarioId);

@@ -28,6 +28,8 @@ use App\Services\UtilService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
@@ -962,6 +964,63 @@ class UsuarioService extends ServiceBase
         }
 
         return $unidades;
+    }
+
+    /**
+     * Seleciona a unidade atual do usuário na sessão e persiste em {@see Usuario::$config}.
+     *
+     * @param  array{unidade_id: string, matricula?: string|null}  $data
+     * @return array{status: string, unidade: \App\Models\Unidade|null}
+     *
+     * @throws \Exception Quando o usuário não possui área de trabalho na unidade informada.
+     */
+    public function selecionaUnidade(Request $request, Usuario $usuarioLogado, array $data): array
+    {
+        Auth::shouldUse('web');
+
+        $usuario = $this->autenticarPorMatricula($request, $usuarioLogado, $data['matricula'] ?? null);
+
+        $usuario = $this->usuarioRepository->findWithAreaTrabalho($usuario->id, $data['unidade_id']);
+
+        if (!$usuario || !$this->usuarioPossuiAreaTrabalhoNaUnidade($usuario)) {
+            throw new \Exception('Unidade não encontrada no usuário');
+        }
+
+        $request->session()->put('unidade_id', $data['unidade_id']);
+
+        $this->usuarioRepository->updateConfig($usuario->id, $data['unidade_id']);
+
+        return [
+            'status'  => 'OK',
+            'unidade' => $this->unidadeRepository->findById($data['unidade_id']),
+        ];
+    }
+
+    private function autenticarPorMatricula(Request $request, Usuario $usuarioAtual, ?string $matricula): Usuario
+    {
+        if (empty($matricula)) {
+            return $usuarioAtual;
+        }
+
+        $usuarioMatricula = $this->usuarioRepository->findByMatricula($matricula);
+
+        if ($usuarioMatricula && $usuarioMatricula->id !== $usuarioAtual->id) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            Auth::guard('web')->loginUsingId($usuarioMatricula->id, remember: false);
+            $request->session()->regenerate();
+
+            return $usuarioMatricula;
+        }
+
+        return $usuarioAtual;
+    }
+
+    private function usuarioPossuiAreaTrabalhoNaUnidade(Usuario $usuario): bool
+    {
+        return !empty($usuario->areasTrabalho?->first()?->id);
     }
 
     /**

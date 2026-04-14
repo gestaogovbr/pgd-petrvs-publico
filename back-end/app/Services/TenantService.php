@@ -170,7 +170,6 @@ class TenantService extends ServiceBase
 
     public function inicializeTenant($tenantId): void
     {
-
         $tenant = tenancy()->find($tenantId);
         ($tenant) ? tenancy()->initialize($tenant) : Log::error("Tenant não encontrado.");
     }
