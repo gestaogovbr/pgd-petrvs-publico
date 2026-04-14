@@ -11,20 +11,22 @@ trait EnvioTrait
 {
     public function agendarEnvio(Model $model, Carbon $dataAgendamento): void
     {
-        $model->data_agendamento_envio = $dataAgendamento;
+        $model->setAttribute('data_agendamento_envio', $dataAgendamento);
         $model->saveQuietly();
     }
 
     public function registrarTentativa(Model $model): void
     {
-        $model->data_tentativa_envio = Carbon::now();
+        $data = Carbon::now();
+        $model->setAttribute('data_tentativa_envio', $data);
         $model->saveQuietly();
     }
 
     public function registrarSucesso(Model $model): void
     {
-        $model->data_envio_api_pgd = Carbon::now();
-        $model->data_conclusao_envio = Carbon::now();
+        $data = Carbon::now();
+        $model->setAttribute('data_envio_api_pgd', $data);
+        $model->setAttribute('data_conclusao_envio', $data);
         $model->saveQuietly();
         $this->registrarLog($model, 'Envio realizado com sucesso.');
     }
@@ -32,21 +34,23 @@ trait EnvioTrait
     // o insucesso é uma tentativa de envio que falhou, mas que ainda pode ser reprocessada posteriormente
     public function registrarInsucesso(Model $model, string $mensagem): void
     {
-        $model->data_tentativa_envio = Carbon::now();
+        $data = Carbon::now();
+        $model->setAttribute('data_tentativa_envio', $data);
         $model->saveQuietly();
         $this->registrarLog($model, $mensagem);
     }
 
     public function registrarConclusao(Model $model, string $mensagem): void
     {
-        $model->data_conclusao_envio = Carbon::now();
+        $data = Carbon::now();
+        $model->setAttribute('data_conclusao_envio', $data);
         $model->saveQuietly();
         $this->registrarLog($model, $mensagem);
     }
 
     public function registrarLog(Model $model, string $mensagem): void
     {
-        $model->log_envio = $mensagem;
+        $model->setAttribute('log_envio', $mensagem);
         $model->saveQuietly();
     }
 }

@@ -8,7 +8,6 @@ use App\Models\PlanoTrabalho;
 use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Services\API_PGD\PgdService;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExportarPlanoTrabalhoJob extends ExportarItemJob
@@ -27,7 +26,7 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
     {
         $planoTrabalho = parent::getModel();
 
-        if (!$planoTrabalho) {
+        if (!$planoTrabalho instanceof PlanoTrabalho) {
             throw new ExportPgdException("Plano de Trabalho inválido ou sem dados suficientes para envio", $this->id);
         }
 
