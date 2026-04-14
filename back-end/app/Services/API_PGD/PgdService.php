@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
+use App\Repository\TenantRepository;
 
 class PgdService
 {
@@ -23,14 +24,20 @@ class PgdService
     const DURACAO_TOKEN_PGD = 60*10; // 10 minutos
     private mixed $logReponse = null;
     private ?\Exception $exception = null;
+    private $tenantRepository;
 
-    public function getHttpClient($tenantId) : \Illuminate\Http\Client\PendingRequest
+    public function __construct()
+    {
+        $this->tenantRepository = app()->make('TenantRepository');
+    }
+
+    public function getHttpClient($tenantId) : PendingRequest
     {
         $token = $this->authenticate($tenantId);
 
         $service = $this;
 
-        $tenant = Tenant::find($tenantId);
+        $tenant = $this->getTenant($tenantId);
 
         return Http::withOptions([
                 'verify'=> false,
@@ -118,7 +125,7 @@ class PgdService
             return $token;
         }
 
-        $tenant = Tenant::find($tenantId);
+        $tenant = $this->getTenant($tenantId);
 
         if (!$tenant['api_url']) {
             $errorMsg = 'Endereço URL da API PGD não definidos no Tenant '.$tenantId;
@@ -208,7 +215,7 @@ class PgdService
     }
 
     public function getTenant($tenantId) {
-        $tenant = Tenant::find($tenantId);
+        $tenant = $this->tenantRepository->findById($tenantId);
 
         if (!$tenant) {
             throw new ExportPgdException("Tenant inválido");
