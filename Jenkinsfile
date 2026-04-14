@@ -98,6 +98,10 @@ pipeline {
             steps {
                 dir('front-end') {
                     sh '''
+                    cd "$WORKSPACE"
+                    VERSION=$(node -p "require('./back-end/public/app.json').version")
+                    echo "Versão: $VERSION"
+
                     docker run --rm \
                       -v "$WORKSPACE":/workspace \
                       -w /workspace/front-end \
@@ -272,8 +276,74 @@ pipeline {
                             -o StrictHostKeyChecking=yes \
                             -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
                             -p "$SSH_PORT" \
-                            "$SSH_USER@$SSH_HOST" \
-                            'cd /home/marcocoelho && bash ./install-pgd.sh'
+                            "$SSH_USER@$SSH_HOST" << 'EOF'
+
+                            set -e
+
+                            docker compose down
+
+                            docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
+
+                            docker compose pull
+                            docker compose up -d --remove-orphans
+
+                            sleep 10
+
+                            docker cp /root/.env petrvs_php_hmg:/var/www/.env
+
+                            docker exec petrvs_php_hmg php artisan config:clear
+
+                            docker exec -i petrvs_php_hmg php artisan tinker << 'EOT'
+                                $tenantId = env('PETRVS_ENTIDADE');
+                                $tenant = App\\Models\\Tenant::find($tenantId);
+
+                                if ($tenant) {
+                                    $path = public_path('app.json');
+                                    if (file_exists($path)) {
+                                        $json = json_decode(file_get_contents($path), true);
+
+                                        if (($json['version'] ?? '') !== $tenant->version) {
+                                            $json['version'] = $tenant->version;
+                                            file_put_contents($path, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                                            echo 'Versão sincronizada para: ' . $tenant->version . PHP_EOL;
+                                        } else {
+                                            echo 'Versão já está sincronizada: ' . $tenant->version . PHP_EOL;
+                                        }
+                                    }
+                                } else {
+                                    echo 'Tenant não encontrado: ' . $tenantId . PHP_EOL;
+                                }
+EOT
+
+                            docker exec petrvs_php_hmg php artisan config:clear
+
+                            sleep 10
+
+                            docker exec petrvs_php_hmg bash -c 'chmod -R 777 /var/www/storage/logs/'
+                            docker exec petrvs_php_hmg bash -c 'chmod -R 777 /var/www/storage/'
+                            docker exec petrvs_php_hmg bash -c 'chown -R www-data:www-data /var/www/storage/logs/'
+                            docker exec petrvs_php_hmg bash -c 'rm -f /var/www/storage/logs/*.log'
+
+                            docker exec petrvs_php_hmg touch /var/www/storage/logs/laravel.log
+                            docker exec petrvs_php_hmg chmod 777 /var/www/storage/logs/laravel.log
+
+                            docker exec petrvs_php_hmg php artisan optimize:clear
+                            docker exec petrvs_php_hmg php artisan cache:clear
+                            docker exec petrvs_php_hmg php artisan config:clear
+
+                            docker exec petrvs_php_hmg composer dump-autoload
+
+                            docker exec petrvs_php_hmg php artisan migrate
+                            docker exec petrvs_php_hmg php artisan tenants:migrate
+                            docker exec petrvs_php_hmg php artisan tenants:run db:seed --option="class=DeployHMGSeeder"
+
+                            sleep 10
+
+                            docker restart petrvs_queue
+
+                            docker exec petrvs_php_hmg bash -c "service cron start"
+
+EOF
 
                         echo "Implantação concluída com sucesso em HMG."
                     '''
