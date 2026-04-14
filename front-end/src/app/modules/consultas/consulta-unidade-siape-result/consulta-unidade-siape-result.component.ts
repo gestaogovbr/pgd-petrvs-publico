@@ -1,5 +1,5 @@
-import { Component, Inject, Injector, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { Component, Injector, ViewChild, TemplateRef } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
@@ -23,6 +23,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
   
 
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
+  @ViewChild('resumoTpl') resumoTpl?: TemplateRef<any>;
   public unidade?: Unidade|null;
   public integranteDao: UnidadeIntegranteDaoService;
   public erros: string = '';
@@ -38,7 +39,6 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
       label: "Baixar Dados",
       icon: "bi bi-download",
       onClick: async() => {
-        let error: any = undefined;
         this.loading = true;
         try {
           const response = await firstValueFrom(this.dao!.exportarUnidadeSIAPE(this.codigoUnidade as string));
@@ -79,7 +79,6 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
       label: "Processar",
       icon: "bi bi-gear",
       onClick: async() => {
-        let error: any = undefined;
         let confirm = await this.dialog.confirm("ATENÇÃO", "CONFIRMA A SINCRONIZAÇÃO DA UNIDADE?");
         if (confirm) {
           this.loading = true;
@@ -91,19 +90,34 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
                   this.loading = false;
                   if (result?.success) {
                     await this.loadUnidade();
-                    this.dialog.alert("Sucesso", result.message);
+                    if (result?.resumo) {
+                      const relatorio = await this.obterRelatorioProcessamentoSafely();
+                      await this.mostrarResumo(result.resumo, result.message, relatorio);
+                    } else {
+                      this.dialog.alert("Sucesso", result.message);
+                    }
                     this.log = result.log;
                   } else {
-                    this.dialog.alert("Erro", "Erro ao processar a Unidade: " + result?.message);
+                    if (result?.resumo) {
+                      const relatorio = await this.obterRelatorioProcessamentoSafely();
+                      await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade: " + result?.message, relatorio);
+                    } else {
+                      this.dialog.alert("Erro", "Erro ao processar a Unidade: " + result?.message);
+                    }
                   }
                   this.downloadSiape();
                 },
-                error => {
+                async error => {
                   this.loading = false;
                   console.log(error);
-                  this.log = error.error?.message;
-                  this.error("Erro ao processar a Unidade: " + error.error?.message);
-                  this.dialog.alert("Erro", "Erro ao processar a Unidade: " + (error.message ?? error.error?.message));
+                  const result = error.error;
+                  if (result?.resumo) {
+                    const relatorio = await this.obterRelatorioProcessamentoSafely();
+                    await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade: " + (result.message ?? error.message), relatorio);
+                  } else {
+                    this.dialog.alert("Erro", "Erro ao processar a Unidade: " + (error.message ?? error.error?.message));
+                  }
+                  this.log = result?.log ?? error.error?.message ?? error.message;
                 }
             )
           } catch (error: any) {
@@ -122,15 +136,15 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
   }
 
-  public loadData(entity: Unidade, form: FormGroup, action?: string): Promise<void> | void {
+  public loadData(_entity: Unidade, _form: FormGroup, _action?: string): Promise<void> | void {
     throw new Error('Method not implemented.');
   }
-  public saveData(form: IIndexable): Promise<boolean | Unidade | NavigateResult | null | undefined> {
+  public saveData(_form: IIndexable): Promise<boolean | Unidade | NavigateResult | null | undefined> {
     throw new Error('Method not implemented.');
   }
 
 
-  public initializeData(form: FormGroup): void | Promise<void> {
+  public initializeData(_form: FormGroup): void | Promise<void> {
   }
 
 
@@ -210,6 +224,50 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
 
     } finally {
       this.loading = false;
+    }
+  }
+
+  private async obterRelatorioProcessamentoSafely(): Promise<{ chefeCpf?: string | null; quantidadeServidoresLotados?: number | null } | undefined> {
+    try {
+      const response = await firstValueFrom(this.dao!.relatorioProcessamentoSIAPE(this.codigoUnidade as string));
+      return {
+        chefeCpf: response?.chefeCpf ?? response?.chefe_cpf ?? this.dados?.cpfTitularAutoridadeUorg ?? this.unidade?.gestor?.usuario?.cpf ?? null,
+        quantidadeServidoresLotados: response?.quantidadeServidoresLotados ?? response?.quantidade_servidores_lotados ?? null
+      };
+    } catch {
+      return {
+        chefeCpf: this.dados?.cpfTitularAutoridadeUorg ?? this.unidade?.gestor?.usuario?.cpf ?? null,
+        quantidadeServidoresLotados: null
+      };
+    }
+  }
+
+  private async mostrarResumo(resumo: any[], titulo: string, relatorio?: { chefeCpf?: string | null; quantidadeServidoresLotados?: number | null }) {
+    if (!Array.isArray(resumo)) {
+      this.dialog.alert(titulo, 'Resumo inválido');
+      return;
+    }
+    
+    if (this.resumoTpl) {
+      const dialogResult = await this.dialog.template(
+        { title: titulo, modalWidth: 700 },
+        this.resumoTpl,
+        [{ label: "Ok", color: "btn-primary", value: true }],
+        { resumo: resumo, relatorio: relatorio }
+      ).asPromise();
+      
+      if (dialogResult?.button?.label === "Ok" && dialogResult?.dialog) {
+        dialogResult.dialog.close();
+      }
+    } else {
+      let msg = '';
+      resumo.forEach((item, index) => {
+        msg += `Servidor ${index + 1}:\n`;
+        msg += `Status: ${item.status}\n`;
+        msg += `Mensagem: ${item.mensagem}\n`;
+        msg += '\n';
+      });
+      await this.dialog.alert(titulo, msg);
     }
   }
 

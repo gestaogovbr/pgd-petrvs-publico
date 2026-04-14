@@ -57,3 +57,7 @@
          <toolbar [buttons]="toolbarButtons"></toolbar>
      </separator>
 </div>
+
+<ng-template #resumoTpl let-resumo="resumo" let-relatorio="relatorio">
+  <app-siape-resumo [resumo]="resumo" [relatorio]="relatorio"></app-siape-resumo>
+</ng-template>

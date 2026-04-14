@@ -1,5 +1,5 @@
-import { Component, Inject, Injector, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { Component, Injector, ViewChild } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -55,7 +55,6 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
   }
 
   public async onClickCPF() {
-    let error: any = undefined;
     if (this.form.valid) {
       this.loading = true;
       this.clearErros();
@@ -78,7 +77,11 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
         this.dao!.consultarSIAPE(cpf)
           .subscribe(
             result => {
-              if (result.success) {
+              const status = Number(result?.status);
+              const hasResponseStatus = Number.isInteger(status);
+              const isSuccessStatus = !hasResponseStatus || [200, 201].includes(status);
+
+              if (isSuccessStatus && result?.success) {
                 this.dadosPessoais = result.pessoais;
                 this.dadosFuncionais = result.funcionais;
 
@@ -98,12 +101,16 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
                     }
                   }
                 );
+                return;
               }
+
+              this.loading = false;
+              this.error("Erro ao consultar CPF no SIAPE: " + this.getSiapeErrorMessage(result));
             },
             error => {
               this.loading = false;
               console.log(error);
-              this.error("Erro ao consultar CPF no SIAPE: " + error.error?.message);
+              this.error("Erro ao consultar CPF no SIAPE: " + this.getSiapeErrorMessage(error));
             }
         )
       } catch (error: any) {
@@ -114,6 +121,25 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
         
       }
     }
+  }
+
+  private getSiapeErrorMessage(error: any): string {
+    const message = error?.error?.error
+      || error?.error?.message
+      || error?.message
+      || error?.error
+      || error;
+
+    if (typeof message === 'string' && message.trim().length) {
+      return message;
+    }
+
+    const status = error?.status;
+    if (typeof status === 'number' && status > 0) {
+      return `Falha na consulta (status ${status}).`;
+    }
+
+    return 'Falha na consulta.';
   }
 
   ngOnInit() {

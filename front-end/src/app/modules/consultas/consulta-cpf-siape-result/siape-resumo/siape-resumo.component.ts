@@ -9,6 +9,7 @@ import { Component, Input, OnInit } from '@angular/core';
 export class SiapeResumoComponent implements OnInit {
 
   @Input() resumo: any[] = [];
+  @Input() relatorio?: { chefeCpf?: string | null; quantidadeServidoresLotados?: number | null };
 
   constructor() { }
 

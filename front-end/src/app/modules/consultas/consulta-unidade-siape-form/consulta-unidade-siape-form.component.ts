@@ -1,9 +1,7 @@
-import { Component, Inject, Injector, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { Component, Injector, ViewChild } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
-import { Usuario } from 'src/app/models/usuario.model';
 import { NavigateResult } from 'src/app/services/navigate.service';
 import { PageFormBase } from '../../base/page-form-base';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
@@ -46,7 +44,6 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
   }
 
   public async onClickUnidade() {
-    let error: any = undefined;
     if (this.form.valid) {
       this.loading = true;
       this.clearErros();
@@ -69,7 +66,11 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
         this.dao!.consultaUnidadeSIAPE(codigoUnidade)
           .subscribe(
             result => {
-              if (result.success) {
+              const status = Number(result?.status);
+              const hasResponseStatus = Number.isInteger(status);
+              const isSuccessStatus = !hasResponseStatus || [200, 201].includes(status);
+
+              if (isSuccessStatus && result?.success) {
                 this.dados = result.dados;
 
                 this.loading = false;
@@ -87,12 +88,16 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
                     }
                   }
                 );
+                return;
               }
+
+              this.loading = false;
+              this.error("Erro ao consultar Unidade no SIAPE: " + this.getSiapeErrorMessage(result));
             },
             error => {
               this.loading = false;
               console.log(error);
-              this.error("Erro ao consultar Unidade no SIAPE: " + error.error?.message);
+              this.error("Erro ao consultar Unidade no SIAPE: " + this.getSiapeErrorMessage(error));
             }
         )
       } catch (error: any) {
@@ -105,13 +110,32 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
     }
   }
 
-  public loadData(entity: Unidade, form: FormGroup, action?: string): Promise<void> | void {
+  private getSiapeErrorMessage(error: any): string {
+    const message = error?.error?.error
+      || error?.error?.message
+      || error?.message
+      || error?.error
+      || error;
+
+    if (typeof message === 'string' && message.trim().length) {
+      return message;
+    }
+
+    const status = error?.status;
+    if (typeof status === 'number' && status > 0) {
+      return `Falha na consulta (status ${status}).`;
+    }
+
+    return 'Falha na consulta.';
+  }
+
+  public loadData(_entity: Unidade, _form: FormGroup, _action?: string): Promise<void> | void {
     // throw new Error('Method not implemented.');
   }
-  public initializeData(form: FormGroup): Promise<void> | void {
+  public initializeData(_form: FormGroup): Promise<void> | void {
     // throw new Error('Method not implemented.');
   }
-  public saveData(form: IIndexable): Promise<boolean | Unidade | NavigateResult | null | undefined> {
+  public saveData(_form: IIndexable): Promise<boolean | Unidade | NavigateResult | null | undefined> {
     throw new Error('Method not implemented.');
   }
 
