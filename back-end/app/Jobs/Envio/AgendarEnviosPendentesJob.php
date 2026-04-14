@@ -16,7 +16,7 @@ class AgendarEnviosPendentesJob implements ShouldQueue, ContratoJobSchedule
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $timeout = 0;
+    public int $timeout = 60 * 60; // 1 hora
     public int $tries = 1;
 
     public function __construct(private readonly ?string $tenantId = null)
