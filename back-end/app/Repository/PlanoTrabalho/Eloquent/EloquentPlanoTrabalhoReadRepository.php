@@ -39,7 +39,6 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                             $query->whereIn('status', StatusEnum::permitemEnvio());
                         });
                 },
-                'entregas',
                 'consolidacoes' => function ($query) {
                     $query->whereIn('status', [StatusEnum::AVALIADO->value]);
                 },
