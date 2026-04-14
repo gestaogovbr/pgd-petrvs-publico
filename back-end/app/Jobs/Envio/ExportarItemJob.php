@@ -116,7 +116,6 @@ abstract class ExportarItemJob implements ShouldQueue
                 $this->sucesso();
             } else {
                 $this->logError('Erro no envio!');
-                Log::info($resource->toArray(request()));
             }
 
             unset($resource);
