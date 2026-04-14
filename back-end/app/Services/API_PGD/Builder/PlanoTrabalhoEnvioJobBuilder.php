@@ -25,9 +25,6 @@ class PlanoTrabalhoEnvioJobBuilder
             );
         }
 
-        /* @var PlanoTrabalho $planoTrabalho */
-        $planoTrabalhoRepository->agendarEnvio($planoTrabalho, Carbon::now());
-
         return new ExportarPlanoTrabalhoJob($tenantId, $planoTrabalho->id, $origem);
     }
 }

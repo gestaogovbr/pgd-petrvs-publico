@@ -21,7 +21,6 @@ class UsuarioObserver
     {
         if ($usuario->wasChanged('deleted_at')) {
             return; // ignora se veio de restore
-
         }
 
         if (!tenancy()->initialized) {

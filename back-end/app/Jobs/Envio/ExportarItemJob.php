@@ -47,9 +47,6 @@ abstract class ExportarItemJob implements ShouldQueue
         $this->queue = 'pgd_queue';
         $this->connection = 'rabbitmq';
 
-        //$tenant = tenancy()->find($tenantId);
-        //tenancy()->initialize($tenant);
-
         $model = $this->getRepository()->findById($this->id);
         $dataAgendamento = Carbon::now();
         if ($model !== null) {
@@ -91,6 +88,8 @@ abstract class ExportarItemJob implements ShouldQueue
 
         $tenant = tenancy()->find($this->tenantId);
         tenancy()->initialize($tenant);
+
+        $model = null;
 
         try{
             /** @var Usuario|PlanoEntrega|PlanoTrabalho $model */
