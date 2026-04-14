@@ -10,6 +10,15 @@ use App\Exceptions\EnvioNaoAgendadoException;
 
 class StatusJustificativaObserver
 {
+    public $afterCommit = true;
+
+    public function __construct()
+    {
+        if (app()->environment('testing')) {
+            $this->afterCommit = false;
+        }
+    }
+
     public function created(StatusJustificativa $model)
     {
         if ($model->isPlanoTrabalho() && $model->isAtivo()) {

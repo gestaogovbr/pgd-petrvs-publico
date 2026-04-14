@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\Usuario;
-use App\Repository\Interfaces\AbstractEnvioRepository;
+use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
 use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
 use Carbon\Carbon;
@@ -14,9 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * @implements AbstractEnvioRepository<Usuario>
+ * @implements EnvioRepositoryInterface<Usuario>
  */
-class UsuarioRepository implements AbstractEnvioRepository
+class UsuarioRepository implements EnvioRepositoryInterface
 {
     public function __construct(
         private readonly UsuarioReadRepositoryContract $readRepository,
@@ -198,5 +198,10 @@ class UsuarioRepository implements AbstractEnvioRepository
     {
         /** @var Usuario $usuario */
         $this->writeRepository->registrarLog($usuario, $mensagem);
+    }
+
+    public function updateConfig(string $usuarioId, string $unidadeId): bool
+    {
+        return $this->writeRepository->updateConfig($usuarioId, $unidadeId);
     }
 }

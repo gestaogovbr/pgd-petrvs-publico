@@ -5,7 +5,7 @@ use App\Exceptions\ExportPgdException;
 use App\Jobs\Envio\ExportarItemJob;
 use App\Jobs\Envio\Resources\PlanoTrabalhoResource;
 use App\Models\PlanoTrabalho;
-use App\Repository\Interfaces\AbstractEnvioRepository;
+use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Services\API_PGD\PgdService;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +18,7 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
         return 'Enviar Plano de Trabalho para API';
     }
 
-    public function getRepository(): AbstractEnvioRepository
+    public function getRepository(): EnvioRepositoryInterface
     {
         return app(PlanoTrabalhoRepository::class);
     }
@@ -26,6 +26,10 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
     public function getModel(): ?PlanoTrabalho
     {
         $planoTrabalho = parent::getModel();
+
+        if (!$planoTrabalho) {
+            throw new ExportPgdException("Plano de Trabalho inválido ou sem dados suficientes para envio", $this->id);
+        }
 
         if (!$planoTrabalho->isEmStatusParaEnvio()) {
             throw new ExportPgdException("Plano de Trabalho não está em status para envio", $this->id);

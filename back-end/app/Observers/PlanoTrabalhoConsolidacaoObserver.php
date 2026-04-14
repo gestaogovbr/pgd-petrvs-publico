@@ -9,6 +9,15 @@ use App\Exceptions\EnvioNaoAgendadoException;
 
 class PlanoTrabalhoConsolidacaoObserver
 {
+    public $afterCommit = true;
+
+    public function __construct()
+    {
+        if (app()->environment('testing')) {
+            $this->afterCommit = false;
+        }
+    }
+
     public function created(PlanoTrabalhoConsolidacao $model): void
     {
     }

@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @template T of Model
- *
  */
-interface AbstractEnvioRepository extends AbstractEnvioReadRepository, AbstractEnvioWriteRepository
+interface EnvioRepositoryInterface extends EnvioReadRepositoryInterface, EnvioWriteRepositoryInterface
 {
 }

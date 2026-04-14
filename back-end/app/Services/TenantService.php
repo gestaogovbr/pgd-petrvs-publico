@@ -170,7 +170,6 @@ class TenantService extends ServiceBase
 
     public function inicializeTenant($tenantId): void
     {
-
         $tenant = tenancy()->find($tenantId);
         ($tenant) ? tenancy()->initialize($tenant) : Log::error("Tenant não encontrado.");
     }
@@ -182,7 +181,12 @@ class TenantService extends ServiceBase
      */
     public function runInTenant(int|string $tenantId, callable $callback): void
     {
-        $tenant = Tenant::findOrFail($tenantId);
+        $tenant = $this->tenantRepository->findById($tenantId);
+
+        if (!$tenant) {
+            Log::error("Tenant não encontrado para ID: " . $tenantId);
+            throw new NotFoundException("Tenant", "Tenant não encontrado para ID: " . $tenantId);
+        }
         $tenant->run($callback);
     }
 

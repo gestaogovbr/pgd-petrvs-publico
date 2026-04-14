@@ -8,7 +8,7 @@ use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
-use App\Repository\Interfaces\AbstractEnvioReadRepository;
+use App\Repository\Interfaces\EnvioReadRepositoryInterface;
 use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +22,7 @@ use Illuminate\Support\Collection as SupportCollection;
 /**
  * @extends AbstractEloquentReadRepository<Usuario>
  */
-class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository implements UsuarioReadRepositoryContract, AbstractEnvioReadRepository
+class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository implements UsuarioReadRepositoryContract, EnvioReadRepositoryInterface
 {
     public function __construct(Usuario $model)
     {

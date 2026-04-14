@@ -25,6 +25,7 @@ trait EnvioTrait
     {
         $model->data_envio_api_pgd = Carbon::now();
         $model->data_conclusao_envio = Carbon::now();
+        $model->saveQuietly();
         $this->registrarLog($model, 'Envio realizado com sucesso.');
     }
 
@@ -32,12 +33,14 @@ trait EnvioTrait
     public function registrarInsucesso(Model $model, string $mensagem): void
     {
         $model->data_tentativa_envio = Carbon::now();
+        $model->saveQuietly();
         $this->registrarLog($model, $mensagem);
     }
 
     public function registrarConclusao(Model $model, string $mensagem): void
     {
         $model->data_conclusao_envio = Carbon::now();
+        $model->saveQuietly();
         $this->registrarLog($model, $mensagem);
     }
 

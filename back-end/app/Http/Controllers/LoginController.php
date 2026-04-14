@@ -11,7 +11,6 @@ use App\Services\IntegracaoService;
 use App\Services\ApiService;
 use App\Services\LoginService;
 use App\Models\Usuario;
-use App\Models\Unidade;
 use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Services\UsuarioService;
@@ -62,7 +61,7 @@ class LoginController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
-    public function selecionaUnidade(Request $request, FirebaseAuthService $auth)
+    public function selecionaUnidade(Request $request, FirebaseAuthService $auth, UsuarioService $usuarioService)
     {
         $data = $request->validate([
             'unidade_id' => ['required'],
@@ -77,44 +76,13 @@ class LoginController extends Controller
 
         $usuario = Auth::guard('web')->user();
 
-        if (!empty($data['matricula'])) {
-            $usuarioMatricula = Usuario::where('matricula', $data['matricula'])->first();
-
-            if ($usuarioMatricula && $usuarioMatricula->id !== $usuario->id) {
-                Auth::guard('web')->logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                Auth::guard('web')->loginUsingId($usuarioMatricula->id, remember: false);
-                $request->session()->regenerate();
-
-                $usuario = $usuarioMatricula;
-            }
+        try {
+            $payload = $usuarioService->selecionaUnidade($request, $usuario, $data);
+        } catch (\Exception $e) {
+            return LogError::newError('Unidade não encontrada no usuário', $e);
         }
 
-        $usuario = Usuario::where('id', $usuario->id)
-            ->with(['areasTrabalho' => function ($query) use ($data) {
-                $query->where('unidade_id', $data['unidade_id']);
-            }])->first();
-
-        if (!isset($usuario->areasTrabalho[0]) || empty($usuario->areasTrabalho[0]->id)) {
-            return LogError::newError('Unidade não encontrada no usuário', new \Exception("selecionaUnidade"));
-        }
-
-        $request->session()->put('unidade_id', $data['unidade_id']);
-
-        $config = $usuario->config ?? [];
-        $config['unidade_id'] = $data['unidade_id'];
-
-        Usuario::withoutEvents(function () use ($usuario, $config) {
-             $usuario->config = $config;
-             $usuario->save();
-        });
-
-        return response()->json([
-            'status'  => 'OK',
-            'unidade' => Unidade::find($data['unidade_id']),
-        ]);
+        return response()->json($payload);
     }
 
 

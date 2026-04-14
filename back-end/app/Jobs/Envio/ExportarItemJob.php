@@ -7,7 +7,7 @@ use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
-use App\Repository\Interfaces\AbstractEnvioRepository;
+use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Services\API_PGD\PgdService;
 use Carbon\Carbon;
 use Illuminate\Bus\Batchable;
@@ -47,9 +47,6 @@ abstract class ExportarItemJob implements ShouldQueue
         $this->queue = 'pgd_queue';
         $this->connection = 'rabbitmq';
 
-        //$tenant = tenancy()->find($tenantId);
-        //tenancy()->initialize($tenant);
-
         $model = $this->getRepository()->findById($this->id);
         $dataAgendamento = Carbon::now();
         if ($model !== null) {
@@ -63,7 +60,7 @@ abstract class ExportarItemJob implements ShouldQueue
         return $this->getRepository()->findOneParaEnvio($this->id);
     }
 
-    abstract public function getRepository(): AbstractEnvioRepository;
+    abstract public function getRepository(): EnvioRepositoryInterface;
 
     abstract public function getResource(): JsonResource;
 
@@ -92,9 +89,16 @@ abstract class ExportarItemJob implements ShouldQueue
         $tenant = tenancy()->find($this->tenantId);
         tenancy()->initialize($tenant);
 
+        $model = null;
+
         try{
             /** @var Usuario|PlanoEntrega|PlanoTrabalho $model */
             $model = $this->getModel();
+
+             if (!$model) {
+                $this->logInfo("Item não encontrado para envio.");
+                return;
+            }
 
             if ($this->timestamp && $this->timestamp->lt($model->data_agendamento_envio)) {
                 $this->logInfo("Ignorando envio defasado.");
@@ -111,7 +115,6 @@ abstract class ExportarItemJob implements ShouldQueue
                 $this->sucesso();
             } else {
                 $this->logError('Erro no envio!');
-                Log::info($resource->toArray(request()));
             }
 
             unset($resource);

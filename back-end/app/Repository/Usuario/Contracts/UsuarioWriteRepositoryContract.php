@@ -22,4 +22,6 @@ interface   UsuarioWriteRepositoryContract
     public function registrarInsucesso(Usuario $usuario, string $mensagem): void;
     public function registrarConclusao(Usuario $usuario, string $mensagem): void;
     public function registrarLog(Usuario $usuario, string $mensagem): void;
+
+    public function updateConfig(string $usuarioId, string $unidadeId): bool;
 }

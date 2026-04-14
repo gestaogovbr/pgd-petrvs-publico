@@ -17,7 +17,7 @@ class PlanoEntregaEnvioService
             return false;
         }
 
-        dispatch($job)->onConnection('rabbitmq')->onQueue('pgd_queue')->afterCommit();
+        dispatch($job);
         Log::info('PE agendado');
         return true;
     }

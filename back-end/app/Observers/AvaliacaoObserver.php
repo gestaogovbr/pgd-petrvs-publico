@@ -10,6 +10,15 @@ use Illuminate\Support\Facades\Log;
 
 class AvaliacaoObserver
 {
+    public $afterCommit = true;
+
+    public function __construct()
+    {
+        if (app()->environment('testing')) {
+            $this->afterCommit = false;
+        }
+    }
+
     public function created(Avaliacao $model): void
     {
         if ($model->isPlanoEntrega()) {

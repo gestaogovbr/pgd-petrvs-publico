@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\PlanoEntrega;
-use App\Repository\Interfaces\AbstractEnvioRepository;
+use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
 use Carbon\Carbon;
@@ -13,9 +13,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @implements AbstractEnvioRepository<PlanoEntrega>
+ * @implements EnvioRepositoryInterface<PlanoEntrega>
  */
-class PlanoEntregaRepository implements AbstractEnvioRepository
+class PlanoEntregaRepository implements EnvioRepositoryInterface
 {
     public function __construct(
         private readonly PlanoEntregaReadRepositoryContract $readRepository,
