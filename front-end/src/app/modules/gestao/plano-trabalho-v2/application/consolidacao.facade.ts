@@ -3,7 +3,8 @@ import { ConsolidacaoApiClient } from '../infra/consolidacao-api.client';
 import { ConcluirConsolidacaoUseCase } from './concluir-consolidacao.usecase';
 import { AvaliarConsolidacaoUseCase } from './avaliar-consolidacao.usecase';
 import { SolicitarRecursoUseCase } from './solicitar-recurso.usecase';
-import { AtividadeConsolidacao, Consolidacao, NotaAvaliacao, PlanoTrabalhoEntrega } from '../domain/types';
+import { AtividadeConsolidacao, Consolidacao, NotaAvaliacao, Ocorrencia, OcorrenciaFormValue, PlanoTrabalhoEntrega, TipoMotivoAfastamento } from '../domain/types';
+import { TipoMotivoAfastamentoService } from 'src/app/v2/services/tipo-motivo-afastamento.service';
 
 @Injectable()
 export class ConsolidacaoFacade {
@@ -11,6 +12,7 @@ export class ConsolidacaoFacade {
   private readonly concluirUC = inject(ConcluirConsolidacaoUseCase);
   private readonly avaliarUC = inject(AvaliarConsolidacaoUseCase);
   private readonly solicitarRecursoUC = inject(SolicitarRecursoUseCase);
+  private readonly tipoMotivoApi = inject(TipoMotivoAfastamentoService);
 
   private planoId = '';
 
@@ -37,12 +39,22 @@ export class ConsolidacaoFacade {
   readonly justificativaRecurso = signal<string>('');
   readonly enviandoRecursoIds = signal<Set<string>>(new Set());
 
+  // --- Estado de ocorrências ---
+  readonly tiposMotivo = signal<TipoMotivoAfastamento[]>([]);
+  readonly ocorrenciaEmEdicao = signal<{
+    consolidacaoId: string;
+    ocorrenciaId?: string;
+    form: OcorrenciaFormValue;
+  } | null>(null);
+  readonly salvandoOcorrencia = signal(false);
+
   // --- Inicialização ---
 
   init(planoId: string): void {
     this.planoId = planoId;
     this.loadConsolidacoes();
     this.loadNotas();
+    this.loadTiposMotivo();
   }
 
   loadConsolidacoes(): void {
@@ -56,6 +68,101 @@ export class ConsolidacaoFacade {
     this.api.getNotasConsolidacao(this.planoId).subscribe(notas => {
       notas.sort((a: NotaAvaliacao, b: NotaAvaliacao) => b.sequencia - a.sequencia);
       this.notas.set(notas);
+    });
+  }
+
+  loadTiposMotivo(): void {
+    this.tipoMotivoApi.listar().subscribe(tipos => {
+      this.tiposMotivo.set(tipos);
+    });
+  }
+
+  // --- Ocorrências ---
+
+  getOcorrenciasConsolidacao(consolidacao: Consolidacao): Ocorrencia[] {
+    return consolidacao.ocorrencias ?? [];
+  }
+
+  iniciarNovaOcorrencia(consolidacao: Consolidacao): void {
+    this.ocorrenciaEmEdicao.set({
+      consolidacaoId: consolidacao.id,
+      form: {
+        observacoes: '',
+        data_inicio: consolidacao.data_inicio.substring(0, 10),
+        data_fim: consolidacao.data_fim.substring(0, 10),
+        tipo_motivo_afastamento_id: '',
+        horas: '',
+      },
+    });
+  }
+
+  iniciarEdicaoOcorrencia(consolidacao: Consolidacao, ocorrencia: Ocorrencia): void {
+    this.ocorrenciaEmEdicao.set({
+      consolidacaoId: consolidacao.id,
+      ocorrenciaId: ocorrencia.id,
+      form: {
+        observacoes: ocorrencia.observacoes ?? '',
+        data_inicio: ocorrencia.data_inicio.substring(0, 10),
+        data_fim: ocorrencia.data_fim.substring(0, 10),
+        tipo_motivo_afastamento_id: ocorrencia.tipo_motivo_afastamento_id,
+        horas: ocorrencia.horas != null ? String(ocorrencia.horas) : '',
+      },
+    });
+  }
+
+  cancelarOcorrencia(): void {
+    this.ocorrenciaEmEdicao.set(null);
+  }
+
+  setOcorrenciaForm(partial: Partial<OcorrenciaFormValue>): void {
+    this.ocorrenciaEmEdicao.update(e => e ? { ...e, form: { ...e.form, ...partial } } : null);
+  }
+
+  confirmarOcorrencia(): void {
+    const edicao = this.ocorrenciaEmEdicao();
+    if (!edicao) return;
+
+    this.salvandoOcorrencia.set(true);
+    const { form, ocorrenciaId } = edicao;
+    const horas = form.horas ? Number(form.horas) : null;
+
+    const obs = ocorrenciaId
+      ? this.api.updateOcorrencia(this.planoId, ocorrenciaId, {
+          observacoes: form.observacoes,
+          tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
+          horas: horas ?? undefined,
+        })
+      : this.api.createOcorrencia(this.planoId, {
+          observacoes: form.observacoes,
+          data_inicio: form.data_inicio,
+          data_fim: form.data_fim,
+          tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
+          ...(horas ? { horas } : {}),
+        });
+
+    obs.subscribe({
+      next: (salva) => {
+        this.consolidacoes.update(lista => lista.map(c => {
+          if (c.id !== edicao.consolidacaoId) return c;
+          const ocorrencias = ocorrenciaId
+            ? (c.ocorrencias ?? []).map((o: Ocorrencia) => o.id === salva.id ? salva : o)
+            : [...(c.ocorrencias ?? []), salva];
+          return { ...c, ocorrencias };
+        }));
+        this.ocorrenciaEmEdicao.set(null);
+        this.salvandoOcorrencia.set(false);
+      },
+      error: () => this.salvandoOcorrencia.set(false),
+    });
+  }
+
+  excluirOcorrencia(consolidacaoId: string, ocorrencia: Ocorrencia): void {
+    if (!confirm('Deseja excluir esta ocorrência?')) return;
+    this.api.deleteOcorrencia(this.planoId, ocorrencia.id).subscribe(() => {
+      this.consolidacoes.update(lista => lista.map(c => {
+        if (c.id !== consolidacaoId) return c;
+        return { ...c, ocorrencias: (c.ocorrencias ?? []).filter((o: Ocorrencia) => o.id !== ocorrencia.id) };
+      }));
     });
   }
 

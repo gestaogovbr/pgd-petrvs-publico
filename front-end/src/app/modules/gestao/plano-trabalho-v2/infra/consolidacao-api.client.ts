@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { AvaliacaoConsolidacao, AtividadeConsolidacao, Consolidacao, NotaAvaliacao, PlanoTrabalhoId } from '../domain/types';
+import { AvaliacaoConsolidacao, AtividadeConsolidacao, Consolidacao, NotaAvaliacao, Ocorrencia, PlanoTrabalhoId } from '../domain/types';
 import { GlobalsService } from 'src/app/services/globals.service';
 
 @Injectable()
@@ -12,7 +12,12 @@ export class ConsolidacaoApiClient {
 
   getConsolidacoes(planoId: PlanoTrabalhoId): Observable<Consolidacao[]> {
     return this.http.get<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao`)
-      .pipe(map((r: any) => r?.data ?? []));
+      .pipe(map((r: any) => (r?.data ?? []).map((c: any) => ({
+        ...c,
+        ocorrencias: (c.afastamentos ?? [])
+          .map((pivot: any) => pivot.afastamento)
+          .filter(Boolean),
+      }))));
   }
 
   concluirConsolidacao(planoId: string, consolidacaoId: string): Observable<Consolidacao> {
@@ -52,5 +57,31 @@ export class ConsolidacaoApiClient {
 
   deleteAtividade(planoId: string, consolidacaoId: string, atividadeId: string): Observable<void> {
     return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/atividade/${atividadeId}`);
+  }
+
+  // --- Ocorrências ---
+
+  createOcorrencia(planoId: string, payload: {
+    observacoes: string;
+    data_inicio: string;
+    data_fim: string;
+    tipo_motivo_afastamento_id: string;
+    horas?: number;
+  }): Observable<Ocorrencia> {
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoId}/ocorrencia`, payload)
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  updateOcorrencia(planoId: string, ocorrenciaId: string, payload: {
+    observacoes?: string;
+    tipo_motivo_afastamento_id?: string;
+    horas?: number | null;
+  }): Observable<Ocorrencia> {
+    return this.http.patch<any>(`${this.gb.servidorURL}${this.base}/${planoId}/ocorrencia/${ocorrenciaId}`, payload)
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  deleteOcorrencia(planoId: string, ocorrenciaId: string): Observable<void> {
+    return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoId}/ocorrencia/${ocorrenciaId}`);
   }
 }

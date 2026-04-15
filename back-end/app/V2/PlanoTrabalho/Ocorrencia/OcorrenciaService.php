@@ -28,7 +28,7 @@ class OcorrenciaService
 
         $this->vincularConsolidacoes($plano->id, $afastamento);
 
-        return $afastamento->load('tipoMotivoAfastamento:id,descricao');
+        return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
     }
 
     public function update(OcorrenciaUpdateDTO $dto): Afastamento
@@ -38,7 +38,7 @@ class OcorrenciaService
 
         $afastamento->update($dto->toPersistArray());
 
-        return $afastamento->load('tipoMotivoAfastamento:id,descricao');
+        return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
     }
 
     public function destroy(string $planoTrabalhoId, string $ocorrenciaId): void

@@ -23,7 +23,7 @@ class EloquentTipoMotivoAfastamentoReadRepository extends AbstractEloquentReadRe
     {
         return $this->query()
             ->whereNull('deleted_at')
-            ->select(['id', 'codigo', 'nome'])
+            ->select(['id', 'codigo', 'nome', 'horas'])
             ->orderBy('nome')
             ->get();
     }

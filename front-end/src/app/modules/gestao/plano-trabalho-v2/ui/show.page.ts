@@ -17,12 +17,13 @@ import { ConsolidacaoFacade } from "../application/consolidacao.facade";
 import { BreadcrumbService } from "src/app/v2/components/breadcrumb/breadcrumb.service";
 import { AvaliacaoFormComponent } from "./components/avaliacao-form.component";
 import { RecursoFormComponent } from "./components/recurso-form.component";
+import { OcorrenciaFormComponent } from "./components/ocorrencia-form.component";
 
 @Component({
   selector: 'app-plano-trabalho-v2-show-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, AvaliacaoFormComponent, RecursoFormComponent],
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, AvaliacaoFormComponent, RecursoFormComponent, OcorrenciaFormComponent],
   templateUrl: './show.page.html'
 })
 export class PlanoTrabalhoV2ShowPage implements OnInit {
@@ -177,6 +178,10 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     if (total <= 1) return this.notaIcones[2];
     const step = (this.notaIcones.length - 1) / (total - 1);
     return this.notaIcones[Math.round(index * step)];
+  }
+
+  ocorrenciaEmEdicaoNesta(consolidacao: Consolidacao): boolean {
+    return this.facade.ocorrenciaEmEdicao()?.consolidacaoId === consolidacao.id;
   }
 
   // --- Navegação ---

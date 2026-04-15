@@ -250,6 +250,110 @@
                 </table>
               </div>
             </div>
+            <!-- Ocorrências -->
+            @if (podeRegistrar()) {
+              <br-divider class="my-3"></br-divider>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <p class="text-weight-semi-bold mb-0">Ocorrências</p>
+                @if (!ocorrenciaEmEdicaoNesta(consolidacao)) {
+                  <br-button emphasis="secondary" density="small" (click)="facade.iniciarNovaOcorrencia(consolidacao)">
+                    <i class="fas fa-plus mr-1"></i>Nova ocorrência
+                  </br-button>
+                }
+              </div>
+
+              @if (ocorrenciaEmEdicaoNesta(consolidacao) && !facade.ocorrenciaEmEdicao()?.ocorrenciaId) {
+                <app-ocorrencia-form
+                  [form]="facade.ocorrenciaEmEdicao()!.form"
+                  [tiposMotivo]="facade.tiposMotivo()"
+                  [salvando]="facade.salvandoOcorrencia()"
+                  [modoEdicao]="false"
+                  (formChange)="facade.setOcorrenciaForm($event)"
+                  (confirmar)="facade.confirmarOcorrencia()"
+                  (cancelar)="facade.cancelarOcorrencia()"
+                />
+              }
+
+              @for (o of facade.getOcorrenciasConsolidacao(consolidacao); track o.id) {
+                @if (facade.ocorrenciaEmEdicao()?.ocorrenciaId === o.id) {
+                  <app-ocorrencia-form
+                    [form]="facade.ocorrenciaEmEdicao()!.form"
+                    [tiposMotivo]="facade.tiposMotivo()"
+                    [salvando]="facade.salvandoOcorrencia()"
+                    [modoEdicao]="true"
+                    (formChange)="facade.setOcorrenciaForm($event)"
+                    (confirmar)="facade.confirmarOcorrencia()"
+                    (cancelar)="facade.cancelarOcorrencia()"
+                  />
+                } @else {
+                  <div class="br-card mb-2 p-2x">
+                    <div class="d-flex justify-content-between align-items-start gap-2">
+                      <div class="d-flex align-items-start gap-2 flex-grow-1 min-width-0">
+                        <i class="fas fa-calendar-times text-primary mt-1" style="font-size:1.1rem; flex-shrink:0;"></i>
+                        <div class="min-width-0">
+                          <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                            <span class="text-weight-semi-bold">{{ o.tipo_motivo_afastamento?.nome || '-' }}</span>
+                            <span class="text-muted" style="font-size:0.85rem;">
+                              <i class="fas fa-calendar-alt mr-1"></i>{{ o.data_inicio | date:'dd/MM/yyyy' }} – {{ o.data_fim | date:'dd/MM/yyyy' }}
+                            </span>
+                            @if (o.horas) {
+                              <span class="text-muted" style="font-size:0.85rem;">
+                                <i class="fas fa-clock mr-1"></i>{{ o.horas }}h
+                              </span>
+                            }
+                          </div>
+                          @if (o.observacoes) {
+                            <p class="text-muted mb-0" style="font-size:0.85rem;">{{ o.observacoes }}</p>
+                          }
+                        </div>
+                      </div>
+                      <div class="d-flex gap-1 flex-shrink-0">
+                        <br-button shape="circle" density="small" (click)="facade.iniciarEdicaoOcorrencia(consolidacao, o)" title="Editar">
+                          <i class="fas fa-pen"></i>
+                        </br-button>
+                        <br-button shape="circle" density="small" (click)="facade.excluirOcorrencia(consolidacao.id, o)" title="Excluir">
+                          <i class="fas fa-trash"></i>
+                        </br-button>
+                      </div>
+                    </div>
+                  </div>
+                }
+              } @empty {
+                @if (!ocorrenciaEmEdicaoNesta(consolidacao)) {
+                  <p class="text-muted"><small>Nenhuma ocorrência registrada neste período.</small></p>
+                }
+              }
+            } @else {
+              @let ocorrenciasLista = facade.getOcorrenciasConsolidacao(consolidacao);
+              @if (ocorrenciasLista.length > 0) {
+                <br-divider class="my-3"></br-divider>
+                <p class="text-weight-semi-bold mb-2">Ocorrências</p>
+                @for (o of ocorrenciasLista; track o.id) {
+                  <div class="br-card mb-2 p-2x">
+                    <div class="d-flex align-items-start gap-2">
+                      <i class="fas fa-calendar-times text-primary mt-1" style="font-size:1.1rem; flex-shrink:0;"></i>
+                      <div>
+                        <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                          <span class="text-weight-semi-bold">{{ o.tipo_motivo_afastamento?.nome || '-' }}</span>
+                          <span class="text-muted" style="font-size:0.85rem;">
+                            <i class="fas fa-calendar-alt mr-1"></i>{{ o.data_inicio | date:'dd/MM/yyyy' }} – {{ o.data_fim | date:'dd/MM/yyyy' }}
+                          </span>
+                          @if (o.horas) {
+                            <span class="text-muted" style="font-size:0.85rem;">
+                              <i class="fas fa-clock mr-1"></i>{{ o.horas }}h
+                            </span>
+                          }
+                        </div>
+                        @if (o.observacoes) {
+                          <p class="text-muted mb-0" style="font-size:0.85rem;">{{ o.observacoes }}</p>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+              }
+            }
+
             @if (consolidacao.avaliacoes.length > 0) {
               <div class="mt-4">
                 <p class="text-weight-semi-bold mb-2">Avaliação do Período</p>

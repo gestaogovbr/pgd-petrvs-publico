@@ -33,6 +33,31 @@ export type QueryParams = {
   filters?: Record<string, unknown>;
 };
 
+export type TipoMotivoAfastamento = {
+  id: string;
+  nome: string;
+  sigla: string;
+  horas: number;
+};
+
+export type Ocorrencia = {
+  id: string;
+  observacoes: string | null;
+  data_inicio: string;
+  data_fim: string;
+  horas: number | null;
+  tipo_motivo_afastamento_id: string;
+  tipo_motivo_afastamento?: TipoMotivoAfastamento;
+};
+
+export type OcorrenciaFormValue = {
+  observacoes: string;
+  data_inicio: string;
+  data_fim: string;
+  tipo_motivo_afastamento_id: string;
+  horas: string;
+};
+
 export type AvaliacaoConsolidacao = {
   id: string;
   data_avaliacao: string;
@@ -67,4 +92,5 @@ export type Consolidacao = {
   atividades: AtividadeConsolidacao[];
   avaliacoes: AvaliacaoConsolidacao[];
   avaliacao_id: string | null;
+  ocorrencias: Ocorrencia[];
 };
