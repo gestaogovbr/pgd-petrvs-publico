@@ -15,6 +15,7 @@ use App\V2\PlanoTrabalho\Consolidacao\Validators\ConcluirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ReabrirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\RecursoValidator;
 use App\V2\StatusService;
+use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,6 +25,7 @@ class PlanoTrabalhoConsolidacaoService
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly ProgramaRepository $programaRepository,
+        private readonly PlanoTrabalhoService $planoTrabalhoService,
         private readonly AtividadeAuthorizationValidator $authValidator,
         private readonly ConcluirConsolidacaoValidator $concluirValidator,
         private readonly ReabrirConsolidacaoValidator $reabrirValidator,
@@ -39,7 +41,13 @@ class PlanoTrabalhoConsolidacaoService
             throw new NotFoundException('Plano de Trabalho não encontrado.');
         }
 
-        return $this->consolidacaoRepository->findByPlanoTrabalhoId($planoTrabalhoId);
+        $consolidacoes = $this->consolidacaoRepository->findByPlanoTrabalhoId($planoTrabalhoId);
+
+        if (!$this->planoTrabalhoService->isDonoOuChefia($plano, Auth::id())) {
+            $consolidacoes->each(fn ($c) => $c->unsetRelation('afastamentos'));
+        }
+
+        return $consolidacoes;
     }
 
     public function concluir(string $planoTrabalhoId, string $consolidacaoId): PlanoTrabalhoConsolidacao

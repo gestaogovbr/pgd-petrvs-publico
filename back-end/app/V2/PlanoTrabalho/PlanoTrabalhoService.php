@@ -93,6 +93,10 @@ class PlanoTrabalhoService
             throw new NotFoundException( 'Plano de Trabalho não encontrado.');
         }
 
+        if (!$this->isDonoOuChefia($plano, Auth::id())) {
+            $this->stripAfastamentos($plano);
+        }
+
         return $plano;
     }
 
@@ -165,5 +169,27 @@ class PlanoTrabalhoService
         }
 
         return $clone;
+    }
+
+    public function isDonoOuChefia(PlanoTrabalho $plano, ?string $usuarioId): bool
+    {
+        if ($usuarioId === null) {
+            return false;
+        }
+
+        if ($plano->usuario_id === $usuarioId) {
+            return true;
+        }
+
+        return $this->unidadeRepository->isUsuarioGestorRecursivo($plano->unidade_id, $usuarioId);
+    }
+
+    private function stripAfastamentos(PlanoTrabalho $plano): void
+    {
+        if (!$plano->relationLoaded('consolidacoes')) {
+            return;
+        }
+
+        $plano->consolidacoes->each(fn ($c) => $c->unsetRelation('afastamentos'));
     }
 }

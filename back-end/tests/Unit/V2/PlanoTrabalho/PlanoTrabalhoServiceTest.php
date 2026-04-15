@@ -15,6 +15,7 @@ use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateValidator;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -269,8 +270,11 @@ describe('PlanoTrabalhoService::destroy', function () {
 describe('PlanoTrabalhoService::show', function () {
 
     test('retorna plano quando sem entregas', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->usuario_id = 'user-1';
 
         $this->readRepository
             ->shouldReceive('findByIdComRelacoes')
@@ -284,8 +288,11 @@ describe('PlanoTrabalhoService::show', function () {
     });
 
     test('retorna plano quando tem entregas', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->usuario_id = 'user-1';
         $plano->setRelation('entregas', new Collection([
             (object) ['id' => 'entrega-1'],
         ]));
@@ -310,6 +317,61 @@ describe('PlanoTrabalhoService::show', function () {
 
         $this->service->show('inexistente');
     })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
+
+    test('mantém afastamentos quando usuário é dono do plano', function () {
+        Auth::shouldReceive('id')->andReturn('dono-1');
+
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->shouldNotReceive('unsetRelation');
+
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->usuario_id = 'dono-1';
+        $plano->unidade_id = 'unidade-1';
+        $plano->setRelation('consolidacoes', new Collection([$consolidacao]));
+
+        $this->readRepository->shouldReceive('findByIdComRelacoes')->andReturn($plano);
+
+        $this->service->show('plano-1');
+    });
+
+    test('mantém afastamentos quando usuário é chefia', function () {
+        Auth::shouldReceive('id')->andReturn('chefia-1');
+
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->shouldNotReceive('unsetRelation');
+
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->usuario_id = 'outro-user';
+        $plano->unidade_id = 'unidade-1';
+        $plano->setRelation('consolidacoes', new Collection([$consolidacao]));
+
+        $this->readRepository->shouldReceive('findByIdComRelacoes')->andReturn($plano);
+        $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('unidade-1', 'chefia-1')->andReturn(true);
+
+        $this->service->show('plano-1');
+    });
+
+    test('remove afastamentos quando usuário não é dono nem chefia', function () {
+        Auth::shouldReceive('id')->andReturn('estranho-1');
+
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->shouldReceive('unsetRelation')->with('afastamentos')->once();
+
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->usuario_id = 'outro-user';
+        $plano->unidade_id = 'unidade-1';
+        $plano->setRelation('consolidacoes', new Collection([$consolidacao]));
+
+        $this->readRepository->shouldReceive('findByIdComRelacoes')->andReturn($plano);
+        $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('unidade-1', 'estranho-1')->andReturn(false);
+
+        $this->service->show('plano-1');
+    });
 });
 
 describe('PlanoTrabalhoService::statuses', function () {

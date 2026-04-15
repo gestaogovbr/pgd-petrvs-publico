@@ -5,6 +5,7 @@ use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizatio
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ConcluirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ReabrirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\RecursoValidator;
+use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\V2\StatusService;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
@@ -22,6 +23,7 @@ beforeEach(function () {
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->consolidacaoRepo = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
     $this->programaRepo = Mockery::mock(ProgramaRepository::class);
+    $this->planoTrabalhoService = Mockery::mock(PlanoTrabalhoService::class);
     $this->authValidator = Mockery::mock(AtividadeAuthorizationValidator::class);
     $this->concluirValidator = Mockery::mock(ConcluirConsolidacaoValidator::class);
     $this->reabrirValidator = Mockery::mock(ReabrirConsolidacaoValidator::class);
@@ -32,6 +34,7 @@ beforeEach(function () {
         $this->planoRepo,
         $this->consolidacaoRepo,
         $this->programaRepo,
+        $this->planoTrabalhoService,
         $this->authValidator,
         $this->concluirValidator,
         $this->reabrirValidator,
@@ -45,7 +48,8 @@ afterEach(fn () => Mockery::close());
 describe('PlanoTrabalhoConsolidacaoService::index', function () {
 
     test('retorna consolidações do plano', function () {
-        /** @var PlanoTrabalho $plano */
+        Auth::shouldReceive('id')->andReturn('dono-1');
+
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $plano->id = 'plano-1';
 
@@ -56,6 +60,9 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
                 Mockery::mock(PlanoTrabalhoConsolidacao::class),
                 Mockery::mock(PlanoTrabalhoConsolidacao::class),
             ]));
+
+        $this->planoTrabalhoService->shouldReceive('isDonoOuChefia')
+            ->with($plano, 'dono-1')->andReturn(true);
 
         expect($this->service->index('plano-1'))->toHaveCount(2);
     });
@@ -68,12 +75,50 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
     })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
 
     test('retorna collection vazia quando plano não tem consolidações', function () {
-        /** @var PlanoTrabalho $plano */
+        Auth::shouldReceive('id')->andReturn('dono-1');
+
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
         $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')->andReturn(new Collection());
+        $this->planoTrabalhoService->shouldReceive('isDonoOuChefia')->andReturn(true);
 
         expect($this->service->index('plano-1'))->toBeEmpty();
+    });
+
+    test('remove afastamentos quando usuário não é dono nem chefia', function () {
+        Auth::shouldReceive('id')->andReturn('estranho-1');
+
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->shouldReceive('unsetRelation')->with('afastamentos')->once();
+
+        $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')
+            ->andReturn(new Collection([$consolidacao]));
+
+        $this->planoTrabalhoService->shouldReceive('isDonoOuChefia')
+            ->with($plano, 'estranho-1')->andReturn(false);
+
+        $this->service->index('plano-1');
+    });
+
+    test('mantém afastamentos quando usuário é dono ou chefia', function () {
+        Auth::shouldReceive('id')->andReturn('dono-1');
+
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->shouldNotReceive('unsetRelation');
+
+        $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')
+            ->andReturn(new Collection([$consolidacao]));
+
+        $this->planoTrabalhoService->shouldReceive('isDonoOuChefia')
+            ->with($plano, 'dono-1')->andReturn(true);
+
+        $this->service->index('plano-1');
     });
 });
 
