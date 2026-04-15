@@ -226,11 +226,14 @@ readonly filters: FormGroup<{
     if (raw.meus_planos) result['usuario_id'] = this.auth.usuario?.id;
     if (raw.incluir_subordinadas) result['incluir_subordinadas'] = true;
 
-    if (raw.numero.trim().length) result['numero'] = raw.numero.trim();
+    const numero = String(raw.numero ?? '').trim();
+    if (numero.length) result['numero'] = numero;
     if (raw.tipo_modalidade_id.length) result['tipo_modalidade_id'] = raw.tipo_modalidade_id;
     if (raw.status.length) result['status'] = raw.status;
-    if (raw.usuario.trim().length) result['usuario_nome'] = raw.usuario.trim();
-    if (raw.unidade_regramento.trim().length) result['unidade_regramento'] = raw.unidade_regramento.trim();
+    const usuario = String(raw.usuario ?? '').trim();
+    if (usuario.length) result['usuario_nome'] = usuario;
+    const unidadeRegramento = String(raw.unidade_regramento ?? '').trim();
+    if (unidadeRegramento.length) result['unidade_regramento'] = unidadeRegramento;
 
     result['unidade_id'] = this.auth.unidade?.id;
 
