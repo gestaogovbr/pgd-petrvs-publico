@@ -200,4 +200,47 @@ describe('PlanoTrabalhoIndexDTO', function () {
             ->and($novo->unidadeRegramento)->toBe('DITIC')
             ->and($novo->unidadesId)->toBe(['u-1', 'u-2']);
     });
+
+    test('orderBy e orderDir são null quando não informados', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true]);
+
+        expect($filtro->orderBy)->toBeNull()
+            ->and($filtro->orderDir)->toBeNull();
+    });
+
+    test('extrai orderBy numero e orderDir asc corretamente', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'vigentes' => true,
+            'order_by' => 'numero',
+            'order_dir' => 'asc',
+        ]);
+
+        expect($filtro->orderBy)->toBe('numero')
+            ->and($filtro->orderDir)->toBe('asc');
+    });
+
+    test('extrai orderBy usuario_nome e orderDir desc corretamente', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'vigentes' => true,
+            'order_by' => 'usuario_nome',
+            'order_dir' => 'desc',
+        ]);
+
+        expect($filtro->orderBy)->toBe('usuario_nome')
+            ->and($filtro->orderDir)->toBe('desc');
+    });
+
+    test('withUnidadesId preserva orderBy e orderDir', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'vigentes' => true,
+            'unidade_id' => 'u-1',
+            'order_by' => 'numero',
+            'order_dir' => 'desc',
+        ]);
+
+        $novo = $filtro->withUnidadesId(['u-1', 'u-2']);
+
+        expect($novo->orderBy)->toBe('numero')
+            ->and($novo->orderDir)->toBe('desc');
+    });
 });

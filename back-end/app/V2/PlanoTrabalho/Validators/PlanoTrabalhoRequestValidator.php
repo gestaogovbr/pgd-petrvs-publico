@@ -27,6 +27,8 @@ class PlanoTrabalhoRequestValidator
             'filters.hierarquia' => ['sometimes', 'boolean'],
             'filters.usuario_nome' => ['sometimes', 'nullable', 'string'],
             'filters.unidade_regramento' => ['sometimes', 'nullable', 'string'],
+            'order_by' => ['sometimes', 'nullable', 'string', 'in:numero,usuario_nome'],
+            'order_dir' => ['sometimes', 'nullable', 'string', 'in:asc,desc'],
         ]);
     }
 

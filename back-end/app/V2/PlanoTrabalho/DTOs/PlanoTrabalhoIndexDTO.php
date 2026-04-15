@@ -25,6 +25,8 @@ class PlanoTrabalhoIndexDTO
         public readonly int $page,
         public readonly int $perPage,
         public readonly ?string $usuarioLogadoId = null,
+        public readonly ?string $orderBy = null,
+        public readonly ?string $orderDir = null,
     ) {}
 
     public function withUnidadesId(array $unidadesId): self
@@ -46,6 +48,8 @@ class PlanoTrabalhoIndexDTO
             page: $this->page,
             perPage: $this->perPage,
             usuarioLogadoId: $this->usuarioLogadoId,
+            orderBy: $this->orderBy,
+            orderDir: $this->orderDir,
         );
     }
 
@@ -56,6 +60,8 @@ class PlanoTrabalhoIndexDTO
         $filters['size'] = $data['size'] ?? 15;
         $filters['usuarioLogadoId'] = $usuarioLogadoId;
         $filters['hierarquia'] = $data['hierarquia'] ?? true;
+        $filters['order_by'] = $data['order_by'] ?? null;
+        $filters['order_dir'] = $data['order_dir'] ?? null;
 
         return self::fromArray($filters);
     }
@@ -99,6 +105,8 @@ class PlanoTrabalhoIndexDTO
             page: (int) ($filters['page'] ?? 1),
             perPage: (int) ($filters['size'] ?? 15),
             usuarioLogadoId: $usuarioLogadoId,
+            orderBy: $filters['order_by'] ?? null,
+            orderDir: $filters['order_dir'] ?? null,
         );
     }
 }

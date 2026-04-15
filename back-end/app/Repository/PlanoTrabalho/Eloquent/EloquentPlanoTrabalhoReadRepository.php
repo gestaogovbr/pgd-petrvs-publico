@@ -128,7 +128,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         /** @var \Illuminate\Database\Eloquent\Builder<PlanoTrabalho> $queryBase */
         $queryBase = PlanoTrabalho::query();
 
-        $query = $queryBase->select('id', 'numero', 'usuario_id', 'unidade_id', 'tipo_modalidade_id', 'data_inicio', 'data_fim', 'data_arquivamento', 'status')
+        $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.tipo_modalidade_id', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status')
               ->with(['usuario:id,nome', 'tipoModalidade:id,nome', 'unidade:id,nome,sigla']);
 
         if($filtro->hierarquia){
@@ -187,6 +187,13 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             $termo = '%' . strtolower($filtro->unidadeRegramento) . '%';
             $query->whereHas('unidade', fn ($q) => $q->whereRaw('LOWER(sigla) like ?', [$termo])
                 ->orWhereRaw('LOWER(nome) like ?', [$termo]));
+        }
+
+        if ($filtro->orderBy === 'numero') {
+            $query->orderBy('numero', $filtro->orderDir ?? 'asc');
+        } elseif ($filtro->orderBy === 'usuario_nome') {
+            $query->join('usuarios', 'usuarios.id', '=', 'planos_trabalhos.usuario_id')
+                  ->orderBy('usuarios.nome', $filtro->orderDir ?? 'asc');
         }
 
         return $query->paginate(perPage: $filtro->perPage, page: $filtro->page);

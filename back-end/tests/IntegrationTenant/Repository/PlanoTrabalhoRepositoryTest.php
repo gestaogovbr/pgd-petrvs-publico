@@ -420,6 +420,122 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
             ->and($result->count())->toBe(2)
             ->and($result->lastPage())->toBe(3);
     });
+
+    test('ordena por numero asc', function () {
+        $planoA = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        $planoB = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'usuario_id' => $this->usuario->id,
+            'order_by' => 'numero',
+            'order_dir' => 'asc',
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+        $numeros = collect($result->items())->pluck('numero')->toArray();
+
+        expect($numeros)->toBe(collect($numeros)->sort()->values()->toArray());
+    });
+
+    test('ordena por numero desc', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'usuario_id' => $this->usuario->id,
+            'order_by' => 'numero',
+            'order_dir' => 'desc',
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+        $numeros = collect($result->items())->pluck('numero')->toArray();
+
+        expect($numeros)->toBe(collect($numeros)->sortDesc()->values()->toArray());
+    });
+
+    test('ordena por usuario_nome asc', function () {
+        $usuarioA = Usuario::factory()->create([
+            'nome' => 'Ana',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $usuarioZ = Usuario::factory()->create([
+            'nome' => 'Zélia',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioZ->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioA->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'unidade_id' => $this->unidade->id,
+            'order_by' => 'usuario_nome',
+            'order_dir' => 'asc',
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+        $ids = collect($result->items())->pluck('usuario_id')->toArray();
+
+        expect($ids[0])->toBe($usuarioA->id)
+            ->and($ids[1])->toBe($usuarioZ->id);
+    });
+
+    test('ordena por usuario_nome desc', function () {
+        $usuarioA = Usuario::factory()->create([
+            'nome' => 'Ana',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+        $usuarioZ = Usuario::factory()->create([
+            'nome' => 'Zélia',
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'perfil_id' => $this->perfilId,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioA->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioZ->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'unidade_id' => $this->unidade->id,
+            'order_by' => 'usuario_nome',
+            'order_dir' => 'desc',
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+        $ids = collect($result->items())->pluck('usuario_id')->toArray();
+
+        expect($ids[0])->toBe($usuarioZ->id)
+            ->and($ids[1])->toBe($usuarioA->id);
+    });
 });
 
 describe('PlanoTrabalhoRepository::findByIdComRelacoes', function () {

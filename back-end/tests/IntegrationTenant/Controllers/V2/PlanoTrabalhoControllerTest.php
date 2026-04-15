@@ -276,6 +276,86 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
     });
 });
 
+// ── GET index: ordenação (validação) ─────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho (ordenação - validação)', function () {
+
+    test('retorna 400 quando order_by tem valor inválido', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['vigentes' => true],
+            'order_by' => 'campo_invalido',
+        ]))->assertStatus(400);
+    });
+
+    test('retorna 400 quando order_dir tem valor inválido', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['vigentes' => true],
+            'order_by' => 'numero',
+            'order_dir' => 'invalido',
+        ]))->assertStatus(400);
+    });
+});
+
+// ── GET index: ordenação (happy path) ──────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho (ordenação - happy path)', function () {
+
+    test('retorna planos ordenados por numero asc', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        PlanoTrabalho::factory()->count(3)->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['usuario_id' => $this->usuario->id],
+            'order_by' => 'numero',
+            'order_dir' => 'asc',
+        ]));
+
+        $response->assertStatus(200);
+        $numeros = collect($response->json('data.data'))->pluck('numero')->toArray();
+
+        expect($numeros)->toBe(collect($numeros)->sort()->values()->toArray());
+    });
+
+    test('retorna planos ordenados por usuario_nome desc', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $usuarioA = Usuario::factory()->create(['nome' => 'Ana']);
+        $usuarioZ = Usuario::factory()->create(['nome' => 'Zélia']);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioA->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioZ->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['unidade_id' => $this->unidade->id],
+            'order_by' => 'usuario_nome',
+            'order_dir' => 'desc',
+        ]));
+
+        $response->assertStatus(200);
+        $items = $response->json('data.data');
+
+        expect($items[0]['usuario_id'])->toBe($usuarioZ->id)
+            ->and($items[1]['usuario_id'])->toBe($usuarioA->id);
+    });
+});
+
 // ── POST store: validação ───────────────────────────────────────────
 
 describe('POST /api/v2/plano-trabalho (validação)', function () {
