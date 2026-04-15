@@ -10,6 +10,8 @@ export class PlanoTrabalhoListFacade {
   readonly page = signal(1);
   readonly pageSize = signal(20);
   readonly sort = signal<string | undefined>(undefined);
+  readonly orderBy = signal<string | undefined>(undefined);
+  readonly orderDir = signal<'asc' | 'desc'>('asc');
   readonly filters = signal<Record<string, unknown>>({});
 
   readonly items = signal<PlanoTrabalho[]>([]);
@@ -22,6 +24,8 @@ export class PlanoTrabalhoListFacade {
     page: this.page(),
     pageSize: this.pageSize(),
     sort: this.sort(),
+    orderBy: this.orderBy(),
+    orderDir: this.orderDir(),
     filters: this.filters()
   }));
 

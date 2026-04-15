@@ -248,17 +248,14 @@ export class AppComponent implements IAppComponent {
       id: "navbarDropdownGestaoExecucao",
       menu: [
         this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
-        Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "USUARIO" } }),
         this.menuSchema.OCORRENCIAS,
         this.menuSchema.AFASTAMENTOS,
-        this.menuSchema.ATIVIDADES
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Avaliação"),
       permition: "MENU_GESTAO_ACESSO",
       id: "navbarDropdownGestaoAvaliacao",
       menu: [
-        this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO,
         this.menuSchema.AVALIACAO_PLANOS_ENTREGAS
       ].sort(this.orderMenu)
     }, 

@@ -14,6 +14,7 @@ import { UnidadeService } from "src/app/v2/services/unidade.service";
 import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
 import { ConsolidacaoPolicy } from "../application/consolidacao.policy";
 import { ConsolidacaoFacade } from "../application/consolidacao.facade";
+import { BreadcrumbService } from "src/app/v2/components/breadcrumb/breadcrumb.service";
 import { AvaliacaoFormComponent } from "./components/avaliacao-form.component";
 import { RecursoFormComponent } from "./components/recurso-form.component";
 
@@ -36,6 +37,8 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
 
+  private readonly breadcrumb = inject(BreadcrumbService);
+
   readonly policy = inject(PlanoTrabalhoPolicy);
   readonly consolidacaoPolicy = inject(ConsolidacaoPolicy);
   readonly facade = inject(ConsolidacaoFacade);
@@ -53,6 +56,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
       this.api.getById(id!).subscribe({
         next: (plano) => {
           this.planoTrabalho.set(plano);
+          this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
           this.loading.set(false);
         },
         error: () => {

@@ -28,6 +28,8 @@ export type QueryParams = {
   page?: number;
   pageSize?: number;
   sort?: string;
+  orderBy?: string;
+  orderDir?: 'asc' | 'desc';
   filters?: Record<string, unknown>;
 };
 

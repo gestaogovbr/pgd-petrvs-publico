@@ -95,8 +95,22 @@
       <table>
         <thead>
           <tr>
-            <th scope="col">Número</th>
-            <th scope="col">Usuário</th>
+            <th scope="col" style="cursor:pointer; white-space:nowrap" (click)="onSort('numero')">
+              Número
+              @if (facade.orderBy() === 'numero') {
+                <span>{{ facade.orderDir() === 'asc' ? '▲' : '▼' }}</span>
+              } @else {
+                <span style="opacity:0.35">⇅</span>
+              }
+            </th>
+            <th scope="col" style="cursor:pointer; white-space:nowrap" (click)="onSort('usuario_nome')">
+              Usuário
+              @if (facade.orderBy() === 'usuario_nome') {
+                <span>{{ facade.orderDir() === 'asc' ? '▲' : '▼' }}</span>
+              } @else {
+                <span style="opacity:0.35">⇅</span>
+              }
+            </th>
             <th scope="col">Unidade</th>
             <th scope="col">Modalidade</th>
             <th scope="col">Status</th>
@@ -145,6 +159,12 @@
                 @if (policy.podeClonar(p)) {
                 <br-button shape="circle" (click)="clonarPlano(p)" title="Clonar" ariaLabel="Clonar plano">
                   <i class="fas fa-clone"></i>
+                </br-button>
+                }
+
+                @if (policy.podeExcluir(p)) {
+                <br-button shape="circle" (click)="excluirPlano(p)" title="Excluir" ariaLabel="Excluir plano">
+                  <i class="fas fa-trash"></i>
                 </br-button>
                 }
               </div>

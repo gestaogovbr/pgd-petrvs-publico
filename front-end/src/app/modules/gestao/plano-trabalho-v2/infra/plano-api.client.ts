@@ -84,6 +84,8 @@ export class PlanoApiClient {
     if (typeof params.page === 'number') out['page'] = String(params.page);
     if (typeof params.pageSize === 'number') out['size'] = String(params.pageSize);
     if (params.sort?.length) out['sort'] = params.sort;
+    if (params.orderBy?.length) out['order_by'] = params.orderBy;
+    if (params.orderDir?.length) out['order_dir'] = params.orderDir;
     if (params.filters) {
       Object.entries(params.filters).forEach(([k, v]) => {
         if (v !== undefined && v !== null) out[`filters[${k}]`] = this.stringifyFilterValue(v);
