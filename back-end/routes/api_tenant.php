@@ -611,12 +611,14 @@ use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController as Atividade
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoController as AvaliacaoV2;
 use App\V2\PlanoTrabalho\Ocorrencia\OcorrenciaController as OcorrenciaV2;
 use App\V2\TipoModalidade\TipoModalidadeController as TipoModalidadeV2;
+use App\V2\TipoMotivoAfastamento\TipoMotivoAfastamentoController as TipoMotivoAfastamentoV2;
 use App\V2\Usuario\UsuarioController as UsuarioV2;
 use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
+    Route::get('tipos-motivos-afastamentos', [TipoMotivoAfastamentoV2::class, 'index']);
     Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
     Route::get('plano-trabalho/statuses', [PlanoTrabalhoV2::class, 'statuses']);
     Route::get('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'show']);

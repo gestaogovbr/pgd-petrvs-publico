@@ -157,6 +157,8 @@ use App\Repository\Perfil\Contracts\PerfilReadRepositoryContract;
 use App\Repository\Perfil\Eloquent\EloquentPerfilReadRepository;
 use App\Repository\TipoModalidade\Contracts\TipoModalidadeReadRepositoryContract;
 use App\Repository\TipoModalidade\Eloquent\EloquentTipoModalidadeReadRepository;
+use App\Repository\TipoMotivoAfastamento\Contracts\TipoMotivoAfastamentoReadRepositoryContract;
+use App\Repository\TipoMotivoAfastamento\Eloquent\EloquentTipoMotivoAfastamentoReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\PlanoTrabalho\Eloquent\EloquentPlanoTrabalhoReadRepository;
@@ -222,6 +224,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             TipoModalidadeReadRepositoryContract::class,
             EloquentTipoModalidadeReadRepository::class,
+        );
+
+        $this->app->bind(
+            TipoMotivoAfastamentoReadRepositoryContract::class,
+            EloquentTipoMotivoAfastamentoReadRepository::class,
         );
 
         $this->app->bind(
