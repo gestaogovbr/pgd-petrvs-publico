@@ -19,7 +19,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
             'tipo_modalidade_id' => 'mod-abc',
-            'justificativa' => 'Justificativa teste',
+            'justificativa_modalidade' => 'Justificativa teste',
         ], 'criador-999');
 
         expect($dto->usuarioId)->toBe('user-123')
@@ -53,7 +53,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
             'tipo_modalidade_id' => 'mod-abc',
-            'justificativa' => 'Justificativa',
+            'justificativa_modalidade' => 'Justificativa',
         ], 'criador-999');
 
         $array = $dto->toArray();
