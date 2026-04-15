@@ -230,6 +230,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             'tipoModalidade:id,nome',
             'entregas',
             'consolidacoes.atividades',
+            'consolidacoes.afastamentos.afastamento.tipoMotivoAfastamento:id,descricao',
             'documento.assinaturas.usuario',
             'entregas.planoEntregaEntrega.entrega',
             'entregas.planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome'

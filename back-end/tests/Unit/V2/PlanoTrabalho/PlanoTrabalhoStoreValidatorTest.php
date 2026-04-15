@@ -125,7 +125,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         $this->validacao->validar(buildStoreDTO([
             'tipo_modalidade_id' => 'mod-diferente',
-            'justificativa' => 'Modalidade ajustada por necessidade do serviço.',
+            'justificativa_modalidade' => 'Modalidade ajustada por necessidade do serviço.',
         ]));
 
         expect(true)->toBeTrue();

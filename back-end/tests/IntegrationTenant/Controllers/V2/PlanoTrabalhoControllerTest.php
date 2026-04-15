@@ -453,10 +453,10 @@ describe('POST /api/v2/plano-trabalho (modalidade divergente)', function () {
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
             'programa_id' => $this->programa->id,
-            'data_inicio' => '2024-06-01',
-            'data_fim' => '2024-12-31',
+            'data_inicio' => '2025-03-01',
+            'data_fim' => '2025-05-31',
             'tipo_modalidade_id' => $outraModalidade->id,
-            'justificativa' => 'Modalidade ajustada por necessidade do serviço.',
+            'justificativa_modalidade' => 'Modalidade ajustada por necessidade do serviço.',
         ])->assertStatus(201);
     });
 
@@ -469,10 +469,10 @@ describe('POST /api/v2/plano-trabalho (modalidade divergente)', function () {
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
             'programa_id' => $this->programa->id,
-            'data_inicio' => '2024-06-01',
-            'data_fim' => '2024-12-31',
+            'data_inicio' => '2025-07-01',
+            'data_fim' => '2025-09-30',
             'tipo_modalidade_id' => $outraModalidade->id,
-            'justificativa' => 'Necessidade do serviço.',
+            'justificativa_modalidade' => 'Necessidade do serviço.',
         ]);
 
         $this->assertDatabaseHas('planos_trabalhos', [
