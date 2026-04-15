@@ -10,80 +10,144 @@
   <form [formGroup]="filters" class="mb-3">
     <div class="br-card">
       <div class="card-content">
-        <div class="row align-items-end">
-          <div class="col-md-2 mb-3">
-            <div class="br-input">
+
+        <!-- BLOCO PRINCIPAL -->
+        <div class="row g-3 align-items-end mb-3">
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="br-input w-100">
               <label>Período: Início</label>
-              <input type="date" formControlName="periodo_inicio" (change)="onFilterChange()" />
+              <input type="date"
+                    formControlName="periodo_inicio"
+                    (change)="onFilterChange()" />
             </div>
           </div>
-          <div class="col-md-2 mb-3">
-            <div class="br-input">
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="br-input w-100">
               <label>Período: Fim</label>
-              <input type="date" formControlName="periodo_fim" (change)="onFilterChange()" />
+              <input type="date"
+                    formControlName="periodo_fim"
+                    (change)="onFilterChange()" />
             </div>
           </div>
-          <div class="col-md-auto mb-3 d-flex gap-3">
-            <div class="br-switch icon">
-              <input type="checkbox" id="incluir_subordinadas" formControlName="incluir_subordinadas" [disabled]="isParticipante" (change)="onFilterChange()" />
-              <label for="incluir_subordinadas">Subordinadas</label>
+
+          <!-- CHECKS -->
+          <div class="col-12 col-md-6">
+            <div class="d-flex flex-wrap gap-3">
+
+              <div class="br-switch icon">
+                <input type="checkbox"
+                      id="incluir_subordinadas"
+                      formControlName="incluir_subordinadas"
+                      [disabled]="isParticipante"
+                      (change)="onFilterChange()" />
+                <label for="incluir_subordinadas">Subordinadas</label>
+              </div>
+
+              <div class="br-switch icon">
+                <input type="checkbox"
+                      id="vigentes"
+                      formControlName="vigentes"
+                      (change)="onFilterChange()" />
+                <label for="vigentes">Vigentes</label>
+              </div>
+
+              <div class="br-switch icon">
+                <input type="checkbox"
+                      id="incluir_arquivados"
+                      formControlName="incluir_arquivados"
+                      (change)="onFilterChange()" />
+                <label for="incluir_arquivados">Arquivados</label>
+              </div>
+
+              <div class="br-switch icon">
+                <input type="checkbox"
+                      id="meus_planos"
+                      formControlName="meus_planos"
+                      (change)="onFilterChange()" />
+                <label for="meus_planos">Meus Planos</label>
+              </div>
+
             </div>
-            <div class="br-switch icon">
-              <input type="checkbox" id="vigentes" formControlName="vigentes" (change)="onFilterChange()" />
-              <label for="vigentes">Vigentes</label>
-            </div>
-            <div class="br-switch icon">
-              <input type="checkbox" id="incluir_arquivados" formControlName="incluir_arquivados" (change)="onFilterChange()" />
-              <label for="incluir_arquivados">Arquivados</label>
-            </div>
-            <div class="br-switch icon">
-              <input type="checkbox" id="meus_planos" formControlName="meus_planos" (change)="onFilterChange()" />
-              <label for="meus_planos">Meus Planos</label>
-            </div>
-          </div>
-          <div class="col mb-3 text-right">
-            <br-button emphasis="secondary" (click)="onConsultar()">
-              <i class="fas fa-search mr-1"></i>Consultar
-            </br-button>
-            <br-button emphasis="tertiary" (click)="toggleAdvanced()">
-              <i class="fas fa-filter mr-1"></i>Filtro avançado
-            </br-button>
           </div>
         </div>
 
+        <!-- FILTRO AVANÇADO -->
         @if (advanced) {
-        <div class="br-divider"></div>
-        <div class="row mt-3">
-          <div class="col-md-1 mb-3">
-            <div class="br-input">
-              <label>#ID</label>
-              <input type="text" formControlName="numero" (input)="onFilterChange()" />
+          <div class="br-divider"></div>
+
+          <div class="row g-3 mt-2">
+
+            <div class="col-12 col-sm-4 col-md-2">
+              <div class="br-input w-100">
+                <label>#ID</label>
+                <input type="text"
+                      formControlName="numero"
+                      (input)="onFilterChange()" />
+              </div>
             </div>
-          </div>
-          <div class="col-md-3 mb-3">
-            <div class="br-input">
-              <label>Usuário</label>
-              <input type="text" formControlName="usuario" [disabled]="isParticipante" (input)="onFilterChange()" />
+
+            <div class="col-12 col-sm-8 col-md-3">
+              <div class="br-input w-100">
+                <label>Usuário</label>
+                <input type="text"
+                      formControlName="usuario"
+                      [disabled]="isParticipante"
+                      (input)="onFilterChange()" />
+              </div>
             </div>
-          </div>
-          <div class="col-md-3 mb-3">
-            <div class="br-input">
-              <label>Unidade</label>
-              <input type="text" formControlName="unidade_regramento" (input)="onFilterChange()" />
+
+            <div class="col-12 col-md-3">
+              <div class="br-input w-100">
+                <label>Unidade</label>
+                <input type="text"
+                      formControlName="unidade_regramento"
+                      (input)="onFilterChange()" />
+              </div>
             </div>
+
+            <div class="col-12 col-md-2">
+              <br-select
+                label="Modalidade"
+                formControlName="tipo_modalidade_id"
+                [options]="modalidadeOptions()"
+                class="w-100">
+              </br-select>
+            </div>
+
+            <div class="col-12 col-md-2">
+              <br-select
+                label="Status"
+                formControlName="status"
+                [options]="statusOptions"
+                class="w-100">
+              </br-select>
+            </div>
+
           </div>
-          <div class="col-md-3 mb-3">
-            <br-select label="Modalidade" formControlName="tipo_modalidade_id" [options]="modalidadeOptions()" />
-          </div>
-          <div class="col-md-2 mb-3">
-            <br-select label="Status" formControlName="status" [options]="statusOptions" />
-          </div>
-        </div>
         }
+
+        <!-- AÇÕES -->
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end mt-3">
+
+          <br-button emphasis="secondary" (click)="onConsultar()">
+            <i class="fas fa-search mr-1"></i>Consultar
+          </br-button>
+
+          <br-button emphasis="tertiary" (click)="toggleAdvanced()">
+            <i class="fas fa-filter mr-1"></i>Filtro avançado
+          </br-button>
+
+          <br-button emphasis="tertiary" (click)="limparFiltros()">
+            <i class="fas fa-times mr-1"></i>Limpar filtros
+          </br-button>
+
+        </div>
+
       </div>
     </div>
   </form>
-
   @if (facade.loading()) {
   <div class="d-flex justify-content-center p-5">
     <div class="br-loading" role="progressbar" aria-label="carregando"></div>

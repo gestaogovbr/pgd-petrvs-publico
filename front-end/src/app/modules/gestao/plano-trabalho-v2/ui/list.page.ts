@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { PlanoTrabalhoListFacade } from '../application/list.facade';
-import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
@@ -98,7 +98,7 @@ readonly filters: FormGroup<{
       ]);
     });
 
-    this.setupToggleRules();
+    this.setupSubscriptions();
 
     if (this.isParticipante) {
       this.filters.controls.incluir_subordinadas.setValue(false);
@@ -110,7 +110,6 @@ readonly filters: FormGroup<{
     }
 
     this.restoreFilters();
-    this.applyToggleRules();
     this.applyFiltersAndLoad(true);
   }
 
@@ -127,73 +126,45 @@ readonly filters: FormGroup<{
     this.applyFiltersAndLoad(true);
   }
 
+  limparFiltros() {
+    this.advanced = false;
+    this.filters.reset({
+      periodo_inicio: null,
+      periodo_fim: null,
+      incluir_subordinadas: !this.isParticipante,
+      vigentes: true,
+      incluir_arquivados: false,
+      meus_planos: this.isParticipante,
+      numero: '',
+      usuario: '',
+      unidade_regramento: '',
+      tipo_modalidade_id: '',
+      status: ''
+    }, { emitEvent: false });
+    this.applyFiltersAndLoad(true);
+  }
+
   onFilterChange() {
     if (this.filterTimer) clearTimeout(this.filterTimer);
     this.filterTimer = setTimeout(() => this.applyFiltersAndLoad(true), 400);
   }
 
-  private setupToggleRules() {
+  private setupSubscriptions() {
     const arquivados = this.filters.controls.incluir_arquivados;
     const vigentes = this.filters.controls.vigentes;
 
     this.subscriptions.push(
-      arquivados.valueChanges.subscribe(value => this.onArquivadosToggle(value)),
-      vigentes.valueChanges.subscribe(value => this.onVigentesToggle(value)),
+      arquivados.valueChanges.subscribe(checked => {
+        if (checked) vigentes.setValue(false, { emitEvent: false });
+        this.onFilterChange();
+      }),
+      vigentes.valueChanges.subscribe(checked => {
+        if (checked) arquivados.setValue(false, { emitEvent: false });
+        this.onFilterChange();
+      }),
       this.filters.controls.tipo_modalidade_id.valueChanges.subscribe(() => this.onFilterChange()),
       this.filters.controls.status.valueChanges.subscribe(() => this.onFilterChange()),
     );
-  }
-
-  private applyToggleRules() {
-    this.onArquivadosToggle(this.filters.controls.incluir_arquivados.value);
-    this.onVigentesToggle(this.filters.controls.vigentes.value);
-  }
-
-  private onArquivadosToggle(checked: boolean) {
-    const arquivados = this.filters.controls.incluir_arquivados;
-    const vigentes = this.filters.controls.vigentes;
-
-    if (checked) {
-      this.setControlValueSilently(vigentes, false);
-      this.setControlEnabled(vigentes, false);
-      this.setControlEnabled(arquivados, true);
-      return;
-    }
-
-    if (!vigentes.value) {
-      this.setControlEnabled(vigentes, true);
-    }
-  }
-
-  private onVigentesToggle(checked: boolean) {
-    const arquivados = this.filters.controls.incluir_arquivados;
-    const vigentes = this.filters.controls.vigentes;
-
-    if (checked) {
-      this.setControlValueSilently(arquivados, false);
-      this.setControlEnabled(arquivados, false);
-      this.setControlEnabled(vigentes, true);
-      return;
-    }
-
-    if (!arquivados.value) {
-      this.setControlEnabled(arquivados, true);
-    }
-  }
-
-  private setControlEnabled(control: AbstractControl, enabled: boolean) {
-    if (enabled && control.disabled) {
-      control.enable({ emitEvent: false });
-    }
-    if (!enabled && control.enabled) {
-      control.disable({ emitEvent: false });
-    }
-  }
-
-  private setControlValueSilently<T>(control: FormControl<T>, value: T) {
-    if (control.value !== value) {
-      control.setValue(value, { emitEvent: false });
-    }
   }
 
   private saveFilters() {
