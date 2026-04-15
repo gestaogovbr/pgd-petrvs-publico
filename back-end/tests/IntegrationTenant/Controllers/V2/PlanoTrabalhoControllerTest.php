@@ -623,6 +623,102 @@ describe('GET /api/v2/plano-trabalho/:id (validação)', function () {
     });
 });
 
+describe('GET /api/v2/plano-trabalho/:id (afastamentos)', function () {
+
+    test('retorna afastamentos nas consolidações quando usuário é dono do plano', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'status' => 'ATIVO',
+        ]);
+
+        $consolidacao = \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $tipoMotivo = \App\Models\TipoMotivoAfastamento::firstOrCreate(
+            ['nome' => 'Licença Médica'],
+            ['codigo' => 'LM', 'sigla' => 'LM', 'calculo' => 'DECRESCIMO', 'data_inicio' => now(), 'situacao' => 'ATIVO', 'icone' => 'bi bi-heart-pulse', 'cor' => '#FF0000', 'horas' => 0, 'integracao' => 0]
+        );
+
+        $afastamento = \App\Models\Afastamento::create([
+            'observacoes' => 'Afastamento teste',
+            'data_inicio' => $consolidacao->data_inicio,
+            'data_fim' => $consolidacao->data_fim,
+            'horas' => 0,
+            'usuario_id' => $this->usuario->id,
+            'tipo_motivo_afastamento_id' => $tipoMotivo->id,
+        ]);
+
+        \App\Models\PlanoTrabalhoConsolidacaoAfastamento::create([
+                    'plano_trabalho_consolidacao_id' => $consolidacao->id,
+                    'afastamento_id' => $afastamento->id,
+                    'snapshot' => json_encode($afastamento->toArray()),
+                    'data_conclusao' => now(),
+                ]);
+
+        $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$plano->id}")
+            ->assertStatus(200)
+            ->json('data.consolidacoes.0');
+
+        expect($data)->toHaveKey('afastamentos');
+        expect($data['afastamentos'])->not->toBeEmpty();
+    });
+
+    test('não retorna afastamentos nas consolidações quando usuário não é dono nem chefia', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'status' => 'ATIVO',
+        ]);
+
+        $consolidacao = \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $tipoMotivo = \App\Models\TipoMotivoAfastamento::firstOrCreate(
+            ['nome' => 'Licença Médica'],
+            ['codigo' => 'LM', 'sigla' => 'LM', 'calculo' => 'DECRESCIMO', 'data_inicio' => now(), 'situacao' => 'ATIVO', 'icone' => 'bi bi-heart-pulse', 'cor' => '#FF0000', 'horas' => 0, 'integracao' => 0]
+        );
+
+        $afastamento = \App\Models\Afastamento::create([
+            'observacoes' => 'Afastamento teste',
+            'data_inicio' => $consolidacao->data_inicio,
+            'data_fim' => $consolidacao->data_fim,
+            'horas' => 0,
+            'usuario_id' => $this->usuario->id,
+            'tipo_motivo_afastamento_id' => $tipoMotivo->id,
+        ]);
+
+        \App\Models\PlanoTrabalhoConsolidacaoAfastamento::create([
+                    'plano_trabalho_consolidacao_id' => $consolidacao->id,
+                    'afastamento_id' => $afastamento->id,
+                    'snapshot' => json_encode($afastamento->toArray()),
+                    'data_conclusao' => now(),
+                ]);
+
+        $outroUsuario = Usuario::factory()->create([
+            'perfil_id' => Perfil::factory()->create(['nivel' => 3])->id,
+        ]);
+
+        $this->actingAs($outroUsuario, 'web');
+
+        $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$plano->id}")
+            ->assertStatus(200)
+            ->json('data.consolidacoes.0');
+
+        expect($data)->not->toHaveKey('afastamentos');
+    });
+});
+
 // ── GET statuses ──────────────────────────────────────────────────────────
 
 describe('GET /api/v2/plano-trabalho/statuses', function () {
