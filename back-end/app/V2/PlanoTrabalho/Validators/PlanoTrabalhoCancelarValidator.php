@@ -13,9 +13,12 @@ use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
+use App\V2\Traits\ValidaAutorizacaoTrait;
 
 class PlanoTrabalhoCancelarValidator
 {
+    use ValidaAutorizacaoTrait;
+
     private const STATUSES_CONSOLIDACAO_BLOQUEIAM = [
         StatusEnum::CONCLUIDO,
         StatusEnum::AVALIADO,
@@ -26,6 +29,7 @@ class PlanoTrabalhoCancelarValidator
         private readonly UnidadeRepository $unidadeRepository,
         private readonly UsuarioRepository $usuarioRepository,
     ) {}
+
 
     public function validar(string $planoId, string $usuarioLogadoId): PlanoTrabalho
     {
@@ -60,18 +64,13 @@ class PlanoTrabalhoCancelarValidator
 
     private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void
     {
-        if ($plano->usuario_id === $usuarioLogadoId) {
-            return;
-        }
-
-        if ($this->unidadeRepository->isUsuarioGestorRecursivo($plano->unidade_id, $usuarioLogadoId)) {
+        if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id)) {
             return;
         }
 
         $usuario = $this->usuarioRepository->findById($usuarioLogadoId);
-        $nivel = $usuario->perfil->nivel;
 
-        if ($nivel <= PerfilEnum::ADMINISTRADOR_NEGOCIAL->value) {
+        if ($usuario->perfil->nivel <= PerfilEnum::ADMINISTRADOR_NEGOCIAL->value) {
             return;
         }
 

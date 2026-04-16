@@ -13,10 +13,13 @@ use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
+use App\V2\Traits\ValidaAutorizacaoTrait;
 use Carbon\Carbon;
 
 class PlanoTrabalhoArquivarValidator
 {
+    use ValidaAutorizacaoTrait;
+
     private const PRAZO_RECURSO_DIAS = 30;
 
     public function __construct(
@@ -24,6 +27,7 @@ class PlanoTrabalhoArquivarValidator
         private readonly UnidadeRepository $unidadeRepository,
         private readonly UsuarioRepository $usuarioRepository,
     ) {}
+
 
     public function validar(string $planoId, string $usuarioLogadoId): PlanoTrabalho
     {
@@ -85,11 +89,7 @@ class PlanoTrabalhoArquivarValidator
 
     private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void
     {
-        if ($plano->usuario_id === $usuarioLogadoId) {
-            return;
-        }
-
-        if ($this->unidadeRepository->isUsuarioGestorRecursivo($plano->unidade_id, $usuarioLogadoId)) {
+        if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id)) {
             return;
         }
 

@@ -10,14 +10,20 @@ use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
+use App\V2\Traits\ValidaAutorizacaoTrait;
 
 class PlanoTrabalhoDestroyValidator
 {
+    use ValidaAutorizacaoTrait;
+
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
+        private readonly UnidadeRepository $unidadeRepository,
         private readonly UsuarioRepository $usuarioRepository,
     ) {}
+
 
     public function validar(string $planoId, string $usuarioLogadoId): void
     {
@@ -35,23 +41,13 @@ class PlanoTrabalhoDestroyValidator
             throw new ValidateException('Plano de Trabalho não pode ser excluído pois já possui assinatura.');
         }
 
-        $this->validarAutorizacao($plano, $usuarioLogadoId);
-    }
-
-    private function validarAutorizacao($plano, string $usuarioLogadoId): void
-    {
-        if ($usuarioLogadoId === $plano->criacao_usuario_id) {
-            return;
-        }
-
-        if ($usuarioLogadoId === $plano->usuario_id) {
+        if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id, ['criacao_usuario_id', 'usuario_id'])) {
             return;
         }
 
         $usuario = $this->usuarioRepository->findById($usuarioLogadoId);
-        $nivel = $usuario->perfil->nivel;
 
-        if ($nivel <= PerfilEnum::ADMINISTRADOR_MASTER->value) {
+        if ($usuario->perfil->nivel <= PerfilEnum::ADMINISTRADOR_MASTER->value) {
             return;
         }
 

@@ -4,20 +4,22 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators;
 
-use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
+use App\V2\Traits\ValidaAutorizacaoTrait;
 
-class AtividadeAuthorizationValidator # TO-DO: parece que isso aqui pertence muito mais a um PlanoTrabalhoAuthorizationValidator. Pois vê se PT é do usuário ou do gestor
+class AtividadeAuthorizationValidator
 {
+    use ValidaAutorizacaoTrait;
+
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly UnidadeRepository $unidadeRepository,
     ) {}
 
-    public function validar(string $planoTrabalhoId, string $usuarioLogadoId): PlanoTrabalho # TO-DO: fazer um DTO(ptID, AuthID, ErrorMessage)
+    public function validar(string $planoTrabalhoId, string $usuarioLogadoId): PlanoTrabalho
     {
         $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
 
@@ -25,14 +27,13 @@ class AtividadeAuthorizationValidator # TO-DO: parece que isso aqui pertence mui
             throw new NotFoundException('Plano de Trabalho não encontrado.');
         }
 
-        if ($plano->usuario_id === $usuarioLogadoId) {
-            return $plano;
-        }
+        $this->autorizarDonoOuChefia(
+            $plano,
+            $usuarioLogadoId,
+            $plano->unidade_id,
+            'Usuário não tem permissão para registrar execuções neste Plano de Trabalho.',
+        );
 
-        if ($this->unidadeRepository->isUsuarioGestorRecursivo($plano->unidade_id, $usuarioLogadoId)) {
-            return $plano;
-        }
-
-        throw new ForbiddenException('Usuário não tem permissão para registrar execuções neste Plano de Trabalho.');
+        return $plano;
     }
 }

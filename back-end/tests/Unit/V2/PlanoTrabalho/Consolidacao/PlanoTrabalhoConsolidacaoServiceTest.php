@@ -5,11 +5,11 @@ use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizatio
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ConcluirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ReabrirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\RecursoValidator;
-use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\V2\StatusService;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\ProgramaRepository;
+use App\Repository\UnidadeRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Exceptions\NotFoundException;
@@ -23,7 +23,7 @@ beforeEach(function () {
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->consolidacaoRepo = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
     $this->programaRepo = Mockery::mock(ProgramaRepository::class);
-    $this->planoTrabalhoService = Mockery::mock(PlanoTrabalhoService::class);
+    $this->unidadeRepo = Mockery::mock(UnidadeRepository::class);
     $this->authValidator = Mockery::mock(AtividadeAuthorizationValidator::class);
     $this->concluirValidator = Mockery::mock(ConcluirConsolidacaoValidator::class);
     $this->reabrirValidator = Mockery::mock(ReabrirConsolidacaoValidator::class);
@@ -34,7 +34,7 @@ beforeEach(function () {
         $this->planoRepo,
         $this->consolidacaoRepo,
         $this->programaRepo,
-        $this->planoTrabalhoService,
+        $this->unidadeRepo,
         $this->authValidator,
         $this->concluirValidator,
         $this->reabrirValidator,
@@ -52,6 +52,8 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
 
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $plano->id = 'plano-1';
+        $plano->usuario_id = 'dono-1';
+        $plano->unidade_id = 'u-1';
 
         $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn($plano);
         $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')
@@ -60,9 +62,6 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
                 Mockery::mock(PlanoTrabalhoConsolidacao::class),
                 Mockery::mock(PlanoTrabalhoConsolidacao::class),
             ]));
-
-        $this->planoTrabalhoService->shouldReceive('isDonoOuChefia')
-            ->with($plano, 'dono-1')->andReturn(true);
 
         expect($this->service->index('plano-1'))->toHaveCount(2);
     });
@@ -78,9 +77,10 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
         Auth::shouldReceive('id')->andReturn('dono-1');
 
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->usuario_id = 'dono-1';
+        $plano->unidade_id = 'u-1';
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
         $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')->andReturn(new Collection());
-        $this->planoTrabalhoService->shouldReceive('isDonoOuChefia')->andReturn(true);
 
         expect($this->service->index('plano-1'))->toBeEmpty();
     });
@@ -89,6 +89,8 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
         Auth::shouldReceive('id')->andReturn('estranho-1');
 
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->usuario_id = 'outro';
+        $plano->unidade_id = 'u-1';
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
 
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
@@ -97,8 +99,8 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
         $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')
             ->andReturn(new Collection([$consolidacao]));
 
-        $this->planoTrabalhoService->shouldReceive('isDonoOuChefia')
-            ->with($plano, 'estranho-1')->andReturn(false);
+        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('u-1', 'estranho-1')->andReturn(false);
 
         $this->service->index('plano-1');
     });
@@ -107,6 +109,8 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
         Auth::shouldReceive('id')->andReturn('dono-1');
 
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->usuario_id = 'dono-1';
+        $plano->unidade_id = 'u-1';
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
 
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
@@ -114,9 +118,6 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
 
         $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')
             ->andReturn(new Collection([$consolidacao]));
-
-        $this->planoTrabalhoService->shouldReceive('isDonoOuChefia')
-            ->with($plano, 'dono-1')->andReturn(true);
 
         $this->service->index('plano-1');
     });

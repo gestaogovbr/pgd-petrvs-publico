@@ -275,6 +275,7 @@ describe('PlanoTrabalhoService::show', function () {
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $plano->usuario_id = 'user-1';
+        $plano->unidade_id = 'u-1';
 
         $this->readRepository
             ->shouldReceive('findByIdComRelacoes')
@@ -293,6 +294,7 @@ describe('PlanoTrabalhoService::show', function () {
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $plano->usuario_id = 'user-1';
+        $plano->unidade_id = 'u-1';
         $plano->setRelation('entregas', new Collection([
             (object) ['id' => 'entrega-1'],
         ]));

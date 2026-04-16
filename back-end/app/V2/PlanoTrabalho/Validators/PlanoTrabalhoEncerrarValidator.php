@@ -13,14 +13,18 @@ use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
+use App\V2\Traits\ValidaAutorizacaoTrait;
 
 class PlanoTrabalhoEncerrarValidator
 {
+    use ValidaAutorizacaoTrait;
+
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly UnidadeRepository $unidadeRepository,
         private readonly UsuarioRepository $usuarioRepository,
     ) {}
+
 
     public function validar(string $planoId, string $usuarioLogadoId): PlanoTrabalho
     {
@@ -41,11 +45,7 @@ class PlanoTrabalhoEncerrarValidator
 
     private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void
     {
-        if ($plano->usuario_id === $usuarioLogadoId) {
-            return;
-        }
-
-        if ($this->unidadeRepository->isUsuarioGestorRecursivo($plano->unidade_id, $usuarioLogadoId)) {
+        if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id)) {
             return;
         }
 

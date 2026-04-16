@@ -2,6 +2,7 @@
 
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
@@ -16,10 +17,12 @@ uses(TestCase::class);
 
 beforeEach(function () {
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
+    $this->unidadeRepo = Mockery::mock(UnidadeRepository::class);
     $this->usuarioRepo = Mockery::mock(UsuarioRepository::class);
 
     $this->validator = new PlanoTrabalhoDestroyValidator(
         $this->planoRepo,
+        $this->unidadeRepo,
         $this->usuarioRepo,
     );
 });
@@ -105,6 +108,7 @@ describe('PlanoTrabalhoDestroyValidator - autorização', function () {
         $plano = fakePlano(StatusEnum::INCLUIDO->value, 'user-1', 'criador-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
         $this->planoRepo->shouldReceive('possuiAssinatura')->andReturn(false);
+        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('unidade-1', 'outro-user')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('outro-user')->andReturn(fakeUsuario('outro-user', 1));
 
         $this->validator->validar('plano-1', 'outro-user');
@@ -116,6 +120,7 @@ describe('PlanoTrabalhoDestroyValidator - autorização', function () {
         $plano = fakePlano(StatusEnum::INCLUIDO->value, 'user-1', 'criador-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
         $this->planoRepo->shouldReceive('possuiAssinatura')->andReturn(false);
+        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('unidade-1', 'intruso')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('intruso')->andReturn(fakeUsuario('intruso', 5));
 
         $this->validator->validar('plano-1', 'intruso');

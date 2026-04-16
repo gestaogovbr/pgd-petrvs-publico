@@ -19,6 +19,7 @@ use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoEncerrarValidator;
 use App\V2\StatusService;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateValidator;
+use App\V2\Traits\ValidaAutorizacaoTrait;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -26,6 +27,8 @@ use Illuminate\Support\Facades\Auth;
 
 class PlanoTrabalhoService
 {
+    use ValidaAutorizacaoTrait;
+
     public function __construct(
         private readonly PlanoTrabalhoReadRepositoryContract $readRepository,
         private readonly PlanoTrabalhoWriteRepositoryContract $writeRepository,
@@ -93,7 +96,7 @@ class PlanoTrabalhoService
             throw new NotFoundException( 'Plano de Trabalho não encontrado.');
         }
 
-        if (!$this->isDonoOuChefia($plano, Auth::id())) {
+        if (!$this->isDonoOuChefia($plano, Auth::id(), $plano->unidade_id)) {
             $this->stripAfastamentos($plano);
         }
 
@@ -171,18 +174,6 @@ class PlanoTrabalhoService
         return $clone;
     }
 
-    public function isDonoOuChefia(PlanoTrabalho $plano, ?string $usuarioId): bool
-    {
-        if ($usuarioId === null) {
-            return false;
-        }
-
-        if ($plano->usuario_id === $usuarioId) {
-            return true;
-        }
-
-        return $this->unidadeRepository->isUsuarioGestorRecursivo($plano->unidade_id, $usuarioId);
-    }
 
     private function stripAfastamentos(PlanoTrabalho $plano): void
     {
