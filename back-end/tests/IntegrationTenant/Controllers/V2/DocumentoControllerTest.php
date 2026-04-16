@@ -640,6 +640,83 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (participante
     });
 });
 
+// ── POST assinatura-tcr: chefia imediata é dona do PT ───────────────
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (chefia imediata é dona do PT)', function () {
+
+    beforeEach(function () {
+        $this->programa->plano_trabalho_assinatura_participante = 1;
+        $this->programa->plano_trabalho_assinatura_gestor_unidade = 1;
+        $this->programa->save();
+
+        $perfil = Perfil::factory()->create(['nivel' => 3]);
+
+        // participante (dono do PT) é gestor titular da unidade
+        $integrante = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->usuario->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrante->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+
+        // unidade pai existe
+        $this->unidadePai = Unidade::factory()->create();
+        $this->unidade->unidade_pai_id = $this->unidadePai->id;
+        $this->unidade->save();
+
+        // gestor substituto da unidade pai
+        $this->substituto = Usuario::factory()->create(['perfil_id' => $perfil->id]);
+        $integranteSub = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidadePai->id,
+            'usuario_id' => $this->substituto->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integranteSub->id,
+            'atribuicao' => 'GESTOR_SUBSTITUTO',
+        ]);
+    });
+
+    test('chefia imediata assina seu próprio PT → AGUARDANDO_ASSINATURA', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+    });
+
+    test('substituto da unidade pai completa assinatura do PT da chefia → ATIVO', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this)->assertStatus(201);
+
+        $this->actingAs($this->substituto, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+
+    test('substituto assina primeiro, chefia imediata completa seu próprio PT → ATIVO', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+
+        $this->actingAs($this->substituto, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+
+        $this->actingAs($this->usuario, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+});
+
 // ── POST assinatura-tcr: impede assinaturas excedentes ──────────────
 
 describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (assinaturas excedentes)', function () {
