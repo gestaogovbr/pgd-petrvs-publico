@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\Ocorrencia;
+namespace App\Repository\Afastamento;
 
 use App\DTOs\ListResult;
 use App\Models\Ocorrencia;
-use App\Repository\Ocorrencia\Contracts\OcorrenciaReadRepositoryContract;
-use App\Repository\Ocorrencia\Contracts\OcorrenciaWriteRepositoryContract;
+use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
+use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
 
 /**
  * @extends AbstractEloquentWriteRepository<Ocorrencia>
  */
-class OcorrenciaRepository
+class AfastamentoRepository
 {
     public function __construct(
-        private readonly OcorrenciaReadRepositoryContract $readRepository,
-        private readonly OcorrenciaWriteRepositoryContract $writeRepository,
+        private readonly AfastamentoReadRepositoryContract $readRepository,
+        private readonly AfastamentoWriteRepositoryContract $writeRepository,
     ) {
     }
 

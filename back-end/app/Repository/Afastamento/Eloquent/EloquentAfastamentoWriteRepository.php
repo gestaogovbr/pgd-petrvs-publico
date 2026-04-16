@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\Ocorrencia\Eloquent;
+namespace App\Repository\Afastamento\Eloquent;
 
 use App\Models\Afastamento;
+use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
-use App\Repository\Ocorrencia\Contracts\OcorrenciaWriteRepositoryContract;
 
-class EloquentOcorrenciaWriteRepository extends AbstractEloquentWriteRepository implements OcorrenciaWriteRepositoryContract
+class EloquentAfastamentoWriteRepository extends AbstractEloquentWriteRepository implements AfastamentoWriteRepositoryContract
 {
     public function __construct(Afastamento $model)
     {

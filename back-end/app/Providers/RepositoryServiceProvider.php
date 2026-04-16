@@ -28,10 +28,10 @@ use App\Repository\IntegracaoUnidade\Eloquent\EloquentIntegracaoUnidadeReadRepos
 
 use App\Repository\IntegracaoUnidade\Eloquent\EloquentIntegracaoUnidadeWriteRepository;
 
-use App\Repository\Ocorrencia\Contracts\OcorrenciaReadRepositoryContract;
-use App\Repository\Ocorrencia\Contracts\OcorrenciaWriteRepositoryContract;
-use App\Repository\Ocorrencia\Eloquent\EloquentOcorrenciaReadRepository;
-use App\Repository\Ocorrencia\Eloquent\EloquentOcorrenciaWriteRepository;
+use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
+use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
+use App\Repository\Afastamento\Eloquent\EloquentAfastamentoReadRepository;
+use App\Repository\Afastamento\Eloquent\EloquentAfastamentoWriteRepository;
 
 use App\Repository\Perfil\Contracts\PerfilReadRepositoryContract;
 
@@ -269,13 +269,13 @@ final class RepositoryServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            OcorrenciaReadRepositoryContract::class,
-            EloquentOcorrenciaReadRepository::class,
+            AfastamentoReadRepositoryContract::class,
+            EloquentAfastamentoReadRepository::class,
         );
 
         $this->app->bind(
-            OcorrenciaWriteRepositoryContract::class,
-            EloquentOcorrenciaWriteRepository::class,
+            AfastamentoWriteRepositoryContract::class,
+            EloquentAfastamentoWriteRepository::class,
         );
     }
 

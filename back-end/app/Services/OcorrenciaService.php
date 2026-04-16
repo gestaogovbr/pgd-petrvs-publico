@@ -8,7 +8,7 @@ use App\Exceptions\ServerException;
 use App\Exceptions\UnauthorizedUserPanelException;
 use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
-use App\Repository\Ocorrencia\OcorrenciaRepository;
+use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Services\ServiceBase;
 use App\Services\UtilService;
@@ -18,14 +18,14 @@ use Throwable;
 
 class OcorrenciaService extends ServiceBase {
 
-    protected OcorrenciaRepository $ocorrenciaRepository;
+    protected AfastamentoRepository $ocorrenciaRepository;
 
     protected PlanoTrabalhoRepository $planoTrabalhoRepository;
 
     public function __construct()
     {
         parent::__construct();
-        $this->ocorrenciaRepository = app(OcorrenciaRepository::class);
+        $this->ocorrenciaRepository = app(AfastamentoRepository::class);
         $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
     }
 

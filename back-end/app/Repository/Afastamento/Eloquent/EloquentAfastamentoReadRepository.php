@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\Ocorrencia\Eloquent;
+namespace App\Repository\Afastamento\Eloquent;
 
 use App\DTOs\ListResult;
 use App\Models\Afastamento;
-use App\Repository\Ocorrencia\Contracts\OcorrenciaReadRepositoryContract;
+use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class EloquentOcorrenciaReadRepository implements OcorrenciaReadRepositoryContract
+class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryContract
 {
     public function __construct(
         private readonly Afastamento $ocorrencia,

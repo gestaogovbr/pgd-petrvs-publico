@@ -2,20 +2,19 @@
 
 use App\Exceptions\ServerException;
 use App\Models\PlanoTrabalho;
-use App\Repository\OcorrenciaRepository;
+use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Services\OcorrenciaService;
 use App\Services\ServiceBase;
 use Illuminate\Support\Facades\Auth;
-use Mockery;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->ocorrenciaRepository = Mockery::mock(OcorrenciaRepository::class);
+    $this->ocorrenciaRepository = Mockery::mock(AfastamentoRepository::class);
     $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
-    $this->app->instance(OcorrenciaRepository::class, $this->ocorrenciaRepository);
+    $this->app->instance(AfastamentoRepository::class, $this->ocorrenciaRepository);
     $this->app->instance(PlanoTrabalhoRepository::class, $this->planoTrabalhoRepository);
     $this->service = new OcorrenciaService();
     Auth::shouldReceive('user')->andReturn(null);

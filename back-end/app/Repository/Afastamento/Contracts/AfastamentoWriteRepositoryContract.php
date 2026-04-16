@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\Ocorrencia\Contracts;
+namespace App\Repository\Afastamento\Contracts;
 
 use App\Models\Afastamento;
 
-interface OcorrenciaWriteRepositoryContract
+interface AfastamentoWriteRepositoryContract
 {
     /**
      * @param array<string, mixed> $attributes
