@@ -59,8 +59,7 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
     if (this.listarApenasProprioUsuario) {
       result.push(["usuario_id", "==", this.auth.usuario!.id]);
     }
-    if(form.usuario_id?.length && form.tipo_motivo_afastamento_id?.length) {
-      result.push(["usuario_id", "==", form.usuario_id]);
+    if(form.tipo_motivo_afastamento_id?.length) {
       result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
     } else if (form.usuario_id?.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
