@@ -7,11 +7,14 @@ namespace App\Repository\Afastamento\Eloquent;
 use App\DTOs\ListResult;
 use App\Models\Afastamento;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
+use App\Repository\Eloquent\EloquentListRepositoryTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryContract
 {
+    use EloquentListRepositoryTrait;
+
     public function __construct(
         private readonly Afastamento $afastamento,
     ) {
@@ -30,27 +33,36 @@ class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryCont
     {
         $query = $this->afastamento->newQuery();
 
-        $with = $params['with'] ?? [];
-        $orderBy = $params['orderBy'];
-
-        if (!empty($with)) {
-            $query->with($with);
-        }
-
-        if(!empty($orderBy)) {
-            foreach($orderBy as $ordem) {
-                $query->orderBy($ordem[0], $ordem[1] ?? 'asc');
-            }
-        }
+        $this->applyWith($query, $params['with'] ?? []);
+        $this->applyOrderBy($query, $params['orderBy'] ?? []);
+        $this->applyWhere($query, $params['where'] ?? [], $this->whereHandlers());
 
         $count = $query->count();
 
         if (!empty($params['limit'])) {
-            $query->skip(max($params['page'] - 1, 0) * $params['limit'])->take($params['limit']);
+            $this->applyLimitPage(
+                $query,
+                (int) $params['limit'],
+                (int) ($params['page'] ?? 1)
+            );
         }
+
+        \Log::info($query->toSql(), $query->getBindings());
 
         $rows = $query->get();
 
         return new ListResult($rows, $count);
+    }
+
+    /**
+     * @return array<string, callable(Builder, string, mixed): void>
+     */
+    private function whereHandlers(): array
+    {
+        return [
+            'usuario_id' => static function (Builder $query, string $operator, mixed $value): void {
+                $query->where('usuario_id', $value);
+            },
+        ];
     }
 }
