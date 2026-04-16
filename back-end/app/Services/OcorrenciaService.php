@@ -5,36 +5,31 @@ namespace App\Services;
 use App\Enums\PerfilEnum;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
-use App\Exceptions\UnauthorizedUserPanelException;
-use App\Models\Ocorrencia;
+use App\Models\Afastamento;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Services\ServiceBase;
-use App\Services\UtilService;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
-use Throwable;
 
 class OcorrenciaService extends ServiceBase {
 
-    protected AfastamentoRepository $ocorrenciaRepository;
+    protected AfastamentoRepository $afastamentoRepository;
 
     protected PlanoTrabalhoRepository $planoTrabalhoRepository;
 
     public function __construct()
     {
         parent::__construct();
-        $this->ocorrenciaRepository = app(AfastamentoRepository::class);
+        $this->afastamentoRepository = app(AfastamentoRepository::class);
         $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
     }
 
     /**
      * @param array<string, mixed> $attributes
      */
-    public function insert(array $attributes): Ocorrencia
+    public function insert(array $attributes): Afastamento
     {
-        return $this->ocorrenciaRepository->insert($attributes);
+        return $this->afastamentoRepository->insert($attributes);
     }
 
     public function afterStore($entity, $action): void
@@ -75,7 +70,7 @@ class OcorrenciaService extends ServiceBase {
     {
         $this->aplicarFiltroUsuarioLogado($params);
 
-        $result = $this->ocorrenciaRepository->findAll($params);
+        $result = $this->afastamentoRepository->findAll($params);
 
         return $result->toArray();
     }
@@ -102,7 +97,7 @@ class OcorrenciaService extends ServiceBase {
     {
         if ($this->ocorrenciasRestritasAoProprioUsuario()) {
             if ($action === ServiceBase::ACTION_EDIT) {
-                $existente = $this->ocorrenciaRepository->findById((string) ($data['id'] ?? ''));
+                $existente = $this->afastamentoRepository->findById((string) ($data['id'] ?? ''));
                 if ($existente && $existente->usuario_id !== self::loggedUser()?->id) {
                     throw new ServerException("ValidateOcorrencia", "Edição não permitida para esta ocorrência");
                 }

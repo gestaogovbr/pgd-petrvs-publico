@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Repository\Afastamento;
 
 use App\DTOs\ListResult;
-use App\Models\Ocorrencia;
+use App\Models\Afastamento;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
 
 /**
- * @extends AbstractEloquentWriteRepository<Ocorrencia>
+ * @extends AbstractEloquentWriteRepository<Afastamento>
  */
 class AfastamentoRepository
 {
@@ -20,7 +20,7 @@ class AfastamentoRepository
     ) {
     }
 
-    public function findById(string $id): ?Ocorrencia
+    public function findById(string $id): ?Afastamento
     {
         return $this->readRepository->findById($id);
     }
@@ -36,7 +36,7 @@ class AfastamentoRepository
     /**
      * @param array<string, mixed> $attributes
      */
-    public function insert(array $attributes): Ocorrencia
+    public function insert(array $attributes): Afastamento
     {
         return $this->writeRepository->create($attributes);
     }
@@ -44,7 +44,7 @@ class AfastamentoRepository
     /**
      * @param array<string, mixed> $attributes
      */
-    public function update(string $id, array $attributes): ?Ocorrencia
+    public function update(string $id, array $attributes): ?Afastamento
     {
         return $this->writeRepository->update($id, $attributes);
     }

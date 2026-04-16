@@ -70,12 +70,6 @@ class PlanoTrabalhoRepository
         return $this->readRepository->findByIdComRelacoes($id);
     }
 
-    public function findById(string $id): ?PlanoTrabalho
-    {
-        /** @var PlanoTrabalho|null */
-        return $this->readRepository->findById($id);
-    }
-
     public function delete(string $id): bool
     {
         return $this->writeRepository->delete($id);

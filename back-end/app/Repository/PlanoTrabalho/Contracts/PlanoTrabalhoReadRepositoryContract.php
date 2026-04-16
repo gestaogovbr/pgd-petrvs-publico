@@ -12,8 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 
 interface PlanoTrabalhoReadRepositoryContract
 {
-    public function findById(string $id): ?PlanoTrabalho;
-
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection;
 
     public function planosAtivos(string $usuarioId): Collection;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Ocorrencia;
+use App\Models\Afastamento;
 use App\Models\Perfil;
 use App\Models\TipoModalidade;
 use App\Models\Usuario;
@@ -18,14 +18,14 @@ describe('AfastamentoRepository', function () {
             'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
-        $ocorrencia = Ocorrencia::factory()->create([
+        $Afastamento = Afastamento::factory()->create([
             'usuario_id' => $usuario->id,
         ]);
 
-        $found = $this->repository->findById($ocorrencia->id);
+        $found = $this->repository->findById($Afastamento->id);
 
         expect($found)->not->toBeNull()
-            ->and($found->id)->toBe($ocorrencia->id);
+            ->and($found->id)->toBe($Afastamento->id);
     });
 
     test('findById retorna null quando id está vazio', function () {
