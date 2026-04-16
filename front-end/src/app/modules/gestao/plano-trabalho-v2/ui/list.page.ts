@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, debounceTime } from 'rxjs';
 import { PlanoTrabalho } from '../domain/types';
 import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ClonarPlanoUseCase } from '../application/clonar-plano.usecase';
@@ -39,11 +39,14 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   private readonly FILTER_KEY = 'plano-trabalho-v2:filters';
 
-  advanced = false;
+  readonly advanced = signal(false);
 
   /** Plano aguardando justificativa de cancelamento */
   readonly cancelandoPlano = signal<PlanoTrabalho | null>(null);
   readonly justificativaCancelamento = signal('');
+
+  /** Confirmação genérica (clonar / excluir) */
+  readonly confirmacaoPendente = signal<{ titulo: string; mensagem: string; onConfirm: () => void } | null>(null);
 
   readonly modalidadeOptions = signal<SelectOption[]>([{ value: '', label: 'Todas', selected: true }]);
 
@@ -57,6 +60,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     { value: 'CANCELADO', label: 'Cancelado' },
   ];
   private readonly subscriptions: Subscription[] = [];
+  private readonly filterChange$ = new Subject<void>();
 
 readonly filters: FormGroup<{
     periodo_inicio: FormControl<string | null>;
@@ -84,7 +88,6 @@ readonly filters: FormGroup<{
     status: this.fb.nonNullable.control('')
   });
 
-  private filterTimer?: ReturnType<typeof setTimeout>;
 
   get isParticipante(): boolean {
     return this.auth.isUsuarioParticipante();
@@ -115,10 +118,11 @@ readonly filters: FormGroup<{
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
+    this.filterChange$.complete();
   }
 
   toggleAdvanced() {
-    this.advanced = !this.advanced;
+    this.advanced.set(!this.advanced());
     this.saveFilters();
   }
 
@@ -127,7 +131,7 @@ readonly filters: FormGroup<{
   }
 
   limparFiltros() {
-    this.advanced = false;
+    this.advanced.set(false);
     this.filters.reset({
       periodo_inicio: null,
       periodo_fim: null,
@@ -145,8 +149,7 @@ readonly filters: FormGroup<{
   }
 
   onFilterChange() {
-    if (this.filterTimer) clearTimeout(this.filterTimer);
-    this.filterTimer = setTimeout(() => this.applyFiltersAndLoad(true), 400);
+    this.filterChange$.next();
   }
 
   private setupSubscriptions() {
@@ -154,6 +157,7 @@ readonly filters: FormGroup<{
     const vigentes = this.filters.controls.vigentes;
 
     this.subscriptions.push(
+      this.filterChange$.pipe(debounceTime(400)).subscribe(() => this.applyFiltersAndLoad(true)),
       arquivados.valueChanges.subscribe(checked => {
         if (checked) vigentes.setValue(false, { emitEvent: false });
         this.onFilterChange();
@@ -169,14 +173,14 @@ readonly filters: FormGroup<{
 
   private saveFilters() {
     const raw = this.filters.getRawValue();
-    this.filterStorage.save(this.FILTER_KEY, { ...raw, advanced: this.advanced });
+    this.filterStorage.save(this.FILTER_KEY, { ...raw, advanced: this.advanced() });
   }
 
   private restoreFilters() {
     const parsed = this.filterStorage.load<Record<string, unknown>>(this.FILTER_KEY);
     if (!parsed) return;
     this.filters.patchValue(parsed, { emitEvent: false });
-    if (parsed['advanced']) this.advanced = true;
+    if (parsed['advanced']) this.advanced.set(true);
   }
 
   private applyFiltersAndLoad(resetPage: boolean) {
@@ -266,17 +270,32 @@ readonly filters: FormGroup<{
   }
 
   clonarPlano(p: PlanoTrabalho) {
-    if (!confirm('Um novo Plano de Trabalho será criado com base neste, preservando suas informações, exceto as datas de início e fim, os percentuais de contribuição e os vínculos com entregas que não estejam mais disponíveis. Deseja confirmar?')) return;
-    this.clonarPlanoUC.execute(p.id).subscribe((novo) => {
-      this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', novo.id]);
+    this.confirmacaoPendente.set({
+      titulo: 'Clonar Plano de Trabalho',
+      mensagem: 'Um novo Plano de Trabalho será criado com base neste, preservando suas informações, exceto as datas de início e fim, os percentuais de contribuição e os vínculos com entregas que não estejam mais disponíveis.',
+      onConfirm: () => this.clonarPlanoUC.execute(p.id).subscribe(novo =>
+        this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', novo.id])
+      )
     });
   }
 
   excluirPlano(p: PlanoTrabalho) {
-    if (!confirm('Tem certeza que deseja excluir este Plano de Trabalho? Esta ação não pode ser desfeita.')) return;
-    this.excluirPlanoUC.execute(p.id).subscribe(() => {
-      this.applyFiltersAndLoad(false);
+    this.confirmacaoPendente.set({
+      titulo: 'Excluir Plano de Trabalho',
+      mensagem: 'Tem certeza que deseja excluir este Plano de Trabalho? Esta ação não pode ser desfeita.',
+      onConfirm: () => this.excluirPlanoUC.execute(p.id).subscribe(() => this.applyFiltersAndLoad(false))
     });
+  }
+
+  cancelarConfirmacao() {
+    this.confirmacaoPendente.set(null);
+  }
+
+  confirmarAcao() {
+    const acao = this.confirmacaoPendente();
+    if (!acao) return;
+    this.confirmacaoPendente.set(null);
+    acao.onConfirm();
   }
 
   iniciarCancelamento(p: PlanoTrabalho) {

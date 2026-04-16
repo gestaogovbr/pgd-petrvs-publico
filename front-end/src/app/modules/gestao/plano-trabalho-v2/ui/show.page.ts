@@ -7,7 +7,7 @@ import { filter, map, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoApiClient } from "../infra/plano-api.client";
 import { ArquivarPlanoUseCase } from "../application/arquivar-plano.usecase";
-import { Consolidacao, PlanoTrabalho, PlanoTrabalhoEntrega } from "../domain/types";
+import { Consolidacao, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo } from "../domain/types";
 import { PlanoTrabalhoStatus } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
 import { UnidadeService } from "src/app/v2/services/unidade.service";
@@ -138,17 +138,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   }
 
   getPlanoEntregaInfo(e: PlanoTrabalhoEntrega): { plano: string; entrega: string } {
-    if (e.orgao) return { plano: 'Outro Órgão/Entidade', entrega: e.orgao };
-    if (!e.plano_entrega_entrega_id) return { plano: 'Não vinculada', entrega: '-' };
-
-    if (e.plano_entrega_entrega) {
-      return {
-        plano: (e.plano_entrega_entrega as any).plano_entrega?.nome || 'Plano vinculado',
-        entrega: (e.plano_entrega_entrega as any).descricao || 'Entrega vinculada'
-      };
-    }
-
-    return { plano: 'Plano vinculado', entrega: 'Entrega vinculada' };
+    return getPlanoEntregaInfo(e);
   }
 
   // --- Display helpers de nota (usados no template) ---

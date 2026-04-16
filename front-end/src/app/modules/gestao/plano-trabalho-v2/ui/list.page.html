@@ -74,7 +74,7 @@
         </div>
 
         <!-- FILTRO AVANÇADO -->
-        @if (advanced) {
+        @if (advanced()) {
           <div class="br-divider"></div>
 
           <div class="row g-3 mt-2">
@@ -159,20 +159,24 @@
       <table>
         <thead>
           <tr>
-            <th scope="col" style="cursor:pointer; white-space:nowrap" (click)="onSort('numero')">
+            <th scope="col" style="cursor:pointer; white-space:nowrap" tabindex="0"
+                (click)="onSort('numero')" (keydown.enter)="onSort('numero')" (keydown.space)="onSort('numero')"
+                [attr.aria-sort]="facade.orderBy() === 'numero' ? (facade.orderDir() === 'asc' ? 'ascending' : 'descending') : 'none'">
               Número
               @if (facade.orderBy() === 'numero') {
-                <span>{{ facade.orderDir() === 'asc' ? '▲' : '▼' }}</span>
+                <span aria-hidden="true">{{ facade.orderDir() === 'asc' ? '▲' : '▼' }}</span>
               } @else {
-                <span style="opacity:0.35">⇅</span>
+                <span aria-hidden="true" style="opacity:0.35">⇅</span>
               }
             </th>
-            <th scope="col" style="cursor:pointer; white-space:nowrap" (click)="onSort('usuario_nome')">
+            <th scope="col" style="cursor:pointer; white-space:nowrap" tabindex="0"
+                (click)="onSort('usuario_nome')" (keydown.enter)="onSort('usuario_nome')" (keydown.space)="onSort('usuario_nome')"
+                [attr.aria-sort]="facade.orderBy() === 'usuario_nome' ? (facade.orderDir() === 'asc' ? 'ascending' : 'descending') : 'none'">
               Usuário
               @if (facade.orderBy() === 'usuario_nome') {
-                <span>{{ facade.orderDir() === 'asc' ? '▲' : '▼' }}</span>
+                <span aria-hidden="true">{{ facade.orderDir() === 'asc' ? '▲' : '▼' }}</span>
               } @else {
-                <span style="opacity:0.35">⇅</span>
+                <span aria-hidden="true" style="opacity:0.35">⇅</span>
               }
             </th>
             <th scope="col">Unidade</th>
@@ -247,6 +251,16 @@
 
   <app-v2-pagination class="mt-3 d-block" [page]="facade.page()" [lastPage]="facade.lastPage()" [total]="facade.total()" (pageChange)="onPageChange($event)" />
 </div>
+
+<br-scrim [isOpen]="!!confirmacaoPendente()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!confirmacaoPendente()" [titleText]="confirmacaoPendente()?.titulo || ''" size="small" alignFooter="end" (brModalBeforeClose)="cancelarConfirmacao()">
+    <p>{{ confirmacaoPendente()?.mensagem }}</p>
+    <div slot="footer">
+      <br-button emphasis="secondary" (click)="cancelarConfirmacao()">Cancelar</br-button>
+      <br-button emphasis="primary" (click)="confirmarAcao()">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
 
 <br-scrim [isOpen]="!!cancelandoPlano()" [disableCloseOnClick]="true">
   <br-modal [show]="!!cancelandoPlano()" titleText="Cancelar Plano de Trabalho" size="medium" alignFooter="end" initial-focus-selector="#justificativa_cancelamento" (brModalBeforeClose)="cancelarCancelamento()">

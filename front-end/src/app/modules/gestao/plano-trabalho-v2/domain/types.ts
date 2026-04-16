@@ -58,6 +58,18 @@ export type OcorrenciaFormValue = {
   horas: string;
 };
 
+export function getPlanoEntregaInfo(e: PlanoTrabalhoEntrega | any): { plano: string; entrega: string } {
+  if (e.orgao) return { plano: 'Outro Órgão/Entidade', entrega: e.orgao };
+  if (!e.plano_entrega_entrega_id) return { plano: 'Não vinculada', entrega: '-' };
+  if (e.plano_entrega_entrega) {
+    return {
+      plano: (e.plano_entrega_entrega as any).plano_entrega?.nome || 'Plano vinculado',
+      entrega: (e.plano_entrega_entrega as any).descricao || 'Entrega vinculada'
+    };
+  }
+  return { plano: 'Plano vinculado', entrega: 'Entrega vinculada' };
+}
+
 export type AvaliacaoConsolidacao = {
   id: string;
   data_avaliacao: string;

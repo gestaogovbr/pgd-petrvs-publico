@@ -14,13 +14,12 @@ import { UsuarioService, UsuarioSearchItem } from 'src/app/v2/services/usuario.s
 import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
 import { PlanoEntregaApiService, PlanoEntregaItem } from 'src/app/v2/services/plano-entrega-api.service';
-import { GlobalsService } from 'src/app/services/globals.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { MessageService } from 'src/app/v2/services/message.service';
 import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
-import { PlanoTrabalho } from '../domain/types';
+import { PlanoTrabalho, getPlanoEntregaInfo } from '../domain/types';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -44,7 +43,6 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   private readonly message = inject(MessageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
-  public readonly gb = inject(GlobalsService);
   private readonly injector = inject(Injector);
   readonly policy = inject(PlanoTrabalhoPolicy);
 
@@ -548,18 +546,8 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     });
   }
 
-  getPlanoEntregaInfo(e: any): { plano: string, entrega: string } {
-    if (e.orgao) return { plano: 'Outro Órgão/Entidade', entrega: e.orgao };
-    if (!e.plano_entrega_entrega_id) return { plano: 'Não vinculada', entrega: '-' };
-
-    if (e.plano_entrega_entrega) {
-      return {
-        plano: e.plano_entrega_entrega.plano_entrega?.nome || 'Plano vinculado',
-        entrega: e.plano_entrega_entrega.descricao || 'Entrega vinculada'
-      };
-    }
-
-    return { plano: 'Plano vinculado', entrega: 'Entrega vinculada' };
+  getPlanoEntregaInfo(e: any): { plano: string; entrega: string } {
+    return getPlanoEntregaInfo(e);
   }
 
   buscarOutrasUnidades(term: string) {

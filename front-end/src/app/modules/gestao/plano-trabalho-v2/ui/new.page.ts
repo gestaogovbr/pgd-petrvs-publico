@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, of, switchMap, take, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigateService } from 'src/app/services/navigate.service';
+import { Router } from '@angular/router';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -26,7 +26,7 @@ import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb
 })
 export class PlanoTrabalhoV2NewPage implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly go = inject(NavigateService);
+  private readonly router = inject(Router);
   private readonly api = inject(PlanoTrabalhoApiClient);
   private readonly usuarioService = inject(UsuarioService);
   private readonly programaApi = inject(ProgramaApiService);
@@ -138,7 +138,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     ).subscribe(id => this.selectedModalidadeId.set(id ?? ''));
   }
 
-  voltar() { this.go.navigate({ route: ['gestao', 'plano-trabalho-v2'] }); }
+  voltar() { this.router.navigate(['gestao', 'plano-trabalho-v2']); }
 
   selecionarUsuario(item: UsuarioSearchItem) {
     this.form.controls.usuario_id.setValue(item.id);
@@ -175,7 +175,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.api.create(payload)
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe(res => {
-        this.go.navigate({ route: ['gestao', 'plano-trabalho-v2', 'editar', res.id] });
+        this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', res.id]);
       });
   }
 
