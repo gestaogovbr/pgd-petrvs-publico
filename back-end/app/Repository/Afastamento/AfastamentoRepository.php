@@ -28,9 +28,9 @@ class AfastamentoRepository
     /**
      * @return ListResult
      */
-    public function findAll($data): ListResult
+    public function findAll($params): ListResult
     {
-        return $this->readRepository->findAll($data);
+        return $this->readRepository->findAll($params);
     }
 
     /**

@@ -13,7 +13,7 @@ class ListResult
     public function toArray(): array
     {
         return [
-            'rows' => $this->data,
+            'rows' => $this->data->toArray(),
             'count' => $this->total,
         ];
     }

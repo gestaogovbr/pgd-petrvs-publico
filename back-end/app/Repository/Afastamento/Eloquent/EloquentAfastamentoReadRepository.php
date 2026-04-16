@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryContract
 {
     public function __construct(
-        private readonly Afastamento $ocorrencia,
+        private readonly Afastamento $afastamento,
     ) {
     }
 
@@ -23,22 +23,33 @@ class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryCont
             return null;
         }
 
-        return $this->ocorrencia->newQuery()->find($id);
+        return $this->afastamento->newQuery()->find($id);
     }
 
-    public function findAll($data): ListResult
+    public function findAll($params): ListResult
     {
-        $query = $this->ocorrencia->newQuery();
+        $query = $this->afastamento->newQuery();
+
+        $with = $params['with'] ?? [];
+        $orderBy = $params['orderBy'];
+
+        if (!empty($with)) {
+            $query->with($with);
+        }
+
+        if(!empty($orderBy)) {
+            foreach($orderBy as $ordem) {
+                $query->orderBy($ordem[0], $ordem[1] ?? 'asc');
+            }
+        }
 
         $count = $query->count();
 
-        if (! empty($data['limit'])) {
-            $query->skip(max($data['page'] - 1, 0) * $data['limit'])->take($data['limit']);
+        if (!empty($params['limit'])) {
+            $query->skip(max($params['page'] - 1, 0) * $params['limit'])->take($params['limit']);
         }
 
         $rows = $query->get();
-
-        \Log::info($query->toSql());
 
         return new ListResult($rows, $count);
     }

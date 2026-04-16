@@ -28,7 +28,7 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
   constructor(public injector: Injector) {
     super(injector, Afastamento, AfastamentoDaoService);
     /* Inicializações */
-    this.join = ["tipo_motivo_afastamento:id, nome", "usuario: id, nome"];
+    this.join = ["tipoMotivoAfastamento:id,nome", "usuario:id,nome"];
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
