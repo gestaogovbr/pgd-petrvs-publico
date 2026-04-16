@@ -32,6 +32,11 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->findByPlanoTrabalhoId($planoTrabalhoId);
     }
 
+    public function findByPlanoTrabalhoIdAndPeriodo(string $planoTrabalhoId, string $dataInicio, string $dataFim): Collection
+    {
+        return $this->readRepository->findByPlanoTrabalhoIdAndPeriodo($planoTrabalhoId, $dataInicio, $dataFim);
+    }
+
     public function getPendentesAvaliacao(
         array $unidadesGerenciadasIds,
         array $unidadesSubordinadasIds,
@@ -61,5 +66,20 @@ class PlanoTrabalhoConsolidacaoRepository
     public function delete(string $id): bool
     {
         return $this->writeRepository->delete($id);
+    }
+
+    public function createAfastamentoVinculo(array $attributes): void
+    {
+        $this->writeRepository->createAfastamentoVinculo($attributes);
+    }
+
+    public function updateAfastamentoSnapshot(string $afastamentoId, string $snapshot): void
+    {
+        $this->writeRepository->updateAfastamentoSnapshot($afastamentoId, $snapshot);
+    }
+
+    public function deleteAfastamentoVinculos(string $afastamentoId): void
+    {
+        $this->writeRepository->deleteAfastamentoVinculos($afastamentoId);
     }
 }

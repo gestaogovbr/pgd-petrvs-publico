@@ -15,4 +15,10 @@ interface PlanoTrabalhoConsolidacaoWriteRepositoryContract
 
     /** @return \App\Models\PlanoTrabalhoConsolidacao|null */
     public function update(string|int $id, array $attributes): ?Model;
+
+    public function createAfastamentoVinculo(array $attributes): void;
+
+    public function updateAfastamentoSnapshot(string $afastamentoId, string $snapshot): void;
+
+    public function deleteAfastamentoVinculos(string $afastamentoId): void;
 }

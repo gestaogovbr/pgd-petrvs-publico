@@ -15,6 +15,8 @@ interface PlanoTrabalhoConsolidacaoReadRepositoryContract
 
     public function findByPlanoTrabalhoId(string $planoTrabalhoId): \Illuminate\Database\Eloquent\Collection;
 
+    public function findByPlanoTrabalhoIdAndPeriodo(string $planoTrabalhoId, string $dataInicio, string $dataFim): \Illuminate\Database\Eloquent\Collection;
+
     public function getPendentesAvaliacao(
         array $unidadesGerenciadasIds,
         array $unidadesSubordinadasIds,

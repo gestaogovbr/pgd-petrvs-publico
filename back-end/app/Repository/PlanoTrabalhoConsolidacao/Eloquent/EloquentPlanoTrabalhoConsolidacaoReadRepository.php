@@ -82,20 +82,6 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
         ])->find($id);
     }
 
-    /**
-     * Busca consolidações concluídas pendentes de avaliação.
-     *
-     * Regras principais:
-     * - Considera apenas consolidações com status CONCLUIDO e latestStatus anterior à data de corte.
-     * - Para unidades gerenciadas, exclui a consolidação do gestor titular quando o avaliador é gestor substituto.
-     * - Para unidades subordinadas, permite apenas planos cujo titular é gestor da unidade.
-     *
-     * @param array $unidadesGerenciadasIds IDs das unidades gerenciadas pelo usuário.
-     * @param array $unidadesSubordinadasIds IDs de unidades subordinadas às gerenciadas.
-     * @param string $usuarioId ID do usuário avaliador.
-     * @param \DateTimeInterface $dataCorte Data limite para considerar pendência.
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
     public function findByPlanoTrabalhoId(string $planoTrabalhoId): \Illuminate\Database\Eloquent\Collection
     {
         return $this->query()
@@ -111,6 +97,29 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->get();
     }
 
+    public function findByPlanoTrabalhoIdAndPeriodo(string $planoTrabalhoId, string $dataInicio, string $dataFim): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->where('data_inicio', '<=', $dataFim)
+            ->where('data_fim', '>=', $dataInicio)
+            ->get();
+    }
+
+    /**
+     * Busca consolidações concluídas pendentes de avaliação.
+     *
+     * Regras principais:
+     * - Considera apenas consolidações com status CONCLUIDO e latestStatus anterior à data de corte.
+     * - Para unidades gerenciadas, exclui a consolidação do gestor titular quando o avaliador é gestor substituto.
+     * - Para unidades subordinadas, permite apenas planos cujo titular é gestor da unidade.
+     *
+     * @param array $unidadesGerenciadasIds IDs das unidades gerenciadas pelo usuário.
+     * @param array $unidadesSubordinadasIds IDs de unidades subordinadas às gerenciadas.
+     * @param string $usuarioId ID do usuário avaliador.
+     * @param \DateTimeInterface $dataCorte Data limite para considerar pendência.
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function getPendentesAvaliacao(
         array $unidadesGerenciadasIds,
         array $unidadesSubordinadasIds,

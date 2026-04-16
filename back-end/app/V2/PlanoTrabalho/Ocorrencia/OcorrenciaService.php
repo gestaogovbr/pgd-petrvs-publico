@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Ocorrencia;
 
 use App\Models\Afastamento;
-use App\Models\PlanoTrabalhoConsolidacao;
-use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\V2\PlanoTrabalho\Ocorrencia\DTOs\ConsolidacaoAfastamentoDTO;
 use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaStoreDTO;
 use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
 use App\V2\PlanoTrabalho\Ocorrencia\Validators\OcorrenciaStoreValidator;
@@ -16,6 +16,7 @@ class OcorrenciaService
 {
     public function __construct(
         private readonly OcorrenciaStoreValidator $validator,
+        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
     ) {}
 
     public function store(OcorrenciaStoreDTO $dto): Afastamento
@@ -35,8 +36,14 @@ class OcorrenciaService
     {
         $plano = $this->validator->validarAutorizacao($dto->planoTrabalhoId, Auth::id());
         $afastamento = $this->validator->validarExistencia($dto->ocorrenciaId, $plano);
-
+        
+        // TODO (#1984): mover para AfastamentoRepository::update
         $afastamento->update($dto->toPersistArray());
+
+        $this->consolidacaoRepository->updateAfastamentoSnapshot(
+            $afastamento->id,
+            json_encode($afastamento->fresh()->toArray()),
+        );
 
         return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
     }
@@ -46,30 +53,25 @@ class OcorrenciaService
         $plano = $this->validator->validarAutorizacao($planoTrabalhoId, Auth::id());
         $afastamento = $this->validator->validarExistencia($ocorrenciaId, $plano);
 
-        // TODO (#1984): mover para AfastamentoRepository (ou PlanoTrabalhoConsolidacaoAfastamentoRepository)
-        PlanoTrabalhoConsolidacaoAfastamento::where('afastamento_id', $afastamento->id)->delete();
+        $this->consolidacaoRepository->deleteAfastamentoVinculos($afastamento->id);
+
+        // TODO (#1984): mover para AfastamentoRepository::delete
         $afastamento->delete();
     }
 
     private function vincularConsolidacoes(string $planoTrabalhoId, Afastamento $afastamento): void
     {
-        // TODO (#1984): mover para PlanoTrabalhoConsolidacaoRepository::findByPeriodo
-        $consolidacoes = PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $planoTrabalhoId)
-            ->where('data_inicio', '<=', $afastamento->data_fim)
-            ->where('data_fim', '>=', $afastamento->data_inicio)
-            ->get();
+        $consolidacoes = $this->consolidacaoRepository->findByPlanoTrabalhoIdAndPeriodo(
+            $planoTrabalhoId,
+            $afastamento->data_inicio,
+            $afastamento->data_fim,
+        );
 
         foreach ($consolidacoes as $consolidacao) {
-            // TODO (#1984): mover para PlanoTrabalhoConsolidacaoAfastamentoRepository::create
-            PlanoTrabalhoConsolidacaoAfastamento::create([
-                'plano_trabalho_consolidacao_id' => $consolidacao->id,
-                'afastamento_id' => $afastamento->id,
-                'snapshot' => json_encode([
-                    'data_inicio' => $afastamento->data_inicio,
-                    'data_fim' => $afastamento->data_fim,
-                ]),
-                'data_conclusao' => now(),
-            ]);
+            /** @var \App\Models\PlanoTrabalhoConsolidacao $consolidacao */
+            $this->consolidacaoRepository->createAfastamentoVinculo(
+                ConsolidacaoAfastamentoDTO::fromModels($consolidacao, $afastamento)->toPersistArray(),
+            );
         }
     }
 }
