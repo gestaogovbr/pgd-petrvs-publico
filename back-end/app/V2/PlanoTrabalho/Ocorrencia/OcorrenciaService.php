@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Ocorrencia;
 
 use App\Models\Afastamento;
+use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\V2\PlanoTrabalho\Ocorrencia\DTOs\ConsolidacaoAfastamentoDTO;
 use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaStoreDTO;
@@ -16,6 +17,7 @@ class OcorrenciaService
 {
     public function __construct(
         private readonly OcorrenciaStoreValidator $validator,
+        private readonly AfastamentoRepository $afastamentoRepository,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
     ) {}
 
@@ -24,8 +26,7 @@ class OcorrenciaService
         $plano = $this->validator->validarAutorizacao($dto->planoTrabalhoId, Auth::id());
         $this->validator->validarStore($plano, $dto);
 
-        // TODO (#1984): mover para AfastamentoRepository::create
-        $afastamento = Afastamento::create($dto->toPersistArray($plano->usuario_id));
+        $afastamento = $this->afastamentoRepository->insert($dto->toPersistArray($plano->usuario_id));
 
         $this->vincularConsolidacoes($plano->id, $afastamento);
 
@@ -36,13 +37,14 @@ class OcorrenciaService
     {
         $plano = $this->validator->validarAutorizacao($dto->planoTrabalhoId, Auth::id());
         $afastamento = $this->validator->validarExistencia($dto->ocorrenciaId, $plano);
-        
-        // TODO (#1984): mover para AfastamentoRepository::update
-        $afastamento->update($dto->toPersistArray());
+
+        $this->afastamentoRepository->update($afastamento->id, $dto->toPersistArray());
+
+        $afastamento->refresh();
 
         $this->consolidacaoRepository->updateAfastamentoSnapshot(
             $afastamento->id,
-            json_encode($afastamento->fresh()->toArray()),
+            json_encode($afastamento->toArray()),
         );
 
         return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
@@ -54,9 +56,7 @@ class OcorrenciaService
         $afastamento = $this->validator->validarExistencia($ocorrenciaId, $plano);
 
         $this->consolidacaoRepository->deleteAfastamentoVinculos($afastamento->id);
-
-        // TODO (#1984): mover para AfastamentoRepository::delete
-        $afastamento->delete();
+        $this->afastamentoRepository->destroy($afastamento->id);
     }
 
     private function vincularConsolidacoes(string $planoTrabalhoId, Afastamento $afastamento): void
