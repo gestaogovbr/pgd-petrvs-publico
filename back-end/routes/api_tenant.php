@@ -665,3 +665,4 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('plano-entrega', [PlanoEntregaV2::class, 'buscarPorUnidade']);
     Route::get('plano-entrega/{planoEntregaId}/entrega', [PlanoEntregaV2::class, 'buscarEntregasPorPlano'])->whereUuid('planoEntregaId');
 });
+

@@ -5,7 +5,8 @@ pipeline {
         skipDefaultCheckout(true)
         disableConcurrentBuilds()
         timestamps()
-        buildDiscarder(logRotator(numToKeepStr: '30'))
+        buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
+        timeout(time: 30, unit: 'MINUTES')
     }
 
     environment {
@@ -17,6 +18,9 @@ pipeline {
         DB_HOST = '127.0.0.1'
         DB_USERNAME = 'root'
         DB_PASSWORD = 'root'
+        COMPOSER_ALLOW_SUPERUSER = '1'
+        PHPSTAN_REPORT = 'back-end/phpstan-report.xml'
+        PHPSTAN_EXIT_FILE = '.phpstan-exit-code'
     }
 
     stages {
@@ -119,26 +123,68 @@ PY
                 sh './ci/scripts/run-pest.sh'
             }
         }
-    }
 
-    post {
-        always {
-            script {
-                if (env.CI_MARIADB_CONTAINER?.trim()) {
-                    sh '''
-                        docker logs "${CI_MARIADB_CONTAINER}" >/tmp/${CI_MARIADB_CONTAINER}.log 2>&1 || true
-                        docker rm -f "${CI_MARIADB_CONTAINER}" >/dev/null 2>&1 || true
-                    '''
-                }
+        stage('Run PHPStan') {
+            when {
+                expression { env.SKIP_PIPELINE != 'true' }
+            }
+            steps {
+                sh 'chmod +x ci/scripts/run-phpstan.sh'
+                sh './ci/scripts/run-phpstan.sh'
             }
         }
 
-        failure {
-            echo 'Pipeline de Pest falhou.'
-        }
-
-        success {
-            echo 'Pipeline de Pest concluída com sucesso.'
+        stage('Fail if PHPStan failed') {
+            when {
+                expression { env.SKIP_PIPELINE != 'true' }
+            }
+            steps {
+                script {
+                    def exitCode = readFile('.phpstan-exit-code').trim()
+                    if (exitCode != '0') {
+                        error("PHPStan encontrou erros.")
+                    }
+                }
+            }
         }
     }
+
+ post {
+    always {
+        script {
+            if (env.CI_MARIADB_CONTAINER?.trim()) {
+                sh '''
+                    docker logs "${CI_MARIADB_CONTAINER}" >/tmp/${CI_MARIADB_CONTAINER}.log 2>&1 || true
+                    docker rm -f "${CI_MARIADB_CONTAINER}" >/dev/null 2>&1 || true
+                '''
+            }
+        }
+
+        sh '''
+            echo "==> Verificando artefatos antes do archive"
+            ls -lah back-end/phpstan-report.xml back-end/phpstan-report.txt .phpstan-exit-code || true
+        '''
+
+        archiveArtifacts(
+            artifacts: 'back-end/phpstan-report.xml, back-end/phpstan-report.txt, .phpstan-exit-code',
+            fingerprint: true,
+            allowEmptyArchive: false,
+            onlyIfSuccessful: false
+        )
+
+        recordIssues(
+            enabledForFailure: true,
+            aggregatingResults: false,
+            tools: [checkStyle(pattern: 'back-end/phpstan-report.xml', id: 'phpstan', name: 'PHPStan')]
+        )
+    }
+
+    failure {
+        echo 'Pipeline de CI falhou.'
+    }
+
+    success {
+        echo 'Pipeline de CI concluída com sucesso.'
+    }
+}
 }

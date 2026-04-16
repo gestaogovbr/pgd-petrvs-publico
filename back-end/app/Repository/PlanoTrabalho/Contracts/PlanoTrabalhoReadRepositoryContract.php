@@ -6,11 +6,14 @@ namespace App\Repository\PlanoTrabalho\Contracts;
 
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Models\PlanoTrabalho;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 interface PlanoTrabalhoReadRepositoryContract
 {
+    public function findById(string $id): ?PlanoTrabalho;
+
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection;
 
     public function planosAtivos(string $usuarioId): Collection;

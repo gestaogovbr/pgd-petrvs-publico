@@ -16,16 +16,6 @@
                 <i [class]="row.icone" [style.color]="row.cor"></i><span [style.color]="row.cor"> {{row.nome}}</span>
             </ng-template>
         </column>
-        <column title="Formato" [template]="columnEmHoras">
-            <ng-template let-row="row" #columnEmHoras>
-                <span>{{ row.horas ? 'Horas' : 'Dias'}}</span>
-            </ng-template>
-        </column>
-        <column title="Integrado" [template]="columnIntegrado">
-            <ng-template let-row="row" #columnIntegrado>
-                <span>{{ row.integracao ? 'Sim (cód. '+row.codigo+')' : 'Não'}}</span>
-            </ng-template>
-        </column>
         <column type="options" [onEdit]="edit" [options]="options"></column>
     </columns>
     <pagination [rows]="rowsLimit"></pagination>

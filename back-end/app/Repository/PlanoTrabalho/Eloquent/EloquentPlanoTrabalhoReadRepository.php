@@ -21,6 +21,17 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         $this->model = $model;
     }
 
+    public function findById(string|int $id): ?PlanoTrabalho
+    {
+        if ($id === '' || $id === 0) {
+            return null;
+        }
+
+        $found = parent::findById($id);
+
+        return $found instanceof PlanoTrabalho ? $found : null;
+    }
+
     /**
      * @param array $unidadesGerenciadasIds
      * @param array $unidadesSubordinadasIds
@@ -155,7 +166,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         if ($filtro->dataInicio !== null) {
             $query->where('data_fim', '>=', $filtro->dataInicio);
         }
-        
+
         if ($filtro->dataFim !== null) {
             $query->where('data_inicio', '<=', $filtro->dataFim);
         }
@@ -235,7 +246,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             'entregas.planoEntregaEntrega.entrega',
             'entregas.planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome'
         ])->find($id);
-        
+
         return $plano;
     }
 

@@ -18,6 +18,11 @@ class PlanoTrabalhoRepository
         private readonly PlanoTrabalhoWriteRepositoryContract $writeRepository
     ) {}
 
+    public function findById(string $id): ?PlanoTrabalho
+    {
+        return $this->readRepository->findById($id);
+    }
+
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
         return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesGerenciadasIds, $unidadesSubordinadasIds, $usuarioId);

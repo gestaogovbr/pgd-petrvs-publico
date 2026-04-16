@@ -24,14 +24,14 @@ class InativacaoUnidadesTemporarios implements ShouldQueue
         tenancy()->initialize($tenant);
     }
 
-    public function handle(): void
+    public function handle(?UnidadeService $unidadeService = null): void
     {
         if (!$this->tenantId) {
             return;
         }
 
         try {
-            $unidadeService = app(UnidadeService::class);
+            $unidadeService = $unidadeService ?? app(UnidadeService::class);
             $unidadeService->processarUnidadesTemporarias();
         } catch (\Exception $e) {
             Log::error("Erro ao processar inativação de unidades temporárias", [

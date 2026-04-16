@@ -135,11 +135,10 @@ export class AppComponent implements IAppComponent {
       TIPOS_DOCUMENTOS: { name: this.lex.translate("Tipos de Documento"), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
       TIPOS_JUSTIFICATIVAS: { name: this.lex.translate("Tipos de Justificativa"), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
       // TIPOS_MODALIDADES: { name: this.lex.translate("Tipos de Modalidade"), permition: 'MOD_TIPO_MDL', route: ['cadastros', 'tipo-modalidade'], icon: this.entity.getIcon('TipoModalidade') },
-      // TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
+      // TIPOS_MOTIVOS_OCORRENCIAS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /* Gestão */
-      AFASTAMENTOS: { name: this.lex.translate("Ocorrências"), permition: 'MOD_AFT', route: ['gestao', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
-      OCORRENCIAS: { name: this.lex.translate("Ocorrencias"), permition: 'MOD_OCOR', route: ['gestao', 'ocorrencia'], icon: this.entity.getIcon('Ocorrencia') },
+      OCORRENCIAS: { name: this.lex.translate("Ocorrências"), permition: 'MOD_OCOR', route: ['gestao', 'ocorrencia'], icon: this.entity.getIcon('Ocorrencia') },
       CADEIAS_VALORES: { name: this.lex.translate("Cadeias de Valores"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
       ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
       PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucionais"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
@@ -249,7 +248,7 @@ export class AppComponent implements IAppComponent {
       menu: [
         this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
         this.menuSchema.OCORRENCIAS,
-        this.menuSchema.AFASTAMENTOS,
+        this.menuSchema.ATIVIDADES
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Avaliação"),
@@ -303,17 +302,13 @@ export class AppComponent implements IAppComponent {
 
     this.moduloExecucao = [
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, { metadata: { minha_unidade: true } }),
-     
-      //this.menuSchema.AFASTAMENTOS,
+      this.menuSchema.ATIVIDADES,
+      Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
       this.menuSchema.OCORRENCIAS,
+      Object.assign({}, this.menuSchema.RELATORIO_USUARIOS,  {
+        name: this.lex.translate("Relatório de Agentes Públicos")
+      }),
       {
-        name: this.lex.translate("Relatórios"),
-        permition: "MOD_RELATORIOS",
-        id: "navbarDropdownRelatorios",
-        menu: [
-          this.menuSchema.RELATORIO_USUARIOS
-        ].sort(this.orderMenu)
-      }, {
         name: this.lex.translate("Indicadores"),
         id: "navbarDropdownIndicadores",
         menu: [
@@ -329,7 +324,7 @@ export class AppComponent implements IAppComponent {
       permition: "MENU_CAD_ACESSO",
       id: "navbarDropdownCadastrosAdm",
       menu: [
-        this.menuSchema.AFASTAMENTOS,
+        this.menuSchema.OCORRENCIAS,
         this.menuSchema.CIDADES,
         this.menuSchema.CLIENTES,
         this.menuSchema.EIXOS_TEMATICOS,
@@ -343,7 +338,7 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.TIPOS_DOCUMENTOS,
         this.menuSchema.TIPOS_JUSTIFICATIVAS,
         // this.menuSchema.TIPOS_MODALIDADES,
-        // this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
+        // this.menuSchema.TIPOS_MOTIVOS_OCORRENCIAS,
         this.menuSchema.TIPOS_PROCESSOS,
         this.menuSchema.TIPOS_TAREFAS
       ].sort(this.orderMenu)

@@ -132,7 +132,7 @@
             },
             "dev": {
               "optimization": false,
-              "sourceMap": true
+              "sourceMap": false
             }
           }
         },
