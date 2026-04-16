@@ -9,7 +9,6 @@ use App\Models\Afastamento;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 use App\Repository\Eloquent\EloquentListRepositoryTrait;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 
 class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryContract
 {
