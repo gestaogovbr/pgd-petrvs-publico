@@ -54,4 +54,9 @@ class UnidadeRepository
     {
         return $this->readRepository->existsByCodigo($codigo);
     }
+
+    public function findBySigla(string $sigla): ?\App\Models\Unidade
+    {
+        return $this->readRepository->findBySigla($sigla);
+    }
 }

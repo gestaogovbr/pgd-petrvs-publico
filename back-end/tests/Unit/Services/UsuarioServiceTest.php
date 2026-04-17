@@ -59,7 +59,7 @@ class UsuarioServiceTest extends TestCase
         ];
         
         $this->integracaoServiceMock
-            ->shouldReceive('verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake')
+            ->shouldReceive('liberarEmailDuplicadoDefinindoComoNulo')
             ->once()
             ->with($email, '22222', $id);
 

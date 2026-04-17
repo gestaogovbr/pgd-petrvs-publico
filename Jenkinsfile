@@ -19,9 +19,9 @@ pipeline {
             }
         }
 
-      stage('Show Context') {
-        steps {
-            sh '''
+        stage('Show Context') {
+            steps {
+                sh '''
                 echo "=== USER / HOST ==="
                 whoami
                 hostname
@@ -48,7 +48,7 @@ pipeline {
                 echo "=== ALL NPMS FOUND ==="
                 find / -name npm 2>/dev/null | head -20
             '''
-        }
+            }
         }
 
         stage('Install Frontend Dependencies') {
@@ -59,9 +59,9 @@ pipeline {
                     branch 'dataprev_producao'
                 }
             }
-        steps {
-            dir('front-end') {
-                sh '''
+            steps {
+                dir('front-end') {
+                    sh '''
                     docker run --rm \
                       -v "$WORKSPACE":/workspace \
                       -w /workspace/front-end \
@@ -71,7 +71,7 @@ pipeline {
                         npm install --legacy-peer-deps
                       "
                 '''
-         }
+                }
             }
         }
 
@@ -95,9 +95,13 @@ pipeline {
                     branch 'dataprev_hmg'
                 }
             }
-             steps {
-            dir('front-end') {
-                sh '''
+            steps {
+                dir('front-end') {
+                    sh '''
+                    cd "$WORKSPACE"
+                    VERSION=$(node -p "require('./back-end/public/app.json').version")
+                    echo "Versão: $VERSION"
+
                     docker run --rm \
                       -v "$WORKSPACE":/workspace \
                       -w /workspace/front-end \
@@ -110,8 +114,8 @@ pipeline {
                         node ./postbuild.js
                       "
                 '''
+                }
             }
-    }
         }
 
         stage('Build Producao') {
@@ -121,8 +125,8 @@ pipeline {
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs'
                 DOCKER_HUB_TAG_LATEST = 'latest'
-                DOCKER_HUB_TAG_NEW = '2.9.20'
-                DOCKER_HUB_TAG_OLD = '2.9.19'
+                DOCKER_HUB_TAG_NEW = '2.9.21'
+                DOCKER_HUB_TAG_OLD = '2.9.20'
             }
             steps {
                 withCredentials([
@@ -198,32 +202,39 @@ pipeline {
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs-develop'
                 DOCKER_HUB_TAG = 'dsv'
-                SSH_USER = 'root'
-                SSH_HOST = '200.152.47.207'
-                SSH_PORT = '7223'
                 DEPLOY_PATH = './'
             }
             steps {
                 withCredentials([
-                    string(credentialsId: 'SSH_PASSWORD_DSV', variable: 'SSH_PASSWORD'),
-                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
+                    string(credentialsId: 'SSH_USER', variable: 'SSH_USER'),
+                    string(credentialsId: 'SSH_HOST', variable: 'SSH_HOST'),
+                    string(credentialsId: 'SSH_DSV_PORT', variable: 'SSH_PORT'),
+                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
+                    file(credentialsId: 'SSH_DSV_KNOWN_HOSTS', variable: 'KNOWN_HOSTS_FILE')
                 ]) {
-                    sh '''
-                        echo "Iniciando a construção e implantação do DSV..."
-                        echo "Construindo a imagem Docker..."
-                        docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/deploy/Dockerfile .
-                        echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-                        echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-                        docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
-                        echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-                        docker run --rm \
-                            -e SSHPASS="$SSH_PASSWORD" \
-                            -e SSH_PORT="$SSH_PORT" \
-                            -e SSH_TARGET="$SSH_USER@$SSH_HOST" \
-                            alpine:3.20 \
-                            sh -lc 'apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_TARGET" "$1"' -- 'cd /home/marcocoelho && bash ./install-pgd.sh'
-                        echo "Implantação concluída com sucesso em DSV."
-                    '''
+                    sshagent(credentials: ['SSH_KEY_DSV']) {
+                        sh '''
+                            set -eu
+
+                            echo "Iniciando a construção e implantação do DSV..."
+                            echo "Construindo a imagem Docker..."
+                            docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
+
+                            echo "Construção da imagem concluída. Enviando para o Docker Hub..."
+                            echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+                            docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG"
+
+                            echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
+                            ssh -T \
+                                -o StrictHostKeyChecking=yes \
+                                -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
+                                -p "$SSH_PORT" \
+                                "$SSH_USER@$SSH_HOST" \
+                                'cd /home/marcocoelho && bash ./install-pgd.sh'
+
+                            echo "Implantação concluída com sucesso em DSV."
+                        '''
+                    }
                 }
             }
         }
@@ -235,32 +246,108 @@ pipeline {
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs-develop'
                 DOCKER_HUB_TAG = 'hmg'
-                SSH_USER = 'root'
-                SSH_HOST = '200.152.47.207'
-                SSH_PORT = '7222'
                 DEPLOY_PATH = './'
             }
             steps {
                 withCredentials([
+                    string(credentialsId: 'SSH_USER', variable: 'SSH_USER'),
+                    string(credentialsId: 'SSH_HOST', variable: 'SSH_HOST'),
+                    string(credentialsId: 'SSH_HMG_PORT', variable: 'SSH_PORT'),
                     string(credentialsId: 'SSH_PASSWORD_HMG', variable: 'SSH_PASSWORD'),
-                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
+                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
+                    file(credentialsId: 'SSH_HMG_KNOWN_HOSTS', variable: 'KNOWN_HOSTS_FILE')
                 ]) {
-                    sh '''
+                        sshagent(credentials: ['SSH_KEY_DSV']) {
+                            sh '''
+                        set -eu
+
                         echo "Iniciando a construção e implantação do HMG..."
+
                         echo "Construindo a imagem Docker..."
-                        docker build -t $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG -f ./resources/deploy/Dockerfile .
+                        docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
+
                         echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-                        echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
-                        docker push $DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG
+                        echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG"
+
                         echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
-                        docker run --rm \
-                            -e SSHPASS="$SSH_PASSWORD" \
-                            -e SSH_PORT="$SSH_PORT" \
-                            -e SSH_TARGET="$SSH_USER@$SSH_HOST" \
-                            alpine:3.20 \
-                            sh -lc 'apk add --no-cache openssh-client sshpass >/dev/null && sshpass -e ssh -T -o StrictHostKeyChecking=no -p "$SSH_PORT" "$SSH_TARGET" "$1"' -- 'sh install-pgd.sh < /dev/null'
+
+                        ssh -T \
+                            -o StrictHostKeyChecking=yes \
+                            -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
+                            -p "$SSH_PORT" \
+                            "$SSH_USER@$SSH_HOST" << 'EOF'
+
+                            set -e
+
+                            docker compose down
+
+                            docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
+
+                            docker compose pull
+                            docker compose up -d --remove-orphans
+
+                            sleep 10
+
+                            docker cp /root/.env petrvs_php_hmg:/var/www/.env
+
+                            docker exec petrvs_php_hmg php artisan config:clear
+
+                            docker exec -i petrvs_php_hmg php artisan tinker << 'EOT'
+                                $tenantId = env('PETRVS_ENTIDADE');
+                                $tenant = App\\Models\\Tenant::find($tenantId);
+
+                                if ($tenant) {
+                                    $path = public_path('app.json');
+                                    if (file_exists($path)) {
+                                        $json = json_decode(file_get_contents($path), true);
+
+                                        if (($json['version'] ?? '') !== $tenant->version) {
+                                            $json['version'] = $tenant->version;
+                                            file_put_contents($path, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                                            echo 'Versão sincronizada para: ' . $tenant->version . PHP_EOL;
+                                        } else {
+                                            echo 'Versão já está sincronizada: ' . $tenant->version . PHP_EOL;
+                                        }
+                                    }
+                                } else {
+                                    echo 'Tenant não encontrado: ' . $tenantId . PHP_EOL;
+                                }
+EOT
+
+                            docker exec petrvs_php_hmg php artisan config:clear
+
+                            sleep 10
+
+                            docker exec petrvs_php_hmg bash -c 'chmod -R 777 /var/www/storage/logs/'
+                            docker exec petrvs_php_hmg bash -c 'chmod -R 777 /var/www/storage/'
+                            docker exec petrvs_php_hmg bash -c 'chown -R www-data:www-data /var/www/storage/logs/'
+                            docker exec petrvs_php_hmg bash -c 'rm -f /var/www/storage/logs/*.log'
+
+                            docker exec petrvs_php_hmg touch /var/www/storage/logs/laravel.log
+                            docker exec petrvs_php_hmg chmod 777 /var/www/storage/logs/laravel.log
+
+                            docker exec petrvs_php_hmg php artisan optimize:clear
+                            docker exec petrvs_php_hmg php artisan cache:clear
+                            docker exec petrvs_php_hmg php artisan config:clear
+
+                            docker exec petrvs_php_hmg composer dump-autoload
+
+                            docker exec petrvs_php_hmg php artisan migrate
+                            docker exec petrvs_php_hmg php artisan tenants:migrate
+                            docker exec petrvs_php_hmg php artisan tenants:run db:seed --option="class=DeployHMGSeeder"
+
+                            sleep 10
+
+                            docker restart petrvs_queue
+
+                            docker exec petrvs_php_hmg bash -c "service cron start"
+
+EOF
+
                         echo "Implantação concluída com sucesso em HMG."
                     '''
+                        }
                 }
             }
         }
@@ -268,10 +355,10 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline concluída com sucesso."
+            echo 'Pipeline concluída com sucesso.'
         }
         failure {
-            echo "Pipeline falhou."
+            echo 'Pipeline falhou.'
         }
         always {
             cleanWs()
