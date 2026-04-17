@@ -315,7 +315,7 @@ test('signIn govbr callback normaliza cpf e encontra usuario ativo', function ()
     expect($result['entidade'])->toBe($entidade);
 });
 
-test('signIn govbr callback faz fallback para email quando cpf ausente', function () {
+test('signIn govbr callback nega acesso quando CPF ausente (sem fallback por e-mail)', function () {
     $request = Request::create('/login-govbr-callback/ABC', 'GET', [
         'code' => 'code-123',
         'state' => 'state-123',
@@ -328,12 +328,6 @@ test('signIn govbr callback faz fallback para email quando cpf ausente', functio
     $entidade = new Entidade();
     $entidade->id = 'uuid-entidade';
     $entidade->sigla = 'ABC';
-
-    $usuario = new Usuario();
-    $usuario->id = 'uuid-usuario';
-    $usuario->cpf = '12345678901';
-    $usuario->situacao_siape = 'ATIVO_PERMANENTE';
-    $usuario->config = [];
 
     $socialiteUser = (object) [
         'email' => 'teste@teste.com',
@@ -360,7 +354,6 @@ test('signIn govbr callback faz fallback para email quando cpf ausente', functio
     $this->service->shouldReceive('registrarEntidade')->andReturn($entidade);
     $this->service->shouldReceive('getConfigGovBr')->andReturn($config);
     $this->service->shouldReceive('govBrProvider')->andReturn($provider);
-    $this->service->shouldReceive('registrarUsuario')->andReturn($usuario);
 
     $this->usuarioRepository->shouldReceive('findActivesByCpf')
         ->with('')
@@ -369,17 +362,9 @@ test('signIn govbr callback faz fallback para email quando cpf ausente', functio
     $this->usuarioRepository->shouldReceive('findByCpf')
         ->with('')
         ->andReturn(null);
-    $this->usuarioRepository->shouldReceive('findByEmail')
-        ->with('teste@teste.com')
-        ->andReturn($usuario);
 
-    Auth::shouldReceive('loginUsingId')->with('uuid-usuario')->andReturn(true);
-
-    $result = $this->service->signInGovBrCallback($request);
-
-    expect($result)->toBeArray();
-    expect($result['kind'])->toBe(LoginService::KIND_GOVBR);
-    expect($result['usuario'])->toBe($usuario);
+    expect(fn() => $this->service->signInGovBrCallback($request))
+        ->toThrow(\Exception::class, "Usuário inativo no SIAPE. Acesso negado.");
 });
 
 test('registrarUsuario inclui unidades_vinculadas com atributos minimos', function () {

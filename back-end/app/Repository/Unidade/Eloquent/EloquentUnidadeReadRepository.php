@@ -105,6 +105,13 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $this->query()->where('codigo', $codigo)->exists();
     }
 
+    public function findBySigla(string $sigla): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()->where('sigla', $sigla)->first();
+        return $unidade;
+    }
+
     public function findById(string|int $id): ?Unidade
     {
         /** @var Unidade|null $unidade */
