@@ -199,7 +199,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
                 continue;
             }
 
-            $this->integracaoService->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($registro->email, $registro->matricula);
+            $this->integracaoService->liberarEmailDuplicadoDefinindoComoNulo($registro->email, $registro->matricula);
 
             SiapeLog::info("Inserindo servidor na tabela Usuários", $registro->toArray());
             $attributes = $registro->getAttributes();

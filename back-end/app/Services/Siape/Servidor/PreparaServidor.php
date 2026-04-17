@@ -22,15 +22,20 @@ trait PreparaServidor
         return null;
     }
 
-    public function getEmail(array $matriculas, array $dadosFuncionais): ?string
+    public function getEmail(array $dadosFuncionais): ?string
     {
-        $email =  UtilService::valueOrDefault($dadosFuncionais['emailfuncional'], $matriculas['matriculasiape'] . "@petrvs.gov.br");
-        if (!empty($email)) {
-            $email = str_contains($email, "@") ? $email : $email . "@prf.gov.br";
-            $email = mb_strtolower($email, 'UTF-8');
-            return $email;
+        $emailFuncional = $dadosFuncionais['emailfuncional'] ?? null;
+        $email = is_string($emailFuncional) ? trim($emailFuncional) : null;
+
+        if (empty($email)) {
+            return null;
         }
-        return $email;
+
+        if (!str_contains($email, "@")) {
+            return null;
+        }
+
+        return mb_strtolower($email, 'UTF-8');
     }
 
     public function getEmailChefiaImediata(array $servidor): ?string
@@ -131,24 +136,28 @@ trait PreparaServidor
         };
 
         return match ($tipo) {
-            "SIAPE" => UtilService::valueOrDefault($ativo['dataexercicionoorgao'], null),
-            "WSO2" => $formatWSO2Date($ativo['dataexercicionoorgao']),
+            "SIAPE" => UtilService::valueOrDefault($ativo['dataexercicionoorgao'] ?? null, null),
+            "WSO2" => $formatWSO2Date($ativo['dataexercicionoorgao'] ?? null),
             default => null
         };
     }
 
     public function setFuncoes(array &$ativo): void
     {
-        if (!empty($ativo['funcoes'] && is_array($ativo['funcoes']))) {
-            foreach ($ativo['funcoes'] as &$at) {
+        $funcoes = $ativo['funcoes'] ?? null;
+
+        if (!is_array($funcoes) || $funcoes === []) {
+            $ativo['funcoes'] = null;
+            return;
+        }
+
+        foreach ($funcoes as &$at) {
                 if (array_key_exists('uorg_funcao', $at)) {
                     $at['uorg_funcao'] = strval(intval($at['uorg_funcao']));
                 }
-            }
-            $ativo['funcoes'] = json_encode(($ativo['funcoes']));
-        } else {
-            $ativo['funcoes'] = null;
         }
+
+        $ativo['funcoes'] = json_encode(($funcoes));
     }
 
 
@@ -177,8 +186,8 @@ trait PreparaServidor
         };
 
         return match ($tipo) {
-            "SIAPE" => UtilService::valueOrDefault($servidor['data_modificacao'], null),
-            "WSO2" => $formatWSO2Date($servidor['data_modificacao']),
+            "SIAPE" => UtilService::valueOrDefault($servidor['data_modificacao'] ?? null, null),
+            "WSO2" => $formatWSO2Date($servidor['data_modificacao'] ?? null),
             default => null
         };
     }
