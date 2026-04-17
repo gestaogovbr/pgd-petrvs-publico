@@ -683,16 +683,7 @@ class LoginService
         $cpf = $this->extractGovBrCpf($user);
         $usuario = $this->findUser('cpf', $cpf);
 
-        if ($usuario) {
-            return $usuario;
-        }
-
-        $email = $this->extractGovBrEmail($user);
-        if (empty($email)) {
-            return null;
-        }
-
-        return $this->findUser('email', $email);
+        return $usuario;
     }
 
     private function fetchGovBrUser(mixed $provider): mixed
@@ -760,19 +751,6 @@ class LoginService
         }
 
         return '';
-    }
-
-    private function extractGovBrEmail(mixed $user): ?string
-    {
-        $email = data_get($user, 'email')
-            ?? data_get($user, 'user.email')
-            ?? data_get($user, 'user.attributes.email');
-
-        if (!is_string($email) || empty($email)) {
-            return null;
-        }
-
-        return $this->emailBeforeHash($email);
     }
 
     private function emailBeforeHash(mixed $email): ?string
