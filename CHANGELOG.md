@@ -1,3 +1,16 @@
+## 2.9.21 17/04/2026
+### Adicionado
+- Adicionada busca de unidades por sigla, melhorando a localização e identificação de unidades no sistema.
+- Adicionado suporte ao tratamento de contratos temporários vindos do SIAPE.
+
+### Corrigido
+- Corrigida a identificação da unidade de exercício quando a sigla da unidade de lotação não está preenchida.
+- Corrigido problema relacionado a perfis duplicados.
+
+### Modificado
+- Removida a geração de e-mails fictícios para servidores sem e-mail funcional no SIAPE; e-mails artificiais já cadastrados serão convertidos para vazio.
+
+
 ## 2.9.20 30/03/2026
 ### Corrigido
 - Correção de modalidades para usuários não participantes no PGD no Relatório de Agentes.
