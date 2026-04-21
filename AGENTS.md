@@ -12,6 +12,9 @@
 
 - Run backend commands only inside the PHP container:
   `docker exec petrvs_php sh -lc "cd /var/www && <command>"`
+- Before backend commands, if `petrvs_php` or `petrvs_db` exist but are stopped, start them with `docker start petrvs_php` and `docker start petrvs_db`.
+- If `petrvs_php` or `petrvs_db` do not exist, create/start the dev stack from `resources/docker/dev/docker-compose.yml` with:
+  `docker compose -f resources/docker/dev/docker-compose.yml up -d petrvs_db petrvs_php`
 - Run frontend commands only inside the Node container:
   `docker exec petrvs_node sh -lc "cd /usr/src/app && <command>"`
 - Do not run `artisan`, Pest, PHPStan, Composer, `npm`, `ng`, builds, or test commands directly on the host.

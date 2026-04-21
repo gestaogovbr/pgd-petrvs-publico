@@ -539,6 +539,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/unidade/download-unidade-siape', [UnidadeController::class, 'downloadLogSiape']);
     Route::post('/usuario/processar-siape', [SiapeIndividualController::class, 'processaServidor']);
     Route::post('/unidade/processar-siape', [SiapeIndividualController::class, 'processaUnidade']);
+    Route::post('/unidade/relatorio-processamento-siape', [SiapeIndividualController::class, 'relatorioProcessamentoUnidade']);
     Route::post('/siape-blacklist/remover-cpf', [SiapeBlackListServidorController::class, 'remover']);
     Route::post('/SiapeBlacklistServidor/query', [SiapeBlackListServidorController::class, 'query']);
 

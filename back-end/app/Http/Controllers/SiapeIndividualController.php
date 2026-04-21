@@ -86,9 +86,10 @@ class SiapeIndividualController extends ControllerBase
             $data = $request->validate([
                 'unidade' => [],
             ]);
-            
+
             $this->service->processaUnidade($data['unidade']);
             $retorno['log'] = $this->getLogSiape();
+            $retorno['resumo'] = $this->service->getResumo();
             return response()->json(
                 $retorno,
                 Response::HTTP_OK
@@ -97,7 +98,27 @@ class SiapeIndividualController extends ControllerBase
             $retorno['success'] = false;
             $retorno['message'] = $e->getMessage();
             $retorno['log'] = $this->getLogSiape();
+            $retorno['resumo'] = $this->service->getResumo();
             return response()->json($retorno, Response::HTTP_BAD_REQUEST);
+        }
+    }
+
+    public function relatorioProcessamentoUnidade(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'unidade' => [],
+            ]);
+
+            return response()->json(
+                $this->service->relatorioProcessamentoUnidade($data['unidade']),
+                Response::HTTP_OK
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 }

@@ -6,6 +6,9 @@
 - The app uses MariaDB/MySQL, `stancl/tenancy`, Sanctum, Horizon, Telescope, SIAPE integrations, repositories, DTOs, Pest, and PHPStan/Larastan.
 - Run every command through `petrvs_php`:
   `docker exec petrvs_php sh -lc "cd /var/www && <command>"`
+- Before running backend commands, if `petrvs_php` or `petrvs_db` already exist but are stopped, start them with `docker start petrvs_php` and `docker start petrvs_db`.
+- If those containers do not exist, create/start the dev stack from the repo root with:
+  `docker compose -f resources/docker/dev/docker-compose.yml up -d petrvs_db petrvs_php`
 - Do not run backend commands directly on the host.
 
 ## Required References
