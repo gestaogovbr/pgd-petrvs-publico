@@ -10,8 +10,11 @@ use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Services\ServiceBase;
+use Illuminate\Support\Facades\Session;
 
 class OcorrenciaService extends ServiceBase {
+
+    public string $collection = "App\Models\Afastamento";
 
     protected AfastamentoRepository $afastamentoRepository;
 
@@ -63,12 +66,59 @@ class OcorrenciaService extends ServiceBase {
     }
 
     /**
+     * Com MOD_OCOR_UNIDADE (e sem MOD_OCOR_TODAS_UNIDADES): lista apenas afastamentos cujo usuário possui vínculo
+     * (unidades_integrantes, qualquer atribuição) com a unidade de contexto (sessão ou lotação) ou subordinada.
+     */
+    private function ocorrenciasRestritasPorHierarquiaUnidade(): bool
+    {
+        $usuario = self::loggedUser();
+        if ($usuario === null) {
+            return false;
+        }
+        if (!$usuario->hasPermissionTo('MOD_OCOR_UNIDADE')) {
+            return false;
+        }
+        if ($usuario->hasPermissionTo('MOD_OCOR_TODAS_UNIDADES')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function idsUnidadeContextoComSubordinadas(): array
+    {
+        $unidadeId = Session::get('unidade_id') ?? self::loggedUser()?->lotacao?->unidade_id;
+        if (empty($unidadeId)) {
+            return [];
+        }
+        $subordinadas = $this->unidadeService->subordinadas($unidadeId);
+
+        return array_values(array_unique(array_merge(
+            [$unidadeId],
+            $subordinadas->pluck('id')->all()
+        )));
+    }
+
+    private function aplicarFiltroHierarquiaUnidade(array &$data): void
+    {
+        if (!$this->ocorrenciasRestritasPorHierarquiaUnidade()) {
+            return;
+        }
+        $ids = $this->idsUnidadeContextoComSubordinadas();
+        $data['where'][] = ['usuario_unidade_integrante_ids', 'in', $ids];
+    }
+
+    /**
      * @param array<string, mixed> $params
      * @return array{count: int, rows: mixed, extra: mixed}
      */
     public function query($params)
     {
         $this->aplicarFiltroUsuarioLogado($params);
+        $this->aplicarFiltroHierarquiaUnidade($params);
 
         $result = $this->afastamentoRepository->findAll($params);
 
@@ -81,6 +131,12 @@ class OcorrenciaService extends ServiceBase {
 
         if ($this->ocorrenciasRestritasAoProprioUsuario() && $entity->usuario_id !== self::loggedUser()?->id) {
             throw new NotFoundException("Id não encontrado");
+        }
+        if ($this->ocorrenciasRestritasPorHierarquiaUnidade()) {
+            $ids = $this->idsUnidadeContextoComSubordinadas();
+            if (!$this->afastamentoRepository->usuarioPossuiVinculoEmUnidades((string) $entity->usuario_id, $ids)) {
+                throw new NotFoundException("Id não encontrado");
+            }
         }
         return $entity;
     }

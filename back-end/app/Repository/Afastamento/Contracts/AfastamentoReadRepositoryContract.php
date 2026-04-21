@@ -13,6 +13,11 @@ interface AfastamentoReadRepositoryContract
     public function findById(string $id): ?Afastamento;
 
     /**
+     * @param list<string> $unidadeIds
+     */
+    public function usuarioPossuiVinculoEmUnidades(string $usuarioId, array $unidadeIds): bool;
+
+    /**
      * @return ListResult
      */
     public function findAll($data): ListResult;

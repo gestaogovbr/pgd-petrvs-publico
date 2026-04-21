@@ -26,6 +26,14 @@ class AfastamentoRepository
     }
 
     /**
+     * @param list<string> $unidadeIds
+     */
+    public function usuarioPossuiVinculoEmUnidades(string $usuarioId, array $unidadeIds): bool
+    {
+        return $this->readRepository->usuarioPossuiVinculoEmUnidades($usuarioId, $unidadeIds);
+    }
+
+    /**
      * @return ListResult
      */
     public function findAll($params): ListResult

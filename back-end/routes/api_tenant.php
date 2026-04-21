@@ -284,9 +284,6 @@ Route::middleware(['auth:sanctum'])->prefix('TipoProcesso')->group(function () {
 });
 
 /* Modulos: Gestão */
-Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () {
-  defaultRoutes(AfastamentoController::class);
-});
 Route::middleware(['auth:sanctum'])->prefix('Ocorrencia')->group(function () {
   defaultRoutes(OcorrenciaController::class);
 });
