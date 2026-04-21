@@ -1,5 +1,5 @@
 <div class="siape-resumo-container">
-  <div *ngIf="relatorio?.chefeCpf || relatorio?.quantidadeServidoresLotados !== undefined" class="mb-3">
+  <div *ngIf="relatorio?.chefeCpf || relatorio?.quantidadeServidoresLotados !== undefined || relatorio?.unidade" class="mb-3">
     <div class="card border-0 shadow-sm">
       <div class="card-header bg-light">
         <h6 class="mb-0 fw-bold text-secondary">
@@ -8,6 +8,39 @@
       </div>
       <div class="card-body">
         <div class="row g-3">
+          <div class="col-md-6" *ngIf="relatorio?.unidade">
+            <div class="p-3 bg-white border rounded h-100">
+              <h6 class="border-bottom pb-2 mb-3 text-primary">
+                <i class="bi bi-building me-2"></i>Unidade
+              </h6>
+              <div class="mb-2">
+                <strong>Código:</strong> {{ relatorio?.unidade?.codigo || 'Não informado' }}
+              </div>
+              <div class="mb-2">
+                <strong>Sigla:</strong> {{ relatorio?.unidade?.sigla || 'Não informada' }}
+              </div>
+              <div>
+                <strong>Nome:</strong> {{ relatorio?.unidade?.nome || 'Não informado' }}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6" *ngIf="relatorio?.unidade">
+            <div class="p-3 bg-white border rounded h-100">
+              <h6 class="border-bottom pb-2 mb-3 text-primary">
+                <i class="bi bi-diagram-3 me-2"></i>Hierarquia
+              </h6>
+              <div *ngIf="relatorio?.unidade?.unidade_raiz; else unidadePaiRelatorio">
+                <strong>Vínculo:</strong> Unidade raiz
+              </div>
+              <ng-template #unidadePaiRelatorio>
+                <div class="mb-2">
+                  <strong>Unidade pai:</strong>
+                  {{ relatorio?.unidade?.unidade_pai_codigo || 'Não informada' }}
+                  <span *ngIf="relatorio?.unidade?.unidade_pai_sigla"> - {{ relatorio?.unidade?.unidade_pai_sigla }}</span>
+                </div>
+              </ng-template>
+            </div>
+          </div>
           <div class="col-md-6" *ngIf="relatorio?.chefeCpf">
             <div class="p-3 bg-white border rounded h-100">
               <h6 class="border-bottom pb-2 mb-3 text-primary">
@@ -36,8 +69,8 @@
     <div class="card border-0 shadow-sm">
       <div class="card-header bg-light d-flex justify-content-between align-items-center">
         <h6 class="mb-0 fw-bold text-secondary">
-          <i class="bi bi-person-badge me-2"></i>
-          Servidor #{{ i + 1 }}
+          <i class="me-2" [ngClass]="isResumoUnidade(item) ? 'bi bi-building' : 'bi bi-person-badge'"></i>
+          {{ isResumoUnidade(item) ? 'Unidade' : 'Servidor' }} #{{ i + 1 }}
         </h6>
         <span class="badge rounded-pill" [ngClass]="'bg-' + getStatusClass(item.status)">
           <i [class]="getStatusIcon(item.status) + ' me-1'"></i>
@@ -53,8 +86,42 @@
         </div>
 
         <div class="row g-3">
-          <!-- Status de Criação/Existência -->
-          <div class="col-md-6">
+          <!-- Status da Unidade -->
+          <div class="col-md-6" *ngIf="isResumoUnidade(item)">
+            <div class="p-3 bg-white border rounded h-100">
+              <h6 class="border-bottom pb-2 mb-3 text-primary">
+                <i class="bi bi-building-check me-2"></i>Status da Unidade
+              </h6>
+              <ul class="list-unstyled mb-0">
+                <li class="mb-2 d-flex align-items-center">
+                  <i class="bi bi-check2 text-success me-2" *ngIf="item.unidade_existia"></i>
+                  <i class="bi bi-plus-circle text-primary me-2" *ngIf="!item.unidade_existia"></i>
+                  <span>
+                    <strong>Unidade:</strong>
+                    <span *ngIf="item.unidade_existia">
+                      {{ item.unidade_sigla || item.unidade_codigo || 'Unidade' }} já cadastrada no sistema
+                    </span>
+                    <span *ngIf="!item.unidade_existia">Nova unidade criada</span>
+                  </span>
+                </li>
+                <li class="mb-2 d-flex align-items-center">
+                  <i class="bi bi-diagram-3 text-primary me-2"></i>
+                  <span><strong>Unidade pai:</strong> {{ unidadePaiLabel(item) }}</span>
+                </li>
+                <li class="mb-2 d-flex align-items-center" *ngIf="item.quantidade_servidores_lotados !== undefined && item.quantidade_servidores_lotados !== null">
+                  <i class="bi bi-people text-primary me-2"></i>
+                  <span><strong>Servidores lotados:</strong> {{ item.quantidade_servidores_lotados }}</span>
+                </li>
+                <li class="d-flex align-items-center" *ngIf="item.chefe_cpf">
+                  <i class="bi bi-person-badge text-primary me-2"></i>
+                  <span><strong>CPF do chefe:</strong> {{ item.chefe_cpf }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Status de Criação/Existência do Servidor -->
+          <div class="col-md-6" *ngIf="isResumoServidor(item)">
             <div class="p-3 bg-white border rounded h-100">
               <h6 class="border-bottom pb-2 mb-3 text-primary">
                 <i class="bi bi-database me-2"></i>Status do Registro

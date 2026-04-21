@@ -11,6 +11,12 @@ import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { DialogService } from 'src/app/services/dialog.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { Unidade } from 'src/app/models/unidade.model';
+import { SiapeRelatorioUnidade, SiapeResumoItem } from '../consulta-cpf-siape-result/siape-resumo/siape-resumo.component';
+
+interface SiapeRelatorioProcessamentoResponse extends SiapeRelatorioUnidade {
+  success?: boolean;
+  message?: string;
+}
 
 @Component({
     selector: 'consulta-unidade-siape-result',
@@ -227,22 +233,24 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     }
   }
 
-  private async obterRelatorioProcessamentoSafely(): Promise<{ chefeCpf?: string | null; quantidadeServidoresLotados?: number | null } | undefined> {
+  private async obterRelatorioProcessamentoSafely(): Promise<SiapeRelatorioUnidade | undefined> {
     try {
-      const response = await firstValueFrom(this.dao!.relatorioProcessamentoSIAPE(this.codigoUnidade as string));
+      const response = await firstValueFrom(this.dao!.relatorioProcessamentoSIAPE(this.codigoUnidade as string)) as SiapeRelatorioProcessamentoResponse;
       return {
-        chefeCpf: response?.chefeCpf ?? response?.chefe_cpf ?? this.dados?.cpfTitularAutoridadeUorg ?? this.unidade?.gestor?.usuario?.cpf ?? null,
-        quantidadeServidoresLotados: response?.quantidadeServidoresLotados ?? response?.quantidade_servidores_lotados ?? null
+        chefeCpf: response?.chefeCpf ?? this.dados?.cpfTitularAutoridadeUorg ?? this.unidade?.gestor?.usuario?.cpf ?? null,
+        quantidadeServidoresLotados: response?.quantidadeServidoresLotados ?? null,
+        unidade: response?.unidade ?? this.unidadeRelatorioFallback()
       };
     } catch {
       return {
         chefeCpf: this.dados?.cpfTitularAutoridadeUorg ?? this.unidade?.gestor?.usuario?.cpf ?? null,
-        quantidadeServidoresLotados: null
+        quantidadeServidoresLotados: null,
+        unidade: this.unidadeRelatorioFallback()
       };
     }
   }
 
-  private async mostrarResumo(resumo: any[], titulo: string, relatorio?: { chefeCpf?: string | null; quantidadeServidoresLotados?: number | null }) {
+  private async mostrarResumo(resumo: SiapeResumoItem[], titulo: string, relatorio?: SiapeRelatorioUnidade) {
     if (!Array.isArray(resumo)) {
       this.dialog.alert(titulo, 'Resumo inválido');
       return;
@@ -262,13 +270,36 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     } else {
       let msg = '';
       resumo.forEach((item, index) => {
-        msg += `Servidor ${index + 1}:\n`;
+        msg += `Unidade ${index + 1}:\n`;
         msg += `Status: ${item.status}\n`;
         msg += `Mensagem: ${item.mensagem}\n`;
+        if ('unidade_codigo' in item) {
+          msg += `Código: ${item.unidade_codigo ?? 'Não informado'}\n`;
+          msg += `Nome: ${item.unidade_nome ?? 'Não informado'}\n`;
+          msg += `Unidade pai: ${item.unidade_raiz ? 'Unidade raiz' : (item.unidade_pai_codigo ?? 'Não informada')}\n`;
+          msg += `Servidores lotados: ${item.quantidade_servidores_lotados ?? 'Não informado'}\n`;
+        }
         msg += '\n';
       });
       await this.dialog.alert(titulo, msg);
     }
+  }
+
+  private unidadeRelatorioFallback(): SiapeRelatorioUnidade['unidade'] {
+    if (!this.unidade) {
+      return null;
+    }
+
+    return {
+      id: this.unidade.id,
+      codigo: this.unidade.codigo,
+      sigla: this.unidade.sigla,
+      nome: this.unidade.nome,
+      unidade_pai_id: this.unidade.unidade_pai_id,
+      unidade_pai_codigo: this.unidade.unidade_pai?.codigo ?? this.dados?.codUorgPai ?? null,
+      unidade_pai_sigla: this.unidade.unidade_pai?.sigla ?? null,
+      unidade_raiz: this.unidade.unidade_pai_id === null
+    };
   }
 
 }
