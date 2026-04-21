@@ -36,8 +36,8 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
     this.code = "MOD_OCOR";
     this.filter = this.fh.FormBuilder({
       observacoes: {default: ""},
-      data_inicio: {default: new Date()},
-      data_fim: {default: new Date()},
+      data_inicio: {default: null},
+      data_fim: {default: null},
       usuario_id: {default: ""},
       tipo_motivo_afastamento_id: {default: ""}
     });
@@ -56,17 +56,21 @@ export class AfastamentoListComponent extends PageListBase<Afastamento, Afastame
   public filterWhere = (filter: FormGroup) => {
     let result: any[] = [];
     let form: any = filter.value;
+
     if (this.listarApenasProprioUsuario) {
       result.push(["usuario_id", "==", this.auth.usuario!.id]);
     }
     if(form.tipo_motivo_afastamento_id?.length) {
       result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
-    } else if (form.usuario_id?.length) {
+    }
+    else if (form.usuario_id?.length) {
       result.push(["usuario_id", "==", form.usuario_id]);
-    } else if (form.tipo_motivo_afastamento_id?.length) {
-      result.push(["tipo_motivo_afastamento_id", "==", form.tipo_motivo_afastamento_id]);
-    } else if(this.dao?.validDateTime(form.data_inicio) && this.dao?.validDateTime(form.data_fim) && !this.listagemInicial) {
-      result.push(this.dao?.intersectionWhere("data_inicio", "data_fim", this.util.startOfDay(form.data_inicio), this.util.startOfDay(form.data_fim)));
+    }
+    if(this.dao?.validDateTime(form.data_inicio)) {
+      result.push(["data_inicio", ">=", this.util.startOfDay(form.data_inicio)]);
+    }
+    if(this.dao?.validDateTime(form.data_fim)) {
+      result.push(["data_fim", "<=", this.util.endOfDay(form.data_fim)]);
     }
     
     return result;
