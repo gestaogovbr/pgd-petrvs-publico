@@ -1,69 +1,69 @@
-# Petrvs Backend Codex Guide
+# Guia Codex do Back-End Petrvs
 
-## Project Truth
+## Verdades do Projeto
 
-- This directory is a Laravel 10 application on PHP 8.2.
-- The app uses MariaDB/MySQL, `stancl/tenancy`, Sanctum, Horizon, Telescope, SIAPE integrations, repositories, DTOs, Pest, and PHPStan/Larastan.
-- Run every command through `petrvs_php`:
+- Este diretório é uma aplicação Laravel 10 em PHP 8.2.
+- A aplicação usa MariaDB/MySQL, `stancl/tenancy`, Sanctum, Horizon, Telescope, integrações SIAPE, repositories, DTOs, Pest e PHPStan/Larastan.
+- Rode todos os comandos via `petrvs_php`:
   `docker exec petrvs_php sh -lc "cd /var/www && <command>"`
-- Before running backend commands, if `petrvs_php` or `petrvs_db` already exist but are stopped, start them with `docker start petrvs_php` and `docker start petrvs_db`.
-- If those containers do not exist, create/start the dev stack from the repo root with:
+- Antes de rodar comandos de back-end, se `petrvs_php` ou `petrvs_db` já existirem mas estiverem parados, inicie-os com `docker start petrvs_php` e `docker start petrvs_db`.
+- Se esses containers não existirem, crie/inicie a stack de desenvolvimento a partir da raiz do repo com:
   `docker compose -f resources/docker/dev/docker-compose.yml up -d petrvs_db petrvs_php`
-- Do not run backend commands directly on the host.
+- Não rode comandos de back-end diretamente no host.
 
-## Required References
+## Referências Obrigatórias
 
-- Testing: `docs/pest.md` and `docs/pest-bd.md`.
+- Testes: `docs/pest.md` e `docs/pest-bd.md`.
 - Repositories: `docs/repository-pattern.md`.
-- PHPStan: `docs/phpstan.md` and `phpstan.neon.dist`.
-- SIAPE and integration flows: `docs/integracao_gestor_logica.md`, `docs/refactor-integracao-service.md`, and `docs/siape-unidade-relatorio-routes.md`.
+- PHPStan: `docs/phpstan.md` e `phpstan.neon.dist`.
+- SIAPE e fluxos de integração: `docs/integracao_gestor_logica.md`, `docs/refactor-integracao-service.md` e `docs/siape-unidade-relatorio-routes.md`.
 
-## Architecture Rules
+## Regras de Arquitetura
 
-- Controllers should stay thin: validate/request handling, authorization entry points, delegation, and response shaping only.
-- Business logic belongs in Services, domain-specific collaborators, validators, repositories, DTOs, policies, resources, jobs, or commands.
-- Prefer constructor injection and contracts where repositories or external integrations are involved.
-- Keep methods small, prefer early returns over nested conditionals, avoid magic numbers, and remove unused imports.
-- Preserve tenancy boundaries explicitly. Be careful with central vs tenant connections, tenant initialization, and data isolation.
-- Preserve audit/log behavior, especially `SiapeLog`, Laravel logs, auditing, and integration process logs.
+- Controllers devem permanecer finos: apenas validação/manuseio da request, pontos de entrada de autorização, delegação e formatação de resposta.
+- Regra de negócio pertence a Services, colaboradores específicos de domínio, validators, repositories, DTOs, policies, resources, jobs ou commands.
+- Prefira injeção por construtor e contracts quando repositories ou integrações externas estiverem envolvidos.
+- Mantenha métodos pequenos, prefira retornos antecipados em vez de condicionais aninhadas, evite números mágicos e remova imports não utilizados.
+- Preserve explicitamente os limites de tenancy. Tenha cuidado com conexões central vs tenant, inicialização de tenant e isolamento de dados.
+- Preserve comportamento de auditoria/log, especialmente `SiapeLog`, logs Laravel, auditing e logs de processamento de integração.
 
-## Repository Rules
+## Regras de Repository
 
-- Follow `docs/repository-pattern.md`.
-- Use `php artisan make:repository <Model>Repository` through the PHP container for new repositories.
-- Put read/write contracts under `App\Repository\<Modulo>\Contracts`.
-- Put Eloquent implementations under `App\Repository\<Modulo>\Eloquent`.
-- Prefer `AbstractEloquentReadRepository` and `AbstractEloquentWriteRepository` for generic operations.
-- Return DTOs for composed data. Avoid loose associative arrays for multi-field domain returns.
-- Register interface bindings in `App\Providers\RepositoryServiceProvider`.
-- Services should consume contracts or domain repository facades, not raw query details.
+- Siga `docs/repository-pattern.md`.
+- Use `php artisan make:repository <Model>Repository` pelo container PHP para novos repositories.
+- Coloque contracts de leitura/escrita em `App\Repository\<Modulo>\Contracts`.
+- Coloque implementações Eloquent em `App\Repository\<Modulo>\Eloquent`.
+- Prefira `AbstractEloquentReadRepository` e `AbstractEloquentWriteRepository` para operações genéricas.
+- Retorne DTOs para dados compostos. Evite arrays associativos soltos para retornos de domínio com múltiplos campos.
+- Registre bindings de interfaces em `App\Providers\RepositoryServiceProvider`.
+- Services devem consumir contracts ou facades de repository de domínio, não detalhes crus de query.
 
-## Testing Rules
+## Regras de Teste
 
-- Unit tests live in `tests/Unit` and use Pest + Mockery.
-- Unit tests must not use `Schema::create`, `DB::table(...)->insert`, `RefreshDatabase`, tenant setup, or real model persistence.
-- Central database integration tests live in `tests/Integration` and use `Tests\DatabaseTestCase`.
-- Tenant integration tests live in `tests/IntegrationTenant` and use `Tests\DatabaseTenantTestCase`; tenant context is initialized automatically.
-- Use `IntegrationTenant` for tenant business rules, repositories over tenant data, SIAPE tenant flows, and model behavior that needs tenant schema.
-- If a tenant migration changes schema, evaluate whether `database/schema/tenant-schema.sql` must be regenerated.
+- Testes unitários ficam em `tests/Unit` e usam Pest + Mockery.
+- Testes unitários não devem usar `Schema::create`, `DB::table(...)->insert`, `RefreshDatabase`, setup de tenant ou persistência real de models.
+- Testes de integração do banco central ficam em `tests/Integration` e usam `Tests\DatabaseTestCase`.
+- Testes de integração tenant ficam em `tests/IntegrationTenant` e usam `Tests\DatabaseTenantTestCase`; o contexto tenant é inicializado automaticamente.
+- Use `IntegrationTenant` para regras de negócio tenant, repositories sobre dados tenant, fluxos SIAPE tenant e comportamento de model que precise do schema tenant.
+- Se uma migração tenant alterar schema, avalie se `database/schema/tenant-schema.sql` precisa ser regenerado.
 
-## Quality Commands
+## Comandos de Qualidade
 
-- Full Pest:
+- Pest completo:
   `docker exec petrvs_php sh -lc "cd /var/www && ./vendor/bin/pest --ci"`
-- Focused Pest:
+- Pest focado:
   `docker exec petrvs_php sh -lc "cd /var/www && ./vendor/bin/pest tests/Unit/Services/ExampleTest.php"`
-- Tenant integration suite:
+- Suite de integração tenant:
   `docker exec petrvs_php sh -lc "cd /var/www && ./vendor/bin/pest --testsuite=IntegrationTenant"`
-- PHPStan focused path:
+- PHPStan em caminho focado:
   `docker exec petrvs_php sh -lc "cd /var/www && vendor/bin/phpstan analyse app/Services/ExampleService.php --configuration=phpstan.neon.dist --memory-limit=1G --no-progress"`
-- PHPStan full app:
+- PHPStan completo em `app`:
   `docker exec petrvs_php sh -lc "cd /var/www && vendor/bin/phpstan analyse app --configuration=phpstan.neon.dist --memory-limit=1G --no-progress"`
 
-## Security And Performance
+## Segurança e Performance
 
-- Validate inputs, enforce authorization, and protect tenant scope before data access.
-- Avoid exposing CPF, tokens, logs, or integration payloads unless the endpoint requires it.
-- Avoid N+1 queries; use eager loading, repository-specific query methods, and indexes where appropriate.
-- Prefer transactions for multi-write business operations.
-- Treat SQL strings, dynamic filters, file downloads, and external SIAPE responses as security-sensitive surfaces.
+- Valide entradas, aplique autorização e proteja o escopo tenant antes do acesso a dados.
+- Evite expor CPF, tokens, logs ou payloads de integração salvo quando o endpoint exigir.
+- Evite consultas N+1; use eager loading, métodos de query específicos em repositories e índices quando apropriado.
+- Prefira transactions para operações de negócio com múltiplas escritas.
+- Trate strings SQL, filtros dinâmicos, downloads de arquivo e respostas externas do SIAPE como superfícies sensíveis de segurança.
