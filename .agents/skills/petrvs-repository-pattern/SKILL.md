@@ -1,32 +1,32 @@
 ---
 name: petrvs-repository-pattern
-description: Use when creating, refactoring, reviewing, or testing Petrvs-PGD backend repositories, repository contracts, Eloquent repository implementations, DTO returns, or RepositoryServiceProvider bindings.
+description: Use ao criar, refatorar, revisar ou testar repositories backend do Petrvs-PGD, contracts de repository, implementações Eloquent, retornos DTO ou bindings no RepositoryServiceProvider.
 ---
 
-# Petrvs Repository Pattern
+# Repository Pattern Petrvs
 
-## References
+## Referências
 
-- Read `back-end/AGENTS.md`.
-- Load `../petrvs-backend-laravel/references/repository-pattern.md`.
-- Load `../petrvs-backend-laravel/references/testing.md` when adding or adjusting tests.
-- Load `../petrvs-backend-laravel/references/commands.md` before running commands.
+- Leia `back-end/AGENTS.md`.
+- Carregue `../petrvs-backend-laravel/references/repository-pattern.md`.
+- Carregue `../petrvs-backend-laravel/references/testing.md` ao adicionar ou ajustar testes.
+- Carregue `../petrvs-backend-laravel/references/commands.md` antes de rodar comandos.
 
-## Workflow
+## Fluxo
 
-1. Inspect the model, existing repositories for nearby modules, consumers, and provider bindings.
-2. For a new repository, use:
+1. Inspecione o model, repositories existentes de módulos próximos, consumidores e provider bindings.
+2. Para um novo repository, use:
    `docker exec petrvs_php sh -lc "cd /var/www && php artisan make:repository <Model>Repository"`
-3. Keep contracts narrow and expressive.
-4. Put generic read/write behavior in Eloquent read/write repositories.
-5. Use a domain repository facade only when it simplifies service consumption.
-6. Use DTOs for composed return data.
-7. Register bindings in `RepositoryServiceProvider`.
-8. Add focused tests, usually under `tests/IntegrationTenant/Repository` for tenant data.
-9. Run focused Pest and PHPStan on changed repository/provider paths.
+3. Mantenha contracts estreitos e expressivos.
+4. Coloque comportamento genérico de read/write nos repositories Eloquent de read/write.
+5. Use uma facade de repository de domínio somente quando isso simplificar o consumo por services.
+6. Use DTOs para dados compostos de retorno.
+7. Registre bindings no `RepositoryServiceProvider`.
+8. Adicione testes focados, normalmente em `tests/IntegrationTenant/Repository` para dados tenant.
+9. Rode Pest focado e PHPStan nos paths alterados de repository/provider.
 
-## Guardrails
+## Cuidados
 
-- Do not inject repositories directly into controllers unless the surrounding module already does so for a narrow read-only case.
-- Do not return large associative arrays for stable domain shapes.
-- Do not duplicate query logic in Services when a repository method is the clearer boundary.
+- Não injete repositories diretamente em controllers, salvo se o módulo ao redor já fizer isso em um caso read-only estreito.
+- Não retorne arrays associativos grandes para shapes de domínio estáveis.
+- Não duplique lógica de query em Services quando um método de repository for o limite mais claro.

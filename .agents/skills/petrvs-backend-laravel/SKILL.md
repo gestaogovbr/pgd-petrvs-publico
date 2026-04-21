@@ -1,34 +1,34 @@
 ---
 name: petrvs-backend-laravel
-description: Use for implementing, refactoring, debugging, or reviewing Petrvs-PGD Laravel backend code, especially Services, Controllers, Jobs, Commands, Models, DTOs, tenancy, SIAPE integrations, Pest tests, and PHPStan validation.
+description: Use ao implementar, refatorar, depurar ou revisar backend Laravel do Petrvs-PGD, especialmente Services, Controllers, Jobs, Commands, Models, DTOs, tenancy, integrações SIAPE, testes Pest e validação PHPStan.
 ---
 
-# Petrvs Backend Laravel
+# Backend Laravel Petrvs
 
-## Start Here
+## Comece Por Aqui
 
-1. Read `AGENTS.md` and `back-end/AGENTS.md`.
-2. Inspect the affected code before deciding. Use `rg` and focused file reads.
-3. Load only the reference that matches the task:
-   - Commands: `references/commands.md`
-   - Tests: `references/testing.md`
+1. Leia `AGENTS.md` e `back-end/AGENTS.md`.
+2. Inspecione o código afetado antes de decidir. Use `rg` e leituras focadas de arquivos.
+3. Carregue somente a referência que combina com a tarefa:
+   - Comandos: `references/commands.md`
+   - Testes: `references/testing.md`
    - Repositories: `references/repository-pattern.md`
    - PHPStan: `references/phpstan.md`
    - SIAPE: `references/siape.md`
 
-## Workflow
+## Fluxo
 
-- Keep changes narrow and aligned with existing Laravel patterns.
-- Put request/response handling in controllers and business rules in Services or focused collaborators.
-- Prefer contracts, DTOs, repositories, validators, policies, resources, and jobs where the existing codebase already uses them.
-- Preserve tenant context and logging/audit behavior.
-- Add or adjust tests for changed behavior unless the change is purely controller delegation.
-- Validate with the narrowest relevant Pest command and PHPStan on the changed path.
+- Mantenha mudanças pequenas e alinhadas aos padrões Laravel existentes.
+- Deixe tratamento de request/response em controllers e regras de negócio em Services ou colaboradores focados.
+- Prefira contracts, DTOs, repositories, validators, policies, resources e jobs quando o código existente já usar esses padrões.
+- Preserve contexto tenant e comportamento de logs/auditoria.
+- Adicione ou ajuste testes para comportamento alterado, salvo mudança puramente de delegação em controller.
+- Valide com o comando Pest mais estreito relevante e PHPStan no path alterado.
 
-## Backend Guardrails
+## Cuidados Backend
 
-- Run all backend commands through `petrvs_php`; never run backend tooling on the host.
-- Unit tests must not touch the database.
-- Tenant-aware behavior belongs in `tests/IntegrationTenant`.
-- Repository changes must follow the repository reference and update bindings.
-- Security-sensitive areas: authorization, tenant isolation, CPF/personal data, SIAPE payloads, file downloads, raw SQL, mass assignment, and logs.
+- Rode todos os comandos backend via `petrvs_php`; nunca rode ferramentas backend no host.
+- Testes Unit não podem tocar no banco.
+- Comportamento tenant-aware pertence a `tests/IntegrationTenant`.
+- Mudanças em repository devem seguir a referência de repository e atualizar bindings.
+- Áreas sensíveis de segurança: autorização, isolamento tenant, CPF/dados pessoais, payloads SIAPE, downloads, SQL bruto, mass assignment e logs.

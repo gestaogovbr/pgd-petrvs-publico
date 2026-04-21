@@ -1,36 +1,36 @@
 ---
 name: petrvs-pest-testing
-description: Use when writing, migrating, debugging, or reviewing Petrvs-PGD backend tests with Pest, Mockery, Unit tests without database access, Integration tests, or IntegrationTenant tests.
+description: Use ao escrever, migrar, depurar ou revisar testes backend do Petrvs-PGD com Pest, Mockery, testes Unit sem acesso a banco, Integration ou IntegrationTenant.
 ---
 
-# Petrvs Pest Testing
+# Testes Pest Petrvs
 
-## References
+## Referências
 
-- Read `back-end/AGENTS.md`.
-- Load `../petrvs-backend-laravel/references/testing.md`.
-- Load `../petrvs-backend-laravel/references/commands.md` before running tests.
+- Leia `back-end/AGENTS.md`.
+- Carregue `../petrvs-backend-laravel/references/testing.md`.
+- Carregue `../petrvs-backend-laravel/references/commands.md` antes de rodar testes.
 
-## Workflow
+## Fluxo
 
-1. Classify the behavior: pure logic, central database, or tenant database.
-2. Use `tests/Unit` for pure logic and mock every database boundary.
-3. Use `tests/Integration` for central database behavior.
-4. Use `tests/IntegrationTenant` for tenant rules and tenant repositories.
-5. Prefer focused Pest expectations and small test cases.
-6. Keep fixtures minimal and domain-relevant.
-7. Run the focused test file first, then suite-level tests if risk warrants it.
+1. Classifique o comportamento: lógica pura, banco central ou banco tenant.
+2. Use `tests/Unit` para lógica pura e faça mock de todo limite com banco.
+3. Use `tests/Integration` para comportamento de banco central.
+4. Use `tests/IntegrationTenant` para regras tenant e repositories tenant.
+5. Prefira expectations Pest focadas e casos de teste pequenos.
+6. Mantenha fixtures mínimas e relevantes para o domínio.
+7. Rode primeiro o arquivo de teste focado e depois suites se o risco justificar.
 
-## Unit Test Rules
+## Regras De Teste Unit
 
-- No `Schema::create`.
-- No `DB::table(...)->insert`.
-- No `RefreshDatabase`.
-- No real model persistence.
-- Use Mockery for models, repositories, services, facades, and partial legacy seams.
+- Nada de `Schema::create`.
+- Nada de `DB::table(...)->insert`.
+- Nada de `RefreshDatabase`.
+- Nada de persistência real de model.
+- Use Mockery para models, repositories, services, facades e seams legados parciais.
 
-## Integration Rules
+## Regras De Integration
 
-- `Tests\DatabaseTestCase` is for central DB integration.
-- `Tests\DatabaseTenantTestCase` initializes tenant context automatically for `IntegrationTenant`.
-- Tenant migrations require checking `database/schema/tenant-schema.sql`.
+- `Tests\DatabaseTestCase` é para integração com banco central.
+- `Tests\DatabaseTenantTestCase` inicializa contexto tenant automaticamente para `IntegrationTenant`.
+- Migrations tenant exigem verificar `database/schema/tenant-schema.sql`.

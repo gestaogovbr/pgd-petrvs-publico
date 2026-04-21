@@ -1,18 +1,18 @@
-# Petrvs PHPStan Reference
+# Referência PHPStan Petrvs
 
-Primary doc: `back-end/docs/phpstan.md`.
+Doc principal: `back-end/docs/phpstan.md`.
 
-## Current Config
+## Configuração Atual
 
-- Config file: `back-end/phpstan.neon.dist`.
-- Extension: `vendor/larastan/larastan/extension.neon`.
-- Paths default to `app`.
-- Level: `3`.
-- Temporary directory: `storage/framework/phpstan`.
+- Arquivo de configuração: `back-end/phpstan.neon.dist`.
+- Extensão: `vendor/larastan/larastan/extension.neon`.
+- Paths padrão: `app`.
+- Nível: `3`.
+- Diretório temporário: `storage/framework/phpstan`.
 - `treatPhpDocTypesAsCertain: false`.
-- Parallelism is intentionally conservative.
+- Paralelismo é intencionalmente conservador.
 
-## Commands
+## Comandos
 
 ```bash
 docker exec petrvs_php sh -lc "cd /var/www && vendor/bin/phpstan analyse app --configuration=phpstan.neon.dist --memory-limit=1G --no-progress"
@@ -20,19 +20,19 @@ docker exec petrvs_php sh -lc "cd /var/www && vendor/bin/phpstan analyse app/Ser
 docker exec petrvs_php sh -lc "cd /var/www && vendor/bin/phpstan analyse app/Repository --configuration=phpstan.neon.dist --memory-limit=1G --no-progress"
 ```
 
-## Fixing Guidance
+## Diretrizes De Correção
 
-- Prefer real type fixes over suppressions.
-- Add native param and return types when compatible.
-- Use valid PHPDoc syntax with types in tags and descriptions in prose.
-- Initialize variables before conditional use.
-- Remove unused imports and unused closure captures.
-- Avoid duplicate array keys in validation rules.
-- For Eloquent relation existence warnings, first confirm the relation exists on the model. Then consider relation return types/PHPDocs or simplifying query expressions.
-- Do not change behavior just to satisfy PHPStan unless the reported issue is a real bug.
+- Prefira correções reais de tipo em vez de suppressions.
+- Adicione tipos nativos de parâmetro e retorno quando compatível.
+- Use sintaxe PHPDoc válida, com tipos nas tags e descrições em texto.
+- Inicialize variáveis antes de uso condicional.
+- Remova imports não usados e captures não usados em closures.
+- Evite chaves duplicadas em arrays de regras de validação.
+- Para avisos de existência de relation Eloquent, confirme primeiro que a relation existe no model. Depois considere tipos/PHPDocs de retorno da relation ou simplificação das expressões de query.
+- Não mude comportamento apenas para satisfazer PHPStan, salvo quando o achado for bug real.
 
-## Verification
+## Verificação
 
-- Run PHPStan on the changed path.
-- If a shared type, model relation, base repository, or provider changes, run a broader related scope.
-- For Services work, use `app/Services` or the specific service file depending on risk.
+- Rode PHPStan no path alterado.
+- Se mudar tipo compartilhado, relation de model, repository base ou provider, rode um escopo relacionado mais amplo.
+- Para trabalho em Services, use `app/Services` ou o arquivo de service específico conforme o risco.

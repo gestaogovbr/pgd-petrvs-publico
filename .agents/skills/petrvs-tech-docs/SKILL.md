@@ -1,27 +1,27 @@
 ---
 name: petrvs-tech-docs
-description: Use when creating or updating Petrvs-PGD technical documentation, ADRs, API contracts, architecture notes, runbooks, SIAPE flow docs, testing docs, or release/PR technical notes.
+description: Use ao criar ou atualizar documentação técnica do Petrvs-PGD, ADRs, contratos de API, notas de arquitetura, runbooks, docs de fluxos SIAPE, docs de testes ou notas técnicas de release/PR.
 ---
 
-# Petrvs Technical Docs
+# Documentação Técnica Petrvs
 
-## Workflow
+## Fluxo
 
-1. Identify the target audience: developer, reviewer, operator, or product stakeholder.
-2. Inspect the implementation and existing docs before writing.
-3. Keep Markdown concise, factual, and aligned with current repo behavior.
-4. For architectural decisions, use ADR shape: title, status, context, decision, consequences.
-5. For APIs, document route, request, success response, error response, status codes, and compatibility notes.
-6. For operations, document command, environment, failure symptoms, diagnosis, and rollback or recovery path.
+1. Identifique o público-alvo: developer, reviewer, operador ou stakeholder de produto.
+2. Inspecione a implementação e docs existentes antes de escrever.
+3. Mantenha Markdown conciso, factual e alinhado ao comportamento atual do repo.
+4. Para decisões arquiteturais, use formato ADR: título, status, contexto, decisão e consequências.
+5. Para APIs, documente route, request, response de sucesso, response de erro, status codes e notas de compatibilidade.
+6. Para operação, documente comando, ambiente, sintomas de falha, diagnóstico e caminho de rollback ou recuperação.
 
-## Petrvs Focus Areas
+## Áreas De Foco Petrvs
 
-- Laravel backend architecture, repositories, DTOs, tenancy, queues, jobs, SIAPE, logs, Pest, and PHPStan.
-- Angular 21 module/service/component behavior when documenting UI changes.
-- Security and performance impacts, especially tenant scope and personal data.
+- Arquitetura backend Laravel, repositories, DTOs, tenancy, queues, jobs, SIAPE, logs, Pest e PHPStan.
+- Comportamento de module/service/component Angular 21 ao documentar mudanças UI.
+- Impactos de segurança e performance, especialmente escopo tenant e dados pessoais.
 
-## References
+## Referências
 
-- Use `../petrvs-backend-laravel/references/commands.md` for commands.
-- Use `../petrvs-backend-laravel/references/testing.md` for test documentation.
-- Use `../petrvs-backend-laravel/references/siape.md` for SIAPE docs.
+- Use `../petrvs-backend-laravel/references/commands.md` para comandos.
+- Use `../petrvs-backend-laravel/references/testing.md` para documentação de testes.
+- Use `../petrvs-backend-laravel/references/siape.md` para docs SIAPE.

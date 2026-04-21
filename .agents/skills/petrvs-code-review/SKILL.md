@@ -1,36 +1,36 @@
 ---
 name: petrvs-code-review
-description: Use when reviewing Petrvs-PGD Laravel or Angular changes for security, performance, tenancy, SIAPE impact, repository patterns, tests, PHPStan, and maintainability before merge.
+description: Use ao revisar mudanças Laravel ou Angular do Petrvs-PGD antes de merge, com foco em segurança, performance, tenancy, impacto SIAPE, padrões de repository, testes, PHPStan e manutenibilidade.
 ---
 
-# Petrvs Code Review
+# Code Review Petrvs
 
-## Review Posture
+## Postura De Review
 
-- Lead with findings ordered by severity.
-- Ground every finding in file and line references.
-- Prioritize bugs, security risks, data leaks, tenant boundary issues, authorization gaps, N+1 queries, fragile SIAPE behavior, and missing tests.
-- Keep summary secondary and brief.
+- Comece pelos achados, ordenados por severidade.
+- Fundamente cada achado com referência de arquivo e linha.
+- Priorize bugs, riscos de segurança, vazamento de dados, problemas de limite tenant, falhas de autorização, queries N+1, comportamento SIAPE frágil e testes ausentes.
+- Mantenha o resumo como informação secundária e breve.
 
-## Backend Checklist
+## Checklist Backend
 
-- Authorization, validation, tenant scope, mass assignment, SQL injection, CPF/personal data exposure.
-- Services and repositories follow Petrvs boundaries.
-- DTOs are used for composed return shapes.
-- Queries avoid N+1 and unnecessary broad loading.
-- SIAPE changes preserve logs, lotacao, gestor, unidade, servidor, and tenant behavior.
-- Pest coverage matches risk; Unit tests do not touch DB.
-- PHPStan/Larastan likely passes for changed paths.
+- Autorização, validação, escopo tenant, mass assignment, SQL injection e exposição de CPF/dados pessoais.
+- Services e repositories seguem os limites do Petrvs.
+- DTOs são usados para retornos compostos.
+- Queries evitam N+1 e carregamentos amplos desnecessários.
+- Mudanças SIAPE preservam logs, lotacao, gestor, unidade, servidor e comportamento tenant.
+- Cobertura Pest acompanha o risco; testes Unit não tocam no banco.
+- PHPStan/Larastan provavelmente passa nos paths alterados.
 
-## Frontend Checklist
+## Checklist Frontend
 
-- Angular 21 patterns, strict typing, no unnecessary `any`.
-- Safe rendering and sanitization for server data.
-- Subscriptions are managed; RxJS flows are typed.
-- Module boundaries and shared components are respected.
+- Padrões Angular 21, tipagem estrita e nenhum `any` desnecessário.
+- Renderização segura e sanitização para dados do servidor.
+- Subscriptions são gerenciadas; fluxos RxJS são tipados.
+- Limites de modules e components compartilhados são respeitados.
 
-## References
+## Referências
 
-- Use `../petrvs-backend-laravel/references/testing.md` for test expectations.
-- Use `../petrvs-backend-laravel/references/repository-pattern.md` for repository changes.
-- Use `../petrvs-backend-laravel/references/siape.md` for SIAPE changes.
+- Use `../petrvs-backend-laravel/references/testing.md` para expectativas de testes.
+- Use `../petrvs-backend-laravel/references/repository-pattern.md` para mudanças em repository.
+- Use `../petrvs-backend-laravel/references/siape.md` para mudanças SIAPE.

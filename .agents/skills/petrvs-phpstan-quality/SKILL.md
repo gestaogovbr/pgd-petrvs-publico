@@ -1,28 +1,28 @@
 ---
 name: petrvs-phpstan-quality
-description: Use when fixing or reviewing Petrvs-PGD PHPStan/Larastan findings, PHPDoc types, Eloquent relation warnings, undefined variables, duplicate validation keys, repository generics, or static-analysis quality.
+description: Use ao corrigir ou revisar achados PHPStan/Larastan do Petrvs-PGD, tipos PHPDoc, avisos de relações Eloquent, variáveis indefinidas, chaves duplicadas de validação, generics de repository ou qualidade de análise estática.
 ---
 
-# Petrvs PHPStan Quality
+# Qualidade PHPStan Petrvs
 
-## References
+## Referências
 
-- Read `back-end/AGENTS.md`.
-- Load `../petrvs-backend-laravel/references/phpstan.md`.
-- Load `../petrvs-backend-laravel/references/commands.md`.
+- Leia `back-end/AGENTS.md`.
+- Carregue `../petrvs-backend-laravel/references/phpstan.md`.
+- Carregue `../petrvs-backend-laravel/references/commands.md`.
 
-## Workflow
+## Fluxo
 
-1. Run or inspect PHPStan output for the narrow changed path.
-2. Confirm whether each finding is a real bug, a missing type hint, a PHPDoc issue, or a Larastan inference limitation.
-3. Prefer behavior-preserving fixes.
-4. Add native types and valid PHPDocs where they clarify real contracts.
-5. For relation warnings, inspect the model relation and query chain before editing.
-6. Run PHPStan again on the same path; broaden scope only when shared code changed.
+1. Rode ou inspecione a saída PHPStan para o menor path alterado.
+2. Confirme se cada achado é bug real, type hint ausente, problema de PHPDoc ou limitação de inferência do Larastan.
+3. Prefira correções que preservem comportamento.
+4. Adicione tipos nativos e PHPDocs válidos quando eles esclarecerem contratos reais.
+5. Para avisos de relation, inspecione a relação no model e a cadeia da query antes de editar.
+6. Rode PHPStan de novo no mesmo path; amplie o escopo somente quando código compartilhado mudar.
 
-## Guardrails
+## Cuidados
 
-- Do not add suppressions before trying a real fix.
-- Do not change domain behavior merely to quiet analysis.
-- Do not loosen types to `mixed` unless the boundary truly is dynamic.
-- Keep validation arrays free of duplicate keys and undefined variables.
+- Não adicione suppressions antes de tentar uma correção real.
+- Não mude comportamento de domínio apenas para silenciar análise.
+- Não afrouxe tipos para `mixed` salvo quando o limite for realmente dinâmico.
+- Mantenha arrays de validação sem chaves duplicadas e variáveis indefinidas.

@@ -1,18 +1,18 @@
-# Petrvs Commands Reference
+# Referência De Comandos Petrvs
 
-All backend commands run inside `petrvs_php`:
+Todos os comandos backend rodam dentro de `petrvs_php`:
 
 ```bash
 docker exec petrvs_php sh -lc "cd /var/www && <command>"
 ```
 
-All frontend commands run inside `petrvs_node`:
+Todos os comandos frontend rodam dentro de `petrvs_node`:
 
 ```bash
 docker exec petrvs_node sh -lc "cd /usr/src/app && <command>"
 ```
 
-Do not run `artisan`, Pest, PHPStan, Composer, `npm`, `ng`, builds, or tests directly on the host.
+Não rode `artisan`, Pest, PHPStan, Composer, `npm`, `ng`, builds ou testes diretamente no host.
 
 ## Backend
 

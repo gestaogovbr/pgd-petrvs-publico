@@ -1,27 +1,27 @@
 ---
 name: petrvs-angular-ui
-description: Use when implementing, refactoring, debugging, or reviewing Petrvs-PGD Angular 21 frontend modules, components, services, routes, forms, RxJS flows, templates, tests, lint, or build behavior.
+description: Use ao implementar, refatorar, depurar ou revisar frontend Angular 21 do Petrvs-PGD, incluindo modules, components, services, routes, forms, fluxos RxJS, templates, testes, lint e build.
 ---
 
-# Petrvs Angular UI
+# UI Angular Petrvs
 
-## Start Here
+## Comece Por Aqui
 
-1. Read `AGENTS.md`.
-2. Inspect the affected module under `front-end/src/app/modules` and shared pieces under `components`, `services`, and `models`.
-3. Load `../petrvs-backend-laravel/references/commands.md` before running frontend commands.
+1. Leia `AGENTS.md`.
+2. Inspecione o module afetado em `front-end/src/app/modules` e os itens compartilhados em `components`, `services` e `models`.
+3. Carregue `../petrvs-backend-laravel/references/commands.md` antes de rodar comandos frontend.
 
-## Workflow
+## Fluxo
 
-- Treat the app as Angular 21.
-- Preserve module boundaries and existing component/service naming.
-- Prefer strict TypeScript, typed models, and typed RxJS flows.
-- Avoid `any` unless the boundary is genuinely dynamic and the reason is clear.
-- Keep templates safe for server-provided data.
-- Use established UI components and patterns already present in the feature.
-- Run focused lint/test/build commands through `petrvs_node` when applicable.
+- Trate a aplicação como Angular 21.
+- Preserve limites de modules e a nomeação existente de components/services.
+- Prefira TypeScript estrito, models tipados e fluxos RxJS tipados.
+- Evite `any`, salvo quando o limite for realmente dinâmico e o motivo estiver claro.
+- Mantenha templates seguros para dados vindos do servidor.
+- Use components e padrões de UI já estabelecidos na feature.
+- Rode comandos focados de lint/test/build via `petrvs_node` quando aplicável.
 
-## Commands
+## Comandos
 
 ```bash
 docker exec petrvs_node sh -lc "cd /usr/src/app && npm run lint"

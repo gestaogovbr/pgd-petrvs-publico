@@ -1,48 +1,48 @@
-# Petrvs Repository Pattern Reference
+# Referência Repository Pattern Petrvs
 
-Primary doc: `back-end/docs/repository-pattern.md`.
+Doc principal: `back-end/docs/repository-pattern.md`.
 
-## Goals
+## Objetivos
 
-- Isolate Eloquent access from Services and domain logic.
-- Standardize read/write data access.
-- Keep query optimization localized.
-- Make tests easier through contracts and DTOs.
+- Isolar acesso Eloquent de Services e lógica de domínio.
+- Padronizar acesso a dados de leitura/escrita.
+- Manter otimização de queries localizada.
+- Facilitar testes por meio de contracts e DTOs.
 
-## Structure
+## Estrutura
 
-- Base read repository: `App\Repository\Eloquent\AbstractEloquentReadRepository`.
-- Base write repository: `App\Repository\Eloquent\AbstractEloquentWriteRepository`.
+- Repository base de leitura: `App\Repository\Eloquent\AbstractEloquentReadRepository`.
+- Repository base de escrita: `App\Repository\Eloquent\AbstractEloquentWriteRepository`.
 - Contracts: `App\Repository\<Modulo>\Contracts`.
-- Eloquent implementations: `App\Repository\<Modulo>\Eloquent`.
-- Optional domain facade: `App\Repository\<Modulo>Repository`.
+- Implementações Eloquent: `App\Repository\<Modulo>\Eloquent`.
+- Facade de domínio opcional: `App\Repository\<Modulo>Repository`.
 - Bindings: `App\Providers\RepositoryServiceProvider`.
 
-## Creation
+## Criação
 
-Use the generator through the PHP container:
+Use o gerador pelo container PHP:
 
 ```bash
 docker exec petrvs_php sh -lc "cd /var/www && php artisan make:repository <Model>Repository"
 ```
 
-Use `--read=false` or `--write=false` only when the module genuinely needs one side.
+Use `--read=false` ou `--write=false` somente quando o módulo realmente precisar de apenas um lado.
 
-## Rules
+## Regras
 
-- Services consume contracts or a domain repository facade, not raw query details.
-- Extend `AbstractEloquentReadRepository` or `AbstractEloquentWriteRepository` for generic operations.
-- Add expressive methods for domain-specific queries, such as `findByCpfAndMatricula`.
-- Return DTOs for composed multi-field data.
-- Avoid loose associative arrays when the return shape is meaningful.
-- Register every new contract binding in `RepositoryServiceProvider`.
-- Add focused tests. Tenant data repositories usually need `tests/IntegrationTenant/Repository`.
+- Services consomem contracts ou uma facade de repository de domínio, não detalhes crus de query.
+- Estenda `AbstractEloquentReadRepository` ou `AbstractEloquentWriteRepository` para operações genéricas.
+- Adicione métodos expressivos para queries específicas de domínio, como `findByCpfAndMatricula`.
+- Retorne DTOs para dados compostos com múltiplos campos.
+- Evite arrays associativos soltos quando o shape de retorno for significativo.
+- Registre todo novo binding de contract no `RepositoryServiceProvider`.
+- Adicione testes focados. Repositories com dados tenant normalmente precisam de `tests/IntegrationTenant/Repository`.
 
-## Review Checklist
+## Checklist De Review
 
-- Contracts expose only methods consumers need.
-- Implementations honor contract signatures and return types.
-- Query methods avoid N+1 and load only required relations.
-- DTOs are typed and placed under `App\DTOs\<Modulo>`.
-- Provider bindings resolve interfaces to Eloquent implementations.
-- PHPStan passes for the changed repository paths.
+- Contracts expõem apenas os métodos necessários aos consumidores.
+- Implementações honram assinaturas e tipos de retorno dos contracts.
+- Métodos de query evitam N+1 e carregam apenas relations necessárias.
+- DTOs são tipados e ficam em `App\DTOs\<Modulo>`.
+- Provider bindings resolvem interfaces para implementações Eloquent.
+- PHPStan passa nos paths de repository alterados.
