@@ -33,7 +33,7 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoReadRepositoryContract $readRepository,
         private readonly PlanoTrabalhoWriteRepositoryContract $writeRepository,
         private readonly UnidadeRepository $unidadeRepository,
-        private readonly PlanoTrabalhoStoreValidator $storeValidacao,
+        private readonly PlanoTrabalhoStoreValidator $storeValidator,
         private readonly PlanoTrabalhoUpdateValidator $updateValidator,
         private readonly PlanoTrabalhoDestroyValidator $destroyValidator,
         private readonly PlanoTrabalhoCancelarValidator $cancelarValidator,
@@ -62,8 +62,8 @@ class PlanoTrabalhoService
     public function store(array $data): PlanoTrabalho
     {
         $dto = PlanoTrabalhoStoreDTO::fromArray($data, Auth::id());
-        $this->storeValidacao->validarAutorizacao($dto);
-        $this->storeValidacao->validar($dto);
+        $this->storeValidator->validarAutorizacao($dto);
+        $this->storeValidator->validar($dto);
 
         return $this->writeRepository->create($dto->toArray());
     }
@@ -77,6 +77,7 @@ class PlanoTrabalhoService
         }
 
         $dto = PlanoTrabalhoStoreDTO::fromArray($data, Auth::id());
+        $this->storeValidator->validarAutorizacao($dto);
         $this->updateValidator->validar($dto, $id);
 
         $updated = $this->writeRepository->update($id, $dto->toArray());

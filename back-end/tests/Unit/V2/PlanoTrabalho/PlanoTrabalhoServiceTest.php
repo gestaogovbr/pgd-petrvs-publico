@@ -30,28 +30,28 @@ beforeEach(function () {
     $this->readRepository = Mockery::mock(PlanoTrabalhoReadRepositoryContract::class);
     $this->writeRepository = Mockery::mock(PlanoTrabalhoWriteRepositoryContract::class);
     $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
-    $this->storeValidacao = Mockery::mock(PlanoTrabalhoStoreValidator::class);
+    $this->storeValidator = Mockery::mock(PlanoTrabalhoStoreValidator::class);
     $this->updateValidator = Mockery::mock(PlanoTrabalhoUpdateValidator::class);
     $this->destroyValidator = Mockery::mock(PlanoTrabalhoDestroyValidator::class);
     $this->cancelarValidator = Mockery::mock(PlanoTrabalhoCancelarValidator::class);
     $this->encerrarValidator = Mockery::mock(PlanoTrabalhoEncerrarValidator::class);
     $this->arquivarValidator = Mockery::mock(PlanoTrabalhoArquivarValidator::class);
     $this->clonarValidator = Mockery::mock(PlanoTrabalhoClonarValidator::class);
-    $this->indexValidacao = Mockery::mock(PlanoTrabalhoIndexValidator::class);
+    $this->indexValidator = Mockery::mock(PlanoTrabalhoIndexValidator::class);
     $this->statusService = Mockery::mock(StatusService::class);
 
     $this->service = new PlanoTrabalhoService(
         $this->readRepository,
         $this->writeRepository,
         $this->unidadeRepository,
-        $this->storeValidacao,
+        $this->storeValidator,
         $this->updateValidator,
         $this->destroyValidator,
         $this->cancelarValidator,
         $this->encerrarValidator,
         $this->arquivarValidator,
         $this->clonarValidator,
-        $this->indexValidacao,
+        $this->indexValidator,
         $this->statusService,
     );
 });
@@ -64,7 +64,7 @@ describe('PlanoTrabalhoService::index', function () {
 
     test('delega ao repository com o filtro construído', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
-        $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
+        $this->indexValidator->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
         $this->readRepository
@@ -80,7 +80,7 @@ describe('PlanoTrabalhoService::index', function () {
 
     test('expande unidades com subordinadas quando flag subordinadas=true', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
-        $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
+        $this->indexValidator->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
         $this->unidadeRepository
@@ -111,7 +111,7 @@ describe('PlanoTrabalhoService::index', function () {
 
     test('propaga usuario_nome e unidade_regramento no filtro ao repository', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
-        $this->indexValidacao->shouldReceive('validar')->once()->andReturnUsing(fn ($f) => $f);
+        $this->indexValidator->shouldReceive('validar')->once()->andReturnUsing(fn ($f) => $f);
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
         $this->readRepository
@@ -133,7 +133,7 @@ describe('PlanoTrabalhoService::index', function () {
 
     test('não expande subordinadas quando flag subordinadas está ausente', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
-        $this->indexValidacao->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
+        $this->indexValidator->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
         $paginator = Mockery::mock(LengthAwarePaginator::class);
 
         $this->unidadeRepository->shouldNotReceive('getSubordinadasRecursivas');
@@ -154,11 +154,11 @@ describe('PlanoTrabalhoService::store', function () {
 
         $plano = Mockery::mock(PlanoTrabalho::class);
 
-        $this->storeValidacao
+        $this->storeValidator
             ->shouldReceive('validarAutorizacao')
             ->once();
 
-        $this->storeValidacao
+        $this->storeValidator
             ->shouldReceive('validar')
             ->once()
             ->with(Mockery::type(PlanoTrabalhoStoreDTO::class));
@@ -184,11 +184,11 @@ describe('PlanoTrabalhoService::store', function () {
     test('não persiste quando validação lança exceção', function () {
         Auth::shouldReceive('id')->andReturn('criador-1');
 
-        $this->storeValidacao
+        $this->storeValidator
             ->shouldReceive('validarAutorizacao')
             ->once();
 
-        $this->storeValidacao
+        $this->storeValidator
             ->shouldReceive('validar')
             ->once()
             ->andThrow(new ValidateException('A unidade está inativa.'));
@@ -210,8 +210,8 @@ describe('PlanoTrabalhoService::store', function () {
 
         $plano = Mockery::mock(PlanoTrabalho::class);
 
-        $this->storeValidacao->shouldReceive('validarAutorizacao')->once();
-        $this->storeValidacao->shouldReceive('validar')->once();
+        $this->storeValidator->shouldReceive('validarAutorizacao')->once();
+        $this->storeValidator->shouldReceive('validar')->once();
 
         $this->writeRepository
             ->shouldReceive('create')
@@ -386,4 +386,32 @@ describe('PlanoTrabalhoService::statuses', function () {
 
         expect($this->service->statuses())->toBe(PlanoTrabalho::STATUSES);
     });
+});
+
+describe('PlanoTrabalhoService::update', function () {
+
+    test('perfil Consulta é bloqueado ao tentar editar um PT', function () {
+        Auth::shouldReceive('id')->andReturn('user-consulta');
+
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+
+        $this->readRepository->shouldReceive('findById')->with('plano-1')->andReturn($plano);
+
+        $this->storeValidator->shouldReceive('validarAutorizacao')
+            ->once()
+            ->andThrow(new \App\Exceptions\ForbiddenException('Usuário com este perfil não pode cadastrar plano de trabalho.'));
+
+        $this->updateValidator->shouldNotReceive('validar');
+        $this->writeRepository->shouldNotReceive('update');
+
+        $this->service->update('plano-1', [
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'tipo_modalidade_id' => 'mod-1',
+        ]);
+    })->throws(\App\Exceptions\ForbiddenException::class);
 });

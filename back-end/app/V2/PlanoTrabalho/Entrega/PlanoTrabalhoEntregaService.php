@@ -8,18 +8,22 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\PlanoTrabalhoEntregaRepository;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
 use App\V2\PlanoTrabalho\Entrega\DTOs\PlanoTrabalhoEntregaStoreDTO;
+use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaAuthorizationValidator;
 use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaStoreValidator;
+use Illuminate\Support\Facades\Auth;
 
 class PlanoTrabalhoEntregaService
 {
     public function __construct(
         private readonly PlanoTrabalhoEntregaRepository $repository,
         private readonly PlanoTrabalhoEntregaStoreValidator $storeValidator,
+        private readonly PlanoTrabalhoEntregaAuthorizationValidator $authorizationValidator,
         private readonly TCRInvalidador $tcrInvalidador,
     ) {}
 
     public function store(PlanoTrabalhoEntregaStoreDTO $dto): PlanoTrabalhoEntrega
     {
+        $this->authorizationValidator->validar($dto->planoTrabalhoId, Auth::id());
         $this->storeValidator->validar($dto);
 
         $entrega = $this->repository->create($dto->toArray());
@@ -31,6 +35,7 @@ class PlanoTrabalhoEntregaService
 
     public function update(string $entregaId, PlanoTrabalhoEntregaStoreDTO $dto): PlanoTrabalhoEntrega
     {
+        $this->authorizationValidator->validar($dto->planoTrabalhoId, Auth::id());
         $this->storeValidator->validar($dto);
 
         $entrega = $this->repository->update($entregaId, $dto->toArray());
@@ -42,6 +47,7 @@ class PlanoTrabalhoEntregaService
 
     public function destroy(string $planoTrabalhoId, string $entregaId): void
     {
+        $this->authorizationValidator->validar($planoTrabalhoId, Auth::id());
         $this->storeValidator->validarDestroy($planoTrabalhoId);
 
         $this->repository->delete($entregaId);

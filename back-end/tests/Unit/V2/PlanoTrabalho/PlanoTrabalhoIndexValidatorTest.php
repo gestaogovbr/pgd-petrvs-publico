@@ -166,3 +166,47 @@ describe('PlanoTrabalhoIndexValidacao', function () {
         expect($resultado->unidadesId)->toBe(['unidade-sub-1']);
     });
 });
+
+describe('PlanoTrabalhoIndexValidacao — perfil Consulta', function () {
+
+    test('perfil Consulta não expande unidades como perfil Unidade', function () {
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-consulta';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::CONSULTA->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-consulta')->andReturn($usuario);
+        $this->integranteRepo->shouldNotReceive('findByUsuario');
+        $this->unidadeRepo->shouldNotReceive('getSubordinadasRecursivas');
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'vigentes' => true,
+            'usuarioLogadoId' => 'user-consulta',
+        ]);
+
+        $resultado = $this->validacao->validar($filtro);
+
+        expect($resultado->unidadesId)->toBeNull();
+    });
+
+    test('perfil Consulta pode visualizar planos de qualquer usuário', function () {
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-consulta';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::CONSULTA->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-consulta')->andReturn($usuario);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'usuario_id' => 'outro-user',
+            'vigentes' => true,
+            'usuarioLogadoId' => 'user-consulta',
+        ]);
+
+        $resultado = $this->validacao->validar($filtro);
+
+        expect($resultado->usuarioId)->toBe('outro-user');
+    });
+});
