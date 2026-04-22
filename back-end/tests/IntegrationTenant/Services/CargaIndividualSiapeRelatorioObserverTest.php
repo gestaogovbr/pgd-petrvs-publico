@@ -8,6 +8,7 @@ use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Services\IntegracaoService;
+use App\Services\Siape\CargaIndividual\CargaIndividualSiapeObserverInterface;
 use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
 use App\Services\Siape\CargaIndividual\CargaIndividualSiapeRelatorioService;
 use Carbon\CarbonImmutable;
@@ -95,6 +96,55 @@ test('observer persiste relatorio de sucesso para unidade comum sem municipio ne
     expect($payload)->not->toContain('cpfSubstitutoAutoridadeUorg');
 });
 
+test('subject usa attach detach e notify do padrao php para observers', function () {
+    $observerCaptura = new class implements CargaIndividualSiapeObserverInterface {
+        public int $chamadas = 0;
+        public ?string $processamentoId = null;
+
+        public function update(\SplSubject $subject): void
+        {
+            if ($subject instanceof CargaIndividualSiapeSubject) {
+                $this->chamadas++;
+                $this->processamentoId = $subject->contexto()->processamentoId;
+            }
+        }
+    };
+
+    $subject = app(CargaIndividualSiapeSubject::class);
+    $subject->attach($observerCaptura);
+
+    $primeiroProcessamentoId = (string) Str::uuid();
+    $subject->notificar(new CargaIndividualSiapeProcessamentoDTO(
+        processamentoId: $primeiroProcessamentoId,
+        tipo: CargaIndividualSiapeProcessamentoDTO::TIPO_SERVIDOR,
+        chave: '11122233344',
+        status: CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
+        entradaValida: false,
+        dadosSiape: [],
+        resumo: [['status' => 'erro']],
+        mensagemErro: 'Falha simulada',
+        solicitanteId: null,
+    ));
+
+    expect($observerCaptura->chamadas)->toBe(1);
+    expect($observerCaptura->processamentoId)->toBe($primeiroProcessamentoId);
+
+    $subject->detach($observerCaptura);
+    $subject->notificar(new CargaIndividualSiapeProcessamentoDTO(
+        processamentoId: (string) Str::uuid(),
+        tipo: CargaIndividualSiapeProcessamentoDTO::TIPO_SERVIDOR,
+        chave: '11122233344',
+        status: CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
+        entradaValida: false,
+        dadosSiape: [],
+        resumo: [['status' => 'erro']],
+        mensagemErro: 'Falha simulada',
+        solicitanteId: null,
+    ));
+
+    expect($observerCaptura->chamadas)->toBe(1);
+});
+
 test('observer trata unidade raiz por pai_servo 999999 como situacao normal', function () {
     Unidade::factory()->create([
         'codigo' => '99901',
@@ -127,6 +177,25 @@ test('observer trata unidade raiz por pai_servo 999999 como situacao normal', fu
     expect($relatorio->status)->toBe('sucesso');
     expect($payload)->toContain('Unidade raiz');
     expect($payload)->toContain('nao_aplicavel');
+});
+
+test('observer persiste relatorio amigavel para falha de unidade', function () {
+    $relatorio = app(CargaIndividualSiapeSubject::class)->notificar(new CargaIndividualSiapeProcessamentoDTO(
+        processamentoId: (string) Str::uuid(),
+        tipo: CargaIndividualSiapeProcessamentoDTO::TIPO_UNIDADE,
+        chave: '26001',
+        status: CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
+        entradaValida: false,
+        dadosSiape: [],
+        resumo: [['status' => 'erro']],
+        mensagemErro: 'Não existem dados para consulta',
+        solicitanteId: null,
+    ));
+
+    expect($relatorio->tipo)->toBe('unidade');
+    expect($relatorio->status)->toBe('erro');
+    expect($relatorio->entrada_valida)->toBeFalse();
+    expect($relatorio->mensagem_usuario)->toContain('não há dados disponíveis');
 });
 
 test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorrExclusao', function () {
@@ -182,6 +251,53 @@ test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorr
     expect($payload)->toContain('emailInstitucional');
     expect($payload)->toContain('matriculaSiape');
     expect($payload)->not->toContain('dataOcorrExclusao');
+});
+
+test('observer monta secoes para servidor com multiplas matriculas', function () {
+    Usuario::factory()->create([
+        'cpf' => '11122233344',
+        'nome' => 'Servidor Vinculo A',
+        'email' => 'a@orgao.gov.br',
+        'matricula' => '111111',
+        'tipo_modalidade_id' => $this->tipoModalidade->id,
+    ]);
+    Usuario::factory()->create([
+        'cpf' => '11122233344',
+        'nome' => 'Servidor Vinculo B',
+        'email' => 'b@orgao.gov.br',
+        'matricula' => '222222',
+        'tipo_modalidade_id' => $this->tipoModalidade->id,
+    ]);
+
+    $relatorio = app(CargaIndividualSiapeSubject::class)->notificar(new CargaIndividualSiapeProcessamentoDTO(
+        processamentoId: (string) Str::uuid(),
+        tipo: CargaIndividualSiapeProcessamentoDTO::TIPO_SERVIDOR,
+        chave: '11122233344',
+        status: CargaIndividualSiapeProcessamentoDTO::STATUS_SUCESSO,
+        entradaValida: true,
+        dadosSiape: [
+            'dadosPessoais' => [
+                'nome' => 'Servidor',
+            ],
+            'dadosFuncionais' => [
+                [
+                    'matriculaSiape' => '111111',
+                    'emailInstitucional' => 'a@orgao.gov.br',
+                ],
+                [
+                    'matriculaSiape' => '222222',
+                    'emailInstitucional' => 'b@orgao.gov.br',
+                ],
+            ],
+        ],
+        resumo: [['status' => 'sucesso']],
+        mensagemErro: null,
+        solicitanteId: null,
+    ));
+
+    expect($relatorio->secoes)->toHaveCount(2);
+    expect($relatorio->secoes[0]['titulo'])->toBe('Vinculo SIAPE 1');
+    expect($relatorio->secoes[1]['titulo'])->toBe('Vinculo SIAPE 2');
 });
 
 test('observer persiste relatorio amigavel para falha SOAP sem XML nem termos tecnicos', function () {

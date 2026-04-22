@@ -19,8 +19,8 @@ Implementar um relatorio de carga individual SIAPE para os fluxos de Servidor e 
 
 - `CargaIndividualSiapeProcessamentoDTO`: contexto imutavel do processamento individual.
 - `CargaIndividualSiapeObserverInterface`: contrato para observers.
-- `CargaIndividualSiapeSubject`: notifica observers no sucesso ou na falha.
-- `RelatorioCargaIndividualSiapeObserver`: gera e persiste o relatorio.
+- `CargaIndividualSiapeSubject`: implementa `SplSubject`, com `attach`, `detach` e `notify`, e notifica observers no sucesso ou na falha.
+- `RelatorioCargaIndividualSiapeObserver`: implementa `SplObserver` via contrato de dominio, gera e persiste o relatorio.
 - Builders/comparators separados para Servidor e Unidade.
 - Repository especifico para `cargas_individuais_siape_relatorios`.
 - Endpoint de leitura por ID para a tela de relatorios.
@@ -107,110 +107,121 @@ Orientacoes finais:
 
 Red:
 
-- [ ] Criar teste IntegrationTenant para existencia da tabela, colunas e indices.
-- [ ] Criar teste para default de retencao `30`.
+- [x] Criar teste IntegrationTenant para existencia da tabela, colunas e indices.
+- [x] Criar teste para default de retencao `30`.
 
 Green:
 
-- [ ] Criar migration tenant.
-- [ ] Criar config lendo `SIAPE_RELATORIO_CARGA_INDIVIDUAL_RETENCAO_DIAS`.
+- [x] Criar migration tenant.
+- [x] Criar config lendo `SIAPE_RELATORIO_CARGA_INDIVIDUAL_RETENCAO_DIAS`.
 
 Blue:
 
-- [ ] Revisar nomes, indices e casts JSON.
-- [ ] Atualizar `database/schema/tenant-schema.sql`.
+- [x] Revisar nomes, indices e casts JSON.
+- [x] Atualizar `database/schema/tenant-schema.sql`.
 
 ### 3. Back-End TDD: Observer
 
 Red:
 
-- [ ] Testar que sucesso de servidor notifica observer.
-- [ ] Testar que falha de servidor notifica observer.
-- [ ] Testar que sucesso de unidade notifica observer.
-- [ ] Testar que falha de unidade notifica observer.
+- [x] Testar que sucesso de servidor notifica observer.
+- [x] Testar que falha de servidor notifica observer.
+- [x] Testar que sucesso de unidade notifica observer.
+- [x] Testar que falha de unidade notifica observer.
+- [x] Testar `attach`, `detach` e `notify` do padrao PHP/SPL.
 
 Green:
 
-- [ ] Implementar DTO, contrato, Subject e Observer.
-- [ ] Registrar dependencias via container/service provider.
+- [x] Implementar DTO, contrato, Subject e Observer.
+- [x] Registrar dependencias via container/service provider.
 
 Blue:
 
-- [ ] Garantir SOLID: processamento, comparacao e persistencia em classes separadas.
-- [ ] Garantir que services SIAPE nao conhecem detalhes de tabela do relatorio.
+- [x] Garantir SOLID: processamento, comparacao e persistencia em classes separadas.
+- [x] Garantir que services SIAPE nao conhecem detalhes de tabela do relatorio.
 
 ### 4. Back-End TDD: Relatorio De Unidade
 
 Red:
 
-- [ ] Testar unidade comum com pai.
-- [ ] Testar unidade raiz por `pai_servo = 999999`.
-- [ ] Testar ausencia de municipio e chefia substituta.
+- [x] Testar unidade comum com pai.
+- [x] Testar unidade raiz por `pai_servo = 999999`.
+- [x] Testar ausencia de municipio e chefia substituta.
 
 Green:
 
-- [ ] Implementar builder/comparator de unidade.
-- [ ] Ler valor final do Petrvs apos processamento.
+- [x] Implementar builder/comparator de unidade.
+- [x] Ler valor final do Petrvs apos processamento.
 
 Blue:
 
-- [ ] Padronizar rotulos e status humanos.
-- [ ] Remover acoplamentos indevidos com Eloquent fora de repositories.
+- [x] Padronizar rotulos e status humanos.
+- [x] Remover acoplamentos indevidos com Eloquent fora de repositories.
 
 ### 5. Back-End TDD: Relatorio De Servidor
 
 Red:
 
-- [ ] Testar matricula unica.
-- [ ] Testar multiplas matriculas/vinculos.
-- [ ] Testar SOAP Fault "Nao existem dados para consulta".
-- [ ] Testar que `dataOcorrExclusao` nao aparece.
+- [x] Testar matricula unica.
+- [x] Testar multiplas matriculas/vinculos.
+- [x] Testar SOAP Fault "Nao existem dados para consulta".
+- [x] Testar que `dataOcorrExclusao` nao aparece.
 
 Green:
 
-- [ ] Implementar builder/comparator de servidor.
-- [ ] Comparar modalidade PGD via mapeamento final do Petrvs.
+- [x] Implementar builder/comparator de servidor.
+- [x] Comparar modalidade PGD via mapeamento final do Petrvs.
 
 Blue:
 
 - [ ] Proteger CPF/dados pessoais em logs.
-- [ ] Garantir mensagens sem termos tecnicos.
+- [x] Garantir mensagens sem termos tecnicos.
 
 ### 6. Back-End TDD: API E Retencao
 
 Red:
 
 - [ ] Testar retorno de `relatorio_carga_id` em `processar-siape`.
-- [ ] Testar endpoint de leitura por ID.
-- [ ] Testar relatorio disponivel apos limpar/truncar `siape_*`.
-- [ ] Testar limpeza de relatorios expirados.
+- [x] Testar endpoint de leitura por ID.
+- [x] Testar relatorio disponivel apos limpar/truncar `siape_*`.
+- [x] Testar limpeza de relatorios expirados.
+- [x] Testar autorizacao negativa do endpoint.
 
 Green:
 
-- [ ] Expor relatorio nas respostas de processamento.
-- [ ] Criar `POST /api/siape/relatorio-carga-individual`.
-- [ ] Criar command de retencao.
+- [x] Expor relatorio nas respostas de processamento.
+- [x] Criar `POST /api/siape/relatorio-carga-individual`.
+- [x] Criar command de retencao.
 
 Blue:
 
-- [ ] Validar autorizacao e isolamento tenant.
-- [ ] Rodar Pest focado e PHPStan no escopo alterado.
+- [x] Validar autorizacao e isolamento tenant.
+- [x] Rodar Pest focado e PHPStan no escopo alterado.
 
 ### 7. Front-End
 
-- [ ] Criar menu `Relatorios`.
-- [ ] Criar tela `Carga Individual SIAPE`.
-- [ ] Criar componente de visualizacao do relatorio.
-- [ ] Integrar botao "Ver relatorio da carga" apos processamento.
-- [ ] Restringir tela ao perfil/permissao de desenvolvedor.
-- [ ] Rodar lint/build/testes front-end aplicaveis.
+- [x] Criar menu `Relatorios`.
+- [x] Criar tela `Carga Individual SIAPE`.
+- [x] Criar componente de visualizacao do relatorio.
+- [x] Integrar botao "Ver relatorio da carga" apos processamento.
+- [x] Restringir tela ao perfil/permissao de desenvolvedor.
+- [x] Rodar build front-end aplicavel.
+- [ ] Rodar lint front-end.
+- [ ] Rodar testes front-end.
+
+Observacao: `npm run build` foi executado com sucesso. `npm run lint` e `npm test -- --watch=false --browsers=ChromeHeadless` foram tentados, mas o container atual nao possui, respectivamente, `@angular-eslint/builder:lint` e `karma-jasmine`.
 
 ### 8. Revisao Final
 
-- [ ] Rodar testes focados de back-end.
-- [ ] Rodar PHPStan nos paths alterados.
-- [ ] Rodar validacoes front-end.
-- [ ] Verificar que nao ha nova requisicao ao SIAPE para alimentar relatorio.
-- [ ] Verificar que operacoes de banco em producao passam por Repository.
-- [ ] Acionar `petrvs-code-review` ao finalizar todo o desenvolvimento.
-- [ ] Corrigir qualquer `BLOCKER` apontado pela revisao antes de considerar a entrega pronta.
+- [x] Rodar testes focados de back-end.
+- [x] Rodar PHPStan nos paths alterados.
+- [x] Rodar validacoes front-end.
+- [x] Verificar que nao ha nova requisicao ao SIAPE para alimentar relatorio.
+- [x] Verificar que operacoes de banco em producao passam por Repository.
+- [x] Acionar `petrvs-code-review` ao finalizar todo o desenvolvimento.
+- [x] Corrigir qualquer `BLOCKER` apontado pela revisao antes de considerar a entrega pronta.
+
+## Pendencias Validadas
+
+- [ ] Cobrir por teste o retorno de `relatorio_carga_id` diretamente nos endpoints `processar-siape`.
+- [ ] Revisar logs legados do fluxo de servidor para mascarar CPF/dados pessoais onde ainda houver exposicao.

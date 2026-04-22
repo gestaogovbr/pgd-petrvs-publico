@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Siape\CargaIndividual;
 
-use App\DTOs\Siape\CargaIndividualSiapeProcessamentoDTO;
-use App\Models\CargaIndividualSiapeRelatorio;
+use SplObserver;
 
-interface CargaIndividualSiapeObserverInterface
+interface CargaIndividualSiapeObserverInterface extends SplObserver
 {
-    public function atualizar(CargaIndividualSiapeProcessamentoDTO $contexto): ?CargaIndividualSiapeRelatorio;
 }

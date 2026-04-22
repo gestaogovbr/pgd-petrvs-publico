@@ -6,33 +6,74 @@ namespace App\Services\Siape\CargaIndividual;
 
 use App\DTOs\Siape\CargaIndividualSiapeProcessamentoDTO;
 use App\Models\CargaIndividualSiapeRelatorio;
+use InvalidArgumentException;
+use LogicException;
+use SplObjectStorage;
+use SplObserver;
+use SplSubject;
 
-class CargaIndividualSiapeSubject
+class CargaIndividualSiapeSubject implements SplSubject
 {
-    /** @var array<int, CargaIndividualSiapeObserverInterface> */
-    private array $observers;
+    /** @var SplObjectStorage<SplObserver, null> */
+    private SplObjectStorage $observers;
+    private ?CargaIndividualSiapeProcessamentoDTO $contexto = null;
+    private ?CargaIndividualSiapeRelatorio $relatorio = null;
 
     public function __construct(RelatorioCargaIndividualSiapeObserver $relatorioObserver)
     {
-        $this->observers = [$relatorioObserver];
+        $this->observers = new SplObjectStorage();
+        $this->attach($relatorioObserver);
     }
 
-    public function anexar(CargaIndividualSiapeObserverInterface $observer): void
+    public function attach(SplObserver $observer): void
     {
-        $this->observers[] = $observer;
+        if (!$observer instanceof CargaIndividualSiapeObserverInterface) {
+            throw new InvalidArgumentException('Observer de carga individual SIAPE invalido.');
+        }
+
+        $this->observers->attach($observer);
+    }
+
+    public function detach(SplObserver $observer): void
+    {
+        if ($this->observers->contains($observer)) {
+            $this->observers->detach($observer);
+        }
+    }
+
+    public function notify(): void
+    {
+        foreach ($this->observers as $observer) {
+            /** @var SplObserver $observer */
+            $observer->update($this);
+        }
     }
 
     public function notificar(CargaIndividualSiapeProcessamentoDTO $contexto): ?CargaIndividualSiapeRelatorio
     {
-        $relatorio = null;
+        $this->contexto = $contexto;
+        $this->relatorio = null;
 
-        foreach ($this->observers as $observer) {
-            $resultado = $observer->atualizar($contexto);
-            if ($resultado instanceof CargaIndividualSiapeRelatorio) {
-                $relatorio = $resultado;
-            }
+        try {
+            $this->notify();
+
+            return $this->relatorio;
+        } finally {
+            $this->contexto = null;
+        }
+    }
+
+    public function contexto(): CargaIndividualSiapeProcessamentoDTO
+    {
+        if (!$this->contexto instanceof CargaIndividualSiapeProcessamentoDTO) {
+            throw new LogicException('Contexto de carga individual SIAPE indisponivel.');
         }
 
-        return $relatorio;
+        return $this->contexto;
+    }
+
+    public function registrarRelatorio(CargaIndividualSiapeRelatorio $relatorio): void
+    {
+        $this->relatorio = $relatorio;
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Siape\CargaIndividual;
 
-use App\DTOs\Siape\CargaIndividualSiapeProcessamentoDTO;
-use App\Models\CargaIndividualSiapeRelatorio;
+use InvalidArgumentException;
+use SplSubject;
 
 class RelatorioCargaIndividualSiapeObserver implements CargaIndividualSiapeObserverInterface
 {
@@ -14,8 +14,13 @@ class RelatorioCargaIndividualSiapeObserver implements CargaIndividualSiapeObser
     ) {
     }
 
-    public function atualizar(CargaIndividualSiapeProcessamentoDTO $contexto): ?CargaIndividualSiapeRelatorio
+    public function update(SplSubject $subject): void
     {
-        return $this->relatorioService->registrar($contexto);
+        if (!$subject instanceof CargaIndividualSiapeSubject) {
+            throw new InvalidArgumentException('Subject de carga individual SIAPE invalido.');
+        }
+
+        $relatorio = $this->relatorioService->registrar($subject->contexto());
+        $subject->registrarRelatorio($relatorio);
     }
 }
