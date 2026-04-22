@@ -23,7 +23,6 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
   public integranteDao: UnidadeIntegranteDaoService;
 
   public form: FormGroup;
-  public erros: string = '';
   public dados: any;
   public integrantes: IntegranteConsolidado[] = [];
 
@@ -48,7 +47,6 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
     if (this.form.valid) {
       this.loading = true;
       this.clearErros();
-      this.erros = '';
       try {
         const codigoUnidade = this.form.get('unidade')?.value.replace(/\D/g, '');
         const unidades = await this.dao?.query({ where: [['codigo', '==', codigoUnidade]] })
@@ -114,7 +112,6 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
 
   private showSiapeError(error: any): void {
     const message = this.getSiapeErrorMessage(error);
-    this.erros = message;
     this.error(message);
   }
 
