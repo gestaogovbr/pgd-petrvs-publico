@@ -26,6 +26,7 @@ class PlanoTrabalhoStoreValidator
     public function validar(PlanoTrabalhoStoreDTO $dto): void
     {
         $this->validarUnidadeAtiva($dto->unidadeId);
+        $this->validarParticipanteHabilitado($dto);
         $this->validarPeriodoDentroDoRegramento($dto);
         $this->validarConflitoPeriodo($dto);
         $this->validarModalidadeDivergente($dto);
@@ -61,6 +62,13 @@ class PlanoTrabalhoStoreValidator
     {
         if (!$this->unidadeRepository->hasUsuarioLotacao($dto->unidadeId, $dto->usuarioId, true)) {
             throw new ForbiddenException('O agente público não está lotado ou vinculado nas unidades do usuário logado.');
+        }
+    }
+
+    private function validarParticipanteHabilitado(PlanoTrabalhoStoreDTO $dto): void
+    {
+        if (!$this->usuarioRepository->isParticipanteHabilitado($dto->usuarioId, $dto->programaId)) {
+            throw new ValidateException('O participante não está habilitado no PGD/SIAPE para o regramento selecionado.');
         }
     }
 

@@ -10,6 +10,7 @@ use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\Perfil;
+use App\Models\ProgramaParticipante;
 use App\Exceptions\ValidateException;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -66,6 +67,12 @@ beforeEach(function () {
         'data_fim' => '2025-12-31',
     ]);
     $this->tipoModalidadeId = $tipoModalidade->id;
+
+    ProgramaParticipante::factory()->create([
+        'usuario_id' => $this->usuario->id,
+        'programa_id' => $this->programa->id,
+        'habilitado' => true,
+    ]);
 });
 
 afterEach(function () {

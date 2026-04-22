@@ -24,9 +24,17 @@ class PlanoTrabalhoUpdateValidator
     public function validar(PlanoTrabalhoStoreDTO $dto, string $planoId): void
     {
         $this->validarUnidadeAtiva($dto->unidadeId);
+        $this->validarParticipanteHabilitado($dto);
         $this->validarPeriodoDentroDoRegramento($dto);
         $this->validarConflitoPeriodo($dto, $planoId);
         $this->validarModalidadeDivergente($dto);
+    }
+
+    private function validarParticipanteHabilitado(PlanoTrabalhoStoreDTO $dto): void
+    {
+        if (!$this->usuarioRepository->isParticipanteHabilitado($dto->usuarioId, $dto->programaId)) {
+            throw new ValidateException('O participante não está habilitado no PGD/SIAPE para o regramento selecionado.');
+        }
     }
 
     private function validarUnidadeAtiva(string $unidadeId): void

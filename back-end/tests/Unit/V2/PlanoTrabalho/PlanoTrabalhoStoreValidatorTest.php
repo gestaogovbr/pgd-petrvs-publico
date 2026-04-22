@@ -48,6 +48,18 @@ afterEach(function () {
 
 describe('PlanoTrabalhoStoreValidator', function () {
 
+    test('lança exceção quando participante não está habilitado no SIAPE (RN25)', function () {
+        $unidade = Mockery::mock(Unidade::class)->makePartial();
+        $unidade->data_inativacao = null;
+
+        $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')
+            ->with('user-1', 'programa-1')
+            ->andReturn(false);
+
+        $this->validacao->validar(buildStoreDTO());
+    })->throws(ValidateException::class, 'O participante não está habilitado no PGD/SIAPE para o regramento selecionado.');
+
     test('lança exceção quando unidade está inativa', function () {
         $unidade = Mockery::mock(Unidade::class)->makePartial();
         $unidade->data_inativacao = '2024-01-01';
@@ -66,6 +78,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $programa->data_fim = '2024-12-31';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->with('programa-1')->andReturn($programa);
 
         $this->validacao->validar(buildStoreDTO());
@@ -80,6 +93,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $programa->data_fim = '2024-12-31';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')
             ->with('user-1', '2024-03-01', '2024-06-30')
@@ -100,6 +114,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $agente->tipo_modalidade_id = 'mod-siape';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
@@ -119,6 +134,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $agente->tipo_modalidade_id = 'mod-siape';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
@@ -143,6 +159,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $agente->tipo_modalidade_id = 'mod-1';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
