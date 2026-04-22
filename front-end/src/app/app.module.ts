@@ -19,6 +19,7 @@ import { RotinaModule } from './modules/rotinas/rotina.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ErrorsInterceptor } from './interceptors/errors-interceptor';
 import { PetrvsAuthInterceptor } from './interceptors/petrvs-auth-interceptor';
+import { AppShellV2Component } from './v2/components/app-shell/app-shell.component';
 
 registerLocaleData(localePt);
 
@@ -41,7 +42,8 @@ registerLocaleData(localePt);
     UteisModule,
     LogModule,
     RotinaModule,
-    FormsModule
+    FormsModule,
+    AppShellV2Component,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: PetrvsAuthInterceptor, multi: true },

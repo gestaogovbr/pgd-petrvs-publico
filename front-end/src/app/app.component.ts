@@ -248,7 +248,6 @@ export class AppComponent implements IAppComponent {
       menu: [
         this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
         this.menuSchema.OCORRENCIAS,
-        this.menuSchema.ATIVIDADES
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Avaliação"),
@@ -302,8 +301,7 @@ export class AppComponent implements IAppComponent {
 
     this.moduloExecucao = [
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, { metadata: { minha_unidade: true } }),
-      this.menuSchema.ATIVIDADES,
-      Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
+
       this.menuSchema.OCORRENCIAS,
       Object.assign({}, this.menuSchema.RELATORIO_USUARIOS,  {
         name: this.lex.translate("Relatório de Agentes Públicos")
