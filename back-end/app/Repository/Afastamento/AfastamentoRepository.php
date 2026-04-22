@@ -9,9 +9,6 @@ use App\Models\Afastamento;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
 
-/**
- * @extends AbstractEloquentWriteRepository<Afastamento>
- */
 class AfastamentoRepository
 {
     public function __construct(
