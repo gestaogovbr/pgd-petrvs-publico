@@ -10,17 +10,18 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
-    selector: 'consulta-cpf-siape-form',
+    selector: 'consulta-unidade-siape-form',
     templateUrl: './consulta-unidade-siape-form.component.html',
     styleUrls: ['./consulta-unidade-siape-form.component.scss'],
     standalone: false
 })
 export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, UnidadeDaoService> {
-  
+  private readonly mensagemSiapeIndisponivel = 'Não foi possível consultar a unidade no SIAPE neste momento. Verifique se o ambiente possui configuração de acesso ao SIAPE ou tente novamente mais tarde.';
+
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
   public unidade?: Unidade|null;
   public integranteDao: UnidadeIntegranteDaoService;
-  
+
   public form: FormGroup;
   public erros: string = '';
   public dados: any;
@@ -30,7 +31,7 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
     super(injector, Unidade, UnidadeDaoService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.form = this.fh.FormBuilder({
-      unidade: {default: ""}, 
+      unidade: {default: ""},
     }, this.cdRef, this.validate);
   }
 
@@ -47,6 +48,7 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
     if (this.form.valid) {
       this.loading = true;
       this.clearErros();
+      this.erros = '';
       try {
         const codigoUnidade = this.form.get('unidade')?.value.replace(/\D/g, '');
         const unidades = await this.dao?.query({ where: [['codigo', '==', codigoUnidade]] })
@@ -92,22 +94,28 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
               }
 
               this.loading = false;
-              this.error("Erro ao consultar Unidade no SIAPE: " + this.getSiapeErrorMessage(result));
+              this.showSiapeError(result);
             },
             error => {
               this.loading = false;
               console.log(error);
-              this.error("Erro ao consultar Unidade no SIAPE: " + this.getSiapeErrorMessage(error));
+              this.showSiapeError(error);
             }
         )
       } catch (error: any) {
         this.loading = false;
         console.log(error);
-        this.erros = error;
+        this.showSiapeError(error);
       } finally {
-        
+
       }
     }
+  }
+
+  private showSiapeError(error: any): void {
+    const message = this.getSiapeErrorMessage(error);
+    this.erros = message;
+    this.error(message);
   }
 
   private getSiapeErrorMessage(error: any): string {
@@ -118,7 +126,12 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
       || error;
 
     if (typeof message === 'string' && message.trim().length) {
-      return message;
+      const trimmedMessage = message.trim();
+      if (this.isSiapeConfigurationError(trimmedMessage)) {
+        return this.mensagemSiapeIndisponivel;
+      }
+
+      return trimmedMessage;
     }
 
     const status = error?.status;
@@ -127,6 +140,16 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
     }
 
     return 'Falha na consulta.';
+  }
+
+  private isSiapeConfigurationError(message: string): boolean {
+    const normalizedMessage = message.toLowerCase();
+
+    return normalizedMessage.includes('curl error')
+      || normalizedMessage.includes('url rejected')
+      || normalizedMessage.includes('no host part in the url')
+      || normalizedMessage.includes('could not resolve host')
+      || normalizedMessage.includes('failed to connect');
   }
 
   public loadData(_entity: Unidade, _form: FormGroup, _action?: string): Promise<void> | void {
