@@ -209,6 +209,12 @@ export class AppComponent implements IAppComponent {
         route: ['relatorios', 'unidades'],
         //onClick: ()=> this.emDesenvolvimento()
       },
+      RELATORIO_CARGA_INDIVIDUAL_SIAPE: {
+        name: "Carga Individual SIAPE",
+        permition: 'MOD_SIAPE_RELATORIO_CARGA',
+        icon: 'bi bi-clipboard-data',
+        route: ['relatorios', 'carga-individual-siape'],
+      },
       INDICADORES_ENTREGAS: {
         name: "Entregas",
         //permition: 'MOD_IND_ENTREGAS',
@@ -300,7 +306,8 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES
+        this.menuSchema.RELATORIO_UNIDADES,
+        this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Indicadores"),
@@ -377,7 +384,8 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES
+        this.menuSchema.RELATORIO_UNIDADES,
+        this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Indicadores"),
@@ -423,6 +431,13 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.DEV_UNIDADE_CONSULTA_SIAPE,
         this.menuSchema.BLACKLIST_SERVIDOR,
         this.menuSchema.BLACKLIST_UNIDADE
+      ]
+    }, {
+      name: this.lex.translate("Relatórios"),
+      permition: "MENU_DEV_ACESSO",
+      id: "navbarDropdownDevRelatorios",
+      menu: [
+        this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
       ]
     }, {
       name: this.lex.translate("Envio API"),

@@ -109,6 +109,10 @@ use App\Repository\PlanoEntrega\Eloquent\EloquentPlanoEntregaReadRepository;
 use App\Repository\PlanoEntrega\Eloquent\EloquentPlanoEntregaWriteRepository;
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
+use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
+use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioWriteRepositoryContract;
+use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioReadRepository;
+use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioWriteRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class RepositoryServiceProvider extends ServiceProvider
@@ -263,6 +267,16 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             RelatorioAgenteReadRepositoryContract::class,
             EloquentRelatorioAgenteReadRepository::class,
+        );
+
+        $this->app->bind(
+            CargaIndividualSiapeRelatorioReadRepositoryContract::class,
+            EloquentCargaIndividualSiapeRelatorioReadRepository::class,
+        );
+
+        $this->app->bind(
+            CargaIndividualSiapeRelatorioWriteRepositoryContract::class,
+            EloquentCargaIndividualSiapeRelatorioWriteRepository::class,
         );
     }
 

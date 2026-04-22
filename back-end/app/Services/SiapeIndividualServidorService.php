@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTOs\Siape\CargaIndividualSiapeProcessamentoDTO;
 use App\Facades\SiapeLog;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Entidade;
@@ -17,6 +18,7 @@ use App\Repository\UnidadeRepository;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeIntegranteAtribuicaoRepository;
 use App\Repository\UsuarioRepository;
+use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
 use App\Services\Siape\Unidade\Atribuicao;
 use App\Services\IntegracaoServiceFactory;
 use Illuminate\Support\Str;
@@ -41,6 +43,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     private SiapeIndividualService $service;
     private ?array $resumo = null;
+    private ?array $relatorioCarga = null;
 
     public function __construct(
         protected IntegracaoServiceFactory $integracaoServiceFactory,
@@ -54,6 +57,7 @@ class SiapeIndividualServidorService extends ServiceBase
         protected UnidadeIntegranteRepository $unidadeIntegranteRepository,
         protected UnidadeIntegranteAtribuicaoRepository $unidadeIntegranteAtribuicaoRepository,
         protected UsuarioRepository $usuarioRepository,
+        protected CargaIndividualSiapeSubject $cargaIndividualSiapeSubject,
         $collection = null
     ) {
         parent::__construct($collection);
@@ -84,6 +88,11 @@ class SiapeIndividualServidorService extends ServiceBase
         return $this->resumo;
     }
 
+    public function getRelatorioCarga(): ?array
+    {
+        return $this->relatorioCarga;
+    }
+
     /**
      * Executa o fluxo completo de sincronização do SIAPE para um servidor
      * @throws Exception
@@ -94,11 +103,18 @@ class SiapeIndividualServidorService extends ServiceBase
 
         $this->service = $service;
         $this->resumo = null;
-        
-        $cpfLimpo = $this->limparEValidarCpf($cpf);
-        $usuariosAntes = $this->capturarEstadoUsuarios($cpfLimpo);
+        $this->relatorioCarga = null;
+        $processamentoId = (string) Str::uuid();
+        $dadosRelatorio = [
+            'dadosPessoais' => [],
+            'dadosFuncionais' => [],
+        ];
+        $cpfLimpo = preg_replace('/[^0-9]/', '', $cpf) ?? $cpf;
+        $usuariosAntes = [];
 
         try {
+            $cpfLimpo = $this->limparEValidarCpf($cpf);
+            $usuariosAntes = $this->capturarEstadoUsuarios($cpfLimpo);
             $this->logInicioProcessamento($cpf, $cpfLimpo);
             $this->limparDadosAnteriores($cpfLimpo);
 
@@ -106,6 +122,8 @@ class SiapeIndividualServidorService extends ServiceBase
             list($respFuncionais, $respPessoais) = $this->executarConsultasSiape($cpfLimpo, $xmlFuncionais, $xmlPessoais);
             
             $dadosFuncionais = $this->processarRespostaFuncionais($cpfLimpo, $respFuncionais);
+            $dadosRelatorio['dadosFuncionais'] = $dadosFuncionais;
+            $dadosRelatorio['dadosPessoais'] = $this->processarDadosPessoaisParaRelatorio($cpfLimpo, $respPessoais);
             
             $this->processarUnidadesDosServidores($cpfLimpo, $dadosFuncionais);
             $this->salvarDadosConsulta($cpfLimpo, $respFuncionais, $respPessoais);
@@ -118,7 +136,7 @@ class SiapeIndividualServidorService extends ServiceBase
             if (empty($this->resumo)) {
                 $nome = 'Servidor';
                 try {
-                     $dadosPessoaisArr = $this->service->getProcessaDadosSiape()->processaDadosPessoais($cpfLimpo, $respPessoais);
+                     $dadosPessoaisArr = $dadosRelatorio['dadosPessoais'];
                      $nome = $dadosPessoaisArr['nome'] ?? 'Servidor';
                 } catch (\Throwable $e) {
                     // ignore
@@ -135,12 +153,83 @@ class SiapeIndividualServidorService extends ServiceBase
                 ];
             }
 
+            $this->registrarRelatorioCarga(
+                $processamentoId,
+                $cpfLimpo,
+                $this->statusRelatorioPorResumo($this->resumo),
+                true,
+                $dadosRelatorio,
+                null
+            );
+
             return $this->resumo;
 
         } catch (Exception $e) {
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_ERRO, $e->getMessage());
+            $this->registrarRelatorioCarga(
+                $processamentoId,
+                $cpfLimpo,
+                CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
+                false,
+                $dadosRelatorio,
+                $e->getMessage()
+            );
             throw $e;
         }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function processarDadosPessoaisParaRelatorio(string $cpf, string $respPessoais): array
+    {
+        try {
+            return $this->service->getProcessaDadosSiape()->processaDadosPessoais($cpf, $respPessoais);
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $dadosRelatorio
+     */
+    private function registrarRelatorioCarga(
+        string $processamentoId,
+        string $cpf,
+        string $status,
+        bool $entradaValida,
+        array $dadosRelatorio,
+        ?string $mensagemErro
+    ): void {
+        $relatorio = $this->cargaIndividualSiapeSubject->notificar(new CargaIndividualSiapeProcessamentoDTO(
+            processamentoId: $processamentoId,
+            tipo: CargaIndividualSiapeProcessamentoDTO::TIPO_SERVIDOR,
+            chave: $cpf,
+            status: $status,
+            entradaValida: $entradaValida,
+            dadosSiape: $dadosRelatorio,
+            resumo: $this->resumo,
+            mensagemErro: $mensagemErro,
+            solicitanteId: auth()->id(),
+        ));
+
+        $this->relatorioCarga = $relatorio ? [
+            'id' => $relatorio->id,
+            'status' => $relatorio->status,
+            'tipo' => $relatorio->tipo,
+        ] : null;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>>|null $resumo
+     */
+    private function statusRelatorioPorResumo(?array $resumo): string
+    {
+        if (collect($resumo ?? [])->contains(fn(array $item) => ($item['status'] ?? null) === self::STATUS_PARCIAL)) {
+            return CargaIndividualSiapeProcessamentoDTO::STATUS_PARCIAL;
+        }
+
+        return CargaIndividualSiapeProcessamentoDTO::STATUS_SUCESSO;
     }
 
     protected function instanciarIntegracaoService(): IntegracaoService

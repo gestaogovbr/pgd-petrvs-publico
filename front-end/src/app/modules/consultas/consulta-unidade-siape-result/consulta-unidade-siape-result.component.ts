@@ -39,6 +39,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
   public dados: any;
   public integrantes: IntegranteConsolidado[] = [];
   public dialog: DialogService;
+  public ultimoRelatorioCargaId?: string;
 
   public toolbarButtons: ToolbarButton[] = [
     {
@@ -82,6 +83,13 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
       }
     },
     {
+      label: "Ver relatório da carga",
+      icon: "bi bi-clipboard-data",
+      color: "btn-outline-info",
+      dynamicVisible: () => !!this.ultimoRelatorioCargaId,
+      onClick: () => this.abrirRelatorioCarga()
+    },
+    {
       label: "Processar",
       icon: "bi bi-gear",
       onClick: async() => {
@@ -94,11 +102,12 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
               .subscribe(
                 async result => {
                   this.loading = false;
+                  this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
                   if (result?.success) {
                     await this.loadUnidade();
                     if (result?.resumo) {
                       const relatorio = await this.obterRelatorioProcessamentoSafely();
-                      await this.mostrarResumo(result.resumo, result.message, relatorio);
+                      await this.mostrarResumo(result.resumo, result.message, relatorio, this.ultimoRelatorioCargaId);
                     } else {
                       this.dialog.alert("Sucesso", result.message);
                     }
@@ -106,7 +115,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
                   } else {
                     if (result?.resumo) {
                       const relatorio = await this.obterRelatorioProcessamentoSafely();
-                      await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade: " + result?.message, relatorio);
+                      await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade: " + result?.message, relatorio, this.ultimoRelatorioCargaId);
                     } else {
                       this.dialog.alert("Erro", "Erro ao processar a Unidade: " + result?.message);
                     }
@@ -115,11 +124,11 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
                 },
                 async error => {
                   this.loading = false;
-                  console.log(error);
                   const result = error.error;
+                  this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
                   if (result?.resumo) {
                     const relatorio = await this.obterRelatorioProcessamentoSafely();
-                    await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade: " + (result.message ?? error.message), relatorio);
+                    await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade: " + (result.message ?? error.message), relatorio, this.ultimoRelatorioCargaId);
                   } else {
                     this.dialog.alert("Erro", "Erro ao processar a Unidade: " + (error.message ?? error.error?.message));
                   }
@@ -250,20 +259,32 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     }
   }
 
-  private async mostrarResumo(resumo: SiapeResumoItem[], titulo: string, relatorio?: SiapeRelatorioUnidade) {
+  private async mostrarResumo(resumo: SiapeResumoItem[], titulo: string, relatorio?: SiapeRelatorioUnidade, relatorioCargaId?: string) {
     if (!Array.isArray(resumo)) {
       this.dialog.alert(titulo, 'Resumo inválido');
       return;
     }
     
     if (this.resumoTpl) {
+      const buttons = relatorioCargaId
+        ? [
+            { label: "Ver relatório da carga", color: "btn-primary", value: "relatorio" },
+            { label: "Ok", color: "btn-outline-secondary", value: true }
+          ]
+        : [{ label: "Ok", color: "btn-primary", value: true }];
       const dialogResult = await this.dialog.template(
         { title: titulo, modalWidth: 700 },
         this.resumoTpl,
-        [{ label: "Ok", color: "btn-primary", value: true }],
+        buttons,
         { resumo: resumo, relatorio: relatorio }
       ).asPromise();
       
+      if (dialogResult?.button?.value === "relatorio" && relatorioCargaId) {
+        dialogResult.dialog.close();
+        this.abrirRelatorioCarga(relatorioCargaId);
+        return;
+      }
+
       if (dialogResult?.button?.label === "Ok" && dialogResult?.dialog) {
         dialogResult.dialog.close();
       }
@@ -300,6 +321,15 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
       unidade_pai_sigla: this.unidade.unidade_pai?.sigla ?? null,
       unidade_raiz: this.unidade.unidade_pai_id === null
     };
+  }
+
+  public abrirRelatorioCarga(relatorioCargaId: string = this.ultimoRelatorioCargaId ?? ''): void {
+    if (!relatorioCargaId) return;
+
+    this.go.navigate(
+      { route: ['relatorios', 'carga-individual-siape'], params: { id: relatorioCargaId } },
+      { metadata: { relatorioId: relatorioCargaId } }
+    );
   }
 
 }

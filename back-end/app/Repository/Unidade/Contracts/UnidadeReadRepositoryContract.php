@@ -17,6 +17,8 @@ interface UnidadeReadRepositoryContract
 
     public function findByCodigo(string $codigo): ?\App\Models\Unidade;
 
+    public function findByCodigoWithPai(string $codigo): ?\App\Models\Unidade;
+
     public function getUnidadesGerenciadas(string $usuarioId): \Illuminate\Database\Eloquent\Collection;
 
     public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection;

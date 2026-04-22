@@ -338,6 +338,33 @@ CREATE TABLE `capacidades_tecnicas` (
   CONSTRAINT `capacidades_tecnicas_area_tematica_id_foreign` FOREIGN KEY (`area_tematica_id`) REFERENCES `areas_tematicas` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `cargas_individuais_siape_relatorios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cargas_individuais_siape_relatorios` (
+  `id` char(36) NOT NULL,
+  `processamento_id` char(36) NOT NULL,
+  `tipo` varchar(20) NOT NULL,
+  `chave` varchar(50) NOT NULL,
+  `status` varchar(20) NOT NULL,
+  `entrada_valida` tinyint(1) NOT NULL DEFAULT 0,
+  `mensagem_usuario` text DEFAULT NULL,
+  `orientacoes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`orientacoes`)),
+  `secoes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`secoes`)),
+  `solicitante_id` char(36) DEFAULT NULL,
+  `processado_em` datetime NOT NULL,
+  `expira_em` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ci_siape_rel_processamento_unique` (`processamento_id`),
+  KEY `ci_siape_rel_tipo_chave_idx` (`tipo`,`chave`),
+  KEY `ci_siape_rel_processado_idx` (`processado_em`),
+  KEY `ci_siape_rel_expira_idx` (`expira_em`),
+  KEY `ci_siape_rel_solicitante_idx` (`solicitante_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `cargos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -3802,4 +3829,5 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (389,'2026_01_16_00
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (390,'2026_01_23_000000_version2_9_10',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (391,'2026_01_28_000000_version2_9_11',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (392,'2026_01_29_000000_version2_9_12',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (393,'2026_04_22_000000_create_cargas_individuais_siape_relatorios_table',1);
 commit;

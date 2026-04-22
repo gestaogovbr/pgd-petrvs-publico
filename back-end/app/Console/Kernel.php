@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\NotifySlowQuery::class,
         \App\Console\Commands\SlowLogWatch::class,
         \App\Console\Commands\SlowLogPrune::class,
+        \App\Console\Commands\PruneCargaIndividualSiapeRelatorios::class,
     ];
 
     protected function commands()
@@ -82,5 +83,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('db:slow-log:ensure-daily --perm=777')->dailyAt('00:01');
         
         $schedule->command('logs:cleanup')->dailyAt('00:01');
+        $schedule->command('tenants:run siape:prune-relatorios-carga-individual')->dailyAt('00:45');
     }
 }

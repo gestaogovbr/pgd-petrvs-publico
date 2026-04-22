@@ -2,14 +2,17 @@
 
 namespace App\Services;
 
+use App\DTOs\Siape\CargaIndividualSiapeProcessamentoDTO;
 use App\Facades\SiapeLog;
 use App\Models\Entidade;
 use App\Models\IntegracaoUnidade;
 use App\Models\Unidade;
 use App\Repository\EntidadeRepository;
+use App\Repository\IntegracaoUnidadeRepository;
 use App\Repository\SiapeDadosUORGRepository;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
+use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Str;
@@ -27,6 +30,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
     /** @var array<int, array<string, mixed>>|null */
     private ?array $resumo = null;
+    private ?array $relatorioCarga = null;
 
     public function __construct(
         protected SiapeDadosUORGRepository $siapeDadosUORGRepository,
@@ -34,6 +38,8 @@ class SiapeIndividualUnidadeService extends ServiceBase
         protected IntegracaoServiceFactory $integracaoServiceFactory,
         protected UnidadeRepository $unidadeRepository,
         protected UnidadeIntegranteRepository $unidadeIntegranteRepository,
+        protected IntegracaoUnidadeRepository $integracaoUnidadeRepository,
+        protected CargaIndividualSiapeSubject $cargaIndividualSiapeSubject,
         $collection = null
     ) {
         parent::__construct($collection);
@@ -47,6 +53,11 @@ class SiapeIndividualUnidadeService extends ServiceBase
         return $this->resumo;
     }
 
+    public function getRelatorioCarga(): ?array
+    {
+        return $this->relatorioCarga;
+    }
+
     /**
      * @return mixed
      */
@@ -56,6 +67,10 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         $this->service = $service;
         $this->resumo = null;
+        $this->relatorioCarga = null;
+        $processamentoId = (string) Str::uuid();
+        $dadosRelatorio = [];
+        $entradaValida = false;
         $codigoUnidade = $this->normalizarCodigoUnidade($codigoUnidade);
         $unidadeAntes = $this->capturarEstadoUnidade($codigoUnidade);
 
@@ -74,6 +89,8 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
             $codUorg = $this->getCodigoFromXML($dadosUnidadeResponseXml);
             $codigoProcessado = $codUorg ?? $codigoUnidade;
+            $dadosRelatorio = $this->extrairDadosUnidadeRelatorio($dadosUnidadeResponseXml);
+            $entradaValida = !empty($dadosRelatorio['codUorg']);
 
             SiapeLog::info('Dados da unidade recebidos do SIAPE', ['response' => $dadosUnidadeResponseXml]);
 
@@ -115,6 +132,15 @@ class SiapeIndividualUnidadeService extends ServiceBase
                 )
             ];
 
+            $this->registrarRelatorioCarga(
+                $processamentoId,
+                $codigoProcessado,
+                $entradaValida ? CargaIndividualSiapeProcessamentoDTO::STATUS_SUCESSO : CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
+                $entradaValida,
+                $dadosRelatorio,
+                $entradaValida ? null : 'Não existem dados para consulta'
+            );
+
             return $retorno;
         } catch (Exception $e) {
             $this->resumo = [
@@ -126,6 +152,15 @@ class SiapeIndividualUnidadeService extends ServiceBase
                     $e->getMessage()
                 )
             ];
+
+            $this->registrarRelatorioCarga(
+                $processamentoId,
+                $codigoUnidade,
+                CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
+                false,
+                $dadosRelatorio,
+                $e->getMessage()
+            );
 
             throw $e;
         }
@@ -288,10 +323,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
     private function buscarChefeCpf(string $codigoUnidade): ?string
     {
-        $registro = IntegracaoUnidade::query()
-            ->where('id_servo', $codigoUnidade)
-            ->orWhere('codigo_siape', $codigoUnidade)
-            ->first();
+        $registro = $this->integracaoUnidadeRepository->findByCodigo($codigoUnidade);
 
         if (!$registro instanceof IntegracaoUnidade || empty($registro->cpf_titular_autoridade_uorg)) {
             return null;
@@ -300,6 +332,66 @@ class SiapeIndividualUnidadeService extends ServiceBase
         $cpf = preg_replace('/[^0-9]/', '', $registro->cpf_titular_autoridade_uorg);
 
         return $cpf !== '' ? $cpf : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function extrairDadosUnidadeRelatorio(string $xmlResponse): array
+    {
+        $xml = simplexml_load_string($xmlResponse);
+        if ($xml === false) {
+            return [];
+        }
+
+        $xml->registerXPathNamespace('ent', 'http://entidade.wssiapenet');
+
+        $dados = [];
+        foreach ([
+            'codUorg',
+            'codUorgPai',
+            'nomeExtendido',
+            'siglaUorg',
+            'dataUltimaTransacao',
+            'cpfTitularAutoridadeUorg',
+        ] as $campo) {
+            $result = $xml->xpath('//ent:' . $campo);
+            if ($result && isset($result[0])) {
+                $dados[$campo] = (string) $result[0];
+            }
+        }
+
+        return $dados;
+    }
+
+    /**
+     * @param array<string, mixed> $dadosRelatorio
+     */
+    private function registrarRelatorioCarga(
+        string $processamentoId,
+        string $codigoUnidade,
+        string $status,
+        bool $entradaValida,
+        array $dadosRelatorio,
+        ?string $mensagemErro
+    ): void {
+        $relatorio = $this->cargaIndividualSiapeSubject->notificar(new CargaIndividualSiapeProcessamentoDTO(
+            processamentoId: $processamentoId,
+            tipo: CargaIndividualSiapeProcessamentoDTO::TIPO_UNIDADE,
+            chave: $codigoUnidade,
+            status: $status,
+            entradaValida: $entradaValida,
+            dadosSiape: $dadosRelatorio,
+            resumo: $this->resumo,
+            mensagemErro: $mensagemErro,
+            solicitanteId: auth()->id(),
+        ));
+
+        $this->relatorioCarga = $relatorio ? [
+            'id' => $relatorio->id,
+            'status' => $relatorio->status,
+            'tipo' => $relatorio->tipo,
+        ] : null;
     }
 
     private function montaXmlUnidade($codigoDaUnidade)

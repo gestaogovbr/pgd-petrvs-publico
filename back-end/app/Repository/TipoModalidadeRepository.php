@@ -18,6 +18,11 @@ class TipoModalidadeRepository
         return $this->readRepository->getDefaultId();
     }
 
+    public function findById(string|int $id): ?\App\Models\TipoModalidade
+    {
+        return $this->readRepository->findById($id);
+    }
+
     public function findByNome(string $name): ?object
     {
         return $this->readRepository->findOneBy(['nome' => $name]);

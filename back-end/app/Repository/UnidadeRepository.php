@@ -35,6 +35,11 @@ class UnidadeRepository
         return $this->readRepository->findByCodigo($codigo);
     }
 
+    public function findByCodigoWithPai(string $codigo): ?\App\Models\Unidade
+    {
+        return $this->readRepository->findByCodigoWithPai($codigo);
+    }
+
     public function getUnidadesGerenciadas(string $usuarioId): \Illuminate\Database\Eloquent\Collection
     {
         return $this->readRepository->getUnidadesGerenciadas($usuarioId);

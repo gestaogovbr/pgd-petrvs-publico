@@ -22,4 +22,11 @@ class EloquentTipoModalidadeReadRepository extends AbstractEloquentReadRepositor
     {
         return $this->model->whereNull('deleted_at')->value('id');
     }
+
+    public function findById(string|int $id): ?TipoModalidade
+    {
+        $modalidade = $this->query()->find($id);
+
+        return $modalidade instanceof TipoModalidade ? $modalidade : null;
+    }
 }

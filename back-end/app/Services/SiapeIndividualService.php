@@ -61,6 +61,12 @@ class SiapeIndividualService extends ServiceBase
             ?? $this->SiapeIndividualUnidadeService->getResumo();
     }
 
+    public function getRelatorioCarga(): ?array
+    {
+        return $this->SiapeIndividualServidorService->getRelatorioCarga()
+            ?? $this->SiapeIndividualUnidadeService->getRelatorioCarga();
+    }
+
     private function inicializaClassesNecessarias()
     {
         $this->config = config("integracao")["siape"];

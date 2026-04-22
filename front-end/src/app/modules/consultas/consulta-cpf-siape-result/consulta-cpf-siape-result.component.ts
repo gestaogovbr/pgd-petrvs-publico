@@ -32,6 +32,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
   public dadosFuncionais: any;
   public integrantes: IntegranteConsolidado[] = [];
   public dialog: DialogService;
+  public ultimoRelatorioCargaId?: string;
 
   public toolbarButtons: ToolbarButton[] = [
     {
@@ -76,6 +77,13 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
       }
     },
     {
+      label: "Ver relatório da carga",
+      icon: "bi bi-clipboard-data",
+      color: "btn-outline-info",
+      dynamicVisible: () => !!this.ultimoRelatorioCargaId,
+      onClick: () => this.abrirRelatorioCarga()
+    },
+    {
       label: "Processar",
       icon: "bi bi-gear",
       onClick: async() => {
@@ -89,17 +97,18 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
               .subscribe(
                 async result => {
                   this.loading = false;
+                  this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
                   if (result?.success) {
                     await this.loadUsuario();
                     if(result.resumo) {
-                        await this.mostrarResumo(result.resumo, result.message);
+                        await this.mostrarResumo(result.resumo, result.message, this.ultimoRelatorioCargaId);
                     } else {
                         await this.dialog.alert("Sucesso", result.message);
                     }
                     this.log = result.log;
                   } else {
                     if (result?.resumo) {
-                        await this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + result?.message);
+                        await this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + result?.message, this.ultimoRelatorioCargaId);
                     } else {
                         await this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
                     }
@@ -108,10 +117,10 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
                 },
                 error => {
                   this.loading = false;
-                  console.log(error);
                   const result = error.error;
+                  this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
                   if (result?.resumo) {
-                      this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + (result.message ?? error.message));
+                      this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + (result.message ?? error.message), this.ultimoRelatorioCargaId);
                   } else {
                       this.dialog.alert("Erro", "Erro ao processar CPF: " + (result?.message ?? error.message));
                   }
@@ -239,7 +248,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     }
   }
 
-  private async mostrarResumo(resumo: any[], titulo: string) {
+  private async mostrarResumo(resumo: any[], titulo: string, relatorioCargaId?: string) {
     if (!Array.isArray(resumo)) {
         this.dialog.alert(titulo, 'Resumo inválido');
         return;
@@ -250,9 +259,21 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
          titulo = 'Parcial';
       }
 
-      const dialogResult = await this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, [{ label: "Ok", color: "btn-primary", value: true }], { resumo: resumo })
+      const buttons = relatorioCargaId
+        ? [
+            { label: "Ver relatório da carga", color: "btn-primary", value: "relatorio" },
+            { label: "Ok", color: "btn-outline-secondary", value: true }
+          ]
+        : [{ label: "Ok", color: "btn-primary", value: true }];
+      const dialogResult = await this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, buttons, { resumo: resumo })
       .asPromise();
       
+      if (dialogResult?.button?.value === "relatorio" && relatorioCargaId) {
+          dialogResult.dialog.close();
+          this.abrirRelatorioCarga(relatorioCargaId);
+          return;
+      }
+
       if (dialogResult?.button?.label === "Ok" && dialogResult?.dialog) {
           dialogResult.dialog.close();
       }
@@ -273,6 +294,15 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
       });
       await this.dialog.alert(titulo, msg);
     }
+  }
+
+  public abrirRelatorioCarga(relatorioCargaId: string = this.ultimoRelatorioCargaId ?? ''): void {
+    if (!relatorioCargaId) return;
+
+    this.go.navigate(
+      { route: ['relatorios', 'carga-individual-siape'], params: { id: relatorioCargaId } },
+      { metadata: { relatorioId: relatorioCargaId } }
+    );
   }
 
 }
