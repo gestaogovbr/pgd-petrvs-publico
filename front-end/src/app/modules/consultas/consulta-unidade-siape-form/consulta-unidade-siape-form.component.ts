@@ -1,5 +1,6 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild, ViewRef } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { IIndexable } from 'src/app/models/base.model';
 import { NavigateResult } from 'src/app/services/navigate.service';
@@ -63,49 +64,37 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
           this.integrantes = integrantesList.integrantes.filter(integrante => integrante.atribuicoes?.length > 0);
         }
 
-        this.dao!.consultaUnidadeSIAPE(codigoUnidade)
-          .subscribe(
-            result => {
-              const status = Number(result?.status);
-              const hasResponseStatus = Number.isInteger(status);
-              const isSuccessStatus = !hasResponseStatus || [200, 201].includes(status);
+        const result = await firstValueFrom(this.dao!.consultaUnidadeSIAPE(codigoUnidade));
+        const status = Number(result?.status);
+        const hasResponseStatus = Number.isInteger(status);
+        const isSuccessStatus = !hasResponseStatus || [200, 201].includes(status);
 
-              if (isSuccessStatus && result?.success) {
-                this.dados = result.dados;
+        if (isSuccessStatus && result?.success) {
+          this.dados = result.dados;
 
-                this.loading = false;
-
-                this.go.navigate(
-                  {
-                    route: ['consultas', 'unidade-siape-result']
-                  },
-                  {
-                    metadata: {
-                      codigoUnidade: this.form.get('unidade')?.value,
-                      unidade: this.unidade,
-                      dados: result.dados,
-                      integrantes: this.integrantes
-                    }
-                  }
-                );
-                return;
-              }
-
-              this.loading = false;
-              this.showSiapeError(result);
+          this.go.navigate(
+            {
+              route: ['consultas', 'unidade-siape-result']
             },
-            error => {
-              this.loading = false;
-              console.log(error);
-              this.showSiapeError(error);
+            {
+              metadata: {
+                codigoUnidade: this.form.get('unidade')?.value,
+                unidade: this.unidade,
+                dados: result.dados,
+                integrantes: this.integrantes
+              }
             }
-        )
+          );
+          return;
+        }
+
+        this.showSiapeError(result);
       } catch (error: any) {
-        this.loading = false;
         console.log(error);
         this.showSiapeError(error);
       } finally {
-
+        this.loading = false;
+        this.detectChangesIfActive();
       }
     }
   }
@@ -113,6 +102,14 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
   private showSiapeError(error: any): void {
     const message = this.getSiapeErrorMessage(error);
     this.error(message);
+  }
+
+  private detectChangesIfActive(): void {
+    const viewRef = this.cdRef as ViewRef;
+
+    if (!viewRef.destroyed) {
+      this.cdRef.detectChanges();
+    }
   }
 
   private getSiapeErrorMessage(error: any): string {
