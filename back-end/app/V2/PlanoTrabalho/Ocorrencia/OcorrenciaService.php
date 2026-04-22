@@ -61,7 +61,7 @@ class OcorrenciaService
 
     private function vincularConsolidacoes(string $planoTrabalhoId, Afastamento $afastamento): void
     {
-        $consolidacoes = $this->consolidacaoRepository->findByPlanoTrabalhoIdAndPeriodo(
+        $consolidacoes = $this->consolidacaoRepository->findAllByPlanoTrabalhoIdAndPeriodo(
             $planoTrabalhoId,
             $afastamento->data_inicio,
             $afastamento->data_fim,

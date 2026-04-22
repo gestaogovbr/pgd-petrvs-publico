@@ -17,34 +17,34 @@ class UnidadeIntegranteRepository
     ) {
     }
 
-    public function findCuradoresByUsuario(string $usuarioId): Collection
+    public function findAllCuradoresByUsuario(string $usuarioId): Collection
     {
-        return $this->readRepository->findCuradoresByUsuario($usuarioId);
+        return $this->readRepository->findAllCuradoresByUsuario($usuarioId);
     }
 
-    public function findColaboracoesByUsuario(string $usuarioId): Collection
+    public function findAllColaboracoesByUsuario(string $usuarioId): Collection
     {
-        return $this->readRepository->findColaboracoesByUsuario($usuarioId);
+        return $this->readRepository->findAllColaboracoesByUsuario($usuarioId);
     }
 
-    public function findGerenciasSubstitutasByUsuario(string $usuarioId): Collection
+    public function findAllGerenciasSubstitutasByUsuario(string $usuarioId): Collection
     {
-        return $this->readRepository->findGerenciasSubstitutasByUsuario($usuarioId);
+        return $this->readRepository->findAllGerenciasSubstitutasByUsuario($usuarioId);
     }
 
-    public function findGerenciasDelegadasByUsuario(string $usuarioId): Collection
+    public function findAllGerenciasDelegadasByUsuario(string $usuarioId): Collection
     {
-        return $this->readRepository->findGerenciasDelegadasByUsuario($usuarioId);
+        return $this->readRepository->findAllGerenciasDelegadasByUsuario($usuarioId);
     }
 
-    public function findGerenciasTitularesByUsuario(string $usuarioId): Collection
+    public function findAllGerenciasTitularesByUsuario(string $usuarioId): Collection
     {
-        return $this->readRepository->findGerenciasTitularesByUsuario($usuarioId);
+        return $this->readRepository->findAllGerenciasTitularesByUsuario($usuarioId);
     }
 
-    public function findLotacoesByUsuario(string $usuarioId): Collection
+    public function findAllLotacoesByUsuario(string $usuarioId): Collection
     {
-        return $this->readRepository->findLotacoesByUsuario($usuarioId);
+        return $this->readRepository->findAllLotacoesByUsuario($usuarioId);
     }
 
     public function findGestorByUnidade(string $unidadeId): ?UnidadeIntegrante
@@ -57,8 +57,8 @@ class UnidadeIntegranteRepository
         return $this->readRepository->findUnidadeIntegrante($usuarioId, $unidadeId);
     }
 
-    public function findByUsuario(string $usuarioId): Collection
+    public function findAllByUsuario(string $usuarioId): Collection
     {
-        return $this->readRepository->findByUsuario($usuarioId);
+        return $this->readRepository->findAllByUsuario($usuarioId);
     }
 }

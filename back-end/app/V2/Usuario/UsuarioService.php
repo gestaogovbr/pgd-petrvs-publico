@@ -15,7 +15,7 @@ class UsuarioService
 
     public function buscarPorNomeOuMatricula(string $nomeMatricula)
     {
-        return $this->usuarioRepository->findByNomeMatricula($nomeMatricula);
+        return $this->usuarioRepository->findAllByNomeMatricula($nomeMatricula);
     }
 
     public function buscarPorId(string $usuarioId)

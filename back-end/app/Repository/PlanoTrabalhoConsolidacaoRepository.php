@@ -27,14 +27,14 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->findConsolidacaoById($id);
     }
 
-    public function findByPlanoTrabalhoId(string $planoTrabalhoId): Collection
+    public function findAllByPlanoTrabalhoId(string $planoTrabalhoId): Collection
     {
-        return $this->readRepository->findByPlanoTrabalhoId($planoTrabalhoId);
+        return $this->readRepository->findAllByPlanoTrabalhoId($planoTrabalhoId);
     }
 
-    public function findByPlanoTrabalhoIdAndPeriodo(string $planoTrabalhoId, string $dataInicio, string $dataFim): Collection
+    public function findAllByPlanoTrabalhoIdAndPeriodo(string $planoTrabalhoId, string $dataInicio, string $dataFim): Collection
     {
-        return $this->readRepository->findByPlanoTrabalhoIdAndPeriodo($planoTrabalhoId, $dataInicio, $dataFim);
+        return $this->readRepository->findAllByPlanoTrabalhoIdAndPeriodo($planoTrabalhoId, $dataInicio, $dataFim);
     }
 
     public function getPendentesAvaliacao(

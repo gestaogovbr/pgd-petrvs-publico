@@ -13,9 +13,9 @@ interface PlanoEntregaReadRepositoryContract
     public function getEntregasPlanoEntregaHomologacao(array $unidadesIds): Collection;
     public function getEntregasPlanoEntregaExecucao(array $unidadesIds): Collection;
 
-    public function findByUnidadeId(string $unidadeId): Collection;
+    public function findAllByUnidadeId(string $unidadeId): Collection;
 
-    public function findEntregasByPlanoId(string $planoEntregaId): Collection;
+    public function findAllEntregasByPlanoId(string $planoEntregaId): Collection;
 
     /** @return \App\Models\PlanoEntregaEntrega|null */
     public function findEntregaById(string $entregaId): ?\App\Models\PlanoEntregaEntrega;

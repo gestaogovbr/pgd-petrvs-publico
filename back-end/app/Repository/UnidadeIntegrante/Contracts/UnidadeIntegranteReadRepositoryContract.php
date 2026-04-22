@@ -11,13 +11,13 @@ use Illuminate\Database\Eloquent\Collection;
  */
 interface UnidadeIntegranteReadRepositoryContract
 {
-    public function findCuradoresByUsuario(string $usuarioId): Collection;
-    public function findColaboracoesByUsuario(string $usuarioId): Collection;
-    public function findGerenciasSubstitutasByUsuario(string $usuarioId): Collection;
-    public function findGerenciasDelegadasByUsuario(string $usuarioId): Collection;
-    public function findGerenciasTitularesByUsuario(string $usuarioId): Collection;
-    public function findLotacoesByUsuario(string $usuarioId): Collection;
+    public function findAllCuradoresByUsuario(string $usuarioId): Collection;
+    public function findAllColaboracoesByUsuario(string $usuarioId): Collection;
+    public function findAllGerenciasSubstitutasByUsuario(string $usuarioId): Collection;
+    public function findAllGerenciasDelegadasByUsuario(string $usuarioId): Collection;
+    public function findAllGerenciasTitularesByUsuario(string $usuarioId): Collection;
+    public function findAllLotacoesByUsuario(string $usuarioId): Collection;
     public function findGestorByUnidade(string $unidadeId): ?\App\Models\UnidadeIntegrante;
     public function findUnidadeIntegrante(string $usuarioId, string $unidadeId): ?\App\Models\UnidadeIntegrante;
-    public function findByUsuario(string $usuarioId): Collection;
+    public function findAllByUsuario(string $usuarioId): Collection;
 }

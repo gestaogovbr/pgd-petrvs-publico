@@ -27,7 +27,7 @@ describe('PlanoEntregaService::buscarPorUnidade', function () {
         ]);
 
         $this->planoEntregaRepository
-            ->shouldReceive('findByUnidadeId')
+            ->shouldReceive('findAllByUnidadeId')
             ->once()
             ->with($dto->unidadeId)
             ->andReturn($collection);
@@ -42,7 +42,7 @@ describe('PlanoEntregaService::buscarPorUnidade', function () {
         $dto = PlanoEntregaBuscaDTO::fromArray(['unidade_id' => 'unidade-sem-plano']);
 
         $this->planoEntregaRepository
-            ->shouldReceive('findByUnidadeId')
+            ->shouldReceive('findAllByUnidadeId')
             ->once()
             ->with($dto->unidadeId)
             ->andReturn(new Collection());
@@ -63,7 +63,7 @@ describe('PlanoEntregaService::buscarPorUnidade', function () {
         ]);
 
         $this->planoEntregaRepository
-            ->shouldReceive('findByUnidadeId')
+            ->shouldReceive('findAllByUnidadeId')
             ->once()
             ->andReturn($collection);
 

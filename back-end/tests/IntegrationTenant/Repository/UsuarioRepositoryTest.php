@@ -244,7 +244,7 @@ test('getUnidadesVinculadas', function () {
     expect($unidades)->toHaveCount(2);
 });
 
-test('findByNomeMatricula por nome', function () {
+test('findAllByNomeMatricula por nome', function () {
     $usuario = Usuario::factory()->create([
         'nome' => 'João Silva Teste',
         'matricula' => '111111',
@@ -252,12 +252,12 @@ test('findByNomeMatricula por nome', function () {
         'perfil_id' => $this->perfilId,
     ]);
 
-    $result = $this->repository->findByNomeMatricula('João Silva');
+    $result = $this->repository->findAllByNomeMatricula('João Silva');
 
     expect($result->contains('id', $usuario->id))->toBeTrue();
 });
 
-test('findByNomeMatricula por matricula', function () {
+test('findAllByNomeMatricula por matricula', function () {
     $usuario = Usuario::factory()->create([
         'nome' => 'Maria Oliveira',
         'matricula' => '999888',
@@ -265,12 +265,12 @@ test('findByNomeMatricula por matricula', function () {
         'perfil_id' => $this->perfilId,
     ]);
 
-    $result = $this->repository->findByNomeMatricula('99988');
+    $result = $this->repository->findAllByNomeMatricula('99988');
 
     expect($result->contains('id', $usuario->id))->toBeTrue();
 });
 
-test('findByNomeMatricula sem resultado', function () {
+test('findAllByNomeMatricula sem resultado', function () {
     Usuario::factory()->create([
         'nome' => 'Carlos Souza',
         'matricula' => '123456',
@@ -278,12 +278,12 @@ test('findByNomeMatricula sem resultado', function () {
         'perfil_id' => $this->perfilId,
     ]);
 
-    $result = $this->repository->findByNomeMatricula('TermoInexistente999');
+    $result = $this->repository->findAllByNomeMatricula('TermoInexistente999');
 
     expect($result)->toHaveCount(0);
 });
 
-test('findByNomeMatricula busca parcial', function () {
+test('findAllByNomeMatricula busca parcial', function () {
     $u1 = Usuario::factory()->create([
         'nome' => 'Ana Paula Ferreira',
         'matricula' => '500100',
@@ -297,7 +297,7 @@ test('findByNomeMatricula busca parcial', function () {
         'perfil_id' => $this->perfilId,
     ]);
 
-    $result = $this->repository->findByNomeMatricula('500');
+    $result = $this->repository->findAllByNomeMatricula('500');
 
     expect($result->contains('id', $u1->id))->toBeTrue();
     expect($result->contains('id', $u2->id))->toBeTrue();

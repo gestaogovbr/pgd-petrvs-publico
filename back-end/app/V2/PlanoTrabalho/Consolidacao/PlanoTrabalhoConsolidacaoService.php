@@ -45,7 +45,7 @@ class PlanoTrabalhoConsolidacaoService
             throw new NotFoundException('Plano de Trabalho não encontrado.');
         }
 
-        $consolidacoes = $this->consolidacaoRepository->findByPlanoTrabalhoId($planoTrabalhoId);
+        $consolidacoes = $this->consolidacaoRepository->findAllByPlanoTrabalhoId($planoTrabalhoId);
 
         if (!$this->isDonoOuChefia($plano, Auth::id(), $plano->unidade_id)) {
             $consolidacoes->each(fn ($c) => $c->unsetRelation('afastamentos'));
@@ -115,6 +115,6 @@ class PlanoTrabalhoConsolidacaoService
             ? $plano->programa
             : $plano->load('programa')->programa;
 
-        return $this->programaRepository->findNotasAvaliacao($programa->tipo_avaliacao_plano_trabalho_id);
+        return $this->programaRepository->findAllNotasAvaliacao($programa->tipo_avaliacao_plano_trabalho_id);
     }
 }

@@ -85,7 +85,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->get();
     }
 
-    public function findByUnidadeId(string $unidadeId): Collection
+    public function findAllByUnidadeId(string $unidadeId): Collection
     {
         return $this->query()
             ->where('unidade_id', $unidadeId)
@@ -93,7 +93,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->get();
     }
 
-    public function findEntregasByPlanoId(string $planoEntregaId): Collection
+    public function findAllEntregasByPlanoId(string $planoEntregaId): Collection
     {
         return PlanoEntregaEntrega::where('plano_entrega_id', $planoEntregaId)
             ->select('id', 'plano_entrega_id', 'entrega_id', 'descricao', 'descricao_entrega')

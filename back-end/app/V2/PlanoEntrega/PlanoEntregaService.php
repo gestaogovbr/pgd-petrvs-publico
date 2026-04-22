@@ -18,11 +18,11 @@ class PlanoEntregaService
 
     public function buscarPorUnidade(PlanoEntregaBuscaDTO $dto): Collection
     {
-        return $this->planoEntregaRepository->findByUnidadeId($dto->unidadeId);
+        return $this->planoEntregaRepository->findAllByUnidadeId($dto->unidadeId);
     }
 
     public function buscarEntregasPorPlano(PlanoEntregaEntregaBuscaDTO $dto): Collection
     {
-        return $this->planoEntregaRepository->findEntregasByPlanoId($dto->planoEntregaId);
+        return $this->planoEntregaRepository->findAllEntregasByPlanoId($dto->planoEntregaId);
     }
 }

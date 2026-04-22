@@ -17,7 +17,7 @@ test('buscarPorNomeOuMatricula delega ao repository e retorna collection', funct
     ]);
 
     $repo = Mockery::mock(UsuarioRepository::class);
-    $repo->shouldReceive('findByNomeMatricula')
+    $repo->shouldReceive('findAllByNomeMatricula')
         ->once()
         ->with('João')
         ->andReturn($expected);
@@ -30,7 +30,7 @@ test('buscarPorNomeOuMatricula delega ao repository e retorna collection', funct
 
 test('buscarPorNomeOuMatricula retorna collection vazia quando nenhum resultado', function () {
     $repo = Mockery::mock(UsuarioRepository::class);
-    $repo->shouldReceive('findByNomeMatricula')
+    $repo->shouldReceive('findAllByNomeMatricula')
         ->once()
         ->with('inexistente')
         ->andReturn(new Collection());
@@ -44,7 +44,7 @@ test('buscarPorNomeOuMatricula retorna collection vazia quando nenhum resultado'
 
 test('buscarPorNomeOuMatricula propaga exceção do repository', function () {
     $repo = Mockery::mock(UsuarioRepository::class);
-    $repo->shouldReceive('findByNomeMatricula')
+    $repo->shouldReceive('findAllByNomeMatricula')
         ->once()
         ->andThrow(new \RuntimeException('Erro de conexão'));
 

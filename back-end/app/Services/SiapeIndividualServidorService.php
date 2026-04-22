@@ -155,7 +155,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function buscarUsuariosPorCpf(string $cpf): array
     {
-        return $this->usuarioRepository->findByCpfWithLotacao($cpf)
+        return $this->usuarioRepository->findAllByCpfWithLotacao($cpf)
             ->map(fn(Usuario $u) => [
                 'id' => $u->id,
                 'matricula' => $u->matricula,
@@ -481,7 +481,7 @@ class SiapeIndividualServidorService extends ServiceBase
     }
 
     protected function gerarUsuariosResumo(string $cpf) {
-        return $this->usuarioRepository->findByCpfWithLotacao($cpf);
+        return $this->usuarioRepository->findAllByCpfWithLotacao($cpf);
     }
 
     private function gerarResumo(array $usuariosAntes, string $cpf, string $status, string $mensagem = self::MSG_CONCLUIDO): array

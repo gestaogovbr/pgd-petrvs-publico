@@ -19,7 +19,7 @@ class GeradorPeriodosAvaliativos
 
     public function gerar(PlanoTrabalho $plano): void
     {
-        $existentes = $this->consolidacaoRepository->findByPlanoTrabalhoId($plano->id);
+        $existentes = $this->consolidacaoRepository->findAllByPlanoTrabalhoId($plano->id);
 
         if ($existentes->isNotEmpty()) {
             return;

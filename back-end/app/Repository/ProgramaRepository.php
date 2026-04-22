@@ -23,7 +23,7 @@ class ProgramaRepository
         return $this->readRepository->findById($id);
     }
 
-    public function findNotasAvaliacao(string $tipoAvaliacaoId): Collection
+    public function findAllNotasAvaliacao(string $tipoAvaliacaoId): Collection
     {
         return TipoAvaliacaoNota::where('tipo_avaliacao_id', $tipoAvaliacaoId)
             ->orderBy('sequencia')

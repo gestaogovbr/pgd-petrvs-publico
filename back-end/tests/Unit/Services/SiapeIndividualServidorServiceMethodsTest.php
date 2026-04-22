@@ -79,7 +79,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $lotacao->unidade_id = 1;
         $usuario->setRelation('lotacao', $lotacao);
 
-        $usuarioRepository->shouldReceive('findByCpfWithLotacao')
+        $usuarioRepository->shouldReceive('findAllByCpfWithLotacao')
             ->with($cpf)
             ->andReturn(new Collection([$usuario]));
 
@@ -200,7 +200,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         expect($result)->not->toBeNull();
 
 
-        $usuarioRepository->shouldReceive('findByCpfWithLotacao')
+        $usuarioRepository->shouldReceive('findAllByCpfWithLotacao')
             ->with($cpf)
             ->andReturn(new Collection([tap(new Usuario(), function (Usuario $u): void {
                 $u->matricula = 'M1';

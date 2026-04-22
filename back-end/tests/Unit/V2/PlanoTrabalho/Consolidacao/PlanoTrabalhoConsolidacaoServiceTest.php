@@ -56,7 +56,7 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
         $plano->unidade_id = 'u-1';
 
         $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn($plano);
-        $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')
+        $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')
             ->with('plano-1')
             ->andReturn(new Collection([
                 Mockery::mock(PlanoTrabalhoConsolidacao::class),
@@ -68,7 +68,7 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
 
     test('lança exceção quando plano não encontrado', function () {
         $this->planoRepo->shouldReceive('findById')->with('plano-x')->andReturn(null);
-        $this->consolidacaoRepo->shouldNotReceive('findByPlanoTrabalhoId');
+        $this->consolidacaoRepo->shouldNotReceive('findAllByPlanoTrabalhoId');
 
         $this->service->index('plano-x');
     })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
@@ -80,7 +80,7 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
         $plano->usuario_id = 'dono-1';
         $plano->unidade_id = 'u-1';
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
-        $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')->andReturn(new Collection());
+        $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')->andReturn(new Collection());
 
         expect($this->service->index('plano-1'))->toBeEmpty();
     });
@@ -96,7 +96,7 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
         $consolidacao->shouldReceive('unsetRelation')->with('afastamentos')->once();
 
-        $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')
+        $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')
             ->andReturn(new Collection([$consolidacao]));
 
         $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
@@ -116,7 +116,7 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
         $consolidacao->shouldNotReceive('unsetRelation');
 
-        $this->consolidacaoRepo->shouldReceive('findByPlanoTrabalhoId')
+        $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')
             ->andReturn(new Collection([$consolidacao]));
 
         $this->service->index('plano-1');

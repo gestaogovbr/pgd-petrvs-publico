@@ -168,7 +168,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
-    public function findByNomeMatricula(string $nomeMatricula): Collection
+    public function findAllByNomeMatricula(string $nomeMatricula): Collection
     {
         $term = '%' . $nomeMatricula . '%';
         return $this->query()
@@ -236,7 +236,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
-    public function findByCpfWithLotacao(string $cpf): Collection
+    public function findAllByCpfWithLotacao(string $cpf): Collection
     {
         return $this->model->newQuery()
             ->with(['lotacao.unidade'])
