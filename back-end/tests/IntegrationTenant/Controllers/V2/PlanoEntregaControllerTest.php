@@ -139,3 +139,191 @@ describe('GET /api/v2/plano-entrega (happy path)', function () {
         expect($response->json('data'))->toBeEmpty();
     });
 });
+
+// ── interseção de período e ordenação (RN31/RN32) ───────────────────
+
+describe('GET /api/v2/plano-entrega (interseção de período - RN31/RN32)', function () {
+
+    test('retorna apenas PEs com interseção de período', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $peIntersecta = PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-06-30',
+        ]);
+
+        PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-07-01',
+            'data_fim' => '2024-12-31',
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-entrega?' . http_build_query([
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => '2024-03-01',
+            'data_fim' => '2024-05-31',
+        ]));
+
+        $data = $response->json('data');
+
+        expect($data)->toHaveCount(1);
+        expect($data[0]['id'])->toBe($peIntersecta->id);
+    });
+
+    test('exclui PE que termina antes do início do PT', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-02-28',
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-entrega?' . http_build_query([
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => '2024-03-01',
+            'data_fim' => '2024-06-30',
+        ]));
+
+        expect($response->json('data'))->toBeEmpty();
+    });
+
+    test('exclui PE que começa depois do fim do PT', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-07-01',
+            'data_fim' => '2024-12-31',
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-entrega?' . http_build_query([
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => '2024-03-01',
+            'data_fim' => '2024-06-30',
+        ]));
+
+        expect($response->json('data'))->toBeEmpty();
+    });
+
+    test('inclui PE que intersecta por um dia no início', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $pe = PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-03-01',
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-entrega?' . http_build_query([
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => '2024-03-01',
+            'data_fim' => '2024-06-30',
+        ]));
+
+        $data = $response->json('data');
+        expect($data)->toHaveCount(1);
+        expect($data[0]['id'])->toBe($pe->id);
+    });
+
+    test('inclui PE totalmente contido no período do PT', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $pe = PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-04-01',
+            'data_fim' => '2024-05-31',
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-entrega?' . http_build_query([
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => '2024-03-01',
+            'data_fim' => '2024-06-30',
+        ]));
+
+        $data = $response->json('data');
+        expect($data)->toHaveCount(1);
+        expect($data[0]['id'])->toBe($pe->id);
+    });
+
+    test('inclui PE que intersecta por um dia no fim', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $pe = PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-06-30',
+            'data_fim' => '2024-12-31',
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-entrega?' . http_build_query([
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => '2024-03-01',
+            'data_fim' => '2024-06-30',
+        ]));
+
+        $data = $response->json('data');
+        expect($data)->toHaveCount(1);
+        expect($data[0]['id'])->toBe($pe->id);
+    });
+
+    test('retorna PEs ordenados do mais recente para o mais antigo', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $peAntigo = PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-06-30',
+        ]);
+
+        $peRecente = PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-04-01',
+            'data_fim' => '2024-12-31',
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-entrega?' . http_build_query([
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+        ]));
+
+        $data = $response->json('data');
+
+        expect($data)->toHaveCount(2);
+        expect($data[0]['id'])->toBe($peRecente->id);
+        expect($data[1]['id'])->toBe($peAntigo->id);
+    });
+
+    test('retorna todos os PEs quando datas não informadas', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        PlanoEntrega::factory()->count(2)->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-entrega?unidade_id=' . $this->unidade->id);
+
+        expect($response->json('data'))->toHaveCount(2);
+    });
+});
