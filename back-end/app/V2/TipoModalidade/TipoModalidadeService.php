@@ -14,6 +14,6 @@ class TipoModalidadeService
 
     public function index(): Collection
     {
-        return $this->repository->getAll();
+        return $this->repository->findAll();
     }
 }

@@ -24,8 +24,8 @@ class TipoModalidadeRepository
         return $this->readRepository->findOneBy(['nome' => $name]);
     }
 
-    public function getAll(): Collection
+    public function findAll(): Collection
     {
-        return $this->readRepository->getAll();
+        return $this->readRepository->findAll();
     }
 }
