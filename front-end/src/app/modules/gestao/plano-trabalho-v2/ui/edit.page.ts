@@ -580,7 +580,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
   }
 
   private carregarPlanosUnidade(unidadeId: string) {
-    this.planoEntregaApi.buscarPorUnidade(unidadeId).subscribe(planos => {
+    this.planoEntregaApi.buscarPorUnidade(unidadeId, this.plano()!.data_inicio, this.plano()!.data_fim).subscribe(planos => {
       this.planosUnidade.set(planos);
       this.entregaForm.controls.plano_entrega_id.setValue('', { emitEvent: false });
       this.entregasDoPlano.set([]);
@@ -588,7 +588,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
   }
 
   private carregarPlanosOutraUnidade(unidadeId: string, planoSelecionadoId?: string) {
-    this.planoEntregaApi.buscarPorUnidade(unidadeId).subscribe(planos => {
+    this.planoEntregaApi.buscarPorUnidade(unidadeId, this.plano()!.data_inicio, this.plano()!.data_fim).subscribe(planos => {
       this.planosOutraUnidade.set(planos);
       if (!planoSelecionadoId) {
         this.entregaForm.controls.outra_unidade_plano_id.setValue('', { emitEvent: false });
