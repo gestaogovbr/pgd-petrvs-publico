@@ -22,7 +22,6 @@ class EloquentTipoMotivoAfastamentoReadRepository extends AbstractEloquentReadRe
     public function getAllForDropdown(): Collection
     {
         return $this->query()
-            ->whereNull('deleted_at')
             ->select(['id', 'codigo', 'nome', 'horas'])
             ->orderBy('nome')
             ->get();

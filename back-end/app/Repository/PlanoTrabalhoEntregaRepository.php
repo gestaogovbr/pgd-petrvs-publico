@@ -47,9 +47,9 @@ class PlanoTrabalhoEntregaRepository
         return $entrega;
     }
 
-    public function delete(string $id): void
+    public function delete(string $id): bool
     {
-        $this->writeRepository->delete($id);
+        return $this->writeRepository->delete($id);
     }
 
     public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId): bool

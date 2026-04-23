@@ -10,5 +10,5 @@ interface TipoModalidadeReadRepositoryContract
 {
     public function getDefaultId(): ?string;
     public function findOneBy(array $criteria): ?object;
-    public function getAll(): Collection;
+    public function findAll(): Collection;
 }

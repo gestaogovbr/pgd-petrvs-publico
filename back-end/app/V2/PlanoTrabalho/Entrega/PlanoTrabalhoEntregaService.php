@@ -50,7 +50,9 @@ class PlanoTrabalhoEntregaService
         $this->authorizationValidator->validar($planoTrabalhoId, Auth::id());
         $this->storeValidator->validarDestroy($planoTrabalhoId);
 
-        $this->repository->delete($entregaId);
+        $this->repository->delete($entregaId)
+            || throw new \RuntimeException('Falha ao remover a entrega.');
+
         $this->tcrInvalidador->invalidar($planoTrabalhoId);
     }
 }

@@ -25,7 +25,7 @@ describe('TipoModalidadeService::index', function () {
         ]);
 
         $this->repository
-            ->shouldReceive('getAll')
+            ->shouldReceive('findAll')
             ->once()
             ->andReturn($collection);
 
@@ -37,7 +37,7 @@ describe('TipoModalidadeService::index', function () {
 
     test('retorna collection vazia quando não há registros', function () {
         $this->repository
-            ->shouldReceive('getAll')
+            ->shouldReceive('findAll')
             ->once()
             ->andReturn(new Collection());
 
