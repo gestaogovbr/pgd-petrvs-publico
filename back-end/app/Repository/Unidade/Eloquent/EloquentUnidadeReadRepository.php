@@ -8,6 +8,8 @@ use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
+use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -86,7 +88,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $unidade;
     }
 
-    public function getUnidadesGerenciadas(string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    public function getUnidadesGerenciadas(string $usuarioId): Collection
     {
         return $this->query()
             ->whereHas('gestor', fn($q) => $q->where('usuario_id', $usuarioId))
@@ -95,12 +97,12 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->get();
     }
 
-    public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection
+    public function getSubordinadas(array $ids): Collection
     {
         return $this->query()->whereIn('unidade_pai_id', $ids)->get();
     }
 
-    public function getSubordinadasRecursivas(array $ids): \Illuminate\Database\Eloquent\Collection
+    public function getSubordinadasRecursivas(array $ids): Collection
     {
         if (empty($ids)) {
             return $this->model->newCollection();
@@ -144,7 +146,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $unidade;
     }
 
-    public function buscarPorNomeOuCodigoNaHierarquia(\App\V2\Unidade\DTOs\UnidadeBuscaDTO $dto, string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    public function buscarPorNomeOuCodigoNaHierarquia(UnidadeBuscaDTO $dto, string $usuarioId): Collection
     {
         $query = $this->query()->select('id', 'nome', 'codigo', 'sigla');
 
