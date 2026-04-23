@@ -13,6 +13,8 @@ class PlanoEntregaRequestValidator
     {
         return $request->validate([
             'unidade_id' => ['required', 'uuid'],
+            'data_inicio' => ['sometimes', 'date'],
+            'data_fim' => ['sometimes', 'date'],
         ], [
             'unidade_id.required' => 'O id da unidade é obrigatório.',
             'unidade_id.uuid' => 'O id da unidade deve ser um UUID válido.',

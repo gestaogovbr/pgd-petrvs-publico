@@ -85,12 +85,21 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->get();
     }
 
-    public function findAllByUnidadeId(string $unidadeId): Collection
+    public function findAllByUnidadeId(string $unidadeId, ?string $dataInicio = null, ?string $dataFim = null): Collection
     {
-        return $this->query()
+        $query = $this->query()
             ->where('unidade_id', $unidadeId)
-            ->select('id', 'nome', 'numero', 'status', 'data_inicio', 'data_fim')
-            ->get();
+            ->select('id', 'nome', 'numero', 'status', 'data_inicio', 'data_fim');
+
+        if ($dataInicio !== null) {
+            $query->where('data_fim', '>=', $dataInicio);
+        }
+
+        if ($dataFim !== null) {
+            $query->where('data_inicio', '<=', $dataFim);
+        }
+
+        return $query->orderBy('data_inicio', 'desc')->get();
     }
 
     public function findAllEntregasByPlanoId(string $planoEntregaId): Collection

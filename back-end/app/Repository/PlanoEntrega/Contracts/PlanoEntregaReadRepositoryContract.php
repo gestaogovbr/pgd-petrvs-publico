@@ -13,7 +13,7 @@ interface PlanoEntregaReadRepositoryContract
     public function getEntregasPlanoEntregaHomologacao(array $unidadesIds): Collection;
     public function getEntregasPlanoEntregaExecucao(array $unidadesIds): Collection;
 
-    public function findAllByUnidadeId(string $unidadeId): Collection;
+    public function findAllByUnidadeId(string $unidadeId, ?string $dataInicio = null, ?string $dataFim = null): Collection;
 
     public function findAllEntregasByPlanoId(string $planoEntregaId): Collection;
 

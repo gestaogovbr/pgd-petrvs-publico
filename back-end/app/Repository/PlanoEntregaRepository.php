@@ -36,9 +36,9 @@ class PlanoEntregaRepository
         return $this->readRepository->getEntregasPlanoEntregaExecucao($unidadesIds);
     }
 
-    public function findAllByUnidadeId(string $unidadeId): Collection
+    public function findAllByUnidadeId(string $unidadeId, ?string $dataInicio = null, ?string $dataFim = null): Collection
     {
-        return $this->readRepository->findAllByUnidadeId($unidadeId);
+        return $this->readRepository->findAllByUnidadeId($unidadeId, $dataInicio, $dataFim);
     }
 
     public function findAllEntregasByPlanoId(string $planoEntregaId): Collection

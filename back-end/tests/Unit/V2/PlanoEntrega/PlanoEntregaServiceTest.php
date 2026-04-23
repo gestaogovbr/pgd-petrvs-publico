@@ -29,7 +29,7 @@ describe('PlanoEntregaService::buscarPorUnidade', function () {
         $this->planoEntregaRepository
             ->shouldReceive('findAllByUnidadeId')
             ->once()
-            ->with($dto->unidadeId)
+            ->with($dto->unidadeId, null, null)
             ->andReturn($collection);
 
         $result = $this->service->buscarPorUnidade($dto);
@@ -44,7 +44,7 @@ describe('PlanoEntregaService::buscarPorUnidade', function () {
         $this->planoEntregaRepository
             ->shouldReceive('findAllByUnidadeId')
             ->once()
-            ->with($dto->unidadeId)
+            ->with($dto->unidadeId, null, null)
             ->andReturn(new Collection());
 
         $result = $this->service->buscarPorUnidade($dto);
@@ -65,10 +65,33 @@ describe('PlanoEntregaService::buscarPorUnidade', function () {
         $this->planoEntregaRepository
             ->shouldReceive('findAllByUnidadeId')
             ->once()
+            ->with($dto->unidadeId, null, null)
             ->andReturn($collection);
 
         $result = $this->service->buscarPorUnidade($dto);
 
         expect($result)->toHaveCount(3);
+    });
+
+    test('passa datas de interseção ao repository (RN31/RN32)', function () {
+        $dto = PlanoEntregaBuscaDTO::fromArray([
+            'unidade_id' => 'unidade-1',
+            'data_inicio' => '2024-03-01',
+            'data_fim' => '2024-06-30',
+        ]);
+
+        $collection = new Collection([
+            (object) ['id' => 'pe-1', 'nome' => 'Plano A'],
+        ]);
+
+        $this->planoEntregaRepository
+            ->shouldReceive('findAllByUnidadeId')
+            ->once()
+            ->with('unidade-1', '2024-03-01', '2024-06-30')
+            ->andReturn($collection);
+
+        $result = $this->service->buscarPorUnidade($dto);
+
+        expect($result)->toHaveCount(1);
     });
 });
