@@ -45,6 +45,25 @@ test('findByCpfOrEmail', function () {
     expect($foundEmail->id)->toBe($usuario->id);
 });
 
+test('findByCpfOrEmail ignora email nulo ou vazio', function () {
+    $cpf = str_pad((string) random_int(1, 99999999999), 11, '0', STR_PAD_LEFT);
+
+    Usuario::factory()->create([
+        'cpf' => $cpf,
+        'email' => null,
+        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $foundWithNullEmail = $this->repository->findByCpfOrEmail($cpf, null);
+    expect($foundWithNullEmail)->not->toBeNull();
+    expect($foundWithNullEmail->cpf)->toBe($cpf);
+
+    $foundWithEmptyEmail = $this->repository->findByCpfOrEmail($cpf, '');
+    expect($foundWithEmptyEmail)->not->toBeNull();
+    expect($foundWithEmptyEmail->cpf)->toBe($cpf);
+});
+
 test('isParticipanteHabilitado', function () {
     $usuario = Usuario::factory()->create([
         'tipo_modalidade_id' => $this->tipoModalidadeId,
