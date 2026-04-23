@@ -77,7 +77,7 @@ describe('PlanoTrabalhoEntregaService::destroy', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
         $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1');
         $this->storeValidator->shouldReceive('validarDestroy')->once()->with('plano-1');
-        $this->repository->shouldReceive('delete')->once()->with('entrega-1');
+        $this->repository->shouldReceive('delete')->once()->with('entrega-1')->andReturn(true);
         $this->tcrInvalidador->shouldReceive('invalidar')->once()->with('plano-1');
 
         $this->service->destroy('plano-1', 'entrega-1');

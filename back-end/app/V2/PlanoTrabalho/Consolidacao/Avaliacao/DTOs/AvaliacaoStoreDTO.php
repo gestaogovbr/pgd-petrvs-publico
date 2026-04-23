@@ -8,14 +8,13 @@ use App\Models\TipoAvaliacaoNota;
 
 class AvaliacaoStoreDTO
 {
-    private ?TipoAvaliacaoNota $nota = null;
-
     public function __construct(
         public readonly string $planoTrabalhoId,
         public readonly string $consolidacaoId,
         public readonly string $avaliadorId,
         public readonly string $tipoAvaliacaoNotaId,
         public readonly ?string $justificativa,
+        public readonly ?TipoAvaliacaoNota $nota = null,
     ) {}
 
     public static function fromArray(array $data, string $planoTrabalhoId, string $consolidacaoId, string $avaliadorId): self
@@ -29,10 +28,16 @@ class AvaliacaoStoreDTO
         );
     }
 
-    public function setNota(TipoAvaliacaoNota $nota): self
+    public function withNota(TipoAvaliacaoNota $nota): self
     {
-        $this->nota = $nota;
-        return $this;
+        return new self(
+            planoTrabalhoId: $this->planoTrabalhoId,
+            consolidacaoId: $this->consolidacaoId,
+            avaliadorId: $this->avaliadorId,
+            tipoAvaliacaoNotaId: $this->tipoAvaliacaoNotaId,
+            justificativa: $this->justificativa,
+            nota: $nota,
+        );
     }
 
     public function toPersistArray(): array

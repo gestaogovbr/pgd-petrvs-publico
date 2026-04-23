@@ -26,7 +26,7 @@ class AvaliacaoService
         $plano = $this->authValidator->validar($dto->planoTrabalhoId, $dto->avaliadorId);
         $consolidacao = $this->storeValidator->validar($plano, $dto);
         $nota = $this->storeValidator->validarNota($plano, $dto);
-        $dto->setNota($nota);
+        $dto = $dto->withNota($nota);
 
         $isReavaliacao = $consolidacao->avaliacoes->isNotEmpty();
 
