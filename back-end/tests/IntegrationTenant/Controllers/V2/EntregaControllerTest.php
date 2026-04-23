@@ -11,8 +11,21 @@ use App\Models\PlanoTrabalho;
 use App\Models\Programa;
 use App\Models\TipoModalidade;
 use App\Models\Unidade;
+use App\Models\Documento;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Route;
+
+function criarDocumentoTCR(string $planoTrabalhoId): Documento
+{
+    return Documento::create([
+        'titulo' => 'TCR Teste',
+        'tipo' => 'HTML',
+        'especie' => 'TCR',
+        'conteudo' => 'conteudo',
+        'status' => 'GERADO',
+        'plano_trabalho_id' => $planoTrabalhoId,
+    ]);
+}
 
 beforeEach(function () {
     if (!Route::has('__tests.v2.plano-trabalho.entrega.store')) {
@@ -20,6 +33,18 @@ beforeEach(function () {
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/entrega',
             [PlanoTrabalhoEntregaController::class, 'store']
         )->name('__tests.v2.plano-trabalho.entrega.store');
+    }
+    if (!Route::has('__tests.v2.plano-trabalho.entrega.update')) {
+        Route::middleware(['api'])->put(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}',
+            [PlanoTrabalhoEntregaController::class, 'update']
+        )->name('__tests.v2.plano-trabalho.entrega.update');
+    }
+    if (!Route::has('__tests.v2.plano-trabalho.entrega.destroy')) {
+        Route::middleware(['api'])->delete(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}',
+            [PlanoTrabalhoEntregaController::class, 'destroy']
+        )->name('__tests.v2.plano-trabalho.entrega.destroy');
     }
 
     $perfil = Perfil::factory()->create(['nivel' => 3]);
@@ -200,5 +225,143 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (happy path)', function () {
             'plano_trabalho_id' => $this->plano->id,
             'forca_trabalho' => 150,
         ]);
+    });
+});
+
+// ── TCR invalidação após operações bem-sucedidas ────────────────────
+
+describe('POST /api/v2/plano-trabalho/:id/entrega (invalidação TCR)', function () {
+
+    test('invalida TCR após criar entrega com sucesso', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $documento = criarDocumentoTCR($this->plano->id);
+        $this->plano->update(['documento_id' => $documento->id]);
+
+        $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
+            'origem' => 'PROPRIA_UNIDADE',
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'forca_trabalho' => 50,
+            'descricao' => 'Nova entrega',
+        ]);
+
+        $response->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->documento_id)->toBeNull();
+    });
+
+    test('não invalida TCR quando store falha por validação', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $documento = criarDocumentoTCR($this->plano->id);
+        $this->plano->update(['documento_id' => $documento->id]);
+
+        $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", []);
+
+        $response->assertStatus(400);
+
+        $this->plano->refresh();
+        expect($this->plano->documento_id)->toBe($documento->id);
+    });
+});
+
+describe('PUT /api/v2/plano-trabalho/:id/entrega/:eid (invalidação TCR)', function () {
+
+    test('invalida TCR após atualizar entrega com sucesso', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $entregaCatalogo2 = Entrega::factory()->create(['unidade_id' => $this->unidade->id]);
+        $planoEntrega = PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+        ]);
+        $planoEntregaEntrega2 = PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $planoEntrega->id,
+            'entrega_id' => $entregaCatalogo2->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $entrega = $this->plano->entregas()->create([
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'origem' => 'PROPRIA_UNIDADE',
+            'forca_trabalho' => 50,
+            'descricao' => 'Original',
+        ]);
+
+        $documento = criarDocumentoTCR($this->plano->id);
+        $this->plano->update(['documento_id' => $documento->id]);
+
+        $response = $this->putJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega/{$entrega->id}", [
+            'origem' => 'PROPRIA_UNIDADE',
+            'plano_entrega_entrega_id' => $planoEntregaEntrega2->id,
+            'forca_trabalho' => 75,
+            'descricao' => 'Atualizada',
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->plano->refresh();
+        expect($this->plano->documento_id)->toBeNull();
+    });
+
+    test('não invalida TCR quando update falha por validação', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $entrega = $this->plano->entregas()->create([
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'origem' => 'PROPRIA_UNIDADE',
+            'forca_trabalho' => 50,
+            'descricao' => 'Original',
+        ]);
+
+        $documento = criarDocumentoTCR($this->plano->id);
+        $this->plano->update(['documento_id' => $documento->id]);
+
+        $response = $this->putJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega/{$entrega->id}", []);
+
+        $response->assertStatus(400);
+
+        $this->plano->refresh();
+        expect($this->plano->documento_id)->toBe($documento->id);
+    });
+});
+
+describe('DELETE /api/v2/plano-trabalho/:id/entrega/:eid (invalidação TCR)', function () {
+
+    test('invalida TCR após remover entrega com sucesso', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $entrega = $this->plano->entregas()->create([
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'origem' => 'PROPRIA_UNIDADE',
+            'forca_trabalho' => 50,
+            'descricao' => 'Para remover',
+        ]);
+
+        $documento = criarDocumentoTCR($this->plano->id);
+        $this->plano->update(['documento_id' => $documento->id]);
+
+        $response = $this->deleteJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega/{$entrega->id}");
+
+        $response->assertStatus(204);
+
+        $this->plano->refresh();
+        expect($this->plano->documento_id)->toBeNull();
+    });
+
+    test('não invalida TCR quando entrega não existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $documento = criarDocumentoTCR($this->plano->id);
+        $this->plano->update(['documento_id' => $documento->id]);
+
+        $response = $this->deleteJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega/" . fake()->uuid());
+
+        $response->assertStatus(500);
+
+        $this->plano->refresh();
+        expect($this->plano->documento_id)->toBe($documento->id);
     });
 });
