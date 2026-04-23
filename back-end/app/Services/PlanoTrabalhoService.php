@@ -21,7 +21,7 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Programa;
 use App\Models\DocumentoAssinatura;
 use App\Models\PlanoEntregaEntrega;
-use App\Models\TipoModalidade;
+use App\Support\ModalidadePgd;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
@@ -218,6 +218,8 @@ class PlanoTrabalhoService extends ServiceBase
     public function proxyStore($plano, $unidade, $action)
     {
         $plano["criacao_usuario_id"] = parent::loggedUser()->id;
+        $usuario = Usuario::find($plano["usuario_id"] ?? null);
+        $plano["modalidade_pgd"] = ModalidadePgd::normalize($plano["modalidade_pgd"] ?? $usuario?->modalidade_pgd ?? null);
         $this->documentoId = $plano["documento_id"];
         $plano["documento_id"] = null;
         return $plano;
@@ -226,7 +228,7 @@ class PlanoTrabalhoService extends ServiceBase
     public function validateStore($data, $unidade, $action)
     {
         $usuario = Usuario::with("areasTrabalho")->find($data["usuario_id"]);
-        $tipoModalidade = TipoModalidade::find($data["tipo_modalidade_id"]);
+        $modalidadePgd = ModalidadePgd::normalize($data["modalidade_pgd"] ?? $usuario?->modalidade_pgd ?? null);
         $programa = Programa::find($data["programa_id"]);
         $condicoes = $this->buscaCondicoes($data);
 
@@ -260,7 +262,7 @@ class PlanoTrabalhoService extends ServiceBase
         $fimPlano = Carbon::parse($data["data_fim"]);
 
         // Validar Modalidade
-        if (!empty($tipoModalidade) && $tipoModalidade->exige_pedagio && !empty($usuario->pedagio)) {
+        if (ModalidadePgd::exigePedagio($modalidadePgd) && !empty($usuario->pedagio)) {
             if (empty($usuario->data_inicial_pedagio) || empty($usuario->data_final_pedagio)) {
                 throw new ServerException(
                     "ValidateUsuario",
@@ -615,7 +617,6 @@ class PlanoTrabalhoService extends ServiceBase
             "unidade:id,sigla,nome",
             "unidade.gestor:id,unidade_id,usuario_id",
             "unidade.gestoresSubstitutos:id,unidade_id,usuario_id",
-            "tipoModalidade:id,nome",
             "consolidacoes.avaliacao.tipoAvaliacao.notas",
             "consolidacoes.avaliacoes",
             "consolidacoes.atividades" =>
@@ -669,7 +670,7 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function metadadosPlano($plano_id, $inicioPeriodo = null, $fimPeriodo = null): array
     {
-        $plano = PlanoTrabalho::where('id', $plano_id)->with(['atividades', 'tipoModalidade'])->first()->toArray();
+        $plano = PlanoTrabalho::where('id', $plano_id)->with(['atividades'])->first()->toArray();
         $result = [
             "concluido" => true,
             "atividadesNaoIniciadas" => $this->atividadesNaoIniciadas($plano, null, null), //array_filter($plano['atividades'], fn($atividade) => $atividade['data_inicio'] == null),
@@ -684,7 +685,7 @@ class PlanoTrabalhoService extends ServiceBase
             "horasUteisAfastamento" => 0,
             "horasUteisDecorridas" => 0,
             "horasUteisTotais" => $plano['tempo_total'],
-            "modalidade" => $plano['tipo_modalidade']['nome'],
+            "modalidade" => ModalidadePgd::label($plano['modalidade_pgd'] ?? null),
             "percentualHorasNaoIniciadas" => 0,
             "usuario_id" => $plano['usuario_id'],
             "noPeriodo" => [
@@ -855,17 +856,14 @@ class PlanoTrabalhoService extends ServiceBase
 
     public function proxyGetAllIdsExtra($result, $data)
     {
-        $tipoModalidades = [];
         $usuarios = [];
         $unidades = [];
         foreach ($result["rows"] as $plano) {
-            $tipoModalidades[$plano->tipo_modalidade_id] = $plano->tipoModalidade;
             $usuarios[$plano->usuario_id] = $plano->usuario;
             $unidades[$plano->unidade_id] = $plano->unidade;
         }
         return [
             "merge" => [
-                "tipo_modalidade" => $tipoModalidades,
                 "usuario" => $usuarios,
                 "unidade" => $unidades
             ]

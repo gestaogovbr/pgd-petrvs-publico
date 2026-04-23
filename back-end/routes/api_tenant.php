@@ -94,7 +94,6 @@ use App\Http\Controllers\TipoCursoController;
 use App\Http\Controllers\TipoDocumentoController;
 
 use App\Http\Controllers\TipoJustificativaController;
-use App\Http\Controllers\TipoModalidadeController;
 use App\Http\Controllers\TipoMotivoAfastamentoController;
 use App\Http\Controllers\TipoProcessoController;
 use App\Http\Controllers\TipoTarefaController;
@@ -264,9 +263,6 @@ Route::middleware(['auth:sanctum'])->prefix('TipoAvaliacao')->group(function () 
 });
 Route::middleware(['auth:sanctum'])->prefix('TipoAvaliacaoNota')->group(function () {
   Route::post('query', [TipoAvaliacaoNotaController::class, 'query']);
-});
-Route::middleware(['auth:sanctum'])->prefix('TipoModalidade')->group(function () {
-  defaultRoutes(TipoModalidadeController::class);
 });
 Route::middleware(['auth:sanctum'])->prefix('TipoMotivoAfastamento')->group(function () {
   defaultRoutes(TipoMotivoAfastamentoController::class);

@@ -34,7 +34,7 @@ export class AtividadeDaoService extends DaoBaseService<Atividade> {
   }
 
   public getAtividade(id: string): Promise<Atividade | null> {
-    return this.getById(id, ["pausas", "unidade", "tipo_atividade", "comentarios.usuario", "plano_trabalho.entregas.entrega:id,nome", "plano_trabalho.tipo_modalidade", "plano_trabalho.documento:id,metadados", "usuario", "usuario.afastamentos", "usuario.planos_trabalho.tipo_modalidade", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario"]); 
+    return this.getById(id, ["pausas", "unidade", "tipo_atividade", "comentarios.usuario", "plano_trabalho.entregas.entrega:id,nome", "plano_trabalho.documento:id,metadados", "usuario", "usuario.afastamentos", "tarefas.tipo_tarefa", "tarefas.comentarios.usuario"]);
   }
 
   public getHierarquia(atividade_id: string): Promise<any> {

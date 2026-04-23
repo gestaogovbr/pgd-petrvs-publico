@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace App\Services\Siape\CargaIndividual;
 
 use App\Models\Usuario;
-use App\Repository\TipoModalidadeRepository;
 use App\Repository\UsuarioRepository;
+use App\Support\ModalidadePgd;
 
 class CargaIndividualSiapeRelatorioServidorBuilder
 {
     public function __construct(
         private readonly UsuarioRepository $usuarioRepository,
-        private readonly TipoModalidadeRepository $tipoModalidadeRepository,
         private readonly CargaIndividualSiapeCampoComparator $comparator,
     ) {
     }
@@ -92,13 +91,11 @@ class CargaIndividualSiapeRelatorioServidorBuilder
 
     private function modalidadePgd(?Usuario $usuario): ?string
     {
-        if (!$usuario instanceof Usuario || empty($usuario->tipo_modalidade_id)) {
+        if (!$usuario instanceof Usuario) {
             return null;
         }
 
-        $modalidade = $this->tipoModalidadeRepository->findById((string) $usuario->tipo_modalidade_id);
-
-        return $modalidade?->nome;
+        return ModalidadePgd::normalize($usuario->modalidade_pgd);
     }
 
     private function somenteNumeros(?string $valor): ?string

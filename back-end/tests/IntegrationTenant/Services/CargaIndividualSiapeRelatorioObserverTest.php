@@ -2,7 +2,6 @@
 
 use App\DTOs\Siape\CargaIndividualSiapeProcessamentoDTO;
 use App\Models\CargaIndividualSiapeRelatorio;
-use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
@@ -25,13 +24,6 @@ beforeEach(function () {
         ]);
     }
 
-    $this->tipoModalidade = TipoModalidade::create([
-        'nome' => 'Teletrabalho',
-        'exige_pedagio' => 0,
-        'plano_trabalho_calcula_horas' => 0,
-        'atividade_tempo_despendido' => 0,
-        'atividade_esforco' => 0,
-    ]);
 });
 
 test('observer persiste relatorio de sucesso para unidade comum sem municipio nem chefia substituta', function () {
@@ -50,7 +42,7 @@ test('observer persiste relatorio de sucesso para unidade comum sem municipio ne
 
     $gestor = Usuario::factory()->create([
         'cpf' => '12345678901',
-        'tipo_modalidade_id' => $this->tipoModalidade->id,
+        'modalidade_pgd' => 'presencial',
     ]);
     $integrante = UnidadeIntegrante::create([
         'usuario_id' => $gestor->id,
@@ -213,7 +205,7 @@ test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorr
         'situacao_funcional' => '1',
         'nome_jornada' => '40 horas semanais',
         'cod_jornada' => 40,
-        'tipo_modalidade_id' => $this->tipoModalidade->id,
+        'modalidade_pgd' => 'presencial',
         'participa_pgd' => 'sim',
     ]);
 
@@ -259,14 +251,14 @@ test('observer monta secoes para servidor com multiplas matriculas', function ()
         'nome' => 'Servidor Vinculo A',
         'email' => 'a@orgao.gov.br',
         'matricula' => '111111',
-        'tipo_modalidade_id' => $this->tipoModalidade->id,
+        'modalidade_pgd' => 'presencial',
     ]);
     Usuario::factory()->create([
         'cpf' => '11122233344',
         'nome' => 'Servidor Vinculo B',
         'email' => 'b@orgao.gov.br',
         'matricula' => '222222',
-        'tipo_modalidade_id' => $this->tipoModalidade->id,
+        'modalidade_pgd' => 'presencial',
     ]);
 
     $relatorio = app(CargaIndividualSiapeSubject::class)->notificar(new CargaIndividualSiapeProcessamentoDTO(

@@ -300,7 +300,7 @@ class UnidadeService extends ServiceBase
     public function metadadosUnidade($unidade_id, $programa_id): array
     {
         /** @phpstan-ignore-next-line */
-        $unidade = Unidade::where('id', $unidade_id)->with(['planosTrabalho', 'planosTrabalho.atividades', 'planosTrabalho.tipoModalidade'])->first();
+        $unidade = Unidade::where('id', $unidade_id)->with(['planosTrabalho', 'planosTrabalho.atividades'])->first();
         $metadadosPlanosTrabalho = [];
         foreach ($unidade['planosTrabalho']->toArray() as $plano) {
             if (($plano['programa_id'] == $programa_id) && ($this->calendarioService->between(new DateTime(), $plano['data_inicio'], $plano['data_fim']))) {
@@ -314,7 +314,7 @@ class UnidadeService extends ServiceBase
             "qdePlanosTrabalhoPrograma" => count($metadadosPlanosTrabalho),
             "nrServidoresPrograma" => count(array_unique(array_map(fn($x) => $x["usuario_id"], $metadadosPlanosTrabalho))),
             "idsServidoresPrograma" => array_unique(array_map(fn($x) => $x["usuario_id"], $metadadosPlanosTrabalho)),
-            "tiposModalidadesPlanosTrabalho" => array_map(fn($x) => $x["tipoModalidade"], $metadadosPlanosTrabalho),
+            "modalidadesPlanosTrabalho" => array_map(fn($x) => $x["modalidade"], $metadadosPlanosTrabalho),
             "horasUteisTotais" => array_reduce(array_map(fn($m) => $m['horasUteisTotais'], $metadadosPlanosTrabalho), function ($acum, $item) {
                 return $acum + $item;
             }, 0),

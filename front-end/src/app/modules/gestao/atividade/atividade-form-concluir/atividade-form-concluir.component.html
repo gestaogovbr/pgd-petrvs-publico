@@ -10,7 +10,7 @@
   <separator [title]="'Tarefa da ' + lex.translate('atividade')" collapse [collapsed]="false">
     <atividade-list-tarefa persist [atividade]="entity"></atividade-list-tarefa>
   </separator>
-  <div *ngIf="!entity?.plano_trabalho?.tipo_modalidade?.atividade_esforco; else comEsforco" class="row">
+  <div *ngIf="!modalidadePgd.atividadeEsforco(entity?.plano_trabalho?.modalidade_pgd); else comEsforco" class="row">
     <!--input-datetime noIcon [size]="4" [label]="lex.translate('Distribuição')" controlName="data_distribuicao" [control]="form!.controls.data_distribuicao" labelInfo="Data de inclusão/distribuição/lançamento"></input-datetime-->
     <input-number [size]="6" [decimals]="2" label="Progresso" disabled sufix="%" icon="bi bi-clock" controlName="progresso" labelInfo="Progresso de execução (% Concluído). Sempre será 100% na conclusão!"></input-number>
     <input-datetime noIcon [size]="6" [label]="lex.translate('Prazo de entrega')" controlName="data_estipulada_entrega" [control]="form!.controls.data_estipulada_entrega" [labelInfo]="'Data estipulada para entrega da '+ lex.translate('atividade')"></input-datetime>
@@ -24,7 +24,7 @@
     </div>
   </ng-template>
   <separator title="Conclusão">
-    <div *ngIf="!entity?.plano_trabalho?.tipo_modalidade?.atividade_tempo_despendido; else comTempoDespendido" class="row">
+    <div *ngIf="!modalidadePgd.atividadeTempoDespendido(entity?.plano_trabalho?.modalidade_pgd); else comTempoDespendido" class="row">
       <input-datetime noIcon [size]="6" label="Inicio" controlName="data_inicio" [control]="form!.controls.data_inicio" disabled [labelInfo]="'Data em que o usuário iniciou a '+ lex.translate('atividade')"></input-datetime>
       <input-datetime noIcon [size]="6" label="Conclusão" controlName="data_entrega" [control]="form!.controls.data_entrega" (change)="onDataEntregaChange($event)" [labelInfo]="'Data da conclusão da '+ lex.translate('atividade')" required></input-datetime>
       <!--input-datetime [size]="4" label="Data de arquivamento" controlName="data_arquivamento" [control]="form!.controls.data_inicio" disabled [labelInfo]="'Data de arquivamento da '+ lex.translate('atividade')"></input-datetime-->
@@ -38,7 +38,7 @@
       </div>
     </ng-template>
   </separator>
-  <separator *ngIf="efemerides && entity?.plano_trabalho?.tipo_modalidade?.atividade_tempo_despendido" title="Cálculos das horas" collapse>
+  <separator *ngIf="efemerides && modalidadePgd.atividadeTempoDespendido(entity?.plano_trabalho?.modalidade_pgd)" title="Cálculos das horas" collapse>
     <calendar-efemerides [efemerides]="efemerides"></calendar-efemerides>
   </separator>
 </editable-form>

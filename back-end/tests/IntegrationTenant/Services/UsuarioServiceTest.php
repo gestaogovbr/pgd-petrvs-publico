@@ -14,7 +14,6 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
         config(['database.default' => 'tenant']);
         DB::setDefaultConnection('tenant');
         $this->entidadeId = Str::uuid()->toString();
-        $this->tipoModalidadeId = Str::uuid()->toString();
         
         try {
             DB::connection('tenant')->table('entidades')->insert([
@@ -28,17 +27,6 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
                 'forma_contagem_carga_horaria' => 'DIA',
                 'expediente' => json_encode(['domingo'=>[],'segunda'=>[],'terca'=>[],'quarta'=>[],'quinta'=>[],'sexta'=>[],'sabado'=>[],'especial'=>[]]),
                 'habilitar_relatos_siape' => 0,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-
-            DB::connection('tenant')->table('tipos_modalidades')->insert([
-                'id' => $this->tipoModalidadeId,
-                'nome' => 'Presencial',
-                'exige_pedagio' => 0,
-                'plano_trabalho_calcula_horas' => 1,
-                'atividade_tempo_despendido' => 1,
-                'atividade_esforco' => 1,
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -61,7 +49,7 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
             'cpf' => '12345678901',
             'password' => 'password',
             'apelido' => 'Test',
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ])->save();
         
         $unidade = new Unidade();
@@ -118,7 +106,7 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
             'cpf' => '12345678902',
             'password' => 'password',
             'apelido' => 'Test 2',
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ])->save();
         
         $unidadePai = new Unidade();
@@ -187,7 +175,7 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
             'cpf' => '12345678903',
             'password' => 'password',
             'apelido' => 'Test 3',
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ])->save();
         
         $unidadeAvo = new Unidade();
@@ -272,7 +260,7 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
             'cpf' => '12345678904',
             'password' => 'password',
             'apelido' => 'Test 4',
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ])->save();
 
         $unidade = new Unidade();
@@ -325,7 +313,7 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
             'cpf' => '12345678905',
             'password' => 'password',
             'apelido' => 'Test 5',
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ])->save();
         
         $unidadePai = new Unidade();
@@ -394,7 +382,7 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
             'cpf' => '12345678906',
             'password' => 'password',
             'apelido' => 'Test 6',
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ])->save();
 
         $unidade = new Unidade();
@@ -431,7 +419,7 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
             'cpf' => '12345678907',
             'password' => 'password',
             'apelido' => 'Test 7',
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ])->save();
 
         $unidade = new Unidade();
@@ -485,7 +473,7 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
             'cpf' => '12345678908',
             'password' => 'password',
             'apelido' => 'Test 8',
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ])->save();
 
         $unidade = new Unidade();
