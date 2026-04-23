@@ -378,12 +378,7 @@ describe('PlanoTrabalhoService::show', function () {
 
 describe('PlanoTrabalhoService::statuses', function () {
 
-    test('delega ao repository e retorna statuses', function () {
-        $this->readRepository
-            ->shouldReceive('getStatuses')
-            ->once()
-            ->andReturn(PlanoTrabalho::STATUSES);
-
+    test('retorna statuses do Model', function () {
         expect($this->service->statuses())->toBe(PlanoTrabalho::STATUSES);
     });
 });

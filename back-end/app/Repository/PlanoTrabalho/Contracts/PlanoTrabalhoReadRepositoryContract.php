@@ -32,6 +32,4 @@ interface PlanoTrabalhoReadRepositoryContract
     public function findById(string|int $id): ?Model;
 
     public function possuiAssinatura(string $planoId): bool;
-
-    public function getStatuses(): array;
 }

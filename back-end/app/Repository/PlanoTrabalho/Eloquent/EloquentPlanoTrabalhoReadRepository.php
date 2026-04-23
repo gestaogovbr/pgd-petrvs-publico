@@ -257,9 +257,4 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->whereHas('documentos.assinaturas')
             ->exists();
     }
-
-    public function getStatuses(): array
-    {
-        return PlanoTrabalho::STATUSES;
-    }
 }

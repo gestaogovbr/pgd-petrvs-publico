@@ -113,7 +113,7 @@ class PlanoTrabalhoService
 
     public function statuses(): array
     {
-        return $this->readRepository->getStatuses();
+        return PlanoTrabalho::STATUSES;
     }
 
     public function cancelar(string $id, string $justificativa): PlanoTrabalho
