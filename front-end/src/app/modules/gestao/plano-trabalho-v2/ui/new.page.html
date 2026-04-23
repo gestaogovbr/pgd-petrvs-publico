@@ -63,6 +63,14 @@
             </div>
           </div>
 
+          @if (erroPeriodo()) {
+            <div class="row">
+              <div class="col-12 mb-2">
+                <span class="text-danger fw-semibold">A data de início não pode ser maior que a data final</span>
+              </div>
+            </div>
+          }
+
           @if (modalidadeDivergente()) {
             <div class="row mt-2">
               <div class="col-md-12 mb-3">

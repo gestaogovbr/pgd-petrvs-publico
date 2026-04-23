@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, Injector, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, of, switchMap, take, timer } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, merge, of, switchMap, take, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
+import { Perfil } from 'src/app/models/perfil.model';
 import { PlanoTrabalhoApiClient } from '../infra/api-client';
 import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
 import { UsuarioService, UsuarioSearchItem } from 'src/app/v2/services/usuario.service';
@@ -38,6 +39,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   saving = signal(false);
   carregandoRegramento = signal(false);
+  erroPeriodo = signal(false);
 
   programaNome = signal('');
   private programaId = signal('');
@@ -136,6 +138,13 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       distinctUntilChanged(),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(id => this.selectedModalidadeId.set(id ?? ''));
+
+    merge(
+      this.form.controls.data_inicio.valueChanges,
+      this.form.controls.data_fim.valueChanges
+    ).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.erroPeriodo.set(false));
   }
 
   voltar() { this.router.navigate(['gestao', 'plano-trabalho-v2']); }
@@ -160,6 +169,11 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   salvar() {
     if (this.saving() || this.form.invalid || !this.programaId()) return;
+    const { data_inicio, data_fim } = this.form.controls;
+    if (data_inicio.value && data_fim.value && data_fim.value < data_inicio.value) {
+      this.erroPeriodo.set(true);
+      return;
+    }
 
     const payload = {
       usuario_id: this.form.controls.usuario_id.value,
@@ -201,6 +215,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   private preselectUsuario(usuario: Usuario) {
     if (!usuario.id || !usuario.nome) return;
+    if (usuario.perfil?.nivel === Perfil.NIVEL.COLABORADOR) return;
     this.form.controls.usuario_id.setValue(usuario.id);
     this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
     void this.carregarUnidades(usuario);
