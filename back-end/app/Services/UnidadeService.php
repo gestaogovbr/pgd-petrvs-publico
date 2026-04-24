@@ -299,8 +299,11 @@ class UnidadeService extends ServiceBase
      */
     public function metadadosUnidade($unidade_id, $programa_id): array
     {
-        /** @phpstan-ignore-next-line */
-        $unidade = Unidade::where('id', $unidade_id)->with(['planosTrabalho', 'planosTrabalho.atividades'])->first();
+        $unidade = $this->unidadeRepository->findWithPlanosTrabalhoAtividades($unidade_id);
+        if (empty($unidade)) {
+            throw new ServerException("ValidateUnidade", "Unidade não encontrada.");
+        }
+
         $metadadosPlanosTrabalho = [];
         foreach ($unidade['planosTrabalho']->toArray() as $plano) {
             if (($plano['programa_id'] == $programa_id) && ($this->calendarioService->between(new DateTime(), $plano['data_inicio'], $plano['data_fim']))) {

@@ -28,6 +28,14 @@ final class ModalidadePgd
         self::NO_EXTERIOR => 5,
     ];
 
+    /** @var array<int, string> */
+    private const MODALIDADES_COM_PEDAGIO = [
+        self::PARCIAL,
+        self::INTEGRAL,
+        self::NO_EXTERIOR_SUBSTITUICAO,
+        self::NO_EXTERIOR,
+    ];
+
     public static function normalize(mixed $value): ?string
     {
         if (!is_scalar($value)) {
@@ -84,11 +92,7 @@ final class ModalidadePgd
     {
         $modalidade = self::normalize($value);
 
-        if ($modalidade === null || $modalidade === self::PRESENCIAL) {
-            return false;
-        }
-
-        return true;
+        return in_array($modalidade, self::MODALIDADES_COM_PEDAGIO, true);
     }
 
     public static function atividadeEsforco(mixed $value): bool

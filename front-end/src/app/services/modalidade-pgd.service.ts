@@ -7,6 +7,8 @@ export type ModalidadePgdValor = 'presencial' | 'integral' | 'parcial' | 'no ext
   providedIn: 'root'
 })
 export class ModalidadePgdService {
+  private readonly modalidadesComPedagio = ['parcial', 'integral', 'no exterior', 'no exterior substituicao'];
+
   public readonly items: LookupItem[] = [
     { key: null, value: 'Não definida' },
     { key: 'presencial', value: 'Presencial' },
@@ -49,7 +51,7 @@ export class ModalidadePgdService {
   public exigePedagio(value: unknown): boolean {
     const normalized = this.normalize(value);
 
-    return !!normalized && normalized !== 'presencial';
+    return !!normalized && this.modalidadesComPedagio.includes(normalized);
   }
 
   public atividadeEsforco(_value: unknown): boolean {

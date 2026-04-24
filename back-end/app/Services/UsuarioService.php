@@ -645,7 +645,7 @@ class UsuarioService extends ServiceBase
             if (empty($data["integrantes"][0]))
                 throw new ValidateException("Selecione uma unidade!", 422);
 
-            if (!isset($data['modalidade_pgd'])) {
+            if (!array_key_exists('modalidade_pgd', $data)) {
                 $user = $this->usuarioRepository->findById($data["id"]);
                 $data['modalidade_pgd'] = $user?->modalidade_pgd;
             }

@@ -218,7 +218,9 @@ class PlanoTrabalhoService extends ServiceBase
     public function proxyStore($plano, $unidade, $action)
     {
         $plano["criacao_usuario_id"] = parent::loggedUser()->id;
-        $usuario = Usuario::find($plano["usuario_id"] ?? null);
+        $usuario = empty($plano["usuario_id"] ?? null)
+            ? null
+            : $this->usuarioRepository->findById($plano["usuario_id"]);
         $plano["modalidade_pgd"] = ModalidadePgd::normalize($plano["modalidade_pgd"] ?? $usuario?->modalidade_pgd ?? null);
         $this->documentoId = $plano["documento_id"];
         $plano["documento_id"] = null;
@@ -670,7 +672,12 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function metadadosPlano($plano_id, $inicioPeriodo = null, $fimPeriodo = null): array
     {
-        $plano = PlanoTrabalho::where('id', $plano_id)->with(['atividades'])->first()->toArray();
+        $planoTrabalho = $this->planoTrabalhoRepository->findWithAtividades($plano_id);
+        if (empty($planoTrabalho)) {
+            throw new ServerException("ValidatePlanoTrabalho", "Plano de trabalho não encontrado.");
+        }
+
+        $plano = $planoTrabalho->toArray();
         $result = [
             "concluido" => true,
             "atividadesNaoIniciadas" => $this->atividadesNaoIniciadas($plano, null, null), //array_filter($plano['atividades'], fn($atividade) => $atividade['data_inicio'] == null),

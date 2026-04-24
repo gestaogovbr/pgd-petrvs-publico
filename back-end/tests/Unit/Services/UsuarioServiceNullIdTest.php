@@ -146,4 +146,22 @@ describe('UsuarioService - Null ID Checks', function () {
         expect($result)->not->toHaveKey('tipo_modalidade_id');
         expect($result)->not->toHaveKey('pedagio');
     });
+
+    it('keeps explicit null modalidade_pgd when editing user', function () {
+        $this->usuarioRepository->shouldNotReceive('findById');
+
+        $data = [
+            'id' => 'user-id',
+            'matricula' => '12345',
+            'modalidade_pgd' => null,
+            'integrantes' => [
+                ['unidade_id' => 'unidade-1'],
+            ],
+        ];
+
+        $this->usuarioService->validateStore($data, null, \App\Services\ServiceBase::ACTION_EDIT);
+
+        expect($data)->toHaveKey('modalidade_pgd')
+            ->and($data['modalidade_pgd'])->toBeNull();
+    });
 });

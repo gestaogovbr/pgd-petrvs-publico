@@ -129,4 +129,15 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         $unidade = $this->query()->find($id);
         return $unidade;
     }
+
+    public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()
+            ->with(['planosTrabalho', 'planosTrabalho.atividades'])
+            ->where('id', $id)
+            ->first();
+
+        return $unidade;
+    }
 }

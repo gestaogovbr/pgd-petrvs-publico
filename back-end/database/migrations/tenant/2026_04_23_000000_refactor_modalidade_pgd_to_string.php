@@ -175,16 +175,14 @@ return new class extends Migration
 
     private function backfillColumnFromTipoModalidade(string $table, string $targetColumn, string $sourceColumn, string $where): void
     {
-        $tmsJoin = Schema::hasTable('tipos_modalidades_siape')
-            ? 'LEFT JOIN tipos_modalidades_siape tms ON tms.tipo_modalidade_id = tm.id'
+        $tmsValue = Schema::hasTable('tipos_modalidades_siape')
+            ? "(SELECT tms.nome FROM tipos_modalidades_siape tms WHERE tms.tipo_modalidade_id = tm.id ORDER BY tms.nome LIMIT 1),"
             : '';
-        $tmsValue = Schema::hasTable('tipos_modalidades_siape') ? 'tms.nome,' : '';
         $tmExpression = $this->normalizaSql('tm.nome');
 
         DB::statement(<<<SQL
             UPDATE {$table} dest
             INNER JOIN tipos_modalidades tm ON tm.id = dest.{$sourceColumn}
-            {$tmsJoin}
             SET dest.{$targetColumn} = COALESCE({$tmsValue} {$tmExpression})
             WHERE {$where}
         SQL);

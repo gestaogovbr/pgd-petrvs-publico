@@ -111,6 +111,8 @@ use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeR
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioWriteRepositoryContract;
 use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioReadRepository;
 use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioWriteRepository;
+use App\Repository\Atividade\Contracts\AtividadeReadRepositoryContract;
+use App\Repository\Atividade\Eloquent\EloquentAtividadeReadRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class RepositoryServiceProvider extends ServiceProvider
@@ -270,6 +272,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             CargaIndividualSiapeRelatorioWriteRepositoryContract::class,
             EloquentCargaIndividualSiapeRelatorioWriteRepository::class,
+        );
+
+        $this->app->bind(
+            AtividadeReadRepositoryContract::class,
+            EloquentAtividadeReadRepository::class,
         );
     }
 

@@ -25,6 +25,8 @@ interface UnidadeReadRepositoryContract
 
     public function findById(string|int $id): ?\App\Models\Unidade;
 
+    public function findWithPlanosTrabalhoAtividades(string|int $id): ?\App\Models\Unidade;
+
     public function existsByCodigo(string $codigo): bool;
 
     public function findBySigla(string $sigla): ?\App\Models\Unidade;

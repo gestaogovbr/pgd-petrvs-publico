@@ -55,6 +55,11 @@ class UnidadeRepository
         return $this->readRepository->findById($id);
     }
 
+    public function findWithPlanosTrabalhoAtividades(string|int $id): ?\App\Models\Unidade
+    {
+        return $this->readRepository->findWithPlanosTrabalhoAtividades($id);
+    }
+
     public function existsByCodigo(string $codigo): bool
     {
         return $this->readRepository->existsByCodigo($codigo);

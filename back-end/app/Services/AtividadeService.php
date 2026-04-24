@@ -14,6 +14,7 @@ use App\Services\ServiceBase;
 use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Repository\UnidadeRepository;
+use App\Repository\AtividadeRepository;
 use App\Services\ComentarioService;
 use App\Services\RawWhere;
 use App\Services\UtilService;
@@ -44,10 +45,12 @@ use Throwable;
 class AtividadeService extends ServiceBase
 {
     protected UnidadeRepository $unidadeRepository;
+    protected AtividadeRepository $atividadeRepository;
 
     public function __construct() {
         parent::__construct();
         $this->unidadeRepository = app(UnidadeRepository::class);
+        $this->atividadeRepository = app(AtividadeRepository::class);
     }
 
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
@@ -522,7 +525,10 @@ class AtividadeService extends ServiceBase
         unset($conclusao["arquivar"]);
         try {
             DB::beginTransaction();
-            $atividade = Atividade::with(["planoTrabalho"])->where("id", $conclusao["id"])->first();
+            $atividade = $this->atividadeRepository->findWithPlanoTrabalho($conclusao["id"]);
+            if (empty($atividade)) {
+                throw new ServerException("ValidateAtividade", "Atividade não encontrada.");
+            }
             /* Testa permissão para iniciar atividade de outros usuarios */
             if ($atividade->usuario_id != parent::loggedUser()->id){
                 if (!parent::loggedUser()->hasPermissionTo('MOD_ATV_USERS_CONCL')){

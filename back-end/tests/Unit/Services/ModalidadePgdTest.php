@@ -22,4 +22,14 @@ describe('ModalidadePgd', function () {
         expect(fn () => (new ModalidadeResource('valor invalido'))->get())
             ->toThrow(ExportPgdException::class);
     });
+
+    it('exige pedagio apenas para modalidades conhecidas de teletrabalho', function () {
+        expect(ModalidadePgd::exigePedagio('presencial'))->toBeFalse()
+            ->and(ModalidadePgd::exigePedagio(null))->toBeFalse()
+            ->and(ModalidadePgd::exigePedagio('modalidade customizada'))->toBeFalse()
+            ->and(ModalidadePgd::exigePedagio('parcial'))->toBeTrue()
+            ->and(ModalidadePgd::exigePedagio('integral'))->toBeTrue()
+            ->and(ModalidadePgd::exigePedagio('no exterior'))->toBeTrue()
+            ->and(ModalidadePgd::exigePedagio('no exterior substituicao'))->toBeTrue();
+    });
 });
