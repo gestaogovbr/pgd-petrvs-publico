@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
+import { EnvioUsuarioDaoService } from 'src/app/dao/envio-usuario-dao.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { addDays } from 'date-fns';
@@ -13,30 +13,24 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
   styleUrls: ['./envio-usuario-list.component.scss'],
   standalone: false,
 })
-export class EnvioUsuarioListComponent extends PageListBase<Usuario, UsuarioDaoService> {
+export class EnvioUsuarioListComponent extends PageListBase<Usuario, EnvioUsuarioDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public toolbarButtons: ToolbarButton[] = [];
 
   constructor(public injector: Injector) {
-    super(injector, Usuario, UsuarioDaoService);
+    super(injector, Usuario, EnvioUsuarioDaoService);
     /* Inicializações */
     this.title = this.lex.translate('Envios de Participantes');
     this.code = "MOD_ENVIO_USUARIO";
-    this.fields = [
-      "matricula",
-      "nome",
-      "cpf",
-      "updated_at",
-      "data_envio_api_pgd",
-      "data_agendamento_envio",
-      "data_tentativa_envio",
-      "log_envio"
-    ];
     this.filter = this.fh.FormBuilder({
       cpf: { default: '' },
-      nome: { default: null },
+      nome: { default: '' },
       status: { default: null },
+      agendamento_inicio: { default: null },
+      agendamento_fim: { default: null },
+      conclusao_inicio: { default: null },
+      conclusao_fim: { default: null },
       envio_inicio: { default: null },
       envio_fim: { default: null },
     });
@@ -80,17 +74,60 @@ export class EnvioUsuarioListComponent extends PageListBase<Usuario, UsuarioDaoS
     }
 
     if (form.status == 'Com falha') {
-      result.push(["log_envio", "!=", null]);
+      result.push(["envio_com_falha", "==", 1]);
+    }
+
+    if (form.agendamento_inicio) {
+      result.push(["data_agendamento_envio", ">=", form.agendamento_inicio.toISOString().slice(0, 10)]);
+    }
+
+    if (form.agendamento_fim) {
+      result.push(["data_agendamento_envio", "<", addDays(form.agendamento_fim, 1).toISOString().slice(0, 10)]);
+    }
+
+    if (form.conclusao_inicio) {
+      result.push(["data_conclusao_envio", ">=", form.conclusao_inicio.toISOString().slice(0, 10)]);
+    }
+
+    if (form.conclusao_fim) {
+      result.push(["data_conclusao_envio", "<", addDays(form.conclusao_fim, 1).toISOString().slice(0, 10)]);
     }
 
     if (form.envio_inicio) {
-      result.push(["data_envio_api_pgd", ">=", form.envio_inicio.toISOString().slice(0,10)]);
+      result.push(["data_envio_api_pgd", ">=", form.envio_inicio.toISOString().slice(0, 10)]);
     }
 
     if (form.envio_fim) {
-      result.push(["data_envio_api_pgd", "<", addDays(form.envio_fim, 1).toISOString().slice(0,10)]);
+      result.push(["data_envio_api_pgd", "<", addDays(form.envio_fim, 1).toISOString().slice(0, 10)]);
     }
 
     return result;
+  }
+
+  public hasTentativaBeforeAgendamento(row: Usuario): boolean {
+    const dataAgendamento = (row as any)?.data_agendamento_envio;
+    const dataTentativaEnvio = (row as any)?.data_tentativa_envio;
+
+    return !!dataAgendamento
+      && !!dataTentativaEnvio
+      && dataAgendamento > dataTentativaEnvio;
+  }
+
+  public hasConclusaoBeforeAgendamento(row: Usuario): boolean {
+    const dataAgendamento = (row as any)?.data_agendamento_envio;
+    const dataConclusaoEnvio = (row as any)?.data_conclusao_envio;
+
+    return !!dataAgendamento
+      && !!dataConclusaoEnvio
+      && dataAgendamento > dataConclusaoEnvio;
+  }
+
+  public hasEnvioBeforeAgendamento(row: Usuario): boolean {
+    const dataAgendamento = (row as any)?.data_agendamento_envio;
+    const dataEnvioApiPgd = (row as any)?.data_envio_api_pgd;
+
+    return !!dataAgendamento
+      && !!dataEnvioApiPgd
+      && dataAgendamento > dataEnvioApiPgd;
   }
 }
