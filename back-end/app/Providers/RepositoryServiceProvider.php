@@ -112,7 +112,9 @@ use App\Repository\Tenant\Contracts\TenantWriteRepositoryContract;
 use App\Repository\Tenant\Eloquent\EloquentTenantReadRepository;
 use App\Repository\Tenant\Eloquent\EloquentTenantWriteRepository;
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
+use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
+use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class RepositoryServiceProvider extends ServiceProvider
@@ -276,6 +278,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             RelatorioAgenteReadRepositoryContract::class,
             EloquentRelatorioAgenteReadRepository::class,
+        );
+
+        $this->app->bind(
+            EnvioPlanoTrabalhoReadRepositoryContract::class,
+            EloquentEnvioPlanoTrabalhoReadRepository::class,
         );
     }
 
