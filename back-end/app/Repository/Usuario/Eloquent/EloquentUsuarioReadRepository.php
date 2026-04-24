@@ -39,8 +39,15 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
-    public function findByCpfOrEmail(string $cpf, string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario
+    public function findByCpfOrEmail(string $cpf, ?string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario
     {
+        $cpf = UtilService::onlyNumbers(trim($cpf));
+        $email = is_string($email) ? trim($email) : '';
+
+        if ($cpf === '' && $email === '') {
+            return null;
+        }
+
         /** @var Builder|Usuario $query */
         $query = $this->query();
 
@@ -49,8 +56,21 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         }
 
         $query->where(function ($q) use ($cpf, $email) {
-            $q->where('cpf', UtilService::onlyNumbers($cpf))
-              ->orWhere('email', $email);
+            if ($cpf !== '') {
+                $q->where('cpf', $cpf);
+            }
+
+            if ($email === '') {
+                return;
+            }
+
+            if ($cpf !== '') {
+                $q->orWhere('email', $email);
+            }
+
+            if ($cpf === '') {
+                $q->where('email', $email);
+            }
         });
 
         if ($exceptId) {
@@ -171,8 +191,14 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
-    public function findByEmail(string $email): ?Usuario
+    public function findByEmail(?string $email): ?Usuario
     {
+        $email = is_string($email) ? trim($email) : '';
+
+        if ($email === '') {
+            return null;
+        }
+
         /** @var Usuario|null $usuario */
         $usuario = $this->query()->where('email', $email)->first();
         return $usuario;
