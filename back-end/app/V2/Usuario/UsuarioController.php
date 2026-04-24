@@ -28,7 +28,7 @@ class UsuarioController extends Controller
             $result = $this->service->buscarPorNomeOuMatricula($data['nome_matricula']);
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -47,7 +47,7 @@ class UsuarioController extends Controller
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -62,7 +62,7 @@ class UsuarioController extends Controller
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);

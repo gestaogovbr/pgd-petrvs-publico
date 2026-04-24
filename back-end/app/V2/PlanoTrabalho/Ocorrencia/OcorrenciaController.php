@@ -31,7 +31,7 @@ class OcorrenciaController extends Controller
 
             return response()->json(['success' => true, 'data' => $ocorrencia], Response::HTTP_CREATED);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
@@ -49,7 +49,7 @@ class OcorrenciaController extends Controller
 
             return response()->json(['success' => true, 'data' => $ocorrencia]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {

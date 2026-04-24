@@ -85,40 +85,40 @@ beforeEach(function () {
 
 describe('POST /api/v2/plano-trabalho/:id/entrega (validação)', function () {
 
-    test('retorna 400 quando payload vazio', function () {
+    test('retorna 422 quando payload vazio', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [])
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
-    test('retorna 400 quando plano_entrega_entrega_id não é uuid', function () {
+    test('retorna 422 quando plano_entrega_entrega_id não é uuid', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
             'origem' => 'PROPRIA_UNIDADE',
             'plano_entrega_entrega_id' => 'nao-uuid',
-        ])->assertStatus(400);
+        ])->assertStatus(422);
     });
 
-    test('retorna 400 quando descricao excede 1000 caracteres', function () {
+    test('retorna 422 quando descricao excede 1000 caracteres', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
             'origem' => 'PROPRIA_UNIDADE',
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
             'descricao' => str_repeat('a', 1001),
-        ])->assertStatus(400);
+        ])->assertStatus(422);
     });
 
-    test('retorna 400 quando forca_trabalho é negativa', function () {
+    test('retorna 422 quando forca_trabalho é negativa', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
             'origem' => 'PROPRIA_UNIDADE',
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
             'forca_trabalho' => -1,
-        ])->assertStatus(400);
+        ])->assertStatus(422);
     });
 });
 
@@ -259,7 +259,7 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (invalidação TCR)', function
 
         $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", []);
 
-        $response->assertStatus(400);
+        $response->assertStatus(422);
 
         $this->plano->refresh();
         expect($this->plano->documento_id)->toBe($documento->id);
@@ -321,7 +321,7 @@ describe('PUT /api/v2/plano-trabalho/:id/entrega/:eid (invalidação TCR)', func
 
         $response = $this->putJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega/{$entrega->id}", []);
 
-        $response->assertStatus(400);
+        $response->assertStatus(422);
 
         $this->plano->refresh();
         expect($this->plano->documento_id)->toBe($documento->id);

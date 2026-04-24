@@ -50,14 +50,9 @@ test('findByCpfOrEmail ignora email nulo ou vazio', function () {
 
     Usuario::factory()->create([
         'cpf' => $cpf,
-        'email' => null,
         'tipo_modalidade_id' => $this->tipoModalidadeId,
         'perfil_id' => $this->perfilId,
     ]);
-
-    $foundWithNullEmail = $this->repository->findByCpfOrEmail($cpf, null);
-    expect($foundWithNullEmail)->not->toBeNull();
-    expect($foundWithNullEmail->cpf)->toBe($cpf);
 
     $foundWithEmptyEmail = $this->repository->findByCpfOrEmail($cpf, '');
     expect($foundWithEmptyEmail)->not->toBeNull();

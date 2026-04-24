@@ -30,7 +30,7 @@ class PlanoTrabalhoEntregaRequestValidator
             'origem.required' => 'A origem da entrega é obrigatório.',
             'origem.in' => 'A origem da entrega deve ser PROPRIA_UNIDADE, OUTRA_UNIDADE, OUTRO_ORGAO ou SEM_ENTREGA.',
             'plano_entrega_entrega_id.required_if' => 'O vínculo com a entrega do plano de entregas é obrigatório para este tipo.',
-            'plano_entrega_entrega_id.uuid' => 'O vínculo com plano de entrega deve ser um UUID válido.',
+            'plano_entrega_entrega_id.uuid' => 'O valor informado para o vínculo com plano de entrega é inválido.',
             'orgao.required_if' => 'O nome do órgão é obrigatório para este tipo.',
             'orgao.max' => 'O nome do órgão não pode exceder 256 caracteres.',
             'forca_trabalho.min' => 'A força de trabalho não pode ser negativa.',

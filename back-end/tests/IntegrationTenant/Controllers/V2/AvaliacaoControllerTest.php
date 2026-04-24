@@ -349,13 +349,13 @@ describe('POST /api/v2/plano-trabalho/:id/consolidacao/:cid/avaliacao', function
         )->assertStatus(422);
     });
 
-    test('retorna 400 quando tipo_avaliacao_nota_id ausente', function () {
+    test('retorna 422 quando tipo_avaliacao_nota_id ausente', function () {
         $consolidacaoId = prepararConsolidacaoConcluida($this);
 
         $this->postJson(
             "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
             []
-        )->assertStatus(400);
+        )->assertStatus(422);
     });
 });
 
@@ -513,13 +513,13 @@ describe('PATCH /api/v2/.../consolidacao/:cid/recurso', function () {
         )->assertStatus(422);
     });
 
-    test('retorna 400 quando justificativa ausente', function () {
+    test('retorna 422 quando justificativa ausente', function () {
         $consolidacaoId = prepararConsolidacaoAvaliada($this);
 
         $this->patchJson(
             "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/recurso",
             []
-        )->assertStatus(400);
+        )->assertStatus(422);
     });
 
     test('retorna 422 quando periodo nao esta avaliado', function () {

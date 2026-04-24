@@ -131,12 +131,12 @@ function validOcorrenciaPayload($ctx): array
 
 describe('POST /api/v2/plano-trabalho/:id/ocorrencia (validação)', function () {
 
-    test('retorna 400 quando campos obrigatórios ausentes', function () {
+    test('retorna 422 quando campos obrigatórios ausentes', function () {
         $this->actingAs($this->usuario, 'web');
         ativarPlanoOcorrencia($this);
 
         $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia", [])
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
     test('retorna 404 quando plano não encontrado', function () {

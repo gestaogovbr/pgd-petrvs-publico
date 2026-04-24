@@ -45,12 +45,16 @@ class PlanoTrabalhoRequestValidator
             'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
         ], [
             'usuario_id.required' => 'O participante é obrigatório.',
+            'usuario_id.uuid' => 'O valor informado para o participante é inválido.',
             'unidade_id.required' => 'A unidade executora é obrigatória.',
+            'unidade_id.uuid' => 'O valor informado para a unidade executora é inválido.',
             'programa_id.required' => 'O regramento é obrigatório.',
+            'programa_id.uuid' => 'O valor informado para o regramento é inválido.',
             'data_inicio.required' => 'A data de início é obrigatória.',
             'data_fim.required' => 'A data de fim é obrigatória.',
             'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
             'tipo_modalidade_id.required' => 'A modalidade é obrigatória.',
+            'tipo_modalidade_id.uuid' => 'O valor informado para a modalidade é inválido.',
             'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
             'justificativa_modalidade.max' => 'A justificativa da modalidade não pode exceder 500 caracteres.',
         ]);
@@ -69,12 +73,16 @@ class PlanoTrabalhoRequestValidator
             'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
         ], [
             'usuario_id.required' => 'O participante é obrigatório.',
+            'usuario_id.uuid' => 'O valor informado para o participante é inválido.',
             'unidade_id.required' => 'A unidade executora é obrigatória.',
+            'unidade_id.uuid' => 'O valor informado para a unidade executora é inválido.',
             'programa_id.required' => 'O regramento é obrigatório.',
+            'programa_id.uuid' => 'O valor informado para o regramento é inválido.',
             'data_inicio.required' => 'A data de início é obrigatória.',
             'data_fim.required' => 'A data de fim é obrigatória.',
             'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
             'tipo_modalidade_id.required' => 'A modalidade é obrigatória.',
+            'tipo_modalidade_id.uuid' => 'O valor informado para a modalidade é inválido.',
             'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
             'justificativa_modalidade.max' => 'A justificativa da modalidade não pode exceder 500 caracteres.',
         ]);

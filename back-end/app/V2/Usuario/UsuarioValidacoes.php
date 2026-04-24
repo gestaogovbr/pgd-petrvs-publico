@@ -25,7 +25,7 @@ class UsuarioValidacoes
             'id' => ['required', 'uuid'],
         ], [
             'id.required' => 'O id do usuário é obrigatório.',
-            'id.uuid' => 'O id do usuário deve ser um UUID válido.',
+            'id.uuid' => 'O valor informado para o usuário é inválido.',
         ]);
     }
 

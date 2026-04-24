@@ -280,14 +280,14 @@ describe('PATCH /api/v2/plano-trabalho/:id/consolidacao/:cid/reabrir', function 
         ]);
     });
 
-    test('retorna 400 quando justificativa ausente', function () {
+    test('retorna 422 quando justificativa ausente', function () {
         $this->actingAs($this->usuario, 'web');
         $consolidacaoId = ativarEObterConsolidacao($this);
         concluirConsolidacao($this, $consolidacaoId);
 
         $this->patchJson(
             "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/reabrir"
-        )->assertStatus(400);
+        )->assertStatus(422);
     });
 
     test('retorna 422 quando consolidação não está concluída', function () {

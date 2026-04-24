@@ -34,7 +34,7 @@ class AtividadeController extends Controller
 
             return response()->json(['success' => true, 'data' => $atividade], Response::HTTP_CREATED);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
@@ -53,7 +53,7 @@ class AtividadeController extends Controller
 
             return response()->json(['success' => true, 'data' => $atividade]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {

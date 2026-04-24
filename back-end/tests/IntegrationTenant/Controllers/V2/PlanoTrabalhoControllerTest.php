@@ -114,34 +114,34 @@ describe('GET /api/v2/plano-trabalho (validação)', function () {
             ->assertJsonPath('success', true);
     });
 
-    test('retorna 400 quando size não é inteiro', function () {
+    test('retorna 422 quando size não é inteiro', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->getJson('/api/__tests/v2/plano-trabalho?size=abc')
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
-    test('retorna 400 quando page não é inteiro', function () {
+    test('retorna 422 quando page não é inteiro', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->getJson('/api/__tests/v2/plano-trabalho?page=abc')
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
-    test('retorna 400 quando filters.usuario_id não é uuid', function () {
+    test('retorna 422 quando filters.usuario_id não é uuid', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
             'filters' => ['usuario_id' => 'nao-uuid'],
-        ]))->assertStatus(400);
+        ]))->assertStatus(422);
     });
 
-    test('retorna 400 quando filters.data_inicio é data inválida', function () {
+    test('retorna 422 quando filters.data_inicio é data inválida', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
             'filters' => ['data_inicio' => 'nao-data'],
-        ]))->assertStatus(400);
+        ]))->assertStatus(422);
     });
 
     test('retorna 422 quando service lança ValidateException', function () {
@@ -287,23 +287,23 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
 
 describe('GET /api/v2/plano-trabalho (ordenação - validação)', function () {
 
-    test('retorna 400 quando order_by tem valor inválido', function () {
+    test('retorna 422 quando order_by tem valor inválido', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
             'filters' => ['vigentes' => true],
             'order_by' => 'campo_invalido',
-        ]))->assertStatus(400);
+        ]))->assertStatus(422);
     });
 
-    test('retorna 400 quando order_dir tem valor inválido', function () {
+    test('retorna 422 quando order_dir tem valor inválido', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
             'filters' => ['vigentes' => true],
             'order_by' => 'numero',
             'order_dir' => 'invalido',
-        ]))->assertStatus(400);
+        ]))->assertStatus(422);
     });
 });
 
@@ -371,21 +371,21 @@ describe('POST /api/v2/plano-trabalho (validação)', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->postJson('/api/__tests/v2/plano-trabalho', [])
-            ->assertStatus(400)
+            ->assertStatus(422)
             ->assertJsonStructure(['error']);
     });
 
-    test('retorna 400 quando usuario_id não é uuid', function () {
+    test('retorna 422 quando usuario_id não é uuid', function () {
         $this->actingAs($this->usuario, 'web');
 
         $payload = validStorePayload();
         $payload['usuario_id'] = 'nao-uuid';
 
         $this->postJson('/api/__tests/v2/plano-trabalho', $payload)
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
-    test('retorna 400 quando data_fim anterior a data_inicio', function () {
+    test('retorna 422 quando data_fim anterior a data_inicio', function () {
         $this->actingAs($this->usuario, 'web');
 
         $payload = validStorePayload();
@@ -393,27 +393,27 @@ describe('POST /api/v2/plano-trabalho (validação)', function () {
         $payload['data_fim'] = '2025-01-01';
 
         $this->postJson('/api/__tests/v2/plano-trabalho', $payload)
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
-    test('retorna 400 quando tipo_modalidade_id ausente', function () {
+    test('retorna 422 quando tipo_modalidade_id ausente', function () {
         $this->actingAs($this->usuario, 'web');
 
         $payload = validStorePayload();
         unset($payload['tipo_modalidade_id']);
 
         $this->postJson('/api/__tests/v2/plano-trabalho', $payload)
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
-    test('retorna 400 quando programa_id ausente', function () {
+    test('retorna 422 quando programa_id ausente', function () {
         $this->actingAs($this->usuario, 'web');
 
         $payload = validStorePayload();
         unset($payload['programa_id']);
 
         $this->postJson('/api/__tests/v2/plano-trabalho', $payload)
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
     test('retorna 422 quando service lança ValidateException', function () {
@@ -830,12 +830,12 @@ describe('PATCH /api/v2/plano-trabalho/:id/cancelar', function () {
         ])->assertStatus(422);
     });
 
-    test('retorna 400 quando justificativa ausente', function () {
+    test('retorna 422 quando justificativa ausente', function () {
         $this->actingAs($this->usuario, 'web');
         $plano = criarPlanoAtivo($this);
 
         $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [])
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
     test('retorna 404 quando plano nao existe', function () {
@@ -961,12 +961,12 @@ describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
         ])->assertStatus(422);
     });
 
-    test('retorna 400 quando justificativa ausente', function () {
+    test('retorna 422 quando justificativa ausente', function () {
         $this->actingAs($this->usuario, 'web');
         $plano = criarPlanoAtivoComConsolidacoes($this);
 
         $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [])
-            ->assertStatus(400);
+            ->assertStatus(422);
     });
 
     test('retorna 404 quando plano nao existe', function () {

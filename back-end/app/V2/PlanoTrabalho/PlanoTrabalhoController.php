@@ -29,7 +29,7 @@ class PlanoTrabalhoController extends Controller
             $result = $this->service->index($data);
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
@@ -45,7 +45,7 @@ class PlanoTrabalhoController extends Controller
             $entity = $this->service->store($data);
             return response()->json(['success' => true, 'data' => $entity], Response::HTTP_CREATED);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
@@ -61,7 +61,7 @@ class PlanoTrabalhoController extends Controller
             $entity = $this->service->update($id, $data);
             return response()->json(['success' => true, 'data' => $entity]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
@@ -109,7 +109,7 @@ class PlanoTrabalhoController extends Controller
 
             return response()->json(['success' => true, 'data' => $plano]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
@@ -126,7 +126,7 @@ class PlanoTrabalhoController extends Controller
 
             return response()->json(['success' => true, 'data' => $plano]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {

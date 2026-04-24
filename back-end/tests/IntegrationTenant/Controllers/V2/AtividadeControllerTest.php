@@ -145,7 +145,7 @@ describe('POST /api/v2/plano-trabalho/:id/consolidacao/:cid/atividade', function
         ]);
     });
 
-    test('retorna 400 quando descricao ausente', function () {
+    test('retorna 422 quando descricao ausente', function () {
         $this->actingAs($this->usuario, 'web');
         $consolidacaoId = ativarPlanoAtividade($this);
 
@@ -154,7 +154,7 @@ describe('POST /api/v2/plano-trabalho/:id/consolidacao/:cid/atividade', function
             ['plano_trabalho_entrega_id' => $this->entrega->id]
         );
 
-        $response->assertStatus(400);
+        $response->assertStatus(422);
     });
 
     test('retorna 422 quando plano não está ativo', function () {

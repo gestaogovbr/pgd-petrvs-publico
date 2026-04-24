@@ -30,7 +30,7 @@ class UnidadeController extends Controller
             $result = $this->service->buscarPorNomeOuCodigo($dto, Auth::id());
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);

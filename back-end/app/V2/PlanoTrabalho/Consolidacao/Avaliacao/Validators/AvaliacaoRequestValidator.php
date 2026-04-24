@@ -15,7 +15,7 @@ class AvaliacaoRequestValidator
             'justificativa' => ['nullable', 'string', 'max:500'],
         ], [
             'tipo_avaliacao_nota_id.required' => 'A nota de avaliação é obrigatória.',
-            'tipo_avaliacao_nota_id.uuid' => 'A nota de avaliação deve ser um UUID válido.',
+            'tipo_avaliacao_nota_id.uuid' => 'O valor informado para a nota de avaliação é inválido.',
             'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
         ]);
     }

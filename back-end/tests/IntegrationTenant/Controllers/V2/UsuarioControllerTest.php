@@ -31,22 +31,22 @@ afterEach(function () {
 
 // ── buscarPorNomeMatricula: validação ───────────────────────────────
 
-test('v2 usuario buscarPorNomeMatricula retorna 400 quando nome_matricula ausente', function () {
+test('v2 usuario buscarPorNomeMatricula retorna 422 quando nome_matricula ausente', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
     $response = $this->getJson('/api/__tests/v2/usuario');
 
-    $response->assertStatus(400);
+    $response->assertStatus(422);
 })->group('v2-usuario');
 
-test('v2 usuario buscarPorNomeMatricula retorna 400 quando nome_matricula tem menos de 3 caracteres', function () {
+test('v2 usuario buscarPorNomeMatricula retorna 422 quando nome_matricula tem menos de 3 caracteres', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
     $response = $this->getJson('/api/__tests/v2/usuario?nome_matricula=ab');
 
-    $response->assertStatus(400);
+    $response->assertStatus(422);
     $response->assertJson(fn ($json) =>
         $json->where('error', fn ($error) => str_contains($error, '3 caracteres'))
     );
@@ -91,13 +91,13 @@ test('v2 usuario buscarPorNomeMatricula retorna 500 quando service lança exceç
 
 // ── buscarPorId: validação / not found / sucesso ────────────────────
 
-test('v2 usuario buscarPorId retorna 400 quando id não é uuid', function () {
+test('v2 usuario buscarPorId retorna 422 quando id não é uuid', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
     $response = $this->getJson('/api/__tests/v2/usuario/abc');
 
-    $response->assertStatus(400);
+    $response->assertStatus(422);
 })->group('v2-usuario');
 
 test('v2 usuario buscarPorId retorna 404 quando usuário não existe', function () {
@@ -126,13 +126,13 @@ test('v2 usuario buscarPorId retorna 200 com usuário', function () {
 
 // ── buscarUnidadesVinculadasPorCpf: validação / sucesso ─────────────
 
-test('v2 usuario buscarUnidadesVinculadasPorCpf retorna 400 quando cpf inválido', function () {
+test('v2 usuario buscarUnidadesVinculadasPorCpf retorna 422 quando cpf inválido', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
     $response = $this->getJson('/api/__tests/v2/usuario/cpf/123/unidades');
 
-    $response->assertStatus(400);
+    $response->assertStatus(422);
 })->group('v2-usuario');
 
 test('v2 usuario buscarUnidadesVinculadasPorCpf retorna 200 com service mockado', function () {

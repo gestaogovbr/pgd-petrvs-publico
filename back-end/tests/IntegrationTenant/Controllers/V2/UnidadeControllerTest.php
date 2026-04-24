@@ -36,12 +36,12 @@ afterEach(function () {
 
 describe('GET /api/v2/unidade (validação)', function () {
 
-    test('retorna 400 quando termo tem menos de 3 caracteres', function () {
+    test('retorna 422 quando termo tem menos de 3 caracteres', function () {
         $this->actingAs($this->usuario, 'web');
 
         $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=ab');
 
-        $response->assertStatus(400)
+        $response->assertStatus(422)
             ->assertJson(fn ($json) =>
                 $json->where('error', fn ($error) => str_contains($error, '3 caracteres'))
             );

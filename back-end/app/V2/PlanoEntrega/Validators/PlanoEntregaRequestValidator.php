@@ -17,7 +17,7 @@ class PlanoEntregaRequestValidator
             'data_fim' => ['sometimes', 'date'],
         ], [
             'unidade_id.required' => 'O id da unidade é obrigatório.',
-            'unidade_id.uuid' => 'O id da unidade deve ser um UUID válido.',
+            'unidade_id.uuid' => 'O valor informado para a unidade é inválido.',
         ]);
     }
 
@@ -28,7 +28,7 @@ class PlanoEntregaRequestValidator
             ['plano_entrega_id' => ['required', 'uuid']],
             [
                 'plano_entrega_id.required' => 'O id do plano de entrega é obrigatório.',
-                'plano_entrega_id.uuid'     => 'O id do plano de entrega deve ser um UUID válido.',
+                'plano_entrega_id.uuid'     => 'O valor informado para o plano de entrega é inválido.',
             ]
         )->validate();
 

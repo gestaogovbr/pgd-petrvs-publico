@@ -26,11 +26,11 @@ class PlanoEntregaController extends Controller
     {
         try {
             $validatedId = PlanoEntregaRequestValidator::buscarEntregasPorPlano($planoEntregaId);
-            $dto = PlanoEntregaEntregaBuscaDTO::fromRouteParam($validatedId);
+            $dto = new PlanoEntregaEntregaBuscaDTO($validatedId);
             $result = $this->service->buscarEntregasPorPlano($dto);
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -45,7 +45,7 @@ class PlanoEntregaController extends Controller
             $result = $this->service->buscarPorUnidade($dto);
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);

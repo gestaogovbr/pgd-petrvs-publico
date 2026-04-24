@@ -28,20 +28,20 @@ afterEach(function () {
 
 describe('GET /api/v2/plano-entrega (validação)', function () {
 
-    test('retorna 400 quando unidade_id ausente', function () {
+    test('retorna 422 quando unidade_id ausente', function () {
         $this->actingAs($this->usuario, 'web');
 
         $response = $this->getJson('/api/__tests/v2/plano-entrega');
 
-        $response->assertStatus(400);
+        $response->assertStatus(422);
     });
 
-    test('retorna 400 quando unidade_id não é uuid', function () {
+    test('retorna 422 quando unidade_id não é uuid', function () {
         $this->actingAs($this->usuario, 'web');
 
         $response = $this->getJson('/api/__tests/v2/plano-entrega?unidade_id=nao-uuid');
 
-        $response->assertStatus(400);
+        $response->assertStatus(422);
     });
 
     test('retorna 500 quando service lança exceção inesperada', function () {
