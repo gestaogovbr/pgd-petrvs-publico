@@ -21,9 +21,9 @@ use App\Repository\UsuarioRepository;
 use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
 use App\Services\Siape\Unidade\Atribuicao;
 use App\Services\IntegracaoServiceFactory;
+use App\Support\SiapeDate;
 use Illuminate\Support\Str;
 use Exception;
-use DateTime;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Brazanation\Documents\Cpf;
@@ -38,9 +38,6 @@ class SiapeIndividualServidorService extends ServiceBase
     private const MSG_CONCLUIDO = 'Processamento concluído';
     private const TAMANHO_CPF = 11;
     private const MAX_PREVIEW_LOG = 200;
-    private const FORMATO_DATA_SIAPE = 'dmY';
-    private const FORMATO_DATA_DB = 'Y-m-d 00:00:00';
-
     private SiapeIndividualService $service;
     private ?array $resumo = null;
     private ?array $relatorioCarga = null;
@@ -463,8 +460,7 @@ class SiapeIndividualServidorService extends ServiceBase
     {
         $this->siapeDadosUORGRepository->create([
             'id' => Str::uuid(),
-            'data_modificacao' => DateTime::createFromFormat(self::FORMATO_DATA_SIAPE, $unidadeSiape['dataUltimaTransacao'])
-                ->format(self::FORMATO_DATA_DB),
+            'data_modificacao' => SiapeDate::dataUltimaTransacaoParaBancoOuFalha($unidadeSiape['dataUltimaTransacao']),
             'response' => $responseXml,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

@@ -11,6 +11,7 @@ use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Services\IntegracaoService;
+use App\Support\SiapeDate;
 
 class CargaIndividualSiapeRelatorioUnidadeBuilder
 {
@@ -40,7 +41,7 @@ class CargaIndividualSiapeRelatorioUnidadeBuilder
                 : $this->comparator->comparar('codUorgPai', 'Unidade superior', $paiSiape ?: null, $unidade?->unidadePai?->codigo),
             $this->comparator->comparar('nomeExtendido', 'Nome da unidade', $dadosSiape['nomeExtendido'] ?? null, $unidade?->nome),
             $this->comparator->comparar('siglaUorg', 'Sigla da unidade', $dadosSiape['siglaUorg'] ?? null, $unidade?->sigla),
-            $this->comparator->comparar('dataUltimaTransacao', 'Ultima atualizacao no SIAPE', $dadosSiape['dataUltimaTransacao'] ?? null, $unidade?->data_modificacao, $unidade?->data_modificacao === null),
+            $this->comparator->comparar('dataUltimaTransacao', 'Ultima atualizacao no SIAPE', SiapeDate::dataUltimaTransacaoParaBanco($dadosSiape['dataUltimaTransacao'] ?? null), $unidade?->data_modificacao, $unidade?->data_modificacao === null),
             $this->comparator->comparar('cpfTitularAutoridadeUorg', 'Chefia titular', $dadosSiape['cpfTitularAutoridadeUorg'] ?? null, $this->cpfGestorTitular($unidade)),
         ];
 

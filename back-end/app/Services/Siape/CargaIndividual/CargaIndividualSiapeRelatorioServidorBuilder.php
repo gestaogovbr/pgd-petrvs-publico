@@ -7,6 +7,7 @@ namespace App\Services\Siape\CargaIndividual;
 use App\Models\Usuario;
 use App\Repository\UsuarioRepository;
 use App\Support\ModalidadePgd;
+use App\Support\SiapeDate;
 
 class CargaIndividualSiapeRelatorioServidorBuilder
 {
@@ -57,7 +58,7 @@ class CargaIndividualSiapeRelatorioServidorBuilder
         return [
             $this->comparator->comparar('nome', 'Nome', $dadosPessoais['nome'] ?? null, $usuario?->nome),
             $this->comparator->comparar('emailInstitucional', 'E-mail institucional', $funcional['emailInstitucional'] ?? null, $usuario?->email),
-            $this->comparator->comparar('dataUltimaTransacao', 'Ultima atualizacao no SIAPE', $funcional['dataUltimaTransacao'] ?? null, $usuario?->data_modificacao, $usuario?->data_modificacao === null),
+            $this->comparator->comparar('dataUltimaTransacao', 'Ultima atualizacao no SIAPE', SiapeDate::dataUltimaTransacaoParaBanco($funcional['dataUltimaTransacao'] ?? null), $usuario?->data_modificacao, $usuario?->data_modificacao === null),
             $this->comparator->comparar('nomeJornada', 'Jornada', $funcional['nomeJornada'] ?? null, $usuario?->nome_jornada),
             $this->comparator->comparar('codJornada', 'Codigo da jornada', $funcional['codJornada'] ?? null, $usuario?->cod_jornada),
             $this->comparator->comparar('matriculaSiape', 'Matricula SIAPE', $funcional['matriculaSiape'] ?? null, $usuario?->matricula),

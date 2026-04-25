@@ -38,6 +38,7 @@ test('observer persiste relatorio de sucesso para unidade comum sem municipio ne
         'nome' => 'Unidade Filha',
         'sigla' => 'FILHA',
         'unidade_pai_id' => $pai->id,
+        'data_modificacao' => '2026-04-22 00:00:00',
     ]);
 
     $gestor = Usuario::factory()->create([
@@ -83,6 +84,8 @@ test('observer persiste relatorio de sucesso para unidade comum sem municipio ne
     expect($payload)->toContain('codUorg');
     expect($payload)->toContain('codUorgPai');
     expect($payload)->toContain('cpfTitularAutoridadeUorg');
+    expect($payload)->toContain('2026-04-22 00:00:00');
+    expect($payload)->not->toContain('22042026');
     expect($payload)->not->toContain('Municipio');
     expect($payload)->not->toContain('nomeMunicipio');
     expect($payload)->not->toContain('cpfSubstitutoAutoridadeUorg');
@@ -207,6 +210,7 @@ test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorr
         'cod_jornada' => 40,
         'modalidade_pgd' => 'presencial',
         'participa_pgd' => 'sim',
+        'data_modificacao' => '2026-04-22 00:00:00',
     ]);
 
     $relatorio = app(CargaIndividualSiapeSubject::class)->notificar(new CargaIndividualSiapeProcessamentoDTO(
@@ -242,6 +246,8 @@ test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorr
     expect($payload)->toContain('nome');
     expect($payload)->toContain('emailInstitucional');
     expect($payload)->toContain('matriculaSiape');
+    expect($payload)->toContain('2026-04-22 00:00:00');
+    expect($payload)->not->toContain('22042026');
     expect($payload)->not->toContain('dataOcorrExclusao');
 });
 

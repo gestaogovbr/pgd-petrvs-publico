@@ -6,8 +6,8 @@ use App\Models\IntegracaoUnidade;
 use App\Models\SiapeBlacklistUnidade;
 use App\Models\SiapeDadosUORG;
 use App\Models\SiapeListaUORGS;
+use App\Support\SiapeDate;
 use Carbon\Carbon;
-use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
@@ -29,7 +29,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             SiapeDadosUORG::insert([
                 'id' => Str::uuid(),
                 'codigo' => $dados[0],
-                'data_modificacao' => DateTime::createFromFormat('dmY', $dataultimaAtualizacao)->format('Y-m-d 00:00:00'),
+                'data_modificacao' => SiapeDate::dataUltimaTransacaoParaBancoOuFalha($dataultimaAtualizacao),
                 'response' => $xml,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -152,7 +152,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             }
 
             $dataModificacaoBD = $this->asTimestamp($unidadeProcessada->data_modificacao);
-            $dataModificacaoSiape = DateTime::createFromFormat('dmY', $unidade['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
+            $dataModificacaoSiape = SiapeDate::dataUltimaTransacaoParaBancoOuFalha($unidade['dataUltimaTransacao']);
             $dataModificacaoSiape  = $this->asTimestamp($dataModificacaoSiape);
 
             if($dataModificacaoSiape > $dataModificacaoBD){
