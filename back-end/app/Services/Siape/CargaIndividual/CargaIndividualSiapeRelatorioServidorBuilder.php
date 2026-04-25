@@ -55,6 +55,8 @@ class CargaIndividualSiapeRelatorioServidorBuilder
      */
     private function camposServidor(array $dadosPessoais, array $funcional, ?Usuario $usuario): array
     {
+        $situacaoFuncional = $this->campoSituacaoFuncional($funcional, $usuario);
+
         return [
             $this->comparator->comparar('nome', 'Nome', $dadosPessoais['nome'] ?? null, $usuario?->nome),
             $this->comparator->comparar('emailInstitucional', 'E-mail institucional', $funcional['emailInstitucional'] ?? null, $usuario?->email),
@@ -63,10 +65,51 @@ class CargaIndividualSiapeRelatorioServidorBuilder
             $this->comparator->comparar('codJornada', 'Codigo da jornada', $funcional['codJornada'] ?? null, $usuario?->cod_jornada),
             $this->comparator->comparar('matriculaSiape', 'Matricula SIAPE', $funcional['matriculaSiape'] ?? null, $usuario?->matricula),
             $this->comparator->comparar('codUorgExercicio', 'Unidade de exercicio', $funcional['codUorgExercicio'] ?? null, $usuario?->lotacao?->unidade?->codigo),
-            $this->comparator->comparar('codSitFuncional', 'Situacao funcional', $funcional['codSitFuncional'] ?? null, $usuario?->situacao_funcional),
+            $situacaoFuncional,
             $this->comparator->comparar('modalidadePGD', 'Modalidade PGD', $funcional['modalidadePGD'] ?? null, $this->modalidadePgd($usuario)),
             $this->comparator->comparar('participaPGD', 'Participa do PGD', $funcional['participaPGD'] ?? null, $usuario?->participa_pgd),
         ];
+    }
+
+    /**
+     * @param array<string, mixed> $funcional
+     * @return array<string, mixed>
+     */
+    private function campoSituacaoFuncional(array $funcional, ?Usuario $usuario): array
+    {
+        $campo = $this->comparator->comparar(
+            'nomeSitFuncional',
+            'Situacao funcional',
+            $funcional['nomeSitFuncional'] ?? null,
+            $usuario?->situacao_funcional,
+        );
+
+        $recebidoSiape = $this->situacaoFuncionalSiapeParaExibicao(
+            $funcional['nomeSitFuncional'] ?? null,
+            $funcional['codSitFuncional'] ?? null,
+        );
+
+        if ($recebidoSiape !== null) {
+            $campo['recebido_siape'] = $recebidoSiape;
+        }
+
+        return $campo;
+    }
+
+    private function situacaoFuncionalSiapeParaExibicao(mixed $nome, mixed $codigo): ?string
+    {
+        if (!is_scalar($nome)) {
+            return null;
+        }
+
+        $nome = trim((string) $nome);
+        if ($nome === '') {
+            return null;
+        }
+
+        $codigo = is_scalar($codigo) ? trim((string) $codigo) : '';
+
+        return $codigo !== '' ? "{$nome} ({$codigo})" : $nome;
     }
 
     /**

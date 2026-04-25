@@ -205,7 +205,7 @@ test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorr
         'nome' => 'Maria Silva',
         'email' => 'maria.silva@orgao.gov.br',
         'matricula' => '777888',
-        'situacao_funcional' => '1',
+        'situacao_funcional' => 'EXERCICIO_7_ART93_8112',
         'nome_jornada' => '40 horas semanais',
         'cod_jornada' => 40,
         'modalidade_pgd' => 'presencial',
@@ -230,7 +230,8 @@ test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorr
                 'codJornada' => '40',
                 'matriculaSiape' => '777888',
                 'codUorgExercicio' => $unidade->codigo,
-                'codSitFuncional' => '1',
+                'nomeSitFuncional' => 'EXERCICIO_7_ART93_8112',
+                'codSitFuncional' => '44',
                 'modalidadePGD' => 'Teletrabalho',
                 'participaPGD' => 'sim',
                 'dataOcorrExclusao' => '01012020',
@@ -247,8 +248,14 @@ test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorr
     expect($payload)->toContain('emailInstitucional');
     expect($payload)->toContain('matriculaSiape');
     expect($payload)->toContain('2026-04-22 00:00:00');
+    expect($payload)->toContain('EXERCICIO_7_ART93_8112 (44)');
+    expect($payload)->not->toContain('codSitFuncional');
     expect($payload)->not->toContain('22042026');
     expect($payload)->not->toContain('dataOcorrExclusao');
+
+    $campoSituacao = collect($relatorio->secoes[0]['campos'])->firstWhere('campo', 'nomeSitFuncional');
+    expect($campoSituacao['status'])->toBe('confirmado');
+    expect($campoSituacao['registrado_petrvs'])->toBe('EXERCICIO_7_ART93_8112');
 });
 
 test('observer monta secoes para servidor com multiplas matriculas', function () {
