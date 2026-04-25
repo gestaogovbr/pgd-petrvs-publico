@@ -39,6 +39,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     {
       label: "Baixar Dados",
       icon: "bi bi-download",
+      color: "btn-outline-secondary",
       onClick: async() => {
         let error: any = undefined;
         this.loading = true;
@@ -80,13 +81,14 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     {
       label: "Ver relatório da carga",
       icon: "bi bi-clipboard-data",
-      color: "btn-outline-info",
+      color: "btn-outline-primary",
       dynamicVisible: () => !!this.ultimoRelatorioCargaId,
       onClick: () => this.abrirRelatorioCarga()
     },
     {
       label: "Processar",
       icon: "bi bi-gear",
+      color: "btn-success",
       onClick: async() => {
         let error: any = undefined;
         let confirm = await this.dialog.confirm("ATENÇÃO", "CONFIRMA A SINCRONIZAÇÃO DO USUÁRIO?");
@@ -114,7 +116,6 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
                         await this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
                     }
                   }
-                  this.downloadSiape();
                 },
                 error => {
                   this.loading = false;
@@ -262,12 +263,22 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
 
       const buttons = relatorioCargaId
         ? [
-            { label: "Ver relatório da carga", color: "btn-primary", value: "relatorio" },
+            { label: "Baixar log", color: "btn-outline-secondary", value: "log" },
+            { label: "Ver relatório da carga", color: "btn-outline-primary", value: "relatorio" },
             { label: "Ok", color: "btn-outline-secondary", value: true }
           ]
-        : [{ label: "Ok", color: "btn-primary", value: true }];
+        : [
+            { label: "Baixar log", color: "btn-outline-secondary", value: "log" },
+            { label: "Ok", color: "btn-outline-secondary", value: true }
+          ];
       const dialogResult = await this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, buttons, { resumo: resumo })
       .asPromise();
+
+      if (dialogResult?.button?.value === "log") {
+          dialogResult.dialog.close();
+          await this.downloadSiape();
+          return;
+      }
       
       if (dialogResult?.button?.value === "relatorio" && relatorioCargaId) {
           dialogResult.dialog.close();
