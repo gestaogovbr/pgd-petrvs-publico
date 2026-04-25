@@ -37,7 +37,7 @@
     </div>
   </form>
 
-  <section *ngIf="relatorio" class="relatorio-detalhe">
+  <section *ngIf="exibindoDetalhe && relatorio" class="relatorio-detalhe">
     <header class="relatorio-cabecalho">
       <div>
         <h2>{{ relatorio.tipo === 'servidor' ? 'Servidor' : 'Unidade' }}</h2>
@@ -50,7 +50,7 @@
 
     <div class="meta">
       <span>Consulta: {{ relatorio.chave }}</span>
-      <span *ngIf="relatorio.processado_em">Processado em {{ relatorio.processado_em | date:'dd/MM/yyyy HH:mm' }}</span>
+      <span *ngIf="relatorio.processado_em">Processado em {{ formatarProcessadoEm(relatorio.processado_em) }}</span>
       <span>{{ relatorio.entrada_valida ? 'Dados recebidos no formato esperado' : 'Dados recebidos com inconsistência' }}</span>
     </div>
 
@@ -82,7 +82,7 @@
     </section>
   </section>
 
-  <section *ngIf="!relatorio" class="recentes">
+  <section *ngIf="!exibindoDetalhe" class="recentes">
     <h2>Relatórios recentes</h2>
     <div class="lista-recentes" *ngIf="recentes.length; else vazio">
       <button class="item-recente" type="button" *ngFor="let item of recentes" (click)="abrir(item)">
@@ -90,7 +90,7 @@
           <strong>{{ item.tipo === 'servidor' ? 'Servidor' : 'Unidade' }}</strong>
           {{ item.chave }}
         </span>
-        <small>{{ item.processado_em | date:'dd/MM/yyyy HH:mm' }}</small>
+        <small>{{ formatarProcessadoEm(item.processado_em) }}</small>
         <em>{{ item.status === 'sucesso' ? 'Concluído' : (item.status === 'parcial' ? 'Atenção' : 'Não concluído') }}</em>
       </button>
     </div>
