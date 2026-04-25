@@ -50,7 +50,10 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
       this.clearErros();
       try {
         const codigoUnidade = this.form.get('unidade')?.value.replace(/\D/g, '');
-        const unidades = await this.dao?.query({ where: [['codigo', '==', codigoUnidade]] })
+        const unidades = await this.dao?.query({
+          where: [['codigo', '==', codigoUnidade]],
+          join: ['gestor.usuario:cpf', 'unidadePai:codigo']
+        })
           .asPromise();
 
         if (unidades) {
