@@ -33,6 +33,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
   public integrantes: IntegranteConsolidado[] = [];
   public dialog: DialogService;
   public ultimoRelatorioCargaId?: string;
+  public override mensagemCarregando = "Carregando dados do formulário, aguarde...";
 
   public toolbarButtons: ToolbarButton[] = [
     {

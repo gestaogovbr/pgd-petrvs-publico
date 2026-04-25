@@ -40,6 +40,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
   public integrantes: IntegranteConsolidado[] = [];
   public dialog: DialogService;
   public ultimoRelatorioCargaId?: string;
+  public override mensagemCarregando = "Carregando dados do formulário, aguarde...";
 
   public toolbarButtons: ToolbarButton[] = [
     {
