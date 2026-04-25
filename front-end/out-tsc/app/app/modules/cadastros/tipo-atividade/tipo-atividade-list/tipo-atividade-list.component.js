@@ -1,0 +1,73 @@
+import { __decorate } from "tslib";
+import { Component, ViewChild } from '@angular/core';
+import { GridComponent } from 'src/app/components/grid/grid.component';
+import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
+import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
+import { PageListBase } from 'src/app/modules/base/page-list-base';
+let TipoAtividadeListComponent = class TipoAtividadeListComponent extends PageListBase {
+    constructor(injector) {
+        super(injector, TipoAtividade, TipoAtividadeDaoService);
+        this.injector = injector;
+        this.filterWhere = (filter) => {
+            let form = filter.value;
+            let result = [];
+            if (form.nome?.length)
+                result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+            return result;
+        };
+        /* Inicializações */
+        this.title = this.lex.translate("Tipos de Atividades");
+        this.code = "MOD_TIPO_ATV";
+        this.filter = this.fh.FormBuilder({
+            nome: { default: "" }
+        });
+        // Testa se o usuário possui permissão para exibir dados do tipo de atividade
+        if (this.auth.hasPermissionTo("MOD_TIPO_ATV")) {
+            this.options.push({
+                icon: "bi bi-info-circle",
+                label: "Informações",
+                onClick: this.consult.bind(this)
+            });
+        }
+        // Testa se o usuário possui permissão para excluir o tipo de atividade
+        if (this.auth.hasPermissionTo("MOD_ATV_EXCL")) {
+            this.options.push({
+                icon: "bi bi-trash",
+                label: "Excluir",
+                onClick: this.delete.bind(this)
+            });
+        }
+        this.addOption(this.OPTION_LOGS, "MOD_AUDIT_LOG");
+    }
+    filterClear(filter) {
+        filter.controls.nome.setValue("");
+        super.filterClear(filter);
+    }
+    getReportEtiquetas(row) {
+        let result = "";
+        row.etiquetas.forEach(element => {
+            result += element.value + ";\n";
+        });
+        return result;
+    }
+    getReportChecklist(row) {
+        let result = "";
+        row.checklist.forEach(element => {
+            result += element.value + ";\n";
+        });
+        return result;
+    }
+};
+__decorate([
+    ViewChild(GridComponent, { static: false })
+], TipoAtividadeListComponent.prototype, "grid", void 0);
+TipoAtividadeListComponent = __decorate([
+    Component({
+        selector: 'app-tipo-atividade-list',
+        templateUrl: './tipo-atividade-list.component.html',
+        styleUrls: ['./tipo-atividade-list.component.scss'],
+        standalone: false
+    })
+], TipoAtividadeListComponent);
+export { TipoAtividadeListComponent };
+//# sourceMappingURL=tipo-atividade-list.component.js.map
