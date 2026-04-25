@@ -65,8 +65,8 @@
         </div>
         <div class="linha" *ngFor="let campo of secao.campos; trackBy: campoTrack">
           <span>{{ campo.rotulo }}</span>
-          <span>{{ valor(campo.recebido_siape) }}</span>
-          <span>{{ valor(campo.registrado_petrvs) }}</span>
+          <span>{{ valorCampo(campo, 'recebido_siape') }}</span>
+          <span>{{ valorCampo(campo, 'registrado_petrvs') }}</span>
           <span>
             <strong [class]="statusClass(campo.status)">{{ statusLabel(campo.status) }}</strong>
           </span>

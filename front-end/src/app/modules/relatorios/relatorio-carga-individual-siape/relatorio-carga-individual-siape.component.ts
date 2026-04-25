@@ -255,6 +255,16 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
     }
   }
 
+  public valorCampo(campo: RelatorioCargaIndividualSiapeCampo, origem: 'recebido_siape' | 'registrado_petrvs'): string {
+    const valor = campo[origem];
+
+    if (campo.campo === 'dataUltimaTransacao') {
+      return this.formatarDataSiape(valor);
+    }
+
+    return this.valor(valor);
+  }
+
   public statusLabel(status: RelatorioCargaIndividualSiapeStatusCampo): string {
     const labels: Record<RelatorioCargaIndividualSiapeStatusCampo, string> = {
       confirmado: 'Confirmado',
@@ -397,8 +407,8 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
     const linhas = secao.campos.map((campo) => `
       <tr>
         <td>${this.escaparHtml(campo.rotulo)}</td>
-        <td>${this.escaparHtml(this.valor(campo.recebido_siape))}</td>
-        <td>${this.escaparHtml(this.valor(campo.registrado_petrvs))}</td>
+        <td>${this.escaparHtml(this.valorCampo(campo, 'recebido_siape'))}</td>
+        <td>${this.escaparHtml(this.valorCampo(campo, 'registrado_petrvs'))}</td>
         <td><span class="${this.statusCampoClass(campo.status)}">${this.escaparHtml(this.statusLabel(campo.status))}</span></td>
       </tr>
     `).join('');
@@ -583,6 +593,51 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
     }
 
     return String(valor);
+  }
+
+  private formatarDataSiape(valor: unknown): string {
+    if (valor === null || typeof valor === 'undefined') {
+      return 'Nao informado';
+    }
+
+    if (valor instanceof Date) {
+      return this.formatarPartesData(valor.getDate(), valor.getMonth() + 1, valor.getFullYear());
+    }
+
+    if (typeof valor !== 'string') {
+      return this.valor(valor);
+    }
+
+    const texto = valor.trim();
+    if (!texto) {
+      return 'Nao informado';
+    }
+
+    const dataBanco = /^(\d{4})-(\d{2})-(\d{2})(?:[ T]\d{2}:\d{2}:\d{2})?$/.exec(texto);
+    if (dataBanco) {
+      return this.formatarPartesData(Number(dataBanco[3]), Number(dataBanco[2]), Number(dataBanco[1]));
+    }
+
+    const dataSiape = /^(\d{2})(\d{2})(\d{4})$/.exec(texto);
+    if (dataSiape) {
+      return this.formatarPartesData(Number(dataSiape[1]), Number(dataSiape[2]), Number(dataSiape[3]));
+    }
+
+    return texto;
+  }
+
+  private formatarPartesData(dia: number, mes: number, ano: number): string {
+    const data = new Date(ano, mes - 1, dia);
+
+    if (data.getFullYear() !== ano || data.getMonth() !== mes - 1 || data.getDate() !== dia) {
+      return 'Nao informado';
+    }
+
+    return [
+      String(dia).padStart(2, '0'),
+      String(mes).padStart(2, '0'),
+      String(ano).padStart(4, '0'),
+    ].join('-');
   }
 
   private escaparHtml(valor: string): string {
