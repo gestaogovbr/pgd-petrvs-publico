@@ -278,27 +278,38 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
             { label: "Baixar log", color: "btn-outline-secondary", value: "log" },
             { label: "Ok", color: "btn-outline-secondary", value: true }
           ];
-      const dialogResult = await this.dialog.template(
+      const dialogResult = this.dialog.template(
         { title: titulo, modalWidth: 700 },
         this.resumoTpl,
         buttons,
         { resumo: resumo, relatorio: relatorio }
-      ).asPromise();
+      );
 
-      if (dialogResult?.button?.value === "log") {
-        dialogResult.dialog.close();
-        await this.downloadSiape();
-        return;
-      }
-      
-      if (dialogResult?.button?.value === "relatorio" && relatorioCargaId) {
-        dialogResult.dialog.close();
-        this.abrirRelatorioCarga(relatorioCargaId);
-        return;
-      }
+      while (true) {
+        const button = await Promise.race([
+          firstValueFrom(dialogResult.dialog.onButtonClick),
+          firstValueFrom(dialogResult.dialog.onClose).then(() => null),
+        ]);
 
-      if (dialogResult?.button?.label === "Ok" && dialogResult?.dialog) {
-        dialogResult.dialog.close();
+        if (button === null) {
+          return;
+        }
+
+        if (button?.value === "log") {
+          await this.downloadSiape();
+          continue;
+        }
+
+        if (button?.value === "relatorio" && relatorioCargaId) {
+          dialogResult.dialog.close();
+          this.abrirRelatorioCarga(relatorioCargaId);
+          return;
+        }
+
+        if (button?.label === "Ok") {
+          dialogResult.dialog.close();
+          return;
+        }
       }
     } else {
       let msg = '';

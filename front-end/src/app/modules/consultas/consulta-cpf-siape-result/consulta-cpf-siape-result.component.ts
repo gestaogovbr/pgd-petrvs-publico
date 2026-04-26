@@ -271,23 +271,33 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
             { label: "Baixar log", color: "btn-outline-secondary", value: "log" },
             { label: "Ok", color: "btn-outline-secondary", value: true }
           ];
-      const dialogResult = await this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, buttons, { resumo: resumo })
-      .asPromise();
+      const dialogResult = this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, buttons, { resumo: resumo });
 
-      if (dialogResult?.button?.value === "log") {
-          dialogResult.dialog.close();
-          await this.downloadSiape();
-          return;
-      }
-      
-      if (dialogResult?.button?.value === "relatorio" && relatorioCargaId) {
+      while (true) {
+        const button = await Promise.race([
+          firstValueFrom(dialogResult.dialog.onButtonClick),
+          firstValueFrom(dialogResult.dialog.onClose).then(() => null),
+        ]);
+
+        if (button === null) {
+            return;
+        }
+
+        if (button?.value === "log") {
+            await this.downloadSiape();
+            continue;
+        }
+
+        if (button?.value === "relatorio" && relatorioCargaId) {
           dialogResult.dialog.close();
           this.abrirRelatorioCarga(relatorioCargaId);
           return;
-      }
+        }
 
-      if (dialogResult?.button?.label === "Ok" && dialogResult?.dialog) {
+        if (button?.label === "Ok") {
           dialogResult.dialog.close();
+          return;
+        }
       }
     } else {
       // Fallback in case template is not loaded for some reason
