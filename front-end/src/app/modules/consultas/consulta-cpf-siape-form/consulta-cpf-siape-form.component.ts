@@ -1,5 +1,6 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector, ViewChild, ViewRef } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -74,52 +75,48 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
           this.integrantes = integrantesList.integrantes.filter(integrante => integrante.atribuicoes?.length > 0);
         }
 
-        this.dao!.consultarSIAPE(cpf)
-          .subscribe(
-            result => {
-              const status = Number(result?.status);
-              const hasResponseStatus = Number.isInteger(status);
-              const isSuccessStatus = !hasResponseStatus || [200, 201].includes(status);
+        const result = await firstValueFrom(this.dao!.consultarSIAPE(cpf));
+        const status = Number(result?.status);
+        const hasResponseStatus = Number.isInteger(status);
+        const isSuccessStatus = !hasResponseStatus || [200, 201].includes(status);
 
-              if (isSuccessStatus && result?.success) {
-                this.dadosPessoais = result.pessoais;
-                this.dadosFuncionais = result.funcionais;
+        if (isSuccessStatus && result?.success) {
+          this.dadosPessoais = result.pessoais;
+          this.dadosFuncionais = result.funcionais;
 
-                this.loading = false;
-
-                this.go.navigate(
-                  {
-                    route: ['consultas', 'cpf-siape-result']
-                  },
-                  {
-                    metadata: {
-                      cpf: this.form.get('cpf')?.value,
-                      usuario: this.usuario,
-                      dadosPessoais: result.pessoais,
-                      dadosFuncionais: result.funcionais,
-                      integrantes: this.integrantes
-                    }
-                  }
-                );
-                return;
-              }
-
-              this.loading = false;
-              this.error("Erro ao consultar CPF no SIAPE: " + this.getSiapeErrorMessage(result));
+          this.go.navigate(
+            {
+              route: ['consultas', 'cpf-siape-result']
             },
-            error => {
-              this.loading = false;
-              console.log(error);
-              this.error("Erro ao consultar CPF no SIAPE: " + this.getSiapeErrorMessage(error));
+            {
+              metadata: {
+                cpf: this.form.get('cpf')?.value,
+                usuario: this.usuario,
+                dadosPessoais: result.pessoais,
+                dadosFuncionais: result.funcionais,
+                integrantes: this.integrantes
+              }
             }
-        )
+          );
+          return;
+        }
+
+        this.error("Erro ao consultar CPF no SIAPE: " + this.getSiapeErrorMessage(result));
       } catch (error: any) {
-        this.loading = false;
         console.log(error);
-        this.erros = error;
+        this.error("Erro ao consultar CPF no SIAPE: " + this.getSiapeErrorMessage(error));
       } finally {
-        
+        this.loading = false;
+        this.detectChangesIfActive();
       }
+    }
+  }
+
+  private detectChangesIfActive(): void {
+    const viewRef = this.cdRef as ViewRef;
+
+    if (!viewRef.destroyed) {
+      this.cdRef.detectChanges();
     }
   }
 
