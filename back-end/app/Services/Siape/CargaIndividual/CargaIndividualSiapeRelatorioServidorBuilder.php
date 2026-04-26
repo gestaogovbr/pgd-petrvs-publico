@@ -7,7 +7,6 @@ namespace App\Services\Siape\CargaIndividual;
 use App\Models\Usuario;
 use App\Repository\UsuarioRepository;
 use App\Support\ModalidadePgd;
-use App\Support\SiapeDate;
 
 class CargaIndividualSiapeRelatorioServidorBuilder
 {
@@ -60,7 +59,10 @@ class CargaIndividualSiapeRelatorioServidorBuilder
         return [
             $this->comparator->comparar('nome', 'Nome', $dadosPessoais['nome'] ?? null, $usuario?->nome),
             $this->comparator->comparar('emailInstitucional', 'E-mail institucional', $funcional['emailInstitucional'] ?? null, $usuario?->email),
-            $this->comparator->comparar('dataUltimaTransacao', 'Ultima atualizacao no SIAPE', SiapeDate::dataUltimaTransacaoParaBanco($funcional['dataUltimaTransacao'] ?? null), $usuario?->data_modificacao, $usuario?->data_modificacao === null),
+            // TODO/FIXME: reexibir a ultima atualizacao do servidor quando houver fonte confiavel.
+            // O XML de consultaDadosFuncionais nao traz dataUltimaTransacao; integracao_servidores tambem
+            // nao e confiavel para este relatorio. A fonte correta futura deve partir do XML salvo em
+            // siape_listaServidores, mas isso exige um fluxo adicional com mais consultas externas ao SIAPE.
             $this->comparator->comparar('nomeJornada', 'Jornada', $funcional['nomeJornada'] ?? null, $usuario?->nome_jornada),
             $this->comparator->comparar('codJornada', 'Codigo da jornada', $funcional['codJornada'] ?? null, $usuario?->cod_jornada),
             $this->comparator->comparar('matriculaSiape', 'Matricula SIAPE', $funcional['matriculaSiape'] ?? null, $usuario?->matricula),

@@ -210,7 +210,6 @@ test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorr
         'cod_jornada' => 40,
         'modalidade_pgd' => 'presencial',
         'participa_pgd' => 'sim',
-        'data_modificacao' => '2026-04-22 00:00:00',
     ]);
 
     $relatorio = app(CargaIndividualSiapeSubject::class)->notificar(new CargaIndividualSiapeProcessamentoDTO(
@@ -225,7 +224,6 @@ test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorr
             ],
             'dadosFuncionais' => [[
                 'emailInstitucional' => 'maria.silva@orgao.gov.br',
-                'dataUltimaTransacao' => '22042026',
                 'nomeJornada' => '40 horas semanais',
                 'codJornada' => '40',
                 'matriculaSiape' => '777888',
@@ -247,10 +245,10 @@ test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorr
     expect($payload)->toContain('nome');
     expect($payload)->toContain('emailInstitucional');
     expect($payload)->toContain('matriculaSiape');
-    expect($payload)->toContain('2026-04-22 00:00:00');
     expect($payload)->toContain('EXERCICIO_7_ART93_8112 (44)');
+    expect($payload)->not->toContain('dataUltimaTransacao');
+    expect($payload)->not->toContain('Ultima atualizacao no SIAPE');
     expect($payload)->not->toContain('codSitFuncional');
-    expect($payload)->not->toContain('22042026');
     expect($payload)->not->toContain('dataOcorrExclusao');
 
     $campoSituacao = collect($relatorio->secoes[0]['campos'])->firstWhere('campo', 'nomeSitFuncional');
