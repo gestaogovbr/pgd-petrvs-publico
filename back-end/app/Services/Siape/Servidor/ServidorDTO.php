@@ -9,7 +9,7 @@ class ServidorDTO
     public ?string $data_modificacao;
     public string $cpf;
     public string $nome;
-    public string $emailfuncional;
+    public ?string $emailfuncional;
     public ?string $sexo;
     public ?string $municipio;
     public ?string $uf;

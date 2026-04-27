@@ -105,7 +105,7 @@ class Usuario extends Authenticatable implements AuditableContract
     protected $appends = ['pedagio'];
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
-        'email', /* varchar(100); NOT NULL; */ // E-mail do usuário
+        'email', /* varchar(100); NULL; */ // E-mail do usuário
         'email_verified_at', /* timestamp; */ // Data de verificação do e-mail do usuário
         'cpf', /* varchar(11); NOT NULL; */ // CPF do usuário
         'matricula', /* varchar(50); */ // Matrícula funcional do usuário

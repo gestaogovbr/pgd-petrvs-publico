@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 interface UsuarioReadRepositoryContract
 {
     public function findById(string|int $id, bool $deleteTrashed = false): ?Usuario;
-    public function findByCpfOrEmail(string $cpf, string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario;
+    public function findByCpfOrEmail(string $cpf, ?string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario;
     public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool;
     public function isIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): bool;
     public function getAtribuicoes(string $usuarioId, string $unidadeId): array;

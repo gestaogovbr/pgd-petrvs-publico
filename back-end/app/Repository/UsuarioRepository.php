@@ -23,7 +23,7 @@ class UsuarioRepository
         return $this->readRepository->findById($id, $deleteTrashed);
     }
 
-    public function findByCpfOrEmail(string $cpf, string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario
+    public function findByCpfOrEmail(string $cpf, ?string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario
     {
         return $this->readRepository->findByCpfOrEmail($cpf, $email, $exceptId, $withTrashed);
     }
