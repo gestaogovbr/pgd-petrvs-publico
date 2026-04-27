@@ -3,6 +3,7 @@
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAssinarValidator;
 use App\Repository\DocumentoRepository;
 use App\Repository\DocumentoAssinaturaRepository;
+use App\Repository\UnidadeRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\Documento;
 use App\Enums\StatusEnum;
@@ -16,7 +17,8 @@ uses(TestCase::class);
 beforeEach(function () {
     $this->documentoRepo = Mockery::mock(DocumentoRepository::class);
     $this->assinaturaRepo = Mockery::mock(DocumentoAssinaturaRepository::class);
-    $this->validator = new PlanoTrabalhoDocumentoAssinarValidator($this->documentoRepo, $this->assinaturaRepo);
+    $this->unidadeRepo = Mockery::mock(UnidadeRepository::class);
+    $this->validator = new PlanoTrabalhoDocumentoAssinarValidator($this->documentoRepo, $this->assinaturaRepo, $this->unidadeRepo);
 });
 
 afterEach(function () {
@@ -31,6 +33,8 @@ function fakePlanoAssinar(string $status): PlanoTrabalho
     /** @var PlanoTrabalho $plano */
     $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
     $plano->id = 'plano-1';
+    $plano->usuario_id = 'user-1';
+    $plano->unidade_id = 'unidade-1';
     $plano->status = $status;
     $plano->shouldReceive('entregas')->andReturn($relation);
     return $plano;

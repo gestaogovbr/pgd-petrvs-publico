@@ -755,7 +755,7 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (substituto m
         ]);
     });
 
-    test('chefia assina próprio TCR e substituto da mesma unidade NÃO completa assinatura → permanece AGUARDANDO_ASSINATURA', function () {
+    test('chefia assina próprio TCR e substituto da mesma unidade é bloqueado ao tentar assinar → 403', function () {
         // Chefia (participante) assina como participante
         $this->actingAs($this->usuario, 'web');
         postDocumento($this);
@@ -764,15 +764,19 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (substituto m
         $this->plano->refresh();
         expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
 
-        // Substituto da MESMA unidade tenta assinar como gestor hierárquico
+        // Substituto da MESMA unidade tenta assinar → bloqueado antes de criar assinatura
         $this->actingAs($this->substitutoMesmaUnidade, 'web');
-        postAssinar($this)->assertStatus(201);
+        postAssinar($this)->assertStatus(403);
 
-        // O plano NÃO deve ir para ATIVO, pois o substituto da mesma unidade
-        // não é chefia hierárquica superior ao participante que já é gestor dessa unidade.
-        // A assinatura de gestor deve vir de uma unidade SUPERIOR na hierarquia.
         $this->plano->refresh();
         expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+
+        $this->assertDatabaseHas('documentos_assinaturas', [
+            'usuario_id' => $this->usuario->id,
+        ]);
+        $this->assertDatabaseMissing('documentos_assinaturas', [
+            'usuario_id' => $this->substitutoMesmaUnidade->id,
+        ]);
     });
 });
 
