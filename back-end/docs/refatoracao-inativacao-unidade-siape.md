@@ -31,18 +31,18 @@ O risco principal e inativar uma unidade erroneamente. Hoje a inativacao final r
 
 ### Novo service de ciclo de vida
 
-- [ ] Criar `App\Services\Siape\Unidade\SiapeUnidadeLifecycleService`.
-- [ ] Centralizar no service:
-  - [ ] cruzamento entre unidades locais e `listaUorgs`;
-  - [ ] criacao/restauracao/manutencao de blacklist;
-  - [ ] cancelamento de pendencia quando a unidade reaparece;
-  - [ ] inicio de `data_inicio_inativacao`;
-  - [ ] confirmacao final por `dadosUorg`;
-  - [ ] efetivacao de `data_inativacao`;
-  - [ ] remocao de atribuicoes/lotacoes;
-  - [ ] logs `SiapeLog`.
-- [ ] Preservar `created_at` de blacklist ja ativa para nao reiniciar indevidamente a contagem.
-- [ ] Ao restaurar blacklist soft-deleted, reiniciar a contagem com novo `created_at`, pois e uma nova evidencia de ausencia.
+- [x] Criar `App\Services\Siape\Unidade\SiapeUnidadeLifecycleService`.
+- [x] Centralizar no service:
+  - [x] cruzamento entre unidades locais e `listaUorgs`;
+  - [x] criacao/restauracao/manutencao de blacklist;
+  - [x] cancelamento de pendencia quando a unidade reaparece;
+  - [x] inicio de `data_inicio_inativacao`;
+  - [x] confirmacao final por `dadosUorg`;
+  - [x] efetivacao de `data_inativacao`;
+  - [x] remocao de atribuicoes/lotacoes;
+  - [x] logs `SiapeLog`.
+- [x] Preservar `created_at` de blacklist ja ativa para nao reiniciar indevidamente a contagem.
+- [x] Ao restaurar blacklist soft-deleted, reiniciar a contagem com novo `created_at`, pois e uma nova evidencia de ausencia.
 
 ### Criacao e cancelamento de blacklist
 
@@ -108,18 +108,18 @@ O risco principal e inativar uma unidade erroneamente. Hoje a inativacao final r
 
 Criar testes em `tests/IntegrationTenant`, pois o fluxo altera dados tenant e remove atribuicoes.
 
-- [ ] Unidade ausente em `listaUorgs` cria blacklist.
-- [ ] Unidade ausente com blacklist ja existente preserva `created_at`.
-- [ ] Unidade que reaparece em `listaUorgs` remove blacklist e limpa `data_inicio_inativacao`.
-- [ ] Unidade ja inativada nao ganha nova blacklist apenas por ausencia em `listaUorgs`.
-- [ ] Blacklist vencida inicia `data_inicio_inativacao`.
-- [ ] Blacklist nao vencida nao inicia inativacao.
-- [ ] Segundo prazo vencido com `dadosUorg` negativo preenche `data_inativacao`.
-- [ ] Segundo prazo vencido com `dadosUorg` negativo remove atribuicoes, inclusive `LOTADO`.
-- [ ] Segundo prazo vencido com `dadosUorg` positivo nao inativa e preserva atribuicoes.
-- [ ] Falha/retorno ambiguo de `dadosUorg` nao inativa.
-- [ ] Erro ao remover atribuicoes faz rollback e preserva `data_inativacao = null`.
-- [ ] Remocao de blacklist limpa pendencia sem reativar unidade ja inativada.
+- [x] Unidade ausente em `listaUorgs` cria blacklist.
+- [x] Unidade ausente com blacklist ja existente preserva `created_at`.
+- [x] Unidade que reaparece em `listaUorgs` remove blacklist e limpa `data_inicio_inativacao`.
+- [x] Unidade ja inativada nao ganha nova blacklist apenas por ausencia em `listaUorgs`.
+- [x] Blacklist vencida inicia `data_inicio_inativacao`.
+- [x] Blacklist nao vencida nao inicia inativacao.
+- [x] Segundo prazo vencido com `dadosUorg` negativo preenche `data_inativacao`.
+- [x] Segundo prazo vencido com `dadosUorg` negativo remove atribuicoes, inclusive `LOTADO`.
+- [x] Segundo prazo vencido com `dadosUorg` positivo nao inativa e preserva atribuicoes.
+- [x] Falha/retorno ambiguo de `dadosUorg` nao inativa.
+- [x] Erro ao remover atribuicoes faz rollback e preserva `data_inativacao = null`.
+- [x] Remocao de blacklist limpa pendencia sem reativar unidade ja inativada.
 - [ ] Reativacao manual limpa `data_inicio_inativacao` para nao ser revertida pelo job.
 - [ ] `InativacaoUsuariosSiape` aparece no agendamento fixo sem mudar a regra de usuario.
 
