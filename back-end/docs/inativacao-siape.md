@@ -67,6 +67,22 @@ A blacklist de unidades e criada quando a consulta da UORG retorna fault catalog
 
 Durante a busca em lote, `BuscarDadosSiapeUnidade` ignora unidades que ja estao na blacklist.
 
+## Descoberta para refatoracao de unidades
+
+Foi identificado que a consulta SIAPE `listaUorgs` retorna apenas UORGs ativas. Com isso, uma unidade local com `codigo` preenchido que nao aparece em `listaUorgs` pode ser tratada como candidata ao fluxo de blacklist/inativacao. Essa ausencia, porem, nao deve ser usada sozinha para efetivar `data_inativacao`, porque a integracao SIAPE e instavel e a inativacao final remove atribuicoes/lotacoes dos servidores vinculados.
+
+Diretriz planejada para a refatoracao:
+
+1. `listaUorgs` sera a evidencia primaria de unidades ativas.
+2. Unidades locais ativas ou em processo de inativacao que nao aparecerem em `listaUorgs` devem entrar ou permanecer em `siape_blacklist_unidades`.
+3. Unidades que reaparecerem em `listaUorgs` devem ter a pendencia cancelada, com limpeza de `data_inicio_inativacao`.
+4. O prazo padrao de unidade passa a ser configurado por `SIAPE_INATIVACAO_UNIDADE_PRAZO_DIAS`, com default de 7 dias.
+5. A inativacao final so deve ocorrer apos o prazo em blacklist, o prazo em `data_inicio_inativacao` e confirmacao negativa por `dadosUorg`.
+6. A confirmacao negativa por `dadosUorg` deve aceitar apenas ausencia inequivoca, como fault `0002` com mensagem "Nao existem dados para consulta" ou ausencia clara de `<dadosUorgResponse><out>` em SOAP valido.
+7. Falha de rede, erro de token, XML invalido, resposta vazia, SOAP fault diferente ou resposta com `<out>` contendo dados da unidade devem impedir a inativacao final.
+
+O plano detalhado dessa refatoracao esta em `back-end/docs/refatoracao-inativacao-unidade-siape.md`.
+
 ## Fluxo automatico de inativacao de usuarios SIAPE
 
 Entrada principal:

@@ -30,6 +30,7 @@ return [
         'conectagov_qtd_max_requisicoes' => (int) env('INTEGRACAO_SIAPE_CONECTAGOV_QTD_MAX_REQUISICOES', 10),
         'codOrgao' => env('INTEGRACAO_SIAPE_CODORGAO', ""),
         'codUorg' => env('INTEGRACAO_SIAPE_CODUORG', ""),
+        'inativacao_unidade_prazo_dias' => (int) env('SIAPE_INATIVACAO_UNIDADE_PRAZO_DIAS', 7),
         'parmExistPag' => env('INTEGRACAO_SIAPE_PARMEXISTPAG', ""),
         'parmTipoVinculo' => env('INTEGRACAO_SIAPE_PARMTIPOVINCULO', "")
     ],
