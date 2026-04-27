@@ -717,6 +717,65 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (chefia imedi
     });
 });
 
+// ── POST assinatura-tcr: substituto da mesma unidade NÃO pode assinar como gestor hierárquico ──
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (substituto mesma unidade)', function () {
+
+    beforeEach(function () {
+        $this->programa->plano_trabalho_assinatura_participante = 1;
+        $this->programa->plano_trabalho_assinatura_gestor_unidade = 1;
+        $this->programa->save();
+
+        $perfil = Perfil::factory()->create(['nivel' => 3]);
+
+        // participante (dono do PT) é gestor titular da sua unidade
+        $integrante = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->usuario->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrante->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+
+        // unidade pai existe
+        $this->unidadePai = Unidade::factory()->create();
+        $this->unidade->unidade_pai_id = $this->unidadePai->id;
+        $this->unidade->save();
+
+        // substituto é GESTOR_SUBSTITUTO da MESMA unidade (não da unidade pai)
+        $this->substitutoMesmaUnidade = Usuario::factory()->create(['perfil_id' => $perfil->id]);
+        $integranteSub = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->substitutoMesmaUnidade->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integranteSub->id,
+            'atribuicao' => 'GESTOR_SUBSTITUTO',
+        ]);
+    });
+
+    test('chefia assina próprio TCR e substituto da mesma unidade NÃO completa assinatura → permanece AGUARDANDO_ASSINATURA', function () {
+        // Chefia (participante) assina como participante
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+
+        // Substituto da MESMA unidade tenta assinar como gestor hierárquico
+        $this->actingAs($this->substitutoMesmaUnidade, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        // O plano NÃO deve ir para ATIVO, pois o substituto da mesma unidade
+        // não é chefia hierárquica superior ao participante que já é gestor dessa unidade.
+        // A assinatura de gestor deve vir de uma unidade SUPERIOR na hierarquia.
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+    });
+});
+
 // ── POST assinatura-tcr: impede assinaturas excedentes ──────────────
 
 describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (assinaturas excedentes)', function () {

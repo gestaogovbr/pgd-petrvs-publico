@@ -37,7 +37,15 @@ class TCRAssinaturaPolicy
     private function gestorHierarquicoAssinou(string $documentoId, PlanoTrabalho $plano): bool
     {
         $unidadePt = $this->unidadeRepository->findById($plano->unidade_id);
-        $unidade = $unidadePt;
+        $isParticipanteGestorDaUnidade = $this->assinaturaRepository->gestorUnidadeAssinou($documentoId, $unidadePt->id);
+
+        if ($isParticipanteGestorDaUnidade && $unidadePt->unidade_pai_id === null) {
+            return true;
+        }
+
+        $unidade = ($isParticipanteGestorDaUnidade && $unidadePt->unidade_pai_id)
+            ? $this->unidadeRepository->findById($unidadePt->unidade_pai_id)
+            : $unidadePt;
 
         while ($unidade !== null) {
             if ($this->assinaturaRepository->gestorDiferenteDoParticipanteAssinou($documentoId, $unidade->id, $plano->usuario_id)) {
@@ -52,9 +60,6 @@ class TCRAssinaturaPolicy
             break;
         }
 
-        $semSuperior = $unidadePt->unidade_pai_id === null;
-        $participanteEhGestor = $this->assinaturaRepository->gestorUnidadeAssinou($documentoId, $unidadePt->id);
-
-        return $semSuperior && $participanteEhGestor;
+        return false;
     }
 }
