@@ -1480,15 +1480,7 @@ class PlanoTrabalhoService extends ServiceBase
 
     public function hasUsuarioPendencias(string $usuarioId, $planoTrabalhoId, $dataAssinatura): bool
     {
-        $diasPendenciaDataFinalPlano = 30;
-        $dataLimite = $dataAssinatura->copy()->subDays($diasPendenciaDataFinalPlano)->format('Y-m-d');
-
-        $planosPendentes = $this->planoTrabalhoRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
-
-        if ($planosPendentes->count() > 0) {
-            return true;
-        }
-
+        //Remoção do bloqueio por pendencia
         return false;
     }
 
