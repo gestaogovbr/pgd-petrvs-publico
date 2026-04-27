@@ -89,24 +89,24 @@ O risco principal e inativar uma unidade erroneamente. Hoje a inativacao final r
 
 ### Reativacao e remocao de blacklist
 
-- [ ] Atualizar `SiapeBlacklistUnidadeService::remover()` para cancelar a pendencia:
+- [x] Atualizar `SiapeBlacklistUnidadeService::remover()` para cancelar a pendencia:
   - remover blacklist;
   - limpar `data_inicio_inativacao`;
   - nao limpar `data_inativacao` de unidade ja finalizada.
-- [ ] Atualizar `UnidadeService::inativar($id, false)` para reativacao manual definitiva:
+- [x] Atualizar `UnidadeService::inativar($id, false)` para reativacao manual definitiva:
   - limpar `data_inativacao`;
   - limpar `data_inicio_inativacao`;
   - limpar `data_ativacao_temporaria`;
   - limpar `justificativa_ativacao_temporaria`.
-- [ ] Manter `UnidadeService::ativarTemporariamente()` como liberacao temporaria:
+- [x] Manter `UnidadeService::ativarTemporariamente()` como liberacao temporaria:
   - `data_inativacao = null`;
   - `data_inicio_inativacao = now()`;
   - expiracao pelo prazo configurado de 7 dias.
 
 ### Agendamento de usuario
 
-- [ ] Agendar `InativacaoUsuariosSiape` no `Console\Kernel` para todos os tenants.
-- [ ] Nao alterar regra de usuario nesta etapa, exceto o agendamento fixo.
+- [x] Agendar `InativacaoUsuariosSiape` no `Console\Kernel` para todos os tenants.
+- [x] Nao alterar regra de usuario nesta etapa, exceto o agendamento fixo.
 
 ## Checklist de testes
 
@@ -129,8 +129,9 @@ Criar testes em `tests/IntegrationTenant`, pois o fluxo altera dados tenant e re
 - [x] `UnidadeService::processarUnidadesTemporarias()` efetiva inativacao via lifecycle.
 - [x] Erro ao remover atribuicoes faz rollback e preserva `data_inativacao = null`.
 - [x] Remocao de blacklist limpa pendencia sem reativar unidade ja inativada.
-- [ ] Reativacao manual limpa `data_inicio_inativacao` para nao ser revertida pelo job.
-- [ ] `InativacaoUsuariosSiape` aparece no agendamento fixo sem mudar a regra de usuario.
+- [x] `SiapeBlacklistUnidadeService::remover()` limpa pendencia sem reativar unidade ja inativada.
+- [x] Reativacao manual limpa `data_inicio_inativacao` para nao ser revertida pelo job.
+- [x] `InativacaoUsuariosSiape` aparece no agendamento fixo sem mudar a regra de usuario.
 
 ## Criterios de seguranca
 

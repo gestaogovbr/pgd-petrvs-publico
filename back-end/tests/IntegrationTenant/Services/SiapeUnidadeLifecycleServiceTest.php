@@ -35,11 +35,13 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
+use App\Services\SiapeBlacklistUnidadeService;
 use App\Services\IntegracaoUnidadeService;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 use App\Services\UnidadeService;
 use Carbon\Carbon;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Str;
 
 afterEach(function () {
@@ -63,6 +65,8 @@ beforeEach(function () {
         '112',
         '113',
         '114',
+        '115',
+        '116',
         '200',
         '300',
         '999',
@@ -431,14 +435,14 @@ describe('SiapeUnidadeLifecycleService', function () {
         Carbon::setTestNow(Carbon::parse('2026-04-20 10:00:00'));
 
         $unidade = Unidade::factory()->create([
-            'codigo' => '107',
+            'codigo' => '115',
             'data_inicio_inativacao' => now()->subDays(8),
             'data_inativacao' => now()->subDay(),
             'data_ativacao_temporaria' => now()->subDay(),
             'justificativa_ativacao_temporaria' => 'liberacao operacional',
         ]);
 
-        $this->markTestSkipped('Reativacao manual sera implementada na etapa Reativacao e remocao de blacklist.');
+        app(UnidadeService::class)->inativar($unidade->id, false);
 
         $unidade->refresh();
 
@@ -446,7 +450,7 @@ describe('SiapeUnidadeLifecycleService', function () {
             ->and($unidade->data_inativacao)->toBeNull()
             ->and($unidade->data_ativacao_temporaria)->toBeNull()
             ->and($unidade->justificativa_ativacao_temporaria)->toBeNull();
-});
+    });
 
     test('erro na remocao de atribuicoes faz rollback da inativacao final', function () {
         Carbon::setTestNow(Carbon::parse('2026-04-20 10:00:00'));
@@ -598,5 +602,50 @@ describe('SiapeUnidadeLifecycleService', function () {
 
         expectDataHoraString($unidade->data_inativacao, '2026-04-20 10:00:00');
         expect(UnidadeIntegranteAtribuicao::where('unidade_integrante_id', $integrante->id)->count())->toBe(0);
+    });
+
+    test('SiapeBlacklistUnidadeService remover cancela pendencia sem reativar unidade finalizada', function () {
+        Carbon::setTestNow(Carbon::parse('2026-04-20 10:00:00'));
+
+        $unidade = Unidade::factory()->create([
+            'codigo' => '116',
+            'data_inicio_inativacao' => now()->subDays(8),
+            'data_inativacao' => now()->subDay(),
+        ]);
+        SiapeBlacklistUnidade::create([
+            'id' => (string) Str::uuid(),
+            'codigo' => '116',
+            'response' => 'ausente da listaUorgs',
+            'inativado' => 1,
+        ]);
+
+        $resultado = app(SiapeBlacklistUnidadeService::class)->remover('116');
+
+        $unidade->refresh();
+
+        expect($resultado['success'])->toBeTrue()
+            ->and($resultado['count'])->toBe(1);
+        expect(SiapeBlacklistUnidade::where('codigo', '116')->exists())->toBeFalse();
+        expect($unidade->data_inicio_inativacao)->toBeNull()
+            ->and($unidade->data_inativacao)->not->toBeNull();
+    });
+
+    test('Kernel agenda InativacaoUsuariosSiape para todos os tenants', function () {
+        $schedule = new Schedule();
+        $kernel = app(\App\Console\Kernel::class);
+        $method = new ReflectionMethod($kernel, 'schedule');
+        $method->setAccessible(true);
+
+        try {
+            $method->invoke($kernel, $schedule);
+        } catch (\Throwable) {
+            // A suite tenant nao possui todas as tabelas centrais consultadas
+            // pelo Kernel; para este teste basta inspecionar os eventos ja registrados.
+        }
+
+        $event = collect($schedule->events())
+            ->first(fn ($event): bool => ($event->description ?? null) === 'Inativação Usuários SIAPE');
+
+        expect($event)->not->toBeNull();
     });
 });

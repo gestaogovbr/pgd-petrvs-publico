@@ -159,6 +159,11 @@ class UnidadeService extends ServiceBase
             $unidade = Unidade::find($id);
             if (empty($unidade)) throw new NotFoundException("Unidade não encontrada");
             $unidade->data_inativacao = $inativo ? date("Y-m-d H:i:s") : null;
+            if (!$inativo) {
+                $unidade->data_inicio_inativacao = null;
+                $unidade->data_ativacao_temporaria = null;
+                $unidade->justificativa_ativacao_temporaria = null;
+            }
             $unidade->save();
             DB::commit();
         } catch (Throwable $e) {

@@ -43,6 +43,14 @@ class Kernel extends ConsoleKernel
                 \App\Jobs\InativacaoUsuariosTemporarios::dispatch($tenant->id);
             }
         })->dailyAt('03:00')->name('Inativação Usuários Temporários');
+
+        $schedule->call(function () {
+            $tenants = \App\Models\Tenant::all();
+            foreach ($tenants as $tenant) {
+                /** @var \App\Models\Tenant $tenant */
+                \App\Jobs\InativacaoUsuariosSiape::dispatch($tenant->id);
+            }
+        })->dailyAt('00:05')->name('Inativação Usuários SIAPE');
         
         $schedule->call(function () {
             $tenants = \App\Models\Tenant::all();
