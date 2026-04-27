@@ -30,16 +30,60 @@
 */
 
 use App\Models\SiapeBlacklistUnidade;
+use App\Models\SiapeListaUORGS;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
+use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 afterEach(function () {
     Carbon::setTestNow();
+});
+
+beforeEach(function () {
+    $codigos = [
+        '100',
+        '101',
+        '102',
+        '103',
+        '104',
+        '105',
+        '106',
+        '107',
+        '108',
+        '109',
+        '110',
+        '111',
+        '112',
+        '200',
+        '300',
+        '999',
+    ];
+
+    $unidadeIds = Unidade::withTrashed()
+        ->whereIn('codigo', $codigos)
+        ->pluck('id');
+    $integranteIds = UnidadeIntegrante::withTrashed()
+        ->whereIn('unidade_id', $unidadeIds->all())
+        ->pluck('id');
+
+    UnidadeIntegranteAtribuicao::withTrashed()
+        ->whereIn('unidade_integrante_id', $integranteIds->all())
+        ->forceDelete();
+    UnidadeIntegrante::withTrashed()
+        ->whereIn('id', $integranteIds->all())
+        ->forceDelete();
+    Unidade::withTrashed()
+        ->whereIn('id', $unidadeIds->all())
+        ->forceDelete();
+    SiapeBlacklistUnidade::withTrashed()
+        ->whereIn('codigo', $codigos)
+        ->forceDelete();
+    SiapeListaUORGS::withTrashed()->forceDelete();
 });
 
 function criarVinculoUnidadeComAtribuicoes(Unidade $unidade, array $atribuicoes = ['LOTADO', 'GESTOR']): UnidadeIntegrante
@@ -381,5 +425,86 @@ describe('SiapeUnidadeLifecycleService', function () {
 
         expect(fn () => $service->efetivarInativacoesPendentes())->toThrow(RuntimeException::class);
         expect($unidade->fresh()->data_inativacao)->toBeNull();
+    });
+
+    test('processamento da listaUorgs sincroniza blacklist antes de buscar dados das unidades ativas', function () {
+        Carbon::setTestNow(Carbon::parse('2026-04-20 10:00:00'));
+
+        Unidade::factory()->create(['codigo' => '100']);
+        $unidadeReativadaNoSiape = Unidade::factory()->create([
+            'codigo' => '200',
+            'data_inicio_inativacao' => now()->subDays(8),
+        ]);
+        Unidade::factory()->create([
+            'codigo' => '300',
+            'data_inativacao' => now()->subDay(),
+        ]);
+
+        SiapeBlacklistUnidade::create([
+            'id' => (string) Str::uuid(),
+            'codigo' => '200',
+            'response' => 'ausente em carga anterior',
+            'inativado' => 1,
+            'created_at' => now()->subDays(10),
+            'updated_at' => now()->subDays(10),
+        ]);
+
+        $listaUorgs = SiapeListaUORGS::create([
+            'response' => <<<XML
+            <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <soap:Body>
+                    <ns1:listaUorgsResponse xmlns:ns1="http://servico.wssiapenet">
+                        <out xmlns="">
+                            <ns2:Uorg xmlns:ns2="http://entidade.wssiapenet">
+                                <codigo xmlns="http://entidade.wssiapenet">200</codigo>
+                                <dataUltimaTransacao xmlns="http://entidade.wssiapenet">05062025</dataUltimaTransacao>
+                                <nome xmlns="http://entidade.wssiapenet">UNIDADE REATIVADA</nome>
+                            </ns2:Uorg>
+                            <ns2:Uorg xmlns:ns2="http://entidade.wssiapenet">
+                                <codigo xmlns="http://entidade.wssiapenet">999</codigo>
+                                <dataUltimaTransacao xmlns="http://entidade.wssiapenet">05062025</dataUltimaTransacao>
+                                <nome xmlns="http://entidade.wssiapenet">UNIDADE NOVA</nome>
+                            </ns2:Uorg>
+                        </out>
+                    </ns1:listaUorgsResponse>
+                </soap:Body>
+            </soap:Envelope>
+            XML,
+            'processado' => 0,
+        ]);
+
+        $buscarDadosUnidade = new class([
+            'cpf' => '00000000000',
+            'url' => 'http://localhost',
+            'conectagov_chave' => 'chave',
+            'conectagov_senha' => 'senha',
+            'conectagov_qtd_max_requisicoes' => 10,
+            'codOrgao' => '1',
+            'siglaSistema' => 'SIGLA',
+            'nomeSistema' => 'NOME',
+            'senha' => 'SENHA',
+        ]) extends BuscarDadosSiapeUnidade {
+            /** @var array<string, string> */
+            public array $xmlUnidadesBuscadas = [];
+
+            public function buscarUnidades(array $xmlUnidades): bool
+            {
+                $this->xmlUnidadesBuscadas = $xmlUnidades;
+
+                return true;
+            }
+        };
+
+        $buscarDadosUnidade->enviar();
+
+        expect($buscarDadosUnidade->xmlUnidadesBuscadas)->toHaveKeys([
+            '200.05062025',
+            '999.05062025',
+        ]);
+        expect(SiapeBlacklistUnidade::where('codigo', '100')->exists())->toBeTrue();
+        expect(SiapeBlacklistUnidade::where('codigo', '200')->exists())->toBeFalse();
+        expect(SiapeBlacklistUnidade::where('codigo', '300')->exists())->toBeFalse();
+        expect($unidadeReativadaNoSiape->fresh()->data_inicio_inativacao)->toBeNull();
+        expect($listaUorgs->fresh()->processado)->toBe(1);
     });
 });

@@ -3,9 +3,9 @@
 namespace App\Services\Siape\BuscarDados;
 
 use App\Models\IntegracaoUnidade;
-use App\Models\SiapeBlacklistUnidade;
 use App\Models\SiapeDadosUORG;
 use App\Models\SiapeListaUORGS;
+use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 use App\Support\SiapeDate;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -120,9 +120,6 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 
         $this->limpaTabela();
         
-        $unidadesJaProcessadas = IntegracaoUnidade::all();
-        $blacklistUnidades = SiapeBlacklistUnidade::all();
-
         $uorgs = SiapeListaUORGS::where('processado', 0)
                 ->orderBy('updated_at', 'desc')
                 ->first();
@@ -134,13 +131,14 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
             return;
         }
 
-        $unidades = array_filter($unidades, function ($unidade) use ($unidadesJaProcessadas, $blacklistUnidades) 
+        /** @var SiapeUnidadeLifecycleService $lifecycleService */
+        $lifecycleService = app(SiapeUnidadeLifecycleService::class);
+        $lifecycleService->sincronizarBlacklistPelaListaUorgs($unidades);
+
+        $unidadesJaProcessadas = IntegracaoUnidade::all();
+
+        $unidades = array_filter($unidades, function ($unidade) use ($unidadesJaProcessadas) 
         {
-             $estaNaBlackList =  $blacklistUnidades->firstWhere('codigo', $unidade['codigo']);
-            if ($estaNaBlackList) {
-                Log::alert("está na black list deverá ser ignorado: ".$unidade['codigo']);
-                return false;
-            }
            $unidadeProcessada =  $unidadesJaProcessadas->firstWhere('codigo_siape', $unidade['codigo']);
 
            if(!$unidadeProcessada){

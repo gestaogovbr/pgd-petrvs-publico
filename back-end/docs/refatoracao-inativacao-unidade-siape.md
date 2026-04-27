@@ -46,12 +46,13 @@ O risco principal e inativar uma unidade erroneamente. Hoje a inativacao final r
 
 ### Criacao e cancelamento de blacklist
 
-- [ ] No processamento de `listaUorgs`, normalizar codigos para comparacao.
-- [ ] Ignorar unidades locais sem `codigo`.
-- [ ] Ignorar unidades locais ja finalizadas com `data_inativacao` preenchida ao criar novas blacklists.
-- [ ] Para unidade local ativa/pending ausente de `listaUorgs`, criar ou manter blacklist com `inativado = 0`.
-- [ ] Para unidade que voltou em `listaUorgs`, remover/cancelar blacklist ativa e limpar `data_inicio_inativacao`.
-- [ ] Nao limpar `data_inativacao` apenas por remocao de blacklist; reativacao final deve ser confirmada pelo SIAPE ou feita manualmente.
+- [x] No processamento de `listaUorgs`, normalizar codigos para comparacao.
+- [x] Ignorar unidades locais sem `codigo`.
+- [x] Ignorar unidades locais ja finalizadas com `data_inativacao` preenchida ao criar novas blacklists.
+- [x] Para unidade local ativa/pending ausente de `listaUorgs`, criar ou manter blacklist com `inativado = 0`.
+- [x] Para unidade que voltou em `listaUorgs`, remover/cancelar blacklist ativa e limpar `data_inicio_inativacao`.
+- [x] Nao limpar `data_inativacao` apenas por remocao de blacklist; reativacao final deve ser confirmada pelo SIAPE ou feita manualmente.
+- [x] Integrar a sincronizacao ao `BuscarDadosSiapeUnidade::enviar()` antes da busca de `dadosUorg`, para que unidade presente na lista atual nao seja ignorada por blacklist antiga.
 
 ### Inicio da inativacao
 
@@ -112,6 +113,7 @@ Criar testes em `tests/IntegrationTenant`, pois o fluxo altera dados tenant e re
 - [x] Unidade ausente com blacklist ja existente preserva `created_at`.
 - [x] Unidade que reaparece em `listaUorgs` remove blacklist e limpa `data_inicio_inativacao`.
 - [x] Unidade ja inativada nao ganha nova blacklist apenas por ausencia em `listaUorgs`.
+- [x] Processamento real de `listaUorgs` sincroniza blacklist antes de buscar `dadosUorg` das unidades ativas.
 - [x] Blacklist vencida inicia `data_inicio_inativacao`.
 - [x] Blacklist nao vencida nao inicia inativacao.
 - [x] Segundo prazo vencido com `dadosUorg` negativo preenche `data_inativacao`.
