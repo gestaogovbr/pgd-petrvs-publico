@@ -3,6 +3,7 @@ import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal 
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from "src/app/v2/components/breadcrumb/breadcrumb.component";
 import { ActivatedRoute } from "@angular/router";
+import { HttpErrorResponse } from "@angular/common/http";
 import { catchError, filter, finalize, map, of, switchMap, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoApiClient } from "../infra/plano-api.client";
@@ -10,6 +11,7 @@ import { DocumentoApiClient } from "../infra/documento-api.client";
 import { PlanoTrabalho } from "../domain/types";
 import { AuthService } from "src/app/services/auth.service";
 import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
+import { MessageService } from "src/app/v2/services/message.service";
 
 @Component({
   selector: 'app-plano-trabalho-v2-tcr-page',
@@ -25,6 +27,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   readonly policy = inject(PlanoTrabalhoPolicy);
+  private readonly message = inject(MessageService);
 
   readonly planoId = signal<string | null>(null);
   readonly plano = signal<PlanoTrabalho | null>(null);
@@ -97,7 +100,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
         );
         this.jaAssinou.set(true);
       },
-      error: () => this.error.set('Erro ao assinar o documento.')
+      error: (err: HttpErrorResponse) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao assinar o documento.')
     });
   }
 
@@ -116,7 +119,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
         );
         this.jaAssinou.set(false);
       },
-      error: () => this.error.set('Erro ao cancelar a assinatura.')
+      error: (err: HttpErrorResponse) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao cancelar a assinatura.')
     });
   }
 

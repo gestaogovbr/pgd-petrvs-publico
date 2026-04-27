@@ -62,3 +62,4 @@ kubectl
 .vscode/diagnostics/
 back-end/public/app.json
 front-end/package-lock.json
+back-end/public/app.json
