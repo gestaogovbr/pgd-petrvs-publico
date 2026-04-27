@@ -25,7 +25,7 @@ export class PlanoTrabalhoPolicy {
 
   podeAssinar(p: PlanoTrabalho): boolean {
     const statusPermitidos = ['INCLUIDO', 'AGUARDANDO_ASSINATURA'];
-    return statusPermitidos.includes(p.status);
+    return statusPermitidos.includes(p.status) && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id);
   }
 
   podeExcluir(p: PlanoTrabalho): boolean {

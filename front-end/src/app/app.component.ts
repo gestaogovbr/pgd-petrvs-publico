@@ -145,7 +145,7 @@ export class AppComponent implements IAppComponent {
       PLANOS_ENTREGAS: { name: this.lex.translate("Planejamento"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { planejamento: true } },
       PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho-v2'], icon: this.entity.getIcon('PlanoTrabalho') },
       CONSOLIDACOES: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD', route: ['gestao', 'plano-trabalho', 'consolidacao'], icon: this.entity.getIcon('PlanoTrabalhoConsolidacao') },
-      PROGRAMAS_GESTAO: { name: this.lex.translate("Programas de Gestão"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
+      PROGRAMAS_GESTAO: { name: this.lex.translate("Regramentos Instituidoras"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
       HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PART', route: ['gestao', 'programa', 'participantes'], icon: this.entity.getIcon('Programa') },
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PRODUTOS: { name: this.lex.translate("Produtos e Serviços"), permition: 'MOD_PROD', route: ['gestao', 'produto'], icon: this.entity.getIcon('Projeto') }, // TODO : retornar esse menu ao subir produtos
@@ -229,17 +229,7 @@ export class AppComponent implements IAppComponent {
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
 
-    this.moduloGestao = [{
-      name: this.lex.translate("Planejamento"),
-      permition: "MENU_GESTAO_ACESSO",
-      id: "navbarDropdownGestaoPlanejamento",
-      menu: [
-        this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
-        this.menuSchema.CADEIAS_VALORES,
-        this.menuSchema.PROGRAMAS_GESTAO,
-        this.menuSchema.HABILITACOES_PROGRAMA             
-      ].sort(this.orderMenu)
-    }, 
+    this.moduloGestao = [ 
     {
       name: this.lex.translate("Planos de Entregas"),
       permition: "MENU_GESTAO_ACESSO",
@@ -248,32 +238,24 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.PLANOS_ENTREGAS,   
         this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
         this.menuSchema.AVALIACAO_PLANOS_ENTREGAS,
-        this.menuSchema.OCORRENCIAS,
       ].sort(this.orderMenu)
     }, 
     Object.assign({}, this.menuSchema.PLANOS_TRABALHOS),
+    Object.assign({}, this.menuSchema.OCORRENCIAS),
     {
-      name: this.lex.translate("Gerenciamento"),
-      permition: "MENU_CONFIG_ACESSO",
-      id: "navbarDropdownGestaoGerencial",
+      name: this.lex.translate("Institucional"),
+      permition: "MENU_GESTAO_ACESSO",
+      id: "navbarDropdownGestaoPlanejamento",
       menu: [
-        this.menuSchema.ENTIDADES,
-        this.menuSchema.UNIDADES,
-        this.menuSchema.USUARIOS,
-        this.menuSchema.PERFIS,
-        // this.menuSchema.CLIENTES,
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Cadastros"),
-      permition: "MENU_CAD_ACESSO",
-      id: "navbarDropdownGestaoCadastros",
-      menu: [
+        this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
+        this.menuSchema.CADEIAS_VALORES,
+        this.menuSchema.PROGRAMAS_GESTAO,
         this.menuSchema.EIXOS_TEMATICOS,
-        this.menuSchema.TIPOS_ATIVIDADES,
-        this.menuSchema.TIPOS_JUSTIFICATIVAS,
-        this.menuSchema.TIPOS_TAREFAS
+        this.menuSchema.UNIDADES,
+        this.menuSchema.USUARIOS,       
       ].sort(this.orderMenu)
-    }, {
+    },
+    {
       name: this.lex.translate("Relatórios"),
       permition: "MOD_RELATORIOS",
       id: "navbarDropdownRelatorios",
@@ -293,10 +275,9 @@ export class AppComponent implements IAppComponent {
       ].sort(this.orderMenu)
     }];
 
+    
     this.moduloExecucao = [
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, { metadata: { minha_unidade: true } }),
-
-      this.menuSchema.OCORRENCIAS,
       Object.assign({}, this.menuSchema.RELATORIO_USUARIOS,  {
         name: this.lex.translate("Relatório de Agentes Públicos")
       }),
@@ -312,39 +293,6 @@ export class AppComponent implements IAppComponent {
     ];
 
     this.moduloAdministrador = [{
-      name: this.lex.translate("Cadastros"),
-      permition: "MENU_CAD_ACESSO",
-      id: "navbarDropdownCadastrosAdm",
-      menu: [
-        this.menuSchema.OCORRENCIAS,
-        this.menuSchema.CIDADES,
-        this.menuSchema.CLIENTES,
-        this.menuSchema.EIXOS_TEMATICOS,
-        // this.menuSchema.ENTREGAS,
-        this.menuSchema.FERIADOS,
-        this.menuSchema.MATERIAIS_SERVICOS,
-        this.menuSchema.OCORRENCIAS,
-        this.menuSchema.TEMPLATES,
-        this.menuSchema.TIPOS_ATIVIDADES,
-        // this.menuSchema.TIPOS_AVALIACOES,
-        this.menuSchema.TIPOS_DOCUMENTOS,
-        this.menuSchema.TIPOS_JUSTIFICATIVAS,
-        // this.menuSchema.TIPOS_MODALIDADES,
-        // this.menuSchema.TIPOS_MOTIVOS_OCORRENCIAS,
-        this.menuSchema.TIPOS_PROCESSOS,
-        this.menuSchema.TIPOS_TAREFAS
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Gerenciamento"),
-      permition: "MENU_CONFIG_ACESSO",
-      id: "navbarDropdownGerencialAdm",
-      menu: [
-        this.menuSchema.ENTIDADES,
-        this.menuSchema.UNIDADES,
-        this.menuSchema.USUARIOS,
-        this.menuSchema.PERFIS
-      ].sort(this.orderMenu)
-    }, {
       name: this.lex.translate("Relatórios"),
       permition: "MOD_RELATORIOS",
       id: "navbarDropdownRelatorios",
@@ -365,42 +313,28 @@ export class AppComponent implements IAppComponent {
     }];
 
     this.moduloDev = [{
-      name: this.lex.translate("Manutenção"),
-      permition: "MENU_DEV_ACESSO",
-      id: "navbarDropdownDevManutencao",
-      menu: [
-        this.menuSchema.ROTINAS_INTEGRACAO,
-        this.menuSchema.PAINEL
-      ]
-    }, {
       name: this.lex.translate("Logs e Auditorias"),
       permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevLogs",
       menu: [
         this.menuSchema.LOGS_ALTERACOES,
         this.menuSchema.LOGS_ERROS,
-        this.menuSchema.LOGS_TRAFEGOS,
         this.menuSchema.LOGS_SYSTEM
       ]
-    }, {
-      name: this.lex.translate("Testes"),
-      permition: "MENU_DEV_ACESSO",
-      id: "navbarDropdownDevTestes",
-      menu: [
-        this.menuSchema.TESTE_IMPERSONATE,
-      ]
-    }, {
-      name: this.lex.translate("Consultas"),
+    },    
+    {
+      name: this.lex.translate("SIAPE"),
       permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevConsultas",
       menu: [
         this.menuSchema.DEV_CPF_CONSULTA_SIAPE,
         this.menuSchema.DEV_UNIDADE_CONSULTA_SIAPE,
         this.menuSchema.BLACKLIST_SERVIDOR,
-        this.menuSchema.BLACKLIST_UNIDADE
+        this.menuSchema.BLACKLIST_UNIDADE,
+        this.menuSchema.ROTINAS_INTEGRACAO,
       ]
     }, {
-      name: this.lex.translate("Envio API"),
+      name: this.lex.translate("API PGD"),
       permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevApiPgd",
       menu: [
@@ -408,7 +342,9 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.ENVIO_FORCAR,
         this.menuSchema.ENVIO_REINICIAR
       ]
-    }];
+    },
+    Object.assign({}, this.menuSchema.TESTE_IMPERSONATE)
+  ];
 
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },
