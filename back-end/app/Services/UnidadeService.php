@@ -13,6 +13,7 @@ use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
 use App\Services\Siape\Unidade\Atribuicao;
+use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 use App\Models\UnidadeIntegrante;
 use App\Repository\UnidadeRepository;
 use App\Repository\UnidadeIntegranteRepository;
@@ -816,55 +817,9 @@ class UnidadeService extends ServiceBase
 
     public function processarUnidadesTemporarias(): void
     {
-        $dataLimite = Carbon::now()->subDays(30);
-
-        $unidadesParaInativar = Unidade::whereNotNull('data_inicio_inativacao')
-            ->where('data_inicio_inativacao', '<=', $dataLimite)
-            ->whereNull('data_inativacao')
-            ->get();
-
-        if ($unidadesParaInativar->isEmpty()) {
-            Log::info("Nenhuma unidade temporária encontrada para inativação após 30 dias");
-            return;
-        }
-
-        $idsInativadas = [];
-
-        foreach ($unidadesParaInativar as $unidade) {
-            $unidade->data_inativacao = Carbon::now();
-            $unidade->save();
-
-            $idsInativadas[] = $unidade->id;
-
-            $usuariosVinculados = UnidadeIntegrante::where('unidade_id', $unidade->id)
-                ->whereNull('deleted_at')
-                ->get();
-
-            foreach ($usuariosVinculados as $integranteUnidade) {
-                $this->LimparAtribuicoes($integranteUnidade, true);
-
-                Log::info("Atribuições removidas do usuário vinculado à unidade inativada", [
-                    'usuario_id' => $integranteUnidade->usuario_id,
-                    'unidade_id' => $unidade->id,
-                    'unidade_integrante_id' => $integranteUnidade->id
-                ]);
-            }
-
-            Log::info("Unidade inativada após 30 dias do início da inativação", [
-                'unidade_id' => $unidade->id,
-                'nome' => $unidade->nome,
-                'sigla' => $unidade->sigla,
-                'codigo' => $unidade->codigo,
-                'data_inicio_inativacao' => $unidade->data_inicio_inativacao,
-                'data_inativacao' => $unidade->data_inativacao,
-                'usuarios_afetados' => $usuariosVinculados->count()
-            ]);
-        }
-
-        Log::info("Inativação de unidades temporárias concluída", [
-            'total_inativadas' => count($idsInativadas),
-            'ids' => $idsInativadas
-        ]);
+        /** @var SiapeUnidadeLifecycleService $lifecycleService */
+        $lifecycleService = app(SiapeUnidadeLifecycleService::class);
+        $lifecycleService->efetivarInativacoesPendentes();
     }
 
     public function ativarTemporariamente($data)

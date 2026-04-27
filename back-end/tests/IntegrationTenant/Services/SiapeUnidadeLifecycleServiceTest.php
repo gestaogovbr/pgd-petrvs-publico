@@ -35,8 +35,10 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
+use App\Services\IntegracaoUnidadeService;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
+use App\Services\UnidadeService;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
@@ -59,6 +61,8 @@ beforeEach(function () {
         '110',
         '111',
         '112',
+        '113',
+        '114',
         '200',
         '300',
         '999',
@@ -350,6 +354,45 @@ describe('SiapeUnidadeLifecycleService', function () {
         expect($service->dadosUorgConfirmaAusencia('112', $soapResponse))->toBeFalse();
     });
 
+    test('dadosUorg com fault diferente nao confirma ausencia', function () {
+        $soapFault = <<<XML
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Body>
+                <soap:Fault>
+                    <faultcode>9999</faultcode>
+                    <faultstring>Falha temporaria do SIAPE</faultstring>
+                </soap:Fault>
+            </soap:Body>
+        </soap:Envelope>
+        XML;
+
+        $service = app(SiapeUnidadeLifecycleService::class);
+
+        expect($service->dadosUorgConfirmaAusencia('112', $soapFault))->toBeFalse();
+    });
+
+    test('dadosUorg sem response esperado e tratado como retorno ambiguo', function () {
+        $soapAmbiguo = <<<XML
+        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+            <soap:Body>
+                <ns1:outraOperacaoResponse xmlns:ns1="http://servico.wssiapenet" />
+            </soap:Body>
+        </soap:Envelope>
+        XML;
+
+        $service = app(SiapeUnidadeLifecycleService::class);
+
+        expect(fn () => $service->dadosUorgConfirmaAusencia('112', $soapAmbiguo))
+            ->toThrow(RuntimeException::class, 'Resposta ambigua em dadosUorg');
+    });
+
+    test('dadosUorg invalido e tratado como retorno ambiguo', function () {
+        $service = app(SiapeUnidadeLifecycleService::class);
+
+        expect(fn () => $service->dadosUorgConfirmaAusencia('112', '<xml>'))
+            ->toThrow(RuntimeException::class);
+    });
+
     test('remocao de blacklist cancela pendencia sem reativar unidade ja inativada', function () {
         Carbon::setTestNow(Carbon::parse('2026-04-20 10:00:00'));
 
@@ -506,5 +549,54 @@ describe('SiapeUnidadeLifecycleService', function () {
         expect(SiapeBlacklistUnidade::where('codigo', '300')->exists())->toBeFalse();
         expect($unidadeReativadaNoSiape->fresh()->data_inicio_inativacao)->toBeNull();
         expect($listaUorgs->fresh()->processado)->toBe(1);
+    });
+
+    test('IntegracaoUnidadeService inicia inativacao usando prazo configurado do lifecycle', function () {
+        Carbon::setTestNow(Carbon::parse('2026-04-20 10:00:00'));
+        config(['integracao.siape.inativacao_unidade_prazo_dias' => 7]);
+
+        $unidade = Unidade::factory()->create(['codigo' => '113']);
+        $blacklist = SiapeBlacklistUnidade::create([
+            'id' => (string) Str::uuid(),
+            'codigo' => '113',
+            'response' => 'ausente da listaUorgs',
+            'inativado' => 0,
+            'created_at' => now()->subDays(7),
+            'updated_at' => now()->subDays(7),
+        ]);
+
+        app(IntegracaoUnidadeService::class)->processaUnidadesRemovidasNoSiape();
+
+        $unidade->refresh();
+        $blacklist->refresh();
+
+        expectDataHoraString($unidade->data_inicio_inativacao, '2026-04-20 10:00:00');
+        expect($blacklist->inativado)->toBe(1);
+    });
+
+    test('UnidadeService efetiva inativacao final usando dadosUorg e remove atribuicoes em transaction do lifecycle', function () {
+        Carbon::setTestNow(Carbon::parse('2026-04-20 10:00:00'));
+        config(['integracao.siape.inativacao_unidade_prazo_dias' => 7]);
+
+        $this->app->bind(
+            SiapeUnidadeLifecycleService::class,
+            fn (): SiapeUnidadeLifecycleService => new SiapeUnidadeLifecycleService(
+                confirmarAusencia: fn (string $codigo): bool => $codigo === '114'
+            )
+        );
+
+        $unidade = Unidade::factory()->create([
+            'codigo' => '114',
+            'data_inicio_inativacao' => now()->subDays(7),
+            'data_inativacao' => null,
+        ]);
+        $integrante = criarVinculoUnidadeComAtribuicoes($unidade);
+
+        app(UnidadeService::class)->processarUnidadesTemporarias();
+
+        $unidade->refresh();
+
+        expectDataHoraString($unidade->data_inativacao, '2026-04-20 10:00:00');
+        expect(UnidadeIntegranteAtribuicao::where('unidade_integrante_id', $integrante->id)->count())->toBe(0);
     });
 });

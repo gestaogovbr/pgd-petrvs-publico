@@ -186,12 +186,15 @@ class SiapeUnidadeLifecycleService
             'unidades_inativadas' => 0,
             'confirmacoes_presentes' => 0,
             'confirmacoes_falhas' => 0,
+            'integrantes_afetados' => 0,
             'atribuicoes_removidas' => 0,
         ];
 
         $unidades = Unidade::query()
             ->whereNotNull('data_inicio_inativacao')
             ->where('data_inicio_inativacao', '<=', $dataLimite)
+            ->whereNotNull('codigo')
+            ->where('codigo', '<>', '')
             ->whereNull('data_inativacao')
             ->get();
 
@@ -220,29 +223,50 @@ class SiapeUnidadeLifecycleService
                 continue;
             }
 
-            $atribuicoesRemovidas = DB::transaction(function () use ($unidade): int {
+            $inativacao = DB::transaction(function () use ($unidade, $dataLimite): array {
                 $unidadeAtual = Unidade::query()
                     ->whereKey($unidade->id)
                     ->lockForUpdate()
                     ->first();
 
-                if (!$unidadeAtual instanceof Unidade || $unidadeAtual->data_inativacao !== null) {
-                    return 0;
+                if (
+                    !$unidadeAtual instanceof Unidade
+                    || $unidadeAtual->data_inativacao !== null
+                    || $unidadeAtual->data_inicio_inativacao === null
+                    || $unidadeAtual->data_inicio_inativacao > $dataLimite
+                ) {
+                    return [
+                        'inativada' => 0,
+                        'integrantes_afetados' => 0,
+                        'atribuicoes_removidas' => 0,
+                    ];
                 }
+
+                $integrantesAfetados = $this->contarIntegrantesAtivosDaUnidade($unidadeAtual);
 
                 $unidadeAtual->data_inativacao = now();
                 $unidadeAtual->save();
 
-                return $this->removerAtribuicoesDaUnidade($unidadeAtual);
+                return [
+                    'inativada' => 1,
+                    'integrantes_afetados' => $integrantesAfetados,
+                    'atribuicoes_removidas' => $this->removerAtribuicoesDaUnidade($unidadeAtual),
+                ];
             });
 
+            if ($inativacao['inativada'] === 0) {
+                continue;
+            }
+
             $resultado['unidades_inativadas']++;
-            $resultado['atribuicoes_removidas'] += $atribuicoesRemovidas;
+            $resultado['integrantes_afetados'] += $inativacao['integrantes_afetados'];
+            $resultado['atribuicoes_removidas'] += $inativacao['atribuicoes_removidas'];
 
             SiapeLog::info('Lifecycle SIAPE unidade: unidade inativada apos confirmacao dadosUorg', [
                 'unidade_id' => $unidade->id,
                 'codigo' => $unidade->codigo,
-                'atribuicoes_removidas' => $atribuicoesRemovidas,
+                'integrantes_afetados' => $inativacao['integrantes_afetados'],
+                'atribuicoes_removidas' => $inativacao['atribuicoes_removidas'],
             ]);
         }
 
@@ -270,6 +294,12 @@ class SiapeUnidadeLifecycleService
                 );
         }
 
+        $dadosUorgResponse = $responseXml->xpath('//*[local-name()="dadosUorgResponse"]');
+
+        if (empty($dadosUorgResponse)) {
+            throw new RuntimeException("Resposta ambigua em dadosUorg para a unidade {$codigo}");
+        }
+
         $out = $responseXml->xpath('//*[local-name()="dadosUorgResponse"]/*[local-name()="out"]');
 
         return empty($out);
@@ -290,6 +320,14 @@ class SiapeUnidadeLifecycleService
             ->whereIn('unidade_integrante_id', $integranteIds->all())
             ->whereNull('deleted_at')
             ->delete();
+    }
+
+    protected function contarIntegrantesAtivosDaUnidade(Unidade $unidade): int
+    {
+        return UnidadeIntegrante::query()
+            ->where('unidade_id', $unidade->id)
+            ->whereNull('deleted_at')
+            ->count();
     }
 
     protected function confirmarAusenciaEmDadosUorg(string $codigo): bool
