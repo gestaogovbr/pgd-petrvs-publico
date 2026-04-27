@@ -35,7 +35,7 @@ test('deve retornar true quando existem planos pendentes com data fim vencida', 
     );
 
     expect($resultado)->toBeFalse();
-})->todo();
+})->skip('Testes desabilitados esperando novas definições para o bloqueio por pendencias.');
 
 test('deve retornar false quando nao existem planos pendentes', function () {
     $usuarioId = 'user-sem-planos';
@@ -49,4 +49,4 @@ test('deve retornar false quando nao existem planos pendentes', function () {
     );
 
     expect($resultado)->toBeFalse();
-})->todo();
+})->skip('Testes desabilitados esperando novas definições para o bloqueio por pendencias.');
