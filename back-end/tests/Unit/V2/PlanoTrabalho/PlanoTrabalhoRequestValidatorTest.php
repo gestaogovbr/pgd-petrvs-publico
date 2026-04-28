@@ -138,6 +138,12 @@ describe('PlanoTrabalhoRequestValidator::store', function () {
         ));
     })->throws(ValidationException::class);
 
+    test('rejeita modalidade_pgd inválida', function () use ($validPayload) {
+        PlanoTrabalhoRequestValidator::store(makeRequest(array_merge($validPayload, [
+            'modalidade_pgd' => 'inexistente',
+        ])));
+    })->throws(ValidationException::class);
+
     test('rejeita data_fim anterior a data_inicio', function () use ($validPayload) {
         PlanoTrabalhoRequestValidator::store(makeRequest(array_merge($validPayload, [
             'data_inicio' => '2024-06-30',
