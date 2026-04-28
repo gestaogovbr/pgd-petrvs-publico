@@ -3,25 +3,30 @@
 namespace App\V2\TipoModalidade;
 
 use App\Http\Controllers\Controller;
+use App\Support\ModalidadePgd;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\Response;
-use Throwable;
 
 class TipoModalidadeController extends Controller
 {
-    public function __construct(
-        private readonly TipoModalidadeService $service
-    ) {
-    }
-
+    /**
+     * Lista as modalidades PGD disponíveis.
+     *
+     * @return JsonResponse
+     * ```json
+     * {
+     *   "success": true,
+     *   "data": [
+     *     {"key": "presencial", "value": "Presencial"},
+     *     {"key": "parcial", "value": "Teletrabalho (Parcial)"},
+     *     {"key": "integral", "value": "Teletrabalho (Integral)"},
+     *     {"key": "no exterior substituicao", "value": "Teletrabalho no exterior (substituição)"},
+     *     {"key": "no exterior", "value": "Teletrabalho no exterior"}
+     *   ]
+     * }
+     * ```
+     */
     public function index(): JsonResponse
     {
-        try {
-            return response()->json(['success' => true, 'data' => $this->service->index()]);
-        } catch (Throwable $e) {
-            Log::error(throwableToArrayLog($e));
-            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return response()->json(['success' => true, 'data' => ModalidadePgd::options()]);
     }
 }
