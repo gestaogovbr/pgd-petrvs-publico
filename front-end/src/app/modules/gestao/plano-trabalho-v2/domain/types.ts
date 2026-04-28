@@ -13,7 +13,8 @@ export type PlanoTrabalhoCreatePayload = {
   programa_id: string;
   data_inicio: string;
   data_fim: string;
-  tipo_modalidade_id: string;
+  modalidade_pgd: string;
+  justificativa_modalidade?: string | null;
 };
 
 export type Page<T> = {

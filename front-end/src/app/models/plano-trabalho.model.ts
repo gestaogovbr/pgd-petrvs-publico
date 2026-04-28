@@ -58,8 +58,10 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public programa_id: string = "";
     public usuario_id: string = "";
     public unidade_id: string = "";
+    public numero: number = 0;
     public modalidade_pgd: string | null = null;
     public modalidade_pgd_label: string = "Não definida";
+    public justificativa_modalidade: string | null = null;
     public documento_id: string | null = null;
 
     public constructor(data?: any) { super(); this.initialization(data); }

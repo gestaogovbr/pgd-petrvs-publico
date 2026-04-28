@@ -9,7 +9,7 @@ import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PlanoApiClient } from '../infra/plano-api.client';
-import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
+import { ModalidadePgdOption } from 'src/app/v2/services/tipo-modalidade.service';
 import { UsuarioService, UsuarioSearchItem } from 'src/app/v2/services/usuario.service';
 import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
@@ -58,13 +58,13 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly agentePublicoQuery = this.fb.nonNullable.control('');
   sugestoesUsuarios = signal<UsuarioSearchItem[]>([]);
   unidades = signal<Unidade[]>([]);
-  modalidades = signal<TipoModalidade[]>([]);
+  modalidades = signal<ModalidadePgdOption[]>([]);
 
   // Valores selecionados como sinais para que os computed de options incluam `selected: true`
   // (necessário porque o br-select/Stencil processa options antes de writeValue)
   private readonly selectedUnidadeId = signal('');
   private readonly selectedModalidadeId = signal('');
-  private readonly usuarioTipoModalidadeId = signal('');
+  private readonly usuarioModalidadePgd = signal('');
 
   // Sinais de seleção do entregaForm
   private readonly selectedOrigem = signal('PROPRIA_UNIDADE');
@@ -101,7 +101,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     unidade_id: FormControl<string>;
     data_inicio: FormControl<string>;
     data_fim: FormControl<string>;
-    tipo_modalidade_id: FormControl<string>;
+    modalidade_pgd: FormControl<string>;
     justificativa: FormControl<string>;
     justificativa_modalidade: FormControl<string>;
   }> = this.fb.group({
@@ -109,7 +109,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     unidade_id: this.fb.nonNullable.control('', Validators.required),
     data_inicio: this.fb.nonNullable.control('', Validators.required),
     data_fim: this.fb.nonNullable.control('', Validators.required),
-    tipo_modalidade_id: this.fb.nonNullable.control('', Validators.required),
+    modalidade_pgd: this.fb.nonNullable.control('', Validators.required),
     justificativa: this.fb.nonNullable.control(''),
     justificativa_modalidade: this.fb.nonNullable.control('')
   });
@@ -136,10 +136,14 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     this.podeSalvar()
   );
 
+  // TODO: definir comportamento quando usuario.modalidade_pgd é null (sem registro no SIAPE).
+  // Atualmente trata como divergente, exigindo justificativa.
   readonly modalidadeDivergente = computed(() => {
     const selecionada = this.selectedModalidadeId();
-    const doUsuario = this.usuarioTipoModalidadeId();
-    return !!selecionada && !!doUsuario && selecionada !== doUsuario;
+    const doUsuario = this.usuarioModalidadePgd();
+    if (!selecionada) return false;
+    if (!doUsuario) return true;
+    return selecionada !== doUsuario;
   });
 
   // Options para BrSelectComponent — inclui `selected: true` para o item atual,
@@ -151,7 +155,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   readonly modalidadesOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedModalidadeId();
-    return this.modalidades().map(m => ({ value: `${m.id}`, label: m.nome, selected: `${m.id}` === sel }));
+    return this.modalidades().map(m => ({ value: m.key, label: m.value, selected: m.key === sel }));
   });
 
   readonly origemSelectOptions = computed<SelectOption[]>(() => {
@@ -202,7 +206,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       ctrl.updateValueAndValidity();
     }, { injector: this.injector });
 
-    // Justificativa de modalidade obrigatória quando diverge do tipo_modalidade_id do usuário
+    // Justificativa de modalidade obrigatória quando diverge do modalidade_pgd do usuário
     effect(() => {
       const ctrl = this.form.controls.justificativa_modalidade;
       if (this.modalidadeDivergente()) {
@@ -228,7 +232,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       this.entregas.set(plano.entregas || []);
       this.form.controls.data_inicio.setValue(plano.data_inicio ? new Date(plano.data_inicio).toISOString().split('T')[0] : '');
       this.form.controls.data_fim.setValue(plano.data_fim ? new Date(plano.data_fim).toISOString().split('T')[0] : '');
-      this.form.controls.justificativa.setValue(plano.justificativa || '');
+      this.form.controls.justificativa.setValue(plano.justificativa_modalidade || '');
       this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '');
 
       if (plano.usuario_id) {
@@ -238,8 +242,8 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
         await this.carregarUnidades(usuario);
         this.selectedUnidadeId.set(plano.unidade_id ?? '');
         this.form.controls.unidade_id.setValue(plano.unidade_id);
-        this.selectedModalidadeId.set(plano.tipo_modalidade_id ?? '');
-        this.form.controls.tipo_modalidade_id.setValue(plano.tipo_modalidade_id);
+        this.selectedModalidadeId.set(plano.modalidade_pgd ?? '');
+        this.form.controls.modalidade_pgd.setValue(plano.modalidade_pgd ?? '');
         this.carregarPlanosUnidade(plano.unidade_id);
       }
       this.loading.set(false);
@@ -262,7 +266,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       this.carregarPlanosUnidade(unidadeId);
     });
 
-    this.form.controls.tipo_modalidade_id.valueChanges.pipe(
+    this.form.controls.modalidade_pgd.valueChanges.pipe(
       distinctUntilChanged(),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(id => this.selectedModalidadeId.set(id ?? ''));
@@ -390,7 +394,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     this.agentePublicoQuery.setValue('');
     this.form.controls.usuario_id.setValue('');
     this.form.controls.unidade_id.setValue('');
-    this.form.controls.tipo_modalidade_id.setValue('');
+    this.form.controls.modalidade_pgd.setValue('');
   }
 
   salvar() {
@@ -410,7 +414,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       programa_id: this.programaId(),
       data_inicio: this.form.controls.data_inicio.value,
       data_fim: this.form.controls.data_fim.value,
-      tipo_modalidade_id: this.form.controls.tipo_modalidade_id.value,
+      modalidade_pgd: this.form.controls.modalidade_pgd.value,
       justificativa: this.form.controls.justificativa.value || null,
       justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null
     };
@@ -652,21 +656,21 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       }
     }
 
-    this.modalidades.set(await this.tipoModalidadeApi.listar(!!usuario.pedagio));
+    this.modalidades.set(await this.tipoModalidadeApi.listar());
 
-    const tipoModalidadeId = usuario.tipo_modalidade_id;
+    const tipoModalidadeId = usuario.modalidade_pgd;
     if (typeof tipoModalidadeId === 'string' && tipoModalidadeId.length) {
       const tipoModalidadeValue = tipoModalidadeId.trim();
-      const isValid = this.modalidades().some(m => `${m.id}` === tipoModalidadeValue);
+      const isValid = this.modalidades().some(m => m.key === tipoModalidadeValue);
       if (isValid) {
-        this.usuarioTipoModalidadeId.set(tipoModalidadeValue);
-        this.form.controls.tipo_modalidade_id.setValue(tipoModalidadeValue);
+        this.usuarioModalidadePgd.set(tipoModalidadeValue);
+        this.form.controls.modalidade_pgd.setValue(tipoModalidadeValue);
         return;
       }
     }
 
     if (this.modalidades().length > 0) {
-      this.form.controls.tipo_modalidade_id.setValue(`${this.modalidades()[0].id}`);
+      this.form.controls.modalidade_pgd.setValue(this.modalidades()[0].key);
     }
   }
 }

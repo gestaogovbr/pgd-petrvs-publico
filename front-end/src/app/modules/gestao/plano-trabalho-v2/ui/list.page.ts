@@ -94,10 +94,10 @@ readonly filters: FormGroup<{
   }
 
   ngOnInit(): void {
-    this.tipoModalidadeApi.listar(false).then(modalidades => {
+    this.tipoModalidadeApi.listar().then(modalidades => {
       this.modalidadeOptions.set([
         { value: '', label: 'Todas', selected: true },
-        ...modalidades.map(m => ({ value: m.id, label: m.nome }))
+        ...modalidades.map(m => ({ value: m.key, label: m.value }))
       ]);
     });
 

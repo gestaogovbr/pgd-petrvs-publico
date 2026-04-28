@@ -76,7 +76,7 @@
           <div class="col-md-3 mb-3">
             <div class="br-input">
               <label>Modalidade</label>
-              <input type="text" readonly [value]="planoTrabalho()?.tipo_modalidade?.nome || '-'" />
+              <input type="text" readonly [value]="planoTrabalho()?.modalidade_pgd_label || '-'" />
             </div>
           </div>
           <div class="col-md-3 mb-3">
@@ -86,12 +86,12 @@
             </div>
           </div>
         </div>
-        @if (planoTrabalho()?.justificativa) {
+        @if (planoTrabalho()?.justificativa_modalidade) {
           <div class="row mt-2">
             <div class="col-md-12">
               <div class="br-textarea">
-                <label>Justificativa</label>
-                <textarea readonly>{{ planoTrabalho()?.justificativa }}</textarea>
+                <label>Justificativa da divergência da modalidade</label>
+                <textarea readonly>{{ planoTrabalho()?.justificativa_modalidade }}</textarea>
               </div>
             </div>
           </div>

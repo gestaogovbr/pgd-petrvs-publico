@@ -196,7 +196,7 @@
             </td>
             <td data-th="Usuário">{{ p.usuario?.nome || '-' }}</td>
             <td data-th="Unidade">{{ p.unidade?.sigla || '-' }}</td>
-            <td data-th="Modalidade">{{ p.tipo_modalidade?.nome || '-' }}</td>
+            <td data-th="Modalidade">{{ p.modalidade_pgd_label || '-' }}</td>
             <td data-th="Status">
               <br-tag shape="rounded" density="small" [bgColor]="statusClass(p.status)" [label]="statusLabel(p.status)"></br-tag>
               @if (p.data_arquivamento) {
