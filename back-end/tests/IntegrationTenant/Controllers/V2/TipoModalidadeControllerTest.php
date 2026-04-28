@@ -1,7 +1,6 @@
 <?php
 
 use App\V2\TipoModalidade\TipoModalidadeController;
-use App\Models\TipoModalidade;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Route;
 
@@ -20,10 +19,8 @@ afterEach(function () {
 
 describe('GET /api/v2/tipo-modalidade', function () {
 
-    test('retorna 200 com lista de tipos modalidade', function () {
+    test('retorna 200 com lista de modalidades', function () {
         $this->actingAs($this->usuario, 'web');
-
-        $modalidade = TipoModalidade::factory()->create(['nome' => 'Teletrabalho']);
 
         $response = $this->getJson('/api/__tests/v2/tipo-modalidade');
 
@@ -33,37 +30,23 @@ describe('GET /api/v2/tipo-modalidade', function () {
         $data = $response->json('data');
 
         expect($data)->toBeArray()
-            ->and(collect($data)->pluck('id'))->toContain($modalidade->id);
+            ->and($data)->not->toBeEmpty();
     });
 
-    test('retorna apenas registros não deletados', function () {
+    test('retorna campos key e value em cada registro', function () {
         $this->actingAs($this->usuario, 'web');
-
-        $ativo = TipoModalidade::factory()->create(['nome' => 'Presencial']);
-        $deletado = TipoModalidade::factory()->create(['nome' => 'Removido']);
-        $deletado->delete();
-
-        $data = $this->getJson('/api/__tests/v2/tipo-modalidade')->json('data');
-        $ids = collect($data)->pluck('id')->toArray();
-
-        expect($ids)->toContain($ativo->id)
-            ->and($ids)->not->toContain($deletado->id);
-    });
-
-    test('retorna campos esperados em cada registro', function () {
-        $this->actingAs($this->usuario, 'web');
-
-        TipoModalidade::factory()->create();
 
         $data = $this->getJson('/api/__tests/v2/tipo-modalidade')->json('data');
 
-        expect($data[0])->toHaveKeys([
-            'id',
-            'nome',
-            'exige_pedagio',
-            'plano_trabalho_calcula_horas',
-            'atividade_tempo_despendido',
-            'atividade_esforco',
-        ]);
+        expect($data[0])->toHaveKeys(['key', 'value']);
+    });
+
+    test('contém modalidade presencial', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $data = $this->getJson('/api/__tests/v2/tipo-modalidade')->json('data');
+        $keys = collect($data)->pluck('key')->toArray();
+
+        expect($keys)->toContain('presencial');
     });
 });

@@ -9,7 +9,6 @@ use App\Models\PlanoEntrega;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalho;
 use App\Models\Programa;
-use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\Documento;
 use App\Models\Usuario;
@@ -48,11 +47,9 @@ beforeEach(function () {
     }
 
     $perfil = Perfil::factory()->create(['nivel' => 3]);
-    $tipoModalidade = TipoModalidade::factory()->create();
     $this->unidade = Unidade::factory()->create();
     $this->usuario = Usuario::factory()->create([
         'perfil_id' => $perfil->id,
-        'tipo_modalidade_id' => $tipoModalidade->id,
     ]);
     $this->programa = Programa::factory()->create([
         'data_inicio' => '2024-01-01',
@@ -62,7 +59,6 @@ beforeEach(function () {
     $this->plano = PlanoTrabalho::factory()->create([
         'usuario_id' => $this->usuario->id,
         'unidade_id' => $this->unidade->id,
-        'tipo_modalidade_id' => $tipoModalidade->id,
         'criacao_usuario_id' => $this->usuario->id,
         'programa_id' => $this->programa->id,
         'status' => 'INCLUIDO',

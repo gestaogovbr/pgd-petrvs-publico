@@ -2,18 +2,13 @@
 
 namespace App\V2\TipoModalidade;
 
-use App\Repository\TipoModalidadeRepository;
+use App\Support\ModalidadePgd;
 use Illuminate\Support\Collection;
 
 class TipoModalidadeService
 {
-    public function __construct(
-        private readonly TipoModalidadeRepository $repository
-    ) {
-    }
-
     public function index(): Collection
     {
-        return $this->repository->findAll();
+        return new Collection(ModalidadePgd::options());
     }
 }

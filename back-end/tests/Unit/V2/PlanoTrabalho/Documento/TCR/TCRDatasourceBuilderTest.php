@@ -67,7 +67,7 @@ describe('TCRDatasourceBuilder', function () {
             'carga_horaria' => 8,
             'status' => 'INCLUIDO',
         ]);
-        $plano->shouldReceive('getAttribute')->with('tipoModalidade')->andReturn(null);
+        $plano->shouldReceive('getAttribute')->with('modalidade_pgd_label')->andReturn(null);
         $plano->shouldReceive('getAttribute')->with('unidade')->andReturn(null);
         $plano->shouldReceive('getAttribute')->with('usuario')->andReturn(null);
         $plano->shouldReceive('getAttribute')->with('programa')->andReturn(null);

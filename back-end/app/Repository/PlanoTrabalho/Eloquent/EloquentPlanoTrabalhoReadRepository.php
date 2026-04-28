@@ -149,8 +149,8 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         /** @var \Illuminate\Database\Eloquent\Builder<PlanoTrabalho> $queryBase */
         $queryBase = PlanoTrabalho::query();
 
-        $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.tipo_modalidade_id', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status')
-              ->with(['usuario:id,nome', 'tipoModalidade:id,nome', 'unidade:id,nome,sigla']);
+        $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.modalidade_pgd', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status')
+              ->with(['usuario:id,nome', 'unidade:id,nome,sigla']);
 
         if($filtro->hierarquia){
             $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
@@ -185,8 +185,8 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             $query->where('numero', $filtro->numero);
         }
 
-        if ($filtro->tipoModalidadeId !== null) {
-            $query->where('tipo_modalidade_id', $filtro->tipoModalidadeId);
+        if ($filtro->modalidadePgd !== null) {
+            $query->where('modalidade_pgd', $filtro->modalidadePgd);
         }
 
         if ($filtro->status !== null) {
@@ -248,7 +248,6 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             'usuario:id,nome,apelido',
             'unidade:id,sigla,nome',
             'programa:id,nome',
-            'tipoModalidade:id,nome',
             'entregas',
             'consolidacoes.atividades',
             'consolidacoes.afastamentos.afastamento.tipoMotivoAfastamento:id,nome,horas',

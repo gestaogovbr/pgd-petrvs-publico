@@ -18,7 +18,7 @@ class PlanoTrabalhoIndexDTO
         public readonly bool $subordinadas,
         public readonly ?bool $hierarquia,
         public readonly ?int $numero,
-        public readonly ?string $tipoModalidadeId,
+        public readonly ?string $modalidadePgd,
         public readonly ?string $status,
         public readonly ?string $usuarioNome,
         public readonly ?string $unidadeRegramento,
@@ -41,7 +41,7 @@ class PlanoTrabalhoIndexDTO
             subordinadas: $this->subordinadas,
             hierarquia: $this->hierarquia,
             numero: $this->numero,
-            tipoModalidadeId: $this->tipoModalidadeId,
+            modalidadePgd: $this->modalidadePgd,
             status: $this->status,
             usuarioNome: $this->usuarioNome,
             unidadeRegramento: $this->unidadeRegramento,
@@ -78,13 +78,13 @@ class PlanoTrabalhoIndexDTO
         }
         $hierarquia = $filters['hierarquia'] ?? null;
         $numero = isset($filters['numero']) ? (int) $filters['numero'] : null;
-        $tipoModalidadeId = $filters['tipo_modalidade_id'] ?? null;
+        $modalidadePgd = $filters['modalidade_pgd'] ?? null;
         $status = $filters['status'] ?? null;
         $usuarioLogadoId = $filters['usuarioLogadoId'] ?? null;
         $usuarioId = $filters['usuario_id'] ?? null;
         $incluirSubordinadas = $filters['incluir_subordinadas'] ?? null;
 
-        if ($dataInicio === null && $dataFim === null && !$vigentes && !$arquivados && $usuarioId === null && $numero === null && $tipoModalidadeId === null && $status === null && $unidadesId === null && $incluirSubordinadas == null) {
+        if ($dataInicio === null && $dataFim === null && !$vigentes && !$arquivados && $usuarioId === null && $numero === null && $modalidadePgd === null && $status === null && $unidadesId === null && $incluirSubordinadas == null) {
             throw new ValidateException("Informe ao menos um filtro para a busca.");
         }
 
@@ -98,7 +98,7 @@ class PlanoTrabalhoIndexDTO
             subordinadas: (bool) ($incluirSubordinadas),
             hierarquia: $hierarquia,
             numero: $numero,
-            tipoModalidadeId: $tipoModalidadeId,
+            modalidadePgd: $modalidadePgd,
             status: $status,
             usuarioNome: $filters['usuario_nome'] ?? null,
             unidadeRegramento: $filters['unidade_regramento'] ?? null,

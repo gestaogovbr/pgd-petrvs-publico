@@ -2,14 +2,12 @@
 
 use App\Models\Afastamento;
 use App\Models\Perfil;
-use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Repository\Afastamento\AfastamentoRepository;
 
 beforeEach(function () {
-    $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
     $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
     $this->repository = app(AfastamentoRepository::class);
 });
@@ -17,7 +15,6 @@ beforeEach(function () {
 describe('AfastamentoRepository', function () {
     test('findById retorna a ocorrência quando existe', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $afastamento = Afastamento::factory()->create([
@@ -47,7 +44,6 @@ describe('AfastamentoRepository', function () {
 
     test('usuarioPossuiVinculoEmUnidades reflete vínculo em unidades_integrantes', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $unidadeA = Unidade::factory()->create();
@@ -64,11 +60,9 @@ describe('AfastamentoRepository', function () {
 
     test('findAll respeita filtro por usuario_id e retorna total', function () {
         $usuarioA = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $usuarioB = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
 
@@ -89,7 +83,6 @@ describe('AfastamentoRepository', function () {
 
     test('insert persiste afastamento', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
 
@@ -111,7 +104,6 @@ describe('AfastamentoRepository', function () {
 
     test('update altera campos do afastamento', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $afastamento = Afastamento::factory()->create([
@@ -128,7 +120,6 @@ describe('AfastamentoRepository', function () {
 
     test('destroy remove o registro', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $afastamento = Afastamento::factory()->create(['usuario_id' => $usuario->id]);

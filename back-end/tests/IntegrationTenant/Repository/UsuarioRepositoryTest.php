@@ -261,7 +261,6 @@ test('findAllByNomeMatricula por nome', function () {
     $usuario = Usuario::factory()->create([
         'nome' => 'João Silva Teste',
         'matricula' => '111111',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
         'perfil_id' => $this->perfilId,
     ]);
 
@@ -274,7 +273,6 @@ test('findAllByNomeMatricula por matricula', function () {
     $usuario = Usuario::factory()->create([
         'nome' => 'Maria Oliveira',
         'matricula' => '999888',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
         'perfil_id' => $this->perfilId,
     ]);
 
@@ -287,7 +285,6 @@ test('findAllByNomeMatricula sem resultado', function () {
     Usuario::factory()->create([
         'nome' => 'Carlos Souza',
         'matricula' => '123456',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
         'perfil_id' => $this->perfilId,
     ]);
 
@@ -300,13 +297,11 @@ test('findAllByNomeMatricula busca parcial', function () {
     $u1 = Usuario::factory()->create([
         'nome' => 'Ana Paula Ferreira',
         'matricula' => '500100',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
         'perfil_id' => $this->perfilId,
     ]);
     $u2 = Usuario::factory()->create([
         'nome' => 'Pedro Henrique',
         'matricula' => '500200',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
         'perfil_id' => $this->perfilId,
     ]);
 

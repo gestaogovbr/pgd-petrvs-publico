@@ -34,7 +34,7 @@ describe('PlanoTrabalhoRequestValidator::index', function () {
                 'unidade_id' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
                 'incluir_subordinadas' => true,
                 'numero' => 42,
-                'tipo_modalidade_id' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+                'modalidade_pgd' => 'presencial',
                 'status' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
                 'hierarquia' => false,
                 'usuario_nome' => 'João',
@@ -86,7 +86,7 @@ describe('PlanoTrabalhoRequestValidator::store', function () {
         'programa_id' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
         'data_inicio' => '2024-01-01',
         'data_fim' => '2024-06-30',
-        'tipo_modalidade_id' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        'modalidade_pgd' => 'presencial',
     ];
 
     test('aceita payload válido completo', function () use ($validPayload) {
@@ -132,9 +132,9 @@ describe('PlanoTrabalhoRequestValidator::store', function () {
         ));
     })->throws(ValidationException::class);
 
-    test('rejeita sem tipo_modalidade_id', function () use ($validPayload) {
+    test('rejeita sem modalidade_pgd', function () use ($validPayload) {
         PlanoTrabalhoRequestValidator::store(makeRequest(
-            array_diff_key($validPayload, ['tipo_modalidade_id' => ''])
+            array_diff_key($validPayload, ['modalidade_pgd' => ''])
         ));
     })->throws(ValidationException::class);
 
@@ -172,7 +172,7 @@ describe('PlanoTrabalhoRequestValidator::update', function () {
         'programa_id' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
         'data_inicio' => '2024-01-01',
         'data_fim' => '2024-06-30',
-        'tipo_modalidade_id' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+        'modalidade_pgd' => 'presencial',
     ];
 
     test('aceita payload válido', function () use ($validPayload) {

@@ -95,7 +95,6 @@ class PlanoTrabalhoRepository
     {
         return $plano->load([
             'programa.templateTcr',
-            'tipoModalidade',
             'unidade',
             'usuario',
             'entregas.entrega',

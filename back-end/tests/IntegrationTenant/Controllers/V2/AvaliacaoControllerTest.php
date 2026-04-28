@@ -15,7 +15,6 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
 use App\Models\Template;
 use App\Models\TipoAvaliacaoNota;
-use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
@@ -66,17 +65,14 @@ beforeEach(function () {
     }
 
     $perfil = Perfil::factory()->create(['nivel' => 3]);
-    $tipoModalidade = TipoModalidade::factory()->create();
     $this->unidade = Unidade::factory()->create();
 
     $this->participante = Usuario::factory()->create([
         'perfil_id' => $perfil->id,
-        'tipo_modalidade_id' => $tipoModalidade->id,
     ]);
 
     $this->chefia = Usuario::factory()->create([
         'perfil_id' => $perfil->id,
-        'tipo_modalidade_id' => $tipoModalidade->id,
     ]);
 
     $integrante = \App\Models\UnidadeIntegrante::create([
@@ -102,7 +98,6 @@ beforeEach(function () {
     $this->plano = PlanoTrabalho::factory()->create([
         'usuario_id' => $this->participante->id,
         'unidade_id' => $this->unidade->id,
-        'tipo_modalidade_id' => $tipoModalidade->id,
         'criacao_usuario_id' => $this->participante->id,
         'programa_id' => $this->programa->id,
         'data_inicio' => '2025-01-01',

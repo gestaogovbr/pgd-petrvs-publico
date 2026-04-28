@@ -10,7 +10,6 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\Programa;
 use App\Models\Template;
-use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Services\OcorrenciaService;
@@ -20,7 +19,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
-    $this->tipoModalidade = TipoModalidade::factory()->create();
     $this->perfilParticipante = Perfil::factory()->create(['nivel' => PerfilEnum::PARTICIPANTE->value]);
     $this->unidade = Unidade::factory()->create();
 
@@ -31,18 +29,15 @@ beforeEach(function () {
 
     $this->usuarioParticipante = Usuario::factory()->create([
         'perfil_id' => $this->perfilParticipante->id,
-        'tipo_modalidade_id' => $this->tipoModalidade->id,
     ]);
 
     $this->outroUsuario = Usuario::factory()->create([
         'perfil_id' => $this->perfilParticipante->id,
-        'tipo_modalidade_id' => $this->tipoModalidade->id,
     ]);
 
     $this->planoTrabalho = PlanoTrabalho::factory()->create([
         'usuario_id' => $this->usuarioParticipante->id,
         'unidade_id' => $this->unidade->id,
-        'tipo_modalidade_id' => $this->tipoModalidade->id,
         'programa_id' => $this->programa->id,
     ]);
 });

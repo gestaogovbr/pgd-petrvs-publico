@@ -12,7 +12,7 @@ class PlanoTrabalhoStoreDTO
         public readonly string $programaId,
         public readonly string $dataInicio,
         public readonly string $dataFim,
-        public readonly string $tipoModalidadeId,
+        public readonly string $modalidadePgd,
         public readonly string $criacaoUsuarioId,
         public readonly ?string $justificativaModalidade = null,
     ) {}
@@ -30,7 +30,7 @@ class PlanoTrabalhoStoreDTO
             programaId: $data['programa_id'],
             dataInicio: $data['data_inicio'],
             dataFim: $data['data_fim'],
-            tipoModalidadeId: $data['tipo_modalidade_id'],
+            modalidadePgd: $data['modalidade_pgd'],
             criacaoUsuarioId: $criacaoUsuarioId,
             justificativaModalidade: $data['justificativa_modalidade'] ?? null,
         );
@@ -45,7 +45,7 @@ class PlanoTrabalhoStoreDTO
             'programa_id' => $this->programaId,
             'data_inicio' => $this->dataInicio,
             'data_fim' => $this->dataFim,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->criacaoUsuarioId,
             'justificativa_modalidade' => $this->justificativaModalidade,
         ];

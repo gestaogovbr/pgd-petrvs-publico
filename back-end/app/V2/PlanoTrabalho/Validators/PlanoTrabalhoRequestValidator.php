@@ -22,7 +22,7 @@ class PlanoTrabalhoRequestValidator
             'filters.unidade_id' => ['sometimes', 'nullable', 'uuid'],
             'filters.incluir_subordinadas' => ['sometimes', 'boolean'],
             'filters.numero' => ['sometimes', 'nullable', 'integer'],
-            'filters.tipo_modalidade_id' => ['sometimes', 'nullable', 'uuid'],
+            'filters.modalidade_pgd' => ['sometimes', 'nullable', 'string'],
             'filters.status' => ['sometimes', 'nullable', 'uuid'],
             'filters.hierarquia' => ['sometimes', 'boolean'],
             'filters.usuario_nome' => ['sometimes', 'nullable', 'string'],
@@ -40,7 +40,7 @@ class PlanoTrabalhoRequestValidator
             'programa_id' => ['required', 'uuid'],
             'data_inicio' => ['required', 'date'],
             'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
-            'tipo_modalidade_id' => ['required', 'uuid'],
+            'modalidade_pgd' => ['required', 'string'],
             'justificativa' => ['nullable', 'string', 'max:500'],
             'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
         ], [
@@ -53,8 +53,8 @@ class PlanoTrabalhoRequestValidator
             'data_inicio.required' => 'A data de início é obrigatória.',
             'data_fim.required' => 'A data de fim é obrigatória.',
             'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
-            'tipo_modalidade_id.required' => 'A modalidade é obrigatória.',
-            'tipo_modalidade_id.uuid' => 'O valor informado para a modalidade é inválido.',
+            'modalidade_pgd.required' => 'A modalidade é obrigatória.',
+            'modalidade_pgd.string' => 'O valor informado para a modalidade é inválido.',
             'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
             'justificativa_modalidade.max' => 'A justificativa da modalidade não pode exceder 500 caracteres.',
         ]);
@@ -68,7 +68,7 @@ class PlanoTrabalhoRequestValidator
             'programa_id' => ['required', 'uuid'],
             'data_inicio' => ['required', 'date'],
             'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
-            'tipo_modalidade_id' => ['required', 'uuid'],
+            'modalidade_pgd' => ['required', 'string'],
             'justificativa' => ['nullable', 'string', 'max:500'],
             'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
         ], [
@@ -81,8 +81,8 @@ class PlanoTrabalhoRequestValidator
             'data_inicio.required' => 'A data de início é obrigatória.',
             'data_fim.required' => 'A data de fim é obrigatória.',
             'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
-            'tipo_modalidade_id.required' => 'A modalidade é obrigatória.',
-            'tipo_modalidade_id.uuid' => 'O valor informado para a modalidade é inválido.',
+            'modalidade_pgd.required' => 'A modalidade é obrigatória.',
+            'modalidade_pgd.string' => 'O valor informado para a modalidade é inválido.',
             'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
             'justificativa_modalidade.max' => 'A justificativa da modalidade não pode exceder 500 caracteres.',
         ]);

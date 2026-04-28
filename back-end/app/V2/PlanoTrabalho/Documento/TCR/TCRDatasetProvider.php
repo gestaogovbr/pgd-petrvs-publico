@@ -27,18 +27,13 @@ class TCRDatasetProvider
             ['field' => 'status', 'label' => 'Status do plano'],
             ['field' => 'data_inicio', 'label' => 'Data inicial do plano', 'type' => 'DATETIME'],
             ['field' => 'data_fim', 'label' => 'Data final do plano', 'type' => 'DATETIME'],
-            ['field' => 'tipo_modalidade', 'label' => 'Tipo de modalidade', 'fields' => $this->tipoModalidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->tipoModalidade],
+            ['field' => 'tipo_modalidade', 'label' => 'Tipo de modalidade', 'value' => fn ($ctx) => $ctx->modalidade_pgd_label],
             ['field' => 'unidade', 'label' => 'Unidade', 'fields' => $this->unidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->unidade],
             ['field' => 'usuario', 'label' => 'Usuário', 'fields' => $this->usuarioFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->usuario],
             ['field' => 'programa', 'label' => 'Programa', 'fields' => $this->programaFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->programa],
             ['field' => 'entregas', 'label' => 'Entregas', 'fields' => $this->entregaFields(), 'type' => 'ARRAY', 'value' => fn ($ctx) => $ctx->entregas],
             ['field' => 'criterios_avaliacao', 'label' => 'Critérios de avaliação', 'fields' => [['field' => 'value', 'label' => 'Critério']], 'type' => 'ARRAY', 'value' => fn ($ctx) => $ctx->criterios_avaliacao],
         ];
-    }
-
-    private function tipoModalidadeFields(): array
-    {
-        return [['field' => 'nome', 'label' => 'Nome']];
     }
 
     private function unidadeFields(): array

@@ -18,7 +18,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'programa_id' => 'programa-789',
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => 'mod-abc',
+            'modalidade_pgd' => 'presencial',
             'justificativa_modalidade' => 'Justificativa teste',
         ], 'criador-999');
 
@@ -27,7 +27,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             ->and($dto->programaId)->toBe('programa-789')
             ->and($dto->dataInicio)->toBe('2024-01-01')
             ->and($dto->dataFim)->toBe('2024-12-31')
-            ->and($dto->tipoModalidadeId)->toBe('mod-abc')
+            ->and($dto->modalidadePgd)->toBe('presencial')
             ->and($dto->justificativaModalidade)->toBe('Justificativa teste')
             ->and($dto->criacaoUsuarioId)->toBe('criador-999');
     });
@@ -39,7 +39,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'programa_id' => 'programa-1',
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-06-30',
-            'tipo_modalidade_id' => 'mod-1',
+            'modalidade_pgd' => 'presencial',
         ], 'criador-1');
 
         expect($dto->justificativaModalidade)->toBeNull();
@@ -52,7 +52,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'programa_id' => 'programa-789',
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => 'mod-abc',
+            'modalidade_pgd' => 'presencial',
             'justificativa_modalidade' => 'Justificativa',
         ], 'criador-999');
 
@@ -64,7 +64,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'programa_id' => 'programa-789',
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => 'mod-abc',
+            'modalidade_pgd' => 'presencial',
             'criacao_usuario_id' => 'criador-999',
             'justificativa_modalidade' => 'Justificativa',
         ]);

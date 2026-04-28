@@ -24,7 +24,7 @@ function buildStoreDTO(array $overrides = []): PlanoTrabalhoStoreDTO
         'programa_id' => 'programa-1',
         'data_inicio' => '2024-03-01',
         'data_fim' => '2024-06-30',
-        'tipo_modalidade_id' => 'mod-1',
+        'modalidade_pgd' => 'presencial',
     ], $overrides), 'criador-1');
 }
 
@@ -111,7 +111,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $programa->data_fim = '2024-12-31';
 
         $agente = Mockery::mock(Usuario::class)->makePartial();
-        $agente->tipo_modalidade_id = 'mod-siape';
+        $agente->modalidade_pgd = 'integral';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
@@ -119,7 +119,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
 
-        $this->validacao->validar(buildStoreDTO(['tipo_modalidade_id' => 'mod-diferente']));
+        $this->validacao->validar(buildStoreDTO(['modalidade_pgd' => 'parcial']));
     })->throws(ValidateException::class, 'Modalidade distinta daquela registrada no SIAPE. A justificativa é obrigatória.');
 
     test('permite quando modalidade diverge do SIAPE com justificativa', function () {
@@ -131,7 +131,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $programa->data_fim = '2024-12-31';
 
         $agente = Mockery::mock(Usuario::class)->makePartial();
-        $agente->tipo_modalidade_id = 'mod-siape';
+        $agente->modalidade_pgd = 'integral';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
@@ -140,7 +140,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
 
         $this->validacao->validar(buildStoreDTO([
-            'tipo_modalidade_id' => 'mod-diferente',
+            'modalidade_pgd' => 'parcial',
             'justificativa_modalidade' => 'Modalidade ajustada por necessidade do serviço.',
         ]));
 
@@ -156,7 +156,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $programa->data_fim = '2024-12-31';
 
         $agente = Mockery::mock(Usuario::class)->makePartial();
-        $agente->tipo_modalidade_id = 'mod-1';
+        $agente->modalidade_pgd = 'presencial';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);

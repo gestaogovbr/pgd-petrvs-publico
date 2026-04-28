@@ -6,7 +6,6 @@ use App\V2\PlanoTrabalho\PlanoTrabalhoController;
 use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\Models\PlanoTrabalho;
 use App\Models\Programa;
-use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\Perfil;
@@ -55,18 +54,17 @@ beforeEach(function () {
     }
 
     $perfil = Perfil::factory()->create(['nivel' => PerfilEnum::PARTICIPANTE]);
-    $tipoModalidade = TipoModalidade::factory()->create();
 
     $this->unidade = Unidade::factory()->create();
     $this->usuario = Usuario::factory()->create([
         'perfil_id' => $perfil->id,
-        'tipo_modalidade_id' => $tipoModalidade->id,
+        'modalidade_pgd' => 'presencial',
     ]);
     $this->programa = Programa::factory()->create([
         'data_inicio' => '2024-01-01',
         'data_fim' => '2025-12-31',
     ]);
-    $this->tipoModalidadeId = $tipoModalidade->id;
+    $this->modalidadePgd = 'presencial';
 
     ProgramaParticipante::factory()->create([
         'usuario_id' => $this->usuario->id,
@@ -87,7 +85,7 @@ function validStorePayload(): array
         'programa_id' => fake()->uuid(),
         'data_inicio' => '2025-01-01',
         'data_fim' => '2025-06-30',
-        'tipo_modalidade_id' => fake()->uuid(),
+        'modalidade_pgd' => 'presencial',
     ];
 }
 
@@ -174,7 +172,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
         ]);
@@ -183,7 +181,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $outroUsuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
         ]);
 
         $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
@@ -205,7 +203,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
         $vigente = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'data_inicio' => now()->subMonth(),
             'data_fim' => now()->addMonth(),
             'status' => StatusEnum::ATIVO,
@@ -214,7 +212,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'data_inicio' => now()->subYear(),
             'data_fim' => now()->subMonths(6),
             'status' => StatusEnum::ATIVO,
@@ -236,7 +234,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
         $dentroIntervalo = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'data_inicio' => '2024-03-01',
             'data_fim' => '2024-06-30',
         ]);
@@ -244,7 +242,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'data_inicio' => '2025-06-01',
             'data_fim' => '2025-12-31',
         ]);
@@ -268,7 +266,7 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
         ]);
@@ -317,7 +315,7 @@ describe('GET /api/v2/plano-trabalho (ordenação - happy path)', function () {
         PlanoTrabalho::factory()->count(3)->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
         ]);
 
         $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
@@ -341,12 +339,12 @@ describe('GET /api/v2/plano-trabalho (ordenação - happy path)', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $usuarioA->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
         ]);
         PlanoTrabalho::factory()->create([
             'usuario_id' => $usuarioZ->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
         ]);
 
         $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
@@ -396,11 +394,11 @@ describe('POST /api/v2/plano-trabalho (validação)', function () {
             ->assertStatus(422);
     });
 
-    test('retorna 422 quando tipo_modalidade_id ausente', function () {
+    test('retorna 422 quando modalidade_pgd ausente', function () {
         $this->actingAs($this->usuario, 'web');
 
         $payload = validStorePayload();
-        unset($payload['tipo_modalidade_id']);
+        unset($payload['modalidade_pgd']);
 
         $this->postJson('/api/__tests/v2/plano-trabalho', $payload)
             ->assertStatus(422);
@@ -439,22 +437,18 @@ describe('POST /api/v2/plano-trabalho (modalidade divergente)', function () {
     test('retorna 422 quando modalidade diverge do SIAPE sem justificativa', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $outraModalidade = \App\Models\TipoModalidade::factory()->create();
-
         $this->postJson('/api/__tests/v2/plano-trabalho', [
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
             'programa_id' => $this->programa->id,
             'data_inicio' => '2024-06-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => $outraModalidade->id,
+            'modalidade_pgd' => 'integral',
         ])->assertStatus(422);
     });
 
     test('retorna 201 quando modalidade diverge do SIAPE com justificativa', function () {
         $this->actingAs($this->usuario, 'web');
-
-        $outraModalidade = \App\Models\TipoModalidade::factory()->create();
 
         $this->postJson('/api/__tests/v2/plano-trabalho', [
             'usuario_id' => $this->usuario->id,
@@ -462,7 +456,7 @@ describe('POST /api/v2/plano-trabalho (modalidade divergente)', function () {
             'programa_id' => $this->programa->id,
             'data_inicio' => '2025-03-01',
             'data_fim' => '2025-05-31',
-            'tipo_modalidade_id' => $outraModalidade->id,
+            'modalidade_pgd' => 'integral',
             'justificativa_modalidade' => 'Modalidade ajustada por necessidade do serviço.',
         ])->assertStatus(201);
     });
@@ -470,15 +464,13 @@ describe('POST /api/v2/plano-trabalho (modalidade divergente)', function () {
     test('persiste justificativa_modalidade quando modalidade diverge', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $outraModalidade = \App\Models\TipoModalidade::factory()->create();
-
         $response = $this->postJson('/api/__tests/v2/plano-trabalho', [
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
             'programa_id' => $this->programa->id,
             'data_inicio' => '2025-07-01',
             'data_fim' => '2025-09-30',
-            'tipo_modalidade_id' => $outraModalidade->id,
+            'modalidade_pgd' => 'integral',
             'justificativa_modalidade' => 'Necessidade do serviço.',
         ]);
 
@@ -502,7 +494,7 @@ describe('POST /api/v2/plano-trabalho (happy path)', function () {
             'programa_id' => $this->programa->id,
             'data_inicio' => '2024-06-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
         ]);
 
         $response->assertStatus(201)
@@ -526,7 +518,7 @@ describe('POST /api/v2/plano-trabalho (happy path)', function () {
             'programa_id' => $this->programa->id,
             'data_inicio' => '2024-06-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
         ]);
 
         $plano = PlanoTrabalho::find($response->json('data.id'));
@@ -545,7 +537,7 @@ describe('DELETE /api/v2/plano-trabalho/:id (happy path)', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'status' => 'INCLUIDO',
         ]);
@@ -567,7 +559,7 @@ describe('DELETE /api/v2/plano-trabalho/:id (validacao)', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'status' => 'AGUARDANDO_ASSINATURA',
         ]);
@@ -594,7 +586,7 @@ describe('GET /api/v2/plano-trabalho/:id (happy path)', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
         ]);
 
         $response = $this->getJson("/api/__tests/v2/plano-trabalho/{$plano->id}");
@@ -610,13 +602,13 @@ describe('GET /api/v2/plano-trabalho/:id (happy path)', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
         ]);
 
         $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$plano->id}")
             ->json('data');
 
-        expect($data)->toHaveKeys(['usuario', 'unidade', 'programa', 'tipo_modalidade', 'entregas', 'consolidacoes']);
+        expect($data)->toHaveKeys(['usuario', 'unidade', 'programa', 'modalidade_pgd', 'entregas', 'consolidacoes']);
     });
 });
 
@@ -638,7 +630,7 @@ describe('GET /api/v2/plano-trabalho/:id (afastamentos)', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'status' => 'ATIVO',
         ]);
 
@@ -682,7 +674,7 @@ describe('GET /api/v2/plano-trabalho/:id (afastamentos)', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'status' => 'ATIVO',
         ]);
 
@@ -752,7 +744,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/cancelar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $context->usuario->id,
             'unidade_id' => $context->unidade->id,
-            'tipo_modalidade_id' => $context->tipoModalidadeId,
+            'modalidade_pgd' => $context->modalidadePgd,
             'criacao_usuario_id' => $context->usuario->id,
             'programa_id' => $context->programa->id,
             'data_inicio' => '2025-01-01',
@@ -805,7 +797,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/cancelar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'INCLUIDO',
@@ -857,7 +849,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $context->usuario->id,
             'unidade_id' => $context->unidade->id,
-            'tipo_modalidade_id' => $context->tipoModalidadeId,
+            'modalidade_pgd' => $context->modalidadePgd,
             'criacao_usuario_id' => $context->usuario->id,
             'programa_id' => $context->programa->id,
             'data_inicio' => $hoje->copy()->subMonths(6)->format('Y-m-d'),
@@ -950,7 +942,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'INCLUIDO',
@@ -988,7 +980,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/arquivar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'CANCELADO',
@@ -1008,7 +1000,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/arquivar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'CONCLUIDO',
@@ -1030,7 +1022,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/arquivar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'CONCLUIDO',
@@ -1075,7 +1067,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/arquivar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'ATIVO',
@@ -1091,7 +1083,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/arquivar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'CONCLUIDO',
@@ -1136,7 +1128,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/arquivar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'CANCELADO',
@@ -1165,7 +1157,7 @@ describe('POST /api/v2/plano-trabalho/:id/clonar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'ATIVO',
@@ -1194,7 +1186,7 @@ describe('POST /api/v2/plano-trabalho/:id/clonar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'CONCLUIDO',
@@ -1235,7 +1227,7 @@ describe('POST /api/v2/plano-trabalho/:id/clonar', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
             'status' => 'CANCELADO',

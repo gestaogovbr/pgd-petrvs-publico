@@ -102,7 +102,7 @@ class PlanoTrabalhoStoreValidator
     {
         $agente = $this->usuarioRepository->findById($dto->usuarioId);
 
-        if ($agente->tipo_modalidade_id === $dto->tipoModalidadeId) {
+        if ($agente->modalidade_pgd === $dto->modalidadePgd) {
             return;
         }
 

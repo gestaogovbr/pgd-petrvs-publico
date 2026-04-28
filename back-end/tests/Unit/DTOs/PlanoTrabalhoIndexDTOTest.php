@@ -108,19 +108,19 @@ describe('PlanoTrabalhoIndexDTO', function () {
         expect($filtro->numero)->toBeNull();
     });
 
-    test('extrai filtro tipo_modalidade_id corretamente', function () {
+    test('extrai filtro modalidade_pgd corretamente', function () {
         $filtro = PlanoTrabalhoIndexDTO::fromArray([
             'vigentes' => true,
-            'tipo_modalidade_id' => 'modalidade-abc',
+            'modalidade_pgd' => 'presencial',
         ]);
 
-        expect($filtro->tipoModalidadeId)->toBe('modalidade-abc');
+        expect($filtro->modalidadePgd)->toBe('presencial');
     });
 
-    test('tipo_modalidade_id é null quando não informado', function () {
+    test('modalidade_pgd é null quando não informado', function () {
         $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true]);
 
-        expect($filtro->tipoModalidadeId)->toBeNull();
+        expect($filtro->modalidadePgd)->toBeNull();
     });
 
     test('extrai filtro status corretamente', function () {
@@ -144,10 +144,10 @@ describe('PlanoTrabalhoIndexDTO', function () {
         expect($filtro->numero)->toBe(10);
     });
 
-    test('aceita filtro apenas com tipo_modalidade_id', function () {
-        $filtro = PlanoTrabalhoIndexDTO::fromArray(['tipo_modalidade_id' => 'mod-1']);
+    test('aceita filtro apenas com modalidade_pgd', function () {
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['modalidade_pgd' => 'presencial']);
 
-        expect($filtro->tipoModalidadeId)->toBe('mod-1');
+        expect($filtro->modalidadePgd)->toBe('presencial');
     });
 
     test('aceita filtro apenas com status', function () {

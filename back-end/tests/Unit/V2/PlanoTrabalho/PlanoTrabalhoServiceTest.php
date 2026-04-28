@@ -175,7 +175,7 @@ describe('PlanoTrabalhoService::store', function () {
             'programa_id' => 'programa-1',
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => 'mod-1',
+            'modalidade_pgd' => 'presencial',
         ]);
 
         expect($result)->toBe($plano);
@@ -201,7 +201,7 @@ describe('PlanoTrabalhoService::store', function () {
             'programa_id' => 'programa-1',
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => 'mod-1',
+            'modalidade_pgd' => 'presencial',
         ]);
     })->throws(ValidateException::class, 'A unidade está inativa.');
 
@@ -227,7 +227,7 @@ describe('PlanoTrabalhoService::store', function () {
             'programa_id' => 'programa-1',
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => 'mod-1',
+            'modalidade_pgd' => 'presencial',
         ]);
     });
 });
@@ -406,7 +406,7 @@ describe('PlanoTrabalhoService::update', function () {
             'programa_id' => 'programa-1',
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => 'mod-1',
+            'modalidade_pgd' => 'presencial',
         ]);
     })->throws(\App\Exceptions\ForbiddenException::class);
 });
