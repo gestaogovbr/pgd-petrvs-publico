@@ -21,13 +21,19 @@ interface UnidadeReadRepositoryContract
 
     public function findByCodigo(string $codigo): ?Unidade;
 
+    public function findBySigla(string $sigla): ?Unidade;
+
     public function getUnidadesGerenciadas(string $usuarioId): Collection;
+
+    public function findByCodigoWithPai(string $codigo): ?\App\Models\Unidade;
 
     public function getSubordinadas(array $ids): Collection;
 
     public function getSubordinadasRecursivas(array $ids): Collection;
 
     public function findById(string|int $id): ?Unidade;
+
+    public function findWithPlanosTrabalhoAtividades(string|int $id): ?\App\Models\Unidade;
 
     public function existsByCodigo(string $codigo): bool;
 

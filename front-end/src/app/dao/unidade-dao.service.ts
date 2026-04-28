@@ -176,6 +176,10 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
     return this.server.postDownload('api/unidade/download-unidade-siape', { unidade });
   }
 
+  public relatorioProcessamentoSIAPE(unidade: string) {
+    return this.server.post('api/unidade/relatorio-processamento-siape', { unidade });
+  }
+
   public obterInstituidora(unidade_id: string): Promise<Unidade> {
     return new Promise<Unidade>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/obter-instituidora', { unidade_id }).subscribe(response => {

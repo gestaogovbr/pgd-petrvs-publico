@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository\Atividade\Contracts;
 
+use App\Models\Atividade;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -21,4 +22,5 @@ interface AtividadeReadRepositoryContract
      * @return Collection<int, string>
      */
     public function entregaIdsComAtividade(string $consolidacaoId): Collection;
+    public function findWithPlanoTrabalho(string|int $id): ?Atividade;
 }

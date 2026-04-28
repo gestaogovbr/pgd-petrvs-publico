@@ -94,7 +94,6 @@ use App\Http\Controllers\TipoCursoController;
 use App\Http\Controllers\TipoDocumentoController;
 
 use App\Http\Controllers\TipoJustificativaController;
-use App\Http\Controllers\TipoModalidadeController;
 use App\Http\Controllers\TipoMotivoAfastamentoController;
 use App\Http\Controllers\TipoProcessoController;
 use App\Http\Controllers\TipoTarefaController;
@@ -264,9 +263,6 @@ Route::middleware(['auth:sanctum'])->prefix('TipoAvaliacao')->group(function () 
 });
 Route::middleware(['auth:sanctum'])->prefix('TipoAvaliacaoNota')->group(function () {
   Route::post('query', [TipoAvaliacaoNotaController::class, 'query']);
-});
-Route::middleware(['auth:sanctum'])->prefix('TipoModalidade')->group(function () {
-  defaultRoutes(TipoModalidadeController::class);
 });
 Route::middleware(['auth:sanctum'])->prefix('TipoMotivoAfastamento')->group(function () {
   defaultRoutes(TipoMotivoAfastamentoController::class);
@@ -536,6 +532,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/unidade/download-unidade-siape', [UnidadeController::class, 'downloadLogSiape']);
     Route::post('/usuario/processar-siape', [SiapeIndividualController::class, 'processaServidor']);
     Route::post('/unidade/processar-siape', [SiapeIndividualController::class, 'processaUnidade']);
+    Route::post('/unidade/relatorio-processamento-siape', [SiapeIndividualController::class, 'relatorioProcessamentoUnidade']);
+    Route::post('/siape/relatorio-carga-individual', [SiapeIndividualController::class, 'relatorioCargaIndividual']);
     Route::post('/siape-blacklist/remover-cpf', [SiapeBlackListServidorController::class, 'remover']);
     Route::post('/SiapeBlacklistServidor/query', [SiapeBlackListServidorController::class, 'query']);
 

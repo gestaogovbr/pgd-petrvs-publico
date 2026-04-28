@@ -28,6 +28,11 @@ class PlanoTrabalhoRepository
         return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesGerenciadasIds, $unidadesSubordinadasIds, $usuarioId);
     }
 
+    public function findWithAtividades(string|int $id): ?PlanoTrabalho
+    {
+        return $this->readRepository->findWithAtividades($id);
+    }
+
     public function planosAtivos(string $usuarioId): Collection
     {
         return $this->readRepository->planosAtivos($usuarioId);

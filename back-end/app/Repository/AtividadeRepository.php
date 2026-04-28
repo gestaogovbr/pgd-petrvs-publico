@@ -46,4 +46,9 @@ class AtividadeRepository
     {
         return $this->writeRepository->delete($id);
     }
+
+    public function findWithPlanoTrabalho(string|int $id): ?Atividade
+    {
+        return $this->readRepository->findWithPlanoTrabalho($id);
+    }
 }

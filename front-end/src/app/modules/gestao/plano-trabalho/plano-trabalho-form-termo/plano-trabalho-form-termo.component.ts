@@ -7,13 +7,13 @@ import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service';
-import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { TipoDocumento } from 'src/app/models/tipo-documento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
 
 @Component({
@@ -29,23 +29,22 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('programa', { static: false }) public programa?: InputSearchComponent;
   @ViewChild('tipoDocumento', { static: false }) public tipoDocumento?: InputSearchComponent;
-  @ViewChild('tipoModalidade', { static: false }) public tipoModalidade?: InputSearchComponent;
 
   public unidadeDao: UnidadeDaoService;
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
   public documentoDao: DocumentoDaoService;
   public tipoDocumentoDao: TipoDocumentoDaoService;
-  public tipoModalidadeDao: TipoModalidadeDaoService;
+  public modalidadePgd: ModalidadePgdService;
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalho, PlanoTrabalhoDaoService);
-    this.join = ["unidade", "usuario", "programa.template_tcr", "tipo_modalidade", "documento", "documentos", "atividades.atividade"];
+    this.join = ["unidade", "usuario", "programa.template_tcr", "documento", "documentos", "atividades.atividade"];
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
-    this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
+    this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
 
     this.form = this.fh.FormBuilder({
@@ -62,7 +61,7 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
       tipo_documento_id: {default: ""},
       numero_processo: {default: ""},
       vinculadas: {default: true},
-      tipo_modalidade_id: {default: ""},
+      modalidade_pgd: {default: null},
       forma_contagem_carga_horaria: {default: "DIA"}
     }, this.cdRef, this.validate);
   }
@@ -92,8 +91,7 @@ export class PlanoTrabalhoFormTermoComponent extends PageFormBase<PlanoTrabalho,
     await Promise.all ([
       this.unidade!.loadSearch(entity.unidade || entity.unidade_id),
       this.usuario!.loadSearch(entity.usuario || entity.usuario_id),
-      this.programa!.loadSearch(entity.programa || entity.programa_id),
-      this.tipoModalidade!.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)
+      this.programa!.loadSearch(entity.programa || entity.programa_id)
     ]);
    
     formValue.data_inicio = this.auth.hora;

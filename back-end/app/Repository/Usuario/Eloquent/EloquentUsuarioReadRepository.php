@@ -200,7 +200,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             ->get();
     }
 
-    public function findByEmail(string $email): ?Usuario
+    public function findByEmail(?string $email): ?Usuario
     {
         $email = is_string($email) ? trim($email) : '';
 

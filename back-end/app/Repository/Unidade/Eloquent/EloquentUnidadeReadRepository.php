@@ -10,7 +10,6 @@ use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @extends AbstractEloquentReadRepository<Unidade>
@@ -85,6 +84,17 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
     {
         /** @var Unidade|null $unidade */
         $unidade = $this->query()->where('codigo', $codigo)->first();
+        return $unidade;
+    }
+
+    public function findByCodigoWithPai(string $codigo): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()
+            ->with('unidadePai')
+            ->where('codigo', $codigo)
+            ->first();
+
         return $unidade;
     }
 
@@ -176,5 +186,16 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         }
 
         return $query->get();
+    }
+
+    public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()
+            ->with(['planosTrabalho', 'planosTrabalho.atividades'])
+            ->where('id', $id)
+            ->first();
+
+        return $unidade;
     }
 }

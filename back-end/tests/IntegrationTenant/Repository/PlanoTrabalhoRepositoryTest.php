@@ -10,16 +10,13 @@ use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\PlanoTrabalhoRepository;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\Enums\StatusEnum;
-use App\Models\TipoModalidade;
 use App\Models\Perfil;
 
 beforeEach(function () {
     $this->repository = app(PlanoTrabalhoRepository::class);
-    $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
     $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
     $this->unidade = Unidade::factory()->create();
     $this->usuario = Usuario::factory()->create([
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
         'perfil_id' => $this->perfilId,
     ]);
     $this->programa = Programa::factory()->create();
@@ -29,7 +26,6 @@ describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
 
     test('retorna apenas planos de outros usuários aguardando assinatura', function () {
         $outroUsuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
 
@@ -37,21 +33,18 @@ describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
             'unidade_id' => $this->unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $this->unidade->id,
             'usuario_id' => $this->usuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $this->unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::ATIVO->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], $this->usuario->id);
@@ -62,15 +55,12 @@ describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
 
     test('não inclui plano do gestor titular para chefe substituto', function () {
         $gestorTitular = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $gestorSubstituto = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $participante = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
 
@@ -96,14 +86,12 @@ describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
             'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorTitular->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $this->unidade->id,
             'usuario_id' => $participante->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], $gestorSubstituto->id);
@@ -114,11 +102,9 @@ describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
 
     test('inclui plano do gestor titular quando usuário não é chefe substituto', function () {
         $gestorTitular = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $outroUsuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
 
@@ -135,14 +121,12 @@ describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
             'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorTitular->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $this->unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], 'usuario-qualquer');
@@ -156,19 +140,15 @@ describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
         $unidadeSubordinada = Unidade::factory()->create(['unidade_pai_id' => $this->unidade->id]);
 
         $usuarioLogado = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $titularSubordinada = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $participanteSubordinada = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $participanteSuperior = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
 
@@ -185,21 +165,18 @@ describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
             'unidade_id' => $this->unidade->id,
             'usuario_id' => $participanteSuperior->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $unidadeSubordinada->id,
             'usuario_id' => $titularSubordinada->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $unidadeSubordinada->id,
             'usuario_id' => $participanteSubordinada->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura(
@@ -224,7 +201,6 @@ describe('PlanoTrabalhoRepository::create', function () {
             'programa_id' => $this->programa->id,
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'criacao_usuario_id' => $this->usuario->id,
         ]);
 
@@ -245,7 +221,6 @@ describe('PlanoTrabalhoRepository::create', function () {
             'programa_id' => $this->programa->id,
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-12-31',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'criacao_usuario_id' => $this->usuario->id,
         ]);
 
@@ -259,17 +234,14 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $outroUsuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         PlanoTrabalho::factory()->create([
             'usuario_id' => $outroUsuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id]);
@@ -283,7 +255,6 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subMonth(),
             'data_fim' => now()->addMonth(),
             'status' => StatusEnum::ATIVO,
@@ -292,7 +263,6 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subYear(),
             'data_fim' => now()->subMonth(),
             'status' => StatusEnum::CONCLUIDO,
@@ -308,7 +278,6 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => '2024-03-01',
             'data_fim' => '2024-06-30',
         ]);
@@ -316,7 +285,6 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => '2025-01-01',
             'data_fim' => '2025-12-31',
         ]);
@@ -336,7 +304,6 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subMonth(),
             'data_fim' => now()->addMonth(),
             'status' => StatusEnum::ATIVO,
@@ -345,7 +312,6 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $outraUnidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subMonth(),
             'data_fim' => now()->addMonth(),
             'status' => StatusEnum::ATIVO,
@@ -364,14 +330,12 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_arquivamento' => now(),
         ]);
 
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_arquivamento' => null,
         ]);
 
@@ -385,14 +349,12 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_arquivamento' => now(),
         ]);
 
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_arquivamento' => null,
         ]);
 
@@ -406,7 +368,6 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->count(5)->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray([
@@ -425,12 +386,10 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         $planoA = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
         $planoB = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray([
@@ -448,12 +407,10 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray([
@@ -470,24 +427,20 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
     test('ordena por usuario_nome asc', function () {
         $usuarioA = Usuario::factory()->create([
             'nome' => 'Ana',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $usuarioZ = Usuario::factory()->create([
             'nome' => 'Zélia',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
 
         PlanoTrabalho::factory()->create([
             'usuario_id' => $usuarioZ->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
         PlanoTrabalho::factory()->create([
             'usuario_id' => $usuarioA->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray([
@@ -505,24 +458,20 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
     test('ordena por usuario_nome desc', function () {
         $usuarioA = Usuario::factory()->create([
             'nome' => 'Ana',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $usuarioZ = Usuario::factory()->create([
             'nome' => 'Zélia',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
 
         PlanoTrabalho::factory()->create([
             'usuario_id' => $usuarioA->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
         PlanoTrabalho::factory()->create([
             'usuario_id' => $usuarioZ->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray([
@@ -544,7 +493,6 @@ describe('PlanoTrabalhoRepository::findByIdComRelacoes', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         $result = $this->repository->findByIdComRelacoes($plano->id);
@@ -554,7 +502,6 @@ describe('PlanoTrabalhoRepository::findByIdComRelacoes', function () {
             ->and($result->relationLoaded('usuario'))->toBeTrue()
             ->and($result->relationLoaded('unidade'))->toBeTrue()
             ->and($result->relationLoaded('programa'))->toBeTrue()
-            ->and($result->relationLoaded('tipoModalidade'))->toBeTrue()
             ->and($result->relationLoaded('entregas'))->toBeTrue()
             ->and($result->relationLoaded('consolidacoes'))->toBeTrue();
     });
@@ -563,7 +510,6 @@ describe('PlanoTrabalhoRepository::findByIdComRelacoes', function () {
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalhoEntrega::factory()->create(['plano_trabalho_id' => $plano->id]);

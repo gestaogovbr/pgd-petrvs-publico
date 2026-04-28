@@ -17,6 +17,7 @@ import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { Programa } from 'src/app/models/programa.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { UnidadeService } from 'src/app/services/unidade.service';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 
 @Component({
     selector: 'app-plano-trabalho-consolidacao-avaliacao',
@@ -32,6 +33,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public avaliacaoDao: AvaliacaoDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
   public unidadeService: UnidadeService;
+  public modalidadePgd: ModalidadePgdService;
   public extraJoin: string[];
   public extra: any;
 
@@ -45,11 +47,12 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoDaoService);
     this.unidadeService = injector.get<UnidadeService>(UnidadeService);
+    this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
     /* Inicializações */
     this.join = [
       "avaliacoes:id,recurso",
       "avaliacao", // "avaliacao.tipoAvaliacao.notas"
-      "plano_trabalho:id", // "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,url_foto"
+      "plano_trabalho:id",
     ];
     this.extraJoin = [ // Utilizado pelo RefreshId
       "avaliacao.tipoAvaliacao.notas",
@@ -58,7 +61,6 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       "planoTrabalho.unidade.unidadePai.gestoresSubstitutos:id,unidade_id,usuario_id", 
       "planoTrabalho.unidade.unidadePai.gestor:id,unidade_id,usuario_id", 
       "planoTrabalho.unidade.gestoresSubstitutos:id,unidade_id,usuario_id", 
-      "planoTrabalho.tipoModalidade:id,nome", 
       "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto"
     ];
 

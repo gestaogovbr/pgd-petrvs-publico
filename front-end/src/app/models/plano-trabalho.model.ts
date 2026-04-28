@@ -1,5 +1,4 @@
 import { Base } from './base.model';
-import { TipoModalidade } from './tipo-modalidade.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 import { Programa } from './programa.model';
@@ -25,7 +24,6 @@ export type PlanoTrabalhoMetadata = {
 
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public accordionDisabled: boolean = false;
-    public tipo_modalidade?: TipoModalidade;
     public unidade?: Unidade;
     public usuario?: Usuario;
     public programa?: Programa;
@@ -51,14 +49,18 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public criterios_avaliacao: LookupItem[] = []; /* Critérios de avaliação do plano de trabalho */
     public quantidadeAssinaturasExigidas: number = 2;
 
-    public numero: number = 0;
+    /*public _metadata: PlanoTrabalhoMetadata = {
+        assinaturasExigidas: { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] },
+        jaAssinaramTCR: { "participante": [], "gestores_unidade_executora": [],  "gestores_unidade_lotacao": [], "gestores_entidade": [] },
+        criterios_avaliacao: []
+    };*/
+
     public programa_id: string = "";
     public usuario_id: string = "";
     public unidade_id: string = "";
-    public tipo_modalidade_id: string = "";
+    public modalidade_pgd: string | null = null;
+    public modalidade_pgd_label: string = "Não definida";
     public documento_id: string | null = null;
-    public justificativa: string | null = null;
-    public justificativa_modalidade: string | null = null;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

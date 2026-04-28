@@ -69,7 +69,12 @@ abstract class DatabaseTenantTestCase extends TestCase
 
     protected function loadTenantSchema()
     {
-        if (!Schema::connection('tenant')->hasTable('usuarios')) {
+        $needsSchemaReload = !Schema::connection('tenant')->hasTable('usuarios')
+            || !Schema::connection('tenant')->hasColumn('usuarios', 'modalidade_pgd');
+
+        if ($needsSchemaReload) {
+            $this->dropTenantObjects();
+
             $path = database_path('schema/tenant-schema.sql');
             
             if (file_exists($path)) {
@@ -100,6 +105,29 @@ abstract class DatabaseTenantTestCase extends TestCase
                 ]);
             }
         }
+    }
+
+    protected function dropTenantObjects(): void
+    {
+        DB::connection('tenant')->statement('SET FOREIGN_KEY_CHECKS=0');
+
+        $views = DB::connection('tenant')->select("SHOW FULL TABLES WHERE Table_type = 'VIEW'");
+        foreach ($views as $view) {
+            $viewName = array_values((array) $view)[0] ?? null;
+            if ($viewName) {
+                DB::connection('tenant')->statement(sprintf('DROP VIEW IF EXISTS `%s`', str_replace('`', '``', $viewName)));
+            }
+        }
+
+        $tables = DB::connection('tenant')->select("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'");
+        foreach ($tables as $table) {
+            $tableName = array_values((array) $table)[0] ?? null;
+            if ($tableName) {
+                DB::connection('tenant')->statement(sprintf('DROP TABLE IF EXISTS `%s`', str_replace('`', '``', $tableName)));
+            }
+        }
+
+        DB::connection('tenant')->statement('SET FOREIGN_KEY_CHECKS=1');
     }
 
     protected function tearDown(): void

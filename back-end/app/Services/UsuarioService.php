@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\TipoModalidadeEnum;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Exceptions\DBException;
 use App\Exceptions\NotFoundException;
@@ -15,7 +14,6 @@ use App\Repository\PerfilRepository;
 use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
-use App\Repository\TipoModalidadeRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Repository\SiapeBlackListServidorRepository;
@@ -25,6 +23,7 @@ use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
 use App\Services\UnidadeService;
 use App\Services\UtilService;
+use App\Support\ModalidadePgd;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -54,7 +53,6 @@ class UsuarioService extends ServiceBase
     protected UnidadeRepository $unidadeRepository;
     protected IntegracaoServidorRepository $integracaoServidorRepository;
     protected PerfilRepository $perfilRepository;
-    protected TipoModalidadeRepository $tipoModalidadeRepository;
     protected PlanoTrabalhoConsolidacaoRepository $planoTrabalhoConsolidacaoRepository;
     protected PlanoTrabalhoRepository $planoTrabalhoRepository;
     protected PlanoEntregaRepository $planoEntregaRepository;
@@ -66,26 +64,25 @@ class UsuarioService extends ServiceBase
         $this->unidadeRepository = app(UnidadeRepository::class);
         $this->integracaoServidorRepository = app(IntegracaoServidorRepository::class);
         $this->perfilRepository = app(PerfilRepository::class);
-        $this->tipoModalidadeRepository = app(TipoModalidadeRepository::class);
         $this->planoTrabalhoConsolidacaoRepository = app(PlanoTrabalhoConsolidacaoRepository::class);
         $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
         $this->planoEntregaRepository = app(PlanoEntregaRepository::class);
         $this->siapeBlackListServidorRepository = app(SiapeBlackListServidorRepository::class);
     }
 
-    private function applyDefaultTipoModalidadeId(array &$data): void
+    private function normalizeModalidadePgd(array &$data): void
     {
-        if (!empty($data['tipo_modalidade_id'] ?? null)) {
+        if (array_key_exists('tipo_modalidade_id', $data) && !array_key_exists('modalidade_pgd', $data)) {
+            $data['modalidade_pgd'] = $data['tipo_modalidade_id'];
+        }
+
+        unset($data['tipo_modalidade_id'], $data['tipo_modalidade'], $data['tipo_modalidade_siape']);
+
+        if (!array_key_exists('modalidade_pgd', $data)) {
             return;
         }
 
-        $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome(TipoModalidadeEnum::SEM_DADOS_SIAPE->nome());
-
-        if (!$defaultTipoModalidade) {
-            throw new ValidateException("Tipo de Modalidade Padrão não definido no sistema. Consulte um administrador", 422);
-        }
-
-        $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
+        $data['modalidade_pgd'] = ModalidadePgd::normalize($data['modalidade_pgd']);
     }
 
     private function parseUsuarioExterno(mixed $value): ?bool
@@ -161,7 +158,7 @@ class UsuarioService extends ServiceBase
             'email'              => $usuario->emailfuncional,
             'cod_jornada'        => $usuario->cod_jornada,
             'nome_jornada'       => $usuario->nome_jornada,
-            'tipo_modalidade_id' => $modalidadePgdValida,
+            'modalidade_pgd'     => $modalidadePgdValida,
             'participa_pgd'      => $usuario->participa_pgd,
             'ident_unica'        => $usuario->ident_unica,
             'data_modificacao'   => UtilService::asDateTime($usuario->data_modificacao),
@@ -217,20 +214,9 @@ class UsuarioService extends ServiceBase
 
     public function gerarUsuario($dados, $modalidade, $perfil): Usuario
     {
-        $tipoModalidadePgd = UtilService::valueOrDefault($dados['modalidade_pgd']);
-
-        $tipoModalidadePgd = empty($tipoModalidadePgd) ? $modalidade : $this->integracaoService->validarModalidadePgd($tipoModalidadePgd);
-
-        if (empty($tipoModalidadePgd)) {
-            $tipoModalidadePgd = $this->tipoModalidadeRepository->getDefaultId();
-        }
+        $modalidadePgd = $this->integracaoService->validarModalidadePgd($dados['modalidade_pgd'] ?? $modalidade);
 
         $matriculaNova = UtilService::valueOrDefault($dados['matricula']);
-
-        if (empty($tipoModalidadePgd)) {
-             SiapeLog::error("Não foi possível identificar um Tipo de Modalidade para o servidor {$matriculaNova}. O registro será ignorado.");
-             throw new NotFoundException("Nenhum tipo de modalidade foi encontrado para o servidor {$matriculaNova}.");
-        }
 
         $email = $dados['emailfuncional'] ?? null;
         $email = is_string($email) ? trim($email) : null;
@@ -262,7 +248,7 @@ class UsuarioService extends ServiceBase
                     'sexo' => UtilService::valueOrDefault($dados['sexo']),
                     'situacao_funcional' => UtilService::valueOrDefault($dados['situacao_funcional'], "DESCONHECIDO"),
                     'perfil_id' => $perfil,
-                    'tipo_modalidade_id' => $tipoModalidadePgd,
+                    'modalidade_pgd' => $modalidadePgd,
                     'exercicio' => UtilService::valueOrDefault($dados['exercicio']),
                     'uf' => UtilService::valueOrDefault($dados['uf'], null),
                     'data_modificacao' => UtilService::asDateTime($dados['data_modificacao']),
@@ -349,7 +335,7 @@ class UsuarioService extends ServiceBase
                 if (!empty($data['telefone'])) {
                     $data['telefone'] = UtilService::onlyNumbers($data['telefone']);
                 }
-                $this->applyDefaultTipoModalidadeId($data);
+                $this->normalizeModalidadePgd($data);
                 $updated = $this->usuarioRepository->update($restoredEntity->id, $data);
                 if (!$updated) {
                     throw new DBException("Falha ao reativar o usuário", 500);
@@ -585,7 +571,7 @@ class UsuarioService extends ServiceBase
     {
         $data["with"] = [];
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
-        $this->applyDefaultTipoModalidadeId($data);
+        $this->normalizeModalidadePgd($data);
         $this->removerEmailDaRequisicaoSeUsuarioInterno($data, $data['usuario_externo'] ?? null);
 
         unset($data['pedagio']);
@@ -602,7 +588,7 @@ class UsuarioService extends ServiceBase
     public function proxyUpdate($data, $unidade)
     {
         $data["with"] = [];
-        $this->applyDefaultTipoModalidadeId($data);
+        $this->normalizeModalidadePgd($data);
 
         if (array_key_exists('email', $data)) {
             $usuario = !empty($data['id'] ?? null) ? $this->usuarioRepository->findById($data['id']) : null;
@@ -659,9 +645,9 @@ class UsuarioService extends ServiceBase
             if (empty($data["integrantes"][0]))
                 throw new ValidateException("Selecione uma unidade!", 422);
 
-            if (!isset($data['tipo_modalidade_id'])) {
+            if (!array_key_exists('modalidade_pgd', $data)) {
                 $user = $this->usuarioRepository->findById($data["id"]);
-                $data['tipo_modalidade_id'] = $user?->tipo_modalidade_id;
+                $data['modalidade_pgd'] = $user?->modalidade_pgd;
             }
 
             if (array_key_exists('email', $data)) {

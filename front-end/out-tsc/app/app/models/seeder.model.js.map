@@ -1,0 +1,1 @@
+{"version":3,"file":"seeder.model.js","sourceRoot":"","sources":["../../../../src/app/models/seeder.model.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,MAAM,cAAc,CAAC;AAEpC,MAAM,OAAO,MAAO,SAAQ,IAAI;IAI5B,YAAmB,IAAU;QAAI,KAAK,EAAE,CAAC;QAFlC,SAAI,GAAW,EAAE,CAAC,CAAC,oBAAoB;QAEJ,IAAI,CAAC,cAAc,CAAC,IAAI,CAAC,CAAC;IAAC,CAAC;CAGzE"}

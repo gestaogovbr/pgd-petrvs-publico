@@ -35,6 +35,16 @@ class UnidadeRepository
         return $this->readRepository->findByCodigo($codigo);
     }
 
+    public function findBySigla(string $sigla): ?\App\Models\Unidade
+    {
+        return $this->readRepository->findBySigla($sigla);
+    }
+
+    public function findByCodigoWithPai(string $codigo): ?\App\Models\Unidade
+    {
+        return $this->readRepository->findByCodigoWithPai($codigo);
+    }
+
     public function getUnidadesGerenciadas(string $usuarioId): \Illuminate\Database\Eloquent\Collection
     {
         return $this->readRepository->getUnidadesGerenciadas($usuarioId);
@@ -53,6 +63,11 @@ class UnidadeRepository
     public function findById(string $id): ?\App\Models\Unidade
     {
         return $this->readRepository->findById($id);
+    }
+
+    public function findWithPlanosTrabalhoAtividades(string|int $id): ?\App\Models\Unidade
+    {
+        return $this->readRepository->findWithPlanosTrabalhoAtividades($id);
     }
 
     public function existsByCodigo(string $codigo): bool

@@ -61,4 +61,9 @@ class UnidadeIntegranteRepository
     {
         return $this->readRepository->findAllByUsuario($usuarioId);
     }
+
+    public function countLotadosByUnidade(string $unidadeId): int
+    {
+        return $this->readRepository->countLotadosByUnidade($unidadeId);
+    }
 }

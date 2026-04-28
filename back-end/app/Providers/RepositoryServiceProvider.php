@@ -115,6 +115,10 @@ use App\Repository\Programa\Eloquent\EloquentProgramaWriteRepository;
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
 
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
+use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
+use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioWriteRepositoryContract;
+use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioReadRepository;
+use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioWriteRepository;
 
 use App\Repository\SiapeBlackListServidor\Contracts\SiapeBlackListServidorReadRepositoryContract;
 
@@ -215,11 +219,6 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             PerfilReadRepositoryContract::class,
             EloquentPerfilReadRepository::class,
-        );
-
-        $this->app->bind(
-            TipoModalidadeReadRepositoryContract::class,
-            EloquentTipoModalidadeReadRepository::class,
         );
 
         $this->app->bind(
@@ -372,6 +371,7 @@ final class RepositoryServiceProvider extends ServiceProvider
             AtividadeReadRepositoryContract::class,
             EloquentAtividadeReadRepository::class,
         );
+
         $this->app->bind(
             AtividadeWriteRepositoryContract::class,
             EloquentAtividadeWriteRepository::class,
@@ -399,6 +399,16 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             AfastamentoWriteRepositoryContract::class,
             EloquentAfastamentoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            CargaIndividualSiapeRelatorioReadRepositoryContract::class,
+            EloquentCargaIndividualSiapeRelatorioReadRepository::class,
+        );
+
+        $this->app->bind(
+            CargaIndividualSiapeRelatorioWriteRepositoryContract::class,
+            EloquentCargaIndividualSiapeRelatorioWriteRepository::class,
         );
     }
 

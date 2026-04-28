@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\Entidade;
 use App\Models\Cidade;
-use App\Models\TipoModalidade;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class EntidadeFactory extends Factory
@@ -23,6 +22,7 @@ class EntidadeFactory extends Factory
             'gravar_historico_processo' => 0,
             'layout_formulario_atividade' => 'COMPLETO',
             'forma_contagem_carga_horaria' => 'DIA',
+            'modalidade_pgd_padrao' => null,
             'habilitar_relatos_siape' => 0,
         ];
     }

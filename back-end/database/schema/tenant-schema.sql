@@ -338,6 +338,33 @@ CREATE TABLE `capacidades_tecnicas` (
   CONSTRAINT `capacidades_tecnicas_area_tematica_id_foreign` FOREIGN KEY (`area_tematica_id`) REFERENCES `areas_tematicas` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `cargas_individuais_siape_relatorios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cargas_individuais_siape_relatorios` (
+  `id` char(36) NOT NULL,
+  `processamento_id` char(36) NOT NULL,
+  `tipo` varchar(20) NOT NULL,
+  `chave` varchar(50) NOT NULL,
+  `status` varchar(20) NOT NULL,
+  `entrada_valida` tinyint(1) NOT NULL DEFAULT 0,
+  `mensagem_usuario` text DEFAULT NULL,
+  `orientacoes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`orientacoes`)),
+  `secoes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`secoes`)),
+  `solicitante_id` char(36) DEFAULT NULL,
+  `processado_em` datetime NOT NULL,
+  `expira_em` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ci_siape_rel_processamento_unique` (`processamento_id`),
+  KEY `ci_siape_rel_tipo_chave_idx` (`tipo`,`chave`),
+  KEY `ci_siape_rel_processado_idx` (`processado_em`),
+  KEY `ci_siape_rel_expira_idx` (`expira_em`),
+  KEY `ci_siape_rel_solicitante_idx` (`solicitante_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `cargos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -706,7 +733,7 @@ CREATE TABLE `entidades` (
   `notificacoes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)' CHECK (json_valid(`notificacoes`)),
   `forma_contagem_carga_horaria` enum('DIA','SEMANA','MES') NOT NULL DEFAULT 'DIA' COMMENT 'Forma de contagem padrão da carga horária',
   `expediente` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '{"domingo":[],"segunda":[],"terca":[],"quarta":[],"quinta":[],"sexta":[],"sabado":[],"especial":[]}' COMMENT 'Configuração de expediente' CHECK (json_valid(`expediente`)),
-  `tipo_modalidade_id` char(36) DEFAULT NULL,
+  `modalidade_pgd_padrao` varchar(50) DEFAULT NULL,
   `cidade_id` char(36) DEFAULT NULL,
   `gestor_id` char(36) DEFAULT NULL,
   `gestor_substituto_id` char(36) DEFAULT NULL,
@@ -715,14 +742,12 @@ CREATE TABLE `entidades` (
   `habilitar_relatos_siape` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `entidades_sigla_unique` (`sigla`),
-  KEY `entidades_tipo_modalidade_id_foreign` (`tipo_modalidade_id`),
   KEY `entidades_cidade_id_foreign` (`cidade_id`),
   KEY `entidades_gestor_id_foreign` (`gestor_id`),
   KEY `entidades_gestor_substituto_id_foreign` (`gestor_substituto_id`),
   CONSTRAINT `entidades_cidade_id_foreign` FOREIGN KEY (`cidade_id`) REFERENCES `cidades` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `entidades_gestor_id_foreign` FOREIGN KEY (`gestor_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `entidades_gestor_substituto_id_foreign` FOREIGN KEY (`gestor_substituto_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `entidades_tipo_modalidade_id_foreign` FOREIGN KEY (`tipo_modalidade_id`) REFERENCES `tipos_modalidades` (`id`) ON UPDATE CASCADE
+  CONSTRAINT `entidades_gestor_substituto_id_foreign` FOREIGN KEY (`gestor_substituto_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `entregas`;
@@ -1558,7 +1583,7 @@ CREATE TABLE `planos_trabalhos` (
   `programa_id` char(36) NOT NULL,
   `usuario_id` char(36) NOT NULL,
   `unidade_id` char(36) NOT NULL,
-  `tipo_modalidade_id` char(36) NOT NULL,
+  `modalidade_pgd` varchar(50) DEFAULT NULL,
   `criacao_usuario_id` char(36) NOT NULL,
   `documento_id` char(36) DEFAULT NULL,
   `criterios_avaliacao` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT json_array() COMMENT 'Critérios para avaliação' CHECK (json_valid(`criterios_avaliacao`)),
@@ -1570,13 +1595,11 @@ CREATE TABLE `planos_trabalhos` (
   KEY `planos_trabalhos_programa_id_foreign` (`programa_id`),
   KEY `planos_trabalhos_usuario_id_foreign` (`usuario_id`),
   KEY `planos_trabalhos_unidade_id_foreign` (`unidade_id`),
-  KEY `planos_trabalhos_tipo_modalidade_id_foreign` (`tipo_modalidade_id`),
   KEY `planos_trabalhos_criacao_usuario_id_foreign` (`criacao_usuario_id`),
   KEY `planos_trabalhos_documento_id_foreign` (`documento_id`),
   CONSTRAINT `planos_trabalhos_criacao_usuario_id_foreign` FOREIGN KEY (`criacao_usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_trabalhos_documento_id_foreign` FOREIGN KEY (`documento_id`) REFERENCES `documentos` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_trabalhos_programa_id_foreign` FOREIGN KEY (`programa_id`) REFERENCES `programas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `planos_trabalhos_tipo_modalidade_id_foreign` FOREIGN KEY (`tipo_modalidade_id`) REFERENCES `tipos_modalidades` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_trabalhos_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_trabalhos_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -2546,38 +2569,6 @@ CREATE TABLE `tipos_justificativas` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `tipos_modalidades`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tipos_modalidades` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome da modalidade',
-  `exige_pedagio` tinyint(1) NOT NULL DEFAULT 0,
-  `plano_trabalho_calcula_horas` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Se o plano de trabalho calcula horas (considerando a carga horária e os dias)',
-  `atividade_tempo_despendido` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Se calcula tempo despendido na atividade',
-  `atividade_esforco` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Se utiliza esforço (tempo para execução) na atividade',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `tipos_modalidades_siape`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tipos_modalidades_siape` (
-  `id` char(36) NOT NULL,
-  `tipo_modalidade_id` char(36) DEFAULT NULL,
-  `nome` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `tipos_modalidades_siape_tipo_modalidade_id_foreign` (`tipo_modalidade_id`),
-  KEY `tipos_modalidades_siape_nome_index` (`nome`),
-  CONSTRAINT `tipos_modalidades_siape_tipo_modalidade_id_foreign` FOREIGN KEY (`tipo_modalidade_id`) REFERENCES `tipos_modalidades` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `tipos_motivos_afastamentos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2796,16 +2787,14 @@ CREATE TABLE `usuarios` (
   `tipo_pedagio` tinyint(3) unsigned DEFAULT NULL,
   `nome_jornada` varchar(100) DEFAULT NULL COMMENT 'Codigo da Jornada',
   `cod_jornada` int(11) DEFAULT NULL COMMENT 'Nome da Jornada',
-  `tipo_modalidade_id` char(36) NOT NULL COMMENT 'Modalidade do Usuário no PGD(DC2Type:guid)',
+  `modalidade_pgd` varchar(50) DEFAULT NULL COMMENT 'Modalidade do Usuário no PGD',
   `participa_pgd` enum('sim','não') NOT NULL COMMENT 'Indica se o usuário participa do PGD.',
   `ident_unica` varchar(50) DEFAULT NULL COMMENT 'Identificador único do usuário',
   PRIMARY KEY (`id`),
   UNIQUE KEY `usuarios_email_unique` (`email`),
   UNIQUE KEY `usuarios_matricula_unique` (`matricula`),
   KEY `usuarios_perfil_id_foreign` (`perfil_id`),
-  KEY `usuarios_tipo_modalidade_id_foreign` (`tipo_modalidade_id`),
-  CONSTRAINT `usuarios_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfis` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `usuarios_tipo_modalidade_id_foreign` FOREIGN KEY (`tipo_modalidade_id`) REFERENCES `tipos_modalidades` (`id`) ON UPDATE CASCADE
+  CONSTRAINT `usuarios_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfis` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `view_api_pgd`;
@@ -2855,6 +2844,7 @@ SET character_set_client = utf8mb4;
   1 AS `participanteNome`,
   1 AS `unidadeHierarquia`,
   1 AS `unidadeSigla`,
+  1 AS `modalidade_pgd`,
   1 AS `tipo_modalidade_id`,
   1 AS `tipoModalidadeNome`,
   1 AS `duracao`,
@@ -2876,6 +2866,7 @@ SET character_set_client = utf8mb4;
   1 AS `participanteNome`,
   1 AS `unidadeHierarquia`,
   1 AS `unidadeSigla`,
+  1 AS `modalidade_pgd`,
   1 AS `tipo_modalidade_id`,
   1 AS `tipoModalidadeNome`,
   1 AS `duracao`,
@@ -3334,7 +3325,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_relatorio_plano_trabalho` AS select `pt`.`id` collate utf8mb4_unicode_ci AS `id`,`pt`.`id` collate utf8mb4_unicode_ci AS `plano_trabalho_id`,`pt`.`numero` collate utf8mb4_unicode_ci AS `numero`,`pt`.`status` collate utf8mb4_unicode_ci AS `status`,cast(`pt`.`data_inicio` as date) AS `dataInicio`,cast(`pt`.`data_fim` as date) AS `dataFim`,`pt`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`usu`.`nome` collate utf8mb4_unicode_ci AS `participanteNome`,`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,`pt`.`tipo_modalidade_id` collate utf8mb4_unicode_ci AS `tipo_modalidade_id`,`tm`.`nome` collate utf8mb4_unicode_ci AS `tipoModalidadeNome`,to_days(`pt`.`data_fim`) - to_days(`pt`.`data_inicio`) + 1 AS `duracao`,coalesce((select sum(coalesce(`pte`.`forca_trabalho`,0) * 1) from `planos_trabalhos_entregas` `pte` where `pte`.`plano_trabalho_id` = `pt`.`id` and `pte`.`deleted_at` is null),0) AS `chd`,(select count(0) from `planos_trabalhos_consolidacoes` `ptc` where `ptc`.`plano_trabalho_id` = `pt`.`id` and `ptc`.`deleted_at` is null) AS `qtdePeriodosAvaliativos` from (((`planos_trabalhos` `pt` join `usuarios` `usu` on(`usu`.`id` = `pt`.`usuario_id`)) join `unidades` `uni` on(`uni`.`id` = `pt`.`unidade_id`)) join `tipos_modalidades` `tm` on(`tm`.`id` = `pt`.`tipo_modalidade_id`)) where `pt`.`deleted_at` is null */;
+/*!50001 VIEW `view_relatorio_plano_trabalho` AS select `pt`.`id` collate utf8mb4_unicode_ci AS `id`,`pt`.`id` collate utf8mb4_unicode_ci AS `plano_trabalho_id`,`pt`.`numero` collate utf8mb4_unicode_ci AS `numero`,`pt`.`status` collate utf8mb4_unicode_ci AS `status`,cast(`pt`.`data_inicio` as date) AS `dataInicio`,cast(`pt`.`data_fim` as date) AS `dataFim`,`pt`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`usu`.`nome` collate utf8mb4_unicode_ci AS `participanteNome`,`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `modalidade_pgd`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `tipo_modalidade_id`,case when `pt`.`modalidade_pgd` is null or `pt`.`modalidade_pgd` = '' then 'Não definida' when lower(`pt`.`modalidade_pgd`) = 'presencial' then 'Presencial' when lower(`pt`.`modalidade_pgd`) = 'parcial' then 'Teletrabalho (Parcial)' when lower(`pt`.`modalidade_pgd`) = 'integral' then 'Teletrabalho (Integral)' when lower(`pt`.`modalidade_pgd`) = 'no exterior substituicao' then 'Teletrabalho no exterior (substituição)' when lower(`pt`.`modalidade_pgd`) = 'no exterior' then 'Teletrabalho no exterior' else `pt`.`modalidade_pgd` end collate utf8mb4_unicode_ci AS `tipoModalidadeNome`,to_days(`pt`.`data_fim`) - to_days(`pt`.`data_inicio`) + 1 AS `duracao`,coalesce((select sum(coalesce(`pte`.`forca_trabalho`,0) * 1) from `planos_trabalhos_entregas` `pte` where `pte`.`plano_trabalho_id` = `pt`.`id` and `pte`.`deleted_at` is null),0) AS `chd`,(select count(0) from `planos_trabalhos_consolidacoes` `ptc` where `ptc`.`plano_trabalho_id` = `pt`.`id` and `ptc`.`deleted_at` is null) AS `qtdePeriodosAvaliativos` from ((`planos_trabalhos` `pt` join `usuarios` `usu` on(`usu`.`id` = `pt`.`usuario_id`)) join `unidades` `uni` on(`uni`.`id` = `pt`.`unidade_id`)) where `pt`.`deleted_at` is null */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3347,7 +3338,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_relatorio_plano_trabalho_detalhado` AS select `ptc`.`id` collate utf8mb4_unicode_ci AS `id`,`pt`.`id` collate utf8mb4_unicode_ci AS `plano_trabalho_id`,`pt`.`numero` collate utf8mb4_unicode_ci AS `numero`,`pt`.`status` collate utf8mb4_unicode_ci AS `status`,cast(`pt`.`data_inicio` as date) AS `dataInicio`,cast(`pt`.`data_fim` as date) AS `dataFim`,`pt`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`usu`.`nome` collate utf8mb4_unicode_ci AS `participanteNome`,`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,`pt`.`tipo_modalidade_id` collate utf8mb4_unicode_ci AS `tipo_modalidade_id`,`tm`.`nome` collate utf8mb4_unicode_ci AS `tipoModalidadeNome`,to_days(`pt`.`data_fim`) - to_days(`pt`.`data_inicio`) + 1 AS `duracao`,ifnull((select sum(ifnull(`pte`.`forca_trabalho`,0) * 1) from `planos_trabalhos_entregas` `pte` where `pte`.`plano_trabalho_id` = `pt`.`id` and `pte`.`deleted_at` is null),0) AS `chd`,cast(`ptc`.`data_inicio` as date) AS `data_inicio_avaliativo`,cast(`ptc`.`data_fim` as date) AS `data_fim_avaliativo`,cast(`ptc`.`data_conclusao` as date) AS `data_conclusao`,cast(`aval_antiga`.`data_avaliacao` as date) AS `data_avaliacao`,json_unquote(`aval_antiga`.`nota`) AS `nota`,`aval_antiga`.`data_recurso` AS `data_recurso`,case when `a`.`id` = `aval_antiga`.`id` then NULL else cast(`a`.`data_avaliacao` as date) end AS `data_reavaliacao`,case when `a`.`id` = `aval_antiga`.`id` then NULL else json_unquote(`a`.`nota`) end AS `nota_reavaliacao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `ptc`.`data_conclusao` is null then case when curdate() <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Aguardando' else 'Atrasado' end else case when cast(`ptc`.`data_conclusao` as date) <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_execucao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `a`.`data_avaliacao` is null then case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Aguardando' else 'Atrasado' end else case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_avaliacao` from ((((((`planos_trabalhos` `pt` join `usuarios` `usu` on(`usu`.`id` = `pt`.`usuario_id`)) join `unidades` `uni` on(`uni`.`id` = `pt`.`unidade_id`)) join `tipos_modalidades` `tm` on(`tm`.`id` = `pt`.`tipo_modalidade_id`)) left join `planos_trabalhos_consolidacoes` `ptc` on(`ptc`.`plano_trabalho_id` = `pt`.`id` and `ptc`.`deleted_at` is null)) left join `avaliacoes` `a` on(`a`.`id` = `ptc`.`avaliacao_id` and `a`.`deleted_at` is null)) left join (select `a1`.`id` AS `id`,`a1`.`data_avaliacao` AS `data_avaliacao`,`a1`.`nota` AS `nota`,`a1`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,`a1`.`data_recurso` AS `data_recurso`,`a1`.`rn` AS `rn` from (select `avaliacoes`.`id` AS `id`,`avaliacoes`.`data_avaliacao` AS `data_avaliacao`,`avaliacoes`.`nota` AS `nota`,`avaliacoes`.`data_recurso` AS `data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,row_number() over ( partition by `avaliacoes`.`plano_trabalho_consolidacao_id` order by `avaliacoes`.`data_avaliacao`) AS `rn` from `avaliacoes` where `avaliacoes`.`deleted_at` is null group by `avaliacoes`.`id`,`avaliacoes`.`data_avaliacao`,`avaliacoes`.`nota`,`avaliacoes`.`data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id`) `a1` where `a1`.`rn` = 1) `aval_antiga` on(`aval_antiga`.`plano_trabalho_consolidacao_id` = `ptc`.`id`)) where `pt`.`deleted_at` is null */;
+/*!50001 VIEW `view_relatorio_plano_trabalho_detalhado` AS select `ptc`.`id` collate utf8mb4_unicode_ci AS `id`,`pt`.`id` collate utf8mb4_unicode_ci AS `plano_trabalho_id`,`pt`.`numero` collate utf8mb4_unicode_ci AS `numero`,`pt`.`status` collate utf8mb4_unicode_ci AS `status`,cast(`pt`.`data_inicio` as date) AS `dataInicio`,cast(`pt`.`data_fim` as date) AS `dataFim`,`pt`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`usu`.`nome` collate utf8mb4_unicode_ci AS `participanteNome`,`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `modalidade_pgd`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `tipo_modalidade_id`,case when `pt`.`modalidade_pgd` is null or `pt`.`modalidade_pgd` = '' then 'Não definida' when lower(`pt`.`modalidade_pgd`) = 'presencial' then 'Presencial' when lower(`pt`.`modalidade_pgd`) = 'parcial' then 'Teletrabalho (Parcial)' when lower(`pt`.`modalidade_pgd`) = 'integral' then 'Teletrabalho (Integral)' when lower(`pt`.`modalidade_pgd`) = 'no exterior substituicao' then 'Teletrabalho no exterior (substituição)' when lower(`pt`.`modalidade_pgd`) = 'no exterior' then 'Teletrabalho no exterior' else `pt`.`modalidade_pgd` end collate utf8mb4_unicode_ci AS `tipoModalidadeNome`,to_days(`pt`.`data_fim`) - to_days(`pt`.`data_inicio`) + 1 AS `duracao`,ifnull((select sum(ifnull(`pte`.`forca_trabalho`,0) * 1) from `planos_trabalhos_entregas` `pte` where `pte`.`plano_trabalho_id` = `pt`.`id` and `pte`.`deleted_at` is null),0) AS `chd`,cast(`ptc`.`data_inicio` as date) AS `data_inicio_avaliativo`,cast(`ptc`.`data_fim` as date) AS `data_fim_avaliativo`,cast(`ptc`.`data_conclusao` as date) AS `data_conclusao`,cast(`aval_antiga`.`data_avaliacao` as date) AS `data_avaliacao`,json_unquote(`aval_antiga`.`nota`) AS `nota`,`aval_antiga`.`data_recurso` AS `data_recurso`,case when `a`.`id` = `aval_antiga`.`id` then NULL else cast(`a`.`data_avaliacao` as date) end AS `data_reavaliacao`,case when `a`.`id` = `aval_antiga`.`id` then NULL else json_unquote(`a`.`nota`) end AS `nota_reavaliacao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `ptc`.`data_conclusao` is null then case when curdate() <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Aguardando' else 'Atrasado' end else case when cast(`ptc`.`data_conclusao` as date) <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_execucao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `a`.`data_avaliacao` is null then case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Aguardando' else 'Atrasado' end else case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_avaliacao` from (((((`planos_trabalhos` `pt` join `usuarios` `usu` on(`usu`.`id` = `pt`.`usuario_id`)) join `unidades` `uni` on(`uni`.`id` = `pt`.`unidade_id`)) left join `planos_trabalhos_consolidacoes` `ptc` on(`ptc`.`plano_trabalho_id` = `pt`.`id` and `ptc`.`deleted_at` is null)) left join `avaliacoes` `a` on(`a`.`id` = `ptc`.`avaliacao_id` and `a`.`deleted_at` is null)) left join (select `a1`.`id` AS `id`,`a1`.`data_avaliacao` AS `data_avaliacao`,`a1`.`nota` AS `nota`,`a1`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,`a1`.`data_recurso` AS `data_recurso`,`a1`.`rn` AS `rn` from (select `avaliacoes`.`id` AS `id`,`avaliacoes`.`data_avaliacao` AS `data_avaliacao`,`avaliacoes`.`nota` AS `nota`,`avaliacoes`.`data_recurso` AS `data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,row_number() over ( partition by `avaliacoes`.`plano_trabalho_consolidacao_id` order by `avaliacoes`.`data_avaliacao`) AS `rn` from `avaliacoes` where `avaliacoes`.`deleted_at` is null group by `avaliacoes`.`id`,`avaliacoes`.`data_avaliacao`,`avaliacoes`.`nota`,`avaliacoes`.`data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id`) `a1` where `a1`.`rn` = 1) `aval_antiga` on(`aval_antiga`.`plano_trabalho_consolidacao_id` = `ptc`.`id`)) where `pt`.`deleted_at` is null */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3820,4 +3811,6 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (405,'2026_03_23_00
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (406,'2026_03_31_000000_add_justificativa_to_planos_trabalhos',2);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (407,'2026_04_08_114835_add_justificativa_modalidade_to_planos_trabalhos',2);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (408,'2026_04_09_114026_add_encerrado_at_to_planos_trabalhos',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (393,'2026_04_22_000000_create_cargas_individuais_siape_relatorios_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (394,'2026_04_23_000000_refactor_modalidade_pgd_to_string',1);
 commit;

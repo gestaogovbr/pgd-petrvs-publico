@@ -6,12 +6,16 @@ namespace App\Repository\RelatorioAgente\Eloquent;
 
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
 use App\Services\UnidadeService;
+use App\Support\ModalidadePgd;
 use Illuminate\Support\Facades\DB;
 
 class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadRepositoryContract
 {
     public function query(array $data): array
     {
+        $modalidadeUsuario = ModalidadePgd::sqlLabelExpression('`u`.`modalidade_pgd`');
+        $modalidadePlano = ModalidadePgd::sqlLabelExpression('`pt_ultimo_pactuado`.`modalidade_pgd`');
+
         $sql = <<<TEXT
         with lotacoes as (
             select
@@ -36,13 +40,13 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
             `u`.`participa_pgd` AS `participaPGD`,
             CASE WHEN `u`.`participa_pgd` = 'não' THEN 'INATIVO' ELSE `u`.`situacao_siape` END AS `situacao`,
             case
-                when `u`.`participa_pgd` = 'sim' then COALESCE(`tm_sougov`.`nome`, `tm_sem`.`nome`)
+                when `u`.`participa_pgd` = 'sim' then {$modalidadeUsuario}
                 when `u`.`participa_pgd` = 'não' then '-'
-                else `tm_sem`.`nome`
+                else 'Não definida'
             end AS `modalidadeSouGov`,
             case
-                when  `u`.`situacao_siape` = 'INATIVO' OR `tm`.`id` IS NULL OR `u`.`participa_pgd` = 'não' then '-'
-                when COALESCE(`u`.`tipo_modalidade_id`, '') = COALESCE(`tm`.`id`, '') then 'IGUAL'
+                when  `u`.`situacao_siape` = 'INATIVO' OR `pt_ultimo_pactuado`.`modalidade_pgd` IS NULL OR `u`.`participa_pgd` = 'não' then '-'
+                when COALESCE(`u`.`modalidade_pgd`, '') = COALESCE(`pt_ultimo_pactuado`.`modalidade_pgd`, '') then 'IGUAL'
                 else 'DIFERENTE'
             end as comparacaoSouGovPetrvs,
             `u`.`perfil_id` AS `perfil_id`,
@@ -53,11 +57,12 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
             `fn_obter_unidade_hierarquia`(`uni_lotacao`.`id`) AS `unidadeHierarquia`,
             `uni_lotacao`.`id` AS `unidadeLotacao`,
             `uni_lotacao`.`sigla` AS `unidadeNome`,
-            COALESCE(`u`.`tipo_modalidade_id`, `tm_sem`.`id`) AS `tipo_modalidade_id`,
+            `u`.`modalidade_pgd` AS `modalidade_pgd`,
+            `u`.`modalidade_pgd` AS `tipo_modalidade_id`,
             CASE
-                WHEN `u`.`participa_pgd` = 'sim' THEN COALESCE(`tm`.`nome`, '-')
+                WHEN `u`.`participa_pgd` = 'sim' THEN {$modalidadePlano}
                 WHEN `u`.`participa_pgd` = 'não' THEN '-'
-                ELSE COALESCE(`tm_sem`.`nome`, '-')
+                ELSE 'Não definida'
             END AS `tipoModalidadeNome`,
             `u`.`data_inicial_pedagio` AS `data_inicial_pedagio`,
             `u`.`data_final_pedagio` AS `data_final_pedagio`,
@@ -91,7 +96,7 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
             select
                 `pt`.`usuario_id` AS `usuario_id`,
                 `pt`.`id` AS `id`,
-                `pt`.`tipo_modalidade_id` AS `tipo_modalidade_id`
+                `pt`.`modalidade_pgd` AS `modalidade_pgd`
             from
                 `planos_trabalhos` `pt`
             where
@@ -129,13 +134,6 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
             (`uni_lotacao`.`id` = `lotacoes`.`unidade_id`)
         left join `perfis` `p` on
             (`p`.`id` = `u`.`perfil_id`)
-        left join `tipos_modalidades` `tm` on
-            (`tm`.`id` = `pt_ultimo_pactuado`.`tipo_modalidade_id`)
-        left join `tipos_modalidades` `tm_sougov` on
-            (`tm_sougov`.`id` = `u`.`tipo_modalidade_id`)
-        left join `tipos_modalidades` `tm_sem` on
-            (`tm_sem`.`nome` = 'Sem dados do SIAPE'
-                and `tm_sem`.`deleted_at` is null)
         where
             `u`.`deleted_at` is null
             and `uia`.`atribuicao` is not null
@@ -236,8 +234,14 @@ TEXT;
 
         $modalidade = $this->extractWhere($data, 'modalidadeSouGov');
         if (isset($modalidade[2])) {
-            $sql .= ' and `u`.`tipo_modalidade_id` = ?';
+            $sql .= ' and `u`.`modalidade_pgd` = ?';
             $params[] = $modalidade[2];
+        }
+
+        $modalidadePgd = $this->extractWhere($data, 'modalidade_pgd');
+        if (isset($modalidadePgd[2])) {
+            $sql .= ' and `u`.`modalidade_pgd` = ?';
+            $params[] = $modalidadePgd[2];
         }
 
         $situacaoSiape = $this->extractWhere($data, 'situacao');
@@ -251,15 +255,15 @@ TEXT;
             $operacaoComparacao = $this->getComparacaoSouGov($comparacaoSouGovPetrvs[2]);
 
             if ($operacaoComparacao == '-') {
-                $sql .= " and ( `u`.`situacao_siape` = 'INATIVO' OR `tm`.`id` IS NULL OR `u`.`participa_pgd` = 'não' ) ";
+                $sql .= " and ( `u`.`situacao_siape` = 'INATIVO' OR `pt_ultimo_pactuado`.`modalidade_pgd` IS NULL OR `u`.`participa_pgd` = 'não' ) ";
             } elseif ($operacaoComparacao != '') {
-                $sql .= " and ( `u`.`participa_pgd` = 'sim' and COALESCE(`u`.`tipo_modalidade_id`, '') $operacaoComparacao COALESCE(`tm`.`id`, '') and  COALESCE(`tm`.`id`, '') != '') ";
+                $sql .= " and ( `u`.`participa_pgd` = 'sim' and COALESCE(`u`.`modalidade_pgd`, '') $operacaoComparacao COALESCE(`pt_ultimo_pactuado`.`modalidade_pgd`, '') and COALESCE(`pt_ultimo_pactuado`.`modalidade_pgd`, '') != '') ";
             }
         }
 
         $tipo_modalidade_id = $this->extractWhere($data, 'tipo_modalidade_id');
         if (isset($tipo_modalidade_id[2])) {
-            $sql .= ' and `u`.`tipo_modalidade_id` = ?';
+            $sql .= ' and `u`.`modalidade_pgd` = ?';
             $params[] = $tipo_modalidade_id[2];
         }
 

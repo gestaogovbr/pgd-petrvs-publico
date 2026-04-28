@@ -23,6 +23,7 @@ use App\Repository\UnidadeRepository;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeIntegranteAtribuicaoRepository;
 use App\Repository\UsuarioRepository;
+use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
 
 uses(TestCase::class);
 
@@ -45,6 +46,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $unidadeIntegranteRepository = Mockery::mock(UnidadeIntegranteRepository::class);
         $unidadeIntegranteAtribuicaoRepository = Mockery::mock(UnidadeIntegranteAtribuicaoRepository::class);
         $usuarioRepository = Mockery::mock(UsuarioRepository::class);
+        $cargaIndividualSiapeSubject = Mockery::mock(CargaIndividualSiapeSubject::class);
 
         $service = new SiapeIndividualServidorService(
             $mockFactory,
@@ -57,7 +59,8 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
             $unidadeRepository,
             $unidadeIntegranteRepository,
             $unidadeIntegranteAtribuicaoRepository,
-            $usuarioRepository
+            $usuarioRepository,
+            $cargaIndividualSiapeSubject
         );
 
         $cpf = '12345678901';
@@ -229,6 +232,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
             Mockery::mock(UnidadeIntegranteRepository::class),
             Mockery::mock(UnidadeIntegranteAtribuicaoRepository::class),
             Mockery::mock(UsuarioRepository::class),
+            Mockery::mock(CargaIndividualSiapeSubject::class),
         ])->makePartial();
         $service->shouldAllowMockingProtectedMethods();
 

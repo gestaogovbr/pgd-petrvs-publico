@@ -413,6 +413,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_RELATORIO_PE_TODAS_UNIDADES"],
       ["codigo" => "MOD_RELATORIO_USUARIO_TODAS_UNIDADES"],
       ["codigo" => "MOD_RELATORIO_UNIDADE_TODAS_UNIDADES"],
+      ["codigo" => "MOD_SIAPE_RELATORIO_CARGA"],
       ["codigo" => "MOD_IND_TODAS_UNIDADES"],
       ["codigo" => "MOD_UND_INST"],
       ["codigo" => "MOD_PART_PEDAGIO"],

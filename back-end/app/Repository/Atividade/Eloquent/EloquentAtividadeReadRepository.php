@@ -9,9 +9,6 @@ use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Atividade\Contracts\AtividadeReadRepositoryContract;
 use Illuminate\Support\Collection;
 
-/**
- * @extends AbstractEloquentReadRepository<Atividade>
- */
 class EloquentAtividadeReadRepository extends AbstractEloquentReadRepository implements AtividadeReadRepositoryContract
 {
     public function __construct(Atividade $model)
@@ -25,5 +22,16 @@ class EloquentAtividadeReadRepository extends AbstractEloquentReadRepository imp
             ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
             ->distinct()
             ->pluck('plano_trabalho_entrega_id');
+    }
+
+    public function findWithPlanoTrabalho(string|int $id): ?Atividade
+    {
+        /** @var Atividade|null $atividade */
+        $atividade = $this->query()
+            ->with(['planoTrabalho'])
+            ->where('id', $id)
+            ->first();
+
+        return $atividade;
     }
 }

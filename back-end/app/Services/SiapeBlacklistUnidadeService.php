@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\SiapeBlacklistUnidade;
 use App\Services\ServiceBase;
+use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 use Exception;
 
 class SiapeBlacklistUnidadeService extends ServiceBase
@@ -11,20 +11,17 @@ class SiapeBlacklistUnidadeService extends ServiceBase
     public function remover(string $codigo): array
     {
         try {
-            $registros = SiapeBlacklistUnidade::where('codigo', $codigo)->get();
+            /** @var SiapeUnidadeLifecycleService $lifecycleService */
+            $lifecycleService = app(SiapeUnidadeLifecycleService::class);
+            $resultado = $lifecycleService->cancelarPendenciaPorCodigo($codigo);
+            $count = $resultado['blacklists_removidas'];
 
-            if ($registros->isEmpty()) {
+            if ($count === 0) {
                 return [
                     'success' => false,
                     'message' => 'Código de unidade não encontrado na blacklist',
                     'count' => 0
                 ];
-            }
-
-            $count = $registros->count();
-
-            foreach ($registros as $registro) {
-                $registro->delete();
             }
 
             return [

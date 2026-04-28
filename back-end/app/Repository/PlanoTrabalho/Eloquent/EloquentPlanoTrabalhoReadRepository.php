@@ -11,7 +11,6 @@ use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository implements PlanoTrabalhoReadRepositoryContract
@@ -30,6 +29,17 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         $found = parent::findById($id);
 
         return $found instanceof PlanoTrabalho ? $found : null;
+    }
+
+    public function findWithAtividades(string|int $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null $planoTrabalho */
+        $planoTrabalho = $this->query()
+            ->with(['atividades'])
+            ->where('id', $id)
+            ->first();
+
+        return $planoTrabalho;
     }
 
     /**
