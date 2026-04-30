@@ -17,7 +17,6 @@ front-end/.angular/*
 
 
 back-end/database/seeders/LogSeeder.php
-resources/docker/dev/docker-compose.yml
 Dump Tabela Atividades.sql
 
 # Farias
