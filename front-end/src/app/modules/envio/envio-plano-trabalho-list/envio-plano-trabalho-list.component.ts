@@ -4,7 +4,6 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { EnvioPlanoTrabalhoDaoService } from 'src/app/dao/envio-plano-trabalho-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { addDays } from 'date-fns';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
@@ -46,60 +45,60 @@ export class EnvioPlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho,
     let form: any = filter.value;
 
     if (form.numero?.length) {
-      result.push(["numero", "like", "%" + form.numero.trim().replace(" ", "%") + "%"]);
+      result.push(["numero", form.numero.trim()]);
     }
 
 
     if (form.unidade_id?.length) {
-      result.push(["unidade_id", "==", form.unidade_id]);
+      result.push(["unidade_id", form.unidade_id]);
     }
 
     if (form.status == 'Não agendados') {
-      result.push(["data_agendamento_envio", "==", null]);
+      result.push(["isNaoAgendado", true]);
     }
 
     if (form.status == 'Agendados') {
-      result.push(["data_agendamento_envio", "!=", null]);
+      result.push(["isAgendado", true]);
     }
 
     if (form.status == 'Enviados') {
-      result.push(["data_envio_api_pgd", "!=", null]);
+      result.push(["isEnviado", true]);
     }
 
     if (form.status == 'Não enviados') {
-      result.push(["data_envio_api_pgd", "==", null]);
+      result.push(["isNaoEnviado", true]);
     }
 
     if (form.status == 'Pendentes') {
-      result.push(["envios_pendentes", "==", 1]);
+      result.push(["isPendente", true]);
     }
 
     if (form.status == 'Com falha') {
-      result.push(["envio_com_falha", "==", 1]);
+      result.push(["isFalha", true]);
     }
 
     if (form.agendamento_inicio) {
-      result.push(["data_agendamento_envio", ">=", form.agendamento_inicio.toISOString().slice(0, 10)]);
+      result.push(["data_agendamento_envio_gte", form.agendamento_inicio.toISOString().slice(0, 10)]);
     }
 
     if (form.agendamento_fim) {
-      result.push(["data_agendamento_envio", "<", addDays(form.agendamento_fim, 1).toISOString().slice(0, 10)]);
+      result.push(["data_agendamento_envio_lte", form.agendamento_fim.toISOString().slice(0, 10)]);
     }
 
     if (form.conclusao_inicio) {
-      result.push(["data_conclusao_envio", ">=", form.conclusao_inicio.toISOString().slice(0, 10)]);
+      result.push(["data_conclusao_envio_gte", form.conclusao_inicio.toISOString().slice(0, 10)]);
     }
 
     if (form.conclusao_fim) {
-      result.push(["data_conclusao_envio", "<", addDays(form.conclusao_fim, 1).toISOString().slice(0, 10)]);
+      result.push(["data_conclusao_envio_lte", form.conclusao_fim.toISOString().slice(0, 10)]);
     }
 
     if (form.envio_inicio) {
-      result.push(["data_envio_api_pgd", ">=", form.envio_inicio.toISOString().slice(0, 10)]);
+      result.push(["data_envio_api_pgd_gte", form.envio_inicio.toISOString().slice(0, 10)]);
     }
 
     if (form.envio_fim) {
-      result.push(["data_envio_api_pgd", "<", addDays(form.envio_fim, 1).toISOString().slice(0, 10)]);
+      result.push(["data_envio_api_pgd_lte", form.envio_fim.toISOString().slice(0, 10)]);
     }
 
     return result;

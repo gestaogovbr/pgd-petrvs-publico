@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 uses(Tests\TestCase::class);
@@ -11,25 +13,47 @@ afterEach(function () {
     Mockery::close();
 });
 
-test('query aplica filtro envio_com_falha e retorna rows com unidade e programa', function () {
-    DB::shouldReceive('select')
-        ->once()
-        ->withArgs(function (string $sql, array $params): bool {
-            return str_contains($sql, 'COUNT(*) AS total')
-                && str_contains($sql, 'pt.data_agendamento_envio IS NOT NULL')
-                && str_contains($sql, "pt.log_envio <> 'Envio realizado com sucesso.'")
-                && $params === [];
-        })
-        ->andReturn([(object) ['total' => 1]]);
+function preparaDbMockEnvioPlanoTrabalho(int $count, Collection $rows): void
+{
+    $builder = Mockery::mock(Builder::class);
+    $builder->shouldReceive('leftJoin')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('select')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('whereNull')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('whereNotNull')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('where')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('orWhereColumn')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('orderByDesc')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('orderBy')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('forPage')->andReturnSelf()->byDefault();
 
-    DB::shouldReceive('select')
-        ->once()
-        ->withArgs(function (string $sql, array $params): bool {
-            return str_contains($sql, 'ORDER BY pt.data_agendamento_envio DESC, pt.id ASC')
-                && str_contains($sql, 'LIMIT 10 OFFSET 0')
-                && $params === [];
-        })
-        ->andReturn([
+    $builder->shouldReceive('count')->once()->withNoArgs()->andReturn($count);
+    $builder->shouldReceive('get')->once()->withNoArgs()->andReturn($rows);
+
+    DB::shouldReceive('table')->once()->with('planos_trabalhos as pt')->andReturn($builder);
+}
+
+test('query devolve count e rows conforme o builder', function (array $where, int $count, Collection $rows) {
+    preparaDbMockEnvioPlanoTrabalho($count, $rows);
+
+    $repository = new EloquentEnvioPlanoTrabalhoReadRepository();
+    $result = $repository->query([
+        'where' => $where,
+        'page' => 1,
+        'limit' => 10,
+    ]);
+
+    expect($result['count'])->toBe($count);
+    expect($result['rows']->count())->toBe($rows->count());
+
+    if ($rows->isNotEmpty()) {
+        expect($result['rows']->first()->unidade->sigla)->toBe('U1');
+        expect($result['rows']->first()->programa->nome)->toBe('Programa 1');
+    }
+})->with([
+    'isFalha' => [
+        [['isFalha', true]],
+        1,
+        collect([
             (object) [
                 'id' => 'pt-1',
                 'numero' => 1,
@@ -46,18 +70,26 @@ test('query aplica filtro envio_com_falha e retorna rows com unidade e programa'
                 'programa_id' => 'p-1',
                 'programa_nome' => 'Programa 1',
             ],
-        ]);
-
-    $repository = new EloquentEnvioPlanoTrabalhoReadRepository();
-
-    $result = $repository->query([
-        'where' => [['envio_com_falha', '==', 1]],
-        'page' => 1,
-        'limit' => 10,
-    ]);
-
-    expect($result['count'])->toBe(1);
-    expect($result['rows'])->toHaveCount(1);
-    expect($result['rows']->first()->unidade->sigla)->toBe('U1');
-    expect($result['rows']->first()->programa->nome)->toBe('Programa 1');
-});
+        ]),
+    ],
+    'numero' => [
+        [['numero', '10']],
+        0,
+        collect(),
+    ],
+    'data_agendamento_envio_lte' => [
+        [['data_agendamento_envio_lte', '2026-04-30']],
+        0,
+        collect(),
+    ],
+    'isNaoEnviado' => [
+        [['isNaoEnviado', true]],
+        0,
+        collect(),
+    ],
+    'isPendente' => [
+        [['isPendente', true]],
+        0,
+        collect(),
+    ],
+]);

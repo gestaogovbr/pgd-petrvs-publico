@@ -5,13 +5,12 @@ namespace App\Services;
 use App\Repository\EnvioPlanoTrabalhoRepository;
 use App\Services\ServiceBase;
 
-class EnvioPlanoTrabalhoService extends ServiceBase
+class EnvioPlanoTrabalhoService
 {
     private EnvioPlanoTrabalhoRepository $envioPlanoTrabalhoRepository;
 
     public function __construct()
     {
-        parent::__construct();
         $this->envioPlanoTrabalhoRepository = app(EnvioPlanoTrabalhoRepository::class);
     }
 

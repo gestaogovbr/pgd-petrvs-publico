@@ -8,7 +8,7 @@ describe('EnvioPlanoTrabalhoListComponent', () => {
     component = Object.create(EnvioPlanoTrabalhoListComponent.prototype);
   });
 
-  it('mapeia status com falha para filtro envio_com_falha', () => {
+  it('mapeia status com falha para filtro isFalha', () => {
     const where = component.filterWhere({
       value: {
         numero: '',
@@ -17,7 +17,7 @@ describe('EnvioPlanoTrabalhoListComponent', () => {
       },
     } as FormGroup);
 
-    expect(where).toContain(['envio_com_falha', '==', 1]);
+    expect(where).toContain(['isFalha', true]);
   });
 
   it('mapeia filtro de unidade e numero', () => {
@@ -29,8 +29,8 @@ describe('EnvioPlanoTrabalhoListComponent', () => {
       },
     } as FormGroup);
 
-    expect(where).toContain(['numero', 'like', '%123%']);
-    expect(where).toContain(['unidade_id', '==', 'unidade-1']);
+    expect(where).toContain(['numero', '123']);
+    expect(where).toContain(['unidade_id', 'unidade-1']);
   });
 
   it('indica tentativa antes do agendamento', () => {
