@@ -2,22 +2,6 @@
   "vhosts": [
     { "name": "/" }
   ],
-  "users": [
-    {
-      "name": "petrvs",
-      "password": "petrvs",
-      "tags": "administrator"
-    }
-  ],
-  "permissions": [
-    {
-      "user": "petrvs",
-      "vhost": "/",
-      "configure": ".*",
-      "write": ".*",
-      "read": ".*"
-    }
-  ],
   "queues": [
     {
       "name": "pgd_queue",
