@@ -4,7 +4,6 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { EnvioUsuarioDaoService } from 'src/app/dao/envio-usuario-dao.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
-import { addDays } from 'date-fns';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 
 @Component({
@@ -42,63 +41,63 @@ export class EnvioUsuarioListComponent extends PageListBase<Usuario, EnvioUsuari
     let form: any = filter.value;
 
     if (form.cpf?.length) {
-      result.push(["cpf", "like", "%" + form.cpf.trim().replace(" ", "%") + "%"]);
+      result.push(["cpf", form.cpf.trim()]);
     }
 
     if (form.nome?.length) {
-      result.push(["nome", "like", "%" + form.nome.trim().replace(" ", "%") + "%"]);
+      result.push(["nome", form.nome.trim()]);
     }
 
     if (form.status == 'Não agendados') {
-      result.push(["data_agendamento_envio", "==", null]);
+      result.push(["isNaoAgendado", true]);
     }
 
     if (form.status == 'Agendados') {
-      result.push(["data_agendamento_envio", "!=", null]);
+      result.push(["isAgendado", true]);
     }
 
     if (form.status == 'Enviados') {
-      result.push(["data_envio_api_pgd", "!=", null]);
+      result.push(["isEnviado", true]);
     }
 
     if (form.status == 'Não enviados') {
-      result.push(["data_envio_api_pgd", "==", null]);
+      result.push(["isNaoEnviado", true]);
     }
 
     if (form.status == 'Pendentes') {
-      result.push(["envios_pendentes", "==", 1]);
+      result.push(["isPendente", true]);
     }
 
     if (form.status == 'Concluídos') {
-      result.push(["envios_concluidos", "==", 1]);
+      result.push(["isConcluido", true]);
     }
 
     if (form.status == 'Com falha') {
-      result.push(["envio_com_falha", "==", 1]);
+      result.push(["isFalha", true]);
     }
 
     if (form.agendamento_inicio) {
-      result.push(["data_agendamento_envio", ">=", form.agendamento_inicio.toISOString().slice(0, 10)]);
+      result.push(["data_agendamento_envio_gte", form.agendamento_inicio.toISOString().slice(0, 10)]);
     }
 
     if (form.agendamento_fim) {
-      result.push(["data_agendamento_envio", "<", addDays(form.agendamento_fim, 1).toISOString().slice(0, 10)]);
+      result.push(["data_agendamento_envio_lte", form.agendamento_fim.toISOString().slice(0, 10)]);
     }
 
     if (form.conclusao_inicio) {
-      result.push(["data_conclusao_envio", ">=", form.conclusao_inicio.toISOString().slice(0, 10)]);
+      result.push(["data_conclusao_envio_gte", form.conclusao_inicio.toISOString().slice(0, 10)]);
     }
 
     if (form.conclusao_fim) {
-      result.push(["data_conclusao_envio", "<", addDays(form.conclusao_fim, 1).toISOString().slice(0, 10)]);
+      result.push(["data_conclusao_envio_lte", form.conclusao_fim.toISOString().slice(0, 10)]);
     }
 
     if (form.envio_inicio) {
-      result.push(["data_envio_api_pgd", ">=", form.envio_inicio.toISOString().slice(0, 10)]);
+      result.push(["data_envio_api_pgd_gte", form.envio_inicio.toISOString().slice(0, 10)]);
     }
 
     if (form.envio_fim) {
-      result.push(["data_envio_api_pgd", "<", addDays(form.envio_fim, 1).toISOString().slice(0, 10)]);
+      result.push(["data_envio_api_pgd_lte", form.envio_fim.toISOString().slice(0, 10)]);
     }
 
     return result;

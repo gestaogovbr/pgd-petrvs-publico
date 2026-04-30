@@ -6,13 +6,12 @@ use App\Models\Usuario;
 use App\Repository\EnvioUsuarioRepository;
 use App\Services\ServiceBase;
 
-class EnvioUsuarioService extends ServiceBase
+class EnvioUsuarioService
 {
     private EnvioUsuarioRepository $envioUsuarioRepository;
 
     public function __construct()
     {
-        parent::__construct();
         $this->envioUsuarioRepository = app(EnvioUsuarioRepository::class);
     }
 
