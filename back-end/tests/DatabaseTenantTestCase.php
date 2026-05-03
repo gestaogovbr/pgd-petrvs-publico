@@ -15,6 +15,14 @@ abstract class DatabaseTenantTestCase extends TestCase
     protected $tenancy = true;
     protected static bool $dumped = false;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Integração HTTP usa X-ENTIDADE; .env local com domain/subdomain ignora o header e quebra os testes.
+        config()->set('petrvs.tenant.type', 'request');
+    }
+
     public function dump() {
         if (self::$dumped) {
             return true;
@@ -96,15 +104,9 @@ abstract class DatabaseTenantTestCase extends TestCase
 
     protected function tearDown(): void
     {
-        // Rollback na conexão do tenant
         if (DB::connection('tenant')->transactionLevel() > 0) {
             DB::connection('tenant')->rollBack();
         }
-
-        // Finaliza tenância para voltar ao contexto central
-        // Isso é importante para que o RefreshDatabase (que roda depois)
-        // consiga limpar o banco principal corretamente se necessário
-        // tenancy()->end();
 
         parent::tearDown();
     }

@@ -34,5 +34,6 @@
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="REDIS_HOST" value="127.0.0.1"/>
         <env name="DB_DATABASE" value="petrvs_test"/>
+        <env name="PETRVS_TENANT_TYPE" value="request"/>
     </php>
 </phpunit>
