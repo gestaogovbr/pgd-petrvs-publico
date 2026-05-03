@@ -38,7 +38,7 @@ class ParticipanteResource extends JsonResource
         }
 
         if (empty($this->ultimoPlanoTrabalho->modalidade_pgd)){
-            throw new ExportPgdException("Usuário {$this->id} não possui modalidade definida");
+            throw new ExportPgdException("Usuário não possui modalidade definida");
         }
 
         $modalidade = new ModalidadeResource($this->ultimoPlanoTrabalho->modalidade_pgd);
