@@ -58,7 +58,6 @@ front-end/src/proxy.conf.json
 front-end/tsconfig.json
 *.bak
 front-end/.vscode/settings.json
-front-end/out-tsc/
 front-end/out-tsc/*
 
 # Dario
