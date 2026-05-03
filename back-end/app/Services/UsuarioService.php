@@ -616,20 +616,6 @@ class UsuarioService extends ServiceBase
             $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
         }
 
-        if (!isset($data['tipo_modalidade_id'])) {
-            $user = $this->usuarioRepository->findById($data["id"]);
-
-            if(!$user?->tipo_modalidade_id) {
-                $defaultTipoModalidade = $this->tipoModalidadeRepository->findByNome('Sem dados do SIAPE');
-
-                if ($defaultTipoModalidade) {
-                    $data['tipo_modalidade_id'] = $defaultTipoModalidade->id;
-                }
-            } else {
-                $data['tipo_modalidade_id'] = $user?->tipo_modalidade_id;
-            }
-        }
-
         unset($data['pedagio']);
         $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
         $this->validarPerfil($data);

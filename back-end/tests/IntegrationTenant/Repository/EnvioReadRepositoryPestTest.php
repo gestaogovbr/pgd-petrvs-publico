@@ -8,7 +8,6 @@ use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoEntrega;
-use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
@@ -21,7 +20,6 @@ use Illuminate\Support\Str;
 describe('UsuarioRepository — leitura para envio PGD (findOneParaEnvio)', function () {
     beforeEach(function () {
         $this->repository = app(UsuarioRepository::class);
-        $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial Read Pest'])->id;
         $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão Read Pest'])->id;
     });
 
@@ -31,7 +29,6 @@ describe('UsuarioRepository — leitura para envio PGD (findOneParaEnvio)', func
 
     it('retorna o usuário com unidades integrantes apenas na atribuição LOTADO', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $unidadeLotada = Unidade::factory()->create();
@@ -94,7 +91,6 @@ describe('PlanoEntregaRepository — leitura para envio PGD (findOneParaEnvio)',
 describe('PlanoTrabalhoRepository — leitura para envio PGD (findOneParaEnvio)', function () {
     beforeEach(function () {
         $this->repository = app(PlanoTrabalhoRepository::class);
-        $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial PT Read Pest'])->id;
         $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão PT Read Pest'])->id;
     });
 
@@ -104,12 +100,10 @@ describe('PlanoTrabalhoRepository — leitura para envio PGD (findOneParaEnvio)'
 
     it('retorna o plano com usuario, entregas e consolidacoes avaliadas (e avaliacao nas consolidacoes)', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $plano = PlanoTrabalho::factory()->create([
             'usuario_id' => $usuario->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
         ]);
 
         PlanoTrabalhoEntrega::factory()->create([

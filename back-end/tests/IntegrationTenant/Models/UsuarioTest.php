@@ -34,7 +34,6 @@ test('usuario deve retornar relacionamento lotacao corretamente', function () {
         'sexo' => 'MASCULINO',
         'modalidade_pgd' => 'presencial',
     ]);
-    $usuario->tipo_modalidade_id = $tipoModalidade->id;
     $usuario->save();
 
     $unidade = new Unidade();
@@ -90,7 +89,6 @@ test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTAD
         'apelido' => 'TesteSemLotacao',
         'modalidade_pgd' => 'presencial',
     ]);
-    $usuario->tipo_modalidade_id = $tipoModalidade->id;
     $usuario->save();
 
     $unidade = Unidade::create([

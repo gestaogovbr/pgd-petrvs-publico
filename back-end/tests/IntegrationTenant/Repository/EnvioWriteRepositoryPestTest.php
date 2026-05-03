@@ -5,7 +5,6 @@ declare(strict_types=1);
 use App\Models\Perfil;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
-use App\Models\TipoModalidade;
 use App\Models\Usuario;
 use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoRepository;
@@ -18,13 +17,11 @@ const LOG_ENVIO_SUCESSO_PGD = 'Envio realizado com sucesso.';
 describe('UsuarioRepository — escrita de envio PGD', function () {
     beforeEach(function () {
         $this->repository = app(UsuarioRepository::class);
-        $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial Pest'])->id;
         $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão Pest'])->id;
     });
 
     it('registrarSucesso persiste data_envio_api_pgd, data_conclusao_envio e log de sucesso', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
             'log_envio' => 'erro anterior',
             'data_envio_api_pgd' => null,
@@ -41,7 +38,6 @@ describe('UsuarioRepository — escrita de envio PGD', function () {
 
     it('registrarInsucesso persiste data_tentativa_envio e log_envio', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
 
@@ -54,7 +50,6 @@ describe('UsuarioRepository — escrita de envio PGD', function () {
 
     it('registrarTentativa persiste apenas data_tentativa_envio', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
             'data_tentativa_envio' => null,
             'log_envio' => null,
@@ -69,7 +64,6 @@ describe('UsuarioRepository — escrita de envio PGD', function () {
 
     it('registrarConclusao persiste data_conclusao_envio e log_envio', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
             'data_conclusao_envio' => null,
         ]);
@@ -83,7 +77,6 @@ describe('UsuarioRepository — escrita de envio PGD', function () {
 
     it('registrarLog persiste apenas log_envio', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
             'log_envio' => null,
         ]);
@@ -95,7 +88,6 @@ describe('UsuarioRepository — escrita de envio PGD', function () {
 
     it('agendarEnvio persiste data_agendamento_envio', function () {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
             'data_agendamento_envio' => null,
         ]);
@@ -177,13 +169,11 @@ describe('PlanoEntregaRepository — escrita de envio PGD', function () {
 describe('PlanoTrabalhoRepository — escrita de envio PGD', function () {
     beforeEach(function () {
         $this->repository = app(PlanoTrabalhoRepository::class);
-        $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial PT Pest'])->id;
         $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão PT Pest'])->id;
     });
 
     it('registrarSucesso persiste data_envio_api_pgd, data_conclusao_envio e log de sucesso', function () {
         $plano = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'log_envio' => 'algo',
             'data_envio_api_pgd' => null,
             'data_conclusao_envio' => null,
@@ -198,9 +188,7 @@ describe('PlanoTrabalhoRepository — escrita de envio PGD', function () {
     });
 
     it('registrarInsucesso persiste data_tentativa_envio e log_envio', function () {
-        $plano = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-        ]);
+        $plano = PlanoTrabalho::factory()->ativo()->create();
 
         $this->repository->registrarInsucesso($plano, 'timeout');
 
@@ -211,7 +199,6 @@ describe('PlanoTrabalhoRepository — escrita de envio PGD', function () {
 
     it('registrarTentativa persiste apenas data_tentativa_envio', function () {
         $plano = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_tentativa_envio' => null,
             'log_envio' => null,
         ]);
@@ -225,7 +212,6 @@ describe('PlanoTrabalhoRepository — escrita de envio PGD', function () {
 
     it('registrarConclusao persiste data_conclusao_envio e log_envio', function () {
         $plano = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_conclusao_envio' => null,
         ]);
 
@@ -238,7 +224,6 @@ describe('PlanoTrabalhoRepository — escrita de envio PGD', function () {
 
     it('registrarLog persiste apenas log_envio', function () {
         $plano = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'log_envio' => null,
         ]);
 
@@ -249,7 +234,6 @@ describe('PlanoTrabalhoRepository — escrita de envio PGD', function () {
 
     it('agendarEnvio persiste data_agendamento_envio', function () {
         $plano = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_agendamento_envio' => null,
         ]);
 

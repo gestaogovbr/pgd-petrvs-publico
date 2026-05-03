@@ -38,11 +38,7 @@ class PlanoEntregaFactory extends Factory
             'tipo_justificativa_id' => $tipoJustificativa->id
         ]);
 
-        $tipoModalidade = TipoModalidade::factory()->create();
-
-        $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $tipoModalidade->id,
-        ]);
+        $usuario = Usuario::factory()->create();
 
         return [
             'id'   =>  Uuid::uuid4()->toString(),

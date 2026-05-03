@@ -7,7 +7,6 @@ use App\Models\Perfil;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoEntrega;
-use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
@@ -17,8 +16,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 use Tests\DatabaseTenantTestCase;
-use App\Enums\StatusEnum;
-use App\Models\Perfil;
 
 class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
 {
@@ -241,15 +238,9 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
     public function testFindAllParaEnvio(): void
     {
         $incluido = PlanoTrabalho::factory()->create([
-            'status' => StatusEnum::INCLUIDO->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-        ]);
-        $ativo = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-        ]);
-        $deleted = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-        ]);
+            'status' => StatusEnum::INCLUIDO->value        ]);
+        $ativo = PlanoTrabalho::factory()->ativo()->create();
+        $deleted = PlanoTrabalho::factory()->ativo()->create();
         $deleted->delete();
 
         $ids = [];
@@ -272,12 +263,10 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
     public function testFindOneParaEnvioCarregaRelacoesEFiltraConsolidacoesAvaliadas(): void
     {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $plano = PlanoTrabalho::factory()->create([
-            'usuario_id' => $usuario->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'usuario_id' => $usuario->id
         ]);
 
         PlanoTrabalhoEntrega::factory()->create([
@@ -304,9 +293,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
 
     public function testFindById(): void
     {
-        $plano = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-        ]);
+        $plano = PlanoTrabalho::factory()->ativo()->create();
         $found = $this->repository->findById($plano->id);
         $this->assertNotNull($found);
         $this->assertSame($plano->id, $found->id);
@@ -316,19 +303,16 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
     public function testPlanosAtivos(): void
     {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $ativo = PlanoTrabalho::factory()->create([
             'usuario_id' => $usuario->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->subDay(),
             'data_fim' => now()->addMonth(),
             'status' => StatusEnum::ATIVO->value,
         ]);
         PlanoTrabalho::factory()->create([
             'usuario_id' => $usuario->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => now()->addMonth(),
             'data_fim' => now()->addMonths(2),
             'status' => StatusEnum::ATIVO->value,
@@ -342,19 +326,16 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
     public function testPlanosAtivosPorData(): void
     {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $dentro = PlanoTrabalho::factory()->create([
             'usuario_id' => $usuario->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => '2025-01-01',
             'data_fim' => '2025-12-31',
             'status' => StatusEnum::ATIVO->value,
         ]);
         PlanoTrabalho::factory()->create([
             'usuario_id' => $usuario->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_inicio' => '2026-01-01',
             'data_fim' => '2026-12-31',
             'status' => StatusEnum::ATIVO->value,
@@ -368,24 +349,20 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
     public function testBuscarPlanosPendentes(): void
     {
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'perfil_id' => $this->perfilId,
         ]);
         $referencia = PlanoTrabalho::factory()->create([
             'usuario_id' => $usuario->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'status' => StatusEnum::ATIVO->value,
             'data_fim' => '2025-03-01',
         ]);
         $pendente = PlanoTrabalho::factory()->create([
             'usuario_id' => $usuario->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
             'data_fim' => '2025-02-01',
         ]);
         PlanoTrabalho::factory()->create([
             'usuario_id' => $usuario->id,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'status' => StatusEnum::INCLUIDO->value,
             'data_fim' => '2025-01-01',
         ]);
@@ -398,18 +375,15 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
     public function testChunkEnviosPendentes(): void
     {
         $incluido = PlanoTrabalho::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'status' => StatusEnum::INCLUIDO->value,
             'data_agendamento_envio' => now(),
             'data_envio_api_pgd' => null,
         ]);
         $pendente = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_agendamento_envio' => Carbon::now()->subHour(),
             'data_envio_api_pgd' => null,
         ]);
         $jaEnviado = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
             'data_agendamento_envio' => Carbon::now()->subDays(2),
             'data_conclusao_envio' => Carbon::now()->subDay(),
             'data_envio_api_pgd' => Carbon::now()->subDay(),
@@ -429,9 +403,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
 
     public function testRegistrarTentativa(): void
     {
-        $plano = PlanoTrabalho::factory()->ativo()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
-        ]);
+        $plano = PlanoTrabalho::factory()->ativo()->create();
         $this->assertNull($plano->fresh()->data_tentativa_envio);
 
         $this->repository->registrarTentativa($plano);
