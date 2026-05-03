@@ -9,7 +9,6 @@ use App\Models\Cidade;
 use App\Models\Entidade;
 use App\Models\Perfil;
 use App\Models\Unidade;
-use App\Models\TipoModalidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
@@ -331,8 +330,6 @@ class TenantService extends ServiceBase
             Log::info('Busca de Níveis de acesso.');
             $NivelAcessoService = new NivelAcessoService();
 
-            $tipoModalidadeId = $this->getTipoModalidadeId();
-
             Log::info('Cadastro de Usuário.');
             $usuario = new Usuario([
                 'email' => $dataOrEntity->email,
@@ -340,7 +337,7 @@ class TenantService extends ServiceBase
                 'cpf' => $dataOrEntity->cpf,
                 'apelido' => $dataOrEntity->apelido,
                 'perfil_id' => $NivelAcessoService->getPerfilDesenvolvedor()->id,
-                'tipo_modalidade_id' => $tipoModalidadeId,
+                'modalidade_pgd' => null,
                 'data_inicio' => Carbon::now()
             ]);
             $usuario->save();
@@ -410,18 +407,6 @@ class TenantService extends ServiceBase
         }
 
         return $cidade->id;
-    }
-
-    private function getTipoModalidadeId(): string
-    {
-        $tipoModalidade = TipoModalidade::first();
-        if ($tipoModalidade === null) {
-            $tipoModalidade = TipoModalidade::create([
-                'nome' => 'Teletrabalho',
-            ]);
-        }
-
-        return $tipoModalidade->id;
     }
 
     public function deleteTenant($id)

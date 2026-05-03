@@ -17,11 +17,12 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 use Tests\DatabaseTenantTestCase;
+use App\Enums\StatusEnum;
+use App\Models\Perfil;
 
 class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
 {
     protected PlanoTrabalhoRepository $repository;
-    protected string $tipoModalidadeId;
     protected string $perfilId;
 
     protected function setUp(): void
@@ -30,8 +31,6 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         Bus::fake();
         $this->repository = app(PlanoTrabalhoRepository::class);
 
-        // Create prerequisites
-        $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
         $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
     }
 
@@ -39,11 +38,11 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
     {
         $unidade = Unidade::factory()->create();
         $usuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
         $outroUsuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
 
@@ -52,7 +51,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
             'unidade_id' => $unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ]);
 
         // Plano waiting for signature, correct unit, same user (should be excluded)
@@ -60,7 +59,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
             'unidade_id' => $unidade->id,
             'usuario_id' => $usuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ]);
 
         // Plano not waiting for signature
@@ -68,7 +67,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
             'unidade_id' => $unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::ATIVO->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura([$unidade->id], [], $usuario->id);
@@ -82,15 +81,15 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         $unidade = Unidade::factory()->create();
 
         $gestorTitular = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
         $gestorSubstituto = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
         $participante = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
 
@@ -116,14 +115,14 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
             'unidade_id' => $unidade->id,
             'usuario_id' => $gestorTitular->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $unidade->id,
             'usuario_id' => $participante->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura([$unidade->id], [], $gestorSubstituto->id);
@@ -137,11 +136,11 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         $unidade = Unidade::factory()->create();
 
         $gestorTitular = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
         $outroUsuario = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
 
@@ -158,14 +157,14 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
             'unidade_id' => $unidade->id,
             'usuario_id' => $gestorTitular->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura([$unidade->id], [], 'usuario-qualquer');
@@ -181,19 +180,19 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         $unidadeSubordinada = Unidade::factory()->create(['unidade_pai_id' => $unidadeSuperior->id]);
 
         $usuarioLogado = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
         $titularSubordinada = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
         $participanteSubordinada = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
         $participanteSuperior = Usuario::factory()->create([
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ]);
 
@@ -210,21 +209,21 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
             'unidade_id' => $unidadeSuperior->id,
             'usuario_id' => $participanteSuperior->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $unidadeSubordinada->id,
             'usuario_id' => $titularSubordinada->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $unidadeSubordinada->id,
             'usuario_id' => $participanteSubordinada->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'tipo_modalidade_id' => $this->tipoModalidadeId
+            'modalidade_pgd' => 'presencial'
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura(

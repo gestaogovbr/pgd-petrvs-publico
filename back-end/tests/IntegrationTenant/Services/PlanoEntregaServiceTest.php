@@ -5,6 +5,8 @@ namespace Tests\IntegrationTenant\Services;
 use App\Models\Entidade;
 use App\Models\PlanoEntrega;
 use App\Models\Programa;
+use App\Models\Usuario;
+use App\Models\Entidade;
 use App\Models\TipoAvaliacao;
 use App\Models\TipoJustificativa;
 use App\Models\TipoModalidade;
@@ -83,18 +85,6 @@ describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () 
         ]);
         $programa->save();
 
-        // 4. Tipo Modalidade (necessário para usuário)
-        $tipoModalidade = new TipoModalidade();
-        $tipoModalidade->id = Str::uuid();
-        $tipoModalidade->fill([
-            'nome' => 'Modalidade Teste',
-            'exige_pedagio' => 0,
-            'plano_trabalho_calcula_horas' => 0,
-            'atividade_tempo_despendido' => 0,
-            'atividade_esforco' => 0,
-        ]);
-        $tipoModalidade->save();
-
         // 5. Usuario
         $usuario = new Usuario();
         $usuario->id = Str::uuid();
@@ -105,7 +95,7 @@ describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () 
             'apelido' => 'Teste',
             'matricula' => '1234567',
             'sexo' => 'MASCULINO',
-            'tipo_modalidade_id' => $tipoModalidade->id,
+            'modalidade_pgd' => 'presencial',
         ]);
         $usuario->save();
 

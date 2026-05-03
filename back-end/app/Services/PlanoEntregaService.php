@@ -798,17 +798,7 @@ class PlanoEntregaService extends ServiceBase
 
     public function planosUnidadeComPendenciasExecucaoAvaliacao(string $unidadeId, $planoEntregaId, $dataAssinatura): bool
     {
-        $diasPendenciaDataFinalPlano = 30;
-
-        $planosPendentes = PlanoEntrega::where('unidade_id', $unidadeId)
-            ->whereIn('status', PlanoEntrega::STATUSES_PENDENTES)
-            ->where('id','!=', $planoEntregaId)
-            ->where('data_fim', '<', $dataAssinatura->subDays($diasPendenciaDataFinalPlano))
-            ->get();
-
-        if ($planosPendentes->count() > 0) {
-            return true;
-        }
+        //Remoção do bloqueio por pendencia
 
         return false;
     }

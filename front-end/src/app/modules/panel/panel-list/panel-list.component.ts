@@ -145,6 +145,9 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 	private UsersInPGD(): Promise<void> {
 		return this.dao!.countUsersInPGD().then((count) => {
 			this.countUsersInPGD = count;
+		}).catch((error) => {
+			this.error('Erro ao buscar usuários no PGD');
+			this.countUsersInPGD = -1;
 		});
 	}
 

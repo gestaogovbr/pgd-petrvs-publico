@@ -9,6 +9,7 @@ use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use Carbon\Carbon;
+use App\Models\PlanoTrabalho;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -35,6 +36,11 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
         return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesGerenciadasIds, $unidadesSubordinadasIds, $usuarioId);
+    }
+
+    public function findWithAtividades(string|int $id): ?PlanoTrabalho
+    {
+        return $this->readRepository->findWithAtividades($id);
     }
 
     public function planosAtivos(string $usuarioId): Collection

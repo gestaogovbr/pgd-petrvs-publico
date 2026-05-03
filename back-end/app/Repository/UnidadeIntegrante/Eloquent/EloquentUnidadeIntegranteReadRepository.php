@@ -94,4 +94,12 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
 
         return $integrante instanceof UnidadeIntegrante ? $integrante : null;
     }
+
+    public function countLotadosByUnidade(string $unidadeId): int
+    {
+        return $this->model->newQuery()
+            ->where('unidade_id', $unidadeId)
+            ->has('lotado')
+            ->count();
+    }
 }

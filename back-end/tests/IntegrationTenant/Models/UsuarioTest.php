@@ -6,7 +6,6 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
-use App\Models\TipoModalidade;
 use App\Models\Entidade;
 use App\Services\Siape\Unidade\Enum\Atribuicao;
 
@@ -24,8 +23,6 @@ test('usuario deve retornar relacionamento lotacao corretamente', function () {
     ]);
     $entidade->save();
 
-    $tipoModalidade = TipoModalidade::factory()->create();
-
     $usuario = new Usuario();
     $usuario->id = \Illuminate\Support\Str::uuid();
     $usuario->fill([
@@ -34,7 +31,8 @@ test('usuario deve retornar relacionamento lotacao corretamente', function () {
         'cpf' => '99999999999',
         'apelido' => 'TesteLotacao',
         'matricula' => '1234567',
-        'sexo' => 'MASCULINO'
+        'sexo' => 'MASCULINO',
+        'modalidade_pgd' => 'presencial',
     ]);
     $usuario->tipo_modalidade_id = $tipoModalidade->id;
     $usuario->save();
@@ -83,8 +81,6 @@ test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTAD
     ]);
     $entidade->save();
 
-    $tipoModalidade = TipoModalidade::factory()->create();
-
     $usuario = new Usuario();
     $usuario->id = \Illuminate\Support\Str::uuid();
     $usuario->fill([
@@ -92,6 +88,7 @@ test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTAD
         'nome' => 'Usuário Teste Sem Lotação',
         'cpf' => '88888888888',
         'apelido' => 'TesteSemLotacao',
+        'modalidade_pgd' => 'presencial',
     ]);
     $usuario->tipo_modalidade_id = $tipoModalidade->id;
     $usuario->save();

@@ -25,7 +25,7 @@
         </column>
         <column title="Modalidade" [template]="columnModalidade">
             <ng-template let-row="row" #columnModalidade>
-                <span> {{row.plano_trabalho?.tipo_modalidade?.nome || ""}}</span>
+                <span> {{row.plano_trabalho?.modalidade_pgd_label || modalidadePgd.label(row.plano_trabalho?.modalidade_pgd)}}</span>
             </ng-template>
         </column>
         <column title="Iniciado em" field="created_at" [width]="80" [template]="columnDataCriacao">

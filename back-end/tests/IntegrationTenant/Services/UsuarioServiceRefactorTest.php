@@ -21,7 +21,6 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
         DB::setDefaultConnection('tenant');
 
         $this->entidadeId = Str::uuid()->toString();
-        $this->tipoModalidadeId = Str::uuid()->toString();
         $this->perfilId = Str::uuid()->toString();
 
         // Criar Entidade
@@ -40,18 +39,6 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
             'updated_at' => now()
         ]);
 
-        // Criar Tipo Modalidade
-        DB::table('tipos_modalidades')->insert([
-            'id' => $this->tipoModalidadeId,
-            'nome' => 'Presencial',
-            'exige_pedagio' => 0,
-            'plano_trabalho_calcula_horas' => 1,
-            'atividade_tempo_despendido' => 1,
-            'atividade_esforco' => 1,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
         // Criar Perfil
         DB::table('perfis')->insert([
             'id' => $this->perfilId,
@@ -65,7 +52,7 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
         // Mock do IntegracaoService
         $this->mock(IntegracaoService::class, function (MockInterface $mock) {
             $mock->shouldReceive('liberarEmailDuplicadoDefinindoComoNulo')->andReturnNull();
-            $mock->shouldReceive('validarModalidadePgd')->andReturn($this->tipoModalidadeId);
+            $mock->shouldReceive('validarModalidadePgd')->andReturn('presencial');
         });
     });
 
@@ -81,7 +68,7 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
             'cpf' => $cpf,
             'email' => 'teste@semmatricula.com',
             'matricula' => null,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ])->save();
 
@@ -143,7 +130,7 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
             'cpf' => $cpf,
             'email' => 'teste@lotacao.com',
             'matricula' => $matriculaAntiga,
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ])->save();
 
@@ -191,7 +178,7 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
             'email' => 'antigo@email.com',
             'matricula' => 'TESTE1',
             'cpf' => '11122233344',
-            'tipo_modalidade_id' => $this->tipoModalidadeId,
+            'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ])->save();
 

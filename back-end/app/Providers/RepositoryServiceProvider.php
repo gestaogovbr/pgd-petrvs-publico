@@ -97,8 +97,6 @@ use App\Repository\Unidade\Eloquent\EloquentUnidadeReadRepository;
 use App\Repository\Unidade\Eloquent\EloquentUnidadeWriteRepository;
 use App\Repository\Perfil\Contracts\PerfilReadRepositoryContract;
 use App\Repository\Perfil\Eloquent\EloquentPerfilReadRepository;
-use App\Repository\TipoModalidade\Contracts\TipoModalidadeReadRepositoryContract;
-use App\Repository\TipoModalidade\Eloquent\EloquentTipoModalidadeReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\PlanoTrabalho\Eloquent\EloquentPlanoTrabalhoReadRepository;
@@ -113,6 +111,12 @@ use App\Repository\Tenant\Eloquent\EloquentTenantReadRepository;
 use App\Repository\Tenant\Eloquent\EloquentTenantWriteRepository;
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
+use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
+use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioWriteRepositoryContract;
+use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioReadRepository;
+use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioWriteRepository;
+use App\Repository\Atividade\Contracts\AtividadeReadRepositoryContract;
+use App\Repository\Atividade\Eloquent\EloquentAtividadeReadRepository;
 use Illuminate\Support\ServiceProvider;
 
 final class RepositoryServiceProvider extends ServiceProvider
@@ -161,11 +165,6 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             PerfilReadRepositoryContract::class,
             EloquentPerfilReadRepository::class,
-        );
-
-        $this->app->bind(
-            TipoModalidadeReadRepositoryContract::class,
-            EloquentTipoModalidadeReadRepository::class,
         );
 
         $this->app->bind(
@@ -276,6 +275,21 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             RelatorioAgenteReadRepositoryContract::class,
             EloquentRelatorioAgenteReadRepository::class,
+        );
+
+        $this->app->bind(
+            CargaIndividualSiapeRelatorioReadRepositoryContract::class,
+            EloquentCargaIndividualSiapeRelatorioReadRepository::class,
+        );
+
+        $this->app->bind(
+            CargaIndividualSiapeRelatorioWriteRepositoryContract::class,
+            EloquentCargaIndividualSiapeRelatorioWriteRepository::class,
+        );
+
+        $this->app->bind(
+            AtividadeReadRepositoryContract::class,
+            EloquentAtividadeReadRepository::class,
         );
     }
 

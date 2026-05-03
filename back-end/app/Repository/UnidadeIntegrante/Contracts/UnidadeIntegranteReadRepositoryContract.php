@@ -19,4 +19,5 @@ interface UnidadeIntegranteReadRepositoryContract
     public function findLotacoesByUsuario(string $usuarioId): Collection;
     public function findGestorByUnidade(string $unidadeId): ?\App\Models\UnidadeIntegrante;
     public function findUnidadeIntegrante(string $usuarioId, string $unidadeId): ?\App\Models\UnidadeIntegrante;
+    public function countLotadosByUnidade(string $unidadeId): int;
 }

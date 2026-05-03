@@ -2,15 +2,16 @@
 
 namespace Tests\IntegrationTenant\Services;
 
-use App\Models\Entidade;
+
+use App\Services\StatusService;
 use App\Models\PlanoTrabalho;
+use App\Models\Usuario;
+use App\Models\Unidade;
 use App\Models\Programa;
+use App\Models\Entidade;
 use App\Models\TipoAvaliacao;
 use App\Models\TipoJustificativa;
 use App\Models\TipoModalidade;
-use App\Models\Unidade;
-use App\Models\Usuario;
-use App\Services\StatusService;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Tests\DatabaseTenantTestCase;
@@ -55,9 +56,17 @@ describe('StatusService Integration', function () {
         $this->unidade->id = 'unidade-teste';
         $this->unidade->save();
 
-        $this->tipoModalidade = TipoModalidade::factory()->create();
+        $this->usuario = new Usuario();
+        $this->usuario->fill([
+            'id' => 'usuario-teste',
+            'nome' => 'Usuario Teste',
+            'email' => 'usuario@teste.com',
+            'cpf' => '00000000000',
+            'apelido' => 'UserTeste',
+            'modalidade_pgd' => 'presencial'
+        ]);
+        $this->usuario->saveOrFail();
 
-        $this->usuario = Usuario::factory()->create();
         $this->actingAs($this->usuario);
 
         // Create dependencies for Programa
@@ -102,7 +111,7 @@ describe('StatusService Integration', function () {
             'unidade_id' => $this->unidade->id,
             'usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
-            'tipo_modalidade_id' => $this->tipoModalidade->id,
+            'modalidade_pgd' => 'presencial',
             'data_inicio' => now(),
             'data_fim' => now()->addMonth(),
             //'status' => 'INCLUIDO',

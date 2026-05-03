@@ -47,8 +47,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       cpf: { default: "" },
       apelido: { default: "" },
       participa_pgd: { default: ""},
-      modalidade_pgd: { default: ""},
-      tipo_modalidade_id: { default: null },
+      modalidade_pgd: { default: null},
       usuario_externo: { default: true },
       telefone: { default: "" },
       uf: { default: "" },
@@ -61,8 +60,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.planoDataset = this.planoTrabalhoDao.dataset();
     this.join = [
       "auditsExterno",
-      "ultimoPlanoTrabalhoAtivo.documentos",
-      "tipoModalidadeSiape"
+      "ultimoPlanoTrabalhoAtivo.documentos"
     ]
   }
 

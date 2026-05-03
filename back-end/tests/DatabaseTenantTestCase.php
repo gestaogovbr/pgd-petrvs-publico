@@ -31,6 +31,69 @@ abstract class DatabaseTenantTestCase extends TestCase
         self::$dumped = true;
     }
 
+    protected function loadTenantSchema()
+    {
+        $needsSchemaReload = !Schema::connection('tenant')->hasTable('usuarios')
+            || !Schema::connection('tenant')->hasColumn('usuarios', 'modalidade_pgd');
+
+        if ($needsSchemaReload) {
+            $this->dropTenantObjects();
+
+            $path = database_path('schema/tenant-schema.sql');
+
+            if (file_exists($path)) {
+                $config = config('database.connections.tenant');
+
+                $host = gethostbyname($config['host']);
+
+                $command = sprintf(
+                    'mysql -h %s -P %s -u %s -p%s %s < %s',
+                    escapeshellarg($host),
+                    escapeshellarg($config['port']),
+                    escapeshellarg($config['username']),
+                    escapeshellarg($config['password']),
+                    escapeshellarg($config['database']),
+                    escapeshellarg($path)
+                );
+
+                exec($command, $output, $returnVar);
+
+                if ($returnVar !== 0) {
+                     throw new \Exception("Erro ao importar schema do tenant via mysql CLI. Exit code: $returnVar. Host resolvido: $host. Verifique credenciais e conexão.");
+                }
+            } else {
+                $this->artisan('migrate', [
+                    '--path' => 'database/migrations/tenant',
+                    '--database' => 'tenant',
+                    '--force' => true,
+                ]);
+            }
+        }
+    }
+
+    protected function dropTenantObjects(): void
+    {
+        DB::connection('tenant')->statement('SET FOREIGN_KEY_CHECKS=0');
+
+        $views = DB::connection('tenant')->select("SHOW FULL TABLES WHERE Table_type = 'VIEW'");
+        foreach ($views as $view) {
+            $viewName = array_values((array) $view)[0] ?? null;
+            if ($viewName) {
+                DB::connection('tenant')->statement(sprintf('DROP VIEW IF EXISTS `%s`', str_replace('`', '``', $viewName)));
+            }
+        }
+
+        $tables = DB::connection('tenant')->select("SHOW FULL TABLES WHERE Table_type = 'BASE TABLE'");
+        foreach ($tables as $table) {
+            $tableName = array_values((array) $table)[0] ?? null;
+            if ($tableName) {
+                DB::connection('tenant')->statement(sprintf('DROP TABLE IF EXISTS `%s`', str_replace('`', '``', $tableName)));
+            }
+        }
+
+        DB::connection('tenant')->statement('SET FOREIGN_KEY_CHECKS=1');
+    }
+
     protected function tearDown(): void
     {
         // Rollback na conexão do tenant

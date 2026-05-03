@@ -21,15 +21,6 @@ beforeEach(function () {
 
     $this->service = app(SiapeIndividualServidorService::class);
 
-    // Create TipoModalidade required for Usuario
-    $this->tipoModalidade = TipoModalidade::create([
-        'nome' => 'Presencial',
-        'exige_pedagio' => 0,
-        'plano_trabalho_calcula_horas' => 0,
-        'atividade_tempo_despendido' => 0,
-        'atividade_esforco' => 0
-    ]);
-
     // Mock external service
     $this->mockSiapeService = Mockery::mock(SiapeIndividualService::class);
     $this->mockSiapeService->config = [
@@ -65,7 +56,7 @@ test('deve identificar usuario novo no resumo', function () {
         'cpf' => $cpf,
         'apelido' => 'Novo',
         'matricula' => '11111',
-        'tipo_modalidade_id' => $this->tipoModalidade->id
+        'modalidade_pgd' => 'presencial'
     ]);
 
     $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf, 'sucesso']);
@@ -86,7 +77,7 @@ test('deve identificar usuario existente no resumo', function () {
         'apelido' => 'Existente',
         'matricula' => '22222',
         'situacao_siape' => 'ATIVO',
-        'tipo_modalidade_id' => $this->tipoModalidade->id
+        'modalidade_pgd' => 'presencial'
     ]);
 
     $usuariosAntes = [[
@@ -120,7 +111,7 @@ test('deve identificar alteracoes no usuario', function () {
         'apelido' => 'Mudanca',
         'matricula' => '33333',
         'situacao_siape' => 'ATIVO',
-        'tipo_modalidade_id' => $this->tipoModalidade->id
+        'modalidade_pgd' => 'presencial'
     ]);
 
      $usuariosAntes = [[
@@ -152,7 +143,7 @@ test('deve retornar parcial se lotacao falhar para usuario existente', function 
         'apelido' => 'SemLotacao',
         'matricula' => '44444',
         'situacao_siape' => 'ATIVO',
-        'tipo_modalidade_id' => $this->tipoModalidade->id
+        'modalidade_pgd' => 'presencial'
     ]);
 
     $usuariosAntes = [[
@@ -185,7 +176,7 @@ test('deve gerenciar blacklist corretamente para multiplas matriculas', function
         'cpf' => $cpf,
         'matricula' => '11111',
         'situacao_siape' => 'ATIVO',
-        'tipo_modalidade_id' => $this->tipoModalidade->id
+        'modalidade_pgd' => 'presencial'
     ]);
 
     $userB = Usuario::create([
@@ -194,7 +185,7 @@ test('deve gerenciar blacklist corretamente para multiplas matriculas', function
         'cpf' => $cpf,
         'matricula' => '22222',
         'situacao_siape' => 'ATIVO',
-        'tipo_modalidade_id' => $this->tipoModalidade->id
+        'modalidade_pgd' => 'presencial'
     ]);
 
     SiapeBlackListServidor::create([

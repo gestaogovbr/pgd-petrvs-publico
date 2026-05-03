@@ -24,6 +24,7 @@ use App\Repository\UnidadeRepository;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeIntegranteAtribuicaoRepository;
 use App\Repository\UsuarioRepository;
+use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
@@ -51,6 +52,8 @@ beforeEach(function () {
     $this->unidadeIntegranteRepository = Mockery::mock(UnidadeIntegranteRepository::class);
     $this->unidadeIntegranteAtribuicaoRepository = Mockery::mock(UnidadeIntegranteAtribuicaoRepository::class);
     $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
+    $this->cargaIndividualSiapeSubject = Mockery::mock(CargaIndividualSiapeSubject::class);
+    $this->cargaIndividualSiapeSubject->shouldReceive('notificar')->andReturn(null)->byDefault();
 
     $this->service = Mockery::mock(SiapeIndividualServidorService::class, [
         $this->integracaoServiceFactory,
@@ -64,6 +67,7 @@ beforeEach(function () {
         $this->unidadeIntegranteRepository,
         $this->unidadeIntegranteAtribuicaoRepository,
         $this->usuarioRepository,
+        $this->cargaIndividualSiapeSubject,
     ])->makePartial();
     $this->service->shouldAllowMockingProtectedMethods();
     

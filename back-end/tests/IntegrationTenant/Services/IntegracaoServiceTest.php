@@ -11,14 +11,6 @@ beforeEach(function () {
     Bus::fake();
     $this->service = new IntegracaoService();
 
-    $this->tipoModalidadeId = Str::uuid()->toString();
-    DB::table('tipos_modalidades')->insert([
-        'id' => $this->tipoModalidadeId,
-        'nome' => 'Modalidade Teste',
-        'created_at' => now(),
-        'updated_at' => now()
-    ]);
-
     $this->perfilParticipanteId = Str::uuid()->toString();
     DB::table('perfis')->insert([
         'id' => $this->perfilParticipanteId,
@@ -42,7 +34,7 @@ test('deve alterar email de usuario existente ativo para liberar email', functio
         'matricula' => '11111',
         'nome' => 'Antigo',
         'cpf' => '11111111111',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'created_at' => now(),
         'updated_at' => now()
     ]);
@@ -68,7 +60,7 @@ test('deve alterar email de usuario existente soft deleted para liberar email', 
         'matricula' => '33333',
         'nome' => 'Deletado',
         'cpf' => '33333333333',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'created_at' => now(),
         'updated_at' => now(),
         'deleted_at' => now()
@@ -95,7 +87,7 @@ test('nao deve alterar email se for o proprio usuario ignorado', function () {
         'matricula' => '55555',
         'nome' => 'Proprio',
         'cpf' => '55555555555',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'created_at' => now(),
         'updated_at' => now()
     ]);
@@ -159,7 +151,7 @@ test('deve transferir email para usuario mais recente e manter consistencia ao e
         'matricula' => '1',
         'apelido' => 'usuario1',
         'situacao_funcional' => 'ATIVO_PERMANENTE',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'data_modificacao' => $dataUsuario1,
         'created_at' => now(),
         'updated_at' => now(),
@@ -295,7 +287,7 @@ test('deve ser idempotente ao executar fluxo de servidores com dados já consist
         'matricula' => '1',
         'apelido' => 'usuario1',
         'situacao_funcional' => 'ATIVO_PERMANENTE',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'data_modificacao' => $dataUsuario1,
         'created_at' => now(),
         'updated_at' => now(),
@@ -309,7 +301,7 @@ test('deve ser idempotente ao executar fluxo de servidores com dados já consist
         'matricula' => '2',
         'apelido' => 'usuario2',
         'situacao_funcional' => 'ATIVO_PERMANENTE',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'data_modificacao' => $dataUsuario2,
         'created_at' => now(),
         'updated_at' => now(),

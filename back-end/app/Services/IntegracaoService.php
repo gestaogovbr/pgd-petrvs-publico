@@ -26,6 +26,7 @@ use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
+use App\Support\ModalidadePgd;
 
 /**
  * @property UtilService $UtilService
@@ -734,39 +735,7 @@ class IntegracaoService extends ServiceBase
 
   public function validarModalidadePgd($modalidadeString)
   {
-    $fallbackId = DB::table('tipos_modalidades')
-      ->where('nome', 'Sem dados do SIAPE')
-      ->whereNull('deleted_at')
-      ->value('id');
-
-    if (empty($fallbackId)) {
-        $fallbackId = DB::table('tipos_modalidades')
-          ->whereNull('deleted_at')
-          ->value('id');
-    }
-
-    if (empty($modalidadeString)) {
-      return $fallbackId;
-    }
-
-    if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $modalidadeString)) {
-      $tipoId = DB::table('tipos_modalidades_siape')
-        ->where('id', $modalidadeString)
-        ->value('tipo_modalidade_id');
-      return $tipoId ?? $fallbackId;
-    }
-
-    $tipoId = DB::table('tipos_modalidades_siape')
-      ->where('nome', $modalidadeString)
-      ->value('tipo_modalidade_id');
-
-    if ($tipoId) {
-      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para TipoModalidade: {$tipoId}");
-      return $tipoId;
-    }
-
-    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido para 'Sem dados do SIAPE'.");
-    return $fallbackId;
+    return ModalidadePgd::normalize($modalidadeString);
   }
 
   private function verificarUsuariosExternosIntegracao(): void

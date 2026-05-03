@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\Usuario;
-use App\Models\TipoModalidade;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -25,7 +24,7 @@ class UsuarioFactory extends Factory
             'data_nascimento' => $this->faker->optional()->date(),
             'sexo' => $this->faker->randomElement(['MASCULINO', 'FEMININO']),
             'situacao_funcional' => 'APOSENTADO',
-            'tipo_modalidade_id' => TipoModalidade::factory(),
+            'modalidade_pgd' => $this->faker->randomElement(['presencial', 'parcial', 'integral', null]),
         ];
     }
 }

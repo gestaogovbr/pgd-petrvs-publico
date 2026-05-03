@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\PlanoTrabalho\Contracts;
 
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalho;
 use Illuminate\Database\Eloquent\Collection;
 
 interface PlanoTrabalhoReadRepositoryContract
@@ -12,6 +13,8 @@ interface PlanoTrabalhoReadRepositoryContract
     public function findById(string|int $id): ?PlanoTrabalho;
 
     public function findOneParaEnvio(string|int $id): ?PlanoTrabalho;
+
+    public function findWithAtividades(string|int $id): ?PlanoTrabalho;
 
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection;
 

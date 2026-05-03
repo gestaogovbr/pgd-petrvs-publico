@@ -160,23 +160,30 @@ PY
             }
         }
 
-        sh '''
-            echo "==> Verificando artefatos antes do archive"
-            ls -lah back-end/phpstan-report.xml back-end/phpstan-report.txt .phpstan-exit-code || true
-        '''
+        script {
+            if (env.SKIP_PIPELINE == 'true') {
+                echo 'Archive de artefatos ignorado: pipeline não executado para este contexto.'
+                return
+            }
 
-        archiveArtifacts(
-            artifacts: 'back-end/phpstan-report.xml, back-end/phpstan-report.txt, .phpstan-exit-code',
-            fingerprint: true,
-            allowEmptyArchive: false,
-            onlyIfSuccessful: false
-        )
+            sh '''
+                echo "==> Verificando artefatos antes do archive"
+                ls -lah back-end/phpstan-report.xml back-end/phpstan-report.txt .phpstan-exit-code || true
+            '''
 
-        recordIssues(
-            enabledForFailure: true,
-            aggregatingResults: false,
-            tools: [checkStyle(pattern: 'back-end/phpstan-report.xml', id: 'phpstan', name: 'PHPStan')]
-        )
+            archiveArtifacts(
+                artifacts: 'back-end/phpstan-report.xml, back-end/phpstan-report.txt, .phpstan-exit-code',
+                fingerprint: true,
+                allowEmptyArchive: false,
+                onlyIfSuccessful: false
+            )
+
+            recordIssues(
+                enabledForFailure: true,
+                aggregatingResults: false,
+                tools: [checkStyle(pattern: 'back-end/phpstan-report.xml', id: 'phpstan', name: 'PHPStan')]
+            )
+        }
     }
 
     failure {

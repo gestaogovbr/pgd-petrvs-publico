@@ -63,7 +63,7 @@
             </div>
             <div class="row" style="margin-bottom: 20px">
                 <input-display [size]="3" label="Participante do PGD" [value]="entity?.participa_pgd?.toUpperCase()"></input-display>
-                <input-display [size]="6" label="Modalidade" [value]="entity?.tipo_modalidade_siape ? entity?.tipo_modalidade_siape?.nome?.toUpperCase() : 'Não definida'"></input-display>
+                <input-display [size]="6" label="Modalidade" [value]="entity?.modalidade_pgd_label || entity?.modalidade_pgd || 'Não definida'"></input-display>
             </div>
         </tab>
         <tab key="CONFIGURACOES" label="TCR- Particularidades do participante" *ngIf="entity?.id && !entity?.usuario_externo">

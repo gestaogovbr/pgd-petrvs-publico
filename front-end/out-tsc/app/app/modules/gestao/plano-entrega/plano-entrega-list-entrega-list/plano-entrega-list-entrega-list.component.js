@@ -1,0 +1,79 @@
+import { __decorate } from "tslib";
+import { Component, ViewChild } from '@angular/core';
+import { GridComponent } from 'src/app/components/grid/grid.component';
+import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { PlanoEntregaEntrega } from 'src/app/models/plano-entrega-entrega.model';
+import { PageListBase } from 'src/app/modules/base/page-list-base';
+import { PlanoEntregaService } from '../plano-entrega.service';
+let PlanoEntregaListEntregaListComponent = class PlanoEntregaListEntregaListComponent extends PageListBase {
+    constructor(injector) {
+        super(injector, PlanoEntregaEntrega, PlanoEntregaEntregaDaoService);
+        this.injector = injector;
+        this.buttons = [];
+        this.idsUnidadesAscendentes = [];
+        this.filterWhere = (filter) => {
+            let form = filter.value;
+            let result = [];
+            if (this.idsUnidadesAscendentes.length)
+                result.push(["plano_entrega.unidade_id", "in", this.idsUnidadesAscendentes]);
+            if (form.unidade_id?.length) { // unidade demandante
+                result.push(["unidade_id", "==", form.unidade_id]);
+            }
+            if (form.descricao?.length) {
+                result.push(["descricao", "like", "%" + form.descricao.trim().replace(" ", "%") + "%"]);
+            }
+            if (form.descricao_entrega?.length) {
+                result.push(["descricao_entrega", "like", "%" + form.descricao_entrega.trim().replace(" ", "%") + "%"]);
+            }
+            if (form.destinatario?.length) {
+                result.push(["destinatario", "like", "%" + form.destinatario.trim().replace(" ", "%") + "%"]);
+            }
+            return result;
+        };
+        this.planoEntregaDao = injector.get(PlanoEntregaEntregaDaoService);
+        this.unidadeDao = injector.get(UnidadeDaoService);
+        this.planoEntregaService = injector.get(PlanoEntregaService);
+        this.title = this.lex.translate("Entregas");
+        this.filter = this.fh.FormBuilder({
+            descricao: { default: "" },
+            descricao_entrega: { default: "" },
+            unidade_id: { default: "" },
+            destinatario: { default: "" },
+        });
+        this.join = ["entrega:id,nome", "entrega_pai:id,descricao", "unidade:id,sigla", "plano_entrega:id,nome"];
+        this.groupBy = [{ field: "plano_entrega.nome", label: "Unidade" }];
+    }
+    ngOnInit() {
+        super.ngOnInit();
+        this.idsUnidadesAscendentes = this.metadata?.idsUnidadesAscendentes || this.idsUnidadesAscendentes;
+        this.filter?.controls.unidade_id.setValue(this.idsUnidadesAscendentes[0]);
+    }
+    onLoad() {
+        this.grid.priorOrderBy = [["plano_entrega.created_at", "desc"]];
+        super.onLoad();
+    }
+    dynamicOptions(row) {
+        let result = [];
+        result.push({ label: "Informações", icon: "bi bi-info-circle", onClick: (objetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true }) });
+        return result;
+    }
+    filterClear(filter) {
+        super.filterClear(filter);
+        filter.controls.descricao.setValue("");
+        filter.controls.descricao_entrega.setValue("");
+    }
+};
+__decorate([
+    ViewChild(GridComponent, { static: false })
+], PlanoEntregaListEntregaListComponent.prototype, "grid", void 0);
+PlanoEntregaListEntregaListComponent = __decorate([
+    Component({
+        selector: 'app-plano-entrega-list-entrega-list',
+        templateUrl: './plano-entrega-list-entrega-list.component.html',
+        styleUrls: ['./plano-entrega-list-entrega-list.component.scss'],
+        standalone: false
+    })
+], PlanoEntregaListEntregaListComponent);
+export { PlanoEntregaListEntregaListComponent };
+//# sourceMappingURL=plano-entrega-list-entrega-list.component.js.map

@@ -6,7 +6,7 @@
         </div>
         <div class="row">
             <input-search #unidade [size]="5" disabled controlName="unidade_id" [dao]="unidadeDao" ></input-search>
-            <input-search #tipoModalidade disabled [size]="3" controlName="tipo_modalidade_id" [dao]="tipoModalidadeDao"></input-search>
+            <input-display [size]="3" label="Modalidade" [value]="entity?.modalidade_pgd_label || modalidadePgd.label(entity?.modalidade_pgd)"></input-display>
             <input-text numbers disabled [size]="2" label="% prod." icon="bi bi-hourglass-split" controlName="ganho_produtividade" [control]="form!.controls.ganho_produtividade" [labelInfo]="'Percentual de ganho de produtividade (Será descontado do ' + lex.translate('tempo pactuado')+')'" [attr.maxlength]=250></input-text>
             <input-display [size]="2" label="H. Parciais" icon="bi bi-clock" controlName="tempo_proporcional" [control]="form!.controls.tempo_proporcional" labelInfo="Total de horas menos os afastamentos."></input-display>
         </div>

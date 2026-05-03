@@ -6,7 +6,6 @@ use App\Models\PlanoTrabalho;
 use App\Models\Programa;
 use App\Models\Usuario;
 use App\Models\Unidade;
-use App\Models\TipoModalidade;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PlanoTrabalhoFactory extends Factory
@@ -15,6 +14,9 @@ class PlanoTrabalhoFactory extends Factory
 
     public function definition(): array
     {
+        $usuario = Usuario::factory()->create();
+        $unidade = Unidade::factory()->create();
+
         return [
             'id' => $this->faker->uuid(),
             'carga_horaria' => 8.00,
@@ -26,10 +28,10 @@ class PlanoTrabalhoFactory extends Factory
             'forma_contagem_carga_horaria' => 'DIA',
             'status' => 'INCLUIDO',
             'programa_id' => Programa::factory(),
-            'usuario_id' => Usuario::factory(),
-            'unidade_id' => Unidade::factory(),
-            'tipo_modalidade_id' => TipoModalidade::factory(),
-            'criacao_usuario_id' => Usuario::factory(),
+            'usuario_id' => $usuario->id,
+            'unidade_id' => $unidade->id,
+            'modalidade_pgd' => $usuario->modalidade_pgd ?? 'presencial',
+            'criacao_usuario_id' => $usuario->id,
             'criterios_avaliacao' => [],
         ];
     }

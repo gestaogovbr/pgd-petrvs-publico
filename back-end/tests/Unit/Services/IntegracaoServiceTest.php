@@ -60,7 +60,7 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
             "cod_jornada = :cod_jornada, " .
             "nome_jornada = :nome_jornada, " .
             "data_nascimento = :data_nascimento, " .
-            "tipo_modalidade_id = :tipo_modalidade_id, " .
+            "modalidade_pgd = :modalidade_pgd, " .
             "participa_pgd = :participa_pgd, " .
             "data_modificacao = :data_modificacao WHERE id = :id";
 

@@ -1,0 +1,101 @@
+<div class="relatorio-carga-siape">
+  <toolbar></toolbar>
+
+  <form class="relatorio-filtros" [formGroup]="filtro" (ngSubmit)="buscarPorId()">
+    <label>
+      <span>Identificador</span>
+      <input class="form-control" formControlName="id" placeholder="ID do relatório">
+    </label>
+
+    <label>
+      <span>Tipo</span>
+      <select class="form-select" formControlName="tipo" (change)="listarRecentes()">
+        <option value="">Todos</option>
+        <option value="servidor">Servidor</option>
+        <option value="unidade">Unidade</option>
+      </select>
+    </label>
+
+    <label>
+      <span>CPF ou unidade</span>
+      <input class="form-control" formControlName="chave" placeholder="Buscar recentes">
+    </label>
+
+    <div class="acoes">
+      <button class="btn btn-primary" type="submit">
+        <i class="bi bi-search"></i>
+        Buscar
+      </button>
+      <button class="btn btn-outline-secondary" type="button" (click)="listarRecentes()">
+        <i class="bi bi-clock-history"></i>
+        Recentes
+      </button>
+      <button class="btn btn-outline-secondary" type="button" (click)="limpar()">
+        <i class="bi bi-x-circle"></i>
+        Limpar
+      </button>
+    </div>
+  </form>
+
+  <section *ngIf="exibindoDetalhe && relatorio" class="relatorio-detalhe">
+    <header class="relatorio-cabecalho">
+      <div>
+        <h2>{{ relatorio.tipo === 'servidor' ? 'Servidor' : 'Unidade' }}</h2>
+        <p>{{ relatorio.mensagem_usuario }}</p>
+      </div>
+      <span class="status-geral" [class.erro]="relatorio.status === 'erro'" [class.parcial]="relatorio.status === 'parcial'">
+        {{ relatorio.status === 'sucesso' ? 'Concluído' : (relatorio.status === 'parcial' ? 'Atenção' : 'Não concluído') }}
+      </span>
+    </header>
+
+    <div class="meta">
+      <span>Consulta: {{ relatorio.chave }}</span>
+      <span *ngIf="relatorio.processado_em">Processado em {{ formatarProcessadoEm(relatorio.processado_em) }}</span>
+      <span>{{ relatorio.entrada_valida ? 'Dados recebidos no formato esperado' : 'Dados recebidos com inconsistência' }}</span>
+    </div>
+
+    <section *ngFor="let secao of relatorio.secoes" class="secao">
+      <h3>{{ secao.titulo }}</h3>
+      <div class="tabela">
+        <div class="linha cabecalho">
+          <span>Campo</span>
+          <span>Recebido do SIAPE</span>
+          <span>Registrado no Petrvs</span>
+          <span>Situação</span>
+        </div>
+        <div class="linha" *ngFor="let campo of secao.campos; trackBy: campoTrack">
+          <span>{{ campo.rotulo }}</span>
+          <span>{{ valorCampo(campo, 'recebido_siape') }}</span>
+          <span>{{ valorCampo(campo, 'registrado_petrvs') }}</span>
+          <span>
+            <strong [class]="statusClass(campo.status)">{{ statusLabel(campo.status) }}</strong>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="orientacoes" *ngIf="relatorio.orientacoes.length">
+      <h3>Orientações</h3>
+      <ul>
+        <li *ngFor="let orientacao of relatorio.orientacoes">{{ orientacao }}</li>
+      </ul>
+    </section>
+  </section>
+
+  <section *ngIf="!exibindoDetalhe" class="recentes">
+    <h2>Relatórios recentes</h2>
+    <div class="lista-recentes" *ngIf="recentes.length; else vazio">
+      <button class="item-recente" type="button" *ngFor="let item of recentes" (click)="abrir(item)">
+        <span>
+          <strong>{{ item.tipo === 'servidor' ? 'Servidor' : 'Unidade' }}</strong>
+          {{ item.chave }}
+        </span>
+        <small>{{ formatarProcessadoEm(item.processado_em) }}</small>
+        <em>{{ item.status === 'sucesso' ? 'Concluído' : (item.status === 'parcial' ? 'Atenção' : 'Não concluído') }}</em>
+      </button>
+    </div>
+    <ng-template #vazio>
+      <p class="vazio">Nenhum relatório encontrado.</p>
+    </ng-template>
+  </section>
+</div>

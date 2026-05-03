@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Perfil;
-use App\Models\TipoModalidade;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
@@ -10,13 +9,12 @@ use Illuminate\Support\Facades\DB;
 
 function criarUsuarioComDependencias(string $matricula, ?string $cpf = null): Usuario
 {
-    $tipoModalidade = TipoModalidade::factory()->create();
     $perfil = Perfil::factory()->create();
 
     return Usuario::factory()->create([
         'matricula' => $matricula,
         'cpf' => $cpf ?? fake()->numerify('###########'),
-        'tipo_modalidade_id' => $tipoModalidade->id,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $perfil->id,
     ]);
 }

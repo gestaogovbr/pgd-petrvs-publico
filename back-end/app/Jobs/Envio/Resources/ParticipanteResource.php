@@ -37,11 +37,11 @@ class ParticipanteResource extends JsonResource
             throw new ExportPgdException("Usuário não possui data de assinatura", $this->id);
         }
 
-        if (!$this->ultimoPlanoTrabalho->tipoModalidade){
-            throw new ExportPgdException("Usuário não possui modalidade definida", $this->id);
+        if (empty($this->ultimoPlanoTrabalho->modalidade_pgd)){
+            throw new ExportPgdException("Usuário {$this->id} não possui modalidade definida");
         }
 
-        $modalidade = new ModalidadeResource($this->ultimoPlanoTrabalho->tipoModalidade);
+        $modalidade = new ModalidadeResource($this->ultimoPlanoTrabalho->modalidade_pgd);
 
         $result = [
             "id"                        => $this->id,

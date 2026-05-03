@@ -483,7 +483,11 @@ class TipoCapacidadeService extends ServiceBase
             ["MOD_ENVIO_PT", "Logs de PT"],
             ["MOD_ENVIO_PE", "Logs de PE"],
         ]
-    ]
+    ],
+    [
+        "codigo" => "MOD_SIAPE_RELATORIO_CARGA",
+        "descricao" => "Relatório de Carga Individual SIAPE",
+    ],
   ];
 
   private function differentDev(&$data)
