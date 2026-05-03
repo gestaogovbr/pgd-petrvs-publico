@@ -14,6 +14,7 @@ use App\Services\SiapeIndividualUnidadeService;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\Sanctum;
+use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 
 beforeEach(function () {
     SiapeDadosUORG::query()->forceDelete();
@@ -70,8 +71,10 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
 
         $entidadeIdsChamados = [];
 
+        $totalEntidadesSync = Entidade::query()->count();
+
         $this->mockIntegracaoService->shouldReceive('sincronizar')
-            ->times(3)
+            ->times($totalEntidadesSync)
             ->with(Mockery::on(function (array $inputs) use (&$entidadeIdsChamados): bool {
                 $entidadeIdsChamados[] = $inputs['entidade'];
                 return $inputs['unidades'] === true
@@ -88,8 +91,8 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         $service = app(SiapeIndividualUnidadeService::class);
         $service->fluxoSiape($codigo, $this->mockSiapeService);
 
-        expect($entidadeIdsChamados)->toHaveCount(3);
-        expect($entidadeIdsChamados)->toEqualCanonicalizing($this->entidades->pluck('id')->all());
+        expect($entidadeIdsChamados)->toHaveCount($totalEntidadesSync);
+        expect($entidadeIdsChamados)->toEqualCanonicalizing(Entidade::query()->pluck('id')->all());
 
         expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->toBeNull();
 
@@ -114,8 +117,10 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
 
         $entidadeIdsChamados = [];
 
+        $totalEntidadesSync = Entidade::query()->count();
+
         $this->mockIntegracaoService->shouldReceive('sincronizar')
-            ->times(3)
+            ->times($totalEntidadesSync)
             ->with(Mockery::on(function (array $inputs) use (&$entidadeIdsChamados): bool {
                 $entidadeIdsChamados[] = $inputs['entidade'];
                 return $inputs['unidades'] === true
@@ -132,8 +137,8 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         $service = app(SiapeIndividualUnidadeService::class);
         $service->fluxoSiape('codigo invalido', $this->mockSiapeService);
 
-        expect($entidadeIdsChamados)->toHaveCount(3);
-        expect($entidadeIdsChamados)->toEqualCanonicalizing($this->entidades->pluck('id')->all());
+        expect($entidadeIdsChamados)->toHaveCount($totalEntidadesSync);
+        expect($entidadeIdsChamados)->toEqualCanonicalizing(Entidade::query()->pluck('id')->all());
 
         expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->toBeNull();
 
@@ -184,8 +189,10 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
             'atribuicao' => 'COLABORADOR',
         ]);
 
+        $totalEntidadesSync = Entidade::query()->count();
+
         $this->mockIntegracaoService->shouldReceive('sincronizar')
-            ->times(4)
+            ->times($totalEntidadesSync)
             ->andReturn([]);
 
         $this->mockBuscarUnidade->shouldReceive('executaRequisicao')
@@ -209,14 +216,18 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
     });
 
     test('resumo identifica unidade nova criada durante sincronizacao', function () {
-        $codigo = '26102';
+        $base = fake()->numberBetween(100000, 800000);
+        $codigoPai = (string) $base;
+        $codigo = (string) ($base + 1);
         $parent = Unidade::factory()->create([
-            'codigo' => '26000',
+            'codigo' => $codigoPai,
             'sigla' => 'PAI',
         ]);
 
+        $totalEntidadesSync = Entidade::query()->count();
+
         $this->mockIntegracaoService->shouldReceive('sincronizar')
-            ->times(4)
+            ->times($totalEntidadesSync)
             ->andReturnUsing(function () use ($codigo, $parent) {
                 Unidade::firstOrCreate(
                     ['codigo' => $codigo],
@@ -244,15 +255,18 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         expect($resumo[0]['unidade_existia'])->toBeFalse();
         expect($resumo[0]['unidade_inserida'])->toBeTrue();
         expect($resumo[0]['unidade_pai_id'])->toBe($parent->id);
-        expect($resumo[0]['unidade_pai_codigo'])->toBe('26000');
+        expect($resumo[0]['unidade_pai_codigo'])->toBe($codigoPai);
         expect($resumo[0]['unidade_pai_sigla'])->toBe('PAI');
         expect($resumo[0]['unidade_raiz'])->toBeFalse();
     });
 
     test('resumo registra alteracoes em unidade existente com pai', function () {
-        $codigo = '26103';
-        $parentAntigo = Unidade::factory()->create(['codigo' => '26001']);
-        $parentNovo = Unidade::factory()->create(['codigo' => '26002']);
+        $base = fake()->numberBetween(100_000, 800_000);
+        $codigoPaiAntigo = (string) $base;
+        $codigoPaiNovo = (string) ($base + 1);
+        $codigo = (string) ($base + 2);
+        $parentAntigo = Unidade::factory()->create(['codigo' => $codigoPaiAntigo]);
+        $parentNovo = Unidade::factory()->create(['codigo' => $codigoPaiNovo]);
         $unidade = Unidade::factory()->create([
             'codigo' => $codigo,
             'nome' => 'Nome Antigo',
@@ -260,8 +274,10 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
             'unidade_pai_id' => $parentAntigo->id,
         ]);
 
+        $totalEntidadesSync = Entidade::query()->count();
+
         $this->mockIntegracaoService->shouldReceive('sincronizar')
-            ->times(4)
+            ->times($totalEntidadesSync)
             ->andReturnUsing(function () use ($unidade, $parentNovo) {
                 $unidade->update([
                     'nome' => 'Nome Novo',
@@ -282,7 +298,7 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
 
         expect($resumo[0]['unidade_existia'])->toBeTrue();
         expect($resumo[0]['unidade_pai_id'])->toBe($parentNovo->id);
-        expect($resumo[0]['unidade_pai_codigo'])->toBe('26002');
+        expect($resumo[0]['unidade_pai_codigo'])->toBe($codigoPaiNovo);
         expect($resumo[0]['alteracoes'])->toContain('nome', 'sigla', 'unidade_pai_id');
     });
 
@@ -311,6 +327,16 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
 });
 
 describe('POST /api/unidade/relatorio-processamento-siape', function () {
+    beforeEach(function () {
+        // Com RefreshDatabase + segunda requisição HTTP, o resolver por X-ENTIDADE pode falhar
+        // ao buscar o tenant central; o setUp do tenant já inicializa o contexto necessário.
+        $this->withoutMiddleware(InitializeTenancyByRequestData::class);
+    });
+
+    afterEach(function () {
+        $this->withMiddleware(InitializeTenancyByRequestData::class);
+    });
+
     test('retorna relatorio agregado da unidade processada', function () {
         $usuario = Usuario::factory()->create();
         Sanctum::actingAs($usuario);
@@ -351,20 +377,20 @@ describe('POST /api/unidade/relatorio-processamento-siape', function () {
             ->andReturn($relatorio);
         $this->app->instance(SiapeIndividualService::class, $mockSiapeIndividualService);
 
-        $response = $this->withHeader('X-ENTIDADE', 'tenant_test')
+        $response = $this->withHeader('X-ENTIDADE', $this->tenantId)
             ->postJson('/api/unidade/relatorio-processamento-siape', [
                 'unidade' => '26110',
             ]);
 
         $response->assertOk()
-            ->assertJsonPath('success', true)
-            ->assertJsonPath('chefeCpf', '11122233344')
-            ->assertJsonPath('quantidadeServidoresLotados', 1)
-            ->assertJsonPath('unidade.id', $unidade->id)
-            ->assertJsonPath('unidade.unidade_pai_id', $parent->id)
-            ->assertJsonPath('unidade.unidade_pai_codigo', '26010')
-            ->assertJsonPath('unidade.unidade_pai_sigla', 'SUP')
-            ->assertJsonPath('unidade.unidade_raiz', false);
+            ->assertJsonPath('success', $relatorio['success'])
+            ->assertJsonPath('chefeCpf', $relatorio['chefeCpf'])
+            ->assertJsonPath('quantidadeServidoresLotados', $relatorio['quantidadeServidoresLotados'])
+            ->assertJsonPath('unidade.id', $relatorio['unidade']['id'])
+            ->assertJsonPath('unidade.unidade_pai_id', $relatorio['unidade']['unidade_pai_id'])
+            ->assertJsonPath('unidade.unidade_pai_codigo', $relatorio['unidade']['unidade_pai_codigo'])
+            ->assertJsonPath('unidade.unidade_pai_sigla', $relatorio['unidade']['unidade_pai_sigla'])
+            ->assertJsonPath('unidade.unidade_raiz', $relatorio['unidade']['unidade_raiz']);
     });
 
     test('retorna erro quando unidade nao existe no relatorio agregado', function () {
@@ -377,7 +403,7 @@ describe('POST /api/unidade/relatorio-processamento-siape', function () {
             ->andThrow(new Exception('Unidade 999999 não encontrada no Petrvs.'));
         $this->app->instance(SiapeIndividualService::class, $mockSiapeIndividualService);
 
-        $response = $this->withHeader('X-ENTIDADE', 'tenant_test')
+        $response = $this->withHeader('X-ENTIDADE', $this->tenantId)
             ->postJson('/api/unidade/relatorio-processamento-siape', [
                 'unidade' => '999999',
             ]);
