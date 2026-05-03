@@ -78,3 +78,4 @@ kubectl
 .trae/diagnostics/
 .vscode/diagnostics/
 review-pr-*
+front-end/out-tsc/app/main.js
