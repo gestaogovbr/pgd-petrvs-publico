@@ -47,7 +47,6 @@ import { CapacidadeTecnicaDaoService } from '../dao/capacidade-tecnica-dao.servi
 import { AtividadeDaoService } from '../dao/atividade-dao.service';
 import { PlanoTrabalhoConsolidacaoDaoService } from '../dao/plano-trabalho-consolidacao-dao.service';
 import { OcorrenciaDaoService } from '../dao/ocorrencia-dao.service';
-import { EnvioDaoService } from '../dao/envio-dao.service';
 import { ClienteDaoService } from '../dao/cliente-dao.service';
 import { TipoClienteDaoService } from '../dao/tipo-cliente-dao.service';
 import { SolucaoDaoService } from '../dao/solucao-dao.service';
@@ -90,7 +89,6 @@ export class EntityService {
       { collection: 'EixoTematico', codigo: 'MOD_EXTM', table: 'eixos_tematicos', campo: 'nome', icon: 'bi bi-gear', dao: injector.get<EixoTematicoDaoService>(EixoTematicoDaoService), label: "Eixo Temático", selectRoute: { route: ['cadastros', 'eixo-tematico'] } },
       { collection: 'Entidade', codigo: 'MOD_ENTD', table: 'entidades', campo: 'nome', icon: 'bi bi-bookmark-heart', dao: injector.get<EntidadeDaoService>(EntidadeDaoService), label: "Entidade", selectRoute: { route: ['configuracoes', 'entidade'] } },
       { collection: 'Entrega', codigo: 'MOD_ENTRG', table: 'entregas', campo: 'nome', icon: 'bi bi-list-check', dao: injector.get<EntregaDaoService>(EntregaDaoService), label: "Entrega", selectRoute: { route: ['cadastros', 'entrega'] } },
-      { collection: 'Envio', table: 'envios', campo: 'id', icon: 'bi bi-send', dao: injector.get<EnvioDaoService>(EnvioDaoService), label: "Log de Envios à API PGD", selectRoute: { route: ['logs', 'envios'] } },
       { collection: 'Error', table: 'errors', campo: 'type', icon: 'bi bi-bug', dao: injector.get<ErrorDaoService>(ErrorDaoService), label: "Log de Erro", selectRoute: { route: ['logs', 'error'] } },
       { collection: 'Feriado', codigo: 'MOD_FER', table: 'feriados', campo: 'nome', icon: 'bi bi-emoji-sunglasses', dao: injector.get<FeriadoDaoService>(FeriadoDaoService), label: "Feriado", selectRoute: { route: ['cadastros', 'feriado'] } },
       { collection: 'Funcao', codigo: 'MOD_RX_CURR', table: 'funcoes', campo: 'nome', icon: 'bi bi-check-circle-fill', dao: injector.get<FuncaoDaoService>(FuncaoDaoService), label: "Função", selectRoute: { route: ['raiox', 'cadastros', 'funcao'] } },
