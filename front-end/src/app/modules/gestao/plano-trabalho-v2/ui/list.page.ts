@@ -8,6 +8,7 @@ import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
 import { Router } from '@angular/router';
 import { Subject, Subscription, debounceTime } from 'rxjs';
 import { PlanoTrabalho } from '../domain/types';
+import { PlanoTrabalhoStatus } from 'src/app/models/plano-trabalho.model';
 import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ClonarPlanoUseCase } from '../application/clonar-plano.usecase';
 import { ExcluirPlanoUseCase } from '../application/excluir-plano.usecase';
@@ -52,12 +53,12 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   readonly statusOptions: SelectOption[] = [
     { value: '', label: 'Todos', selected: true },
-    { value: 'INCLUIDO', label: 'Incluído' },
-    { value: 'AGUARDANDO_ASSINATURA', label: 'Aguardando assinatura' },
-    { value: 'ATIVO', label: 'Ativo' },
-    { value: 'SUSPENSO', label: 'Suspenso' },
-    { value: 'CONCLUIDO', label: 'Concluído' },
-    { value: 'CANCELADO', label: 'Cancelado' },
+    { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Incluído' },
+    { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura' },
+    { value: PlanoTrabalhoStatus.ATIVO, label: 'Ativo' },
+    { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso' },
+    { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído' },
+    { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado' },
   ];
   private readonly subscriptions: Subscription[] = [];
   private readonly filterChange$ = new Subject<void>();
@@ -233,24 +234,28 @@ readonly filters: FormGroup<{
     this.facade.load();
   }
 
-  statusClass(value: string | undefined): string {
-    if (value === 'ATIVO') return '#2a9c2a';
-    if (value === 'INCLUIDO') return '#686868';
-    if (value === 'AGUARDANDO_ASSINATURA') return '#cac704';
-    if (value === 'SUSPENSO') return '#df8e32';
-    if (value === 'CANCELADO') return '#c92c2c';
-    if (value == 'CONCLUIDO') return '#28128a';
-    return 'secondary';
+  statusClass(value: PlanoTrabalhoStatus | undefined): string {
+    const cores: Partial<Record<PlanoTrabalhoStatus, string>> = {
+      ATIVO: '#2a9c2a',
+      INCLUIDO: '#686868',
+      AGUARDANDO_ASSINATURA: '#cac704',
+      SUSPENSO: '#df8e32',
+      CANCELADO: '#c92c2c',
+      CONCLUIDO: '#28128a',
+    };
+    return value ? (cores[value] ?? 'secondary') : 'secondary';
   }
 
-  statusLabel(value: string | undefined): string {
-    if (value === 'ATIVO') return 'Ativo';
-    if (value === 'INCLUIDO') return 'Rascunho';
-    if (value === 'AGUARDANDO_ASSINATURA') return 'Aguardando assinatura';
-    if (value === 'SUSPENSO') return 'Suspenso';
-    if (value === 'CANCELADO') return 'Cancelado';
-    if (value == 'CONCLUIDO') return 'Concluído'
-    return value || '-';
+  statusLabel(value: PlanoTrabalhoStatus | undefined): string {
+    const labels: Partial<Record<PlanoTrabalhoStatus, string>> = {
+      ATIVO: 'Ativo',
+      INCLUIDO: 'Rascunho',
+      AGUARDANDO_ASSINATURA: 'Aguardando assinatura',
+      SUSPENSO: 'Suspenso',
+      CANCELADO: 'Cancelado',
+      CONCLUIDO: 'Concluído',
+    };
+    return value ? (labels[value] ?? value) : '-';
   }
 
   novoPlano() {

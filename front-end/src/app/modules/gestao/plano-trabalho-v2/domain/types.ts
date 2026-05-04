@@ -97,9 +97,32 @@ export type AtividadeConsolidacao = {
   updated_at?: string;
 };
 
+export type ConsolidacaoStatus = 'INCLUIDO' | 'CONCLUIDO' | 'AVALIADO';
+
+export const ConsolidacaoStatus = {
+  INCLUIDO: 'INCLUIDO',
+  CONCLUIDO: 'CONCLUIDO',
+  AVALIADO: 'AVALIADO',
+} as const satisfies Record<ConsolidacaoStatus, ConsolidacaoStatus>;
+
+type ConsolidacaoStatusGroupName =
+  | 'emRegistro'
+  | 'fechados'
+  | 'reabrivel'
+  | 'avaliavel'
+  | 'avaliada';
+
+export const ConsolidacaoStatusGroups: Record<ConsolidacaoStatusGroupName, readonly ConsolidacaoStatus[]> = {
+  emRegistro: [ConsolidacaoStatus.INCLUIDO],
+  fechados: [ConsolidacaoStatus.CONCLUIDO, ConsolidacaoStatus.AVALIADO],
+  reabrivel: [ConsolidacaoStatus.CONCLUIDO],
+  avaliavel: [ConsolidacaoStatus.CONCLUIDO],
+  avaliada: [ConsolidacaoStatus.AVALIADO],
+};
+
 export type Consolidacao = {
   id: string;
-  status: 'INCLUIDO' | 'CONCLUIDO' | 'AVALIADO';
+  status: ConsolidacaoStatus;
   data_inicio: string;
   data_fim: string;
   atividades: AtividadeConsolidacao[];

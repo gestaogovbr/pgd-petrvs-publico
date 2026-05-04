@@ -16,6 +16,37 @@ export type PlanoMetadados = { concluido: boolean }
 
 export type PlanoTrabalhoStatus = 'INCLUIDO' | 'AGUARDANDO_ASSINATURA' | 'ATIVO' | 'CONCLUIDO' | 'AVALIADO' | 'SUSPENSO' | 'CANCELADO';
 
+export const PlanoTrabalhoStatus = {
+    INCLUIDO: 'INCLUIDO',
+    AGUARDANDO_ASSINATURA: 'AGUARDANDO_ASSINATURA',
+    ATIVO: 'ATIVO',
+    CONCLUIDO: 'CONCLUIDO',
+    AVALIADO: 'AVALIADO',
+    SUSPENSO: 'SUSPENSO',
+    CANCELADO: 'CANCELADO',
+} as const satisfies Record<PlanoTrabalhoStatus, PlanoTrabalhoStatus>;
+
+type PlanoTrabalhoStatusGroupName =
+    | 'editavel'
+    | 'assinavel'
+    | 'vigente'
+    | 'comExecucaoVisivel'
+    | 'arquivavel'
+    | 'clonavel'
+    | 'cancelavel'
+    | 'excluivel';
+
+export const PlanoTrabalhoStatusGroups: Record<PlanoTrabalhoStatusGroupName, readonly PlanoTrabalhoStatus[]> = {
+    editavel: [PlanoTrabalhoStatus.INCLUIDO, PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA],
+    assinavel: [PlanoTrabalhoStatus.INCLUIDO, PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA],
+    vigente: [PlanoTrabalhoStatus.ATIVO],
+    comExecucaoVisivel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO, PlanoTrabalhoStatus.AVALIADO],
+    arquivavel: [PlanoTrabalhoStatus.CONCLUIDO, PlanoTrabalhoStatus.CANCELADO],
+    clonavel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO],
+    cancelavel: [PlanoTrabalhoStatus.ATIVO],
+    excluivel: [PlanoTrabalhoStatus.INCLUIDO],
+};
+
 export type PlanoTrabalhoMetadata = {
     assinaturasExigidas: AssinaturaList;
     jaAssinaramTCR: AssinaturaList;

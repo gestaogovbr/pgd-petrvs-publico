@@ -7,23 +7,22 @@ import { filter, map, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoApiClient } from "../infra/plano-api.client";
 import { ArquivarPlanoUseCase } from "../application/arquivar-plano.usecase";
-import { Consolidacao, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo } from "../domain/types";
-import { PlanoTrabalhoStatus } from "src/app/models/plano-trabalho.model";
+import { Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo } from "../domain/types";
+import { PlanoTrabalhoStatus, PlanoTrabalhoStatusGroups } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
 import { UnidadeService } from "src/app/v2/services/unidade.service";
 import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
 import { ConsolidacaoPolicy } from "../application/consolidacao.policy";
 import { ConsolidacaoFacade } from "../application/consolidacao.facade";
 import { BreadcrumbService } from "src/app/v2/components/breadcrumb/breadcrumb.service";
-import { AvaliacaoFormComponent } from "./components/avaliacao-form.component";
-import { RecursoFormComponent } from "./components/recurso-form.component";
-import { OcorrenciaFormComponent } from "./components/ocorrencia-form.component";
+import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
+import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
 
 @Component({
   selector: 'app-plano-trabalho-v2-show-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, AvaliacaoFormComponent, RecursoFormComponent, OcorrenciaFormComponent],
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent],
   templateUrl: './show.page.html'
 })
 export class PlanoTrabalhoV2ShowPage implements OnInit {
@@ -33,8 +32,6 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly auth = inject(AuthService);
   private readonly unidadeService = inject(UnidadeService);
-  private readonly notaPalette = ['#c0392b', '#e67e22', '#27ae60', '#1589c0', '#1351b4'];
-  private readonly notaIcones = ['fa-frown', 'fa-frown', 'fa-smile', 'fa-smile', 'fa-smile'];
 
   private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
 
@@ -47,6 +44,9 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly planoTrabalho = signal<PlanoTrabalho | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+
+  readonly PlanoStatus = PlanoTrabalhoStatus;
+  readonly ConsolidacaoStatus = ConsolidacaoStatus;
   ngOnInit(): void {
     this.route.paramMap.pipe(
       map(params => params.get('id')),
@@ -72,18 +72,10 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   // --- Autorização ---
 
-  podeRegistrar(consolidacao?: Consolidacao): boolean {
-    const plano = this.planoTrabalho();
-    if (!plano || plano.status !== 'ATIVO') return false;
-    if (['CONCLUIDO', 'AVALIADO'].includes(consolidacao?.status ?? '')) return false;
-    return plano.usuario_id === this.auth.usuario?.id
-      || this.unidadeService.isGestorUnidade(plano.unidade_id);
-  }
-
   podeVisualizarConsolidacoes(): boolean {
     const plano = this.planoTrabalho();
     if (!plano) return false;
-    return ['ATIVO', 'CONCLUIDO', 'AVALIADO'].includes(plano.status);
+    return PlanoTrabalhoStatusGroups.comExecucaoVisivel.includes(plano.status);
   }
 
   todasEntregasComAtividade(consolidacao: Consolidacao): boolean {
@@ -93,15 +85,17 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   }
 
   podeConcluirConsolidacao(consolidacao: Consolidacao): boolean {
-    return this.podeRegistrar()
-      && consolidacao.status === 'INCLUIDO'
+    const plano = this.planoTrabalho();
+    if (!plano) return false;
+    return this.consolidacaoPolicy.podeRegistrar(plano, consolidacao)
+      && consolidacao.status === ConsolidacaoStatus.INCLUIDO
       && this.todasEntregasComAtividade(consolidacao);
   }
 
   podeReabrirConsolidacao(consolidacao: Consolidacao): boolean {
     const plano = this.planoTrabalho();
-    if (!plano || plano.status !== 'ATIVO') return false;
-    return consolidacao.status === 'CONCLUIDO'
+    if (!plano || plano.status !== PlanoTrabalhoStatus.ATIVO) return false;
+    return ConsolidacaoStatusGroups.reabrivel.includes(consolidacao.status)
       && (plano.usuario_id === this.auth.usuario?.id
         || this.unidadeService.isGestorUnidade(plano.unidade_id));
   }
@@ -121,8 +115,8 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     return value ? (labels[value] ?? value) : '-';
   }
 
-  statusConsolidacaoLabel(value: string | undefined): string {
-    const labels: Record<string, string> = {
+  statusConsolidacaoLabel(value: ConsolidacaoStatus | undefined): string {
+    const labels: Record<ConsolidacaoStatus, string> = {
       INCLUIDO: 'Aguardando Registro',
       CONCLUIDO: 'Aguardando Avaliação',
       AVALIADO: 'Avaliado',
@@ -131,7 +125,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   }
 
   statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
-    if (consolidacao.status === 'INCLUIDO' && this.todasEntregasComAtividade(consolidacao)) {
+    if (consolidacao.status === ConsolidacaoStatus.INCLUIDO && this.todasEntregasComAtividade(consolidacao)) {
       return 'Registro incluído';
     }
     return this.statusConsolidacaoLabel(consolidacao.status);
@@ -139,39 +133,6 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   getPlanoEntregaInfo(e: PlanoTrabalhoEntrega): { plano: string; entrega: string } {
     return getPlanoEntregaInfo(e);
-  }
-
-  // --- Display helpers de nota (usados no template) ---
-
-  notaLabel(nota: string | number | null | undefined): string {
-    return String(nota ?? '').replace(/^"|"$/g, '');
-  }
-
-  notaIndexPorId(notaId: string, notaTexto?: string | number | null): number {
-    const notas = this.facade.notas();
-    const byId = notas.findIndex(n => n.id === notaId);
-    if (byId !== -1) return byId;
-    if (notaTexto) {
-      const clean = this.notaLabel(notaTexto);
-      return notas.findIndex(n => n.nota === clean);
-    }
-    return -1;
-  }
-
-  notaColor(index: number, total: number): string {
-    if (total <= 1) return this.notaPalette[2];
-    const step = (this.notaPalette.length - 1) / (total - 1);
-    return this.notaPalette[Math.round(index * step)];
-  }
-
-  notaIcone(index: number, total: number): string {
-    if (total <= 1) return this.notaIcones[2];
-    const step = (this.notaIcones.length - 1) / (total - 1);
-    return this.notaIcones[Math.round(index * step)];
-  }
-
-  ocorrenciaEmEdicaoNesta(consolidacao: Consolidacao): boolean {
-    return this.facade.ocorrenciaEmEdicao()?.consolidacaoId === consolidacao.id;
   }
 
   // --- Navegação ---

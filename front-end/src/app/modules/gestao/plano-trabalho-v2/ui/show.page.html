@@ -16,7 +16,7 @@
       <h2 class="mb-0">Plano de Trabalho #{{ planoTrabalho()?.numero }}</h2>
       <div class="flex-shrink-0 gap-3">
         <br-button (click)="voltar()" class="mr-2">Voltar</br-button>
-        @if (planoTrabalho()?.status !== 'INCLUIDO') {
+        @if (planoTrabalho()?.status !== PlanoStatus.INCLUIDO) {
           <br-button class="mr-2" emphasis="secondary" (click)="irParaTcr()" title="Ver TCR" ariaLabel="Ver Termo de Compromisso de Resultados">
             <i class="fas fa-file-signature mr-1"></i>TCR
           </br-button>
@@ -115,12 +115,12 @@
                 </tr>
               </thead>
               <tbody>
-                @for (e of planoTrabalho()?.entregas; track e.id) {
+                @for (entrega of planoTrabalho()?.entregas; track entrega.id) {
                   <tr>
-                    <td>{{ getPlanoEntregaInfo(e).plano }}</td>
-                    <td>{{ getPlanoEntregaInfo(e).entrega }}</td>
-                    <td>{{ e.forca_trabalho ? e.forca_trabalho + '%' : '-' }}</td>
-                    <td>{{ e.descricao }}</td>
+                    <td>{{ getPlanoEntregaInfo(entrega).plano }}</td>
+                    <td>{{ getPlanoEntregaInfo(entrega).entrega }}</td>
+                    <td>{{ entrega.forca_trabalho ? entrega.forca_trabalho + '%' : '-' }}</td>
+                    <td>{{ entrega.descricao }}</td>
                   </tr>
                 } @empty {
                   <tr>
@@ -158,7 +158,7 @@
               <div class="table-wrap">
                 <table style="table-layout: fixed; width: 100%;">
                   <colgroup>
-                    @if (podeRegistrar(consolidacao)) {
+                    @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
                       <col style="width: 27%">
                       <col style="width: 27%">
                       <col style="width: 27%">
@@ -174,29 +174,29 @@
                       <th scope="col">Entrega</th>
                       <th scope="col">Trabalho Planejado</th>
                       <th scope="col">Trabalho Executado</th>
-                      @if (podeRegistrar(consolidacao)) { <th scope="col"></th> }
+                      @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) { <th scope="col"></th> }
                     </tr>
                   </thead>
                   <tbody>
-                    @for (e of planoTrabalho()?.entregas; track e.id) {
-                      @let atividade = facade.getAtividade(consolidacao, e.id);
-                      @let editando = facade.estaEditando(consolidacao.id, e.id);
+                    @for (entrega of planoTrabalho()?.entregas; track entrega.id) {
+                      @let atividade = facade.getAtividade(consolidacao, entrega.id);
+                      @let editando = facade.estaEditando(consolidacao.id, entrega.id);
                       <tr>
                         <td>
-                          {{ getPlanoEntregaInfo(e).entrega }}
+                          {{ getPlanoEntregaInfo(entrega).entrega }}
                           <br />
-                          <small class="text-muted">{{ getPlanoEntregaInfo(e).plano }}</small>
+                          <small class="text-muted">{{ getPlanoEntregaInfo(entrega).plano }}</small>
                         </td>
-                        <td><span class="white-space">{{ e.descricao || '-' }}</span></td>
+                        <td><span class="white-space">{{ entrega.descricao || '-' }}</span></td>
                         <td>
-                          @if (podeRegistrar(consolidacao)) {
+                          @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
                             @if (editando || !atividade) {
                               <br-textarea
                                 show-counter
                                 class="w-100"
                                 [maxlength]="1500"
-                                [value]="facade.getTexto(consolidacao.id, e.id)"
-                                (input)="facade.setTexto(consolidacao.id, e.id, $any($event.target).value)"
+                                [value]="facade.getTexto(consolidacao.id, entrega.id)"
+                                (input)="facade.setTexto(consolidacao.id, entrega.id, $any($event.target).value)"
                                 placeholder="Descreva o trabalho executado..."
                               ></br-textarea>
                             } @else {
@@ -206,21 +206,21 @@
                             <span class="white-space">{{ atividade?.descricao || '-' }}</span>
                           }
                         </td>
-                        @if (podeRegistrar(consolidacao)) {
+                        @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
                           <td class="text-nowrap">
                             @if (editando || !atividade) {
                               <div class="d-flex gap-1">
                                 <br-button
                                   emphasis="primary"
                                   density="small"
-                                  (click)="facade.confirmarAtividade(consolidacao, e)"
-                                  [disabled]="facade.salvando().has(consolidacao.id + '-' + e.id) || !facade.getTexto(consolidacao.id, e.id).trim()"
+                                  (click)="facade.confirmarAtividade(consolidacao, entrega)"
+                                  [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id) || !facade.getTexto(consolidacao.id, entrega.id).trim()"
                                 >Confirmar</br-button>
                                 <br-button
                                   emphasis="secondary"
                                   density="small"
-                                  (click)="facade.cancelarEdicao(consolidacao.id, e.id, atividade)"
-                                  [disabled]="facade.salvando().has(consolidacao.id + '-' + e.id)"
+                                  (click)="facade.cancelarEdicao(consolidacao.id, entrega.id, atividade)"
+                                  [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id)"
                                 >Cancelar</br-button>
                               </div>
                             } @else {
@@ -228,13 +228,13 @@
                                 <br-button
                                   emphasis="secondary"
                                   density="small"
-                                  (click)="facade.iniciarEdicao(consolidacao.id, e.id, atividade.descricao)"
+                                  (click)="facade.iniciarEdicao(consolidacao.id, entrega.id, atividade.descricao)"
                                 >Editar</br-button>
                                 <br-button
                                   class="text-danger"
                                   emphasis="secondary"
                                   density="small"
-                                  (click)="facade.excluirAtividade(consolidacao, e)"
+                                  (click)="facade.excluirAtividade(consolidacao, entrega)"
                                 >Excluir</br-button>
                               </div>
                             }
@@ -243,207 +243,24 @@
                       </tr>
                     } @empty {
                       <tr>
-                        <td [attr.colspan]="podeRegistrar(consolidacao) ? 4 : 3" class="text-center p-3">Nenhuma entrega cadastrada no planejamento.</td>
+                        <td [attr.colspan]="consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao) ? 4 : 3" class="text-center p-3">Nenhuma entrega cadastrada no planejamento.</td>
                       </tr>
                     }
                   </tbody>
                 </table>
               </div>
             </div>
-            <!-- Ocorrências -->
-            @if (podeRegistrar()) {
-              <br-divider class="my-3"></br-divider>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <p class="text-weight-semi-bold mb-0">Ocorrências</p>
-                @if (!ocorrenciaEmEdicaoNesta(consolidacao)) {
-                  <br-button emphasis="secondary" density="small" (click)="facade.iniciarNovaOcorrencia(consolidacao)">
-                    <i class="fas fa-plus mr-1"></i>Nova ocorrência
-                  </br-button>
-                }
-              </div>
+            <app-consolidacao-ocorrencias
+              [consolidacao]="consolidacao"
+              [planoTrabalho]="planoTrabalho()!"
+            />
 
-              @if (ocorrenciaEmEdicaoNesta(consolidacao) && !facade.ocorrenciaEmEdicao()?.ocorrenciaId) {
-                <app-ocorrencia-form
-                  [form]="facade.ocorrenciaEmEdicao()!.form"
-                  [tiposMotivo]="facade.tiposMotivo()"
-                  [salvando]="facade.salvandoOcorrencia()"
-                  [modoEdicao]="false"
-                  (formChange)="facade.setOcorrenciaForm($event)"
-                  (confirmar)="facade.confirmarOcorrencia()"
-                  (cancelar)="facade.cancelarOcorrencia()"
-                />
-              }
 
-              @for (o of facade.getOcorrenciasConsolidacao(consolidacao); track o.id) {
-                @if (facade.ocorrenciaEmEdicao()?.ocorrenciaId === o.id) {
-                  <app-ocorrencia-form
-                    [form]="facade.ocorrenciaEmEdicao()!.form"
-                    [tiposMotivo]="facade.tiposMotivo()"
-                    [salvando]="facade.salvandoOcorrencia()"
-                    [modoEdicao]="true"
-                    (formChange)="facade.setOcorrenciaForm($event)"
-                    (confirmar)="facade.confirmarOcorrencia()"
-                    (cancelar)="facade.cancelarOcorrencia()"
-                  />
-                } @else {
-                  <div class="br-card mb-2 p-2x">
-                    <div class="d-flex justify-content-between align-items-start gap-2">
-                      <div class="d-flex align-items-start gap-2 flex-grow-1 min-width-0">
-                        <i class="fas fa-calendar-times text-primary mt-1" style="font-size:1.1rem; flex-shrink:0;"></i>
-                        <div class="min-width-0">
-                          <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
-                            <span class="text-weight-semi-bold">{{ o.tipo_motivo_afastamento?.nome || '-' }}</span>
-                            <span class="text-muted" style="font-size:0.85rem;">
-                              <i class="fas fa-calendar-alt mr-1"></i>{{ o.data_inicio | date:'dd/MM/yyyy' }} – {{ o.data_fim | date:'dd/MM/yyyy' }}
-                            </span>
-                            @if (o.horas) {
-                              <span class="text-muted" style="font-size:0.85rem;">
-                                <i class="fas fa-clock mr-1"></i>{{ o.horas }}h
-                              </span>
-                            }
-                          </div>
-                          @if (o.observacoes) {
-                            <p class="text-muted mb-0" style="font-size:0.85rem;">{{ o.observacoes }}</p>
-                          }
-                        </div>
-                      </div>
-                      <div class="d-flex gap-1 flex-shrink-0">
-                        <br-button shape="circle" density="small" (click)="facade.iniciarEdicaoOcorrencia(consolidacao, o)" title="Editar">
-                          <i class="fas fa-pen"></i>
-                        </br-button>
-                        <br-button shape="circle" density="small" (click)="facade.excluirOcorrencia(consolidacao.id, o)" title="Excluir">
-                          <i class="fas fa-trash"></i>
-                        </br-button>
-                      </div>
-                    </div>
-                  </div>
-                }
-              } @empty {
-                @if (!ocorrenciaEmEdicaoNesta(consolidacao)) {
-                  <p class="text-muted"><small>Nenhuma ocorrência registrada neste período.</small></p>
-                }
-              }
-            } @else {
-              @let ocorrenciasLista = facade.getOcorrenciasConsolidacao(consolidacao);
-              @if (ocorrenciasLista.length > 0) {
-                <br-divider class="my-3"></br-divider>
-                <p class="text-weight-semi-bold mb-2">Ocorrências</p>
-                @for (o of ocorrenciasLista; track o.id) {
-                  <div class="br-card mb-2 p-2x">
-                    <div class="d-flex align-items-start gap-2">
-                      <i class="fas fa-calendar-times text-primary mt-1" style="font-size:1.1rem; flex-shrink:0;"></i>
-                      <div>
-                        <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
-                          <span class="text-weight-semi-bold">{{ o.tipo_motivo_afastamento?.nome || '-' }}</span>
-                          <span class="text-muted" style="font-size:0.85rem;">
-                            <i class="fas fa-calendar-alt mr-1"></i>{{ o.data_inicio | date:'dd/MM/yyyy' }} – {{ o.data_fim | date:'dd/MM/yyyy' }}
-                          </span>
-                          @if (o.horas) {
-                            <span class="text-muted" style="font-size:0.85rem;">
-                              <i class="fas fa-clock mr-1"></i>{{ o.horas }}h
-                            </span>
-                          }
-                        </div>
-                        @if (o.observacoes) {
-                          <p class="text-muted mb-0" style="font-size:0.85rem;">{{ o.observacoes }}</p>
-                        }
-                      </div>
-                    </div>
-                  </div>
-                }
-              }
-            }
+            <app-consolidacao-avaliacoes
+              [consolidacao]="consolidacao"
+              [planoTrabalho]="planoTrabalho()!"
+            />
 
-            @if (consolidacao.avaliacoes.length > 0) {
-              <div class="mt-4">
-                <p class="text-weight-semi-bold mb-2">Avaliação do Período</p>
-                <div class="br-table">
-                  <div class="table-wrap">
-                    <table>
-                      <thead>
-                        <tr>
-                          <th scope="col">Data</th>
-                          <th scope="col">Avaliador</th>
-                          <th scope="col">Nota / Justificativa</th>
-                          <th scope="col">Recurso</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for (avaliacao of consolidacao.avaliacoes; track avaliacao.id) {
-                          @let notaIdx = notaIndexPorId(avaliacao.tipo_avaliacao_nota_id, avaliacao.nota);
-                          @let notaTotal = facade.notas().length;
-                          <tr>
-                            <td>{{ avaliacao.data_avaliacao | date:'dd/MM/yyyy HH:mm' }}</td>
-                            <td>{{ avaliacao.avaliador?.nome || '-' }}</td>
-                            <td>
-                              <div class="d-flex align-items-center gap-2">
-                                @if (notaIdx !== -1) {
-                                  <div [style.color]="notaColor(notaIdx, notaTotal)" style="font-size: 1.5rem; line-height: 1;">
-                                    <i class="fas {{ notaIcone(notaIdx, notaTotal) }}"></i>
-                                  </div>
-                                }
-                                <strong>{{ notaLabel(avaliacao.nota) }}</strong>
-                              </div>
-                              @if (avaliacao.justificativa) {
-                                <div class="mt-1 text-muted"><small>{{ avaliacao.justificativa }}</small></div>
-                              }
-                            </td>
-                            <td>
-                              @if (avaliacao.recurso) {
-                                <div class="d-flex align-items-center gap-2">
-                                  <i class="fas fa-flag text-warning"></i>
-                                  <small>{{ avaliacao.recurso }}</small>
-                                </div>
-                              } @else if (consolidacaoPolicy.podeSolicitarRecurso(consolidacao, avaliacao, planoTrabalho()!)) {
-                                <app-recurso-form
-                                  [avaliacaoId]="avaliacao.id"
-                                  [ativo]="facade.solicitandoRecursoAvaliacaoId() === avaliacao.id"
-                                  [emAndamento]="facade.enviandoRecursoIds().has(avaliacao.id)"
-                                  [justificativa]="facade.justificativaRecurso()"
-                                  (abrir)="facade.iniciarSolicitacaoRecurso(avaliacao.id)"
-                                  (cancelar)="facade.cancelarSolicitacaoRecurso()"
-                                  (justificativaChange)="facade.justificativaRecurso.set($event)"
-                                  (submeter)="facade.confirmarSolicitacaoRecurso(consolidacao, avaliacao.id)"
-                                />
-                              }
-                            </td>
-                          </tr>
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-              @if (consolidacaoPolicy.podeReavaliarConsolidacao(consolidacao, planoTrabalho()!)) {
-                <br-divider></br-divider>
-                <p class="text-weight-semi-bold mb-3">Reavaliação</p>
-                <app-avaliacao-form
-                  [consolidacaoId]="consolidacao.id"
-                  [notas]="facade.notas()"
-                  [notaSelecionadaId]="facade.getNotaSelecionada(consolidacao.id)"
-                  [justificativa]="facade.getJustificativaAvaliacao(consolidacao.id)"
-                  [justificativaObrigatoria]="facade.notaSelecionadaJustificaObrigatoria(consolidacao.id)"
-                  [emAndamento]="facade.avaliandoIds().has(consolidacao.id)"
-                  (notaSelecionada)="facade.selecionarNota(consolidacao.id, $event)"
-                  (justificativaChange)="facade.setJustificativaAvaliacao(consolidacao.id, $event)"
-                  (submeter)="facade.avaliarConsolidacao(consolidacao)"
-                />
-              }
-            } @else if (consolidacaoPolicy.podeAvaliarConsolidacao(consolidacao, planoTrabalho()!)) {
-              <br-divider></br-divider>
-              <p class="text-weight-semi-bold mb-3">Avaliação</p>
-              <app-avaliacao-form
-                [consolidacaoId]="consolidacao.id"
-                [notas]="facade.notas()"
-                [notaSelecionadaId]="facade.getNotaSelecionada(consolidacao.id)"
-                [justificativa]="facade.getJustificativaAvaliacao(consolidacao.id)"
-                [justificativaObrigatoria]="facade.notaSelecionadaJustificaObrigatoria(consolidacao.id)"
-                [emAndamento]="facade.avaliandoIds().has(consolidacao.id)"
-                (notaSelecionada)="facade.selecionarNota(consolidacao.id, $event)"
-                (justificativaChange)="facade.setJustificativaAvaliacao(consolidacao.id, $event)"
-                (submeter)="facade.avaliarConsolidacao(consolidacao)"
-              />
-            }
 
           </div>
           @if (podeConcluirConsolidacao(consolidacao)) {
