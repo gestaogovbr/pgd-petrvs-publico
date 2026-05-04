@@ -765,19 +765,8 @@ class PlanoEntregaService extends ServiceBase
 
     private function planosUnidadeComPendencias($unidadeId): bool
     {
-        $planos = PlanoEntrega::where('unidade_id', $unidadeId)
-            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])
-            ->orderByDesc('numero')
-            ->take(2)
-            ->get();
-
-        if ($planos->count() < 2) {
-            return false;
-        }
-
-        $planoAnterior = $planos->get(1);
-
-        return in_array($planoAnterior->status, PlanoEntrega::STATUSES_PENDENTES, true);
+        //Remoção do bloqueio por pendencia
+        return false;
     }
 
     public function planosUnidadeComPendenciasExecucaoAvaliacao(string $unidadeId, $planoEntregaId, $dataAssinatura): bool
