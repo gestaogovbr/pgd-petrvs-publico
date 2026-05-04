@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaReadRepositoryContract;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaWriteRepositoryContract;
+use App\V2\PlanoTrabalho\Entrega\DTOs\ResumoForcaTrabalhoDTO;
 
 class PlanoTrabalhoEntregaRepository
 {
@@ -55,5 +56,10 @@ class PlanoTrabalhoEntregaRepository
     public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId): bool
     {
         return $this->readRepository->existeVinculo($planoTrabalhoId, $planoEntregaEntregaId);
+    }
+
+    public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO
+    {
+        return $this->readRepository->resumoForcaTrabalhoPorPlano($planoTrabalhoId);
     }
 }
