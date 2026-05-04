@@ -11,8 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Trait para validação de autorização em entidades vinculadas a um Plano de Trabalho.
  *
- * Requer que a classe que usa o trait possua a propriedade:
- *   private readonly UnidadeRepository $unidadeRepository
+ * @property-read UnidadeRepository $unidadeRepository
  */
 trait ValidaAutorizacaoTrait
 {
@@ -28,10 +27,7 @@ trait ValidaAutorizacaoTrait
             }
         }
 
-        /** @var UnidadeRepository $unidadeRepository */
-        $unidadeRepository = $this->unidadeRepository;
-
-        return $unidadeRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId);
+        return $this->unidadeRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId);
     }
 
     protected function autorizarDonoOuChefia(
