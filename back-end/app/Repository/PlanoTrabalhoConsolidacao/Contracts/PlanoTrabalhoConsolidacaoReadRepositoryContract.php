@@ -23,4 +23,12 @@ interface PlanoTrabalhoConsolidacaoReadRepositoryContract
         string $usuarioId,
         \DateTimeInterface $dataCorte
     ): \Illuminate\Database\Eloquent\Collection;
+
+    public function todosAvaliadosPorPlano(string $planoTrabalhoId): bool;
+
+    public function possuiAvaliacaoRecentePorPlano(string $planoTrabalhoId, \DateTimeInterface $limite): bool;
+
+    public function possuiPendenciasPorPlano(string $planoTrabalhoId): bool;
+
+    public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool;
 }

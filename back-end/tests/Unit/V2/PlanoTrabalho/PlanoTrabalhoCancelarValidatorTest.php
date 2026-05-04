@@ -2,6 +2,7 @@
 
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Models\PlanoTrabalho;
@@ -10,17 +11,18 @@ use App\Models\Perfil;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 beforeEach(function () {
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
+    $this->consolidacaoRepo = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
     $this->unidadeRepo = Mockery::mock(UnidadeRepository::class);
     $this->usuarioRepo = Mockery::mock(UsuarioRepository::class);
     $this->validator = new PlanoTrabalhoCancelarValidator(
         $this->planoRepo,
+        $this->consolidacaoRepo,
         $this->unidadeRepo,
         $this->usuarioRepo,
     );
@@ -28,17 +30,14 @@ beforeEach(function () {
 
 afterEach(fn () => Mockery::close());
 
-function mockPlanoAtivo(string $usuarioId = 'user-1', bool $temConsolidacaoFinalizada = false): PlanoTrabalho
+function mockPlanoAtivo(string $usuarioId = 'user-1'): PlanoTrabalho
 {
-    $relation = Mockery::mock(HasMany::class);
-    $relation->shouldReceive('whereIn->exists')->andReturn($temConsolidacaoFinalizada);
-
+    /** @var PlanoTrabalho $plano */
     $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
     $plano->id = 'plano-1';
     $plano->status = 'ATIVO';
     $plano->usuario_id = $usuarioId;
     $plano->unidade_id = 'unidade-1';
-    $plano->shouldReceive('consolidacoes')->andReturn($relation);
 
     return $plano;
 }
@@ -48,6 +47,7 @@ describe('PlanoTrabalhoCancelarValidator', function () {
     test('retorna plano quando participante dono cancela', function () {
         $plano = mockPlanoAtivo('user-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->consolidacaoRepo->shouldReceive('possuiConsolidacaoFinalizadaPorPlano')->with('plano-1')->andReturn(false);
 
         expect($this->validator->validar('plano-1', 'user-1'))->toBe($plano);
     });
@@ -55,6 +55,7 @@ describe('PlanoTrabalhoCancelarValidator', function () {
     test('retorna plano quando chefia cancela', function () {
         $plano = mockPlanoAtivo('outro-user');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->consolidacaoRepo->shouldReceive('possuiConsolidacaoFinalizadaPorPlano')->andReturn(false);
         $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
             ->with('unidade-1', 'chefia-1')->andReturn(true);
 
@@ -64,6 +65,7 @@ describe('PlanoTrabalhoCancelarValidator', function () {
     test('retorna plano quando adm master cancela', function () {
         $plano = mockPlanoAtivo('outro-user');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->consolidacaoRepo->shouldReceive('possuiConsolidacaoFinalizadaPorPlano')->andReturn(false);
         $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->andReturn(false);
 
         $usuario = Mockery::mock(Usuario::class)->makePartial();
@@ -90,14 +92,17 @@ describe('PlanoTrabalhoCancelarValidator', function () {
     })->throws(ValidateException::class, 'Apenas planos com status ATIVO podem ser cancelados.');
 
     test('lanca excecao quando possui consolidacao finalizada', function () {
-        $plano = mockPlanoAtivo('user-1', true);
+        $plano = mockPlanoAtivo('user-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->consolidacaoRepo->shouldReceive('possuiConsolidacaoFinalizadaPorPlano')->with('plano-1')->andReturn(true);
 
         $this->validator->validar('plano-1', 'user-1');
     })->throws(ValidateException::class, 'O plano não pode ser cancelado pois possui período avaliativo com registro finalizado.');
 
     test('lanca excecao quando usuario sem permissao', function () {
         $plano = mockPlanoAtivo('outro-user');
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->consolidacaoRepo->shouldReceive('possuiConsolidacaoFinalizadaPorPlano')->andReturn(false);
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
         $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->andReturn(false);
 

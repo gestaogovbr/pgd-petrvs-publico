@@ -51,6 +51,26 @@ class PlanoTrabalhoConsolidacaoRepository
         );
     }
 
+    public function todosAvaliadosPorPlano(string $planoTrabalhoId): bool
+    {
+        return $this->readRepository->todosAvaliadosPorPlano($planoTrabalhoId);
+    }
+
+    public function possuiAvaliacaoRecentePorPlano(string $planoTrabalhoId, \DateTimeInterface $limite): bool
+    {
+        return $this->readRepository->possuiAvaliacaoRecentePorPlano($planoTrabalhoId, $limite);
+    }
+
+    public function possuiPendenciasPorPlano(string $planoTrabalhoId): bool
+    {
+        return $this->readRepository->possuiPendenciasPorPlano($planoTrabalhoId);
+    }
+
+    public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool
+    {
+        return $this->readRepository->possuiConsolidacaoFinalizadaPorPlano($planoTrabalhoId);
+    }
+
     public function create(array $attributes): PlanoTrabalhoConsolidacao
     {
         /** @var PlanoTrabalhoConsolidacao */

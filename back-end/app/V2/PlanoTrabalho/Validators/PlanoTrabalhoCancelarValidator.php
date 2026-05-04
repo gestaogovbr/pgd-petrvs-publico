@@ -10,6 +10,7 @@ use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use App\Models\PlanoTrabalho;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
@@ -19,13 +20,9 @@ class PlanoTrabalhoCancelarValidator
 {
     use ValidaAutorizacaoTrait;
 
-    private const STATUSES_CONSOLIDACAO_BLOQUEIAM = [
-        StatusEnum::CONCLUIDO,
-        StatusEnum::AVALIADO,
-    ];
-
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
+        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly UnidadeRepository $unidadeRepository,
         private readonly UsuarioRepository $usuarioRepository,
     ) {}
@@ -51,13 +48,7 @@ class PlanoTrabalhoCancelarValidator
 
     private function validarSemConsolidacaoFinalizada(PlanoTrabalho $plano): void
     {
-        $statusBloqueiam = array_map(fn (StatusEnum $s) => $s->value, self::STATUSES_CONSOLIDACAO_BLOQUEIAM);
-
-        $possuiFinalizada = $plano->consolidacoes()
-            ->whereIn('status', $statusBloqueiam)
-            ->exists();
-
-        if ($possuiFinalizada) {
+        if ($this->consolidacaoRepository->possuiConsolidacaoFinalizadaPorPlano($plano->id)) {
             throw new ValidateException('O plano não pode ser cancelado pois possui período avaliativo com registro finalizado.');
         }
     }

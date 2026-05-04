@@ -10,6 +10,7 @@ use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use App\Models\PlanoTrabalho;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
@@ -24,6 +25,7 @@ class PlanoTrabalhoArquivarValidator
 
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
+        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly UnidadeRepository $unidadeRepository,
         private readonly UsuarioRepository $usuarioRepository,
     ) {}
@@ -66,25 +68,19 @@ class PlanoTrabalhoArquivarValidator
 
     private function todosAvaliados(PlanoTrabalho $plano): bool
     {
-        return $plano->consolidacoes()
-            ->where('status', '!=', StatusEnum::AVALIADO->value)
-            ->doesntExist();
+        return $this->consolidacaoRepository->todosAvaliadosPorPlano($plano->id);
     }
 
     private function dentroPrazoRecurso(PlanoTrabalho $plano): bool
     {
         $limite = Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS);
 
-        return $plano->consolidacoes()
-            ->whereHas('avaliacoes', fn ($q) => $q->where('data_avaliacao', '>', $limite))
-            ->exists();
+        return $this->consolidacaoRepository->possuiAvaliacaoRecentePorPlano($plano->id, $limite);
     }
 
     private function possuiPendencias(PlanoTrabalho $plano): bool
     {
-        return $plano->consolidacoes()
-            ->whereIn('status', [StatusEnum::INCLUIDO->value, StatusEnum::CONCLUIDO->value])
-            ->exists();
+        return $this->consolidacaoRepository->possuiPendenciasPorPlano($plano->id);
     }
 
     private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void

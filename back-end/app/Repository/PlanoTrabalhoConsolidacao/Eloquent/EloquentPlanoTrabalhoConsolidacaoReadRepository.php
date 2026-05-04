@@ -162,6 +162,39 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
         return new Collection($merged->all());
     }
 
+
+    public function todosAvaliadosPorPlano(string $planoTrabalhoId): bool
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->where('status', '!=', StatusEnum::AVALIADO->value)
+            ->doesntExist();
+    }
+
+    public function possuiAvaliacaoRecentePorPlano(string $planoTrabalhoId, \DateTimeInterface $limite): bool
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->whereHas('avaliacoes', fn ($q) => $q->where('data_avaliacao', '>', $limite))
+            ->exists();
+    }
+
+    public function possuiPendenciasPorPlano(string $planoTrabalhoId): bool
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->whereIn('status', [StatusEnum::INCLUIDO->value, StatusEnum::CONCLUIDO->value])
+            ->exists();
+    }
+
+    public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->whereIn('status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value])
+            ->exists();
+    }
+
     private function basePendentesAvaliacaoQuery(\DateTimeInterface $dataCorte): \Illuminate\Database\Eloquent\Builder
     {
         return $this->query()
