@@ -22,9 +22,8 @@ class UsuarioValidacoes
         $request->merge(['id' => $usuarioId]);
 
         return $request->validate([
-            'id' => ['required', 'uuid'],
+            'id' => ['uuid'],
         ], [
-            'id.required' => 'O id do usuário é obrigatório.',
             'id.uuid' => 'O valor informado para o usuário é inválido.',
         ]);
     }
