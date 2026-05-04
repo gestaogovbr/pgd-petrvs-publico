@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\AsJson;
+use App\Contracts\HasStatusHistory;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\Unidade;
@@ -46,8 +47,12 @@ use Illuminate\Database\Eloquent\Collection;
  * @property-read Collection|Atividade[] $atividades
  * @property-read Collection|Ocorrencia[] $ocorrencias
  */
-class PlanoTrabalho extends ModelBase
+class PlanoTrabalho extends ModelBase implements HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'plano_trabalho_id';
+    }
     protected $table = 'planos_trabalhos';
 
     protected $with = [];

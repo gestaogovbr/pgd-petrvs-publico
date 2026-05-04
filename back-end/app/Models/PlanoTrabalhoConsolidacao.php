@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusEnum;
+use App\Contracts\HasStatusHistory;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
 use App\Models\Comparecimento;
@@ -15,8 +16,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property string|null $justificativa_conclusao
  */
-class PlanoTrabalhoConsolidacao extends ModelBase
+class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'plano_trabalho_consolidacao_id';
+    }
   protected $table = 'planos_trabalhos_consolidacoes';
 
   protected $with = [];
