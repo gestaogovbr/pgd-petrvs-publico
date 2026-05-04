@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Documento\TCR;
 
 use App\Enums\StatusEnum;
+use App\Models\PlanoTrabalho;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
@@ -47,7 +48,7 @@ class TCRInvalidador
         $this->planoTrabalhoRepository->update($planoTrabalhoId, ['documento_id' => null]);
     }
 
-    private function reverterStatus($plano): void
+    private function reverterStatus(PlanoTrabalho $plano): void
     {
         if ($plano->status === StatusEnum::INCLUIDO->value) {
             return;
