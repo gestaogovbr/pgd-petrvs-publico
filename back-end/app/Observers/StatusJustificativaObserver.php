@@ -21,7 +21,7 @@ class StatusJustificativaObserver
 
     public function created(StatusJustificativa $model)
     {
-        if ($model->isPlanoTrabalho() && $model->isAtivo()) {
+        if ($model->isFromPlanoTrabalho() && $model->isAtivo()) {
             if (!tenancy()->initialized) {
                 Log::warning('Tentativa de agendar envio de plano de trabalho sem tenant inicializado');
                 return true;
@@ -34,7 +34,7 @@ class StatusJustificativaObserver
             }
         }
 
-        if ($model->isPlanoEntrega() && $model->isAtivo()) {
+        if ($model->isFromPlanoEntrega() && $model->isAtivo()) {
             if (!tenancy()->initialized) {
                 Log::warning('Tentativa de agendar envio de plano de entrega sem tenant inicializado');
                 return true;
