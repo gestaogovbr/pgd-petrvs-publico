@@ -65,9 +65,11 @@ export class PanelAdminsFormComponent extends PageFormBase<UserPanel, UsersPanel
     this.loading = true;
     try {
       this.tenants = await this.tenantsDao.query().asPromise();
+      const items: LookupItem[] = [];
       this.tenants.forEach(t => {
-        this.items.push({key: t.id, value: t.nome_entidade})
+        items.push({key: t.id, value: t.nome_entidade})
       });      
+      this.items = items;
     } finally {
       this.loading = false;
     }

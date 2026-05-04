@@ -1,3 +1,10 @@
+## 2.9.22 04/05/2026
+### Corrigido
+- Corrigido cadastro de usuário configurador no painel saas impedindo seleção de tenant.
+
+### Modificado
+- Removido bloqueio de cadastro de plano de trabalho e entrega em caso de com pendencias de registro de execução ou avaliações.
+
 ## 2.9.21 17/04/2026
 ### Adicionado
 - Adicionada busca de unidades por sigla, melhorando a localização e identificação de unidades no sistema.

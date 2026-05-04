@@ -1454,36 +1454,13 @@ class PlanoTrabalhoService extends ServiceBase
 
     public function planosUsuarioComPendencias(string $usuarioId): bool
     {
-        $planos = PlanoTrabalho::where('usuario_id', $usuarioId)
-            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO'])            
-            ->whereDoesntHave('consolidacoes', function ($query) {
-                $query->where('status', 'AVALIADO');
-            })
-            ->orderByDesc('numero')
-            ->take(2)
-            ->get();
-
-        if ($planos->count() < 2) {
-            return false;
-        }
-
-        $planoAnterior = $planos->get(1);
-        $statusesPendentes = StatusEnum::pendentesPlanoTrabalho();
-
-        return in_array($planoAnterior->status, $statusesPendentes, true);
+        //Remoção do bloqueio por pendencia
+        return false;
     }
 
     public function hasUsuarioPendencias(string $usuarioId, $planoTrabalhoId, $dataAssinatura): bool
     {
-        $diasPendenciaDataFinalPlano = 30;
-        $dataLimite = $dataAssinatura->copy()->subDays($diasPendenciaDataFinalPlano)->format('Y-m-d');
-
-        $planosPendentes = $this->planoTrabalhoRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
-
-        if ($planosPendentes->count() > 0) {
-            return true;
-        }
-
+        //Remoção do bloqueio por pendencia
         return false;
     }
 
