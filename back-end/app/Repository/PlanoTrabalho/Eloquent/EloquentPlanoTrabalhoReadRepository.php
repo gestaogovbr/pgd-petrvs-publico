@@ -194,9 +194,9 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         }
 
         if ($filtro->vigentes) {
-            $now = now();
-            $query->where('data_inicio', '<=', $now)
-                  ->where('data_fim', '>=', $now)
+            $today = today();
+            $query->where('data_inicio', '<=', $today)
+                  ->where('data_fim', '>=', $today)
                   ->where('status', StatusEnum::ATIVO->value);
         }
 
