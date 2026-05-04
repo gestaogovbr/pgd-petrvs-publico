@@ -8,6 +8,7 @@ use App\DTOs\PlanoTrabalho\PlanoTrabalhoConsolidacaoDataDTO;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoReadRepositoryContract;
 use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoWriteRepositoryContract;
+use App\V2\PlanoTrabalho\DTOs\ResumoConsolidacoesDTO;
 use Illuminate\Database\Eloquent\Collection;
 
 class PlanoTrabalhoConsolidacaoRepository
@@ -51,19 +52,9 @@ class PlanoTrabalhoConsolidacaoRepository
         );
     }
 
-    public function todosAvaliadosPorPlano(string $planoTrabalhoId): bool
+    public function resumoParaArquivamento(string $planoTrabalhoId, \DateTimeInterface $limiteRecurso): ResumoConsolidacoesDTO
     {
-        return $this->readRepository->todosAvaliadosPorPlano($planoTrabalhoId);
-    }
-
-    public function possuiAvaliacaoRecentePorPlano(string $planoTrabalhoId, \DateTimeInterface $limite): bool
-    {
-        return $this->readRepository->possuiAvaliacaoRecentePorPlano($planoTrabalhoId, $limite);
-    }
-
-    public function possuiPendenciasPorPlano(string $planoTrabalhoId): bool
-    {
-        return $this->readRepository->possuiPendenciasPorPlano($planoTrabalhoId);
+        return $this->readRepository->resumoParaArquivamento($planoTrabalhoId, $limiteRecurso);
     }
 
     public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool

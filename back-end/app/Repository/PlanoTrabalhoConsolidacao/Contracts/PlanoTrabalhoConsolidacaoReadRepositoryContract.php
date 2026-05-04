@@ -6,6 +6,7 @@ namespace App\Repository\PlanoTrabalhoConsolidacao\Contracts;
 
 use App\DTOs\PlanoTrabalho\PlanoTrabalhoConsolidacaoDataDTO;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\V2\PlanoTrabalho\DTOs\ResumoConsolidacoesDTO;
 
 interface PlanoTrabalhoConsolidacaoReadRepositoryContract
 {
@@ -24,11 +25,7 @@ interface PlanoTrabalhoConsolidacaoReadRepositoryContract
         \DateTimeInterface $dataCorte
     ): \Illuminate\Database\Eloquent\Collection;
 
-    public function todosAvaliadosPorPlano(string $planoTrabalhoId): bool;
-
-    public function possuiAvaliacaoRecentePorPlano(string $planoTrabalhoId, \DateTimeInterface $limite): bool;
-
-    public function possuiPendenciasPorPlano(string $planoTrabalhoId): bool;
+    public function resumoParaArquivamento(string $planoTrabalhoId, \DateTimeInterface $limiteRecurso): ResumoConsolidacoesDTO;
 
     public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool;
 }

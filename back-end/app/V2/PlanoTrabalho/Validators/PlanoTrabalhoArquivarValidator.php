@@ -55,32 +55,20 @@ class PlanoTrabalhoArquivarValidator
             return;
         }
 
-        if ($plano->encerrado_at !== null && !$this->possuiPendencias($plano)) {
+        $resumo = $this->consolidacaoRepository->resumoParaArquivamento(
+            $plano->id,
+            Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS),
+        );
+
+        if ($plano->encerrado_at !== null && !$resumo->possuiPendencias) {
             return;
         }
 
-        if ($plano->status === StatusEnum::CONCLUIDO->value && $this->todosAvaliados($plano) && !$this->dentroPrazoRecurso($plano)) {
+        if ($plano->status === StatusEnum::CONCLUIDO->value && $resumo->todosAvaliados && !$resumo->avaliacaoRecente) {
             return;
         }
 
         throw new ValidateException('Este Plano de Trabalho não atende aos requisitos para arquivamento.');
-    }
-
-    private function todosAvaliados(PlanoTrabalho $plano): bool
-    {
-        return $this->consolidacaoRepository->todosAvaliadosPorPlano($plano->id);
-    }
-
-    private function dentroPrazoRecurso(PlanoTrabalho $plano): bool
-    {
-        $limite = Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS);
-
-        return $this->consolidacaoRepository->possuiAvaliacaoRecentePorPlano($plano->id, $limite);
-    }
-
-    private function possuiPendencias(PlanoTrabalho $plano): bool
-    {
-        return $this->consolidacaoRepository->possuiPendenciasPorPlano($plano->id);
     }
 
     private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void

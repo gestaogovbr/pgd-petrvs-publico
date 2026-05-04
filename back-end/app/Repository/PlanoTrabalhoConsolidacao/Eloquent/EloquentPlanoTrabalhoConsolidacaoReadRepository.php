@@ -13,6 +13,7 @@ use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoReadRepositoryContract;
+use App\V2\PlanoTrabalho\DTOs\ResumoConsolidacoesDTO;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -163,28 +164,25 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
     }
 
 
-    public function todosAvaliadosPorPlano(string $planoTrabalhoId): bool
+    public function resumoParaArquivamento(string $planoTrabalhoId, \DateTimeInterface $limiteRecurso): ResumoConsolidacoesDTO
     {
-        return $this->query()
+        $result = $this->query()
             ->where('plano_trabalho_id', $planoTrabalhoId)
-            ->where('status', '!=', StatusEnum::AVALIADO->value)
-            ->doesntExist();
-    }
+            ->selectRaw('COUNT(CASE WHEN status != ? THEN 1 END) = 0 AS todos_avaliados', [StatusEnum::AVALIADO->value])
+            ->selectRaw('COUNT(CASE WHEN status IN (?, ?) THEN 1 END) > 0 AS possui_pendencias', [StatusEnum::INCLUIDO->value, StatusEnum::CONCLUIDO->value])
+            ->toBase()
+            ->first();
 
-    public function possuiAvaliacaoRecentePorPlano(string $planoTrabalhoId, \DateTimeInterface $limite): bool
-    {
-        return $this->query()
+        $avaliacaoRecente = $this->query()
             ->where('plano_trabalho_id', $planoTrabalhoId)
-            ->whereHas('avaliacoes', fn ($q) => $q->where('data_avaliacao', '>', $limite))
+            ->whereHas('avaliacoes', fn ($q) => $q->where('data_avaliacao', '>', $limiteRecurso))
             ->exists();
-    }
 
-    public function possuiPendenciasPorPlano(string $planoTrabalhoId): bool
-    {
-        return $this->query()
-            ->where('plano_trabalho_id', $planoTrabalhoId)
-            ->whereIn('status', [StatusEnum::INCLUIDO->value, StatusEnum::CONCLUIDO->value])
-            ->exists();
+        return new ResumoConsolidacoesDTO(
+            todosAvaliados: (bool) $result->todos_avaliados,
+            avaliacaoRecente: $avaliacaoRecente,
+            possuiPendencias: (bool) $result->possui_pendencias,
+        );
     }
 
     public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool
