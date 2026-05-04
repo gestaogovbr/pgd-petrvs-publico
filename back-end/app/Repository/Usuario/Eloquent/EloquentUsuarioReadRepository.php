@@ -192,9 +192,9 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
     {
         $term = '%' . $nomeMatricula . '%';
         return $this->query()
-            ->where(function ($q) use ($nomeMatricula, $term) {
+            ->where(function ($q) use ($term) {
                 $q->where('nome', 'like', $term)
-                  ->orWhere('matricula','like','%'.$nomeMatricula.'%');
+                  ->orWhere('matricula', 'like', $term);
             })
              ->with(['lotacao'])
             ->get();
