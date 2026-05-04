@@ -23,6 +23,7 @@ use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAuthorizatio
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoCancelarAssinaturaValidator;
 use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoStoreValidator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class PlanoTrabalhoDocumentoService
@@ -77,10 +78,6 @@ class PlanoTrabalhoDocumentoService
             return $documentoExistente;
         }
 
-        $this->planoTrabalhoRepository->update($planoTrabalhoId, [
-            'justificativa' => $justificativa,
-        ]);
-
         $plano = $this->planoTrabalhoRepository->loadRelacoesTCR($plano);
 
         $template = $this->datasourceBuilder->getTemplate($plano);
@@ -96,13 +93,19 @@ class PlanoTrabalhoDocumentoService
             templateId: $this->datasourceBuilder->getTemplateId($plano),
         );
 
-        $documento = $this->documentoRepository->createFromTCR($dto);
+        return DB::transaction(function () use ($planoTrabalhoId, $justificativa, $dto) {
+            $this->planoTrabalhoRepository->update($planoTrabalhoId, [
+                'justificativa' => $justificativa,
+            ]);
 
-        $this->planoTrabalhoRepository->update($planoTrabalhoId, [
-            'documento_id' => $documento->id,
-        ]);
+            $documento = $this->documentoRepository->createFromTCR($dto);
 
-        return $documento;
+            $this->planoTrabalhoRepository->update($planoTrabalhoId, [
+                'documento_id' => $documento->id,
+            ]);
+
+            return $documento;
+        });
     }
 
     public function assinar(string $planoTrabalhoId): DocumentoAssinatura
@@ -112,23 +115,26 @@ class PlanoTrabalhoDocumentoService
         $documento = $this->assinarValidator->validar($plano, $usuarioId);
 
         $dto = TCRAssinaturaDTO::fromDocumento($documento, $usuarioId);
-        $assinatura = $this->assinaturaRepository->createFromTCR($dto);
 
-        $status = $this->assinaturaPolicy->todasRealizadas($plano, $documento->id)
-            ? StatusEnum::ATIVO->value
-            : StatusEnum::AGUARDANDO_ASSINATURA->value;
+        return DB::transaction(function () use ($plano, $documento, $dto) {
+            $assinatura = $this->assinaturaRepository->createFromTCR($dto);
 
-        $this->statusService->atualizaStatus(
-            $plano,
-            $status,
-            "Registrada a assinatura do servidor: " . Auth::user()->nome . "."
-        );
+            $status = $this->assinaturaPolicy->todasRealizadas($plano, $documento->id)
+                ? StatusEnum::ATIVO->value
+                : StatusEnum::AGUARDANDO_ASSINATURA->value;
 
-        if ($status === StatusEnum::ATIVO->value) {
-            $this->geradorPeriodos->gerar($plano);
-        }
+            $this->statusService->atualizaStatus(
+                $plano,
+                $status,
+                "Registrada a assinatura do servidor: " . Auth::user()->nome . "."
+            );
 
-        return $assinatura;
+            if ($status === StatusEnum::ATIVO->value) {
+                $this->geradorPeriodos->gerar($plano);
+            }
+
+            return $assinatura;
+        });
     }
 
     public function cancelarAssinatura(string $planoTrabalhoId): void
@@ -137,16 +143,18 @@ class PlanoTrabalhoDocumentoService
         $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
         $documento = $this->cancelarAssinaturaValidator->validar($plano, $usuarioId);
 
-        $this->assinaturaRepository->deleteAssinaturaUsuario($documento->id, $usuarioId);
+        DB::transaction(function () use ($plano, $documento, $usuarioId) {
+            $this->assinaturaRepository->deleteAssinaturaUsuario($documento->id, $usuarioId);
 
-        $status = $this->assinaturaRepository->existeAlgumaAssinatura($documento->id)
-            ? StatusEnum::AGUARDANDO_ASSINATURA->value
-            : StatusEnum::INCLUIDO->value;
+            $status = $this->assinaturaRepository->existeAlgumaAssinatura($documento->id)
+                ? StatusEnum::AGUARDANDO_ASSINATURA->value
+                : StatusEnum::INCLUIDO->value;
 
-        $this->statusService->atualizaStatus(
-            $plano,
-            $status,
-            "Cancelada a assinatura do servidor: " . Auth::user()->nome . "."
-        );
+            $this->statusService->atualizaStatus(
+                $plano,
+                $status,
+                "Cancelada a assinatura do servidor: " . Auth::user()->nome . "."
+            );
+        });
     }
 }

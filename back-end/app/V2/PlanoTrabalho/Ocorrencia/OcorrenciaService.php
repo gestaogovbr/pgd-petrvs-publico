@@ -12,6 +12,7 @@ use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaStoreDTO;
 use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
 use App\V2\PlanoTrabalho\Ocorrencia\Validators\OcorrenciaStoreValidator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OcorrenciaService
 {
@@ -26,11 +27,13 @@ class OcorrenciaService
         $plano = $this->validator->validarAutorizacao($dto->planoTrabalhoId, Auth::id());
         $this->validator->validarStore($plano, $dto);
 
-        $afastamento = $this->afastamentoRepository->insert($dto->toPersistArray($plano->usuario_id));
+        return DB::transaction(function () use ($dto, $plano) {
+            $afastamento = $this->afastamentoRepository->insert($dto->toPersistArray($plano->usuario_id));
 
-        $this->vincularConsolidacoes($plano->id, $afastamento);
+            $this->vincularConsolidacoes($plano->id, $afastamento);
 
-        return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
+            return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
+        });
     }
 
     public function update(OcorrenciaUpdateDTO $dto): Afastamento
@@ -38,16 +41,18 @@ class OcorrenciaService
         $plano = $this->validator->validarAutorizacao($dto->planoTrabalhoId, Auth::id());
         $afastamento = $this->validator->validarExistencia($dto->ocorrenciaId, $plano);
 
-        $this->afastamentoRepository->update($afastamento->id, $dto->toPersistArray());
+        return DB::transaction(function () use ($afastamento, $dto) {
+            $this->afastamentoRepository->update($afastamento->id, $dto->toPersistArray());
 
-        $afastamento->refresh();
+            $afastamento->refresh();
 
-        $this->consolidacaoRepository->updateAfastamentoSnapshot(
-            $afastamento->id,
-            json_encode($afastamento->toArray()),
-        );
+            $this->consolidacaoRepository->updateAfastamentoSnapshot(
+                $afastamento->id,
+                json_encode($afastamento->toArray()),
+            );
 
-        return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
+            return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
+        });
     }
 
     public function destroy(string $planoTrabalhoId, string $ocorrenciaId): void
@@ -55,8 +60,10 @@ class OcorrenciaService
         $plano = $this->validator->validarAutorizacao($planoTrabalhoId, Auth::id());
         $afastamento = $this->validator->validarExistencia($ocorrenciaId, $plano);
 
-        $this->consolidacaoRepository->deleteAfastamentoVinculos($afastamento->id);
-        $this->afastamentoRepository->destroy($afastamento->id);
+        DB::transaction(function () use ($afastamento) {
+            $this->consolidacaoRepository->deleteAfastamentoVinculos($afastamento->id);
+            $this->afastamentoRepository->destroy($afastamento->id);
+        });
     }
 
     private function vincularConsolidacoes(string $planoTrabalhoId, Afastamento $afastamento): void

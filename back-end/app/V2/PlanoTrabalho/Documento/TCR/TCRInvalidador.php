@@ -9,6 +9,7 @@ use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\V2\StatusService;
+use Illuminate\Support\Facades\DB;
 
 class TCRInvalidador
 {
@@ -27,8 +28,10 @@ class TCRInvalidador
             return;
         }
 
-        $this->invalidarDocumento($planoTrabalhoId);
-        $this->reverterStatus($plano);
+        DB::transaction(function () use ($planoTrabalhoId, $plano) {
+            $this->invalidarDocumento($planoTrabalhoId);
+            $this->reverterStatus($plano);
+        });
     }
 
     private function invalidarDocumento(string $planoTrabalhoId): void

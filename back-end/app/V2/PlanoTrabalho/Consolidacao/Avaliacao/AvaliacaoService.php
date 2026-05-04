@@ -11,6 +11,7 @@ use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\DTOs\AvaliacaoStoreDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoStoreValidator;
 use App\V2\StatusService;
+use Illuminate\Support\Facades\DB;
 
 class AvaliacaoService
 {
@@ -30,18 +31,20 @@ class AvaliacaoService
 
         $isReavaliacao = $consolidacao->avaliacoes->isNotEmpty();
 
-        $avaliacao = $this->avaliacaoRepository->create($dto->toPersistArray());
+        return DB::transaction(function () use ($dto, $consolidacao, $isReavaliacao) {
+            $avaliacao = $this->avaliacaoRepository->create($dto->toPersistArray());
 
-        $justificativa = $isReavaliacao
-            ? 'Período reavaliado pela chefia.'
-            : 'Período avaliado pela chefia.';
+            $justificativa = $isReavaliacao
+                ? 'Período reavaliado pela chefia.'
+                : 'Período avaliado pela chefia.';
 
-        $this->statusService->atualizaStatus(
-            $consolidacao,
-            StatusEnum::AVALIADO->value,
-            $justificativa,
-        );
+            $this->statusService->atualizaStatus(
+                $consolidacao,
+                StatusEnum::AVALIADO->value,
+                $justificativa,
+            );
 
-        return $avaliacao;
+            return $avaliacao;
+        });
     }
 }

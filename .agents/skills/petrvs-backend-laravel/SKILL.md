@@ -32,3 +32,4 @@ description: Use ao implementar, refatorar, depurar ou revisar backend Laravel d
 - Comportamento tenant-aware pertence a `tests/IntegrationTenant`.
 - Mudanças em repository devem seguir a referência de repository e atualizar bindings.
 - Áreas sensíveis de segurança: autorização, isolamento tenant, CPF/dados pessoais, payloads SIAPE, downloads, SQL bruto, mass assignment e logs.
+- Métodos de Service com 2+ escritas devem usar `DB::transaction`. Validações e leituras ficam fora da transação, apenas escritas dentro. Ver `back-end/AGENTS.md` seção "Regras de Transação".

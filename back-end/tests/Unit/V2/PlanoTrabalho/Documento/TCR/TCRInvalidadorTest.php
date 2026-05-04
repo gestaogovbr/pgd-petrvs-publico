@@ -94,4 +94,31 @@ describe('TCRInvalidador', function () {
 
         $this->invalidador->invalidar('plano-1');
     });
+
+    test('propaga exceção da transação sem engolir o erro', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->status = StatusEnum::AGUARDANDO_ASSINATURA->value;
+
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
+        $this->assinaturaRepo->shouldReceive('deleteAssinaturasDocumento')->once()->with('doc-1');
+        $this->documentoRepo->shouldReceive('delete')->once()->with('doc-1');
+        $this->planoRepo->shouldReceive('update')->once()->with('plano-1', ['documento_id' => null]);
+
+        $this->statusService->shouldReceive('atualizaStatus')
+            ->once()
+            ->andThrow(new \RuntimeException('Falha ao reverter status'));
+
+        expect(fn () => $this->invalidador->invalidar('plano-1'))
+            ->toThrow(\RuntimeException::class, 'Falha ao reverter status');
+
+        expect($plano->status)->toBe(StatusEnum::AGUARDANDO_ASSINATURA->value);
+    });
 });

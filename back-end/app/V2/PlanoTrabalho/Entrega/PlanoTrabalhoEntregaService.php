@@ -11,6 +11,7 @@ use App\V2\PlanoTrabalho\Entrega\DTOs\PlanoTrabalhoEntregaStoreDTO;
 use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaAuthorizationValidator;
 use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaStoreValidator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PlanoTrabalhoEntregaService
 {
@@ -26,11 +27,13 @@ class PlanoTrabalhoEntregaService
         $this->authorizationValidator->validar($dto->planoTrabalhoId, Auth::id());
         $this->storeValidator->validar($dto);
 
-        $entrega = $this->repository->create($dto->toArray());
+        return DB::transaction(function () use ($dto) {
+            $entrega = $this->repository->create($dto->toArray());
 
-        $this->tcrInvalidador->invalidar($dto->planoTrabalhoId);
+            $this->tcrInvalidador->invalidar($dto->planoTrabalhoId);
 
-        return $entrega;
+            return $entrega;
+        });
     }
 
     public function update(string $entregaId, PlanoTrabalhoEntregaStoreDTO $dto): PlanoTrabalhoEntrega
@@ -38,11 +41,13 @@ class PlanoTrabalhoEntregaService
         $this->authorizationValidator->validar($dto->planoTrabalhoId, Auth::id());
         $this->storeValidator->validar($dto);
 
-        $entrega = $this->repository->update($entregaId, $dto->toArray());
+        return DB::transaction(function () use ($entregaId, $dto) {
+            $entrega = $this->repository->update($entregaId, $dto->toArray());
 
-        $this->tcrInvalidador->invalidar($dto->planoTrabalhoId);
+            $this->tcrInvalidador->invalidar($dto->planoTrabalhoId);
 
-        return $entrega->refresh();
+            return $entrega->refresh();
+        });
     }
 
     public function destroy(string $planoTrabalhoId, string $entregaId): void
@@ -50,9 +55,11 @@ class PlanoTrabalhoEntregaService
         $this->authorizationValidator->validar($planoTrabalhoId, Auth::id());
         $this->storeValidator->validarDestroy($planoTrabalhoId);
 
-        $this->repository->delete($entregaId)
-            || throw new \RuntimeException('Falha ao remover a entrega.');
+        DB::transaction(function () use ($planoTrabalhoId, $entregaId) {
+            $this->repository->delete($entregaId)
+                || throw new \RuntimeException('Falha ao remover a entrega.');
 
-        $this->tcrInvalidador->invalidar($planoTrabalhoId);
+            $this->tcrInvalidador->invalidar($planoTrabalhoId);
+        });
     }
 }

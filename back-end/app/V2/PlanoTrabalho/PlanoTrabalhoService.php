@@ -24,6 +24,7 @@ use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PlanoTrabalhoService
 {
@@ -133,13 +134,15 @@ class PlanoTrabalhoService
     {
         $plano = $this->encerrarValidator->validar($id, Auth::id());
 
-        $this->writeRepository->update($id, ['encerrado_at' => now()->format('Y-m-d')]);
+        DB::transaction(function () use ($id, $plano, $justificativa) {
+            $this->writeRepository->update($id, ['encerrado_at' => now()->format('Y-m-d')]);
 
-        $this->statusService->atualizaStatus(
-            $plano,
-            StatusEnum::CONCLUIDO->value,
-            'Plano encerrado antecipadamente. Justificativa: ' . $justificativa,
-        );
+            $this->statusService->atualizaStatus(
+                $plano,
+                StatusEnum::CONCLUIDO->value,
+                'Plano encerrado antecipadamente. Justificativa: ' . $justificativa,
+            );
+        });
 
         return $plano->refresh();
     }
@@ -158,21 +161,23 @@ class PlanoTrabalhoService
         $planoOriginal = $this->clonarValidator->validar($id, Auth::id());
         $planoDTO = PlanoTrabalhoCloneDTO::fromPlanoTrabalho($planoOriginal, Auth::id());
 
-        $clone = $this->writeRepository->create($planoDTO->toArray());
+        return DB::transaction(function () use ($planoOriginal, $planoDTO) {
+            $clone = $this->writeRepository->create($planoDTO->toArray());
 
-        $planoOriginal->load('entregas.planoEntregaEntrega');
+            $planoOriginal->load('entregas.planoEntregaEntrega');
 
-        foreach ($planoOriginal->entregas as $entrega) {
-            $entregaDTO = PlanoTrabalhoEntregaCloneDTO::fromEntrega($entrega);
+            foreach ($planoOriginal->entregas as $entrega) {
+                $entregaDTO = PlanoTrabalhoEntregaCloneDTO::fromEntrega($entrega);
 
-            if ($entregaDTO === null) {
-                continue;
+                if ($entregaDTO === null) {
+                    continue;
+                }
+
+                $clone->entregas()->create($entregaDTO->toArray());
             }
 
-            $clone->entregas()->create($entregaDTO->toArray());
-        }
-
-        return $clone;
+            return $clone;
+        });
     }
 
 

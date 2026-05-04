@@ -19,6 +19,7 @@ use App\Repository\UnidadeRepository;
 use App\V2\Traits\ValidaAutorizacaoTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class PlanoTrabalhoConsolidacaoService
 {
@@ -87,20 +88,22 @@ class PlanoTrabalhoConsolidacaoService
         $plano = $this->recursoValidator->validarAutorizacao($planoTrabalhoId, Auth::id());
         $avaliacao = $this->recursoValidator->validar($plano, $consolidacaoId);
 
-        $avaliacao->update([
-            'recurso' => $justificativa,
-            'data_recurso' => now()->format('Y-m-d H:i:s'),
-        ]);
+        return DB::transaction(function () use ($avaliacao, $justificativa) {
+            $avaliacao->update([
+                'recurso' => $justificativa,
+                'data_recurso' => now()->format('Y-m-d H:i:s'),
+            ]);
 
-        $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
+            $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
 
-        $this->statusService->atualizaStatus(
-            $consolidacao,
-            StatusEnum::CONCLUIDO->value,
-            'Recurso solicitado pelo participante: ' . Auth::user()->nome . '.',
-        );
+            $this->statusService->atualizaStatus(
+                $consolidacao,
+                StatusEnum::CONCLUIDO->value,
+                'Recurso solicitado pelo participante: ' . Auth::user()->nome . '.',
+            );
 
-        return $consolidacao;
+            return $consolidacao;
+        });
     }
 
     public function notasAvaliacao(string $planoTrabalhoId): Collection
