@@ -47,35 +47,37 @@ class GeradorPeriodosAvaliativos
 
     private function calcularProximaData(string $data, Programa $programa): string
     {
-        $dayWeek = (int) date('w', strtotime($data));
+        $date = Carbon::parse($data);
 
         return match ($programa->periodicidade_consolidacao) {
-            'DIAS' => date('Y-m-d', strtotime($data . ' + ' . $programa->periodicidade_valor . ' days')),
-            'SEMANAL' => $this->calcularSemanal($data, $dayWeek, $programa->periodicidade_valor),
-            'QUINZENAL' => $this->calcularQuinzenal($data, $dayWeek, $programa->periodicidade_valor),
-            default => $this->calcularPorMes($data, $programa),
+            'DIAS' => $date->addDays($programa->periodicidade_valor)->format('Y-m-d'),
+            'SEMANAL' => $this->calcularSemanal($date, $programa->periodicidade_valor),
+            'QUINZENAL' => $this->calcularQuinzenal($date, $programa->periodicidade_valor),
+            default => $this->calcularPorMes($date, $programa),
         };
     }
 
-    private function calcularSemanal(string $data, int $dayWeek, int $valor): string
+    private function calcularSemanal(Carbon $date, int $valor): string
     {
+        $dayWeek = $date->dayOfWeek;
         $offset = $dayWeek < $valor
             ? $valor - $dayWeek
             : 6 - $dayWeek + $valor;
 
-        return date('Y-m-d', strtotime($data . ' + ' . $offset . ' days'));
+        return $date->copy()->addDays($offset)->format('Y-m-d');
     }
 
-    private function calcularQuinzenal(string $data, int $dayWeek, int $valor): string
+    private function calcularQuinzenal(Carbon $date, int $valor): string
     {
+        $dayWeek = $date->dayOfWeek;
         $offset = $dayWeek < $valor
             ? 7 + $valor - $dayWeek
             : 7 + 6 - $dayWeek + $valor;
 
-        return date('Y-m-d', strtotime($data . ' + ' . $offset . ' days'));
+        return $date->copy()->addDays($offset)->format('Y-m-d');
     }
 
-    private function calcularPorMes(string $data, Programa $programa): string
+    private function calcularPorMes(Carbon $date, Programa $programa): string
     {
         $incMonth = match ($programa->periodicidade_consolidacao) {
             'BIMESTRAL' => 1,
@@ -84,17 +86,14 @@ class GeradorPeriodosAvaliativos
             default => 0,
         };
 
-        $ano = date('Y', strtotime($data));
-        $mes = date('m', strtotime($data));
-        $dia = date('d', strtotime($data));
-
-        if ($dia >= $programa->periodicidade_valor) {
+        if ($date->day >= $programa->periodicidade_valor) {
             $incMonth++;
         }
 
-        $anoMesDia = date('Y-m-d', strtotime($ano . '-' . $mes . '-01 + ' . $incMonth . ' month'));
-        $days = min(date('t', strtotime($anoMesDia)), $programa->periodicidade_valor) - 1;
+        $primeiroDia = $date->copy()->startOfMonth()->addMonths($incMonth);
+        $diasNoMes = $primeiroDia->daysInMonth;
+        $dia = min($diasNoMes, $programa->periodicidade_valor) - 1;
 
-        return date('Y-m-d', strtotime($anoMesDia . ' + ' . $days . ' days'));
+        return $primeiroDia->addDays($dia)->format('Y-m-d');
     }
 }
