@@ -44,6 +44,8 @@ use Illuminate\Database\Eloquent\Collection;
  * @property Carbon|null $data_agendamento_envio
  * @property Carbon|null $data_envio_api_pgd
  * @property Carbon|null $data_tentativa_envio
+ * @property Carbon|null $data_conclusao_envio
+ * @property string|null $log_envio
  * @property-read Usuario $usuario
  * @property-read Programa $programa
  * @property-read Unidade $unidade

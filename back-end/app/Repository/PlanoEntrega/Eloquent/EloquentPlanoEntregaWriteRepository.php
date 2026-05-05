@@ -8,7 +8,6 @@ use App\Models\PlanoEntrega;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
 use App\Repository\Eloquent\EnvioTrait;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @extends AbstractEloquentWriteRepository<PlanoEntrega>
@@ -22,7 +21,7 @@ class EloquentPlanoEntregaWriteRepository extends AbstractEloquentWriteRepositor
         $this->model = $model;
     }
 
-    protected function aplicarLogEnvioAposSucesso(Model $model): void
+    protected function aplicarLogEnvioAposSucesso(PlanoEntrega $model): void
     {
         $model->log_envio = null;
     }
