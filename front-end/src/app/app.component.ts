@@ -107,9 +107,7 @@ export class AppComponent implements IAppComponent {
     this.auth.app = this;
     this.lex.app = this;
     this.gb.app = this;
-    if (this.gb.isEmbedded && this.gb.initialRoute?.length) {
-      this.go.navigate({ route: this.gb.initialRoute });
-    }
+
 
     this.lex.cdRef = this.cdRef;
     /* Definição do menu do sistema */
@@ -139,27 +137,26 @@ export class AppComponent implements IAppComponent {
       // TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /* Gestão */
-      AFASTAMENTOS: { name: this.lex.translate("Ocorrências"), permition: 'MOD_AFT', route: ['gestao', 'afastamento'], icon: this.entity.getIcon('Afastamento') },
-      OCORRENCIAS: { name: this.lex.translate("Ocorrencias"), permition: 'MOD_OCOR', route: ['gestao', 'ocorrencia'], icon: this.entity.getIcon('Ocorrencia') },
+      OCORRENCIAS: { name: this.lex.translate("Ocorrências"), permition: 'MOD_OCOR', route: ['gestao', 'ocorrencia'], icon: this.entity.getIcon('Ocorrencia') },
       CADEIAS_VALORES: { name: this.lex.translate("Cadeias de Valores"), permition: 'MOD_CADV', route: ['gestao', 'cadeia-valor'], icon: this.entity.getIcon('CadeiaValor') },
       ATIVIDADES: { name: this.lex.translate("Atividades"), permition: 'MOD_ATV', route: ['gestao', 'atividade'], icon: this.entity.getIcon('Atividade') },
       PLANEJAMENTOS_INSTITUCIONAIS: { name: this.lex.translate("Planejamentos Institucionais"), permition: 'MOD_PLAN_INST', route: ['gestao', 'planejamento'], icon: this.entity.getIcon('Planejamento') },
-      PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { planejamento: true } },
-      PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho'], icon: this.entity.getIcon('PlanoTrabalho') },
+      PLANOS_ENTREGAS: { name: this.lex.translate("Planejamento"), permition: 'MOD_PENT', route: ['gestao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { planejamento: true } },
+      PLANOS_TRABALHOS: { name: this.lex.translate("Planos de Trabalho"), permition: 'MOD_PTR', route: ['gestao', 'plano-trabalho-v2'], icon: this.entity.getIcon('PlanoTrabalho') },
       CONSOLIDACOES: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD', route: ['gestao', 'plano-trabalho', 'consolidacao'], icon: this.entity.getIcon('PlanoTrabalhoConsolidacao') },
-      PROGRAMAS_GESTAO: { name: this.lex.translate("Programas de Gestão"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
+      PROGRAMAS_GESTAO: { name: this.lex.translate("Regramentos Instituidoras"), permition: 'MOD_PRGT', route: ['gestao', 'programa'], icon: this.entity.getIcon('Programa') },
       HABILITACOES_PROGRAMA: { name: this.lex.translate("Habilitações"), permition: 'MOD_PART', route: ['gestao', 'programa', 'participantes'], icon: this.entity.getIcon('Programa') },
       PORTIFOLIOS: { name: this.lex.translate("Portifólios"), permition: 'MOD_PROJ', route: ['gestao', 'projeto'], icon: this.entity.getIcon('Projeto') },
       PRODUTOS: { name: this.lex.translate("Produtos e Serviços"), permition: 'MOD_PROD', route: ['gestao', 'produto'], icon: this.entity.getIcon('Projeto') }, // TODO : retornar esse menu ao subir produtos
       SOLUCOES: { name: this.lex.translate("Soluções"), permition: 'MOD_SOLUCOES', route: ['gestao', 'solucao'], icon: this.entity.getIcon('Solucao') }, // TODO : retornar esse menu ao subir produtos
       /* Execucao */
-      EXECUCAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT', route: ['execucao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { execucao: true } },
+      EXECUCAO_PLANOS_ENTREGAS: { name: this.lex.translate("Execução"), permition: 'MOD_PENT', route: ['execucao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { execucao: true } },
       /* Relatórios */
       FORCAS_TRABALHOS_SERVIDORES: { name: "Força de Trabalho - Servidor", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'servidor'], icon: this.entity.getIcon('RelatorioServidor') },
       FORCAS_TRABALHOS_AREAS: { name: "Força de Trabalho - Área", permition: 'MOD_PTR_CONS', route: ['relatorios', 'forca-de-trabalho', 'area'], icon: this.entity.getIcon('RelatorioArea') },
       /* Avaliações */
       AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO: { name: this.lex.translate("Consolidações"), permition: 'MOD_PTR_CSLD_AVAL', route: ['avaliacao', 'plano-trabalho', 'consolidacao', 'avaliacao'], icon: this.entity.getIcon('PlanoTrabalho') },
-      AVALIACAO_PLANOS_ENTREGAS: { name: this.lex.translate("Planos de Entregas"), permition: 'MOD_PENT_AVAL', route: ['avaliacao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { avaliacao: true } },
+      AVALIACAO_PLANOS_ENTREGAS: { name: this.lex.translate("Avaliação"), permition: 'MOD_PENT_AVAL', route: ['avaliacao', 'plano-entrega'], icon: this.entity.getIcon('PlanoEntrega'), params: { avaliacao: true } },
       /* Configurações */
       PREFERENCIAS: { name: "Preferências", permition: '', route: ['configuracoes', 'preferencia'], metadata: { root: true, modal: true }, icon: this.entity.getIcon('Preferencia') },
       ENTIDADES: { name: this.lex.translate("Entidades"), permition: 'MOD_CFG_ENTD', route: ['configuracoes', 'entidade'], icon: this.entity.getIcon('Entidade') },
@@ -237,67 +234,33 @@ export class AppComponent implements IAppComponent {
       AUDITORIA: { name: "Auditoria", permition: '', route: ['configuracoes', 'sobre'], icon: "" }
     };
 
-    this.moduloGestao = [{
-      name: this.lex.translate("Planejamento"),
+    this.moduloGestao = [ 
+    {
+      name: this.lex.translate("Planos de Entregas"),
+      permition: "MENU_GESTAO_ACESSO",
+      id: "navbarDropdownGestaoExecucao",
+      menu: [
+        this.menuSchema.PLANOS_ENTREGAS,   
+        this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
+        this.menuSchema.AVALIACAO_PLANOS_ENTREGAS,
+      ].sort(this.orderMenu)
+    }, 
+    Object.assign({}, this.menuSchema.PLANOS_TRABALHOS),
+    Object.assign({}, this.menuSchema.OCORRENCIAS),
+    {
+      name: this.lex.translate("Institucional"),
       permition: "MENU_GESTAO_ACESSO",
       id: "navbarDropdownGestaoPlanejamento",
       menu: [
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.CADEIAS_VALORES,
-        // this.menuSchema.SOLUCOES,
-        // this.menuSchema.PRODUTOS,
         this.menuSchema.PROGRAMAS_GESTAO,
-        this.menuSchema.HABILITACOES_PROGRAMA,
-        this.menuSchema.PLANOS_ENTREGAS,
-        this.menuSchema.PLANOS_TRABALHOS,
-        
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Execução"),
-      permition: "MENU_GESTAO_ACESSO",
-      id: "navbarDropdownGestaoExecucao",
-      menu: [
-        this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
-        Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "USUARIO" } }),
-        this.menuSchema.OCORRENCIAS,
-        this.menuSchema.AFASTAMENTOS,
-        this.menuSchema.ATIVIDADES
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Avaliação"),
-      permition: "MENU_GESTAO_ACESSO",
-      id: "navbarDropdownGestaoAvaliacao",
-      menu: [
-        this.menuSchema.AVALIACAO_CONSOLIDACAO_PLANO_TRABALHO,
-        this.menuSchema.AVALIACAO_PLANOS_ENTREGAS
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Gerenciamento"),
-      permition: "MENU_CONFIG_ACESSO",
-      id: "navbarDropdownGestaoGerencial",
-      menu: [
-        this.menuSchema.ENTIDADES,
-        this.menuSchema.UNIDADES,
-        this.menuSchema.USUARIOS,
-        this.menuSchema.PERFIS,
-        // this.menuSchema.CLIENTES,
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Cadastros"),
-      permition: "MENU_CAD_ACESSO",
-      id: "navbarDropdownGestaoCadastros",
-      menu: [
         this.menuSchema.EIXOS_TEMATICOS,
-        // this.menuSchema.ENTREGAS,
-        // this.menuSchema.TIPOS_AVALIACOES,
-        this.menuSchema.TIPOS_ATIVIDADES,
-        //this.menuSchema.TIPOS_CLIENTES,
-        this.menuSchema.TIPOS_JUSTIFICATIVAS,
-        // this.menuSchema.TIPOS_MODALIDADES,
-        // this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
-        this.menuSchema.TIPOS_TAREFAS
+        this.menuSchema.UNIDADES,
+        this.menuSchema.USUARIOS,       
       ].sort(this.orderMenu)
-    }, {
+    },
+    {
       name: this.lex.translate("Relatórios"),
       permition: "MOD_RELATORIOS",
       id: "navbarDropdownRelatorios",
@@ -318,20 +281,13 @@ export class AppComponent implements IAppComponent {
       ].sort(this.orderMenu)
     }];
 
+    
     this.moduloExecucao = [
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, { metadata: { minha_unidade: true } }),
-      this.menuSchema.ATIVIDADES,
-      Object.assign({}, this.menuSchema.CONSOLIDACOES, { params: { tab: "UNIDADE" } }),
-      //this.menuSchema.AFASTAMENTOS,
-      this.menuSchema.OCORRENCIAS,
+      Object.assign({}, this.menuSchema.RELATORIO_USUARIOS,  {
+        name: this.lex.translate("Relatório de Agentes Públicos")
+      }),
       {
-        name: this.lex.translate("Relatórios"),
-        permition: "MOD_RELATORIOS",
-        id: "navbarDropdownRelatorios",
-        menu: [
-          this.menuSchema.RELATORIO_USUARIOS
-        ].sort(this.orderMenu)
-      }, {
         name: this.lex.translate("Indicadores"),
         id: "navbarDropdownIndicadores",
         menu: [
@@ -343,39 +299,6 @@ export class AppComponent implements IAppComponent {
     ];
 
     this.moduloAdministrador = [{
-      name: this.lex.translate("Cadastros"),
-      permition: "MENU_CAD_ACESSO",
-      id: "navbarDropdownCadastrosAdm",
-      menu: [
-        this.menuSchema.AFASTAMENTOS,
-        this.menuSchema.CIDADES,
-        this.menuSchema.CLIENTES,
-        this.menuSchema.EIXOS_TEMATICOS,
-        // this.menuSchema.ENTREGAS,
-        this.menuSchema.FERIADOS,
-        this.menuSchema.MATERIAIS_SERVICOS,
-        this.menuSchema.OCORRENCIAS,
-        this.menuSchema.TEMPLATES,
-        this.menuSchema.TIPOS_ATIVIDADES,
-        // this.menuSchema.TIPOS_AVALIACOES,
-        this.menuSchema.TIPOS_DOCUMENTOS,
-        this.menuSchema.TIPOS_JUSTIFICATIVAS,
-        // this.menuSchema.TIPOS_MODALIDADES,
-        // this.menuSchema.TIPOS_MOTIVOS_AFASTAMENTOS,
-        this.menuSchema.TIPOS_PROCESSOS,
-        this.menuSchema.TIPOS_TAREFAS
-      ].sort(this.orderMenu)
-    }, {
-      name: this.lex.translate("Gerenciamento"),
-      permition: "MENU_CONFIG_ACESSO",
-      id: "navbarDropdownGerencialAdm",
-      menu: [
-        this.menuSchema.ENTIDADES,
-        this.menuSchema.UNIDADES,
-        this.menuSchema.USUARIOS,
-        this.menuSchema.PERFIS
-      ].sort(this.orderMenu)
-    }, {
       name: this.lex.translate("Relatórios"),
       permition: "MOD_RELATORIOS",
       id: "navbarDropdownRelatorios",
@@ -397,39 +320,25 @@ export class AppComponent implements IAppComponent {
     }];
 
     this.moduloDev = [{
-      name: this.lex.translate("Manutenção"),
-      permition: "MENU_DEV_ACESSO",
-      id: "navbarDropdownDevManutencao",
-      menu: [
-        this.menuSchema.ROTINAS_INTEGRACAO,
-        this.menuSchema.PAINEL
-      ]
-    }, {
       name: this.lex.translate("Logs e Auditorias"),
       permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevLogs",
       menu: [
         this.menuSchema.LOGS_ALTERACOES,
         this.menuSchema.LOGS_ERROS,
-        this.menuSchema.LOGS_TRAFEGOS,
         this.menuSchema.LOGS_SYSTEM
       ]
-    }, {
-      name: this.lex.translate("Testes"),
-      permition: "MENU_DEV_ACESSO",
-      id: "navbarDropdownDevTestes",
-      menu: [
-        this.menuSchema.TESTE_IMPERSONATE,
-      ]
-    }, {
-      name: this.lex.translate("Consultas"),
+    },    
+    {
+      name: this.lex.translate("SIAPE"),
       permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevConsultas",
       menu: [
         this.menuSchema.DEV_CPF_CONSULTA_SIAPE,
         this.menuSchema.DEV_UNIDADE_CONSULTA_SIAPE,
         this.menuSchema.BLACKLIST_SERVIDOR,
-        this.menuSchema.BLACKLIST_UNIDADE
+        this.menuSchema.BLACKLIST_UNIDADE,
+        this.menuSchema.ROTINAS_INTEGRACAO,
       ]
     }, {
       name: this.lex.translate("Relatórios"),
@@ -439,7 +348,7 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
       ]
     }, {
-      name: this.lex.translate("Envio API"),
+      name: this.lex.translate("API PGD"),
       permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevApiPgd",
       menu: [
@@ -447,7 +356,9 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.ENVIO_FORCAR,
         this.menuSchema.ENVIO_REINICIAR
       ]
-    }];
+    },
+    Object.assign({}, this.menuSchema.TESTE_IMPERSONATE)
+  ];
 
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },
@@ -526,15 +437,6 @@ export class AppComponent implements IAppComponent {
 
   public get usuarioFoto(): SafeUrl {
     return this.gb.getResourcePath(this.auth.usuario?.url_foto || "assets/images/profile.png");
-  }
-
-  public onCollapseContainerClick() {
-    this.auth.usuarioConfig = { ocultar_container_petrvs: !this.auth.usuario!.config.ocultar_container_petrvs };
-    this.cdRef.detectChanges();
-  }
-
-  public get collapseContainer(): boolean {
-    return this.gb.isEmbedded && this.auth.logged && !!this.auth.usuario?.config.ocultar_container_petrvs;
   }
 
   public onRestoreClick(popup: DialogComponent) {

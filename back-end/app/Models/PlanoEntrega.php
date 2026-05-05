@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusEnum;
+use App\Contracts\HasStatusHistory;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -36,8 +37,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read CadeiaValor|null $cadeiaValor
  * @property-read PlanoEntrega|null $planoEntregaPai
  */
-class PlanoEntrega extends ModelBase
+class PlanoEntrega extends ModelBase implements HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'plano_entrega_id';
+    }
     protected $table = 'planos_entregas';
 
     protected $with = [];

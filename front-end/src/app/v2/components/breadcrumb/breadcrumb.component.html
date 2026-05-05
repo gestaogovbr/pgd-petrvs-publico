@@ -1,0 +1,19 @@
+<nav class="br-breadcrumb" aria-label="Você está em:">
+  <ol class="breadcrumb-list">
+    <li class="crumb">
+      <a routerLink="/home" aria-label="Página inicial">
+        <i class="fas fa-home"></i>
+      </a>
+    </li>
+    @for (item of service.crumbs(); track item.label) {
+      <li class="crumb">
+        <i class="icon fas fa-chevron-right" aria-hidden="true"></i>
+        @if (item.active) {
+          <span>{{ item.label }}</span>
+        } @else {
+          <a [routerLink]="item.url">{{ item.label }}</a>
+        }
+      </li>
+    }
+  </ol>
+</nav>

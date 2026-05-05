@@ -35,6 +35,11 @@ class UnidadeRepository
         return $this->readRepository->findByCodigo($codigo);
     }
 
+    public function findBySigla(string $sigla): ?\App\Models\Unidade
+    {
+        return $this->readRepository->findBySigla($sigla);
+    }
+
     public function findByCodigoWithPai(string $codigo): ?\App\Models\Unidade
     {
         return $this->readRepository->findByCodigoWithPai($codigo);
@@ -48,6 +53,11 @@ class UnidadeRepository
     public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection
     {
         return $this->readRepository->getSubordinadas($ids);
+    }
+
+    public function getSubordinadasRecursivas(array $ids): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->getSubordinadasRecursivas($ids);
     }
 
     public function findById(string $id): ?\App\Models\Unidade
@@ -65,8 +75,8 @@ class UnidadeRepository
         return $this->readRepository->existsByCodigo($codigo);
     }
 
-    public function findBySigla(string $sigla): ?\App\Models\Unidade
+    public function buscarPorNomeOuCodigoNaHierarquia(\App\V2\Unidade\DTOs\UnidadeBuscaDTO $dto, string $usuarioId): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->readRepository->findBySigla($sigla);
+        return $this->readRepository->buscarPorNomeOuCodigoNaHierarquia($dto, $usuarioId);
     }
 }

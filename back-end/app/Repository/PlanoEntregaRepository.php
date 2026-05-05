@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\PlanoEntregaEntrega;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,4 +36,18 @@ class PlanoEntregaRepository
         return $this->readRepository->getEntregasPlanoEntregaExecucao($unidadesIds);
     }
 
+    public function findAllByUnidadeId(string $unidadeId, ?string $dataInicio = null, ?string $dataFim = null): Collection
+    {
+        return $this->readRepository->findAllByUnidadeId($unidadeId, $dataInicio, $dataFim);
+    }
+
+    public function findAllEntregasByPlanoId(string $planoEntregaId): Collection
+    {
+        return $this->readRepository->findAllEntregasByPlanoId($planoEntregaId);
+    }
+
+    public function findEntregaById(string $entregaId): ?PlanoEntregaEntrega
+    {
+        return $this->readRepository->findEntregaById($entregaId);
+    }
 }

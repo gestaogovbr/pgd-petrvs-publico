@@ -20,7 +20,6 @@ import { PlanoEntregaListProgressoComponent } from './plano-entrega-list-progres
 import { PlanoEntregaFormProgressoComponent } from './plano-entrega-form-progresso/plano-entrega-form-progresso.component';
 import { PlanoEntregaEntregasVinculadasComponent } from './plano-entrega-entregas-vinculadas/plano-entrega-entregas-vinculadas.component';
 import { PlanoEntregaEntregaDetalhesComponent } from './plano-entrega-entrega-detalhes/plano-entrega-entrega-detalhes.component';
-import { OrganizationChartModule } from 'primeng/organizationchart';
 import { PlanoEntregaListProdutoComponent } from './plano-entrega-list-produto/plano-entrega-list-produto.component';
 
 
@@ -50,7 +49,6 @@ import { PlanoEntregaListProdutoComponent } from './plano-entrega-list-produto/p
     PlanoEntregaRoutingModule,
     PlanejamentoModule,
     CadeiaValorModule,
-    OrganizationChartModule,
     UteisModule
   ]
 })

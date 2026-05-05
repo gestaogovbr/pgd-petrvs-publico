@@ -1,0 +1,282 @@
+<!-- ── Menu lateral ───────────────────────────────────────── -->
+<div id="main-menu"
+  class="br-menu"
+  [class.active]="menuAberto()"
+  [attr.aria-hidden]="!menuAberto()"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Menu de navegação">
+
+  <div class="menu-container" [attr.inert]="!menuAberto() || null">
+    <div class="menu-panel">
+
+      <div class="menu-header">
+        <div class="menu-title">
+          <img [src]="logoSrc" alt="" aria-hidden="true" height="32" />
+          <span>PETRVS</span>
+        </div>
+        <div class="menu-close">
+          <button #menuClose class="br-button circle" type="button"
+            aria-label="Fechar menu de navegação"
+            (click)="fecharMenu()">
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <nav class="menu-body" aria-label="Menu principal">
+
+        <!-- Home -->
+        <a class="menu-item"
+          [attr.tabindex]="menuAberto() ? 0 : -1"
+          (click)="goHome()"
+          (keydown)="onKeyActivate($event, goHome.bind(this))">
+          <span class="icon"><i class="bi bi-house-fill" aria-hidden="true"></i></span>
+          <span class="menu-text">Home</span>
+        </a>
+
+        <!-- Itens dinâmicos -->
+        @for (section of menuItems; track section.id || section.name) {
+          @if (hasPermission(section.permition)) {
+
+            @if (section.route) {
+              <a class="menu-item"
+                [attr.tabindex]="menuAberto() ? 0 : -1"
+                (click)="navigate(section)"
+                (keydown)="onKeyActivate($event, navigate.bind(this, section))">
+                <span class="icon"><i [class]="section.icon" aria-hidden="true"></i></span>
+                <span class="menu-text">{{ section.name }}</span>
+              </a>
+
+            } @else if (section.menu?.length) {
+              <div class="menu-folder" [class.expanded]="isFolderAberto(section.name)">
+                <a class="menu-item"
+                  [attr.tabindex]="menuAberto() ? 0 : -1"
+                  [attr.aria-expanded]="isFolderAberto(section.name)"
+                  (click)="toggleFolder(section.name)"
+                  (keydown)="onKeyActivate($event, toggleFolder.bind(this, section.name))">
+                  <span class="icon"><i [class]="section.icon || 'bi bi-list'" aria-hidden="true"></i></span>
+                  <span class="menu-text">{{ section.name }}</span>
+                  <i class="fas fa-chevron-down menu-chevron" aria-hidden="true"></i>
+                </a>
+                <ul role="group" [attr.aria-label]="section.name">
+                  @for (item of section.menu; track item?.name) {
+                    @if (item && item !== '-' && hasPermission(item.permition)) {
+                      <li>
+                        <a class="menu-item"
+                          [attr.tabindex]="menuAberto() ? 0 : -1"
+                          (click)="navigate(item)"
+                          (keydown)="onKeyActivate($event, navigate.bind(this, item))">
+                          @if (item.icon) {
+                            <span class="icon"><i [class]="item.icon" aria-hidden="true"></i></span>
+                          }
+                          <span class="menu-text">{{ item.name }}</span>
+                        </a>
+                      </li>
+                    }
+                  }
+                </ul>
+              </div>
+            }
+
+          }
+        }
+
+      </nav>
+    </div>
+  </div>
+
+  <!-- Backdrop: fecha ao clicar fora (invisível para AT) -->
+  <div class="menu-scrim" aria-hidden="true" (click)="fecharMenu()"></div>
+</div>
+
+<!-- ── Layout principal (inert quando menu aberto = focus trap nativo) ──────── -->
+<div class="app-shell" [attr.inert]="menuAberto() || null">
+
+  <main class="app-content" id="main-content">
+
+    <header class="br-header compact is-sticky">
+      <div class="container-fluid">
+
+        <div class="header-row">
+
+          <!-- Esquerda: hambúrguer + título -->
+          <div class="header-menu d-flex align-items-center">
+            <button #menuTrigger class="br-button  circle" type="button"
+              [attr.aria-label]="menuAberto() ? 'Fechar menu' : 'Abrir menu'"
+              [attr.aria-expanded]="menuAberto()"
+              aria-controls="main-menu"
+              (click)="toggleMenu()">
+              <i class="fas fa-bars" aria-hidden="true"></i>
+            </button>
+            <div class="header-info ms-2" aria-hidden="true">
+              <div class="header-title">PGD PETRVS</div>
+              <div class="header-subtitle">Programa de Gestão e Desempenho</div>
+            </div>
+          </div>
+
+          <!-- Direita: ações -->
+          <div class="header-actions ms-auto">
+
+            <!-- Notificações -->
+            <div class="header-functions">
+              <button class="br-button circle" type="button"
+                [attr.aria-label]="naoLidas ? naoLidas + ' notificações não lidas' : 'Notificações'"
+                (click)="irParaNotificacoes()">
+                <span class="position-relative" aria-hidden="true">
+                  <i class="bi bi-bell"></i>
+                  @if (naoLidas) {
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                      style="font-size:0.55rem">
+                      {{ naoLidas > 9 ? '9+' : naoLidas }}
+                    </span>
+                  }
+                </span>
+              </button>
+            </div>
+
+            <span class="br-divider vertical mx-half" aria-hidden="true"></span>
+
+            <!-- Unidade / Matrícula -->
+            <div class="header-functions">
+              <button class="br-button small" type="button"
+                [attr.aria-label]="'Trocar unidade. Atual: ' + (auth.unidade?.sigla || '') + ' ' + (auth.usuario?.matricula || '')"
+                [attr.aria-expanded]="unidadeAberta()"
+                aria-controls="modal-unidade"
+                (click)="toggleUnidade()">
+                <i class="bi bi-building me-1" aria-hidden="true"></i>
+                <span class="d-none d-sm-inline text-truncate" aria-hidden="true" style="max-width:10rem">
+                  {{ auth.unidade?.sigla }} ({{ auth.usuario?.matricula }})
+                </span>
+              </button>
+            </div>
+
+            <span class="br-divider vertical mx-half" aria-hidden="true"></span>
+
+            <!-- Perfil -->
+            <div class="header-login">
+              <button class="br-button small" type="button"
+                [attr.aria-label]="'Perfil de ' + usuarioNome"
+                [attr.aria-expanded]="perfilAberto()"
+                aria-controls="painel-perfil"
+                (click)="togglePerfil()">
+                <i class="bi bi-person-circle me-1" aria-hidden="true"></i>
+                <span class="d-none d-sm-inline" aria-hidden="true">{{ usuarioNome }}</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </header>
+
+    <div class="app-page-content p-4">
+      <ng-content />
+    </div>
+
+  </main>
+
+  @if (auth.usuario) {
+    <footer class="footer hidden-print" role="contentinfo">
+      <div class="d-flex justify-content-between align-items-center px-3 py-2">
+        <small class="text-primary">Versão: {{ gb.VERSAO_SYS }}</small>
+        <div class="logos d-flex gap-3" aria-label="Logos institucionais">
+          <img [src]="gb.getResourcePath('assets/images/logo_pgd_' + (gb.theme !== 'light' ? 'light' : 'normal') + '.png')" alt="Programa de Gestão e Desempenho" height="24" />
+          <img [src]="gb.getResourcePath('assets/images/logo_gov_' + (gb.theme !== 'light' ? 'light' : 'normal') + '.png')" alt="Governo Federal" height="24" />
+        </div>
+      </div>
+    </footer>
+  }
+
+</div>
+
+<!-- ─── Modal: Trocar Unidade ──────────────────────────────────────────────── -->
+<br-scrim [isOpen]="unidadeAberta()" [disableCloseOnClick]="false" (click)="unidadeAberta.set(false)">
+  <br-modal id="modal-unidade" [show]="unidadeAberta()" titleText="Trocar Unidade / Matrícula"
+    size="small" alignFooter="end" (brModalBeforeClose)="unidadeAberta.set(false)">
+
+    <ul class="nav d-flex flex-column" style="max-height: 20rem; overflow-y: auto"
+      role="listbox" aria-label="Unidades disponíveis">
+      @for (u of unidadesVinculadas; track u.id + (u.matricula ?? '')) {
+        <li class="nav-item" role="option"
+          [attr.aria-selected]="u.id === auth.unidade?.id && u.matricula === auth.usuario?.matricula">
+          <a class="nav-link d-flex justify-content-between align-items-center"
+            tabindex="0"
+            [class.fw-bold]="u.id === auth.unidade?.id && u.matricula === auth.usuario?.matricula"
+            (click)="selecionaUnidade(u.id, u.matricula ?? null)"
+            (keydown)="onKeyActivate($event, selecionaUnidade.bind(this, u.id, u.matricula ?? null))">
+            <span>{{ u.sigla }}</span>
+            <span class="text-muted ms-2">{{ u.matricula }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+
+    <div slot="footer">
+      <br-button emphasis="secondary" (click)="unidadeAberta.set(false)">Fechar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
+
+<!-- ─── Painel: Perfil ─────────────────────────────────────────────────────── -->
+@if (perfilAberto()) {
+  <div class="perfil-overlay" aria-hidden="true" (click)="perfilAberto.set(false)"></div>
+
+  <div id="painel-perfil" class="perfil-panel br-card shadow"
+    role="dialog" aria-modal="true" [attr.aria-label]="'Perfil de ' + usuarioNome">
+    <div class="card-content text-center pt-3 pb-2">
+      <img [src]="usuarioFoto" [attr.alt]="'Foto de ' + usuarioNome" width="64" height="64"
+        class="rounded-circle mb-2" style="object-fit: cover" />
+      <div class="fw-semibold" id="perfil-nome">{{ usuarioNome }}</div>
+      <small class="text-muted">{{ auth.usuario?.email }}</small>
+    </div>
+
+    <div class="br-divider"></div>
+
+    <ul class="nav d-flex flex-column pb-2" role="list">
+      <li class="nav-item" role="listitem">
+        <a class="nav-link px-3" tabindex="0" role="button"
+          (click)="navigatePerfil(['configuracoes', 'usuario', auth.usuario!.id, 'edit'])"
+          (keydown)="onKeyActivate($event, navigatePerfil.bind(this, ['configuracoes', 'usuario', auth.usuario!.id, 'edit']))">
+          <i class="bi bi-person-circle me-2" aria-hidden="true"></i>Perfil
+        </a>
+      </li>
+      <li class="nav-item" role="listitem">
+        <a class="nav-link px-3" tabindex="0" role="button"
+          (click)="navigatePerfil(['configuracoes', 'preferencia', 'usuario', auth.usuario!.id])"
+          (keydown)="onKeyActivate($event, navigatePerfil.bind(this, ['configuracoes', 'preferencia', 'usuario', auth.usuario!.id]))">
+          <i class="bi bi-gear me-2" aria-hidden="true"></i>Preferências
+        </a>
+      </li>
+
+      @if (auth.isGestorAlgumaAreaTrabalho(true, true)) {
+        <li class="nav-item" role="listitem">
+          <a class="nav-link px-3" tabindex="0" role="button"
+            (click)="navigatePerfil(['configuracoes', 'unidade', auth.unidade!.id, 'edit'])"
+            (keydown)="onKeyActivate($event, navigatePerfil.bind(this, ['configuracoes', 'unidade', auth.unidade!.id, 'edit']))">
+            <i class="bi bi-unity me-2" aria-hidden="true"></i>Unidade
+          </a>
+        </li>
+
+         <li class="nav-item" role="listitem">
+          <a class="nav-link px-3" tabindex="0" role="button"
+            (click)="navigatePerfil(['configuracoes', 'unidade', '', auth.unidade!.id, 'integrante'], {metadata: { unidade: auth.unidade }})"
+            (keydown)="onKeyActivate($event, navigatePerfil.bind(this, ['configuracoes', 'unidade', '', auth.unidade!.id, 'integrante']))">
+            <i class="bi bi-people me-2" aria-hidden="true"></i>Integrantes
+          </a>
+        </li>
+      }
+
+    </ul>
+
+    <div class="br-divider"></div>
+
+    <div class="px-3 py-2">
+      <br-button emphasis="secondary" class="w-100" (click)="logout()">
+        <i class="bi bi-arrow-bar-right me-1" aria-hidden="true"></i>Sair
+      </br-button>
+    </div>
+  </div>
+}

@@ -21,11 +21,12 @@ interface UsuarioReadRepositoryContract
     public function getUnidadesVinculadas(string $cpf): Collection;
     public function search(array $params, int $limit = 0);
     public function findByMatricula(string $matricula): ?Usuario;
-    public function findByEmail(?string $email): ?Usuario;
+    public function findAllByNomeMatricula(string $nomeMatricula): Collection;
+    public function findByEmail(string $email): ?Usuario;
     public function findActivesByCpf(string $cpf): Collection;
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario;
     public function findWithAreaTrabalho(string $userId, string $unidadeId): ?Usuario;
     public function findByCpf(string $cpf): ?Usuario;
-    public function findByCpfWithLotacao(string $cpf): Collection;
+    public function findAllByCpfWithLotacao(string $cpf): Collection;
     public function findAllByCpfUnfiltered(string $cpf): Collection;
 }

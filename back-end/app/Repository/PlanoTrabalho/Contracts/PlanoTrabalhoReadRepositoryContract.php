@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Repository\PlanoTrabalho\Contracts;
 
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Models\PlanoTrabalho;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 interface PlanoTrabalhoReadRepositoryContract
 {
@@ -18,4 +21,17 @@ interface PlanoTrabalhoReadRepositoryContract
     public function planosAtivosPorData(string $dataInicial, string $dataFinal, string $usuarioId): Collection;
 
     public function buscarPlanosPendentes(string $usuarioId, string $planoTrabalhoId, string $dataLimite): Collection;
+
+    public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator;
+
+    public function existeConflitoPeriodo(string $usuarioId, string $dataInicio, string $dataFim): bool;
+    public function existeConflitoPeriodoExcluindo(string $usuarioId, string $dataInicio, string $dataFim, string $excluirPlanoId): bool;
+
+    /** @return \App\Models\PlanoTrabalho|null */
+    public function findByIdComRelacoes(string $id): ?Model;
+
+    /** @return \App\Models\PlanoTrabalho|null */
+    public function findById(string|int $id): ?Model;
+
+    public function possuiAssinatura(string $planoId): bool;
 }

@@ -13,6 +13,7 @@ use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoReadRepositoryContract;
+use App\V2\PlanoTrabalho\DTOs\ResumoConsolidacoesDTO;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -81,6 +82,30 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
         ])->find($id);
     }
 
+    public function findAllByPlanoTrabalhoId(string $planoTrabalhoId): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->query()
+            ->with([
+                'atividades:id,plano_trabalho_consolidacao_id,plano_trabalho_entrega_id,descricao,created_at,updated_at',
+                'avaliacoes:id,plano_trabalho_consolidacao_id,avaliador_id,data_avaliacao,nota,justificativa,recurso,data_recurso',
+                'avaliacoes.avaliador:id,nome',
+                'afastamentos.afastamento:id,observacoes,data_inicio,data_fim,horas,tipo_motivo_afastamento_id',
+                'afastamentos.afastamento.tipoMotivoAfastamento:id,nome,sigla,horas',
+            ])
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->orderBy('data_inicio')
+            ->get();
+    }
+
+    public function findAllByPlanoTrabalhoIdAndPeriodo(string $planoTrabalhoId, string $dataInicio, string $dataFim): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->where('data_inicio', '<=', $dataFim)
+            ->where('data_fim', '>=', $dataInicio)
+            ->get();
+    }
+
     /**
      * Busca consolidações concluídas pendentes de avaliação.
      *
@@ -136,6 +161,36 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->values();
 
         return new Collection($merged->all());
+    }
+
+
+    public function resumoParaArquivamento(string $planoTrabalhoId, \DateTimeInterface $limiteRecurso): ResumoConsolidacoesDTO
+    {
+        $result = $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->selectRaw('COUNT(CASE WHEN status != ? THEN 1 END) = 0 AS todos_avaliados', [StatusEnum::AVALIADO->value])
+            ->selectRaw('COUNT(CASE WHEN status IN (?, ?) THEN 1 END) > 0 AS possui_pendencias', [StatusEnum::INCLUIDO->value, StatusEnum::CONCLUIDO->value])
+            ->toBase()
+            ->first();
+
+        $avaliacaoRecente = $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->whereHas('avaliacoes', fn ($q) => $q->where('data_avaliacao', '>', $limiteRecurso))
+            ->exists();
+
+        return new ResumoConsolidacoesDTO(
+            todosAvaliados: (bool) $result->todos_avaliados,
+            avaliacaoRecente: $avaliacaoRecente,
+            possuiPendencias: (bool) $result->possui_pendencias,
+        );
+    }
+
+    public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->whereIn('status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value])
+            ->exists();
     }
 
     private function basePendentesAvaliacaoQuery(\DateTimeInterface $dataCorte): \Illuminate\Database\Eloquent\Builder

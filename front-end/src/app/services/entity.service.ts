@@ -73,7 +73,7 @@ export class EntityService {
     this.lex = injector.get<LexicalService>(LexicalService);
     this.list = [
       { collection: 'Adesao', icon: 'bi bi-universal-access-circle', label: "Adesão" },
-      { collection: 'Afastamento', codigo: 'MOD_AFT', table: 'afastamentos', campo: 'observacoes', icon: 'bi bi-toggle-off', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), label: "Afastamento", selectRoute: { route: ['gestao', 'afastamento'] } },
+      { collection: 'Afastamento', codigo: 'MOD_OCOR', table: 'afastamentos', campo: 'observacoes', icon: 'bi bi-toggle-off', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), label: "Afastamento", selectRoute: { route: ['gestao', 'afastamento'] } },
       { collection: 'Atividade', codigo: 'MOD_ATV', table: 'atividades', campo: 'descricao', icon: 'bi bi-activity', dao: injector.get<AtividadeDaoService>(AtividadeDaoService), label: "Atividade", selectRoute: { route: ['gestao', 'atividade'] } },
       { collection: 'AtividadeTarefa', table: 'atividades_tarefas', campo: 'atividade_id', icon: '', dao: injector.get<AtividadeTarefaDaoService>(AtividadeTarefaDaoService), label: "Tarefa da Atividade" },
       { collection: 'CadeiaValor', codigo: 'MOD_CADV', table: 'cadeias_valores', campo: 'nome', icon: 'bi bi-bar-chart-steps', dao: injector.get<CadeiaValorDaoService>(CadeiaValorDaoService), label: "Cadeia de Valor", selectRoute: { route: ['gestao', 'cadeia-valor'] } },
