@@ -1,4 +1,4 @@
-/*M!999999\- enable the sandbox mode */ 
+/*M!999999\- enable the sandbox mode */
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -22,6 +22,7 @@ CREATE TABLE `afastamentos` (
   PRIMARY KEY (`id`),
   KEY `afastamentos_usuario_id_foreign` (`usuario_id`),
   KEY `afastamentos_tipo_motivo_afastamento_id_foreign` (`tipo_motivo_afastamento_id`),
+  KEY `idx_afastamentos_usuario_data` (`usuario_id`,`data_inicio`,`data_fim`),
   CONSTRAINT `afastamentos_tipo_motivo_afastamento_id_foreign` FOREIGN KEY (`tipo_motivo_afastamento_id`) REFERENCES `tipos_motivos_afastamentos` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `afastamentos_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -336,6 +337,33 @@ CREATE TABLE `capacidades_tecnicas` (
   PRIMARY KEY (`id`),
   KEY `capacidades_tecnicas_area_tematica_id_foreign` (`area_tematica_id`),
   CONSTRAINT `capacidades_tecnicas_area_tematica_id_foreign` FOREIGN KEY (`area_tematica_id`) REFERENCES `areas_tematicas` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `cargas_individuais_siape_relatorios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `cargas_individuais_siape_relatorios` (
+  `id` char(36) NOT NULL,
+  `processamento_id` char(36) NOT NULL,
+  `tipo` varchar(20) NOT NULL,
+  `chave` varchar(50) NOT NULL,
+  `status` varchar(20) NOT NULL,
+  `entrada_valida` tinyint(1) NOT NULL DEFAULT 0,
+  `mensagem_usuario` text DEFAULT NULL,
+  `orientacoes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`orientacoes`)),
+  `secoes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`secoes`)),
+  `solicitante_id` char(36) DEFAULT NULL,
+  `processado_em` datetime NOT NULL,
+  `expira_em` datetime DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ci_siape_rel_processamento_unique` (`processamento_id`),
+  KEY `ci_siape_rel_tipo_chave_idx` (`tipo`,`chave`),
+  KEY `ci_siape_rel_processado_idx` (`processado_em`),
+  KEY `ci_siape_rel_expira_idx` (`expira_em`),
+  KEY `ci_siape_rel_solicitante_idx` (`solicitante_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `cargos`;
@@ -706,7 +734,7 @@ CREATE TABLE `entidades` (
   `notificacoes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Configurações das notificações (Se envia e-mail, whatsapp, tipos, templates)' CHECK (json_valid(`notificacoes`)),
   `forma_contagem_carga_horaria` enum('DIA','SEMANA','MES') NOT NULL DEFAULT 'DIA' COMMENT 'Forma de contagem padrão da carga horária',
   `expediente` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '{"domingo":[],"segunda":[],"terca":[],"quarta":[],"quinta":[],"sexta":[],"sabado":[],"especial":[]}' COMMENT 'Configuração de expediente' CHECK (json_valid(`expediente`)),
-  `tipo_modalidade_id` char(36) DEFAULT NULL,
+  `modalidade_pgd_padrao` varchar(50) DEFAULT NULL,
   `cidade_id` char(36) DEFAULT NULL,
   `gestor_id` char(36) DEFAULT NULL,
   `gestor_substituto_id` char(36) DEFAULT NULL,
@@ -715,14 +743,12 @@ CREATE TABLE `entidades` (
   `habilitar_relatos_siape` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `entidades_sigla_unique` (`sigla`),
-  KEY `entidades_tipo_modalidade_id_foreign` (`tipo_modalidade_id`),
   KEY `entidades_cidade_id_foreign` (`cidade_id`),
   KEY `entidades_gestor_id_foreign` (`gestor_id`),
   KEY `entidades_gestor_substituto_id_foreign` (`gestor_substituto_id`),
   CONSTRAINT `entidades_cidade_id_foreign` FOREIGN KEY (`cidade_id`) REFERENCES `cidades` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `entidades_gestor_id_foreign` FOREIGN KEY (`gestor_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `entidades_gestor_substituto_id_foreign` FOREIGN KEY (`gestor_substituto_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `entidades_tipo_modalidade_id_foreign` FOREIGN KEY (`tipo_modalidade_id`) REFERENCES `tipos_modalidades` (`id`) ON UPDATE CASCADE
+  CONSTRAINT `entidades_gestor_substituto_id_foreign` FOREIGN KEY (`gestor_substituto_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `entregas`;
@@ -743,50 +769,6 @@ CREATE TABLE `entregas` (
   PRIMARY KEY (`id`),
   KEY `entregas_unidade_id_foreign` (`unidade_id`),
   CONSTRAINT `entregas_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `envio_itens`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `envio_itens` (
-  `id` char(36) NOT NULL,
-  `envio_id` char(36) NOT NULL,
-  `tipo` enum('participante','trabalho','entrega') NOT NULL,
-  `uid` char(36) NOT NULL,
-  `fonte` int(11) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `sucesso` tinyint(1) NOT NULL DEFAULT 0,
-  `erros` text DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `envio_itens_envio_id_foreign` (`envio_id`),
-  CONSTRAINT `envio_itens_envio_id_foreign` FOREIGN KEY (`envio_id`) REFERENCES `envios` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `envios`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `envios` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `finished_at` timestamp NULL DEFAULT NULL,
-  `sucesso` tinyint(1) NOT NULL DEFAULT 0,
-  `erros` text DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `qtde_participantes_sucessos` int(11) NOT NULL DEFAULT 0,
-  `qtde_participantes_falhas` int(11) NOT NULL DEFAULT 0,
-  `qtde_entregas_sucessos` int(11) NOT NULL DEFAULT 0,
-  `qtde_entregas_falhas` int(11) NOT NULL DEFAULT 0,
-  `qtde_trabalhos_sucessos` int(11) NOT NULL DEFAULT 0,
-  `qtde_trabalhos_falhas` int(11) NOT NULL DEFAULT 0,
-  `numero` bigint(20) unsigned NOT NULL,
-  `qtde_participantes_aptos` int(11) NOT NULL DEFAULT 0,
-  `qtde_entregas_aptos` int(11) NOT NULL DEFAULT 0,
-  `qtde_trabalhos_aptos` int(11) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `envios_numero_unique` (`numero`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `favoritos`;
@@ -826,6 +808,7 @@ CREATE TABLE `feriados` (
   PRIMARY KEY (`id`),
   KEY `feriados_entidade_id_foreign` (`entidade_id`),
   KEY `feriados_cidade_id_foreign` (`cidade_id`),
+  KEY `idx_feriados_data` (`ano`,`mes`,`dia`),
   CONSTRAINT `feriados_cidade_id_foreign` FOREIGN KEY (`cidade_id`) REFERENCES `cidades` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `feriados_entidade_id_foreign` FOREIGN KEY (`entidade_id`) REFERENCES `entidades` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1387,6 +1370,10 @@ CREATE TABLE `planos_entregas` (
   `okr_id` char(36) DEFAULT NULL,
   `data_envio_api_pgd` timestamp NULL DEFAULT NULL,
   `avaliado_at` date DEFAULT NULL COMMENT 'Data em que o plano teve seu status alterado para AVALIADO',
+  `data_agendamento_envio` timestamp NULL DEFAULT NULL COMMENT 'Data do agendamento para envio para a API',
+  `data_tentativa_envio` timestamp NULL DEFAULT NULL COMMENT 'Data da Ultima Tentativa de Envio',
+  `log_envio` text DEFAULT NULL,
+  `data_conclusao_envio` timestamp NULL DEFAULT NULL COMMENT 'Data em que o envio foi concluído com sucesso na API PGD',
   PRIMARY KEY (`id`),
   UNIQUE KEY `planos_entregas_numero_unique` (`numero`),
   KEY `planos_entregas_planejamento_id_foreign` (`planejamento_id`),
@@ -1397,6 +1384,7 @@ CREATE TABLE `planos_entregas` (
   KEY `planos_entregas_criacao_usuario_id_foreign` (`criacao_usuario_id`),
   KEY `planos_entregas_avaliacao_id_foreign` (`avaliacao_id`),
   KEY `planos_entregas_okr_id_foreign` (`okr_id`),
+  KEY `planos_entregas_data_agendamento_envio_index` (`data_agendamento_envio`),
   CONSTRAINT `planos_entregas_avaliacao_id_foreign` FOREIGN KEY (`avaliacao_id`) REFERENCES `avaliacoes` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_entregas_cadeia_valor_id_foreign` FOREIGN KEY (`cadeia_valor_id`) REFERENCES `cadeias_valores` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_entregas_criacao_usuario_id_foreign` FOREIGN KEY (`criacao_usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
@@ -1438,7 +1426,6 @@ CREATE TABLE `planos_entregas_entregas` (
   KEY `planos_entregas_entregas_entrega_pai_id_foreign` (`entrega_pai_id`),
   KEY `planos_entregas_entregas_unidade_id_foreign` (`unidade_id`),
   CONSTRAINT `planos_entregas_entregas_entrega_id_foreign` FOREIGN KEY (`entrega_id`) REFERENCES `entregas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `planos_entregas_entregas_entrega_pai_id_foreign` FOREIGN KEY (`entrega_pai_id`) REFERENCES `planos_entregas_entregas` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_entregas_entregas_plano_entrega_id_foreign` FOREIGN KEY (`plano_entrega_id`) REFERENCES `planos_entregas` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_entregas_entregas_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1557,24 +1544,27 @@ CREATE TABLE `planos_trabalhos` (
   `programa_id` char(36) NOT NULL,
   `usuario_id` char(36) NOT NULL,
   `unidade_id` char(36) NOT NULL,
-  `tipo_modalidade_id` char(36) NOT NULL,
+  `modalidade_pgd` varchar(50) DEFAULT NULL,
   `criacao_usuario_id` char(36) NOT NULL,
   `documento_id` char(36) DEFAULT NULL,
   `criterios_avaliacao` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT json_array() COMMENT 'Critérios para avaliação' CHECK (json_valid(`criterios_avaliacao`)),
   `data_envio_api_pgd` timestamp NULL DEFAULT NULL,
   `avaliado_at` date DEFAULT NULL COMMENT 'Data em que todos os planos_trabalhos_consolidacoes tiveram o status alterado para AVALIADO',
+  `data_agendamento_envio` timestamp NULL DEFAULT NULL COMMENT 'Data do agendamento para envio para a API',
+  `data_tentativa_envio` timestamp NULL DEFAULT NULL COMMENT 'Data da Ultima Tentativa de Envio',
+  `log_envio` text DEFAULT NULL,
+  `data_conclusao_envio` timestamp NULL DEFAULT NULL COMMENT 'Data em que o envio foi concluído com sucesso na API PGD',
   PRIMARY KEY (`id`),
   UNIQUE KEY `planos_trabalhos_numero_unique` (`numero`),
   KEY `planos_trabalhos_programa_id_foreign` (`programa_id`),
   KEY `planos_trabalhos_usuario_id_foreign` (`usuario_id`),
   KEY `planos_trabalhos_unidade_id_foreign` (`unidade_id`),
-  KEY `planos_trabalhos_tipo_modalidade_id_foreign` (`tipo_modalidade_id`),
   KEY `planos_trabalhos_criacao_usuario_id_foreign` (`criacao_usuario_id`),
   KEY `planos_trabalhos_documento_id_foreign` (`documento_id`),
+  KEY `planos_trabalhos_data_agendamento_envio_index` (`data_agendamento_envio`),
   CONSTRAINT `planos_trabalhos_criacao_usuario_id_foreign` FOREIGN KEY (`criacao_usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_trabalhos_documento_id_foreign` FOREIGN KEY (`documento_id`) REFERENCES `documentos` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_trabalhos_programa_id_foreign` FOREIGN KEY (`programa_id`) REFERENCES `programas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `planos_trabalhos_tipo_modalidade_id_foreign` FOREIGN KEY (`tipo_modalidade_id`) REFERENCES `tipos_modalidades` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_trabalhos_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planos_trabalhos_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1590,7 +1580,7 @@ CREATE TABLE `planos_trabalhos_consolidacoes` (
   `data_inicio` date NOT NULL COMMENT 'Data inicial da consolidacão',
   `data_fim` date NOT NULL COMMENT 'Data final da consolidação',
   `data_conclusao` datetime DEFAULT NULL COMMENT 'Data da conclusão (usado como referência para o snapshot das atividades)',
-  `status` enum('AGUARDANDO_REGISTRO','INCLUIDO','CONCLUIDO','AVALIADO') NOT NULL DEFAULT 'AGUARDANDO_REGISTRO' COMMENT 'Status atual da consolidação',
+  `status` enum('INCLUIDO','CONCLUIDO','AVALIADO') NOT NULL DEFAULT 'INCLUIDO' COMMENT 'Status atual da consolidação',
   `plano_trabalho_id` char(36) NOT NULL,
   `avaliacao_id` char(36) DEFAULT NULL,
   `justificativa_conclusao` text DEFAULT NULL,
@@ -2126,7 +2116,7 @@ CREATE TABLE `questionarios_perguntas` (
   `tipo` enum('EMOJI','SELECT','MULTI_SELECT','TEXT','TEXT_AREA','TIMER','DATE_TIME','NUMBER','RATE','SWITCH','RADIO','RADIO_INLINE','RADIO_BUTTON','CHECK','SEARCH') DEFAULT NULL,
   `criado_versao` int(11) NOT NULL COMMENT 'Versão do Questionario que foi criada a pergunta',
   `deletado_versao` int(11) DEFAULT NULL COMMENT 'Versão do Questionario que foi deletada a pergunta',
-  `respostas_possiveis` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Respostas possiveis para a pergunta(DC2Type:json)' CHECK (json_valid(`respostas_possiveis`)),
+  `respostas_possiveis` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Respostas possiveis para a pergunta' CHECK (json_valid(`respostas_possiveis`)),
   `questionario_id` char(36) NOT NULL,
   `origem_id` char(36) DEFAULT NULL,
   `codigo` text DEFAULT NULL,
@@ -2544,38 +2534,6 @@ CREATE TABLE `tipos_justificativas` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `tipos_modalidades`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tipos_modalidades` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome da modalidade',
-  `exige_pedagio` tinyint(1) NOT NULL DEFAULT 0,
-  `plano_trabalho_calcula_horas` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Se o plano de trabalho calcula horas (considerando a carga horária e os dias)',
-  `atividade_tempo_despendido` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Se calcula tempo despendido na atividade',
-  `atividade_esforco` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Se utiliza esforço (tempo para execução) na atividade',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `tipos_modalidades_siape`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tipos_modalidades_siape` (
-  `id` char(36) NOT NULL,
-  `tipo_modalidade_id` char(36) DEFAULT NULL,
-  `nome` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `tipos_modalidades_siape_tipo_modalidade_id_foreign` (`tipo_modalidade_id`),
-  KEY `tipos_modalidades_siape_nome_index` (`nome`),
-  CONSTRAINT `tipos_modalidades_siape_tipo_modalidade_id_foreign` FOREIGN KEY (`tipo_modalidade_id`) REFERENCES `tipos_modalidades` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `tipos_motivos_afastamentos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
@@ -2761,7 +2719,7 @@ CREATE TABLE `usuarios` (
   `email` varchar(100) NOT NULL COMMENT 'E-mail do usuário',
   `nome` varchar(256) NOT NULL COMMENT 'Nome do usuário',
   `password` varchar(255) DEFAULT NULL COMMENT 'Senha do usuário',
-  `cpf` varchar(14) NOT NULL COMMENT 'CPF do usuário',
+  `cpf` varchar(14) NOT NULL,
   `matricula` varchar(50) DEFAULT NULL COMMENT 'Matrícula funcional do usuário',
   `apelido` varchar(255) DEFAULT NULL COMMENT 'Apelido/Nome de guerra/Nome social',
   `telefone` varchar(50) DEFAULT NULL COMMENT 'Telefone do usuário',
@@ -2794,28 +2752,20 @@ CREATE TABLE `usuarios` (
   `tipo_pedagio` tinyint(3) unsigned DEFAULT NULL,
   `nome_jornada` varchar(100) DEFAULT NULL COMMENT 'Codigo da Jornada',
   `cod_jornada` int(11) DEFAULT NULL COMMENT 'Nome da Jornada',
-  `tipo_modalidade_id` char(36) NOT NULL COMMENT 'Modalidade do Usuário no PGD(DC2Type:guid)',
+  `modalidade_pgd` varchar(50) DEFAULT NULL COMMENT 'Modalidade do Usuário no PGD',
   `participa_pgd` enum('sim','não') NOT NULL COMMENT 'Indica se o usuário participa do PGD.',
   `ident_unica` varchar(50) DEFAULT NULL COMMENT 'Identificador único do usuário',
+  `data_agendamento_envio` timestamp NULL DEFAULT NULL COMMENT 'Data do agendamento para envio do usuário para a API PGD',
+  `data_tentativa_envio` timestamp NULL DEFAULT NULL COMMENT 'Data da Ultima Tentativa de Envio',
+  `log_envio` text DEFAULT NULL,
+  `data_conclusao_envio` timestamp NULL DEFAULT NULL COMMENT 'Data em que o envio foi concluído com sucesso na API PGD',
   PRIMARY KEY (`id`),
   UNIQUE KEY `usuarios_email_unique` (`email`),
   UNIQUE KEY `usuarios_matricula_unique` (`matricula`),
   KEY `usuarios_perfil_id_foreign` (`perfil_id`),
-  KEY `usuarios_tipo_modalidade_id_foreign` (`tipo_modalidade_id`),
-  CONSTRAINT `usuarios_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfis` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `usuarios_tipo_modalidade_id_foreign` FOREIGN KEY (`tipo_modalidade_id`) REFERENCES `tipos_modalidades` (`id`) ON UPDATE CASCADE
+  CONSTRAINT `usuarios_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfis` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-DROP TABLE IF EXISTS `view_api_pgd`;
-/*!50001 DROP VIEW IF EXISTS `view_api_pgd`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8mb4;
-/*!50001 CREATE VIEW `view_api_pgd` AS SELECT
- 1 AS `id`,
-  1 AS `tipo`,
-  1 AS `json_audit`,
-  1 AS `fonte` */;
-SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `view_relatorio_plano_entrega`;
 /*!50001 DROP VIEW IF EXISTS `view_relatorio_plano_entrega`*/;
 SET @saved_cs_client     = @@character_set_client;
@@ -2853,6 +2803,7 @@ SET character_set_client = utf8mb4;
   1 AS `participanteNome`,
   1 AS `unidadeHierarquia`,
   1 AS `unidadeSigla`,
+  1 AS `modalidade_pgd`,
   1 AS `tipo_modalidade_id`,
   1 AS `tipoModalidadeNome`,
   1 AS `duracao`,
@@ -2874,6 +2825,7 @@ SET character_set_client = utf8mb4;
   1 AS `participanteNome`,
   1 AS `unidadeHierarquia`,
   1 AS `unidadeSigla`,
+  1 AS `modalidade_pgd`,
   1 AS `tipo_modalidade_id`,
   1 AS `tipoModalidadeNome`,
   1 AS `duracao`,
@@ -2917,16 +2869,6 @@ SET character_set_client = utf8mb4;
   1 AS `json_audit`,
   1 AS `fonte` */;
 SET character_set_client = @saved_cs_client;
-DROP TABLE IF EXISTS `vw_pgd_planos_trabalho`;
-/*!50001 DROP VIEW IF EXISTS `vw_pgd_planos_trabalho`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8mb4;
-/*!50001 CREATE VIEW `vw_pgd_planos_trabalho` AS SELECT
- 1 AS `id`,
-  1 AS `tipo`,
-  1 AS `json_audit`,
-  1 AS `fonte` */;
-SET character_set_client = @saved_cs_client;
 DROP TABLE IF EXISTS `vw_pgd_usuarios`;
 /*!50001 DROP VIEW IF EXISTS `vw_pgd_usuarios`*/;
 SET @saved_cs_client     = @@character_set_client;
@@ -2937,6 +2879,190 @@ SET character_set_client = utf8mb4;
   1 AS `json_audit`,
   1 AS `fonte` */;
 SET character_set_client = @saved_cs_client;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP FUNCTION IF EXISTS `fn_calcular_dias_uteis` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `fn_calcular_dias_uteis`(p_data_inicio DATE,
+    p_data_fim DATE,
+    p_unidade_id CHAR(36)) RETURNS int(11)
+    DETERMINISTIC
+BEGIN
+    DECLARE v_dias_uteis INT;
+
+    WITH RECURSIVE
+    anos AS (
+        SELECT YEAR(p_data_inicio) AS ano
+        UNION ALL
+        SELECT ano + 1 FROM anos WHERE ano < YEAR(p_data_fim)
+    ),
+    dias AS (
+        SELECT DATE(p_data_inicio) AS data
+        UNION ALL
+        SELECT DATE_ADD(data, INTERVAL 1 DAY)
+        FROM dias
+        WHERE data < DATE(p_data_fim)
+    ),
+    feriados_validos AS (
+        SELECT
+            f.tipoDia,
+            f.dia,
+            f.mes,
+            f.ano,
+            f.recorrente,
+            f.abrangencia,
+            CASE
+                WHEN f.recorrente = 1 AND f.tipoDia = 'MES'
+                    THEN DATE(CONCAT(a.ano, '-', LPAD(f.mes, 2, '0'), '-', LPAD(f.dia, 2, '0')))
+                WHEN f.recorrente = 0 AND f.tipoDia = 'MES'
+                    THEN DATE(CONCAT(f.ano, '-', LPAD(f.mes, 2, '0'), '-', LPAD(f.dia, 2, '0')))
+                ELSE NULL
+            END AS data_feriado
+        FROM feriados f
+        LEFT JOIN anos a ON f.recorrente = 1
+        WHERE
+            (
+                f.abrangencia = 'NACIONAL'
+                OR (
+                    f.abrangencia = 'ESTADUAL'
+                    AND f.uf = (
+                        SELECT cid.uf
+                        FROM unidades uni
+                        INNER JOIN cidades cid ON cid.id = uni.cidade_id
+                        WHERE uni.id = p_unidade_id
+                    )
+                )
+                OR (
+                    f.abrangencia = 'MUNICIPAL'
+                    AND f.cidade_id = (
+                        SELECT cidade_id
+                        FROM unidades
+                        WHERE id = p_unidade_id
+                    )
+                )
+            )
+            AND (
+                f.recorrente = 1
+                OR (f.ano BETWEEN YEAR(p_data_inicio) AND YEAR(p_data_fim))
+            )
+    )
+    SELECT COUNT(*) INTO v_dias_uteis
+    FROM dias d
+    WHERE DAYOFWEEK(d.data) NOT IN (1, 7)
+      AND NOT EXISTS (
+        SELECT 1
+        FROM feriados_validos f
+        WHERE
+            (
+                f.tipoDia = 'MES'
+                AND d.data = f.data_feriado
+            )
+            OR (
+                f.tipoDia = 'SEMANA'
+                AND DAYOFWEEK(d.data) = f.dia
+            )
+      );
+
+    RETURN v_dias_uteis;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP FUNCTION IF EXISTS `fn_data_pascoa` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `fn_data_pascoa`(ano INT) RETURNS date
+    DETERMINISTIC
+BEGIN
+  DECLARE a INT;
+  DECLARE b INT;
+  DECLARE c INT;
+  DECLARE d INT;
+  DECLARE e INT;
+  DECLARE f INT;
+  DECLARE g INT;
+  DECLARE h INT;
+  DECLARE i INT;
+  DECLARE k INT;
+  DECLARE l INT;
+  DECLARE m INT;
+  DECLARE dia INT;
+  DECLARE mes INT;
+
+  SET a = ano % 19;
+  SET b = FLOOR(ano / 100);
+  SET c = ano % 100;
+  SET d = FLOOR(b / 4);
+  SET e = b % 4;
+  SET f = FLOOR((b + 8) / 25);
+  SET g = FLOOR((b - f + 1) / 3);
+  SET h = (19 * a + b - d - g + 15) % 30;
+  SET i = FLOOR(c / 4);
+  SET k = c % 4;
+  SET l = (32 + 2 * e + 2 * i - h - k) % 7;
+  SET m = FLOOR((a + 11 * h + 22 * l) / 451);
+  SET mes = FLOOR((h + l - 7 * m + 114) / 31);
+  SET dia = ((h + l - 7 * m + 114) % 31) + 1;
+
+  RETURN STR_TO_DATE(CONCAT(ano, '-', mes, '-', dia), '%Y-%m-%d');
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP FUNCTION IF EXISTS `fn_obter_processo_sequencia` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `fn_obter_processo_sequencia`(processo_id CHAR(36)) RETURNS varchar(255) CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci
+    DETERMINISTIC
+BEGIN
+                DECLARE seq_result VARCHAR(255) DEFAULT '';
+                DECLARE seq_atual VARCHAR(255);
+                DECLARE pai_atual CHAR(36);
+
+                SELECT sequencia, processo_pai_id INTO seq_atual, pai_atual
+                FROM cadeias_valores_processos
+                WHERE id = processo_id;
+
+                WHILE pai_atual IS NOT NULL DO
+                    SET seq_result = CONCAT(seq_atual, '.', seq_result);
+
+                    SELECT sequencia, processo_pai_id INTO seq_atual, pai_atual
+                    FROM cadeias_valores_processos
+                    WHERE id = pai_atual;
+                END WHILE;
+
+                SET seq_result = CONCAT(seq_atual, '.', seq_result);
+                RETURN TRIM(TRAILING '.' FROM seq_result);
+            END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 /*!50003 DROP FUNCTION IF EXISTS `fn_obter_unidade_hierarquia` */;
@@ -2983,189 +3109,56 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `get_view_api_pgd_by_interval` */;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP FUNCTION IF EXISTS `obter_sequencia` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `get_view_api_pgd_by_interval`(IN days_interval INT)
+CREATE DEFINER=`root`@`%` FUNCTION `obter_sequencia`(processo_id CHAR(36)) RETURNS varchar(255) CHARSET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci
+    DETERMINISTIC
 BEGIN
-                SELECT
-                    usuarios.id AS id,
-                    "participante" AS tipo,
-                    NULL AS json_audit
-                FROM usuarios
-                INNER JOIN programas_participantes ON usuarios.id = programas_participantes.usuario_id
-                WHERE data_envio_api_pgd IS NULL
-                UNION ALL
-                SELECT
-                    id AS id,
-                    "trabalho" AS tipo,
-                    NULL AS json_audit
-                FROM planos_trabalhos
-                WHERE data_envio_api_pgd IS NULL
-                UNION ALL
-                SELECT
-                    id AS id,
-                    "entrega" AS tipo,
-                    NULL AS json_audit
-                FROM planos_entregas
-                WHERE data_envio_api_pgd IS NULL
-                UNION ALL
-                SELECT
-                    t1.id AS id,
-                    t1.tipo AS tipo,
-                    t1.json_audit AS json_audit
-                FROM
-                    (
-                        SELECT d.usuario_id AS id,
-                        "participante" AS tipo,
-                        JSON_ARRAYAGG(a.id) AS json_audit
-                        FROM audits a
-                        JOIN programas_participantes d ON a.auditable_id = d.id
-                        WHERE a.auditable_type LIKE "%ProgramaParticipante"
-                        AND DATE(a.created_at) >= CURDATE() - INTERVAL days_interval DAY
-                        AND (a.tags = "ERRO" OR a.tags IS NULL)
-                        GROUP BY d.usuario_id
-                    ) t1
-                UNION ALL
-                SELECT
-                    t2.id AS id,
-                    t2.tipo AS tipo,
-                    t2.json_audit AS json_audit
-                FROM
-                    (
-                        SELECT d.usuario_id AS id,
-                        "participante" AS tipo,
-                        JSON_ARRAYAGG(a.id) AS json_audit
-                        FROM audits a
-                        JOIN documentos_assinaturas d ON a.auditable_id = d.id
-                        WHERE a.auditable_type LIKE "%DocumentoAssinatura"
-                        AND DATE(a.created_at) >= CURDATE() - INTERVAL days_interval DAY
-                        AND (a.tags = "ERRO" OR a.tags IS NULL)
-                        GROUP BY d.usuario_id
-                    ) t2
-                UNION ALL
-                SELECT
-                    t3.id AS id,
-                    t3.tipo AS tipo,
-                    t3.json_audit AS json_audit
-                FROM
-                    (
-                        SELECT d.id AS id,
-                        "participante" AS tipo,
-                        JSON_ARRAYAGG(a.id) AS json_audit
-                        FROM audits a
-                        JOIN usuarios d ON a.auditable_id = d.id
-                        WHERE a.auditable_type LIKE "%Usuario"
-                        AND DATE(a.created_at) >= CURDATE() - INTERVAL days_interval DAY
-                        AND (a.tags = "ERRO" OR a.tags IS NULL)
-                        GROUP BY d.id
-                    ) t3
-                UNION ALL
-                SELECT
-                    t4.id AS id,
-                    t4.tipo AS tipo,
-                    t4.json_audit AS json_audit
-                FROM
-                    (
-                        SELECT d.id AS id,
-                        "trabalho" AS tipo,
-                        JSON_ARRAYAGG(a.id) AS json_audit
-                        FROM audits a
-                        JOIN planos_trabalhos d ON a.auditable_id = d.id
-                        WHERE a.auditable_type LIKE "%PlanoTrabalho"
-                        AND DATE(a.created_at) >= CURDATE() - INTERVAL days_interval DAY
-                        AND (a.tags = "ERRO" OR a.tags IS NULL)
-                        GROUP BY d.id
-                    ) t4
-                UNION ALL
-                SELECT
-                    t5.id AS id,
-                    t5.tipo AS tipo,
-                    t5.json_audit AS json_audit
-                FROM
-                    (
-                        SELECT d.plano_trabalho_id AS id,
-                        "trabalho" AS tipo,
-                        JSON_ARRAYAGG(a.id) AS json_audit
-                        FROM audits a
-                        JOIN planos_trabalhos_consolidacoes d ON a.auditable_id = d.id
-                        WHERE a.auditable_type LIKE "%PlanoTrabalhoConsolidacao"
-                        AND DATE(a.created_at) >= CURDATE() - INTERVAL days_interval DAY
-                        AND (a.tags = "ERRO" OR a.tags IS NULL)
-                        GROUP BY d.plano_trabalho_id
-                    ) t5
-                UNION ALL
-                SELECT
-                    t6.id AS id,
-                    t6.tipo AS tipo,
-                    t6.json_audit AS json_audit
-                FROM
-                    (
-                        SELECT d.plano_trabalho_id AS id,
-                        "trabalho" AS tipo,
-                        JSON_ARRAYAGG(a.id) AS json_audit
-                        FROM audits a
-                        JOIN planos_trabalhos_entregas d ON a.auditable_id = d.id
-                        WHERE a.auditable_type LIKE "%PlanoTrabalhoEntrega"
-                        AND DATE(a.created_at) >= CURDATE() - INTERVAL days_interval DAY
-                        AND (a.tags = "ERRO" OR a.tags IS NULL)
-                        GROUP BY d.plano_trabalho_id
-                    ) t6
-                UNION ALL
-                SELECT
-                    t7.id AS id,
-                    t7.tipo AS tipo,
-                    t7.json_audit AS json_audit
-                FROM
-                    (
-                        SELECT d.id AS id,
-                        "entrega" AS tipo,
-                        JSON_ARRAYAGG(a.id) AS json_audit
-                        FROM audits a
-                        JOIN planos_entregas d ON a.auditable_id = d.id
-                        WHERE a.auditable_type LIKE "%PlanoEntrega"
-                        AND DATE(a.created_at) >= CURDATE() - INTERVAL days_interval DAY
-                        AND (a.tags = "ERRO" OR a.tags IS NULL)
-                        GROUP BY d.id
-                    ) t7
-                UNION ALL
-                SELECT
-                    t8.id AS id,
-                    t8.tipo AS tipo,
-                    t8.json_audit AS json_audit
-                FROM
-                    (
-                        SELECT d.plano_entrega_id AS id,
-                        "entrega" AS tipo,
-                        JSON_ARRAYAGG(a.id) AS json_audit
-                        FROM audits a
-                        JOIN planos_entregas_entregas d ON a.auditable_id = d.id
-                        WHERE a.auditable_type LIKE "%PlanoEntregaEntrega"
-                        AND DATE(a.created_at) >= CURDATE() - INTERVAL days_interval DAY
-                        AND (a.tags = "ERRO" OR a.tags IS NULL)
-                        GROUP BY d.plano_entrega_id
-                    ) t8;
-            END ;;
+    DECLARE seq_result VARCHAR(255) DEFAULT '';
+    DECLARE seq_atual VARCHAR(255);
+    DECLARE pai_atual CHAR(36);
+
+    -- Inicializa com os dados do processo informado
+    SELECT sequencia, processo_pai_id INTO seq_atual, pai_atual
+    FROM petrvs_mgi.cadeias_valores_processos
+    WHERE id = processo_id;
+
+    -- Constrói a sequência subindo na hierarquia
+    WHILE pai_atual IS NOT NULL DO
+        -- Adiciona o valor atual ao início da sequência
+        SET seq_result = CONCAT(seq_atual, '.', seq_result);
+
+        -- Busca o próximo nível da hierarquia
+        SELECT sequencia, processo_pai_id INTO seq_atual, pai_atual
+        FROM petrvs_mgi.cadeias_valores_processos
+        WHERE id = pai_atual;
+    END WHILE;
+
+    -- Adiciona o último elemento (raiz) e remove o ponto final se houver
+    SET seq_result = CONCAT(seq_atual, '.', seq_result);
+    RETURN TRIM(TRAILING '.' FROM seq_result);
+END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sequence_atividade_numero` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_atividade_numero`()
 BEGIN
@@ -3178,14 +3171,14 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sequence_documento_numero` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_documento_numero`()
 BEGIN
@@ -3198,34 +3191,34 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sequence_notificacao_numero` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_notificacao_numero`()
 BEGIN
-                UPDATE sequences SET notificacao_numero = notificacao_numero + 1;
+	UPDATE sequences SET notificacao_numero = notificacao_numero + 1;
                 SELECT notificacao_numero AS number FROM sequences;
-            END ;;
+END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sequence_plano_entrega_numero` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_plano_entrega_numero`()
 BEGIN
@@ -3238,14 +3231,14 @@ DELIMITER ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `sequence_plano_trabalho_numero` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8mb4 */ ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_plano_trabalho_numero`()
 BEGIN
@@ -3257,66 +3250,13 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `sequence_projeto_numero` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `sequence_projeto_numero`()
-BEGIN
-                UPDATE sequences SET projeto_numero = GREATEST(IFNULL((SELECT MAX(numero) FROM projetos), 1), projeto_numero + 1);
-                SELECT projeto_numero AS number FROM sequences;
-            END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `sequence_template_numero` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8mb4 */ ;
-/*!50003 SET character_set_results = utf8mb4 */ ;
-/*!50003 SET collation_connection  = utf8mb4_unicode_ci */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `sequence_template_numero`()
-BEGIN
-                UPDATE sequences SET template_numero = template_numero + 1;
-                SELECT template_numero AS number FROM sequences;
-            END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50001 DROP VIEW IF EXISTS `view_api_pgd`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_api_pgd` AS select distinct `usuarios`.`id` AS `id`,'participante' AS `tipo`,NULL AS `json_audit`,1 AS `fonte` from (`usuarios` join `programas_participantes` on(`usuarios`.`id` = `programas_participantes`.`usuario_id`)) where `usuarios`.`data_envio_api_pgd` is null and `usuarios`.`deleted_at` is null and `programas_participantes`.`deleted_at` is null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `usuarios`.`id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `usuarios`.`id` and `da`.`deleted_at` is null limit 1) union all select distinct `planos_trabalhos`.`id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,NULL AS `json_audit`,2 AS `fonte` from `planos_trabalhos` where `planos_trabalhos`.`deleted_at` is null and `planos_trabalhos`.`data_envio_api_pgd` is null and `planos_trabalhos`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') union all select distinct `planos_entregas`.`id` AS `id`,'entrega' collate utf8mb4_unicode_ci AS `tipo`,NULL AS `json_audit`,3 AS `fonte` from `planos_entregas` where `planos_entregas`.`deleted_at` is null and `planos_entregas`.`data_envio_api_pgd` is null and `planos_entregas`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') union all select distinct `t1`.`id` AS `id`,`t1`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t1`.`json_audit` AS `json_audit`,4 AS `fonte` from (select `d`.`usuario_id` AS `id`,'participante' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (`audits` `a` join `programas_participantes` `d` on(`a`.`auditable_id` = `d`.`id`)) where `a`.`auditable_type` like '%ProgramaParticipante' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `d`.`usuario_id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `d`.`usuario_id` and `da`.`deleted_at` is null limit 1) group by `d`.`usuario_id`) `t1` union all select distinct `t2`.`id` AS `id`,`t2`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t2`.`json_audit` AS `json_audit`,5 AS `fonte` from (select `d`.`usuario_id` AS `id`,'participante' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (`audits` `a` join `documentos_assinaturas` `d` on(`a`.`auditable_id` = `d`.`id`)) where `a`.`auditable_type` like '%DocumentoAssinatura' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `d`.`usuario_id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `d`.`usuario_id` and `da`.`deleted_at` is null limit 1) group by `d`.`usuario_id`) `t2` union all select distinct `t3`.`id` AS `id`,`t3`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t3`.`json_audit` AS `json_audit`,6 AS `fonte` from (select `d`.`id` AS `id`,'participante' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (`audits` `a` join `usuarios` `d` on(`a`.`auditable_id` = `d`.`id`)) where `a`.`auditable_type` like '%Usuario' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `d`.`id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `d`.`id` and `da`.`deleted_at` is null limit 1) and exists(select 1 from `programas_participantes` `part` where `part`.`usuario_id` = `d`.`id` and `part`.`deleted_at` is null limit 1) group by `d`.`id`) `t3` union all select distinct `t4`.`id` AS `id`,`t4`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t4`.`json_audit` AS `json_audit`,7 AS `fonte` from (select `d`.`id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (`audits` `a` join `planos_trabalhos` `d` on(`a`.`auditable_id` = `d`.`id`)) where `a`.`auditable_type` like '%PlanoTrabalho' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and `d`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') group by `d`.`id`) `t4` union all select distinct `t5`.`id` AS `id`,`t5`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t5`.`json_audit` AS `json_audit`,8 AS `fonte` from (select `d`.`plano_trabalho_id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `planos_trabalhos_consolidacoes` `d` on(`a`.`auditable_id` = `d`.`id`)) join `planos_trabalhos` `pt` on(`pt`.`id` = `d`.`plano_trabalho_id`)) where `a`.`auditable_type` like '%PlanoTrabalhoConsolidacao' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and `pt`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `pt`.`deleted_at` is null group by `d`.`plano_trabalho_id`) `t5` union all select distinct `t6`.`id` AS `id`,`t6`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t6`.`json_audit` AS `json_audit`,9 AS `fonte` from (select `d`.`plano_trabalho_id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `planos_trabalhos_entregas` `d` on(`a`.`auditable_id` = `d`.`id`)) join `planos_trabalhos` `pt` on(`pt`.`id` = `d`.`plano_trabalho_id`)) where `a`.`auditable_type` like '%PlanoTrabalhoEntrega' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and `pt`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `pt`.`deleted_at` is null group by `d`.`plano_trabalho_id`) `t6` union all select distinct `t7`.`id` AS `id`,`t7`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t7`.`json_audit` AS `json_audit`,10 AS `fonte` from (select `d`.`id` AS `id`,'entrega' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `planos_entregas` `d` on(`a`.`auditable_id` = `d`.`id`)) join `programas` `p` on(`p`.`id` = `d`.`programa_id`)) where `a`.`auditable_type` like '%PlanoEntrega' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `d`.`deleted_at` is null and `p`.`deleted_at` is null group by `d`.`id`) `t7` union all select distinct `t8`.`id` AS `id`,`t8`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t8`.`json_audit` AS `json_audit`,11 AS `fonte` from (select `d`.`plano_entrega_id` AS `id`,'entrega' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (((`audits` `a` join `planos_entregas_entregas` `d` on(`a`.`auditable_id` = `d`.`id`)) join `planos_entregas` `pe` on(`pe`.`id` = `d`.`plano_entrega_id`)) join `programas` `p` on(`p`.`id` = `pe`.`programa_id`)) where `a`.`auditable_type` like '%PlanoEntregaEntrega' and (`a`.`tags` like '%ERRO%' or `a`.`tags` is null) and `d`.`deleted_at` is null and `pe`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `p`.`deleted_at` is null group by `d`.`plano_entrega_id`) `t8` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!50001 DROP VIEW IF EXISTS `view_relatorio_plano_entrega`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `view_relatorio_plano_entrega` AS with status_homolog_pe as (select `sj`.`plano_entrega_id` AS `plano_entrega_id`,`sj`.`created_at` AS `created_at`,row_number() over ( partition by `sj`.`plano_entrega_id` order by `sj`.`created_at` desc) AS `rn` from (`status_justificativas` `sj` join `planos_entregas` `pe` on(`pe`.`id` = `sj`.`plano_entrega_id`)) where `sj`.`codigo` = 'ATIVO' and `sj`.`deleted_at` is null and `pe`.`status` not in ('INCLUIDO','CANCELADO','HOMOLOGANDO')), status_concluido_pe as (select `sj`.`plano_entrega_id` AS `plano_entrega_id`,`sj`.`created_at` AS `created_at`,row_number() over ( partition by `sj`.`plano_entrega_id` order by `sj`.`created_at` desc) AS `rn` from (`status_justificativas` `sj` join `planos_entregas` `pe` on(`pe`.`id` = `sj`.`plano_entrega_id`)) where `sj`.`codigo` = 'CONCLUIDO' and `sj`.`deleted_at` is null and `pe`.`status` not in ('INCLUIDO','CANCELADO','SUSPENSO','ATIVO'))select `pe`.`id` collate utf8mb4_unicode_ci AS `id`,`pe`.`numero` AS `numero`,`pe`.`status` collate utf8mb4_unicode_ci AS `status`,`pe`.`nome` collate utf8mb4_unicode_ci AS `entregaNome`,cast(`pe`.`data_inicio` as date) AS `dataInicio`,cast(`pe`.`data_fim` as date) AS `dataFim`,`pe`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`fn_obter_unidade_hierarquia`(`pe`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,to_days(`pe`.`data_fim`) - to_days(`pe`.`data_inicio`) + 1 AS `duracao`,cast(`a`.`data_avaliacao` as date) AS `data_avaliacao`,json_unquote(`a`.`nota`) AS `nota`,case when `pe`.`status` = 'CANCELADO' or `pe`.`status` = 'SUSPENSO' then NULL else case when `a`.`data_avaliacao` is null then case when `scpe`.`created_at` is null or curdate() <= cast(`scpe`.`created_at` as date) + interval 30 day then 'Aguardando' else 'Atrasado' end else case when cast(`a`.`data_avaliacao` as date) <= cast(`scpe`.`created_at` as date) + interval 30 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_avaliacao`,case when `pe`.`status` = 'CANCELADO' or `pe`.`status` = 'SUSPENSO' then NULL else case when `scpe`.`created_at` is null then 'Pendente' else 'Registrado' end end collate utf8mb4_unicode_ci AS `situacao_conclusao`,cast(`spe`.`created_at` as date) AS `data_homologacao`,cast(`scpe`.`created_at` as date) AS `data_conclusao` from ((((`planos_entregas` `pe` join `unidades` `uni` on(`uni`.`id` = `pe`.`unidade_id`)) left join `avaliacoes` `a` on(`a`.`id` = `pe`.`avaliacao_id` and `a`.`deleted_at` is null)) left join `status_homolog_pe` `spe` on(`spe`.`plano_entrega_id` = `pe`.`id` and `spe`.`rn` = 1)) left join `status_concluido_pe` `scpe` on(`scpe`.`plano_entrega_id` = `pe`.`id` and `scpe`.`rn` = 1)) where `pe`.`deleted_at` is null */;
@@ -3329,10 +3269,10 @@ DELIMITER ;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_relatorio_plano_trabalho` AS select `pt`.`id` collate utf8mb4_unicode_ci AS `id`,`pt`.`id` collate utf8mb4_unicode_ci AS `plano_trabalho_id`,`pt`.`numero` collate utf8mb4_unicode_ci AS `numero`,`pt`.`status` collate utf8mb4_unicode_ci AS `status`,cast(`pt`.`data_inicio` as date) AS `dataInicio`,cast(`pt`.`data_fim` as date) AS `dataFim`,`pt`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`usu`.`nome` collate utf8mb4_unicode_ci AS `participanteNome`,`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,`pt`.`tipo_modalidade_id` collate utf8mb4_unicode_ci AS `tipo_modalidade_id`,`tm`.`nome` collate utf8mb4_unicode_ci AS `tipoModalidadeNome`,to_days(`pt`.`data_fim`) - to_days(`pt`.`data_inicio`) + 1 AS `duracao`,coalesce((select sum(coalesce(`pte`.`forca_trabalho`,0) * 1) from `planos_trabalhos_entregas` `pte` where `pte`.`plano_trabalho_id` = `pt`.`id` and `pte`.`deleted_at` is null),0) AS `chd`,(select count(0) from `planos_trabalhos_consolidacoes` `ptc` where `ptc`.`plano_trabalho_id` = `pt`.`id` and `ptc`.`deleted_at` is null) AS `qtdePeriodosAvaliativos` from (((`planos_trabalhos` `pt` join `usuarios` `usu` on(`usu`.`id` = `pt`.`usuario_id`)) join `unidades` `uni` on(`uni`.`id` = `pt`.`unidade_id`)) join `tipos_modalidades` `tm` on(`tm`.`id` = `pt`.`tipo_modalidade_id`)) where `pt`.`deleted_at` is null */;
+/*!50001 VIEW `view_relatorio_plano_trabalho` AS select `pt`.`id` collate utf8mb4_unicode_ci AS `id`,`pt`.`id` collate utf8mb4_unicode_ci AS `plano_trabalho_id`,`pt`.`numero` collate utf8mb4_unicode_ci AS `numero`,`pt`.`status` collate utf8mb4_unicode_ci AS `status`,cast(`pt`.`data_inicio` as date) AS `dataInicio`,cast(`pt`.`data_fim` as date) AS `dataFim`,`pt`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`usu`.`nome` collate utf8mb4_unicode_ci AS `participanteNome`,`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `modalidade_pgd`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `tipo_modalidade_id`,case when `pt`.`modalidade_pgd` is null or `pt`.`modalidade_pgd` = '' then 'Não definida' when lower(`pt`.`modalidade_pgd`) = 'presencial' then 'Presencial' when lower(`pt`.`modalidade_pgd`) = 'parcial' then 'Teletrabalho (Parcial)' when lower(`pt`.`modalidade_pgd`) = 'integral' then 'Teletrabalho (Integral)' when lower(`pt`.`modalidade_pgd`) = 'no exterior substituicao' then 'Teletrabalho no exterior (substituição)' when lower(`pt`.`modalidade_pgd`) = 'no exterior' then 'Teletrabalho no exterior' else `pt`.`modalidade_pgd` end collate utf8mb4_unicode_ci AS `tipoModalidadeNome`,to_days(`pt`.`data_fim`) - to_days(`pt`.`data_inicio`) + 1 AS `duracao`,coalesce((select sum(coalesce(`pte`.`forca_trabalho`,0) * 1) from `planos_trabalhos_entregas` `pte` where `pte`.`plano_trabalho_id` = `pt`.`id` and `pte`.`deleted_at` is null),0) AS `chd`,(select count(0) from `planos_trabalhos_consolidacoes` `ptc` where `ptc`.`plano_trabalho_id` = `pt`.`id` and `ptc`.`deleted_at` is null) AS `qtdePeriodosAvaliativos` from ((`planos_trabalhos` `pt` join `usuarios` `usu` on(`usu`.`id` = `pt`.`usuario_id`)) join `unidades` `uni` on(`uni`.`id` = `pt`.`unidade_id`)) where `pt`.`deleted_at` is null */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3342,10 +3282,10 @@ DELIMITER ;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_relatorio_plano_trabalho_detalhado` AS select `ptc`.`id` collate utf8mb4_unicode_ci AS `id`,`pt`.`id` collate utf8mb4_unicode_ci AS `plano_trabalho_id`,`pt`.`numero` collate utf8mb4_unicode_ci AS `numero`,`pt`.`status` collate utf8mb4_unicode_ci AS `status`,cast(`pt`.`data_inicio` as date) AS `dataInicio`,cast(`pt`.`data_fim` as date) AS `dataFim`,`pt`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`usu`.`nome` collate utf8mb4_unicode_ci AS `participanteNome`,`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,`pt`.`tipo_modalidade_id` collate utf8mb4_unicode_ci AS `tipo_modalidade_id`,`tm`.`nome` collate utf8mb4_unicode_ci AS `tipoModalidadeNome`,to_days(`pt`.`data_fim`) - to_days(`pt`.`data_inicio`) + 1 AS `duracao`,ifnull((select sum(ifnull(`pte`.`forca_trabalho`,0) * 1) from `planos_trabalhos_entregas` `pte` where `pte`.`plano_trabalho_id` = `pt`.`id` and `pte`.`deleted_at` is null),0) AS `chd`,cast(`ptc`.`data_inicio` as date) AS `data_inicio_avaliativo`,cast(`ptc`.`data_fim` as date) AS `data_fim_avaliativo`,cast(`ptc`.`data_conclusao` as date) AS `data_conclusao`,cast(`aval_antiga`.`data_avaliacao` as date) AS `data_avaliacao`,json_unquote(`aval_antiga`.`nota`) AS `nota`,`aval_antiga`.`data_recurso` AS `data_recurso`,case when `a`.`id` = `aval_antiga`.`id` then NULL else cast(`a`.`data_avaliacao` as date) end AS `data_reavaliacao`,case when `a`.`id` = `aval_antiga`.`id` then NULL else json_unquote(`a`.`nota`) end AS `nota_reavaliacao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `ptc`.`data_conclusao` is null then case when curdate() <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Aguardando' else 'Atrasado' end else case when cast(`ptc`.`data_conclusao` as date) <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_execucao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `a`.`data_avaliacao` is null then case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Aguardando' else 'Atrasado' end else case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_avaliacao` from ((((((`planos_trabalhos` `pt` join `usuarios` `usu` on(`usu`.`id` = `pt`.`usuario_id`)) join `unidades` `uni` on(`uni`.`id` = `pt`.`unidade_id`)) join `tipos_modalidades` `tm` on(`tm`.`id` = `pt`.`tipo_modalidade_id`)) left join `planos_trabalhos_consolidacoes` `ptc` on(`ptc`.`plano_trabalho_id` = `pt`.`id` and `ptc`.`deleted_at` is null)) left join `avaliacoes` `a` on(`a`.`id` = `ptc`.`avaliacao_id` and `a`.`deleted_at` is null)) left join (select `a1`.`id` AS `id`,`a1`.`data_avaliacao` AS `data_avaliacao`,`a1`.`nota` AS `nota`,`a1`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,`a1`.`data_recurso` AS `data_recurso`,`a1`.`rn` AS `rn` from (select `avaliacoes`.`id` AS `id`,`avaliacoes`.`data_avaliacao` AS `data_avaliacao`,`avaliacoes`.`nota` AS `nota`,`avaliacoes`.`data_recurso` AS `data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,row_number() over ( partition by `avaliacoes`.`plano_trabalho_consolidacao_id` order by `avaliacoes`.`data_avaliacao`) AS `rn` from `avaliacoes` where `avaliacoes`.`deleted_at` is null group by `avaliacoes`.`id`,`avaliacoes`.`data_avaliacao`,`avaliacoes`.`nota`,`avaliacoes`.`data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id`) `a1` where `a1`.`rn` = 1) `aval_antiga` on(`aval_antiga`.`plano_trabalho_consolidacao_id` = `ptc`.`id`)) where `pt`.`deleted_at` is null */;
+/*!50001 VIEW `view_relatorio_plano_trabalho_detalhado` AS select `ptc`.`id` collate utf8mb4_unicode_ci AS `id`,`pt`.`id` collate utf8mb4_unicode_ci AS `plano_trabalho_id`,`pt`.`numero` collate utf8mb4_unicode_ci AS `numero`,`pt`.`status` collate utf8mb4_unicode_ci AS `status`,cast(`pt`.`data_inicio` as date) AS `dataInicio`,cast(`pt`.`data_fim` as date) AS `dataFim`,`pt`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`usu`.`nome` collate utf8mb4_unicode_ci AS `participanteNome`,`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `modalidade_pgd`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `tipo_modalidade_id`,case when `pt`.`modalidade_pgd` is null or `pt`.`modalidade_pgd` = '' then 'Não definida' when lower(`pt`.`modalidade_pgd`) = 'presencial' then 'Presencial' when lower(`pt`.`modalidade_pgd`) = 'parcial' then 'Teletrabalho (Parcial)' when lower(`pt`.`modalidade_pgd`) = 'integral' then 'Teletrabalho (Integral)' when lower(`pt`.`modalidade_pgd`) = 'no exterior substituicao' then 'Teletrabalho no exterior (substituição)' when lower(`pt`.`modalidade_pgd`) = 'no exterior' then 'Teletrabalho no exterior' else `pt`.`modalidade_pgd` end collate utf8mb4_unicode_ci AS `tipoModalidadeNome`,to_days(`pt`.`data_fim`) - to_days(`pt`.`data_inicio`) + 1 AS `duracao`,ifnull((select sum(ifnull(`pte`.`forca_trabalho`,0) * 1) from `planos_trabalhos_entregas` `pte` where `pte`.`plano_trabalho_id` = `pt`.`id` and `pte`.`deleted_at` is null),0) AS `chd`,cast(`ptc`.`data_inicio` as date) AS `data_inicio_avaliativo`,cast(`ptc`.`data_fim` as date) AS `data_fim_avaliativo`,cast(`ptc`.`data_conclusao` as date) AS `data_conclusao`,cast(`aval_antiga`.`data_avaliacao` as date) AS `data_avaliacao`,json_unquote(`aval_antiga`.`nota`) AS `nota`,`aval_antiga`.`data_recurso` AS `data_recurso`,case when `a`.`id` = `aval_antiga`.`id` then NULL else cast(`a`.`data_avaliacao` as date) end AS `data_reavaliacao`,case when `a`.`id` = `aval_antiga`.`id` then NULL else json_unquote(`a`.`nota`) end AS `nota_reavaliacao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `ptc`.`data_conclusao` is null then case when curdate() <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Aguardando' else 'Atrasado' end else case when cast(`ptc`.`data_conclusao` as date) <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_execucao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `a`.`data_avaliacao` is null then case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Aguardando' else 'Atrasado' end else case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_avaliacao` from (((((`planos_trabalhos` `pt` join `usuarios` `usu` on(`usu`.`id` = `pt`.`usuario_id`)) join `unidades` `uni` on(`uni`.`id` = `pt`.`unidade_id`)) left join `planos_trabalhos_consolidacoes` `ptc` on(`ptc`.`plano_trabalho_id` = `pt`.`id` and `ptc`.`deleted_at` is null)) left join `avaliacoes` `a` on(`a`.`id` = `ptc`.`avaliacao_id` and `a`.`deleted_at` is null)) left join (select `a1`.`id` AS `id`,`a1`.`data_avaliacao` AS `data_avaliacao`,`a1`.`nota` AS `nota`,`a1`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,`a1`.`data_recurso` AS `data_recurso`,`a1`.`rn` AS `rn` from (select `avaliacoes`.`id` AS `id`,`avaliacoes`.`data_avaliacao` AS `data_avaliacao`,`avaliacoes`.`nota` AS `nota`,`avaliacoes`.`data_recurso` AS `data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,row_number() over ( partition by `avaliacoes`.`plano_trabalho_consolidacao_id` order by `avaliacoes`.`data_avaliacao`) AS `rn` from `avaliacoes` where `avaliacoes`.`deleted_at` is null group by `avaliacoes`.`id`,`avaliacoes`.`data_avaliacao`,`avaliacoes`.`nota`,`avaliacoes`.`data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id`) `a1` where `a1`.`rn` = 1) `aval_antiga` on(`aval_antiga`.`plano_trabalho_consolidacao_id` = `ptc`.`id`)) where `pt`.`deleted_at` is null */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3355,10 +3295,10 @@ DELIMITER ;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_relatorio_unidades` AS with chefias as (select `ui`.`unidade_id` AS `unidade_id`,`ui`.`usuario_id` AS `usuario_id` from (`unidades_integrantes` `ui` join `unidades_integrantes_atribuicoes` `uia` on(`uia`.`unidade_integrante_id` = `ui`.`id` and `uia`.`deleted_at` is null and `uia`.`atribuicao` collate utf8mb4_unicode_ci = 'GESTOR')) where `ui`.`deleted_at` is null), contadores as (select `ui`.`unidade_id` AS `unidade_id`,count(distinct `ui`.`usuario_id`) AS `totalAgentes`,sum(case when `uia`.`atribuicao` collate utf8mb4_unicode_ci = 'GESTOR_SUBSTITUTO' then 1 else 0 end) AS `totalSubstitutos`,sum(case when `uia`.`atribuicao` collate utf8mb4_unicode_ci = 'GESTOR_DELEGADO' then 1 else 0 end) AS `totalDelegados`,sum(case when `uia`.`atribuicao` collate utf8mb4_unicode_ci = 'COLABORADOR' then 1 else 0 end) AS `totalVinculados` from (`unidades_integrantes` `ui` left join `unidades_integrantes_atribuicoes` `uia` on(`uia`.`unidade_integrante_id` = `ui`.`id` and `uia`.`deleted_at` is null)) where `ui`.`deleted_at` is null and `uia`.`atribuicao` is not null group by `ui`.`unidade_id`)select distinct `uni`.`id` collate utf8mb4_unicode_ci AS `id`,`uni`.`id` collate utf8mb4_unicode_ci AS `unidade_id`,`fn_obter_unidade_hierarquia`(`uni`.`id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`nome` collate utf8mb4_unicode_ci AS `nome`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `sigla`,`uni`.`codigo` collate utf8mb4_unicode_ci AS `codigo`,case when `uni`.`instituidora` = 1 then 'Instituidora' collate utf8mb4_unicode_ci else 'Executora' collate utf8mb4_unicode_ci end AS `tipo`,`chefia`.`id` collate utf8mb4_unicode_ci AS `chefiaId`,`chefia`.`nome` collate utf8mb4_unicode_ci AS `chefiaNome`,`contadores`.`totalVinculados` AS `totalVinculados`,`contadores`.`totalSubstitutos` AS `totalSubstitutos`,`contadores`.`totalDelegados` AS `totalDelegados` from (((`unidades` `uni` left join `chefias` on(`chefias`.`unidade_id` = `uni`.`id`)) left join `usuarios` `chefia` on(`chefia`.`id` = `chefias`.`usuario_id`)) left join `contadores` on(`contadores`.`unidade_id` = `uni`.`id`)) where `uni`.`deleted_at` is null order by 2 */;
+/*!50001 VIEW `view_relatorio_unidades` AS with chefias as (select `ui`.`unidade_id` AS `unidade_id`,`ui`.`usuario_id` AS `usuario_id` from (`unidades_integrantes` `ui` join `unidades_integrantes_atribuicoes` `uia` on(`uia`.`unidade_integrante_id` = `ui`.`id` and `uia`.`deleted_at` is null and `uia`.`atribuicao` collate utf8mb4_unicode_ci = 'GESTOR')) where `ui`.`deleted_at` is null), contadores as (select `ui`.`unidade_id` AS `unidade_id`,count(distinct `ui`.`usuario_id`) AS `totalAgentes`,sum(case when `uia`.`atribuicao` collate utf8mb4_unicode_ci = 'GESTOR_SUBSTITUTO' then 1 else 0 end) AS `totalSubstitutos`,sum(case when `uia`.`atribuicao` collate utf8mb4_unicode_ci = 'GESTOR_DELEGADO' then 1 else 0 end) AS `totalDelegados`,sum(case when `uia`.`atribuicao` collate utf8mb4_unicode_ci = 'COLABORADOR' then 1 else 0 end) AS `totalVinculados` from (`unidades_integrantes` `ui` left join `unidades_integrantes_atribuicoes` `uia` on(`uia`.`unidade_integrante_id` = `ui`.`id` and `uia`.`deleted_at` is null)) where `ui`.`deleted_at` is null and `uia`.`atribuicao` is not null group by `ui`.`unidade_id`)select distinct `uni`.`id` collate utf8mb4_unicode_ci AS `id`,`uni`.`id` collate utf8mb4_unicode_ci AS `unidade_id`,`fn_obter_unidade_hierarquia`(`uni`.`id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`nome` collate utf8mb4_unicode_ci AS `nome`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `sigla`,`uni`.`codigo` collate utf8mb4_unicode_ci AS `codigo`,case when `uni`.`instituidora` = 1 then 'Instituidora' collate utf8mb4_unicode_ci else 'Executora' collate utf8mb4_unicode_ci end AS `tipo`,`chefia`.`id` collate utf8mb4_unicode_ci AS `chefiaId`,`chefia`.`nome` collate utf8mb4_unicode_ci AS `chefiaNome`,`contadores`.`totalVinculados` AS `totalVinculados`,`contadores`.`totalSubstitutos` AS `totalSubstitutos`,`contadores`.`totalDelegados` AS `totalDelegados` from (((`unidades` `uni` left join `chefias` on(`chefias`.`unidade_id` = `uni`.`id`)) left join `usuarios` `chefia` on(`chefia`.`id` = `chefias`.`usuario_id`)) left join `contadores` on(`contadores`.`unidade_id` = `uni`.`id`)) where `uni`.`deleted_at` is null order by `uni`.`id` collate utf8mb4_unicode_ci */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3368,23 +3308,10 @@ DELIMITER ;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `vw_pgd_planos_entrega` AS select distinct `planos_entregas`.`id` AS `id`,'entrega' collate utf8mb4_unicode_ci AS `tipo`,NULL AS `json_audit`,1 AS `fonte` from `planos_entregas` where `planos_entregas`.`deleted_at` is null and `planos_entregas`.`data_envio_api_pgd` is null and `planos_entregas`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') union all select distinct `t7`.`id` AS `id`,`t7`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t7`.`json_audit` AS `json_audit`,2 AS `fonte` from (select `d`.`id` AS `id`,'entrega' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `planos_entregas` `d` on(`a`.`auditable_id` = `d`.`id`)) join `programas` `p` on(`p`.`id` = `d`.`programa_id`)) where `a`.`auditable_type` = 'App\\Models\\PlanoEntrega' and `a`.`enviado` = 0 and `d`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `d`.`deleted_at` is null and `p`.`deleted_at` is null and `d`.`data_envio_api_pgd` is not null group by `d`.`id`) `t7` union all select distinct `t8`.`id` AS `id`,`t8`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t8`.`json_audit` AS `json_audit`,3 AS `fonte` from (select `d`.`plano_entrega_id` AS `id`,'entrega' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (((`audits` `a` join `planos_entregas_entregas` `d` on(`a`.`auditable_id` = `d`.`id`)) join `planos_entregas` `pe` on(`pe`.`id` = `d`.`plano_entrega_id`)) join `programas` `p` on(`p`.`id` = `pe`.`programa_id`)) where `a`.`auditable_type` = 'App\\Models\\PlanoEntregaEntrega' and `a`.`enviado` = 0 and `d`.`deleted_at` is null and `pe`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `pe`.`data_envio_api_pgd` is not null and `p`.`deleted_at` is null group by `d`.`plano_entrega_id`) `t8` union all select distinct `t9`.`id` AS `id`,`t9`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t9`.`json_audit` AS `json_audit`,4 AS `fonte` from (select `pe`.`id` AS `id`,'entrega' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `avaliacoes` `ava` on(`ava`.`id` = `a`.`auditable_id`)) join `planos_entregas` `pe` on(`pe`.`id` = `ava`.`plano_entrega_id`)) where `a`.`auditable_type` = 'App\\Models\\Avaliacao' and `a`.`enviado` = 0 and `pe`.`deleted_at` is null and `pe`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `pe`.`data_envio_api_pgd` is not null group by `pe`.`id`) `t9` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-/*!50001 DROP VIEW IF EXISTS `vw_pgd_planos_trabalho`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `vw_pgd_planos_trabalho` AS select distinct `planos_trabalhos`.`id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,NULL AS `json_audit`,2 AS `fonte` from `planos_trabalhos` where `planos_trabalhos`.`deleted_at` is null and `planos_trabalhos`.`data_envio_api_pgd` is null and `planos_trabalhos`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') union all select distinct `t4`.`id` AS `id`,`t4`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t4`.`json_audit` AS `json_audit`,7 AS `fonte` from (select `d`.`id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (`audits` `a` join `planos_trabalhos` `d` on(`a`.`auditable_id` = `d`.`id`)) where `a`.`auditable_type` = 'App\\Models\\PlanoTrabalho' and `a`.`enviado` = 0 and `d`.`deleted_at` is null and `d`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `d`.`data_envio_api_pgd` is not null group by `d`.`id`) `t4` union all select distinct `t5`.`id` AS `id`,`t5`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t5`.`json_audit` AS `json_audit`,8 AS `fonte` from (select `d`.`plano_trabalho_id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `planos_trabalhos_consolidacoes` `d` on(`a`.`auditable_id` = `d`.`id`)) join `planos_trabalhos` `pt` on(`pt`.`id` = `d`.`plano_trabalho_id`)) where `a`.`auditable_type` = 'App\\Models\\PlanoTrabalhoConsolidacao' and `a`.`enviado` = 0 and `d`.`deleted_at` is null and `pt`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `pt`.`deleted_at` is null and `pt`.`data_envio_api_pgd` is not null group by `d`.`plano_trabalho_id`) `t5` union all select distinct `t6`.`id` AS `id`,`t6`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t6`.`json_audit` AS `json_audit`,9 AS `fonte` from (select `d`.`plano_trabalho_id` AS `id`,'trabalho' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `planos_trabalhos_entregas` `d` on(`a`.`auditable_id` = `d`.`id`)) join `planos_trabalhos` `pt` on(`pt`.`id` = `d`.`plano_trabalho_id`)) where `a`.`auditable_type` = 'App\\Models\\PlanoTrabalhoEntrega' and `a`.`enviado` = 0 and `d`.`deleted_at` is null and `pt`.`status` in ('ATIVO','CONCLUIDO','AVALIADO') and `pt`.`deleted_at` is null and `pt`.`data_envio_api_pgd` is not null group by `d`.`plano_trabalho_id`) `t6` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -3394,7 +3321,7 @@ DELIMITER ;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
+/*!50001 SET collation_connection      = utf8mb4_uca1400_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `vw_pgd_usuarios` AS select distinct `usuarios`.`id` AS `id`,'participante' collate utf8mb4_unicode_ci AS `tipo`,NULL AS `json_audit`,1 AS `fonte` from (`usuarios` join `programas_participantes` on(`usuarios`.`id` = `programas_participantes`.`usuario_id`)) where `usuarios`.`data_envio_api_pgd` is null and `usuarios`.`deleted_at` is null and `programas_participantes`.`deleted_at` is null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `usuarios`.`id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `usuarios`.`id` and `da`.`deleted_at` is null limit 1) union all select distinct `t1`.`id` AS `id`,`t1`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t1`.`json_audit` AS `json_audit`,4 AS `fonte` from (select `d`.`usuario_id` AS `id`,'participante' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `programas_participantes` `d` on(`a`.`auditable_id` = `d`.`id`)) join `usuarios` `usu` on(`usu`.`id` = `d`.`usuario_id`)) where `a`.`auditable_type` = 'App\\Models\\ProgramaParticipante' and `a`.`enviado` = 0 and `d`.`deleted_at` is null and `usu`.`deleted_at` is null and `usu`.`data_envio_api_pgd` is not null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `d`.`usuario_id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `d`.`usuario_id` and `da`.`deleted_at` is null limit 1) group by `d`.`usuario_id`) `t1` union all select distinct `t2`.`id` AS `id`,`t2`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t2`.`json_audit` AS `json_audit`,5 AS `fonte` from (select `d`.`usuario_id` AS `id`,'participante' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from ((`audits` `a` join `documentos_assinaturas` `d` on(`a`.`auditable_id` = `d`.`id`)) join `usuarios` `usu` on(`usu`.`id` = `d`.`usuario_id`)) where `a`.`auditable_type` = 'App\\Models\\DocumentoAssinatura' and `a`.`enviado` = 0 and `d`.`deleted_at` is null and `usu`.`deleted_at` is null and `usu`.`data_envio_api_pgd` is not null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `d`.`usuario_id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `d`.`usuario_id` and `da`.`deleted_at` is null limit 1) group by `d`.`usuario_id`) `t2` union all select distinct `t3`.`id` AS `id`,`t3`.`tipo` collate utf8mb4_unicode_ci AS `tipo`,`t3`.`json_audit` AS `json_audit`,6 AS `fonte` from (select `d`.`id` AS `id`,'participante' collate utf8mb4_unicode_ci AS `tipo`,json_arrayagg(`a`.`id`) AS `json_audit` from (`audits` `a` join `usuarios` `d` on(`a`.`auditable_id` = `d`.`id`)) where `a`.`auditable_type` = 'App\\Models\\Usuario' and `a`.`enviado` = 0 and `d`.`deleted_at` is null and `d`.`deleted_at` is null and `d`.`data_envio_api_pgd` is not null and exists(select `pt`.`id` from `planos_trabalhos` `pt` where `pt`.`usuario_id` = `d`.`id` and `pt`.`deleted_at` is null limit 1) and exists(select 1 from `documentos_assinaturas` `da` where `da`.`usuario_id` = `d`.`id` and `da`.`deleted_at` is null limit 1) and exists(select 1 from `programas_participantes` `part` where `part`.`usuario_id` = `d`.`id` and `part`.`deleted_at` is null limit 1) group by `d`.`id`) `t3` */;
@@ -3408,8 +3335,8 @@ DELIMITER ;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
-/*M!999999\- enable the sandbox mode */ 
-set autocommit=0;
+/*M!999999\- enable the sandbox mode */
+SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (1,'2014_10_12_100000_create_password_resets_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (2,'2019_08_19_000000_create_failed_jobs_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (3,'2019_12_14_000001_create_personal_access_tokens_table',1);
@@ -3566,240 +3493,278 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (153,'2024_02_19_12
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (154,'2024_02_19_123500_alter_questionarios_perguntas_table_add_enum',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (155,'2024_02_29_145300_version_2_0_11',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (156,'2024_03_04_154734_drop_password_resets_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (157,'2024_03_04_155130_drop_failed_jobs_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (158,'2024_03_07_221717_rename_questionarios_respostas_to_questionarios_preenchimentos_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (159,'2024_03_07_221813_rename_questionarios_respostas_perguntas_to_questionarios_perguntas_respostas_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (160,'2024_03_07_222136_alter_questionarios_preenchimentos_table_rename_column',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (161,'2024_03_07_222240_alter_questionarios_perguntas_respostas_table_rename_column',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (162,'2024_03_08_105829_rename_curriculum_tables',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (163,'2024_03_08_145300_version_2_0_12',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (164,'2024_03_09_091845_rename_curriculums_to_curriculuns_tables',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (165,'2024_03_09_222240_alter_questionarios_perguntas_table_rename_column',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (166,'2024_03_13_153203_alter_curriculuns_profissionais_table_modify_centro_treinamento_id',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (167,'2024_03_15_105800_rename_materias_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (168,'2024_03_15_145500_alter_disciplinas_table_drop_columns',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (169,'2024_03_15_145700_alter_disciplinas_table_drop_fk_curso_id',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (170,'2024_03_18_153100_alter_historicos_docencias_internas_table_add_disciplina_id',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (171,'2024_03_19_123300_alter_questionarios_preenchimentos_table_ add_resumo_resposta',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (172,'2024_04_01_223840_deleta_usuarios_duplicados',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (173,'2024_04_03_164716_add_unique_constraint_to_cpf_column_in_usuarios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (174,'2024_04_05_090740_create_jobs_schedules_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (175,'2024_04_05_145300_version_2_0_13',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (176,'2024_04_11_154027_remove_servidores_duplicados_integracao_servidores_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (177,'2024_04_16_191452_deleta_integracao_servidores_duplicados_final',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (178,'2024_04_19_145300_version_2_0_14',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (179,'2024_05_01_213806_change_horario_column_in_jobs_schedules_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (180,'2024_05_07_170358_drop_jobs_schedules',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (181,'2024_05_16_165824_add_columns_integracao_servidores_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (182,'2024_05_16_184112_add_columns_to_usuarios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (183,'2024_05_17_195143_delete_all_data_integracao_servidores_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (184,'2024_05_27_104112_add_columns_to_tipos_motivos_afastamentos_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (185,'2024_05_29_155300_version_2_0_15',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (186,'2024_06_06_092311_add_tipo_avaliacao_nota_id_to_avaliacoes',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (187,'2024_06_18_131241_alter_column_matricula_usuarios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (188,'2024_07_01_155300_version_2_0_16',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (189,'2024_07_15_155300_version_2_0_17',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (190,'2024_07_17_163219_create_audits_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (191,'2024_07_29_151556_add_unidade_autorizadora_id_to_programas',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (192,'2024_07_30_092311_add_documento_id_to_programa_participantes',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (193,'2024_07_31_110002_alter_audits_add_message',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (194,'2024_07_31_230758_add_data_envio_api_pgd_to_usuarios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (195,'2024_07_31_230805_add_data_envio_api_pgd_to_planos_trabalhos_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (196,'2024_07_31_230811_add_data_envio_api_pgd_to_planos_entregas_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (197,'2024_07_31_232158_create_get_view_api_pgd_by_interval_procedure',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (198,'2024_08_01_220620_create_view_api_pgd',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (199,'2024_08_05_150754_delete_wrong_data_from_siape',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (200,'2024_08_14_113824_update_view_api',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (201,'2024_08_19_172734_add_cpf_columns_to_integracao_unidades_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (202,'2024_08_20_154929_truncate_unidades_integrantes_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (203,'2024_08_21_151217_create_produtos_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (204,'2024_08_21_151908_create_produto_produto_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (205,'2024_08_21_152557_create_produto_processo_cadeia_valor_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (206,'2024_08_22_161407_create_catalogo_produtos_servicos_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (207,'2024_08_28_234458_update_atribuicao_column_unidades_integrantes_atribuicoes_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (208,'2024_08_30_010751_alter_catalogo_add_softdelete',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (209,'2024_09_05_165918_alter_entidade_add_email',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (210,'2024_09_06_171107_create_catalogo_produtos_servicos_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (211,'2024_09_09_155300_version_2_1_0',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (212,'2024_09_10_171546_add_columns_to_table_produtos',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (213,'2024_09_10_172945_add_columns_to_table_produto_produto',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (214,'2024_09_12_095149_create_tipos_clientes_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (215,'2024_09_12_102456_create_clientes_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (216,'2024_09_12_103120_create_column_cliente_id_produtos_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (217,'2024_09_16_164326_alter_solucoes_add_soft_delete',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (218,'2024_09_17_155300_version_2_1_1',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (219,'2024_09_21_004302_alter_entidade_add_email_remetente',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (220,'2024_09_23_003649_alter_solucao_remove_responsavel',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (221,'2024_09_23_120945_add_solucao_ativo_inativo',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (222,'2024_09_27_113035_create_uorg_and_servidores_tables',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (223,'2024_09_27_192027_add_processado_to_siape_tables',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (224,'2024_09_30_155300_version_2_1_2',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (225,'2024_10_01_005430_update-view-api-pgd',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (226,'2024_10_01_164031_add_soft_deletes_to_siape_tables',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (227,'2024_10_01_200620_add_cpf_to_siape_tables',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (228,'2024_10_02_152622_alter-entidaide-nullify-email-remetente',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (229,'2024_10_03_105350_version2_1_3',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (230,'2024_10_04_105350_version2_2_0',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (231,'2024_10_04_183837_add_data_modificacao_to_siape_dados_u_o_r_g_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (232,'2024_10_04_185248_add_data_modificacao_to_siape_lista_servidores_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (233,'2024_10_05_001206_add_data_modificacao_to_siape_servidores_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (234,'2024_10_07_163151_create_envios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (235,'2024_10_07_204733_create_envio_itens_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (236,'2024_10_11_105350_version2_3_0',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (237,'2024_10_15_152144_truncate_siape_tables',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (238,'2024_10_17_102427_alter_fundamentacao_column_in_okrs_and_planejamentos_objetivos_tables',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (239,'2024_10_23_105350_version2_3_1',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (240,'2024_10_28_153550_alter-envio-add-counters',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (241,'2024_10_30_105432_alter-view-api-pgd-add-distinct',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (242,'2024_11_05_110341_version2_3_2',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (243,'2024_11_26_120241_create_entidade_emails',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (244,'2024_12_06_024703_create-produtos-solucoes',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (245,'2024_12_09_154000_create_entrega_produto_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (246,'2024_12_09_160237_create_solucoes_unidades_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (247,'2024_12_10_124944_delete_column_solucao_produtos_unidades_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (248,'2024_12_11_023845_alter_solucao_add_identificador',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (249,'2024_12_17_150819_update_view_api_p_g_d',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (250,'2024_12_18_130736_version2_3_3',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (251,'2024_12_26_043918_cria_vw_pg_usuarios',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (252,'2024_12_26_044218_cria_vw_pg_planos_entrega',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (253,'2024_12_26_044231_cria_vw_pg_planos_trabalho',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (254,'2024_12_26_192335_alter_envios_add_numero',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (255,'2024_12_29_172336_alter_audits_add_envio',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (256,'2024_12_30_112727_alter_envios_add_aptos',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (257,'2024_12_30_113155_update_views_p_g_d',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (258,'2025_01_03_130736_version2_3_4',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (259,'2025_01_09_130659_add_responsavel_id_to_produtos_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (260,'2025_01_10_153325_remove_tipo_from_produto_produto_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (261,'2025_01_13_154000_alter_entrega_produto_add_unique',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (262,'2025_01_14_104000_alter_entrega_produto_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (263,'2025_01_15_111048_alter_clientes_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (264,'2025_01_22_111048_alter_planos_entregas_entregas_produtos_entrega_id_foreign',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (265,'2025_01_22_152917_remove_unidades_raizes_duplicadas',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (266,'2025_01_22_171001_alter_entrega_produto_fk',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (267,'2025_01_23_183155_update_views_p_g_d',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (268,'2025_01_24_130736_version2_3_5',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (269,'2025_01_27_165145_add_usuario_externo_to_usuarios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (270,'2025_01_27_172336_update_perfil_usuarios',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (271,'2025_01_28_113017_version2_3_6',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (272,'2025_02_07_113017_version2_3_7',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (273,'2025_02_14_090945_add_isadmin_to_usuarios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (274,'2025_02_16_113017_version2_3_8',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (275,'2025_02_16_113017_version2_3_9',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (276,'2025_02_16_201118_add_expires_at_to_personal_access_tokens',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (277,'2025_02_25_004613_create_siape_blacklist_servidores_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (278,'2025_02_25_004614_create_siape_blacklist_unidades_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (279,'2025_02_27_024653_alter-produtos-produtos-insumos',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (280,'2025_02_27_153056_version2_3_10',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (281,'2025_02_28_171001_alter_cliente_tipo_cliente_fk',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (282,'2025_03_07_092117_fix_columns_unidade_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (283,'2025_03_13_153056_version2_3_11',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (284,'2025_03_24_153056_version2_3_12',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (285,'2025_03_28_153056_version2_3_13',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (286,'2025_04_01_153056_version2_3_14',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (287,'2025_04_03_102024_corrige-chefias',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (288,'2025_04_11_153056_version2_3_15',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (289,'2025_04_16_153056_version2_3_16',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (290,'2025_04_22_153056_version2_3_17',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (291,'2025_05_05_151156_remove_jornada_columns_from_integracao_servidores',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (292,'2025_05_05_153844_remove_jornada_columns_from_usuarios',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (293,'2025_05_12_153056_version2_3_18',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (294,'2025_05_16_153056_add_pedagio_usuarios',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (295,'2025_05_19_153056_version2_3_19',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (296,'2025_05_21_153056_add_controle_pedagio_tipo_modalidades',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (297,'2025_05_27_171756_version2_3_20',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (298,'2025_06_10_163440_add-fn-unidade-hierarquia',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (299,'2025_06_11_111456_version2_4_0',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (300,'2025_06_11_185237_create-view-relatorio-pt',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (301,'2025_06_13_111456_version2_4_1',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (302,'2025_06_14_172112_alter_avaliacao_add_data_recurso',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (303,'2025_06_30_114548_add_auditable_index_to_audits_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (304,'2025_07_01_185237_create-view-relatorio-pe',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (305,'2025_07_03_111456_version2_4_2',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (306,'2025_07_07_172059_delete_duplicate_data_unidade_integrante_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (307,'2025_07_08_101520_add_unique_usuario_unidade_to_unidades_integrantes',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (308,'2025_07_09_181025_add_inativado_to_siape_blacklist_servidores_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (309,'2025_07_21_111456_version2_5_0',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (310,'2025_07_24_144820_version2_5_1',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (311,'2025_07_24_165824_add_columns_integracao_servidores_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (312,'2025_07_24_184112_add_columns_to_usuarios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (313,'2025_07_25_101429_delete_usuarios_aposentados',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (314,'2025_07_25_144820_version2_5_2',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (315,'2025_07_28_182220_version2_5_3',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (316,'2025_07_29_112900_add_modalidade_integracao_servidores_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (317,'2025_07_29_112900_add_modalidade_to_usuarios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (318,'2025_07_31_140300_alter_integracao_servidor_table_add_participa_pgd',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (319,'2025_07_31_140300_alter_usuarios_table_add_participa_pgd',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (320,'2025_08_05_181626_alter-relatorio-pe',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (321,'2025_08_07_121607_alter-relatorio-pt-add-cancelados',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (322,'2025_08_07_152112_change_data_modificacao_integracao_servidores',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (323,'2025_08_08_120000_version2_6_0',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (324,'2025_08_08_121607_alter-relatorio-pe-collation',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (325,'2025_08_11_005908_alter-relatorio-pe-add-homologacao',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (326,'2025_08_13_110000_version2_6_1',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (327,'2025_08_13_115954_alter-relatorio-unidade-add-sigla',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (328,'2025_08_13_121607_update-relatorio-pe',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (329,'2025_08_13_121607_update-relatorio-pt-detalhado',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (330,'2025_08_13_185237_update-view-relatorio-pt',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (331,'2025_08_13_190000_add_situacao_siape_to_usuarios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (332,'2025_08_15_005908_alter-relatorio-pe-add-homologacao',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (333,'2025_08_19_204556_move_unique_constraint_from_cpf_to_matricula_usuarios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (334,'2025_08_20_005908_alter-relatorio-pe-ajuste-situacao',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (335,'2025_08_20_130050_create_tipo_modalidade_siape_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (336,'2025_08_20_add_ident_unica_column_to_tables',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (337,'2025_08_21_070300_alter_usuarios_table_add_modalidade_pgd_key',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (338,'2025_08_28_130000_version2_6_2',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (339,'2025_09_08_130000_version2_6_3',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (340,'2025_09_09_150000_version2_6_4',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (341,'2025_09_10_004615_add_codigo_to_siape_dados_uorg_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (342,'2025_09_10_123400_alter_usuarios_table_modalidade_pgd_nullable',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (343,'2025_09_11_120000_add_inativado_to_siape_blacklist_unidades_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (344,'2025_09_11_121000_add_data_inicio_inativacao_to_unidades_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (345,'2025_09_17_125821_alter-afastamentos-add-horas',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (346,'2025_09_22_150000_version2_6_5',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (347,'2025_09_26_022347_forcar_envios',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (348,'2025_09_29_150000_version2_7_0',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (349,'2025_10_01_093308_version2_7_1',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (350,'2025_10_02_093308_version2_7_2',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (351,'2025_10_03_022347_forcar_envios',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (352,'2025_10_06_093308_version2_7_3',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (353,'2025_10_07_100000_alter_usuarios_table_situacao_siape_not_null',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (354,'2025_10_09_090956_add_registro_execucao_to_planos_entregas_entregas_progressos_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (355,'2025_10_13_093308_version2_7_4',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (356,'2025_10_14_074111_delete_atribuicao_colaborador',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (357,'2025_10_14_074151_delete_atribuicao_colaborador_lotado',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (358,'2025_10_17_104519_update_usuario_externo_not_consulta',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (359,'2025_10_20_093308_version2_7_5',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (360,'2025_10_23_171448_add_temporaria_fields_to_unidade_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (361,'2025_10_24_172900_version2_7_6',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (362,'2025_10_28_104519_add_justificativa_conclusao_consolidacao',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (363,'2025_10_29_095011_add_unidade_executora_flag',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (364,'2025_10_29_134904_update_entidade_nomenclatura_unidade',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (365,'2025_10_29_172900_version2_7_7',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (366,'2025_10_30_151816_tenant_fix_matriculas_duplicadas',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (367,'2025_11_06_000000_tenant_fix_usuarios_duplicados_cpf_matricula',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (368,'2025_11_06_010000_tenant_fix_usuarios_matricula_vazia',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (369,'2025_11_10_172900_version2_7_8',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (370,'2025_11_11_113535_alter_statuses_planos_trabalhos_planos_entregas',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (371,'2025_11_13_015228_alter-entidades-add-habilitar-relatos',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (372,'2025_11_13_152800_add_avaliado_at_to_planos',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (373,'2025_11_17_140000_alter_siape_blacklist_servidores_add_matricula',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (374,'2025_11_17_172900_version2_8_0',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (375,'2025_11_18_172900_version2_8_1',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (376,'2025_11_24_172900_version2_8_2',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (377,'2025_12_01_172900_version2_8_3',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (378,'2025_12_03_172900_version2_9_0',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (379,'2025_12_05_172900_version2_9_1',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (380,'2025_12_05_173500_version2_9_2',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (381,'2025_12_09_000000_version2_9_3',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (382,'2025_12_09_173600_fix_usuarios_modalidade_pgd_from_cpf',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (383,'2025_12_09_212548_alter_usuarios_modalidade_pgd_to_tipo_modalidade_id',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (384,'2025_12_15_000000_version2_9_4',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (385,'2025_12_19_000000_version2_9_5',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (386,'2025_12_26_000000_version2_9_6',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (387,'2026_01_02_000000_version2_9_7',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (388,'2026_01_12_000000_version2_9_8',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (389,'2026_01_16_000000_version2_9_9',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (390,'2026_01_23_000000_version2_9_10',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (391,'2026_01_28_000000_version2_9_11',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (392,'2026_01_29_000000_version2_9_12',1);
-commit;
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (157,'2024_03_04_154937_create_orgao_central_exportacoes_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (158,'2024_03_04_155130_drop_failed_jobs_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (159,'2024_03_07_221717_rename_questionarios_respostas_to_questionarios_preenchimentos_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (160,'2024_03_07_221813_rename_questionarios_respostas_perguntas_to_questionarios_perguntas_respostas_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (161,'2024_03_07_222136_alter_questionarios_preenchimentos_table_rename_column',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (162,'2024_03_07_222240_alter_questionarios_perguntas_respostas_table_rename_column',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (163,'2024_03_08_105829_rename_curriculum_tables',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (164,'2024_03_08_145300_version_2_0_12',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (165,'2024_03_09_091845_rename_curriculums_to_curriculuns_tables',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (166,'2024_03_09_222240_alter_questionarios_perguntas_table_rename_column',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (167,'2024_03_13_153203_alter_curriculuns_profissionais_table_modify_centro_treinamento_id',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (168,'2024_03_15_105800_rename_materias_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (169,'2024_03_15_145500_alter_disciplinas_table_drop_columns',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (170,'2024_03_15_145700_alter_disciplinas_table_drop_fk_curso_id',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (171,'2024_03_18_153100_alter_historicos_docencias_internas_table_add_disciplina_id',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (172,'2024_03_19_123300_alter_questionarios_preenchimentos_table_ add_resumo_resposta',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (173,'2024_04_01_223840_deleta_usuarios_duplicados',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (174,'2024_04_03_164716_add_unique_constraint_to_cpf_column_in_usuarios_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (175,'2024_04_05_090740_create_jobs_schedules_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (176,'2024_04_05_145300_version_2_0_13',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (177,'2024_04_11_154027_remove_servidores_duplicados_integracao_servidores_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (178,'2024_04_16_191452_deleta_integracao_servidores_duplicados_final',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (179,'2024_04_19_145300_version_2_0_14',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (180,'2024_05_01_213806_change_horario_column_in_jobs_schedules_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (181,'2024_05_07_170358_drop_jobs_schedules',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (182,'2024_05_16_165824_add_columns_integracao_servidores_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (183,'2024_05_16_184112_add_columns_to_usuarios_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (184,'2024_05_17_195143_delete_all_data_integracao_servidores_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (185,'2024_05_27_104112_add_columns_to_tipos_motivos_afastamentos_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (186,'2024_05_29_155300_version_2_0_15',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (187,'2024_06_06_092311_add_tipo_avaliacao_nota_id_to_avaliacoes',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (188,'2019_09_15_000010_create_tenants_table',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (189,'2019_09_15_000020_create_domains_table',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (190,'2023_03_28_230334_create_sessions_table',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (191,'2023_06_15_163909_create_jobs_table',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (192,'2023_07_18_000010_create_tenants_logs_table',2);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (193,'2024_06_18_131241_alter_column_matricula_usuarios_table',3);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (194,'2024_07_01_155300_version_2_0_16',3);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (195,'2024_07_15_155300_version_2_0_17',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (196,'2024_07_17_163219_create_audits_table',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (197,'2024_07_29_151556_add_unidade_autorizadora_id_to_programas',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (198,'2024_07_30_092311_add_documento_id_to_programa_participantes',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (199,'2024_07_31_110002_alter_audits_add_message',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (200,'2024_07_31_230758_add_data_envio_api_pgd_to_usuarios_table',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (201,'2024_07_31_230805_add_data_envio_api_pgd_to_planos_trabalhos_table',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (202,'2024_07_31_230811_add_data_envio_api_pgd_to_planos_entregas_table',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (203,'2024_07_31_232158_create_get_view_api_pgd_by_interval_procedure',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (204,'2024_08_01_220620_create_view_api_pgd',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (205,'2024_08_05_150754_delete_wrong_data_from_siape',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (206,'2024_08_14_113824_update_view_api',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (207,'2024_08_19_172734_add_cpf_columns_to_integracao_unidades_table',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (208,'2024_08_20_154929_truncate_unidades_integrantes_table',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (209,'2024_08_28_234458_update_atribuicao_column_unidades_integrantes_atribuicoes_table',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (210,'2024_09_09_155300_version_2_1_0',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (211,'2024_09_17_155300_version_2_1_1',5);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (212,'2024_09_30_155300_version_2_1_2',6);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (213,'2024_10_03_105350_version2_1_3',7);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (214,'2024_10_04_105350_version2_2_0',8);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (215,'2024_08_21_151217_create_produtos_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (216,'2024_08_21_151908_create_produto_produto_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (217,'2024_08_21_152557_create_produto_processo_cadeia_valor_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (218,'2024_08_22_161407_create_catalogo_produtos_servicos_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (219,'2024_08_30_010751_alter_catalogo_add_softdelete',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (220,'2024_09_05_165918_alter_entidade_add_email',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (221,'2024_09_06_171107_create_catalogo_produtos_servicos_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (222,'2024_09_10_172945_add_columns_to_table_produto_produto',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (223,'2024_09_12_095149_create_tipos_clientes_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (224,'2024_09_12_102456_create_clientes_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (225,'2024_09_12_103120_create_column_cliente_id_produtos_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (226,'2024_09_16_164326_alter_solucoes_add_soft_delete',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (227,'2024_09_21_004302_alter_entidade_add_email_remetente',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (228,'2024_09_23_003649_alter_solucao_remove_responsavel',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (229,'2024_09_23_120945_add_solucao_ativo_inativo',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (230,'2024_09_27_113035_create_uorg_and_servidores_tables',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (231,'2024_09_27_192027_add_processado_to_siape_tables',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (232,'2024_10_01_005430_update-view-api-pgd',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (233,'2024_10_01_164031_add_soft_deletes_to_siape_tables',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (234,'2024_10_01_200620_add_cpf_to_siape_tables',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (235,'2024_10_02_152622_alter-entidaide-nullify-email-remetente',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (236,'2024_10_04_183837_add_data_modificacao_to_siape_dados_u_o_r_g_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (237,'2024_10_04_185248_add_data_modificacao_to_siape_lista_servidores_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (238,'2024_10_05_001206_add_data_modificacao_to_siape_servidores_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (239,'2024_10_07_163151_create_envios_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (240,'2024_10_07_204733_create_envio_itens_table',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (241,'2024_10_11_105350_version2_3_0',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (242,'2024_10_15_152144_truncate_siape_tables',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (243,'2024_10_17_102427_alter_fundamentacao_column_in_okrs_and_planejamentos_objetivos_tables',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (244,'2024_10_23_105350_version2_3_1',9);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (245,'2024_10_28_153550_alter-envio-add-counters',10);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (246,'2024_10_30_105432_alter-view-api-pgd-add-distinct',10);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (247,'2024_11_05_110341_version2_3_2',10);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (248,'2024_12_17_150819_update_view_api_p_g_d',11);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (249,'2024_12_18_130736_version2_3_3',11);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (250,'2024_12_26_043918_cria_vw_pg_usuarios',11);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (251,'2024_12_26_044218_cria_vw_pg_planos_entrega',11);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (252,'2024_12_26_044231_cria_vw_pg_planos_trabalho',11);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (253,'2024_12_26_192335_alter_envios_add_numero',12);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (254,'2024_12_29_172336_alter_audits_add_envio',12);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (255,'2024_12_30_112727_alter_envios_add_aptos',12);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (256,'2024_12_30_113155_update_views_p_g_d',12);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (257,'2025_01_03_130736_version2_3_4',12);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (258,'2024_09_10_171546_add_columns_to_table_produtos',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (259,'2024_11_26_120241_create_entidade_emails',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (260,'2024_12_06_024703_create-produtos-solucoes',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (261,'2024_12_09_154000_create_entrega_produto_table',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (262,'2024_12_09_160237_create_solucoes_unidades_table',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (263,'2024_12_10_124944_delete_column_solucao_produtos_unidades_table',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (264,'2024_12_11_023845_alter_solucao_add_identificador',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (265,'2025_01_09_130659_add_responsavel_id_to_produtos_table',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (266,'2025_01_10_153325_remove_tipo_from_produto_produto_table',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (267,'2025_01_13_154000_alter_entrega_produto_add_unique',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (268,'2025_01_14_104000_alter_entrega_produto_table',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (269,'2025_01_15_111048_alter_clientes_table',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (270,'2025_01_22_111048_alter_planos_entregas_entregas_produtos_entrega_id_foreign',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (271,'2025_01_22_152917_remove_unidades_raizes_duplicadas',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (272,'2025_01_22_171001_alter_entrega_produto_fk',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (273,'2025_01_23_183155_update_views_p_g_d',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (274,'2025_01_24_130736_version2_3_5',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (275,'2025_01_28_113017_version2_3_6',13);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (276,'2025_02_07_113017_version2_3_7',14);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (277,'2025_02_16_113017_version2_3_8',15);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (278,'2025_02_16_113017_version2_3_9',16);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (279,'2025_02_25_004613_create_siape_blacklist_servidores_table',16);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (280,'2025_02_27_153056_version2_3_10',16);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (281,'2025_03_07_092117_fix_columns_unidade_table',17);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (282,'2025_03_13_153056_version2_3_11',17);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (283,'2025_01_27_165145_add_usuario_externo_to_usuarios_table',18);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (284,'2025_01_27_172336_update_perfil_usuarios',18);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (285,'2025_02_27_024653_alter-produtos-produtos-insumos',18);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (286,'2025_02_28_171001_alter_cliente_tipo_cliente_fk',18);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (287,'2025_03_24_153056_version2_3_12',18);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (288,'2025_03_28_153056_version2_3_13',19);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (289,'2025_04_01_153056_version2_3_14',20);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (290,'2025_04_03_102024_corrige-chefias',21);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (291,'2025_04_11_153056_version2_3_15',21);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (292,'2025_04_16_153056_version2_3_16',22);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (293,'2025_04_22_153056_version2_3_17',23);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (294,'2025_02_14_090945_add_isadmin_to_usuarios_table',24);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (295,'2025_02_16_201118_add_expires_at_to_personal_access_tokens',24);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (296,'2025_05_12_153056_version2_3_18',24);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (297,'2025_05_05_151156_remove_jornada_columns_from_integracao_servidores',25);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (298,'2025_05_05_153844_remove_jornada_columns_from_usuarios',25);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (299,'2025_05_19_153056_version2_3_19',25);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (300,'2025_05_27_171756_version2_3_20',26);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (301,'2025_05_16_153056_add_pedagio_usuarios',27);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (302,'2025_05_21_153056_add_controle_pedagio_tipo_modalidades',27);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (303,'2025_06_11_111456_version2_4_0',27);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (304,'2025_06_13_111456_version2_4_1',28);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (305,'2025_07_03_111456_version2_4_2',29);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (306,'2025_06_10_163440_add-fn-unidade-hierarquia',30);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (307,'2025_06_11_185237_create-view-relatorio-pt',30);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (308,'2025_06_14_172112_alter_avaliacao_add_data_recurso',30);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (309,'2025_06_15_185237_create-view-relatorio-pt-detalhado',30);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (310,'2025_06_30_114548_add_auditable_index_to_audits_table',30);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (311,'2025_07_01_185237_create-view-relatorio-pe',30);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (312,'2025_07_07_172059_delete_duplicate_data_unidade_integrante_table',30);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (313,'2025_07_08_101520_add_unique_usuario_unidade_to_unidades_integrantes',30);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (314,'2025_07_21_111456_version2_5_0',30);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (315,'2025_07_09_181025_add_inativado_to_siape_blacklist_servidores_table',31);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (316,'2025_07_24_144820_version2_5_1',31);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (317,'2025_07_25_101429_delete_usuarios_aposentados',31);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (318,'2025_07_25_144820_version2_5_2',31);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (319,'2025_07_28_182220_version2_5_3',32);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (320,'2025_07_24_165824_add_columns_integracao_servidores_table',33);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (321,'2025_07_24_184112_add_columns_to_usuarios_table',33);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (322,'2025_08_05_180002_alter-relatorio-pt-detalhado',33);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (323,'2025_08_05_181626_alter-relatorio-pe',33);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (324,'2025_08_07_121607_alter-relatorio-pt-add-cancelados',33);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (325,'2025_08_08_120000_version2_6_0',33);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (326,'2025_08_08_121607_alter-relatorio-pe-collation',33);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (327,'2025_26_07_185237_create-view-relatorio-unidades',33);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (328,'2025_08_13_110000_version2_6_1',34);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (329,'2025_08_13_115954_alter-relatorio-unidade-add-sigla',34);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (330,'2025_08_13_121607_update-relatorio-pe',34);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (331,'2025_08_13_121607_update-relatorio-pt-detalhado',34);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (332,'2025_08_13_185237_update-view-relatorio-pt',34);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (333,'2025_07_29_112900_add_modalidade_integracao_servidores_table',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (334,'2025_07_29_112900_add_modalidade_to_usuarios_table',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (335,'2025_07_31_140300_alter_integracao_servidor_table_add_participa_pgd',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (336,'2025_07_31_140300_alter_usuarios_table_add_participa_pgd',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (337,'2025_08_07_152112_change_data_modificacao_integracao_servidores',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (338,'2025_08_11_005908_alter-relatorio-pe-add-homologacao',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (339,'2025_08_13_190000_add_situacao_siape_to_usuarios_table',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (340,'2025_08_15_005908_alter-relatorio-pe-add-homologacao',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (341,'2025_08_20_005908_alter-relatorio-pe-ajuste-situacao',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (342,'2025_08_20_130050_create_tipo_modalidade_siape_table',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (343,'2025_08_21_070300_alter_usuarios_table_add_modalidade_pgd_key',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (344,'2025_08_28_130000_version2_6_2',35);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (345,'2025_09_08_130000_version2_6_3',36);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (346,'2025_09_09_150000_version2_6_4',37);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (347,'2025_09_10_123400_alter_usuarios_table_modalidade_pgd_nullable',37);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (348,'2025_09_22_150000_version2_6_5',38);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (349,'2025_02_25_004614_create_siape_blacklist_unidades_table',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (350,'2025_08_19_204556_move_unique_constraint_from_cpf_to_matricula_usuarios_table',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (351,'2025_08_20_add_ident_unica_column_to_tables',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (352,'2025_09_10_004615_add_codigo_to_siape_dados_uorg_table',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (353,'2025_09_11_120000_add_inativado_to_siape_blacklist_unidades_table',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (354,'2025_09_11_121000_add_data_inicio_inativacao_to_unidades_table',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (355,'2025_09_17_125821_alter-afastamentos-add-horas',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (356,'2025_09_26_022347_forcar_envios',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (357,'2025_09_29_150000_version2_7_0',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (358,'2025_10_01_093308_version2_7_1',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (359,'2025_10_02_093308_version2_7_2',39);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (360,'2025_10_03_022347_forcar_envios',40);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (361,'2025_10_06_093308_version2_7_3',40);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (362,'2025_10_07_100000_alter_usuarios_table_situacao_siape_not_null',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (363,'2025_10_13_093308_version2_7_4',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (364,'2025_10_14_074111_delete_atribuicao_colaborador',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (365,'2025_10_14_074151_delete_atribuicao_colaborador_lotado',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (366,'2025_10_17_104519_update_usuario_externo_not_consulta',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (367,'2025_10_20_093308_version2_7_5',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (368,'2025_10_24_172900_version2_7_6',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (369,'2025_10_29_172900_version2_7_7',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (370,'2025_10_30_151816_tenant_fix_matriculas_duplicadas',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (371,'2025_11_06_000000_tenant_fix_usuarios_duplicados_cpf_matricula',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (372,'2025_11_06_010000_tenant_fix_usuarios_matricula_vazia',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (373,'2025_11_10_172900_version2_7_8',41);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (375,'2025_11_11_104519_calendario',42);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (376,'2025_10_09_090956_add_registro_execucao_to_planos_entregas_entregas_progressos_table',43);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (377,'2025_10_23_171448_add_temporaria_fields_to_unidade_table',43);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (378,'2025_11_13_015228_alter-entidades-add-habilitar-relatos',43);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (379,'2025_10_28_104519_add_justificativa_conclusao_consolidacao',44);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (380,'2025_10_29_095011_add_unidade_executora_flag',44);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (381,'2025_10_29_134904_update_entidade_nomenclatura_unidade',44);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (382,'2025_11_17_172900_version2_8_0',44);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (383,'2025_11_18_172900_version2_8_1',44);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (384,'2025_11_24_172900_version2_8_2',45);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (385,'2025_11_17_140000_alter_siape_blacklist_servidores_add_matricula',46);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (386,'2025_12_01_172900_version2_8_3',46);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (387,'2025_12_03_172900_version2_9_0',47);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (388,'2025_12_05_172900_version2_9_1',48);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (389,'2025_12_05_173500_version2_9_2',48);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (390,'2025_12_09_000000_version2_9_3',48);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (391,'2025_12_09_173600_fix_usuarios_modalidade_pgd_from_cpf',48);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (392,'2025_12_09_212548_alter_usuarios_modalidade_pgd_to_tipo_modalidade_id',48);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (393,'2025_12_15_000000_version2_9_4',48);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (394,'2025_12_19_000000_version2_9_5',48);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (395,'2025_11_11_113535_alter_statuses_planos_trabalhos_planos_entregas',49);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (396,'2025_11_13_152800_add_avaliado_at_to_planos',49);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (397,'2025_12_26_000000_version2_9_6',49);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (398,'2026_01_02_000000_version2_9_7',49);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (399,'2026_01_12_000000_version2_9_8',49);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (400,'2026_01_16_000000_version2_9_9',49);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (402,'2026_01_20_184614_alter-usuario-add-datas-envio',50);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (403,'2026_01_22_163701_add-usuarios-envios',51);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (434,'2026_01_22_181817_alter-usuario-add-datas-envio',52);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (436,'2026_01_27_181817_alter-pe-add-datas-envio',52);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (437,'2026_01_27_191817_alter-pt-add-datas-envio',53);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (438,'2026_01_23_000000_version2_9_10',54);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (439,'2026_01_28_000000_version2_9_11',55);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (440,'2026_01_29_000000_version2_9_12',55);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (459,'2026_02_04_143500_marca_pe_envio',56);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (460,'2026_02_06_000000_version2_9_13',57);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (463,'2026_02_11_164301_add_index_data_agendamento_envio',58);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (464,'2026_02_13_000000_version2_9_14',59);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (465,'2026_02_12_160000_alter_status_aguardando_registro',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (466,'2026_02_24_163221_drop-views-pgd',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (467,'2026_02_24_163843_drop-envios',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (468,'2026_02_26_085122_remove_fk_pe',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (469,'2026_02_27_000000_version2_9_15',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (470,'2026_03_06_000000_version2_9_16',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (471,'2026_03_06_2000_atualiza_planos_trabalhos',60);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (472,'2026_03_10_000000_version2_9_17',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (473,'2026_03_12_180933_normalize_cpfs_in_usuarios_table',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (474,'2026_03_12_182713_shrink_cpf_column_in_usuarios_table',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (475,'2026_03_13_000000_version2_9_18',61);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (476,'2026_03_16_222108_remove_duplicate_lotacao_atribuicoes',62);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (477,'2026_03_23_000000_version2_9_19',62);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (480,'2026_01_23_181817_marca_usuarios_envio',63);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (481,'2026_03_30_000000_version2_9_20',64);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (482,'2026_04_02_120000_add_data_conclusao_envio_to_usuarios_planos_trabalhos_planos_entregas',65);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (393,'2026_04_22_000000_create_cargas_individuais_siape_relatorios_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (394,'2026_04_23_000000_refactor_modalidade_pgd_to_string',1);
+COMMIT;
+SET AUTOCOMMIT=@OLD_AUTOCOMMIT;

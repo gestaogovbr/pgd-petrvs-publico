@@ -9,6 +9,7 @@ use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 
 class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository implements PlanoTrabalhoReadRepositoryContract
@@ -16,6 +17,47 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     public function __construct(PlanoTrabalho $model)
     {
         $this->model = $model;
+    }
+
+    public function findById(string|int $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null $planoTrabalho */
+        $planoTrabalho = $this->query()->find($id);
+        return $planoTrabalho;
+    }
+
+    public function findOneParaEnvio(string|int $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null */
+        $planoTrabalho = $this->model->newQuery()
+            ->with([
+                'usuario',
+                'entregas' => function ($query) {
+                    $query
+                        ->whereNull('plano_entrega_entrega_id')
+                        ->orWhereHas('planoEntregaEntrega.planoEntrega', function ($query) {
+                            $query->whereIn('status', StatusEnum::permitemEnvio());
+                        });
+                },
+                'consolidacoes' => function ($query) {
+                    $query->whereIn('status', [StatusEnum::AVALIADO->value]);
+                },
+                'consolidacoes.avaliacao',
+            ])
+            ->find($id);
+
+        return $planoTrabalho;
+    }
+
+    public function findWithAtividades(string|int $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null $planoTrabalho */
+        $planoTrabalho = $this->query()
+            ->with(['atividades'])
+            ->where('id', $id)
+            ->first();
+
+        return $planoTrabalho;
     }
 
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
@@ -112,5 +154,30 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('id', '!=', $planoTrabalhoId)
             ->where('data_fim', '<', $dataLimite)
             ->get();
+    }
+
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
+    {
+        DB::table('planos_trabalhos')
+            ->whereNull('planos_trabalhos.deleted_at')
+            ->whereIn('planos_trabalhos.status', StatusEnum::permitemEnvio())
+            ->select('planos_trabalhos.id')
+            ->orderBy('planos_trabalhos.id')
+            ->chunkById($chunkSize, function (SupportCollection $planosTrabalho) use ($onChunk): void {
+                $onChunk($planosTrabalho);
+            });
+    }
+
+    public function chunkEnviosPendentes(int $size, callable $callback): void
+    {
+        PlanoTrabalho::query()
+            ->whereNull('deleted_at')
+            ->whereIn('status', StatusEnum::permitemEnvio())
+            ->whereNotNull('data_agendamento_envio')
+            ->where(function ($query) {
+                $query->whereColumn('data_agendamento_envio', '>', 'data_conclusao_envio')
+                    ->orWhereNull('data_conclusao_envio');
+            })
+            ->chunkById($size, $callback);
     }
 }

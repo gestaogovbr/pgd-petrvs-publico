@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace App\Repository\PlanoTrabalho\Contracts;
 
+use App\Models\PlanoTrabalho;
 use Illuminate\Database\Eloquent\Collection;
 
 interface PlanoTrabalhoReadRepositoryContract
 {
+    public function findById(string|int $id): ?PlanoTrabalho;
+
+    public function findOneParaEnvio(string|int $id): ?PlanoTrabalho;
+
+    public function findWithAtividades(string|int $id): ?PlanoTrabalho;
+
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection;
 
     public function planosAtivos(string $usuarioId): Collection;
@@ -15,4 +22,8 @@ interface PlanoTrabalhoReadRepositoryContract
     public function planosAtivosPorData(string $dataInicial, string $dataFinal, string $usuarioId): Collection;
 
     public function buscarPlanosPendentes(string $usuarioId, string $planoTrabalhoId, string $dataLimite): Collection;
+
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
+
+    public function chunkEnviosPendentes(int $size, callable $callback): void;
 }

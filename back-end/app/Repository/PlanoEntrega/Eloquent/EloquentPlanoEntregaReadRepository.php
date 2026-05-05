@@ -10,6 +10,8 @@ use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Facades\DB;
 
 class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository implements PlanoEntregaReadRepositoryContract
 {
@@ -28,6 +30,38 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
     public function __construct(PlanoEntrega $model)
     {
         $this->model = $model;
+    }
+
+    public function findById(string|int $id): ?PlanoEntrega
+    {
+        /** @var PlanoEntrega|null */
+        return parent::findById($id);
+    }
+
+    public function findOneParaEnvio(string|int $id): ?PlanoEntrega
+    {
+        /** @var PlanoEntrega|null */
+        return $this->model->newQuery()
+            ->with([
+                'programa',
+                'programa.unidade',
+                'unidade',
+                'entregas',
+                'entregas.unidade',
+            ])
+            ->find($id);
+    }
+
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
+    {
+        DB::table('planos_entregas')
+            ->whereNull('planos_entregas.deleted_at')
+            ->whereIn('planos_entregas.status', StatusEnum::permitemEnvio())
+            ->select('planos_entregas.id')
+            ->orderBy('planos_entregas.id')
+            ->chunkById($chunkSize, function (SupportCollection $planosEntrega) use ($onChunk): void {
+                $onChunk($planosEntrega);
+            });
     }
 
     public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection

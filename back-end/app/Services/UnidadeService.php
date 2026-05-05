@@ -13,6 +13,7 @@ use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
 use App\Services\Siape\Unidade\Atribuicao;
+use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 use App\Models\UnidadeIntegrante;
 use App\Repository\UnidadeRepository;
 use App\Repository\UnidadeIntegranteRepository;
@@ -158,6 +159,11 @@ class UnidadeService extends ServiceBase
             $unidade = Unidade::find($id);
             if (empty($unidade)) throw new NotFoundException("Unidade não encontrada");
             $unidade->data_inativacao = $inativo ? date("Y-m-d H:i:s") : null;
+            if (!$inativo) {
+                $unidade->data_inicio_inativacao = null;
+                $unidade->data_ativacao_temporaria = null;
+                $unidade->justificativa_ativacao_temporaria = null;
+            }
             $unidade->save();
             DB::commit();
         } catch (Throwable $e) {
@@ -299,8 +305,11 @@ class UnidadeService extends ServiceBase
      */
     public function metadadosUnidade($unidade_id, $programa_id): array
     {
-        /** @phpstan-ignore-next-line */
-        $unidade = Unidade::where('id', $unidade_id)->with(['planosTrabalho', 'planosTrabalho.atividades', 'planosTrabalho.tipoModalidade'])->first();
+        $unidade = $this->unidadeRepository->findWithPlanosTrabalhoAtividades($unidade_id);
+        if (empty($unidade)) {
+            throw new ServerException("ValidateUnidade", "Unidade não encontrada.");
+        }
+
         $metadadosPlanosTrabalho = [];
         foreach ($unidade['planosTrabalho']->toArray() as $plano) {
             if (($plano['programa_id'] == $programa_id) && ($this->calendarioService->between(new DateTime(), $plano['data_inicio'], $plano['data_fim']))) {
@@ -314,7 +323,7 @@ class UnidadeService extends ServiceBase
             "qdePlanosTrabalhoPrograma" => count($metadadosPlanosTrabalho),
             "nrServidoresPrograma" => count(array_unique(array_map(fn($x) => $x["usuario_id"], $metadadosPlanosTrabalho))),
             "idsServidoresPrograma" => array_unique(array_map(fn($x) => $x["usuario_id"], $metadadosPlanosTrabalho)),
-            "tiposModalidadesPlanosTrabalho" => array_map(fn($x) => $x["tipoModalidade"], $metadadosPlanosTrabalho),
+            "modalidadesPlanosTrabalho" => array_map(fn($x) => $x["modalidade"], $metadadosPlanosTrabalho),
             "horasUteisTotais" => array_reduce(array_map(fn($m) => $m['horasUteisTotais'], $metadadosPlanosTrabalho), function ($acum, $item) {
                 return $acum + $item;
             }, 0),
@@ -813,55 +822,9 @@ class UnidadeService extends ServiceBase
 
     public function processarUnidadesTemporarias(): void
     {
-        $dataLimite = Carbon::now()->subDays(30);
-
-        $unidadesParaInativar = Unidade::whereNotNull('data_inicio_inativacao')
-            ->where('data_inicio_inativacao', '<=', $dataLimite)
-            ->whereNull('data_inativacao')
-            ->get();
-
-        if ($unidadesParaInativar->isEmpty()) {
-            Log::info("Nenhuma unidade temporária encontrada para inativação após 30 dias");
-            return;
-        }
-
-        $idsInativadas = [];
-
-        foreach ($unidadesParaInativar as $unidade) {
-            $unidade->data_inativacao = Carbon::now();
-            $unidade->save();
-
-            $idsInativadas[] = $unidade->id;
-
-            $usuariosVinculados = UnidadeIntegrante::where('unidade_id', $unidade->id)
-                ->whereNull('deleted_at')
-                ->get();
-
-            foreach ($usuariosVinculados as $integranteUnidade) {
-                $this->LimparAtribuicoes($integranteUnidade, true);
-
-                Log::info("Atribuições removidas do usuário vinculado à unidade inativada", [
-                    'usuario_id' => $integranteUnidade->usuario_id,
-                    'unidade_id' => $unidade->id,
-                    'unidade_integrante_id' => $integranteUnidade->id
-                ]);
-            }
-
-            Log::info("Unidade inativada após 30 dias do início da inativação", [
-                'unidade_id' => $unidade->id,
-                'nome' => $unidade->nome,
-                'sigla' => $unidade->sigla,
-                'codigo' => $unidade->codigo,
-                'data_inicio_inativacao' => $unidade->data_inicio_inativacao,
-                'data_inativacao' => $unidade->data_inativacao,
-                'usuarios_afetados' => $usuariosVinculados->count()
-            ]);
-        }
-
-        Log::info("Inativação de unidades temporárias concluída", [
-            'total_inativadas' => count($idsInativadas),
-            'ids' => $idsInativadas
-        ]);
+        /** @var SiapeUnidadeLifecycleService $lifecycleService */
+        $lifecycleService = app(SiapeUnidadeLifecycleService::class);
+        $lifecycleService->efetivarInativacoesPendentes();
     }
 
     public function ativarTemporariamente($data)

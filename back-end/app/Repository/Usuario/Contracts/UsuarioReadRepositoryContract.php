@@ -28,4 +28,7 @@ interface UsuarioReadRepositoryContract
     public function findByCpf(string $cpf): ?Usuario;
     public function findByCpfWithLotacao(string $cpf): Collection;
     public function findAllByCpfUnfiltered(string $cpf): Collection;
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
+
+    public function findOneParaEnvio(string $id): ?Usuario;
 }

@@ -2,29 +2,42 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
-import { EnvioReiniciarFormComponent } from './reiniciar/envio-reiniciar-form/envio-reiniciar-form.component';
-import { EnvioForcarComponent } from './forcar/envio-forcar/envio-forcar.component';
+import { EnvioUsuarioListComponent } from './envio-usuario-list/envio-usuario-list.component';
+import { EnvioPlanoEntregaListComponent } from './envio-plano-entrega-list/envio-plano-entrega-list.component';
+import { EnvioPlanoTrabalhoListComponent } from './envio-plano-trabalho-list/envio-plano-trabalho-list.component';
 
 const routes: Routes = [
   { 
-    path: 'reiniciar',
-    component: EnvioReiniciarFormComponent,
+    path: 'participantes',
+    component: EnvioUsuarioListComponent,
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
-      title: "Reiniciar envios à API PGD"
+      title: "Logs de Participantes",
+      modal: false
     }
   },
   { 
-    path: 'forcar',
-    component: EnvioForcarComponent,
+    path: 'planos-entrega',
+    component: EnvioPlanoEntregaListComponent,
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
-      title: "Forçar envio",
-      modal: true
+      title: "Logs de Planos de Entrega",
+      modal: false
+    }
+  },
+  { 
+    path: 'planos-trabalho',
+    component: EnvioPlanoTrabalhoListComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: "Logs de Planos de Trabalho",
+      modal: false
     }
   }
 ];

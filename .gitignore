@@ -4,8 +4,21 @@
 *.bak
 
 back-end/vendor/*
-back-end/public/
-back-end/resources/views/angular.blade.php
+# Conteúdo gerado pelo build do front-end
+# back-end/public/*.js
+# back-end/public/*.map
+# back-end/public/*.css
+# back-end/public/*.woff
+# back-end/public/*.woff2
+# back-end/public/*.ttf
+# back-end/public/favicon.ico
+# back-end/public/3rdpartylicenses.txt
+# back-end/public/app.json
+# back-end/public/assets/*
+# back-end/public/docs/*
+# back-end/public/tinymce/*
+# back-end/public/webfonts/*
+# back-end/resources/views/angular.blade.php
 front-end/node_modules/*
 front-end/.angular/*
 
@@ -13,6 +26,8 @@ front-end/.angular/*
 
 /resources/mysql/*
 /resources/docker/mariadb/*
+/resources/rabbitmq/*
+
 
 back-end/database/seeders/LogSeeder.php
 resources/docker/dev/docker-compose.yml
@@ -43,6 +58,7 @@ front-end/src/proxy.conf.json
 front-end/tsconfig.json
 *.bak
 front-end/.vscode/settings.json
+front-end/out-tsc/*
 
 # Dario
 back-end/storage/tenant*/*/
@@ -60,3 +76,5 @@ back-end/storage/logs/*.log
 kubectl
 .trae/diagnostics/
 .vscode/diagnostics/
+review-pr-*
+front-end/out-tsc/app/main.js

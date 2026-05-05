@@ -64,16 +64,10 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			onClick: this.forcarSiape.bind(this),
 		});
 		this.options.push({
-			icon: "bi bi-exclamation-octagon-fill",
-			label: "Forçar Envio",
-			onClick: this.forcarEnvio.bind(this),
-		});
-		this.options.push({
 			icon: "bi bi-trash",
 			label: "Excluir",
 			onClick: this.deleteTenant.bind(this),
 		});
-
 		this.options.push({
 			icon: "bi bi-database-fill-gear",
 			label: "Executar Seeder",

@@ -8,7 +8,6 @@ use App\Models\Perfil;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
-use App\Models\TipoModalidade;
 use Illuminate\Database\Seeder;
 use App\Services\NivelAcessoService;
 class UsuarioSeeder extends Seeder
@@ -17,17 +16,14 @@ class UsuarioSeeder extends Seeder
    * Run the database seeds.
    *
    * @return void
-   */
+  */
   public $timenow;
   public $nivelAcessoService;
-  public $modalidade_id;
-
 
   public function __construct()
   {
     $this->timenow = now();
     $this->nivelAcessoService = new NivelAcessoService();
-    $this->modalidade_id = TipoModalidade::first()->id;
   }
 
   public function run()
@@ -40,7 +36,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '01798651106',
         'apelido' => 'Geisimar',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
       ],
@@ -50,7 +46,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '74065505291',
         'apelido' => 'Grana',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
       ],
@@ -60,7 +56,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '01914276167',
         'apelido' => 'Guilherme',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
       ],
@@ -70,7 +66,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '48321770100',
         'apelido' => 'Cimei',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
       ],
@@ -80,7 +76,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '78232848120',
         'apelido' => 'Juliane',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'FEMININO',
         'is_admin' => true,
       ],
@@ -90,7 +86,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '82162492504',
         'apelido' => 'Thais',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'FEMININO',
         'is_admin' => true,
       ],
@@ -100,7 +96,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '11555557759',
         'apelido' => 'Bruno',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
       ],
@@ -110,7 +106,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '44239586003',
         'apelido' => 'Gabriel',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',  
         'is_admin' => true,
       ],
@@ -120,7 +116,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '02559875101',
         'apelido' => 'Diego',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,      
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
       ],
@@ -130,7 +126,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '05210244121',
         'apelido' => 'Rafael',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,    
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
        ],
@@ -140,7 +136,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => '13968027469',
         'apelido' => 'Rhuan',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,      
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
        ],
@@ -150,7 +146,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => env('CPF_LEON', ''),
         'apelido' => 'Leon',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,    
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
       ],
@@ -160,7 +156,7 @@ class UsuarioSeeder extends Seeder
         'cpf' => env('CPF_LUCAS', ''),
         'apelido' => 'Lucas',
         'perfil_id' => $perfilDesenvolvedorId,
-        'modalidade_id' => $this->modalidade_id,    
+        'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
       ]
@@ -198,6 +194,7 @@ class UsuarioSeeder extends Seeder
           ),
           'uf' => 'DF',
           'sexo' => $usuario['sexo'],
+          'modalidade_pgd' => $usuario['modalidade_pgd'] ?? null,
           'data_modificacao' => $this->timenow,
           'is_admin' => $usuario['is_admin'],
         ]);

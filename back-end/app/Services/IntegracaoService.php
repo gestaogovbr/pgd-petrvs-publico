@@ -26,6 +26,7 @@ use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
+use App\Support\ModalidadePgd;
 
 /**
  * @property UtilService $UtilService
@@ -634,7 +635,7 @@ class IntegracaoService extends ServiceBase
     if ($email === '') {
       return;
     }
-    
+
     $usuarios = Usuario::withoutGlobalScopes()
         ->where('email', $email)
         ->when($ignoreId, function ($query) use ($ignoreId) {
@@ -645,9 +646,9 @@ class IntegracaoService extends ServiceBase
     foreach ($usuarios as $usuario) {
       if (!empty($usuario)) {
         LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
-        
+
         SiapeLog::info("IntegracaoService: Liberando email duplicado definindo como nulo", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
-        
+
         DB::table('usuarios')->where('id', $usuario->id)->update(['email' => null]);
       }
     }
@@ -656,7 +657,7 @@ class IntegracaoService extends ServiceBase
   /**
    * Cria uma lotação para o Usuário, se seus dados já existirem na tabela integracao_servidores,
    * e se ela já constar na tabela Unidades. Salva o novo usuário, independentemente da lotação
-   * 
+   *
    * @param Usuario $usuario
    * @param UnidadeIntegrante $lotacao
    */
@@ -731,50 +732,18 @@ class IntegracaoService extends ServiceBase
       $unidadeRaiz->save();
     }
   }
-  
+
   public function validarModalidadePgd($modalidadeString)
   {
-    $fallbackId = DB::table('tipos_modalidades')
-      ->where('nome', 'Sem dados do SIAPE')
-      ->whereNull('deleted_at')
-      ->value('id');
+    return ModalidadePgd::normalize($modalidadeString);
+  }
 
-    if (empty($fallbackId)) {
-        $fallbackId = DB::table('tipos_modalidades')
-          ->whereNull('deleted_at')
-          ->value('id');
-    }
-
-    if (empty($modalidadeString)) {
-      return $fallbackId;
-    }
-
-    if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $modalidadeString)) {
-      $tipoId = DB::table('tipos_modalidades_siape')
-        ->where('id', $modalidadeString)
-        ->value('tipo_modalidade_id');
-      return $tipoId ?? $fallbackId;
-    }
-
-    $tipoId = DB::table('tipos_modalidades_siape')
-      ->where('nome', $modalidadeString)
-      ->value('tipo_modalidade_id');
-
-    if ($tipoId) {
-      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para TipoModalidade: {$tipoId}");
-      return $tipoId;
-    }
-
-    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido para 'Sem dados do SIAPE'.");
-    return $fallbackId;
-  }  
-  
   private function verificarUsuariosExternosIntegracao(): void
   {
     try {
       $usuariosExternos = DB::select(
-        "SELECT u.* FROM usuarios AS u 
-         INNER JOIN integracao_servidores AS ise ON u.matricula = ise.matriculasiape 
+        "SELECT u.* FROM usuarios AS u
+         INNER JOIN integracao_servidores AS ise ON u.matricula = ise.matriculasiape
          WHERE u.usuario_externo = 1"
       );
 
@@ -795,7 +764,7 @@ class IntegracaoService extends ServiceBase
           $perfilColaborador = $this->nivelAcessoService->getPerfilColaborador();
           $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
 
-          if ($perfilColaborador && $perfilParticipante && 
+          if ($perfilColaborador && $perfilParticipante &&
               $usuario->perfil->id === $perfilColaborador->id) {
             $this->perfilService->alteraPerfilUsuario($usuario->id, $perfilParticipante->id);
             SiapeLog::info(sprintf(

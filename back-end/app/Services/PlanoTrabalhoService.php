@@ -21,7 +21,7 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Programa;
 use App\Models\DocumentoAssinatura;
 use App\Models\PlanoEntregaEntrega;
-use App\Models\TipoModalidade;
+use App\Support\ModalidadePgd;
 use Carbon\Carbon;
 use DateTime;
 use Throwable;
@@ -101,7 +101,7 @@ class PlanoTrabalhoService extends ServiceBase
             $ids[] = $unidadeId[2];
             if(is_array($ids) && is_array($ids[0]))
                 $ids = array_unique(...$ids);
-            
+
             $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
         }
 
@@ -212,12 +212,31 @@ class PlanoTrabalhoService extends ServiceBase
         }
 
 
+        $enviosPendentes = $this->extractWhere($data, "envios_pendentes");
+        if (isset($enviosPendentes[2])) {
+            $query->whereRaw("(data_agendamento_envio IS NOT NULL)", []);
+            $query->whereRaw("((data_conclusao_envio IS NULL) OR (data_conclusao_envio < data_agendamento_envio))", []);
+        }
+
+        $enviosConcluidos = $this->extractWhere($data, "envios_concluidos");
+        if (isset($enviosConcluidos[2])) {
+            $query->whereRaw("data_conclusao_envio IS NOT NULL", []);
+        }
+
+        $where = array_values(array_filter($where, function ($item) {
+                return ($item[0] !== 'envios_pendentes');
+        }));
+
         $data["where"] = $where;
     }
 
     public function proxyStore($plano, $unidade, $action)
     {
         $plano["criacao_usuario_id"] = parent::loggedUser()->id;
+        $usuario = empty($plano["usuario_id"] ?? null)
+            ? null
+            : $this->usuarioRepository->findById($plano["usuario_id"]);
+        $plano["modalidade_pgd"] = ModalidadePgd::normalize($plano["modalidade_pgd"] ?? $usuario?->modalidade_pgd ?? null);
         $this->documentoId = $plano["documento_id"];
         $plano["documento_id"] = null;
         return $plano;
@@ -226,7 +245,7 @@ class PlanoTrabalhoService extends ServiceBase
     public function validateStore($data, $unidade, $action)
     {
         $usuario = Usuario::with("areasTrabalho")->find($data["usuario_id"]);
-        $tipoModalidade = TipoModalidade::find($data["tipo_modalidade_id"]);
+        $modalidadePgd = ModalidadePgd::normalize($data["modalidade_pgd"] ?? $usuario?->modalidade_pgd ?? null);
         $programa = Programa::find($data["programa_id"]);
         $condicoes = $this->buscaCondicoes($data);
 
@@ -260,7 +279,7 @@ class PlanoTrabalhoService extends ServiceBase
         $fimPlano = Carbon::parse($data["data_fim"]);
 
         // Validar Modalidade
-        if (!empty($tipoModalidade) && $tipoModalidade->exige_pedagio && !empty($usuario->pedagio)) {
+        if (ModalidadePgd::exigePedagio($modalidadePgd) && !empty($usuario->pedagio)) {
             if (empty($usuario->data_inicial_pedagio) || empty($usuario->data_final_pedagio)) {
                 throw new ServerException(
                     "ValidateUsuario",
@@ -448,7 +467,7 @@ class PlanoTrabalhoService extends ServiceBase
         - Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
         */
         $documento = Documento::find($documentoId);
-        
+
         $planoTrabalho = PlanoTrabalho::withTrashed()->with('entregas')->find($documento->plano_trabalho_id)->toArray();
         $nrEntregas = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
 
@@ -541,7 +560,7 @@ class PlanoTrabalhoService extends ServiceBase
                 $proximoFim =  Carbon::parse($this->proxDataConsolidacao($dataInicio->toDateString(), $plano->programa));
                 $dataFim = $proximoFim->greaterThan($limite) ? $limite->copy() : $proximoFim;
                 $igual = $existentes->first(fn($c) => $c->data_inicio === $dataInicio->toDateString() && $c->data_fim === $dataFim->toDateString());
-                $intersecao = $existentes->first(fn($c) => $c->status !== StatusEnum::INCLUIDO->value && 
+                $intersecao = $existentes->first(fn($c) => $c->status !== StatusEnum::INCLUIDO->value &&
                                                             $dataInicio->lessThanOrEqualTo(Carbon::parse($c->data_fim)) && $dataFim->greaterThanOrEqualTo(Carbon::parse($c->data_inicio)));
                 if (!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
                     $merged[] = $igual;
@@ -615,7 +634,6 @@ class PlanoTrabalhoService extends ServiceBase
             "unidade:id,sigla,nome",
             "unidade.gestor:id,unidade_id,usuario_id",
             "unidade.gestoresSubstitutos:id,unidade_id,usuario_id",
-            "tipoModalidade:id,nome",
             "consolidacoes.avaliacao.tipoAvaliacao.notas",
             "consolidacoes.avaliacoes",
             "consolidacoes.atividades" =>
@@ -669,7 +687,12 @@ class PlanoTrabalhoService extends ServiceBase
      */
     public function metadadosPlano($plano_id, $inicioPeriodo = null, $fimPeriodo = null): array
     {
-        $plano = PlanoTrabalho::where('id', $plano_id)->with(['atividades', 'tipoModalidade'])->first()->toArray();
+        $planoTrabalho = $this->planoTrabalhoRepository->findWithAtividades($plano_id);
+        if (empty($planoTrabalho)) {
+            throw new ServerException("ValidatePlanoTrabalho", "Plano de trabalho não encontrado.");
+        }
+
+        $plano = $planoTrabalho->toArray();
         $result = [
             "concluido" => true,
             "atividadesNaoIniciadas" => $this->atividadesNaoIniciadas($plano, null, null), //array_filter($plano['atividades'], fn($atividade) => $atividade['data_inicio'] == null),
@@ -684,7 +707,7 @@ class PlanoTrabalhoService extends ServiceBase
             "horasUteisAfastamento" => 0,
             "horasUteisDecorridas" => 0,
             "horasUteisTotais" => $plano['tempo_total'],
-            "modalidade" => $plano['tipo_modalidade']['nome'],
+            "modalidade" => ModalidadePgd::label($plano['modalidade_pgd'] ?? null),
             "percentualHorasNaoIniciadas" => 0,
             "usuario_id" => $plano['usuario_id'],
             "noPeriodo" => [
@@ -855,17 +878,14 @@ class PlanoTrabalhoService extends ServiceBase
 
     public function proxyGetAllIdsExtra($result, $data)
     {
-        $tipoModalidades = [];
         $usuarios = [];
         $unidades = [];
         foreach ($result["rows"] as $plano) {
-            $tipoModalidades[$plano->tipo_modalidade_id] = $plano->tipoModalidade;
             $usuarios[$plano->usuario_id] = $plano->usuario;
             $unidades[$plano->unidade_id] = $plano->unidade;
         }
         return [
             "merge" => [
-                "tipo_modalidade" => $tipoModalidades,
                 "usuario" => $usuarios,
                 "unidade" => $unidades
             ]
@@ -889,7 +909,7 @@ class PlanoTrabalhoService extends ServiceBase
             return "O plano de trabalho não pode ser cancelado porque foi deletado ou não está em nenhum dos seguintes status: INCLUIDO, AGUARDANDO ASSINATURA ou ATIVO.\n[ver RN_PTR_R]";
         if (!$condition2)
             return "O plano de trabalho não pode ser cancelado porque o usuário logado não é um dos gestores da sua unidade executora.\n[ver RN_PTR_R]";
-       
+
         return null;
     }
 
@@ -900,7 +920,7 @@ class PlanoTrabalhoService extends ServiceBase
             throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado.");
         }
 
-        return !$plano->consolidacoes() 
+        return !$plano->consolidacoes()
                       ->where('status', '!=', StatusEnum::INCLUIDO->value)
                       ->exists();
     }
@@ -1423,7 +1443,7 @@ class PlanoTrabalhoService extends ServiceBase
 
         $usuario = Usuario::find($planoTrabalho['usuario_id']);
         if (!$usuario) return false;
-        
+
         return $usuario->lotacao?->unidade_id == $unidadeId;
     }
 

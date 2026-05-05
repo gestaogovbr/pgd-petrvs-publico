@@ -16,7 +16,7 @@ docker exec petrvs_php bash -lc "cd /var/www && composer install --no-interactio
 ## Executar todos os testes Pest
 
 ```
-docker exec petrvs_php bash -lc "cd /var/www && ./vendor/bin/pest --ci"
+docker exec petrvs_php composer test
 ```
 
 ## Executar um arquivo de teste específico

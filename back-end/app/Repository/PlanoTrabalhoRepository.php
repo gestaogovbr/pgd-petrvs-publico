@@ -4,20 +4,42 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\PlanoTrabalho;
+use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
-class PlanoTrabalhoRepository
+/**
+ * @implements EnvioRepositoryInterface<PlanoTrabalho>
+ */
+class PlanoTrabalhoRepository implements EnvioRepositoryInterface
 {
     public function __construct(
         private readonly PlanoTrabalhoReadRepositoryContract $readRepository,
         private readonly PlanoTrabalhoWriteRepositoryContract $writeRepository
     ) {}
 
+    public function findById(string|int $id, $deleteTrashed = false): ?PlanoTrabalho
+    {
+        return $this->readRepository->findById($id);
+    }
+
+    public function findOneParaEnvio(string|int $id): ?PlanoTrabalho
+    {
+        return $this->readRepository->findOneParaEnvio($id);
+    }
+
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
         return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesGerenciadasIds, $unidadesSubordinadasIds, $usuarioId);
+    }
+
+    public function findWithAtividades(string|int $id): ?PlanoTrabalho
+    {
+        return $this->readRepository->findWithAtividades($id);
     }
 
     public function planosAtivos(string $usuarioId): Collection
@@ -33,5 +55,51 @@ class PlanoTrabalhoRepository
     public function buscarPlanosPendentes(string $usuarioId, string $planoTrabalhoId, string $dataLimite): Collection
     {
         return $this->readRepository->buscarPlanosPendentes($usuarioId, $planoTrabalhoId, $dataLimite);
+    }
+
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
+    {
+        $this->readRepository->findAllParaEnvio($chunkSize, $onChunk);
+    }
+
+    public function chunkEnviosPendentes(int $size, callable $callback): void
+    {
+        $this->readRepository->chunkEnviosPendentes($size, $callback);
+    }
+
+    public function agendarEnvio(Model $planoTrabalho, Carbon $dataAgendamento): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->agendarEnvio($planoTrabalho, $dataAgendamento);
+    }
+
+    public function registrarTentativa(Model $planoTrabalho): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->registrarTentativa($planoTrabalho);
+    }
+
+    public function registrarSucesso(Model $planoTrabalho): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->registrarSucesso($planoTrabalho);
+    }
+
+    public function registrarInsucesso(Model $planoTrabalho, string $mensagem): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->registrarInsucesso($planoTrabalho, $mensagem);
+    }
+
+    public function registrarConclusao(Model $planoTrabalho, string $mensagem): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->registrarConclusao($planoTrabalho, $mensagem);
+    }
+
+    public function registrarLog(Model $planoTrabalho, string $mensagem): void
+    {
+        /** @var PlanoTrabalho $planoTrabalho */
+        $this->writeRepository->registrarLog($planoTrabalho, $mensagem);
     }
 }

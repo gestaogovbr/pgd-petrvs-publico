@@ -20,7 +20,7 @@ class InativaUnidadesTemporarios extends Command
      *
      * @var string
      */
-    protected $description = 'Inativa unidades com data_inicio_inativacao após 30 dias';
+    protected $description = 'Inativa unidades com data_inicio_inativacao após o prazo configurado';
 
     /**
      * Execute the console command.

@@ -19,7 +19,6 @@ import { PlanoTrabalho } from './plano-trabalho.model';
 import { ProgramaParticipante } from './programa-participante.model';
 import { UnidadeIntegrante } from './unidade-integrante.model';
 import { Unidade } from './unidade.model';
-import { TipoModalidadeSiape } from './tipo-modalidade-siape.model';
 import { UnidadeVinculada } from '../services/auth.service';
 
 
@@ -158,9 +157,15 @@ export class Usuario extends Base implements HasNotificacao {
     public data_inicial_pedagio: Date | null = null; /* Data Inicial do Pedágio */
     public data_final_pedagio: Date | null = null; /* Data Final do Pedágio */
     public pedagio: boolean = false;
-    public tipo_modalidade_id: string | null = null; /* Tipo de Modalidade PGD */
+    public modalidade_pgd: string | null = null; /* Modalidade PGD */
+    public modalidade_pgd_label: string = "Não definida";
     public participa_pgd: string = 'sim'; /* Participa PGD */
     public tipo_modalidade_siape?: TipoModalidadeSiape;
+
+    public data_agendamento_envio?: Date | null = null; /* Data de agendamento do envio */
+    public data_tentativa_envio?: Date | null = null; /* Data da última tentativa de envio */
+    public data_envio_api_pgd?: Date | null = null; /* Data do envio para a API do PGD */
+    public log_envio: string | null = null; /* Log do envio do para a API do PGD */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

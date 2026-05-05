@@ -4,16 +4,38 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\PlanoEntrega;
+use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
-class PlanoEntregaRepository
+/**
+ * @implements EnvioRepositoryInterface<PlanoEntrega>
+ */
+class PlanoEntregaRepository implements EnvioRepositoryInterface
 {
     public function __construct(
         private readonly PlanoEntregaReadRepositoryContract $readRepository,
         private readonly PlanoEntregaWriteRepositoryContract $writeRepository
     ) {}
+
+    public function findById(string|int $id, $deleteTrashed = false): ?PlanoEntrega
+    {
+        return $this->readRepository->findById($id);
+    }
+
+    public function findOneParaEnvio(string|int $id): ?PlanoEntrega
+    {
+        return $this->readRepository->findOneParaEnvio($id);
+    }
+
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
+    {
+        $this->readRepository->findAllParaEnvio($chunkSize, $onChunk);
+    }
 
     public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection
     {
@@ -35,4 +57,39 @@ class PlanoEntregaRepository
         return $this->readRepository->getEntregasPlanoEntregaExecucao($unidadesIds);
     }
 
+    public function agendarEnvio(Model $planoEntrega, Carbon $dataAgendamento): void
+    {
+        /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->agendarEnvio($planoEntrega, $dataAgendamento);
+    }
+
+    public function registrarTentativa(Model $planoEntrega): void
+    {
+        /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->registrarTentativa($planoEntrega);
+    }
+
+    public function registrarSucesso(Model $planoEntrega): void
+    {
+        /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->registrarSucesso($planoEntrega);
+    }
+
+    public function registrarInsucesso(Model $planoEntrega, string $mensagem): void
+    {
+        /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->registrarInsucesso($planoEntrega, $mensagem);
+    }
+
+    public function registrarConclusao(Model $planoEntrega, string $mensagem): void
+    {
+        /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->registrarConclusao($planoEntrega, $mensagem);
+    }
+
+    public function registrarLog(Model $planoEntrega, string $mensagem): void
+    {
+       /** @var PlanoEntrega $planoEntrega */
+        $this->writeRepository->registrarLog($planoEntrega, $mensagem);
+    }
 }

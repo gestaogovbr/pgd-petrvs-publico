@@ -7,18 +7,18 @@ use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Repository\UsuarioRepository;
-use App\Models\TipoModalidade;
 use App\Models\Perfil;
+use Illuminate\Support\Facades\Bus;
 
 beforeEach(function () {
+    Bus::fake();
     $this->repository = app(UsuarioRepository::class);
-    $this->tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
     $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
 });
 
 test('findById', function () {
     $usuario = Usuario::factory()->create([
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
 
@@ -34,7 +34,7 @@ test('findByCpfOrEmail', function () {
     $usuario = Usuario::factory()->create([
         'cpf' => $cpf,
         'email' => $email,
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
 
@@ -51,7 +51,7 @@ test('findByCpfOrEmail ignora email nulo ou vazio', function () {
     Usuario::factory()->create([
         'cpf' => $cpf,
         'email' => null,
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
 
@@ -66,7 +66,7 @@ test('findByCpfOrEmail ignora email nulo ou vazio', function () {
 
 test('isParticipanteHabilitado', function () {
     $usuario = Usuario::factory()->create([
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
     $programa = Programa::factory()->create();
@@ -90,7 +90,7 @@ test('isParticipanteHabilitado', function () {
 
 test('isIntegrante', function () {
     $usuario = Usuario::factory()->create([
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
     $unidade = Unidade::factory()->create();
@@ -113,7 +113,7 @@ test('isIntegrante', function () {
 
 test('getAtribuicoes', function () {
     $usuario = Usuario::factory()->create([
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
     $unidade = Unidade::factory()->create();
@@ -142,7 +142,7 @@ test('getAtribuicoes', function () {
 
 test('isLotacao', function () {
     $usuario = Usuario::factory()->create([
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
     $unidade = Unidade::factory()->create();
@@ -165,13 +165,13 @@ test('isLotacao', function () {
 test('findAllSemMatricula', function () {
     Usuario::factory()->create([
         'matricula' => '12345',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
 
     $semMatricula = Usuario::factory()->create([
         'matricula' => null,
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
 
@@ -185,7 +185,7 @@ test('findByCpfAndLotacao', function () {
     $cpf = '99988877766';
     $usuario = Usuario::factory()->create([
         'cpf' => $cpf,
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
     $unidade = Unidade::factory()->create();
@@ -212,13 +212,13 @@ test('findAllByCpf', function () {
 
     Usuario::factory()->count(2)->create([
         'cpf' => $cpf,
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
 
     Usuario::factory()->create([
         'cpf' => '99999999999',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
 
@@ -231,7 +231,7 @@ test('getUnidadesVinculadas', function () {
     $cpf = '55566677788';
     $usuario = Usuario::factory()->create([
         'cpf' => $cpf,
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
 
@@ -269,7 +269,7 @@ test('createAndUpdate', function () {
         'cpf' => '12312312312',
         'email' => 'novo@example.com',
         'matricula' => '654321',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ];
 

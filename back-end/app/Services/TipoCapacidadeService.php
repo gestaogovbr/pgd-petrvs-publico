@@ -475,6 +475,19 @@ class TipoCapacidadeService extends ServiceBase
         "codigo" => "MOD_RELATORIO_UNIDADE_TODAS_UNIDADES",
         "descricao" => "Relatório de Unidades - Listar todas as unidades",
     ],
+    [
+        "codigo" => "MOD_ENVIOS",
+        "descricao" => "Envios",
+        "capacidades" => [
+            ["MOD_ENVIO_USUARIO", "Logs de Participantes"],
+            ["MOD_ENVIO_PT", "Logs de PT"],
+            ["MOD_ENVIO_PE", "Logs de PE"],
+        ]
+    ],
+    [
+        "codigo" => "MOD_SIAPE_RELATORIO_CARGA",
+        "descricao" => "Relatório de Carga Individual SIAPE",
+    ],
   ];
 
   private function differentDev(&$data)

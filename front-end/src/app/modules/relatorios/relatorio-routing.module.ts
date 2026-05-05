@@ -9,6 +9,7 @@ import { RelatorioUnidadeComponent } from "./relatorio-unidade/relatorio-unidade
 import { IndicadorEquipeComponent } from "./indicadores-equipes/indicadores-equipes.component";
 import { IndicadorGestaoComponent } from "./indicadores-gestao/indicadores-gestao.component";
 import { IndicadorEntregaComponent } from "./indicadores-entrega/indicadores-entrega.component";
+import { RelatorioCargaIndividualSiapeComponent } from "./relatorio-carga-individual-siape/relatorio-carga-individual-siape.component";
 
 const routes: Routes = [
   { path: 'planos-trabalho',
@@ -45,6 +46,15 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: { 
       title: "Relatório de Unidades",
+    }
+  }, {
+   path: 'carga-individual-siape',
+    component: RelatorioCargaIndividualSiapeComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: "Relatório de Carga Individual SIAPE",
     }
   }, {
    path: 'indicadores/equipes',

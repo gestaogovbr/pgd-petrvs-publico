@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Perfil;
-use App\Models\TipoModalidade;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 
@@ -46,7 +45,6 @@ test('migração saneia emails @petrvs definindo usuarios.email como null', func
     $makeNullable = require $makeNullablePath;
     $makeNullable->up();
 
-    $tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
     $perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
 
     $emailPetrvs1 = 'u1-' . \Illuminate\Support\Str::uuid()->toString() . '@petrvs.gov.br';
@@ -55,19 +53,19 @@ test('migração saneia emails @petrvs definindo usuarios.email como null', func
 
     $usuarioPetrvs1 = Usuario::factory()->create([
         'email' => $emailPetrvs1,
-        'tipo_modalidade_id' => $tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $perfilId,
     ]);
 
     $usuarioPetrvs2 = Usuario::factory()->create([
         'email' => $emailPetrvs2,
-        'tipo_modalidade_id' => $tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $perfilId,
     ]);
 
     $usuarioValido = Usuario::factory()->create([
         'email' => $emailValido,
-        'tipo_modalidade_id' => $tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $perfilId,
     ]);
 

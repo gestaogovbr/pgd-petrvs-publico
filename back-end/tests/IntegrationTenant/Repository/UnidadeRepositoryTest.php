@@ -5,7 +5,6 @@ namespace Tests\IntegrationTenant\Repository;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\Perfil;
-use App\Models\TipoModalidade;
 use App\Repository\UnidadeRepository;
 use Tests\DatabaseTenantTestCase;
 use Illuminate\Support\Facades\DB;
@@ -33,19 +32,6 @@ class UnidadeRepositoryTest extends DatabaseTenantTestCase
                 'updated_at' => now(),
             ]);
         }
-        
-        if (!DB::table('tipos_modalidades')->where('id', 'modalidade-test')->exists()) {
-            DB::table('tipos_modalidades')->insert([
-                'id' => 'modalidade-test',
-                'nome' => 'Presencial',
-                'exige_pedagio' => 0,
-                'plano_trabalho_calcula_horas' => 1,
-                'atividade_tempo_despendido' => 1,
-                'atividade_esforco' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        }
     }
 
     public function test_has_usuario_lotacao()
@@ -53,7 +39,7 @@ class UnidadeRepositoryTest extends DatabaseTenantTestCase
         $unidade = Unidade::factory()->create();
         $usuario = Usuario::factory()->create([
             'perfil_id' => 'perfil-test',
-            'tipo_modalidade_id' => 'modalidade-test'
+            'modalidade_pgd' => 'presencial'
         ]);
         
         $ui = new UnidadeIntegrante();
@@ -77,7 +63,7 @@ class UnidadeRepositoryTest extends DatabaseTenantTestCase
         
         $gestor = Usuario::factory()->create([
             'perfil_id' => 'perfil-test',
-            'tipo_modalidade_id' => 'modalidade-test'
+            'modalidade_pgd' => 'presencial'
         ]);
         
         $ui = new UnidadeIntegrante();
@@ -95,7 +81,7 @@ class UnidadeRepositoryTest extends DatabaseTenantTestCase
         
         $outro = Usuario::factory()->create([
             'perfil_id' => 'perfil-test',
-            'tipo_modalidade_id' => 'modalidade-test'
+            'modalidade_pgd' => 'presencial'
         ]);
         $this->assertFalse($this->repository->isUsuarioGestorRecursivo($filho->id, $outro->id));
     }

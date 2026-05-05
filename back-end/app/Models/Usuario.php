@@ -19,7 +19,6 @@ use App\Models\Favorito;
 use App\Models\Integracao;
 use App\Models\IntegracaoServidor;
 use App\Models\Notificacao;
-use App\Models\TipoModalidadeSiape;
 use App\Models\NotificacaoConfig;
 use App\Models\NotificacaoDestinatario;
 use App\Models\NotificacaoWhatsapp;
@@ -37,6 +36,7 @@ use App\Models\StatusJustificativa;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Services\UtilService;
+use App\Support\ModalidadePgd;
 use App\Traits\AutoUuid;
 use App\Traits\HasPermissions;
 use App\Traits\MergeRelations;
@@ -67,8 +67,6 @@ class UsuarioConfig
     public $notificacoes;
 }
 
-
-
 /**
  * @property string $id
  * @property string $nome
@@ -80,7 +78,10 @@ class UsuarioConfig
  * @property string $sexo
  * @property string $situacao_funcional
  * @property string $perfil_id
- * @property string $tipo_modalidade_id
+ * @property string|null $modalidade_pgd
+ * @property Carbon|null $data_agendamento_envio
+ * @property Carbon|null $data_envio_api_pgd
+ * @property Carbon|null $data_tentativa_envio
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
  * @property-read \App\Models\UnidadeIntegrante|null $lotacao
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
@@ -102,7 +103,7 @@ class Usuario extends Authenticatable implements AuditableContract
     protected $table = "usuarios";
 
     protected $with = ['perfil'];
-    protected $appends = ['pedagio'];
+    protected $appends = ['pedagio', 'modalidade_pgd_label'];
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
         'email', /* varchar(100); NULL; */ // E-mail do usuário
@@ -123,7 +124,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'data_nascimento',
         'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
         'cod_jornada', /* int; NULL */ // Codigo da Jornada
-        'tipo_modalidade_id', /* char(36); NULL */ // Tipo de modalidade do usuário no PGD
+        'modalidade_pgd', /* varchar(50); NULL */ // Modalidade do usuário no PGD
         'participa_pgd',/* enum('sim','não'); */ // Participação do usuário no PGD
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
@@ -178,6 +179,9 @@ class Usuario extends Authenticatable implements AuditableContract
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'data_agendamento_envio' => 'datetime',
+        'data_tentativa_envio' => 'datetime',
+        'data_envio_api_pgd' => 'datetime',
         'notificacoes' => AsJson::class
     ];
 
@@ -471,9 +475,9 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(UnidadeIntegrante::class)->has('colaborador');
     } // unidade com a qual possui TCR
 
-    public function tipoModalidadeSiape()
+    public function getModalidadePgdLabelAttribute(): string
     {
-        return $this->belongsTo(TipoModalidadeSiape::class, 'modalidade_pgd');
+        return ModalidadePgd::label($this->modalidade_pgd ?? null);
     }
 
 

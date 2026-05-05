@@ -5,7 +5,7 @@
     </div>
     <separator></separator>
     <div class="row">
-        <input-search label="Responsável" #usuario [size]="12" controlName="usuario_id" [dao]="usuarioDao" [join]="['planos_trabalho.tipo_modalidade:id,nome', 'planos_trabalho.entregas.entrega:id,nome']" labelInfo="Responsável por executar a atividade" (select)="onUsuarioSelect($event)" required></input-search>
+        <input-search label="Responsável" #usuario [size]="12" controlName="usuario_id" [dao]="usuarioDao" [join]="['planos_trabalho.entregas.entrega:id,nome']" labelInfo="Responsável por executar a atividade" (select)="onUsuarioSelect($event)" required></input-search>
     </div>
     <div class="row">
         <input-select [label]="lex.translate('Plano de trabalho')" [size]="7" controlName="plano_trabalho_id" #planoTrabalho [control]="form!.controls.plano_trabalho_id" [items]="planosTrabalhos" (change)="onPlanoChange($event)" [labelInfo]="lex.translate('Plano de trabalho')" required></input-select>

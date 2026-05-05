@@ -2,19 +2,14 @@
 
 use App\Models\Usuario;
 use App\Services\IntegracaoService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+
 beforeEach(function () {
+    Bus::fake();
     $this->service = new IntegracaoService();
-    
-    $this->tipoModalidadeId = Str::uuid()->toString();
-    DB::table('tipos_modalidades')->insert([
-        'id' => $this->tipoModalidadeId,
-        'nome' => 'Modalidade Teste',
-        'created_at' => now(),
-        'updated_at' => now()
-    ]);
 
     $this->perfilParticipanteId = Str::uuid()->toString();
     DB::table('perfis')->insert([
@@ -32,14 +27,14 @@ beforeEach(function () {
 test('deve alterar email de usuario existente ativo para liberar email', function () {
     $email = 'conflito@teste.gov.br';
     $id = Str::uuid()->toString();
-    
+
     DB::table('usuarios')->insert([
         'id' => $id,
         'email' => $email,
         'matricula' => '11111',
         'nome' => 'Antigo',
         'cpf' => '11111111111',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'created_at' => now(),
         'updated_at' => now()
     ]);
@@ -51,26 +46,26 @@ test('deve alterar email de usuario existente ativo para liberar email', functio
     $this->service->liberarEmailDuplicadoDefinindoComoNulo($email, '22222');
 
     $usuarioAntigo = DB::table('usuarios')->where('id', $id)->first();
-    
+
     expect($usuarioAntigo->email)->toBeNull();
 });
 
 test('deve alterar email de usuario existente soft deleted para liberar email', function () {
     $email = 'conflito_deleted@teste.gov.br';
     $id = Str::uuid()->toString();
-    
+
     DB::table('usuarios')->insert([
         'id' => $id,
         'email' => $email,
         'matricula' => '33333',
         'nome' => 'Deletado',
         'cpf' => '33333333333',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'created_at' => now(),
         'updated_at' => now(),
         'deleted_at' => now()
     ]);
-    
+
     $this->assertDatabaseHas('usuarios', ['id' => $id, 'email' => $email]);
 
     Usuario::flushEventListeners();
@@ -78,31 +73,31 @@ test('deve alterar email de usuario existente soft deleted para liberar email', 
     $this->service->liberarEmailDuplicadoDefinindoComoNulo($email, '44444');
 
     $usuarioAntigo = DB::table('usuarios')->where('id', $id)->first();
-    
+
     expect($usuarioAntigo->email)->toBeNull();
 });
 
 test('nao deve alterar email se for o proprio usuario ignorado', function () {
     $email = 'proprio@teste.gov.br';
     $id = Str::uuid()->toString();
-    
+
     DB::table('usuarios')->insert([
         'id' => $id,
         'email' => $email,
         'matricula' => '55555',
         'nome' => 'Proprio',
         'cpf' => '55555555555',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'created_at' => now(),
         'updated_at' => now()
     ]);
-    
+
     Usuario::flushEventListeners();
 
     $this->service->liberarEmailDuplicadoDefinindoComoNulo($email, '55555', $id);
 
     $usuario = DB::table('usuarios')->where('id', $id)->first();
-    
+
     expect($usuario->email)->toBe($email);
 });
 
@@ -156,7 +151,7 @@ test('deve transferir email para usuario mais recente e manter consistencia ao e
         'matricula' => '1',
         'apelido' => 'usuario1',
         'situacao_funcional' => 'ATIVO_PERMANENTE',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'data_modificacao' => $dataUsuario1,
         'created_at' => now(),
         'updated_at' => now(),
@@ -292,7 +287,7 @@ test('deve ser idempotente ao executar fluxo de servidores com dados já consist
         'matricula' => '1',
         'apelido' => 'usuario1',
         'situacao_funcional' => 'ATIVO_PERMANENTE',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'data_modificacao' => $dataUsuario1,
         'created_at' => now(),
         'updated_at' => now(),
@@ -306,7 +301,7 @@ test('deve ser idempotente ao executar fluxo de servidores com dados já consist
         'matricula' => '2',
         'apelido' => 'usuario2',
         'situacao_funcional' => 'ATIVO_PERMANENTE',
-        'tipo_modalidade_id' => $this->tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'data_modificacao' => $dataUsuario2,
         'created_at' => now(),
         'updated_at' => now(),
@@ -341,7 +336,9 @@ test('deve ser idempotente ao executar fluxo de servidores com dados já consist
         ],
     ];
 
-    $this->service->processarServidoresTransaction($servidores);
+    Usuario::withoutEvents(function () use ($servidores) {
+        $this->service->processarServidoresTransaction($servidores);
+    });
 
     $usuario1 = DB::table('usuarios')->where('matricula', '1')->first();
     $usuario2 = DB::table('usuarios')->where('matricula', '2')->first();

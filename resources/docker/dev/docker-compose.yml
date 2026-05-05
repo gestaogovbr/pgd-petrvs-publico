@@ -32,6 +32,7 @@ services:
     environment:
       - TZ=America/Bahia
       - REDIS_HOST=petrvs_redis
+      - RABBITMQ_HOST=petrvs_rabbitmq
     volumes:
       - ../../../back-end:/var/www
     deploy:
@@ -50,9 +51,43 @@ services:
     dns:
       - 8.8.8.8
       - 1.1.1.1
+    environment:
+      - APP_CONTEXT=web
     depends_on:
-      - petrvs_db
-      - petrvs_redis
+      petrvs_db:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
+    networks:
+      - appnet
+
+  petrvs_rabbitmq:
+    image: rabbitmq:3-management
+    container_name: petrvs_rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # UI de gerenciamento
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      RABBITMQ_DEFAULT_USER: petrvs
+      RABBITMQ_DEFAULT_PASS: petrvs
+      RABBITMQ_DEFAULT_VHOST: /
+      TZ: "America/Bahia"
+    volumes:
+      - ../../rabbitmq/data:/var/lib/rabbitmq
+      - ../../rabbitmq/logs:/var/log/rabbitmq
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
     networks:
       - appnet
 
@@ -64,9 +99,15 @@ services:
       resources:
         limits:
           memory: 1024M
+    environment:
+      - APP_CONTEXT=queue
     depends_on:
-      - petrvs_php
-      - petrvs_redis
+      petrvs_db:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
     networks:
       - appnet
 
@@ -76,7 +117,14 @@ services:
     command: >
       /bin/sh -c "while :; do php /var/www/artisan schedule:run >> /var/www/storage/logs/scheduler.log 2>&1; sleep 60; done"
     depends_on:
-      - petrvs_php
+      petrvs_db:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
+    environment:
+      - APP_CONTEXT=scheduler
     networks:
       - appnet
   
@@ -106,10 +154,16 @@ services:
   petrvs_redis:
     image: redis:alpine
     container_name: petrvs_redis
+    command: redis-server --bind 0.0.0.0 --protected-mode no
     ports:
-      - "6378:6378"
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
     networks:
       - appnet
 
 networks:
   appnet:
+
+volumes:
+  redis-data:

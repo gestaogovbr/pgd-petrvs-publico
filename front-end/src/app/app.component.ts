@@ -136,7 +136,6 @@ export class AppComponent implements IAppComponent {
       // TIPOS_AVALIACOES: { name: this.lex.translate("Tipos de Avaliação"), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
       TIPOS_DOCUMENTOS: { name: this.lex.translate("Tipos de Documento"), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
       TIPOS_JUSTIFICATIVAS: { name: this.lex.translate("Tipos de Justificativa"), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
-      // TIPOS_MODALIDADES: { name: this.lex.translate("Tipos de Modalidade"), permition: 'MOD_TIPO_MDL', route: ['cadastros', 'tipo-modalidade'], icon: this.entity.getIcon('TipoModalidade') },
       // TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /* Gestão */
@@ -174,12 +173,16 @@ export class AppComponent implements IAppComponent {
       LOGS_ERROS: { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: this.entity.getIcon('Error') },
       LOGS_TRAFEGOS: { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
       LOGS_SYSTEM: { name: "Logs do Sistema", permition: '', route: ['logs', 'system-logs'], icon: 'bi bi-file-earmark-text' },
-      TESTE_IMPERSONATE: { name: "IMPERSONATE", permition: '', route: ['impersonate'], icon: this.entity.getIcon('Teste') },
+      IMPERSONATE: { name: "Personificar", permition: '', route: ['impersonate'], icon: this.entity.getIcon('Ferramentas') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
-      ENVIO_LOGS: { name: "Log dos Envios", permition: '', route: ['logs', 'envios'], icon: 'bi-list-check' },
-      ENVIO_FORCAR: { name: "Forçar Envio", permition: '', route: ['envios', 'forcar'], icon: this.entity.getIcon('Envio') },
-      ENVIO_REINICIAR: { name: "Resetar Envios", permition: '', route: ['envios', 'reiniciar'], icon: 'bi-arrow-clockwise' },
+      /* Envios */
+      //ENVIO_LOGS: { name: "Log dos Envios", permition: '', route: ['logs', 'envios'], icon: 'bi-list-check' },
+      //ENVIO_FORCAR: { name: "Forçar Envio", permition: '', route: ['envios', 'forcar'], icon: this.entity.getIcon('Envio') },
+      //ENVIO_REINICIAR: { name: "Resetar Envios", permition: '', route: ['envios', 'reiniciar'], icon: 'bi-arrow-clockwise' },
+      ENVIO_USUARIO: { name: "Logs de Participantes", permition: 'MOD_ENVIO_USUARIO', route: ['envios', 'participantes'], icon: 'bi bi-person' },
+      ENVIO_PLANO_ENTREGA: { name: "Logs de Planos de Entrega", permition: 'MOD_ENVIO_PE', route: ['envios', 'planos-entrega'], icon: 'bi bi-list-check' },
+      ENVIO_PLANO_TRABALHO: { name: "Logs de Planos de Trabalho", permition: 'MOD_ENVIO_PT', route: ['envios', 'planos-trabalho'], icon: 'bi bi-list-check' },
       /* SIAPE */
       BLACKLIST_SERVIDOR: { name: "CPFs indisponíveis", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
       BLACKLIST_UNIDADE: { name: "Unidades indisponíveis", permition: '', route: ['siape', 'blacklist-unidade'], icon: 'bi bi-building-dash' },
@@ -208,6 +211,12 @@ export class AppComponent implements IAppComponent {
         icon: this.entity.getIcon('Unidade'),
         route: ['relatorios', 'unidades'],
         //onClick: ()=> this.emDesenvolvimento()
+      },
+      RELATORIO_CARGA_INDIVIDUAL_SIAPE: {
+        name: "Carga Individual SIAPE",
+        permition: 'MOD_SIAPE_RELATORIO_CARGA',
+        icon: 'bi bi-clipboard-data',
+        route: ['relatorios', 'carga-individual-siape'],
       },
       INDICADORES_ENTREGAS: {
         name: "Entregas",
@@ -300,7 +309,8 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES
+        this.menuSchema.RELATORIO_UNIDADES,
+        this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Indicadores"),
@@ -377,7 +387,8 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES
+        this.menuSchema.RELATORIO_UNIDADES,
+        this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Indicadores"),
@@ -408,13 +419,6 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.LOGS_SYSTEM
       ]
     }, {
-      name: this.lex.translate("Testes"),
-      permition: "MENU_DEV_ACESSO",
-      id: "navbarDropdownDevTestes",
-      menu: [
-        this.menuSchema.TESTE_IMPERSONATE,
-      ]
-    }, {
       name: this.lex.translate("Consultas"),
       permition: "MENU_DEV_ACESSO",
       id: "navbarDropdownDevConsultas",
@@ -425,13 +429,31 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.BLACKLIST_UNIDADE
       ]
     }, {
-      name: this.lex.translate("Envio API"),
+      name: this.lex.translate("Relatórios"),
       permition: "MENU_DEV_ACESSO",
+      id: "navbarDropdownDevRelatorios",
+      menu: [
+        this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
+      ]
+    }, {
+      name: this.lex.translate("Envio API"),
+      permition: "MOD_ENVIOS",
       id: "navbarDropdownDevApiPgd",
       menu: [
-        this.menuSchema.ENVIO_LOGS,
-        this.menuSchema.ENVIO_FORCAR,
-        this.menuSchema.ENVIO_REINICIAR
+        //this.menuSchema.ENVIO_LOGS,
+        //this.menuSchema.ENVIO_FORCAR,
+        //this.menuSchema.ENVIO_REINICIAR,
+        this.menuSchema.ENVIO_USUARIO,
+        this.menuSchema.ENVIO_PLANO_ENTREGA,
+        this.menuSchema.ENVIO_PLANO_TRABALHO
+      ],
+    },
+    {
+      name: this.lex.translate("Ferramentas"),
+      permition: "MENU_DEV_ACESSO",
+      id: "navbarDropdownDevTestes",
+      menu: [
+        this.menuSchema.IMPERSONATE,
       ]
     }];
 

@@ -8,6 +8,7 @@ use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
+use App\Repository\Interfaces\EnvioReadRepositoryInterface;
 use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -15,11 +16,13 @@ use App\Services\UtilService;
 use App\Services\RawWhere;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection as SupportCollection;
+
 
 /**
  * @extends AbstractEloquentReadRepository<Usuario>
  */
-class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository implements UsuarioReadRepositoryContract
+class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository implements UsuarioReadRepositoryContract, EnvioReadRepositoryInterface
 {
     public function __construct(Usuario $model)
     {
@@ -30,7 +33,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
     {
         /** @var \Illuminate\Database\Eloquent\Builder<Usuario> $query */
         $query = $this->query();
-        
+
         /** @var Usuario|null $usuario */
         $usuario = $deleteTrashed ? $query->withTrashed()->find($id) : parent::findById($id);
         return $usuario;
@@ -47,7 +50,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
 
         /** @var Builder|Usuario $query */
         $query = $this->query();
-        
+
         if ($withTrashed) {
             $query->withTrashed();
         }
@@ -89,7 +92,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         $participacao = $usuario->participacoesProgramas()
             ->where('programa_id', $programaId)
             ->first();
-            
+
         return $participacao ? (bool) $participacao->habilitado : false;
     }
 
@@ -143,7 +146,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             })
             ->orderBy('created_at', 'asc')
             ->first();
-            
+
         return $usuario;
     }
 
@@ -173,11 +176,11 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
     {
         $query = $this->query();
         $this->applySearchFilters($query, $params);
-        
+
         if ($limit > 0) {
             return $query->paginate($limit);
         }
-        
+
         return $query->get();
     }
 
@@ -230,7 +233,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             "gerenciasDelegadas.unidade",
             "notificacoesDestinatario" => fn($q) => $q->where('data_leitura', null)
         ])->first();
-        
+
         return $usuario;
     }
 
@@ -314,12 +317,12 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                 }
             }
         }
-        
+
         // Handle text search if present
         if (isset($params['query']) && !empty($params['query'])) {
              $text = "%" . str_replace(" ", "%", $params['query']) . "%";
              $fields = $params['fields'] ?? ['nome', 'email', 'cpf', 'matricula', 'apelido'];
-             
+
              $query->where(function($q) use ($fields, $text) {
                  foreach ($fields as $field) {
                      $q->orWhere($field, 'like', $text);
@@ -336,5 +339,46 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                 $query->orderBy($field, $direction === 'desc' ? 'desc' : 'asc');
             }
         }
+    }
+
+    public function findOneParaEnvio(string $id): ?Usuario
+    {
+        return $this->model->newQuery()
+            ->with([
+                'unidadesIntegrantes' => function ($query) {
+                    $query->whereHas('atribuicoes', function ($query) {
+                        $query
+                            ->where('atribuicao', 'LOTADO')
+                            ->whereNull('deleted_at');
+                    });
+                },
+            ])
+            ->find($id);
+    }
+
+    // lista os usuário para envio ao PGD
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
+    {
+        DB::table('usuarios')
+            ->whereNull('usuarios.deleted_at')
+            ->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                    ->from('planos_trabalhos as pt')
+                    ->whereColumn('pt.usuario_id', 'usuarios.id')
+                    ->whereNull('pt.deleted_at')
+                    ->limit(1);
+            })
+            ->whereExists(function ($q) {
+                $q->select(DB::raw(1))
+                    ->from('documentos_assinaturas as da')
+                    ->whereColumn('da.usuario_id', 'usuarios.id')
+                    ->whereNull('da.deleted_at')
+                    ->limit(1);
+            })
+            ->select('usuarios.id')
+            ->orderBy('usuarios.id')
+            ->chunkById($chunkSize, function (SupportCollection $usuarios) use ($onChunk): void {
+                $onChunk($usuarios);
+            });
     }
 }

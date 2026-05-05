@@ -3,16 +3,22 @@
 namespace App\Models;
 
 use App\Casts\AsJson;
-use App\Models\ModelBase;
-use App\Models\Usuario;
-use App\Models\Unidade;
+use App\Enums\StatusEnum;
 use App\Models\Atividade;
-use App\Models\Programa;
 use App\Models\Documento;
-use App\Models\PlanoTrabalhoEntrega;
+use App\Models\DocumentoAssinatura;
+use App\Models\ModelBase;
+use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalhoConsolidacao;
-use App\Models\TipoModalidade;
+use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
+use App\Models\PlanoTrabalhoEntrega;
+use App\Models\Programa;
+use App\Models\StatusJustificativa;
+use App\Support\ModalidadePgd;
+use App\Models\Unidade;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,7 +29,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @property string $usuario_id
  * @property string $programa_id
  * @property string $unidade_id
- * @property string $tipo_modalidade_id
+ * @property string|null $modalidade_pgd
  * @property string $criacao_usuario_id
  * @property string $documento_id
  * @property float $carga_horaria
@@ -35,10 +41,12 @@ use Illuminate\Database\Eloquent\Collection;
  * @property \DateTime|null $avaliado_at
  * @property array $criterios_avaliacao
  * @property mixed $_metadata
+ * @property Carbon|null $data_agendamento_envio
+ * @property Carbon|null $data_envio_api_pgd
+ * @property Carbon|null $data_tentativa_envio
  * @property-read Usuario $usuario
  * @property-read Programa $programa
  * @property-read Unidade $unidade
- * @property-read TipoModalidade $tipoModalidade
  * @property-read Usuario|null $criacaoUsuario
  * @property-read Documento|null $documento
  * @property-read Collection|PlanoTrabalhoConsolidacao[] $consolidacoes
@@ -53,6 +61,8 @@ class PlanoTrabalho extends ModelBase
 
     protected $with = [];
 
+    protected $appends = ['modalidade_pgd_label'];
+
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'carga_horaria', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */ // Carga horária diária do usuário
         'tempo_total', /* double(8,2); NOT NULL; DEFAULT: '0.00'; */ // Horas úteis de trabalho no período de data_inicio_vigencia à data_fim_vigencia considerando carga_horaria, feriados, fins de semana
@@ -64,7 +74,7 @@ class PlanoTrabalho extends ModelBase
         'criacao_usuario_id', /* char(36); */
         'unidade_id', /* char(36); NOT NULL; */
         'documento_id', /* char(36); */
-        'tipo_modalidade_id', /* char(36); NOT NULL; */
+        'modalidade_pgd', /* varchar(50); NULL; */
         'data_inicio', /* datetime; NOT NULL; */ // Inicio do plano de trabalho
         'data_fim', /* datetime; NOT NULL; */ // Fim do plano de trabalho
         'data_arquivamento', /* datetime; */ // Data de arquivamento do plano de trabalho
@@ -90,7 +100,10 @@ class PlanoTrabalho extends ModelBase
     public $delete_cascade = ['documentos','consolidacoes'];
 
     protected $casts = [
-        "criterios_avaliacao" => AsJson::class
+        "criterios_avaliacao" => AsJson::class,
+        'data_agendamento_envio' => 'datetime',
+        'data_tentativa_envio' => 'datetime',
+        'data_envio_api_pgd' => 'datetime',
     ];
 
     protected static function booted()
@@ -162,15 +175,15 @@ class PlanoTrabalho extends ModelBase
         return $this->belongsTo(Unidade::class);
     }
 
-    public function tipoModalidade(): BelongsTo
-    {
-        return $this->belongsTo(TipoModalidade::class);
-    }
-
     public function documento(): BelongsTo
     {
         return $this->belongsTo(Documento::class);
     }    //nullable
+
+    public function getModalidadePgdLabelAttribute(): string
+    {
+        return ModalidadePgd::label($this->modalidade_pgd ?? null);
+    }
 
     public function ultimaAssinatura(): HasOneThrough
     {
@@ -206,6 +219,19 @@ class PlanoTrabalho extends ModelBase
                 'foreign_key' => 'plano_trabalho_id',
             ],
         ];
+    }
+
+    public function isEmStatusParaEnvio() {
+        if ($this->status instanceof \App\Enums\StatusEnum) {
+            $status = $this->status->value;
+        } else{
+            $status = (string)$this->status;
+        }
+
+        return ($status == StatusEnum::ATIVO->value)
+            || ($status == StatusEnum::CONCLUIDO->value)
+            || ($status == StatusEnum::AVALIADO->value)
+        ;
     }
 
 }
