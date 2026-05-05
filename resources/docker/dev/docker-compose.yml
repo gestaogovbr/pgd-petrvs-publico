@@ -64,8 +64,15 @@ services:
       - appnet
 
   petrvs_rabbitmq:
-    image: rabbitmq:3-management
+    build:
+      context: .
+      dockerfile: Dockerfile-rabbitmq
+    image: petrvs-rabbitmq:dev
     container_name: petrvs_rabbitmq
+    # definitions.json no repo só tem filas; o entrypoint faz merge com RABBITMQ_* do back-end/.env (Dockerfile-rabbitmq).
+    # Zerar dados: docker volume rm petrvs_rabbitmq_data_dev
+    env_file:
+      - ../../../back-end/.env
     ports:
       - "5672:5672"    # AMQP
       - "15672:15672"  # UI de gerenciamento
@@ -75,12 +82,9 @@ services:
       timeout: 5s
       retries: 5
     environment:
-      RABBITMQ_DEFAULT_USER: petrvs
-      RABBITMQ_DEFAULT_PASS: petrvs
-      RABBITMQ_DEFAULT_VHOST: /
       TZ: "America/Bahia"
     volumes:
-      - ../../rabbitmq/data:/var/lib/rabbitmq
+      - petrvs_rabbitmq_data:/var/lib/rabbitmq
       - ../../rabbitmq/logs:/var/log/rabbitmq
       - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
       - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
@@ -167,3 +171,5 @@ networks:
 
 volumes:
   redis-data:
+  petrvs_rabbitmq_data:
+    name: petrvs_rabbitmq_data_dev

@@ -396,7 +396,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
 
         $usuario = new Usuario();
         $usuario->forceFill(['id' => 'user-id', 'usuario_externo' => 1]);
-        $this->usuarioRepository->shouldReceive('findById')->once()->with('user-id')->andReturn($usuario);
+        $this->usuarioRepository->shouldReceive('findById')->twice()->with('user-id')->andReturn($usuario);
 
         $updatedUser = Mockery::mock(Usuario::class);
         $updatedUser->shouldReceive('getAttribute')->with('id')->andReturn('user-id');
@@ -424,7 +424,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
 
         $usuario = new Usuario();
         $usuario->forceFill(['id' => 'user-id', 'usuario_externo' => 0]);
-        $this->usuarioRepository->shouldReceive('findById')->once()->with('user-id')->andReturn($usuario);
+        $this->usuarioRepository->shouldReceive('findById')->twice()->with('user-id')->andReturn($usuario);
 
         $updatedUser = Mockery::mock(Usuario::class);
         $updatedUser->shouldReceive('getAttribute')->with('id')->andReturn('user-id');
@@ -632,7 +632,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         $usuario->forceFill(['id' => 'user-id', 'usuario_externo' => 0]);
 
         $this->usuarioRepository->shouldReceive('findById')
-            ->once()
+            ->twice()
             ->with('user-id')
             ->andReturn($usuario);
 

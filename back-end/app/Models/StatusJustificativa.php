@@ -60,12 +60,12 @@ class StatusJustificativa extends ModelBase
     return $this->codigo === self::CODIGO_ATIVO;
   }
 
-  public function isPlanoTrabalho(): bool
+  public function isFromPlanoTrabalho(): bool
   {
     return !empty($this->plano_trabalho_id);
   }
 
-  public function isPlanoEntrega(): bool
+  public function isFromPlanoEntrega(): bool
   {
     return !empty($this->plano_entrega_id);
   }

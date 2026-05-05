@@ -24,11 +24,11 @@ class PgdService
     const DURACAO_TOKEN_PGD = 60*10; // 10 minutos
     private mixed $logReponse = null;
     private ?\Exception $exception = null;
-    private $tenantRepository;
+    private TenantRepository $tenantRepository;
 
     public function __construct()
     {
-        $this->tenantRepository = app()->make('TenantRepository');
+        $this->tenantRepository = app(TenantRepository::class);
     }
 
     public function getHttpClient($tenantId) : PendingRequest

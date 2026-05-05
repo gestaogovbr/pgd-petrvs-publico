@@ -8,7 +8,8 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)">
         <div class="row">
-            <input-text [size]="3" label="CPF" controlName="cpf" placeholder="CPF..." [attr.maxlength]="14" [form]="filter"></input-text>
+            <input-text [size]="2" label="CPF" controlName="cpf" placeholder="CPF..." [attr.maxlength]="14" [form]="filter"></input-text>
+            <input-text [size]="3" label="Nome" controlName="nome" placeholder="Nome..." [form]="filter"></input-text>
             <input-select
                 [size]="2"
                 label="Status"
@@ -16,17 +17,47 @@
                 [items]="lookup.ENVIO_USUARIO_STATUS"
                 [control]="filter!.controls.status"
                 itemTodos="- Todos -" [valueTodos]="null"/>
+        </div>
+        <div class="row">
             <input-datetime
                 [size]="2"
                 date
-                label="Período do envio: início"
+                label="Data agendamento: início"
+                controlName="this.filter.agendamento_inicio"
+                [control]="filter!.controls.agendamento_inicio"
+            ></input-datetime>
+            <input-datetime
+                [size]="2"
+                date
+                label="Data agendamento: fim"
+                controlName="this.filter.agendamento_fim"
+                [control]="filter!.controls.agendamento_fim"
+            ></input-datetime>
+            <input-datetime
+                [size]="2"
+                date
+                label="Período de conclusão: início"
+                controlName="this.filter.conclusao_inicio"
+                [control]="filter!.controls.conclusao_inicio"
+            ></input-datetime>
+            <input-datetime
+                [size]="2"
+                date
+                label="Período de conclusão: fim"
+                controlName="this.filter.conclusao_fim"
+                [control]="filter!.controls.conclusao_fim"
+            ></input-datetime>
+            <input-datetime
+                [size]="2"
+                date
+                label="Período de envio: início"
                 controlName="this.filter.envio_inicio"
                 [control]="filter!.controls.envio_inicio"
             ></input-datetime>
             <input-datetime
                 [size]="2"
                 date
-                label="Período do envio: fim"
+                label="Período de envio: fim"
                 controlName="this.filter.envio_fim"
                 [control]="filter!.controls.envio_fim"
             ></input-datetime>
@@ -43,13 +74,13 @@
             <ng-template let-row="row" #columnDataAgendamentoEnvio><span> {{row.data_agendamento_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
         </column>
         <column title="Tentativa de Envio" [template]="columnDataTentativaEnvio">
-            <ng-template let-row="row" #columnDataTentativaEnvio><span> {{row.data_tentativa_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
+            <ng-template let-row="row" #columnDataTentativaEnvio><span [class.text-strike]="hasTentativaBeforeAgendamento(row)"> {{row.data_tentativa_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
         </column>
         <column title="Conclusão" [template]="columnDataConclusaoEnvio">
-            <ng-template let-row="row" #columnDataConclusaoEnvio><span> {{row.data_conclusao_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
+            <ng-template let-row="row" #columnDataConclusaoEnvio><span [class.text-strike]="hasConclusaoBeforeAgendamento(row)"> {{row.data_conclusao_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
         </column>
         <column title="Envio bem sucedido" [template]="columnDataEnvioApiPgd">
-            <ng-template let-row="row" #columnDataEnvioApiPgd><span> {{row.data_envio_api_pgd | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
+            <ng-template let-row="row" #columnDataEnvioApiPgd><span [class.text-strike]="hasEnvioBeforeAgendamento(row)"> {{row.data_envio_api_pgd | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
         </column>
         <column title="Log de envio" field="log_envio"></column>
     </columns>

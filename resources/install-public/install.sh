@@ -378,15 +378,17 @@ services:
     ports:
       - '6379:6379'
   petrvs_rabbitmq:
-    image: rabbitmq:3-management
+    build:
+      context: .
+      dockerfile: Dockerfile-rabbitmq
+    image: petrvs-rabbitmq:install
     container_name: petrvs_rabbitmq
+    env_file:
+      - ./.env
     ports:
       - "5672:5672"    # AMQP
       - "15672:15672"  # UI de gerenciamento
     environment:
-      RABBITMQ_DEFAULT_USER: petrvs
-      RABBITMQ_DEFAULT_PASS: petrvs
-      RABBITMQ_DEFAULT_VHOST: /
       TZ: "America/Bahia"
     volumes:
       - ../../rabbitmq/data:/var/lib/rabbitmq
@@ -437,15 +439,17 @@ services:
     stdin_open: true
     tty: true
   petrvs_rabbitmq:
-    image: rabbitmq:3-management
+    build:
+      context: .
+      dockerfile: Dockerfile-rabbitmq
+    image: petrvs-rabbitmq:install
     container_name: petrvs_rabbitmq
+    env_file:
+      - ./.env
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: petrvs
-      RABBITMQ_DEFAULT_PASS: petrvs
-      RABBITMQ_DEFAULT_VHOST: /
       TZ: "America/Bahia"
     volumes:
       - ../rabbitmq/data:/var/lib/rabbitmq

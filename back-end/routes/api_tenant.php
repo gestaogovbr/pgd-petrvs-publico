@@ -32,6 +32,9 @@ use App\Http\Controllers\EntidadeController;
 use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\EnvioController;
 use App\Http\Controllers\EnvioItemController;
+use App\Http\Controllers\EnvioUsuarioController;
+use App\Http\Controllers\EnvioPlanoEntregaController;
+use App\Http\Controllers\EnvioPlanoTrabalhoController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\FeriadoController;
 use App\Http\Controllers\FuncaoController;
@@ -181,6 +184,15 @@ Route::middleware('auth:sanctum')->prefix('Envio')->group(function () {
 Route::middleware('auth:sanctum')->prefix('EnvioItem')->group(function () {
   Route::post('query', [EnvioItemController::class, 'query']);
   Route::post('get-by-id', [EnvioItemController::class, 'getById']);
+});
+Route::middleware('auth:sanctum')->prefix('EnvioUsuario')->group(function () {
+  Route::post('query', [EnvioUsuarioController::class, 'query']);
+});
+Route::middleware('auth:sanctum')->prefix('EnvioPlanoEntrega')->group(function () {
+  Route::post('query', [EnvioPlanoEntregaController::class, 'query']);
+});
+Route::middleware('auth:sanctum')->prefix('EnvioPlanoTrabalho')->group(function () {
+  Route::post('query', [EnvioPlanoTrabalhoController::class, 'query']);
 });
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
 });

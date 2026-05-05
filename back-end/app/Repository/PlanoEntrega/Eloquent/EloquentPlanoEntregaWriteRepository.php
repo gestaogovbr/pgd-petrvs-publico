@@ -23,6 +23,6 @@ class EloquentPlanoEntregaWriteRepository extends AbstractEloquentWriteRepositor
 
     protected function aplicarLogEnvioAposSucesso(PlanoEntrega $model): void
     {
-        $model->log_envio = null;
+        $model->setAttribute('log_envio', null);
     }
 }

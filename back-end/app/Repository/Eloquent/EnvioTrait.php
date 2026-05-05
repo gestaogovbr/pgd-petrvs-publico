@@ -17,7 +17,7 @@ trait EnvioTrait
      */
     public function agendarEnvio(Model $model, Carbon $dataAgendamento): void
     {
-        $model->data_agendamento_envio = $dataAgendamento;
+        $model->setAttribute('data_agendamento_envio', $dataAgendamento);
         $model->saveQuietly();
     }
 
@@ -26,7 +26,8 @@ trait EnvioTrait
      */
     public function registrarTentativa(Model $model): void
     {
-        $model->data_tentativa_envio = Carbon::now();
+        $data = Carbon::now();
+        $model->setAttribute('data_tentativa_envio', $data);
         $model->saveQuietly();
     }
 
@@ -35,8 +36,9 @@ trait EnvioTrait
      */
     public function registrarSucesso(Model $model): void
     {
-        $model->data_envio_api_pgd = Carbon::now();
-        $model->data_conclusao_envio = Carbon::now();
+        $data = Carbon::now();
+        $model->setAttribute('data_envio_api_pgd', $data);
+        $model->setAttribute('data_conclusao_envio', $data);
         $model->saveQuietly();
         $this->registrarLog($model, 'Envio realizado com sucesso.');
     }
@@ -47,7 +49,8 @@ trait EnvioTrait
      */
     public function registrarInsucesso(Model $model, string $mensagem): void
     {
-        $model->data_tentativa_envio = Carbon::now();
+        $data = Carbon::now();
+        $model->setAttribute('data_tentativa_envio', $data);
         $model->saveQuietly();
         $this->registrarLog($model, $mensagem);
     }
@@ -57,7 +60,8 @@ trait EnvioTrait
      */
     public function registrarConclusao(Model $model, string $mensagem): void
     {
-        $model->data_conclusao_envio = Carbon::now();
+        $data = Carbon::now();
+        $model->setAttribute('data_conclusao_envio', $data);
         $model->saveQuietly();
         $this->registrarLog($model, $mensagem);
     }
@@ -67,7 +71,7 @@ trait EnvioTrait
      */
     public function registrarLog(Model $model, string $mensagem): void
     {
-        $model->log_envio = $mensagem;
+        $model->setAttribute('log_envio', $mensagem);
         $model->saveQuietly();
     }
 }

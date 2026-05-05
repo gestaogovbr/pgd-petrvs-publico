@@ -44,7 +44,7 @@ describe('PreparaServidor', function () {
         });
 
         test('normaliza email funcional para minúsculas quando já possui domínio', function () {
-            $preparaServidor = new PreparaServidorTestClass();
+            $preparaServidor = new PreparaServidorTest();
             $dadosFuncionais = ['emailfuncional' => 'JOAO@GOV.BR'];
 
             $result = $preparaServidor->getEmail($dadosFuncionais);
@@ -62,7 +62,7 @@ describe('PreparaServidor', function () {
         });
 
         test('retorna null quando email funcional não possui arroba', function () {
-            $preparaServidor = new PreparaServidorTestClass();
+            $preparaServidor = new PreparaServidorTest();
             $dadosFuncionais = ['emailfuncional' => 'JOAO'];
 
             $result = $preparaServidor->getEmail($dadosFuncionais);

@@ -95,10 +95,10 @@
         },
         "platform": {
             "php": "8.2.30"
+        },
+        "audit": {
+            "block-insecure": false
         }
-    },
-    "audit": {
-        "block-insecure": false
     },
     "minimum-stability": "dev",
     "prefer-stable": true
