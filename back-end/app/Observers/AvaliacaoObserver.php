@@ -33,7 +33,7 @@ class AvaliacaoObserver
 
     public function updated(Avaliacao $model): void
     {
-        if ($model->isPlanoEntrega()) {
+        if ($model->isFromPlanoEntrega()) {
             if (!tenancy()->initialized) {
                 Log::warning('Tentativa de agendar envio de plano de entrega sem tenant inicializado');
                 return;
