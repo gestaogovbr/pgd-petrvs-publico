@@ -96,25 +96,45 @@ pipeline {
                 }
             }
             steps {
-                dir('front-end') {
-                    sh '''
+                sh '''
+                    set -eu
                     cd "$WORKSPACE"
-                    VERSION=$(node -p "require('./back-end/public/app.json').version")
-                    echo "Versão: $VERSION"
 
+                    VERSION_SOURCE=$(node -p "require('./front-end/src/app.json').version")
+                    echo "Versão fonte: $VERSION_SOURCE"
+
+                    echo "=== LIMPEZA MÍNIMA DE ARTEFATOS GERADOS ==="
+                    rm -f back-end/resources/views/angular.blade.php || true
+                    rm -f back-end/public/index.html || true
+                    rm -f back-end/public/app.json || true
+                    rm -f back-end/public/assets/build-info.json || true
+
+                    echo "=== BUILD ANGULAR + POSTBUILD (NODE 20) ==="
                     docker run --rm \
-                      -v "$WORKSPACE":/workspace \
-                      -w /workspace/front-end \
-                      node:20 \
-                      bash -lc "
-                        set -eu
-                        npm install --legacy-peer-deps
-                        mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
-                        npx ng build --configuration=production --output-path=../back-end/public
-                        node ./postbuild.js
-                      "
+                        -v "$WORKSPACE":/workspace \
+                        -w /workspace/front-end \
+                        node:20 \
+                        bash -lc "
+                            set -eu
+                            npm install --legacy-peer-deps
+                            mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
+                            npx ng build --configuration=production --output-path=../back-end/public
+                            node ./postbuild.js
+                        "
+
+                    echo "=== VALIDAÇÃO DOS ARTEFATOS GERADOS ==="
+                    test -f back-end/resources/views/angular.blade.php
+                    test -f back-end/public/app.json
+                    test -f back-end/public/assets/build-info.json
+
+                    VERSION=$(node -p "require('./back-end/public/app.json').version")
+                    test "$VERSION" = "$VERSION_SOURCE"
+                    echo "Versão gerada: $VERSION"
+
+                    ls -lah back-end/resources/views/angular.blade.php
+                    ls -lah back-end/public/app.json
+                    ls -lah back-end/public/assets/build-info.json
                 '''
-                }
             }
         }
 
@@ -125,8 +145,8 @@ pipeline {
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs'
                 DOCKER_HUB_TAG_LATEST = 'latest'
-                DOCKER_HUB_TAG_NEW = '2.9.21'
-                DOCKER_HUB_TAG_OLD = '2.9.20'
+                DOCKER_HUB_TAG_NEW = '2.9.22'
+                DOCKER_HUB_TAG_OLD = '2.9.21'
             }
             steps {
                 withCredentials([
