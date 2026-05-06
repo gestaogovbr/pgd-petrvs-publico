@@ -151,6 +151,10 @@ use App\Repository\TipoModalidade\Contracts\TipoModalidadeReadRepositoryContract
 use App\Repository\TipoModalidade\Eloquent\EloquentTipoModalidadeReadRepository;
 use App\Repository\TipoMotivoAfastamento\Contracts\TipoMotivoAfastamentoReadRepositoryContract;
 use App\Repository\TipoMotivoAfastamento\Eloquent\EloquentTipoMotivoAfastamentoReadRepository;
+use App\Repository\TipoObjetivo\Contracts\TipoObjetivoReadRepositoryContract;
+use App\Repository\TipoObjetivo\Contracts\TipoObjetivoWriteRepositoryContract;
+use App\Repository\TipoObjetivo\Eloquent\EloquentTipoObjetivoReadRepository;
+use App\Repository\TipoObjetivo\Eloquent\EloquentTipoObjetivoWriteRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\Repository\Unidade\Eloquent\EloquentUnidadeReadRepository;
@@ -409,6 +413,16 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             CargaIndividualSiapeRelatorioWriteRepositoryContract::class,
             EloquentCargaIndividualSiapeRelatorioWriteRepository::class,
+        );
+
+        $this->app->bind(
+            TipoObjetivoReadRepositoryContract::class,
+            EloquentTipoObjetivoReadRepository::class,
+        );
+
+        $this->app->bind(
+            TipoObjetivoWriteRepositoryContract::class,
+            EloquentTipoObjetivoWriteRepository::class,
         );
     }
 

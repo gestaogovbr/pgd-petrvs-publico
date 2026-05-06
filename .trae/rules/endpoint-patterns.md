@@ -20,9 +20,10 @@ description: Sempre que um endpoint V2 for criado ou modificado
 - Controller NÃO contém lógica de negócio — apenas: validar request → montar DTO → chamar service → retornar JSON
 - Rotas RESTful: `POST /recurso` para criar, `DELETE /recurso` para remover (ex: `POST /assinatura-tcr`)
 - Nomenclatura: controller deve incluir o contexto do módulo pai para evitar ambiguidade (ex: `PlanoTrabalhoConsolidacaoController`, não `ConsolidacaoController`)
-- Catch order: `ValidationException` (400) → `IBaseException` ($e->getCode()) → `Throwable` (500)
-- `ValidationException` (input malformado) retorna **400 Bad Request** — o request nem foi processado
+- Catch order: `ValidationException` ($e->status) → `IBaseException` ($e->getCode()) → `Throwable` (500)
+- `ValidationException` (input malformado) retorna **$e->status** (422 por padrão no Laravel) — o request nem foi processado
 - `IBaseException` (regras de negócio) retorna o código da exceção (404, 422, 403) — o request foi processado mas violou uma regra
+- Logging de erros inesperados: usar `report($e)` — NÃO usar `throwableToArrayLog($e)`
 
 ### Service
 - Service é orquestrador: Validação → DTO → Repository. Não contém regras de negócio nem queries
@@ -47,7 +48,7 @@ description: Sempre que um endpoint V2 for criado ou modificado
 ### Exceções e HTTP Status Codes
 - Usar exceções tipadas: `NotFoundException` (404), `ValidateException` (422), `ForbiddenException` (403)
 - O controller usa `$e->getCode()` para o HTTP status, sem hardcode
-- **400 Bad Request**: `ValidationException` — input malformado, campos ausentes/inválidos. O request NÃO foi processado
+- **ValidationException** (input malformado): usa `$e->status` (422 por padrão no Laravel). O request NÃO foi processado
 - **422 Unprocessable Entity**: `ValidateException` — input válido mas viola regra de negócio. O request FOI processado
 - **404 Not Found**: `NotFoundException` — recurso não existe
 - **403 Forbidden**: `ForbiddenException` — usuário sem permissão

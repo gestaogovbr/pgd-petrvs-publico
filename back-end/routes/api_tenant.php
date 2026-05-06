@@ -610,6 +610,7 @@ use App\V2\TipoMotivoAfastamento\TipoMotivoAfastamentoController as TipoMotivoAf
 use App\V2\Usuario\UsuarioController as UsuarioV2;
 use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
+use App\V2\TipoObjetivo\TipoObjetivoController;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
@@ -659,5 +660,10 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
 
     Route::get('plano-entrega', [PlanoEntregaV2::class, 'buscarPorUnidade']);
     Route::get('plano-entrega/{planoEntregaId}/entrega', [PlanoEntregaV2::class, 'buscarEntregasPorPlano'])->whereUuid('planoEntregaId');
+
+    Route::get('tipo-objetivo', [TipoObjetivoController::class, 'index']);
+    Route::post('tipo-objetivo', [TipoObjetivoController::class, 'store']);
+    Route::put('tipo-objetivo/{id}', [TipoObjetivoController::class, 'update']);
+    Route::delete('tipo-objetivo/{id}', [TipoObjetivoController::class, 'destroy']);
 });
 
