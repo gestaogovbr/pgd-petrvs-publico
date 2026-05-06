@@ -44,6 +44,7 @@ beforeEach(function () {
     $this->app->instance(IntegracaoServiceFactory::class, $mockFactory);
 
     $this->entidades = Entidade::factory()->count(3)->create();
+    $this->totalEntidades = Entidade::count();
 
     $this->registroProcessado = SiapeDadosUORG::factory()->processado()->create();
 });

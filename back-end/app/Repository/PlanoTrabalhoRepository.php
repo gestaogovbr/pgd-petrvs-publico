@@ -9,6 +9,8 @@ use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use Carbon\Carbon;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -101,5 +103,57 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
     {
         /** @var PlanoTrabalho $planoTrabalho */
         $this->writeRepository->registrarLog($planoTrabalho, $mensagem);
+    }
+    public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator
+    {
+        return $this->readRepository->buscarPlanosListagem($filtro);
+    }
+
+    public function create(array $attributes): PlanoTrabalho
+    {
+        /** @var PlanoTrabalho */
+        return $this->writeRepository->create($attributes);
+    }
+
+    public function existeConflitoPeriodo(string $usuarioId, string $dataInicio, string $dataFim): bool
+    {
+        return $this->readRepository->existeConflitoPeriodo($usuarioId, $dataInicio, $dataFim);
+    }
+
+    public function existeConflitoPeriodoExcluindo(string $usuarioId, string $dataInicio, string $dataFim, string $excluirPlanoId): bool
+    {
+        return $this->readRepository->existeConflitoPeriodoExcluindo($usuarioId, $dataInicio, $dataFim, $excluirPlanoId);
+    }
+
+    public function findByIdComRelacoes(string $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null */
+        return $this->readRepository->findByIdComRelacoes($id);
+    }
+
+    public function delete(string $id): bool
+    {
+        return $this->writeRepository->delete($id);
+    }
+
+    public function update(string $id, array $attributes): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null */
+        return $this->writeRepository->update($id, $attributes);
+    }
+
+    public function possuiAssinatura(string $planoId): bool
+    {
+        return $this->readRepository->possuiAssinatura($planoId);
+    }
+
+    public function loadRelacoesTCR(PlanoTrabalho $plano): PlanoTrabalho
+    {
+        return $plano->load([
+            'programa.templateTcr',
+            'unidade',
+            'usuario',
+            'entregas.entrega',
+        ]);
     }
 }

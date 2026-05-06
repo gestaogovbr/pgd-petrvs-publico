@@ -14,6 +14,7 @@ class PlanoEntregaEntregaFactory extends Factory
     public function definition(): array
     {
         return [
+            'id' => $this->faker->uuid(),
             'plano_entrega_id' => PlanoEntrega::factory(),
             'unidade_id' => fn (array $attributes) => PlanoEntrega::query()->findOrFail($attributes['plano_entrega_id'])->unidade_id,
             'entrega_id' => Entrega::factory(),

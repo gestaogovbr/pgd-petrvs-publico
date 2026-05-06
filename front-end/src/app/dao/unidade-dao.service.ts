@@ -8,7 +8,6 @@ import { UsuarioDaoService } from './usuario-dao.service';
 import { PlanoEntregaDaoService } from './plano-entrega-dao.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { Usuario } from '../models/usuario.model';
-import { TreeNode } from 'primeng/api';
 import { LookupItem } from '../services/lookup.service';
 import { Planejamento } from '../models/planejamento.model';
 import { firstValueFrom } from 'rxjs';

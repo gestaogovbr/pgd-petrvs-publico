@@ -191,6 +191,18 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
+    public function findAllByNomeMatricula(string $nomeMatricula): Collection
+    {
+        $term = '%' . $nomeMatricula . '%';
+        return $this->query()
+            ->where(function ($q) use ($term) {
+                $q->where('nome', 'like', $term)
+                  ->orWhere('matricula', 'like', $term);
+            })
+             ->with(['lotacao'])
+            ->get();
+    }
+
     public function findByEmail(?string $email): ?Usuario
     {
         $email = is_string($email) ? trim($email) : '';
@@ -253,7 +265,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
-    public function findByCpfWithLotacao(string $cpf): Collection
+    public function findAllByCpfWithLotacao(string $cpf): Collection
     {
         return $this->model->newQuery()
             ->with(['lotacao.unidade'])

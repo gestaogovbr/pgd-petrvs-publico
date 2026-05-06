@@ -1,8 +1,8 @@
 import { Component, Injector, ChangeDetectorRef } from '@angular/core';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Unidade } from 'src/app/models/unidade.model';
-import { TreeNode } from 'primeng/api';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
+import { LookupTreeNode } from 'src/app/services/lookup.service';
 
 @Component({
     selector: 'unidade-mapa',
@@ -11,7 +11,7 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
     standalone: false
 })
 export class UnidadeListMapComponent extends PageFrameBase {
-  public data: TreeNode[] = [];
+  public data: LookupTreeNode[] = [];
   private unidadeDao: UnidadeDaoService;
 
   constructor(public injector: Injector) {
@@ -36,7 +36,7 @@ export class UnidadeListMapComponent extends PageFrameBase {
     this.cdRef.detectChanges();
   }
 
-  montaNoRecursivo(unidade: Unidade, lista: Unidade[], minhaUnidadeId?: string): TreeNode {
+  montaNoRecursivo(unidade: Unidade, lista: Unidade[], minhaUnidadeId?: string): LookupTreeNode {
       let filhos = lista.filter(x => x.unidade_pai_id === unidade.id);
       
       // Expande se for a unidade do usuário ou um de seus ancestrais
@@ -67,7 +67,7 @@ export class UnidadeListMapComponent extends PageFrameBase {
       return false;
   }
   
-  public toggle(event: Event, node: TreeNode) {
+  public toggle(event: Event, node: LookupTreeNode) {
       event.stopPropagation();
       node.expanded = !node.expanded;
   }

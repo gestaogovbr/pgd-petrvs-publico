@@ -37,6 +37,7 @@ use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Services\UtilService;
 use App\Support\ModalidadePgd;
+use App\Contracts\HasStatusHistory;
 use App\Traits\AutoUuid;
 use App\Traits\HasPermissions;
 use App\Traits\MergeRelations;
@@ -96,8 +97,13 @@ class UsuarioConfig
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasSubstitutas
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasDelegadas
  */
-class Usuario extends Authenticatable implements AuditableContract
+class Usuario extends Authenticatable implements AuditableContract, HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'usuario_id';
+    }
+
     use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable,Impersonate;
 
     // protected $areasTrabalho; // dynamic property

@@ -60,7 +60,7 @@ abstract class AbstractEloquentReadRepository
      * @param array<string, mixed> $criteria
      * @return Collection<int, TModel>
      */
-    public function findWhere(array $criteria): Collection
+    public function findAllWhere(array $criteria): Collection
     {
         $query = $this->applyCriteria($this->query(), $criteria);
 

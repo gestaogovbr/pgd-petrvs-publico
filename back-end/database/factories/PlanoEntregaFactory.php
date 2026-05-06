@@ -41,15 +41,15 @@ class PlanoEntregaFactory extends Factory
         $usuario = Usuario::factory()->create();
 
         return [
-            'id'   =>  Uuid::uuid4()->toString(),
-            'unidade_id' => $unidade->id,
-            'programa_id' => $programa->id,
-            'status' => 'INCLUIDO',
-            'criacao_usuario_id' => $usuario->id,
+            'id' => $this->faker->uuid(),
+            'numero' => $this->faker->randomNumber(4),
             'nome' => $this->faker->sentence(10),
             'data_inicio' => now(),
             'data_fim' => now()->addMonth(),
-            'numero' => 123
+            'status' => 'INCLUIDO',
+            'unidade_id' => $unidade->id,
+            'programa_id' => $programa->id,
+            'criacao_usuario_id' => null,
         ];
     }
 }

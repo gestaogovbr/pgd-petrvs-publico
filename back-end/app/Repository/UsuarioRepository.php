@@ -114,7 +114,12 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findByMatricula($matricula);
     }
 
-    public function findByEmail(?string $email): ?Usuario
+    public function findAllByNomeMatricula(string $nomeMatricula): Collection
+    {
+        return $this->readRepository->findAllByNomeMatricula($nomeMatricula);
+    }
+
+    public function findByEmail(string $email): ?Usuario
     {
         return $this->readRepository->findByEmail($email);
     }
@@ -139,9 +144,9 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findByCpf($cpf);
     }
 
-    public function findByCpfWithLotacao(string $cpf): Collection
+    public function findAllByCpfWithLotacao(string $cpf): Collection
     {
-        return $this->readRepository->findByCpfWithLotacao($cpf);
+        return $this->readRepository->findAllByCpfWithLotacao($cpf);
     }
 
     public function findAllByCpfUnfiltered(string $cpf): Collection
