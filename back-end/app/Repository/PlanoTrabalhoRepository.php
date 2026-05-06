@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
+use App\Models\PlanoTrabalho;
 use Illuminate\Database\Eloquent\Collection;
 
 class PlanoTrabalhoRepository
@@ -18,6 +19,11 @@ class PlanoTrabalhoRepository
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
         return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesGerenciadasIds, $unidadesSubordinadasIds, $usuarioId);
+    }
+
+    public function findWithAtividades(string|int $id): ?PlanoTrabalho
+    {
+        return $this->readRepository->findWithAtividades($id);
     }
 
     public function planosAtivos(string $usuarioId): Collection

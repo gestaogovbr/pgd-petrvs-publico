@@ -4,13 +4,13 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { InputWorkloadComponent, UnitWorkload } from 'src/app/components/input/input-workload/input-workload.component';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { TemplateDaoService } from 'src/app/dao/template-dao.service';
-import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Entidade } from 'src/app/models/entidade.model';
 import { Expediente } from 'src/app/models/expediente.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
 import { NotificacoesConfigComponent } from 'src/app/modules/uteis/notificacoes/notificacoes-config/notificacoes-config.component';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 
 @Component({
     selector: 'app-entidade-conf',
@@ -25,20 +25,20 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
 
   public form: FormGroup;
   public formNomenclatura: FormGroup;
-  public tipoModalidadeDao: TipoModalidadeDaoService;
   public templateDao: TemplateDaoService;
   public notificacao: NotificacaoService;
+  public modalidadePgd: ModalidadePgdService;
 
   constructor(public injector: Injector) {
     super(injector, Entidade, EntidadeDaoService);
-    this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.templateDao = injector.get<TemplateDaoService>(TemplateDaoService);
     this.notificacao = injector.get<NotificacaoService>(NotificacaoService);
+    this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
     this.modalWidth = 1200;
     this.join = ["notificacoes_templates", "relatorios_templates"];
     this.form = this.fh.FormBuilder({
       url_sei: {default: ""},
-      tipo_modalidade_id: {default: null},
+      modalidade_pgd_padrao: {default: null},
       notificacoes: {default: []},
       nomenclatura: {default: []},
       expediente: {default: new Expediente()},
@@ -133,7 +133,7 @@ export class EntidadeConfComponent extends PageFormBase<Entidade, EntidadeDaoSer
       entidade = this.util.fillForm(entidade, this.form!.value);
       this.dao!.update(entidade.id, {
         url_sei: entidade.url_sei,
-        tipo_modalidade_id: entidade.tipo_modalidade_id,
+        modalidade_pgd_padrao: entidade.modalidade_pgd_padrao,
         nomenclatura: entidade.nomenclatura,
         notificacoes: entidade.notificacoes,
         notificacoes_templates: entidade.notificacoes_templates,

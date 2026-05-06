@@ -1,0 +1,40 @@
+import { __decorate } from "tslib";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { DndModule } from 'ngx-drag-drop';
+import { SharedModule } from "../../../shared/shared.module";
+import { CadeiaValorRoutingModule } from './cadeia-valor-routing.module';
+import { CadeiaValorListComponent } from './cadeia-valor-list/cadeia-valor-list.component';
+import { CadeiaValorFormComponent } from './cadeia-valor-form/cadeia-valor-form.component';
+import { CadeiaValorListGridComponent } from './cadeia-valor-list-grid/cadeia-valor-list-grid.component';
+import { CadeiaValorMapaComponent } from './cadeia-valor-mapa/cadeia-valor-mapa.component';
+import { CadeiaValorListProcessosComponent } from './cadeia-valor-list-processos/cadeia-valor-list-processos.component';
+import { CadeiaValorListProcessosEntregasComponent } from './cadeia-valor-list-processos-entregas/cadeia-valor-list-processos-entregas.component';
+let CadeiaValorModule = class CadeiaValorModule {
+};
+CadeiaValorModule = __decorate([
+    NgModule({
+        declarations: [
+            CadeiaValorListComponent,
+            CadeiaValorFormComponent,
+            CadeiaValorListGridComponent,
+            CadeiaValorListProcessosComponent,
+            CadeiaValorMapaComponent,
+            CadeiaValorListProcessosEntregasComponent,
+        ],
+        imports: [
+            CommonModule,
+            SharedModule,
+            ReactiveFormsModule,
+            FormsModule,
+            DndModule,
+            CadeiaValorRoutingModule
+        ],
+        exports: [
+            CadeiaValorListProcessosEntregasComponent
+        ]
+    })
+], CadeiaValorModule);
+export { CadeiaValorModule };
+//# sourceMappingURL=cadeia-valor.module.js.map

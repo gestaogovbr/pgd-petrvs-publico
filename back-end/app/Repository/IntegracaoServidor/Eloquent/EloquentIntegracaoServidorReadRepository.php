@@ -66,7 +66,7 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
                 isr.nome_jornada AS nome_jornada,
                 u.cod_jornada AS cod_jornada_antigo,
                 isr.cod_jornada AS cod_jornada,
-                u.tipo_modalidade_id AS tipo_modalidade_id_anterior,
+                u.modalidade_pgd AS modalidade_pgd_anterior,
                 isr.modalidade_pgd,
                 u.participa_pgd AS participa_pgd_anterior,
                 isr.participa_pgd
@@ -79,7 +79,7 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
                 isr.telefone != u.telefone OR
                 (isr.nome_jornada != u.nome_jornada OR isr.nome_jornada IS NOT NULL AND u.nome_jornada IS NULL) OR
                 (isr.cod_jornada != u.cod_jornada OR isr.cod_jornada IS NOT NULL AND u.cod_jornada IS NULL) OR
-                (isr.modalidade_pgd IS NOT NULL AND u.tipo_modalidade_id IS NULL) OR
+                COALESCE(isr.modalidade_pgd, '') != COALESCE(u.modalidade_pgd, '') OR
                 (isr.participa_pgd != u.participa_pgd OR isr.participa_pgd IS NOT NULL AND u.participa_pgd IS NULL) OR
                 (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL))
             AND u.id IS NOT NULL"

@@ -6,7 +6,6 @@ import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import {DocumentoDaoService} from "src/app/dao/documento-dao-service";
 import {PlanoTrabalhoDaoService} from "src/app/dao/plano-trabalho-dao.service";
 import {ProgramaDaoService} from "src/app/dao/programa-dao.service";
-import {TipoModalidadeDaoService} from "src/app/dao/tipo-modalidade-dao.service";
 import {UnidadeDaoService} from "src/app/dao/unidade-dao.service";
 import {UsuarioDaoService} from "src/app/dao/usuario-dao.service";
 import {IIndexable} from "src/app/models/base.model";
@@ -18,6 +17,7 @@ import {DocumentoService} from "src/app/modules/uteis/documentos/documento.servi
 import {UtilService} from "src/app/services/util.service";
 import {UnidadeService} from "src/app/services/unidade.service";
 import { QueryOrderBy } from "src/app/dao/dao-base.service";
+import { ModalidadePgdService } from "src/app/services/modalidade-pgd.service";
 @Component({
     selector: "plano-trabalho-list",
     templateUrl: "./plano-trabalho-list.component.html",
@@ -38,11 +38,11 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 	public programaDao: ProgramaDaoService;
 	public usuarioDao: UsuarioDaoService;
 	public planoTrabalhoService: PlanoTrabalhoService;
+	public modalidadePgd: ModalidadePgdService;
 	public temAtribuicaoChefia: boolean = false;
 	public routeStatus: FullRoute = {route: ["uteis", "status"]};
-	public tipoModalidadeDao: TipoModalidadeDaoService;
 	public multiselectAllFields: string[] = [
-		"tipo_modalidade_id",
+		"modalidade_pgd",
 		"usuario_id",
 		"unidade_id",
 		"documento_id",
@@ -94,9 +94,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
 		this.planoTrabalhoService =
 			injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
-		this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(
-			TipoModalidadeDaoService
-		);
+		this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
 		/* Inicializações */
 		this.title = this.lex.translate("Planos de Trabalho");
 		this.code = "MOD_PTR";
@@ -110,7 +108,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 				status: {default: ""},
 				unidade_id: {default: null},
 				arquivados: {default: false},
-				tipo_modalidade_id: {default: null},
+				modalidade_pgd: {default: null},
 				data_filtro: {default: null},
 				data_filtro_inicio: {default: new Date()},
 				data_filtro_fim: {default: new Date()},
@@ -125,7 +123,6 @@ export class PlanoTrabalhoListComponent extends PageListBase<
       "documento.assinaturas:id,usuario_id,documento_id",
 			"programa:id,nome",
       "documento:id,numero,titulo,especie,conteudo,tipo",
-			"tipo_modalidade:id,nome",
 			"entregas.plano_entrega_entrega.entrega:descricao",
 			"entregas.plano_entrega_entrega.plano_entrega:id,unidade_id",
 			"entregas.plano_entrega_entrega.plano_entrega.unidade:id,sigla",
@@ -405,7 +402,7 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		filter.controls.status.setValue(null);
 		filter.controls.arquivados.setValue(false);
 		filter.controls.subordinadas.setValue(false);
-		filter.controls.tipo_modalidade_id.setValue(null);
+		filter.controls.modalidade_pgd.setValue(null);
 		filter.controls.data_filtro.setValue(null);
 		filter.controls.data_filtro_inicio.setValue(new Date());
 		filter.controls.data_filtro_fim.setValue(new Date());
@@ -417,8 +414,8 @@ export class PlanoTrabalhoListComponent extends PageListBase<
 		let result: any[] = [];
 		let form: any = filter.value;
 
-		if (form.tipo_modalidade_id?.length) {
-			result.push(["tipo_modalidade_id", "==", form.tipo_modalidade_id]);
+		if (form.modalidade_pgd?.length) {
+			result.push(["modalidade_pgd", "==", form.modalidade_pgd]);
 		}
 
 		if (form.data_filtro) {

@@ -174,7 +174,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             SiapeLog::info("Não foram encontrados servidores para serem inseridos na tabela usuários.");
         }
 
-        $tipoModalidadeNaoIdentificada = $this->integracaoService->validarModalidadePgd('');
+        $modalidadeNaoIdentificada = $this->integracaoService->validarModalidadePgd('');
         
         foreach ($vinculos_isr as $v_isr) {
             $v_isr = UtilService::object2array($v_isr);
@@ -189,7 +189,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             }
         
             try {
-                $registro = $this->usuarioService->gerarUsuario($v_isr, $tipoModalidadeNaoIdentificada, $perfilParticipanteId);
+                $registro = $this->usuarioService->gerarUsuario($v_isr, $modalidadeNaoIdentificada, $perfilParticipanteId);
             } catch (NotFoundException $th) {
                 //já foi registrado no log
                 continue;

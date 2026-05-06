@@ -14,6 +14,7 @@ use App\Services\ServiceBase;
 use App\Services\UnidadeService;
 use App\Services\CalendarioService;
 use App\Repository\UnidadeRepository;
+use App\Repository\AtividadeRepository;
 use App\Services\ComentarioService;
 use App\Services\RawWhere;
 use App\Services\UtilService;
@@ -44,10 +45,12 @@ use Throwable;
 class AtividadeService extends ServiceBase
 {
     protected UnidadeRepository $unidadeRepository;
+    protected AtividadeRepository $atividadeRepository;
 
     public function __construct() {
         parent::__construct();
         $this->unidadeRepository = app(UnidadeRepository::class);
+        $this->atividadeRepository = app(AtividadeRepository::class);
     }
 
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
@@ -63,11 +66,9 @@ class AtividadeService extends ServiceBase
         "comentarios.usuario:id,nome,apelido,email,url_foto",
         "tarefas.tarefa",
         "tarefas.comentarios.usuario:id,nome,apelido,email,url_foto",
-        "planoTrabalho.tipoModalidade",
         "planoTrabalho.entregas.entrega:id,nome",
         "usuario.afastamentos",
         "usuario.planosTrabalho.entregas.entrega:id,nome",
-        "usuario.planosTrabalho.tipoModalidade:id,nome",
         "reacoes.usuario:id,nome,apelido"
     ];
 
@@ -312,7 +313,7 @@ class AtividadeService extends ServiceBase
             if(empty($result['feriados'][$row->unidade_id])) $result['feriados'][$row->unidade_id] = $this->calendarioService->feriadosCadastrados($row->unidade_id);
         }
         if(count($planosTrabalhos) > 0) {
-            $list = PlanoTrabalho::with("tipoModalidade")->whereIn("id", array_keys($planosTrabalhos))->get();
+            $list = PlanoTrabalho::whereIn("id", array_keys($planosTrabalhos))->get();
             foreach($list as $planoTrabalho) $result['planos_trabalho'][$planoTrabalho->id] = $planoTrabalho;
         }
         if(count($afastamentos) > 0) {
@@ -524,7 +525,10 @@ class AtividadeService extends ServiceBase
         unset($conclusao["arquivar"]);
         try {
             DB::beginTransaction();
-            $atividade = Atividade::with(["planoTrabalho.tipoModalidade"])->where("id", $conclusao["id"])->first();
+            $atividade = $this->atividadeRepository->findWithPlanoTrabalho($conclusao["id"]);
+            if (empty($atividade)) {
+                throw new ServerException("ValidateAtividade", "Atividade não encontrada.");
+            }
             /* Testa permissão para iniciar atividade de outros usuarios */
             if ($atividade->usuario_id != parent::loggedUser()->id){
                 if (!parent::loggedUser()->hasPermissionTo('MOD_ATV_USERS_CONCL')){

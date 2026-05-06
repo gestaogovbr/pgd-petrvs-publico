@@ -1,7 +1,3 @@
-<div class="spinner-border" role="status" *ngIf="loading">
-    <span class="visually-hidden"></span>
-</div>
-
 <div class="consulta-unidade-siape-result">
     
     <div class="dados-siape">
@@ -18,7 +14,7 @@
                 </p>
             </div>
             <div class="col-md-12">
-                <p>Sigla: <b>{{dados.siglaOrgao}}</b></p>
+                <p>Sigla: <b>{{dados.siglaUorg}}</b></p>
             </div>
             <div class="col-md-12">
                 <p>Nome: <b>{{dados.nomeExtendido}}</b></p>
@@ -57,3 +53,7 @@
          <toolbar [buttons]="toolbarButtons"></toolbar>
      </separator>
 </div>
+
+<ng-template #resumoTpl let-resumo="resumo" let-relatorio="relatorio">
+  <app-siape-resumo [resumo]="resumo" [relatorio]="relatorio"></app-siape-resumo>
+</ng-template>

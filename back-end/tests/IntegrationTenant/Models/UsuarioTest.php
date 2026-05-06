@@ -6,7 +6,6 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
-use App\Models\TipoModalidade;
 use App\Models\Entidade;
 use App\Services\Siape\Unidade\Enum\Atribuicao;
 
@@ -24,17 +23,6 @@ test('usuario deve retornar relacionamento lotacao corretamente', function () {
     ]);
     $entidade->save();
 
-    $tipoModalidade = new TipoModalidade();
-    $tipoModalidade->id = \Illuminate\Support\Str::uuid();
-    $tipoModalidade->fill([
-        'nome' => 'Modalidade Teste',
-        'exige_pedagio' => 0,
-        'plano_trabalho_calcula_horas' => 0,
-        'atividade_tempo_despendido' => 0,
-        'atividade_esforco' => 0,
-    ]);
-    $tipoModalidade->save();
-
     $usuario = new Usuario();
     $usuario->id = \Illuminate\Support\Str::uuid();
     $usuario->fill([
@@ -44,7 +32,7 @@ test('usuario deve retornar relacionamento lotacao corretamente', function () {
         'apelido' => 'TesteLotacao',
         'matricula' => '1234567',
         'sexo' => 'MASCULINO',
-        'tipo_modalidade_id' => $tipoModalidade->id,
+        'modalidade_pgd' => 'presencial',
     ]);
     $usuario->save();
 
@@ -92,17 +80,6 @@ test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTAD
     ]);
     $entidade->save();
 
-    $tipoModalidade = new TipoModalidade();
-    $tipoModalidade->id = \Illuminate\Support\Str::uuid();
-    $tipoModalidade->fill([
-        'nome' => 'Modalidade Teste 2',
-        'exige_pedagio' => 0,
-        'plano_trabalho_calcula_horas' => 0,
-        'atividade_tempo_despendido' => 0,
-        'atividade_esforco' => 0,
-    ]);
-    $tipoModalidade->save();
-
     $usuario = new Usuario();
     $usuario->id = \Illuminate\Support\Str::uuid();
     $usuario->fill([
@@ -110,7 +87,7 @@ test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTAD
         'nome' => 'Usuário Teste Sem Lotação',
         'cpf' => '88888888888',
         'apelido' => 'TesteSemLotacao',
-        'tipo_modalidade_id' => $tipoModalidade->id,
+        'modalidade_pgd' => 'presencial',
     ]);
     $usuario->save();
 

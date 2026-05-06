@@ -1,0 +1,30 @@
+import { __decorate } from "tslib";
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { EntidadeRoutingModule } from './entidade-routing.module';
+import { EntidadeFormComponent } from './entidade-form/entidade-form.component';
+import { EntidadeListComponent } from './entidade-list/entidade-list.component';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { EntidadeConfComponent } from './entidade-conf/entidade-conf.component';
+import { UteisModule } from '../../uteis/uteis.module';
+let EntidadeModule = class EntidadeModule {
+};
+EntidadeModule = __decorate([
+    NgModule({
+        declarations: [
+            EntidadeFormComponent,
+            EntidadeListComponent,
+            EntidadeConfComponent
+        ],
+        imports: [
+            CommonModule,
+            SharedModule,
+            ReactiveFormsModule,
+            UteisModule,
+            EntidadeRoutingModule
+        ]
+    })
+], EntidadeModule);
+export { EntidadeModule };
+//# sourceMappingURL=entidade.module.js.map

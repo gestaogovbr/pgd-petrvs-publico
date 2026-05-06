@@ -1,5 +1,4 @@
 import { Base } from './base.model';
-import { TipoModalidade } from './tipo-modalidade.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 import { Programa } from './programa.model';
@@ -25,7 +24,6 @@ export type PlanoTrabalhoMetadata = {
 
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public accordionDisabled: boolean = false;
-    public tipo_modalidade?: TipoModalidade;
     public unidade?: Unidade;
     public usuario?: Usuario;
     public programa?: Programa;
@@ -60,7 +58,8 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public programa_id: string = "";
     public usuario_id: string = "";
     public unidade_id: string = "";
-    public tipo_modalidade_id: string = "";
+    public modalidade_pgd: string | null = null;
+    public modalidade_pgd_label: string = "Não definida";
     public documento_id: string | null = null;
 
     public constructor(data?: any) { super(); this.initialization(data); }
