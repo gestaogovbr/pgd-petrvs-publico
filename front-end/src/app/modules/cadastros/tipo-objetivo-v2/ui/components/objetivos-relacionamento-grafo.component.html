@@ -1,0 +1,98 @@
+<div class="br-card mt-4">
+  <div class="card-header">
+    <div>
+      <h4 class="mb-1">Protótipo de Grafo de Relacionamentos</h4>
+      <small>Dados fake para validar vínculo entre objetivo pai e objetivo superior.</small>
+    </div>
+  </div>
+
+  <div class="card-content">
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+      <div class="br-switch icon">
+        <input id="show-pai" type="checkbox" [checked]="showPaiRelations()" (change)="onTogglePai($event)" />
+        <label for="show-pai">Mostrar relação pai</label>
+      </div>
+
+      <div class="br-switch icon">
+        <input id="show-superior" type="checkbox" [checked]="showSuperiorRelations()" (change)="onToggleSuperior($event)" />
+        <label for="show-superior">Mostrar relação objetivo superior</label>
+      </div>
+
+      <br-button emphasis="secondary" (click)="resetLayout()">Resetar layout</br-button>
+      <br-button emphasis="tertiary" (click)="clearSelection()">Limpar seleção</br-button>
+    </div>
+
+    <div class="legend mb-2">
+      <span><strong>Nós:</strong> azul claro = planejamento superior, verde claro = planejamento atual</span>
+      <span><strong>Arestas:</strong> cinza contínuo = pai, azul tracejado = objetivo superior</span>
+      <span><strong>Interação:</strong> clique para destacar conexões e arraste nós para reorganizar</span>
+    </div>
+
+    <svg #svgRef class="graph-surface" viewBox="0 0 1000 520" (click)="clearSelection()">
+      <defs>
+        <marker id="arrowPai" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L8,3 z" fill="#636363"></path>
+        </marker>
+        <marker id="arrowSuperior" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L8,3 z" fill="#1351b4"></path>
+        </marker>
+      </defs>
+
+      @for (edge of visibleEdges(); track edge.source + '-' + edge.target + '-' + edge.type) {
+        @let source = visibleNodes().find(node => node.id === edge.source);
+        @let target = visibleNodes().find(node => node.id === edge.target);
+        @if (source && target) {
+          <line
+            [attr.x1]="source.x"
+            [attr.y1]="source.y"
+            [attr.x2]="target.x"
+            [attr.y2]="target.y"
+            [attr.stroke]="edge.type === 'PAI' ? '#636363' : '#1351b4'"
+            [attr.stroke-opacity]="isEdgeHighlighted(edge) ? '1' : '0.2'"
+            [attr.stroke-width]="isEdgeHighlighted(edge) ? '2.4' : '1.5'"
+            [attr.stroke-dasharray]="edge.type === 'SUPERIOR' ? '7 6' : null"
+            [attr.marker-end]="edge.type === 'PAI' ? 'url(#arrowPai)' : 'url(#arrowSuperior)'"
+          ></line>
+        }
+      }
+
+      @for (node of visibleNodes(); track node.id) {
+        <g
+          class="node"
+          [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
+          (click)="$event.stopPropagation(); onNodeClick(node.id)"
+        >
+          <circle
+            r="32"
+            [attr.fill]="nodeFill(node)"
+            [attr.stroke]="nodeStroke(node)"
+            stroke-width="2.5"
+            (pointerdown)="startDrag($event, node.id)"
+          ></circle>
+          <text class="node-id" text-anchor="middle" dy="-2">{{ node.id }}</text>
+          <text class="node-plan" text-anchor="middle" dy="12">{{ node.planejamento === 'SUPERIOR' ? 'SUP' : 'ATU' }}</text>
+          @if (hasExpandableRelations(node.id)) {
+            @if (isExpanded(node.id)) {
+              <text class="node-expand-state" text-anchor="middle" dy="28">-</text>
+            } @else {
+              <text class="node-expand-state" text-anchor="middle" dy="28">+</text>
+            }
+          }
+        </g>
+      }
+    </svg>
+
+    @if (selectedNode()) {
+      <div class="br-card mt-3 detail-card">
+        <div class="card-content">
+          <h5 class="mb-2">{{ selectedNode()!.nome }}</h5>
+          <p class="mb-1"><strong>ID:</strong> {{ selectedNode()!.id }}</p>
+          <p class="mb-1"><strong>Planejamento:</strong> {{ selectedNode()!.planejamento === 'SUPERIOR' ? 'Superior' : 'Atual' }}</p>
+          <p class="mb-1"><strong>Pai:</strong> {{ selectedConnections().parents.length ? selectedConnections().parents[0].nome : '-' }}</p>
+          <p class="mb-1"><strong>Objetivo superior:</strong> {{ selectedConnections().superiores.length ? selectedConnections().superiores[0].nome : '-' }}</p>
+          <p class="mb-0"><strong>Filhos:</strong> {{ selectedConnections().children.length ? selectedConnections().children.map(child => child.nome).join(', ') : '-' }}</p>
+        </div>
+      </div>
+    }
+  </div>
+</div>

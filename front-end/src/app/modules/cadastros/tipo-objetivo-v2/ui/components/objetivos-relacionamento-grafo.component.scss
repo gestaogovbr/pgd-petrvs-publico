@@ -1,0 +1,42 @@
+.graph-surface {
+  width: 100%;
+  min-height: 420px;
+  border: 1px solid #d6d6d6;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.node {
+  cursor: pointer;
+}
+
+.node-id {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #333333;
+  pointer-events: none;
+}
+
+.node-plan {
+  font-size: 10px;
+  fill: #555555;
+  pointer-events: none;
+}
+
+.node-expand-state {
+  font-size: 18px;
+  font-weight: 700;
+  fill: #333333;
+  pointer-events: none;
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.detail-card {
+  border: 1px solid #c5d4eb;
+}

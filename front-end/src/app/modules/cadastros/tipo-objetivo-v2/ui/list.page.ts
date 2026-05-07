@@ -6,12 +6,13 @@ import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb
 import { TipoObjetivoFacade } from '../application/tipo-objetivo.facade';
 import { TipoObjetivo } from '../domain/types';
 import { MessageService } from 'src/app/v2/services/message.service';
+import { ObjetivosRelacionamentoGrafoComponent } from './components/objetivos-relacionamento-grafo.component';
 
 @Component({
   selector: 'app-tipo-objetivo-v2-list-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent, ObjetivosRelacionamentoGrafoComponent],
   templateUrl: './list.page.html'
 })
 export class TipoObjetivoV2ListPage implements OnInit {

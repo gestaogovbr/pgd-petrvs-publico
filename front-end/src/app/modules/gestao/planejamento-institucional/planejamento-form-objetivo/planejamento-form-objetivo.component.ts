@@ -12,6 +12,9 @@ import { Planejamento } from 'src/app/models/planejamento.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
+import { TipoObjetivoApiClient } from 'src/app/modules/cadastros/tipo-objetivo-v2/infra/tipo-objetivo-api.client';
+import { firstValueFrom } from 'rxjs';
+
 
 @Component({
     selector: 'app-planejamento-form-objetivo',
@@ -29,11 +32,14 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   public objetivos_superiores: LookupItem[] = [];
   public planejamentoDao?: PlanejamentoDaoService;
   public eixoTematicoDao?: EixoTematicoDaoService;
+  public tipoObjetivoApiClient?: TipoObjetivoApiClient;
+  public tiposObjetivos: LookupItem[] = [];
 
   constructor(public injector: Injector) {
     super(injector, PlanejamentoObjetivo, PlanejamentoObjetivoDaoService);
     this.planejamentoDao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.eixoTematicoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
+    this.tipoObjetivoApiClient = injector.get<TipoObjetivoApiClient>(TipoObjetivoApiClient);
     this.form = this.fh.FormBuilder({
       nome: {default: ""},
       fundamentacao: {default: ""},
@@ -43,6 +49,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
       objetivo_superior_id: {default: null},
       objetivo_pai_id: {default: null},
       integra_okr: {default: true},
+      tipo_objetivo_id: {default: null},
     }, this.cdRef, this.validate);
   }
 
@@ -60,6 +67,10 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   }
 
   public loadData(entity: PlanejamentoObjetivo, form: FormGroup) {
+    if (!entity.tipo_objetivo_id && entity.tipo_objetivo?.id) {
+      entity.tipo_objetivo_id = entity.tipo_objetivo.id;
+    }
+
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
     this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
@@ -71,12 +82,24 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
     let objetivosOrdenados = this.ordenarObjetivos(objetivosRaw);
     let objetivosSuperioresOrdenados = this.ordenarObjetivos(objetivosSuperioresRaw);
+
     
     objetivosOrdenados = this.filtrarObjetivos(objetivosOrdenados, entity.id);
     this.objetivos = this.montarListaObjetivos(objetivosOrdenados);
     this.objetivos_superiores = this.montarListaObjetivos(objetivosSuperioresOrdenados);
 
     (async () => {
+        const tiposObjetivos = this.tipoObjetivoApiClient
+          ? await firstValueFrom(this.tipoObjetivoApiClient.list())
+          : [];
+
+        if (Array.isArray(tiposObjetivos)) {
+          this.tiposObjetivos = tiposObjetivos.map(x => ({
+            key: x.id,
+            value: x.nome,
+            data: x
+          }));
+        }
         await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
     })();
   }
@@ -134,7 +157,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   }
 
   public async initializeData(form: FormGroup) {
-    this.entity = this.metadata?.objetivo as PlanejamentoObjetivo;
+    this.entity = new PlanejamentoObjetivo(this.metadata?.objetivo);
     await this.loadData(this.entity!, form);
   }
 
