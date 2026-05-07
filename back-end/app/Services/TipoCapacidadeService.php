@@ -481,6 +481,10 @@ class TipoCapacidadeService extends ServiceBase
         "codigo" => "MOD_SIAPE_RELATORIO_CARGA",
         "descricao" => "Relatório de Carga Individual SIAPE",
     ],
+    [
+      "codigo" => "MOD_TIPO_OBJETIVO",
+      "descricao" => "Módulo de Tipos de Objetivos",
+    ]
   ];
 
   private function differentDev(&$data)

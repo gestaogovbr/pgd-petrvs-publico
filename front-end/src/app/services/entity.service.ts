@@ -51,6 +51,7 @@ import { ClienteDaoService } from '../dao/cliente-dao.service';
 import { TipoClienteDaoService } from '../dao/tipo-cliente-dao.service';
 import { SolucaoDaoService } from '../dao/solucao-dao.service';
 
+
 export type EntityItem = {
   collection: string,
   codigo?: string,
@@ -126,6 +127,7 @@ export class EntityService {
       { collection: 'Unidade', codigo: 'MOD_UND', table: 'unidades', campo: 'nome', icon: 'fa-unity fab', dao: injector.get<UnidadeDaoService>(UnidadeDaoService), label: "Unidade", selectRoute: { route: ['configuracoes', 'unidade'] } },
       { collection: 'UnidadeIntegrante', table: 'unidades_integrantes', campo: 'atribuicao', icon: '', dao: injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService), label: "Integrante da Unidade" },
       { collection: 'Usuario', codigo: 'MOD_USER', table: 'usuarios', campo: 'nome', icon: 'bi bi-people', dao: injector.get<UsuarioDaoService>(UsuarioDaoService), label: "Usuário", selectRoute: { route: ['configuracoes', 'usuario'] } },
+      { collection: 'TipoObjetivo', icon: 'bi bi-bullseye', label: "Tipo de Objetivo", selectRoute: { route: ['cadastros', 'tipo-objetivo-v2'] } },
     ];
   }
 

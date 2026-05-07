@@ -125,6 +125,7 @@ export class AppComponent implements IAppComponent {
       CIDADES: { name: this.lex.translate("Cidades"), permition: 'MOD_CID', route: ['cadastros', 'cidade'], icon: this.entity.getIcon('Cidade') },
       CLIENTES: { name: this.lex.translate("Clientes"), permition: 'MOD_CLI', route: ['cadastros', 'cliente'], icon: this.entity.getIcon('Cliente') }, // TODO : retornar esse menu ao subir produtos
       EIXOS_TEMATICOS: { name: this.lex.translate("Eixos Temáticos"), permition: 'MOD_EXTM', route: ['cadastros', 'eixo-tematico'], icon: this.entity.getIcon('EixoTematico') },
+      TIPOS_OBJETIVOS: { name: this.lex.translate("Tipos de Objetivos"), permition: 'MOD_TIPO_OBJETIVO', route: ['cadastros', 'tipo-objetivo'], icon: this.entity.getIcon('TipoObjetivo') },
       // ENTREGAS: { name: this.lex.translate("Modelos de Entregas"), permition: 'MOD_ENTRG', route: ['cadastros', 'entrega'], icon: this.entity.getIcon('Entrega') },
       FERIADOS: { name: this.lex.translate("Feriados"), permition: 'MOD_FER', route: ['cadastros', 'feriado'], icon: this.entity.getIcon('Feriado') },
       TEMPLATES: { name: this.lex.translate("Templates"), permition: 'MOD_TEMP', route: ['cadastros', 'templates'], icon: this.entity.getIcon('Template'), params: { modo: "listagem" } },
@@ -254,6 +255,7 @@ export class AppComponent implements IAppComponent {
       menu: [
         this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         this.menuSchema.CADEIAS_VALORES,
+        this.menuSchema.TIPOS_OBJETIVOS,
         this.menuSchema.PROGRAMAS_GESTAO,
         this.menuSchema.EIXOS_TEMATICOS,
         this.menuSchema.UNIDADES,
