@@ -3404,7 +3404,7 @@ DELIMITER ;
 /*M!999999\- enable the sandbox mode */ 
 set autocommit=0;
 
-CREATE TABLE `tipos_objetivos` (
+CREATE TABLE `tipos_planejamentos_objetivos` (
   `id` char(36) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -3414,8 +3414,8 @@ CREATE TABLE `tipos_objetivos` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-ALTER TABLE `planos_entregas_entregas_objetivos` ADD COLUMN `tipo_objetivo_id` char(36) DEFAULT NULL COMMENT 'Tipo do objetivo (opcional)' AFTER `entrega_id`;
-ALTER TABLE `planos_entregas_entregas_objetivos` ADD CONSTRAINT `fk_plan_entr_entr_obj_tipo_obj_id` FOREIGN KEY (`tipo_objetivo_id`) REFERENCES `tipos_objetivos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `planejamentos_objetivos` ADD COLUMN `tipo_objetivo_id` char(36) DEFAULT NULL COMMENT 'Tipo do objetivo (opcional)' AFTER `eixo_tematico_id`;
+ALTER TABLE `planejamentos_objetivos` ADD CONSTRAINT `fk_planej_obj_tipo_objetivo_id` FOREIGN KEY (`tipo_objetivo_id`) REFERENCES `tipos_planejamentos_objetivos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (1,'2014_10_12_100000_create_password_resets_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (2,'2019_08_19_000000_create_failed_jobs_table',1);

@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('tipos_objetivos', function (Blueprint $table) {
+        Schema::create('tipos_planejamentos_objetivos', function (Blueprint $table) {
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
@@ -20,11 +20,11 @@ return new class extends Migration
             $table->text('descricao')->nullable()->comment('Descrição do tipo de objetivo');
         });
 
-        Schema::table('planos_entregas_entregas_objetivos', function (Blueprint $table) {
-            $table->uuid('tipo_objetivo_id')->nullable()->after('entrega_id')
+        Schema::table('planejamentos_objetivos', function (Blueprint $table) {
+            $table->uuid('tipo_objetivo_id')->nullable()->after('eixo_tematico_id')
                 ->comment('Tipo do objetivo (opcional)');
 
-            $table->foreign('tipo_objetivo_id', 'fk_plan_entr_entr_obj_tipo_obj_id')
+            $table->foreign('tipo_objetivo_id', 'fk_planej_obj_tipo_objetivo_id')
                 ->references('id')
                 ->on('tipos_objetivos')
                 ->onDelete('set null')
@@ -34,11 +34,11 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('planos_entregas_entregas_objetivos', function (Blueprint $table) {
-            $table->dropForeign('fk_plan_entr_entr_obj_tipo_obj_id');
+        Schema::table('planejamentos_objetivos', function (Blueprint $table) {
+            $table->dropForeign('fk_planej_obj_tipo_objetivo_id');
             $table->dropColumn('tipo_objetivo_id');
         });
 
-        Schema::dropIfExists('tipos_objetivos');
+        Schema::dropIfExists('tipos_planejamentos_objetivos');
     }
 };

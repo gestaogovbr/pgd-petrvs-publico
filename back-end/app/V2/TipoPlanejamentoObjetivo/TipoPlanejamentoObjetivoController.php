@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\V2\TipoObjetivo;
+namespace App\V2\TipoPlanejamentoObjetivo;
 
 use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\Controller;
-use App\V2\TipoObjetivo\DTOs\TipoObjetivoStoreDTO;
-use App\V2\TipoObjetivo\DTOs\TipoObjetivoUpdateDTO;
-use App\V2\TipoObjetivo\Validators\TipoObjetivoRequestValidator;
+use App\V2\TipoPlanejamentoObjetivo\DTOs\TipoPlanejamentoObjetivoStoreDTO;
+use App\V2\TipoPlanejamentoObjetivo\DTOs\TipoPlanejamentoObjetivoUpdateDTO;
+use App\V2\TipoPlanejamentoObjetivo\Validators\TipoPlanejamentoObjetivoRequestValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class TipoObjetivoController extends Controller
+class TipoPlanejamentoObjetivoController extends Controller
 {
     public function __construct(
-        private readonly TipoObjetivoService $service,
+        private readonly TipoPlanejamentoObjetivoService $service,
     ) {}
 
     public function index(): JsonResponse
@@ -34,8 +34,8 @@ class TipoObjetivoController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            $data = TipoObjetivoRequestValidator::store($request);
-            $dto = TipoObjetivoStoreDTO::fromArray($data);
+            $data = TipoPlanejamentoObjetivoRequestValidator::store($request);
+            $dto = TipoPlanejamentoObjetivoStoreDTO::fromArray($data);
             $tipoObjetivo = $this->service->store($dto);
 
             return response()->json(['success' => true, 'data' => $tipoObjetivo], Response::HTTP_CREATED);
@@ -52,8 +52,8 @@ class TipoObjetivoController extends Controller
     public function update(Request $request, string $id): JsonResponse
     {
         try {
-            $data = TipoObjetivoRequestValidator::update($request);
-            $dto = TipoObjetivoUpdateDTO::fromArray($data, $id);
+            $data = TipoPlanejamentoObjetivoRequestValidator::update($request);
+            $dto = TipoPlanejamentoObjetivoUpdateDTO::fromArray($data, $id);
             $tipoObjetivo = $this->service->update($dto);
 
             return response()->json(['success' => true, 'data' => $tipoObjetivo]);

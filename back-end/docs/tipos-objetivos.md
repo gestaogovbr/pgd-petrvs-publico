@@ -13,7 +13,7 @@ Queremos qualificar os `planos_entregas_entregas_objetivos` em tipos para que se
 
 ## Planejamento
 
-- Criar tabelas e modelos `tipos_objetivos`, relacionando com `planos_entregas_entregas_objetivos` (FK), mas sem constraint para permitir que hajam objetivos não tipificados;
+- Criar tabelas e modelos `tipos_objetivos`, relacionando com `planejamentos_objetivos` (FK), mas sem constraint obrigatória para permitir que hajam objetivos não tipificados;
 - Adicionar controller/service seguindo os V2 de CRUD `tipos_objetivos`;
   - Operações de escrita (CUD) restritas a ADM_MASTER (verificação por nível de perfil)
   - A leitura será feita tanto numa listagem de tipos quanto num dropdown para atribuição de `planos_entregas_entregas_objetivos.tipos_objetivos`

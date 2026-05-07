@@ -5,54 +5,54 @@ namespace Tests\Unit\Services\V2;
 use App\Enums\PerfilEnum;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
-use App\Models\TipoObjetivo;
+use App\Models\TipoPlanejamentoObjetivo;
 use App\Models\Usuario;
-use App\Repository\TipoObjetivoRepository;
+use App\Repository\TipoPlanejamentoObjetivoRepository;
 use App\Repository\UsuarioRepository;
-use App\V2\TipoObjetivo\Validators\TipoObjetivoStoreValidator;
+use App\V2\TipoPlanejamentoObjetivo\Validators\TipoPlanejamentoObjetivoStoreValidator;
 use Mockery;
 
 afterEach(function () {
     Mockery::close();
 });
 
-describe('TipoObjetivoStoreValidator::validarExistencia', function () {
-    test('retorna TipoObjetivo quando encontrado', function () {
-        $tipoObjetivo = Mockery::mock(TipoObjetivo::class)->makePartial();
+describe('TipoPlanejamentoObjetivoStoreValidator::validarExistencia', function () {
+    test('retorna TipoPlanejamentoObjetivo quando encontrado', function () {
+        $tipoObjetivo = Mockery::mock(TipoPlanejamentoObjetivo::class)->makePartial();
 
-        $repo = Mockery::mock(TipoObjetivoRepository::class);
+        $repo = Mockery::mock(TipoPlanejamentoObjetivoRepository::class);
         $repo->shouldReceive('findById')->once()->with('tipo-1')->andReturn($tipoObjetivo);
 
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
 
-        $validator = new TipoObjetivoStoreValidator($repo, $usuarioRepo);
+        $validator = new TipoPlanejamentoObjetivoStoreValidator($repo, $usuarioRepo);
 
         expect($validator->validarExistencia('tipo-1'))->toBe($tipoObjetivo);
     });
 
     test('lança NotFoundException quando não encontrado', function () {
-        $repo = Mockery::mock(TipoObjetivoRepository::class);
+        $repo = Mockery::mock(TipoPlanejamentoObjetivoRepository::class);
         $repo->shouldReceive('findById')->once()->with('inexistente')->andReturn(null);
 
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
 
-        $validator = new TipoObjetivoStoreValidator($repo, $usuarioRepo);
+        $validator = new TipoPlanejamentoObjetivoStoreValidator($repo, $usuarioRepo);
         $validator->validarExistencia('inexistente');
     })->throws(NotFoundException::class, 'Tipo de objetivo não encontrado.');
 });
 
-describe('TipoObjetivoStoreValidator::validar', function () {
+describe('TipoPlanejamentoObjetivoStoreValidator::validar', function () {
     test('não lança exceção quando usuário é ADM_MASTER', function () {
         $perfil = (object) ['nivel' => PerfilEnum::ADMINISTRADOR_MASTER->value];
 
         $usuario = Mockery::mock(Usuario::class)->makePartial();
         $usuario->shouldReceive('getAttribute')->with('perfil')->andReturn($perfil);
 
-        $repo = Mockery::mock(TipoObjetivoRepository::class);
+        $repo = Mockery::mock(TipoPlanejamentoObjetivoRepository::class);
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
         $usuarioRepo->shouldReceive('findById')->once()->with('user-adm')->andReturn($usuario);
 
-        $validator = new TipoObjetivoStoreValidator($repo, $usuarioRepo);
+        $validator = new TipoPlanejamentoObjetivoStoreValidator($repo, $usuarioRepo);
         $validator->validar('user-adm');
 
         expect(true)->toBeTrue();
@@ -64,11 +64,11 @@ describe('TipoObjetivoStoreValidator::validar', function () {
         $usuario = Mockery::mock(Usuario::class)->makePartial();
         $usuario->shouldReceive('getAttribute')->with('perfil')->andReturn($perfil);
 
-        $repo = Mockery::mock(TipoObjetivoRepository::class);
+        $repo = Mockery::mock(TipoPlanejamentoObjetivoRepository::class);
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
         $usuarioRepo->shouldReceive('findById')->once()->with('user-dev')->andReturn($usuario);
 
-        $validator = new TipoObjetivoStoreValidator($repo, $usuarioRepo);
+        $validator = new TipoPlanejamentoObjetivoStoreValidator($repo, $usuarioRepo);
         $validator->validar('user-dev');
 
         expect(true)->toBeTrue();
@@ -80,11 +80,11 @@ describe('TipoObjetivoStoreValidator::validar', function () {
         $usuario = Mockery::mock(Usuario::class)->makePartial();
         $usuario->shouldReceive('getAttribute')->with('perfil')->andReturn($perfil);
 
-        $repo = Mockery::mock(TipoObjetivoRepository::class);
+        $repo = Mockery::mock(TipoPlanejamentoObjetivoRepository::class);
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
         $usuarioRepo->shouldReceive('findById')->once()->with('user-part')->andReturn($usuario);
 
-        $validator = new TipoObjetivoStoreValidator($repo, $usuarioRepo);
+        $validator = new TipoPlanejamentoObjetivoStoreValidator($repo, $usuarioRepo);
         $validator->validar('user-part');
     })->throws(ForbiddenException::class, 'Apenas administradores master podem gerenciar tipos de objetivo.');
 
@@ -94,11 +94,11 @@ describe('TipoObjetivoStoreValidator::validar', function () {
         $usuario = Mockery::mock(Usuario::class)->makePartial();
         $usuario->shouldReceive('getAttribute')->with('perfil')->andReturn($perfil);
 
-        $repo = Mockery::mock(TipoObjetivoRepository::class);
+        $repo = Mockery::mock(TipoPlanejamentoObjetivoRepository::class);
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
         $usuarioRepo->shouldReceive('findById')->once()->with('user-neg')->andReturn($usuario);
 
-        $validator = new TipoObjetivoStoreValidator($repo, $usuarioRepo);
+        $validator = new TipoPlanejamentoObjetivoStoreValidator($repo, $usuarioRepo);
         $validator->validar('user-neg');
     })->throws(ForbiddenException::class, 'Apenas administradores master podem gerenciar tipos de objetivo.');
 });

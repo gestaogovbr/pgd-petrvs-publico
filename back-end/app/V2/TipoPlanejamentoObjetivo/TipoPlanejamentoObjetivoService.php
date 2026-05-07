@@ -2,37 +2,37 @@
 
 declare(strict_types=1);
 
-namespace App\V2\TipoObjetivo;
+namespace App\V2\TipoPlanejamentoObjetivo;
 
-use App\Models\TipoObjetivo;
-use App\Repository\TipoObjetivoRepository;
-use App\V2\TipoObjetivo\DTOs\TipoObjetivoStoreDTO;
-use App\V2\TipoObjetivo\DTOs\TipoObjetivoUpdateDTO;
-use App\V2\TipoObjetivo\Validators\TipoObjetivoStoreValidator;
+use App\Models\TipoPlanejamentoObjetivo;
+use App\Repository\TipoPlanejamentoObjetivoRepository;
+use App\V2\TipoPlanejamentoObjetivo\DTOs\TipoPlanejamentoObjetivoStoreDTO;
+use App\V2\TipoPlanejamentoObjetivo\DTOs\TipoPlanejamentoObjetivoUpdateDTO;
+use App\V2\TipoPlanejamentoObjetivo\Validators\TipoPlanejamentoObjetivoStoreValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
-class TipoObjetivoService
+class TipoPlanejamentoObjetivoService
 {
     public function __construct(
-        private readonly TipoObjetivoRepository $repository,
-        private readonly TipoObjetivoStoreValidator $validator,
+        private readonly TipoPlanejamentoObjetivoRepository $repository,
+        private readonly TipoPlanejamentoObjetivoStoreValidator $validator,
     ) {}
 
-    /** @return Collection<int, TipoObjetivo> */
+    /** @return Collection<int, TipoPlanejamentoObjetivo> */
     public function index(): Collection
     {
         return $this->repository->getAll();
     }
 
-    public function store(TipoObjetivoStoreDTO $dto): TipoObjetivo
+    public function store(TipoPlanejamentoObjetivoStoreDTO $dto): TipoPlanejamentoObjetivo
     {
         $this->validator->validar(Auth::id());
 
         return $this->repository->create($dto->toPersistArray());
     }
 
-    public function update(TipoObjetivoUpdateDTO $dto): TipoObjetivo
+    public function update(TipoPlanejamentoObjetivoUpdateDTO $dto): TipoPlanejamentoObjetivo
     {
         $this->validator->validar(Auth::id());
         $tipoObjetivo = $this->validator->validarExistencia($dto->id);

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\V2\TipoObjetivo\DTOs;
+namespace App\V2\TipoPlanejamentoObjetivo\DTOs;
 
-class TipoObjetivoUpdateDTO
+class TipoPlanejamentoObjetivoUpdateDTO
 {
     public function __construct(
         public readonly string $id,

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\V2\TipoObjetivo\Validators;
+namespace App\V2\TipoPlanejamentoObjetivo\Validators;
 
 use Illuminate\Http\Request;
 
-class TipoObjetivoRequestValidator
+class TipoPlanejamentoObjetivoRequestValidator
 {
     /** @return array<string, mixed> */
     public static function store(Request $request): array

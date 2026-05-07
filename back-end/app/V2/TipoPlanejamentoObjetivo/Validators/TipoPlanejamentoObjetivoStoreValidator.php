@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\V2\TipoObjetivo\Validators;
+namespace App\V2\TipoPlanejamentoObjetivo\Validators;
 
 use App\Enums\PerfilEnum;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
-use App\Models\TipoObjetivo;
-use App\Repository\TipoObjetivoRepository;
+use App\Models\TipoPlanejamentoObjetivo;
+use App\Repository\TipoPlanejamentoObjetivoRepository;
 use App\Repository\UsuarioRepository;
 
-class TipoObjetivoStoreValidator
+class TipoPlanejamentoObjetivoStoreValidator
 {
     public function __construct(
-        private readonly TipoObjetivoRepository $repository,
+        private readonly TipoPlanejamentoObjetivoRepository $repository,
         private readonly UsuarioRepository $usuarioRepository,
     ) {}
 
-    public function validarExistencia(string $id): TipoObjetivo
+    public function validarExistencia(string $id): TipoPlanejamentoObjetivo
     {
         $tipoObjetivo = $this->repository->findById($id);
 

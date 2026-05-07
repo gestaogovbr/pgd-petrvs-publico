@@ -4,21 +4,21 @@ namespace Tests\IntegrationTenant\Controllers\V2;
 
 use App\Enums\PerfilEnum;
 use App\Models\Perfil;
-use App\Models\TipoObjetivo;
+use App\Models\TipoPlanejamentoObjetivo;
 use App\Models\Usuario;
-use App\V2\TipoObjetivo\TipoObjetivoController;
+use App\V2\TipoPlanejamentoObjetivo\TipoPlanejamentoObjetivoController;
 use Illuminate\Support\Facades\Route;
 
 beforeEach(function () {
     if (!Route::has('__tests.v2.tipo-objetivo.index')) {
         Route::middleware(['api'])->group(function () {
-            Route::get('/api/__tests/v2/tipo-objetivo', [TipoObjetivoController::class, 'index'])
+            Route::get('/api/__tests/v2/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'index'])
                 ->name('__tests.v2.tipo-objetivo.index');
-            Route::post('/api/__tests/v2/tipo-objetivo', [TipoObjetivoController::class, 'store'])
+            Route::post('/api/__tests/v2/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'store'])
                 ->name('__tests.v2.tipo-objetivo.store');
-            Route::put('/api/__tests/v2/tipo-objetivo/{id}', [TipoObjetivoController::class, 'update'])
+            Route::put('/api/__tests/v2/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'update'])
                 ->name('__tests.v2.tipo-objetivo.update');
-            Route::delete('/api/__tests/v2/tipo-objetivo/{id}', [TipoObjetivoController::class, 'destroy'])
+            Route::delete('/api/__tests/v2/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'destroy'])
                 ->name('__tests.v2.tipo-objetivo.destroy');
         });
     }
@@ -43,8 +43,8 @@ describe('GET /api/v2/tipo-objetivo', function () {
     });
 
     test('retorna tipos cadastrados ordenados por nome', function () {
-        TipoObjetivo::create(['nome' => 'Zebra', 'descricao' => null]);
-        TipoObjetivo::create(['nome' => 'Alpha', 'descricao' => null]);
+        TipoPlanejamentoObjetivo::create(['nome' => 'Zebra', 'descricao' => null]);
+        TipoPlanejamentoObjetivo::create(['nome' => 'Alpha', 'descricao' => null]);
 
         $this->actingAs($this->participante, 'web');
 
@@ -70,7 +70,7 @@ describe('POST /api/v2/tipo-objetivo', function () {
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.nome', 'Estratégico');
 
-        $this->assertDatabaseHas('tipos_objetivos', ['nome' => 'Estratégico']);
+        $this->assertDatabaseHas('tipos_planejamentos_objetivos', ['nome' => 'Estratégico']);
     });
 
     test('retorna 422 quando nome ausente', function () {
@@ -92,7 +92,7 @@ describe('POST /api/v2/tipo-objetivo', function () {
 
 describe('PUT /api/v2/tipo-objetivo/:id', function () {
     test('ADM_MASTER atualiza tipo', function () {
-        $tipo = TipoObjetivo::create(['nome' => 'Original', 'descricao' => null]);
+        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Original', 'descricao' => null]);
 
         $this->actingAs($this->admMaster, 'web');
 
@@ -100,7 +100,7 @@ describe('PUT /api/v2/tipo-objetivo/:id', function () {
             ->assertStatus(200)
             ->assertJsonPath('data.nome', 'Atualizado');
 
-        $this->assertDatabaseHas('tipos_objetivos', ['id' => $tipo->id, 'nome' => 'Atualizado']);
+        $this->assertDatabaseHas('tipos_planejamentos_objetivos', ['id' => $tipo->id, 'nome' => 'Atualizado']);
     });
 
     test('retorna 404 quando tipo não existe', function () {
@@ -111,7 +111,7 @@ describe('PUT /api/v2/tipo-objetivo/:id', function () {
     });
 
     test('participante recebe 403', function () {
-        $tipo = TipoObjetivo::create(['nome' => 'Original', 'descricao' => null]);
+        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Original', 'descricao' => null]);
 
         $this->actingAs($this->participante, 'web');
 
@@ -124,14 +124,14 @@ describe('PUT /api/v2/tipo-objetivo/:id', function () {
 
 describe('DELETE /api/v2/tipo-objetivo/:id', function () {
     test('ADM_MASTER deleta tipo', function () {
-        $tipo = TipoObjetivo::create(['nome' => 'Para deletar', 'descricao' => null]);
+        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Para deletar', 'descricao' => null]);
 
         $this->actingAs($this->admMaster, 'web');
 
         $this->deleteJson("/api/__tests/v2/tipo-objetivo/{$tipo->id}")
             ->assertStatus(204);
 
-        $this->assertSoftDeleted('tipos_objetivos', ['id' => $tipo->id]);
+        $this->assertSoftDeleted('tipos_planejamentos_objetivos', ['id' => $tipo->id]);
     });
 
     test('retorna 404 quando tipo não existe', function () {
@@ -142,7 +142,7 @@ describe('DELETE /api/v2/tipo-objetivo/:id', function () {
     });
 
     test('participante recebe 403', function () {
-        $tipo = TipoObjetivo::create(['nome' => 'Protegido', 'descricao' => null]);
+        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Protegido', 'descricao' => null]);
 
         $this->actingAs($this->participante, 'web');
 
