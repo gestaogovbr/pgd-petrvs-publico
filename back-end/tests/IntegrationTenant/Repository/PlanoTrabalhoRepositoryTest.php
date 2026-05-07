@@ -2,6 +2,8 @@
 
 namespace Tests\IntegrationTenant\Repository;
 
+use App\Enums\StatusEnum;
+use App\Models\Perfil;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
@@ -10,12 +12,15 @@ use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Repository\PlanoTrabalhoRepository;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
-use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
+
+
 
 beforeEach(function () {
+    Bus::fake();
     $this->repository = app(PlanoTrabalhoRepository::class);
     $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
     $this->unidade = Unidade::factory()->create();

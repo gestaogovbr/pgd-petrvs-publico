@@ -49,7 +49,7 @@ class PlanoEntregaFactory extends Factory
             'status' => 'INCLUIDO',
             'unidade_id' => $unidade->id,
             'programa_id' => $programa->id,
-            'criacao_usuario_id' => null,
+            'criacao_usuario_id' => $usuario->id,
         ];
     }
 }

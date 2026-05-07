@@ -109,6 +109,8 @@ Como os testes de tenant usam um arquivo SQL estático (`database/schema/tenant-
 2.  Gere um banco temporário e exporte o schema (pode ser feito manualmente ou via script auxiliar se disponível).
 3.  O objetivo é ter um dump `no-data` das tabelas do tenant salvo em `back-end/database/schema/tenant-schema.sql`.
 
+* Exemplo funcional: docker exec -it petrvs_db /usr/bin/mariadb-dump -u root -pPsEeTnRhVaS --no-data --routines --triggers petrvs_mgi > back-end/database/schema/tenant-schema.sql 
+
 *Nota: Atualmente, este processo pode exigir um fluxo manual de criar um tenant, rodar migrations e fazer o dump.*
 
 ## Melhores Práticas

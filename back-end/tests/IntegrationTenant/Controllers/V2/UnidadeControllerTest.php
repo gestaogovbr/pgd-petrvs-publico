@@ -7,7 +7,6 @@ use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use Illuminate\Support\Facades\Route;
-use Mockery;
 
 beforeEach(function () {
     if (!Route::has('__tests.v2.unidade.buscarPorNomeOuCodigo')) {
@@ -29,7 +28,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Mockery::close();
+    \Mockery::close();
 });
 
 // ── validação ───────────────────────────────────────────────────────

@@ -2,20 +2,34 @@
 
 use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
-use App\V2\PlanoTrabalho\PlanoTrabalhoController;
-use App\V2\PlanoTrabalho\PlanoTrabalhoService;
+use App\Exceptions\ValidateException;
+use App\Models\Afastamento;
+use App\Models\Avaliacao;
+use App\Models\Entrega;
+use App\Models\Perfil;
+use App\Models\PlanoEntrega;
+use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
+use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
+use App\Models\ProgramaParticipante;
+use App\Models\TipoAvaliacaoNota;
+use App\Models\TipoMotivoAfastamento;
 use App\Models\Unidade;
 use App\Models\Usuario;
-use App\Models\Perfil;
-use App\Models\ProgramaParticipante;
-use App\Exceptions\ValidateException;
-use Illuminate\Support\Facades\Route;
+use App\V2\PlanoTrabalho\PlanoTrabalhoController;
+use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Mockery;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Route;
+
+
 
 beforeEach(function () {
+    Bus::fake();
+
     if (!Route::has('__tests.v2.plano-trabalho.index')) {
         Route::middleware(['api'])->get('/api/__tests/v2/plano-trabalho', [PlanoTrabalhoController::class, 'index'])
             ->name('__tests.v2.plano-trabalho.index');
@@ -74,7 +88,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Mockery::close();
+    \Mockery::close();
 });
 
 function validStorePayload(): array

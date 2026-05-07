@@ -2,7 +2,7 @@
 
 namespace Tests\IntegrationTenant\Controllers\V2;
 
-use App\V2\PlanoTrabalho\Entrega\PlanoTrabalhoEntregaController;
+use App\Models\Documento;
 use App\Models\Entrega;
 use App\Models\Perfil;
 use App\Models\PlanoEntrega;
@@ -10,9 +10,11 @@ use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalho;
 use App\Models\Programa;
 use App\Models\Unidade;
-use App\Models\Documento;
 use App\Models\Usuario;
+use App\V2\PlanoTrabalho\Entrega\PlanoTrabalhoEntregaController;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Route;
+
 
 function criarDocumentoTCR(string $planoTrabalhoId): Documento
 {
@@ -27,6 +29,8 @@ function criarDocumentoTCR(string $planoTrabalhoId): Documento
 }
 
 beforeEach(function () {
+    Bus::fake();
+
     if (!Route::has('__tests.v2.plano-trabalho.entrega.store')) {
         Route::middleware(['api'])->post(
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/entrega',

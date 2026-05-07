@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\IntegrationTenant\Services;
 
 use App\Jobs\Envio\ExportarPlanoEntregaJob;
 use App\Models\PlanoEntrega;
@@ -11,9 +11,6 @@ use App\Services\Envio\AgendarEnvioPlanosEntregasService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Mockery;
-use Tests\TenantTestCase;
-
-uses(TenantTestCase::class);
 
 afterEach(function () {
     Mockery::close();

@@ -7,7 +7,6 @@ use App\Models\Programa;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\Route;
-use Mockery;
 
 beforeEach(function () {
     if (!Route::has('__tests.v2.plano-entrega.buscarPorUnidade')) {
@@ -21,7 +20,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    Mockery::close();
+    \Mockery::close();
 });
 
 // ── validação ───────────────────────────────────────────────────────

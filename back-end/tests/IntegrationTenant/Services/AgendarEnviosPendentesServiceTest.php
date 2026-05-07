@@ -1,25 +1,21 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\IntegrationTenant\Services;
 
-use App\Enums\StatusEnum;
 use App\Jobs\Envio\ExportarParticipanteJob;
 use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
-use App\Services\Envio\AgendarEnvioPlanosTrabalhosService;
+use App\Services\Envio\AgendarEnviosPendentesService;
+use App\Services\TenantService;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Log;
 use Mockery;
-use Tests\TenantTestCase;
-
-uses(TenantTestCase::class);
 
 afterEach(function () {
     Mockery::close();
 });
 
-describe('AgendarEnvioPlanosTrabalhosService', function () {
+describe('AgendarEnviosPendentesService', function () {
 
     it('percorre os chunks, carrega planos e encadeia envio quando o PT é elegível', function () {
         Bus::fake();
@@ -28,17 +24,18 @@ describe('AgendarEnvioPlanosTrabalhosService', function () {
         $planoId = $plano->id;
 
         $planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
-        $planoRepo->shouldReceive('findAllParaEnvio')
+        $planoRepo->shouldReceive('chunkEnviosPendentes')
             ->once()
-            ->with(AgendarEnvioPlanosTrabalhosService::CHUNK_SIZE, Mockery::type('callable'))
+            ->with(AgendarEnviosPendentesService::CHUNK_SIZE, Mockery::type('callable'))
             ->andReturnUsing(function (int $chunkSize, callable $callback) use ($planoId): void {
                 $callback(collect([(object) ['id' => $planoId]]));
             });
 
-        $planoRepo->shouldReceive('findById')->with($planoId)->andReturn($plano->fresh(['usuario']));
+        $planoRepo->shouldReceive('findById')->with((string) $planoId)->andReturn($plano->fresh(['usuario']));
 
-        $service = new AgendarEnvioPlanosTrabalhosService($planoRepo);
-        $service->executarAgendamentoNoTenant(tenant());
+        $tenantService = Mockery::mock(TenantService::class);
+        $service = new AgendarEnviosPendentesService($planoRepo, $tenantService);
+        $service->executarAgendamentoNoTenant(tenant()->id);
 
         Bus::assertChained([
             ExportarParticipanteJob::class,
@@ -50,11 +47,11 @@ describe('AgendarEnvioPlanosTrabalhosService', function () {
         Bus::fake();
 
         $p1 = PlanoTrabalho::factory()->ativo()->create();
-        $p2 = PlanoTrabalho::factory()->create(['status' => StatusEnum::CONCLUIDO->value]);
+        $p2 = PlanoTrabalho::factory()->ativo()->create();
 
         $chunks = 0;
         $planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
-        $planoRepo->shouldReceive('findAllParaEnvio')
+        $planoRepo->shouldReceive('chunkEnviosPendentes')
             ->once()
             ->andReturnUsing(function (int $chunkSize, callable $callback) use (&$chunks, $p1, $p2): void {
                 $callback(collect([(object) ['id' => $p1->id]]));
@@ -63,11 +60,12 @@ describe('AgendarEnvioPlanosTrabalhosService', function () {
                 $chunks++;
             });
 
-        $planoRepo->shouldReceive('findById')->with($p1->id)->andReturn($p1->fresh(['usuario']));
-        $planoRepo->shouldReceive('findById')->with($p2->id)->andReturn($p2->fresh(['usuario']));
+        $planoRepo->shouldReceive('findById')->with((string) $p1->id)->andReturn($p1->fresh(['usuario']));
+        $planoRepo->shouldReceive('findById')->with((string) $p2->id)->andReturn($p2->fresh(['usuario']));
 
-        $service = new AgendarEnvioPlanosTrabalhosService($planoRepo);
-        $service->executarAgendamentoNoTenant(tenant());
+        $tenantService = Mockery::mock(TenantService::class);
+        $service = new AgendarEnviosPendentesService($planoRepo, $tenantService);
+        $service->executarAgendamentoNoTenant(tenant()->id);
 
         expect($chunks)->toBe(2);
     });
@@ -76,7 +74,7 @@ describe('AgendarEnvioPlanosTrabalhosService', function () {
         Bus::fake();
 
         $planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
-        $planoRepo->shouldReceive('findAllParaEnvio')
+        $planoRepo->shouldReceive('chunkEnviosPendentes')
             ->once()
             ->andReturnUsing(function (int $chunkSize, callable $callback): void {
                 $callback(collect([(object) ['id' => 'id-inexistente']]));
@@ -84,8 +82,9 @@ describe('AgendarEnvioPlanosTrabalhosService', function () {
 
         $planoRepo->shouldReceive('findById')->with('id-inexistente')->andReturn(null);
 
-        $service = new AgendarEnvioPlanosTrabalhosService($planoRepo);
-        $service->executarAgendamentoNoTenant(tenant());
+        $tenantService = Mockery::mock(TenantService::class);
+        $service = new AgendarEnviosPendentesService($planoRepo, $tenantService);
+        $service->executarAgendamentoNoTenant(tenant()->id);
 
         Bus::assertNothingDispatched();
     });
