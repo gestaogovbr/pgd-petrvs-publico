@@ -8,7 +8,7 @@
                 <div class="form-group col-md-9">
                     <div class="row">
                         <input-text [disabled]="!entity?.usuario_externo ? 'true' : undefined" [size]="3" label="CPF" controlName="cpf"  [attr.maxlength]=11 required></input-text>
-                        <input-text [disabled]="!entity?.usuario_externo ? 'true' : undefined" [size]="6" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250 required></input-text>
+                        <input-text [disabled]="!entity?.usuario_externo ? 'true' : undefined" [size]="6" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250></input-text>
                         <input-datetime date [size]="3" label="Nascimento" noIcon controlName="data_nascimento" [labelInfo]="'Data de nascimento'" [disabled]="!entity?.usuario_externo ? 'true' : undefined"></input-datetime>
                     </div>
                     <div class="row">
