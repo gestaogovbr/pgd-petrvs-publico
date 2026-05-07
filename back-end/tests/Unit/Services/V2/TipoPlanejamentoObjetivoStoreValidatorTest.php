@@ -9,7 +9,7 @@ use App\Models\TipoPlanejamentoObjetivo;
 use App\Models\Usuario;
 use App\Repository\TipoPlanejamentoObjetivoRepository;
 use App\Repository\UsuarioRepository;
-use App\V2\TipoPlanejamentoObjetivo\Validators\TipoPlanejamentoObjetivoStoreValidator;
+use App\V2\Planejamento\TipoObjetivo\Validators\TipoPlanejamentoObjetivoStoreValidator;
 use Mockery;
 
 afterEach(function () {

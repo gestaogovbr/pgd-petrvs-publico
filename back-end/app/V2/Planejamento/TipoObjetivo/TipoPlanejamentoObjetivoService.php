@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\V2\TipoPlanejamentoObjetivo;
+namespace App\V2\Planejamento\TipoObjetivo;
 
 use App\Models\TipoPlanejamentoObjetivo;
 use App\Repository\TipoPlanejamentoObjetivoRepository;
-use App\V2\TipoPlanejamentoObjetivo\DTOs\TipoPlanejamentoObjetivoStoreDTO;
-use App\V2\TipoPlanejamentoObjetivo\DTOs\TipoPlanejamentoObjetivoUpdateDTO;
-use App\V2\TipoPlanejamentoObjetivo\Validators\TipoPlanejamentoObjetivoStoreValidator;
+use App\V2\Planejamento\TipoObjetivo\DTOs\TipoPlanejamentoObjetivoStoreDTO;
+use App\V2\Planejamento\TipoObjetivo\DTOs\TipoPlanejamentoObjetivoUpdateDTO;
+use App\V2\Planejamento\TipoObjetivo\Validators\TipoPlanejamentoObjetivoStoreValidator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 

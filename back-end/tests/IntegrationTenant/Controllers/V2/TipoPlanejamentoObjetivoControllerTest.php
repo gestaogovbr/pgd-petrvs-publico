@@ -6,19 +6,19 @@ use App\Enums\PerfilEnum;
 use App\Models\Perfil;
 use App\Models\TipoPlanejamentoObjetivo;
 use App\Models\Usuario;
-use App\V2\TipoPlanejamentoObjetivo\TipoPlanejamentoObjetivoController;
+use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
 use Illuminate\Support\Facades\Route;
 
 beforeEach(function () {
     if (!Route::has('__tests.v2.tipo-objetivo.index')) {
         Route::middleware(['api'])->group(function () {
-            Route::get('/api/__tests/v2/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'index'])
+            Route::get('/api/__tests/v2/planejamento/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'index'])
                 ->name('__tests.v2.tipo-objetivo.index');
-            Route::post('/api/__tests/v2/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'store'])
+            Route::post('/api/__tests/v2/planejamento/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'store'])
                 ->name('__tests.v2.tipo-objetivo.store');
-            Route::put('/api/__tests/v2/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'update'])
+            Route::put('/api/__tests/v2/planejamento/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'update'])
                 ->name('__tests.v2.tipo-objetivo.update');
-            Route::delete('/api/__tests/v2/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'destroy'])
+            Route::delete('/api/__tests/v2/planejamento/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'destroy'])
                 ->name('__tests.v2.tipo-objetivo.destroy');
         });
     }
@@ -32,11 +32,11 @@ beforeEach(function () {
 
 // ── GET index ──────────────────────────────────────────────────────
 
-describe('GET /api/v2/tipo-objetivo', function () {
+describe('GET /api/v2/planejamento/tipo-objetivo', function () {
     test('retorna 200 com lista vazia quando não há registros', function () {
         $this->actingAs($this->participante, 'web');
 
-        $this->getJson('/api/__tests/v2/tipo-objetivo')
+        $this->getJson('/api/__tests/v2/planejamento/tipo-objetivo')
             ->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data', []);
@@ -48,7 +48,7 @@ describe('GET /api/v2/tipo-objetivo', function () {
 
         $this->actingAs($this->participante, 'web');
 
-        $data = $this->getJson('/api/__tests/v2/tipo-objetivo')->json('data');
+        $data = $this->getJson('/api/__tests/v2/planejamento/tipo-objetivo')->json('data');
 
         expect($data[0]['nome'])->toBe('Alpha')
             ->and($data[1]['nome'])->toBe('Zebra');
@@ -57,11 +57,11 @@ describe('GET /api/v2/tipo-objetivo', function () {
 
 // ── POST store ──────────────────────────────────────────────────────
 
-describe('POST /api/v2/tipo-objetivo', function () {
+describe('POST /api/v2/planejamento/tipo-objetivo', function () {
     test('ADM_MASTER cria tipo e retorna 201', function () {
         $this->actingAs($this->admMaster, 'web');
 
-        $response = $this->postJson('/api/__tests/v2/tipo-objetivo', [
+        $response = $this->postJson('/api/__tests/v2/planejamento/tipo-objetivo', [
             'nome' => 'Estratégico',
             'descricao' => 'Objetivo estratégico',
         ]);
@@ -70,43 +70,43 @@ describe('POST /api/v2/tipo-objetivo', function () {
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.nome', 'Estratégico');
 
-        $this->assertDatabaseHas('tipos_planejamentos_objetivos', ['nome' => 'Estratégico']);
+        $this->assertDatabaseHas('planejamentos_tipos_objetivos', ['nome' => 'Estratégico']);
     });
 
     test('retorna 422 quando nome ausente', function () {
         $this->actingAs($this->admMaster, 'web');
 
-        $this->postJson('/api/__tests/v2/tipo-objetivo', [])
+        $this->postJson('/api/__tests/v2/planejamento/tipo-objetivo', [])
             ->assertStatus(422);
     });
 
     test('participante recebe 403', function () {
         $this->actingAs($this->participante, 'web');
 
-        $this->postJson('/api/__tests/v2/tipo-objetivo', ['nome' => 'X'])
+        $this->postJson('/api/__tests/v2/planejamento/tipo-objetivo', ['nome' => 'X'])
             ->assertStatus(403);
     });
 });
 
 // ── PUT update ──────────────────────────────────────────────────────
 
-describe('PUT /api/v2/tipo-objetivo/:id', function () {
+describe('PUT /api/v2/planejamento/tipo-objetivo/:id', function () {
     test('ADM_MASTER atualiza tipo', function () {
         $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Original', 'descricao' => null]);
 
         $this->actingAs($this->admMaster, 'web');
 
-        $this->putJson("/api/__tests/v2/tipo-objetivo/{$tipo->id}", ['nome' => 'Atualizado'])
+        $this->putJson("/api/__tests/v2/planejamento/tipo-objetivo/{$tipo->id}", ['nome' => 'Atualizado'])
             ->assertStatus(200)
             ->assertJsonPath('data.nome', 'Atualizado');
 
-        $this->assertDatabaseHas('tipos_planejamentos_objetivos', ['id' => $tipo->id, 'nome' => 'Atualizado']);
+        $this->assertDatabaseHas('planejamentos_tipos_objetivos', ['id' => $tipo->id, 'nome' => 'Atualizado']);
     });
 
     test('retorna 404 quando tipo não existe', function () {
         $this->actingAs($this->admMaster, 'web');
 
-        $this->putJson('/api/__tests/v2/tipo-objetivo/' . fake()->uuid(), ['nome' => 'X'])
+        $this->putJson('/api/__tests/v2/planejamento/tipo-objetivo/' . fake()->uuid(), ['nome' => 'X'])
             ->assertStatus(404);
     });
 
@@ -115,29 +115,29 @@ describe('PUT /api/v2/tipo-objetivo/:id', function () {
 
         $this->actingAs($this->participante, 'web');
 
-        $this->putJson("/api/__tests/v2/tipo-objetivo/{$tipo->id}", ['nome' => 'X'])
+        $this->putJson("/api/__tests/v2/planejamento/tipo-objetivo/{$tipo->id}", ['nome' => 'X'])
             ->assertStatus(403);
     });
 });
 
 // ── DELETE destroy ──────────────────────────────────────────────────
 
-describe('DELETE /api/v2/tipo-objetivo/:id', function () {
+describe('DELETE /api/v2/planejamento/tipo-objetivo/:id', function () {
     test('ADM_MASTER deleta tipo', function () {
         $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Para deletar', 'descricao' => null]);
 
         $this->actingAs($this->admMaster, 'web');
 
-        $this->deleteJson("/api/__tests/v2/tipo-objetivo/{$tipo->id}")
+        $this->deleteJson("/api/__tests/v2/planejamento/tipo-objetivo/{$tipo->id}")
             ->assertStatus(204);
 
-        $this->assertSoftDeleted('tipos_planejamentos_objetivos', ['id' => $tipo->id]);
+        $this->assertSoftDeleted('planejamentos_tipos_objetivos', ['id' => $tipo->id]);
     });
 
     test('retorna 404 quando tipo não existe', function () {
         $this->actingAs($this->admMaster, 'web');
 
-        $this->deleteJson('/api/__tests/v2/tipo-objetivo/' . fake()->uuid())
+        $this->deleteJson('/api/__tests/v2/planejamento/tipo-objetivo/' . fake()->uuid())
             ->assertStatus(404);
     });
 
@@ -146,7 +146,7 @@ describe('DELETE /api/v2/tipo-objetivo/:id', function () {
 
         $this->actingAs($this->participante, 'web');
 
-        $this->deleteJson("/api/__tests/v2/tipo-objetivo/{$tipo->id}")
+        $this->deleteJson("/api/__tests/v2/planejamento/tipo-objetivo/{$tipo->id}")
             ->assertStatus(403);
     });
 });

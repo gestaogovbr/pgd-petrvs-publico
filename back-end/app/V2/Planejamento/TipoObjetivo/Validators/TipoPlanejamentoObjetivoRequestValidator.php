@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\V2\TipoPlanejamentoObjetivo\Validators;
+namespace App\V2\Planejamento\TipoObjetivo\Validators;
 
 use Illuminate\Http\Request;
 

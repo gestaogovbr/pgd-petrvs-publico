@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\V2\TipoPlanejamentoObjetivo;
+namespace App\V2\Planejamento\TipoObjetivo;
 
 use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\Controller;
-use App\V2\TipoPlanejamentoObjetivo\DTOs\TipoPlanejamentoObjetivoStoreDTO;
-use App\V2\TipoPlanejamentoObjetivo\DTOs\TipoPlanejamentoObjetivoUpdateDTO;
-use App\V2\TipoPlanejamentoObjetivo\Validators\TipoPlanejamentoObjetivoRequestValidator;
+use App\V2\Planejamento\TipoObjetivo\DTOs\TipoPlanejamentoObjetivoStoreDTO;
+use App\V2\Planejamento\TipoObjetivo\DTOs\TipoPlanejamentoObjetivoUpdateDTO;
+use App\V2\Planejamento\TipoObjetivo\Validators\TipoPlanejamentoObjetivoRequestValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\V2\TipoPlanejamentoObjetivo\DTOs;
+namespace App\V2\Planejamento\TipoObjetivo\DTOs;
 
 class TipoPlanejamentoObjetivoUpdateDTO
 {

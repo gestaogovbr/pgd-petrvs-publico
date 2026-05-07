@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TipoPlanejamentoObjetivo extends ModelBase
 {
-    protected $table = 'tipos_planejamentos_objetivos';
+    protected $table = 'planejamentos_tipos_objetivos';
 
     protected $fillable = [
         'nome',

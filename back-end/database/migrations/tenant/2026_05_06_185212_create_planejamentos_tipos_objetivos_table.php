@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('tipos_planejamentos_objetivos', function (Blueprint $table) {
+        Schema::create('planejamentos_tipos_objetivos', function (Blueprint $table) {
             $table->uuid('id');
             $table->primary('id');
             $table->timestamps();
@@ -26,7 +26,7 @@ return new class extends Migration
 
             $table->foreign('tipo_objetivo_id', 'fk_planej_obj_tipo_objetivo_id')
                 ->references('id')
-                ->on('tipos_objetivos')
+                ->on('planejamentos_tipos_objetivos')
                 ->onDelete('set null')
                 ->onUpdate('cascade');
         });
@@ -39,6 +39,6 @@ return new class extends Migration
             $table->dropColumn('tipo_objetivo_id');
         });
 
-        Schema::dropIfExists('tipos_planejamentos_objetivos');
+        Schema::dropIfExists('planejamentos_tipos_objetivos');
     }
 };

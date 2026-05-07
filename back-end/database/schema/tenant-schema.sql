@@ -3404,7 +3404,7 @@ DELIMITER ;
 /*M!999999\- enable the sandbox mode */ 
 set autocommit=0;
 
-CREATE TABLE `tipos_planejamentos_objetivos` (
+CREATE TABLE `planejamentos_tipos_objetivos` (
   `id` char(36) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -3415,7 +3415,7 @@ CREATE TABLE `tipos_planejamentos_objetivos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ALTER TABLE `planejamentos_objetivos` ADD COLUMN `tipo_objetivo_id` char(36) DEFAULT NULL COMMENT 'Tipo do objetivo (opcional)' AFTER `eixo_tematico_id`;
-ALTER TABLE `planejamentos_objetivos` ADD CONSTRAINT `fk_planej_obj_tipo_objetivo_id` FOREIGN KEY (`tipo_objetivo_id`) REFERENCES `tipos_planejamentos_objetivos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `planejamentos_objetivos` ADD CONSTRAINT `fk_planej_obj_tipo_objetivo_id` FOREIGN KEY (`tipo_objetivo_id`) REFERENCES `planejamentos_tipos_objetivos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (1,'2014_10_12_100000_create_password_resets_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (2,'2019_08_19_000000_create_failed_jobs_table',1);
@@ -3825,6 +3825,6 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (405,'2026_03_23_00
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (406,'2026_03_31_000000_add_justificativa_to_planos_trabalhos',2);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (407,'2026_04_08_114835_add_justificativa_modalidade_to_planos_trabalhos',2);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (408,'2026_04_09_114026_add_encerrado_at_to_planos_trabalhos',2);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (393,'2026_04_22_000000_create_cargas_individuais_siape_relatorios_table',1);
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (394,'2026_04_23_000000_refactor_modalidade_pgd_to_string',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (409,'2026_04_22_000000_create_cargas_individuais_siape_relatorios_table',1);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (410,'2026_04_23_000000_refactor_modalidade_pgd_to_string',1);
 commit;
