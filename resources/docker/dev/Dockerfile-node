@@ -1,7 +1,8 @@
 FROM node:20-alpine
-RUN mkdir -p /usr/src/app
+RUN mkdir -p /usr/src/app && chown -R node:node /usr/src/app
 WORKDIR /usr/src/app
 VOLUME /usr/src/app
 EXPOSE 4200
 COPY init-node.sh /usr/local/bin/
+USER node
 ENTRYPOINT []
