@@ -301,8 +301,8 @@ pipeline {
                             set -e 
 
                             # Copia a base (dev) e a versão HMG como override padrão do Compose.
-                            cp -f resources/docker/dev/docker-compose.yml ./docker-compose.yml
-                            cp -f resources/docker/hmg/docker-compose.hmg.yml ./docker-compose.override.yml
+                            cp -f petrvs-pgd/resources/docker/dev/docker-compose.yml ./docker-compose.yml
+                            cp -f petrvs-pgd/resources/docker/hmg/docker-compose.hmg.yml ./docker-compose.override.yml
 
                             docker compose down
 
