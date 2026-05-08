@@ -57,7 +57,7 @@ services:
   
   petrvs_rabbitmq:
     env_file:
-      - .env
+      - ./.env
 
 volumes:
   db_data:

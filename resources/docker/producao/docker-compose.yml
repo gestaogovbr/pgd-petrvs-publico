@@ -53,7 +53,7 @@ services:
     image: petrvs-rabbitmq:producao
     container_name: petrvs_rabbitmq
     env_file:
-      - ./back-end/.env
+      - ./.env
     ports:
       - "5672:5672"
       - "15672:15672"
