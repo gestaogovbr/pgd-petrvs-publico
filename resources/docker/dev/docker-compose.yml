@@ -10,11 +10,11 @@ services:
       - ./my.cnf:/etc/mysql/my.cnf
       - ../../../back-end/storage/logs:/var/www/storage/logs
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
+      MYSQL_DATABASE: petrvs
       MYSQL_USER: petrvs
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_TCP_PORT: ${DB_PORT}
+      MYSQL_PASSWORD: PsEeTnRhVaS
+      MYSQL_TCP_PORT: 3308
       TZ: "America/Bahia"
     deploy:
       resources:
