@@ -345,13 +345,6 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.ROTINAS_INTEGRACAO,
       ]
     }, {
-      name: this.lex.translate("Relatórios"),
-      permition: "MENU_DEV_ACESSO",
-      id: "navbarDropdownDevRelatorios",
-      menu: [
-        this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
-      ]
-    }, {
       name: this.lex.translate("Envio API"),
       permition: "MOD_ENVIOS",
       id: "navbarDropdownDevApiPgd",
