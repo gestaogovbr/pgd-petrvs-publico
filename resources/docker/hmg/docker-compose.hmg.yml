@@ -48,6 +48,8 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
+    env_file:
+      - ../../../back-end/.env
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_DATABASE}
