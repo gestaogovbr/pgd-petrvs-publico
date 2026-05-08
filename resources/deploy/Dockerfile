@@ -30,6 +30,7 @@ RUN docker-php-ext-install soap
 RUN docker-php-ext-install curl
 RUN docker-php-ext-install gd
 RUN docker-php-ext-install calendar
+RUN docker-php-ext-install sockets
 # Instalar openssl utilizando um workaround
 RUN docker-php-ext-install openssl || true
 RUN cp /usr/src/php/ext/openssl/config0.m4 /usr/src/php/ext/openssl/config.m4
@@ -76,6 +77,9 @@ RUN chmod -R 755 ./
 
 # Ajustar permissões dos diretórios necessários
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public
+
+RUN docker-php-ext-install sockets && docker-php-ext-enable sockets
+RUN php -m | grep -i "^sockets$"
 
 RUN composer install --optimize-autoloader --no-dev
 
