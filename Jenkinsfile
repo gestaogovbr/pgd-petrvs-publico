@@ -304,55 +304,20 @@ pipeline {
 
                             MAINTENANCE_CONTAINER="petrvs_maintenance_hmg"
                             MAINTENANCE_DIR="/tmp/petrvs-maintenance"
+                            MAINTENANCE_SOURCE_DIR="resources/deploy/maintenance"
 
                             echo "Preparando página de manutenção temporária..."
                             mkdir -p "$MAINTENANCE_DIR"
-                            cat > "$MAINTENANCE_DIR/index.html" << 'HTML'
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serviço em Atualização</title>
-  <style>
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
-      text-align: center;
-      padding: 24px;
-    }
-    .card {
-      max-width: 560px;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 12px;
-      padding: 28px 22px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
-    }
-    h1 { margin: 0 0 14px; font-size: 1.7rem; }
-    p { margin: 0; line-height: 1.5; }
-  </style>
-</head>
-<body>
-  <main class="card">
-    <h1>Serviço em Atualização</h1>
-    <p>Estamos finalizando uma atualização e o sistema volta em instantes.</p>
-  </main>
-</body>
-</html>
-HTML
+                            cp "$MAINTENANCE_SOURCE_DIR/index.html" "$MAINTENANCE_DIR/index.html"
+                            cp "$MAINTENANCE_SOURCE_DIR/default.conf" "$MAINTENANCE_DIR/default.conf"
 
                             cd resources/docker/dev
 
                             # Executa compose diretamente com base (dev) + override (hmg).
                             COMPOSE_FILES="-f docker-compose.yml -f ../hmg/docker-compose.hmg.yml"
                             COMPOSE_ENV_FILE="--env-file ../../../back-end/.env"
+                            WARMUP_HTTP_PORT="8080"
+                            WARMUP_HTTPS_PORT="8443"
 
                             docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES down
 
@@ -364,15 +329,16 @@ HTML
                               -p 80:80 \
                               -p 443:80 \
                               -v "$MAINTENANCE_DIR:/usr/share/nginx/html:ro" \
+                              -v "$MAINTENANCE_DIR/default.conf:/etc/nginx/conf.d/default.conf:ro" \
                               nginx:alpine
 
                             # Remove containers com nome fixo que podem ficar órfãos de execuções anteriores.
                             docker rm -f petrvs_db_hmg petrvs_php_hmg petrvs_queue petrvs_redis petrvs_rabbitmq 2>/dev/null || true
                             docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
 
-                            echo "Finalizando manutenção temporária para subir os serviços..."
-                            docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
-
+                            echo "Subindo stack em portas de aquecimento com manutenção ativa..."
+                            export PETRVS_HTTP_PORT="$WARMUP_HTTP_PORT"
+                            export PETRVS_HTTPS_PORT="$WARMUP_HTTPS_PORT"
                             docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --remove-orphans
 
                             sleep 10
@@ -444,6 +410,41 @@ EOT
                             echo 'Restart do ambiente de JOBS'
                             docker restart petrvs_queue
                             docker exec petrvs_php_hmg bash -c "service cron start"
+
+                            echo "Publicando aplicação nas portas finais (80/443)..."
+                            unset PETRVS_HTTP_PORT
+                            unset PETRVS_HTTPS_PORT
+
+                            docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+
+                            if ! docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --no-deps --force-recreate petrvs_php; then
+                                echo "Falha ao subir aplicação nas portas finais. Reativando manutenção..."
+                                docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+                                docker run -d \
+                                  --name "$MAINTENANCE_CONTAINER" \
+                                  --restart unless-stopped \
+                                  -p 80:80 \
+                                  -p 443:80 \
+                                  -v "$MAINTENANCE_DIR:/usr/share/nginx/html:ro" \
+                                  -v "$MAINTENANCE_DIR/default.conf:/etc/nginx/conf.d/default.conf:ro" \
+                                  nginx:alpine
+                                exit 1
+                            fi
+
+                            sleep 8
+                            if ! curl -fsS http://127.0.0.1/ >/dev/null; then
+                                echo "Aplicação não respondeu após publicação final. Reativando manutenção..."
+                                docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+                                docker run -d \
+                                  --name "$MAINTENANCE_CONTAINER" \
+                                  --restart unless-stopped \
+                                  -p 80:80 \
+                                  -p 443:80 \
+                                  -v "$MAINTENANCE_DIR:/usr/share/nginx/html:ro" \
+                                  -v "$MAINTENANCE_DIR/default.conf:/etc/nginx/conf.d/default.conf:ro" \
+                                  nginx:alpine
+                                exit 1
+                            fi
 EOF
 
                         echo "Implantação concluída com sucesso em HMG."

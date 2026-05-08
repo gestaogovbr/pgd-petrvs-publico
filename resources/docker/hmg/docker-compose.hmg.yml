@@ -7,8 +7,8 @@ services:
     image: segescginf/pgdpetrvs-develop:hmg
     container_name: petrvs_php_hmg
     ports:
-      - "80:80"
-      - "443:443"
+      - "${PETRVS_HTTP_PORT:-80}:80"
+      - "${PETRVS_HTTPS_PORT:-443}:443"
     deploy:
       resources:
         limits:
