@@ -318,18 +318,18 @@ pipeline {
                             sleep 10
 
                             echo "Build do Front-end...."
-                            docker exec -it petrvs_node npm install -g @angular/cli
-                            docker exec -it petrvs_node npm install --include=dev --legacy-peer-deps
-                            docker exec -it petrvs_node npm run build
+                            docker exec petrvs_node npm install -g @angular/cli
+                            docker exec petrvs_node npm install --include=dev --legacy-peer-deps
+                            docker exec petrvs_node npm run build
                             
                             echo "Instalando Dependências do PHP...";
-                            docker exec -it petrvs_php_hmg composer install
+                            docker exec petrvs_php_hmg composer install
 
                             echo "Limpando configurações...";
                             docker exec petrvs_php_hmg php artisan config:clear
 
                             echo "Sincronizando versão do app.json com o tenant..."
-                            docker exec -i petrvs_php_hmg php artisan tinker << 'EOT'
+                            docker exec petrvs_php_hmg php artisan tinker << 'EOT'
                                 $tenantId = env('PETRVS_ENTIDADE');
                                 $tenant = App\\Models\\Tenant::find($tenantId);
 
