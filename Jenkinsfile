@@ -305,11 +305,65 @@ pipeline {
                             MAINTENANCE_CONTAINER="petrvs_maintenance_hmg"
                             MAINTENANCE_DIR="/tmp/petrvs-maintenance"
                             MAINTENANCE_SOURCE_DIR="resources/deploy/maintenance"
+                            MAINTENANCE_CERT_SOURCE_DIR="resources/docker/producao/configuracoes/certificados"
+                            FINAL_PUBLISH_MAX_RETRIES=5
+                            FINAL_PUBLISH_RETRY_DELAY=3
 
-                            echo "Preparando página de manutenção temporária..."
-                            mkdir -p "$MAINTENANCE_DIR"
-                            cp "$MAINTENANCE_SOURCE_DIR/index.html" "$MAINTENANCE_DIR/index.html"
-                            cp "$MAINTENANCE_SOURCE_DIR/default.conf" "$MAINTENANCE_DIR/default.conf"
+                            prepare_maintenance_assets() {
+                                echo "Preparando página de manutenção temporária..."
+                                mkdir -p "$MAINTENANCE_DIR/certs"
+                                cp "$MAINTENANCE_SOURCE_DIR/index.html" "$MAINTENANCE_DIR/index.html"
+                                cp "$MAINTENANCE_SOURCE_DIR/default.conf" "$MAINTENANCE_DIR/default.conf"
+                                cp "$MAINTENANCE_CERT_SOURCE_DIR/certificate.crt" "$MAINTENANCE_DIR/certs/certificate.crt"
+                                cp "$MAINTENANCE_CERT_SOURCE_DIR/private.key" "$MAINTENANCE_DIR/certs/private.key"
+                            }
+
+                            start_maintenance_container() {
+                                echo "Subindo container temporário de manutenção..."
+                                docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+                                docker run -d \
+                                  --name "$MAINTENANCE_CONTAINER" \
+                                  --restart unless-stopped \
+                                  -p 80:80 \
+                                  -p 443:443 \
+                                  -v "$MAINTENANCE_DIR:/usr/share/nginx/html:ro" \
+                                  -v "$MAINTENANCE_DIR/default.conf:/etc/nginx/conf.d/default.conf:ro" \
+                                  -v "$MAINTENANCE_DIR/certs:/etc/nginx/certs:ro" \
+                                  nginx:alpine
+                            }
+
+                            reactivate_maintenance_and_exit() {
+                                local reason="$1"
+                                echo "$reason"
+                                start_maintenance_container
+                                exit 1
+                            }
+
+                            publish_final_ports_with_retry() {
+                                local publish_ok=0
+                                local attempt=0
+                                echo "Publicando aplicação nas portas finais (80/443)..."
+                                unset PETRVS_HTTP_PORT
+                                unset PETRVS_HTTPS_PORT
+                                docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+                                sleep 2
+
+                                for attempt in $(seq 1 "$FINAL_PUBLISH_MAX_RETRIES"); do
+                                    echo "Tentativa $attempt/$FINAL_PUBLISH_MAX_RETRIES para publicar em 80/443..."
+                                    if docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --no-deps --force-recreate petrvs_php; then
+                                        publish_ok=1
+                                        break
+                                    fi
+                                    echo "Falha ao publicar nas portas finais. Aguardando ${FINAL_PUBLISH_RETRY_DELAY}s..."
+                                    sleep "$FINAL_PUBLISH_RETRY_DELAY"
+                                done
+
+                                if [ "$publish_ok" -ne 1 ]; then
+                                    reactivate_maintenance_and_exit "Falha ao subir aplicação nas portas finais. Reativando manutenção..."
+                                fi
+                            }
+
+                            prepare_maintenance_assets
 
                             cd resources/docker/dev
 
@@ -321,16 +375,7 @@ pipeline {
 
                             docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES down
 
-                            echo "Subindo container temporário de manutenção..."
-                            docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
-                            docker run -d \
-                              --name "$MAINTENANCE_CONTAINER" \
-                              --restart unless-stopped \
-                              -p 80:80 \
-                              -p 443:80 \
-                              -v "$MAINTENANCE_DIR:/usr/share/nginx/html:ro" \
-                              -v "$MAINTENANCE_DIR/default.conf:/etc/nginx/conf.d/default.conf:ro" \
-                              nginx:alpine
+                            start_maintenance_container
 
                             # Remove containers com nome fixo que podem ficar órfãos de execuções anteriores.
                             docker rm -f petrvs_db_hmg petrvs_php_hmg petrvs_queue petrvs_redis petrvs_rabbitmq 2>/dev/null || true
@@ -411,39 +456,11 @@ EOT
                             docker restart petrvs_queue
                             docker exec petrvs_php_hmg bash -c "service cron start"
 
-                            echo "Publicando aplicação nas portas finais (80/443)..."
-                            unset PETRVS_HTTP_PORT
-                            unset PETRVS_HTTPS_PORT
-
-                            docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
-
-                            if ! docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --no-deps --force-recreate petrvs_php; then
-                                echo "Falha ao subir aplicação nas portas finais. Reativando manutenção..."
-                                docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
-                                docker run -d \
-                                  --name "$MAINTENANCE_CONTAINER" \
-                                  --restart unless-stopped \
-                                  -p 80:80 \
-                                  -p 443:80 \
-                                  -v "$MAINTENANCE_DIR:/usr/share/nginx/html:ro" \
-                                  -v "$MAINTENANCE_DIR/default.conf:/etc/nginx/conf.d/default.conf:ro" \
-                                  nginx:alpine
-                                exit 1
-                            fi
+                            publish_final_ports_with_retry
 
                             sleep 8
                             if ! curl -fsS http://127.0.0.1/ >/dev/null; then
-                                echo "Aplicação não respondeu após publicação final. Reativando manutenção..."
-                                docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
-                                docker run -d \
-                                  --name "$MAINTENANCE_CONTAINER" \
-                                  --restart unless-stopped \
-                                  -p 80:80 \
-                                  -p 443:80 \
-                                  -v "$MAINTENANCE_DIR:/usr/share/nginx/html:ro" \
-                                  -v "$MAINTENANCE_DIR/default.conf:/etc/nginx/conf.d/default.conf:ro" \
-                                  nginx:alpine
-                                exit 1
+                                reactivate_maintenance_and_exit "Aplicação não respondeu após publicação final. Reativando manutenção..."
                             fi
 EOF
 
