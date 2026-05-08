@@ -356,9 +356,9 @@ export class AppComponent implements IAppComponent {
       permition: "MOD_ENVIOS",
       id: "navbarDropdownDevApiPgd",
       menu: [
-        this.menuSchema.ENVIO_LOGS,
-        this.menuSchema.ENVIO_FORCAR,
-        this.menuSchema.ENVIO_REINICIAR
+        this.menuSchema.ENVIO_USUARIO,
+        this.menuSchema.ENVIO_PLANO_ENTREGA,
+        this.menuSchema.ENVIO_PLANO_TRABALHO
       ]
     }];
 
