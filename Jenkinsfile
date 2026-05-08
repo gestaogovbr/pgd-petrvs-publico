@@ -14,6 +14,12 @@ pipeline {
 
     stages {
         stage('Checkout') {
+            when {
+                anyOf {
+                    branch 'dataprev_dsv'
+                    branch 'dataprev_producao'
+                }
+            }
             steps {
                 checkout scm
             }
