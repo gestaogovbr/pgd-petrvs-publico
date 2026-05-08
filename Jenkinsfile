@@ -298,20 +298,18 @@ pipeline {
                             -p "$SSH_PORT" \
                             "$SSH_USER@$SSH_HOST" << 'EOF'
 
-                            set -e
+                            set -e 
 
-                            # Padroniza os arquivos de compose no host remoto:
-                            # base (dev) + override (hmg), sobrescrevendo sempre os locais.
+                            # Copia a base (dev) e a versão HMG como override padrão do Compose.
                             cp -f resources/docker/dev/docker-compose.yml ./docker-compose.yml
-                            cp -f resources/docker/hmg/docker-compose.hmg.yml ./docker-compose.hmg.yml
-                            COMPOSE_FILES="-f docker-compose.yml -f docker-compose.hmg.yml"
+                            cp -f resources/docker/hmg/docker-compose.hmg.yml ./docker-compose.override.yml
 
-                            docker compose $COMPOSE_FILES down
+                            docker compose down
 
                             docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
 
-                            docker compose $COMPOSE_FILES pull
-                            docker compose $COMPOSE_FILES up -d --remove-orphans
+                            docker compose pull
+                            docker compose up -d --remove-orphans
 
                             sleep 10
 
