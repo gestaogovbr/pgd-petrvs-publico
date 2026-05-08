@@ -54,6 +54,10 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_TCP_PORT: ${DB_PORT}
+  
+  petrvs_rabbitmq:
+    env_file:
+      - .env
 
 volumes:
   db_data:
