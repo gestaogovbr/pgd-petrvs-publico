@@ -308,6 +308,7 @@ pipeline {
                             MAINTENANCE_CERT_SOURCE_DIR="resources/docker/producao/configuracoes/certificados"
                             FINAL_PUBLISH_MAX_RETRIES=5
                             FINAL_PUBLISH_RETRY_DELAY=3
+                            APP_HEALTHCHECK_PATH="/app.json"
 
                             prepare_maintenance_assets() {
                                 echo "Preparando página de manutenção temporária..."
@@ -321,6 +322,7 @@ pipeline {
                             start_maintenance_container() {
                                 echo "Subindo container temporário de manutenção..."
                                 docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+                                sleep 2
                                 docker run -d \
                                   --name "$MAINTENANCE_CONTAINER" \
                                   --restart unless-stopped \
@@ -332,9 +334,33 @@ pipeline {
                                   nginx:alpine
                             }
 
+                            stop_maintenance_container() {
+                                echo "Encerrando container temporário de manutenção..."
+                                docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+                            }
+
+                            is_application_reachable_now() {
+                                local code=""
+                                code="$(docker exec petrvs_php_hmg sh -lc 'curl -kLsS -o /dev/null -w "%{http_code}" --max-time 8 https://127.0.0.1'"$APP_HEALTHCHECK_PATH"' || true' 2>/dev/null || true)"
+                                if [ "$code" = "200" ]; then
+                                    return 0
+                                fi
+
+                                code="$(docker exec petrvs_php_hmg sh -lc 'curl -LsS -o /dev/null -w "%{http_code}" --max-time 8 http://127.0.0.1'"$APP_HEALTHCHECK_PATH"' || true' 2>/dev/null || true)"
+                                if [ "$code" = "200" ]; then
+                                    return 0
+                                fi
+
+                                return 1
+                            }
+
                             reactivate_maintenance_and_exit() {
                                 local reason="$1"
                                 echo "$reason"
+                                if is_application_reachable_now; then
+                                    echo "Aplicação está respondendo; manutenção não será reativada."
+                                    return 0
+                                fi
                                 start_maintenance_container
                                 exit 1
                             }
@@ -343,14 +369,12 @@ pipeline {
                                 local publish_ok=0
                                 local attempt=0
                                 echo "Publicando aplicação nas portas finais (80/443)..."
-                                unset PETRVS_HTTP_PORT
-                                unset PETRVS_HTTPS_PORT
-                                docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+                                stop_maintenance_container
                                 sleep 2
 
                                 for attempt in $(seq 1 "$FINAL_PUBLISH_MAX_RETRIES"); do
                                     echo "Tentativa $attempt/$FINAL_PUBLISH_MAX_RETRIES para publicar em 80/443..."
-                                    if docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --no-deps --force-recreate petrvs_php; then
+                                    if PETRVS_HTTP_PORT=80 PETRVS_HTTPS_PORT=443 docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --no-deps --force-recreate petrvs_php; then
                                         publish_ok=1
                                         break
                                     fi
@@ -361,6 +385,31 @@ pipeline {
                                 if [ "$publish_ok" -ne 1 ]; then
                                     reactivate_maintenance_and_exit "Falha ao subir aplicação nas portas finais. Reativando manutenção..."
                                 fi
+                            }
+
+                            verify_final_application_response() {
+                                local health_attempt=0
+                                local health_max_retries=20
+                                local health_retry_delay=3
+                                local status_code=""
+
+                                for health_attempt in $(seq 1 "$health_max_retries"); do
+                                    echo "Validando resposta da aplicação (${health_attempt}/${health_max_retries})..."
+                                    status_code="$(docker exec petrvs_php_hmg sh -lc 'curl -kLsS -o /dev/null -w "%{http_code}" --max-time 10 https://127.0.0.1'"$APP_HEALTHCHECK_PATH"' || true' 2>/dev/null || true)"
+                                    if [ "$status_code" = "200" ]; then
+                                        echo "Aplicação respondeu em HTTPS com status $status_code no caminho $APP_HEALTHCHECK_PATH."
+                                        return 0
+                                    fi
+
+                                    status_code="$(docker exec petrvs_php_hmg sh -lc 'curl -LsS -o /dev/null -w "%{http_code}" --max-time 10 http://127.0.0.1'"$APP_HEALTHCHECK_PATH"' || true' 2>/dev/null || true)"
+                                    if [ "$status_code" = "200" ]; then
+                                        echo "Aplicação respondeu em HTTP com status $status_code no caminho $APP_HEALTHCHECK_PATH."
+                                        return 0
+                                    fi
+                                    sleep "$health_retry_delay"
+                                done
+
+                                return 1
                             }
 
                             prepare_maintenance_assets
@@ -382,9 +431,7 @@ pipeline {
                             docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
 
                             echo "Subindo stack em portas de aquecimento com manutenção ativa..."
-                            export PETRVS_HTTP_PORT="$WARMUP_HTTP_PORT"
-                            export PETRVS_HTTPS_PORT="$WARMUP_HTTPS_PORT"
-                            docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --remove-orphans
+                            PETRVS_HTTP_PORT="$WARMUP_HTTP_PORT" PETRVS_HTTPS_PORT="$WARMUP_HTTPS_PORT" docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --remove-orphans
 
                             sleep 10
 
@@ -458,10 +505,12 @@ EOT
 
                             publish_final_ports_with_retry
 
-                            sleep 8
-                            if ! curl -fsS http://127.0.0.1/ >/dev/null; then
+                            if ! verify_final_application_response; then
                                 reactivate_maintenance_and_exit "Aplicação não respondeu após publicação final. Reativando manutenção..."
                             fi
+
+                            # Segurança: garante que manutenção não ficou ativa após sucesso.
+                            stop_maintenance_container
 EOF
 
                         echo "Implantação concluída com sucesso em HMG."
