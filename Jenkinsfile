@@ -299,6 +299,7 @@ pipeline {
                             set -e 
                            
                             cd petrvs-pgd
+                            git reset --hard
                             git pull --ff-only
 
                             cd resources/docker/dev
