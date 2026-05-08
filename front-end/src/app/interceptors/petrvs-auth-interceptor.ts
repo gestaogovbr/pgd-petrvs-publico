@@ -21,10 +21,10 @@ export class PetrvsAuthInterceptor implements HttpInterceptor {
 
     if (apiToken && apiToken.length) {
       headers['Authorization'] = `Bearer ${apiToken}`;
-    } else {
-      const csrf = this.xsrf.getToken() as string;
-      if (csrf) headers['X-XSRF-TOKEN'] = csrf;
     }
+
+    const csrf = this.xsrf.getToken() as string;
+    if (csrf) headers['X-XSRF-TOKEN'] = csrf;
 
     const xPetrvs: any = { version: this.gb.VERSAO_DB };
     if (this.auth.unidade?.id) xPetrvs['unidade_id'] = this.auth.unidade.id;
