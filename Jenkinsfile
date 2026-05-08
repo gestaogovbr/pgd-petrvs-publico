@@ -322,6 +322,7 @@ pipeline {
 
                             echo "Build do Front-end...."
                             docker exec -it petrvs_node npm install -g @angular/cli
+                            docker exec -it petrvs_node npm install --include=dev --legacy-peer-deps
                             docker exec -it petrvs_node npm run build
                             
                             echo "Instalando Dependências do PHP...";
