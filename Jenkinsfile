@@ -275,51 +275,62 @@ pipeline {
                     string(credentialsId: 'SSH_HMG_PORT', variable: 'SSH_PORT'),
                     string(credentialsId: 'SSH_PASSWORD_HMG', variable: 'SSH_PASSWORD'),
                     string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
+                    string(credentialsId: 'token_github', variable: 'TOKEN_GITHUB'),
                     file(credentialsId: 'SSH_HMG_KNOWN_HOSTS', variable: 'KNOWN_HOSTS_FILE')
                 ]) {
                         sshagent(credentials: ['SSH_KEY_DSV']) {
                             sh '''
                         set -eu
 
-                        echo "Iniciando a construção e implantação do HMG..."
+                        #echo "Iniciando a construção e implantação do HMG..."
 
-                        echo "Construindo a imagem Docker..."
-                        docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
+                        #echo "Construindo a imagem Docker..."
+                        #docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
 
-                        echo "Construção da imagem concluída. Enviando para o Docker Hub..."
-                        echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG"
+                        #echo "Construção da imagem concluída. Enviando para o Docker Hub..."
+                        #echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+                        #docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG"
 
-                        echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
+                        #echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
 
                         ssh -T \
                             -o StrictHostKeyChecking=yes \
                             -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
                             -p "$SSH_PORT" \
-                            "$SSH_USER@$SSH_HOST" << 'EOF'
+                            "$SSH_USER@$SSH_HOST" "TOKEN_GITHUB='$TOKEN_GITHUB' bash -s" << 'EOF'
 
                             set -e 
+                           
+                            cd petrvs-pgd
+                            git pull --ff-only
 
-                            # Copia a base (dev) e a versão HMG como override padrão do Compose.
-                            cp -f petrvs-pgd/resources/docker/dev/docker-compose.yml ./docker-compose.yml
-                            cp -f petrvs-pgd/resources/docker/hmg/docker-compose.hmg.yml ./docker-compose.override.yml
-                            
-                            # Como o compose será executado da raiz, corrige path do env_file herdado do arquivo base (dev).
-                            sed -i 's#../../../back-end/.env#./.env#g' ./docker-compose.yml
+                            cd resources/docker/dev
 
-                            docker compose down
+                            # Executa compose diretamente com base (dev) + override (hmg).
+                            COMPOSE_FILES="-f docker-compose.yml -f ../hmg/docker-compose.hmg.yml"
+                            COMPOSE_ENV_FILE="--env-file ../../../back-end/.env"
 
+                            docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES down
+
+                            # Remove containers com nome fixo que podem ficar órfãos de execuções anteriores.
+                            docker rm -f petrvs_db_hmg petrvs_php_hmg petrvs_queue petrvs_redis petrvs_rabbitmq 2>/dev/null || true
                             docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
 
-                            docker compose pull
-                            docker compose up -d --remove-orphans
+                            docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --remove-orphans
 
                             sleep 10
 
-                            docker cp /root/.env petrvs_php_hmg:/var/www/.env
+                            echo "Build do Front-end...."
+                            docker exec -it petrvs_node npm install -g @angular/cli
+                            docker exec -it petrvs_node npm run build
+                            
+                            echo "Instalando Dependências do PHP...";
+                            docker exec -it petrvs_php_hmg composer install
 
+                            echo "Limpando configurações...";
                             docker exec petrvs_php_hmg php artisan config:clear
 
+                            echo "Sincronizando versão do app.json com o tenant..."
                             docker exec -i petrvs_php_hmg php artisan tinker << 'EOT'
                                 $tenantId = env('PETRVS_ENTIDADE');
                                 $tenant = App\\Models\\Tenant::find($tenantId);
@@ -342,34 +353,39 @@ pipeline {
                                 }
 EOT
 
+                            echo "Limpando caches e otimizando aplicação...";
                             docker exec petrvs_php_hmg php artisan config:clear
 
                             sleep 10
 
-                            docker exec petrvs_php_hmg bash -c 'chmod -R 777 /var/www/storage/logs/'
-                            docker exec petrvs_php_hmg bash -c 'chmod -R 777 /var/www/storage/'
-                            docker exec petrvs_php_hmg bash -c 'chown -R www-data:www-data /var/www/storage/logs/'
-                            docker exec petrvs_php_hmg bash -c 'rm -f /var/www/storage/logs/*.log'
-
+                            echo "Permissão storage/logs..."
+                            docker exec petrvs_php_hmg bash -c 'sudo chmod -R 777 /var/www/storage/logs/'
+                            docker exec petrvs_php_hmg bash -c 'sudo chmod -R 777 /var/www/storage/'
+                            docker exec petrvs_php_hmg bash -c 'sudo chown -R www-data:www-data ./storage/logs/'
+                            
+                            echo "Limpando storage/logs"
+                            docker exec petrvs_php_hmg bash -c 'sudo rm -f /var/www/storage/logs/*.log'
                             docker exec petrvs_php_hmg touch /var/www/storage/logs/laravel.log
                             docker exec petrvs_php_hmg chmod 777 /var/www/storage/logs/laravel.log
 
-                            docker exec petrvs_php_hmg php artisan optimize:clear
-                            docker exec petrvs_php_hmg php artisan cache:clear
-                            docker exec petrvs_php_hmg php artisan config:clear
+                            #Limpar Cache
+                            echo "Limpar Cache"
+                            docker exec petrvs_php_hmg bash -c 'php artisan optimize:clear'
+                            docker exec petrvs_php_hmg bash -c 'php artisan cache:clear'
+                            docker exec petrvs_php_hmg bash -c 'php artisan config:clear'
+                            docker exec petrvs_php_hmg bash -c 'composer dump-autoload'
 
-                            docker exec petrvs_php_hmg composer dump-autoload
-
-                            docker exec petrvs_php_hmg php artisan migrate
-                            docker exec petrvs_php_hmg php artisan tenants:migrate
-                            docker exec petrvs_php_hmg php artisan tenants:run db:seed --option="class=DeployHMGSeeder"
-
+                            echo "Executando php artisan migrate..."
+                            # Execute o shell do container e o comando php artisan migrate
+                            docker exec petrvs_php_hmg bash -c "php artisan migrate"
+                            docker exec petrvs_php_hmg bash -c "php artisan tenants:migrate"
+                            docker exec petrvs_php_hmg bash -c 'php artisan tenants:run db:seed --option="class=DeployHMGSeeder"'
+                            
                             sleep 10
 
+                            echo 'Restart do ambiente de JOBS'
                             docker restart petrvs_queue
-
                             docker exec petrvs_php_hmg bash -c "service cron start"
-
 EOF
 
                         echo "Implantação concluída com sucesso em HMG."
