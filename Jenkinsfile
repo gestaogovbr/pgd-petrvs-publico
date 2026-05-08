@@ -300,12 +300,18 @@ pipeline {
 
                             set -e
 
-                            docker compose down
+                            # Padroniza os arquivos de compose no host remoto:
+                            # base (dev) + override (hmg), sobrescrevendo sempre os locais.
+                            cp -f resources/docker/dev/docker-compose.yml ./docker-compose.yml
+                            cp -f resources/docker/hmg/docker-compose.hmg.yml ./docker-compose.hmg.yml
+                            COMPOSE_FILES="-f docker-compose.yml -f docker-compose.hmg.yml"
+
+                            docker compose $COMPOSE_FILES down
 
                             docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
 
-                            docker compose pull
-                            docker compose up -d --remove-orphans
+                            docker compose $COMPOSE_FILES pull
+                            docker compose $COMPOSE_FILES up -d --remove-orphans
 
                             sleep 10
 
