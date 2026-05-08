@@ -19,9 +19,16 @@ services:
     container_name: petrvs_queue
     environment:
       - TZ=America/Bahia
+      - APP_CONTEXT=queue
+      - RABBITMQ_HOST=petrvs_rabbitmq
     command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
     depends_on:
-      - petrvs_php
+      petrvs_php:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
     stdin_open: true
     tty: true
 
@@ -40,11 +47,11 @@ services:
       - db_data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
     environment:
-      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
-      MYSQL_DATABASE: petrvs
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: root
-      MYSQL_PASSWORD: PsEeTnRhVaS
-      MYSQL_TCP_PORT: 3306  
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_TCP_PORT: ${DB_PORT}
 
 volumes:
   db_data:
