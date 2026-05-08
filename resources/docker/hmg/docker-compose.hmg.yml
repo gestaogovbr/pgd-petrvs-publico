@@ -4,6 +4,7 @@ services:
 
   # PHP
   petrvs_php:
+    image: segescginf/pgdpetrvs-develop:hmg
     container_name: petrvs_php_hmg
     ports:
       - "80:80"
@@ -16,6 +17,7 @@ services:
 
   # QUEUE
   petrvs_queue:
+    image: segescginf/pgdpetrvs-develop:hmg
     container_name: petrvs_queue
     environment:
       - TZ=America/Bahia
