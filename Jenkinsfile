@@ -302,6 +302,52 @@ pipeline {
                             git reset --hard
                             git pull --ff-only
 
+                            MAINTENANCE_CONTAINER="petrvs_maintenance_hmg"
+                            MAINTENANCE_DIR="/tmp/petrvs-maintenance"
+
+                            echo "Preparando página de manutenção temporária..."
+                            mkdir -p "$MAINTENANCE_DIR"
+                            cat > "$MAINTENANCE_DIR/index.html" << 'HTML'
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviço em Atualização</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      text-align: center;
+      padding: 24px;
+    }
+    .card {
+      max-width: 560px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 28px 22px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+    }
+    h1 { margin: 0 0 14px; font-size: 1.7rem; }
+    p { margin: 0; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Serviço em Atualização</h1>
+    <p>Estamos finalizando uma atualização e o sistema volta em instantes.</p>
+  </main>
+</body>
+</html>
+HTML
+
                             cd resources/docker/dev
 
                             # Executa compose diretamente com base (dev) + override (hmg).
@@ -310,9 +356,22 @@ pipeline {
 
                             docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES down
 
+                            echo "Subindo container temporário de manutenção..."
+                            docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+                            docker run -d \
+                              --name "$MAINTENANCE_CONTAINER" \
+                              --restart unless-stopped \
+                              -p 80:80 \
+                              -p 443:80 \
+                              -v "$MAINTENANCE_DIR:/usr/share/nginx/html:ro" \
+                              nginx:alpine
+
                             # Remove containers com nome fixo que podem ficar órfãos de execuções anteriores.
                             docker rm -f petrvs_db_hmg petrvs_php_hmg petrvs_queue petrvs_redis petrvs_rabbitmq 2>/dev/null || true
                             docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
+
+                            echo "Finalizando manutenção temporária para subir os serviços..."
+                            docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
 
                             docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --remove-orphans
 
