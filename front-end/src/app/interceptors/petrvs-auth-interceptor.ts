@@ -23,9 +23,6 @@ export class PetrvsAuthInterceptor implements HttpInterceptor {
       headers['Authorization'] = `Bearer ${apiToken}`;
     }
 
-    const csrf = this.xsrf.getToken() as string;
-    if (csrf) headers['X-XSRF-TOKEN'] = csrf;
-
     const xPetrvs: any = { version: this.gb.VERSAO_DB };
     if (this.auth.unidade?.id) xPetrvs['unidade_id'] = this.auth.unidade.id;
     headers['X-PETRVS'] = btoa(JSON.stringify(xPetrvs));
