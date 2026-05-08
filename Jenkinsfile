@@ -55,7 +55,6 @@ pipeline {
             when {
                 anyOf {
                     branch 'dataprev_dsv'
-                    branch 'dataprev_hmg'
                     branch 'dataprev_producao'
                 }
             }
@@ -79,7 +78,6 @@ pipeline {
             when {
                 anyOf {
                     branch 'dataprev_dsv'
-                    branch 'dataprev_hmg'
                     branch 'dataprev_producao'
                 }
             }
@@ -92,7 +90,6 @@ pipeline {
             when {
                 anyOf {
                     branch 'dataprev_dsv'
-                    branch 'dataprev_hmg'
                 }
             }
             steps {
