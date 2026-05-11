@@ -78,7 +78,6 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             'planoTrabalho.entregas.planoEntregaEntrega.entrega:id,nome,tipo_indicador',
             'planoTrabalho.entregas.planoEntregaEntrega.objetivos.objetivo',
             'planoTrabalho.entregas.planoEntregaEntrega.processos.processo',
-            'planoTrabalho.tipoModalidade',
         ])->find($id);
     }
 

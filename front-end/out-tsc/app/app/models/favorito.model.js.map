@@ -1,0 +1,1 @@
+{"version":3,"file":"favorito.model.js","sourceRoot":"","sources":["../../../../src/app/models/favorito.model.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,MAAM,cAAc,CAAC;AAGpC,MAAM,OAAO,QAAS,SAAQ,IAAI;IAM9B,YAAmB,IAAU;QAAI,KAAK,EAAE,CAAC;QAHlC,WAAM,GAAU,EAAE,CAAC;QACnB,eAAU,GAAW,EAAE,CAAA;QAEY,IAAI,CAAC,cAAc,CAAC,IAAI,CAAC,CAAC;IAAC,CAAC;CACzE"}

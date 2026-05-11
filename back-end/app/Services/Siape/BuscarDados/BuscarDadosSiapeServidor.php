@@ -7,8 +7,8 @@ use App\Models\SiapeBlackListServidor;
 use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeListaServidores;
+use App\Support\SiapeDate;
 use Carbon\Carbon;
-use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
@@ -64,7 +64,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             }
             $dataModificacaoBD = $this->asTimestamp($servidorProcessado->data_modificacao);
 
-            $dataModificacaoSiape = DateTime::createFromFormat('dmY', $servidor['dataUltimaTransacao'])->format('Y-m-d 00:00:00');
+            $dataModificacaoSiape = SiapeDate::dataUltimaTransacaoParaBancoOuFalha($servidor['dataUltimaTransacao']);
             $dataModificacaoSiape  = $this->asTimestamp($dataModificacaoSiape);
 
             if ($dataModificacaoSiape > $dataModificacaoBD) {
@@ -130,7 +130,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             array_push($inserts, [
                 'id' => Str::uuid(),
                 'cpf' => $cpf,
-                'data_modificacao' => DateTime::createFromFormat('dmY', $dataUltimaTransacao)->format('Y-m-d 00:00:00'),
+                'data_modificacao' => SiapeDate::dataUltimaTransacaoParaBancoOuFalha($dataUltimaTransacao),
                 'response' => $xml,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -171,7 +171,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             array_push($inserts, [
                 'id' => Str::uuid(),
                 'cpf' => $cpf,
-                'data_modificacao' => DateTime::createFromFormat('dmY', $dataUltimaTransacao)->format('Y-m-d 00:00:00'),
+                'data_modificacao' => SiapeDate::dataUltimaTransacaoParaBancoOuFalha($dataUltimaTransacao),
                 'response' => $xml,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
@@ -289,5 +289,4 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
     }
 
 }
-
 

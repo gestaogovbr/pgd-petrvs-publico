@@ -74,8 +74,18 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
 
   ngOnInit(): void {
     this.buildInfoService.getBuildInfo().subscribe(data => {
-      this.buildInfo = data;
-      this.buildInfo.build_date = this.formatDate(this.buildInfo.build_date);
+      const buildInfo = (typeof data === 'object' && data !== null) ? { ...data } : {};
+      const buildDate = this.formatDate(
+        typeof buildInfo['build_date'] === 'string' ? buildInfo['build_date'] :
+        typeof buildInfo['buildDate'] === 'string' ? buildInfo['buildDate'] :
+        undefined
+      );
+
+      this.buildInfo = {
+        ...buildInfo,
+        build_date: buildDate,
+        build_number: buildInfo['build_number'] ?? buildInfo['buildNumber'] ?? buildInfo['version'] ?? '-',
+      };
     });
     this.titleSubscriber.next("Login Petrvs");
     this.route.queryParams.subscribe(params => {
@@ -164,8 +174,16 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
     this.document.body.classList.remove('login');
   }
 
-  private formatDate(dateString: string): string {
+  private formatDate(dateString?: string): string {
+    if (!dateString?.trim()) {
+      return '-';
+    }
+
     const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) {
+      return dateString;
+    }
+
     const options: Intl.DateTimeFormatOptions = {
       day: '2-digit',
       month: '2-digit',

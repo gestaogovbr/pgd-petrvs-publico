@@ -2,7 +2,6 @@ import { Injectable, Injector } from '@angular/core';
 import { PlanoTrabalho } from '../models/plano-trabalho.model';
 import { MetadadosPlano } from 'src/app/modules/base/page-report-base';
 import { DaoBaseService } from './dao-base.service';
-import { TipoModalidadeDaoService } from './tipo-modalidade-dao.service';
 import { UnidadeDaoService } from './unidade-dao.service';
 import { UsuarioDaoService } from './usuario-dao.service';
 import { ProgramaDaoService } from './programa-dao.service';
@@ -21,7 +20,6 @@ export type PlanoTrabalhoByUsuario = {
 })
 export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
 
-  public tipoModalidadeDao: TipoModalidadeDaoService;
   public unidadeDao: UnidadeDaoService;
   public usuarioDao: UsuarioDaoService;
   public programaDao: ProgramaDaoService;
@@ -30,7 +28,6 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
 
   constructor(protected injector: Injector) {
     super("PlanoTrabalho", injector);
-    this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
@@ -47,7 +44,7 @@ export class PlanoTrabalhoDaoService extends DaoBaseService<PlanoTrabalho> {
       { field: "tempo_proporcional", label: "Tempo proporcional (descontando afastamentos)" },
       { field: "data_inicio", label: "Data inicial do plano", type: "DATETIME" },
       { field: "data_fim", label: "Data final do plano", type: "DATETIME" },
-      { field: "tipo_modalidade", label: "Tipo de modalidade", fields: this.tipoModalidadeDao.dataset(), type: "OBJECT" },
+      { field: "modalidade_pgd", label: "Modalidade" },
       { field: "unidade", label: "Unidade", fields: this.unidadeDao.dataset(), type: "OBJECT" },
       { field: "usuario", label: "Usuário", fields: this.usuarioDao.dataset(), type: "OBJECT" },
       { field: "programa", label: "Programa", fields: this.programaDao.dataset(), type: "OBJECT" },

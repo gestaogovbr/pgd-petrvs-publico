@@ -1,7 +1,7 @@
 <div class="p-3 bg-body-secondary mb-3">    
     <div class="row w-100">
         <div class="col-md-1">#ID</div>
-        <div class="col-md-4">{{lex.translate('Participante')}}/{{lex.translate('Unidade')}}/{{lex.translate('Programa')}}/{{lex.translate('Tipo de modalidade')}}</div>
+        <div class="col-md-4">{{lex.translate('Participante')}}/{{lex.translate('Unidade')}}/{{lex.translate('Programa')}}/{{lex.translate('Modalidade')}}</div>
         <div class="col-md-3">Vigência</div>
         <div class="col-md-2"></div>
         <div class="col-md-2">Status</div>
@@ -16,7 +16,7 @@
                 <badge [icon]="entityService.getIcon('Usuario')" [label]="item.usuario?.nome" color="light" [hint]="lex.translate('Participante') + ': ' + item.usuario?.nome"></badge>
                 <badge [icon]="entityService.getIcon('Unidade')" [label]="item.unidade?.sigla" color="light" [hint]="lex.translate('Unidade') + ': ' + item.unidade?.nome"></badge>
                 <badge [icon]="entityService.getIcon('Programa')" [label]="item.programa?.nome" color="light" [hint]="lex.translate('Programa')"></badge>
-                <badge [icon]="entityService.getIcon('TipoModalidade')" [label]="item.tipo_modalidade?.nome" color="light" [hint]="lex.translate('Tipo de modalidade')"></badge>
+                <badge icon="bi bi-person-workspace" [label]="item.modalidade_pgd_label || modalidadePgd.label(item.modalidade_pgd)" color="light" [hint]="lex.translate('Modalidade')"></badge>
             </div>
             <div class="col-md-3">
                 {{dao!.getDateFormatted(item.data_inicio)+" até "+dao!.getDateFormatted(item.data_fim)}}

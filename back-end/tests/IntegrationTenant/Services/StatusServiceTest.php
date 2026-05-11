@@ -7,7 +7,6 @@ use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\Programa;
-use App\Models\TipoModalidade;
 use App\Models\Entidade;
 use App\Models\TipoJustificativa;
 use App\Models\TipoAvaliacao;
@@ -52,13 +51,6 @@ describe('StatusService Integration', function () {
         $this->unidade->id = 'unidade-teste';
         $this->unidade->save();
 
-        $this->tipoModalidade = new TipoModalidade();
-        $this->tipoModalidade->fill([
-            'nome' => 'Modalidade Teste',
-        ]);
-        $this->tipoModalidade->id = 'modalidade-teste'; // Force ID
-        $this->tipoModalidade->saveOrFail();
-
         $this->usuario = new Usuario();
         $this->usuario->fill([
             'id' => 'usuario-teste',
@@ -66,7 +58,7 @@ describe('StatusService Integration', function () {
             'email' => 'usuario@teste.com',
             'cpf' => '00000000000',
             'apelido' => 'UserTeste',
-            'tipo_modalidade_id' => $this->tipoModalidade->id
+            'modalidade_pgd' => 'presencial'
         ]);
         $this->usuario->saveOrFail();
         $this->actingAs($this->usuario);
@@ -117,7 +109,7 @@ describe('StatusService Integration', function () {
             'unidade_id' => $this->unidade->id,
             'usuario_id' => $this->usuario->id,
             'programa_id' => $this->programa->id,
-            'tipo_modalidade_id' => $this->tipoModalidade->id,
+            'modalidade_pgd' => 'presencial',
             'data_inicio' => now(),
             'data_fim' => now()->addMonth(),
             //'status' => 'INCLUIDO',

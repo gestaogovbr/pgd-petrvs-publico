@@ -136,7 +136,6 @@ export class AppComponent implements IAppComponent {
       // TIPOS_AVALIACOES: { name: this.lex.translate("Tipos de Avaliação"), permition: 'MOD_TIPO_AVAL', route: ['cadastros', 'tipo-avaliacao'], icon: this.entity.getIcon('TipoAvaliacao') },
       TIPOS_DOCUMENTOS: { name: this.lex.translate("Tipos de Documento"), permition: 'MOD_TIPO_DOC', route: ['cadastros', 'tipo-documento'], icon: this.entity.getIcon('TipoDocumento') },
       TIPOS_JUSTIFICATIVAS: { name: this.lex.translate("Tipos de Justificativa"), permition: 'MOD_TIPO_JUST', route: ['cadastros', 'tipo-justificativa'], icon: this.entity.getIcon('TipoJustificativa') },
-      // TIPOS_MODALIDADES: { name: this.lex.translate("Tipos de Modalidade"), permition: 'MOD_TIPO_MDL', route: ['cadastros', 'tipo-modalidade'], icon: this.entity.getIcon('TipoModalidade') },
       // TIPOS_MOTIVOS_AFASTAMENTOS: { name: this.lex.translate("Tipos de Motivo de Afastamento"), permition: 'MOD_TIPO_MTV_AFT', route: ['cadastros', 'tipo-motivo-afastamento'], icon: this.entity.getIcon('TipoMotivoAfastamento') },
       TIPOS_PROCESSOS: { name: this.lex.translate("Tipos de Processo"), permition: 'MOD_TIPO_PROC', route: ['cadastros', 'tipo-processo'], icon: this.entity.getIcon('TipoProcesso') },
       /* Gestão */
@@ -208,6 +207,12 @@ export class AppComponent implements IAppComponent {
         icon: this.entity.getIcon('Unidade'),
         route: ['relatorios', 'unidades'],
         //onClick: ()=> this.emDesenvolvimento()
+      },
+      RELATORIO_CARGA_INDIVIDUAL_SIAPE: {
+        name: "Carga Individual SIAPE",
+        permition: 'MOD_SIAPE_RELATORIO_CARGA',
+        icon: 'bi bi-clipboard-data',
+        route: ['relatorios', 'carga-individual-siape'],
       },
       INDICADORES_ENTREGAS: {
         name: "Entregas",
@@ -300,7 +305,8 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES
+        this.menuSchema.RELATORIO_UNIDADES,
+        this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Indicadores"),
@@ -377,7 +383,8 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.RELATORIO_PLANO_TRABALHO,
         this.menuSchema.RELATORIO_PLANO_ENTREGA,
         this.menuSchema.RELATORIO_USUARIOS,
-        this.menuSchema.RELATORIO_UNIDADES
+        this.menuSchema.RELATORIO_UNIDADES,
+        this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
       ].sort(this.orderMenu)
     }, {
       name: this.lex.translate("Indicadores"),
@@ -423,6 +430,13 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.DEV_UNIDADE_CONSULTA_SIAPE,
         this.menuSchema.BLACKLIST_SERVIDOR,
         this.menuSchema.BLACKLIST_UNIDADE
+      ]
+    }, {
+      name: this.lex.translate("Relatórios"),
+      permition: "MENU_DEV_ACESSO",
+      id: "navbarDropdownDevRelatorios",
+      menu: [
+        this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE
       ]
     }, {
       name: this.lex.translate("Envio API"),

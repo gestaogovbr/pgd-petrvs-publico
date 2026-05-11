@@ -32,11 +32,14 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
   public dadosFuncionais: any;
   public integrantes: IntegranteConsolidado[] = [];
   public dialog: DialogService;
+  public ultimoRelatorioCargaId?: string;
+  public override mensagemCarregando = "Carregando dados do formulário, aguarde...";
 
   public toolbarButtons: ToolbarButton[] = [
     {
       label: "Baixar Dados",
       icon: "bi bi-download",
+      color: "btn-outline-secondary",
       onClick: async() => {
         let error: any = undefined;
         this.loading = true;
@@ -76,8 +79,16 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
       }
     },
     {
+      label: "Ver relatório da carga",
+      icon: "bi bi-clipboard-data",
+      color: "btn-outline-primary",
+      dynamicVisible: () => !!this.ultimoRelatorioCargaId,
+      onClick: () => this.abrirRelatorioCarga()
+    },
+    {
       label: "Processar",
       icon: "bi bi-gear",
+      color: "btn-success",
       onClick: async() => {
         let error: any = undefined;
         let confirm = await this.dialog.confirm("ATENÇÃO", "CONFIRMA A SINCRONIZAÇÃO DO USUÁRIO?");
@@ -89,29 +100,29 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
               .subscribe(
                 async result => {
                   this.loading = false;
+                  this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
                   if (result?.success) {
                     await this.loadUsuario();
                     if(result.resumo) {
-                        await this.mostrarResumo(result.resumo, result.message);
+                        await this.mostrarResumo(result.resumo, result.message, this.ultimoRelatorioCargaId);
                     } else {
                         await this.dialog.alert("Sucesso", result.message);
                     }
                     this.log = result.log;
                   } else {
                     if (result?.resumo) {
-                        await this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + result?.message);
+                        await this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + result?.message, this.ultimoRelatorioCargaId);
                     } else {
                         await this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
                     }
                   }
-                  this.downloadSiape();
                 },
                 error => {
                   this.loading = false;
-                  console.log(error);
                   const result = error.error;
+                  this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
                   if (result?.resumo) {
-                      this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + (result.message ?? error.message));
+                      this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + (result.message ?? error.message), this.ultimoRelatorioCargaId);
                   } else {
                       this.dialog.alert("Erro", "Erro ao processar CPF: " + (result?.message ?? error.message));
                   }
@@ -239,7 +250,7 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
     }
   }
 
-  private async mostrarResumo(resumo: any[], titulo: string) {
+  private async mostrarResumo(resumo: any[], titulo: string, relatorioCargaId?: string) {
     if (!Array.isArray(resumo)) {
         this.dialog.alert(titulo, 'Resumo inválido');
         return;
@@ -250,11 +261,43 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
          titulo = 'Parcial';
       }
 
-      const dialogResult = await this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, [{ label: "Ok", color: "btn-primary", value: true }], { resumo: resumo })
-      .asPromise();
-      
-      if (dialogResult?.button?.label === "Ok" && dialogResult?.dialog) {
+      const buttons = relatorioCargaId
+        ? [
+            { label: "Baixar log", color: "btn-outline-secondary", value: "log" },
+            { label: "Ver relatório da carga", color: "btn-outline-primary", value: "relatorio" },
+            { label: "Ok", color: "btn-outline-secondary", value: true }
+          ]
+        : [
+            { label: "Baixar log", color: "btn-outline-secondary", value: "log" },
+            { label: "Ok", color: "btn-outline-secondary", value: true }
+          ];
+      const dialogResult = this.dialog.template({ title: titulo, modalWidth: 700 }, this.resumoTpl, buttons, { resumo: resumo });
+
+      while (true) {
+        const button = await Promise.race([
+          firstValueFrom(dialogResult.dialog.onButtonClick),
+          firstValueFrom(dialogResult.dialog.onClose).then(() => null),
+        ]);
+
+        if (button === null) {
+            return;
+        }
+
+        if (button?.value === "log") {
+            await this.downloadSiape();
+            continue;
+        }
+
+        if (button?.value === "relatorio" && relatorioCargaId) {
           dialogResult.dialog.close();
+          this.abrirRelatorioCarga(relatorioCargaId);
+          return;
+        }
+
+        if (button?.label === "Ok") {
+          dialogResult.dialog.close();
+          return;
+        }
       }
     } else {
       // Fallback in case template is not loaded for some reason
@@ -273,6 +316,15 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
       });
       await this.dialog.alert(titulo, msg);
     }
+  }
+
+  public abrirRelatorioCarga(relatorioCargaId: string = this.ultimoRelatorioCargaId ?? ''): void {
+    if (!relatorioCargaId) return;
+
+    this.go.navigate(
+      { route: ['relatorios', 'carga-individual-siape'], params: { id: relatorioCargaId } },
+      { metadata: { relatorioId: relatorioCargaId } }
+    );
   }
 
 }

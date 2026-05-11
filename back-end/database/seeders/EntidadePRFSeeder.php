@@ -47,7 +47,7 @@ class EntidadePRFSeeder extends Seeder
         //"api_public_key" => NULL,
         //"api_private_key" => NULL,
         "expediente" => "{\"sexta\": [], \"terca\": [], \"quarta\": [], \"quinta\": [], \"sabado\": [], \"domingo\": [], \"segunda\": [], \"especial\": []}",
-        "tipo_modalidade_id" => NULL,
+        "modalidade_pgd_padrao" => NULL,
         "cidade_id" => $this->brasilia->id,
         "gestor_id" => NULL,
         "gestor_substituto_id" => NULL,

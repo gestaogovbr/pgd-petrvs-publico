@@ -1,6 +1,12 @@
+x-security-defaults: &security_defaults
+  security_opt:
+    - no-new-privileges:true
+    - seccomp:../security/seccomp-cve-2026-31431.json
+
 services:
 
   petrvs_db:
+    <<: *security_defaults
     image: mariadb:latest
     container_name: petrvs_db
     ports:
@@ -23,6 +29,7 @@ services:
       - appnet
 
   petrvs_base: &petrvs_base
+    <<: *security_defaults
     build:
       context: .
       dockerfile: Dockerfile-php
@@ -81,6 +88,7 @@ services:
       - appnet
   
   petrvs_node:
+    <<: *security_defaults
     build:
       context: .
       dockerfile: Dockerfile-node
@@ -104,6 +112,7 @@ services:
       - appnet
 
   petrvs_redis:
+    <<: *security_defaults
     image: redis:alpine
     container_name: petrvs_redis
     ports:
