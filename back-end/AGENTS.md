@@ -45,7 +45,7 @@
 - Testes de integração do banco central ficam em `tests/Integration` e usam `Tests\DatabaseTestCase`.
 - Testes de integração tenant ficam em `tests/IntegrationTenant` e usam `Tests\DatabaseTenantTestCase`; o contexto tenant é inicializado automaticamente.
 - Use `IntegrationTenant` para regras de negócio tenant, repositories sobre dados tenant, fluxos SIAPE tenant e comportamento de model que precise do schema tenant.
-- Se uma migração tenant alterar schema, avalie se `database/schema/tenant-schema.sql` precisa ser regenerado.
+- Se uma migração tenant alterar schema, avalie se `database/schema/test-tenant-schema.sql` precisa ser regenerado.
 
 ## Comandos de Qualidade
 

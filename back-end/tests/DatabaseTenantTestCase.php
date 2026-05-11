@@ -75,7 +75,7 @@ abstract class DatabaseTenantTestCase extends TestCase
         if ($needsSchemaReload) {
             $this->dropTenantObjects();
 
-            $path = database_path('schema/tenant-schema.sql');
+            $path = database_path('schema/test-tenant-schema.sql');
             
             if (file_exists($path)) {
                 $config = config('database.connections.tenant');

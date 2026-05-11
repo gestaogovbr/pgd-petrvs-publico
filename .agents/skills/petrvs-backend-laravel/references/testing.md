@@ -25,8 +25,8 @@ Docs principais: `back-end/docs/pest.md` e `back-end/docs/pest-bd.md`.
 - Classe base: `Tests\DatabaseTenantTestCase`.
 - Objetivo: regras de negócio tenant, repositories tenant, fluxos SIAPE tenant e comportamento de model contra schema tenant.
 - Contexto tenant é inicializado automaticamente.
-- Schema tenant carrega de `database/schema/tenant-schema.sql` quando disponível.
-- Se uma migration tenant alterar schema, avalie se `tenant-schema.sql` deve ser regenerado.
+- Schema tenant carrega de `database/schema/test-tenant-schema.sql` quando disponível.
+- Se uma migration tenant alterar schema, avalie se `test-tenant-schema.sql` deve ser regenerado.
 
 ## Escolhendo A Suite
 

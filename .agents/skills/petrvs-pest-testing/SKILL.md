@@ -33,4 +33,4 @@ description: Use ao escrever, migrar, depurar ou revisar testes backend do Petrv
 
 - `Tests\DatabaseTestCase` é para integração com banco central.
 - `Tests\DatabaseTenantTestCase` inicializa contexto tenant automaticamente para `IntegrationTenant`.
-- Migrations tenant exigem verificar `database/schema/tenant-schema.sql`.
+- Migrations tenant exigem verificar `database/schema/test-tenant-schema.sql`.
