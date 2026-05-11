@@ -1,11 +1,19 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { GridComponent } from 'src/app/components/grid/grid.component';
 import { EnvioPlanoTrabalhoDaoService } from 'src/app/dao/envio-plano-trabalho-dao.service';
+import { QueryContext } from 'src/app/dao/query-context';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+
+type EnvioPlanoTrabalhoRow = PlanoTrabalho & {
+  data_agendamento_envio?: string | Date | null;
+  data_tentativa_envio?: string | Date | null;
+  data_conclusao_envio?: string | Date | null;
+  data_envio_api_pgd?: string | Date | null;
+  log_envio?: string | null;
+};
 
 @Component({
   selector: 'envio-plano-trabalho-list',
@@ -14,10 +22,10 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
   standalone: false
 })
 export class EnvioPlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho, EnvioPlanoTrabalhoDaoService> {
-  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-
   public toolbarButtons: ToolbarButton[] = [];
   public unidadeDao: UnidadeDaoService;
+  public rows: EnvioPlanoTrabalhoRow[] = [];
+  public isLoadingRows = false;
 
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalho, EnvioPlanoTrabalhoDaoService);
@@ -38,6 +46,54 @@ export class EnvioPlanoTrabalhoListComponent extends PageListBase<PlanoTrabalho,
       envio_fim: { default: null },
     });
     this.orderBy = [['data_agendamento_envio', 'desc']];
+  }
+
+  public override onQueryResolve(rows: PlanoTrabalho[] | null) {
+    this.rows = rows || [];
+  }
+
+  protected override beforeQuery(): void {
+    this.isLoadingRows = true;
+  }
+
+  protected override afterQuery(): void {
+    this.isLoadingRows = false;
+    super.afterQuery();
+  }
+
+  public get queryData(): QueryContext<PlanoTrabalho> | undefined {
+    return this.query;
+  }
+
+  public get hasRows(): boolean {
+    return this.rows.length > 0;
+  }
+
+  public consultar(): void {
+    this.query?.reload(this.queryOptions);
+  }
+
+  public limparFiltros(): void {
+    this.filter?.reset({
+      numero: '',
+      unidade_id: null,
+      status: null,
+      agendamento_inicio: null,
+      agendamento_fim: null,
+      conclusao_inicio: null,
+      conclusao_fim: null,
+      envio_inicio: null,
+      envio_fim: null,
+    });
+    this.consultar();
+  }
+
+  public paginaAnterior(): void {
+    this.query?.priorPage();
+  }
+
+  public proximaPagina(): void {
+    this.query?.nextPage();
   }
 
   public filterWhere = (filter: FormGroup) => {

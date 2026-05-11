@@ -1,88 +1,163 @@
-<grid [dao]="dao"
-    [title]="isModal ? '' : title"
-    [hasAdd]="false"
-    [hasEdit]="false"
-    [selectable]="selectable"
-    [orderBy]="orderBy"
->
-    <toolbar *ngIf="!selectable"></toolbar>
-    <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)">
-        <div class="row">
-            <input-text [size]="2" label="CPF" controlName="cpf" placeholder="CPF..." [attr.maxlength]="14" [form]="filter"></input-text>
-            <input-text [size]="3" label="Nome" controlName="nome" placeholder="Nome..." [form]="filter"></input-text>
-            <input-select
-                [size]="2"
-                label="Status"
-                controlName="status"
-                [items]="lookup.ENVIO_USUARIO_STATUS"
-                [control]="filter!.controls.status"
-                itemTodos="- Todos -" [valueTodos]="null"/>
+<div class="br-mainpanel">
+    <app-breadcrumb></app-breadcrumb>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">{{ title }}</h2>
+    </div>
+
+    <div class="mb-3" [formGroup]="filter!">
+        <div class="br-card">
+            <div class="card-content">
+                <div class="row g-3">
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <div class="br-input w-100">
+                            <label>CPF</label>
+                            <input type="text" maxlength="14" formControlName="cpf" placeholder="CPF..." />
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4">
+                        <div class="br-input w-100">
+                            <label>Nome</label>
+                            <input type="text" formControlName="nome" placeholder="Nome..." />
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <input-select
+                            [size]="12"
+                            label="Status"
+                            controlName="status"
+                            [items]="lookup.ENVIO_USUARIO_STATUS"
+                            [control]="filter!.controls.status"
+                            itemTodos="- Todos -"
+                            [valueTodos]="null">
+                        </input-select>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <input-datetime
+                            [size]="12"
+                            date
+                            label="Agendamento: início"
+                            controlName="this.filter.agendamento_inicio"
+                            [control]="filter!.controls.agendamento_inicio">
+                        </input-datetime>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <input-datetime
+                            [size]="12"
+                            date
+                            label="Agendamento: fim"
+                            controlName="this.filter.agendamento_fim"
+                            [control]="filter!.controls.agendamento_fim">
+                        </input-datetime>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <input-datetime
+                            [size]="12"
+                            date
+                            label="Conclusão: início"
+                            controlName="this.filter.conclusao_inicio"
+                            [control]="filter!.controls.conclusao_inicio">
+                        </input-datetime>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <input-datetime
+                            [size]="12"
+                            date
+                            label="Conclusão: fim"
+                            controlName="this.filter.conclusao_fim"
+                            [control]="filter!.controls.conclusao_fim">
+                        </input-datetime>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <input-datetime
+                            [size]="12"
+                            date
+                            label="Envio: início"
+                            controlName="this.filter.envio_inicio"
+                            [control]="filter!.controls.envio_inicio">
+                        </input-datetime>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-2">
+                        <input-datetime
+                            [size]="12"
+                            date
+                            label="Envio: fim"
+                            controlName="this.filter.envio_fim"
+                            [control]="filter!.controls.envio_fim">
+                        </input-datetime>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end mt-3">
+                    <br-button emphasis="secondary" (click)="consultar()">
+                        <i class="fas fa-search mr-1"></i>Consultar
+                    </br-button>
+                    <br-button emphasis="tertiary" (click)="limparFiltros()">
+                        <i class="fas fa-times mr-1"></i>Limpar filtros
+                    </br-button>
+                </div>
+            </div>
         </div>
-        <div class="row">
-            <input-datetime
-                [size]="2"
-                date
-                label="Data agendamento: início"
-                controlName="this.filter.agendamento_inicio"
-                [control]="filter!.controls.agendamento_inicio"
-            ></input-datetime>
-            <input-datetime
-                [size]="2"
-                date
-                label="Data agendamento: fim"
-                controlName="this.filter.agendamento_fim"
-                [control]="filter!.controls.agendamento_fim"
-            ></input-datetime>
-            <input-datetime
-                [size]="2"
-                date
-                label="Período de conclusão: início"
-                controlName="this.filter.conclusao_inicio"
-                [control]="filter!.controls.conclusao_inicio"
-            ></input-datetime>
-            <input-datetime
-                [size]="2"
-                date
-                label="Período de conclusão: fim"
-                controlName="this.filter.conclusao_fim"
-                [control]="filter!.controls.conclusao_fim"
-            ></input-datetime>
-            <input-datetime
-                [size]="2"
-                date
-                label="Período de envio: início"
-                controlName="this.filter.envio_inicio"
-                [control]="filter!.controls.envio_inicio"
-            ></input-datetime>
-            <input-datetime
-                [size]="2"
-                date
-                label="Período de envio: fim"
-                controlName="this.filter.envio_fim"
-                [control]="filter!.controls.envio_fim"
-            ></input-datetime>
+    </div>
+
+    @if (isLoadingRows) {
+    <div class="d-flex justify-content-center p-5">
+        <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+    </div>
+    }
+
+    <div class="br-table">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">CPF</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Matrícula</th>
+                        <th scope="col">Atualizado em</th>
+                        <th scope="col">Agendamento em</th>
+                        <th scope="col">Tentativa de envio</th>
+                        <th scope="col">Conclusão</th>
+                        <th scope="col">Envio bem sucedido</th>
+                        <th scope="col">Log de envio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (row of rows; track row.id) {
+                    <tr>
+                        <td data-th="CPF">{{ row.cpf || '-' }}</td>
+                        <td data-th="Nome">{{ row.nome || '-' }}</td>
+                        <td data-th="Matrícula">{{ row.matricula || '-' }}</td>
+                        <td data-th="Atualizado em">{{ row.updated_at | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                        <td data-th="Agendamento em">{{ row.data_agendamento_envio | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                        <td data-th="Tentativa de envio">
+                            <span [class.text-strike]="hasTentativaBeforeAgendamento(row)">{{ row.data_tentativa_envio | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+                        </td>
+                        <td data-th="Conclusão">
+                            <span [class.text-strike]="hasConclusaoBeforeAgendamento(row)">{{ row.data_conclusao_envio | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+                        </td>
+                        <td data-th="Envio bem sucedido">
+                            <span [class.text-strike]="hasEnvioBeforeAgendamento(row)">{{ row.data_envio_api_pgd | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+                        </td>
+                        <td data-th="Log de envio">{{ row.log_envio || '-' }}</td>
+                    </tr>
+                    }
+                    @if (!hasRows && !isLoadingRows) {
+                    <tr>
+                        <td colspan="9" class="text-center p-3">Nenhum envio de participante encontrado.</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    </filter>
-    <columns>
-        <column title="CPF" field="cpf"></column>
-        <column title="Nome" field="nome"></column>
-        <column title="Matrícula" field="matricula"></column>
-        <column title="Atualizado em" [template]="columnUpdatedAt">
-            <ng-template let-row="row" #columnUpdatedAt><span> {{row.updated_at | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
-        </column>
-        <column title="Agendamento em" [template]="columnDataAgendamentoEnvio">
-            <ng-template let-row="row" #columnDataAgendamentoEnvio><span> {{row.data_agendamento_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
-        </column>
-        <column title="Tentativa de Envio" [template]="columnDataTentativaEnvio">
-            <ng-template let-row="row" #columnDataTentativaEnvio><span [class.text-strike]="hasTentativaBeforeAgendamento(row)"> {{row.data_tentativa_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
-        </column>
-        <column title="Conclusão" [template]="columnDataConclusaoEnvio">
-            <ng-template let-row="row" #columnDataConclusaoEnvio><span [class.text-strike]="hasConclusaoBeforeAgendamento(row)"> {{row.data_conclusao_envio | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
-        </column>
-        <column title="Envio bem sucedido" [template]="columnDataEnvioApiPgd">
-            <ng-template let-row="row" #columnDataEnvioApiPgd><span [class.text-strike]="hasEnvioBeforeAgendamento(row)"> {{row.data_envio_api_pgd | date:'dd/MM/yyyy HH:mm:ss'}}</span></ng-template>
-        </column>
-        <column title="Log de envio" field="log_envio"></column>
-    </columns>
-    <pagination [rows]="rowsLimit"></pagination>
-</grid>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-3">
+        <br-button emphasis="tertiary" [disabled]="!queryData?.enablePrior" (click)="paginaAnterior()">
+            <i class="fas fa-chevron-left mr-1"></i>Página anterior
+        </br-button>
+        <br-button emphasis="tertiary" [disabled]="!queryData?.enableNext" (click)="proximaPagina()">
+            Próxima página<i class="fas fa-chevron-right ml-1"></i>
+        </br-button>
+    </div>
+</div>
