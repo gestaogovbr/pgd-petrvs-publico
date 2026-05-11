@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Envio;
 
+use App\Exceptions\ExportPgdException;
 use App\Exceptions\TokenPgdException;
 use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Models\PlanoEntrega;
@@ -66,11 +67,11 @@ abstract class ExportarItemJob implements ShouldQueue
 
     abstract public function tag();
 
-    protected function logInfo($message) {
+    protected function logInfo(string $message) {
         Log::info("ENVIO [{$this->tenantId}] ".$this->tag()." #{$this->id} - {$message}".($this->origem ? " (Origem: {$this->origem}, Tentativa: {$this->execucoes})" : ''));
     }
 
-    protected function logError($message) {
+    protected function logError(string $message) {
         Log::error("ENVIO [{$this->tenantId}] ".$this->tag()." #{$this->id} - {$message}".($this->origem ? " (Origem: {$this->origem}, Tentativa: {$this->execucoes})" : ''));
     }
 
@@ -127,11 +128,6 @@ abstract class ExportarItemJob implements ShouldQueue
             return;
         } catch(Throwable $exception) {
             $this->logError($exception->getmessage());
-            $repository = $this->getRepository();
-            if (!$model) {
-                $model = $repository->findById($this->id);
-                $repository->registrarConclusao($model, $exception->getmessage());
-            }
             throw $exception;
         }
     }
@@ -182,12 +178,26 @@ abstract class ExportarItemJob implements ShouldQueue
     }
 
     public function failed(?Throwable $exception): void {
-        $this->insucesso($exception->getMessage());
+        $tenant = tenancy()->find($this->tenantId);
+        if ($tenant !== null) {
+            tenancy()->initialize($tenant);
+        }
 
         if ($exception instanceof TimeoutExceededException) {
             $this->logInfo('Timeout excedido. Nova tentativa em 5 minutos');
             $this->reagendar();
         }
+
+        if ($exception instanceof ExportPgdException) {
+            $model = $this->getModel() ?? $this->getRepository()->findById($this->id);
+            if ($model !== null) {
+                $this->getRepository()->registrarConclusao($model, $exception->getMessage());
+            }
+
+            return;
+        }
+
+        $this->insucesso($exception?->getMessage() ?? 'Falha desconhecida no envio');
     }
 
     public function reagendar() {
