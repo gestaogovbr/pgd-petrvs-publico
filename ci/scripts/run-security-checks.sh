@@ -27,6 +27,7 @@ run_backend_audit() {
   set -e
 
   echo "Resumo do Composer Audit:"
+  set +e
   php -r '
     $file = "'"${REPORTS_DIR}/composer-audit.json"'";
     if (!file_exists($file)) {
@@ -34,21 +35,46 @@ run_backend_audit() {
         exit(1);
     }
     $data = json_decode(file_get_contents($file), true);
-    if (!$data) {
+    if (json_last_error() !== JSON_ERROR_NONE) {
         fwrite(STDERR, "Falha ao interpretar JSON do composer audit.\n");
         exit(1);
     }
 
     $advisories = $data["advisories"] ?? [];
     $abandoned = $data["abandoned"] ?? [];
+    $severityCounts = [
+        "critical" => 0,
+        "high" => 0,
+        "medium" => 0,
+        "low" => 0,
+        "info" => 0,
+        "unknown" => 0,
+    ];
+    $blockingCount = 0;
 
     $advisoryCount = 0;
     foreach ($advisories as $package => $items) {
         $advisoryCount += count($items);
+        foreach ($items as $item) {
+            $severity = strtolower($item["severity"] ?? "unknown");
+            if (!array_key_exists($severity, $severityCounts)) {
+                $severity = "unknown";
+            }
+            $severityCounts[$severity]++;
+            if (in_array($severity, ["high", "critical"], true)) {
+                $blockingCount++;
+            }
+        }
     }
 
     echo "- Pacotes com advisories: " . count($advisories) . PHP_EOL;
     echo "- Total de advisories: " . $advisoryCount . PHP_EOL;
+    echo "- Critical: " . $severityCounts["critical"] . PHP_EOL;
+    echo "- High: " . $severityCounts["high"] . PHP_EOL;
+    echo "- Medium: " . $severityCounts["medium"] . PHP_EOL;
+    echo "- Low: " . $severityCounts["low"] . PHP_EOL;
+    echo "- Info: " . $severityCounts["info"] . PHP_EOL;
+    echo "- Unknown: " . $severityCounts["unknown"] . PHP_EOL;
     echo "- Pacotes abandonados: " . count($abandoned) . PHP_EOL;
 
     foreach ($advisories as $package => $items) {
@@ -63,11 +89,23 @@ run_backend_audit() {
         $replacementText = $replacement ?: "sem substituto informado";
         echo "  * [abandoned] $package -> $replacementText" . PHP_EOL;
     }
+
+    exit($blockingCount > 0 ? 10 : 0);
   '
+  SUMMARY_EXIT_CODE=$?
+  set -e
+
+  if [ "${SUMMARY_EXIT_CODE}" -eq 10 ]; then
+    echo "Composer Audit encontrou vulnerabilidades high/critical."
+    return 1
+  fi
+
+  if [ "${SUMMARY_EXIT_CODE}" -ne 0 ]; then
+    return "${SUMMARY_EXIT_CODE}"
+  fi
 
   if [ "${AUDIT_EXIT_CODE}" -ne 0 ]; then
-    echo "Composer Audit encontrou problemas."
-    return "${AUDIT_EXIT_CODE}"
+    echo "Composer Audit encontrou apenas vulnerabilidades abaixo de high; pipeline seguirá."
   fi
 
   log "Backend SCA finalizado."
@@ -88,6 +126,7 @@ run_frontend_audit() {
   set -e
 
   echo "Resumo do npm audit:"
+  set +e
   node -e '
     const fs = require("fs");
     const file = process.argv[1];
@@ -105,9 +144,21 @@ run_frontend_audit() {
       process.exit(1);
     }
 
+    if (data.error) {
+      const code = data.error.code || "erro";
+      const summary = data.error.summary || data.error.message || JSON.stringify(data.error);
+      console.error(`npm audit retornou erro (${code}): ${summary}`);
+      process.exit(2);
+    }
+
     const vulnerabilities = data.vulnerabilities || {};
     const metadata = data.metadata || {};
     const counts = (metadata.vulnerabilities || {});
+    const blockingByMetadata = (counts.high || 0) + (counts.critical || 0);
+    const blockingByPackage = Object.values(vulnerabilities)
+      .filter(info => ["high", "critical"].includes(String(info.severity || "unknown").toLowerCase()))
+      .length;
+    const blockingCount = blockingByMetadata || blockingByPackage;
 
     console.log(`- Info: ${counts.info || 0}`);
     console.log(`- Low: ${counts.low || 0}`);
@@ -127,10 +178,23 @@ run_frontend_audit() {
         console.log(`      - ${title}`);
       }
     }
+
+    process.exit(blockingCount > 0 ? 10 : 0);
   ' "${REPORTS_DIR}/npm-audit.json"
+  SUMMARY_EXIT_CODE=$?
+  set -e
+
+  if [ "${SUMMARY_EXIT_CODE}" -eq 10 ]; then
+    echo "npm audit encontrou vulnerabilidades high/critical."
+    return 1
+  fi
+
+  if [ "${SUMMARY_EXIT_CODE}" -ne 0 ]; then
+    return "${SUMMARY_EXIT_CODE}"
+  fi
 
   if [ "${AUDIT_EXIT_CODE}" -ne 0 ]; then
-    echo "npm audit encontrou problemas."
+    echo "npm audit falhou por erro de execução sem vulnerabilidades high/critical; ver relatório."
     return "${AUDIT_EXIT_CODE}"
   fi
 

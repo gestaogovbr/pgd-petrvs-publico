@@ -57,7 +57,7 @@
       <div class="row">
           <input-radio [size]="4"  label="Formulário de Demanda" controlName="layout_formulario_demanda" [control]="form!.controls.layout_formulario_demanda" [items]="lookup.TIPO_LAYOUT" labelInfo="Forma do layout do formulário de Demanda"></input-radio>
           <input-radio [size]="3" label="Histórico do Processo" controlName="gravar_historico_processo" [control]="form!.controls.gravar_historico_processo" [items]="lookup.SIMNAO" labelInfo="Gravar andamento da demanda no processo"></input-radio>
-          <input-search #tipo_modalidade [size]="5" label="Modalidade" controlName="tipo_modalidade_id" [control]="form!.controls.tipo_modalidade_id" [dao]="tipoModalidadeDao" labelInfo="Tipo de modalidade padrão utilizada ao criar plano de trabalho." [selectRoute]="{route: ['cadastros', 'tipo-modalidade']}"></input-search>
+          <input-select [size]="5" label="Modalidade" controlName="modalidade_pgd_padrao" [control]="form!.controls.modalidade_pgd_padrao" [items]="modalidadePgd.items" labelInfo="Modalidade padrão utilizada ao criar plano de trabalho."></input-select>
       </div>
       <div class="row">
           <input-multiselect [size]="12" label="Ocultar campos"  [items]="campos" [addItemControl]="campoSelect" labelInfo="Campos a serem ocultados no Formulário de Demanda.">

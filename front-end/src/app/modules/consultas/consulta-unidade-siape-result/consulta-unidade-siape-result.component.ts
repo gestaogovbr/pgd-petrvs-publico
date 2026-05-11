@@ -1,5 +1,5 @@
-import { Component, Inject, Injector, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
+import { Component, Injector, ViewChild, TemplateRef } from '@angular/core';
+import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
@@ -11,6 +11,12 @@ import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { DialogService } from 'src/app/services/dialog.service';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { Unidade } from 'src/app/models/unidade.model';
+import { SiapeRelatorioUnidade, SiapeResumoItem } from '../consulta-cpf-siape-result/siape-resumo/siape-resumo.component';
+
+interface SiapeRelatorioProcessamentoResponse extends SiapeRelatorioUnidade {
+  success?: boolean;
+  message?: string;
+}
 
 @Component({
     selector: 'consulta-unidade-siape-result',
@@ -23,6 +29,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
   
 
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
+  @ViewChild('resumoTpl') resumoTpl?: TemplateRef<any>;
   public unidade?: Unidade|null;
   public integranteDao: UnidadeIntegranteDaoService;
   public erros: string = '';
@@ -32,13 +39,15 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
   public dados: any;
   public integrantes: IntegranteConsolidado[] = [];
   public dialog: DialogService;
+  public ultimoRelatorioCargaId?: string;
+  public override mensagemCarregando = "Carregando dados do formulário, aguarde...";
 
   public toolbarButtons: ToolbarButton[] = [
     {
       label: "Baixar Dados",
       icon: "bi bi-download",
+      color: "btn-outline-secondary",
       onClick: async() => {
-        let error: any = undefined;
         this.loading = true;
         try {
           const response = await firstValueFrom(this.dao!.exportarUnidadeSIAPE(this.codigoUnidade as string));
@@ -76,10 +85,17 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
       }
     },
     {
+      label: "Ver relatório da carga",
+      icon: "bi bi-clipboard-data",
+      color: "btn-outline-primary",
+      dynamicVisible: () => !!this.ultimoRelatorioCargaId,
+      onClick: () => this.abrirRelatorioCarga()
+    },
+    {
       label: "Processar",
       icon: "bi bi-gear",
+      color: "btn-success",
       onClick: async() => {
-        let error: any = undefined;
         let confirm = await this.dialog.confirm("ATENÇÃO", "CONFIRMA A SINCRONIZAÇÃO DA UNIDADE?");
         if (confirm) {
           this.loading = true;
@@ -89,21 +105,36 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
               .subscribe(
                 async result => {
                   this.loading = false;
+                  this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
                   if (result?.success) {
                     await this.loadUnidade();
-                    this.dialog.alert("Sucesso", result.message);
+                    if (result?.resumo) {
+                      const relatorio = await this.obterRelatorioProcessamentoSafely();
+                      await this.mostrarResumo(result.resumo, result.message, relatorio, this.ultimoRelatorioCargaId);
+                    } else {
+                      this.dialog.alert("Sucesso", result.message);
+                    }
                     this.log = result.log;
                   } else {
-                    this.dialog.alert("Erro", "Erro ao processar a Unidade: " + result?.message);
+                    if (result?.resumo) {
+                      const relatorio = await this.obterRelatorioProcessamentoSafely();
+                      await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade: " + result?.message, relatorio, this.ultimoRelatorioCargaId);
+                    } else {
+                      this.dialog.alert("Erro", "Erro ao processar a Unidade: " + result?.message);
+                    }
                   }
-                  this.downloadSiape();
                 },
-                error => {
+                async error => {
                   this.loading = false;
-                  console.log(error);
-                  this.log = error.error?.message;
-                  this.error("Erro ao processar a Unidade: " + error.error?.message);
-                  this.dialog.alert("Erro", "Erro ao processar a Unidade: " + (error.message ?? error.error?.message));
+                  const result = error.error;
+                  this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
+                  if (result?.resumo) {
+                    const relatorio = await this.obterRelatorioProcessamentoSafely();
+                    await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade: " + (result.message ?? error.message), relatorio, this.ultimoRelatorioCargaId);
+                  } else {
+                    this.dialog.alert("Erro", "Erro ao processar a Unidade: " + (error.message ?? error.error?.message));
+                  }
+                  this.log = result?.log ?? error.error?.message ?? error.message;
                 }
             )
           } catch (error: any) {
@@ -122,15 +153,15 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
   }
 
-  public loadData(entity: Unidade, form: FormGroup, action?: string): Promise<void> | void {
+  public loadData(_entity: Unidade, _form: FormGroup, _action?: string): Promise<void> | void {
     throw new Error('Method not implemented.');
   }
-  public saveData(form: IIndexable): Promise<boolean | Unidade | NavigateResult | null | undefined> {
+  public saveData(_form: IIndexable): Promise<boolean | Unidade | NavigateResult | null | undefined> {
     throw new Error('Method not implemented.');
   }
 
 
-  public initializeData(form: FormGroup): void | Promise<void> {
+  public initializeData(_form: FormGroup): void | Promise<void> {
   }
 
 
@@ -211,6 +242,117 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
     } finally {
       this.loading = false;
     }
+  }
+
+  private async obterRelatorioProcessamentoSafely(): Promise<SiapeRelatorioUnidade | undefined> {
+    try {
+      const response = await firstValueFrom(this.dao!.relatorioProcessamentoSIAPE(this.codigoUnidade as string)) as SiapeRelatorioProcessamentoResponse;
+      return {
+        chefeCpf: response?.chefeCpf ?? this.dados?.cpfTitularAutoridadeUorg ?? this.unidade?.gestor?.usuario?.cpf ?? null,
+        quantidadeServidoresLotados: response?.quantidadeServidoresLotados ?? null,
+        unidade: response?.unidade ?? this.unidadeRelatorioFallback()
+      };
+    } catch {
+      return {
+        chefeCpf: this.dados?.cpfTitularAutoridadeUorg ?? this.unidade?.gestor?.usuario?.cpf ?? null,
+        quantidadeServidoresLotados: null,
+        unidade: this.unidadeRelatorioFallback()
+      };
+    }
+  }
+
+  private async mostrarResumo(resumo: SiapeResumoItem[], titulo: string, relatorio?: SiapeRelatorioUnidade, relatorioCargaId?: string) {
+    if (!Array.isArray(resumo)) {
+      this.dialog.alert(titulo, 'Resumo inválido');
+      return;
+    }
+    
+    if (this.resumoTpl) {
+      const buttons = relatorioCargaId
+        ? [
+            { label: "Baixar log", color: "btn-outline-secondary", value: "log" },
+            { label: "Ver relatório da carga", color: "btn-outline-primary", value: "relatorio" },
+            { label: "Ok", color: "btn-outline-secondary", value: true }
+          ]
+        : [
+            { label: "Baixar log", color: "btn-outline-secondary", value: "log" },
+            { label: "Ok", color: "btn-outline-secondary", value: true }
+          ];
+      const dialogResult = this.dialog.template(
+        { title: titulo, modalWidth: 700 },
+        this.resumoTpl,
+        buttons,
+        { resumo: resumo, relatorio: relatorio }
+      );
+
+      while (true) {
+        const button = await Promise.race([
+          firstValueFrom(dialogResult.dialog.onButtonClick),
+          firstValueFrom(dialogResult.dialog.onClose).then(() => null),
+        ]);
+
+        if (button === null) {
+          return;
+        }
+
+        if (button?.value === "log") {
+          await this.downloadSiape();
+          continue;
+        }
+
+        if (button?.value === "relatorio" && relatorioCargaId) {
+          dialogResult.dialog.close();
+          this.abrirRelatorioCarga(relatorioCargaId);
+          return;
+        }
+
+        if (button?.label === "Ok") {
+          dialogResult.dialog.close();
+          return;
+        }
+      }
+    } else {
+      let msg = '';
+      resumo.forEach((item, index) => {
+        msg += `Unidade ${index + 1}:\n`;
+        msg += `Status: ${item.status}\n`;
+        msg += `Mensagem: ${item.mensagem}\n`;
+        if ('unidade_codigo' in item) {
+          msg += `Código: ${item.unidade_codigo ?? 'Não informado'}\n`;
+          msg += `Nome: ${item.unidade_nome ?? 'Não informado'}\n`;
+          msg += `Unidade pai: ${item.unidade_raiz ? 'Unidade raiz' : (item.unidade_pai_codigo ?? 'Não informada')}\n`;
+          msg += `Servidores lotados: ${item.quantidade_servidores_lotados ?? 'Não informado'}\n`;
+        }
+        msg += '\n';
+      });
+      await this.dialog.alert(titulo, msg);
+    }
+  }
+
+  private unidadeRelatorioFallback(): SiapeRelatorioUnidade['unidade'] {
+    if (!this.unidade) {
+      return null;
+    }
+
+    return {
+      id: this.unidade.id,
+      codigo: this.unidade.codigo,
+      sigla: this.unidade.sigla,
+      nome: this.unidade.nome,
+      unidade_pai_id: this.unidade.unidade_pai_id,
+      unidade_pai_codigo: this.unidade.unidade_pai?.codigo ?? this.dados?.codUorgPai ?? null,
+      unidade_pai_sigla: this.unidade.unidade_pai?.sigla ?? null,
+      unidade_raiz: this.unidade.unidade_pai_id === null
+    };
+  }
+
+  public abrirRelatorioCarga(relatorioCargaId: string = this.ultimoRelatorioCargaId ?? ''): void {
+    if (!relatorioCargaId) return;
+
+    this.go.navigate(
+      { route: ['relatorios', 'carga-individual-siape'], params: { id: relatorioCargaId } },
+      { metadata: { relatorioId: relatorioCargaId } }
+    );
   }
 
 }

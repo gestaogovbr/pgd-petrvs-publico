@@ -2,7 +2,7 @@
 FROM php:8.2-apache
 
 # instala recursos adicionais
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     sed \
     git \
     zlib1g-dev \
@@ -21,7 +21,9 @@ RUN apt-get update && apt-get install -y \
     supervisor \
     default-mysql-client \
     && pecl install redis inotify \
-    && docker-php-ext-enable inotify
+    && docker-php-ext-enable inotify \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Bibliotecas php
 RUN docker-php-ext-install zip pdo_mysql mysqli soap gd calendar \
@@ -55,5 +57,4 @@ RUN echo "xdebug.mode=off" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xde
     echo "xdebug.start_with_request=yes" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.client_host=host.docker.internal" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.discover_client_host=0" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
-    echo "xdebug.client_port=9004" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    echo "xdebug.client_port=9004" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null

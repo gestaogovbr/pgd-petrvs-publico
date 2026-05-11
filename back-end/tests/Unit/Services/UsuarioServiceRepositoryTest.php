@@ -12,7 +12,6 @@ use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\SiapeBlackListServidorRepository;
-use App\Repository\TipoModalidadeRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Services\IntegracaoService;
@@ -49,17 +48,11 @@ beforeEach(function () {
     $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
     $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
     $this->perfilRepository = Mockery::mock(PerfilRepository::class);
-    $this->tipoModalidadeRepository = Mockery::mock(TipoModalidadeRepository::class);
     $this->integracaoServidorRepository = Mockery::mock(IntegracaoServidorRepository::class);
     $this->planoTrabalhoConsolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
     $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->planoEntregaRepository = Mockery::mock(PlanoEntregaRepository::class);
     $this->siapeBlackListServidorRepository = Mockery::mock(SiapeBlackListServidorRepository::class);
-
-    $this->tipoModalidadeRepository
-        ->shouldReceive('findByNome')
-        ->andReturn((object) ['id' => 'mod-default-id'])
-        ->byDefault();
 
     $this->unidadeService = Mockery::mock(UnidadeService::class);
     $this->integracaoService = Mockery::mock(IntegracaoService::class);
@@ -84,7 +77,6 @@ beforeEach(function () {
         'usuarioRepository' => $this->usuarioRepository,
         'unidadeRepository' => $this->unidadeRepository,
         'perfilRepository' => $this->perfilRepository,
-        'tipoModalidadeRepository' => $this->tipoModalidadeRepository,
         'integracaoServidorRepository' => $this->integracaoServidorRepository,
         'planoTrabalhoConsolidacaoRepository' => $this->planoTrabalhoConsolidacaoRepository,
         'planoTrabalhoRepository' => $this->planoTrabalhoRepository,
@@ -441,7 +433,8 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
             ->once()
             ->with('user-id', Mockery::on(function (array $payload): bool {
                 return !array_key_exists('email', $payload)
-                    && ($payload['tipo_modalidade_id'] ?? null) === 'mod-default-id';
+                    && !array_key_exists('tipo_modalidade_id', $payload)
+                    && ($payload['modalidade_pgd'] ?? null) === null;
             }))
             ->andReturn($updatedUser);
         $this->unidadeIntegranteAtribuicaoService->shouldReceive('checkLotacoes')->once()->with('user-id');
@@ -548,7 +541,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
             ->once()
             ->with(Mockery::on(function (array $arg) use ($perfil): bool {
                 return ($arg['matricula'] ?? null) === '12345'
-                    && ($arg['tipo_modalidade_id'] ?? null) === 'mod-1-id'
+                    && ($arg['modalidade_pgd'] ?? null) === 'mod-1-id'
                     && ($arg['perfil_id'] ?? null) === $perfil;
             }))
             ->andReturn($novoUsuarioMock);
@@ -599,7 +592,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         $this->usuarioRepository->shouldReceive('update')
             ->once()
             ->with('user-id', Mockery::on(function (array $arg): bool {
-                return ($arg['nome'] ?? null) === 'Nome' && ($arg['tipo_modalidade_id'] ?? null) === 'mod-id';
+                return ($arg['nome'] ?? null) === 'Nome' && ($arg['modalidade_pgd'] ?? null) === 'mod-id';
             }));
 
         $this->service->atualizarServidor($usuarioObj);
@@ -613,7 +606,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         ];
 
         $usuario = new Usuario();
-        $usuario->forceFill(['id' => 'user-id', 'tipo_modalidade_id' => 'mod-default-id', 'usuario_externo' => 0]);
+        $usuario->forceFill(['id' => 'user-id', 'modalidade_pgd' => null, 'usuario_externo' => 0]);
 
         $this->usuarioRepository->shouldReceive('findById')
             ->once()

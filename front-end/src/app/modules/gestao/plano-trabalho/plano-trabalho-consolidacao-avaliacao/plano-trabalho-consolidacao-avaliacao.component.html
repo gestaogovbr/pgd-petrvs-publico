@@ -36,7 +36,7 @@
                     <column [title]="'Plano de trabalho/Vigência/Modalidade'" [template]="columnPlanoTrabalho">
                         <ng-template let-row="row" #columnPlanoTrabalho>
                             #{{row.plano_trabalho?.numero}} <badge label="Início" color="light" icon="bi bi-calendar2" [textValue]="util.getDateFormatted(row.plano_trabalho?.data_inicio)"></badge><badge label="Término" color="light" icon="bi bi-calendar2-check" [textValue]="util.getDateFormatted(row.plano_trabalho?.data_fim)"></badge>
-                            <badge [icon]="entityService.getIcon('TipoModalidade')" [label]="row.plano_trabalho?.tipo_modalidade?.nome" color="light" [hint]="lex.translate('Tipo de modalidade')"></badge>
+                            <badge icon="bi bi-person-workspace" [label]="row.plano_trabalho?.modalidade_pgd_label || modalidadePgd.label(row.plano_trabalho?.modalidade_pgd)" color="light" [hint]="lex.translate('Modalidade')"></badge>
                         </ng-template>
                     </column>
                     <column title="Data início" [template]="columnDataInicio">

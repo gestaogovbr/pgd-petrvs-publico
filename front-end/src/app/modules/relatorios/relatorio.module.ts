@@ -11,6 +11,7 @@ import { IndicadorEquipeComponent } from './indicadores-equipes/indicadores-equi
 import { IndicadorGestaoComponent } from './indicadores-gestao/indicadores-gestao.component';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { IndicadorEntregaComponent } from './indicadores-entrega/indicadores-entrega.component';
+import { RelatorioCargaIndividualSiapeComponent } from './relatorio-carga-individual-siape/relatorio-carga-individual-siape.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { IndicadorEntregaComponent } from './indicadores-entrega/indicadores-ent
     RelatorioUnidadeComponent,
     IndicadorEquipeComponent,
     IndicadorGestaoComponent,
-    IndicadorEntregaComponent
+    IndicadorEntregaComponent,
+    RelatorioCargaIndividualSiapeComponent
   ],
   imports: [
     CommonModule,

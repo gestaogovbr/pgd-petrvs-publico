@@ -1,31 +1,29 @@
 <?php
 
 use App\Models\Perfil;
-use App\Models\TipoModalidade;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 
 test('normaliza cpf removendo máscara na tabela usuarios', function () {
     DB::connection('tenant')->statement('ALTER TABLE usuarios MODIFY cpf VARCHAR(14) NOT NULL');
 
-    $tipoModalidadeId = TipoModalidade::factory()->create(['nome' => 'Presencial'])->id;
     $perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
 
     $usuarioMascarado = Usuario::factory()->create([
         'cpf' => '015.750.810-24',
-        'tipo_modalidade_id' => $tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $perfilId,
     ]);
 
     $usuarioSemMascara = Usuario::factory()->create([
         'cpf' => '12345678901',
-        'tipo_modalidade_id' => $tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $perfilId,
     ]);
 
     $usuarioFormatoInvalido = Usuario::factory()->create([
         'cpf' => '123.456',
-        'tipo_modalidade_id' => $tipoModalidadeId,
+        'modalidade_pgd' => 'presencial',
         'perfil_id' => $perfilId,
     ]);
 

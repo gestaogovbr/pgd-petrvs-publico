@@ -13,4 +13,6 @@ interface IntegracaoUnidadeReadRepositoryContract
      * @return \Illuminate\Support\Collection
      */
     public function getUnidadesComChefias(): \Illuminate\Support\Collection;
+
+    public function findByCodigo(string $codigo): ?\App\Models\IntegracaoUnidade;
 }

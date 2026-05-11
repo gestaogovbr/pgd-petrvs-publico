@@ -1,0 +1,187 @@
+.relatorio-carga-siape-pagina {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  color: #111827;
+}
+
+.relatorio-carga-siape-pagina h1,
+.relatorio-carga-siape-pagina h2,
+.relatorio-carga-siape-pagina h3,
+.relatorio-carga-siape-pagina p,
+.relatorio-carga-siape-pagina span,
+.relatorio-carga-siape-pagina strong,
+.relatorio-carga-siape-pagina td,
+.relatorio-carga-siape-pagina th,
+.relatorio-carga-siape-pagina li,
+.relatorio-carga-siape-pagina label {
+  color: #111827;
+}
+
+.relatorio-carga-siape-cabecalho,
+.relatorio-carga-siape-bloco,
+.relatorio-carga-siape-box {
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.relatorio-carga-siape-cabecalho h1,
+.relatorio-carga-siape-bloco h2,
+.relatorio-carga-siape-box h3 {
+  margin: 0 0 8px;
+}
+
+.relatorio-carga-siape-cabecalho p,
+.relatorio-carga-siape-detalhe__topo p,
+.relatorio-carga-siape-card__mensagem {
+  margin: 0;
+  color: #475467;
+}
+
+.relatorio-carga-siape-filtros {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.4fr) minmax(140px, .6fr) minmax(180px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.relatorio-carga-siape-filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.relatorio-carga-siape-acoes,
+.relatorio-carga-siape-card__acoes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.relatorio-carga-siape-conteudo {
+  min-height: 120px;
+}
+
+.relatorio-carga-siape-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.relatorio-carga-siape-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  background: #ffffff;
+}
+
+.relatorio-carga-siape-card__topo,
+.relatorio-carga-siape-card__meta,
+.relatorio-carga-siape-detalhe__topo,
+.relatorio-carga-siape-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.relatorio-carga-siape-card__meta,
+.relatorio-carga-siape-meta {
+  margin-top: 12px;
+}
+
+.relatorio-carga-siape-card__mensagem {
+  margin-top: 12px;
+}
+
+.relatorio-carga-siape-muted {
+  margin-left: 8px;
+  color: #667085;
+}
+
+.relatorio-carga-siape-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-weight: 600;
+}
+
+.relatorio-carga-siape-chip--sucesso {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.relatorio-carga-siape-chip--parcial {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.relatorio-carga-siape-chip--erro {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.relatorio-carga-siape-orientacoes {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.relatorio-carga-siape-tabela-wrapper {
+  overflow: auto;
+}
+
+.relatorio-carga-siape-tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.relatorio-carga-siape-tabela th,
+.relatorio-carga-siape-tabela td {
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+}
+
+.relatorio-carga-siape-tabela th {
+  background: #f3f4f6;
+  font-weight: 700;
+}
+
+.relatorio-carga-siape-status {
+  font-weight: 600;
+}
+
+.relatorio-carga-siape-status--confirmado {
+  color: #166534;
+}
+
+.relatorio-carga-siape-status--ajustado {
+  color: #1d4ed8;
+}
+
+.relatorio-carga-siape-status--divergente,
+.relatorio-carga-siape-status--alerta {
+  color: #991b1b;
+}
+
+.relatorio-carga-siape-status--neutro {
+  color: #475467;
+}
+
+.relatorio-carga-siape-vazio {
+  color: #667085;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .relatorio-carga-siape-filtros {
+    grid-template-columns: 1fr;
+  }
+}

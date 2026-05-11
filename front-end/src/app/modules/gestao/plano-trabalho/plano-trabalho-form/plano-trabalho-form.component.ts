@@ -11,13 +11,11 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { ProgramaDaoService, ProgramaMetadata } from 'src/app/dao/programa-dao.service';
-import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Documento } from 'src/app/models/documento.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { Programa } from 'src/app/models/programa.model';
-import { TipoModalidade } from 'src/app/models/tipo-modalidade.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
@@ -36,6 +34,7 @@ import { InputTextComponent } from 'src/app/components/input/input-text/input-te
 import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 import { UnidadeIntegranteAtribuicao } from 'src/app/models/unidade-integrante-atribuicao.model';
 import { ProgramaService } from 'src/app/services/programa.service';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 
 @Component({
     selector: 'plano-trabalho-form',
@@ -52,7 +51,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('programa', { static: false }) public programa?: InputSelectComponent;
   @ViewChild('unidade', { static: false }) public unidade?: InputSelectComponent;
-  @ViewChild('tipoModalidade', { static: false }) public tipoModalidade?: InputSelectComponent;
   @ViewChild('planoEntrega', { static: false }) public planoEntrega?: InputSearchComponent;
   @ViewChild('atividade', { static: false }) public atividade?: InputSearchComponent;
   @ViewChild('entrega', { static: false }) public entrega?: InputSelectComponent;
@@ -66,8 +64,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public templateService: TemplateService;
   public utilService: UtilService;
   public calendar: CalendarService;
-  public tipoModalidadeDao: TipoModalidadeDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
+  public modalidadePgd: ModalidadePgdService;
   public horasTotais?: Efemerides;
   public horasParciais?: Efemerides;
   public planoDataset: TemplateDataset[];
@@ -82,8 +80,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   public usuarioUnidades: LookupItem[] = [];
   public selectedPrograma?: Programa;
   public selectedUnidade?: Unidade;
-  public selectedModalidade?: TipoModalidade;
-  public tipoModalidadeItems: LookupItem[] = [];
   public planosUsuarioComPendencias: boolean = false;
   public programaService: ProgramaService;
 
@@ -98,9 +94,8 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       "usuario.lotacao",
       "usuario.areas_trabalho.atribuicoes",
       "usuario.unidades",
-      "programa.template_tcr", 
-      "tipo_modalidade", 
-      "documento", 
+      "programa.template_tcr",
+      "documento",
       "documentos.assinaturas.usuario:id,nome,apelido", 
       "entregas.plano_entrega_entrega.entrega",
       "entregas.plano_entrega_entrega.plano_entrega.unidade:id,nome,sigla",
@@ -114,7 +109,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.templateService = injector.get<TemplateService>(TemplateService);
     this.utilService = injector.get<UtilService>(UtilService);
     this.calendar = injector.get<CalendarService>(CalendarService);
-    this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
+    this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
     this.documentoDao = injector.get<DocumentoDaoService>(DocumentoDaoService);
     this.planoTrabalhoService = injector.get<PlanoTrabalhoService>(PlanoTrabalhoService);
     this.programaService = injector.get<ProgramaService>(ProgramaService);
@@ -134,7 +129,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
       documentos: { default: [] },
       atividades: { default: [] },
       entregas: { default: [] },
-      tipo_modalidade_id: { default: "" },
+      modalidade_pgd: { default: null },
       forma_contagem_carga_horaria: { default: "DIA" },
       editar_texto_complementar_unidade: { default: false },
       editar_texto_complementar_usuario: { default: false },
@@ -199,7 +194,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
   }
 
   private isRequiredFieldEmpty(control: AbstractControl, controlName: string): boolean {
-    const requiredFields = ['unidade_id', 'programa_id', 'usuario_id', 'tipo_modalidade_id'];
+    const requiredFields = ['unidade_id', 'programa_id', 'usuario_id'];
     return requiredFields.includes(controlName) && !control.value?.length;
   }
 
@@ -310,50 +305,15 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     }
   }
 
-  async carregaModalidades(pedagio: boolean) {
-    try {
-      const where: [string, string, any][] = pedagio ? [['exige_pedagio', '==', 0]] : [];
-      const modalidades = await this.tipoModalidadeDao.query({
-        where: where,
-        join: ['modalidadeSiape'],
-      }).asPromise();
+  public selecionaModalidade(usuario?: Usuario) {
+    let modalidade = this.modalidadePgd.normalize(this.entity?.modalidade_pgd ?? usuario?.modalidade_pgd ?? null);
 
-      if (modalidades.length > 0) {
-        this.tipoModalidadeItems = modalidades.map(mod => ({
-          key: mod.id,
-          value: mod.nome,
-          data: mod
-        }));
-        this.selecionaModalidade();
-      } else {
-        this.dialog.alert('Erro', 'Não foi possível carregar as modalidades disponíveis.');
-      }
-    } catch (error) {
-      console.error('Erro ao carregar modalidades:', error);
-      this.dialog.alert('Erro', 'Ocorreu um erro ao carregar as modalidades.');
+    if (usuario?.pedagio && this.modalidadePgd.exigePedagio(modalidade)) {
+      modalidade = 'presencial';
     }
-  }
 
-  public selecionaModalidade() {
-    const tipo_modalidade_id = this.entity?.tipo_modalidade_id ?? this.entity?.usuario?.tipo_modalidade_id;
-    //buscar por igualdade direta de flidade_id
-    let modalidade = this.tipoModalidadeItems.find((mod: LookupItem) => (mod.data as TipoModalidade).id == tipo_modalidade_id);
-    if (modalidade) {
-      this.form?.controls.tipo_modalidade_id.setValue(modalidade.key);
-      this.selectedModalidade = modalidade.data;
-    } else {
-      this.form?.controls.tipo_modalidade_id.setValue(this.tipoModalidadeItems[0].key);
-    }
-  }
-
-  public changeModalidade() {
-    if (this.entity!.usuario?.tipo_modalidade_id != this.form?.controls.tipo_modalidade_id.value) {
-      this.dialog.confirm('Atenção', 'Você está propondo plano de trabalho com modalidade distinta daquela registrada pela sua chefia imadiata no SouGov Líder. Deseja continuar?').then((result) => {
-        if (!result) {
-          this.selecionaModalidade();
-        }
-      });
-    }
+    this.form?.controls.modalidade_pgd.setValue(modalidade);
+    if (this.entity) this.entity.modalidade_pgd = modalidade;
   }
 
   public podeEditarTextoComplementar(unidade_id : string) : string|undefined {
@@ -391,11 +351,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         const unidadeId = this.action === 'edit' ? this.entity?.unidade_id : selected.entity.lotacao.unidade_id;
         this.carregaProgramas(unidadeId);
 
-        if (selected.entity.pedagio) {
-          await this.carregaModalidades(true);
-        } else {
-          await this.carregaModalidades(false);
-        }
+        this.selecionaModalidade(selected.entity);
       }
       const participa = this.utilService.slugify(selected.entity.participa_pgd ?? '');
       if (participa === 'nao') {
@@ -413,14 +369,6 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         })
       }
 
-      if(selected.entity.pedagio) {
-        let modalidades = await this.tipoModalidadeDao.query({
-          where: [['exige_pedagio', '==', 0]]
-        }).asPromise();
-        this.form?.controls.tipo_modalidade_id.setValue(modalidades[0]?.id);
-      }
-      
-     
     } catch (error) {
       console.error('Erro ao selecionar usuário:', error);
       this.dialog.alert('Erro', 'Ocorreu um erro ao processar a seleção do usuário.');
@@ -515,6 +463,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     ]);
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
+    this.selecionaModalidade(entity.usuario);
     //this.form!.controls.unidade_id.setValue(null);
 
     if(action == 'clone') {
@@ -580,7 +529,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     plano.usuario = (this.usuario!.selectedEntity || this.entity?.usuario) as Usuario;
     plano.unidade = (this.selectedUnidade || this.entity?.unidade) as Unidade;
     plano.programa = (this.selectedPrograma || this.entity?.programa) as Programa;
-    plano.tipo_modalidade = (this.selectedModalidade || this.entity?.tipo_modalidade) as TipoModalidade;   
+    plano.modalidade_pgd = this.modalidadePgd.normalize(this.form?.controls.modalidade_pgd.value);
     plano.documento = this.entity?.documento;
     plano.documento_id = this.form?.controls.documento_id.value;
     

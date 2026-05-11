@@ -32,4 +32,14 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
             ->whereNull('u.deleted_at')
             ->get();
     }
+
+    public function findByCodigo(string $codigo): ?IntegracaoUnidade
+    {
+        $registro = $this->query()
+            ->where('id_servo', $codigo)
+            ->orWhere('codigo_siape', $codigo)
+            ->first();
+
+        return $registro instanceof IntegracaoUnidade ? $registro : null;
+    }
 }

@@ -70,7 +70,6 @@ export class PlanoTrabalhoService {
     const plano = parent as PlanoTrabalho;
     const documento = item || (plano?.documentos || []).find(x => plano?.documento_id?.length && x.id == plano?.documento_id) || plano?.documento;
     if (parent && documento && !documento.assinaturas?.find(x => x.usuario_id == this.auth.usuario!.id)) {
-      const tipoModalidade = plano.tipo_modalidade;
       const programa = plano.programa;
       const entidade = this.auth.entidade!;
       let ids: string[] = [];
@@ -78,7 +77,7 @@ export class PlanoTrabalhoService {
       if (programa?.plano_trabalho_assinatura_gestor_lotacao) ids.push(...this.auth.gestoresLotacao.map(x => x.id));
       if (programa?.plano_trabalho_assinatura_gestor_unidade) ids.push(plano.unidade?.gestor?.id || "", ...plano.unidade?.gestores_substitutos?.map(x => x.id) || "");
       if (programa?.plano_trabalho_assinatura_gestor_entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
-      return !!tipoModalidade && ids.includes(this.auth.usuario!.id);
+      return ids.includes(this.auth.usuario!.id);
     }
     return false;
   }

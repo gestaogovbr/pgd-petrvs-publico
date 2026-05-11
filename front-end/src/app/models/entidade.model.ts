@@ -6,7 +6,6 @@ import { Expediente } from './expediente.model';
 import { HasNotificacao, NotificacoesConfig } from './notificacao.model';
 import { HasRelatorio } from './relatorio.model';
 import { Template } from './template.model';
-import { TipoModalidade } from './tipo-modalidade.model';
 import { Usuario } from './usuario.model';
 
 export type Nomenclatura = {
@@ -21,7 +20,6 @@ export type TipoCargaHoraria = "DIA" | "SEMANA" | "MES";
 
 export class Entidade extends Base implements HasNotificacao, HasRelatorio {
     public cidade?: Cidade;
-    public tipo_modalidade?: TipoModalidade;
     public gestor?: Usuario; /* Objeto do usuario gestor */
     public gestor_substituto?: Usuario;
     public relatorios_templates?: Template[] | undefined;
@@ -45,7 +43,7 @@ export class Entidade extends Base implements HasNotificacao, HasRelatorio {
     public gestor_id: string | null = null; // Usuário gestor da unidade
     public gestor_substituto_id: string | null = null; // Usuário gestor substituto da unidade
     public cidade_id: string | null = null;
-    public tipo_modalidade_id: string | null = null; //Tipo de modalidade utilizada ao criar plano de trabalho
+    public modalidade_pgd_padrao: string | null = null; //Modalidade utilizada ao criar plano de trabalho
     public email_responsavel_siape: string = ""; // Email do responsável pelas alterações no SIAPE
     public email_remetente_siape: string = ""; // Email do remetente a ser usado em relato de alterações no SIAPE
     public habilitar_relatos_siape: boolean = false; // Indica se o relato de erros de lotação no SIAPE está habilitado
