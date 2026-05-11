@@ -1,10 +1,18 @@
-import { Component, Injector, ViewChild } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { GridComponent } from 'src/app/components/grid/grid.component';
 import { EnvioUsuarioDaoService } from 'src/app/dao/envio-usuario-dao.service';
+import { QueryContext } from 'src/app/dao/query-context';
 import { Usuario } from 'src/app/models/usuario.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
+
+type EnvioUsuarioRow = Usuario & {
+  data_agendamento_envio?: string | Date | null;
+  data_tentativa_envio?: string | Date | null;
+  data_conclusao_envio?: string | Date | null;
+  data_envio_api_pgd?: string | Date | null;
+  log_envio?: string | null;
+};
 
 @Component({
   selector: 'envio-usuario-list',
@@ -13,9 +21,9 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
   standalone: false,
 })
 export class EnvioUsuarioListComponent extends PageListBase<Usuario, EnvioUsuarioDaoService> {
-  @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
-
   public toolbarButtons: ToolbarButton[] = [];
+  public rows: EnvioUsuarioRow[] = [];
+  public isLoadingRows = false;
 
   constructor(public injector: Injector) {
     super(injector, Usuario, EnvioUsuarioDaoService);
@@ -34,6 +42,54 @@ export class EnvioUsuarioListComponent extends PageListBase<Usuario, EnvioUsuari
       envio_fim: { default: null },
     });
     this.orderBy = [['data_agendamento_envio', 'desc']];
+  }
+
+  public override onQueryResolve(rows: Usuario[] | null) {
+    this.rows = rows || [];
+  }
+
+  protected override beforeQuery(): void {
+    this.isLoadingRows = true;
+  }
+
+  protected override afterQuery(): void {
+    this.isLoadingRows = false;
+    super.afterQuery();
+  }
+
+  public get queryData(): QueryContext<Usuario> | undefined {
+    return this.query;
+  }
+
+  public get hasRows(): boolean {
+    return this.rows.length > 0;
+  }
+
+  public consultar(): void {
+    this.query?.reload(this.queryOptions);
+  }
+
+  public limparFiltros(): void {
+    this.filter?.reset({
+      cpf: '',
+      nome: '',
+      status: null,
+      agendamento_inicio: null,
+      agendamento_fim: null,
+      conclusao_inicio: null,
+      conclusao_fim: null,
+      envio_inicio: null,
+      envio_fim: null,
+    });
+    this.consultar();
+  }
+
+  public paginaAnterior(): void {
+    this.query?.priorPage();
+  }
+
+  public proximaPagina(): void {
+    this.query?.nextPage();
   }
 
   public filterWhere = (filter: FormGroup) => {

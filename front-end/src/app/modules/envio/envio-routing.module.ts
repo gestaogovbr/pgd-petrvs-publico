@@ -15,6 +15,7 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: {
       title: "Logs de Participantes",
+      breadcrumb: "Envio de Participantes",
       modal: false
     }
   },
@@ -26,6 +27,7 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: {
       title: "Logs de Planos de Entrega",
+      breadcrumb: "Envio de Planos de Entrega",
       modal: false
     }
   },
@@ -37,6 +39,7 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: {
       title: "Logs de Planos de Trabalho",
+      breadcrumb: "Envio de Planos de Trabalho",
       modal: false
     }
   }

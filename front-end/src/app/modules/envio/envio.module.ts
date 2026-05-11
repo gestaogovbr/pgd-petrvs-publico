@@ -7,6 +7,9 @@ import { EnvioRoutingModule } from './envio-routing.module';
 import { EnvioUsuarioListComponent } from './envio-usuario-list/envio-usuario-list.component';
 import { EnvioPlanoTrabalhoListComponent } from './envio-plano-trabalho-list/envio-plano-trabalho-list.component';
 import { EnvioPlanoEntregaListComponent } from './envio-plano-entrega-list/envio-plano-entrega-list.component';
+import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
+import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
 
 
 @NgModule({
@@ -20,7 +23,12 @@ import { EnvioPlanoEntregaListComponent } from './envio-plano-entrega-list/envio
     SharedModule,
     ReactiveFormsModule,
     EnvioRoutingModule,
-    UteisModule
+    UteisModule,
+    WebcomponentsAngularModule,
+    BreadcrumbComponent
+  ],
+  providers: [
+    BreadcrumbService
   ]
 })
 export class EnvioModule { }
