@@ -2,7 +2,7 @@
   <div class="card-header">
     <div>
       <h4 class="mb-1">Protótipo de Grafo de Relacionamentos</h4>
-      <small>Dados fake para validar vínculo entre objetivo pai e objetivo superior.</small>
+      <small>Dados de exemplo: planejamentos, vínculo pai e objetivo de planejamento superior.</small>
     </div>
   </div>
 
@@ -20,20 +20,50 @@
 
       <br-button emphasis="secondary" (click)="resetLayout()">Resetar layout</br-button>
       <br-button emphasis="tertiary" (click)="clearSelection()">Limpar seleção</br-button>
+      <div class="br-input zoom-filter-input">
+        <label>Planejamento</label>
+        <select [value]="planejamentoFilter()" (change)="onPlanejamentoFilterChange($event)">
+          @for (option of planejamentoOptions(); track option) {
+            <option [value]="option">{{ option === 'ALL' ? 'Todos' : option }}</option>
+          }
+        </select>
+      </div>
+      <div class="br-input zoom-filter-input">
+        <label>Máx. nós</label>
+        <select [value]="maxNodes()" (change)="onMaxNodesChange($event)">
+          @for (size of maxNodesOptions; track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </div>
+      <span class="zoom-controls" aria-label="Controles de zoom do grafo">
+        <br-button emphasis="tertiary" (click)="zoomOut()">Afastar</br-button>
+        <span class="zoom-controls__value">{{ zoom() * 100 | number:'1.0-0' }}%</span>
+        <br-button emphasis="tertiary" (click)="zoomIn()">Aproximar</br-button>
+        <br-button emphasis="tertiary" (click)="resetZoom()">100%</br-button>
+      </span>
     </div>
 
     <div class="legend mb-2">
-      <span><strong>Nós:</strong> azul claro = planejamento superior, verde claro = planejamento atual</span>
-      <span><strong>Arestas:</strong> cinza contínuo = pai, azul tracejado = objetivo superior</span>
-      <span><strong>Interação:</strong> clique para destacar conexões e arraste nós para reorganizar</span>
+      <span><strong>Planejamentos:</strong></span>
+      <span class="legend__planejamentos">
+        @for (planejamento of planejamentosLegenda(); track planejamento.nome) {
+          <span class="legend__item">
+            <span class="legend__swatch" [style.background-color]="planejamento.color.fill" [style.border-color]="planejamento.color.stroke"></span>
+            {{ planejamento.nome }}
+          </span>
+        }
+      </span>
+      <span><strong>Arestas direcionais:</strong> cinza contínuo = filho → pai · azul tracejado = objetivo relacionado → objetivo superior</span>
+      <span><strong>Interação:</strong> clique para expandir/ocultar relações · arrastar para reposicionar</span>
     </div>
 
-    <svg #svgRef class="graph-surface" viewBox="0 0 1000 520" (click)="clearSelection()">
+    <svg #svgRef class="graph-surface" [attr.viewBox]="viewBoxString()" (click)="clearSelection()">
       <defs>
-        <marker id="arrowPai" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+        <marker id="arrowPai" viewBox="0 0 10 6" markerWidth="10" markerHeight="6" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
           <path d="M0,0 L0,6 L8,3 z" fill="#636363"></path>
         </marker>
-        <marker id="arrowSuperior" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+        <marker id="arrowSuperior" viewBox="0 0 10 6" markerWidth="10" markerHeight="6" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
           <path d="M0,0 L0,6 L8,3 z" fill="#1351b4"></path>
         </marker>
       </defs>
@@ -42,17 +72,20 @@
         @let source = visibleNodes().find(node => node.id === edge.source);
         @let target = visibleNodes().find(node => node.id === edge.target);
         @if (source && target) {
+          @let segment = edgeSegment(source, target);
           <line
-            [attr.x1]="source.x"
-            [attr.y1]="source.y"
-            [attr.x2]="target.x"
-            [attr.y2]="target.y"
+            [attr.x1]="segment.x1"
+            [attr.y1]="segment.y1"
+            [attr.x2]="segment.x2"
+            [attr.y2]="segment.y2"
             [attr.stroke]="edge.type === 'PAI' ? '#636363' : '#1351b4'"
             [attr.stroke-opacity]="isEdgeHighlighted(edge) ? '1' : '0.2'"
             [attr.stroke-width]="isEdgeHighlighted(edge) ? '2.4' : '1.5'"
             [attr.stroke-dasharray]="edge.type === 'SUPERIOR' ? '7 6' : null"
             [attr.marker-end]="edge.type === 'PAI' ? 'url(#arrowPai)' : 'url(#arrowSuperior)'"
-          ></line>
+          >
+            <title>{{ edgeTitle(edge, source, target) }}</title>
+          </line>
         }
       }
 
@@ -62,22 +95,40 @@
           [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
           (click)="$event.stopPropagation(); onNodeClick(node.id)"
         >
-          <circle
-            r="32"
+          <title>{{ node.planejamentoNome }} — {{ node.nome }} — {{ node.entregasCount }} entregas — {{ node.esforcoTotalHoras }} h</title>
+          <rect
+            [attr.x]="-cardHalfW"
+            [attr.y]="-cardHalfH"
+            [attr.width]="cardW"
+            [attr.height]="cardH"
+            rx="8"
             [attr.fill]="nodeFill(node)"
             [attr.stroke]="nodeStroke(node)"
             stroke-width="2.5"
             (pointerdown)="startDrag($event, node.id)"
-          ></circle>
-          <text class="node-id" text-anchor="middle" dy="-2">{{ node.id }}</text>
-          <text class="node-plan" text-anchor="middle" dy="12">{{ node.planejamento === 'SUPERIOR' ? 'SUP' : 'ATU' }}</text>
-          @if (hasExpandableRelations(node.id)) {
-            @if (isExpanded(node.id)) {
-              <text class="node-expand-state" text-anchor="middle" dy="28">-</text>
-            } @else {
-              <text class="node-expand-state" text-anchor="middle" dy="28">+</text>
-            }
-          }
+          ></rect>
+          <foreignObject
+            [attr.x]="-cardHalfW"
+            [attr.y]="-cardHalfH"
+            [attr.width]="cardW"
+            [attr.height]="cardH"
+            pointer-events="none"
+          >
+            <div xmlns="http://www.w3.org/1999/xhtml" class="node-card" lang="pt-BR">
+              <p class="node-card__planning">{{ node.planejamentoNome }}</p>
+              <p class="node-card__title">{{ node.nome }}</p>
+              <div class="node-card__bottom">
+                <div class="node-card__meta">
+                  <span>{{ node.entregasCount }} entregas</span>
+                  <span class="node-card__sep" aria-hidden="true">·</span>
+                  <span>{{ node.esforcoTotalHoras }} h</span>
+                </div>
+                @if (hasExpandableRelations(node.id)) {
+                  <span class="node-card__toggle" aria-hidden="true">{{ isExpanded(node.id) ? '−' : '+' }}</span>
+                }
+              </div>
+            </div>
+          </foreignObject>
         </g>
       }
     </svg>
@@ -87,10 +138,25 @@
         <div class="card-content">
           <h5 class="mb-2">{{ selectedNode()!.nome }}</h5>
           <p class="mb-1"><strong>ID:</strong> {{ selectedNode()!.id }}</p>
-          <p class="mb-1"><strong>Planejamento:</strong> {{ selectedNode()!.planejamento === 'SUPERIOR' ? 'Superior' : 'Atual' }}</p>
-          <p class="mb-1"><strong>Pai:</strong> {{ selectedConnections().parents.length ? selectedConnections().parents[0].nome : '-' }}</p>
-          <p class="mb-1"><strong>Objetivo superior:</strong> {{ selectedConnections().superiores.length ? selectedConnections().superiores[0].nome : '-' }}</p>
-          <p class="mb-0"><strong>Filhos:</strong> {{ selectedConnections().children.length ? selectedConnections().children.map(child => child.nome).join(', ') : '-' }}</p>
+          <p class="mb-1">
+            <strong>Planejamento:</strong>
+            {{ selectedNode()!.planejamentoNome }}
+          </p>
+          <p class="mb-1"><strong>Esforço total:</strong> {{ selectedNode()!.esforcoTotalHoras }} h</p>
+          <p class="mb-2"><strong>Entregas relacionadas:</strong> {{ selectedNode()!.entregasCount }}</p>
+          <p class="mb-1"><strong>Pai (mesmo planejamento):</strong> {{ selectedConnections().parents.length ? selectedConnections().parents[0].nome : '—' }}</p>
+          <p class="mb-1">
+            <strong>Objetivo de planejamento superior:</strong>
+            {{ selectedConnections().superiores.length ? selectedConnections().superiores[0].nome : '—' }}
+          </p>
+          <p class="mb-0">
+            <strong>Objetivos filhos (pai):</strong>
+            {{
+              selectedConnections().children.length
+                ? selectedConnections().children.map(child => child.nome).join(', ')
+                : '—'
+            }}
+          </p>
         </div>
       </div>
     }
