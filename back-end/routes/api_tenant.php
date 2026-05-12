@@ -611,6 +611,7 @@ use App\V2\Usuario\UsuarioController as UsuarioV2;
 use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
 use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
+use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoObjetivoV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
@@ -665,5 +666,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::post('planejamento/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'store']);
     Route::put('planejamento/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'update']);
     Route::delete('planejamento/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'destroy']);
+
+    Route::get('planejamento/objetivo/{id}/esforco-total', [PlanejamentoObjetivoV2::class, 'esforcoTotal'])->whereUuid('id');
 });
 
