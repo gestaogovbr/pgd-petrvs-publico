@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\V2\Planejamento\Objetivo;
+namespace App\Repository\PlanejamentoObjetivo\Eloquent;
 
 use App\Models\PlanejamentoObjetivo;
+use App\Models\PlanoEntregaEntregaObjetivo;
+use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
+use App\V2\Planejamento\Objetivo\DTOs\EntregasPorUnidadeDTO;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
 use Illuminate\Support\Facades\DB;
 
-class PlanejamentoObjetivoRepository
+class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivoReadRepositoryContract
 {
     public function find(string $id): ?PlanejamentoObjetivo
     {
@@ -19,6 +22,20 @@ class PlanejamentoObjetivoRepository
     public function getEsforcoTotal(PlanejamentoObjetivo $objetivo): array
     {
         return $this->buildMap($objetivo->id);
+    }
+
+    /** @return EntregasPorUnidadeDTO[] */
+    public function getEntregasAgrupadasPorUnidade(string $objetivoId): array
+    {
+        return PlanoEntregaEntregaObjetivo::where('planejamento_objetivo_id', $objetivoId)
+            ->with('entrega.unidade')
+            ->get()
+            ->pluck('entrega')
+            ->filter()
+            ->groupBy('unidade_id')
+            ->map(fn($entregas) => EntregasPorUnidadeDTO::fromEntregas($entregas))
+            ->values()
+            ->all();
     }
 
     private function buildMap(string $raizId): array

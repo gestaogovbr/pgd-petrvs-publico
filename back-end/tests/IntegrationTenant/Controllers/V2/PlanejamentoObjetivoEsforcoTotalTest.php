@@ -22,6 +22,9 @@ beforeEach(function () {
             Route::get('/api/__tests/v2/planejamento/objetivo/{id}/esforco-total', [PlanejamentoObjetivoController::class, 'esforcoTotal'])
                 ->whereUuid('id')
                 ->name('__tests.v2.objetivo.esforco-total');
+            Route::get('/api/__tests/v2/planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoController::class, 'entregas'])
+                ->whereUuid('id')
+                ->name('__tests.v2.objetivo.entregas');
         });
     }
 
@@ -304,5 +307,110 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         expect($data[$objPai->id]['esforco_total_horas'])->toEqual(60);
         // Filho: 20
         expect($data[$objFilho->id]['esforco_total_horas'])->toEqual(20);
+    });
+});
+
+// ── Entregas ────────────────────────────────────────────────────────
+
+describe('GET /api/v2/planejamento/objetivo/{id}/entregas', function () {
+
+    test('retorna 404 para objetivo inexistente', function () {
+        $this->getJson('/api/__tests/v2/planejamento/objetivo/' . Str::uuid()->toString() . '/entregas')
+            ->assertStatus(404);
+    });
+
+    test('retorna lista vazia quando objetivo não tem entregas', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Sem Entregas');
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/entregas");
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data', []);
+    });
+
+    test('retorna entregas agrupadas por unidade', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Com Entregas');
+
+        // Criar 2 entregas na mesma unidade
+        $entrega1 = PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $base['planoEntrega']->id,
+            'entrega_id' => $base['entrega']->id,
+            'unidade_id' => $base['unidade']->id,
+            'descricao_entrega' => 'Entrega Alpha',
+        ]);
+        $entrega2 = PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $base['planoEntrega']->id,
+            'entrega_id' => $base['entrega']->id,
+            'unidade_id' => $base['unidade']->id,
+            'descricao_entrega' => 'Entrega Beta',
+        ]);
+
+        PlanoEntregaEntregaObjetivo::create([
+            'id' => Str::uuid()->toString(),
+            'planejamento_objetivo_id' => $obj->id,
+            'entrega_id' => $entrega1->id,
+        ]);
+        PlanoEntregaEntregaObjetivo::create([
+            'id' => Str::uuid()->toString(),
+            'planejamento_objetivo_id' => $obj->id,
+            'entrega_id' => $entrega2->id,
+        ]);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/entregas");
+        $response->assertStatus(200);
+
+        $data = $response->json('data');
+
+        // 1 grupo (mesma unidade)
+        expect($data)->toHaveCount(1);
+        expect($data[0]['unidade_id'])->toBe($base['unidade']->id);
+        expect($data[0]['unidade_nome'])->not->toBeEmpty();
+        expect($data[0]['entregas'])->toHaveCount(2);
+    });
+
+    test('agrupa entregas de unidades diferentes', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Multi Unidade');
+
+        $outraUnidade = \App\Models\Unidade::factory()->create();
+
+        $entrega1 = PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $base['planoEntrega']->id,
+            'entrega_id' => $base['entrega']->id,
+            'unidade_id' => $base['unidade']->id,
+            'descricao_entrega' => 'Entrega Unidade A',
+        ]);
+        $entrega2 = PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $base['planoEntrega']->id,
+            'entrega_id' => $base['entrega']->id,
+            'unidade_id' => $outraUnidade->id,
+            'descricao_entrega' => 'Entrega Unidade B',
+        ]);
+
+        PlanoEntregaEntregaObjetivo::create([
+            'id' => Str::uuid()->toString(),
+            'planejamento_objetivo_id' => $obj->id,
+            'entrega_id' => $entrega1->id,
+        ]);
+        PlanoEntregaEntregaObjetivo::create([
+            'id' => Str::uuid()->toString(),
+            'planejamento_objetivo_id' => $obj->id,
+            'entrega_id' => $entrega2->id,
+        ]);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/entregas");
+        $response->assertStatus(200);
+
+        $data = $response->json('data');
+
+        // 2 grupos (unidades diferentes)
+        expect($data)->toHaveCount(2);
+
+        $unidadeIds = array_column($data, 'unidade_id');
+        expect($unidadeIds)->toContain($base['unidade']->id);
+        expect($unidadeIds)->toContain($outraUnidade->id);
     });
 });
