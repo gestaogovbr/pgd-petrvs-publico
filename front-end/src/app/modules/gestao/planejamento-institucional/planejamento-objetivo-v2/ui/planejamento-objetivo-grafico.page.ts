@@ -1,7 +1,33 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, ViewChild, computed, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  HostListener,
+  ViewChild,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
-import objetivosDados from './dados.json';
+import { firstValueFrom } from 'rxjs';
+import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { PlanejamentoObjetivoEsforcoApiClient, type EsforcoObjetivoNodeApi } from '../infra/planejamento-objetivo-esforco-api.client';
+
+type ObjetivoGrafoDadosRow = {
+  objetivo_id: string;
+  objetivo_nome: string;
+  planejamento_nome: string;
+  planejamento_superior_id?: string | null;
+  total_entregas: number;
+  esforco_total_horas: number;
+  objetivo_pai_id?: string | null;
+  objetivo_superior_id?: string | null;
+};
 
 type ObjetivoNode = {
   id: string;
@@ -14,17 +40,6 @@ type ObjetivoNode = {
   objetivoSuperiorId?: string;
   x: number;
   y: number;
-};
-
-type ObjetivoDadosJson = {
-  objetivo_id: string;
-  objetivo_nome: string;
-  planejamento_nome: string;
-  planejamento_superior_id?: string | null;
-  total_entregas: number;
-  esforco_total_horas: number;
-  objetivo_pai_id?: string | null;
-  objetivo_superior_id?: string | null;
 };
 
 type PlanejamentoColor = {
@@ -54,7 +69,6 @@ type GraphViewBox = {
   height: number;
 };
 
-/** Cartão do nó no SVG (centrado em x,y) — área maior para título + rodapé sem sobreposição. */
 const CARD_W = 170;
 const CARD_H = 82;
 const CARD_HALF_W = CARD_W / 2;
@@ -74,16 +88,24 @@ const PLANEJAMENTO_PALETTE: PlanejamentoColor[] = [
 ];
 
 @Component({
-  selector: 'app-objetivos-relacionamento-grafo',
+  selector: 'app-planejamento-objetivo-grafico-page',
   standalone: true,
-  imports: [CommonModule, WebcomponentsAngularModule],
-  templateUrl: './objetivos-relacionamento-grafo.component.html',
-  styleUrl: './objetivos-relacionamento-grafo.component.scss'
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent],
+  templateUrl: './planejamento-objetivo-grafico.page.html',
+  styleUrl: './planejamento-objetivo-grafico.page.scss'
 })
-export class ObjetivosRelacionamentoGrafoComponent {
-  @ViewChild('svgRef', { static: true }) svgRef!: ElementRef<SVGSVGElement>;
+export class PlanejamentoObjetivoGraficoPage {
+  private readonly route = inject(ActivatedRoute);
+  private readonly esforcoApi = inject(PlanejamentoObjetivoEsforcoApiClient);
 
-  /** Expõe medidas do cartão ao template (foreignObject / rect). */
+  @ViewChild('svgRef', { static: false }) svgRef?: ElementRef<SVGSVGElement>;
+
+  readonly loading = signal(true);
+  readonly loadError = signal<string | null>(null);
+  /** Linhas vindas da API; `undefined` = ainda não carregou ou em carga inicial. */
+  readonly graficoDados = signal<ObjetivoGrafoDadosRow[] | undefined>(undefined);
+
   readonly graphW = GRAPH_W;
   readonly graphH = GRAPH_H;
   readonly cardW = CARD_W;
@@ -91,10 +113,15 @@ export class ObjetivosRelacionamentoGrafoComponent {
   readonly cardHalfW = CARD_HALF_W;
   readonly cardHalfH = CARD_HALF_H;
 
-  private readonly allNodes: ObjetivoNode[] = this.buildNodesFromDados(objetivosDados as ObjetivoDadosJson[]);
-  private readonly planejamentoColors = this.buildPlanejamentoColors(this.allNodes);
+  readonly fullNodeList = computed(() => {
+    const rows = this.graficoDados();
+    if (rows === undefined) return [];
+    return this.buildNodesFromDados(rows);
+  });
 
-  readonly nodes = signal<ObjetivoNode[]>(this.cloneNodes(this.allNodes));
+  readonly planejamentoColorsMap = computed(() => this.buildPlanejamentoColors(this.fullNodeList()));
+
+  readonly nodes = signal<ObjetivoNode[]>([]);
   readonly zoom = signal(1);
   readonly showPaiRelations = signal(true);
   readonly showSuperiorRelations = signal(true);
@@ -103,7 +130,7 @@ export class ObjetivosRelacionamentoGrafoComponent {
   readonly planejamentoFilter = signal<string>('ALL');
   readonly maxNodes = signal<number>(50);
   readonly maxNodesOptions = [18, 30, 50, 75, 100, 150];
-  readonly planejamentoOptions = computed(() => ['ALL', ...new Set(this.allNodes.map(node => node.planejamentoNome))]);
+  readonly planejamentoOptions = computed(() => ['ALL', ...new Set(this.fullNodeList().map(node => node.planejamentoNome))]);
   readonly planejamentosLegenda = computed(() =>
     [...new Set(this.nodes().map(node => node.planejamentoNome))].map(nome => ({
       nome,
@@ -130,7 +157,15 @@ export class ObjetivosRelacionamentoGrafoComponent {
   private dragState: { nodeId: string; offsetX: number; offsetY: number } | null = null;
 
   constructor() {
-    this.applyDisplayFilters();
+    effect(
+      () => {
+        const source = this.fullNodeList();
+        untracked(() => this.applyDisplayFiltersFromSource(source));
+      },
+      { allowSignalWrites: true }
+    );
+    untracked(() => this.applyDisplayFiltersFromSource(this.fullNodeList()));
+    void this.carregar();
   }
 
   readonly rootNodeIds = computed<string[]>(() =>
@@ -201,6 +236,64 @@ export class ObjetivosRelacionamentoGrafoComponent {
 
     return { parents, children, superiores } as const;
   });
+
+  private static mapaEsforcoParaGrafo(data: Record<string, EsforcoObjetivoNodeApi>): ObjetivoGrafoDadosRow[] {
+    const rows: ObjetivoGrafoDadosRow[] = Object.values(data).map(node => ({
+      objetivo_id: node.objetivo_id,
+      objetivo_nome: node.objetivo_nome,
+      planejamento_nome: node.planejamento_nome,
+      planejamento_superior_id: null,
+      total_entregas: node.total_entregas ?? 0,
+      esforco_total_horas: node.esforco_total_horas ?? 0,
+      objetivo_pai_id: node.objetivo_pai_id,
+      objetivo_superior_id: node.objetivo_superior_id
+    }));
+
+    return PlanejamentoObjetivoGraficoPage.enriquecerPlanejamentoSuperior(rows);
+  }
+
+  private static enriquecerPlanejamentoSuperior(rows: ObjetivoGrafoDadosRow[]): ObjetivoGrafoDadosRow[] {
+    const nomes = [...new Set(rows.map(r => r.planejamento_nome))].sort();
+    if (nomes.length <= 1) {
+      return rows.map(r => ({ ...r, planejamento_superior_id: null }));
+    }
+    const raiz = nomes[0];
+    return rows.map(r => ({
+      ...r,
+      planejamento_superior_id: r.planejamento_nome === raiz ? null : '1'
+    }));
+  }
+
+  private async carregar(): Promise<void> {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id?.length) {
+      this.loadError.set('Identificador do objetivo não informado.');
+      this.graficoDados.set([]);
+      this.loading.set(false);
+      return;
+    }
+
+    this.loading.set(true);
+    this.loadError.set(null);
+    this.graficoDados.set(undefined);
+
+    try {
+      const map = await firstValueFrom(this.esforcoApi.getEsforcoTotal(id));
+      this.graficoDados.set(PlanejamentoObjetivoGraficoPage.mapaEsforcoParaGrafo(map));
+    } catch (err: unknown) {
+      let msg = 'Não foi possível carregar o gráfico.';
+      if (err instanceof HttpErrorResponse) {
+        const body = err.error as { error?: string } | undefined;
+        msg = (typeof body?.error === 'string' ? body.error : err.message) || msg;
+      } else if (err instanceof Error) {
+        msg = err.message;
+      }
+      this.loadError.set(msg);
+      this.graficoDados.set([]);
+    } finally {
+      this.loading.set(false);
+    }
+  }
 
   selectNode(nodeId: string) {
     this.selectedNodeId.set(nodeId);
@@ -349,11 +442,14 @@ export class ObjetivosRelacionamentoGrafoComponent {
   }
 
   planejamentoColor(nome: string): PlanejamentoColor {
-    return this.planejamentoColors.get(nome) ?? PLANEJAMENTO_PALETTE[0];
+    return this.planejamentoColorsMap().get(nome) ?? PLANEJAMENTO_PALETTE[0];
   }
 
   private getSvgRelativePosition(event: PointerEvent): { x: number; y: number } {
-    const svg = this.svgRef.nativeElement;
+    const svg = this.svgRef?.nativeElement;
+    if (!svg) {
+      return { x: 0, y: 0 };
+    }
     const rect = svg.getBoundingClientRect();
     const viewBox = this.viewBox();
     const scaleX = viewBox.width / rect.width;
@@ -411,8 +507,10 @@ export class ObjetivosRelacionamentoGrafoComponent {
     return nodes.map(node => ({ ...node }));
   }
 
-  private buildNodesFromDados(dados: ObjetivoDadosJson[]): ObjetivoNode[] {
-    const objetivos = dados.filter(item => item.objetivo_id?.length && item.objetivo_nome?.length && item.planejamento_nome?.length);
+  private buildNodesFromDados(dados: ObjetivoGrafoDadosRow[]): ObjetivoNode[] {
+    const objetivos = dados.filter(
+      item => item.objetivo_id?.length && item.objetivo_nome?.length && item.planejamento_nome?.length
+    );
     const selected = objetivos;
     const planejamentoEhPaiByNome = this.buildPlanejamentoParentFlag(selected);
 
@@ -452,7 +550,7 @@ export class ObjetivosRelacionamentoGrafoComponent {
     });
   }
 
-  private buildPlanejamentoParentFlag(objetivos: ObjetivoDadosJson[]): Map<string, boolean> {
+  private buildPlanejamentoParentFlag(objetivos: ObjetivoGrafoDadosRow[]): Map<string, boolean> {
     const planningSuperiorValues = new Map<string, Set<string | null>>();
 
     for (const objetivo of objetivos) {
@@ -484,32 +582,33 @@ export class ObjetivosRelacionamentoGrafoComponent {
   private buildPlanejamentoColors(nodes: ObjetivoNode[]): Map<string, PlanejamentoColor> {
     const planejamentoNomes = [...new Set(nodes.map(node => node.planejamentoNome))].sort();
 
-    return new Map(planejamentoNomes.map((nome, index) => [
-      nome,
-      PLANEJAMENTO_PALETTE[index % PLANEJAMENTO_PALETTE.length]
-    ]));
+    return new Map(
+      planejamentoNomes.map((nome, index) => [nome, PLANEJAMENTO_PALETTE[index % PLANEJAMENTO_PALETTE.length]])
+    );
   }
 
   private applyDisplayFilters() {
+    this.applyDisplayFiltersFromSource(this.fullNodeList());
+  }
+
+  private applyDisplayFiltersFromSource(allNodes: ObjetivoNode[]) {
     const planejamento = this.planejamentoFilter();
     const limit = this.maxNodes();
 
-    const filteredByPlanning = planejamento === 'ALL'
-      ? this.allNodes
-      : this.allNodes.filter(node => node.planejamentoNome === planejamento);
+    const filteredByPlanning =
+      planejamento === 'ALL' ? allNodes : allNodes.filter(node => node.planejamentoNome === planejamento);
 
     const limited = filteredByPlanning.slice(0, Math.max(1, limit));
     const ids = new Set(limited.map(node => node.id));
     const normalized = limited.map(node => ({
       ...node,
       parentId: node.parentId && ids.has(node.parentId) ? node.parentId : undefined,
-      objetivoSuperiorId: node.objetivoSuperiorId && ids.has(node.objetivoSuperiorId) ? node.objetivoSuperiorId : undefined
+      objetivoSuperiorId:
+        node.objetivoSuperiorId && ids.has(node.objetivoSuperiorId) ? node.objetivoSuperiorId : undefined
     }));
 
     this.nodes.set(this.cloneNodes(normalized));
     this.selectedNodeId.set(null);
     this.expandedNodeIds.set(new Set());
   }
-
-  
 }

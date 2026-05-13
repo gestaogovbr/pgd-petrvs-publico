@@ -60,7 +60,7 @@ Tipos TypeScript puros. Pode re-exportar modelos v1 como aliases para isolar a s
 - **Policy** (`.policy.ts`): funções puras de regra de negócio (podeArquivar? statusValido? quaisCamposEditaveis?). **Obrigatoriamente stateless**. Fácil de testar.
 
 ### `infra/`
-Adapters para o mundo externo. Todo `.client.ts` herda de `V2ApiClient` (ver §6). Tokens HTTP customizados e interceptors específicos do módulo moram em `infra/http/`.
+Adapters para o mundo externo. Todo `.client.ts` herda de `V2ApiClient` (ver §6). **Interceptors HTTP funcionais compartilhados** (`authTenantVersionInterceptor`, `errorInterceptor`) e **tokens** (`TENANT_ID`, `TRACE_ID`, `API_VERSION`) ficam em `src/app/v2/infra/http/` e são referenciados pelos `routes.ts` dos módulos v2 via `provideHttpClient(withInterceptors(...))`.
 
 ### `ui/`
 Pages (rotas) e componentes visuais. Consome **somente** `application/*` e `domain/*`. Nunca importa de `infra/` nem de services legados v1 diretamente (use a facade v2 correspondente).

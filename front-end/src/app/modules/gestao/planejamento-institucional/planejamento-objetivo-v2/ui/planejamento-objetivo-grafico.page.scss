@@ -1,3 +1,7 @@
+.grafico-wrap {
+  overflow-x: auto;
+}
+
 .graph-surface {
   width: 100%;
   min-height: 520px;
@@ -10,7 +14,6 @@
   cursor: pointer;
 }
 
-/* Conteúdo HTML dentro do foreignObject (texto com quebra por palavra, sem sobrepor linhas) */
 .node-card {
   box-sizing: border-box;
   width: 100%;

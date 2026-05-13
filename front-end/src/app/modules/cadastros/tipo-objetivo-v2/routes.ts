@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authTenantVersionInterceptor, errorInterceptor } from '../../gestao/plano-trabalho-v2/infra/http/interceptors';
+import { authTenantVersionInterceptor, errorInterceptor } from 'src/app/v2/infra/http/interceptors';
 import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
 import { TipoObjetivoApiClient } from './infra/tipo-objetivo-api.client';
 import { TipoObjetivoFacade } from './application/tipo-objetivo.facade';

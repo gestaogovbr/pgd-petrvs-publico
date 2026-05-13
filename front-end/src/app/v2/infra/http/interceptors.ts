@@ -6,6 +6,7 @@ import { GlobalsService } from 'src/app/services/globals.service';
 import { API_VERSION, TENANT_ID, TRACE_ID } from './tokens';
 import { catchError, throwError } from 'rxjs';
 
+/** Interceptor funcional v2: auth, URL absoluta, headers de entidade/unidade/versão. */
 export function authTenantVersionInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
   const auth = inject(AuthService);
   const gb = inject(GlobalsService);
@@ -28,6 +29,7 @@ export function authTenantVersionInterceptor(req: HttpRequest<unknown>, next: Ht
   return next(cloned);
 }
 
+/** Interceptor funcional v2: mensagens de erro para 400/422/500. */
 export function errorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
   const message = inject(MessageService);
   return next(req).pipe(
