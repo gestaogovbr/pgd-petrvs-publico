@@ -289,6 +289,33 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
     /**
      * Cenário: forca_trabalho parcial (50%)
      */
+    /**
+     * Cenário: descendente conectado via objetivo_superior_id (não objetivo_pai_id)
+     * Garante que o branch elseif (superiorId) é exercitado no buildMap.
+     */
+    test('acumula esforço de descendente vinculado via objetivo_superior_id', function () {
+        $base = criarEstruturaBase();
+
+        $objRaiz = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Raiz');
+        $objSub = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Subordinado', superiorId: $objRaiz->id);
+
+        vincularEntregaComEsforco($objRaiz, $base, $this->usuario, diasPlano: 7);
+        vincularEntregaComEsforco($objSub, $base, $this->usuario, diasPlano: 7);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objRaiz->id}/esforco-total");
+        $response->assertStatus(200);
+
+        $data = $response->json('data');
+
+        // Raiz: 40 + 40 = 80 (inclui subordinado)
+        expect($data[$objRaiz->id]['esforco_total_horas'])->toEqual(80);
+        expect($data[$objRaiz->id]['filhos'])->toBe([$objSub->id]);
+
+        // Subordinado: 40
+        expect($data[$objSub->id]['esforco_total_horas'])->toEqual(40);
+        expect($data[$objSub->id]['objetivo_superior'])->toBe(['id' => $objRaiz->id, 'nome' => 'Raiz']);
+    });
+
     test('calcula corretamente com forca_trabalho parcial', function () {
         $base = criarEstruturaBase();
 
