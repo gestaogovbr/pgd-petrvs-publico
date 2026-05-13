@@ -15,26 +15,29 @@ class EsforcoNodeDTO implements \JsonSerializable
         public readonly string $planejamento_nome,
         public readonly int $total_entregas,
         public readonly float $esforco_proprio,
-        public readonly float $esforco_total_horas,
-        public readonly array $filhos = [],
+        public float $esforco_total_horas,
+        public array $filhos = [],
         public readonly ?array $objetivo_pai = null,
         public readonly ?array $objetivo_superior = null,
     ) {}
 
-    public static function fromNode(array $node): self
+    public static function fromRow(object $row): self
     {
         return new self(
-            objetivo_id: $node['objetivo_id'],
-            objetivo_nome: $node['objetivo_nome'],
-            objetivo_pai_id: $node['objetivo_pai_id'] ?? null,
-            objetivo_superior_id: $node['objetivo_superior_id'] ?? null,
-            planejamento_nome: $node['planejamento_nome'],
-            total_entregas: $node['total_entregas'],
-            esforco_proprio: $node['esforco_proprio'],
-            esforco_total_horas: $node['esforco_total_horas'],
-            filhos: $node['filhos'] ?? [],
-            objetivo_pai: $node['objetivo_pai'] ?? null,
-            objetivo_superior: $node['objetivo_superior'] ?? null,
+            objetivo_id: $row->objetivo_id,
+            objetivo_nome: $row->objetivo_nome,
+            objetivo_pai_id: $row->objetivo_pai_id,
+            objetivo_superior_id: $row->objetivo_superior_id,
+            planejamento_nome: $row->planejamento_nome,
+            total_entregas: (int) $row->total_entregas,
+            esforco_proprio: (float) $row->esforco_proprio,
+            esforco_total_horas: (float) $row->esforco_proprio,
+            objetivo_pai: $row->objetivo_pai_id
+                ? ['id' => $row->objetivo_pai_id, 'nome' => $row->pai_nome]
+                : null,
+            objetivo_superior: $row->objetivo_superior_id
+                ? ['id' => $row->objetivo_superior_id, 'nome' => $row->sup_nome]
+                : null,
         );
     }
 

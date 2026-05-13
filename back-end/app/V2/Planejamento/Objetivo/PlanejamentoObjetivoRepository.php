@@ -18,14 +18,7 @@ class PlanejamentoObjetivoRepository
     /** @return array<string, EsforcoNodeDTO> */
     public function getEsforcoTotal(PlanejamentoObjetivo $objetivo): array
     {
-        $map = $this->buildMap($objetivo->id);
-
-        $result = [];
-        foreach ($map as $id => $node) {
-            $result[$id] = EsforcoNodeDTO::fromNode($node);
-        }
-
-        return $result;
+        return $this->buildMap($objetivo->id);
     }
 
     private function buildMap(string $raizId): array
@@ -81,36 +74,19 @@ class PlanejamentoObjetivoRepository
 
         $map = [];
         foreach ($rows as $row) {
-            $map[$row->objetivo_id] = [
-                'objetivo_id' => $row->objetivo_id,
-                'objetivo_nome' => $row->objetivo_nome,
-                'objetivo_pai_id' => $row->objetivo_pai_id,
-                'objetivo_superior_id' => $row->objetivo_superior_id,
-                'planejamento_nome' => $row->planejamento_nome,
-                'total_entregas' => (int) $row->total_entregas,
-                'esforco_proprio' => (float) $row->esforco_proprio,
-                'esforco_total_horas' => (float) $row->esforco_proprio,
-                'filhos' => [],
-                'objetivo_pai' => $row->objetivo_pai_id
-                    ? ['id' => $row->objetivo_pai_id, 'nome' => $row->pai_nome]
-                    : null,
-                'objetivo_superior' => $row->objetivo_superior_id
-                    ? ['id' => $row->objetivo_superior_id, 'nome' => $row->sup_nome]
-                    : null,
-            ];
+            $map[$row->objetivo_id] = EsforcoNodeDTO::fromRow($row);
         }
 
-        foreach ($map as $id => &$node) {
-            $parentId = $node['objetivo_pai_id'];
-            $superiorId = $node['objetivo_superior_id'];
+        foreach ($map as $id => $node) {
+            $parentId = $node->objetivo_pai_id;
+            $superiorId = $node->objetivo_superior_id;
 
             if ($parentId && isset($map[$parentId])) {
-                $map[$parentId]['filhos'][] = $id;
+                $map[$parentId]->filhos[] = $id;
             } elseif ($superiorId && isset($map[$superiorId])) {
-                $map[$superiorId]['filhos'][] = $id;
+                $map[$superiorId]->filhos[] = $id;
             }
         }
-        unset($node);
 
         $this->acumularHoras($raizId, $map);
 
@@ -119,11 +95,11 @@ class PlanejamentoObjetivoRepository
 
     private function acumularHoras(string $id, array &$map): float
     {
-        $total = $map[$id]['esforco_proprio'];
-        foreach ($map[$id]['filhos'] as $filhoId) {
+        $total = $map[$id]->esforco_proprio;
+        foreach ($map[$id]->filhos as $filhoId) {
             $total += $this->acumularHoras($filhoId, $map);
         }
-        $map[$id]['esforco_total_horas'] = round($total, 2);
+        $map[$id]->esforco_total_horas = round($total, 2);
         return $total;
     }
 }
