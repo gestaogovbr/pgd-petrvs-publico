@@ -188,9 +188,10 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         expect($data[$objFilho->id]['filhos'])->toBe([$objNeto->id]);
         expect($data[$objFilho->id]['objetivo_pai'])->toBe(['id' => $objPai->id, 'nome' => 'Pai']);
 
-        // Neto: 40, filhos = []
+        // Neto: 40h, has objetivo_pai pointing to Filho
         expect($data[$objNeto->id]['esforco_total_horas'])->toEqual(40);
         expect($data[$objNeto->id]['filhos'])->toBeEmpty();
+        expect($data[$objNeto->id]['objetivo_pai'])->toBe(['id' => $objFilho->id, 'nome' => 'Filho']);
     });
 
     /**

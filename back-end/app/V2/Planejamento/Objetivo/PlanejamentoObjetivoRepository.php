@@ -20,13 +20,6 @@ class PlanejamentoObjetivoRepository
     {
         $map = $this->buildMap($objetivo->id);
 
-        $map[$objetivo->id]['objetivo_pai'] = $objetivo->objetivo_pai_id
-            ? ['id' => $objetivo->objetivoPai->id, 'nome' => $objetivo->objetivoPai->nome]
-            : null;
-        $map[$objetivo->id]['objetivo_superior'] = $objetivo->objetivo_superior_id
-            ? ['id' => $objetivo->objetivoSuperior->id, 'nome' => $objetivo->objetivoSuperior->nome]
-            : null;
-
         $result = [];
         foreach ($map as $id => $node) {
             $result[$id] = EsforcoNodeDTO::fromNode($node);
@@ -53,6 +46,8 @@ class PlanejamentoObjetivoRepository
                 d.objetivo_pai_id,
                 d.objetivo_superior_id,
                 pla.nome AS planejamento_nome,
+                pai.nome AS pai_nome,
+                sup.nome AS sup_nome,
                 COUNT(DISTINCT pee.id) AS total_entregas,
                 ROUND(
                     COALESCE(
@@ -68,6 +63,8 @@ class PlanejamentoObjetivoRepository
             FROM descendentes d
             JOIN planejamentos_objetivos po ON po.id = d.id
             JOIN planejamentos pla ON pla.id = po.planejamento_id
+            LEFT JOIN planejamentos_objetivos pai ON pai.id = d.objetivo_pai_id AND pai.deleted_at IS NULL
+            LEFT JOIN planejamentos_objetivos sup ON sup.id = d.objetivo_superior_id AND sup.deleted_at IS NULL
             LEFT JOIN planos_entregas_entregas_objetivos peeo
                 ON peeo.planejamento_objetivo_id = d.id AND peeo.deleted_at IS NULL
             LEFT JOIN planos_entregas_entregas pee
@@ -78,7 +75,7 @@ class PlanejamentoObjetivoRepository
                 ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL AND pt.status IN ('CONCLUIDO')
             LEFT JOIN usuarios u
                 ON u.id = pt.usuario_id AND u.deleted_at IS NULL
-            GROUP BY d.id, d.nome, d.objetivo_pai_id, d.objetivo_superior_id, pla.nome
+            GROUP BY d.id, d.nome, d.objetivo_pai_id, d.objetivo_superior_id, pla.nome, pai.nome, sup.nome
             ORDER BY d.nome
         ", ['raiz_id' => $raizId]);
 
@@ -94,6 +91,12 @@ class PlanejamentoObjetivoRepository
                 'esforco_proprio' => (float) $row->esforco_proprio,
                 'esforco_total_horas' => (float) $row->esforco_proprio,
                 'filhos' => [],
+                'objetivo_pai' => $row->objetivo_pai_id
+                    ? ['id' => $row->objetivo_pai_id, 'nome' => $row->pai_nome]
+                    : null,
+                'objetivo_superior' => $row->objetivo_superior_id
+                    ? ['id' => $row->objetivo_superior_id, 'nome' => $row->sup_nome]
+                    : null,
             ];
         }
 
