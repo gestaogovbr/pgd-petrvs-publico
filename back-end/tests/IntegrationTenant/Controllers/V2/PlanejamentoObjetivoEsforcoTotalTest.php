@@ -335,6 +335,79 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         // Filho: 20
         expect($data[$objFilho->id]['esforco_total_horas'])->toEqual(20);
     });
+
+    test('segunda chamada retorna do cache', function () {
+        $base = criarEstruturaBase();
+
+        $objPai = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Pai');
+        $objFilho = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Filho', paiId: $objPai->id);
+
+        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasPlano: 7);
+        vincularEntregaComEsforco($objFilho, $base, $this->usuario, diasPlano: 7);
+
+        // Primeira chamada — popula cache
+        $response1 = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objPai->id}/esforco-total");
+        $response1->assertStatus(200);
+
+        // Segunda chamada — deve vir do cache com mesmo resultado
+        $response2 = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objPai->id}/esforco-total");
+        $response2->assertStatus(200);
+
+        expect($response2->json('data'))->toEqual($response1->json('data'));
+
+        // Verifica que os nós estão no cache
+        expect(\Illuminate\Support\Facades\Cache::tags('esforco-total')->has("esforco-total:tree:{$objPai->id}"))->toBeTrue();
+        expect(\Illuminate\Support\Facades\Cache::tags('esforco-total')->has("esforco-total:node:{$objPai->id}"))->toBeTrue();
+        expect(\Illuminate\Support\Facades\Cache::tags('esforco-total')->has("esforco-total:node:{$objFilho->id}"))->toBeTrue();
+    });
+
+    test('não entra em loop com nó auto-referenciante (objetivo_pai_id = id)', function () {
+        $base = criarEstruturaBase();
+
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Self Parent');
+
+        // Forçar auto-referência direta
+        \Illuminate\Support\Facades\DB::table('planejamentos_objetivos')
+            ->where('id', $obj->id)
+            ->update(['objetivo_pai_id' => $obj->id]);
+
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 7);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/esforco-total");
+        $response->assertStatus(200);
+
+        $data = $response->json('data');
+        expect($data[$obj->id]['filhos'])->toBeEmpty();
+        expect($data[$obj->id]['esforco_total_horas'])->toEqual(40);
+    });
+
+    // NOTE: Ciclos (A→B→A) não são testáveis sem DB-level recursion limit.
+    // A proteção po.id != d.id cobre auto-referência.
+    // Ciclos indiretos devem ser prevenidos na validação de escrita (service/validator).
+
+    test('rebuild quando nó do cache é invalidado', function () {
+        $base = criarEstruturaBase();
+
+        $objPai = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Pai');
+        $objFilho = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Filho', paiId: $objPai->id);
+
+        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasPlano: 7);
+        vincularEntregaComEsforco($objFilho, $base, $this->usuario, diasPlano: 7);
+
+        // Popula cache
+        $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objPai->id}/esforco-total");
+
+        // Invalida um nó individual (simula invalidação parcial)
+        \Illuminate\Support\Facades\Cache::tags('esforco-total')->forget("esforco-total:node:{$objFilho->id}");
+
+        // Deve fazer rebuild e retornar dados corretos
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objPai->id}/esforco-total");
+        $response->assertStatus(200);
+
+        $data = $response->json('data');
+        expect($data[$objPai->id]['esforco_total_horas'])->toEqual(80);
+        expect($data[$objFilho->id]['esforco_total_horas'])->toEqual(40);
+    });
 });
 
 // ── Entregas ────────────────────────────────────────────────────────

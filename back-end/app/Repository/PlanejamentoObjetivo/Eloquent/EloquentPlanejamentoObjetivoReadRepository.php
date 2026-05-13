@@ -9,10 +9,21 @@ use App\Models\PlanoEntregaEntregaObjetivo;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
 use App\V2\Planejamento\Objetivo\DTOs\EntregasPorUnidadeDTO;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivoReadRepositoryContract
 {
+    private const CACHE_TTL_MINUTES = 10;
+    private const CACHE_TAG = 'esforco-total';
+
+    // TODO: Invalidar cache (Cache::tags('esforco-total')->flush()) nos seguintes eventos:
+    // - PlanoTrabalho: status muda para/de CONCLUIDO
+    // - PlanoTrabalhoEntrega: create/update/delete (altera forca_trabalho ou vínculo)
+    // - PlanoEntregaEntregaObjetivo: create/delete (altera quais entregas pertencem ao objetivo)
+    // - Usuario: cod_jornada alterado (afeta cálculo de horas)
+    // - PlanejamentoObjetivo: create/update/delete (altera hierarquia da árvore)
+
     public function find(string $id): ?PlanejamentoObjetivo
     {
         return PlanejamentoObjetivo::where('id', $id)->whereNull('deleted_at')->first();
@@ -21,7 +32,39 @@ class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivo
     /** @return array<string, EsforcoNodeDTO> */
     public function getEsforcoTotal(PlanejamentoObjetivo $objetivo): array
     {
-        return $this->buildMap($objetivo->id);
+        $treeKey = "esforco-total:tree:{$objetivo->id}";
+        $nodeIds = Cache::tags(self::CACHE_TAG)->get($treeKey);
+
+        if ($nodeIds) {
+            $map = [];
+            foreach ($nodeIds as $id) {
+                $node = Cache::tags(self::CACHE_TAG)->get("esforco-total:node:{$id}");
+                if (!$node) {
+                    // Cache parcialmente invalidado, rebuild
+                    return $this->buildAndCache($objetivo->id);
+                }
+                $map[$id] = $node;
+            }
+            return $map;
+        }
+
+        return $this->buildAndCache($objetivo->id);
+    }
+
+    private function buildAndCache(string $raizId): array
+    {
+        $map = $this->buildMap($raizId);
+        $ttl = now()->addMinutes(self::CACHE_TTL_MINUTES);
+
+        // Cache a lista de UUIDs da árvore
+        Cache::tags(self::CACHE_TAG)->put("esforco-total:tree:{$raizId}", array_keys($map), $ttl);
+
+        // Cache cada nó individualmente
+        foreach ($map as $id => $node) {
+            Cache::tags(self::CACHE_TAG)->put("esforco-total:node:{$id}", $node, $ttl);
+        }
+
+        return $map;
     }
 
     /** @return EntregasPorUnidadeDTO[] */
@@ -40,15 +83,16 @@ class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivo
 
     private function buildMap(string $raizId): array
     {
-        $rows = DB::select("
+        $rows = DB::select(<<<SQL
             WITH RECURSIVE descendentes AS (
-                SELECT id, nome, objetivo_pai_id, objetivo_superior_id, 0 AS nivel
+                SELECT id, nome, objetivo_pai_id, objetivo_superior_id
                 FROM planejamentos_objetivos WHERE id = :raiz_id AND deleted_at IS NULL
                 UNION ALL
-                SELECT po.id, po.nome, po.objetivo_pai_id, po.objetivo_superior_id, d.nivel + 1
+                SELECT po.id, po.nome, po.objetivo_pai_id, po.objetivo_superior_id
                 FROM planejamentos_objetivos po
-                INNER JOIN descendentes d ON po.objetivo_pai_id = d.id OR po.objetivo_superior_id = d.id
+                INNER JOIN descendentes d ON (po.objetivo_pai_id = d.id OR po.objetivo_superior_id = d.id)
                 WHERE po.deleted_at IS NULL
+                  AND po.id != d.id -- previne auto-referência; ciclos indiretos (A→B→A) devem ser prevenidos na validação de escrita
             )
             SELECT
                 d.id AS objetivo_id,
@@ -87,7 +131,7 @@ class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivo
                 ON u.id = pt.usuario_id AND u.deleted_at IS NULL
             GROUP BY d.id, d.nome, d.objetivo_pai_id, d.objetivo_superior_id, pla.nome, pai.nome, sup.nome
             ORDER BY d.nome
-        ", ['raiz_id' => $raizId]);
+        SQL, ['raiz_id' => $raizId]);
 
         $map = [];
         foreach ($rows as $row) {
@@ -98,9 +142,12 @@ class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivo
             $parentId = $node->objetivo_pai_id;
             $superiorId = $node->objetivo_superior_id;
 
-            if ($parentId && isset($map[$parentId])) {
+            // NOTE: prioriza objetivo_pai_id sobre objetivo_superior_id para evitar duplicação.
+            // Edge-case: se um nó tem pai E superior ambos presentes no mapa, ele só aparece
+            // como filho do pai. Avaliar se há cenários onde deveria aparecer em ambos.
+            if ($parentId && $parentId !== $id && isset($map[$parentId])) {
                 $map[$parentId]->filhos[] = $id;
-            } elseif ($superiorId && isset($map[$superiorId])) {
+            } elseif ($superiorId && $superiorId !== $id && isset($map[$superiorId])) {
                 $map[$superiorId]->filhos[] = $id;
             }
         }
