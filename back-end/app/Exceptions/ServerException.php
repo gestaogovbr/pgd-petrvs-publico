@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Exceptions\Contracts\IBaseException;
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 class ServerException extends Exception implements IBaseException
 {
@@ -33,6 +34,7 @@ class ServerException extends Exception implements IBaseException
         "ProgramaUpdate" => "Usuário não tem permissão para alterar regramentos",
         "ProgramaDestroy" => "Usuário não tem permissão para excluir regramentos",
         "RelatorioCapacidade" => "Usuário não tem permissão para abrir este Relatório",
+        "RelatorioEnvioParticipantes" => "Acesso negado ao relatório de envio de participantes.",
         "ValidateAvaliacao" => "Erro ao validar avaliacao",
         "ValidateRecursoAvaliacao" => "Erro ao validar o recurso da avaliação",
         "ValidateAtividade" => "Erro ao validar atividade",
@@ -67,7 +69,17 @@ class ServerException extends Exception implements IBaseException
         if(!empty($extra)) {
             $message[] = $extra;
         }
-        parent::__construct(implode($separator, $message));
+        $fullMessage = implode($separator, $message);
+        $httpCode = $this->httpStatusForExceptionCode($code);
+        parent::__construct($fullMessage, $httpCode);
+    }
+
+    private function httpStatusForExceptionCode(string $code): int
+    {
+        return match ($code) {
+            'RelatorioEnvioParticipantes' => Response::HTTP_FORBIDDEN,
+            default => 0,
+        };
     }
 
     private function getMessageException(string $code) : string

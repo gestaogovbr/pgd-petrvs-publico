@@ -1,6 +1,7 @@
 import { PlanoTrabalho as PlanoTrabalhoModel } from 'src/app/models/plano-trabalho.model';
 import { PlanoTrabalhoEntrega as PlanoTrabalhoEntregaModel } from 'src/app/models/plano-trabalho-entrega.model';
 import { PlanoTrabalhoConsolidacao as PlanoTrabalhoConsolidacaoModel } from 'src/app/models/plano-trabalho-consolidacao.model';
+import type { NormalizeQueryParamsInput } from 'src/app/v2/infra/normalize-query-params';
 
 export type PlanoTrabalhoId = string;
 export type PlanoTrabalho = PlanoTrabalhoModel;
@@ -17,20 +18,9 @@ export type PlanoTrabalhoCreatePayload = {
   justificativa_modalidade?: string | null;
 };
 
-export type Page<T> = {
-  items: T[];
-  total: number;
-  page: number;
-  perPage: number;
-  lastPage: number;
-};
+export type { Page } from 'src/app/v2/domain/pagination';
 
-export type QueryParams = {
-  page?: number;
-  pageSize?: number;
-  sort?: string;
-  orderBy?: string;
-  orderDir?: 'asc' | 'desc';
+export type QueryParams = Omit<NormalizeQueryParamsInput, 'filters'> & {
   filters?: Record<string, unknown>;
 };
 

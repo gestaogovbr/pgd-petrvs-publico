@@ -36,5 +36,5 @@ test('EnvioUsuarioService delega query ao repository', function () {
 
     $service = app(EnvioUsuarioService::class);
 
-    expect($service->queryForEnvioList($payload, $requestUser))->toBe($expected);
+    expect($service->query($payload, $requestUser))->toBe($expected);
 });

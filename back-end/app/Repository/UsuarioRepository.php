@@ -29,6 +29,11 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findById($id, $deleteTrashed);
     }
 
+    public function findByIdComAreasTrabalho(string|int $id): ?Usuario
+    {
+        return $this->readRepository->findByIdComAreasTrabalho($id);
+    }
+
     public function findByCpfOrEmail(string $cpf, ?string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario
     {
         return $this->readRepository->findByCpfOrEmail($cpf, $email, $exceptId, $withTrashed);
