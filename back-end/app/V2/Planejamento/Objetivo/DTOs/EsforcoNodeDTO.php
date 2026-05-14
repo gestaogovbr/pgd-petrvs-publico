@@ -21,13 +21,48 @@ class EsforcoNodeDTO implements \JsonSerializable
         public readonly string $planejamento_nome,
         public readonly int $total_entregas,
         public readonly float $esforco_proprio,
-        public readonly float $esforco_total_horas,
-        public readonly array $filhos = [],
-        public readonly array $filhos_pai = [],
-        public readonly array $filhos_superior = [],
+        public float $esforco_total_horas,
+        /** @var list<string> */
+        public array $filhos = [],
+        /** @var list<string> */
+        public array $filhos_pai = [],
+        /** @var list<string> */
+        public array $filhos_superior = [],
         public readonly ?array $objetivo_pai = null,
         public readonly ?array $objetivo_superior = null,
     ) {}
+
+    public static function fromRow(object $row): self
+    {
+        $paiId = isset($row->objetivo_pai_id) && $row->objetivo_pai_id !== null && $row->objetivo_pai_id !== ''
+            ? (string) $row->objetivo_pai_id
+            : null;
+        $supId = isset($row->objetivo_superior_id) && $row->objetivo_superior_id !== null && $row->objetivo_superior_id !== ''
+            ? (string) $row->objetivo_superior_id
+            : null;
+        $paiNom = isset($row->pai_nome) && $row->pai_nome !== null && $row->pai_nome !== ''
+            ? (string) $row->pai_nome
+            : null;
+        $supNom = isset($row->sup_nome) && $row->sup_nome !== null && $row->sup_nome !== ''
+            ? (string) $row->sup_nome
+            : null;
+
+        return new self(
+            objetivo_id: (string) $row->objetivo_id,
+            objetivo_nome: (string) $row->objetivo_nome,
+            objetivo_pai_id: $paiId,
+            objetivo_superior_id: $supId,
+            planejamento_nome: (string) $row->planejamento_nome,
+            total_entregas: (int) $row->total_entregas,
+            esforco_proprio: (float) $row->esforco_proprio,
+            esforco_total_horas: (float) $row->esforco_proprio,
+            filhos: [],
+            filhos_pai: [],
+            filhos_superior: [],
+            objetivo_pai: ($paiId !== null && $paiNom !== null) ? ['id' => $paiId, 'nome' => $paiNom] : null,
+            objetivo_superior: ($supId !== null && $supNom !== null) ? ['id' => $supId, 'nome' => $supNom] : null,
+        );
+    }
 
     /**
      * @param  array<string, mixed>  $node

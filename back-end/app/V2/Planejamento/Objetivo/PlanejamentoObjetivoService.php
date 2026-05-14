@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\Planejamento\Objetivo;
 
 use App\Exceptions\NotFoundException;
+use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregaPlanoItemDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregasListagemDTO;
@@ -189,7 +190,7 @@ class PlanejamentoObjetivoService
             return $computado[$id];
         }
         if (isset($pilha[$id])) {
-            return (float) $map[$id]['esforco_proprio'];
+            return 0.0;
         }
 
         $pilha[$id] = true;

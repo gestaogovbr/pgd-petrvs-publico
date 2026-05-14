@@ -152,6 +152,8 @@ function marcarNosComPrefixoCached(array $objetivos): void
                 esforco_proprio: $node->esforco_proprio,
                 esforco_total_horas: $node->esforco_total_horas,
                 filhos: $node->filhos,
+                filhos_pai: $node->filhos_pai,
+                filhos_superior: $node->filhos_superior,
                 objetivo_pai: $node->objetivo_pai,
                 objetivo_superior: $node->objetivo_superior,
             );

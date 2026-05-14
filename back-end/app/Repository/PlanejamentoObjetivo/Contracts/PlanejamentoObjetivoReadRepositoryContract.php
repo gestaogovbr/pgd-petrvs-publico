@@ -20,6 +20,29 @@ interface PlanejamentoObjetivoReadRepositoryContract
     /** @return array<string, EsforcoNodeDTO> */
     public function getEsforcoTotal(PlanejamentoObjetivo $objetivo): array;
 
+    /** @return list<string> */
+    public function coletarIdsFechamento(string $objetivoId): array;
+
+    /**
+     * Métricas de esforço e metadados por objetivo (uma linha por id).
+     *
+     * @param  list<string>  $ids
+     * @return list<\stdClass>
+     */
+    public function loadEsforcoPorIds(array $ids): array;
+
+    /**
+     * @param  list<string>  $ids
+     * @return array<string, string>
+     */
+    public function lookupNomes(array $ids): array;
+
+    /** @return list<\stdClass> */
+    public function listarEntregasPlanoEntregaPorObjetivoId(string $objetivoId): array;
+
+    /** @return list<\stdClass> */
+    public function listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId(string $objetivoId): array;
+
     /** @return EntregasPorUnidadeDTO[] */
     public function getEntregasAgrupadasPorUnidade(string $objetivoId): array;
 }
