@@ -6,27 +6,31 @@ namespace App\Repository\PlanejamentoObjetivo\Eloquent;
 
 use App\Models\PlanejamentoObjetivo;
 use App\Models\PlanoEntregaEntregaObjetivo;
+use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
 use App\V2\Planejamento\Objetivo\DTOs\EntregasPorUnidadeDTO;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
-class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivoReadRepositoryContract
+/**
+ * @extends AbstractEloquentReadRepository<PlanejamentoObjetivo>
+ *
+ * TODO: Invalidar cache (Cache::tags('esforco-total')->flush()) nos seguintes eventos:
+ * - PlanoTrabalho: status muda para/de CONCLUIDO
+ * - PlanoTrabalhoEntrega: create/update/delete (altera forca_trabalho ou vínculo)
+ * - PlanoEntregaEntregaObjetivo: create/delete (altera quais entregas pertencem ao objetivo)
+ * - Usuario: cod_jornada alterado (afeta cálculo de horas)
+ * - PlanejamentoObjetivo: create/update/delete (altera hierarquia da árvore)
+ */
+class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRepository implements PlanejamentoObjetivoReadRepositoryContract
 {
     private const CACHE_TTL_MINUTES = 10;
     private const CACHE_TAG = 'esforco-total';
 
-    // TODO: Invalidar cache (Cache::tags('esforco-total')->flush()) nos seguintes eventos:
-    // - PlanoTrabalho: status muda para/de CONCLUIDO
-    // - PlanoTrabalhoEntrega: create/update/delete (altera forca_trabalho ou vínculo)
-    // - PlanoEntregaEntregaObjetivo: create/delete (altera quais entregas pertencem ao objetivo)
-    // - Usuario: cod_jornada alterado (afeta cálculo de horas)
-    // - PlanejamentoObjetivo: create/update/delete (altera hierarquia da árvore)
-
-    public function find(string $id): ?PlanejamentoObjetivo
+    public function __construct(PlanejamentoObjetivo $model)
     {
-        return PlanejamentoObjetivo::where('id', $id)->whereNull('deleted_at')->first();
+        $this->model = $model;
     }
 
     /** @return array<string, EsforcoNodeDTO> */

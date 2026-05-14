@@ -7,13 +7,15 @@ namespace App\Repository\PlanejamentoObjetivo\Contracts;
 use App\Models\PlanejamentoObjetivo;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
 use App\V2\Planejamento\Objetivo\DTOs\EntregasPorUnidadeDTO;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @see \App\Repository\PlanejamentoObjetivo\Eloquent\EloquentPlanejamentoObjetivoReadRepository
  */
 interface PlanejamentoObjetivoReadRepositoryContract
 {
-    public function find(string $id): ?PlanejamentoObjetivo;
+    /** @return PlanejamentoObjetivo|null */
+    public function find(string|int $id): ?Model;
 
     /** @return array<string, EsforcoNodeDTO> */
     public function getEsforcoTotal(PlanejamentoObjetivo $objetivo): array;
