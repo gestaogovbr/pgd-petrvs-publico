@@ -50,7 +50,7 @@ const routes: Routes = [
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
-      title: 'Consulta de Envio',
+      title: 'Consulta de Envios à API PGD',
       modal: false
     }
   }

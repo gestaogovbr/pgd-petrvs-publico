@@ -42,16 +42,15 @@ export class AppShellV2Component implements OnInit {
   readonly perfilAberto  = signal(false);
   readonly menuAberto    = signal(false);
 
-  private readonly foldersAbertos = new Set<string>();
+  /** Nome da pasta de nível 1 aberta; só uma por vez (acordeão). */
+  private readonly pastaMenuAberta = signal<string | null>(null);
 
   isFolderAberto(name: string): boolean {
-    return this.foldersAbertos.has(name);
+    return this.pastaMenuAberta() === name;
   }
 
   toggleFolder(name: string): void {
-    this.foldersAbertos.has(name)
-      ? this.foldersAbertos.delete(name)
-      : this.foldersAbertos.add(name);
+    this.pastaMenuAberta.update((atual) => (atual === name ? null : name));
   }
 
   ngOnInit(): void {
@@ -84,6 +83,7 @@ export class AppShellV2Component implements OnInit {
 
   fecharMenu(): void {
     this.menuAberto.set(false);
+    this.pastaMenuAberta.set(null);
     // Devolve foco ao botão que abriu o menu
     requestAnimationFrame(() => this.menuTriggerRef?.nativeElement.focus());
   }
