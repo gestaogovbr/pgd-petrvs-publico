@@ -1,5 +1,1 @@
-import { HttpContextToken } from '@angular/common/http';
-
-export const TENANT_ID = new HttpContextToken<string | undefined>(() => undefined);
-export const TRACE_ID = new HttpContextToken<string | undefined>(() => undefined);
-export const API_VERSION = new HttpContextToken<string>(() => 'v2');
+export { TENANT_ID, TRACE_ID, API_VERSION } from 'src/app/v2/http/tokens';
