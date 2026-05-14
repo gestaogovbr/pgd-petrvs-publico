@@ -6,7 +6,7 @@
   <div class="row mt-4">
     <div class="col-6 col-sm-4 mb-3" *ngIf="auth.hasPermissionTo('MOD_ENVIO_USUARIO')">
       <app-button-dashboard
-        [title]="'Logs de Participantes'"
+        [title]="'Envios de Participantes'"
         iconClass="bi bi-people-fill"
         textColor="#1369f0"
         borderColor="#1369f0"
@@ -16,7 +16,7 @@
 
     <div class="col-6 col-sm-4 mb-3" *ngIf="auth.hasPermissionTo('MOD_ENVIO_PE')">
       <app-button-dashboard
-        [title]="'Logs de Planos de Entrega'"
+        [title]="'Envios de Planos de Entrega'"
         iconClass="bi bi-box-seam"
         textColor="#1369f0"
         borderColor="#1369f0"
@@ -26,7 +26,7 @@
 
     <div class="col-6 col-sm-4 mb-3" *ngIf="auth.hasPermissionTo('MOD_ENVIO_PT')">
       <app-button-dashboard
-        [title]="'Logs de Planos de Trabalho'"
+        [title]="'Envios de Planos de Trabalho'"
         iconClass="bi bi-clipboard2-check"
         textColor="#1369f0"
         borderColor="#1369f0"

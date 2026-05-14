@@ -170,17 +170,14 @@ export class AppComponent implements IAppComponent {
       LOGS_ERROS: { name: "Log dos Erros", permition: '', route: ['logs', 'error'], icon: this.entity.getIcon('Error') },
       LOGS_TRAFEGOS: { name: "Log do Tráfego", permition: '', route: ['logs', 'traffic'], icon: this.entity.getIcon('Traffic') },
       LOGS_SYSTEM: { name: "Logs do Sistema", permition: '', route: ['logs', 'system-logs'], icon: 'bi bi-file-earmark-text' },
-      IMPERSONATE: { name: "Personificar", permition: '', route: ['impersonate'], icon: this.entity.getIcon('Ferramentas') },
+      IMPERSONATE: { name: "Personificar", permition: 'MENU_DEV_ACESSO', route: ['impersonate'], icon: this.entity.getIcon('Ferramentas') },
       DEV_CPF_CONSULTA_SIAPE: { name: "Consulta CPF SIAPE", permition: '', route: ['consultas', 'cpf-siape'], icon: this.entity.getIcon('ConsultaCPFSIAPE') },
       DEV_UNIDADE_CONSULTA_SIAPE: { name: "Consulta Unidade SIAPE", permition: '', route: ['consultas', 'unidade-siape'], icon: this.entity.getIcon('ConsultaUnidadeSIAPE') },
       /* Envios */
       //ENVIO_LOGS: { name: "Log dos Envios", permition: '', route: ['logs', 'envios'], icon: 'bi-list-check' },
       //ENVIO_FORCAR: { name: "Forçar Envio", permition: '', route: ['envios', 'forcar'], icon: this.entity.getIcon('Envio') },
       //ENVIO_REINICIAR: { name: "Resetar Envios", permition: '', route: ['envios', 'reiniciar'], icon: 'bi-arrow-clockwise' },
-      ENVIO_CONSULTA: { name: "Consulta de Envio", permition: 'MOD_ENVIOS', route: ['envios'], icon: 'bi bi-inboxes' },
-      ENVIO_USUARIO: { name: "Logs de Participantes", permition: 'MOD_ENVIO_USUARIO', route: ['envios', 'participantes'], icon: 'bi bi-person' },
-      ENVIO_PLANO_ENTREGA: { name: "Logs de Planos de Entrega", permition: 'MOD_ENVIO_PE', route: ['envios', 'planos-entrega'], icon: 'bi bi-list-check' },
-      ENVIO_PLANO_TRABALHO: { name: "Logs de Planos de Trabalho", permition: 'MOD_ENVIO_PT', route: ['envios', 'planos-trabalho'], icon: 'bi bi-list-check' },
+      ENVIOS: { name: "Envios", permition: 'MOD_ENVIOS', route: ['envios'], icon: 'bi bi-inboxes' },
       /* SIAPE */
       BLACKLIST_SERVIDOR: { name: "CPFs indisponíveis", permition: '', route: ['siape', 'blacklist-servidor'], icon: 'bi bi-person-x' },
       BLACKLIST_UNIDADE: { name: "Unidades indisponíveis", permition: '', route: ['siape', 'blacklist-unidade'], icon: 'bi bi-building-dash' },
@@ -334,14 +331,7 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.LOGS_SYSTEM
       ]
     },
-    {
-      name: this.lex.translate("Ferramentas"),
-      permition: "MENU_DEV_ACESSO",
-      id: "navbarDropdownDevTestes",
-      menu: [
-        this.menuSchema.IMPERSONATE,
-      ]
-    },
+    Object.assign({}, this.menuSchema.IMPERSONATE),
     {
       name: this.lex.translate("SIAPE"),
       permition: "MENU_DEV_ACESSO",
@@ -353,17 +343,9 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.BLACKLIST_UNIDADE,
         this.menuSchema.ROTINAS_INTEGRACAO,
       ]
-    }, {
-      name: this.lex.translate("Envio API"),
-      permition: "MOD_ENVIOS",
-      id: "navbarDropdownDevApiPgd",
-      menu: [
-        this.menuSchema.ENVIO_CONSULTA,
-        this.menuSchema.ENVIO_USUARIO,
-        this.menuSchema.ENVIO_PLANO_ENTREGA,
-        this.menuSchema.ENVIO_PLANO_TRABALHO
-      ]
-    }];
+    },
+    Object.assign({}, this.menuSchema.ENVIOS)
+    ];
 
     this.menuContexto = [
       { key: "GESTAO", permition: "CTXT_GEST", icon: "bi bi-clipboard-data", name: this.lex.translate("PGD"), menu: this.moduloGestao },
