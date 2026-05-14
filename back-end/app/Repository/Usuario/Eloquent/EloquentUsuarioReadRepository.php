@@ -39,6 +39,17 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
+    public function findByIdComAreasTrabalho(string|int $id): ?Usuario
+    {
+        /** @var Usuario|null $usuario */
+        $usuario = $this->query()
+            ->whereKey($id)
+            ->with(['areasTrabalho.unidade'])
+            ->first();
+
+        return $usuario;
+    }
+
     public function findByCpfOrEmail(string $cpf, ?string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario
     {
         $cpf = UtilService::onlyNumbers(trim($cpf));
