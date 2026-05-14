@@ -26,4 +26,9 @@ class ProgramaRepository
     {
         return $this->readRepository->findAllNotasAvaliacao($tipoAvaliacaoId);
     }
+
+    public function isVigenteParaUnidade(string $programaId, string $unidadeId): bool
+    {
+        return $this->readRepository->isVigenteParaUnidade($programaId, $unidadeId);
+    }
 }

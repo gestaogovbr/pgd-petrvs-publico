@@ -79,4 +79,10 @@ class UnidadeRepository
     {
         return $this->readRepository->buscarPorNomeOuCodigoNaHierarquia($dto, $usuarioId);
     }
+
+    /** @return string[] IDs das unidades na linha ascendente (da raiz até a unidade informada) */
+    public function linhaAscendente(string $unidadeId): array
+    {
+        return $this->readRepository->linhaAscendente($unidadeId);
+    }
 }

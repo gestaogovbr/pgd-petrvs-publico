@@ -61,8 +61,9 @@ beforeEach(function () {
         'modalidade_pgd' => 'presencial',
     ]);
     $this->programa = Programa::factory()->create([
+        'unidade_id' => $this->unidade->id,
         'data_inicio' => '2024-01-01',
-        'data_fim' => '2025-12-31',
+        'data_fim' => '2027-12-31',
     ]);
     $this->modalidadePgd = 'presencial';
 
