@@ -333,7 +333,15 @@ export class AppComponent implements IAppComponent {
         this.menuSchema.LOGS_ERROS,
         this.menuSchema.LOGS_SYSTEM
       ]
-    },    
+    },
+    {
+      name: this.lex.translate("Ferramentas"),
+      permition: "MENU_DEV_ACESSO",
+      id: "navbarDropdownDevTestes",
+      menu: [
+        this.menuSchema.IMPERSONATE,
+      ]
+    },
     {
       name: this.lex.translate("SIAPE"),
       permition: "MENU_DEV_ACESSO",
