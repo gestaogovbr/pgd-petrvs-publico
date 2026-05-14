@@ -22,6 +22,9 @@ beforeEach(function () {
             Route::get('/api/__tests/v2/planejamento/objetivo/{id}/esforco-total', [PlanejamentoObjetivoController::class, 'esforcoTotal'])
                 ->whereUuid('id')
                 ->name('__tests.v2.objetivo.esforco-total');
+            Route::get('/api/__tests/v2/planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoController::class, 'entregas'])
+                ->whereUuid('id')
+                ->name('__tests.v2.objetivo.entregas');
         });
     }
 
@@ -155,14 +158,13 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
     });
 
     /**
-     * Cenário: árvore simples com acúmulo — resposta é map<uuid, node>
+     * Cenário: fechamento bidirecional incluindo Pai (ancestral), Filho (consultado) e Neto (descendente)
      *
-     *  obj-filho (40h) ← consultado
-     *   └── obj-neto (40h)
-     *
-     * obj-filho.filhos = [neto.id]
+     *  Pai (40h)
+     *   └── Filho (40h)  ← consultado
+     *        └── Neto (40h)
      */
-    test('acumula esforço recursivamente nos descendentes via objetivo_pai_id', function () {
+    test('inclui ascendentes e descendentes via objetivo_pai_id (fechamento bidirecional)', function () {
         $base = criarEstruturaBase();
 
         $objPai = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Pai');
@@ -178,25 +180,29 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
 
         $data = $response->json('data');
 
-        // Map has 2 entries: filho + neto
-        expect($data)->toHaveCount(2);
+        expect($data)->toHaveCount(3);
+        expect($data)->toHaveKey($objPai->id);
         expect($data)->toHaveKey($objFilho->id);
         expect($data)->toHaveKey($objNeto->id);
 
-        // Filho: 40 + 40 = 80, filhos = [neto.id]
+        expect($data[$objPai->id]['esforco_total_horas'])->toEqual(120);
+        expect($data[$objPai->id]['filhos_pai'])->toBe([$objFilho->id]);
+        expect($data[$objPai->id]['filhos_superior'])->toBeEmpty();
+        expect($data[$objPai->id]['objetivo_pai'])->toBeNull();
+
         expect($data[$objFilho->id]['esforco_total_horas'])->toEqual(80);
-        expect($data[$objFilho->id]['filhos'])->toBe([$objNeto->id]);
+        expect($data[$objFilho->id]['filhos_pai'])->toBe([$objNeto->id]);
         expect($data[$objFilho->id]['objetivo_pai'])->toBe(['id' => $objPai->id, 'nome' => 'Pai']);
 
-        // Neto: 40, filhos = []
         expect($data[$objNeto->id]['esforco_total_horas'])->toEqual(40);
-        expect($data[$objNeto->id]['filhos'])->toBeEmpty();
+        expect($data[$objNeto->id]['filhos_pai'])->toBeEmpty();
+        expect($data[$objNeto->id]['objetivo_pai'])->toBe(['id' => $objFilho->id, 'nome' => 'Filho']);
     });
 
     /**
-     * Cenário: objetivo com objetivo_superior_id
+     * Cenário: objetivo com objetivo_superior_id — superior também entra no fechamento
      */
-    test('retorna referência ao objetivo_superior quando existe', function () {
+    test('inclui o objetivo_superior no fechamento e o expõe em filhos_superior', function () {
         $base = criarEstruturaBase();
 
         $objSuperior = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Superior DTI');
@@ -211,16 +217,27 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
 
         $data = $response->json('data');
 
-        expect($data[$objDep->id]['objetivo_nome'])->toBe('Dep');
+        expect($data)->toHaveCount(3);
+        expect($data)->toHaveKey($objSuperior->id);
+        expect($data)->toHaveKey($objDep->id);
+        expect($data)->toHaveKey($objDepFilho->id);
+
+        expect($data[$objSuperior->id]['filhos_superior'])->toBe([$objDep->id]);
+        expect($data[$objSuperior->id]['filhos_pai'])->toBeEmpty();
+        expect($data[$objSuperior->id]['esforco_total_horas'])->toEqual(80);
+
         expect($data[$objDep->id]['esforco_total_horas'])->toEqual(80);
+        expect($data[$objDep->id]['filhos_pai'])->toBe([$objDepFilho->id]);
         expect($data[$objDep->id]['objetivo_superior'])->toBe(['id' => $objSuperior->id, 'nome' => 'Superior DTI']);
         expect($data[$objDep->id]['objetivo_pai'])->toBeNull();
+
+        expect($data[$objDepFilho->id]['objetivo_pai'])->toBe(['id' => $objDep->id, 'nome' => 'Dep']);
     });
 
     /**
-     * Cenário: objetivo com AMBOS pai e superior
+     * Cenário: filho com PAI e SUPERIOR aparece em ambas as listas de adjacência
      */
-    test('retorna referências a pai e superior quando ambos existem', function () {
+    test('separa filhos_pai e filhos_superior preservando a aresta dupla', function () {
         $base = criarEstruturaBase();
 
         $objSuperior = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Superior');
@@ -234,8 +251,45 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
 
         $data = $response->json('data');
 
+        expect($data)->toHaveKey($objPai->id);
+        expect($data)->toHaveKey($objSuperior->id);
+        expect($data)->toHaveKey($objAlvo->id);
+
+        expect($data[$objPai->id]['filhos_pai'])->toBe([$objAlvo->id]);
+        expect($data[$objPai->id]['filhos_superior'])->toBeEmpty();
+        expect($data[$objPai->id]['esforco_total_horas'])->toEqual(40);
+
+        expect($data[$objSuperior->id]['filhos_superior'])->toBe([$objAlvo->id]);
+        expect($data[$objSuperior->id]['filhos_pai'])->toBeEmpty();
+        expect($data[$objSuperior->id]['esforco_total_horas'])->toEqual(40);
+
         expect($data[$objAlvo->id]['objetivo_pai'])->toBe(['id' => $objPai->id, 'nome' => 'Pai']);
         expect($data[$objAlvo->id]['objetivo_superior'])->toBe(['id' => $objSuperior->id, 'nome' => 'Superior']);
+        expect($data[$objAlvo->id]['filhos'])->toBeEmpty();
+    });
+
+    /**
+     * Cenário: ciclo via objetivo_pai_id não trava nem infla o esforço total
+     */
+    test('protege contra ciclos em objetivo_pai_id', function () {
+        $base = criarEstruturaBase();
+
+        $objA = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'A');
+        $objB = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'B', paiId: $objA->id);
+        $objA->objetivo_pai_id = $objB->id;
+        $objA->save();
+
+        vincularEntregaComEsforco($objA, $base, $this->usuario, diasPlano: 7);
+        vincularEntregaComEsforco($objB, $base, $this->usuario, diasPlano: 7);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objA->id}/esforco-total");
+        $response->assertStatus(200);
+
+        $data = $response->json('data');
+
+        expect($data)->toHaveCount(2);
+        expect($data[$objA->id]['esforco_total_horas'])->toBeGreaterThanOrEqual(40.0);
+        expect($data[$objA->id]['esforco_total_horas'])->toBeLessThanOrEqual(80.0);
     });
 
     /**
@@ -303,5 +357,106 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         expect($data[$objPai->id]['esforco_total_horas'])->toEqual(60);
         // Filho: 20
         expect($data[$objFilho->id]['esforco_total_horas'])->toEqual(20);
+    });
+
+    /**
+     * Cenário: consulta partindo do neto inclui pai e avô (subida)
+     */
+    test('inclui ancestrais quando a consulta parte do neto', function () {
+        $base = criarEstruturaBase();
+
+        $objAvo = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Avô');
+        $objPai = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Pai', paiId: $objAvo->id);
+        $objNeto = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Neto', paiId: $objPai->id);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objNeto->id}/esforco-total");
+        $response->assertStatus(200);
+
+        $data = $response->json('data');
+
+        expect($data)->toHaveCount(3);
+        expect($data[$objNeto->id]['objetivo_pai'])->toBe(['id' => $objPai->id, 'nome' => 'Pai']);
+        expect($data[$objPai->id]['objetivo_pai'])->toBe(['id' => $objAvo->id, 'nome' => 'Avô']);
+        expect($data[$objAvo->id]['objetivo_pai'])->toBeNull();
+    });
+});
+
+describe('GET /api/v2/planejamento/objetivo/{id}/entregas', function () {
+
+    test('retorna 404 para objetivo inexistente', function () {
+        $this->getJson('/api/__tests/v2/planejamento/objetivo/' . Str::uuid()->toString() . '/entregas')
+            ->assertStatus(404);
+    });
+
+    test('retorna contagens zero quando não há vínculos', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Sem vínculos');
+
+        $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/entregas")
+            ->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.objetivo_id', $obj->id)
+            ->assertJsonPath('data.total_entregas', 0);
+    });
+
+    test('lista entrega do plano de entregas com progresso e esforço por unidade (PT concluído)', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Com PT concluído');
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 7, forcaTrabalho: 100.0);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/entregas");
+        $response->assertStatus(200)
+            ->assertJsonPath('data.total_entregas', 1);
+
+        $itens = $response->json('data.itens');
+        expect($itens)->toHaveCount(1);
+        expect($itens[0])->toHaveKeys(['progresso_esperado', 'progresso_realizado', 'homologado', 'esforco_horas_total']);
+        expect((float) $itens[0]['esforco_horas_total'])->toBeGreaterThan(0);
+
+        $porUnidade = $response->json('data.esforco_por_unidade');
+        expect($porUnidade)->toHaveCount(1);
+        expect((float) $porUnidade[0]['esforco_horas_total'])->toBeGreaterThan(0);
+    });
+
+    test('lista entrega do PE mesmo sem PT concluído, com esforço zero e sem totais por unidade', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Só PT ativo');
+
+        $planoEntregaEntrega = PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $base['planoEntrega']->id,
+            'entrega_id' => $base['entrega']->id,
+            'unidade_id' => $base['unidade']->id,
+        ]);
+
+        PlanoEntregaEntregaObjetivo::create([
+            'id' => Str::uuid()->toString(),
+            'planejamento_objetivo_id' => $obj->id,
+            'entrega_id' => $planoEntregaEntrega->id,
+        ]);
+
+        $planoTrabalho = PlanoTrabalho::factory()->ativo()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $base['unidade']->id,
+            'programa_id' => $base['programa']->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-01-07',
+        ]);
+
+        PlanoTrabalhoEntrega::factory()->create([
+            'plano_trabalho_id' => $planoTrabalho->id,
+            'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
+            'forca_trabalho' => 100,
+        ]);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/entregas");
+        $response->assertStatus(200)
+            ->assertJsonPath('data.total_entregas', 1);
+
+        $itens = $response->json('data.itens');
+        expect($itens)->toHaveCount(1);
+        expect((float) $itens[0]['esforco_horas_total'])->toEqual(0.0);
+
+        expect($response->json('data.esforco_por_unidade'))->toBe([]);
     });
 });

@@ -2,6 +2,7 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
@@ -13,6 +14,7 @@ import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { NavigateResult } from 'src/app/services/navigate.service';
 import { TipoObjetivoApiClient } from 'src/app/modules/cadastros/tipo-objetivo-v2/infra/tipo-objetivo-api.client';
+import { TipoObjetivo } from 'src/app/modules/cadastros/tipo-objetivo-v2/domain/types';
 import { firstValueFrom } from 'rxjs';
 
 
@@ -26,6 +28,9 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('planejamentoSuperiorNome', {static: false}) public planejamentoSuperiorNome?: InputTextComponent;
   @ViewChild('eixoTematico', {static: false}) public eixoTematico?: InputSearchComponent;
+  @ViewChild('tipoObjetivo', { static: false }) public tipoObjetivo?: InputSelectComponent;
+
+
 
   public planejamento?: Planejamento;
   public objetivos: LookupItem[] = [];
@@ -163,8 +168,16 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
   public saveData(form: IIndexable): Promise<NavigateResult> {
     return new Promise<NavigateResult>(async (resolve, reject) => {
-      const objetivo = Object.assign({eixo_tematico: this.eixoTematico?.selectedItem?.entity}, this.entity!);
-      resolve(new NavigateResult(this.util.fillForm(objetivo, this.form!.value)));
+      const objetivo = Object.assign({ eixo_tematico: this.eixoTematico?.selectedItem?.entity }, this.entity!);
+      const filled = this.util.fillForm(objetivo, this.form!.value) as PlanejamentoObjetivo;
+      const tipoId = filled.tipo_objetivo_id;
+      const tipoData = this.tipoObjetivo?.selectedItem?.data as TipoObjetivo | undefined;
+      if (tipoId && tipoData) {
+        filled.tipo_objetivo = tipoData;
+      } else {
+        filled.tipo_objetivo = undefined;
+      }
+      resolve(new NavigateResult(filled));
     });
   }
 
