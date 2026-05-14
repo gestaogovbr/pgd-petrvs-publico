@@ -164,7 +164,7 @@ Response:
 
 ```
 
-### Iteration v2
+### Iteration v2 - **This is how it's working now**
 
 For being more economic with the processing I intend to make it on demand.
 0. GET `/api/v2/planejamentos-objetivos/:uuid/esforco-total`
@@ -173,38 +173,56 @@ For being more economic with the processing I intend to make it on demand.
 2. On the front-end, we'll have the original objective's tree with branches to the name of the obetivo_pai and objetivo_superior (if they exist), they will have the name and a `more details` button. 
 3. Third: upon clicking the `more details` -> Step 0 with superior/pai's id and so on
 
-### Estratégia de Cache
 
-A resposta é um `map<uuid, EsforcoNodeDTO>` onde cada nó tem `filhos: string[]` (UUIDs). Duas estratégias possíveis:
+### `GET /api/v2/planejamento/objetivo/:uuid/entregas`
 
-#### Opção A — Cache por raiz (recomendada para v1)
+Retorna as entregas vinculadas ao objetivo, agrupadas por unidade.
 
-- **Chave**: `esforco-total:{objetivo_id}`
-- **Valor**: o map inteiro retornado para aquele UUID raiz
-- **TTL**: 10 min (configurável)
-- **Invalidação**:
-  - `PlanoTrabalho` muda status para/de `CONCLUIDO`
-  - CUD em `PlanoTrabalhoEntrega`
-  - CUD em `PlanoEntregaEntregaObjetivo`
-  - Qualquer um desses eventos → `Cache::forget("esforco-total:{objetivo_id}")` para os objetivos afetados
-  - Alternativa simples: `Cache::tags('esforco-total')->flush()` nos eventos acima
+Response:
 
-```php
-// No repository
-public function getEsforcoTotal(PlanejamentoObjetivo $objetivo): array
+```jsonc
 {
-    return Cache::tags('esforco-total')->remember(
-        "esforco-total:{$objetivo->id}",
-        now()->addMinutes(10),
-        fn() => $this->buildAndMapNodes($objetivo)
-    );
+  "success": true,
+  "data": [
+    {
+      "unidade_id": "a1b2c3d4-...",
+      "unidade_nome": "Departamento de TI",
+      "unidade_sigla": "DTI",
+      "entregas": [
+        {
+          "id": "e1f2g3h4-...",
+          "descricao_entrega": "Revisar KYC dos stakeholders",
+          "data_inicio": "2024-01-01 00:00:00",
+          "data_fim": "2024-06-30 00:00:00",
+          "progresso_esperado": "50.00",
+          "progresso_realizado": "30.00",
+          "homologado": true
+        }
+      ]
+    },
+    {
+      "unidade_id": "b2c3d4e5-...",
+      "unidade_nome": "Divisão de Desenvolvimento",
+      "unidade_sigla": "DivDev",
+      "entregas": [
+        {
+          "id": "m9n0o1p2-...",
+          "descricao_entrega": "Migrar APIs legado",
+          "data_inicio": "2024-02-01 00:00:00",
+          "data_fim": "2024-12-31 00:00:00",
+          "progresso_esperado": "75.00",
+          "progresso_realizado": "60.00",
+          "homologado": true
+        }
+      ]
+    }
+  ]
 }
 ```
 
-**Prós**: simples, uma linha de cache, cada request é self-contained.
-**Contras**: se o usuário clica "more details" num filho que já estava no cache do pai, re-executa a query para o filho como raiz.
+### Estratégia de Cache
 
-#### Opção B — Cache por nó individual (v2 futura)
+A resposta é um `map<uuid, EsforcoNodeDTO>` onde cada nó tem `filhos: string[]` (UUIDs). Duas estratégias possíveis:
 
 - **Chave**: `esforco-node:{objetivo_id}`
 - **Valor**: `{esforco_proprio, filhos: string[], objetivo_pai, objetivo_superior}`
@@ -213,11 +231,12 @@ public function getEsforcoTotal(PlanejamentoObjetivo $objetivo): array
   2. Se hit, percorrer `filhos` recursivamente buscando cada um no cache
   3. Se miss em qualquer nó, query apenas os nós faltantes
   4. Recomputar `esforco_total_horas` somando `esforco_proprio` dos descendentes
-- **Invalidação**: granular — ao mudar um plano de trabalho, invalida apenas os nós diretamente afetados + seus ancestrais
+- **Invalidação**: granular — ao mudar uma entrega, , invalida apenas os nós diretamente afetados + seus ancestrais
 
 **Prós**: evita re-queries para subárvores já visitadas; ideal para árvores grandes.
 **Contras**: complexidade de implementação; precisa de invalidação em cascata (ascendente).
+**Pergunta**: e a busca? E o query?
 
-#### Decisão
+### `/api/v2/planejamentos-objetivos/:uuid/entregas`
 
-Começar com **Opção A** (cache por raiz). Migrar para Opção B apenas se performance se tornar um problema com árvores muito profundas.
+Returns a list of `planos_entregas_entregas`, the entregas should be groupped by the unidade

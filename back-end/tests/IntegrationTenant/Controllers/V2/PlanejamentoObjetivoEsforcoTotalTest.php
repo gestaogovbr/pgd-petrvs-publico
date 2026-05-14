@@ -134,6 +134,33 @@ function vincularEntregaComEsforco(
 
 // ── Testes ──────────────────────────────────────────────────────────
 
+/**
+ * Helper: marca nós no cache com prefixo "cached-" no objetivo_nome
+ */
+function marcarNosComPrefixoCached(array $objetivos): void
+{
+    foreach ($objetivos as $o) {
+        $node = \Illuminate\Support\Facades\Cache::tags('esforco-total')->get("esforco-total:node:{$o->id}");
+        if ($node) {
+            $tagged = new \App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO(
+                objetivo_id: $node->objetivo_id,
+                objetivo_nome: "cached-{$node->objetivo_nome}",
+                objetivo_pai_id: $node->objetivo_pai_id,
+                objetivo_superior_id: $node->objetivo_superior_id,
+                planejamento_nome: $node->planejamento_nome,
+                total_entregas: $node->total_entregas,
+                esforco_proprio: $node->esforco_proprio,
+                esforco_total_horas: $node->esforco_total_horas,
+                filhos: $node->filhos,
+                objetivo_pai: $node->objetivo_pai,
+                objetivo_superior: $node->objetivo_superior,
+            );
+            \Illuminate\Support\Facades\Cache::tags('esforco-total')->put("esforco-total:node:{$o->id}", $tagged, now()->addMinutes(10));
+        }
+    }
+}
+
+
 describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
 
     test('retorna 404 para objetivo inexistente', function () {
@@ -339,6 +366,33 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
     /**
      * Cenário: forca_trabalho parcial (50%)
      */
+    /**
+     * Cenário: descendente conectado via objetivo_superior_id (não objetivo_pai_id)
+     * Garante que o branch elseif (superiorId) é exercitado no buildMap.
+     */
+    test('acumula esforço de descendente vinculado via objetivo_superior_id', function () {
+        $base = criarEstruturaBase();
+
+        $objRaiz = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Raiz');
+        $objSub = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Subordinado', superiorId: $objRaiz->id);
+
+        vincularEntregaComEsforco($objRaiz, $base, $this->usuario, diasPlano: 7);
+        vincularEntregaComEsforco($objSub, $base, $this->usuario, diasPlano: 7);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objRaiz->id}/esforco-total");
+        $response->assertStatus(200);
+
+        $data = $response->json('data');
+
+        // Raiz: 40 + 40 = 80 (inclui subordinado)
+        expect($data[$objRaiz->id]['esforco_total_horas'])->toEqual(80);
+        expect($data[$objRaiz->id]['filhos'])->toBe([$objSub->id]);
+
+        // Subordinado: 40
+        expect($data[$objSub->id]['esforco_total_horas'])->toEqual(40);
+        expect($data[$objSub->id]['objetivo_superior'])->toBe(['id' => $objRaiz->id, 'nome' => 'Raiz']);
+    });
+
     test('calcula corretamente com forca_trabalho parcial', function () {
         $base = criarEstruturaBase();
 
