@@ -63,13 +63,10 @@
                   @for (item of section.menu; track item?.name) {
                     @if (item && item !== '-' && hasPermission(item.permition)) {
                       <li>
-                        <a class="menu-item"
+                        <a class="menu-item menu-item-submenu"
                           [attr.tabindex]="menuAberto() ? 0 : -1"
                           (click)="navigate(item)"
                           (keydown)="onKeyActivate($event, navigate.bind(this, item))">
-                          @if (item.icon) {
-                            <span class="icon"><i [class]="item.icon" aria-hidden="true"></i></span>
-                          }
                           <span class="menu-text">{{ item.name }}</span>
                         </a>
                       </li>
