@@ -177,6 +177,7 @@ export class AppComponent implements IAppComponent {
       //ENVIO_LOGS: { name: "Log dos Envios", permition: '', route: ['logs', 'envios'], icon: 'bi-list-check' },
       //ENVIO_FORCAR: { name: "Forçar Envio", permition: '', route: ['envios', 'forcar'], icon: this.entity.getIcon('Envio') },
       //ENVIO_REINICIAR: { name: "Resetar Envios", permition: '', route: ['envios', 'reiniciar'], icon: 'bi-arrow-clockwise' },
+      ENVIO_CONSULTA: { name: "Consulta de Envio", permition: 'MOD_ENVIOS', route: ['envios'], icon: 'bi bi-inboxes' },
       ENVIO_USUARIO: { name: "Logs de Participantes", permition: 'MOD_ENVIO_USUARIO', route: ['envios', 'participantes'], icon: 'bi bi-person' },
       ENVIO_PLANO_ENTREGA: { name: "Logs de Planos de Entrega", permition: 'MOD_ENVIO_PE', route: ['envios', 'planos-entrega'], icon: 'bi bi-list-check' },
       ENVIO_PLANO_TRABALHO: { name: "Logs de Planos de Trabalho", permition: 'MOD_ENVIO_PT', route: ['envios', 'planos-trabalho'], icon: 'bi bi-list-check' },
@@ -349,6 +350,7 @@ export class AppComponent implements IAppComponent {
       permition: "MOD_ENVIOS",
       id: "navbarDropdownDevApiPgd",
       menu: [
+        this.menuSchema.ENVIO_CONSULTA,
         this.menuSchema.ENVIO_USUARIO,
         this.menuSchema.ENVIO_PLANO_ENTREGA,
         this.menuSchema.ENVIO_PLANO_TRABALHO

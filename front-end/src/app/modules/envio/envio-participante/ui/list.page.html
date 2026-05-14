@@ -1,0 +1,150 @@
+<div class="br-mainpanel">
+  <app-breadcrumb />
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">{{ lex.translate('Envios de Participantes') }}</h2>
+  </div>
+
+  <form [formGroup]="filters" class="mb-3">
+    <div class="br-card">
+      <div class="card-content">
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100">
+              <label>CPF</label>
+              <input type="text" maxlength="14" formControlName="cpf" placeholder="CPF..." />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-4">
+            <div class="br-input w-100">
+              <label>Nome</label>
+              <input type="text" formControlName="nome" placeholder="Nome..." />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <br-select
+              label="Status"
+              formControlName="status"
+              [options]="statusOptions()"
+              class="w-100">
+            </br-select>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100">
+              <label>Agendamento: início</label>
+              <input type="date" formControlName="agendamento_inicio" />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100">
+              <label>Agendamento: fim</label>
+              <input type="date" formControlName="agendamento_fim" />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100">
+              <label>Conclusão: início</label>
+              <input type="date" formControlName="conclusao_inicio" />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100">
+              <label>Conclusão: fim</label>
+              <input type="date" formControlName="conclusao_fim" />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100">
+              <label>Envio: início</label>
+              <input type="date" formControlName="envio_inicio" />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100">
+              <label>Envio: fim</label>
+              <input type="date" formControlName="envio_fim" />
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end mt-3">
+          <br-button emphasis="secondary" type="button" (click)="onConsultar()">
+            <i class="fas fa-search mr-1"></i>Consultar
+          </br-button>
+          <br-button emphasis="tertiary" type="button" (click)="limparFiltros()">
+            <i class="fas fa-times mr-1"></i>Limpar filtros
+          </br-button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  @if (facade.loading()) {
+  <div class="d-flex justify-content-center p-5">
+    <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+  </div>
+  }
+
+  @if (!facade.loading() && hasAnyFilter()) {
+  <p class="text-muted small mb-2" role="status">Total consultado: {{ facade.total() }}</p>
+  }
+
+  <div class="br-table">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">CPF</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Matrícula</th>
+            <th scope="col">Atualizado em</th>
+            <th scope="col">Agendamento em</th>
+            <th scope="col">Tentativa de envio</th>
+            <th scope="col">Conclusão</th>
+            <th scope="col">Envio bem sucedido</th>
+            <th scope="col">Log de envio</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of facade.items(); track row.id) {
+          <tr>
+            <td data-th="CPF">{{ row.cpf || '-' }}</td>
+            <td data-th="Nome">{{ row.nome || '-' }}</td>
+            <td data-th="Matrícula">{{ row.matricula || '-' }}</td>
+            <td data-th="Atualizado em">{{ row.updated_at | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+            <td data-th="Agendamento em">{{ row.data_agendamento_envio | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+            <td data-th="Tentativa de envio">
+              <span [class.text-strike]="hasTentativaBeforeAgendamento(row)">{{ row.data_tentativa_envio | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+            </td>
+            <td data-th="Conclusão">
+              <span [class.text-strike]="hasConclusaoBeforeAgendamento(row)">{{ row.data_conclusao_envio | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+            </td>
+            <td data-th="Envio bem sucedido">
+              <span [class.text-strike]="hasEnvioBeforeAgendamento(row)">{{ row.data_envio_api_pgd | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+            </td>
+            <td data-th="Log de envio">{{ row.log_envio || '-' }}</td>
+          </tr>
+          }
+          @if (facade.items().length === 0 && !facade.loading()) {
+          <tr>
+            <td colspan="9" class="text-center p-3">
+              @if (!hasAnyFilter()) {
+              Defina pelo menos um filtro e clique em Consultar.
+              } @else {
+              Nenhum envio de participante encontrado.
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <app-v2-pagination
+    class="mt-3 d-block"
+    [class.d-none]="!hasAnyFilter()"
+    [page]="facade.page()"
+    [lastPage]="facade.lastPage()"
+    [total]="facade.total()"
+    (pageChange)="onPageChange($event)" />
+</div>
