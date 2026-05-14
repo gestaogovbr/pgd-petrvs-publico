@@ -32,39 +32,51 @@ class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivo
     /** @return array<string, EsforcoNodeDTO> */
     public function getEsforcoTotal(PlanejamentoObjetivo $objetivo): array
     {
-        $treeKey = "esforco-total:tree:{$objetivo->id}";
-        $nodeIds = Cache::tags(self::CACHE_TAG)->get($treeKey);
+        $map = [];
+        $missingIds = [];
+        $this->loadEsforcoTotalFromCache($objetivo->id, $map, $missingIds);
 
-        if ($nodeIds) {
-            $map = [];
-            foreach ($nodeIds as $id) {
-                $node = Cache::tags(self::CACHE_TAG)->get("esforco-total:node:{$id}");
-                if (!$node) {
-                    // Cache parcialmente invalidado, rebuild
-                    return $this->buildAndCache($objetivo->id);
-                }
-                $map[$id] = $node;
-            }
+        if (empty($missingIds)) {
             return $map;
         }
 
-        return $this->buildAndCache($objetivo->id);
-    }
+        // Rebuild apenas as subtrees dos nós ausentes
+        $freshNodes = $this->buildMap($objetivo->id, $missingIds);
+        $map = array_merge($map, $freshNodes);
 
-    private function buildAndCache(string $raizId): array
-    {
-        $map = $this->buildMap($raizId);
+        // Re-acumular totais do root (ancestrais dos nós frescos estão com totais stale)
+        $this->acumularHoras($objetivo->id, $map);
+
+        // Cachear todos os nós (frescos + atualizados)
         $ttl = now()->addMinutes(self::CACHE_TTL_MINUTES);
-
-        // Cache a lista de UUIDs da árvore
-        Cache::tags(self::CACHE_TAG)->put("esforco-total:tree:{$raizId}", array_keys($map), $ttl);
-
-        // Cache cada nó individualmente
         foreach ($map as $id => $node) {
             Cache::tags(self::CACHE_TAG)->put("esforco-total:node:{$id}", $node, $ttl);
         }
 
         return $map;
+    }
+
+    /**
+     * Tenta montar o mapa a partir do cache, navegando via filhos.
+     * Coleta IDs dos nós ausentes em $missingIds.
+     */
+    private function loadEsforcoTotalFromCache(string $id, array &$map, array &$missingIds): void
+    {
+        if (isset($map[$id]) || in_array($id, $missingIds)) {
+            return;
+        }
+
+        $node = Cache::tags(self::CACHE_TAG)->get("esforco-total:node:{$id}");
+        if (!$node) {
+            $missingIds[] = $id;
+            return;
+        }
+
+        $map[$id] = $node;
+
+        foreach ($node->filhos as $filhoId) {
+            $this->loadEsforcoTotalFromCache($filhoId, $map, $missingIds);
+        }
     }
 
     /** @return EntregasPorUnidadeDTO[] */
@@ -81,12 +93,15 @@ class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivo
             ->all();
     }
 
-    private function buildMap(string $raizId): array
+    private function buildMap(string $raizId, array $seedIds = []): array
     {
+        $ids = empty($seedIds) ? [$raizId] : $seedIds;
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
         $rows = DB::select(<<<SQL
             WITH RECURSIVE descendentes AS (
                 SELECT id, nome, objetivo_pai_id, objetivo_superior_id
-                FROM planejamentos_objetivos WHERE id = :raiz_id AND deleted_at IS NULL
+                FROM planejamentos_objetivos WHERE id IN ({$placeholders}) AND deleted_at IS NULL
                 UNION ALL
                 SELECT po.id, po.nome, po.objetivo_pai_id, po.objetivo_superior_id
                 FROM planejamentos_objetivos po
@@ -131,7 +146,7 @@ class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivo
                 ON u.id = pt.usuario_id AND u.deleted_at IS NULL
             GROUP BY d.id, d.nome, d.objetivo_pai_id, d.objetivo_superior_id, pla.nome, pai.nome, sup.nome
             ORDER BY d.nome
-        SQL, ['raiz_id' => $raizId]);
+        SQL, $ids);
 
         $map = [];
         foreach ($rows as $row) {
@@ -151,8 +166,6 @@ class EloquentPlanejamentoObjetivoReadRepository implements PlanejamentoObjetivo
                 $map[$superiorId]->filhos[] = $id;
             }
         }
-
-        $this->acumularHoras($raizId, $map);
 
         return $map;
     }

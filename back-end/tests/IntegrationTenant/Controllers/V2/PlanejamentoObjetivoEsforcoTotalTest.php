@@ -134,6 +134,33 @@ function vincularEntregaComEsforco(
 
 // ── Testes ──────────────────────────────────────────────────────────
 
+/**
+ * Helper: marca nós no cache com prefixo "cached-" no objetivo_nome
+ */
+function marcarNosComPrefixoCached(array $objetivos): void
+{
+    foreach ($objetivos as $o) {
+        $node = \Illuminate\Support\Facades\Cache::tags('esforco-total')->get("esforco-total:node:{$o->id}");
+        if ($node) {
+            $tagged = new \App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO(
+                objetivo_id: $node->objetivo_id,
+                objetivo_nome: "cached-{$node->objetivo_nome}",
+                objetivo_pai_id: $node->objetivo_pai_id,
+                objetivo_superior_id: $node->objetivo_superior_id,
+                planejamento_nome: $node->planejamento_nome,
+                total_entregas: $node->total_entregas,
+                esforco_proprio: $node->esforco_proprio,
+                esforco_total_horas: $node->esforco_total_horas,
+                filhos: $node->filhos,
+                objetivo_pai: $node->objetivo_pai,
+                objetivo_superior: $node->objetivo_superior,
+            );
+            \Illuminate\Support\Facades\Cache::tags('esforco-total')->put("esforco-total:node:{$o->id}", $tagged, now()->addMinutes(10));
+        }
+    }
+}
+
+
 describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
 
     test('retorna 404 para objetivo inexistente', function () {
@@ -349,16 +376,16 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         $response1 = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objPai->id}/esforco-total");
         $response1->assertStatus(200);
 
-        // Segunda chamada — deve vir do cache com mesmo resultado
+        // Marcar nós no cache com prefixo "cached-"
+        marcarNosComPrefixoCached([$objPai, $objFilho]);
+
+        // Segunda chamada — todos devem vir do cache (com prefixo)
         $response2 = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objPai->id}/esforco-total");
         $response2->assertStatus(200);
 
-        expect($response2->json('data'))->toEqual($response1->json('data'));
-
-        // Verifica que os nós estão no cache
-        expect(\Illuminate\Support\Facades\Cache::tags('esforco-total')->has("esforco-total:tree:{$objPai->id}"))->toBeTrue();
-        expect(\Illuminate\Support\Facades\Cache::tags('esforco-total')->has("esforco-total:node:{$objPai->id}"))->toBeTrue();
-        expect(\Illuminate\Support\Facades\Cache::tags('esforco-total')->has("esforco-total:node:{$objFilho->id}"))->toBeTrue();
+        $data = $response2->json('data');
+        expect($data[$objPai->id]['objetivo_nome'])->toBe('cached-Pai');
+        expect($data[$objFilho->id]['objetivo_nome'])->toBe('cached-Filho');
     });
 
     test('não entra em loop com nó auto-referenciante (objetivo_pai_id = id)', function () {
@@ -385,28 +412,70 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
     // A proteção po.id != d.id cobre auto-referência.
     // Ciclos indiretos devem ser prevenidos na validação de escrita (service/validator).
 
-    test('rebuild quando nó do cache é invalidado', function () {
+    /**
+     * Árvore: 1(2(3,4), 5(6, 7(8,9,10)), 11, 12)
+     * Flush nós 2 e 7, 11 do cache → partial rebuild deve retornar mesmo resultado.
+     * Marca nós no cache com prefixo "cached-" para verificar origem.
+     */
+    test('rebuild parcial com nós intermediários ausentes retorna mesmo resultado', function () {
         $base = criarEstruturaBase();
 
-        $objPai = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Pai');
-        $objFilho = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Filho', paiId: $objPai->id);
+        $obj1 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '1');
+        $obj2 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '2', paiId: $obj1->id);
+        $obj3 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '3', paiId: $obj2->id);
+        $obj4 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '4', paiId: $obj2->id);
+        $obj5 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '5', paiId: $obj1->id);
+        $obj6 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '6', paiId: $obj5->id);
+        $obj7 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '7', paiId: $obj5->id);
+        $obj8 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '8', paiId: $obj7->id);
+        $obj9 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '9', paiId: $obj7->id);
+        $obj10 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '10', paiId: $obj7->id);
+        $obj11 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '11', paiId: $obj1->id);
+        $obj12 = criarObjetivo($base['planejamento']->id, $base['eixo']->id, '12', paiId: $obj1->id);
 
-        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasPlano: 7);
-        vincularEntregaComEsforco($objFilho, $base, $this->usuario, diasPlano: 7);
+        foreach ([$obj1, $obj2, $obj3, $obj4, $obj5, $obj6, $obj7, $obj8, $obj9, $obj10] as $obj) {
+            vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 7);
+        }
 
-        // Popula cache
-        $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objPai->id}/esforco-total");
+        // Primeira chamada — popula cache
+        $response1 = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj1->id}/esforco-total");
+        $response1->assertStatus(200);
+        $expected = $response1->json('data');
 
-        // Invalida um nó individual (simula invalidação parcial)
-        \Illuminate\Support\Facades\Cache::tags('esforco-total')->forget("esforco-total:node:{$objFilho->id}");
+        // Marcar nós no cache com prefixo "cached-" no nome (reconstruct pois é readonly)
+        $allIds = [$obj1, $obj2, $obj3, $obj4, $obj5, $obj6, $obj7, $obj8, $obj9, $obj10, $obj11, $obj12];
+        marcarNosComPrefixoCached($allIds);
 
-        // Deve fazer rebuild e retornar dados corretos
-        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objPai->id}/esforco-total");
-        $response->assertStatus(200);
+        // Flush nós 2 e 7 (intermediários)
+        \Illuminate\Support\Facades\Cache::tags('esforco-total')->forget("esforco-total:node:{$obj2->id}");
+        \Illuminate\Support\Facades\Cache::tags('esforco-total')->forget("esforco-total:node:{$obj7->id}");
+        \Illuminate\Support\Facades\Cache::tags('esforco-total')->forget("esforco-total:node:{$obj11->id}");
 
-        $data = $response->json('data');
-        expect($data[$objPai->id]['esforco_total_horas'])->toEqual(80);
-        expect($data[$objFilho->id]['esforco_total_horas'])->toEqual(40);
+        // Segunda chamada — partial rebuild
+        $response2 = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj1->id}/esforco-total");
+        $response2->assertStatus(200);
+        $actual = $response2->json('data');
+
+        // Nós que vieram do cache devem ter prefixo "cached-"
+        expect($actual[$obj1->id]['objetivo_nome'])->toBe('cached-1');   // cache hit
+        expect($actual[$obj5->id]['objetivo_nome'])->toBe('cached-5');   // cache hit
+        expect($actual[$obj6->id]['objetivo_nome'])->toBe('cached-6');   // cache hit
+        expect($actual[$obj12->id]['objetivo_nome'])->toBe('cached-12');   // cache hit
+
+        // Nós 2, 7, 11 foram rebuilt (sem prefixo) — vieram frescos do DB
+        expect($actual[$obj2->id]['objetivo_nome'])->toBe('2');          // rebuilt
+        expect($actual[$obj7->id]['objetivo_nome'])->toBe('7');          // rebuilt
+        expect($actual[$obj11->id]['objetivo_nome'])->toBe('11');          // rebuilt
+
+        // Filhos de nós rebuilt também são frescos (CTE descende deles)
+        expect($actual[$obj3->id]['objetivo_nome'])->toBe('3');          // rebuilt (filho de 2)
+        expect($actual[$obj4->id]['objetivo_nome'])->toBe('4');          // rebuilt (filho de 2)
+        expect($actual[$obj8->id]['objetivo_nome'])->toBe('8');          // rebuilt (filho de 7)
+        expect($actual[$obj9->id]['objetivo_nome'])->toBe('9');          // rebuilt (filho de 7)
+        expect($actual[$obj10->id]['objetivo_nome'])->toBe('10');        // rebuilt (filho de 7)
+
+        // Totais devem ser idênticos ao original (re-acumulados)
+        expect($actual[$obj1->id]['esforco_total_horas'])->toEqual($expected[$obj1->id]['esforco_total_horas']);
     });
 });
 
