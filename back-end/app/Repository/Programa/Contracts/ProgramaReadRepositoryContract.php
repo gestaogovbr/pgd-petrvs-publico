@@ -16,4 +16,6 @@ interface ProgramaReadRepositoryContract
     public function findById(string|int $id): ?Model;
 
     public function findAllNotasAvaliacao(string $tipoAvaliacaoId): Collection;
+
+    public function isVigenteParaUnidade(string $programaId, string $unidadeId): bool;
 }

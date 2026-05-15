@@ -9,6 +9,7 @@ use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -197,5 +198,24 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->first();
 
         return $unidade;
+    }
+
+    /** @return string[] IDs da raiz até a unidade informada */
+    public function linhaAscendente(string $unidadeId): array
+    {
+        $rows = DB::select(<<<SQL
+            WITH RECURSIVE ascendentes AS (
+                SELECT id, unidade_pai_id
+                FROM unidades WHERE id = ? AND deleted_at IS NULL
+                UNION ALL
+                SELECT u.id, u.unidade_pai_id
+                FROM unidades u
+                INNER JOIN ascendentes a ON u.id = a.unidade_pai_id
+                WHERE u.deleted_at IS NULL
+            )
+            SELECT id FROM ascendentes
+        SQL, [$unidadeId]);
+
+        return array_reverse(array_column($rows, 'id'));
     }
 }

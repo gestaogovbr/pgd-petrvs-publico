@@ -211,7 +211,7 @@ readonly filters: FormGroup<{
     const unidadeRegramento = String(raw.unidade_regramento ?? '').trim();
     if (unidadeRegramento.length) result['unidade_regramento'] = unidadeRegramento;
 
-    result['unidade_id'] = this.auth.unidade?.id;
+    //result['unidade_id'] = this.auth.unidade?.id;
 
     return result;
   }
