@@ -18,7 +18,13 @@ trait EnvioTrait
     public function agendarEnvio(Model $model, Carbon $dataAgendamento): void
     {
         $model->setAttribute('data_agendamento_envio', $dataAgendamento);
-        $model->saveQuietly();
+        $timestampsEnabled = $model->timestamps;
+        $model->timestamps = false;
+        try {
+            $model->saveQuietly();
+        } finally {
+            $model->timestamps = $timestampsEnabled;
+        }
     }
 
     /**
@@ -28,7 +34,13 @@ trait EnvioTrait
     {
         $data = Carbon::now();
         $model->setAttribute('data_tentativa_envio', $data);
-        $model->saveQuietly();
+        $timestampsEnabled = $model->timestamps;
+        $model->timestamps = false;
+        try {
+            $model->saveQuietly();
+        } finally {
+            $model->timestamps = $timestampsEnabled;
+        }
     }
 
     /**
@@ -39,7 +51,13 @@ trait EnvioTrait
         $data = Carbon::now();
         $model->setAttribute('data_envio_api_pgd', $data);
         $model->setAttribute('data_conclusao_envio', $data);
-        $model->saveQuietly();
+        $timestampsEnabled = $model->timestamps;
+        $model->timestamps = false;
+        try {
+            $model->saveQuietly();
+        } finally {
+            $model->timestamps = $timestampsEnabled;
+        }
         $this->registrarLog($model, 'Envio realizado com sucesso.');
     }
 
@@ -51,7 +69,13 @@ trait EnvioTrait
     {
         $data = Carbon::now();
         $model->setAttribute('data_tentativa_envio', $data);
-        $model->saveQuietly();
+        $timestampsEnabled = $model->timestamps;
+        $model->timestamps = false;
+        try {
+            $model->saveQuietly();
+        } finally {
+            $model->timestamps = $timestampsEnabled;
+        }
         $this->registrarLog($model, $mensagem);
     }
 
@@ -62,7 +86,13 @@ trait EnvioTrait
     {
         $data = Carbon::now();
         $model->setAttribute('data_conclusao_envio', $data);
-        $model->saveQuietly();
+        $timestampsEnabled = $model->timestamps;
+        $model->timestamps = false;
+        try {
+            $model->saveQuietly();
+        } finally {
+            $model->timestamps = $timestampsEnabled;
+        }
         $this->registrarLog($model, $mensagem);
     }
 
@@ -72,6 +102,12 @@ trait EnvioTrait
     public function registrarLog(Model $model, string $mensagem): void
     {
         $model->setAttribute('log_envio', $mensagem);
-        $model->saveQuietly();
+        $timestampsEnabled = $model->timestamps;
+        $model->timestamps = false;
+        try {
+            $model->saveQuietly();
+        } finally {
+            $model->timestamps = $timestampsEnabled;
+        }
     }
 }
