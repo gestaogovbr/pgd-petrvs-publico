@@ -1,3 +1,7 @@
+## 2.10.1 15/05/2026
+### Corrigido
+- Remove a obrigatoriedade do campo de e-mail dos usuário, uma vez que não há mais geração de e-mail fictícios para servidores sem e-mail funcional no SIAPE.
+
 ## 2.10.0 08/05/2026
 ### Adicionado
 - Adicionado relatório da Carga Individual SIAPE.
