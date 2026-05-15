@@ -1,7 +1,7 @@
 <div class="br-mainpanel">
   <app-breadcrumb />
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">{{ lex.translate('Envios de Planos de Trabalho') }}</h2>
+    <h2 class="mb-0">{{ lex.translate('Envios de Planos de Entrega') }}</h2>
   </div>
 
   <form [formGroup]="filters" class="mb-3">
@@ -14,7 +14,13 @@
               <input type="text" formControlName="numero" placeholder="Número..." />
             </div>
           </div>
-          <div class="col-12 col-sm-6 col-md-4">
+          <div class="col-12 col-sm-6 col-md-5">
+            <div class="br-input w-100">
+              <label>Nome</label>
+              <input type="text" formControlName="nome" placeholder="Nome..." />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-3">
             <input-search
               [size]="12"
               label="Unidade"
@@ -97,10 +103,11 @@
         <thead>
           <tr>
             <th scope="col">#ID</th>
+            <th scope="col">Nome</th>
             <th scope="col">Unidade</th>
             <th scope="col">Programa</th>
             <th scope="col">Vigência</th>
-            <th scope="col">Plano de trabalho alterado em</th>
+            <th scope="col">Plano de entrega alterado em</th>
             <th scope="col">Envio agendado em</th>
             <th scope="col">Tentativa de envio</th>
             <th scope="col">Envio concluído em</th>
@@ -112,6 +119,7 @@
           @for (row of facade.items(); track row.id) {
           <tr>
             <td data-th="#ID">#{{ row.numero }}</td>
+            <td data-th="Nome">{{ row.nome || '-' }}</td>
             <td data-th="Unidade">{{ row.unidade?.sigla || 'Não definida' }}</td>
             <td data-th="Programa">{{ row.programa?.nome || 'Não definido' }}</td>
             <td data-th="Vigência">
@@ -139,11 +147,11 @@
           }
           @if (facade.items().length === 0 && !facade.loading()) {
           <tr>
-            <td colspan="10" class="text-center p-3">
+            <td colspan="11" class="text-center p-3">
               @if (!hasAnyFilter()) {
               Defina pelo menos um filtro e clique em Consultar.
               } @else {
-              Nenhum envio de plano de trabalho encontrado.
+              Nenhum envio de plano de entrega encontrado.
               }
             </td>
           </tr>

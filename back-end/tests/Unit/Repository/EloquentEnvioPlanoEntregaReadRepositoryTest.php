@@ -106,4 +106,9 @@ test('query devolve count e rows conforme o builder', function (array $where, in
         0,
         collect(),
     ],
+    'isConcluido' => [
+        [['isConcluido', '==', true]],
+        0,
+        collect(),
+    ],
 ]);

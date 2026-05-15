@@ -174,6 +174,12 @@ class EloquentEnvioPlanoEntregaReadRepository implements EnvioPlanoEntregaReadRe
                                 ->orWhereColumn('pe.data_conclusao_envio', '<', 'pe.data_agendamento_envio');
                         });
                 });
+                continue;
+            }
+
+            if ($field === 'isConcluido' && in_array($operator, ['=', '=='], true) && ($value === true || $value === 1 || $value === '1')) {
+                $query->whereNotNull('pe.data_conclusao_envio');
+                continue;
             }
         }
     }
