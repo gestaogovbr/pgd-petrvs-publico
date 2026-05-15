@@ -31,11 +31,11 @@ test('ignora status Todos', function () {
 
 test('monta intervalos de data', function () {
     $dto = EnvioParticipanteIndexFiltersDTO::fromArray([
-        'agendamento_inicio' => '2025-01-01',
+        'alteracao_inicio' => '2025-01-01',
         'envio_fim' => '2025-12-31',
     ]);
     $where = $dto->toWhereArray();
 
-    expect($where)->toContain(['data_agendamento_envio_gte', '2025-01-01']);
+    expect($where)->toContain(['updated_at_gte', '2025-01-01']);
     expect($where)->toContain(['data_envio_api_pgd_lte', '2025-12-31']);
 });

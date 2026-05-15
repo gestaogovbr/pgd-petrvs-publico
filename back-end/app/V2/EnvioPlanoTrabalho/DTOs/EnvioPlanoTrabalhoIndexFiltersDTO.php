@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace App\V2\EnvioParticipante\DTOs;
+namespace App\V2\EnvioPlanoTrabalho\DTOs;
 
 /**
- * Filtros da listagem de envios de participante (API v2).
+ * Filtros da listagem de envios de plano de trabalho (API v2).
  *
- * @see \App\Repository\EnvioUsuario\Eloquent\EloquentEnvioUsuarioReadRepository
+ * @see \App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository
  */
-final class EnvioParticipanteIndexFiltersDTO
+final class EnvioPlanoTrabalhoIndexFiltersDTO
 {
     public function __construct(
-        public readonly ?string $cpf,
-        public readonly ?string $nome,
+        public readonly ?string $numero,
+        public readonly ?string $unidadeId,
         public readonly ?string $status,
         public readonly ?string $alteracaoInicio,
         public readonly ?string $alteracaoFim,
@@ -29,8 +29,8 @@ final class EnvioParticipanteIndexFiltersDTO
     public static function fromArray(array $filters): self
     {
         return new self(
-            cpf: self::trimmedStringOrNull($filters['cpf'] ?? null),
-            nome: self::trimmedStringOrNull($filters['nome'] ?? null),
+            numero: self::trimmedStringOrNull($filters['numero'] ?? null),
+            unidadeId: self::trimmedStringOrNull($filters['unidade_id'] ?? null),
             status: self::trimmedStringOrNull($filters['status'] ?? null),
             alteracaoInicio: self::dateStringOrNull($filters['alteracao_inicio'] ?? null),
             alteracaoFim: self::dateStringOrNull($filters['alteracao_fim'] ?? null),
@@ -42,7 +42,7 @@ final class EnvioParticipanteIndexFiltersDTO
     }
 
     /**
-     * Converte para o formato `where` esperado pelo repositório de envio de usuário.
+     * Converte para o formato `where` esperado pelo repositório de envio de plano de trabalho.
      *
      * @return array<int, array{0: string, 1: mixed}>
      */
@@ -50,12 +50,12 @@ final class EnvioParticipanteIndexFiltersDTO
     {
         $where = [];
 
-        if ($this->cpf !== null && $this->cpf !== '') {
-            $where[] = ['cpf', $this->cpf];
+        if ($this->numero !== null && $this->numero !== '') {
+            $where[] = ['numero', $this->numero];
         }
 
-        if ($this->nome !== null && $this->nome !== '') {
-            $where[] = ['nome', $this->nome];
+        if ($this->unidadeId !== null && $this->unidadeId !== '') {
+            $where[] = ['unidade_id', $this->unidadeId];
         }
 
         if ($this->status !== null && $this->status !== '' && $this->status !== 'Todos') {

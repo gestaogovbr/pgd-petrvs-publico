@@ -1,23 +1,25 @@
 export type { Page } from 'src/app/v2/domain/pagination';
 
-/** Linha retornada pela listagem de envios de participante (API v2). */
-export type EnvioParticipanteRow = {
+export type EnvioPlanoEntregaRow = {
   id: string;
-  cpf: string | null;
+  numero: number | string;
   nome: string | null;
-  matricula: string | null;
+  data_inicio: string | null;
+  data_fim: string | null;
   updated_at: string | null;
   data_agendamento_envio: string | null;
   data_tentativa_envio: string | null;
   data_conclusao_envio: string | null;
   data_envio_api_pgd: string | null;
   log_envio: string | null;
+  unidade: { id: string; sigla: string } | null;
+  programa: { id: string; nome: string } | null;
 };
 
-/** Filtros da listagem (enviados como `filters[chave]` na query da API). */
-export type EnvioParticipanteListFilters = {
-  cpf?: string;
+export type EnvioPlanoEntregaListFilters = {
+  numero?: string;
   nome?: string;
+  unidade_id?: string;
   status?: string;
   alteracao_inicio?: string;
   alteracao_fim?: string;
@@ -27,8 +29,7 @@ export type EnvioParticipanteListFilters = {
   envio_fim?: string;
 };
 
-/** Parâmetros da listagem (`page` + `filters` na query). */
-export type EnvioParticipanteQueryParams = {
+export type EnvioPlanoEntregaQueryParams = {
   page?: number;
-  filters?: EnvioParticipanteListFilters;
+  filters?: EnvioPlanoEntregaListFilters;
 };

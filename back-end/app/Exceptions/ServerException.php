@@ -35,6 +35,8 @@ class ServerException extends Exception implements IBaseException
         "ProgramaDestroy" => "Usuário não tem permissão para excluir regramentos",
         "RelatorioCapacidade" => "Usuário não tem permissão para abrir este Relatório",
         "RelatorioEnvioParticipantes" => "Acesso negado ao relatório de envio de participantes.",
+        "RelatorioEnvioPlanoTrabalho" => "Acesso negado ao relatório de envio de planos de trabalho.",
+        "RelatorioEnvioPlanoEntrega" => "Acesso negado ao relatório de envio de planos de entrega.",
         "ValidateAvaliacao" => "Erro ao validar avaliacao",
         "ValidateRecursoAvaliacao" => "Erro ao validar o recurso da avaliação",
         "ValidateAtividade" => "Erro ao validar atividade",
@@ -78,6 +80,8 @@ class ServerException extends Exception implements IBaseException
     {
         return match ($code) {
             'RelatorioEnvioParticipantes' => Response::HTTP_FORBIDDEN,
+            'RelatorioEnvioPlanoTrabalho' => Response::HTTP_FORBIDDEN,
+            'RelatorioEnvioPlanoEntrega' => Response::HTTP_FORBIDDEN,
             default => 0,
         };
     }
