@@ -36,34 +36,33 @@ class UsuarioAdminSeeder extends Seeder
       [
         'email' => 'gabriel.s.domingos@gestao.gov.br',
         'nome' => 'Gabriel Marcos da Silva Domingos',
-        'cpf' => '99775708094',
-        'matricula' => str_pad(rand(100000, 9999999), 7, '0', STR_PAD_LEFT),
-        'apelido' => 'Gabriel',
-        'perfil_id' => $perfilDevId,
-        'sexo' => 'MASCULINO',
-        'is_admin' => true,
-      ],
-      [
-        'email' => '3472974@petrvs.gov.br',
-        'nome' => 'Gabriel Marcos da Silva Domingos',
         'cpf' => '06737232167',
-        'matricula' => str_pad(rand(100000, 9999999), 7, '0', STR_PAD_LEFT),
+        'matricula' => '3472974',
         'apelido' => 'Gabriel',
         'perfil_id' => $perfilDevId,
         'sexo' => 'MASCULINO',
         'is_admin' => true,
       ],
-      
       [
         'email' => 'gabrieldnb7@gmail.com',
         'nome' => 'Gabriel Marcos da Silva Domingos',
-        'cpf' => '99775708095',
-        'matricula' => str_pad(rand(100000, 9999999), 7, '0', STR_PAD_LEFT),
+        'cpf' => '44239586003',
+        'matricula' => '4197644',
         'apelido' => 'Gabriel',
         'perfil_id' => $perfilDevId,
         'sexo' => 'MASCULINO',
         'is_admin' => true,
       ],
+      [
+        'email' => 'ana.vilela@gestao.gov.br',
+        'nome' => 'Ana Carolina Gontijo Vilela Dias',
+        'cpf' => '09445389166',
+        'matricula' => '3525660',
+        'apelido' => 'Ana',
+        'perfil_id' => $perfilDevId,
+        'sexo' => 'FEMININO',
+        'is_admin' => true,
+      ]
     ];
 
     foreach ($usuarios as $usuarioData) {
@@ -73,17 +72,18 @@ class UsuarioAdminSeeder extends Seeder
         ->first();
 
       if ($usuario) {
-        if (!$usuario->is_admin) {
-          $usuario->is_admin = true;
-          $usuario->updated_at = $this->timenow;
-          $usuario->save();
-        }
-        
+        $usuario->update([
+            'nome' => $usuarioData['nome'],
+            'cpf' => $usuarioData['cpf'],
+            'matricula' => $usuarioData['matricula'],
+            'is_admin' => true,
+        ]);
+
         // Verificar se já existe UnidadeIntegrante para este usuário
         $integranteExistente = UnidadeIntegrante::where('usuario_id', $usuario->id)
           ->where('unidade_id', $unidadePaiId)
           ->first();
-          
+
         if (!$integranteExistente) {
           $integrante = UnidadeIntegrante::create([
             'unidade_id' => $unidadePaiId,
@@ -110,7 +110,7 @@ class UsuarioAdminSeeder extends Seeder
       $usuario->is_admin = $usuarioData['is_admin'];
       $usuario->created_at = $this->timenow;
       $usuario->updated_at = $this->timenow;
-      
+
       $usuario->save();
 
       $integrante = UnidadeIntegrante::create([
