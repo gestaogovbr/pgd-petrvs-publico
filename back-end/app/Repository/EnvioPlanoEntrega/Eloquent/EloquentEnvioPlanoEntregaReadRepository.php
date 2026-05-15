@@ -125,6 +125,11 @@ class EloquentEnvioPlanoEntregaReadRepository implements EnvioPlanoEntregaReadRe
                 continue;
             }
 
+            if ($field === 'updated_at' && in_array($operator, ['>=', '<'], true)) {
+                $query->where('pe.updated_at', $normalizedOperator, $value);
+                continue;
+            }
+
             if ($field === 'data_conclusao_envio' && in_array($operator, ['>=', '<'], true)) {
                 $query->where('pe.data_conclusao_envio', $normalizedOperator, $value);
                 continue;

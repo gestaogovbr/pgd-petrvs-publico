@@ -93,4 +93,17 @@ test('query devolve count e rows conforme o builder', function (array $where, in
         0,
         collect(),
     ],
+    'updated_at_gte' => [
+        [['updated_at', '>=', '2026-03-01']],
+        0,
+        collect(),
+    ],
+    'updated_at_range' => [
+        [
+            ['updated_at', '>=', '2026-04-01'],
+            ['updated_at', '<', '2026-05-01'],
+        ],
+        0,
+        collect(),
+    ],
 ]);

@@ -40,8 +40,8 @@ export class EnvioPlanoEntregaListComponent extends PageListBase<PlanoEntrega, E
       nome: { default: '' },
       unidade_id: { default: null },
       status: { default: null },
-      agendamento_inicio: { default: null },
-      agendamento_fim: { default: null },
+      alteracao_inicio: { default: null },
+      alteracao_fim: { default: null },
       conclusao_inicio: { default: null },
       conclusao_fim: { default: null },
       envio_inicio: { default: null },
@@ -81,8 +81,8 @@ export class EnvioPlanoEntregaListComponent extends PageListBase<PlanoEntrega, E
       nome: '',
       unidade_id: null,
       status: null,
-      agendamento_inicio: null,
-      agendamento_fim: null,
+      alteracao_inicio: null,
+      alteracao_fim: null,
       conclusao_inicio: null,
       conclusao_fim: null,
       envio_inicio: null,
@@ -139,12 +139,12 @@ export class EnvioPlanoEntregaListComponent extends PageListBase<PlanoEntrega, E
       result.push(["envio_com_falha", "==", 1]);
     }
 
-    if (form.agendamento_inicio) {
-      result.push(["data_agendamento_envio", ">=", form.agendamento_inicio.toISOString().slice(0, 10)]);
+    if (form.alteracao_inicio) {
+      result.push(["updated_at", ">=", form.alteracao_inicio.toISOString().slice(0, 10)]);
     }
 
-    if (form.agendamento_fim) {
-      result.push(["data_agendamento_envio", "<", addDays(form.agendamento_fim, 1).toISOString().slice(0, 10)]);
+    if (form.alteracao_fim) {
+      result.push(["updated_at", "<", addDays(form.alteracao_fim, 1).toISOString().slice(0, 10)]);
     }
 
     if (form.conclusao_inicio) {
