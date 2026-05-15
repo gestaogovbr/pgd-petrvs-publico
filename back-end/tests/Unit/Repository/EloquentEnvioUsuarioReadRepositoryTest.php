@@ -93,6 +93,16 @@ test('query devolve count e rows conforme o builder', function (array $where, in
         0,
         collect(),
     ],
+    'updated_at_gte' => [
+        [['updated_at_gte', '2026-03-01']],
+        0,
+        collect(),
+    ],
+    'updated_at_lte' => [
+        [['updated_at_lte', '2026-04-30']],
+        0,
+        collect(),
+    ],
     'isNaoEnviado' => [
         [['isNaoEnviado', true]],
         0,

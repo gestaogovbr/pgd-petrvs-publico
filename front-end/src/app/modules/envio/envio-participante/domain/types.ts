@@ -19,8 +19,8 @@ export type EnvioParticipanteListFilters = {
   cpf?: string;
   nome?: string;
   status?: string;
-  agendamento_inicio?: string;
-  agendamento_fim?: string;
+  alteracao_inicio?: string;
+  alteracao_fim?: string;
   conclusao_inicio?: string;
   conclusao_fim?: string;
   envio_inicio?: string;

@@ -42,8 +42,8 @@ export class EnvioParticipanteListPage implements OnInit {
     cpf: FormControl<string>;
     nome: FormControl<string>;
     status: FormControl<string>;
-    agendamento_inicio: FormControl<string | null>;
-    agendamento_fim: FormControl<string | null>;
+    alteracao_inicio: FormControl<string | null>;
+    alteracao_fim: FormControl<string | null>;
     conclusao_inicio: FormControl<string | null>;
     conclusao_fim: FormControl<string | null>;
     envio_inicio: FormControl<string | null>;
@@ -52,8 +52,8 @@ export class EnvioParticipanteListPage implements OnInit {
     cpf: this.fb.nonNullable.control(''),
     nome: this.fb.nonNullable.control(''),
     status: this.fb.nonNullable.control(this.statusTodos),
-    agendamento_inicio: this.fb.control<string | null>(null),
-    agendamento_fim: this.fb.control<string | null>(null),
+    alteracao_inicio: this.fb.control<string | null>(null),
+    alteracao_fim: this.fb.control<string | null>(null),
     conclusao_inicio: this.fb.control<string | null>(null),
     conclusao_fim: this.fb.control<string | null>(null),
     envio_inicio: this.fb.control<string | null>(null),
@@ -86,8 +86,8 @@ export class EnvioParticipanteListPage implements OnInit {
       cpf: '',
       nome: '',
       status: this.statusTodos,
-      agendamento_inicio: null,
-      agendamento_fim: null,
+      alteracao_inicio: null,
+      alteracao_fim: null,
       conclusao_inicio: null,
       conclusao_fim: null,
       envio_inicio: null,
@@ -149,8 +149,8 @@ export class EnvioParticipanteListPage implements OnInit {
     if (nome.length) out.nome = nome;
     const status = String(raw.status ?? '').trim();
     if (status.length && status !== this.statusTodos) out.status = status;
-    if (raw.agendamento_inicio) out.agendamento_inicio = raw.agendamento_inicio;
-    if (raw.agendamento_fim) out.agendamento_fim = raw.agendamento_fim;
+    if (raw.alteracao_inicio) out.alteracao_inicio = raw.alteracao_inicio;
+    if (raw.alteracao_fim) out.alteracao_fim = raw.alteracao_fim;
     if (raw.conclusao_inicio) out.conclusao_inicio = raw.conclusao_inicio;
     if (raw.conclusao_fim) out.conclusao_fim = raw.conclusao_fim;
     if (raw.envio_inicio) out.envio_inicio = raw.envio_inicio;

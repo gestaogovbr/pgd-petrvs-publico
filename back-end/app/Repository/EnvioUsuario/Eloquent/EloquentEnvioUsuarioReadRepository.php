@@ -113,6 +113,21 @@ class EloquentEnvioUsuarioReadRepository implements EnvioUsuarioReadRepositoryCo
             }
         }
 
+        if (($value = $this->getFiltro($where, 'updated_at_gte')) !== null) {
+            $value = (string) $value;
+            if ($value !== '') {
+                $query->where('u.updated_at', '>=', $value);
+            }
+        }
+
+        if (($value = $this->getFiltro($where, 'updated_at_lte')) !== null) {
+            $value = trim((string) $value);
+            if ($value !== '') {
+                $fimAjustado = Carbon::parse($value)->addDay()->format('Y-m-d');
+                $query->where('u.updated_at', '<', $fimAjustado);
+            }
+        }
+
         if (($value = $this->getFiltro($where, 'data_conclusao_envio_gte')) !== null) {
             $value = (string) $value;
             if ($value !== '') {

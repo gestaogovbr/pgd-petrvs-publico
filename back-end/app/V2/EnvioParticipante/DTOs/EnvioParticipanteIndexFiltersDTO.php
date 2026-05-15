@@ -15,8 +15,8 @@ final class EnvioParticipanteIndexFiltersDTO
         public readonly ?string $cpf,
         public readonly ?string $nome,
         public readonly ?string $status,
-        public readonly ?string $agendamentoInicio,
-        public readonly ?string $agendamentoFim,
+        public readonly ?string $alteracaoInicio,
+        public readonly ?string $alteracaoFim,
         public readonly ?string $conclusaoInicio,
         public readonly ?string $conclusaoFim,
         public readonly ?string $envioInicio,
@@ -32,8 +32,8 @@ final class EnvioParticipanteIndexFiltersDTO
             cpf: self::trimmedStringOrNull($filters['cpf'] ?? null),
             nome: self::trimmedStringOrNull($filters['nome'] ?? null),
             status: self::trimmedStringOrNull($filters['status'] ?? null),
-            agendamentoInicio: self::dateStringOrNull($filters['agendamento_inicio'] ?? null),
-            agendamentoFim: self::dateStringOrNull($filters['agendamento_fim'] ?? null),
+            alteracaoInicio: self::dateStringOrNull($filters['alteracao_inicio'] ?? null),
+            alteracaoFim: self::dateStringOrNull($filters['alteracao_fim'] ?? null),
             conclusaoInicio: self::dateStringOrNull($filters['conclusao_inicio'] ?? null),
             conclusaoFim: self::dateStringOrNull($filters['conclusao_fim'] ?? null),
             envioInicio: self::dateStringOrNull($filters['envio_inicio'] ?? null),
@@ -63,8 +63,8 @@ final class EnvioParticipanteIndexFiltersDTO
         }
 
         $pairs = [
-            [$this->agendamentoInicio, 'data_agendamento_envio_gte'],
-            [$this->agendamentoFim, 'data_agendamento_envio_lte'],
+            [$this->alteracaoInicio, 'updated_at_gte'],
+            [$this->alteracaoFim, 'updated_at_lte'],
             [$this->conclusaoInicio, 'data_conclusao_envio_gte'],
             [$this->conclusaoFim, 'data_conclusao_envio_lte'],
             [$this->envioInicio, 'data_envio_api_pgd_gte'],
