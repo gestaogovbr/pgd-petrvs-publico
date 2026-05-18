@@ -59,6 +59,22 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $result[0]->count > 0;
     }
 
+    public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        $result = $this->model->getConnection()->select("
+            SELECT COUNT(*) as count
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id = ?
+              AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO')
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", [$unidadeId, $usuarioId]);
+
+        return $result[0]->count > 0;
+    }
+
     /**
      * Helper to generate the raw where clause for areas de trabalho
      */

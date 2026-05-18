@@ -13,9 +13,10 @@ class PlanoTrabalhoEntregaStoreDTO
         public readonly ?string $orgao,
         public readonly float $forcaTrabalho,
         public readonly string $descricao,
+        public readonly ?string $entregaId = null,
     ) {}
 
-    public static function fromArray(array $data, string $planoTrabalhoId): self
+    public static function fromArray(array $data, string $planoTrabalhoId, ?string $entregaId = null): self
     {
         $origem = $data['origem'];
 
@@ -26,6 +27,7 @@ class PlanoTrabalhoEntregaStoreDTO
             orgao: $origem === 'OUTRO_ORGAO' ? $data['orgao'] : null,
             forcaTrabalho: (float) ($data['forca_trabalho'] ?? 0),
             descricao: $data['descricao'] ?? '',
+            entregaId: $entregaId,
         );
     }
 

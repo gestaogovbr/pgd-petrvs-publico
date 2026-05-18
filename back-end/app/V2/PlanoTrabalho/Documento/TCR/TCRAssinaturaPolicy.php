@@ -37,7 +37,7 @@ class TCRAssinaturaPolicy
     private function gestorHierarquicoAssinou(string $documentoId, PlanoTrabalho $plano): bool
     {
         $unidadePt = $this->unidadeRepository->findById($plano->unidade_id);
-        $isParticipanteGestorDaUnidade = $this->assinaturaRepository->gestorUnidadeAssinou($documentoId, $unidadePt->id);
+        $isParticipanteGestorDaUnidade = $this->unidadeRepository->isUsuarioGestorDaUnidade($unidadePt->id, $plano->usuario_id);
 
         if ($isParticipanteGestorDaUnidade && $unidadePt->unidade_pai_id === null) {
             return true;

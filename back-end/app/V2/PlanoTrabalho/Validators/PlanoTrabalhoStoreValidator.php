@@ -86,6 +86,10 @@ class PlanoTrabalhoStoreValidator
         $inicioPlano = Carbon::parse($dto->dataInicio);
         $fimPlano = Carbon::parse($dto->dataFim);
 
+        if ($inicioPlano->diffInDays($fimPlano) > 365) {
+            throw new ValidateException('O período do plano de trabalho não pode ser superior a 1 ano.');
+        }
+
         if ($inicioPlano < $programa->data_inicio || $fimPlano > $programa->data_fim) {
             throw new ValidateException('As datas do plano de trabalho estão fora do período de vigência do regramento.');
         }

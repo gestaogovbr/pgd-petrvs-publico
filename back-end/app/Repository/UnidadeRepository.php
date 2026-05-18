@@ -25,6 +25,11 @@ class UnidadeRepository
         return $this->readRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId);
     }
 
+    public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->readRepository->isUsuarioGestorDaUnidade($unidadeId, $usuarioId);
+    }
+
     public function getAreasTrabalhoWhereClause(string $usuarioId, bool $subordinadas, string $prefix = ""): string
     {
         return $this->readRepository->getAreasTrabalhoWhereClause($usuarioId, $subordinadas, $prefix);

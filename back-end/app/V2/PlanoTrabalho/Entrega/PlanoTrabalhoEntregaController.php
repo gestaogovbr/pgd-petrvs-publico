@@ -43,7 +43,7 @@ class PlanoTrabalhoEntregaController extends Controller
     {
         try {
             $data = PlanoTrabalhoEntregaRequestValidator::update($request);
-            $dto = PlanoTrabalhoEntregaStoreDTO::fromArray($data, $planoTrabalhoId);
+            $dto = PlanoTrabalhoEntregaStoreDTO::fromArray($data, $planoTrabalhoId, $entregaId);
             $entrega = $this->service->update($entregaId, $dto);
 
             return response()->json(['success' => true, 'data' => $entrega], Response::HTTP_OK);

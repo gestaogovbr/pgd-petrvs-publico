@@ -39,7 +39,7 @@ class PlanoTrabalhoEntregaStoreValidator
         }
 
         $entrega = $this->findEntregaOrFail($dto->planoEntregaEntregaId);
-        $this->validarUnicidade($dto->planoTrabalhoId, $entrega->id);
+        $this->validarUnicidade($dto->planoTrabalhoId, $entrega->id, $dto->entregaId);
         $this->validarIntersecaoPeriodo($plano, $entrega);
     }
 
@@ -82,9 +82,9 @@ class PlanoTrabalhoEntregaStoreValidator
         }
     }
 
-    private function validarUnicidade(string $planoTrabalhoId, string $planoEntregaEntregaId): void
+    private function validarUnicidade(string $planoTrabalhoId, string $planoEntregaEntregaId, ?string $entregaId = null): void
     {
-        if ($this->planoTrabalhoEntregaRepository->existeVinculo($planoTrabalhoId, $planoEntregaEntregaId)) {
+        if ($this->planoTrabalhoEntregaRepository->existeVinculo($planoTrabalhoId, $planoEntregaEntregaId, $entregaId)) {
             throw new ValidateException('Esta entrega já está vinculada a este Plano de Trabalho.');
         }
     }
