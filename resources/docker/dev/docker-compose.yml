@@ -1,6 +1,12 @@
+x-security-defaults: &security_defaults
+  security_opt:
+    - no-new-privileges:true
+    - seccomp:../security/seccomp-cve-2026-31431.json
+
 services:
 
   petrvs_db:
+    <<: *security_defaults
     image: mariadb:latest
     container_name: petrvs_db
     ports:
@@ -11,6 +17,7 @@ services:
       - ../../../back-end/storage/logs:/var/www/storage/logs
     environment:
       MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
+      MYSQL_DATABASE: petrvs
       MYSQL_USER: petrvs
       MYSQL_PASSWORD: PsEeTnRhVaS
       MYSQL_TCP_PORT: 3308
@@ -23,6 +30,7 @@ services:
       - appnet
 
   petrvs_base: &petrvs_base
+    <<: *security_defaults
     build:
       context: .
       dockerfile: Dockerfile-php
@@ -46,8 +54,8 @@ services:
     <<: *petrvs_base
     container_name: petrvs_php
     ports:
-      - "80:80"
-      - "443:443"
+      - "${PETRVS_HTTP_PORT:-80}:80"
+      - "${PETRVS_HTTPS_PORT:-443}:443"
     dns:
       - 8.8.8.8
       - 1.1.1.1
@@ -64,6 +72,7 @@ services:
       - appnet
 
   petrvs_rabbitmq:
+    <<: *security_defaults
     build:
       context: .
       dockerfile: Dockerfile-rabbitmq
@@ -77,10 +86,11 @@ services:
       - "5672:5672"    # AMQP
       - "15672:15672"  # UI de gerenciamento
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 20s
     environment:
       TZ: "America/Bahia"
     volumes:
@@ -133,6 +143,7 @@ services:
       - appnet
   
   petrvs_node:
+    <<: *security_defaults
     build:
       context: .
       dockerfile: Dockerfile-node
@@ -156,6 +167,7 @@ services:
       - appnet
 
   petrvs_redis:
+    <<: *security_defaults
     image: redis:alpine
     container_name: petrvs_redis
     command: redis-server --bind 0.0.0.0 --protected-mode no

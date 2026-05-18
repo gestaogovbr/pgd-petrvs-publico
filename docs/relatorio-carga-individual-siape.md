@@ -118,7 +118,7 @@ Green:
 Blue:
 
 - [x] Revisar nomes, indices e casts JSON.
-- [x] Atualizar `database/schema/tenant-schema.sql`.
+- [x] Atualizar `database/schema/test-tenant-schema.sql`.
 
 ### 3. Back-End TDD: Observer
 

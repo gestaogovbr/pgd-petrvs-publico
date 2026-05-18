@@ -11,7 +11,6 @@ use App\Models\DocumentoAssinatura;
 use App\Models\ModelBase;
 use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalhoConsolidacao;
-use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
 use App\Models\StatusJustificativa;

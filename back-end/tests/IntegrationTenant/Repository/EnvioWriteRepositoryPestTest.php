@@ -36,6 +36,25 @@ describe('UsuarioRepository — escrita de envio PGD', function () {
         expect($fresh->log_envio)->toBe(LOG_ENVIO_SUCESSO_PGD);
     });
 
+    it('registrarSucesso não altera updated_at do usuário', function () {
+        $usuario = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+            'log_envio' => 'erro anterior',
+            'data_envio_api_pgd' => null,
+            'data_conclusao_envio' => null,
+        ]);
+        $updatedAtAntes = $usuario->fresh()->updated_at;
+
+        Carbon::setTestNow('2035-01-15 10:00:00');
+        try {
+            $this->repository->registrarSucesso($usuario);
+        } finally {
+            Carbon::setTestNow();
+        }
+
+        expect($usuario->fresh()->updated_at->equalTo($updatedAtAntes))->toBeTrue();
+    });
+
     it('registrarInsucesso persiste data_tentativa_envio e log_envio', function () {
         $usuario = Usuario::factory()->create([
             'perfil_id' => $this->perfilId,
@@ -120,6 +139,24 @@ describe('PlanoEntregaRepository — escrita de envio PGD', function () {
         expect($fresh->log_envio)->toBe(LOG_ENVIO_SUCESSO_PGD);
     });
 
+    it('registrarSucesso não altera updated_at do plano de entrega', function () {
+        $plano = PlanoEntrega::factory()->create([
+            'log_envio' => 'pendente',
+            'data_envio_api_pgd' => null,
+            'data_conclusao_envio' => null,
+        ]);
+        $updatedAtAntes = $plano->fresh()->updated_at;
+
+        Carbon::setTestNow('2035-01-15 10:00:00');
+        try {
+            $this->repository->registrarSucesso($plano);
+        } finally {
+            Carbon::setTestNow();
+        }
+
+        expect($plano->fresh()->updated_at->equalTo($updatedAtAntes))->toBeTrue();
+    });
+
     it('registrarInsucesso persiste data_tentativa_envio e log_envio', function () {
         $plano = PlanoEntrega::factory()->create();
 
@@ -185,6 +222,24 @@ describe('PlanoTrabalhoRepository — escrita de envio PGD', function () {
         expect($fresh->data_envio_api_pgd)->not->toBeNull();
         expect($fresh->data_conclusao_envio)->not->toBeNull();
         expect($fresh->log_envio)->toBe(LOG_ENVIO_SUCESSO_PGD);
+    });
+
+    it('registrarSucesso não altera updated_at do plano de trabalho', function () {
+        $plano = PlanoTrabalho::factory()->ativo()->create([
+            'log_envio' => 'algo',
+            'data_envio_api_pgd' => null,
+            'data_conclusao_envio' => null,
+        ]);
+        $updatedAtAntes = $plano->fresh()->updated_at;
+
+        Carbon::setTestNow('2035-01-15 10:00:00');
+        try {
+            $this->repository->registrarSucesso($plano);
+        } finally {
+            Carbon::setTestNow();
+        }
+
+        expect($plano->fresh()->updated_at->equalTo($updatedAtAntes))->toBeTrue();
     });
 
     it('registrarInsucesso persiste data_tentativa_envio e log_envio', function () {

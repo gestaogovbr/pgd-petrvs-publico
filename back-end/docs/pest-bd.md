@@ -41,7 +41,7 @@ Todos os arquivos criados dentro de `tests/IntegrationTenant` usarão automatica
 
 **Características:**
 *   **Inicialização Automática**: Não é necessário chamar `$this->setupTenant()`. O `setUp` da classe base já cria o tenant e muda o contexto.
-*   **Schema Otimizado**: O schema do banco do tenant é carregado a partir de `database/schema/tenant-schema.sql` (gerado via `mysqldump`), o que é muito mais rápido do que rodar todas as migrations.
+*   **Schema Otimizado**: O schema do banco do tenant é carregado a partir de `database/schema/test-tenant-schema.sql` (gerado via `mysqldump`), o que é muito mais rápido do que rodar todas as migrations.
 *   **Isolamento**: Cada teste roda em uma transação no banco do tenant.
 
 **Exemplo:**
@@ -101,13 +101,15 @@ Para rodar os testes centrais:
 
 ## Manutenção do Schema do Tenant
 
-Como os testes de tenant usam um arquivo SQL estático (`database/schema/tenant-schema.sql`) para velocidade, **sempre que você criar uma nova migration que altere tabelas do tenant**, você deve regenerar esse arquivo.
+Como os testes de tenant usam um arquivo SQL estático (`database/schema/test-tenant-schema.sql`) para velocidade, **sempre que você criar uma nova migration que altere tabelas do tenant**, você deve regenerar esse arquivo.
 
 **Como regenerar o dump do schema do tenant:**
 
 1.  Garanta que suas migrations estão atualizadas.
 2.  Gere um banco temporário e exporte o schema (pode ser feito manualmente ou via script auxiliar se disponível).
-3.  O objetivo é ter um dump `no-data` das tabelas do tenant salvo em `back-end/database/schema/tenant-schema.sql`.
+3.  O objetivo é ter um dump `no-data` das tabelas do tenant salvo em `back-end/database/schema/test-tenant-schema.sql`.
+
+* Exemplo funcional: docker exec -it petrvs_db /usr/bin/mariadb-dump -u root -pPsEeTnRhVaS --no-data --routines --triggers petrvs_mgi > back-end/database/schema/tenant-schema.sql 
 
 *Nota: Atualmente, este processo pode exigir um fluxo manual de criar um tenant, rodar migrations e fazer o dump.*
 

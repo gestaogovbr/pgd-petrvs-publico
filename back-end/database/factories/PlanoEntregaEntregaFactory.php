@@ -15,15 +15,41 @@ class PlanoEntregaEntregaFactory extends Factory
     {
         return [
             'id' => $this->faker->uuid(),
-            'homologado' => 1,
-            'data_inicio' => '2024-01-01',
+            'plano_entrega_id' => PlanoEntrega::factory(),
+            'unidade_id' => fn (array $attributes) => PlanoEntrega::query()->findOrFail($attributes['plano_entrega_id'])->unidade_id,
+            'entrega_id' => Entrega::factory(),
+            'homologado' => false,
+            'data_inicio' => now(),
+            'data_fim' => null,
             'descricao' => $this->faker->sentence(),
-            'meta' => '{}',
+            'meta' => [],
+            'realizado' => null,
+            'destinatario' => null,
+            'progresso_esperado' => 0,
+            'progresso_realizado' => 0,
+            'entrega_pai_id' => null,
+            'etiquetas' => null,
+            'checklist' => null,
             'descricao_meta' => $this->faker->sentence(),
             'descricao_entrega' => $this->faker->sentence(),
-            'plano_entrega_id' => null,
-            'entrega_id' => null,
-            'unidade_id' => null,
         ];
+    }
+
+    public function forPlanoEntrega(PlanoEntrega $planoEntrega): static
+    {
+        return $this->state([
+            'plano_entrega_id' => $planoEntrega->id,
+            'unidade_id' => $planoEntrega->unidade_id,
+        ]);
+    }
+
+    public function forEntregaCatalogo(Entrega $entrega): static
+    {
+        return $this->state(['entrega_id' => $entrega->id]);
+    }
+
+    public function homologado(bool $value = true): static
+    {
+        return $this->state(['homologado' => $value]);
     }
 }

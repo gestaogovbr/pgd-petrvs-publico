@@ -32,7 +32,6 @@ use App\Http\Controllers\EntidadeController;
 use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\EnvioController;
 use App\Http\Controllers\EnvioItemController;
-use App\Http\Controllers\EnvioUsuarioController;
 use App\Http\Controllers\EnvioPlanoEntregaController;
 use App\Http\Controllers\EnvioPlanoTrabalhoController;
 use App\Http\Controllers\ErrorController;
@@ -184,9 +183,6 @@ Route::middleware('auth:sanctum')->prefix('Envio')->group(function () {
 Route::middleware('auth:sanctum')->prefix('EnvioItem')->group(function () {
   Route::post('query', [EnvioItemController::class, 'query']);
   Route::post('get-by-id', [EnvioItemController::class, 'getById']);
-});
-Route::middleware('auth:sanctum')->prefix('EnvioUsuario')->group(function () {
-  Route::post('query', [EnvioUsuarioController::class, 'query']);
 });
 Route::middleware('auth:sanctum')->prefix('EnvioPlanoEntrega')->group(function () {
   Route::post('query', [EnvioPlanoEntregaController::class, 'query']);
@@ -624,8 +620,15 @@ use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
 use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
 use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoObjetivoV2;
+use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
+use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
+use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
+    Route::get('envio-participante', [EnvioParticipanteQueryController::class, 'index']);
+    Route::get('envio-plano-trabalho', [EnvioPlanoTrabalhoQueryController::class, 'index']);
+    Route::get('envio-plano-entrega', [EnvioPlanoEntregaQueryController::class, 'index']);
+
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
     Route::get('tipos-motivos-afastamentos', [TipoMotivoAfastamentoV2::class, 'index']);
     Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);

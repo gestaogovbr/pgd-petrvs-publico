@@ -21,7 +21,7 @@ interface PlanoTrabalhoWriteRepositoryContract
     public function registrarConclusao(PlanoTrabalho $planoTrabalho, string $mensagem): void;
 
     public function registrarLog(PlanoTrabalho $planoTrabalho, string $mensagem): void;
-    
+
     /** @return PlanoTrabalho */
     public function create(array $attributes): Model;
 

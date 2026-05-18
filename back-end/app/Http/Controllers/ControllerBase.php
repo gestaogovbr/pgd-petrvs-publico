@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Contracts\IBaseException;
+use App\Support\AuthenticatedUsuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Usuario;
@@ -82,8 +83,7 @@ abstract class ControllerBase extends Controller
      * @return \App\Models\Usuario|null
      */
     public static function loggedUser(): ?\App\Models\Usuario {
-        /** @var \App\Models\Usuario|null */
-        return Auth::user();
+        return AuthenticatedUsuario::logged();
     }
 
     public function getPetrvsHeader(Request $request) {
@@ -139,7 +139,7 @@ abstract class ControllerBase extends Controller
     }
 
     public function getUsuario(Request $request) {
-        return !empty(self::loggedUser()) ? Usuario::where("id", self::loggedUser()?->id)->with("areasTrabalho.unidade")->first() : null;
+        return AuthenticatedUsuario::withAreasDeTrabalho();
     }
 
     /**

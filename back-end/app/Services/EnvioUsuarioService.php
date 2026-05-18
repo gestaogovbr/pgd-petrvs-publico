@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Usuario;
 use App\Repository\EnvioUsuarioRepository;
-use App\Services\ServiceBase;
 
 class EnvioUsuarioService
 {
@@ -15,7 +14,7 @@ class EnvioUsuarioService
         $this->envioUsuarioRepository = app(EnvioUsuarioRepository::class);
     }
 
-    public function queryForEnvioList(array $data, Usuario $requestUser): array
+    public function query(array $data, Usuario $requestUser): array
     {
         return $this->envioUsuarioRepository->query($data, $requestUser);
     }

@@ -26,9 +26,11 @@ interface PlanoTrabalhoReadRepositoryContract
     public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
 
     public function chunkEnviosPendentes(int $size, callable $callback): void;
+
     public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator;
 
     public function existeConflitoPeriodo(string $usuarioId, string $dataInicio, string $dataFim): bool;
+
     public function existeConflitoPeriodoExcluindo(string $usuarioId, string $dataInicio, string $dataFim, string $excluirPlanoId): bool;
 
     public function findByIdComRelacoes(string $id): ?PlanoTrabalho;

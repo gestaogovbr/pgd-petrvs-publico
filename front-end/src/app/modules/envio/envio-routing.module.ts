@@ -2,41 +2,53 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
-import { EnvioUsuarioListComponent } from './envio-usuario-list/envio-usuario-list.component';
-import { EnvioPlanoEntregaListComponent } from './envio-plano-entrega-list/envio-plano-entrega-list.component';
-import { EnvioPlanoTrabalhoListComponent } from './envio-plano-trabalho-list/envio-plano-trabalho-list.component';
+import { EnvioConsultaComponent } from './envio-consulta/envio-consulta.component';
 
 const routes: Routes = [
-  { 
+  {
     path: 'participantes',
-    component: EnvioUsuarioListComponent,
+    loadChildren: () => import('./envio-participante/routes').then(m => m.routes),
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
-      title: "Logs de Participantes",
+      title: 'Logs de Participantes',
+      breadcrumb: 'Envio de Participantes',
       modal: false
     }
   },
-  { 
+  {
     path: 'planos-entrega',
-    component: EnvioPlanoEntregaListComponent,
+    loadChildren: () => import('./envio-plano-entrega/routes').then((m) => m.routes),
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
-      title: "Logs de Planos de Entrega",
-      modal: false
-    }
+      title: 'Logs de Planos de Entrega',
+      breadcrumb: 'Envio de Planos de Entrega',
+      modal: false,
+    },
   },
-  { 
+  {
     path: 'planos-trabalho',
-    component: EnvioPlanoTrabalhoListComponent,
+    loadChildren: () => import('./envio-plano-trabalho/routes').then((m) => m.routes),
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
-      title: "Logs de Planos de Trabalho",
+      title: 'Logs de Planos de Trabalho',
+      breadcrumb: 'Envio de Planos de Trabalho',
+      modal: false,
+    },
+  },
+  {
+    path: '',
+    component: EnvioConsultaComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: 'Consulta de Envios à API PGD',
       modal: false
     }
   }

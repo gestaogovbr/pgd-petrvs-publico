@@ -79,15 +79,6 @@ use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
 use App\Repository\PlanoEntrega\Eloquent\EloquentPlanoEntregaReadRepository;
 
 use App\Repository\PlanoEntrega\Eloquent\EloquentPlanoEntregaWriteRepository;
-use App\Repository\Tenant\Contracts\TenantReadRepositoryContract;
-use App\Repository\Tenant\Contracts\TenantWriteRepositoryContract;
-use App\Repository\Tenant\Eloquent\EloquentTenantReadRepository;
-use App\Repository\Tenant\Eloquent\EloquentTenantWriteRepository;
-use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
-use App\Repository\EnvioUsuario\Eloquent\EloquentEnvioUsuarioReadRepository;
-use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryContract;
-use App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository;
-use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
 
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 
@@ -112,6 +103,10 @@ use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaWriteRepos
 use App\Repository\PlanoTrabalhoEntrega\Eloquent\EloquentPlanoTrabalhoEntregaReadRepository;
 
 use App\Repository\PlanoTrabalhoEntrega\Eloquent\EloquentPlanoTrabalhoEntregaWriteRepository;
+use App\Repository\Tenant\Contracts\TenantReadRepositoryContract;
+use App\Repository\Tenant\Contracts\TenantWriteRepositoryContract;
+use App\Repository\Tenant\Eloquent\EloquentTenantReadRepository;
+use App\Repository\Tenant\Eloquent\EloquentTenantWriteRepository;
 
 use App\Repository\Programa\Contracts\ProgramaReadRepositoryContract;
 
@@ -122,6 +117,12 @@ use App\Repository\Programa\Eloquent\EloquentProgramaReadRepository;
 use App\Repository\Programa\Eloquent\EloquentProgramaWriteRepository;
 
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
+use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
+use App\Repository\EnvioUsuario\Eloquent\EloquentEnvioUsuarioReadRepository;
+use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryContract;
+use App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository;
+use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
+use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
 
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
@@ -448,6 +449,21 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             PlanejamentoObjetivoReadRepositoryContract::class,
             EloquentPlanejamentoObjetivoReadRepository::class,
+        );
+
+        $this->app->bind(
+            EnvioUsuarioReadRepositoryContract::class,
+            EloquentEnvioUsuarioReadRepository::class,
+        );
+
+        $this->app->bind(
+            EnvioPlanoEntregaReadRepositoryContract::class,
+            EloquentEnvioPlanoEntregaReadRepository::class,
+        );
+
+        $this->app->bind(
+            EnvioPlanoTrabalhoReadRepositoryContract::class,
+            EloquentEnvioPlanoTrabalhoReadRepository::class,
         );
     }
 

@@ -23,9 +23,14 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
 
     public function findById(string|int $id): ?PlanoTrabalho
     {
+        if ($id === '' || $id === 0) {
+            return null;
+        }
+
         /** @var PlanoTrabalho|null $planoTrabalho */
         $planoTrabalho = $this->query()->find($id);
-        return $planoTrabalho;
+
+        return $planoTrabalho instanceof PlanoTrabalho ? $planoTrabalho : null;
     }
 
     public function findOneParaEnvio(string|int $id): ?PlanoTrabalho

@@ -120,6 +120,21 @@ class EloquentEnvioPlanoTrabalhoReadRepository implements EnvioPlanoTrabalhoRead
             }
         }
 
+        if (($value = $this->getFiltro($where, 'updated_at_gte')) !== null) {
+            $value = (string) $value;
+            if ($value !== '') {
+                $query->where('pt.updated_at', '>=', $value);
+            }
+        }
+
+        if (($value = $this->getFiltro($where, 'updated_at_lte')) !== null) {
+            $value = trim((string) $value);
+            if ($value !== '') {
+                $fimAjustado = Carbon::parse($value)->addDay()->format('Y-m-d');
+                $query->where('pt.updated_at', '<', $fimAjustado);
+            }
+        }
+
         if (($value = $this->getFiltro($where, 'data_conclusao_envio_gte')) !== null) {
             $value = (string) $value;
             if ($value !== '') {
@@ -173,6 +188,10 @@ class EloquentEnvioPlanoTrabalhoReadRepository implements EnvioPlanoTrabalhoRead
                             ->orWhereColumn('pt.data_conclusao_envio', '<', 'pt.data_agendamento_envio');
                     });
             });
+        }
+
+        if ($this->isFiltroValido($this->getFiltro($where, 'isConcluido'))) {
+            $query->whereNotNull('pt.data_conclusao_envio');
         }
     }
 

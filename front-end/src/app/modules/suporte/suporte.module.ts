@@ -9,12 +9,7 @@ import { FeedbackComponent } from './feedback/feedback.component';
 
 const routes: Routes = [
   {
-    path: '', component: HomeSuporteComponent,
-    children: [
-      {
-        path: '', component: MenuSuporteComponent
-      }
-    ]
+    path: '', component: MenuSuporteComponent,
   },
   {
     path: 'feedback', component: FeedbackComponent
@@ -28,7 +23,7 @@ const routes: Routes = [
     FeedbackComponent
   ],
   imports: [
-    RouterModule.forRoot(routes),
+    RouterModule.forChild(routes),
     CommonModule,
     SharedModule,
   ]

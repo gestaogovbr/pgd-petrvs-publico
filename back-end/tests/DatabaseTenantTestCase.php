@@ -2,18 +2,15 @@
 
 namespace Tests;
 
-use App\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Artisan;
 
 abstract class DatabaseTenantTestCase extends TestCase
 {
     use RefreshDatabase;
 
     protected $tenancy = true;
-    protected static bool $dumped = false;
+    protected static bool $tenantSchemaLoaded = false;
 
     protected function setUp(): void
     {
@@ -23,60 +20,50 @@ abstract class DatabaseTenantTestCase extends TestCase
         config()->set('petrvs.tenant.type', 'request');
     }
 
-    public function dump() {
-        if (self::$dumped) {
-            return true;
-        }
-
-        $path = database_path('schema/tenant-schema.sql');
-
-        if (!file_exists($path)) {
-            Artisan::call('schema:dump', [
-                '--database' => 'tenant',
-            ]);
-        }
-
-        self::$dumped = true;
-    }
-
     protected function loadTenantSchema()
     {
-        $needsSchemaReload = !Schema::connection('tenant')->hasTable('usuarios')
-            || !Schema::connection('tenant')->hasColumn('usuarios', 'modalidade_pgd');
+        if (self::$tenantSchemaLoaded) {
+            return;
+        }
 
-        if ($needsSchemaReload) {
-            $this->dropTenantObjects();
+        $tenantDatabase = (string) config('database.connections.tenant.database');
+        $databaseExists = DB::connection(config('tenancy.database.central_connection', config('database.default')))
+            ->select(
+                'SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ? LIMIT 1',
+                [$tenantDatabase]
+            );
 
-            $path = database_path('schema/tenant-schema.sql');
+        if (empty($databaseExists)) {
+            throw new \RuntimeException("Banco tenant '{$tenantDatabase}' não existe para os testes.");
+        }
 
-            if (file_exists($path)) {
-                $config = config('database.connections.tenant');
+        $this->dropTenantObjects();
 
-                $host = gethostbyname($config['host']);
+        $path = database_path('schema/test-tenant-schema.sql');
 
-                $command = sprintf(
-                    'mysql -h %s -P %s -u %s -p%s %s < %s',
-                    escapeshellarg($host),
-                    escapeshellarg($config['port']),
-                    escapeshellarg($config['username']),
-                    escapeshellarg($config['password']),
-                    escapeshellarg($config['database']),
-                    escapeshellarg($path)
-                );
+        if (file_exists($path)) {
+            $config = config('database.connections.tenant');
 
-                exec($command, $output, $returnVar);
+            $host = gethostbyname($config['host']);
 
-                if ($returnVar !== 0) {
-                     throw new \Exception("Erro ao importar schema do tenant via mysql CLI. Exit code: $returnVar. Host resolvido: $host. Verifique credenciais e conexão.");
-                }
-            } else {
-                $this->artisan('migrate', [
-                    '--path' => 'database/migrations/tenant',
-                    '--database' => 'tenant',
-                    '--force' => true,
-                ]);
+            $command = sprintf(
+                'mysql -h %s -P %s -u %s -p%s %s < %s',
+                escapeshellarg($host),
+                escapeshellarg($config['port']),
+                escapeshellarg($config['username']),
+                escapeshellarg($config['password']),
+                escapeshellarg($config['database']),
+                escapeshellarg($path)
+            );
+
+            exec($command, $output, $returnVar);
+
+            if ($returnVar !== 0) {
+                throw new \Exception("Erro ao importar schema do tenant via mysql CLI. Exit code: $returnVar. Host resolvido: $host. Verifique credenciais e conexão.");
             }
         }
+
+        self::$tenantSchemaLoaded = true;
     }
 
     protected function dropTenantObjects(): void
