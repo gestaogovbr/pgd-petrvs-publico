@@ -658,6 +658,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/recurso', [PlanoTrabalhoConsolidacaoV2::class, 'recurso']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/avaliacao', [AvaliacaoV2::class, 'store']);
+    Route::delete('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/avaliacao/{avaliacaoId}', [AvaliacaoV2::class, 'destroy']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade', [AtividadeV2::class, 'store']);
     Route::put('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}', [AtividadeV2::class, 'update']);

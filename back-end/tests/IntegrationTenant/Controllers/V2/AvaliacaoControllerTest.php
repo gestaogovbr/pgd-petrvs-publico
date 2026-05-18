@@ -53,6 +53,11 @@ beforeEach(function () {
             [AvaliacaoController::class, 'store']
         )->name('__tests.v2.avaliacao.store');
 
+        Route::middleware(['api'])->delete(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/avaliacao/{avaliacaoId}',
+            [AvaliacaoController::class, 'destroy']
+        )->name('__tests.v2.avaliacao.destroy');
+
         Route::middleware(['api'])->get(
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/notas-avaliacao',
             [PlanoTrabalhoConsolidacaoController::class, 'notasAvaliacao']
@@ -351,6 +356,57 @@ describe('POST /api/v2/plano-trabalho/:id/consolidacao/:cid/avaliacao', function
             "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
             []
         )->assertStatus(422);
+    });
+});
+
+// ── DELETE avaliação ─────────────────────────────────────────────────
+
+describe('DELETE /api/v2/plano-trabalho/:id/consolidacao/:cid/avaliacao/:aid', function () {
+
+    test('cancela avaliação quando usuário logado foi o avaliador', function () {
+        $consolidacaoId = prepararConsolidacaoConcluida($this);
+
+        $this->postJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $this->notaSemJustificativa->id]
+        )->assertStatus(201);
+
+        $avaliacaoId = DB::table('avaliacoes')
+            ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
+            ->value('id');
+
+        $response = $this->deleteJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao/{$avaliacaoId}"
+        );
+
+        $response->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.status', 'CONCLUIDO');
+
+        $this->assertSoftDeleted('avaliacoes', ['id' => $avaliacaoId]);
+        $this->assertDatabaseHas('planos_trabalhos_consolidacoes', [
+            'id' => $consolidacaoId,
+            'status' => 'CONCLUIDO',
+        ]);
+    });
+
+    test('retorna 403 quando usuário logado não foi o avaliador', function () {
+        $consolidacaoId = prepararConsolidacaoConcluida($this);
+
+        $this->postJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $this->notaSemJustificativa->id]
+        )->assertStatus(201);
+
+        $avaliacaoId = DB::table('avaliacoes')
+            ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
+            ->value('id');
+
+        $this->actingAs($this->participante, 'web');
+
+        $this->deleteJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao/{$avaliacaoId}"
+        )->assertStatus(403);
     });
 });
 

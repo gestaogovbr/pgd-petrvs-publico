@@ -35,6 +35,11 @@ export class ConsolidacaoApiClient {
       .pipe(map((r: any) => r?.data ?? r));
   }
 
+  cancelarAvaliacao(planoId: string, consolidacaoId: string, avaliacaoId: string): Observable<Consolidacao> {
+    return this.http.delete<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/avaliacao/${avaliacaoId}`)
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
   solicitarRecurso(planoId: string, consolidacaoId: string, justificativa: string): Observable<AvaliacaoConsolidacao> {
     return this.http.patch<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/recurso`, { justificativa })
       .pipe(map((r: any) => r?.data ?? r));
