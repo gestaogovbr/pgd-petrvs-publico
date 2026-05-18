@@ -84,10 +84,14 @@ const CARD_W = 176;
 const CARD_H = 96;
 const CARD_HALF_W = CARD_W / 2;
 const CARD_HALF_H = CARD_H / 2;
-const GRAPH_W = 1280;
-const GRAPH_H = 760;
+const GRAPH_MIN_W = 1280;
+const GRAPH_MIN_H = 760;
 const GRAPH_PADDING_X = CARD_HALF_W + 28;
 const GRAPH_PADDING_Y = CARD_HALF_H + 36;
+const GRAPH_LAYER_X_SPACING = CARD_W + 85;
+const GRAPH_NODE_Y_SPACING = CARD_H + 26;
+const GRAPH_FIT_PADDING_X = 90;
+const GRAPH_FIT_PADDING_Y = 70;
 /** Recua o fim da aresta para a ponta da seta ficar fora do retângulo do nó. */
 const EDGE_END_ARROW_INSET = 16;
 /** Passagens alternadas do barycenter (redução de cruzamentos nas arestas). */
@@ -142,7 +146,7 @@ export class PlanejamentoObjetivoGraficoPage {
   private readonly graphLayoutModel = computed(() => {
     const rows = this.graficoDados();
     if (rows === undefined) {
-      return { nodes: [] as ObjetivoNode[], width: GRAPH_W, height: GRAPH_H };
+      return { nodes: [] as ObjetivoNode[], width: GRAPH_MIN_W, height: GRAPH_MIN_H };
     }
     return this.buildGraphLayoutFromDados(rows, this.queriedObjetivoId());
   });
@@ -180,12 +184,17 @@ export class PlanejamentoObjetivoGraficoPage {
     const zoom = this.zoom();
     const cw = this.graphCanvasW();
     const ch = this.graphCanvasH();
-    const width = cw / zoom;
-    const height = ch / zoom;
+    const fitted = this.fitViewBoxToVisibleNodes();
+    const baseWidth = fitted?.width ?? cw;
+    const baseHeight = fitted?.height ?? ch;
+    const centerX = fitted ? fitted.x + fitted.width / 2 : cw / 2;
+    const centerY = fitted ? fitted.y + fitted.height / 2 : ch / 2;
+    const width = baseWidth / zoom;
+    const height = baseHeight / zoom;
 
     return {
-      x: (cw - width) / 2 + this.panX(),
-      y: (ch - height) / 2 + this.panY(),
+      x: centerX - width / 2 + this.panX(),
+      y: centerY - height / 2 + this.panY(),
       width,
       height
     };
@@ -718,6 +727,30 @@ export class PlanejamentoObjetivoGraficoPage {
     return `Objetivo relacionado -> objetivo superior: ${source.nome} -> ${target.nome}`;
   }
 
+  private fitViewBoxToVisibleNodes(): GraphViewBox | null {
+    const nodes = this.nodes();
+    if (nodes.length === 0) {
+      return null;
+    }
+
+    const minX = Math.min(...nodes.map(node => node.x - CARD_HALF_W));
+    const maxX = Math.max(...nodes.map(node => node.x + CARD_HALF_W));
+    const minY = Math.min(...nodes.map(node => node.y - CARD_HALF_H));
+    const maxY = Math.max(...nodes.map(node => node.y + CARD_HALF_H));
+
+    const x = Math.max(0, minX - GRAPH_FIT_PADDING_X);
+    const y = Math.max(0, minY - GRAPH_FIT_PADDING_Y);
+    const right = Math.min(this.graphCanvasW(), maxX + GRAPH_FIT_PADDING_X);
+    const bottom = Math.min(this.graphCanvasH(), maxY + GRAPH_FIT_PADDING_Y);
+
+    return {
+      x,
+      y,
+      width: Math.max(CARD_W + GRAPH_FIT_PADDING_X * 2, right - x),
+      height: Math.max(CARD_H + GRAPH_FIT_PADDING_Y * 2, bottom - y)
+    };
+  }
+
   nodeFill(node: ObjetivoNode): string {
     if (node.isQueriedRoot) return '#fff4cc';
     return this.planejamentoColor(node.planejamentoNome).fill;
@@ -816,7 +849,7 @@ export class PlanejamentoObjetivoGraficoPage {
       item => item.objetivo_id?.length && item.objetivo_nome?.length && item.planejamento_nome?.length
     );
     if (objetivos.length === 0) {
-      return { nodes: [], width: GRAPH_W, height: GRAPH_H };
+      return { nodes: [], width: GRAPH_MIN_W, height: GRAPH_MIN_H };
     }
 
     const planejamentoEhPaiByNome = this.buildPlanejamentoParentFlag(objetivos);
@@ -846,8 +879,8 @@ export class PlanejamentoObjetivoGraficoPage {
     const layers = this.assignLayers(rootId, drafts, filhosPorId);
     const posicoes = this.ordenarPorBarycenterIterado(layers, drafts);
 
-    const canvasW = GRAPH_W;
-    const canvasH = GRAPH_H;
+    const canvasW = this.canvasWidthForLayers(layers.minLayer, layers.maxLayer);
+    const canvasH = this.canvasHeightForLayers(posicoes.totalByLayer);
 
     const nodes: ObjetivoNode[] = objetivos.map(item => {
       const draft = drafts.get(item.objetivo_id);
@@ -1007,6 +1040,7 @@ export class PlanejamentoObjetivoGraficoPage {
       const ids = (byLayer.get(l) ?? [])
         .slice()
         .sort((a, b) => (drafts.get(a)?.nome ?? '').localeCompare(drafts.get(b)?.nome ?? ''));
+      byLayer.set(l, ids);
       ids.forEach((id, idx) => indexByNodeId.set(id, idx));
       totalByLayer.set(l, ids.length);
     }
@@ -1015,11 +1049,13 @@ export class PlanejamentoObjetivoGraficoPage {
       for (let l = layers.minLayer + 1; l <= layers.maxLayer; l++) {
         const ids = (byLayer.get(l) ?? []).slice();
         ids.sort((a, b) => this.compararPorBarycenter(a, b, drafts, indexByNodeId, 'up'));
+        byLayer.set(l, ids);
         ids.forEach((id, idx) => indexByNodeId.set(id, idx));
       }
       for (let l = layers.maxLayer - 1; l >= layers.minLayer; l--) {
         const ids = (byLayer.get(l) ?? []).slice();
         ids.sort((a, b) => this.compararPorBarycenter(a, b, drafts, indexByNodeId, 'down'));
+        byLayer.set(l, ids);
         ids.forEach((id, idx) => indexByNodeId.set(id, idx));
       }
     }
@@ -1082,14 +1118,35 @@ export class PlanejamentoObjetivoGraficoPage {
   private xByLayer(layer: number, minLayer: number, maxLayer: number, canvasW: number): number {
     const totalLayers = maxLayer - minLayer + 1;
     if (totalLayers <= 1) return canvasW / 2;
-    const innerWidth = canvasW - GRAPH_PADDING_X * 2;
-    return GRAPH_PADDING_X + ((layer - minLayer) / (totalLayers - 1)) * innerWidth;
+    const clusterWidth = (totalLayers - 1) * GRAPH_LAYER_X_SPACING;
+    const startX = (canvasW - clusterWidth) / 2;
+
+    return startX + (layer - minLayer) * GRAPH_LAYER_X_SPACING;
   }
 
   private yByIndexInLayer(index: number, total: number, canvasH: number): number {
-    if (total <= 1) return canvasH / 2;
-    const availableHeight = canvasH - GRAPH_PADDING_Y * 2;
-    return GRAPH_PADDING_Y + index * (availableHeight / (total - 1));
+    void total;
+    void canvasH;
+
+    return GRAPH_PADDING_Y + index * GRAPH_NODE_Y_SPACING;
+  }
+
+  private canvasWidthForLayers(minLayer: number, maxLayer: number): number {
+    const totalLayers = maxLayer - minLayer + 1;
+    if (totalLayers <= 1) {
+      return GRAPH_MIN_W;
+    }
+
+    return Math.max(GRAPH_MIN_W, GRAPH_PADDING_X * 2 + (totalLayers - 1) * GRAPH_LAYER_X_SPACING);
+  }
+
+  private canvasHeightForLayers(totalByLayer: Map<number, number>): number {
+    const maxNodesInLayer = Math.max(1, ...totalByLayer.values());
+    if (maxNodesInLayer <= 1) {
+      return GRAPH_MIN_H;
+    }
+
+    return Math.max(GRAPH_MIN_H, GRAPH_PADDING_Y * 2 + (maxNodesInLayer - 1) * GRAPH_NODE_Y_SPACING);
   }
 
   private buildPlanejamentoColors(nodes: ObjetivoNode[]): Map<string, PlanejamentoColor> {
@@ -1133,6 +1190,33 @@ export class PlanejamentoObjetivoGraficoPage {
     }
 
     return ancestors;
+  }
+
+  /**
+   * Desce por `parentId` e `objetivoSuperiorId` para manter visíveis os planejamentos inferiores
+   * vinculados ao objetivo aberto, mesmo quando há muitos filhos diretos no planejamento atual.
+   */
+  private collectTransitiveDescendantIds(seedIds: readonly string[], byId: Map<string, ObjetivoNode>): Set<string> {
+    const descendants = new Set<string>();
+    const queue = [...seedIds];
+
+    while (queue.length > 0) {
+      const id = queue.shift()!;
+
+      for (const node of byId.values()) {
+        if (node.parentId !== id && node.objetivoSuperiorId !== id) {
+          continue;
+        }
+        if (descendants.has(node.id)) {
+          continue;
+        }
+
+        descendants.add(node.id);
+        queue.push(node.id);
+      }
+    }
+
+    return descendants;
   }
 
   private applyDisplayFiltersFromSource(allNodes: ObjetivoNode[]) {
@@ -1186,7 +1270,21 @@ export class PlanejamentoObjetivoGraficoPage {
       let core: ObjetivoNode[] = [rootNode, ...uniqueNeighbors.filter(n => n.id !== rootNode.id)];
       const seedIds = core.map(n => n.id);
       const ancestorIds = this.collectTransitiveAncestorIds(seedIds, byId);
+      const descendantIds = this.collectTransitiveDescendantIds([rootId], byId);
       const seenCore = new Set(core.map(n => n.id));
+
+      for (const did of descendantIds) {
+        if (seenCore.has(did)) {
+          continue;
+        }
+        const dn = byId.get(did);
+        if (!dn) {
+          continue;
+        }
+        seenCore.add(did);
+        core.push(dn);
+      }
+
       for (const aid of ancestorIds) {
         if (seenCore.has(aid)) {
           continue;

@@ -189,9 +189,9 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
     /**
      * Cenário: fechamento bidirecional incluindo Pai (ancestral), Filho (consultado) e Neto (descendente)
      *
-     *  Pai (40h)
-     *   └── Filho (40h)  ← consultado
-     *        └── Neto (40h)
+     *  Pai (56h)
+     *   └── Filho (56h)  ← consultado
+     *        └── Neto (56h)
      */
     test('inclui ascendentes e descendentes via objetivo_pai_id (fechamento bidirecional)', function () {
         $base = criarEstruturaBase();
@@ -214,16 +214,16 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         expect($data)->toHaveKey($objFilho->id);
         expect($data)->toHaveKey($objNeto->id);
 
-        expect($data[$objPai->id]['esforco_total_horas'])->toEqual(120);
+        expect($data[$objPai->id]['esforco_total_horas'])->toEqual(168);
         expect($data[$objPai->id]['filhos_pai'])->toBe([$objFilho->id]);
         expect($data[$objPai->id]['filhos_superior'])->toBeEmpty();
         expect($data[$objPai->id]['objetivo_pai'])->toBeNull();
 
-        expect($data[$objFilho->id]['esforco_total_horas'])->toEqual(80);
+        expect($data[$objFilho->id]['esforco_total_horas'])->toEqual(112);
         expect($data[$objFilho->id]['filhos_pai'])->toBe([$objNeto->id]);
         expect($data[$objFilho->id]['objetivo_pai'])->toBe(['id' => $objPai->id, 'nome' => 'Pai']);
 
-        expect($data[$objNeto->id]['esforco_total_horas'])->toEqual(40);
+        expect($data[$objNeto->id]['esforco_total_horas'])->toEqual(56);
         expect($data[$objNeto->id]['filhos_pai'])->toBeEmpty();
         expect($data[$objNeto->id]['objetivo_pai'])->toBe(['id' => $objFilho->id, 'nome' => 'Filho']);
     });
@@ -253,9 +253,9 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
 
         expect($data[$objSuperior->id]['filhos_superior'])->toBe([$objDep->id]);
         expect($data[$objSuperior->id]['filhos_pai'])->toBeEmpty();
-        expect($data[$objSuperior->id]['esforco_total_horas'])->toEqual(80);
+        expect($data[$objSuperior->id]['esforco_total_horas'])->toEqual(112);
 
-        expect($data[$objDep->id]['esforco_total_horas'])->toEqual(80);
+        expect($data[$objDep->id]['esforco_total_horas'])->toEqual(112);
         expect($data[$objDep->id]['filhos_pai'])->toBe([$objDepFilho->id]);
         expect($data[$objDep->id]['objetivo_superior'])->toBe(['id' => $objSuperior->id, 'nome' => 'Superior DTI']);
         expect($data[$objDep->id]['objetivo_pai'])->toBeNull();
@@ -286,11 +286,11 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
 
         expect($data[$objPai->id]['filhos_pai'])->toBe([$objAlvo->id]);
         expect($data[$objPai->id]['filhos_superior'])->toBeEmpty();
-        expect($data[$objPai->id]['esforco_total_horas'])->toEqual(40);
+        expect($data[$objPai->id]['esforco_total_horas'])->toEqual(56);
 
         expect($data[$objSuperior->id]['filhos_superior'])->toBe([$objAlvo->id]);
         expect($data[$objSuperior->id]['filhos_pai'])->toBeEmpty();
-        expect($data[$objSuperior->id]['esforco_total_horas'])->toEqual(40);
+        expect($data[$objSuperior->id]['esforco_total_horas'])->toEqual(56);
 
         expect($data[$objAlvo->id]['objetivo_pai'])->toBe(['id' => $objPai->id, 'nome' => 'Pai']);
         expect($data[$objAlvo->id]['objetivo_superior'])->toBe(['id' => $objSuperior->id, 'nome' => 'Superior']);
@@ -317,8 +317,8 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         $data = $response->json('data');
 
         expect($data)->toHaveCount(2);
-        expect($data[$objA->id]['esforco_total_horas'])->toBeGreaterThanOrEqual(40.0);
-        expect($data[$objA->id]['esforco_total_horas'])->toBeLessThanOrEqual(80.0);
+        expect($data[$objA->id]['esforco_total_horas'])->toBeGreaterThanOrEqual(56.0);
+        expect($data[$objA->id]['esforco_total_horas'])->toBeLessThanOrEqual(112.0);
     });
 
     /**
@@ -386,12 +386,12 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
 
         $data = $response->json('data');
 
-        // Raiz: 40 + 40 = 80 (inclui subordinado)
-        expect($data[$objRaiz->id]['esforco_total_horas'])->toEqual(80);
+        // Raiz: 56 + 56 = 112 (inclui subordinado)
+        expect($data[$objRaiz->id]['esforco_total_horas'])->toEqual(112);
         expect($data[$objRaiz->id]['filhos'])->toBe([$objSub->id]);
 
-        // Subordinado: 40
-        expect($data[$objSub->id]['esforco_total_horas'])->toEqual(40);
+        // Subordinado: 56
+        expect($data[$objSub->id]['esforco_total_horas'])->toEqual(56);
         expect($data[$objSub->id]['objetivo_superior'])->toBe(['id' => $objRaiz->id, 'nome' => 'Raiz']);
     });
 
@@ -409,10 +409,10 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
 
         $data = $response->json('data');
 
-        // Pai: 40 + 20 = 60
-        expect($data[$objPai->id]['esforco_total_horas'])->toEqual(60);
-        // Filho: 20
-        expect($data[$objFilho->id]['esforco_total_horas'])->toEqual(20);
+        // Pai: 56 + 28 = 84
+        expect($data[$objPai->id]['esforco_total_horas'])->toEqual(84);
+        // Filho: 28
+        expect($data[$objFilho->id]['esforco_total_horas'])->toEqual(28);
     });
 
     /**

@@ -263,9 +263,8 @@
                                 <tr>
                                   <th scope="col">Entrega (PE)</th>
                                   <th scope="col">Unidade (PE)</th>
-                                  <th scope="col">Progresso realizado</th>
-                                  <th scope="col">Progresso esperado</th>
-                                  <th scope="col">Homologada</th>
+                                  <th scope="col">Realizado</th>
+                                  <th scope="col">Meta</th>
                                   <th scope="col">Esforço (h)</th>
                                 </tr>
                               </thead>
@@ -281,7 +280,6 @@
                                     <td>{{ item.entrega_unidade_sigla }}</td>
                                     <td>{{ formatPercent(item.progresso_realizado) }}</td>
                                     <td>{{ formatPercent(item.progresso_esperado) }}</td>
-                                    <td>{{ item.homologado ? 'Sim' : 'Não' }}</td>
                                     <td class="text-nowrap">{{ formatHoras(item.esforco_horas_total) }}</td>
                                   </tr>
                                 }

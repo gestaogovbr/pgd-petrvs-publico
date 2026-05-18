@@ -52,6 +52,7 @@
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.28;
   pointer-events: none;
+  position: relative;
 }
 
 .node-card__top {
@@ -82,9 +83,15 @@
   color: #5a3d00;
 }
 
+.node-card--root .node-card__planning {
+  padding-right: 58px;
+}
+
 .node-card__badge {
-  display: inline-block;
-  flex-shrink: 0;
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  display: block;
   padding: 1px 5px;
   border-radius: 6px;
   background: #d4a92c;
@@ -92,6 +99,7 @@
   font-size: 7px;
   font-weight: 800;
   letter-spacing: 0.03em;
+  line-height: 1.35;
   text-transform: uppercase;
 }
 

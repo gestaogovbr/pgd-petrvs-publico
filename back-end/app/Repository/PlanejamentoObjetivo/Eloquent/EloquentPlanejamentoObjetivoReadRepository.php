@@ -28,6 +28,12 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     private const CACHE_TTL_MINUTES = 10;
     private const CACHE_TAG = 'esforco-total';
 
+    /** Divisor aplicado a {@see \App\Models\Usuario::$cod_jornada} no cálculo de esforço (jornada semanal → fator diário). */
+    private const ESFORCO_COD_JORNADA_SEMANA_DIVISOR = 5.0;
+
+    /** Horas semanais padrão quando {@see \App\Models\Usuario::$cod_jornada} é NULL no cálculo de esforço. */
+    private const ESFORCO_COD_JORNADA_PADRAO = 40;
+
     public function __construct(PlanejamentoObjetivo $model)
     {
         $this->model = $model;
@@ -182,7 +188,10 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     /** @return list<\stdClass> */
     public function listarEntregasPlanoEntregaPorObjetivoId(string $objetivoId): array
     {
-        return DB::select(<<<'SQL'
+        $jornadaDivisor = self::ESFORCO_COD_JORNADA_SEMANA_DIVISOR;
+        $jornadaPadrao = self::ESFORCO_COD_JORNADA_PADRAO;
+
+        return DB::select(<<<SQL
             SELECT
                 pee.id AS plano_entrega_entrega_id,
                 COALESCE(pee.descricao_entrega, pee.descricao, '') AS entrega_titulo,
@@ -197,7 +206,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ROUND(
                     COALESCE(
                         SUM(
-                            (us.cod_jornada / 7.0)
+                            (COALESCE(us.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
                             * (DATEDIFF(pt.data_fim, pt.data_inicio) + 1)
                             * (pte.forca_trabalho / 100.0)
                         ),
@@ -235,7 +244,10 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     /** @return list<\stdClass> */
     public function listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId(string $objetivoId): array
     {
-        return DB::select(<<<'SQL'
+        $jornadaDivisor = self::ESFORCO_COD_JORNADA_SEMANA_DIVISOR;
+        $jornadaPadrao = self::ESFORCO_COD_JORNADA_PADRAO;
+
+        return DB::select(<<<SQL
             SELECT
                 u.id AS unidade_id,
                 u.nome AS unidade_nome,
@@ -243,7 +255,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ROUND(
                     COALESCE(
                         SUM(
-                            (us.cod_jornada / 7.0)
+                            (COALESCE(us.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
                             * (DATEDIFF(pt.data_fim, pt.data_inicio) + 1)
                             * (pte.forca_trabalho / 100.0)
                         ),
@@ -274,6 +286,8 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     private function selectEsforcoMetricRowsForObjetivoIds(array $ids): array
     {
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $jornadaDivisor = self::ESFORCO_COD_JORNADA_SEMANA_DIVISOR;
+        $jornadaPadrao = self::ESFORCO_COD_JORNADA_PADRAO;
 
         return DB::select(<<<SQL
             SELECT
@@ -288,7 +302,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ROUND(
                     COALESCE(
                         SUM(
-                            (u.cod_jornada / 7.0)
+                            (COALESCE(u.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
                             * (DATEDIFF(pt.data_fim, pt.data_inicio) + 1)
                             * (pte.forca_trabalho / 100.0)
                         ),
@@ -320,6 +334,8 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     {
         $ids = empty($seedIds) ? [$raizId] : $seedIds;
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $jornadaDivisor = self::ESFORCO_COD_JORNADA_SEMANA_DIVISOR;
+        $jornadaPadrao = self::ESFORCO_COD_JORNADA_PADRAO;
 
         $rows = DB::select(<<<SQL
             WITH RECURSIVE descendentes AS (
@@ -344,7 +360,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ROUND(
                     COALESCE(
                         SUM(
-                            (u.cod_jornada / 7.0)
+                            (COALESCE(u.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
                             * (DATEDIFF(pt.data_fim, pt.data_inicio) + 1)
                             * (pte.forca_trabalho / 100.0)
                         ),
