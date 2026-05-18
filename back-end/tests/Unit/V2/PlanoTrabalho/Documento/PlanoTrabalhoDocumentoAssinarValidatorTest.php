@@ -136,4 +136,6 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
 
         $this->validator->validar($plano, 'user-1');
     })->throws(ValidateException::class, 'Todas as assinaturas exigidas já foram realizadas.');
+
+
 });

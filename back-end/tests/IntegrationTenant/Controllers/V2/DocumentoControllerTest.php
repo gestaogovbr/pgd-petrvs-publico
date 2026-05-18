@@ -777,6 +777,211 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (substituto m
     });
 });
 
+// ── POST assinatura-tcr: cenário CODAS (participante lotado + chefia mesma unidade) ──
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (cenário CODAS)', function () {
+
+    beforeEach(function () {
+        $this->programa->plano_trabalho_assinatura_participante = 1;
+        $this->programa->plano_trabalho_assinatura_gestor_unidade = 1;
+        $this->programa->save();
+
+        $perfil = Perfil::factory()->create(['nivel' => 3]);
+
+        // Thaís: chefia (GESTOR) + lotado na CODAS
+        $this->chefia = Usuario::factory()->create(['perfil_id' => $perfil->id]);
+        $integrante = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->chefia->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrante->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrante->id,
+            'atribuicao' => 'LOTADO',
+        ]);
+
+        // Gabriel (participante): apenas LOTADO na CODAS, sem chefia
+        $integranteParticipante = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->usuario->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integranteParticipante->id,
+            'atribuicao' => 'LOTADO',
+        ]);
+
+        // CODAS tem unidade pai
+        $this->unidadePai = Unidade::factory()->create();
+        $this->unidade->unidade_pai_id = $this->unidadePai->id;
+        $this->unidade->save();
+    });
+
+    test('participante lotado assina e chefia da mesma unidade completa → ATIVO', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+
+        $this->actingAs($this->chefia, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+
+    test('chefia da mesma unidade assina primeiro e participante completa → ATIVO', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+
+        $this->actingAs($this->chefia, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+
+        $this->actingAs($this->usuario, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+});
+
+// ── POST assinatura-tcr: participante é gestor de unidade superior mas apenas lotado na unidade do PT ──
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (participante gestor de unidade superior)', function () {
+
+    beforeEach(function () {
+        $this->programa->plano_trabalho_assinatura_participante = 1;
+        $this->programa->plano_trabalho_assinatura_gestor_unidade = 1;
+        $this->programa->save();
+
+        $perfil = Perfil::factory()->create(['nivel' => 3]);
+
+        // Hierarquia: MGI > CGPGD > CODAS
+        $this->unidadePai = Unidade::factory()->create();  // CGPGD
+        $this->unidade->unidade_pai_id = $this->unidadePai->id;
+        $this->unidade->save();
+
+        // Participante é LOTADO na CODAS (unidade do PT) — não é gestor aqui
+        $integranteLocal = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->usuario->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integranteLocal->id,
+            'atribuicao' => 'LOTADO',
+        ]);
+
+        // Participante é GESTOR_SUBSTITUTO da CGPGD (unidade pai) — gestor na hierarquia global
+        $integranteGlobal = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidadePai->id,
+            'usuario_id' => $this->usuario->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integranteGlobal->id,
+            'atribuicao' => 'GESTOR_SUBSTITUTO',
+        ]);
+
+        // Chefia é GESTOR da CODAS (unidade do PT)
+        $this->chefia = Usuario::factory()->create(['perfil_id' => $perfil->id]);
+        $integranteChefia = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->chefia->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integranteChefia->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+    });
+
+    test('chefia da unidade do PT pode assinar mesmo que participante seja gestor em unidade superior', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+
+        $this->actingAs($this->chefia, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+});
+
+// ── POST assinatura-tcr: participante é gestor da unidade do PT e também da unidade pai ──
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (participante gestor da unidade e da unidade pai)', function () {
+
+    beforeEach(function () {
+        $this->programa->plano_trabalho_assinatura_participante = 1;
+        $this->programa->plano_trabalho_assinatura_gestor_unidade = 1;
+        $this->programa->save();
+
+        $perfil = Perfil::factory()->create(['nivel' => 3]);
+
+        // Hierarquia: avô > pai > filho (unidade do PT)
+        $this->unidadeAvo = Unidade::factory()->create();
+        $this->unidadePai = Unidade::factory()->create(['unidade_pai_id' => $this->unidadeAvo->id]);
+        $this->unidade->unidade_pai_id = $this->unidadePai->id;
+        $this->unidade->save();
+
+        // Participante é GESTOR da unidade do PT (filho)
+        $integranteFilho = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->usuario->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integranteFilho->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+
+        // Participante TAMBÉM é GESTOR da unidade pai
+        $integrantePai = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidadePai->id,
+            'usuario_id' => $this->usuario->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrantePai->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+
+        // Gestor da unidade pai (outro usuário) — quem deve assinar
+        $this->gestorPai = Usuario::factory()->create(['perfil_id' => $perfil->id]);
+        $integranteGestorPai = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidadePai->id,
+            'usuario_id' => $this->gestorPai->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integranteGestorPai->id,
+            'atribuicao' => 'GESTOR_SUBSTITUTO',
+        ]);
+    });
+
+    test('gestor da unidade pai assina o TCR — não precisa do avô', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+
+        // Gestor da unidade PAI assina — suficiente, não precisa do avô
+        $this->actingAs($this->gestorPai, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+});
+
 // ── POST assinatura-tcr: impede assinaturas excedentes ──────────────
 
 describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (assinaturas excedentes)', function () {
