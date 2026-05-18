@@ -87,7 +87,7 @@
 
   <div class="d-flex gap-2 mt-3">
     <br-button type="button" (click)="voltar()" [disabled]="saving()">Voltar</br-button>
-    <br-button emphasis="primary" type="button" (click)="salvar()" [disabled]="!podeSalvar()">Salvar</br-button>
+    <br-button emphasis="primary" type="button" (click)="salvar()" [disabled]="!podeSalvar() || saving()">Salvar</br-button>
   </div>
 
 </div>
