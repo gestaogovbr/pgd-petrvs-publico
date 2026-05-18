@@ -32,7 +32,8 @@ class Integracao implements InterfaceIntegracao
         private UnidadeIntegranteRepository $unidadeIntegranteRepository,
         private UnidadeIntegranteAtribuicaoRepository $unidadeIntegranteAtribuicaoRepository,
         private UsuarioRepository $usuarioRepository,
-        private UnidadeRepository $unidadeRepository
+        private UnidadeRepository $unidadeRepository,
+        private bool $preservarAtribuicoesExistentes = false
     ) {
     }
 
@@ -104,6 +105,15 @@ class Integracao implements InterfaceIntegracao
         $integranteNovoOuExistente = $this->criaVinculoDoUsuarioComUnidade($usuario->id, $unidadeDestino->id);
 
         if (empty($vinculoDTO->atribuicoes)) {
+            if ($this->preservarAtribuicoesExistentes) {
+                SiapeLog::info("Payload SIAPE sem atribuições; preservando atribuições existentes", [
+                    'usuario_id' => $usuario->id,
+                    'unidade_id' => $unidadeDestino->id,
+                ]);
+                array_push($this->atribuicoesFinais, ["Payload SIAPE sem atribuições; atribuições existentes preservadas."]);
+                return;
+            }
+
             array_push($this->atribuicoesFinais, ["O vínculo de LOTADO não pode ser apagado; apenas transferido, através da atribuição de lotação em outra unidade."]);
             $this->limpaTodasAtribuicoesMenosLotado($usuario, $integranteNovoOuExistente);
             return;           
@@ -127,7 +137,7 @@ class Integracao implements InterfaceIntegracao
            unset($vinculoDTO->atribuicoes[$atribuicao]);
         });
 
-        if(!empty($atribuicoesRemover)){
+        if(!$this->preservarAtribuicoesExistentes && !empty($atribuicoesRemover)){
             $this->removeDeterminadasAtribuicoes($atribuicoesRemover, $integranteNovoOuExistente);
         }
         
