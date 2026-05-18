@@ -251,7 +251,14 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processarLotacoes', function
         $usuarioServiceMock->shouldReceive('atualizarMatriculasUsuariosSemMatricula')->once();
 
         $unidadeIntegranteMock = Mockery::mock(UnidadeIntegranteService::class);
-        $unidadeIntegranteMock->shouldReceive('salvarIntegrantes')->once()->andReturn(['ok' => true]);
+        $unidadeIntegranteMock->shouldReceive('salvarIntegrantes')
+            ->once()
+            ->with(Mockery::on(function (array $vinculo) {
+                return ($vinculo[0]['usuario_id'] ?? null) === 'usuario_id'
+                    && ($vinculo[0]['unidade_id'] ?? null) === 'unidade_id'
+                    && ($vinculo[0]['atribuicoes'] ?? null) === ['LOTADO'];
+            }), false, true)
+            ->andReturn(['ok' => true]);
 
         DB::shouldReceive('transaction')
             ->once()

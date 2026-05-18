@@ -43,6 +43,7 @@ beforeEach(function () {
     $this->app->instance(IntegracaoServiceFactory::class, $mockFactory);
 
     $this->entidades = Entidade::factory()->count(3)->create();
+    $this->entidadeIdsEsperados = Entidade::query()->pluck('id')->all();
 
     $this->registroProcessado = SiapeDadosUORG::factory()->processado()->create();
 });
@@ -71,7 +72,7 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         $entidadeIdsChamados = [];
 
         $this->mockIntegracaoService->shouldReceive('sincronizar')
-            ->times(3)
+            ->times(count($this->entidadeIdsEsperados))
             ->with(Mockery::on(function (array $inputs) use (&$entidadeIdsChamados): bool {
                 $entidadeIdsChamados[] = $inputs['entidade'];
                 return $inputs['unidades'] === true
@@ -88,8 +89,8 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         $service = app(SiapeIndividualUnidadeService::class);
         $service->fluxoSiape($codigo, $this->mockSiapeService);
 
-        expect($entidadeIdsChamados)->toHaveCount(3);
-        expect($entidadeIdsChamados)->toEqualCanonicalizing($this->entidades->pluck('id')->all());
+        expect($entidadeIdsChamados)->toHaveCount(count($this->entidadeIdsEsperados));
+        expect($entidadeIdsChamados)->toEqualCanonicalizing($this->entidadeIdsEsperados);
 
         expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->toBeNull();
 
@@ -115,7 +116,7 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         $entidadeIdsChamados = [];
 
         $this->mockIntegracaoService->shouldReceive('sincronizar')
-            ->times(3)
+            ->times(count($this->entidadeIdsEsperados))
             ->with(Mockery::on(function (array $inputs) use (&$entidadeIdsChamados): bool {
                 $entidadeIdsChamados[] = $inputs['entidade'];
                 return $inputs['unidades'] === true
@@ -132,8 +133,8 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         $service = app(SiapeIndividualUnidadeService::class);
         $service->fluxoSiape('codigo invalido', $this->mockSiapeService);
 
-        expect($entidadeIdsChamados)->toHaveCount(3);
-        expect($entidadeIdsChamados)->toEqualCanonicalizing($this->entidades->pluck('id')->all());
+        expect($entidadeIdsChamados)->toHaveCount(count($this->entidadeIdsEsperados));
+        expect($entidadeIdsChamados)->toEqualCanonicalizing($this->entidadeIdsEsperados);
 
         expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->toBeNull();
 
