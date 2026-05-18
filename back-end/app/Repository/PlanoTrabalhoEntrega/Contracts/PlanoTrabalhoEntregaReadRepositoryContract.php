@@ -18,7 +18,7 @@ interface PlanoTrabalhoEntregaReadRepositoryContract
     /** @return \App\Models\PlanoTrabalhoEntrega|null */
     public function find(string|int $id): ?Model;
 
-    public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId): bool;
+    public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId, ?string $excludeId = null): bool;
 
     public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO;
 }
