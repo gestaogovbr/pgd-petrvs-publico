@@ -3,7 +3,7 @@ FROM php:8.2-apache
 ARG ELASTIC_APM_ENABLED=false
 
 # Instalar recursos adicionais
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     sed \
     vim \
     git \
@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y \
     openssl \
     libssl-dev \
     libxml2-dev \
-    sudo \
     chrony \
     && docker-php-ext-install zip \
     pdo_mysql \
@@ -44,10 +43,12 @@ RUN set -eux; \
     URL=$(curl -s "https://api.github.com/repos/elastic/apm-agent-php/releases/tags/v${ELASTIC_APM_VERSION}" | grep -oE "https://[^\"]+\.deb" | head -n1) || true; \
     if [ -n "$URL" ]; then \
       curl -L "$URL" -o /tmp/apm-agent-php.deb; \
-      apt-get update && apt-get install -y ca-certificates curl || true; \
-      if ! dpkg -i /tmp/apm-agent-php.deb; then apt-get -y install -f && dpkg -i /tmp/apm-agent-php.deb; fi; \
+      apt-get update && apt-get install -y --no-install-recommends ca-certificates curl || true; \
+      if ! dpkg -i /tmp/apm-agent-php.deb; then apt-get -y --no-install-recommends install -f && dpkg -i /tmp/apm-agent-php.deb; fi; \
       echo "Elastic APM PHP agent installed via .deb."; \
-    fi
+    fi; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/* /tmp/apm-agent-php.deb
 
 ENV ELASTIC_APM_ENABLED=${ELASTIC_APM_ENABLED} \
     ELASTIC_APM_ENVIRONMENT=prd \

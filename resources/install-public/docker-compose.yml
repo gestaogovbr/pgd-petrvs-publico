@@ -1,6 +1,13 @@
 version: "3.9"
+
+x-security-defaults: &security_defaults
+  security_opt:
+    - no-new-privileges:true
+    - seccomp:../docker/security/seccomp-cve-2026-31431.json
+
 services:
   mariadb:
+    <<: *security_defaults
     image: mariadb:latest
     container_name: petrvs_db
     ports:
@@ -11,6 +18,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpgd   # Define a senha para o root
   petrvs_php:
+    <<: *security_defaults
     image: segescginf/pgdpetrvs:latest  # Substitua pela sua imagem real
     container_name: petrvs_php
       - APP_CONTEXT=web
@@ -33,6 +41,7 @@ services:
       - "./.env:/var/www/.env"
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
   petrvs_queue:
+    <<: *security_defaults
     image: segescginf/pgdpetrvs:latest
     container_name: petrvs_queue
     command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
@@ -74,6 +83,7 @@ services:
         limits:
           memory: 1024M
   petrvs_redis:
+    <<: *security_defaults
     image: redis:alpine
     container_name: petrvs_redis
     ports:

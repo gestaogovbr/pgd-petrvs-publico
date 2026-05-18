@@ -667,11 +667,11 @@ docker cp .env petrvs_php:/var/www/.env
 
 # Storage
 echo "Permissão storage/logs..."
-docker exec -it petrvs_php bash -c 'sudo chmod -R 777 /var/www/storage/logs/'
-docker exec -it petrvs_php bash -c 'sudo chmod -R 777 /var/www/storage/'
-docker exec -it petrvs_php bash -c 'sudo chown -R www-data:root ./storage/logs/'
+docker exec -it petrvs_php bash -c 'chmod -R 777 /var/www/storage/logs/'
+docker exec -it petrvs_php bash -c 'chmod -R 777 /var/www/storage/'
+docker exec -it petrvs_php bash -c 'chown -R www-data:root ./storage/logs/'
 echo "Limpando storage/logs"
-docker exec -it petrvs_php bash -c 'sudo rm -f /var/www/storage/logs/*.log'
+docker exec -it petrvs_php bash -c 'rm -f /var/www/storage/logs/*.log'
 docker exec -it petrvs_php touch /var/www/storage/logs/laravel.log
 docker exec -it petrvs_php chmod 777 /var/www/storage/logs/laravel.log
 docker exec -it petrvs_php touch /var/www/storage/logs/mysql-slow.log

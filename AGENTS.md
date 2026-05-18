@@ -55,7 +55,7 @@
 - Testes de integração do banco central usam `back-end/tests/Integration` com `Tests\DatabaseTestCase`.
 - Testes de integração tenant-aware usam `back-end/tests/IntegrationTenant` com `Tests\DatabaseTenantTestCase`.
 - Mudanças de comportamento no back-end precisam de testes focados, exceto mudanças apenas em controller que só roteiam/delegam sem regra de negócio.
-- Migrações tenant exigem verificar se `back-end/database/schema/tenant-schema.sql` deve ser regenerado.
+- Migrações tenant exigem verificar se `back-end/database/schema/test-tenant-schema.sql` deve ser regenerado.
 
 ## Portão de Qualidade
 

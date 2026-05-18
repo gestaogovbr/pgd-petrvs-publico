@@ -2,8 +2,12 @@
 FROM mysql:8-debian
 
 # Installar recursos adicionais
-RUN apt-get update
-RUN apt-get install -y chrony
+# O chrony vem do Debian; desativa o repo MySQL da imagem base para evitar falha por chave GPG rotacionada.
+RUN mv /etc/apt/sources.list.d/mysql.list /etc/apt/sources.list.d/mysql.list.disabled \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends chrony \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Instalar e configurar sicronizador de tempo - Chrony
 COPY ./configuracoes/chrony/chrony.conf /etc/chrony/chrony.conf

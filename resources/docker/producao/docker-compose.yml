@@ -1,6 +1,12 @@
+x-security-defaults: &security_defaults
+  security_opt:
+    - no-new-privileges:true
+    - seccomp:../security/seccomp-cve-2026-31431.json
+
 services:
 
   petrvs_db_producao:
+    <<: *security_defaults
     image: mysql:8-debian
     build:
       context: .
@@ -21,6 +27,7 @@ services:
           memory: 2048M
 
   petrvs_php_producao:
+    <<: *security_defaults
     build: 
       context: .
       dockerfile: Dockerfile-php
