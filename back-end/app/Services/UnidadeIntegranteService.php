@@ -86,7 +86,7 @@ class UnidadeIntegranteService extends ServiceBase
   }
 
   
-  public function salvarIntegrantes(array $vinculos, $transaction = true): array
+  public function salvarIntegrantes(array $vinculos, bool $transaction = true, bool $preservarAtribuicoesExistentes = false): array
   {
     $result = [];
     foreach ($vinculos as $vinculo) {
@@ -123,6 +123,7 @@ class UnidadeIntegranteService extends ServiceBase
             'unidadeIntegranteAtribuicaoRepository' => app(UnidadeIntegranteAtribuicaoRepository::class),
             'usuarioRepository' => app(UsuarioRepository::class),
             'unidadeRepository' => app(UnidadeRepository::class),
+            'preservarAtribuicoesExistentes' => $preservarAtribuicoesExistentes,
         ]);
         $integracao->setTransaction($transaction); 
         $integracao->processar();
