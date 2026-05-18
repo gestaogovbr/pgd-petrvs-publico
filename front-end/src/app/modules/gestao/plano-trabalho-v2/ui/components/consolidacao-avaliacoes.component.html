@@ -1,0 +1,90 @@
+@if (consolidacao.avaliacoes.length > 0) {
+  <div class="mt-4">
+    <p class="text-weight-semi-bold mb-2">Avaliação do Período</p>
+    <div class="br-table">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Data</th>
+              <th scope="col">Avaliador</th>
+              <th scope="col">Nota / Justificativa</th>
+              <th scope="col">Recurso</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (avaliacao of consolidacao.avaliacoes; track avaliacao.id) {
+              @let notaIdx = notaIndexPorId(avaliacao.tipo_avaliacao_nota_id, avaliacao.nota);
+              @let notaTotal = facade.notas().length;
+              <tr>
+                <td>{{ avaliacao.data_avaliacao | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ avaliacao.avaliador?.nome || '-' }}</td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    @if (notaIdx !== -1) {
+                      <div [style.color]="notaColor(notaIdx, notaTotal)" style="font-size: 1.5rem; line-height: 1;">
+                        <i class="fas {{ notaIcone(notaIdx, notaTotal) }}"></i>
+                      </div>
+                    }
+                    <strong>{{ notaLabel(avaliacao.nota) }}</strong>
+                  </div>
+                  @if (avaliacao.justificativa) {
+                    <div class="mt-1 text-muted"><small>{{ avaliacao.justificativa }}</small></div>
+                  }
+                </td>
+                <td>
+                  @if (avaliacao.recurso) {
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="fas fa-flag text-warning"></i>
+                      <small>{{ avaliacao.recurso }}</small>
+                    </div>
+                  } @else if (consolidacaoPolicy.podeSolicitarRecurso(consolidacao, avaliacao, planoTrabalho)) {
+                    <app-recurso-form
+                      [avaliacaoId]="avaliacao.id"
+                      [ativo]="facade.solicitandoRecursoAvaliacaoId() === avaliacao.id"
+                      [emAndamento]="facade.enviandoRecursoIds().has(avaliacao.id)"
+                      [justificativa]="facade.justificativaRecurso()"
+                      (abrir)="facade.iniciarSolicitacaoRecurso(avaliacao.id)"
+                      (cancelar)="facade.cancelarSolicitacaoRecurso()"
+                      (justificativaChange)="facade.justificativaRecurso.set($event)"
+                      (submeter)="facade.confirmarSolicitacaoRecurso(consolidacao, avaliacao.id)"
+                    />
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  @if (consolidacaoPolicy.podeReavaliarConsolidacao(consolidacao, planoTrabalho)) {
+    <br-divider></br-divider>
+    <p class="text-weight-semi-bold mb-3">Reavaliação</p>
+    <app-avaliacao-form
+      [consolidacaoId]="consolidacao.id"
+      [notas]="facade.notas()"
+      [notaSelecionadaId]="facade.getNotaSelecionada(consolidacao.id)"
+      [justificativa]="facade.getJustificativaAvaliacao(consolidacao.id)"
+      [justificativaObrigatoria]="facade.notaSelecionadaJustificaObrigatoria(consolidacao.id)"
+      [emAndamento]="facade.avaliandoIds().has(consolidacao.id)"
+      (notaSelecionada)="facade.selecionarNota(consolidacao.id, $event)"
+      (justificativaChange)="facade.setJustificativaAvaliacao(consolidacao.id, $event)"
+      (submeter)="facade.avaliarConsolidacao(consolidacao)"
+    />
+  }
+} @else if (consolidacaoPolicy.podeAvaliarConsolidacao(consolidacao, planoTrabalho)) {
+  <br-divider></br-divider>
+  <p class="text-weight-semi-bold mb-3">Avaliação</p>
+  <app-avaliacao-form
+    [consolidacaoId]="consolidacao.id"
+    [notas]="facade.notas()"
+    [notaSelecionadaId]="facade.getNotaSelecionada(consolidacao.id)"
+    [justificativa]="facade.getJustificativaAvaliacao(consolidacao.id)"
+    [justificativaObrigatoria]="facade.notaSelecionadaJustificaObrigatoria(consolidacao.id)"
+    [emAndamento]="facade.avaliandoIds().has(consolidacao.id)"
+    (notaSelecionada)="facade.selecionarNota(consolidacao.id, $event)"
+    (justificativaChange)="facade.setJustificativaAvaliacao(consolidacao.id, $event)"
+    (submeter)="facade.avaliarConsolidacao(consolidacao)"
+  />
+}

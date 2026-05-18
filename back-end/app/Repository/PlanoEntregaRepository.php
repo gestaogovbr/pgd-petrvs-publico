@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\PlanoEntrega;
+use App\Models\PlanoEntregaEntrega;
 use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
@@ -91,5 +92,20 @@ class PlanoEntregaRepository implements EnvioRepositoryInterface
     {
        /** @var PlanoEntrega $planoEntrega */
         $this->writeRepository->registrarLog($planoEntrega, $mensagem);
+    }
+
+    public function findAllByUnidadeId(string $unidadeId, ?string $dataInicio = null, ?string $dataFim = null): Collection
+    {
+        return $this->readRepository->findAllByUnidadeId($unidadeId, $dataInicio, $dataFim);
+    }
+
+    public function findAllEntregasByPlanoId(string $planoEntregaId): Collection
+    {
+        return $this->readRepository->findAllEntregasByPlanoId($planoEntregaId);
+    }
+
+    public function findEntregaById(string $entregaId): ?PlanoEntregaEntrega
+    {
+        return $this->readRepository->findEntregaById($entregaId);
     }
 }

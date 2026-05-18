@@ -1,0 +1,105 @@
+<div class="br-mainpanel">
+  <app-breadcrumb />
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Tipos de Objetivos</h2>
+    <br-button emphasis="primary" (click)="abrirNovo()">
+      <i class="fas fa-plus mr-1"></i>Novo tipo
+    </br-button>
+  </div>
+
+  <div class="br-card mb-3">
+    <div class="card-content">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-8">
+          <div class="br-input">
+            <label>Filtrar por nome</label>
+            <input type="text" [value]="filtroNome()" (input)="atualizarFiltro($any($event.target).value)" placeholder="Digite para filtrar..." />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (facade.loading()) {
+    <div class="d-flex justify-content-center p-5">
+      <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+    </div>
+  } @else {
+    <div class="br-table">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Nome</th>
+              <th scope="col">Descrição</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of itensFiltrados(); track item.id) {
+              <tr>
+                <td data-th="Nome">{{ item.nome }}</td>
+                <td data-th="Descrição">{{ item.descricao || '-' }}</td>
+                <td data-th="Ações">
+                  <div class="d-flex gap-1">
+                    <br-button shape="circle" (click)="abrirEdicao(item)" title="Editar" ariaLabel="Editar tipo de objetivo">
+                      <i class="fas fa-pen"></i>
+                    </br-button>
+                    <br-button shape="circle" class="text-danger" (click)="abrirExclusao(item)" title="Excluir" ariaLabel="Excluir tipo de objetivo">
+                      <i class="fas fa-trash"></i>
+                    </br-button>
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (itensFiltrados().length === 0) {
+              <tr>
+                <td colspan="3" class="text-center p-3">Nenhum tipo de objetivo encontrado.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+</div>
+
+<br-scrim [isOpen]="modalFormularioAberto()" [disableCloseOnClick]="true">
+  <br-modal [show]="modalFormularioAberto()"
+            [titleText]="itemEmEdicao() ? 'Editar tipo de objetivo' : 'Novo tipo de objetivo'"
+            size="medium"
+            alignFooter="end"
+            (brModalBeforeClose)="fecharModalFormulario()">
+    <form [formGroup]="form" class="d-flex flex-column gap-3">
+      <div class="br-input">
+        <label>Nome <span class="text-danger">*</span></label>
+        <input type="text" formControlName="nome" maxlength="250" />
+      </div>
+
+      <div class="br-textarea">
+        <label>Descrição</label>
+        <textarea rows="4" formControlName="descricao" maxlength="1000"></textarea>
+      </div>
+    </form>
+
+    <div slot="footer">
+      <br-button emphasis="secondary" (click)="fecharModalFormulario()">Cancelar</br-button>
+      <br-button emphasis="primary" [disabled]="facade.saving()" (click)="salvar()">Salvar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
+
+<br-scrim [isOpen]="!!itemParaExcluir()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!itemParaExcluir()"
+            titleText="Excluir tipo de objetivo"
+            size="small"
+            alignFooter="end"
+            (brModalBeforeClose)="cancelarExclusao()">
+    <p>Tem certeza que deseja excluir o tipo <strong>{{ itemParaExcluir()?.nome }}</strong>?</p>
+    <div slot="footer">
+      <br-button emphasis="secondary" (click)="cancelarExclusao()">Cancelar</br-button>
+      <br-button emphasis="primary" [disabled]="facade.saving()" (click)="confirmarExclusao()">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>

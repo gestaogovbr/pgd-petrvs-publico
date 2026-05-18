@@ -37,13 +37,15 @@ class TipoCapacidadeService extends ServiceBase
         ["MENU_RELATORIOS", "Permite acessar o menu Relatórios"],
       ]
     ], [
-      "codigo" => "MOD_AFT",
-      "descricao" => "Módulo de afastamentos",
+      "codigo" => "MOD_OCOR",
+      "descricao" => "Módulo de Ocorrências",
       "capacidades" => [
-        /* Capacidades do módulo AFASTAMENTO*/
-        ["MOD_AFT_EDT", "Permite editar afastamento"],
-        ["MOD_AFT_EXCL", "Permite excluir afastamento"],
-        ["MOD_AFT_INCL", "Permite incluir afastamento"]
+        /* Capacidades do módulo Ocorrências*/
+        ["MOD_OCOR_EDT", "Permite editar Ocorrências"],
+        ["MOD_OCOR_EXCL", "Permite excluir Ocorrências"],
+        ["MOD_OCOR_INCL", "Permite incluir Ocorrências"],
+        ["MOD_OCOR_TODAS_UNIDADES", "Permite pesquisar as Ocorrências de Todas as Unidades"],
+        ["MOD_OCOR_UNIDADE", "Permite pesquisar em todas as Ocorrências da Unidade e Subordinadas"],
       ]
     ], [
       "codigo" => "MOD_ATV",
@@ -488,6 +490,10 @@ class TipoCapacidadeService extends ServiceBase
         "codigo" => "MOD_SIAPE_RELATORIO_CARGA",
         "descricao" => "Relatório de Carga Individual SIAPE",
     ],
+    [
+      "codigo" => "MOD_TIPO_OBJETIVO",
+      "descricao" => "Módulo de Tipos de Objetivos",
+    ]
   ];
 
   private function differentDev(&$data)

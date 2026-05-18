@@ -1541,6 +1541,8 @@ CREATE TABLE `planos_trabalhos` (
   `data_arquivamento` datetime DEFAULT NULL COMMENT 'Data de arquivamento do plano de trabalho',
   `forma_contagem_carga_horaria` enum('DIA','SEMANA','MES') NOT NULL DEFAULT 'DIA' COMMENT 'Forma de contagem padrão da carga horária',
   `status` enum('INCLUIDO','AGUARDANDO_ASSINATURA','ATIVO','CONCLUIDO','AVALIADO','SUSPENSO','CANCELADO') NOT NULL DEFAULT 'INCLUIDO' COMMENT 'Status atual do plano de trabalho',
+  `justificativa` text DEFAULT NULL COMMENT 'Justificativa para carga horária inferior a 100%',
+  `justificativa_modalidade` varchar(500) DEFAULT NULL COMMENT 'Justificativa para modalidade divergente do SIAPE',
   `programa_id` char(36) NOT NULL,
   `usuario_id` char(36) NOT NULL,
   `unidade_id` char(36) NOT NULL,
@@ -1554,6 +1556,7 @@ CREATE TABLE `planos_trabalhos` (
   `data_tentativa_envio` timestamp NULL DEFAULT NULL COMMENT 'Data da Ultima Tentativa de Envio',
   `log_envio` text DEFAULT NULL,
   `data_conclusao_envio` timestamp NULL DEFAULT NULL COMMENT 'Data em que o envio foi concluído com sucesso na API PGD',
+  `encerrado_at` date DEFAULT NULL COMMENT 'Data de encerramento antecipado do plano de trabalho',
   PRIMARY KEY (`id`),
   UNIQUE KEY `planos_trabalhos_numero_unique` (`numero`),
   KEY `planos_trabalhos_programa_id_foreign` (`programa_id`),
@@ -2719,7 +2722,7 @@ CREATE TABLE `usuarios` (
   `email` varchar(100) NOT NULL COMMENT 'E-mail do usuário',
   `nome` varchar(256) NOT NULL COMMENT 'Nome do usuário',
   `password` varchar(255) DEFAULT NULL COMMENT 'Senha do usuário',
-  `cpf` varchar(14) NOT NULL,
+  `cpf` varchar(11) NOT NULL COMMENT 'CPF do usuário',
   `matricula` varchar(50) DEFAULT NULL COMMENT 'Matrícula funcional do usuário',
   `apelido` varchar(255) DEFAULT NULL COMMENT 'Apelido/Nome de guerra/Nome social',
   `telefone` varchar(50) DEFAULT NULL COMMENT 'Telefone do usuário',
@@ -3335,8 +3338,22 @@ DELIMITER ;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*M!100616 SET NOTE_VERBOSITY=@OLD_NOTE_VERBOSITY */;
 
-/*M!999999\- enable the sandbox mode */
-SET @OLD_AUTOCOMMIT=@@AUTOCOMMIT, @@AUTOCOMMIT=0;
+/*M!999999\- enable the sandbox mode */ 
+set autocommit=0;
+
+CREATE TABLE `planejamentos_tipos_objetivos` (
+  `id` char(36) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `nome` varchar(255) NOT NULL COMMENT 'Nome do tipo de objetivo',
+  `descricao` text DEFAULT NULL COMMENT 'Descrição do tipo de objetivo',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `planejamentos_objetivos` ADD COLUMN `tipo_objetivo_id` char(36) DEFAULT NULL COMMENT 'Tipo do objetivo (opcional)' AFTER `eixo_tematico_id`;
+ALTER TABLE `planejamentos_objetivos` ADD CONSTRAINT `fk_planej_obj_tipo_objetivo_id` FOREIGN KEY (`tipo_objetivo_id`) REFERENCES `planejamentos_tipos_objetivos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (1,'2014_10_12_100000_create_password_resets_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (2,'2019_08_19_000000_create_failed_jobs_table',1);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (3,'2019_12_14_000001_create_personal_access_tokens_table',1);

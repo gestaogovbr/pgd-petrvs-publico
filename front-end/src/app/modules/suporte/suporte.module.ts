@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { PanelMenuModule } from 'primeng/panelmenu';
 import { HomeSuporteComponent } from './home-suporte/home-suporte.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { MenuSuporteComponent } from './menu-suporte/menu-suporte.component';
@@ -31,7 +30,6 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes),
     CommonModule,
-    PanelMenuModule,
     SharedModule,
   ]
 })

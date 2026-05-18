@@ -182,10 +182,9 @@ export class InputSearchComponent extends InputBase implements OnInit {
 		this.control?.valueChanges.subscribe(async (newValue) => {			
 			if (this.selectedValue != newValue) {
 				this.selectedValue = newValue;
-				await this.loadSearch();
+				await this.loadSearch(newValue);
 			}
 		});
-		this.control?.setValue(this.control.value);
 	}
 
 	public selectItem(
@@ -464,7 +463,8 @@ export class InputSearchComponent extends InputBase implements OnInit {
 	public async loadSearch(
 		keyOrSelectItem?: string | SelectItem | any,
 		emitEvent: boolean = true
-	) {		
+	) {	
+		if (!keyOrSelectItem && !this.control?.value) return;	
 		this.clear(false, emitEvent);
 		let selectedItem: SelectItem | undefined = undefined;
 		if (keyOrSelectItem) {

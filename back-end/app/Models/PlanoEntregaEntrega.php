@@ -91,7 +91,7 @@ class PlanoEntregaEntrega extends ModelBase
   {
     return $this->belongsTo(PlanoEntrega::class);
   }
-  public function entrega()
+  public function entrega(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(Entrega::class);
   }      //nullable

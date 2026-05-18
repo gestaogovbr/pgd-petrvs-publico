@@ -296,7 +296,7 @@ abstract class ControllerBase extends Controller
                 'success' => true,
                 'count' => $result['count'],
                 'rows' => $result['rows'],
-                'extra' => $result['extra']
+                'extra' => $result['extra'] ?? []
             ]);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);

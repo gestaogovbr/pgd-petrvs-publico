@@ -6,6 +6,7 @@ namespace App\Repository\PlanoTrabalho\Contracts;
 
 use App\Models\PlanoTrabalho;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 interface PlanoTrabalhoWriteRepositoryContract
 {
@@ -20,4 +21,12 @@ interface PlanoTrabalhoWriteRepositoryContract
     public function registrarConclusao(PlanoTrabalho $planoTrabalho, string $mensagem): void;
 
     public function registrarLog(PlanoTrabalho $planoTrabalho, string $mensagem): void;
+    
+    /** @return PlanoTrabalho */
+    public function create(array $attributes): Model;
+
+    /** @return PlanoTrabalho|null */
+    public function update(string|int $id, array $attributes): ?Model;
+
+    public function delete(string|int $id): bool;
 }

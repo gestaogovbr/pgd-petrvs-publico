@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Repository\PlanoTrabalho\Eloquent;
 
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\Models\PlanoTrabalho;
 use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
@@ -60,6 +62,12 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         return $planoTrabalho;
     }
 
+    /**
+     * @param array $unidadesGerenciadasIds
+     * @param array $unidadesSubordinadasIds
+     * @param string $usuarioId
+     * @return Collection
+     */
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
         $unidadesGerenciadasIds = array_values(array_unique($unidadesGerenciadasIds));
@@ -179,5 +187,128 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                     ->orWhereNull('data_conclusao_envio');
             })
             ->chunkById($size, $callback);
+    }
+
+    public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator
+    {
+        /** @var \Illuminate\Database\Eloquent\Builder<PlanoTrabalho> $queryBase */
+        $queryBase = PlanoTrabalho::query();
+
+        $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.modalidade_pgd', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status')
+              ->with(['usuario:id,nome', 'unidade:id,nome,sigla']);
+
+        if($filtro->hierarquia){
+            $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
+
+            $query->addSelect(DB::raw("$queryHierarquia AS hierarquia"))
+                 ->orderBy(DB::raw($queryHierarquia));
+        }
+
+        if($filtro->arquivados){
+            $query->whereNotNull('data_arquivamento');
+        }else{
+            $query->whereNull('data_arquivamento');
+        }
+
+        if ($filtro->unidadesId !== null) {
+            $query->whereIn('unidade_id', $filtro->unidadesId);
+        }
+
+        if ($filtro->usuarioId !== null) {
+            $query->where('usuario_id', $filtro->usuarioId);
+        }
+
+        if ($filtro->dataInicio !== null) {
+            $query->where('data_fim', '>=', $filtro->dataInicio);
+        }
+
+        if ($filtro->dataFim !== null) {
+            $query->where('data_inicio', '<=', $filtro->dataFim);
+        }
+
+        if ($filtro->numero !== null) {
+            $query->where('numero', $filtro->numero);
+        }
+
+        if ($filtro->modalidadePgd !== null) {
+            $query->where('modalidade_pgd', $filtro->modalidadePgd);
+        }
+
+        if ($filtro->status !== null) {
+            $query->where('status', $filtro->status);
+        }
+
+        if ($filtro->vigentes) {
+            $today = today();
+            $query->where('data_inicio', '<=', $today)
+                  ->where('data_fim', '>=', $today)
+                  ->where('status', StatusEnum::ATIVO->value);
+        }
+
+        if ($filtro->usuarioNome !== null && $filtro->usuarioNome !== '') {
+            $query->whereHas('usuario', fn ($q) => $q->where('nome', 'like', '%' . $filtro->usuarioNome . '%'));
+        }
+
+        if ($filtro->unidadeRegramento !== null && $filtro->unidadeRegramento !== '') {
+            $termo = '%' . strtolower($filtro->unidadeRegramento) . '%';
+            $query->whereHas('unidade', fn ($q) => $q->whereRaw('LOWER(sigla) like ?', [$termo])
+                ->orWhereRaw('LOWER(nome) like ?', [$termo]));
+        }
+
+        if ($filtro->orderBy === 'numero') {
+            $query->orderBy('numero', $filtro->orderDir ?? 'asc');
+        } elseif ($filtro->orderBy === 'usuario_nome') {
+            $query->join('usuarios', 'usuarios.id', '=', 'planos_trabalhos.usuario_id')
+                  ->orderBy('usuarios.nome', $filtro->orderDir ?? 'asc');
+        }
+
+        return $query->paginate(perPage: $filtro->perPage, page: $filtro->page);
+    }
+
+    public function existeConflitoPeriodo(string $usuarioId, string $dataInicio, string $dataFim): bool
+    {
+        return $this->query()
+            ->where('usuario_id', $usuarioId)
+            ->where('data_inicio', '<=', $dataFim)
+            ->where('data_fim', '>=', $dataInicio)
+            ->where('status', '!=', 'CANCELADO')
+            ->exists();
+    }
+
+    public function existeConflitoPeriodoExcluindo(string $usuarioId, string $dataInicio, string $dataFim, string $excluirPlanoId): bool
+    {
+        return $this->query()
+            ->where('usuario_id', $usuarioId)
+            ->where('data_inicio', '<=', $dataFim)
+            ->where('data_fim', '>=', $dataInicio)
+            ->where('status', '!=', 'CANCELADO')
+            ->where('id', '!=', $excluirPlanoId)
+            ->exists();
+    }
+
+    public function findByIdComRelacoes(string $id): ?PlanoTrabalho
+    {
+        /** @var PlanoTrabalho|null $plano */
+        $plano = PlanoTrabalho::with([
+            'usuario:id,nome,apelido',
+            'unidade:id,sigla,nome',
+            'programa:id,nome',
+            'entregas',
+            'consolidacoes.atividades',
+            'consolidacoes.afastamentos.afastamento.tipoMotivoAfastamento:id,nome,horas',
+            'documento.assinaturas.usuario',
+            'entregas.planoEntregaEntrega.entrega',
+            'entregas.planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome'
+        ])->find($id);
+
+        return $plano;
+    }
+
+    public function possuiAssinatura(string $planoId): bool
+    {
+        return $this->query()
+            ->where('id', $planoId)
+            ->whereHas('documentos.assinaturas')
+            ->exists();
     }
 }

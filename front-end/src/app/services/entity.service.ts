@@ -50,6 +50,7 @@ import { ClienteDaoService } from '../dao/cliente-dao.service';
 import { TipoClienteDaoService } from '../dao/tipo-cliente-dao.service';
 import { SolucaoDaoService } from '../dao/solucao-dao.service';
 
+
 export type EntityItem = {
   collection: string,
   codigo?: string,
@@ -72,7 +73,7 @@ export class EntityService {
     this.lex = injector.get<LexicalService>(LexicalService);
     this.list = [
       { collection: 'Adesao', icon: 'bi bi-universal-access-circle', label: "Adesão" },
-      { collection: 'Afastamento', codigo: 'MOD_AFT', table: 'afastamentos', campo: 'observacoes', icon: 'bi bi-toggle-off', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), label: "Afastamento", selectRoute: { route: ['gestao', 'afastamento'] } },
+      { collection: 'Afastamento', codigo: 'MOD_OCOR', table: 'afastamentos', campo: 'observacoes', icon: 'bi bi-toggle-off', dao: injector.get<AfastamentoDaoService>(AfastamentoDaoService), label: "Afastamento", selectRoute: { route: ['gestao', 'afastamento'] } },
       { collection: 'Atividade', codigo: 'MOD_ATV', table: 'atividades', campo: 'descricao', icon: 'bi bi-activity', dao: injector.get<AtividadeDaoService>(AtividadeDaoService), label: "Atividade", selectRoute: { route: ['gestao', 'atividade'] } },
       { collection: 'AtividadeTarefa', table: 'atividades_tarefas', campo: 'atividade_id', icon: '', dao: injector.get<AtividadeTarefaDaoService>(AtividadeTarefaDaoService), label: "Tarefa da Atividade" },
       { collection: 'CadeiaValor', codigo: 'MOD_CADV', table: 'cadeias_valores', campo: 'nome', icon: 'bi bi-bar-chart-steps', dao: injector.get<CadeiaValorDaoService>(CadeiaValorDaoService), label: "Cadeia de Valor", selectRoute: { route: ['gestao', 'cadeia-valor'] } },
@@ -124,6 +125,7 @@ export class EntityService {
       { collection: 'Unidade', codigo: 'MOD_UND', table: 'unidades', campo: 'nome', icon: 'fa-unity fab', dao: injector.get<UnidadeDaoService>(UnidadeDaoService), label: "Unidade", selectRoute: { route: ['configuracoes', 'unidade'] } },
       { collection: 'UnidadeIntegrante', table: 'unidades_integrantes', campo: 'atribuicao', icon: '', dao: injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService), label: "Integrante da Unidade" },
       { collection: 'Usuario', codigo: 'MOD_USER', table: 'usuarios', campo: 'nome', icon: 'bi bi-people', dao: injector.get<UsuarioDaoService>(UsuarioDaoService), label: "Usuário", selectRoute: { route: ['configuracoes', 'usuario'] } },
+      { collection: 'TipoObjetivo', icon: 'bi bi-bullseye', label: "Tipo de Objetivo", selectRoute: { route: ['cadastros', 'tipo-objetivo-v2'] } },
     ];
   }
 

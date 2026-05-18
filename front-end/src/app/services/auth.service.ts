@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Injectable, Injector } from '@angular/core';
 import { Unidade } from '../models/unidade.model';
 import { Usuario, UsuarioConfig } from '../models/usuario.model';
+import { Perfil } from '../models/perfil.model';
 
 import { DialogService } from './dialog.service';
 import { GlobalsService } from './globals.service';
@@ -58,13 +59,11 @@ export class AuthService {
   public set logging(value: boolean) {
     if (value != this._logging) {
       this._logging = value;
-      if (!this.gb.isEmbedded) {
-        if (value) {
-          this.dialogs.showSppinerOverlay("Logando . . .", 60000);
-        } else {
-          this.dialogs.closeSppinerOverlay();
-        }
-      }
+      if (value) {
+        this.dialogs.showSppinerOverlay("Logando . . .", 60000);
+      } else {
+        this.dialogs.closeSppinerOverlay();
+      }      
     }
   }
   public set apiToken(value: string | undefined) {
@@ -287,9 +286,9 @@ export class AuthService {
   }
 
   private logIn(kind: AuthKind, route: string, params: any, redirectTo?: FullRoute): Promise<boolean> {
-    let deviceName = this.gb.isExtension ? "EXTENSION" : this.gb.isSeiModule ? "SEI" : "BROWSER";
+    let deviceName = "BROWSER";
     let login = (): Promise<boolean> => {
-      return this.server.post((this.gb.isEmbedded ? "api/" : "web/") + route, { ...params, device_name: deviceName }).toPromise().then(response => {
+      return this.server.post("web/" + route, { ...params, device_name: deviceName }).toPromise().then(response => {
         const loginResponse = response as LoginResponse;
         if (loginResponse?.error) throw new Error(loginResponse.error);
         this.kind = loginResponse?.kind || kind;
@@ -312,18 +311,14 @@ export class AuthService {
       });
     };
     this.logging = true;
-    if (this.gb.isEmbedded) {
-      return login();
-    } else {
-      return this.server.get('sanctum/csrf-cookie').toPromise().then(login);
-    }
+    return this.server.get('sanctum/csrf-cookie').toPromise().then(login);
   }
 
   public async logOut() {
     try {
       this.logging = true;
 
-      await this.server.get((this.gb.isEmbedded ? "api/" : "web/") + "logout").toPromise();
+      await this.server.get("web/logout").toPromise();
 
       const clearLogin = () => {
         localStorage.removeItem("petrvs_api_token");
@@ -424,11 +419,15 @@ export class AuthService {
   }
 
   public isUsuarioDeveloper(): boolean {
-    return this.usuario?.perfil?.nivel == 0;
+    return (this.usuario?.perfil?.nivel ?? Perfil.NIVEL.DESENVOLVEDOR) === Perfil.NIVEL.DESENVOLVEDOR;
   }
 
   public isUsuarioConsulta(): boolean {
-    return this.usuario?.perfil?.nivel == 7;
+    return (this.usuario?.perfil?.nivel ?? Perfil.NIVEL.CONSULTA) === Perfil.NIVEL.CONSULTA;
+  }
+
+  public isUsuarioParticipante(): boolean {
+    return (this.usuario?.perfil?.nivel ?? Perfil.NIVEL.PARTICIPANTE) === Perfil.NIVEL.PARTICIPANTE;
   }
 
 
@@ -524,11 +523,7 @@ export class AuthService {
       });
     };
     this.logging = true;
-    if (this.gb.isEmbedded) {
-      return login();
-    } else {
-      return this.server.get('sanctum/csrf-cookie').toPromise().then(login);
-    }
+    return this.server.get('sanctum/csrf-cookie').toPromise().then(login);
   }
 
   public buscarUnidadesVinculadas(cpf: string): Promise<UnidadeVinculada[]> {

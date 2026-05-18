@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\AsJson;
 use App\Enums\StatusEnum;
+use App\Contracts\HasStatusHistory;
 use App\Models\Atividade;
 use App\Models\Documento;
 use App\Models\DocumentoAssinatura;
@@ -57,8 +58,12 @@ use Illuminate\Database\Eloquent\Collection;
  * @property-read Collection|Atividade[] $atividades
  * @property-read Collection|Ocorrencia[] $ocorrencias
  */
-class PlanoTrabalho extends ModelBase
+class PlanoTrabalho extends ModelBase implements HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'plano_trabalho_id';
+    }
     protected $table = 'planos_trabalhos';
 
     protected $with = [];
@@ -84,6 +89,9 @@ class PlanoTrabalho extends ModelBase
         'avaliado_at', /* date; data em que o plano teve o status trasicionado para AVALIADO */
         //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
+        'justificativa', /* text; NULL; */ // Justificativa para carga horária diferente de 100%
+        'justificativa_modalidade', /* varchar(500); NULL; */ // Justificativa para modalidade divergente do SIAPE
+        'encerrado_at', /* date; NULL; */ // Data de encerramento antecipado do plano de trabalho
     ];
 
   public const STATUSES = [

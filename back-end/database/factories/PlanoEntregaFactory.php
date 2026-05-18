@@ -20,36 +20,16 @@ class PlanoEntregaFactory extends Factory
 
     public function definition(): array
     {
-        $tipoAvaliacao = TipoAvaliacao::factory()->create();
-        $tipoJustificativa = TipoJustificativa::factory()->create();
-        $entidade = Entidade::factory()->create();
-
-        $unidade = Unidade::factory()->create([
-            'entidade_id' => $entidade->id,
-            'instituidora' => 1
-        ]);
-
-        $programa = Programa::factory()->create([
-            'unidade_id' => $unidade->id,
-            'data_inicio' => now(),
-            'data_fim' => now()->addYear(),
-            'tipo_avaliacao_plano_entrega_id' => $tipoAvaliacao->id,
-            'tipo_avaliacao_plano_trabalho_id' => $tipoAvaliacao->id,
-            'tipo_justificativa_id' => $tipoJustificativa->id
-        ]);
-
-        $usuario = Usuario::factory()->create();
-
         return [
-            'id'   =>  Uuid::uuid4()->toString(),
-            'unidade_id' => $unidade->id,
-            'programa_id' => $programa->id,
-            'status' => 'INCLUIDO',
-            'criacao_usuario_id' => $usuario->id,
-            'nome' => $this->faker->sentence(10),
-            'data_inicio' => now(),
-            'data_fim' => now()->addMonth(),
-            'numero' => 123
+            'id' => $this->faker->uuid(),
+            'numero' => $this->faker->randomNumber(4),
+            'nome' => $this->faker->sentence(),
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2025-12-31',
+            'status' => 'ATIVO',
+            'unidade_id' => null,
+            'programa_id' => null,
+            'criacao_usuario_id' => null,
         ];
     }
 }

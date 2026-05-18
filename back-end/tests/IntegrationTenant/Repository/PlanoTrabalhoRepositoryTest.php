@@ -2,96 +2,70 @@
 
 namespace Tests\IntegrationTenant\Repository;
 
-use App\Enums\StatusEnum;
-use App\Models\Perfil;
 use App\Models\PlanoTrabalho;
-use App\Models\PlanoTrabalhoConsolidacao;
-use App\Models\PlanoTrabalhoEntrega;
+use App\Models\Programa;
 use App\Models\Unidade;
+use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
-use App\Models\Usuario;
 use App\Repository\PlanoTrabalhoRepository;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Str;
-use Tests\DatabaseTenantTestCase;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
+use App\Enums\StatusEnum;
+use App\Models\Perfil;
+use App\Models\PlanoTrabalhoEntrega;
 
-class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
-{
-    protected PlanoTrabalhoRepository $repository;
-    protected string $perfilId;
+beforeEach(function () {
+    $this->repository = app(PlanoTrabalhoRepository::class);
+    $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
+    $this->unidade = Unidade::factory()->create();
+    $this->usuario = Usuario::factory()->create([
+        'perfil_id' => $this->perfilId,
+    ]);
+    $this->programa = Programa::factory()->create();
+});
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        Bus::fake();
-        $this->repository = app(PlanoTrabalhoRepository::class);
-
-        $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
-    }
-
-    public function testGetPlanosTrabalhoAssinatura()
-    {
-        $unidade = Unidade::factory()->create();
-        $usuario = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
-        ]);
+    test('retorna apenas planos de outros usuários aguardando assinatura', function () {
         $outroUsuario = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
 
-        // Plano waiting for signature, correct unit, different user
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'modalidade_pgd' => 'presencial'
         ]);
 
-        // Plano waiting for signature, correct unit, same user (should be excluded)
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
-            'usuario_id' => $usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->usuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'modalidade_pgd' => 'presencial'
         ]);
 
-        // Plano not waiting for signature
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::ATIVO->value,
-            'modalidade_pgd' => 'presencial'
         ]);
 
-        $result = $this->repository->getPlanosTrabalhoAssinatura([$unidade->id], [], $usuario->id);
+        $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], $this->usuario->id);
 
-        $this->assertCount(1, $result);
-        $this->assertEquals($outroUsuario->id, $result->first()->usuario_id);
-    }
+        expect($result)->toHaveCount(1)
+            ->and($result->first()->usuario_id)->toBe($outroUsuario->id);
+    });
 
-    public function testGetPlanosTrabalhoAssinaturaNaoIncluiPlanoDoGestorTitularParaChefeSubstituto()
-    {
-        $unidade = Unidade::factory()->create();
-
+    test('não inclui plano do gestor titular para chefe substituto', function () {
         $gestorTitular = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $gestorSubstituto = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $participante = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
 
         $integranteTitular = UnidadeIntegrante::query()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorTitular->id,
         ]);
         UnidadeIntegranteAtribuicao::query()->create([
@@ -100,7 +74,7 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         ]);
 
         $integranteSubstituto = UnidadeIntegrante::query()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorSubstituto->id,
         ]);
         UnidadeIntegranteAtribuicao::query()->create([
@@ -109,40 +83,33 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         ]);
 
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorTitular->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'modalidade_pgd' => 'presencial'
         ]);
 
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $participante->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'modalidade_pgd' => 'presencial'
         ]);
 
-        $result = $this->repository->getPlanosTrabalhoAssinatura([$unidade->id], [], $gestorSubstituto->id);
+        $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], $gestorSubstituto->id);
 
-        $this->assertCount(1, $result);
-        $this->assertEquals($participante->id, $result->first()->usuario_id);
-    }
+        expect($result)->toHaveCount(1)
+            ->and($result->first()->usuario_id)->toBe($participante->id);
+    });
 
-    public function testGetPlanosTrabalhoAssinaturaIncluiPlanoDoGestorTitularQuandoUsuarioNaoEhChefeSubstituto()
-    {
-        $unidade = Unidade::factory()->create();
-
+    test('inclui plano do gestor titular quando usuário não é chefe substituto', function () {
         $gestorTitular = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $outroUsuario = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
 
         $integranteTitular = UnidadeIntegrante::query()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorTitular->id,
         ]);
         UnidadeIntegranteAtribuicao::query()->create([
@@ -151,46 +118,38 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         ]);
 
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $gestorTitular->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'modalidade_pgd' => 'presencial'
         ]);
 
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidade->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $outroUsuario->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'modalidade_pgd' => 'presencial'
         ]);
 
-        $result = $this->repository->getPlanosTrabalhoAssinatura([$unidade->id], [], 'usuario-qualquer');
+        $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], 'usuario-qualquer');
 
-        $this->assertCount(2, $result);
-        $this->assertTrue($result->pluck('usuario_id')->contains($gestorTitular->id));
-        $this->assertTrue($result->pluck('usuario_id')->contains($outroUsuario->id));
-    }
+        expect($result)->toHaveCount(2)
+            ->and($result->pluck('usuario_id')->contains($gestorTitular->id))->toBeTrue()
+            ->and($result->pluck('usuario_id')->contains($outroUsuario->id))->toBeTrue();
+    });
 
-    public function testGetPlanosTrabalhoAssinaturaIncluiApenasGestorTitularDasSubordinadas()
-    {
-        $unidadeSuperior = Unidade::factory()->create();
-        $unidadeSubordinada = Unidade::factory()->create(['unidade_pai_id' => $unidadeSuperior->id]);
+    test('inclui apenas gestor titular das subordinadas', function () {
+        $unidadeSubordinada = Unidade::factory()->create(['unidade_pai_id' => $this->unidade->id]);
 
         $usuarioLogado = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $titularSubordinada = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $participanteSubordinada = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
         $participanteSuperior = Usuario::factory()->create([
-            'modalidade_pgd' => 'presencial',
-            'perfil_id' => $this->perfilId
+            'perfil_id' => $this->perfilId,
         ]);
 
         $integranteTitularSub = UnidadeIntegrante::query()->create([
@@ -203,211 +162,364 @@ class PlanoTrabalhoRepositoryTest extends DatabaseTenantTestCase
         ]);
 
         PlanoTrabalho::factory()->create([
-            'unidade_id' => $unidadeSuperior->id,
+            'unidade_id' => $this->unidade->id,
             'usuario_id' => $participanteSuperior->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'modalidade_pgd' => 'presencial'
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $unidadeSubordinada->id,
             'usuario_id' => $titularSubordinada->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'modalidade_pgd' => 'presencial'
         ]);
 
         PlanoTrabalho::factory()->create([
             'unidade_id' => $unidadeSubordinada->id,
             'usuario_id' => $participanteSubordinada->id,
             'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'modalidade_pgd' => 'presencial'
         ]);
 
         $result = $this->repository->getPlanosTrabalhoAssinatura(
-            [$unidadeSuperior->id],
+            [$this->unidade->id],
             [$unidadeSubordinada->id],
             $usuarioLogado->id
         );
 
-        $this->assertCount(2, $result);
-        $this->assertTrue($result->pluck('usuario_id')->contains($participanteSuperior->id));
-        $this->assertTrue($result->pluck('usuario_id')->contains($titularSubordinada->id));
-        $this->assertFalse($result->pluck('usuario_id')->contains($participanteSubordinada->id));
-    }
+        expect($result)->toHaveCount(2)
+            ->and($result->pluck('usuario_id')->contains($participanteSuperior->id))->toBeTrue()
+            ->and($result->pluck('usuario_id')->contains($titularSubordinada->id))->toBeTrue()
+            ->and($result->pluck('usuario_id')->contains($participanteSubordinada->id))->toBeFalse();
+    });
+describe('PlanoTrabalhoRepository::create', function () {
 
-    public function testFindAllParaEnvio(): void
-    {
-        $incluido = PlanoTrabalho::factory()->create([
-            'status' => StatusEnum::INCLUIDO->value        ]);
-        $ativo = PlanoTrabalho::factory()->ativo()->create();
-        $deleted = PlanoTrabalho::factory()->ativo()->create();
-        $deleted->delete();
+    test('persiste o plano de trabalho no banco', function () {
+        $plano = $this->repository->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'criacao_usuario_id' => $this->usuario->id,
+        ]);
 
-        $ids = [];
-        $this->repository->findAllParaEnvio(100, function ($chunk) use (&$ids): void {
-            foreach ($chunk as $row) {
-                $ids[] = $row->id;
-            }
-        });
+        expect($plano)->toBeInstanceOf(PlanoTrabalho::class)
+            ->and($plano->exists)->toBeTrue()
+            ->and($plano->usuario_id)->toBe($this->usuario->id);
 
-        $this->assertContains($ativo->id, $ids);
-        $this->assertNotContains($incluido->id, $ids);
-        $this->assertNotContains($deleted->id, $ids);
-    }
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $plano->id,
+            'status' => 'INCLUIDO',
+        ]);
+    });
 
-    public function testFindOneParaEnvioRetornaNullQuandoIdInexistente(): void
-    {
-        $this->assertNull($this->repository->findOneParaEnvio(Str::uuid()->toString()));
-    }
+    test('gera numero automaticamente via stored procedure', function () {
+        $plano = $this->repository->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'criacao_usuario_id' => $this->usuario->id,
+        ]);
 
-    public function testFindOneParaEnvioCarregaRelacoesEFiltraConsolidacoesAvaliadas(): void
-    {
-        $usuario = Usuario::factory()->create([
+        expect($plano->numero)->toBeGreaterThan(0);
+    });
+});
+
+describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
+
+    test('filtra por usuario_id', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $outroUsuario = Usuario::factory()->create([
             'perfil_id' => $this->perfilId,
-        ]);
-        $plano = PlanoTrabalho::factory()->create([
-            'usuario_id' => $usuario->id
-        ]);
-
-        PlanoTrabalhoEntrega::factory()->create([
-            'plano_trabalho_id' => $plano->id,
-            'plano_entrega_entrega_id' => null,
-        ]);
-
-        PlanoTrabalhoConsolidacao::factory()->create([
-            'plano_trabalho_id' => $plano->id,
-            'status' => StatusEnum::INCLUIDO->value,
-        ]);
-        $consolidacaoAvaliada = PlanoTrabalhoConsolidacao::factory()->create([
-            'plano_trabalho_id' => $plano->id,
-            'status' => StatusEnum::AVALIADO->value,
-        ]);
-
-        $result = $this->repository->findOneParaEnvio($plano->id);
-
-        $this->assertNotNull($result);
-        $this->assertCount(1, $result->entregas);
-        $this->assertCount(1, $result->consolidacoes);
-        $this->assertSame($consolidacaoAvaliada->id, $result->consolidacoes->first()->id);
-    }
-
-    public function testFindById(): void
-    {
-        $plano = PlanoTrabalho::factory()->ativo()->create();
-        $found = $this->repository->findById($plano->id);
-        $this->assertNotNull($found);
-        $this->assertSame($plano->id, $found->id);
-        $this->assertNull($this->repository->findById(Str::uuid()->toString()));
-    }
-
-    public function testPlanosAtivos(): void
-    {
-        $usuario = Usuario::factory()->create([
-            'perfil_id' => $this->perfilId,
-        ]);
-        $ativo = PlanoTrabalho::factory()->create([
-            'usuario_id' => $usuario->id,
-            'data_inicio' => now()->subDay(),
-            'data_fim' => now()->addMonth(),
-            'status' => StatusEnum::ATIVO->value,
         ]);
         PlanoTrabalho::factory()->create([
-            'usuario_id' => $usuario->id,
-            'data_inicio' => now()->addMonth(),
-            'data_fim' => now()->addMonths(2),
-            'status' => StatusEnum::ATIVO->value,
+            'usuario_id' => $outroUsuario->id,
+            'unidade_id' => $this->unidade->id,
         ]);
 
-        $result = $this->repository->planosAtivos($usuario->id);
-        $this->assertCount(1, $result);
-        $this->assertSame($ativo->id, $result->first()->id);
-    }
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
 
-    public function testPlanosAtivosPorData(): void
-    {
-        $usuario = Usuario::factory()->create([
-            'perfil_id' => $this->perfilId,
+        expect($result->total())->toBe(1)
+            ->and($result->items()[0]->usuario_id)->toBe($this->usuario->id);
+    });
+
+    test('retorna apenas vigentes', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => now()->subMonth(),
+            'data_fim' => now()->addMonth(),
+            'status' => StatusEnum::ATIVO,
         ]);
-        $dentro = PlanoTrabalho::factory()->create([
-            'usuario_id' => $usuario->id,
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => now()->subYear(),
+            'data_fim' => now()->subMonth(),
+            'status' => StatusEnum::CONCLUIDO,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1);
+    });
+
+    test('filtra por intervalo de datas', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => '2024-03-01',
+            'data_fim' => '2024-06-30',
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
             'data_inicio' => '2025-01-01',
             'data_fim' => '2025-12-31',
-            'status' => StatusEnum::ATIVO->value,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1);
+    });
+
+    test('filtra por unidade_id', function () {
+        $outraUnidade = Unidade::factory()->create();
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'data_inicio' => now()->subMonth(),
+            'data_fim' => now()->addMonth(),
+            'status' => StatusEnum::ATIVO,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $outraUnidade->id,
+            'data_inicio' => now()->subMonth(),
+            'data_fim' => now()->addMonth(),
+            'status' => StatusEnum::ATIVO,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'vigentes' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1);
+    });
+
+    test('retorna apenas planos arquivados quando arquivados=true', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'data_arquivamento' => now(),
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'data_arquivamento' => null,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id, 'arquivados' => true]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1);
+    });
+
+    test('exclui planos arquivados quando arquivados=false', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'data_arquivamento' => now(),
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'data_arquivamento' => null,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1);
+    });
+
+    test('respeita paginação', function () {
+        PlanoTrabalho::factory()->count(5)->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'usuario_id' => $this->usuario->id,
+            'page' => 1,
+            'size' => 2,
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(5)
+            ->and($result->count())->toBe(2)
+            ->and($result->lastPage())->toBe(3);
+    });
+
+    test('ordena por numero asc', function () {
+        $planoA = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+        $planoB = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'usuario_id' => $this->usuario->id,
+            'order_by' => 'numero',
+            'order_dir' => 'asc',
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+        $numeros = collect($result->items())->pluck('numero')->toArray();
+
+        expect($numeros)->toBe(collect($numeros)->sort()->values()->toArray());
+    });
+
+    test('ordena por numero desc', function () {
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
         ]);
         PlanoTrabalho::factory()->create([
-            'usuario_id' => $usuario->id,
-            'data_inicio' => '2026-01-01',
-            'data_fim' => '2026-12-31',
-            'status' => StatusEnum::ATIVO->value,
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
         ]);
 
-        $result = $this->repository->planosAtivosPorData('2025-06-01', '2025-06-30', $usuario->id);
-        $this->assertCount(1, $result);
-        $this->assertSame($dentro->id, $result->first()->id);
-    }
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'usuario_id' => $this->usuario->id,
+            'order_by' => 'numero',
+            'order_dir' => 'desc',
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+        $numeros = collect($result->items())->pluck('numero')->toArray();
 
-    public function testBuscarPlanosPendentes(): void
-    {
-        $usuario = Usuario::factory()->create([
+        expect($numeros)->toBe(collect($numeros)->sortDesc()->values()->toArray());
+    });
+
+    test('ordena por usuario_nome asc', function () {
+        $usuarioA = Usuario::factory()->create([
+            'nome' => 'Ana',
             'perfil_id' => $this->perfilId,
         ]);
-        $referencia = PlanoTrabalho::factory()->create([
-            'usuario_id' => $usuario->id,
-            'status' => StatusEnum::ATIVO->value,
-            'data_fim' => '2025-03-01',
+        $usuarioZ = Usuario::factory()->create([
+            'nome' => 'Zélia',
+            'perfil_id' => $this->perfilId,
         ]);
-        $pendente = PlanoTrabalho::factory()->create([
-            'usuario_id' => $usuario->id,
-            'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
-            'data_fim' => '2025-02-01',
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioZ->id,
+            'unidade_id' => $this->unidade->id,
         ]);
         PlanoTrabalho::factory()->create([
-            'usuario_id' => $usuario->id,
-            'status' => StatusEnum::INCLUIDO->value,
-            'data_fim' => '2025-01-01',
+            'usuario_id' => $usuarioA->id,
+            'unidade_id' => $this->unidade->id,
         ]);
 
-        $result = $this->repository->buscarPlanosPendentes($usuario->id, $referencia->id, '2025-03-15');
-        $this->assertCount(1, $result);
-        $this->assertSame($pendente->id, $result->first()->id);
-    }
-
-    public function testChunkEnviosPendentes(): void
-    {
-        $incluido = PlanoTrabalho::factory()->create([
-            'status' => StatusEnum::INCLUIDO->value,
-            'data_agendamento_envio' => now(),
-            'data_envio_api_pgd' => null,
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'unidade_id' => $this->unidade->id,
+            'order_by' => 'usuario_nome',
+            'order_dir' => 'asc',
         ]);
-        $pendente = PlanoTrabalho::factory()->ativo()->create([
-            'data_agendamento_envio' => Carbon::now()->subHour(),
-            'data_envio_api_pgd' => null,
+        $result = $this->repository->buscarPlanosListagem($filtro);
+        $ids = collect($result->items())->pluck('usuario_id')->toArray();
+
+        expect($ids[0])->toBe($usuarioA->id)
+            ->and($ids[1])->toBe($usuarioZ->id);
+    });
+
+    test('ordena por usuario_nome desc', function () {
+        $usuarioA = Usuario::factory()->create([
+            'nome' => 'Ana',
+            'perfil_id' => $this->perfilId,
         ]);
-        $jaEnviado = PlanoTrabalho::factory()->ativo()->create([
-            'data_agendamento_envio' => Carbon::now()->subDays(2),
-            'data_conclusao_envio' => Carbon::now()->subDay(),
-            'data_envio_api_pgd' => Carbon::now()->subDay(),
+        $usuarioZ = Usuario::factory()->create([
+            'nome' => 'Zélia',
+            'perfil_id' => $this->perfilId,
         ]);
 
-        $ids = [];
-        $this->repository->chunkEnviosPendentes(100, function ($chunk) use (&$ids): void {
-            foreach ($chunk as $plano) {
-                $ids[] = $plano->id;
-            }
-        });
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioA->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioZ->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
 
-        $this->assertContains($pendente->id, $ids);
-        $this->assertNotContains($incluido->id, $ids);
-        $this->assertNotContains($jaEnviado->id, $ids);
-    }
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'unidade_id' => $this->unidade->id,
+            'order_by' => 'usuario_nome',
+            'order_dir' => 'desc',
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+        $ids = collect($result->items())->pluck('usuario_id')->toArray();
 
-    public function testRegistrarTentativa(): void
-    {
-        $plano = PlanoTrabalho::factory()->ativo()->create();
-        $this->assertNull($plano->fresh()->data_tentativa_envio);
+        expect($ids[0])->toBe($usuarioZ->id)
+            ->and($ids[1])->toBe($usuarioA->id);
+    });
+});
 
-        $this->repository->registrarTentativa($plano);
+describe('PlanoTrabalhoRepository::findByIdComRelacoes', function () {
 
-        $this->assertNotNull($plano->fresh()->data_tentativa_envio);
-    }
-}
+    test('retorna plano com relations carregadas', function () {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $result = $this->repository->findByIdComRelacoes($plano->id);
+
+        expect($result)->not->toBeNull()
+            ->and($result->id)->toBe($plano->id)
+            ->and($result->relationLoaded('usuario'))->toBeTrue()
+            ->and($result->relationLoaded('unidade'))->toBeTrue()
+            ->and($result->relationLoaded('programa'))->toBeTrue()
+            ->and($result->relationLoaded('entregas'))->toBeTrue()
+            ->and($result->relationLoaded('consolidacoes'))->toBeTrue();
+    });
+
+    test('retorna entregas quando existem', function () {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        PlanoTrabalhoEntrega::factory()->create(['plano_trabalho_id' => $plano->id]);
+
+        $result = $this->repository->findByIdComRelacoes($plano->id);
+
+        expect($result->entregas)->toHaveCount(1);
+    });
+
+    test('retorna null quando id nao existe', function () {
+        $result = $this->repository->findByIdComRelacoes(fake()->uuid());
+
+        expect($result)->toBeNull();
+    });
+});

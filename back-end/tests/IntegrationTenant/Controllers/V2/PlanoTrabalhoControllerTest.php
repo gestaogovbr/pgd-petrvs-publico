@@ -1,0 +1,1246 @@
+<?php
+
+use App\Enums\PerfilEnum;
+use App\Enums\StatusEnum;
+use App\V2\PlanoTrabalho\PlanoTrabalhoController;
+use App\V2\PlanoTrabalho\PlanoTrabalhoService;
+use App\Models\PlanoTrabalho;
+use App\Models\Programa;
+use App\Models\Unidade;
+use App\Models\Usuario;
+use App\Models\Perfil;
+use App\Models\ProgramaParticipante;
+use App\Exceptions\ValidateException;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Mockery;
+
+beforeEach(function () {
+    if (!Route::has('__tests.v2.plano-trabalho.index')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/plano-trabalho', [PlanoTrabalhoController::class, 'index'])
+            ->name('__tests.v2.plano-trabalho.index');
+    }
+    if (!Route::has('__tests.v2.plano-trabalho.statuses')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/plano-trabalho/statuses', [PlanoTrabalhoController::class, 'statuses'])
+            ->name('__tests.v2.plano-trabalho.statuses');
+    }
+    if (!Route::has('__tests.v2.plano-trabalho.store')) {
+        Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho', [PlanoTrabalhoController::class, 'store'])
+            ->name('__tests.v2.plano-trabalho.store');
+    }
+    if (!Route::has('__tests.v2.plano-trabalho.show')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/plano-trabalho/{id}', [PlanoTrabalhoController::class, 'show'])
+            ->name('__tests.v2.plano-trabalho.show');
+    }
+    if (!Route::has('__tests.v2.plano-trabalho.destroy')) {
+        Route::middleware(['api'])->delete('/api/__tests/v2/plano-trabalho/{id}', [PlanoTrabalhoController::class, 'destroy'])
+            ->name('__tests.v2.plano-trabalho.destroy');
+    }
+    if (!Route::has('__tests.v2.plano-trabalho.cancelar')) {
+        Route::middleware(['api'])->patch('/api/__tests/v2/plano-trabalho/{id}/cancelar', [PlanoTrabalhoController::class, 'cancelar'])
+            ->name('__tests.v2.plano-trabalho.cancelar');
+    }
+    if (!Route::has('__tests.v2.plano-trabalho.encerrar')) {
+        Route::middleware(['api'])->patch('/api/__tests/v2/plano-trabalho/{id}/encerrar', [PlanoTrabalhoController::class, 'encerrar'])
+            ->name('__tests.v2.plano-trabalho.encerrar');
+    }
+    if (!Route::has('__tests.v2.plano-trabalho.arquivar')) {
+        Route::middleware(['api'])->patch('/api/__tests/v2/plano-trabalho/{id}/arquivar', [PlanoTrabalhoController::class, 'arquivar'])
+            ->name('__tests.v2.plano-trabalho.arquivar');
+    }
+    if (!Route::has('__tests.v2.plano-trabalho.clonar')) {
+        Route::middleware(['api'])->post('/api/__tests/v2/plano-trabalho/{id}/clonar', [PlanoTrabalhoController::class, 'clonar'])
+            ->name('__tests.v2.plano-trabalho.clonar');
+    }
+
+    $perfil = Perfil::factory()->create(['nivel' => PerfilEnum::PARTICIPANTE]);
+
+    $this->unidade = Unidade::factory()->create();
+    $this->usuario = Usuario::factory()->create([
+        'perfil_id' => $perfil->id,
+        'modalidade_pgd' => 'presencial',
+    ]);
+    $this->programa = Programa::factory()->create([
+        'data_inicio' => '2024-01-01',
+        'data_fim' => '2025-12-31',
+    ]);
+    $this->modalidadePgd = 'presencial';
+
+    ProgramaParticipante::factory()->create([
+        'usuario_id' => $this->usuario->id,
+        'programa_id' => $this->programa->id,
+        'habilitado' => true,
+    ]);
+});
+
+afterEach(function () {
+    Mockery::close();
+});
+
+function validStorePayload(): array
+{
+    return [
+        'usuario_id' => fake()->uuid(),
+        'unidade_id' => fake()->uuid(),
+        'programa_id' => fake()->uuid(),
+        'data_inicio' => '2025-01-01',
+        'data_fim' => '2025-06-30',
+        'modalidade_pgd' => 'presencial',
+    ];
+}
+
+// ── GET index: validação ────────────────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho (validação)', function () {
+
+    test('retorna 200 com service mockado', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->mock(PlanoTrabalhoService::class, function ($mock) {
+            $mock->shouldReceive('index')
+                ->once()
+                ->andReturn(new LengthAwarePaginator([], 0, 15));
+        });
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'size' => 15,
+            'page' => 1,
+            'filters' => ['vigentes' => true],
+        ]));
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+    });
+
+    test('retorna 422 quando size não é inteiro', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson('/api/__tests/v2/plano-trabalho?size=abc')
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando page não é inteiro', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson('/api/__tests/v2/plano-trabalho?page=abc')
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando filters.usuario_id não é uuid', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['usuario_id' => 'nao-uuid'],
+        ]))->assertStatus(422);
+    });
+
+    test('retorna 422 quando filters.data_inicio é data inválida', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['data_inicio' => 'nao-data'],
+        ]))->assertStatus(422);
+    });
+
+    test('retorna 422 quando service lança ValidateException', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->mock(PlanoTrabalhoService::class, function ($mock) {
+            $mock->shouldReceive('index')
+                ->andThrow(new ValidateException('Informe ao menos um filtro para a busca.'));
+        });
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'page' => 1,
+            'size' => 15,
+        ]));
+
+        $response->assertStatus(422)
+            ->assertJson(fn ($json) =>
+                $json->where('error', fn ($error) => str_contains($error, 'Informe ao menos um filtro'))
+            );
+    });
+});
+
+// ── GET index: happy path (sem mock) ────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho (happy path)', function () {
+
+    test('retorna plano filtrado por usuario_id', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+        ]);
+
+        $outroUsuario = Usuario::factory()->create();
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $outroUsuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['usuario_id' => $this->usuario->id],
+        ]));
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $items = $response->json('data.data');
+
+        expect($items)->toHaveCount(1)
+            ->and($items[0]['id'])->toBe($plano->id);
+    });
+
+    test('retorna apenas planos vigentes', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $vigente = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'data_inicio' => now()->subMonth(),
+            'data_fim' => now()->addMonth(),
+            'status' => StatusEnum::ATIVO,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'data_inicio' => now()->subYear(),
+            'data_fim' => now()->subMonths(6),
+            'status' => StatusEnum::ATIVO,
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['vigentes' => true],
+        ]));
+
+        $items = $response->json('data.data');
+
+        expect($items)->toHaveCount(1)
+            ->and($items[0]['id'])->toBe($vigente->id);
+    });
+
+    test('retorna planos dentro do intervalo de datas', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $dentroIntervalo = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'data_inicio' => '2024-03-01',
+            'data_fim' => '2024-06-30',
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'data_inicio' => '2025-06-01',
+            'data_fim' => '2025-12-31',
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => [
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-12-31',
+            ],
+        ]));
+
+        $items = $response->json('data.data');
+
+        expect($items)->toHaveCount(1)
+            ->and($items[0]['id'])->toBe($dentroIntervalo->id);
+    });
+
+    test('retorna data_arquivamento na resposta do index', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['usuario_id' => $this->usuario->id],
+        ]));
+
+        $items = $response->json('data.data');
+
+        expect($items[0])->toHaveKey('data_arquivamento');
+    });
+});
+
+// ── GET index: ordenação (validação) ─────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho (ordenação - validação)', function () {
+
+    test('retorna 422 quando order_by tem valor inválido', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['vigentes' => true],
+            'order_by' => 'campo_invalido',
+        ]))->assertStatus(422);
+    });
+
+    test('retorna 422 quando order_dir tem valor inválido', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['vigentes' => true],
+            'order_by' => 'numero',
+            'order_dir' => 'invalido',
+        ]))->assertStatus(422);
+    });
+});
+
+// ── GET index: ordenação (happy path) ──────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho (ordenação - happy path)', function () {
+
+    test('retorna planos ordenados por numero asc', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        PlanoTrabalho::factory()->count(3)->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['usuario_id' => $this->usuario->id],
+            'order_by' => 'numero',
+            'order_dir' => 'asc',
+        ]));
+
+        $response->assertStatus(200);
+        $numeros = collect($response->json('data.data'))->pluck('numero')->toArray();
+
+        expect($numeros)->toBe(collect($numeros)->sort()->values()->toArray());
+    });
+
+    test('retorna planos ordenados por usuario_nome desc', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $usuarioA = Usuario::factory()->create(['nome' => 'Ana']);
+        $usuarioZ = Usuario::factory()->create(['nome' => 'Zélia']);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioA->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+        ]);
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $usuarioZ->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho?' . http_build_query([
+            'filters' => ['unidade_id' => $this->unidade->id],
+            'order_by' => 'usuario_nome',
+            'order_dir' => 'desc',
+        ]));
+
+        $response->assertStatus(200);
+        $items = $response->json('data.data');
+
+        expect($items[0]['usuario_id'])->toBe($usuarioZ->id)
+            ->and($items[1]['usuario_id'])->toBe($usuarioA->id);
+    });
+});
+
+// ── POST store: validação ───────────────────────────────────────────
+
+describe('POST /api/v2/plano-trabalho (validação)', function () {
+
+    test('retorna 400 quando payload vazio', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->postJson('/api/__tests/v2/plano-trabalho', [])
+            ->assertStatus(422)
+            ->assertJsonStructure(['error']);
+    });
+
+    test('retorna 422 quando usuario_id não é uuid', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $payload = validStorePayload();
+        $payload['usuario_id'] = 'nao-uuid';
+
+        $this->postJson('/api/__tests/v2/plano-trabalho', $payload)
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando data_fim anterior a data_inicio', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $payload = validStorePayload();
+        $payload['data_inicio'] = '2025-06-30';
+        $payload['data_fim'] = '2025-01-01';
+
+        $this->postJson('/api/__tests/v2/plano-trabalho', $payload)
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando modalidade_pgd ausente', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $payload = validStorePayload();
+        unset($payload['modalidade_pgd']);
+
+        $this->postJson('/api/__tests/v2/plano-trabalho', $payload)
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando programa_id ausente', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $payload = validStorePayload();
+        unset($payload['programa_id']);
+
+        $this->postJson('/api/__tests/v2/plano-trabalho', $payload)
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando service lança ValidateException', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->mock(PlanoTrabalhoService::class, function ($mock) {
+            $mock->shouldReceive('store')
+                ->andThrow(new ValidateException('A unidade está inativa.'));
+        });
+
+        $this->postJson('/api/__tests/v2/plano-trabalho', validStorePayload())
+            ->assertStatus(422)
+            ->assertJson(fn ($json) =>
+                $json->where('error', fn ($error) => str_contains($error, 'A unidade está inativa.'))
+            );
+    });
+});
+
+// ── POST store: modalidade divergente (RN24) ─────────────────────────
+
+describe('POST /api/v2/plano-trabalho (modalidade divergente)', function () {
+
+    test('retorna 422 quando modalidade diverge do SIAPE sem justificativa', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->postJson('/api/__tests/v2/plano-trabalho', [
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2024-06-01',
+            'data_fim' => '2024-12-31',
+            'modalidade_pgd' => 'integral',
+        ])->assertStatus(422);
+    });
+
+    test('retorna 201 quando modalidade diverge do SIAPE com justificativa', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->postJson('/api/__tests/v2/plano-trabalho', [
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2025-03-01',
+            'data_fim' => '2025-05-31',
+            'modalidade_pgd' => 'integral',
+            'justificativa_modalidade' => 'Modalidade ajustada por necessidade do serviço.',
+        ])->assertStatus(201);
+    });
+
+    test('persiste justificativa_modalidade quando modalidade diverge', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->postJson('/api/__tests/v2/plano-trabalho', [
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2025-07-01',
+            'data_fim' => '2025-09-30',
+            'modalidade_pgd' => 'integral',
+            'justificativa_modalidade' => 'Necessidade do serviço.',
+        ]);
+
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $response->json('data.id'),
+            'justificativa_modalidade' => 'Necessidade do serviço.',
+        ]);
+    });
+});
+
+// ── POST store: happy path (sem mock) ───────────────────────────────
+
+describe('POST /api/v2/plano-trabalho (happy path)', function () {
+
+    test('persiste o plano no banco e retorna 201', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->postJson('/api/__tests/v2/plano-trabalho', [
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2024-06-01',
+            'data_fim' => '2024-12-31',
+            'modalidade_pgd' => $this->modalidadePgd,
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $response->json('data.id'),
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'INCLUIDO',
+        ]);
+    });
+
+    test('plano criado possui numero gerado automaticamente', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->postJson('/api/__tests/v2/plano-trabalho', [
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2024-06-01',
+            'data_fim' => '2024-12-31',
+            'modalidade_pgd' => $this->modalidadePgd,
+        ]);
+
+        $plano = PlanoTrabalho::find($response->json('data.id'));
+
+        expect($plano->numero)->toBeGreaterThan(0);
+    });
+});
+
+// -- DELETE destroy -----------------------------------------------------------
+
+describe('DELETE /api/v2/plano-trabalho/:id (happy path)', function () {
+
+    test('exclui PT com status INCLUIDO e retorna 200', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $response = $this->deleteJson("/api/__tests/v2/plano-trabalho/{$plano->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertSoftDeleted('planos_trabalhos', ['id' => $plano->id]);
+    });
+});
+
+describe('DELETE /api/v2/plano-trabalho/:id (validacao)', function () {
+
+    test('retorna 400 quando PT ja possui assinatura', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'status' => 'AGUARDANDO_ASSINATURA',
+        ]);
+
+        $this->deleteJson("/api/__tests/v2/plano-trabalho/{$plano->id}")
+            ->assertStatus(422);
+    });
+
+    test('retorna 404 quando PT nao encontrado', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->deleteJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid())
+            ->assertStatus(404);
+    });
+});
+
+// ── GET show ────────────────────────────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho/:id (happy path)', function () {
+
+    test('retorna plano existente com relations', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+        ]);
+
+        $response = $this->getJson("/api/__tests/v2/plano-trabalho/{$plano->id}");
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.id', $plano->id);
+    });
+
+    test('retorna relations carregadas', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+        ]);
+
+        $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$plano->id}")
+            ->json('data');
+
+        expect($data)->toHaveKeys(['usuario', 'unidade', 'programa', 'modalidade_pgd', 'entregas', 'consolidacoes']);
+    });
+});
+
+describe('GET /api/v2/plano-trabalho/:id (validação)', function () {
+
+    test('retorna 404 quando plano não existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->getJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid())
+            ->assertStatus(404);
+    });
+});
+
+describe('GET /api/v2/plano-trabalho/:id (afastamentos)', function () {
+
+    test('retorna afastamentos nas consolidações quando usuário é dono do plano', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'status' => 'ATIVO',
+        ]);
+
+        $consolidacao = \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $tipoMotivo = \App\Models\TipoMotivoAfastamento::firstOrCreate(
+            ['nome' => 'Licença Médica'],
+            ['codigo' => 'LM', 'sigla' => 'LM', 'calculo' => 'DECRESCIMO', 'data_inicio' => now(), 'situacao' => 'ATIVO', 'icone' => 'bi bi-heart-pulse', 'cor' => '#FF0000', 'horas' => 0, 'integracao' => 0]
+        );
+
+        $afastamento = \App\Models\Afastamento::create([
+            'observacoes' => 'Afastamento teste',
+            'data_inicio' => $consolidacao->data_inicio,
+            'data_fim' => $consolidacao->data_fim,
+            'horas' => 0,
+            'usuario_id' => $this->usuario->id,
+            'tipo_motivo_afastamento_id' => $tipoMotivo->id,
+        ]);
+
+        \App\Models\PlanoTrabalhoConsolidacaoAfastamento::create([
+                    'plano_trabalho_consolidacao_id' => $consolidacao->id,
+                    'afastamento_id' => $afastamento->id,
+                    'snapshot' => json_encode($afastamento->toArray()),
+                    'data_conclusao' => now(),
+                ]);
+
+        $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$plano->id}")
+            ->assertStatus(200)
+            ->json('data.consolidacoes.0');
+
+        expect($data)->toHaveKey('afastamentos');
+        expect($data['afastamentos'])->not->toBeEmpty();
+    });
+
+    test('não retorna afastamentos nas consolidações quando usuário não é dono nem chefia', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'status' => 'ATIVO',
+        ]);
+
+        $consolidacao = \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $tipoMotivo = \App\Models\TipoMotivoAfastamento::firstOrCreate(
+            ['nome' => 'Licença Médica'],
+            ['codigo' => 'LM', 'sigla' => 'LM', 'calculo' => 'DECRESCIMO', 'data_inicio' => now(), 'situacao' => 'ATIVO', 'icone' => 'bi bi-heart-pulse', 'cor' => '#FF0000', 'horas' => 0, 'integracao' => 0]
+        );
+
+        $afastamento = \App\Models\Afastamento::create([
+            'observacoes' => 'Afastamento teste',
+            'data_inicio' => $consolidacao->data_inicio,
+            'data_fim' => $consolidacao->data_fim,
+            'horas' => 0,
+            'usuario_id' => $this->usuario->id,
+            'tipo_motivo_afastamento_id' => $tipoMotivo->id,
+        ]);
+
+        \App\Models\PlanoTrabalhoConsolidacaoAfastamento::create([
+                    'plano_trabalho_consolidacao_id' => $consolidacao->id,
+                    'afastamento_id' => $afastamento->id,
+                    'snapshot' => json_encode($afastamento->toArray()),
+                    'data_conclusao' => now(),
+                ]);
+
+        $outroUsuario = Usuario::factory()->create([
+            'perfil_id' => Perfil::factory()->create(['nivel' => 3])->id,
+        ]);
+
+        $this->actingAs($outroUsuario, 'web');
+
+        $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$plano->id}")
+            ->assertStatus(200)
+            ->json('data.consolidacoes.0');
+
+        expect($data)->not->toHaveKey('afastamentos');
+    });
+});
+
+// ── GET statuses ──────────────────────────────────────────────────────────
+
+describe('GET /api/v2/plano-trabalho/statuses', function () {
+
+    test('retorna 200 com todos os statuses', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho/statuses');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $data = $response->json('data');
+        expect($data)->toBe(PlanoTrabalho::STATUSES);
+    });
+});
+
+// ── PATCH cancelar ──────────────────────────────────────────────────
+
+describe('PATCH /api/v2/plano-trabalho/:id/cancelar', function () {
+
+    function criarPlanoAtivo($context): PlanoTrabalho
+    {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $context->usuario->id,
+            'unidade_id' => $context->unidade->id,
+            'modalidade_pgd' => $context->modalidadePgd,
+            'criacao_usuario_id' => $context->usuario->id,
+            'programa_id' => $context->programa->id,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-06-30',
+            'status' => 'ATIVO',
+        ]);
+
+        return $plano;
+    }
+
+    test('cancela plano com sucesso', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivo($this);
+
+        $response = $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [
+            'justificativa' => 'Plano não será mais necessário.',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $plano->id,
+            'status' => 'CANCELADO',
+        ]);
+    });
+
+    test('cancela plano que possui consolidacoes', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivo($this);
+
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [
+            'justificativa' => 'Cancelamento.',
+        ])->assertStatus(200);
+
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $plano->id,
+            'status' => 'CANCELADO',
+        ]);
+    });
+
+    test('retorna 422 quando plano nao esta ativo', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [
+            'justificativa' => 'Tentativa.',
+        ])->assertStatus(422);
+    });
+
+    test('retorna 422 quando possui consolidacao finalizada', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivo($this);
+
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [
+            'justificativa' => 'Tentativa.',
+        ])->assertStatus(422);
+    });
+
+    test('retorna 422 quando justificativa ausente', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivo($this);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/cancelar", [])
+            ->assertStatus(422);
+    });
+
+    test('retorna 404 quando plano nao existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/cancelar', [
+            'justificativa' => 'Tentativa.',
+        ])->assertStatus(404);
+    });
+});
+
+// ── PATCH encerrar ──────────────────────────────────────────────────
+
+describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
+
+    function criarPlanoAtivoComConsolidacoes($context): PlanoTrabalho
+    {
+        $hoje = now();
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $context->usuario->id,
+            'unidade_id' => $context->unidade->id,
+            'modalidade_pgd' => $context->modalidadePgd,
+            'criacao_usuario_id' => $context->usuario->id,
+            'programa_id' => $context->programa->id,
+            'data_inicio' => $hoje->copy()->subMonths(6)->format('Y-m-d'),
+            'data_fim' => $hoje->copy()->addMonths(6)->format('Y-m-d'),
+            'status' => 'ATIVO',
+        ]);
+
+        // Passada
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => $hoje->copy()->subMonths(6)->format('Y-m-d'),
+            'data_fim' => $hoje->copy()->subMonths(3)->format('Y-m-d'),
+            'status' => 'AVALIADO',
+        ]);
+
+        // Vigente (inclui hoje)
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => $hoje->copy()->subMonths(1)->format('Y-m-d'),
+            'data_fim' => $hoje->copy()->addMonths(1)->format('Y-m-d'),
+            'status' => 'INCLUIDO',
+        ]);
+
+        // Futura 1
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => $hoje->copy()->addMonths(2)->format('Y-m-d'),
+            'data_fim' => $hoje->copy()->addMonths(4)->format('Y-m-d'),
+            'status' => 'INCLUIDO',
+        ]);
+
+        // Futura 2
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => $hoje->copy()->addMonths(4)->addDay()->format('Y-m-d'),
+            'data_fim' => $hoje->copy()->addMonths(6)->format('Y-m-d'),
+            'status' => 'INCLUIDO',
+        ]);
+
+        return $plano;
+    }
+
+    test('encerra plano com sucesso', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivoComConsolidacoes($this);
+        $dataFimOriginal = (string) $plano->data_fim;
+
+        $response = $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
+            'justificativa' => 'Encerramento antecipado por necessidade.',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $plano->refresh();
+        expect($plano->status)->toBe('CONCLUIDO');
+        expect(substr((string) $plano->data_fim, 0, 10))->toBe(substr($dataFimOriginal, 0, 10));
+        expect($plano->encerrado_at)->toBe(now()->format('Y-m-d'));
+    });
+
+    test('preserva todas as consolidacoes', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivoComConsolidacoes($this);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
+            'justificativa' => 'Encerramento.',
+        ])->assertStatus(200);
+
+        $total = \App\Models\PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $plano->id)->count();
+        expect($total)->toBe(4);
+    });
+
+    test('registra justificativa no historico de status', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivoComConsolidacoes($this);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
+            'justificativa' => 'Motivo do encerramento.',
+        ])->assertStatus(200);
+
+        $this->assertDatabaseHas('status_justificativas', [
+            'plano_trabalho_id' => $plano->id,
+            'codigo' => 'CONCLUIDO',
+        ]);
+    });
+
+    test('retorna 422 quando plano nao esta ativo', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'INCLUIDO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
+            'justificativa' => 'Tentativa.',
+        ])->assertStatus(422);
+    });
+
+    test('retorna 422 quando justificativa ausente', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivoComConsolidacoes($this);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [])
+            ->assertStatus(422);
+    });
+
+    test('retorna 404 quando plano nao existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/encerrar', [
+            'justificativa' => 'Tentativa.',
+        ])->assertStatus(404);
+    });
+});
+
+// ── PATCH arquivar ──────────────────────────────────────────────────
+
+describe('PATCH /api/v2/plano-trabalho/:id/arquivar', function () {
+
+    test('arquiva plano cancelado', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CANCELADO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $plano->refresh();
+        expect($plano->data_arquivamento)->not->toBeNull();
+    });
+
+    test('arquiva plano encerrado sem pendencias', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CONCLUIDO',
+            'encerrado_at' => now()->subDays(5)->format('Y-m-d'),
+        ]);
+
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'AVALIADO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(200);
+    });
+
+    test('arquiva plano concluido com todos periodos avaliados fora do prazo de recurso', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $nota = \App\Models\TipoAvaliacaoNota::create([
+            'id' => fake()->uuid(),
+            'sequencia' => 3,
+            'nota' => json_encode('Adequado'),
+            'descricao' => 'Adequado',
+            'pergunta' => '?',
+            'aprova' => 1,
+            'justifica' => 0,
+            'icone' => 'bi bi-check',
+            'cor' => '#28a745',
+            'tipo_avaliacao_id' => $this->programa->tipo_avaliacao_plano_trabalho_id,
+        ]);
+
+        $consolidacao = \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'AVALIADO',
+        ]);
+
+        \App\Models\Avaliacao::create([
+            'data_avaliacao' => now()->subDays(31)->format('Y-m-d H:i:s'),
+            'nota' => $nota->nota,
+            'justificativa' => null,
+            'justificativas' => [],
+            'avaliador_id' => $this->usuario->id,
+            'plano_trabalho_consolidacao_id' => $consolidacao->id,
+            'tipo_avaliacao_id' => $nota->tipo_avaliacao_id,
+            'tipo_avaliacao_nota_id' => $nota->id,
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(200);
+    });
+
+    test('retorna 422 quando plano ativo', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'ATIVO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando avaliacao dentro do prazo de recurso', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $nota = \App\Models\TipoAvaliacaoNota::create([
+            'id' => fake()->uuid(),
+            'sequencia' => 3,
+            'nota' => json_encode('Adequado'),
+            'descricao' => 'Adequado',
+            'pergunta' => '?',
+            'aprova' => 1,
+            'justifica' => 0,
+            'icone' => 'bi bi-check',
+            'cor' => '#28a745',
+            'tipo_avaliacao_id' => $this->programa->tipo_avaliacao_plano_trabalho_id,
+        ]);
+
+        $consolidacao = \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => 'AVALIADO',
+        ]);
+
+        \App\Models\Avaliacao::create([
+            'data_avaliacao' => now()->subDays(5)->format('Y-m-d H:i:s'),
+            'nota' => $nota->nota,
+            'justificativa' => null,
+            'justificativas' => [],
+            'avaliador_id' => $this->usuario->id,
+            'plano_trabalho_consolidacao_id' => $consolidacao->id,
+            'tipo_avaliacao_id' => $nota->tipo_avaliacao_id,
+            'tipo_avaliacao_nota_id' => $nota->id,
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando ja esta arquivado', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CANCELADO',
+            'data_arquivamento' => now(),
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(422);
+    });
+
+    test('retorna 404 quando plano nao existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/arquivar')
+            ->assertStatus(404);
+    });
+});
+
+// ── POST clonar ─────────────────────────────────────────────────────
+
+describe('POST /api/v2/plano-trabalho/:id/clonar', function () {
+
+    test('clona plano com sucesso', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'ATIVO',
+        ]);
+
+        $response = $this->postJson("/api/__tests/v2/plano-trabalho/{$plano->id}/clonar");
+
+        $response->assertStatus(201)
+            ->assertJsonPath('success', true);
+
+        $cloneId = $response->json('data.id');
+        expect($cloneId)->not->toBe($plano->id);
+
+        $this->assertDatabaseHas('planos_trabalhos', [
+            'id' => $cloneId,
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'INCLUIDO',
+        ]);
+    });
+
+    test('clona entregas com forca_trabalho zerada', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $entregaCatalogo = \App\Models\Entrega::factory()->create(['unidade_id' => $this->unidade->id]);
+        $planoEntrega = \App\Models\PlanoEntrega::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'programa_id' => $this->programa->id,
+            'criacao_usuario_id' => $this->usuario->id,
+        ]);
+        $pee = \App\Models\PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $planoEntrega->id,
+            'entrega_id' => $entregaCatalogo->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        \App\Models\PlanoTrabalhoEntrega::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'plano_entrega_entrega_id' => $pee->id,
+            'forca_trabalho' => 80,
+            'descricao' => 'Entrega original',
+        ]);
+
+        $cloneId = $this->postJson("/api/__tests/v2/plano-trabalho/{$plano->id}/clonar")
+            ->json('data.id');
+
+        $entregaClone = \App\Models\PlanoTrabalhoEntrega::where('plano_trabalho_id', $cloneId)->first();
+
+        expect($entregaClone)->not->toBeNull();
+        expect((float) $entregaClone->forca_trabalho)->toBe(0.0);
+        expect($entregaClone->descricao)->toBe('Entrega original');
+    });
+
+    test('retorna 422 quando plano cancelado', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'status' => 'CANCELADO',
+        ]);
+
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$plano->id}/clonar")
+            ->assertStatus(422);
+    });
+
+    test('retorna 404 quando plano nao existe', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $this->postJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/clonar')
+            ->assertStatus(404);
+    });
+});
