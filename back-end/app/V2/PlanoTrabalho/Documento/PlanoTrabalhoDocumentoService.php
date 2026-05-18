@@ -70,7 +70,7 @@ class PlanoTrabalhoDocumentoService
     public function store(string $planoTrabalhoId, ?string $justificativa = null): Documento
     {
         $plano = $this->authValidator->validar($planoTrabalhoId, Auth::id());
-        $justificativa = $this->storeValidator->validar($plano, $justificativa);
+        $justificativa = $this->storeValidator->validar($plano, $justificativa ?? $plano->justificativa);
 
         $documentoExistente = $this->documentoRepository->findTcrByPlanoTrabalhoId($planoTrabalhoId);
 

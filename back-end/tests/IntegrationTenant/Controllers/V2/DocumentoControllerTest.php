@@ -180,6 +180,19 @@ describe('POST /api/v2/plano-trabalho/:id/documento (CHD)', function () {
         $this->plano->refresh();
         expect($this->plano->justificativa)->toBeNull();
     });
+
+    test('retorna 201 quando CHD diferente de 100% e justificativa já salva no plano', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        \App\Models\PlanoTrabalhoEntrega::where('plano_trabalho_id', $this->plano->id)
+            ->update(['forca_trabalho' => 110]);
+
+        $this->plano->update(['justificativa' => 'Acúmulo temporário.']);
+
+        // Envia request sem justificativa — deve usar a do plano
+        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento")
+            ->assertStatus(201);
+    });
 });
 
 // ── happy path ──────────────────────────────────────────────────────
