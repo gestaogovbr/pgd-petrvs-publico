@@ -83,8 +83,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   entregasDoPlano = signal<SelectOption[]>([]);
   entregasDoPlanoOutraUnidade = signal<SelectOption[]>([]);
 
-  sugestoesOutrasUnidades = signal<{id: string, sigla: string, nome: string}[]>([]);
-  outraUnidadeSelecionada = signal<{id: string, sigla: string, nome: string} | null>(null);
+  sugestoesOutrasUnidades = signal<{id: string, sigla: string, nome: string, codigo: string}[]>([]);
+  outraUnidadeSelecionada = signal<{id: string, sigla: string, nome: string, codigo: string} | null>(null);
   readonly outraUnidadeQuery = this.fb.control('');
 
   mostrandoFormEntrega = signal(false);
@@ -530,8 +530,8 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       this.sugestoesOutrasUnidades.set([]);
       this.carregarPlanosOutraUnidade(outraUnidadeId, outraUnidadePlanoId);
       this.unidadeService.getById(outraUnidadeId).subscribe(unidade => {
-        this.outraUnidadeSelecionada.set({ id: unidade.id, sigla: unidade.sigla, nome: unidade.nome });
-        this.outraUnidadeQuery.setValue(`${unidade.sigla} - ${unidade.nome}`, { emitEvent: false });
+        this.outraUnidadeSelecionada.set({ id: unidade.id, sigla: unidade.sigla, nome: unidade.nome, codigo: unidade.codigo });
+        this.outraUnidadeQuery.setValue(`${unidade.codigo} - ${unidade.sigla} - ${unidade.nome}`, { emitEvent: false });
       });
     } else {
       this.outraUnidadeSelecionada.set(null);
@@ -564,9 +564,9 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     });
   }
 
-  selecionarOutraUnidade(u: {id: string, sigla: string, nome: string}) {
+  selecionarOutraUnidade(u: {id: string, sigla: string, nome: string, codigo: string}) {
     this.outraUnidadeSelecionada.set(u);
-    this.outraUnidadeQuery.setValue(`${u.sigla} - ${u.nome}`, { emitEvent: false });
+    this.outraUnidadeQuery.setValue(`${u.codigo} - ${u.sigla} - ${u.nome}`, { emitEvent: false });
     this.sugestoesOutrasUnidades.set([]);
     this.entregaForm.controls.outra_unidade_id.setValue(u.id);
   }
