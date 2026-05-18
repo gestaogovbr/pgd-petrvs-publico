@@ -53,12 +53,10 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $unidade->data_inativacao = null;
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
-        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')
-            ->with('user-1', 'programa-1')
-            ->andReturn(false);
+        $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(false);
 
         $this->validacao->validar(buildStoreDTO());
-    })->throws(ValidateException::class, 'O participante não está habilitado no PGD/SIAPE para o regramento selecionado.');
+    })->throws(ValidateException::class, 'O regramento selecionado não está vigente para a unidade informada.');
 
     test('lança exceção quando unidade está inativa', function () {
         $unidade = Mockery::mock(Unidade::class)->makePartial();
@@ -78,7 +76,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $programa->data_fim = '2024-12-31';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
-        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
+        $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->with('programa-1')->andReturn($programa);
 
         $this->validacao->validar(buildStoreDTO());
@@ -93,7 +91,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $programa->data_fim = '2024-12-31';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
-        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
+        $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')
             ->with('user-1', '2024-03-01', '2024-06-30')
@@ -114,7 +112,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $agente->modalidade_pgd = 'integral';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
-        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
+        $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
@@ -134,7 +132,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $agente->modalidade_pgd = 'integral';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
-        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
+        $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
@@ -159,7 +157,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $agente->modalidade_pgd = 'presencial';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
-        $this->usuarioRepo->shouldReceive('isParticipanteHabilitado')->andReturn(true);
+        $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
