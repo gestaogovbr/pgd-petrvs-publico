@@ -119,13 +119,16 @@ class IntegracaoGestorService extends ServiceBase
             $servidorIntegracao = $this->integracaoServidorRepository->findByCpfAndCodigoExercicio($cpfChefe, $codigoUnidade);
 
             if (!$servidorIntegracao) {
-                SiapeLog::warning("Servidor com CPF {$cpfChefe} não encontrado na tabela integracao_servidores vinculado à unidade {$codigoUnidade}. Tentando buscar apenas pelo CPF na tabela de usuários.");
+                SiapeLog::warning("Servidor com CPF {$cpfChefe} não encontrado na tabela integracao_servidores vinculado à unidade {$codigoUnidade}. Chefia ignorada para evitar retorno indevido por dado stale.");
+                continue;
             }
 
-            $usuario = $this->usuarioRepository->findByCpf($cpfChefe);
+            $usuario = !empty($servidorIntegracao->matriculasiape)
+                ? $this->usuarioRepository->findByMatricula($servidorIntegracao->matriculasiape)
+                : $this->usuarioRepository->findByCpf($cpfChefe);
 
             if (!$usuario) {
-                SiapeLog::warning("Usuário com CPF {$cpfChefe} (Chefe da unidade {$codigoUnidade}) não encontrado na tabela usuarios.");
+                SiapeLog::warning("Usuário chefe com CPF {$cpfChefe} e matrícula {$servidorIntegracao->matriculasiape} (unidade {$codigoUnidade}) não encontrado na tabela usuarios.");
                 continue;
             }
 

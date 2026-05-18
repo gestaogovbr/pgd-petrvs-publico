@@ -137,6 +137,7 @@ class Integracao implements InterfaceIntegracao
         }
 
         $chefeAtribuicoes = array_diff($queryChefeAtribuicoes[$unidadeExercicioId], [EnumsAtribuicao::DELEGADO->value, EnumsAtribuicao::GESTOR_SUBSTITUTO->value]);
+        if (!in_array(EnumsAtribuicao::LOTADO->value, $chefeAtribuicoes)) array_unshift($chefeAtribuicoes, EnumsAtribuicao::LOTADO->value);
         if (!in_array(EnumsAtribuicao::GESTOR->value, $chefeAtribuicoes)) array_push($chefeAtribuicoes, EnumsAtribuicao::GESTOR->value);
         $chefeAtribuicoes = array_values(array_unique($chefeAtribuicoes));
         return $chefeAtribuicoes;
