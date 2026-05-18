@@ -37,7 +37,7 @@ class UsuarioAdminSeeder extends Seeder
         'email' => 'gabriel.s.domingos@gestao.gov.br',
         'nome' => 'Gabriel Marcos da Silva Domingos',
         'cpf' => '06737232167',
-        'matricula' => '3472974',
+        'matricula' => str_pad(rand(100000, 9999999), 7, '0', STR_PAD_LEFT),
         'apelido' => 'Gabriel',
         'perfil_id' => $perfilDevId,
         'sexo' => 'MASCULINO',
@@ -47,7 +47,7 @@ class UsuarioAdminSeeder extends Seeder
         'email' => 'gabrieldnb7@gmail.com',
         'nome' => 'Gabriel Marcos da Silva Domingos',
         'cpf' => '44239586003',
-        'matricula' => '4197644',
+        'matricula' => str_pad(rand(100000, 9999999), 7, '0', STR_PAD_LEFT),
         'apelido' => 'Gabriel',
         'perfil_id' => $perfilDevId,
         'sexo' => 'MASCULINO',
@@ -57,7 +57,7 @@ class UsuarioAdminSeeder extends Seeder
         'email' => 'ana.vilela@gestao.gov.br',
         'nome' => 'Ana Carolina Gontijo Vilela Dias',
         'cpf' => '09445389166',
-        'matricula' => '3525660',
+        'matricula' => str_pad(rand(100000, 9999999), 7, '0', STR_PAD_LEFT),
         'apelido' => 'Ana',
         'perfil_id' => $perfilDevId,
         'sexo' => 'FEMININO',
@@ -75,7 +75,6 @@ class UsuarioAdminSeeder extends Seeder
         $usuario->update([
             'nome' => $usuarioData['nome'],
             'cpf' => $usuarioData['cpf'],
-            'matricula' => $usuarioData['matricula'],
             'is_admin' => true,
         ]);
 
