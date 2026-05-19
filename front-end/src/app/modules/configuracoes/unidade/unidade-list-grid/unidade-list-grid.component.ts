@@ -3,7 +3,7 @@ import { FormGroup, AbstractControl } from '@angular/forms';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputSwitchComponent } from 'src/app/components/input/input-switch/input-switch.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
@@ -11,9 +11,10 @@ import { Unidade } from 'src/app/models/unidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'unidade-list-grid',
-  templateUrl: './unidade-list-grid.component.html',
-  styleUrls: ['./unidade-list-grid.component.scss']
+    selector: 'unidade-list-grid',
+    templateUrl: './unidade-list-grid.component.html',
+    styleUrls: ['./unidade-list-grid.component.scss'],
+    standalone: false
 })
 export class UnidadeListGridComponent extends PageListBase<Unidade, UnidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

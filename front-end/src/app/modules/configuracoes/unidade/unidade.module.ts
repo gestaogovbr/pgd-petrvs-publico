@@ -4,12 +4,10 @@ import { CommonModule } from '@angular/common';
 import { UnidadeRoutingModule } from './unidade-routing.module';
 import { UnidadeFormComponent } from './unidade-form/unidade-form.component';
 import { UnidadeListComponent } from './unidade-list/unidade-list.component';
-import { ComponentsModule } from 'src/app/components/components.module';
-import { OrganizationChartModule } from 'primeng/organizationchart';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UnidadeMergeComponent } from './unidade-merge/unidade-merge.component';
 import { UteisModule } from '../../uteis/uteis.module';
-import { NgScrollbarModule } from 'ngx-scrollbar';
 import { UnidadeIntegranteComponent } from './unidade-integrante/unidade-integrante.component';
 import { UnidadeListGridComponent } from './unidade-list-grid/unidade-list-grid.component';
 import { UnidadeListMapComponent } from './unidade-list-map/unidade-list-map.component';
@@ -26,12 +24,10 @@ import { UnidadeListMapComponent } from './unidade-list-map/unidade-list-map.com
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     UteisModule,
     ReactiveFormsModule,
-    UnidadeRoutingModule,
-    OrganizationChartModule,
-    NgScrollbarModule
+    UnidadeRoutingModule
   ]
 })
 export class UnidadeModule { }

@@ -5,11 +5,33 @@ namespace App\Services;
 use App\Services\ServiceBase;
 use App\Services\PlanoTrabalhoService;
 use App\Services\PlanoEntregaEntregaService;
+use App\Services\PlanejamentoService;
+use App\Services\CidadeService;
+use App\Services\EntidadeService;
+use App\Services\PlanejamentoObjetivoService;
+use App\Services\PlanoTrabalhoEntregaService;
+use App\Services\ProgramaService;
+use App\Services\UsuarioService;
+use App\Services\UnidadeService;
+use App\Support\ModalidadePgd;
 
+/**
+ * @property PlanejamentoService $planejamentoService
+ * @property PlanoTrabalhoService $planoTrabalhoService
+ * @property CidadeService $cidadeService
+ * @property EntidadeService $entidadeService
+ * @property PlanejamentoObjetivoService $planejamentoObjetivoService
+ * @property PlanoTrabalhoEntregaService $planoTrabalhoEntregaService
+ * @property ProgramaService $programaService
+ * @property PlanoEntregaEntregaService $planoEntregaEntregaService
+ * @property UsuarioService $usuarioService
+ * @property UnidadeService $unidadeService
+ */
 class TemplateDatasetService extends ServiceBase
 {
 	public $dataset = [];
-	public function __construct() {
+
+    public function __construct() {
 		/*
 			Definição dos datasets do sistema, deverá seguir a seguinte estrutura:
 			[
@@ -86,7 +108,7 @@ class TemplateDatasetService extends ServiceBase
 					["field" => "status", "label" => "Status do plano"],
 					["field" => "data_inicio", "label" => "Data inicial do plano", "type" => "DATETIME"],
 					["field" => "data_fim", "label" => "Data final do plano", "type" => "DATETIME"],
-					["field" => "tipo_modalidade", "label" => "Tipo de modalidade", "fields" => "TIPO_MODALIDADE", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->tipoModalidade; }],
+					["field" => "modalidade_pgd", "label" => "Modalidade", "value" => function ($contexto) { return ModalidadePgd::label($contexto->modalidade_pgd ?? null); }],
 					["field" => "unidade", "label" => "Unidade", "fields" => "UNIDADE", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->unidade; }],
 					["field" => "usuario", "label" => "Usuário", "fields" => "USUARIO", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->usuario; }],
 					["field" => "programa", "label" => "Programa", "fields" => "PROGRAMA", "type" => "OBJECT", "value" => function ($contexto) { return $contexto->programa; }],
@@ -150,12 +172,6 @@ class TemplateDatasetService extends ServiceBase
 					["field" => "sexo", "label" => "Sexo", "lookup" => "SEXO"],
 					["field" => "situacao_funcional", "label" => "Situação Funcional", "lookup" => "USUARIO_SITUACAO_FUNCIONAL"],
 					["field" => "texto_complementar_plano", "label" => "Mensagem do Plano de trabalho", "type" => "TEMPLATE"]
-				],
-			],			
-			"TIPO_MODALIDADE" => [
-				"context" => function ($params) { return gettype($params) == "string" ? $this->planoModalidadeService->getById($params) : $params; },
-				"fields" => [
-					["field" => "nome", "label" => "Nome"]
 				],
 			],
 			"KEY_VALUE" => [

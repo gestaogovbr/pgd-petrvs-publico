@@ -1,5 +1,4 @@
 import { Injectable, Injector } from '@angular/core';
-import { TipoDocumentoSei } from '../listeners/procedimento-trabalhar/procedimento-trabalhar.component';
 import { TipoDocumento } from '../models/tipo-documento.model';
 import { DaoBaseService } from './dao-base.service';
 
@@ -13,7 +12,7 @@ export class TipoDocumentoDaoService extends DaoBaseService<TipoDocumento> {
     this.inputSearchConfig.searchFields = ["nome"];
   }  
 
-  public atualizar(lista: TipoDocumentoSei[]): Promise<boolean> {
+  public atualizar(lista: TipoDocumento[]): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/atualizar', {
         lista: lista

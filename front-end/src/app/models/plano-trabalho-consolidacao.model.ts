@@ -1,9 +1,10 @@
+import { Atividade } from './atividade.model';
 import { Avaliacao, HasAvaliacao } from './avaliacao.model';
 import { Base } from './base.model';
 import { PlanoTrabalho } from './plano-trabalho.model';
 import { HasStatus, StatusJustificativa } from './status-justificativa.model';
 
-export type PlanoTrabalhoConsolidacaoStatus = 'CONCLUIDO' | 'AVALIADO' | 'INCLUIDO' | 'AGUARDANDO_REGISTRO';
+export type PlanoTrabalhoConsolidacaoStatus = 'CONCLUIDO' | 'AVALIADO' | 'INCLUIDO';
 
 export class PlanoTrabalhoConsolidacao extends Base implements HasAvaliacao, HasStatus {
     public plano_trabalho?: PlanoTrabalho;
@@ -13,6 +14,7 @@ export class PlanoTrabalhoConsolidacao extends Base implements HasAvaliacao, Has
     public data_fim: Date = new Date();
     public status: PlanoTrabalhoConsolidacaoStatus = "INCLUIDO"; // Status atual da consolidação
     public avaliacoes: Avaliacao[] = [];
+    public atividades: Atividade[] = []
     public status_historico: StatusJustificativa[] = [];
 
     public plano_trabalho_id: string = "";

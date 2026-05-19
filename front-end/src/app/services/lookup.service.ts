@@ -584,7 +584,6 @@ export class LookupService implements IIndexable {
   ];
 
   public CONSOLIDACAO_STATUS: LookupItem[] = [
-    { key: "AGUARDANDO_REGISTRO", value: "Aguardando Registro", icon: "bi bi-clock", color: "secondary" },
     { key: "INCLUIDO", value: "Incluido", icon: "bi bi-pencil-square", color: "secondary" },
     { key: "CONCLUIDO", value: "Concluído", icon: "bi bi-clipboard2-check", color: "primary" },
     { key: "AVALIADO", value: "Avaliado", icon: "bi bi-star", color: "info" }
@@ -998,6 +997,17 @@ export class LookupService implements IIndexable {
   public RELATORIO_UNIDADE_TIPOS: LookupItem[] = [
     { key: 'Instituidora', value: "Instituidora" },
     { key: 'Executora', value: "Executora" }
+  ];
+
+  public ENVIO_USUARIO_STATUS: LookupItem[] = [
+    { key: 'Todos', value: "Todos" },
+    { key: 'Não agendados', value: "Não agendados" },
+    { key: 'Agendados', value: "Agendados" },
+    { key: 'Pendentes', value: "Pendentes" },
+    { key: 'Não enviados', value: "Não enviados" },
+    { key: 'Concluídos', value: "Concluídos" },
+    { key: 'Enviados', value: "Enviados" },
+    { key: 'Com falha', value: "Com falha" },
   ];
 
   public getLookup(itens: LookupItem[], key: any) {

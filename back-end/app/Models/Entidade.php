@@ -14,9 +14,15 @@ use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\TipoTarefa;
 use App\Models\Template;
-use App\Models\TipoModalidade;
 use App\Models\NotificacaoConfig;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Unidade[] $unidades
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Feriado[] $feriados
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\EntidadeEmail[] $emails
+ */
 class Entidade extends ModelBase
 {
   protected $table = "entidades";
@@ -33,7 +39,7 @@ class Entidade extends ModelBase
     'gravar_historico_processo', /* tinyint; NOT NULL; */ // Se grava andamento da atividade dentro do processo vinculado (Caso seja o SEI, será em Consultar Andamento)
     'layout_formulario_atividade', /* enum('COMPLETO','SIMPLIFICADO'); NOT NULL; DEFAULT: 'COMPLETO'; */ // Layout para a tela do formulário de atividades (cadastro simplificado ou completo)
     'campos_ocultos_atividade', /* json; */ // Campos que se deseja ocultar do formulário de atividade, com seu respectivo valor padrão, em caso de NULL será utilizado o valor default do banco
-    'tipo_modalidade_id', /* char(36); */
+    'modalidade_pgd_padrao', /* varchar(50); */
     'cidade_id', /* char(36); */
     'uf', /* varchar(2); */ // UF para feriados estaduais
     'nomenclatura', /* json; */ // Nomenclatura utilizada no sistema
@@ -78,23 +84,32 @@ class Entidade extends ModelBase
   ];
 
   // Has
-  public function feriados()
+  public function feriados(): HasMany
   {
     return $this->hasMany(Feriado::class);
   }
-  public function documentos()
+  public function documentos(): HasMany
   {
     return $this->hasMany(Documento::class);
   }
-  public function planejamentos()
+  public function planejamentos(): HasMany
   {
     return $this->hasMany(Planejamento::class);
   }
-  public function cadeiasValores()
+  public function gestor(): BelongsTo
+  {
+    return $this->belongsTo(Usuario::class, 'gestor_id');
+  }
+  public function gestorSubstituto(): BelongsTo
+  {
+    return $this->belongsTo(Usuario::class, 'gestor_substituto_id');
+  }
+  public function cadeiasValores(): HasMany
   {
     return $this->hasMany(CadeiaValor::class);
   }
-  public function integracoes()
+
+  public function integracoes(): HasMany
   {
     return $this->hasMany(Integracao::class);
   }
@@ -119,18 +134,7 @@ class Entidade extends ModelBase
   {
     return $this->belongsTo(Cidade::class);
   }      //nullable
-  public function gestor()
-  {
-    return $this->belongsTo(Usuario::class);
-  }     //nullable
-  public function gestorSubstituto()
-  {
-    return $this->belongsTo(Usuario::class);
-  }   //nullable
-  public function tipoModalidade()
-  {
-    return $this->belongsTo(TipoModalidade::class);
-  }  //nullable
+
   public function emails()
   {
     return $this->hasMany(EntidadeEmail::class);

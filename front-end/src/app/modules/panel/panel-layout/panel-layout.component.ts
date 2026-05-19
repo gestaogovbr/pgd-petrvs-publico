@@ -7,9 +7,10 @@ import { TenantDaoService } from "src/app/dao/tenant-dao.service";
 
 
 @Component({
-	selector: "panel-layout",
-	templateUrl: "./panel-layout.component.html",
-	styleUrls: ["./panel-layout.component.scss"],
+    selector: "panel-layout",
+    templateUrl: "./panel-layout.component.html",
+    styleUrls: ["./panel-layout.component.scss"],
+    standalone: false
 })
 export class PanelLayoutComponent extends PageBase implements OnInit {
 	public currentUser: any;

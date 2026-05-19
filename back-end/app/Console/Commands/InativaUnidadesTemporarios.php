@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\InativacaoUnidadesTemporarios;
+use App\Services\UnidadeService;
 use Illuminate\Console\Command;
 
 class InativaUnidadesTemporarios extends Command
@@ -19,7 +20,7 @@ class InativaUnidadesTemporarios extends Command
      *
      * @var string
      */
-    protected $description = 'Inativa unidades com data_inicio_inativacao após 30 dias';
+    protected $description = 'Inativa unidades com data_inicio_inativacao após o prazo configurado';
 
     /**
      * Execute the console command.
@@ -36,7 +37,7 @@ class InativaUnidadesTemporarios extends Command
         $this->info("Executando inativação de unidades temporárias para o tenant: {$tenantId}");
         
         $inativacaoUnidadesTemporarios = new InativacaoUnidadesTemporarios($tenantId);
-        $inativacaoUnidadesTemporarios->handle();
+        $inativacaoUnidadesTemporarios->handle(app(UnidadeService::class));
         
         $this->info("Job de inativação de unidades temporárias executado com sucesso!");
         

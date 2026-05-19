@@ -8,6 +8,8 @@ export class Solucao extends Base {
   public sigla: string = ""; 
   public descricao?: string = ""; 
   public url?: string = ""; 
+  public data_desativado?: Date | null;
+  public data_ativado?: Date | null;
   public solucoes_unidades?: SolucaoUnidade[] = [];
   public produtos_solucoes?: ProdutoSolucao[] = [];
   public constructor(data?: any) { super(); this.initialization(data); }

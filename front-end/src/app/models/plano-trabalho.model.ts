@@ -1,5 +1,4 @@
 import { Base } from './base.model';
-import { TipoModalidade } from './tipo-modalidade.model';
 import { Unidade } from './unidade.model';
 import { Usuario } from './usuario.model';
 import { Programa } from './programa.model';
@@ -17,6 +16,37 @@ export type PlanoMetadados = { concluido: boolean }
 
 export type PlanoTrabalhoStatus = 'INCLUIDO' | 'AGUARDANDO_ASSINATURA' | 'ATIVO' | 'CONCLUIDO' | 'AVALIADO' | 'SUSPENSO' | 'CANCELADO';
 
+export const PlanoTrabalhoStatus = {
+    INCLUIDO: 'INCLUIDO',
+    AGUARDANDO_ASSINATURA: 'AGUARDANDO_ASSINATURA',
+    ATIVO: 'ATIVO',
+    CONCLUIDO: 'CONCLUIDO',
+    AVALIADO: 'AVALIADO',
+    SUSPENSO: 'SUSPENSO',
+    CANCELADO: 'CANCELADO',
+} as const satisfies Record<PlanoTrabalhoStatus, PlanoTrabalhoStatus>;
+
+type PlanoTrabalhoStatusGroupName =
+    | 'editavel'
+    | 'assinavel'
+    | 'vigente'
+    | 'comExecucaoVisivel'
+    | 'arquivavel'
+    | 'clonavel'
+    | 'cancelavel'
+    | 'excluivel';
+
+export const PlanoTrabalhoStatusGroups: Record<PlanoTrabalhoStatusGroupName, readonly PlanoTrabalhoStatus[]> = {
+    editavel: [PlanoTrabalhoStatus.INCLUIDO, PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA],
+    assinavel: [PlanoTrabalhoStatus.INCLUIDO, PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA],
+    vigente: [PlanoTrabalhoStatus.ATIVO],
+    comExecucaoVisivel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO, PlanoTrabalhoStatus.AVALIADO],
+    arquivavel: [PlanoTrabalhoStatus.CONCLUIDO, PlanoTrabalhoStatus.CANCELADO],
+    clonavel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO],
+    cancelavel: [PlanoTrabalhoStatus.ATIVO],
+    excluivel: [PlanoTrabalhoStatus.INCLUIDO],
+};
+
 export type PlanoTrabalhoMetadata = {
     assinaturasExigidas: AssinaturaList;
     jaAssinaramTCR: AssinaturaList;
@@ -25,7 +55,6 @@ export type PlanoTrabalhoMetadata = {
 
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public accordionDisabled: boolean = false;
-    public tipo_modalidade?: TipoModalidade;
     public unidade?: Unidade;
     public usuario?: Usuario;
     public programa?: Programa;
@@ -60,8 +89,16 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public programa_id: string = "";
     public usuario_id: string = "";
     public unidade_id: string = "";
-    public tipo_modalidade_id: string = "";
+    public numero: number = 0;
+    public modalidade_pgd: string | null = null;
+    public modalidade_pgd_label: string = "Não definida";
+    public justificativa_modalidade: string | null = null;
     public documento_id: string | null = null;
+
+    public data_agendamento_envio?: Date | null = null; /* Data de agendamento do envio */
+    public data_tentativa_envio?: Date | null = null; /* Data da última tentativa de envio */
+    public data_envio_api_pgd?: Date | null = null; /* Data do envio para a API do PGD */
+    public log_envio: string | null = null; /* Log do envio do para a API do PGD */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

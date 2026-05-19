@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusEnum;
+use App\Contracts\HasStatusHistory;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -12,9 +13,41 @@ use App\Models\Planejamento;
 use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntrega;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class PlanoEntrega extends ModelBase
+/**
+ * @property string $nome
+ * @property string $planejamento_id
+ * @property string $cadeia_valor_id
+ * @property string $unidade_id
+ * @property string $plano_entrega_id
+ * @property string $programa_id
+ * @property string $criacao_usuario_id
+ * @property \DateTime $data_inicio
+ * @property \DateTime|null $data_fim
+ * @property \DateTime|null $data_arquivamento
+ * @property \DateTime|null $avaliado_at
+ * @property Carbon|null $data_agendamento_envio
+ * @property Carbon|null $data_envio_api_pgd
+ * @property Carbon|null $data_tentativa_envio
+ * @property Carbon|null $data_conclusao_envio
+ * @property string|null $log_envio
+ * @property-read Unidade $unidade
+ * @property-read Programa $programa
+ * @property-read Usuario $criacaoUsuario
+ * @property-read Planejamento|null $planejamento
+ * @property-read CadeiaValor|null $cadeiaValor
+ * @property-read PlanoEntrega|null $planoEntregaPai
+ */
+class PlanoEntrega extends ModelBase implements HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'plano_entrega_id';
+    }
     protected $table = 'planos_entregas';
 
     protected $with = [];
@@ -37,19 +70,31 @@ class PlanoEntrega extends ModelBase
         //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
     ];
 
-  public const STATUSES = [
-    'INCLUIDO' => 'Incluído',
-    'HOMOLOGANDO' => 'Aguardando homologação',
-    'ATIVO' => 'Em execução',
-    'CONCLUIDO' => 'Concluído',
-    'AVALIADO' => 'Avaliado',
-    'SUSPENSO' => 'Suspenso',
-    'CANCELADO' => 'Cancelado'
-  ];
+    public const STATUSES = [
+        'INCLUIDO' => 'Incluído',
+        'HOMOLOGANDO' => 'Aguardando homologação',
+        'ATIVO' => 'Em execução',
+        'CONCLUIDO' => 'Concluído',
+        'AVALIADO' => 'Avaliado',
+        'SUSPENSO' => 'Suspenso',
+        'CANCELADO' => 'Cancelado'
+    ];
 
-  public $fillable_changes = ["entregas"];
+    public const DATA_MUDANCA_REGRA_PE = '2026-01-12';
+
+    public const STATUSES_PENDENTES = [
+        'INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'
+    ];
+
+    public $fillable_changes = ["entregas"];
 
     public $delete_cascade = [];
+
+    protected $casts = [
+        'data_agendamento_envio' => 'datetime',
+        'data_tentativa_envio' => 'datetime',
+        'data_envio_api_pgd' => 'datetime',
+    ];
 
     protected static function booted()
     {
@@ -59,77 +104,82 @@ class PlanoEntrega extends ModelBase
 
         static::updating(function (PlanoEntrega $planoEntrega) {
             if ($planoEntrega->isDirty('status') && $planoEntrega->status === StatusEnum::AVALIADO->value) {
-                $planoEntrega->avaliado_at = date('Y-m-d');
+                $planoEntrega->avaliado_at = now();
             }
         });
     }
 
     // Has
-    public function statusHistorico()
+    public function statusHistorico(): HasMany
     {
         return $this->hasMany(StatusJustificativa::class, "plano_entrega_id");
     }
 
-    public function latestStatus()
+    public function latestStatus(): HasOne
     {
         return $this->hasOne(StatusJustificativa::class, "plano_entrega_id")->latestOfMany();
     }
 
-    public function entregas()
+    public function entregas(): HasMany
     {
         return $this->hasMany(PlanoEntregaEntrega::class);
     }
 
-    public function planosEntrega()
+    public function planosEntrega(): HasMany
     {
         return $this->hasMany(PlanoEntrega::class);
     }
 
-    public function planosTrabalho()
+    public function planosTrabalho(): HasMany
     {
         return $this->hasMany(PlanoTrabalho::class);
     }
 
-    public function avaliacoes()
+    public function avaliacoes(): HasMany
     {
         return $this->hasMany(Avaliacao::class, 'plano_entrega_id');
     }
 
     // Belongs
-    public function planejamento()
-    {
-        return $this->belongsTo(Planejamento::class);
-    }  //nullable
-
-    public function cadeiaValor()
-    {
-        return $this->belongsTo(CadeiaValor::class);
-    }    //nullable
-
-    public function unidade()
+    public function unidade(): BelongsTo
     {
         return $this->belongsTo(Unidade::class);
     }
 
-    public function criador()
-    {
-        return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
-    }
-
-    public function programa()
+    public function programa(): BelongsTo
     {
         return $this->belongsTo(Programa::class);
     }
 
-    public function planoEntregaSuperior()
+    public function criacaoUsuario(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
+    }
+
+    public function criador(): BelongsTo
+    {
+        return $this->belongsTo(Usuario::class, 'criacao_usuario_id');
+    }
+
+    public function planejamento(): BelongsTo
+    {
+        return $this->belongsTo(Planejamento::class);
+    }
+
+    public function cadeiaValor(): BelongsTo
+    {
+        return $this->belongsTo(CadeiaValor::class);
+    }
+
+    public function planoEntregaSuperior(): BelongsTo
     {
         return $this->belongsTo(PlanoEntrega::class, 'plano_entrega_id');
-    } //nullable
+    }
 
-    public function avaliacao()
+    public function avaliacao(): BelongsTo
     {
         return $this->belongsTo(Avaliacao::class);
-    }  //nullable
+    }
 
     public function getAuditRelations(): array
     {
@@ -167,5 +217,16 @@ class PlanoEntrega extends ModelBase
         ];
     }
 
+    public function isEmStatusParaEnvio() {
+        if ($this->status instanceof \App\Enums\StatusEnum) {
+            $status = $this->status->value;
+        } else{
+            $status = (string)$this->status;
+        }
 
+        return ($status == StatusEnum::ATIVO->value)
+            || ($status == StatusEnum::CONCLUIDO->value)
+            || ($status == StatusEnum::AVALIADO->value)
+        ;
+    }
 }

@@ -1,18 +1,19 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { PageBase } from '../../base/page-base';
-import { TreeNode } from 'primeng/api';
 import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
+import { LookupTreeNode } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-desdobramento',
-  templateUrl: './desdobramento.component.html',
-  styleUrls: ['./desdobramento.component.scss']
+    selector: 'app-desdobramento',
+    templateUrl: './desdobramento.component.html',
+    styleUrls: ['./desdobramento.component.scss'],
+    standalone: false
 })
 export class DesdobramentoComponent extends PageBase implements OnInit {
 
   public typeObject: string  = ''
   public idObject: string  = ''
-  data: TreeNode[] = [
+  data: LookupTreeNode[] = [
     {
         label: 'F.C Barcelona',
         expanded: true,
@@ -72,7 +73,8 @@ export class DesdobramentoComponent extends PageBase implements OnInit {
     this.programaDao.getById(this.idObject)
   }
 
+  public toggle(node: LookupTreeNode) {
+    node.expanded = !node.expanded;
+  }
 
-
-  
 }

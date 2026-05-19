@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Enums\ComentarioPrivacidadeEnum;
+use App\Enums\ComentarioTipoEnum;
 use App\Enums\StatusEnum;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -11,6 +13,8 @@ use App\Models\Afastamento;
 use App\Services\ServiceBase;
 use App\Services\UnidadeService;
 use App\Services\CalendarioService;
+use App\Repository\UnidadeRepository;
+use App\Repository\AtividadeRepository;
 use App\Services\ComentarioService;
 use App\Services\RawWhere;
 use App\Services\UtilService;
@@ -31,14 +35,30 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Throwable;
 
+/**
+ * @property UsuarioService $usuarioService
+ * @property StatusService $statusService
+ * @property NotificacoesService $notificacoesService
+ * @property CalendarioService $calendarioService
+ * @property UnidadeService $unidadeService
+ */
 class AtividadeService extends ServiceBase
 {
+    protected UnidadeRepository $unidadeRepository;
+    protected AtividadeRepository $atividadeRepository;
+
+    public function __construct() {
+        parent::__construct();
+        $this->unidadeRepository = app(UnidadeRepository::class);
+        $this->atividadeRepository = app(AtividadeRepository::class);
+    }
+
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */
 
     public $joinable = [
-        "tipo_atividade",
-        "plano_trabalho_entrega.plano_entrega_entrega",
-        "tarefas.tipo_tarefa",
+        "tipoAtividade",
+        "planoTrabalhoEntrega.planoEntregaEntrega",
+        "tarefas.tipoTarefa",
         "demandante:id,nome,apelido,email,url_foto",
         "pausas",
         "usuario:id,nome,matricula,apelido,email,url_foto",
@@ -46,11 +66,9 @@ class AtividadeService extends ServiceBase
         "comentarios.usuario:id,nome,apelido,email,url_foto",
         "tarefas.tarefa",
         "tarefas.comentarios.usuario:id,nome,apelido,email,url_foto",
-        "plano_trabalho.tipo_modalidade",
-        "plano_trabalho.entregas.entrega:id,nome",
+        "planoTrabalho.entregas.entrega:id,nome",
         "usuario.afastamentos",
-        "usuario.planos_trabalho.entregas.entrega:id,nome",
-        "usuario.planos_trabalho.tipo_modalidade:id,nome",
+        "usuario.planosTrabalho.entregas.entrega:id,nome",
         "reacoes.usuario:id,nome,apelido"
     ];
 
@@ -114,7 +132,7 @@ class AtividadeService extends ServiceBase
         if($action != ServiceBase::ACTION_INSERT) {
             $this->validateBackward($data["id"], "STORE");
         }
-        if(!$this->usuarioService->hasLotacao($data["unidade_id"])) {
+        if(!$this->unidadeRepository->hasUsuarioLotacao($data["unidade_id"], parent::loggedUser()->id, true)) {
             throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade do usuário logado nem subordinada a ele.");
         }
         if(!empty($data["plano_trabalho_id"])) {
@@ -126,7 +144,8 @@ class AtividadeService extends ServiceBase
         }
         if(!empty($data["usuario_id"])) {
             $usuario = Usuario::find($data["usuario_id"]);
-            if(!$this->usuarioService->hasLotacao($data["unidade_id"], $usuario, false)) {
+            $usuarioId = $usuario ? $usuario->id : parent::loggedUser()->id;
+            if(!$this->unidadeRepository->hasUsuarioLotacao($data["unidade_id"], $usuarioId, false)) {
                 if (!parent::loggedUser()->hasPermissionTo('MOD_ATV_USU_EXT')) {
                     throw new ServerException("ValidateAtividade", $unidade->sigla . " não é uma unidade (lotação) para o responsável, ou você não tem permissão para incluir atividade para usuário de outra unidade (MOD_ATV_USU_EXT)");
                 }
@@ -145,12 +164,6 @@ class AtividadeService extends ServiceBase
 
     public function extraStore(&$entity, $unidade, $action) {
         $metadados = $this->metadados($entity);
-        $consolidacao = PlanoTrabalhoConsolidacao::where(['id' => $entity->plano_trabalho_consolidacao_id,
-                                                          'status' => StatusEnum::AGUARDANDO_REGISTRO->value])->first();
-        if (!!$consolidacao) {
-            $consolidacao->status = StatusEnum::INCLUIDO->value;
-            $consolidacao->save();
-        }
         /* Atualiza status */
         $status = $metadados["pausado"] ? "PAUSADO" : 
             ($metadados["concluido"] ? "CONCLUIDO" : 
@@ -300,7 +313,7 @@ class AtividadeService extends ServiceBase
             if(empty($result['feriados'][$row->unidade_id])) $result['feriados'][$row->unidade_id] = $this->calendarioService->feriadosCadastrados($row->unidade_id);
         }
         if(count($planosTrabalhos) > 0) {
-            $list = PlanoTrabalho::with("tipoModalidade")->whereIn("id", array_keys($planosTrabalhos))->get();
+            $list = PlanoTrabalho::whereIn("id", array_keys($planosTrabalhos))->get();
             foreach($list as $planoTrabalho) $result['planos_trabalho'][$planoTrabalho->id] = $planoTrabalho;
         }
         if(count($afastamentos) > 0) {
@@ -464,8 +477,7 @@ class AtividadeService extends ServiceBase
             $this->update($data, $unidade, false);
             $this->statusService->atualizaStatus($atividade, "INICIADO", "Iniciada nessa data manualmente");
             if($suspender) {
-                $unidadeService = new UnidadeService();
-                $dataHora = $unidadeService->hora($unidade->id);
+                $dataHora = $this->unidadeService->hora($unidade->id);
                 $iniciadas = $this->iniciadas($data["usuario_id"]);
                 foreach ($iniciadas as $atividade_id) {
                     // Pausar todas, exceto a atividade que está iniciando
@@ -513,7 +525,10 @@ class AtividadeService extends ServiceBase
         unset($conclusao["arquivar"]);
         try {
             DB::beginTransaction();
-            $atividade = Atividade::with(["planoTrabalho.tipoModalidade"])->where("id", $conclusao["id"])->first();
+            $atividade = $this->atividadeRepository->findWithPlanoTrabalho($conclusao["id"]);
+            if (empty($atividade)) {
+                throw new ServerException("ValidateAtividade", "Atividade não encontrada.");
+            }
             /* Testa permissão para iniciar atividade de outros usuarios */
             if ($atividade->usuario_id != parent::loggedUser()->id){
                 if (!parent::loggedUser()->hasPermissionTo('MOD_ATV_USERS_CONCL')){
@@ -528,13 +543,12 @@ class AtividadeService extends ServiceBase
                 $comentarioService->destroy($comentarioTecnico->id);
             }
             if(!empty($descricaoTecnica)) {
-                $unidadeService = new UnidadeService();
                 $comentarioService->store([
                     "texto" => $descricaoTecnica,
                     "path" => null,
-                    "data_comentario" => $unidadeService->hora($unidade->id),
-                    "tipo" => "TECNICO",
-                    "privacidade" => "PUBLICO",
+                    "data_comentario" => $this->unidadeService->hora($unidade->id),
+                    "tipo" => ComentarioTipoEnum::TECNICO->value,
+                    "privacidade" => ComentarioPrivacidadeEnum::PUBLICO->value,
                     "usuario_id" => parent::loggedUser()->id,
                     "atividade_id" => $conclusao["id"]
                 ], $unidade, false);
@@ -562,7 +576,9 @@ class AtividadeService extends ServiceBase
                 "documento_entrega_id" => null
             ], $unidade, false);
             $this->statusService->atualizaStatus($atividade, "INICIADO", "Cancelado conclusão nessa data");
-            $comentarioTecnico = Comentario::where("atividade_id", $atividade->id)->where("tipo", "TECNICO")->first();
+            $comentarioTecnico = Comentario::where("atividade_id", $atividade->id)
+                ->where("tipo", ComentarioTipoEnum::TECNICO->value)
+                ->first();
             if(!empty($comentarioTecnico)) {
                 $comentarioService->destroy($comentarioTecnico->id);
             }
@@ -720,15 +736,20 @@ class AtividadeService extends ServiceBase
         }
     }
 
+    /**
+     * @param PlanoEntregaEntrega|null $entregaPlanoEntrega
+     */
     public function recuperarEntregasSuperiores($entregaPlanoEntrega = null)
     {
         $result = [];
         if(!empty($entregaPlanoEntrega)) {
             $entregaPlanoEntrega->entrega;
             $result = [$entregaPlanoEntrega];
+            /** @var PlanoEntregaEntrega $atual */
             $atual = $entregaPlanoEntrega;
             while(!empty($atual->entrega_pai_id)) {
                 $result[] = $atual->entregaPai;
+                /** @var PlanoEntregaEntrega $atual */
                 $atual = $atual->entregaPai;
                 $atual->entrega;
             }
@@ -737,6 +758,9 @@ class AtividadeService extends ServiceBase
 
     }
 
+    /**
+     * @param iterable<PlanoEntregaEntrega> $entregas
+     */
     public function recuperarObjetivosProcessosParaEntregas($entregas)
     {
         $objetivosIds = [];
@@ -754,18 +778,22 @@ class AtividadeService extends ServiceBase
 
        foreach ($planejamentoObjetivos as $objetivo) {
             $objetivos = [$objetivo];
+            /** @var PlanejamentoObjetivo $atual */
             $atual = $objetivo;
             while(!empty($atual->objetivo_pai_id)) {
                 $objetivos[] = $atual->objetivoPai;
+                /** @var PlanejamentoObjetivo $atual */
                 $atual = $atual->objetivoPai;
             }        
         }
 
         foreach ($planejamnetoProcessos as $processo) {
             $processos = [$processo];
+            /** @var CadeiaValorProcesso $atual */
             $atual = $processo;
             while(!empty($atual->processo_pai_id)) {
                 $processos[] = $atual->processoPai;
+                /** @var CadeiaValorProcesso $atual */
                 $atual = $atual->processoPai;
             }        
         }

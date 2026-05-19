@@ -10,16 +10,16 @@ import { LoginComponent } from './modules/login/login.component';
 import { ConfigComponent } from './modules/config/config.component';
 import { DialogComponent } from './services/dialog/dialog.component';
 import { SpinnerOverlayComponent } from './services/spinner-overlay/spinner-overlay.component';
-import { ComponentsModule } from './components/components.module';
+import { SharedModule } from './shared/shared.module';
 import { TesteImpersonateComponent } from './modules/teste/teste-impersonate/teste-impersonate.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LogModule } from './modules/logs/log.module';
 import { UteisModule } from './modules/uteis/uteis.module';
 import { RotinaModule } from './modules/rotinas/rotina.module';
-import { NgScrollbarModule } from 'ngx-scrollbar';
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ErrorsInterceptor } from './interceptors/errors-interceptor';
+import { PetrvsAuthInterceptor } from './interceptors/petrvs-auth-interceptor';
+import { AppShellV2Component } from './v2/components/app-shell/app-shell.component';
 
 registerLocaleData(localePt);
 
@@ -37,16 +37,16 @@ registerLocaleData(localePt);
     BrowserAnimationsModule,
     HttpClientModule,
     ReactiveFormsModule,
-    ComponentsModule,
+    SharedModule,
     AppRoutingModule,
     UteisModule,
     LogModule,
     RotinaModule,
-    NgScrollbarModule,
-    DynamicDialogModule,
-    FormsModule
+    FormsModule,
+    AppShellV2Component,
   ],
   providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: PetrvsAuthInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: 'pt-BR' }
   ],

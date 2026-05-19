@@ -6,9 +6,10 @@ import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-tipo-atividade-list',
-  templateUrl: './tipo-atividade-list.component.html',
-  styleUrls: ['./tipo-atividade-list.component.scss']
+    selector: 'app-tipo-atividade-list',
+    templateUrl: './tipo-atividade-list.component.html',
+    styleUrls: ['./tipo-atividade-list.component.scss'],
+    standalone: false
 })
 export class TipoAtividadeListComponent extends PageListBase<TipoAtividade, TipoAtividadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

@@ -18,6 +18,9 @@ class Interval
   public int $start;
   public int $end;
 
+  /**
+   * @param mixed $value
+   */
   function __construct($value = null)
   {
     $value = (array) $value;
@@ -34,6 +37,9 @@ class Turno
   public string|null $data;
   public bool $sem;
 
+  /**
+   * @param mixed $value
+   */
   function __construct($value = null)
   {
     $value = (array) $value;
@@ -101,6 +107,9 @@ class Efemerides
   public array $diasNaoUteis = [];
   public array $diasDetalhes = [];
 
+  /**
+   * @param mixed $value
+   */
   function __construct($value = null)
   {
     $value = (array) $value;
@@ -160,9 +169,9 @@ class CalendarioService
     return date("N", $timestamp) > 5;
   }
 
-  public static function isFeriadoReligioso($timestamp): string|null
+  public static function isFeriadoReligioso($timestamp, $listaFeriados = null): string|null
   {
-    $listaFeriados = static::listaFeriadosReligiosos($timestamp, $timestamp);
+    $listaFeriados = $listaFeriados ?? static::listaFeriadosReligiosos($timestamp, $timestamp);
     return static::isFeriadoCadastrado($timestamp, $listaFeriados);
   }
 
@@ -189,7 +198,7 @@ class CalendarioService
     return new DateTime($year . "-" . $month . "-" . $day . " 00:00:00");
   }
 
-  public static function listaFeriadosReligiosos(int $inicio, int $fim)
+  public static function listaFeriadosReligiosos(int $inicio, int $fim, $unidade = null)
   {
     $feriados = [];
     for ($ano = intval(date('Y', $inicio)), $anoFim = intval(date('Y', $fim)); $ano <= $anoFim; $ano++) {
@@ -264,7 +273,7 @@ class CalendarioService
     for ($ano = intval(date('Y', $inicio)), $anoFim = intval(date('Y', $fim)); $ano <= $anoFim; $ano++) {
       foreach ($feriados as $feriado) {
         $dataFeriado = mktime(0, 0, 0, $feriado->dia, $feriado->mes, $ano);
-        if (($feriado->recorrent || $feriado->ano == $ano) && static::between($dataFeriado, $inicio, $fim)) {
+        if (($feriado->recorrente || $feriado->ano == $ano) && static::between($dataFeriado, $inicio, $fim)) {
           array_push($result, date("Y-m-d", $dataFeriado));
         }
       }
@@ -299,6 +308,7 @@ class CalendarioService
     $forma = $unidade->distribuicao_forma_contagem_prazos;
     $listaFeriados = [];
     $listaFeriadosReligiosos = [];
+    $inicio = $dataInicio;
     while ($unidade && $horas > 0) {
       if ($ano != date('Y', $diaAtual)) {
         $ano = date('Y', $diaAtual);
@@ -313,12 +323,12 @@ class CalendarioService
         /* Conta sempre a partir do próximo dia útil e encerra sempre com $unidade->horario_trabalho_fim */
         if ($dataInicio != $diaAtual && ($forma == "DIAS_CORRIDOS" || $diaUtil)) {
           $horas -= min($cargaHoraria, $horas);
-          $result = date('Y-m-d', $diaAtual) + "T" + $unidade->horario_trabalho_fim + ":00";
+          $result = date('Y-m-d', $diaAtual) . "T" . $unidade->horario_trabalho_fim . ":00";
         }
       } else { /* calcula em horas */
         if ($forma == "HORAS_CORRIDAS" || $diaUtil) {
-          $inicioDia = $dataInicio != $diaAtual ? $dataInicio : strtotime(date('Y-m-d', $diaAtual) + "T" + ($forma == "HORAS_CORRIDAS" ? "00:00:00" : $unidade->horario_trabalho_inicio));
-          $expediente = $forma == "HORAS_CORRIDAS" ? strtotime(date('Y-m-d', $diaAtual) + "T23:59:59") : min(strtotime(date('Y-m-d', $diaAtual) + "T" + $unidade->horario_trabalho_fim) - $inicioDia, $cargaHoraria);
+          $inicioDia = $dataInicio != $diaAtual ? $dataInicio : strtotime(date('Y-m-d', $diaAtual) . "T" . ($forma == "HORAS_CORRIDAS" ? "00:00:00" : $unidade->horario_trabalho_inicio));
+          $expediente = $forma == "HORAS_CORRIDAS" ? strtotime(date('Y-m-d', $diaAtual) . "T23:59:59") : min(strtotime(date('Y-m-d', $diaAtual) . "T" . $unidade->horario_trabalho_fim) - $inicioDia, $cargaHoraria);
           $horasUteis = min($expediente, $horas);
           $horas -= $horasUteis;
           $result = date(ServiceBase::ISO8601_FORMAT, $inicioDia + $horasUteis);
@@ -369,9 +379,9 @@ class CalendarioService
   /**
    * expediente
    *
-   * @param  mixed $unidade: parâmetro opcional
-   * @param  mixed $inicio: parâmetro opcional
-   * @return: retorna a duração do expediente em horas. Se a $unidade não for informada, retorna 24.
+   * @param  Unidade|null $unidade: parâmetro opcional
+   * @param  DateTime|null $inicio: parâmetro opcional
+   * @return float: retorna a duração do expediente em horas. Se a $unidade não for informada, retorna 24.
    */
   public static function expediente(Unidade $unidade = null, DateTime $inicio = null)
   {
@@ -404,7 +414,12 @@ class CalendarioService
   public static function nestedExpediente(Unidade $unidade): Expediente
   {
     $expediente = $unidade->expediente ? new Expediente($unidade->expediente) : new Expediente($unidade->entidade->expediente);
-    $expediente = $expediente ? $expediente : ($unidade->entidade_id == Auth::user()->unidade->entidade_id ? new Expediente(Auth::user()->unidade->entidade->expediente) : new Expediente());
+    $unidadeUsuario = null;
+    $user = Auth::user();
+    if ($user instanceof \App\Models\Usuario) {
+        $unidadeUsuario = $user->lotacao?->unidade;
+    }
+    $expediente = $expediente ? $expediente : (($unidadeUsuario && $unidade->entidade_id == $unidadeUsuario->entidade_id) ? new Expediente($unidadeUsuario->entidade->expediente) : new Expediente());
     //transforma objetos da classe stdClass em objetos da classe Turno
     foreach (array_keys((array) $expediente) as $dia) {
       foreach (array_keys((array) $expediente->$dia) as $t) {
@@ -622,9 +637,9 @@ class CalendarioService
         $acum += UtilService::getHoursBetween(UtilService::asDateTime($item->start), UtilService::asDateTime($item->end));
         return $acum;
       }, 0);
-      $intersecao = UtilService::intersection([...$diaAtual->intervalos, ...$afastamentosDia]);
+      $intersecao = UtilService::intersection(array_map(fn($i) => (array) $i, [...$diaAtual->intervalos, ...$afastamentosDia]));
       $hIntersecao = !$intersecao ? 0 : array_reduce([$intersecao], function ($acum, $item) {
-        $acum += UtilService::getHoursBetween(UtilService::asDateTime($item->start), UtilService::asDateTime($item->end));
+        $acum += UtilService::getHoursBetween(UtilService::asDateTime($item['start']), UtilService::asDateTime($item['end']));
         return $acum;
       }, 0);
       $result->horasAfastamento += ($hAfastamentoHoje - $hIntersecao);

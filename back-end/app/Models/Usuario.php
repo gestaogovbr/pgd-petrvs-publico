@@ -35,16 +35,23 @@ use App\Models\QuestionarioPreenchimento;
 use App\Models\StatusJustificativa;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
-use App\Services\UsuarioService;
-use App\Services\UnidadeService;
+use App\Services\UtilService;
+use App\Support\ModalidadePgd;
+use App\Contracts\HasStatusHistory;
 use App\Traits\AutoUuid;
 use App\Traits\HasPermissions;
 use App\Traits\MergeRelations;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Models\Audit;
+use App\Models\Unidade;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -58,21 +65,58 @@ use ReflectionObject;
 
 class UsuarioConfig
 {
+    public $notificacoes;
 }
 
-class Usuario extends Authenticatable implements AuditableContract
+/**
+ * @property string $id
+ * @property string $nome
+ * @property string $email
+ * @property string $cpf
+ * @property string $matricula
+ * @property string $apelido
+ * @property string $telefone
+ * @property string $sexo
+ * @property string $situacao_funcional
+ * @property string $perfil_id
+ * @property string|null $modalidade_pgd
+ * @property Carbon|null $data_agendamento_envio
+ * @property Carbon|null $data_envio_api_pgd
+ * @property Carbon|null $data_tentativa_envio
+ * @property Carbon|null $data_conclusao_envio
+ * @property string|null $log_envio
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
+ * @property-read \App\Models\UnidadeIntegrante|null $lotacao
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
+ * @property-read \App\Models\Perfil|null $perfil
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $unidadesIntegrantes
+ * @property-read \App\Models\PlanoTrabalho|null $ultimoPlanoTrabalho
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Unidade[] $unidades
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $curadores
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $colaboracoes
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasSubstitutas
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasDelegadas
+ */
+class Usuario extends Authenticatable implements AuditableContract, HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'usuario_id';
+    }
+
     use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable,Impersonate;
+
+    // protected $areasTrabalho; // dynamic property
 
     protected $table = "usuarios";
 
     protected $with = ['perfil'];
-    protected $appends = ['pedagio'];
+    protected $appends = ['pedagio', 'modalidade_pgd_label'];
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
-        'email', /* varchar(100); NOT NULL; */ // E-mail do usuário
+        'email', /* varchar(100); NULL; */ // E-mail do usuário
         'email_verified_at', /* timestamp; */ // Data de verificação do e-mail do usuário
-        'cpf', /* varchar(14); NOT NULL; */ // CPF do usuário
+        'cpf', /* varchar(11); NOT NULL; */ // CPF do usuário
         'matricula', /* varchar(50); */ // Matrícula funcional do usuário
         'apelido', /* varchar(100); NOT NULL; */ // Apelido/Nome de guerra/Nome social
         'telefone', /* varchar(50); */ // Telefone do usuário
@@ -88,7 +132,7 @@ class Usuario extends Authenticatable implements AuditableContract
         'data_nascimento',
         'nome_jornada', /* varchar(100); NULL */ // Nome da Jornada
         'cod_jornada', /* int; NULL */ // Codigo da Jornada
-        'tipo_modalidade_id', /* char(36); NULL */ // Tipo de modalidade do usuário no PGD
+        'modalidade_pgd', /* varchar(50); NULL */ // Modalidade do usuário no PGD
         'participa_pgd',/* enum('sim','não'); */ // Participação do usuário no PGD
         //'deleted_at', /* timestamp; */
         //'remember_token', /* varchar(100); */
@@ -130,8 +174,6 @@ class Usuario extends Authenticatable implements AuditableContract
 
     /**
      * The attributes that should be hidden for arrays.
-     *
-     * @var array
      */
     protected $hidden = [
         'password',
@@ -141,10 +183,13 @@ class Usuario extends Authenticatable implements AuditableContract
     /**
      * The attributes that should be cast to native types.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'data_agendamento_envio' => 'datetime',
+        'data_tentativa_envio' => 'datetime',
+        'data_envio_api_pgd' => 'datetime',
         'notificacoes' => AsJson::class
     ];
 
@@ -156,7 +201,6 @@ class Usuario extends Authenticatable implements AuditableContract
         'atividadesDemandadas',
         'comentarios',
         'documentos',
-        'favoritos',  // Note que 'favoritos' aparece duas vezes na lista original
         'favoritos',
         'historicosProjeto',
         'integracoes',
@@ -320,7 +364,7 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(ProgramaParticipante::class)->latestOfMany();
     }
 
-    public function integracoes()
+    public function integracoes(): HasMany
     {
         return $this->hasMany(Integracao::class);
     }
@@ -330,13 +374,12 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id');
     }
 
-    public function planosTrabalhoCriados()
+    public function planosTrabalhoCriados(): HasMany
     {
         return $this->hasMany(PlanoEntrega::class, 'criacao_usuario_id');
     }
 
-
-    public function unidadesIntegrantes()
+    public function unidadesIntegrantes(): HasMany
     {
         return $this->hasMany(UnidadeIntegrante::class, 'usuario_id', 'id');
     }
@@ -367,38 +410,40 @@ class Usuario extends Authenticatable implements AuditableContract
     }
 
     // belongsTo
-    public function perfil()
+    public function perfil(): BelongsTo
     {
         return $this->belongsTo(Perfil::class);
-    }     //nullable
+    }
 
-    // belongsToMany
     public function unidades()
     {
         return $this->belongsToMany(Unidade::class, 'unidades_integrantes', 'usuario_id', 'unidade_id');
     }
 
     // Others relationships
-    public function gerenciaTitular()
+    public function gerenciaTitular(): HasOne
     {
         return $this->hasOne(UnidadeIntegrante::class)->has('gestor');
     }
 
-    public function gerencias()
+    public function gerencias(): HasMany
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('gestor');
     }
 
-    public function gerenciasSubstitutas()
+    public function gerenciasSubstitutas(): HasMany
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('gestorSubstituto');
     }
 
-    public function gerenciasDelegadas()
+    public function gerenciasDelegadas(): HasMany
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('gestorDelegado');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function lotacao()
     {
         return $this->hasOne(UnidadeIntegrante::class)->has('lotado');
@@ -420,6 +465,9 @@ class Usuario extends Authenticatable implements AuditableContract
     }
 
     //public function areasTrabalho() { return $this->hasMany(UnidadeIntegrante::class)->has('lotado')->orHas('colaborador'); }
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function areasTrabalho()
     {
         return $this->hasMany(UnidadeIntegrante::class)->has('atribuicoes');
@@ -435,9 +483,9 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(UnidadeIntegrante::class)->has('colaborador');
     } // unidade com a qual possui TCR
 
-    public function tipoModalidadeSiape()
+    public function getModalidadePgdLabelAttribute(): string
     {
-        return $this->belongsTo(TipoModalidadeSiape::class, 'modalidade_pgd');
+        return ModalidadePgd::label($this->modalidade_pgd ?? null);
     }
 
 
@@ -446,13 +494,15 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf');
     }
 
-    // Mutattors e Casts
+   /**
+     * @deprecated
+     * Será removido essa dependência
+     */
     public function getUrlFotoAttribute($value)
     {
-        $usuarioService = new UsuarioService();
         $url = "/assets/images/profile.png";
         try {
-            $url = empty($this->foto_perfil) ? "/assets/images/profile.png" : $usuarioService->downloadUrl($this->foto_perfil);
+            $url = empty($this->foto_perfil) ? "/assets/images/profile.png" : UtilService::downloadUrl($this->foto_perfil);
         } catch (Throwable $e) {
             $url = "/assets/images/profile.png";
         }

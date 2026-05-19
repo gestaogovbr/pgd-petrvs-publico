@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild } from "@angular/core";
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioPlanoEntregaDaoService } from "src/app/dao/relatorio-plano-entrega-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
@@ -13,9 +13,10 @@ import { of } from "rxjs";
 import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
 
 @Component({
-  selector: 'relatorio-plano-entrega',
-  templateUrl: './relatorio-plano-entrega.component.html',
-  styleUrls: ['./relatorio-plano-entrega.component.scss']
+    selector: 'relatorio-plano-entrega',
+    templateUrl: './relatorio-plano-entrega.component.html',
+    styleUrls: ['./relatorio-plano-entrega.component.scss'],
+    standalone: false
 })
 export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<RelatorioPlanoEntrega, RelatorioPlanoEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

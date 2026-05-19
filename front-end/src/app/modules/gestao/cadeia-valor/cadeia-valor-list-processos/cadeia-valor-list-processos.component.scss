@@ -1,0 +1,60 @@
+.processo-item {
+  cursor: default;
+  transition: all 0.2s ease;
+  position: relative;
+
+  &[draggable="true"] {
+    cursor: move;
+  }
+
+  &:hover:not(.editing) {
+    background-color: rgba(0, 123, 255, 0.05);
+  }
+
+  &.editing {
+    background-color: rgba(255, 193, 7, 0.1);
+  }
+
+  &.dragging {
+    opacity: 0.4;
+    background-color: rgba(0, 123, 255, 0.15);
+  }
+
+  &.drop-target {
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: #28a745;
+      z-index: 10;
+    }
+    
+    &.drop-before::before {
+      top: -2px;
+    }
+    
+    &.drop-after::before {
+      bottom: -2px;
+    }
+    
+    &.drop-child {
+      background-color: rgba(40, 167, 69, 0.15);
+      border: 2px dashed #28a745 !important;
+      box-shadow: 0 0 8px rgba(40, 167, 69, 0.3);
+      
+      &::before {
+        display: none;
+      }
+    }
+  }
+
+  .drag-handle {
+    cursor: grab;
+    
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}

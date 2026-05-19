@@ -11,9 +11,10 @@ import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { Checklist } from 'src/app/models/atividade.model';
 
 @Component({
-  selector: 'app-entrega-form',
-  templateUrl: './entrega-form.component.html',
-  styleUrls: ['./entrega-form.component.scss']
+    selector: 'app-entrega-form',
+    templateUrl: './entrega-form.component.html',
+    styleUrls: ['./entrega-form.component.scss'],
+    standalone: false
 })
 export class EntregaFormComponent extends PageFormBase<Entrega, EntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

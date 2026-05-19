@@ -7,9 +7,10 @@ import { TenantDaoService } from 'src/app/dao/tenant-dao.service';
 import { QueryOptions } from 'src/app/dao/query-options';
 
 @Component({
-  selector: 'panel-list-logs',
-  templateUrl: './panel-list-logs.component.html',
-  styleUrls: ['./panel-list-logs.component.scss']
+    selector: 'panel-list-logs',
+    templateUrl: './panel-list-logs.component.html',
+    styleUrls: ['./panel-list-logs.component.scss'],
+    standalone: false
 })
 export class PanelListLogsComponent extends PageListBase<TenantLogs, TenantLogsDaoService> {
 

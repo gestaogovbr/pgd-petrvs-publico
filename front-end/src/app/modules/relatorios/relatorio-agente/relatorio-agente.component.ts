@@ -1,28 +1,28 @@
 import { Component, Injector, ViewChild } from "@angular/core";
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioAgenteDaoService } from "src/app/dao/relatorio-agente-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { RelatorioAgente } from "src/app/models/relatorio-agente.model";
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
-import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.service";
 import { PerfilDaoService } from "src/app/dao/perfil-dao.service";
 import { of } from "rxjs";
 import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
+import { ModalidadePgdService } from "src/app/services/modalidade-pgd.service";
 
 @Component({
-  selector: 'relatorio-agente',
-  templateUrl: './relatorio-agente.component.html',
-  styleUrls: ['./relatorio-agente.component.scss']
+    selector: 'relatorio-agente',
+    templateUrl: './relatorio-agente.component.html',
+    styleUrls: ['./relatorio-agente.component.scss'],
+    standalone: false
 })
 export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAgente, RelatorioAgenteDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public permissao: string = 'MOD_RELATORIO_USUARIO';
   public perfilDao: PerfilDaoService;
-  public tipoModalidadeDao: TipoModalidadeDaoService;
   public botoes: ToolbarButton[] = [];
   public tiposModalidade: LookupItem[] = [];
   public tiposSituacao: LookupItem[] = [];
@@ -31,7 +31,7 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
   constructor(public injector: Injector, dao: RelatorioAgenteDaoService) {
       super(injector, RelatorioAgente, RelatorioAgenteDaoService);
       this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
-      this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
+      this.tiposModalidade = injector.get<ModalidadePgdService>(ModalidadePgdService).items;
 
       this.filter = this.fh.FormBuilder({
         unidade_id: { default: this.auth.unidade?.id },
@@ -69,10 +69,6 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
         this.filter?.controls.unidade_id.setValue(this.metadata?.unidade_id);
         this.saveUsuarioConfig();
       }
-
-      this.tipoModalidadeDao.query().asPromise().then(modalidades => {
-          this.tiposModalidade = this.lookup.map(modalidades, 'id', 'nome');
-      });
 
       this.perfilDao.query().asPromise().then(perfis => {
           this.perfis = this.lookup.map(perfis, 'id', 'nome')
@@ -129,7 +125,7 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
     }
 
     if (form.modalidade?.length) {
-      result.push(["tipo_modalidade_id", "==", form.modalidade]);
+      result.push(["modalidade_pgd", "==", form.modalidade]);
     }
 
     if (form.modalidadeSouGov?.length) {

@@ -1,7 +1,7 @@
 import {Component, Injector, ViewChild} from "@angular/core";
 import {AbstractControl, FormGroup} from "@angular/forms";
 import {GridComponent} from "src/app/components/grid/grid.component";
-import {ToolbarButton} from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import {CadeiaValorDaoService} from "src/app/dao/cadeia-valor-dao.service";
 import {PlanejamentoDaoService} from "src/app/dao/planejamento-dao.service";
 import {PlanoEntregaDaoService} from "src/app/dao/plano-entrega-dao.service";
@@ -20,9 +20,10 @@ import {UnidadeService} from "src/app/services/unidade.service";
 import {ProgramaService} from "src/app/services/programa.service";
 
 @Component({
-	selector: "plano-entrega-list",
-	templateUrl: "./plano-entrega-list.component.html",
-	styleUrls: ["./plano-entrega-list.component.scss"],
+    selector: "plano-entrega-list",
+    templateUrl: "./plano-entrega-list.component.html",
+    styleUrls: ["./plano-entrega-list.component.scss"],
+    standalone: false
 })
 export class PlanoEntregaListComponent extends PageListBase<
 	PlanoEntrega,
@@ -114,7 +115,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 		);
 		this.join = [
 			"planejamento:id,nome",
-			"programa:id,nome,data_fim",
+			"programa:id,nome,data_inicio,data_fim",
 			"cadeia_valor:id,nome",
 			"unidade:id,sigla,path,data_inativacao,instituidora,unidade_pai_id",
 			"entregas.entrega",
@@ -721,7 +722,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 						  )) && this.auth.hasPermissionTo("MOD_PENT_EDT_FLH");
 				let condicao3 = this.auth.isIntegrante(
 					"HOMOLOGADOR_PLANO_ENTREGA",
-					planoEntrega.unidade!.unidade_pai_id!
+					planoEntrega.unidade?.unidade_pai_id!
 				);
 				let condicao4 =
 					this.planoEntregaService.situacaoPlano(planoEntrega) == "ATIVO" &&
@@ -797,7 +798,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 						  ) ||
 						  this.auth.isIntegrante(
 								"AVALIADOR_PLANO_ENTREGA",
-								planoEntrega.unidade!.id!
+								planoEntrega.unidade?.id!
 						  ))
 				);
 			case this.BOTAO_CANCELAR_CONCLUSAO:
@@ -919,11 +920,11 @@ export class PlanoEntregaListComponent extends PageListBase<
 								planoEntrega.unidade?.unidade_pai_id
 						  );
 				let condition3 =
-					this.auth.isLotacaoUsuario(planoEntrega.unidade!.unidade_pai) &&
+					this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) &&
 					this.auth.hasPermissionTo("MOD_PENT_HOMOL");
 				let condition4 = this.auth.isIntegrante(
 					"HOMOLOGADOR_PLANO_ENTREGA",
-					planoEntrega.unidade!.unidade_pai_id!
+					planoEntrega.unidade?.unidade_pai_id!
 				);
 				return (
 					!this.execucao &&

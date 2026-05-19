@@ -5,9 +5,10 @@ import { SystemLog } from 'src/app/models/system-log.model';
 import { SystemLogDaoService } from 'src/app/dao/system-log-dao.service';
 
 @Component({
-  selector: 'app-system-logs-list',
-  templateUrl: './system-logs-list.component.html',
-  styleUrls: ['./system-logs-list.component.scss']
+    selector: 'app-system-logs-list',
+    templateUrl: './system-logs-list.component.html',
+    styleUrls: ['./system-logs-list.component.scss'],
+    standalone: false
 })
 export class SystemLogsListComponent extends PageListBase<SystemLog, SystemLogDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

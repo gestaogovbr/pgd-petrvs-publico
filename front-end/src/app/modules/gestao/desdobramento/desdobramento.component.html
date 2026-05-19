@@ -1,1 +1,21 @@
-<p-organizationChart [value]="data"></p-organizationChart>
+<div class="card">
+  <div class="card-body">
+    <ng-container *ngFor="let node of data">
+      <ng-container *ngTemplateOutlet="nodeTpl; context:{ $implicit: node }"></ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #nodeTpl let-node>
+  <div class="d-flex align-items-center gap-2 mb-1">
+    <button type="button" class="btn btn-sm btn-outline-secondary" *ngIf="node.children?.length" (click)="toggle(node)">
+      {{ node.expanded ? '−' : '+' }}
+    </button>
+    <span class="badge" [ngClass]="node.styleClass || 'text-bg-light'">{{ node.label }}</span>
+  </div>
+  <div class="ms-4" *ngIf="node.children?.length && node.expanded">
+    <ng-container *ngFor="let child of node.children">
+      <ng-container *ngTemplateOutlet="nodeTpl; context:{ $implicit: child }"></ng-container>
+    </ng-container>
+  </div>
+</ng-template>

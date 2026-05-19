@@ -15,6 +15,7 @@ use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\Programa;
 use App\Models\TipoAvaliacao;
+use App\Models\Avaliacao;
 use App\Models\Unidade;
 use App\Enums\StatusEnum;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
@@ -26,13 +27,25 @@ use App\Services\Snapshot\Rebuilder\AfastamentoSnapshotRebuilder;
 use App\Services\Snapshot\Rebuilder\AtividadeSnapshotRebuilder;
 use App\Services\Snapshot\Rebuilder\OcorrenciaSnapshotRebuilder;
 use App\Services\Snapshot\Rebuilder\PlanoTrabalhoConsolidacaoRebuildService;
+use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Throwable;
+use App\Services\StatusService;
 
+/**
+ * @property StatusService $statusService
+ */
 class PlanoTrabalhoConsolidacaoService extends ServiceBase
 {
+  private PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository;
+
+  public function __construct($collection = null, ?PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository = null)
+  {
+    parent::__construct($collection);
+    $this->consolidacaoRepository = $consolidacaoRepository ?? app(PlanoTrabalhoConsolidacaoRepository::class);
+  }
 
   public function proxyQuery($query, &$data)
   {
@@ -68,7 +81,6 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         "unidade.gestoresDelegados:id,unidade_id,usuario_id",
         "unidade.unidadePai.gestor:id,unidade_id,usuario_id",
         "unidade.unidadePai.gestoresSubstitutos:id,unidade_id,usuario_id",
-        "tipoModalidade:id,nome",
         "usuario:id,nome,apelido,url_foto,foto_perfil"
       ])->whereIn("id", $planosTrabalhosIds)->get()->all();
       $programasIds = array_unique(array_map(fn($v) => $v["programa_id"], $planosTrabalhos));
@@ -79,15 +91,14 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return count($result) > 0 ? $result : null;
   }
 
-  /** 
+  /**
    * Retorna dados de atividades, atividades da consolidacao, ocorrencias, afastamentos e entregas do plano
-   * 
+   *
    * @param   string  $id       O ID da Consolidação do Plano de Trabalho.
    * @return  array
    */
   public function consolidacaoDados($id): array
   {
-    $repository = new PlanoTrabalhoConsolidacaoRepository();
     $snapshotRebuilders = [
       'atividades' => new AtividadeSnapshotRebuilder(new AtividadeService()),
       'afastamentos' => new AfastamentoSnapshotRebuilder(),
@@ -95,27 +106,30 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     ];
 
     $rebuilderService = new PlanoTrabalhoConsolidacaoRebuildService($snapshotRebuilders);
-    $consolidacaoData = $repository->getConsolidacaoData($id);
-    $consolidacao = $repository->findConsolidacaoById($id);
+    $consolidacaoData = $this->consolidacaoRepository->getConsolidacaoData($id);
+
+    if ($consolidacaoData === null) {
+      throw new \RuntimeException('Consolidação não encontrada para o ID informado');
+    }
 
     return [
-      'programa' => $consolidacao->planoTrabalho?->programa,
-      'planoTrabalho' => $consolidacao->planoTrabalho,
-      'planosEntregas' => $consolidacaoData['planosEntregas'],
-      'atividades' => $rebuilderService->rebuildCollections($consolidacaoData['atividades'], $consolidacao, 'atividades'),
-      'afastamentos' => $rebuilderService->rebuildCollections($consolidacaoData['afastamentos'], $consolidacao, 'afastamentos'),
-      'ocorrencias' => $rebuilderService->rebuildCollections($consolidacaoData['ocorrencias'], $consolidacao, 'ocorrencias'),
-      'comparecimentos' => $consolidacao->comparecimentos ?? [],
-      'status' => $consolidacao->status,
-      'justificativa_conclusao' => $consolidacao->justificativa_conclusao,
+      'programa' => $consolidacaoData->programa,
+      'planoTrabalho' => $consolidacaoData->planoTrabalho,
+      'planosEntregas' => $consolidacaoData->planosEntregas,
+      'atividades' => $rebuilderService->rebuildCollections($consolidacaoData->atividades, $consolidacaoData->consolidacao, 'atividades'),
+      'afastamentos' => $rebuilderService->rebuildCollections($consolidacaoData->afastamentos, $consolidacaoData->consolidacao, 'afastamentos'),
+      'ocorrencias' => $rebuilderService->rebuildCollections($consolidacaoData->ocorrencias, $consolidacaoData->consolidacao, 'ocorrencias'),
+      'comparecimentos' => $consolidacaoData->comparecimentos,
+      'status' => $consolidacaoData->status,
+      'justificativa_conclusao' => $consolidacaoData->justificativaConclusao,
     ];
   }
 
-  /** 
+  /**
    * Reconstroi o Afastameto para ter a aparência de quando a consolidação foi concluída
-   * 
+   *
    * @param   array  $afastamento         Afastamento (Array) que se deseja atualizar
-   * @param   Consolidacao  $consolidacao Consolidacao
+   * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
    */
   public function buildAfastamentoConsolidacao($afastamento, $consolidacao)
@@ -133,11 +147,11 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return $afastamento;
   }
 
-  /** 
+  /**
    * Reconstroi a Ocorrencia para ter a aparência de quando a consolidação foi concluída
-   * 
+   *
    * @param   array  $ocorrencia          Ocorrencia (Array) que se deseja atualizar
-   * @param   Consolidacao  $consolidacao Consolidacao
+   * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
    */
   public function buildOcorrenciaConsolidacao($ocorrencia, $consolidacao)
@@ -155,11 +169,11 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return $ocorrencia;
   }
 
-  /** 
+  /**
    * Reconstroi a Atividade para ter a aparência de quando a consolidação foi concluída
-   * 
+   *
    * @param   array  $atividade          Atividade (Array) que se deseja atualizar
-   * @param   Consolidacao  $consolidacao Consolidacao
+   * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
    */
   public function buildAtividadeConsolidacao($atividade, $consolidacao)
@@ -220,9 +234,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return $atividade;
   }
 
-  /** 
+  /**
    * Conclui o período de consolidacao
-   * 
+   *
    * @param   string  $id       O ID da Consolidação do Plano de Trabalho.
    * @return  array
    */
@@ -260,7 +274,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
         }
       }
 
-      $dataConclusao = new DateTime();
+      $dataConclusao = Carbon::now();
       $consolidacao->data_conclusao = $dataConclusao;
       if (!empty($justificativa_conclusao)) {
         $consolidacao->justificativa_conclusao = $justificativa_conclusao;
@@ -282,9 +296,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     }
   }
 
-  /** 
+  /**
    * Cancela a conclusão do período de consolidacao
-   * 
+   *
    * @param   string  $id       O ID da Consolidação do Plano de Trabalho.
    * @return  array
    */
@@ -315,10 +329,10 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     }
   }
 
-  /** 
+  /**
    * Consolidação imediatamente anterior a consolidação passada
-   * 
-   * @param   string  $id       O ID da Consolidação
+   *
+   * @param   string  $consolidacaoId       O ID da Consolidação
    * @return  PlanoTrabalhoConsolidacao | null
    */
   public function anterior($consolidacaoId)
@@ -327,10 +341,10 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return PlanoTrabalhoConsolidacao::where("plano_trabalho_id", $consolidacao->plano_trabalho_id)->where("data_inicio", "<", $consolidacao->data_inicio)->orderBy("data_inicio", "DESC")->first();
   }
 
-  /** 
+  /**
    * Consolidação imediatamente posterior a consolidação passada
-   * 
-   * @param   string  $id       O ID da Consolidação
+   *
+   * @param   string  $consolidacaoId       O ID da Consolidação
    * @return  PlanoTrabalhoConsolidacao | null
    */
   public function proximo($consolidacaoId)
@@ -339,13 +353,13 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return PlanoTrabalhoConsolidacao::where("plano_trabalho_id", $consolidacao->plano_trabalho_id)->where("data_fim", ">", $consolidacao->data_fim)->orderBy("data_fim", "ASC")->first();
   }
 
-  /** 
+  /**
    * Completa o processo de avaliação para a consolidação
-   * 
-   * @param   Avanliacao  $avaliacao Avaliacao
+   *
+   * @param   Avaliacao  $avaliacao Avaliacao
    * @return  void
    */
-  public function avaliar($avaliacao)
+  public function avaliar(Avaliacao $avaliacao)
   {
     $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
     $consolidacao->avaliacao_id = $avaliacao->id;
@@ -364,7 +378,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
 
   /**
    * Retorna as consolidações pendentes do usuário
-   * 
+   *
    * @param   string  $usuarioId  ID do usuário
    * @return  array
    */
@@ -415,8 +429,8 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   /**
    * Detecta inconsistências em consolidações concluídas ou avaliadas
    * onde entregas do plano de trabalho não possuem atividades associadas
-   * 
-   * Utiliza as tabelas de snapshot (PlanoTrabalhoConsolidacaoAtividade) para 
+   *
+   * Utiliza as tabelas de snapshot (PlanoTrabalhoConsolidacaoAtividade) para
    * verificar as atividades que existiam no momento da conclusão da consolidação
    */
   public function detectarInconsistencias($usuario_id = null)
@@ -470,14 +484,17 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
       })->filter()->unique();
 
       foreach ($consolidacao->planoTrabalho->entregas as $entrega) {
+        
+        if($consolidacao->planoTrabalho["created_at"] < UtilService::asDateTime(PlanoTrabalho::DATA_MUDANCA_REGRA_PT)) continue;
+
         $temAtividade = $entregasComAtividade->contains($entrega->id);
 
         if (!$temAtividade) {
           $entregasSemAtividade[] = [
             'id' => $entrega->id,
             'descricao' => $entrega->descricao,
-            'data_inicio' => $entrega->data_inicio,
-            'data_fim' => $entrega->data_fim
+            'data_inicio' => $entrega->planoEntregaEntrega?->data_inicio,
+            'data_fim' => $entrega->planoEntregaEntrega?->data_fim
           ];
         }
       }

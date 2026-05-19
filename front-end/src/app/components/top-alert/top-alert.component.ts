@@ -5,9 +5,10 @@ import { ComponentBase } from '../component-base';
 export type AlertType = "alert" | "success" | "warning" | "danger";
 
 @Component({
-  selector: 'top-alert',
-  templateUrl: './top-alert.component.html',
-  styleUrls: ['./top-alert.component.scss']
+    selector: 'top-alert',
+    templateUrl: './top-alert.component.html',
+    styleUrls: ['./top-alert.component.scss'],
+    standalone: false
 })
 export class TopAlertComponent extends ComponentBase implements OnInit {
   @Input() message?: string;

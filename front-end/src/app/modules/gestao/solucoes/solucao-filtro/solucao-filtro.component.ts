@@ -6,9 +6,10 @@ import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
 import { LookupService } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'solucao-filtro',
-  templateUrl: './solucao-filtro.component.html',
-  styleUrls: ['./solucao-filtro.component.scss']
+    selector: 'solucao-filtro',
+    templateUrl: './solucao-filtro.component.html',
+    styleUrls: ['./solucao-filtro.component.scss'],
+    standalone: false
 })
 export class SolucaoFiltroComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

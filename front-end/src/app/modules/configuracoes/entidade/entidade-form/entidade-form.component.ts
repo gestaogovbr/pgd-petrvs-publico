@@ -4,7 +4,6 @@ import { EditableFormComponent } from 'src/app/components/editable-form/editable
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 import { EntidadeDaoService } from 'src/app/dao/entidade-dao.service';
-import { TipoModalidadeDaoService } from 'src/app/dao/tipo-modalidade-dao.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Cidade } from 'src/app/models/cidade.model';
@@ -12,31 +11,32 @@ import { EntidadeEmail } from 'src/app/models/entidade-email';
 import { Entidade } from 'src/app/models/entidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 import { LookupItem } from 'src/app/services/lookup.service';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 import { UtilService } from 'src/app/services/util.service';
 
 @Component({
-  selector: 'app-entidade-form',
-  templateUrl: './entidade-form.component.html',
-  styleUrls: ['./entidade-form.component.scss']
+    selector: 'app-entidade-form',
+    templateUrl: './entidade-form.component.html',
+    styleUrls: ['./entidade-form.component.scss'],
+    standalone: false
 })
 export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild('cidade', { static: false }) public cidade?: InputSearchComponent;
   @ViewChild('gestor', { static: false }) public gestor?: InputSearchComponent;
   @ViewChild('gestorSubstituto', { static: false }) public gestorSubstituto?: InputSearchComponent;
-  @ViewChild('tipo_modalidade', { static: false }) public tipoModalidade?: InputSearchComponent;
 
-  public tipoModalidadeDao: TipoModalidadeDaoService;
   public cidadeDao: CidadeDaoService;
   public usuarioDao: UsuarioDaoService;
+  public modalidadePgd: ModalidadePgdService;
   public campos: LookupItem[] = [];
   public formEmail: FormGroup;
 
   constructor(public injector: Injector, public util: UtilService) {
     super(injector, Entidade, EntidadeDaoService);
-    this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
     this.cidadeDao = injector.get<CidadeDaoService>(CidadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
     this.form = this.fh.FormBuilder({
       sigla: {default: ""},
       nome: {default: ""},
@@ -45,7 +45,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
       gravar_historico_processo: {default: ""},
       layout_formulario_demanda: {default: ""},
       campos_ocultos_demanda: {default: ""},
-      tipo_modalidade_id: {default: null},
+      modalidade_pgd_padrao: {default: null},
       cidade_id: {default: null},
       gestor_id: {default: null},
       gestor_substituto_id: {default: null},
@@ -56,7 +56,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
       email_remetente_siape: {default: ""},
       emails: {default: []}
     }, this.cdRef, this.validate);
-    this.join = ["cidade", "tipoModalidade", "gestor", "gestor_substituto", "emails"];
+    this.join = ["cidade", "gestor", "gestor_substituto", "emails"];
     this.formEmail = this.fh.FormBuilder({
       email: {default: ""},
     }, this.cdRef, this.validateEmail);
@@ -109,8 +109,7 @@ export class EntidadeFormComponent extends PageFormBase<Entidade, EntidadeDaoSer
     await Promise.all ([
       this.cidade?.loadSearch(entity.cidade || entity.cidade_id),
       this.gestor!.loadSearch(entity.gestor || entity.gestor_id),
-      this.gestorSubstituto!.loadSearch(entity.gestor_substituto || entity.gestor_substituto_id),
-      this.tipoModalidade?.loadSearch(entity.tipo_modalidade || entity.tipo_modalidade_id)
+      this.gestorSubstituto!.loadSearch(entity.gestor_substituto || entity.gestor_substituto_id)
     ]);
     form.patchValue(this.util.fillForm(formValue, entity));
   }

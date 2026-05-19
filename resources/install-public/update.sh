@@ -29,11 +29,11 @@ sleep 10
 
 #Storage
 echo "Permissão storage/logs..."
-docker exec -it petrvs_php bash -c 'sudo chmod -R 777 /var/www/storage/logs/'
-docker exec -it petrvs_php bash -c 'sudo chmod -R 777 /var/www/storage/'
-docker exec -it petrvs_php bash -c 'sudo chown -R www-data:www-data ./storage/logs/'
+docker exec -it petrvs_php bash -c 'chmod -R 777 /var/www/storage/logs/'
+docker exec -it petrvs_php bash -c 'chmod -R 777 /var/www/storage/'
+docker exec -it petrvs_php bash -c 'chown -R www-data:www-data ./storage/logs/'
 echo "Limpando storage/logs"
-docker exec -it petrvs_php bash -c 'sudo rm -f /var/www/storage/logs/*.log'
+docker exec -it petrvs_php bash -c 'rm -f /var/www/storage/logs/*.log'
 docker exec -it petrvs_php touch /var/www/storage/logs/laravel.log
 docker exec -it petrvs_php chmod 777 /var/www/storage/logs/laravel.log
 docker exec -it petrvs_php bash -lc 'touch /var/www/storage/logs/$(date +%d-%m-%Y)-mysql-slow.log'
@@ -41,6 +41,8 @@ docker exec -it petrvs_php bash -lc 'chmod 777 /var/www/storage/logs/*-mysql-slo
 
 #Limpar Cache 
 echo "Limpar Cache"
+docker exec petrvs_php bash -c 'php artisan optimize:clear'
+docker exec petrvs_php bash -c 'composer dump-autoload'
 docker exec petrvs_php bash -c 'php artisan cache:clear'
 docker exec petrvs_php bash -c 'php artisan config:clear'
 

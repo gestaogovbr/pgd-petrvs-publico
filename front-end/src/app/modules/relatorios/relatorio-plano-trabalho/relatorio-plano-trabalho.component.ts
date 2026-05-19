@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild } from "@angular/core";
 import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioPlanoTrabalhoDaoService } from "src/app/dao/relatorio-plano-trabalho-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
@@ -11,21 +11,21 @@ import moment from 'moment';
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { RelatorioPlanoTrabalhoDetalhadoDaoService } from "src/app/dao/relatorio-plano-trabalho-detalhado-dao.service";
-import { TipoModalidadeDaoService } from "src/app/dao/tipo-modalidade-dao.service";
 import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
 import { of } from 'rxjs';
 import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
+import { ModalidadePgdService } from "src/app/services/modalidade-pgd.service";
 
 @Component({
-  selector: 'relatorio-plano-trabalho',
-  templateUrl: './relatorio-plano-trabalho.component.html',
-  styleUrls: ['./relatorio-plano-trabalho.component.scss']
+    selector: 'relatorio-plano-trabalho',
+    templateUrl: './relatorio-plano-trabalho.component.html',
+    styleUrls: ['./relatorio-plano-trabalho.component.scss'],
+    standalone: false
 })
 export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public permissao: string = 'MOD_RELATORIO_PT';
-  public tipoModalidadeDao: TipoModalidadeDaoService;
   public tipoAvaliacaoNotaDao: TipoAvaliacaoNotaDaoService;
   public relatorioPlanoTrabalhoDao: RelatorioPlanoTrabalhoDaoService;
   public relatorioPlanoTrabalhoDetalhadoDao: RelatorioPlanoTrabalhoDetalhadoDaoService;
@@ -38,7 +38,7 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
       super(injector, RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService);
       this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-      this.tipoModalidadeDao = injector.get<TipoModalidadeDaoService>(TipoModalidadeDaoService);
+      this.tiposModalidade = injector.get<ModalidadePgdService>(ModalidadePgdService).items;
       this.tipoAvaliacaoNotaDao = injector.get<TipoAvaliacaoNotaDaoService>(TipoAvaliacaoNotaDaoService);
       this.relatorioPlanoTrabalhoDao = injector.get<RelatorioPlanoTrabalhoDaoService>(RelatorioPlanoTrabalhoDaoService);
       this.relatorioPlanoTrabalhoDetalhadoDao = injector.get<RelatorioPlanoTrabalhoDetalhadoDaoService>(RelatorioPlanoTrabalhoDetalhadoDaoService);
@@ -98,10 +98,6 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
 
   public async ngOnInit() {
       super.ngOnInit();
-
-      this.tipoModalidadeDao.query().asPromise().then(modalidades => {
-          this.tiposModalidade = this.lookup.map(modalidades, 'id', 'nome');
-      });
 
       this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
           .asPromise().then(notas => {
@@ -180,7 +176,7 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
     }
 
     if (form.modalidade) {
-      result.push(["tipo_modalidade_id", "==", form.modalidade]);
+      result.push(["modalidade_pgd", "==", form.modalidade]);
     }
 
     if (form.nota) {

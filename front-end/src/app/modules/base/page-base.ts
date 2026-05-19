@@ -12,7 +12,7 @@ import { ModalPage } from './modal-page';
 import { Subject } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { EntityService } from 'src/app/services/entity.service';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 declare var bootstrap: any;
 
 @Injectable()

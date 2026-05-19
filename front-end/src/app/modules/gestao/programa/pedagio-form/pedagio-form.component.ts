@@ -9,9 +9,10 @@ import {PageFormBase} from "src/app/modules/base/page-form-base";
 import {LookupItem} from "src/app/services/lookup.service";
 
 @Component({
-	selector: "app-pedagio-form",
-	templateUrl: "./pedagio-form.component.html",
-	styleUrls: ["./pedagio-form.component.scss"],
+    selector: "app-pedagio-form",
+    templateUrl: "./pedagio-form.component.html",
+    styleUrls: ["./pedagio-form.component.scss"],
+    standalone: false
 })
 export class PedagioFormComponent extends PageFormBase<
 	Usuario,

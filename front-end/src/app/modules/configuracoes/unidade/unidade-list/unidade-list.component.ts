@@ -9,9 +9,10 @@ import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-unidade-list',
-  templateUrl: './unidade-list.component.html',
-  styleUrls: ['./unidade-list.component.scss']
+    selector: 'app-unidade-list',
+    templateUrl: './unidade-list.component.html',
+    styleUrls: ['./unidade-list.component.scss'],
+    standalone: false
 })
 export class UnidadeListComponent extends PageBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

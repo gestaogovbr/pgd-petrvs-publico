@@ -1,15 +1,14 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CalendarEfemeridesComponent } from './calendar-efemerides/calendar-efemerides.component';
 import { ComentariosComponent } from './comentarios/comentarios.component';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ComentariosWidgetComponent } from './comentarios/comentarios-widget/comentarios-widget.component';
 import { UteisRoutingModule } from './uteis-routing.module';
 import { CalendarExpedienteComponent } from './calendar-expediente/calendar-expediente.component';
 import { DocumentosComponent } from './documentos/documentos.component';
 import { TemplatesComponent } from './templates/templates.component';
 import { DocumentosAssinarComponent } from './documentos/documentos-assinar/documentos-assinar.component';
-import { DocumentosLinkComponent } from './documentos/documentos-link/documentos-link.component';
 import { NotificacoesComponent } from './notificacoes/notificacoes.component';
 import { NotificacoesConfigComponent } from './notificacoes/notificacoes-config/notificacoes-config.component';
 import { NotificacoesTemplateComponent } from './notificacoes/notificacoes-template/notificacoes-template.component';
@@ -34,7 +33,6 @@ import { FazerRecursoComponent } from './avaliar/fazer-recurso/fazer-recurso.com
     DocumentosComponent,
     TemplatesComponent,
     DocumentosAssinarComponent,
-    DocumentosLinkComponent,
     DocumentosBadgeComponent,
     NotificacoesComponent,
     NotificacoesConfigComponent,
@@ -52,8 +50,11 @@ import { FazerRecursoComponent } from './avaliar/fazer-recurso/fazer-recurso.com
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     UteisRoutingModule
+  ],
+  schemas: [
+    // NO_ERRORS_SCHEMA
   ],
   exports: [
     CalendarEfemeridesComponent,
@@ -61,7 +62,6 @@ import { FazerRecursoComponent } from './avaliar/fazer-recurso/fazer-recurso.com
     ComentariosWidgetComponent,
     CalendarExpedienteComponent,
     DocumentosComponent,
-    DocumentosLinkComponent,
     DocumentosBadgeComponent,
     TemplatesComponent,
     NotificacoesComponent,

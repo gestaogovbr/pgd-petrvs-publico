@@ -15,11 +15,13 @@ import { CalendarService } from 'src/app/services/calendar.service';
 import { InputTimerComponent } from 'src/app/components/input/input-timer/input-timer.component';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 
 @Component({
-  selector: 'app-atividade-form-iniciar',
-  templateUrl: './atividade-form-iniciar.component.html',
-  styleUrls: ['./atividade-form-iniciar.component.scss']
+    selector: 'app-atividade-form-iniciar',
+    templateUrl: './atividade-form-iniciar.component.html',
+    styleUrls: ['./atividade-form-iniciar.component.scss'],
+    standalone: false
 })
 export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, AtividadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -29,6 +31,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
   
   public usuarioDao: UsuarioDaoService;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
+  public modalidadePgd: ModalidadePgdService;
   public calendar: CalendarService;
   public form: FormGroup;
   public modalWidth: number = 600;
@@ -36,7 +39,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
   public planoTrabalhoSelecionado?: PlanoTrabalho | null = null;
   public planosTrabalhos: LookupItem[] = [];
   public planosTrabalhosEntregas: LookupItem[] = [];
-  public planoTrabalhoJoin: string[] = ["entregas.plano_entrega_entrega:id,descricao", "tipo_modalidade:id,nome"];
+  public planoTrabalhoJoin: string[] = ["entregas.plano_entrega_entrega:id,descricao"];
   public get labelInfoSuspender(): string {
     const n = this.iniciadas.length > 1 ? this.lex.translate("tarefas"): this.lex.translate("tarefa");
     const s = this.iniciadas.length == 1 ? "" : "s";
@@ -48,6 +51,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
     super(injector, Atividade, AtividadeDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
+    this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.form = this.fh.FormBuilder({
       usuario_id: {default: undefined},
@@ -61,7 +65,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
       data_inicio: {default: null},
       suspender: {default: false}
     }, this.cdRef, this.validate);
-    this.join = ["unidade", "atividade", "usuario.planos_trabalho.tipo_modalidade"];
+    this.join = ["unidade", "atividade"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -101,7 +105,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
     this.planosTrabalhos = planosTrabalhos.filter(x => x.unidade_id == this.entity!.unidade_id).map(x => {
       return {
         key: x.id,
-        value: (x.tipo_modalidade?.nome || "") + " - " + this.dao!.getDateFormatted(x.data_inicio)+ " à " + this.dao!.getDateFormatted(x.data_fim),
+        value: (x.modalidade_pgd_label || this.modalidadePgd.label(x.modalidade_pgd)) + " - " + this.dao!.getDateFormatted(x.data_inicio)+ " à " + this.dao!.getDateFormatted(x.data_fim),
         data: x
       };
     });
@@ -147,7 +151,7 @@ export class AtividadeFormIniciarComponent extends PageFormBase<Atividade, Ativi
     await this.usuario!.loadSearch(entity.usuario || formValue.usuario_id);
     this.loadIniciadas(formValue.usuario_id);
     if(entity.unidade_id != this.auth.unidade!.id) {
-      await this.auth.selecionaUnidade(entity.unidade_id);
+      await this.auth.selecionaUnidade(entity.unidade_id, undefined);
     }
     form.patchValue(formValue);
     this.onPlanoChange(new Event('change'));

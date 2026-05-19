@@ -8,6 +8,8 @@ use App\Models\Documento;
 use App\Models\TipoTarefa;
 use App\Models\Usuario;
 use App\Models\Comentario;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AtividadeTarefa extends ModelBase
 {
@@ -34,28 +36,28 @@ class AtividadeTarefa extends ModelBase
   public $delete_cascade = ['comentarios'];
 
   // Has
-  public function comentarios()
+  public function comentarios(): HasMany
   {
     return $this->hasMany(Comentario::class);
   }
-  public function documentos()
+  public function documentos(): HasMany
   {
     return $this->hasMany(Documento::class);
   }
   // Belongs
-  public function documento()
+  public function documento(): BelongsTo
   {
     return $this->belongsTo(Documento::class);
   }    //nullable  
-  public function usuario()
+  public function usuario(): BelongsTo
   {
     return $this->belongsTo(Usuario::class);
   }
-  public function tipoTarefa()
+  public function tipoTarefa(): BelongsTo
   {
     return $this->belongsTo(TipoTarefa::class);
   }      //nullable
-  public function atividade()
+  public function atividade(): BelongsTo
   {
     return $this->belongsTo(Atividade::class);
   }

@@ -21,17 +21,17 @@ import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service'
 import { Documento } from 'src/app/models/documento.model';
 import { AtividadePausa } from 'src/app/models/atividade-pausa.model';
 import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
-import { SeiKeys } from 'src/app/listeners/procedimento-trabalhar/procedimento-trabalhar.component';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AtividadeService } from '../atividade.service';
-import { DocumentosLinkComponent } from 'src/app/modules/uteis/documentos/documentos-link/documentos-link.component';
 import { UnidadeService } from 'src/app/services/unidade.service';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 
 @Component({
-  selector: 'app-atividade-form',
-  templateUrl: './atividade-form.component.html',
-  styleUrls: ['./atividade-form.component.scss']
+    selector: 'app-atividade-form',
+    templateUrl: './atividade-form.component.html',
+    styleUrls: ['./atividade-form.component.scss'],
+    standalone: false
 })
 export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDaoService> implements OnInit {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -41,9 +41,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   @ViewChild('unidade', { static: false }) public unidade?: InputSearchComponent;
   @ViewChild('usuario', { static: false }) public usuario?: InputSearchComponent;
   @ViewChild('comentarios', { static: false }) public comentarios?: ComentariosComponent;
-  @ViewChild('requisicao', { static: false }) public requisicao?: DocumentosLinkComponent;
 
-  public sei?: SeiKeys;
   public form: FormGroup;
   public formChecklist: FormGroup;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
@@ -54,12 +52,13 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
   public usuarioDao: UsuarioDaoService;
   public calendar: CalendarService;
   public comentario: ComentarioService;
+  public modalidadePgd: ModalidadePgdService;
   public etiquetas: LookupItem[] = [];
   public checklist: Checklist[] = [];//public checklist: LookupItem[] = [];
   public planosTrabalhos: LookupItem[] = [];
-  public planoTrabalhoJoin: string[] = ["entregas.plano_entrega_entrega:id,descricao", "tipo_modalidade:id,nome"];
+  public planoTrabalhoJoin: string[] = ["entregas.plano_entrega_entrega:id,descricao"];
   public planoTrabalhoSelecionado?: PlanoTrabalho | null = null;
-  public usuarioJoin: string[] = ['planos_trabalho.entregas.plano_entrega_entrega:id,descricao', 'planos_trabalho.tipo_modalidade:id,nome'];
+  public usuarioJoin: string[] = ['planos_trabalho.entregas.plano_entrega_entrega:id,descricao'];
   public entregas: LookupItem[] = [];
 
   constructor(public injector: Injector) {
@@ -73,6 +72,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     this.unidadeService = injector.get<UnidadeService>(UnidadeService);
     this.calendar = injector.get<CalendarService>(CalendarService);
     this.comentario = injector.get<ComentarioService>(ComentarioService);
+    this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
     this.title = "Inclusão de " + this.lex.translate('Atividade');
     this.form = this.fh.FormBuilder({
       numero: {default: 0},
@@ -113,9 +113,8 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
       checked: {default: false}
     }, this.cdRef, this.validateChecklist);
     this.join = [
-      "usuario.planos_trabalho.tipo_modalidade:id,nome", 
-      "pausas", 
-      "tipo_atividade", 
+      "pausas",
+      "tipo_atividade",
       "unidade", 
       "comentarios.usuario", 
       "tarefas.tipo_tarefa", 
@@ -235,7 +234,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
             const unidade = await this.unidadeDao.getById(planoTrabalho.unidade_id);
             if(unidade) {
               await this.unidade?.loadSearch(unidade);
-              await this.auth.selecionaUnidade(unidade.id);
+              await this.auth.selecionaUnidade(unidade.id, undefined);
             }
           }
           const planoTrabalhoEntregaId = this.form.controls.plano_trabalho_entrega_id.value;
@@ -286,8 +285,8 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
 
   public getPlanosTrabalhos(usuario: Usuario, data_distribuicao: Date, plano_trabalho_id: string | null): LookupItem[] {
     return usuario.planos_trabalho?.filter(x => x.id == plano_trabalho_id || (this.util.between(data_distribuicao, {start: x.data_inicio, end: x.data_fim}) && x.status == "ATIVO")).map(x => Object.assign({
-      key: x.id, 
-      value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim), data: x
+      key: x.id,
+      value: (x.modalidade_pgd_label || this.modalidadePgd.label(x.modalidade_pgd)) + " - " + this.usuarioDao.getDateFormatted(x.data_inicio)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim), data: x
     })) || [];
   }
 
@@ -295,7 +294,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     if(usuario) {
       const planoTrabalhoId = this.form.controls.plano_trabalho_id.value;
       const dataDistribuicao = this.form.controls.data_distribuicao.value || new Date();
-      this.planosTrabalhos = this.getPlanosTrabalhos(usuario, dataDistribuicao, planoTrabalhoId); //usuario?.planos?.map(x => Object.assign({key: x.id, value: (x.tipo_modalidade?.nome || "") + " - " + this.usuarioDao.getDateFormatted(x.data_inicio)+ " a " + this.usuarioDao.getDateFormatted(x.data_fim), data: x})) || [];
+      this.planosTrabalhos = this.getPlanosTrabalhos(usuario, dataDistribuicao, planoTrabalhoId);
       if(this.hasUsuarioActionNew && this.auth.usuario!.id == this.form.controls.usuario_id.value) this.form!.controls.iniciado.setValue(true);
       this.cdRef.detectChanges();
       this.form.controls.plano_trabalho_id.setValue(!planoTrabalhoId?.length && this.planosTrabalhos.length > 0 ? this.planosTrabalhos[0].key : planoTrabalhoId);
@@ -384,7 +383,7 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
     form.patchValue(formValue, {emitEvent: false}); /* Carrega valores iniciais no form e previne que o plano_id seja sobrescrito */
     if(entity.usuario) this.loadUsuario(entity.usuario);
     if(entity.tipo_atividade) this.loadTipoAtividade(entity.tipo_atividade);
-    if(entity.unidade_id != this.auth.unidade!.id) await this.auth.selecionaUnidade(entity.unidade_id);
+    if(entity.unidade_id != this.auth.unidade!.id) await this.auth.selecionaUnidade(entity.unidade_id, undefined);
     entity.comentarios = this.comentario.orderComentarios(entity.comentarios || []);
     entity.pausas = this.orderPausas(entity.pausas || []);
     form.patchValue(this.util.fillForm(formValue, this.form.value)); /* Carrega os valores e dispara os eventos */
@@ -431,7 +430,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
         })))
       });
     } else {
-      this.sei = this.metadata?.sei;
       this.entity = new Atividade();
       this.entity.data_distribuicao = this.auth.hora;
       this.entity.data_estipulada_entrega = this.entity.data_distribuicao;
@@ -477,7 +475,6 @@ export class AtividadeFormComponent extends PageFormBase<Atividade, AtividadeDao
           }
         }
       }
-      atividade.documento_requisicao = this.requisicao?.documento;
       atividade.comentarios = atividade.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);
       atividade.tarefas = atividade.tarefas.filter((tarefa: AtividadeTarefa) => {
         tarefa.comentarios = tarefa.comentarios.filter((x: Comentario) => ["ADD", "EDIT", "DELETE"].includes(x._status || "") && x.texto?.length);

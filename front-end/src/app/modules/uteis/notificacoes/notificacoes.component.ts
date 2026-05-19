@@ -4,14 +4,15 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { PageListBase } from '../../base/page-list-base';
 import { Notificacao } from 'src/app/models/notificacao.model';
 import { NotificacaoDaoService } from 'src/app/dao/notificacao-dao.service';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { IIndexable } from 'src/app/models/base.model';
 import { NotificacaoService } from './notificacao.service';
 
 @Component({
-  selector: 'notificacoes',
-  templateUrl: './notificacoes.component.html',
-  styleUrls: ['./notificacoes.component.scss']
+    selector: 'notificacoes',
+    templateUrl: './notificacoes.component.html',
+    styleUrls: ['./notificacoes.component.scss'],
+    standalone: false
 })
 export class NotificacoesComponent extends PageListBase<Notificacao, NotificacaoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

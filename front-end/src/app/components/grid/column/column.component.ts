@@ -3,16 +3,17 @@ import { FormGroup } from '@angular/forms';
 import { DaoBaseService } from 'src/app/dao/dao-base.service';
 import { Base } from 'src/app/models/base.model';
 import { LookupItem } from 'src/app/services/lookup.service';
-import { ToolbarButton } from '../../toolbar/toolbar.component';
+import { ToolbarButton } from '../../toolbar/toolbar-types';
 import { ColumnType } from '../grid-column';
 
 export type ColumnAlign = "none" | "center" | "left" | "right";
 export type ColumnVerticalAlign = "bottom" | "top" | "middle";
 
 @Component({
-  selector: 'column',
-  templateUrl: './column.component.html',
-  styleUrls: ['./column.component.scss']
+    selector: 'column',
+    templateUrl: './column.component.html',
+    styleUrls: ['./column.component.scss'],
+    standalone: false
 })
 export class ColumnComponent implements OnInit {
   @Input() icon?: string;

@@ -19,6 +19,8 @@ class SiapeIndividualService extends ServiceBase
     private BuscarDadosSiapeServidores $buscarDadosSiapeServidores;
     private BuscarDadosSiapeUnidades $buscarDadosSiapeUnidades;
 
+    public SiapeIndividualServidorService $SiapeIndividualServidorService;
+    public SiapeIndividualUnidadeService $SiapeIndividualUnidadeService;
 
     public mixed $config;
 
@@ -42,6 +44,29 @@ class SiapeIndividualService extends ServiceBase
         return $this->SiapeIndividualUnidadeService->fluxoSiape($codUnidade, $this);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function relatorioProcessamentoUnidade(string $codUnidade): array
+    {
+        return $this->SiapeIndividualUnidadeService->relatorioProcessamento($codUnidade);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>|null
+     */
+    public function getResumo(): ?array
+    {
+        return $this->SiapeIndividualServidorService->getResumo()
+            ?? $this->SiapeIndividualUnidadeService->getResumo();
+    }
+
+    public function getRelatorioCarga(): ?array
+    {
+        return $this->SiapeIndividualServidorService->getRelatorioCarga()
+            ?? $this->SiapeIndividualUnidadeService->getRelatorioCarga();
+    }
+
     private function inicializaClassesNecessarias()
     {
         $this->config = config("integracao")["siape"];
@@ -50,6 +75,8 @@ class SiapeIndividualService extends ServiceBase
         $this->buscarDadosSiapeServidores = new BuscarDadosSiapeServidores($this->config);
         $this->buscarDadosSiapeUnidades = new BuscarDadosSiapeUnidades($this->config);
         $this->processaDadosSiape = new ProcessaDadosSiapeBD();
+        $this->SiapeIndividualServidorService = app(SiapeIndividualServidorService::class);
+        $this->SiapeIndividualUnidadeService = app(SiapeIndividualUnidadeService::class);
     }
 
     private function limpaLogSiape(string $cpf)

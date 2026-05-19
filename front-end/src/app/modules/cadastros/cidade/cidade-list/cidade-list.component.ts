@@ -6,9 +6,10 @@ import { Cidade } from 'src/app/models/cidade.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-cidade-list',
-  templateUrl: './cidade-list.component.html',
-  styleUrls: ['./cidade-list.component.scss']
+    selector: 'app-cidade-list',
+    templateUrl: './cidade-list.component.html',
+    styleUrls: ['./cidade-list.component.scss'],
+    standalone: false
 })
 export class CidadeListComponent extends PageListBase<Cidade, CidadeDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

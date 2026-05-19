@@ -6,9 +6,10 @@ import { TipoCliente } from 'src/app/models/tipo-cliente.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-tipo-cliente-list',
-  templateUrl: './tipo-cliente-list.component.html',
-  styleUrls: ['./tipo-cliente-list.component.scss']
+    selector: 'app-tipo-cliente-list',
+    templateUrl: './tipo-cliente-list.component.html',
+    styleUrls: ['./tipo-cliente-list.component.scss'],
+    standalone: false
 })
 export class TipoClienteListComponent extends PageListBase<TipoCliente, TipoClienteDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { BadgeButton } from 'src/app/components/badge/badge.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { AtividadeDaoService } from 'src/app/dao/atividade-dao.service';
 import { Afastamento } from 'src/app/models/afastamento.model';
 import { Atividade, Checklist } from 'src/app/models/atividade.model';
@@ -17,6 +17,7 @@ import { ComentarioService } from 'src/app/services/comentario.service';
 import { DialogService } from 'src/app/services/dialog.service';
 import { LexicalService } from 'src/app/services/lexical.service';
 import { LookupService } from 'src/app/services/lookup.service';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 import { NavigateService, RouteMetadata } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 
@@ -53,7 +54,8 @@ export class AtividadeService {
     public util: UtilService,
     public go: NavigateService,
     public dialog: DialogService,
-    public dao: AtividadeDaoService
+    public dao: AtividadeDaoService,
+    public modalidadePgd: ModalidadePgdService
   ) { }
 
   public getStatus(row: any, consolidacao?: PlanoTrabalhoConsolidacao): BadgeButton[] {
@@ -81,9 +83,9 @@ export class AtividadeService {
         { color: "light", hint: this.lex.translate("Data de distribuição"), icon: "bi bi-file-earmark-plus", label: this.dao.getDateTimeFormatted(row.data_distribuicao) },
         { color: "light", hint: this.lex.translate("Prazo de entrega"), icon: "bi bi-calendar-check", label: this.dao.getDateTimeFormatted(row.data_estipulada_entrega) }
       ];
-      if (planoTrabalho?.tipo_modalidade?.atividade_esforco) tempos.push({ color: "light", hint: this.lex.translate("Esforço"), icon: "bi bi-stopwatch", label: (row.esforco ? this.util.decimalToTimerFormated(row.esforco, true) + " " + this.lex.translate("esforço") : "Sem " + this.lex.translate("esforço"))});
+      if (this.modalidadePgd.atividadeEsforco(planoTrabalho?.modalidade_pgd)) tempos.push({ color: "light", hint: this.lex.translate("Esforço"), icon: "bi bi-stopwatch", label: (row.esforco ? this.util.decimalToTimerFormated(row.esforco, true) + " " + this.lex.translate("esforço") : "Sem " + this.lex.translate("esforço"))});
       if (row.metadados.concluido) tempos.push({ color: "light", hint: "Data de entrega realizada", icon: "bi bi-check-circle", label: this.dao.getDateTimeFormatted(row.data_entrega) });
-      if (row.metadados.iniciado && !!planoTrabalho?.tipo_modalidade?.atividade_tempo_despendido) {
+      if (row.metadados.iniciado && this.modalidadePgd.atividadeTempoDespendido(planoTrabalho?.modalidade_pgd)) {
         const cargaHoraria = planoTrabalho?.carga_horaria || 0;
         const afastamentos = extra?.afastamentos[row.usuario_id!] || [];
         const despendido = row.metadados.concluido ? (row.tempo_despendido || 0) : this.calendar.horasUteis(row.data_inicio!, this.auth.hora, cargaHoraria, row.unidade!, "ENTREGA", row.pausas, afastamentos);
@@ -168,6 +170,7 @@ export class AtividadeService {
         this.dao!.delete(atividade).then(() => {
           metadata.removeId(atividade.id);
           this.dialog.topAlert("Registro excluído com sucesso!", 5000);
+          metadata.refresh();
         }).catch((error) => this.dialog.alert("Erro", "Erro ao excluir: " + (error?.message ? error?.message : error)));
       }
     });

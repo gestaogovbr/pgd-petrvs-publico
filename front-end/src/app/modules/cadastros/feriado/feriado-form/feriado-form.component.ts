@@ -11,9 +11,10 @@ import { Cidade } from 'src/app/models/cidade.model';
 import { CidadeDaoService } from 'src/app/dao/cidade-dao.service';
 
 @Component({
-  selector: 'app-feriado-form',
-  templateUrl: './feriado-form.component.html',
-  styleUrls: ['./feriado-form.component.scss']
+    selector: 'app-feriado-form',
+    templateUrl: './feriado-form.component.html',
+    styleUrls: ['./feriado-form.component.scss'],
+    standalone: false
 })
 
 export class FeriadoFormComponent extends PageFormBase<Feriado, FeriadoDaoService> {

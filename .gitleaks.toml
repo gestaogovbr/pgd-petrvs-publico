@@ -1,0 +1,25 @@
+title = "Gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Arquivos e padrões ignorados na esteira Jenkins"
+paths = [
+  '''back-end/public/.*''',
+  '''.*\.map$''',
+  '''phpstan\.phar$''',
+  '''resources/docker/producao/configuracoes/certificados/private\.key$''',
+  '''resources/docker/esteira/configuracoes/certificados/private\.key$'''
+]
+regexes = [
+  '''CELETISTA/EMPREGADO''',
+  '''ANISTIADO_PRIVADO_L10559''',
+  '''EXERCICIO_7_ART93_8112''',
+  '''-----BEGIN PRIVATE KEY-----", "-----END PRIVATE KEY-----", "\\n"\], "", \$privateKey'''
+]
+stopwords = [
+  "CELETISTA/EMPREGADO",
+  "ANISTIADO_PRIVADO_L10559",
+  "EXERCICIO_7_ART93_8112"
+]

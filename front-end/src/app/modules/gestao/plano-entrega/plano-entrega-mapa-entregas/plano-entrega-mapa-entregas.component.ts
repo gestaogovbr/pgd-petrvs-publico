@@ -14,9 +14,10 @@ import { CadeiaValorProcesso } from 'src/app/models/cadeia-valor-processo.model'
 import { CadeiaValorProcessoDaoService } from 'src/app/dao/cadeia-valor-processo-dao.service';
 
 @Component({
-  selector: 'plano-entrega-mapa-entregas',
-  templateUrl: './plano-entrega-mapa-entregas.component.html',
-  styleUrls: ['./plano-entrega-mapa-entregas.component.scss']
+    selector: 'plano-entrega-mapa-entregas',
+    templateUrl: './plano-entrega-mapa-entregas.component.html',
+    styleUrls: ['./plano-entrega-mapa-entregas.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaMapaEntregasComponent extends PageListBase<PlanoEntregaEntrega, PlanoEntregaEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

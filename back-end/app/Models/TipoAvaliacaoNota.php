@@ -6,7 +6,14 @@ use App\Models\ModelBase;
 use App\Models\TipoAvaliacao;
 use App\Models\TipoAvaliacaoJustificativa;
 use App\Casts\AsJson;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * @property-read Collection|TipoAvaliacaoJustificativa[] $justificativas
+ * @property-read TipoAvaliacao $tipoAvaliacao
+ */
 class TipoAvaliacaoNota extends ModelBase
 {
   protected $table = 'tipos_avaliacoes_notas';
@@ -34,12 +41,13 @@ class TipoAvaliacaoNota extends ModelBase
   ];
 
   // Belongs
-  public function tipoAvaliacao()
+  public function tipoAvaliacao(): BelongsTo
   {
     return $this->belongsTo(TipoAvaliacao::class);
   }
+
   // Has
-  public function justificativas()
+  public function justificativas(): HasMany
   {
     return $this->hasMany(TipoAvaliacaoJustificativa::class);
   }

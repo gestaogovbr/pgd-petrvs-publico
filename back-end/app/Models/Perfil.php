@@ -31,7 +31,7 @@ class Perfil extends ModelBase
   {
     return $this->hasMany(Usuario::class);
   }
-  public function capacidades()
+  public function capacidades(): \Illuminate\Database\Eloquent\Relations\HasMany
   {
     return $this->hasMany(Capacidade::class);
   }

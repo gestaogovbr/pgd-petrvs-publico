@@ -6,7 +6,24 @@ use App\Models\ModelBase;
 use App\Models\Planejamento;
 use App\Models\EixoTematico;
 use App\Models\PlanoEntregaEntregaObjetivo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $nome
+ * @property string $fundamentacao
+ * @property int $sequencia
+ * @property string|null $path
+ * @property string $eixo_tematico_id
+ * @property string|null $objetivo_pai_id
+ * @property string $planejamento_id
+ * @property int $integra_okr
+ * @property string|null $objetivo_superior_id
+ * @property PlanejamentoObjetivo|null $objetivoPai
+ * @property PlanejamentoObjetivo|null $objetivoSuperior
+ * @property Planejamento $planejamento
+ * @property EixoTematico $eixoTematico
+ */
 class PlanejamentoObjetivo extends ModelBase
 {
   protected $table = 'planejamentos_objetivos';
@@ -24,38 +41,50 @@ class PlanejamentoObjetivo extends ModelBase
     'integra_okr',  /* tinyint(1); NOT NULL; */ // Objetivos que serão visíveis no OKR
     //'deleted_at', /* timestamp; */
     'objetivo_superior_id', /* char(36); */
+    'tipo_objetivo_id', /* char(36); */
   ];
 
   public $delete_cascade = ["objetivos"];
 
   // Has
-  public function objetivos()
+  public function objetivos(): HasMany
   {
     return $this->hasMany(PlanejamentoObjetivo::class, 'objetivo_superior_id');
   }
-  public function objetivosFilhos()
+
+  public function objetivosFilhos(): HasMany
   {
     return $this->hasMany(PlanejamentoObjetivo::class, 'objetivo_pai_id');
   }
-  public function objetivosEntrega()
+
+  public function objetivosEntrega(): HasMany
   {
     return $this->hasMany(PlanoEntregaEntregaObjetivo::class, 'planejamento_objetivo_id');
-  } //ok
+  }
+
   // Belongs
-  public function planejamento()
+  public function planejamento(): BelongsTo
   {
     return $this->belongsTo(Planejamento::class);
   }
-  public function eixoTematico()
+
+  public function eixoTematico(): BelongsTo
   {
     return $this->belongsTo(EixoTematico::class);
   }
-  public function objetivoPai()
+
+  public function objetivoPai(): BelongsTo
   {
-    return $this->belongsTo(PlanejamentoObjetivo::class);
-  }    //nullable
-  public function objetivoSuperior()
+    return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_pai_id');
+  }
+
+  public function objetivoSuperior(): BelongsTo
   {
-    return $this->belongsTo(PlanejamentoObjetivo::class);
-  }    //nullable
+    return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_superior_id');
+  }
+
+  public function tipoObjetivo(): BelongsTo
+  {
+    return $this->belongsTo(TipoPlanejamentoObjetivo::class, 'tipo_objetivo_id');
+  }
 }

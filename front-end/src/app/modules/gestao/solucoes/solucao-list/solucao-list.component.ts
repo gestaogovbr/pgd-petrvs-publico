@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, ViewChild } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { SolucaoDaoService } from "src/app/dao/solucao-dao.service";
 import { SolucaoUnidadeDaoService } from "src/app/dao/solucao-unidade-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
@@ -13,9 +13,10 @@ import { PageListBase } from "src/app/modules/base/page-list-base";
 import { SolucaoService } from "src/app/services/solucao.service";
 
 @Component({
-  selector: 'app-solucao-list',
-  templateUrl: './solucao-list.component.html',
-  styleUrls: ['./solucao-list.component.scss']
+    selector: 'app-solucao-list',
+    templateUrl: './solucao-list.component.html',
+    styleUrls: ['./solucao-list.component.scss'],
+    standalone: false
 })
 export class SolucaoListComponent extends PageListBase<Solucao, SolucaoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

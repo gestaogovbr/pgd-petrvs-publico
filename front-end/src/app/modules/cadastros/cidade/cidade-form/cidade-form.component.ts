@@ -7,9 +7,10 @@ import { Cidade } from 'src/app/models/cidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
 
 @Component({
-  selector: 'app-cidade-form',
-  templateUrl: './cidade-form.component.html',
-  styleUrls: ['./cidade-form.component.scss']
+    selector: 'app-cidade-form',
+    templateUrl: './cidade-form.component.html',
+    styleUrls: ['./cidade-form.component.scss'],
+    standalone: false
 })
 export class CidadeFormComponent extends PageFormBase<Cidade, CidadeDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

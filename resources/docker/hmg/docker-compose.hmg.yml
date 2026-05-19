@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+
+  # PHP
+  petrvs_php:
+    image: segescginf/pgdpetrvs-develop:hmg
+    container_name: petrvs_php_hmg
+    deploy:
+      resources:
+        limits:
+          cpus: '3.0'
+          memory: 4048M
+
+  # QUEUE
+  petrvs_queue:
+    image: segescginf/pgdpetrvs-develop:hmg
+    container_name: petrvs_queue
+    volumes: []
+    environment:
+      - TZ=America/Bahia
+      - APP_CONTEXT=queue
+      - RABBITMQ_HOST=petrvs_rabbitmq
+    command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
+    stdin_open: true
+    tty: true
+
+  # REDIS
+  petrvs_redis:
+    container_name: petrvs_redis
+    volumes:
+      - redis-data:/data
+
+  # DB (vira petrvs_db_hmg)
+  petrvs_db:
+    container_name: petrvs_db_hmg
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./my.cnf:/etc/mysql/my.cnf
+    env_file:
+      - ../../../back-end/.env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: root
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_TCP_PORT: ${DB_PORT}
+
+volumes:
+  db_data:
+    name: root_db_data
+  redis-data:

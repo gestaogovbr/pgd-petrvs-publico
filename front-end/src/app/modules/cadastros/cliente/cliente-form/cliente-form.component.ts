@@ -15,9 +15,10 @@ import { PageFormBase } from "src/app/modules/base/page-form-base";
 import { LookupItem } from "src/app/services/lookup.service";
 
 @Component({
-  selector: 'app-cliente-form',
-  templateUrl: './cliente-form.component.html',
-  styleUrls: ['./cliente-form.component.scss']
+    selector: 'app-cliente-form',
+    templateUrl: './cliente-form.component.html',
+    styleUrls: ['./cliente-form.component.scss'],
+    standalone: false
 })
 
 export class ClienteFormComponent extends PageFormBase<Cliente, ClienteDaoService> {

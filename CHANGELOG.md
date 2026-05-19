@@ -1,3 +1,94 @@
+## 2.10.1 15/05/2026
+### Corrigido
+- Remove a obrigatoriedade do campo de e-mail dos usuário, uma vez que não há mais geração de e-mail fictícios para servidores sem e-mail funcional no SIAPE.
+- Preservadas as atribuições manuais de servidores, como Vinculado, Delegado e Chefe Substituto, após rotinas de integração ou carga individual do SIAPE.
+
+## 2.10.0 08/05/2026
+### Adicionado
+- Adicionado relatório da Carga Individual SIAPE.
+- Adicionadas informações detalhadas de unidades e servidores nos relatórios de processamento SIAPE.
+- Adicionada opção para baixar logs nas consultas SIAPE.
+- Adicionado controle de ciclo de vida para inativação de unidades SIAPE.
+- Adicionada sincronização da blacklist durante o processamento de unidades SIAPE.
+
+### Modificado
+- Melhorada a consulta de CPF e unidade no SIAPE, com tratamento de erros mais consistente.
+- Melhorada a exibição de relatórios SIAPE, incluindo formatação de datas, valores e situação funcional.
+- Ajustado o fluxo de abertura e download de relatórios nas consultas de CPF e unidade.
+- Substituídos indicadores de carregamento por mensagens mais claras nas telas de consulta.
+- Removida a exibição da data da última transação quando a informação não for confiável.
+- Ajustado o prazo de inativação de unidades SIAPE para uso de configuração específica.
+- Melhoradas regras e validações relacionadas à modalidade PGD e pedágio.
+
+### Corrigido
+- Corrigida a geração e exibição de relatórios nas consultas SIAPE.
+- Melhorada a apresentação de mensagens de erro no login.
+- Ajustado o tratamento de erros na consulta de unidade no SIAPE.
+
+## 2.9.22 04/05/2026
+### Corrigido
+- Corrigido cadastro de usuário configurador no painel saas impedindo seleção de tenant.
+
+### Modificado
+- Removido bloqueio de cadastro de plano de trabalho e entrega em caso de com pendencias de registro de execução ou avaliações.
+
+## 2.9.21 17/04/2026
+### Adicionado
+- Adicionada busca de unidades por sigla, melhorando a localização e identificação de unidades no sistema.
+- Adicionado suporte ao tratamento de contratos temporários vindos do SIAPE.
+
+### Corrigido
+- Corrigida a identificação da unidade de exercício quando a sigla da unidade de lotação não está preenchida.
+- Corrigido problema relacionado a perfis duplicados.
+
+### Modificado
+- Removida a geração de e-mails fictícios para servidores sem e-mail funcional no SIAPE; e-mails artificiais já cadastrados serão convertidos para vazio.
+
+
+## 2.9.20 30/03/2026
+### Corrigido
+- Correção de modalidades para usuários não participantes no PGD no Relatório de Agentes.
+## 2.9.19 23/03/2026
+### Corrigido
+- A atualização de chefias não cria mais vínculos repetidos para o mesmo servidor.
+- Correção automática para remover lotações duplicadas do mesmo servidor, evitando inconsistências em listagens e permissões.
+- Corrigido consultas em pendências do chefe.
+- Correção da importação indiviual de unidades, que não adicionava as atribuições de chefia corretamente.
+### Modificado
+- Pendências de Plano de Trabalho sem registro de execução antes da data 01/10/2025 não serão mais consideradas.
+- Pendências de Plano de Entrega sem registro de execução antes da data 12/01/2026 não serão mais consideradas.
+## 2.9.18 16/03/2026
+### Corrigido
+- Correção no campo CPF, retirado mascára do front e adição de validação no backend.
+- Correção na busca de processos da cadeia de valor no cadastro de entregas do plano de entregas
+### Modificado
+- Melhorado a lógica do componente que lista as unidades do usuário
+- Usuarios excluídos serão restaurados pelo processo de execução do SIAPE
+## 2.9.17 10/03/2026
+### Corrigido
+- Correção na atualização e reativação de usuários.
+- Ajustes na busca de usuários para exibir resultados corretos.
+- Ajustes na integração com o SIAPE para evitar inconsistências de matrícula e lotação.
+- Atualização interna de segurança e melhorias de estabilidade.
+
+## 2.9.16 09/03/2026
+### Modificado
+- Reestruturação do planejamento institucional para agrupar objetivos por eixo temático.
+- Reestruturação do cadastro de processos na cadeia de valor
+### Corrigido
+- Adiciona o campo `programa.data_inicio` na chamada da API. Corrigindo a checagem de regimento vigente para permitir o cancelamento de conclusão dos PEs.
+
+## 2.9.15 27/02/2026
+### Adicionado
+- Adicionada regra para bloquear assinatura de PT quando um plano com mais de 30 dias posterior a outro não imediatamente posterior ao último com pendencia de registro de execução ou avaliação.
+- Adicionada regra para bloquear liberação para homologação de plano de entrega quando um plano mais de 30 dias posterior a outro não imediatamente posterior ao último com pendencia de registro de execução ou avaliação.
+### Modificado
+- Status `AGUARDANDO_REGISTRO` deixa de ser processado no banco e passa a ser definido no front.
+- Removida a validação do banco que impedia a desvinculação da entrega a uma entrega de unidade superior.
+### Corrigido
+- Exibição da modalidade no PT quando diferente da modalidade do Participante.
+- Correção dos erros advindos da adição do status `AGUARDANDO_REGISTRO`. Ex.: cálculo dos períodos avaliativos após edição do plano, cancelamento de plano, conclusão de REs, etc.
+
 ## 2.9.14 18/02/2026
 ### Adicionado
 - Adição da opção para o usuário editar as ocorrências lançadas no registro de execução.

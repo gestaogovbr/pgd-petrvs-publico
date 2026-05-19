@@ -17,6 +17,11 @@ class RelatorioAgenteController extends ControllerBase {
         return true;
     }
 
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws ServerException
+     */
     public function query(Request $request) {
         if (!$this->getUsuario($request)->hasPermissionTo('MOD_RELATORIO_USUARIO')){
             throw new ServerException("RelatorioCapacidade", "Acesso negado ao relatório de Agentes.");

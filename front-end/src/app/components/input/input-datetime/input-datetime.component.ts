@@ -5,15 +5,16 @@ import moment from 'moment';
 import { UtilService } from 'src/app/services/util.service';
 
 @Component({
-  selector: 'input-datetime',
-  templateUrl: './input-datetime.component.html',
-  styleUrls: ['./input-datetime.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-datetime',
+    templateUrl: './input-datetime.component.html',
+    styleUrls: ['./input-datetime.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputDatetimeComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';

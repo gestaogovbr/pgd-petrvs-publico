@@ -1,24 +1,28 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UteisModule } from '../uteis/uteis.module';
-import { EnvioReiniciarFormComponent } from './reiniciar/envio-reiniciar-form/envio-reiniciar-form.component';
 import { EnvioRoutingModule } from './envio-routing.module';
-import { EnvioForcarComponent } from './forcar/envio-forcar/envio-forcar.component';
+import { EnvioConsultaComponent } from './envio-consulta/envio-consulta.component';
+import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
+import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
 
 
 @NgModule({
-  declarations: [
-    EnvioReiniciarFormComponent,
-    EnvioForcarComponent
-  ],
+  declarations: [EnvioConsultaComponent],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     ReactiveFormsModule,
     EnvioRoutingModule,
-    UteisModule
+    UteisModule,
+    WebcomponentsAngularModule,
+    BreadcrumbComponent
+  ],
+  providers: [
+    BreadcrumbService
   ]
 })
 export class EnvioModule { }

@@ -2,7 +2,7 @@ import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -17,9 +17,10 @@ export type UnidadeMerge = {
 }
 
 @Component({
-  selector: 'app-unidade-merge',
-  templateUrl: './unidade-merge.component.html',
-  styleUrls: ['./unidade-merge.component.scss']
+    selector: 'app-unidade-merge',
+    templateUrl: './unidade-merge.component.html',
+    styleUrls: ['./unidade-merge.component.scss'],
+    standalone: false
 })
 export class UnidadeMergeComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

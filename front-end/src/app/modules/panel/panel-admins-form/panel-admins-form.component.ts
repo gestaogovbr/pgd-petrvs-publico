@@ -11,9 +11,10 @@ import { TenantDaoService } from "src/app/dao/tenant-dao.service";
 import { InputSelectComponent } from "src/app/components/input/input-select/input-select.component";
 
 @Component({
-  selector: 'panel-admins-form',
-  templateUrl: './panel-admins-form.component.html',
-  styleUrls: ['./panel-admins-form.component.scss']
+    selector: 'panel-admins-form',
+    templateUrl: './panel-admins-form.component.html',
+    styleUrls: ['./panel-admins-form.component.scss'],
+    standalone: false
 })
 export class PanelAdminsFormComponent extends PageFormBase<UserPanel, UsersPanelDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -64,9 +65,11 @@ export class PanelAdminsFormComponent extends PageFormBase<UserPanel, UsersPanel
     this.loading = true;
     try {
       this.tenants = await this.tenantsDao.query().asPromise();
+      const items: LookupItem[] = [];
       this.tenants.forEach(t => {
-        this.items.push({key: t.id, value: t.nome_entidade})
+        items.push({key: t.id, value: t.nome_entidade})
       });      
+      this.items = items;
     } finally {
       this.loading = false;
     }

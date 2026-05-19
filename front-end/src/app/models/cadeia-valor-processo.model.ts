@@ -7,6 +7,7 @@ export class CadeiaValorProcesso extends Base {
   }
   public cadeia_valor?: CadeiaValor;
   public processo_pai?: CadeiaValorProcesso;
+  public children?: CadeiaValorProcesso[] = [];
 
   public path: string = ""; /* Unidade à qual está vinculado o plano de gestão/entregas */
   public nome: string = ""; /* Nome do plano de gestão/entregas */

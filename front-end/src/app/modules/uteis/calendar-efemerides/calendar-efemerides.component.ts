@@ -5,9 +5,10 @@ import { Efemerides } from '../../../services/calendar.service';
 import { Interval, UtilService } from '../../../services/util.service';
 
 @Component({
-  selector: 'calendar-efemerides',
-  templateUrl: './calendar-efemerides.component.html',
-  styleUrls: ['./calendar-efemerides.component.scss']
+    selector: 'calendar-efemerides',
+    templateUrl: './calendar-efemerides.component.html',
+    styleUrls: ['./calendar-efemerides.component.scss'],
+    standalone: false
 })
 export class CalendarEfemeridesComponent implements OnInit {
   @Input() efemerides?: Efemerides;

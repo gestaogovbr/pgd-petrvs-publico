@@ -19,6 +19,13 @@ describe('Teste básico com Pest e Mockery', function () {
 
         expect($mock->metodo('x'))->toBe('ok');
     });
+    
+    it('usa Mockery para mock com argumentos', function () {
+        $mock = Mockery::mock(BasicoMockInterface::class);
+        $mock->shouldReceive('metodo')->with('x')->andReturn('ok');
+
+        expect($mock->metodo('x'))->toBe('ok');
+    });
 
     afterEach(function () {
         // Fecha os mocks após cada teste

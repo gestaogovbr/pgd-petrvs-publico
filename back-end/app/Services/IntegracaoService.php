@@ -19,16 +19,22 @@ use Illuminate\Support\Facades\DB;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Support\Facades\Log;
 use App\Facades\SiapeLog;
+use App\Support\ModalidadePgd;
 
 /**
  * @property UtilService $UtilService
  * @property IntegracaoGestorService $integracaoGestorService
+ * @property IntegracaoSiapeService $IntegracaoSiapeService
+ * @property ProcessadorAtualizacaoDadosSiapeService $processadorAtualizacaoDadosSiapeService
+ * @property PerfilService $perfilService
+ * @property UnidadeService $unidadeService
  */
 class IntegracaoService extends ServiceBase
 {
@@ -102,6 +108,27 @@ class IntegracaoService extends ServiceBase
     return $resultado;
   }
 
+  /**
+   * @param object{
+   *   id_servo: string,
+   *   codigo_antigo: string|null,
+   *   nomeuorg: string,
+   *   nome_antigo: string|null,
+   *   siglauorg: string,
+   *   sigla_antiga: string|null,
+   *   pai_servo: string,
+   *   id_pai_antigo: string|null,
+   *   id: string|null,
+   *   path_antigo: string|null,
+   *   cidade_id: string|null,
+   *   cidade_antiga: string|null,
+   *   unidade_pai_id: string|null,
+   *   codigo_pai_antigo: string|null,
+   *   path_pai: string|null,
+   *   data_modificacao_siape: string,
+   *   data_modificacao_und: string|null
+   * } $unidade
+   */
   public function buscaOuInserePai($unidade, $entidade_id)
   {
     if (empty($unidade->pai_servo)) {
@@ -115,6 +142,27 @@ class IntegracaoService extends ServiceBase
     }
   }
 
+  /**
+   * @param object{
+   *   id_servo: string,
+   *   codigo_antigo: string|null,
+   *   nomeuorg: string,
+   *   nome_antigo: string|null,
+   *   siglauorg: string,
+   *   sigla_antiga: string|null,
+   *   pai_servo: string,
+   *   id_pai_antigo: string|null,
+   *   id: string|null,
+   *   path_antigo: string|null,
+   *   cidade_id: string|null,
+   *   cidade_antiga: string|null,
+   *   unidade_pai_id: string|null,
+   *   codigo_pai_antigo: string|null,
+   *   path_pai: string|null,
+   *   data_modificacao_siape: string,
+   *   data_modificacao_und: string|null
+   * } $unidade
+   */
   public function deepReplaceUnidades($unidade, $entidade_id)
   {
     // Prepara os principais atributos da Unidade.
@@ -183,7 +231,7 @@ class IntegracaoService extends ServiceBase
 
       // Atualiza os paths dos filhos.
       $antes = $unidade->path_antigo . "/" . $unidade->id;
-      if (DB::select("select count(*) from unidades where path = '" . $antes . "'") > 0) {
+      if (!empty(DB::select("select count(*) from unidades where path = '" . $antes . "'"))) {
         $depois = $values[':path'] . "/" . $unidade->id;
         $like = $antes . "%";
 
@@ -326,11 +374,10 @@ class IntegracaoService extends ServiceBase
     if (!empty($inputs['unidades']) && $inputs['unidades'] && !empty($entidade_id)) {
       SiapeLog::info("Iniciando sincronização de Unidades");
       try {
-        $uos = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
-        SiapeLog::info("Concluída a fase de obtenção dos dados das unidades informados pelo SIAPE!.....");
-
-        DB::transaction(function () use (&$uos, &$self) {
-          foreach ($uos as $uo) {
+        $unidades = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
+        if (count($unidades) > 0) {
+            DB::transaction(function () use (&$unidades) {
+                foreach ($unidades as $uo) {
             $uorg_codigo = UtilService::valueOrDefault($uo["id_servo"]);
             $uorg_ativa = UtilService::valueOrDefault($uo["ativa"]) == 'true';
 
@@ -426,6 +473,7 @@ class IntegracaoService extends ServiceBase
             }
           }
         });
+      }
 
         /*
         Remover uorgs que não existem mais no SIAPE/WSO2, mas ainda constam na tabela integracao_unidades.
@@ -433,9 +481,9 @@ class IntegracaoService extends ServiceBase
         */
         $unidades_siape =  array_map(function ($uorg) {
           if (!empty($uorg['id_servo'])) return $uorg['id_servo'];
-        }, $uos);
+        }, $unidades);
 
-        $unidades_integracao = DB::table("integracao_unidades")->get('id_servo')->values('id_servo')->toArray();
+        $unidades_integracao = DB::table("integracao_unidades")->pluck('id_servo')->toArray();
 
         $unidades_integracao = array_map(function ($uorg) {
           if (!empty($uorg->id_servo)) return $uorg->id_servo;
@@ -511,7 +559,7 @@ class IntegracaoService extends ServiceBase
         $DbResultAtivadas = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NULL);");
 
         $this->result['unidades']['Resultado'] = 'Sucesso';
-        array_push($this->result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->get()->count() . ' unidades!');
+        array_push($this->result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->count() . ' unidades!');
         $this->result['unidades']['Observações'] = [...$this->result['unidades']['Observações'], ...array_filter([
           count($this->unidadesInseridas) . (count($this->unidadesInseridas) == 1 ? ' unidade nova informada pelo SIAPE foi inserida no Petrvs!' : ' unidades novas informadas pelo SIAPE foram inseridas no Petrvs!'),
           count($this->paisAlterados) . (count($this->paisAlterados) == 1 ? ' unidade sofreu alteração na hierarquia e possivelmente em outros dados e foi atualizada!' : ' unidades sofreram alteração na hierarquia e possivelmente em outros dados e foram atualizadas!'),
@@ -535,27 +583,7 @@ class IntegracaoService extends ServiceBase
         $servidores = [];
         $servidores = $this->IntegracaoSiapeService->retornarServidores()["Pessoas"];
         SiapeLog::info("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
-
-        DB::transaction(function () use (
-          &$servidores,
-        ) {
-
-          $integracaoServidoresRepository = new IntegracaoServidorRepository(new IntegracaoServidor);
-          try {
-            $integracaoServidorProcessar =  new Integracao($integracaoServidoresRepository);
-          } catch (Throwable $e) {
-            LogError::newError("Erro ao truncar a tabela integracao_servidores", $e);
-            SiapeLog::info(sprintf("Erro ao truncar a tabela integracao_servidores: %s", $e->getMessage()), throwableToArray($e));
-          }
-          $this->logSiape("Iniciando processo de atualização de servidores", [], Tipo::INFO);
-          $integracaoServidorProcessar->setServidores($servidores)->setEcho($this->echo)->setIntegracaoConfig($this->integracao_config)
-            ->setResult($this->result);
-          $integracaoServidorProcessar->processar();
-
-          $this->result = $integracaoServidorProcessar->getResult();
-        });
-
-        $this->processadorAtualizacaoDadosSiapeService->processar($this->result, $this->integracao_config["perfilComum"]);
+        $this->processarServidoresTransaction($servidores);
 
         $this->result['servidores']['Resultado'] = 'Sucesso';
         array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' .
@@ -574,10 +602,40 @@ class IntegracaoService extends ServiceBase
     $this->result["gestores"] = $this->integracaoGestorService->atualizarGestores($inputs, $this->integracao_config);
   }
 
-  public function verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake(string $email, ?string $matricula, string $ignoreId = null): void
+  public function processarServidoresTransaction(array &$servidores): void
   {
+    DB::transaction(function () use (&$servidores) {
+      $integracaoServidorProcessar = null;
+      $integracaoServidoresRepository = app(IntegracaoServidorRepository::class);
+      try {
+        $integracaoServidorProcessar = new Integracao($integracaoServidoresRepository);
+      } catch (Throwable $e) {
+        LogError::newError("Erro ao truncar a tabela integracao_servidores", $e);
+        SiapeLog::info(sprintf("Erro ao truncar a tabela integracao_servidores: %s", $e->getMessage()), throwableToArray($e));
+      }
+      $this->logSiape("Iniciando processo de atualização de servidores", [], Tipo::INFO);
+      $integracaoServidorProcessar->setServidores($servidores)->setEcho($this->echo)->setIntegracaoConfig($this->integracao_config)
+        ->setResult($this->result);
+      $integracaoServidorProcessar->processar();
+
+      $this->result = $integracaoServidorProcessar->getResult();
+    });
+
+    $this->processadorAtualizacaoDadosSiapeService->processar($this->result, $this->integracao_config["perfilComum"]);
+  }
+
+  public function liberarEmailDuplicadoDefinindoComoNulo(?string $email, ?string $matricula, ?string $ignoreId = null): void
+  {
+    if (!is_string($email)) {
+      return;
+    }
+
     $email = trim(mb_strtolower($email, 'UTF-8'));
-    
+
+    if ($email === '') {
+      return;
+    }
+
     $usuarios = Usuario::withoutGlobalScopes()
         ->where('email', $email)
         ->when($ignoreId, function ($query) use ($ignoreId) {
@@ -588,19 +646,10 @@ class IntegracaoService extends ServiceBase
     foreach ($usuarios as $usuario) {
       if (!empty($usuario)) {
         LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
-        
-        $novoemailBase = $usuario->matricula;
-        if (empty($novoemailBase)) {
-          $novoemailBase = \Illuminate\Support\Str::uuid()->toString();
-        }
-        
-        $novoemail = $novoemailBase . "@petrvs.gov.br";
-        
-        $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($novoemail, $usuario->matricula, $usuario->id);
-        
-        SiapeLog::info("IntegracaoService: Alterando email duplicado para email fake", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
-        
-        DB::table('usuarios')->where('id', $usuario->id)->update(['email' => $novoemail]);
+
+        SiapeLog::info("IntegracaoService: Liberando email duplicado definindo como nulo", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
+
+        DB::table('usuarios')->where('id', $usuario->id)->update(['email' => null]);
       }
     }
   }
@@ -608,16 +657,22 @@ class IntegracaoService extends ServiceBase
   /**
    * Cria uma lotação para o Usuário, se seus dados já existirem na tabela integracao_servidores,
    * e se ela já constar na tabela Unidades. Salva o novo usuário, independentemente da lotação
+   *
+   * @param Usuario $usuario
+   * @param UnidadeIntegrante $lotacao
    */
-  public function salvarUsuarioLotacao(&$usuario, &$lotacao)
+  public function salvarUsuarioLotacao(Usuario &$usuario, UnidadeIntegrante &$lotacao)
   {
     if ($this->fillUsuarioWithSiape($usuario, $lotacao)) { //se quem está logado existe na tabela integracao_servidores
-      $perfil_nivel_5_id = $this->nivelAcessoService->getPerfilParticipante()->id;
+      /** @var \App\Services\NivelAcessoService $nivelAcessoService */
+      $nivelAcessoService = $this->nivelAcessoService;
+      $perfil_nivel_5_id = $nivelAcessoService->getPerfilParticipante()->id;
       $usuario->perfil_id = $perfil_nivel_5_id;
-      $this->verificaSeOEmailJaEstaVinculadoEAlteraParaEmailFake($usuario->email, $usuario->matricula, $usuario->id);
+      $this->liberarEmailDuplicadoDefinindoComoNulo($usuario->email, $usuario->matricula, $usuario->id);
       $usuario->save();
       $usuario->fresh();
       if (!empty($lotacao->unidade_id)) { // se sua Unidade estiver cadastrada, insere-se uma lotação principal pra ele
+        /** @var \App\Models\UnidadeIntegrante $lotacao */
         $lotacao->usuario_id = $usuario->id;
         $lotacao->save();
         $lotacao->refresh();
@@ -677,50 +732,18 @@ class IntegracaoService extends ServiceBase
       $unidadeRaiz->save();
     }
   }
-  
+
   public function validarModalidadePgd($modalidadeString)
   {
-    $fallbackId = DB::table('tipos_modalidades')
-      ->where('nome', 'Sem dados do SIAPE')
-      ->whereNull('deleted_at')
-      ->value('id');
+    return ModalidadePgd::normalize($modalidadeString);
+  }
 
-    if (empty($fallbackId)) {
-        $fallbackId = DB::table('tipos_modalidades')
-          ->whereNull('deleted_at')
-          ->value('id');
-    }
-
-    if (empty($modalidadeString)) {
-      return $fallbackId;
-    }
-
-    if (preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $modalidadeString)) {
-      $tipoId = DB::table('tipos_modalidades_siape')
-        ->where('id', $modalidadeString)
-        ->value('tipo_modalidade_id');
-      return $tipoId ?? $fallbackId;
-    }
-
-    $tipoId = DB::table('tipos_modalidades_siape')
-      ->where('nome', $modalidadeString)
-      ->value('tipo_modalidade_id');
-
-    if ($tipoId) {
-      SiapeLog::info("Modalidade '{$modalidadeString}' convertida para TipoModalidade: {$tipoId}");
-      return $tipoId;
-    }
-
-    SiapeLog::warning("Modalidade '{$modalidadeString}' não encontrada na tabela tipos_modalidades_siape. Valor será definido para 'Sem dados do SIAPE'.");
-    return $fallbackId;
-  }  
-  
   private function verificarUsuariosExternosIntegracao(): void
   {
     try {
       $usuariosExternos = DB::select(
-        "SELECT u.* FROM usuarios AS u 
-         INNER JOIN integracao_servidores AS ise ON u.matricula = ise.matriculasiape 
+        "SELECT u.* FROM usuarios AS u
+         INNER JOIN integracao_servidores AS ise ON u.matricula = ise.matriculasiape
          WHERE u.usuario_externo = 1"
       );
 
@@ -741,7 +764,7 @@ class IntegracaoService extends ServiceBase
           $perfilColaborador = $this->nivelAcessoService->getPerfilColaborador();
           $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
 
-          if ($perfilColaborador && $perfilParticipante && 
+          if ($perfilColaborador && $perfilParticipante &&
               $usuario->perfil->id === $perfilColaborador->id) {
             $this->perfilService->alteraPerfilUsuario($usuario->id, $perfilParticipante->id);
             SiapeLog::info(sprintf(

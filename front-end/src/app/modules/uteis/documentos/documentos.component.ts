@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Injector, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { GridComponent } from 'src/app/components/grid/grid.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { DocumentoDaoService } from 'src/app/dao/documento-dao-service';
 import { PlanoTrabalhoDaoService } from 'src/app/dao/plano-trabalho-dao.service';
 import { IIndexable } from 'src/app/models/base.model';
@@ -13,9 +13,10 @@ import { TemplateDataset, TemplateService } from '../templates/template.service'
 import { DocumentoService } from './documento.service';
 
 @Component({
-  selector: 'documentos',
-  templateUrl: './documentos.component.html',
-  styleUrls: ['./documentos.component.scss']
+    selector: 'documentos',
+    templateUrl: './documentos.component.html',
+    styleUrls: ['./documentos.component.scss'],
+    standalone: false
 })
 export class DocumentosComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
@@ -177,19 +178,6 @@ export class DocumentosComponent extends PageFrameBase {
     //result.push({hint: "Preview", icon: "bi bi-zoom-in", onClick: this.documentoService.onDocumentoClick.bind(this.documentoService.onDocumentoClick) });
     return result;
   }
-
-  /*public needSign(documento: Documento): boolean {
-    const tipoModalidade = this.entity!.tipo_modalidade!; //(this.tipoModalidade?.selectedEntity as TipoModalidade);
-    const usuario = this.entity!.usuario!; // (this.usuario?.selectedEntity as Usuario);
-    const unidade = this.entity!.unidade!; // (this.unidade?.selectedEntity as Unidade);
-    const entidade = unidade?.entidade;
-    const alredySigned = !!documento.assinaturas.find(x => x.usuario_id == this.auth.usuario!.id);
-    let ids: string[] = [];
-    if(tipoModalidade?.exige_assinatura && usuario) ids.push(usuario.id);
-    if(tipoModalidade?.exige_assinatura_gestor_unidade && unidade) ids.push(unidade.gestor_id || "", unidade.gestor_substituto_id || "");
-    if(tipoModalidade?.exige_assinatura_gestor_entidade && entidade) ids.push(entidade.gestor_id || "", entidade.gestor_substituto_id || "");
-    return !alredySigned && tipoModalidade && ids.includes(this.auth.usuario!.id);
-  }*/
 
   public async signDocumento(documento: Documento) {
     await this.documentoService.sign([documento]);

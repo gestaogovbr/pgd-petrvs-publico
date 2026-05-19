@@ -1,6 +1,18 @@
 <p class="text-secondary">Você está acessando o módulo de Gestão. Matrícula: {{auth.usuario?.matricula}}. </p>
 
-<!-- Banner de pendências como chefe -->
+<div *ngIf="!pendenciasLoaded" class="alert alert-secondary d-flex justify-content-between align-items-center mt-3">
+  <div class="d-flex align-items-center gap-2 flex-wrap">
+    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    <span>Carregando pendências…</span>
+    <span class="placeholder-glow d-inline-flex align-items-center ms-2">
+      <span class="placeholder col-2"></span>
+    </span>
+  </div>
+  <div>
+    <button type="button" class="btn btn-sm btn-primary" disabled>Ver detalhes</button>
+  </div>
+</div>
+
 <div *ngIf="pendenciasLoaded && totalPendenciasChefe > 0" class="alert alert-warning d-flex justify-content-between align-items-center mt-3">
   <div>
     Você tem
@@ -12,6 +24,7 @@
   </div>
 </div>
 
+
 <div class="row mt-5">
   <div class="col-6 col-sm-3 mb-3">
     <app-button-dashboard
@@ -19,7 +32,7 @@
       [imgIcon]="gb.getResourcePath('assets/icons/home/negociate.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
-      [route]="{route: ['gestao/plano-trabalho']}"
+      [route]="{route: ['gestao/plano-trabalho-v2']}"
     ></app-button-dashboard>
   </div>
 
@@ -30,26 +43,6 @@
       textColor="#1369f0"
       borderColor="#1369f0"
       [route]="{route: ['execucao/plano-entrega']}"
-    ></app-button-dashboard>
-  </div>
-
-  <div class="col-6 col-sm-3 mb-3">
-    <app-button-dashboard
-      [title]="lex.translate('Consolidações')"
-      [imgIcon]="gb.getResourcePath('assets/icons/home/team.svg')"
-      textColor="#1369f0"
-      borderColor="#1369f0"
-      [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
-    ></app-button-dashboard>
-  </div>
-
-  <div class="col-6 col-sm-3 mb-3">
-    <app-button-dashboard
-      [title]="'Avaliações de ' + lex.translate('consolidações')"
-      [imgIcon]="gb.getResourcePath('assets/icons/home/ranking.svg')"
-      textColor="#1369f0"
-      borderColor="#1369f0"
-      [route]="{route: ['avaliacao/plano-trabalho/consolidacao/avaliacao']}"
     ></app-button-dashboard>
   </div>
 

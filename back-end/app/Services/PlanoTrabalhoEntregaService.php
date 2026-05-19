@@ -4,8 +4,12 @@ namespace App\Services;
 
 use App\Models\PlanoTrabalhoEntrega;
 use App\Services\ServiceBase;
+use App\Services\PlanoTrabalhoService;
 use App\Exceptions\ServerException;
 
+/**
+ * @property PlanoTrabalhoService $planoTrabalhoService
+ */
 class PlanoTrabalhoEntregaService extends ServiceBase
 {
 

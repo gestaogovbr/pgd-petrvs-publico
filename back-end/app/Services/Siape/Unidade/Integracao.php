@@ -8,6 +8,10 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
+use App\Repository\UnidadeRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UsuarioRepository;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
 use Illuminate\Support\Facades\DB;
 use App\Services\Siape\Unidade\Enum\Atribuicao as EnumAtribuicao;
@@ -23,8 +27,34 @@ class Integracao implements InterfaceIntegracao
     private array $atribuicoesFinais = [];
 
 
-    public function __construct(private array $vinculos)
+    public function __construct(
+        private array $vinculos,
+        private UnidadeIntegranteRepository $unidadeIntegranteRepository,
+        private UnidadeIntegranteAtribuicaoRepository $unidadeIntegranteAtribuicaoRepository,
+        private UsuarioRepository $usuarioRepository,
+        private UnidadeRepository $unidadeRepository,
+        private bool $preservarAtribuicoesExistentes = false
+    ) {
+    }
+
+    public function getUnidadeIntegranteRepository(): UnidadeIntegranteRepository
     {
+        return $this->unidadeIntegranteRepository;
+    }
+
+    public function getUnidadeIntegranteAtribuicaoRepository(): UnidadeIntegranteAtribuicaoRepository
+    {
+        return $this->unidadeIntegranteAtribuicaoRepository;
+    }
+
+    public function getUsuarioRepository(): UsuarioRepository
+    {
+        return $this->usuarioRepository;
+    }
+
+    public function getUnidadeRepository(): UnidadeRepository
+    {
+        return $this->unidadeRepository;
     }
 
     public function processar(): void
@@ -50,6 +80,7 @@ class Integracao implements InterfaceIntegracao
 
             if ($this->transaction) DB::commit();
         } catch (\Exception $e) {
+            SiapeLog::error("Erro ao processar vínculo", ['exception' => $e->getMessage()]);
             if ($this->transaction) DB::rollBack();
             throw $e;
         }
@@ -74,6 +105,15 @@ class Integracao implements InterfaceIntegracao
         $integranteNovoOuExistente = $this->criaVinculoDoUsuarioComUnidade($usuario->id, $unidadeDestino->id);
 
         if (empty($vinculoDTO->atribuicoes)) {
+            if ($this->preservarAtribuicoesExistentes) {
+                SiapeLog::info("Payload SIAPE sem atribuições; preservando atribuições existentes", [
+                    'usuario_id' => $usuario->id,
+                    'unidade_id' => $unidadeDestino->id,
+                ]);
+                array_push($this->atribuicoesFinais, ["Payload SIAPE sem atribuições; atribuições existentes preservadas."]);
+                return;
+            }
+
             array_push($this->atribuicoesFinais, ["O vínculo de LOTADO não pode ser apagado; apenas transferido, através da atribuição de lotação em outra unidade."]);
             $this->limpaTodasAtribuicoesMenosLotado($usuario, $integranteNovoOuExistente);
             return;           
@@ -97,7 +137,7 @@ class Integracao implements InterfaceIntegracao
            unset($vinculoDTO->atribuicoes[$atribuicao]);
         });
 
-        if(!empty($atribuicoesRemover)){
+        if(!$this->preservarAtribuicoesExistentes && !empty($atribuicoesRemover)){
             $this->removeDeterminadasAtribuicoes($atribuicoesRemover, $integranteNovoOuExistente);
         }
         
@@ -114,7 +154,9 @@ class Integracao implements InterfaceIntegracao
             $atribuicaoExistente->delete();
             $integrante->delete();
             array_push($this->atribuicoesFinais, sprintf("Atribuição %s removida do integrante %s", $atribuicao->value, $integrante->id));
+            SiapeLog::info(sprintf("Atribuição %s removida do integrante %s", $atribuicao->value, $integrante->id));
         } else {
+            SiapeLog::info(sprintf("Atribuição %s já não existe para o integrante %s", $atribuicao->value, $integrante->id));
             array_push($this->atribuicoesFinais, sprintf("Atribuição %s já não existe para o integrante %s", $atribuicao->value, $integrante->id));
         }
     }

@@ -17,9 +17,10 @@ import {InputSelectComponent} from "../../../../components/input/input-select/in
 import { Perfil } from 'src/app/models/perfil.model';
 
 @Component({
-  selector: 'usuario-integrante',
-  templateUrl: './usuario-integrante.component.html',
-  styleUrls: ['./usuario-integrante.component.scss']
+    selector: 'usuario-integrante',
+    templateUrl: './usuario-integrante.component.html',
+    styleUrls: ['./usuario-integrante.component.scss'],
+    standalone: false
 })
 export class UsuarioIntegranteComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

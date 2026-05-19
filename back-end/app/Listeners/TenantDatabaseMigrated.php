@@ -24,7 +24,7 @@ class TenantDatabaseMigrated extends TenantListenerBase
     /**
      * Handle the event.
      *
-     * @param  \App\Events\DatabaseMigrated  $event
+     * @param  \Stancl\Tenancy\Events\DatabaseMigrated  $event
      * @return void
      */
     public function handle(Events\DatabaseMigrated $event)

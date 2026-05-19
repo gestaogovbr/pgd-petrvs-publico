@@ -15,8 +15,10 @@ yarn-error.log
 /.vscode
 /.env
 /public/index.html
+/public/app.json
 /storage/logs
 /storage/phpstan
+/storage/framework/phpstan
 .phpstan-diagnostics/
 # managed
 **.data.json

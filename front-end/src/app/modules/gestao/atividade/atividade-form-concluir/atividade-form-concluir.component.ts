@@ -14,11 +14,13 @@ import { TipoDocumentoDaoService } from 'src/app/dao/tipo-documento-dao.service'
 import { TipoAtividadeDaoService } from 'src/app/dao/tipo-atividade-dao.service';
 import { TipoAtividade } from 'src/app/models/tipo-atividade.model';
 import { Documento } from 'src/app/models/documento.model';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 
 @Component({
-  selector: 'app-atividade-form-concluir',
-  templateUrl: './atividade-form-concluir.component.html',
-  styleUrls: ['./atividade-form-concluir.component.scss']
+    selector: 'app-atividade-form-concluir',
+    templateUrl: './atividade-form-concluir.component.html',
+    styleUrls: ['./atividade-form-concluir.component.scss'],
+    standalone: false
 })
 export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, AtividadeDaoService> implements OnInit {
   @ViewChild('tipoAtividade', { static: false }) public tipoAtividade?: InputSearchComponent;
@@ -31,6 +33,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
   public efemerides?: Efemerides;
   public modalWidth: number = 800;
   public calendar: CalendarService;
+  public modalidadePgd: ModalidadePgdService;
   public entregas: LookupItem[] = [];
 
   constructor(public injector: Injector) {
@@ -38,6 +41,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
     this.tipoAtividadeDao = injector.get<TipoAtividadeDaoService>(TipoAtividadeDaoService);
     this.tipoDocumentoDao = injector.get<TipoDocumentoDaoService>(TipoDocumentoDaoService);
     this.calendar = injector.get<CalendarService>(CalendarService);
+    this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
     this.title = 'Conclusão de ' + this.lex.translate('atividade');
     this.form = this.fh.FormBuilder({
       tipo_atividade_id: {default: null},
@@ -54,7 +58,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
       documento_entrega_id: {default: null},
       plano_trabalho_entrega_id: {default: null}
     }, this.cdRef, this.validate);
-    this.join = ["plano_trabalho.tipo_modalidade", "unidade", "plano_trabalho.entregas.plano_entrega_entrega:id,descricao"];
+    this.join = ["unidade", "plano_trabalho.entregas.plano_entrega_entrega:id,descricao"];
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -75,7 +79,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
     formValue.progresso = 100;
     await this.tipoAtividade!.loadSearch(entity.tipo_atividade || formValue.tipo_atividade_id);
     if(entity.unidade_id != this.auth.unidade!.id) {
-      await this.auth.selecionaUnidade(entity.unidade_id);
+      await this.auth.selecionaUnidade(entity.unidade_id, undefined);
     }
     this.entregas = entity.plano_trabalho?.entregas?.map(x => Object.assign({}, {
       key: x.id,
@@ -120,7 +124,7 @@ export class AtividadeFormConcluirComponent extends PageFormBase<Atividade, Ativ
       atividade.descricao_tecnica = this.form!.controls.descricao_tecnica.value;
       atividade.data_arquivamento = this.form!.controls.arquivar.value ? new Date() : null;
       atividade.progresso = this.form!.controls.progresso.value;
-      atividade.produtividade = this.entity?.plano_trabalho?.tipo_modalidade?.atividade_tempo_despendido ? this.calendar.produtividade(atividade.esforco, atividade.tempo_despendido) : null;
+      atividade.produtividade = this.modalidadePgd.atividadeTempoDespendido(this.entity?.plano_trabalho?.modalidade_pgd) ? this.calendar.produtividade(atividade.esforco, atividade.tempo_despendido) : null;
       this.dao!.concluir(atividade).then(saved => resolve(saved)).catch(reject);
     });
   }

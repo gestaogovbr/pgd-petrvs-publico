@@ -8,6 +8,8 @@ import { DialogService } from './dialog.service';
 import { LexicalService } from './lexical.service';
 import { Unidade } from '../models/unidade.model';
 import { Usuario } from '../models/usuario.model';
+import { SiapeBlacklistServidorDaoService } from '../dao/siape-blacklist-servidor-dao.service';
+import { SiapeBlacklistServidor } from '../models/siape-blacklist-servidor.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +20,7 @@ export class IntegranteService {
   public lex: LexicalService;
   public util: UtilService;
   public dialog: DialogService;
+  public siapeBlacklistDao: SiapeBlacklistServidorDaoService;
 
   constructor(public injector: Injector) {
     /* Injections */
@@ -25,6 +28,7 @@ export class IntegranteService {
     this.lex = this.injector.get<LexicalService>(LexicalService);
     this.dialog = this.injector.get<DialogService>(DialogService);
     this.util = this.injector.get<UtilService>(UtilService);
+    this.siapeBlacklistDao = this.injector.get<SiapeBlacklistServidorDaoService>(SiapeBlacklistServidorDaoService);
   }
 
   /**
@@ -185,5 +189,18 @@ export class IntegranteService {
     let base = entityUsuario ? { id: dados.id, unidade_sigla: dados.apelidoOuSigla, unidade_nome: dados.nome, unidade_codigo: dados.codigo } : { id: dados.id, usuario_apelido: dados.apelidoOuSigla, usuario_nome: dados.nome };   
     dados.itens[index!] = this.completarIntegrante(base, entityUsuario ? dados.id : entity.id, entityUsuario ? entity.id : dados.id, atribuicoes); 
     return dados.itens;
+  }
+
+  public async consultarBlacklistCpf(cpf: string): Promise<{ rows: SiapeBlacklistServidor[], matriculas: string[] }> {
+    try {
+      const response = await this.siapeBlacklistDao.queryByCpf(cpf).toPromise();
+      const rows = (response?.rows || []).map((r: any) => new SiapeBlacklistServidor(r));
+      const matriculas = rows
+        .map((r: SiapeBlacklistServidor) => r.matricula)
+        .filter((m: string | undefined) => !!m && !!(m as string).length) as string[];
+      return { rows, matriculas };
+    } catch (e) {
+      return { rows: [], matriculas: [] };
+    }
   }
 }

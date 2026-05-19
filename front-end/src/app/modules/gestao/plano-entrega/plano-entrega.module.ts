@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ComponentsModule } from 'src/app/components/components.module';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { PlanoEntregaRoutingModule } from './plano-entrega-routing.module';
 import { PlanoEntregaListComponent } from './plano-entrega-list/plano-entrega-list.component';
 import { PlanoEntregaFormComponent } from './plano-entrega-form/plano-entrega-form.component';
@@ -20,7 +20,6 @@ import { PlanoEntregaListProgressoComponent } from './plano-entrega-list-progres
 import { PlanoEntregaFormProgressoComponent } from './plano-entrega-form-progresso/plano-entrega-form-progresso.component';
 import { PlanoEntregaEntregasVinculadasComponent } from './plano-entrega-entregas-vinculadas/plano-entrega-entregas-vinculadas.component';
 import { PlanoEntregaEntregaDetalhesComponent } from './plano-entrega-entrega-detalhes/plano-entrega-entrega-detalhes.component';
-import { OrganizationChartModule } from 'primeng/organizationchart';
 import { PlanoEntregaListProdutoComponent } from './plano-entrega-list-produto/plano-entrega-list-produto.component';
 
 
@@ -46,11 +45,10 @@ import { PlanoEntregaListProdutoComponent } from './plano-entrega-list-produto/p
   ],
   imports: [
     CommonModule,
-    ComponentsModule,
+    SharedModule,
     PlanoEntregaRoutingModule,
     PlanejamentoModule,
     CadeiaValorModule,
-    OrganizationChartModule,
     UteisModule
   ]
 })

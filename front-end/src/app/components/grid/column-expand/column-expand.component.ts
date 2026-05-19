@@ -8,15 +8,16 @@ import { ColumnType, GridColumn } from '../grid-column';
 import { GridComponent } from '../grid.component';
 
 @Component({
-  selector: 'column-expand',
-  templateUrl: './column-expand.component.html',
-  styleUrls: ['./column-expand.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]  
+    selector: 'column-expand',
+    templateUrl: './column-expand.component.html',
+    styleUrls: ['./column-expand.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class ColumnExpandComponent extends ComponentBase implements OnInit {
   @Input() column: GridColumn = new GridColumn();

@@ -6,9 +6,10 @@ import { PageBase } from 'src/app/modules/base/page-base';
 import { PlanoEntregaService } from '../../plano-entrega/plano-entrega.service';
 
 @Component({
-  selector: 'atividade-hierarquia',
-  templateUrl: './atividade-hierarquia.component.html',
-  styleUrls: ['./atividade-hierarquia.component.scss']
+    selector: 'atividade-hierarquia',
+    templateUrl: './atividade-hierarquia.component.html',
+    styleUrls: ['./atividade-hierarquia.component.scss'],
+    standalone: false
 })
 export class AtividadeHierarquiaComponent extends PageBase implements OnInit {
   public atividade!: AtividadeHierarquia;

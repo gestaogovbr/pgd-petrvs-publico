@@ -1,16 +1,17 @@
 import {Component, Injector, ViewChild} from "@angular/core";
 import {FormGroup} from "@angular/forms";
 import {GridComponent} from "src/app/components/grid/grid.component";
-import {ToolbarButton} from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import {TenantDaoService} from "src/app/dao/tenant-dao.service";
 import {Tenant} from "src/app/models/tenant.model";
 import {PageListBase} from "src/app/modules/base/page-list-base";
 import {AuthPanelService} from "../../../services/auth-panel.service";
 
 @Component({
-	selector: "app-panel-list",
-	templateUrl: "./panel-list.component.html",
-	styleUrls: ["./panel-list.component.scss"],
+    selector: "app-panel-list",
+    templateUrl: "./panel-list.component.html",
+    styleUrls: ["./panel-list.component.scss"],
+    standalone: false
 })
 export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 	@ViewChild(GridComponent, {static: false}) public grid?: GridComponent;
@@ -63,16 +64,10 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			onClick: this.forcarSiape.bind(this),
 		});
 		this.options.push({
-			icon: "bi bi-exclamation-octagon-fill",
-			label: "Forçar Envio",
-			onClick: this.forcarEnvio.bind(this),
-		});
-		this.options.push({
 			icon: "bi bi-trash",
 			label: "Excluir",
 			onClick: this.deleteTenant.bind(this),
 		});
-
 		this.options.push({
 			icon: "bi bi-database-fill-gear",
 			label: "Executar Seeder",
@@ -150,6 +145,9 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 	private UsersInPGD(): Promise<void> {
 		return this.dao!.countUsersInPGD().then((count) => {
 			this.countUsersInPGD = count;
+		}).catch((error) => {
+			this.error('Erro ao buscar usuários no PGD');
+			this.countUsersInPGD = -1;
 		});
 	}
 

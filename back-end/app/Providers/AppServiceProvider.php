@@ -7,23 +7,40 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\SolucaoController;
 use App\Http\Controllers\TipoClienteController;
-use App\Models\TipoCliente;
+use App\Models\Avaliacao;
+use App\Models\PlanoEntrega;
+use App\Models\PlanoEntregaEntrega;
+use App\Models\PlanoEntregaEntregaProgresso;
+use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\PlanoTrabalhoEntrega;
+use App\Models\StatusJustificativa;
+use App\Models\Usuario;
+use App\Observers\AvaliacaoObserver;
+use App\Observers\PlanoEntregaEntregaObserver;
+use App\Observers\PlanoEntregaEntregaProgressoObserver;
+use App\Observers\PlanoEntregaObserver;
+use App\Observers\PlanoTrabalhoConsolidacaoObserver;
+use App\Observers\PlanoTrabalhoEntregaObserver;
+use App\Observers\PlanoTrabalhoObserver;
+use App\Observers\StatusJustificativaObserver;
+use App\Observers\UsuarioObserver;
 use App\Services\Validador\ClienteValidador;
 use App\Services\Validador\IValidador;
 use App\Services\Validador\ProdutoClienteValidador;
-use App\Services\Validador\ProdutoClienteValidation;
-use App\Services\Validador\ProdutoProcessoCadeiaValorValidation;
 use App\Services\Validador\ProdutoInsumoValidation;
+use App\Services\Validador\ProdutoProcessoCadeiaValorValidation;
 use App\Services\Validador\ProdutoSolucaoValidador;
 use App\Services\Validador\ProdutoValidador;
 use App\Services\Validador\SolucaoValidador;
 use App\Services\Validador\TipoClienteValidador;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\ServiceProvider;
 use Stancl\Tenancy\Database\Models\Domain;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -80,11 +97,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         URL::forceScheme('https');
-        if($this->app->environment('APP_ENV') == 'local') {
+        /*if(env('APP_ENV') == 'local') {
             DB::listen(function ($query) {
-                Log::info($query->sql, $query->bindings, $query->time);
+                Log::info($query->sql, ['bindings' => $query->bindings, 'time' => $query->time]);
             });
-        }
+        }*/
 
         Domain::saved(function (Domain $domain) {
             Cache::forget('domain:tenant_id:'.$domain->tenant_id);
@@ -94,5 +111,15 @@ class AppServiceProvider extends ServiceProvider
             Cache::forget('domain:tenant_id:'.$domain->tenant_id);
             Cache::forget('domain:domain:'.$domain->domain);
         });
+
+        Usuario::observe(UsuarioObserver::class);
+        PlanoEntrega::observe(PlanoEntregaObserver::class);
+        PlanoEntregaEntrega::observe(PlanoEntregaEntregaObserver::class);
+        PlanoEntregaEntregaProgresso::observe(PlanoEntregaEntregaProgressoObserver::class);
+        //StatusJustificativa::observe(StatusJustificativaObserver::class);
+        PlanoTrabalho::observe(PlanoTrabalhoObserver::class);
+        PlanoTrabalhoEntrega::observe(PlanoTrabalhoEntregaObserver::class);
+        \App\Models\PlanoTrabalhoConsolidacao::observe(PlanoTrabalhoConsolidacaoObserver::class);
+
     }
 }

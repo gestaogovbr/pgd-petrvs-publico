@@ -1,7 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
@@ -33,9 +33,10 @@ import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 
 @Component({
-  selector: 'plano-entrega-form-entrega',
-  templateUrl: './plano-entrega-form-entrega.component.html',
-  styleUrls: ['./plano-entrega-form-entrega.component.scss']
+    selector: 'plano-entrega-form-entrega',
+    templateUrl: './plano-entrega-form-entrega.component.html',
+    styleUrls: ['./plano-entrega-form-entrega.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaEntrega, PlanoEntregaEntregaDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

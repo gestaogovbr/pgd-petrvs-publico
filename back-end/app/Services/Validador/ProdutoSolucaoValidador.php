@@ -19,6 +19,9 @@ class ProdutoSolucaoValidador extends BaseValidador
         if(empty($produtosSolucoes)){
             return [];
         }
+
+        $validated = [];
+
         foreach ($produtosSolucoes as $produtoSolucao) {
             $validator = Validator::make(
                 $produtoSolucao,
@@ -27,7 +30,7 @@ class ProdutoSolucaoValidador extends BaseValidador
                 ],
                 [
                     'solucao_id.required' => 'O campo solução é obrigatório.',
-                    'solucao_id.uuid' => 'O campo solução deve ser um UUID válido.',
+                    'solucao_id.uuid' => 'O valor informado para a solução é inválido.',
                     'solucao_id.exists' => 'A solução informada não foi encontrada.',
                 ]
             );
@@ -35,13 +38,10 @@ class ProdutoSolucaoValidador extends BaseValidador
             if ($validator->fails()) {
                 throw new ValidationException($validator);
             }
+
+            $validated[] = $validator->validated();
         }
 
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        return $validator->validated();
+        return $validated;
     }
 }

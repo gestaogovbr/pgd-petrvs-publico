@@ -2,9 +2,10 @@ import { Component, ContentChildren, OnInit, QueryList } from '@angular/core';
 import { ColumnComponent } from '../column/column.component';
 
 @Component({
-  selector: 'columns',
-  templateUrl: './columns.component.html',
-  styleUrls: ['./columns.component.scss']
+    selector: 'columns',
+    templateUrl: './columns.component.html',
+    styleUrls: ['./columns.component.scss'],
+    standalone: false
 })
 export class ColumnsComponent implements OnInit {
   @ContentChildren(ColumnComponent, { descendants: true }) columnsRef?: QueryList<ColumnComponent>;

@@ -1,9 +1,36 @@
-<ng-scrollbar autoHeightDisabled="false" track="all">
-  <div class="my-3">
-    <p-organizationChart [value]="data" (onNodeExpand)="expandeUnidade($event)">
-      <ng-template let-node pTemplate="unidade">
-        <div class="font-bold">{{ node.label }}</div>
-      </ng-template>
-    </p-organizationChart>
+<div class="tree-container my-4 overflow-auto">
+  <div class="tree">
+      <ul>
+          <ng-container *ngFor="let node of data">
+              <ng-container *ngTemplateOutlet="recursiveNode; context:{ $implicit: node }"></ng-container>
+          </ng-container>
+      </ul>
   </div>
-</ng-scrollbar>
+</div>
+
+<ng-template #recursiveNode let-node>
+  <li>
+      <div class="node-content shadow-sm" 
+           [class.bg-primary]="node.styleClass?.includes('primary')" 
+           [class.text-white]="node.styleClass?.includes('primary')"
+           (click)="toggle($event, node)"
+           role="button">
+           <div class="fw-bold">
+               {{ node.label }}
+               <i *ngIf="node.children && node.children.length" 
+                  class="bi ms-2" 
+                  [class.bi-chevron-down]="node.expanded" 
+                  [class.bi-chevron-right]="!node.expanded"></i>
+           </div>
+           <small *ngIf="node.data?.hint" [class.text-white-50]="node.styleClass?.includes('primary')" [class.text-muted]="!node.styleClass?.includes('primary')">
+               {{ node.data.hint }}
+           </small>
+      </div>
+      
+      <ul *ngIf="node.expanded && node.children && node.children.length">
+          <ng-container *ngFor="let child of node.children">
+              <ng-container *ngTemplateOutlet="recursiveNode; context:{ $implicit: child }"></ng-container>
+          </ng-container>
+      </ul>
+  </li>
+</ng-template>

@@ -9,8 +9,8 @@ import {
 import { ComponentBase } from '../component-base';
 
 @Component({
-  selector: 'double-scrollbar',
-  template: ` <div
+    selector: 'double-scrollbar',
+    template: ` <div
       style="overflow-y:hidden"
       [ngStyle]="{ height: nativeScrollBarHeight }"
     >
@@ -41,7 +41,8 @@ import { ComponentBase } from '../component-base';
     >
       <ng-content></ng-content>
     </div>`,
-  styles: [],
+    styles: [],
+    standalone: false
 })
 export class DoubleScrollbarComponent extends ComponentBase implements OnInit {
   constructor(public injector: Injector) {

@@ -246,7 +246,7 @@ class UsuarioController extends ControllerBase
     {
         try {
             $data = $request->validate([
-                'cpf' => ['required', 'string', 'size:11']
+                'cpf' => ['required', 'string']
             ]);
 
             $usuarios = $this->service->matriculas($data['cpf']);
@@ -275,7 +275,7 @@ class UsuarioController extends ControllerBase
                 'usuario_id' => ['required', 'uuid'],
                 'justificativa' => ['required', 'string'],
             ])->validate();
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $this->service->ativarTemporariamente($validated)
@@ -288,12 +288,12 @@ class UsuarioController extends ControllerBase
             return response()->json(['error' => "Codigo " . $dataError['code'] . ": Ocorreu um erro inesperado."]);
         }
     }
-    
+
     public function unidadesVinculadas(Request $request)
     {
         try {
             $data = $request->validate([
-                'cpf' => ['required', 'string', 'size:11']
+                'cpf' => ['required', 'string']
             ]);
 
             $unidades = $this->service->unidadesVinculadas($data['cpf']);

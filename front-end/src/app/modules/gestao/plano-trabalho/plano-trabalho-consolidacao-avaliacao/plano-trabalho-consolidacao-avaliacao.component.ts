@@ -1,6 +1,7 @@
 import { Component, Injector, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { GridComponent, GridGroupSeparator } from 'src/app/components/grid/grid.component';
+import { GridComponent } from 'src/app/components/grid/grid.component';
+import { GridGroupSeparator } from 'src/app/components/grid/grid-types';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
@@ -11,16 +12,18 @@ import { Base } from 'src/app/models/base.model';
 import { TipoAvaliacao } from 'src/app/models/tipo-avaliacao.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { AvaliacaoDaoService } from 'src/app/dao/avaliacao-dao.service';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PlanoTrabalhoService } from '../plano-trabalho.service';
 import { Programa } from 'src/app/models/programa.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 import { UnidadeService } from 'src/app/services/unidade.service';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 
 @Component({
-  selector: 'app-plano-trabalho-consolidacao-avaliacao',
-  templateUrl: './plano-trabalho-consolidacao-avaliacao.component.html',
-  styleUrls: ['./plano-trabalho-consolidacao-avaliacao.component.scss']
+    selector: 'app-plano-trabalho-consolidacao-avaliacao',
+    templateUrl: './plano-trabalho-consolidacao-avaliacao.component.html',
+    styleUrls: ['./plano-trabalho-consolidacao-avaliacao.component.scss'],
+    standalone: false
 })
 
 export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoDaoService> {
@@ -30,6 +33,7 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public avaliacaoDao: AvaliacaoDaoService;
   public planoTrabalhoService: PlanoTrabalhoService;
   public unidadeService: UnidadeService;
+  public modalidadePgd: ModalidadePgdService;
   public extraJoin: string[];
   public extra: any;
 
@@ -43,11 +47,12 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   constructor(public injector: Injector) {
     super(injector, PlanoTrabalhoConsolidacao, PlanoTrabalhoConsolidacaoDaoService);
     this.unidadeService = injector.get<UnidadeService>(UnidadeService);
+    this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
     /* Inicializações */
     this.join = [
       "avaliacoes:id,recurso",
       "avaliacao", // "avaliacao.tipoAvaliacao.notas"
-      "plano_trabalho:id", // "planoTrabalho.unidade:id,sigla,nome", "planoTrabalho.unidade.gestor:id,unidade_id,usuario_id", "planoTrabalho.unidade.gestorSubstituto:id,unidade_id,usuario_id", "planoTrabalho.tipoModalidade:id,nome", "planoTrabalho.usuario:id,nome,apelido,url_foto"
+      "plano_trabalho:id",
     ];
     this.extraJoin = [ // Utilizado pelo RefreshId
       "avaliacao.tipoAvaliacao.notas",
@@ -56,7 +61,6 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
       "planoTrabalho.unidade.unidadePai.gestoresSubstitutos:id,unidade_id,usuario_id", 
       "planoTrabalho.unidade.unidadePai.gestor:id,unidade_id,usuario_id", 
       "planoTrabalho.unidade.gestoresSubstitutos:id,unidade_id,usuario_id", 
-      "planoTrabalho.tipoModalidade:id,nome", 
       "planoTrabalho.usuario:id,nome,apelido,foto_perfil,url_foto"
     ];
 
@@ -134,11 +138,19 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
         let plano = p as PlanoTrabalho;
         plano.programa = this.programas?.find((x: Programa) => x.id == plano.programa_id);
       });
-      rows?.forEach(v => {
-        let consolidacao = v as PlanoTrabalhoConsolidacao;
-        consolidacao.plano_trabalho = this.planos_trabalhos?.find((x: PlanoTrabalho) => x.id == consolidacao.plano_trabalho_id);
-        if(consolidacao.avaliacao) consolidacao.avaliacao.tipo_avaliacao = this.extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == consolidacao.avaliacao!.tipo_avaliacao_id);
-      });
+      if (rows) {
+        for (let i = rows.length - 1; i >= 0; i--) {
+          const consolidacao = rows[i] as PlanoTrabalhoConsolidacao;
+          consolidacao.plano_trabalho = this.planos_trabalhos?.find((x: PlanoTrabalho) => x.id == consolidacao.plano_trabalho_id);
+          if (!consolidacao.plano_trabalho) {
+            rows.splice(i, 1);
+            continue;
+          }
+          if (consolidacao.avaliacao) {
+            consolidacao.avaliacao.tipo_avaliacao = this.extra?.tipos_avaliacoes?.find((x: TipoAvaliacao) => x.id == consolidacao.avaliacao!.tipo_avaliacao_id);
+          }
+        }
+      }
     }
   }
 
@@ -152,7 +164,6 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
   public dynamicButtons(row: any): ToolbarButton[] {
     let result: ToolbarButton[] = [];
     let consolidacao: PlanoTrabalhoConsolidacao = row as PlanoTrabalhoConsolidacao;
-   
     let programa: Programa = consolidacao.plano_trabalho!.programa!;
     let isAvaliador: boolean = false;
     const usuarioId = consolidacao.plano_trabalho!.usuario_id;
@@ -240,4 +251,3 @@ export class PlanoTrabalhoConsolidacaoAvaliacaoComponent extends PageListBase<Pl
     }[status]
   }
 }
-

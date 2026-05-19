@@ -232,6 +232,10 @@
     .border {
         border: var(--bs-border-width) var(--bs-border-style) #13162d !important;
     }
+
+    .header-eixo {
+      background-color: #dddddd !important;
+    }
   }
 
   &[data-bs-theme="light"] {
@@ -252,25 +256,92 @@
       background-color: var(--petrvs-form-control-background);
     }
 
+    .header-eixo {
+      background-color: #dddddd !important;
+    }
+
   }
 
   &[data-bs-theme="dark"] {
-    --petrvs-navbar-top-bg-color: #1b1f23;
-    --petrvs-navbar-vertical-border-color: #0c0f12;
-    --petrvs-nav-link-bg-hover: #111212;
-    --petrvs-nav-link-bg-active: #111212;
-    --petrvs-box-background: #1b1f23;
+    // ── PETRVS vars ──────────────────────────────────────
+    --petrvs-navbar-top-bg-color: #161b22;
+    --petrvs-navbar-vertical-border-color: #30363d;
+    --petrvs-nav-link-bg-hover: #21262d;
+    --petrvs-nav-link-bg-active: #21262d;
+    --petrvs-nav-link-color: #e6edf3;
+    --petrvs-navbar-brand-color: #fec803;
+    --petrvs-border-color-dropdown: #30363d;
+    --petrvs-form-control-background: #21262d;
+    --petrvs-box-background: #161b22;
 
+    // ── Bootstrap dark overrides ─────────────────────────
+    --bs-body-bg: #0d1117;
+    --bs-body-color: #e6edf3;
+    --bs-border-color: #30363d;
+    --bs-secondary-bg: #161b22;
+    --bs-tertiary-bg: #1e2128;
+    --bs-emphasis-color: #f0f6fc;
+    --bs-heading-color: #f0f6fc;
+    --bs-nav-link-color: #e6edf3;
+    --bs-dropdown-link-color: #e6edf3;
+
+    // ── GovBR DS token overrides ─────────────────────────
+    --background: #0d1117;
+    --background-light: #0d1117;
+    --color: #e6edf3;
+    --color-light: #e6edf3;
+    --interactive: #388bfd;
+    --interactive-light: #388bfd;
+    --border-color: #30363d;
+    --color-secondary-01: #0d1117;
+    --color-secondary-02: #161b22;
+    --color-secondary-03: #21262d;
+    --color-secondary-04: #30363d;
+    --color-secondary-05: #484f58;
+    --color-secondary-06: #6e7681;
+    --color-secondary-07: #8b949e;
+    --color-secondary-08: #c9d1d9;
+    --color-secondary-09: #f0f6fc;
+    --focus-color: var(--focus-color-dark);
+    --visited: var(--visited-dark);
+    --hover: var(--hover-dark);
+    --pressed: var(--pressed-dark);
+    --background-alternative: #21262d;
+
+    // ── GovBR DS component overrides ────────────────────
+    .br-header {
+      background: var(--petrvs-navbar-top-bg-color) !important;
+      color: var(--color) !important;
+      border-bottom: 1px solid var(--bs-border-color);
+
+      .br-button {
+        color: var(--color) !important;
+      }
+    }
+
+    .br-card {
+      background: var(--bs-tertiary-bg) !important;
+      color: var(--color) !important;
+    }
+
+    br-modal, br-scrim {
+      --background: var(--bs-secondary-bg);
+      --color: var(--bs-body-color);
+      --border-color: var(--bs-border-color);
+      --color-secondary-04: var(--bs-border-color);
+    }
+
+    // ── Bootstrap component overrides ───────────────────
     .btn-light {
-      --bs-btn-bg: var(--bs-body-bg);
+      --bs-btn-bg: var(--bs-secondary-bg);
       --bs-btn-border-color: var(--bs-border-color);
       --bs-btn-color: var(--bs-body-color);
       color: var(--bs-body-color) !important;
-      background-color: var(--bs-body-bg) !important;
+      background-color: var(--bs-secondary-bg) !important;
 
       &:hover, &:active {
-        background-color: var(--bs-body-bg);
-        border-color:  var(--bs-border-color);
+        background-color: var(--bs-tertiary-bg);
+        border-color: var(--bs-border-color);
         color: var(--bs-body-color) !important;
       }
       &:disabled {
@@ -282,6 +353,126 @@
       color: var(--bs-body-color) !important;
     }
 
+    .navbar {
+      .dropdown-menu {
+        --bs-dropdown-bg: var(--petrvs-navbar-top-bg-color);
+        .card {
+          background-color: var(--petrvs-navbar-top-bg-color);
+        }
+        .dropdown-item {
+          color: var(--bs-nav-link-color);
+          &:hover {
+            background-color: var(--petrvs-nav-link-bg-active);
+          }
+        }
+      }
+    }
+
+    .header-eixo {
+      background-color: #21262d !important;
+    }
+
+    .modal {
+      --bs-modal-bg: var(--bs-secondary-bg);
+      --bs-modal-border-color: var(--bs-border-color);
+      --bs-modal-color: var(--bs-body-color);
+    }
+
+    .form-control, .form-select {
+      background-color: var(--petrvs-form-control-background);
+      border-color: var(--bs-border-color);
+      color: var(--bs-body-color);
+
+      &:focus {
+        background-color: var(--petrvs-form-control-background);
+        color: var(--bs-body-color);
+      }
+    }
+
+    .card {
+      --bs-card-bg: var(--bs-tertiary-bg);
+      --bs-card-border-color: var(--bs-border-color);
+      color: var(--bs-body-color);
+    }
+
+    .table {
+      --bs-table-bg: transparent;
+      --bs-table-border-color: var(--bs-border-color);
+      color: var(--bs-body-color);
+    }
+
+    .list-group-item {
+      --bs-list-group-bg: var(--bs-secondary-bg);
+      --bs-list-group-border-color: var(--bs-border-color);
+      --bs-list-group-color: var(--bs-body-color);
+    }
+
+    .nav-link {
+      color: var(--bs-nav-link-color);
+
+      &:hover {
+        background-color: var(--petrvs-nav-link-bg-hover);
+      }
+    }
+
+    input:read-only,
+    input:disabled,
+    textarea:read-only,
+    button:disabled {
+      background-color: var(--bs-tertiary-bg) !important;
+    }
+
+    .badge.bg-secondary {
+      background-color: var(--bs-tertiary-bg) !important;
+      color: var(--bs-body-color) !important;
+    }
+
+    // ── GovBR DS table overrides ─────────────────────────
+    .br-table {
+      thead tr, .table-header {
+        background-color: var(--bs-tertiary-bg) !important;
+        color: var(--bs-body-color) !important;
+      }
+
+      th, td {
+        border-color: var(--bs-border-color) !important;
+        color: var(--bs-body-color) !important;
+      }
+
+      tr:hover td {
+        background-color: var(--bs-secondary-bg) !important;
+      }
+    }
+
+    // ── GovBR DS color utilities ─────────────────────────
+    .bg-gray-2, .bg-gray-5, .bg-gray-10, .bg-gray-20 {
+      background-color: var(--bs-tertiary-bg) !important;
+      color: var(--bs-body-color) !important;
+    }
+
+    // ── v2 app-shell: menu lateral ───────────────────────
+    .br-menu {
+      .menu-container {
+        background: var(--bs-secondary-bg) !important;
+        color: var(--bs-body-color) !important;
+      }
+
+      ul, li {
+        background: transparent !important;
+      }
+
+      .menu-item {
+        color: var(--bs-body-color) !important;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.07) !important;
+        }
+      }
+    }
+
+    .perfil-panel.br-card {
+      background: var(--bs-tertiary-bg) !important;
+    }
   }
 
   .textValue {
@@ -388,17 +579,6 @@ body {
 }
 
 
-.p-organizationchart .p-organizationchart-line-down {
-  margin: 0 auto;
-}
-.p-organizationchart-node-content .p-node-toggler .p-node-toggler-icon {
-  vertical-align: inherit;
-}
-
-.p-organizationchart-table>tbody>tr>td {
-  border-width: 1px !important;
-  border-style: revert-layer !important;
-}
 
 .p-treeselect {
   display: flex;
@@ -445,4 +625,8 @@ body {
     visibility: visible !important;
     overflow: visible !important; /* Remove scrollbar for printing. */
    }
+}
+
+.white-space {
+  white-space: pre-wrap;
 }

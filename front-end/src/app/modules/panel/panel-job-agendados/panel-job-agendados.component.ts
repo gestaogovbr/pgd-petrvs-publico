@@ -8,9 +8,10 @@ import { FormGroup } from "@angular/forms";
 import { isValidCron } from 'cron-validator';
 
 @Component({
-  selector: 'app-panel-job-agendados',
-  templateUrl: './panel-job-agendados.component.html',
-  styleUrls: ['./panel-job-agendados.component.scss']
+    selector: 'app-panel-job-agendados',
+    templateUrl: './panel-job-agendados.component.html',
+    styleUrls: ['./panel-job-agendados.component.scss'],
+    standalone: false
 })
 export class JobAgendadoComponent extends PageListBase<Tenant, TenantDaoService> {
   jobs: JobAgendado[] = [];

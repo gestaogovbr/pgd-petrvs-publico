@@ -10,9 +10,10 @@ import { InputSearchComponent } from 'src/app/components/input/input-search/inpu
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
-  selector: 'app-cadeia-valor-form',
-  templateUrl: './cadeia-valor-form.component.html',
-  styleUrls: ['./cadeia-valor-form.component.scss']
+    selector: 'app-cadeia-valor-form',
+    templateUrl: './cadeia-valor-form.component.html',
+    styleUrls: ['./cadeia-valor-form.component.scss'],
+    standalone: false
 })
 export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaValorDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
@@ -68,12 +69,11 @@ export class CadeiaValorFormComponent extends PageFormBase<CadeiaValor, CadeiaVa
 
   public async saveData(form: IIndexable): Promise<CadeiaValor> {
     return new Promise<CadeiaValor>((resolve, reject) => {
-      this.processos!.grid!.confirm();
+     // this.processos!.grid!.confirm();
       let cadeiaValor = this.util.fill(new CadeiaValor(), this.entity!);
       this.form!.value.entidade_id = this.auth.entidade?.id
       //this.form!.value.unidade_id = this.auth.unidade?.id
       cadeiaValor = this.util.fillForm(cadeiaValor, this.form!.value);
-      cadeiaValor.processos = this.processos!.items;
       resolve(cadeiaValor);
     });
   }

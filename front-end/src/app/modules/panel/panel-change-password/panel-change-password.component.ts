@@ -10,9 +10,10 @@ import { AuthPanelService } from "src/app/services/auth-panel.service";
 import { Modal } from "bootstrap";
 
 @Component({
-  selector: 'panel-change-password',
-  templateUrl: './panel-change-password.component.html',
-  styleUrls: ['./panel-change-password.component.scss']
+    selector: 'panel-change-password',
+    templateUrl: './panel-change-password.component.html',
+    styleUrls: ['./panel-change-password.component.scss'],
+    standalone: false
 })
 export class PanelChangePasswordComponent extends PageFormBase<UserPanel, UsersPanelDaoService> {
   public editableForm?: EditableFormComponent | undefined;

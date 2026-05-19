@@ -7,9 +7,10 @@ export type ColunaTipo = {
 }
 
 @Component({
-  selector: 'app-colunas',
-  templateUrl: './colunas.component.html',
-  styleUrls: ['./colunas.component.scss']
+    selector: 'app-colunas',
+    templateUrl: './colunas.component.html',
+    styleUrls: ['./colunas.component.scss'],
+    standalone: false
 })
 export class ColunasComponent extends PageFrameBase {
   @Input() colunas: ColunaTipo[] = [];

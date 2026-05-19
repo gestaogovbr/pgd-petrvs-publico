@@ -3,15 +3,16 @@ import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from
 import { InputBase, LabelPosition } from '../input-base';
 
 @Component({
-  selector: 'input-textarea',
-  templateUrl: './input-textarea.component.html',
-  styleUrls: ['./input-textarea.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-textarea',
+    templateUrl: './input-textarea.component.html',
+    styleUrls: ['./input-textarea.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputTextareaComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';

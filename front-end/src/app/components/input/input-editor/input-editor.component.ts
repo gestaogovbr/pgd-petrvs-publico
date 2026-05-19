@@ -6,21 +6,20 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { Editor, EditorEvent, RawEditorOptions } from 'tinymce';
 import { InputBase, LabelPosition } from "../input-base";
 import { TemplateDataset, TemplateService, VariableTemplate } from 'src/app/modules/uteis/templates/template.service';
-import { LookupItem, LookupService } from 'src/app/services/lookup.service';
-import { TreeNode } from 'primeng/api';
-import { TreeNodeSelectEvent } from 'primeng/tree';
+import { LookupItem, LookupService, LookupTreeNode } from 'src/app/services/lookup.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 
 @Component({
-  selector: 'input-editor',
-  templateUrl: './input-editor.component.html',
-  styleUrls: ['./input-editor.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-editor',
+    templateUrl: './input-editor.component.html',
+    styleUrls: ['./input-editor.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputEditorComponent extends InputBase implements OnInit {
   @ViewChild('helpTemplate') helpTemplate?: TemplateRef<any>;
@@ -217,7 +216,8 @@ export class InputEditorComponent extends InputBase implements OnInit {
   };
 
   public listas: LookupItem[] = [];
-  public variaveis: TreeNode[] = [];
+  public variaveis: LookupTreeNode<{ path: string }>[] = [];
+  public variaveisSelectOptions: Array<{ node: LookupTreeNode<{ path: string }>; label: string }> = [];
   public tipoComparadorUm: string | null = '';
   public tipoComparadorDois: string | null = '';
 
@@ -243,7 +243,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
   private _variables: VariableTemplate[] = [];  
   public operatorForm: FormGroup;
   public blockForForm: FormGroup;
-  public selectedVariable!: TreeNode;
+  public selectedVariable?: LookupTreeNode<{ path: string }>;
   public expressaoIf: string = "{{if}}{{end-if}}"
   public expressaoFor: string = "{{for}}{{end-for}}"
   
@@ -258,9 +258,9 @@ export class InputEditorComponent extends InputBase implements OnInit {
     this.operatorForm = this.fb.group({
       operador: [''],
       comparadorUmTipo: ['', [Validators.required]],
-      comparadorUmValor: [''],
+      comparadorUmValor: [null],
       comparadorDoisTipo: ['', [Validators.required]],
-      comparadorDoisValor: [''],
+      comparadorDoisValor: [null],
     }, this.cdRef);
 
     this.blockForForm = this.fb.group({
@@ -356,7 +356,10 @@ export class InputEditorComponent extends InputBase implements OnInit {
 
   ngOnInit(): void {
     super.ngOnInit();    
-    if(this.dataset) this.variaveis = this.convertArrayToTreeNodes(this.dataset)
+    if (this.dataset) {
+      this.variaveis = this.convertArrayToTreeNodes(this.dataset);
+      this.rebuildVariaveisSelectOptions();
+    }
   }
 
   ngAfterViewInit() {
@@ -393,16 +396,18 @@ export class InputEditorComponent extends InputBase implements OnInit {
   }
 
   getVariableString(): string {
-    return this.selectedVariable ? `{{${this.selectedVariable.data?.path}}}` : '';
+    return this.selectedVariable?.data?.path ? `{{${this.selectedVariable.data.path}}}` : '';
   }
 
   insertVariable() {
+    if (!this.selectedVariable?.data?.path) return;
     this.editor?.insertContent(`{{${this.selectedVariable.data.path}}}`); 
     this.dialog.close();   
   }
 
-  nodeSelect(event: any) {
-    this.selectedVariable = event.node
+  public onVariableClick(node: LookupTreeNode<{ path: string }>) {
+    if (!node.selectable) return;
+    this.selectedVariable = node;
   }
 
   insertBlockFor(){
@@ -415,9 +420,9 @@ export class InputEditorComponent extends InputBase implements OnInit {
     this.dialog.close();   
   }
   
-  convertToTreeNode(templateDataset: TemplateDataset, parentPath?: string): TreeNode {
+  convertToTreeNode(templateDataset: TemplateDataset, parentPath?: string): LookupTreeNode<{ path: string }> {
     const currentPath = parentPath ? parentPath + "." + templateDataset.field : templateDataset.field;
-    const treeNode: TreeNode = {
+    const treeNode: LookupTreeNode<{ path: string }> = {
       label: templateDataset.label,
       data: {path: currentPath},
       type: templateDataset.type,
@@ -434,7 +439,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
     return treeNode;
   }
 
-  convertArrayToTreeNodes(templateDatasets: TemplateDataset[], parentPath?: string): TreeNode[] {
+  convertArrayToTreeNodes(templateDatasets: TemplateDataset[], parentPath?: string): LookupTreeNode<{ path: string }>[] {
     return templateDatasets.map(dataset => this.convertToTreeNode(dataset, parentPath));
   }
 
@@ -443,8 +448,20 @@ export class InputEditorComponent extends InputBase implements OnInit {
     if(comparador == 2) this.tipoComparadorDois = this.operatorForm.controls.comparadorDoisTipo.value;
   }
 
-  selectVariable(event: TreeNodeSelectEvent, input: number){
-    if(input == 1) this.operatorForm.controls.comparadorUmValor.patchValue(event.node);
-    if(input == 2) this.operatorForm.controls.comparadorDoisValor.patchValue(event.node);     
+  private rebuildVariaveisSelectOptions() {
+    const options: Array<{ node: LookupTreeNode<{ path: string }>; label: string }> = [];
+
+    const walk = (nodes: LookupTreeNode<{ path: string }>[], level: number) => {
+      for (const node of nodes) {
+        const prefix = level > 0 ? `${'— '.repeat(level)}` : '';
+        const label = `${prefix}${node.label || ''}`.trim();
+        if (node.selectable) options.push({ node, label });
+        const children = (node.children || []) as LookupTreeNode<{ path: string }>[];
+        if (children.length) walk(children, level + 1);
+      }
+    };
+
+    walk(this.variaveis, 0);
+    this.variaveisSelectOptions = options;
   }
 }

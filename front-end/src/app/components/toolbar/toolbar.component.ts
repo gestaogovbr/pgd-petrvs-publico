@@ -4,35 +4,13 @@ import { FullRoute, NavigateService, RouteMetadata } from 'src/app/services/navi
 import { UtilService } from 'src/app/services/util.service';
 import { ComponentBase } from '../component-base';
 import { GlobalsService } from 'src/app/services/globals.service';
-
-export type ToolbarButton = {
-  id?: string,
-  divider?: boolean,
-  route?: FullRoute,
-  metadata?: RouteMetadata,
-  class?: string,
-  icon?: string,
-  img?: string,
-  disabled?: boolean | (() => boolean),
-  iconChar?: string, 
-  color?: string,
-  label?: string,
-  hint?: string,
-  running?: boolean,
-  toggle?: boolean,
-  badge?: string,
-  pressed?: boolean | ((button: ToolbarButton) => boolean),
-  items?: ToolbarButton[],
-  hidden?: boolean,
-  dynamicItems?: (...args: any[]) => ToolbarButton[] | undefined,
-  dynamicVisible?: (...args: any[]) => boolean,
-  onClick?: (...args: any[]) => any
-}
+import { ToolbarButton } from './toolbar-types';
 
 @Component({
-  selector: 'toolbar',
-  templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.scss']
+    selector: 'toolbar',
+    templateUrl: './toolbar.component.html',
+    styleUrls: ['./toolbar.component.scss'],
+    standalone: false
 })
 export class ToolbarComponent extends ComponentBase implements OnInit {
   @Input() icon: string = "";

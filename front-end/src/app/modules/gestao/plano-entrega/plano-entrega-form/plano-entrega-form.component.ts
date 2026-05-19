@@ -5,7 +5,7 @@ import { GridComponent } from 'src/app/components/grid/grid.component';
 import { InputDatetimeComponent } from 'src/app/components/input/input-datetime/input-datetime.component';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { InputTextComponent } from 'src/app/components/input/input-text/input-text.component';
-import { ToolbarButton } from 'src/app/components/toolbar/toolbar.component';
+import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { CadeiaValorDaoService } from 'src/app/dao/cadeia-valor-dao.service';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
 import { PlanoEntregaDaoService } from 'src/app/dao/plano-entrega-dao.service';
@@ -23,9 +23,10 @@ import { InputSelectComponent } from 'src/app/components/input/input-select/inpu
 import { ProgramaService } from 'src/app/services/programa.service';
 
 @Component({
-  selector: 'app-plano-entrega-form',
-  templateUrl: './plano-entrega-form.component.html',
-  styleUrls: ['./plano-entrega-form.component.scss']
+    selector: 'app-plano-entrega-form',
+    templateUrl: './plano-entrega-form.component.html',
+    styleUrls: ['./plano-entrega-form.component.scss'],
+    standalone: false
 })
 
 export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoEntregaDaoService> {

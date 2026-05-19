@@ -6,9 +6,10 @@ import { Feriado } from 'src/app/models/feriado.model';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 
 @Component({
-  selector: 'app-feriado-list',
-  templateUrl: './feriado-list.component.html',
-  styleUrls: ['./feriado-list.component.scss']
+    selector: 'app-feriado-list',
+    templateUrl: './feriado-list.component.html',
+    styleUrls: ['./feriado-list.component.scss'],
+    standalone: false
 })
 export class FeriadoListComponent extends PageListBase<Feriado, FeriadoDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

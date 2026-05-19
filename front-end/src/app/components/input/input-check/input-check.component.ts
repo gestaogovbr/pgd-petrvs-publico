@@ -4,15 +4,16 @@ import { LookupItem } from 'src/app/services/lookup.service';
 import { InputBase, LabelPosition } from '../input-base';
 
 @Component({
-  selector: 'input-check',
-  templateUrl: './input-check.component.html',
-  styleUrls: ['./input-check.component.scss'],
-  viewProviders: [
-    {
-      provide: ControlContainer,
-      useExisting: FormGroupDirective
-    }
-  ]
+    selector: 'input-check',
+    templateUrl: './input-check.component.html',
+    styleUrls: ['./input-check.component.scss'],
+    viewProviders: [
+        {
+            provide: ControlContainer,
+            useExisting: FormGroupDirective
+        }
+    ],
+    standalone: false
 })
 export class InputCheckComponent extends InputBase implements OnInit {
   @HostBinding('class') class = 'form-group';

@@ -1,0 +1,541 @@
+pipeline {
+    agent { label 'docker' }
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
+
+    environment {
+        NODE_VERSION = '20'
+        DOCKER_HUB_USERNAME = 'segescginf'
+    }
+
+    stages {
+        stage('Checkout') {
+            when {
+                anyOf {
+                    branch 'dataprev_dsv'
+                    branch 'dataprev_producao'
+                }
+            }
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Show Context') {
+            steps {
+                sh '''
+                echo "=== USER / HOST ==="
+                whoami
+                hostname
+                pwd
+
+                echo "=== PATH ==="
+                echo "$PATH"
+
+                echo "=== NODE / NPM ==="
+                which node || true
+                which npm || true
+                node -v || true
+                npm -v || true
+
+                echo "=== DIRECT CHECKS ==="
+                /usr/bin/node -v || true
+                /usr/bin/npm -v || true
+                /bin/node -v || true
+                /bin/npm -v || true
+
+                echo "=== ALL NODES FOUND ==="
+                find / -name node 2>/dev/null | head -20
+
+                echo "=== ALL NPMS FOUND ==="
+                find / -name npm 2>/dev/null | head -20
+            '''
+            }
+        }
+
+        stage('Install Frontend Dependencies') {
+            when {
+                anyOf {
+                    branch 'dataprev_dsv'
+                    branch 'dataprev_producao'
+                }
+            }
+            steps {
+                dir('front-end') {
+                    sh '''
+                    docker run --rm \
+                      -v "$WORKSPACE":/workspace \
+                      -w /workspace/front-end \
+                      node:20 \
+                      bash -lc "
+                        set -eu
+                        npm install --legacy-peer-deps
+                      "
+                '''
+                }
+            }
+        }
+
+        stage('Install Angular CLI') {
+            when {
+                anyOf {
+                    branch 'dataprev_dsv'
+                    branch 'dataprev_producao'
+                }
+            }
+            steps {
+                sh 'echo "Instalação global do @angular/cli desabilitada (EACCES). O build usa npx dentro do container."'
+            }
+        }
+
+        stage('Build Angular + Postbuild') {
+            when {
+                anyOf {
+                    branch 'dataprev_dsv'
+                }
+            }
+            steps {
+                sh '''
+                    set -eu
+                    cd "$WORKSPACE"
+
+                    VERSION_SOURCE=$(node -p "require('./front-end/src/app.json').version")
+                    echo "Versão fonte: $VERSION_SOURCE"
+
+                    echo "=== LIMPEZA MÍNIMA DE ARTEFATOS GERADOS ==="
+                    rm -f back-end/resources/views/angular.blade.php || true
+                    rm -f back-end/public/index.html || true
+                    rm -f back-end/public/app.json || true
+                    rm -f back-end/public/assets/build-info.json || true
+
+                    echo "=== BUILD ANGULAR + POSTBUILD (NODE 20) ==="
+                    docker run --rm \
+                        -v "$WORKSPACE":/workspace \
+                        -w /workspace/front-end \
+                        node:20 \
+                        bash -lc "
+                            set -eu
+                            npm install --legacy-peer-deps
+                            mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
+                            npx ng build --configuration=production --output-path=../back-end/public
+                            node ./postbuild.js
+                        "
+
+                    echo "=== VALIDAÇÃO DOS ARTEFATOS GERADOS ==="
+                    test -f back-end/resources/views/angular.blade.php
+                    test -f back-end/public/app.json
+                    test -f back-end/public/assets/build-info.json
+
+                    VERSION=$(node -p "require('./back-end/public/app.json').version")
+                    test "$VERSION" = "$VERSION_SOURCE"
+                    echo "Versão gerada: $VERSION"
+
+                    ls -lah back-end/resources/views/angular.blade.php
+                    ls -lah back-end/public/app.json
+                    ls -lah back-end/public/assets/build-info.json
+                '''
+            }
+        }
+
+        stage('Build Producao') {
+            when {
+                branch 'dataprev_producao'
+            }
+            environment {
+                DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs'
+                DOCKER_HUB_TAG_LATEST = 'latest'
+                DOCKER_HUB_TAG_NEW = '3.0.0'
+                DOCKER_HUB_TAG_OLD = '2.10.1'
+            }
+            steps {
+                withCredentials([
+                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')
+                ]) {
+                    sh '''
+                        set -eu
+
+                        echo "=== BUILD PRODUÇÃO ==="
+                        cd "$WORKSPACE"
+
+                        echo "=== LIMPEZA MÍNIMA DE ARTEFATOS ==="
+                        rm -f back-end/resources/views/angular.blade.php || true
+                        rm -f back-end/public/index.html || true
+                        rm -f back-end/public/app.json || true
+                        rm -f back-end/public/assets/build-info.json || true
+
+                        echo "=== BUILD ANGULAR + POSTBUILD (NODE 20) ==="
+                        docker run --rm \
+                        -v "$WORKSPACE":/workspace \
+                        -w /workspace/front-end \
+                        node:20 \
+                        bash -lc '
+                            set -eu
+                            npm install --legacy-peer-deps
+                            mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
+                            npx ng build --configuration=production --output-path=../back-end/public
+                            node ./postbuild.js
+                        '
+
+                        echo "=== VALIDAÇÃO DOS ARTEFATOS ==="
+                        test -f back-end/resources/views/angular.blade.php
+                        test -f back-end/public/app.json
+                        test -f back-end/public/assets/build-info.json
+
+                        echo "=== DIAGNÓSTICO RÁPIDO ==="
+                        ls -lah back-end/resources/views/angular.blade.php
+                        ls -lah back-end/public/app.json
+                        ls -lah back-end/public/assets/build-info.json
+
+                        echo "=== LOGIN DOCKER HUB ==="
+                        echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+
+                        echo "=== PREPARANDO TAG OLD ==="
+                        docker pull "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST" || true
+
+                        if docker manifest inspect "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD" >/dev/null 2>&1; then
+                        echo "A tag $DOCKER_HUB_TAG_OLD já existe, não será reetiquetada."
+                        else
+                        docker tag "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST" "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD"
+                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_OLD"
+                        fi
+
+                        echo "=== BUILD DA IMAGEM ==="
+                        docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW" -f ./resources/deploy/Dockerfile .
+
+                        docker tag "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW" "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST"
+
+                        echo "=== PUSH DAS IMAGENS ==="
+                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_NEW"
+                        docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG_LATEST"
+
+                        echo "=== FIM BUILD PRODUÇÃO ==="
+                    '''
+                }
+            }
+        }
+
+        stage('Build and Deploy DSV') {
+            when {
+                branch 'dataprev_dsv'
+            }
+            environment {
+                DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs-develop'
+                DOCKER_HUB_TAG = 'dsv'
+                DEPLOY_PATH = './'
+            }
+            steps {
+                withCredentials([
+                    string(credentialsId: 'SSH_USER', variable: 'SSH_USER'),
+                    string(credentialsId: 'SSH_HOST', variable: 'SSH_HOST'),
+                    string(credentialsId: 'SSH_DSV_PORT', variable: 'SSH_PORT'),
+                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
+                    file(credentialsId: 'SSH_DSV_KNOWN_HOSTS', variable: 'KNOWN_HOSTS_FILE')
+                ]) {
+                    sshagent(credentials: ['SSH_KEY_DSV']) {
+                        sh '''
+                            set -eu
+
+                            echo "Iniciando a construção e implantação do DSV..."
+                            echo "Construindo a imagem Docker..."
+                            docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
+
+                            echo "Construção da imagem concluída. Enviando para o Docker Hub..."
+                            echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+                            docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG"
+
+                            echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
+                            ssh -T \
+                                -o StrictHostKeyChecking=yes \
+                                -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
+                                -p "$SSH_PORT" \
+                                "$SSH_USER@$SSH_HOST" \
+                                'cd /home/marcocoelho && bash ./install-pgd.sh'
+
+                            echo "Implantação concluída com sucesso em DSV."
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Build and Deploy HMG') {
+            when {
+                branch 'dataprev_hmg'
+            }
+            environment {
+                DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs-develop'
+                DOCKER_HUB_TAG = 'hmg'
+                DEPLOY_PATH = './'
+            }
+            steps {
+                withCredentials([
+                    string(credentialsId: 'SSH_USER', variable: 'SSH_USER'),
+                    string(credentialsId: 'SSH_HOST', variable: 'SSH_HOST'),
+                    string(credentialsId: 'SSH_HMG_PORT', variable: 'SSH_PORT'),
+                    string(credentialsId: 'SSH_PASSWORD_HMG', variable: 'SSH_PASSWORD'),
+                    string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD'),
+                    string(credentialsId: 'token_github', variable: 'TOKEN_GITHUB'),
+                    file(credentialsId: 'SSH_HMG_KNOWN_HOSTS', variable: 'KNOWN_HOSTS_FILE')
+                ]) {
+                        sshagent(credentials: ['SSH_KEY_DSV']) {
+                            sh '''
+                        set -eu
+
+                        #echo "Iniciando a construção e implantação do HMG..."
+
+                        #echo "Construindo a imagem Docker..."
+                        #docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
+
+                        #echo "Construção da imagem concluída. Enviando para o Docker Hub..."
+                        #echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
+                        #docker push "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG"
+
+                        #echo "Envio da imagem Docker concluído. Iniciando implantação no servidor remoto..."
+
+                        ssh -T \
+                            -o StrictHostKeyChecking=yes \
+                            -o UserKnownHostsFile="$KNOWN_HOSTS_FILE" \
+                            -p "$SSH_PORT" \
+                            "$SSH_USER@$SSH_HOST" "TOKEN_GITHUB='$TOKEN_GITHUB' bash -s" << 'EOF'
+
+                            set -e 
+                           
+                            cd petrvs-pgd
+                            git reset --hard
+                            git pull --ff-only
+
+                            MAINTENANCE_CONTAINER="petrvs_maintenance_hmg"
+                            MAINTENANCE_DIR="/tmp/petrvs-maintenance"
+                            MAINTENANCE_SOURCE_DIR="resources/deploy/maintenance"
+                            MAINTENANCE_CERT_SOURCE_DIR="resources/docker/producao/configuracoes/certificados"
+                            FINAL_PUBLISH_MAX_RETRIES=5
+                            FINAL_PUBLISH_RETRY_DELAY=3
+                            APP_HEALTHCHECK_PATH="/app.json"
+
+                            prepare_maintenance_assets() {
+                                echo "Preparando página de manutenção temporária..."
+                                mkdir -p "$MAINTENANCE_DIR/certs"
+                                cp "$MAINTENANCE_SOURCE_DIR/index.html" "$MAINTENANCE_DIR/index.html"
+                                cp "$MAINTENANCE_SOURCE_DIR/default.conf" "$MAINTENANCE_DIR/default.conf"
+                                cp "$MAINTENANCE_CERT_SOURCE_DIR/certificate.crt" "$MAINTENANCE_DIR/certs/certificate.crt"
+                                cp "$MAINTENANCE_CERT_SOURCE_DIR/private.key" "$MAINTENANCE_DIR/certs/private.key"
+                            }
+
+                            start_maintenance_container() {
+                                echo "Subindo container temporário de manutenção..."
+                                docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+                                sleep 2
+                                docker run -d \
+                                  --name "$MAINTENANCE_CONTAINER" \
+                                  --restart unless-stopped \
+                                  -p 80:80 \
+                                  -p 443:443 \
+                                  -v "$MAINTENANCE_DIR:/usr/share/nginx/html:ro" \
+                                  -v "$MAINTENANCE_DIR/default.conf:/etc/nginx/conf.d/default.conf:ro" \
+                                  -v "$MAINTENANCE_DIR/certs:/etc/nginx/certs:ro" \
+                                  nginx:alpine
+                            }
+
+                            stop_maintenance_container() {
+                                echo "Encerrando container temporário de manutenção..."
+                                docker rm -f "$MAINTENANCE_CONTAINER" 2>/dev/null || true
+                            }
+
+                            is_application_reachable_now() {
+                                local code=""
+                                code="$(docker exec petrvs_php_hmg sh -lc 'curl -kLsS -o /dev/null -w "%{http_code}" --max-time 8 https://127.0.0.1'"$APP_HEALTHCHECK_PATH"' || true' 2>/dev/null || true)"
+                                if [ "$code" = "200" ]; then
+                                    return 0
+                                fi
+
+                                code="$(docker exec petrvs_php_hmg sh -lc 'curl -LsS -o /dev/null -w "%{http_code}" --max-time 8 http://127.0.0.1'"$APP_HEALTHCHECK_PATH"' || true' 2>/dev/null || true)"
+                                if [ "$code" = "200" ]; then
+                                    return 0
+                                fi
+
+                                return 1
+                            }
+
+                            reactivate_maintenance_and_exit() {
+                                local reason="$1"
+                                echo "$reason"
+                                if is_application_reachable_now; then
+                                    echo "Aplicação está respondendo; manutenção não será reativada."
+                                    return 0
+                                fi
+                                start_maintenance_container
+                                exit 1
+                            }
+
+                            publish_final_ports_with_retry() {
+                                local publish_ok=0
+                                local attempt=0
+                                echo "Publicando aplicação nas portas finais (80/443)..."
+                                stop_maintenance_container
+                                sleep 2
+
+                                for attempt in $(seq 1 "$FINAL_PUBLISH_MAX_RETRIES"); do
+                                    echo "Tentativa $attempt/$FINAL_PUBLISH_MAX_RETRIES para publicar em 80/443..."
+                                    if PETRVS_HTTP_PORT=80 PETRVS_HTTPS_PORT=443 docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --no-deps --force-recreate petrvs_php; then
+                                        publish_ok=1
+                                        break
+                                    fi
+                                    echo "Falha ao publicar nas portas finais. Aguardando ${FINAL_PUBLISH_RETRY_DELAY}s..."
+                                    sleep "$FINAL_PUBLISH_RETRY_DELAY"
+                                done
+
+                                if [ "$publish_ok" -ne 1 ]; then
+                                    reactivate_maintenance_and_exit "Falha ao subir aplicação nas portas finais. Reativando manutenção..."
+                                fi
+                            }
+
+                            verify_final_application_response() {
+                                local health_attempt=0
+                                local health_max_retries=20
+                                local health_retry_delay=3
+                                local status_code=""
+
+                                for health_attempt in $(seq 1 "$health_max_retries"); do
+                                    echo "Validando resposta da aplicação (${health_attempt}/${health_max_retries})..."
+                                    status_code="$(docker exec petrvs_php_hmg sh -lc 'curl -kLsS -o /dev/null -w "%{http_code}" --max-time 10 https://127.0.0.1'"$APP_HEALTHCHECK_PATH"' || true' 2>/dev/null || true)"
+                                    if [ "$status_code" = "200" ]; then
+                                        echo "Aplicação respondeu em HTTPS com status $status_code no caminho $APP_HEALTHCHECK_PATH."
+                                        return 0
+                                    fi
+
+                                    status_code="$(docker exec petrvs_php_hmg sh -lc 'curl -LsS -o /dev/null -w "%{http_code}" --max-time 10 http://127.0.0.1'"$APP_HEALTHCHECK_PATH"' || true' 2>/dev/null || true)"
+                                    if [ "$status_code" = "200" ]; then
+                                        echo "Aplicação respondeu em HTTP com status $status_code no caminho $APP_HEALTHCHECK_PATH."
+                                        return 0
+                                    fi
+                                    sleep "$health_retry_delay"
+                                done
+
+                                return 1
+                            }
+
+                            prepare_maintenance_assets
+
+                            cd resources/docker/dev
+
+                            # Executa compose diretamente com base (dev) + override (hmg).
+                            COMPOSE_FILES="-f docker-compose.yml -f ../hmg/docker-compose.hmg.yml"
+                            COMPOSE_ENV_FILE="--env-file ../../../back-end/.env"
+                            WARMUP_HTTP_PORT="8080"
+                            WARMUP_HTTPS_PORT="8443"
+
+                            docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES down
+
+                            start_maintenance_container
+
+                            # Remove containers com nome fixo que podem ficar órfãos de execuções anteriores.
+                            docker rm -f petrvs_db_hmg petrvs_php_hmg petrvs_queue petrvs_redis petrvs_rabbitmq 2>/dev/null || true
+                            docker container prune -f && docker image prune -f && docker network prune -f && docker builder prune -f
+
+                            echo "Subindo stack em portas de aquecimento com manutenção ativa..."
+                            PETRVS_HTTP_PORT="$WARMUP_HTTP_PORT" PETRVS_HTTPS_PORT="$WARMUP_HTTPS_PORT" docker compose $COMPOSE_ENV_FILE $COMPOSE_FILES up -d --remove-orphans
+
+                            sleep 10
+
+                            echo "Build do Front-end...."
+                            docker exec petrvs_node npm install -g @angular/cli
+                            docker exec petrvs_node npm install --include=dev --legacy-peer-deps
+                            docker exec petrvs_node npm run build
+                            
+                            echo "Instalando Dependências do PHP...";
+                            docker exec petrvs_php_hmg composer install
+
+                            echo "Limpando configurações...";
+                            docker exec petrvs_php_hmg php artisan config:clear
+
+                            echo "Sincronizando versão do app.json com o tenant..."
+                            docker exec petrvs_php_hmg php artisan tinker << 'EOT'
+                                $tenantId = env('PETRVS_ENTIDADE');
+                                $tenant = App\\Models\\Tenant::find($tenantId);
+
+                                if ($tenant) {
+                                    $path = public_path('app.json');
+                                    if (file_exists($path)) {
+                                        $json = json_decode(file_get_contents($path), true);
+
+                                        if (($json['version'] ?? '') !== $tenant->version) {
+                                            $json['version'] = $tenant->version;
+                                            file_put_contents($path, json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+                                            echo 'Versão sincronizada para: ' . $tenant->version . PHP_EOL;
+                                        } else {
+                                            echo 'Versão já está sincronizada: ' . $tenant->version . PHP_EOL;
+                                        }
+                                    }
+                                } else {
+                                    echo 'Tenant não encontrado: ' . $tenantId . PHP_EOL;
+                                }
+EOT
+
+                            echo "Limpando caches e otimizando aplicação...";
+                            docker exec petrvs_php_hmg php artisan config:clear
+
+                            sleep 10
+
+                            echo "Permissão storage/logs..."
+                            docker exec petrvs_php_hmg bash -c 'sudo chmod -R 777 /var/www/storage/logs/'
+                            docker exec petrvs_php_hmg bash -c 'sudo chmod -R 777 /var/www/storage/'
+                            docker exec petrvs_php_hmg bash -c 'sudo chown -R www-data:www-data ./storage/logs/'
+                            
+                            echo "Limpando storage/logs"
+                            docker exec petrvs_php_hmg bash -c 'sudo rm -f /var/www/storage/logs/*.log'
+                            docker exec petrvs_php_hmg touch /var/www/storage/logs/laravel.log
+                            docker exec petrvs_php_hmg chmod 777 /var/www/storage/logs/laravel.log
+
+                            #Limpar Cache
+                            echo "Limpar Cache"
+                            docker exec petrvs_php_hmg bash -c 'php artisan optimize:clear'
+                            docker exec petrvs_php_hmg bash -c 'php artisan cache:clear'
+                            docker exec petrvs_php_hmg bash -c 'php artisan config:clear'
+                            docker exec petrvs_php_hmg bash -c 'composer dump-autoload'
+
+                            echo "Executando php artisan migrate..."
+                            # Execute o shell do container e o comando php artisan migrate
+                            docker exec petrvs_php_hmg bash -c "php artisan migrate"
+                            docker exec petrvs_php_hmg bash -c "php artisan tenants:migrate"
+                            docker exec petrvs_php_hmg bash -c 'php artisan tenants:run db:seed --option="class=DeployHMGSeeder"'
+                            
+                            sleep 10
+
+                            echo 'Restart do ambiente de JOBS'
+                            docker restart petrvs_queue
+                            docker exec petrvs_php_hmg bash -c "service cron start"
+
+                            publish_final_ports_with_retry
+
+                            if ! verify_final_application_response; then
+                                reactivate_maintenance_and_exit "Aplicação não respondeu após publicação final. Reativando manutenção..."
+                            fi
+
+                            # Segurança: garante que manutenção não ficou ativa após sucesso.
+                            stop_maintenance_container
+EOF
+
+                        echo "Implantação concluída com sucesso em HMG."
+                    '''
+                        }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline concluída com sucesso.'
+        }
+        failure {
+            echo 'Pipeline falhou.'
+        }
+        always {
+            cleanWs()
+        }
+    }
+}

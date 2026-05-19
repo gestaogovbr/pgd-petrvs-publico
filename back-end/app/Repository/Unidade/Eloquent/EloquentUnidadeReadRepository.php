@@ -1,0 +1,280 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Repository\Unidade\Eloquent;
+
+use App\Models\Unidade;
+use App\Models\Usuario;
+use App\Repository\Eloquent\AbstractEloquentReadRepository;
+use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
+use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * @extends AbstractEloquentReadRepository<Unidade>
+ */
+class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository implements UnidadeReadRepositoryContract
+{
+    public function __construct(Unidade $model)
+    {
+        $this->model = $model;
+    }
+
+    public function hasUsuarioLotacao(string $unidadeId, string $usuarioId, bool $subordinadas = true): bool
+    {
+        $areasTrabalhoWhere = $this->getAreasTrabalhoWhereClause($usuarioId, $subordinadas);
+        return $this->query()->where("id", $unidadeId)
+            ->whereRaw($areasTrabalhoWhere)
+            ->exists();
+    }
+
+    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool
+    {
+
+        $result = $this->model->getConnection()->select("
+            WITH RECURSIVE unidade_hierarchy AS (
+                SELECT id, unidade_pai_id, 0 as level
+                FROM unidades 
+                WHERE id = ?
+                
+                UNION ALL
+                
+                SELECT u.id, u.unidade_pai_id, uh.level + 1
+                FROM unidades u
+                INNER JOIN unidade_hierarchy uh ON u.id = uh.unidade_pai_id
+                WHERE uh.level < 10
+            )
+            SELECT COUNT(*) as count
+            FROM unidade_hierarchy uh
+            INNER JOIN unidades_integrantes ui ON ui.unidade_id = uh.id
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.usuario_id = ?
+              AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO')
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", [$unidadeId, $usuarioId]);
+        
+        return $result[0]->count > 0;
+    }
+
+    public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        $result = $this->model->getConnection()->select("
+            SELECT COUNT(*) as count
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id = ?
+              AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO')
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", [$unidadeId, $usuarioId]);
+
+        return $result[0]->count > 0;
+    }
+
+    public function isUsuarioGestorTitularDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        $result = $this->model->getConnection()->select("
+            SELECT COUNT(*) as count
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id = ?
+              AND uia.atribuicao = 'GESTOR'
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", [$unidadeId, $usuarioId]);
+
+        return $result[0]->count > 0;
+    }
+
+    public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO
+    {
+        $sql = <<<SQL
+            SELECT
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as participante_gestor_titular,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO') THEN 1 ELSE 0 END) as participante_gestor,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as assinante_gestor_titular
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id IN (?, ?)
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        SQL;
+
+        $row = $this->model->getConnection()->select($sql, [
+            $participanteId, $participanteId, $assinanteId, $unidadeId, $participanteId, $assinanteId,
+        ])[0];
+
+        return new AssinaturaHierarquiaDTO(
+            participanteGestor: (bool) $row->participante_gestor,
+            participanteGestorTitular: (bool) $row->participante_gestor_titular,
+            assinanteGestorTitular: (bool) $row->assinante_gestor_titular,
+        );
+    }
+
+    /**
+     * Helper to generate the raw where clause for areas de trabalho
+     */
+    public function getAreasTrabalhoWhereClause(string $usuarioId, bool $subordinadas, string $prefix = ""): string
+    {
+        $where = [];
+        $prefix = empty($prefix) ? "" : $prefix . ".";
+        $usuario = Usuario::find($usuarioId);
+        
+        if (!$usuario) {
+            return "false";
+        }
+
+        foreach ($usuario->areasTrabalho as $lotacao) {
+            $where[] = $prefix . "id = '" . $lotacao->unidade_id . "'";
+            if ($subordinadas)
+                $where[] = $prefix . "path like '%" . $lotacao->unidade_id . "%'";
+        }
+        $result = implode(" OR ", $where);
+        return empty($result) ? "false" : "(" . $result . ")";
+    }
+
+    public function findByCodigo(string $codigo): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()->where('codigo', $codigo)->first();
+        return $unidade;
+    }
+
+    public function findByCodigoWithPai(string $codigo): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()
+            ->with('unidadePai')
+            ->where('codigo', $codigo)
+            ->first();
+
+        return $unidade;
+    }
+
+    public function getUnidadesGerenciadas(string $usuarioId): Collection
+    {
+        return $this->query()
+            ->whereHas('gestor', fn($q) => $q->where('usuario_id', $usuarioId))
+            ->orWhereHas('gestoresSubstitutos', fn($q) => $q->where('usuario_id', $usuarioId))
+            ->orWhereHas('gestoresDelegados', fn($q) => $q->where('usuario_id', $usuarioId))
+            ->get();
+    }
+
+    public function getSubordinadas(array $ids): Collection
+    {
+        return $this->query()->whereIn('unidade_pai_id', $ids)->get();
+    }
+
+    public function getSubordinadasRecursivas(array $ids): Collection
+    {
+        if (empty($ids)) {
+            return $this->model->newCollection();
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        $subordinadaIds = $this->model->getConnection()->select("
+            WITH RECURSIVE subordinadas AS (
+                SELECT id, unidade_pai_id
+                FROM unidades
+                WHERE unidade_pai_id IN ($placeholders)
+
+                UNION ALL
+
+                SELECT u.id, u.unidade_pai_id
+                FROM unidades u
+                INNER JOIN subordinadas s ON u.unidade_pai_id = s.id
+            )
+            SELECT id FROM subordinadas
+        ", $ids);
+
+        $resultIds = array_map(fn($row) => $row->id, $subordinadaIds);
+
+        if (empty($resultIds)) {
+            return $this->model->newCollection();
+        }
+
+        return $this->query()->whereIn('id', $resultIds)->get();
+    }
+
+    public function existsByCodigo(string $codigo): bool
+    {
+        return $this->query()->where('codigo', $codigo)->exists();
+    }
+
+    public function findBySigla(string $sigla): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()->where('sigla', $sigla)->first();
+        return $unidade;
+    }
+
+    public function findById(string|int $id): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()->find($id);
+        return $unidade;
+    }
+
+    public function buscarPorNomeOuCodigoNaHierarquia(UnidadeBuscaDTO $dto, string $usuarioId): Collection
+    {
+        $query = $this->query()->select('id', 'nome', 'codigo', 'sigla');
+
+        if ($dto->hierarquia) {
+            $areasTrabalhoWhere = $this->getAreasTrabalhoWhereClause($usuarioId, true);
+            $query->whereRaw($areasTrabalhoWhere);
+        }
+
+        if ($dto->termo) {
+            $termoLower = mb_strtolower($dto->termo);
+            $query->where(function ($q) use ($termoLower) {
+                $q->whereRaw('LOWER(nome) like ?', ["%{$termoLower}%"])
+                  ->orWhereRaw('LOWER(codigo) like ?', ["%{$termoLower}%"])
+                  ->orWhereRaw('LOWER(sigla) like ?', ["%{$termoLower}%"]);
+            });
+        }
+
+        if (!$dto->todos) {
+            $query->limit(50);
+        }
+
+        return $query->get();
+    }
+
+    public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()
+            ->with(['planosTrabalho', 'planosTrabalho.atividades'])
+            ->where('id', $id)
+            ->first();
+
+        return $unidade;
+    }
+
+    /** @return string[] IDs da raiz até a unidade informada */
+    public function linhaAscendente(string $unidadeId): array
+    {
+        $rows = DB::select(<<<SQL
+            WITH RECURSIVE ascendentes AS (
+                SELECT id, unidade_pai_id
+                FROM unidades WHERE id = ? AND deleted_at IS NULL
+                UNION ALL
+                SELECT u.id, u.unidade_pai_id
+                FROM unidades u
+                INNER JOIN ascendentes a ON u.id = a.unidade_pai_id
+                WHERE u.deleted_at IS NULL
+            )
+            SELECT id FROM ascendentes
+        SQL, [$unidadeId]);
+
+        return array_reverse(array_column($rows, 'id'));
+    }
+}

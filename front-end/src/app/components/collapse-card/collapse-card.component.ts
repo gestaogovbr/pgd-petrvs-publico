@@ -2,9 +2,10 @@ import { Component, Injector, Input, OnInit, TemplateRef } from '@angular/core';
 import { ComponentBase, ComponentColor } from '../component-base';
 
 @Component({
-  selector: 'collapse-card',
-  templateUrl: './collapse-card.component.html',
-  styleUrls: ['./collapse-card.component.scss']
+    selector: 'collapse-card',
+    templateUrl: './collapse-card.component.html',
+    styleUrls: ['./collapse-card.component.scss'],
+    standalone: false
 })
 export class CollapseCardComponent extends ComponentBase implements OnInit {
   @Input() title?: string;

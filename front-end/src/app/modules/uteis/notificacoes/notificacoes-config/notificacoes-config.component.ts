@@ -16,9 +16,10 @@ export class Notificar {
 }
 
 @Component({
-  selector: 'notificacoes-config',
-  templateUrl: './notificacoes-config.component.html',
-  styleUrls: ['./notificacoes-config.component.scss']
+    selector: 'notificacoes-config',
+    templateUrl: './notificacoes-config.component.html',
+    styleUrls: ['./notificacoes-config.component.scss'],
+    standalone: false
 })
 export class NotificacoesConfigComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

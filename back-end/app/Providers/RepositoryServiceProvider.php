@@ -1,0 +1,473 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Providers;
+
+use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
+
+use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
+
+use App\Repository\Afastamento\Eloquent\EloquentAfastamentoReadRepository;
+
+use App\Repository\Afastamento\Eloquent\EloquentAfastamentoWriteRepository;
+
+use App\Repository\Atividade\Contracts\AtividadeReadRepositoryContract;
+
+use App\Repository\Atividade\Contracts\AtividadeWriteRepositoryContract;
+
+use App\Repository\Atividade\Eloquent\EloquentAtividadeReadRepository;
+
+use App\Repository\Atividade\Eloquent\EloquentAtividadeWriteRepository;
+
+use App\Repository\Avaliacao\Contracts\AvaliacaoReadRepositoryContract;
+
+use App\Repository\Avaliacao\Contracts\AvaliacaoWriteRepositoryContract;
+
+use App\Repository\Avaliacao\Eloquent\EloquentAvaliacaoReadRepository;
+
+use App\Repository\Avaliacao\Eloquent\EloquentAvaliacaoWriteRepository;
+
+use App\Repository\Documento\Contracts\DocumentoReadRepositoryContract;
+
+use App\Repository\Documento\Contracts\DocumentoWriteRepositoryContract;
+
+use App\Repository\Documento\Eloquent\EloquentDocumentoReadRepository;
+
+use App\Repository\Documento\Eloquent\EloquentDocumentoWriteRepository;
+
+use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
+
+use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
+
+use App\Repository\DocumentoAssinatura\Eloquent\EloquentDocumentoAssinaturaReadRepository;
+
+use App\Repository\DocumentoAssinatura\Eloquent\EloquentDocumentoAssinaturaWriteRepository;
+
+use App\Repository\Entidade\Contracts\EntidadeReadRepositoryContract;
+
+use App\Repository\Entidade\Contracts\EntidadeWriteRepositoryContract;
+
+use App\Repository\Entidade\Eloquent\EloquentEntidadeReadRepository;
+
+use App\Repository\Entidade\Eloquent\EloquentEntidadeWriteRepository;
+
+use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorReadRepositoryContract;
+
+use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorWriteRepositoryContract;
+
+use App\Repository\IntegracaoServidor\Eloquent\EloquentIntegracaoServidorReadRepository;
+
+use App\Repository\IntegracaoServidor\Eloquent\EloquentIntegracaoServidorWriteRepository;
+
+use App\Repository\IntegracaoUnidade\Contracts\IntegracaoUnidadeReadRepositoryContract;
+
+use App\Repository\IntegracaoUnidade\Contracts\IntegracaoUnidadeWriteRepositoryContract;
+
+use App\Repository\IntegracaoUnidade\Eloquent\EloquentIntegracaoUnidadeReadRepository;
+
+use App\Repository\IntegracaoUnidade\Eloquent\EloquentIntegracaoUnidadeWriteRepository;
+
+use App\Repository\Perfil\Contracts\PerfilReadRepositoryContract;
+
+use App\Repository\Perfil\Eloquent\EloquentPerfilReadRepository;
+
+use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
+
+use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
+
+use App\Repository\PlanoEntrega\Eloquent\EloquentPlanoEntregaReadRepository;
+
+use App\Repository\PlanoEntrega\Eloquent\EloquentPlanoEntregaWriteRepository;
+
+use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
+
+use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
+
+use App\Repository\PlanoTrabalho\Eloquent\EloquentPlanoTrabalhoReadRepository;
+
+use App\Repository\PlanoTrabalho\Eloquent\EloquentPlanoTrabalhoWriteRepository;
+
+use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoReadRepositoryContract;
+
+use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoWriteRepositoryContract;
+
+use App\Repository\PlanoTrabalhoConsolidacao\Eloquent\EloquentPlanoTrabalhoConsolidacaoReadRepository;
+
+use App\Repository\PlanoTrabalhoConsolidacao\Eloquent\EloquentPlanoTrabalhoConsolidacaoWriteRepository;
+
+use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaReadRepositoryContract;
+
+use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaWriteRepositoryContract;
+
+use App\Repository\PlanoTrabalhoEntrega\Eloquent\EloquentPlanoTrabalhoEntregaReadRepository;
+
+use App\Repository\PlanoTrabalhoEntrega\Eloquent\EloquentPlanoTrabalhoEntregaWriteRepository;
+use App\Repository\Tenant\Contracts\TenantReadRepositoryContract;
+use App\Repository\Tenant\Contracts\TenantWriteRepositoryContract;
+use App\Repository\Tenant\Eloquent\EloquentTenantReadRepository;
+use App\Repository\Tenant\Eloquent\EloquentTenantWriteRepository;
+
+use App\Repository\Programa\Contracts\ProgramaReadRepositoryContract;
+
+use App\Repository\Programa\Contracts\ProgramaWriteRepositoryContract;
+
+use App\Repository\Programa\Eloquent\EloquentProgramaReadRepository;
+
+use App\Repository\Programa\Eloquent\EloquentProgramaWriteRepository;
+
+use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
+use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
+use App\Repository\EnvioUsuario\Eloquent\EloquentEnvioUsuarioReadRepository;
+use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryContract;
+use App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository;
+use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
+use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
+
+use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
+use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
+use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioWriteRepositoryContract;
+use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioReadRepository;
+use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioWriteRepository;
+
+use App\Repository\SiapeBlackListServidor\Contracts\SiapeBlackListServidorReadRepositoryContract;
+
+
+use App\Repository\SiapeBlackListServidor\Contracts\SiapeBlackListServidorWriteRepositoryContract;
+
+use App\Repository\SiapeBlackListServidor\Eloquent\EloquentSiapeBlackListServidorReadRepository;
+use App\Repository\SiapeBlackListServidor\Eloquent\EloquentSiapeBlackListServidorWriteRepository;
+use App\Repository\SiapeConsultaDadosFuncionais\Contracts\SiapeConsultaDadosFuncionaisReadRepositoryContract;
+use App\Repository\SiapeConsultaDadosFuncionais\Contracts\SiapeConsultaDadosFuncionaisWriteRepositoryContract;
+use App\Repository\SiapeConsultaDadosFuncionais\Eloquent\EloquentSiapeConsultaDadosFuncionaisReadRepository;
+use App\Repository\SiapeConsultaDadosFuncionais\Eloquent\EloquentSiapeConsultaDadosFuncionaisWriteRepository;
+use App\Repository\SiapeConsultaDadosPessoais\Contracts\SiapeConsultaDadosPessoaisReadRepositoryContract;
+use App\Repository\SiapeConsultaDadosPessoais\Contracts\SiapeConsultaDadosPessoaisWriteRepositoryContract;
+use App\Repository\SiapeConsultaDadosPessoais\Eloquent\EloquentSiapeConsultaDadosPessoaisReadRepository;
+use App\Repository\SiapeConsultaDadosPessoais\Eloquent\EloquentSiapeConsultaDadosPessoaisWriteRepository;
+use App\Repository\SiapeDadosUORG\Contracts\SiapeDadosUORGReadRepositoryContract;
+use App\Repository\SiapeDadosUORG\Contracts\SiapeDadosUORGWriteRepositoryContract;
+use App\Repository\SiapeDadosUORG\Eloquent\EloquentSiapeDadosUORGReadRepository;
+use App\Repository\SiapeDadosUORG\Eloquent\EloquentSiapeDadosUORGWriteRepository;
+use App\Repository\SiapeListaUORGS\Contracts\SiapeListaUORGSReadRepositoryContract;
+use App\Repository\SiapeListaUORGS\Contracts\SiapeListaUORGSWriteRepositoryContract;
+use App\Repository\SiapeListaUORGS\Eloquent\EloquentSiapeListaUORGSReadRepository;
+use App\Repository\SiapeListaUORGS\Eloquent\EloquentSiapeListaUORGSWriteRepository;
+use App\Repository\StatusJustificativa\Contracts\StatusJustificativaReadRepositoryContract;
+use App\Repository\StatusJustificativa\Contracts\StatusJustificativaWriteRepositoryContract;
+use App\Repository\StatusJustificativa\Eloquent\EloquentStatusJustificativaReadRepository;
+use App\Repository\StatusJustificativa\Eloquent\EloquentStatusJustificativaWriteRepository;
+use App\Repository\TipoModalidade\Contracts\TipoModalidadeReadRepositoryContract;
+use App\Repository\TipoModalidade\Eloquent\EloquentTipoModalidadeReadRepository;
+use App\Repository\TipoMotivoAfastamento\Contracts\TipoMotivoAfastamentoReadRepositoryContract;
+use App\Repository\TipoMotivoAfastamento\Eloquent\EloquentTipoMotivoAfastamentoReadRepository;
+use App\Repository\TipoPlanejamentoObjetivo\Contracts\TipoPlanejamentoObjetivoReadRepositoryContract;
+use App\Repository\TipoPlanejamentoObjetivo\Contracts\TipoPlanejamentoObjetivoWriteRepositoryContract;
+use App\Repository\TipoPlanejamentoObjetivo\Eloquent\EloquentTipoPlanejamentoObjetivoReadRepository;
+use App\Repository\TipoPlanejamentoObjetivo\Eloquent\EloquentTipoPlanejamentoObjetivoWriteRepository;
+use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
+use App\Repository\PlanejamentoObjetivo\Eloquent\EloquentPlanejamentoObjetivoReadRepository;
+use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
+use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
+use App\Repository\Unidade\Eloquent\EloquentUnidadeReadRepository;
+use App\Repository\Unidade\Eloquent\EloquentUnidadeWriteRepository;
+use App\Repository\UnidadeIntegrante\Contracts\UnidadeIntegranteReadRepositoryContract;
+use App\Repository\UnidadeIntegrante\Contracts\UnidadeIntegranteWriteRepositoryContract;
+use App\Repository\UnidadeIntegrante\Eloquent\EloquentUnidadeIntegranteReadRepository;
+use App\Repository\UnidadeIntegrante\Eloquent\EloquentUnidadeIntegranteWriteRepository;
+use App\Repository\UnidadeIntegranteAtribuicao\Contracts\UnidadeIntegranteAtribuicaoReadRepositoryContract;
+use App\Repository\UnidadeIntegranteAtribuicao\Contracts\UnidadeIntegranteAtribuicaoWriteRepositoryContract;
+use App\Repository\UnidadeIntegranteAtribuicao\Eloquent\EloquentUnidadeIntegranteAtribuicaoReadRepository;
+use App\Repository\UnidadeIntegranteAtribuicao\Eloquent\EloquentUnidadeIntegranteAtribuicaoWriteRepository;
+use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
+use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
+use App\Repository\Usuario\Eloquent\EloquentUsuarioReadRepository;
+use App\Repository\Usuario\Eloquent\EloquentUsuarioWriteRepository;
+use Illuminate\Support\ServiceProvider;
+
+final class RepositoryServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        $this->app->bind(
+            IntegracaoServidorReadRepositoryContract::class,
+            EloquentIntegracaoServidorReadRepository::class,
+        );
+
+        $this->app->bind(
+            IntegracaoServidorWriteRepositoryContract::class,
+            EloquentIntegracaoServidorWriteRepository::class,
+        );
+
+        $this->app->bind(
+            PlanoTrabalhoConsolidacaoReadRepositoryContract::class,
+            EloquentPlanoTrabalhoConsolidacaoReadRepository::class,
+        );
+        $this->app->bind(
+            PlanoTrabalhoConsolidacaoWriteRepositoryContract::class,
+            EloquentPlanoTrabalhoConsolidacaoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            UnidadeReadRepositoryContract::class,
+            EloquentUnidadeReadRepository::class,
+        );
+
+        $this->app->bind(
+            UnidadeWriteRepositoryContract::class,
+            EloquentUnidadeWriteRepository::class,
+        );
+
+        $this->app->bind(
+            UsuarioWriteRepositoryContract::class,
+            EloquentUsuarioWriteRepository::class,
+        );
+
+        $this->app->bind(
+            IntegracaoUnidadeReadRepositoryContract::class,
+            EloquentIntegracaoUnidadeReadRepository::class,
+        );
+        $this->app->bind(
+            IntegracaoUnidadeWriteRepositoryContract::class,
+            EloquentIntegracaoUnidadeWriteRepository::class,
+        );
+
+        $this->app->bind(
+            PerfilReadRepositoryContract::class,
+            EloquentPerfilReadRepository::class,
+        );
+
+        $this->app->bind(
+            TipoMotivoAfastamentoReadRepositoryContract::class,
+            EloquentTipoMotivoAfastamentoReadRepository::class,
+        );
+
+        $this->app->bind(
+            PlanoTrabalhoReadRepositoryContract::class,
+            EloquentPlanoTrabalhoReadRepository::class,
+        );
+        $this->app->bind(
+            PlanoTrabalhoWriteRepositoryContract::class,
+            EloquentPlanoTrabalhoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            PlanoEntregaReadRepositoryContract::class,
+            EloquentPlanoEntregaReadRepository::class,
+        );
+        $this->app->bind(
+            PlanoEntregaWriteRepositoryContract::class,
+            EloquentPlanoEntregaWriteRepository::class,
+        );
+
+        $this->app->bind(
+            UsuarioReadRepositoryContract::class,
+            EloquentUsuarioReadRepository::class,
+        );
+
+
+        $this->app->bind(
+            EntidadeReadRepositoryContract::class,
+            EloquentEntidadeReadRepository::class,
+        );
+        $this->app->bind(
+            EntidadeWriteRepositoryContract::class,
+            EloquentEntidadeWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeConsultaDadosPessoaisReadRepositoryContract::class,
+            EloquentSiapeConsultaDadosPessoaisReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeConsultaDadosPessoaisWriteRepositoryContract::class,
+            EloquentSiapeConsultaDadosPessoaisWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeConsultaDadosFuncionaisReadRepositoryContract::class,
+            EloquentSiapeConsultaDadosFuncionaisReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeConsultaDadosFuncionaisWriteRepositoryContract::class,
+            EloquentSiapeConsultaDadosFuncionaisWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeListaUORGSReadRepositoryContract::class,
+            EloquentSiapeListaUORGSReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeListaUORGSWriteRepositoryContract::class,
+            EloquentSiapeListaUORGSWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeDadosUORGReadRepositoryContract::class,
+            EloquentSiapeDadosUORGReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeDadosUORGWriteRepositoryContract::class,
+            EloquentSiapeDadosUORGWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeBlackListServidorReadRepositoryContract::class,
+            EloquentSiapeBlackListServidorReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeBlackListServidorWriteRepositoryContract::class,
+            EloquentSiapeBlackListServidorWriteRepository::class,
+        );
+
+        $this->app->bind(
+            UnidadeIntegranteReadRepositoryContract::class,
+            EloquentUnidadeIntegranteReadRepository::class,
+        );
+        $this->app->bind(
+            UnidadeIntegranteWriteRepositoryContract::class,
+            EloquentUnidadeIntegranteWriteRepository::class,
+        );
+
+        $this->app->bind(
+            UnidadeIntegranteAtribuicaoReadRepositoryContract::class,
+            EloquentUnidadeIntegranteAtribuicaoReadRepository::class,
+        );
+        $this->app->bind(
+            UnidadeIntegranteAtribuicaoWriteRepositoryContract::class,
+            EloquentUnidadeIntegranteAtribuicaoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            TenantReadRepositoryContract::class,
+            EloquentTenantReadRepository::class,
+        );
+        $this->app->bind(
+            TenantWriteRepositoryContract::class,
+            EloquentTenantWriteRepository::class,
+        );
+
+        $this->app->bind(
+            ProgramaReadRepositoryContract::class,
+            EloquentProgramaReadRepository::class,
+        );
+        $this->app->bind(
+            ProgramaWriteRepositoryContract::class,
+            EloquentProgramaWriteRepository::class,
+        );
+
+        $this->app->bind(
+            PlanoTrabalhoEntregaReadRepositoryContract::class,
+            EloquentPlanoTrabalhoEntregaReadRepository::class,
+        );
+        $this->app->bind(
+            PlanoTrabalhoEntregaWriteRepositoryContract::class,
+            EloquentPlanoTrabalhoEntregaWriteRepository::class,
+        );
+
+        $this->app->bind(
+            DocumentoReadRepositoryContract::class,
+            EloquentDocumentoReadRepository::class,
+        );
+        $this->app->bind(
+            DocumentoWriteRepositoryContract::class,
+            EloquentDocumentoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            DocumentoAssinaturaReadRepositoryContract::class,
+            EloquentDocumentoAssinaturaReadRepository::class,
+        );
+        $this->app->bind(
+            DocumentoAssinaturaWriteRepositoryContract::class,
+            EloquentDocumentoAssinaturaWriteRepository::class,
+        );
+
+        $this->app->bind(
+            StatusJustificativaReadRepositoryContract::class,
+            EloquentStatusJustificativaReadRepository::class,
+        );
+        $this->app->bind(
+            StatusJustificativaWriteRepositoryContract::class,
+            EloquentStatusJustificativaWriteRepository::class,
+        );
+
+        $this->app->bind(
+            AtividadeReadRepositoryContract::class,
+            EloquentAtividadeReadRepository::class,
+        );
+
+        $this->app->bind(
+            AtividadeWriteRepositoryContract::class,
+            EloquentAtividadeWriteRepository::class,
+        );
+
+        $this->app->bind(
+            AvaliacaoReadRepositoryContract::class,
+            EloquentAvaliacaoReadRepository::class,
+        );
+        $this->app->bind(
+            AvaliacaoWriteRepositoryContract::class,
+            EloquentAvaliacaoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            RelatorioAgenteReadRepositoryContract::class,
+            EloquentRelatorioAgenteReadRepository::class,
+        );
+
+        $this->app->bind(
+            AfastamentoReadRepositoryContract::class,
+            EloquentAfastamentoReadRepository::class,
+        );
+
+        $this->app->bind(
+            AfastamentoWriteRepositoryContract::class,
+            EloquentAfastamentoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            CargaIndividualSiapeRelatorioReadRepositoryContract::class,
+            EloquentCargaIndividualSiapeRelatorioReadRepository::class,
+        );
+
+        $this->app->bind(
+            CargaIndividualSiapeRelatorioWriteRepositoryContract::class,
+            EloquentCargaIndividualSiapeRelatorioWriteRepository::class,
+        );
+
+        $this->app->bind(
+            TipoPlanejamentoObjetivoReadRepositoryContract::class,
+            EloquentTipoPlanejamentoObjetivoReadRepository::class,
+        );
+
+        $this->app->bind(
+            TipoPlanejamentoObjetivoWriteRepositoryContract::class,
+            EloquentTipoPlanejamentoObjetivoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            PlanejamentoObjetivoReadRepositoryContract::class,
+            EloquentPlanejamentoObjetivoReadRepository::class,
+        );
+
+        $this->app->bind(
+            EnvioUsuarioReadRepositoryContract::class,
+            EloquentEnvioUsuarioReadRepository::class,
+        );
+
+        $this->app->bind(
+            EnvioPlanoEntregaReadRepositoryContract::class,
+            EloquentEnvioPlanoEntregaReadRepository::class,
+        );
+
+        $this->app->bind(
+            EnvioPlanoTrabalhoReadRepositoryContract::class,
+            EloquentEnvioPlanoTrabalhoReadRepository::class,
+        );
+    }
+
+    public function boot(): void
+    {
+    }
+}

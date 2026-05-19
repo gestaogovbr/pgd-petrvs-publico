@@ -1,5 +1,5 @@
 <editable-form [form]="form!" [disabled]="formDisabled" (submit)="onSaveData()" (cancel)="onCancel()">
-    <separator *ngIf="recurso || form!.controls.recurso?.value?.length" title="Recurso">
+    <separator *ngIf="recurso || form!.controls.recurso.value?.length" title="Recurso">
         <input-textarea label="Texto do recurso" [size]="12" [disabled]="recurso ? undefined : 'true'" [rows]="2" controlName="recurso" [control]="form!.controls.recurso"></input-textarea>
     </separator>
     <div class="row">

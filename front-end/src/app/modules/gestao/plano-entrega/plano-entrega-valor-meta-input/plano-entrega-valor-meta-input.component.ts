@@ -4,9 +4,10 @@ import { Entrega } from 'src/app/models/entrega.model';
 import { LookupItem } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'plano-entrega-valor-meta-input',
-  templateUrl: './plano-entrega-valor-meta-input.component.html',
-  styleUrls: ['./plano-entrega-valor-meta-input.component.scss']
+    selector: 'plano-entrega-valor-meta-input',
+    templateUrl: './plano-entrega-valor-meta-input.component.html',
+    styleUrls: ['./plano-entrega-valor-meta-input.component.scss'],
+    standalone: false
 })
 export class PlanoEntregaValorMetaInputComponent {
   @HostBinding('class') class = 'form-group';

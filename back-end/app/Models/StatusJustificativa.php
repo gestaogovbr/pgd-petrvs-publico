@@ -9,6 +9,11 @@ use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Atividade;
 
+/**
+ * @property Usuario $usuario
+ * @property PlanoTrabalho|null $planoTrabalho
+ * @property PlanoEntrega|null $planoEntrega
+ */
 class StatusJustificativa extends ModelBase
 {
   protected $table = 'status_justificativas';
@@ -25,6 +30,8 @@ class StatusJustificativa extends ModelBase
     'usuario_id', /* char(36); NOT NULL; */
     //'deleted_at', /* timestamp; */
   ];
+
+  const CODIGO_ATIVO = 'ATIVO';
   //Has
   // Belongs
   public function planoEntrega()
@@ -46,5 +53,20 @@ class StatusJustificativa extends ModelBase
   public function usuario()
   {
     return $this->belongsTo(Usuario::class, "usuario_id");
+  }
+
+  public function isAtivo(): bool
+  {
+    return $this->codigo === self::CODIGO_ATIVO;
+  }
+
+  public function isFromPlanoTrabalho(): bool
+  {
+    return !empty($this->plano_trabalho_id);
+  }
+
+  public function isFromPlanoEntrega(): bool
+  {
+    return !empty($this->plano_entrega_id);
   }
 }

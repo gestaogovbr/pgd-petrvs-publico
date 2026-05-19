@@ -34,7 +34,6 @@ class Solucao extends ModelBase
 
     protected $casts = [
         'id' => 'string',
-        'identificador' => 'string',
         'nome' => 'string',
         'sigla' => 'string',
         'descricao' => 'string',

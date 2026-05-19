@@ -3,9 +3,10 @@ import { SafeUrl } from '@angular/platform-browser';
 import { GlobalsService } from 'src/app/services/globals.service';
 
 @Component({
-  selector: 'profile-picture',
-  templateUrl: './profile-picture.component.html',
-  styleUrls: ['./profile-picture.component.scss']
+    selector: 'profile-picture',
+    templateUrl: './profile-picture.component.html',
+    styleUrls: ['./profile-picture.component.scss'],
+    standalone: false
 })
 export class ProfilePictureComponent implements OnInit {
   @Input() url?: string | SafeUrl | null;

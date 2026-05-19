@@ -29,22 +29,19 @@ export type DialogButton = {
 };
 
 @Component({
-	selector: "app-dialog",
-	templateUrl: "./dialog.component.html",
-	styleUrls: ["./dialog.component.scss"],
-	providers: [
-		{
-			provide: "ID_GENERATOR_BASE",
-			useFactory: (
-				self: DialogComponent,
-				go: NavigateService,
-				util: UtilService
-			) => {
-				return util.onlyAlphanumeric(go.getStackRouteUrl());
-			},
-			deps: [DialogComponent, NavigateService, UtilService],
-		},
-	],
+    selector: "app-dialog",
+    templateUrl: "./dialog.component.html",
+    styleUrls: ["./dialog.component.scss"],
+    providers: [
+        {
+            provide: "ID_GENERATOR_BASE",
+            useFactory: (self: DialogComponent, go: NavigateService, util: UtilService) => {
+                return util.onlyAlphanumeric(go.getStackRouteUrl());
+            },
+            deps: [DialogComponent, NavigateService, UtilService],
+        },
+    ],
+    standalone: false
 })
 export class DialogComponent implements OnInit {
 	@Input() iconTitle?: string;

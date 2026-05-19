@@ -3,7 +3,7 @@ import { AbstractControl, FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { InputSearchComponent } from "src/app/components/input/input-search/input-search.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { ClienteDaoService } from "src/app/dao/cliente-dao.service";
 import { ProdutoDaoService } from "src/app/dao/produto-dao.service";
 import { ProdutoInsumoDaoService } from "src/app/dao/produto-insumo-dao.service";
@@ -15,9 +15,10 @@ import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 import { LookupItem } from "src/app/services/lookup.service";
 
 @Component({
-  selector: 'produto-list-insumo',
-  templateUrl: './produto-list-insumo.component.html',
-  styleUrls: ['./produto-list-insumo.component.scss']
+    selector: 'produto-list-insumo',
+    templateUrl: './produto-list-insumo.component.html',
+    styleUrls: ['./produto-list-insumo.component.scss'],
+    standalone: false
 })
 export class ProdutoListInsumoComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

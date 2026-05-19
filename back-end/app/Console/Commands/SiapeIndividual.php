@@ -16,7 +16,7 @@ class SiapeIndividual extends Command
      *
      * @var string
      */
-    protected $signature = 'app:siape-individual {tenant} {--cpf=} {--unidade=}';
+    protected $signature = 'siape:individual {tenant} {--cpf=} {--unidade=}';
 
     /**
      * The console command description.

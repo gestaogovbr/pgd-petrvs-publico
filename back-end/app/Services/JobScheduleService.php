@@ -76,22 +76,41 @@ class JobScheduleService extends ServiceBase {
 
     public function getAllClassJobs() {
         $jobs = [];
-        $files = scandir(app_path('Jobs'));
-        foreach ($files as $file) {
-            if (strpos($file, '.php') !== false) {
-                $job = str_replace('.php', '', $file);
-                $namespace = 'App\\Jobs\\';
+        $jobsPath = realpath(app_path('Jobs'));
+        if ($jobsPath === false) {
+            return $jobs;
+        }
 
-                $fullClassName = $namespace . $job;
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($jobsPath, \FilesystemIterator::SKIP_DOTS)
+        );
 
-                if (class_exists($fullClassName)) {
-                    $interfaces = class_implements($fullClassName);
+        foreach ($iterator as $file) {
+            if (!$file->isFile() || $file->getExtension() !== 'php') {
+                continue;
+            }
 
-                    if ($interfaces && in_array('App\\Jobs\\Contratos\\ContratoJobSchedule', $interfaces)) {
-                        $jobs[$job] = $fullClassName::getDescricao();
-                        continue;
-                    }
-                }
+            $pathname = $file->getRealPath();
+            if ($pathname === false) {
+                continue;
+            }
+
+            $relative = str_replace($jobsPath . DIRECTORY_SEPARATOR, '', $pathname);
+            $classeSuffix = str_replace(['/', '\\'], '\\', substr($relative, 0, -4));
+            $fullClassName = 'App\\Jobs\\' . $classeSuffix;
+
+            if (!class_exists($fullClassName)) {
+                continue;
+            }
+
+            $reflection = new \ReflectionClass($fullClassName);
+            if ($reflection->isAbstract()) {
+                continue;
+            }
+
+            $interfaces = class_implements($fullClassName);
+            if ($interfaces && in_array('App\\Jobs\\Contratos\\ContratoJobSchedule', $interfaces, true)) {
+                $jobs[$classeSuffix] = $fullClassName::getDescricao();
             }
         }
 
@@ -114,7 +133,7 @@ class JobScheduleService extends ServiceBase {
 
         if(!$jobBuscarDadosJaExiste){
 
-            $now->addMinute(30);
+            $now->addMinutes(30);
             $minute = $now->format('i');
             $hour = $now->format('H');
             $expressaoCron = "{$minute} {$hour} * * *";

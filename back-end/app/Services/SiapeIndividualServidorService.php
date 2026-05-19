@@ -2,21 +2,28 @@
 
 namespace App\Services;
 
+use App\DTOs\Siape\CargaIndividualSiapeProcessamentoDTO;
 use App\Facades\SiapeLog;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Entidade;
-use App\Models\SiapeConsultaDadosFuncionais;
-use App\Models\SiapeConsultaDadosPessoais;
-use App\Models\SiapeDadosUORG;
-use App\Models\SiapeListaUORGS;
 use App\Models\SiapeBlackListServidor;
-use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Repository\EntidadeRepository;
+use App\Repository\SiapeBlackListServidorRepository;
+use App\Repository\SiapeConsultaDadosFuncionaisRepository;
+use App\Repository\SiapeConsultaDadosPessoaisRepository;
+use App\Repository\SiapeDadosUORGRepository;
+use App\Repository\SiapeListaUORGSRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UsuarioRepository;
+use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
 use App\Services\Siape\Unidade\Atribuicao;
 use App\Services\IntegracaoServiceFactory;
+use App\Support\SiapeDate;
 use Illuminate\Support\Str;
 use Exception;
-use DateTime;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Brazanation\Documents\Cpf;
@@ -31,22 +38,56 @@ class SiapeIndividualServidorService extends ServiceBase
     private const MSG_CONCLUIDO = 'Processamento concluído';
     private const TAMANHO_CPF = 11;
     private const MAX_PREVIEW_LOG = 200;
-    private const FORMATO_DATA_SIAPE = 'dmY';
-    private const FORMATO_DATA_DB = 'Y-m-d 00:00:00';
-
     private SiapeIndividualService $service;
     private ?array $resumo = null;
+    private ?array $relatorioCarga = null;
 
     public function __construct(
         protected IntegracaoServiceFactory $integracaoServiceFactory,
+        protected EntidadeRepository $entidadeRepository,
+        protected SiapeBlackListServidorRepository $siapeBlackListServidorRepository,
+        protected SiapeConsultaDadosFuncionaisRepository $siapeConsultaDadosFuncionaisRepository,
+        protected SiapeConsultaDadosPessoaisRepository $siapeConsultaDadosPessoaisRepository,
+        protected SiapeDadosUORGRepository $siapeDadosUORGRepository,
+        protected SiapeListaUORGSRepository $siapeListaUORGSRepository,
+        protected UnidadeRepository $unidadeRepository,
+        protected UnidadeIntegranteRepository $unidadeIntegranteRepository,
+        protected UnidadeIntegranteAtribuicaoRepository $unidadeIntegranteAtribuicaoRepository,
+        protected UsuarioRepository $usuarioRepository,
+        protected CargaIndividualSiapeSubject $cargaIndividualSiapeSubject,
         $collection = null
     ) {
         parent::__construct($collection);
     }
 
+    public function getUnidadeIntegranteRepository(): UnidadeIntegranteRepository
+    {
+        return $this->unidadeIntegranteRepository;
+    }
+
+    public function getUnidadeIntegranteAtribuicaoRepository(): UnidadeIntegranteAtribuicaoRepository
+    {
+        return $this->unidadeIntegranteAtribuicaoRepository;
+    }
+
+    public function getUsuarioRepository(): UsuarioRepository
+    {
+        return $this->usuarioRepository;
+    }
+
+    public function getUnidadeRepository(): UnidadeRepository
+    {
+        return $this->unidadeRepository;
+    }
+
     public function getResumo(): ?array
     {
         return $this->resumo;
+    }
+
+    public function getRelatorioCarga(): ?array
+    {
+        return $this->relatorioCarga;
     }
 
     /**
@@ -59,11 +100,18 @@ class SiapeIndividualServidorService extends ServiceBase
 
         $this->service = $service;
         $this->resumo = null;
-        
-        $cpfLimpo = $this->limparEValidarCpf($cpf);
-        $usuariosAntes = $this->capturarEstadoUsuarios($cpfLimpo);
+        $this->relatorioCarga = null;
+        $processamentoId = (string) Str::uuid();
+        $dadosRelatorio = [
+            'dadosPessoais' => [],
+            'dadosFuncionais' => [],
+        ];
+        $cpfLimpo = preg_replace('/[^0-9]/', '', $cpf) ?? $cpf;
+        $usuariosAntes = [];
 
         try {
+            $cpfLimpo = $this->limparEValidarCpf($cpf);
+            $usuariosAntes = $this->capturarEstadoUsuarios($cpfLimpo);
             $this->logInicioProcessamento($cpf, $cpfLimpo);
             $this->limparDadosAnteriores($cpfLimpo);
 
@@ -71,6 +119,8 @@ class SiapeIndividualServidorService extends ServiceBase
             list($respFuncionais, $respPessoais) = $this->executarConsultasSiape($cpfLimpo, $xmlFuncionais, $xmlPessoais);
             
             $dadosFuncionais = $this->processarRespostaFuncionais($cpfLimpo, $respFuncionais);
+            $dadosRelatorio['dadosFuncionais'] = $dadosFuncionais;
+            $dadosRelatorio['dadosPessoais'] = $this->processarDadosPessoaisParaRelatorio($cpfLimpo, $respPessoais);
             
             $this->processarUnidadesDosServidores($cpfLimpo, $dadosFuncionais);
             $this->salvarDadosConsulta($cpfLimpo, $respFuncionais, $respPessoais);
@@ -83,7 +133,7 @@ class SiapeIndividualServidorService extends ServiceBase
             if (empty($this->resumo)) {
                 $nome = 'Servidor';
                 try {
-                     $dadosPessoaisArr = $this->service->getProcessaDadosSiape()->processaDadosPessoais($cpfLimpo, $respPessoais);
+                     $dadosPessoaisArr = $dadosRelatorio['dadosPessoais'];
                      $nome = $dadosPessoaisArr['nome'] ?? 'Servidor';
                 } catch (\Throwable $e) {
                     // ignore
@@ -100,12 +150,83 @@ class SiapeIndividualServidorService extends ServiceBase
                 ];
             }
 
+            $this->registrarRelatorioCarga(
+                $processamentoId,
+                $cpfLimpo,
+                $this->statusRelatorioPorResumo($this->resumo),
+                true,
+                $dadosRelatorio,
+                null
+            );
+
             return $this->resumo;
 
         } catch (Exception $e) {
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_ERRO, $e->getMessage());
+            $this->registrarRelatorioCarga(
+                $processamentoId,
+                $cpfLimpo,
+                CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
+                false,
+                $dadosRelatorio,
+                $e->getMessage()
+            );
             throw $e;
         }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function processarDadosPessoaisParaRelatorio(string $cpf, string $respPessoais): array
+    {
+        try {
+            return $this->service->getProcessaDadosSiape()->processaDadosPessoais($cpf, $respPessoais);
+        } catch (\Throwable) {
+            return [];
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $dadosRelatorio
+     */
+    private function registrarRelatorioCarga(
+        string $processamentoId,
+        string $cpf,
+        string $status,
+        bool $entradaValida,
+        array $dadosRelatorio,
+        ?string $mensagemErro
+    ): void {
+        $relatorio = $this->cargaIndividualSiapeSubject->notificar(new CargaIndividualSiapeProcessamentoDTO(
+            processamentoId: $processamentoId,
+            tipo: CargaIndividualSiapeProcessamentoDTO::TIPO_SERVIDOR,
+            chave: $cpf,
+            status: $status,
+            entradaValida: $entradaValida,
+            dadosSiape: $dadosRelatorio,
+            resumo: $this->resumo,
+            mensagemErro: $mensagemErro,
+            solicitanteId: auth()->id(),
+        ));
+
+        $this->relatorioCarga = $relatorio ? [
+            'id' => $relatorio->id,
+            'status' => $relatorio->status,
+            'tipo' => $relatorio->tipo,
+        ] : null;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>>|null $resumo
+     */
+    private function statusRelatorioPorResumo(?array $resumo): string
+    {
+        if (collect($resumo ?? [])->contains(fn(array $item) => ($item['status'] ?? null) === self::STATUS_PARCIAL)) {
+            return CargaIndividualSiapeProcessamentoDTO::STATUS_PARCIAL;
+        }
+
+        return CargaIndividualSiapeProcessamentoDTO::STATUS_SUCESSO;
     }
 
     protected function instanciarIntegracaoService(): IntegracaoService
@@ -120,10 +241,8 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function buscarUsuariosPorCpf(string $cpf): array
     {
-        return $this->getModelInstance(Usuario::class)->with(['lotacao.unidade'])
-            ->where('cpf', $cpf)
-            ->get()
-            ->map(fn($u) => [
+        return $this->usuarioRepository->findAllByCpfWithLotacao($cpf)
+            ->map(fn(Usuario $u) => [
                 'id' => $u->id,
                 'matricula' => $u->matricula,
                 'nome' => $u->nome,
@@ -149,8 +268,8 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function limparDadosSiape(string $cpf): void
     {
-        $this->getModelInstance(SiapeConsultaDadosPessoais::class)->withTrashed()->where('cpf', $cpf)->forceDelete();
-        $this->getModelInstance(SiapeConsultaDadosFuncionais::class)->withTrashed()->where('cpf', $cpf)->forceDelete();
+        $this->siapeConsultaDadosPessoaisRepository->forceDeleteByCpf($cpf);
+        $this->siapeConsultaDadosFuncionaisRepository->forceDeleteByCpf($cpf);
     }
 
     private function limparDadosAnteriores(string $cpf): void
@@ -281,7 +400,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function verificarExistenciaUnidade(string $codigoUnidade): bool
     {
-        return $this->getModelInstance(Unidade::class)->where('codigo', $codigoUnidade)->exists();
+        return $this->unidadeRepository->existsByCodigo($codigoUnidade);
     }
 
     private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, array $dados): void
@@ -320,17 +439,13 @@ class SiapeIndividualServidorService extends ServiceBase
             $this->service->config['nomeSistema'],
             $this->service->config['senha'],
             $this->service->getBuscarDadosSiapeUnidade()->getCpf(),
-            $codOrgao,
-            $this->service->config['parmExistPag'],
-            $this->service->config['parmTipoVinculo']
+            $codOrgao
         );
     }
 
     protected function buscarUorgNaoProcessada()
     {
-        return $this->getModelInstance(SiapeListaUORGS::class)->where('processado', 0)
-            ->orderBy('updated_at', 'desc')
-            ->first();
+        return $this->siapeListaUORGSRepository->findUnprocessed();
     }
 
     private function buscarUnidadeNaLista(string $codigoUnidade): ?array
@@ -343,10 +458,9 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function salvarHistoricoUnidadeDb(string $responseXml, ?array $unidadeSiape): void
     {
-        $this->getModelInstance(SiapeDadosUORG::class)->insert([
+        $this->siapeDadosUORGRepository->create([
             'id' => Str::uuid(),
-            'data_modificacao' => DateTime::createFromFormat(self::FORMATO_DATA_SIAPE, $unidadeSiape['dataUltimaTransacao'])
-                ->format(self::FORMATO_DATA_DB),
+            'data_modificacao' => SiapeDate::dataUltimaTransacaoParaBancoOuFalha($unidadeSiape['dataUltimaTransacao']),
             'response' => $responseXml,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
@@ -363,7 +477,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function salvarDadosConsultaDb(string $cpf, string $respFuncionais, string $respPessoais): void
     {
-        $this->getModelInstance(SiapeConsultaDadosFuncionais::class)->insert([
+        $this->siapeConsultaDadosFuncionaisRepository->create([
             'id' => Str::uuid(),
             'cpf' => $cpf,
             'data_modificacao' => today(),
@@ -372,7 +486,7 @@ class SiapeIndividualServidorService extends ServiceBase
             'updated_at' => Carbon::now(),
         ]);
 
-        $this->getModelInstance(SiapeConsultaDadosPessoais::class)->insert([
+        $this->siapeConsultaDadosPessoaisRepository->create([
             'id' => Str::uuid(),
             'cpf' => $cpf,
             'data_modificacao' => today(),
@@ -408,7 +522,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function buscarTodasEntidades()
     {
-        return $this->getModelInstance(Entidade::class)->all();
+        return $this->entidadeRepository->findAll();
     }
 
     private function executarSincronizacaoFinal(string $cpf): void
@@ -452,7 +566,7 @@ class SiapeIndividualServidorService extends ServiceBase
     }
 
     protected function gerarUsuariosResumo(string $cpf) {
-        return $this->getModelInstance(Usuario::class)->with(['lotacao.unidade'])->where('cpf', $cpf)->get();
+        return $this->usuarioRepository->findAllByCpfWithLotacao($cpf);
     }
 
     private function gerarResumo(array $usuariosAntes, string $cpf, string $status, string $mensagem = self::MSG_CONCLUIDO): array
@@ -516,7 +630,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function buscarUsuariosSimples(string $cpf)
     {
-        return $this->getModelInstance(Usuario::class)->where('cpf', $cpf)->get();
+        return $this->usuarioRepository->findAllByCpfUnfiltered($cpf);
     }
 
     private function removeVinculoParaforcarSerLotadoNovamente(string $cpf, array $dadosFuncionaisArray): void
@@ -531,16 +645,47 @@ class SiapeIndividualServidorService extends ServiceBase
         $matriculasSiape = array_map(fn($dado) => $dado['matriculaSiape'] ?? null, $dadosFuncionaisArray);
 
         foreach ($usuarios as $usuario) {
-            $this->processarRemocaoVinculoUsuario($usuario, $cpf, $matriculasSiape);
+            if (in_array($usuario->matricula, $matriculasSiape)) {
+                $this->processarRemocaoVinculoUsuario($usuario, $cpf, $matriculasSiape);
+                continue;
+            }
+
+            $this->adicionarBlacklist($cpf, $usuario->matricula);
+        }
+    }
+
+    private function adicionarBlacklist(string $cpf, ?string $matricula): void
+    {
+        if (empty($matricula)) {
+            return;
+        }
+
+        $exists = $this->siapeBlackListServidorRepository->exists($cpf, $matricula);
+
+        if (!$exists) {
+            $this->siapeBlackListServidorRepository->create([
+                'id' => Str::uuid(),
+                'cpf' => $cpf,
+                'matricula' => $matricula,
+                'response' => 'Adicionado automaticamente via integração',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]);
+            
+            SiapeLog::info('Usuário adicionado à blacklist por ausência no SIAPE', [
+                'cpf' => $cpf, 
+                'matricula' => $matricula
+            ]);
         }
     }
 
     private function processarRemocaoVinculoUsuario(Usuario $usuario, string $cpf, array $matriculasSiape): void
     {
-        if (!$usuario->lotacao?->unidade) return;
-        
         $this->atualizarStatusUsuario($usuario);
         $this->verificarBlacklist($cpf, $usuario);
+        
+        if (!$usuario->lotacao?->unidade) return;
+        
         $this->removeTodasAsGestoesDoUsuario($usuario);
         
         if (!in_array($usuario->matricula, $matriculasSiape)) {
@@ -551,25 +696,24 @@ class SiapeIndividualServidorService extends ServiceBase
             ]);
             return;
         }
-
-        $this->removeLotacao($usuario);
+        //FIXME Removendo essa opção até que corrija o bug de lotação
+        // $this->removeLotacao($usuario);
     }
 
     private function atualizarStatusUsuario(Usuario $usuario): void
     {
-        $usuario->usuario_externo = 0;
-        $usuario->save();
+        $this->usuarioRepository->update($usuario->id, ['usuario_externo' => false]);
     }
 
-    protected function buscarBlacklist(string $cpf)
+    protected function buscarBlacklist(string $cpf, ?string $matricula = null)
     {
-        return $this->getModelInstance(SiapeBlackListServidor::class)->where('cpf', $cpf)->first();
+        return $this->siapeBlackListServidorRepository->findByCpfAndOptionalMatricula($cpf, $matricula);
     }
 
     private function verificarBlacklist(string $cpf, Usuario $usuario): void
     {
         try {
-            $blacklistRegistro = $this->buscarBlacklist($cpf);
+            $blacklistRegistro = $this->buscarBlacklist($cpf, $usuario->matricula);
 
             if ($blacklistRegistro) {
                 $this->processarRegistroBlacklist($blacklistRegistro, $usuario, $cpf);
@@ -587,15 +731,14 @@ class SiapeIndividualServidorService extends ServiceBase
     private function processarRegistroBlacklist(SiapeBlackListServidor $registro, Usuario $usuario, string $cpf): void
     {
         if ((int)($registro->inativado ?? 0) === 1) {
-            $usuario->situacao_siape = UsuarioSituacaoSiape::ATIVO->value;
-            $usuario->save();
+            $this->usuarioRepository->update($usuario->id, ['situacao_siape' => UsuarioSituacaoSiape::ATIVO->value]);
             SiapeLog::info('Usuário reativado pela remoção da blacklist', [
                 'cpf' => $cpf,
                 'usuario_id' => $usuario->id
             ]);
         }
 
-        $registro->forceDelete();
+        $this->siapeBlackListServidorRepository->forceDelete($registro->id);
         SiapeLog::info('Registro removido da blacklist', ['cpf' => $cpf]);
     }
 
@@ -603,7 +746,7 @@ class SiapeIndividualServidorService extends ServiceBase
     {
         $blacklistRegistro = $this->buscarBlacklist($cpf);
         if ($blacklistRegistro) {
-            $blacklistRegistro->forceDelete();
+            $this->siapeBlackListServidorRepository->forceDelete($blacklistRegistro->id);
             SiapeLog::info('Registro removido da blacklist', ['cpf' => $cpf]);
         }
     }
@@ -619,9 +762,6 @@ class SiapeIndividualServidorService extends ServiceBase
             $codigoDaUnidade
         );
     }
-
-    // Unused method removed
-
 
     private function montaXMLDadosFuncionais(string $cpf)
     {
@@ -649,8 +789,16 @@ class SiapeIndividualServidorService extends ServiceBase
         );
     }
 
+    private function validarCpf(string $cpf): bool
+    {
+        try {
+            new Cpf($cpf);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 
-   
     private function limparEValidarCpf(string $cpf): string
     {
         $cpfLimpo = preg_replace('/[^0-9]/', '', $cpf);

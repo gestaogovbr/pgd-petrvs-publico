@@ -9,6 +9,6 @@ enum PlanoEntregaStatus: string
     case SUSPENSO = 'SUSPENSO';
     case CONCLUIDO = 'CONCLUIDO';
     case CANCELADO = 'CANCELADO';
-    case AVALIDADO = 'AVALIADO';
+    case AVALIADO = 'AVALIADO';
     case HOMOLOGANDO = 'HOMOLOGANDO';
 }

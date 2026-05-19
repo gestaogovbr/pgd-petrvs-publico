@@ -13,9 +13,10 @@ import { SeederDaoService } from 'src/app/dao/seeder-dao.service';
 import { JobAgendadoDaoService } from 'src/app/dao/job-agendado-dao.service';
 
 @Component({
-  selector: 'app-panel-form',
-  templateUrl: './panel-form.component.html',
-  styleUrls: ['./panel-form.component.scss']
+    selector: 'app-panel-form',
+    templateUrl: './panel-form.component.html',
+    styleUrls: ['./panel-form.component.scss'],
+    standalone: false
 })
 export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

@@ -7,11 +7,13 @@ import { IIndexable } from 'src/app/models/base.model';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
 import { PlanoTrabalho } from 'src/app/models/plano-trabalho.model';
 import { PageFrameBase } from 'src/app/modules/base/page-frame-base';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 
 @Component({
-  selector: 'plano-trabalho-list-accordeon',
-  templateUrl: './plano-trabalho-list-accordeon.component.html',
-  styleUrls: ['./plano-trabalho-list-accordeon.component.scss']
+    selector: 'plano-trabalho-list-accordeon',
+    templateUrl: './plano-trabalho-list-accordeon.component.html',
+    styleUrls: ['./plano-trabalho-list-accordeon.component.scss'],
+    standalone: false
 })
 export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
   @ViewChild('accordion', { static: false }) public accordion?: AccordionComponent;
@@ -28,6 +30,7 @@ export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
 
   public selectedIndex: number = -1;
   public dao?: PlanoTrabalhoDaoService;
+  public modalidadePgd: ModalidadePgdService;
   public planos: PlanoTrabalho[] = [];
 
   private _arquivados: boolean = false;
@@ -35,6 +38,7 @@ export class PlanoTrabalhoListAccordeonComponent extends PageFrameBase {
   constructor(public injector: Injector) {
     super(injector);
     this.dao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
+    this.modalidadePgd = injector.get<ModalidadePgdService>(ModalidadePgdService);
   }
 
   ngAfterViewInit() {

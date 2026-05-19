@@ -6,7 +6,7 @@ use App\Models\Usuario;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
-use OwenIt\Auditing\Models\Audit;
+use App\Models\Audit;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\ServiceBase;
 

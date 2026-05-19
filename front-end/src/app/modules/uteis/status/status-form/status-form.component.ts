@@ -6,9 +6,10 @@ import { StatusService } from './status.service';
 import { LookupService } from 'src/app/services/lookup.service';
 
 @Component({
-  selector: 'app-status',
-  templateUrl: './status-form.component.html',
-  styleUrls: ['./status-form.component.scss']
+    selector: 'app-status',
+    templateUrl: './status-form.component.html',
+    styleUrls: ['./status-form.component.scss'],
+    standalone: false
 })
 export class StatusFormComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

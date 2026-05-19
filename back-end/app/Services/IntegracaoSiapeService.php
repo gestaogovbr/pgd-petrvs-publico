@@ -5,11 +5,11 @@ namespace App\Services;
 use Illuminate\Support\Facades\DB;
 use App\Services\ServiceBase;
 use App\Exceptions\LogError;
-use App\Models\Unidade;
 use App\Services\Siape\ProcessaDadosSiapeBD;
 use DateTime;
 use Illuminate\Support\Facades\Log;
 use Throwable;
+use App\Repository\UnidadeRepository;
 
 class IntegracaoSiapeService extends ServiceBase
 {
@@ -116,17 +116,8 @@ class IntegracaoSiapeService extends ServiceBase
       $dadosFuncionais['codUorgExercicio'] = strval(intval($dadosFuncionais['codUorgExercicio']));
     }
 
-    // Contrato temporário: mapear unidade pela sigla da lotação
-    if (($dadosFuncionais['codSitFuncional'] ?? null) == self::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO) {
-      $sigla = trim($dadosFuncionais['siglaUorgLotacao'] ?? '');
-      if ($sigla === '') {
-        return null;
-      }
-      $unidadeServidorTemporario = Unidade::where('sigla', $sigla)->first();
-      if (!$unidadeServidorTemporario) {
-        return null;
-      }
-      $dadosFuncionais['codUorgExercicio'] = $unidadeServidorTemporario->codigo;
+    if (!$this->processarContratoTemporario($dadosFuncionais)) {
+      return null;
     }
 
     // Função (legacy/TODO)
@@ -167,6 +158,32 @@ class IntegracaoSiapeService extends ServiceBase
     ];
 
     return $funcional;
+  }
+
+  public $siapeCodUorg;
+
+  protected function getUnidadeRepository(): UnidadeRepository
+  {
+    return app(UnidadeRepository::class);
+  }
+
+  private function processarContratoTemporario(array &$dadosFuncionais): bool
+  {
+    $codSit = $dadosFuncionais['codSitFuncional'] ?? null;
+    if ($codSit != self::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO) {
+      return true;
+    }
+    $sigla = trim($dadosFuncionais['siglaUorgLotacao'] ?? '');
+    if ($sigla === '') {
+      $codUorgExercicio = trim((string) ($dadosFuncionais['codUorgExercicio'] ?? ''));
+      return $codUorgExercicio !== '';
+    }
+    $unidadeServidorTemporario = $this->getUnidadeRepository()->findBySigla($sigla);
+    if (!$unidadeServidorTemporario) {
+      return false;
+    }
+    $dadosFuncionais['codUorgExercicio'] = $unidadeServidorTemporario->codigo;
+    return true;
   }
 
   public function retornarUorgs($uorgInicial = 1)

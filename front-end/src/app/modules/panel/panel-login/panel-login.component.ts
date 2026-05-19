@@ -6,11 +6,13 @@ import {FormHelperService} from "../../../services/form-helper.service";
 import { GlobalsService } from 'src/app/services/globals.service';
 import { DOCUMENT } from '@angular/common';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
+import { DialogService } from 'src/app/services/dialog.service';
 
 @Component({
     selector: 'app-panel-login',
     templateUrl: './panel-login.component.html',
-    styleUrls: ['./panel-login.component.scss']
+    styleUrls: ['./panel-login.component.scss'],
+    standalone: false
 })
 export class PanelLoginComponent {
 
@@ -21,6 +23,7 @@ export class PanelLoginComponent {
         public globals: GlobalsService,
         private router: Router,
         private authService: AuthPanelService,
+        private dialog: DialogService,
         public fh: FormHelperService,
         public formBuilder: FormBuilder,
         public cdRef: ChangeDetectorRef,
@@ -52,17 +55,13 @@ export class PanelLoginComponent {
     public loginPanel() {
         const form = this.login.controls;
         this.authService.loginPanel(form.email.value, form.password.value)
-            .then((success) => {
-                if (success) {
-                    // Navegar para a rota desejada após o login bem-sucedido
-                    this.router.navigate(['/panel']); // Substitua '/panel' pela rota desejada
-                } else {
-                    alert('Credenciais inválidas. Por favor, tente novamente.');
-                }
+            .then(() => {
+                this.router.navigate(['/panel']);
             })
             .catch(error => {
-                alert('Erro durante o login:'+error.error.error);
-                console.error('Erro durante o login:', error.error.error);
+                const message = error?.error?.error || 'Não foi possível realizar o login.';
+                this.dialog.alert('Atenção', message);
+                console.error('Erro durante o login:', error);
             });
     }
 

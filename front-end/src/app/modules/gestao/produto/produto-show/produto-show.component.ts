@@ -4,9 +4,10 @@ import { Produto } from "src/app/models/produto.model";
 import { PageBase } from "src/app/modules/base/page-base";
 
 @Component({
-  selector: 'produto-show',
-  templateUrl: './produto-show.component.html',
-  styleUrls: ['./produto-show.component.scss']
+    selector: 'produto-show',
+    templateUrl: './produto-show.component.html',
+    styleUrls: ['./produto-show.component.scss'],
+    standalone: false
 })
 export class ProdutoShowComponent extends PageBase {
   public produto?: Produto | null;

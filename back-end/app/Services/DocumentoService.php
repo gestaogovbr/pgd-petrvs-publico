@@ -13,10 +13,11 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\App;
 use App\Services\UtilService;
 use Illuminate\Database\Eloquent\Builder;
-
-
 use Throwable;
 
+/**
+ * @property PlanoTrabalhoService $planoTrabalhoService
+ */
 class DocumentoService extends ServiceBase {
 
     public function proxyUpdate($data, $unidade) {
@@ -25,19 +26,24 @@ class DocumentoService extends ServiceBase {
             if($documento->especie == "TCR" && !empty($documento->plano_id) && $documento->status == "AGUARDANDO_SEI") {
                 $planoTrabalho = PlanoTrabalho::find($documento->plano_trabalho_id);
                 $planoTrabalho->documento_id = $data['id'];
-                $planoTrabalho->save();    
+                $planoTrabalho->save();
             }
         }
         return $data;
     }
 
+    /**
+     * @param Documento $entity
+     * @param mixed $unidade
+     * @param string $action
+     */
     public function extraStore($entity, $unidade, $action) {
         $documento = $entity;
         if($documento->especie == "TCR" && $action == ServiceBase::ACTION_INSERT) {
             if(!empty($documento->plano_trabalho_id) && $documento->status == "GERADO") {
                 $plano = PlanoTrabalho::find($documento->plano_trabalho_id);
                 $plano->documento_id = $entity->id;
-                $plano->save();    
+                $plano->save();
             }
         }
     }
@@ -48,15 +54,17 @@ class DocumentoService extends ServiceBase {
 
     public function assinar($data,$request) {
         $usuario = parent::loggedUser();
+
         $documentos = Documento::with(['assinaturas' => function ($query) use ($usuario) {
             $query->where('usuario_id', $usuario->id);
         }, 'planoTrabalho'])->whereIn('id', $data["documentos_ids"])->get();
+
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-            foreach($documentos as $documento) {
+            foreach($documentos as $n => $documento) {
                 $especie = $documento->especie;
-                if(count($documento->assinaturas) == 0) { 
-                    $this->registrarAssinatura($documento, $usuario->id, $request); 
+                if(count($documento->assinaturas) == 0) {
+                    $doc = $this->registrarAssinatura($documento, $usuario->id, $request);
                     if($especie == "TCR") $this->planoTrabalhoService->assinaturaTcr($documento, $usuario);
                 } else {
                     /* Remove o documento que já foi assinado */
@@ -68,6 +76,7 @@ class DocumentoService extends ServiceBase {
             DB::rollback();
             throw $e;
         }
+
         return Documento::with('assinaturas.usuario:id,nome,apelido')->whereIn('id', $data["documentos_ids"])->get()->all();
     }
 
@@ -83,7 +92,7 @@ class DocumentoService extends ServiceBase {
 
     public function gerarPDF($data){
         $documento = Documento::find($data["documento_id"]);
-        if(empty($documento)) throw new ServerException("ValidateDocumento", "Documento não encontrado");        
+        if(empty($documento)) throw new ServerException("ValidateDocumento", "Documento não encontrado");
         $head = '<head><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">';
         $assinaturas = '';
         if($documento->assinaturas) {
@@ -93,7 +102,7 @@ class DocumentoService extends ServiceBase {
             }
             $assinaturas .= '</div>';
         }
-        $pdf = Pdf::loadHTML($head . $documento->conteudo . $assinaturas);        
+        $pdf = Pdf::loadHTML($head . $documento->conteudo . $assinaturas);
         $pdf->render();
         return $pdf->output();
     }

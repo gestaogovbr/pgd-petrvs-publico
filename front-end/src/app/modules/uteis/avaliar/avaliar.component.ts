@@ -31,9 +31,10 @@ import { ProgramaDaoService } from 'src/app/dao/programa-dao.service';
 export type OrigemAvaliacao = "PLANO_ENTREGA" | "CONSOLIDACAO";
 
 @Component({
-  selector: 'avaliar',
-  templateUrl: './avaliar.component.html',
-  styleUrls: ['./avaliar.component.scss']
+    selector: 'avaliar',
+    templateUrl: './avaliar.component.html',
+    styleUrls: ['./avaliar.component.scss'],
+    standalone: false
 })
 export class AvaliarComponent extends PageFormBase<Avaliacao, AvaliacaoDaoService> implements OnInit {
   @ViewChild('notaInput', { static: false }) public notaInput?: AvaliarNotaInputComponent;

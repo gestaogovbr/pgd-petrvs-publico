@@ -15,9 +15,10 @@ import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 import { LookupItem } from "src/app/services/lookup.service";
 
 @Component({
-  selector: 'produto-list-processo',
-  templateUrl: './produto-list-processo.component.html',
-  styleUrls: ['./produto-list-processo.component.scss']
+    selector: 'produto-list-processo',
+    templateUrl: './produto-list-processo.component.html',
+    styleUrls: ['./produto-list-processo.component.scss'],
+    standalone: false
 })
 export class ProdutoListProcessoComponent extends PageFrameBase {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;

@@ -1,0 +1,68 @@
+<div class="relatorio-carga-siape">
+  <section class="debug-topo">
+    <h2>Relatório de Carga Individual SIAPE</h2>
+    <p>
+      detalhe={{ exibindoDetalhe ? 'sim' : 'nao' }} |
+      recentes={{ recentes.length }} |
+      relatorio={{ relatorio ? 'sim' : 'nao' }}
+    </p>
+  </section>
+
+  <form class="relatorio-filtros" [formGroup]="filtro" (ngSubmit)="buscarPorId()">
+    <label>
+      <span>Identificador</span>
+      <input class="form-control" formControlName="id" placeholder="ID do relatório">
+    </label>
+
+    <label>
+      <span>Tipo</span>
+      <select class="form-select" formControlName="tipo" (change)="listarRecentes()">
+        <option value="">Todos</option>
+        <option value="servidor">Servidor</option>
+        <option value="unidade">Unidade</option>
+      </select>
+    </label>
+
+    <label>
+      <span>CPF ou unidade</span>
+      <input class="form-control" formControlName="chave" placeholder="Buscar recentes">
+    </label>
+
+    <div class="acoes">
+      <button class="btn btn-primary" type="submit">Buscar</button>
+      <button class="btn btn-outline-secondary" type="button" (click)="listarRecentes()">Recentes</button>
+      <button class="btn btn-outline-secondary" type="button" (click)="limpar()">Limpar</button>
+    </div>
+  </form>
+
+  <section class="debug-bloco" *ngIf="!exibindoDetalhe">
+    <h3>Recentes</h3>
+    <p *ngIf="!recentes.length">Nenhum relatório encontrado.</p>
+
+    <div *ngFor="let item of recentes" class="debug-item">
+      <div><strong>ID:</strong> {{ item.id }}</div>
+      <div><strong>Tipo:</strong> {{ item.tipo }}</div>
+      <div><strong>Chave:</strong> {{ item.chave }}</div>
+      <div><strong>Status:</strong> {{ item.status }}</div>
+      <div><strong>Processado em:</strong> {{ formatarProcessadoEm(item.processado_em) || '-' }}</div>
+      <div class="debug-acoes">
+        <button class="btn btn-sm btn-outline-primary" type="button" (click)="abrir(item)">Abrir</button>
+      </div>
+      <pre>{{ item | json }}</pre>
+    </div>
+  </section>
+
+  <section class="debug-bloco" *ngIf="exibindoDetalhe && relatorio">
+    <h3>Detalhe</h3>
+    <div class="debug-item">
+      <div><strong>ID:</strong> {{ relatorio.id }}</div>
+      <div><strong>Tipo:</strong> {{ relatorio.tipo }}</div>
+      <div><strong>Chave:</strong> {{ relatorio.chave }}</div>
+      <div><strong>Status:</strong> {{ relatorio.status }}</div>
+      <div><strong>Mensagem:</strong> {{ relatorio.mensagem_usuario }}</div>
+      <div><strong>Entrada válida:</strong> {{ relatorio.entrada_valida ? 'sim' : 'nao' }}</div>
+      <div><strong>Processado em:</strong> {{ formatarProcessadoEm(relatorio.processado_em) || '-' }}</div>
+      <pre>{{ relatorio | json }}</pre>
+    </div>
+  </section>
+</div>

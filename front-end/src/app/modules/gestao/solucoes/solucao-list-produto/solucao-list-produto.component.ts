@@ -2,7 +2,7 @@ import { Component, Injector, Input, ViewChild } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { InputSelectComponent } from "src/app/components/input/input-select/input-select.component";
-import { ToolbarButton } from "src/app/components/toolbar/toolbar.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { QueryOptions } from "src/app/dao/query-options";
 import { ProdutoSolucao } from "src/app/models/produto-solucao.model";
 import { Produto } from "src/app/models/produto.model";
@@ -12,9 +12,10 @@ import { PageFrameBase } from "src/app/modules/base/page-frame-base";
 import { LookupItem } from "src/app/services/lookup.service";
 
 @Component({
-  selector: 'solucao-list-produto',
-  templateUrl: './solucao-list-produto.component.html',
-  styleUrls: ['./solucao-list-produto.component.scss']
+    selector: 'solucao-list-produto',
+    templateUrl: './solucao-list-produto.component.html',
+    styleUrls: ['./solucao-list-produto.component.scss'],
+    standalone: false
 })
 export class SolucaoListProdutoComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;

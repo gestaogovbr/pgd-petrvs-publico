@@ -7,7 +7,7 @@
       [imgIcon]="gb.getResourcePath('assets/icons/home/negociate.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
-      [route]="{route: ['gestao/plano-trabalho']}"
+      [route]="{route: ['gestao/plano-trabalho-v2']}"
     ></app-button-dashboard>
   </div>
 
@@ -21,25 +21,7 @@
     ></app-button-dashboard>
   </div>
 
-  <div class="col-6 col-sm-3 mb-3">
-    <app-button-dashboard
-      [title]="lex.translate('Consolidações')"
-      [imgIcon]="gb.getResourcePath('assets/icons/home/team.svg')"
-      textColor="#1369f0"
-      borderColor="#1369f0"
-      [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
-    ></app-button-dashboard>
-  </div>
-
-  <div class="col-6 col-sm-3 mb-3">
-    <app-button-dashboard
-      [title]="'Avaliações de ' + lex.translate('consolidações')"
-      [imgIcon]="gb.getResourcePath('assets/icons/home/ranking.svg')"
-      textColor="#1369f0"
-      borderColor="#1369f0"
-      [route]="{route: ['avaliacao/plano-trabalho/consolidacao/avaliacao']}"
-    ></app-button-dashboard>
-  </div>
+ 
 
 </div>
 
@@ -61,7 +43,8 @@
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <div>
                   <strong>Plano de trabalho: {{ grupo.plano_trabalho?.numero }}</strong>
-                  <span class="badge bg-warning text-dark rounded-pill ms-2">({{ grupo.pendencias?.length }})</span>
+                  <span class="badge bg-warning text-dark rounded-pill ms-2">({{ grupo.pendencias.length }})</span>
+
                 </div>
                 <button 
                   type="button" 

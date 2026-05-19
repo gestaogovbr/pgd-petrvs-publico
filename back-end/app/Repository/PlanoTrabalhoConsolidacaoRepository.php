@@ -1,103 +1,96 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
-use App\Enums\StatusEnum;
-use App\Models\Afastamento;
-use App\Models\Atividade;
-use App\Models\Ocorrencia;
-use App\Models\PlanoEntrega;
+use App\DTOs\PlanoTrabalho\PlanoTrabalhoConsolidacaoDataDTO;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoReadRepositoryContract;
+use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoWriteRepositoryContract;
+use App\V2\PlanoTrabalho\DTOs\ResumoConsolidacoesDTO;
 use Illuminate\Database\Eloquent\Collection;
 
 class PlanoTrabalhoConsolidacaoRepository
 {
-  public function getConsolidacaoData($id): array
-  {
-    $consolidacao = $this->findConsolidacaoById($id);
-    $concluido = in_array($consolidacao->status, [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
-    $planosEntregasIds = array_map(fn($pe) => $pe->planoEntregaEntrega?->plano_entrega_id, $consolidacao->planoTrabalho->entregas?->all() ?? []);
+    public function __construct(
+        private readonly PlanoTrabalhoConsolidacaoReadRepositoryContract $readRepository,
+        private readonly PlanoTrabalhoConsolidacaoWriteRepositoryContract $writeRepository,
+    ) {}
 
-    return [
-      'programa' => $consolidacao->planoTrabalho?->programa,
-      'planoTrabalho' => $consolidacao->planoTrabalho,
-      'planosEntregas' => PlanoEntrega::whereIn("id", $planosEntregasIds)->get(),
-      'atividades' => $this->getAtividades($consolidacao, $concluido),
-      'afastamentos' => $this->getAfastamentos($consolidacao, $concluido),
-      'ocorrencias' => $this->getOcorrencias($consolidacao, $concluido),
-      'comparecimentos' => $consolidacao->comparecimentos ?? [],
-      'status' => $consolidacao->status,
-      'justificativa_conclusao' => $consolidacao->justificativa_conclusao,
-    ];
-  }
+    public function getConsolidacaoData(string $id): ?PlanoTrabalhoConsolidacaoDataDTO
+    {
+        return $this->readRepository->getConsolidacaoData($id);
+    }
 
-  public function findConsolidacaoById($id): PlanoTrabalhoConsolidacao | null
-  {
-    return PlanoTrabalhoConsolidacao::with([
-      'comparecimentos.unidade:id,nome,sigla',
-      'avaliacao',
-      'avaliacoes',
-      'planoTrabalho.programa',
-      'planoTrabalho.unidade.gestor:id,usuario_id',
-      'planoTrabalho.unidade.gestoresSubstitutos:id,usuario_id',
-      'planoTrabalho.entregas.entrega',
-      'planoTrabalho.entregas.reacoes',
-      'planoTrabalho.entregas.planoEntregaEntrega:id,descricao,plano_entrega_id,entrega_id,meta,realizado,progresso_realizado',
-      'planoTrabalho.entregas.planoEntregaEntrega.entrega:id,nome,tipo_indicador',
-      'planoTrabalho.entregas.planoEntregaEntrega.objetivos.objetivo',
-      'planoTrabalho.entregas.planoEntregaEntrega.processos.processo',
-      'planoTrabalho.tipoModalidade'
-    ])->find($id);
-  }
+    public function findConsolidacaoById(string $id): ?PlanoTrabalhoConsolidacao
+    {
+        return $this->readRepository->findConsolidacaoById($id);
+    }
 
-  private function getAtividades($consolidacao, bool $concluido): Collection
-  {
-    $query = Atividade::with([
-      'demandante',
-      'usuario',
-      'tipoAtividade',
-      'pausas' => fn($q) => $q->withTrashed(),
-      'tarefas' => fn($q) => $q->withTrashed(),
-      'tarefas.tipoTarefa:id,nome',
-      'comentarios' => fn($q) => $q->withTrashed(),
-      'comentarios.usuario:id,nome,apelido',
-      'reacoes.usuario:id,nome,apelido'
-    ]);
+    public function findAllByPlanoTrabalhoId(string $planoTrabalhoId): Collection
+    {
+        return $this->readRepository->findAllByPlanoTrabalhoId($planoTrabalhoId);
+    }
 
-    return $concluido
-      ? $query->withTrashed()->whereHas('consolidacoes', fn($q) =>
-      $q->where('plano_trabalho_consolidacao_id', $consolidacao->id)
-        ->where('data_conclusao', $consolidacao->data_conclusao))->get()
-      : $query->where('data_estipulada_entrega', '>=', $consolidacao->data_inicio)
-      ->where('data_distribuicao', '<=', $consolidacao->data_fim)
-      ->where('usuario_id', $consolidacao->planoTrabalho->usuario_id)->get();
-  }
+    public function findAllByPlanoTrabalhoIdAndPeriodo(string $planoTrabalhoId, string $dataInicio, string $dataFim): Collection
+    {
+        return $this->readRepository->findAllByPlanoTrabalhoIdAndPeriodo($planoTrabalhoId, $dataInicio, $dataFim);
+    }
 
-  private function getAfastamentos($consolidacao, bool $concluido): Collection
-  {
-    $query = Afastamento::with(['tipoMotivoAfastamento']);
+    public function getPendentesAvaliacao(
+        array $unidadesGerenciadasIds,
+        array $unidadesSubordinadasIds,
+        string $usuarioId,
+        \DateTimeInterface $dataCorte
+    ): Collection {
+        return $this->readRepository->getPendentesAvaliacao(
+            $unidadesGerenciadasIds,
+            $unidadesSubordinadasIds,
+            $usuarioId,
+            $dataCorte
+        );
+    }
 
-    return $concluido
-      ? $query->withTrashed()->whereHas('consolidacoes', fn($q) =>
-      $q->where('plano_trabalho_consolidacao_id', $consolidacao->id)
-        ->where('data_conclusao', $consolidacao->data_conclusao))->get()
-      : $query->where("data_fim", ">=", $consolidacao->data_inicio)
-      ->where('data_inicio', '<=', $consolidacao->data_fim)
-      ->where('usuario_id', $consolidacao->planoTrabalho->usuario_id)->get();
-  }
+    public function resumoParaArquivamento(string $planoTrabalhoId, \DateTimeInterface $limiteRecurso): ResumoConsolidacoesDTO
+    {
+        return $this->readRepository->resumoParaArquivamento($planoTrabalhoId, $limiteRecurso);
+    }
 
-  private function getOcorrencias($consolidacao, bool $concluido): Collection
-  {
-    $query = Ocorrencia::with(['usuario']);
+    public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool
+    {
+        return $this->readRepository->possuiConsolidacaoFinalizadaPorPlano($planoTrabalhoId);
+    }
 
-    return $concluido
-      ? $query->withTrashed()->whereHas('consolidacoes', fn($q) =>
-      $q->where('plano_trabalho_consolidacao_id', $consolidacao->id)
-        ->where('data_conclusao', $consolidacao->data_conclusao))->get()
-      : $query->where("data_fim", ">=", $consolidacao->data_inicio)
-      ->where('data_inicio', '<=', $consolidacao->data_fim)
-      ->where('usuario_id', $consolidacao->planoTrabalho->usuario_id)
-      ->where(fn($q) => $q->whereNull('plano_trabalho_id')
-        ->orWhere('plano_trabalho_id', '=', $consolidacao->planoTrabalho->id))->get();
-  }
+    public function create(array $attributes): PlanoTrabalhoConsolidacao
+    {
+        /** @var PlanoTrabalhoConsolidacao */
+        return $this->writeRepository->create($attributes);
+    }
+
+    public function update(string $id, array $attributes): ?PlanoTrabalhoConsolidacao
+    {
+        /** @var PlanoTrabalhoConsolidacao|null */
+        return $this->writeRepository->update($id, $attributes);
+    }
+
+    public function delete(string $id): bool
+    {
+        return $this->writeRepository->delete($id);
+    }
+
+    public function createAfastamentoVinculo(array $attributes): void
+    {
+        $this->writeRepository->createAfastamentoVinculo($attributes);
+    }
+
+    public function updateAfastamentoSnapshot(string $afastamentoId, string $snapshot): void
+    {
+        $this->writeRepository->updateAfastamentoSnapshot($afastamentoId, $snapshot);
+    }
+
+    public function deleteAfastamentoVinculos(string $afastamentoId): void
+    {
+        $this->writeRepository->deleteAfastamentoVinculos($afastamentoId);
+    }
 }

@@ -8,6 +8,9 @@ use App\Models\Usuario;
 use App\Models\TipoAvaliacao;
 use App\Models\AvaliacaoEntregaChecklist;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class Avaliacao extends ModelBase
 {
   protected $table = 'avaliacoes';
@@ -25,8 +28,9 @@ class Avaliacao extends ModelBase
     'plano_entrega_id', /* char(36); */
     'tipo_avaliacao_id', /* char(36); NOT NULL; */
     'tipo_avaliacao_nota_id', /* char(36); NOT NULL; */
+    'recurso', /* text; */ // Recurso contra a nota atribuída, pelo avaliado
+    'data_recurso', /* datetime; */ // Data do recurso
     //'deleted_at', /* timestamp; */
-    //'recurso', /* text; */// Recurso contra a nota atribuída, pelo avaliado
   ];
 
   public $delete_cascade = [
@@ -44,31 +48,41 @@ class Avaliacao extends ModelBase
   ];
 
   // Has
-  public function entregasChecklist()
+  public function entregasChecklist(): HasMany
   {
     return $this->hasMany(AvaliacaoEntregaChecklist::class);
   }
   // Belongs
-  public function avaliador()
+  public function avaliador(): BelongsTo
   {
     return $this->belongsTo(Usuario::class);
   }
-  public function tipoAvaliacao()
+  public function tipoAvaliacao(): BelongsTo
   {
     return $this->belongsTo(TipoAvaliacao::class);
   }
 
-  public function tipoAvaliacaoNota()
+  public function tipoAvaliacaoNota(): BelongsTo
   {
     return $this->belongsTo(TipoAvaliacaoNota::class);
   }
 
-  public function planoEntrega()
+  public function planoEntrega(): BelongsTo
   {
     return $this->belongsTo(PlanoEntrega::class);
   }
-  public function planoTrabalhoConsolidacao()
+  public function planoTrabalhoConsolidacao(): BelongsTo
   {
     return $this->belongsTo(PlanoTrabalhoConsolidacao::class);
+  }
+
+  public function isFromConsolidacao(): bool
+  {
+    return !empty($this->plano_trabalho_consolidacao_id);
+  }
+
+  public function isFromPlanoEntrega(): bool
+  {
+    return !empty($this->plano_entrega_id);
   }
 }
