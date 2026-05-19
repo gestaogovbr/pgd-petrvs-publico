@@ -408,6 +408,14 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
   private salvarPlano(onSuccess: () => void) {
     if (this.saving() || this.form.invalid || !this.programaId() || !this.planoId()) return;
 
+    const plano = this.plano();
+    if (plano?.documento_id) {
+      const msg = plano.status === 'AGUARDANDO_ASSINATURA'
+        ? 'Ao prosseguir com a edição, a assinatura será automaticamente desfeita e as informações preenchidas no bloco Planejamento serão excluídas. Deseja continuar?'
+        : 'Ao prosseguir com a edição, as informações preenchidas no bloco Planejamento serão excluídas. Deseja continuar?';
+      if (!confirm(msg)) return;
+    }
+
     const payload: Partial<any> = {
       usuario_id: this.form.controls.usuario_id.value,
       unidade_id: this.form.controls.unidade_id.value,
