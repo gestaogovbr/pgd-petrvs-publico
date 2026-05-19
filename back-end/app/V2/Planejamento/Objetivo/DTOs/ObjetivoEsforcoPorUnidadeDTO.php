@@ -7,6 +7,16 @@ namespace App\V2\Planejamento\Objetivo\DTOs;
 /** Somatório de esforço (horas) por unidade do plano de trabalho (apenas PT concluído). */
 final class ObjetivoEsforcoPorUnidadeDTO implements \JsonSerializable
 {
+    public static function fromRow(\stdClass $row): self
+    {
+        return new self(
+            unidade_id: (string) $row->unidade_id,
+            unidade_nome: (string) $row->unidade_nome,
+            unidade_sigla: (string) $row->unidade_sigla,
+            esforco_horas_total: (float) $row->esforco_horas_total,
+        );
+    }
+
     public function __construct(
         public readonly string $unidade_id,
         public readonly string $unidade_nome,
