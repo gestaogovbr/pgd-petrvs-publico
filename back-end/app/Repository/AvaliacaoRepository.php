@@ -30,4 +30,9 @@ class AvaliacaoRepository
     {
         return $this->writeRepository->delete($id);
     }
+
+    public function findMaisRecenteDaConsolidacao(string $consolidacaoId): ?Avaliacao
+    {
+        return $this->readRepository->findMaisRecenteDaConsolidacao($consolidacaoId);
+    }
 }

@@ -41,6 +41,7 @@ class AvaliacaoController extends Controller
         }
     }
 
+    // TODO: adicionar AvaliacaoRequestValidator::destroy() para validar request (ex: justificativa obrigatória)
     public function destroy(string $planoTrabalhoId, string $consolidacaoId, string $avaliacaoId): JsonResponse
     {
         try {
