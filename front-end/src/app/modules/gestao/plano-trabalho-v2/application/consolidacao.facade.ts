@@ -33,6 +33,7 @@ export class ConsolidacaoFacade {
   readonly notasSelecionadas = signal<Record<string, string>>({});
   readonly justificativasAvaliacao = signal<Record<string, string>>({});
   readonly avaliandoIds = signal<Set<string>>(new Set());
+  readonly cancelandoAvaliacaoIds = signal<Set<string>>(new Set());
 
   // --- Estado de recurso ---
   readonly solicitandoRecursoAvaliacaoId = signal<string | null>(null);
@@ -317,6 +318,22 @@ export class ConsolidacaoFacade {
       error: () => {
         this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
       }
+    });
+  }
+
+  cancelarAvaliacao(consolidacao: Consolidacao, avaliacaoId: string): void {
+    if (!confirm('Deseja cancelar esta avaliação?')) return;
+
+    this.cancelandoAvaliacaoIds.update(s => new Set([...s, avaliacaoId]));
+
+    this.api.cancelarAvaliacao(this.planoId, consolidacao.id, avaliacaoId).subscribe({
+      next: () => {
+        this.loadConsolidacoes();
+        this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+      },
+      error: () => {
+        this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+      },
     });
   }
 

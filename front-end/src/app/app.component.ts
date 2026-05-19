@@ -145,6 +145,12 @@ export class AppComponent implements IAppComponent {
         route: ['cadastros', 'eixo-tematico'],
         icon: this.entity.getIcon('EixoTematico'),
       },
+      TIPOS_OBJETIVOS: {
+        name: this.lex.translate("Tipos de Objetivos"),
+        permition: 'MOD_TIPO_OBJETIVO',
+        route: ['cadastros', 'tipo-objetivo'],
+        icon: this.entity.getIcon('TipoObjetivo'),
+      },
       // ENTREGAS: {
       //   name: this.lex.translate("Modelos de Entregas"),
       //   permition: 'MOD_ENTRG',
@@ -543,6 +549,7 @@ export class AppComponent implements IAppComponent {
         menu: [
           this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
           this.menuSchema.CADEIAS_VALORES,
+          this.menuSchema.TIPOS_OBJETIVOS,
           this.menuSchema.PROGRAMAS_GESTAO,
           this.menuSchema.EIXOS_TEMATICOS,
           this.menuSchema.UNIDADES,

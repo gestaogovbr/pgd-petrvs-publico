@@ -101,10 +101,23 @@ describe('PlanoTrabalhoEntregaStoreValidator::validar', function () {
     test('lança exceção quando vínculo duplicado', function () {
         $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::INCLUIDO->value));
         $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(mockEntregaPE('2025-02-01', '2025-05-31'));
-        $this->ptEntregaRepo->shouldReceive('existeVinculo')->with('plano-1', 'pee-1')->andReturn(true);
+        $this->ptEntregaRepo->shouldReceive('existeVinculo')->with('plano-1', 'pee-1', null)->andReturn(true);
 
         $this->validator->validar(dtoPlanoEntrega());
     })->throws(ValidateException::class, 'Esta entrega já está vinculada a este Plano de Trabalho.');
+
+    test('permite editar entrega existente sem erro de duplicidade', function () {
+        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::INCLUIDO->value));
+        $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(mockEntregaPE('2025-02-01', '2025-05-31'));
+        $this->ptEntregaRepo->shouldReceive('existeVinculo')->with('plano-1', 'pee-1', 'entrega-1')->andReturn(false);
+
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
+            'origem' => 'PROPRIA_UNIDADE',
+            'plano_entrega_entrega_id' => 'pee-1',
+        ], 'plano-1', 'entrega-1');
+
+        $this->validator->validar($dto);
+    })->throwsNoExceptions();
 
     test('lança exceção quando entrega totalmente antes do PT', function () {
         $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::INCLUIDO->value, '2025-06-01', '2025-12-31'));

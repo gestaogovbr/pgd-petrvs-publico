@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 
 class UnidadeRepository
 {
@@ -23,6 +24,21 @@ class UnidadeRepository
     public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool
     {
         return $this->readRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId);
+    }
+
+    public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->readRepository->isUsuarioGestorDaUnidade($unidadeId, $usuarioId);
+    }
+
+    public function isUsuarioGestorTitularDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->readRepository->isUsuarioGestorTitularDaUnidade($unidadeId, $usuarioId);
+    }
+
+    public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO
+    {
+        return $this->readRepository->getHierarquiaAssinatura($unidadeId, $participanteId, $assinanteId);
     }
 
     public function getAreasTrabalhoWhereClause(string $usuarioId, bool $subordinadas, string $prefix = ""): string

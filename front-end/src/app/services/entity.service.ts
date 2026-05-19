@@ -610,6 +610,14 @@ export class EntityService {
           route: ['configuracoes', 'usuario'],
         },
       },
+      {
+        collection: 'TipoObjetivo',
+        icon: 'bi bi-bullseye',
+        label: "Tipo de Objetivo",
+        selectRoute: {
+          route: ['cadastros', 'tipo-objetivo-v2'],
+        },
+      },
     ];
   }
 

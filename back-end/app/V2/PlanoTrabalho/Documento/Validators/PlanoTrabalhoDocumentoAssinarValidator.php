@@ -13,6 +13,7 @@ use App\Models\PlanoTrabalho;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\DocumentoRepository;
 use App\Repository\UnidadeRepository;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 
 class PlanoTrabalhoDocumentoAssinarValidator
 {
@@ -68,6 +69,14 @@ class PlanoTrabalhoDocumentoAssinarValidator
         }
     }
 
+    /**
+     * Valida se o assinante possui autoridade hierárquica para assinar o TCR de outro participante.
+     *
+     * Regra baseada no papel do participante NA UNIDADE DO PT:
+     * - Participante é apenas lotado → gestor da mesma unidade ou da unidade pai pode assinar
+     * - Participante é GESTOR_SUBSTITUTO/DELEGADO → GESTOR titular da mesma unidade pode assinar
+     * - Participante é GESTOR titular → gestor da unidade pai deve assinar
+     */
     private function validarChefiaHierarquica(PlanoTrabalho $plano, string $usuarioId): void
     {
         if ($plano->usuario_id === $usuarioId) {
@@ -76,16 +85,35 @@ class PlanoTrabalhoDocumentoAssinarValidator
 
         $unidade = $this->unidadeRepository->findById($plano->unidade_id);
 
+        // Unidade raiz (sem pai): não há hierarquia superior para exigir.
+        // Não verifica se o assinante é gestor porque o AuthorizationValidator
+        // (executado antes) já garante que apenas o dono do PT ou gestores da unidade
+        // chegam até aqui (via autorizarDonoOuChefia → isUsuarioGestorRecursivo).
         if ($unidade === null || $unidade->unidade_pai_id === null) {
             return;
         }
 
-        if (!$this->unidadeRepository->isUsuarioGestorRecursivo($plano->unidade_id, $plano->usuario_id)) {
+        $hierarquia = $this->unidadeRepository->getHierarquiaAssinatura($plano->unidade_id, $plano->usuario_id, $usuarioId);
+
+        if ($this->isAssinanteSuperiorHierarquicoNaUnidade($hierarquia)) {
             return;
         }
 
         if (!$this->unidadeRepository->isUsuarioGestorRecursivo($unidade->unidade_pai_id, $usuarioId)) {
-            throw new ForbiddenException('A assinatura de gestor deve ser de uma chefia hierarquicamente superior à unidade do participante.');
+            throw new ForbiddenException('O assinante deve ser gestor da mesma unidade do participante ou de uma unidade superior.');
         }
+    }
+
+    private function isAssinanteSuperiorHierarquicoNaUnidade(AssinaturaHierarquiaDTO $hierarquia): bool
+    {
+        if (!$hierarquia->participanteGestor) {
+            return true;
+        }
+
+        if (!$hierarquia->participanteGestorTitular) {
+            return $hierarquia->assinanteGestorTitular;
+        }
+
+        return false;
     }
 }

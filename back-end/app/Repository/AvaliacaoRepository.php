@@ -20,4 +20,19 @@ class AvaliacaoRepository
         /** @var Avaliacao */
         return $this->writeRepository->create($attributes);
     }
+
+    public function findById(string|int $id): ?Avaliacao
+    {
+        return $this->readRepository->findById($id);
+    }
+
+    public function delete(string|int $id): bool
+    {
+        return $this->writeRepository->delete($id);
+    }
+
+    public function findMaisRecenteDaConsolidacao(string $consolidacaoId): ?Avaliacao
+    {
+        return $this->readRepository->findMaisRecenteDaConsolidacao($consolidacaoId);
+    }
 }

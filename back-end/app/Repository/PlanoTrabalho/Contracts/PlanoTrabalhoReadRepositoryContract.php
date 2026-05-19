@@ -8,12 +8,9 @@ use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Models\PlanoTrabalho;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 interface PlanoTrabalhoReadRepositoryContract
 {
-    public function findById(string|int $id): ?PlanoTrabalho;
-
     public function findOneParaEnvio(string|int $id): ?PlanoTrabalho;
 
     public function findWithAtividades(string|int $id): ?PlanoTrabalho;
@@ -36,8 +33,9 @@ interface PlanoTrabalhoReadRepositoryContract
 
     public function existeConflitoPeriodoExcluindo(string $usuarioId, string $dataInicio, string $dataFim, string $excluirPlanoId): bool;
 
-    /** @return \App\Models\PlanoTrabalho|null */
-    public function findByIdComRelacoes(string $id): ?Model;
+    public function findByIdComRelacoes(string $id): ?PlanoTrabalho;
+
+    public function findById(string|int $id): ?PlanoTrabalho;
 
     public function possuiAssinatura(string $planoId): bool;
 }

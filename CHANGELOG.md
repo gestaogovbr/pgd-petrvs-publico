@@ -1,3 +1,30 @@
+## 2.10.1 15/05/2026
+### Corrigido
+- Remove a obrigatoriedade do campo de e-mail dos usuário, uma vez que não há mais geração de e-mail fictícios para servidores sem e-mail funcional no SIAPE.
+- Preservadas as atribuições manuais de servidores, como Vinculado, Delegado e Chefe Substituto, após rotinas de integração ou carga individual do SIAPE.
+
+## 2.10.0 08/05/2026
+### Adicionado
+- Adicionado relatório da Carga Individual SIAPE.
+- Adicionadas informações detalhadas de unidades e servidores nos relatórios de processamento SIAPE.
+- Adicionada opção para baixar logs nas consultas SIAPE.
+- Adicionado controle de ciclo de vida para inativação de unidades SIAPE.
+- Adicionada sincronização da blacklist durante o processamento de unidades SIAPE.
+
+### Modificado
+- Melhorada a consulta de CPF e unidade no SIAPE, com tratamento de erros mais consistente.
+- Melhorada a exibição de relatórios SIAPE, incluindo formatação de datas, valores e situação funcional.
+- Ajustado o fluxo de abertura e download de relatórios nas consultas de CPF e unidade.
+- Substituídos indicadores de carregamento por mensagens mais claras nas telas de consulta.
+- Removida a exibição da data da última transação quando a informação não for confiável.
+- Ajustado o prazo de inativação de unidades SIAPE para uso de configuração específica.
+- Melhoradas regras e validações relacionadas à modalidade PGD e pedágio.
+
+### Corrigido
+- Corrigida a geração e exibição de relatórios nas consultas SIAPE.
+- Melhorada a apresentação de mensagens de erro no login.
+- Ajustado o tratamento de erros na consulta de unidade no SIAPE.
+
 ## 2.9.22 04/05/2026
 ### Corrigido
 - Corrigido cadastro de usuário configurador no painel saas impedindo seleção de tenant.

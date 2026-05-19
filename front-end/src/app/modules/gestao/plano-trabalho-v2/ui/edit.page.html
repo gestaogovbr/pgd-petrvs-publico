@@ -126,7 +126,7 @@
                       <div class="br-card position-absolute w-100" style="z-index: 1050;">
                         @for (u of sugestoesOutrasUnidades(); track u.id) {
                           <div class="d-flex justify-content-between align-items-center px-2 py-1 card-content">
-                            <span>{{ u.sigla }} - {{ u.nome }}</span>
+                            <span>{{ u.codigo }} - {{ u.sigla }} - {{ u.nome }}</span>
                             <br-button type="button" emphasis="secondary" (click)="selecionarOutraUnidade(u)">Selecionar</br-button>
                           </div>
                         }

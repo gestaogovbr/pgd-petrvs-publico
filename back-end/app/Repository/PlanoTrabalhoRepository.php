@@ -104,6 +104,7 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
         /** @var PlanoTrabalho $planoTrabalho */
         $this->writeRepository->registrarLog($planoTrabalho, $mensagem);
     }
+
     public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator
     {
         return $this->readRepository->buscarPlanosListagem($filtro);

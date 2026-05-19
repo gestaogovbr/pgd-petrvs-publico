@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 class AvaliacaoRequestValidator
 {
+    // TODO: adicionar método destroy() para validar request de cancelamento de avaliação (ex: justificativa obrigatória)
+
     public static function store(Request $request): array
     {
         return $request->validate([

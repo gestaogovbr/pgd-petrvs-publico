@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authTenantVersionInterceptor, errorInterceptor } from './infra/http/interceptors';
+import { authTenantVersionInterceptor, errorInterceptor } from 'src/app/v2/infra/http/interceptors';
 import { UsuarioService } from 'src/app/v2/services/usuario.service';
 import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';

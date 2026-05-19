@@ -47,7 +47,7 @@ Se não encontrar o planejamento, perguntar ao usuário.
 - Sem testes unitários
 - Nomenclatura: controller inclui contexto do módulo pai (ex: `PlanoTrabalhoConsolidacaoController`, não `ConsolidacaoController`)
 - Fluxo: RequestValidator → DTO (se aplicável) → Service → JSON
-- Catch order: `ValidationException` (400) → `IBaseException` ($e->getCode()) → `Throwable` (500)
+- Catch order: `ValidationException` ($e->status) → `IBaseException` ($e->getCode()) → `Throwable` (500)
 
 ### 6. E2E (IntegrationTenant)
 - Registrar rotas de teste sem middleware auth

@@ -13,11 +13,7 @@ use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Repository\PlanoTrabalhoRepository;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Str;
-
-
 
 beforeEach(function () {
     Bus::fake();
@@ -29,8 +25,6 @@ beforeEach(function () {
     ]);
     $this->programa = Programa::factory()->create();
 });
-
-describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
 
     test('retorna apenas planos de outros usuários aguardando assinatura', function () {
         $outroUsuario = Usuario::factory()->create([
@@ -198,8 +192,6 @@ describe('PlanoTrabalhoRepository::getPlanosTrabalhoAssinatura', function () {
             ->and($result->pluck('usuario_id')->contains($titularSubordinada->id))->toBeTrue()
             ->and($result->pluck('usuario_id')->contains($participanteSubordinada->id))->toBeFalse();
     });
-});
-
 describe('PlanoTrabalhoRepository::create', function () {
 
     test('persiste o plano de trabalho no banco', function () {

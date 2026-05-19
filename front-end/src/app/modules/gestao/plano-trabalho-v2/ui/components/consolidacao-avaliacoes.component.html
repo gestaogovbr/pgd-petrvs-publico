@@ -10,6 +10,7 @@
               <th scope="col">Avaliador</th>
               <th scope="col">Nota / Justificativa</th>
               <th scope="col">Recurso</th>
+              <th scope="col">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -49,6 +50,20 @@
                       (justificativaChange)="facade.justificativaRecurso.set($event)"
                       (submeter)="facade.confirmarSolicitacaoRecurso(consolidacao, avaliacao.id)"
                     />
+                  }
+                </td>
+                <td>
+                  @if (consolidacaoPolicy.podeCancelarAvaliacao(consolidacao, avaliacao)) {
+                    <br-button
+                      emphasis="secondary"
+                      density="small"
+                      [disabled]="facade.cancelandoAvaliacaoIds().has(avaliacao.id)"
+                      (click)="facade.cancelarAvaliacao(consolidacao, avaliacao.id)"
+                    >
+                      <i class="fas fa-ban mr-1"></i>Cancelar
+                    </br-button>
+                  } @else {
+                    -
                   }
                 </td>
               </tr>

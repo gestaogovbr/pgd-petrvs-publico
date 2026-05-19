@@ -53,9 +53,9 @@ class PlanoTrabalhoEntregaRepository
         return $this->writeRepository->delete($id);
     }
 
-    public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId): bool
+    public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId, ?string $excludeId = null): bool
     {
-        return $this->readRepository->existeVinculo($planoTrabalhoId, $planoEntregaEntregaId);
+        return $this->readRepository->existeVinculo($planoTrabalhoId, $planoEntregaEntregaId, $excludeId);
     }
 
     public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO

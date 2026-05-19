@@ -419,6 +419,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_UND_INST"],
       ["codigo" => "MOD_PART_PEDAGIO"],
       ["codigo" => "MOD_AUDIT_LOG"],
+      ["codigo" => "MOD_TIPO_OBJETIVO"],
     ]);
 
     $capacidades_colaborador = array_merge(

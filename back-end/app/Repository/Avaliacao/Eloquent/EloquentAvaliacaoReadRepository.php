@@ -17,4 +17,26 @@ class EloquentAvaliacaoReadRepository extends AbstractEloquentReadRepository imp
     {
         $this->model = $model;
     }
+
+    public function findById(string|int $id): ?Avaliacao
+    {
+        /** @var Avaliacao|null $avaliacao */
+        $avaliacao = $this->query()
+            ->with([
+                'planoTrabalhoConsolidacao.planoTrabalho',
+                'planoTrabalhoConsolidacao.avaliacoes',
+            ])
+            ->find($id);
+
+        return $avaliacao instanceof Avaliacao ? $avaliacao : null;
+    }
+
+    public function findMaisRecenteDaConsolidacao(string $consolidacaoId): ?Avaliacao
+    {
+        return $this->query()
+            ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
+            ->orderByDesc('data_avaliacao')
+            ->orderByDesc('created_at')
+            ->first();
+    }
 }

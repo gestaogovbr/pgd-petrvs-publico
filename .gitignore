@@ -80,3 +80,4 @@ front-end/package-lock.json
 back-end/public/app.json
 review-pr-*
 front-end/out-tsc/app/main.js
+front-end/dist/*

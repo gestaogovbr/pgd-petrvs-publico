@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM php:8.2-apache
 # instala recursos adicionais
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     sed \
     vim \
     git \
@@ -13,14 +13,15 @@ RUN apt-get update && apt-get install -y \
     openssl \
     libssl-dev \
     libxml2-dev \
-    sudo \
     chrony \
     libpng-dev \
     libjpeg-dev \
     cron \
     supervisor \
     default-mysql-client \
-    && pecl install redis
+    && pecl install redis \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install pdo_mysql

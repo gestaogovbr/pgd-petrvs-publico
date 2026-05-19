@@ -10,14 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 
 interface PlanoTrabalhoWriteRepositoryContract
 {
-    /** @return PlanoTrabalho */
-    public function create(array $attributes): Model;
-
-    /** @return PlanoTrabalho|null */
-    public function update(string|int $id, array $attributes): ?Model;
-
-    public function delete(string|int $id): bool;
-
     public function agendarEnvio(PlanoTrabalho $planoTrabalho, Carbon $dataAgendamento): void;
 
     public function registrarTentativa(PlanoTrabalho $planoTrabalho): void;
@@ -29,4 +21,12 @@ interface PlanoTrabalhoWriteRepositoryContract
     public function registrarConclusao(PlanoTrabalho $planoTrabalho, string $mensagem): void;
 
     public function registrarLog(PlanoTrabalho $planoTrabalho, string $mensagem): void;
+
+    /** @return PlanoTrabalho */
+    public function create(array $attributes): Model;
+
+    /** @return PlanoTrabalho|null */
+    public function update(string|int $id, array $attributes): ?Model;
+
+    public function delete(string|int $id): bool;
 }

@@ -40,4 +40,19 @@ class AvaliacaoController extends Controller
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    // TODO: adicionar AvaliacaoRequestValidator::destroy() para validar request (ex: justificativa obrigatória)
+    public function destroy(string $planoTrabalhoId, string $consolidacaoId, string $avaliacaoId): JsonResponse
+    {
+        try {
+            $consolidacao = $this->service->destroy($planoTrabalhoId, $consolidacaoId, $avaliacaoId, (string) Auth::id());
+
+            return response()->json(['success' => true, 'data' => $consolidacao]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

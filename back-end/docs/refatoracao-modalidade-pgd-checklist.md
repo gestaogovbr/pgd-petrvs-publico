@@ -25,7 +25,7 @@ Simplificar a modalidade PGD para um campo textual nullable, removendo a depend�
 - [x] Remover FKs antigas de usuários, planos, entidades e mapeamento SIAPE.
 - [x] Dropar `tipo_modalidade_id` de usuários, planos e entidades.
 - [x] Dropar `tipos_modalidades_siape` antes de `tipos_modalidades`.
-- [x] Atualizar `database/schema/tenant-schema.sql`.
+- [x] Atualizar `database/schema/test-tenant-schema.sql`.
 
 ## Back-end Laravel
 

@@ -618,6 +618,8 @@ use App\V2\TipoMotivoAfastamento\TipoMotivoAfastamentoController as TipoMotivoAf
 use App\V2\Usuario\UsuarioController as UsuarioV2;
 use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
+use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
+use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoObjetivoV2;
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
@@ -656,6 +658,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/recurso', [PlanoTrabalhoConsolidacaoV2::class, 'recurso']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/avaliacao', [AvaliacaoV2::class, 'store']);
+    Route::delete('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/avaliacao/{avaliacaoId}', [AvaliacaoV2::class, 'destroy']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade', [AtividadeV2::class, 'store']);
     Route::put('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}', [AtividadeV2::class, 'update']);
@@ -674,5 +677,13 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
 
     Route::get('plano-entrega', [PlanoEntregaV2::class, 'buscarPorUnidade']);
     Route::get('plano-entrega/{planoEntregaId}/entrega', [PlanoEntregaV2::class, 'buscarEntregasPorPlano'])->whereUuid('planoEntregaId');
+
+    Route::get('planejamento/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'index']);
+    Route::post('planejamento/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'store']);
+    Route::put('planejamento/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'update']);
+    Route::delete('planejamento/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'destroy']);
+
+    Route::get('planejamento/objetivo/{id}/esforco-total', [PlanejamentoObjetivoV2::class, 'esforcoTotal'])->whereUuid('id');
+    Route::get('planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoV2::class, 'entregas'])->whereUuid('id');
 });
 

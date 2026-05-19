@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Models\PlanoEntrega;
-use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Models\PlanoEntregaEntrega;
+use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
 use Carbon\Carbon;
