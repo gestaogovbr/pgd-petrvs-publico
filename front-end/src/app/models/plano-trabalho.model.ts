@@ -93,6 +93,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public modalidade_pgd: string | null = null;
     public modalidade_pgd_label: string = "Não definida";
     public justificativa_modalidade: string | null = null;
+    public justificativa: string | null = null;
     public documento_id: string | null = null;
 
     public data_agendamento_envio?: Date | null = null; /* Data de agendamento do envio */

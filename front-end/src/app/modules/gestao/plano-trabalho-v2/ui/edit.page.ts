@@ -193,11 +193,11 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(status => this.formStatus.set(status));
 
-    // Justificativa obrigatória quando carga < 100%
+    // Justificativa obrigatória quando carga != 100%
     effect(() => {
       const total = this.totalForcaTrabalho();
       const ctrl = this.form.controls.justificativa;
-      if (total < 100) {
+      if (total !== 100) {
         ctrl.setValidators(Validators.required);
       } else {
         ctrl.clearValidators();
@@ -232,7 +232,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       this.entregas.set(plano.entregas || []);
       this.form.controls.data_inicio.setValue(plano.data_inicio ? new Date(plano.data_inicio).toISOString().split('T')[0] : '');
       this.form.controls.data_fim.setValue(plano.data_fim ? new Date(plano.data_fim).toISOString().split('T')[0] : '');
-      this.form.controls.justificativa.setValue(plano.justificativa_modalidade || '');
+      this.form.controls.justificativa.setValue(plano.justificativa || '');
       this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '');
 
       if (plano.usuario_id) {
