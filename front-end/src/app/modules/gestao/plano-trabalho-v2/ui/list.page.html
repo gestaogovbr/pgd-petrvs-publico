@@ -37,7 +37,7 @@
             <div class="d-flex flex-wrap gap-3">
 
               @if (!isParticipante) {
-              <div class="br-switch icon">
+              <div class="br-switch icon small mr-3">
                 <input type="checkbox"
                       id="incluir_subordinadas"
                       formControlName="incluir_subordinadas"
@@ -46,15 +46,15 @@
               </div>
               }
 
-              <div class="br-switch icon">
+              <div class="br-switch icon small mr-3">
                 <input type="checkbox"
                       id="vigentes"
                       formControlName="vigentes"
                       (change)="onFilterChange()" />
-                <label for="vigentes">Vigentes</label>
+                <label for="vigentes">Plano do dia</label>
               </div>
 
-              <div class="br-switch icon">
+              <div class="br-switch icon small mr-3">
                 <input type="checkbox"
                       id="incluir_arquivados"
                       formControlName="incluir_arquivados"
@@ -63,7 +63,7 @@
               </div>
 
               @if (!isParticipante) {
-              <div class="br-switch icon">
+              <div class="br-switch icon small">
                 <input type="checkbox"
                       id="meus_planos"
                       formControlName="meus_planos"
@@ -244,7 +244,18 @@
           }
           @if (facade.items().length === 0 && !facade.loading()) {
           <tr>
-            <td colspan="7" class="text-center p-3">Nenhum plano de trabalho encontrado.</td>
+            <td colspan="7" class="text-center p-3">
+              <div class="br-message warning">
+                <div class="icon"><i class="fas fa-exclamation-triangle fa-lg" aria-hidden="true"></i></div>
+                <div class="content">
+                  @if (filters.controls.vigentes.value) {
+                    <span class="message-title">Nenhum plano de trabalho do dia encontrado.</span>
+                  } @else {
+                    <span class="message-title">Nenhum plano de trabalho encontrado.</span>
+                  }
+                </div>
+              </div>
+            </td>
           </tr>
           }
         </tbody>
