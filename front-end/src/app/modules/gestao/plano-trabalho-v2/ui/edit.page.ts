@@ -193,11 +193,11 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(status => this.formStatus.set(status));
 
-    // Justificativa obrigatória quando carga < 100%
+    // Justificativa obrigatória quando carga != 100%
     effect(() => {
       const total = this.totalForcaTrabalho();
       const ctrl = this.form.controls.justificativa;
-      if (total < 100) {
+      if (total !== 100) {
         ctrl.setValidators(Validators.required);
       } else {
         ctrl.clearValidators();
@@ -232,7 +232,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       this.entregas.set(plano.entregas || []);
       this.form.controls.data_inicio.setValue(plano.data_inicio ? new Date(plano.data_inicio).toISOString().split('T')[0] : '');
       this.form.controls.data_fim.setValue(plano.data_fim ? new Date(plano.data_fim).toISOString().split('T')[0] : '');
-      this.form.controls.justificativa.setValue(plano.justificativa_modalidade || '');
+      this.form.controls.justificativa.setValue(plano.justificativa || '');
       this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '');
 
       if (plano.usuario_id) {
@@ -405,6 +405,10 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     this.salvarPlano(() => this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', this.planoId()]));
   }
 
+  irParaTCR() {
+    this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', this.planoId()]);
+  }
+
   private salvarPlano(onSuccess: () => void) {
     if (this.saving() || this.form.invalid || !this.programaId() || !this.planoId()) return;
 
@@ -430,7 +434,10 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     this.saving.set(true);
     this.api.update(this.planoId()!, payload)
       .pipe(finalize(() => this.saving.set(false)))
-      .subscribe(() => onSuccess());
+      .subscribe((updated) => {
+        if (updated) this.plano.set(updated);
+        onSuccess();
+      });
   }
 
   adicionarEntrega() {
@@ -468,6 +475,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
         .pipe(finalize(() => this.salvandoEntrega.set(false)))
         .subscribe(res => {
           this.entregas.update(list => list.map(e => e.id === res.id ? res : e));
+          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
           this.cancelarEntrega();
         });
     } else {
@@ -475,6 +483,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
         .pipe(finalize(() => this.salvandoEntrega.set(false)))
         .subscribe(res => {
           this.entregas.update(list => [...list, res]);
+          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
           this.cancelarEntrega();
         });
     }
@@ -555,6 +564,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     if (!confirm('Deseja realmente excluir esta entrega?')) return;
     this.api.deleteEntrega(this.planoId()!, entrega.id).subscribe(() => {
       this.entregas.update(list => list.filter(e => e.id !== entrega.id));
+      this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
     });
   }
 

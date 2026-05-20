@@ -16,8 +16,8 @@
       <h2 class="mb-0">Plano de Trabalho #{{ planoTrabalho()?.numero }}</h2>
       <div class="flex-shrink-0 gap-3">
         <br-button (click)="voltar()" class="mr-2">Voltar</br-button>
-        @if (planoTrabalho()?.status !== PlanoStatus.INCLUIDO) {
-          <br-button class="mr-2" emphasis="secondary" (click)="irParaTcr()" title="Ver TCR" ariaLabel="Ver Termo de Compromisso de Resultados">
+        @if (planoTrabalho()?.documento_id) {
+          <br-button class="mr-2" emphasis="secondary" (click)="irParaTcr()" title="Ver TCR" ariaLabel="Ver Termo de Compromisso e Responsabilidade">
             <i class="fas fa-file-signature mr-1"></i>TCR
           </br-button>
         }
