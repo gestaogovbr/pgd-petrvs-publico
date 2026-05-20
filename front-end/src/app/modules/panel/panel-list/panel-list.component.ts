@@ -63,11 +63,14 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			label: "Forçar SIAPE",
 			onClick: this.forcarSiape.bind(this),
 		});
-		this.options.push({
-			icon: "bi bi-trash",
-			label: "Excluir",
-			onClick: this.deleteTenant.bind(this),
-		});
+		if (this.currentUser && this.currentUser.nivel === 1) {
+			this.options.push({
+				icon: "bi bi-trash",
+				label: "Excluir",
+				onClick: this.deleteTenant.bind(this),
+			});
+		}
+		
 		this.options.push({
 			icon: "bi bi-database-fill-gear",
 			label: "Executar Seeder",
@@ -96,12 +99,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 					{route: ["panel", "audit"]},
 					{metadata: {tenant_id: tenant.id}}
 				)
-		});
-		// this.options.push({
-		// 	icon: "bi bi-cloud-arrow-down-fill",
-		// 	label: "Dump",
-        //     onClick: this.databaseDump.bind(this),
-		// });
+		});	
 	}
 
 	async onLoad() {
@@ -115,15 +113,7 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
   }
 
 	public dynamicButtons(row: any): ToolbarButton[] {
-		let result: ToolbarButton[] = [];
-		if (this.currentUser && this.currentUser.nivel === 1) {
-			result.push({
-				label: "Apagar dados",
-				icon: "bi bi-database-dash",
-				color: "danger",
-				onClick: this.cleanDB.bind(this),
-			});
-		}
+		let result: ToolbarButton[] = [];		
 		return result;
 	}
 
