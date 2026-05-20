@@ -161,11 +161,11 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly origemSelectOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedOrigem();
     return [
-      { value: 'PROPRIA_UNIDADE', label: 'Própria Unidade', selected: sel === 'PROPRIA_UNIDADE' },
-      { value: 'OUTRA_UNIDADE', label: 'Outra Unidade', selected: sel === 'OUTRA_UNIDADE' },
-      { value: 'OUTRO_ORGAO', label: 'Outro Órgão/Entidade', selected: sel === 'OUTRO_ORGAO' },
-      { value: 'SEM_ENTREGA', label: 'Não vinculada a entrega', selected: sel === 'SEM_ENTREGA' }
-    ];
+      { value: 'PROPRIA_UNIDADE', label: 'Entrega da própria unidade' },
+      { value: 'OUTRA_UNIDADE', label: 'Entrega de outra unidade' },
+      { value: 'OUTRO_ORGAO', label: 'Entrega de outro órgão/entidade' },
+      { value: 'SEM_ENTREGA', label: 'Não vinculada a entrega' }
+    ].map(o => ({ ...o, selected: o.value === sel }));
   });
 
   readonly planosUnidadeOptions = computed<SelectOption[]>(() => {
