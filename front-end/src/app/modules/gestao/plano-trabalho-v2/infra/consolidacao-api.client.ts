@@ -79,6 +79,8 @@ export class ConsolidacaoApiClient {
 
   updateOcorrencia(planoId: string, ocorrenciaId: string, payload: {
     observacoes?: string;
+    data_inicio?: string;
+    data_fim?: string;
     tipo_motivo_afastamento_id?: string;
     horas?: number | null;
   }): Observable<Ocorrencia> {

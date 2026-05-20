@@ -167,6 +167,9 @@ pipeline {
                         rm -f back-end/public/app.json || true
                         rm -f back-end/public/assets/build-info.json || true
 
+                        echo "=== COPIA O app.json DO FRONT-END PARA O BACK-END ==="
+                        cp front-end/src/app.json back-end/public/app.json
+
                         echo "=== BUILD ANGULAR + POSTBUILD (NODE 20) ==="
                         docker run --rm \
                         -v "$WORKSPACE":/workspace \

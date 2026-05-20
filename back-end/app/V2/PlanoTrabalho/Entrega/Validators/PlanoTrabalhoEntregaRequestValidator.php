@@ -24,7 +24,7 @@ class PlanoTrabalhoEntregaRequestValidator
             'origem' => ['required', 'string', 'in:PROPRIA_UNIDADE,OUTRA_UNIDADE,OUTRO_ORGAO,SEM_ENTREGA'],
             'plano_entrega_entrega_id' => ['required_if:origem,PROPRIA_UNIDADE', 'required_if:origem,OUTRA_UNIDADE', 'nullable', 'uuid'],
             'orgao' => ['required_if:tipo,OUTRO_ORGAO', 'nullable', 'string', 'max:256'],
-            'forca_trabalho' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'forca_trabalho' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:999.99'],
             'descricao' => ['sometimes', 'nullable', 'string', 'max:1000'],
         ], [
             'origem.required' => 'A origem da entrega é obrigatório.',

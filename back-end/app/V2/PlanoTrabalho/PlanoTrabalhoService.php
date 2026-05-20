@@ -19,6 +19,7 @@ use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoEncerrarValidator;
 use App\V2\StatusService;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateValidator;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
 use App\V2\Traits\ValidaAutorizacaoTrait;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
@@ -43,6 +44,7 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoClonarValidator $clonarValidator,
         private readonly PlanoTrabalhoIndexValidator $indexValidator,
         private readonly StatusService $statusService,
+        private readonly TCRInvalidador $tcrInvalidador,
     ) {}
 
 
@@ -81,13 +83,17 @@ class PlanoTrabalhoService
         $this->storeValidator->validarAutorizacao($dto);
         $this->updateValidator->validar($dto, $id);
 
-        $updated = $this->writeRepository->update($id, $dto->toArray());
+        return DB::transaction(function () use ($id, $dto) {
+            $updated = $this->writeRepository->update($id, $dto->toArray());
 
-        if ($updated === null) {
-            throw new NotFoundException( 'Não foi possível atualizar o Plano de Trabalho.');
-        }
+            if ($updated === null) {
+                throw new NotFoundException('Não foi possível atualizar o Plano de Trabalho.');
+            }
 
-        return $updated;
+            $this->tcrInvalidador->invalidar($id);
+
+            return $updated;
+        });
     }
 
     public function show(string $id): PlanoTrabalho

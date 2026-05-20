@@ -92,7 +92,7 @@
       <div class="card-header text-weight-semi-bold text-up-02 p-2x bg-gray-10 d-flex justify-content-between align-items-center">
         Planejamento
          <br-button emphasis="secondary" (click)="adicionarEntrega()" [disabled]="mostrandoFormEntrega()">
-            <i class="fas fa-plus mr-1"></i> Adicionar Entrega
+            <i class="fas fa-plus mr-1"></i> Adicionar Planejamento
           </br-button>
       </div>
       <div class="card-content">
@@ -265,11 +265,11 @@
           </div>
         </div>
 
-        @if (totalForcaTrabalho() < 100) {
+        @if (totalForcaTrabalho() !== 100) {
           <div class="row mt-3">
             <div class="col-md-12">
               <div class="br-textarea">
-                <label>Justificativa para carga horária insuficiente</label>
+                <label>Justificativa para carga horária {{ totalForcaTrabalho() < 100 ? 'insuficiente' : 'excedente' }}</label>
                 <textarea placeholder="Descreva a justificativa" [formControl]="form.controls.justificativa"></textarea>
               </div>
             </div>
@@ -285,7 +285,11 @@
         <br-button emphasis="secondary" (click)="excluir()">Excluir</br-button>
       }
       <br-button emphasis="secondary" (click)="salvar()" [disabled]="!podeSalvar() || saving()">Salvar Alterações</br-button>
-      <br-button emphasis="primary" (click)="assinar()" [disabled]="!podeAssinar()">Assinar</br-button>
+      @if (plano()?.documento_id) {
+        <br-button emphasis="primary" (click)="irParaTCR()">Assinar</br-button>
+      } @else {
+        <br-button emphasis="primary" (click)="assinar()" [disabled]="!podeAssinar()">Criar TCR e Assinar</br-button>
+      }
     </div>
 
   }

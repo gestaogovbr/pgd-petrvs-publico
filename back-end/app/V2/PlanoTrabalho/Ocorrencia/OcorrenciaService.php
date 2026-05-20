@@ -40,6 +40,7 @@ class OcorrenciaService
     {
         $plano = $this->validator->validarAutorizacao($dto->planoTrabalhoId, Auth::id());
         $afastamento = $this->validator->validarExistencia($dto->ocorrenciaId, $plano);
+        $this->validator->validarUpdate($plano, $dto, $afastamento);
 
         return DB::transaction(function () use ($afastamento, $dto) {
             $this->afastamentoRepository->update($afastamento->id, $dto->toPersistArray());

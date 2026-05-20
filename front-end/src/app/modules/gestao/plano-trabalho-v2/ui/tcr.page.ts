@@ -99,6 +99,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
           : doc
         );
         this.jaAssinou.set(true);
+        this.plano.update(p => p ? { ...p, status: 'AGUARDANDO_ASSINATURA' } as any : p);
       },
       error: (err: HttpErrorResponse) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao assinar o documento.')
     });

@@ -51,15 +51,18 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   readonly modalidadeOptions = signal<SelectOption[]>([{ value: '', label: 'Todas', selected: true }]);
 
-  readonly statusOptions: SelectOption[] = [
-    { value: '', label: 'Todos', selected: true },
-    { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Incluído' },
-    { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura' },
-    { value: PlanoTrabalhoStatus.ATIVO, label: 'Ativo' },
-    { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso' },
-    { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído' },
-    { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado' },
-  ];
+  get statusOptions(): SelectOption[] {
+    const current = this.filters.controls.status.value;
+    return [
+      { value: '', label: 'Todos' },
+      { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Incluído' },
+      { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura' },
+      { value: PlanoTrabalhoStatus.ATIVO, label: 'Em execução' },
+      { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso' },
+      { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído' },
+      { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado' },
+    ].map(o => ({ ...o, selected: o.value === current }));
+  }
   private readonly subscriptions: Subscription[] = [];
   private readonly filterChange$ = new Subject<void>();
 
@@ -95,15 +98,6 @@ readonly filters: FormGroup<{
   }
 
   ngOnInit(): void {
-    this.tipoModalidadeApi.listar().then(modalidades => {
-      this.modalidadeOptions.set([
-        { value: '', label: 'Todas', selected: true },
-        ...modalidades.map(m => ({ value: m.key, label: m.value }))
-      ]);
-    });
-
-    this.setupSubscriptions();
-
     if (this.isParticipante) {
       this.filters.controls.incluir_subordinadas.setValue(false);
       this.filters.controls.incluir_subordinadas.disable({ emitEvent: false });
@@ -115,6 +109,15 @@ readonly filters: FormGroup<{
 
     this.restoreFilters();
     this.applyFiltersAndLoad(true);
+    this.setupSubscriptions();
+
+    this.tipoModalidadeApi.listar().then(modalidades => {
+      const current = this.filters.controls.tipo_modalidade_id.value;
+      this.modalidadeOptions.set([
+        { value: '', label: 'Todas', selected: current === '' },
+        ...modalidades.map(m => ({ value: m.key, label: m.value, selected: m.key === current }))
+      ]);
+    });
   }
 
   ngOnDestroy(): void {
@@ -204,7 +207,7 @@ readonly filters: FormGroup<{
 
     const numero = String(raw.numero ?? '').trim();
     if (numero.length) result['numero'] = numero;
-    if (raw.tipo_modalidade_id.length) result['tipo_modalidade_id'] = raw.tipo_modalidade_id;
+    if (raw.tipo_modalidade_id.length) result['modalidade_pgd'] = raw.tipo_modalidade_id;
     if (raw.status.length) result['status'] = raw.status;
     const usuario = String(raw.usuario ?? '').trim();
     if (usuario.length) result['usuario_nome'] = usuario;
@@ -248,7 +251,7 @@ readonly filters: FormGroup<{
 
   statusLabel(value: PlanoTrabalhoStatus | undefined): string {
     const labels: Partial<Record<PlanoTrabalhoStatus, string>> = {
-      ATIVO: 'Ativo',
+      ATIVO: 'Em execução',
       INCLUIDO: 'Rascunho',
       AGUARDANDO_ASSINATURA: 'Aguardando assinatura',
       SUSPENSO: 'Suspenso',

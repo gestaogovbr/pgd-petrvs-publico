@@ -161,11 +161,11 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly origemSelectOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedOrigem();
     return [
-      { value: 'PROPRIA_UNIDADE', label: 'Própria Unidade', selected: sel === 'PROPRIA_UNIDADE' },
-      { value: 'OUTRA_UNIDADE', label: 'Outra Unidade', selected: sel === 'OUTRA_UNIDADE' },
-      { value: 'OUTRO_ORGAO', label: 'Outro Órgão/Entidade', selected: sel === 'OUTRO_ORGAO' },
-      { value: 'SEM_ENTREGA', label: 'Não vinculada a entrega', selected: sel === 'SEM_ENTREGA' }
-    ];
+      { value: 'PROPRIA_UNIDADE', label: 'Entrega da própria unidade' },
+      { value: 'OUTRA_UNIDADE', label: 'Entrega de outra unidade' },
+      { value: 'OUTRO_ORGAO', label: 'Entrega de outro órgão/entidade' },
+      { value: 'SEM_ENTREGA', label: 'Não vinculada a entrega' }
+    ].map(o => ({ ...o, selected: o.value === sel }));
   });
 
   readonly planosUnidadeOptions = computed<SelectOption[]>(() => {
@@ -193,11 +193,11 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(status => this.formStatus.set(status));
 
-    // Justificativa obrigatória quando carga < 100%
+    // Justificativa obrigatória quando carga != 100%
     effect(() => {
       const total = this.totalForcaTrabalho();
       const ctrl = this.form.controls.justificativa;
-      if (total < 100) {
+      if (total !== 100) {
         ctrl.setValidators(Validators.required);
       } else {
         ctrl.clearValidators();
@@ -232,7 +232,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       this.entregas.set(plano.entregas || []);
       this.form.controls.data_inicio.setValue(plano.data_inicio ? new Date(plano.data_inicio).toISOString().split('T')[0] : '');
       this.form.controls.data_fim.setValue(plano.data_fim ? new Date(plano.data_fim).toISOString().split('T')[0] : '');
-      this.form.controls.justificativa.setValue(plano.justificativa_modalidade || '');
+      this.form.controls.justificativa.setValue(plano.justificativa || '');
       this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '');
 
       if (plano.usuario_id) {
@@ -405,8 +405,20 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     this.salvarPlano(() => this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', this.planoId()]));
   }
 
+  irParaTCR() {
+    this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', this.planoId()]);
+  }
+
   private salvarPlano(onSuccess: () => void) {
     if (this.saving() || this.form.invalid || !this.programaId() || !this.planoId()) return;
+
+    const plano = this.plano();
+    if (plano?.documento_id) {
+      const msg = plano.status === 'AGUARDANDO_ASSINATURA'
+        ? 'Ao prosseguir com a edição, a assinatura será automaticamente desfeita e as informações preenchidas no bloco Planejamento serão excluídas. Deseja continuar?'
+        : 'Ao prosseguir com a edição, as informações preenchidas no bloco Planejamento serão excluídas. Deseja continuar?';
+      if (!confirm(msg)) return;
+    }
 
     const payload: Partial<any> = {
       usuario_id: this.form.controls.usuario_id.value,
@@ -422,7 +434,10 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     this.saving.set(true);
     this.api.update(this.planoId()!, payload)
       .pipe(finalize(() => this.saving.set(false)))
-      .subscribe(() => onSuccess());
+      .subscribe((updated) => {
+        if (updated) this.plano.set(updated);
+        onSuccess();
+      });
   }
 
   adicionarEntrega() {
@@ -460,6 +475,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
         .pipe(finalize(() => this.salvandoEntrega.set(false)))
         .subscribe(res => {
           this.entregas.update(list => list.map(e => e.id === res.id ? res : e));
+          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
           this.cancelarEntrega();
         });
     } else {
@@ -467,6 +483,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
         .pipe(finalize(() => this.salvandoEntrega.set(false)))
         .subscribe(res => {
           this.entregas.update(list => [...list, res]);
+          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
           this.cancelarEntrega();
         });
     }
@@ -547,6 +564,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     if (!confirm('Deseja realmente excluir esta entrega?')) return;
     this.api.deleteEntrega(this.planoId()!, entrega.id).subscribe(() => {
       this.entregas.update(list => list.filter(e => e.id !== entrega.id));
+      this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
     });
   }
 

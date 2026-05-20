@@ -11,7 +11,9 @@ use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaStoreDTO;
+use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
 use App\V2\Traits\ValidaAutorizacaoTrait;
+use Illuminate\Support\Carbon;
 
 class OcorrenciaStoreValidator
 {
@@ -43,7 +45,25 @@ class OcorrenciaStoreValidator
 
     public function validarStore(PlanoTrabalho $plano, OcorrenciaStoreDTO $dto): void
     {
-        $semIntersecao = $dto->dataFim < $plano->data_inicio || $dto->dataInicio > $plano->data_fim;
+        $this->validarPeriodoDentroDoPlano($plano, $dto->dataInicio, $dto->dataFim);
+    }
+
+    public function validarUpdate(PlanoTrabalho $plano, OcorrenciaUpdateDTO $dto, Afastamento $afastamento): void
+    {
+        $dataInicio = $dto->dataInicio ?? (string) $afastamento->data_inicio;
+        $dataFim = $dto->dataFim ?? (string) $afastamento->data_fim;
+
+        $this->validarPeriodoDentroDoPlano($plano, $dataInicio, $dataFim);
+    }
+
+    private function validarPeriodoDentroDoPlano(PlanoTrabalho $plano, string $dataInicio, string $dataFim): void
+    {
+        $inicio = Carbon::parse($dataInicio)->startOfDay();
+        $fim = Carbon::parse($dataFim)->startOfDay();
+        $planoInicio = Carbon::parse($plano->data_inicio)->startOfDay();
+        $planoFim = Carbon::parse($plano->data_fim)->startOfDay();
+
+        $semIntersecao = $fim->lt($planoInicio) || $inicio->gt($planoFim);
 
         if ($semIntersecao) {
             throw new ValidateException('A ocorrência deve ter período coincidente com o do Plano de Trabalho.');
