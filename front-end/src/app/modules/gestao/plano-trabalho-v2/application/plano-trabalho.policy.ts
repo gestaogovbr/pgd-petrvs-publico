@@ -12,7 +12,7 @@ export class PlanoTrabalhoPolicy {
   podeCancelar(p: PlanoTrabalho): boolean {
     return this.auth.hasPermissionTo('MOD_PTR_CNC')
       && PlanoTrabalhoStatusGroups.cancelavel.includes(p.status)
-      && this.unidadeService.isGestorUnidade(p.unidade_id);
+      && (this.auth.usuario?.id == p.usuario_id || this.unidadeService.isGestorUnidade(p.unidade_id));
   }
 
   podeEditar(p: PlanoTrabalho): boolean {
