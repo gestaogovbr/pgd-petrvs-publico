@@ -12,6 +12,8 @@ class OcorrenciaUpdateDTO
         public readonly ?string $observacoes,
         public readonly ?string $tipoMotivoAfastamentoId,
         public readonly ?int $horas,
+        public readonly ?string $dataInicio,
+        public readonly ?string $dataFim
     ) {}
 
     public static function fromArray(array $data, string $planoTrabalhoId, string $ocorrenciaId): self
@@ -22,6 +24,8 @@ class OcorrenciaUpdateDTO
             observacoes: $data['observacoes'] ?? null,
             tipoMotivoAfastamentoId: $data['tipo_motivo_afastamento_id'] ?? null,
             horas: isset($data['horas']) ? (int) $data['horas'] : null,
+            dataInicio: $data['data_inicio'] ?? null,
+            dataFim: $data['data_fim'] ?? null
         );
     }
 
@@ -31,6 +35,8 @@ class OcorrenciaUpdateDTO
             'observacoes' => $this->observacoes,
             'tipo_motivo_afastamento_id' => $this->tipoMotivoAfastamentoId,
             'horas' => $this->horas,
+            'data_inicio' => $this->dataInicio,
+            'data_fim' => $this->dataFim
         ], fn ($v) => $v !== null);
     }
 }

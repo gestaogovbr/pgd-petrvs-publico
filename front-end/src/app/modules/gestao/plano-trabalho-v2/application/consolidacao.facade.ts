@@ -132,6 +132,8 @@ export class ConsolidacaoFacade {
           observacoes: form.observacoes,
           tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
           horas: horas ?? undefined,
+          data_inicio: form.data_inicio,
+          data_fim: form.data_fim
         })
       : this.api.createOcorrencia(this.planoId, {
           observacoes: form.observacoes,

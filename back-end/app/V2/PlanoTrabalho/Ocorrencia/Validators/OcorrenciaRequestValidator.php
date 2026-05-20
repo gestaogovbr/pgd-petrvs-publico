@@ -31,6 +31,8 @@ class OcorrenciaRequestValidator
             'observacoes' => ['sometimes', 'string'],
             'tipo_motivo_afastamento_id' => ['sometimes', 'uuid'],
             'horas' => ['nullable', 'integer', 'min:1'],
+            'data_inicio' => ['sometimes', 'date'],
+            'data_fim' => ['sometimes', 'date', 'after_or_equal:data_inicio'],
         ]);
     }
 }
