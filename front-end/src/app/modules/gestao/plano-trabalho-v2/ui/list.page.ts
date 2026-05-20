@@ -55,7 +55,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     { value: '', label: 'Todos', selected: true },
     { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Incluído' },
     { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura' },
-    { value: PlanoTrabalhoStatus.ATIVO, label: 'Ativo' },
+    { value: PlanoTrabalhoStatus.ATIVO, label: 'Em execução' },
     { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso' },
     { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído' },
     { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado' },
@@ -248,7 +248,7 @@ readonly filters: FormGroup<{
 
   statusLabel(value: PlanoTrabalhoStatus | undefined): string {
     const labels: Partial<Record<PlanoTrabalhoStatus, string>> = {
-      ATIVO: 'Ativo',
+      ATIVO: 'Em execução',
       INCLUIDO: 'Rascunho',
       AGUARDANDO_ASSINATURA: 'Aguardando assinatura',
       SUSPENSO: 'Suspenso',

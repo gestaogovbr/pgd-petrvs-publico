@@ -104,7 +104,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   statusLabel(value: PlanoTrabalhoStatus | undefined): string {
     const labels: Record<PlanoTrabalhoStatus, string> = {
-      ATIVO: 'Ativo',
+      ATIVO: 'Em execução',
       INCLUIDO: 'Incluído',
       AGUARDANDO_ASSINATURA: 'Aguardando assinatura',
       SUSPENSO: 'Suspenso',
