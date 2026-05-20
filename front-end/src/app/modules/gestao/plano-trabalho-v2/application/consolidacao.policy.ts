@@ -19,7 +19,8 @@ export class ConsolidacaoPolicy {
   podeAvaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho): boolean {
     return this.auth.usuario?.id != planoTrabalho.usuario_id
       && consolidacao.status === ConsolidacaoStatus.CONCLUIDO
-      && this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id);
+      && (this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id)
+        || this.unidadeService.isGestorUnidade(planoTrabalho.unidade?.unidade_pai_id ?? null));
   }
 
   podeSolicitarRecurso(consolidacao: Consolidacao, avaliacao: AvaliacaoConsolidacao, planoTrabalho: PlanoTrabalho): boolean {

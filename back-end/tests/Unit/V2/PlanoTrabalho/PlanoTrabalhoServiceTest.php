@@ -21,6 +21,8 @@ use App\Exceptions\ValidateException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use App\V2\StatusService;
+use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
@@ -39,6 +41,8 @@ beforeEach(function () {
     $this->clonarValidator = Mockery::mock(PlanoTrabalhoClonarValidator::class);
     $this->indexValidator = Mockery::mock(PlanoTrabalhoIndexValidator::class);
     $this->statusService = Mockery::mock(StatusService::class);
+    $this->tcrInvalidador = Mockery::mock(TCRInvalidador::class);
+    $this->consolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
 
     $this->service = new PlanoTrabalhoService(
         $this->readRepository,
@@ -53,6 +57,8 @@ beforeEach(function () {
         $this->clonarValidator,
         $this->indexValidator,
         $this->statusService,
+        $this->tcrInvalidador,
+        $this->consolidacaoRepository,
     );
 });
 
@@ -409,4 +415,45 @@ describe('PlanoTrabalhoService::update', function () {
             'modalidade_pgd' => 'presencial',
         ]);
     })->throws(\App\Exceptions\ForbiddenException::class);
+});
+
+describe('PlanoTrabalhoService::encerrar', function () {
+    test('ajusta data_fim, soft-deleta consolidações futuras e ajusta vigente', function () {
+        $planoId = 'plano-123';
+        $userId = 'user-456';
+        $hoje = now()->format('Y-m-d');
+
+        Auth::shouldReceive('id')->andReturn($userId);
+
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = $planoId;
+        $plano->shouldReceive('refresh')->andReturnSelf();
+
+        $this->encerrarValidator->shouldReceive('validar')
+            ->with($planoId, $userId)
+            ->andReturn($plano);
+
+        $this->writeRepository->shouldReceive('update')
+            ->once()
+            ->with($planoId, Mockery::on(fn ($data) =>
+                $data['encerrado_at'] === $hoje && $data['data_fim'] === $hoje
+            ))
+            ->andReturn($plano);
+
+        $this->consolidacaoRepository->shouldReceive('ajustarDataFimVigente')
+            ->once()
+            ->with($planoId, $hoje);
+
+        $this->consolidacaoRepository->shouldReceive('concluirTodas')
+            ->once()
+            ->with($planoId);
+
+        $this->statusService->shouldReceive('atualizaStatus')
+            ->once()
+            ->with($plano, 'CONCLUIDO', Mockery::on(fn ($msg) => str_contains($msg, 'motivo teste')));
+
+        $result = $this->service->encerrar($planoId, 'motivo teste');
+
+        expect($result)->toBe($plano);
+    });
 });

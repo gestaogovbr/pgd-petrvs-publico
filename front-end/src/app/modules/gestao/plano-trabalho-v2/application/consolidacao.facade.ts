@@ -5,6 +5,7 @@ import { AvaliarConsolidacaoUseCase } from './avaliar-consolidacao.usecase';
 import { SolicitarRecursoUseCase } from './solicitar-recurso.usecase';
 import { AtividadeConsolidacao, Consolidacao, NotaAvaliacao, Ocorrencia, OcorrenciaFormValue, PlanoTrabalhoEntrega, TipoMotivoAfastamento } from '../domain/types';
 import { TipoMotivoAfastamentoService } from 'src/app/v2/services/tipo-motivo-afastamento.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Injectable()
 export class ConsolidacaoFacade {
@@ -13,6 +14,7 @@ export class ConsolidacaoFacade {
   private readonly avaliarUC = inject(AvaliarConsolidacaoUseCase);
   private readonly solicitarRecursoUC = inject(SolicitarRecursoUseCase);
   private readonly tipoMotivoApi = inject(TipoMotivoAfastamentoService);
+  private readonly auth = inject(AuthService);
 
   private planoId = '';
 
@@ -311,8 +313,11 @@ export class ConsolidacaoFacade {
     this.avaliandoIds.update(s => new Set([...s, consolidacao.id]));
 
     this.avaliarUC.execute(this.planoId, consolidacao.id, { tipo_avaliacao_nota_id: notaId, justificativa }).subscribe({
-      next: () => {
-        this.loadConsolidacoes();
+      next: (avaliacao) => {
+        this.consolidacoes.update(list => list.map(c => c.id === consolidacao.id
+          ? { ...c, status: 'AVALIADO', avaliacoes: [...c.avaliacoes, { ...avaliacao, avaliador: { id: this.auth.usuario!.id, nome: this.auth.usuario!.nome } }] }
+          : c
+        ));
         this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
         this.notasSelecionadas.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
         this.justificativasAvaliacao.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });

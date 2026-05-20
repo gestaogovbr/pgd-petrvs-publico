@@ -93,4 +93,14 @@ class PlanoTrabalhoConsolidacaoRepository
     {
         $this->writeRepository->deleteAfastamentoVinculos($afastamentoId);
     }
+
+    public function ajustarDataFimVigente(string $planoTrabalhoId, string $dataEncerramento): void
+    {
+        $this->writeRepository->ajustarDataFimVigente($planoTrabalhoId, $dataEncerramento);
+    }
+
+    public function concluirTodas(string $planoTrabalhoId): void
+    {
+        $this->writeRepository->concluirTodas($planoTrabalhoId);
+    }
 }

@@ -21,8 +21,8 @@ class AvaliacaoStoreValidator
 
     public function validar(PlanoTrabalho $plano, AvaliacaoStoreDTO $dto): PlanoTrabalhoConsolidacao
     {
-        if ($plano->status !== StatusEnum::ATIVO->value) {
-            throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO.');
+        if (!in_array($plano->status, [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value])) {
+            throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO ou CONCLUÍDO.');
         }
 
         $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($dto->consolidacaoId);

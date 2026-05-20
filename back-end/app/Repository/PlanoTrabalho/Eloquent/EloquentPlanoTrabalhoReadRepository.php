@@ -199,7 +199,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         /** @var \Illuminate\Database\Eloquent\Builder<PlanoTrabalho> $queryBase */
         $queryBase = PlanoTrabalho::query();
 
-        $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.modalidade_pgd', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status')
+        $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.modalidade_pgd', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status', 'planos_trabalhos.encerrado_at')
               ->with(['usuario:id,nome', 'unidade:id,nome,sigla']);
 
         if($filtro->hierarquia){
@@ -295,7 +295,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         /** @var PlanoTrabalho|null $plano */
         $plano = PlanoTrabalho::with([
             'usuario:id,nome,apelido',
-            'unidade:id,sigla,nome',
+            'unidade:id,sigla,nome,unidade_pai_id',
             'programa:id,nome',
             'entregas',
             'consolidacoes.atividades',

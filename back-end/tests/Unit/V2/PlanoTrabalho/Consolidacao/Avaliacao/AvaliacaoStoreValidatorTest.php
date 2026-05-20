@@ -52,7 +52,7 @@ describe('AvaliacaoStoreValidator::validar', function () {
         $plano->status = 'INCLUIDO';
 
         $this->validator->validar($plano, dtoAvaliacao());
-    })->throws(ValidateException::class, 'O Plano de Trabalho precisa estar com status ATIVO.');
+    })->throws(ValidateException::class, 'O Plano de Trabalho precisa estar com status ATIVO ou CONCLUÍDO.');
 
     test('lança exceção quando período não encontrado', function () {
         /** @var PlanoTrabalho $plano */

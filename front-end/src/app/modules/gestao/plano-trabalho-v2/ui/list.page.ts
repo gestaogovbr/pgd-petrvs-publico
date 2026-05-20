@@ -12,6 +12,7 @@ import { PlanoTrabalhoStatus } from 'src/app/models/plano-trabalho.model';
 import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ClonarPlanoUseCase } from '../application/clonar-plano.usecase';
 import { ExcluirPlanoUseCase } from '../application/excluir-plano.usecase';
+import { PlanoApiClient } from '../infra/plano-api.client';
 import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
@@ -33,6 +34,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   readonly policy = inject(PlanoTrabalhoPolicy);
   private readonly router = inject(Router);
   private readonly cancelarPlanoUC = inject(CancelarPlanoUseCase);
+  private readonly planoApi = inject(PlanoApiClient); // TODO: remover ao criar EncerrarPlanoUseCase
   private readonly clonarPlanoUC = inject(ClonarPlanoUseCase);
   private readonly excluirPlanoUC = inject(ExcluirPlanoUseCase);
   private readonly filterStorage = inject(FilterStorageService);
@@ -45,6 +47,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   /** Plano aguardando justificativa de cancelamento */
   readonly cancelandoPlano = signal<PlanoTrabalho | null>(null);
   readonly justificativaCancelamento = signal('');
+  readonly encerrando = signal<PlanoTrabalho | null>(null);
+  readonly justificativaEncerramento = signal('');
 
   /** Confirmação genérica (clonar / excluir) */
   readonly confirmacaoPendente = signal<{ titulo: string; mensagem: string; onConfirm: () => void } | null>(null);
@@ -249,7 +253,8 @@ readonly filters: FormGroup<{
     return value ? (cores[value] ?? 'secondary') : 'secondary';
   }
 
-  statusLabel(value: PlanoTrabalhoStatus | undefined): string {
+  statusLabel(value: PlanoTrabalhoStatus | undefined, plano?: PlanoTrabalho): string {
+    if (value === 'CONCLUIDO' && plano?.encerrado_at) return 'Encerrado antecipadamente';
     const labels: Partial<Record<PlanoTrabalhoStatus, string>> = {
       ATIVO: 'Em execução',
       INCLUIDO: 'Rascunho',
@@ -257,6 +262,7 @@ readonly filters: FormGroup<{
       SUSPENSO: 'Suspenso',
       CANCELADO: 'Cancelado',
       CONCLUIDO: 'Concluído',
+      AVALIADO: 'Avaliado',
     };
     return value ? (labels[value] ?? value) : '-';
   }
@@ -324,6 +330,29 @@ readonly filters: FormGroup<{
     this.cancelarPlanoUC.execute(plano.id, justificativa).subscribe(() => {
       this.cancelandoPlano.set(null);
       this.justificativaCancelamento.set('');
+      this.applyFiltersAndLoad(false);
+    });
+  }
+
+  iniciarEncerramento(p: PlanoTrabalho) {
+    this.encerrando.set(p);
+    this.justificativaEncerramento.set('');
+  }
+
+  cancelarEncerramento() {
+    this.encerrando.set(null);
+    this.justificativaEncerramento.set('');
+  }
+
+  // TODO: usar EncerrarPlanoUseCase em vez de chamar planoApi diretamente
+  confirmarEncerramento() {
+    const plano = this.encerrando();
+    const justificativa = this.justificativaEncerramento().trim();
+    if (!plano || !justificativa) return;
+
+    this.planoApi.encerrar(plano.id, justificativa).subscribe(() => {
+      this.encerrando.set(null);
+      this.justificativaEncerramento.set('');
       this.applyFiltersAndLoad(false);
     });
   }

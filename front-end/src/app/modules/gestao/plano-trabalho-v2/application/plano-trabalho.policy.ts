@@ -42,7 +42,9 @@ export class PlanoTrabalhoPolicy {
 
   podeArquivar(p: PlanoTrabalho): boolean {
     return PlanoTrabalhoStatusGroups.arquivavel.includes(p.status)
-      && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id)
+      && (this.unidadeService.isGestorUnidade(p.unidade_id)
+        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null)
+        || p.usuario_id === this.auth.usuario?.id)
       && !p.data_arquivamento;
   }
 }

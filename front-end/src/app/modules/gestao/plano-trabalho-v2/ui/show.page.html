@@ -31,6 +31,11 @@
             <i class="fas fa-archive mr-1"></i>Arquivar
           </br-button>
         }
+        @if (planoTrabalho()?.status === PlanoStatus.ATIVO) {
+          <br-button emphasis="secondary" (click)="encerrarPlano()" title="Encerrar plano" ariaLabel="Encerrar plano antecipadamente">
+            <i class="fas fa-stop-circle mr-1"></i>Encerrar
+          </br-button>
+        }
 
 
       </div>
@@ -310,3 +315,22 @@
     }
   }
 </div>
+
+<br-scrim [isOpen]="encerrando()" [disableCloseOnClick]="true">
+  <br-modal [show]="encerrando()" titleText="Encerrar Plano de Trabalho" size="medium" alignFooter="end" (brModalBeforeClose)="cancelarEncerramento()">
+    <div class="p-3">
+      <div class="br-message warning mb-3" role="alert">
+        <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="content">Ao encerrar este Plano de Trabalho, ele será válido apenas até a data de hoje, preservando os registros e avaliações já realizados. Esta ação é definitiva e não poderá ser desfeita. Deseja confirmar?</div>
+      </div>
+      <p class="mb-3">Informe o motivo do encerramento antecipado.</p>
+      <div class="br-textarea">
+        <textarea id="justificativa_encerramento" rows="4" placeholder="Descreva o motivo do encerramento..." [value]="justificativaEncerramento()" (input)="justificativaEncerramento.set($any($event.target).value)"></textarea>
+      </div>
+    </div>
+    <div slot="footer">
+      <br-button emphasis="secondary" (click)="cancelarEncerramento()">Voltar</br-button>
+      <br-button emphasis="primary" [disabled]="!justificativaEncerramento().trim()" (click)="confirmarEncerramento()">Confirmar encerramento</br-button>
+    </div>
+  </br-modal>
+</br-scrim>

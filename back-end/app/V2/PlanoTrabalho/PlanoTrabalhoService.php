@@ -5,6 +5,7 @@ namespace App\V2\PlanoTrabalho;
 use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoCloneDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoEntregaCloneDTO;
@@ -45,6 +46,7 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoIndexValidator $indexValidator,
         private readonly StatusService $statusService,
         private readonly TCRInvalidador $tcrInvalidador,
+        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
     ) {}
 
 
@@ -141,7 +143,18 @@ class PlanoTrabalhoService
         $plano = $this->encerrarValidator->validar($id, Auth::id());
 
         DB::transaction(function () use ($id, $plano, $justificativa) {
-            $this->writeRepository->update($id, ['encerrado_at' => now()->format('Y-m-d')]);
+            $dataEncerramento = now()->format('Y-m-d');
+
+            $this->writeRepository->update($id, [
+                'encerrado_at' => $dataEncerramento,
+                'data_fim' => $dataEncerramento,
+            ]);
+
+            // Ajustar data_fim do período vigente para a data do encerramento
+            $this->consolidacaoRepository->ajustarDataFimVigente($id, $dataEncerramento);
+
+            // Concluir todas as consolidações restantes
+            $this->consolidacaoRepository->concluirTodas($id);
 
             $this->statusService->atualizaStatus(
                 $plano,

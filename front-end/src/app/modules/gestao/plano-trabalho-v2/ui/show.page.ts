@@ -44,6 +44,8 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly planoTrabalho = signal<PlanoTrabalho | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  readonly encerrando = signal(false);
+  readonly justificativaEncerramento = signal('');
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
@@ -103,6 +105,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   // --- Labels / Display ---
 
   statusLabel(value: PlanoTrabalhoStatus | undefined): string {
+    if (value === 'CONCLUIDO' && this.planoTrabalho()?.encerrado_at) return 'Encerrado antecipadamente';
     const labels: Record<PlanoTrabalhoStatus, string> = {
       ATIVO: 'Em execução',
       INCLUIDO: 'Incluído',
@@ -125,6 +128,10 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   }
 
   statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
+    const plano = this.planoTrabalho();
+    if (plano?.encerrado_at && consolidacao.data_inicio > plano.encerrado_at) {
+      return 'Encerrado antecipadamente';
+    }
     if (consolidacao.status === ConsolidacaoStatus.INCLUIDO && this.todasEntregasComAtividade(consolidacao)) {
       return 'Registro incluído';
     }
@@ -158,6 +165,31 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
       next: (atualizado) => {
         this.planoTrabalho.set(atualizado);
       }
+    });
+  }
+
+  encerrarPlano() {
+    this.encerrando.set(true);
+    this.justificativaEncerramento.set('');
+  }
+
+  cancelarEncerramento() {
+    this.encerrando.set(false);
+    this.justificativaEncerramento.set('');
+  }
+
+  // TODO: usar EncerrarPlanoUseCase em vez de chamar planoApi diretamente
+  confirmarEncerramento() {
+    const plano = this.planoTrabalho();
+    const justificativa = this.justificativaEncerramento().trim();
+    if (!plano || !justificativa) return;
+    this.api.encerrar(plano.id, justificativa).subscribe({
+      next: (atualizado) => {
+        this.planoTrabalho.set(atualizado);
+        this.encerrando.set(false);
+        this.justificativaEncerramento.set('');
+      },
+      error: (err) => alert(err?.error?.error || 'Erro ao encerrar o plano.')
     });
   }
 }
