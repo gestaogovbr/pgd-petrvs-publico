@@ -51,7 +51,7 @@ export class PlanoApiClient extends TenantV2ResourceApiBase {
   }
 
   archive(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
-    return this.http.post<any>(this.resourceUrl(`/${id}/arquivar`), {})
+    return this.http.patch<any>(this.resourceUrl(`/${id}/arquivar`), {})
       .pipe(map((r: any) => (r?.data as PlanoTrabalho) ?? r));
   }
 
