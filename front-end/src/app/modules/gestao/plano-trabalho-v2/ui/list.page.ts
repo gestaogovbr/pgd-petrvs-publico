@@ -51,15 +51,18 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   readonly modalidadeOptions = signal<SelectOption[]>([{ value: '', label: 'Todas', selected: true }]);
 
-  readonly statusOptions: SelectOption[] = [
-    { value: '', label: 'Todos', selected: true },
-    { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Incluído' },
-    { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura' },
-    { value: PlanoTrabalhoStatus.ATIVO, label: 'Em execução' },
-    { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso' },
-    { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído' },
-    { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado' },
-  ];
+  get statusOptions(): SelectOption[] {
+    const current = this.filters.controls.status.value;
+    return [
+      { value: '', label: 'Todos', selected: current === '' },
+      { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Incluído', selected: current === PlanoTrabalhoStatus.INCLUIDO },
+      { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura', selected: current === PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA },
+      { value: PlanoTrabalhoStatus.ATIVO, label: 'Em execução', selected: current === PlanoTrabalhoStatus.ATIVO },
+      { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso', selected: current === PlanoTrabalhoStatus.SUSPENSO },
+      { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído', selected: current === PlanoTrabalhoStatus.CONCLUIDO },
+      { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado', selected: current === PlanoTrabalhoStatus.CANCELADO },
+    ];
+  }
   private readonly subscriptions: Subscription[] = [];
   private readonly filterChange$ = new Subject<void>();
 
@@ -95,15 +98,6 @@ readonly filters: FormGroup<{
   }
 
   ngOnInit(): void {
-    this.tipoModalidadeApi.listar().then(modalidades => {
-      this.modalidadeOptions.set([
-        { value: '', label: 'Todas', selected: true },
-        ...modalidades.map(m => ({ value: m.key, label: m.value }))
-      ]);
-    });
-
-    this.setupSubscriptions();
-
     if (this.isParticipante) {
       this.filters.controls.incluir_subordinadas.setValue(false);
       this.filters.controls.incluir_subordinadas.disable({ emitEvent: false });
@@ -115,6 +109,15 @@ readonly filters: FormGroup<{
 
     this.restoreFilters();
     this.applyFiltersAndLoad(true);
+    this.setupSubscriptions();
+
+    this.tipoModalidadeApi.listar().then(modalidades => {
+      const current = this.filters.controls.tipo_modalidade_id.value;
+      this.modalidadeOptions.set([
+        { value: '', label: 'Todas', selected: current === '' },
+        ...modalidades.map(m => ({ value: m.key, label: m.value, selected: m.key === current }))
+      ]);
+    });
   }
 
   ngOnDestroy(): void {
