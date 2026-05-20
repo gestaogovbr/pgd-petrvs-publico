@@ -54,14 +54,14 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   get statusOptions(): SelectOption[] {
     const current = this.filters.controls.status.value;
     return [
-      { value: '', label: 'Todos', selected: current === '' },
-      { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Incluído', selected: current === PlanoTrabalhoStatus.INCLUIDO },
-      { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura', selected: current === PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA },
-      { value: PlanoTrabalhoStatus.ATIVO, label: 'Em execução', selected: current === PlanoTrabalhoStatus.ATIVO },
-      { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso', selected: current === PlanoTrabalhoStatus.SUSPENSO },
-      { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído', selected: current === PlanoTrabalhoStatus.CONCLUIDO },
-      { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado', selected: current === PlanoTrabalhoStatus.CANCELADO },
-    ];
+      { value: '', label: 'Todos' },
+      { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Incluído' },
+      { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura' },
+      { value: PlanoTrabalhoStatus.ATIVO, label: 'Em execução' },
+      { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso' },
+      { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído' },
+      { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado' },
+    ].map(o => ({ ...o, selected: o.value === current }));
   }
   private readonly subscriptions: Subscription[] = [];
   private readonly filterChange$ = new Subject<void>();
