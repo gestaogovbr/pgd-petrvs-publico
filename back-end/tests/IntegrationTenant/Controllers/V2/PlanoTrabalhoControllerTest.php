@@ -224,6 +224,15 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
             'status' => StatusEnum::ATIVO,
         ]);
 
+        $vigenteRascunho = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'data_inicio' => now()->subWeek(),
+            'data_fim' => now()->addMonth(),
+            'status' => StatusEnum::INCLUIDO,
+        ]);
+
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
@@ -238,9 +247,11 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
         ]));
 
         $items = $response->json('data.data');
+        $ids = array_column($items, 'id');
 
-        expect($items)->toHaveCount(1)
-            ->and($items[0]['id'])->toBe($vigente->id);
+        expect($items)->toHaveCount(2)
+            ->and($ids)->toContain($vigente->id)
+            ->and($ids)->toContain($vigenteRascunho->id);
     });
 
     test('retorna planos dentro do intervalo de datas', function () {
