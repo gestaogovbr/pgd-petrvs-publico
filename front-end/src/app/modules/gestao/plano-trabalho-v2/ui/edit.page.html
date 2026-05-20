@@ -285,7 +285,11 @@
         <br-button emphasis="secondary" (click)="excluir()">Excluir</br-button>
       }
       <br-button emphasis="secondary" (click)="salvar()" [disabled]="!podeSalvar() || saving()">Salvar Alterações</br-button>
-      <br-button emphasis="primary" (click)="assinar()" [disabled]="!podeAssinar()">Assinar</br-button>
+      @if (plano()?.documento_id) {
+        <br-button emphasis="primary" (click)="irParaTCR()">Assinar</br-button>
+      } @else {
+        <br-button emphasis="primary" (click)="assinar()" [disabled]="!podeAssinar()">Criar TCR e Assinar</br-button>
+      }
     </div>
 
   }

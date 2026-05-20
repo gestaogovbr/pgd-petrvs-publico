@@ -25,7 +25,8 @@ export class PlanoApiClient extends TenantV2ResourceApiBase {
   }
 
   update(id: PlanoTrabalhoId, payload: Partial<PlanoTrabalho>): Observable<PlanoTrabalho> {
-    return this.http.patch<PlanoTrabalho>(this.resourceUrl(`/${id}`), payload);
+    return this.http.patch<{ success: boolean; data: PlanoTrabalho }>(this.resourceUrl(`/${id}`), payload)
+      .pipe(map(r => r.data));
   }
 
   delete(id: PlanoTrabalhoId): Observable<void> {
