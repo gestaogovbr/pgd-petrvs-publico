@@ -204,7 +204,7 @@ readonly filters: FormGroup<{
 
     const numero = String(raw.numero ?? '').trim();
     if (numero.length) result['numero'] = numero;
-    if (raw.tipo_modalidade_id.length) result['tipo_modalidade_id'] = raw.tipo_modalidade_id;
+    if (raw.tipo_modalidade_id.length) result['modalidade_pgd'] = raw.tipo_modalidade_id;
     if (raw.status.length) result['status'] = raw.status;
     const usuario = String(raw.usuario ?? '').trim();
     if (usuario.length) result['usuario_nome'] = usuario;
