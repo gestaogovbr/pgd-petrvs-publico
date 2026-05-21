@@ -20,7 +20,7 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
         $this->model = $model;
     }
 
-    public function findCuradoresByUsuario(string $usuarioId): Collection
+    public function findAllCuradoresByUsuario(string $usuarioId): Collection
     {
         return $this->model->newQuery()
             ->with('curador')
@@ -29,7 +29,7 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
             ->get();
     }
 
-    public function findColaboracoesByUsuario(string $usuarioId): Collection
+    public function findAllColaboracoesByUsuario(string $usuarioId): Collection
     {
         return $this->model->newQuery()
             ->with('colaborador')
@@ -38,7 +38,7 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
             ->get();
     }
 
-    public function findGerenciasSubstitutasByUsuario(string $usuarioId): Collection
+    public function findAllGerenciasSubstitutasByUsuario(string $usuarioId): Collection
     {
         return $this->model->newQuery()
             ->with('gestorSubstituto')
@@ -47,7 +47,7 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
             ->get();
     }
 
-    public function findGerenciasDelegadasByUsuario(string $usuarioId): Collection
+    public function findAllGerenciasDelegadasByUsuario(string $usuarioId): Collection
     {
         return $this->model->newQuery()
             ->with('gestorDelegado')
@@ -56,7 +56,7 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
             ->get();
     }
 
-    public function findGerenciasTitularesByUsuario(string $usuarioId): Collection
+    public function findAllGerenciasTitularesByUsuario(string $usuarioId): Collection
     {
         return $this->model->newQuery()
             ->with('gestor')
@@ -65,7 +65,7 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
             ->get();
     }
 
-    public function findLotacoesByUsuario(string $usuarioId): Collection
+    public function findAllLotacoesByUsuario(string $usuarioId): Collection
     {
         return $this->model->newQuery()
             ->with('lotado')
@@ -93,6 +93,13 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
             ->first();
 
         return $integrante instanceof UnidadeIntegrante ? $integrante : null;
+    }
+
+    public function findAllByUsuario(string $usuarioId): Collection
+    {
+        return $this->model->newQuery()
+            ->where('usuario_id', $usuarioId)
+            ->get();
     }
 
     public function countLotadosByUnidade(string $unidadeId): int

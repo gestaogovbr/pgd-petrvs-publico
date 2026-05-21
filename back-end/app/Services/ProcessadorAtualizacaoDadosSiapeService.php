@@ -147,7 +147,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 
         $dbResult = null;
         try {
-            $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+            $dbResult = $this->unidadeIntegrante->salvarIntegrantes($vinculo, false, true);
         } catch (Throwable $th) {
             report($th);
             SiapeLog::error("IntegracaoService: Durante integração não foi possível alterar lotação!: ". $th->getMessage(), [$vinculo]);
@@ -236,7 +236,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             'atribuicoes' => $atribuicoes,
             ]);
 
-            $this->unidadeIntegrante->salvarIntegrantes($vinculo, false);
+            $this->unidadeIntegrante->salvarIntegrantes($vinculo, false, true);
         }
     }
 }

@@ -2,21 +2,26 @@
 
 namespace Tests\IntegrationTenant\Services;
 
-use App\Services\PlanoEntregaService;
+use App\Models\Entidade;
 use App\Models\PlanoEntrega;
-use App\Models\Unidade;
 use App\Models\Programa;
 use App\Models\Usuario;
-use App\Models\Entidade;
 use App\Models\TipoAvaliacao;
 use App\Models\TipoJustificativa;
+use App\Models\TipoModalidade;
+use App\Models\Unidade;
+use App\Services\PlanoEntregaService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 
+
 describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () {
-    
+
     it('deve cancelar a avaliação persistindo no banco de dados', function () {
+        Bus::fake();
+
         // Criar dados manualmente (Factories não disponíveis)
-        
+
         // 0. Dependências de Programa
         $tipoAvaliacao = new TipoAvaliacao();
         $tipoAvaliacao->id = Str::uuid();
@@ -81,7 +86,7 @@ describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () 
         // 5. Usuario
         $usuario = new Usuario();
         $usuario->id = Str::uuid();
-        $usuario->fill([
+        $usuario->forceFill([
             'email' => 'teste@petrvs.com',
             'nome' => 'Usuário Teste',
             'cpf' => '11111111111',
@@ -91,10 +96,10 @@ describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () 
             'modalidade_pgd' => 'presencial',
         ]);
         $usuario->save();
-        
+
         // Autenticar usuário
         $this->actingAs($usuario);
-        
+
         // 6. PlanoEntrega
         $planoEntrega = PlanoEntrega::withoutEvents(function () use ($unidade, $programa, $usuario) {
             $planoEntrega = new PlanoEntrega();
@@ -114,16 +119,16 @@ describe('PlanoEntregaService - Cancelar Avaliacao (Integração)', function () 
         });
 
         $service = new PlanoEntregaService();
-        
+
         $data = [
             'id' => $planoEntrega->id,
             'justificativa' => 'Justificativa do teste de integração'
         ];
 
         // Execução
-        $resultado = $service->cancelarAvaliacao($data, $unidade->toArray());
+            $resultado = $service->cancelarAvaliacao($data, $unidade->toArray());
+            expect($resultado)->toBeTrue();
 
-        expect($resultado)->toBeTrue();
 
         // Verificação no banco
         $planoEntrega->refresh();

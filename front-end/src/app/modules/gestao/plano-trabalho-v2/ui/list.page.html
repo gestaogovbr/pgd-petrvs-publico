@@ -1,0 +1,291 @@
+<div class="br-mainpanel">
+  <app-breadcrumb />
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Planos de Trabalho</h2>
+    <br-button emphasis="primary" (click)="novoPlano()">
+      <i class="fas fa-plus mr-1"></i>Novo plano de trabalho
+    </br-button>
+  </div>
+
+  <form [formGroup]="filters" class="mb-3">
+    <div class="br-card">
+      <div class="card-content">
+
+        <!-- BLOCO PRINCIPAL -->
+        <div class="row g-3 align-items-end mb-3">
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="br-input w-100">
+              <label>Período: Início</label>
+              <input type="date"
+                    formControlName="periodo_inicio"
+                    (change)="onFilterChange()" />
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="br-input w-100">
+              <label>Período: Fim</label>
+              <input type="date"
+                    formControlName="periodo_fim"
+                    (change)="onFilterChange()" />
+            </div>
+          </div>
+
+          <!-- CHECKS -->
+          <div class="col-12 col-md-6">
+            <div class="d-flex flex-wrap gap-3">
+
+              @if (!isParticipante) {
+              <div class="br-switch icon">
+                <input type="checkbox"
+                      id="incluir_subordinadas"
+                      formControlName="incluir_subordinadas"
+                      (change)="onFilterChange()" />
+                <label for="incluir_subordinadas">Subordinadas</label>
+              </div>
+              }
+
+              <div class="br-switch icon">
+                <input type="checkbox"
+                      id="vigentes"
+                      formControlName="vigentes"
+                      (change)="onFilterChange()" />
+                <label for="vigentes">Vigentes</label>
+              </div>
+
+              <div class="br-switch icon">
+                <input type="checkbox"
+                      id="incluir_arquivados"
+                      formControlName="incluir_arquivados"
+                      (change)="onFilterChange()" />
+                <label for="incluir_arquivados">Arquivados</label>
+              </div>
+
+              @if (!isParticipante) {
+              <div class="br-switch icon">
+                <input type="checkbox"
+                      id="meus_planos"
+                      formControlName="meus_planos"
+                      (change)="onFilterChange()" />
+                <label for="meus_planos">Meus Planos</label>
+              </div>
+              }
+
+            </div>
+          </div>
+        </div>
+
+        <!-- FILTRO AVANÇADO -->
+        @if (advanced()) {
+          <div class="br-divider"></div>
+
+          <div class="row g-3 mt-2">
+
+            <div class="col-12 col-sm-4 col-md-2">
+              <div class="br-input w-100">
+                <label>#ID</label>
+                <input type="text"
+                      formControlName="numero"
+                      (input)="onFilterChange()" />
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-8 col-md-3">
+              <div class="br-input w-100">
+                <label>Usuário</label>
+                <input type="text"
+                      formControlName="usuario"
+                      [disabled]="isParticipante"
+                      (input)="onFilterChange()" />
+              </div>
+            </div>
+
+            <div class="col-12 col-md-3">
+              <div class="br-input w-100">
+                <label>Unidade</label>
+                <input type="text"
+                      formControlName="unidade_regramento"
+                      (input)="onFilterChange()" />
+              </div>
+            </div>
+
+            <div class="col-12 col-md-2">
+              <br-select
+                label="Modalidade"
+                formControlName="tipo_modalidade_id"
+                [options]="modalidadeOptions()"
+                class="w-100">
+              </br-select>
+            </div>
+
+            <div class="col-12 col-md-2">
+              <br-select
+                label="Status"
+                formControlName="status"
+                [options]="statusOptions"
+                class="w-100">
+              </br-select>
+            </div>
+
+          </div>
+        }
+
+        <!-- AÇÕES -->
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end mt-3">
+
+          <br-button emphasis="secondary" (click)="onConsultar()">
+            <i class="fas fa-search mr-1"></i>Consultar
+          </br-button>
+
+          <br-button emphasis="tertiary" (click)="toggleAdvanced()">
+            <i class="fas fa-filter mr-1"></i>Filtro avançado
+          </br-button>
+
+          <br-button emphasis="tertiary" (click)="limparFiltros()">
+            <i class="fas fa-times mr-1"></i>Limpar filtros
+          </br-button>
+
+        </div>
+
+      </div>
+    </div>
+  </form>
+  @if (facade.loading()) {
+  <div class="d-flex justify-content-center p-5">
+    <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+  </div>
+  }
+
+  <div class="br-table">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" style="cursor:pointer; white-space:nowrap" tabindex="0"
+                (click)="onSort('numero')" (keydown.enter)="onSort('numero')" (keydown.space)="onSort('numero')"
+                [attr.aria-sort]="facade.orderBy() === 'numero' ? (facade.orderDir() === 'asc' ? 'ascending' : 'descending') : 'none'">
+              Número
+              @if (facade.orderBy() === 'numero') {
+                <span aria-hidden="true">{{ facade.orderDir() === 'asc' ? '▲' : '▼' }}</span>
+              } @else {
+                <span aria-hidden="true" style="opacity:0.35">⇅</span>
+              }
+            </th>
+            <th scope="col" style="cursor:pointer; white-space:nowrap" tabindex="0"
+                (click)="onSort('usuario_nome')" (keydown.enter)="onSort('usuario_nome')" (keydown.space)="onSort('usuario_nome')"
+                [attr.aria-sort]="facade.orderBy() === 'usuario_nome' ? (facade.orderDir() === 'asc' ? 'ascending' : 'descending') : 'none'">
+              Usuário
+              @if (facade.orderBy() === 'usuario_nome') {
+                <span aria-hidden="true">{{ facade.orderDir() === 'asc' ? '▲' : '▼' }}</span>
+              } @else {
+                <span aria-hidden="true" style="opacity:0.35">⇅</span>
+              }
+            </th>
+            <th scope="col">Unidade</th>
+            <th scope="col">Modalidade</th>
+            <th scope="col">Status</th>
+            <th scope="col">Período</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of facade.items(); track p.id) {
+          <tr>
+            <td data-th="Número">
+              <br-button class="p-0" (click)="detalhesDoPlano(p)">
+                {{ p.numero }}
+              </br-button>
+            </td>
+            <td data-th="Usuário">{{ p.usuario?.nome || '-' }}</td>
+            <td data-th="Unidade">{{ p.unidade?.sigla || '-' }}</td>
+            <td data-th="Modalidade">{{ p.modalidade_pgd_label || '-' }}</td>
+            <td data-th="Status">
+              <br-tag shape="rounded" density="small" [bgColor]="statusClass(p.status)" [label]="statusLabel(p.status)"></br-tag>
+              @if (p.data_arquivamento) {
+                <br-tag class="ml-1" shape="rounded" density="small" bgColor="#81088b" label="Arquivado" title="Arquivado em {{ p.data_arquivamento | date:'dd/MM/yyyy' }}"></br-tag>
+              }
+            </td>
+            <td data-th="Período">{{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}</td>
+            <td data-th="Ações">
+              <div class="d-flex gap-1">
+                <br-button shape="circle" (click)="detalhesDoPlano(p)" title="Consultar" ariaLabel="Detalhes do plano">
+                  <i class="fas fa-search"></i>
+                </br-button>
+                @if (policy.podeEditar(p)) {
+                <br-button shape="circle" (click)="editarPlano(p)" title="Editar" ariaLabel="Editar plano">
+                  <i class="fas fa-pen"></i>
+                </br-button>
+                }
+                @if (policy.podeAssinar(p)) {
+                <br-button shape="circle" (click)="assinarPlano(p)" title="Assinar" ariaLabel="Assinar plano">
+                  <i class="fas fa-file-signature"></i>
+                </br-button>
+                }
+                @if (policy.podeCancelar(p)) {
+                <br-button shape="circle" class="text-danger" (click)="iniciarCancelamento(p)" title="Cancelar" ariaLabel="Cancelar plano">
+                  <i class="fas fa-times-circle"></i>
+                </br-button>
+                }
+                @if (policy.podeClonar(p)) {
+                <br-button shape="circle" (click)="clonarPlano(p)" title="Clonar" ariaLabel="Clonar plano">
+                  <i class="fas fa-clone"></i>
+                </br-button>
+                }
+
+                @if (policy.podeExcluir(p)) {
+                <br-button shape="circle" (click)="excluirPlano(p)" title="Excluir" ariaLabel="Excluir plano">
+                  <i class="fas fa-trash"></i>
+                </br-button>
+                }
+              </div>
+            </td>
+          </tr>
+          }
+          @if (facade.items().length === 0 && !facade.loading()) {
+          <tr>
+            <td colspan="7" class="text-center p-3">Nenhum plano de trabalho encontrado.</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <app-v2-pagination class="mt-3 d-block" [page]="facade.page()" [lastPage]="facade.lastPage()" [total]="facade.total()" (pageChange)="onPageChange($event)" />
+</div>
+
+<br-scrim [isOpen]="!!confirmacaoPendente()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!confirmacaoPendente()" [titleText]="confirmacaoPendente()?.titulo || ''" size="small" alignFooter="end" (brModalBeforeClose)="cancelarConfirmacao()">
+    <p>{{ confirmacaoPendente()?.mensagem }}</p>
+    <div slot="footer">
+      <br-button emphasis="secondary" (click)="cancelarConfirmacao()">Cancelar</br-button>
+      <br-button emphasis="primary" (click)="confirmarAcao()">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
+
+<br-scrim [isOpen]="!!cancelandoPlano()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!cancelandoPlano()" titleText="Cancelar Plano de Trabalho" size="medium" alignFooter="end" initial-focus-selector="#justificativa_cancelamento" (brModalBeforeClose)="cancelarCancelamento()">
+    <div class="br-message warning">
+      <div class="icon"><i class="fas fa-exclamation-triangle fa-lg" aria-hidden="true"></i>
+      </div>
+      <div class="content" aria-label="Ao cancelar este Plano de Trabalho, ele não poderá ser clonado e todos os registros de execução já realizados serão desconsiderados. Esta ação é definitiva e não poderá ser desfeita." role="alert">
+        <span class="message-title">Atenção.</span>
+        <span class="message-body">
+          Ao cancelar este Plano de Trabalho, ele não poderá ser clonado e todos os registros de execução já realizados serão desconsiderados. Esta ação é definitiva e não poderá ser desfeita.
+        </span>
+      </div>
+    </div>
+
+    <p class="mb-3">Informe o motivo do cancelamento do plano de trabalho de <strong>{{ cancelandoPlano()?.usuario?.nome }}</strong>.</p>
+    <div class="br-textarea">
+      <label>Justificativa <span class="text-danger">*</span></label>
+      <textarea id="justificativa_cancelamento" rows="4" placeholder="Descreva o motivo do cancelamento..." [value]="justificativaCancelamento()" (input)="justificativaCancelamento.set($any($event.target).value)"></textarea>
+    </div>
+    <div slot="footer">
+      <br-button emphasis="secondary" (click)="cancelarCancelamento()">Voltar</br-button>
+      <br-button emphasis="primary" [disabled]="!justificativaCancelamento().trim()" (click)="confirmarCancelamento()">Confirmar cancelamento</br-button>
+    </div>
+  </br-modal>
+</br-scrim>

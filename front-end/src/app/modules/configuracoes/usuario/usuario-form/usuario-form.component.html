@@ -8,7 +8,7 @@
                 <div class="form-group col-md-9">
                     <div class="row">
                         <input-text [disabled]="!entity?.usuario_externo ? 'true' : undefined" [size]="3" label="CPF" controlName="cpf"  [attr.maxlength]=11 required></input-text>
-                        <input-text [disabled]="!entity?.usuario_externo ? 'true' : undefined" [size]="6" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250 required></input-text>
+                        <input-text [disabled]="!entity?.usuario_externo ? 'true' : undefined" [size]="6" label="E-mail" controlName="email" textCase="lower" [attr.maxlength]=250></input-text>
                         <input-datetime date [size]="3" label="Nascimento" noIcon controlName="data_nascimento" [labelInfo]="'Data de nascimento'" [disabled]="!entity?.usuario_externo ? 'true' : undefined"></input-datetime>
                     </div>
                     <div class="row">
@@ -61,7 +61,7 @@
                     </grid>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" style="margin-bottom: 20px">
                 <input-display [size]="3" label="Participante do PGD" [value]="entity?.participa_pgd?.toUpperCase()"></input-display>
                 <input-display [size]="6" label="Modalidade" [value]="entity?.modalidade_pgd_label || entity?.modalidade_pgd || 'Não definida'"></input-display>
             </div>

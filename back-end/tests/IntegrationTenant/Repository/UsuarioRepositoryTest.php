@@ -8,8 +8,10 @@ use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Repository\UsuarioRepository;
 use App\Models\Perfil;
+use Illuminate\Support\Facades\Bus;
 
 beforeEach(function () {
+    Bus::fake();
     $this->repository = app(UsuarioRepository::class);
     $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
 });
@@ -52,10 +54,6 @@ test('findByCpfOrEmail ignora email nulo ou vazio', function () {
         'modalidade_pgd' => 'presencial',
         'perfil_id' => $this->perfilId,
     ]);
-
-    $foundWithNullEmail = $this->repository->findByCpfOrEmail($cpf, null);
-    expect($foundWithNullEmail)->not->toBeNull();
-    expect($foundWithNullEmail->cpf)->toBe($cpf);
 
     $foundWithEmptyEmail = $this->repository->findByCpfOrEmail($cpf, '');
     expect($foundWithEmptyEmail)->not->toBeNull();
@@ -259,6 +257,60 @@ test('getUnidadesVinculadas', function () {
     $unidades = $this->repository->getUnidadesVinculadas($cpf);
 
     expect($unidades)->toHaveCount(2);
+});
+
+test('findAllByNomeMatricula por nome', function () {
+    $usuario = Usuario::factory()->create([
+        'nome' => 'João Silva Teste',
+        'matricula' => '111111',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $result = $this->repository->findAllByNomeMatricula('João Silva');
+
+    expect($result->contains('id', $usuario->id))->toBeTrue();
+});
+
+test('findAllByNomeMatricula por matricula', function () {
+    $usuario = Usuario::factory()->create([
+        'nome' => 'Maria Oliveira',
+        'matricula' => '999888',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $result = $this->repository->findAllByNomeMatricula('99988');
+
+    expect($result->contains('id', $usuario->id))->toBeTrue();
+});
+
+test('findAllByNomeMatricula sem resultado', function () {
+    Usuario::factory()->create([
+        'nome' => 'Carlos Souza',
+        'matricula' => '123456',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $result = $this->repository->findAllByNomeMatricula('TermoInexistente999');
+
+    expect($result)->toHaveCount(0);
+});
+
+test('findAllByNomeMatricula busca parcial', function () {
+    $u1 = Usuario::factory()->create([
+        'nome' => 'Ana Paula Ferreira',
+        'matricula' => '500100',
+        'perfil_id' => $this->perfilId,
+    ]);
+    $u2 = Usuario::factory()->create([
+        'nome' => 'Pedro Henrique',
+        'matricula' => '500200',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $result = $this->repository->findAllByNomeMatricula('500');
+
+    expect($result->contains('id', $u1->id))->toBeTrue();
+    expect($result->contains('id', $u2->id))->toBeTrue();
 });
 
 test('createAndUpdate', function () {

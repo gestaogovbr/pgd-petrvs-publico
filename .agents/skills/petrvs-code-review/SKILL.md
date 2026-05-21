@@ -29,6 +29,15 @@ O back-end usa Repository Pattern de forma obrigatória. Toda operação de banc
 
 É proibido flexibilizar esse padrão em código de produção alterado. Não relativize com frases como "dentro do padrão atual está OK" ou "pode ser aceitável".
 
+## Validação Obrigatória de Transações
+
+Para cada método de Service alterado:
+
+1. Conte as operações de escrita (create, update, delete, insert, save, destroy, `atualizaStatus`).
+2. Se houver 2 ou mais escritas sem `DB::transaction`, classifique como `MAJOR`.
+3. Verifique que validações e leituras ficam FORA da transação.
+4. Verifique que a transação está no Service, não no Controller nem no Repository.
+
 ## Validação Obrigatória de Repository
 
 Para cada alteração de back-end analisada:

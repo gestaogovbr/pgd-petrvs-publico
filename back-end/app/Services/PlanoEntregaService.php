@@ -519,6 +519,22 @@ class PlanoEntregaService extends ServiceBase
                 array_push($where, $condition);
             }
         }
+
+        $enviosPendentes = $this->extractWhere($data, "envios_pendentes");
+        if (isset($enviosPendentes[2])) {
+            $query->whereRaw("(data_agendamento_envio IS NOT NULL)", []);
+            $query->whereRaw("((data_conclusao_envio IS NULL) OR (data_conclusao_envio < data_agendamento_envio))", []);
+        }
+
+        $enviosConcluidos = $this->extractWhere($data, "envios_concluidos");
+        if (isset($enviosConcluidos[2])) {
+            $query->whereRaw("data_conclusao_envio IS NOT NULL", []);
+        }
+
+        $where = array_values(array_filter($where, function ($item) {
+                return ($item[0] !== 'envios_pendentes');
+        }));
+
         $data["where"] = $where;
 
     }

@@ -1,0 +1,296 @@
+<div class="container-fluid py-3 govbr-v2">
+  <app-breadcrumb />
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+      <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+    </div>
+  } @else {
+
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">Plano de Trabalho #{{ plano()?.numero }}</h2>
+    </div>
+
+    <!-- Informações gerais -->
+    <div class="br-card mb-4">
+      <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Informações gerais</div>
+      <div class="card-content">
+        <form [formGroup]="form">
+          <div class="row">
+
+            <div class="col-md-4 mb-3 position-relative">
+              <div class="d-flex align-items-end gap-2">
+                <div class="br-input w-100">
+                  <label>Agente Público</label>
+                  <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" />
+                </div>
+                <br-button type="button" emphasis="secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+              </div>
+              @if (sugestoesUsuarios().length > 0) {
+                <div class="br-card position-absolute w-100" style="z-index: 1050;">
+                  @for (u of sugestoesUsuarios(); track u.id) {
+                    <div class="d-flex justify-content-between align-items-center px-2 py-1 card-content">
+                      <div class="text-truncate">
+                        {{ u.nome }}
+                        @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
+                      </div>
+                      <br-button type="button" emphasis="secondary" (click)="selecionarUsuario(u)">Selecionar</br-button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <br-select label="Unidade" formControlName="unidade_id" [options]="unidadesOptions()" />
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <div class="br-input">
+                <label>Regramento de Instituição PGD</label>
+                <input type="text" readonly [value]="programaNome()" />
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-md-3 mb-3">
+              <div class="br-input">
+                <label>Início</label>
+                <input type="date" formControlName="data_inicio" />
+              </div>
+            </div>
+            <div class="col-md-3 mb-3">
+              <div class="br-input">
+                <label>Final</label>
+                <input type="date" formControlName="data_fim" />
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <br-select label="Modalidade" formControlName="modalidade_pgd" [options]="modalidadesOptions()" />
+            </div>
+          </div>
+
+          @if (modalidadeDivergente()) {
+            <div class="row mt-2">
+              <div class="col-md-12 mb-3">
+                <div class="br-textarea">
+                  <label>Justificativa para modalidade diferente da prevista <span class="text-danger">*</span></label>
+                  <textarea formControlName="justificativa_modalidade" placeholder="Descreva a justificativa para a modalidade escolhida..."></textarea>
+                </div>
+              </div>
+            </div>
+          }
+        </form>
+      </div>
+    </div>
+
+    <!-- Planejamento -->
+    <div class="br-card mb-4">
+      <div class="card-header text-weight-semi-bold text-up-02 p-2x bg-gray-10 d-flex justify-content-between align-items-center">
+        Planejamento
+         <br-button emphasis="secondary" (click)="adicionarEntrega()" [disabled]="mostrandoFormEntrega()">
+            <i class="fas fa-plus mr-1"></i> Adicionar Planejamento
+          </br-button>
+      </div>
+      <div class="card-content">
+        @if (mostrandoFormEntrega()) {
+          <div class="p-3 mb-4 border rounded" style="background-color: var(--color-secondary-01);">
+            <h6 class="mb-3 text-weight-semi-bold">
+              {{ entregaForm.value.id ? 'Editar Entrega' : 'Nova Entrega' }}
+            </h6>
+
+            <form [formGroup]="entregaForm">
+              <div class="row">
+
+                <!-- Origem -->
+                <div class="col-md-3 mb-3">
+                  <br-select label="Origem da Entrega" formControlName="origem" [options]="origemSelectOptions()" />
+                </div>
+
+                <!-- OUTRA_UNIDADE: busca de unidade com autocomplete -->
+                @if (entregaForm.value.origem === 'OUTRA_UNIDADE') {
+                  <div class="col-md-6 mb-3 position-relative">
+                    <div class="d-flex align-items-end gap-2">
+                      <div class="br-input w-100">
+                        <label>Unidade</label>
+                        <input type="text" [formControl]="outraUnidadeQuery" placeholder="Digite nome ou sigla (mín. 3)..." [disabled]="!!outraUnidadeSelecionada()" />
+                      </div>
+                      @if (outraUnidadeSelecionada()) {
+                        <br-button type="button" emphasis="secondary"  (click)="limparOutraUnidade()">Limpar</br-button>
+                      }
+                    </div>
+                    @if (sugestoesOutrasUnidades().length > 0) {
+                      <div class="br-card position-absolute w-100" style="z-index: 1050;">
+                        @for (u of sugestoesOutrasUnidades(); track u.id) {
+                          <div class="d-flex justify-content-between align-items-center px-2 py-1 card-content">
+                            <span>{{ u.codigo }} - {{ u.sigla }} - {{ u.nome }}</span>
+                            <br-button type="button" emphasis="secondary" (click)="selecionarOutraUnidade(u)">Selecionar</br-button>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                  @if (entregaForm.value.outra_unidade_id) {
+                    <div class="col-md-3 mb-3">
+                      <br-select
+                        label="Plano de Entrega"
+                        formControlName="outra_unidade_plano_id"
+                        [options]="planosOutraUnidadeOptions()"
+                        placeholder="Selecione um plano..."
+                      />
+                    </div>
+                  }
+                }
+
+                <!-- PROPRIA_UNIDADE: plano -->
+                @if (entregaForm.value.origem === 'PROPRIA_UNIDADE') {
+                  <div class="col-md-9 mb-3">
+                    <br-select
+                      label="Plano de Entrega"
+                      formControlName="plano_entrega_id"
+                      [options]="planosUnidadeOptions()"
+                      placeholder="Selecione um plano..."
+                    />
+                  </div>
+                }
+
+                <!-- OUTRO_ORGAO -->
+                @if (entregaForm.value.origem === 'OUTRO_ORGAO') {
+                  <div class="col-md-9 mb-3">
+                    <div class="br-input">
+                      <label>Órgão/Entidade</label>
+                      <input type="text" formControlName="orgao" placeholder="Nome do Órgão" />
+                    </div>
+                  </div>
+                }
+
+              </div>
+
+              <!-- Entregas do plano selecionado (própria unidade) -->
+              @if (entregaForm.value.origem === 'PROPRIA_UNIDADE' && entregasDoPlanoOptions().length > 0) {
+                <div class="row">
+                  <div class="col-md-12 mb-3">
+                    <br-select
+                      label="Entrega"
+                      formControlName="plano_entrega_entrega_id"
+                      [options]="entregasDoPlanoOptions()"
+                      placeholder="Selecione uma entrega..."
+                    />
+                  </div>
+                </div>
+              }
+
+              <!-- Entregas do plano selecionado (outra unidade) -->
+              @if (entregaForm.value.origem === 'OUTRA_UNIDADE' && entregasDoPlanoOutraUnidadeOptions().length > 0) {
+                <div class="row">
+                  <div class="col-md-12 mb-3">
+                    <br-select
+                      label="Entrega"
+                      formControlName="plano_entrega_entrega_id"
+                      [options]="entregasDoPlanoOutraUnidadeOptions()"
+                      placeholder="Selecione uma entrega..."
+                    />
+                  </div>
+                </div>
+              }
+
+              <div class="row">
+                
+                <div class="col-md-2 mb-3">
+                  <div class="br-input">
+                    <label>% CHD</label>
+                    <input type="number" formControlName="forca_trabalho" placeholder="Ex: 100" />
+                  </div>
+                </div>
+               
+                <div class="col mb-3">
+                  <div class="br-textarea">
+                    <label>Trabalho Planejado</label>
+                    <textarea formControlName="descricao" placeholder="Descreva o trabalho planejado..."></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end gap-2 mt-2">
+                <br-button emphasis="secondary" (click)="cancelarEntrega()">Cancelar</br-button>
+                <br-button emphasis="primary" (click)="salvarEntrega()" [disabled]="entregaForm.invalid || salvandoEntrega()">
+                  {{ salvandoEntrega() ? 'Salvando...' : 'Salvar Entrega' }}
+                </br-button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- Tabela de entregas -->
+        <div class="br-table">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Plano de Entrega</th>
+                  <th scope="col">Entrega</th>
+                  <th scope="col">% CHD <br-tag class="count">{{ totalForcaTrabalho() }}%</br-tag></th>
+                  <th scope="col">Trabalho Planejado</th>
+                  <th scope="col">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (e of entregas(); track e.id) {
+                  <tr>
+                    <td>{{ getPlanoEntregaInfo(e).plano }}</td>
+                    <td>{{ getPlanoEntregaInfo(e).entrega }}</td>
+                    <td>{{ e.forca_trabalho ? e.forca_trabalho + '%' : '-' }}</td>
+                    <td>{{ e.descricao }}</td>
+                    <td>
+                      <div class="d-flex gap-1">
+                        <br-button type="button" shape="circle" emphasis="tertiary" (click)="editarEntrega(e)" title="Editar" ariaLabel="Editar entrega">
+                          <i class="fas fa-pen"></i>
+                        </br-button>
+                        <br-button type="button" shape="circle" emphasis="tertiary"  (click)="removerEntrega(e)" title="Excluir" ariaLabel="Excluir entrega">
+                          <i class="fas fa-trash "></i>
+                        </br-button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="5" class="text-center p-3">Nenhuma entrega cadastrada no planejamento</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        @if (totalForcaTrabalho() !== 100) {
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <div class="br-textarea">
+                <label>Justificativa para carga horária {{ totalForcaTrabalho() < 100 ? 'insuficiente' : 'excedente' }}</label>
+                <textarea placeholder="Descreva a justificativa" [formControl]="form.controls.justificativa"></textarea>
+              </div>
+            </div>
+          </div>
+        }
+
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-2">
+      <br-button (click)="voltar()">Voltar</br-button>
+      @if (plano() && policy.podeExcluir(plano()!)) {
+        <br-button emphasis="secondary" (click)="excluir()">Excluir</br-button>
+      }
+      <br-button emphasis="secondary" (click)="salvar()" [disabled]="!podeSalvar() || saving()">Salvar Alterações</br-button>
+      @if (plano()?.documento_id) {
+        <br-button emphasis="primary" (click)="irParaTCR()">Assinar</br-button>
+      } @else {
+        <br-button emphasis="primary" (click)="assinar()" [disabled]="!podeAssinar()">Criar TCR e Assinar</br-button>
+      }
+    </div>
+
+  }
+</div>

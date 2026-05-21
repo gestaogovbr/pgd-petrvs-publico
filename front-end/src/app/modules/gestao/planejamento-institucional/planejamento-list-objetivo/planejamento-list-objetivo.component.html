@@ -49,8 +49,8 @@
             </div>
             
             <!-- Sequence and Name -->
-            <div class="d-flex flex-column flex-fill" style="min-width: 0;">
-
+            <div class="d-flex flex-column align-items-start flex-fill" style="min-width: 0;">
+                <span *ngIf="item.tipo_objetivo" class="badge bg-primary d-inline-block mb-1">{{ item.tipo_objetivo.nome }}</span>
                 <span [title]="item.nome"><strong>{{ (parentSeq ? parentSeq + '.' : '') + (i + 1) }}</strong> - {{ item.nome }}</span>
                 
             </div>
