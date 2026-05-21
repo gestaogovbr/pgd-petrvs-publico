@@ -37,7 +37,7 @@
             <div class="d-flex flex-wrap gap-3">
 
               @if (!isParticipante) {
-              <div class="br-switch icon">
+              <div class="br-switch icon small mr-3">
                 <input type="checkbox"
                       id="incluir_subordinadas"
                       formControlName="incluir_subordinadas"
@@ -46,15 +46,15 @@
               </div>
               }
 
-              <div class="br-switch icon">
+              <div class="br-switch icon small mr-3">
                 <input type="checkbox"
                       id="vigentes"
                       formControlName="vigentes"
                       (change)="onFilterChange()" />
-                <label for="vigentes">Vigentes</label>
+                <label for="vigentes">Plano do dia</label>
               </div>
 
-              <div class="br-switch icon">
+              <div class="br-switch icon small mr-3">
                 <input type="checkbox"
                       id="incluir_arquivados"
                       formControlName="incluir_arquivados"
@@ -63,7 +63,7 @@
               </div>
 
               @if (!isParticipante) {
-              <div class="br-switch icon">
+              <div class="br-switch icon small">
                 <input type="checkbox"
                       id="meus_planos"
                       formControlName="meus_planos"
@@ -201,7 +201,7 @@
             <td data-th="Unidade">{{ p.unidade?.sigla || '-' }}</td>
             <td data-th="Modalidade">{{ p.modalidade_pgd_label || '-' }}</td>
             <td data-th="Status">
-              <br-tag shape="rounded" density="small" [bgColor]="statusClass(p.status)" [label]="statusLabel(p.status)"></br-tag>
+              <br-tag shape="rounded" density="small" [bgColor]="statusClass(p.status)" [label]="statusLabel(p.status, p)"></br-tag>
               @if (p.data_arquivamento) {
                 <br-tag class="ml-1" shape="rounded" density="small" bgColor="#81088b" label="Arquivado" title="Arquivado em {{ p.data_arquivamento | date:'dd/MM/yyyy' }}"></br-tag>
               }
@@ -227,6 +227,11 @@
                   <i class="fas fa-times-circle"></i>
                 </br-button>
                 }
+                @if (p.status === 'ATIVO') {
+                <br-button shape="circle" (click)="iniciarEncerramento(p)" title="Encerrar" ariaLabel="Encerrar plano">
+                  <i class="fas fa-stop-circle"></i>
+                </br-button>
+                }
                 @if (policy.podeClonar(p)) {
                 <br-button shape="circle" (click)="clonarPlano(p)" title="Clonar" ariaLabel="Clonar plano">
                   <i class="fas fa-clone"></i>
@@ -244,7 +249,18 @@
           }
           @if (facade.items().length === 0 && !facade.loading()) {
           <tr>
-            <td colspan="7" class="text-center p-3">Nenhum plano de trabalho encontrado.</td>
+            <td colspan="7" class="text-center p-3">
+              <div class="br-message warning">
+                <div class="icon"><i class="fas fa-exclamation-triangle fa-lg" aria-hidden="true"></i></div>
+                <div class="content">
+                  @if (filters.controls.vigentes.value) {
+                    <span class="message-title">Nenhum plano de trabalho do dia encontrado.</span>
+                  } @else {
+                    <span class="message-title">Nenhum plano de trabalho encontrado.</span>
+                  }
+                </div>
+              </div>
+            </td>
           </tr>
           }
         </tbody>
@@ -286,6 +302,25 @@
     <div slot="footer">
       <br-button emphasis="secondary" (click)="cancelarCancelamento()">Voltar</br-button>
       <br-button emphasis="primary" [disabled]="!justificativaCancelamento().trim()" (click)="confirmarCancelamento()">Confirmar cancelamento</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
+
+<br-scrim [isOpen]="!!encerrando()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!encerrando()" titleText="Encerrar Plano de Trabalho" size="medium" alignFooter="end" (brModalBeforeClose)="cancelarEncerramento()">
+    <div class="p-3">
+      <div class="br-message warning mb-3" role="alert">
+        <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="content">Ao encerrar este Plano de Trabalho, ele será válido apenas até a data de hoje, preservando os registros e avaliações já realizados. Esta ação é definitiva e não poderá ser desfeita. Deseja confirmar?</div>
+      </div>
+      <p class="mb-3">Informe o motivo do encerramento antecipado do plano de trabalho de <strong>{{ encerrando()?.usuario?.nome }}</strong>.</p>
+      <div class="br-textarea">
+        <textarea id="justificativa_encerramento" rows="4" placeholder="Descreva o motivo do encerramento..." [value]="justificativaEncerramento()" (input)="justificativaEncerramento.set($any($event.target).value)"></textarea>
+      </div>
+    </div>
+    <div slot="footer">
+      <br-button emphasis="secondary" (click)="cancelarEncerramento()">Voltar</br-button>
+      <br-button emphasis="primary" [disabled]="!justificativaEncerramento().trim()" (click)="confirmarEncerramento()">Confirmar encerramento</br-button>
     </div>
   </br-modal>
 </br-scrim>

@@ -43,6 +43,8 @@ class PlanoTrabalhoEncerrarValidator
         return $plano;
     }
 
+    // TODO: spec 4.23-b exige que "representante da unidade instituidora superior ou igual à unidade
+    //       onde o plano foi feito" também possa encerrar. Verificar se validarAutorizacao cobre esse caso.
     private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void
     {
         if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id)) {

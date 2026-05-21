@@ -77,6 +77,10 @@ class PlanoTrabalhoArquivarValidator
             return;
         }
 
+        if ($this->unidadeRepository->isUsuarioGestorRecursivo($plano->unidade_id, $usuarioLogadoId)) {
+            return;
+        }
+
         $usuario = $this->usuarioRepository->findById($usuarioLogadoId);
 
         if ($usuario->perfil->nivel <= PerfilEnum::COLABORADOR->value) {

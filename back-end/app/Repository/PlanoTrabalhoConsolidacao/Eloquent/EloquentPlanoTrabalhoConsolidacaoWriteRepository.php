@@ -34,4 +34,21 @@ class EloquentPlanoTrabalhoConsolidacaoWriteRepository extends AbstractEloquentW
     {
         PlanoTrabalhoConsolidacaoAfastamento::where('afastamento_id', $afastamentoId)->delete();
     }
+
+    public function ajustarDataFimVigente(string $planoTrabalhoId, string $dataEncerramento): void
+    {
+        PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $planoTrabalhoId)
+            ->where('data_inicio', '<=', $dataEncerramento)
+            ->where('data_fim', '>', $dataEncerramento)
+            ->whereNull('deleted_at')
+            ->update(['data_fim' => $dataEncerramento]);
+    }
+
+    public function concluirTodas(string $planoTrabalhoId): void
+    {
+        PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $planoTrabalhoId)
+            ->whereNull('deleted_at')
+            ->where('status', '!=', 'AVALIADO')
+            ->update(['status' => 'CONCLUIDO']);
+    }
 }

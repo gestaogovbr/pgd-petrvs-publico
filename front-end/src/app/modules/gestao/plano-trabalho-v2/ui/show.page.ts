@@ -7,6 +7,7 @@ import { filter, map, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoApiClient } from "../infra/plano-api.client";
 import { ArquivarPlanoUseCase } from "../application/arquivar-plano.usecase";
+import { EncerrarPlanoUseCase } from "../application/encerrar-plano.usecase";
 import { Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo } from "../domain/types";
 import { PlanoTrabalhoStatus, PlanoTrabalhoStatusGroups } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
@@ -34,6 +35,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   private readonly unidadeService = inject(UnidadeService);
 
   private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
+  private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
 
   private readonly breadcrumb = inject(BreadcrumbService);
 
@@ -44,6 +46,8 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly planoTrabalho = signal<PlanoTrabalho | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  readonly encerrando = signal(false);
+  readonly justificativaEncerramento = signal('');
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
@@ -103,6 +107,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   // --- Labels / Display ---
 
   statusLabel(value: PlanoTrabalhoStatus | undefined): string {
+    if (value === 'CONCLUIDO' && this.planoTrabalho()?.encerrado_at) return 'Encerrado antecipadamente';
     const labels: Record<PlanoTrabalhoStatus, string> = {
       ATIVO: 'Em execução',
       INCLUIDO: 'Incluído',
@@ -125,6 +130,10 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   }
 
   statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
+    const plano = this.planoTrabalho();
+    if (plano?.encerrado_at && consolidacao.data_inicio > plano.encerrado_at) {
+      return 'Encerrado antecipadamente';
+    }
     if (consolidacao.status === ConsolidacaoStatus.INCLUIDO && this.todasEntregasComAtividade(consolidacao)) {
       return 'Registro incluído';
     }
@@ -158,6 +167,31 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
       next: (atualizado) => {
         this.planoTrabalho.set(atualizado);
       }
+    });
+  }
+
+  encerrarPlano() {
+    this.encerrando.set(true);
+    this.justificativaEncerramento.set('');
+  }
+
+  cancelarEncerramento() {
+    this.encerrando.set(false);
+    this.justificativaEncerramento.set('');
+  }
+
+  confirmarEncerramento() {
+    const plano = this.planoTrabalho();
+    const justificativa = this.justificativaEncerramento().trim();
+    if (!plano || !justificativa) return;
+    this.encerrarPlanoUC.execute(plano.id, justificativa).subscribe({
+      next: (atualizado) => {
+        this.planoTrabalho.set(atualizado);
+        if (atualizado.consolidacoes) this.facade.consolidacoes.set(atualizado.consolidacoes as any);
+        this.encerrando.set(false);
+        this.justificativaEncerramento.set('');
+      },
+      error: (err) => alert(err?.error?.error || 'Erro ao encerrar o plano.')
     });
   }
 }

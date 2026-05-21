@@ -35,7 +35,7 @@ describe('PlanoTrabalhoRequestValidator::index', function () {
                 'incluir_subordinadas' => true,
                 'numero' => 42,
                 'modalidade_pgd' => 'presencial',
-                'status' => 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+                'status' => 'ATIVO',
                 'hierarquia' => false,
                 'usuario_nome' => 'João',
                 'unidade_regramento' => 'Regra X',

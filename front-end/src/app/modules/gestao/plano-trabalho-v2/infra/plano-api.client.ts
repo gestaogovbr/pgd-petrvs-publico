@@ -56,6 +56,11 @@ export class PlanoApiClient extends TenantV2ResourceApiBase {
       .pipe(map((r: any) => (r?.data as PlanoTrabalho) ?? r));
   }
 
+  encerrar(id: PlanoTrabalhoId, justificativa: string): Observable<PlanoTrabalho> {
+    return this.http.patch<any>(this.resourceUrl(`/${id}/encerrar`), { justificativa })
+      .pipe(map((r: any) => (r?.data as PlanoTrabalho) ?? r));
+  }
+
   cancelAssinatura(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
     return this.http.post<any>(this.resourceUrl(`/${id}/cancelar-assinatura`), {})
       .pipe(map((r: any) => (r?.data as PlanoTrabalho) ?? r));

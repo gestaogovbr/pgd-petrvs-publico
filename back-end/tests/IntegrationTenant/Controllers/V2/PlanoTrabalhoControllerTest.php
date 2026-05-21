@@ -932,7 +932,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
 
         $plano->refresh();
         expect($plano->status)->toBe('CONCLUIDO');
-        expect(substr((string) $plano->data_fim, 0, 10))->toBe(substr($dataFimOriginal, 0, 10));
+        expect(substr((string) $plano->data_fim, 0, 10))->toBe(now()->format('Y-m-d'));
         expect($plano->encerrado_at)->toBe(now()->format('Y-m-d'));
     });
 
