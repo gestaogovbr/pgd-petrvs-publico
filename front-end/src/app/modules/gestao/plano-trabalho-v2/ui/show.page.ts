@@ -7,6 +7,7 @@ import { filter, map, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoApiClient } from "../infra/plano-api.client";
 import { ArquivarPlanoUseCase } from "../application/arquivar-plano.usecase";
+import { EncerrarPlanoUseCase } from "../application/encerrar-plano.usecase";
 import { Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo } from "../domain/types";
 import { PlanoTrabalhoStatus, PlanoTrabalhoStatusGroups } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
@@ -34,6 +35,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   private readonly unidadeService = inject(UnidadeService);
 
   private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
+  private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
 
   private readonly breadcrumb = inject(BreadcrumbService);
 
@@ -178,12 +180,11 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     this.justificativaEncerramento.set('');
   }
 
-  // TODO: usar EncerrarPlanoUseCase em vez de chamar planoApi diretamente
   confirmarEncerramento() {
     const plano = this.planoTrabalho();
     const justificativa = this.justificativaEncerramento().trim();
     if (!plano || !justificativa) return;
-    this.api.encerrar(plano.id, justificativa).subscribe({
+    this.encerrarPlanoUC.execute(plano.id, justificativa).subscribe({
       next: (atualizado) => {
         this.planoTrabalho.set(atualizado);
         this.encerrando.set(false);

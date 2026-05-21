@@ -12,7 +12,7 @@ import { PlanoTrabalhoStatus } from 'src/app/models/plano-trabalho.model';
 import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ClonarPlanoUseCase } from '../application/clonar-plano.usecase';
 import { ExcluirPlanoUseCase } from '../application/excluir-plano.usecase';
-import { PlanoApiClient } from '../infra/plano-api.client';
+import { EncerrarPlanoUseCase } from '../application/encerrar-plano.usecase';
 import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
@@ -34,7 +34,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   readonly policy = inject(PlanoTrabalhoPolicy);
   private readonly router = inject(Router);
   private readonly cancelarPlanoUC = inject(CancelarPlanoUseCase);
-  private readonly planoApi = inject(PlanoApiClient); // TODO: remover ao criar EncerrarPlanoUseCase
+  private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
   private readonly clonarPlanoUC = inject(ClonarPlanoUseCase);
   private readonly excluirPlanoUC = inject(ExcluirPlanoUseCase);
   private readonly filterStorage = inject(FilterStorageService);
@@ -344,13 +344,12 @@ readonly filters: FormGroup<{
     this.justificativaEncerramento.set('');
   }
 
-  // TODO: usar EncerrarPlanoUseCase em vez de chamar planoApi diretamente
   confirmarEncerramento() {
     const plano = this.encerrando();
     const justificativa = this.justificativaEncerramento().trim();
     if (!plano || !justificativa) return;
 
-    this.planoApi.encerrar(plano.id, justificativa).subscribe(() => {
+    this.encerrarPlanoUC.execute(plano.id, justificativa).subscribe(() => {
       this.encerrando.set(null);
       this.justificativaEncerramento.set('');
       this.applyFiltersAndLoad(false);
