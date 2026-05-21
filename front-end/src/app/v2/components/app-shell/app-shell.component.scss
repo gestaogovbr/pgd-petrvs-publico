@@ -152,6 +152,10 @@ header.br-header {
     font-weight: 500;
   }
 
+  .menu-body > .menu-folder.expanded > .menu-item > .menu-text {
+    font-weight: 700;
+  }
+
   // Folder (grupo colapsável)
   .menu-folder {
     > ul {
