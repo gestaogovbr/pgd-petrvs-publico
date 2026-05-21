@@ -16,7 +16,7 @@
       <h2 class="mb-0">Plano de Trabalho #{{ planoTrabalho()?.numero }}</h2>
       <div class="flex-shrink-0 gap-3">
         <br-button (click)="voltar()" class="mr-2">Voltar</br-button>
-        @if (planoTrabalho()?.documento_id) {
+        @if (policy.podeVerTcr(planoTrabalho()!)) {
           <br-button class="mr-2" emphasis="secondary" (click)="irParaTcr()" title="Ver TCR" ariaLabel="Ver Termo de Compromisso e Responsabilidade">
             <i class="fas fa-file-signature mr-1"></i>TCR
           </br-button>
@@ -31,7 +31,7 @@
             <i class="fas fa-archive mr-1"></i>Arquivar
           </br-button>
         }
-        @if (planoTrabalho()?.status === PlanoStatus.ATIVO) {
+        @if (policy.podeEncerrar(planoTrabalho()!)) {
           <br-button emphasis="secondary" (click)="encerrarPlano()" title="Encerrar plano" ariaLabel="Encerrar plano antecipadamente">
             <i class="fas fa-stop-circle mr-1"></i>Encerrar
           </br-button>
