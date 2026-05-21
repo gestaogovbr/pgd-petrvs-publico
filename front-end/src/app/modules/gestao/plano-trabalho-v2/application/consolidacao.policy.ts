@@ -17,6 +17,7 @@ export class ConsolidacaoPolicy {
   }
 
   podeAvaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho): boolean {
+    if (planoTrabalho.encerrado_at && consolidacao.data_inicio > planoTrabalho.encerrado_at) return false;
     return this.auth.usuario?.id != planoTrabalho.usuario_id
       && consolidacao.status === ConsolidacaoStatus.CONCLUIDO
       && (this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id)

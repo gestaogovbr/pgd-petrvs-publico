@@ -39,6 +39,10 @@ class AvaliacaoStoreValidator
             throw new ValidateException('O período avaliativo precisa estar com status CONCLUIDO para ser avaliado.');
         }
 
+        if ($plano->encerrado_at && $consolidacao->data_inicio > $plano->encerrado_at) {
+            throw new ValidateException('Períodos avaliativos posteriores ao encerramento não podem ser avaliados.');
+        }
+
         $avaliacoes = $consolidacao->relationLoaded('avaliacoes')
             ? $consolidacao->avaliacoes
             : $consolidacao->load('avaliacoes')->avaliacoes;

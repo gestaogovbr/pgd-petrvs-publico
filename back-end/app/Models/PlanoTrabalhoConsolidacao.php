@@ -39,6 +39,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
 
       $todasAvaliadas = $planoTrabalho->consolidacoes()
         ->where('status', '!=', StatusEnum::AVALIADO->value)
+        ->when($planoTrabalho->encerrado_at, fn ($q) => $q->where('data_inicio', '<=', $planoTrabalho->encerrado_at))
         ->doesntExist();
 
       if ($todasAvaliadas && $planoTrabalho->status === StatusEnum::ATIVO->value) {
@@ -61,7 +62,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
         return;
       }
 
-      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
+      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value && !$planoTrabalho->encerrado_at) {
         $planoTrabalho->update(['avaliado_at' => null]);
         $statusService->atualizaStatus(
           $planoTrabalho,
