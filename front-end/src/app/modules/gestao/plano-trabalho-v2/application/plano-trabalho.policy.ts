@@ -30,6 +30,20 @@ export class PlanoTrabalhoPolicy {
       && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id);
   }
 
+  podeVerTcr(p: PlanoTrabalho): boolean {
+    return !!p.documento_id
+      && (p.usuario_id === this.auth.usuario?.id
+        || this.unidadeService.isGestorUnidade(p.unidade_id)
+        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
+  }
+
+  podeEncerrar(p: PlanoTrabalho): boolean {
+    return p.status === PlanoTrabalhoStatus.ATIVO
+      && (p.usuario_id === this.auth.usuario?.id
+        || this.unidadeService.isGestorUnidade(p.unidade_id)
+        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
+  }
+
   podeExcluir(p: PlanoTrabalho): boolean {
     return PlanoTrabalhoStatusGroups.excluivel.includes(p.status)
       && p.usuario_id === this.auth.usuario?.id;

@@ -227,7 +227,7 @@
                   <i class="fas fa-times-circle"></i>
                 </br-button>
                 }
-                @if (p.status === 'ATIVO') {
+                @if (policy.podeEncerrar(p)) {
                 <br-button shape="circle" (click)="iniciarEncerramento(p)" title="Encerrar" ariaLabel="Encerrar plano">
                   <i class="fas fa-stop-circle"></i>
                 </br-button>
