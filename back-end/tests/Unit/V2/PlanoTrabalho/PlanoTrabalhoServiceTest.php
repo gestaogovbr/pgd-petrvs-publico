@@ -428,6 +428,7 @@ describe('PlanoTrabalhoService::encerrar', function () {
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $plano->id = $planoId;
         $plano->shouldReceive('refresh')->andReturnSelf();
+        $plano->shouldReceive('load')->andReturnSelf();
 
         $this->encerrarValidator->shouldReceive('validar')
             ->with($planoId, $userId)
