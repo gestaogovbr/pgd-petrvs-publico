@@ -187,6 +187,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     this.encerrarPlanoUC.execute(plano.id, justificativa).subscribe({
       next: (atualizado) => {
         this.planoTrabalho.set(atualizado);
+        if (atualizado.consolidacoes) this.facade.consolidacoes.set(atualizado.consolidacoes as any);
         this.encerrando.set(false);
         this.justificativaEncerramento.set('');
       },

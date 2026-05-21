@@ -163,7 +163,11 @@ class PlanoTrabalhoService
             );
         });
 
-        return $plano->refresh();
+        return $plano->refresh()->load([
+            'consolidacoes.atividades',
+            'consolidacoes.avaliacoes.avaliador:id,nome',
+            'consolidacoes.afastamentos.afastamento.tipoMotivoAfastamento:id,nome,horas',
+        ]);
     }
 
     public function arquivar(string $id): PlanoTrabalho
