@@ -3,7 +3,10 @@
 namespace Tests\IntegrationTenant\Services;
 
 use App\Models\SiapeBlackListServidor;
-use App\Models\TipoModalidade;
+use App\Models\Unidade;
+use App\Models\UnidadeIntegrante;
+use App\Models\UnidadeIntegranteAtribuicao;
+use App\Services\Siape\ProcessaDadosSiapeBD;
 use App\Models\Usuario;
 use App\Services\SiapeIndividualService;
 use App\Services\SiapeIndividualServidorService;
@@ -214,4 +217,93 @@ test('deve gerenciar blacklist corretamente para multiplas matriculas', function
         'cpf' => $cpf,
         'matricula' => '22222'
     ]);
+});
+
+test('processaDadosFuncionais reativa servidor encontrado no siape e remove blacklist', function () {
+    $cpf = '01428751637';
+    $matricula = '1234567';
+
+    $usuario = Usuario::create([
+        'nome' => 'Servidor Reativado',
+        'email' => 'reativado@teste.com',
+        'cpf' => $cpf,
+        'matricula' => $matricula,
+        'situacao_siape' => 'INATIVO',
+        'data_ativacao_temporaria' => now()->subDay(),
+        'justicativa_ativacao_temporaria' => 'teste',
+        'modalidade_pgd' => 'presencial',
+    ]);
+
+    SiapeBlackListServidor::create([
+        'cpf' => $cpf,
+        'matricula' => null,
+        'response' => 'fault anterior',
+    ]);
+    SiapeBlackListServidor::create([
+        'cpf' => $cpf,
+        'matricula' => $matricula,
+        'response' => 'matricula ausente anteriormente',
+    ]);
+
+    $xml = <<<XML
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns1:resp xmlns:ns1="http://servico.wssiapenet" xmlns:tipo="http://tipo.servico.wssiapenet">
+                <tipo:DadosFuncionais>
+                    <matriculaSiape>$matricula</matriculaSiape>
+                    <codUorgExercicio>27</codUorgExercicio>
+                </tipo:DadosFuncionais>
+            </ns1:resp>
+        </soap:Body>
+    </soap:Envelope>
+    XML;
+
+    $dados = (new ProcessaDadosSiapeBD())->processaDadosFuncionais($cpf, $xml);
+
+    expect($dados)->toHaveCount(1)
+        ->and($dados[0]['matriculaSiape'])->toBe($matricula);
+
+    $usuario->refresh();
+    expect($usuario->situacao_siape)->toBe('ATIVO')
+        ->and($usuario->data_ativacao_temporaria)->toBeNull()
+        ->and($usuario->justicativa_ativacao_temporaria)->toBeNull();
+
+    expect(SiapeBlackListServidor::where('cpf', $cpf)->exists())->toBeFalse();
+});
+
+test('matricula ativa preserva lotacao existente durante carga individual', function () {
+    $cpf = '02852091240';
+    $matricula = '7654321';
+    $unidade = Unidade::factory()->create(['codigo' => '27']);
+    $usuario = Usuario::create([
+        'nome' => 'Servidor Com Lotacao',
+        'email' => 'lotado@teste.com',
+        'cpf' => $cpf,
+        'matricula' => $matricula,
+        'situacao_siape' => 'ATIVO',
+        'modalidade_pgd' => 'presencial',
+    ]);
+
+    $integrante = UnidadeIntegrante::create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidade->id,
+    ]);
+    UnidadeIntegranteAtribuicao::create([
+        'unidade_integrante_id' => $integrante->id,
+        'atribuicao' => 'LOTADO',
+    ]);
+
+    $reflection = new \ReflectionClass(SiapeIndividualServidorService::class);
+    $method = $reflection->getMethod('removeVinculoParaforcarSerLotadoNovamente');
+    $method->setAccessible(true);
+
+    $method->invokeArgs($this->service, [$cpf, [
+        ['matriculaSiape' => $matricula, 'codUorgExercicio' => '27'],
+    ]]);
+
+    $this->assertDatabaseHas('unidades_integrantes_atribuicoes', [
+        'unidade_integrante_id' => $integrante->id,
+        'atribuicao' => 'LOTADO',
+        'deleted_at' => null,
+    ], 'tenant');
 });
