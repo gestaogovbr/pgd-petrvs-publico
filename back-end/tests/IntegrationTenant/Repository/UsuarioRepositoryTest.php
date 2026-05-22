@@ -6,8 +6,10 @@ use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Programa;
 use App\Models\ProgramaParticipante;
+use App\Enums\UsuarioSituacaoSiape;
 use App\Repository\UsuarioRepository;
 use App\Models\Perfil;
+use App\Services\UsuarioService;
 use Illuminate\Support\Facades\Bus;
 
 beforeEach(function () {
@@ -257,6 +259,90 @@ test('getUnidadesVinculadas', function () {
     $unidades = $this->repository->getUnidadesVinculadas($cpf);
 
     expect($unidades)->toHaveCount(2);
+});
+
+test('getUnidadesVinculadas ignora integrante sem atribuição ativa', function () {
+    $cpf = '11122233344';
+    $usuario = Usuario::factory()->create([
+        'cpf' => $cpf,
+        'modalidade_pgd' => 'presencial',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $unidadeAtiva = Unidade::factory()->create();
+    $unidadeOrfa = Unidade::factory()->create();
+
+    $integranteAtivo = UnidadeIntegrante::query()->create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidadeAtiva->id,
+    ]);
+    UnidadeIntegranteAtribuicao::query()->create([
+        'atribuicao' => 'LOTADO',
+        'unidade_integrante_id' => $integranteAtivo->id,
+    ]);
+
+    $integranteOrfa = UnidadeIntegrante::query()->create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidadeOrfa->id,
+    ]);
+    $atribuicaoExcluida = UnidadeIntegranteAtribuicao::query()->create([
+        'atribuicao' => 'GESTOR',
+        'unidade_integrante_id' => $integranteOrfa->id,
+    ]);
+    $atribuicaoExcluida->delete();
+
+    $unidades = $this->repository->getUnidadesVinculadas($cpf);
+
+    expect($unidades)->toHaveCount(1)
+        ->and($unidades->first()->id)->toBe($unidadeAtiva->id);
+});
+
+test('anexarUnidadesVinculadasPorCpf ignora unidade sem atribuição ativa', function () {
+    $cpf = '44455566677';
+    $usuario = Usuario::factory()->create([
+        'cpf' => $cpf,
+        'matricula' => 'MAT-ATIVA',
+        'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
+        'modalidade_pgd' => 'presencial',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $unidadeAtiva = Unidade::factory()->create(['sigla' => 'U-ATV']);
+    $unidadeOrfa = Unidade::factory()->create(['sigla' => 'U-ORF']);
+
+    $integranteAtivo = UnidadeIntegrante::query()->create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidadeAtiva->id,
+    ]);
+    UnidadeIntegranteAtribuicao::query()->create([
+        'atribuicao' => 'LOTADO',
+        'unidade_integrante_id' => $integranteAtivo->id,
+    ]);
+
+    $integranteOrfa = UnidadeIntegrante::query()->create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidadeOrfa->id,
+    ]);
+    $atribuicaoExcluida = UnidadeIntegranteAtribuicao::query()->create([
+        'atribuicao' => 'GESTOR',
+        'unidade_integrante_id' => $integranteOrfa->id,
+    ]);
+    $atribuicaoExcluida->delete();
+
+    $usuarioConsulta = Usuario::factory()->create([
+        'cpf' => $cpf,
+        'modalidade_pgd' => 'presencial',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    app(UsuarioService::class)->anexarUnidadesVinculadasPorCpf($usuarioConsulta);
+
+    $unidadesVinculadas = $usuarioConsulta->getAttribute('unidades_vinculadas');
+
+    expect($unidadesVinculadas)->toHaveCount(1)
+        ->and($unidadesVinculadas[0]['id'])->toBe($unidadeAtiva->id)
+        ->and($unidadesVinculadas[0]['sigla'])->toBe('U-ATV')
+        ->and($unidadesVinculadas[0]['matricula'])->toBe('MAT-ATIVA');
 });
 
 test('findAllByNomeMatricula por nome', function () {
