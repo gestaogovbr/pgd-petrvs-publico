@@ -117,17 +117,17 @@ class SiapeIndividualServidorService extends ServiceBase
 
             list($xmlFuncionais, $xmlPessoais) = $this->prepararXmlsConsulta($cpfLimpo);
             list($respFuncionais, $respPessoais) = $this->executarConsultasSiape($cpfLimpo, $xmlFuncionais, $xmlPessoais);
-            
+
             $dadosFuncionais = $this->processarRespostaFuncionais($cpfLimpo, $respFuncionais);
             $dadosRelatorio['dadosFuncionais'] = $dadosFuncionais;
             $dadosRelatorio['dadosPessoais'] = $this->processarDadosPessoaisParaRelatorio($cpfLimpo, $respPessoais);
-            
+
             $this->processarUnidadesDosServidores($cpfLimpo, $dadosFuncionais);
             $this->salvarDadosConsulta($cpfLimpo, $respFuncionais, $respPessoais);
-            
+
             $this->atualizarVinculosUsuarios($cpfLimpo, $dadosFuncionais);
             $this->executarSincronizacaoFinal($cpfLimpo);
-            
+
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_SUCESSO);
 
             if (empty($this->resumo)) {
@@ -138,7 +138,7 @@ class SiapeIndividualServidorService extends ServiceBase
                 } catch (\Throwable $e) {
                     // ignore
                 }
-                
+
                 $this->resumo[] = [
                     'status' => self::STATUS_PARCIAL,
                     'nome' => $nome,
@@ -161,17 +161,20 @@ class SiapeIndividualServidorService extends ServiceBase
 
             return $this->resumo;
 
-        } catch (Exception $e) {
-            $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_ERRO, $e->getMessage());
+        } catch (\Throwable $e) {
+            $msgErro = 'Houve uma falha na comunicação com o SIAPE ao processar este CPF. Por favor, tente novamente mais tarde.';
+            SiapeLog::error('Erro ao processar servidor no SIAPE: ' . $cpfLimpo . ' - ' . $e->getMessage());
+
+            $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_ERRO, $msgErro);
             $this->registrarRelatorioCarga(
                 $processamentoId,
                 $cpfLimpo,
                 CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
                 false,
                 $dadosRelatorio,
-                $e->getMessage()
+                $msgErro
             );
-            throw $e;
+            throw new \Exception($msgErro);
         }
     }
 
@@ -289,7 +292,7 @@ class SiapeIndividualServidorService extends ServiceBase
         try {
             $xmlFuncionais = $this->montaXMLDadosFuncionais($cpf);
             $xmlPessoais = $this->montaXmlDadosPessoais($cpf);
-            
+
             SiapeLog::info('XMLs montados com sucesso', [
                 'xml_funcionais_tamanho' => strlen($xmlFuncionais),
                 'xml_pessoais_tamanho' => strlen($xmlPessoais)
@@ -314,19 +317,19 @@ class SiapeIndividualServidorService extends ServiceBase
         try {
             $respFuncionais = $this->service->getBuscarDadosSiapeServidor()->executaRequisicao($xmlFuncionais);
             $respPessoais = $this->service->getBuscarDadosSiapeServidor()->executaRequisicao($xmlPessoais);
-            
+
             SiapeLog::info('Requisições executadas com sucesso', [
                 'cpf' => $cpf,
                 'response_funcionais_tamanho' => strlen($respFuncionais),
                 'response_pessoais_tamanho' => strlen($respPessoais)
             ]);
-            
+
             $this->logPreviewResposta($cpf, $respFuncionais, $respPessoais);
 
             return [$respFuncionais, $respPessoais];
         } catch (Exception $e) {
             report($e);
-            throw new Exception("Erro ao consultar dados no SIAPE: " . $e->getMessage());
+            throw new Exception("Houve uma falha na comunicação com o SIAPE ao processar este CPF. Por favor, tente novamente mais tarde.");
         }
     }
 
@@ -343,7 +346,7 @@ class SiapeIndividualServidorService extends ServiceBase
     {
         try {
             $dadosArray = $this->service->getProcessaDadosSiape()->processaDadosFuncionais($cpf, $responseXml);
-            
+
             SiapeLog::info('Dados funcionais processados', [
                 'cpf' => $cpf,
                 'dados_processados' => is_array($dadosArray) ? count($dadosArray) : 'não é array',
@@ -391,10 +394,10 @@ class SiapeIndividualServidorService extends ServiceBase
             'indice_dados' => $index,
             'dados_funcionais_keys' => array_keys($dados)
         ]);
-        
+
         $codigoUnidade = strval(intval($dados['codUorgExercicio']));
         $this->validarUnidadeProcessada($cpf, $codigoUnidade, $dados);
-        
+
         $this->sincronizarDadosUnidade($cpf, $codigoUnidade);
     }
 
@@ -428,7 +431,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
         $this->atualizarListaUorgs($codigoUnidade);
         $unidadeSiape = $this->buscarUnidadeNaLista($codigoUnidade);
-        
+
         $this->salvarHistoricoUnidade($respUnidade, $unidadeSiape);
     }
 
@@ -506,7 +509,7 @@ class SiapeIndividualServidorService extends ServiceBase
     private function atualizarVinculosUsuarios(string $cpf, array $dadosFuncionais): void
     {
         SiapeLog::info('Iniciando remoção de vínculos para forçar nova lotação', ['cpf' => $cpf]);
-        
+
         try {
             $this->removeVinculoParaforcarSerLotadoNovamente($cpf, $dadosFuncionais);
             SiapeLog::info('Remoção de vínculos concluída com sucesso', ['cpf' => $cpf]);
@@ -532,16 +535,16 @@ class SiapeIndividualServidorService extends ServiceBase
         try {
             $integracaoService = $this->instanciarIntegracaoService();
             $entidades = $this->buscarTodasEntidades();
-            
+
             SiapeLog::info('Processando entidades para sincronização', [
                 'cpf' => $cpf,
                 'total_entidades' => $entidades->count()
             ]);
-            
+
             foreach ($entidades as $entidade) {
                 $this->sincronizarEntidadeUnica($integracaoService, $entidade, $cpf);
             }
-            
+
             SiapeLog::info('Processo de sincronização concluído com sucesso', ['cpf' => $cpf]);
         } catch (Exception $e) {
             report($e);
@@ -614,7 +617,7 @@ class SiapeIndividualServidorService extends ServiceBase
     {
         $alteracoes = [];
         $campos = ['nome', 'email', 'matricula', 'situacao_siape'];
-        
+
         foreach ($campos as $campo) {
             if (($uAntes[$campo] ?? null) != $uDepois->$campo) {
                 $alteracoes[] = $campo;
@@ -636,7 +639,7 @@ class SiapeIndividualServidorService extends ServiceBase
     private function removeVinculoParaforcarSerLotadoNovamente(string $cpf, array $dadosFuncionaisArray): void
     {
         $usuarios = $this->buscarUsuariosSimples($cpf);
-        
+
         if ($usuarios->isEmpty()) {
             $this->removendoDaBlackList($cpf);
             return;
@@ -671,9 +674,9 @@ class SiapeIndividualServidorService extends ServiceBase
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now()
             ]);
-            
+
             SiapeLog::info('Usuário adicionado à blacklist por ausência no SIAPE', [
-                'cpf' => $cpf, 
+                'cpf' => $cpf,
                 'matricula' => $matricula
             ]);
         }
@@ -683,11 +686,11 @@ class SiapeIndividualServidorService extends ServiceBase
     {
         $this->atualizarStatusUsuario($usuario);
         $this->verificarBlacklist($cpf, $usuario);
-        
+
         if (!$usuario->lotacao?->unidade) return;
-        
+
         $this->removeTodasAsGestoesDoUsuario($usuario);
-        
+
         if (!in_array($usuario->matricula, $matriculasSiape)) {
             SiapeLog::warning('Lotação não removida: Matrícula não corresponde ao SIAPE', [
                 'cpf' => $cpf,
