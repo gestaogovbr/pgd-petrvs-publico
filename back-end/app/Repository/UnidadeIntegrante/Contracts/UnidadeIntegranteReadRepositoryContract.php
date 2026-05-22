@@ -20,5 +20,9 @@ interface UnidadeIntegranteReadRepositoryContract
     public function findGestorByUnidade(string $unidadeId): ?\App\Models\UnidadeIntegrante;
     public function findUnidadeIntegrante(string $usuarioId, string $unidadeId): ?\App\Models\UnidadeIntegrante;
     public function findAllByUsuario(string $usuarioId): Collection;
+
+    /** Integrantes com ao menos uma atribuição não excluída (escopo Plano de Trabalho). */
+    public function findAllComAtribuicoesAtivasByUsuario(string $usuarioId): Collection;
+
     public function countLotadosByUnidade(string $unidadeId): int;
 }

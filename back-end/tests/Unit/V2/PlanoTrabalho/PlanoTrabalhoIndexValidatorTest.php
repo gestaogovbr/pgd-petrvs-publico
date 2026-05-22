@@ -88,7 +88,7 @@ describe('PlanoTrabalhoIndexValidacao', function () {
         $integrante->unidade_id = 'unidade-1';
 
         $this->usuarioRepo->shouldReceive('findById')->with('user-unidade')->andReturn($usuario);
-        $this->integranteRepo->shouldReceive('findAllByUsuario')->with('user-unidade')->andReturn(new Collection([$integrante]));
+        $this->integranteRepo->shouldReceive('findAllComAtribuicoesAtivasByUsuario')->with('user-unidade')->andReturn(new Collection([$integrante]));
         $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')->with(['unidade-1'])->andReturn(new Collection());
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray(['unidade_id' => ['unidade-1'], 'vigentes' => true, 'usuarioLogadoId' => 'user-unidade']);
@@ -109,7 +109,7 @@ describe('PlanoTrabalhoIndexValidacao', function () {
         $integrante->unidade_id = 'unidade-1';
 
         $this->usuarioRepo->shouldReceive('findById')->with('user-unidade')->andReturn($usuario);
-        $this->integranteRepo->shouldReceive('findAllByUsuario')->with('user-unidade')->andReturn(new Collection([$integrante]));
+        $this->integranteRepo->shouldReceive('findAllComAtribuicoesAtivasByUsuario')->with('user-unidade')->andReturn(new Collection([$integrante]));
         $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')->with(['unidade-1'])->andReturn(new Collection());
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray(['unidade_id' => ['unidade-sem-vinculo'], 'vigentes' => true, 'usuarioLogadoId' => 'user-unidade']);
@@ -133,7 +133,7 @@ describe('PlanoTrabalhoIndexValidacao', function () {
         $subordinada->id = 'unidade-sub-1';
 
         $this->usuarioRepo->shouldReceive('findById')->with('user-unidade')->andReturn($usuario);
-        $this->integranteRepo->shouldReceive('findAllByUsuario')->with('user-unidade')->andReturn(new Collection([$integrante1, $integrante2]));
+        $this->integranteRepo->shouldReceive('findAllComAtribuicoesAtivasByUsuario')->with('user-unidade')->andReturn(new Collection([$integrante1, $integrante2]));
         $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')->with(['unidade-1', 'unidade-2'])->andReturn(new Collection([$subordinada]));
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true, 'usuarioLogadoId' => 'user-unidade']);
@@ -157,13 +157,31 @@ describe('PlanoTrabalhoIndexValidacao', function () {
         $subordinada->id = 'unidade-sub-1';
 
         $this->usuarioRepo->shouldReceive('findById')->with('user-unidade')->andReturn($usuario);
-        $this->integranteRepo->shouldReceive('findAllByUsuario')->with('user-unidade')->andReturn(new Collection([$integrante]));
+        $this->integranteRepo->shouldReceive('findAllComAtribuicoesAtivasByUsuario')->with('user-unidade')->andReturn(new Collection([$integrante]));
         $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')->with(['unidade-1'])->andReturn(new Collection([$subordinada]));
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray(['unidade_id' => ['unidade-sub-1'], 'vigentes' => true, 'usuarioLogadoId' => 'user-unidade']);
         $resultado = $this->validacao->validar($filtro);
 
         expect($resultado->unidadesId)->toBe(['unidade-sub-1']);
+    });
+
+    test('perfil unidade sem atribuições ativas não inclui unidades órfãs no escopo', function () {
+        /** @var Usuario $usuario */
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-unidade';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::UNIDADE->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-unidade')->andReturn($usuario);
+        $this->integranteRepo->shouldReceive('findAllComAtribuicoesAtivasByUsuario')->with('user-unidade')->andReturn(new Collection());
+        $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')->with([])->andReturn(new Collection());
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true, 'usuarioLogadoId' => 'user-unidade']);
+        $resultado = $this->validacao->validar($filtro);
+
+        expect($resultado->unidadesId)->toBe([]);
     });
 });
 
@@ -177,7 +195,7 @@ describe('PlanoTrabalhoIndexValidacao — perfil Consulta', function () {
         $usuario->setRelation('perfil', $perfil);
 
         $this->usuarioRepo->shouldReceive('findById')->with('user-consulta')->andReturn($usuario);
-        $this->integranteRepo->shouldNotReceive('findAllByUsuario');
+        $this->integranteRepo->shouldNotReceive('findAllComAtribuicoesAtivasByUsuario');
         $this->unidadeRepo->shouldNotReceive('getSubordinadasRecursivas');
 
         $filtro = PlanoTrabalhoIndexDTO::fromArray([

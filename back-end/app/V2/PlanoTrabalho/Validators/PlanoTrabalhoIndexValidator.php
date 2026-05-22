@@ -56,7 +56,7 @@ class PlanoTrabalhoIndexValidator
     private function validarPerfilUnidade(PlanoTrabalhoIndexDTO $filtro): PlanoTrabalhoIndexDTO
     {
         $unidadesDiretas = $this->integranteRepository
-            ->findAllByUsuario($filtro->usuarioLogadoId)
+            ->findAllComAtribuicoesAtivasByUsuario($filtro->usuarioLogadoId)
             ->pluck('unidade_id')
             ->toArray();
 

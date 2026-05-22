@@ -1,4 +1,4 @@
-/*M!999999\- enable the sandbox mode */ 
+/*M!999999\- enable the sandbox mode */
 -- MariaDB dump 10.19-12.0.2-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: petrvs_mgi
@@ -1664,6 +1664,21 @@ CREATE TABLE `planejamentos_objetivos` (
   CONSTRAINT `planejamentos_objetivos_objetivo_pai_id_foreign` FOREIGN KEY (`objetivo_pai_id`) REFERENCES `planejamentos_objetivos` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planejamentos_objetivos_objetivo_superior_id_foreign` FOREIGN KEY (`objetivo_superior_id`) REFERENCES `planejamentos_objetivos` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `planejamentos_objetivos_planejamento_id_foreign` FOREIGN KEY (`planejamento_id`) REFERENCES `planejamentos` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `planejamentos_tipos_objetivos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `planejamentos_tipos_objetivos` (
+  `id` char(36) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `nome` varchar(255) NOT NULL COMMENT 'Nome do tipo de objetivo',
+  `descricao` text DEFAULT NULL COMMENT 'Descrição do tipo de objetivo',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3572,87 +3587,166 @@ SET character_set_client = @saved_cs_client;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` FUNCTION `fn_calcular_dias_uteis`(p_data_inicio DATE,
-    p_data_fim DATE,
+CREATE DEFINER=`root`@`%` FUNCTION `fn_calcular_dias_uteis`(p_data_inicio DATE,
+
+    p_data_fim DATE,
+
     p_unidade_id CHAR(36)) RETURNS int(11)
     DETERMINISTIC
-BEGIN
-    DECLARE v_dias_uteis INT;
-
-    WITH RECURSIVE
-    anos AS (
-        SELECT YEAR(p_data_inicio) AS ano
-        UNION ALL
-        SELECT ano + 1 FROM anos WHERE ano < YEAR(p_data_fim)
-    ),
-    dias AS (
-        SELECT DATE(p_data_inicio) AS data
-        UNION ALL
-        SELECT DATE_ADD(data, INTERVAL 1 DAY)
-        FROM dias
-        WHERE data < DATE(p_data_fim)
-    ),
-    feriados_validos AS (
-        SELECT
-            f.tipoDia,
-            f.dia,
-            f.mes,
-            f.ano,
-            f.recorrente,
-            f.abrangencia,
-            CASE
-                WHEN f.recorrente = 1 AND f.tipoDia = 'MES'
-                    THEN DATE(CONCAT(a.ano, '-', LPAD(f.mes, 2, '0'), '-', LPAD(f.dia, 2, '0')))
-                WHEN f.recorrente = 0 AND f.tipoDia = 'MES'
-                    THEN DATE(CONCAT(f.ano, '-', LPAD(f.mes, 2, '0'), '-', LPAD(f.dia, 2, '0')))
-                ELSE NULL
-            END AS data_feriado
-        FROM feriados f
-        LEFT JOIN anos a ON f.recorrente = 1
-        WHERE
-            (
-                f.abrangencia = 'NACIONAL'
-                OR (
-                    f.abrangencia = 'ESTADUAL'
-                    AND f.uf = (
-                        SELECT cid.uf
-                        FROM unidades uni
-                        INNER JOIN cidades cid ON cid.id = uni.cidade_id
-                        WHERE uni.id = p_unidade_id
-                    )
-                )
-                OR (
-                    f.abrangencia = 'MUNICIPAL'
-                    AND f.cidade_id = (
-                        SELECT cidade_id
-                        FROM unidades
-                        WHERE id = p_unidade_id
-                    )
-                )
-            )
-            AND (
-                f.recorrente = 1
-                OR (f.ano BETWEEN YEAR(p_data_inicio) AND YEAR(p_data_fim))
-            )
-    )
-    SELECT COUNT(*) INTO v_dias_uteis
-    FROM dias d
-    WHERE DAYOFWEEK(d.data) NOT IN (1, 7)
-      AND NOT EXISTS (
-        SELECT 1
-        FROM feriados_validos f
-        WHERE
-            (
-                f.tipoDia = 'MES'
-                AND d.data = f.data_feriado
-            )
-            OR (
-                f.tipoDia = 'SEMANA'
-                AND DAYOFWEEK(d.data) = f.dia
-            )
-      );
-
-    RETURN v_dias_uteis;
+BEGIN
+
+    DECLARE v_dias_uteis INT;
+
+
+
+    WITH RECURSIVE
+
+    anos AS (
+
+        SELECT YEAR(p_data_inicio) AS ano
+
+        UNION ALL
+
+        SELECT ano + 1 FROM anos WHERE ano < YEAR(p_data_fim)
+
+    ),
+
+    dias AS (
+
+        SELECT DATE(p_data_inicio) AS data
+
+        UNION ALL
+
+        SELECT DATE_ADD(data, INTERVAL 1 DAY)
+
+        FROM dias
+
+        WHERE data < DATE(p_data_fim)
+
+    ),
+
+    feriados_validos AS (
+
+        SELECT
+
+            f.tipoDia,
+
+            f.dia,
+
+            f.mes,
+
+            f.ano,
+
+            f.recorrente,
+
+            f.abrangencia,
+
+            CASE
+
+                WHEN f.recorrente = 1 AND f.tipoDia = 'MES'
+
+                    THEN DATE(CONCAT(a.ano, '-', LPAD(f.mes, 2, '0'), '-', LPAD(f.dia, 2, '0')))
+
+                WHEN f.recorrente = 0 AND f.tipoDia = 'MES'
+
+                    THEN DATE(CONCAT(f.ano, '-', LPAD(f.mes, 2, '0'), '-', LPAD(f.dia, 2, '0')))
+
+                ELSE NULL
+
+            END AS data_feriado
+
+        FROM feriados f
+
+        LEFT JOIN anos a ON f.recorrente = 1
+
+        WHERE
+
+            (
+
+                f.abrangencia = 'NACIONAL'
+
+                OR (
+
+                    f.abrangencia = 'ESTADUAL'
+
+                    AND f.uf = (
+
+                        SELECT cid.uf
+
+                        FROM unidades uni
+
+                        INNER JOIN cidades cid ON cid.id = uni.cidade_id
+
+                        WHERE uni.id = p_unidade_id
+
+                    )
+
+                )
+
+                OR (
+
+                    f.abrangencia = 'MUNICIPAL'
+
+                    AND f.cidade_id = (
+
+                        SELECT cidade_id
+
+                        FROM unidades
+
+                        WHERE id = p_unidade_id
+
+                    )
+
+                )
+
+            )
+
+            AND (
+
+                f.recorrente = 1
+
+                OR (f.ano BETWEEN YEAR(p_data_inicio) AND YEAR(p_data_fim))
+
+            )
+
+    )
+
+    SELECT COUNT(*) INTO v_dias_uteis
+
+    FROM dias d
+
+    WHERE DAYOFWEEK(d.data) NOT IN (1, 7)
+
+      AND NOT EXISTS (
+
+        SELECT 1
+
+        FROM feriados_validos f
+
+        WHERE
+
+            (
+
+                f.tipoDia = 'MES'
+
+                AND d.data = f.data_feriado
+
+            )
+
+            OR (
+
+                f.tipoDia = 'SEMANA'
+
+                AND DAYOFWEEK(d.data) = f.dia
+
+            )
+
+      );
+
+
+
+    RETURN v_dias_uteis;
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -3671,38 +3765,70 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` FUNCTION `fn_data_pascoa`(ano INT) RETURNS date
     DETERMINISTIC
-BEGIN
-  DECLARE a INT;
-  DECLARE b INT;
-  DECLARE c INT;
-  DECLARE d INT;
-  DECLARE e INT;
-  DECLARE f INT;
-  DECLARE g INT;
-  DECLARE h INT;
-  DECLARE i INT;
-  DECLARE k INT;
-  DECLARE l INT;
-  DECLARE m INT;
-  DECLARE dia INT;
-  DECLARE mes INT;
-
-  SET a = ano % 19;
-  SET b = FLOOR(ano / 100);
-  SET c = ano % 100;
-  SET d = FLOOR(b / 4);
-  SET e = b % 4;
-  SET f = FLOOR((b + 8) / 25);
-  SET g = FLOOR((b - f + 1) / 3);
-  SET h = (19 * a + b - d - g + 15) % 30;
-  SET i = FLOOR(c / 4);
-  SET k = c % 4;
-  SET l = (32 + 2 * e + 2 * i - h - k) % 7;
-  SET m = FLOOR((a + 11 * h + 22 * l) / 451);
-  SET mes = FLOOR((h + l - 7 * m + 114) / 31);
-  SET dia = ((h + l - 7 * m + 114) % 31) + 1;
-
-  RETURN STR_TO_DATE(CONCAT(ano, '-', mes, '-', dia), '%Y-%m-%d');
+BEGIN
+
+  DECLARE a INT;
+
+  DECLARE b INT;
+
+  DECLARE c INT;
+
+  DECLARE d INT;
+
+  DECLARE e INT;
+
+  DECLARE f INT;
+
+  DECLARE g INT;
+
+  DECLARE h INT;
+
+  DECLARE i INT;
+
+  DECLARE k INT;
+
+  DECLARE l INT;
+
+  DECLARE m INT;
+
+  DECLARE dia INT;
+
+  DECLARE mes INT;
+
+
+
+  SET a = ano % 19;
+
+  SET b = FLOOR(ano / 100);
+
+  SET c = ano % 100;
+
+  SET d = FLOOR(b / 4);
+
+  SET e = b % 4;
+
+  SET f = FLOOR((b + 8) / 25);
+
+  SET g = FLOOR((b - f + 1) / 3);
+
+  SET h = (19 * a + b - d - g + 15) % 30;
+
+  SET i = FLOOR(c / 4);
+
+  SET k = c % 4;
+
+  SET l = (32 + 2 * e + 2 * i - h - k) % 7;
+
+  SET m = FLOOR((a + 11 * h + 22 * l) / 451);
+
+  SET mes = FLOOR((h + l - 7 * m + 114) / 31);
+
+  SET dia = ((h + l - 7 * m + 114) % 31) + 1;
+
+
+
+  RETURN STR_TO_DATE(CONCAT(ano, '-', mes, '-', dia), '%Y-%m-%d');
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -3803,30 +3929,54 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` FUNCTION `obter_sequencia`(processo_id CHAR(36)) RETURNS varchar(255) CHARSET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci
     DETERMINISTIC
-BEGIN
-    DECLARE seq_result VARCHAR(255) DEFAULT '';
-    DECLARE seq_atual VARCHAR(255);
-    DECLARE pai_atual CHAR(36);
-
-    -- Inicializa com os dados do processo informado
-    SELECT sequencia, processo_pai_id INTO seq_atual, pai_atual
-    FROM petrvs_mgi.cadeias_valores_processos
-    WHERE id = processo_id;
-
-    -- Constrói a sequência subindo na hierarquia
-    WHILE pai_atual IS NOT NULL DO
-        -- Adiciona o valor atual ao início da sequência
-        SET seq_result = CONCAT(seq_atual, '.', seq_result);
-
-        -- Busca o próximo nível da hierarquia
-        SELECT sequencia, processo_pai_id INTO seq_atual, pai_atual
-        FROM petrvs_mgi.cadeias_valores_processos
-        WHERE id = pai_atual;
-    END WHILE;
-
-    -- Adiciona o último elemento (raiz) e remove o ponto final se houver
-    SET seq_result = CONCAT(seq_atual, '.', seq_result);
-    RETURN TRIM(TRAILING '.' FROM seq_result);
+BEGIN
+
+    DECLARE seq_result VARCHAR(255) DEFAULT '';
+
+    DECLARE seq_atual VARCHAR(255);
+
+    DECLARE pai_atual CHAR(36);
+
+
+
+    -- Inicializa com os dados do processo informado
+
+    SELECT sequencia, processo_pai_id INTO seq_atual, pai_atual
+
+    FROM petrvs_mgi.cadeias_valores_processos
+
+    WHERE id = processo_id;
+
+
+
+    -- Constrói a sequência subindo na hierarquia
+
+    WHILE pai_atual IS NOT NULL DO
+
+        -- Adiciona o valor atual ao início da sequência
+
+        SET seq_result = CONCAT(seq_atual, '.', seq_result);
+
+
+
+        -- Busca o próximo nível da hierarquia
+
+        SELECT sequencia, processo_pai_id INTO seq_atual, pai_atual
+
+        FROM petrvs_mgi.cadeias_valores_processos
+
+        WHERE id = pai_atual;
+
+    END WHILE;
+
+
+
+    -- Adiciona o último elemento (raiz) e remove o ponto final se houver
+
+    SET seq_result = CONCAT(seq_atual, '.', seq_result);
+
+    RETURN TRIM(TRAILING '.' FROM seq_result);
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -3844,9 +3994,12 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_atividade_numero`()
-BEGIN
-                UPDATE sequences SET atividade_numero = atividade_numero + 1;
-                SELECT atividade_numero AS number FROM sequences;
+BEGIN
+
+                UPDATE sequences SET atividade_numero = atividade_numero + 1;
+
+                SELECT atividade_numero AS number FROM sequences;
+
             END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -3864,9 +4017,12 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_documento_numero`()
-BEGIN
-                UPDATE sequences SET documento_numero = documento_numero + 1;
-                SELECT documento_numero AS number FROM sequences;
+BEGIN
+
+                UPDATE sequences SET documento_numero = documento_numero + 1;
+
+                SELECT documento_numero AS number FROM sequences;
+
             END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -3884,9 +4040,12 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_notificacao_numero`()
-BEGIN
-	UPDATE sequences SET notificacao_numero = notificacao_numero + 1;
-                SELECT notificacao_numero AS number FROM sequences;
+BEGIN
+
+	UPDATE sequences SET notificacao_numero = notificacao_numero + 1;
+
+                SELECT notificacao_numero AS number FROM sequences;
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -3904,9 +4063,12 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_plano_entrega_numero`()
-BEGIN
-                UPDATE sequences SET plano_entrega_numero = plano_entrega_numero + 1;
-                SELECT plano_entrega_numero AS number FROM sequences;
+BEGIN
+
+                UPDATE sequences SET plano_entrega_numero = plano_entrega_numero + 1;
+
+                SELECT plano_entrega_numero AS number FROM sequences;
+
             END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -3924,9 +4086,12 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_plano_trabalho_numero`()
-BEGIN
-                UPDATE sequences SET plano_trabalho_numero = plano_trabalho_numero + 1;
-                SELECT plano_trabalho_numero AS number FROM sequences;
+BEGIN
+
+                UPDATE sequences SET plano_trabalho_numero = plano_trabalho_numero + 1;
+
+                SELECT plano_trabalho_numero AS number FROM sequences;
+
             END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -3944,9 +4109,12 @@ DELIMITER ;
 /*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_template_numero`()
-BEGIN
-                UPDATE sequences SET template_numero = template_numero + 1;
-                SELECT template_numero AS number FROM sequences;
+BEGIN
+
+                UPDATE sequences SET template_numero = template_numero + 1;
+
+                SELECT template_numero AS number FROM sequences;
+
             END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;

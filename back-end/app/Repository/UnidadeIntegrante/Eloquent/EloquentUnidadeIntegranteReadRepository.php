@@ -95,10 +95,19 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
         return $integrante instanceof UnidadeIntegrante ? $integrante : null;
     }
 
+    // Alerta: esta função pode trazer unidades sem atribuições ativas
     public function findAllByUsuario(string $usuarioId): Collection
     {
         return $this->model->newQuery()
             ->where('usuario_id', $usuarioId)
+            ->get();
+    }
+
+    public function findAllComAtribuicoesAtivasByUsuario(string $usuarioId): Collection
+    {
+        return $this->model->newQuery()
+            ->where('usuario_id', $usuarioId)
+            ->has('atribuicoes')
             ->get();
     }
 
