@@ -14,6 +14,7 @@ use App\Repository\PerfilRepository;
 use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Repository\SiapeBlackListServidorRepository;
@@ -59,11 +60,13 @@ class UsuarioService extends ServiceBase
     protected PlanoTrabalhoRepository $planoTrabalhoRepository;
     protected PlanoEntregaRepository $planoEntregaRepository;
     protected SiapeBlackListServidorRepository $siapeBlackListServidorRepository;
+    protected UnidadeIntegranteRepository $unidadeIntegranteRepository;
 
     public function __construct() {
         parent::__construct();
         $this->usuarioRepository = app(UsuarioRepository::class);
         $this->unidadeRepository = app(UnidadeRepository::class);
+        $this->unidadeIntegranteRepository = app(UnidadeIntegranteRepository::class);
         $this->integracaoServidorRepository = app(IntegracaoServidorRepository::class);
         $this->perfilRepository = app(PerfilRepository::class);
         $this->planoTrabalhoConsolidacaoRepository = app(PlanoTrabalhoConsolidacaoRepository::class);
@@ -873,15 +876,21 @@ class UsuarioService extends ServiceBase
             return;
         }
 
-        $usuarios->loadMissing(['unidades:id,sigla']);
-
         $unidadesVinculadasPayloadByKey = [];
 
         foreach ($usuarios as $usuarioPorCpf) {
             $matricula = $usuarioPorCpf->getAttribute('matricula') ?? null;
             $situacaoFuncional = $usuarioPorCpf->getAttribute('situacao_funcional') ?? null;
 
-            foreach ($usuarioPorCpf->unidades ?? [] as $unidade) {
+            $integrantes = $this->unidadeIntegranteRepository
+                ->findAllComAtribuicoesAtivasByUsuario(strval($usuarioPorCpf->id));
+
+            foreach ($integrantes as $integrante) {
+                $unidade = $integrante->unidade;
+                if ($unidade === null) {
+                    continue;
+                }
+
                 $key = strval($unidade->id) . '|' . strval($matricula ?? '');
 
                 if (isset($unidadesVinculadasPayloadByKey[$key])) {
