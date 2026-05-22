@@ -119,9 +119,9 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findByMatricula($matricula);
     }
 
-    public function findAllByNomeMatricula(string $nomeMatricula): Collection
+    public function findAllByNomeMatricula(string $nomeMatricula, ?string $unidadeId = null): Collection
     {
-        return $this->readRepository->findAllByNomeMatricula($nomeMatricula);
+        return $this->readRepository->findAllByNomeMatricula($nomeMatricula, $unidadeId);
     }
 
     public function findByEmail(string $email): ?Usuario

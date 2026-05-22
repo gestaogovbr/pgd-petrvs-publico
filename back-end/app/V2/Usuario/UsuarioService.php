@@ -13,9 +13,9 @@ class UsuarioService
         $this->usuarioRepository = $usuarioRepository;
     }
 
-    public function buscarPorNomeOuMatricula(string $nomeMatricula)
+    public function buscarPorNomeOuMatricula(string $nomeMatricula, ?string $unidadeId = null)
     {
-        return $this->usuarioRepository->findAllByNomeMatricula($nomeMatricula);
+        return $this->usuarioRepository->findAllByNomeMatricula($nomeMatricula, $unidadeId);
     }
 
     public function buscarPorId(string $usuarioId)

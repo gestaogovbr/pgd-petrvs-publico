@@ -44,7 +44,7 @@ interface UnidadeReadRepositoryContract
 
     public function existsByCodigo(string $codigo): bool;
 
-    public function buscarPorNomeOuCodigoNaHierarquia(UnidadeBuscaDTO $dto, string $usuarioId): Collection;
+    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection;
 
     /** @return string[] */
     public function linhaAscendente(string $unidadeId): array;

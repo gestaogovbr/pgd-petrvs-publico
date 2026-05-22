@@ -223,14 +223,9 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $unidade;
     }
 
-    public function buscarPorNomeOuCodigoNaHierarquia(UnidadeBuscaDTO $dto, string $usuarioId): Collection
+    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection
     {
         $query = $this->query()->select('id', 'nome', 'codigo', 'sigla');
-
-        if ($dto->hierarquia) {
-            $areasTrabalhoWhere = $this->getAreasTrabalhoWhereClause($usuarioId, true);
-            $query->whereRaw($areasTrabalhoWhere);
-        }
 
         if ($dto->termo) {
             $termoLower = mb_strtolower($dto->termo);

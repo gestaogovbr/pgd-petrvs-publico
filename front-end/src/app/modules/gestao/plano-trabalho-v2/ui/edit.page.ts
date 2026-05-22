@@ -18,6 +18,7 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { MessageService } from 'src/app/v2/services/message.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
 import { PlanoTrabalho, getPlanoEntregaInfo } from '../domain/types';
 
@@ -45,6 +46,9 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly injector = inject(Injector);
   readonly policy = inject(PlanoTrabalhoPolicy);
+  private readonly auth = inject(AuthService);
+
+  readonly agentePublicoSomenteLeitura = computed(() => this.auth.isUsuarioParticipante());
 
   planoId = signal<string | null>(null);
   plano = signal<PlanoTrabalho | null>(null);
@@ -247,6 +251,9 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
         this.carregarPlanosUnidade(plano.unidade_id);
       }
       this.loading.set(false);
+      if (this.auth.isUsuarioParticipante()) {
+        this.agentePublicoQuery.disable({ emitEvent: false });
+      }
     });
 
     this.agentePublicoQuery.valueChanges.pipe(
@@ -388,6 +395,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
   }
 
   limparUsuarioSelecionado() {
+    if (this.agentePublicoSomenteLeitura()) return;
     this.unidades.set([]);
     this.programaId.set('');
     this.programaNome.set('');
@@ -523,7 +531,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       plano_entrega_id: planoEntregaId,
       plano_entrega_entrega_id: '',
       descricao: entrega.descricao || '',
-      forca_trabalho: entrega.forca_trabalho || 100
+      forca_trabalho: entrega.forca_trabalho || 1
     }, { emitEvent: false });
 
     if (planoId && (origem === 'PROPRIA_UNIDADE' || origem === 'OUTRA_UNIDADE')) {
@@ -655,8 +663,10 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
 
   private buscarUsuarios(term: string) {
     const value = term.trim();
-    if (value.length < 3) return of([] as UsuarioSearchItem[]);
-    return this.usuarioService.searchByNomeMatricula(value);
+    if (value.length < 3 || this.agentePublicoSomenteLeitura()) {
+      return of([] as UsuarioSearchItem[]);
+    }
+    return this.usuarioService.searchByNomeMatricula(value, this.auth.unidade?.id);
   }
 
   private async carregarUnidades(usuario: Usuario) {

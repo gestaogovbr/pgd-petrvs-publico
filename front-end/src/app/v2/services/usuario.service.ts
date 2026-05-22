@@ -21,9 +21,14 @@ export class UsuarioService {
   private readonly gb = inject(GlobalsService);
   private readonly base = 'api/v2/usuario';
 
-  searchByNomeMatricula(term: string): Observable<UsuarioSearchItem[]> {
+  searchByNomeMatricula(term: string, unidadeId?: string | null): Observable<UsuarioSearchItem[]> {
+    const params: Record<string, string> = { nome_matricula: term };
+    if (unidadeId) {
+      params['unidade_id'] = unidadeId;
+    }
+
     return this.http
-      .get<any>(`${this.gb.servidorURL}/${this.base}`, { params: { nome_matricula: term } })  
+      .get<any>(`${this.gb.servidorURL}/${this.base}`, { params })
       .pipe(
         map((response: any) => {
           const items = Array.isArray(response?.data) ? response.data : [];

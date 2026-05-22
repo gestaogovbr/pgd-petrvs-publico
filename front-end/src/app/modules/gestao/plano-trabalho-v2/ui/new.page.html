@@ -13,9 +13,11 @@
               <div class="d-flex align-items-end gap-2">
                 <div class="br-input flex-grow-1">
                   <label>Agente Público</label>
-                  <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" />
+                  <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" [readonly]="agentePublicoSomenteLeitura()" />
                 </div>
-                <br-button emphasis="secondary" type="button" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+                @if (!agentePublicoSomenteLeitura()) {
+                  <br-button emphasis="secondary" type="button" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+                }
               </div>
               @if (sugestoesUsuarios().length > 0) {
                 <div class="br-card position-absolute w-100" style="z-index: 1050;">

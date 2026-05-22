@@ -19,36 +19,34 @@ afterEach(function () {
 
 describe('UnidadeService::buscarPorNomeOuCodigo', function () {
 
-    test('delega ao repository com DTO e usuarioId e retorna collection', function () {
-        $dto = UnidadeBuscaDTO::fromArray(['termo' => 'Financ']);
-        $usuarioId = 'usr-1';
+    test('delega ao repository com DTO e retorna collection', function () {
+        $dto = UnidadeBuscaDTO::fromArray(['nome_codigo' => 'Financ']);
 
         $collection = new Collection([
             (object) ['id' => 'u-1', 'nome' => 'Financeiro', 'codigo' => '001', 'sigla' => 'FIN'],
         ]);
 
         $this->unidadeRepository
-            ->shouldReceive('buscarPorNomeOuCodigoNaHierarquia')
+            ->shouldReceive('buscarPorNomeOuCodigo')
             ->once()
-            ->withArgs(fn($d, $u) => $d === $dto && $u === $usuarioId)
+            ->with($dto)
             ->andReturn($collection);
 
-        $result = $this->service->buscarPorNomeOuCodigo($dto, $usuarioId);
+        $result = $this->service->buscarPorNomeOuCodigo($dto);
 
         expect($result)->toBe($collection)
             ->and($result)->toHaveCount(1);
     });
 
     test('retorna collection vazia quando nenhuma unidade corresponde', function () {
-        $dto = UnidadeBuscaDTO::fromArray(['termo' => 'XYZ']);
-        $usuarioId = 'usr-1';
+        $dto = UnidadeBuscaDTO::fromArray(['nome_codigo' => 'XYZ']);
 
         $this->unidadeRepository
-            ->shouldReceive('buscarPorNomeOuCodigoNaHierarquia')
+            ->shouldReceive('buscarPorNomeOuCodigo')
             ->once()
             ->andReturn(new Collection());
 
-        $result = $this->service->buscarPorNomeOuCodigo($dto, $usuarioId);
+        $result = $this->service->buscarPorNomeOuCodigo($dto);
 
         expect($result)->toBeInstanceOf(Collection::class)
             ->and($result)->toHaveCount(0);
@@ -56,48 +54,31 @@ describe('UnidadeService::buscarPorNomeOuCodigo', function () {
 
     test('retorna unidades quando termo é null', function () {
         $dto = UnidadeBuscaDTO::fromArray([]);
-        $usuarioId = 'usr-1';
 
         $collection = new Collection([
             (object) ['id' => 'u-1', 'nome' => 'Financeiro', 'codigo' => '001', 'sigla' => 'FIN'],
         ]);
 
         $this->unidadeRepository
-            ->shouldReceive('buscarPorNomeOuCodigoNaHierarquia')
+            ->shouldReceive('buscarPorNomeOuCodigo')
             ->once()
             ->andReturn($collection);
 
-        $result = $this->service->buscarPorNomeOuCodigo($dto, $usuarioId);
+        $result = $this->service->buscarPorNomeOuCodigo($dto);
 
         expect($result)->toHaveCount(1);
     });
 
-    test('passa DTO com hierarquia false ao repository', function () {
-        $dto = UnidadeBuscaDTO::fromArray(['hierarquia' => false]);
-        $usuarioId = 'usr-1';
-
-        $this->unidadeRepository
-            ->shouldReceive('buscarPorNomeOuCodigoNaHierarquia')
-            ->once()
-            ->withArgs(fn($d, $u) => $d->hierarquia === false)
-            ->andReturn(new Collection());
-
-        $result = $this->service->buscarPorNomeOuCodigo($dto, $usuarioId);
-
-        expect($result)->toHaveCount(0);
-    });
-
     test('passa DTO com todos true ao repository', function () {
         $dto = UnidadeBuscaDTO::fromArray(['todos' => true]);
-        $usuarioId = 'usr-1';
 
         $this->unidadeRepository
-            ->shouldReceive('buscarPorNomeOuCodigoNaHierarquia')
+            ->shouldReceive('buscarPorNomeOuCodigo')
             ->once()
-            ->withArgs(fn($d, $u) => $d->todos === true)
+            ->withArgs(fn ($d) => $d->todos === true)
             ->andReturn(new Collection());
 
-        $result = $this->service->buscarPorNomeOuCodigo($dto, $usuarioId);
+        $result = $this->service->buscarPorNomeOuCodigo($dto);
 
         expect($result)->toHaveCount(0);
     });

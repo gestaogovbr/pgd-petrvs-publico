@@ -15,34 +15,29 @@ describe('UnidadeBuscaDTO', function () {
         $dto = UnidadeBuscaDTO::fromArray([]);
 
         expect($dto->termo)->toBeNull()
-            ->and($dto->hierarquia)->toBeTrue()
             ->and($dto->todos)->toBeFalse();
     });
 
     test('extrai todos os campos corretamente', function () {
         $dto = UnidadeBuscaDTO::fromArray([
             'nome_codigo' => 'Financeiro',
-            'hierarquia' => false,
             'todos' => true,
         ]);
 
         expect($dto->termo)->toBe('Financeiro')
-            ->and($dto->hierarquia)->toBeFalse()
             ->and($dto->todos)->toBeTrue();
     });
 
-    test('converte hierarquia e todos para boolean', function () {
+    test('converte todos para boolean', function () {
         $dto = UnidadeBuscaDTO::fromArray([
-            'hierarquia' => 1,
             'todos' => 0,
         ]);
 
-        expect($dto->hierarquia)->toBeTrue()
-            ->and($dto->todos)->toBeFalse();
+        expect($dto->todos)->toBeFalse();
     });
 
     test('termo null quando não informado', function () {
-        $dto = UnidadeBuscaDTO::fromArray(['hierarquia' => true]);
+        $dto = UnidadeBuscaDTO::fromArray(['todos' => true]);
 
         expect($dto->termo)->toBeNull();
     });
@@ -50,13 +45,11 @@ describe('UnidadeBuscaDTO', function () {
     test('toArray retorna array com todos os campos', function () {
         $dto = UnidadeBuscaDTO::fromArray([
             'nome_codigo' => 'Coord',
-            'hierarquia' => false,
             'todos' => true,
         ]);
 
         expect($dto->toArray())->toBe([
             'nome_codigo' => 'Coord',
-            'hierarquia' => false,
             'todos' => true,
         ]);
     });

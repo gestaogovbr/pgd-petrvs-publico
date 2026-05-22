@@ -8,7 +8,6 @@ class UnidadeBuscaDTO
 {
     public function __construct(
         public readonly ?string $termo,
-        public readonly bool $hierarquia,
         public readonly bool $todos,
     ) {}
 
@@ -16,7 +15,6 @@ class UnidadeBuscaDTO
     {
         return new self(
             termo: $data['nome_codigo'] ?? null,
-            hierarquia: (bool) ($data['hierarquia'] ?? true),
             todos: (bool) ($data['todos'] ?? false),
         );
     }
@@ -25,7 +23,6 @@ class UnidadeBuscaDTO
     {
         return [
             'nome_codigo' => $this->termo,
-            'hierarquia' => $this->hierarquia,
             'todos' => $this->todos,
         ];
     }

@@ -25,7 +25,10 @@ class UsuarioController extends Controller
     {
         try {
             $data = UsuarioValidacoes::buscarPorNomeMatricula($request);
-            $result = $this->service->buscarPorNomeOuMatricula($data['nome_matricula']);
+            $result = $this->service->buscarPorNomeOuMatricula(
+                $data['nome_matricula'],
+                $data['unidade_id'] ?? null,
+            );
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], $e->status);

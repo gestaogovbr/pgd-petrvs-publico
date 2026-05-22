@@ -76,6 +76,8 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.formStatus() === 'VALID' && !!this.programaId() && !this.saving()
   );
 
+  readonly agentePublicoSomenteLeitura = computed(() => this.auth.isUsuarioParticipante());
+
   // TODO: definir comportamento quando usuario.modalidade_pgd é null (sem registro no SIAPE).
   // Atualmente trata como divergente, exigindo justificativa.
   readonly modalidadeDivergente = computed(() => {
@@ -119,7 +121,12 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
         take(1),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(usuario => this.preselectUsuario(usuario));
+      .subscribe(usuario => {
+        this.preselectUsuario(usuario);
+        if (this.auth.isUsuarioParticipante()) {
+          this.agentePublicoQuery.disable({ emitEvent: false });
+        }
+      });
 
     this.agentePublicoQuery.valueChanges.pipe(
       debounceTime(250),
@@ -160,6 +167,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   }
 
   limparUsuarioSelecionado() {
+    if (this.agentePublicoSomenteLeitura()) return;
     this.unidades.set([]);
     this.programaId.set('');
     this.programaNome.set('');
@@ -212,13 +220,17 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   private buscarUsuarios(term: string) {
     const value = term.trim();
-    if (value.length < 3) return of([] as UsuarioSearchItem[]);
-    return this.usuarioService.searchByNomeMatricula(value);
+    if (value.length < 3 || this.agentePublicoSomenteLeitura()) {
+      return of([] as UsuarioSearchItem[]);
+    }
+    return this.usuarioService.searchByNomeMatricula(value, this.auth.unidade?.id);
   }
 
   private preselectUsuario(usuario: Usuario) {
     if (!usuario.id || !usuario.nome) return;
-    if (usuario.perfil?.nivel === Perfil.NIVEL.COLABORADOR) return;
+    if (!this.auth.isUsuarioParticipante() && usuario.perfil?.nivel === Perfil.NIVEL.COLABORADOR) {
+      return;
+    }
     this.form.controls.usuario_id.setValue(usuario.id);
     this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
     void this.carregarUnidades(usuario);

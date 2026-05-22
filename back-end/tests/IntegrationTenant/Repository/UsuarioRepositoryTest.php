@@ -399,6 +399,39 @@ test('findAllByNomeMatricula busca parcial', function () {
     expect($result->contains('id', $u2->id))->toBeTrue();
 });
 
+test('findAllByNomeMatricula filtra por unidade de lotacao', function () {
+    $unidadeA = Unidade::factory()->create();
+    $unidadeB = Unidade::factory()->create();
+
+    $usuarioA = Usuario::factory()->create([
+        'nome' => 'Agente Unidade A',
+        'matricula' => '700001',
+        'perfil_id' => $this->perfilId,
+    ]);
+    $usuarioB = Usuario::factory()->create([
+        'nome' => 'Agente Unidade B',
+        'matricula' => '700002',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    foreach ([[$usuarioA, $unidadeA], [$usuarioB, $unidadeB]] as [$usuario, $unidade]) {
+        $integrante = new UnidadeIntegrante();
+        $integrante->usuario_id = $usuario->id;
+        $integrante->unidade_id = $unidade->id;
+        $integrante->save();
+
+        $atribuicao = new UnidadeIntegranteAtribuicao();
+        $atribuicao->unidade_integrante_id = $integrante->id;
+        $atribuicao->atribuicao = 'LOTADO';
+        $atribuicao->save();
+    }
+
+    $result = $this->repository->findAllByNomeMatricula('Agente Unidade', $unidadeA->id);
+
+    expect($result->contains('id', $usuarioA->id))->toBeTrue();
+    expect($result->contains('id', $usuarioB->id))->toBeFalse();
+});
+
 test('createAndUpdate', function () {
     $attributes = [
         'nome' => 'Novo Usuário',

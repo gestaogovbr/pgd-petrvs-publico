@@ -19,11 +19,11 @@ test('buscarPorNomeOuMatricula delega ao repository e retorna collection', funct
     $repo = Mockery::mock(UsuarioRepository::class);
     $repo->shouldReceive('findAllByNomeMatricula')
         ->once()
-        ->with('João')
+        ->with('João', 'unidade-1')
         ->andReturn($expected);
 
     $service = new UsuarioService($repo);
-    $result = $service->buscarPorNomeOuMatricula('João');
+    $result = $service->buscarPorNomeOuMatricula('João', 'unidade-1');
 
     expect($result)->toBe($expected);
 })->group('v2-usuario');

@@ -23,9 +23,11 @@
               <div class="d-flex align-items-end gap-2">
                 <div class="br-input w-100">
                   <label>Agente Público</label>
-                  <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" />
+                  <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" [readonly]="agentePublicoSomenteLeitura()" />
                 </div>
-                <br-button type="button" emphasis="secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+                @if (!agentePublicoSomenteLeitura()) {
+                  <br-button type="button" emphasis="secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+                }
               </div>
               @if (sugestoesUsuarios().length > 0) {
                 <div class="br-card position-absolute w-100" style="z-index: 1050;">
@@ -99,7 +101,7 @@
         @if (mostrandoFormEntrega()) {
           <div class="p-3 mb-4 border rounded" style="background-color: var(--color-secondary-01);">
             <h6 class="mb-3 text-weight-semi-bold">
-              {{ entregaForm.value.id ? 'Editar Entrega' : 'Nova Entrega' }}
+              {{ entregaForm.value.id ? 'Editar Contribuição' : 'Nova Contribuição' }}
             </h6>
 
             <form [formGroup]="entregaForm">
@@ -107,7 +109,7 @@
 
                 <!-- Origem -->
                 <div class="col-md-3 mb-3">
-                  <br-select label="Origem da Entrega" formControlName="origem" [options]="origemSelectOptions()" />
+                  <br-select label="Origem" formControlName="origem" [options]="origemSelectOptions()" />
                 </div>
 
                 <!-- OUTRA_UNIDADE: busca de unidade com autocomplete -->
@@ -217,7 +219,7 @@
               <div class="d-flex justify-content-end gap-2 mt-2">
                 <br-button emphasis="secondary" (click)="cancelarEntrega()">Cancelar</br-button>
                 <br-button emphasis="primary" (click)="salvarEntrega()" [disabled]="entregaForm.invalid || salvandoEntrega()">
-                  {{ salvandoEntrega() ? 'Salvando...' : 'Salvar Entrega' }}
+                  {{ salvandoEntrega() ? 'Salvando...' : 'Salvar Contribuição' }}
                 </br-button>
               </div>
             </form>
@@ -246,10 +248,10 @@
                     <td>{{ e.descricao }}</td>
                     <td>
                       <div class="d-flex gap-1">
-                        <br-button type="button" shape="circle" emphasis="tertiary" (click)="editarEntrega(e)" title="Editar" ariaLabel="Editar entrega">
+                        <br-button type="button" shape="circle" emphasis="tertiary" (click)="editarEntrega(e)" title="Editar" ariaLabel="Editar Contribuição">
                           <i class="fas fa-pen"></i>
                         </br-button>
-                        <br-button type="button" shape="circle" emphasis="tertiary"  (click)="removerEntrega(e)" title="Excluir" ariaLabel="Excluir entrega">
+                        <br-button type="button" shape="circle" emphasis="tertiary"  (click)="removerEntrega(e)" title="Excluir" ariaLabel="Excluir Contribuição">
                           <i class="fas fa-trash "></i>
                         </br-button>
                       </div>
@@ -257,7 +259,7 @@
                   </tr>
                 } @empty {
                   <tr>
-                    <td colspan="5" class="text-center p-3">Nenhuma entrega cadastrada no planejamento</td>
+                    <td colspan="5" class="text-center p-3">Nenhuma contribuição cadastrada no planejamento</td>
                   </tr>
                 }
               </tbody>

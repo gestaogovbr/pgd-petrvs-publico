@@ -15,8 +15,8 @@ class UnidadeService
         $this->unidadeRepository = $unidadeRepository;
     }
 
-    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto, string $usuarioId): Collection
+    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection
     {
-        return $this->unidadeRepository->buscarPorNomeOuCodigoNaHierarquia($dto, $usuarioId);
+        return $this->unidadeRepository->buscarPorNomeOuCodigo($dto);
     }
 }
