@@ -11,7 +11,9 @@ import { DocumentoApiClient } from "../infra/documento-api.client";
 import { PlanoTrabalho } from "../domain/types";
 import { AuthService } from "src/app/services/auth.service";
 import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
+import { mensagemConfirmacaoAssinaturaPlano } from "../application/plano-trabalho-assinatura.messages";
 import { MessageService } from "src/app/v2/services/message.service";
+import { UnidadeService } from "src/app/v2/services/unidade.service";
 
 @Component({
   selector: 'app-plano-trabalho-v2-tcr-page',
@@ -28,6 +30,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   readonly policy = inject(PlanoTrabalhoPolicy);
   private readonly message = inject(MessageService);
+  private readonly unidadeService = inject(UnidadeService);
 
   readonly planoId = signal<string | null>(null);
   readonly plano = signal<PlanoTrabalho | null>(null);
@@ -88,6 +91,20 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
   assinar() {
     const id = this.planoId();
     if (!id || this.salvando()) return;
+
+    const plano = this.plano();
+    const mensagem = mensagemConfirmacaoAssinaturaPlano(
+      this.documento()?.assinaturas ?? [],
+      this.usuarioAtualId,
+      {
+        plano,
+        usuarioLogadoEhGestorUnidadeSuperiorAoPlano: this.unidadeService.isGestorUnidade(
+          plano?.unidade?.unidade_pai_id ?? null,
+        ),
+      },
+    );
+    if (!confirm(mensagem)) return;
+
     this.salvando.set(true);
     this.documentoApi.assinarDocumento(id).pipe(
       finalize(() => this.salvando.set(false))
@@ -99,7 +116,6 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
           : doc
         );
         this.jaAssinou.set(true);
-        this.plano.update(p => p ? { ...p, status: 'AGUARDANDO_ASSINATURA' } as any : p);
       },
       error: (err: HttpErrorResponse) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao assinar o documento.')
     });

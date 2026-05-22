@@ -4019,9 +4019,12 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `sequence_documento_numero`()
 BEGIN
 
-                UPDATE sequences SET documento_numero = documento_numero + 1;
+                UPDATE sequences SET documento_numero = GREATEST(
+                    IFNULL((SELECT MAX(numero) FROM documentos), 0),
+                    documento_numero
+                ) + 1;
 
-                SELECT documento_numero AS number FROM sequences;
+                SELECT documento_numero AS number FROM sequences LIMIT 1;
 
             END ;;
 DELIMITER ;
