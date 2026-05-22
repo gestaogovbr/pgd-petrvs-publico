@@ -13,9 +13,9 @@ use App\V2\Planejamento\TipoObjetivo\Validators\TipoPlanejamentoObjetivoStoreVal
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Mockery;
-use Tests\TestCase;
+//use Tests\TestCase;
 
-uses(TestCase::class);
+//uses(TestCase::class);
 
 afterEach(function () {
     Mockery::close();

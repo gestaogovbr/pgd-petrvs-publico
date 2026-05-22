@@ -146,6 +146,16 @@ header.br-header {
     }
   }
 
+  /* Peso médio só no nível 1 (Home, links e pastas). */
+  .menu-body > .menu-item > .menu-text,
+  .menu-body > .menu-folder > .menu-item > .menu-text {
+    font-weight: 500;
+  }
+
+  .menu-body > .menu-folder.expanded > .menu-item > .menu-text {
+    font-weight: 700;
+  }
+
   // Folder (grupo colapsável)
   .menu-folder {
     > ul {
@@ -169,11 +179,6 @@ header.br-header {
 
     &.expanded > ul {
       display: block;
-    }
-
-    /* Negrito só no rótulo do nível 1 quando a pasta está aberta (não nos subitens). */
-    &.expanded > .menu-item > .menu-text {
-      font-weight: 700;
     }
   }
 

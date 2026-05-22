@@ -62,6 +62,11 @@ class UnidadeIntegranteRepository
         return $this->readRepository->findAllByUsuario($usuarioId);
     }
 
+    public function findAllComAtribuicoesAtivasByUsuario(string $usuarioId): Collection
+    {
+        return $this->readRepository->findAllComAtribuicoesAtivasByUsuario($usuarioId);
+    }
+
     public function countLotadosByUnidade(string $unidadeId): int
     {
         return $this->readRepository->countLotadosByUnidade($unidadeId);
