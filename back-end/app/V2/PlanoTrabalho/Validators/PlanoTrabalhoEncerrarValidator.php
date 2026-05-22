@@ -38,6 +38,10 @@ class PlanoTrabalhoEncerrarValidator
             throw new ValidateException('Apenas planos com status ATIVO podem ser encerrados.');
         }
 
+        if ($plano->data_fim < now()->format('Y-m-d')) {
+            throw new ValidateException('Não é possível encerrar antecipadamente um plano cuja vigência já expirou.');
+        }
+
         $this->validarAutorizacao($plano, $usuarioLogadoId);
 
         return $plano;

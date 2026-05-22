@@ -994,6 +994,17 @@ describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
             'justificativa' => 'Tentativa.',
         ])->assertStatus(404);
     });
+
+    test('retorna 422 quando vigência já expirou', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivoComConsolidacoes($this);
+        $plano->update(['data_fim' => now()->subDay()->format('Y-m-d')]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
+            'justificativa' => 'Tentativa de encerrar plano expirado.',
+        ])->assertStatus(422)
+          ->assertJsonPath('error', 'Não é possível encerrar antecipadamente um plano cuja vigência já expirou.');
+    });
 });
 
 // ── PATCH arquivar ──────────────────────────────────────────────────
