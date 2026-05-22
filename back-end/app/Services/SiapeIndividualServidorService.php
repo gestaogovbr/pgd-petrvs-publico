@@ -174,7 +174,7 @@ class SiapeIndividualServidorService extends ServiceBase
                 $dadosRelatorio,
                 $msgErro
             );
-            throw new \Exception($msgErro);
+            throw new Exception($msgErro);
         }
     }
 
