@@ -38,7 +38,9 @@ export class PlanoTrabalhoPolicy {
   }
 
   podeEncerrar(p: PlanoTrabalho): boolean {
+    const hoje = new Date().toISOString().split('T')[0];
     return p.status === PlanoTrabalhoStatus.ATIVO
+      && String(p.data_fim).slice(0, 10) >= hoje
       && (p.usuario_id === this.auth.usuario?.id
         || this.unidadeService.isGestorUnidade(p.unidade_id)
         || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
@@ -46,7 +48,9 @@ export class PlanoTrabalhoPolicy {
 
   podeExcluir(p: PlanoTrabalho): boolean {
     return PlanoTrabalhoStatusGroups.excluivel.includes(p.status)
-      && p.usuario_id === this.auth.usuario?.id;
+      && (p.usuario_id === this.auth.usuario?.id
+        || this.unidadeService.isGestorUnidade(p.unidade_id)
+        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
   }
 
   podeClonar(p: PlanoTrabalho): boolean {
