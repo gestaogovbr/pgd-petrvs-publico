@@ -1,0 +1,6 @@
+interface:
+  display_name: "Petrvs Issue Regression Tests"
+  short_description: "Cria regressões tenant antes da correção"
+  default_prompt: "Use $petrvs-issue-regression-tests to create focused backend tenant regression tests for this issue before changing production code."
+policy:
+  allow_implicit_invocation: true
