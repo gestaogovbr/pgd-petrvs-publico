@@ -71,6 +71,9 @@
 - Use `petrvs-pest-testing` para testes Pest e decisões entre Unit e Integration.
 - Use `petrvs-phpstan-quality` para tipos Larastan/PHPStan e limpeza de PHPDoc.
 - Use `petrvs-siape-integracao` para SIAPE, gestores, servidores, unidades, lotação e logs de integração.
+- Use `petrvs-issue-commenter` para redigir ou publicar comentários em issues, sempre com aprovação explícita antes de publicar.
+- Use `petrvs-issue-triage-docs` para criar/atualizar `docs/issues` e separar hipóteses confirmadas, secundárias e cenários não resolvidos.
+- Use `petrvs-issue-regression-tests` quando o usuário autorizar criar testes de regressão E2E backend tenant a partir da triagem da issue.
 - Use `petrvs-code-review` para revisão de segurança/performance/padrões.
 - Use `petrvs-tech-docs` para ADRs, documentação de API, runbooks e notas de arquitetura.
 - Use `petrvs-angular-ui` para UI Angular 21 e trabalho em services.
