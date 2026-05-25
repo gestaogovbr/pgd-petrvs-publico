@@ -74,7 +74,7 @@
           </div>
           <div class="col-md-3 mb-3">
             <p class="mb-1 text-weight-semi-bold text-up-01">Status</p>
-            <p class="mb-0">{{ statusLabel(planoTrabalho()?.status) }}</p>
+            <p class="mb-0">{{ statusLabel(assinatura.plano()?.status || planoTrabalho()?.status) }}</p>
           </div>
         </div>
         @if (planoTrabalho()?.justificativa_modalidade) {
@@ -82,6 +82,14 @@
             <div class="col-md-12">
               <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa da divergência da modalidade</p>
               <p class="mb-0">{{ planoTrabalho()?.justificativa_modalidade }}</p>
+            </div>
+          </div>
+        }
+        @if (planoTrabalho()?.justificativa) {
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa da carga horária</p>
+              <p class="mb-0">{{ planoTrabalho()?.justificativa }}</p>
             </div>
           </div>
         }

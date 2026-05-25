@@ -22,7 +22,7 @@ export class AssinarPlanoUseCase {
   readonly salvando = signal(false);
   readonly justificativaCHD = signal('');
 
-  private plano = signal<PlanoTrabalho | null>(null);
+  readonly plano = signal<PlanoTrabalho | null>(null);
   private entregas = signal<any[]>([]);
   private onDocumentoCriado: (() => void) | null = null;
 
@@ -115,6 +115,8 @@ export class AssinarPlanoUseCase {
           : doc
         );
         this.jaAssinou.set(false);
+        const remaining = (this.documento()?.assinaturas ?? []).length;
+        this.plano.update(p => p ? { ...p, status: remaining > 0 ? 'AGUARDANDO_ASSINATURA' : 'INCLUIDO' } as any : p);
       },
       error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao cancelar a assinatura.')
     });
