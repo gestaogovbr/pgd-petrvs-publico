@@ -25,6 +25,7 @@ export class AssinarPlanoUseCase {
   readonly plano = signal<PlanoTrabalho | null>(null);
   private entregas = signal<any[]>([]);
   private onDocumentoCriado: (() => void) | null = null;
+  onAfterAssinar: (() => void) | null = null;
 
   readonly totalCHD = computed(() =>
     this.entregas().reduce((sum: number, e: any) => sum + (Number(e.forca_trabalho) || 0), 0)
@@ -93,6 +94,7 @@ export class AssinarPlanoUseCase {
           }
         ) ? 'ATIVO' : 'AGUARDANDO_ASSINATURA';
         this.plano.update(pl => pl ? { ...pl, status: novoStatus } as any : pl);
+        this.onAfterAssinar?.();
       },
       error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao assinar o documento.')
     });

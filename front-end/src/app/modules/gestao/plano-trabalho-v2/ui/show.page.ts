@@ -66,6 +66,10 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
           this.loading.set(false);
           this.assinatura.init(plano, plano.entregas || []);
+          this.assinatura.onAfterAssinar = () => {
+            this.planoTrabalho.update(p => p ? { ...p, status: this.assinatura.plano()?.status ?? p.status } as any : p);
+            this.facade.loadConsolidacoes();
+          };
         },
         error: () => {
           this.error.set('Erro ao carregar o plano de trabalho.');
@@ -82,7 +86,8 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   podeVisualizarConsolidacoes(): boolean {
     const plano = this.planoTrabalho();
     if (!plano) return false;
-    return PlanoTrabalhoStatusGroups.comExecucaoVisivel.includes(plano.status);
+    const status = this.assinatura.plano()?.status || plano.status;
+    return PlanoTrabalhoStatusGroups.comExecucaoVisivel.includes(status);
   }
 
   todasEntregasComAtividade(consolidacao: Consolidacao): boolean {
