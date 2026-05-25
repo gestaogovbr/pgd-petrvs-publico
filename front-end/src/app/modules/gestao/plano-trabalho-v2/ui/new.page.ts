@@ -223,7 +223,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     if (value.length < 3 || this.agentePublicoSomenteLeitura()) {
       return of([] as UsuarioSearchItem[]);
     }
-    return this.usuarioService.searchByNomeMatricula(value, this.auth.unidade?.id);
+    return this.usuarioService.searchByNomeMatricula(value);
   }
 
   private preselectUsuario(usuario: Usuario) {

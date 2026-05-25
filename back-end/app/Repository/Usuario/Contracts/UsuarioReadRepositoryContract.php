@@ -26,6 +26,8 @@ interface UsuarioReadRepositoryContract
     public function search(array $params, int $limit = 0);
     public function findByMatricula(string $matricula): ?Usuario;
     public function findAllByNomeMatricula(string $nomeMatricula, ?string $unidadeId = null): Collection;
+    public function findAgentesPublicosNoEscopoCadastrante(string $nomeMatricula, string $cadastranteId, int $limite = 50): Collection;
+    public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool;
     public function findByEmail(string $email): ?Usuario;
     public function findActivesByCpf(string $cpf): Collection;
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario;

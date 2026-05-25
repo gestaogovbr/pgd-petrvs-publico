@@ -11,11 +11,9 @@ class UsuarioValidacoes
     {
         return $request->validate([
             'nome_matricula' => ['required', 'string', 'min:3'],
-            'unidade_id' => ['sometimes', 'nullable', 'uuid'],
         ], [
             'nome_matricula.required' => 'O nome ou matrícula é obrigatório para a busca.',
             'nome_matricula.min' => 'O termo deve ter ao menos 3 caracteres.',
-            'unidade_id.uuid' => 'O valor informado para a unidade é inválido.',
         ]);
     }
 

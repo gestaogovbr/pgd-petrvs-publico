@@ -5,6 +5,7 @@ namespace Tests\IntegrationTenant\Controllers\V2;
 use App\V2\Usuario\UsuarioController;
 use App\V2\Usuario\UsuarioService;
 use App\Models\Usuario;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Route;
 use Mockery;
 
@@ -59,10 +60,10 @@ test('v2 usuario buscarPorNomeMatricula retorna 200 com service mockado', functi
     $this->actingAs($usuario, 'web');
 
     $this->mock(UsuarioService::class, function ($mock) {
-        $mock->shouldReceive('buscarPorNomeOuMatricula')
+        $mock->shouldReceive('buscarAgentesPublicosNoEscopoCadastrante')
             ->once()
-            ->with('João')
-            ->andReturn([['id' => fake()->uuid(), 'nome' => 'João Silva']]);
+            ->with('João', Mockery::type('string'))
+            ->andReturn(new Collection([['id' => fake()->uuid(), 'nome' => 'João Silva']]));
     });
 
     $response = $this->getJson('/api/__tests/v2/usuario?nome_matricula=João');
@@ -79,7 +80,7 @@ test('v2 usuario buscarPorNomeMatricula retorna 500 quando service lança exceç
     $this->actingAs($usuario, 'web');
 
     $this->mock(UsuarioService::class, function ($mock) {
-        $mock->shouldReceive('buscarPorNomeOuMatricula')
+        $mock->shouldReceive('buscarAgentesPublicosNoEscopoCadastrante')
             ->andThrow(new \RuntimeException('Erro de conexão com o banco.'));
     });
 

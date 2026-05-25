@@ -93,6 +93,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   mostrandoFormEntrega = signal(false);
   salvandoEntrega = signal(false);
+  editandoInformacoesGerais = signal(false);
 
   readonly totalForcaTrabalho = computed(() =>
     this.entregas().reduce((sum: number, e: any) => sum + (Number(e.forca_trabalho) || 0), 0)
@@ -142,6 +143,26 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   // TODO: definir comportamento quando usuario.modalidade_pgd é null (sem registro no SIAPE).
   // Atualmente trata como divergente, exigindo justificativa.
+  readonly agenteExibicao = computed(() =>
+    this.agentePublicoQuery.value || this.plano()?.usuario?.nome || '-'
+  );
+
+  readonly unidadeExibicao = computed(() => {
+    const plano = this.plano();
+    if (plano?.unidade?.sigla) return plano.unidade.sigla;
+    const id = this.selectedUnidadeId();
+    return this.unidades().find(u => `${u.id}` === id)?.sigla ?? '-';
+  });
+
+  readonly modalidadeExibicao = computed(() => {
+    const plano = this.plano();
+    if (plano?.modalidade_pgd_label) {
+      return plano.modalidade_pgd_label;
+    }
+    const key = this.selectedModalidadeId() || this.form.controls.modalidade_pgd.value;
+    return this.modalidades().find(m => m.key === key)?.value ?? '-';
+  });
+
   readonly modalidadeDivergente = computed(() => {
     const selecionada = this.selectedModalidadeId();
     const doUsuario = this.usuarioModalidadePgd();
@@ -234,26 +255,9 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     ).subscribe(async plano => {
       this.plano.set(plano);
       this.entregas.set(plano.entregas || []);
-      this.form.controls.data_inicio.setValue(plano.data_inicio ? new Date(plano.data_inicio).toISOString().split('T')[0] : '');
-      this.form.controls.data_fim.setValue(plano.data_fim ? new Date(plano.data_fim).toISOString().split('T')[0] : '');
       this.form.controls.justificativa.setValue(plano.justificativa || '');
-      this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '');
-
-      if (plano.usuario_id) {
-        const usuario = await firstValueFrom(this.usuarioService.getById(plano.usuario_id));
-        this.form.controls.usuario_id.setValue(usuario.id);
-        this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
-        await this.carregarUnidades(usuario);
-        this.selectedUnidadeId.set(plano.unidade_id ?? '');
-        this.form.controls.unidade_id.setValue(plano.unidade_id);
-        this.selectedModalidadeId.set(plano.modalidade_pgd ?? '');
-        this.form.controls.modalidade_pgd.setValue(plano.modalidade_pgd ?? '');
-        this.carregarPlanosUnidade(plano.unidade_id);
-      }
+      await this.aplicarInformacoesGeraisDoPlano(plano);
       this.loading.set(false);
-      if (this.auth.isUsuarioParticipante()) {
-        this.agentePublicoQuery.disable({ emitEvent: false });
-      }
     });
 
     this.agentePublicoQuery.valueChanges.pipe(
@@ -405,6 +409,26 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     this.form.controls.modalidade_pgd.setValue('');
   }
 
+  abrirEdicaoInformacoesGerais(): void {
+    this.editandoInformacoesGerais.set(true);
+  }
+
+  cancelarEdicaoInformacoesGerais(): void {
+    const plano = this.plano();
+    if (plano) {
+      void this.aplicarInformacoesGeraisDoPlano(plano);
+    }
+    this.sugestoesUsuarios.set([]);
+    this.editandoInformacoesGerais.set(false);
+  }
+
+  salvarInformacoesGerais(): void {
+    this.salvarPlano(() => {
+      this.message.success('Informações gerais salvas com sucesso.');
+      this.editandoInformacoesGerais.set(false);
+    });
+  }
+
   salvar() {
     this.salvarPlano(() => this.message.success('Plano de trabalho salvo com sucesso.'));
   }
@@ -442,8 +466,11 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     this.saving.set(true);
     this.api.update(this.planoId()!, payload)
       .pipe(finalize(() => this.saving.set(false)))
-      .subscribe((updated) => {
-        if (updated) this.plano.set(updated);
+      .subscribe(async (updated) => {
+        if (updated) {
+          this.plano.set(updated);
+          await this.aplicarInformacoesGeraisDoPlano(updated);
+        }
         onSuccess();
       });
   }
@@ -647,6 +674,45 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     }));
   }
 
+  private async aplicarInformacoesGeraisDoPlano(plano: PlanoTrabalho): Promise<void> {
+    this.form.controls.data_inicio.setValue(
+      plano.data_inicio ? new Date(plano.data_inicio).toISOString().split('T')[0] : '',
+      { emitEvent: false }
+    );
+    this.form.controls.data_fim.setValue(
+      plano.data_fim ? new Date(plano.data_fim).toISOString().split('T')[0] : '',
+      { emitEvent: false }
+    );
+    this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '', { emitEvent: false });
+
+    if (plano.usuario_id) {
+      const usuario = await firstValueFrom(this.usuarioService.getById(plano.usuario_id));
+      this.form.controls.usuario_id.setValue(usuario.id, { emitEvent: false });
+      this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
+      await this.carregarUnidades(usuario);
+      this.selectedUnidadeId.set(plano.unidade_id ?? '');
+      this.form.controls.unidade_id.setValue(plano.unidade_id ?? '', { emitEvent: false });
+      this.selectedModalidadeId.set(plano.modalidade_pgd ?? '');
+      this.form.controls.modalidade_pgd.setValue(plano.modalidade_pgd ?? '', { emitEvent: false });
+      if (plano.unidade_id) {
+        this.carregarPlanosUnidade(plano.unidade_id);
+      }
+    }
+
+    if (plano.programa?.nome) {
+      this.programaNome.set(plano.programa.nome);
+      this.programaId.set(plano.programa_id ?? plano.programa.id ?? '');
+    } else if (plano.unidade_id) {
+      await this.carregarRegramento(plano.unidade_id);
+    }
+
+    if (this.auth.isUsuarioParticipante()) {
+      this.agentePublicoQuery.disable({ emitEvent: false });
+    } else {
+      this.agentePublicoQuery.enable({ emitEvent: false });
+    }
+  }
+
   private async carregarRegramento(unidadeId: string) {
     if (this.carregandoRegramento()) return;
     this.carregandoRegramento.set(true);
@@ -666,7 +732,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     if (value.length < 3 || this.agentePublicoSomenteLeitura()) {
       return of([] as UsuarioSearchItem[]);
     }
-    return this.usuarioService.searchByNomeMatricula(value, this.auth.unidade?.id);
+    return this.usuarioService.searchByNomeMatricula(value);
   }
 
   private async carregarUnidades(usuario: Usuario) {

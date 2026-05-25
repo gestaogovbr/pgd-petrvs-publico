@@ -124,6 +124,16 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findAllByNomeMatricula($nomeMatricula, $unidadeId);
     }
 
+    public function findAgentesPublicosNoEscopoCadastrante(string $nomeMatricula, string $cadastranteId, int $limite = 50): Collection
+    {
+        return $this->readRepository->findAgentesPublicosNoEscopoCadastrante($nomeMatricula, $cadastranteId, $limite);
+    }
+
+    public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool
+    {
+        return $this->readRepository->agenteEstaLotadoOuVinculadoNaUnidade($agenteId, $unidadeId);
+    }
+
     public function findByEmail(string $email): ?Usuario
     {
         return $this->readRepository->findByEmail($email);

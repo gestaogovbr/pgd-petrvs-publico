@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repository\Usuario\Eloquent;
 
+use App\Enums\Atribuicao;
+use App\Enums\PerfilEnum;
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\Interfaces\EnvioReadRepositoryInterface;
 use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,8 +28,11 @@ use Illuminate\Support\Collection as SupportCollection;
  */
 class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository implements UsuarioReadRepositoryContract, EnvioReadRepositoryInterface
 {
-    public function __construct(Usuario $model)
-    {
+    public function __construct(
+        Usuario $model,
+        private readonly UnidadeRepository $unidadeRepository,
+        private readonly UnidadeIntegranteRepository $unidadeIntegranteRepository,
+    ) {
         $this->model = $model;
     }
 
@@ -218,6 +225,76 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         }
 
         return $query->with(['lotacao'])->get();
+    }
+
+    public function findAgentesPublicosNoEscopoCadastrante(string $nomeMatricula, string $cadastranteId, int $limite = 50): Collection
+    {
+        $unidadesEscopoIds = $this->resolverUnidadesEscopoCadastrante($cadastranteId);
+        if ($unidadesEscopoIds === []) {
+            /** @var Collection<int, Usuario> */
+            return $this->model->newCollection();
+        }
+
+        $term = '%' . $nomeMatricula . '%';
+        $tabelaUsuarios = $this->model->getTable();
+
+        /** @var Collection<int, Usuario> */
+        return $this->query()
+            ->select(["{$tabelaUsuarios}.id", "{$tabelaUsuarios}.nome", "{$tabelaUsuarios}.matricula", "{$tabelaUsuarios}.cpf"])
+            ->where(function ($q) use ($term, $tabelaUsuarios) {
+                $q->where("{$tabelaUsuarios}.nome", 'like', $term)
+                    ->orWhere("{$tabelaUsuarios}.matricula", 'like', $term);
+            })
+            ->whereHas('perfil', fn ($q) => $q->where('nivel', '<', PerfilEnum::COLABORADOR->value))
+            ->whereHas('areasTrabalho', fn ($q) => $q->whereIn('unidade_id', $unidadesEscopoIds))
+            ->with(['lotacao:id,usuario_id,unidade_id', 'lotacao.unidade:id,unidade_pai_id'])
+            ->limit($limite)
+            ->get();
+    }
+
+    /**
+     * Unidades de atribuição ativa do cadastrante + subordinadas (CTE recursiva, sem path).
+     *
+     * @return list<string>
+     */
+    private function resolverUnidadesEscopoCadastrante(string $cadastranteId): array
+    {
+        $unidadesDiretas = $this->unidadeIntegranteRepository
+            ->findAllComAtribuicoesAtivasByUsuario($cadastranteId)
+            ->pluck('unidade_id')
+            ->toArray();
+
+        $subordinadasIds = $this->unidadeRepository
+            ->getSubordinadasRecursivas($unidadesDiretas)
+            ->pluck('id')
+            ->toArray();
+
+        return array_values(array_unique(array_merge($unidadesDiretas, $subordinadasIds)));
+    }
+
+    public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool
+    {
+        $usuario = $this->query()->find($agenteId);
+        if ($usuario === null) {
+            return false;
+        }
+
+        if ($usuario->lotacao !== null && $usuario->lotacao->unidade_id === $unidadeId) {
+            return true;
+        }
+
+        return $this->query()
+            ->whereKey($agenteId)
+            ->whereHas('areasTrabalho', function ($q) use ($unidadeId) {
+                $q->where('unidade_id', $unidadeId)
+                    ->whereHas('atribuicoes', function ($qAtrib) {
+                        $qAtrib->whereIn('atribuicao', [
+                            Atribuicao::LOTADO->value,
+                            Atribuicao::COLABORADOR->value,
+                        ]);
+                    });
+            })
+            ->exists();
     }
 
     public function findByEmail(?string $email): ?Usuario

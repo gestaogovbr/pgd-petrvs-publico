@@ -3,19 +3,22 @@
 namespace App\V2\Usuario;
 
 use App\Repository\UsuarioRepository;
+use Illuminate\Database\Eloquent\Collection;
 
 class UsuarioService
 {
-    protected UsuarioRepository $usuarioRepository;
+    public function __construct(
+        protected UsuarioRepository $usuarioRepository,
+    ) {}
 
-    public function __construct(UsuarioRepository $usuarioRepository)
+    public function buscarPorNomeOuMatricula(string $nomeMatricula): Collection
     {
-        $this->usuarioRepository = $usuarioRepository;
+        return $this->usuarioRepository->findAllByNomeMatricula($nomeMatricula);
     }
 
-    public function buscarPorNomeOuMatricula(string $nomeMatricula, ?string $unidadeId = null)
+    public function buscarAgentesPublicosNoEscopoCadastrante(string $nomeMatricula, string $cadastranteId): Collection
     {
-        return $this->usuarioRepository->findAllByNomeMatricula($nomeMatricula, $unidadeId);
+        return $this->usuarioRepository->findAgentesPublicosNoEscopoCadastrante($nomeMatricula, $cadastranteId);
     }
 
     public function buscarPorId(string $usuarioId)

@@ -14,78 +14,133 @@
 
     <!-- Informações gerais -->
     <div class="br-card mb-4">
-      <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Informações gerais</div>
+      <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x d-flex justify-content-between align-items-center">
+        <span>Informações gerais</span>
+        @if (!editandoInformacoesGerais() && plano() && policy.podeEditar(plano()!)) {
+          <br-button type="button" emphasis="secondary" (click)="abrirEdicaoInformacoesGerais()" [disabled]="saving()">
+            <i class="fas fa-pen mr-1"></i> Editar
+          </br-button>
+        }
+      </div>
       <div class="card-content">
-        <form [formGroup]="form">
+        @if (!editandoInformacoesGerais()) {
           <div class="row">
-
-            <div class="col-md-4 mb-3 position-relative">
-              <div class="d-flex align-items-end gap-2">
-                <div class="br-input w-100">
-                  <label>Agente Público</label>
-                  <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" [readonly]="agentePublicoSomenteLeitura()" />
-                </div>
-                @if (!agentePublicoSomenteLeitura()) {
-                  <br-button type="button" emphasis="secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
-                }
-              </div>
-              @if (sugestoesUsuarios().length > 0) {
-                <div class="br-card position-absolute w-100" style="z-index: 1050;">
-                  @for (u of sugestoesUsuarios(); track u.id) {
-                    <div class="d-flex justify-content-between align-items-center px-2 py-1 card-content">
-                      <div class="text-truncate">
-                        {{ u.nome }}
-                        @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
-                      </div>
-                      <br-button type="button" emphasis="secondary" (click)="selecionarUsuario(u)">Selecionar</br-button>
-                    </div>
-                  }
-                </div>
-              }
-            </div>
-
             <div class="col-md-4 mb-3">
-              <br-select label="Unidade" formControlName="unidade_id" [options]="unidadesOptions()" />
+              <p class="mb-1 text-weight-semi-bold text-up-01">Agente Público</p>
+              <p class="mb-0">{{ agenteExibicao() }}</p>
             </div>
-
             <div class="col-md-4 mb-3">
-              <div class="br-input">
-                <label>Regramento de Instituição PGD</label>
-                <input type="text" readonly [value]="programaNome()" />
-              </div>
+              <p class="mb-1 text-weight-semi-bold text-up-01">Unidade</p>
+              <p class="mb-0">{{ unidadeExibicao() }}</p>
             </div>
-
+            <div class="col-md-4 mb-3">
+              <p class="mb-1 text-weight-semi-bold text-up-01">Regramento de Instituição PGD</p>
+              <p class="mb-0">{{ programaNome() || plano()?.programa?.nome || '-' }}</p>
+            </div>
           </div>
-
           <div class="row mt-2">
             <div class="col-md-3 mb-3">
-              <div class="br-input">
-                <label>Início</label>
-                <input type="date" formControlName="data_inicio" />
-              </div>
+              <p class="mb-1 text-weight-semi-bold text-up-01">Início</p>
+              <p class="mb-0">{{ plano()?.data_inicio | date:'dd/MM/yyyy' }}</p>
             </div>
             <div class="col-md-3 mb-3">
-              <div class="br-input">
-                <label>Final</label>
-                <input type="date" formControlName="data_fim" />
-              </div>
+              <p class="mb-1 text-weight-semi-bold text-up-01">Final</p>
+              <p class="mb-0">{{ plano()?.data_fim | date:'dd/MM/yyyy' }}</p>
             </div>
             <div class="col-md-6 mb-3">
-              <br-select label="Modalidade" formControlName="modalidade_pgd" [options]="modalidadesOptions()" />
+              <p class="mb-1 text-weight-semi-bold text-up-01">Modalidade</p>
+              <p class="mb-0">{{ modalidadeExibicao() }}</p>
             </div>
           </div>
-
-          @if (modalidadeDivergente()) {
+          @if (plano()?.justificativa_modalidade) {
             <div class="row mt-2">
-              <div class="col-md-12 mb-3">
-                <div class="br-textarea">
-                  <label>Justificativa para modalidade diferente da prevista <span class="text-danger">*</span></label>
-                  <textarea formControlName="justificativa_modalidade" placeholder="Descreva a justificativa para a modalidade escolhida..."></textarea>
-                </div>
+              <div class="col-md-12">
+                <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa para modalidade diferente da prevista</p>
+                <p class="mb-0">{{ plano()?.justificativa_modalidade }}</p>
               </div>
             </div>
           }
-        </form>
+        } @else {
+          <form [formGroup]="form">
+            <div class="row">
+
+              <div class="col-md-4 mb-3 position-relative">
+                <div class="d-flex align-items-end gap-2">
+                  <div class="br-input w-100">
+                    <label>Agente Público</label>
+                    <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" [readonly]="agentePublicoSomenteLeitura()" />
+                  </div>
+                  @if (!agentePublicoSomenteLeitura()) {
+                    <br-button type="button" emphasis="secondary" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+                  }
+                </div>
+                @if (sugestoesUsuarios().length > 0) {
+                  <div class="br-card position-absolute w-100" style="z-index: 1050;">
+                    @for (u of sugestoesUsuarios(); track u.id) {
+                      <div class="d-flex justify-content-between align-items-center px-2 py-1 card-content">
+                        <div class="text-truncate">
+                          {{ u.nome }}
+                          @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
+                        </div>
+                        <br-button type="button" emphasis="secondary" (click)="selecionarUsuario(u)">Selecionar</br-button>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <br-select label="Unidade" formControlName="unidade_id" [options]="unidadesOptions()" />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <div class="br-input">
+                  <label>Regramento de Instituição PGD</label>
+                  <input type="text" readonly [value]="programaNome()" />
+                </div>
+              </div>
+
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-3 mb-3">
+                <div class="br-input">
+                  <label>Início</label>
+                  <input type="date" formControlName="data_inicio" />
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="br-input">
+                  <label>Final</label>
+                  <input type="date" formControlName="data_fim" />
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <br-select label="Modalidade" formControlName="modalidade_pgd" [options]="modalidadesOptions()" />
+              </div>
+            </div>
+
+            @if (modalidadeDivergente()) {
+              <div class="row mt-2">
+                <div class="col-md-12 mb-3">
+                  <div class="br-textarea">
+                    <label>Justificativa para modalidade diferente da prevista <span class="text-danger">*</span></label>
+                    <textarea formControlName="justificativa_modalidade" placeholder="Descreva a justificativa para a modalidade escolhida..."></textarea>
+                  </div>
+                </div>
+              </div>
+            }
+          </form>
+
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <br-button type="button" emphasis="secondary" (click)="cancelarEdicaoInformacoesGerais()" [disabled]="saving()">
+              Cancelar
+            </br-button>
+            <br-button type="button" emphasis="primary" (click)="salvarInformacoesGerais()" [disabled]="!podeSalvar() || saving()">
+              {{ saving() ? 'Salvando...' : 'Salvar' }}
+            </br-button>
+          </div>
+        }
       </div>
     </div>
 

@@ -60,8 +60,12 @@ class PlanoTrabalhoStoreValidator
 
     private function validarAgenteLotadoNasUnidadesDoCriador(PlanoTrabalhoStoreDTO $dto): void
     {
-        if (!$this->unidadeRepository->hasUsuarioLotacao($dto->unidadeId, $dto->usuarioId, true)) {
-            throw new ForbiddenException('O agente público não está lotado ou vinculado nas unidades do usuário logado.');
+        if (!$this->unidadeRepository->hasUsuarioLotacao($dto->unidadeId, $dto->criacaoUsuarioId, true)) {
+            throw new ForbiddenException('A unidade do plano não está no escopo de atuação do usuário logado.');
+        }
+
+        if (!$this->usuarioRepository->agenteEstaLotadoOuVinculadoNaUnidade($dto->usuarioId, $dto->unidadeId)) {
+            throw new ForbiddenException('O agente público não está lotado ou vinculado na unidade do plano.');
         }
     }
 
