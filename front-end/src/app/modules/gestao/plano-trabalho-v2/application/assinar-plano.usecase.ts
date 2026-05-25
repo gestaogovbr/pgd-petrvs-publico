@@ -95,6 +95,7 @@ export class AssinarPlanoUseCase {
         ) ? 'ATIVO' : 'AGUARDANDO_ASSINATURA';
         this.plano.update(pl => pl ? { ...pl, status: novoStatus } as any : pl);
         this.onAfterAssinar?.();
+        this.message.success('Assinatura realizada com sucesso.');
       },
       error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao assinar o documento.')
     });
@@ -121,6 +122,7 @@ export class AssinarPlanoUseCase {
         this.jaAssinou.set(false);
         const remaining = (this.documento()?.assinaturas ?? []).length;
         this.plano.update(p => p ? { ...p, status: remaining > 0 ? 'AGUARDANDO_ASSINATURA' : 'INCLUIDO' } as any : p);
+        this.message.success('Assinatura cancelada com sucesso.');
       },
       error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao cancelar a assinatura.')
     });
