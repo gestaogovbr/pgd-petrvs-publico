@@ -7,7 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
 import { Router } from '@angular/router';
 import { Subject, Subscription, debounceTime } from 'rxjs';
-import { PlanoTrabalho } from '../domain/types';
+import { PlanoTrabalho, planoTrabalhoStatusLabel } from '../domain/types';
 import { PlanoTrabalhoStatus } from 'src/app/models/plano-trabalho.model';
 import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ClonarPlanoUseCase } from '../application/clonar-plano.usecase';
@@ -59,7 +59,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     const current = this.filters.controls.status.value;
     return [
       { value: '', label: 'Todos' },
-      { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Incluído' },
+      { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Rascunho' },
       { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura' },
       { value: PlanoTrabalhoStatus.ATIVO, label: 'Em execução' },
       { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso' },
@@ -254,17 +254,7 @@ readonly filters: FormGroup<{
   }
 
   statusLabel(value: PlanoTrabalhoStatus | undefined, plano?: PlanoTrabalho): string {
-    if (value === 'CONCLUIDO' && plano?.encerrado_at) return 'Encerrado antecipadamente';
-    const labels: Partial<Record<PlanoTrabalhoStatus, string>> = {
-      ATIVO: 'Em execução',
-      INCLUIDO: 'Rascunho',
-      AGUARDANDO_ASSINATURA: 'Aguardando assinatura',
-      SUSPENSO: 'Suspenso',
-      CANCELADO: 'Cancelado',
-      CONCLUIDO: 'Concluído',
-      AVALIADO: 'Avaliado',
-    };
-    return value ? (labels[value] ?? value) : '-';
+    return planoTrabalhoStatusLabel(value, plano);
   }
 
   novoPlano() {

@@ -47,57 +47,41 @@
       <div class="card-content">
         <div class="row">
           <div class="col-md-4 mb-3">
-            <div class="br-input">
-              <label>Agente Público</label>
-              <input type="text" readonly [value]="planoTrabalho()?.usuario?.nome || '-'" />
-            </div>
+            <p class="mb-1 text-weight-semi-bold text-up-01">Agente Público</p>
+            <p class="mb-0">{{ planoTrabalho()?.usuario?.nome || '-' }}</p>
           </div>
           <div class="col-md-4 mb-3">
-            <div class="br-input">
-              <label>Unidade</label>
-              <input type="text" readonly [value]="planoTrabalho()?.unidade?.sigla || '-'" />
-            </div>
+            <p class="mb-1 text-weight-semi-bold text-up-01">Unidade</p>
+            <p class="mb-0">{{ planoTrabalho()?.unidade?.sigla || '-' }}</p>
           </div>
           <div class="col-md-4 mb-3">
-            <div class="br-input">
-              <label>Regramento de Instituição PGD</label>
-              <input type="text" readonly [value]="planoTrabalho()?.programa?.nome || '-'" />
-            </div>
+            <p class="mb-1 text-weight-semi-bold text-up-01">Regramento de Instituição PGD</p>
+            <p class="mb-0">{{ planoTrabalho()?.programa?.nome || '-' }}</p>
           </div>
         </div>
         <div class="row mt-2">
           <div class="col-md-3 mb-3">
-            <div class="br-input">
-              <label>Início</label>
-              <input type="text" readonly [value]="planoTrabalho()?.data_inicio | date:'dd/MM/yyyy'" />
-            </div>
+            <p class="mb-1 text-weight-semi-bold text-up-01">Início</p>
+            <p class="mb-0">{{ planoTrabalho()?.data_inicio | date:'dd/MM/yyyy' }}</p>
           </div>
           <div class="col-md-3 mb-3">
-            <div class="br-input">
-              <label>Final</label>
-              <input type="text" readonly [value]="planoTrabalho()?.data_fim | date:'dd/MM/yyyy'" />
-            </div>
+            <p class="mb-1 text-weight-semi-bold text-up-01">Final</p>
+            <p class="mb-0">{{ planoTrabalho()?.data_fim | date:'dd/MM/yyyy' }}</p>
           </div>
           <div class="col-md-3 mb-3">
-            <div class="br-input">
-              <label>Modalidade</label>
-              <input type="text" readonly [value]="planoTrabalho()?.modalidade_pgd_label || '-'" />
-            </div>
+            <p class="mb-1 text-weight-semi-bold text-up-01">Modalidade</p>
+            <p class="mb-0">{{ planoTrabalho()?.modalidade_pgd_label || '-' }}</p>
           </div>
           <div class="col-md-3 mb-3">
-            <div class="br-input">
-              <label>Status</label>
-              <input type="text" readonly [value]="statusLabel(planoTrabalho()?.status)" />
-            </div>
+            <p class="mb-1 text-weight-semi-bold text-up-01">Status</p>
+            <p class="mb-0">{{ statusLabel(planoTrabalho()?.status) }}</p>
           </div>
         </div>
         @if (planoTrabalho()?.justificativa_modalidade) {
           <div class="row mt-2">
             <div class="col-md-12">
-              <div class="br-textarea">
-                <label>Justificativa da divergência da modalidade</label>
-                <textarea readonly>{{ planoTrabalho()?.justificativa_modalidade }}</textarea>
-              </div>
+              <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa da divergência da modalidade</p>
+              <p class="mb-0">{{ planoTrabalho()?.justificativa_modalidade }}</p>
             </div>
           </div>
         }

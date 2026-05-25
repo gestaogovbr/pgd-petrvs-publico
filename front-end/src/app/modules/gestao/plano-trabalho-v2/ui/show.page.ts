@@ -8,7 +8,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoApiClient } from "../infra/plano-api.client";
 import { ArquivarPlanoUseCase } from "../application/arquivar-plano.usecase";
 import { EncerrarPlanoUseCase } from "../application/encerrar-plano.usecase";
-import { Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo } from "../domain/types";
+import { Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo, planoTrabalhoStatusLabel } from "../domain/types";
 import { PlanoTrabalhoStatus, PlanoTrabalhoStatusGroups } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
 import { UnidadeService } from "src/app/v2/services/unidade.service";
@@ -107,17 +107,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   // --- Labels / Display ---
 
   statusLabel(value: PlanoTrabalhoStatus | undefined): string {
-    if (value === 'CONCLUIDO' && this.planoTrabalho()?.encerrado_at) return 'Encerrado antecipadamente';
-    const labels: Record<PlanoTrabalhoStatus, string> = {
-      ATIVO: 'Em execução',
-      INCLUIDO: 'Incluído',
-      AGUARDANDO_ASSINATURA: 'Aguardando assinatura',
-      SUSPENSO: 'Suspenso',
-      CANCELADO: 'Cancelado',
-      CONCLUIDO: 'Concluído',
-      AVALIADO: 'Avaliado'
-    };
-    return value ? (labels[value] ?? value) : '-';
+    return planoTrabalhoStatusLabel(value, this.planoTrabalho()!);
   }
 
   statusConsolidacaoLabel(value: ConsolidacaoStatus | undefined): string {

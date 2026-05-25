@@ -20,7 +20,7 @@ import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb
 import { MessageService } from 'src/app/v2/services/message.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
-import { PlanoTrabalho, getPlanoEntregaInfo } from '../domain/types';
+import { PlanoTrabalho, getPlanoEntregaInfo, planoTrabalhoStatusLabel } from '../domain/types';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -161,6 +161,11 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     }
     const key = this.selectedModalidadeId() || this.form.controls.modalidade_pgd.value;
     return this.modalidades().find(m => m.key === key)?.value ?? '-';
+  });
+
+  readonly statusLabel = computed(() => {
+    const plano = this.plano();
+    return planoTrabalhoStatusLabel(plano?.status, plano!);
   });
 
   readonly modalidadeDivergente = computed(() => {

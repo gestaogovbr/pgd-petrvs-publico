@@ -47,9 +47,13 @@
               <p class="mb-1 text-weight-semi-bold text-up-01">Final</p>
               <p class="mb-0">{{ plano()?.data_fim | date:'dd/MM/yyyy' }}</p>
             </div>
-            <div class="col-md-6 mb-3">
+            <div class="col-md-3 mb-3">
               <p class="mb-1 text-weight-semi-bold text-up-01">Modalidade</p>
               <p class="mb-0">{{ modalidadeExibicao() }}</p>
+            </div>
+            <div class="col-md-3 mb-3">
+              <p class="mb-1 text-weight-semi-bold text-up-01">Status</p>
+              <p class="mb-0">{{ statusLabel() }}</p>
             </div>
           </div>
           @if (plano()?.justificativa_modalidade) {
