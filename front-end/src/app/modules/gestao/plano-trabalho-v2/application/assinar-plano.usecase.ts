@@ -26,6 +26,7 @@ export class AssinarPlanoUseCase {
   private entregas = signal<any[]>([]);
   private onDocumentoCriado: (() => void) | null = null;
   onAfterAssinar: (() => void) | null = null;
+  onAfterCancelar: (() => void) | null = null;
 
   readonly totalCHD = computed(() =>
     this.entregas().reduce((sum: number, e: any) => sum + (Number(e.forca_trabalho) || 0), 0)
@@ -54,6 +55,7 @@ export class AssinarPlanoUseCase {
     this.entregas.set(entregas ?? plano.entregas ?? []);
     this.documento.set(null);
     this.jaAssinou.set(false);
+    this.salvando.set(false);
     if (plano.documento_id) {
       this.documentoApi.getDocumento(plano.id).subscribe(doc => {
         this.documento.set(doc);
@@ -123,17 +125,18 @@ export class AssinarPlanoUseCase {
         const remaining = (this.documento()?.assinaturas ?? []).length;
         this.plano.update(p => p ? { ...p, status: remaining > 0 ? 'AGUARDANDO_ASSINATURA' : 'INCLUIDO' } as any : p);
         this.message.success('Assinatura cancelada com sucesso.');
+        this.onAfterCancelar?.();
       },
       error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao cancelar a assinatura.')
     });
   }
 
-  /** Gera o TCR. Se CHD ≠ 100%, pede justificativa primeiro via modal. */
+  /** Gera o TCR. Se CHD ≠ 100% e > 0, pede justificativa primeiro via modal. */
   gerarDocumento(onSuccess: () => void) {
     const id = this.plano()?.id;
     if (!id || this.salvando()) return;
     this.onDocumentoCriado = onSuccess;
-    if (this.totalCHD() !== 100) {
+    if (this.totalCHD() > 0 && this.totalCHD() !== 100) {
       this.justificativaCHD.set('');
       this.confirmandoGeracaoTCR.set(true);
     } else {

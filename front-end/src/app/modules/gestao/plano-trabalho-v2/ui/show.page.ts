@@ -165,6 +165,11 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     }
   }
 
+  verTcr() {
+    const id = this.planoTrabalho()?.id;
+    if (id) this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+  }
+
   arquivarPlano() {
     const plano = this.planoTrabalho();
     if (!plano) return;

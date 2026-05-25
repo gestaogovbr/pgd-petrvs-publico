@@ -338,11 +338,11 @@
           <div class="d-flex gap-2">
             @if (!assinatura.jaAssinou()) {
               <br-button emphasis="primary" (click)="assinatura.abrirConfirmacaoAssinatura()" [disabled]="assinatura.salvando()">
-                <i class="fas fa-pen mr-1"></i>Assinar
+                <i class="fas fa-pen-fancy mr-1"></i>Assinar
               </br-button>
             } @else if (assinatura.podeCancelarAssinatura()) {
               <br-button emphasis="secondary" (click)="assinatura.abrirConfirmacaoCancelamento()" [disabled]="assinatura.salvando()">
-                <i class="fas fa-times mr-1"></i>Cancelar Assinatura
+                <i class="fas fa-ban mr-1"></i>Cancelar Assinatura
               </br-button>
             }
           </div>

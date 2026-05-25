@@ -272,15 +272,38 @@ readonly filters: FormGroup<{
   }
 
   assinarPlano(p: PlanoTrabalho) {
+    const chd = Number((p as any).carga_trabalho_total) || 0;
+    this.assinatura.init(p, [{ forca_trabalho: chd }]);
+    this.assinatura.onAfterAssinar = () => this.facade.load();
+    this.assinatura.onAfterCancelar = () => this.facade.load();
     if (p.documento_id) {
-      this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id]);
+      this.assinatura.abrirConfirmacaoAssinatura();
     } else {
-      const chd = Number((p as any).carga_trabalho_total) || 0;
-      this.assinatura.init(p, [{ forca_trabalho: chd }]);
-      this.assinatura.gerarDocumento(() =>
-        this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id])
-      );
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'consultar', p.id]);
     }
+  }
+
+  cancelarAssinaturaPlano(p: PlanoTrabalho) {
+    const chd = Number((p as any).carga_trabalho_total) || 0;
+    this.assinatura.init(p, [{ forca_trabalho: chd }]);
+    this.assinatura.onAfterCancelar = () => this.facade.load();
+    this.assinatura.abrirConfirmacaoCancelamento();
+  }
+
+  verTcrDoPlanoAssinatura() {
+    const id = this.assinatura.plano()?.id;
+    if (id) {
+      this.assinatura.confirmandoAssinatura.set(false);
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+    }
+  }
+
+  confirmarAssinaturaEAtualizar() {
+    this.assinatura.confirmarAssinatura();
+  }
+
+  confirmarCancelamentoEAtualizar() {
+    this.assinatura.confirmarCancelamentoAssinatura();
   }
 
   clonarPlano(p: PlanoTrabalho) {
