@@ -2,6 +2,8 @@
 
 use App\Models\Usuario;
 use App\Repository\Usuario\Eloquent\EloquentUsuarioReadRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UnidadeIntegranteRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Tests\TestCase;
 
@@ -11,6 +13,12 @@ afterAll(function () {
     \Mockery::close();
 });
 
+function makeUsuarioRepo($model): EloquentUsuarioReadRepository {
+    $unidadeRepo = \Mockery::mock(UnidadeRepository::class);
+    $integranteRepo = \Mockery::mock(UnidadeIntegranteRepository::class);
+    return new EloquentUsuarioReadRepository($model, $unidadeRepo, $integranteRepo);
+}
+
 test('findByEmail retorna null quando email vazio sem consultar o banco', function () {
     $builder = \Mockery::mock(Builder::class);
     $builder->shouldReceive('where')->withAnyArgs()->andReturnSelf()->byDefault();
@@ -19,7 +27,7 @@ test('findByEmail retorna null quando email vazio sem consultar o banco', functi
     $model = \Mockery::mock(Usuario::class);
     $model->shouldReceive('newQuery')->never()->andReturn($builder);
 
-    $repo = new EloquentUsuarioReadRepository($model);
+    $repo = makeUsuarioRepo($model);
 
     expect($repo->findByEmail(''))->toBeNull();
 });
@@ -32,7 +40,7 @@ test('findByEmail retorna null quando email nulo sem consultar o banco', functio
     $model = \Mockery::mock(Usuario::class);
     $model->shouldReceive('newQuery')->never()->andReturn($builder);
 
-    $repo = new EloquentUsuarioReadRepository($model);
+    $repo = makeUsuarioRepo($model);
 
     expect($repo->findByEmail(null))->toBeNull();
 });
@@ -64,7 +72,7 @@ test('findByCpfOrEmail não adiciona filtro de email quando email vazio', functi
     $model = \Mockery::mock(Usuario::class);
     $model->shouldReceive('newQuery')->andReturn($outerBuilder);
 
-    $repo = new EloquentUsuarioReadRepository($model);
+    $repo = makeUsuarioRepo($model);
 
     expect($repo->findByCpfOrEmail($cpf, $email))->toBeNull();
 });
@@ -96,7 +104,7 @@ test('findByCpfOrEmail não adiciona filtro de email quando email nulo', functio
     $model = \Mockery::mock(Usuario::class);
     $model->shouldReceive('newQuery')->andReturn($outerBuilder);
 
-    $repo = new EloquentUsuarioReadRepository($model);
+    $repo = makeUsuarioRepo($model);
 
     expect($repo->findByCpfOrEmail($cpf, $email))->toBeNull();
 });
@@ -112,7 +120,7 @@ test('findByIdComAreasTrabalho aplica whereKey e eager load areasTrabalho.unidad
     $model = \Mockery::mock(Usuario::class);
     $model->shouldReceive('newQuery')->andReturn($builder);
 
-    $repo = new EloquentUsuarioReadRepository($model);
+    $repo = makeUsuarioRepo($model);
 
     expect($repo->findByIdComAreasTrabalho('user-1'))->toBe($usuario);
 });
