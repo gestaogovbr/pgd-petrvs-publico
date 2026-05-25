@@ -22,6 +22,9 @@ export class ConsolidacaoFacade {
   readonly consolidacoes = signal<Consolidacao[]>([]);
   readonly notas = signal<NotaAvaliacao[]>([]);
 
+  // --- Confirmação genérica ---
+  readonly confirmacaoPendente = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
+
   // --- Estado de atividades ---
   readonly textos = signal<Record<string, string>>({});
   readonly editando = signal<Set<string>>(new Set());
@@ -162,12 +165,17 @@ export class ConsolidacaoFacade {
   }
 
   excluirOcorrencia(consolidacaoId: string, ocorrencia: Ocorrencia): void {
-    if (!confirm('Deseja excluir esta ocorrência?')) return;
-    this.api.deleteOcorrencia(this.planoId, ocorrencia.id).subscribe(() => {
-      this.consolidacoes.update(lista => lista.map(c => {
-        if (c.id !== consolidacaoId) return c;
-        return { ...c, ocorrencias: (c.ocorrencias ?? []).filter((o: Ocorrencia) => o.id !== ocorrencia.id) };
-      }));
+    this.confirmacaoPendente.set({
+      titulo: 'Excluir Ocorrência',
+      mensagem: 'Deseja excluir esta ocorrência?',
+      onConfirmar: () => {
+        this.api.deleteOcorrencia(this.planoId, ocorrencia.id).subscribe(() => {
+          this.consolidacoes.update(lista => lista.map(c => {
+            if (c.id !== consolidacaoId) return c;
+            return { ...c, ocorrencias: (c.ocorrencias ?? []).filter((o: Ocorrencia) => o.id !== ocorrencia.id) };
+          }));
+        });
+      }
     });
   }
 
@@ -226,13 +234,19 @@ export class ConsolidacaoFacade {
 
   excluirAtividade(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): void {
     const atividade = this.getAtividade(consolidacao, entrega.id);
-    if (!atividade || !confirm('Deseja realmente excluir este registro de execução?')) return;
+    if (!atividade) return;
 
-    this.api.deleteAtividade(this.planoId, consolidacao.id, atividade.id).subscribe(() => {
-      this.atualizarAtividadeNaConsolidacao(consolidacao.id, entrega.id, null);
-      const key = `${consolidacao.id}-${entrega.id}`;
-      this.textos.update(t => ({ ...t, [key]: '' }));
-      this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
+    this.confirmacaoPendente.set({
+      titulo: 'Excluir Registro de Execução',
+      mensagem: 'Deseja realmente excluir este registro de execução?',
+      onConfirmar: () => {
+        this.api.deleteAtividade(this.planoId, consolidacao.id, atividade.id).subscribe(() => {
+          this.atualizarAtividadeNaConsolidacao(consolidacao.id, entrega.id, null);
+          const key = `${consolidacao.id}-${entrega.id}`;
+          this.textos.update(t => ({ ...t, [key]: '' }));
+          this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
+        });
+      }
     });
   }
 
@@ -329,18 +343,21 @@ export class ConsolidacaoFacade {
   }
 
   cancelarAvaliacao(consolidacao: Consolidacao, avaliacaoId: string): void {
-    if (!confirm('Deseja cancelar esta avaliação?')) return;
-
-    this.cancelandoAvaliacaoIds.update(s => new Set([...s, avaliacaoId]));
-
-    this.api.cancelarAvaliacao(this.planoId, consolidacao.id, avaliacaoId).subscribe({
-      next: () => {
-        this.loadConsolidacoes();
-        this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
-      },
-      error: () => {
-        this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
-      },
+    this.confirmacaoPendente.set({
+      titulo: 'Cancelar Avaliação',
+      mensagem: 'Deseja cancelar esta avaliação?',
+      onConfirmar: () => {
+        this.cancelandoAvaliacaoIds.update(s => new Set([...s, avaliacaoId]));
+        this.api.cancelarAvaliacao(this.planoId, consolidacao.id, avaliacaoId).subscribe({
+          next: () => {
+            this.loadConsolidacoes();
+            this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+          },
+          error: () => {
+            this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+          },
+        });
+      }
     });
   }
 
@@ -360,18 +377,21 @@ export class ConsolidacaoFacade {
     const justificativa = this.justificativaRecurso().trim();
     if (!justificativa) return;
 
-    if (!confirm('Ao recorrer desta avaliação, o período avaliativo seguirá para reavaliação. Deseja confirmar?')) return;
-
-    this.enviandoRecursoIds.update(s => new Set([...s, avaliacaoId]));
-
-    this.solicitarRecursoUC.execute(this.planoId, consolidacao.id, justificativa).subscribe({
-      next: () => {
-        this.loadConsolidacoes();
-        this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
-        this.cancelarSolicitacaoRecurso();
-      },
-      error: () => {
-        this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+    this.confirmacaoPendente.set({
+      titulo: 'Solicitar Recurso',
+      mensagem: 'Ao recorrer desta avaliação, o período avaliativo seguirá para reavaliação. Deseja confirmar?',
+      onConfirmar: () => {
+        this.enviandoRecursoIds.update(s => new Set([...s, avaliacaoId]));
+        this.solicitarRecursoUC.execute(this.planoId, consolidacao.id, justificativa).subscribe({
+          next: () => {
+            this.loadConsolidacoes();
+            this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+            this.cancelarSolicitacaoRecurso();
+          },
+          error: () => {
+            this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+          }
+        });
       }
     });
   }

@@ -51,6 +51,8 @@ export class AssinarPlanoUseCase {
   init(plano: PlanoTrabalho, entregas?: any[]) {
     this.plano.set(plano);
     this.entregas.set(entregas ?? plano.entregas ?? []);
+    this.documento.set(null);
+    this.jaAssinou.set(false);
     if (plano.documento_id) {
       this.documentoApi.getDocumento(plano.id).subscribe(doc => {
         this.documento.set(doc);

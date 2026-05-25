@@ -58,6 +58,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   saving = signal(false);
   carregandoRegramento = signal(false);
 
+  readonly confirmacao = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
+
   programaNome = signal('');
   private programaId = signal('');
 
@@ -392,10 +394,16 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
   voltar() { this.router.navigate(['gestao', 'plano-trabalho-v2']); }
 
   excluir() {
-    if (!this.planoId() || !confirm('Deseja realmente excluir este plano de trabalho?')) return;
-    this.api.delete(this.planoId()!).subscribe(() => {
-      this.message.success('Plano de trabalho excluído com sucesso.');
-      this.router.navigate(['gestao', 'plano-trabalho-v2']);
+    if (!this.planoId()) return;
+    this.confirmacao.set({
+      titulo: 'Excluir Plano de Trabalho',
+      mensagem: 'Deseja realmente excluir este plano de trabalho?',
+      onConfirmar: () => {
+        this.api.delete(this.planoId()!).subscribe(() => {
+          this.message.success('Plano de trabalho excluído com sucesso.');
+          this.router.navigate(['gestao', 'plano-trabalho-v2']);
+        });
+      }
     });
   }
 
@@ -471,8 +479,18 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       const msg = plano.status === 'AGUARDANDO_ASSINATURA'
         ? 'Ao prosseguir com a edição, a assinatura será automaticamente desfeita e as informações preenchidas no bloco Planejamento serão excluídas. Deseja continuar?'
         : 'Ao prosseguir com a edição, as informações preenchidas no bloco Planejamento serão excluídas. Deseja continuar?';
-      if (!confirm(msg)) return;
+      this.confirmacao.set({
+        titulo: 'Confirmar Edição',
+        mensagem: msg,
+        onConfirmar: () => this.executarSalvarPlano(onSuccess)
+      });
+      return;
     }
+
+    this.executarSalvarPlano(onSuccess);
+  }
+
+  private executarSalvarPlano(onSuccess: () => void) {
 
     const payload: Partial<any> = {
       usuario_id: this.form.controls.usuario_id.value,
@@ -618,10 +636,15 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
 
   removerEntrega(entrega: any) {
     if (!this.planoId() || !entrega.id) return;
-    if (!confirm('Deseja realmente excluir esta entrega?')) return;
-    this.api.deleteEntrega(this.planoId()!, entrega.id).subscribe(() => {
-      this.entregas.update(list => list.filter(e => e.id !== entrega.id));
-      this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
+    this.confirmacao.set({
+      titulo: 'Excluir Contribuição',
+      mensagem: 'Deseja realmente excluir esta entrega?',
+      onConfirmar: () => {
+        this.api.deleteEntrega(this.planoId()!, entrega.id).subscribe(() => {
+          this.entregas.update(list => list.filter(e => e.id !== entrega.id));
+          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
+        });
+      }
     });
   }
 
