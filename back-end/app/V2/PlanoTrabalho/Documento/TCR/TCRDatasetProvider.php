@@ -27,7 +27,7 @@ class TCRDatasetProvider
             ['field' => 'status', 'label' => 'Status do plano'],
             ['field' => 'data_inicio', 'label' => 'Data inicial do plano', 'type' => 'DATETIME'],
             ['field' => 'data_fim', 'label' => 'Data final do plano', 'type' => 'DATETIME'],
-            ['field' => 'tipo_modalidade', 'label' => 'Tipo de modalidade', 'value' => fn ($ctx) => $ctx->modalidade_pgd_label],
+            ['field' => 'tipo_modalidade', 'label' => 'Tipo de modalidade', 'fields' => [['field' => 'nome', 'label' => 'Nome']], 'type' => 'OBJECT', 'value' => fn ($ctx) => (object) ['nome' => $ctx->modalidade_pgd_label]],
             ['field' => 'unidade', 'label' => 'Unidade', 'fields' => $this->unidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->unidade],
             ['field' => 'usuario', 'label' => 'Usuário', 'fields' => $this->usuarioFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->usuario],
             ['field' => 'programa', 'label' => 'Programa', 'fields' => $this->programaFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->programa],
@@ -42,6 +42,7 @@ class TCRDatasetProvider
             ['field' => 'codigo', 'label' => 'Código'],
             ['field' => 'sigla', 'label' => 'Sigla'],
             ['field' => 'nome', 'label' => 'Nome'],
+            ['field' => 'texto_complementar_plano', 'label' => 'Particularidades da Unidade Executora', 'type' => 'TEMPLATE'],
         ];
     }
 
@@ -56,6 +57,7 @@ class TCRDatasetProvider
             ['field' => 'telefone', 'label' => 'Telefone'],
             ['field' => 'sexo', 'label' => 'Sexo', 'lookup' => 'SEXO'],
             ['field' => 'situacao_funcional', 'label' => 'Situação Funcional', 'lookup' => 'USUARIO_SITUACAO_FUNCIONAL'],
+            ['field' => 'texto_complementar_plano', 'label' => 'Particularidades do Participante', 'type' => 'TEMPLATE'],
         ];
     }
 

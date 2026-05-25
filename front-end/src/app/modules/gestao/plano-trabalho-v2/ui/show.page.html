@@ -16,7 +16,7 @@
       <h2 class="mb-0">Plano de Trabalho #{{ planoTrabalho()?.numero }}</h2>
       <div class="flex-shrink-0 gap-3">
         <br-button (click)="voltar()" class="mr-2">Voltar</br-button>
-        @if (policy.podeVerTcr(planoTrabalho()!)) {
+        @if (policy.podeAssinar(planoTrabalho()!)) {
           <br-button class="mr-2" emphasis="secondary" (click)="irParaTcr()" title="Ver TCR" ariaLabel="Ver Termo de Compromisso e Responsabilidade">
             <i class="fas fa-file-signature mr-1"></i>TCR
           </br-button>
@@ -74,7 +74,7 @@
           </div>
           <div class="col-md-3 mb-3">
             <p class="mb-1 text-weight-semi-bold text-up-01">Status</p>
-            <p class="mb-0">{{ statusLabel(planoTrabalho()?.status) }}</p>
+            <p class="mb-0">{{ statusLabel(assinatura.plano()?.status || planoTrabalho()?.status) }}</p>
           </div>
         </div>
         @if (planoTrabalho()?.justificativa_modalidade) {
@@ -82,6 +82,14 @@
             <div class="col-md-12">
               <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa da divergência da modalidade</p>
               <p class="mb-0">{{ planoTrabalho()?.justificativa_modalidade }}</p>
+            </div>
+          </div>
+        }
+        @if (planoTrabalho()?.justificativa) {
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa da carga horária</p>
+              <p class="mb-0">{{ planoTrabalho()?.justificativa }}</p>
             </div>
           </div>
         }
@@ -297,8 +305,92 @@
         </br-message>
       }
     }
+    <!-- Assinaturas -->
+    @if (assinatura.documento()) {
+      <div class="br-card mb-4">
+        <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Assinaturas</div>
+        <div class="card-content">
+          @if (assinatura.documento()?.assinaturas?.length) {
+            <div class="br-table mb-4">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Usuário</th>
+                      <th scope="col">Data</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (a of assinatura.documento()?.assinaturas; track a.id) {
+                      <tr>
+                        <td>{{ a.usuario_nome || '-' }}</td>
+                        <td>{{ a.data_assinatura | date:'dd/MM/yyyy HH:mm' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          } @else {
+            <p class="text-body-secondary mb-4">Nenhuma assinatura registrada.</p>
+          }
+
+          <div class="d-flex gap-2">
+            @if (!assinatura.jaAssinou()) {
+              <br-button emphasis="primary" (click)="assinatura.abrirConfirmacaoAssinatura()" [disabled]="assinatura.salvando()">
+                <i class="fas fa-pen mr-1"></i>Assinar
+              </br-button>
+            } @else if (assinatura.podeCancelarAssinatura()) {
+              <br-button emphasis="secondary" (click)="assinatura.abrirConfirmacaoCancelamento()" [disabled]="assinatura.salvando()">
+                <i class="fas fa-times mr-1"></i>Cancelar Assinatura
+              </br-button>
+            }
+          </div>
+        </div>
+      </div>
+    }
   }
 </div>
+
+<br-scrim [isOpen]="assinatura.confirmandoGeracaoTCR()" [disableCloseOnClick]="true">
+  <br-modal [show]="assinatura.confirmandoGeracaoTCR()" titleText="Justificativa Carga Horária" size="medium" alignFooter="end" (brModalBeforeClose)="assinatura.confirmandoGeracaoTCR.set(false)">
+    <div class="p-3">
+      <p>A carga horária total é de {{ assinatura.totalCHD() }}%. Informe a justificativa para prosseguir.</p>
+      <div class="br-textarea mt-3">
+        <label>Justificativa <span class="text-danger">*</span></label>
+        <textarea rows="3" placeholder="Descreva a justificativa..." [value]="assinatura.justificativaCHD()" (input)="assinatura.justificativaCHD.set($any($event.target).value)"></textarea>
+      </div>
+    </div>
+    <div slot="footer">
+      <br-button class="mx-1" emphasis="secondary" (click)="assinatura.confirmandoGeracaoTCR.set(false)">Cancelar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="assinatura.confirmarGeracaoTCR()" [disabled]="!assinatura.justificativaCHD().trim()">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
+
+<br-scrim [isOpen]="assinatura.confirmandoAssinatura()" [disableCloseOnClick]="true">
+  <br-modal [show]="assinatura.confirmandoAssinatura()" titleText="Confirmar Assinatura" size="medium" alignFooter="end" (brModalBeforeClose)="assinatura.confirmandoAssinatura.set(false)">
+    <div class="p-3">
+      <p>{{ assinatura.mensagemConfirmacao }}</p>
+    </div>
+    <div slot="footer">
+      <br-button class="mx-1" emphasis="secondary" (click)="assinatura.confirmandoAssinatura.set(false)">Cancelar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="assinatura.confirmarAssinatura()">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
+
+<br-scrim [isOpen]="assinatura.confirmandoCancelamento()" [disableCloseOnClick]="true">
+  <br-modal [show]="assinatura.confirmandoCancelamento()" titleText="Cancelar Assinatura" size="medium" alignFooter="end" (brModalBeforeClose)="assinatura.confirmandoCancelamento.set(false)">
+    <div class="p-3">
+      <p>Deseja realmente cancelar sua assinatura?</p>
+    </div>
+    <div slot="footer">
+      <br-button class="mx-1" emphasis="secondary" (click)="assinatura.confirmandoCancelamento.set(false)">Voltar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="assinatura.confirmarCancelamentoAssinatura()">Confirmar cancelamento</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
 
 <br-scrim [isOpen]="encerrando()" [disableCloseOnClick]="true">
   <br-modal [show]="encerrando()" titleText="Encerrar Plano de Trabalho" size="medium" alignFooter="end" (brModalBeforeClose)="cancelarEncerramento()">
@@ -313,8 +405,8 @@
       </div>
     </div>
     <div slot="footer">
-      <br-button emphasis="secondary" (click)="cancelarEncerramento()">Voltar</br-button>
-      <br-button emphasis="primary" [disabled]="!justificativaEncerramento().trim()" (click)="confirmarEncerramento()">Confirmar encerramento</br-button>
+      <br-button class="mx-1" emphasis="secondary" (click)="cancelarEncerramento()">Voltar</br-button>
+      <br-button class="mx-1" emphasis="primary" [disabled]="!justificativaEncerramento().trim()" (click)="confirmarEncerramento()">Confirmar encerramento</br-button>
     </div>
   </br-modal>
 </br-scrim>

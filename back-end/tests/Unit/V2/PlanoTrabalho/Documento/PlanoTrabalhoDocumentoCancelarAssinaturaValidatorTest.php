@@ -35,11 +35,18 @@ function fakePlanoCancelar(string $usuarioId, string $status): PlanoTrabalho
 
 describe('PlanoTrabalhoDocumentoCancelarAssinaturaValidator', function () {
 
-    test('lança ForbiddenException quando usuário não é o participante', function () {
+    test('lança ValidateException quando usuário não possui assinatura no documento', function () {
         $plano = fakePlanoCancelar('user-dono', StatusEnum::AGUARDANDO_ASSINATURA->value);
 
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->with('plano-1')->andReturn($documento);
+        $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->with('doc-1', 'user-outro')->andReturn(false);
+
         $this->validator->validar($plano, 'user-outro');
-    })->throws(ForbiddenException::class, 'Apenas o participante do Plano de Trabalho pode cancelar a assinatura.');
+    })->throws(ValidateException::class, 'Usuário não possui assinatura neste documento.');
 
     test('lança ValidateException quando status não é AGUARDANDO_ASSINATURA', function () {
         $plano = fakePlanoCancelar('user-1', StatusEnum::INCLUIDO->value);

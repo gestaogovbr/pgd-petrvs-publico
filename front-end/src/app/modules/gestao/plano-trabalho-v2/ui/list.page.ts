@@ -13,6 +13,7 @@ import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ClonarPlanoUseCase } from '../application/clonar-plano.usecase';
 import { ExcluirPlanoUseCase } from '../application/excluir-plano.usecase';
 import { EncerrarPlanoUseCase } from '../application/encerrar-plano.usecase';
+import { AssinarPlanoUseCase } from '../application/assinar-plano.usecase';
 import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
@@ -37,6 +38,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
   private readonly clonarPlanoUC = inject(ClonarPlanoUseCase);
   private readonly excluirPlanoUC = inject(ExcluirPlanoUseCase);
+  readonly assinatura = inject(AssinarPlanoUseCase);
   private readonly filterStorage = inject(FilterStorageService);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
 
@@ -270,7 +272,15 @@ readonly filters: FormGroup<{
   }
 
   assinarPlano(p: PlanoTrabalho) {
-    this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id]);
+    if (p.documento_id) {
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id]);
+    } else {
+      const chd = Number((p as any).carga_trabalho_total) || 0;
+      this.assinatura.init(p, [{ forca_trabalho: chd }]);
+      this.assinatura.gerarDocumento(() =>
+        this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id])
+      );
+    }
   }
 
   clonarPlano(p: PlanoTrabalho) {

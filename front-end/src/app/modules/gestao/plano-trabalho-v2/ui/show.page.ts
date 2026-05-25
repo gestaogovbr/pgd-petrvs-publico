@@ -16,6 +16,7 @@ import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
 import { ConsolidacaoPolicy } from "../application/consolidacao.policy";
 import { ConsolidacaoFacade } from "../application/consolidacao.facade";
 import { BreadcrumbService } from "src/app/v2/components/breadcrumb/breadcrumb.service";
+import { AssinarPlanoUseCase } from "../application/assinar-plano.usecase";
 import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
 import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
 
@@ -42,6 +43,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly policy = inject(PlanoTrabalhoPolicy);
   readonly consolidacaoPolicy = inject(ConsolidacaoPolicy);
   readonly facade = inject(ConsolidacaoFacade);
+  readonly assinatura = inject(AssinarPlanoUseCase);
 
   readonly planoTrabalho = signal<PlanoTrabalho | null>(null);
   readonly loading = signal(true);
@@ -63,6 +65,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.planoTrabalho.set(plano);
           this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
           this.loading.set(false);
+          this.assinatura.init(plano, plano.entregas || []);
         },
         error: () => {
           this.error.set('Erro ao carregar o plano de trabalho.');
@@ -147,7 +150,14 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   irParaTcr() {
     const id = this.planoTrabalho()?.id;
-    if (id) this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+    if (!id) return;
+    if (this.planoTrabalho()?.documento_id) {
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+    } else {
+      this.assinatura.gerarDocumento(() =>
+        this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id])
+      );
+    }
   }
 
   arquivarPlano() {

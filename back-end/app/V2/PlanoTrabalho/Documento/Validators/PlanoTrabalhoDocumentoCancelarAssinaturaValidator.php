@@ -22,10 +22,6 @@ class PlanoTrabalhoDocumentoCancelarAssinaturaValidator
 
     public function validar(PlanoTrabalho $plano, string $usuarioId): Documento
     {
-        if ($plano->usuario_id !== $usuarioId) {
-            throw new ForbiddenException('Apenas o participante do Plano de Trabalho pode cancelar a assinatura.');
-        }
-
         if ($plano->status !== StatusEnum::AGUARDANDO_ASSINATURA->value) {
             throw new ValidateException('Plano de Trabalho deve estar com status Aguardando Assinatura para cancelar.');
         }
