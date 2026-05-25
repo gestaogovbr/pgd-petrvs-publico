@@ -80,16 +80,16 @@ type GraphViewBox = {
   height: number;
 };
 
-const CARD_W = 176;
-const CARD_H = 96;
+const CARD_W = 160;
+const CARD_H = 88;
 const CARD_HALF_W = CARD_W / 2;
 const CARD_HALF_H = CARD_H / 2;
 const GRAPH_MIN_W = 1280;
 const GRAPH_MIN_H = 760;
 const GRAPH_PADDING_X = CARD_HALF_W + 28;
 const GRAPH_PADDING_Y = CARD_HALF_H + 36;
-const GRAPH_LAYER_X_SPACING = CARD_W + 85;
-const GRAPH_NODE_Y_SPACING = CARD_H + 26;
+const GRAPH_LAYER_X_SPACING = CARD_W + 70;
+const GRAPH_NODE_Y_SPACING = CARD_H + 22;
 const GRAPH_FIT_PADDING_X = 90;
 const GRAPH_FIT_PADDING_Y = 70;
 /** Recua o fim da aresta para a ponta da seta ficar fora do retângulo do nó. */
@@ -743,11 +743,20 @@ export class PlanejamentoObjetivoGraficoPage {
     const right = Math.min(this.graphCanvasW(), maxX + GRAPH_FIT_PADDING_X);
     const bottom = Math.min(this.graphCanvasH(), maxY + GRAPH_FIT_PADDING_Y);
 
+    const contentW = Math.max(CARD_W + GRAPH_FIT_PADDING_X * 2, right - x);
+    const contentH = Math.max(CARD_H + GRAPH_FIT_PADDING_Y * 2, bottom - y);
+    const FIT_MIN_W = 640;
+    const FIT_MIN_H = 400;
+    const w = Math.max(contentW, FIT_MIN_W);
+    const h = Math.max(contentH, FIT_MIN_H);
+    const cx = x + contentW / 2;
+    const cy = y + contentH / 2;
+
     return {
-      x,
-      y,
-      width: Math.max(CARD_W + GRAPH_FIT_PADDING_X * 2, right - x),
-      height: Math.max(CARD_H + GRAPH_FIT_PADDING_Y * 2, bottom - y)
+      x: cx - w / 2,
+      y: cy - h / 2,
+      width: w,
+      height: h
     };
   }
 
