@@ -19,14 +19,10 @@
       <br-button (click)="voltar()">Voltar</br-button>
     </div>
 
-    <!-- Sem documento ainda -->
     @if (!documento()) {
       <div class="br-card mb-4">
         <div class="card-content text-center py-4">
-          <p class="mb-3">Nenhum documento TCR gerado para este plano.</p>
-          <br-button emphasis="primary" (click)="gerarDocumento()" [disabled]="salvando()">
-            @if (salvando()) { Gerando... } @else { Gerar Documento }
-          </br-button>
+          <div class="br-loading" role="progressbar" aria-label="carregando"></div>
         </div>
       </div>
     } @else {
