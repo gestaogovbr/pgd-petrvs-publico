@@ -43,47 +43,6 @@
             <div class="p-3 border rounded mb-4" [innerHTML]="documento()?.conteudo"></div>
           }
 
-          <!-- Assinaturas -->
-          <h6 class="text-weight-semi-bold mb-3">Assinaturas</h6>
-          @if (documento()?.assinaturas?.length) {
-            <div class="br-table mb-4">
-              <div class="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th scope="col">Usuário</th>
-                      <th scope="col">Data</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (a of documento()?.assinaturas; track a.id) {
-                      <tr>
-                        <td>{{ a.usuario_nome || '-' }}</td>
-                        <td>{{ a.data_assinatura | date:'dd/MM/yyyy HH:mm' }}</td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          } @else {
-            <p class="text-body-secondary mb-4">Nenhuma assinatura registrada.</p>
-          }
-
-          <!-- Ações -->
-          @let p = plano();
-          <div class="d-flex gap-2">
-            @if (!jaAssinou()) {
-              <br-button emphasis="primary" (click)="assinar()" [disabled]="salvando()">
-                @if (salvando()) { Assinando... } @else { <i class="fas fa-pen mr-1"></i>Assinar }
-              </br-button>
-            } @else if (p && policy.podeCancelarAssinatura(p)) {
-              <br-button emphasis="secondary" (click)="cancelarAssinatura()" [disabled]="salvando()">
-                @if (salvando()) { Cancelando... } @else { <i class="fas fa-times mr-1"></i>Cancelar Assinatura }
-              </br-button>
-            }
-          </div>
-
         </div>
       </div>
     }

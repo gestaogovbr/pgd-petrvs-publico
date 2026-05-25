@@ -3,17 +3,11 @@ import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal 
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from "src/app/v2/components/breadcrumb/breadcrumb.component";
 import { ActivatedRoute } from "@angular/router";
-import { HttpErrorResponse } from "@angular/common/http";
 import { catchError, filter, finalize, map, of, switchMap, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoApiClient } from "../infra/plano-api.client";
 import { DocumentoApiClient } from "../infra/documento-api.client";
 import { PlanoTrabalho } from "../domain/types";
-import { AuthService } from "src/app/services/auth.service";
-import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
-import { mensagemConfirmacaoAssinaturaPlano } from "../application/plano-trabalho-assinatura.messages";
-import { MessageService } from "src/app/v2/services/message.service";
-import { UnidadeService } from "src/app/v2/services/unidade.service";
 
 @Component({
   selector: 'app-plano-trabalho-v2-tcr-page',
@@ -26,11 +20,7 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly planoApi = inject(PlanoApiClient);
   private readonly documentoApi = inject(DocumentoApiClient);
-  private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
-  readonly policy = inject(PlanoTrabalhoPolicy);
-  private readonly message = inject(MessageService);
-  private readonly unidadeService = inject(UnidadeService);
 
   readonly planoId = signal<string | null>(null);
   readonly plano = signal<PlanoTrabalho | null>(null);
@@ -38,10 +28,6 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
   readonly loading = signal(true);
   readonly salvando = signal(false);
   readonly error = signal<string | null>(null);
-
-  get usuarioAtualId(): string { return this.auth.usuario?.id ?? ''; }
-
-  readonly jaAssinou = signal(false);
 
   ngOnInit(): void {
     this.route.paramMap.pipe(
@@ -63,7 +49,6 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
     ).subscribe({
       next: (doc) => {
         this.documento.set(doc);
-        this.atualizarJaAssinou();
         this.loading.set(false);
       },
       error: () => {
@@ -80,70 +65,10 @@ export class PlanoTrabalhoV2TcrPage implements OnInit {
     this.documentoApi.createDocumento(id).pipe(
       finalize(() => this.salvando.set(false))
     ).subscribe({
-      next: (doc) => {
-        this.documento.set(doc);
-        this.atualizarJaAssinou();
-      },
+      next: (doc) => this.documento.set(doc),
       error: () => this.error.set('Erro ao gerar o documento.')
     });
   }
 
-  assinar() {
-    const id = this.planoId();
-    if (!id || this.salvando()) return;
-
-    const plano = this.plano();
-    const mensagem = mensagemConfirmacaoAssinaturaPlano(
-      this.documento()?.assinaturas ?? [],
-      this.usuarioAtualId,
-      {
-        plano,
-        usuarioLogadoEhGestorUnidadeSuperiorAoPlano: this.unidadeService.isGestorUnidade(
-          plano?.unidade?.unidade_pai_id ?? null,
-        ),
-      },
-    );
-    if (!confirm(mensagem)) return;
-
-    this.salvando.set(true);
-    this.documentoApi.assinarDocumento(id).pipe(
-      finalize(() => this.salvando.set(false))
-    ).subscribe({
-      next: (assinatura) => {
-        assinatura.usuario_nome = this.auth.usuario?.nome;
-        this.documento.update(doc => doc
-          ? { ...doc, assinaturas: [...(doc.assinaturas ?? []), assinatura] }
-          : doc
-        );
-        this.jaAssinou.set(true);
-      },
-      error: (err: HttpErrorResponse) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao assinar o documento.')
-    });
-  }
-
-  cancelarAssinatura() {
-    const id = this.planoId();
-    if (!id || this.salvando()) return;
-    if (!confirm('Deseja realmente cancelar sua assinatura?')) return;
-    this.salvando.set(true);
-    this.documentoApi.cancelarAssinaturaDocumento(id).pipe(
-      finalize(() => this.salvando.set(false))
-    ).subscribe({
-      next: () => {
-        this.documento.update(doc => doc
-          ? { ...doc, assinaturas: (doc.assinaturas ?? []).filter((a: any) => a.usuario_id !== this.usuarioAtualId) }
-          : doc
-        );
-        this.jaAssinou.set(false);
-      },
-      error: (err: HttpErrorResponse) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao cancelar a assinatura.')
-    });
-  }
-
-  voltar() {  window.history.back();  }
-
-  private atualizarJaAssinou() {
-    const assinaturas: any[] = this.documento()?.assinaturas ?? [];
-    this.jaAssinou.set(assinaturas.some(a => a.usuario_id === this.usuarioAtualId));
-  }
+  voltar() { window.history.back(); }
 }

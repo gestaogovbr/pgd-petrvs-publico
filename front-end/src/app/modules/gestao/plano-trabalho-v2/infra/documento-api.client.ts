@@ -14,8 +14,8 @@ export class DocumentoApiClient {
       .pipe(map((r: any) => r?.data ?? r));
   }
 
-  createDocumento(planoTrabalhoId: string): Observable<any> {
-    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/documento`, {})
+  createDocumento(planoTrabalhoId: string, justificativa?: string): Observable<any> {
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoTrabalhoId}/documento`, { justificativa })
       .pipe(map((r: any) => r?.data ?? r));
   }
 

@@ -20,6 +20,7 @@ import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb
 import { MessageService } from 'src/app/v2/services/message.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
+import { AssinarPlanoUseCase } from '../application/assinar-plano.usecase';
 import { PlanoTrabalho, getPlanoEntregaInfo, planoTrabalhoStatusLabel } from '../domain/types';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
@@ -46,6 +47,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly injector = inject(Injector);
   readonly policy = inject(PlanoTrabalhoPolicy);
+  readonly assinatura = inject(AssinarPlanoUseCase);
   private readonly auth = inject(AuthService);
 
   readonly agentePublicoSomenteLeitura = computed(() => this.auth.isUsuarioParticipante());
@@ -259,6 +261,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(async plano => {
       this.plano.set(plano);
+      this.assinatura.init(plano, plano.entregas || []);
       this.entregas.set(plano.entregas || []);
       this.form.controls.justificativa.setValue(plano.justificativa || '');
       await this.aplicarInformacoesGeraisDoPlano(plano);
@@ -439,11 +442,25 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
   }
 
   assinar() {
-    this.salvarPlano(() => this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', this.planoId()]));
+    const id = this.planoId();
+    if (!id) return;
+    this.assinatura.gerarDocumento(() => {
+      this.plano.update(p => p ? { ...p, documento_id: 'generated' } as any : p);
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+    });
   }
 
   irParaTCR() {
-    this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', this.planoId()]);
+    const id = this.planoId();
+    if (!id) return;
+    if (this.plano()?.documento_id) {
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+    } else {
+      this.assinatura.gerarDocumento(() => {
+        this.plano.update(p => p ? { ...p, documento_id: 'generated' } as any : p);
+        this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+      });
+    }
   }
 
   private salvarPlano(onSuccess: () => void) {
