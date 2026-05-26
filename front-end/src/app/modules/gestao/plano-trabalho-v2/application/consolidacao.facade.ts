@@ -340,20 +340,30 @@ export class ConsolidacaoFacade {
     if (!notaId) return;
 
     const justificativa = this.getJustificativaAvaliacao(consolidacao.id).trim() || undefined;
-    this.avaliandoIds.update(s => new Set([...s, consolidacao.id]));
 
-    this.avaliarUC.execute(this.planoId, consolidacao.id, { tipo_avaliacao_nota_id: notaId, justificativa }).subscribe({
-      next: (avaliacao) => {
-        this.consolidacoes.update(list => list.map(c => c.id === consolidacao.id
-          ? { ...c, status: 'AVALIADO', avaliacoes: [...c.avaliacoes, { ...avaliacao, avaliador: { id: this.auth.usuario!.id, nome: this.auth.usuario!.nome } }] }
-          : c
-        ));
-        this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
-        this.notasSelecionadas.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
-        this.justificativasAvaliacao.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
-      },
-      error: () => {
-        this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
+    const nota = this.notas().find(n => n.id === notaId);
+
+    this.confirmacaoPendente.set({
+      titulo: 'Avaliar Período',
+      mensagem: `Você está atribuindo a nota ${nota?.nota ?? ''} à execução deste período do Plano de Trabalho. Deseja confirmar?`,
+      onConfirmar: () => {
+        this.avaliandoIds.update(s => new Set([...s, consolidacao.id]));
+
+        this.avaliarUC.execute(this.planoId, consolidacao.id, { tipo_avaliacao_nota_id: notaId, justificativa }).subscribe({
+          next: (avaliacao) => {
+            this.consolidacoes.update(list => list.map(c => c.id === consolidacao.id
+              ? { ...c, status: 'AVALIADO', avaliacoes: [...c.avaliacoes, { ...avaliacao, avaliador: { id: this.auth.usuario!.id, nome: this.auth.usuario!.nome } }] }
+              : c
+            ));
+            this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
+            this.notasSelecionadas.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
+            this.justificativasAvaliacao.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
+            this.message.success('Avaliação realizada com sucesso.');
+          },
+          error: () => {
+            this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
+          }
+        });
       }
     });
   }
@@ -368,6 +378,7 @@ export class ConsolidacaoFacade {
           next: () => {
             this.loadConsolidacoes();
             this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+            this.message.success('Avaliação cancelada com sucesso.');
           },
           error: () => {
             this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
@@ -403,6 +414,7 @@ export class ConsolidacaoFacade {
             this.loadConsolidacoes();
             this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
             this.cancelarSolicitacaoRecurso();
+            this.message.success('Recurso solicitado com sucesso.');
           },
           error: () => {
             this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
