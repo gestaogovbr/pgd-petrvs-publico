@@ -150,8 +150,13 @@ class IntegracaoSiapeService extends ServiceBase
       'nome_jornada'          => UtilService::valueOrDefault($dadosFuncionais['nomeJornada'] ?? null)
     ];
 
+    $emailFuncional = UtilService::valueOrDefault($dadosFuncionais['emailInstitucional'] ?? null);
+    if (empty($emailFuncional)) {
+      $emailFuncional = UtilService::valueOrDefault($dadosFuncionais['emailServidor'] ?? null);
+    }
+
     $funcional = [
-      'emailfuncional'        => UtilService::valueOrDefault($dadosFuncionais['emailInstitucional'] ?? null),
+      'emailfuncional'        => $emailFuncional,
       'cpf_chefia_imediata'   => UtilService::valueOrDefault($dadosFuncionais['cpfChefiaImediata'] ?? null, null),
       'email_chefia_imediata' => UtilService::valueOrDefault($dadosFuncionais['emailChefiaImediata'] ?? null, null),
       'matriculas'            => ['dados' => $matricula],
