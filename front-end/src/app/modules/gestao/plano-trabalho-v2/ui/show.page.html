@@ -133,177 +133,179 @@
 
     <!-- Execução -->
     @if (podeVisualizarConsolidacoes()) {
-      <div class="mb-2">
-        <h4>Registros de Execução</h4>
-      </div>
+      <div class="br-card mb-4">
+        <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Registros de Execução</div>
 
-      @for (consolidacao of facade.consolidacoes(); track consolidacao.id) {
-        <div class="br-card mb-4">
-          <br-collapse [open]="false">
-            <div slot="trigger" class="d-flex justify-content-between align-items-center w-100 pe-2">
-              <span class="text-weight-semi-bold">
-                Período Avaliativo: {{ consolidacao.data_inicio | date:'dd/MM/yyyy' }} à {{ consolidacao.data_fim | date:'dd/MM/yyyy' }}
-              </span>
-              <span>
-                Status do Período:
-                <br-tag shape="rounded" density="small" [label]="statusConsolidacaoDisplay(consolidacao)"></br-tag>
-              </span>
-            </div>
-          <div class="card-content">
-            <p class="text-weight-semi-bold mb-3">Detalhamentos</p>
-            <div class="br-table">
-              <div class="table-wrap">
-                <table style="table-layout: fixed; width: 100%;">
-                  <colgroup>
-                    @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
-                      <col style="width: 27%">
-                      <col style="width: 27%">
-                      <col style="width: 27%">
-                      <col style="width: 19%">
-                    } @else {
-                      <col style="width: 33%">
-                      <col style="width: 33%">
-                      <col style="width: 33%">
-                    }
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th scope="col">Entrega</th>
-                      <th scope="col">Trabalho Planejado</th>
-                      <th scope="col">Trabalho Executado</th>
-                      @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) { <th scope="col"></th> }
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (entrega of planoTrabalho()?.entregas; track entrega.id) {
-                      @let atividade = facade.getAtividade(consolidacao, entrega.id);
-                      @let editando = facade.estaEditando(consolidacao.id, entrega.id);
-                      <tr>
-                        <td>
-                          {{ getPlanoEntregaInfo(entrega).entrega }}
-                          <br />
-                          <small class="text-muted">{{ getPlanoEntregaInfo(entrega).plano }}</small>
-                        </td>
-                        <td><span class="white-space">{{ entrega.descricao || '-' }}</span></td>
-                        <td>
+        <div class="card-content">
+          @for (consolidacao of facade.consolidacoes(); track consolidacao.id) {
+            <div class="br-card mb-4">
+              <br-collapse [open]="false">
+                <div slot="trigger" class="d-flex justify-content-between align-items-center w-100 pe-2">
+                  <span class="text-weight-semi-bold">
+                    Período Avaliativo: {{ consolidacao.data_inicio | date:'dd/MM/yyyy' }} à {{ consolidacao.data_fim | date:'dd/MM/yyyy' }}
+                  </span>
+                  <span>
+                    Status do Período:
+                    <br-tag shape="rounded" density="small" [label]="statusConsolidacaoDisplay(consolidacao)"></br-tag>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <p class="text-weight-semi-bold mb-3">Detalhamentos</p>
+                  <div class="br-table">
+                    <div class="table-wrap">
+                      <table style="table-layout: fixed; width: 100%;">
+                        <colgroup>
                           @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
-                            @if (editando || !atividade) {
-                              <br-textarea
-                                show-counter
-                                class="w-100"
-                                [maxlength]="1500"
-                                [value]="facade.getTexto(consolidacao.id, entrega.id)"
-                                (input)="facade.setTexto(consolidacao.id, entrega.id, $any($event.target).value)"
-                                placeholder="Descreva o trabalho executado..."
-                              ></br-textarea>
-                            } @else {
-                              <span class="white-space">{{ atividade.descricao }}</span>
-                            }
-                          } @else {
-                            <span class="white-space">{{ atividade?.descricao || '-' }}</span>
-                          }
-                        </td>
-                        @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
-                          <td class="text-nowrap">
-                            @if (editando || !atividade) {
-                              <div class="d-flex gap-1">
-                                <br-button
-                                  emphasis="primary"
-                                  density="small"
-                                  (click)="facade.confirmarAtividade(consolidacao, entrega)"
-                                  [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id) || !facade.getTexto(consolidacao.id, entrega.id).trim()"
-                                >Confirmar</br-button>
-                                <br-button
-                                  emphasis="secondary"
-                                  density="small"
-                                  (click)="facade.cancelarEdicao(consolidacao.id, entrega.id, atividade)"
-                                  [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id)"
-                                >Cancelar</br-button>
-                              </div>
-                            } @else {
-                              <div class="d-flex gap-1">
-                                <br-button
-                                  emphasis="secondary"
-                                  density="small"
-                                  (click)="facade.iniciarEdicao(consolidacao.id, entrega.id, atividade.descricao)"
-                                >Editar</br-button>
-                                <br-button
-                                  class="text-danger"
-                                  emphasis="secondary"
-                                  density="small"
-                                  (click)="facade.excluirAtividade(consolidacao, entrega)"
-                                >Excluir</br-button>
-                              </div>
-                            }
-                          </td>
+                          <col style="width: 27%">
+                          <col style="width: 27%">
+                          <col style="width: 27%">
+                          <col style="width: 19%">
+                        } @else {
+                          <col style="width: 33%">
+                          <col style="width: 33%">
+                          <col style="width: 33%">
                         }
-                      </tr>
-                    } @empty {
-                      <tr>
-                        <td [attr.colspan]="consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao) ? 4 : 3" class="text-center p-3">Nenhuma entrega cadastrada no planejamento.</td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <app-consolidacao-ocorrencias
-              [consolidacao]="consolidacao"
-              [planoTrabalho]="planoTrabalho()!"
-            />
+                          </colgroup>
+                          <thead>
+                            <tr>
+                              <th scope="col">Entrega</th>
+                              <th scope="col">Trabalho Planejado</th>
+                              <th scope="col">Trabalho Executado</th>
+                              @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) { <th scope="col"></th> }
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (entrega of planoTrabalho()?.entregas; track entrega.id) {
+                              @let atividade = facade.getAtividade(consolidacao, entrega.id);
+                              @let editando = facade.estaEditando(consolidacao.id, entrega.id);
+                              <tr>
+                                <td>
+                                  {{ getPlanoEntregaInfo(entrega).entrega }}
+                                  <br />
+                                  <small class="text-muted">{{ getPlanoEntregaInfo(entrega).plano }}</small>
+                                </td>
+                                <td><span class="white-space">{{ entrega.descricao || '-' }}</span></td>
+                                <td>
+                                  @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
+                                    @if (editando || !atividade) {
+                                      <br-textarea
+                                        show-counter
+                                        class="w-100"
+                                        [maxlength]="1500"
+                                        [value]="facade.getTexto(consolidacao.id, entrega.id)"
+                                        (input)="facade.setTexto(consolidacao.id, entrega.id, $any($event.target).value)"
+                                        placeholder="Descreva o trabalho executado..."
+                                      ></br-textarea>
+                                    } @else {
+                                      <span class="white-space">{{ atividade.descricao }}</span>
+                                    }
+                                  } @else {
+                                    <span class="white-space">{{ atividade?.descricao || '-' }}</span>
+                                  }
+                                </td>
+                                @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
+                                  <td class="text-nowrap">
+                                    @if (editando || !atividade) {
+                                      <div class="d-flex gap-1">
+                                        <br-button
+                                          emphasis="primary"
+                                          density="small"
+                                          (click)="facade.confirmarAtividade(consolidacao, entrega)"
+                                          [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id) || !facade.getTexto(consolidacao.id, entrega.id).trim()"
+                                        >Confirmar</br-button>
+                                        <br-button
+                                          emphasis="secondary"
+                                          density="small"
+                                          (click)="facade.cancelarEdicao(consolidacao.id, entrega.id, atividade)"
+                                          [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id)"
+                                        >Cancelar</br-button>
+                                      </div>
+                                    } @else {
+                                      <div class="d-flex gap-1">
+                                        <br-button
+                                          emphasis="secondary"
+                                          density="small"
+                                          (click)="facade.iniciarEdicao(consolidacao.id, entrega.id, atividade.descricao)"
+                                        >Editar</br-button>
+                                        <br-button
+                                          class="text-danger"
+                                          emphasis="secondary"
+                                          density="small"
+                                          (click)="facade.excluirAtividade(consolidacao, entrega)"
+                                        >Excluir</br-button>
+                                      </div>
+                                    }
+                                  </td>
+                                }
+                              </tr>
+                            } @empty {
+                              <tr>
+                                <td [attr.colspan]="consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao) ? 4 : 3" class="text-center p-3">Nenhuma entrega cadastrada no planejamento.</td>
+                              </tr>
+                            }
+                          </tbody>
+                          </table>
+                    </div>
+                  </div>
+                  <app-consolidacao-ocorrencias
+                    [consolidacao]="consolidacao"
+                    [planoTrabalho]="planoTrabalho()!"
+                  />
 
 
-            <app-consolidacao-avaliacoes
-              [consolidacao]="consolidacao"
-              [planoTrabalho]="planoTrabalho()!"
-            />
+                  <app-consolidacao-avaliacoes
+                    [consolidacao]="consolidacao"
+                    [planoTrabalho]="planoTrabalho()!"
+                  />
 
 
-          </div>
-          @if (podeConcluirConsolidacao(consolidacao)) {
-            <div class="card-footer d-flex justify-content-end p-2x">
-              <br-button emphasis="primary" (click)="facade.concluirConsolidacao(consolidacao)">
-                Concluir Registro
-              </br-button>
-            </div>
-          }
-          @if (podeReabrirConsolidacao(consolidacao)) {
-            @if (facade.reabrindoId() === consolidacao.id) {
-              <div class="card-footer p-2x">
-                <div class="br-textarea mb-2">
-                  <label>Justificativa para reabertura <span class="text-danger">*</span></label>
-                  <textarea
-                    rows="3"
-                    placeholder="Informe o motivo da reabertura..."
-                    [value]="facade.justificativaReabrir()"
-                    (input)="facade.justificativaReabrir.set($any($event.target).value)"
-                  ></textarea>
                 </div>
-                <div class="d-flex justify-content-end gap-2">
-                  <br-button emphasis="secondary" (click)="facade.cancelarReabertura()">Cancelar</br-button>
-                  <br-button
-                    emphasis="primary"
-                    [disabled]="!facade.justificativaReabrir().trim()"
-                    (click)="facade.confirmarReabertura(consolidacao)"
-                  >Confirmar Reabertura</br-button>
-                </div>
-              </div>
-            } @else {
-              <div class="card-footer d-flex justify-content-end p-2x">
-                <br-button emphasis="secondary" (click)="facade.iniciarReabertura(consolidacao)">
-                  Reabrir Registro
-                </br-button>
-              </div>
-            }
+                @if (podeConcluirConsolidacao(consolidacao)) {
+                  <div class="card-footer d-flex justify-content-end p-2x">
+                    <br-button emphasis="primary" (click)="facade.concluirConsolidacao(consolidacao)">
+                      Concluir Registro
+                    </br-button>
+                  </div>
+                }
+                @if (podeReabrirConsolidacao(consolidacao)) {
+                  @if (facade.reabrindoId() === consolidacao.id) {
+                    <div class="card-footer p-2x">
+                      <div class="br-textarea mb-2">
+                        <label>Justificativa para reabertura <span class="text-danger">*</span></label>
+                        <textarea
+                          rows="3"
+                          placeholder="Informe o motivo da reabertura..."
+                          [value]="facade.justificativaReabrir()"
+                          (input)="facade.justificativaReabrir.set($any($event.target).value)"
+                        ></textarea>
+                      </div>
+                      <div class="d-flex justify-content-end gap-2">
+                        <br-button emphasis="secondary" (click)="facade.cancelarReabertura()">Cancelar</br-button>
+                        <br-button
+                          emphasis="primary"
+                          [disabled]="!facade.justificativaReabrir().trim()"
+                          (click)="facade.confirmarReabertura(consolidacao)"
+                        >Confirmar Reabertura</br-button>
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="card-footer d-flex justify-content-end p-2x">
+                      <br-button emphasis="secondary" (click)="facade.iniciarReabertura(consolidacao)">
+                        Reabrir Registro
+                      </br-button>
+                    </div>
+                  }
+                }
+              </br-collapse>
+            </div>
+          } @empty {
+            <br-message info>
+              <div class="icon"><i class="fas fa-exclamation-triangle fa-lg" aria-label="aviso"></i></div>
+              <div class="message-body">Nenhum período avaliativo registrado para este plano de trabalho.</div>
+            </br-message>
           }
-          </br-collapse>
         </div>
-      } @empty {
-        <br-message info>
-          <div class="icon"><i class="fas fa-exclamation-triangle fa-lg" aria-label="aviso"></i></div>
-          <div class="message-body">Nenhum período avaliativo registrado para este plano de trabalho.</div>
-        </br-message>
-      }
+      </div>
     }
     <!-- Assinaturas -->
     @if (assinatura.documento() || policy.podeAssinar(planoTrabalho()!)) {
