@@ -83,8 +83,13 @@ class PlanoTrabalhoIndexDTO
         $usuarioLogadoId = $filters['usuarioLogadoId'] ?? null;
         $usuarioId = $filters['usuario_id'] ?? null;
         $incluirSubordinadas = $filters['incluir_subordinadas'] ?? null;
+        $unidadeRegramento = $filters['unidade_regramento'] ?? null;
 
-        if ($dataInicio === null && $dataFim === null && !$vigentes && !$arquivados && $usuarioId === null && $numero === null && $modalidadePgd === null && $status === null && $unidadesId === null && $incluirSubordinadas == null) {
+        $possuiFiltro = $dataInicio || $dataFim || $vigentes || $arquivados
+            || $usuarioId || $numero || $modalidadePgd || $status
+            || $unidadesId || $incluirSubordinadas || $unidadeRegramento;
+
+        if (!$possuiFiltro) {
             throw new ValidateException("Informe ao menos um filtro para a busca.");
         }
 
