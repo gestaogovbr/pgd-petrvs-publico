@@ -136,19 +136,19 @@ export class ConsolidacaoFacade {
 
     const obs = ocorrenciaId
       ? this.api.updateOcorrencia(this.planoId, ocorrenciaId, {
-          observacoes: form.observacoes,
-          tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
-          horas: horas ?? undefined,
-          data_inicio: form.data_inicio,
-          data_fim: form.data_fim
-        })
+        observacoes: form.observacoes,
+        tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
+        horas: horas ?? undefined,
+        data_inicio: form.data_inicio,
+        data_fim: form.data_fim
+      })
       : this.api.createOcorrencia(this.planoId, {
-          observacoes: form.observacoes,
-          data_inicio: form.data_inicio,
-          data_fim: form.data_fim,
-          tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
-          ...(horas ? { horas } : {}),
-        });
+        observacoes: form.observacoes,
+        data_inicio: form.data_inicio,
+        data_fim: form.data_fim,
+        tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
+        ...(horas ? { horas } : {}),
+      });
 
     obs.subscribe({
       next: (salva) => {
@@ -256,7 +256,7 @@ export class ConsolidacaoFacade {
 
   concluirConsolidacao(consolidacao: Consolidacao): void {
     this.confirmacaoPendente.set({
-      titulo: 'Concluir Registro',
+      titulo: 'Finalizar Registro',
       mensagem: 'Ao finalizar este registro, a execução do Plano de Trabalho referente a este período será encaminhada para avaliação da chefia. Deseja confirmar?',
       onConfirmar: () => {
         this.concluirUC.execute(this.planoId, consolidacao.id).subscribe({
