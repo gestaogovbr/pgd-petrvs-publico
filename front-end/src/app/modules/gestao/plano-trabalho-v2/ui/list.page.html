@@ -202,6 +202,9 @@
             <td data-th="Modalidade">{{ p.modalidade_pgd_label || '-' }}</td>
             <td data-th="Status">
               <br-tag shape="rounded" density="small" [bgColor]="statusClass(p.status)" [label]="statusLabel(p.status, p)"></br-tag>
+              @if ($any(p).aguardando_reavaliacao) {
+                <br-tag class="ml-1" shape="rounded" density="small" bgColor="#e67e22" label="Aguardando Reavaliação"></br-tag>
+              }
               @if (p.data_arquivamento) {
                 <br-tag class="ml-1" shape="rounded" density="small" bgColor="#81088b" label="Arquivado" title="Arquivado em {{ p.data_arquivamento | date:'dd/MM/yyyy' }}"></br-tag>
               }
