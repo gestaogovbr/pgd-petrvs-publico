@@ -34,7 +34,8 @@ export class ConsolidacaoPolicy {
 
   podeReavaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho): boolean {
     const ultimaAvaliacao = consolidacao.avaliacoes[consolidacao.avaliacoes.length - 1];
-    return !!ultimaAvaliacao?.recurso
+    return consolidacao.avaliacoes.length === 1
+      && !!ultimaAvaliacao?.recurso
       && this.auth.usuario?.id != planoTrabalho.usuario_id
       && (this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id)
         || this.unidadeService.isGestorUnidade(planoTrabalho.unidade?.unidade_pai_id ?? null));
