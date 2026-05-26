@@ -139,7 +139,7 @@
         <div class="card-content">
           @for (consolidacao of facade.consolidacoes(); track consolidacao.id) {
             <div class="br-card mb-4">
-              <br-collapse [open]="false">
+              <br-collapse [open]="$index == 0">
                 <div slot="trigger" class="d-flex justify-content-between align-items-center w-100 pe-2">
                   <span class="text-weight-semi-bold">
                     Período Avaliativo: {{ consolidacao.data_inicio | date:'dd/MM/yyyy' }} à {{ consolidacao.data_fim | date:'dd/MM/yyyy' }}
