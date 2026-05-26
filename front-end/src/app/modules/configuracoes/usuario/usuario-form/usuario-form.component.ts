@@ -86,6 +86,9 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     if (controlName == "cpf" && !this.util.validarCPF(control.value)) {
       result = "Inválido";
     }
+    if (controlName == "email" && !!this.entity?.usuario_externo && this.util.empty(control.value)) { 
+      result = "Obrigatório";
+    }
     if(controlName == 'data_nascimento' && control.value == null){
       return result;
     }

@@ -5,7 +5,11 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\PlanoEntregaEntrega;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read PlanoEntregaEntrega|null $entrega
+ */
 class PlanoEntregaEntregaObjetivo extends ModelBase
 {
   protected $table = 'planos_entregas_entregas_objetivos';
@@ -24,11 +28,11 @@ class PlanoEntregaEntregaObjetivo extends ModelBase
 
   // Has
   // Belongs
-  public function objetivo()
+  public function objetivo(): BelongsTo
   {
     return $this->belongsTo(PlanejamentoObjetivo::class, 'planejamento_objetivo_id');
   } //ok
-  public function entrega()
+  public function entrega(): BelongsTo
   {
     return $this->belongsTo(PlanoEntregaEntrega::class, 'entrega_id');
   } //ok

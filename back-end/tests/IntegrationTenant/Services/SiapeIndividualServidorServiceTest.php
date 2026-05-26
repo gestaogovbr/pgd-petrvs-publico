@@ -2,16 +2,17 @@
 
 namespace Tests\IntegrationTenant\Services;
 
-use App\Models\Usuario;
 use App\Models\SiapeBlackListServidor;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\SiapeListaUORGS;
 use App\Services\NivelAcessoService;
+use App\Services\Siape\ProcessaDadosSiapeBD;
+use App\Models\Usuario;
 use App\Services\SiapeIndividualService;
 use App\Services\SiapeIndividualServidorService;
-use App\Services\Siape\ProcessaDadosSiapeBD;
+use Illuminate\Support\Facades\Bus;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
@@ -19,14 +20,16 @@ use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use Mockery;
 
+
 // Uses DatabaseTenantTestCase implicitly via folder configuration in Pest.php
 
 beforeEach(function () {
     // No manual schema creation needed!
     // DatabaseTenantTestCase handles tenant creation and schema loading.
-    
+    Bus::fake();
+
     $this->service = app(SiapeIndividualServidorService::class);
-    
+
     // Mock external service
     $this->mockSiapeService = Mockery::mock(SiapeIndividualService::class);
     $this->mockSiapeService->config = [
@@ -45,7 +48,7 @@ afterEach(function () {
 
 test('deve identificar usuario novo no resumo', function () {
     $cpf = str_pad((string) random_int(1, 99999999999), 11, '0', STR_PAD_LEFT);
-    
+
     // Ensure user does not exist
     $this->assertDatabaseMissing('usuarios', ['cpf' => $cpf], 'tenant');
 
@@ -53,7 +56,7 @@ test('deve identificar usuario novo no resumo', function () {
     $method = $reflection->getMethod('gerarResumo');
     $method->setAccessible(true);
 
-    $usuariosAntes = []; 
+    $usuariosAntes = [];
 
     // Create user manually to simulate insertion
     $usuario = Usuario::create([
@@ -64,7 +67,7 @@ test('deve identificar usuario novo no resumo', function () {
         'matricula' => '11111',
         'modalidade_pgd' => 'presencial'
     ]);
-    
+
     $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf, 'sucesso']);
 
     expect($resumo)->toHaveCount(1);
@@ -75,7 +78,7 @@ test('deve identificar usuario novo no resumo', function () {
 
 test('deve identificar usuario existente no resumo', function () {
     $cpf = '98765432109';
-    
+
     $usuario = Usuario::create([
         'nome' => 'Usuario Existente',
         'email' => 'existente@teste.com',
@@ -109,7 +112,7 @@ test('deve identificar usuario existente no resumo', function () {
 
 test('deve identificar alteracoes no usuario', function () {
      $cpf = '11122233344';
-    
+
      $usuario = Usuario::create([
         'nome' => 'Nome Novo',
         'email' => 'mudanca@teste.com',
@@ -128,20 +131,20 @@ test('deve identificar alteracoes no usuario', function () {
          'situacao_siape' => $usuario->situacao_siape,
          'lotacao_id' => null
      ]];
- 
+
      $reflection = new \ReflectionClass(SiapeIndividualServidorService::class);
      $method = $reflection->getMethod('gerarResumo');
      $method->setAccessible(true);
- 
+
      $resumo = $method->invokeArgs($this->service, [$usuariosAntes, $cpf, 'sucesso']);
- 
+
      expect($resumo[0]['usuario_existia'])->toBeTrue();
      expect($resumo[0]['alteracoes'])->toContain('nome');
 });
 
 test('deve retornar parcial se lotacao falhar para usuario existente', function () {
     $cpf = '55566677788';
-    
+
     $usuario = Usuario::create([
         'nome' => 'Usuario Sem Lotacao',
         'email' => 'semlotacao@teste.com',
@@ -175,7 +178,7 @@ test('deve retornar parcial se lotacao falhar para usuario existente', function 
 
 test('deve gerenciar blacklist corretamente para multiplas matriculas', function () {
     $cpf = '11122233344';
-    
+
     $userA = Usuario::create([
         'nome' => 'User A',
         'email' => 'a@test.com',
@@ -184,7 +187,7 @@ test('deve gerenciar blacklist corretamente para multiplas matriculas', function
         'situacao_siape' => 'ATIVO',
         'modalidade_pgd' => 'presencial'
     ]);
-    
+
     $userB = Usuario::create([
         'nome' => 'User B',
         'email' => 'b@test.com',
@@ -208,7 +211,7 @@ test('deve gerenciar blacklist corretamente para multiplas matriculas', function
     $reflection = new \ReflectionClass(SiapeIndividualServidorService::class);
     $method = $reflection->getMethod('removeVinculoParaforcarSerLotadoNovamente');
     $method->setAccessible(true);
-    
+
     $method->invokeArgs($this->service, [$cpf, $dadosFuncionais]);
 
     $this->assertDatabaseMissing('siape_blacklist_servidores', [

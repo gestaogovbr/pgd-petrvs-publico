@@ -1,6 +1,5 @@
-import { Component, Injector, Input, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Injector, Input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { PlanejamentoDaoService } from 'src/app/dao/planejamento-dao.service';
@@ -18,7 +17,6 @@ import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
     standalone: false
 })
 export class PlanejamentoListObjetivoComponent extends PageFrameBase {
-  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @Input() public planejamento_superior_id?: string;
   @Input() set control(value: AbstractControl | undefined) { super.control = value; } get control(): AbstractControl | undefined { return super.control; }
   @Input() set entity(value: Planejamento | undefined) { super.entity = value; } get entity(): Planejamento | undefined { return super.entity; }
@@ -61,13 +59,6 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     this.dao = injector.get<PlanejamentoDaoService>(PlanejamentoDaoService);
     this.objetivoDao = injector.get<PlanejamentoObjetivoDaoService>(PlanejamentoObjetivoDaoService);
     this.eixoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
-    this.form = this.fh.FormBuilder({
-      nome: { default: "" },
-      fundamentacao: { default: "" },
-      planejamento_id: { default: null },
-      eixo_tematico_id: { default: null },
-      objetivo_superior_id: { default: null }
-    }, this.cdRef);
     this.OPTION_INFORMACOES.onClick = (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true, metadata: { objetivos: this.items, objetivo: objetivo } });
     this.OPTION_EXCLUIR.onClick = (objetivo: PlanejamentoObjetivo) => { this.removeObjetivo(objetivo); };
     this.addOption(this.OPTION_INFORMACOES);
@@ -221,7 +212,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     if (this.auth.hasPermissionTo('MOD_PLAN_INST_EDT') && !this.disabled) {
       result.push({ hint: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (objetivo: PlanejamentoObjetivo) => { this.editObjetivo(objetivo); } });
     }
-    result.push({ hint: "Entregas", icon: "bi bi-file-earmark-bar-graph", color: "btn-outline-success", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({route: ['gestao', 'plano-entrega', 'entrega', 'objetivos', objetivo.id]}, { modal: true })});
+    result.push({ hint: "Gráfico", icon: "bi bi-diagram-3", color: "btn-outline-primary", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo-grafico', objetivo.id] })});
     return result;
   }
 
@@ -257,7 +248,14 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
             if(this.isNoPersist) {
                 this.items.push(modalResult);
             } else {
-                this.items.push(await this.objetivoDao!.save(modalResult)); 
+                const saved = await this.objetivoDao!.save(modalResult);
+                if (saved) {
+                  const merged = new PlanejamentoObjetivo(saved);
+                  merged.tipo_objetivo = modalResult.tipo_objetivo;
+                  this.items.push(merged);
+                } else {
+                  this.items.push(modalResult);
+                }
             }
             this.buildTree();
           } catch (error: any) {
@@ -301,9 +299,10 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
 
           if (!this.isNoPersist) {
               const savedItem = await this.objetivoDao?.save(modalResult);
-              // Atualiza o item na lista com o retorno do servidor (incluindo updated_at atualizado)
               if (savedItem) {
-                  this.items[index] = savedItem;
+                const merged = new PlanejamentoObjetivo(savedItem);
+                merged.tipo_objetivo = modalResult.tipo_objetivo;
+                this.items[index] = merged;
               } else {
                   this.items[index] = modalResult;
               }

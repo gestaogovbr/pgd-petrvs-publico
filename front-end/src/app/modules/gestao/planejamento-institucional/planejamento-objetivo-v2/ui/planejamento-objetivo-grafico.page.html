@@ -1,0 +1,360 @@
+<div class="br-mainpanel">
+  <app-breadcrumb />
+
+  <h2 class="mb-3">Gráfico de objetivos e esforço</h2>
+
+  @if (loadError()) {
+    <div class="alert alert-warning" role="alert">{{ loadError() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center p-5">
+      <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+    </div>
+  } @else if (graficoDados() !== undefined && !loadError()) {
+    <div class="grafico-wrap">
+      <div class="br-card mt-2">
+        <div class="card-header">
+          <div class="p-2">
+            <h4 class="mb-1">Relacionamento e esforço</h4>
+            <small>Objetivos a partir do ponto de consulta, vínculos pai e objetivo superior, horas acumuladas.</small>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+            <div class="br-switch icon">
+              <input id="show-pai" type="checkbox" [checked]="showPaiRelations()" (change)="onTogglePai($event)" />
+              <label for="show-pai">Mostrar relação pai</label>
+            </div>
+
+            <div class="br-switch icon">
+              <input id="show-superior" type="checkbox" [checked]="showSuperiorRelations()" (change)="onToggleSuperior($event)" />
+              <label for="show-superior">Mostrar relação objetivo superior</label>
+            </div>
+
+            <br-button emphasis="secondary" (click)="resetLayout()">Resetar layout</br-button>
+            <br-button emphasis="tertiary" (click)="clearSelection()">Limpar seleção</br-button>
+            <div class="br-input zoom-filter-input">
+              <label>Planejamento</label>
+              <select [value]="planejamentoFilter()" (change)="onPlanejamentoFilterChange($event)">
+                @for (option of planejamentoOptions(); track option) {
+                  <option [value]="option">{{ option === 'ALL' ? 'Todos' : option }}</option>
+                }
+              </select>
+            </div>
+        
+            <span class="zoom-controls" aria-label="Controles de zoom do grafo">
+              <br-button emphasis="tertiary" (click)="zoomOut()">Afastar</br-button>
+              <span class="zoom-controls__value">{{ zoom() * 100 | number:'1.0-0' }}%</span>
+              <br-button emphasis="tertiary" (click)="zoomIn()">Aproximar</br-button>
+              <br-button emphasis="tertiary" (click)="resetZoom()">100%</br-button>
+            </span>
+          </div>
+
+          <div class="row g-3 align-items-start grafico-main-row">
+            <div class="col-12 col-lg-8 grafico-viewport-col">
+              <div class="legend mb-2">
+                <span><strong>Planejamentos:</strong></span>
+                <span class="legend__planejamentos">
+                  @for (planejamento of planejamentosLegenda(); track planejamento.nome) {
+                    <span class="legend__item">
+                      <span
+                        class="legend__swatch"
+                        [style.background-color]="planejamento.color.fill"
+                        [style.border-color]="planejamento.color.stroke"
+                      ></span>
+                      {{ planejamento.nome }}
+                    </span>
+                  }
+                </span>
+                <span><strong>Arestas direcionais (curvas):</strong> cinza contínuo = filho → pai · azul tracejado = objetivo relacionado → objetivo superior</span>
+                <span><strong>Interação:</strong> clique para expandir/ocultar relações · arrastar nó para reposicionar · arrastar o fundo para mover a visão</span>
+              </div>
+
+              <svg #svgRef class="graph-surface" [attr.viewBox]="viewBoxString()">
+            <defs>
+              <marker
+                id="arrowPai"
+                viewBox="0 0 10 6"
+                markerWidth="10"
+                markerHeight="6"
+                refX="8"
+                refY="3"
+                orient="auto"
+                markerUnits="userSpaceOnUse"
+              >
+                <path d="M0,0 L0,6 L8,3 z" fill="#636363"></path>
+              </marker>
+              <marker
+                id="arrowSuperior"
+                viewBox="0 0 10 6"
+                markerWidth="10"
+                markerHeight="6"
+                refX="8"
+                refY="3"
+                orient="auto"
+                markerUnits="userSpaceOnUse"
+              >
+                <path d="M0,0 L0,6 L8,3 z" fill="#1351b4"></path>
+              </marker>
+            </defs>
+
+            <rect
+              class="graph-pan-hit"
+              x="0"
+              y="0"
+              [attr.width]="graphCanvasW()"
+              [attr.height]="graphCanvasH()"
+              fill="transparent"
+              (pointerdown)="onPanBackgroundDown($event)"
+            ></rect>
+
+            @for (edge of visibleEdges(); track edge.source + '-' + edge.target + '-' + edge.type) {
+              @let source = visibleNodes().find(node => node.id === edge.source);
+              @let target = visibleNodes().find(node => node.id === edge.target);
+              @if (source && target) {
+                <path
+                  [attr.d]="edgePath(edge, source, target)"
+                  fill="none"
+                  [attr.stroke]="edge.type === 'PAI' ? '#636363' : '#1351b4'"
+                  [attr.stroke-opacity]="isEdgeHighlighted(edge) ? '1' : '0.2'"
+                  [attr.stroke-width]="isEdgeHighlighted(edge) ? '2.4' : '1.5'"
+                  [attr.stroke-dasharray]="edge.type === 'SUPERIOR' ? '7 6' : null"
+                  [attr.marker-end]="edge.type === 'PAI' ? 'url(#arrowPai)' : 'url(#arrowSuperior)'"
+                >
+                  <title>{{ edgeTitle(edge, source, target) }}</title>
+                </path>
+              }
+            }
+
+            @for (node of visibleNodes(); track node.id) {
+              <g
+                class="node"
+                [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
+                (click)="$event.stopPropagation(); onNodeClick(node.id)"
+              >
+                <title>
+                  {{ node.planejamentoNome }} — {{ node.nome }} — {{ node.entregasCount }} entregas — próprio
+                  {{ formatHoras(node.esforcoProprioHoras) }} h, total {{ formatHoras(node.esforcoTotalHoras) }} h
+                </title>
+                <rect
+                  [attr.x]="-cardHalfW"
+                  [attr.y]="-cardHalfH"
+                  [attr.width]="cardW"
+                  [attr.height]="cardH"
+                  rx="8"
+                  [attr.fill]="nodeFill(node)"
+                  [attr.stroke]="nodeStroke(node)"
+                  [attr.stroke-width]="nodeStrokeWidth(node)"
+                  (pointerdown)="startDrag($event, node.id)"
+                ></rect>
+                <foreignObject
+                  [attr.x]="-cardHalfW"
+                  [attr.y]="-cardHalfH"
+                  [attr.width]="cardW"
+                  [attr.height]="cardH"
+                  pointer-events="none"
+                >
+                  <div xmlns="http://www.w3.org/1999/xhtml" class="node-card" [class.node-card--root]="node.isQueriedRoot" lang="pt-BR">
+                    <div class="node-card__top">
+                      @if (node.isQueriedRoot) {
+                        <span class="node-card__badge" aria-label="objetivo consultado">consultado</span>
+                      }
+                      <p class="node-card__planning" [attr.title]="node.planejamentoNome">{{ node.planejamentoNome }}</p>
+                    </div>
+                    <p class="node-card__title" [attr.title]="node.nome">{{ node.nome }}</p>
+                    <p class="node-card__entregas" [attr.title]="textoTooltipEntregas(node.entregasCount)">
+                      @if (node.entregasCount === 1) {
+                        1 entrega
+                      } @else {
+                        {{ node.entregasCount }} entregas
+                      }
+                    </p>
+                    <div class="node-card__bottom">
+                      <div class="node-card__meta">
+                        <span class="node-card__metric">Próprio&nbsp;{{ formatHorasGrafico(node.esforcoProprioHoras) }}&nbsp;h</span>
+                        <span class="node-card__metric">Total&nbsp;{{ formatHorasGrafico(node.esforcoTotalHoras) }}&nbsp;h</span>
+                      </div>
+                      @if (hasExpandableRelations(node.id)) {
+                        <span class="node-card__toggle" aria-hidden="true">{{ isExpanded(node.id) ? '−' : '+' }}</span>
+                      }
+                    </div>
+                  </div>
+                </foreignObject>
+              </g>
+            }
+          </svg>
+            </div>
+
+            <div class="col-12 col-lg-4 grafico-detail-col">
+              @if (selectedNode()) {
+                <div class="br-card detail-card h-100">
+                  <div class="card-content detail-card__body">
+                    <h5 class="mb-2 detail-card__title">{{ selectedNode()!.nome }}</h5>
+                    @if (selectedNode()!.id !== queriedObjetivoId()) {
+                      <div class="detail-card__actions mb-3">
+                        <br-button emphasis="secondary" (click)="abrirGrafoOutroObjetivo(selectedNode()!.id, $event)">
+                          Centralizar gráfico neste objetivo
+                        </br-button>
+                      </div>
+                    }
+                   
+                    <p class="mb-1">
+                      <strong>Planejamento:</strong>
+                      {{ selectedNode()!.planejamentoNome }}
+                    </p>
+                    <p class="mb-1">
+                      <strong>Esforço próprio:</strong> {{ formatHoras(selectedNode()!.esforcoProprioHoras) }} h
+                    </p>
+                    <p class="mb-1">
+                      <strong>Esforço total (acumulado):</strong> {{ formatHoras(selectedNode()!.esforcoTotalHoras) }} h
+                    </p>
+                    <p class="mb-2">
+                      <strong>Total de entregas (no gráfico):</strong> {{ selectedNode()!.entregasCount }}
+                    </p>
+
+                    <div class="detail-card__entregas-toolbar mb-2">
+                      <br-button emphasis="secondary" [disabled]="entregasLoading()" (click)="carregarEntregasDetalhe()">
+                        @if (entregasLoading()) {
+                          Carregando…
+                        } @else if (entregasResposta()) {
+                          Atualizar entregas
+                        } @else {
+                          Visualizar entregas (plano de entregas)
+                        }
+                      </br-button>
+                      @if (entregasResposta()) {
+                        <br-button emphasis="tertiary" (click)="togglePainelEntregas()">
+                          {{ entregasPainelAberto() ? 'Ocultar lista' : 'Mostrar lista' }}
+                        </br-button>
+                      }
+                    </div>
+
+                    @if (entregasError()) {
+                      <div class="alert alert-warning py-2 px-2 mb-2" role="alert">{{ entregasError() }}</div>
+                    }
+
+                    @if (entregasResposta() && entregasPainelAberto()) {
+                      <div class="detail-entregas mb-3">
+                        <p class="small text-muted mb-2">
+                          Entregas do <strong>plano de entregas</strong> com progresso no PE. O esforço (h) de cada linha soma apenas
+                          <strong>planos de trabalho concluídos</strong> que usam essa entrega. O esforço por unidade segue a mesma regra (unidade do PT).
+                        </p>
+
+                        @if (entregasResposta()!.esforco_por_unidade.length) {
+                          <p class="mb-1"><strong>Esforço por unidade (PT concluído)</strong></p>
+                          <ul class="detail-entregas__unidades mb-3">
+                            @for (u of entregasResposta()!.esforco_por_unidade; track u.unidade_id) {
+                              <li>
+                                <span class="detail-entregas__unidade-nome">{{ u.unidade_sigla }} — {{ u.unidade_nome }}</span>
+                                <span class="detail-entregas__unidade-meta">{{ formatHoras(u.esforco_horas_total) }} h</span>
+                              </li>
+                            }
+                          </ul>
+                        }
+
+                        @if (entregasResposta()!.itens.length === 0) {
+                          <p class="small text-muted mb-0">Nenhuma entrega do plano de entregas vinculada a este objetivo.</p>
+                        } @else {
+                          <div class="table-responsive detail-entregas__table-wrap">
+                            <table class="table table-sm table-bordered detail-entregas-table mb-0">
+                              <thead>
+                                <tr>
+                                  <th scope="col">Entrega (PE)</th>
+                                  <th scope="col">Unidade (PE)</th>
+                                  <th scope="col">Realizado</th>
+                                  <th scope="col">Meta</th>
+                                  <th scope="col">Esforço (h)</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                @for (item of entregasResposta()!.itens; track item.plano_entrega_entrega_id) {
+                                  <tr>
+                                    <td>
+                                      <span class="detail-entregas-table__titulo">{{ item.entrega_titulo }}</span>
+                                      @if (item.entrega_catalogo_nome) {
+                                        <span class="d-block small text-muted">Cat.: {{ item.entrega_catalogo_nome }}</span>
+                                      }
+                                    </td>
+                                    <td>{{ item.entrega_unidade_sigla }}</td>
+                                    <td>{{ formatPercent(item.progresso_realizado) }}</td>
+                                    <td>{{ formatPercent(item.progresso_esperado) }}</td>
+                                    <td class="text-nowrap">{{ formatHoras(item.esforco_horas_total) }}</td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+                        }
+                      </div>
+                    }
+
+                    <div class="detail-card__row mb-1">
+                      <strong>Pai (mesmo planejamento):</strong>
+                      @if (selectedConnections().parents.length) {
+                        <span>{{ selectedConnections().parents[0].nome }}</span>
+                        <br-button emphasis="tertiary" (click)="abrirGrafoOutroObjetivo(selectedConnections().parents[0].id, $event)">
+                          Ver no gráfico
+                        </br-button>
+                      } @else {
+                        <span>—</span>
+                      }
+                    </div>
+
+                    <div class="detail-card__row mb-1">
+                      <strong>Objetivo de planejamento superior:</strong>
+                      @if (selectedConnections().superiores.length) {
+                        <span>{{ selectedConnections().superiores[0].nome }}</span>
+                        <br-button emphasis="tertiary" (click)="abrirGrafoOutroObjetivo(selectedConnections().superiores[0].id, $event)">
+                          Ver no gráfico
+                        </br-button>
+                      } @else {
+                        <span>—</span>
+                      }
+                    </div>
+
+                    <p class="mb-1"><strong>Objetivos filhos (pai):</strong></p>
+                    @if (selectedConnections().children.length) {
+                      <ul class="detail-card__list mb-1">
+                        @for (child of selectedConnections().children; track child.id) {
+                          <li class="detail-card__list-item">
+                            <span>{{ child.nome }}</span>
+                            <br-button emphasis="tertiary" (click)="abrirGrafoOutroObjetivo(child.id, $event)">Gráfico</br-button>
+                          </li>
+                        }
+                      </ul>
+                    } @else {
+                      <p class="mb-1">—</p>
+                    }
+
+                    <p class="mb-1"><strong>Objetivos vinculados como superior:</strong></p>
+                    @if (selectedConnections().childrenSuperior.length) {
+                      <ul class="detail-card__list mb-0">
+                        @for (child of selectedConnections().childrenSuperior; track child.id) {
+                          <li class="detail-card__list-item">
+                            <span>{{ child.nome }}</span>
+                            <br-button emphasis="tertiary" (click)="abrirGrafoOutroObjetivo(child.id, $event)">Gráfico</br-button>
+                          </li>
+                        }
+                      </ul>
+                    } @else {
+                      <p class="mb-0">—</p>
+                    }
+                  </div>
+                </div>
+              } @else {
+                <div class="br-card detail-card detail-card--empty h-100">
+                  <div class="card-content detail-card__body">
+                    <h5 class="mb-2">Objetivo selecionado</h5>
+                    <p class="mb-0 text-muted">Clique em um nó do gráfico para ver os detalhes aqui.</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

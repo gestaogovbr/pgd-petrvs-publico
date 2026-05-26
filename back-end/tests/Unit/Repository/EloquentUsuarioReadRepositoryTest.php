@@ -100,3 +100,19 @@ test('findByCpfOrEmail não adiciona filtro de email quando email nulo', functio
 
     expect($repo->findByCpfOrEmail($cpf, $email))->toBeNull();
 });
+
+test('findByIdComAreasTrabalho aplica whereKey e eager load areasTrabalho.unidade', function () {
+    $usuario = \Mockery::mock(Usuario::class);
+
+    $builder = \Mockery::mock(Builder::class);
+    $builder->shouldReceive('whereKey')->once()->with('user-1')->andReturnSelf();
+    $builder->shouldReceive('with')->once()->with(['areasTrabalho.unidade'])->andReturnSelf();
+    $builder->shouldReceive('first')->once()->andReturn($usuario);
+
+    $model = \Mockery::mock(Usuario::class);
+    $model->shouldReceive('newQuery')->andReturn($builder);
+
+    $repo = new EloquentUsuarioReadRepository($model);
+
+    expect($repo->findByIdComAreasTrabalho('user-1'))->toBe($usuario);
+});

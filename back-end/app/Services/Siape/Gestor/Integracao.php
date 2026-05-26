@@ -113,7 +113,7 @@ class Integracao implements InterfaceIntegracao
         $vinculo = $this->preparaVinculo($dado['id_chefe'], $unidadeExercicioId, $chefeAtribuicoes);
 
         SiapeLog::info("Salvando integrantes", $vinculo);
-        $this->unidadeIntegranteService->salvarIntegrantes($vinculo, false);
+        $this->unidadeIntegranteService->salvarIntegrantes($vinculo, false, true);
         $this->removerGestorSubstituto($dado['id_chefe'], $unidadeExercicioId);
 
         $this->alteraPerfilAdministradorNegocial($dado['id_chefe'], $usuarioChefia);

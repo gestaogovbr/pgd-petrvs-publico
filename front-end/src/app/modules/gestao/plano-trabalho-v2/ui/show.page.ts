@@ -1,0 +1,197 @@
+import { CommonModule } from "@angular/common";
+import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal } from "@angular/core";
+import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
+import { BreadcrumbComponent } from "src/app/v2/components/breadcrumb/breadcrumb.component";
+import { ActivatedRoute, Router } from "@angular/router";
+import { filter, map, take } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { PlanoApiClient } from "../infra/plano-api.client";
+import { ArquivarPlanoUseCase } from "../application/arquivar-plano.usecase";
+import { EncerrarPlanoUseCase } from "../application/encerrar-plano.usecase";
+import { Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo } from "../domain/types";
+import { PlanoTrabalhoStatus, PlanoTrabalhoStatusGroups } from "src/app/models/plano-trabalho.model";
+import { AuthService } from "src/app/services/auth.service";
+import { UnidadeService } from "src/app/v2/services/unidade.service";
+import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
+import { ConsolidacaoPolicy } from "../application/consolidacao.policy";
+import { ConsolidacaoFacade } from "../application/consolidacao.facade";
+import { BreadcrumbService } from "src/app/v2/components/breadcrumb/breadcrumb.service";
+import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
+import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
+
+@Component({
+  selector: 'app-plano-trabalho-v2-show-page',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent],
+  templateUrl: './show.page.html'
+})
+export class PlanoTrabalhoV2ShowPage implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly api = inject(PlanoApiClient);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly auth = inject(AuthService);
+  private readonly unidadeService = inject(UnidadeService);
+
+  private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
+  private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
+
+  private readonly breadcrumb = inject(BreadcrumbService);
+
+  readonly policy = inject(PlanoTrabalhoPolicy);
+  readonly consolidacaoPolicy = inject(ConsolidacaoPolicy);
+  readonly facade = inject(ConsolidacaoFacade);
+
+  readonly planoTrabalho = signal<PlanoTrabalho | null>(null);
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
+  readonly encerrando = signal(false);
+  readonly justificativaEncerramento = signal('');
+
+  readonly PlanoStatus = PlanoTrabalhoStatus;
+  readonly ConsolidacaoStatus = ConsolidacaoStatus;
+  ngOnInit(): void {
+    this.route.paramMap.pipe(
+      map(params => params.get('id')),
+      filter(id => !!id),
+      take(1),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(id => {
+      this.api.getById(id!).subscribe({
+        next: (plano) => {
+          this.planoTrabalho.set(plano);
+          this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.error.set('Erro ao carregar o plano de trabalho.');
+          this.loading.set(false);
+        }
+      });
+
+      this.facade.init(id!);
+    });
+  }
+
+  // --- Autorização ---
+
+  podeVisualizarConsolidacoes(): boolean {
+    const plano = this.planoTrabalho();
+    if (!plano) return false;
+    return PlanoTrabalhoStatusGroups.comExecucaoVisivel.includes(plano.status);
+  }
+
+  todasEntregasComAtividade(consolidacao: Consolidacao): boolean {
+    const entregas = this.planoTrabalho()?.entregas ?? [];
+    if (!entregas.length) return false;
+    return entregas.every(e => this.facade.getAtividade(consolidacao, e.id) !== null);
+  }
+
+  podeConcluirConsolidacao(consolidacao: Consolidacao): boolean {
+    const plano = this.planoTrabalho();
+    if (!plano) return false;
+    return this.consolidacaoPolicy.podeRegistrar(plano, consolidacao)
+      && consolidacao.status === ConsolidacaoStatus.INCLUIDO
+      && this.todasEntregasComAtividade(consolidacao);
+  }
+
+  podeReabrirConsolidacao(consolidacao: Consolidacao): boolean {
+    const plano = this.planoTrabalho();
+    if (!plano || plano.status !== PlanoTrabalhoStatus.ATIVO) return false;
+    return ConsolidacaoStatusGroups.reabrivel.includes(consolidacao.status)
+      && (plano.usuario_id === this.auth.usuario?.id
+        || this.unidadeService.isGestorUnidade(plano.unidade_id));
+  }
+
+  // --- Labels / Display ---
+
+  statusLabel(value: PlanoTrabalhoStatus | undefined): string {
+    if (value === 'CONCLUIDO' && this.planoTrabalho()?.encerrado_at) return 'Encerrado antecipadamente';
+    const labels: Record<PlanoTrabalhoStatus, string> = {
+      ATIVO: 'Em execução',
+      INCLUIDO: 'Incluído',
+      AGUARDANDO_ASSINATURA: 'Aguardando assinatura',
+      SUSPENSO: 'Suspenso',
+      CANCELADO: 'Cancelado',
+      CONCLUIDO: 'Concluído',
+      AVALIADO: 'Avaliado'
+    };
+    return value ? (labels[value] ?? value) : '-';
+  }
+
+  statusConsolidacaoLabel(value: ConsolidacaoStatus | undefined): string {
+    const labels: Record<ConsolidacaoStatus, string> = {
+      INCLUIDO: 'Aguardando Registro',
+      CONCLUIDO: 'Aguardando Avaliação',
+      AVALIADO: 'Avaliado',
+    };
+    return value ? (labels[value] ?? value) : '-';
+  }
+
+  statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
+    const plano = this.planoTrabalho();
+    if (plano?.encerrado_at && consolidacao.data_inicio > plano.encerrado_at) {
+      return 'Encerrado antecipadamente';
+    }
+    if (consolidacao.status === ConsolidacaoStatus.INCLUIDO && this.todasEntregasComAtividade(consolidacao)) {
+      return 'Registro incluído';
+    }
+    return this.statusConsolidacaoLabel(consolidacao.status);
+  }
+
+  getPlanoEntregaInfo(e: PlanoTrabalhoEntrega): { plano: string; entrega: string } {
+    return getPlanoEntregaInfo(e);
+  }
+
+  // --- Navegação ---
+
+  voltar() {
+    this.router.navigate(['gestao', 'plano-trabalho-v2']);
+  }
+
+  editarPlano() {
+    const id = this.planoTrabalho()?.id;
+    if (id) this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', id]);
+  }
+
+  irParaTcr() {
+    const id = this.planoTrabalho()?.id;
+    if (id) this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+  }
+
+  arquivarPlano() {
+    const plano = this.planoTrabalho();
+    if (!plano) return;
+    this.arquivarPlanoUC.execute(plano.id).subscribe({
+      next: (atualizado) => {
+        this.planoTrabalho.set(atualizado);
+      }
+    });
+  }
+
+  encerrarPlano() {
+    this.encerrando.set(true);
+    this.justificativaEncerramento.set('');
+  }
+
+  cancelarEncerramento() {
+    this.encerrando.set(false);
+    this.justificativaEncerramento.set('');
+  }
+
+  confirmarEncerramento() {
+    const plano = this.planoTrabalho();
+    const justificativa = this.justificativaEncerramento().trim();
+    if (!plano || !justificativa) return;
+    this.encerrarPlanoUC.execute(plano.id, justificativa).subscribe({
+      next: (atualizado) => {
+        this.planoTrabalho.set(atualizado);
+        if (atualizado.consolidacoes) this.facade.consolidacoes.set(atualizado.consolidacoes as any);
+        this.encerrando.set(false);
+        this.justificativaEncerramento.set('');
+      },
+      error: (err) => alert(err?.error?.error || 'Erro ao encerrar o plano.')
+    });
+  }
+}

@@ -17,6 +17,8 @@ use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Collection;
+use function Symfony\Component\String\s;
 
 class SiapeIndividualUnidadeService extends ServiceBase
 {
@@ -100,6 +102,15 @@ class SiapeIndividualUnidadeService extends ServiceBase
             SiapeLog::info('Buscando a lista de urogs');
 
             SiapeLog::info('Salvando os dados da unidade');
+
+        $this->siapeDadosUORGRepository->create([
+            'id' => Str::uuid(),
+            'data_modificacao' => today(),
+            'codigo' => $codUorg,
+            'response' => $dadosUnidadeResponseXml,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
 
             $this->siapeDadosUORGRepository->create([
                 'id' => Str::uuid(),
