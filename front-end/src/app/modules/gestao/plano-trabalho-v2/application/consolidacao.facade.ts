@@ -342,9 +342,10 @@ export class ConsolidacaoFacade {
     const justificativa = this.getJustificativaAvaliacao(consolidacao.id).trim() || undefined;
 
     const nota = this.notas().find(n => n.id === notaId);
+    const isReavaliacao = consolidacao.avaliacoes?.length === 1 && !!consolidacao.avaliacoes[0].recurso;
 
     this.confirmacaoPendente.set({
-      titulo: 'Avaliar Período',
+      titulo: isReavaliacao ? 'Reavaliar Período' : 'Avaliar Período',
       mensagem: `Você está atribuindo a nota ${nota?.nota ?? ''} à execução deste período do Plano de Trabalho. Deseja confirmar?`,
       onConfirmar: () => {
         this.avaliandoIds.update(s => new Set([...s, consolidacao.id]));
@@ -358,7 +359,7 @@ export class ConsolidacaoFacade {
             this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
             this.notasSelecionadas.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
             this.justificativasAvaliacao.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
-            this.message.success('Avaliação realizada com sucesso.');
+            this.message.success(isReavaliacao ? 'Reavaliação realizada com sucesso.' : 'Avaliação realizada com sucesso.');
           },
           error: () => {
             this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });

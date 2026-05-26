@@ -22,6 +22,16 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
     {
         return 'plano_trabalho_consolidacao_id';
     }
+
+    public function possuiRecursoSemReavaliacao(): bool
+    {
+        $avaliacoes = $this->relationLoaded('avaliacoes')
+            ? $this->avaliacoes
+            : $this->avaliacoes()->get();
+
+        return $avaliacoes->count() === 1
+            && $avaliacoes->first()->recurso !== null;
+    }
   protected $table = 'planos_trabalhos_consolidacoes';
 
   protected $with = [];
@@ -62,7 +72,9 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
         return;
       }
 
-      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value && !$planoTrabalho->encerrado_at) {
+      $foiRecurso = $consolidacao->possuiRecursoSemReavaliacao();
+
+      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value && !$planoTrabalho->encerrado_at && !$foiRecurso) {
         $planoTrabalho->update(['avaliado_at' => null]);
         $statusService->atualizaStatus(
           $planoTrabalho,

@@ -83,6 +83,7 @@
       [justificativa]="facade.getJustificativaAvaliacao(consolidacao.id)"
       [justificativaObrigatoria]="facade.notaSelecionadaJustificaObrigatoria(consolidacao.id)"
       [emAndamento]="facade.avaliandoIds().has(consolidacao.id)"
+      submitLabel="Reavaliar"
       (notaSelecionada)="facade.selecionarNota(consolidacao.id, $event)"
       (justificativaChange)="facade.setJustificativaAvaliacao(consolidacao.id, $event)"
       (submeter)="facade.avaliarConsolidacao(consolidacao)"

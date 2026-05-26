@@ -140,6 +140,12 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     if (consolidacao.status === ConsolidacaoStatus.INCLUIDO && this.todasEntregasComAtividade(consolidacao)) {
       return 'Registro incluído';
     }
+    if (consolidacao.status === ConsolidacaoStatus.CONCLUIDO && consolidacao.avaliacoes?.length === 1 && consolidacao.avaliacoes[0].recurso) {
+      return 'Aguardando Reavaliação';
+    }
+    if (consolidacao.status === ConsolidacaoStatus.AVALIADO && consolidacao.avaliacoes?.length > 1) {
+      return 'Reavaliado';
+    }
     return this.statusConsolidacaoLabel(consolidacao.status);
   }
 
