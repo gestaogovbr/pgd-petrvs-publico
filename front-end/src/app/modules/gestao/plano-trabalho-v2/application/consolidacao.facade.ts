@@ -6,6 +6,7 @@ import { SolicitarRecursoUseCase } from './solicitar-recurso.usecase';
 import { AtividadeConsolidacao, Consolidacao, NotaAvaliacao, Ocorrencia, OcorrenciaFormValue, PlanoTrabalhoEntrega, TipoMotivoAfastamento } from '../domain/types';
 import { TipoMotivoAfastamentoService } from 'src/app/v2/services/tipo-motivo-afastamento.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { MessageService } from 'src/app/v2/services/message.service';
 
 @Injectable()
 export class ConsolidacaoFacade {
@@ -15,6 +16,7 @@ export class ConsolidacaoFacade {
   private readonly solicitarRecursoUC = inject(SolicitarRecursoUseCase);
   private readonly tipoMotivoApi = inject(TipoMotivoAfastamentoService);
   private readonly auth = inject(AuthService);
+  private readonly message = inject(MessageService);
 
   private planoId = '';
 
@@ -253,11 +255,18 @@ export class ConsolidacaoFacade {
   // --- Consolidação ---
 
   concluirConsolidacao(consolidacao: Consolidacao): void {
-    this.concluirUC.execute(this.planoId, consolidacao.id).subscribe({
-      next: (atualizado) => {
-        this.consolidacoes.update(lista =>
-          lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
-        );
+    this.confirmacaoPendente.set({
+      titulo: 'Concluir Registro',
+      mensagem: 'Ao finalizar este registro, a execução do Plano de Trabalho referente a este período será encaminhada para avaliação da chefia. Deseja confirmar?',
+      onConfirmar: () => {
+        this.concluirUC.execute(this.planoId, consolidacao.id).subscribe({
+          next: (atualizado) => {
+            this.consolidacoes.update(lista =>
+              lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
+            );
+            this.message.success('Registro concluído com sucesso.');
+          }
+        });
       }
     });
   }
@@ -276,13 +285,20 @@ export class ConsolidacaoFacade {
     const justificativa = this.justificativaReabrir().trim();
     if (!justificativa) return;
 
-    this.api.reabrirConsolidacao(this.planoId, consolidacao.id, justificativa).subscribe({
-      next: (atualizado) => {
-        this.consolidacoes.update(lista =>
-          lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
-        );
-        this.reabrindoId.set(null);
-        this.justificativaReabrir.set('');
+    this.confirmacaoPendente.set({
+      titulo: 'Reabrir Registro',
+      mensagem: 'Ao reabrir este registro, a execução do Plano de Trabalho referente a este período retornará para edição e ficará indisponível para avaliação até nova finalização. Deseja confirmar?',
+      onConfirmar: () => {
+        this.api.reabrirConsolidacao(this.planoId, consolidacao.id, justificativa).subscribe({
+          next: (atualizado) => {
+            this.consolidacoes.update(lista =>
+              lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
+            );
+            this.reabrindoId.set(null);
+            this.justificativaReabrir.set('');
+            this.message.success('Registro reaberto com sucesso.');
+          }
+        });
       }
     });
   }
