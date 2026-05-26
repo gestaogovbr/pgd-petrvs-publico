@@ -252,14 +252,6 @@
                     [planoTrabalho]="planoTrabalho()!"
                   />
 
-
-                  <app-consolidacao-avaliacoes
-                    [consolidacao]="consolidacao"
-                    [planoTrabalho]="planoTrabalho()!"
-                  />
-
-
-                </div>
                 @if (podeConcluirConsolidacao(consolidacao)) {
                   <div class="card-footer d-flex justify-content-end p-2x">
                     <br-button emphasis="primary" (click)="facade.concluirConsolidacao(consolidacao)">
@@ -296,6 +288,13 @@
                     </div>
                   }
                 }
+                  <app-consolidacao-avaliacoes
+                    [consolidacao]="consolidacao"
+                    [planoTrabalho]="planoTrabalho()!"
+                  />
+
+
+                </div>
               </br-collapse>
             </div>
           } @empty {
