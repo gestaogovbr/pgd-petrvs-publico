@@ -397,7 +397,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     if (!this.planoId()) return;
     this.confirmacao.set({
       titulo: 'Excluir Plano de Trabalho',
-      mensagem: 'Deseja realmente excluir este plano de trabalho?',
+      mensagem: 'Ao excluir este Plano de Trabalho, ele será removido definitivamente do sistema. Essa ação é irreversível. Deseja confirmar?',
       onConfirmar: () => {
         this.api.delete(this.planoId()!).subscribe(() => {
           this.message.success('Plano de trabalho excluído com sucesso.');

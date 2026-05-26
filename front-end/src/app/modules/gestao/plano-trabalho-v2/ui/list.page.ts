@@ -319,7 +319,7 @@ readonly filters: FormGroup<{
   excluirPlano(p: PlanoTrabalho) {
     this.confirmacaoPendente.set({
       titulo: 'Excluir Plano de Trabalho',
-      mensagem: 'Tem certeza que deseja excluir este Plano de Trabalho? Esta ação não pode ser desfeita.',
+      mensagem: 'Ao excluir este Plano de Trabalho, ele será removido definitivamente do sistema. Essa ação é irreversível. Deseja confirmar?',
       onConfirm: () => this.excluirPlanoUC.execute(p.id).subscribe(() => this.applyFiltersAndLoad(false))
     });
   }
