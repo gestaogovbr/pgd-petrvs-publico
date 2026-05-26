@@ -199,9 +199,9 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         /** @var \Illuminate\Database\Eloquent\Builder<PlanoTrabalho> $queryBase */
         $queryBase = PlanoTrabalho::query();
 
-        $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.modalidade_pgd', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status', 'planos_trabalhos.encerrado_at', 'planos_trabalhos.documento_id')
+        $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.programa_id', 'planos_trabalhos.modalidade_pgd', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status', 'planos_trabalhos.encerrado_at', 'planos_trabalhos.documento_id')
               ->addSelect(DB::raw('(SELECT COALESCE(SUM(e.forca_trabalho), 0) FROM planos_trabalhos_entregas e WHERE e.plano_trabalho_id = planos_trabalhos.id AND e.deleted_at IS NULL) AS carga_trabalho_total'))
-              ->with(['usuario:id,nome', 'unidade:id,nome,sigla']);
+              ->with(['usuario:id,nome', 'unidade:id,nome,sigla', 'programa:id,nome']);
 
         if($filtro->hierarquia){
             $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';

@@ -198,7 +198,7 @@
               </br-button>
             </td>
             <td data-th="Usuário">{{ p.usuario?.nome || '-' }}</td>
-            <td data-th="Unidade">{{ p.unidade?.sigla || '-' }}</td>
+            <td data-th="Unidade">{{ p.unidade?.sigla || '-' }}<br><small class="text-muted">{{ p.programa?.nome || '' }}</small></td>
             <td data-th="Modalidade">{{ p.modalidade_pgd_label || '-' }}</td>
             <td data-th="Status">
               <br-tag shape="rounded" density="small" [bgColor]="statusClass(p.status)" [label]="statusLabel(p.status, p)"></br-tag>
