@@ -525,7 +525,7 @@ describe('SiapeUnidadeLifecycleService', function () {
 
         $buscarDadosUnidade = new class([
             'cpf' => '00000000000',
-            'url' => 'http://localhost',
+            'url' => 'http://localhost:8080',
             'conectagov_chave' => 'chave',
             'conectagov_senha' => 'senha',
             'conectagov_qtd_max_requisicoes' => 10,

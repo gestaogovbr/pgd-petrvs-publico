@@ -208,47 +208,55 @@
             </td>
             <td data-th="Período">{{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}</td>
             <td data-th="Ações">
-              <div class="d-flex gap-1">
-                <br-button shape="circle" (click)="detalhesDoPlano(p)" title="Consultar" ariaLabel="Detalhes do plano">
+              <div class="d-flex gap-1 align-items-center">
+                <br-button shape="circle" (click)="detalhesDoPlano(p)" title="Visualizar" ariaLabel="Visualizar plano">
                   <i class="fas fa-search"></i>
                 </br-button>
-                @if (policy.podeEditar(p)) {
-                <br-button shape="circle" (click)="editarPlano(p)" title="Editar" ariaLabel="Editar plano">
-                  <i class="fas fa-pen-to-square"></i>
-                </br-button>
-                }
-                @if (policy.podeAssinar(p)) {
-                  @if (p.documento_id && p.status === 'AGUARDANDO_ASSINATURA') {
-                    <br-button shape="circle" (click)="cancelarAssinaturaPlano(p)" title="Cancelar Assinatura" ariaLabel="Cancelar assinatura do plano">
-                      <i class="fas fa-ban"></i>
-                    </br-button>
-                  } @else {
-                    <br-button shape="circle" (click)="assinarPlano(p)" title="Assinar" ariaLabel="Assinar plano">
-                      <i class="fas fa-pen-fancy"></i>
-                    </br-button>
-                  }
-                }
-                @if (policy.podeCancelar(p)) {
-                <br-button shape="circle" class="text-danger" (click)="iniciarCancelamento(p)" title="Cancelar" ariaLabel="Cancelar plano">
-                  <i class="fas fa-times-circle"></i>
-                </br-button>
-                }
-                @if (policy.podeEncerrar(p)) {
-                <br-button shape="circle" (click)="iniciarEncerramento(p)" title="Encerrar" ariaLabel="Encerrar plano">
-                  <i class="fas fa-stop-circle"></i>
-                </br-button>
-                }
-                @if (policy.podeClonar(p)) {
-                <br-button shape="circle" (click)="clonarPlano(p)" title="Clonar" ariaLabel="Clonar plano">
-                  <i class="fas fa-clone"></i>
-                </br-button>
-                }
-
-                @if (policy.podeExcluir(p)) {
-                <br-button shape="circle" (click)="excluirPlano(p)" title="Excluir" ariaLabel="Excluir plano">
-                  <i class="fas fa-trash"></i>
-                </br-button>
-                }
+                <div class="btn-group">
+                  <br-button shape="circle" data-bs-toggle="dropdown" aria-expanded="false" title="Mais ações" ariaLabel="Mais ações">
+                    <i class="fas fa-ellipsis-v"></i>
+                  </br-button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeEditar(p)" (click)="policy.podeEditar(p) && editarPlano(p)">
+                        <i class="fas fa-pen-to-square"></i> Editar
+                      </a>
+                    </li>
+                    @if (p.documento_id && p.status === 'AGUARDANDO_ASSINATURA') {
+                    <li>
+                      <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeAssinar(p)" (click)="policy.podeAssinar(p) && cancelarAssinaturaPlano(p)">
+                        <i class="fas fa-ban"></i> Cancelar Assinatura
+                      </a>
+                    </li>
+                    } @else {
+                    <li>
+                      <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeAssinar(p)" (click)="policy.podeAssinar(p) && assinarPlano(p)">
+                        <i class="fas fa-pen-fancy"></i> Assinar
+                      </a>
+                    </li>
+                    }
+                    <li>
+                      <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeCancelar(p)" (click)="policy.podeCancelar(p) && iniciarCancelamento(p)">
+                        <i class="fas fa-times-circle"></i> Cancelar
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeEncerrar(p)" (click)="policy.podeEncerrar(p) && iniciarEncerramento(p)">
+                        <i class="fas fa-stop-circle"></i> Encerrar
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeClonar(p)" (click)="policy.podeClonar(p) && clonarPlano(p)">
+                        <i class="fas fa-clone"></i> Clonar
+                      </a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeExcluir(p)" (click)="policy.podeExcluir(p) && excluirPlano(p)">
+                        <i class="fas fa-trash"></i> Excluir
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </td>
           </tr>
