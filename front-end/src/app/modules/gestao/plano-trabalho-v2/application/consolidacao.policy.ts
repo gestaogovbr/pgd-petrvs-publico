@@ -25,18 +25,19 @@ export class ConsolidacaoPolicy {
   }
 
   podeSolicitarRecurso(consolidacao: Consolidacao, avaliacao: AvaliacaoConsolidacao, planoTrabalho: PlanoTrabalho): boolean {
+    const jaRecorreu = consolidacao.avaliacoes.some(a => a.recurso !== null);
     return this.auth.usuario?.id === planoTrabalho.usuario_id
-      && planoTrabalho.status === PlanoTrabalhoStatus.CONCLUIDO
       && consolidacao.status === ConsolidacaoStatus.AVALIADO
-      && consolidacao.avaliacoes.length === 1
-      && avaliacao.recurso === null;
+      && avaliacao.recurso === null
+      && !jaRecorreu;
   }
 
   podeReavaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho): boolean {
     const ultimaAvaliacao = consolidacao.avaliacoes[consolidacao.avaliacoes.length - 1];
     return !!ultimaAvaliacao?.recurso
       && this.auth.usuario?.id != planoTrabalho.usuario_id
-      && this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id);
+      && (this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id)
+        || this.unidadeService.isGestorUnidade(planoTrabalho.unidade?.unidade_pai_id ?? null));
   }
 
   podeCancelarAvaliacao(consolidacao: Consolidacao, avaliacao: AvaliacaoConsolidacao): boolean {

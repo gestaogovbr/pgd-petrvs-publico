@@ -338,7 +338,7 @@
           }
 
           <div class="d-flex gap-2">
-            @if (!assinatura.jaAssinou()) {
+            @if (!assinatura.jaAssinou() && policy.podeAssinar(planoTrabalho()!)) {
               <br-button emphasis="primary" (click)="assinatura.abrirConfirmacaoAssinatura()" [disabled]="assinatura.salvando()">
                 <i class="fas fa-pen-fancy mr-1"></i>Assinar
               </br-button>

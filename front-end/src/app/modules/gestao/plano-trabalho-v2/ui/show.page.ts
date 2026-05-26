@@ -113,6 +113,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     const plano = this.planoTrabalho();
     if (!plano || plano.status !== PlanoTrabalhoStatus.ATIVO) return false;
     return ConsolidacaoStatusGroups.reabrivel.includes(consolidacao.status)
+      && !consolidacao.avaliacoes?.length
       && (plano.usuario_id === this.auth.usuario?.id
         || this.unidadeService.isGestorUnidade(plano.unidade_id));
   }
