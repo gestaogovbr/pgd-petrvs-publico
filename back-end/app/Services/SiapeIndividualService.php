@@ -8,7 +8,7 @@ use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidades;
 use App\Services\Siape\ProcessaDadosSiapeBD;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
+use App\Facades\SiapeLog;
 
 class SiapeIndividualService extends ServiceBase
 {
@@ -46,7 +46,7 @@ class SiapeIndividualService extends ServiceBase
             return $this->SiapeIndividualUnidadeService->fluxoSiape($codUnidade, $this);
 
         } catch (\Throwable $e) {
-            Log::error('Erro ao processar unidade no SIAPE: ' . $e->getMessage());
+            SiapeLog::error('Erro ao processar unidade no SIAPE: ' . $e->getMessage());
             throw new \Exception('Houve uma falha na comunicação com o SIAPE ao processar esta unidade. Por favor, tente novamente mais tarde.');
         }
     }

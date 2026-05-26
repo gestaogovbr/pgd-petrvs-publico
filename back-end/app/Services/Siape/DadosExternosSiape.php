@@ -2,6 +2,7 @@
 
 namespace App\Services\Siape;
 
+use App\Facades\SiapeLog;
 use App\Services\Siape\BuscarDados\BuscarDadosSiape;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
@@ -48,7 +49,7 @@ trait DadosExternosSiape
             $retorno = $this->siapeClassBuscaDados->buscaSincrona($xmlData);
             return $this->siapeClassBuscaDados->prepareResponseXml($retorno);
         } catch (\Throwable $e) {
-            Log::error('Erro ao buscar dados funcionais da unidade no SIAPE: ' .$e->getMessage());
+            SiapeLog::error('Erro ao buscar dados funcionais da unidade no SIAPE: ' .$e->getMessage());
             throw new \Exception('Houve uma falha na comunicação com o SIAPE ao processar esta unidade. Por favor, tente novamente mais tarde.');
         }
     }
@@ -102,7 +103,7 @@ trait DadosExternosSiape
                 }
             }
         } catch (\Throwable $e) {
-            Log::error('Erro ao buscar dados funcionais do servidor no SIAPE - CPF: ' . $cpf . ' - ' . $e->getMessage());
+            SiapeLog::error('Erro ao buscar dados funcionais do servidor no SIAPE - CPF: ' . $cpf . ' - ' . $e->getMessage());
             throw new \Exception('Houve uma falha na comunicação com o SIAPE ao processar este CPF. Por favor, tente novamente mais tarde.');
         }
 
@@ -138,7 +139,7 @@ trait DadosExternosSiape
             }
 
         } catch (\Throwable $e) {
-            Log::error('Erro ao buscar dados pessoais do servidor no SIAPE - CPF: ' . $cpf . ' - ' . $e->getMessage());
+            SiapeLog::error('Erro ao buscar dados pessoais do servidor no SIAPE - CPF: ' . $cpf . ' - ' . $e->getMessage());
             throw new \Exception('Houve uma falha na comunicação com o SIAPE ao processar este CPF. Por favor, tente novamente mais tarde.');
         }
 
