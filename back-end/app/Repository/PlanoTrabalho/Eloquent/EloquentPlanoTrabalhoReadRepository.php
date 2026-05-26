@@ -203,6 +203,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
               ->addSelect(DB::raw('(SELECT COALESCE(SUM(e.forca_trabalho), 0) FROM planos_trabalhos_entregas e WHERE e.plano_trabalho_id = planos_trabalhos.id AND e.deleted_at IS NULL) AS carga_trabalho_total'))
               ->addSelect(DB::raw('(SELECT COUNT(*) > 0 FROM planos_trabalhos_consolidacoes c INNER JOIN avaliacoes a ON a.plano_trabalho_consolidacao_id = c.id AND a.deleted_at IS NULL AND a.recurso IS NOT NULL WHERE c.plano_trabalho_id = planos_trabalhos.id AND c.status = "CONCLUIDO") AS aguardando_reavaliacao'))
               ->addSelect(DB::raw('(SELECT COUNT(*) > 0 FROM planos_trabalhos_consolidacoes c WHERE c.plano_trabalho_id = planos_trabalhos.id AND c.status = "AVALIADO" AND (SELECT COUNT(*) FROM avaliacoes a WHERE a.plano_trabalho_consolidacao_id = c.id AND a.deleted_at IS NULL) > 1) AS reavaliado'))
+              ->addSelect(DB::raw('(SELECT COUNT(*) > 0 FROM planos_trabalhos_consolidacoes c WHERE c.plano_trabalho_id = planos_trabalhos.id AND c.status IN ("CONCLUIDO", "AVALIADO")) AS has_consolidacao_concluida'))
               ->with(['usuario:id,nome', 'unidade:id,nome,sigla', 'programa:id,nome']);
 
         if($filtro->hierarquia){
