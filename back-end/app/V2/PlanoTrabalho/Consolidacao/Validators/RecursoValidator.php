@@ -75,7 +75,7 @@ class RecursoValidator
         $avaliacao = $avaliacoes->first();
 
         if ($avaliacao->tipoAvaliacaoNota->aprova) {
-            throw new ValidateException('Recurso só pode ser solicitado para notas que não aprovam (inadequado ou não executado).');
+            throw new ValidateException('Recurso só pode ser solicitado para período avaliado como "Inadequado" ou "Não exeutado".');
         }
 
         $prazoLimite = Carbon::parse($avaliacao->data_avaliacao)->addDays(self::PRAZO_RECURSO_DIAS);

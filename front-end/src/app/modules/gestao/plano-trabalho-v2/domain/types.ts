@@ -83,6 +83,7 @@ export type AvaliacaoConsolidacao = {
   nota: number;
   justificativa: string | null;
   tipo_avaliacao_nota_id: string;
+  tipo_avaliacao_nota?: { id: string; aprova: number };
   avaliador?: { id: string; nome: string };
   recurso: string | null;
   data_recurso: string | null;

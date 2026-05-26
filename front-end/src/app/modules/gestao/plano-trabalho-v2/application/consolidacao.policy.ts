@@ -29,6 +29,7 @@ export class ConsolidacaoPolicy {
     return this.auth.usuario?.id === planoTrabalho.usuario_id
       && consolidacao.status === ConsolidacaoStatus.AVALIADO
       && avaliacao.recurso === null
+      && !avaliacao.tipo_avaliacao_nota?.aprova
       && !jaRecorreu;
   }
 
