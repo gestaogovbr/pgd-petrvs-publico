@@ -1,21 +1,21 @@
 //@ts-ignore
 const webBrowser = typeof chrome != "undefined" ? chrome : typeof browser != "undefined" ? browser : undefined;
 const defaultExtensionOptionsConfig = { /* Configuração utilizada para acessas as configurações da extensão */
-  api_url: webBrowser?.runtime?.getURL ? webBrowser.runtime.getURL("") : "http://localhost:8080",
-  app_env: "local",
-  suporte_url: "https://suporte.prf.gov.br",
-  entidade: "PRF",
-  logo_url: "logo_vertical.png",
-  versao: "1.0.0",
-  edicao: "MGI",
-  login: {
-    google_client_id: "",
-    gsuit: true,
-    azure: true,
-    institucional: true,
-    firebase: false,
-    user_password: true
-  }
+    api_url: webBrowser?.runtime?.getURL ? webBrowser.runtime.getURL("") : "http://localhost",
+    app_env: "local",
+    suporte_url: "https://suporte.prf.gov.br",
+    entidade: "PRF",
+    logo_url: "logo_vertical.png",
+    versao: "1.0.0",
+    edicao: "MGI",
+    login: {
+        google_client_id: "",
+        gsuit: true,
+        azure: true,
+        institucional: true,
+        firebase: false,
+        user_password: true
+    }
 };
 //@ts-ignore
 const global: any = typeof PETRVS_GLOBAL_CONFIG != "undefined" ? PETRVS_GLOBAL_CONFIG : defaultExtensionOptionsConfig;
@@ -28,22 +28,22 @@ const HOST = URL.replace(/^https?:\/\//, "").replace(/\/$/, "");
 const HTTPS = URL.startsWith("https");
 
 export const environment = {
-  production: true,
-  host: HOST,
-  https: HTTPS,
-  env: global?.app_env || "local",
-  suporte: global?.suporte_url || "https://suporte.prf.gov.br",
-  entidade: global?.entidade || "PRF",
-  images: { login: global?.logo_url || "logo.png" },
-  versao: global?.versao || "1.0.0",
-  edicao: global?.edicao || "MGI",
-  login: global?.login || {
-    google_client_id: global?.google_client_id || "",
-    gsuit: true,
-    azure: true,
-    institucional: true,
-    firebase: false,
-    user_password: true,
-    login_unico: true
-  }
+    production: true,
+    host: HOST,
+    https: HTTPS,
+    env: global?.app_env || "local",
+    suporte: global?.suporte_url || "https://suporte.prf.gov.br",
+    entidade: global?.entidade || "PRF",
+    images: { login: global?.logo_url || "logo.png" },
+    versao: global?.versao || "1.0.0",
+    edicao: global?.edicao || "MGI",
+    login: global?.login || {
+        google_client_id: global?.google_client_id || "",
+        gsuit: true,
+        azure: true,
+        institucional: true,
+        firebase: false,
+        user_password: true,
+        login_unico: true
+    }
 };

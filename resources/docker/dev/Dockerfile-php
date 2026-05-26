@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1
 FROM php:8.2-apache
-# instala recursos adicionais 
-RUN apt-get update && apt-get install -y \
+
+# instala recursos adicionais
+RUN apt-get update && apt-get install -y --no-install-recommends \
     sed \
     git \
     zlib1g-dev \
@@ -12,20 +13,17 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libxml2-dev \
     nano \
-    ca-certificates \
     iputils-ping \
     dnsutils \
     libpng-dev \
     libjpeg-dev \
     cron \
     supervisor \
-    default-mysql-client
-# cópia do ca-certificates.crt local 
-# COPY ./ca-certificates-2.crt /usr/local/share/ca-certificates/ 
-COPY ./z-scaler-root-ca.crt /usr/local/share/ca-certificates/ 
-RUN update-ca-certificates  
-RUN pecl channel-update pecl.php.net 
-RUN pecl install redis inotify
+    default-mysql-client \
+    && pecl install redis inotify \
+    && docker-php-ext-enable inotify \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Bibliotecas php
 RUN docker-php-ext-install zip pdo_mysql mysqli soap gd calendar sockets \
@@ -48,20 +46,15 @@ COPY php.ini /usr/local/etc/php/php.ini
 #RUN echo "* * * * * cd /var/www/ && /usr/local/bin/php artisan schedule:run >> /var/www/schedule.log 2>&1" | crontab -
 
 # instala o composer
-# RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-#     php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
-RUN curl -o composer-setup.php -L https://getcomposer.org/installer && \
-    php composer-setup.php --install-dir=/usr/local/bin --filename=composer --disable-tls && \
-    rm ./composer-setup.php 
-# habilita o modulo rewrite 
-RUN a2enmod rewrite headers 
-# RUN pecl install xdebug-3.3.2 && docker-php-ext-enable xdebug 
-RUN curl -o xdebug-3.3.2.tgz -L https://pecl.php.net/get/xdebug/3.3.2 && \
-    pecl install --offline ./xdebug-3.3.2.tgz && \
-    rm ./xdebug-3.3.2.tgz && docker-php-ext-enable xdebug
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
+    rm composer-setup.php
+
+# habilita o modulo rewrite
+RUN a2enmod rewrite headers
+RUN pecl install xdebug-3.3.2 && docker-php-ext-enable xdebug
 RUN echo "xdebug.mode=off" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.start_with_request=yes" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.client_host=host.docker.internal" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.discover_client_host=0" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
-    echo "xdebug.client_port=9004" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    echo "xdebug.client_port=9004" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null

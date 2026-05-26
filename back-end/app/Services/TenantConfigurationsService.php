@@ -50,26 +50,19 @@ class TenantConfigurationsService
         # Obtém a URL do aplicativo do arquivo de configuração
         $appUrl = config('app.url');
         $protocol = parse_url($appUrl, PHP_URL_SCHEME);
-        $domainArray = explode(":", $settings['dominio_url']);
-        $domainName = $domainArray[0];
-
-        if(count($domainArray)>1)
-            $domainPort = $domainArray[1];
 
         # Setagem das informações nos configs ###
         config(['app.url' => $protocol . "://" . $settings['dominio_url']]);
-        config(['session.domain' => $domainName]);
+        config(['session.domain' => $settings['dominio_url']]);
         config(['sanctum.stateful' => [
             $settings['dominio_url'],
-            $domainName,
-            $domainName . ":".$domainPort,
-            $domainName . ":443"
+            $settings['dominio_url'] . ":" . self::HTTPS_PORT
         ]]);
-
         #Petrvs
         config(['petrvs.schemas.base' => $settings['id']]);
         config(['petrvs.schemas.tenant_aplicacao' => $settings['tenancy_db_name']]);
         config(['petrvs.schemas.tenant_log' => $settings['log_database']]);
+
 
         # LOGIN UNICO - GOVBR
         config(['services.govbr.client_secret'          => $settings['login_login_unico_secret']                ?? env('LOGIN_UNICO_CLIENT_SECRET')]);
