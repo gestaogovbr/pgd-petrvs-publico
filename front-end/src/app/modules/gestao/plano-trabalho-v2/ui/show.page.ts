@@ -16,6 +16,7 @@ import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
 import { ConsolidacaoPolicy } from "../application/consolidacao.policy";
 import { ConsolidacaoFacade } from "../application/consolidacao.facade";
 import { BreadcrumbService } from "src/app/v2/components/breadcrumb/breadcrumb.service";
+import { MessageService } from "src/app/v2/services/message.service";
 import { AssinarPlanoUseCase } from "../application/assinar-plano.usecase";
 import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
 import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
@@ -39,6 +40,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
 
   private readonly breadcrumb = inject(BreadcrumbService);
+  private readonly message = inject(MessageService);
 
   readonly policy = inject(PlanoTrabalhoPolicy);
   readonly consolidacaoPolicy = inject(ConsolidacaoPolicy);
@@ -67,7 +69,10 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.loading.set(false);
           this.assinatura.init(plano, plano.entregas || []);
           this.assinatura.onAfterAssinar = () => {
-            this.planoTrabalho.update(p => p ? { ...p, status: this.assinatura.plano()?.status ?? p.status } as any : p);
+            this.api.getById(plano.id).subscribe(updated => {
+              this.planoTrabalho.set(updated);
+              this.assinatura.init(updated, updated.entregas || []);
+            });
             this.facade.loadConsolidacoes();
           };
         },
@@ -156,7 +161,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   irParaTcr() {
     const id = this.planoTrabalho()?.id;
     if (!id) return;
-    if (this.planoTrabalho()?.documento_id) {
+    if (this.planoTrabalho()?.documento_id || this.assinatura.documento()) {
       this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
     } else {
       this.assinatura.gerarDocumento(() =>
@@ -173,9 +178,16 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   arquivarPlano() {
     const plano = this.planoTrabalho();
     if (!plano) return;
-    this.arquivarPlanoUC.execute(plano.id).subscribe({
-      next: (atualizado) => {
-        this.planoTrabalho.set(atualizado);
+    this.facade.confirmacaoPendente.set({
+      titulo: 'Arquivar Plano de Trabalho',
+      mensagem: 'Ao arquivar este Plano de Trabalho, ele será removido da tela, ficando disponível apenas quando consultado. Deseja confirmar?',
+      onConfirmar: () => {
+        this.arquivarPlanoUC.execute(plano.id).subscribe({
+          next: (atualizado) => {
+            this.planoTrabalho.set(atualizado);
+            this.message.success('Plano de trabalho arquivado com sucesso.');
+          }
+        });
       }
     });
   }

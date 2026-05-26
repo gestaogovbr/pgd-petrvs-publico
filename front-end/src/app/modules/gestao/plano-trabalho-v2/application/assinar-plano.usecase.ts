@@ -75,6 +75,14 @@ export class AssinarPlanoUseCase {
     const id = this.plano()?.id;
     if (!id) return;
     this.confirmandoAssinatura.set(false);
+    if (!this.documento()) {
+      this.gerarDocumento(() => this.executarAssinatura(id));
+      return;
+    }
+    this.executarAssinatura(id);
+  }
+
+  private executarAssinatura(id: string) {
     this.salvando.set(true);
     this.documentoApi.assinarDocumento(id).pipe(
       finalize(() => this.salvando.set(false))

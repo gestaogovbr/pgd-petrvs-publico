@@ -306,7 +306,7 @@
       }
     }
     <!-- Assinaturas -->
-    @if (assinatura.documento()) {
+    @if (assinatura.documento() || policy.podeAssinar(planoTrabalho()!)) {
       <div class="br-card mb-4">
         <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Assinaturas</div>
         <div class="card-content">
