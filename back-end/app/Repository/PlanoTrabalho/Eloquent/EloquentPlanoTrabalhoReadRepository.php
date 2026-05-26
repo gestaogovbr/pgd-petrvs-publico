@@ -206,8 +206,10 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         if($filtro->hierarquia){
             $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
 
-            $query->addSelect(DB::raw("$queryHierarquia AS hierarquia"))
-                 ->orderBy(DB::raw($queryHierarquia));
+            $query->addSelect(DB::raw("$queryHierarquia AS hierarquia"));
+            if (!$filtro->orderBy) {
+                $query->orderBy(DB::raw($queryHierarquia));
+            }
         }
 
         if($filtro->arquivados){
