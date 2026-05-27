@@ -91,8 +91,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   entregasDoPlano = signal<SelectOption[]>([]);
   entregasDoPlanoOutraUnidade = signal<SelectOption[]>([]);
 
-  sugestoesOutrasUnidades = signal<{id: string, codigo: string, sigla: string, nome: string}[]>([]);
-  outraUnidadeSelecionada = signal<{id: string, codigo: string, sigla: string, nome: string} | null>(null);
+  sugestoesOutrasUnidades = signal<{ id: string, codigo: string, sigla: string, nome: string }[]>([]);
+  outraUnidadeSelecionada = signal<{ id: string, codigo: string, sigla: string, nome: string } | null>(null);
   readonly outraUnidadeQuery = this.fb.control('');
 
   mostrandoFormEntrega = signal(false);
@@ -111,7 +111,6 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     data_inicio: FormControl<string>;
     data_fim: FormControl<string>;
     modalidade_pgd: FormControl<string>;
-    justificativa: FormControl<string>;
     justificativa_modalidade: FormControl<string>;
   }> = this.fb.group({
     usuario_id: this.fb.nonNullable.control('', Validators.required),
@@ -119,7 +118,6 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     data_inicio: this.fb.nonNullable.control('', Validators.required),
     data_fim: this.fb.nonNullable.control('', Validators.required),
     modalidade_pgd: this.fb.nonNullable.control('', Validators.required),
-    justificativa: this.fb.nonNullable.control(''),
     justificativa_modalidade: this.fb.nonNullable.control('')
   });
 
@@ -211,7 +209,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     return this.planosOutraUnidade().map(p => ({ value: p.id, label: `${p.numero} - ${p.nome}`, selected: p.id === sel }));
   });
 
-readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
+  readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedEntregaEntregaId();
     return this.entregasDoPlano().map(o => ({ ...o, selected: o.value === sel }));
   });
@@ -225,19 +223,6 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     this.form.statusChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(status => this.formStatus.set(status));
-
-    // Justificativa obrigatória quando carga != 100%
-    effect(() => {
-      const total = this.totalForcaTrabalho();
-      const ctrl = this.form.controls.justificativa;
-      if (total !== 100) {
-        ctrl.setValidators(Validators.required);
-      } else {
-        ctrl.clearValidators();
-        ctrl.setValue('');
-      }
-      ctrl.updateValueAndValidity();
-    }, { injector: this.injector });
 
     // Justificativa de modalidade obrigatória quando diverge do modalidade_pgd do usuário
     effect(() => {
@@ -264,7 +249,6 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       this.plano.set(plano);
       this.assinatura.init(plano, plano.entregas || []);
       this.entregas.set(plano.entregas || []);
-      this.form.controls.justificativa.setValue(plano.justificativa || '');
       await this.aplicarInformacoesGeraisDoPlano(plano);
       this.loading.set(false);
     });
@@ -498,7 +482,6 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       data_inicio: this.form.controls.data_inicio.value,
       data_fim: this.form.controls.data_fim.value,
       modalidade_pgd: this.form.controls.modalidade_pgd.value,
-      justificativa: this.form.controls.justificativa.value || null,
       justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null
     };
 
@@ -661,7 +644,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     });
   }
 
-  selecionarOutraUnidade(u: {id: string, codigo: string, sigla: string, nome: string}) {
+  selecionarOutraUnidade(u: { id: string, codigo: string, sigla: string, nome: string }) {
     this.outraUnidadeSelecionada.set(u);
     this.outraUnidadeQuery.setValue(`${u.codigo} - ${u.sigla} - ${u.nome}`, { emitEvent: false });
     this.sugestoesOutrasUnidades.set([]);
