@@ -61,7 +61,7 @@
             </div>
 
             <div class="col-md-6 mb-3">
-              <br-select label="Modalidade" formControlName="modalidade_pgd" [options]="modalidadesOptions()" (change)="onModalidadeChange($event)" />
+              <br-select label="Modalidade" formControlName="modalidade_pgd" [options]="modalidadesOptions()" (valueChange)="onModalidadeChange($event)" />
               @if (modalidadeDivergente()) {
                 <div class="mb-3">
                   <span class="feedback warning" role="alert">
