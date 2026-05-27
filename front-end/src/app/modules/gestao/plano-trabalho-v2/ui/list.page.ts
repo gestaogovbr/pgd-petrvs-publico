@@ -42,7 +42,12 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly filterStorage = inject(FilterStorageService);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
 
-  private readonly FILTER_KEY = 'plano-trabalho-v2:filters';
+  private readonly FILTER_KEY_PREFIX = 'plano-trabalho-v2:filters';
+
+  private get filterStorageKey(): string {
+    const userId = this.auth.usuario?.id;
+    return userId ? `${this.FILTER_KEY_PREFIX}:${userId}` : this.FILTER_KEY_PREFIX;
+  }
 
   readonly advanced = signal(false);
 
@@ -183,11 +188,11 @@ readonly filters: FormGroup<{
 
   private saveFilters() {
     const raw = this.filters.getRawValue();
-    this.filterStorage.save(this.FILTER_KEY, { ...raw, advanced: this.advanced() });
+    this.filterStorage.save(this.filterStorageKey, { ...raw, advanced: this.advanced() });
   }
 
   private restoreFilters() {
-    const parsed = this.filterStorage.load<Record<string, unknown>>(this.FILTER_KEY);
+    const parsed = this.filterStorage.load<Record<string, unknown>>(this.filterStorageKey);
     if (!parsed) return;
     this.filters.patchValue(parsed, { emitEvent: false });
     if (parsed['advanced']) this.advanced.set(true);

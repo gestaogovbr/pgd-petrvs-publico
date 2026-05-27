@@ -73,7 +73,9 @@ export class HomeGestaoPendenciasComponent extends PageBase {
   public trackById(_: number, item: any) { return item?.id; }
 
   public abrirPlanosTrabalho(numero: string) {
-    this.filterStorage.save('plano-trabalho-v2:filters', { numero, meus_planos: false, vigentes: false, advanced: true, subordinadas: true   });
+    const userId = this.auth.usuario?.id;
+    const filterKey = userId ? `plano-trabalho-v2:filters:${userId}` : 'plano-trabalho-v2:filters';
+    this.filterStorage.save(filterKey, { numero, meus_planos: false, vigentes: false, advanced: true, subordinadas: true   });
     const rota = this.go.navigate({ route: ['gestao', 'plano-trabalho-v2'] });
     rota.then(success => {
       if (success) this.fecharModal();
