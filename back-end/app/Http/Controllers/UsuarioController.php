@@ -95,6 +95,29 @@ class UsuarioController extends ControllerBase
         }
     }
 
+    public function consultarCPFSipec(Request $request)
+    {
+        $request->validate([
+            'cpf' => [],
+        ]);
+
+        try {
+            $retorno = $this->service->consultaCPFSipec($request->cpf);
+
+            return response()->json([
+                'success' => true,
+                'funcionais' => $retorno['funcionais'],
+                'pessoais' => $retorno['pessoais']
+            ]);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], Response::HTTP_BAD_REQUEST);
+        }
+    }
+
     public function exportarCPFSiape(Request $request)
     {
         $data = $request->validate([

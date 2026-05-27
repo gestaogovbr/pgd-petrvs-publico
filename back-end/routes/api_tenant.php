@@ -533,6 +533,7 @@ Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/usuario/consultar-cpf-siape', [UsuarioController::class, 'consultarCPFSiape']);
+    Route::post('/usuario/consultar-cpf-sipec', [UsuarioController::class, 'consultarCPFSipec']);
     Route::post('/usuario/exportar-cpf-siape', [UsuarioController::class, 'exportarCPFSiape']);
     Route::post('/usuario/download-cpf-siape', [UsuarioController::class, 'downloadLogSiape']);
     Route::post('/unidade/consultar-unidade-siape', [UnidadeController::class, 'consultaUnidadeSiape']);

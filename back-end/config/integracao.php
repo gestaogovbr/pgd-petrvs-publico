@@ -34,6 +34,13 @@ return [
         'parmExistPag' => env('INTEGRACAO_SIAPE_PARMEXISTPAG', ""),
         'parmTipoVinculo' => env('INTEGRACAO_SIAPE_PARMTIPOVINCULO', "")
     ],
+    'sipec' => [
+        'url' => env('INTEGRACAO_SIPEC_URL', ''),
+        'conectagov_chave' => env('INTEGRACAO_SIPEC_CONECTAGOV_CHAVE', ''),
+        'conectagov_senha' => env('INTEGRACAO_SIPEC_CONECTAGOV_SENHA', ''),
+        'cpf' => env('INTEGRACAO_SIPEC_CPF', ''),
+        'codUorg' => env('INTEGRACAO_SIPEC_CODUORG', ''),
+    ],
     'siape_relatorio_carga_individual' => [
         'retencao_dias' => (int) env('SIAPE_RELATORIO_CARGA_INDIVIDUAL_RETENCAO_DIAS', 30),
     ],

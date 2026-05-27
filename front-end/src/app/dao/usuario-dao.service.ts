@@ -63,6 +63,10 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
     return this.server.post('api/usuario/consultar-cpf-siape', { cpf });
   }
 
+  public consultarSIPEC(cpf: string) {
+    return this.server.post('api/usuario/consultar-cpf-sipec', { cpf });
+  }
+
 
 
   public atualizaPedagio(data: any) {
