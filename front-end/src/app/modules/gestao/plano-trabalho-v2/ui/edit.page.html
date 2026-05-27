@@ -268,10 +268,15 @@
                 </div>
                
                 <div class="col mb-3">
-                  <div class="br-textarea">
-                    <label>Trabalho Planejado</label>
-                    <textarea formControlName="descricao" placeholder="Descreva o trabalho planejado..."></textarea>
-                  </div>
+                  <label>Trabalho Planejado</label>
+                  <br-textarea
+                    show-counter
+                    class="w-100"
+                    [maxlength]="1000"
+                    [value]="entregaForm.get('descricao')!.value || ''"
+                    (input)="entregaForm.get('descricao')!.setValue($any($event.target).value)"
+                    placeholder="Descreva o trabalho planejado..."
+                  ></br-textarea>
                 </div>
               </div>
 
