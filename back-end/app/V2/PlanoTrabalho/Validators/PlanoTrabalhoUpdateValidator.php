@@ -32,8 +32,9 @@ class PlanoTrabalhoUpdateValidator
 
     private function validarParticipanteHabilitado(PlanoTrabalhoStoreDTO $dto): void
     {
-        if (!$this->usuarioRepository->isParticipanteHabilitado($dto->usuarioId, $dto->programaId)) {
-            throw new ValidateException('O participante não está habilitado no PGD/SIAPE para o regramento selecionado.');
+        $agente = $this->usuarioRepository->findById($dto->usuarioId);
+        if ($agente->participa_pgd !== 'sim') {
+            throw new ValidateException('O participante não está habilitado para participar do PGD.');
         }
     }
 

@@ -479,10 +479,13 @@ class UsuarioService extends ServiceBase
         $key = [$usuarioId, $programaId];
         if ($this->hasBuffer("isParticipanteHabilitado", $key)) {
             return $this->getBuffer("isParticipanteHabilitado", $key);
-        } else {
-            $usuarioId = $usuarioId ?? parent::loggedUser()->id;
-            return $this->setBuffer("isParticipanteHabilitado", $key, $this->usuarioRepository->isParticipanteHabilitado($usuarioId, $programaId));
         }
+
+        $usuarioId = $usuarioId ?? parent::loggedUser()->id;
+        $usuario = $this->usuarioRepository->findById($usuarioId);
+        $habilitado = $usuario !== null && $usuario->participa_pgd === 'sim';
+
+        return $this->setBuffer("isParticipanteHabilitado", $key, $habilitado);
     }
 
     public function isIntegrante(string $atribuicao, string $unidadeId, string|null $usuarioId = null): bool

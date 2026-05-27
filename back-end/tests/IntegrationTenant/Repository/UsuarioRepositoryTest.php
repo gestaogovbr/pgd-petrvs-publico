@@ -5,7 +5,6 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Programa;
-use App\Models\ProgramaParticipante;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Repository\UsuarioRepository;
 use App\Models\Perfil;
@@ -62,28 +61,25 @@ test('findByCpfOrEmail ignora email nulo ou vazio', function () {
     expect($foundWithEmptyEmail->cpf)->toBe($cpf);
 });
 
-test('isParticipanteHabilitado', function () {
-    $usuario = Usuario::factory()->create([
+test('isParticipanteHabilitado usa participa_pgd do usuário', function () {
+    $programa = Programa::factory()->create();
+    $service = app(UsuarioService::class);
+
+    $usuarioNao = Usuario::factory()->create([
         'modalidade_pgd' => 'presencial',
+        'participa_pgd' => 'não',
         'perfil_id' => $this->perfilId,
     ]);
-    $programa = Programa::factory()->create();
 
-    expect($this->repository->isParticipanteHabilitado($usuario->id, $programa->id))->toBeFalse();
+    expect($service->isParticipanteHabilitado($usuarioNao->id, $programa->id))->toBeFalse();
 
-    ProgramaParticipante::factory()->create([
-        'usuario_id' => $usuario->id,
-        'programa_id' => $programa->id,
-        'habilitado' => false,
+    $usuarioSim = Usuario::factory()->create([
+        'modalidade_pgd' => 'presencial',
+        'participa_pgd' => 'sim',
+        'perfil_id' => $this->perfilId,
     ]);
 
-    expect($this->repository->isParticipanteHabilitado($usuario->id, $programa->id))->toBeFalse();
-
-    ProgramaParticipante::where('usuario_id', $usuario->id)
-        ->where('programa_id', $programa->id)
-        ->update(['habilitado' => true]);
-
-    expect($this->repository->isParticipanteHabilitado($usuario->id, $programa->id))->toBeTrue();
+    expect($service->isParticipanteHabilitado($usuarioSim->id, $programa->id))->toBeTrue();
 });
 
 test('isIntegrante', function () {

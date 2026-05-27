@@ -39,11 +39,6 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findByCpfOrEmail($cpf, $email, $exceptId, $withTrashed);
     }
 
-    public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool
-    {
-        return $this->readRepository->isParticipanteHabilitado($usuarioId, $programaId);
-    }
-
     public function isIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): bool
     {
         return $this->readRepository->isIntegrante($usuarioId, $unidadeId, $atribuicao);

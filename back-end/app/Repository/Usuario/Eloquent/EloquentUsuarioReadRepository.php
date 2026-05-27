@@ -100,20 +100,6 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
-    public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool
-    {
-        /** @var Usuario|null $usuario */
-        $usuario = $this->query()->find($usuarioId);
-        if (!$usuario) return false;
-
-        /** @var \App\Models\ProgramaParticipante|null $participacao */
-        $participacao = $usuario->participacoesProgramas()
-            ->where('programa_id', $programaId)
-            ->first();
-
-        return $participacao ? (bool) $participacao->habilitado : false;
-    }
-
     public function isIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): bool
     {
         return UnidadeIntegranteAtribuicao::where('atribuicao', $atribuicao)
@@ -245,6 +231,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                 $q->where("{$tabelaUsuarios}.nome", 'like', $term)
                     ->orWhere("{$tabelaUsuarios}.matricula", 'like', $term);
             })
+            ->where('participa_pgd', '=', 'sim')
             ->whereHas('perfil', fn ($q) => $q->where('nivel', '<', PerfilEnum::COLABORADOR->value))
             ->whereHas('areasTrabalho', fn ($q) => $q->whereIn('unidade_id', $unidadesEscopoIds))
             ->with(['lotacao:id,usuario_id,unidade_id', 'lotacao.unidade:id,unidade_pai_id'])

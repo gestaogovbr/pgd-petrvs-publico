@@ -121,6 +121,14 @@
               </div>
               <div class="col-md-6 mb-3">
                 <br-select label="Modalidade" formControlName="modalidade_pgd" [options]="modalidadesOptions()" />
+                @if (modalidadeDivergente()) {
+                  <div class="mb-3">
+                    <span class="feedback warning" role="alert">
+                      <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                      Modalidade distinta daquele registrada pela chefia imediata do participante no SouGov Líder.
+                    </span>
+                  </div>
+                }
               </div>
             </div>
 

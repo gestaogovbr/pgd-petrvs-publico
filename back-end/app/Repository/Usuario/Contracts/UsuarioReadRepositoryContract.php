@@ -15,7 +15,6 @@ interface UsuarioReadRepositoryContract
     public function findByIdComAreasTrabalho(string|int $id): ?Usuario;
 
     public function findByCpfOrEmail(string $cpf, ?string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario;
-    public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool;
     public function isIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): bool;
     public function getAtribuicoes(string $usuarioId, string $unidadeId): array;
     public function isLotacao(string $usuarioId, string $unidadeId): bool;
