@@ -308,8 +308,10 @@ pipeline {
                             set -e 
                            
                             cd petrvs-pgd
-                            git reset --hard
-                            git pull --ff-only
+                            git fetch origin
+                            git checkout dataprev_hmg
+                            git reset --hard origin/dataprev_hmg
+                            git clean -fd
 
                             MAINTENANCE_CONTAINER="petrvs_maintenance_hmg"
                             MAINTENANCE_DIR="/tmp/petrvs-maintenance"
