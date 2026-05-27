@@ -175,8 +175,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly modalidadeDivergente = computed(() => {
     const selecionada = this.selectedModalidadeId();
     const doUsuario = this.usuarioModalidadePgd();
-    if (!selecionada) return false;
-    if (!doUsuario) return true;
+    if (!selecionada || !doUsuario) return false;
     return selecionada !== doUsuario;
   });
 

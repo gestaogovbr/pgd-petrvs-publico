@@ -84,8 +84,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   readonly modalidadeDivergente = computed(() => {
     const selecionada = this.selectedModalidade();
     const doUsuario = this.usuarioModalidadePgd();
-    if (!selecionada) return false;
-    if (!doUsuario) return true;
+    if (!selecionada || !doUsuario) return false;
     return selecionada !== doUsuario;
   });
 
@@ -175,6 +174,11 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.agentePublicoQuery.setValue(item.nome, { emitEvent: false });
     this.sugestoesUsuarios.set([]);
     this.carregarUnidades(item as Usuario);
+  }
+
+  onModalidadeChange(event: any) {
+    const value = event?.detail?.value ?? event?.target?.value ?? '';
+    this.selectedModalidade.set(value);
   }
 
   limparUsuarioSelecionado() {
