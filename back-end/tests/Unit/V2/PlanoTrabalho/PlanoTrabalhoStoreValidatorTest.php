@@ -48,11 +48,28 @@ afterEach(function () {
 
 describe('PlanoTrabalhoStoreValidator', function () {
 
-    test('lança exceção quando participante não está habilitado no SIAPE (RN25)', function () {
+    test('lança exceção quando participante não está habilitado no PGD (RN25)', function () {
         $unidade = Mockery::mock(Unidade::class)->makePartial();
         $unidade->data_inativacao = null;
 
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->participa_pgd = 'não';
+
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+
+        $this->validacao->validar(buildStoreDTO());
+    })->throws(ValidateException::class, 'O participante não está habilitado para participar do PGD.');
+
+    test('lança exceção quando regramento não está vigente para a unidade', function () {
+        $unidade = Mockery::mock(Unidade::class)->makePartial();
+        $unidade->data_inativacao = null;
+
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->participa_pgd = 'sim';
+
+        $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
         $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(false);
 
         $this->validacao->validar(buildStoreDTO());
@@ -75,7 +92,11 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $programa->data_inicio = '2024-04-01';
         $programa->data_fim = '2024-12-31';
 
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->participa_pgd = 'sim';
+
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
         $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->with('programa-1')->andReturn($programa);
 
@@ -90,7 +111,11 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $programa->data_inicio = '2024-01-01';
         $programa->data_fim = '2024-12-31';
 
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->participa_pgd = 'sim';
+
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
         $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
         $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')
@@ -110,6 +135,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         $agente = Mockery::mock(Usuario::class)->makePartial();
         $agente->modalidade_pgd = 'integral';
+        $agente->participa_pgd = 'sim';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
@@ -130,6 +156,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         $agente = Mockery::mock(Usuario::class)->makePartial();
         $agente->modalidade_pgd = 'integral';
+        $agente->participa_pgd = 'sim';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
@@ -155,6 +182,7 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         $agente = Mockery::mock(Usuario::class)->makePartial();
         $agente->modalidade_pgd = 'presencial';
+        $agente->participa_pgd = 'sim';
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
@@ -267,7 +295,7 @@ describe('PlanoTrabalhoStoreValidator - autorização', function () {
         $this->validacao->validarAutorizacao(buildStoreDTO());
     })->throws(ValidateException::class, 'Este usuário não pode ser agente público de um plano de trabalho.');
 
-    test('demais perfis só podem cadastrar para agentes lotados/vinculados nas suas unidades (RN18.ii,iii)', function () {
+    test('rejeita quando unidade do plano está fora do escopo do cadastrante (RN18.iii)', function () {
         /** @var Usuario $criador */
         $criador = Mockery::mock(Usuario::class)->makePartial();
         $criador->id = 'criador-1';
@@ -284,8 +312,62 @@ describe('PlanoTrabalhoStoreValidator - autorização', function () {
 
         $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
-        $this->unidadeRepo->shouldReceive('hasUsuarioLotacao')->with('unidade-1', 'user-1', true)->andReturn(false);
+        $this->unidadeRepo->shouldReceive('hasUsuarioLotacao')->with('unidade-1', 'criador-1', true)->andReturn(false);
 
         $this->validacao->validarAutorizacao(buildStoreDTO());
-    })->throws(ForbiddenException::class, 'O agente público não está lotado ou vinculado nas unidades do usuário logado.');
+    })->throws(ForbiddenException::class, 'A unidade do plano não está no escopo de atuação do usuário logado.');
+
+    test('rejeita quando agente não está lotado ou vinculado na unidade do plano (RN18.iii)', function () {
+        /** @var Usuario $criador */
+        $criador = Mockery::mock(Usuario::class)->makePartial();
+        $criador->id = 'criador-1';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = 3;
+        $criador->setRelation('perfil', $perfil);
+
+        /** @var Usuario $agente */
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->id = 'user-1';
+        $perfilAgente = Mockery::mock(Perfil::class)->makePartial();
+        $perfilAgente->nivel = 5;
+        $agente->setRelation('perfil', $perfilAgente);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+        $this->unidadeRepo->shouldReceive('hasUsuarioLotacao')->with('unidade-1', 'criador-1', true)->andReturn(true);
+        $this->usuarioRepo
+            ->shouldReceive('agenteEstaLotadoOuVinculadoNaUnidade')
+            ->with('user-1', 'unidade-1')
+            ->andReturn(false);
+
+        $this->validacao->validarAutorizacao(buildStoreDTO());
+    })->throws(ForbiddenException::class, 'O agente público não está lotado ou vinculado na unidade do plano.');
+
+    test('permite cadastro quando unidade e agente estão no escopo (RN18.iii)', function () {
+        /** @var Usuario $criador */
+        $criador = Mockery::mock(Usuario::class)->makePartial();
+        $criador->id = 'criador-1';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = 3;
+        $criador->setRelation('perfil', $perfil);
+
+        /** @var Usuario $agente */
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->id = 'user-1';
+        $perfilAgente = Mockery::mock(Perfil::class)->makePartial();
+        $perfilAgente->nivel = 5;
+        $agente->setRelation('perfil', $perfilAgente);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('criador-1')->andReturn($criador);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+        $this->unidadeRepo->shouldReceive('hasUsuarioLotacao')->with('unidade-1', 'criador-1', true)->andReturn(true);
+        $this->usuarioRepo
+            ->shouldReceive('agenteEstaLotadoOuVinculadoNaUnidade')
+            ->with('user-1', 'unidade-1')
+            ->andReturn(true);
+
+        $this->validacao->validarAutorizacao(buildStoreDTO());
+
+        expect(true)->toBeTrue();
+    });
 });

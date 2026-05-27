@@ -39,11 +39,6 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findByCpfOrEmail($cpf, $email, $exceptId, $withTrashed);
     }
 
-    public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool
-    {
-        return $this->readRepository->isParticipanteHabilitado($usuarioId, $programaId);
-    }
-
     public function isIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): bool
     {
         return $this->readRepository->isIntegrante($usuarioId, $unidadeId, $atribuicao);
@@ -119,9 +114,19 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findByMatricula($matricula);
     }
 
-    public function findAllByNomeMatricula(string $nomeMatricula): Collection
+    public function findAllByNomeMatricula(string $nomeMatricula, ?string $unidadeId = null): Collection
     {
-        return $this->readRepository->findAllByNomeMatricula($nomeMatricula);
+        return $this->readRepository->findAllByNomeMatricula($nomeMatricula, $unidadeId);
+    }
+
+    public function findAgentesPublicosNoEscopoCadastrante(string $nomeMatricula, string $cadastranteId, int $limite = 50): Collection
+    {
+        return $this->readRepository->findAgentesPublicosNoEscopoCadastrante($nomeMatricula, $cadastranteId, $limite);
+    }
+
+    public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool
+    {
+        return $this->readRepository->agenteEstaLotadoOuVinculadoNaUnidade($agenteId, $unidadeId);
     }
 
     public function findByEmail(string $email): ?Usuario

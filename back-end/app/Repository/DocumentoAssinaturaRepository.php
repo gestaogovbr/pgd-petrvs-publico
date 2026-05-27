@@ -36,6 +36,11 @@ class DocumentoAssinaturaRepository
         return $this->readRepository->gestorDiferenteDoParticipanteAssinou($documentoId, $unidadeId, $participanteId);
     }
 
+    public function gestorTitularDiferenteDoParticipanteAssinou(string $documentoId, string $unidadeId, string $participanteId): bool
+    {
+        return $this->readRepository->gestorTitularDiferenteDoParticipanteAssinou($documentoId, $unidadeId, $participanteId);
+    }
+
     public function existeAlgumaAssinatura(string $documentoId): bool
     {
         return $this->readRepository->existeAlgumaAssinatura($documentoId);

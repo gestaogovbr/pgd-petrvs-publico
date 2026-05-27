@@ -299,7 +299,7 @@ export class EntityService {
         codigo: 'MOD_OCOR',
         table: 'ocorrencias',
         campo: 'descricao',
-        icon: 'bi bi-exclamation-diamond',
+        icon: 'bi bi-list',
         dao: injector.get<OcorrenciaDaoService>(OcorrenciaDaoService),
         label: "Ocorrência",
         selectRoute: {

@@ -132,37 +132,6 @@ function vincularEntregaComEsforco(
     ]);
 }
 
-// ── Testes ──────────────────────────────────────────────────────────
-
-/**
- * Helper: marca nós no cache com prefixo "cached-" no objetivo_nome
- */
-function marcarNosComPrefixoCached(array $objetivos): void
-{
-    foreach ($objetivos as $o) {
-        $node = \Illuminate\Support\Facades\Cache::tags('esforco-total')->get("esforco-total:node:{$o->id}");
-        if ($node) {
-            $tagged = new \App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO(
-                objetivo_id: $node->objetivo_id,
-                objetivo_nome: "cached-{$node->objetivo_nome}",
-                objetivo_pai_id: $node->objetivo_pai_id,
-                objetivo_superior_id: $node->objetivo_superior_id,
-                planejamento_nome: $node->planejamento_nome,
-                total_entregas: $node->total_entregas,
-                esforco_proprio: $node->esforco_proprio,
-                esforco_total_horas: $node->esforco_total_horas,
-                filhos: $node->filhos,
-                filhos_pai: $node->filhos_pai,
-                filhos_superior: $node->filhos_superior,
-                objetivo_pai: $node->objetivo_pai,
-                objetivo_superior: $node->objetivo_superior,
-            );
-            \Illuminate\Support\Facades\Cache::tags('esforco-total')->put("esforco-total:node:{$o->id}", $tagged, now()->addMinutes(10));
-        }
-    }
-}
-
-
 describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
 
     test('retorna 404 para objetivo inexistente', function () {
@@ -370,7 +339,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
      */
     /**
      * Cenário: descendente conectado via objetivo_superior_id (não objetivo_pai_id)
-     * Garante que o branch elseif (superiorId) é exercitado no buildMap.
+     * Garante que descendentes via objetivo_superior_id entram no fechamento e na acumulação.
      */
     test('acumula esforço de descendente vinculado via objetivo_superior_id', function () {
         $base = criarEstruturaBase();

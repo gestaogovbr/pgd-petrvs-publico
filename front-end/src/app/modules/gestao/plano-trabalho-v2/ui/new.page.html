@@ -13,9 +13,11 @@
               <div class="d-flex align-items-end gap-2">
                 <div class="br-input flex-grow-1">
                   <label>Agente Público</label>
-                  <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" />
+                  <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" [readonly]="agentePublicoSomenteLeitura()" />
                 </div>
-                <br-button emphasis="secondary" type="button" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+                @if (!agentePublicoSomenteLeitura()) {
+                  <br-button emphasis="secondary" type="button" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+                }
               </div>
               @if (sugestoesUsuarios().length > 0) {
                 <div class="br-card position-absolute w-100" style="z-index: 1050;">
@@ -38,7 +40,7 @@
             <div class="col-md-4 mb-3">
               <div class="br-input">
                 <label>Regramento de Instituição PGD</label>
-                <input type="text" readonly [value]="programaNome()" />
+                <input type="text" readonly [value]="programaNome()" />                
               </div>
             </div>
           </div>
@@ -59,7 +61,15 @@
             </div>
 
             <div class="col-md-6 mb-3">
-              <br-select label="Modalidade" formControlName="modalidade_pgd" [options]="modalidadesOptions()" />
+              <br-select label="Modalidade" formControlName="modalidade_pgd" [options]="modalidadesOptions()" (change)="onModalidadeChange($event)" />
+              @if (modalidadeDivergente()) {
+                <div class="mb-3">
+                  <span class="feedback warning" role="alert">
+                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                    Modalidade distinta daquele registrada pela chefia imediata do participante no SouGov Líder.
+                  </span>
+                </div>
+              }
             </div>
           </div>
 
@@ -91,3 +101,15 @@
   </div>
 
 </div>
+
+<br-scrim [isOpen]="!!confirmacao()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!confirmacao()" [titleText]="confirmacao()?.titulo || ''" size="small" alignFooter="end" (brModalBeforeClose)="confirmacao.set(null)">
+    <div class="p-3">
+      <p>{{ confirmacao()?.mensagem }}</p>
+    </div>
+    <div slot="footer">
+      <br-button class="mx-1" emphasis="secondary" (click)="confirmacao.set(null)">Cancelar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="confirmacao()?.onConfirmar(); confirmacao.set(null)">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>

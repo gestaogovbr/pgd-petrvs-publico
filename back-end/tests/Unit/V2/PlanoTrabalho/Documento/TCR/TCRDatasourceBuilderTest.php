@@ -80,4 +80,21 @@ describe('TCRDatasourceBuilder', function () {
         expect($datasource->carga_horaria)->toBe(8);
         expect($datasource->status)->toBe('INCLUIDO');
     });
+
+    test('getDatasource expõe tipo_modalidade como objeto com campo nome', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->shouldReceive('toArray')->andReturn([]);
+        $plano->shouldReceive('getAttribute')->with('modalidade_pgd_label')->andReturn('Teletrabalho Integral');
+        $plano->shouldReceive('getAttribute')->with('unidade')->andReturn(null);
+        $plano->shouldReceive('getAttribute')->with('usuario')->andReturn(null);
+        $plano->shouldReceive('getAttribute')->with('programa')->andReturn(null);
+        $plano->shouldReceive('getAttribute')->with('entregas')->andReturn(null);
+        $plano->shouldReceive('getAttribute')->with('criterios_avaliacao')->andReturn(null);
+
+        $datasource = $this->builder->getDatasource($plano);
+
+        expect($datasource->tipo_modalidade)->toBeObject();
+        expect($datasource->tipo_modalidade->nome)->toBe('Teletrabalho Integral');
+    });
 });

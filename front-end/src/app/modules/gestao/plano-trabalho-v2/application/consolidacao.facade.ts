@@ -5,6 +5,8 @@ import { AvaliarConsolidacaoUseCase } from './avaliar-consolidacao.usecase';
 import { SolicitarRecursoUseCase } from './solicitar-recurso.usecase';
 import { AtividadeConsolidacao, Consolidacao, NotaAvaliacao, Ocorrencia, OcorrenciaFormValue, PlanoTrabalhoEntrega, TipoMotivoAfastamento } from '../domain/types';
 import { TipoMotivoAfastamentoService } from 'src/app/v2/services/tipo-motivo-afastamento.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { MessageService } from 'src/app/v2/services/message.service';
 
 @Injectable()
 export class ConsolidacaoFacade {
@@ -13,12 +15,17 @@ export class ConsolidacaoFacade {
   private readonly avaliarUC = inject(AvaliarConsolidacaoUseCase);
   private readonly solicitarRecursoUC = inject(SolicitarRecursoUseCase);
   private readonly tipoMotivoApi = inject(TipoMotivoAfastamentoService);
+  private readonly auth = inject(AuthService);
+  private readonly message = inject(MessageService);
 
   private planoId = '';
 
   // --- Estado principal ---
   readonly consolidacoes = signal<Consolidacao[]>([]);
   readonly notas = signal<NotaAvaliacao[]>([]);
+
+  // --- Confirmação genérica ---
+  readonly confirmacaoPendente = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
 
   // --- Estado de atividades ---
   readonly textos = signal<Record<string, string>>({});
@@ -129,17 +136,19 @@ export class ConsolidacaoFacade {
 
     const obs = ocorrenciaId
       ? this.api.updateOcorrencia(this.planoId, ocorrenciaId, {
-          observacoes: form.observacoes,
-          tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
-          horas: horas ?? undefined,
-        })
+        observacoes: form.observacoes,
+        tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
+        horas: horas ?? undefined,
+        data_inicio: form.data_inicio,
+        data_fim: form.data_fim
+      })
       : this.api.createOcorrencia(this.planoId, {
-          observacoes: form.observacoes,
-          data_inicio: form.data_inicio,
-          data_fim: form.data_fim,
-          tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
-          ...(horas ? { horas } : {}),
-        });
+        observacoes: form.observacoes,
+        data_inicio: form.data_inicio,
+        data_fim: form.data_fim,
+        tipo_motivo_afastamento_id: form.tipo_motivo_afastamento_id,
+        ...(horas ? { horas } : {}),
+      });
 
     obs.subscribe({
       next: (salva) => {
@@ -158,12 +167,17 @@ export class ConsolidacaoFacade {
   }
 
   excluirOcorrencia(consolidacaoId: string, ocorrencia: Ocorrencia): void {
-    if (!confirm('Deseja excluir esta ocorrência?')) return;
-    this.api.deleteOcorrencia(this.planoId, ocorrencia.id).subscribe(() => {
-      this.consolidacoes.update(lista => lista.map(c => {
-        if (c.id !== consolidacaoId) return c;
-        return { ...c, ocorrencias: (c.ocorrencias ?? []).filter((o: Ocorrencia) => o.id !== ocorrencia.id) };
-      }));
+    this.confirmacaoPendente.set({
+      titulo: 'Excluir Ocorrência',
+      mensagem: 'Deseja excluir esta ocorrência?',
+      onConfirmar: () => {
+        this.api.deleteOcorrencia(this.planoId, ocorrencia.id).subscribe(() => {
+          this.consolidacoes.update(lista => lista.map(c => {
+            if (c.id !== consolidacaoId) return c;
+            return { ...c, ocorrencias: (c.ocorrencias ?? []).filter((o: Ocorrencia) => o.id !== ocorrencia.id) };
+          }));
+        });
+      }
     });
   }
 
@@ -222,24 +236,37 @@ export class ConsolidacaoFacade {
 
   excluirAtividade(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): void {
     const atividade = this.getAtividade(consolidacao, entrega.id);
-    if (!atividade || !confirm('Deseja realmente excluir este registro de execução?')) return;
+    if (!atividade) return;
 
-    this.api.deleteAtividade(this.planoId, consolidacao.id, atividade.id).subscribe(() => {
-      this.atualizarAtividadeNaConsolidacao(consolidacao.id, entrega.id, null);
-      const key = `${consolidacao.id}-${entrega.id}`;
-      this.textos.update(t => ({ ...t, [key]: '' }));
-      this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
+    this.confirmacaoPendente.set({
+      titulo: 'Excluir Registro de Execução',
+      mensagem: 'Deseja realmente excluir este registro de execução?',
+      onConfirmar: () => {
+        this.api.deleteAtividade(this.planoId, consolidacao.id, atividade.id).subscribe(() => {
+          this.atualizarAtividadeNaConsolidacao(consolidacao.id, entrega.id, null);
+          const key = `${consolidacao.id}-${entrega.id}`;
+          this.textos.update(t => ({ ...t, [key]: '' }));
+          this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
+        });
+      }
     });
   }
 
   // --- Consolidação ---
 
   concluirConsolidacao(consolidacao: Consolidacao): void {
-    this.concluirUC.execute(this.planoId, consolidacao.id).subscribe({
-      next: (atualizado) => {
-        this.consolidacoes.update(lista =>
-          lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
-        );
+    this.confirmacaoPendente.set({
+      titulo: 'Finalizar Registro',
+      mensagem: 'Ao finalizar este registro, a execução do Plano de Trabalho referente a este período será encaminhada para avaliação da chefia. Deseja confirmar?',
+      onConfirmar: () => {
+        this.concluirUC.execute(this.planoId, consolidacao.id).subscribe({
+          next: (atualizado) => {
+            this.consolidacoes.update(lista =>
+              lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
+            );
+            this.message.success('Registro concluído com sucesso.');
+          }
+        });
       }
     });
   }
@@ -258,13 +285,20 @@ export class ConsolidacaoFacade {
     const justificativa = this.justificativaReabrir().trim();
     if (!justificativa) return;
 
-    this.api.reabrirConsolidacao(this.planoId, consolidacao.id, justificativa).subscribe({
-      next: (atualizado) => {
-        this.consolidacoes.update(lista =>
-          lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
-        );
-        this.reabrindoId.set(null);
-        this.justificativaReabrir.set('');
+    this.confirmacaoPendente.set({
+      titulo: 'Reabrir Registro',
+      mensagem: 'Ao reabrir este registro, a execução do Plano de Trabalho referente a este período retornará para edição e ficará indisponível para avaliação até nova finalização. Deseja confirmar?',
+      onConfirmar: () => {
+        this.api.reabrirConsolidacao(this.planoId, consolidacao.id, justificativa).subscribe({
+          next: (atualizado) => {
+            this.consolidacoes.update(lista =>
+              lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
+            );
+            this.reabrindoId.set(null);
+            this.justificativaReabrir.set('');
+            this.message.success('Registro reaberto com sucesso.');
+          }
+        });
       }
     });
   }
@@ -306,34 +340,52 @@ export class ConsolidacaoFacade {
     if (!notaId) return;
 
     const justificativa = this.getJustificativaAvaliacao(consolidacao.id).trim() || undefined;
-    this.avaliandoIds.update(s => new Set([...s, consolidacao.id]));
 
-    this.avaliarUC.execute(this.planoId, consolidacao.id, { tipo_avaliacao_nota_id: notaId, justificativa }).subscribe({
-      next: () => {
-        this.loadConsolidacoes();
-        this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
-        this.notasSelecionadas.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
-        this.justificativasAvaliacao.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
-      },
-      error: () => {
-        this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
+    const nota = this.notas().find(n => n.id === notaId);
+    const isReavaliacao = consolidacao.avaliacoes?.length === 1 && !!consolidacao.avaliacoes[0].recurso;
+
+    this.confirmacaoPendente.set({
+      titulo: isReavaliacao ? 'Reavaliar Período' : 'Avaliar Período',
+      mensagem: `Você está atribuindo a nota ${nota?.nota ?? ''} à execução deste período do Plano de Trabalho. Deseja confirmar?`,
+      onConfirmar: () => {
+        this.avaliandoIds.update(s => new Set([...s, consolidacao.id]));
+
+        this.avaliarUC.execute(this.planoId, consolidacao.id, { tipo_avaliacao_nota_id: notaId, justificativa }).subscribe({
+          next: (avaliacao) => {
+            this.consolidacoes.update(list => list.map(c => c.id === consolidacao.id
+              ? { ...c, status: 'AVALIADO', avaliacoes: [...c.avaliacoes, { ...avaliacao, avaliador: { id: this.auth.usuario!.id, nome: this.auth.usuario!.nome } }] }
+              : c
+            ));
+            this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
+            this.notasSelecionadas.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
+            this.justificativasAvaliacao.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
+            this.message.success(isReavaliacao ? 'Reavaliação realizada com sucesso.' : 'Avaliação realizada com sucesso.');
+          },
+          error: () => {
+            this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
+          }
+        });
       }
     });
   }
 
   cancelarAvaliacao(consolidacao: Consolidacao, avaliacaoId: string): void {
-    if (!confirm('Deseja cancelar esta avaliação?')) return;
-
-    this.cancelandoAvaliacaoIds.update(s => new Set([...s, avaliacaoId]));
-
-    this.api.cancelarAvaliacao(this.planoId, consolidacao.id, avaliacaoId).subscribe({
-      next: () => {
-        this.loadConsolidacoes();
-        this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
-      },
-      error: () => {
-        this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
-      },
+    this.confirmacaoPendente.set({
+      titulo: 'Cancelar Avaliação',
+      mensagem: 'Deseja cancelar esta avaliação?',
+      onConfirmar: () => {
+        this.cancelandoAvaliacaoIds.update(s => new Set([...s, avaliacaoId]));
+        this.api.cancelarAvaliacao(this.planoId, consolidacao.id, avaliacaoId).subscribe({
+          next: () => {
+            this.loadConsolidacoes();
+            this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+            this.message.success('Avaliação cancelada com sucesso.');
+          },
+          error: () => {
+            this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+          },
+        });
+      }
     });
   }
 
@@ -353,18 +405,22 @@ export class ConsolidacaoFacade {
     const justificativa = this.justificativaRecurso().trim();
     if (!justificativa) return;
 
-    if (!confirm('Ao recorrer desta avaliação, o período avaliativo seguirá para reavaliação. Deseja confirmar?')) return;
-
-    this.enviandoRecursoIds.update(s => new Set([...s, avaliacaoId]));
-
-    this.solicitarRecursoUC.execute(this.planoId, consolidacao.id, justificativa).subscribe({
-      next: () => {
-        this.loadConsolidacoes();
-        this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
-        this.cancelarSolicitacaoRecurso();
-      },
-      error: () => {
-        this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+    this.confirmacaoPendente.set({
+      titulo: 'Solicitar Recurso',
+      mensagem: 'Ao recorrer desta avaliação, o período avaliativo seguirá para reavaliação. Deseja confirmar?',
+      onConfirmar: () => {
+        this.enviandoRecursoIds.update(s => new Set([...s, avaliacaoId]));
+        this.solicitarRecursoUC.execute(this.planoId, consolidacao.id, justificativa).subscribe({
+          next: () => {
+            this.loadConsolidacoes();
+            this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+            this.cancelarSolicitacaoRecurso();
+            this.message.success('Recurso solicitado com sucesso.');
+          },
+          error: () => {
+            this.enviandoRecursoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
+          }
+        });
       }
     });
   }

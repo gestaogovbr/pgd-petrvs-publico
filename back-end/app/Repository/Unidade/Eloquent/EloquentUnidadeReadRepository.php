@@ -8,6 +8,7 @@ use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
@@ -73,6 +74,48 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         ", [$unidadeId, $usuarioId]);
 
         return $result[0]->count > 0;
+    }
+
+    public function isUsuarioGestorTitularDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        $result = $this->model->getConnection()->select("
+            SELECT COUNT(*) as count
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id = ?
+              AND uia.atribuicao = 'GESTOR'
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", [$unidadeId, $usuarioId]);
+
+        return $result[0]->count > 0;
+    }
+
+    public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO
+    {
+        $sql = <<<SQL
+            SELECT
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as participante_gestor_titular,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO') THEN 1 ELSE 0 END) as participante_gestor,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as assinante_gestor_titular
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id IN (?, ?)
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        SQL;
+
+        $row = $this->model->getConnection()->select($sql, [
+            $participanteId, $participanteId, $assinanteId, $unidadeId, $participanteId, $assinanteId,
+        ])[0];
+
+        return new AssinaturaHierarquiaDTO(
+            participanteGestor: (bool) $row->participante_gestor,
+            participanteGestorTitular: (bool) $row->participante_gestor_titular,
+            assinanteGestorTitular: (bool) $row->assinante_gestor_titular,
+        );
     }
 
     /**
@@ -180,14 +223,9 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $unidade;
     }
 
-    public function buscarPorNomeOuCodigoNaHierarquia(UnidadeBuscaDTO $dto, string $usuarioId): Collection
+    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection
     {
         $query = $this->query()->select('id', 'nome', 'codigo', 'sigla');
-
-        if ($dto->hierarquia) {
-            $areasTrabalhoWhere = $this->getAreasTrabalhoWhereClause($usuarioId, true);
-            $query->whereRaw($areasTrabalhoWhere);
-        }
 
         if ($dto->termo) {
             $termoLower = mb_strtolower($dto->termo);

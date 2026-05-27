@@ -21,8 +21,8 @@ class AvaliacaoStoreValidator
 
     public function validar(PlanoTrabalho $plano, AvaliacaoStoreDTO $dto): PlanoTrabalhoConsolidacao
     {
-        if ($plano->status !== StatusEnum::ATIVO->value) {
-            throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO.');
+        if (!in_array($plano->status, [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value])) {
+            throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO ou CONCLUÍDO.');
         }
 
         $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($dto->consolidacaoId);
@@ -37,6 +37,10 @@ class AvaliacaoStoreValidator
 
         if ($consolidacao->status !== StatusEnum::CONCLUIDO->value) {
             throw new ValidateException('O período avaliativo precisa estar com status CONCLUIDO para ser avaliado.');
+        }
+
+        if ($plano->encerrado_at && $consolidacao->data_inicio > $plano->encerrado_at) {
+            throw new ValidateException('Períodos avaliativos posteriores ao encerramento não podem ser avaliados.');
         }
 
         $avaliacoes = $consolidacao->relationLoaded('avaliacoes')

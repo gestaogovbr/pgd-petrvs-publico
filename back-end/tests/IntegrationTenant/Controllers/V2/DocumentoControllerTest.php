@@ -790,6 +790,60 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (substituto m
     });
 });
 
+// ── POST assinatura-tcr: GESTOR titular assina TCR de GESTOR_SUBSTITUTO da mesma unidade ──
+
+describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (gestor assina TCR de substituto)', function () {
+
+    beforeEach(function () {
+        $this->programa->plano_trabalho_assinatura_participante = 1;
+        $this->programa->plano_trabalho_assinatura_gestor_unidade = 1;
+        $this->programa->save();
+
+        $perfil = Perfil::factory()->create(['nivel' => 3]);
+
+        // Unidade com pai
+        $this->unidadePai = Unidade::factory()->create();
+        $this->unidade->unidade_pai_id = $this->unidadePai->id;
+        $this->unidade->save();
+
+        // Participante (dono do PT) é GESTOR_SUBSTITUTO da unidade
+        $integrante = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->usuario->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrante->id,
+            'atribuicao' => 'GESTOR_SUBSTITUTO',
+        ]);
+
+        // GESTOR titular da mesma unidade
+        $this->gestorTitular = Usuario::factory()->create(['perfil_id' => $perfil->id]);
+        $integranteGestor = \App\Models\UnidadeIntegrante::create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->gestorTitular->id,
+        ]);
+        \App\Models\UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integranteGestor->id,
+            'atribuicao' => 'GESTOR',
+        ]);
+    });
+
+    test('GESTOR titular assina TCR de GESTOR_SUBSTITUTO da mesma unidade → ATIVO', function () {
+        $this->actingAs($this->usuario, 'web');
+        postDocumento($this);
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
+
+        $this->actingAs($this->gestorTitular, 'web');
+        postAssinar($this)->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+    });
+});
+
 // ── POST assinatura-tcr: cenário CODAS (participante lotado + chefia mesma unidade) ──
 
 describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (cenário CODAS)', function () {
@@ -978,16 +1032,9 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (participante
         ]);
     });
 
-    test('gestor da unidade pai assina o TCR — não precisa do avô', function () {
+    test('participante gestor de unidade e unidade pai assina uma vez → ATIVO', function () {
         $this->actingAs($this->usuario, 'web');
         postDocumento($this);
-        postAssinar($this)->assertStatus(201);
-
-        $this->plano->refresh();
-        expect($this->plano->status)->toBe('AGUARDANDO_ASSINATURA');
-
-        // Gestor da unidade PAI assina — suficiente, não precisa do avô
-        $this->actingAs($this->gestorPai, 'web');
         postAssinar($this)->assertStatus(201);
 
         $this->plano->refresh();

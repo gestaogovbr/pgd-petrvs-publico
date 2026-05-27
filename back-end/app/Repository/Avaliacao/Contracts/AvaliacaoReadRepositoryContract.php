@@ -12,4 +12,6 @@ use App\Models\Avaliacao;
 interface AvaliacaoReadRepositoryContract
 {
     public function findById(string|int $id): ?Avaliacao;
+
+    public function findMaisRecenteDaConsolidacao(string $consolidacaoId): ?Avaliacao;
 }

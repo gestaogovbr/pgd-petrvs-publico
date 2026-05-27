@@ -15,7 +15,6 @@ interface UsuarioReadRepositoryContract
     public function findByIdComAreasTrabalho(string|int $id): ?Usuario;
 
     public function findByCpfOrEmail(string $cpf, ?string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario;
-    public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool;
     public function isIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): bool;
     public function getAtribuicoes(string $usuarioId, string $unidadeId): array;
     public function isLotacao(string $usuarioId, string $unidadeId): bool;
@@ -25,7 +24,9 @@ interface UsuarioReadRepositoryContract
     public function getUnidadesVinculadas(string $cpf): Collection;
     public function search(array $params, int $limit = 0);
     public function findByMatricula(string $matricula): ?Usuario;
-    public function findAllByNomeMatricula(string $nomeMatricula): Collection;
+    public function findAllByNomeMatricula(string $nomeMatricula, ?string $unidadeId = null): Collection;
+    public function findAgentesPublicosNoEscopoCadastrante(string $nomeMatricula, string $cadastranteId, int $limite = 50): Collection;
+    public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool;
     public function findByEmail(string $email): ?Usuario;
     public function findActivesByCpf(string $cpf): Collection;
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario;

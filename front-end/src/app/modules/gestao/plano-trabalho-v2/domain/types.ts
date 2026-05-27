@@ -1,4 +1,4 @@
-import { PlanoTrabalho as PlanoTrabalhoModel } from 'src/app/models/plano-trabalho.model';
+import { PlanoTrabalho as PlanoTrabalhoModel, PlanoTrabalhoStatus } from 'src/app/models/plano-trabalho.model';
 import { PlanoTrabalhoEntrega as PlanoTrabalhoEntregaModel } from 'src/app/models/plano-trabalho-entrega.model';
 import { PlanoTrabalhoConsolidacao as PlanoTrabalhoConsolidacaoModel } from 'src/app/models/plano-trabalho-consolidacao.model';
 import type { NormalizeQueryParamsInput } from 'src/app/v2/infra/normalize-query-params';
@@ -61,12 +61,29 @@ export function getPlanoEntregaInfo(e: PlanoTrabalhoEntrega | any): { plano: str
   return { plano: 'Plano vinculado', entrega: 'Entrega vinculada' };
 }
 
+const PLANO_TRABALHO_STATUS_LABELS: Record<PlanoTrabalhoStatus, string> = {
+  ATIVO: 'Em execução',
+  INCLUIDO: 'Rascunho',
+  AGUARDANDO_ASSINATURA: 'Aguardando assinatura',
+  SUSPENSO: 'Suspenso',
+  CANCELADO: 'Cancelado',
+  CONCLUIDO: 'Concluído',
+  AVALIADO: 'Avaliado',
+};
+
+export function planoTrabalhoStatusLabel(status: PlanoTrabalhoStatus | undefined, plano?: PlanoTrabalho): string {
+  if (!status) return '-';
+  if (status === 'CONCLUIDO' && plano?.encerrado_at) return 'Encerrado antecipadamente';
+  return PLANO_TRABALHO_STATUS_LABELS[status] ?? status;
+}
+
 export type AvaliacaoConsolidacao = {
   id: string;
   data_avaliacao: string;
   nota: number;
   justificativa: string | null;
   tipo_avaliacao_nota_id: string;
+  tipo_avaliacao_nota?: { id: string; aprova: number };
   avaliador?: { id: string; nome: string };
   recurso: string | null;
   data_recurso: string | null;

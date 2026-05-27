@@ -12,7 +12,7 @@ export type UsuarioSearchItem = {
   matricula: string | null;
   cpf?: string | null;
   lotacao?: UnidadeIntegrante;
-  tipo_modalidade_id?: string | null;
+  modalidade_pgd?: string | null;
 };
 
 @Injectable()
@@ -23,7 +23,7 @@ export class UsuarioService {
 
   searchByNomeMatricula(term: string): Observable<UsuarioSearchItem[]> {
     return this.http
-      .get<any>(`${this.gb.servidorURL}/${this.base}`, { params: { nome_matricula: term } })  
+      .get<any>(`${this.gb.servidorURL}/${this.base}`, { params: { nome_matricula: term } })
       .pipe(
         map((response: any) => {
           const items = Array.isArray(response?.data) ? response.data : [];
@@ -33,7 +33,7 @@ export class UsuarioService {
             matricula: u?.matricula ? String(u.matricula) : null,
             cpf: u?.cpf ? String(u.cpf) : null,
             lotacao: u?.lotacao ? u.lotacao : null,
-            tipo_modalidade_id: u?.tipo_modalidade_id ? String(u.tipo_modalidade_id) : null,
+            modalidade_pgd: u?.modalidade_pgd ?? null,
           }));
         })
       );

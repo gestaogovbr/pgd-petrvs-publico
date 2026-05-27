@@ -38,6 +38,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   saving = signal(false);
   carregandoRegramento = signal(false);
+  readonly confirmacao = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
   erroPeriodo = signal(false);
 
   programaNome = signal('');
@@ -76,13 +77,14 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.formStatus() === 'VALID' && !!this.programaId() && !this.saving()
   );
 
+  readonly agentePublicoSomenteLeitura = computed(() => this.auth.isUsuarioParticipante());
+
   // TODO: definir comportamento quando usuario.modalidade_pgd é null (sem registro no SIAPE).
   // Atualmente trata como divergente, exigindo justificativa.
   readonly modalidadeDivergente = computed(() => {
     const selecionada = this.selectedModalidade();
     const doUsuario = this.usuarioModalidadePgd();
-    if (!selecionada) return false;
-    if (!doUsuario) return true;
+    if (!selecionada || !doUsuario) return false;
     return selecionada !== doUsuario;
   });
 
@@ -119,7 +121,12 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
         take(1),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(usuario => this.preselectUsuario(usuario));
+      .subscribe(usuario => {
+        this.preselectUsuario(usuario);
+        if (this.auth.isUsuarioParticipante()) {
+          this.agentePublicoQuery.disable({ emitEvent: false });
+        }
+      });
 
     this.agentePublicoQuery.valueChanges.pipe(
       debounceTime(250),
@@ -150,7 +157,17 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     ).subscribe(() => this.erroPeriodo.set(false));
   }
 
-  voltar() { this.router.navigate(['gestao', 'plano-trabalho-v2']); }
+  voltar() {
+    if (this.form.dirty) {
+      this.confirmacao.set({
+        titulo: 'Voltar',
+        mensagem: 'Ao voltar, todos os dados serão descartados. Deseja confirmar?',
+        onConfirmar: () => this.router.navigate(['gestao', 'plano-trabalho-v2'])
+      });
+    } else {
+      this.router.navigate(['gestao', 'plano-trabalho-v2']);
+    }
+  }
 
   selecionarUsuario(item: UsuarioSearchItem) {
     this.form.controls.usuario_id.setValue(item.id);
@@ -159,7 +176,13 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.carregarUnidades(item as Usuario);
   }
 
+  onModalidadeChange(event: any) {
+    const value = event?.detail?.value ?? event?.target?.value ?? '';
+    this.selectedModalidade.set(value);
+  }
+
   limparUsuarioSelecionado() {
+    if (this.agentePublicoSomenteLeitura()) return;
     this.unidades.set([]);
     this.programaId.set('');
     this.programaNome.set('');
@@ -212,13 +235,17 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   private buscarUsuarios(term: string) {
     const value = term.trim();
-    if (value.length < 3) return of([] as UsuarioSearchItem[]);
+    if (value.length < 3 || this.agentePublicoSomenteLeitura()) {
+      return of([] as UsuarioSearchItem[]);
+    }
     return this.usuarioService.searchByNomeMatricula(value);
   }
 
   private preselectUsuario(usuario: Usuario) {
     if (!usuario.id || !usuario.nome) return;
-    if (usuario.perfil?.nivel === Perfil.NIVEL.COLABORADOR) return;
+    if (!this.auth.isUsuarioParticipante() && usuario.perfil?.nivel === Perfil.NIVEL.COLABORADOR) {
+      return;
+    }
     this.form.controls.usuario_id.setValue(usuario.id);
     this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
     void this.carregarUnidades(usuario);

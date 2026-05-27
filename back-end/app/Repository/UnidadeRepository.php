@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 
 class UnidadeRepository
 {
@@ -28,6 +29,16 @@ class UnidadeRepository
     public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool
     {
         return $this->readRepository->isUsuarioGestorDaUnidade($unidadeId, $usuarioId);
+    }
+
+    public function isUsuarioGestorTitularDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->readRepository->isUsuarioGestorTitularDaUnidade($unidadeId, $usuarioId);
+    }
+
+    public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO
+    {
+        return $this->readRepository->getHierarquiaAssinatura($unidadeId, $participanteId, $assinanteId);
     }
 
     public function getAreasTrabalhoWhereClause(string $usuarioId, bool $subordinadas, string $prefix = ""): string
@@ -80,9 +91,9 @@ class UnidadeRepository
         return $this->readRepository->existsByCodigo($codigo);
     }
 
-    public function buscarPorNomeOuCodigoNaHierarquia(\App\V2\Unidade\DTOs\UnidadeBuscaDTO $dto, string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    public function buscarPorNomeOuCodigo(\App\V2\Unidade\DTOs\UnidadeBuscaDTO $dto): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->readRepository->buscarPorNomeOuCodigoNaHierarquia($dto, $usuarioId);
+        return $this->readRepository->buscarPorNomeOuCodigo($dto);
     }
 
     /** @return string[] IDs das unidades na linha ascendente (da raiz até a unidade informada) */

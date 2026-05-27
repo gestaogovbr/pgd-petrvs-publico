@@ -18,8 +18,10 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { MessageService } from 'src/app/v2/services/message.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
-import { PlanoTrabalho, getPlanoEntregaInfo } from '../domain/types';
+import { AssinarPlanoUseCase } from '../application/assinar-plano.usecase';
+import { PlanoTrabalho, getPlanoEntregaInfo, planoTrabalhoStatusLabel } from '../domain/types';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -45,12 +47,18 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly injector = inject(Injector);
   readonly policy = inject(PlanoTrabalhoPolicy);
+  readonly assinatura = inject(AssinarPlanoUseCase);
+  private readonly auth = inject(AuthService);
+
+  readonly agentePublicoSomenteLeitura = computed(() => this.auth.isUsuarioParticipante());
 
   planoId = signal<string | null>(null);
   plano = signal<PlanoTrabalho | null>(null);
   loading = signal(true);
   saving = signal(false);
   carregandoRegramento = signal(false);
+
+  readonly confirmacao = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
 
   programaNome = signal('');
   private programaId = signal('');
@@ -83,12 +91,13 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   entregasDoPlano = signal<SelectOption[]>([]);
   entregasDoPlanoOutraUnidade = signal<SelectOption[]>([]);
 
-  sugestoesOutrasUnidades = signal<{id: string, codigo: string, sigla: string, nome: string}[]>([]);
-  outraUnidadeSelecionada = signal<{id: string, codigo: string, sigla: string, nome: string} | null>(null);
+  sugestoesOutrasUnidades = signal<{ id: string, codigo: string, sigla: string, nome: string }[]>([]);
+  outraUnidadeSelecionada = signal<{ id: string, codigo: string, sigla: string, nome: string } | null>(null);
   readonly outraUnidadeQuery = this.fb.control('');
 
   mostrandoFormEntrega = signal(false);
   salvandoEntrega = signal(false);
+  editandoInformacoesGerais = signal(false);
 
   readonly totalForcaTrabalho = computed(() =>
     this.entregas().reduce((sum: number, e: any) => sum + (Number(e.forca_trabalho) || 0), 0)
@@ -102,7 +111,6 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     data_inicio: FormControl<string>;
     data_fim: FormControl<string>;
     modalidade_pgd: FormControl<string>;
-    justificativa: FormControl<string>;
     justificativa_modalidade: FormControl<string>;
   }> = this.fb.group({
     usuario_id: this.fb.nonNullable.control('', Validators.required),
@@ -110,7 +118,6 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     data_inicio: this.fb.nonNullable.control('', Validators.required),
     data_fim: this.fb.nonNullable.control('', Validators.required),
     modalidade_pgd: this.fb.nonNullable.control('', Validators.required),
-    justificativa: this.fb.nonNullable.control(''),
     justificativa_modalidade: this.fb.nonNullable.control('')
   });
 
@@ -122,7 +129,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     outra_unidade_plano_id: this.fb.control(''),
     plano_entrega_id: this.fb.control(''),
     plano_entrega_entrega_id: this.fb.control(''),
-    descricao: this.fb.control('', Validators.required),
+    descricao: this.fb.control('', [Validators.required, Validators.maxLength(1000)]),
     forca_trabalho: this.fb.control<number>(100, [Validators.required, Validators.min(1)])
   });
 
@@ -138,11 +145,35 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   // TODO: definir comportamento quando usuario.modalidade_pgd é null (sem registro no SIAPE).
   // Atualmente trata como divergente, exigindo justificativa.
+  readonly agenteExibicao = computed(() =>
+    this.agentePublicoQuery.value || this.plano()?.usuario?.nome || '-'
+  );
+
+  readonly unidadeExibicao = computed(() => {
+    const plano = this.plano();
+    if (plano?.unidade?.sigla) return plano.unidade.sigla;
+    const id = this.selectedUnidadeId();
+    return this.unidades().find(u => `${u.id}` === id)?.sigla ?? '-';
+  });
+
+  readonly modalidadeExibicao = computed(() => {
+    const plano = this.plano();
+    if (plano?.modalidade_pgd_label) {
+      return plano.modalidade_pgd_label;
+    }
+    const key = this.selectedModalidadeId() || this.form.controls.modalidade_pgd.value;
+    return this.modalidades().find(m => m.key === key)?.value ?? '-';
+  });
+
+  readonly statusLabel = computed(() => {
+    const plano = this.plano();
+    return planoTrabalhoStatusLabel(plano?.status, plano!);
+  });
+
   readonly modalidadeDivergente = computed(() => {
     const selecionada = this.selectedModalidadeId();
     const doUsuario = this.usuarioModalidadePgd();
-    if (!selecionada) return false;
-    if (!doUsuario) return true;
+    if (!selecionada || !doUsuario) return false;
     return selecionada !== doUsuario;
   });
 
@@ -161,11 +192,11 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly origemSelectOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedOrigem();
     return [
-      { value: 'PROPRIA_UNIDADE', label: 'Própria Unidade', selected: sel === 'PROPRIA_UNIDADE' },
-      { value: 'OUTRA_UNIDADE', label: 'Outra Unidade', selected: sel === 'OUTRA_UNIDADE' },
-      { value: 'OUTRO_ORGAO', label: 'Outro Órgão/Entidade', selected: sel === 'OUTRO_ORGAO' },
-      { value: 'SEM_ENTREGA', label: 'Não vinculada a entrega', selected: sel === 'SEM_ENTREGA' }
-    ];
+      { value: 'PROPRIA_UNIDADE', label: 'Entrega da própria unidade' },
+      { value: 'OUTRA_UNIDADE', label: 'Entrega de outra unidade' },
+      { value: 'OUTRO_ORGAO', label: 'Entrega de outro órgão/entidade' },
+      { value: 'SEM_ENTREGA', label: 'Não vinculada a entrega' }
+    ].map(o => ({ ...o, selected: o.value === sel }));
   });
 
   readonly planosUnidadeOptions = computed<SelectOption[]>(() => {
@@ -178,7 +209,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     return this.planosOutraUnidade().map(p => ({ value: p.id, label: `${p.numero} - ${p.nome}`, selected: p.id === sel }));
   });
 
-readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
+  readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedEntregaEntregaId();
     return this.entregasDoPlano().map(o => ({ ...o, selected: o.value === sel }));
   });
@@ -192,19 +223,6 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     this.form.statusChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(status => this.formStatus.set(status));
-
-    // Justificativa obrigatória quando carga < 100%
-    effect(() => {
-      const total = this.totalForcaTrabalho();
-      const ctrl = this.form.controls.justificativa;
-      if (total < 100) {
-        ctrl.setValidators(Validators.required);
-      } else {
-        ctrl.clearValidators();
-        ctrl.setValue('');
-      }
-      ctrl.updateValueAndValidity();
-    }, { injector: this.injector });
 
     // Justificativa de modalidade obrigatória quando diverge do modalidade_pgd do usuário
     effect(() => {
@@ -229,23 +247,9 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(async plano => {
       this.plano.set(plano);
+      this.assinatura.init(plano, plano.entregas || []);
       this.entregas.set(plano.entregas || []);
-      this.form.controls.data_inicio.setValue(plano.data_inicio ? new Date(plano.data_inicio).toISOString().split('T')[0] : '');
-      this.form.controls.data_fim.setValue(plano.data_fim ? new Date(plano.data_fim).toISOString().split('T')[0] : '');
-      this.form.controls.justificativa.setValue(plano.justificativa_modalidade || '');
-      this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '');
-
-      if (plano.usuario_id) {
-        const usuario = await firstValueFrom(this.usuarioService.getById(plano.usuario_id));
-        this.form.controls.usuario_id.setValue(usuario.id);
-        this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
-        await this.carregarUnidades(usuario);
-        this.selectedUnidadeId.set(plano.unidade_id ?? '');
-        this.form.controls.unidade_id.setValue(plano.unidade_id);
-        this.selectedModalidadeId.set(plano.modalidade_pgd ?? '');
-        this.form.controls.modalidade_pgd.setValue(plano.modalidade_pgd ?? '');
-        this.carregarPlanosUnidade(plano.unidade_id);
-      }
+      await this.aplicarInformacoesGeraisDoPlano(plano);
       this.loading.set(false);
     });
 
@@ -373,10 +377,16 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
   voltar() { this.router.navigate(['gestao', 'plano-trabalho-v2']); }
 
   excluir() {
-    if (!this.planoId() || !confirm('Deseja realmente excluir este plano de trabalho?')) return;
-    this.api.delete(this.planoId()!).subscribe(() => {
-      this.message.success('Plano de trabalho excluído com sucesso.');
-      this.router.navigate(['gestao', 'plano-trabalho-v2']);
+    if (!this.planoId()) return;
+    this.confirmacao.set({
+      titulo: 'Excluir Plano de Trabalho',
+      mensagem: 'Ao excluir este Plano de Trabalho, ele será removido definitivamente do sistema. Essa ação é irreversível. Deseja confirmar?',
+      onConfirmar: () => {
+        this.api.delete(this.planoId()!).subscribe(() => {
+          this.message.success('Plano de trabalho excluído com sucesso.');
+          this.router.navigate(['gestao', 'plano-trabalho-v2']);
+        });
+      }
     });
   }
 
@@ -388,6 +398,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
   }
 
   limparUsuarioSelecionado() {
+    if (this.agentePublicoSomenteLeitura()) return;
     this.unidades.set([]);
     this.programaId.set('');
     this.programaNome.set('');
@@ -397,16 +408,72 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     this.form.controls.modalidade_pgd.setValue('');
   }
 
+  abrirEdicaoInformacoesGerais(): void {
+    this.editandoInformacoesGerais.set(true);
+  }
+
+  cancelarEdicaoInformacoesGerais(): void {
+    const plano = this.plano();
+    if (plano) {
+      void this.aplicarInformacoesGeraisDoPlano(plano);
+    }
+    this.sugestoesUsuarios.set([]);
+    this.editandoInformacoesGerais.set(false);
+  }
+
+  salvarInformacoesGerais(): void {
+    this.salvarPlano(() => {
+      this.message.success('Informações gerais salvas com sucesso.');
+      this.editandoInformacoesGerais.set(false);
+    });
+  }
+
   salvar() {
     this.salvarPlano(() => this.message.success('Plano de trabalho salvo com sucesso.'));
   }
 
   assinar() {
-    this.salvarPlano(() => this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', this.planoId()]));
+    const id = this.planoId();
+    if (!id) return;
+    this.assinatura.gerarDocumento(() => {
+      this.plano.update(p => p ? { ...p, documento_id: 'generated' } as any : p);
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+    });
+  }
+
+  irParaTCR() {
+    const id = this.planoId();
+    if (!id) return;
+    if (this.plano()?.documento_id) {
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+    } else {
+      this.assinatura.gerarDocumento(() => {
+        this.plano.update(p => p ? { ...p, documento_id: 'generated' } as any : p);
+        this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+      });
+    }
   }
 
   private salvarPlano(onSuccess: () => void) {
     if (this.saving() || this.form.invalid || !this.programaId() || !this.planoId()) return;
+
+    const plano = this.plano();
+    if (plano?.documento_id) {
+      const msg = plano.status === 'AGUARDANDO_ASSINATURA'
+        ? 'Ao prosseguir com a edição, a assinatura será automaticamente desfeita e as informações preenchidas no bloco Planejamento serão excluídas. Deseja continuar?'
+        : 'Ao prosseguir com a edição, as informações preenchidas no bloco Planejamento serão excluídas. Deseja continuar?';
+      this.confirmacao.set({
+        titulo: 'Confirmar Edição',
+        mensagem: msg,
+        onConfirmar: () => this.executarSalvarPlano(onSuccess)
+      });
+      return;
+    }
+
+    this.executarSalvarPlano(onSuccess);
+  }
+
+  private executarSalvarPlano(onSuccess: () => void) {
 
     const payload: Partial<any> = {
       usuario_id: this.form.controls.usuario_id.value,
@@ -415,14 +482,19 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       data_inicio: this.form.controls.data_inicio.value,
       data_fim: this.form.controls.data_fim.value,
       modalidade_pgd: this.form.controls.modalidade_pgd.value,
-      justificativa: this.form.controls.justificativa.value || null,
       justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null
     };
 
     this.saving.set(true);
     this.api.update(this.planoId()!, payload)
       .pipe(finalize(() => this.saving.set(false)))
-      .subscribe(() => onSuccess());
+      .subscribe(async (updated) => {
+        if (updated) {
+          this.plano.set(updated);
+          await this.aplicarInformacoesGeraisDoPlano(updated);
+        }
+        onSuccess();
+      });
   }
 
   adicionarEntrega() {
@@ -460,6 +532,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
         .pipe(finalize(() => this.salvandoEntrega.set(false)))
         .subscribe(res => {
           this.entregas.update(list => list.map(e => e.id === res.id ? res : e));
+          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
           this.cancelarEntrega();
         });
     } else {
@@ -467,6 +540,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
         .pipe(finalize(() => this.salvandoEntrega.set(false)))
         .subscribe(res => {
           this.entregas.update(list => [...list, res]);
+          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
           this.cancelarEntrega();
         });
     }
@@ -506,7 +580,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
       plano_entrega_id: planoEntregaId,
       plano_entrega_entrega_id: '',
       descricao: entrega.descricao || '',
-      forca_trabalho: entrega.forca_trabalho || 100
+      forca_trabalho: entrega.forca_trabalho || 1
     }, { emitEvent: false });
 
     if (planoId && (origem === 'PROPRIA_UNIDADE' || origem === 'OUTRA_UNIDADE')) {
@@ -544,9 +618,15 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
 
   removerEntrega(entrega: any) {
     if (!this.planoId() || !entrega.id) return;
-    if (!confirm('Deseja realmente excluir esta entrega?')) return;
-    this.api.deleteEntrega(this.planoId()!, entrega.id).subscribe(() => {
-      this.entregas.update(list => list.filter(e => e.id !== entrega.id));
+    this.confirmacao.set({
+      titulo: 'Excluir Contribuição',
+      mensagem: 'Deseja realmente excluir esta entrega?',
+      onConfirmar: () => {
+        this.api.deleteEntrega(this.planoId()!, entrega.id).subscribe(() => {
+          this.entregas.update(list => list.filter(e => e.id !== entrega.id));
+          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
+        });
+      }
     });
   }
 
@@ -564,7 +644,7 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     });
   }
 
-  selecionarOutraUnidade(u: {id: string, codigo: string, sigla: string, nome: string}) {
+  selecionarOutraUnidade(u: { id: string, codigo: string, sigla: string, nome: string }) {
     this.outraUnidadeSelecionada.set(u);
     this.outraUnidadeQuery.setValue(`${u.codigo} - ${u.sigla} - ${u.nome}`, { emitEvent: false });
     this.sugestoesOutrasUnidades.set([]);
@@ -621,6 +701,45 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
     }));
   }
 
+  private async aplicarInformacoesGeraisDoPlano(plano: PlanoTrabalho): Promise<void> {
+    this.form.controls.data_inicio.setValue(
+      plano.data_inicio ? new Date(plano.data_inicio).toISOString().split('T')[0] : '',
+      { emitEvent: false }
+    );
+    this.form.controls.data_fim.setValue(
+      plano.data_fim ? new Date(plano.data_fim).toISOString().split('T')[0] : '',
+      { emitEvent: false }
+    );
+    this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '', { emitEvent: false });
+
+    if (plano.usuario_id) {
+      const usuario = await firstValueFrom(this.usuarioService.getById(plano.usuario_id));
+      this.form.controls.usuario_id.setValue(usuario.id, { emitEvent: false });
+      this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
+      await this.carregarUnidades(usuario);
+      this.selectedUnidadeId.set(plano.unidade_id ?? '');
+      this.form.controls.unidade_id.setValue(plano.unidade_id ?? '', { emitEvent: false });
+      this.selectedModalidadeId.set(plano.modalidade_pgd ?? '');
+      this.form.controls.modalidade_pgd.setValue(plano.modalidade_pgd ?? '', { emitEvent: false });
+      if (plano.unidade_id) {
+        this.carregarPlanosUnidade(plano.unidade_id);
+      }
+    }
+
+    if (plano.programa?.nome) {
+      this.programaNome.set(plano.programa.nome);
+      this.programaId.set(plano.programa_id ?? plano.programa.id ?? '');
+    } else if (plano.unidade_id) {
+      await this.carregarRegramento(plano.unidade_id);
+    }
+
+    if (this.auth.isUsuarioParticipante()) {
+      this.agentePublicoQuery.disable({ emitEvent: false });
+    } else {
+      this.agentePublicoQuery.enable({ emitEvent: false });
+    }
+  }
+
   private async carregarRegramento(unidadeId: string) {
     if (this.carregandoRegramento()) return;
     this.carregandoRegramento.set(true);
@@ -637,7 +756,9 @@ readonly entregasDoPlanoOptions = computed<SelectOption[]>(() => {
 
   private buscarUsuarios(term: string) {
     const value = term.trim();
-    if (value.length < 3) return of([] as UsuarioSearchItem[]);
+    if (value.length < 3 || this.agentePublicoSomenteLeitura()) {
+      return of([] as UsuarioSearchItem[]);
+    }
     return this.usuarioService.searchByNomeMatricula(value);
   }
 

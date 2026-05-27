@@ -7,7 +7,8 @@ import { filter, map, take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoApiClient } from "../infra/plano-api.client";
 import { ArquivarPlanoUseCase } from "../application/arquivar-plano.usecase";
-import { Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo } from "../domain/types";
+import { EncerrarPlanoUseCase } from "../application/encerrar-plano.usecase";
+import { Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo, planoTrabalhoStatusLabel } from "../domain/types";
 import { PlanoTrabalhoStatus, PlanoTrabalhoStatusGroups } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
 import { UnidadeService } from "src/app/v2/services/unidade.service";
@@ -15,6 +16,8 @@ import { PlanoTrabalhoPolicy } from "../application/plano-trabalho.policy";
 import { ConsolidacaoPolicy } from "../application/consolidacao.policy";
 import { ConsolidacaoFacade } from "../application/consolidacao.facade";
 import { BreadcrumbService } from "src/app/v2/components/breadcrumb/breadcrumb.service";
+import { MessageService } from "src/app/v2/services/message.service";
+import { AssinarPlanoUseCase } from "../application/assinar-plano.usecase";
 import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
 import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
 
@@ -34,16 +37,21 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   private readonly unidadeService = inject(UnidadeService);
 
   private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
+  private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
 
   private readonly breadcrumb = inject(BreadcrumbService);
+  private readonly message = inject(MessageService);
 
   readonly policy = inject(PlanoTrabalhoPolicy);
   readonly consolidacaoPolicy = inject(ConsolidacaoPolicy);
   readonly facade = inject(ConsolidacaoFacade);
+  readonly assinatura = inject(AssinarPlanoUseCase);
 
   readonly planoTrabalho = signal<PlanoTrabalho | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
+  readonly encerrando = signal(false);
+  readonly justificativaEncerramento = signal('');
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
@@ -59,6 +67,14 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.planoTrabalho.set(plano);
           this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
           this.loading.set(false);
+          this.assinatura.init(plano, plano.entregas || []);
+          this.assinatura.onAfterAssinar = () => {
+            this.api.getById(plano.id).subscribe(updated => {
+              this.planoTrabalho.set(updated);
+              this.assinatura.init(updated, updated.entregas || []);
+            });
+            this.facade.loadConsolidacoes();
+          };
         },
         error: () => {
           this.error.set('Erro ao carregar o plano de trabalho.');
@@ -75,7 +91,8 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   podeVisualizarConsolidacoes(): boolean {
     const plano = this.planoTrabalho();
     if (!plano) return false;
-    return PlanoTrabalhoStatusGroups.comExecucaoVisivel.includes(plano.status);
+    const status = this.assinatura.plano()?.status || plano.status;
+    return PlanoTrabalhoStatusGroups.comExecucaoVisivel.includes(status);
   }
 
   todasEntregasComAtividade(consolidacao: Consolidacao): boolean {
@@ -96,6 +113,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     const plano = this.planoTrabalho();
     if (!plano || plano.status !== PlanoTrabalhoStatus.ATIVO) return false;
     return ConsolidacaoStatusGroups.reabrivel.includes(consolidacao.status)
+      && !consolidacao.avaliacoes?.length
       && (plano.usuario_id === this.auth.usuario?.id
         || this.unidadeService.isGestorUnidade(plano.unidade_id));
   }
@@ -103,16 +121,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   // --- Labels / Display ---
 
   statusLabel(value: PlanoTrabalhoStatus | undefined): string {
-    const labels: Record<PlanoTrabalhoStatus, string> = {
-      ATIVO: 'Ativo',
-      INCLUIDO: 'Incluído',
-      AGUARDANDO_ASSINATURA: 'Aguardando assinatura',
-      SUSPENSO: 'Suspenso',
-      CANCELADO: 'Cancelado',
-      CONCLUIDO: 'Concluído',
-      AVALIADO: 'Avaliado'
-    };
-    return value ? (labels[value] ?? value) : '-';
+    return planoTrabalhoStatusLabel(value, this.planoTrabalho()!);
   }
 
   statusConsolidacaoLabel(value: ConsolidacaoStatus | undefined): string {
@@ -125,8 +134,18 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   }
 
   statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
+    const plano = this.planoTrabalho();
+    if (plano?.encerrado_at && consolidacao.data_inicio > plano.encerrado_at) {
+      return 'Encerrado antecipadamente';
+    }
     if (consolidacao.status === ConsolidacaoStatus.INCLUIDO && this.todasEntregasComAtividade(consolidacao)) {
       return 'Registro incluído';
+    }
+    if (consolidacao.status === ConsolidacaoStatus.CONCLUIDO && consolidacao.avaliacoes?.length === 1 && consolidacao.avaliacoes[0].recurso) {
+      return 'Aguardando Reavaliação';
+    }
+    if (consolidacao.status === ConsolidacaoStatus.AVALIADO && consolidacao.avaliacoes?.length > 1) {
+      return 'Reavaliado';
     }
     return this.statusConsolidacaoLabel(consolidacao.status);
   }
@@ -148,16 +167,60 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   irParaTcr() {
     const id = this.planoTrabalho()?.id;
+    if (!id) return;
+    if (this.planoTrabalho()?.documento_id || this.assinatura.documento()) {
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+    } else {
+      this.assinatura.gerarDocumento(() =>
+        this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id])
+      );
+    }
+  }
+
+  verTcr() {
+    const id = this.planoTrabalho()?.id;
     if (id) this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
   }
 
   arquivarPlano() {
     const plano = this.planoTrabalho();
     if (!plano) return;
-    this.arquivarPlanoUC.execute(plano.id).subscribe({
+    this.facade.confirmacaoPendente.set({
+      titulo: 'Arquivar Plano de Trabalho',
+      mensagem: 'Ao arquivar este Plano de Trabalho, ele será removido da tela, ficando disponível apenas quando consultado. Deseja confirmar?',
+      onConfirmar: () => {
+        this.arquivarPlanoUC.execute(plano.id).subscribe({
+          next: (atualizado) => {
+            this.planoTrabalho.set(atualizado);
+            this.message.success('Plano de trabalho arquivado com sucesso.');
+          }
+        });
+      }
+    });
+  }
+
+  encerrarPlano() {
+    this.encerrando.set(true);
+    this.justificativaEncerramento.set('');
+  }
+
+  cancelarEncerramento() {
+    this.encerrando.set(false);
+    this.justificativaEncerramento.set('');
+  }
+
+  confirmarEncerramento() {
+    const plano = this.planoTrabalho();
+    const justificativa = this.justificativaEncerramento().trim();
+    if (!plano || !justificativa) return;
+    this.encerrarPlanoUC.execute(plano.id, justificativa).subscribe({
       next: (atualizado) => {
         this.planoTrabalho.set(atualizado);
-      }
+        if (atualizado.consolidacoes) this.facade.consolidacoes.set(atualizado.consolidacoes as any);
+        this.encerrando.set(false);
+        this.justificativaEncerramento.set('');
+      },
+      error: (err) => alert(err?.error?.error || 'Erro ao encerrar o plano.')
     });
   }
 }

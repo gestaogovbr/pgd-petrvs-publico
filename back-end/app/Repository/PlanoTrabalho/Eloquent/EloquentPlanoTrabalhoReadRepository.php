@@ -199,14 +199,20 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         /** @var \Illuminate\Database\Eloquent\Builder<PlanoTrabalho> $queryBase */
         $queryBase = PlanoTrabalho::query();
 
-        $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.modalidade_pgd', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status')
-              ->with(['usuario:id,nome', 'unidade:id,nome,sigla']);
+        $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.programa_id', 'planos_trabalhos.modalidade_pgd', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status', 'planos_trabalhos.encerrado_at', 'planos_trabalhos.documento_id')
+              ->addSelect(DB::raw('(SELECT COALESCE(SUM(e.forca_trabalho), 0) FROM planos_trabalhos_entregas e WHERE e.plano_trabalho_id = planos_trabalhos.id AND e.deleted_at IS NULL) AS carga_trabalho_total'))
+              ->addSelect(DB::raw('(SELECT COUNT(*) > 0 FROM planos_trabalhos_consolidacoes c INNER JOIN avaliacoes a ON a.plano_trabalho_consolidacao_id = c.id AND a.deleted_at IS NULL AND a.recurso IS NOT NULL WHERE c.plano_trabalho_id = planos_trabalhos.id AND c.status = "CONCLUIDO") AS aguardando_reavaliacao'))
+              ->addSelect(DB::raw('(SELECT COUNT(*) > 0 FROM planos_trabalhos_consolidacoes c WHERE c.plano_trabalho_id = planos_trabalhos.id AND c.status = "AVALIADO" AND (SELECT COUNT(*) FROM avaliacoes a WHERE a.plano_trabalho_consolidacao_id = c.id AND a.deleted_at IS NULL) > 1) AS reavaliado'))
+              ->addSelect(DB::raw('(SELECT COUNT(*) > 0 FROM planos_trabalhos_consolidacoes c WHERE c.plano_trabalho_id = planos_trabalhos.id AND c.status IN ("CONCLUIDO", "AVALIADO")) AS has_consolidacao_concluida'))
+              ->with(['usuario:id,nome', 'unidade:id,nome,sigla', 'programa:id,nome']);
 
         if($filtro->hierarquia){
             $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
 
-            $query->addSelect(DB::raw("$queryHierarquia AS hierarquia"))
-                 ->orderBy(DB::raw($queryHierarquia));
+            $query->addSelect(DB::raw("$queryHierarquia AS hierarquia"));
+            if (!$filtro->orderBy) {
+                $query->orderBy(DB::raw($queryHierarquia));
+            }
         }
 
         if($filtro->arquivados){
@@ -246,8 +252,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         if ($filtro->vigentes) {
             $today = today();
             $query->where('data_inicio', '<=', $today)
-                  ->where('data_fim', '>=', $today)
-                  ->where('status', StatusEnum::ATIVO->value);
+                  ->where('data_fim', '>=', $today);
         }
 
         if ($filtro->usuarioNome !== null && $filtro->usuarioNome !== '') {
@@ -296,7 +301,9 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         /** @var PlanoTrabalho|null $plano */
         $plano = PlanoTrabalho::with([
             'usuario:id,nome,apelido',
-            'unidade:id,sigla,nome',
+            'usuario.lotacao:id,usuario_id,unidade_id',
+            'usuario.lotacao.unidade:id,unidade_pai_id',
+            'unidade:id,sigla,nome,unidade_pai_id',
             'programa:id,nome',
             'entregas',
             'consolidacoes.atividades',

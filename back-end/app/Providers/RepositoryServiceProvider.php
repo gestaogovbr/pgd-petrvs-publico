@@ -465,6 +465,7 @@ final class RepositoryServiceProvider extends ServiceProvider
             EnvioPlanoTrabalhoReadRepositoryContract::class,
             EloquentEnvioPlanoTrabalhoReadRepository::class,
         );
+
     }
 
     public function boot(): void

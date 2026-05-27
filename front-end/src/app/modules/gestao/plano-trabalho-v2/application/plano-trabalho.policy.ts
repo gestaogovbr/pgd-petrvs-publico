@@ -12,7 +12,8 @@ export class PlanoTrabalhoPolicy {
   podeCancelar(p: PlanoTrabalho): boolean {
     return this.auth.hasPermissionTo('MOD_PTR_CNC')
       && PlanoTrabalhoStatusGroups.cancelavel.includes(p.status)
-      && this.unidadeService.isGestorUnidade(p.unidade_id);
+      && !p.has_consolidacao_concluida
+      && (this.auth.usuario?.id == p.usuario_id || this.unidadeService.isGestorUnidade(p.unidade_id));
   }
 
   podeEditar(p: PlanoTrabalho): boolean {
@@ -30,9 +31,27 @@ export class PlanoTrabalhoPolicy {
       && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id);
   }
 
+  podeVerTcr(p: PlanoTrabalho): boolean {
+    return !!p.documento_id
+      && (p.usuario_id === this.auth.usuario?.id
+        || this.unidadeService.isGestorUnidade(p.unidade_id)
+        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
+  }
+
+  podeEncerrar(p: PlanoTrabalho): boolean {
+    const hoje = new Date().toISOString().split('T')[0];
+    return p.status === PlanoTrabalhoStatus.ATIVO
+      && String(p.data_fim).slice(0, 10) >= hoje
+      && (p.usuario_id === this.auth.usuario?.id
+        || this.unidadeService.isGestorUnidade(p.unidade_id)
+        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
+  }
+
   podeExcluir(p: PlanoTrabalho): boolean {
     return PlanoTrabalhoStatusGroups.excluivel.includes(p.status)
-      && p.usuario_id === this.auth.usuario?.id;
+      && (p.usuario_id === this.auth.usuario?.id
+        || this.unidadeService.isGestorUnidade(p.unidade_id)
+        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
   }
 
   podeClonar(p: PlanoTrabalho): boolean {
@@ -42,7 +61,9 @@ export class PlanoTrabalhoPolicy {
 
   podeArquivar(p: PlanoTrabalho): boolean {
     return PlanoTrabalhoStatusGroups.arquivavel.includes(p.status)
-      && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id)
+      && (this.unidadeService.isGestorUnidade(p.unidade_id)
+        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null)
+        || p.usuario_id === this.auth.usuario?.id)
       && !p.data_arquivamento;
   }
 }

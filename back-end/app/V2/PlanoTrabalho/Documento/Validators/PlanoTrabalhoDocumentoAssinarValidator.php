@@ -13,6 +13,7 @@ use App\Models\PlanoTrabalho;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\DocumentoRepository;
 use App\Repository\UnidadeRepository;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 
 class PlanoTrabalhoDocumentoAssinarValidator
 {
@@ -73,7 +74,8 @@ class PlanoTrabalhoDocumentoAssinarValidator
      *
      * Regra baseada no papel do participante NA UNIDADE DO PT:
      * - Participante é apenas lotado → gestor da mesma unidade ou da unidade pai pode assinar
-     * - Participante é gestor da unidade do PT → gestor da unidade pai deve assinar
+     * - Participante é GESTOR_SUBSTITUTO/DELEGADO → GESTOR titular da mesma unidade pode assinar
+     * - Participante é GESTOR titular → gestor da unidade pai deve assinar
      */
     private function validarChefiaHierarquica(PlanoTrabalho $plano, string $usuarioId): void
     {
@@ -91,14 +93,27 @@ class PlanoTrabalhoDocumentoAssinarValidator
             return;
         }
 
-        // Verifica se o participante é gestor DA UNIDADE DO PT (não recursivo)
-        if (!$this->unidadeRepository->isUsuarioGestorDaUnidade($plano->unidade_id, $plano->usuario_id)) {
+        $hierarquia = $this->unidadeRepository->getHierarquiaAssinatura($plano->unidade_id, $plano->usuario_id, $usuarioId);
+
+        if ($this->isAssinanteSuperiorHierarquicoNaUnidade($hierarquia)) {
             return;
         }
 
-        // Participante é gestor da unidade do PT — exige assinante da unidade pai
         if (!$this->unidadeRepository->isUsuarioGestorRecursivo($unidade->unidade_pai_id, $usuarioId)) {
             throw new ForbiddenException('O assinante deve ser gestor da mesma unidade do participante ou de uma unidade superior.');
         }
+    }
+
+    private function isAssinanteSuperiorHierarquicoNaUnidade(AssinaturaHierarquiaDTO $hierarquia): bool
+    {
+        if (!$hierarquia->participanteGestor) {
+            return true;
+        }
+
+        if (!$hierarquia->participanteGestorTitular) {
+            return $hierarquia->assinanteGestorTitular;
+        }
+
+        return false;
     }
 }

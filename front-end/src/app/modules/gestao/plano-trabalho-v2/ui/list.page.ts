@@ -7,11 +7,13 @@ import { AuthService } from 'src/app/services/auth.service';
 import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
 import { Router } from '@angular/router';
 import { Subject, Subscription, debounceTime } from 'rxjs';
-import { PlanoTrabalho } from '../domain/types';
+import { PlanoTrabalho, planoTrabalhoStatusLabel } from '../domain/types';
 import { PlanoTrabalhoStatus } from 'src/app/models/plano-trabalho.model';
 import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ClonarPlanoUseCase } from '../application/clonar-plano.usecase';
 import { ExcluirPlanoUseCase } from '../application/excluir-plano.usecase';
+import { EncerrarPlanoUseCase } from '../application/encerrar-plano.usecase';
+import { AssinarPlanoUseCase } from '../application/assinar-plano.usecase';
 import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
@@ -33,8 +35,10 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   readonly policy = inject(PlanoTrabalhoPolicy);
   private readonly router = inject(Router);
   private readonly cancelarPlanoUC = inject(CancelarPlanoUseCase);
+  private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
   private readonly clonarPlanoUC = inject(ClonarPlanoUseCase);
   private readonly excluirPlanoUC = inject(ExcluirPlanoUseCase);
+  readonly assinatura = inject(AssinarPlanoUseCase);
   private readonly filterStorage = inject(FilterStorageService);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
 
@@ -45,21 +49,26 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   /** Plano aguardando justificativa de cancelamento */
   readonly cancelandoPlano = signal<PlanoTrabalho | null>(null);
   readonly justificativaCancelamento = signal('');
+  readonly encerrando = signal<PlanoTrabalho | null>(null);
+  readonly justificativaEncerramento = signal('');
 
   /** Confirmação genérica (clonar / excluir) */
   readonly confirmacaoPendente = signal<{ titulo: string; mensagem: string; onConfirm: () => void } | null>(null);
 
   readonly modalidadeOptions = signal<SelectOption[]>([{ value: '', label: 'Todas', selected: true }]);
 
-  readonly statusOptions: SelectOption[] = [
-    { value: '', label: 'Todos', selected: true },
-    { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Incluído' },
-    { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura' },
-    { value: PlanoTrabalhoStatus.ATIVO, label: 'Ativo' },
-    { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso' },
-    { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído' },
-    { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado' },
-  ];
+  get statusOptions(): SelectOption[] {
+    const current = this.filters.controls.status.value;
+    return [
+      { value: '', label: 'Todos' },
+      { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Rascunho' },
+      { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura' },
+      { value: PlanoTrabalhoStatus.ATIVO, label: 'Em execução' },
+      { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso' },
+      { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído' },
+      { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado' },
+    ].map(o => ({ ...o, selected: o.value === current }));
+  }
   private readonly subscriptions: Subscription[] = [];
   private readonly filterChange$ = new Subject<void>();
 
@@ -95,15 +104,6 @@ readonly filters: FormGroup<{
   }
 
   ngOnInit(): void {
-    this.tipoModalidadeApi.listar().then(modalidades => {
-      this.modalidadeOptions.set([
-        { value: '', label: 'Todas', selected: true },
-        ...modalidades.map(m => ({ value: m.key, label: m.value }))
-      ]);
-    });
-
-    this.setupSubscriptions();
-
     if (this.isParticipante) {
       this.filters.controls.incluir_subordinadas.setValue(false);
       this.filters.controls.incluir_subordinadas.disable({ emitEvent: false });
@@ -115,6 +115,15 @@ readonly filters: FormGroup<{
 
     this.restoreFilters();
     this.applyFiltersAndLoad(true);
+    this.setupSubscriptions();
+
+    this.tipoModalidadeApi.listar().then(modalidades => {
+      const current = this.filters.controls.tipo_modalidade_id.value;
+      this.modalidadeOptions.set([
+        { value: '', label: 'Todas', selected: current === '' },
+        ...modalidades.map(m => ({ value: m.key, label: m.value, selected: m.key === current }))
+      ]);
+    });
   }
 
   ngOnDestroy(): void {
@@ -204,7 +213,7 @@ readonly filters: FormGroup<{
 
     const numero = String(raw.numero ?? '').trim();
     if (numero.length) result['numero'] = numero;
-    if (raw.tipo_modalidade_id.length) result['tipo_modalidade_id'] = raw.tipo_modalidade_id;
+    if (raw.tipo_modalidade_id.length) result['modalidade_pgd'] = raw.tipo_modalidade_id;
     if (raw.status.length) result['status'] = raw.status;
     const usuario = String(raw.usuario ?? '').trim();
     if (usuario.length) result['usuario_nome'] = usuario;
@@ -246,16 +255,8 @@ readonly filters: FormGroup<{
     return value ? (cores[value] ?? 'secondary') : 'secondary';
   }
 
-  statusLabel(value: PlanoTrabalhoStatus | undefined): string {
-    const labels: Partial<Record<PlanoTrabalhoStatus, string>> = {
-      ATIVO: 'Ativo',
-      INCLUIDO: 'Rascunho',
-      AGUARDANDO_ASSINATURA: 'Aguardando assinatura',
-      SUSPENSO: 'Suspenso',
-      CANCELADO: 'Cancelado',
-      CONCLUIDO: 'Concluído',
-    };
-    return value ? (labels[value] ?? value) : '-';
+  statusLabel(value: PlanoTrabalhoStatus | undefined, plano?: PlanoTrabalho): string {
+    return planoTrabalhoStatusLabel(value, plano);
   }
 
   novoPlano() {
@@ -271,7 +272,38 @@ readonly filters: FormGroup<{
   }
 
   assinarPlano(p: PlanoTrabalho) {
-    this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', p.id]);
+    const chd = Number((p as any).carga_trabalho_total) || 0;
+    this.assinatura.init(p, [{ forca_trabalho: chd }]);
+    this.assinatura.onAfterAssinar = () => this.facade.load();
+    this.assinatura.onAfterCancelar = () => this.facade.load();
+    if (p.documento_id) {
+      this.assinatura.abrirConfirmacaoAssinatura();
+    } else {
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'consultar', p.id]);
+    }
+  }
+
+  cancelarAssinaturaPlano(p: PlanoTrabalho) {
+    const chd = Number((p as any).carga_trabalho_total) || 0;
+    this.assinatura.init(p, [{ forca_trabalho: chd }]);
+    this.assinatura.onAfterCancelar = () => this.facade.load();
+    this.assinatura.abrirConfirmacaoCancelamento();
+  }
+
+  verTcrDoPlanoAssinatura() {
+    const id = this.assinatura.plano()?.id;
+    if (id) {
+      this.assinatura.confirmandoAssinatura.set(false);
+      this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
+    }
+  }
+
+  confirmarAssinaturaEAtualizar() {
+    this.assinatura.confirmarAssinatura();
+  }
+
+  confirmarCancelamentoEAtualizar() {
+    this.assinatura.confirmarCancelamentoAssinatura();
   }
 
   clonarPlano(p: PlanoTrabalho) {
@@ -287,7 +319,7 @@ readonly filters: FormGroup<{
   excluirPlano(p: PlanoTrabalho) {
     this.confirmacaoPendente.set({
       titulo: 'Excluir Plano de Trabalho',
-      mensagem: 'Tem certeza que deseja excluir este Plano de Trabalho? Esta ação não pode ser desfeita.',
+      mensagem: 'Ao excluir este Plano de Trabalho, ele será removido definitivamente do sistema. Essa ação é irreversível. Deseja confirmar?',
       onConfirm: () => this.excluirPlanoUC.execute(p.id).subscribe(() => this.applyFiltersAndLoad(false))
     });
   }
@@ -321,6 +353,28 @@ readonly filters: FormGroup<{
     this.cancelarPlanoUC.execute(plano.id, justificativa).subscribe(() => {
       this.cancelandoPlano.set(null);
       this.justificativaCancelamento.set('');
+      this.applyFiltersAndLoad(false);
+    });
+  }
+
+  iniciarEncerramento(p: PlanoTrabalho) {
+    this.encerrando.set(p);
+    this.justificativaEncerramento.set('');
+  }
+
+  cancelarEncerramento() {
+    this.encerrando.set(null);
+    this.justificativaEncerramento.set('');
+  }
+
+  confirmarEncerramento() {
+    const plano = this.encerrando();
+    const justificativa = this.justificativaEncerramento().trim();
+    if (!plano || !justificativa) return;
+
+    this.encerrarPlanoUC.execute(plano.id, justificativa).subscribe(() => {
+      this.encerrando.set(null);
+      this.justificativaEncerramento.set('');
       this.applyFiltersAndLoad(false);
     });
   }

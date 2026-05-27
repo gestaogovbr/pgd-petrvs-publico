@@ -38,11 +38,17 @@ class PlanoTrabalhoEncerrarValidator
             throw new ValidateException('Apenas planos com status ATIVO podem ser encerrados.');
         }
 
+        if ($plano->data_fim < now()->format('Y-m-d')) {
+            throw new ValidateException('Não é possível encerrar antecipadamente um plano cuja vigência já expirou.');
+        }
+
         $this->validarAutorizacao($plano, $usuarioLogadoId);
 
         return $plano;
     }
 
+    // TODO: spec 4.23-b exige que "representante da unidade instituidora superior ou igual à unidade
+    //       onde o plano foi feito" também possa encerrar. Verificar se validarAutorizacao cobre esse caso.
     private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void
     {
         if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id)) {

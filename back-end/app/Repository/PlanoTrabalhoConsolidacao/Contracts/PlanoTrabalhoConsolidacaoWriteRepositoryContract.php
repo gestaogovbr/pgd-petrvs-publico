@@ -21,4 +21,8 @@ interface PlanoTrabalhoConsolidacaoWriteRepositoryContract
     public function updateAfastamentoSnapshot(string $afastamentoId, string $snapshot): void;
 
     public function deleteAfastamentoVinculos(string $afastamentoId): void;
+
+    public function ajustarDataFimVigente(string $planoTrabalhoId, string $dataEncerramento): void;
+
+    public function concluirTodas(string $planoTrabalhoId): void;
 }

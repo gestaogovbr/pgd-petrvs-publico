@@ -224,6 +224,15 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
             'status' => StatusEnum::ATIVO,
         ]);
 
+        $vigenteRascunho = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'data_inicio' => now()->subWeek(),
+            'data_fim' => now()->addMonth(),
+            'status' => StatusEnum::INCLUIDO,
+        ]);
+
         PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $this->unidade->id,
@@ -238,9 +247,11 @@ describe('GET /api/v2/plano-trabalho (happy path)', function () {
         ]));
 
         $items = $response->json('data.data');
+        $ids = array_column($items, 'id');
 
-        expect($items)->toHaveCount(1)
-            ->and($items[0]['id'])->toBe($vigente->id);
+        expect($items)->toHaveCount(2)
+            ->and($ids)->toContain($vigente->id)
+            ->and($ids)->toContain($vigenteRascunho->id);
     });
 
     test('retorna planos dentro do intervalo de datas', function () {
@@ -921,7 +932,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
 
         $plano->refresh();
         expect($plano->status)->toBe('CONCLUIDO');
-        expect(substr((string) $plano->data_fim, 0, 10))->toBe(substr($dataFimOriginal, 0, 10));
+        expect(substr((string) $plano->data_fim, 0, 10))->toBe(now()->format('Y-m-d'));
         expect($plano->encerrado_at)->toBe(now()->format('Y-m-d'));
     });
 
@@ -982,6 +993,17 @@ describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
         $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/encerrar', [
             'justificativa' => 'Tentativa.',
         ])->assertStatus(404);
+    });
+
+    test('retorna 422 quando vigência já expirou', function () {
+        $this->actingAs($this->usuario, 'web');
+        $plano = criarPlanoAtivoComConsolidacoes($this);
+        $plano->update(['data_fim' => now()->subDay()->format('Y-m-d')]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
+            'justificativa' => 'Tentativa de encerrar plano expirado.',
+        ])->assertStatus(422)
+          ->assertJsonPath('error', 'Não é possível encerrar antecipadamente um plano cuja vigência já expirou.');
     });
 });
 

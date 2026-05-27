@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\Unidade\Contracts;
 
 use App\Models\Unidade;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -18,6 +19,10 @@ interface UnidadeReadRepositoryContract
     public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool;
 
     public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool;
+
+    public function isUsuarioGestorTitularDaUnidade(string $unidadeId, string $usuarioId): bool;
+
+    public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO;
 
     public function getAreasTrabalhoWhereClause(string $usuarioId, bool $subordinadas, string $prefix = ""): string;
 
@@ -39,7 +44,7 @@ interface UnidadeReadRepositoryContract
 
     public function existsByCodigo(string $codigo): bool;
 
-    public function buscarPorNomeOuCodigoNaHierarquia(UnidadeBuscaDTO $dto, string $usuarioId): Collection;
+    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection;
 
     /** @return string[] */
     public function linhaAscendente(string $unidadeId): array;

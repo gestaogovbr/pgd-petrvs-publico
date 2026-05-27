@@ -10,6 +10,32 @@ namespace App\V2\Planejamento\Objetivo\DTOs;
  */
 final class ObjetivoEntregaPlanoItemDTO implements \JsonSerializable
 {
+    public static function fromRow(\stdClass $row): self
+    {
+        $catalogoIdRaw = $row->entrega_catalogo_id ?? null;
+        $catalogoId = $catalogoIdRaw !== null && $catalogoIdRaw !== ''
+            ? (string) $catalogoIdRaw
+            : null;
+        $catalogoNomeRaw = $row->entrega_catalogo_nome ?? null;
+        $catalogoNome = $catalogoNomeRaw !== null && $catalogoNomeRaw !== ''
+            ? (string) $catalogoNomeRaw
+            : null;
+
+        return new self(
+            plano_entrega_entrega_id: (string) $row->plano_entrega_entrega_id,
+            entrega_titulo: (string) $row->entrega_titulo,
+            entrega_catalogo_id: $catalogoId,
+            entrega_catalogo_nome: $catalogoNome,
+            entrega_unidade_id: (string) $row->entrega_unidade_id,
+            entrega_unidade_nome: (string) $row->entrega_unidade_nome,
+            entrega_unidade_sigla: (string) $row->entrega_unidade_sigla,
+            progresso_esperado: (float) $row->progresso_esperado,
+            progresso_realizado: (float) $row->progresso_realizado,
+            homologado: (int) ($row->homologado ?? 0) !== 0,
+            esforco_horas_total: (float) $row->esforco_horas_total,
+        );
+    }
+
     public function __construct(
         public readonly string $plano_entrega_entrega_id,
         public readonly string $entrega_titulo,

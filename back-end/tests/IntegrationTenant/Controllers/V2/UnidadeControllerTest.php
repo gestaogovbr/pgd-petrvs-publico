@@ -65,7 +65,7 @@ describe('GET /api/v2/unidade (validação)', function () {
 
 describe('GET /api/v2/unidade (happy path)', function () {
 
-    test('retorna 200 sem termo, listando unidades da hierarquia', function () {
+    test('retorna 200 sem termo, listando unidades', function () {
         $this->actingAs($this->usuario, 'web');
 
         $response = $this->getJson('/api/__tests/v2/unidade');
@@ -73,10 +73,7 @@ describe('GET /api/v2/unidade (happy path)', function () {
         $response->assertStatus(200)
             ->assertJsonPath('success', true);
 
-        $data = $response->json('data');
-        $ids = collect($data)->pluck('id')->toArray();
-
-        expect($ids)->toContain($this->unidade->id);
+        expect($response->json('data'))->toBeArray();
     });
 
     test('retorna unidade ao buscar por nome', function () {
@@ -105,16 +102,16 @@ describe('GET /api/v2/unidade (happy path)', function () {
         expect(collect($data)->pluck('id'))->toContain($this->unidade->id);
     });
 
-    test('não retorna unidade fora da hierarquia do usuário', function () {
+    test('retorna unidade fora da lotação do usuário quando o termo corresponde', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $outraUnidade = Unidade::factory()->create(['nome' => 'Unidade Isolada']);
+        $outraUnidade = Unidade::factory()->create(['nome' => 'Unidade Isolada', 'codigo' => '99999']);
 
         $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=Isolada');
 
         $data = $response->json('data');
 
-        expect(collect($data)->pluck('id'))->not->toContain($outraUnidade->id);
+        expect(collect($data)->pluck('id'))->toContain($outraUnidade->id);
     });
 
     test('retorna campos esperados em cada registro', function () {

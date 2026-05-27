@@ -17,6 +17,7 @@ export class AvaliacaoFormComponent {
   @Input() justificativa = '';
   @Input() justificativaObrigatoria = false;
   @Input() emAndamento = false;
+  @Input() submitLabel = 'Avaliar';
 
   @Output() notaSelecionada = new EventEmitter<string>();
   @Output() justificativaChange = new EventEmitter<string>();

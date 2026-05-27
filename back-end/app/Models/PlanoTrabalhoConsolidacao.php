@@ -22,6 +22,16 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
     {
         return 'plano_trabalho_consolidacao_id';
     }
+
+    public function possuiRecursoSemReavaliacao(): bool
+    {
+        $avaliacoes = $this->relationLoaded('avaliacoes')
+            ? $this->avaliacoes
+            : $this->avaliacoes()->get();
+
+        return $avaliacoes->count() === 1
+            && $avaliacoes->first()->recurso !== null;
+    }
   protected $table = 'planos_trabalhos_consolidacoes';
 
   protected $with = [];
@@ -39,6 +49,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
 
       $todasAvaliadas = $planoTrabalho->consolidacoes()
         ->where('status', '!=', StatusEnum::AVALIADO->value)
+        ->when($planoTrabalho->encerrado_at, fn ($q) => $q->where('data_inicio', '<=', $planoTrabalho->encerrado_at))
         ->doesntExist();
 
       if ($todasAvaliadas && $planoTrabalho->status === StatusEnum::ATIVO->value) {
@@ -51,12 +62,33 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
         return;
       }
 
-      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
+      if ($todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
+        $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
+        $statusService->atualizaStatus(
+          $planoTrabalho,
+          StatusEnum::AVALIADO->value,
+          'Plano de Trabalho avaliado: todos os períodos avaliativos foram avaliados.',
+        );
+        return;
+      }
+
+      $foiRecurso = $consolidacao->possuiRecursoSemReavaliacao();
+
+      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value && !$planoTrabalho->encerrado_at && !$foiRecurso) {
         $planoTrabalho->update(['avaliado_at' => null]);
         $statusService->atualizaStatus(
           $planoTrabalho,
           StatusEnum::ATIVO->value,
           'Plano de Trabalho reaberto: um período avaliativo deixou de estar avaliado.',
+        );
+      }
+
+      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::AVALIADO->value) {
+        $planoTrabalho->update(['avaliado_at' => null]);
+        $statusService->atualizaStatus(
+          $planoTrabalho,
+          StatusEnum::CONCLUIDO->value,
+          'Avaliação cancelada: plano retornou ao status anterior.',
         );
       }
     });
@@ -68,7 +100,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
     'data_fim', /* date; NOT NULL; */ // Data final da consolidação
     'plano_trabalho_id', /* char(36); NOT NULL; */
     //'data_conclusao', /* date; NOT NULL; */
-    'status', /* enum('CONCLUIDO','AVALIADO','INCLUIDO'); */// Status atual da consolidação
+    'status', /* enum('INCLUIDO','CONCLUIDO','AVALIADO'); */// Status atual da consolidação
     //'avaliacao_id', /* char(36); */
     //'deleted_at', /* timestamp; */
   ];
