@@ -219,8 +219,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
         if (atualizado.consolidacoes) this.facade.consolidacoes.set(atualizado.consolidacoes as any);
         this.encerrando.set(false);
         this.justificativaEncerramento.set('');
-      },
-      error: (err) => alert(err?.error?.error || 'Erro ao encerrar o plano.')
+      }
     });
   }
 }
