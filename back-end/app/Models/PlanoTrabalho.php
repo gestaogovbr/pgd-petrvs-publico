@@ -3,16 +3,22 @@
 namespace App\Models;
 
 use App\Casts\AsJson;
-use App\Models\ModelBase;
-use App\Models\Usuario;
-use App\Models\Unidade;
+use App\Enums\StatusEnum;
+use App\Contracts\HasStatusHistory;
 use App\Models\Atividade;
-use App\Models\Programa;
 use App\Models\Documento;
-use App\Models\PlanoTrabalhoEntrega;
+use App\Models\DocumentoAssinatura;
+use App\Models\ModelBase;
+use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\PlanoTrabalhoEntrega;
+use App\Models\Programa;
+use App\Models\StatusJustificativa;
 use App\Support\ModalidadePgd;
+use App\Models\Unidade;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,6 +41,11 @@ use Illuminate\Database\Eloquent\Collection;
  * @property \DateTime|null $avaliado_at
  * @property array $criterios_avaliacao
  * @property mixed $_metadata
+ * @property Carbon|null $data_agendamento_envio
+ * @property Carbon|null $data_envio_api_pgd
+ * @property Carbon|null $data_tentativa_envio
+ * @property Carbon|null $data_conclusao_envio
+ * @property string|null $log_envio
  * @property-read Usuario $usuario
  * @property-read Programa $programa
  * @property-read Unidade $unidade
@@ -46,8 +57,12 @@ use Illuminate\Database\Eloquent\Collection;
  * @property-read Collection|Atividade[] $atividades
  * @property-read Collection|Ocorrencia[] $ocorrencias
  */
-class PlanoTrabalho extends ModelBase
+class PlanoTrabalho extends ModelBase implements HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'plano_trabalho_id';
+    }
     protected $table = 'planos_trabalhos';
 
     protected $with = [];
@@ -73,6 +88,9 @@ class PlanoTrabalho extends ModelBase
         'avaliado_at', /* date; data em que o plano teve o status trasicionado para AVALIADO */
         //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do plano de trabalho (Gerado pelo sistema)
+        'justificativa', /* text; NULL; */ // Justificativa para carga horária diferente de 100%
+        'justificativa_modalidade', /* varchar(500); NULL; */ // Justificativa para modalidade divergente do SIAPE
+        'encerrado_at', /* date; NULL; */ // Data de encerramento antecipado do plano de trabalho
     ];
 
   public const STATUSES = [
@@ -91,7 +109,10 @@ class PlanoTrabalho extends ModelBase
     public $delete_cascade = ['documentos','consolidacoes'];
 
     protected $casts = [
-        "criterios_avaliacao" => AsJson::class
+        "criterios_avaliacao" => AsJson::class,
+        'data_agendamento_envio' => 'datetime',
+        'data_tentativa_envio' => 'datetime',
+        'data_envio_api_pgd' => 'datetime',
     ];
 
     protected static function booted()
@@ -207,6 +228,19 @@ class PlanoTrabalho extends ModelBase
                 'foreign_key' => 'plano_trabalho_id',
             ],
         ];
+    }
+
+    public function isEmStatusParaEnvio() {
+        if ($this->status instanceof \App\Enums\StatusEnum) {
+            $status = $this->status->value;
+        } else{
+            $status = (string)$this->status;
+        }
+
+        return ($status == StatusEnum::ATIVO->value)
+            || ($status == StatusEnum::CONCLUIDO->value)
+            || ($status == StatusEnum::AVALIADO->value)
+        ;
     }
 
 }

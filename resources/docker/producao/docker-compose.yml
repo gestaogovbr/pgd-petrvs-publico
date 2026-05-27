@@ -15,10 +15,11 @@ services:
     volumes:
       - ../mysql:/var/lib/mysql
     environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: petrvs
-      MYSQL_PASSWORD: PsEeTnRhVaS
-      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
-      MYSQL_TCP_PORT: 3308
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_TCP_PORT: ${DB_PORT}
     deploy:
       resources:
         limits:
@@ -41,6 +42,9 @@ services:
       - "443:443"
     depends_on:
       - petrvs_db_producao
+      - petrvs_rabbitmq
+    environment:
+      - RABBITMQ_HOST=petrvs_rabbitmq
     volumes:
       - ../../../back-end:/var/www
     deploy:
@@ -48,6 +52,38 @@ services:
         limits:
           cpus: '0.5'
           memory: 2048M
+
+  petrvs_rabbitmq:
+    build:
+      context: .
+      dockerfile: Dockerfile-rabbitmq
+    image: petrvs-rabbitmq:producao
+    container_name: petrvs_rabbitmq
+    env_file:
+      - ./.env
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      TZ: "America/Bahia"
+    volumes:
+      - petrvs_rabbitmq_data:/var/lib/rabbitmq
+      - ./configuracoes/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./configuracoes/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1024M
+
+volumes:
+  petrvs_rabbitmq_data:
+    name: petrvs_rabbitmq_data_producao
 
 # Sobre resources
 # https://docs.docker.com/config/containers/resource_constraints/

@@ -31,7 +31,7 @@ describe('PlanoTrabalhoService::hasUsuarioPendencias', function () {
             $dataAssinatura
         );
 
-        expect($resultado)->toBeTrue();
+        expect($resultado)->toBeFalse();
     });
 
     test('retorna false quando plano incluído tem data fim vencida', function () {
@@ -71,7 +71,7 @@ describe('PlanoTrabalhoService::hasUsuarioPendencias', function () {
             $dataAssinatura
         );
 
-        expect($resultado)->toBeTrue();
+        expect($resultado)->toBeFalse();
     });
 
     test('retorna false quando não existem planos pendentes', function () {
@@ -167,4 +167,4 @@ describe('PlanoTrabalhoService::hasUsuarioPendencias', function () {
 
         expect($resultado)->toBeFalse();
     });
-})->skip('dependente do ticket #1757');
+});

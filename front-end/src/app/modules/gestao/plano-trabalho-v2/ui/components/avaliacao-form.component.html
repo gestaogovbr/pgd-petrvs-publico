@@ -1,0 +1,39 @@
+<div class="d-flex justify-content-center gap-3 mb-4">
+  @for (nota of notas; track nota.id; let i = $index) {
+    @let cor = notaColor(i, notas.length);
+    @let icone = notaIcone(i, notas.length);
+    <div
+      class="text-center p-3"
+      style="border-radius: 10px; width: 160px; cursor: pointer; transition: background-color 0.15s;"
+      [style.border]="'2px solid ' + cor"
+      [style.background-color]="notaSelecionadaId === nota.id ? cor + '22' : 'white'"
+      (click)="notaSelecionada.emit(nota.id)"
+    >
+      <div [style.color]="cor" style="font-size: 2rem; line-height: 1;">
+        <i class="fas {{ icone }}"></i>
+      </div>
+      <small class="d-block mt-1 text-weight-semi-bold" [style.color]="cor">{{ nota.nota }}</small>
+    </div>
+  }
+</div>
+<p class="mb-1">
+  Justificativa
+  @if (justificativaObrigatoria) {
+    <span class="text-danger">*</span>
+  }
+</p>
+<div class="d-flex gap-3 align-items-start">
+  <div class="br-textarea flex-grow-1">
+    <textarea
+      rows="3"
+      [placeholder]="justificativaObrigatoria ? 'Justificativa obrigatória para esta nota...' : 'Justificativa (opcional)...'"
+      [value]="justificativa"
+      (input)="justificativaChange.emit($any($event.target).value)"
+    ></textarea>
+  </div>
+  <br-button
+    emphasis="primary"
+    [disabled]="!podeSalvar || emAndamento"
+    (click)="submeter.emit()"
+  >Avaliar</br-button>
+</div>

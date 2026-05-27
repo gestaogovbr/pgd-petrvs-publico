@@ -13,9 +13,11 @@ use App\Repository\SiapeDadosUORGRepository;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
 use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
+use function Symfony\Component\String\s;
 
 class SiapeIndividualUnidadeService extends ServiceBase
 {
@@ -97,6 +99,15 @@ class SiapeIndividualUnidadeService extends ServiceBase
             SiapeLog::info('Buscando a lista de urogs');
 
             SiapeLog::info('Salvando os dados da unidade');
+
+        $this->siapeDadosUORGRepository->create([
+            'id' => Str::uuid(),
+            'data_modificacao' => today(),
+            'codigo' => $codUorg,
+            'response' => $dadosUnidadeResponseXml,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
 
             $this->siapeDadosUORGRepository->create([
                 'id' => Str::uuid(),

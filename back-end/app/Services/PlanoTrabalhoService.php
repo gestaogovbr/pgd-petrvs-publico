@@ -101,7 +101,7 @@ class PlanoTrabalhoService extends ServiceBase
             $ids[] = $unidadeId[2];
             if(is_array($ids) && is_array($ids[0]))
                 $ids = array_unique(...$ids);
-            
+
             $data["where"][] = ['unidade_id', 'in', array_unique($ids)];
         }
 
@@ -211,6 +211,21 @@ class PlanoTrabalhoService extends ServiceBase
             $where = ["or", ["usuario_id", "in", $usuariosLotados], $where];
         }
 
+
+        $enviosPendentes = $this->extractWhere($data, "envios_pendentes");
+        if (isset($enviosPendentes[2])) {
+            $query->whereRaw("(data_agendamento_envio IS NOT NULL)", []);
+            $query->whereRaw("((data_conclusao_envio IS NULL) OR (data_conclusao_envio < data_agendamento_envio))", []);
+        }
+
+        $enviosConcluidos = $this->extractWhere($data, "envios_concluidos");
+        if (isset($enviosConcluidos[2])) {
+            $query->whereRaw("data_conclusao_envio IS NOT NULL", []);
+        }
+
+        $where = array_values(array_filter($where, function ($item) {
+                return ($item[0] !== 'envios_pendentes');
+        }));
 
         $data["where"] = $where;
     }
@@ -452,7 +467,7 @@ class PlanoTrabalhoService extends ServiceBase
         - Enquanto faltar assinatura no TCR, o plano vai para o (ou permanece no) status de 'AGUARDANDO_ASSINATURA'. Quando o último assinar o TCR, o plano vai para o status 'ATIVO';
         */
         $documento = Documento::find($documentoId);
-        
+
         $planoTrabalho = PlanoTrabalho::withTrashed()->with('entregas')->find($documento->plano_trabalho_id)->toArray();
         $nrEntregas = empty($planoTrabalho['entregas']) ? 0 : count($planoTrabalho['entregas']);
 
@@ -545,7 +560,7 @@ class PlanoTrabalhoService extends ServiceBase
                 $proximoFim =  Carbon::parse($this->proxDataConsolidacao($dataInicio->toDateString(), $plano->programa));
                 $dataFim = $proximoFim->greaterThan($limite) ? $limite->copy() : $proximoFim;
                 $igual = $existentes->first(fn($c) => $c->data_inicio === $dataInicio->toDateString() && $c->data_fim === $dataFim->toDateString());
-                $intersecao = $existentes->first(fn($c) => $c->status !== StatusEnum::INCLUIDO->value && 
+                $intersecao = $existentes->first(fn($c) => $c->status !== StatusEnum::INCLUIDO->value &&
                                                             $dataInicio->lessThanOrEqualTo(Carbon::parse($c->data_fim)) && $dataFim->greaterThanOrEqualTo(Carbon::parse($c->data_inicio)));
                 if (!empty($igual)) { /* (RN_CSLD_4) Caso exista períodos iguais, o período existente será mantido (para este perído nada será feito, manterá a mesma ID) */
                     $merged[] = $igual;
@@ -894,7 +909,7 @@ class PlanoTrabalhoService extends ServiceBase
             return "O plano de trabalho não pode ser cancelado porque foi deletado ou não está em nenhum dos seguintes status: INCLUIDO, AGUARDANDO ASSINATURA ou ATIVO.\n[ver RN_PTR_R]";
         if (!$condition2)
             return "O plano de trabalho não pode ser cancelado porque o usuário logado não é um dos gestores da sua unidade executora.\n[ver RN_PTR_R]";
-       
+
         return null;
     }
 
@@ -905,7 +920,7 @@ class PlanoTrabalhoService extends ServiceBase
             throw new ServerException("ValidatePlanoTrabalho", "Plano de Trabalho não encontrado.");
         }
 
-        return !$plano->consolidacoes() 
+        return !$plano->consolidacoes()
                       ->where('status', '!=', StatusEnum::INCLUIDO->value)
                       ->exists();
     }
@@ -1428,7 +1443,7 @@ class PlanoTrabalhoService extends ServiceBase
 
         $usuario = Usuario::find($planoTrabalho['usuario_id']);
         if (!$usuario) return false;
-        
+
         return $usuario->lotacao?->unidade_id == $unidadeId;
     }
 
