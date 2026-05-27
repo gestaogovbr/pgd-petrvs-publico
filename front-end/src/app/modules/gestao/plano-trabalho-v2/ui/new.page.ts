@@ -177,16 +177,18 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   }
 
   onModalidadeChange(event: any) {
-    const value = event?.detail?.value ?? event?.target?.value ?? '';
+    const value = event?.detail ?? event?.target?.value ?? '';
     this.selectedModalidade.set(value);
   }
 
   limparUsuarioSelecionado() {
     if (this.agentePublicoSomenteLeitura()) return;
     this.unidades.set([]);
+    this.modalidades.set([]);
     this.programaId.set('');
     this.programaNome.set('');
     this.usuarioModalidadePgd.set('');
+    this.selectedModalidade.set('');
     this.agentePublicoQuery.setValue('');
     this.form.controls.usuario_id.setValue('');
     this.form.controls.unidade_id.setValue('');
@@ -266,14 +268,17 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       }
     }
 
+    const modalidadePgd = usuario.modalidade_pgd;
+    if (typeof modalidadePgd === 'string' && modalidadePgd.length) {
+      this.selectedModalidade.set(modalidadePgd);
+      this.usuarioModalidadePgd.set(modalidadePgd);
+    }
+
     this.modalidades.set(await this.tipoModalidadeApi.listar());
 
-    const modalidadePgd = usuario.modalidade_pgd;
     if (typeof modalidadePgd === 'string' && modalidadePgd.length) {
       const isValid = this.modalidades().some(m => m.key === modalidadePgd);
       if (isValid) {
-        this.usuarioModalidadePgd.set(modalidadePgd);
-        this.selectedModalidade.set(modalidadePgd);
         this.form.controls.modalidade_pgd.setValue(modalidadePgd);
         return;
       }
