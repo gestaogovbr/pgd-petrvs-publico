@@ -38,6 +38,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   saving = signal(false);
   carregandoRegramento = signal(false);
+  readonly confirmacao = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
   erroPeriodo = signal(false);
 
   programaNome = signal('');
@@ -157,7 +158,17 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     ).subscribe(() => this.erroPeriodo.set(false));
   }
 
-  voltar() { this.router.navigate(['gestao', 'plano-trabalho-v2']); }
+  voltar() {
+    if (this.form.dirty) {
+      this.confirmacao.set({
+        titulo: 'Voltar',
+        mensagem: 'Ao voltar, todos os dados serão descartados. Deseja confirmar?',
+        onConfirmar: () => this.router.navigate(['gestao', 'plano-trabalho-v2'])
+      });
+    } else {
+      this.router.navigate(['gestao', 'plano-trabalho-v2']);
+    }
+  }
 
   selecionarUsuario(item: UsuarioSearchItem) {
     this.form.controls.usuario_id.setValue(item.id);
