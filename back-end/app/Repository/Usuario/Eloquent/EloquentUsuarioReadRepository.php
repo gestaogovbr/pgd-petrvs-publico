@@ -226,7 +226,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
 
         /** @var Collection<int, Usuario> */
         return $this->query()
-            ->select(["{$tabelaUsuarios}.id", "{$tabelaUsuarios}.nome", "{$tabelaUsuarios}.matricula", "{$tabelaUsuarios}.cpf"])
+            ->select(["{$tabelaUsuarios}.id", "{$tabelaUsuarios}.nome", "{$tabelaUsuarios}.matricula", "{$tabelaUsuarios}.cpf", "{$tabelaUsuarios}.modalidade_pgd"])
             ->where(function ($q) use ($term, $tabelaUsuarios) {
                 $q->where("{$tabelaUsuarios}.nome", 'like', $term)
                     ->orWhere("{$tabelaUsuarios}.matricula", 'like', $term);
