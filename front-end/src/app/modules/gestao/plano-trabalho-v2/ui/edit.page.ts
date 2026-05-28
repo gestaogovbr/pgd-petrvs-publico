@@ -376,6 +376,10 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   voltar() { this.router.navigate(['gestao', 'plano-trabalho-v2']); }
 
+  irParaAssinar() {
+    this.router.navigate(['gestao', 'plano-trabalho-v2', 'consultar', this.planoId()], { fragment: 'assinaturas' });
+  }
+
   excluir() {
     if (!this.planoId()) return;
     this.confirmacao.set({
@@ -532,7 +536,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
         .pipe(finalize(() => this.salvandoEntrega.set(false)))
         .subscribe(res => {
           this.entregas.update(list => list.map(e => e.id === res.id ? res : e));
-          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
+          this.plano.update(p => p ? { ...p, documento_id: null, entregas: this.entregas() } as any : p);
           this.cancelarEntrega();
         });
     } else {
@@ -540,7 +544,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
         .pipe(finalize(() => this.salvandoEntrega.set(false)))
         .subscribe(res => {
           this.entregas.update(list => [...list, res]);
-          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
+          this.plano.update(p => p ? { ...p, documento_id: null, entregas: this.entregas() } as any : p);
           this.cancelarEntrega();
         });
     }
@@ -624,7 +628,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       onConfirmar: () => {
         this.api.deleteEntrega(this.planoId()!, entrega.id).subscribe(() => {
           this.entregas.update(list => list.filter(e => e.id !== entrega.id));
-          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
+          this.plano.update(p => p ? { ...p, documento_id: null, entregas: this.entregas() } as any : p);
         });
       }
     });

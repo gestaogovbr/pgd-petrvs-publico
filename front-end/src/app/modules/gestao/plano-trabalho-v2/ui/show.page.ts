@@ -75,6 +75,9 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
             });
             this.facade.loadConsolidacoes();
           };
+          this.route.fragment.pipe(take(1)).subscribe(f => {
+            if (f) setTimeout(() => document.getElementById(f)?.scrollIntoView({ behavior: 'smooth' }), 300);
+          });
         },
         error: () => {
           this.error.set('Erro ao carregar o plano de trabalho.');
