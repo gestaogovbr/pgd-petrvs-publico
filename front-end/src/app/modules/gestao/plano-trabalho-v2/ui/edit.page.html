@@ -68,6 +68,14 @@
               </div>
             </div>
           }
+          @if (plano()?.justificativa) {
+            <div class="row mt-2">
+              <div class="col-md-12">
+                <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa da carga horária</p>
+                <p class="mb-0">{{ plano()?.justificativa }}</p>
+              </div>
+            </div>
+          }
         } @else {
           <form [formGroup]="form">
             <div class="row">
@@ -142,6 +150,17 @@
                   <div class="br-textarea">
                     <label>Justificativa para modalidade diferente da prevista <span class="text-danger">*</span></label>
                     <textarea formControlName="justificativa_modalidade" placeholder="Descreva a justificativa para a modalidade escolhida..."></textarea>
+                  </div>
+                </div>
+              </div>
+            }
+
+            @if (totalForcaTrabalho() !== 100) {
+              <div class="row mt-2">
+                <div class="col-md-12 mb-3">
+                  <div class="br-textarea">
+                    <label>Justificativa para carga horária {{ totalForcaTrabalho() < 100 ? 'insuficiente' : 'excedente' }} <span class="text-danger">*</span></label>
+                    <textarea formControlName="justificativa" placeholder="Descreva a justificativa para a carga horária..."></textarea>
                   </div>
                 </div>
               </div>
