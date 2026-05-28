@@ -351,7 +351,7 @@
       @if (plano() && policy.podeExcluir(plano()!)) {
         <br-button emphasis="secondary" (click)="excluir()">Excluir</br-button>
       }
-      <br-button emphasis="primary" (click)="irParaAssinar()" [disabled]="!plano() || !policy.podeAssinar(plano()!)"><i class="fas fa-pen-fancy mr-1"></i>Assinar Plano</br-button>
+      <br-button emphasis="primary" (click)="irParaAssinar()" [disabled]="!plano() || !policy.podeAssinar(plano()!)" [hidden]="assinatura.jaAssinou()"><i class="fas fa-pen-fancy mr-1"></i>Assinar Plano</br-button>
     </div>
 
   }
