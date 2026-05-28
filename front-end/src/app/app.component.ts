@@ -411,7 +411,7 @@ export class AppComponent implements IAppComponent {
         name: "Personificar",
         permition: 'MENU_DEV_ACESSO',
         route: ['impersonate'],
-        icon: this.entity.getIcon('Ferramentas'),
+        icon: 'bi bi-list',
       },
       DEV_CPF_CONSULTA_SIAPE: {
         name: "Consulta CPF SIAPE",
@@ -448,7 +448,7 @@ export class AppComponent implements IAppComponent {
         name: "Envios",
         permition: 'MOD_ENVIOS',
         route: ['envios'],
-        icon: 'bi bi-send',
+        icon: 'bi bi-list',
       },
       /* SIAPE */
       BLACKLIST_SERVIDOR: {
