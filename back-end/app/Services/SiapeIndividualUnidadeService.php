@@ -13,9 +13,10 @@ use App\Repository\SiapeDadosUORGRepository;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
 use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
+use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use function Symfony\Component\String\s;
 
@@ -42,6 +43,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
         protected UnidadeIntegranteRepository $unidadeIntegranteRepository,
         protected IntegracaoUnidadeRepository $integracaoUnidadeRepository,
         protected CargaIndividualSiapeSubject $cargaIndividualSiapeSubject,
+        protected SiapeUnidadeLifecycleService $siapeUnidadeLifecycleService,
         $collection = null
     ) {
         parent::__construct($collection);
@@ -75,6 +77,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
         $entradaValida = false;
         $codigoUnidade = $this->normalizarCodigoUnidade($codigoUnidade);
         $unidadeAntes = $this->capturarEstadoUnidade($codigoUnidade);
+        $cpfTitularAnterior = $this->buscarChefeCpf($codigoUnidade);
 
         try {
             SiapeLog::info('Limpando tabelas de controle do SIAPE para a unidade');
@@ -117,6 +120,18 @@ class SiapeIndividualUnidadeService extends ServiceBase
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);
+
+            if ($entradaValida) {
+                $this->siapeUnidadeLifecycleService->reativarUnidadeEncontradaNoSiape($codigoProcessado);
+                $this->enfileirarUnidadesRelacionadasPorChefia(
+                    $codigoUnidade,
+                    $codigoProcessado,
+                    [
+                        $cpfTitularAnterior,
+                        $this->normalizarCpf($dadosRelatorio['cpfTitularAutoridadeUorg'] ?? null),
+                    ]
+                );
+            }
 
             $integracaoService = $this->integracaoServiceFactory->make();
 
@@ -233,6 +248,98 @@ class SiapeIndividualUnidadeService extends ServiceBase
         return preg_replace('/[^0-9]/', '', $codigoUnidade) ?? '';
     }
 
+    private function normalizarCpf(mixed $cpf): ?string
+    {
+        if (!is_string($cpf) && !is_numeric($cpf)) {
+            return null;
+        }
+
+        $cpfNormalizado = UtilService::onlyNumbers((string) $cpf);
+
+        return $cpfNormalizado !== '' ? $cpfNormalizado : null;
+    }
+
+    /**
+     * @param array<int, string|null> $cpfs
+     */
+    private function enfileirarUnidadesRelacionadasPorChefia(string $codigoOriginal, string $codigoProcessado, array $cpfs): void
+    {
+        $cpfsNormalizados = collect($cpfs)
+            ->map(fn (?string $cpf): ?string => $this->normalizarCpf($cpf))
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($cpfsNormalizados->isEmpty()) {
+            return;
+        }
+
+        $codigosJaProcessados = collect([$codigoOriginal, $codigoProcessado])
+            ->filter()
+            ->map(fn (string $codigo): string => $this->normalizarCodigoUnidade($codigo))
+            ->unique()
+            ->values()
+            ->all();
+
+        foreach ($this->listarUnidadesRelacionadasPorChefias($cpfsNormalizados, $codigoProcessado, $codigosJaProcessados) as $unidadeRelacionada) {
+            $codigosJaProcessados[] = $unidadeRelacionada['codigo'];
+            $this->enfileirarUnidadeRelacionada($unidadeRelacionada['codigo'], $unidadeRelacionada['cpf']);
+        }
+    }
+
+    /**
+     * @param \Illuminate\Support\Collection<int, string> $cpfs
+     * @param array<int, string> $codigosIgnorados
+     * @return array<int, array{codigo: string, cpf: string}>
+     */
+    private function listarUnidadesRelacionadasPorChefias($cpfs, string $codigoProcessado, array $codigosIgnorados): array
+    {
+        return $cpfs
+            ->flatMap(fn (string $cpf) => $this->integracaoUnidadeRepository
+                ->getCodigosByCpfTitular($cpf, $codigoProcessado)
+                ->map(fn (string $codigo): array => [
+                    'codigo' => $this->normalizarCodigoUnidade($codigo),
+                    'cpf' => $cpf,
+                ]))
+            ->filter(fn (array $unidade): bool => $unidade['codigo'] !== '' && !in_array($unidade['codigo'], $codigosIgnorados, true))
+            ->unique('codigo')
+            ->values()
+            ->all();
+    }
+
+    private function enfileirarUnidadeRelacionada(string $codigoUnidade, string $cpfTitular): void
+    {
+        try {
+            SiapeLog::info('Carga individual SIAPE: enfileirando unidade relacionada por CPF titular', [
+                'codigo_unidade' => $codigoUnidade,
+                'cpf_titular' => $cpfTitular,
+            ]);
+
+            $xmlUnidade = $this->montaXmlUnidade($codigoUnidade);
+            $responseXml = $this->service->getBuscarDadosSiapeUnidade()->executaRequisicao($xmlUnidade);
+            $codigoRetornado = $this->getCodigoFromXML($responseXml) ?? $codigoUnidade;
+
+            $this->siapeDadosUORGRepository->create([
+                'id' => Str::uuid(),
+                'data_modificacao' => today(),
+                'codigo' => $codigoRetornado,
+                'response' => $responseXml,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+
+            if ($this->getCodigoFromXML($responseXml) !== null) {
+                $this->siapeUnidadeLifecycleService->reativarUnidadeEncontradaNoSiape($codigoRetornado);
+            }
+        } catch (Exception $e) {
+            SiapeLog::warning('Carga individual SIAPE: falha ao enfileirar unidade relacionada por CPF titular', [
+                'codigo_unidade' => $codigoUnidade,
+                'cpf_titular' => $cpfTitular,
+                'erro' => $e->getMessage(),
+            ]);
+        }
+    }
+
     /**
      * @return array<string, mixed>|null
      */
@@ -340,7 +447,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
             return null;
         }
 
-        $cpf = preg_replace('/[^0-9]/', '', $registro->cpf_titular_autoridade_uorg);
+        $cpf = UtilService::onlyNumbers($registro->cpf_titular_autoridade_uorg);
 
         return $cpf !== '' ? $cpf : null;
     }

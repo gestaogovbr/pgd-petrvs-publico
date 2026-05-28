@@ -2,6 +2,7 @@
 
 use App\Models\Entidade;
 use App\Models\IntegracaoUnidade;
+use App\Models\SiapeBlacklistUnidade;
 use App\Models\SiapeDadosUORG;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
@@ -12,6 +13,7 @@ use App\Services\IntegracaoServiceFactory;
 use App\Services\SiapeIndividualService;
 use App\Services\SiapeIndividualUnidadeService;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\Sanctum;
 use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
@@ -71,9 +73,10 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         XML;
 
         $entidadeIdsChamados = [];
+        $totalEntidades = Entidade::query()->count();
 
         $this->mockIntegracaoService->shouldReceive('sincronizar')
-            ->times(count($this->entidadeIdsEsperados))
+            ->times($totalEntidades)
             ->with(Mockery::on(function (array $inputs) use (&$entidadeIdsChamados): bool {
                 $entidadeIdsChamados[] = $inputs['entidade'];
                 return $inputs['unidades'] === true
@@ -90,8 +93,10 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         $service = app(SiapeIndividualUnidadeService::class);
         $service->fluxoSiape($codigo, $this->mockSiapeService);
 
-        expect($entidadeIdsChamados)->toHaveCount(count($this->entidadeIdsEsperados));
-        expect($entidadeIdsChamados)->toEqualCanonicalizing($this->entidadeIdsEsperados);
+        $entidadeIdsEsperados = Entidade::query()->pluck('id')->all();
+
+        expect($entidadeIdsChamados)->toHaveCount(count($entidadeIdsEsperados));
+        expect($entidadeIdsChamados)->toEqualCanonicalizing($entidadeIdsEsperados);
 
         expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->toBeNull();
 
@@ -115,9 +120,10 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         XML;
 
         $entidadeIdsChamados = [];
+        $totalEntidades = Entidade::query()->count();
 
         $this->mockIntegracaoService->shouldReceive('sincronizar')
-            ->times(count($this->entidadeIdsEsperados))
+            ->times($totalEntidades)
             ->with(Mockery::on(function (array $inputs) use (&$entidadeIdsChamados): bool {
                 $entidadeIdsChamados[] = $inputs['entidade'];
                 return $inputs['unidades'] === true
@@ -134,8 +140,10 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         $service = app(SiapeIndividualUnidadeService::class);
         $service->fluxoSiape('codigo invalido', $this->mockSiapeService);
 
-        expect($entidadeIdsChamados)->toHaveCount(count($this->entidadeIdsEsperados));
-        expect($entidadeIdsChamados)->toEqualCanonicalizing($this->entidadeIdsEsperados);
+        $entidadeIdsEsperados = Entidade::query()->pluck('id')->all();
+
+        expect($entidadeIdsChamados)->toHaveCount(count($entidadeIdsEsperados));
+        expect($entidadeIdsChamados)->toEqualCanonicalizing($entidadeIdsEsperados);
 
         expect(SiapeDadosUORG::withTrashed()->find($this->registroProcessado->id))->toBeNull();
 
@@ -321,6 +329,69 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         expect($resumo[0]['mensagem'])->toBe('Falha simulada no SIAPE');
         expect($resumo[0]['unidade_existia'])->toBeTrue();
     });
+
+    test('carga individual enfileira unidade relacionada por cpf titular e reativa unidade encontrada no siape', function () {
+        $cpfTitular = '02559875108';
+        $codigoAntigo = '26120';
+        $codigoNovo = '26121';
+
+        $unidadeAntiga = Unidade::factory()->create([
+            'codigo' => $codigoAntigo,
+            'nome' => 'Unidade Antiga',
+        ]);
+        $unidadeNova = Unidade::factory()->create([
+            'codigo' => $codigoNovo,
+            'nome' => 'Unidade Nova',
+            'data_inicio_inativacao' => Carbon::now()->subDays(8),
+            'data_inativacao' => Carbon::now()->subDay(),
+        ]);
+
+        IntegracaoUnidade::create([
+            'id_servo' => $codigoAntigo,
+            'codigo_siape' => $codigoAntigo,
+            'nomeuorg' => 'Unidade Antiga',
+            'siglauorg' => 'ANT',
+            'cpf_titular_autoridade_uorg' => $cpfTitular,
+        ]);
+        IntegracaoUnidade::create([
+            'id_servo' => $codigoNovo,
+            'codigo_siape' => $codigoNovo,
+            'nomeuorg' => 'Unidade Nova',
+            'siglauorg' => 'NOV',
+            'cpf_titular_autoridade_uorg' => $cpfTitular,
+        ]);
+        SiapeBlacklistUnidade::create([
+            'codigo' => $codigoNovo,
+            'response' => 'ausente em carga anterior',
+            'inativado' => 1,
+        ]);
+
+        $this->mockIntegracaoService->shouldReceive('sincronizar')
+            ->andReturn([]);
+
+        $this->mockBuscarUnidade->shouldReceive('executaRequisicao')
+            ->twice()
+            ->andReturn(
+                xmlUnidadeResponse($codigoNovo, $cpfTitular),
+                xmlUnidadeResponse($codigoAntigo, null)
+            );
+
+        $service = app(SiapeIndividualUnidadeService::class);
+        $service->fluxoSiape($codigoNovo, $this->mockSiapeService);
+
+        $this->assertDatabaseHas('siape_dadosUORG', [
+            'codigo' => $codigoNovo,
+        ], 'tenant');
+        $this->assertDatabaseHas('siape_dadosUORG', [
+            'codigo' => $codigoAntigo,
+        ], 'tenant');
+
+        $unidadeNova->refresh();
+        expect($unidadeNova->data_inicio_inativacao)->toBeNull()
+            ->and($unidadeNova->data_inativacao)->toBeNull();
+        expect(SiapeBlacklistUnidade::where('codigo', $codigoNovo)->exists())->toBeFalse();
+        expect($unidadeAntiga->fresh())->not->toBeNull();
+    });
 });
 
 describe('POST /api/unidade/relatorio-processamento-siape', function () {
@@ -411,9 +482,12 @@ describe('POST /api/unidade/relatorio-processamento-siape', function () {
     });
 });
 
-function xmlUnidadeResponse(string $codigo): string
+function xmlUnidadeResponse(string $codigo, ?string $cpfTitular = null): string
 {
     $codUorg = str_pad($codigo, 6, '0', STR_PAD_LEFT);
+    $cpfTitularXml = $cpfTitular === null
+        ? ''
+        : "<cpfTitularAutoridadeUorg xmlns=\"http://entidade.wssiapenet\">$cpfTitular</cpfTitularAutoridadeUorg>";
 
     return <<<XML
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -421,6 +495,7 @@ function xmlUnidadeResponse(string $codigo): string
             <ns1:dadosUorgResponse xmlns:ns1="http://servico.wssiapenet">
                 <out xmlns="">
                     <codUorg xmlns="http://entidade.wssiapenet">$codUorg</codUorg>
+                    $cpfTitularXml
                 </out>
             </ns1:dadosUorgResponse>
         </soap:Body>

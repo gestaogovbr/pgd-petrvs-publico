@@ -67,6 +67,7 @@ resources/documentacao/Gestão/plano_trabalho.pdf
 
 # Para Apple
 *.DS_Store
+.DS_Store
 
 microservice/api-pgd/storage/logs/schedule.log
 back-end/supervisord.log
@@ -78,5 +79,8 @@ kubectl
 back-end/public/app.json
 back-end/public/app.json
 review-pr-*
+
+docs/*
+scripts/release/*
 front-end/out-tsc/app/main.js
 front-end/dist/*

@@ -28,6 +28,17 @@ description: Use para trabalho de integração SIAPE no Petrvs-PGD envolvendo un
 - Não assuma que CPF sozinho identifica o servidor correto quando matricula ou código da unidade de exercício fizer parte da regra.
 - Não contorne o contexto tenant para dados de negócio tenant.
 
+## Cenários De Regressão SIAPE
+
+- Campo ausente no SIAPE não significa automaticamente resposta negativa; preserve dado local quando a ausência não for uma negativa explícita.
+- Mesmo CPF pode ter múltiplas matrículas; avalie CPF, matrícula e unidade antes de concluir que é o mesmo vínculo.
+- Troca de matrícula dentro da mesma unidade é regra real do sistema e deve preservar o usuário existente quando esse for o cenário confirmado.
+- Duas ou mais matrículas ativas em unidades distintas devem coexistir e manter lotações independentes.
+- Duas matrículas ativas do mesmo CPF na mesma unidade é cenário conflitante com a regra de troca de matrícula; registre TODO/FIXME até decisão da equipe.
+- Servidor pode voltar para matrícula antiga após período usando matrícula nova.
+- Servidor ausente no SIAPE por prazo configurado pode entrar em inativação/blacklist; retorno posterior deve limpar o estado de ausência quando aplicável.
+- Como SIAPE não roda localmente, use fixtures/arrays/XML determinísticos e asserts no estado final do banco tenant.
+
 ## Inativacao De Unidades SIAPE
 
 - `listaUorgs` retorna apenas unidades ativas; ausencia de uma unidade local nessa lista e sinal para blacklist, nao prova final para inativacao.
