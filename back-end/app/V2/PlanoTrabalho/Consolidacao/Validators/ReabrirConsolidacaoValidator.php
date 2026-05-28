@@ -19,7 +19,8 @@ class ReabrirConsolidacaoValidator
 
     public function validar(PlanoTrabalho $plano, string $consolidacaoId): PlanoTrabalhoConsolidacao
     {
-        if ($plano->status !== StatusEnum::ATIVO->value) {
+        if (($plano->status !== StatusEnum::ATIVO->value && $plano->encerrado_at === null) ||
+            ($plano->status !== StatusEnum::CONCLUIDO->value && $plano->encerrado_at !== null)) {
             throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO.');
         }
 
@@ -31,6 +32,10 @@ class ReabrirConsolidacaoValidator
 
         if ($consolidacao->plano_trabalho_id !== $plano->id) {
             throw new ValidateException('O período avaliativo não pertence a este Plano de Trabalho.');
+        }
+
+        if ($plano->encerrado_at !== null && $consolidacao->data_inicio > $plano->encerrado_at) {
+            throw new ValidateException('Não é possível reabrir um período avaliativo posterior ao encerramento do plano.');
         }
 
         if ($consolidacao->status !== StatusEnum::CONCLUIDO->value) {

@@ -119,7 +119,7 @@ describe('RecursoValidator::validar', function () {
         $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn($consolidacao);
 
         $this->validator->validar($plano, 'consolidacao-1');
-    })->throws(ValidateException::class, 'Recurso só pode ser solicitado para notas que não aprovam');
+    })->throws(ValidateException::class, 'Recurso só pode ser solicitado para período avaliado como "Inadequado" ou "Não exeutado".');
 
     test('lanca excecao quando prazo expirou', function () {
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();

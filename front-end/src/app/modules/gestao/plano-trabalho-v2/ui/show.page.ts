@@ -114,7 +114,9 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   podeReabrirConsolidacao(consolidacao: Consolidacao): boolean {
     const plano = this.planoTrabalho();
-    if (!plano || plano.status !== PlanoTrabalhoStatus.ATIVO) return false;
+    if (!plano) return false;
+    if (plano.status !== PlanoTrabalhoStatus.ATIVO && !plano.encerrado_at) return false;
+    if (plano.encerrado_at && new Date(consolidacao.data_inicio) > new Date(plano.encerrado_at)) return false;
     return ConsolidacaoStatusGroups.reabrivel.includes(consolidacao.status)
       && !consolidacao.avaliacoes?.length
       && (plano.usuario_id === this.auth.usuario?.id
@@ -138,7 +140,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
     const plano = this.planoTrabalho();
-    if (plano?.encerrado_at && consolidacao.data_inicio > plano.encerrado_at) {
+    if (plano?.encerrado_at && new Date(consolidacao.data_inicio) > new Date(plano.encerrado_at)) {
       return 'Encerrado antecipadamente';
     }
     if (consolidacao.status === ConsolidacaoStatus.INCLUIDO && this.todasEntregasComAtividade(consolidacao)) {

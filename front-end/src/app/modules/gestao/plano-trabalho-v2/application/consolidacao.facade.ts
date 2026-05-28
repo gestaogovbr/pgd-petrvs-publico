@@ -344,9 +344,9 @@ export class ConsolidacaoFacade {
     const nota = this.notas().find(n => n.id === notaId);
     const isReavaliacao = consolidacao.avaliacoes?.length === 1 && !!consolidacao.avaliacoes[0].recurso;
 
-    const mensagem = isReavaliacao ? 
-    `Você está atribuindo a nota ${nota?.nota ?? ''} para a reavaliação deste Plano de Trabalho, encerrando a instância recursal. Deseja confirmar?` : 
-    `Você está atribuindo a nota ${nota?.nota ?? ''} à execução deste período do Plano de Trabalho. Deseja confirmar?`;
+    const mensagem = isReavaliacao ?
+      `Você está atribuindo a nota ${nota?.nota ?? ''} para a reavaliação deste Plano de Trabalho, encerrando a instância recursal. Deseja confirmar?` :
+      `Você está atribuindo a nota ${nota?.nota ?? ''} à execução deste período do Plano de Trabalho. Deseja confirmar?`;
 
     this.confirmacaoPendente.set({
       titulo: isReavaliacao ? 'Reavaliar Período' : 'Avaliar Período',

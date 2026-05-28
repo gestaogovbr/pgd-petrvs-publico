@@ -174,7 +174,7 @@ test('findAgentesPublicosNoEscopoCadastrante aplica participa_pgd sim e filtros 
     $builder = \Mockery::mock(Builder::class);
     $builder->shouldReceive('select')
         ->once()
-        ->with(['usuarios.id', 'usuarios.nome', 'usuarios.matricula', 'usuarios.cpf'])
+        ->with(['usuarios.id', 'usuarios.nome', 'usuarios.matricula', 'usuarios.cpf', 'usuarios.modalidade_pgd'])
         ->andReturnSelf();
     $builder->shouldReceive('where')
         ->once()

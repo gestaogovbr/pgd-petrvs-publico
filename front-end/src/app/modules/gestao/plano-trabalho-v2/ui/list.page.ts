@@ -77,7 +77,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly subscriptions: Subscription[] = [];
   private readonly filterChange$ = new Subject<void>();
 
-readonly filters: FormGroup<{
+  readonly filters: FormGroup<{
     periodo_inicio: FormControl<string | null>;
     periodo_fim: FormControl<string | null>;
     incluir_subordinadas: FormControl<boolean>;
@@ -93,7 +93,7 @@ readonly filters: FormGroup<{
     periodo_inicio: this.fb.control<string | null>(null),
     periodo_fim: this.fb.control<string | null>(null),
     incluir_subordinadas: this.fb.nonNullable.control(true),
-    vigentes: this.fb.nonNullable.control(true),
+    vigentes: this.fb.nonNullable.control(false),
     incluir_arquivados: this.fb.nonNullable.control(false),
     meus_planos: this.fb.nonNullable.control(false),
     numero: this.fb.nonNullable.control(''),
@@ -151,7 +151,7 @@ readonly filters: FormGroup<{
       periodo_inicio: null,
       periodo_fim: null,
       incluir_subordinadas: !this.isParticipante,
-      vigentes: true,
+      vigentes: false,
       incluir_arquivados: false,
       meus_planos: this.isParticipante,
       numero: '',
