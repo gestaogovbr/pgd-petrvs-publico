@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, of, switchMap, take } from 'rxjs';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -29,7 +29,7 @@ export interface SelectOption { value: string; label: string; selected?: boolean
   selector: 'app-plano-trabalho-v2-edit-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent, RouterLink],
   templateUrl: './edit.page.html'
 })
 export class PlanoTrabalhoV2EditPage implements OnInit {
@@ -494,7 +494,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe(async (updated) => {
         if (updated) {
-          this.plano.set(updated);
+          this.plano.set({ ...updated, entregas: this.entregas() } as any);
           await this.aplicarInformacoesGeraisDoPlano(updated);
         }
         onSuccess();
