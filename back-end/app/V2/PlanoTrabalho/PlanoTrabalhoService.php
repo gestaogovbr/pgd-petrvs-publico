@@ -3,10 +3,14 @@
 namespace App\V2\PlanoTrabalho;
 
 use App\Models\PlanoTrabalho;
+use App\Models\Usuario;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
+use App\V2\PlanoTrabalho\Authorization\PlanoTrabalhoAuthorization;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateAuthorizationValidator;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoCloneDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoEntregaCloneDTO;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
@@ -44,6 +48,9 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoArquivarValidator $arquivarValidator,
         private readonly PlanoTrabalhoClonarValidator $clonarValidator,
         private readonly PlanoTrabalhoIndexValidator $indexValidator,
+        private readonly PlanoTrabalhoUpdateAuthorizationValidator $updateAuthorizationValidator,
+        private readonly PlanoTrabalhoAuthorization $authorization,
+        private readonly UsuarioRepository $usuarioRepository,
         private readonly StatusService $statusService,
         private readonly TCRInvalidador $tcrInvalidador,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
@@ -61,7 +68,16 @@ class PlanoTrabalhoService
             $filtro = $filtro->withUnidadesId(array_merge($idsBase, $subordinadasIds));
         }
 
-        return $this->readRepository->buscarPlanosListagem($filtro);
+        $paginator = $this->readRepository->buscarPlanosListagem($filtro);
+        $usuario = $this->usuarioLogadoComPerfilEAreas();
+
+        $paginator->getCollection()->transform(function (PlanoTrabalho $plano) use ($usuario) {
+            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+
+            return $plano;
+        });
+
+        return $paginator;
     }
 
     public function store(array $data): PlanoTrabalho
@@ -82,7 +98,7 @@ class PlanoTrabalhoService
         }
 
         $dto = PlanoTrabalhoStoreDTO::fromArray($data, Auth::id());
-        $this->storeValidator->validarAutorizacao($dto);
+        $this->updateAuthorizationValidator->validar($plano, Auth::id());
         $this->updateValidator->validar($dto, $id);
 
         return DB::transaction(function () use ($id, $dto) {
@@ -109,6 +125,9 @@ class PlanoTrabalhoService
         if (!$this->isDonoOuChefia($plano, Auth::id(), $plano->unidade_id)) {
             $this->stripAfastamentos($plano);
         }
+
+        $usuario = $this->usuarioLogadoComPerfilEAreas();
+        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
 
         return $plano;
     }
@@ -211,5 +230,19 @@ class PlanoTrabalhoService
         }
 
         $plano->consolidacoes->each(fn ($c) => $c->unsetRelation('afastamentos'));
+    }
+
+    private function usuarioLogadoComPerfilEAreas(): Usuario
+    {
+        $usuarioId = Auth::id();
+        $usuario = $this->usuarioRepository->findByIdComAreasTrabalho($usuarioId);
+
+        if ($usuario === null) {
+            throw new NotFoundException('Usuário não encontrado.');
+        }
+
+        $usuario->loadMissing('perfil');
+
+        return $usuario;
     }
 }
