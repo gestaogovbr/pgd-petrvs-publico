@@ -21,7 +21,8 @@ class ConcluirConsolidacaoValidator
 
     public function validar(PlanoTrabalho $plano, string $consolidacaoId): PlanoTrabalhoConsolidacao
     {
-        if ($plano->status !== StatusEnum::ATIVO->value) {
+        if (($plano->status !== StatusEnum::ATIVO->value && $plano->encerrado_at === null) ||
+            ($plano->status !== StatusEnum::CONCLUIDO->value && $plano->encerrado_at !== null)) {
             throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO.');
         }
 

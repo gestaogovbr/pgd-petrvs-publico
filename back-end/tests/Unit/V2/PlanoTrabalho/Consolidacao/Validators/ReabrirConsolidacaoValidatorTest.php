@@ -47,6 +47,7 @@ describe('ReabrirConsolidacaoValidator', function () {
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $plano->status = 'INCLUIDO';
+        $plano->encerrado_at = null;
 
         $this->consolidacaoRepo->shouldNotReceive('findConsolidacaoById');
 
@@ -112,4 +113,43 @@ describe('ReabrirConsolidacaoValidator', function () {
 
         $this->validator->validar($plano, 'c-1');
     })->throws(ValidateException::class, 'Não é possível reabrir um período avaliativo que já possui avaliação.');
+
+    test('permite reabrir quando plano encerrado e consolidação anterior ao encerramento', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->status = 'CONCLUIDO';
+        $plano->encerrado_at = '2026-05-28';
+
+        /** @var PlanoTrabalhoConsolidacao $consolidacao */
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->id = 'c-1';
+        $consolidacao->plano_trabalho_id = 'plano-1';
+        $consolidacao->status = 'CONCLUIDO';
+        $consolidacao->data_inicio = '2026-05-01';
+        $consolidacao->setRelation('avaliacoes', new Collection());
+
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn($consolidacao);
+
+        $result = $this->validator->validar($plano, 'c-1');
+        expect($result)->toBe($consolidacao);
+    });
+
+    test('lança exceção quando plano encerrado e consolidação posterior ao encerramento', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->status = 'CONCLUIDO';
+        $plano->encerrado_at = '2026-05-28';
+
+        /** @var PlanoTrabalhoConsolidacao $consolidacao */
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->plano_trabalho_id = 'plano-1';
+        $consolidacao->status = 'CONCLUIDO';
+        $consolidacao->data_inicio = '2026-06-01';
+
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn($consolidacao);
+
+        $this->validator->validar($plano, 'c-1');
+    })->throws(ValidateException::class, 'Não é possível reabrir um período avaliativo posterior ao encerramento do plano.');
 });
