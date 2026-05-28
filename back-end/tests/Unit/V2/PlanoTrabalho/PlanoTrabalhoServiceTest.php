@@ -14,6 +14,11 @@ use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoUpdateAuthorizationValidator;
+use App\V2\PlanoTrabalho\Authorization\PlanoTrabalhoAuthorization;
+use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoAcoesDTO;
+use App\Repository\UsuarioRepository;
+use App\Models\Usuario;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Exceptions\NotFoundException;
@@ -40,6 +45,9 @@ beforeEach(function () {
     $this->arquivarValidator = Mockery::mock(PlanoTrabalhoArquivarValidator::class);
     $this->clonarValidator = Mockery::mock(PlanoTrabalhoClonarValidator::class);
     $this->indexValidator = Mockery::mock(PlanoTrabalhoIndexValidator::class);
+    $this->updateAuthorizationValidator = Mockery::mock(PlanoTrabalhoUpdateAuthorizationValidator::class);
+    $this->authorization = Mockery::mock(PlanoTrabalhoAuthorization::class);
+    $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
     $this->statusService = Mockery::mock(StatusService::class);
     $this->tcrInvalidador = Mockery::mock(TCRInvalidador::class);
     $this->consolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
@@ -56,6 +64,9 @@ beforeEach(function () {
         $this->arquivarValidator,
         $this->clonarValidator,
         $this->indexValidator,
+        $this->updateAuthorizationValidator,
+        $this->authorization,
+        $this->usuarioRepository,
         $this->statusService,
         $this->tcrInvalidador,
         $this->consolidacaoRepository,
@@ -66,12 +77,56 @@ afterEach(function () {
     Mockery::close();
 });
 
+function mockPaginatorComEnriquecimentoAcoes(): LengthAwarePaginator
+{
+    $planoItem = Mockery::mock(PlanoTrabalho::class)->makePartial();
+    $collection = new Collection([$planoItem]);
+    $paginator = Mockery::mock(LengthAwarePaginator::class);
+    $paginator->shouldReceive('getCollection')->andReturn($collection);
+
+    $usuario = Mockery::mock(Usuario::class)->makePartial();
+    $usuario->shouldReceive('loadMissing')->with('perfil')->andReturnSelf();
+
+    test()->usuarioRepository
+        ->shouldReceive('findByIdComAreasTrabalho')
+        ->with('user-1')
+        ->andReturn($usuario);
+
+    test()->authorization
+        ->shouldReceive('acoes')
+        ->andReturn(new PlanoTrabalhoAcoesDTO(editar: false));
+
+    return $paginator;
+}
+
+function mockShowEnriquecimentoAcoes(PlanoTrabalho $plano): void
+{
+    $usuario = Mockery::mock(Usuario::class)->makePartial();
+    $usuario->shouldReceive('loadMissing')->with('perfil')->andReturnSelf();
+
+    test()->usuarioRepository
+        ->shouldReceive('findByIdComAreasTrabalho')
+        ->andReturn($usuario);
+
+    test()->authorization
+        ->shouldReceive('acoes')
+        ->with($plano, $usuario)
+        ->andReturn(new PlanoTrabalhoAcoesDTO(editar: false));
+}
+
 describe('PlanoTrabalhoService::index', function () {
 
-    test('delega ao repository com o filtro construído', function () {
+    test('delega ao repository com o filtro construído e enriquece acoes', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
         $this->indexValidator->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
+
+        $planoItem = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $collection = new Collection([$planoItem]);
         $paginator = Mockery::mock(LengthAwarePaginator::class);
+        $paginator->shouldReceive('getCollection')->once()->andReturn($collection);
+
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->shouldReceive('loadMissing')->with('perfil')->andReturnSelf();
 
         $this->readRepository
             ->shouldReceive('buscarPlanosListagem')
@@ -79,15 +134,28 @@ describe('PlanoTrabalhoService::index', function () {
             ->with(Mockery::type(PlanoTrabalhoIndexDTO::class))
             ->andReturn($paginator);
 
+        $this->usuarioRepository
+            ->shouldReceive('findByIdComAreasTrabalho')
+            ->once()
+            ->with('user-1')
+            ->andReturn($usuario);
+
+        $this->authorization
+            ->shouldReceive('acoes')
+            ->once()
+            ->with($planoItem, $usuario)
+            ->andReturn(new PlanoTrabalhoAcoesDTO(editar: true));
+
         $result = $this->service->index(['filters' => ['vigentes' => true]]);
 
-        expect($result)->toBe($paginator);
+        expect($result)->toBe($paginator)
+            ->and($planoItem->getAttribute('acoes'))->toBe(['editar' => true]);
     });
 
     test('expande unidades com subordinadas quando flag subordinadas=true', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
         $this->indexValidator->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
-        $paginator = Mockery::mock(LengthAwarePaginator::class);
+        $paginator = mockPaginatorComEnriquecimentoAcoes();
 
         $this->unidadeRepository
             ->shouldReceive('getSubordinadasRecursivas')
@@ -118,7 +186,7 @@ describe('PlanoTrabalhoService::index', function () {
     test('propaga usuario_nome e unidade_regramento no filtro ao repository', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
         $this->indexValidator->shouldReceive('validar')->once()->andReturnUsing(fn ($f) => $f);
-        $paginator = Mockery::mock(LengthAwarePaginator::class);
+        $paginator = mockPaginatorComEnriquecimentoAcoes();
 
         $this->readRepository
             ->shouldReceive('buscarPlanosListagem')
@@ -140,7 +208,7 @@ describe('PlanoTrabalhoService::index', function () {
     test('não expande subordinadas quando flag subordinadas está ausente', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
         $this->indexValidator->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
-        $paginator = Mockery::mock(LengthAwarePaginator::class);
+        $paginator = mockPaginatorComEnriquecimentoAcoes();
 
         $this->unidadeRepository->shouldNotReceive('getSubordinadasRecursivas');
 
@@ -283,15 +351,31 @@ describe('PlanoTrabalhoService::show', function () {
         $plano->usuario_id = 'user-1';
         $plano->unidade_id = 'u-1';
 
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->shouldReceive('loadMissing')->with('perfil')->andReturnSelf();
+
         $this->readRepository
             ->shouldReceive('findByIdComRelacoes')
             ->once()
             ->with('plano-1')
             ->andReturn($plano);
 
+        $this->usuarioRepository
+            ->shouldReceive('findByIdComAreasTrabalho')
+            ->once()
+            ->with('user-1')
+            ->andReturn($usuario);
+
+        $this->authorization
+            ->shouldReceive('acoes')
+            ->once()
+            ->with($plano, $usuario)
+            ->andReturn(new PlanoTrabalhoAcoesDTO(editar: true));
+
         $result = $this->service->show('plano-1');
 
-        expect($result)->toBe($plano);
+        expect($result)->toBe($plano)
+            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true]);
     });
 
     test('retorna plano quando tem entregas', function () {
@@ -310,6 +394,8 @@ describe('PlanoTrabalhoService::show', function () {
             ->once()
             ->with('plano-2')
             ->andReturn($plano);
+
+        mockShowEnriquecimentoAcoes($plano);
 
         $result = $this->service->show('plano-2');
 
@@ -340,6 +426,8 @@ describe('PlanoTrabalhoService::show', function () {
 
         $this->readRepository->shouldReceive('findByIdComRelacoes')->andReturn($plano);
 
+        mockShowEnriquecimentoAcoes($plano);
+
         $this->service->show('plano-1');
     });
 
@@ -358,6 +446,8 @@ describe('PlanoTrabalhoService::show', function () {
         $this->readRepository->shouldReceive('findByIdComRelacoes')->andReturn($plano);
         $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
             ->with('unidade-1', 'chefia-1')->andReturn(true);
+
+        mockShowEnriquecimentoAcoes($plano);
 
         $this->service->show('plano-1');
     });
@@ -378,6 +468,8 @@ describe('PlanoTrabalhoService::show', function () {
         $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
             ->with('unidade-1', 'estranho-1')->andReturn(false);
 
+        mockShowEnriquecimentoAcoes($plano);
+
         $this->service->show('plano-1');
     });
 });
@@ -391,7 +483,7 @@ describe('PlanoTrabalhoService::statuses', function () {
 
 describe('PlanoTrabalhoService::update', function () {
 
-    test('perfil Consulta é bloqueado ao tentar editar um PT', function () {
+    test('bloqueia edição quando usuário não tem permissão', function () {
         Auth::shouldReceive('id')->andReturn('user-consulta');
 
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
@@ -399,11 +491,14 @@ describe('PlanoTrabalhoService::update', function () {
 
         $this->readRepository->shouldReceive('findById')->with('plano-1')->andReturn($plano);
 
-        $this->storeValidator->shouldReceive('validarAutorizacao')
+        $this->updateAuthorizationValidator
+            ->shouldReceive('validar')
             ->once()
-            ->andThrow(new \App\Exceptions\ForbiddenException('Usuário com este perfil não pode cadastrar plano de trabalho.'));
+            ->with($plano, 'user-consulta')
+            ->andThrow(new \App\Exceptions\ForbiddenException('Usuário não tem permissão para editar este Plano de Trabalho.'));
 
         $this->updateValidator->shouldNotReceive('validar');
+        $this->storeValidator->shouldNotReceive('validarAutorizacao');
         $this->writeRepository->shouldNotReceive('update');
 
         $this->service->update('plano-1', [
@@ -445,9 +540,9 @@ describe('PlanoTrabalhoService::encerrar', function () {
             ->once()
             ->with($planoId, $hoje);
 
-        $this->consolidacaoRepository->shouldReceive('concluirTodas')
+        $this->consolidacaoRepository->shouldReceive('encerrarPeriodosFuturos')
             ->once()
-            ->with($planoId);
+            ->with($planoId, $hoje);
 
         $this->statusService->shouldReceive('atualizaStatus')
             ->once()

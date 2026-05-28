@@ -53,6 +53,10 @@ export type PlanoTrabalhoMetadata = {
     criterios_avaliacao: LookupItem[];
 };
 
+export type PlanoTrabalhoAcoes = {
+    editar: boolean;
+};
+
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public accordionDisabled: boolean = false;
     public unidade?: Unidade;
@@ -102,6 +106,9 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public data_tentativa_envio?: Date | null = null; /* Data da última tentativa de envio */
     public data_envio_api_pgd?: Date | null = null; /* Data do envio para a API do PGD */
     public log_envio: string | null = null; /* Log do envio do para a API do PGD */
+
+    /** Permissões calculadas pelo back-end (index/show). */
+    public acoes?: PlanoTrabalhoAcoes;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

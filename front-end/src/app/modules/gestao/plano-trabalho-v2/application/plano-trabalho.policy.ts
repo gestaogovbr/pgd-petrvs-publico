@@ -21,8 +21,7 @@ export class PlanoTrabalhoPolicy {
   }
 
   podeEditar(p: PlanoTrabalho): boolean {
-    return PlanoTrabalhoStatusGroups.editavel.includes(p.status)
-      && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id);
+    return p.acoes?.editar === true;
   }
 
   podeCancelarAssinatura(p: PlanoTrabalho): boolean {

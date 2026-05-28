@@ -44,11 +44,11 @@ class EloquentPlanoTrabalhoConsolidacaoWriteRepository extends AbstractEloquentW
             ->update(['data_fim' => $dataEncerramento]);
     }
 
-    public function concluirTodas(string $planoTrabalhoId): void
+    public function encerrarPeriodosFuturos(string $planoTrabalhoId, string $dataEncerramento): void
     {
         PlanoTrabalhoConsolidacao::where('plano_trabalho_id', $planoTrabalhoId)
             ->whereNull('deleted_at')
-            ->where('status', '!=', 'AVALIADO')
+            ->where('data_inicio', '>', $dataEncerramento)
             ->update(['status' => 'CONCLUIDO']);
     }
 }
