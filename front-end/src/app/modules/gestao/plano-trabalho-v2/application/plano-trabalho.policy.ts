@@ -9,6 +9,10 @@ export class PlanoTrabalhoPolicy {
   private readonly auth = inject(AuthService);
   private readonly unidadeService = inject(UnidadeService);
 
+  podeVerAcoes(): boolean {
+    return !this.auth.isUsuarioConsulta();
+  }
+
   podeCancelar(p: PlanoTrabalho): boolean {
     return this.auth.hasPermissionTo('MOD_PTR_CNC')
       && PlanoTrabalhoStatusGroups.cancelavel.includes(p.status)

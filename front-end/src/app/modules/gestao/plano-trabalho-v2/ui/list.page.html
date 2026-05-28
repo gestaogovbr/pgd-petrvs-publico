@@ -218,6 +218,7 @@
                 <br-button shape="circle" (click)="detalhesDoPlano(p)" title="Visualizar" ariaLabel="Visualizar plano">
                   <i class="fas fa-search"></i>
                 </br-button>
+                @if (policy.podeVerAcoes()) {
                 <div class="btn-group">
                   <br-button shape="circle" data-bs-toggle="dropdown" aria-expanded="false" title="Mais ações" ariaLabel="Mais ações">
                     <i class="fas fa-ellipsis-v"></i>
@@ -263,6 +264,7 @@
                     </li>
                   </ul>
                 </div>
+                }
               </div>
             </td>
           </tr>
