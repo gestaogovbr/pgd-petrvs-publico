@@ -47,7 +47,7 @@ class PlanoTrabalhoAuthorization
     private function usuarioPodeEditarPlano(PlanoTrabalho $plano, Usuario $usuario): bool
     {
         $perfil = $usuario->perfil;
-        if ($perfil !== null && $perfil->nivel <= PerfilEnum::ADMINISTRADOR_MASTER->value) {
+        if ($perfil !== null && $perfil->nivel >= PerfilEnum::ADMINISTRADOR_MASTER->value) {
             return true;
         }
 
