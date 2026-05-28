@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, of, switchMap, take } from 'rxjs';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -29,7 +29,7 @@ export interface SelectOption { value: string; label: string; selected?: boolean
   selector: 'app-plano-trabalho-v2-edit-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent, RouterLink],
   templateUrl: './edit.page.html'
 })
 export class PlanoTrabalhoV2EditPage implements OnInit {
@@ -112,13 +112,15 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     data_fim: FormControl<string>;
     modalidade_pgd: FormControl<string>;
     justificativa_modalidade: FormControl<string>;
+    justificativa: FormControl<string>;
   }> = this.fb.group({
     usuario_id: this.fb.nonNullable.control('', Validators.required),
     unidade_id: this.fb.nonNullable.control('', Validators.required),
     data_inicio: this.fb.nonNullable.control('', Validators.required),
     data_fim: this.fb.nonNullable.control('', Validators.required),
     modalidade_pgd: this.fb.nonNullable.control('', Validators.required),
-    justificativa_modalidade: this.fb.nonNullable.control('')
+    justificativa_modalidade: this.fb.nonNullable.control(''),
+    justificativa: this.fb.nonNullable.control('')
   });
 
   readonly entregaForm = this.fb.group({
@@ -232,6 +234,23 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       } else {
         ctrl.clearValidators();
         ctrl.setValue('');
+      }
+      ctrl.updateValueAndValidity();
+    }, { injector: this.injector });
+
+    // Justificativa de carga horária obrigatória quando CHD != 100%
+    effect(() => {
+      const ctrl = this.form.controls.justificativa;
+      if (this.totalForcaTrabalho() !== 100) {
+        ctrl.setValidators(Validators.required);
+      } else {
+        ctrl.clearValidators();
+        if (ctrl.value) {
+          ctrl.setValue('');
+          if (this.planoId()) {
+            this.api.update(this.planoId()!, { justificativa: null } as any).subscribe();
+          }
+        }
       }
       ctrl.updateValueAndValidity();
     }, { injector: this.injector });
@@ -376,6 +395,10 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   voltar() { this.router.navigate(['gestao', 'plano-trabalho-v2']); }
 
+  irParaAssinar() {
+    this.router.navigate(['gestao', 'plano-trabalho-v2', 'consultar', this.planoId()], { fragment: 'assinaturas' });
+  }
+
   excluir() {
     if (!this.planoId()) return;
     this.confirmacao.set({
@@ -482,7 +505,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       data_inicio: this.form.controls.data_inicio.value,
       data_fim: this.form.controls.data_fim.value,
       modalidade_pgd: this.form.controls.modalidade_pgd.value,
-      justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null
+      justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null,
+      justificativa: this.form.controls.justificativa.value || null
     };
 
     this.saving.set(true);
@@ -490,7 +514,9 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       .pipe(finalize(() => this.saving.set(false)))
       .subscribe(async (updated) => {
         if (updated) {
-          this.plano.set(updated);
+          const planoAtualizado = { ...updated, entregas: this.entregas() } as any;
+          this.plano.set(planoAtualizado);
+          this.assinatura.init(planoAtualizado, this.entregas());
           await this.aplicarInformacoesGeraisDoPlano(updated);
         }
         onSuccess();
@@ -532,7 +558,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
         .pipe(finalize(() => this.salvandoEntrega.set(false)))
         .subscribe(res => {
           this.entregas.update(list => list.map(e => e.id === res.id ? res : e));
-          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
+          this.plano.update(p => p ? { ...p, documento_id: null, entregas: this.entregas() } as any : p);
+          this.assinatura.jaAssinou.set(false);
           this.cancelarEntrega();
         });
     } else {
@@ -540,7 +567,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
         .pipe(finalize(() => this.salvandoEntrega.set(false)))
         .subscribe(res => {
           this.entregas.update(list => [...list, res]);
-          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
+          this.plano.update(p => p ? { ...p, documento_id: null, entregas: this.entregas() } as any : p);
+          this.assinatura.jaAssinou.set(false);
           this.cancelarEntrega();
         });
     }
@@ -624,7 +652,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       onConfirmar: () => {
         this.api.deleteEntrega(this.planoId()!, entrega.id).subscribe(() => {
           this.entregas.update(list => list.filter(e => e.id !== entrega.id));
-          this.plano.update(p => p ? { ...p, documento_id: null } as any : p);
+          this.plano.update(p => p ? { ...p, documento_id: null, entregas: this.entregas() } as any : p);
+          this.assinatura.jaAssinou.set(false);
         });
       }
     });
@@ -711,6 +740,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       { emitEvent: false }
     );
     this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '', { emitEvent: false });
+    this.form.controls.justificativa.setValue(plano.justificativa || '', { emitEvent: false });
 
     if (plano.usuario_id) {
       const usuario = await firstValueFrom(this.usuarioService.getById(plano.usuario_id));

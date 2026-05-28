@@ -9,13 +9,17 @@
 
     <!-- Cabeçalho -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="mb-0">Plano de Trabalho #{{ plano()?.numero }}</h2>
+      <h2 class="mb-0">
+        <a [routerLink]="['/gestao', 'plano-trabalho-v2', 'consultar', planoId()]" class="text-decoration-none" style="font-weight: inherit; font-size: inherit">
+          Plano de Trabalho #{{ plano()?.numero }}
+        </a>
+      </h2>
     </div>
 
     <!-- Informações gerais -->
     <div class="br-card mb-4">
       <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x d-flex justify-content-between align-items-center">
-        <span>Informações gerais</span>
+        Informações gerais
         @if (!editandoInformacoesGerais() && plano() && policy.podeEditar(plano()!)) {
           <br-button type="button" emphasis="secondary" (click)="abrirEdicaoInformacoesGerais()" [disabled]="saving()">
             <i class="fas fa-pen mr-1"></i> Editar
@@ -61,6 +65,14 @@
               <div class="col-md-12">
                 <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa para modalidade diferente da prevista</p>
                 <p class="mb-0">{{ plano()?.justificativa_modalidade }}</p>
+              </div>
+            </div>
+          }
+          @if (plano()?.justificativa) {
+            <div class="row mt-2">
+              <div class="col-md-12">
+                <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa da carga horária</p>
+                <p class="mb-0">{{ plano()?.justificativa }}</p>
               </div>
             </div>
           }
@@ -138,6 +150,17 @@
                   <div class="br-textarea">
                     <label>Justificativa para modalidade diferente da prevista <span class="text-danger">*</span></label>
                     <textarea formControlName="justificativa_modalidade" placeholder="Descreva a justificativa para a modalidade escolhida..."></textarea>
+                  </div>
+                </div>
+              </div>
+            }
+
+            @if (totalForcaTrabalho() !== 100) {
+              <div class="row mt-2">
+                <div class="col-md-12 mb-3">
+                  <div class="br-textarea">
+                    <label>Justificativa para carga horária {{ totalForcaTrabalho() < 100 ? 'insuficiente' : 'excedente' }} <span class="text-danger">*</span></label>
+                    <textarea formControlName="justificativa" placeholder="Descreva a justificativa para a carga horária..."></textarea>
                   </div>
                 </div>
               </div>
@@ -347,6 +370,7 @@
       @if (plano() && policy.podeExcluir(plano()!)) {
         <br-button emphasis="secondary" (click)="excluir()">Excluir</br-button>
       }
+      <br-button emphasis="primary" (click)="irParaAssinar()" [disabled]="!plano() || !policy.podeAssinar(plano()!)" [hidden]="assinatura.jaAssinou()"><i class="fas fa-pen-fancy mr-1"></i>Assinar Plano</br-button>
     </div>
 
   }

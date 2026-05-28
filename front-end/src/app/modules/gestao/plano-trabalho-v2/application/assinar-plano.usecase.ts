@@ -145,7 +145,7 @@ export class AssinarPlanoUseCase {
     if (!id || this.salvando()) return;
     this.onDocumentoCriado = onSuccess;
     if (this.totalCHD() > 0 && this.totalCHD() !== 100) {
-      this.justificativaCHD.set('');
+      this.justificativaCHD.set((this.plano() as any)?.justificativa || '');
       this.confirmandoGeracaoTCR.set(true);
     } else {
       this.executarGeracaoDocumento();

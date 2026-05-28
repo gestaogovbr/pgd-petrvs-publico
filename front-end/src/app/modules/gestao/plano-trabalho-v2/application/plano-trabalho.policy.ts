@@ -28,6 +28,7 @@ export class PlanoTrabalhoPolicy {
 
   podeAssinar(p: PlanoTrabalho): boolean {
     return PlanoTrabalhoStatusGroups.assinavel.includes(p.status)
+      && (p.entregas?.length > 0)
       && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id);
   }
 
