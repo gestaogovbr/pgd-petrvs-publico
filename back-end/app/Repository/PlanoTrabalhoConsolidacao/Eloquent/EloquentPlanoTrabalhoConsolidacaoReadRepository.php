@@ -194,6 +194,25 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->exists();
     }
 
+    public function findAvaliadasComPrazoRecurso(string $usuarioId, int $prazoDias): Collection
+    {
+        return $this->query()
+            ->with([
+                'avaliacoes.tipoAvaliacaoNota:id,descricao,aprova',
+                'planoTrabalho.programa:id,nome',
+                'planoTrabalho.unidade:id,nome,sigla',
+            ])
+            ->whereHas('planoTrabalho', fn ($q) => $q->where('usuario_id', $usuarioId))
+            ->where('status', StatusEnum::AVALIADO->value)
+            ->has('avaliacoes', '=', 1)
+            ->whereHas('avaliacoes', fn ($q) => $q
+                ->whereNull('recurso')
+                ->where('data_avaliacao', '>=', now()->subDays($prazoDias))
+                ->whereHas('tipoAvaliacaoNota', fn ($n) => $n->where('aprova', 0))
+            )
+            ->get();
+    }
+
     private function basePendentesAvaliacaoQuery(\DateTimeInterface $dataCorte): \Illuminate\Database\Eloquent\Builder
     {
         return $this->query()

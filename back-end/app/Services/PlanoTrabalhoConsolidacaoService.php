@@ -427,6 +427,40 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   }
 
   /**
+   * Retorna consolidações avaliadas com nota reprovativa dentro do prazo de recurso (10 dias)
+   *
+   * @param   string  $usuarioId  ID do usuário
+   * @return  array
+   */
+  public function pendenciasRecursoUsuario(string $usuarioId): array
+  {
+    $prazoDias = 10;
+
+    $consolidacoes = $this->consolidacaoRepository
+        ->findAvaliadasComPrazoRecurso($usuarioId, $prazoDias);
+
+    return $consolidacoes->map(fn (PlanoTrabalhoConsolidacao $c) => [
+        'id' => $c->id,
+        'data_inicio' => $c->data_inicio,
+        'data_fim' => $c->data_fim,
+        'data_avaliacao' => $c->avaliacoes->first()->data_avaliacao,
+        'data_limite_recurso' => \Carbon\Carbon::parse($c->avaliacoes->first()->data_avaliacao)
+            ->addDays($prazoDias)->toDateString(),
+        'dias_restantes' => max(0, (int) now()->diffInDays(
+            \Carbon\Carbon::parse($c->avaliacoes->first()->data_avaliacao)->addDays($prazoDias),
+            false
+        )),
+        'nota' => $c->avaliacoes->first()->tipoAvaliacaoNota?->descricao,
+        'plano_trabalho' => [
+            'id' => $c->planoTrabalho->id,
+            'numero' => $c->planoTrabalho->numero,
+            'programa' => $c->planoTrabalho->programa->nome,
+            'unidade' => $c->planoTrabalho->unidade->nome,
+        ],
+    ])->values()->toArray();
+  }
+
+  /**
    * Detecta inconsistências em consolidações concluídas ou avaliadas
    * onde entregas do plano de trabalho não possuem atividades associadas
    *
