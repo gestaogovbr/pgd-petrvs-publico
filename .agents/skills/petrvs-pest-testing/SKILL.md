@@ -21,6 +21,17 @@ description: Use ao escrever, migrar, depurar ou revisar testes backend do Petrv
 6. Mantenha fixtures mínimas e relevantes para o domínio.
 7. Rode primeiro o arquivo de teste focado e depois suites se o risco justificar.
 
+## Portão De Qualidade De Testes
+
+- Teste novo ou alterado: rode primeiro somente o arquivo afetado.
+- Helper, factory ou fixture compartilhada alterada: rode todos os arquivos que usam esse helper, ou a menor suite relacionada.
+- Regressão de issue: nomeie o teste com `issue XXXX - ...`, prove o estado final esperado e mantenha dados sintéticos.
+- Teste que deve reproduzir bug antes da correção: rode antes de alterar produção e registre a falha para orientar a solução.
+- Teste que passa sem mudança de produção: relate que o cenário parece coberto ou provavelmente resolvido.
+- Mudança em comportamento tenant: use `IntegrationTenant` e valide no banco tenant.
+- Mudança em lógica pura: prefira `Unit` com Mockery, sem banco.
+- Depois de correção em produção, rode novamente o teste que falhou, testes relacionados e deixe PHPStan para a skill backend/PHPStan.
+
 ## Regras De Teste Unit
 
 - Nada de `Schema::create`.

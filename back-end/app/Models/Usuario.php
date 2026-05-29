@@ -37,6 +37,7 @@ use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Services\UtilService;
 use App\Support\ModalidadePgd;
+use App\Contracts\HasStatusHistory;
 use App\Traits\AutoUuid;
 use App\Traits\HasPermissions;
 use App\Traits\MergeRelations;
@@ -67,8 +68,6 @@ class UsuarioConfig
     public $notificacoes;
 }
 
-
-
 /**
  * @property string $id
  * @property string $nome
@@ -81,6 +80,11 @@ class UsuarioConfig
  * @property string $situacao_funcional
  * @property string $perfil_id
  * @property string|null $modalidade_pgd
+ * @property Carbon|null $data_agendamento_envio
+ * @property Carbon|null $data_envio_api_pgd
+ * @property Carbon|null $data_tentativa_envio
+ * @property Carbon|null $data_conclusao_envio
+ * @property string|null $log_envio
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
  * @property-read \App\Models\UnidadeIntegrante|null $lotacao
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
@@ -93,8 +97,13 @@ class UsuarioConfig
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasSubstitutas
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasDelegadas
  */
-class Usuario extends Authenticatable implements AuditableContract
+class Usuario extends Authenticatable implements AuditableContract, HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'usuario_id';
+    }
+
     use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable,Impersonate;
 
     // protected $areasTrabalho; // dynamic property
@@ -140,6 +149,9 @@ class Usuario extends Authenticatable implements AuditableContract
         'usuario_externo',
         'is_admin',
         'pedagio',
+        'data_inicial_pedagio',
+        'data_final_pedagio',
+        'tipo_pedagio',
         'data_ativacao_temporaria' /* date; */
     ];
 
@@ -178,6 +190,9 @@ class Usuario extends Authenticatable implements AuditableContract
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'data_agendamento_envio' => 'datetime',
+        'data_tentativa_envio' => 'datetime',
+        'data_envio_api_pgd' => 'datetime',
         'notificacoes' => AsJson::class
     ];
 

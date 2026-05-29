@@ -47,15 +47,16 @@ class TipoMotivoAfastamentoSeeder extends Seeder
         ['tipo' => 'Acréscimo', 'horas' => 'Dias',  'nome' => 'Greve (compensação)'],
         ['tipo' => 'Acréscimo', 'horas' => 'Dias',  'nome' => 'Política de consequência do PGD (compensação)'],
         ['tipo' => 'Acréscimo', 'horas' => 'Dias',   'nome' => 'Recesso (compensação)'],
-        ['tipo' => 'Acréscimo', 'horas' => 'Horas',  'nome' => 'Outras hipóteses (compensação)']
+        ['tipo' => 'Acréscimo', 'horas' => 'Horas',  'nome' => 'Outras hipóteses (compensação)'],
+        ['tipo' => 'Acréscimo', 'horas' => 'Horas',  'nome' => 'Atendimento à convocação presencial excepcional']
       ];
 
-      foreach ($rows as $row) {      
+      foreach ($rows as $row) {
         $data = Carbon::now()->format(ServiceBase::ISO8601_FORMAT);
         $cod = TipoMotivoAfastamento::count() + 1;
         $sigla = preg_replace('/[^a-zA-Z0-9]/', '', $row['nome']);
         $sigla = substr($sigla, 0, 3) . $cod;
-  
+
         TipoMotivoAfastamento::firstOrCreate(['nome' => $row['nome']], [
           "id" => UtilService::uuid($row['nome']),
           "data_inicio" => $data,

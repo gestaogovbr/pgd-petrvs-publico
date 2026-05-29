@@ -2,11 +2,13 @@
 
 namespace Tests\Unit\Services;
 
-use App\Services\StatusService;
 use App\Models\Usuario;
+use App\Services\StatusService;
 use Illuminate\Support\Facades\Auth;
-use Tests\TestCase;
+use Illuminate\Support\Facades\Bus;
 use Mockery;
+use Tests\TestCase;
+
 
 uses(TestCase::class);
 
@@ -16,10 +18,11 @@ afterAll(function () {
 
 describe('StatusService', function () {
     it('atualiza status e cria historico corretamente', function () {
+        Bus::fake();
         // 1. Mock de Usuario Logado (Auth)
         $mockUsuario = Mockery::mock(Usuario::class);
         $mockUsuario->shouldReceive('getAttribute')->with('id')->andReturn('user-id-123');
-        
+
         Auth::shouldReceive('user')
             ->andReturn($mockUsuario);
 
@@ -30,7 +33,7 @@ describe('StatusService', function () {
 
         // Configuração do mock da entidade
         $mockEntity->shouldReceive('getAttribute')->with('latestStatus')->andReturn(null); // Caso acesse latestStatus (comentado no código original, mas bom prevenir)
-        
+
         // Mock do relacionamento statusHistorico()
         $mockEntity->shouldReceive('statusHistorico')
             ->once()
@@ -54,7 +57,7 @@ describe('StatusService', function () {
         $mockEntity->shouldReceive('setAttribute')
             ->with('status', 'NOVO_STATUS')
             ->once();
-            
+
         $mockEntity->shouldReceive('save')
             ->once();
 

@@ -16,7 +16,6 @@ import { AtividadeDashboardComponent } from './atividade-dashboard/atividade-das
 import { AtividadeFormTarefaComponent } from './atividade-form-tarefa/atividade-form-tarefa.component';
 import { AtividadeListTarefaComponent } from './atividade-list-tarefa/atividade-list-tarefa.component';
 import { AtividadeHierarquiaComponent } from './atividade-hierarquia/atividade-hierarquia.component';
-import { OrganizationChartModule } from 'primeng/organizationchart';
 
 
 @NgModule({
@@ -38,8 +37,7 @@ import { OrganizationChartModule } from 'primeng/organizationchart';
     CommonModule,
     AtividadeRoutingModule,
     SharedModule,
-    UteisModule,
-    OrganizationChartModule
+    UteisModule
   ],
   exports: [
     AtividadeListGridComponent,

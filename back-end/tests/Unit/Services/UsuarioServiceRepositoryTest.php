@@ -13,6 +13,7 @@ use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\SiapeBlackListServidorRepository;
+use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Services\IntegracaoService;
@@ -54,6 +55,7 @@ beforeEach(function () {
     $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->planoEntregaRepository = Mockery::mock(PlanoEntregaRepository::class);
     $this->siapeBlackListServidorRepository = Mockery::mock(SiapeBlackListServidorRepository::class);
+    $this->unidadeIntegranteRepository = Mockery::mock(UnidadeIntegranteRepository::class);
 
     $this->unidadeService = Mockery::mock(UnidadeService::class);
     $this->integracaoService = Mockery::mock(IntegracaoService::class);
@@ -83,6 +85,7 @@ beforeEach(function () {
         'planoTrabalhoRepository' => $this->planoTrabalhoRepository,
         'planoEntregaRepository' => $this->planoEntregaRepository,
         'siapeBlackListServidorRepository' => $this->siapeBlackListServidorRepository,
+        'unidadeIntegranteRepository' => $this->unidadeIntegranteRepository,
     ]);
 });
 
@@ -330,14 +333,17 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         expect($result)->toBeTrue();
     });
 
-    it('is participante habilitado calls repository', function () {
+    it('is participante habilitado usa participa_pgd do usuário', function () {
         $usuarioId = 'user-id';
         $programaId = 'programa-id';
 
-        $this->usuarioRepository->shouldReceive('isParticipanteHabilitado')
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->participa_pgd = 'sim';
+
+        $this->usuarioRepository->shouldReceive('findById')
             ->once()
-            ->with($usuarioId, $programaId)
-            ->andReturn(true);
+            ->with($usuarioId)
+            ->andReturn($usuario);
 
         $result = $this->service->isParticipanteHabilitado($usuarioId, $programaId);
 

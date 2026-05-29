@@ -75,6 +75,18 @@ PUSHER_APP_CLUSTER=mt1
 MIX_PUSHER_APP_KEY="\${PUSHER_APP_KEY}"
 MIX_PUSHER_APP_CLUSTER="\${PUSHER_APP_CLUSTER}
 
+RABBITMQ_HOST=petrvs_rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_LOGIN=petrvs
+RABBITMQ_PASSWORD=petrvs
+RABBITMQ_QUEUE=pgd_queue
+
+RABBITMQ_HOST=petrvs_rabbitmq
+RABBITMQ_PORT=5672
+RABBITMQ_LOGIN=petrvs
+RABBITMQ_PASSWORD=petrvs
+RABBITMQ_QUEUE=pgd_queue
+
 TEAMS_ENABLE=false
 TEAMS_COGES_URL=
 TEAMS_ERRORS_URL="
@@ -321,7 +333,10 @@ services:
       - db_data:/var/lib/mysql      # Define um volume persistente para os dados do MariaDB
       - ./my.cnf:/etc/mysql/my.cnf  # Certifique-se que este arquivo está corretamente configurado
     environment:
-      MYSQL_ROOT_PASSWORD: rootpgd   # Define a senha para o root
+      MYSQL_ROOT_PASSWORD: \${DB_PASSWORD}
+      MYSQL_PASSWORD: \${DB_PASSWORD}
+      MYSQL_DATABASE: \${DB_DATABASE}
+      MYSQL_TCP_PORT: \${DB_PORT}
   petrvs_php:
     image: segescginf/pgdpetrvs:$IMAGE_TAG  # Substitua pela sua imagem real
     container_name: petrvs_php
@@ -333,17 +348,33 @@ services:
         limits:
           cpus: '2.0'
           memory: 4048M
+    environment:
+      - APP_CONTEXT=queue
     volumes:
       - ./.env:/var/www/.env
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
+    depends_on:
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
+    depends_on:
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
   petrvs_queue:
     image: segescginf/pgdpetrvs:$IMAGE_TAG
     container_name: petrvs_queue
     environment:
       - TZ=America/Bahia
+      - APP_CONTEXT=queue
     command: ['/bin/bash', '-c', 'mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf']
     depends_on:
-      - petrvs_php
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
     volumes:
       - './.env:/var/www/.env'
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
@@ -354,6 +385,33 @@ services:
     container_name: petrvs_redis
     ports:
       - '6379:6379'
+  petrvs_rabbitmq:
+    build:
+      context: .
+      dockerfile: Dockerfile-rabbitmq
+    image: petrvs-rabbitmq:install
+    container_name: petrvs_rabbitmq
+    env_file:
+      - ./.env
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # UI de gerenciamento
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      TZ: "America/Bahia"
+    volumes:
+      - ./rabbitmq/data:/var/lib/rabbitmq
+      - ./rabbitmq/logs:/var/log/rabbitmq
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
 volumes:
   db_data:  # Declara o volume persistente
 "
@@ -385,12 +443,40 @@ services:
       - TZ=America/Bahia
     command: ['/bin/bash', '-c', 'mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf']
     depends_on:
-      - petrvs_php
+      petrvs_php:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
     volumes:
       - './.env:/var/www/.env'
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
     stdin_open: true
     tty: true
+  petrvs_rabbitmq:
+    build:
+      context: .
+      dockerfile: Dockerfile-rabbitmq
+    image: petrvs-rabbitmq:install
+    container_name: petrvs_rabbitmq
+    env_file:
+      - ./.env
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      TZ: "America/Bahia"
+    volumes:
+      - ./rabbitmq/data:/var/lib/rabbitmq
+      - ./rabbitmq/logs:/var/log/rabbitmq
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
   petrvs_redis:
     image: redis:alpine
     container_name: petrvs_redis
@@ -463,6 +549,83 @@ ask_execute_configurations2() {
 # Chama a função para perguntar ao usuário
 ask_mariadb
 
+# Garante artefatos mínimos do RabbitMQ para o entrypoint customizado.
+ensure_rabbitmq_bootstrap_files() {
+    mkdir -p rabbitmq
+    mkdir -p rabbitmq/data rabbitmq/logs
+
+    if [ ! -f "rabbitmq/entrypoint-merge-definitions.sh" ]; then
+        cat <<'EOF' > rabbitmq/entrypoint-merge-definitions.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+_trim() {
+  printf '%s' "${1:-}" | tr -d '\r' | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+}
+
+LOGIN="$(_trim "${RABBITMQ_LOGIN:-petrvs}")"
+PASS="$(_trim "${RABBITMQ_PASSWORD:-petrvs}")"
+VH="$(_trim "${RABBITMQ_VHOST:-/}")"
+[ -n "$LOGIN" ] || LOGIN="petrvs"
+[ -n "$PASS" ] || PASS="petrvs"
+[ -n "$VH" ] || VH="/"
+
+if [ ! -f /etc/rabbitmq/definitions.json ]; then
+  echo "entrypoint-merge-definitions: falta /etc/rabbitmq/definitions.json" >&2
+  exit 1
+fi
+
+USER_JSON="$(jq -n \
+  --arg u "$LOGIN" \
+  --arg p "$PASS" \
+  --arg vh "$VH" \
+  '{users: [{name: $u, password: $p, tags: "administrator"}], permissions: [{user: $u, vhost: $vh, configure: ".*", write: ".*", read: ".*"}]}')"
+
+jq -s '.[0] * .[1]' /etc/rabbitmq/definitions.json <(echo "$USER_JSON") > /tmp/rabbitmq-merged-definitions.json
+printf 'management.load_definitions = /tmp/rabbitmq-merged-definitions.json\n' > /etc/rabbitmq/conf.d/20-merged-definitions.conf
+
+exec docker-entrypoint.sh "$@"
+EOF
+        chmod +x rabbitmq/entrypoint-merge-definitions.sh
+    fi
+
+    if [ ! -f "rabbitmq/definitions.json" ]; then
+        cat <<'EOF' > rabbitmq/definitions.json
+{
+  "vhosts": [
+    { "name": "/" }
+  ],
+  "queues": [
+    {
+      "name": "pgd_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "pgd_queue_delay",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-message-ttl": 300000,
+        "x-dead-letter-exchange": "",
+        "x-dead-letter-routing-key": "pgd_queue"
+      }
+    }
+  ]
+}
+EOF
+    fi
+
+    if [ ! -f "rabbitmq/rabbitmq.conf" ]; then
+        cat <<'EOF' > rabbitmq/rabbitmq.conf
+# management.load_definitions é definido em runtime por entrypoint-merge-definitions.sh
+EOF
+    fi
+}
+
 # Função para criar o arquivo docker-compose.yml
 create_docker_compose_file() {
     echo "$DOCKER_COMPOSE_CONTENT" > docker-compose.yml
@@ -477,6 +640,7 @@ reset_docker_compose_file() {
     echo "Criando novo arquivo docker-compose.yml..."
     create_docker_compose_file
 }
+ensure_rabbitmq_bootstrap_files
 reset_docker_compose_file
 
 echo "--- PARANDO DOCKER ---"

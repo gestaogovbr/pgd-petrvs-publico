@@ -56,7 +56,7 @@ class PlanoTrabalhoConsolidacaoController extends ControllerBase {
             ]);
             return response()->json([
                 'success' => true,
-                'dados' => $this->service->concluir($data["id"], $data["justificativa_conclusao"])
+                'dados' => $this->service->concluir($data["id"], $data["justificativa_conclusao"] ?? '')
             ]);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);

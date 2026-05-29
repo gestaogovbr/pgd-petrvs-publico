@@ -1,0 +1,29 @@
+@if (ativo) {
+  <div class="d-flex flex-column gap-2" style="min-width: 220px;">
+    <div class="br-textarea">
+      <textarea
+        rows="3"
+        placeholder="Justificativa do recurso..."
+        [value]="justificativa"
+        (input)="justificativaChange.emit($any($event.target).value)"
+      ></textarea>
+    </div>
+    <div class="d-flex gap-2">
+      <br-button
+        size="small"
+        emphasis="primary"
+        [disabled]="!justificativa.trim() || emAndamento"
+        (click)="submeter.emit()"
+      >Enviar</br-button>
+      <br-button size="small" (click)="cancelar.emit()">Cancelar</br-button>
+    </div>
+  </div>
+} @else {
+  <br-button
+    size="small"
+    emphasis="tertiary"
+    (click)="abrir.emit()"
+  >
+    <i class="fas fa-flag mr-1"></i> Solicitar recurso
+  </br-button>
+}
