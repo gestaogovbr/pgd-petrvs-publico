@@ -24,6 +24,36 @@ export type QueryParams = Omit<NormalizeQueryParamsInput, 'filters'> & {
   filters?: Record<string, unknown>;
 };
 
+export type PlanoTrabalhoAuditLog = {
+  id: string;
+  event: string;
+  auditable_type: string;
+  auditable_type_class: string;
+  usuario: string;
+  created_at: string;
+  old_values: Record<string, unknown>;
+  new_values: Record<string, unknown>;
+};
+
+export type PlanoTrabalhoLogModelOption = {
+  key: string;
+  value: string;
+};
+
+export type PlanoTrabalhoLogsQueryParams = {
+  page?: number;
+  size?: number;
+  filters?: {
+    usuario_id?: string;
+    usuario_nome?: string;
+    data_inicio?: string;
+    data_fim?: string;
+    event?: string;
+    search?: string;
+    modelo?: string;
+  };
+};
+
 export type TipoMotivoAfastamento = {
   id: string;
   nome: string;

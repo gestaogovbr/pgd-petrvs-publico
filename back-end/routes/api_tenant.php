@@ -613,6 +613,7 @@ use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController as Pla
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController as AtividadeV2;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoController as AvaliacaoV2;
 use App\V2\PlanoTrabalho\Ocorrencia\OcorrenciaController as OcorrenciaV2;
+use App\V2\PlanoTrabalho\Log\PlanoTrabalhoLogController as PlanoTrabalhoLogV2;
 use App\V2\TipoModalidade\TipoModalidadeController as TipoModalidadeV2;
 use App\V2\TipoMotivoAfastamento\TipoMotivoAfastamentoController as TipoMotivoAfastamentoV2;
 use App\V2\Usuario\UsuarioController as UsuarioV2;
@@ -641,6 +642,8 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::patch('plano-trabalho/{id}/encerrar', [PlanoTrabalhoV2::class, 'encerrar']);
     Route::patch('plano-trabalho/{id}/arquivar', [PlanoTrabalhoV2::class, 'arquivar']);
     Route::post('plano-trabalho/{id}/clonar', [PlanoTrabalhoV2::class, 'clonar']);
+    Route::get('plano-trabalho/{planoTrabalhoId}/logs', [PlanoTrabalhoLogV2::class, 'index']);
+    Route::get('plano-trabalho/{planoTrabalhoId}/logs/modelos', [PlanoTrabalhoLogV2::class, 'modelos']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/entrega', [PlanoTrabalhoEntregaV2::class, 'store']);
     Route::put('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [PlanoTrabalhoEntregaV2::class, 'update']);

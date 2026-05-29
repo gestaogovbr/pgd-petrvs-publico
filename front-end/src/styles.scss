@@ -331,6 +331,31 @@
       --color-secondary-04: var(--bs-border-color);
     }
 
+    br-modal.logs-modal-panel {
+      --modal-xsmall: 80vw;
+      --modal-small: 80vw;
+      --modal-medium: 80vw;
+      --modal-large: 80vw;
+      --modal-auto: 80vw;
+      --modal-size: 80vw;
+      --font-family-base: var(--bs-body-font-family);
+      display: block;
+      width: 80vw;
+      max-width: 80vw;
+      min-width: 80vw;
+      height: 80vh;
+      max-height: 80vh;
+
+      .logs-filters br-select {
+        --font-family-base: var(--bs-body-font-family);
+        --font-family: var(--bs-body-font-family);
+        --font-size: var(--bs-body-font-size);
+        --font-weight: var(--bs-body-font-weight);
+        font-family: var(--bs-body-font-family);
+        font-size: var(--bs-body-font-size);
+      }
+    }
+
     // ── Bootstrap component overrides ───────────────────
     .btn-light {
       --bs-btn-bg: var(--bs-secondary-bg);

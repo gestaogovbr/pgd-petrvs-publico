@@ -525,8 +525,6 @@ class UsuarioService extends ServiceBase
         $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
-        $programa = $this->extractWhere($data, "programa_id");
-        $lotacao = [];
         foreach ($data["where"] as $condition) {
             if (is_array($condition) && $condition[0] == "lotacao") {
                 $lotacao = $condition;
@@ -558,26 +556,13 @@ class UsuarioService extends ServiceBase
             }
         }
 
-        $enviosPendentes = $this->extractWhere($data, "envios_pendentes");
-        if (isset($enviosPendentes[2])) {
-            $query->whereRaw("(data_agendamento_envio IS NOT NULL)", []);
-            $query->whereRaw("((data_conclusao_envio IS NULL) OR (data_conclusao_envio < data_agendamento_envio))", []);
-        }
-
-        $enviosConcluidos = $this->extractWhere($data, "envios_concluidos");
-        if (isset($enviosConcluidos[2])) {
-            $query->whereRaw("data_conclusao_envio IS NOT NULL", []);
-        }
-
-        $where = array_values(array_filter($where, function ($item) {
-                return ($item[0] !== 'envios_pendentes');
-        }));
-
         if (!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
             $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
             array_push($where, RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))", []));
         }
         $data["where"] = $where;
+
+        \Log::info(print_r($data['where'], true));
         return $data;
     }
 
