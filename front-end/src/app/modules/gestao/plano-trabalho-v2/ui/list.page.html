@@ -253,6 +253,11 @@
                       </a>
                     </li>
                     <li>
+                      <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeArquivar(p)" (click)="policy.podeArquivar(p) && arquivarPlano(p)">
+                        <i class="fas fa-archive"></i> Arquivar
+                      </a>
+                    </li>
+                    <li>
                       <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeClonar(p)" (click)="policy.podeClonar(p) && clonarPlano(p)">
                         <i class="fas fa-clone"></i> Clonar
                       </a>
