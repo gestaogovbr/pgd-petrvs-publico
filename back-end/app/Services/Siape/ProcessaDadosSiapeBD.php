@@ -207,7 +207,7 @@ class ProcessaDadosSiapeBD
             'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
             'data_ativacao_temporaria' => null,
             'justicativa_ativacao_temporaria' => null,
-        ];
+        ]);
 
         $perfilParticipanteId = $this->obterPerfilParticipanteParaUsuarioReativado($usuario);
         if (!empty($perfilParticipanteId)) {
