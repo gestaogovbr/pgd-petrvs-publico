@@ -22,6 +22,9 @@ return new class extends Migration
 
     private const TEMP_DESCRICOES = 'tmp_atividades_merge_descricoes';
 
+    /** Limite seguro para coluna TEXT utf8mb4 (65535 bytes). */
+    private const DESCRICAO_MAX_CHARS = 16383;
+
     /** @var list<string> */
     private const TABELAS_COM_ATIVIDADE_ID = [
         'atividades_pausas',
@@ -231,11 +234,12 @@ return new class extends Migration
     {
         $grupos = self::TEMP_GRUPOS;
         $descricoes = self::TEMP_DESCRICOES;
+        $maxChars = self::DESCRICAO_MAX_CHARS;
 
         DB::statement(<<<SQL
             CREATE TEMPORARY TABLE `{$descricoes}` (
                 `keeper_id` CHAR(36) NOT NULL PRIMARY KEY,
-                `descricao_unificada` TEXT NOT NULL
+                `descricao_unificada` LONGTEXT NOT NULL
             ) ENGINE=InnoDB
         SQL);
 
@@ -263,7 +267,7 @@ return new class extends Migration
             UPDATE `atividades` AS `a`
             INNER JOIN `{$descricoes}` AS `d` ON `d`.`keeper_id` = `a`.`id`
             SET
-                `a`.`descricao` = `d`.`descricao_unificada`,
+                `a`.`descricao` = LEFT(`d`.`descricao_unificada`, {$maxChars}),
                 `a`.`updated_at` = NOW()
         SQL);
     }
