@@ -20,6 +20,8 @@ return new class extends Migration
 
     private const TEMP_MAP = 'tmp_atividades_merge_map';
 
+    private const TEMP_DESCRICOES = 'tmp_atividades_merge_descricoes';
+
     /** @var list<string> */
     private const TABELAS_COM_ATIVIDADE_ID = [
         'atividades_pausas',
@@ -132,6 +134,7 @@ return new class extends Migration
 
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . $grupos . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . $map . '`');
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_DESCRICOES . '`');
 
         DB::statement(<<<SQL
             CREATE TEMPORARY TABLE `{$grupos}` (
@@ -227,28 +230,40 @@ return new class extends Migration
     private function atualizarDescricoesUnificadas(): void
     {
         $grupos = self::TEMP_GRUPOS;
+        $descricoes = self::TEMP_DESCRICOES;
+
+        DB::statement(<<<SQL
+            CREATE TEMPORARY TABLE `{$descricoes}` (
+                `keeper_id` CHAR(36) NOT NULL PRIMARY KEY,
+                `descricao_unificada` TEXT NOT NULL
+            ) ENGINE=InnoDB
+        SQL);
+
+        DB::statement(<<<SQL
+            INSERT INTO `{$descricoes}` (`keeper_id`, `descricao_unificada`)
+            SELECT
+                `g`.`keeper_id`,
+                COALESCE(
+                    GROUP_CONCAT(
+                        NULLIF(TRIM(`a2`.`descricao`), '')
+                        ORDER BY `a2`.`created_at` ASC, `a2`.`id` ASC
+                        SEPARATOR '\n\n'
+                    ),
+                    ''
+                ) AS `descricao_unificada`
+            FROM `{$grupos}` AS `g`
+            INNER JOIN `atividades` AS `a2`
+                ON `a2`.`plano_trabalho_consolidacao_id` = `g`.`plano_trabalho_consolidacao_id`
+                AND `a2`.`plano_trabalho_entrega_id` <=> `g`.`plano_trabalho_entrega_id`
+                AND `a2`.`deleted_at` IS NULL
+            GROUP BY `g`.`keeper_id`
+        SQL);
 
         DB::statement(<<<SQL
             UPDATE `atividades` AS `a`
-            INNER JOIN (
-                SELECT
-                    `g`.`keeper_id`,
-                    GROUP_CONCAT(
-                        CASE
-                            WHEN TRIM(`a2`.`descricao`) <> '' THEN TRIM(`a2`.`descricao`)
-                        END
-                        ORDER BY `a2`.`created_at` ASC, `a2`.`id` ASC
-                        SEPARATOR '\n\n'
-                    ) AS `descricao_unificada`
-                FROM `{$grupos}` AS `g`
-                INNER JOIN `atividades` AS `a2`
-                    ON `a2`.`plano_trabalho_consolidacao_id` = `g`.`plano_trabalho_consolidacao_id`
-                    AND `a2`.`plano_trabalho_entrega_id` <=> `g`.`plano_trabalho_entrega_id`
-                    AND `a2`.`deleted_at` IS NULL
-                GROUP BY `g`.`keeper_id`
-            ) AS `u` ON `u`.`keeper_id` = `a`.`id`
+            INNER JOIN `{$descricoes}` AS `d` ON `d`.`keeper_id` = `a`.`id`
             SET
-                `a`.`descricao` = `u`.`descricao_unificada`,
+                `a`.`descricao` = `d`.`descricao_unificada`,
                 `a`.`updated_at` = NOW()
         SQL);
     }
@@ -283,6 +298,7 @@ return new class extends Migration
     {
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_GRUPOS . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_MAP . '`');
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_DESCRICOES . '`');
     }
 
     /**
