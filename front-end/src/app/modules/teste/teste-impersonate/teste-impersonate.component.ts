@@ -26,7 +26,7 @@ export class TesteImpersonateComponent extends PageListBase<Usuario, UsuarioDaoS
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     /* Inicializações */
-    this.title = this.lex.translate("Usuários");
+    this.title = this.lex.translate("Personificar");
     this.code = "MOD_CFG_USER";
     this.join = ["perfil:id,nome"];
     this.filter = this.fh.FormBuilder({
