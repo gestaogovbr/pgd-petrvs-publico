@@ -809,6 +809,145 @@ test('issue 2185 - carga individual deve usar emailServidor quando emailInstituc
         ->and($alteracoes)->toContain('email');
 });
 
+test('issue 2093 - carga individual deve lotar contrato temporario quando exercicio vem vazio e lotacao vem preenchida', function () {
+    $cpf = '52998224725';
+    $matricula = '2093001';
+    $codigoLotacao = '1281';
+    $siglaLotacao = 'UPAGT';
+    $emailServidor = 'servidor.temporario.issue2093@teste.gov.br';
+
+    $unidade = Unidade::factory()->create([
+        'codigo' => $codigoLotacao,
+        'sigla' => $siglaLotacao,
+        'nome' => 'Unidade Temporaria Issue 2093',
+    ]);
+
+    SiapeListaUORGS::create([
+        'id' => (string) Str::uuid(),
+        'response' => '<uorgs />',
+        'processado' => 0,
+    ]);
+
+    $funcionaisRequest = 'xml-funcionais-request-2093';
+    $pessoaisRequest = 'xml-pessoais-request-2093';
+    $unidadeRequest = 'xml-unidade-request-2093';
+
+    $funcionaisResponse = <<<XML
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns1:consultaDadosFuncionaisResponse xmlns:ns1="http://servico.wssiapenet" xmlns:tipo="http://tipo.servico.wssiapenet">
+                <out>
+                    <tipo:DadosFuncionais>
+                        <matriculaSiape>{$matricula}</matriculaSiape>
+                        <codUorgExercicio></codUorgExercicio>
+                        <codUorgLotacao>00000{$codigoLotacao}</codUorgLotacao>
+                        <siglaUorgLotacao>{$siglaLotacao}</siglaUorgLotacao>
+                        <codSitFuncional>12</codSitFuncional>
+                        <emailInstitucional></emailInstitucional>
+                        <emailServidor>{$emailServidor}</emailServidor>
+                        <dataOcorrIngressoOrgao>01012024</dataOcorrIngressoOrgao>
+                        <participaPGD>sim</participaPGD>
+                    </tipo:DadosFuncionais>
+                </out>
+            </ns1:consultaDadosFuncionaisResponse>
+        </soap:Body>
+    </soap:Envelope>
+    XML;
+
+    $pessoaisResponse = <<<XML
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns1:consultaDadosPessoaisResponse xmlns:ns1="http://servico.wssiapenet">
+                <out>
+                    <nome>Servidor Temporario Issue 2093</nome>
+                    <nomeSexo>MASCULINO</nomeSexo>
+                    <nomeMunicipNasc>Brasilia</nomeMunicipNasc>
+                    <ufNascimento>DF</ufNascimento>
+                    <dataNascimento>01011990</dataNascimento>
+                </out>
+            </ns1:consultaDadosPessoaisResponse>
+        </soap:Body>
+    </soap:Envelope>
+    XML;
+
+    $unidadeResponse = <<<XML
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns1:dadosUorgResponse xmlns:ns1="http://servico.wssiapenet">
+                <out>
+                    <codUorg>{$codigoLotacao}</codUorg>
+                    <codUorgPai></codUorgPai>
+                    <codUorgPagadora>{$codigoLotacao}</codUorgPagadora>
+                    <nomeExtendido>Unidade Temporaria Issue 2093</nomeExtendido>
+                    <siglaUorg>{$siglaLotacao}</siglaUorg>
+                    <dataUltimaTransacao>01012024</dataUltimaTransacao>
+                </out>
+            </ns1:dadosUorgResponse>
+        </soap:Body>
+    </soap:Envelope>
+    XML;
+
+    $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+    $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn($funcionaisRequest);
+    $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn($pessoaisRequest);
+    $buscarDadosServidor->shouldReceive('executaRequisicao')
+        ->with($funcionaisRequest)
+        ->andReturn($funcionaisResponse);
+    $buscarDadosServidor->shouldReceive('executaRequisicao')
+        ->with($pessoaisRequest)
+        ->andReturn($pessoaisResponse);
+
+    $buscarDadosUnidade = Mockery::mock(BuscarDadosSiapeUnidade::class);
+    $buscarDadosUnidade->shouldReceive('getUorgAsXml')->andReturn($unidadeRequest);
+    $buscarDadosUnidade->shouldReceive('executaRequisicao')->with($unidadeRequest)->andReturn($unidadeResponse);
+    $buscarDadosUnidade->shouldReceive('getCpf')->andReturn('00000000000');
+    $buscarDadosUnidade->shouldReceive('getUnidades')->andReturn([[
+        'codigo' => $codigoLotacao,
+        'dataUltimaTransacao' => '01012024',
+    ]]);
+
+    $buscarDadosUnidades = Mockery::mock(BuscarDadosSiapeUnidades::class);
+    $buscarDadosUnidades->shouldReceive('listaUorgs')->andReturnNull();
+
+    $siapeService = app(SiapeIndividualService::class);
+    $reflection = new \ReflectionClass(SiapeIndividualService::class);
+
+    foreach ([
+        'buscarDadosSiapeServidor' => $buscarDadosServidor,
+        'buscarDadosSiapeUnidade' => $buscarDadosUnidade,
+        'buscarDadosSiapeUnidades' => $buscarDadosUnidades,
+        'processaDadosSiape' => new ProcessaDadosSiapeBD(),
+    ] as $property => $value) {
+        $reflectionProperty = $reflection->getProperty($property);
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($siapeService, $value);
+    }
+
+    $this->app->instance(SiapeIndividualService::class, $siapeService);
+
+    Sanctum::actingAs(Usuario::factory()->create());
+
+    $response = $this->withHeader('X-ENTIDADE', $this->tenantId)
+        ->postJson('/api/usuario/processar-siape', ['cpf' => $cpf]);
+
+    $response->assertOk();
+    $response->assertJsonPath('success', true);
+    $response->assertJsonPath('resumo.0.status', 'sucesso');
+    $response->assertJsonPath('resumo.0.usuario_inserido', true);
+    $response->assertJsonPath('resumo.0.lotacao_associada', true);
+
+    $usuario = Usuario::where('cpf', $cpf)->where('matricula', $matricula)->first();
+
+    expect($usuario)->not->toBeNull()
+        ->and($usuario->email)->toBe($emailServidor);
+
+    $this->assertDatabaseHas('unidades_integrantes', [
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidade->id,
+        'deleted_at' => null,
+    ], 'tenant');
+});
+
 test('issue 2163 - backend deve salvar atribuicoes de usuario interno com email nulo', function () {
     $perfilDesenvolvedor = Perfil::firstOrCreate(
         ['nivel' => NivelAcessoService::PERFIL_DESENVOLVEDOR],
