@@ -13,6 +13,10 @@ export class PlanoTrabalhoPolicy {
     return !this.auth.isUsuarioConsulta();
   }
 
+  podeVerLogs(): boolean {
+    return this.auth.hasPermissionTo('MOD_AUDIT_LOG');
+  }
+
   podeCancelar(p: PlanoTrabalho): boolean {
     return this.auth.hasPermissionTo('MOD_PTR_CNC')
       && PlanoTrabalhoStatusGroups.cancelavel.includes(p.status)

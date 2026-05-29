@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injector, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
 import { PlanoTrabalhoListFacade } from '../application/list.facade';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -19,6 +21,7 @@ import { FilterStorageService } from 'src/app/v2/services/filter-storage.service
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PaginationV2Component } from 'src/app/v2/components/pagination/pagination.component';
+import { PlanoTrabalhoLogsModalComponent } from './components/plano-trabalho-logs-modal.component';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
 import { SelectOption } from './edit.page';
 
@@ -26,7 +29,13 @@ import { SelectOption } from './edit.page';
   selector: 'app-plano-trabalho-v2-list-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent, PaginationV2Component],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    WebcomponentsAngularModule,
+    BreadcrumbComponent,
+    PaginationV2Component,
+  ],
   templateUrl: './list.page.html'
 })
 export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
@@ -43,6 +52,10 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   readonly assinatura = inject(AssinarPlanoUseCase);
   private readonly filterStorage = inject(FilterStorageService);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
+  private readonly overlay = inject(Overlay);
+  private readonly injector = inject(Injector);
+
+  private logsOverlayRef: OverlayRef | null = null;
 
   private readonly FILTER_KEY_PREFIX = 'plano-trabalho-v2:filters';
 
@@ -134,6 +147,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.fecharLogs();
     this.subscriptions.forEach(s => s.unsubscribe());
     this.filterChange$.complete();
   }
@@ -276,6 +290,36 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   editarPlano(p: PlanoTrabalho) {
     this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', p.id]);
+  }
+
+  abrirLogs(p: PlanoTrabalho) {
+    document.querySelectorAll('.dropdown-menu.show').forEach(el => el.classList.remove('show'));
+    document.querySelectorAll('[data-bs-toggle="dropdown"][aria-expanded="true"]').forEach(el => {
+      el.setAttribute('aria-expanded', 'false');
+    });
+
+    this.fecharLogs();
+
+    this.logsOverlayRef = this.overlay.create({
+      hasBackdrop: true,
+      backdropClass: 'cdk-overlay-dark-backdrop',
+      scrollStrategy: this.overlay.scrollStrategies.block(),
+      positionStrategy: this.overlay.position().global().centerHorizontally().centerVertically(),
+      width: '80vw',
+      height: '80vh',
+      maxWidth: '80vw',
+      maxHeight: '80vh',
+    });
+
+    const portal = new ComponentPortal(PlanoTrabalhoLogsModalComponent, null, this.injector);
+    const componentRef = this.logsOverlayRef.attach(portal);
+    componentRef.setInput('plano', p);
+    componentRef.instance.modalClosed.subscribe(() => this.fecharLogs());
+  }
+
+  fecharLogs() {
+    this.logsOverlayRef?.dispose();
+    this.logsOverlayRef = null;
   }
 
   assinarPlano(p: PlanoTrabalho) {

@@ -493,37 +493,33 @@ export class AuthService {
       return response;
     });
   }
-  public impersonate(user:string): Promise<boolean> {
-    this._apiToken = localStorage.getItem("petrvs_api_token") || undefined;
-    return this.impersonateUser("SESSION", "impersonate", user );
-  }
-
-  private impersonateUser(kind: AuthKind, route: string, user: string,redirectTo?: FullRoute): Promise<boolean> {
-    let login = (): Promise<boolean> => {
-      return this.server.post("api/impersonate", { user_id: user }).toPromise().then(response => {
+  public impersonate(user: string): Promise<boolean> {
+    this.logging = true;
+    return this.server.get('sanctum/csrf-cookie').toPromise()
+      .then(() => this.server.post("api/impersonate", { user_id: user }).toPromise())
+      .then(response => {
         const loginResponse = response as LoginResponse;
         if (loginResponse?.error) throw new Error(loginResponse.error);
-        this.kind = loginResponse?.kind || kind;
-        this.apiToken = loginResponse.token;
-        this.registerEntity(loginResponse.entidade);
-        this.registerUser(loginResponse.usuario, this.apiToken);
-        this.app?.setMenuVars();
-        if (loginResponse.horario_servidor?.length) {
-          this.gb.horarioDelta.servidor = UtilService.iso8601ToDate(loginResponse.horario_servidor);
-          this.gb.horarioDelta.local = new Date();
+        if (loginResponse.token?.length) {
+          localStorage.setItem("petrvs_api_token", loginResponse.token);
+          this._apiToken = loginResponse.token;
         }
-        if (this.success && kind != "SESSION") this.success(this.usuario!, redirectTo);
-        if (this.gb.refresh) this.gb.refresh();
+        // Recarrega sem registerUser: evita navegar para a home e disparar APIs
+        // com token antigo (revogado no backend) antes do reload completo.
+        window.location.assign(this.buildPostImpersonateUrl(loginResponse.usuario));
         return true;
-      }).catch(error => {
-        this.registerUser(undefined);
-        if (this.fail && kind != "SESSION") this.fail(error?.message || error?.error || error.toString());
-        if (this.gb.refresh) this.gb.refresh();
-        return false;
+      })
+      .catch(() => false)
+      .finally(() => {
+        this.logging = false;
       });
-    };
-    this.logging = true;
-    return this.server.get('sanctum/csrf-cookie').toPromise().then(login);
+  }
+
+  private buildPostImpersonateUrl(usuario?: Usuario): string {
+    const base = document.querySelector('base')?.getAttribute('href') || '/';
+    const prefix = base.endsWith('/') ? base : `${base}/`;
+    const contexto = usuario?.config?.menu_contexto?.toLowerCase();
+    return contexto ? `${prefix}home/${contexto}` : `${prefix}home`;
   }
 
   public buscarUnidadesVinculadas(cpf: string): Promise<UnidadeVinculada[]> {
