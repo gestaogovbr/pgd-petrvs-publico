@@ -39,4 +39,9 @@ export class UnidadeService {
     if (incluiDelegado) gestores.push(...(area?.gestores_delegados?.map(x => x.usuario_id) ?? []));
     return !!id && !!area && gestores.includes(this.auth.usuario!.id);
   }
+
+  isGestorHierarquia(unidadeId: string): Observable<boolean> {
+    return this.http.get<any>(`${this.gb.servidorURL}/${this.base}/${unidadeId}/is-gestor-hierarquia`)
+      .pipe(map((r: any) => !!r?.data));
+  }
 }

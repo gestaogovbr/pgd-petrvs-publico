@@ -35,4 +35,10 @@ class UnidadeController extends Controller
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function isGestorHierarquia(Request $request, string $unidadeId): JsonResponse
+    {
+        $isGestor = $this->service->isGestorHierarquia($unidadeId);
+        return response()->json(['data' => $isGestor]);
+    }
 }
