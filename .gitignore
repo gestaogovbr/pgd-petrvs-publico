@@ -78,3 +78,5 @@ review-pr-*
 
 docs/*
 scripts/release/*
+AGENTS.md
+.agents/skills/*
