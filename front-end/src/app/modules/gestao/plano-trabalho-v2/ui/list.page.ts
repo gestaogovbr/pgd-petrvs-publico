@@ -13,6 +13,7 @@ import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ClonarPlanoUseCase } from '../application/clonar-plano.usecase';
 import { ExcluirPlanoUseCase } from '../application/excluir-plano.usecase';
 import { EncerrarPlanoUseCase } from '../application/encerrar-plano.usecase';
+import { ArquivarPlanoUseCase } from '../application/arquivar-plano.usecase';
 import { AssinarPlanoUseCase } from '../application/assinar-plano.usecase';
 import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
@@ -38,6 +39,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
   private readonly clonarPlanoUC = inject(ClonarPlanoUseCase);
   private readonly excluirPlanoUC = inject(ExcluirPlanoUseCase);
+  private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
   readonly assinatura = inject(AssinarPlanoUseCase);
   private readonly filterStorage = inject(FilterStorageService);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
@@ -309,6 +311,14 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   confirmarCancelamentoEAtualizar() {
     this.assinatura.confirmarCancelamentoAssinatura();
+  }
+
+  arquivarPlano(p: PlanoTrabalho) {
+    this.confirmacaoPendente.set({
+      titulo: 'Arquivar Plano de Trabalho',
+      mensagem: 'Ao arquivar este Plano de Trabalho, ele será removido da tela, ficando disponível apenas quando consultado. Deseja confirmar?',
+      onConfirm: () => this.arquivarPlanoUC.execute(p.id).subscribe(() => this.applyFiltersAndLoad(false))
+    });
   }
 
   clonarPlano(p: PlanoTrabalho) {

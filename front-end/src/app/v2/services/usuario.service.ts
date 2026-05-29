@@ -13,6 +13,7 @@ export type UsuarioSearchItem = {
   cpf?: string | null;
   lotacao?: UnidadeIntegrante;
   modalidade_pgd?: string | null;
+  participa_pgd?: string | null;
 };
 
 @Injectable()
@@ -34,6 +35,7 @@ export class UsuarioService {
             cpf: u?.cpf ? String(u.cpf) : null,
             lotacao: u?.lotacao ? u.lotacao : null,
             modalidade_pgd: u?.modalidade_pgd ?? null,
+            participa_pgd: u?.participa_pgd ?? null,
           }));
         })
       );

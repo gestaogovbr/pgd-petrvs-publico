@@ -1,13 +1,13 @@
 @if (ativo) {
   <div class="d-flex flex-column gap-2" style="min-width: 220px;">
-    <div class="br-textarea">
-      <textarea
-        rows="3"
-        placeholder="Justificativa do recurso..."
-        [value]="justificativa"
-        (input)="justificativaChange.emit($any($event.target).value)"
-      ></textarea>
-    </div>
+    <br-textarea
+      show-counter
+      [maxlength]="500"
+      [rows]="3"
+      placeholder="Justificativa do recurso..."
+      [value]="justificativa"
+      (input)="justificativaChange.emit($any($event.target).value)"
+    ></br-textarea>
     <div class="d-flex gap-2">
       <br-button
         size="small"

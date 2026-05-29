@@ -253,6 +253,11 @@
                       </a>
                     </li>
                     <li>
+                      <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeArquivar(p)" (click)="policy.podeArquivar(p) && arquivarPlano(p)">
+                        <i class="fas fa-archive"></i> Arquivar
+                      </a>
+                    </li>
+                    <li>
                       <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeClonar(p)" (click)="policy.podeClonar(p) && clonarPlano(p)">
                         <i class="fas fa-clone"></i> Clonar
                       </a>
@@ -342,9 +347,16 @@
         <div class="content">Ao encerrar este Plano de Trabalho, ele será válido apenas até a data de hoje, preservando os registros e avaliações já realizados. Esta ação é definitiva e não poderá ser desfeita. Deseja confirmar?</div>
       </div>
       <p class="mb-3">Informe o motivo do encerramento antecipado do plano de trabalho de <strong>{{ encerrando()?.usuario?.nome }}</strong>.</p>
-      <div class="br-textarea">
-        <textarea id="justificativa_encerramento" rows="4" placeholder="Descreva o motivo do encerramento..." [value]="justificativaEncerramento()" (input)="justificativaEncerramento.set($any($event.target).value)"></textarea>
-      </div>
+      <br-textarea
+        label="Justificativa *"
+        show-counter
+        class="w-100"
+        [maxlength]="500"
+        [rows]="4"
+        placeholder="Descreva o motivo do encerramento..."
+        [value]="justificativaEncerramento()"
+        (input)="justificativaEncerramento.set($any($event.target).value)"
+      ></br-textarea>
     </div>
     <div slot="footer">
       <br-button class="mx-1" emphasis="secondary" (click)="cancelarEncerramento()">Voltar</br-button>

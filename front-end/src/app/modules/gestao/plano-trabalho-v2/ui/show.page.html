@@ -262,15 +262,16 @@
                 @if (podeReabrirConsolidacao(consolidacao)) {
                   @if (facade.reabrindoId() === consolidacao.id) {
                     <div class="card-footer p-2x">
-                      <div class="br-textarea mb-2">
-                        <label>Justificativa para reabertura <span class="text-danger">*</span></label>
-                        <textarea
-                          rows="3"
-                          placeholder="Informe o motivo da reabertura..."
-                          [value]="facade.justificativaReabrir()"
-                          (input)="facade.justificativaReabrir.set($any($event.target).value)"
-                        ></textarea>
-                      </div>
+                      <br-textarea
+                        label="Justificativa para reabertura *"
+                        show-counter
+                        class="w-100 mb-2"
+                        [maxlength]="500"
+                        [rows]="3"
+                        placeholder="Informe o motivo da reabertura..."
+                        [value]="facade.justificativaReabrir()"
+                        (input)="facade.justificativaReabrir.set($any($event.target).value)"
+                      ></br-textarea>
                       <div class="d-flex justify-content-end gap-2">
                         <br-button emphasis="secondary" (click)="facade.cancelarReabertura()">Cancelar</br-button>
                         <br-button
@@ -408,9 +409,16 @@
         <div class="content">Ao encerrar este Plano de Trabalho, ele será válido apenas até a data de hoje, preservando os registros e avaliações já realizados. Esta ação é definitiva e não poderá ser desfeita. Deseja confirmar?</div>
       </div>
       <p class="mb-3">Informe o motivo do encerramento antecipado.</p>
-      <div class="br-textarea">
-        <textarea id="justificativa_encerramento" rows="4" placeholder="Descreva o motivo do encerramento..." [value]="justificativaEncerramento()" (input)="justificativaEncerramento.set($any($event.target).value)"></textarea>
-      </div>
+      <br-textarea
+        label="Justificativa *"
+        show-counter
+        class="w-100"
+        [maxlength]="500"
+        [rows]="4"
+        placeholder="Descreva o motivo do encerramento..."
+        [value]="justificativaEncerramento()"
+        (input)="justificativaEncerramento.set($any($event.target).value)"
+      ></br-textarea>
     </div>
     <div slot="footer">
       <br-button class="mx-1" emphasis="secondary" (click)="cancelarEncerramento()">Voltar</br-button>

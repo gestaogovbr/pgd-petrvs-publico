@@ -65,6 +65,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   readonly agentePublicoQuery = this.fb.nonNullable.control('');
   sugestoesUsuarios = signal<UsuarioSearchItem[]>([]);
+  erroAgentePublico = signal('');
   unidades = signal<Unidade[]>([]);
   modalidades = signal<ModalidadePgdOption[]>([]);
 
@@ -430,6 +431,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     this.unidades.set([]);
     this.programaId.set('');
     this.programaNome.set('');
+    this.erroAgentePublico.set('');
     this.agentePublicoQuery.setValue('');
     this.form.controls.usuario_id.setValue('');
     this.form.controls.unidade_id.setValue('');
@@ -800,6 +802,11 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   private async carregarUnidades(usuario: Usuario) {
     const unidades = await firstValueFrom(this.usuarioService.getUnidadesVinculadas(usuario.cpf));
     this.unidades.set(unidades ?? []);
+    this.erroAgentePublico.set('');
+
+    if (!unidades || unidades.length === 0 || (usuario as any).participa_pgd !== 'sim') {
+      this.erroAgentePublico.set('Usuário não participante do PGD ou não habilitado para pactuar Plano de Trabalho nesta unidade.');
+    }
 
     const unidadeId = usuario.lotacao?.unidade_id;
     if (unidadeId) {
