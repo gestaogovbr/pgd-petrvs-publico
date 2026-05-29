@@ -30,9 +30,12 @@ export class PlanoTrabalhoPolicy {
   }
 
   podeAssinar(p: PlanoTrabalho): boolean {
+    const temEntregas = (p.entregas?.length > 0) || (Number((p as any).carga_trabalho_total) > 0);
     return PlanoTrabalhoStatusGroups.assinavel.includes(p.status)
-      && (p.entregas?.length > 0)
-      && (this.unidadeService.isGestorUnidade(p.unidade_id) || p.usuario_id === this.auth.usuario?.id);
+      && temEntregas
+      && (p.usuario_id === this.auth.usuario?.id
+        || this.unidadeService.isGestorUnidade(p.unidade_id)
+        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
   }
 
   podeVerTcr(p: PlanoTrabalho): boolean {
