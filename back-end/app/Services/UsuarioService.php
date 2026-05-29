@@ -850,7 +850,7 @@ class UsuarioService extends ServiceBase
             return;
         }
 
-        $usuarios->loadMissing(['unidades:id,sigla']);
+        $usuarios->loadMissing(['areasTrabalho.unidade:id,sigla']);
 
         $unidadesVinculadasPayloadByKey = [];
 
@@ -858,7 +858,12 @@ class UsuarioService extends ServiceBase
             $matricula = $usuarioPorCpf->getAttribute('matricula') ?? null;
             $situacaoFuncional = $usuarioPorCpf->getAttribute('situacao_funcional') ?? null;
 
-            foreach ($usuarioPorCpf->unidades ?? [] as $unidade) {
+            foreach ($usuarioPorCpf->areasTrabalho ?? [] as $areaTrabalho) {
+                $unidade = $areaTrabalho->unidade;
+                if (!$unidade) {
+                    continue;
+                }
+
                 $key = strval($unidade->id) . '|' . strval($matricula ?? '');
 
                 if (isset($unidadesVinculadasPayloadByKey[$key])) {
