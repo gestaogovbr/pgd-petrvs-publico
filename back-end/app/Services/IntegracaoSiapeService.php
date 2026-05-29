@@ -145,7 +145,9 @@ class IntegracaoSiapeService extends ServiceBase
       'funcoes'               => $funcao,
       'ident_unica'           => UtilService::valueOrDefault($dadosFuncionais['identUnica'] ?? null),
       'modalidade_pgd'        => UtilService::valueOrDefault($dadosFuncionais['modalidadePGD'] ?? null),
-      'participa_pgd'         => UtilService::valueOrDefault($dadosFuncionais['participaPGD'] ?? null),
+      'participa_pgd'         => array_key_exists('participaPGD', $dadosFuncionais)
+        ? UtilService::valueOrDefault($dadosFuncionais['participaPGD'], null)
+        : null,
       'cod_jornada'           => UtilService::valueOrDefault($dadosFuncionais['codJornada'] ?? null),
       'nome_jornada'          => UtilService::valueOrDefault($dadosFuncionais['nomeJornada'] ?? null)
     ];

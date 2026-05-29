@@ -202,9 +202,8 @@ class ProcessaDadosSiapeBD
     {
         SiapeBlackListServidor::where('cpf', $usuario->cpf)
             ->where('matricula', $usuario->matricula)
-            ->delete();
-
-        $atributos = [
+            ->forceDelete();
+        $usuario->update([
             'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
             'data_ativacao_temporaria' => null,
             'justicativa_ativacao_temporaria' => null,
@@ -224,7 +223,7 @@ class ProcessaDadosSiapeBD
 
         SiapeBlackListServidor::where('cpf', $cpf)
             ->whereNull('matricula')
-            ->delete();
+            ->forceDelete();
 
         if (empty($matriculasAtivas)) {
             return;
@@ -232,7 +231,7 @@ class ProcessaDadosSiapeBD
 
         $blacklistsRemovidas = SiapeBlackListServidor::where('cpf', $cpf)
             ->whereIn('matricula', $matriculasAtivas)
-            ->delete();
+            ->forceDelete();
 
         $perfisAtualizados = $this->atualizarPerfilConsultaParaParticipante($cpf, $matriculasAtivas);
 
