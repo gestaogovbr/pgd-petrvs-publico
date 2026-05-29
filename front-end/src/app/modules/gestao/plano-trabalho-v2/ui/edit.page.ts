@@ -266,6 +266,11 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(async plano => {
       this.plano.set(plano);
+      if (!this.policy.podeEditar(plano)) {
+        this.message.error('Você não tem permissão para editar este plano de trabalho.');
+        this.router.navigate(['gestao', 'plano-trabalho-v2', 'consultar', plano.id]);
+        return;
+      }
       this.assinatura.init(plano, plano.entregas || []);
       this.entregas.set(plano.entregas || []);
       await this.aplicarInformacoesGeraisDoPlano(plano);

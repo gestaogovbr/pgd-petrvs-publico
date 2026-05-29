@@ -104,8 +104,8 @@ class PlanoTrabalhoConsolidacaoRepository
         $this->writeRepository->ajustarDataFimVigente($planoTrabalhoId, $dataEncerramento);
     }
 
-    public function concluirTodas(string $planoTrabalhoId): void
+    public function encerrarPeriodosFuturos(string $planoTrabalhoId, string $dataEncerramento): void
     {
-        $this->writeRepository->concluirTodas($planoTrabalhoId);
+        $this->writeRepository->encerrarPeriodosFuturos($planoTrabalhoId, $dataEncerramento);
     }
 }

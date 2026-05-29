@@ -52,6 +52,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly error = signal<string | null>(null);
   readonly encerrando = signal(false);
   readonly justificativaEncerramento = signal('');
+  readonly isGestorHierarquia = signal(false);
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
@@ -68,6 +69,11 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
           this.loading.set(false);
           this.assinatura.init(plano, plano.entregas || []);
+          if (this.auth.usuario?.id !== plano.usuario_id
+            && !this.unidadeService.isGestorUnidade(plano.unidade_id)
+            && !this.unidadeService.isGestorUnidade(plano.unidade?.unidade_pai_id ?? null)) {
+            this.unidadeService.isGestorHierarquia(plano.unidade_id).subscribe(v => this.isGestorHierarquia.set(v));
+          }
           this.assinatura.onAfterAssinar = () => {
             this.api.getById(plano.id).subscribe(updated => {
               this.planoTrabalho.set(updated);
@@ -114,7 +120,9 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   podeReabrirConsolidacao(consolidacao: Consolidacao): boolean {
     const plano = this.planoTrabalho();
-    if (!plano || plano.status !== PlanoTrabalhoStatus.ATIVO) return false;
+    if (!plano) return false;
+    if (plano.status !== PlanoTrabalhoStatus.ATIVO && !plano.encerrado_at) return false;
+    if (plano.encerrado_at && new Date(consolidacao.data_inicio) > new Date(plano.encerrado_at)) return false;
     return ConsolidacaoStatusGroups.reabrivel.includes(consolidacao.status)
       && !consolidacao.avaliacoes?.length
       && (plano.usuario_id === this.auth.usuario?.id
@@ -138,7 +146,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
     const plano = this.planoTrabalho();
-    if (plano?.encerrado_at && consolidacao.data_inicio > plano.encerrado_at) {
+    if (plano?.encerrado_at && new Date(consolidacao.data_inicio) > new Date(plano.encerrado_at)) {
       return 'Encerrado antecipadamente';
     }
     if (consolidacao.status === ConsolidacaoStatus.INCLUIDO && this.todasEntregasComAtividade(consolidacao)) {
