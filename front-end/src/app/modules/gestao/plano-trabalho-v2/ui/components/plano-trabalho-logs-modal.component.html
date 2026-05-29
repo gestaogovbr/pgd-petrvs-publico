@@ -1,0 +1,187 @@
+<div
+  class="logs-modal-panel"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="logs-modal-titulo"
+  (mousedown)="bloquearPropagacao($event)"
+  (click)="bloquearPropagacao($event)"
+>
+  <header class="logs-modal-header">
+    <h2 id="logs-modal-titulo" class="logs-modal-titulo">Logs das Alterações</h2>
+    <button type="button" class="logs-modal-fechar" aria-label="Fechar" (click)="fechar()">
+      <i class="fas fa-times" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <div class="logs-modal-content">
+    <div [formGroup]="filters" class="logs-filters mb-3">
+      <div class="row g-3 align-items-start">
+        <div class="col-12 col-lg-6">
+          <div class="br-input w-100 position-relative">
+            <label>Responsável pelo registro</label>
+            <input
+              type="text"
+              [value]="usuarioBusca()"
+              (input)="onUsuarioBuscaInput($any($event.target).value)"
+              placeholder="Buscar por nome ou matrícula"
+              autocomplete="off"
+            />
+            @if (usuarioSelecionado()) {
+              <button type="button" class="btn-clear-usuario" (click)="limparUsuario()" title="Limpar">
+                <i class="fas fa-times"></i>
+              </button>
+            }
+            @if (usuarioSugestoes().length > 0) {
+              <ul class="usuario-sugestoes list-unstyled mb-0">
+                @for (u of usuarioSugestoes(); track u.id) {
+                  <li>
+                    <button type="button" class="dropdown-item" (click)="selecionarUsuario(u)">
+                      {{ u.nome }}@if (u.matricula) { <span class="text-muted"> — {{ u.matricula }}</span> }
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </div>
+
+        <div class="col-6 col-lg-2">
+          <div class="br-input w-100">
+            <label>Início</label>
+            <input type="date" formControlName="data_inicio" />
+          </div>
+        </div>
+
+        <div class="col-6 col-lg-2">
+          <div class="br-input w-100">
+            <label>Fim</label>
+            <input type="date" formControlName="data_fim" />
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-2 logs-select-wrap" [class.select-aberto]="acaoSelectAberto()">
+          <br-select
+            label="Ação"
+            formControlName="event"
+            [options]="acaoSelectOptions"
+            class="w-100"
+            (opened)="onAcaoSelectAberto()"
+            (closed)="onAcaoSelectFechado($event)"
+            (mousedown)="bloquearPropagacao($event)"
+            (click)="bloquearPropagacao($event)"
+          />
+        </div>
+
+        <div class="col-12 col-lg-8">
+          <div class="br-input w-100">
+            <label>Texto geral</label>
+            <input type="text" formControlName="search" placeholder="Texto geral para busca" />
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-4 logs-select-wrap" [class.select-aberto]="modeloSelectAberto()">
+          <br-select
+            label="Modelo"
+            formControlName="modelo"
+            [options]="modeloSelectOptions()"
+            class="w-100"
+            (opened)="onModeloSelectAberto()"
+            (closed)="onModeloSelectFechado($event)"
+            (mousedown)="bloquearPropagacao($event)"
+            (click)="bloquearPropagacao($event)"
+          />
+        </div>
+
+        <div class="col-12 d-flex justify-content-end gap-2">
+          <br-button type="button" emphasis="secondary" (click)="limparFiltros()">
+            <i class="fas fa-times mr-1"></i>Limpar
+          </br-button>
+          <br-button type="button" emphasis="primary" (click)="filtrar()">
+            <i class="fas fa-filter mr-1"></i>Filtrar
+          </br-button>
+        </div>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="text-center p-4">
+        <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+      </div>
+    } @else {
+      <div class="accordion logs-accordion" id="accordionLogsPt">
+        @for (log of logs(); track log.id) {
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button text-start px-3 pt-2 pb-1"
+                [class.collapsed]="!isExpandido(log.id)"
+                type="button"
+                (click)="toggleExpandido(log.id)"
+              >
+                <div class="w-100">
+                  <div class="text-muted small mb-1">
+                    Alterado por: <strong class="text-dark">{{ log.usuario }}</strong>
+                  </div>
+                  <div class="mb-1">
+                    <span
+                      class="badge rounded-pill px-3 py-1 fw-semibold text-uppercase me-2 text-white"
+                      [style.background-color]="eventoCor(log.event)"
+                    >
+                      {{ eventoLabel(log.event) }}
+                    </span>
+                    <span class="fw-semibold">{{ log.auditable_type }}</span>
+                  </div>
+                  <div class="text-muted small">
+                    {{ formatDataHora(log.created_at) }}
+                  </div>
+                </div>
+              </button>
+            </h2>
+
+            @if (isExpandido(log.id)) {
+              <div class="accordion-collapse show">
+                <div class="accordion-body bg-light-subtle rounded shadow-sm">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <h6 class="text-muted">Antes</h6>
+                      <div class="border p-2 rounded bg-white shadow-sm json-panel">
+                        <json-viewer [json]="formatLogValues(log.old_values)"></json-viewer>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <h6 class="text-muted">Depois</h6>
+                      <div class="border p-2 rounded bg-white shadow-sm json-panel">
+                        <json-viewer [json]="formatLogValues(log.new_values)"></json-viewer>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      @if (consultaFinalizada() && logs().length === 0) {
+        <div class="br-message info mt-3" role="alert">
+          <div class="icon"><i class="fas fa-info-circle" aria-hidden="true"></i></div>
+          <div class="content"><span class="message-body">Nenhum registro encontrado.</span></div>
+        </div>
+      }
+
+      @if (total() > 0) {
+        <app-v2-pagination
+          class="mt-3 d-block"
+          [page]="page()"
+          [lastPage]="lastPage()"
+          [total]="total()"
+          (pageChange)="onPageChange($event)"
+        />
+      }
+    }
+  </div>
+
+  <footer class="logs-modal-footer">
+    <br-button type="button" emphasis="secondary" (click)="fechar()">Fechar</br-button>
+  </footer>
+</div>
