@@ -23,14 +23,15 @@
   }
 </p>
 <div class="d-flex gap-3 align-items-start">
-  <div class="br-textarea flex-grow-1">
-    <textarea
-      rows="3"
-      [placeholder]="justificativaObrigatoria ? 'Justificativa obrigatória para esta nota...' : 'Justificativa (opcional)...'"
-      [value]="justificativa"
-      (input)="justificativaChange.emit($any($event.target).value)"
-    ></textarea>
-  </div>
+  <br-textarea
+    class="flex-grow-1"
+    show-counter
+    [maxlength]="500"
+    [rows]="3"
+    [placeholder]="justificativaObrigatoria ? 'Justificativa obrigatória para esta nota...' : 'Justificativa (opcional)...'"
+    [value]="justificativa"
+    (input)="justificativaChange.emit($any($event.target).value)"
+  ></br-textarea>
   <br-button
     emphasis="primary"
     [disabled]="!podeSalvar || emAndamento"
