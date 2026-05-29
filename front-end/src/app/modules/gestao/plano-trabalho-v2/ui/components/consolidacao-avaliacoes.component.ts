@@ -17,6 +17,7 @@ import { RecursoFormComponent } from './recurso-form.component';
 export class ConsolidacaoAvaliacoesComponent {
   @Input({ required: true }) consolidacao!: Consolidacao;
   @Input({ required: true }) planoTrabalho!: PlanoTrabalho;
+  @Input() isGestorHierarquia = false;
 
   readonly facade = inject(ConsolidacaoFacade);
   readonly consolidacaoPolicy = inject(ConsolidacaoPolicy);

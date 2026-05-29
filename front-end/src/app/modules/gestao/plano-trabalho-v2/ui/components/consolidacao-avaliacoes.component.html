@@ -71,7 +71,7 @@
       </div>
     </div>
   </div>
-  @if (consolidacaoPolicy.podeReavaliarConsolidacao(consolidacao, planoTrabalho)) {
+  @if (consolidacaoPolicy.podeReavaliarConsolidacao(consolidacao, planoTrabalho, isGestorHierarquia)) {
     <br-divider></br-divider>
     <p class="text-weight-semi-bold mb-3">Reavaliação</p>
     <app-avaliacao-form
@@ -87,7 +87,7 @@
       (submeter)="facade.avaliarConsolidacao(consolidacao)"
     />
   }
-} @else if (consolidacaoPolicy.podeAvaliarConsolidacao(consolidacao, planoTrabalho)) {
+} @else if (consolidacaoPolicy.podeAvaliarConsolidacao(consolidacao, planoTrabalho, isGestorHierarquia)) {
   <br-divider></br-divider>
   <p class="text-weight-semi-bold mb-3">Avaliação</p>
   <app-avaliacao-form

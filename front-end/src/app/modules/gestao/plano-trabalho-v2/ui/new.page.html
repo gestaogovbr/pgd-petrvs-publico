@@ -8,6 +8,16 @@
     </div>
     <div class="card-content">
       <form [formGroup]="form">
+          @if (erroAgentePublico()) {
+            <div class="row">
+              <div class="col-12 mb-3">
+                <span class="feedback warning" role="alert">
+                  <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                  {{ erroAgentePublico() }}
+                </span>
+              </div>
+            </div>
+          }
           <div class="row">
             <div class="col-md-4 mb-3 position-relative">
               <div class="d-flex align-items-end gap-2">

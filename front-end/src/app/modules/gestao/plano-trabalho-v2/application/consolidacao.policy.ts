@@ -16,12 +16,13 @@ export class ConsolidacaoPolicy {
       || this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id);
   }
 
-  podeAvaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho): boolean {
+  podeAvaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho, isGestorHierarquia = false): boolean {
     if (planoTrabalho.encerrado_at && new Date(consolidacao.data_inicio) > new Date(planoTrabalho.encerrado_at)) return false;
     return this.auth.usuario?.id != planoTrabalho.usuario_id
       && consolidacao.status === ConsolidacaoStatus.CONCLUIDO
       && (this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id)
-        || this.unidadeService.isGestorUnidade(planoTrabalho.unidade?.unidade_pai_id ?? null));
+        || this.unidadeService.isGestorUnidade(planoTrabalho.unidade?.unidade_pai_id ?? null)
+        || isGestorHierarquia);
   }
 
   podeSolicitarRecurso(consolidacao: Consolidacao, avaliacao: AvaliacaoConsolidacao, planoTrabalho: PlanoTrabalho): boolean {
@@ -33,13 +34,14 @@ export class ConsolidacaoPolicy {
       && !jaRecorreu;
   }
 
-  podeReavaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho): boolean {
+  podeReavaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho, isGestorHierarquia = false): boolean {
     const ultimaAvaliacao = consolidacao.avaliacoes[consolidacao.avaliacoes.length - 1];
     return consolidacao.avaliacoes.length === 1
       && !!ultimaAvaliacao?.recurso
       && this.auth.usuario?.id != planoTrabalho.usuario_id
       && (this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id)
-        || this.unidadeService.isGestorUnidade(planoTrabalho.unidade?.unidade_pai_id ?? null));
+        || this.unidadeService.isGestorUnidade(planoTrabalho.unidade?.unidade_pai_id ?? null)
+        || isGestorHierarquia);
   }
 
   podeCancelarAvaliacao(consolidacao: Consolidacao, avaliacao: AvaliacaoConsolidacao): boolean {
