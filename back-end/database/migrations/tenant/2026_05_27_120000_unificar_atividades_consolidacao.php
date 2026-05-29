@@ -2,8 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
@@ -11,10 +9,16 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Unifica atividades duplicadas no mesmo período avaliativo (e mesma entrega),
  * concatenando as descrições em um único registro.
+ *
+ * Implementação set-based (sem loop PHP) para escalar em produção com dezenas de tenants.
  */
 return new class extends Migration
 {
     private const BACKUP_TABLE = 'atividades_unificacao_merge_backup';
+
+    private const TEMP_GRUPOS = 'tmp_atividades_merge_grupos';
+
+    private const TEMP_MAP = 'tmp_atividades_merge_map';
 
     /** @var list<string> */
     private const TABELAS_COM_ATIVIDADE_ID = [
@@ -35,66 +39,47 @@ return new class extends Migration
         }
 
         $this->criarBackup();
-
-        DB::beginTransaction();
+        $this->prepararTabelasTemporarias();
 
         try {
-            $grupos = $this->buscarGruposDuplicados();
-            $mantidas = 0;
-            $removidas = 0;
+            $this->popularGruposEMapeamento();
 
-            foreach ($grupos as $grupo) {
-                $atividades = $this->buscarAtividadesDoGrupo($grupo);
-                if ($atividades->count() < 2) {
-                    continue;
-                }
+            $grupos = (int) DB::table(self::TEMP_GRUPOS)->count();
+            if ($grupos === 0) {
+                Log::info('Migration unificar_atividades_consolidacao: nenhum grupo duplicado encontrado.');
 
-                $keeper = $atividades->sortBy('created_at')->first();
-                $duplicatas = $atividades->where('id', '!=', $keeper->id);
-
-                $descricaoUnificada = $this->unificarDescricoes($atividades->pluck('descricao'));
-
-                DB::table('atividades')
-                    ->where('id', $keeper->id)
-                    ->update([
-                        'descricao' => $descricaoUnificada,
-                        'updated_at' => now(),
-                    ]);
-
-                $this->registrarBackupKeeper($keeper->id, $keeper->descricao);
-
-                foreach ($duplicatas as $duplicata) {
-                    $this->redirecionarReferencias($duplicata->id, $keeper->id);
-                    $this->registrarBackupDuplicata($duplicata, $keeper->id);
-
-                    DB::table('atividades')
-                        ->where('id', $duplicata->id)
-                        ->update([
-                            'deleted_at' => now(),
-                            'updated_at' => now(),
-                        ]);
-
-                    $removidas++;
-                }
-
-                $mantidas++;
+                return;
             }
+
+            DB::statement('SET SESSION group_concat_max_len = 1048576');
+
+            DB::beginTransaction();
+
+            $this->popularBackup();
+            $this->atualizarDescricoesUnificadas();
+            $this->redirecionarReferenciasEmLote();
+            $this->softDeleteDuplicatas();
 
             DB::commit();
 
+            $removidas = (int) DB::table(self::TEMP_MAP)->count();
+
             Log::info('Migration unificar_atividades_consolidacao concluída.', [
-                'grupos_unificados' => $mantidas,
+                'grupos_unificados' => $grupos,
                 'atividades_removidas' => $removidas,
             ]);
         } catch (\Throwable $e) {
-            DB::rollBack();
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
 
             Log::error('Erro na migration unificar_atividades_consolidacao.', [
                 'mensagem' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
             ]);
 
             throw $e;
+        } finally {
+            $this->limparTabelasTemporarias();
         }
     }
 
@@ -105,24 +90,19 @@ return new class extends Migration
         }
 
         DB::transaction(function () {
-            foreach (DB::table(self::BACKUP_TABLE)->whereNull('merged_into_id')->get() as $keeper) {
-                DB::table('atividades')
-                    ->where('id', $keeper->atividade_id)
-                    ->update([
-                        'descricao' => $keeper->descricao,
-                        'updated_at' => now(),
-                    ]);
-            }
+            $backup = self::BACKUP_TABLE;
 
-            foreach (DB::table(self::BACKUP_TABLE)->whereNotNull('merged_into_id')->get() as $duplicata) {
-                DB::table('atividades')
-                    ->where('id', $duplicata->atividade_id)
-                    ->update([
-                        'descricao' => $duplicata->descricao,
-                        'deleted_at' => null,
-                        'updated_at' => now(),
-                    ]);
-            }
+            DB::statement(<<<SQL
+                UPDATE atividades AS a
+                INNER JOIN `{$backup}` AS b ON b.atividade_id = a.id AND b.merged_into_id IS NULL
+                SET a.descricao = b.descricao, a.updated_at = NOW()
+            SQL);
+
+            DB::statement(<<<SQL
+                UPDATE atividades AS a
+                INNER JOIN `{$backup}` AS b ON b.atividade_id = a.id AND b.merged_into_id IS NOT NULL
+                SET a.descricao = b.descricao, a.deleted_at = NULL, a.updated_at = NOW()
+            SQL);
 
             Schema::dropIfExists(self::BACKUP_TABLE);
         });
@@ -145,110 +125,179 @@ return new class extends Migration
         });
     }
 
-    /**
-     * @return Collection<int, object{plano_trabalho_consolidacao_id: string, plano_trabalho_entrega_id: ?string, total: int}>
-     */
-    private function buscarGruposDuplicados(): Collection
+    private function prepararTabelasTemporarias(): void
     {
-        return DB::table('atividades')
-            ->select([
-                'plano_trabalho_consolidacao_id',
-                'plano_trabalho_entrega_id',
-                DB::raw('COUNT(*) AS total'),
-            ])
-            ->whereNull('deleted_at')
-            ->whereNotNull('plano_trabalho_consolidacao_id')
-            ->groupBy('plano_trabalho_consolidacao_id', 'plano_trabalho_entrega_id')
-            ->having('total', '>', 1)
-            ->orderBy('plano_trabalho_consolidacao_id')
-            ->get();
+        $grupos = self::TEMP_GRUPOS;
+        $map = self::TEMP_MAP;
+
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . $grupos . '`');
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . $map . '`');
+
+        DB::statement(<<<SQL
+            CREATE TEMPORARY TABLE `{$grupos}` (
+                `plano_trabalho_consolidacao_id` CHAR(36) NOT NULL,
+                `plano_trabalho_entrega_id` CHAR(36) NULL,
+                `keeper_id` CHAR(36) NOT NULL,
+                PRIMARY KEY (`plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`),
+                KEY `idx_keeper` (`keeper_id`)
+            ) ENGINE=InnoDB
+        SQL);
+
+        DB::statement(<<<SQL
+            CREATE TEMPORARY TABLE `{$map}` (
+                `duplicate_id` CHAR(36) NOT NULL PRIMARY KEY,
+                `keeper_id` CHAR(36) NOT NULL,
+                KEY `idx_keeper` (`keeper_id`)
+            ) ENGINE=InnoDB
+        SQL);
     }
 
-    /**
-     * @param object{plano_trabalho_consolidacao_id: string, plano_trabalho_entrega_id: ?string} $grupo
-     * @return Collection<int, object>
-     */
-    private function buscarAtividadesDoGrupo(object $grupo): Collection
+    private function popularGruposEMapeamento(): void
     {
-        $query = DB::table('atividades')
-            ->select(['id', 'descricao', 'created_at'])
-            ->whereNull('deleted_at')
-            ->where('plano_trabalho_consolidacao_id', $grupo->plano_trabalho_consolidacao_id);
+        $grupos = self::TEMP_GRUPOS;
+        $map = self::TEMP_MAP;
 
-        if ($grupo->plano_trabalho_entrega_id === null) {
-            $query->whereNull('plano_trabalho_entrega_id');
-        } else {
-            $query->where('plano_trabalho_entrega_id', $grupo->plano_trabalho_entrega_id);
+        DB::statement(<<<SQL
+            INSERT INTO `{$grupos}` (`plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`, `keeper_id`)
+            SELECT
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                SUBSTRING_INDEX(GROUP_CONCAT(`id` ORDER BY `created_at` ASC, `id` ASC), ',', 1) AS `keeper_id`
+            FROM `atividades`
+            WHERE `deleted_at` IS NULL
+              AND `plano_trabalho_consolidacao_id` IS NOT NULL
+            GROUP BY `plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`
+            HAVING COUNT(*) > 1
+        SQL);
+
+        DB::statement(<<<SQL
+            INSERT INTO `{$map}` (`duplicate_id`, `keeper_id`)
+            SELECT
+                `a`.`id`,
+                `g`.`keeper_id`
+            FROM `atividades` AS `a`
+            INNER JOIN `{$grupos}` AS `g`
+                ON `g`.`plano_trabalho_consolidacao_id` = `a`.`plano_trabalho_consolidacao_id`
+                AND `g`.`plano_trabalho_entrega_id` <=> `a`.`plano_trabalho_entrega_id`
+            WHERE `a`.`deleted_at` IS NULL
+              AND `a`.`id` <> `g`.`keeper_id`
+        SQL);
+    }
+
+    private function popularBackup(): void
+    {
+        $backup = self::BACKUP_TABLE;
+        $grupos = self::TEMP_GRUPOS;
+        $map = self::TEMP_MAP;
+
+        DB::statement(<<<SQL
+            INSERT INTO `{$backup}` (
+                `atividade_id`,
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                `descricao`,
+                `deleted_at`,
+                `merged_into_id`,
+                `created_at`
+            )
+            SELECT
+                `a`.`id`,
+                `a`.`plano_trabalho_consolidacao_id`,
+                `a`.`plano_trabalho_entrega_id`,
+                `a`.`descricao`,
+                NULL,
+                `m`.`keeper_id`,
+                NOW()
+            FROM `atividades` AS `a`
+            INNER JOIN `{$map}` AS `m` ON `m`.`duplicate_id` = `a`.`id`
+            UNION ALL
+            SELECT
+                `a`.`id`,
+                `a`.`plano_trabalho_consolidacao_id`,
+                `a`.`plano_trabalho_entrega_id`,
+                `a`.`descricao`,
+                NULL,
+                NULL,
+                NOW()
+            FROM `atividades` AS `a`
+            INNER JOIN `{$grupos}` AS `g` ON `g`.`keeper_id` = `a`.`id`
+        SQL);
+    }
+
+    private function atualizarDescricoesUnificadas(): void
+    {
+        $grupos = self::TEMP_GRUPOS;
+
+        DB::statement(<<<SQL
+            UPDATE `atividades` AS `a`
+            INNER JOIN (
+                SELECT
+                    `g`.`keeper_id`,
+                    GROUP_CONCAT(
+                        CASE
+                            WHEN TRIM(`a2`.`descricao`) <> '' THEN TRIM(`a2`.`descricao`)
+                        END
+                        ORDER BY `a2`.`created_at` ASC, `a2`.`id` ASC
+                        SEPARATOR '\n\n'
+                    ) AS `descricao_unificada`
+                FROM `{$grupos}` AS `g`
+                INNER JOIN `atividades` AS `a2`
+                    ON `a2`.`plano_trabalho_consolidacao_id` = `g`.`plano_trabalho_consolidacao_id`
+                    AND `a2`.`plano_trabalho_entrega_id` <=> `g`.`plano_trabalho_entrega_id`
+                    AND `a2`.`deleted_at` IS NULL
+                GROUP BY `g`.`keeper_id`
+            ) AS `u` ON `u`.`keeper_id` = `a`.`id`
+            SET
+                `a`.`descricao` = `u`.`descricao_unificada`,
+                `a`.`updated_at` = NOW()
+        SQL);
+    }
+
+    private function redirecionarReferenciasEmLote(): void
+    {
+        $map = self::TEMP_MAP;
+
+        foreach ($this->tabelasComAtividadeIdDisponiveis() as $tabela) {
+            DB::statement(<<<SQL
+                UPDATE `{$tabela}` AS `t`
+                INNER JOIN `{$map}` AS `m` ON `m`.`duplicate_id` = `t`.`atividade_id`
+                SET `t`.`atividade_id` = `m`.`keeper_id`
+            SQL);
         }
+    }
 
-        return $query->orderBy('created_at')->get();
+    private function softDeleteDuplicatas(): void
+    {
+        $map = self::TEMP_MAP;
+
+        DB::statement(<<<SQL
+            UPDATE `atividades` AS `a`
+            INNER JOIN `{$map}` AS `m` ON `m`.`duplicate_id` = `a`.`id`
+            SET
+                `a`.`deleted_at` = NOW(),
+                `a`.`updated_at` = NOW()
+        SQL);
+    }
+
+    private function limparTabelasTemporarias(): void
+    {
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_GRUPOS . '`');
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_MAP . '`');
     }
 
     /**
-     * @param Collection<int, mixed> $descricoes
+     * @return list<string>
      */
-    private function unificarDescricoes(Collection $descricoes): string
+    private function tabelasComAtividadeIdDisponiveis(): array
     {
-        return $descricoes
-            ->map(static fn ($descricao) => trim((string) $descricao))
-            ->filter(static fn (string $descricao) => $descricao !== '')
-            ->unique()
-            ->implode("\n\n");
-    }
+        $tabelas = [];
 
-    private function redirecionarReferencias(string $deId, string $paraId): void
-    {
         foreach (self::TABELAS_COM_ATIVIDADE_ID as $tabela) {
-            if (!Schema::hasTable($tabela) || !Schema::hasColumn($tabela, 'atividade_id')) {
-                continue;
+            if (Schema::hasTable($tabela) && Schema::hasColumn($tabela, 'atividade_id')) {
+                $tabelas[] = $tabela;
             }
-
-            DB::table($tabela)
-                ->where('atividade_id', $deId)
-                ->update(['atividade_id' => $paraId]);
-        }
-    }
-
-    private function registrarBackupKeeper(string $atividadeId, ?string $descricaoOriginal): void
-    {
-        $atividade = DB::table('atividades')->where('id', $atividadeId)->first();
-        if ($atividade === null) {
-            return;
         }
 
-        DB::table(self::BACKUP_TABLE)->updateOrInsert(
-            ['atividade_id' => $atividadeId],
-            [
-                'plano_trabalho_consolidacao_id' => $atividade->plano_trabalho_consolidacao_id,
-                'plano_trabalho_entrega_id' => $atividade->plano_trabalho_entrega_id,
-                'descricao' => $descricaoOriginal,
-                'deleted_at' => null,
-                'merged_into_id' => null,
-                'created_at' => Carbon::now(),
-            ],
-        );
-    }
-
-    /**
-     * @param object{id: string, descricao: ?string} $duplicata
-     */
-    private function registrarBackupDuplicata(object $duplicata, string $keeperId): void
-    {
-        $atividade = DB::table('atividades')->where('id', $duplicata->id)->first();
-        if ($atividade === null) {
-            return;
-        }
-
-        DB::table(self::BACKUP_TABLE)->updateOrInsert(
-            ['atividade_id' => $duplicata->id],
-            [
-                'plano_trabalho_consolidacao_id' => $atividade->plano_trabalho_consolidacao_id,
-                'plano_trabalho_entrega_id' => $atividade->plano_trabalho_entrega_id,
-                'descricao' => $duplicata->descricao,
-                'deleted_at' => null,
-                'merged_into_id' => $keeperId,
-                'created_at' => Carbon::now(),
-            ],
-        );
+        return $tabelas;
     }
 };
