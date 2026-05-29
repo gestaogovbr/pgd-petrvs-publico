@@ -879,18 +879,17 @@ class UsuarioService extends ServiceBase
             return;
         }
 
+        $usuarios->loadMissing(['areasTrabalho.unidade:id,sigla']);
+
         $unidadesVinculadasPayloadByKey = [];
 
         foreach ($usuarios as $usuarioPorCpf) {
             $matricula = $usuarioPorCpf->getAttribute('matricula') ?? null;
             $situacaoFuncional = $usuarioPorCpf->getAttribute('situacao_funcional') ?? null;
 
-            $integrantes = $this->unidadeIntegranteRepository
-                ->findAllComAtribuicoesAtivasByUsuario(strval($usuarioPorCpf->id));
-
-            foreach ($integrantes as $integrante) {
-                $unidade = $integrante->unidade;
-                if ($unidade === null) {
+            foreach ($usuarioPorCpf->areasTrabalho ?? [] as $areaTrabalho) {
+                $unidade = $areaTrabalho->unidade;
+                if (!$unidade) {
                     continue;
                 }
 
