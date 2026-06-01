@@ -5,6 +5,7 @@ namespace Tests\Unit\Services;
 use App\Exceptions\NotFoundException;
 use App\Models\SiapeBlackListServidor;
 use App\Models\Unidade;
+use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\PerfilRepository;
@@ -12,6 +13,7 @@ use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\SiapeBlackListServidorRepository;
+use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Services\IntegracaoService;
@@ -53,6 +55,7 @@ beforeEach(function () {
     $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->planoEntregaRepository = Mockery::mock(PlanoEntregaRepository::class);
     $this->siapeBlackListServidorRepository = Mockery::mock(SiapeBlackListServidorRepository::class);
+    $this->unidadeIntegranteRepository = Mockery::mock(UnidadeIntegranteRepository::class);
 
     $this->unidadeService = Mockery::mock(UnidadeService::class);
     $this->integracaoService = Mockery::mock(IntegracaoService::class);
@@ -82,6 +85,7 @@ beforeEach(function () {
         'planoTrabalhoRepository' => $this->planoTrabalhoRepository,
         'planoEntregaRepository' => $this->planoEntregaRepository,
         'siapeBlackListServidorRepository' => $this->siapeBlackListServidorRepository,
+        'unidadeIntegranteRepository' => $this->unidadeIntegranteRepository,
     ]);
 });
 
@@ -193,19 +197,25 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         $unidade->id = 'unidade-1';
         $unidade->sigla = 'U1';
 
+        $areaTrabalhoMatricula1 = new UnidadeIntegrante();
+        $areaTrabalhoMatricula1->setRelation('unidade', $unidade);
+
+        $areaTrabalhoMatricula2 = new UnidadeIntegrante();
+        $areaTrabalhoMatricula2->setRelation('unidade', $unidade);
+
         $matricula1 = new Usuario();
         $matricula1->id = 'mat-1';
         $matricula1->cpf = '12345678901';
         $matricula1->matricula = '0001';
         $matricula1->situacao_funcional = 'ATIVO';
-        $matricula1->setRelation('unidades', new Collection([$unidade]));
+        $matricula1->setRelation('areasTrabalho', new Collection([$areaTrabalhoMatricula1]));
 
         $matricula2 = new Usuario();
         $matricula2->id = 'mat-2';
         $matricula2->cpf = '12345678901';
         $matricula2->matricula = '0002';
         $matricula2->situacao_funcional = 'INATIVO';
-        $matricula2->setRelation('unidades', new Collection([$unidade]));
+        $matricula2->setRelation('areasTrabalho', new Collection([$areaTrabalhoMatricula2]));
 
         $this->usuarioRepository->shouldReceive('findById')
             ->once()
@@ -323,14 +333,17 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         expect($result)->toBeTrue();
     });
 
-    it('is participante habilitado calls repository', function () {
+    it('is participante habilitado usa participa_pgd do usuário', function () {
         $usuarioId = 'user-id';
         $programaId = 'programa-id';
 
-        $this->usuarioRepository->shouldReceive('isParticipanteHabilitado')
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->participa_pgd = 'sim';
+
+        $this->usuarioRepository->shouldReceive('findById')
             ->once()
-            ->with($usuarioId, $programaId)
-            ->andReturn(true);
+            ->with($usuarioId)
+            ->andReturn($usuario);
 
         $result = $this->service->isParticipanteHabilitado($usuarioId, $programaId);
 

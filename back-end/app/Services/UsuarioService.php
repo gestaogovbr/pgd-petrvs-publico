@@ -14,6 +14,7 @@ use App\Repository\PerfilRepository;
 use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Repository\SiapeBlackListServidorRepository;
@@ -27,6 +28,8 @@ use App\Support\ModalidadePgd;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -57,11 +60,13 @@ class UsuarioService extends ServiceBase
     protected PlanoTrabalhoRepository $planoTrabalhoRepository;
     protected PlanoEntregaRepository $planoEntregaRepository;
     protected SiapeBlackListServidorRepository $siapeBlackListServidorRepository;
+    protected UnidadeIntegranteRepository $unidadeIntegranteRepository;
 
     public function __construct() {
         parent::__construct();
         $this->usuarioRepository = app(UsuarioRepository::class);
         $this->unidadeRepository = app(UnidadeRepository::class);
+        $this->unidadeIntegranteRepository = app(UnidadeIntegranteRepository::class);
         $this->integracaoServidorRepository = app(IntegracaoServidorRepository::class);
         $this->perfilRepository = app(PerfilRepository::class);
         $this->planoTrabalhoConsolidacaoRepository = app(PlanoTrabalhoConsolidacaoRepository::class);
@@ -415,20 +420,16 @@ class UsuarioService extends ServiceBase
 
     public function extraStore($entity, $unidade, $action)
     {
-        $integrantes = $this->buffer["integrantes"] ?? [];
-        if (!is_array($integrantes)) {
-            $integrantes = [];
+        if (isset($this->buffer["integrantes"])) {
+            foreach ($this->buffer["integrantes"] as &$integrante) {
+                $integrante["usuario_id"] = $entity->id;
+            }
+
+            $this->UnidadeIntegranteService->salvarIntegrantes($this->buffer["integrantes"]);
+        } else {
+            $this->buffer["integrantes"] = [];
         }
 
-        foreach ($integrantes as &$integrante) {
-            $integrante["usuario_id"] = $entity->id;
-        }
-
-        $this->buffer["integrantes"] = $integrantes;
-
-        if (!empty($integrantes)) {
-            $this->UnidadeIntegranteService->salvarIntegrantes($integrantes);
-        }
         if ($action != ServiceBase::ACTION_INSERT)
             $this->unidadeIntegranteAtribuicaoService->checkLotacoes($entity->id);
     }
@@ -485,10 +486,13 @@ class UsuarioService extends ServiceBase
         $key = [$usuarioId, $programaId];
         if ($this->hasBuffer("isParticipanteHabilitado", $key)) {
             return $this->getBuffer("isParticipanteHabilitado", $key);
-        } else {
-            $usuarioId = $usuarioId ?? parent::loggedUser()->id;
-            return $this->setBuffer("isParticipanteHabilitado", $key, $this->usuarioRepository->isParticipanteHabilitado($usuarioId, $programaId));
         }
+
+        $usuarioId = $usuarioId ?? parent::loggedUser()->id;
+        $usuario = $this->usuarioRepository->findById($usuarioId);
+        $habilitado = $usuario !== null && $usuario->participa_pgd === 'sim';
+
+        return $this->setBuffer("isParticipanteHabilitado", $key, $habilitado);
     }
 
     public function isIntegrante(string $atribuicao, string $unidadeId, string|null $usuarioId = null): bool
@@ -528,8 +532,6 @@ class UsuarioService extends ServiceBase
         $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
-        $programa = $this->extractWhere($data, "programa_id");
-        $lotacao = [];
         foreach ($data["where"] as $condition) {
             if (is_array($condition) && $condition[0] == "lotacao") {
                 $lotacao = $condition;
@@ -560,11 +562,14 @@ class UsuarioService extends ServiceBase
                 array_push($where, $condition);
             }
         }
+
         if (!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
             $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
             array_push($where, RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))", []));
         }
         $data["where"] = $where;
+
+        \Log::info(print_r($data['where'], true));
         return $data;
     }
 
@@ -594,13 +599,21 @@ class UsuarioService extends ServiceBase
 
     public function proxyUpdate($data, $unidade)
     {
-        $data["with"] = [];
+        if (isset($data["with"])) {
+            $data["with"] = [];
+        }
+
         $this->normalizeModalidadePgd($data);
 
         if (array_key_exists('email', $data)) {
             $usuario = !empty($data['id'] ?? null) ? $this->usuarioRepository->findById($data['id']) : null;
             $this->removerEmailDaRequisicaoSeUsuarioInterno($data, $data['usuario_externo'] ?? ($usuario?->usuario_externo ?? null));
         }
+
+        if (isset($data['cpf'])) {
+            $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
+        }
+
         unset($data['pedagio']);
         $this->buffer = ["integrantes" => UtilService::getNested($data, "integrantes")];
         $this->validarPerfil($data);
@@ -654,6 +667,7 @@ class UsuarioService extends ServiceBase
 
             if (!array_key_exists('modalidade_pgd', $data)) {
                 $user = $this->usuarioRepository->findById($data["id"]);
+
                 $data['modalidade_pgd'] = $user?->modalidade_pgd;
             }
 
@@ -857,7 +871,7 @@ class UsuarioService extends ServiceBase
             return;
         }
 
-        $usuarios->loadMissing(['unidades:id,sigla']);
+        $usuarios->loadMissing(['areasTrabalho.unidade:id,sigla']);
 
         $unidadesVinculadasPayloadByKey = [];
 
@@ -865,7 +879,12 @@ class UsuarioService extends ServiceBase
             $matricula = $usuarioPorCpf->getAttribute('matricula') ?? null;
             $situacaoFuncional = $usuarioPorCpf->getAttribute('situacao_funcional') ?? null;
 
-            foreach ($usuarioPorCpf->unidades ?? [] as $unidade) {
+            foreach ($usuarioPorCpf->areasTrabalho ?? [] as $areaTrabalho) {
+                $unidade = $areaTrabalho->unidade;
+                if (!$unidade) {
+                    continue;
+                }
+
                 $key = strval($unidade->id) . '|' . strval($matricula ?? '');
 
                 if (isset($unidadesVinculadasPayloadByKey[$key])) {
@@ -1004,6 +1023,63 @@ class UsuarioService extends ServiceBase
         }
 
         return $unidades;
+    }
+
+    /**
+     * Seleciona a unidade atual do usuário na sessão e persiste em {@see Usuario::$config}.
+     *
+     * @param  array{unidade_id: string, matricula?: string|null}  $data
+     * @return array{status: string, unidade: \App\Models\Unidade|null}
+     *
+     * @throws \Exception Quando o usuário não possui área de trabalho na unidade informada.
+     */
+    public function selecionaUnidade(Request $request, Usuario $usuarioLogado, array $data): array
+    {
+        Auth::shouldUse('web');
+
+        $usuario = $this->autenticarPorMatricula($request, $usuarioLogado, $data['matricula'] ?? null);
+
+        $usuario = $this->usuarioRepository->findWithAreaTrabalho($usuario->id, $data['unidade_id']);
+
+        if (!$usuario || !$this->usuarioPossuiAreaTrabalhoNaUnidade($usuario)) {
+            throw new \Exception('Unidade não encontrada no usuário');
+        }
+
+        $request->session()->put('unidade_id', $data['unidade_id']);
+
+        $this->usuarioRepository->updateConfig($usuario->id, $data['unidade_id']);
+
+        return [
+            'status'  => 'OK',
+            'unidade' => $this->unidadeRepository->findById($data['unidade_id']),
+        ];
+    }
+
+    private function autenticarPorMatricula(Request $request, Usuario $usuarioAtual, ?string $matricula): Usuario
+    {
+        if (empty($matricula)) {
+            return $usuarioAtual;
+        }
+
+        $usuarioMatricula = $this->usuarioRepository->findByMatricula($matricula);
+
+        if ($usuarioMatricula && $usuarioMatricula->id !== $usuarioAtual->id) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            Auth::guard('web')->loginUsingId($usuarioMatricula->id, remember: false);
+            $request->session()->regenerate();
+
+            return $usuarioMatricula;
+        }
+
+        return $usuarioAtual;
+    }
+
+    private function usuarioPossuiAreaTrabalhoNaUnidade(Usuario $usuario): bool
+    {
+        return !empty($usuario->areasTrabalho?->first()?->id);
     }
 
     /**

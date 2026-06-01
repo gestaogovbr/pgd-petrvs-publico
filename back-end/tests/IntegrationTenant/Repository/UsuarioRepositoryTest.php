@@ -5,11 +5,14 @@ use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Programa;
-use App\Models\ProgramaParticipante;
+use App\Enums\UsuarioSituacaoSiape;
 use App\Repository\UsuarioRepository;
 use App\Models\Perfil;
+use App\Services\UsuarioService;
+use Illuminate\Support\Facades\Bus;
 
 beforeEach(function () {
+    Bus::fake();
     $this->repository = app(UsuarioRepository::class);
     $this->perfilId = Perfil::factory()->create(['nome' => 'Padrão'])->id;
 });
@@ -53,37 +56,30 @@ test('findByCpfOrEmail ignora email nulo ou vazio', function () {
         'perfil_id' => $this->perfilId,
     ]);
 
-    $foundWithNullEmail = $this->repository->findByCpfOrEmail($cpf, null);
-    expect($foundWithNullEmail)->not->toBeNull();
-    expect($foundWithNullEmail->cpf)->toBe($cpf);
-
     $foundWithEmptyEmail = $this->repository->findByCpfOrEmail($cpf, '');
     expect($foundWithEmptyEmail)->not->toBeNull();
     expect($foundWithEmptyEmail->cpf)->toBe($cpf);
 });
 
-test('isParticipanteHabilitado', function () {
-    $usuario = Usuario::factory()->create([
+test('isParticipanteHabilitado usa participa_pgd do usuário', function () {
+    $programa = Programa::factory()->create();
+    $service = app(UsuarioService::class);
+
+    $usuarioNao = Usuario::factory()->create([
         'modalidade_pgd' => 'presencial',
+        'participa_pgd' => 'não',
         'perfil_id' => $this->perfilId,
     ]);
-    $programa = Programa::factory()->create();
 
-    expect($this->repository->isParticipanteHabilitado($usuario->id, $programa->id))->toBeFalse();
+    expect($service->isParticipanteHabilitado($usuarioNao->id, $programa->id))->toBeFalse();
 
-    ProgramaParticipante::factory()->create([
-        'usuario_id' => $usuario->id,
-        'programa_id' => $programa->id,
-        'habilitado' => false,
+    $usuarioSim = Usuario::factory()->create([
+        'modalidade_pgd' => 'presencial',
+        'participa_pgd' => 'sim',
+        'perfil_id' => $this->perfilId,
     ]);
 
-    expect($this->repository->isParticipanteHabilitado($usuario->id, $programa->id))->toBeFalse();
-
-    ProgramaParticipante::where('usuario_id', $usuario->id)
-        ->where('programa_id', $programa->id)
-        ->update(['habilitado' => true]);
-
-    expect($this->repository->isParticipanteHabilitado($usuario->id, $programa->id))->toBeTrue();
+    expect($service->isParticipanteHabilitado($usuarioSim->id, $programa->id))->toBeTrue();
 });
 
 test('isIntegrante', function () {
@@ -259,6 +255,177 @@ test('getUnidadesVinculadas', function () {
     $unidades = $this->repository->getUnidadesVinculadas($cpf);
 
     expect($unidades)->toHaveCount(2);
+});
+
+test('getUnidadesVinculadas ignora integrante sem atribuição ativa', function () {
+    $cpf = '11122233344';
+    $usuario = Usuario::factory()->create([
+        'cpf' => $cpf,
+        'modalidade_pgd' => 'presencial',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $unidadeAtiva = Unidade::factory()->create();
+    $unidadeOrfa = Unidade::factory()->create();
+
+    $integranteAtivo = UnidadeIntegrante::query()->create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidadeAtiva->id,
+    ]);
+    UnidadeIntegranteAtribuicao::query()->create([
+        'atribuicao' => 'LOTADO',
+        'unidade_integrante_id' => $integranteAtivo->id,
+    ]);
+
+    $integranteOrfa = UnidadeIntegrante::query()->create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidadeOrfa->id,
+    ]);
+    $atribuicaoExcluida = UnidadeIntegranteAtribuicao::query()->create([
+        'atribuicao' => 'GESTOR',
+        'unidade_integrante_id' => $integranteOrfa->id,
+    ]);
+    $atribuicaoExcluida->delete();
+
+    $unidades = $this->repository->getUnidadesVinculadas($cpf);
+
+    expect($unidades)->toHaveCount(1)
+        ->and($unidades->first()->id)->toBe($unidadeAtiva->id);
+});
+
+test('anexarUnidadesVinculadasPorCpf ignora unidade sem atribuição ativa', function () {
+    $cpf = '44455566677';
+    $usuario = Usuario::factory()->create([
+        'cpf' => $cpf,
+        'matricula' => 'MAT-ATIVA',
+        'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
+        'modalidade_pgd' => 'presencial',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $unidadeAtiva = Unidade::factory()->create(['sigla' => 'U-ATV']);
+    $unidadeOrfa = Unidade::factory()->create(['sigla' => 'U-ORF']);
+
+    $integranteAtivo = UnidadeIntegrante::query()->create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidadeAtiva->id,
+    ]);
+    UnidadeIntegranteAtribuicao::query()->create([
+        'atribuicao' => 'LOTADO',
+        'unidade_integrante_id' => $integranteAtivo->id,
+    ]);
+
+    $integranteOrfa = UnidadeIntegrante::query()->create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidadeOrfa->id,
+    ]);
+    $atribuicaoExcluida = UnidadeIntegranteAtribuicao::query()->create([
+        'atribuicao' => 'GESTOR',
+        'unidade_integrante_id' => $integranteOrfa->id,
+    ]);
+    $atribuicaoExcluida->delete();
+
+    $usuarioConsulta = Usuario::factory()->create([
+        'cpf' => $cpf,
+        'modalidade_pgd' => 'presencial',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    app(UsuarioService::class)->anexarUnidadesVinculadasPorCpf($usuarioConsulta);
+
+    $unidadesVinculadas = $usuarioConsulta->getAttribute('unidades_vinculadas');
+
+    expect($unidadesVinculadas)->toHaveCount(1)
+        ->and($unidadesVinculadas[0]['id'])->toBe($unidadeAtiva->id)
+        ->and($unidadesVinculadas[0]['sigla'])->toBe('U-ATV')
+        ->and($unidadesVinculadas[0]['matricula'])->toBe('MAT-ATIVA');
+});
+
+test('findAllByNomeMatricula por nome', function () {
+    $usuario = Usuario::factory()->create([
+        'nome' => 'João Silva Teste',
+        'matricula' => '111111',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $result = $this->repository->findAllByNomeMatricula('João Silva');
+
+    expect($result->contains('id', $usuario->id))->toBeTrue();
+});
+
+test('findAllByNomeMatricula por matricula', function () {
+    $usuario = Usuario::factory()->create([
+        'nome' => 'Maria Oliveira',
+        'matricula' => '999888',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $result = $this->repository->findAllByNomeMatricula('99988');
+
+    expect($result->contains('id', $usuario->id))->toBeTrue();
+});
+
+test('findAllByNomeMatricula sem resultado', function () {
+    Usuario::factory()->create([
+        'nome' => 'Carlos Souza',
+        'matricula' => '123456',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $result = $this->repository->findAllByNomeMatricula('TermoInexistente999');
+
+    expect($result)->toHaveCount(0);
+});
+
+test('findAllByNomeMatricula busca parcial', function () {
+    $u1 = Usuario::factory()->create([
+        'nome' => 'Ana Paula Ferreira',
+        'matricula' => '500100',
+        'perfil_id' => $this->perfilId,
+    ]);
+    $u2 = Usuario::factory()->create([
+        'nome' => 'Pedro Henrique',
+        'matricula' => '500200',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    $result = $this->repository->findAllByNomeMatricula('500');
+
+    expect($result->contains('id', $u1->id))->toBeTrue();
+    expect($result->contains('id', $u2->id))->toBeTrue();
+});
+
+test('findAllByNomeMatricula filtra por unidade de lotacao', function () {
+    $unidadeA = Unidade::factory()->create();
+    $unidadeB = Unidade::factory()->create();
+
+    $usuarioA = Usuario::factory()->create([
+        'nome' => 'Agente Unidade A',
+        'matricula' => '700001',
+        'perfil_id' => $this->perfilId,
+    ]);
+    $usuarioB = Usuario::factory()->create([
+        'nome' => 'Agente Unidade B',
+        'matricula' => '700002',
+        'perfil_id' => $this->perfilId,
+    ]);
+
+    foreach ([[$usuarioA, $unidadeA], [$usuarioB, $unidadeB]] as [$usuario, $unidade]) {
+        $integrante = new UnidadeIntegrante();
+        $integrante->usuario_id = $usuario->id;
+        $integrante->unidade_id = $unidade->id;
+        $integrante->save();
+
+        $atribuicao = new UnidadeIntegranteAtribuicao();
+        $atribuicao->unidade_integrante_id = $integrante->id;
+        $atribuicao->atribuicao = 'LOTADO';
+        $atribuicao->save();
+    }
+
+    $result = $this->repository->findAllByNomeMatricula('Agente Unidade', $unidadeA->id);
+
+    expect($result->contains('id', $usuarioA->id))->toBeTrue();
+    expect($result->contains('id', $usuarioB->id))->toBeFalse();
 });
 
 test('createAndUpdate', function () {

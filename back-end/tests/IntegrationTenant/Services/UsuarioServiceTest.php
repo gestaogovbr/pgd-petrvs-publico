@@ -513,3 +513,49 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
     });
 
 });
+
+test('issue 2098 - unidades vinculadas ignora vinculo sem atribuicao ativa', function () {
+    $cpf = '20980000001';
+
+    $usuario = Usuario::factory()->create([
+        'cpf' => $cpf,
+        'matricula' => 'MAT-2098',
+        'situacao_siape' => 'ATIVO',
+    ]);
+
+    $unidadeComAtribuicao = Unidade::factory()->create([
+        'sigla' => 'UOK',
+        'nome' => 'Unidade Com Atribuicao',
+    ]);
+
+    $unidadeSemAtribuicao = Unidade::factory()->create([
+        'sigla' => 'UST',
+        'nome' => 'Unidade Sem Atribuicao',
+    ]);
+
+    $vinculoComAtribuicao = UnidadeIntegrante::query()->create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidadeComAtribuicao->id,
+    ]);
+
+    UnidadeIntegranteAtribuicao::query()->create([
+        'unidade_integrante_id' => $vinculoComAtribuicao->id,
+        'atribuicao' => 'COLABORADOR',
+    ]);
+
+    UnidadeIntegrante::query()->create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidadeSemAtribuicao->id,
+    ]);
+
+    $service = app(UsuarioService::class);
+    $usuarioRecarregado = Usuario::query()->findOrFail($usuario->id);
+
+    $service->anexarUnidadesVinculadasPorCpf($usuarioRecarregado);
+
+    $unidadesVinculadas = collect($usuarioRecarregado->getAttribute('unidades_vinculadas'));
+
+    expect($unidadesVinculadas->pluck('id')->all())
+        ->toContain($unidadeComAtribuicao->id)
+        ->not->toContain($unidadeSemAtribuicao->id);
+});

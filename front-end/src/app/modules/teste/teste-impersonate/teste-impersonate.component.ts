@@ -26,7 +26,7 @@ export class TesteImpersonateComponent extends PageListBase<Usuario, UsuarioDaoS
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
     /* Inicializações */
-    this.title = this.lex.translate("Usuários");
+    this.title = this.lex.translate("Personificar");
     this.code = "MOD_CFG_USER";
     this.join = ["perfil:id,nome"];
     this.filter = this.fh.FormBuilder({
@@ -63,7 +63,15 @@ export class TesteImpersonateComponent extends PageListBase<Usuario, UsuarioDaoS
     return result;
   }
 
-  public impersonate (user:string){
-    this.auth.impersonate(user);
+  public async impersonate(user: string) {
+    this.loading = true;
+    try {
+      const ok = await this.auth.impersonate(user);
+      if (!ok) {
+        await this.dialog.alert('Erro', 'Não foi possível personificar o usuário.');
+      }
+    } finally {
+      this.loading = false;
+    }
   }
 }

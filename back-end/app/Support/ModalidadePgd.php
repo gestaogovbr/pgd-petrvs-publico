@@ -122,6 +122,12 @@ final class ModalidadePgd
             "ELSE {$column} END";
     }
 
+    /** @return string[] */
+    public static function keys(): array
+    {
+        return array_keys(self::LABELS);
+    }
+
     /** @return array<int, array{key: string, value: string}> */
     public static function options(): array
     {

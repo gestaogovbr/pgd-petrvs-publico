@@ -22,7 +22,7 @@
                   <div><strong>Período :</strong> {{formatDate(r.data_inicio)}} - {{formatDate(r.data_fim)}}</div>
                   <div><strong>Usuário: </strong> {{r.plano_trabalho?.usuario?.nome}}</div>
                 </div>
-                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirConsolidacoes(r.plano_trabalho?.usuario_id, r.plano_trabalho?.unidade_id, r.plano_trabalho?.numero)">Avaliar</button>
+                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirConsolidacoes(r.plano_trabalho?.id)">Avaliar</button>
               </div>
             </li>
           </ul>

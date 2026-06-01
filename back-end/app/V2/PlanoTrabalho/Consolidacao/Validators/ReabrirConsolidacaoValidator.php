@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\V2\PlanoTrabalho\Consolidacao\Validators;
+
+use App\Enums\StatusEnum;
+use App\Exceptions\NotFoundException;
+use App\Exceptions\ValidateException;
+use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+
+class ReabrirConsolidacaoValidator
+{
+    public function __construct(
+        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
+    ) {}
+
+    public function validar(PlanoTrabalho $plano, string $consolidacaoId): PlanoTrabalhoConsolidacao
+    {
+        if (($plano->status !== StatusEnum::ATIVO->value && $plano->encerrado_at === null) ||
+            ($plano->status !== StatusEnum::CONCLUIDO->value && $plano->encerrado_at !== null)) {
+            throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO.');
+        }
+
+        $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($consolidacaoId);
+
+        if ($consolidacao === null) {
+            throw new NotFoundException('Período avaliativo não encontrado.');
+        }
+
+        if ($consolidacao->plano_trabalho_id !== $plano->id) {
+            throw new ValidateException('O período avaliativo não pertence a este Plano de Trabalho.');
+        }
+
+        if ($plano->encerrado_at !== null && $consolidacao->data_inicio > $plano->encerrado_at) {
+            throw new ValidateException('Não é possível reabrir um período avaliativo posterior ao encerramento do plano.');
+        }
+
+        if ($consolidacao->status !== StatusEnum::CONCLUIDO->value) {
+            throw new ValidateException('O período avaliativo precisa estar com status CONCLUIDO para ser reaberto.');
+        }
+
+        $avaliacoes = $consolidacao->relationLoaded('avaliacoes')
+            ? $consolidacao->avaliacoes
+            : $consolidacao->load('avaliacoes')->avaliacoes;
+
+        if ($avaliacoes->isNotEmpty()) {
+            throw new ValidateException('Não é possível reabrir um período avaliativo que já possui avaliação.');
+        }
+
+        return $consolidacao;
+    }
+}
