@@ -28,4 +28,12 @@ class IntegracaoUnidadeRepository
     {
         return $this->readRepository->findByCodigo($codigo);
     }
+
+    /**
+     * @return \Illuminate\Support\Collection<int, non-falsy-string>
+     */
+    public function getCodigosByCpfTitular(string $cpf, ?string $codigoExcluido = null): \Illuminate\Support\Collection
+    {
+        return $this->readRepository->getCodigosByCpfTitular($cpf, $codigoExcluido);
+    }
 }

@@ -67,6 +67,7 @@ resources/documentacao/Gestão/plano_trabalho.pdf
 
 # Para Apple
 *.DS_Store
+.DS_Store
 
 microservice/api-pgd/storage/logs/schedule.log
 back-end/supervisord.log
@@ -80,3 +81,8 @@ back-end/public/app.json
 review-pr-*
 front-end/out-tsc/app/main.js
 front-end/dist/*
+
+docs/*
+scripts/release/*
+AGENTS.md
+.agents/skills/*

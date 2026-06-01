@@ -203,7 +203,14 @@ class UsuarioService extends ServiceBase
             $usuarioLotadoMesmaUnidade = $this->usuarioRepository->findByCpfAndLotacao($cpfCheck, $unidadeExercicioIdCheck);
 
             if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
-                $this->usuarioRepository->update($usuarioLotadoMesmaUnidade->id, ['matricula' => $matriculaNova]);
+                $dadosAtualizacao = ['matricula' => $matriculaNova];
+                $integracaoServidor = $this->integracaoServidorRepository->getServidor($cpfCheck, $matriculaNova);
+
+                if ($integracaoServidor && $integracaoServidor->participa_pgd !== null) {
+                    $dadosAtualizacao['participa_pgd'] = $integracaoServidor->participa_pgd;
+                }
+
+                $this->usuarioRepository->update($usuarioLotadoMesmaUnidade->id, $dadosAtualizacao);
 
                 SiapeLog::info(sprintf('Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
                     (string) $cpfCheck,
