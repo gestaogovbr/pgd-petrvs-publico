@@ -420,6 +420,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   }
 
   selecionarUsuario(item: UsuarioSearchItem) {
+    this.erroAgentePublico.set('');
     this.form.controls.usuario_id.setValue(item.id);
     this.agentePublicoQuery.setValue(item.nome, { emitEvent: false });
     this.sugestoesUsuarios.set([]);
@@ -804,7 +805,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     this.unidades.set(unidades ?? []);
     this.erroAgentePublico.set('');
 
-    if (!unidades || unidades.length === 0 || (usuario as any).participa_pgd === 'não') {
+    if (!unidades || unidades.length === 0 || (usuario as any).participa_pgd === 'não'
+        || (!(usuario as any).participa_pgd && !usuario.modalidade_pgd)) {
       this.erroAgentePublico.set('Usuário não participante do PGD ou não habilitado para pactuar Plano de Trabalho nesta unidade.');
     }
 
