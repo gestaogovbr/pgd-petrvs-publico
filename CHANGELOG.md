@@ -12,8 +12,10 @@
 - **Perfil colaborador**: listagem e arquivamento restritos às unidades de vinculação e subordinadas.
 - Migração de tenant para **unificar atividades duplicadas** na mesma consolidação/entrega, preservando a mais antiga e concatenando descrições.
 - **Planejamento institucional**: cadastro de tipos de objetivo (API v2), gráfico de objetivos com esforço e endpoint de entregas por unidade com cache de esforço.
-- **Envios de Plano de Entrega** refatorados para a API v2.
 - Logs de auditoria e melhorias de pipeline (Jenkins, Docker) e segurança (auditoria com severidade).
+- **Envios de Participantes** (novo formato)
+- **Envios de Planos de Entrega** (novo formato)
+- **Envios de Planos de Trabalho** (novo formato)
 
 ### Modificado
 - Atualização do front-end para **Angular 21** e componentes **GovBR Design System** nos módulos v2.
@@ -26,6 +28,13 @@
 - Filtros da listagem de PT **isolados por usuário**; filtro **Plano do Dia** deixou de ser o padrão ao abrir a tela.
 - **Impersonate**: título e comportamento ao personificar usuário (menu e dados do personificado).
 - Botão **Entrar com gov.br** ajustado na tela de login.
+- Modificada forma de envio para a API PGD, que não será mais em lotes, mas individualizada;
+- Mudança do layout de Ocorrências
+- Mudança no layout dos logs do Plano de Trabalho
+- Mudança de mensagem na assinatura de PT quando agente público dono do plano for chefe da sua UE e substituto da unidade superior;
+- Habilitar módulo Ocorrências para o perfil participante, permitindo que ele inclua nova ocorrência e visualize somente as próprias ocorrências
+- Modificado o módulo Ocorrências para perfil Unidade permitindo que visualizem e editem somente as ocorrências da própria unidade e de unidades subordinadas
+- Modificado o módulo Ocorrências para tornar o campo HORAS obrigatório
 
 ### Corrigido
 - Regras de negócio do PT v2 (#1683): validação de agente público e participação PGD (`participa_pgd`), modalidade pré-preenchida e alerta de divergência (RN24), limite de vigência de um ano, CHD com justificativa persistida, entregas de PE homologadas e força de trabalho máxima.
@@ -38,6 +47,13 @@
 - Integração SIAPE: reativação correta de usuários e remoção definitiva de registros de blacklist quando a matrícula volta a aparecer como ativa.
 - Carga individual SIAPE: normalização de códigos de unidade e lotação correta de contratos temporários quando a unidade de exercício vem vazia.
 - Correções pontuais em tenant (schema na criação), perfis sem e-mail (SIAPE), navegação Angular (`forChild`) e preservação de atribuições manuais de integrantes.
+
+### Removido
+- Logs dos Envios
+- Forçar Envio
+- Resetar Envios
+- Campos de FORMATO e INTEGRAÇÃO do módulo Ocorrências
+
 
 ## 2.10.1 15/05/2026
 ### Corrigido
