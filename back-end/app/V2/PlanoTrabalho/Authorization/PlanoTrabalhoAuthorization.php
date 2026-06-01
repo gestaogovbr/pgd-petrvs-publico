@@ -47,6 +47,9 @@ class PlanoTrabalhoAuthorization
     private function usuarioPodeEditarPlano(PlanoTrabalho $plano, Usuario $usuario): bool
     {
         $perfil = $usuario->perfil;
+        // TODO: verificar com Geisimar o contexto do commit 5c1b0ac97 que alterou <= para >=.
+        // Com >=, todos os perfis (exceto DESENVOLVEDOR) passam. Com <=, apenas DEV e ADM_MASTER.
+        // Os testes de PlanoTrabalhoAuthorizationTest esperam <=. Alinhar antes de alterar.
         if ($perfil !== null && $perfil->nivel >= PerfilEnum::ADMINISTRADOR_MASTER->value) {
             return true;
         }
