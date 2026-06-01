@@ -185,6 +185,110 @@ describe('PlanoTrabalhoIndexValidacao', function () {
     });
 });
 
+describe('PlanoTrabalhoIndexValidacao — perfil Colaborador', function () {
+
+    test('colaborador sem unidades informadas restringe às unidades vinculadas e subordinadas', function () {
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-colaborador';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::COLABORADOR->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $integrante = Mockery::mock(UnidadeIntegrante::class)->makePartial();
+        $integrante->unidade_id = 'unidade-1';
+
+        $subordinada = Mockery::mock(Unidade::class)->makePartial();
+        $subordinada->id = 'unidade-sub-1';
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-colaborador')->andReturn($usuario);
+        $this->integranteRepo->shouldReceive('findAllComAtribuicoesAtivasByUsuario')->with('user-colaborador')->andReturn(new Collection([$integrante]));
+        $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')->with(['unidade-1'])->andReturn(new Collection([$subordinada]));
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true, 'usuarioLogadoId' => 'user-colaborador']);
+        $resultado = $this->validacao->validar($filtro);
+
+        expect($resultado->unidadesId)->toEqualCanonicalizing(['unidade-1', 'unidade-sub-1']);
+    });
+
+    test('colaborador pode consultar unidade onde possui vinculação', function () {
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-colaborador';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::COLABORADOR->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $integrante = Mockery::mock(UnidadeIntegrante::class)->makePartial();
+        $integrante->unidade_id = 'unidade-1';
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-colaborador')->andReturn($usuario);
+        $this->integranteRepo->shouldReceive('findAllComAtribuicoesAtivasByUsuario')->with('user-colaborador')->andReturn(new Collection([$integrante]));
+        $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')->with(['unidade-1'])->andReturn(new Collection());
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['unidade_id' => ['unidade-1'], 'vigentes' => true, 'usuarioLogadoId' => 'user-colaborador']);
+        $resultado = $this->validacao->validar($filtro);
+
+        expect($resultado->unidadesId)->toBe(['unidade-1']);
+    });
+
+    test('colaborador não pode consultar unidade sem vinculação', function () {
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-colaborador';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::COLABORADOR->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $integrante = Mockery::mock(UnidadeIntegrante::class)->makePartial();
+        $integrante->unidade_id = 'unidade-1';
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-colaborador')->andReturn($usuario);
+        $this->integranteRepo->shouldReceive('findAllComAtribuicoesAtivasByUsuario')->with('user-colaborador')->andReturn(new Collection([$integrante]));
+        $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')->with(['unidade-1'])->andReturn(new Collection());
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['unidade_id' => ['unidade-sem-vinculo'], 'vigentes' => true, 'usuarioLogadoId' => 'user-colaborador']);
+        $this->validacao->validar($filtro);
+    })->throws(ValidateException::class, 'Usuário de perfil colaborador só pode consultar planos de unidades onde possui vinculação.');
+
+    test('colaborador pode consultar subordinada de unidade vinculada', function () {
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-colaborador';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::COLABORADOR->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $integrante = Mockery::mock(UnidadeIntegrante::class)->makePartial();
+        $integrante->unidade_id = 'unidade-1';
+
+        $subordinada = Mockery::mock(Unidade::class)->makePartial();
+        $subordinada->id = 'unidade-sub-1';
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-colaborador')->andReturn($usuario);
+        $this->integranteRepo->shouldReceive('findAllComAtribuicoesAtivasByUsuario')->with('user-colaborador')->andReturn(new Collection([$integrante]));
+        $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')->with(['unidade-1'])->andReturn(new Collection([$subordinada]));
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['unidade_id' => ['unidade-sub-1'], 'vigentes' => true, 'usuarioLogadoId' => 'user-colaborador']);
+        $resultado = $this->validacao->validar($filtro);
+
+        expect($resultado->unidadesId)->toBe(['unidade-sub-1']);
+    });
+
+    test('colaborador sem vinculações ativas retorna escopo vazio', function () {
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-colaborador';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::COLABORADOR->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-colaborador')->andReturn($usuario);
+        $this->integranteRepo->shouldReceive('findAllComAtribuicoesAtivasByUsuario')->with('user-colaborador')->andReturn(new Collection());
+        $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')->with([])->andReturn(new Collection());
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['vigentes' => true, 'usuarioLogadoId' => 'user-colaborador']);
+        $resultado = $this->validacao->validar($filtro);
+
+        expect($resultado->unidadesId)->toBe([]);
+    });
+});
+
 describe('PlanoTrabalhoIndexValidacao — perfil Consulta', function () {
 
     test('perfil Consulta não expande unidades como perfil Unidade', function () {
