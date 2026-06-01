@@ -24,6 +24,7 @@ import { PaginationV2Component } from 'src/app/v2/components/pagination/paginati
 import { PlanoTrabalhoLogsModalComponent } from './components/plano-trabalho-logs-modal.component';
 import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
 import { SelectOption } from './edit.page';
+import { MessageService } from 'src/app/v2/services/message.service';
 
 @Component({
   selector: 'app-plano-trabalho-v2-list-page',
@@ -54,7 +55,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
   private readonly overlay = inject(Overlay);
   private readonly injector = inject(Injector);
-
+  private readonly message = inject(MessageService);
   private logsOverlayRef: OverlayRef | null = null;
 
   private readonly FILTER_KEY_PREFIX = 'plano-trabalho-v2:filters';
@@ -361,7 +362,10 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     this.confirmacaoPendente.set({
       titulo: 'Arquivar Plano de Trabalho',
       mensagem: 'Ao arquivar este Plano de Trabalho, ele será removido da tela, ficando disponível apenas quando consultado. Deseja confirmar?',
-      onConfirm: () => this.arquivarPlanoUC.execute(p.id).subscribe(() => this.applyFiltersAndLoad(false))
+      onConfirm: () => this.arquivarPlanoUC.execute(p.id).subscribe(() => {
+        this.applyFiltersAndLoad(false);
+        this.message.success('Plano de trabalho arquivado com sucesso.');
+      })
     });
   }
 

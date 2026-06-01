@@ -804,7 +804,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     this.unidades.set(unidades ?? []);
     this.erroAgentePublico.set('');
 
-    if (!unidades || unidades.length === 0 || (usuario as any).participa_pgd !== 'sim') {
+    if (!unidades || unidades.length === 0 || (usuario as any).participa_pgd === 'não') {
       this.erroAgentePublico.set('Usuário não participante do PGD ou não habilitado para pactuar Plano de Trabalho nesta unidade.');
     }
 

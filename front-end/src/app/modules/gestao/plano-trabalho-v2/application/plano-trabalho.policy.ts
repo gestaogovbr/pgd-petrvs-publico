@@ -71,10 +71,23 @@ export class PlanoTrabalhoPolicy {
   }
 
   podeArquivar(p: PlanoTrabalho): boolean {
-    return PlanoTrabalhoStatusGroups.arquivavel.includes(p.status)
-      && (this.unidadeService.isGestorUnidade(p.unidade_id)
-        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null)
-        || p.usuario_id === this.auth.usuario?.id)
-      && !p.data_arquivamento;
+    if (!PlanoTrabalhoStatusGroups.arquivavel.includes(p.status) || p.data_arquivamento) {
+      return false;
+    }
+
+    if (p.usuario_id === this.auth.usuario?.id) {
+      return true;
+    }
+
+    if (this.unidadeService.isGestorUnidade(p.unidade_id)
+      || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null)) {
+      return true;
+    }
+
+    if (this.auth.isUsuarioColaborador()) {
+      return !!this.auth.usuario?.areas_trabalho?.some(area => area.unidade_id === p.unidade_id);
+    }
+
+    return false;
   }
 }

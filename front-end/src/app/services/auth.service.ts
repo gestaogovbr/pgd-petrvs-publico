@@ -430,6 +430,9 @@ export class AuthService {
     return (this.usuario?.perfil?.nivel ?? Perfil.NIVEL.PARTICIPANTE) === Perfil.NIVEL.PARTICIPANTE;
   }
 
+  public isUsuarioColaborador(): boolean {
+    return (this.usuario?.perfil?.nivel ?? Perfil.NIVEL.COLABORADOR) === Perfil.NIVEL.COLABORADOR;
+  }
 
   
   /**

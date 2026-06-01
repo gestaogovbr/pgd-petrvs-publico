@@ -22,6 +22,7 @@ class RecursoValidator
     private const STATUSES_PERMITE_RECURSO = [
         StatusEnum::ATIVO,
         StatusEnum::CONCLUIDO,
+        StatusEnum::AVALIADO
     ];
 
     public function __construct(
@@ -49,7 +50,7 @@ class RecursoValidator
         $statusPermitidos = array_map(fn (StatusEnum $s) => $s->value, self::STATUSES_PERMITE_RECURSO);
 
         if (!in_array($plano->status, $statusPermitidos, true)) {
-            throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO ou CONCLUÍDO.');
+            throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO, CONCLUÍDO ou AVALIADO.');
         }
 
         $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($consolidacaoId);
