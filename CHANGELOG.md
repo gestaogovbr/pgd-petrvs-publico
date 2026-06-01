@@ -1,3 +1,40 @@
+## 3.0.0 01/06/2026
+
+### Adicionado
+- Novo **Plano de Trabalho v2** (módulo Angular e API `v2/plano-trabalho`), com interface GovBR, substituindo o fluxo legado para gestão do ciclo de vida do PT.
+- **Listagem** de planos com filtros avançados (unidade, regramento, agente, status, modalidade, vigência, arquivados), ordenação por coluna, tags de situação (vigente, aguardando reavaliação, reavaliado) e menu de ações consolidado.
+- **Cadastro e edição** do PT em etapas: informações gerais, planejamento (entregas vinculadas ao Plano de Entrega) e execução/avaliação por períodos consolidados.
+- **Assinatura do TCR** com dupla assinatura, geração automática de períodos avaliativos, mensagens específicas para chefia da unidade executora e chefia substituta da unidade superior, e invalidação de assinaturas ao alterar dados relevantes do plano.
+- **Registro de execução**: inclusão, edição e exclusão de atividades por período; conclusão e reabertura de registro; integração com ocorrências do módulo de Ocorrências.
+- **Avaliação e recurso**: avaliação de período, solicitação de recurso (inclusive com plano em status avaliado), reavaliação e exibição de pendências com recurso disponível.
+- **Ações do plano**: cancelar, encerrar (incluindo encerramento antecipado), clonar, arquivar (com regras de elegibilidade e autorização por perfil) e consulta de **logs** do PT v2.
+- **Autorização no back-end** como fonte da verdade para edição e demais ações sensíveis (`acoes` na API), com escopo por perfil (participante, colaborador, unidade, chefia recursiva, administrador).
+- **Perfil colaborador**: listagem e arquivamento restritos às unidades de vinculação e subordinadas.
+- Migração de tenant para **unificar atividades duplicadas** na mesma consolidação/entrega, preservando a mais antiga e concatenando descrições.
+- **Planejamento institucional**: cadastro de tipos de objetivo (API v2), gráfico de objetivos com esforço e endpoint de entregas por unidade com cache de esforço.
+- **Envios de Plano de Entrega** refatorados para a API v2.
+- Logs de auditoria e melhorias de pipeline (Jenkins, Docker) e segurança (auditoria com severidade).
+
+### Modificado
+- Atualização do front-end para **Angular 21** e componentes **GovBR Design System** nos módulos v2.
+- Arquitetura front-end v2 em camadas (`domain`, `application`, `infra`, `ui`), com use cases, policies e clients HTTP dedicados.
+- Back-end do PT v2 organizado por contexto de negócio (services, validators, DTOs, repositories), sem `ServiceBase`, com testes Pest e transações em operações com múltiplas escritas.
+- Exibição do status **Incluído** como **Rascunho** e do status **Ativo** como **Em execução**.
+- Rótulos **Programa** alterados para **Regramento** nos fluxos de PT e PE.
+- Campos de **justificativa** (modalidade distinta, carga horária, cancelamento, avaliação, recurso, encerramento, reabertura, trabalho planejado) migrados para `br-textarea`, com limite de caracteres visível onde aplicável.
+- Tela de detalhe do PT com informações gerais em modo leitura (texto) em vez de inputs somente leitura.
+- Filtros da listagem de PT **isolados por usuário**; filtro **Plano do Dia** deixou de ser o padrão ao abrir a tela.
+- **Impersonate**: título e comportamento ao personificar usuário (menu e dados do personificado).
+- Botão **Entrar com gov.br** ajustado na tela de login.
+
+### Corrigido
+- Regras de negócio do PT v2 (#1683): validação de agente público e participação PGD (`participa_pgd`), modalidade pré-preenchida e alerta de divergência (RN24), limite de vigência de um ano, CHD com justificativa persistida, entregas de PE homologadas e força de trabalho máxima.
+- Permissões: chefia e chefia superior podem avaliar, assinar, editar e excluir rascunhos conforme hierarquia; perfil consulta sem ações de alteração; botões de assinatura e cancelamento de assinatura exibidos apenas quando aplicável.
+- Listagem: filtros `usuario_nome`, `unidade_regramento` e `status`; filtro vigentes considerando qualquer status dentro do período; ordenação quando `orderBy` é informado explicitamente.
+- Consolidação e avaliação: bloqueio após encerramento do PT; atualização dinâmica dos períodos após encerrar; recurso oculto quando a nota não permite; confirmações e toasts nas ações de registro e avaliação.
+- TCR e documentos: hierarquia local de assinatura, justificativa de CHD no documento gerado, ocorrências somente leitura após assinatura, edição de datas de ocorrência na consolidação.
+- Correções pontuais em tenant (schema na criação), perfis sem e-mail (SIAPE), navegação Angular (`forChild`) e preservação de atribuições manuais de integrantes.
+
 ## 2.10.1 15/05/2026
 ### Corrigido
 - Remove a obrigatoriedade do campo de e-mail dos usuário, uma vez que não há mais geração de e-mail fictícios para servidores sem e-mail funcional no SIAPE.
