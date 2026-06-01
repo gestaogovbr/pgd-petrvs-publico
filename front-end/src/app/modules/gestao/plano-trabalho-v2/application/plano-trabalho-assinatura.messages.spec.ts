@@ -1,4 +1,5 @@
 import {
+  MENSAGEM_CONFIRMACAO_PARTICIPANTE_CHEFIA_SUBSTITUTO_SUPERIOR,
   MENSAGEM_CONFIRMACAO_PRIMEIRO_SIGNATARIO,
   MENSAGEM_CONFIRMACAO_SEGUNDO_SIGNATARIO,
   assinaturaConcluiCiclo,
@@ -80,5 +81,20 @@ describe('plano-trabalho-assinatura.messages', () => {
         usuarioLogadoEhGestorUnidadeSuperiorAoPlano: true,
       }),
     ).toBe(MENSAGEM_CONFIRMACAO_SEGUNDO_SIGNATARIO);
+  });
+
+  it('usa mensagem específica quando o participante é chefia e substituto da unidade superior', () => {
+    const planoChefiaSubstituto = {
+      usuario_id: 'participante-1',
+      unidade_id: 'unidade-plano',
+      usuario: { id: 'participante-1' },
+    } as any;
+
+    expect(
+      mensagemConfirmacaoAssinaturaPlano([], 'participante-1', {
+        plano: planoChefiaSubstituto,
+        participanteEhChefiaComSubstitutoUnidadeSuperior: true,
+      }),
+    ).toBe(MENSAGEM_CONFIRMACAO_PARTICIPANTE_CHEFIA_SUBSTITUTO_SUPERIOR);
   });
 });

@@ -46,8 +46,30 @@ export class AssinarPlanoUseCase {
         usuarioLogadoEhGestorUnidadeSuperiorAoPlano: this.unidadeService.isGestorUnidade(
           p?.unidade?.unidade_pai_id ?? null,
         ),
+        participanteEhChefiaComSubstitutoUnidadeSuperior:
+          this.participanteEhChefiaComSubstitutoUnidadeSuperior(p),
       },
     );
+  }
+
+  private participanteEhChefiaComSubstitutoUnidadeSuperior(p: PlanoTrabalho | null): boolean {
+    if (!p?.usuario_id || !p.unidade_id || !p.unidade?.unidade_pai_id) {
+      return false;
+    }
+
+    const participanteId = p.usuario_id;
+    const unidadePlano = this.auth.unidades?.find(u => u.id === p.unidade_id);
+    const unidadePai = this.auth.unidades?.find(u => u.id === p.unidade?.unidade_pai_id);
+    if (!unidadePlano || !unidadePai) {
+      return false;
+    }
+
+    const ehChefiaUnidade = unidadePlano.gestor?.usuario_id === participanteId;
+    const ehSubstitutoSuperior = (unidadePai.gestores_substitutos ?? []).some(
+      g => g.usuario_id === participanteId,
+    );
+
+    return ehChefiaUnidade && ehSubstitutoSuperior;
   }
 
   init(plano: PlanoTrabalho, entregas?: any[]) {
