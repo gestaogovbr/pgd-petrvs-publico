@@ -6,10 +6,15 @@ export const MENSAGEM_CONFIRMACAO_PRIMEIRO_SIGNATARIO =
 export const MENSAGEM_CONFIRMACAO_SEGUNDO_SIGNATARIO =
   'Ao assinar este Plano de Trabalho, ele passará para a fase de execução e não poderá mais ser editado. Deseja confirmar?';
 
+export const MENSAGEM_CONFIRMACAO_PARTICIPANTE_CHEFIA_SUBSTITUTO_SUPERIOR =
+  'O participante é chefia de unidade e tem atribuição de chefia substituta da unidade superior. Por isso, ao assinar este Plano de Trabalho, ele passará imediatamente para a fase de execução e não poderá mais ser excluído. Deseja confirmar?';
+
 export type ContagemAssinaturasPlanoInput = {
   plano?: PlanoTrabalho | null;
   /** Usuário logado é gestor da unidade imediatamente superior à unidade do plano. */
   usuarioLogadoEhGestorUnidadeSuperiorAoPlano?: boolean;
+  /** Dono do plano é gestor titular da unidade do PT e substituto da unidade superior. */
+  participanteEhChefiaComSubstitutoUnidadeSuperior?: boolean;
 };
 
 /** Quantidade de assinaturas exigidas conforme o plano (não o programa). */
@@ -63,6 +68,13 @@ export function mensagemConfirmacaoAssinaturaPlano(
   usuarioAtualId: string,
   input: ContagemAssinaturasPlanoInput = {},
 ): string {
+  if (
+    input.participanteEhChefiaComSubstitutoUnidadeSuperior
+    && input.plano?.usuario_id === usuarioAtualId
+  ) {
+    return MENSAGEM_CONFIRMACAO_PARTICIPANTE_CHEFIA_SUBSTITUTO_SUPERIOR;
+  }
+
   return assinaturaConcluiCiclo(assinaturas, usuarioAtualId, input)
     ? MENSAGEM_CONFIRMACAO_SEGUNDO_SIGNATARIO
     : MENSAGEM_CONFIRMACAO_PRIMEIRO_SIGNATARIO;
