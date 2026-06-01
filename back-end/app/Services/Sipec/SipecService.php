@@ -126,6 +126,52 @@ class SipecService
     }
 
     /**
+     * Consulta todos os servidores de uma UORG (usado na sincronização de unidade).
+     *
+     * @param string $codUorg Código da UORG
+     * @param bool $participaPgd Filtrar apenas participantes PGD
+     * @return array Lista paginada (chave 'content') com os servidores
+     */
+    public function buscarServidoresDaUnidade(string $codUorg, bool $participaPgd = true): array
+    {
+        return $this->buscarServidores($codUorg, $participaPgd);
+    }
+
+    /**
+     * Busca os dados de uma unidade pelo código UORG.
+     * Endpoint: GET /unidades  (UnidadeDetalhadaDTO — OpenAPI SIGEPE-Integra)
+     *
+     * @param string $codUorg Código da UORG
+     * @return array|null Dados da unidade ou null se não encontrada
+     */
+    public function buscarUnidade(string $codUorg): ?array
+    {
+        $token = $this->getToken();
+        $url   = $this->url . '/unidades?' . http_build_query(['codUorg' => $codUorg]);
+
+        try {
+            $data    = $this->executarGet($url, $token);
+            $itens   = $data['content'] ?? $data;
+
+            if (!is_array($itens) || empty($itens)) {
+                return null;
+            }
+
+            // Filtra pelo código exato caso a API retorne mais de um resultado
+            foreach ($itens as $item) {
+                if ((string) ($item['codUorg'] ?? '') === $codUorg) {
+                    return $item;
+                }
+            }
+
+            return $itens[0] ?? null;
+        } catch (\Exception $e) {
+            Log::warning('SIPEC: unidade não encontrada', ['codUorg' => $codUorg, 'error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
+    /**
      * Executa requisição GET autenticada na API SIPEC.
      */
     private function executarGet(string $url, string $token): array
