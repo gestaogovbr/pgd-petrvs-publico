@@ -241,7 +241,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     const unidadeRegramento = String(raw.unidade_regramento ?? '').trim();
     if (unidadeRegramento.length) result['unidade_regramento'] = unidadeRegramento;
 
-    //result['unidade_id'] = this.auth.unidade?.id;
+    if (!raw.incluir_subordinadas) result['unidade_id'] = this.auth.unidade?.id;
 
     return result;
   }

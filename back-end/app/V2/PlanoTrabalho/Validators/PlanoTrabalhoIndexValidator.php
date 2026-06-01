@@ -32,6 +32,10 @@ class PlanoTrabalhoIndexValidator
             return $this->validarPerfilConsulta($filtro);
         }
 
+        if ($nivel === PerfilEnum::COLABORADOR->value) {
+            return $this->validarPerfilColaborador($filtro);
+        }
+
         if ($nivel >= PerfilEnum::PARTICIPANTE->value) {
             return $this->validarPerfilParticipante($filtro);
         }
@@ -41,6 +45,33 @@ class PlanoTrabalhoIndexValidator
 
     private function validarPerfilConsulta(PlanoTrabalhoIndexDTO $filtro): PlanoTrabalhoIndexDTO
     {
+        return $filtro;
+    }
+
+    private function validarPerfilColaborador(PlanoTrabalhoIndexDTO $filtro): PlanoTrabalhoIndexDTO
+    {
+        $unidadesDiretas = $this->integranteRepository
+            ->findAllComAtribuicoesAtivasByUsuario($filtro->usuarioLogadoId)
+            ->pluck('unidade_id')
+            ->toArray();
+
+        $subordinadasIds = $this->unidadeRepository
+            ->getSubordinadasRecursivas($unidadesDiretas)
+            ->pluck('id')
+            ->toArray();
+
+        $unidadesPermitidas = array_values(array_unique(array_merge($unidadesDiretas, $subordinadasIds)));
+
+        if ($filtro->unidadesId === null) {
+            return $filtro->withUnidadesId($unidadesPermitidas);
+        }
+
+        $naoPermitidas = array_diff($filtro->unidadesId, $unidadesPermitidas);
+
+        if (!empty($naoPermitidas)) {
+            throw new ValidateException("Usuário de perfil colaborador só pode consultar planos de unidades onde possui vinculação.");
+        }
+
         return $filtro;
     }
 
