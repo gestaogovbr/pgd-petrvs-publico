@@ -73,17 +73,15 @@ class PlanoTrabalhoArquivarValidator
 
     private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void
     {
+        // Já verifica recursivamente a autorização do usuário
         if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id)) {
-            return;
-        }
-
-        if ($this->unidadeRepository->isUsuarioGestorRecursivo($plano->unidade_id, $usuarioLogadoId)) {
             return;
         }
 
         $usuario = $this->usuarioRepository->findById($usuarioLogadoId);
 
-        if ($usuario->perfil->nivel <= PerfilEnum::COLABORADOR->value) {
+        if ($usuario?->perfil?->nivel === PerfilEnum::COLABORADOR->value
+            && $this->unidadeRepository->hasUsuarioLotacao($plano->unidade_id, $usuarioLogadoId, true)) {
             return;
         }
 
