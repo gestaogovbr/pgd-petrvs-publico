@@ -33,6 +33,10 @@
 - Listagem: filtros `usuario_nome`, `unidade_regramento` e `status`; filtro vigentes considerando qualquer status dentro do período; ordenação quando `orderBy` é informado explicitamente.
 - Consolidação e avaliação: bloqueio após encerramento do PT; atualização dinâmica dos períodos após encerrar; recurso oculto quando a nota não permite; confirmações e toasts nas ações de registro e avaliação.
 - TCR e documentos: hierarquia local de assinatura, justificativa de CHD no documento gerado, ocorrências somente leitura após assinatura, edição de datas de ocorrência na consolidação.
+- Integração SIAPE: uso do e-mail do servidor quando o e-mail institucional não é informado, evitando falhas em perfis sem e-mail funcional.
+- Integração SIAPE: preservação da participação PGD existente quando o retorno do SIAPE não informa o campo, inclusive em trocas de matrícula.
+- Integração SIAPE: reativação correta de usuários e remoção definitiva de registros de blacklist quando a matrícula volta a aparecer como ativa.
+- Carga individual SIAPE: normalização de códigos de unidade e lotação correta de contratos temporários quando a unidade de exercício vem vazia.
 - Correções pontuais em tenant (schema na criação), perfis sem e-mail (SIAPE), navegação Angular (`forChild`) e preservação de atribuições manuais de integrantes.
 
 ## 2.10.1 15/05/2026
