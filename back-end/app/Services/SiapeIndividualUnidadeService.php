@@ -17,7 +17,6 @@ use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use function Symfony\Component\String\s;
 

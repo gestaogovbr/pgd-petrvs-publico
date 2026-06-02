@@ -197,33 +197,25 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         $unidade->id = 'unidade-1';
         $unidade->sigla = 'U1';
 
-        $integrante1 = new UnidadeIntegrante();
-        $integrante1->setRelation('unidade', $unidade);
+        $areaTrabalhoMatricula1 = new UnidadeIntegrante();
+        $areaTrabalhoMatricula1->setRelation('unidade', $unidade);
 
-        $integrante2 = new UnidadeIntegrante();
-        $integrante2->setRelation('unidade', $unidade);
+        $areaTrabalhoMatricula2 = new UnidadeIntegrante();
+        $areaTrabalhoMatricula2->setRelation('unidade', $unidade);
 
         $matricula1 = new Usuario();
         $matricula1->id = 'mat-1';
         $matricula1->cpf = '12345678901';
         $matricula1->matricula = '0001';
         $matricula1->situacao_funcional = 'ATIVO';
+        $matricula1->setRelation('areasTrabalho', new Collection([$areaTrabalhoMatricula1]));
 
         $matricula2 = new Usuario();
         $matricula2->id = 'mat-2';
         $matricula2->cpf = '12345678901';
         $matricula2->matricula = '0002';
         $matricula2->situacao_funcional = 'INATIVO';
-
-        $this->unidadeIntegranteRepository->shouldReceive('findAllComAtribuicoesAtivasByUsuario')
-            ->once()
-            ->with('mat-1')
-            ->andReturn(new Collection([$integrante1]));
-
-        $this->unidadeIntegranteRepository->shouldReceive('findAllComAtribuicoesAtivasByUsuario')
-            ->once()
-            ->with('mat-2')
-            ->andReturn(new Collection([$integrante2]));
+        $matricula2->setRelation('areasTrabalho', new Collection([$areaTrabalhoMatricula2]));
 
         $this->usuarioRepository->shouldReceive('findById')
             ->once()
