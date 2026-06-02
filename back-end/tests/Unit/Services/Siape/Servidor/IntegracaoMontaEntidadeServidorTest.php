@@ -39,6 +39,7 @@ test('montaEntidadeServidor não descarta servidor quando e-mail funcional está
                         'codigo_servo_exercicio' => '1',
                         'codsitfuncional' => '1',
                         'ident_unica' => 'ident',
+                        'participa_pgd' => 'sim',
                     ],
                 ],
                 'emailfuncional' => null,
@@ -53,4 +54,4 @@ test('montaEntidadeServidor não descarta servidor quando e-mail funcional está
 
     expect($entidades)->toHaveCount(1);
     expect($entidades[0]->getAttribute('emailfuncional'))->toBeNull();
-})->skip('Requer coluna participa_pgd na base de testes (migration pendente)');
+});
