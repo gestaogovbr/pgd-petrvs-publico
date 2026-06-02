@@ -14,7 +14,7 @@ use App\Repository\UnidadeRepository;
 class IntegracaoSiapeService extends ServiceBase
 {
   const SITUACAO_FUNCIONAL_ATIVO_EM_OUTRO_ORGAO = 8;
-  const SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO = 76;
+  public const SITUACOES_FUNCIONAIS_CONTRATO_TEMPORARIO = [12, 40, 49, 76];
 
   private ProcessaDadosSiapeBD|null $siape = null;
 
@@ -116,6 +116,10 @@ class IntegracaoSiapeService extends ServiceBase
       $dadosFuncionais['codUorgExercicio'] = strval(intval($dadosFuncionais['codUorgExercicio']));
     }
 
+    if (!empty($dadosFuncionais['codUorgLotacao'])) {
+      $dadosFuncionais['codUorgLotacao'] = strval(intval($dadosFuncionais['codUorgLotacao']));
+    }
+
     if (!$this->processarContratoTemporario($dadosFuncionais)) {
       return null;
     }
@@ -152,8 +156,13 @@ class IntegracaoSiapeService extends ServiceBase
       'nome_jornada'          => UtilService::valueOrDefault($dadosFuncionais['nomeJornada'] ?? null)
     ];
 
+    $emailFuncional = UtilService::valueOrDefault($dadosFuncionais['emailInstitucional'] ?? null);
+    if (empty($emailFuncional)) {
+      $emailFuncional = UtilService::valueOrDefault($dadosFuncionais['emailServidor'] ?? null);
+    }
+
     $funcional = [
-      'emailfuncional'        => UtilService::valueOrDefault($dadosFuncionais['emailInstitucional'] ?? null),
+      'emailfuncional'        => $emailFuncional,
       'cpf_chefia_imediata'   => UtilService::valueOrDefault($dadosFuncionais['cpfChefiaImediata'] ?? null, null),
       'email_chefia_imediata' => UtilService::valueOrDefault($dadosFuncionais['emailChefiaImediata'] ?? null, null),
       'matriculas'            => ['dados' => $matricula],
@@ -171,14 +180,25 @@ class IntegracaoSiapeService extends ServiceBase
 
   private function processarContratoTemporario(array &$dadosFuncionais): bool
   {
-    $codSit = $dadosFuncionais['codSitFuncional'] ?? null;
-    if ($codSit != self::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO) {
+    $codSit = intval($dadosFuncionais['codSitFuncional'] ?? 0);
+    if (!in_array($codSit, self::SITUACOES_FUNCIONAIS_CONTRATO_TEMPORARIO, true)) {
       return true;
     }
+
+    $codUorgExercicio = trim((string) ($dadosFuncionais['codUorgExercicio'] ?? ''));
+    if ($codUorgExercicio !== '') {
+      return true;
+    }
+
+    $codUorgLotacao = trim((string) ($dadosFuncionais['codUorgLotacao'] ?? ''));
+    if ($codUorgLotacao !== '') {
+      $dadosFuncionais['codUorgExercicio'] = $codUorgLotacao;
+      return true;
+    }
+
     $sigla = trim($dadosFuncionais['siglaUorgLotacao'] ?? '');
     if ($sigla === '') {
-      $codUorgExercicio = trim((string) ($dadosFuncionais['codUorgExercicio'] ?? ''));
-      return $codUorgExercicio !== '';
+      return false;
     }
     $unidadeServidorTemporario = $this->getUnidadeRepository()->findBySigla($sigla);
     if (!$unidadeServidorTemporario) {

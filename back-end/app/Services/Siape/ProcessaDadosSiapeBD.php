@@ -203,7 +203,8 @@ class ProcessaDadosSiapeBD
         SiapeBlackListServidor::where('cpf', $usuario->cpf)
             ->where('matricula', $usuario->matricula)
             ->forceDelete();
-        $usuario->update([
+
+        $atributos = [
             'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
             'data_ativacao_temporaria' => null,
             'justicativa_ativacao_temporaria' => null,

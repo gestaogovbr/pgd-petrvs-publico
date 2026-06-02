@@ -1,6 +1,0 @@
-interface:
-  display_name: "Petrvs Issue Triage Docs"
-  short_description: "Documenta issues e hipóteses em docs/issues"
-  default_prompt: "Use $petrvs-issue-triage-docs to document this issue in docs/issues and separate confirmed and open hypotheses."
-policy:
-  allow_implicit_invocation: true

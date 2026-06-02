@@ -392,10 +392,46 @@ class SiapeIndividualServidorService extends ServiceBase
             'dados_funcionais_keys' => array_keys($dados)
         ]);
         
-        $codigoUnidade = strval(intval($dados['codUorgExercicio']));
+        $codigoUnidade = $this->resolverCodigoUnidadeServidor($dados);
         $this->validarUnidadeProcessada($cpf, $codigoUnidade, $dados);
         
         $this->sincronizarDadosUnidade($cpf, $codigoUnidade);
+    }
+
+    private function resolverCodigoUnidadeServidor(array $dados): string
+    {
+        foreach (['codUorgExercicio', 'codUorgLotacao'] as $campo) {
+            $codigo = $this->normalizarCodigoUnidade($dados[$campo] ?? null);
+
+            if ($codigo !== null) {
+                return $codigo;
+            }
+        }
+
+        return '0';
+    }
+
+    private function normalizarCodigoUnidade(mixed $codigo): ?string
+    {
+        if ($codigo === null) {
+            return null;
+        }
+
+        $valor = trim((string) $codigo);
+
+        if ($valor === '') {
+            return null;
+        }
+
+        $digitos = preg_replace('/\D/', '', $valor);
+
+        if ($digitos === null || $digitos === '') {
+            return null;
+        }
+
+        $normalizado = (string) intval($digitos);
+
+        return $normalizado === '0' ? null : $normalizado;
     }
 
     protected function verificarExistenciaUnidade(string $codigoUnidade): bool

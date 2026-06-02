@@ -79,8 +79,10 @@ kubectl
 back-end/public/app.json
 back-end/public/app.json
 review-pr-*
+front-end/out-tsc/app/main.js
+front-end/dist/*
 
 docs/*
 scripts/release/*
-front-end/out-tsc/app/main.js
-front-end/dist/*
+AGENTS.md
+.agents/skills/*
