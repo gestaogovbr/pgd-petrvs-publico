@@ -68,6 +68,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
     {
         return $this->query()
             ->where('status', StatusEnum::CONCLUIDO->value)
+            ->where('created_at', '>', PlanoEntrega::DATA_MUDANCA_REGRA_PE)
             ->whereIn('unidade_id', $unidadesIds)
             ->with(['unidade:id,sigla,nome'])
             ->get();
@@ -107,6 +108,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->whereHas('planoEntrega', static function ($query): void {
                 $query
                     ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
+                    ->where('created_at', '>', PlanoEntrega::DATA_MUDANCA_REGRA_PE)
                     ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO));
             })
             ->selectRaw(
