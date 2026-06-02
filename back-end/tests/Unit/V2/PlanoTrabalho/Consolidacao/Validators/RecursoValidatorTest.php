@@ -87,7 +87,7 @@ describe('RecursoValidator::validar', function () {
         $plano->status = 'INCLUIDO';
 
         $this->validator->validar($plano, 'consolidacao-1');
-    })->throws(ValidateException::class, 'O Plano de Trabalho precisa estar com status ATIVO, CONCLUÍDO ou AVALIADO.');
+    })->throws(ValidateException::class, 'O Plano de Trabalho precisa estar com status ATIVO ou CONCLUÍDO.');
 
     test('lanca excecao quando consolidacao nao esta avaliada', function () {
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
