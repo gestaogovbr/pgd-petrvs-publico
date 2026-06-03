@@ -247,9 +247,8 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
 
         if ($filtro->status !== null) {
             match ($filtro->status) {
-                'AVALIADO' => $query->where(fn ($q) => $q->whereNotNull('avaliado_at')->orWhere('status', 'AVALIADO')),
-                'ENCERRADO' => $query->whereNotNull('encerrado_at')->whereNull('avaliado_at'),
-                default => $query->where('status', $filtro->status)->whereNull('avaliado_at')->whereNull('encerrado_at'),
+                'ENCERRADO' => $query->whereNotNull('encerrado_at'),
+                default => $query->where('status', $filtro->status)->whereNull('encerrado_at'),
             };
         }
 
