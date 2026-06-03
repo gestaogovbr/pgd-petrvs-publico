@@ -103,8 +103,7 @@ const PLANO_TRABALHO_STATUS_LABELS: Record<PlanoTrabalhoStatus, string> = {
 
 export function planoTrabalhoStatusLabel(status: PlanoTrabalhoStatus | undefined, plano?: PlanoTrabalho): string {
   if (!status) return '-';
-  if (status === 'CONCLUIDO' && plano?.encerrado_at && !(plano as any)?.avaliado_at) return 'Encerrado antecipadamente';
-  if (status === 'CONCLUIDO' && (plano as any)?.avaliado_at) return 'Avaliado';
+  if (status === 'CONCLUIDO' && plano?.encerrado_at) return 'Encerrado antecipadamente';
   return PLANO_TRABALHO_STATUS_LABELS[status] ?? status;
 }
 

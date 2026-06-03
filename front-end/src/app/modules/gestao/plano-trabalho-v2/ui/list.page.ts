@@ -87,7 +87,6 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       { value: PlanoTrabalhoStatus.ATIVO, label: 'Em execução' },
       { value: PlanoTrabalhoStatus.SUSPENSO, label: 'Suspenso' },
       { value: PlanoTrabalhoStatus.CONCLUIDO, label: 'Concluído' },
-      { value: PlanoTrabalhoStatus.AVALIADO, label: 'Avaliado' },
       { value: 'ENCERRADO', label: 'Encerrado antecipadamente' },
       { value: PlanoTrabalhoStatus.CANCELADO, label: 'Cancelado' },
     ].map(o => ({ ...o, selected: o.value === current }));
