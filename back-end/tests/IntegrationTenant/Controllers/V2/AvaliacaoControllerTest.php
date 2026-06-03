@@ -584,3 +584,219 @@ describe('PATCH /api/v2/.../consolidacao/:cid/recurso', function () {
         )->assertStatus(422);
     });
 });
+
+// ── avaliado_at transitions ─────────────────────────────────────────
+
+describe('avaliado_at transitions via booted()', function () {
+
+    function criarPlanoComUmaConsolidacao($context): void
+    {
+        $context->plano->update(['data_inicio' => '2025-01-01', 'data_fim' => '2025-01-31']);
+        // Remove consolidacoes extras geradas
+        DB::table('planos_trabalhos_consolidacoes')
+            ->where('plano_trabalho_id', $context->plano->id)
+            ->delete();
+    }
+
+    function prepararConsolidacaoUnica($context): string
+    {
+        criarPlanoComUmaConsolidacao($context);
+
+        $context->actingAs($context->participante, 'web');
+        $context->postJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/documento");
+        $context->postJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/documento/assinatura-tcr");
+
+        $consolidacaoId = $context->getJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao")
+            ->json('data.0.id');
+
+        $context->postJson(
+            "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/atividade",
+            ['plano_trabalho_entrega_id' => $context->entrega->id, 'descricao' => 'Trabalho']
+        );
+
+        $context->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/concluir"
+        );
+
+        $context->actingAs($context->chefia, 'web');
+        return $consolidacaoId;
+    }
+
+    test('define avaliado_at quando todas consolidações são avaliadas', function () {
+        $consolidacaoId = prepararConsolidacaoUnica($this);
+
+        $this->postJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $this->notaSemJustificativa->id]
+        )->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('CONCLUIDO');
+        expect($this->plano->avaliado_at)->not->toBeNull();
+    });
+
+    test('limpa avaliado_at ao cancelar avaliação', function () {
+        $consolidacaoId = prepararConsolidacaoUnica($this);
+
+        $this->postJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $this->notaSemJustificativa->id]
+        )->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->avaliado_at)->not->toBeNull();
+
+        $avaliacaoId = DB::table('avaliacoes')
+            ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
+            ->whereNull('deleted_at')
+            ->value('id');
+
+        $this->deleteJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao/{$avaliacaoId}"
+        )->assertOk();
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('ATIVO');
+        expect($this->plano->avaliado_at)->toBeNull();
+    });
+
+    test('limpa avaliado_at ao solicitar recurso mas mantém CONCLUIDO', function () {
+        $consolidacaoId = prepararConsolidacaoUnica($this);
+
+        $this->postJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $this->notaReprovada->id, 'justificativa' => 'Inadequado.']
+        )->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->avaliado_at)->not->toBeNull();
+
+        $this->actingAs($this->participante, 'web');
+
+        $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/recurso",
+            ['justificativa' => 'Discordo da nota.']
+        )->assertStatus(200);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('CONCLUIDO');
+        expect($this->plano->avaliado_at)->toBeNull();
+    });
+
+    test('redefine avaliado_at após reavaliação', function () {
+        $consolidacaoId = prepararConsolidacaoUnica($this);
+
+        $this->postJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $this->notaReprovada->id, 'justificativa' => 'Inadequado.']
+        )->assertStatus(201);
+
+        $this->actingAs($this->participante, 'web');
+        $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/recurso",
+            ['justificativa' => 'Discordo.']
+        )->assertStatus(200);
+
+        $this->plano->refresh();
+        expect($this->plano->avaliado_at)->toBeNull();
+
+        $this->actingAs($this->chefia, 'web');
+        $this->postJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $this->notaSemJustificativa->id]
+        )->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('CONCLUIDO');
+        expect($this->plano->avaliado_at)->not->toBeNull();
+    });
+
+    test('ignora consolidações posteriores ao encerramento para definir avaliado_at', function () {
+        $consolidacaoId = prepararConsolidacaoUnica($this);
+
+        // Simular encerramento: marcar plano como encerrado e adicionar consolidação futura
+        DB::table('planos_trabalhos')->where('id', $this->plano->id)->update([
+            'encerrado_at' => '2025-01-20',
+        ]);
+
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $this->plano->id,
+            'status' => 'CONCLUIDO',
+            'data_inicio' => '2025-02-01',
+            'data_fim' => '2025-02-28',
+        ]);
+
+        // Avaliar apenas a consolidação anterior ao encerramento
+        $this->postJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $this->notaSemJustificativa->id]
+        )->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('CONCLUIDO');
+        expect($this->plano->avaliado_at)->not->toBeNull();
+    });
+
+    test('limpa avaliado_at ao cancelar avaliação em plano encerrado (mantém CONCLUIDO)', function () {
+        $consolidacaoId = prepararConsolidacaoUnica($this);
+
+        DB::table('planos_trabalhos')->where('id', $this->plano->id)->update([
+            'encerrado_at' => '2025-01-20',
+        ]);
+
+        \App\Models\PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $this->plano->id,
+            'status' => 'CONCLUIDO',
+            'data_inicio' => '2025-02-01',
+            'data_fim' => '2025-02-28',
+        ]);
+
+        $this->postJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $this->notaSemJustificativa->id]
+        )->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->avaliado_at)->not->toBeNull();
+
+        // Cancelar avaliação
+        $avaliacaoId = DB::table('avaliacoes')
+            ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
+            ->whereNull('deleted_at')
+            ->value('id');
+
+        $this->deleteJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao/{$avaliacaoId}"
+        )->assertOk();
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('CONCLUIDO');
+        expect($this->plano->avaliado_at)->toBeNull();
+    });
+
+    test('limpa avaliado_at ao solicitar recurso em plano encerrado (mantém CONCLUIDO)', function () {
+        $consolidacaoId = prepararConsolidacaoUnica($this);
+
+        DB::table('planos_trabalhos')->where('id', $this->plano->id)->update([
+            'encerrado_at' => '2025-01-20',
+        ]);
+
+        $this->postJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/avaliacao",
+            ['tipo_avaliacao_nota_id' => $this->notaReprovada->id, 'justificativa' => 'Inadequado.']
+        )->assertStatus(201);
+
+        $this->plano->refresh();
+        expect($this->plano->avaliado_at)->not->toBeNull();
+
+        $this->actingAs($this->participante, 'web');
+        $this->patchJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/{$consolidacaoId}/recurso",
+            ['justificativa' => 'Discordo.']
+        )->assertStatus(200);
+
+        $this->plano->refresh();
+        expect($this->plano->status)->toBe('CONCLUIDO');
+        expect($this->plano->avaliado_at)->toBeNull();
+    });
+});
