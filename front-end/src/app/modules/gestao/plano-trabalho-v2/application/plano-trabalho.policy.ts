@@ -44,9 +44,6 @@ export class PlanoTrabalhoPolicy {
 
   podeVerTcr(p: PlanoTrabalho): boolean {
     return !!p.documento_id
-      && (p.usuario_id === this.auth.usuario?.id
-        || this.unidadeService.isGestorUnidade(p.unidade_id)
-        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
   }
 
   podeEncerrar(p: PlanoTrabalho): boolean {
