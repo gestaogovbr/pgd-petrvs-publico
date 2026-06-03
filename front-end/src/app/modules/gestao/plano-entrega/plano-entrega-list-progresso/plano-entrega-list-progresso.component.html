@@ -1,4 +1,4 @@
-<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="isPlanoAtivo && auth.hasPermissionTo('MOD_PENT_ENTR_PRO_INCL')" [hasEdit]="isPlanoAtivo && auth.hasPermissionTo('MOD_PENT_ENTR_PRO_EDT')" [loadList]="onGridLoad.bind(this)">
+<grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join" [selectable]="selectable" (select)="onSelect($event)" [hasAdd]="auth.hasPermissionTo('MOD_PENT_ENTR_PRO_INCL')" [hasEdit]="auth.hasPermissionTo('MOD_PENT_ENTR_PRO_EDT')" [loadList]="onGridLoad.bind(this)">
   <toolbar *ngIf="!selectable"></toolbar>
   <filter [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')" [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="!selectable && filterCollapsed">
     <div class="row">
@@ -26,7 +26,7 @@
         </div>
       </ng-template>
     </column>
-    <column type="options" [onEdit]="edit" [options]="isPlanoAtivo ? options : []"></column>
+    <column type="options" [onEdit]="edit" [options]="options"></column>
   </columns>
   <pagination [rows]="rowsLimit"></pagination>
 </grid>
