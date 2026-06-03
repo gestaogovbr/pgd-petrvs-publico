@@ -10,6 +10,7 @@ use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\SiapeListaUORGS;
 use App\Services\NivelAcessoService;
+use App\Models\TipoModalidade;
 use App\Models\Usuario;
 use App\Services\SiapeIndividualService;
 use App\Services\SiapeIndividualServidorService;
@@ -30,16 +31,6 @@ beforeEach(function () {
     // No manual schema creation needed!
     // DatabaseTenantTestCase handles tenant creation and schema loading.
     Bus::fake();
-
-    Perfil::firstOrCreate(
-        ['nivel' => NivelAcessoService::PERFIL_CONSULTA],
-        ['nome' => 'Consulta', 'descricao' => 'Perfil consulta']
-    );
-
-    Perfil::firstOrCreate(
-        ['nivel' => NivelAcessoService::PERFIL_PARTICIPANTE],
-        ['nome' => 'Participante', 'descricao' => 'Perfil participante']
-    );
 
     $this->service = app(SiapeIndividualServidorService::class);
 
