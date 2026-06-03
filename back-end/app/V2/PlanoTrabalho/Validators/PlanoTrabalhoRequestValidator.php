@@ -26,7 +26,7 @@ class PlanoTrabalhoRequestValidator
             'filters.incluir_subordinadas' => ['sometimes', 'boolean'],
             'filters.numero' => ['sometimes', 'nullable', 'integer'],
             'filters.modalidade_pgd' => ['sometimes', 'nullable', 'string', Rule::in(ModalidadePgd::keys())],
-            'filters.status' => ['sometimes', 'nullable', 'string', Rule::in(array_keys(PlanoTrabalho::STATUSES))],
+            'filters.status' => ['sometimes', 'nullable', 'string', Rule::in(array_merge(['ENCERRADO'], array_keys(PlanoTrabalho::STATUSES)))],
             'filters.hierarquia' => ['sometimes', 'boolean'],
             'filters.usuario_nome' => ['sometimes', 'nullable', 'string'],
             'filters.unidade_regramento' => ['sometimes', 'nullable', 'string'],
