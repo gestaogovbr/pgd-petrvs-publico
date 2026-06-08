@@ -56,7 +56,7 @@ return new class extends Migration
                 return;
             }
 
-            DB::statement('SET SESSION group_concat_max_len = 1048576');
+            $this->configurarSessaoParaAgregacao();
 
             DB::beginTransaction();
 
@@ -167,15 +167,29 @@ return new class extends Migration
         DB::statement(<<<SQL
             INSERT INTO `{$grupos}` (`plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`, `entrega_id_key`, `keeper_id`)
             SELECT
-                `plano_trabalho_consolidacao_id`,
-                `plano_trabalho_entrega_id`,
-                COALESCE(`plano_trabalho_entrega_id`, '') AS `entrega_id_key`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`id` ORDER BY `created_at` ASC, `id` ASC), ',', 1) AS `keeper_id`
-            FROM `atividades`
-            WHERE `deleted_at` IS NULL
-              AND `plano_trabalho_consolidacao_id` IS NOT NULL
-            GROUP BY `plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`
-            HAVING COUNT(*) > 1
+                `dup`.`plano_trabalho_consolidacao_id`,
+                `dup`.`plano_trabalho_entrega_id`,
+                COALESCE(`dup`.`plano_trabalho_entrega_id`, '') AS `entrega_id_key`,
+                MIN(`a`.`id`) AS `keeper_id`
+            FROM (
+                SELECT
+                    `plano_trabalho_consolidacao_id`,
+                    `plano_trabalho_entrega_id`,
+                    MIN(`created_at`) AS `min_created_at`
+                FROM `atividades`
+                WHERE `deleted_at` IS NULL
+                  AND `plano_trabalho_consolidacao_id` IS NOT NULL
+                GROUP BY `plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`
+                HAVING COUNT(*) > 1
+            ) AS `dup`
+            INNER JOIN `atividades` AS `a`
+                ON `a`.`plano_trabalho_consolidacao_id` = `dup`.`plano_trabalho_consolidacao_id`
+                AND `a`.`plano_trabalho_entrega_id` <=> `dup`.`plano_trabalho_entrega_id`
+                AND `a`.`created_at` = `dup`.`min_created_at`
+                AND `a`.`deleted_at` IS NULL
+            GROUP BY
+                `dup`.`plano_trabalho_consolidacao_id`,
+                `dup`.`plano_trabalho_entrega_id`
         SQL);
 
         DB::statement(<<<SQL
@@ -305,6 +319,15 @@ return new class extends Migration
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_GRUPOS . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_MAP . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_DESCRICOES . '`');
+    }
+
+    /**
+     * MySQL e MariaDB usam group_concat_max_len baixo por padrão (1024), o que
+     * dispara erro 1260 ("Row was cut by GROUP_CONCAT") ao unificar descrições.
+     */
+    private function configurarSessaoParaAgregacao(): void
+    {
+        DB::statement('SET SESSION group_concat_max_len = 1048576');
     }
 
     /**
