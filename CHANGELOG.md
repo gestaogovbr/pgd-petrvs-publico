@@ -1,6 +1,13 @@
 ## 3.0.0 01/06/2026
 
 ### Adicionado
+- Adicionado novo container de RabbitMQ para envio de dados.
+  Novas variáveis de ambiente devem ser configuradas ao final do .env (Antes de executar o update):
+    RABBITMQ_HOST=petrvs_rabbitmq
+    RABBITMQ_PORT=5672
+    RABBITMQ_LOGIN=petrvs
+    RABBITMQ_PASSWORD=<sua senha>
+    RABBITMQ_QUEUE=pgd_queue
 - Novo **Plano de Trabalho v2** (módulo Angular e API `v2/plano-trabalho`), com interface GovBR, substituindo o fluxo legado para gestão do ciclo de vida do PT.
 - **Listagem** de planos com filtros avançados (unidade, regramento, agente, status, modalidade, vigência, arquivados), ordenação por coluna, tags de situação (vigente, aguardando reavaliação, reavaliado) e menu de ações consolidado.
 - **Cadastro e edição** do PT em etapas: informações gerais, planejamento (entregas vinculadas ao Plano de Entrega) e execução/avaliação por períodos consolidados.
