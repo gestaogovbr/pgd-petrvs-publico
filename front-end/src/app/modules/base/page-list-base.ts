@@ -11,7 +11,6 @@ import { QueryContext } from 'src/app/dao/query-context';
 import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 //import { appInjector } from 'src/app/app.component';
 import { QueryOptions } from 'src/app/dao/query-options';
-import { TreeNode } from 'primeng/api';
 import { AppComponent } from 'src/app/app.component';
 
 

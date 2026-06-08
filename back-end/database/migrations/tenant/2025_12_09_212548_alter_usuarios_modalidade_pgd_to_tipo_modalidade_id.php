@@ -106,7 +106,7 @@ return new class extends Migration
         });
 
         Schema::table('usuarios', function (Blueprint $table) {
-            $table->uuid('tipo_modalidade_id')->nullable(false)->change();
+            $table->uuid('tipo_modalidade_id')->nullable(true)->change();
         });
 
         Schema::dropIfExists($backupTable);

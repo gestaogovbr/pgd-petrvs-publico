@@ -93,18 +93,22 @@
                 "inject": false
               },
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/@govbr-ds/core/dist/core-tokens.min.css",
+              "./node_modules/@govbr-ds/core/dist/core.min.css",
               "./node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/regular.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/solid.scss",
               "./node_modules/@fortawesome/fontawesome-free/scss/brands.scss",
               "./node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "src/styles.scss",
-              "./node_modules/bootstrap-icons/font/bootstrap-icons.css"
+              "./node_modules/bootstrap-icons/font/bootstrap-icons.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css"
               
             ],
             "scripts": [
               "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
-              "./node_modules/@fortawesome/fontawesome-free/js/all.min.js"
+              "./node_modules/@fortawesome/fontawesome-free/js/all.min.js",
+              "./node_modules/@govbr-ds/core/dist/core.min.js"
             ]
           },
           "configurations": {
@@ -121,14 +125,14 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "50kb",
-                  "maximumError": "50kb"
+                  "maximumWarning": "1000kb",
+                  "maximumError": "1000kb"
                 }
               ]
             },
             "dev": {
               "optimization": false,
-              "sourceMap": true
+              "sourceMap": false
             }
           }
         },

@@ -25,6 +25,7 @@ abstract class AbstractEloquentWriteRepository
     {
         /** @var TModel $model */
         $model = $this->model->newInstance($attributes);
+        $model->fill($attributes);
         $model->save();
 
         return $model;

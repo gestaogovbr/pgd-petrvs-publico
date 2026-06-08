@@ -3,37 +3,48 @@ namespace App\Services\API_PGD;
 
 use App\Exceptions\ExportPgdException;
 use App\Exceptions\LogError;
+use App\Exceptions\TokenPgdException;
+use App\Jobs\Envio\Resources\ParticipanteResource;
+use App\Jobs\Envio\Resources\PlanoEntregaResource;
+use App\Jobs\Envio\Resources\PlanoTrabalhoResource;
 use App\Models\Tenant;
-use Illuminate\Http\Client\RequestException;
+use App\Services\API_PGD\Types\ParticipantePgdType;
+use Exception;
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
-use Exception;
+use App\Repository\TenantRepository;
 
 class PgdService
 {
     CONST TIMEOUT = 35;
+    const DURACAO_TOKEN_PGD = 60*10; // 10 minutos
     private mixed $logReponse = null;
     private ?\Exception $exception = null;
+    private TenantRepository $tenantRepository;
 
-    public function getHttpClient($tenantId, $url) : \Illuminate\Http\Client\PendingRequest
+    public function __construct()
     {
-        $token = $this->getToken($tenantId);
+        $this->tenantRepository = app(TenantRepository::class);
+    }
 
-        if (!$token) {
-            $token = $this->authenticate($tenantId);
-        }
+    public function getHttpClient($tenantId) : PendingRequest
+    {
+        $token = $this->authenticate($tenantId);
 
         $service = $this;
+
+        $tenant = $this->getTenant($tenantId);
 
         return Http::withOptions([
                 'verify'=> false,
                 'timeout'=> self::TIMEOUT,
                 //'debug' => true
             ])
-            ->baseUrl($url)
+            ->baseUrl($tenant->api_url)
             ->withHeader('User-Agent', 'Petrvs/'.config('app.version'))
             ->withToken($token)
             ->retry(2, 0,
@@ -44,6 +55,7 @@ class PgdService
                     }
 
                     Log::info('TIMEOUT DE TOKEN. Reobtendo...');
+                    $this->clearToken($tenantId);
                     $token = $this->authenticate($tenantId);
                     Log::info('Novo token obtido!');
 
@@ -56,16 +68,18 @@ class PgdService
             );
     }
 
-    public function enviarDados($tenantId, $url, $endpoint, $body) : bool
+    public function enviarDados($tenantId, $endpoint, $body) : bool
     {
         $this->exception = null;
 
         try {
-            $response = $this->getHttpClient($tenantId, $url)
+            $response = $this->getHttpClient($tenantId)
                 ->put($endpoint, $body);
 
             return $response->successful();
 
+        } catch(TokenPgdException $e) {
+            throw $e;
         } catch (RequestException $exception) {
             $response = $exception->response;
 
@@ -79,21 +93,15 @@ class PgdService
                 } else {
                     throw new ExportPgdException($data['detail']); //. ' Data: '.print_r($body, true));
                 }
-
             } else {
                 throw new ExportPgdException(
                     "Erro inesperado. Status: ".($response ? $response->status() : '').
-                    ". Msg: ".$exception->getMessage().
-                    ". URL: ".$endpoint.
-                    ". Data: ".print_r($body, true)
+                    ". Msg: ".$exception->getMessage()
                 );
             }
         } catch(\Throwable $exception) {
             throw new ExportPgdException(
-                "Erro inesperado.".
-                ". Msg: ".$exception->getMessage().
-                ". URL: ".$endpoint.
-                ". Data: ".print_r($body, true)
+                "Erro inesperado: ".$exception->getMessage()
             );
         }
     }
@@ -110,21 +118,28 @@ class PgdService
 
     public function authenticate(string $tenantId)
     {
-        $tenant = Tenant::find($tenantId);
+        $token = self::getToken($tenantId);
+
+        if ($token){
+            self::setToken($tenantId, $token);
+            return $token;
+        }
+
+        $tenant = $this->getTenant($tenantId);
 
         if (!$tenant['api_url']) {
             $errorMsg = 'Endereço URL da API PGD não definidos no Tenant '.$tenantId;
-            throw new ExportPgdException($errorMsg);
+            throw new TokenPgdException($errorMsg);
         }
 
         if (!$tenant['api_cod_unidade_autorizadora']) {
             $errorMsg = 'Unidade Autorizadora não definida no Tenant '.$tenantId;
-            throw new ExportPgdException($errorMsg);
+            throw new TokenPgdException($errorMsg);
         }
 
         if (!$tenant['api_username'] or !$tenant['api_password']) {
             $errorMsg = 'Usuário ou senha da API PGD não definidos no Tenant '.$tenantId;
-            throw new ExportPgdException($errorMsg);
+            throw new TokenPgdException($errorMsg);
         }
 
         try {
@@ -156,22 +171,73 @@ class PgdService
             $dados = $response->json();
             $token = $dados['access_token'];
 
-            $this->setToken($tenantId, $token);
+            self::setToken($tenantId, $token);
 
             return $token;
         } catch(\Throwable $e) {
             Log::error("Erro ao obter Token da API PGD: ".$e->getMessage());
             LogError::newError("Erro ao obter Token da API PGD: ");
-            throw $e;
+            throw new TokenPgdException("Erro ao obter Token da API PGD: ".$e->getMessage());
         }
     }
 
-    public function setToken($tenantId, $token) {
-        Cache::put("pgd_token_$tenantId", $token);
+    public function enviarParticipante($tenantId, ParticipanteResource $participante) : bool
+    {
+        $tenant = $this->getTenant($tenantId);
+        $body = (object) json_decode($participante->toJson(), true);
+        $body->cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
+
+        $url = "/organizacao/SIAPE/{$tenant->api_cod_unidade_autorizadora}/{$body->cod_unidade_lotacao}/participante/{$body->matricula_siape}";
+
+        return $this->enviarDados($tenantId, $url, $body);
     }
 
-    public function getToken($tenantId) {
+    public function enviarPlanoEntrega($tenantId, PlanoEntregaResource $planoEntrega) : bool
+    {
+        $tenant = $this->getTenant($tenantId);
+        $body = (object) json_decode($planoEntrega->toJson(), true);
+        $body->cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
+
+        $url = "/organizacao/SIAPE/{$tenant->api_cod_unidade_autorizadora}/plano_entregas/{$planoEntrega->id}";
+
+        return $this->enviarDados($tenantId, $url, $body);
+    }
+
+    public function enviarPlanoTrabalho($tenantId, PlanoTrabalhoResource $planoTrabalho) : bool
+    {
+        $tenant = $this->getTenant($tenantId);
+        $body = (object) json_decode($planoTrabalho->toJson(), true);
+        $body->cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
+
+        $url = "/organizacao/SIAPE/{$tenant->api_cod_unidade_autorizadora}/plano_trabalho/{$planoTrabalho->id}";
+
+        return $this->enviarDados($tenantId, $url, $body);
+    }
+
+    public function getTenant($tenantId) {
+        $tenant = $this->tenantRepository->findById($tenantId);
+
+        if (!$tenant) {
+            throw new ExportPgdException("Tenant inválido");
+        }
+
+        if (!$tenant->api_cod_unidade_autorizadora) {
+            throw new ExportPgdException("Unidade Autorizadora não definida no Tenant");
+        }
+
+        return $tenant;
+    }
+
+    public static function setToken($tenantId, $token) {
+        Cache::put("pgd_token_$tenantId", $token, self::DURACAO_TOKEN_PGD);
+    }
+
+    public static function getToken($tenantId) {
         return Cache::get("pgd_token_$tenantId", false);
+    }
+
+    public static function clearToken($tenantId) {
+        Cache::delete("pgd_token_$tenantId");
     }
 }
 

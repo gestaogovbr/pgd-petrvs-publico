@@ -91,9 +91,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return count($result) > 0 ? $result : null;
   }
 
-  /** 
+  /**
    * Retorna dados de atividades, atividades da consolidacao, ocorrencias, afastamentos e entregas do plano
-   * 
+   *
    * @param   string  $id       O ID da Consolidação do Plano de Trabalho.
    * @return  array
    */
@@ -111,7 +111,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     if ($consolidacaoData === null) {
       throw new \RuntimeException('Consolidação não encontrada para o ID informado');
     }
-    
+
     return [
       'programa' => $consolidacaoData->programa,
       'planoTrabalho' => $consolidacaoData->planoTrabalho,
@@ -125,9 +125,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     ];
   }
 
-  /** 
+  /**
    * Reconstroi o Afastameto para ter a aparência de quando a consolidação foi concluída
-   * 
+   *
    * @param   array  $afastamento         Afastamento (Array) que se deseja atualizar
    * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
@@ -147,9 +147,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return $afastamento;
   }
 
-  /** 
+  /**
    * Reconstroi a Ocorrencia para ter a aparência de quando a consolidação foi concluída
-   * 
+   *
    * @param   array  $ocorrencia          Ocorrencia (Array) que se deseja atualizar
    * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
@@ -169,9 +169,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return $ocorrencia;
   }
 
-  /** 
+  /**
    * Reconstroi a Atividade para ter a aparência de quando a consolidação foi concluída
-   * 
+   *
    * @param   array  $atividade          Atividade (Array) que se deseja atualizar
    * @param   PlanoTrabalhoConsolidacao  $consolidacao Consolidacao
    * @return  array
@@ -234,9 +234,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return $atividade;
   }
 
-  /** 
+  /**
    * Conclui o período de consolidacao
-   * 
+   *
    * @param   string  $id       O ID da Consolidação do Plano de Trabalho.
    * @return  array
    */
@@ -296,9 +296,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     }
   }
 
-  /** 
+  /**
    * Cancela a conclusão do período de consolidacao
-   * 
+   *
    * @param   string  $id       O ID da Consolidação do Plano de Trabalho.
    * @return  array
    */
@@ -329,9 +329,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     }
   }
 
-  /** 
+  /**
    * Consolidação imediatamente anterior a consolidação passada
-   * 
+   *
    * @param   string  $consolidacaoId       O ID da Consolidação
    * @return  PlanoTrabalhoConsolidacao | null
    */
@@ -341,9 +341,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return PlanoTrabalhoConsolidacao::where("plano_trabalho_id", $consolidacao->plano_trabalho_id)->where("data_inicio", "<", $consolidacao->data_inicio)->orderBy("data_inicio", "DESC")->first();
   }
 
-  /** 
+  /**
    * Consolidação imediatamente posterior a consolidação passada
-   * 
+   *
    * @param   string  $consolidacaoId       O ID da Consolidação
    * @return  PlanoTrabalhoConsolidacao | null
    */
@@ -353,9 +353,9 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
     return PlanoTrabalhoConsolidacao::where("plano_trabalho_id", $consolidacao->plano_trabalho_id)->where("data_fim", ">", $consolidacao->data_fim)->orderBy("data_fim", "ASC")->first();
   }
 
-  /** 
+  /**
    * Completa o processo de avaliação para a consolidação
-   * 
+   *
    * @param   Avaliacao  $avaliacao Avaliacao
    * @return  void
    */
@@ -378,7 +378,7 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
 
   /**
    * Retorna as consolidações pendentes do usuário
-   * 
+   *
    * @param   string  $usuarioId  ID do usuário
    * @return  array
    */
@@ -427,10 +427,44 @@ class PlanoTrabalhoConsolidacaoService extends ServiceBase
   }
 
   /**
+   * Retorna consolidações avaliadas com nota reprovativa dentro do prazo de recurso (10 dias)
+   *
+   * @param   string  $usuarioId  ID do usuário
+   * @return  array
+   */
+  public function pendenciasRecursoUsuario(string $usuarioId): array
+  {
+    $prazoDias = 10;
+
+    $consolidacoes = $this->consolidacaoRepository
+        ->findAvaliadasComPrazoRecurso($usuarioId, $prazoDias);
+
+    return $consolidacoes->map(fn (PlanoTrabalhoConsolidacao $c) => [
+        'id' => $c->id,
+        'data_inicio' => $c->data_inicio,
+        'data_fim' => $c->data_fim,
+        'data_avaliacao' => $c->avaliacoes->first()->data_avaliacao,
+        'data_limite_recurso' => \Carbon\Carbon::parse($c->avaliacoes->first()->data_avaliacao)
+            ->addDays($prazoDias)->toDateString(),
+        'dias_restantes' => max(0, (int) now()->diffInDays(
+            \Carbon\Carbon::parse($c->avaliacoes->first()->data_avaliacao)->addDays($prazoDias),
+            false
+        )),
+        'nota' => $c->avaliacoes->first()->tipoAvaliacaoNota?->descricao,
+        'plano_trabalho' => [
+            'id' => $c->planoTrabalho->id,
+            'numero' => $c->planoTrabalho->numero,
+            'programa' => $c->planoTrabalho->programa->nome,
+            'unidade' => $c->planoTrabalho->unidade->nome,
+        ],
+    ])->values()->toArray();
+  }
+
+  /**
    * Detecta inconsistências em consolidações concluídas ou avaliadas
    * onde entregas do plano de trabalho não possuem atividades associadas
-   * 
-   * Utiliza as tabelas de snapshot (PlanoTrabalhoConsolidacaoAtividade) para 
+   *
+   * Utiliza as tabelas de snapshot (PlanoTrabalhoConsolidacaoAtividade) para
    * verificar as atividades que existiam no momento da conclusão da consolidação
    */
   public function detectarInconsistencias($usuario_id = null)

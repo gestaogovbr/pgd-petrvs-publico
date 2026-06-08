@@ -19,14 +19,18 @@ export class ButtonDashboardComponent  extends ComponentBase implements OnInit {
   @Input() title: string = "";
   @Input() textColor: string = "#ddd";
   @Input() borderColor: string = "#000";
+  /** Classes Bootstrap Icons (ex.: `bi bi-person`). Se preenchido, o ícone SVG de `imgIcon` não é usado. */
+  @Input() iconClass = '';
   @Input() route?: FullRoute;
   @Input() metadata?: RouteMetadata;
   @Input() externalLink: boolean = false;
 
   @Input() set imgIcon(value: any) {
-    if(this._imgIcon != value) {
+    if (this._imgIcon !== value) {
       this._imgIcon = value;
-      this.loadSvg();
+      if (value && !this.iconClass) {
+        this.loadSvg();
+      }
     }
   }
   get imgIcon(): any {
@@ -46,7 +50,10 @@ export class ButtonDashboardComponent  extends ComponentBase implements OnInit {
 
   ngOnInit(): void {}
 
-  async loadSvg(){
+  async loadSvg(): Promise<void> {
+    if (!this.imgIcon || this.iconClass) {
+      return;
+    }
     this.seuCodigoSvg$ = await this.server.getSvg(this.imgIcon);
   }
 
