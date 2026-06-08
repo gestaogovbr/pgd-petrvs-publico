@@ -147,7 +147,8 @@ class SipecService
     public function buscarUnidade(string $codUorg): ?array
     {
         $token = $this->getToken();
-        $url   = $this->url . '/unidades?' . http_build_query(['codUorg' => $codUorg]);
+        // codOrgao
+        $url   = $this->url . '/api-sipec/v1/unidades?' . http_build_query(['codUorg' => $codUorg]);
 
         try {
             $data    = $this->executarGet($url, $token);
