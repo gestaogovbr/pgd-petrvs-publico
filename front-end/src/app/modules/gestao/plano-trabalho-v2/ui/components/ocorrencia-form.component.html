@@ -1,0 +1,41 @@
+<div class="br-card mb-2 p-2x" [formGroup]="fg">
+  <div class="row g-2">
+    <div class="col-md-5">
+      <br-select label="Motivo *" formControlName="tipo_motivo_afastamento_id" [options]="tiposOptions" />
+    </div>
+   
+    <div class="col-md-2">
+      <div class="br-input">
+        <label>Início <span class="text-danger">*</span></label>
+        <input type="date" formControlName="data_inicio" />
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="br-input">
+        <label>Fim <span class="text-danger">*</span></label>
+        <input type="date" formControlName="data_fim" />
+      </div>
+    </div>
+   
+    @if (tipoSelecionadoUsaHoras) {
+      <div class="col-md-2">
+        <div class="br-input">
+          <label>Horas <span class="text-danger">*</span></label>
+          <input type="number" min="1" formControlName="horas" />
+        </div>
+      </div>
+    }
+    <div class="col-md-12">
+      <div class="br-textarea">
+        <label>Observações <span class="text-danger">*</span></label>
+        <textarea rows="2" formControlName="observacoes" placeholder="Descreva a ocorrência..."></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-end gap-2 mt-2">
+    <br-button emphasis="secondary" density="small" [disabled]="salvando" (click)="cancelar.emit()">Cancelar</br-button>
+    <br-button emphasis="primary" density="small" [disabled]="salvando || fg.invalid" (click)="onConfirmar()">
+      {{ salvando ? 'Salvando...' : 'Confirmar' }}
+    </br-button>
+  </div>
+</div>

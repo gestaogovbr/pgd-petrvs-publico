@@ -13,11 +13,13 @@ use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
 use App\Models\Usuario;
+use App\Services\NivelAcessoService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 
 class ProcessaDadosSiapeBD
 {
@@ -115,6 +117,7 @@ class ProcessaDadosSiapeBD
             $dadosFuncionais = $xmlResponse->xpath('//tipo:DadosFuncionais');
             $dadosFuncionaisArray = $this->decideDadosFuncionais($dadosFuncionais);
             $this->processaMultiplasMatriculasInativas($cpf, $dadosFuncionaisArray, $dadosFuncionaisOrigem);
+            $this->reativarServidoresEncontradosNoSiape($cpf, $dadosFuncionaisArray);
 
             return $dadosFuncionaisArray;
         } catch (Exception $e) {
@@ -197,12 +200,95 @@ class ProcessaDadosSiapeBD
 
     private function ativarMatricula(Usuario $usuario): void
     {
-        SiapeBlackListServidor::where('matricula', $usuario->matricula)->delete();
+        SiapeBlackListServidor::where('cpf', $usuario->cpf)
+            ->where('matricula', $usuario->matricula)
+            ->forceDelete();
         $usuario->update([
             'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
             'data_ativacao_temporaria' => null,
             'justicativa_ativacao_temporaria' => null,
         ]);
+
+        $perfilParticipanteId = $this->obterPerfilParticipanteParaUsuarioReativado($usuario);
+        if (!empty($perfilParticipanteId)) {
+            $atributos['perfil_id'] = $perfilParticipanteId;
+        }
+
+        $usuario->update($atributos);
+    }
+
+    private function reativarServidoresEncontradosNoSiape(string $cpf, array $dadosFuncionaisArray): void
+    {
+        $matriculasAtivas = $this->obterMatriculasAtivas($dadosFuncionaisArray);
+
+        SiapeBlackListServidor::where('cpf', $cpf)
+            ->whereNull('matricula')
+            ->forceDelete();
+
+        if (empty($matriculasAtivas)) {
+            return;
+        }
+
+        $blacklistsRemovidas = SiapeBlackListServidor::where('cpf', $cpf)
+            ->whereIn('matricula', $matriculasAtivas)
+            ->forceDelete();
+
+        $perfisAtualizados = $this->atualizarPerfilConsultaParaParticipante($cpf, $matriculasAtivas);
+
+        $usuariosReativados = Usuario::where('cpf', $cpf)
+            ->whereIn('matricula', $matriculasAtivas)
+            ->update([
+                'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
+                'data_ativacao_temporaria' => null,
+                'justicativa_ativacao_temporaria' => null,
+            ]);
+
+        if ($blacklistsRemovidas > 0 || $usuariosReativados > 0) {
+            SiapeLog::info(sprintf("CPF:#%s reativado por retorno em dados funcionais:", $cpf), [
+                'matriculas_ativas' => $matriculasAtivas,
+                'blacklists_removidas' => $blacklistsRemovidas,
+                'usuarios_reativados' => $usuariosReativados,
+                'perfis_atualizados' => $perfisAtualizados,
+            ]);
+        }
+    }
+
+    private function atualizarPerfilConsultaParaParticipante(string $cpf, array $matriculasAtivas): int
+    {
+        $perfilConsulta = NivelAcessoService::getPerfilConsulta();
+        $perfilParticipante = NivelAcessoService::getPerfilParticipante();
+
+        if (empty($perfilConsulta) || empty($perfilParticipante)) {
+            return 0;
+        }
+
+        return Usuario::where('cpf', $cpf)
+            ->whereIn('matricula', $matriculasAtivas)
+            ->where('perfil_id', $perfilConsulta->id)
+            ->whereIn('situacao_siape', [
+                UsuarioSituacaoSiape::INATIVO->value,
+                UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value,
+            ])
+            ->update(['perfil_id' => $perfilParticipante->id]);
+    }
+
+    private function obterPerfilParticipanteParaUsuarioReativado(Usuario $usuario): ?string
+    {
+        if (!in_array($usuario->situacao_siape, [
+            UsuarioSituacaoSiape::INATIVO->value,
+            UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value,
+        ], true)) {
+            return null;
+        }
+
+        $perfilConsulta = NivelAcessoService::getPerfilConsulta();
+        $perfilParticipante = NivelAcessoService::getPerfilParticipante();
+
+        if (empty($perfilConsulta) || empty($perfilParticipante) || $usuario->perfil_id !== $perfilConsulta->id) {
+            return null;
+        }
+
+        return $perfilParticipante->id;
     }
 
     private function adicionarBlacklistSeElegivel(string $cpf, Usuario $usuario, $dadosFuncionais): void
@@ -250,6 +336,8 @@ class ProcessaDadosSiapeBD
                 SiapeLog::error('Retorno nulo do array: ', [$dadosUnidades->response]);
                 continue;
             }
+
+            app(SiapeUnidadeLifecycleService::class)->reativarUnidadeEncontradaNoSiape((string) $dadosUnidades->codigo);
 
             $dadosUorgArray[] = [
                 'data_modificacao' => $dadosUnidades->data_modificacao,

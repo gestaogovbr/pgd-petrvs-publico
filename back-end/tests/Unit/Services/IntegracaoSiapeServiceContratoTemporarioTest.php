@@ -37,7 +37,7 @@ describe('IntegracaoSiapeService - processarContratoTemporario (private)', funct
         $method->setAccessible(true);
 
         $dados = [
-            'codSitFuncional' => IntegracaoSiapeService::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO,
+            'codSitFuncional' => IntegracaoSiapeService::SITUACOES_FUNCIONAIS_CONTRATO_TEMPORARIO[3],
             'siglaUorgLotacao' => '   '
         ];
 
@@ -53,7 +53,7 @@ describe('IntegracaoSiapeService - processarContratoTemporario (private)', funct
         $method->setAccessible(true);
 
         $dados = [
-            'codSitFuncional' => IntegracaoSiapeService::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO,
+            'codSitFuncional' => IntegracaoSiapeService::SITUACOES_FUNCIONAIS_CONTRATO_TEMPORARIO[3],
             'siglaUorgLotacao' => '   ',
             'codUorgExercicio' => '123',
         ];
@@ -74,7 +74,7 @@ describe('IntegracaoSiapeService - processarContratoTemporario (private)', funct
         $method->setAccessible(true);
 
         $dados = [
-            'codSitFuncional' => IntegracaoSiapeService::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO,
+            'codSitFuncional' => IntegracaoSiapeService::SITUACOES_FUNCIONAIS_CONTRATO_TEMPORARIO[3],
             'siglaUorgLotacao' => 'ABC'
         ];
 
@@ -95,7 +95,7 @@ describe('IntegracaoSiapeService - processarContratoTemporario (private)', funct
         $method->setAccessible(true);
 
         $dados = [
-            'codSitFuncional' => IntegracaoSiapeService::SITUACAO_FUNCIONAL_CONTRATO_TEMPORARIO,
+            'codSitFuncional' => IntegracaoSiapeService::SITUACOES_FUNCIONAIS_CONTRATO_TEMPORARIO[3],
             'siglaUorgLotacao' => 'DEF'
         ];
 

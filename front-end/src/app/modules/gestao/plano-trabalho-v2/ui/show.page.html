@@ -1,0 +1,440 @@
+<div class="container-fluid py-3 govbr-v2">
+  <app-breadcrumb />
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+      <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+    </div>
+  } @else if (error()) {
+    <div class="br-message danger">
+      <div class="icon"><i class="fas fa-times-circle fa-lg" aria-label="erro"></i></div>
+      <div class="message-body">{{ error() }}</div>
+    </div>
+  } @else {
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">Plano de Trabalho #{{ planoTrabalho()?.numero }}</h2>
+      <div class="flex-shrink-0 gap-3">
+        <br-button (click)="voltar()" class="mr-2">Voltar</br-button>
+        @if (policy.podeAssinar(planoTrabalho()!) || policy.podeVerTcr(planoTrabalho()!)) {
+          <br-button class="mr-2" emphasis="secondary" (click)="irParaTcr()" title="Ver TCR" ariaLabel="Ver Termo de Compromisso e Responsabilidade">
+            <i class="fas fa-file-signature mr-1"></i>TCR
+          </br-button>
+        }
+        @if (policy.podeEditar(planoTrabalho()!)) {
+          <br-button class="mr-2"emphasis="primary" (click)="editarPlano()" title="Editar plano" ariaLabel="Editar plano">
+            <i class="fas fa-edit mr-1"></i>Editar
+          </br-button>
+        }
+        @if (policy.podeArquivar(planoTrabalho()!)) {
+          <br-button emphasis="secondary" (click)="arquivarPlano()" title="Arquivar plano" ariaLabel="Arquivar plano">
+            <i class="fas fa-archive mr-1"></i>Arquivar
+          </br-button>
+        }
+        @if (policy.podeEncerrar(planoTrabalho()!)) {
+          <br-button emphasis="secondary" (click)="encerrarPlano()" title="Encerrar plano" ariaLabel="Encerrar plano antecipadamente">
+            <i class="fas fa-stop-circle mr-1"></i>Encerrar
+          </br-button>
+        }
+
+
+      </div>
+    </div>
+
+    <!-- Informações gerais -->
+    <div class="br-card mb-4">
+      <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Informações gerais</div>
+      <div class="card-content">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <p class="mb-1 text-weight-semi-bold text-up-01">Agente Público</p>
+            <p class="mb-0">{{ planoTrabalho()?.usuario?.nome || '-' }}</p>
+          </div>
+          <div class="col-md-4 mb-3">
+            <p class="mb-1 text-weight-semi-bold text-up-01">Unidade</p>
+            <p class="mb-0">{{ planoTrabalho()?.unidade?.sigla || '-' }}</p>
+          </div>
+          <div class="col-md-4 mb-3">
+            <p class="mb-1 text-weight-semi-bold text-up-01">Regramento de Instituição PGD</p>
+            <p class="mb-0">{{ planoTrabalho()?.programa?.nome || '-' }}</p>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-3 mb-3">
+            <p class="mb-1 text-weight-semi-bold text-up-01">Início</p>
+            <p class="mb-0">{{ planoTrabalho()?.data_inicio | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p class="mb-1 text-weight-semi-bold text-up-01">Final</p>
+            <p class="mb-0">{{ planoTrabalho()?.data_fim | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p class="mb-1 text-weight-semi-bold text-up-01">Modalidade</p>
+            <p class="mb-0">{{ planoTrabalho()?.modalidade_pgd_label || '-' }}</p>
+          </div>
+          <div class="col-md-3 mb-3">
+            <p class="mb-1 text-weight-semi-bold text-up-01">Status</p>
+            <p class="mb-0">{{ statusLabel(assinatura.plano()?.status || planoTrabalho()?.status) }}</p>
+          </div>
+        </div>
+        @if (planoTrabalho()?.justificativa_modalidade) {
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa da divergência da modalidade</p>
+              <p class="mb-0">{{ planoTrabalho()?.justificativa_modalidade }}</p>
+            </div>
+          </div>
+        }
+        @if (planoTrabalho()?.justificativa) {
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa da carga horária</p>
+              <p class="mb-0">{{ planoTrabalho()?.justificativa }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Planejamento -->
+    <div class="br-card mb-4">
+      <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Planejamento</div>
+      <div class="card-content">
+        <div class="br-table">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Plano de Entrega</th>
+                  <th scope="col">Entrega</th>
+                  <th scope="col">% CHD</th>
+                  <th scope="col">Trabalho Planejado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (entrega of planoTrabalho()?.entregas; track entrega.id) {
+                  <tr>
+                    <td>{{ getPlanoEntregaInfo(entrega).plano }}</td>
+                    <td>{{ getPlanoEntregaInfo(entrega).entrega }}</td>
+                    <td>{{ entrega.forca_trabalho ? entrega.forca_trabalho + '%' : '-' }}</td>
+                    <td>{{ entrega.descricao }}</td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="4" class="text-center p-3">Nenhuma entrega cadastrada no planejamento</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Execução -->
+    @if (podeVisualizarConsolidacoes()) {
+      <div class="br-card mb-4">
+        <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Registros de Execução</div>
+
+        <div class="card-content">
+          @for (consolidacao of facade.consolidacoes(); track consolidacao.id) {
+            <div class="br-card mb-4">
+              <br-collapse [open]="$index == 0">
+                <div slot="trigger" class="d-flex justify-content-between align-items-center w-100 pe-2">
+                  <span class="text-weight-semi-bold">
+                    Período Avaliativo: {{ consolidacao.data_inicio | date:'dd/MM/yyyy' }} à {{ consolidacao.data_fim | date:'dd/MM/yyyy' }}
+                  </span>
+                  <span>
+                    Status do Período:
+                    <br-tag shape="rounded" density="small" [label]="statusConsolidacaoDisplay(consolidacao)"></br-tag>
+                  </span>
+                </div>
+                <div class="card-content">
+                  <p class="text-weight-semi-bold mb-3">Detalhamentos</p>
+                  <div class="br-table">
+                    <div class="table-wrap">
+                      <table style="table-layout: fixed; width: 100%;">
+                        <colgroup>
+                          @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
+                          <col style="width: 27%">
+                          <col style="width: 27%">
+                          <col style="width: 27%">
+                          <col style="width: 19%">
+                        } @else {
+                          <col style="width: 33%">
+                          <col style="width: 33%">
+                          <col style="width: 33%">
+                        }
+                          </colgroup>
+                          <thead>
+                            <tr>
+                              <th scope="col">Entrega</th>
+                              <th scope="col">Trabalho Planejado</th>
+                              <th scope="col">Trabalho Executado</th>
+                              @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) { <th scope="col"></th> }
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (entrega of planoTrabalho()?.entregas; track entrega.id) {
+                              @let atividade = facade.getAtividade(consolidacao, entrega.id);
+                              @let editando = facade.estaEditando(consolidacao.id, entrega.id);
+                              <tr>
+                                <td>
+                                  {{ getPlanoEntregaInfo(entrega).entrega }}
+                                  <br />
+                                  <small class="text-muted">{{ getPlanoEntregaInfo(entrega).plano }}</small>
+                                </td>
+                                <td><span class="white-space">{{ entrega.descricao || '-' }}</span></td>
+                                <td>
+                                  @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
+                                    @if (editando || !atividade) {
+                                      <br-textarea
+                                        show-counter
+                                        class="w-100"
+                                        [maxlength]="1500"
+                                        [value]="facade.getTexto(consolidacao.id, entrega.id)"
+                                        (input)="facade.setTexto(consolidacao.id, entrega.id, $any($event.target).value)"
+                                        placeholder="Descreva o trabalho executado..."
+                                      ></br-textarea>
+                                    } @else {
+                                      <span class="white-space">{{ atividade.descricao }}</span>
+                                    }
+                                  } @else {
+                                    <span class="white-space">{{ atividade?.descricao || '-' }}</span>
+                                  }
+                                </td>
+                                @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
+                                  <td class="text-nowrap">
+                                    @if (editando || !atividade) {
+                                      <div class="d-flex gap-1">
+                                        <br-button
+                                          emphasis="primary"
+                                          density="small"
+                                          (click)="facade.confirmarAtividade(consolidacao, entrega)"
+                                          [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id) || !facade.getTexto(consolidacao.id, entrega.id).trim()"
+                                        >Confirmar</br-button>
+                                        <br-button
+                                          emphasis="secondary"
+                                          density="small"
+                                          (click)="facade.cancelarEdicao(consolidacao.id, entrega.id, atividade)"
+                                          [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id)"
+                                        >Cancelar</br-button>
+                                      </div>
+                                    } @else {
+                                      <div class="d-flex gap-1">
+                                        <br-button
+                                          emphasis="secondary"
+                                          density="small"
+                                          (click)="facade.iniciarEdicao(consolidacao.id, entrega.id, atividade.descricao)"
+                                        >Editar</br-button>
+                                        <br-button
+                                          class="text-danger"
+                                          emphasis="secondary"
+                                          density="small"
+                                          (click)="facade.excluirAtividade(consolidacao, entrega)"
+                                        >Excluir</br-button>
+                                      </div>
+                                    }
+                                  </td>
+                                }
+                              </tr>
+                            } @empty {
+                              <tr>
+                                <td [attr.colspan]="consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao) ? 4 : 3" class="text-center p-3">Nenhuma entrega cadastrada no planejamento.</td>
+                              </tr>
+                            }
+                          </tbody>
+                          </table>
+                    </div>
+                  </div>
+                  <app-consolidacao-ocorrencias
+                    [consolidacao]="consolidacao"
+                    [planoTrabalho]="planoTrabalho()!"
+                  />
+
+                @if (podeConcluirConsolidacao(consolidacao)) {
+                  <div class="card-footer d-flex justify-content-end p-2x">
+                    <br-button emphasis="primary" (click)="facade.concluirConsolidacao(consolidacao)">
+                      Finalizar Registro
+                    </br-button>
+                  </div>
+                }
+                @if (podeReabrirConsolidacao(consolidacao)) {
+                  @if (facade.reabrindoId() === consolidacao.id) {
+                    <div class="card-footer p-2x">
+                      <br-textarea
+                        label="Justificativa para reabertura *"
+                        show-counter
+                        class="w-100 mb-2"
+                        [maxlength]="500"
+                        [rows]="3"
+                        placeholder="Informe o motivo da reabertura..."
+                        [value]="facade.justificativaReabrir()"
+                        (input)="facade.justificativaReabrir.set($any($event.target).value)"
+                      ></br-textarea>
+                      <div class="d-flex justify-content-end gap-2">
+                        <br-button emphasis="secondary" (click)="facade.cancelarReabertura()">Cancelar</br-button>
+                        <br-button
+                          emphasis="primary"
+                          [disabled]="!facade.justificativaReabrir().trim()"
+                          (click)="facade.confirmarReabertura(consolidacao)"
+                        >Confirmar Reabertura</br-button>
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="card-footer d-flex justify-content-end p-2x">
+                      <br-button emphasis="secondary" (click)="facade.iniciarReabertura(consolidacao)">
+                        Reabrir Registro
+                      </br-button>
+                    </div>
+                  }
+                }
+                  <app-consolidacao-avaliacoes
+                    [consolidacao]="consolidacao"
+                    [planoTrabalho]="planoTrabalho()!"
+                    [isGestorHierarquia]="isGestorHierarquia()"
+                  />
+
+
+                </div>
+              </br-collapse>
+            </div>
+          } @empty {
+            <br-message info>
+              <div class="icon"><i class="fas fa-exclamation-triangle fa-lg" aria-label="aviso"></i></div>
+              <div class="message-body">Nenhum período avaliativo registrado para este plano de trabalho.</div>
+            </br-message>
+          }
+        </div>
+      </div>
+    }
+    <!-- Assinaturas -->
+    @if (assinatura.documento() || policy.podeAssinar(planoTrabalho()!)) {
+      <div id="assinaturas" class="br-card mb-4">
+        <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Assinaturas</div>
+        <div class="card-content">
+          @if (assinatura.documento()?.assinaturas?.length) {
+            <div class="br-table mb-4">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Usuário</th>
+                      <th scope="col">Data</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (a of assinatura.documento()?.assinaturas; track a.id) {
+                      <tr>
+                        <td>{{ a.usuario_nome || '-' }}</td>
+                        <td>{{ a.data_assinatura | date:'dd/MM/yyyy HH:mm' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          } @else {
+            <p class="text-body-secondary mb-4">Nenhuma assinatura registrada.</p>
+          }
+
+          <div class="d-flex gap-2">
+            @if (!assinatura.jaAssinou() && policy.podeAssinar(planoTrabalho()!)) {
+              <br-button emphasis="primary" (click)="assinatura.abrirConfirmacaoAssinatura()" [disabled]="assinatura.salvando()">
+                <i class="fas fa-pen-fancy mr-1"></i>Assinar
+              </br-button>
+            } @else if (assinatura.podeCancelarAssinatura()) {
+              <br-button emphasis="secondary" (click)="assinatura.abrirConfirmacaoCancelamento()" [disabled]="assinatura.salvando()">
+                <i class="fas fa-ban mr-1"></i>Cancelar Assinatura
+              </br-button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>
+
+<br-scrim [isOpen]="assinatura.confirmandoGeracaoTCR()" [disableCloseOnClick]="true">
+  <br-modal [show]="assinatura.confirmandoGeracaoTCR()" titleText="Justificativa Carga Horária" size="medium" alignFooter="end" (brModalBeforeClose)="assinatura.confirmandoGeracaoTCR.set(false)">
+    <div class="p-3">
+      <p>A carga horária total é de {{ assinatura.totalCHD() }}%. Informe a justificativa para prosseguir.</p>
+      <br-textarea
+        class="mt-3 w-100"
+        label="Justificativa *"
+        show-counter
+        [maxlength]="500"
+        [rows]="3"
+        placeholder="Descreva a justificativa..."
+        [value]="assinatura.justificativaCHD()"
+        (input)="assinatura.justificativaCHD.set($any($event.target).value)"
+      ></br-textarea>
+    </div>
+    <div slot="footer">
+      <br-button class="mx-1" emphasis="secondary" (click)="assinatura.confirmandoGeracaoTCR.set(false)">Cancelar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="assinatura.confirmarGeracaoTCR()" [disabled]="!assinatura.justificativaCHD().trim()">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
+
+<br-scrim [isOpen]="assinatura.confirmandoAssinatura()" [disableCloseOnClick]="true">
+  <br-modal [show]="assinatura.confirmandoAssinatura()" titleText="Confirmar Assinatura" size="medium" alignFooter="end" (brModalBeforeClose)="assinatura.confirmandoAssinatura.set(false)">
+    <div class="p-3">
+      <p>{{ assinatura.mensagemConfirmacao }}</p>
+    </div>
+    <div slot="footer">
+      <br-button class="mx-1" emphasis="secondary" (click)="assinatura.confirmandoAssinatura.set(false)">Cancelar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="assinatura.confirmarAssinatura()">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
+
+<br-scrim [isOpen]="assinatura.confirmandoCancelamento()" [disableCloseOnClick]="true">
+  <br-modal [show]="assinatura.confirmandoCancelamento()" titleText="Cancelar Assinatura" size="medium" alignFooter="end" (brModalBeforeClose)="assinatura.confirmandoCancelamento.set(false)">
+    <div class="p-3">
+      <p>Ao cancelar a assinatura, o Plano de Trabalho retornará ao status de rascunho. Deseja confirmar?</p>
+    </div>
+    <div slot="footer">
+      <br-button class="mx-1" emphasis="secondary" (click)="assinatura.confirmandoCancelamento.set(false)">Voltar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="assinatura.confirmarCancelamentoAssinatura()">Confirmar cancelamento</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
+
+<br-scrim [isOpen]="encerrando()" [disableCloseOnClick]="true">
+  <br-modal [show]="encerrando()" titleText="Encerrar Plano de Trabalho" size="medium" alignFooter="end" (brModalBeforeClose)="cancelarEncerramento()">
+    <div class="p-3">
+      <div class="br-message warning mb-3" role="alert">
+        <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="content">Ao encerrar este Plano de Trabalho, ele será válido apenas até a data de hoje, preservando os registros e avaliações já realizados. Esta ação é definitiva e não poderá ser desfeita. Deseja confirmar?</div>
+      </div>
+      <p class="mb-3">Informe o motivo do encerramento antecipado.</p>
+      <br-textarea
+        label="Justificativa *"
+        show-counter
+        class="w-100"
+        [maxlength]="500"
+        [rows]="4"
+        placeholder="Descreva o motivo do encerramento..."
+        [value]="justificativaEncerramento()"
+        (input)="justificativaEncerramento.set($any($event.target).value)"
+      ></br-textarea>
+    </div>
+    <div slot="footer">
+      <br-button class="mx-1" emphasis="secondary" (click)="cancelarEncerramento()">Voltar</br-button>
+      <br-button class="mx-1" emphasis="primary" [disabled]="!justificativaEncerramento().trim()" (click)="confirmarEncerramento()">Confirmar encerramento</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
+
+<br-scrim [isOpen]="!!facade.confirmacaoPendente()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!facade.confirmacaoPendente()" [titleText]="facade.confirmacaoPendente()?.titulo || ''" size="small" alignFooter="end" (brModalBeforeClose)="facade.confirmacaoPendente.set(null)">
+    <div class="p-3">
+      <p>{{ facade.confirmacaoPendente()?.mensagem }}</p>
+    </div>
+    <div slot="footer">
+      <br-button class="mx-1" emphasis="secondary" (click)="facade.confirmacaoPendente.set(null)">Cancelar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="facade.confirmacaoPendente()?.onConfirmar(); facade.confirmacaoPendente.set(null)">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>

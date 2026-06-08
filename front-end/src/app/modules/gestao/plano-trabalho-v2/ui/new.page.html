@@ -1,0 +1,130 @@
+<div class="container-fluid py-3 govbr-v2">
+  <app-breadcrumb />
+  <h2 class="mb-0">Novo Plano de Trabalho</h2>
+
+  <div class="br-card">
+    <div class="card-header text-weight-semi-bold text-up-02 p-2x bg-gray-10">
+      Informações gerais
+    </div>
+    <div class="card-content">
+      <form [formGroup]="form">
+          @if (erroAgentePublico()) {
+            <div class="row">
+              <div class="col-12 mb-3">
+                <span class="feedback warning" role="alert">
+                  <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                  {{ erroAgentePublico() }}
+                </span>
+              </div>
+            </div>
+          }
+          <div class="row">
+            <div class="col-md-4 mb-3 position-relative">
+              <div class="d-flex align-items-end gap-2">
+                <div class="br-input flex-grow-1">
+                  <label>Agente Público</label>
+                  <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" [readonly]="agentePublicoSomenteLeitura()" />
+                </div>
+                @if (!agentePublicoSomenteLeitura()) {
+                  <br-button emphasis="secondary" type="button" (click)="limparUsuarioSelecionado()" [disabled]="saving()">Limpar</br-button>
+                }
+              </div>
+              @if (sugestoesUsuarios().length > 0) {
+                <div class="br-card position-absolute w-100" style="z-index: 1050;">
+                  @for (u of sugestoesUsuarios(); track u.id) {
+                    <div class="card-content d-flex justify-content-between align-items-center px-2 py-1">
+                      <div class="text-truncate">
+                        {{ u.nome }} @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
+                      </div>
+                      <br-button emphasis="secondary" type="button" (click)="selecionarUsuario(u)">Selecionar</br-button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <br-select label="Unidade" formControlName="unidade_id" [options]="unidadesOptions()" />
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <div class="br-input">
+                <label>Regramento de Instituição PGD</label>
+                <input type="text" readonly [value]="programaNome()" />                
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-md-3 mb-3">
+              <div class="br-input">
+                <label>Início</label>
+                <input type="date" formControlName="data_inicio" />
+              </div>
+            </div>
+
+            <div class="col-md-3 mb-3">
+              <div class="br-input">
+                <label>Final</label>
+                <input type="date" formControlName="data_fim" />
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <br-select label="Modalidade" formControlName="modalidade_pgd" [options]="modalidadesOptions()" (valueChange)="onModalidadeChange($event)" />
+              @if (modalidadeDivergente()) {
+                <div class="mb-3">
+                  <span class="feedback warning" role="alert">
+                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                    Modalidade distinta daquele registrada pela chefia imediata do participante no SouGov Líder.
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+
+          @if (erroPeriodo()) {
+            <div class="row">
+              <div class="col-12 mb-2">
+                <span class="text-danger fw-semibold">A data de início não pode ser maior que a data final</span>
+              </div>
+            </div>
+          }
+
+          @if (modalidadeDivergente()) {
+            <div class="row mt-2">
+              <div class="col-md-12 mb-3">
+                <br-textarea
+                  label="Justificativa para modalidade diferente da prevista *"
+                  show-counter
+                  class="w-100"
+                  [maxlength]="500"
+                  placeholder="Descreva a justificativa para a modalidade escolhida..."
+                  [value]="form.get('justificativa_modalidade')!.value || ''"
+                  (input)="form.get('justificativa_modalidade')!.setValue($any($event.target).value)"
+                ></br-textarea>
+              </div>
+            </div>
+          }
+      </form>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 mt-3">
+    <br-button type="button" (click)="voltar()" [disabled]="saving()">Voltar</br-button>
+    <br-button emphasis="primary" type="button" (click)="salvar()" [disabled]="!podeSalvar() || saving()">Salvar</br-button>
+  </div>
+
+</div>
+
+<br-scrim [isOpen]="!!confirmacao()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!confirmacao()" [titleText]="confirmacao()?.titulo || ''" size="small" alignFooter="end" (brModalBeforeClose)="confirmacao.set(null)">
+    <div class="p-3">
+      <p>{{ confirmacao()?.mensagem }}</p>
+    </div>
+    <div slot="footer">
+      <br-button class="mx-1" emphasis="secondary" (click)="confirmacao.set(null)">Cancelar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="confirmacao()?.onConfirmar(); confirmacao.set(null)">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>
