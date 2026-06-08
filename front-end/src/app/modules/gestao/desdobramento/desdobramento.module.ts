@@ -4,7 +4,6 @@ import { DesdobramentoComponent } from './desdobramento.component';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
-import { OrganizationChartModule } from 'primeng/organizationchart';
 
 const routes: Routes = [
   { path: ':id/:type', component: DesdobramentoComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Desdobramento", modal: true } }
@@ -16,8 +15,7 @@ const routes: Routes = [
   ],
   imports: [
     RouterModule.forRoot(routes),
-    CommonModule,
-    OrganizationChartModule
+    CommonModule
   ]
 })
 export class DesdobramentoModule { }

@@ -1,10 +1,28 @@
-<p-organizationChart [value]="entregasVinculadas" *ngIf="entregasVinculadas.length">
-  <ng-template let-node pTemplate="default">
-    <div class="p-2">{{ node.label }}</div>
-    <badge *ngIf="node.data?.unidade" color="light" [icon]="entityService.getIcon('Unidade')" [label]="node.data?.unidade?.sigla"></badge><br>
-    <button class="btn btn-sm" (click)="showDetalhes(node.data)" title="Detalhes da entrega"><i class="bi bi-eye"></i></button>
-  </ng-template>
-</p-organizationChart>
+<div class="card" *ngIf="entregasVinculadas.length">
+  <div class="card-body">
+    <ng-container *ngFor="let node of entregasVinculadas">
+      <ng-container *ngTemplateOutlet="nodeTpl; context:{ $implicit: node, level: 0 }"></ng-container>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #nodeTpl let-node let-level="level">
+  <div class="d-flex align-items-center gap-2 mb-2" [style.paddingLeft.px]="level * 16">
+    <button class="btn btn-sm btn-outline-secondary" type="button" *ngIf="node.children?.length" (click)="toggle($event, node)">
+      {{ node.expanded ? '−' : '+' }}
+    </button>
+    <span class="fw-semibold">{{ node.label }}</span>
+    <badge *ngIf="node.data?.unidade" color="light" [icon]="entityService.getIcon('Unidade')" [label]="node.data?.unidade?.sigla"></badge>
+    <button class="btn btn-sm" type="button" (click)="showDetalhes(node.data)" title="Detalhes da entrega">
+      <i class="bi bi-eye"></i>
+    </button>
+  </div>
+  <ng-container *ngIf="node.children?.length && node.expanded">
+    <ng-container *ngFor="let child of node.children">
+      <ng-container *ngTemplateOutlet="nodeTpl; context:{ $implicit: child, level: level + 1 }"></ng-container>
+    </ng-container>
+  </ng-container>
+</ng-template>
 
 <div class="d-flex justify-content-center my-2" *ngIf="loader">
   <div class="spinner-border" role="status">

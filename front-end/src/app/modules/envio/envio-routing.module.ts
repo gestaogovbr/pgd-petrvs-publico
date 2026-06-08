@@ -2,29 +2,54 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from 'src/app/guards/auth.guard';
 import { ConfigResolver } from 'src/app/resolvies/config.resolver';
-import { EnvioReiniciarFormComponent } from './reiniciar/envio-reiniciar-form/envio-reiniciar-form.component';
-import { EnvioForcarComponent } from './forcar/envio-forcar/envio-forcar.component';
+import { EnvioConsultaComponent } from './envio-consulta/envio-consulta.component';
 
 const routes: Routes = [
-  { 
-    path: 'reiniciar',
-    component: EnvioReiniciarFormComponent,
+  {
+    path: 'participantes',
+    loadChildren: () => import('./envio-participante/routes').then(m => m.routes),
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
-      title: "Reiniciar envios à API PGD"
+      title: 'Logs de Participantes',
+      breadcrumb: 'Envio de Participantes',
+      modal: false
     }
   },
-  { 
-    path: 'forcar',
-    component: EnvioForcarComponent,
+  {
+    path: 'planos-entrega',
+    loadChildren: () => import('./envio-plano-entrega/routes').then((m) => m.routes),
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
-      title: "Forçar envio",
-      modal: true
+      title: 'Logs de Planos de Entrega',
+      breadcrumb: 'Envio de Planos de Entrega',
+      modal: false,
+    },
+  },
+  {
+    path: 'planos-trabalho',
+    loadChildren: () => import('./envio-plano-trabalho/routes').then((m) => m.routes),
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: 'Logs de Planos de Trabalho',
+      breadcrumb: 'Envio de Planos de Trabalho',
+      modal: false,
+    },
+  },
+  {
+    path: '',
+    component: EnvioConsultaComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: 'Consulta de Envios à API PGD',
+      modal: false
     }
   }
 ];

@@ -7,7 +7,7 @@
       [imgIcon]="gb.getResourcePath('assets/icons/home/negociate.svg')"
       textColor="#1369f0"
       borderColor="#1369f0"
-      [route]="{route: ['gestao/plano-trabalho']}"
+      [route]="{route: ['gestao/plano-trabalho-v2']}"
     ></app-button-dashboard>
   </div>
 
@@ -21,25 +21,7 @@
     ></app-button-dashboard>
   </div>
 
-  <div class="col-6 col-sm-3 mb-3">
-    <app-button-dashboard
-      [title]="lex.translate('Consolidações')"
-      [imgIcon]="gb.getResourcePath('assets/icons/home/team.svg')"
-      textColor="#1369f0"
-      borderColor="#1369f0"
-      [route]="{route: ['gestao/plano-trabalho/consolidacao']}"
-    ></app-button-dashboard>
-  </div>
-
-  <div class="col-6 col-sm-3 mb-3">
-    <app-button-dashboard
-      [title]="'Avaliações de ' + lex.translate('consolidações')"
-      [imgIcon]="gb.getResourcePath('assets/icons/home/ranking.svg')"
-      textColor="#1369f0"
-      borderColor="#1369f0"
-      [route]="{route: ['avaliacao/plano-trabalho/consolidacao/avaliacao']}"
-    ></app-button-dashboard>
-  </div>
+ 
 
 </div>
 
@@ -77,6 +59,43 @@
                 | Limite: {{ pendencia.data_limite | date:'dd/MM/yyyy' }}
                 | <span class="text-danger">{{ pendencia.dias_atraso }} dias em atraso</span>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Seção de Avaliações com prazo para recurso -->
+<div class="row mt-3" *ngIf="recursosDisponiveis.length > 0">
+  <div class="col-12">
+    <div class="card border-info">
+      <div class="card-header bg-info text-white">
+        <h6 class="mb-0 d-flex align-items-center">
+          <i class="bi bi-clock-history me-2"></i>
+          Avaliações com prazo para recurso ({{ recursosDisponiveis.length }})
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12" *ngFor="let recurso of recursosDisponiveis">
+            <div class="alert alert-info d-flex justify-content-between align-items-center mb-2">
+              <div>
+                <strong>Plano de trabalho: {{ recurso.plano_trabalho?.numero }}</strong> — {{ recurso.nota }}<br>
+                <small class="text-muted">
+                  Avaliado em: {{ recurso.data_avaliacao | date:'dd/MM/yyyy' }}
+                  | Prazo: {{ recurso.data_limite_recurso | date:'dd/MM/yyyy' }}
+                  | <span class="text-danger">{{ recurso.dias_restantes }} dias restantes</span>
+                </small>
+              </div>
+              <button
+                type="button"
+                class="btn btn-info btn-sm text-white"
+                (click)="abrirRecurso(recurso)"
+                title="Abrir recurso">
+                Abrir recurso
+              </button>
             </div>
           </div>
         </div>

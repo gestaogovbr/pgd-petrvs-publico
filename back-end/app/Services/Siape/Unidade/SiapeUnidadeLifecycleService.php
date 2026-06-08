@@ -114,6 +114,39 @@ class SiapeUnidadeLifecycleService
     /**
      * @return array<string, int>
      */
+    public function reativarUnidadeEncontradaNoSiape(string $codigo): array
+    {
+        $cancelamento = $this->cancelarPendenciaPorCodigo($codigo);
+
+        $unidadesReativadas = Unidade::query()
+            ->where('codigo', $codigo)
+            ->where(function ($query): void {
+                $query->whereNotNull('data_inicio_inativacao')
+                    ->orWhereNotNull('data_inativacao');
+            })
+            ->update([
+                'data_inicio_inativacao' => null,
+                'data_inativacao' => null,
+                'updated_at' => now(),
+            ]);
+
+        if ($unidadesReativadas > 0) {
+            SiapeLog::info('Lifecycle SIAPE unidade: unidade reativada por retorno em dadosUorg', [
+                'codigo' => $codigo,
+                'unidades_reativadas' => $unidadesReativadas,
+            ]);
+        }
+
+        return [
+            'blacklists_removidas' => $cancelamento['blacklists_removidas'],
+            'pendencias_canceladas' => $cancelamento['unidades_canceladas'],
+            'unidades_reativadas' => $unidadesReativadas,
+        ];
+    }
+
+    /**
+     * @return array<string, int>
+     */
     public function iniciarInativacoesComBlacklistVencida(): array
     {
         $prazoDias = $this->prazoDias();

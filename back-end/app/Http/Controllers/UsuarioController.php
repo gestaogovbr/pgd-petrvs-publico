@@ -275,7 +275,7 @@ class UsuarioController extends ControllerBase
                 'usuario_id' => ['required', 'uuid'],
                 'justificativa' => ['required', 'string'],
             ])->validate();
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $this->service->ativarTemporariamente($validated)
@@ -288,7 +288,7 @@ class UsuarioController extends ControllerBase
             return response()->json(['error' => "Codigo " . $dataError['code'] . ": Ocorreu um erro inesperado."]);
         }
     }
-    
+
     public function unidadesVinculadas(Request $request)
     {
         try {

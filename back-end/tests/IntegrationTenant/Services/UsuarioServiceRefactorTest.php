@@ -19,10 +19,10 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
         // Setup básico
         config(['database.default' => 'tenant']);
         DB::setDefaultConnection('tenant');
-        
+
         $this->entidadeId = Str::uuid()->toString();
         $this->perfilId = Str::uuid()->toString();
-        
+
         // Criar Entidade
         DB::table('entidades')->insert([
             'id' => $this->entidadeId,
@@ -60,7 +60,7 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
         // Criar usuário sem matrícula
         $cpf = '12345678900';
         $matriculaSiape = 'SIAPE123';
-        
+
         $usuario = new Usuario();
         $usuario->forceFill([
             'id' => Str::uuid(),
@@ -76,7 +76,7 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
         // IntegracaoServidor pode não ter factory, criar manualmente
         // Assumindo que IntegracaoServidor usa conexão tenant ou default? Geralmente dados externos são em outro banco, mas aqui parece ser model local.
         // Vou assumir tenant pois o service usa model direto.
-        
+
         // Verificar se IntegracaoServidor tem tabela e fillable. Se não, forceFill.
         $integracao = new IntegracaoServidor();
         $integracao->forceFill([
@@ -88,9 +88,11 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
 
         // Instanciar service
         $service = app(UsuarioService::class);
-        
+
         // Executar
-        $service->atualizarMatriculasUsuariosSemMatricula();
+        Usuario::withoutEvents(fn () =>
+            $service->atualizarMatriculasUsuariosSemMatricula()
+        );
 
         // Verificar
         $this->assertDatabaseHas('usuarios', [
@@ -150,17 +152,24 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
         $service = app(UsuarioService::class);
 
         // Executar
-        $result = $service->verificaSeUsuarioSoMudouMatricula($cpf, $unidadeId, $matriculaNova, 'CODIGO_U');
+        Usuario::withoutEvents(function () use ($service, $cpf, $unidadeId, $matriculaNova) {
+            $result = $service->verificaSeUsuarioSoMudouMatricula(
+                $cpf,
+                $unidadeId,
+                $matriculaNova,
+                'CODIGO_U'
+            );
+
+            expect($result)->toBeFalse();
+        });
 
         // Verificar
-        expect($result)->toBeFalse();
-        
         $this->assertDatabaseHas('usuarios', [
             'id' => $usuario->id,
             'matricula' => $matriculaNova
         ]);
     });
-    
+
     test('atualizarServidor deve atualizar dados do usuario via repository', function () {
         $usuario = new Usuario();
         $usuario->forceFill([
@@ -172,7 +181,7 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
             'modalidade_pgd' => 'presencial',
             'perfil_id' => $this->perfilId
         ])->save();
-        
+
         // Simular objeto de entrada
         $dadosAtualizacao = (object) [
             'id' => $usuario->id,
@@ -190,8 +199,11 @@ describe('UsuarioService - Refactor Methods (Integration)', function () {
         ];
 
         $service = app(UsuarioService::class);
-        $service->atualizarServidor($dadosAtualizacao);
-        
+
+        Usuario::withoutEvents(function () use ($service, $dadosAtualizacao) {
+            $service->atualizarServidor($dadosAtualizacao);
+        });
+
         $this->assertDatabaseHas('usuarios', [
             'id' => $usuario->id,
             'nome' => 'Nome Novo',

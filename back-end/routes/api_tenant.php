@@ -32,6 +32,8 @@ use App\Http\Controllers\EntidadeController;
 use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\EnvioController;
 use App\Http\Controllers\EnvioItemController;
+use App\Http\Controllers\EnvioPlanoEntregaController;
+use App\Http\Controllers\EnvioPlanoTrabalhoController;
 use App\Http\Controllers\ErrorController;
 use App\Http\Controllers\FeriadoController;
 use App\Http\Controllers\FuncaoController;
@@ -182,6 +184,12 @@ Route::middleware('auth:sanctum')->prefix('EnvioItem')->group(function () {
   Route::post('query', [EnvioItemController::class, 'query']);
   Route::post('get-by-id', [EnvioItemController::class, 'getById']);
 });
+Route::middleware('auth:sanctum')->prefix('EnvioPlanoEntrega')->group(function () {
+  Route::post('query', [EnvioPlanoEntregaController::class, 'query']);
+});
+Route::middleware('auth:sanctum')->prefix('EnvioPlanoTrabalho')->group(function () {
+  Route::post('query', [EnvioPlanoTrabalhoController::class, 'query']);
+});
 Route::middleware('auth:sanctum')->prefix('Traffic')->group(function () {
 });
 Route::middleware('auth:sanctum')->post('/Petrvs/showTables', [PetrvsController::class, 'showTables']);
@@ -280,9 +288,6 @@ Route::middleware(['auth:sanctum'])->prefix('TipoProcesso')->group(function () {
 });
 
 /* Modulos: Gestão */
-Route::middleware(['auth:sanctum'])->prefix('Afastamento')->group(function () {
-  defaultRoutes(AfastamentoController::class);
-});
 Route::middleware(['auth:sanctum'])->prefix('Ocorrencia')->group(function () {
   defaultRoutes(OcorrenciaController::class);
 });
@@ -599,3 +604,90 @@ Route::middleware(['auth:sanctum'])->prefix('SystemLogs')->group(function () {
     Route::get('getAll', [SystemLogsController::class, 'index']);
     Route::get('download/{tenantId}/{file}', [SystemLogsController::class, 'download'])->middleware('throttle:60,1');
 });
+
+/* ── V2 ── */
+use App\V2\PlanoTrabalho\PlanoTrabalhoController as PlanoTrabalhoV2;
+use App\V2\PlanoTrabalho\Entrega\PlanoTrabalhoEntregaController as PlanoTrabalhoEntregaV2;
+use App\V2\PlanoTrabalho\Documento\DocumentoController as DocumentoV2;
+use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController as PlanoTrabalhoConsolidacaoV2;
+use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController as AtividadeV2;
+use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoController as AvaliacaoV2;
+use App\V2\PlanoTrabalho\Ocorrencia\OcorrenciaController as OcorrenciaV2;
+use App\V2\PlanoTrabalho\Log\PlanoTrabalhoLogController as PlanoTrabalhoLogV2;
+use App\V2\TipoModalidade\TipoModalidadeController as TipoModalidadeV2;
+use App\V2\TipoMotivoAfastamento\TipoMotivoAfastamentoController as TipoMotivoAfastamentoV2;
+use App\V2\Usuario\UsuarioController as UsuarioV2;
+use App\V2\Unidade\UnidadeController as UnidadeV2;
+use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
+use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
+use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoObjetivoV2;
+use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
+use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
+use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
+
+Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
+    Route::get('envio-participante', [EnvioParticipanteQueryController::class, 'index']);
+    Route::get('envio-plano-trabalho', [EnvioPlanoTrabalhoQueryController::class, 'index']);
+    Route::get('envio-plano-entrega', [EnvioPlanoEntregaQueryController::class, 'index']);
+
+    Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
+    Route::get('tipos-motivos-afastamentos', [TipoMotivoAfastamentoV2::class, 'index']);
+    Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
+    Route::get('plano-trabalho/statuses', [PlanoTrabalhoV2::class, 'statuses']);
+    Route::get('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'show']);
+    Route::post('plano-trabalho', [PlanoTrabalhoV2::class, 'store']);
+    Route::patch('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'update']);
+    Route::delete('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'destroy']);
+    Route::patch('plano-trabalho/{id}/cancelar', [PlanoTrabalhoV2::class, 'cancelar']);
+    Route::patch('plano-trabalho/{id}/encerrar', [PlanoTrabalhoV2::class, 'encerrar']);
+    Route::patch('plano-trabalho/{id}/arquivar', [PlanoTrabalhoV2::class, 'arquivar']);
+    Route::post('plano-trabalho/{id}/clonar', [PlanoTrabalhoV2::class, 'clonar']);
+    Route::get('plano-trabalho/{planoTrabalhoId}/logs', [PlanoTrabalhoLogV2::class, 'index']);
+    Route::get('plano-trabalho/{planoTrabalhoId}/logs/modelos', [PlanoTrabalhoLogV2::class, 'modelos']);
+
+    Route::post('plano-trabalho/{planoTrabalhoId}/entrega', [PlanoTrabalhoEntregaV2::class, 'store']);
+    Route::put('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [PlanoTrabalhoEntregaV2::class, 'update']);
+    Route::delete('plano-trabalho/{planoTrabalhoId}/entrega/{entregaId}', [PlanoTrabalhoEntregaV2::class, 'destroy']);
+
+    Route::post('plano-trabalho/{planoTrabalhoId}/documento', [DocumentoV2::class, 'store']);
+    Route::get('plano-trabalho/{planoTrabalhoId}/documento', [DocumentoV2::class, 'show']);
+    Route::post('plano-trabalho/{planoTrabalhoId}/documento/assinatura-tcr', [DocumentoV2::class, 'assinar']);
+    Route::delete('plano-trabalho/{planoTrabalhoId}/documento/assinatura-tcr', [DocumentoV2::class, 'cancelarAssinatura']);
+
+    Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao', [PlanoTrabalhoConsolidacaoV2::class, 'index']);
+    Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao/notas-avaliacao', [PlanoTrabalhoConsolidacaoV2::class, 'notasAvaliacao']);
+    Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/concluir', [PlanoTrabalhoConsolidacaoV2::class, 'concluir']);
+    Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/reabrir', [PlanoTrabalhoConsolidacaoV2::class, 'reabrir']);
+    Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/recurso', [PlanoTrabalhoConsolidacaoV2::class, 'recurso']);
+
+    Route::post('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/avaliacao', [AvaliacaoV2::class, 'store']);
+    Route::delete('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/avaliacao/{avaliacaoId}', [AvaliacaoV2::class, 'destroy']);
+
+    Route::post('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade', [AtividadeV2::class, 'store']);
+    Route::put('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}', [AtividadeV2::class, 'update']);
+    Route::delete('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}', [AtividadeV2::class, 'destroy']);
+
+
+    Route::post('plano-trabalho/{planoTrabalhoId}/ocorrencia', [OcorrenciaV2::class, 'store']);
+    Route::patch('plano-trabalho/{planoTrabalhoId}/ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'update']);
+    Route::delete('plano-trabalho/{planoTrabalhoId}/ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'destroy']);
+
+    Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
+    Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);
+    Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'buscarPorId'])->whereUuid('usuarioId');
+
+    Route::get('unidade', [UnidadeV2::class, 'buscarPorNomeOuCodigo']);
+    Route::get('unidade/{unidadeId}/is-gestor-hierarquia', [UnidadeV2::class, 'isGestorHierarquia']);
+
+    Route::get('plano-entrega', [PlanoEntregaV2::class, 'buscarPorUnidade']);
+    Route::get('plano-entrega/{planoEntregaId}/entrega', [PlanoEntregaV2::class, 'buscarEntregasPorPlano'])->whereUuid('planoEntregaId');
+
+    Route::get('planejamento/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'index']);
+    Route::post('planejamento/tipo-objetivo', [TipoPlanejamentoObjetivoController::class, 'store']);
+    Route::put('planejamento/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'update']);
+    Route::delete('planejamento/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'destroy']);
+
+    Route::get('planejamento/objetivo/{id}/esforco-total', [PlanejamentoObjetivoV2::class, 'esforcoTotal'])->whereUuid('id');
+    Route::get('planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoV2::class, 'entregas'])->whereUuid('id');
+});
+

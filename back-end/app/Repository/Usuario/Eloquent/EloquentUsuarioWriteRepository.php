@@ -6,15 +6,16 @@ namespace App\Repository\Usuario\Eloquent;
 
 use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
+use App\Repository\Eloquent\EnvioTrait;
 use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
-use Illuminate\Support\Facades\Storage;
-use Throwable;
 
 /**
  * @extends AbstractEloquentWriteRepository<Usuario>
  */
 class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository implements UsuarioWriteRepositoryContract
 {
+    use EnvioTrait;
+
     public function __construct(Usuario $model)
     {
         $this->model = $model;
@@ -57,7 +58,7 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
         }
 
         $usuario->foto_perfil = $downloadedUrl;
-        
+
         switch ($tipo) {
             case "GOOGLE":
                 $usuario->foto_google = $url;
@@ -69,8 +70,26 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
                 $usuario->foto_firebase = $url;
                 break;
         }
-        
+
         return $usuario->save();
+    }
+
+    public function updateConfig(string $usuarioId, string $unidadeId): bool
+    {
+        $usuario = $this->model->find($usuarioId);
+        if (!$usuario) {
+            return false;
+        }
+
+        $config = $usuario->config ?? [];
+        $config['unidade_id'] = $unidadeId;
+
+        Usuario::withoutEvents(function () use ($usuario, $config): void {
+            $usuario->config = $config;
+            $usuario->save();
+        });
+
+        return true;
     }
 
     public function removerVinculos(string $usuarioId): void
@@ -92,6 +111,4 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
             // fresh() is called in service, but here we just return void.
         }
     }
-
-
 }

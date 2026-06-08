@@ -2,26 +2,31 @@
 
 namespace Tests\IntegrationTenant\Services;
 
+
 use App\Services\StatusService;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\Programa;
 use App\Models\Entidade;
-use App\Models\TipoJustificativa;
 use App\Models\TipoAvaliacao;
+use App\Models\TipoJustificativa;
+use App\Models\TipoModalidade;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
+use Tests\DatabaseTenantTestCase;
 
 // Uses automatically applies DatabaseTenantTestCase from Pest.php config for IntegrationTenant suite
 // but we explicitly extended it above for clarity, or we can just use uses() if configured.
 // Pest.php usually handles it. Let's follow the doc pattern which uses 'uses(DatabaseTenantTestCase::class)' implicitly or explicitly.
 // The doc says: "Todos os arquivos criados dentro de tests/IntegrationTenant usarão automaticamente a classe base Tests\DatabaseTenantTestCase"
-
 describe('StatusService Integration', function () {
-    
+
     beforeEach(function () {
+        Bus::fake();
+
         // Criar dependências básicas
-        
+
         // Ensure Entidade exists
         $this->entidade = new Entidade();
         $this->entidade->id = 'entidade-teste';
@@ -61,16 +66,13 @@ describe('StatusService Integration', function () {
             'modalidade_pgd' => 'presencial'
         ]);
         $this->usuario->saveOrFail();
+
         $this->actingAs($this->usuario);
 
         // Create dependencies for Programa
-        $this->tipoJustificativa = new TipoJustificativa();
-        $this->tipoJustificativa->fill(['nome' => 'Justificativa Teste']);
-        $this->tipoJustificativa->save();
+        $this->tipoJustificativa = TipoJustificativa::factory()->create();
 
-        $this->tipoAvaliacao = new TipoAvaliacao();
-        $this->tipoAvaliacao->fill(['nome' => 'Avaliação Teste', 'tipo' => 'QUANTITATIVO']);
-        $this->tipoAvaliacao->save();
+        $this->tipoAvaliacao = TipoAvaliacao::factory()->create();
 
         $this->programa = new Programa();
         $this->programa->fill([
@@ -127,7 +129,7 @@ describe('StatusService Integration', function () {
         // Executar
         $novoStatus = 'ATIVO';
         $justificativa = 'Aprovação do plano';
-        
+
         // Simular usuário logado para evitar erro se o usuarioId passado for vazio (fallback)
         $this->actingAs($this->usuario);
 
@@ -140,7 +142,7 @@ describe('StatusService Integration', function () {
         $service->atualizaStatus($planoTrabalho, $novoStatus, $justificativa, $this->usuario->id);
 
         // Verificar
-        
+
         // 1. O status da entidade foi atualizado
         $this->assertDatabaseHas('planos_trabalhos', [
             'id' => $planoTrabalho->id,
@@ -150,11 +152,11 @@ describe('StatusService Integration', function () {
         // 2. O histórico foi criado
         $planoTrabalho->refresh();
         expect($planoTrabalho->status)->toBe($novoStatus);
-        
+
         // Verificar via relacionamento
         $count = $planoTrabalho->statusHistorico()->count();
         expect($count)->toBe(1);
-        
+
         $historico = $planoTrabalho->statusHistorico()->first();
         expect($historico->codigo)->toBe($novoStatus);
         expect($historico->justificativa)->toBe($justificativa);
