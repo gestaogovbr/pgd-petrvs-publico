@@ -4,7 +4,7 @@
     [hasEdit]="auth.hasPermissionTo('MOD_OCOR_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed" [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')">
-        <div class="row">
+        <div class="row" *ngIf="auth.hasPermissionTo('MOD_OCOR_EDT')">
             <input-search [size]="6" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id" [dao]="usuarioDao"></input-search>
             <input-search [size]="6" #planoTrabalho [control]="filter!.controls.plano_trabalho_id" controlName="plano_trabalho_id" [dao]="planoTrabalhoDao"></input-search>
         </div>

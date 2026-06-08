@@ -94,7 +94,7 @@ export class ServerService {
     if (err instanceof HttpErrorResponse) {
 
       if ([419, 401].includes(err.status)) {        
-        if (this.auth.logged) {
+        if (this.auth.logged && !this.auth.logging) {
           this.auth.logOut();
         } else {
           return throwError(() => (err.error.error)) as Observable<never>;
@@ -128,13 +128,9 @@ export class ServerService {
     };
     let xPetrvs: any = {};
     /* Opções de autenticação do usuário */ 
-    if(this.gb.isEmbedded && this.auth.apiToken?.length) {
-      options.headers["Authorization"] = "Bearer " + this.auth.apiToken;
-    } else {
-      let token = this.tokenExtractor.getToken() as string;
-      if (token !== null) {
-        options.headers["X-XSRF-TOKEN"] = token;
-      }
+    let token = this.tokenExtractor.getToken() as string;
+    if (token !== null) {
+      options.headers["X-XSRF-TOKEN"] = token;
     }
     /* Parametros adicionais do Petrvs */
     xPetrvs["version"] = this.gb.VERSAO_DB;

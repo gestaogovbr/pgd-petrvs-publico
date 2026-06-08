@@ -275,7 +275,7 @@ it('ativarMatricula atualiza usuário e remove blacklist', function () {
     $updated = DB::table('usuarios')->where('id', $userId)->first();
     expect($updated->situacao_siape)->toBe('ATIVO');
     expect($updated->data_ativacao_temporaria)->toBeNull();
-    expect($updated->justicativa_ativacao_temporaria)->toBe('x');
+    expect($updated->justicativa_ativacao_temporaria)->toBeNull();
     $bl = DB::table('siape_blacklist_servidores')->where('matricula', 'XYZ')->whereNull('deleted_at')->count();
     expect($bl)->toBe(0);
 });

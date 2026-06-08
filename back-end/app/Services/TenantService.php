@@ -16,6 +16,7 @@ use App\Models\PainelUsuario;
 use Illuminate\Support\Facades\Artisan;
 use Carbon\Carbon;
 use App\Models\Tenant;
+use App\Repository\TenantRepository;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -24,7 +25,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Cache;
-use App\Jobs\ExportarTenantJob;
 use App\Models\JobSchedule;
 
 
@@ -34,6 +34,14 @@ use App\Models\JobSchedule;
  */
 class TenantService extends ServiceBase
 {
+    protected TenantRepository $tenantRepository;
+
+    public function __construct($collection = null)
+    {
+        parent::__construct($collection);
+        $this->tenantRepository = app(TenantRepository::class);
+    }
+
     public $joinable = [
         'domains',
         'tenantsLogs',
@@ -94,7 +102,7 @@ class TenantService extends ServiceBase
 
         if (isset($dataOrEntity['id']) && str_contains($dataOrEntity['id'], ' ')) {
             throw new ServerException("Tenant", "O campo SIGLA não pode conter espaços.");
-        }   
+        }
 
         $domainExists = DB::table('domains')
             ->where('domain', $dataOrEntity['dominio_url'])
@@ -102,7 +110,7 @@ class TenantService extends ServiceBase
         if ($domainExists && $action != "EDIT" && $dataOrEntity['dominio_url'] != $entity->dominio_url) {
             throw new ServerException("Tenant", "O domínio já está cadastrado.");
         }
-   
+
 
         try {
             $entity->fill($dataOrEntity);
@@ -115,7 +123,7 @@ class TenantService extends ServiceBase
     public function extraStore($dataOrEntity, $unidade, $action)
     {
         Log::info('Verificando se existe o tenant.');
-        $tenant = Tenant::find($dataOrEntity->id);
+        $tenant = $this->tenantRepository->findById($dataOrEntity->id);
         if (!$tenant->domains()->where('domain', $dataOrEntity->dominio_url)->exists()) {
             Log::info('Cadastrando o tenant.');
             $tenant->createDomain([
@@ -159,19 +167,26 @@ class TenantService extends ServiceBase
         BuscarDadosSiapeJob::dispatch($tenantId);
     }
 
-    public function forcarEnvio(string $tenantId)
-    {
-        $this->inicializeTenant($tenantId);
-        $this->TenantConfigurationsService->handle($tenantId);
-
-        ExportarTenantJob::dispatch($tenantId);
-    }
-
     public function inicializeTenant($tenantId): void
     {
-
         $tenant = tenancy()->find($tenantId);
         ($tenant) ? tenancy()->initialize($tenant) : Log::error("Tenant não encontrado.");
+    }
+
+    /**
+     * Executa callback com banco e contexto do tenant via Tenant::run (Stancl).
+     *
+     * @param callable(): void $callback
+     */
+    public function runInTenant(int|string $tenantId, callable $callback): void
+    {
+        $tenant = $this->tenantRepository->findById($tenantId);
+
+        if (!$tenant) {
+            Log::error("Tenant não encontrado para ID: " . $tenantId);
+            throw new NotFoundException("Tenant", "Tenant não encontrado para ID: " . $tenantId);
+        }
+        $tenant->run($callback);
     }
 
     private function limpaTabelas()
@@ -264,7 +279,7 @@ class TenantService extends ServiceBase
         $user_id = Auth::guard('painel')->id();
         $painel_user = PainelUsuario::findOrFail($user_id);
 
-        $tenants = $painel_user->nivel != 1 ? $painel_user->tenants : Tenant::all();
+        $tenants = $painel_user->nivel != 1 ? $painel_user->tenants : $this->tenantRepository->findAll();
         $users = 0;
         foreach ($tenants as $tenant) {
             /** @var Tenant $tenant */
@@ -398,10 +413,10 @@ class TenantService extends ServiceBase
     {
         try {
             $this->validatePermission();
-            $tenant = Tenant::find($id);
+            $tenant = $this->tenantRepository->findById($id);
             if ($tenant) {
                 JobSchedule::where('tenant_id', $tenant->id)->delete();
-                $tenant->delete();
+                $this->tenantRepository->delete($id);
                 Log::info('Tenant deletado com sucesso: ' . $id);
             }
             return true;
@@ -487,7 +502,7 @@ class TenantService extends ServiceBase
 
     public function dumpDatabase($id)
     {
-        $tenant = Tenant::findOrFail($id);
+        $tenant = $this->tenantRepository->findOrFail($id);
 
         $database = $tenant->tenancy_db_name;
         /** @phpstan-ignore-next-line */

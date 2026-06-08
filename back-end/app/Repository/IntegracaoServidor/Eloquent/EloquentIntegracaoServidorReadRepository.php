@@ -7,6 +7,7 @@ namespace App\Repository\IntegracaoServidor\Eloquent;
 use App\Models\IntegracaoServidor;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorReadRepositoryContract;
+use App\Services\UtilService;
 use Illuminate\Support\Facades\DB;
 
 final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentReadRepository implements IntegracaoServidorReadRepositoryContract
@@ -25,9 +26,13 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
 
     public function findByCpfAndCodigoExercicio(string $cpf, string $codigoExercicio): ?IntegracaoServidor
     {
+        $cpf = UtilService::onlyNumbers($cpf);
+        $codigoExercicio = ltrim(preg_replace('/[^0-9]/', '', $codigoExercicio) ?? $codigoExercicio, '0') ?: $codigoExercicio;
+        $cpfNormalizadoSql = "REPLACE(REPLACE(REPLACE(cpf, '.', ''), '-', ''), ' ', '')";
+
         /** @var IntegracaoServidor|null */
         return $this->query()
-            ->where('cpf', $cpf)
+            ->whereRaw($cpfNormalizadoSql . ' = ?', [$cpf])
             ->where('codigo_servo_exercicio', $codigoExercicio)
             ->first();
     }

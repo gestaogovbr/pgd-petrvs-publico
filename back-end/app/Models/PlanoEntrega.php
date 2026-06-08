@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusEnum;
+use App\Contracts\HasStatusHistory;
 use App\Models\ModelBase;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -12,7 +13,7 @@ use App\Models\Planejamento;
 use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntrega;
 use Illuminate\Support\Facades\DB;
-
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -29,6 +30,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property \DateTime|null $data_fim
  * @property \DateTime|null $data_arquivamento
  * @property \DateTime|null $avaliado_at
+ * @property Carbon|null $data_agendamento_envio
+ * @property Carbon|null $data_envio_api_pgd
+ * @property Carbon|null $data_tentativa_envio
+ * @property Carbon|null $data_conclusao_envio
+ * @property string|null $log_envio
  * @property-read Unidade $unidade
  * @property-read Programa $programa
  * @property-read Usuario $criacaoUsuario
@@ -36,8 +42,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read CadeiaValor|null $cadeiaValor
  * @property-read PlanoEntrega|null $planoEntregaPai
  */
-class PlanoEntrega extends ModelBase
+class PlanoEntrega extends ModelBase implements HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'plano_entrega_id';
+    }
     protected $table = 'planos_entregas';
 
     protected $with = [];
@@ -60,25 +70,31 @@ class PlanoEntrega extends ModelBase
         //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
     ];
 
-  public const STATUSES = [
-    'INCLUIDO' => 'Incluído',
-    'HOMOLOGANDO' => 'Aguardando homologação',
-    'ATIVO' => 'Em execução',
-    'CONCLUIDO' => 'Concluído',
-    'AVALIADO' => 'Avaliado',
-    'SUSPENSO' => 'Suspenso',
-    'CANCELADO' => 'Cancelado'
-  ];
-  
-  public const DATA_MUDANCA_REGRA_PE = '2026-01-12';
+    public const STATUSES = [
+        'INCLUIDO' => 'Incluído',
+        'HOMOLOGANDO' => 'Aguardando homologação',
+        'ATIVO' => 'Em execução',
+        'CONCLUIDO' => 'Concluído',
+        'AVALIADO' => 'Avaliado',
+        'SUSPENSO' => 'Suspenso',
+        'CANCELADO' => 'Cancelado'
+    ];
 
-  public const STATUSES_PENDENTES = [
-    'INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'
-  ];
+    public const DATA_MUDANCA_REGRA_PE = '2026-01-12';
 
-  public $fillable_changes = ["entregas"];
+    public const STATUSES_PENDENTES = [
+        'INCLUIDO', 'HOMOLOGANDO', 'ATIVO', 'CONCLUIDO'
+    ];
+
+    public $fillable_changes = ["entregas"];
 
     public $delete_cascade = [];
+
+    protected $casts = [
+        'data_agendamento_envio' => 'datetime',
+        'data_tentativa_envio' => 'datetime',
+        'data_envio_api_pgd' => 'datetime',
+    ];
 
     protected static function booted()
     {
@@ -201,5 +217,16 @@ class PlanoEntrega extends ModelBase
         ];
     }
 
+    public function isEmStatusParaEnvio() {
+        if ($this->status instanceof \App\Enums\StatusEnum) {
+            $status = $this->status->value;
+        } else{
+            $status = (string)$this->status;
+        }
 
+        return ($status == StatusEnum::ATIVO->value)
+            || ($status == StatusEnum::CONCLUIDO->value)
+            || ($status == StatusEnum::AVALIADO->value)
+        ;
+    }
 }

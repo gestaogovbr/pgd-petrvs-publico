@@ -1,0 +1,46 @@
+<div class="container-fluid py-3 govbr-v2">
+  <app-breadcrumb />
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+      <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+    </div>
+  } @else if (error()) {
+    <div class="br-message danger">
+      <div class="icon"><i class="fas fa-times-circle fa-lg" aria-label="erro"></i></div>
+      <div class="message-body">{{ error() }}</div>
+    </div>
+  } @else {
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">
+        TCR — Plano de Trabalho #{{ plano()?.numero }}
+      </h2>
+      <br-button (click)="voltar()">Voltar</br-button>
+    </div>
+
+    @if (!documento()) {
+      <div class="br-card mb-4">
+        <div class="card-content text-center py-4">
+          <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+        </div>
+      </div>
+    } @else {
+
+      <!-- Documento gerado -->
+      <div class="br-card mb-4">
+        <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">
+          Termo de Ciência e Responsabilidade
+        </div>
+        <div class="card-content">
+
+          <!-- Conteúdo HTML do documento -->
+          @if (documento()?.conteudo) {
+            <div class="p-3 border rounded mb-4" [innerHTML]="documento()?.conteudo"></div>
+          }
+
+        </div>
+      </div>
+    }
+  }
+</div>
