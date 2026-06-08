@@ -1,22 +1,39 @@
 <!--<h3 *ngIf="!isModal" class="my-2">{{title}}</h3>-->
 <grid [dao]="dao" [add]="add" [title]="isModal ? '' : title" [orderBy]="orderBy" [groupBy]="groupBy" [join]="join"
-    [hasAdd]="auth.hasPermissionTo('MOD_AFT_INCL')"
-    [hasEdit]="auth.hasPermissionTo('MOD_AFT_EDT')">
+    [hasAdd]="auth.hasPermissionTo('MOD_OCOR_INCL')"
+    [hasEdit]="auth.hasPermissionTo('MOD_OCOR_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed" [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')">
         <div class="row">
-            <input-search [size]="3" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id" [dao]="usuarioDao"></input-search>
+            @if (!listarApenasProprioUsuario) {
+                <input-search 
+                    #usuario 
+                    [size]="3"
+                    [control]="filter!.controls.usuario_id" 
+                    controlName="usuario_id" 
+                    [dao]="usuarioDao"
+                    [selectRoute]="{
+                        route: ['configuracoes', 'usuario'],
+                        params: { unidades: this.unidades }
+                    }"
+                    [where]="auth.hasPermissionTo('MOD_OCOR_TODAS_UNIDADES')
+                        ? []
+                        : [['subordinadas', 'in', this.unidades]]"
+                ></input-search>
+            }
             <input-search [size]="3" #tipoMotivoAfastamento [control]="filter!.controls.tipo_motivo_afastamento_id" controlName="tipo_motivo_afastamento_id" [dao]="tipoMotivoAfastamentoDao" label="Motivo"></input-search>
-            <input-datetime date [size]="3" label="Início" controlName="data_inicio" (click)="filtro()"></input-datetime>
-            <input-datetime date [size]="3" label="Fim" controlName="data_fim" (click)="filtro()"></input-datetime>
+            <input-datetime date [size]="3" label="Início" [control]="filter!.controls.data_inicio" controlName="data_inicio"></input-datetime>
+            <input-datetime date [size]="3" label="Fim" [control]="filter!.controls.data_fim" controlName="data_fim"></input-datetime>
         </div>
     </filter>
     <columns>
-        <column [title]="lex.translate('Usuário')" [template]="columnUsuario">
-            <ng-template let-row="row" #columnUsuario>
-                <span> {{row.usuario.nome}}</span>
-            </ng-template>
-        </column>
+        @if (!listarApenasProprioUsuario) {
+            <column [title]="lex.translate('Usuário')" [template]="columnUsuario">
+                <ng-template let-row="row" #columnUsuario>
+                    <span> {{row.usuario.nome}}</span>
+                </ng-template>
+            </column>
+        }
         <column [title]="lex.translate('Motivo')" [template]="columnMotivoAfastamento">
             <ng-template let-row="row" #columnMotivoAfastamento>
                 <i [class]="row.tipo_motivo_afastamento.icone"></i>

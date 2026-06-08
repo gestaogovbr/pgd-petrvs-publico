@@ -4,6 +4,7 @@ namespace App\Services\Siape\Servidor;
 
 use App\Facades\SiapeLog;
 use App\Models\IntegracaoServidor as entidade;
+use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Services\LogTrait;
 use App\Services\Siape\Contrato\InterfaceIntegracao;
@@ -154,6 +155,8 @@ class Integracao implements InterfaceIntegracao
                 continue;
             }
 
+            $participaPgd = $this->normalizeParticipaPGD(UtilService::valueOrDefault($ativo['participa_pgd'] ?? null, null));
+
             $servidor = [
                 'id' => Uuid::uuid4(),
                 'cpf_ativo' => UtilService::valueOrDefault($pessoal['cpf_ativo']),
@@ -183,7 +186,10 @@ class Integracao implements InterfaceIntegracao
                 'email_chefia_imediata' => $this->getEmailChefiaImediata($funcional),
                 'ident_unica' => UtilService::valueOrDefault($ativo['ident_unica'] ?? null, null),
                 'modalidade_pgd' => UtilService::valueOrDefault($ativo['modalidade_pgd'] ?? null, null),
-                'participa_pgd' => $this->normalizeParticipaPGD(UtilService::valueOrDefault($ativo['participa_pgd'] ?? null, null)),
+                'participa_pgd' => $participaPgd ?? $this->getParticipaPgdUsuarioAtual(
+                    UtilService::onlyNumbers($pessoal['cpf']),
+                    UtilService::valueOrDefault($ativo['matriculasiape'] ?? null, null)
+                ),
                 'cod_jornada' => UtilService::valueOrDefault($ativo['cod_jornada'] ?? null, null),
                 'nome_jornada' => UtilService::valueOrDefault($ativo['nome_jornada'] ?? null, null),
                 'deleted_at' => null,
@@ -203,13 +209,13 @@ class Integracao implements InterfaceIntegracao
      */
     private function normalizeParticipaPGD($value): ?string
     {
-        if ($value === null) return 'não';
+        if ($value === null) return null;
 
         $v = is_bool($value) ? ($value ? 'sim' : 'não') : (string)$value;
 
         $v = trim(mb_strtolower($v));
 
-        if ($v === '' || $v === 'null' || $v === 'undefined') return 'não';
+        if ($v === '' || $v === 'null' || $v === 'undefined') return null;
 
         if ($v === 'nÃ£o' || $v === 'nÃo' || $v === 'nao') {
             $v = 'não';
@@ -238,6 +244,30 @@ class Integracao implements InterfaceIntegracao
         }
 
         return 'não';
+    }
+
+    private function getParticipaPgdUsuarioAtual(?string $cpf, ?string $matricula): string
+    {
+        $participaPgd = null;
+
+        if (!empty($matricula)) {
+            $participaPgd = Usuario::withoutGlobalScopes()
+                ->where('matricula', $matricula)
+                ->value('participa_pgd');
+        }
+
+        if (empty($participaPgd) && !empty($cpf)) {
+            $usuarios = Usuario::withoutGlobalScopes()
+                ->where('cpf', $cpf)
+                ->limit(2)
+                ->pluck('participa_pgd');
+
+            if ($usuarios->count() === 1) {
+                $participaPgd = $usuarios->first();
+            }
+        }
+
+        return in_array($participaPgd, ['sim', 'não'], true) ? $participaPgd : 'não';
     }
 
 

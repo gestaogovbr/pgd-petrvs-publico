@@ -24,7 +24,10 @@ export class OcorrenciaListComponent extends PageListBase<Ocorrencia, Ocorrencia
   constructor(public injector: Injector) {
     super(injector, Ocorrencia, OcorrenciaDaoService);
     /* Inicializações */
-    this.join = ["plano_trabalho:id,numero,data_inicio,data_fim", "plano_trabalho.unidade:id,nome,sigla", "usuario:id,nome,url_foto"];
+    this.join = [
+      "plano_trabalho:id,numero,data_inicio,data_fim",
+      "plano_trabalho.unidade:id,nome,sigla",
+      "usuario:id,nome,url_foto"];
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
     this.title = this.lex.translate("Ocorrências");

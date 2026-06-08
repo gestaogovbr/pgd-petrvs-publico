@@ -17,6 +17,7 @@ services:
       - ../../../back-end/storage/logs:/var/www/storage/logs
     environment:
       MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
+      MYSQL_DATABASE: petrvs
       MYSQL_USER: petrvs
       MYSQL_PASSWORD: PsEeTnRhVaS
       MYSQL_TCP_PORT: 3308
@@ -39,6 +40,7 @@ services:
     environment:
       - TZ=America/Bahia
       - REDIS_HOST=petrvs_redis
+      - RABBITMQ_HOST=petrvs_rabbitmq
     volumes:
       - ../../../back-end:/var/www
     deploy:
@@ -52,14 +54,54 @@ services:
     <<: *petrvs_base
     container_name: petrvs_php
     ports:
-      - "80:80"
-      - "443:443"
+      - "${PETRVS_HTTP_PORT:-80}:80"
+      - "${PETRVS_HTTPS_PORT:-443}:443"
     dns:
       - 8.8.8.8
       - 1.1.1.1
+    environment:
+      - APP_CONTEXT=web
     depends_on:
-      - petrvs_db
-      - petrvs_redis
+      petrvs_db:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
+    networks:
+      - appnet
+
+  petrvs_rabbitmq:
+    <<: *security_defaults
+    build:
+      context: .
+      dockerfile: Dockerfile-rabbitmq
+    image: petrvs-rabbitmq:dev
+    container_name: petrvs_rabbitmq
+    # definitions.json no repo só tem filas; o entrypoint faz merge com RABBITMQ_* do back-end/.env (Dockerfile-rabbitmq).
+    # Zerar dados: docker volume rm petrvs_rabbitmq_data_dev
+    env_file:
+      - ../../../back-end/.env
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # UI de gerenciamento
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    environment:
+      TZ: "America/Bahia"
+    volumes:
+      - petrvs_rabbitmq_data:/var/lib/rabbitmq
+      - ../../rabbitmq/logs:/var/log/rabbitmq
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
     networks:
       - appnet
 
@@ -71,9 +113,15 @@ services:
       resources:
         limits:
           memory: 1024M
+    environment:
+      - APP_CONTEXT=queue
     depends_on:
-      - petrvs_php
-      - petrvs_redis
+      petrvs_db:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
     networks:
       - appnet
 
@@ -83,7 +131,14 @@ services:
     command: >
       /bin/sh -c "while :; do php /var/www/artisan schedule:run >> /var/www/storage/logs/scheduler.log 2>&1; sleep 60; done"
     depends_on:
-      - petrvs_php
+      petrvs_db:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
+    environment:
+      - APP_CONTEXT=scheduler
     networks:
       - appnet
   
@@ -115,10 +170,18 @@ services:
     <<: *security_defaults
     image: redis:alpine
     container_name: petrvs_redis
+    command: redis-server --bind 0.0.0.0 --protected-mode no
     ports:
-      - "6378:6378"
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
     networks:
       - appnet
 
 networks:
   appnet:
+
+volumes:
+  redis-data:
+  petrvs_rabbitmq_data:
+    name: petrvs_rabbitmq_data_dev

@@ -7,6 +7,7 @@ namespace App\Repository;
 use App\Models\Entidade;
 use App\Repository\Entidade\Contracts\EntidadeReadRepositoryContract;
 use App\Repository\Entidade\Contracts\EntidadeWriteRepositoryContract;
+use Illuminate\Database\Eloquent\Collection;
 
 class EntidadeRepository
 {
@@ -26,7 +27,10 @@ class EntidadeRepository
         return $this->readRepository->findBySigla($sigla, $with);
     }
 
-    public function findAll(): \Illuminate\Database\Eloquent\Collection
+    /**
+     * @return Collection<int, Entidade>
+     */
+    public function findAll(): Collection
     {
         return $this->readRepository->findAll();
     }
