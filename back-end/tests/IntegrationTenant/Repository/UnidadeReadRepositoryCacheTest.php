@@ -205,4 +205,39 @@ describe('EloquentUnidadeReadRepository::isUsuarioGestorRecursivo - Cache E2E', 
         expect($resultado2)->toBeFalse();
         expect($queries)->toBeEmpty();
     });
+
+    test('invalidarCacheHierarquia limpa ambas as chaves de cache', function () {
+        $usuarioId = $this->usuario->id;
+
+        // Popula ambos caches
+        $this->repository->isUsuarioGestorRecursivo($this->unidadeFilha->id, $usuarioId);
+
+        expect(Cache::has('unidades-geridas:' . $usuarioId))->toBeTrue();
+        expect(Cache::has('unidade-hierarquia:' . $this->unidadePai->id))->toBeTrue();
+
+        // Invalida tudo
+        $this->repository->invalidarCacheHierarquia();
+
+        expect(Cache::has('unidades-geridas:' . $usuarioId))->toBeFalse();
+        expect(Cache::has('unidade-hierarquia:' . $this->unidadePai->id))->toBeFalse();
+    });
+
+    test('invalidarCacheHierarquia força queries reais na próxima chamada', function () {
+        $usuarioId = $this->usuario->id;
+
+        // Popula cache
+        $this->repository->isUsuarioGestorRecursivo($this->unidadeFilha->id, $usuarioId);
+
+        // Invalida
+        $this->repository->invalidarCacheHierarquia();
+
+        // Próxima chamada deve ir ao banco
+        DB::connection('tenant')->enableQueryLog();
+        $resultado = $this->repository->isUsuarioGestorRecursivo($this->unidadeFilha->id, $usuarioId);
+        $queries = DB::connection('tenant')->getQueryLog();
+        DB::connection('tenant')->disableQueryLog();
+
+        expect($resultado)->toBeTrue();
+        expect($queries)->not->toBeEmpty('Após invalidarCacheHierarquia, deveria consultar o banco');
+    });
 });

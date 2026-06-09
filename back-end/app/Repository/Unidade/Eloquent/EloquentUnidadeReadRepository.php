@@ -78,6 +78,11 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
 
     public function invalidarCacheHierarquia(): void
     {
+        if (!(Cache::getStore() instanceof \Illuminate\Cache\RedisStore)) {
+            Cache::flush();
+            return;
+        }
+
         $prefix = config('cache.prefix', '') . ':';
         $patterns = [
             $prefix . self::CACHE_PREFIX_HIERARQUIA . '*',
