@@ -14,7 +14,6 @@ use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
 use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
 use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
