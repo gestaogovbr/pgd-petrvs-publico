@@ -116,7 +116,7 @@ export class AppShellV2Component implements OnInit {
     else if (hasExecucao) items = [...(app.moduloExecucao || [])];
     if (this.auth.hasPermissionTo('CTXT_DEV')) {
       const devItems = (app.moduloDev || []).filter(
-        (item) => !this.isImpersonateMenuItem(item) || this.auth.isAdmin()
+        (item: { route?: string[] }) => !this.isImpersonateMenuItem(item) || this.auth.isAdmin()
       );
       items = [...items, ...devItems];
     }
