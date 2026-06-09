@@ -231,7 +231,7 @@ export class AuthService {
 
   /** Administrador do sistema (`usuarios.is_admin`). */
   public isAdmin(): boolean {
-    return !!this.usuario?.is_admin;
+    return Number(this.usuario?.is_admin) === 1;
   }
 
   public get routerTo(): any {
