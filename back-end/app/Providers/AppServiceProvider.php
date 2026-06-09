@@ -15,6 +15,7 @@ use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\StatusJustificativa;
+use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Observers\AvaliacaoObserver;
 use App\Observers\PlanoEntregaEntregaObserver;
@@ -24,6 +25,7 @@ use App\Observers\PlanoTrabalhoConsolidacaoObserver;
 use App\Observers\PlanoTrabalhoEntregaObserver;
 use App\Observers\PlanoTrabalhoObserver;
 use App\Observers\StatusJustificativaObserver;
+use App\Observers\UnidadeIntegranteAtribuicaoObserver;
 use App\Observers\UsuarioObserver;
 use App\Services\Validador\ClienteValidador;
 use App\Services\Validador\IValidador;
@@ -120,6 +122,7 @@ class AppServiceProvider extends ServiceProvider
         PlanoTrabalho::observe(PlanoTrabalhoObserver::class);
         PlanoTrabalhoEntrega::observe(PlanoTrabalhoEntregaObserver::class);
         \App\Models\PlanoTrabalhoConsolidacao::observe(PlanoTrabalhoConsolidacaoObserver::class);
+        UnidadeIntegranteAtribuicao::observe(UnidadeIntegranteAtribuicaoObserver::class);
 
     }
 }
