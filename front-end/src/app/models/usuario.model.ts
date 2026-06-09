@@ -131,6 +131,7 @@ export class Usuario extends Base implements HasNotificacao {
     public audits_externo?: any= [];
     public regramentos?: string[] = [];
 
+    public is_admin: boolean = false;
     public nome: string = ""; /* Nome do Usuário */
     public email: string = ""; /* Email do Usuário */
     public usuario_externo: boolean = true;

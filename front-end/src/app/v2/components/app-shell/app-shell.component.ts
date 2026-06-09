@@ -114,8 +114,17 @@ export class AppShellV2Component implements OnInit {
     let items: any[] = [];
     if (hasGestao)       items = [...(app.moduloGestao   || [])];
     else if (hasExecucao) items = [...(app.moduloExecucao || [])];
-    if (this.auth.hasPermissionTo('CTXT_DEV')) items = [...items, ...(app.moduloDev || [])];
+    if (this.auth.hasPermissionTo('CTXT_DEV')) {
+      const devItems = (app.moduloDev || []).filter(
+        (item) => !this.isImpersonateMenuItem(item) || this.auth.isAdmin()
+      );
+      items = [...items, ...devItems];
+    }
     return items;
+  }
+
+  private isImpersonateMenuItem(item: { route?: string[] }): boolean {
+    return item?.route?.[0] === 'impersonate';
   }
 
   hasPermission(permition: string | undefined): boolean {
