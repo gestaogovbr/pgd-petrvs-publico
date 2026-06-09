@@ -34,7 +34,7 @@ export class AuthGuard  {
         result = new Promise((resolve, reject) => {
           const handle = (success: boolean) => {
             if(success) {
-              resolve(true);
+              resolve(this.checkRouteAuthorization(route) ?? true);
             } else {
               if(!this.gb.isToolbar) {
                 let redirectUrl = this.router.parseUrl('/login');
@@ -57,12 +57,23 @@ export class AuthGuard  {
           if(route.queryParams?.context) this.gb.setContexto(route.queryParams?.context, false);
           this.auth.authSession().then(handle).catch(error => handle(false));
         }); 
-      } else if(route.data.permission && !this.auth.hasPermissionTo(route.data.permission)) {
-        this.dialogs.alert("Permissão negada", "O usuário não tem permissão para acessar esse recurso");
-        result = false;
+      } else {
+        result = this.checkRouteAuthorization(route) ?? logged;
       }
     }
 
     return result;
-  }  
+  }
+
+  private checkRouteAuthorization(route: ActivatedRouteSnapshot): boolean | undefined {
+    if(route.data.requireAdmin && !this.auth.isAdmin()) {
+      this.dialogs.alert("Permissão negada", "O usuário não tem permissão para acessar esse recurso");
+      return false;
+    }
+    if(route.data.permission && !this.auth.hasPermissionTo(route.data.permission)) {
+      this.dialogs.alert("Permissão negada", "O usuário não tem permissão para acessar esse recurso");
+      return false;
+    }
+    return undefined;
+  }
 }

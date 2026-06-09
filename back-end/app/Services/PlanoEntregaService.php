@@ -531,11 +531,13 @@ class PlanoEntregaService extends ServiceBase
             $query->whereRaw("data_conclusao_envio IS NOT NULL", []);
         }
 
-        $where = array_values(array_filter($where, function ($item) {
-                return ($item[0] !== 'envios_pendentes');
-        }));
+        if (is_array($where)) {
+            $where = array_values(array_filter($where, function ($item) {
+                    return is_array($item) && ($item[0] !== 'envios_pendentes');
+            }));
+        }
 
-        $data["where"] = $where;
+        $data["where"] = $where ?? [];
 
     }
 

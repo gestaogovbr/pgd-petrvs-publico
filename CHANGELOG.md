@@ -1,4 +1,10 @@
-## 3.0.0 01/06/2026
+## 3.0.1 09/06/2026
+
+### Corrigido
+- Acesso à Personificação
+- Correções na importação de SIAPE
+
+## 3.0.0 08/06/2026
 
 ### Adicionado
 - Adicionado novo container de RabbitMQ para envio de dados.
