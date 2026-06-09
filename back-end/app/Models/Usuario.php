@@ -571,7 +571,7 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
 
     public function canImpersonate(): bool
     {
-        return $this->is_admin == 1 || $this->hasPermissionTo('MENU_DEV_ACESSO');
+        return $this->is_admin == 1;
     }
 
     public function impersonateGuard()

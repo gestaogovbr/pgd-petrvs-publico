@@ -229,6 +229,11 @@ export class AuthService {
     return false;
   }
 
+  /** Administrador do sistema (`usuarios.is_admin == 1`). */
+  public isAdmin(): boolean {
+    return Number(this.usuario?.is_admin) === 1;
+  }
+
   public get routerTo(): any {
     let routerTo = this.route.snapshot?.queryParams?.redirectTo ? JSON.parse(this.route.snapshot?.queryParams?.redirectTo) : { route: this.gb.initialRoute };
     if (routerTo.route[0] == "login") routerTo = { route: this.gb.initialRoute };
