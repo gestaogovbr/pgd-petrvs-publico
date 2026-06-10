@@ -96,6 +96,13 @@ describe('AvaliacaoPolicy::podeCancelar', function () {
         expect($this->policy->podeCancelar($avaliacao, $consolidacao, 'user-1'))->toBeTrue();
     });
 
+    test('retorna false quando avaliação possui recurso', function () {
+        [$avaliacao, $consolidacao] = criarConsolidacaoComAvaliacao('av-1', StatusEnum::AVALIADO->value, 'user-1', now()->toDateTimeString());
+        $avaliacao->recurso = 'Justificativa do recurso';
+
+        expect($this->policy->podeCancelar($avaliacao, $consolidacao, 'user-1'))->toBeFalse();
+    });
+
     test('retorna false quando não há registro de conclusão', function () {
         $avaliacao = Mockery::mock(Avaliacao::class)->makePartial();
         $avaliacao->id = 'av-1';

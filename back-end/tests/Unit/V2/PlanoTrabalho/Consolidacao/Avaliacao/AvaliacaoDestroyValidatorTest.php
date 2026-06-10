@@ -97,6 +97,18 @@ describe('AvaliacaoDestroyValidator', function () {
         $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');
     })->throws(ValidateException::class, 'Apenas a avaliação mais recente pode ser cancelada.');
 
+    test('lança ValidateException quando avaliação possui recurso', function () {
+        $avaliacao = mockAvaliacao('av-1', 'user-1', 'cons-1', 'plano-1');
+
+        $this->avaliacaoRepo->shouldReceive('findById')->andReturn($avaliacao);
+        $this->avaliacaoPolicy->shouldReceive('isStatusAvaliado')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('isAvaliador')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('isMaisRecente')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('naoTemRecurso')->andReturn(false);
+
+        $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');
+    })->throws(ValidateException::class, 'Não é possível cancelar uma avaliação que possui recurso.');
+
     test('lança ValidateException quando prazo expirou', function () {
         $avaliacao = mockAvaliacao('av-1', 'user-1', 'cons-1', 'plano-1');
 
@@ -104,6 +116,7 @@ describe('AvaliacaoDestroyValidator', function () {
         $this->avaliacaoPolicy->shouldReceive('isStatusAvaliado')->andReturn(true);
         $this->avaliacaoPolicy->shouldReceive('isAvaliador')->andReturn(true);
         $this->avaliacaoPolicy->shouldReceive('isMaisRecente')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('naoTemRecurso')->andReturn(true);
         $this->avaliacaoPolicy->shouldReceive('estaDentroDoPrazo')->andReturn(false);
 
         $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');
@@ -116,6 +129,7 @@ describe('AvaliacaoDestroyValidator', function () {
         $this->avaliacaoPolicy->shouldReceive('isStatusAvaliado')->andReturn(true);
         $this->avaliacaoPolicy->shouldReceive('isAvaliador')->andReturn(true);
         $this->avaliacaoPolicy->shouldReceive('isMaisRecente')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('naoTemRecurso')->andReturn(true);
         $this->avaliacaoPolicy->shouldReceive('estaDentroDoPrazo')->andReturn(true);
 
         $result = $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');

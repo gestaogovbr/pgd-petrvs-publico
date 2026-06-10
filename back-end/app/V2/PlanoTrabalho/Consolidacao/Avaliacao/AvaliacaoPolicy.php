@@ -18,6 +18,7 @@ class AvaliacaoPolicy
         return $this->isStatusAvaliado($consolidacao)
             && $this->isAvaliador($avaliacao, $usuarioLogadoId)
             && $this->isMaisRecente($avaliacao, $consolidacao)
+            && $this->naoTemRecurso($avaliacao)
             && $this->estaDentroDoPrazo($consolidacao);
     }
 
@@ -36,6 +37,11 @@ class AvaliacaoPolicy
         $maisRecente = $consolidacao->avaliacoes->sortByDesc('data_avaliacao')->first();
 
         return $maisRecente?->id === $avaliacao->id;
+    }
+
+    public function naoTemRecurso(Avaliacao $avaliacao): bool
+    {
+        return $avaliacao->recurso === null;
     }
 
     public function estaDentroDoPrazo(PlanoTrabalhoConsolidacao $consolidacao): bool

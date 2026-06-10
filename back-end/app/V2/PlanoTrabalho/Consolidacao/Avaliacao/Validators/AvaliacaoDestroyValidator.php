@@ -77,6 +77,10 @@ class AvaliacaoDestroyValidator
             throw new ValidateException('Apenas a avaliação mais recente pode ser cancelada.');
         }
 
+        if (!$this->avaliacaoPolicy->naoTemRecurso($avaliacao)) {
+            throw new ValidateException('Não é possível cancelar uma avaliação que possui recurso.');
+        }
+
         if (!$this->avaliacaoPolicy->estaDentroDoPrazo($consolidacao)) {
             throw new ValidateException('O prazo de ' . AvaliacaoPolicy::PRAZO_CANCELAMENTO_DIAS . ' dias para cancelar a avaliação expirou.');
         }
