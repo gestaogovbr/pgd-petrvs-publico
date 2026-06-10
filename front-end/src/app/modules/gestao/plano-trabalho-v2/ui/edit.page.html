@@ -30,7 +30,7 @@
         @if (!editandoInformacoesGerais()) {
           <div class="row">
             <div class="col-md-4 mb-3">
-              <p class="mb-1 text-weight-semi-bold text-up-01">Agente Público</p>
+              <p class="mb-1 text-weight-semi-bold text-up-01">Participante</p>
               <p class="mb-0">{{ agenteExibicao() }}</p>
             </div>
             <div class="col-md-4 mb-3">
@@ -93,7 +93,7 @@
               <div class="col-md-4 mb-3 position-relative">
                 <div class="d-flex align-items-end gap-2">
                   <div class="br-input w-100">
-                    <label>Agente Público</label>
+                    <label>Participante</label>
                     <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" [readonly]="agentePublicoSomenteLeitura()" />
                   </div>
                   @if (!agentePublicoSomenteLeitura()) {
