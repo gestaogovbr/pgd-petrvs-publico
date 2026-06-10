@@ -8,23 +8,42 @@ use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoAcoesDTO;
 use App\V2\Traits\ValidaAutorizacaoTrait;
+use Carbon\Carbon;
 
 class PlanoTrabalhoAuthorization
 {
     use ValidaAutorizacaoTrait;
 
+    private const PRAZO_RECURSO_DIAS = 30;
+
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
+        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
     ) {}
 
     public function acoes(PlanoTrabalho $plano, Usuario $usuario): PlanoTrabalhoAcoesDTO
     {
         return new PlanoTrabalhoAcoesDTO(
             editar: $this->podeEditar($plano, $usuario),
+            arquivar: $this->podeArquivar($plano, $usuario),
         );
+    }
+
+    public function podeArquivar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($plano->data_arquivamento !== null) {
+            return false;
+        }
+
+        if (!$this->isElegivelParaArquivamento($plano)) {
+            return false;
+        }
+
+        return $this->isAutorizadoArquivar($plano, $usuario);
     }
 
     public function podeEditar(PlanoTrabalho $plano, Usuario $usuario): bool
@@ -81,6 +100,42 @@ class PlanoTrabalhoAuthorization
             if (in_array($unidade->id, $linhaAscendente, true)) {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    private function isElegivelParaArquivamento(PlanoTrabalho $plano): bool
+    {
+        if ($plano->status === StatusEnum::CANCELADO->value) {
+            return true;
+        }
+
+        $resumo = $this->consolidacaoRepository->resumoParaArquivamento(
+            $plano->id,
+            Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS),
+        );
+
+        if ($plano->encerrado_at !== null && !$resumo->possuiPendencias) {
+            return true;
+        }
+
+        if ($plano->status === StatusEnum::CONCLUIDO->value && $resumo->todosAvaliados && !$resumo->avaliacaoRecente) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function isAutorizadoArquivar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($this->isDonoOuChefia($plano, $usuario->id, $plano->unidade_id)) {
+            return true;
+        }
+
+        if ($usuario->perfil?->nivel === PerfilEnum::COLABORADOR->value
+            && $this->unidadeRepository->hasUsuarioLotacao($plano->unidade_id, $usuario->id, true)) {
+            return true;
         }
 
         return false;
