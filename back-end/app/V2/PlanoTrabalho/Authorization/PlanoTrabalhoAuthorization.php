@@ -30,7 +30,35 @@ class PlanoTrabalhoAuthorization
         return new PlanoTrabalhoAcoesDTO(
             editar: $this->podeEditar($plano, $usuario),
             arquivar: $this->podeArquivar($plano, $usuario),
+            encerrar: $this->podeEncerrar($plano, $usuario),
         );
+    }
+
+    public function podeEncerrar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if (!$this->isElegivelParaEncerramento($plano)) {
+            return false;
+        }
+
+        return $this->isAutorizadoEncerrar($plano, $usuario);
+    }
+
+    public function isElegivelParaEncerramento(PlanoTrabalho $plano): bool
+    {
+        if ($plano->status !== StatusEnum::ATIVO->value) {
+            return false;
+        }
+
+        $hoje = now()->format('Y-m-d');
+
+        return $plano->data_inicio <= $hoje && $plano->data_fim >= $hoje;
+    }
+
+    // TODO: spec 4.23-b exige que o adm negocial seja de uma unidade instituidora na linha
+    //       ascendente do PT. Atualmente permite qualquer adm negocial. Avaliar uso de admNegocialNoEscopoInstituidora.
+    public function isAutorizadoEncerrar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        return $this->isDonoOuChefiaOuAdm($plano, $usuario);
     }
 
     public function podeArquivar(PlanoTrabalho $plano, Usuario $usuario): bool
@@ -105,7 +133,7 @@ class PlanoTrabalhoAuthorization
         return false;
     }
 
-    private function isElegivelParaArquivamento(PlanoTrabalho $plano): bool
+    public function isElegivelParaArquivamento(PlanoTrabalho $plano): bool
     {
         if ($plano->status === StatusEnum::CANCELADO->value) {
             return true;
@@ -127,7 +155,7 @@ class PlanoTrabalhoAuthorization
         return false;
     }
 
-    private function isAutorizadoArquivar(PlanoTrabalho $plano, Usuario $usuario): bool
+    public function isAutorizadoArquivar(PlanoTrabalho $plano, Usuario $usuario): bool
     {
         if ($this->isDonoOuChefia($plano, $usuario->id, $plano->unidade_id)) {
             return true;
@@ -139,5 +167,14 @@ class PlanoTrabalhoAuthorization
         }
 
         return false;
+    }
+
+    private function isDonoOuChefiaOuAdm(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($this->isDonoOuChefia($plano, $usuario->id, $plano->unidade_id)) {
+            return true;
+        }
+
+        return $usuario->perfil !== null && $usuario->perfil->nivel <= PerfilEnum::ADMINISTRADOR_NEGOCIAL->value;
     }
 }

@@ -168,7 +168,7 @@ test('acoes retorna todas as permissões calculadas', function () {
 
     $acoes = $this->authorization->acoes($plano, $usuario)->toArray();
 
-    expect($acoes)->toBe(['editar' => false, 'arquivar' => false]);
+    expect($acoes)->toBe(['editar' => false, 'arquivar' => false, 'encerrar' => false]);
 });
 
 // --- podeArquivar ---
@@ -287,4 +287,86 @@ test('podeArquivar retorna true para colaborador com lotação na unidade', func
         ->andReturn(true);
 
     expect($this->authorization->podeArquivar($plano, $usuario))->toBeTrue();
+});
+
+// --- podeEncerrar ---
+
+test('podeEncerrar retorna false quando status não é ATIVO', function () {
+    $plano = makePlano(StatusEnum::CONCLUIDO->value);
+    $usuario = makeUsuario(PerfilEnum::PARTICIPANTE->value);
+    $usuario->id = 'agente-1';
+
+    expect($this->authorization->podeEncerrar($plano, $usuario))->toBeFalse();
+});
+
+test('podeEncerrar retorna false quando vigência ainda não iniciou', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $plano->data_inicio = now()->addDays(5)->format('Y-m-d');
+    $plano->data_fim = now()->addDays(30)->format('Y-m-d');
+    $usuario = makeUsuario(PerfilEnum::PARTICIPANTE->value);
+    $usuario->id = 'agente-1';
+
+    expect($this->authorization->podeEncerrar($plano, $usuario))->toBeFalse();
+});
+
+test('podeEncerrar retorna false quando vigência já expirou', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $plano->data_inicio = now()->subDays(30)->format('Y-m-d');
+    $plano->data_fim = now()->subDays(1)->format('Y-m-d');
+    $usuario = makeUsuario(PerfilEnum::PARTICIPANTE->value);
+    $usuario->id = 'agente-1';
+
+    expect($this->authorization->podeEncerrar($plano, $usuario))->toBeFalse();
+});
+
+test('podeEncerrar retorna true para dono do plano dentro da vigência', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $plano->data_inicio = now()->subDays(10)->format('Y-m-d');
+    $plano->data_fim = now()->addDays(10)->format('Y-m-d');
+    $usuario = makeUsuario(PerfilEnum::PARTICIPANTE->value);
+    $usuario->id = 'agente-1';
+
+    expect($this->authorization->podeEncerrar($plano, $usuario))->toBeTrue();
+});
+
+test('podeEncerrar retorna true para chefia da unidade', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $plano->data_inicio = now()->subDays(10)->format('Y-m-d');
+    $plano->data_fim = now()->addDays(10)->format('Y-m-d');
+    $usuario = makeUsuario(PerfilEnum::UNIDADE->value);
+    $usuario->id = 'chefia-1';
+
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
+        ->with('unidade-plano', 'chefia-1')
+        ->andReturn(true);
+
+    expect($this->authorization->podeEncerrar($plano, $usuario))->toBeTrue();
+});
+
+test('podeEncerrar retorna true para adm negocial', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $plano->data_inicio = now()->subDays(10)->format('Y-m-d');
+    $plano->data_fim = now()->addDays(10)->format('Y-m-d');
+    $usuario = makeUsuario(PerfilEnum::ADMINISTRADOR_NEGOCIAL->value);
+    $usuario->id = 'adm-neg';
+
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
+        ->with('unidade-plano', 'adm-neg')
+        ->andReturn(false);
+
+    expect($this->authorization->podeEncerrar($plano, $usuario))->toBeTrue();
+});
+
+test('podeEncerrar retorna false para usuário sem autorização', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $plano->data_inicio = now()->subDays(10)->format('Y-m-d');
+    $plano->data_fim = now()->addDays(10)->format('Y-m-d');
+    $usuario = makeUsuario(PerfilEnum::PARTICIPANTE->value);
+    $usuario->id = 'outro-user';
+
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
+        ->with('unidade-plano', 'outro-user')
+        ->andReturn(false);
+
+    expect($this->authorization->podeEncerrar($plano, $usuario))->toBeFalse();
 });
