@@ -56,7 +56,7 @@ return new class extends Migration
                 return;
             }
 
-            DB::statement('SET SESSION group_concat_max_len = 1048576');
+            $this->configurarSessaoParaAgregacao();
 
             DB::beginTransaction();
 
@@ -143,8 +143,9 @@ return new class extends Migration
             CREATE TEMPORARY TABLE `{$grupos}` (
                 `plano_trabalho_consolidacao_id` CHAR(36) NOT NULL,
                 `plano_trabalho_entrega_id` CHAR(36) NULL,
+                `entrega_id_key` CHAR(36) NOT NULL COMMENT 'COALESCE(plano_trabalho_entrega_id, "") — PK não aceita NULL',
                 `keeper_id` CHAR(36) NOT NULL,
-                PRIMARY KEY (`plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`),
+                PRIMARY KEY (`plano_trabalho_consolidacao_id`, `entrega_id_key`),
                 KEY `idx_keeper` (`keeper_id`)
             ) ENGINE=InnoDB
         SQL);
@@ -164,16 +165,31 @@ return new class extends Migration
         $map = self::TEMP_MAP;
 
         DB::statement(<<<SQL
-            INSERT INTO `{$grupos}` (`plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`, `keeper_id`)
+            INSERT INTO `{$grupos}` (`plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`, `entrega_id_key`, `keeper_id`)
             SELECT
-                `plano_trabalho_consolidacao_id`,
-                `plano_trabalho_entrega_id`,
-                SUBSTRING_INDEX(GROUP_CONCAT(`id` ORDER BY `created_at` ASC, `id` ASC), ',', 1) AS `keeper_id`
-            FROM `atividades`
-            WHERE `deleted_at` IS NULL
-              AND `plano_trabalho_consolidacao_id` IS NOT NULL
-            GROUP BY `plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`
-            HAVING COUNT(*) > 1
+                `dup`.`plano_trabalho_consolidacao_id`,
+                `dup`.`plano_trabalho_entrega_id`,
+                COALESCE(`dup`.`plano_trabalho_entrega_id`, '') AS `entrega_id_key`,
+                MIN(`a`.`id`) AS `keeper_id`
+            FROM (
+                SELECT
+                    `plano_trabalho_consolidacao_id`,
+                    `plano_trabalho_entrega_id`,
+                    MIN(`created_at`) AS `min_created_at`
+                FROM `atividades`
+                WHERE `deleted_at` IS NULL
+                  AND `plano_trabalho_consolidacao_id` IS NOT NULL
+                GROUP BY `plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`
+                HAVING COUNT(*) > 1
+            ) AS `dup`
+            INNER JOIN `atividades` AS `a`
+                ON `a`.`plano_trabalho_consolidacao_id` = `dup`.`plano_trabalho_consolidacao_id`
+                AND `a`.`plano_trabalho_entrega_id` <=> `dup`.`plano_trabalho_entrega_id`
+                AND `a`.`created_at` = `dup`.`min_created_at`
+                AND `a`.`deleted_at` IS NULL
+            GROUP BY
+                `dup`.`plano_trabalho_consolidacao_id`,
+                `dup`.`plano_trabalho_entrega_id`
         SQL);
 
         DB::statement(<<<SQL
@@ -184,7 +200,7 @@ return new class extends Migration
             FROM `atividades` AS `a`
             INNER JOIN `{$grupos}` AS `g`
                 ON `g`.`plano_trabalho_consolidacao_id` = `a`.`plano_trabalho_consolidacao_id`
-                AND `g`.`plano_trabalho_entrega_id` <=> `a`.`plano_trabalho_entrega_id`
+                AND `g`.`entrega_id_key` = COALESCE(`a`.`plano_trabalho_entrega_id`, '')
             WHERE `a`.`deleted_at` IS NULL
               AND `a`.`id` <> `g`.`keeper_id`
         SQL);
@@ -258,7 +274,7 @@ return new class extends Migration
             FROM `{$grupos}` AS `g`
             INNER JOIN `atividades` AS `a2`
                 ON `a2`.`plano_trabalho_consolidacao_id` = `g`.`plano_trabalho_consolidacao_id`
-                AND `a2`.`plano_trabalho_entrega_id` <=> `g`.`plano_trabalho_entrega_id`
+                AND COALESCE(`a2`.`plano_trabalho_entrega_id`, '') = `g`.`entrega_id_key`
                 AND `a2`.`deleted_at` IS NULL
             GROUP BY `g`.`keeper_id`
         SQL);
@@ -303,6 +319,15 @@ return new class extends Migration
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_GRUPOS . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_MAP . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_DESCRICOES . '`');
+    }
+
+    /**
+     * MySQL e MariaDB usam group_concat_max_len baixo por padrão (1024), o que
+     * dispara erro 1260 ("Row was cut by GROUP_CONCAT") ao unificar descrições.
+     */
+    private function configurarSessaoParaAgregacao(): void
+    {
+        DB::statement('SET SESSION group_concat_max_len = 1048576');
     }
 
     /**
