@@ -45,20 +45,32 @@ class GestorHierarquiaCache
             return;
         }
 
-        $prefix = config('cache.prefix', '') . ':';
+        $connectionName = config('cache.stores.redis.connection', 'cache');
+
+        /** @var \Redis $client */
+        $client = Redis::connection($connectionName)->client();
+
+        $clientPrefix = $client->getOption(\Redis::OPT_PREFIX) ?: '';
+        $storePrefix = Cache::getStore()->getPrefix();
+        $fullPrefix = $clientPrefix . $storePrefix;
+
         $patterns = [
-            $prefix . self::PREFIX_HIERARQUIA . '*',
-            $prefix . self::PREFIX_GERIDAS . '*',
+            $fullPrefix . '*' . self::PREFIX_HIERARQUIA . '*',
+            $fullPrefix . '*' . self::PREFIX_GERIDAS . '*',
         ];
+
+        $client->setOption(\Redis::OPT_PREFIX, '');
 
         foreach ($patterns as $pattern) {
             $cursor = null;
             do {
-                [$cursor, $keys] = Redis::scan($cursor, ['match' => $pattern, 'count' => 100]);
-                if (!empty($keys)) {
-                    Redis::del(...$keys);
+                $keys = $client->scan($cursor, $pattern, 100);
+                if ($keys !== false && !empty($keys)) {
+                    $client->del(...$keys);
                 }
-            } while ($cursor);
+            } while ($cursor > 0);
         }
+
+        $client->setOption(\Redis::OPT_PREFIX, $clientPrefix);
     }
 }

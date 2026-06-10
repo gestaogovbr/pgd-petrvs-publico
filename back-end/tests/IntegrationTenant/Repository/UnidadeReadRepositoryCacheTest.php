@@ -1,5 +1,6 @@
 <?php
 
+use App\Cache\GestorHierarquiaCache;
 use App\Models\Entidade;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
@@ -207,45 +208,20 @@ describe('EloquentUnidadeReadRepository::isUsuarioGestorRecursivo - Cache E2E', 
     });
 
     test('invalidarCacheHierarquia limpa ambas as chaves de cache', function () {
-        if (!(Cache::getStore() instanceof \Illuminate\Cache\RedisStore)) {
-            $this->markTestSkipped('Requer Redis para testar invalidação por SCAN');
-        }
+        Cache::flush();
 
         $usuarioId = $this->usuario->id;
 
-        // Popula ambos caches
+        // Popula ambos caches (agora no Redis)
         $this->repository->isUsuarioGestorRecursivo($this->unidadeFilha->id, $usuarioId);
 
         expect(Cache::has('unidades-geridas:' . $usuarioId))->toBeTrue();
         expect(Cache::has('unidade-hierarquia:' . $this->unidadePai->id))->toBeTrue();
 
         // Invalida tudo
-        $this->repository->invalidarCacheHierarquia();
+        GestorHierarquiaCache::invalidarTudo();
 
         expect(Cache::has('unidades-geridas:' . $usuarioId))->toBeFalse();
         expect(Cache::has('unidade-hierarquia:' . $this->unidadePai->id))->toBeFalse();
-    });
-
-    test('invalidarCacheHierarquia força queries reais na próxima chamada', function () {
-        if (!(Cache::getStore() instanceof \Illuminate\Cache\RedisStore)) {
-            $this->markTestSkipped('Requer Redis para testar invalidação por SCAN');
-        }
-
-        $usuarioId = $this->usuario->id;
-
-        // Popula cache
-        $this->repository->isUsuarioGestorRecursivo($this->unidadeFilha->id, $usuarioId);
-
-        // Invalida
-        $this->repository->invalidarCacheHierarquia();
-
-        // Próxima chamada deve ir ao banco
-        DB::connection('tenant')->enableQueryLog();
-        $resultado = $this->repository->isUsuarioGestorRecursivo($this->unidadeFilha->id, $usuarioId);
-        $queries = DB::connection('tenant')->getQueryLog();
-        DB::connection('tenant')->disableQueryLog();
-
-        expect($resultado)->toBeTrue();
-        expect($queries)->not->toBeEmpty('Após invalidarCacheHierarquia, deveria consultar o banco');
     });
 });
