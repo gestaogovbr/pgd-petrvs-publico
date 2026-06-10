@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Cache\GestorHierarquiaCache;
 use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Models\Entidade;
-use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -35,7 +35,7 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
         return "Sincronizar SIAPE";
     }
 
-    public function handle(IntegracaoService $integracaoService, UnidadeReadRepositoryContract $unidadeRepository)
+    public function handle(IntegracaoService $integracaoService)
     {
         ini_set('memory_limit', '-1');
         
@@ -55,7 +55,7 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
                 Log::alert("Job SincronizarPetrvs: " . json_encode($inputs));
                 $integracaoService->sincronizar($inputs);
             }
-            $unidadeRepository->invalidarCacheHierarquia();
+            GestorHierarquiaCache::invalidarTudo();
             Log::info("Job SincronizarPetrvs END ");
         } catch (\Exception $e) {
             Log::error("Erro ao processar Job SincronizarPetrvs " . $e->getMessage());

@@ -101,9 +101,4 @@ class UnidadeRepository
     {
         return $this->readRepository->linhaAscendente($unidadeId);
     }
-
-    public function invalidarCacheHierarquia(): void
-    {
-        $this->readRepository->invalidarCacheHierarquia();
-    }
 }

@@ -207,6 +207,10 @@ describe('EloquentUnidadeReadRepository::isUsuarioGestorRecursivo - Cache E2E', 
     });
 
     test('invalidarCacheHierarquia limpa ambas as chaves de cache', function () {
+        if (!(Cache::getStore() instanceof \Illuminate\Cache\RedisStore)) {
+            $this->markTestSkipped('Requer Redis para testar invalidação por SCAN');
+        }
+
         $usuarioId = $this->usuario->id;
 
         // Popula ambos caches
@@ -223,6 +227,10 @@ describe('EloquentUnidadeReadRepository::isUsuarioGestorRecursivo - Cache E2E', 
     });
 
     test('invalidarCacheHierarquia força queries reais na próxima chamada', function () {
+        if (!(Cache::getStore() instanceof \Illuminate\Cache\RedisStore)) {
+            $this->markTestSkipped('Requer Redis para testar invalidação por SCAN');
+        }
+
         $usuarioId = $this->usuario->id;
 
         // Popula cache

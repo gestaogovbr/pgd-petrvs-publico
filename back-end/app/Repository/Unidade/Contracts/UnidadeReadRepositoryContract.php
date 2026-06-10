@@ -48,6 +48,4 @@ interface UnidadeReadRepositoryContract
 
     /** @return string[] */
     public function linhaAscendente(string $unidadeId): array;
-
-    public function invalidarCacheHierarquia(): void;
 }

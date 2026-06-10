@@ -2,12 +2,11 @@
 
 namespace App\Observers;
 
+use App\Cache\GestorHierarquiaCache;
 use App\Models\UnidadeIntegranteAtribuicao;
-use Illuminate\Support\Facades\Cache;
 
 class UnidadeIntegranteAtribuicaoObserver
 {
-    private const CACHE_PREFIX_GERIDAS = 'unidades-geridas:';
     private const ATRIBUICOES_GESTOR = ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'];
 
     public function created(UnidadeIntegranteAtribuicao $model): void
@@ -37,6 +36,6 @@ class UnidadeIntegranteAtribuicaoObserver
             return;
         }
 
-        Cache::forget(self::CACHE_PREFIX_GERIDAS . $usuarioId);
+        GestorHierarquiaCache::forgetUsuario($usuarioId);
     }
 }
