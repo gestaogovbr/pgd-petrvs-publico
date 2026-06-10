@@ -44,7 +44,6 @@ class PlanoTrabalhoRequestValidator
             'data_inicio' => ['required', 'date'],
             'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
             'modalidade_pgd' => ['required', 'string', Rule::in(ModalidadePgd::keys())],
-            'justificativa' => ['nullable', 'string', 'max:500'],
             'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
         ], [
             'usuario_id.required' => 'O participante é obrigatório.',
@@ -58,7 +57,6 @@ class PlanoTrabalhoRequestValidator
             'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
             'modalidade_pgd.required' => 'A modalidade é obrigatória.',
             'modalidade_pgd.in' => 'A modalidade informada não é válida.',
-            'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
             'justificativa_modalidade.max' => 'A justificativa da modalidade não pode exceder 500 caracteres.',
         ]);
     }
@@ -72,7 +70,6 @@ class PlanoTrabalhoRequestValidator
             'data_inicio' => ['required', 'date'],
             'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
             'modalidade_pgd' => ['required', 'string', Rule::in(ModalidadePgd::keys())],
-            'justificativa' => ['nullable', 'string', 'max:500'],
             'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
         ], [
             'usuario_id.required' => 'O participante é obrigatório.',
@@ -86,7 +83,6 @@ class PlanoTrabalhoRequestValidator
             'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
             'modalidade_pgd.required' => 'A modalidade é obrigatória.',
             'modalidade_pgd.in' => 'A modalidade informada não é válida.',
-            'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
             'justificativa_modalidade.max' => 'A justificativa da modalidade não pode exceder 500 caracteres.',
         ]);
     }
