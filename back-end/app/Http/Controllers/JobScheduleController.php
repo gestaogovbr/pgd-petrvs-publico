@@ -7,7 +7,7 @@ use App\Exceptions\ServerException;
 use App\Http\Controllers\ControllerBase;
 use App\Jobs\LogJob;
 use App\Jobs\SincronizarSiapeJob;
-use App\Models\JobSchedule;
+use App\Jobs\SincronizarSipecJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -46,6 +46,13 @@ class JobScheduleController extends ControllerBase {
         $usuario_id = $request->input('usuario_id', '08246b0c-e5ff-11ee-a54a-0242ac130002');
         SincronizarSiapeJob::dispatch($usuario_id);
         return response()->json(['message' => 'sincronizarSiape iniciado com sucesso!']);
+    }
+
+    public function sincronizarSipec(Request $request)
+    {
+        $tenantId = $request->input('tenant_id');
+        SincronizarSipecJob::dispatch($tenantId);
+        return response()->json(['message' => 'sincronizarSipec iniciado com sucesso!']);
     }
 
     /**

@@ -216,6 +216,93 @@ class SipecService
     }
 
     /**
+     * Busca TODAS as unidades do órgão com paginação automática.
+     * Grava cada página de resultados na tabela sipec_unidades.
+     *
+     * @param string|null $codOrgao Código do órgão (usa config se null)
+     * @return int Total de registros gravados
+     */
+    public function buscarTodasUnidades(?string $codOrgao = null): int
+    {
+        $codOrgao = $codOrgao ?? $this->codUorg;
+        $token = $this->getToken();
+        $page = 0;
+        $size = 100;
+        $total = 0;
+
+        do {
+            $params = http_build_query([
+                'codOrgao' => $codOrgao,
+                'page' => $page,
+                'size' => $size,
+            ]);
+            $url = $this->url . '/api-sipec/v1/unidades?' . $params;
+            $data = $this->executarGet($url, $token);
+
+            $itens = $data['content'] ?? [];
+            $totalPages = $data['totalPages'] ?? 1;
+
+            foreach ($itens as $item) {
+                \App\Models\SipecUnidade::create([
+                    'codigo' => (string) ($item['codUorg'] ?? ''),
+                    'response' => json_encode($item, JSON_UNESCAPED_UNICODE),
+                    'processado' => false,
+                    'data_modificacao' => $item['dataUltimaTransacao'] ?? null,
+                ]);
+                $total++;
+            }
+
+            $page++;
+        } while ($page < $totalPages);
+
+        return $total;
+    }
+
+    /**
+     * Busca TODOS os servidores do órgão com paginação automática.
+     * Grava cada página de resultados na tabela sipec_servidores.
+     *
+     * @param string|null $codUorg Código da UORG (usa config se null)
+     * @return int Total de registros gravados
+     */
+    public function buscarTodosServidores(?string $codUorg = null): int
+    {
+        $codUorg = $codUorg ?? $this->codUorg;
+        $token = $this->getToken();
+        $page = 0;
+        $size = 100;
+        $total = 0;
+
+        do {
+            $params = http_build_query([
+                'codUorg' => $codUorg,
+                'page' => $page,
+                'size' => $size,
+            ]);
+            $url = $this->url . '/api-sipec/v1/servidores?' . $params;
+            $data = $this->executarGet($url, $token);
+
+            $itens = $data['content'] ?? [];
+            $totalPages = $data['totalPages'] ?? 1;
+
+            foreach ($itens as $item) {
+                \App\Models\SipecServidor::create([
+                    'cpf' => $item['cpf'] ?? null,
+                    'matricula' => isset($item['matriculaSiape']) ? (string) $item['matriculaSiape'] : null,
+                    'response' => json_encode($item, JSON_UNESCAPED_UNICODE),
+                    'processado' => false,
+                    'data_modificacao' => $item['dataUltimaTransacao'] ?? null,
+                ]);
+                $total++;
+            }
+
+            $page++;
+        } while ($page < $totalPages);
+
+        return $total;
+    }
+
+    /**
      * Invalida o token em cache (útil para testes).
      */
     public static function invalidateToken(): void
