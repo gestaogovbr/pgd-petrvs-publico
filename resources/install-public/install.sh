@@ -358,11 +358,7 @@ services:
         condition: service_started
       petrvs_rabbitmq:
         condition: service_healthy
-    depends_on:
-      petrvs_redis:
-        condition: service_started
-      petrvs_rabbitmq:
-        condition: service_healthy
+
   petrvs_queue:
     image: segescginf/pgdpetrvs:$IMAGE_TAG
     container_name: petrvs_queue
