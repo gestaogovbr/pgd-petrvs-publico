@@ -92,6 +92,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
                 'avaliacoes.tipoAvaliacaoNota:id,aprova',
                 'afastamentos.afastamento:id,observacoes,data_inicio,data_fim,horas,tipo_motivo_afastamento_id',
                 'afastamentos.afastamento.tipoMotivoAfastamento:id,nome,sigla,horas',
+                'statusHistorico:id,plano_trabalho_consolidacao_id,codigo,created_at',
             ])
             ->where('plano_trabalho_id', $planoTrabalhoId)
             ->orderBy('data_inicio')

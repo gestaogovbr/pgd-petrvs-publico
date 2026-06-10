@@ -13,6 +13,7 @@ use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoAuthorizatio
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoDestroyValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoStoreValidator;
 use App\V2\StatusService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AvaliacaoService
@@ -23,6 +24,7 @@ class AvaliacaoService
         private readonly AvaliacaoDestroyValidator $destroyValidator,
         private readonly AvaliacaoRepository $avaliacaoRepository,
         private readonly StatusService $statusService,
+        private readonly AvaliacaoPolicy $avaliacaoPolicy,
     ) {}
 
     public function store(AvaliacaoStoreDTO $dto): Avaliacao
@@ -47,6 +49,9 @@ class AvaliacaoService
                 $justificativa,
             );
 
+            $consolidacao->refresh()->load(['avaliacoes', 'statusHistorico']);
+            $avaliacao->setAttribute('pode_cancelar', $this->avaliacaoPolicy->podeCancelar($avaliacao, $consolidacao, $dto->avaliadorId));
+
             return $avaliacao;
         });
     }
@@ -59,7 +64,7 @@ class AvaliacaoService
         $avaliacao = $this->destroyValidator->validar($planoTrabalhoId, $consolidacaoId, $avaliacaoId, $usuarioLogadoId);
         $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
 
-        return DB::transaction(function () use ($avaliacao, $consolidacao) {
+        return DB::transaction(function () use ($avaliacao, $consolidacao, $usuarioLogadoId) {
             $this->avaliacaoRepository->delete($avaliacao->id);
 
             $this->statusService->atualizaStatus(
@@ -68,7 +73,13 @@ class AvaliacaoService
                 'Avaliação do período avaliativo cancelada pela chefia.',
             );
 
-            return $consolidacao->refresh()->load(['avaliacoes.avaliador', 'atividades', 'afastamentos.afastamento']);
+            $consolidacao = $consolidacao->refresh()->load(['avaliacoes.avaliador', 'atividades', 'afastamentos.afastamento', 'statusHistorico']);
+
+            $consolidacao->avaliacoes->each(function ($av) use ($consolidacao, $usuarioLogadoId) {
+                $av->setAttribute('pode_cancelar', $this->avaliacaoPolicy->podeCancelar($av, $consolidacao, $usuarioLogadoId));
+            });
+
+            return $consolidacao;
         });
     }
 }

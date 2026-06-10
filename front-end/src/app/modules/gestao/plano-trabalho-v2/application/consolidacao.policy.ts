@@ -45,13 +45,6 @@ export class ConsolidacaoPolicy {
   }
 
   podeCancelarAvaliacao(consolidacao: Consolidacao, avaliacao: AvaliacaoConsolidacao): boolean {
-    const ultimaAvaliacao = consolidacao.avaliacoes.reduce<AvaliacaoConsolidacao | null>((latest, item) => {
-      if (!latest) return item;
-      return Date.parse(item.data_avaliacao) > Date.parse(latest.data_avaliacao) ? item : latest;
-    }, null);
-
-    return consolidacao.status === ConsolidacaoStatus.AVALIADO
-      && ultimaAvaliacao?.id === avaliacao.id
-      && avaliacao.avaliador?.id === this.auth.usuario?.id;
+    return avaliacao.pode_cancelar === true;
   }
 }

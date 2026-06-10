@@ -11,6 +11,7 @@ use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\ProgramaRepository;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizationValidator;
+use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoPolicy;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ConcluirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ReabrirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\RecursoValidator;
@@ -35,6 +36,7 @@ class PlanoTrabalhoConsolidacaoService
         private readonly ReabrirConsolidacaoValidator $reabrirValidator,
         private readonly RecursoValidator $recursoValidator,
         private readonly StatusService $statusService,
+        private readonly AvaliacaoPolicy $avaliacaoPolicy,
     ) {}
 
 
@@ -51,6 +53,8 @@ class PlanoTrabalhoConsolidacaoService
         if (!$this->isDonoOuChefia($plano, Auth::id(), $plano->unidade_id)) {
             $consolidacoes->each(fn ($c) => $c->unsetRelation('afastamentos'));
         }
+
+        $this->aplicarPodeCancelarAvaliacao($consolidacoes);
 
         return $consolidacoes;
     }
@@ -119,5 +123,16 @@ class PlanoTrabalhoConsolidacaoService
             : $plano->load('programa')->programa;
 
         return $this->programaRepository->findAllNotasAvaliacao($programa->tipo_avaliacao_plano_trabalho_id);
+    }
+
+    private function aplicarPodeCancelarAvaliacao(Collection $consolidacoes): void
+    {
+        $usuarioId = (string) Auth::id();
+
+        $consolidacoes->each(function (PlanoTrabalhoConsolidacao $consolidacao) use ($usuarioId) {
+            $consolidacao->avaliacoes->each(function ($avaliacao) use ($consolidacao, $usuarioId) {
+                $avaliacao->setAttribute('pode_cancelar', $this->avaliacaoPolicy->podeCancelar($avaliacao, $consolidacao, $usuarioId));
+            });
+        });
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoDestroyValidator;
+use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoPolicy;
 use App\Repository\AvaliacaoRepository;
 use App\Models\Avaliacao;
 use App\Models\PlanoTrabalho;
@@ -15,7 +16,8 @@ uses(TestCase::class);
 
 beforeEach(function () {
     $this->avaliacaoRepo = Mockery::mock(AvaliacaoRepository::class);
-    $this->validator = new AvaliacaoDestroyValidator($this->avaliacaoRepo);
+    $this->avaliacaoPolicy = Mockery::mock(AvaliacaoPolicy::class);
+    $this->validator = new AvaliacaoDestroyValidator($this->avaliacaoRepo, $this->avaliacaoPolicy);
 });
 
 afterEach(fn () => Mockery::close());
@@ -29,6 +31,7 @@ function mockAvaliacao(string $id, string $avaliadorId, string $consolidacaoId, 
     $consolidacao->id = $consolidacaoId;
     $consolidacao->status = StatusEnum::AVALIADO->value;
     $consolidacao->shouldReceive('getAttribute')->with('planoTrabalho')->andReturn($plano);
+    $consolidacao->shouldReceive('loadMissing')->andReturnSelf();
 
     $avaliacao = Mockery::mock(Avaliacao::class)->makePartial();
     $avaliacao->id = $id;
@@ -64,44 +67,56 @@ describe('AvaliacaoDestroyValidator', function () {
         $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');
     })->throws(ValidateException::class, 'A avaliação não pertence a este período avaliativo.');
 
-    test('lança exceção quando usuário não é o avaliador', function () {
-        $avaliacao = mockAvaliacao('av-1', 'outro-user', 'cons-1', 'plano-1');
-
-        $this->avaliacaoRepo->shouldReceive('findById')->andReturn($avaliacao);
-
-        $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');
-    })->throws(ForbiddenException::class, 'Apenas quem realizou a avaliação pode cancelá-la.');
-
-    test('lança exceção quando status não é AVALIADO', function () {
+    test('lança ValidateException quando status não é AVALIADO', function () {
         $avaliacao = mockAvaliacao('av-1', 'user-1', 'cons-1', 'plano-1');
-        $avaliacao->planoTrabalhoConsolidacao->status = StatusEnum::CONCLUIDO->value;
 
         $this->avaliacaoRepo->shouldReceive('findById')->andReturn($avaliacao);
+        $this->avaliacaoPolicy->shouldReceive('isStatusAvaliado')->andReturn(false);
 
         $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');
     })->throws(ValidateException::class, 'O período avaliativo precisa estar com status AVALIADO para cancelar a avaliação.');
 
-    test('lança exceção quando não é a avaliação mais recente', function () {
+    test('lança ForbiddenException quando não é o avaliador', function () {
         $avaliacao = mockAvaliacao('av-1', 'user-1', 'cons-1', 'plano-1');
 
-        $outraAvaliacao = Mockery::mock(Avaliacao::class)->makePartial();
-        $outraAvaliacao->id = 'av-2';
+        $this->avaliacaoRepo->shouldReceive('findById')->andReturn($avaliacao);
+        $this->avaliacaoPolicy->shouldReceive('isStatusAvaliado')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('isAvaliador')->andReturn(false);
+
+        $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');
+    })->throws(ForbiddenException::class, 'Apenas quem realizou a avaliação pode cancelá-la.');
+
+    test('lança ValidateException quando não é a mais recente', function () {
+        $avaliacao = mockAvaliacao('av-1', 'user-1', 'cons-1', 'plano-1');
 
         $this->avaliacaoRepo->shouldReceive('findById')->andReturn($avaliacao);
-        $this->avaliacaoRepo->shouldReceive('findMaisRecenteDaConsolidacao')
-            ->with('cons-1')
-            ->andReturn($outraAvaliacao);
+        $this->avaliacaoPolicy->shouldReceive('isStatusAvaliado')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('isAvaliador')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('isMaisRecente')->andReturn(false);
 
         $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');
     })->throws(ValidateException::class, 'Apenas a avaliação mais recente pode ser cancelada.');
 
-    test('retorna avaliação quando todas as validações passam', function () {
+    test('lança ValidateException quando prazo expirou', function () {
         $avaliacao = mockAvaliacao('av-1', 'user-1', 'cons-1', 'plano-1');
 
         $this->avaliacaoRepo->shouldReceive('findById')->andReturn($avaliacao);
-        $this->avaliacaoRepo->shouldReceive('findMaisRecenteDaConsolidacao')
-            ->with('cons-1')
-            ->andReturn($avaliacao);
+        $this->avaliacaoPolicy->shouldReceive('isStatusAvaliado')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('isAvaliador')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('isMaisRecente')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('estaDentroDoPrazo')->andReturn(false);
+
+        $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');
+    })->throws(ValidateException::class, 'O prazo de 20 dias para cancelar a avaliação expirou.');
+
+    test('retorna avaliação quando policy permite', function () {
+        $avaliacao = mockAvaliacao('av-1', 'user-1', 'cons-1', 'plano-1');
+
+        $this->avaliacaoRepo->shouldReceive('findById')->andReturn($avaliacao);
+        $this->avaliacaoPolicy->shouldReceive('isStatusAvaliado')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('isAvaliador')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('isMaisRecente')->andReturn(true);
+        $this->avaliacaoPolicy->shouldReceive('estaDentroDoPrazo')->andReturn(true);
 
         $result = $this->validator->validar('plano-1', 'cons-1', 'av-1', 'user-1');
 
