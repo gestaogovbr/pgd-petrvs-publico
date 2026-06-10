@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal } from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal, computed } from "@angular/core";
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from "src/app/v2/components/breadcrumb/breadcrumb.component";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -56,6 +56,10 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
+
+  readonly totalForcaTrabalho = computed(() =>
+    (this.planoTrabalho()?.entregas ?? []).reduce((sum, e) => sum + (Number(e.forca_trabalho) || 0), 0)
+  );
   ngOnInit(): void {
     this.route.paramMap.pipe(
       map(params => params.get('id')),
