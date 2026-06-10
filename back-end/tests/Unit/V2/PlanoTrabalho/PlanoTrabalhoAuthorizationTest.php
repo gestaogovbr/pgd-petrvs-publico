@@ -201,6 +201,10 @@ test('podeArquivar retorna true para plano CANCELADO sendo dono', function () {
     $usuario = makeUsuario(PerfilEnum::PARTICIPANTE->value);
     $usuario->id = 'agente-1';
 
+    $this->consolidacaoRepository->shouldReceive('resumoParaArquivamento')->andReturn(
+        new ResumoConsolidacoesDTO(todosAvaliados: false, avaliacaoRecente: false, possuiPendencias: false)
+    );
+
     expect($this->authorization->podeArquivar($plano, $usuario))->toBeTrue();
 });
 
@@ -252,6 +256,10 @@ test('podeArquivar retorna false para usuário sem autorização', function () {
     $usuario = makeUsuario(PerfilEnum::PARTICIPANTE->value);
     $usuario->id = 'outro-user';
 
+    $this->consolidacaoRepository->shouldReceive('resumoParaArquivamento')->andReturn(
+        new ResumoConsolidacoesDTO(todosAvaliados: false, avaliacaoRecente: false, possuiPendencias: false)
+    );
+
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
         ->with('unidade-plano', 'outro-user')
         ->andReturn(false);
@@ -264,6 +272,10 @@ test('podeArquivar retorna true para chefia da unidade', function () {
     $plano->data_arquivamento = null;
     $usuario = makeUsuario(PerfilEnum::UNIDADE->value);
     $usuario->id = 'chefia-1';
+
+    $this->consolidacaoRepository->shouldReceive('resumoParaArquivamento')->andReturn(
+        new ResumoConsolidacoesDTO(todosAvaliados: false, avaliacaoRecente: false, possuiPendencias: false)
+    );
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
         ->with('unidade-plano', 'chefia-1')
@@ -278,6 +290,10 @@ test('podeArquivar retorna true para colaborador com lotação na unidade', func
     $usuario = makeUsuario(PerfilEnum::COLABORADOR->value);
     $usuario->id = 'colab-1';
 
+    $this->consolidacaoRepository->shouldReceive('resumoParaArquivamento')->andReturn(
+        new ResumoConsolidacoesDTO(todosAvaliados: false, avaliacaoRecente: false, possuiPendencias: false)
+    );
+
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
         ->with('unidade-plano', 'colab-1')
         ->andReturn(false);
@@ -287,6 +303,46 @@ test('podeArquivar retorna true para colaborador com lotação na unidade', func
         ->andReturn(true);
 
     expect($this->authorization->podeArquivar($plano, $usuario))->toBeTrue();
+});
+
+test('podeArquivar retorna false para plano CANCELADO com consolidação aguardando reavaliação', function () {
+    $plano = makePlano(StatusEnum::CANCELADO->value);
+    $plano->data_arquivamento = null;
+    $usuario = makeUsuario(PerfilEnum::PARTICIPANTE->value);
+    $usuario->id = 'agente-1';
+
+    $this->consolidacaoRepository->shouldReceive('resumoParaArquivamento')->andReturn(
+        new ResumoConsolidacoesDTO(todosAvaliados: false, avaliacaoRecente: false, possuiPendencias: false, possuiAguardandoReavaliacao: true)
+    );
+
+    expect($this->authorization->podeArquivar($plano, $usuario))->toBeFalse();
+});
+
+test('podeArquivar retorna false para plano CONCLUIDO com consolidação aguardando reavaliação', function () {
+    $plano = makePlano(StatusEnum::CONCLUIDO->value);
+    $plano->data_arquivamento = null;
+    $usuario = makeUsuario(PerfilEnum::PARTICIPANTE->value);
+    $usuario->id = 'agente-1';
+
+    $this->consolidacaoRepository->shouldReceive('resumoParaArquivamento')->andReturn(
+        new ResumoConsolidacoesDTO(todosAvaliados: true, avaliacaoRecente: false, possuiPendencias: false, possuiAguardandoReavaliacao: true)
+    );
+
+    expect($this->authorization->podeArquivar($plano, $usuario))->toBeFalse();
+});
+
+test('podeArquivar retorna false para plano encerrado com consolidação aguardando reavaliação', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $plano->data_arquivamento = null;
+    $plano->encerrado_at = now()->subDays(40);
+    $usuario = makeUsuario(PerfilEnum::PARTICIPANTE->value);
+    $usuario->id = 'agente-1';
+
+    $this->consolidacaoRepository->shouldReceive('resumoParaArquivamento')->andReturn(
+        new ResumoConsolidacoesDTO(todosAvaliados: false, avaliacaoRecente: false, possuiPendencias: false, possuiAguardandoReavaliacao: true)
+    );
+
+    expect($this->authorization->podeArquivar($plano, $usuario))->toBeFalse();
 });
 
 // --- podeEncerrar ---

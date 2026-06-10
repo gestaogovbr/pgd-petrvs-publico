@@ -135,14 +135,18 @@ class PlanoTrabalhoAuthorization
 
     public function isElegivelParaArquivamento(PlanoTrabalho $plano): bool
     {
-        if ($plano->status === StatusEnum::CANCELADO->value) {
-            return true;
-        }
-
         $resumo = $this->consolidacaoRepository->resumoParaArquivamento(
             $plano->id,
             Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS),
         );
+
+        if ($resumo->possuiAguardandoReavaliacao) {
+            return false;
+        }
+
+        if ($plano->status === StatusEnum::CANCELADO->value) {
+            return true;
+        }
 
         if ($plano->encerrado_at !== null && !$resumo->possuiPendencias) {
             return true;
