@@ -9,7 +9,9 @@ use App\Models\Afastamento;
 use App\Models\UnidadeIntegrante;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 use App\Repository\Eloquent\EloquentListRepositoryTrait;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryContract
 {
@@ -86,5 +88,19 @@ class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryCont
         $rows = $query->get();
 
         return new ListResult($rows, $count);
+    }
+
+    /** @param string[] $codigosExcluidos */
+    public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia, array $codigosExcluidos): Collection
+    {
+        return $this->afastamento->newQuery()
+            ->where('usuario_id', $usuarioId)
+            ->where('data_fim', '>=', $vigencia->start)
+            ->where('data_inicio', '<=', $vigencia->end)
+            ->whereHas('tipoMotivoAfastamento', function (Builder $q) use ($codigosExcluidos) {
+                $q->whereNotIn('codigo', $codigosExcluidos);
+            })
+            ->orderBy('data_inicio')
+            ->get();
     }
 }

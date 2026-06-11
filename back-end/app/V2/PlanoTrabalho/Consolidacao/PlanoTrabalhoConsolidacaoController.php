@@ -48,6 +48,24 @@ class PlanoTrabalhoConsolidacaoController extends Controller
         }
     }
 
+    public function dispensas(string $planoTrabalhoId): JsonResponse
+    {
+        try {
+            PlanoTrabalhoConsolidacaoRequestValidator::dispensas($planoTrabalhoId);
+
+            $dispensas = $this->service->dispensas($planoTrabalhoId);
+
+            return response()->json(['success' => true, 'data' => $dispensas]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function concluir(string $planoTrabalhoId, string $consolidacaoId): JsonResponse
     {
         try {

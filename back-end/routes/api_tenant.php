@@ -655,6 +655,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::delete('plano-trabalho/{planoTrabalhoId}/documento/assinatura-tcr', [DocumentoV2::class, 'cancelarAssinatura']);
 
     Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao', [PlanoTrabalhoConsolidacaoV2::class, 'index']);
+    Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao/dispensas', [PlanoTrabalhoConsolidacaoV2::class, 'dispensas']);
     Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao/notas-avaliacao', [PlanoTrabalhoConsolidacaoV2::class, 'notasAvaliacao']);
     Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/concluir', [PlanoTrabalhoConsolidacaoV2::class, 'concluir']);
     Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/reabrir', [PlanoTrabalhoConsolidacaoV2::class, 'reabrir']);

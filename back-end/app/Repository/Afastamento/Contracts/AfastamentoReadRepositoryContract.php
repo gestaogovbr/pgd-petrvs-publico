@@ -6,6 +6,7 @@ namespace App\Repository\Afastamento\Contracts;
 
 use App\DTOs\ListResult;
 use App\Models\Afastamento;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Collection;
 
 interface AfastamentoReadRepositoryContract
@@ -21,4 +22,9 @@ interface AfastamentoReadRepositoryContract
      * @return ListResult
      */
     public function findAll($data): ListResult;
+
+    /**
+     * @param string[] $codigosExcluidos
+     */
+    public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia, array $codigosExcluidos): Collection;
 }
