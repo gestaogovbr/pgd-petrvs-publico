@@ -1,20 +1,25 @@
 <?php
 
 use App\Models\Entidade;
+use App\Models\IntegracaoServidor;
 use App\Models\IntegracaoUnidade;
+use App\Models\Perfil;
 use App\Models\SiapeBlacklistUnidade;
 use App\Models\SiapeDadosUORG;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
+use App\Services\IntegracaoGestorService;
 use App\Services\IntegracaoService;
 use App\Services\IntegracaoServiceFactory;
+use App\Services\NivelAcessoService;
 use App\Services\SiapeIndividualService;
 use App\Services\SiapeIndividualUnidadeService;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
 use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 
@@ -23,6 +28,7 @@ beforeEach(function () {
 
     Log::shouldReceive('channel')->with('siape')->andReturnSelf();
     Log::shouldReceive('info')->withAnyArgs();
+    Log::shouldReceive('warning')->withAnyArgs()->zeroOrMoreTimes();
     Log::shouldReceive('error')->withAnyArgs()->zeroOrMoreTimes();
 
     $this->mockBuscarUnidade = Mockery::mock(BuscarDadosSiapeUnidade::class);
@@ -392,6 +398,113 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         expect(SiapeBlacklistUnidade::where('codigo', $codigoNovo)->exists())->toBeFalse();
         expect($unidadeAntiga->fresh())->not->toBeNull();
     });
+
+    test('issue 2149 - atualizacao de gestores atribui chefia quando cpf titular pertence a servidor da unidade', function () {
+        prepararPerfisSiapeIssue2149();
+
+        $cpfTitular = '82162492504';
+        $matricula = '3865001';
+        $codigoUnidade = '3865';
+        $perfilParticipante = NivelAcessoService::getPerfilParticipante();
+        $perfilChefia = NivelAcessoService::getPerfilChefia();
+
+        $unidade = Unidade::factory()->create([
+            'codigo' => $codigoUnidade,
+            'nome' => 'Coordenacao Sintetica CODAS',
+            'sigla' => 'CODAS',
+        ]);
+
+        IntegracaoUnidade::create([
+            'id_servo' => $codigoUnidade,
+            'codigo_siape' => $codigoUnidade,
+            'nomeuorg' => 'Coordenacao Sintetica CODAS',
+            'siglauorg' => 'CODAS',
+            'ativa' => 'true',
+            'cpf_titular_autoridade_uorg' => $cpfTitular,
+        ]);
+
+        IntegracaoServidor::create([
+            'cpf' => $cpfTitular,
+            'nome' => 'ChefIA Sintetica Issue 2149',
+            'matriculasiape' => $matricula,
+            'codigo_servo_exercicio' => $codigoUnidade,
+            'coduorgexercicio' => $codigoUnidade,
+            'data_modificacao' => now(),
+        ]);
+
+        $chefia = Usuario::factory()->create([
+            'cpf' => $cpfTitular,
+            'matricula' => $matricula,
+            'perfil_id' => $perfilParticipante->id,
+        ]);
+
+        $resultado = app(IntegracaoGestorService::class)->atualizarGestores(['gestores' => true], []);
+
+        expect($resultado['Resultado'])->toBe('Sucesso');
+        expect($resultado['Observações'][0])->toContain('1 chefias foram atualizadas com sucesso');
+
+        $integrante = UnidadeIntegrante::query()
+            ->where('usuario_id', $chefia->id)
+            ->where('unidade_id', $unidade->id)
+            ->first();
+
+        expect($integrante)->not->toBeNull();
+        expect(UnidadeIntegranteAtribuicao::query()
+            ->where('unidade_integrante_id', $integrante->id)
+            ->pluck('atribuicao')
+            ->all()
+        )->toEqualCanonicalizing(['LOTADO', 'GESTOR']);
+        expect($chefia->fresh()->perfil_id)->toBe($perfilChefia->id);
+    });
+
+    test('issue 2149 - atualizacao de gestores ignora cpf titular quando servidor esta em outra unidade', function () {
+        prepararPerfisSiapeIssue2149();
+
+        $cpfTitular = '82162492504';
+        $matricula = '3865002';
+        $codigoUnidade = '3865';
+        $codigoOutraUnidade = '9999';
+
+        $unidade = Unidade::factory()->create([
+            'codigo' => $codigoUnidade,
+            'nome' => 'Coordenacao Sintetica CODAS',
+            'sigla' => 'CODAS',
+        ]);
+
+        IntegracaoUnidade::create([
+            'id_servo' => $codigoUnidade,
+            'codigo_siape' => $codigoUnidade,
+            'nomeuorg' => 'Coordenacao Sintetica CODAS',
+            'siglauorg' => 'CODAS',
+            'ativa' => 'true',
+            'cpf_titular_autoridade_uorg' => $cpfTitular,
+        ]);
+
+        IntegracaoServidor::create([
+            'cpf' => $cpfTitular,
+            'nome' => 'ChefIA Sintetica Issue 2149',
+            'matriculasiape' => $matricula,
+            'codigo_servo_exercicio' => $codigoOutraUnidade,
+            'coduorgexercicio' => $codigoOutraUnidade,
+            'data_modificacao' => now(),
+        ]);
+
+        $chefia = Usuario::factory()->create([
+            'cpf' => $cpfTitular,
+            'matricula' => $matricula,
+            'perfil_id' => NivelAcessoService::getPerfilParticipante()->id,
+        ]);
+
+        $resultado = app(IntegracaoGestorService::class)->atualizarGestores(['gestores' => true], []);
+
+        expect($resultado['Resultado'])->toBe('Sucesso');
+        expect($resultado['Observações'][0])->toContain('0 chefias foram atualizadas com sucesso');
+        expect(UnidadeIntegrante::query()
+            ->where('usuario_id', $chefia->id)
+            ->where('unidade_id', $unidade->id)
+            ->exists()
+        )->toBeFalse();
+    });
 });
 
 describe('POST /api/unidade/relatorio-processamento-siape', function () {
@@ -501,4 +614,24 @@ function xmlUnidadeResponse(string $codigo, ?string $cpfTitular = null): string
         </soap:Body>
     </soap:Envelope>
     XML;
+}
+
+function prepararPerfisSiapeIssue2149(): void
+{
+    foreach ([
+        NivelAcessoService::PERFIL_DESENVOLVEDOR => 'Desenvolvedor',
+        NivelAcessoService::PERFIL_ADMINISTRADOR => 'Administrador Geral',
+        NivelAcessoService::PERFIL_ADMINISTRADOR_NEGOCIAL => 'Administrador Negocial',
+        NivelAcessoService::PERFIL_CHEFIA => 'Chefia',
+        NivelAcessoService::PERFIL_PARTICIPANTE => 'Participante',
+    ] as $nivel => $nome) {
+        Perfil::firstOrCreate(
+            ['nivel' => $nivel],
+            [
+                'id' => (string) Str::uuid(),
+                'nome' => $nome,
+                'descricao' => $nome,
+            ]
+        );
+    }
 }
