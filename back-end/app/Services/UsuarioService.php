@@ -197,12 +197,13 @@ class UsuarioService extends ServiceBase
         }
     }
 
-    public function verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio): bool
+    public function verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio, array &$matriculasAlteradasNoBatch = []): bool
     {
         if (!empty($cpfCheck) && !empty($unidadeExercicioIdCheck)) {
             $usuarioLotadoMesmaUnidade = $this->usuarioRepository->findByCpfAndLotacao($cpfCheck, $unidadeExercicioIdCheck);
 
             if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
+                $matriculaAtual = $usuarioLotadoMesmaUnidade->matricula;
                 $dadosAtualizacao = ['matricula' => $matriculaNova];
                 $integracaoServidor = $this->integracaoServidorRepository->getServidor($cpfCheck, $matriculaNova);
 
@@ -210,7 +211,40 @@ class UsuarioService extends ServiceBase
                     $dadosAtualizacao['participa_pgd'] = $integracaoServidor->participa_pgd;
                 }
 
+                // Usuario sem matricula: preencher normalmente
+                if (empty($matriculaAtual)) {
+                    $this->usuarioRepository->update($usuarioLotadoMesmaUnidade->id, $dadosAtualizacao);
+
+                    SiapeLog::info(sprintf('Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
+                        (string) $cpfCheck,
+                        (string) $matriculaNova,
+                        (string) $codigoExercicio
+                    ));
+                    return false;
+                }
+
+                // Matricula igual: nada a fazer
+                if ($matriculaAtual === $matriculaNova) {
+                    return false;
+                }
+
+                $chaveBatch = $cpfCheck . '|' . $unidadeExercicioIdCheck;
+
+                // Já alterou matrícula deste CPF+unidade neste batch: criar novo usuário
+                if (isset($matriculasAlteradasNoBatch[$chaveBatch])) {
+                    SiapeLog::info(sprintf(
+                        'CPF %s: matricula existente %s e nova %s ambas ativas na unidade %s. Criando novo usuario para matricula nova.',
+                        (string) $cpfCheck,
+                        (string) $matriculaAtual,
+                        (string) $matriculaNova,
+                        (string) $codigoExercicio
+                    ));
+                    return true;
+                }
+
+                // Primeira execução no batch: atualizar matrícula e registrar
                 $this->usuarioRepository->update($usuarioLotadoMesmaUnidade->id, $dadosAtualizacao);
+                $matriculasAlteradasNoBatch[$chaveBatch] = true;
 
                 SiapeLog::info(sprintf('Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
                     (string) $cpfCheck,
