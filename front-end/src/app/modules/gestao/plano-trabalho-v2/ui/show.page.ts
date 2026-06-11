@@ -113,6 +113,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   podeConcluirConsolidacao(consolidacao: Consolidacao): boolean {
     const plano = this.planoTrabalho();
     if (!plano) return false;
+    if (this.facade.isDispensada(consolidacao.id)) return false;
     return this.consolidacaoPolicy.podeRegistrar(plano, consolidacao)
       && consolidacao.status === ConsolidacaoStatus.INCLUIDO
       && this.todasEntregasComAtividade(consolidacao);
@@ -121,6 +122,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   podeReabrirConsolidacao(consolidacao: Consolidacao): boolean {
     const plano = this.planoTrabalho();
     if (!plano) return false;
+    if (this.facade.isDispensada(consolidacao.id)) return false;
     if (plano.status !== PlanoTrabalhoStatus.ATIVO && !plano.encerrado_at) return false;
     if (plano.encerrado_at && new Date(consolidacao.data_inicio) > new Date(plano.encerrado_at)) return false;
     return ConsolidacaoStatusGroups.reabrivel.includes(consolidacao.status)
@@ -145,6 +147,9 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   }
 
   statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
+    if (this.facade.isDispensada(consolidacao.id)) {
+      return 'Dispensado';
+    }
     const plano = this.planoTrabalho();
     if (plano?.encerrado_at && new Date(consolidacao.data_inicio) > new Date(plano.encerrado_at)) {
       return 'Encerrado antecipadamente';
