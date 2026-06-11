@@ -8,6 +8,7 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Facades\SiapeLog;
+use App\Models\PlanoEntrega;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\PerfilRepository;
@@ -1132,13 +1133,13 @@ class UsuarioService extends ServiceBase
         $planosTrabalhoAssinatura = $this->planoTrabalhoRepository->getPlanosTrabalhoAssinatura($unidades_ids, $unidadesFilhasIds, $usuario_id);
 
         // 3. Planos de entrega aguardando avaliação
-        $planosEntregaAvaliacao = $this->planoEntregaRepository->getPlanosEntregaAvaliacao($unidadesFilhasIds);
+        $planosEntregaAvaliacao = $this->planoEntregaRepository->getPlanosEntregaAvaliacao($unidadesFilhasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE);
 
         // 4. Planos de entrega aguardando homologação
         $planosEntregaHomologacao = $this->planoEntregaRepository->getPlanosEntregaHomologacao($unidadesFilhasIds);
 
         // 5. Entregas de planos de entrega que precisam ter progresso
-        $entregasPlanoEntregaExecucao = $this->planoEntregaRepository->getEntregasPlanoEntregaExecucao($unidadesFilhasIds);
+        $entregasPlanoEntregaExecucao = $this->planoEntregaRepository->getEntregasPlanoEntregaExecucao($unidadesFilhasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE);
 
         return [
             'registrosExecucao' => $registrosExecucao,
