@@ -152,7 +152,12 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
     {
         return $plano->load([
             'programa.templateTcr',
-            'unidade',
+            'unidade.gestor.usuario',
+            'unidade.gestoresSubstitutos.usuario',
+            'unidade.entidade.gestor',
+            'unidade.entidade.gestorSubstituto',
+            'unidade.entidade.cidade',
+            'unidade.cidade',
             'usuario',
             'entregas.entrega',
         ]);
