@@ -9,6 +9,10 @@ use App\Models\PlanoTrabalho;
 use App\Models\Comparecimento;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\StatusJustificativa;
+use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
+use App\V2\StatusService;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,14 +47,32 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
         return;
       }
 
-      /** @var \App\V2\StatusService $statusService */
-      $statusService = app(\App\V2\StatusService::class);
+      /** @var StatusService $statusService */
+      $statusService = app(StatusService::class);
+      /** @var DispensaAvaliacaoPolicy $dispensaPolicy */
+      $dispensaPolicy = app(DispensaAvaliacaoPolicy::class);
+
       $planoTrabalho = $consolidacao->planoTrabalho()->first();
 
-      $todasAvaliadas = $planoTrabalho->consolidacoes()
-        ->where('status', '!=', StatusEnum::AVALIADO->value)
+      $vigencia = CarbonPeriod::create(
+        Carbon::parse($planoTrabalho->getAttribute('data_inicio'))->startOfDay(),
+        Carbon::parse($planoTrabalho->getAttribute('data_fim'))->startOfDay(),
+      );
+
+      $consolidacoes = $planoTrabalho->consolidacoes()
         ->when($planoTrabalho->encerrado_at, fn ($q) => $q->where('data_inicio', '<=', $planoTrabalho->encerrado_at))
-        ->doesntExist();
+        ->get();
+
+      $dispensadasIds = $dispensaPolicy->consolidacoesDispensadas(
+        $planoTrabalho->getAttribute('usuario_id'),
+        $vigencia,
+        $consolidacoes,
+      );
+
+      $todasAvaliadas = $consolidacoes
+        ->whereNotIn('id', $dispensadasIds)
+        ->where('status', '!=', StatusEnum::AVALIADO->value)
+        ->isEmpty();
 
       if ($todasAvaliadas && $planoTrabalho->status === StatusEnum::ATIVO->value) {
         $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
