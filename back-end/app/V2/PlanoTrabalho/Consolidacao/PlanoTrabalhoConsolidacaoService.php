@@ -130,8 +130,9 @@ class PlanoTrabalhoConsolidacaoService
         $usuarioId = (string) Auth::id();
 
         $consolidacoes->each(function (PlanoTrabalhoConsolidacao $consolidacao) use ($usuarioId) {
-            $consolidacao->avaliacoes->each(function ($avaliacao) use ($consolidacao, $usuarioId) {
-                $avaliacao->setAttribute('pode_cancelar', $this->avaliacaoPolicy->podeCancelar($avaliacao, $consolidacao, $usuarioId));
+            $planoTrabalho = $consolidacao->planoTrabalho;
+            $consolidacao->avaliacoes->each(function ($avaliacao) use ($consolidacao, $usuarioId, $planoTrabalho) {
+                $avaliacao->setAttribute('pode_cancelar', $this->avaliacaoPolicy->podeCancelar($avaliacao, $consolidacao, $usuarioId, $planoTrabalho));
             });
         });
     }

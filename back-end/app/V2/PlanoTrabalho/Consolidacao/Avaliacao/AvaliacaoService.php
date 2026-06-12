@@ -50,7 +50,8 @@ class AvaliacaoService
             );
 
             $consolidacao->refresh()->load(['avaliacoes', 'statusHistorico']);
-            $avaliacao->setAttribute('pode_cancelar', $this->avaliacaoPolicy->podeCancelar($avaliacao, $consolidacao, $dto->avaliadorId));
+            $planoTrabalho = $consolidacao->planoTrabalho;
+            $avaliacao->setAttribute('pode_cancelar', $this->avaliacaoPolicy->podeCancelar($avaliacao, $consolidacao, $dto->avaliadorId, $planoTrabalho));
 
             return $avaliacao;
         });
@@ -75,8 +76,9 @@ class AvaliacaoService
 
             $consolidacao = $consolidacao->refresh()->load(['avaliacoes.avaliador', 'atividades', 'afastamentos.afastamento', 'statusHistorico']);
 
-            $consolidacao->avaliacoes->each(function ($av) use ($consolidacao, $usuarioLogadoId) {
-                $av->setAttribute('pode_cancelar', $this->avaliacaoPolicy->podeCancelar($av, $consolidacao, $usuarioLogadoId));
+            $planoTrabalho = $consolidacao->planoTrabalho;
+            $consolidacao->avaliacoes->each(function ($av) use ($consolidacao, $usuarioLogadoId, $planoTrabalho) {
+                $av->setAttribute('pode_cancelar', $this->avaliacaoPolicy->podeCancelar($av, $consolidacao, $usuarioLogadoId, $planoTrabalho));
             });
 
             return $consolidacao;

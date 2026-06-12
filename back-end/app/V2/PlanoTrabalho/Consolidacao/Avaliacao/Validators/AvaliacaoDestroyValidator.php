@@ -65,6 +65,8 @@ class AvaliacaoDestroyValidator
 
     private function validarPodeCancelar(Avaliacao $avaliacao, PlanoTrabalhoConsolidacao $consolidacao, string $usuarioLogadoId): void
     {
+        $planoTrabalho = $consolidacao->planoTrabalho;
+
         if (!$this->avaliacaoPolicy->isStatusAvaliado($consolidacao)) {
             throw new ValidateException('O período avaliativo precisa estar com status AVALIADO para cancelar a avaliação.');
         }
@@ -77,11 +79,11 @@ class AvaliacaoDestroyValidator
             throw new ValidateException('Apenas a avaliação mais recente pode ser cancelada.');
         }
 
-        if (!$this->avaliacaoPolicy->naoTemRecurso($avaliacao)) {
+        if (!$this->avaliacaoPolicy->naoTemRecurso($avaliacao, $planoTrabalho)) {
             throw new ValidateException('Não é possível cancelar uma avaliação que possui recurso.');
         }
 
-        if (!$this->avaliacaoPolicy->estaDentroDoPrazo($consolidacao)) {
+        if (!$this->avaliacaoPolicy->estaDentroDoPrazo($consolidacao, $planoTrabalho)) {
             throw new ValidateException('O prazo de ' . AvaliacaoPolicy::PRAZO_CANCELAMENTO_DIAS . ' dias para cancelar a avaliação expirou.');
         }
     }
