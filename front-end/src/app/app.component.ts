@@ -772,7 +772,7 @@ export class AppComponent implements IAppComponent {
   }
 
   public get usuarioNome(): string {
-    return this.utils.shortName(this.auth.usuario?.apelido.length ? this.auth.usuario?.apelido : this.auth.usuario?.nome || "");
+    return this.utils.shortName(this.utils.apelidoOuNome(this.auth.usuario) || "");
   }
 
   public get usuarioFoto(): SafeUrl {

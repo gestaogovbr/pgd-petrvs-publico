@@ -197,7 +197,7 @@
                 {{ p.numero }}
               </br-button>
             </td>
-            <td data-th="Usuário">{{ p.usuario?.nome || '-' }}</td>
+            <td data-th="Usuário">{{ p.usuario?.nome_exibicao || '-' }}</td>
             <td data-th="Unidade">{{ p.unidade?.sigla || '-' }}<br><small class="text-muted">{{ p.programa?.nome || '' }}</small></td>
             <td data-th="Modalidade">{{ p.modalidade_pgd_label || '-' }}</td>
             <td data-th="Status">
@@ -328,7 +328,7 @@
       </div>
     </div>
 
-    <p class="mb-3">Informe o motivo do cancelamento do plano de trabalho de <strong>{{ cancelandoPlano()?.usuario?.nome }}</strong>.</p>
+    <p class="mb-3">Informe o motivo do cancelamento do plano de trabalho de <strong>{{ cancelandoPlano()?.usuario?.nome_exibicao }}</strong>.</p>
     <br-textarea
       label="Justificativa *"
       show-counter
@@ -353,7 +353,7 @@
         <div class="icon"><i class="fas fa-exclamation-triangle"></i></div>
         <div class="content">Ao encerrar este Plano de Trabalho, ele será válido apenas até a data de hoje, preservando os registros e avaliações já realizados. Esta ação é definitiva e não poderá ser desfeita. Deseja confirmar?</div>
       </div>
-      <p class="mb-3">Informe o motivo do encerramento antecipado do plano de trabalho de <strong>{{ encerrando()?.usuario?.nome }}</strong>.</p>
+      <p class="mb-3">Informe o motivo do encerramento antecipado do plano de trabalho de <strong>{{ encerrando()?.usuario?.nome_exibicao }}</strong>.</p>
       <br-textarea
         label="Justificativa *"
         show-counter

@@ -13,7 +13,7 @@
         <div class="row w-100">
             <div class="col-md-1">{{'#' + item.numero}}</div>
             <div class="col-md-6">
-                <badge [icon]="entityService.getIcon('Usuario')" [label]="item.usuario?.nome" color="light" [hint]="lex.translate('Participante') + ': ' + item.usuario?.nome"></badge>
+                <badge [icon]="entityService.getIcon('Usuario')" [label]="item.usuario?.nome_exibicao" color="light" [hint]="lex.translate('Participante') + ': ' + item.usuario?.nome_exibicao"></badge>
                 <badge [icon]="entityService.getIcon('Unidade')" [label]="item.unidade?.sigla" color="light" [hint]="lex.translate('Unidade') + ': ' + item.unidade?.nome"></badge>
                 <badge [icon]="entityService.getIcon('Programa')" [label]="item.programa?.nome" color="light" [hint]="lex.translate('Programa')"></badge>
                 <badge icon="bi bi-person-workspace" [label]="item.modalidade_pgd_label || modalidadePgd.label(item.modalidade_pgd)" color="light" [hint]="lex.translate('Modalidade')"></badge>

@@ -12,7 +12,7 @@
     </ng-container>
     <separator *ngIf="isSignatures && documento?.assinaturas?.length" transparent>
         <div class="d-flex flex-wrap">
-            <profile-picture *ngFor="let assinatura of documento!.assinaturas" [url]="assinatura.usuario?.url_foto || ''" [hint]="assinatura.usuario?.nome || 'Desconhecido'"></profile-picture>
+            <profile-picture *ngFor="let assinatura of documento!.assinaturas" [url]="assinatura.usuario?.url_foto || ''" [hint]="assinatura.usuario?.nome_exibicao || 'Desconhecido'"></profile-picture>
         </div>
     </separator>
 </div>

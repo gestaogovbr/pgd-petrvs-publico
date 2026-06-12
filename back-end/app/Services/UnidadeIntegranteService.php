@@ -58,7 +58,7 @@ class UnidadeIntegranteService extends ServiceBase
       $result[$unidadeOuUsuarioDoVinculo->id] = [
         "id" => $unidade ? $vinculo->usuario->id : $vinculo->unidade->id,
         "matricula" => $unidade ? $vinculo->usuario->matricula : null,
-        "usuario_nome" => $unidade ? $vinculo->usuario->nome : null,
+        "usuario_nome" => $unidade ? ($vinculo->usuario->nome_social ?? $vinculo->usuario->nome) : null,
         "usuario_apelido" => $unidade ? $vinculo->usuario->apelido : null,
         "usuario_url_foto" => $unidade ? $vinculo->usuario->url_foto : null,
         "unidade_nome" => $usuario ? $vinculo->unidade->nome : null,

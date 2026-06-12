@@ -11,6 +11,11 @@ class UsuarioService
         protected UsuarioRepository $usuarioRepository,
     ) {}
 
+    public function atualizarNomeSocial(string $usuarioId, ?string $nomeSocial): void
+    {
+        $this->usuarioRepository->update($usuarioId, ['nome_social' => $nomeSocial]);
+    }
+
     public function buscarPorNomeOuMatricula(string $nomeMatricula): Collection
     {
         return $this->usuarioRepository->findAllByNomeMatricula($nomeMatricula);

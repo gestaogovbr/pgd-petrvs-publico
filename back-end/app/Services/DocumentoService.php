@@ -77,7 +77,7 @@ class DocumentoService extends ServiceBase {
             throw $e;
         }
 
-        return Documento::with('assinaturas.usuario:id,nome,apelido')->whereIn('id', $data["documentos_ids"])->get()->all();
+        return Documento::with('assinaturas.usuario:id,nome,apelido,nome_social')->whereIn('id', $data["documentos_ids"])->get()->all();
     }
 
     public function registrarAssinatura($documento, $usuario_id,$request){

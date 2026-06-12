@@ -675,6 +675,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
     Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);
     Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'buscarPorId'])->whereUuid('usuarioId');
+    Route::patch('usuario/nome-social', [UsuarioV2::class, 'atualizarNomeSocial']);
 
     Route::get('unidade', [UnidadeV2::class, 'buscarPorNomeOuCodigo']);
     Route::get('unidade/{unidadeId}/is-gestor-hierarquia', [UnidadeV2::class, 'isGestorHierarquia']);
