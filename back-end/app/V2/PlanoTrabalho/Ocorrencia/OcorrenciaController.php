@@ -11,7 +11,6 @@ use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
 use App\V2\PlanoTrabalho\Ocorrencia\Validators\OcorrenciaRequestValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
@@ -20,7 +19,32 @@ class OcorrenciaController extends Controller
 {
     public function __construct(
         private readonly OcorrenciaService $service,
+        private readonly OcorrenciaImpactoPolicy $impactoPolicy,
     ) {}
+
+    public function impactoConsolidacoes(Request $request): JsonResponse
+    {
+        try {
+            $data = OcorrenciaRequestValidator::impactoConsolidacoes($request);
+
+            $impacto = $this->impactoPolicy->calcularImpacto(
+                $data['usuario_id'],
+                $data['data_inicio'],
+                $data['data_fim'],
+                $data['ocorrencia_id'] ?? null,
+                $data['operacao'],
+            );
+
+            return response()->json(['success' => true, 'data' => $impacto->toArray()]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 
     public function store(Request $request, string $planoTrabalhoId): JsonResponse
     {
@@ -35,7 +59,7 @@ class OcorrenciaController extends Controller
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
-            Log::error(throwableToArrayLog($e));
+            report($e);
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -53,7 +77,7 @@ class OcorrenciaController extends Controller
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
-            Log::error(throwableToArrayLog($e));
+            report($e);
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -67,7 +91,7 @@ class OcorrenciaController extends Controller
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
-            Log::error(throwableToArrayLog($e));
+            report($e);
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

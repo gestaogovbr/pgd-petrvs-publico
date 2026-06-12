@@ -322,4 +322,35 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
                 ->orWhere('plano_trabalho_id', '=', $consolidacao->planoTrabalho->id))
             ->get();
     }
+
+    private const PRAZO_CANCELAMENTO_AVALIACAO_DIAS = 20;
+
+    public function findConsolidacoesParaImpactoDispensa(string $usuarioId, string $dataInicio, string $dataFim): \Illuminate\Support\Collection
+    {
+        $prazoDias = self::PRAZO_CANCELAMENTO_AVALIACAO_DIAS;
+
+        return DB::table('planos_trabalhos_consolidacoes as c')
+            ->join('planos_trabalhos as pt', 'pt.id', '=', 'c.plano_trabalho_id')
+            ->where('pt.usuario_id', $usuarioId)
+            ->whereIn('pt.status', [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value])
+            ->whereNull('pt.deleted_at')
+            ->whereNull('c.deleted_at')
+            ->where('c.data_fim', '>=', $dataInicio)
+            ->where('c.data_inicio', '<=', $dataFim)
+            ->select([
+                'c.id as cons_id',
+                'c.data_inicio as cons_data_inicio',
+                'c.data_fim as cons_data_fim',
+                'c.plano_trabalho_id',
+                'pt.status as pt_status',
+                'pt.data_inicio as pt_data_inicio',
+                'pt.data_fim as pt_data_fim',
+                DB::raw('EXISTS(SELECT 1 FROM atividades a WHERE a.plano_trabalho_consolidacao_id = c.id AND a.deleted_at IS NULL) as has_atividade'),
+                DB::raw('EXISTS(SELECT 1 FROM avaliacoes av WHERE av.plano_trabalho_consolidacao_id = c.id AND av.recurso IS NOT NULL AND av.deleted_at IS NULL) as has_recurso'),
+                DB::raw("EXISTS(SELECT 1 FROM avaliacoes av2 WHERE av2.plano_trabalho_consolidacao_id = c.id AND av2.deleted_at IS NULL AND av2.data_avaliacao < DATE_SUB(NOW(), INTERVAL {$prazoDias} DAY)) as is_prazo_avaliacao_terminado"),
+            ])
+            ->orderByRaw("FIELD(pt.status, 'CONCLUIDO', 'ATIVO')")
+            ->orderBy('c.data_inicio')
+            ->get();
+    }
 }

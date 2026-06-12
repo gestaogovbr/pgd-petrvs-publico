@@ -30,4 +30,6 @@ interface PlanoTrabalhoConsolidacaoReadRepositoryContract
     public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool;
 
     public function findAvaliadasComPrazoRecurso(string $usuarioId, int $prazoDias): \Illuminate\Database\Eloquent\Collection;
+
+    public function findConsolidacoesParaImpactoDispensa(string $usuarioId, string $dataInicio, string $dataFim): \Illuminate\Support\Collection;
 }

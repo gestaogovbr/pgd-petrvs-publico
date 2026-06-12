@@ -67,6 +67,11 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->findAvaliadasComPrazoRecurso($usuarioId, $prazoDias);
     }
 
+    public function findConsolidacoesParaImpactoDispensa(string $usuarioId, string $dataInicio, string $dataFim): \Illuminate\Support\Collection
+    {
+        return $this->readRepository->findConsolidacoesParaImpactoDispensa($usuarioId, $dataInicio, $dataFim);
+    }
+
     public function create(array $attributes): PlanoTrabalhoConsolidacao
     {
         /** @var PlanoTrabalhoConsolidacao */

@@ -117,4 +117,57 @@ class DispensaAvaliacaoPolicy
 
         return false;
     }
+
+    /**
+     * Verifica se um período de consolidação está dispensado com os afastamentos atuais.
+     */
+    public function isConsolidacaoDispensada(string $usuarioId, CarbonPeriod $vigenciaPT, CarbonPeriod $periodoConsolidacao): bool
+    {
+        $intervalos = $this->getMergedIntervalos($usuarioId, $vigenciaPT);
+
+        return !empty($intervalos) && self::isCoberta($periodoConsolidacao, $intervalos);
+    }
+
+    /**
+     * Verifica se um período de consolidação SERÁ dispensado após incluir/editar/excluir uma ocorrência.
+     * Para exclusão: passar ocorrenciaIdExcluir e dataInicioOcorrencia/dataFimOcorrencia como null.
+     */
+    public function isConsolidacaoDispensadaApos(
+        string $usuarioId,
+        CarbonPeriod $vigenciaPT,
+        CarbonPeriod $periodoConsolidacao,
+        ?string $dataInicioOcorrencia,
+        ?string $dataFimOcorrencia,
+        ?string $ocorrenciaIdExcluir = null,
+    ): bool {
+        $afastamentos = $this->afastamentoRepository->findAfastamentosParaDispensa(
+            $usuarioId,
+            $vigenciaPT,
+            self::CODIGOS_COMPENSACAO,
+        );
+
+        if ($ocorrenciaIdExcluir !== null) {
+            $afastamentos = $afastamentos->reject(fn (Afastamento $a) => $a->id === $ocorrenciaIdExcluir);
+        }
+
+        $intervalos = $afastamentos->map(fn (Afastamento $a) => CarbonPeriod::create(
+            Carbon::parse($a->data_inicio)->startOfDay(),
+            Carbon::parse($a->data_fim)->startOfDay(),
+        ))->all();
+
+        if ($dataInicioOcorrencia !== null && $dataFimOcorrencia !== null) {
+            $intervalos[] = CarbonPeriod::create(
+                Carbon::parse($dataInicioOcorrencia)->startOfDay(),
+                Carbon::parse($dataFimOcorrencia)->startOfDay(),
+            );
+        }
+
+        if (empty($intervalos)) {
+            return false;
+        }
+
+        $merged = self::mergeIntervalos($intervalos);
+
+        return self::isCoberta($periodoConsolidacao, $merged);
+    }
 }
