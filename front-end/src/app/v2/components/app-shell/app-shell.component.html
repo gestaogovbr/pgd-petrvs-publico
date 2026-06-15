@@ -179,10 +179,6 @@
     <footer class="footer hidden-print" role="contentinfo">
       <div class="d-flex justify-content-between align-items-center px-3 py-2">
         <small class="text-primary">Versão: {{ gb.VERSAO_SYS }}</small>
-        <div class="logos d-flex gap-3" aria-label="Logos institucionais">
-          <img [src]="gb.getResourcePath('assets/images/logo_pgd_' + (gb.theme !== 'light' ? 'light' : 'normal') + '.png')" alt="Programa de Gestão e Desempenho" height="24" />
-          <img [src]="gb.getResourcePath('assets/images/logo_gov_' + (gb.theme !== 'light' ? 'light' : 'normal') + '.png')" alt="Governo Federal" height="24" />
-        </div>
       </div>
     </footer>
   }
