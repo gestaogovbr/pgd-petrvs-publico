@@ -27,4 +27,9 @@ interface AfastamentoReadRepositoryContract
      * @param string[] $codigosExcluidos
      */
     public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia, array $codigosExcluidos): Collection;
+
+    /**
+     * @param list<string> $unidadeIds
+     */
+    public function findByUsuarioOuSubordinados(string $usuarioId, array $unidadeIds): Collection;
 }

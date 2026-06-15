@@ -4,80 +4,50 @@ declare(strict_types=1);
 
 namespace App\V2\Ocorrencia\Validators;
 
+use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
-use App\Exceptions\ValidateException;
 use App\Models\Afastamento;
-use App\Models\PlanoTrabalho;
-use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\UnidadeRepository;
-use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
-use App\V2\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
-use App\V2\Traits\ValidaAutorizacaoTrait;
-use Illuminate\Support\Carbon;
 
 class OcorrenciaStoreValidator
 {
-    use ValidaAutorizacaoTrait;
-
     public function __construct(
-        private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
+        private readonly AfastamentoRepository $afastamentoRepository,
         private readonly UnidadeRepository $unidadeRepository,
     ) {}
 
-
-    public function validarAutorizacao(string $planoTrabalhoId, string $usuarioLogadoId): PlanoTrabalho
+    /**
+     * RN4: Consulta não pode CUD
+     * RN5: Participante só para si mesmo
+     * RN6: Demais perfis para si e terceiros da cadeia hierárquica
+     */
+    public function validarAutorizacao(string $usuarioAlvoId, string $usuarioLogadoId): void
     {
-        $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
-
-        if ($plano === null) {
-            throw new NotFoundException('Plano de Trabalho não encontrado.');
+        if ($usuarioAlvoId === $usuarioLogadoId) {
+            return;
         }
 
-        $this->autorizarDonoOuChefia(
-            $plano,
-            $usuarioLogadoId,
-            $plano->unidade_id,
-            'Usuário não tem permissão para registrar ocorrências neste Plano de Trabalho.',
-        );
+        $unidadesGerenciadas = $this->unidadeRepository->getUnidadesGerenciadas($usuarioLogadoId);
 
-        return $plano;
-    }
+        if ($unidadesGerenciadas->isEmpty()) {
+            throw new ForbiddenException('Usuário não tem permissão para registrar ocorrências para terceiros.');
+        }
 
-    public function validarStore(PlanoTrabalho $plano, OcorrenciaStoreDTO $dto): void
-    {
-        $this->validarPeriodoDentroDoPlano($plano, $dto->dataInicio, $dto->dataFim);
-    }
+        $unidadeIds = $unidadesGerenciadas->pluck('id')->all();
 
-    public function validarUpdate(PlanoTrabalho $plano, OcorrenciaUpdateDTO $dto, Afastamento $afastamento): void
-    {
-        $dataInicio = $dto->dataInicio ?? (string) $afastamento->data_inicio;
-        $dataFim = $dto->dataFim ?? (string) $afastamento->data_fim;
+        $possuiVinculo = $this->afastamentoRepository->usuarioPossuiVinculoEmUnidades($usuarioAlvoId, $unidadeIds);
 
-        $this->validarPeriodoDentroDoPlano($plano, $dataInicio, $dataFim);
-    }
-
-    private function validarPeriodoDentroDoPlano(PlanoTrabalho $plano, string $dataInicio, string $dataFim): void
-    {
-        $inicio = Carbon::parse($dataInicio)->startOfDay();
-        $fim = Carbon::parse($dataFim)->startOfDay();
-        $planoInicio = Carbon::parse($plano->data_inicio)->startOfDay();
-        $planoFim = Carbon::parse($plano->data_fim)->startOfDay();
-
-        $semIntersecao = $fim->lt($planoInicio) || $inicio->gt($planoFim);
-
-        if ($semIntersecao) {
-            throw new ValidateException('A ocorrência deve ter período coincidente com o do Plano de Trabalho.');
+        if (!$possuiVinculo) {
+            throw new ForbiddenException('Usuário não tem permissão para registrar ocorrências para este servidor.');
         }
     }
 
-    public function validarExistencia(string $ocorrenciaId, PlanoTrabalho $plano): Afastamento
+    public function validarExistencia(string $ocorrenciaId, string $usuarioAlvoId): Afastamento
     {
-        // TODO (#1984): mover para AfastamentoRepository::findByIdAndUsuario
-        $afastamento = Afastamento::where('id', $ocorrenciaId)
-            ->where('usuario_id', $plano->usuario_id)
-            ->first();
+        $afastamento = $this->afastamentoRepository->findById($ocorrenciaId);
 
-        if ($afastamento === null) {
+        if ($afastamento === null || $afastamento->usuario_id !== $usuarioAlvoId) {
             throw new NotFoundException('Ocorrência não encontrada.');
         }
 

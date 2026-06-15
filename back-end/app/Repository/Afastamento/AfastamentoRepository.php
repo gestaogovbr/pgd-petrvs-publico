@@ -68,4 +68,12 @@ class AfastamentoRepository
     {
         return $this->readRepository->findAfastamentosParaDispensa($usuarioId, $vigencia, $codigosExcluidos);
     }
+
+    /**
+     * @param list<string> $unidadeIds
+     */
+    public function findByUsuarioOuSubordinados(string $usuarioId, array $unidadeIds): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->findByUsuarioOuSubordinados($usuarioId, $unidadeIds);
+    }
 }

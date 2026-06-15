@@ -1,15 +1,14 @@
 <?php
 
-namespace Tests\Unit\V2\PlanoTrabalho\Ocorrencia;
+namespace Tests\Unit\V2\Ocorrencia;
 
-use App\Exceptions\ValidateException;
+use App\Exceptions\ForbiddenException;
+use App\Exceptions\NotFoundException;
 use App\Models\Afastamento;
-use App\Models\PlanoTrabalho;
-use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\UnidadeRepository;
-use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
-use App\V2\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
 use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
+use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 use Tests\TestCase;
 
@@ -19,85 +18,105 @@ afterEach(function () {
     Mockery::close();
 });
 
-function criarOcorrenciaStoreValidator(): OcorrenciaStoreValidator
+function criarValidator(?AfastamentoRepository $afastamentoRepo = null, ?UnidadeRepository $unidadeRepo = null): OcorrenciaStoreValidator
 {
     return new OcorrenciaStoreValidator(
-        Mockery::mock(PlanoTrabalhoRepository::class),
-        Mockery::mock(UnidadeRepository::class),
+        $afastamentoRepo ?? Mockery::mock(AfastamentoRepository::class),
+        $unidadeRepo ?? Mockery::mock(UnidadeRepository::class),
     );
 }
 
-function planoComPeriodo(string $inicio = '2026-03-01 00:00:00', string $fim = '2026-03-31 00:00:00'): PlanoTrabalho
-{
-    $plano = new PlanoTrabalho();
-    $plano->data_inicio = $inicio;
-    $plano->data_fim = $fim;
+describe('OcorrenciaStoreValidator::validarAutorizacao', function () {
 
-    return $plano;
-}
+    test('permite quando usuario_id é o próprio usuário logado', function () {
+        $validator = criarValidator();
 
-function dtoStore(string $inicio, string $fim): OcorrenciaStoreDTO
-{
-    return OcorrenciaStoreDTO::fromArray([
-        'observacoes' => 'Teste',
-        'data_inicio' => $inicio,
-        'data_fim' => $fim,
-        'tipo_motivo_afastamento_id' => '00000000-0000-4000-8000-000000000001',
-    ], 'plano-1');
-}
-
-describe('OcorrenciaStoreValidator::validarStore', function () {
-
-    test('aceita ocorrência de um único dia no primeiro dia do plano', function () {
-        $validator = criarOcorrenciaStoreValidator();
-        $plano = planoComPeriodo();
-
-        $validator->validarStore($plano, dtoStore('2026-03-01', '2026-03-01'));
+        $validator->validarAutorizacao('user-1', 'user-1');
 
         expect(true)->toBeTrue();
     });
 
-    test('aceita ocorrência de um único dia no último dia do plano', function () {
-        $validator = criarOcorrenciaStoreValidator();
-        $plano = planoComPeriodo();
+    test('permite quando usuário logado é gestor de unidade onde o alvo está lotado', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+        $unidadeRepo->shouldReceive('getUnidadesGerenciadas')
+            ->with('gestor-1')
+            ->andReturn(new Collection([(object) ['id' => 'unidade-1']]));
 
-        $validator->validarStore($plano, dtoStore('2026-03-31', '2026-03-31'));
+        $afastamentoRepo = Mockery::mock(AfastamentoRepository::class);
+        $afastamentoRepo->shouldReceive('usuarioPossuiVinculoEmUnidades')
+            ->with('user-alvo', ['unidade-1'])
+            ->andReturn(true);
+
+        $validator = criarValidator($afastamentoRepo, $unidadeRepo);
+
+        $validator->validarAutorizacao('user-alvo', 'gestor-1');
 
         expect(true)->toBeTrue();
     });
 
-    test('rejeita ocorrência inteiramente antes do período do plano', function () {
-        $validator = criarOcorrenciaStoreValidator();
-        $plano = planoComPeriodo();
+    test('rejeita quando usuário logado não gerencia nenhuma unidade', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+        $unidadeRepo->shouldReceive('getUnidadesGerenciadas')
+            ->with('user-sem-gestao')
+            ->andReturn(new Collection());
 
-        $validator->validarStore($plano, dtoStore('2026-02-01', '2026-02-28'));
-    })->throws(ValidateException::class);
+        $validator = criarValidator(unidadeRepo: $unidadeRepo);
 
-    test('rejeita ocorrência inteiramente depois do período do plano', function () {
-        $validator = criarOcorrenciaStoreValidator();
-        $plano = planoComPeriodo();
+        $validator->validarAutorizacao('user-alvo', 'user-sem-gestao');
+    })->throws(ForbiddenException::class);
 
-        $validator->validarStore($plano, dtoStore('2026-04-01', '2026-04-30'));
-    })->throws(ValidateException::class);
+    test('rejeita quando alvo não está lotado em unidades gerenciadas', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+        $unidadeRepo->shouldReceive('getUnidadesGerenciadas')
+            ->andReturn(new Collection([(object) ['id' => 'unidade-1']]));
+
+        $afastamentoRepo = Mockery::mock(AfastamentoRepository::class);
+        $afastamentoRepo->shouldReceive('usuarioPossuiVinculoEmUnidades')
+            ->with('user-alvo', ['unidade-1'])
+            ->andReturn(false);
+
+        $validator = criarValidator($afastamentoRepo, $unidadeRepo);
+
+        $validator->validarAutorizacao('user-alvo', 'gestor-1');
+    })->throws(ForbiddenException::class);
 });
 
-describe('OcorrenciaStoreValidator::validarUpdate', function () {
+describe('OcorrenciaStoreValidator::validarExistencia', function () {
 
-    test('aceita atualização para o mesmo dia quando plano usa datetime', function () {
-        $validator = criarOcorrenciaStoreValidator();
-        $plano = planoComPeriodo();
-
+    test('retorna afastamento quando encontrado', function () {
         $afastamento = new Afastamento();
-        $afastamento->data_inicio = '2026-03-10 00:00:00';
-        $afastamento->data_fim = '2026-03-15 00:00:00';
+        $afastamento->id = 'oc-1';
+        $afastamento->usuario_id = 'user-1';
 
-        $dto = OcorrenciaUpdateDTO::fromArray([
-            'data_inicio' => '2026-03-01',
-            'data_fim' => '2026-03-01',
-        ], 'plano-1', 'ocor-1');
+        $afastamentoRepo = Mockery::mock(AfastamentoRepository::class);
+        $afastamentoRepo->shouldReceive('findById')->with('oc-1')->andReturn($afastamento);
 
-        $validator->validarUpdate($plano, $dto, $afastamento);
+        $validator = criarValidator($afastamentoRepo);
 
-        expect(true)->toBeTrue();
+        $result = $validator->validarExistencia('oc-1', 'user-1');
+
+        expect($result->id)->toBe('oc-1');
     });
+
+    test('rejeita quando afastamento não existe', function () {
+        $afastamentoRepo = Mockery::mock(AfastamentoRepository::class);
+        $afastamentoRepo->shouldReceive('findById')->with('oc-1')->andReturn(null);
+
+        $validator = criarValidator($afastamentoRepo);
+
+        $validator->validarExistencia('oc-1', 'user-1');
+    })->throws(NotFoundException::class);
+
+    test('rejeita quando afastamento pertence a outro usuário', function () {
+        $afastamento = new Afastamento();
+        $afastamento->id = 'oc-1';
+        $afastamento->usuario_id = 'user-outro';
+
+        $afastamentoRepo = Mockery::mock(AfastamentoRepository::class);
+        $afastamentoRepo->shouldReceive('findById')->with('oc-1')->andReturn($afastamento);
+
+        $validator = criarValidator($afastamentoRepo);
+
+        $validator->validarExistencia('oc-1', 'user-1');
+    })->throws(NotFoundException::class);
 });

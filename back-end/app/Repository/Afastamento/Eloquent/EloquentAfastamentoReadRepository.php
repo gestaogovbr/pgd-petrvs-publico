@@ -103,4 +103,22 @@ class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryCont
             ->orderBy('data_inicio')
             ->get();
     }
+
+    /** @param list<string> $unidadeIds */
+    public function findByUsuarioOuSubordinados(string $usuarioId, array $unidadeIds): Collection
+    {
+        $query = $this->afastamento->newQuery()
+            ->with(['tipoMotivoAfastamento:id,nome,sigla,horas', 'usuario:id,nome']);
+
+        if (empty($unidadeIds)) {
+            $query->where('usuario_id', $usuarioId);
+        } else {
+            $query->where(fn (Builder $q) => $q
+                ->where('usuario_id', $usuarioId)
+                ->orWhereHas('usuario.unidadesIntegrantes', fn (Builder $sub) => $sub->whereIn('unidade_id', $unidadeIds))
+            );
+        }
+
+        return $query->orderBy('data_inicio', 'desc')->get();
+    }
 }

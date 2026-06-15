@@ -7,7 +7,7 @@ namespace App\V2\Ocorrencia\DTOs;
 class OcorrenciaStoreDTO
 {
     public function __construct(
-        public readonly string $planoTrabalhoId,
+        public readonly string $usuarioId,
         public readonly string $observacoes,
         public readonly string $dataInicio,
         public readonly string $dataFim,
@@ -15,10 +15,10 @@ class OcorrenciaStoreDTO
         public readonly ?int $horas,
     ) {}
 
-    public static function fromArray(array $data, string $planoTrabalhoId): self
+    public static function fromArray(array $data): self
     {
         return new self(
-            planoTrabalhoId: $planoTrabalhoId,
+            usuarioId: $data['usuario_id'],
             observacoes: $data['observacoes'],
             dataInicio: $data['data_inicio'],
             dataFim: $data['data_fim'],
@@ -27,15 +27,15 @@ class OcorrenciaStoreDTO
         );
     }
 
-    public function toPersistArray(string $usuarioId): array
+    public function toPersistArray(): array
     {
         return [
+            'usuario_id' => $this->usuarioId,
             'observacoes' => $this->observacoes,
             'data_inicio' => $this->dataInicio,
             'data_fim' => $this->dataFim,
             'tipo_motivo_afastamento_id' => $this->tipoMotivoAfastamentoId,
             'horas' => $this->horas,
-            'usuario_id' => $usuarioId,
         ];
     }
 }

@@ -7,10 +7,14 @@ namespace App\V2\Ocorrencia;
 use App\Models\Afastamento;
 use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\V2\Ocorrencia\DTOs\ConsolidacaoAfastamentoDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
 use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -19,60 +23,62 @@ class OcorrenciaService
     public function __construct(
         private readonly OcorrenciaStoreValidator $validator,
         private readonly AfastamentoRepository $afastamentoRepository,
+        private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
+        private readonly UnidadeRepository $unidadeRepository,
+        private readonly UsuarioRepository $usuarioRepository,
     ) {}
 
+    public function agentes(): Collection
+    {
+        $usuarioLogadoId = Auth::id();
+        $unidadeIds = $this->getUnidadeIdsGerenciadas($usuarioLogadoId);
 
-    /** 
-     * TODO: request não deve mais conter informações do PT, visto que serão seaparados
-     * A atribuição ao plano agora será feita no via cruzamento do período com as consolidacoes do usuário, e será vinculado dentro da transaction
-     * Validar:
-     * 1. se o usuário existe
-     * 2. se o usuário == usuario_id, ou se isGestor (checar se já existe algum método que recebe as ids de dois usuários e verifica se há alguma unidade em que o usuario X é %GESTOR%, e o usuario Y é COLABORADOR|LOTADO)
-     * 3. se o período não é bloqueado de acordo com a policy
-     * */ 
+        return $this->usuarioRepository->findAgentesVisiveis($usuarioLogadoId, $unidadeIds);
+    }
+
+    public function index(): Collection
+    {
+        $usuarioLogadoId = Auth::id();
+        $unidadeIds = $this->getUnidadeIdsGerenciadas($usuarioLogadoId);
+
+        return $this->afastamentoRepository->findByUsuarioOuSubordinados($usuarioLogadoId, $unidadeIds);
+    }
+
     public function store(OcorrenciaStoreDTO $dto): Afastamento
     {
-        $plano = $this->validator->validarAutorizacao($dto->planoTrabalhoId, Auth::id());
-        $this->validator->validarStore($plano, $dto);
+        $this->validator->validarAutorizacao($dto->usuarioId, Auth::id());
 
-        return DB::transaction(function () use ($dto, $plano) {
-            $afastamento = $this->afastamentoRepository->insert($dto->toPersistArray($plano->usuario_id));
+        return DB::transaction(function () use ($dto) {
+            $afastamento = $this->afastamentoRepository->insert($dto->toPersistArray());
 
-            $this->vincularConsolidacoes($plano->id, $afastamento);
+            $this->vincularConsolidacoes($afastamento);
 
             return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
         });
     }
 
-    /**
-     * TODO: apagar as  vinculações antigas e criar novas
-     * mes,as validações do UPDATE + validar se data_fim >= data_inicio
-     */
     public function update(OcorrenciaUpdateDTO $dto): Afastamento
     {
-        $plano = $this->validator->validarAutorizacao($dto->planoTrabalhoId, Auth::id());
-        $afastamento = $this->validator->validarExistencia($dto->ocorrenciaId, $plano);
-        $this->validator->validarUpdate($plano, $dto, $afastamento);
+        $this->validator->validarAutorizacao($dto->usuarioId, Auth::id());
+        $afastamento = $this->validator->validarExistencia($dto->ocorrenciaId, $dto->usuarioId);
 
         return DB::transaction(function () use ($afastamento, $dto) {
-            $this->afastamentoRepository->update($afastamento->id, $dto->toPersistArray());
+            $this->consolidacaoRepository->deleteAfastamentoVinculos($afastamento->id);
 
+            $this->afastamentoRepository->update($afastamento->id, $dto->toPersistArray());
             $afastamento->refresh();
 
-            $this->consolidacaoRepository->updateAfastamentoSnapshot(
-                $afastamento->id,
-                json_encode($afastamento->toArray()),
-            );
+            $this->vincularConsolidacoes($afastamento);
 
             return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
         });
     }
 
-    public function destroy(string $planoTrabalhoId, string $ocorrenciaId): void
+    public function destroy(string $ocorrenciaId, string $usuarioId): void
     {
-        $plano = $this->validator->validarAutorizacao($planoTrabalhoId, Auth::id());
-        $afastamento = $this->validator->validarExistencia($ocorrenciaId, $plano);
+        $this->validator->validarAutorizacao($usuarioId, Auth::id());
+        $afastamento = $this->validator->validarExistencia($ocorrenciaId, $usuarioId);
 
         DB::transaction(function () use ($afastamento) {
             $this->consolidacaoRepository->deleteAfastamentoVinculos($afastamento->id);
@@ -80,19 +86,35 @@ class OcorrenciaService
         });
     }
 
-    private function vincularConsolidacoes(string $planoTrabalhoId, Afastamento $afastamento): void
+    /**
+     * @return list<string>
+     */
+    private function getUnidadeIdsGerenciadas(string $usuarioId): array
     {
-        $consolidacoes = $this->consolidacaoRepository->findAllByPlanoTrabalhoIdAndPeriodo(
-            $planoTrabalhoId,
+        return $this->unidadeRepository->getUnidadesGerenciadas($usuarioId)->pluck('id')->all();
+    }
+
+    private function vincularConsolidacoes(Afastamento $afastamento): void
+    {
+        $planos = $this->planoTrabalhoRepository->planosAtivosPorData(
             $afastamento->data_inicio,
             $afastamento->data_fim,
+            $afastamento->usuario_id,
         );
 
-        foreach ($consolidacoes as $consolidacao) {
-            /** @var \App\Models\PlanoTrabalhoConsolidacao $consolidacao */
-            $this->consolidacaoRepository->createAfastamentoVinculo(
-                ConsolidacaoAfastamentoDTO::fromModels($consolidacao, $afastamento)->toPersistArray(),
+        foreach ($planos as $plano) {
+            /** @var \App\Models\PlanoTrabalho $plano */
+            $consolidacoes = $this->consolidacaoRepository->findAllByPlanoTrabalhoIdAndPeriodo(
+                $plano->id,
+                $afastamento->data_inicio,
+                $afastamento->data_fim,
             );
+
+            foreach ($consolidacoes as $consolidacao) {
+                $this->consolidacaoRepository->createAfastamentoVinculo(
+                    ConsolidacaoAfastamentoDTO::fromModels($consolidacao, $afastamento)->toPersistArray(),
+                );
+            }
         }
     }
 }

@@ -23,6 +23,28 @@ class OcorrenciaController extends Controller
         private readonly OcorrenciaImpactoPolicy $impactoPolicy,
     ) {}
 
+    public function agentes(): JsonResponse
+    {
+        try {
+            return response()->json(['success' => true, 'data' => $this->service->agentes()]);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function index(): JsonResponse
+    {
+        try {
+            $ocorrencias = $this->service->index();
+
+            return response()->json(['success' => true, 'data' => $ocorrencias]);
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function impactoConsolidacoes(Request $request): JsonResponse
     {
         try {
@@ -41,11 +63,11 @@ class OcorrenciaController extends Controller
         }
     }
 
-    public function store(Request $request, string $planoTrabalhoId): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         try {
             $data = OcorrenciaRequestValidator::store($request);
-            $dto = OcorrenciaStoreDTO::fromArray($data, $planoTrabalhoId);
+            $dto = OcorrenciaStoreDTO::fromArray($data);
             $ocorrencia = $this->service->store($dto);
 
             return response()->json(['success' => true, 'data' => $ocorrencia], Response::HTTP_CREATED);
@@ -59,11 +81,11 @@ class OcorrenciaController extends Controller
         }
     }
 
-    public function update(Request $request, string $planoTrabalhoId, string $ocorrenciaId): JsonResponse
+    public function update(Request $request, string $ocorrenciaId): JsonResponse
     {
         try {
             $data = OcorrenciaRequestValidator::update($request);
-            $dto = OcorrenciaUpdateDTO::fromArray($data, $planoTrabalhoId, $ocorrenciaId);
+            $dto = OcorrenciaUpdateDTO::fromArray($data, $ocorrenciaId);
             $ocorrencia = $this->service->update($dto);
 
             return response()->json(['success' => true, 'data' => $ocorrencia]);
@@ -77,12 +99,15 @@ class OcorrenciaController extends Controller
         }
     }
 
-    public function destroy(string $planoTrabalhoId, string $ocorrenciaId): JsonResponse
+    public function destroy(Request $request, string $ocorrenciaId): JsonResponse
     {
         try {
-            $this->service->destroy($planoTrabalhoId, $ocorrenciaId);
+            $data = OcorrenciaRequestValidator::destroy($request);
+            $this->service->destroy($ocorrenciaId, $data['usuario_id']);
 
             return response()->json(['success' => true], Response::HTTP_NO_CONTENT);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {

@@ -669,7 +669,12 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::delete('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}', [AtividadeV2::class, 'destroy']);
 
 
+    Route::get('ocorrencia/agentes', [OcorrenciaV2::class, 'agentes']);
+    Route::get('ocorrencia', [OcorrenciaV2::class, 'index']);
     Route::get('ocorrencia/impacto-consolidacoes', [OcorrenciaV2::class, 'impactoConsolidacoes']);
+    Route::post('ocorrencia', [OcorrenciaV2::class, 'store']);
+    Route::put('ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'update']);
+    Route::delete('ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'destroy']);
 
     Route::post('plano-trabalho/{planoTrabalhoId}/ocorrencia', [OcorrenciaV2::class, 'store']);
     Route::patch('plano-trabalho/{planoTrabalhoId}/ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'update']);
