@@ -149,6 +149,9 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
         'usuario_externo',
         'is_admin',
         'pedagio',
+        'data_inicial_pedagio',
+        'data_final_pedagio',
+        'tipo_pedagio',
         'data_ativacao_temporaria' /* date; */
     ];
 
