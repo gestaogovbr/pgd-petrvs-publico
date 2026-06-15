@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\V2\PlanoTrabalho\Ocorrencia;
+namespace App\V2\Ocorrencia;
 
 use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\Controller;
-use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaStoreDTO;
-use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
-use App\V2\PlanoTrabalho\Ocorrencia\Validators\OcorrenciaRequestValidator;
+use App\V2\Ocorrencia\DTOs\OcorrenciaOperacaoDTO;
+use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
+use App\V2\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
+use App\V2\Ocorrencia\Validators\OcorrenciaRequestValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -26,14 +27,8 @@ class OcorrenciaController extends Controller
     {
         try {
             $data = OcorrenciaRequestValidator::impactoConsolidacoes($request);
-
-            $impacto = $this->impactoPolicy->calcularImpacto(
-                $data['usuario_id'],
-                $data['data_inicio'],
-                $data['data_fim'],
-                $data['ocorrencia_id'] ?? null,
-                $data['operacao'],
-            );
+            $dto = OcorrenciaOperacaoDTO::fromArray($data);
+            $impacto = $this->impactoPolicy->calcularImpacto($dto);
 
             return response()->json(['success' => true, 'data' => $impacto->toArray()]);
         } catch (ValidationException $e) {

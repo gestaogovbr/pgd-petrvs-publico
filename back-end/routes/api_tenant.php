@@ -612,7 +612,7 @@ use App\V2\PlanoTrabalho\Documento\DocumentoController as DocumentoV2;
 use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController as PlanoTrabalhoConsolidacaoV2;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController as AtividadeV2;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoController as AvaliacaoV2;
-use App\V2\PlanoTrabalho\Ocorrencia\OcorrenciaController as OcorrenciaV2;
+use App\V2\Ocorrencia\OcorrenciaController as OcorrenciaV2;
 use App\V2\PlanoTrabalho\Log\PlanoTrabalhoLogController as PlanoTrabalhoLogV2;
 use App\V2\TipoModalidade\TipoModalidadeController as TipoModalidadeV2;
 use App\V2\TipoMotivoAfastamento\TipoMotivoAfastamentoController as TipoMotivoAfastamentoV2;

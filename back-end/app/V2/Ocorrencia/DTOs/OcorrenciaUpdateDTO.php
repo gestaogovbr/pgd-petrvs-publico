@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\V2\PlanoTrabalho\Ocorrencia\DTOs;
+namespace App\V2\Ocorrencia\DTOs;
 
 class OcorrenciaUpdateDTO
 {

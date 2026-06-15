@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\V2\PlanoTrabalho\Ocorrencia;
+namespace App\V2\Ocorrencia;
 
 use App\Models\Afastamento;
 use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
-use App\V2\PlanoTrabalho\Ocorrencia\DTOs\ConsolidacaoAfastamentoDTO;
-use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaStoreDTO;
-use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
-use App\V2\PlanoTrabalho\Ocorrencia\Validators\OcorrenciaStoreValidator;
+use App\V2\Ocorrencia\DTOs\ConsolidacaoAfastamentoDTO;
+use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
+use App\V2\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
+use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -22,6 +22,15 @@ class OcorrenciaService
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
     ) {}
 
+
+    /** 
+     * TODO: request não deve mais conter informações do PT, visto que serão seaparados
+     * A atribuição ao plano agora será feita no via cruzamento do período com as consolidacoes do usuário, e será vinculado dentro da transaction
+     * Validar:
+     * 1. se o usuário existe
+     * 2. se o usuário == usuario_id, ou se isGestor (checar se já existe algum método que recebe as ids de dois usuários e verifica se há alguma unidade em que o usuario X é %GESTOR%, e o usuario Y é COLABORADOR|LOTADO)
+     * 3. se o período não é bloqueado de acordo com a policy
+     * */ 
     public function store(OcorrenciaStoreDTO $dto): Afastamento
     {
         $plano = $this->validator->validarAutorizacao($dto->planoTrabalhoId, Auth::id());
@@ -36,6 +45,10 @@ class OcorrenciaService
         });
     }
 
+    /**
+     * TODO: apagar as  vinculações antigas e criar novas
+     * mes,as validações do UPDATE + validar se data_fim >= data_inicio
+     */
     public function update(OcorrenciaUpdateDTO $dto): Afastamento
     {
         $plano = $this->validator->validarAutorizacao($dto->planoTrabalhoId, Auth::id());

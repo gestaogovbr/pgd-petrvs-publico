@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\V2\PlanoTrabalho\Ocorrencia\Validators;
+namespace App\V2\Ocorrencia\Validators;
 
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
@@ -10,8 +10,8 @@ use App\Models\Afastamento;
 use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
-use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaStoreDTO;
-use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
+use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
+use App\V2\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
 use App\V2\Traits\ValidaAutorizacaoTrait;
 use Illuminate\Support\Carbon;
 

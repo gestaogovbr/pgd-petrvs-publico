@@ -1,8 +1,9 @@
 <?php
 
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\V2\Ocorrencia\DTOs\OcorrenciaOperacaoDTO;
 use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
-use App\V2\PlanoTrabalho\Ocorrencia\OcorrenciaImpactoPolicy;
+use App\V2\Ocorrencia\OcorrenciaImpactoPolicy;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -43,27 +44,27 @@ describe('OcorrenciaImpactoPolicy::calcularImpacto', function () {
 
     test('retorna sem impacto quando não há consolidações afetadas', function () {
         $policy = makePolicy([]);
-        $resultado = $policy->calcularImpacto('user-1', '2026-05-01', '2026-05-31', null, 'criar');
+        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-05-01', '2026-05-31', null, 'criar'));
 
-        expect($resultado->temImpacto)->toBeFalse();
+        expect($resultado->temImpacto())->toBeFalse();
         expect($resultado->operacaoBloqueada)->toBeFalse();
     });
 
     test('retorna com impacto quando gera dispensa em PT ativo', function () {
         $policy = makePolicy([buildRow()], isDispensadaAtual: false, seraDispensadaApos: true);
 
-        $resultado = $policy->calcularImpacto('user-1', '2026-04-15', '2026-06-15', null, 'criar');
+        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', null, 'criar'));
 
-        expect($resultado->temImpacto)->toBeTrue();
+        expect($resultado->temImpacto())->toBeTrue();
         expect($resultado->operacaoBloqueada)->toBeFalse();
     });
 
     test('retorna sem impacto quando estado não muda', function () {
         $policy = makePolicy([buildRow()], isDispensadaAtual: false, seraDispensadaApos: false);
 
-        $resultado = $policy->calcularImpacto('user-1', '2026-05-10', '2026-05-20', null, 'criar');
+        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-05-10', '2026-05-20', null, 'criar'));
 
-        expect($resultado->temImpacto)->toBeFalse();
+        expect($resultado->temImpacto())->toBeFalse();
     });
 
     test('bloqueia quando PT é CONCLUIDO e há recurso', function () {
@@ -73,7 +74,7 @@ describe('OcorrenciaImpactoPolicy::calcularImpacto', function () {
             seraDispensadaApos: true,
         );
 
-        $resultado = $policy->calcularImpacto('user-1', '2026-04-15', '2026-06-15', null, 'criar');
+        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', null, 'criar'));
 
         expect($resultado->operacaoBloqueada)->toBeTrue();
     });
@@ -85,7 +86,7 @@ describe('OcorrenciaImpactoPolicy::calcularImpacto', function () {
             seraDispensadaApos: true,
         );
 
-        $resultado = $policy->calcularImpacto('user-1', '2026-04-15', '2026-06-15', null, 'criar');
+        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', null, 'criar'));
 
         expect($resultado->operacaoBloqueada)->toBeTrue();
     });
@@ -97,27 +98,27 @@ describe('OcorrenciaImpactoPolicy::calcularImpacto', function () {
             seraDispensadaApos: true,
         );
 
-        $resultado = $policy->calcularImpacto('user-1', '2026-04-15', '2026-06-15', null, 'criar');
+        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', null, 'criar'));
 
-        expect($resultado->temImpacto)->toBeTrue();
+        expect($resultado->temImpacto())->toBeTrue();
         expect($resultado->operacaoBloqueada)->toBeFalse();
     });
 
     test('detecta remoção de dispensa na edição', function () {
         $policy = makePolicy([buildRow()], isDispensadaAtual: true, seraDispensadaApos: false);
 
-        $resultado = $policy->calcularImpacto('user-1', '2026-05-10', '2026-05-20', 'oc-existente', 'editar');
+        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-05-10', '2026-05-20', 'oc-existente', 'editar'));
 
-        expect($resultado->temImpacto)->toBeTrue();
+        expect($resultado->temImpacto())->toBeTrue();
         expect($resultado->operacaoBloqueada)->toBeFalse();
     });
 
     test('detecta remoção de dispensa na exclusão', function () {
         $policy = makePolicy([buildRow()], isDispensadaAtual: true, seraDispensadaApos: false);
 
-        $resultado = $policy->calcularImpacto('user-1', '2026-04-15', '2026-06-15', 'oc-existente', 'excluir');
+        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', 'oc-existente', 'excluir'));
 
-        expect($resultado->temImpacto)->toBeTrue();
+        expect($resultado->temImpacto())->toBeTrue();
         expect($resultado->operacaoBloqueada)->toBeFalse();
     });
 
@@ -131,7 +132,7 @@ describe('OcorrenciaImpactoPolicy::calcularImpacto', function () {
             seraDispensadaApos: true,
         );
 
-        $resultado = $policy->calcularImpacto('user-1', '2026-04-15', '2026-06-15', null, 'criar');
+        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', null, 'criar'));
 
         expect($resultado->operacaoBloqueada)->toBeTrue();
     });

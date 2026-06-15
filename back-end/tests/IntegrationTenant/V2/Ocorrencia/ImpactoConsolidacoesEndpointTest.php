@@ -5,7 +5,7 @@ use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoMotivoAfastamento;
 use App\Models\Usuario;
-use App\V2\PlanoTrabalho\Ocorrencia\OcorrenciaController;
+use App\V2\Ocorrencia\OcorrenciaController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -51,7 +51,8 @@ describe('GET /api/v2/ocorrencia/impacto-consolidacoes', function () {
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.tem_impacto', false)
+            ->assertJsonPath('data.gera_dispensa', false)
+            ->assertJsonPath('data.remove_dispensa', false)
             ->assertJsonPath('data.operacao_bloqueada', false);
     });
 
@@ -64,7 +65,7 @@ describe('GET /api/v2/ocorrencia/impacto-consolidacoes', function () {
         ]));
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.tem_impacto', true)
+            ->assertJsonPath('data.gera_dispensa', true)
             ->assertJsonPath('data.operacao_bloqueada', false);
     });
 
@@ -91,7 +92,48 @@ describe('GET /api/v2/ocorrencia/impacto-consolidacoes', function () {
         ]));
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.tem_impacto', true)
+            ->assertJsonPath('data.remove_dispensa', true)
+            ->assertJsonPath('data.operacao_bloqueada', false);
+    });
+
+    test('detecta remoção de dispensa quando encolhimento cria gap entre afastamentos', function () {
+        // Afastamento 1: 01/05 a 05/05
+        $af1Id = Str::uuid()->toString();
+        DB::connection('tenant')->table('afastamentos')->insert([
+            'id' => $af1Id,
+            'usuario_id' => $this->usuario->id,
+            'data_inicio' => '2026-05-01',
+            'data_fim' => '2026-05-05',
+            'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id,
+            'observacoes' => 'Afastamento 1',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Afastamento 2: 06/05 a 31/05 (cobre junto com af1 toda a consolidação)
+        $af2Id = Str::uuid()->toString();
+        DB::connection('tenant')->table('afastamentos')->insert([
+            'id' => $af2Id,
+            'usuario_id' => $this->usuario->id,
+            'data_inicio' => '2026-05-06',
+            'data_fim' => '2026-05-31',
+            'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id,
+            'observacoes' => 'Afastamento 2',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Edita af2 para 07/05 a 31/05 → gap no dia 06 → perde cobertura total
+        $response = $this->getJson('/api/__tests/v2/ocorrencia/impacto-consolidacoes?' . http_build_query([
+            'usuario_id' => $this->usuario->id,
+            'data_inicio' => '2026-05-07',
+            'data_fim' => '2026-05-31',
+            'ocorrencia_id' => $af2Id,
+            'operacao' => 'editar',
+        ]));
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.remove_dispensa', true)
             ->assertJsonPath('data.operacao_bloqueada', false);
     });
 
@@ -118,7 +160,7 @@ describe('GET /api/v2/ocorrencia/impacto-consolidacoes', function () {
         ]));
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.tem_impacto', true)
+            ->assertJsonPath('data.remove_dispensa', true)
             ->assertJsonPath('data.operacao_bloqueada', false);
     });
 
@@ -143,7 +185,7 @@ describe('GET /api/v2/ocorrencia/impacto-consolidacoes', function () {
         ]));
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.tem_impacto', true)
+            ->assertJsonPath('data.gera_dispensa', true)
             ->assertJsonPath('data.operacao_bloqueada', false);
     });
 

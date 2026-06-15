@@ -2,7 +2,7 @@
 
 namespace Tests\IntegrationTenant\Controllers\V2;
 
-use App\V2\PlanoTrabalho\Ocorrencia\OcorrenciaController;
+use App\V2\Ocorrencia\OcorrenciaController;
 use App\V2\PlanoTrabalho\Documento\DocumentoController;
 use App\Models\Afastamento;
 use App\Models\Entrega;

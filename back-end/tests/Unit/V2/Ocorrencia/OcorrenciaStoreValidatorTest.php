@@ -7,9 +7,9 @@ use App\Models\Afastamento;
 use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
-use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaStoreDTO;
-use App\V2\PlanoTrabalho\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
-use App\V2\PlanoTrabalho\Ocorrencia\Validators\OcorrenciaStoreValidator;
+use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
+use App\V2\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
+use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
 use Mockery;
 use Tests\TestCase;
 
