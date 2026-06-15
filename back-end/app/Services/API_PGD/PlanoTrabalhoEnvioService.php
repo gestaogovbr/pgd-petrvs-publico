@@ -37,12 +37,22 @@ class PlanoTrabalhoEnvioService
 
 
             // FASE 2 - Envio dos Planos de Entrega, para devido envio das entregas vinculadas ao plano de trabalho
-            foreach($planoTrabalho->entregas as $planoTrabalhoEntrega) {
-                if ($planoTrabalhoEntrega->plano_entrega_entrega_id) {
-                    $jobEntrega = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoTrabalhoEntrega->planoEntregaEntrega->planoEntrega, $origem);
-                    if (!empty($jobEntrega)) {
-                        $jobChain[] = $jobEntrega;
-                    }
+            $planoTrabalho->loadMissing('entregas.planoEntregaEntrega.planoEntrega');
+
+            foreach ($planoTrabalho->entregas as $planoTrabalhoEntrega) {
+                if (!$planoTrabalhoEntrega->plano_entrega_entrega_id) {
+                    continue;
+                }
+
+                $planoEntrega = $planoTrabalhoEntrega->planoEntregaEntrega?->planoEntrega;
+                if ($planoEntrega === null) {
+                    Log::warning("PT #{$planoTrabalho->id} entrega #{$planoTrabalhoEntrega->id} com plano_entrega_entrega_id inválido ou excluído");
+                    continue;
+                }
+
+                $jobEntrega = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoEntrega, $origem);
+                if (!empty($jobEntrega)) {
+                    $jobChain[] = $jobEntrega;
                 }
             }
 
