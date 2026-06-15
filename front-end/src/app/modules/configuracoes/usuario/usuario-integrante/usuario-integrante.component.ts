@@ -13,14 +13,14 @@ import { IntegranteService } from 'src/app/services/integrante.service';
 import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { PerfilDaoService } from 'src/app/dao/perfil-dao.service';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import {InputSelectComponent} from "../../../../components/input/input-select/input-select.component";
+import { InputSelectComponent } from "../../../../components/input/input-select/input-select.component";
 import { Perfil } from 'src/app/models/perfil.model';
 
 @Component({
-    selector: 'usuario-integrante',
-    templateUrl: './usuario-integrante.component.html',
-    styleUrls: ['./usuario-integrante.component.scss'],
-    standalone: false
+  selector: 'usuario-integrante',
+  templateUrl: './usuario-integrante.component.html',
+  styleUrls: ['./usuario-integrante.component.scss'],
+  standalone: false
 })
 export class UsuarioIntegranteComponent extends PageFrameBase {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
@@ -67,10 +67,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     this.entity = this.entity ?? this.metadata?.entity;
   }
 
-  public async onUnidadeChange(event: Event) {
+  public async onUnidadeChange() {
     const unidade_id = this.form?.controls.unidade_id.value;
     let atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO
-    const atribuicoesSelecionadas = this.form?.controls.atribuicoes.value.map((item: { key: () => any; }) => item.key)
+    const atribuicoesSelecionadas: string[] = (this.form?.controls.atribuicoes.value || []).map((item: LookupItem) => item.key)
     if (unidade_id) {
       const unidade = await this.unidadeDao.getById(unidade_id);
 
@@ -82,10 +82,10 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
 
       let perfilColaborador = false;
 
-      if(this.perfil){
+      if (this.perfil) {
         await this.perfilDao.getById(this.perfil.currentValue).then(perfil => {
           if (!perfil) return;
-          if(perfil.nivel === 6){
+          if (perfil.nivel === 6) {
             // filtrar atribuições para não permitir CURADOR e GESTOR_SUBSTITUTO
             atribuicoes = atribuicoes.filter(
               atribuicao => atribuicao.key !== 'CURADOR' && atribuicao.key !== 'GESTOR_SUBSTITUTO'
@@ -95,19 +95,19 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
         })
       }
       const isLotado = atribuicoesSelecionadas.includes('LOTADO')
-      
+
       atribuicoes = atribuicoes.filter(
-        atribuicao => atribuicao.key == 'COLABORADOR'? !isLotado : !atribuicoesSelecionadas.includes(atribuicao.key) 
+        atribuicao => atribuicao.key == 'COLABORADOR' ? !isLotado : !atribuicoesSelecionadas.includes(atribuicao.key)
       );
 
       if (!unidade?.executora && !perfilColaborador) {
-        atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO.filter(
+        atribuicoes = atribuicoes.filter(
           atribuicao => atribuicao.key !== 'COLABORADOR'
         );
       }
 
       this.atribuicoes = atribuicoes;
-      this.form?.controls.atribuicao.setValue(atribuicoesSelecionadas.includes('COLABORADOR')?'':"COLABORADOR");
+      this.form?.controls.atribuicao.setValue(atribuicoesSelecionadas.includes('COLABORADOR') ? '' : "COLABORADOR");
     } else {
       this.atribuicoes = [];
     }
@@ -173,10 +173,9 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     return result;
   }
 
-  public asyncFormValidation = async(form?: FormGroup) =>
-  {
+  public asyncFormValidation = async (form?: FormGroup) => {
     let atribuicoes: LookupItem[] = form!.controls.atribuicoes.value;
-    
+
     if (this.util.array_diff(['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'], atribuicoes.map(na => na.key) || []).length < 2) {
       return "A um mesmo servidor só pode ser atribuída uma função de gestor (titular, substituto ou delegado), para uma mesma Unidade!";
     }
@@ -220,21 +219,21 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
   };
 
   public deleteItemHandle(row: LookupItem): boolean | undefined | void {
-    if(row.key == "LOTADO")
+    if (row.key == "LOTADO")
       return false;
-    
+
     const atribuicaoExcluida = row.key;
 
-    const isLotado =  this.form?.controls.atribuicoes.value.filter((val: any) => val.key == "LOTADO").length>0
+    const isLotado = this.form?.controls.atribuicoes.value.filter((val: any) => val.key == "LOTADO").length > 0
 
-    const atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO  
+    const atribuicoes = this.lookup.UNIDADE_INTEGRANTE_TIPO
     this.atribuicoes = atribuicoes.filter(atribuicao =>
-      
-         atribuicao.key == 'COLABORADOR'? !isLotado : atribuicao.key == atribuicaoExcluida || this.atribuicoes.includes(atribuicao)
-      );
+
+      atribuicao.key == 'COLABORADOR' ? !isLotado : atribuicao.key == atribuicaoExcluida || this.atribuicoes.includes(atribuicao)
+    );
     return true;
   };
-  
+
   /**
    * Método chamado na edição de uma atribuição do usuário
    * @param form 
@@ -244,6 +243,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     form.controls.unidade_id.setValue(this.grid?.adding ? row.unidade_id : row.id);
     form.controls.atribuicoes.setValue(this.integranteService.converterAtribuicoes(row.atribuicoes));
     form.controls.atribuicao.setValue("");
+    await this.onUnidadeChange();
   }
 
   /**
@@ -299,17 +299,15 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
    * @param row 
    * @returns 
    */
-  public async salvarIntegrante(form: FormGroup, row: IntegranteConsolidado) 
-  {
-
+  public async salvarIntegrante(form: FormGroup, row: IntegranteConsolidado) {
     let novasAtribuicoes = this.lookup.uniqueLookupItem(form!.controls.atribuicoes.value);
     form.controls.atribuicoes.setValue(novasAtribuicoes);
-    
+
     if (this.grid) this.grid.error = "";
-    
+
     this.cdRef.detectChanges();
     let error = await this.asyncFormValidation(form);
-    
+
     if (!error) {
       let itensGrid = this.grid?.items as IntegranteConsolidado[] || [];
       let confirm = true;
@@ -356,14 +354,14 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
           await this.loadData({ id: this.entity!.id }, this.form);
           if (this.grid) this.grid!.error = "";
         } else {                // se não persistente
-          row.id = this.unidade?.selectedEntity.id,
-            this.grid!.items = this.integranteService.substituirItem({
-              id: row.id,
-              itens: this.grid?.items || [],
-              apelidoOuSigla: this.unidade?.selectedItem?.entity.sigla,
-              nome: this.unidade?.selectedItem?.entity.nome,
-              codigo: this.unidade?.selectedItem?.entity.codigo
-            }, novasAtribuicoes.map((x: LookupItem) => x.key), new Usuario(this.entity!));
+          row.id = this.unidade?.selectedEntity?.id;
+          this.grid!.items = this.integranteService.substituirItem({
+            id: row.id,
+            itens: this.grid?.items || [],
+            apelidoOuSigla: this.unidade?.selectedItem?.entity?.sigla,
+            nome: this.unidade?.selectedItem?.entity?.nome,
+            codigo: this.unidade?.selectedItem?.entity?.codigo,
+          }, novasAtribuicoes.map((x: LookupItem) => x.key), new Usuario(this.entity!));
           this.cdRef.detectChanges();
         }
       } catch (error: any) {
@@ -389,6 +387,6 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
     }
     return this.auth?.hasPermissionTo('MOD_USER_ATRIB') ?? false;
   }
-  
+
 
 }

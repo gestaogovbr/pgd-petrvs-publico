@@ -182,12 +182,12 @@ export class IntegranteService {
    * @param entity 
    * @returns 
    */
-  public substituirItem(dados: any, atribuicoes: IntegranteAtribuicao[], entity: Usuario | Unidade): any[] { 
+  public substituirItem(dados: any, atribuicoes: IntegranteAtribuicao[], entity: Usuario | Unidade): any[] {
     let index = dados.itens.findIndex((x: { [x: string]: any; }) => x["id"] == dados.id);
     let entityUsuario = entity instanceof Usuario;
     //let entityUsuario = entity.hasOwnProperty('cpf');
-    let base = entityUsuario ? { id: dados.id, unidade_sigla: dados.apelidoOuSigla, unidade_nome: dados.nome, unidade_codigo: dados.codigo } : { id: dados.id, usuario_apelido: dados.apelidoOuSigla, usuario_nome: dados.nome };   
-    dados.itens[index!] = this.completarIntegrante(base, entityUsuario ? dados.id : entity.id, entityUsuario ? entity.id : dados.id, atribuicoes); 
+    let base = entityUsuario ? { id: dados.id, unidade_sigla: dados.apelidoOuSigla, unidade_nome: dados.nome, unidade_codigo: dados.codigo } : { id: dados.id, usuario_apelido: dados.apelidoOuSigla, usuario_nome: dados.nome };
+    dados.itens[index!] = this.completarIntegrante(base, entityUsuario ? dados.id : entity.id, entityUsuario ? entity.id : dados.id, atribuicoes);
     return dados.itens;
   }
 
