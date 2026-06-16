@@ -96,7 +96,7 @@ class OcorrenciaService
     {
         $gerendciadasIds = $this->unidadeRepository->getUnidadesGerenciadas($usuarioId)->pluck('id')->all();
 
-        return $this->unidadeRepository->getSubordinadas($gerendciadasIds)->pluck('id')->all();
+        return $this->unidadeRepository->getSubordinadasRecursivas($gerendciadasIds)->pluck('id')->all();
     }
 
     private function vincularConsolidacoes(Afastamento $afastamento): void

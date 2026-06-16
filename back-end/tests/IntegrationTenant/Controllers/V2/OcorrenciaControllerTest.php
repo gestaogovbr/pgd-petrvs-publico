@@ -183,3 +183,26 @@ describe('GET /api/v2/ocorrencia', function () {
         expect($response->json('data.data'))->not->toBeEmpty();
     });
 });
+
+// ── GET agentes ─────────────────────────────────────────────────────
+
+describe('GET /api/v2/ocorrencia/agentes', function () {
+
+    beforeEach(function () {
+        if (!Route::has('__tests.v2.ocorrencia.agentes')) {
+            Route::middleware(['api'])->get('/api/__tests/v2/ocorrencia/agentes', [OcorrenciaController::class, 'agentes'])
+                ->name('__tests.v2.ocorrencia.agentes');
+        }
+    });
+
+    test('retorna ao menos o próprio usuário', function () {
+        $response = $this->getJson('/api/__tests/v2/ocorrencia/agentes');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $agentes = $response->json('data');
+        expect($agentes)->not->toBeEmpty();
+        expect(collect($agentes)->pluck('id')->toArray())->toContain($this->usuario->id);
+    });
+});

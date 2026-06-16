@@ -35,8 +35,9 @@ class OcorrenciaStoreValidator
         }
 
         $unidadeIds = $unidadesGerenciadas->pluck('id')->all();
+        $unidadesSubordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($unidadeIds)->pluck('id')->all();
 
-        $possuiVinculo = $this->afastamentoRepository->usuarioPossuiVinculoEmUnidades($usuarioAlvoId, $unidadeIds);
+        $possuiVinculo = $this->afastamentoRepository->usuarioPossuiVinculoEmUnidades($usuarioAlvoId, $unidadesSubordinadasIds);
 
         if (!$possuiVinculo) {
             throw new ForbiddenException('Usuário não tem permissão para registrar ocorrências para este servidor.');
