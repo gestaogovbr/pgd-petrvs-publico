@@ -11,10 +11,12 @@ use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\V2\Ocorrencia\DTOs\ConsolidacaoAfastamentoDTO;
+use App\V2\Ocorrencia\DTOs\OcorrenciaIndexDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
 use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -32,17 +34,18 @@ class OcorrenciaService
     public function agentes(): Collection
     {
         $usuarioLogadoId = Auth::id();
-        $unidadeIds = $this->getUnidadeIdsGerenciadas($usuarioLogadoId);
+        $unidadeIds = $this->getUnidadeIdsSubordinadas($usuarioLogadoId);
 
         return $this->usuarioRepository->findAgentesVisiveis($usuarioLogadoId, $unidadeIds);
     }
 
-    public function index(): Collection
+    public function index(array $data): LengthAwarePaginator
     {
         $usuarioLogadoId = Auth::id();
-        $unidadeIds = $this->getUnidadeIdsGerenciadas($usuarioLogadoId);
+        $unidadeIds = $this->getUnidadeIdsSubordinadas($usuarioLogadoId);
+        $dto = OcorrenciaIndexDTO::fromRequest($data, $usuarioLogadoId, $unidadeIds);
 
-        return $this->afastamentoRepository->findByUsuarioOuSubordinados($usuarioLogadoId, $unidadeIds);
+        return $this->afastamentoRepository->buscarOcorrenciasListagem($dto);
     }
 
     public function store(OcorrenciaStoreDTO $dto): Afastamento
@@ -89,9 +92,11 @@ class OcorrenciaService
     /**
      * @return list<string>
      */
-    private function getUnidadeIdsGerenciadas(string $usuarioId): array
+    private function getUnidadeIdsSubordinadas(string $usuarioId): array
     {
-        return $this->unidadeRepository->getUnidadesGerenciadas($usuarioId)->pluck('id')->all();
+        $gerendciadasIds = $this->unidadeRepository->getUnidadesGerenciadas($usuarioId)->pluck('id')->all();
+
+        return $this->unidadeRepository->getSubordinadas($gerendciadasIds)->pluck('id')->all();
     }
 
     private function vincularConsolidacoes(Afastamento $afastamento): void

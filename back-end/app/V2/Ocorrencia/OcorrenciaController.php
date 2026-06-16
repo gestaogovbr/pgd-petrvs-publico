@@ -33,12 +33,12 @@ class OcorrenciaController extends Controller
         }
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $ocorrencias = $this->service->index();
+            $result = $this->service->index($request->all());
 
-            return response()->json(['success' => true, 'data' => $ocorrencias]);
+            return response()->json(['success' => true, 'data' => $result]);
         } catch (Throwable $e) {
             report($e);
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);

@@ -8,10 +8,11 @@ use App\DTOs\ListResult;
 use App\Models\Afastamento;
 use App\Models\UnidadeIntegrante;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
-use App\Repository\Eloquent\EloquentListRepositoryTrait;
+use App\V2\Ocorrencia\DTOs\OcorrenciaIndexDTO;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryContract
 {
@@ -104,21 +105,33 @@ class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryCont
             ->get();
     }
 
-    /** @param list<string> $unidadeIds */
-    public function findByUsuarioOuSubordinados(string $usuarioId, array $unidadeIds): Collection
+    public function buscarOcorrenciasListagem(OcorrenciaIndexDTO $dto): LengthAwarePaginator
     {
         $query = $this->afastamento->newQuery()
             ->with(['tipoMotivoAfastamento:id,nome,sigla,horas', 'usuario:id,nome']);
 
-        if (empty($unidadeIds)) {
-            $query->where('usuario_id', $usuarioId);
+        if (empty($dto->unidadeIds)) {
+            $query->where('usuario_id', $dto->usuarioLogadoId);
         } else {
             $query->where(fn (Builder $q) => $q
-                ->where('usuario_id', $usuarioId)
-                ->orWhereHas('usuario.unidadesIntegrantes', fn (Builder $sub) => $sub->whereIn('unidade_id', $unidadeIds))
+                ->where('usuario_id', $dto->usuarioLogadoId)
+                ->orWhereHas('usuario.unidadesIntegrantes', fn (Builder $sub) => $sub->whereIn('unidade_id', $dto->unidadeIds))
             );
         }
 
-        return $query->orderBy('data_inicio', 'desc')->get();
+        if ($dto->usuarioId) {
+            $query->where('usuario_id', $dto->usuarioId);
+        }
+        if ($dto->tipoMotivoAfastamentoId) {
+            $query->where('tipo_motivo_afastamento_id', $dto->tipoMotivoAfastamentoId);
+        }
+        if ($dto->dataInicio) {
+            $query->where('data_inicio', '>=', $dto->dataInicio);
+        }
+        if ($dto->dataFim) {
+            $query->where('data_fim', '<=', $dto->dataFim);
+        }
+
+        return $query->orderBy('data_inicio', 'desc')->paginate(perPage: $dto->perPage, page: $dto->page);
     }
 }

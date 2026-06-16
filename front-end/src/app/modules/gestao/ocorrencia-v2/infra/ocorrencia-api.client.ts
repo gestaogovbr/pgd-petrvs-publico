@@ -10,9 +10,10 @@ export class OcorrenciaApiClient {
   private readonly http = inject(HttpClient);
   private readonly base = '/api/v2/ocorrencia';
 
-  listar(): Observable<Ocorrencia[]> {
-    return this.http.get<any>(`${this.gb.servidorURL}${this.base}`)
-      .pipe(map(r => r?.data ?? []));
+  listar(params: Record<string, any> = {}): Observable<any> {
+    const httpParams = new HttpParams({ fromObject: params });
+    return this.http.get<any>(`${this.gb.servidorURL}${this.base}`, { params: httpParams })
+      .pipe(map(r => r?.data));
   }
 
   agentes(): Observable<{ id: string; nome: string }[]> {

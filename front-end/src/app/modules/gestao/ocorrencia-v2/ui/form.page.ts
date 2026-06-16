@@ -59,7 +59,7 @@ export class OcorrenciaV2FormPage implements OnInit {
     forkJoin({
       tipos: this.api.tipos(),
       agentes: this.api.agentes(),
-      ocorrencias: this.modoEdicao ? this.api.listar() : of([]),
+      ocorrencias: this.modoEdicao ? this.api.listar({ size: 999 }) : of([]),
     }).subscribe({
       next: ({ tipos, agentes, ocorrencias }) => {
         this.tipos.set(tipos);
@@ -67,7 +67,8 @@ export class OcorrenciaV2FormPage implements OnInit {
 
         setTimeout(() => {
           if (this.modoEdicao) {
-            const oc = (ocorrencias as any[]).find((o: any) => o.id === this.ocorrenciaId);
+            const oc = (ocorrencias as any)?.data?.find((o: any) => o.id === this.ocorrenciaId)
+            ?? (ocorrencias as any[])?.find?.((o: any) => o.id === this.ocorrenciaId);
             if (oc) {
               this.fg.patchValue({
                 usuario_id: oc.usuario_id,

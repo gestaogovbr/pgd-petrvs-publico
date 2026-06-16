@@ -8,7 +8,9 @@ use App\DTOs\ListResult;
 use App\Models\Afastamento;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
+use App\V2\Ocorrencia\DTOs\OcorrenciaIndexDTO;
 use Carbon\CarbonPeriod;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 class AfastamentoRepository
@@ -69,11 +71,8 @@ class AfastamentoRepository
         return $this->readRepository->findAfastamentosParaDispensa($usuarioId, $vigencia, $codigosExcluidos);
     }
 
-    /**
-     * @param list<string> $unidadeIds
-     */
-    public function findByUsuarioOuSubordinados(string $usuarioId, array $unidadeIds): \Illuminate\Database\Eloquent\Collection
+    public function buscarOcorrenciasListagem(OcorrenciaIndexDTO $dto): LengthAwarePaginator
     {
-        return $this->readRepository->findByUsuarioOuSubordinados($usuarioId, $unidadeIds);
+        return $this->readRepository->buscarOcorrenciasListagem($dto);
     }
 }
