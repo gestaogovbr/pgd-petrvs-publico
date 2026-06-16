@@ -1,3 +1,9 @@
+## 3.0.2 16/06/2026
+
+### Corrigido
+- Corrigidos bugs ao editar atribuições de usuário: lista de atribuições agora é populada corretamente ao abrir edição, filtro "não executora" opera sobre a lista já processada, e
+componente input-search carrega o valor pré-existente ao montar.
+
 ## 3.0.1 09/06/2026
 
 ### Corrigido
