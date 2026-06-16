@@ -173,7 +173,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   selecionarUsuario(item: UsuarioSearchItem) {
     this.erroAgentePublico.set('');
     this.form.controls.usuario_id.setValue(item.id);
-    this.agentePublicoQuery.setValue(item.nome, { emitEvent: false });
+    this.agentePublicoQuery.setValue(item.nome_exibicao, { emitEvent: false });
     this.sugestoesUsuarios.set([]);
     this.carregarUnidades(item as Usuario);
   }
@@ -252,7 +252,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       return;
     }
     this.form.controls.usuario_id.setValue(usuario.id);
-    this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
+    this.agentePublicoQuery.setValue(usuario.nome_exibicao, { emitEvent: false });
     void this.carregarUnidades(usuario);
   }
 

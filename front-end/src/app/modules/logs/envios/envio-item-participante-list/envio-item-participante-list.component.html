@@ -12,7 +12,7 @@
             <ng-template let-row="row" #columnCpf>{{ row.usuario?.cpf }}</ng-template>
         </column>
         <column title="Nome" field="npme" [width]="120" [template]="columnNome">
-            <ng-template let-row="row" #columnNome>{{ row.usuario?.nome }}</ng-template>
+            <ng-template let-row="row" #columnNome>{{ row.usuario?.nome_exibicao }}</ng-template>
         </column>
         <column title="Iniciado em" field="created_at" [width]="80" [template]="columnDataCriacao">
             <ng-template let-row="row" #columnDataCriacao>

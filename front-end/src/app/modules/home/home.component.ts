@@ -37,9 +37,8 @@ export class HomeComponent implements OnInit {
 
   public mensagemSaudacao() {
     const hora = parseInt(this.auth.unidadeHora.replace(":", ""));
-    const apelido = this.auth.usuario?.apelido;
-    const mail = this.auth.usuario?.email;
-    return hora < 1200 ? "Bom dia, " + apelido : hora < 1800 ? "Boa tarde, " + apelido : "Boa noite, " + apelido;
+    const nome = this.utils.apelidoOuNome(this.auth.usuario) || "";
+    return hora < 1200 ? "Bom dia, " + nome : hora < 1800 ? "Boa tarde, " + nome : "Boa noite, " + nome;
   }
 
   public emailUsuario() {

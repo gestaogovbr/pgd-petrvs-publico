@@ -74,7 +74,7 @@ class TCRDatasetProvider
     private function usuarioFields(): array
     {
         return [
-            ['field' => 'nome', 'label' => 'Nome'],
+            ['field' => 'nome', 'label' => 'Nome', 'value' => fn ($ctx) => empty($ctx->nome_social) ? $ctx->nome : $ctx->nome_social . " (" . $ctx->nome . ')'],
             ['field' => 'email', 'label' => 'E-mail'],
             ['field' => 'cpf', 'label' => 'CPF'],
             ['field' => 'matricula', 'label' => 'Matrícula'],

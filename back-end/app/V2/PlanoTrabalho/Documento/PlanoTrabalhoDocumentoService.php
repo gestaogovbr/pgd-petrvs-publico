@@ -60,7 +60,7 @@ class PlanoTrabalhoDocumentoService
             'assinaturas' => $documento->assinaturas->map(function (DocumentoAssinatura $assinatura) {
                 return [
                     'usuario_id' => $assinatura->usuario_id,
-                    'usuario_nome' => $assinatura->usuario->nome,
+                    'usuario_nome' => $assinatura->usuario->nome_social ?? $assinatura->usuario->nome,
                     'data_assinatura' => $assinatura->data_assinatura
                 ];
             })

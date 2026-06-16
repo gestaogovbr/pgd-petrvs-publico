@@ -15,6 +15,11 @@
                         <input-text [size]="12" label="Nome" controlName="nome" [disabled]="!entity?.usuario_externo ? 'true' : undefined" [attr.maxlength]=250 required></input-text>
                     </div>
                     <div class="row">
+                        <input-text [size]="12" label="Nome Social" controlName="nome_social" [disabled]="!isTitular ? 'true' : undefined" [maxLength]="100"
+                          labelInfo="O Nome Social será utilizado como identificação principal no sistema. O nome civil permanecerá armazenado para fins administrativos e poderá ser utilizado nas hipóteses previstas na legislação vigente.">
+                        </input-text>
+                    </div>
+                    <div class="row">
                         <input-select [size]="6" label="UF" icon="bi bi-flag" controlName="uf" [items]="lookup.UF" [disabled]="!entity?.usuario_externo ? 'true' : undefined"></input-select>
                         <input-text [size]="6" label="Telefone" controlName="telefone" [maskFormat]="'(00) 0000-0000||(00) 0 0000-0000'" [attr.maxlength]=250></input-text>
                     </div>

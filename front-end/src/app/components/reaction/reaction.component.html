@@ -25,7 +25,7 @@
           <div class="participantes rounded shadow">
             <h5>{{lookup.getValue(lookup.REACAO_TIPO, tipoReacao.tipo)}}</h5>
             <small *ngFor="let reacao of tipoReacao.reacoes" class="d-block">
-                {{reacao.usuario?.nome}}
+                {{reacao.usuario?.nome_exibicao}}
             </small>
           </div>
         </div>
