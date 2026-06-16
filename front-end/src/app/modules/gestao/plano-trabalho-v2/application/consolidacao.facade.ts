@@ -35,7 +35,7 @@ export class ConsolidacaoFacade {
   // --- Estado de reabertura ---
   readonly reabrindoId = signal<string | null>(null);
   readonly justificativaReabrir = signal<string>('');
-
+  readonly processandoAcaoId = signal<string | null>(null);
   // --- Estado de avaliação ---
   readonly notasSelecionadas = signal<Record<string, string>>({});
   readonly justificativasAvaliacao = signal<Record<string, string>>({});
@@ -259,13 +259,16 @@ export class ConsolidacaoFacade {
       titulo: 'Finalizar Registro',
       mensagem: 'Ao finalizar este registro, a execução do Plano de Trabalho referente a este período será encaminhada para avaliação da chefia. Deseja confirmar?',
       onConfirmar: () => {
+        this.processandoAcaoId.set(consolidacao.id);
         this.concluirUC.execute(this.planoId, consolidacao.id).subscribe({
           next: (atualizado) => {
             this.consolidacoes.update(lista =>
               lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
             );
+            this.processandoAcaoId.set(null);
             this.message.success('Registro concluído com sucesso.');
-          }
+          },
+          error: () => this.processandoAcaoId.set(null)
         });
       }
     });
@@ -289,6 +292,7 @@ export class ConsolidacaoFacade {
       titulo: 'Reabrir Registro',
       mensagem: 'Ao reabrir este registro, a execução do Plano de Trabalho referente a este período retornará para edição e ficará indisponível para avaliação até nova finalização. Deseja confirmar?',
       onConfirmar: () => {
+        this.processandoAcaoId.set(consolidacao.id);
         this.api.reabrirConsolidacao(this.planoId, consolidacao.id, justificativa).subscribe({
           next: (atualizado) => {
             this.consolidacoes.update(lista =>
@@ -296,8 +300,10 @@ export class ConsolidacaoFacade {
             );
             this.reabrindoId.set(null);
             this.justificativaReabrir.set('');
+            this.processandoAcaoId.set(null);
             this.message.success('Registro reaberto com sucesso.');
-          }
+          },
+          error: () => this.processandoAcaoId.set(null)
         });
       }
     });
