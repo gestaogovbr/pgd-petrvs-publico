@@ -6,7 +6,7 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { OcorrenciaApiClient } from '../infra/ocorrencia-api.client';
 import { AuthService } from 'src/app/services/auth.service';
-import { TipoMotivoAfastamento } from '../domain/types';
+import { ImpactoConsolidacoes, TipoMotivoAfastamento } from '../domain/types';
 import { forkJoin, of } from 'rxjs';
 
 @Component({
@@ -90,14 +90,73 @@ export class OcorrenciaV2FormPage implements OnInit {
     });
   }
 
+  readonly modal = signal<{ titulo: string; mensagem: string } | null>(null);
+  private pendingPayload: any = null;
+
   salvar(): void {
     if (this.fg.invalid) return;
 
-    this.salvando.set(true);
     const payload = {
       ...this.fg.getRawValue(),
       horas: this.fg.controls.horas.value ? Number(this.fg.controls.horas.value) : null,
     };
+
+    this.api.impactoConsolidacoes({
+      usuario_id: payload.usuario_id,
+      data_inicio: payload.data_inicio,
+      data_fim: payload.data_fim,
+      operacao: this.modoEdicao ? 'editar' : 'criar',
+      ocorrencia_id: this.ocorrenciaId ?? undefined,
+    }).subscribe({
+      next: (impacto) => {
+        if (impacto.operacao_bloqueada) {
+          this.modal.set({
+            titulo: 'Operação bloqueada',
+            mensagem: this.getMensagemBloqueio(impacto),
+          });
+          return;
+        }
+
+        if (impacto.gera_dispensa || impacto.remove_dispensa) {
+          this.pendingPayload = payload;
+          this.modal.set({
+            titulo: 'Confirmação',
+            mensagem: this.getMensagemConfirmacao(impacto),
+          });
+          return;
+        }
+
+        this.pendingPayload = payload;
+        this.modal.set({
+          titulo: 'Confirmar',
+          mensagem: this.modoEdicao ? 'Deseja salvar as alterações?' : 'Deseja cadastrar esta ocorrência?',
+        });
+      },
+      error: () => {
+        this.pendingPayload = payload;
+        this.modal.set({
+          titulo: 'Confirmar',
+          mensagem: this.modoEdicao ? 'Deseja salvar as alterações?' : 'Deseja cadastrar esta ocorrência?',
+        });
+      },
+    });
+  }
+
+  confirmarModal(): void {
+    this.modal.set(null);
+    if (this.pendingPayload) {
+      this.executarSalvamento(this.pendingPayload);
+      this.pendingPayload = null;
+    }
+  }
+
+  fecharModal(): void {
+    this.modal.set(null);
+    this.pendingPayload = null;
+  }
+
+  private executarSalvamento(payload: any): void {
+    this.salvando.set(true);
 
     const op$ = this.modoEdicao
       ? this.api.atualizar(this.ocorrenciaId!, payload)
@@ -107,6 +166,26 @@ export class OcorrenciaV2FormPage implements OnInit {
       next: () => this.router.navigate(['/gestao/ocorrencia-v2']),
       error: () => this.salvando.set(false),
     });
+  }
+
+  private getMensagemConfirmacao(impacto: ImpactoConsolidacoes): string {
+    if (impacto.gera_dispensa && impacto.pt_concluido) {
+      return 'A inclusão ou alteração desta ocorrência resultará na dispensa de registro de execução e avaliação de um ou mais períodos avaliativos. Os períodos afetados passarão para o status "Dispensado", e as avaliações já realizadas serão canceladas. Em decorrência dessa alteração, o Plano de Trabalho poderá retornar ao status "Em execução". Deseja confirmar?';
+    }
+    if (impacto.gera_dispensa) {
+      return 'Esta ocorrência resultará na dispensa de registro de execução e avaliação de um ou mais períodos avaliativos, em razão da cobertura integral do período. Deseja confirmar?';
+    }
+    if (impacto.remove_dispensa && impacto.pt_concluido) {
+      return 'A alteração desta ocorrência removerá a dispensa de registro de execução e avaliação de um ou mais períodos avaliativos. Os períodos afetados retornarão ao status anterior e o Plano de Trabalho retornará ao status "Em execução". Deseja confirmar?';
+    }
+    return 'A alteração desta ocorrência removerá a dispensa de registro de execução e avaliação de um ou mais períodos avaliativos. Os períodos afetados retornarão ao status anterior. Deseja confirmar?';
+  }
+
+  private getMensagemBloqueio(impacto: ImpactoConsolidacoes): string {
+    if (impacto.gera_dispensa) {
+      return 'Não é possível incluir ou alterar esta ocorrência, pois ela resultaria na dispensa de registro de execução e avaliação de período avaliativo cuja avaliação não pode mais ser cancelada.';
+    }
+    return 'Esta ocorrência não pode ser alterada ou excluída, pois impacta período avaliativo dispensado pertencente a Plano de Trabalho concluído com prazo recursal encerrado.';
   }
 
   cancelar(): void {

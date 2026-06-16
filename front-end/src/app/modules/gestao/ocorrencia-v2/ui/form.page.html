@@ -65,3 +65,17 @@
     </div>
   }
 </div>
+
+<br-scrim [isOpen]="!!modal()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!modal()" [titleText]="modal()?.titulo || ''" size="small" alignFooter="end" (brModalBeforeClose)="fecharModal()">
+    <p>{{ modal()?.mensagem }}</p>
+    <div slot="footer">
+      @if (modal()?.titulo === 'Operação bloqueada') {
+        <br-button emphasis="primary" (click)="fecharModal()">Entendi</br-button>
+      } @else {
+        <br-button class="mx-1" emphasis="secondary" (click)="fecharModal()">Cancelar</br-button>
+        <br-button class="mx-1" emphasis="primary" (click)="confirmarModal()">Confirmar</br-button>
+      }
+    </div>
+  </br-modal>
+</br-scrim>

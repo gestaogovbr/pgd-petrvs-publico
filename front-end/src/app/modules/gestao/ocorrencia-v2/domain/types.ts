@@ -31,4 +31,5 @@ export type ImpactoConsolidacoes = {
   operacao_bloqueada: boolean;
   gera_dispensa: boolean;
   remove_dispensa: boolean;
+  pt_concluido: boolean;
 };

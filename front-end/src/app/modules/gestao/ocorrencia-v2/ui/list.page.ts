@@ -7,7 +7,7 @@ import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb
 import { PaginationV2Component } from 'src/app/v2/components/pagination/pagination.component';
 import { OcorrenciaApiClient } from '../infra/ocorrencia-api.client';
 import { AuthService } from 'src/app/services/auth.service';
-import { Ocorrencia, TipoMotivoAfastamento } from '../domain/types';
+import { Ocorrencia, TipoMotivoAfastamento, ImpactoConsolidacoes } from '../domain/types';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -104,9 +104,60 @@ export class OcorrenciaV2ListPage implements OnInit {
     this.router.navigate(['/gestao/ocorrencia-v2/editar', id]);
   }
 
-  excluir(ocorrencia: Ocorrencia): void {
-    if (!confirm('Deseja excluir esta ocorrência?')) return;
+  readonly modal = signal<{ titulo: string; mensagem: string; bloqueada: boolean } | null>(null);
+  private pendingExclusao: Ocorrencia | null = null;
 
+  excluir(ocorrencia: Ocorrencia): void {
+    this.api.impactoConsolidacoes({
+      usuario_id: ocorrencia.usuario_id,
+      data_inicio: ocorrencia.data_inicio.substring(0, 10),
+      data_fim: ocorrencia.data_fim.substring(0, 10),
+      operacao: 'excluir',
+      ocorrencia_id: ocorrencia.id,
+    }).subscribe({
+      next: (impacto) => {
+        if (impacto.operacao_bloqueada) {
+          this.modal.set({
+            titulo: 'Operação bloqueada',
+            mensagem: 'Esta ocorrência não pode ser alterada ou excluída, pois impacta período avaliativo dispensado pertencente a Plano de Trabalho concluído com prazo recursal encerrado.',
+            bloqueada: true,
+          });
+          return;
+        }
+
+        if (impacto.gera_dispensa || impacto.remove_dispensa) {
+          this.pendingExclusao = ocorrencia;
+          const mensagem = impacto.pt_concluido
+            ? 'A alteração desta ocorrência removerá a dispensa de registro de execução e avaliação de um ou mais períodos avaliativos. Os períodos afetados retornarão ao status anterior e o Plano de Trabalho retornará ao status "Em execução". Deseja confirmar?'
+            : 'A alteração desta ocorrência removerá a dispensa de registro de execução e avaliação de um ou mais períodos avaliativos. Os períodos afetados retornarão ao status anterior. Deseja confirmar?';
+          this.modal.set({ titulo: 'Confirmação', mensagem, bloqueada: false });
+          return;
+        }
+
+        this.pendingExclusao = ocorrencia;
+        this.modal.set({ titulo: 'Confirmar exclusão', mensagem: 'Deseja excluir esta ocorrência?', bloqueada: false });
+      },
+      error: () => {
+        this.pendingExclusao = ocorrencia;
+        this.modal.set({ titulo: 'Confirmar exclusão', mensagem: 'Deseja excluir esta ocorrência?', bloqueada: false });
+      },
+    });
+  }
+
+  confirmarModal(): void {
+    this.modal.set(null);
+    if (this.pendingExclusao) {
+      this.executarExclusao(this.pendingExclusao);
+      this.pendingExclusao = null;
+    }
+  }
+
+  fecharModal(): void {
+    this.modal.set(null);
+    this.pendingExclusao = null;
+  }
+
+  private executarExclusao(ocorrencia: Ocorrencia): void {
     this.api.excluir(ocorrencia.id, ocorrencia.usuario_id).subscribe({
       next: () => this.carregar(),
     });

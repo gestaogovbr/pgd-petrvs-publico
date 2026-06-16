@@ -49,7 +49,11 @@ class OcorrenciaImpactoPolicy
             && ($row->has_recurso || $row->is_prazo_avaliacao_terminado)
         );
 
-        return OcorrenciaImpactoDTO::fromFlags($geraDispensa, $removeDispensa, $bloqueada);
+        $ptConcluido = $comMudanca->contains(fn (object $row) =>
+            $row->pt_status === StatusEnum::CONCLUIDO->value
+        );
+
+        return OcorrenciaImpactoDTO::fromFlags($geraDispensa, $removeDispensa, $bloqueada, $ptConcluido);
     }
 
     private function isDispensadaAtual(object $row, OcorrenciaOperacaoDTO $dto): bool

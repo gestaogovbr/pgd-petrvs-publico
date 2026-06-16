@@ -49,7 +49,8 @@ export class OcorrenciaApiClient {
     operacao: 'criar' | 'editar' | 'excluir';
     ocorrencia_id?: string;
   }): Observable<ImpactoConsolidacoes> {
-    const httpParams = new HttpParams({ fromObject: params as any });
+    const clean = Object.fromEntries(Object.entries(params).filter(([_, v]) => v !== undefined));
+    const httpParams = new HttpParams({ fromObject: clean });
     return this.http.get<any>(`${this.gb.servidorURL}${this.base}/impacto-consolidacoes`, { params: httpParams })
       .pipe(map(r => r?.data));
   }
