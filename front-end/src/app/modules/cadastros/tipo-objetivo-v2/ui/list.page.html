@@ -2,11 +2,15 @@
   <app-breadcrumb />
 
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">Tipos de Objetivos</h2>
+    <h2 class="mb-0">Elementos do Planejamento</h2>
     <br-button emphasis="primary" (click)="abrirNovo()">
-      <i class="fas fa-plus mr-1"></i>Novo tipo
+      <i class="fas fa-plus mr-1"></i>Incluir novo elemento
     </br-button>
   </div>
+
+  <p class="text-muted mb-3">
+    Os órgãos podem adotar diferentes metodologias de planejamento institucional. Nesta tela, são configurados os elementos que compõem essa metodologia (como objetivos, iniciativas e indicadores). Os elementos cadastrados ficarão disponíveis para uso na construção do planejamento no sistema.
+  </p>
 
   <div class="br-card mb-3">
     <div class="card-content">
@@ -67,7 +71,7 @@
 
 <br-scrim [isOpen]="modalFormularioAberto()" [disableCloseOnClick]="true">
   <br-modal [show]="modalFormularioAberto()"
-            [titleText]="itemEmEdicao() ? 'Editar tipo de objetivo' : 'Novo tipo de objetivo'"
+            [titleText]="itemEmEdicao() ? 'Editar Elemento' : 'Novo Elemento'"
             size="medium"
             alignFooter="end"
             (brModalBeforeClose)="fecharModalFormulario()">
