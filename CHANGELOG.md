@@ -4,6 +4,7 @@
 - Corrigidos bugs ao editar atribuições de usuário: lista de atribuições agora é populada corretamente ao abrir edição, filtro "não executora" opera sobre a lista já processada, e
 componente input-search carrega o valor pré-existente ao montar.
 - Campos data_inicial_pedagio, data_final_pedagio e tipo_pedagio adicionados na lista fillable do model Usuario
+- Corrigida visualização dos registros de execução (progresso) em entregas do Plano de Entrega já finalizadas: o botão "Históricos de Execução" agora é exibido para status além de ATIVO (Concluído, Avaliado, Suspenso, Cancelado), porém em modo somente leitura — inclusão, edição e exclusão de progresso são bloqueadas tanto no front-end quanto no back-end quando o Plano de Entregas não está ATIVO.
 
 ## 3.0.1 09/06/2026
 
