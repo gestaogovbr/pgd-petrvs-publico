@@ -176,6 +176,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 
         $modalidadeNaoIdentificada = $this->integracaoService->validarModalidadePgd('');
         
+        $matriculasAlteradasNoBatch = [];
         foreach ($vinculos_isr as $v_isr) {
             $v_isr = UtilService::object2array($v_isr);
             $cpfCheck = UtilService::valueOrDefault($v_isr['cpf']);
@@ -184,7 +185,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             $unidadeExercicio = $this->unidadeRepository->findByCodigo($codigoExercicio);
             $unidadeExercicioIdCheck = isset($unidadeExercicio->id) ? $unidadeExercicio->id : null;
 
-            if(!$this->usuarioService->verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio)) {
+            if(!$this->usuarioService->verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio, $matriculasAlteradasNoBatch)) {
                 continue;
             }
         
