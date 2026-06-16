@@ -37,7 +37,10 @@ function makePolicy(array $rows, bool $isDispensadaAtual = false, bool $seraDisp
     $dispensaPolicy->shouldReceive('isConsolidacaoDispensada')->andReturn($isDispensadaAtual);
     $dispensaPolicy->shouldReceive('isConsolidacaoDispensadaApos')->andReturn($seraDispensadaApos);
 
-    return new OcorrenciaImpactoPolicy($consolidacaoRepo, $dispensaPolicy);
+    $tipoMotivoRepo = Mockery::mock(\App\Repository\TipoMotivoAfastamentoRepository::class);
+    $tipoMotivoRepo->shouldReceive('findById')->andReturn(null);
+
+    return new OcorrenciaImpactoPolicy($consolidacaoRepo, $dispensaPolicy, $tipoMotivoRepo);
 }
 
 describe('OcorrenciaImpactoPolicy::calcularImpacto', function () {

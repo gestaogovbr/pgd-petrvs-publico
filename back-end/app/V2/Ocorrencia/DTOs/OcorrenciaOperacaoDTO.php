@@ -12,6 +12,7 @@ class OcorrenciaOperacaoDTO
         public readonly string $dataFim,
         public readonly ?string $ocorrenciaId,
         public readonly string $operacao,
+        public readonly ?string $tipoMotivoAfastamentoId = null,
     ) {}
 
     public function isExclusao(): bool
@@ -27,6 +28,7 @@ class OcorrenciaOperacaoDTO
             dataFim: $data['data_fim'],
             ocorrenciaId: $data['ocorrencia_id'] ?? null,
             operacao: $data['operacao'],
+            tipoMotivoAfastamentoId: $data['tipo_motivo_afastamento_id'] ?? null,
         );
     }
 }

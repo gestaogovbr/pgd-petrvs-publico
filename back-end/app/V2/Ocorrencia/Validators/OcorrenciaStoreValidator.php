@@ -6,18 +6,23 @@ namespace App\V2\Ocorrencia\Validators;
 
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
+use App\Exceptions\ValidateException;
 use App\Models\Afastamento;
 use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\UnidadeRepository;
+use App\V2\Ocorrencia\DTOs\OcorrenciaOperacaoDTO;
+use App\V2\Ocorrencia\OcorrenciaImpactoPolicy;
 
 class OcorrenciaStoreValidator
 {
     public function __construct(
         private readonly AfastamentoRepository $afastamentoRepository,
         private readonly UnidadeRepository $unidadeRepository,
+        private readonly OcorrenciaImpactoPolicy $impactoPolicy
     ) {}
 
     /**
+     * Regras do card #2253
      * RN4: Consulta não pode CUD
      * RN5: Participante só para si mesmo
      * RN6: Demais perfis para si e terceiros da cadeia hierárquica
@@ -53,5 +58,19 @@ class OcorrenciaStoreValidator
         }
 
         return $afastamento;
+    }
+
+    /**
+     * Regras do card #2211
+     * RN9: Avaliações fora do prazo de recurso não podem ser sobrescritas
+     * RN10: Avaliações com recursos não podem ser sobrescritas
+     */
+    public function validarImpacto(OcorrenciaOperacaoDTO $dto): void
+    {
+        $impacto = $this->impactoPolicy->calcularImpacto($dto);
+
+        if ($impacto->operacaoBloqueada) {
+            throw new ValidateException("Não é possível {$dto->operacao} a ocorrência pois um dos períodos avaliativos abrangidos por ela tem avaliações que já não podem mais ser alteradas.");
+        }
     }
 }

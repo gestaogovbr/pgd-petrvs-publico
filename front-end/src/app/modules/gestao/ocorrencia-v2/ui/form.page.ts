@@ -78,6 +78,7 @@ export class OcorrenciaV2FormPage implements OnInit {
                 horas: oc.horas?.toString() ?? '',
                 observacoes: oc.observacoes ?? '',
               });
+              this.fg.controls.usuario_id.disable();
             }
           } else {
             this.fg.controls.usuario_id.setValue(this.auth.usuario?.id ?? '');
@@ -107,6 +108,7 @@ export class OcorrenciaV2FormPage implements OnInit {
       data_fim: payload.data_fim,
       operacao: this.modoEdicao ? 'editar' : 'criar',
       ocorrencia_id: this.ocorrenciaId ?? undefined,
+      tipo_motivo_afastamento_id: payload.tipo_motivo_afastamento_id,
     }).subscribe({
       next: (impacto) => {
         if (impacto.operacao_bloqueada) {

@@ -48,6 +48,7 @@ export class OcorrenciaApiClient {
     data_fim: string;
     operacao: 'criar' | 'editar' | 'excluir';
     ocorrencia_id?: string;
+    tipo_motivo_afastamento_id?: string;
   }): Observable<ImpactoConsolidacoes> {
     const clean = Object.fromEntries(Object.entries(params).filter(([_, v]) => v !== undefined));
     const httpParams = new HttpParams({ fromObject: clean });

@@ -6,6 +6,7 @@ namespace App\V2\Ocorrencia;
 
 use App\Enums\StatusEnum;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\Repository\TipoMotivoAfastamentoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
 use App\V2\Ocorrencia\DTOs\OcorrenciaOperacaoDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaImpactoDTO;
@@ -14,9 +15,12 @@ use Carbon\CarbonPeriod;
 
 class OcorrenciaImpactoPolicy
 {
+    private const CODIGOS_COMPENSACAO = ['15', '16', '17', '18'];
+
     public function __construct(
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly DispensaAvaliacaoPolicy $dispensaPolicy,
+        private readonly TipoMotivoAfastamentoRepository $tipoMotivoRepository,
     ) {}
 
     public function calcularImpacto(OcorrenciaOperacaoDTO $dto): OcorrenciaImpactoDTO
@@ -44,14 +48,9 @@ class OcorrenciaImpactoPolicy
             }
         }
 
-        $bloqueada = $comMudanca->contains(fn (object $row) =>
-            $row->pt_status === StatusEnum::CONCLUIDO->value
-            && ($row->has_recurso || $row->is_prazo_avaliacao_terminado)
-        );
+        $bloqueada = $comMudanca->contains(fn (object $row) => $row->has_recurso || $row->is_prazo_avaliacao_terminado);
 
-        $ptConcluido = $comMudanca->contains(fn (object $row) =>
-            $row->pt_status === StatusEnum::CONCLUIDO->value
-        );
+        $ptConcluido = $comMudanca->contains(fn (object $row) => $row->pt_status === StatusEnum::CONCLUIDO->value);
 
         return OcorrenciaImpactoDTO::fromFlags($geraDispensa, $removeDispensa, $bloqueada, $ptConcluido);
     }
@@ -85,15 +84,28 @@ class OcorrenciaImpactoPolicy
 
         $isDispensada = $this->dispensaPolicy->isConsolidacaoDispensada($dto->usuarioId, $vigenciaPT, $periodoConsolidacao);
 
+        $adicionaIntervalo = !$dto->isExclusao() && !$this->isTipoCompensacao($dto->tipoMotivoAfastamentoId);
+
         $seraDispensada = $this->dispensaPolicy->isConsolidacaoDispensadaApos(
             $dto->usuarioId,
             $vigenciaPT,
             $periodoConsolidacao,
-            $dto->isExclusao() ? null : $dto->dataInicio,
-            $dto->isExclusao() ? null : $dto->dataFim,
+            $adicionaIntervalo ? $dto->dataInicio : null,
+            $adicionaIntervalo ? $dto->dataFim : null,
             $dto->ocorrenciaId,
         );
 
         return $isDispensada !== $seraDispensada;
+    }
+
+    private function isTipoCompensacao(?string $tipoMotivoAfastamentoId): bool
+    {
+        if ($tipoMotivoAfastamentoId === null) {
+            return false;
+        }
+
+        $tipo = $this->tipoMotivoRepository->findById($tipoMotivoAfastamentoId);
+
+        return $tipo !== null && in_array($tipo->codigo, self::CODIGOS_COMPENSACAO, true);
     }
 }

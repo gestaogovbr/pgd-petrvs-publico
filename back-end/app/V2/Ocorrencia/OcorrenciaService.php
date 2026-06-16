@@ -12,6 +12,7 @@ use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\V2\Ocorrencia\DTOs\ConsolidacaoAfastamentoDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaIndexDTO;
+use App\V2\Ocorrencia\DTOs\OcorrenciaOperacaoDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaUpdateDTO;
 use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
@@ -52,6 +53,15 @@ class OcorrenciaService
     {
         $this->validator->validarAutorizacao($dto->usuarioId, Auth::id());
 
+        $this->validator->validarImpacto(new OcorrenciaOperacaoDTO(
+            $dto->usuarioId,
+            $dto->dataInicio,
+            $dto->dataFim,
+            null,
+            'criar',
+            $dto->tipoMotivoAfastamentoId,
+        ));
+
         return DB::transaction(function () use ($dto) {
             $afastamento = $this->afastamentoRepository->insert($dto->toPersistArray());
 
@@ -65,6 +75,19 @@ class OcorrenciaService
     {
         $this->validator->validarAutorizacao($dto->usuarioId, Auth::id());
         $afastamento = $this->validator->validarExistencia($dto->ocorrenciaId, $dto->usuarioId);
+
+        $dataInicio = $dto->dataInicio ?? (string) $afastamento->data_inicio;
+        $dataFim = $dto->dataFim ?? (string) $afastamento->data_fim;
+        $tipoId = $dto->tipoMotivoAfastamentoId ?? $afastamento->tipo_motivo_afastamento_id;
+
+        $this->validator->validarImpacto(new OcorrenciaOperacaoDTO(
+            $dto->usuarioId,
+            $dataInicio,
+            $dataFim,
+            $afastamento->id,
+            'editar',
+            $tipoId,
+        ));
 
         return DB::transaction(function () use ($afastamento, $dto) {
             $this->consolidacaoRepository->deleteAfastamentoVinculos($afastamento->id);
@@ -82,6 +105,14 @@ class OcorrenciaService
     {
         $this->validator->validarAutorizacao($usuarioId, Auth::id());
         $afastamento = $this->validator->validarExistencia($ocorrenciaId, $usuarioId);
+
+        $this->validator->validarImpacto(new OcorrenciaOperacaoDTO(
+            $usuarioId,
+            (string) $afastamento->data_inicio,
+            (string) $afastamento->data_fim,
+            $afastamento->id,
+            'excluir',
+        ));
 
         DB::transaction(function () use ($afastamento) {
             $this->consolidacaoRepository->deleteAfastamentoVinculos($afastamento->id);

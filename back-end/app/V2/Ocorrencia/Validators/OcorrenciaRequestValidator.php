@@ -58,6 +58,7 @@ class OcorrenciaRequestValidator
             'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
             'ocorrencia_id' => ['required_if:operacao,editar', 'required_if:operacao,excluir', 'nullable', 'uuid'],
             'operacao' => ['required', 'in:criar,editar,excluir'],
+            'tipo_motivo_afastamento_id' => ['nullable', 'uuid'],
         ], [
             'usuario_id.required' => 'O ID do usuário é obrigatório.',
             'data_inicio.required' => 'A data de início é obrigatória.',
