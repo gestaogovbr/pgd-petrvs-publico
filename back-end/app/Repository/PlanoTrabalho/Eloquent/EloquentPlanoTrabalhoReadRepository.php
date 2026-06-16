@@ -326,4 +326,11 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->whereHas('documentos.assinaturas')
             ->exists();
     }
+
+    public function loadRelacoesClonar(PlanoTrabalho $plano): PlanoTrabalho
+    {
+        $plano->load('entregas.planoEntregaEntrega');
+
+        return $plano;
+    }
 }

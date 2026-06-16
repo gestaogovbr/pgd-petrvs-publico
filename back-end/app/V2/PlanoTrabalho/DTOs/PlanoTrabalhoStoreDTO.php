@@ -16,11 +16,17 @@ class PlanoTrabalhoStoreDTO
         public readonly string $criacaoUsuarioId,
         public readonly ?string $justificativa = null,
         public readonly ?string $justificativaModalidade = null,
+        public readonly ?string $cloneDe = null,
     ) {}
 
     public function isPlanoCriadoParaSi(): bool
     {
         return $this->usuarioId === $this->criacaoUsuarioId;
+    }
+
+    public function isClone(): bool
+    {
+        return $this->cloneDe !== null;
     }
 
     public static function fromArray(array $data, string $criacaoUsuarioId): self
@@ -35,6 +41,7 @@ class PlanoTrabalhoStoreDTO
             criacaoUsuarioId: $criacaoUsuarioId,
             justificativa: $data['justificativa'] ?? null,
             justificativaModalidade: $data['justificativa_modalidade'] ?? null,
+            cloneDe: $data['clone_de'] ?? null,
         );
     }
 
