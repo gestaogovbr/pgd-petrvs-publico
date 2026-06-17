@@ -357,7 +357,7 @@ export class ConsolidacaoFacade {
         this.avaliarUC.execute(this.planoId, consolidacao.id, { tipo_avaliacao_nota_id: notaId, justificativa }).subscribe({
           next: (avaliacao) => {
             this.consolidacoes.update(list => list.map(c => c.id === consolidacao.id
-              ? { ...c, status: 'AVALIADO', avaliacoes: [...c.avaliacoes, { ...avaliacao, avaliador: { id: this.auth.usuario!.id, nome: this.auth.usuario!.nome } }] }
+              ? { ...c, status: 'AVALIADO', avaliacoes: [...c.avaliacoes, { ...avaliacao, avaliador: { id: this.auth.usuario!.id, nome_exibicao: this.auth.usuario!.nome_exibicao } }] }
               : c
             ));
             this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });

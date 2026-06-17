@@ -75,6 +75,7 @@ class UsuarioConfig
  * @property string $cpf
  * @property string $matricula
  * @property string $apelido
+ * @property string|null $nome_social
  * @property string $telefone
  * @property string $sexo
  * @property string $situacao_funcional
@@ -111,14 +112,15 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
     protected $table = "usuarios";
 
     protected $with = ['perfil'];
-    protected $appends = ['pedagio', 'modalidade_pgd_label'];
+    protected $appends = ['pedagio', 'modalidade_pgd_label', 'nome_exibicao'];
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
         'email', /* varchar(100); NULL; */ // E-mail do usuário
         'email_verified_at', /* timestamp; */ // Data de verificação do e-mail do usuário
         'cpf', /* varchar(11); NOT NULL; */ // CPF do usuário
         'matricula', /* varchar(50); */ // Matrícula funcional do usuário
-        'apelido', /* varchar(100); NOT NULL; */ // Apelido/Nome de guerra/Nome social
+        'apelido', /* varchar(100); NOT NULL; */ // Apelido/Nome de guerra
+        'nome_social', /* varchar(100); NULL; */ // Nome social do usuário
         'telefone', /* varchar(50); */ // Telefone do usuário
         'sexo', /* enum('MASCULINO','FEMININO'); */ // Sexo do usuário
         'config', /* json; */ // Configurações do usuário
@@ -149,6 +151,9 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
         'usuario_externo',
         'is_admin',
         'pedagio',
+        'data_inicial_pedagio',
+        'data_final_pedagio',
+        'tipo_pedagio',
         'data_ativacao_temporaria' /* date; */
     ];
 
@@ -482,6 +487,20 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
     {
         return $this->hasOne(UnidadeIntegrante::class)->has('colaborador');
     } // unidade com a qual possui TCR
+
+    public function getNomeExibicaoAttribute(): string
+    {
+        return $this->nome_social ?? $this->nome ?? '';
+    }
+
+    public function getNomeCompletoTcrAttribute(): string
+    {
+        if (empty($this->nome_social)) {
+            return $this->nome ?? '';
+        }
+
+        return $this->nome_social . " (" . $this->nome . ')';
+    }
 
     public function getModalidadePgdLabelAttribute(): string
     {

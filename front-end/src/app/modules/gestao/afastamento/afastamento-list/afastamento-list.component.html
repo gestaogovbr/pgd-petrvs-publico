@@ -30,7 +30,7 @@
         @if (!listarApenasProprioUsuario) {
             <column [title]="lex.translate('Usuário')" [template]="columnUsuario">
                 <ng-template let-row="row" #columnUsuario>
-                    <span> {{row.usuario.nome}}</span>
+                    <span> {{row.usuario.nome_exibicao}}</span>
                 </ng-template>
             </column>
         }

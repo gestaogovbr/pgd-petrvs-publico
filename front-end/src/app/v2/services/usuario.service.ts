@@ -8,7 +8,7 @@ import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 
 export type UsuarioSearchItem = {
   id: string;
-  nome: string;
+  nome_exibicao: string;
   matricula: string | null;
   cpf?: string | null;
   lotacao?: UnidadeIntegrante;
@@ -16,7 +16,7 @@ export type UsuarioSearchItem = {
   participa_pgd?: string | null;
 };
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class UsuarioService {
   private readonly http = inject(HttpClient);
   private readonly gb = inject(GlobalsService);
@@ -30,7 +30,7 @@ export class UsuarioService {
           const items = Array.isArray(response?.data) ? response.data : [];
           return items.map((u: any) => ({
             id: String(u?.id ?? ''),
-            nome: String(u?.nome ?? ''),
+            nome_exibicao: String(u?.nome_exibicao ?? u?.nome ?? ''),
             matricula: u?.matricula ? String(u.matricula) : null,
             cpf: u?.cpf ? String(u.cpf) : null,
             lotacao: u?.lotacao ? u.lotacao : null,
@@ -51,5 +51,11 @@ export class UsuarioService {
     return this.http
         .get<any>(`${this.gb.servidorURL}/${this.base}/cpf/${cpf}/unidades`)
         .pipe(map((response: any) => (response?.data as Unidade[])));
+  }
+
+  atualizarNomeSocial(nomeSocial: string | null): Observable<void> {
+    return this.http
+        .patch<any>(`${this.gb.servidorURL}/${this.base}/nome-social`, { nome_social: nomeSocial })
+        .pipe(map(() => void 0));
   }
 }

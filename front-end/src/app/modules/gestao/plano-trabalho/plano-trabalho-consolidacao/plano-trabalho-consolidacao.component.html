@@ -19,10 +19,10 @@
                 <ng-template let-data="data" #usuarioCardTitle>
                     <div class="d-flex">
                         <div class="ms-3">
-                            <profile-picture [url]="data.url_foto" [size]="40" [hint]="data.nome"></profile-picture>
+                            <profile-picture [url]="data.url_foto" [size]="40" [hint]="data.nome_exibicao"></profile-picture>
                         </div>
                         <div class="flex-fill ms-3">
-                            <strong>{{data.nome || ""}}</strong><br>
+                            <strong>{{data.nome_exibicao || ""}}</strong><br>
                             <small>{{data.apelido || ""}}</small>
                         </div>
                     </div>

@@ -67,10 +67,10 @@
                     <ng-template let-row="row" #columnAvaliador>
                         <div class="avaliador">
                             <div class="avaliador-profile">
-                                <profile-picture [url]="row.avaliador.url_foto || ''" [size]="40" [hint]="row.avaliador.nome || ''"></profile-picture>
+                                <profile-picture [url]="row.avaliador.url_foto || ''" [size]="40" [hint]="row.avaliador.nome_exibicao || ''"></profile-picture>
                             </div>
                             <div class="avaliador-nome">
-                                <strong>{{row.avaliador.nome || ""}}</strong><br>
+                                <strong>{{row.avaliador.nome_exibicao || ""}}</strong><br>
                                 <small>{{row.avaliador.apelido || ""}}</small>
                             </div>
                         </div>

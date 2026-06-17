@@ -36,7 +36,7 @@
                 @for (u of usuarioSugestoes(); track u.id) {
                   <li>
                     <button type="button" class="dropdown-item" (click)="selecionarUsuario(u)">
-                      {{ u.nome }}@if (u.matricula) { <span class="text-muted"> — {{ u.matricula }}</span> }
+                      {{ u.nome_exibicao }}@if (u.matricula) { <span class="text-muted"> — {{ u.matricula }}</span> }
                     </button>
                   </li>
                 }

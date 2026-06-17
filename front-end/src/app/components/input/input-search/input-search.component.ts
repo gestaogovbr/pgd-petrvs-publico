@@ -185,6 +185,10 @@ export class InputSearchComponent extends InputBase implements OnInit {
 				await this.loadSearch(newValue);
 			}
 		});
+		if (this.control?.value && this.selectedValue != this.control.value) {
+			this.selectedValue = this.control.value;
+			this.loadSearch(this.control.value, false);
+		}
 	}
 
 	public selectItem(

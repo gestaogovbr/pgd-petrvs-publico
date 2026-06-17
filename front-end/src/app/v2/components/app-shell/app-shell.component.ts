@@ -61,6 +61,7 @@ export class AppShellV2Component implements OnInit {
         this.gb.setContexto('EXECUCAO', false);
       }
     }
+    this.auth.usuarioChanged$.subscribe(() => this.cdRef.markForCheck());
   }
 
   // Fecha o overlay mais externo ao pressionar Escape
@@ -165,8 +166,7 @@ export class AppShellV2Component implements OnInit {
   }
 
   get usuarioNome(): string {
-    const u = this.auth.usuario;
-    return this.utils.shortName(u?.apelido?.length ? u.apelido : u?.nome || '');
+    return this.utils.shortName(this.utils.apelidoOuNome(this.auth.usuario) || '');
   }
 
   get usuarioFoto(): SafeUrl {
