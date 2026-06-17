@@ -353,4 +353,13 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->orderBy('c.data_inicio')
             ->get();
     }
+
+    public function findConsolidacoesVigentes(string $planoTrabalhoId, ?string $encerradoAt): Collection
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->when($encerradoAt, fn ($q) => $q->where('data_inicio', '<=', $encerradoAt))
+            ->orderBy('data_inicio')
+            ->get();
+    }
 }

@@ -7,8 +7,12 @@ namespace App\Observers;
 use App\Enums\StatusEnum;
 use App\Models\Afastamento;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\Repository\PlanoTrabalhoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
 use App\V2\StatusService;
+use App\V2\StatusTemplates;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
@@ -17,6 +21,8 @@ class AfastamentoObserver
     public function __construct(
         private readonly DispensaAvaliacaoPolicy $dispensaPolicy,
         private readonly StatusService $statusService,
+        private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
+        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
     ) {
     }
 
@@ -37,12 +43,11 @@ class AfastamentoObserver
 
     private function verificarConclusaoPTs(Afastamento $afastamento): void
     {
-        $planos = PlanoTrabalho::query()
-            ->where('usuario_id', $afastamento->usuario_id)
-            ->whereIn('status', [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value])
-            ->where('data_fim', '>=', $afastamento->data_inicio)
-            ->where('data_inicio', '<=', $afastamento->data_fim)
-            ->get();
+        $planos = $this->planoTrabalhoRepository->planosAtivosPorData(
+            Carbon::parse($afastamento->data_inicio)->toString(),
+            Carbon::parse($afastamento->data_fim)->toString(),
+            $afastamento->usuario_id,
+        )->filter(fn (PlanoTrabalho $p) => in_array($p->status, [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value], true));
 
         foreach ($planos as $plano) {
             $this->verificarConclusao($plano, $afastamento);
@@ -57,9 +62,7 @@ class AfastamentoObserver
             Carbon::parse($plano->getAttribute('data_fim'))->startOfDay(),
         );
 
-        $consolidacoes = $plano->consolidacoes()
-            ->when($plano->encerrado_at, fn ($q) => $q->where('data_inicio', '<=', $plano->encerrado_at))
-            ->get();
+        $consolidacoes = $this->consolidacaoRepository->findConsolidacoesVigentes($plano->id, $plano->encerrado_at);
 
         if ($consolidacoes->isEmpty()) {
             return;
@@ -71,27 +74,16 @@ class AfastamentoObserver
             $consolidacoes,
         );
 
-        $todasAvaliadas = $consolidacoes
-            ->whereNotIn('id', $dispensadasIds)
-            ->where('status', '!=', StatusEnum::AVALIADO->value)
-            ->isEmpty();
+        $todasAvaliadas = $consolidacoes->filter(fn(PlanoTrabalhoConsolidacao $c) => $c->status != StatusEnum::AVALIADO->value && !in_array($c->id, $dispensadasIds))->isEmpty();
 
         if ($todasAvaliadas && $plano->status === StatusEnum::ATIVO->value) {
-            $plano->update(['avaliado_at' => date('Y-m-d')]);
-            $this->statusService->atualizaStatus(
-                $plano,
-                StatusEnum::CONCLUIDO->value,
-                "Plano de Trabalho concluído: a ocorrência {$afastamento->id} dispensou os períodos avaliativos.",
-            );
+            $this->planoTrabalhoRepository->update($plano->id, ['avaliado_at' => date('Y-m-d')]);
+            StatusTemplates::concluirPTPorDispensa($plano, $afastamento->id);
         }
 
-        if (! $todasAvaliadas && $plano->status === StatusEnum::CONCLUIDO->value) {
-            $plano->update(['avaliado_at' => null]);
-            $this->statusService->atualizaStatus(
-                $plano,
-                StatusEnum::ATIVO->value,
-                "Plano de Trabalho reativado: os períodos dispensados pela ocorrência {$afastamento->id} deixaram de sê-lo, devido à sua edição ou remoção do sistema.",
-            );
+        if (!$todasAvaliadas && $plano->status === StatusEnum::CONCLUIDO->value && !$plano->encerrado_at) {
+            $this->planoTrabalhoRepository->update($plano->id, ['avaliado_at' => null]);
+            StatusTemplates::reabrirPTConcluidoPorDispensa($plano, $afastamento->id);
         }
     }
 }

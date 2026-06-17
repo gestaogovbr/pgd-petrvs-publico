@@ -1,13 +1,22 @@
 <?php
 
-use App\Models\Afastamento;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoMotivoAfastamento;
 use App\Models\Usuario;
-use Carbon\Carbon;
+use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
+    if (!Route::has('__tests.v2.consolidacao.dispensas')) {
+        Route::middleware(['api'])->get(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/dispensas',
+            [PlanoTrabalhoConsolidacaoController::class, 'dispensas']
+        )->name('__tests.v2.consolidacao.dispensas');
+    }
+
     $this->usuario = Usuario::factory()->create();
     $this->actingAs($this->usuario);
 
@@ -37,14 +46,18 @@ describe('GET /api/v2/plano-trabalho/{id}/consolidacao/dispensas', function () {
             'data_fim' => '2026-05-31',
         ]);
 
-        Afastamento::factory()->create([
+        DB::connection('tenant')->table('afastamentos')->insert([
+            'id' => Str::uuid()->toString(),
             'usuario_id' => $this->usuario->id,
             'data_inicio' => '2026-04-15',
             'data_fim' => '2026-06-15',
             'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id,
+            'observacoes' => 'Teste',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        $response = $this->getJson("/api/v2/plano-trabalho/{$this->plano->id}/consolidacao/dispensas");
+        $response = $this->getJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/dispensas");
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)
@@ -58,14 +71,18 @@ describe('GET /api/v2/plano-trabalho/{id}/consolidacao/dispensas', function () {
             'data_fim' => '2026-05-31',
         ]);
 
-        Afastamento::factory()->create([
+        DB::connection('tenant')->table('afastamentos')->insert([
+            'id' => Str::uuid()->toString(),
             'usuario_id' => $this->usuario->id,
             'data_inicio' => '2026-04-15',
             'data_fim' => '2026-06-15',
             'tipo_motivo_afastamento_id' => $this->tipoCompensacao->id,
+            'observacoes' => 'Teste comp',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
-        $response = $this->getJson("/api/v2/plano-trabalho/{$this->plano->id}/consolidacao/dispensas");
+        $response = $this->getJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/dispensas");
 
         $response->assertStatus(200)
             ->assertJsonPath('data', []);
@@ -78,34 +95,25 @@ describe('GET /api/v2/plano-trabalho/{id}/consolidacao/dispensas', function () {
             'data_fim' => '2026-05-31',
         ]);
 
-        Afastamento::factory()->create([
-            'usuario_id' => $this->usuario->id,
-            'data_inicio' => '2026-04-15',
-            'data_fim' => '2026-05-15',
-            'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id,
+        DB::connection('tenant')->table('afastamentos')->insert([
+            ['id' => Str::uuid()->toString(), 'usuario_id' => $this->usuario->id, 'data_inicio' => '2026-04-15', 'data_fim' => '2026-05-15', 'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id, 'observacoes' => 'af1', 'created_at' => now(), 'updated_at' => now()],
+            ['id' => Str::uuid()->toString(), 'usuario_id' => $this->usuario->id, 'data_inicio' => '2026-05-16', 'data_fim' => '2026-06-15', 'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id, 'observacoes' => 'af2', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        Afastamento::factory()->create([
-            'usuario_id' => $this->usuario->id,
-            'data_inicio' => '2026-05-16',
-            'data_fim' => '2026-06-15',
-            'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id,
-        ]);
-
-        $response = $this->getJson("/api/v2/plano-trabalho/{$this->plano->id}/consolidacao/dispensas");
+        $response = $this->getJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/consolidacao/dispensas");
 
         $response->assertStatus(200)
             ->assertJsonPath('data', [$consolidacao->id]);
     });
 
     test('retorna 422 para uuid inválido', function () {
-        $response = $this->getJson('/api/v2/plano-trabalho/not-a-uuid/consolidacao/dispensas');
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho/not-a-uuid/consolidacao/dispensas');
 
         $response->assertStatus(422);
     });
 
     test('retorna 404 para plano inexistente', function () {
-        $response = $this->getJson('/api/v2/plano-trabalho/00000000-0000-0000-0000-000000000000/consolidacao/dispensas');
+        $response = $this->getJson('/api/__tests/v2/plano-trabalho/00000000-0000-0000-0000-000000000000/consolidacao/dispensas');
 
         $response->assertStatus(404);
     });

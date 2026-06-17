@@ -72,6 +72,11 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->findConsolidacoesParaImpactoDispensa($usuarioId, $dataInicio, $dataFim);
     }
 
+    public function findConsolidacoesVigentes(string $planoTrabalhoId, ?string $encerradoAt): Collection
+    {
+        return $this->readRepository->findConsolidacoesVigentes($planoTrabalhoId, $encerradoAt);
+    }
+
     public function create(array $attributes): PlanoTrabalhoConsolidacao
     {
         /** @var PlanoTrabalhoConsolidacao */
