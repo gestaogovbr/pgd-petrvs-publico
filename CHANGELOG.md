@@ -1,5 +1,8 @@
 ## 3.0.2 16/06/2026
 
+### Adicionado
+- **Nome Social**: campo opcional disponível na aba Principal do perfil do Agente Público, editável exclusivamente pelo próprio titular. Quando preenchido, o nome social substitui o nome civil em todas as listagens e exibições do sistema; quando não preenchido, utiliza o nome proveniente do SIAPE. Na pesquisa de participantes é possível buscar pelo nome social. No TCR, exibe no formato "Nome Social (Nome Civil)". Em contextos informais (header, saudações), exibe apenas o primeiro nome do nome social.
+
 ### Corrigido
 - Corrigidos bugs ao editar atribuições de usuário: lista de atribuições agora é populada corretamente ao abrir edição, filtro "não executora" opera sobre a lista já processada, e
 componente input-search carrega o valor pré-existente ao montar.
