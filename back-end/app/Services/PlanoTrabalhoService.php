@@ -640,7 +640,7 @@ class PlanoTrabalhoService extends ServiceBase
             function ($query) {
                 $query->orderBy('data_inicio');
             },
-            "usuario:id,nome,apelido,url_foto"
+            "usuario:id,nome,apelido,nome_social,url_foto"
         ])->where("usuario_id", $usuarioId)->orderBy('numero', 'desc');
         if (!$arquivados)
             $query->whereNull("data_arquivamento");

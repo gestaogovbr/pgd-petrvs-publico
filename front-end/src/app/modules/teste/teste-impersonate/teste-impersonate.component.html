@@ -15,12 +15,12 @@
     <columns>
         <column icon="bi-person" [align]="'center'" [template]="columnFoto">
             <ng-template let-row="row" #columnFoto>
-                <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome"></profile-picture>
+                <profile-picture [url]="row.url_foto" [size]="40" [hint]="row.nome_exibicao"></profile-picture>
             </ng-template>
         </column>
         <column title="CPF" field="cpf"></column>
         <column title="Matrícula" field="matricula"></column>
-        <column title="Nome" field="nome" orderBy="nome"></column>
+        <column title="Nome" field="nome_exibicao" orderBy="nome"></column>
         <column [title]="lex.translate('Perfil')" [template]="columnPerfil">
             <ng-template let-row="row" #columnPerfil>
                 <strong>{{row.perfil?.nome || ""}}</strong>

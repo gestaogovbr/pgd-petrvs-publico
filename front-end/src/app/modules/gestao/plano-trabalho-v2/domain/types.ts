@@ -114,7 +114,7 @@ export type AvaliacaoConsolidacao = {
   justificativa: string | null;
   tipo_avaliacao_nota_id: string;
   tipo_avaliacao_nota?: { id: string; aprova: number };
-  avaliador?: { id: string; nome: string };
+  avaliador?: { id: string; nome_exibicao: string };
   recurso: string | null;
   data_recurso: string | null;
 };

@@ -44,7 +44,7 @@
                 <order by="usuario.nome" [header]="header">Usuário</order><br>Programa
             </ng-template>
             <ng-template let-row="row" #columnUsuario>
-                <span> {{row.usuario?.nome || ""}}</span><br>
+                <span> {{row.usuario?.nome_exibicao || ""}}</span><br>
                 <badge color="light" icon="bi bi-file-bar-graph" [label]="row.programa?.nome || ''"></badge>
             </ng-template>
         </column>
