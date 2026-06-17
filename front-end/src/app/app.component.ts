@@ -585,6 +585,7 @@ export class AppComponent implements IAppComponent {
           minha_unidade: true,
         },
       }),
+      Object.assign({}, this.menuSchema.OCORRENCIAS),
       Object.assign({}, this.menuSchema.RELATORIO_USUARIOS, {
         name: this.lex.translate("Relatório de Agentes Públicos"),
       }),
