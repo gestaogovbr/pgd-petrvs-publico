@@ -145,8 +145,8 @@ export class AppComponent implements IAppComponent {
         route: ['cadastros', 'eixo-tematico'],
         icon: this.entity.getIcon('EixoTematico'),
       },
-      TIPOS_OBJETIVOS: {
-        name: this.lex.translate("Tipos de Objetivos"),
+      ELEMENTOS_PLANEJAMENTO: {
+        name: this.lex.translate("Elementos do Planejamento"),
         permition: 'MOD_TIPO_OBJETIVO',
         route: ['cadastros', 'tipo-objetivo'],
         icon: this.entity.getIcon('TipoObjetivo'),
@@ -547,13 +547,13 @@ export class AppComponent implements IAppComponent {
         permition: "MENU_GESTAO_ACESSO",
         id: "navbarDropdownGestaoPlanejamento",
         menu: [
-          this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
-          this.menuSchema.CADEIAS_VALORES,
-          this.menuSchema.TIPOS_OBJETIVOS,
-          this.menuSchema.PROGRAMAS_GESTAO,
+          this.menuSchema.ELEMENTOS_PLANEJAMENTO,
           this.menuSchema.EIXOS_TEMATICOS,
-          this.menuSchema.UNIDADES,
           this.menuSchema.USUARIOS,
+          this.menuSchema.UNIDADES,
+          this.menuSchema.PROGRAMAS_GESTAO,
+          this.menuSchema.CADEIAS_VALORES,
+          this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
         ].sort(this.orderMenu),
       },
       {
