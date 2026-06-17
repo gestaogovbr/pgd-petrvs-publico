@@ -10,6 +10,6 @@ class ResumoConsolidacoesDTO
         public readonly bool $todosAvaliados,
         public readonly bool $avaliacaoRecente,
         public readonly bool $possuiPendencias,
-        public readonly bool $possuiAguardandoReavaliacao = false,
+        public readonly bool $isAguardandoReavaliacao = false,
     ) {}
 }

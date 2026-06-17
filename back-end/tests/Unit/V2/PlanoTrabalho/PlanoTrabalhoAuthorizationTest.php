@@ -312,7 +312,7 @@ test('podeArquivar retorna false para plano CANCELADO com consolidação aguarda
     $usuario->id = 'agente-1';
 
     $this->consolidacaoRepository->shouldReceive('resumoParaArquivamento')->andReturn(
-        new ResumoConsolidacoesDTO(todosAvaliados: false, avaliacaoRecente: false, possuiPendencias: false, possuiAguardandoReavaliacao: true)
+        new ResumoConsolidacoesDTO(todosAvaliados: false, avaliacaoRecente: false, possuiPendencias: false, isAguardandoReavaliacao: true)
     );
 
     expect($this->authorization->podeArquivar($plano, $usuario))->toBeFalse();
@@ -325,7 +325,7 @@ test('podeArquivar retorna false para plano CONCLUIDO com consolidação aguarda
     $usuario->id = 'agente-1';
 
     $this->consolidacaoRepository->shouldReceive('resumoParaArquivamento')->andReturn(
-        new ResumoConsolidacoesDTO(todosAvaliados: true, avaliacaoRecente: false, possuiPendencias: false, possuiAguardandoReavaliacao: true)
+        new ResumoConsolidacoesDTO(todosAvaliados: true, avaliacaoRecente: false, possuiPendencias: false, isAguardandoReavaliacao: true)
     );
 
     expect($this->authorization->podeArquivar($plano, $usuario))->toBeFalse();
@@ -339,7 +339,7 @@ test('podeArquivar retorna false para plano encerrado com consolidação aguarda
     $usuario->id = 'agente-1';
 
     $this->consolidacaoRepository->shouldReceive('resumoParaArquivamento')->andReturn(
-        new ResumoConsolidacoesDTO(todosAvaliados: false, avaliacaoRecente: false, possuiPendencias: false, possuiAguardandoReavaliacao: true)
+        new ResumoConsolidacoesDTO(todosAvaliados: false, avaliacaoRecente: false, possuiPendencias: false, isAguardandoReavaliacao: true)
     );
 
     expect($this->authorization->podeArquivar($plano, $usuario))->toBeFalse();

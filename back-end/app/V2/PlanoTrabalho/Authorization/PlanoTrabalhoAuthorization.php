@@ -140,7 +140,7 @@ class PlanoTrabalhoAuthorization
             Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS),
         );
 
-        if ($resumo->possuiAguardandoReavaliacao) {
+        if ($resumo->isAguardandoReavaliacao) {
             return false;
         }
 

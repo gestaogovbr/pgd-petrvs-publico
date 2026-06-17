@@ -180,7 +180,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->whereHas('avaliacoes', fn ($q) => $q->where('data_avaliacao', '>', $limiteRecurso))
             ->exists();
 
-        $possuiAguardandoReavaliacao = $this->query()
+        $isAguardandoReavaliacao = $this->query()
             ->where('plano_trabalho_id', $planoTrabalhoId)
             ->where('status', StatusEnum::CONCLUIDO->value)
             ->whereHas('avaliacoes', fn ($q) => $q->whereNotNull('recurso'))
@@ -191,7 +191,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             todosAvaliados: (bool) $result->todos_avaliados,
             avaliacaoRecente: $avaliacaoRecente,
             possuiPendencias: (bool) $result->possui_pendencias,
-            possuiAguardandoReavaliacao: $possuiAguardandoReavaliacao,
+            isAguardandoReavaliacao: $isAguardandoReavaliacao,
         );
     }
 
