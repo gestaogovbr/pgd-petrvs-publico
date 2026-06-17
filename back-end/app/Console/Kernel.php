@@ -42,7 +42,7 @@ class Kernel extends ConsoleKernel
                 /** @var \App\Models\Tenant $tenant */
                 \App\Jobs\InativacaoUsuariosTemporarios::dispatch($tenant->id);
             }
-        })->dailyAt('03:00')->name('Inativação Usuários Temporários');
+        })->dailyAt('03:00')->name('Inativação Usuários Temporários')->withoutOverlapping();
 
         $schedule->call(function () {
             $tenants = \App\Models\Tenant::all();
@@ -50,7 +50,7 @@ class Kernel extends ConsoleKernel
                 /** @var \App\Models\Tenant $tenant */
                 \App\Jobs\InativacaoUsuariosSiape::dispatch($tenant->id);
             }
-        })->dailyAt('00:05')->name('Inativação Usuários SIAPE');
+        })->dailyAt('00:05')->name('Inativação Usuários SIAPE')->withoutOverlapping();
         
         $schedule->call(function () {
             $tenants = \App\Models\Tenant::all();
@@ -58,7 +58,7 @@ class Kernel extends ConsoleKernel
                 /** @var \App\Models\Tenant $tenant */
                 \App\Jobs\InativacaoUnidadesSiape::dispatch($tenant->id);
             }
-        })->dailyAt('00:15')->name('Inativação Unidades SIAPE');
+        })->dailyAt('00:15')->name('Inativação Unidades SIAPE')->withoutOverlapping();
         
         // Job para inativar unidades temporárias às 00:30 diariamente
         $schedule->call(function () {
@@ -67,7 +67,7 @@ class Kernel extends ConsoleKernel
                 /** @var \App\Models\Tenant $tenant */
                 \App\Jobs\InativacaoUnidadesTemporarios::dispatch($tenant->id);
             }
-        })->dailyAt('00:30')->name('Inativação Unidades Temporários');
+        })->dailyAt('00:30')->name('Inativação Unidades Temporários')->withoutOverlapping();
         
         $agendamentosPrincipal = JobSchedule::where('ativo', true)->get();
         foreach ($agendamentosPrincipal as $jobEntity) {
@@ -80,12 +80,13 @@ class Kernel extends ConsoleKernel
             
             $schedule->job($job)
                 ->name($jobEntity->nome)
-                ->cron($jobEntity->expressao_cron);
+                ->cron($jobEntity->expressao_cron)
+                ->withoutOverlapping();
         }
 
         $schedule->command('horizon:snapshot')->everyFiveMinutes();
 
-        $schedule->command('planos:arquivar-avaliados --days=90')->dailyAt('04:00')->name('Arquivar Planos Avaliados (PTs e PEs)');
+        $schedule->command('planos:arquivar-avaliados --days=90')->dailyAt('04:00')->name('Arquivar Planos Avaliados (PTs e PEs)')->withoutOverlapping();
 
         $schedule->command('db:slow-log:prune-old')->dailyAt('04:00');
         $schedule->command('db:slow-log:ensure-daily --perm=777')->dailyAt('00:01');

@@ -20,6 +20,7 @@ import { UnidadeDaoService } from '../dao/unidade-dao.service';
 import { NotificacaoService } from '../modules/uteis/notificacoes/notificacao.service';
 import { IAppComponent } from '../app-types';
 import { UnidadeService } from './unidade.service';
+import { Subject } from 'rxjs';
 
 export type AuthKind = "USERPASSWORD" | "GOOGLE" | "FIREBASE" | "SESSION" | "SEI" | "LOGINUNICO";
 export type Permission = string | (string | string[])[];
@@ -44,6 +45,7 @@ export class AuthService {
   public kind?: AuthKind;
   public logged: boolean = false;
   public usuario?: Usuario;
+  public usuarioChanged$ = new Subject<void>();
   public capacidades: string[] = [];
   public entidade?: Entidade;
   public unidade?: Unidade;
@@ -229,7 +231,7 @@ export class AuthService {
     return false;
   }
 
-  /** Administrador do sistema (`usuarios.is_admin == 1`). */
+  /** Administrador do sistema (`usuarios.is_admin`). */
   public isAdmin(): boolean {
     return Number(this.usuario?.is_admin) === 1;
   }

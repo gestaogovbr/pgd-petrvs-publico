@@ -13,6 +13,8 @@ import { TemplateDataset } from 'src/app/modules/uteis/templates/template.servic
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
+import { UsuarioService } from 'src/app/v2/services/usuario.service';
+import { firstValueFrom } from 'rxjs';
 
 type Regramento = IIndexable & { nome: string; };
 
@@ -24,6 +26,10 @@ type Regramento = IIndexable & { nome: string; };
 })
 export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   canEditAtribuicoes = false;
+
+  get isTitular(): boolean {
+    return this.entity?.id === this.auth.usuario?.id;
+  }
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(UsuarioIntegranteComponent, { static: false }) public unidadesIntegrantes?: UsuarioIntegranteComponent;
   @ViewChild('lotacao', { static: false }) public lotacao?: InputSearchComponent;
@@ -32,6 +38,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   public unidadeDao: UnidadeDaoService;
   public integranteDao: UnidadeIntegranteDaoService;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
+  public usuarioV2Service: UsuarioService;
   public planoDataset: TemplateDataset[];
   public regramentos: Regramento[] = [];
 
@@ -41,11 +48,13 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
+    this.usuarioV2Service = injector.get<UsuarioService>(UsuarioService);
     this.form = this.fh.FormBuilder({
       email: { default: "" },
       nome: { default: "" },
       cpf: { default: "" },
       apelido: { default: "" },
+      nome_social: { default: null },
       participa_pgd: { default: ""},
       modalidade_pgd: { default: null},
       usuario_externo: { default: true },
@@ -121,6 +130,18 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
       usuario.integrantes = integrantesConsolidados;
           resolve(usuario);
     });
+  }
+
+  public onAfterSave(entity: any) {
+    if (this.isTitular) {
+      const nomeSocial = this.form!.controls['nome_social'].value || null;
+      firstValueFrom(this.usuarioV2Service.atualizarNomeSocial(nomeSocial)).then(() => {
+        if (this.auth.usuario) {
+          this.auth.usuario.nome_social = nomeSocial;
+          this.auth.usuarioChanged$.next();
+        }
+      });
+    }
   }
 
   public titleEdit = (entity: Usuario): string => {

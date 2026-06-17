@@ -49,3 +49,26 @@ describe('UsuarioService::buscarPorNomeOuMatricula', function () {
         expect($this->service->buscarPorNomeOuMatricula('João'))->toBe($collection);
     });
 });
+
+describe('UsuarioService::atualizarNomeSocial', function () {
+
+    test('delega ao repository com nome social preenchido', function () {
+        $this->usuarioRepository
+            ->shouldReceive('update')
+            ->once()
+            ->with('user-123', ['nome_social' => 'Maria Silva'])
+            ->andReturn(null);
+
+        $this->service->atualizarNomeSocial('user-123', 'Maria Silva');
+    });
+
+    test('delega ao repository com nome social nulo para limpar', function () {
+        $this->usuarioRepository
+            ->shouldReceive('update')
+            ->once()
+            ->with('user-123', ['nome_social' => null])
+            ->andReturn(null);
+
+        $this->service->atualizarNomeSocial('user-123', null);
+    });
+});
