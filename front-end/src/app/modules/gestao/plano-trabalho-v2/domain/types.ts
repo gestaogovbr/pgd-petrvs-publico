@@ -16,6 +16,7 @@ export type PlanoTrabalhoCreatePayload = {
   data_fim: string;
   modalidade_pgd: string;
   justificativa_modalidade?: string | null;
+  clone_de?: string | null;
 };
 
 export type { Page } from 'src/app/v2/domain/pagination';

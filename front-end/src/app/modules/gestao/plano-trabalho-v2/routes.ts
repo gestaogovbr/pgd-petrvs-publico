@@ -17,7 +17,6 @@ import { CancelarPlanoUseCase } from './application/cancelar-plano.usecase';
 import { ConcluirConsolidacaoUseCase } from './application/concluir-consolidacao.usecase';
 import { AvaliarConsolidacaoUseCase } from './application/avaliar-consolidacao.usecase';
 import { SolicitarRecursoUseCase } from './application/solicitar-recurso.usecase';
-import { ClonarPlanoUseCase } from './application/clonar-plano.usecase';
 import { ArquivarPlanoUseCase } from './application/arquivar-plano.usecase';
 import { EncerrarPlanoUseCase } from './application/encerrar-plano.usecase';
 import { AssinarPlanoUseCase } from './application/assinar-plano.usecase';
@@ -51,7 +50,6 @@ export const routes: Routes = [
       ConcluirConsolidacaoUseCase,
       AvaliarConsolidacaoUseCase,
       SolicitarRecursoUseCase,
-      ClonarPlanoUseCase,
       ArquivarPlanoUseCase,
       EncerrarPlanoUseCase,
       AssinarPlanoUseCase,
