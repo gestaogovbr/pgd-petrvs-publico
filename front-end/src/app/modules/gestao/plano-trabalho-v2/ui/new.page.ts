@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, merge, of, switchMap, take, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { Programa } from 'src/app/models/programa.model';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -40,8 +41,9 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   carregandoRegramento = signal(false);
   readonly confirmacao = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
   erroPeriodo = signal(false);
+  erroRegramento = signal('');
 
-  programaNome = signal('');
+  private programas = signal<Programa[]>([]);
   private programaId = signal('');
 
   readonly agentePublicoQuery = this.fb.nonNullable.control('');
@@ -97,6 +99,11 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   readonly modalidadesOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedModalidade();
     return this.modalidades().map(m => ({ value: m.key, label: m.value, selected: m.key === sel }));
+  });
+
+  readonly programaNome = computed(() => {
+    const id = this.programaId();
+    return this.programas().find(p => p.id === id)?.nome ?? '';
   });
 
   ngOnInit(): void {
@@ -155,7 +162,10 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       this.form.controls.data_fim.valueChanges
     ).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => this.erroPeriodo.set(false));
+    ).subscribe(() => {
+      this.erroPeriodo.set(false);
+      this.selecionarProgramaPorPeriodo();
+    });
   }
 
   voltar() {
@@ -188,7 +198,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.unidades.set([]);
     this.modalidades.set([]);
     this.programaId.set('');
-    this.programaNome.set('');
+    this.programas.set([]);
     this.erroAgentePublico.set('');
     this.usuarioModalidadePgd.set('');
     this.selectedModalidade.set('');
@@ -229,13 +239,26 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.carregandoRegramento.set(true);
     try {
       const programas = await this.programaApi.buscarPorUnidadeExecutora(unidadeId, this.joinPrograma);
-      const programaVigente = this.programaService.selecionaProgramaVigente(programas);
-      const programa = programaVigente ?? programas[0];
-      this.programaId.set(programa?.id ?? '');
-      this.programaNome.set(programa?.nome ?? '');
+      this.programas.set(programas);
+      this.selecionarProgramaPorPeriodo();
     } finally {
       this.carregandoRegramento.set(false);
     }
+  }
+
+  private selecionarProgramaPorPeriodo() {
+    const programas = this.programas();
+    if (programas.length === 0) return;
+    const dataInicio = this.form.controls.data_inicio.value;
+    const dataFim = this.form.controls.data_fim.value;
+    if (!dataInicio || !dataFim) {
+      this.programaId.set('');
+      this.erroRegramento.set('');
+      return;
+    }
+    const programa = this.programaService.selecionaProgramaPorPeriodo(programas, dataInicio, dataFim);
+    this.programaId.set(programa?.id ?? '');
+    this.erroRegramento.set(programa ? '' : 'O período selecionado para o plano não possui Regramento ativo. Selecione outro período.');
   }
 
   private buscarUsuarios(term: string) {

@@ -124,6 +124,12 @@
                   <label>Regramento de Instituição PGD</label>
                   <input type="text" readonly [value]="programaNome()" />
                 </div>
+                @if (erroRegramento()) {
+                  <span class="feedback warning" role="alert">
+                    <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                    {{ erroRegramento() }}
+                  </span>
+                }
               </div>
 
             </div>
