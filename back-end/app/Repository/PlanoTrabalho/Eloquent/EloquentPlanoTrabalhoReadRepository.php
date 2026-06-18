@@ -49,6 +49,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                 'consolidacoes' => function ($query) {
                     $query->whereIn('status', [StatusEnum::AVALIADO->value]);
                 },
+                'consolidacoes.avaliacoes',
                 'consolidacoes.avaliacao',
             ])
             ->find($id);

@@ -262,7 +262,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
     public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool
     {
         $usuario = $this->query()->find($agenteId);
-        if ($usuario === null) {
+        if (!$usuario instanceof Usuario) {
             return false;
         }
 

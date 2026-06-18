@@ -12,6 +12,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExportarPlanoTrabalhoJob extends ExportarItemJob
 {
+    protected ?int $ptNumero = null;
+
+    public function __construct(
+        string $tenantId,
+        string $id,
+        string $origem = '',
+        ?int $ptNumero = null,
+    ) {
+        $this->ptNumero = $ptNumero;
+        parent::__construct($tenantId, $id, $origem);
+    }
+
     public static function getDescricao(): string
     {
         return 'Enviar Plano de Trabalho para API';
@@ -65,6 +77,22 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
 
     public function tag() {
         return 'Plano de Trabalho';
+    }
+
+    protected function logItemLabel(): string
+    {
+        if ($this->ptNumero !== null) {
+            return 'PT #'.$this->ptNumero.' ('.$this->id.')';
+        }
+
+        if (tenancy()->initialized) {
+            $planoTrabalho = $this->getRepository()->findById($this->id);
+            if ($planoTrabalho instanceof PlanoTrabalho) {
+                return $planoTrabalho->identificacaoEnvio();
+            }
+        }
+
+        return 'PT ('.$this->id.')';
     }
 }
 
