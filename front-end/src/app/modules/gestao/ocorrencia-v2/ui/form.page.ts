@@ -171,6 +171,9 @@ export class OcorrenciaV2FormPage implements OnInit {
   }
 
   private getMensagemConfirmacao(impacto: ImpactoConsolidacoes): string {
+    if (impacto.gera_dispensa && impacto.remove_dispensa) {
+      return 'Esta alteração impactará a situação de um ou mais períodos avaliativos. As dispensas de registro de execução e avaliação serão recalculadas conforme as regras vigentes do sistema. Deseja confirmar?';
+    }
     if (impacto.gera_dispensa && impacto.pt_concluido) {
       return 'A inclusão ou alteração desta ocorrência resultará na dispensa de registro de execução e avaliação de um ou mais períodos avaliativos. Os períodos afetados passarão para o status "Dispensado", e as avaliações já realizadas serão canceladas. Em decorrência dessa alteração, o Plano de Trabalho poderá retornar ao status "Em execução". Deseja confirmar?';
     }
