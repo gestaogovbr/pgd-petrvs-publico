@@ -198,7 +198,7 @@ describe('PUT /api/v2/ocorrencia/:id (bloqueio por mudança de tipo)', function 
     beforeEach(function () {
         $this->tipoCompensacao = TipoMotivoAfastamento::firstOrCreate(
             ['codigo' => '15'],
-            ['nome' => 'Greve (compensação)', 'sigla' => 'GC', 'calculo' => 'DECRESCIMO', 'data_inicio' => now(), 'situacao' => 'ATIVO', 'icone' => 'bi bi-flag', 'cor' => '#FFFF00', 'horas' => 0, 'integracao' => 0]
+            ['nome' => 'Greve (compensação)', 'sigla' => 'GC', 'calculo' => 'ACRESCIMO', 'data_inicio' => now(), 'situacao' => 'ATIVO', 'icone' => 'bi bi-flag', 'cor' => '#FFFF00', 'horas' => 0, 'integracao' => 0]
         );
 
         $tipoAvaliacao = TipoAvaliacao::factory()->create();

@@ -91,15 +91,14 @@ class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryCont
         return new ListResult($rows, $count);
     }
 
-    /** @param string[] $codigosExcluidos */
-    public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia, array $codigosExcluidos): Collection
+    public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia): Collection
     {
         return $this->afastamento->newQuery()
             ->where('usuario_id', $usuarioId)
             ->where('data_fim', '>=', $vigencia->start)
             ->where('data_inicio', '<=', $vigencia->end)
-            ->whereHas('tipoMotivoAfastamento', function (Builder $q) use ($codigosExcluidos) {
-                $q->whereNotIn('codigo', $codigosExcluidos);
+            ->whereHas('tipoMotivoAfastamento', function (Builder $q) {
+                $q->where('calculo', '!=', 'ACRESCIMO');
             })
             ->orderBy('data_inicio')
             ->get();
