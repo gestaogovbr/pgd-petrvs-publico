@@ -5,6 +5,9 @@ namespace App\Services\Snapshot\Creator;
 use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 
+/**
+ * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+ */
 class OcorrenciaSnapshotCreator implements SnapshotCreatorInterface
 {
     public function create(string $entityId, string $consolidacaoId, $dataConclusao): void
