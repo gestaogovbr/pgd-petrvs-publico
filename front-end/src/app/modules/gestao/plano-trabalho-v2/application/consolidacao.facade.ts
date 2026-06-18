@@ -7,6 +7,7 @@ import { AtividadeConsolidacao, Consolidacao, NotaAvaliacao, Ocorrencia, Ocorren
 import { TipoMotivoAfastamentoService } from 'src/app/v2/services/tipo-motivo-afastamento.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/v2/services/message.service';
+import { finalize } from 'rxjs';
 
 @Injectable()
 export class ConsolidacaoFacade {
@@ -36,7 +37,7 @@ export class ConsolidacaoFacade {
   // --- Estado de reabertura ---
   readonly reabrindoId = signal<string | null>(null);
   readonly justificativaReabrir = signal<string>('');
-
+  readonly processandoAcaoId = signal<string | null>(null);
   // --- Estado de avaliação ---
   readonly notasSelecionadas = signal<Record<string, string>>({});
   readonly justificativasAvaliacao = signal<Record<string, string>>({});
@@ -271,14 +272,15 @@ export class ConsolidacaoFacade {
       titulo: 'Finalizar Registro',
       mensagem: 'Ao finalizar este registro, a execução do Plano de Trabalho referente a este período será encaminhada para avaliação da chefia. Deseja confirmar?',
       onConfirmar: () => {
-        this.concluirUC.execute(this.planoId, consolidacao.id).subscribe({
-          next: (atualizado) => {
+        this.processandoAcaoId.set(consolidacao.id);
+        this.concluirUC.execute(this.planoId, consolidacao.id)
+          .pipe(finalize(() => this.processandoAcaoId.set(null)))
+          .subscribe((atualizado) => {
             this.consolidacoes.update(lista =>
               lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
             );
             this.message.success('Registro concluído com sucesso.');
-          }
-        });
+          });
       }
     });
   }
@@ -301,16 +303,17 @@ export class ConsolidacaoFacade {
       titulo: 'Reabrir Registro',
       mensagem: 'Ao reabrir este registro, a execução do Plano de Trabalho referente a este período retornará para edição e ficará indisponível para avaliação até nova finalização. Deseja confirmar?',
       onConfirmar: () => {
-        this.api.reabrirConsolidacao(this.planoId, consolidacao.id, justificativa).subscribe({
-          next: (atualizado) => {
+        this.processandoAcaoId.set(consolidacao.id);
+        this.api.reabrirConsolidacao(this.planoId, consolidacao.id, justificativa)
+          .pipe(finalize(() => this.processandoAcaoId.set(null)))
+          .subscribe((atualizado) => {
             this.consolidacoes.update(lista =>
               lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
             );
             this.reabrindoId.set(null);
             this.justificativaReabrir.set('');
             this.message.success('Registro reaberto com sucesso.');
-          }
-        });
+          });
       }
     });
   }
