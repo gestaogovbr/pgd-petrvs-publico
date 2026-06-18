@@ -70,10 +70,12 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
-        $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(false);
+        $this->programaRepo->shouldReceive('isVigenteParaUnidade')
+            ->with('programa-1', 'unidade-1', '2024-03-01', '2024-06-30')
+            ->andReturn(false);
 
         $this->validacao->validar(buildStoreDTO());
-    })->throws(ValidateException::class, 'O regramento selecionado não está vigente para a unidade informada.');
+    })->throws(ValidateException::class, 'O período selecionado para o plano não possui Regramento ativo. Selecione outro período.');
 
     test('lança exceção quando unidade está inativa', function () {
         $unidade = Mockery::mock(Unidade::class)->makePartial();
@@ -83,25 +85,6 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         $this->validacao->validar(buildStoreDTO());
     })->throws(ValidateException::class, 'A unidade está inativa.');
-
-    test('lança exceção quando datas fora do período do regramento', function () {
-        $unidade = Mockery::mock(Unidade::class)->makePartial();
-        $unidade->data_inativacao = null;
-
-        $programa = Mockery::mock(Programa::class)->makePartial();
-        $programa->data_inicio = '2024-04-01';
-        $programa->data_fim = '2024-12-31';
-
-        $agente = Mockery::mock(Usuario::class)->makePartial();
-        $agente->participa_pgd = 'sim';
-
-        $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
-        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
-        $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
-        $this->programaRepo->shouldReceive('findById')->with('programa-1')->andReturn($programa);
-
-        $this->validacao->validar(buildStoreDTO());
-    })->throws(ValidateException::class, 'As datas do plano de trabalho estão fora do período de vigência do regramento.');
 
     test('lança exceção quando existe conflito de período', function () {
         $unidade = Mockery::mock(Unidade::class)->makePartial();
@@ -117,7 +100,6 @@ describe('PlanoTrabalhoStoreValidator', function () {
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
         $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
-        $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')
             ->with('user-1', '2024-03-01', '2024-06-30')
             ->andReturn(true);
@@ -139,7 +121,6 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
-        $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
 
@@ -160,7 +141,6 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
-        $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
 
@@ -186,7 +166,6 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
         $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
-        $this->programaRepo->shouldReceive('findById')->andReturn($programa);
         $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
 

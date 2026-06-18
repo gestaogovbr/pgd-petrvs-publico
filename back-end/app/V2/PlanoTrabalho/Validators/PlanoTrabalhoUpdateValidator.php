@@ -25,9 +25,17 @@ class PlanoTrabalhoUpdateValidator
     {
         $this->validarUnidadeAtiva($dto->unidadeId);
         $this->validarParticipanteHabilitado($dto);
+        $this->validarRegramentoVigente($dto);
         $this->validarPeriodoDentroDoRegramento($dto);
         $this->validarConflitoPeriodo($dto, $planoId);
         $this->validarModalidadeDivergente($dto);
+    }
+
+    private function validarRegramentoVigente(PlanoTrabalhoStoreDTO $dto): void
+    {
+        if (!$this->programaRepository->isVigenteParaUnidade($dto->programaId, $dto->unidadeId, $dto->dataInicio, $dto->dataFim)) {
+            throw new ValidateException('O período selecionado para o plano não possui Regramento ativo. Selecione outro período.');
+        }
     }
 
     private function validarParticipanteHabilitado(PlanoTrabalhoStoreDTO $dto): void
@@ -48,16 +56,11 @@ class PlanoTrabalhoUpdateValidator
 
     private function validarPeriodoDentroDoRegramento(PlanoTrabalhoStoreDTO $dto): void
     {
-        $programa = $this->programaRepository->findById($dto->programaId);
         $inicioPlano = Carbon::parse($dto->dataInicio);
         $fimPlano = Carbon::parse($dto->dataFim);
 
         if ($inicioPlano->diffInDays($fimPlano) > 365) {
             throw new ValidateException('O período do plano de trabalho não pode ser superior a 1 ano.');
-        }
-
-        if ($inicioPlano < $programa->data_inicio || $fimPlano > $programa->data_fim) {
-            throw new ValidateException('As datas do plano de trabalho estão fora do período de vigência do regramento.');
         }
     }
 
