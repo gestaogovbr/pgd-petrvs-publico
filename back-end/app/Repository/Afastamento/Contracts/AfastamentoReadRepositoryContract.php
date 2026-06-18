@@ -23,10 +23,7 @@ interface AfastamentoReadRepositoryContract
      */
     public function findAll($data): ListResult;
 
-    /**
-     * @param string[] $codigosExcluidos
-     */
-    public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia, array $codigosExcluidos): Collection;
+    public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia): Collection;
 
 
     public function buscarOcorrenciasListagem(\App\V2\Ocorrencia\DTOs\OcorrenciaIndexDTO $dto): \Illuminate\Contracts\Pagination\LengthAwarePaginator;

@@ -63,12 +63,9 @@ class AfastamentoRepository
         return $this->writeRepository->delete($id);
     }
     
-    /**
-     * @param string[] $codigosExcluidos
-     */
-    public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia, array $codigosExcluidos): Collection
+    public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia): Collection
     {
-        return $this->readRepository->findAfastamentosParaDispensa($usuarioId, $vigencia, $codigosExcluidos);
+        return $this->readRepository->findAfastamentosParaDispensa($usuarioId, $vigencia);
     }
 
     public function buscarOcorrenciasListagem(OcorrenciaIndexDTO $dto): LengthAwarePaginator

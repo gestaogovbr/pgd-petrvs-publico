@@ -15,8 +15,6 @@ use Carbon\CarbonPeriod;
 
 class OcorrenciaImpactoPolicy
 {
-    private const CODIGOS_COMPENSACAO = ['15', '16', '17', '18'];
-
     public function __construct(
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly DispensaAvaliacaoPolicy $dispensaPolicy,
@@ -106,6 +104,6 @@ class OcorrenciaImpactoPolicy
 
         $tipo = $this->tipoMotivoRepository->findById($tipoMotivoAfastamentoId);
 
-        return $tipo !== null && in_array($tipo->codigo, self::CODIGOS_COMPENSACAO, true);
+        return $tipo !== null && $tipo->calculo === 'ACRESCIMO';
     }
 }

@@ -13,8 +13,6 @@ use Illuminate\Database\Eloquent\Collection;
 
 class DispensaAvaliacaoPolicy
 {
-    private const CODIGOS_COMPENSACAO = ['15', '16', '17', '18'];
-
     public function __construct(
         private readonly AfastamentoReadRepositoryContract $afastamentoRepository,
     ) {
@@ -56,7 +54,6 @@ class DispensaAvaliacaoPolicy
         $afastamentos = $this->afastamentoRepository->findAfastamentosParaDispensa(
             $usuarioId,
             $vigenciaPT,
-            self::CODIGOS_COMPENSACAO,
         );
 
         if ($afastamentos->isEmpty()) {
@@ -143,7 +140,6 @@ class DispensaAvaliacaoPolicy
         $afastamentos = $this->afastamentoRepository->findAfastamentosParaDispensa(
             $usuarioId,
             $vigenciaPT,
-            self::CODIGOS_COMPENSACAO,
         );
 
         if ($ocorrenciaIdExcluir !== null) {
