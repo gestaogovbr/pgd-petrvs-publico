@@ -20,6 +20,11 @@ export class ConsolidacaoApiClient {
       }))));
   }
 
+  getDispensas(planoId: PlanoTrabalhoId): Observable<string[]> {
+    return this.http.get<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/dispensas`)
+      .pipe(map((r: any) => r?.data ?? []));
+  }
+
   concluirConsolidacao(planoId: string, consolidacaoId: string): Observable<Consolidacao> {
     return this.http.patch<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/concluir`, {})
       .pipe(map((r: any) => r?.data ?? r));

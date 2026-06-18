@@ -612,7 +612,7 @@ use App\V2\PlanoTrabalho\Documento\DocumentoController as DocumentoV2;
 use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController as PlanoTrabalhoConsolidacaoV2;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController as AtividadeV2;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoController as AvaliacaoV2;
-use App\V2\PlanoTrabalho\Ocorrencia\OcorrenciaController as OcorrenciaV2;
+use App\V2\Ocorrencia\OcorrenciaController as OcorrenciaV2;
 use App\V2\PlanoTrabalho\Log\PlanoTrabalhoLogController as PlanoTrabalhoLogV2;
 use App\V2\TipoModalidade\TipoModalidadeController as TipoModalidadeV2;
 use App\V2\TipoMotivoAfastamento\TipoMotivoAfastamentoController as TipoMotivoAfastamentoV2;
@@ -655,6 +655,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::delete('plano-trabalho/{planoTrabalhoId}/documento/assinatura-tcr', [DocumentoV2::class, 'cancelarAssinatura']);
 
     Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao', [PlanoTrabalhoConsolidacaoV2::class, 'index']);
+    Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao/dispensas', [PlanoTrabalhoConsolidacaoV2::class, 'dispensas']);
     Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao/notas-avaliacao', [PlanoTrabalhoConsolidacaoV2::class, 'notasAvaliacao']);
     Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/concluir', [PlanoTrabalhoConsolidacaoV2::class, 'concluir']);
     Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/reabrir', [PlanoTrabalhoConsolidacaoV2::class, 'reabrir']);
@@ -668,9 +669,12 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::delete('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}', [AtividadeV2::class, 'destroy']);
 
 
-    Route::post('plano-trabalho/{planoTrabalhoId}/ocorrencia', [OcorrenciaV2::class, 'store']);
-    Route::patch('plano-trabalho/{planoTrabalhoId}/ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'update']);
-    Route::delete('plano-trabalho/{planoTrabalhoId}/ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'destroy']);
+    Route::get('ocorrencia/agentes', [OcorrenciaV2::class, 'agentes']);
+    Route::get('ocorrencia', [OcorrenciaV2::class, 'index']);
+    Route::get('ocorrencia/impacto-consolidacoes', [OcorrenciaV2::class, 'impactoConsolidacoes']);
+    Route::post('ocorrencia', [OcorrenciaV2::class, 'store']);
+    Route::put('ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'update']);
+    Route::delete('ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'destroy']);
 
     Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
     Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);

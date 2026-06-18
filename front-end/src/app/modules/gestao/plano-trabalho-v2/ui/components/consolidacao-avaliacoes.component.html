@@ -1,3 +1,4 @@
+@if (!facade.isDispensada(consolidacao.id)) {
 @if (consolidacao.avaliacoes.length > 0) {
   <div class="mt-4">
     <p class="text-weight-semi-bold mb-2">Avaliação do Período</p>
@@ -101,4 +102,5 @@
     (justificativaChange)="facade.setJustificativaAvaliacao(consolidacao.id, $event)"
     (submeter)="facade.avaliarConsolidacao(consolidacao)"
   />
+}
 }
