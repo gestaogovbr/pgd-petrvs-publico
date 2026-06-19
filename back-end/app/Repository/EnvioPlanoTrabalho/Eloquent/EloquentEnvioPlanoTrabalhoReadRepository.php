@@ -63,6 +63,7 @@ class EloquentEnvioPlanoTrabalhoReadRepository implements EnvioPlanoTrabalhoRead
             ->select([
                 'pt.id',
                 'pt.numero',
+                'pt.status',
                 'pt.data_inicio',
                 'pt.data_fim',
                 'pt.updated_at',

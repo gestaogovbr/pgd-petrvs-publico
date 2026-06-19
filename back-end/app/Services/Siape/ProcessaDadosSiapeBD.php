@@ -210,6 +210,7 @@ class ProcessaDadosSiapeBD
         ]);
 
         $perfilParticipanteId = $this->obterPerfilParticipanteParaUsuarioReativado($usuario);
+        $atributos = [];
         if (!empty($perfilParticipanteId)) {
             $atributos['perfil_id'] = $perfilParticipanteId;
         }

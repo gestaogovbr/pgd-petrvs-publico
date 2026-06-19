@@ -67,10 +67,10 @@ return [
             'driver' => 'redis',
             'connection' => 'default',
             'queue' => env('REDIS_QUEUE', 'default'),
-            'retry_after' => 180,
+            'retry_after' => 3600,
             'block_for' => null,
             'after_commit' => false,
-            'timeout' => 90
+            'timeout' => 3600,
         ],
 
         'rabbitmq' => [
@@ -111,11 +111,10 @@ return [
             'driver' => 'rabbitmq',
             'connection' => 'rabbitmq',
             'queue' => 'pgd_queue',
-            'retry_after' => 60 * 5,
             'block_for' => null,
-            'tries' => 1,
             'after_commit' => false,
-            'timeout' => 30
+            'retry_after' => 180000,
+            'timeout' => 172800
         ]
     ],
 

@@ -588,6 +588,17 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
         }
     }
 
+    public function identificacaoEnvio(): string
+    {
+        $matricula = trim((string) ($this->matricula ?? ''));
+
+        if ($matricula !== '') {
+            return 'Participante #'.$matricula.' ('.$this->id.')';
+        }
+
+        return 'Participante ('.$this->id.')';
+    }
+
     public function canImpersonate(): bool
     {
         return $this->is_admin == 1;

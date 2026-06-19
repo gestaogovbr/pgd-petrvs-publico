@@ -32,7 +32,7 @@ class PlanoTrabalhoConsolidacaoObserver
         try{
             PlanoTrabalhoEnvioService::processar(tenant('id'), $model->planoTrabalho, 'PlanoTrabalhoConsolidacao');
         }catch(EnvioNaoAgendadoException $e) {
-            Log::info("Envio do plano de trabalho ID {$model->planoTrabalho->id} não agendado: " . $e->getMessage());
+            Log::info("Envio do {$model->planoTrabalho->identificacaoEnvio()} não agendado: " . $e->getMessage());
         }
     }
 }

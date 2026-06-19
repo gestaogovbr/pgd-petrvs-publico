@@ -57,6 +57,7 @@ test('query devolve count e rows conforme o builder', function (array $where, in
             (object) [
                 'id' => 'pt-1',
                 'numero' => 1,
+                'status' => 'ATIVO',
                 'data_inicio' => '2026-04-01 00:00:00',
                 'data_fim' => '2026-04-30 00:00:00',
                 'updated_at' => '2026-04-24 10:00:00',

@@ -11,4 +11,8 @@ export class EnvioPlanoTrabalhoApiClient extends TenantV2ResourceApiBase {
   query(params: EnvioPlanoTrabalhoQueryParams): Observable<Page<EnvioPlanoTrabalhoRow>> {
     return this.getCollectionPaged<EnvioPlanoTrabalhoRow>(normalizeQueryParams(params), 50);
   }
+
+  enviar(id: string): Observable<{ success: boolean; message: string }> {
+    return this.http.post<{ success: boolean; message: string }>(this.resourceUrl(`/${id}/enviar`), {});
+  }
 }

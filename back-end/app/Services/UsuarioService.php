@@ -8,6 +8,7 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Facades\SiapeLog;
+use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\PerfilRepository;
@@ -907,6 +908,10 @@ class UsuarioService extends ServiceBase
         $unidadesVinculadasPayloadByKey = [];
 
         foreach ($usuarios as $usuarioPorCpf) {
+            if (!$usuarioPorCpf instanceof Usuario) {
+                continue;
+            }
+
             $matricula = $usuarioPorCpf->getAttribute('matricula') ?? null;
             $situacaoFuncional = $usuarioPorCpf->getAttribute('situacao_funcional') ?? null;
 
@@ -914,6 +919,10 @@ class UsuarioService extends ServiceBase
                 ->findAllComAtribuicoesAtivasByUsuario(strval($usuarioPorCpf->id));
 
             foreach ($integrantes as $integrante) {
+                if (!$integrante instanceof UnidadeIntegrante) {
+                    continue;
+                }
+
                 $unidade = $integrante->unidade;
                 if ($unidade === null) {
                     continue;
