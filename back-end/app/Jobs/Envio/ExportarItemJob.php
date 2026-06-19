@@ -4,7 +4,6 @@ namespace App\Jobs\Envio;
 
 use App\Exceptions\ExportPgdException;
 use App\Exceptions\TokenPgdException;
-use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
@@ -19,7 +18,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\TimeoutExceededException;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -30,31 +28,41 @@ abstract class ExportarItemJob implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable;
 
-    protected const CIRCUIT_BREAKER_TIMEOUT = 300; // 5 minutos
     protected $timestamp = null;
-    public bool $reagendado = false;
     public int $timeout = 30;
-    public $tries = 1;
+    public int $tries = 1;
 
     protected ?PgdService $pgdService;
+
+    private bool $agendamentoPersistido = false;
 
     /*
         @tenantId: ID do Tenant
         @id: ID do item a ser exportado
         @timestamp: Timestamp do agendamento. Usado para evitar envio de itens defasados
     */
-    public function __construct(protected string $tenantId, protected string $id, protected $origem = '', protected $execucoes = 1)
+    public function __construct(protected string $tenantId, protected string $id, protected $origem = '')
     {
         $this->queue = 'pgd_queue';
         $this->connection = 'rabbitmq';
+        $this->timestamp = Carbon::now();
 
-        $model = $this->getRepository()->findById($this->id);
-        $dataAgendamento = Carbon::now();
-        if ($model !== null) {
-            $this->getRepository()->agendarEnvio($model, $dataAgendamento);
+        if (tenancy()->initialized) {
+            $this->persistirAgendamento();
+        }
+    }
+
+    private function persistirAgendamento(): void
+    {
+        if ($this->agendamentoPersistido) {
+            return;
         }
 
-        $this->timestamp = $dataAgendamento;
+        $model = $this->getRepository()->findById($this->id);
+        if ($model !== null) {
+            $this->getRepository()->agendarEnvio($model, $this->timestamp);
+            $this->agendamentoPersistido = true;
+        }
     }
 
     public function getModel(): ?Model {
@@ -67,28 +75,26 @@ abstract class ExportarItemJob implements ShouldQueue
 
     abstract public function tag();
 
+    protected function logItemLabel(): string
+    {
+        return $this->tag().' #'.$this->id;
+    }
+
     protected function logInfo(string $message) {
-        Log::info("ENVIO [{$this->tenantId}] ".$this->tag()." #{$this->id} - {$message}".($this->origem ? " (Origem: {$this->origem}, Tentativa: {$this->execucoes})" : ''));
+        Log::info("ENVIO [{$this->tenantId}] ".$this->logItemLabel()." - {$message}".($this->origem ? " (Origem: {$this->origem})" : ''));
     }
 
     protected function logError(string $message) {
-        Log::error("ENVIO [{$this->tenantId}] ".$this->tag()." #{$this->id} - {$message}".($this->origem ? " (Origem: {$this->origem}, Tentativa: {$this->execucoes})" : ''));
+        Log::error("ENVIO [{$this->tenantId}] ".$this->logItemLabel()." - {$message}".($this->origem ? " (Origem: {$this->origem})" : ''));
     }
 
     public function handle(PgdService $pgdService)
     {
         $this->pgdService = $pgdService;
-
-        if (Cache::get("api_down")) {
-            $this->insucesso("Tentativa de envio reagendada devido API estar indisponível");
-            $this->reagendar();
-            return;
-        }
+        $this->initializeTenantContext();
+        $this->persistirAgendamento();
 
         $this->logInfo("INICIADO");
-
-        $tenant = tenancy()->find($this->tenantId);
-        tenancy()->initialize($tenant);
 
         $model = null;
 
@@ -98,6 +104,10 @@ abstract class ExportarItemJob implements ShouldQueue
 
              if (!$model) {
                 $this->logInfo("Item não encontrado para envio.");
+                $modelIndisponivel = $this->getRepository()->findById($this->id);
+                if ($modelIndisponivel !== null) {
+                    $this->getRepository()->registrarLog($modelIndisponivel, 'Item não encontrado para envio.');
+                }
                 return;
             }
 
@@ -121,10 +131,7 @@ abstract class ExportarItemJob implements ShouldQueue
             unset($resource);
 
         } catch(TokenPgdException $e) {
-            Cache::put('api_down', true, self::CIRCUIT_BREAKER_TIMEOUT); // circuit breaker
             $this->insucesso($e->getmessage());
-            $this->logInfo('nova tentativa em 5 minutos');
-            $this->reagendar();
             return;
         } catch(Throwable $exception) {
             $this->logError($exception->getmessage());
@@ -154,7 +161,7 @@ abstract class ExportarItemJob implements ShouldQueue
     public function insucesso($message) {
         $this->logError($message);
 
-        $model = $this->getModel();
+        $model = $this->getModel() ?? $this->getRepository()->findById($this->id);
         if ($model === null) {
             return;
         }
@@ -164,28 +171,18 @@ abstract class ExportarItemJob implements ShouldQueue
 
     public function tags()
     {
-        $tags = [
+        return [
             $this->tenantId,
             $this->id,
-            'Execução '.$this->execucoes,
         ];
-
-        if ($this->reagendado) {
-            $tags[] = 'Reagendado';
-        }
-
-        return $tags;
     }
 
     public function failed(?Throwable $exception): void {
-        $tenant = tenancy()->find($this->tenantId);
-        if ($tenant !== null) {
-            tenancy()->initialize($tenant);
-        }
+        $this->initializeTenantContext();
 
         if ($exception instanceof TimeoutExceededException) {
-            $this->logInfo('Timeout excedido. Nova tentativa em 5 minutos');
-            $this->reagendar();
+            $this->insucesso($exception->getMessage() ?: 'Tempo de envio excedido');
+            return;
         }
 
         if ($exception instanceof ExportPgdException) {
@@ -200,11 +197,23 @@ abstract class ExportarItemJob implements ShouldQueue
         $this->insucesso($exception?->getMessage() ?? 'Falha desconhecida no envio');
     }
 
-    public function reagendar() {
-        $this->reagendado = true;
-        dispatch(new static($this->tenantId, $this->id, $this->origem, $this->execucoes + 1))
-            ->delay(now()->addSeconds(300))
-            ->onConnection('rabbitmq')
-            ->onQueue('pgd_queue_delay');
+    protected function initializeTenantContext(): void
+    {
+        $tenant = tenancy()->find($this->tenantId);
+        if ($tenant === null) {
+            return;
+        }
+
+        $tenantKey = (string) $tenant->getTenantKey();
+
+        if (tenancy()->initialized && (string) tenant()->getTenantKey() === $tenantKey) {
+            return;
+        }
+
+        if (tenancy()->initialized) {
+            tenancy()->end();
+        }
+
+        tenancy()->initialize($tenant);
     }
 }

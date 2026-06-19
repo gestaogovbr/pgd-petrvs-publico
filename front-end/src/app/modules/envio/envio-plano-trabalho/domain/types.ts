@@ -4,6 +4,7 @@ export type { Page } from 'src/app/v2/domain/pagination';
 export type EnvioPlanoTrabalhoRow = {
   id: string;
   numero: number | string;
+  status: string | null;
   data_inicio: string | null;
   data_fim: string | null;
   updated_at: string | null;
