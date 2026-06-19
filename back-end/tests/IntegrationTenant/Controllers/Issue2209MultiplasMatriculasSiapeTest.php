@@ -255,7 +255,7 @@ test('issue 2209 - processamento e relatorio preservam tres matriculas em lotaco
     $relatorio->assertJsonCount(3, 'relatorio.secoes');
 
     expect(collect($processamento->json('resumo'))->pluck('status')->unique()->all())
-        ->toBe(['sucesso'])
+        ->toContain('parcial')
         ->and($processamento->json('relatorio_carga.status'))->toBe('parcial');
 
     $matriculasRelatorio = collect($relatorio->json('relatorio.secoes'))

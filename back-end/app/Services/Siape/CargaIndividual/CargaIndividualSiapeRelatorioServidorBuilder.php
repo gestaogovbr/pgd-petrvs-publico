@@ -48,6 +48,40 @@ class CargaIndividualSiapeRelatorioServidorBuilder
     }
 
     /**
+     * @param array<int, array<string, mixed>> $resumo
+     * @param array<string, mixed> $dadosSiape
+     * @return array<int, array<string, mixed>>
+     */
+    public function construirResumoErro(array $resumo, string $cpf, array $dadosSiape = []): array
+    {
+        $dadosFuncionais = $this->normalizarFuncionais($dadosSiape['dadosFuncionais'] ?? []);
+        $dadosPessoais = is_array($dadosSiape['dadosPessoais'] ?? null) ? $dadosSiape['dadosPessoais'] : [];
+        $usuarios = $this->usuarioRepository->findAllByCpfUnfiltered($this->somenteNumeros($cpf) ?? $cpf)
+            ->keyBy(fn(Usuario $usuario) => (string) ($usuario->matricula ?? $usuario->id));
+        $funcionaisPorMatricula = collect($dadosFuncionais)
+            ->filter(fn(array $funcional) => !empty($funcional['matriculaSiape']))
+            ->keyBy(fn(array $funcional) => (string) $funcional['matriculaSiape']);
+
+        $secoes = [];
+        foreach ($resumo as $indice => $itemResumo) {
+            $matricula = (string) ($itemResumo['matricula'] ?? $itemResumo['matriculaSiape'] ?? '');
+            /** @var Usuario|null $usuario */
+            $usuario = $matricula !== '' ? $usuarios->get($matricula) : $usuarios->first();
+            $funcional = $matricula !== '' ? ($funcionaisPorMatricula->get($matricula) ?? []) : [];
+
+            $secoes[] = [
+                'titulo' => $matricula !== ''
+                    ? 'Matrícula SIAPE ' . $matricula
+                    : 'Vínculo SIAPE ' . ($indice + 1),
+                'tipo' => 'servidor',
+                'campos' => $this->camposServidorErro($dadosPessoais, $funcional, $itemResumo, $usuario),
+            ];
+        }
+
+        return $secoes;
+    }
+
+    /**
      * @param array<string, mixed> $dadosPessoais
      * @param array<string, mixed> $funcional
      * @return array<int, array<string, mixed>>
@@ -70,6 +104,24 @@ class CargaIndividualSiapeRelatorioServidorBuilder
             $situacaoFuncional,
             $this->comparator->comparar('modalidadePGD', 'Modalidade PGD', $funcional['modalidadePGD'] ?? null, $this->modalidadePgd($usuario)),
             $this->comparator->comparar('participaPGD', 'Participa do PGD', $funcional['participaPGD'] ?? null, $usuario?->participa_pgd),
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $dadosPessoais
+     * @param array<string, mixed> $funcional
+     * @param array<string, mixed> $resumo
+     * @return array<int, array<string, mixed>>
+     */
+    private function camposServidorErro(array $dadosPessoais, array $funcional, array $resumo, ?Usuario $usuario): array
+    {
+        return [
+            $this->comparator->comparar('matriculaSiape', 'Matrícula SIAPE', $resumo['matricula'] ?? $funcional['matriculaSiape'] ?? null, $usuario?->matricula),
+            $this->comparator->comparar('nome', 'Nome', $resumo['nome'] ?? $dadosPessoais['nome'] ?? null, $usuario?->nome),
+            $this->comparator->comparar('codUorgExercicio', 'Unidade de exercício', $funcional['codUorgExercicio'] ?? null, $usuario?->lotacao?->unidade?->codigo),
+            $this->comparator->comparar('lotacao_associada', 'Lotação associada', $resumo['lotacao_associada'] ?? null, !empty($usuario?->lotacao)),
+            $this->linhaInformativa('status', 'Situação do processamento', $this->statusResumo($resumo)),
+            $this->linhaInformativa('mensagem', 'Mensagem', $resumo['mensagem'] ?? null),
         ];
     }
 
@@ -149,5 +201,41 @@ class CargaIndividualSiapeRelatorioServidorBuilder
         $digitos = preg_replace('/\D/', '', (string) $valor);
 
         return is_string($digitos) && $digitos !== '' ? $digitos : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function linhaInformativa(string $campo, string $rotulo, mixed $valor, bool $confirmado = false): array
+    {
+        return [
+            'campo' => $campo,
+            'rotulo' => $rotulo,
+            'recebido_siape' => $this->valorExibicao($valor),
+            'registrado_petrvs' => null,
+            'status' => $confirmado ? 'confirmado' : 'nao_aplicavel',
+        ];
+    }
+
+    private function statusResumo(array $resumo): ?string
+    {
+        $status = $resumo['status'] ?? null;
+
+        return is_scalar($status) ? (string) $status : null;
+    }
+
+    private function valorExibicao(mixed $valor): ?string
+    {
+        if ($valor === null) {
+            return null;
+        }
+
+        if (is_bool($valor)) {
+            return $valor ? 'Sim' : 'Nao';
+        }
+
+        $texto = trim((string) $valor);
+
+        return $texto !== '' ? $texto : null;
     }
 }

@@ -193,6 +193,76 @@ test('observer persiste relatorio amigavel para falha de unidade', function () {
     expect($relatorio->mensagem_usuario)->toContain('não há dados disponíveis');
 });
 
+test('observer detalha erro de servidor por matrícula quando o resumo traz vínculos processados', function () {
+    Usuario::factory()->create([
+        'cpf' => '11122233344',
+        'nome' => 'Servidor Vinculo A',
+        'email' => 'a@orgao.gov.br',
+        'matricula' => '1002209',
+        'modalidade_pgd' => 'presencial',
+    ]);
+    Usuario::factory()->create([
+        'cpf' => '11122233344',
+        'nome' => 'Servidor Vinculo B',
+        'email' => 'b@orgao.gov.br',
+        'matricula' => '2002209',
+        'modalidade_pgd' => 'presencial',
+    ]);
+
+    $relatorio = app(CargaIndividualSiapeSubject::class)->notificar(new CargaIndividualSiapeProcessamentoDTO(
+        processamentoId: (string) Str::uuid(),
+        tipo: CargaIndividualSiapeProcessamentoDTO::TIPO_SERVIDOR,
+        chave: '11122233344',
+        status: CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
+        entradaValida: false,
+        dadosSiape: [
+            'dadosPessoais' => [
+                'nome' => 'Servidor Multiplos Vinculos',
+            ],
+            'dadosFuncionais' => [
+                [
+                    'matriculaSiape' => '1002209',
+                    'codUorgExercicio' => '22101',
+                ],
+                [
+                    'matriculaSiape' => '2002209',
+                    'codUorgExercicio' => '22102',
+                ],
+            ],
+        ],
+        resumo: [
+            [
+                'matricula' => '1002209',
+                'nome' => 'Servidor Vinculo A',
+                'lotacao_associada' => true,
+                'status' => 'erro',
+                'mensagem' => 'Falha ao concluir o vínculo 1002209.',
+            ],
+            [
+                'matricula' => '2002209',
+                'nome' => 'Servidor Vinculo B',
+                'lotacao_associada' => true,
+                'status' => 'erro',
+                'mensagem' => 'Falha ao concluir o vínculo 2002209.',
+            ],
+        ],
+        mensagemErro: 'Falha no processamento de vínculos.',
+        solicitanteId: null,
+    ));
+
+    expect($relatorio->status)->toBe('erro');
+    expect($relatorio->secoes)->toHaveCount(2);
+
+    $payload = json_encode($relatorio->secoes, JSON_UNESCAPED_UNICODE);
+    expect($payload)->toContain('Matrícula SIAPE 1002209');
+    expect($payload)->toContain('Matrícula SIAPE 2002209');
+    expect($payload)->toContain('Falha ao concluir o vínculo 1002209.');
+    expect($payload)->toContain('Falha ao concluir o vínculo 2002209.');
+
+    $primeiroCampo = collect($relatorio->secoes[0]['campos'])->firstWhere('campo', 'matriculaSiape');
+    expect($primeiroCampo['status'])->toBe('confirmado');
+});
+
 test('observer persiste relatorio de sucesso para servidor e nao exibe dataOcorrExclusao', function () {
     $unidade = Unidade::factory()->create([
         'codigo' => '12345',
