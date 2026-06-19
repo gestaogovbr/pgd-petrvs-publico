@@ -1,3 +1,20 @@
+## 3.0.3 18/06/2026
+
+### Adicionado
+- Opção de envio do PT a partir da Consulta de Envios de PT
+
+### Modificado
+- RabbitMQ atualizado para versão 4.3.1
+- Envios com Timeout não são mais reagendados
+- Timeouts do Envio
+
+### Corrigido
+- Bugs no Agendamento de Planos de Trabalho
+- Variáveis de ambiente duplicadas para RabbitMQ
+
+### Removido
+- Nome de imagem do RabbitMQ
+
 ## 3.0.2 16/06/2026
 
 ### Adicionado
