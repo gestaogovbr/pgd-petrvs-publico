@@ -545,7 +545,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.PLANOS_ENTREGAS,
           this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
           this.menuSchema.AVALIACAO_PLANOS_ENTREGAS,
-        ].sort(this.orderMenu),
+        ],
       },
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS),
       Object.assign({}, this.menuSchema.OCORRENCIAS),
@@ -555,14 +555,14 @@ export class AppComponent implements IAppComponent {
         permition: "MENU_GESTAO_ACESSO",
         id: "navbarDropdownGestaoPlanejamento",
         menu: [
-          this.menuSchema.ELEMENTOS_PLANEJAMENTO,
-          this.menuSchema.EIXOS_TEMATICOS,
-          this.menuSchema.USUARIOS,
-          this.menuSchema.UNIDADES,
-          this.menuSchema.PROGRAMAS_GESTAO,
-          this.menuSchema.CADEIAS_VALORES,
           this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
-        ].sort(this.orderMenu),
+          this.menuSchema.CADEIAS_VALORES,
+          this.menuSchema.PROGRAMAS_GESTAO,
+          this.menuSchema.UNIDADES,
+          this.menuSchema.USUARIOS,
+          this.menuSchema.EIXOS_TEMATICOS,
+          this.menuSchema.ELEMENTOS_PLANEJAMENTO,
+        ],
       },
       {
         name: this.lex.translate("Relatórios"),
@@ -574,7 +574,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.RELATORIO_USUARIOS,
           this.menuSchema.RELATORIO_UNIDADES,
           this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE,
-        ].sort(this.orderMenu),
+        ],
       },
       {
         name: this.lex.translate("Indicadores"),
@@ -583,7 +583,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.INDICADORES_ENTREGAS,
           this.menuSchema.INDICADORES_EQUIPES,
           this.menuSchema.INDICADORES_GESTAO,
-        ].sort(this.orderMenu),
+        ],
       },
     ];
 
@@ -604,7 +604,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.INDICADORES_ENTREGAS,
           this.menuSchema.INDICADORES_EQUIPES,
           this.menuSchema.INDICADORES_GESTAO,
-        ].sort(this.orderMenu),
+        ],
       },
     ];
 
@@ -619,7 +619,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.RELATORIO_USUARIOS,
           this.menuSchema.RELATORIO_UNIDADES,
           this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE,
-        ].sort(this.orderMenu),
+        ],
       },
       {
         name: this.lex.translate("Indicadores"),
@@ -628,7 +628,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.INDICADORES_ENTREGAS,
           this.menuSchema.INDICADORES_EQUIPES,
           this.menuSchema.INDICADORES_GESTAO,
-        ].sort(this.orderMenu),
+        ],
       },
     ];
 
@@ -689,10 +689,6 @@ export class AppComponent implements IAppComponent {
         menu: this.moduloDev,
       },
     ];
-  }
-
-  public orderMenu(a: any, b: any) {
-    return a.nome < b.nome ? -1 : 1;
   }
 
   public rootMenuClick(item: any) {
