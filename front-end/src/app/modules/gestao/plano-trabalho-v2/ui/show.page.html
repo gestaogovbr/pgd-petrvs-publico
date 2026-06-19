@@ -191,16 +191,20 @@
                                       <br-textarea
                                         show-counter
                                         class="w-100"
-                                        [maxlength]="1500"
+                                        [maxlength]="10000"
                                         [value]="facade.getTexto(consolidacao.id, entrega.id)"
                                         (input)="facade.setTexto(consolidacao.id, entrega.id, $any($event.target).value)"
                                         placeholder="Descreva o trabalho executado..."
                                       ></br-textarea>
                                     } @else {
-                                      <span class="white-space">{{ atividade.descricao }}</span>
+                                      <app-texto-colapsavel [texto]="atividade!.descricao" />
                                     }
                                   } @else {
-                                    <span class="white-space">{{ atividade?.descricao || '-' }}</span>
+                                    @if (atividade?.descricao) {
+                                      <app-texto-colapsavel [texto]="atividade!.descricao" />
+                                    } @else {
+                                      <span>-</span>
+                                    }
                                   }
                                 </td>
                                 @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {

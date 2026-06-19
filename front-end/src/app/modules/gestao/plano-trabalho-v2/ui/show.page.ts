@@ -20,12 +20,13 @@ import { MessageService } from "src/app/v2/services/message.service";
 import { AssinarPlanoUseCase } from "../application/assinar-plano.usecase";
 import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
 import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
+import { TextoColapsavelComponent } from "src/app/v2/components/texto-colapsavel/texto-colapsavel.component";
 
 @Component({
   selector: 'app-plano-trabalho-v2-show-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent],
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent, TextoColapsavelComponent],
   templateUrl: './show.page.html'
 })
 export class PlanoTrabalhoV2ShowPage implements OnInit {
