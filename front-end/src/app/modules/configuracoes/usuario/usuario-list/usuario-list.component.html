@@ -19,7 +19,7 @@
         <column title="CPF" field="cpf"></column>
         <column title="Nome" field="nome" orderBy="nome" [template]="columnNome">
             <ng-template let-row="row" #columnNome>
-                {{row.nome}}<br>
+                {{row.nome_exibicao}}<br>
                 <label class="badge text-bg-warning" *ngIf="row.usuario_externo">Usuário Externo</label>                
                 <label class="badge text-bg-danger" *ngIf="row.pedagio">Teletrabalho indisponível</label>
             </ng-template>

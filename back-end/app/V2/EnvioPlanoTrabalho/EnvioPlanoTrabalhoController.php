@@ -46,4 +46,29 @@ class EnvioPlanoTrabalhoController extends Controller
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function enviar(string $id): JsonResponse
+    {
+        try {
+            $usuario = AuthenticatedUsuario::withAreasDeTrabalho();
+            if ($usuario === null || ! $usuario->hasPermissionTo('MOD_ENVIO_PT')) {
+                throw new ServerException('RelatorioEnvioPlanoTrabalho');
+            }
+
+            $this->service->enviar($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Envio ao PGD agendado com sucesso.',
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

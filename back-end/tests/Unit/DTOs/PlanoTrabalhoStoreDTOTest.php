@@ -70,3 +70,49 @@ describe('PlanoTrabalhoStoreDTO', function () {
         ]);
     });
 });
+
+describe('PlanoTrabalhoStoreDTO::isClone', function () {
+
+    test('retorna true quando clone_de é informado', function () {
+        $dto = PlanoTrabalhoStoreDTO::fromArray([
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'modalidade_pgd' => 'presencial',
+            'clone_de' => 'plano-original',
+        ], 'criador-1');
+
+        expect($dto->isClone())->toBeTrue()
+            ->and($dto->cloneDe)->toBe('plano-original');
+    });
+
+    test('retorna false quando clone_de é null', function () {
+        $dto = PlanoTrabalhoStoreDTO::fromArray([
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'modalidade_pgd' => 'presencial',
+        ], 'criador-1');
+
+        expect($dto->isClone())->toBeFalse()
+            ->and($dto->cloneDe)->toBeNull();
+    });
+
+    test('clone_de não aparece no toArray', function () {
+        $dto = PlanoTrabalhoStoreDTO::fromArray([
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'modalidade_pgd' => 'presencial',
+            'clone_de' => 'plano-original',
+        ], 'criador-1');
+
+        expect($dto->toArray())->not->toHaveKey('clone_de');
+    });
+});

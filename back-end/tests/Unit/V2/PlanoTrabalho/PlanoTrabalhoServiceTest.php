@@ -28,7 +28,9 @@ use Illuminate\Database\Eloquent\Collection;
 use App\V2\StatusService;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaWriteRepositoryContract;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -51,6 +53,7 @@ beforeEach(function () {
     $this->statusService = Mockery::mock(StatusService::class);
     $this->tcrInvalidador = Mockery::mock(TCRInvalidador::class);
     $this->consolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
+    $this->entregaWriteRepository = Mockery::mock(PlanoTrabalhoEntregaWriteRepositoryContract::class);
 
     $this->service = new PlanoTrabalhoService(
         $this->readRepository,
@@ -70,6 +73,7 @@ beforeEach(function () {
         $this->statusService,
         $this->tcrInvalidador,
         $this->consolidacaoRepository,
+        $this->entregaWriteRepository,
     );
 });
 
@@ -551,5 +555,204 @@ describe('PlanoTrabalhoService::encerrar', function () {
         $result = $this->service->encerrar($planoId, 'motivo teste');
 
         expect($result)->toBe($plano);
+    });
+});
+
+describe('PlanoTrabalhoService::store com clone_de', function () {
+
+    test('cria plano e copia entregas válidas do plano original', function () {
+        Auth::shouldReceive('id')->andReturn('criador-1');
+        DB::shouldReceive('transaction')->once()->andReturnUsing(fn (callable $cb) => $cb());
+
+        $entregaValida = Mockery::mock(\App\Models\PlanoTrabalhoEntrega::class)->makePartial();
+        $entregaValida->plano_entrega_entrega_id = 'pee-1';
+        $entregaValida->orgao = 'Órgão X';
+        $entregaValida->descricao = 'Entrega válida';
+        $entregaValida->setRelation('planoEntregaEntrega', (object) ['id' => 'pee-1', 'data_inicio' => '2025-01-01', 'data_fim' => '2025-12-31']);
+
+        $planoOriginal = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $planoOriginal->id = 'plano-original';
+        $planoOriginal->setRelation('entregas', new Collection([$entregaValida]));
+
+        $this->readRepository->shouldReceive('loadRelacoesClonar')
+            ->once()
+            ->with($planoOriginal)
+            ->andReturn($planoOriginal);
+
+        $this->clonarValidator->shouldReceive('validar')
+            ->once()
+            ->with('plano-original', 'criador-1')
+            ->andReturn($planoOriginal);
+
+        $this->storeValidator->shouldReceive('validarAutorizacao')->once();
+        $this->storeValidator->shouldReceive('validar')->once();
+
+        $clone = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $clone->id = 'clone-id';
+
+        $this->writeRepository->shouldReceive('create')
+            ->once()
+            ->with(Mockery::on(fn (array $attrs) =>
+                $attrs['usuario_id'] === 'user-1'
+                && $attrs['data_inicio'] === '2025-01-01'
+            ))
+            ->andReturn($clone);
+
+        $this->entregaWriteRepository->shouldReceive('createForPlano')
+            ->once()
+            ->with('clone-id', Mockery::on(fn (array $data) =>
+                $data['plano_entrega_entrega_id'] === 'pee-1'
+                && $data['forca_trabalho'] === 0
+                && $data['descricao'] === 'Entrega válida'
+            ));
+
+        $result = $this->service->store([
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-12-31',
+            'modalidade_pgd' => 'presencial',
+            'clone_de' => 'plano-original',
+        ]);
+
+        expect($result)->toBe($clone);
+    });
+
+    test('ignora entregas cuja planoEntregaEntrega foi removida', function () {
+        Auth::shouldReceive('id')->andReturn('criador-1');
+        DB::shouldReceive('transaction')->once()->andReturnUsing(fn (callable $cb) => $cb());
+
+        $entregaInvalida = Mockery::mock(\App\Models\PlanoTrabalhoEntrega::class)->makePartial();
+        $entregaInvalida->plano_entrega_entrega_id = 'pee-removida';
+        $entregaInvalida->orgao = 'Órgão Y';
+        $entregaInvalida->descricao = 'Entrega inválida';
+        $entregaInvalida->setRelation('planoEntregaEntrega', null);
+
+        $planoOriginal = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $planoOriginal->id = 'plano-original';
+        $planoOriginal->setRelation('entregas', new Collection([$entregaInvalida]));
+
+        $this->readRepository->shouldReceive('loadRelacoesClonar')
+            ->once()
+            ->andReturn($planoOriginal);
+
+        $this->clonarValidator->shouldReceive('validar')->andReturn($planoOriginal);
+        $this->storeValidator->shouldReceive('validarAutorizacao')->once();
+        $this->storeValidator->shouldReceive('validar')->once();
+
+        $clone = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $clone->id = 'clone-id';
+
+        $this->writeRepository->shouldReceive('create')->andReturn($clone);
+        $this->entregaWriteRepository->shouldNotReceive('createForPlano');
+
+        $result = $this->service->store([
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-12-31',
+            'modalidade_pgd' => 'presencial',
+            'clone_de' => 'plano-original',
+        ]);
+
+        expect($result)->toBe($clone);
+    });
+
+    test('sem clone_de não aciona lógica de clone', function () {
+        Auth::shouldReceive('id')->andReturn('criador-1');
+
+        $plano = Mockery::mock(PlanoTrabalho::class);
+
+        $this->storeValidator->shouldReceive('validarAutorizacao')->once();
+        $this->storeValidator->shouldReceive('validar')->once();
+        $this->clonarValidator->shouldNotReceive('validar');
+
+        $this->writeRepository->shouldReceive('create')->once()->andReturn($plano);
+
+        $result = $this->service->store([
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-12-31',
+            'modalidade_pgd' => 'presencial',
+        ]);
+
+        expect($result)->toBe($plano);
+    });
+
+    test('propaga exceção do clonarValidator quando PT original inválido', function () {
+        Auth::shouldReceive('id')->andReturn('criador-1');
+
+        $this->storeValidator->shouldReceive('validarAutorizacao')->once();
+        $this->storeValidator->shouldReceive('validar')->once();
+
+        $this->clonarValidator->shouldReceive('validar')
+            ->once()
+            ->andThrow(new NotFoundException('Plano de Trabalho não encontrado.'));
+
+        $this->writeRepository->shouldNotReceive('create');
+
+        $this->service->store([
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-12-31',
+            'modalidade_pgd' => 'presencial',
+            'clone_de' => 'inexistente',
+        ]);
+    })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
+
+    test('ignora entregas sem interseção de período com o novo plano', function () {
+        Auth::shouldReceive('id')->andReturn('criador-1');
+        DB::shouldReceive('transaction')->once()->andReturnUsing(fn (callable $cb) => $cb());
+
+        $entregaComIntersecao = Mockery::mock(\App\Models\PlanoTrabalhoEntrega::class)->makePartial();
+        $entregaComIntersecao->plano_entrega_entrega_id = 'pee-1';
+        $entregaComIntersecao->orgao = 'Órgão A';
+        $entregaComIntersecao->descricao = 'Entrega com interseção';
+        $pee1 = (object) ['id' => 'pee-1', 'data_inicio' => '2025-03-01', 'data_fim' => '2025-09-01'];
+        $entregaComIntersecao->setRelation('planoEntregaEntrega', $pee1);
+
+        $entregaSemIntersecao = Mockery::mock(\App\Models\PlanoTrabalhoEntrega::class)->makePartial();
+        $entregaSemIntersecao->plano_entrega_entrega_id = 'pee-2';
+        $entregaSemIntersecao->orgao = 'Órgão B';
+        $entregaSemIntersecao->descricao = 'Entrega fora do período';
+        $pee2 = (object) ['id' => 'pee-2', 'data_inicio' => '2024-01-01', 'data_fim' => '2024-06-30'];
+        $entregaSemIntersecao->setRelation('planoEntregaEntrega', $pee2);
+
+        $planoOriginal = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $planoOriginal->id = 'plano-original';
+        $planoOriginal->setRelation('entregas', new Collection([$entregaComIntersecao, $entregaSemIntersecao]));
+
+        $this->readRepository->shouldReceive('loadRelacoesClonar')
+            ->once()
+            ->andReturn($planoOriginal);
+
+        $this->clonarValidator->shouldReceive('validar')->andReturn($planoOriginal);
+        $this->storeValidator->shouldReceive('validarAutorizacao')->once();
+        $this->storeValidator->shouldReceive('validar')->once();
+
+        $clone = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $clone->id = 'clone-id';
+
+        $this->writeRepository->shouldReceive('create')->andReturn($clone);
+
+        $this->entregaWriteRepository->shouldReceive('createForPlano')
+            ->once()
+            ->with('clone-id', Mockery::on(fn (array $data) => $data['descricao'] === 'Entrega com interseção'));
+
+        $this->service->store([
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-12-31',
+            'modalidade_pgd' => 'presencial',
+            'clone_de' => 'plano-original',
+        ]);
     });
 });

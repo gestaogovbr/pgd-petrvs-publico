@@ -7,6 +7,15 @@ use Illuminate\Http\Request;
 class UsuarioValidacoes
 {
 
+    public static function atualizarNomeSocial(Request $request): array
+    {
+        return $request->validate([
+            'nome_social' => ['nullable', 'string', 'max:100'],
+        ], [
+            'nome_social.max' => 'O nome social deve ter no máximo 100 caracteres.',
+        ]);
+    }
+
     public static function buscarPorNomeMatricula(Request $request): array
     {
         return $request->validate([

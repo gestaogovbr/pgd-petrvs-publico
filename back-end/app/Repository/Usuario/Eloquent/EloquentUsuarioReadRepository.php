@@ -226,9 +226,10 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
 
         /** @var Collection<int, Usuario> */
         return $this->query()
-            ->select(["{$tabelaUsuarios}.id", "{$tabelaUsuarios}.nome", "{$tabelaUsuarios}.matricula", "{$tabelaUsuarios}.cpf", "{$tabelaUsuarios}.modalidade_pgd", "{$tabelaUsuarios}.participa_pgd"])
+            ->select(["{$tabelaUsuarios}.id", "{$tabelaUsuarios}.nome", "{$tabelaUsuarios}.nome_social", "{$tabelaUsuarios}.matricula", "{$tabelaUsuarios}.cpf", "{$tabelaUsuarios}.modalidade_pgd", "{$tabelaUsuarios}.participa_pgd"])
             ->where(function ($q) use ($term, $tabelaUsuarios) {
                 $q->where("{$tabelaUsuarios}.nome", 'like', $term)
+                    ->orWhere("{$tabelaUsuarios}.nome_social", 'like', $term)
                     ->orWhere("{$tabelaUsuarios}.matricula", 'like', $term);
             })
             ->where('participa_pgd', '=', 'sim')
@@ -262,7 +263,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
     public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool
     {
         $usuario = $this->query()->find($agenteId);
-        if ($usuario === null) {
+        if (!$usuario instanceof Usuario) {
             return false;
         }
 
@@ -473,5 +474,20 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             ->chunkById($chunkSize, function (SupportCollection $usuarios) use ($onChunk): void {
                 $onChunk($usuarios);
             });
+    }
+
+    /** @param list<string> $unidadeIds */
+    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection
+    {
+        $query = $this->model->newQuery();
+
+        if (empty($unidadeIds)) {
+            $query->where('id', $usuarioId);
+        } else {
+            $query->where('id', $usuarioId)
+                ->orWhereHas('unidadesIntegrantes', fn ($q) => $q->whereIn('unidade_id', $unidadeIds));
+        }
+
+        return $query->orderBy('nome')->get(['id', 'nome']);
     }
 }

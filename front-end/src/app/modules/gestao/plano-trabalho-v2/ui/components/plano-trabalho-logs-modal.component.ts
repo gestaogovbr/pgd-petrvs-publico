@@ -147,7 +147,7 @@ export class PlanoTrabalhoLogsModalComponent implements OnDestroy {
 
   selecionarUsuario(usuario: UsuarioSearchItem): void {
     this.usuarioSelecionado.set(usuario);
-    this.usuarioBusca.set(usuario.nome);
+    this.usuarioBusca.set(usuario.nome_exibicao);
     this.usuarioSugestoes.set([]);
   }
 

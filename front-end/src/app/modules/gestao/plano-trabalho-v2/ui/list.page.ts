@@ -12,7 +12,6 @@ import { Subject, Subscription, debounceTime } from 'rxjs';
 import { PlanoTrabalho, planoTrabalhoStatusLabel } from '../domain/types';
 import { PlanoTrabalhoStatus } from 'src/app/models/plano-trabalho.model';
 import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
-import { ClonarPlanoUseCase } from '../application/clonar-plano.usecase';
 import { ExcluirPlanoUseCase } from '../application/excluir-plano.usecase';
 import { EncerrarPlanoUseCase } from '../application/encerrar-plano.usecase';
 import { ArquivarPlanoUseCase } from '../application/arquivar-plano.usecase';
@@ -47,7 +46,6 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly cancelarPlanoUC = inject(CancelarPlanoUseCase);
   private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
-  private readonly clonarPlanoUC = inject(ClonarPlanoUseCase);
   private readonly excluirPlanoUC = inject(ExcluirPlanoUseCase);
   private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
   readonly assinatura = inject(AssinarPlanoUseCase);
@@ -381,13 +379,12 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   }
 
   clonarPlano(p: PlanoTrabalho) {
-    this.confirmacaoPendente.set({
-      titulo: 'Clonar Plano de Trabalho',
-      mensagem: 'Um novo Plano de Trabalho será criado com base neste, preservando suas informações, exceto as datas de início e fim, os percentuais de contribuição e os vínculos com entregas que não estejam mais disponíveis.',
-      onConfirm: () => this.clonarPlanoUC.execute(p.id).subscribe(novo =>
-        this.router.navigate(['gestao', 'plano-trabalho-v2', 'editar', novo.id])
-      )
-    });
+    this.router.navigate(['gestao', 'plano-trabalho-v2', 'novo'], { queryParams: { clone_de: p.id } });
+    // this.confirmacaoPendente.set({
+    //   titulo: 'Clonar Plano de Trabalho',
+    //   mensagem: 'Você será redirecionado para a tela de criação com os dados deste plano pré-preenchidos (exceto datas). Os percentuais de contribuição serão zerados e vínculos com entregas indisponíveis não serão copiados.',
+    //   onConfirm: () => this.router.navigate(['gestao', 'plano-trabalho-v2', 'novo'], { queryParams: { clone_de: p.id } })
+    // });
   }
 
   excluirPlano(p: PlanoTrabalho) {

@@ -72,6 +72,11 @@ describe('AvaliacaoService::destroy', function () {
 
         $this->destroyValidator->shouldReceive('validar')->andReturn($avaliacao);
         $this->avaliacaoRepo->shouldReceive('delete')->with('av-1')->once()->andReturn(true);
+        $this->avaliacaoRepo->shouldReceive('findMaisRecenteDaConsolidacao')
+            ->with('cons-1')
+            ->once()
+            ->andReturn(null);
+        $consolidacao->shouldReceive('save')->once();
         $this->statusService->shouldReceive('atualizaStatus')
             ->with($consolidacao, 'CONCLUIDO', 'Avaliação do período avaliativo cancelada pela chefia.')
             ->once();

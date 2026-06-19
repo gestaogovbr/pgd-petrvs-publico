@@ -7,6 +7,7 @@ import { AtividadeConsolidacao, Consolidacao, NotaAvaliacao, Ocorrencia, Ocorren
 import { TipoMotivoAfastamentoService } from 'src/app/v2/services/tipo-motivo-afastamento.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/v2/services/message.service';
+import { finalize } from 'rxjs';
 
 @Injectable()
 export class ConsolidacaoFacade {
@@ -23,6 +24,7 @@ export class ConsolidacaoFacade {
   // --- Estado principal ---
   readonly consolidacoes = signal<Consolidacao[]>([]);
   readonly notas = signal<NotaAvaliacao[]>([]);
+  readonly dispensadas = signal<Set<string>>(new Set());
 
   // --- Confirmação genérica ---
   readonly confirmacaoPendente = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
@@ -35,7 +37,7 @@ export class ConsolidacaoFacade {
   // --- Estado de reabertura ---
   readonly reabrindoId = signal<string | null>(null);
   readonly justificativaReabrir = signal<string>('');
-
+  readonly processandoAcaoId = signal<string | null>(null);
   // --- Estado de avaliação ---
   readonly notasSelecionadas = signal<Record<string, string>>({});
   readonly justificativasAvaliacao = signal<Record<string, string>>({});
@@ -63,6 +65,7 @@ export class ConsolidacaoFacade {
     this.loadConsolidacoes();
     this.loadNotas();
     this.loadTiposMotivo();
+    this.loadDispensas();
   }
 
   loadConsolidacoes(): void {
@@ -70,6 +73,16 @@ export class ConsolidacaoFacade {
       this.consolidacoes.set(consolidacoes);
       this.inicializarTextos(consolidacoes);
     });
+  }
+
+  loadDispensas(): void {
+    this.api.getDispensas(this.planoId).subscribe(ids => {
+      this.dispensadas.set(new Set(ids));
+    });
+  }
+
+  isDispensada(consolidacaoId: string): boolean {
+    return this.dispensadas().has(consolidacaoId);
   }
 
   loadNotas(): void {
@@ -259,14 +272,15 @@ export class ConsolidacaoFacade {
       titulo: 'Finalizar Registro',
       mensagem: 'Ao finalizar este registro, a execução do Plano de Trabalho referente a este período será encaminhada para avaliação da chefia. Deseja confirmar?',
       onConfirmar: () => {
-        this.concluirUC.execute(this.planoId, consolidacao.id).subscribe({
-          next: (atualizado) => {
+        this.processandoAcaoId.set(consolidacao.id);
+        this.concluirUC.execute(this.planoId, consolidacao.id)
+          .pipe(finalize(() => this.processandoAcaoId.set(null)))
+          .subscribe((atualizado) => {
             this.consolidacoes.update(lista =>
               lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
             );
             this.message.success('Registro concluído com sucesso.');
-          }
-        });
+          });
       }
     });
   }
@@ -289,16 +303,17 @@ export class ConsolidacaoFacade {
       titulo: 'Reabrir Registro',
       mensagem: 'Ao reabrir este registro, a execução do Plano de Trabalho referente a este período retornará para edição e ficará indisponível para avaliação até nova finalização. Deseja confirmar?',
       onConfirmar: () => {
-        this.api.reabrirConsolidacao(this.planoId, consolidacao.id, justificativa).subscribe({
-          next: (atualizado) => {
+        this.processandoAcaoId.set(consolidacao.id);
+        this.api.reabrirConsolidacao(this.planoId, consolidacao.id, justificativa)
+          .pipe(finalize(() => this.processandoAcaoId.set(null)))
+          .subscribe((atualizado) => {
             this.consolidacoes.update(lista =>
               lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
             );
             this.reabrindoId.set(null);
             this.justificativaReabrir.set('');
             this.message.success('Registro reaberto com sucesso.');
-          }
-        });
+          });
       }
     });
   }
@@ -357,7 +372,7 @@ export class ConsolidacaoFacade {
         this.avaliarUC.execute(this.planoId, consolidacao.id, { tipo_avaliacao_nota_id: notaId, justificativa }).subscribe({
           next: (avaliacao) => {
             this.consolidacoes.update(list => list.map(c => c.id === consolidacao.id
-              ? { ...c, status: 'AVALIADO', avaliacoes: [...c.avaliacoes, { ...avaliacao, avaliador: { id: this.auth.usuario!.id, nome: this.auth.usuario!.nome } }] }
+              ? { ...c, status: 'AVALIADO', avaliacoes: [...c.avaliacoes, { ...avaliacao, avaliador: { id: this.auth.usuario!.id, nome_exibicao: this.auth.usuario!.nome_exibicao } }] }
               : c
             ));
             this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });

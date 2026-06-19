@@ -18,6 +18,8 @@ use App\V2\PlanoTrabalho\Consolidacao\Validators\RecursoValidator;
 use App\V2\StatusService;
 use App\Repository\UnidadeRepository;
 use App\V2\Traits\ValidaAutorizacaoTrait;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +39,7 @@ class PlanoTrabalhoConsolidacaoService
         private readonly RecursoValidator $recursoValidator,
         private readonly StatusService $statusService,
         private readonly AvaliacaoPolicy $avaliacaoPolicy,
+        private readonly DispensaAvaliacaoPolicy $dispensa,
     ) {}
 
 
@@ -108,6 +111,31 @@ class PlanoTrabalhoConsolidacaoService
 
             return $consolidacao;
         });
+    }
+
+    /**
+     * @return string[] IDs das consolidações dispensadas
+     */
+    public function dispensas(string $planoTrabalhoId): array
+    {
+        $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
+
+        if ($plano === null) {
+            throw new NotFoundException('Plano de Trabalho não encontrado.');
+        }
+
+        $vigencia = CarbonPeriod::create(
+            Carbon::parse($plano->getAttribute('data_inicio'))->startOfDay(),
+            Carbon::parse($plano->getAttribute('data_fim'))->startOfDay(),
+        );
+
+        $consolidacoes = $this->consolidacaoRepository->findAllByPlanoTrabalhoId($planoTrabalhoId);
+
+        return $this->dispensa->consolidacoesDispensadas(
+            $plano->getAttribute('usuario_id'),
+            $vigencia,
+            $consolidacoes,
+        );
     }
 
     public function notasAvaliacao(string $planoTrabalhoId): Collection

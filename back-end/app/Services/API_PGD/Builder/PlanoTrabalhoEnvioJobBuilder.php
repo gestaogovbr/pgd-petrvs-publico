@@ -25,6 +25,6 @@ class PlanoTrabalhoEnvioJobBuilder
             );
         }
 
-        return new ExportarPlanoTrabalhoJob($tenantId, $planoTrabalho->id, $origem);
+        return new ExportarPlanoTrabalhoJob($tenantId, $planoTrabalho->id, $origem, $planoTrabalho->numero);
     }
 }

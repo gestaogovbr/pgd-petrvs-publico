@@ -1,3 +1,4 @@
+@if (!facade.isDispensada(consolidacao.id)) {
 @if (consolidacao.avaliacoes.length > 0) {
   <div class="mt-4">
     <p class="text-weight-semi-bold mb-2">Avaliação do Período</p>
@@ -19,7 +20,7 @@
               @let notaTotal = facade.notas().length;
               <tr>
                 <td>{{ avaliacao.data_avaliacao | date:'dd/MM/yyyy HH:mm' }}</td>
-                <td>{{ avaliacao.avaliador?.nome || '-' }}</td>
+                <td>{{ avaliacao.avaliador?.nome_exibicao || '-' }}</td>
                 <td>
                   <div class="d-flex align-items-center gap-2">
                     @if (notaIdx !== -1) {
@@ -101,4 +102,5 @@
     (justificativaChange)="facade.setJustificativaAvaliacao(consolidacao.id, $event)"
     (submeter)="facade.avaliarConsolidacao(consolidacao)"
   />
+}
 }

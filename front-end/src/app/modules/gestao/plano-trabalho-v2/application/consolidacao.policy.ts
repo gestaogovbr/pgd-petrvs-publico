@@ -3,15 +3,18 @@ import { AuthService } from 'src/app/services/auth.service';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { AvaliacaoConsolidacao, Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, PlanoTrabalho } from '../domain/types';
 import { PlanoTrabalhoStatus } from 'src/app/models/plano-trabalho.model';
+import { ConsolidacaoFacade } from './consolidacao.facade';
 
 @Injectable()
 export class ConsolidacaoPolicy {
   private readonly auth = inject(AuthService);
   private readonly unidadeService = inject(UnidadeService);
+  private readonly facade = inject(ConsolidacaoFacade);
 
   podeRegistrar(planoTrabalho: PlanoTrabalho, consolidacao?: Consolidacao): boolean {
     if (planoTrabalho.status !== PlanoTrabalhoStatus.ATIVO && !planoTrabalho.encerrado_at) return false;
     if (consolidacao && ConsolidacaoStatusGroups.fechados.includes(consolidacao.status)) return false;
+    if (this.facade.isDispensada(consolidacao?.id ?? '')) return false;
     return planoTrabalho.usuario_id === this.auth.usuario?.id
       || this.unidadeService.isGestorUnidade(planoTrabalho.unidade_id);
   }

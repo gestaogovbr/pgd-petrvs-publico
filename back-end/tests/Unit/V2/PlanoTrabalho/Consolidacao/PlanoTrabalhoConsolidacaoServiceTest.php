@@ -14,6 +14,7 @@ use App\Repository\UnidadeRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Exceptions\NotFoundException;
+use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
@@ -31,6 +32,7 @@ beforeEach(function () {
     $this->recursoValidator = Mockery::mock(RecursoValidator::class);
     $this->statusService = Mockery::mock(StatusService::class);
     $this->avaliacaoPolicy = Mockery::mock(AvaliacaoPolicy::class);
+    $this->dispensaPolicy = Mockery::mock(DispensaAvaliacaoPolicy::class);
 
     $this->service = new PlanoTrabalhoConsolidacaoService(
         $this->planoRepo,
@@ -43,6 +45,7 @@ beforeEach(function () {
         $this->recursoValidator,
         $this->statusService,
         $this->avaliacaoPolicy,
+        $this->dispensaPolicy
     );
 });
 

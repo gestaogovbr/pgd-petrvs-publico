@@ -45,6 +45,7 @@ class PlanoTrabalhoRequestValidator
             'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
             'modalidade_pgd' => ['required', 'string', Rule::in(ModalidadePgd::keys())],
             'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
+            'clone_de' => ['nullable', 'uuid'],
         ], [
             'usuario_id.required' => 'O participante é obrigatório.',
             'usuario_id.uuid' => 'O valor informado para o participante é inválido.',

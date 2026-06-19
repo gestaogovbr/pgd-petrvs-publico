@@ -147,7 +147,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   // TODO: definir comportamento quando usuario.modalidade_pgd é null (sem registro no SIAPE).
   // Atualmente trata como divergente, exigindo justificativa.
   readonly agenteExibicao = computed(() =>
-    this.agentePublicoQuery.value || this.plano()?.usuario?.nome || '-'
+    this.agentePublicoQuery.value || this.plano()?.usuario?.nome_exibicao || '-'
   );
 
   readonly unidadeExibicao = computed(() => {
@@ -403,7 +403,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   selecionarUsuario(item: UsuarioSearchItem) {
     this.erroAgentePublico.set('');
     this.form.controls.usuario_id.setValue(item.id);
-    this.agentePublicoQuery.setValue(item.nome, { emitEvent: false });
+    this.agentePublicoQuery.setValue(item.nome_exibicao, { emitEvent: false });
     this.sugestoesUsuarios.set([]);
     this.carregarUnidades(item as Usuario);
   }

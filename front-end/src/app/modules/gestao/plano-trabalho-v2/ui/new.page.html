@@ -1,6 +1,10 @@
 <div class="container-fluid py-3 govbr-v2">
   <app-breadcrumb />
-  <h2 class="mb-0">Novo Plano de Trabalho</h2>
+  @if (cloneDe()) {
+    <h2 class="mb-0">Clonar Plano de Trabalho <a [routerLink]="['/gestao', 'plano-trabalho-v2', 'consultar', cloneDe()]" style="font-size: inherit">#{{ cloneDeNumero() }}</a></h2>
+  } @else {
+    <h2 class="mb-0">Novo Plano de Trabalho</h2>
+  }
 
   <div class="br-card">
     <div class="card-header text-weight-semi-bold text-up-02 p-2x bg-gray-10">
@@ -34,7 +38,7 @@
                   @for (u of sugestoesUsuarios(); track u.id) {
                     <div class="card-content d-flex justify-content-between align-items-center px-2 py-1">
                       <div class="text-truncate">
-                        {{ u.nome }} @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
+                        {{ u.nome_exibicao }} @if (u.matricula) { <span class="text-body-secondary">({{ u.matricula }})</span> }
                       </div>
                       <br-button emphasis="secondary" type="button" (click)="selecionarUsuario(u)">Selecionar</br-button>
                     </div>
