@@ -628,6 +628,7 @@ use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQue
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('envio-participante', [EnvioParticipanteQueryController::class, 'index']);
     Route::get('envio-plano-trabalho', [EnvioPlanoTrabalhoQueryController::class, 'index']);
+    Route::post('envio-plano-trabalho/{id}/enviar', [EnvioPlanoTrabalhoQueryController::class, 'enviar']);
     Route::get('envio-plano-entrega', [EnvioPlanoEntregaQueryController::class, 'index']);
 
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);

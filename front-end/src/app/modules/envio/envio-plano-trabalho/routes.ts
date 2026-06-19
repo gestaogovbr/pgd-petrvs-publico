@@ -4,6 +4,7 @@ import { authTenantVersionInterceptor, errorInterceptor } from 'src/app/v2/http/
 import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
 import { EnvioPlanoTrabalhoApiClient } from './infra/envio-plano-trabalho-api.client';
 import { ListarEnvioPlanoTrabalho } from './application/listar-envio-plano-trabalho.usecase';
+import { EnviarEnvioPlanoTrabalho } from './application/enviar-envio-plano-trabalho.usecase';
 import { EnvioPlanoTrabalhoListFacade } from './application/list.facade';
 
 export const routes: Routes = [
@@ -14,6 +15,7 @@ export const routes: Routes = [
       BreadcrumbService,
       EnvioPlanoTrabalhoApiClient,
       ListarEnvioPlanoTrabalho,
+      EnviarEnvioPlanoTrabalho,
       EnvioPlanoTrabalhoListFacade,
     ],
     loadComponent: () => import('./ui/list.page').then((m) => m.EnvioPlanoTrabalhoListPage),
