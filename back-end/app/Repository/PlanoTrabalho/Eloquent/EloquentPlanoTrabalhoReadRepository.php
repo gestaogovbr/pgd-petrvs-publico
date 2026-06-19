@@ -38,18 +38,21 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         /** @var PlanoTrabalho|null */
         $planoTrabalho = $this->model->newQuery()
             ->with([
-                'usuario',
+                'unidade',
+                'usuario.lotacao.unidade',
                 'entregas' => function ($query) {
-                    $query
-                        ->whereNull('plano_entrega_entrega_id')
-                        ->orWhereHas('planoEntregaEntrega.planoEntrega', function ($query) {
-                            $query->whereIn('status', StatusEnum::permitemEnvio());
-                        });
+                    $query->where(function ($query) {
+                        $query
+                            ->whereNull('plano_entrega_entrega_id')
+                            ->orWhereHas('planoEntregaEntrega.planoEntrega', function ($query) {
+                                $query->whereIn('status', StatusEnum::permitemEnvio());
+                            });
+                    });
                 },
+                'entregas.planoEntregaEntrega.planoEntrega',
                 'consolidacoes' => function ($query) {
                     $query->whereIn('status', [StatusEnum::AVALIADO->value]);
                 },
-                'consolidacoes.avaliacoes',
                 'consolidacoes.avaliacao',
             ])
             ->find($id);
