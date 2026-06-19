@@ -127,7 +127,7 @@ class SiapeIndividualServidorService extends ServiceBase
             
             $this->atualizarVinculosUsuarios($cpfLimpo, $dadosFuncionais);
             $this->executarSincronizacaoFinal($cpfLimpo);
-            
+
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_SUCESSO);
 
             if (empty($this->resumo)) {
@@ -393,7 +393,9 @@ class SiapeIndividualServidorService extends ServiceBase
         ]);
         
         $codigoUnidade = $this->resolverCodigoUnidadeServidor($dados);
-        $this->validarUnidadeProcessada($cpf, $codigoUnidade, $dados);
+        if (!$this->validarUnidadeProcessada($cpf, $codigoUnidade, $dados)) {
+            return;
+        }
         
         $this->sincronizarDadosUnidade($cpf, $codigoUnidade);
     }
@@ -439,21 +441,21 @@ class SiapeIndividualServidorService extends ServiceBase
         return $this->unidadeRepository->existsByCodigo($codigoUnidade);
     }
 
-    private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, array $dados): void
+    private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, array $dados): bool
     {
         $unidadeProcessada = $this->verificarExistenciaUnidade($codigoUnidade);
 
         if (!$unidadeProcessada) {
-            SiapeLog::error('Unidade não processada encontrada', [
+            $matricula = (string) ($dados['matriculaSiape'] ?? 'N/A');
+            SiapeLog::warning('Unidade não processada encontrada; matrícula ignorada', [
                 'cpf' => $cpf,
                 'codigo_unidade' => $codigoUnidade,
-                'dados_funcionais' => $dados
+                'matricula_siape' => $matricula,
             ]);
-            throw new Exception(
-                "O CPF {$cpf} pertence à unidade de código {$codigoUnidade}, que ainda não foi processada. " .
-                "É preciso fazer uma carga total na unidade primeiro."
-            );
+            return false;
         }
+
+        return true;
     }
 
     private function sincronizarDadosUnidade(string $cpf, string $codigoUnidade): void
