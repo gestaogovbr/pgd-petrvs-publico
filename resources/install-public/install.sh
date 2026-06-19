@@ -590,17 +590,6 @@ EOF
       "durable": true,
       "auto_delete": false,
       "arguments": {}
-    },
-    {
-      "name": "pgd_queue_delay",
-      "vhost": "/",
-      "durable": true,
-      "auto_delete": false,
-      "arguments": {
-        "x-message-ttl": 300000,
-        "x-dead-letter-exchange": "",
-        "x-dead-letter-routing-key": "pgd_queue"
-      }
     }
   ]
 }
