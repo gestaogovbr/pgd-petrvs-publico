@@ -55,6 +55,8 @@ export type PlanoTrabalhoMetadata = {
 
 export type PlanoTrabalhoAcoes = {
     editar: boolean;
+    arquivar: boolean;
+    encerrar: boolean;
 };
 
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {

@@ -47,7 +47,7 @@
       <div class="card-content">
         <div class="row">
           <div class="col-md-4 mb-3">
-            <p class="mb-1 text-weight-semi-bold text-up-01">Agente Público</p>
+            <p class="mb-1 text-weight-semi-bold text-up-01">Participante</p>
             <p class="mb-0">{{ planoTrabalho()?.usuario?.nome_exibicao || '-' }}</p>
           </div>
           <div class="col-md-4 mb-3">
@@ -107,7 +107,7 @@
                 <tr>
                   <th scope="col">Plano de Entrega</th>
                   <th scope="col">Entrega</th>
-                  <th scope="col">% CHD</th>
+                  <th scope="col">% CHD <br-tag class="count">{{ totalForcaTrabalho() }}%</br-tag></th>
                   <th scope="col">Trabalho Planejado</th>
                 </tr>
               </thead>

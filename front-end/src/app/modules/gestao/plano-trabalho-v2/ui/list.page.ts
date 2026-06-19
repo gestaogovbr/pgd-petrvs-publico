@@ -186,6 +186,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private setupSubscriptions() {
     const arquivados = this.filters.controls.incluir_arquivados;
     const vigentes = this.filters.controls.vigentes;
+    const meusPlanos = this.filters.controls.meus_planos;
+    const subordinadas = this.filters.controls.incluir_subordinadas;
 
     this.subscriptions.push(
       this.filterChange$.pipe(debounceTime(400)).subscribe(() => this.applyFiltersAndLoad(true)),
@@ -195,6 +197,14 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       }),
       vigentes.valueChanges.subscribe(checked => {
         if (checked) arquivados.setValue(false, { emitEvent: false });
+        this.onFilterChange();
+      }),
+      meusPlanos.valueChanges.subscribe(checked => {
+        if (checked) subordinadas.setValue(false, { emitEvent: false });
+        this.onFilterChange();
+      }),
+      subordinadas.valueChanges.subscribe(checked => {
+        if (checked) meusPlanos.setValue(false, { emitEvent: false });
         this.onFilterChange();
       }),
       this.filters.controls.tipo_modalidade_id.valueChanges.subscribe(() => this.onFilterChange()),

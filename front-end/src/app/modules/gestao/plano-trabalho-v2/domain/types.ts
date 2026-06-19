@@ -118,6 +118,7 @@ export type AvaliacaoConsolidacao = {
   avaliador?: { id: string; nome_exibicao: string };
   recurso: string | null;
   data_recurso: string | null;
+  pode_cancelar?: boolean;
 };
 
 export type NotaAvaliacao = {
