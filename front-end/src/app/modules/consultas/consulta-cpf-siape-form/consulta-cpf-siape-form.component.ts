@@ -18,7 +18,7 @@ import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 })
 export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, UsuarioDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent
-  public usuario?: Usuario|null;
+  public usuarios: Usuario[] = [];
   public integranteDao: UnidadeIntegranteDaoService;
   
   public form: FormGroup;
@@ -61,19 +61,17 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
       this.clearErros();
       try {
         const cpf = this.form.get('cpf')?.value.replace(/\D/g, '');
-        const usuarios = await this.dao?.query({ where: [['cpf', '==', cpf]] })
-          .asPromise();
-
-        if (usuarios) {
-          this.usuario = usuarios[0];
-        }
+        this.usuarios = (await this.dao?.query({ where: [['cpf', '==', cpf]] })
+          .asPromise()) ?? [];
 
         this.integrantes = [];
 
-        if (this.usuario) {
-          const integrantesList = await this.integranteDao!.carregarIntegrantes("", this.usuario.id);
-          this.integrantes = integrantesList.integrantes.filter(integrante => integrante.atribuicoes?.length > 0);
-        }
+        const integrantesPorUsuario = await Promise.all(
+          this.usuarios.map(usuario => this.integranteDao.carregarIntegrantes("", usuario.id))
+        );
+        this.integrantes = integrantesPorUsuario.flatMap(resultado =>
+          resultado.integrantes.filter(integrante => integrante.atribuicoes?.length > 0)
+        );
 
         const result = await firstValueFrom(this.dao!.consultarSIAPE(cpf));
         const status = Number(result?.status);
@@ -91,7 +89,7 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
             {
               metadata: {
                 cpf: this.form.get('cpf')?.value,
-                usuario: this.usuario,
+                usuario: this.usuarios,
                 dadosPessoais: result.pessoais,
                 dadosFuncionais: result.funcionais,
                 integrantes: this.integrantes
