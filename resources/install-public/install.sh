@@ -81,12 +81,6 @@ RABBITMQ_LOGIN=petrvs
 RABBITMQ_PASSWORD=petrvs
 RABBITMQ_QUEUE=pgd_queue
 
-RABBITMQ_HOST=petrvs_rabbitmq
-RABBITMQ_PORT=5672
-RABBITMQ_LOGIN=petrvs
-RABBITMQ_PASSWORD=petrvs
-RABBITMQ_QUEUE=pgd_queue
-
 TEAMS_ENABLE=false
 TEAMS_COGES_URL=
 TEAMS_ERRORS_URL="
@@ -358,11 +352,6 @@ services:
         condition: service_started
       petrvs_rabbitmq:
         condition: service_healthy
-    depends_on:
-      petrvs_redis:
-        condition: service_started
-      petrvs_rabbitmq:
-        condition: service_healthy
   petrvs_queue:
     image: segescginf/pgdpetrvs:$IMAGE_TAG
     container_name: petrvs_queue
@@ -389,7 +378,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-rabbitmq
-    image: petrvs-rabbitmq:install
     container_name: petrvs_rabbitmq
     env_file:
       - ./.env
@@ -602,17 +590,6 @@ EOF
       "durable": true,
       "auto_delete": false,
       "arguments": {}
-    },
-    {
-      "name": "pgd_queue_delay",
-      "vhost": "/",
-      "durable": true,
-      "auto_delete": false,
-      "arguments": {
-        "x-message-ttl": 300000,
-        "x-dead-letter-exchange": "",
-        "x-dead-letter-routing-key": "pgd_queue"
-      }
     }
   ]
 }

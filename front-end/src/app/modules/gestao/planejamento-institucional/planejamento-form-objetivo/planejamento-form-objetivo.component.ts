@@ -19,15 +19,15 @@ import { firstValueFrom } from 'rxjs';
 
 
 @Component({
-    selector: 'app-planejamento-form-objetivo',
-    templateUrl: './planejamento-form-objetivo.component.html',
-    styleUrls: ['./planejamento-form-objetivo.component.scss'],
-    standalone: false
+  selector: 'app-planejamento-form-objetivo',
+  templateUrl: './planejamento-form-objetivo.component.html',
+  styleUrls: ['./planejamento-form-objetivo.component.scss'],
+  standalone: false
 })
 export class PlanejamentoFormObjetivoComponent extends PageFormBase<PlanejamentoObjetivo, PlanejamentoObjetivoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
-  @ViewChild('planejamentoSuperiorNome', {static: false}) public planejamentoSuperiorNome?: InputTextComponent;
-  @ViewChild('eixoTematico', {static: false}) public eixoTematico?: InputSearchComponent;
+  @ViewChild('planejamentoSuperiorNome', { static: false }) public planejamentoSuperiorNome?: InputTextComponent;
+  @ViewChild('eixoTematico', { static: false }) public eixoTematico?: InputSearchComponent;
   @ViewChild('tipoObjetivo', { static: false }) public tipoObjetivo?: InputSelectComponent;
 
 
@@ -46,27 +46,27 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
     this.eixoTematicoDao = injector.get<EixoTematicoDaoService>(EixoTematicoDaoService);
     this.tipoObjetivoApiClient = injector.get<TipoObjetivoApiClient>(TipoObjetivoApiClient);
     this.form = this.fh.FormBuilder({
-      nome: {default: ""},
-      fundamentacao: {default: ""},
-      planejamento_id: {default: null},
-      planejamento_superior_nome: {default: ""},
-      eixo_tematico_id: {default: null},
-      objetivo_superior_id: {default: null},
-      objetivo_pai_id: {default: null},
-      integra_okr: {default: true},
-      tipo_objetivo_id: {default: null},
+      nome: { default: "" },
+      fundamentacao: { default: "" },
+      planejamento_id: { default: null },
+      planejamento_superior_nome: { default: "" },
+      eixo_tematico_id: { default: null },
+      objetivo_superior_id: { default: null },
+      objetivo_pai_id: { default: null },
+      integra_okr: { default: true },
+      tipo_objetivo_id: { default: null },
     }, this.cdRef, this.validate);
   }
 
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if(['nome','fundamentacao'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório";
-    if(['eixo_tematico_id'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório";
+    if (['nome', 'fundamentacao'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório";
+    if (['eixo_tematico_id'].indexOf(controlName) >= 0 && !control.value?.length) result = "Obrigatório";
     return result;
   }
 
-  public formValidation = (form?: FormGroup) =>{
+  public formValidation = (form?: FormGroup) => {
     let result = null;
     return result;
   }
@@ -78,34 +78,34 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));
-    this.title = entity._status == 'ADD' ? 'Inclusão de Objetivo' : 'Editando objetivo...';
+    this.title = entity._status == 'ADD' ? 'Adicionar Elemento' : 'Editando Elemento...';
     this.planejamento = this.metadata?.planejamento as Planejamento;
-    if(this.metadata?.planejamento_superior) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento;
+    if (this.metadata?.planejamento_superior) this.planejamento.planejamento_superior = this.metadata.planejamento_superior as Planejamento;
     this.form?.controls.planejamento_superior_nome.setValue(this.planejamento?.planejamento_superior?.nome || '');
-    const objetivosSuperioresRaw = this.planejamento?.planejamento_superior?.objetivos as PlanejamentoObjetivo[] || []; 
+    const objetivosSuperioresRaw = this.planejamento?.planejamento_superior?.objetivos as PlanejamentoObjetivo[] || [];
     const objetivosRaw = (this.metadata?.objetivos as PlanejamentoObjetivo[]) || [];
 
     let objetivosOrdenados = this.ordenarObjetivos(objetivosRaw);
     let objetivosSuperioresOrdenados = this.ordenarObjetivos(objetivosSuperioresRaw);
 
-    
+
     objetivosOrdenados = this.filtrarObjetivos(objetivosOrdenados, entity.id);
     this.objetivos = this.montarListaObjetivos(objetivosOrdenados);
     this.objetivos_superiores = this.montarListaObjetivos(objetivosSuperioresOrdenados);
 
     (async () => {
-        const tiposObjetivos = this.tipoObjetivoApiClient
-          ? await firstValueFrom(this.tipoObjetivoApiClient.list())
-          : [];
+      const tiposObjetivos = this.tipoObjetivoApiClient
+        ? await firstValueFrom(this.tipoObjetivoApiClient.list())
+        : [];
 
-        if (Array.isArray(tiposObjetivos)) {
-          this.tiposObjetivos = tiposObjetivos.map(x => ({
-            key: x.id,
-            value: x.nome,
-            data: x
-          }));
-        }
-        await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
+      if (Array.isArray(tiposObjetivos)) {
+        this.tiposObjetivos = tiposObjetivos.map(x => ({
+          key: x.id,
+          value: x.nome,
+          data: x
+        }));
+      }
+      await this.eixoTematico?.loadSearch(entity.eixo_tematico || entity.eixo_tematico_id);
     })();
   }
 
@@ -193,7 +193,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
   }
 
   public onObjetivoSuperiorChange(row: any) {
-    let idEixoTematicoObjetivoSuperior = this.objetivos_superiores.find(x => x.key === this.form?.controls.objetivo_superior_id.value)?.data.eixo_tematico_id;  
+    let idEixoTematicoObjetivoSuperior = this.objetivos_superiores.find(x => x.key === this.form?.controls.objetivo_superior_id.value)?.data.eixo_tematico_id;
     if (!this.form!.controls.eixo_tematico_id.value) this.form!.controls.eixo_tematico_id.setValue(idEixoTematicoObjetivoSuperior);
     this.cdRef.detectChanges();
   }

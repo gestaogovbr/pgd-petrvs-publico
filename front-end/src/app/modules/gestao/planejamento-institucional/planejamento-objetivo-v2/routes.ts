@@ -26,5 +26,22 @@ export const planejamentoObjetivoV2Routes: Routes = [
       BreadcrumbService,
       PlanejamentoObjetivoEsforcoApiClient
     ]
+  },
+  {
+    path: 'objetivo-arvore/:id',
+    loadComponent: () =>
+      import('./ui/planejamento-objetivo-arvore.page').then(m => m.PlanejamentoObjetivoArvorePage),
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: 'Árvore de objetivos',
+      breadcrumb: 'Árvore de objetivos'
+    },
+    providers: [
+      provideHttpClient(withInterceptors([authTenantVersionInterceptor, errorInterceptor])),
+      BreadcrumbService,
+      PlanejamentoObjetivoEsforcoApiClient
+    ]
   }
 ];

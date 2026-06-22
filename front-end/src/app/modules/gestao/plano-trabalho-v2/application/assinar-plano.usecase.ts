@@ -110,7 +110,7 @@ export class AssinarPlanoUseCase {
       finalize(() => this.salvando.set(false))
     ).subscribe({
       next: (assinatura) => {
-        assinatura.usuario_nome = this.auth.usuario?.nome;
+        assinatura.usuario_nome = this.auth.usuario?.nome_exibicao;
         this.documento.update(doc => doc
           ? { ...doc, assinaturas: [...(doc.assinaturas ?? []), assinatura] }
           : doc

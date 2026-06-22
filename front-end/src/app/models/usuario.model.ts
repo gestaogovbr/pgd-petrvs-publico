@@ -139,6 +139,8 @@ export class Usuario extends Base implements HasNotificacao {
     public cpf: string = ""; /* CPF do usuário */
     public matricula: string | null = null; /* Matrícula do usuário */
     public apelido: string = ""; /* Apelido / Nome de Guerra / Nome funcional */
+    public nome_social: string | null = null; /* Nome Social do usuário */
+    public nome_exibicao: string = ""; /* Nome social ou nome civil (computado pelo back-end) */
     public telefone: string | null = null; /* Telefone */
     public data_nascimento: Date = new Date(); /* Data de nascimento do Usuário */
     public uf: string = "DF"; /* UF - Setar a primeira do LIST */

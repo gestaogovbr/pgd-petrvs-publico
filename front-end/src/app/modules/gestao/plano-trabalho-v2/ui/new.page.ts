@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, merge, of, switchMap, take, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -21,12 +21,13 @@ import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb
   selector: 'app-plano-trabalho-v2-new-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, WebcomponentsAngularModule, BreadcrumbComponent],
   templateUrl: './new.page.html'
 })
 export class PlanoTrabalhoV2NewPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PlanoTrabalhoApiClient);
   private readonly usuarioService = inject(UsuarioService);
   private readonly programaApi = inject(ProgramaApiService);
@@ -40,6 +41,8 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   carregandoRegramento = signal(false);
   readonly confirmacao = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
   erroPeriodo = signal(false);
+  readonly cloneDe = signal<string | null>(null);
+  readonly cloneDeNumero = signal<number | null>(null);
 
   programaNome = signal('');
   private programaId = signal('');
@@ -115,6 +118,11 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       ctrl.updateValueAndValidity();
     }, { injector: this.injector });
 
+    const fonteId = this.route.snapshot.queryParamMap.get('clone_de');
+    if (fonteId) {
+      this.cloneDe.set(fonteId);
+    }
+
     timer(0, 250)
       .pipe(
         map(() => this.auth.usuario),
@@ -123,7 +131,9 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(usuario => {
-        this.preselectUsuario(usuario);
+        if (!this.cloneDe()) {
+          this.preselectUsuario(usuario);
+        }
         if (this.auth.isUsuarioParticipante()) {
           this.agentePublicoQuery.disable({ emitEvent: false });
         }
@@ -156,6 +166,10 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     ).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(() => this.erroPeriodo.set(false));
+
+    if (this.cloneDe()) {
+      this.carregarDadosFonte(this.cloneDe()!);
+    }
   }
 
   voltar() {
@@ -173,7 +187,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   selecionarUsuario(item: UsuarioSearchItem) {
     this.erroAgentePublico.set('');
     this.form.controls.usuario_id.setValue(item.id);
-    this.agentePublicoQuery.setValue(item.nome, { emitEvent: false });
+    this.agentePublicoQuery.setValue(item.nome_exibicao, { emitEvent: false });
     this.sugestoesUsuarios.set([]);
     this.carregarUnidades(item as Usuario);
   }
@@ -213,7 +227,8 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       data_inicio: this.form.controls.data_inicio.value,
       data_fim: this.form.controls.data_fim.value,
       modalidade_pgd: this.form.controls.modalidade_pgd.value,
-      justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null
+      justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null,
+      clone_de: this.cloneDe() || null
     };
 
     this.saving.set(true);
@@ -252,7 +267,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       return;
     }
     this.form.controls.usuario_id.setValue(usuario.id);
-    this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
+    this.agentePublicoQuery.setValue(usuario.nome_exibicao, { emitEvent: false });
     void this.carregarUnidades(usuario);
   }
 
@@ -297,6 +312,51 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       const firstKey = this.modalidades()[0].key;
       this.selectedModalidade.set(firstKey);
       this.form.controls.modalidade_pgd.setValue(firstKey);
+    }
+  }
+
+  private carregarDadosFonte(fonteId: string) {
+    this.api.getById(fonteId).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: plano => {
+        this.cloneDeNumero.set(plano.numero ?? null);
+        this.usuarioService.getById(plano.usuario_id).pipe(
+          take(1)
+        ).subscribe(usuario => {
+          this.form.controls.usuario_id.setValue(usuario.id);
+          this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
+          void this.carregarUnidadesComPreselecao(usuario, plano.unidade_id, plano.modalidade_pgd);
+        });
+      },
+      error: () => {
+        this.cloneDe.set(null);
+        if (this.auth.usuario) {
+          this.preselectUsuario(this.auth.usuario);
+        }
+      }
+    });
+  }
+
+  private async carregarUnidadesComPreselecao(usuario: Usuario, unidadeId: string, modalidade: string | null) {
+    const unidades = await firstValueFrom(this.usuarioService.getUnidadesVinculadas(usuario.cpf));
+    this.unidades.set(unidades ?? []);
+
+    if (unidadeId) {
+      this.selectedUnidadeId.set(unidadeId);
+      this.form.controls.unidade_id.setValue(unidadeId, { emitEvent: false });
+      await this.carregarRegramento(unidadeId);
+    }
+
+    if (typeof usuario.modalidade_pgd === 'string' && usuario.modalidade_pgd.length) {
+      this.usuarioModalidadePgd.set(usuario.modalidade_pgd);
+    }
+
+    this.modalidades.set(await this.tipoModalidadeApi.listar());
+
+    if (modalidade) {
+      this.selectedModalidade.set(modalidade);
+      this.form.controls.modalidade_pgd.setValue(modalidade);
     }
   }
 }

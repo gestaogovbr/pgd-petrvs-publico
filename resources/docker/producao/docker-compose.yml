@@ -57,7 +57,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-rabbitmq
-    image: petrvs-rabbitmq:producao
     container_name: petrvs_rabbitmq
     env_file:
       - ./.env
