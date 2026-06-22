@@ -36,8 +36,8 @@ class PlanoTrabalhoCancelarValidator
             throw new NotFoundException('Plano de Trabalho não encontrado.');
         }
 
-        if ($plano->status !== StatusEnum::ATIVO->value) {
-            throw new ValidateException('Apenas planos com status ATIVO podem ser cancelados.');
+        if (!in_array($plano->status, [StatusEnum::ATIVO->value, StatusEnum::SUSPENSO->value])) {
+            throw new ValidateException('Apenas planos com status ATIVO ou SUSPENSO podem ser cancelados.');
         }
 
         $this->validarSemConsolidacaoFinalizada($plano);

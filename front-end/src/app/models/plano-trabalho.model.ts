@@ -43,7 +43,7 @@ export const PlanoTrabalhoStatusGroups: Record<PlanoTrabalhoStatusGroupName, rea
     comExecucaoVisivel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO, PlanoTrabalhoStatus.AVALIADO],
     arquivavel: [PlanoTrabalhoStatus.CONCLUIDO, PlanoTrabalhoStatus.CANCELADO],
     clonavel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO],
-    cancelavel: [PlanoTrabalhoStatus.ATIVO],
+    cancelavel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.SUSPENSO],
     excluivel: [PlanoTrabalhoStatus.INCLUIDO],
 };
 
