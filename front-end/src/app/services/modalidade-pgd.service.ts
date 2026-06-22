@@ -12,10 +12,10 @@ export class ModalidadePgdService {
   public readonly items: LookupItem[] = [
     { key: null, value: 'Não definida' },
     { key: 'presencial', value: 'Presencial' },
-    { key: 'parcial', value: 'Teletrabalho (Parcial)' },
-    { key: 'integral', value: 'Teletrabalho (Integral)' },
-    { key: 'no exterior', value: 'Teletrabalho no exterior' },
-    { key: 'no exterior substituicao', value: 'Teletrabalho no exterior (substituição)' }
+    { key: 'parcial', value: 'Teletrabalho Parcial' },
+    { key: 'integral', value: 'Teletrabalho Integral' },
+    { key: 'no exterior', value: 'Teletrabalho no Exterior (Discricionária- §7º, art. 12, D. 11.072/22)' },
+    { key: 'no exterior substituicao', value: 'Teletrabalho no Exterior (Substituição- VIII, art. 12, D. 11.072/22)' }
   ];
 
   public normalize(value: unknown): string | null {
