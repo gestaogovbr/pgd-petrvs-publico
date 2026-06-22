@@ -1,5 +1,8 @@
 ## 3.0.4 22/06/2026
 
+### Adicionado
+- Adicionar vLibras para acessibilidade
+
 ### Modificado
 - Reforçada a verificação da atualização de chefias pelo SIAPE, contemplando situações em que o servidor pertence à própria unidade ou está em outra unidade de exercício.
 - Limite de caracteres do registro de execução (trabalho executado) ampliado para 10.000 caracteres
@@ -16,6 +19,8 @@
 - Corrigida visualização de variáveis disponíveis no modal "Adicionar macro" do editor de template do TCR: campos folha agora são clicáveis e campos de array exibem notação correta (ex: `entregas[].descricao`)
 - Corrigida mensagem de erro para status HTTP 400 (Bad Request) para consulta de CPF e Unidade (SIAPE)
 - Corrigida nomenclatura das modalidades
+- Corrigido bug no cancelamento de conclusão de Plano de Entrega
+- Módulo de Ocorrências disponilizado para perfil de Participante
 
 ## 3.0.3 18/06/2026
 
