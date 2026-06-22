@@ -328,7 +328,8 @@ export class UtilService {
   }
 
   public apelidoOuNome(usuario: Usuario | undefined, capitalize: boolean = false): string | undefined {
-    const name = usuario?.apelido?.length ? usuario.apelido : usuario?.nome || "";
+    const nomeSocial = usuario?.nome_social?.length ? usuario.nome_social.split(' ')[0] : '';
+    const name = nomeSocial || (usuario?.apelido?.length ? usuario.apelido : usuario?.nome || "");
     return name && capitalize ? this.capitalCase(name) : name;
   }
 

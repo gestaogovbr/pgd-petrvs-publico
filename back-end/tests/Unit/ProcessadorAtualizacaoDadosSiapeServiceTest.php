@@ -225,6 +225,153 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
     });
 });
 
+describe('ProcessadorAtualizacaoDadosSiapeService - cadastrarUsuariosAusentes com matriculas diferentes no batch', function () {
+    afterEach(function () {
+        Mockery::close();
+    });
+
+    it('deve criar novo usuario quando mesmo cpf+unidade aparece com segunda matricula no batch', function () {
+        // Arrange: 2 registros com mesmo CPF, mesma unidade, matriculas diferentes
+        $dadosBase = [
+            'cpf' => '12345678901',
+            'exercicio' => 'COD001',
+            'nome' => 'Servidor A',
+            'apelido' => 'A',
+            'telefone' => null,
+            'data_nascimento' => null,
+            'sexo' => 'M',
+            'situacao_funcional' => 'ATIVO',
+            'modalidade_pgd' => 1,
+            'uf' => 'DF',
+            'data_modificacao' => '2024-01-01',
+            'ident_unica' => 'UID1',
+            'emailfuncional' => 'a@gov.br',
+        ];
+
+        $vinculos = [
+            (object) array_merge($dadosBase, ['matricula' => '1111111']),
+            (object) array_merge($dadosBase, ['matricula' => '2222222']),
+        ];
+
+        $integracaoServidorRepositoryMock = Mockery::mock(IntegracaoServidorRepository::class);
+        $integracaoServidorRepositoryMock->shouldReceive('getUsuariosAusentes')
+            ->once()
+            ->andReturn($vinculos);
+
+        $unidadeObj = Mockery::mock(\App\Models\Unidade::class)->makePartial();
+        $unidadeObj->id = 'unidade-uuid-1';
+        $unidadeRepositoryMock = Mockery::mock(\App\Repository\UnidadeRepository::class);
+        $unidadeRepositoryMock->shouldReceive('findByCodigo')
+            ->with('COD001')
+            ->andReturn($unidadeObj);
+
+        $usuarioServiceMock = Mockery::mock(UsuarioService::class);
+
+        // Primeira chamada: retorna false (atualizou matricula)
+        $usuarioServiceMock->shouldReceive('verificaSeUsuarioSoMudouMatricula')
+            ->once()
+            ->with('12345678901', 'unidade-uuid-1', '1111111', 'COD001', Mockery::on(function (&$batch) {
+                // Simula o comportamento real: registra no batch
+                $batch['12345678901|unidade-uuid-1'] = true;
+                return true;
+            }))
+            ->andReturn(false);
+
+        // Segunda chamada: batch já tem a chave, retorna true (criar novo)
+        $usuarioServiceMock->shouldReceive('verificaSeUsuarioSoMudouMatricula')
+            ->once()
+            ->with('12345678901', 'unidade-uuid-1', '2222222', 'COD001', Mockery::on(function ($batch) {
+                return isset($batch['12345678901|unidade-uuid-1']);
+            }))
+            ->andReturn(true);
+
+        // Segundo registro gera usuario novo
+        $usuarioMock = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $usuarioMock->id = 'novo-user-id';
+        $usuarioMock->email = 'a@gov.br';
+        $usuarioMock->matricula = '2222222';
+        $usuarioMock->shouldReceive('toArray')->andReturn(['id' => 'novo-user-id']);
+        $usuarioMock->shouldReceive('getAttributes')->andReturn(['id' => 'novo-user-id', 'matricula' => '2222222']);
+        $usuarioMock->shouldReceive('getUnidadesAtribuicoesAttribute')->andReturn([]);
+
+        $usuarioServiceMock->shouldReceive('gerarUsuario')
+            ->once()
+            ->andReturn($usuarioMock);
+
+        $integracaoServiceMock = Mockery::mock(IntegracaoService::class);
+        $integracaoServiceMock->shouldReceive('validarModalidadePgd')->andReturn(1);
+        $integracaoServiceMock->shouldReceive('liberarEmailDuplicadoDefinindoComoNulo')->once();
+
+        $usuarioRepositoryMock = Mockery::mock(\App\Repository\UsuarioRepository::class);
+        $usuarioCriado = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $usuarioCriado->id = 'novo-user-id';
+        $usuarioRepositoryMock->shouldReceive('create')
+            ->once()
+            ->andReturn($usuarioCriado);
+
+        $unidadeIntegranteMock = Mockery::mock(UnidadeIntegranteService::class);
+        $unidadeIntegranteMock->shouldReceive('salvarIntegrantes')->once();
+
+        $nivelAcessoMock = Mockery::mock('alias:' . \App\Services\NivelAcessoService::class);
+        $perfilMock = (object) ['id' => 'perfil-participante-id'];
+        $nivelAcessoMock->shouldReceive('getPerfilParticipante')->andReturn($perfilMock);
+
+        $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
+        $loggerMock->shouldReceive('info', 'warning', 'error')->zeroOrMoreTimes();
+        Log::shouldReceive('channel')->with('siape')->andReturn($loggerMock);
+
+        // Build service via reflection
+        $service = Mockery::mock(ProcessadorAtualizacaoDadosSiapeService::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+
+        $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosSiapeService::class);
+
+        $repoProperty = $reflection->getProperty('integracaoServidorRepository');
+        $repoProperty->setAccessible(true);
+        $repoProperty->setValue($service, $integracaoServidorRepositoryMock);
+
+        $unidadeRepoProperty = $reflection->getProperty('unidadeRepository');
+        $unidadeRepoProperty->setAccessible(true);
+        $unidadeRepoProperty->setValue($service, $unidadeRepositoryMock);
+
+        $usuarioRepoProperty = $reflection->getProperty('usuarioRepository');
+        $usuarioRepoProperty->setAccessible(true);
+        $usuarioRepoProperty->setValue($service, $usuarioRepositoryMock);
+
+        $resultProperty = $reflection->getProperty('result');
+        $resultProperty->setAccessible(true);
+        $resultProperty->setValue($service, [
+            'unidades' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []],
+            'servidores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []],
+            'gestores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []],
+        ]);
+
+        $usuarioComumProperty = $reflection->getProperty('usuarioComum');
+        $usuarioComumProperty->setAccessible(true);
+        $usuarioComumProperty->setValue($service, 'Participante');
+
+        $parentProperty = $reflection->getParentClass()->getProperty('_services');
+        $parentProperty->setAccessible(true);
+        $parentProperty->setValue($service, [
+            'usuarioService' => $usuarioServiceMock,
+            'unidadeIntegrante' => $unidadeIntegranteMock,
+            'integracaoService' => $integracaoServiceMock,
+            'nivelAcessoService' => $nivelAcessoMock,
+        ]);
+
+        // Act
+        $method = $reflection->getMethod('cadastrarUsuariosAusentes');
+        $method->setAccessible(true);
+        $method->invoke($service);
+
+        // Assert: Mockery expectations validam que:
+        // - verificaSeUsuarioSoMudouMatricula foi chamado 2x
+        // - gerarUsuario foi chamado 1x (apenas para o segundo registro)
+        // - create foi chamado 1x (novo usuario criado)
+    });
+});
+
 describe('ProcessadorAtualizacaoDadosSiapeService - processarLotacoes', function () {
     afterEach(function () {
         Mockery::close();

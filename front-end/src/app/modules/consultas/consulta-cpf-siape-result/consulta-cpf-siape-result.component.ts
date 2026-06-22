@@ -110,10 +110,10 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
                     }
                     this.log = result.log;
                   } else {
-                    if (result?.resumo) {
-                        await this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + result?.message, this.ultimoRelatorioCargaId);
+                    if (result?.resumo?.length > 0) {
+                        await this.mostrarResumo(result.resumo, "Erro ao processar CPF ", this.ultimoRelatorioCargaId);
                     } else {
-                        await this.dialog.alert("Erro", "Erro ao processar CPF: " + result?.message);
+                        await this.dialog.alert("Erro", result?.message || "Erro desconhecido ao processar CPF");
                     }
                   }
                 },
@@ -121,10 +121,10 @@ export class ConsultaCpfSiapeResultComponent extends PageFormBase<Usuario, Usuar
                   this.loading = false;
                   const result = error.error;
                   this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
-                  if (result?.resumo) {
-                      this.mostrarResumo(result.resumo, "Erro ao processar CPF: " + (result.message ?? error.message), this.ultimoRelatorioCargaId);
+                  if (result?.resumo?.length > 0) {
+                      this.mostrarResumo(result.resumo, "Erro ao processar CPF", this.ultimoRelatorioCargaId);
                   } else {
-                      this.dialog.alert("Erro", "Erro ao processar CPF: " + (result?.message ?? error.message));
+                      this.dialog.alert("Erro", (result?.message ?? error.message ?? "Erro desconhecido ao processar CPF"));
                   }
                   this.log = result?.log ?? error.message;
                 }

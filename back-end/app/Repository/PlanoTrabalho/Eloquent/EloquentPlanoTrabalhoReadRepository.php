@@ -38,14 +38,18 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         /** @var PlanoTrabalho|null */
         $planoTrabalho = $this->model->newQuery()
             ->with([
-                'usuario',
+                'unidade',
+                'usuario.lotacao.unidade',
                 'entregas' => function ($query) {
-                    $query
-                        ->whereNull('plano_entrega_entrega_id')
-                        ->orWhereHas('planoEntregaEntrega.planoEntrega', function ($query) {
-                            $query->whereIn('status', StatusEnum::permitemEnvio());
-                        });
+                    $query->where(function ($query) {
+                        $query
+                            ->whereNull('plano_entrega_entrega_id')
+                            ->orWhereHas('planoEntregaEntrega.planoEntrega', function ($query) {
+                                $query->whereIn('status', StatusEnum::permitemEnvio());
+                            });
+                    });
                 },
+                'entregas.planoEntregaEntrega.planoEntrega',
                 'consolidacoes' => function ($query) {
                     $query->whereIn('status', [StatusEnum::AVALIADO->value]);
                 },
@@ -112,7 +116,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         return $this->query()
             ->where('status', StatusEnum::AGUARDANDO_ASSINATURA->value)
-            ->with(['usuario:id,nome,apelido,url_foto']);
+            ->with(['usuario:id,nome,apelido,nome_social,url_foto']);
     }
 
     private function subqueryChefeSubstitutoNaoAssinaGestorTitular(\Illuminate\Database\Query\Builder $query, string $usuarioId): void
@@ -204,7 +208,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
               ->addSelect(DB::raw('(SELECT COUNT(*) > 0 FROM planos_trabalhos_consolidacoes c INNER JOIN avaliacoes a ON a.plano_trabalho_consolidacao_id = c.id AND a.deleted_at IS NULL AND a.recurso IS NOT NULL WHERE c.plano_trabalho_id = planos_trabalhos.id AND c.status = "CONCLUIDO") AS aguardando_reavaliacao'))
               ->addSelect(DB::raw('(SELECT COUNT(*) > 0 FROM planos_trabalhos_consolidacoes c WHERE c.plano_trabalho_id = planos_trabalhos.id AND c.status = "AVALIADO" AND (SELECT COUNT(*) FROM avaliacoes a WHERE a.plano_trabalho_consolidacao_id = c.id AND a.deleted_at IS NULL) > 1) AS reavaliado'))
               ->addSelect(DB::raw('(SELECT COUNT(*) > 0 FROM planos_trabalhos_consolidacoes c WHERE c.plano_trabalho_id = planos_trabalhos.id AND c.status IN ("CONCLUIDO", "AVALIADO")) AS has_consolidacao_concluida'))
-              ->with(['usuario:id,nome', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome']);
+              ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome']);
 
         if($filtro->hierarquia){
             $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
@@ -303,7 +307,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         /** @var PlanoTrabalho|null $plano */
         $plano = PlanoTrabalho::with([
-            'usuario:id,nome,apelido',
+            'usuario:id,nome,apelido,nome_social',
             'usuario.lotacao:id,usuario_id,unidade_id',
             'usuario.lotacao.unidade:id,unidade_pai_id',
             'unidade:id,sigla,nome,unidade_pai_id',
@@ -325,5 +329,12 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('id', $planoId)
             ->whereHas('documentos.assinaturas')
             ->exists();
+    }
+
+    public function loadRelacoesClonar(PlanoTrabalho $plano): PlanoTrabalho
+    {
+        $plano->load('entregas.planoEntregaEntrega');
+
+        return $plano;
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class AtividadeRequestValidator
 {
-    private const MAX_DESCRICAO_LENGTH = 1500;
+    private const MAX_DESCRICAO_LENGTH = 10000;
 
     public static function store(Request $request): array
     {

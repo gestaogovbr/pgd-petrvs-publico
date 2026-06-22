@@ -23,9 +23,9 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
         return app(PlanoEntregaRepository::class);
     }
 
-    public function getResource(): PlanoEntregaResource {
-        $planoEntregaRepository = app(PlanoEntregaRepository::class);
-        $planoEntrega = $planoEntregaRepository->findOneParaEnvio($this->id);
+    public function getModelParaEnvio(): ?PlanoEntrega
+    {
+        $planoEntrega = parent::getModelParaEnvio();
 
         if (!$planoEntrega){
             throw new ExportPgdException("Plano de Entrega removido ou inválido", $this->id);
@@ -43,7 +43,11 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
             throw new ExportPgdException("Plano de Entrega não possui Unidade Instituidora", $this->id);
         }
 
-        return new PlanoEntregaResource($planoEntrega);
+        return $planoEntrega;
+    }
+
+    public function getResource($model): PlanoEntregaResource {
+        return new PlanoEntregaResource($model);
     }
 
     public function enviar(JsonResource $resource): bool {

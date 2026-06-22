@@ -17,7 +17,6 @@ import {AvaliacaoDaoService} from "src/app/dao/avaliacao-dao.service";
 import {TipoAvaliacao} from "src/app/models/tipo-avaliacao.model";
 import {LookupItem} from "src/app/services/lookup.service";
 import {UnidadeService} from "src/app/services/unidade.service";
-import {ProgramaService} from "src/app/services/programa.service";
 
 @Component({
     selector: "plano-entrega-list",
@@ -42,7 +41,6 @@ export class PlanoEntregaListComponent extends PageListBase<
 	public cadeiaValorDao: CadeiaValorDaoService;
 	public planoEntregaService: PlanoEntregaService;
 	public unidadeService: UnidadeService;
-	public programaService: ProgramaService;
 	public unidadeSelecionada: Unidade;
 	public habilitarAdesaoToolbar: boolean = false;
 	public toolbarButtons: ToolbarButton[] = [];
@@ -88,7 +86,6 @@ export class PlanoEntregaListComponent extends PageListBase<
 		this.planoEntregaService =
 			injector.get<PlanoEntregaService>(PlanoEntregaService);
 		this.unidadeService = injector.get<UnidadeService>(UnidadeService);
-		this.programaService = injector.get<ProgramaService>(ProgramaService);
 		this.unidadeSelecionada = this.auth.unidade!;
 		this.code = "MOD_PLANE";
 		/* Inicializações */
@@ -808,7 +805,6 @@ export class PlanoEntregaListComponent extends PageListBase<
           - a Unidade do plano (Unidade B) precisa ser sua Unidade de lotação e o usuário logado precisa possuir a capacidade "**MOD_PENT_CANC_CONCL";        */
 				return (
 					this.planoEntregaService.situacaoPlano(planoEntrega) == "CONCLUIDO" &&
-					this.programaService.programaVigente(planoEntrega.programa) &&
 					(this.unidadeService.isGestorUnidade(planoEntrega.unidade) ||
 						(this.auth.isLotacaoUsuario(planoEntrega.unidade) &&
 							this.auth.hasPermissionTo("MOD_PENT_CANC_CONCL")))

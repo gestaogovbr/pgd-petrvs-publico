@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { finalize, take } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { EnviarEnvioPlanoTrabalho } from '../application/enviar-envio-plano-trabalho.usecase';
 import { EnvioPlanoTrabalhoListFacade } from '../application/list.facade';
+import { MessageService } from 'src/app/v2/services/message.service';
 import { EnvioPlanoTrabalhoListFilters, EnvioPlanoTrabalhoRow } from '../domain/types';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
@@ -35,9 +38,11 @@ interface SelectOption {
 })
 export class EnvioPlanoTrabalhoListPage implements OnInit {
   readonly facade = inject(EnvioPlanoTrabalhoListFacade);
+  private readonly enviarPlanoTrabalho = inject(EnviarEnvioPlanoTrabalho);
+  private readonly message = inject(MessageService);
   private readonly fb = inject(FormBuilder);
   private readonly filterStorage = inject(FilterStorageService);
-  private readonly lookup = inject(LookupService);
+  readonly lookup = inject(LookupService);
   readonly lex = inject(LexicalService);
   readonly unidadeDao = inject(UnidadeDaoService);
 
@@ -46,6 +51,7 @@ export class EnvioPlanoTrabalhoListPage implements OnInit {
   private readonly statusTodos = 'Todos';
 
   readonly statusOptions = signal<SelectOption[]>([{ value: this.statusTodos, label: '- Todos -', selected: true }]);
+  readonly enviandoPorId = signal<Record<string, true>>({});
 
   readonly filters: FormGroup<{
     numero: FormControl<string>;
@@ -102,6 +108,48 @@ export class EnvioPlanoTrabalhoListPage implements OnInit {
       envio_fim: null,
     });
     this.applyFiltersAndLoad(true);
+  }
+
+  onEnviar(row: EnvioPlanoTrabalhoRow): void {
+    const id = String(row.id);
+    if (this.enviandoPorId()[id]) {
+      return;
+    }
+
+    this.marcarEnviando(id, true);
+
+    this.enviarPlanoTrabalho
+      .execute(id)
+      .pipe(
+        take(1),
+        finalize(() => this.marcarEnviando(id, false)),
+      )
+      .subscribe({
+        next: (res) => {
+          this.message.success(res.message || 'Envio ao PGD agendado com sucesso.');
+          if (this.hasAnyFilter()) {
+            this.facade.load();
+          }
+        },
+      });
+  }
+
+  private marcarEnviando(id: string, enviando: boolean): void {
+    this.enviandoPorId.update((atual) => {
+      if (enviando) {
+        if (atual[id]) {
+          return atual;
+        }
+        return { ...atual, [id]: true };
+      }
+
+      if (!atual[id]) {
+        return atual;
+      }
+
+      const { [id]: _removido, ...resto } = atual;
+      return resto;
+    });
   }
 
   onPageChange(page: number): void {

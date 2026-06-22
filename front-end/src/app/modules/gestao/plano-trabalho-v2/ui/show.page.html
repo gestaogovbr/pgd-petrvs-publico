@@ -48,7 +48,7 @@
         <div class="row">
           <div class="col-md-4 mb-3">
             <p class="mb-1 text-weight-semi-bold text-up-01">Agente Público</p>
-            <p class="mb-0">{{ planoTrabalho()?.usuario?.nome || '-' }}</p>
+            <p class="mb-0">{{ planoTrabalho()?.usuario?.nome_exibicao || '-' }}</p>
           </div>
           <div class="col-md-4 mb-3">
             <p class="mb-1 text-weight-semi-bold text-up-01">Unidade</p>
@@ -191,16 +191,20 @@
                                       <br-textarea
                                         show-counter
                                         class="w-100"
-                                        [maxlength]="1500"
+                                        [maxlength]="10000"
                                         [value]="facade.getTexto(consolidacao.id, entrega.id)"
                                         (input)="facade.setTexto(consolidacao.id, entrega.id, $any($event.target).value)"
                                         placeholder="Descreva o trabalho executado..."
                                       ></br-textarea>
                                     } @else {
-                                      <span class="white-space">{{ atividade.descricao }}</span>
+                                      <app-texto-colapsavel [texto]="atividade!.descricao" />
                                     }
                                   } @else {
-                                    <span class="white-space">{{ atividade?.descricao || '-' }}</span>
+                                    @if (atividade?.descricao) {
+                                      <app-texto-colapsavel [texto]="atividade!.descricao" />
+                                    } @else {
+                                      <span>-</span>
+                                    }
                                   }
                                 </td>
                                 @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
@@ -254,7 +258,7 @@
 
                 @if (podeConcluirConsolidacao(consolidacao)) {
                   <div class="card-footer d-flex justify-content-end p-2x">
-                    <br-button emphasis="primary" (click)="facade.concluirConsolidacao(consolidacao)">
+                    <br-button emphasis="primary" (click)="facade.concluirConsolidacao(consolidacao)" [disabled]="!!facade.processandoAcaoId()">
                       Finalizar Registro
                     </br-button>
                   </div>
@@ -276,7 +280,7 @@
                         <br-button emphasis="secondary" (click)="facade.cancelarReabertura()">Cancelar</br-button>
                         <br-button
                           emphasis="primary"
-                          [disabled]="!facade.justificativaReabrir().trim()"
+                          [disabled]="!facade.justificativaReabrir().trim() || !!facade.processandoAcaoId()"
                           (click)="facade.confirmarReabertura(consolidacao)"
                         >Confirmar Reabertura</br-button>
                       </div>
@@ -434,7 +438,7 @@
     </div>
     <div slot="footer">
       <br-button class="mx-1" emphasis="secondary" (click)="facade.confirmacaoPendente.set(null)">Cancelar</br-button>
-      <br-button class="mx-1" emphasis="primary" (click)="facade.confirmacaoPendente()?.onConfirmar(); facade.confirmacaoPendente.set(null)">Confirmar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="facade.confirmacaoPendente()?.onConfirmar(); facade.confirmacaoPendente.set(null)" [disabled]="!!facade.processandoAcaoId()">Confirmar</br-button>
     </div>
   </br-modal>
 </br-scrim>

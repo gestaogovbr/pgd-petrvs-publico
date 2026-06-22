@@ -11,10 +11,10 @@ import { PlanejamentoObjetivoDaoService } from 'src/app/dao/planejamento-objetiv
 import { EixoTematicoDaoService } from 'src/app/dao/eixo-tematico-dao.service';
 
 @Component({
-    selector: 'planejamento-list-objetivo',
-    templateUrl: './planejamento-list-objetivo.component.html',
-    styleUrls: ['./planejamento-list-objetivo.component.scss'],
-    standalone: false
+  selector: 'planejamento-list-objetivo',
+  templateUrl: './planejamento-list-objetivo.component.html',
+  styleUrls: ['./planejamento-list-objetivo.component.scss'],
+  standalone: false
 })
 export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   @Input() public planejamento_superior_id?: string;
@@ -34,18 +34,18 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   public eixoDao?: EixoTematicoDaoService;
   private _disabled: boolean = false;
   public eixos: EixoTematico[] = [];
-  
+
   public treeNodes: PlanejamentoObjetivo[] = [];
   public groupedRoots: { id: string, eixo?: EixoTematico, objetivos: PlanejamentoObjetivo[] }[] = [];
   public expandedIds: Set<string> = new Set<string>();
 
   public get toolbarButtons(): ToolbarButton[] {
     return [
-      { 
-        label: "Adicionar Objetivo", 
-        icon: "bi bi-plus", 
-        onClick: () => this.addObjetivo(), 
-        color: "btn-primary" 
+      {
+        label: "Adicionar Elemento",
+        icon: "bi bi-plus",
+        onClick: () => this.addObjetivo(),
+        color: "btn-primary"
       }
     ];
   }
@@ -62,7 +62,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     this.OPTION_INFORMACOES.onClick = (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true, metadata: { objetivos: this.items, objetivo: objetivo } });
     this.OPTION_EXCLUIR.onClick = (objetivo: PlanejamentoObjetivo) => { this.removeObjetivo(objetivo); };
     this.addOption(this.OPTION_INFORMACOES);
-    this.addOption(this.OPTION_EXCLUIR,'MOD_PLAN_INST_EXCL');
+    this.addOption(this.OPTION_EXCLUIR, 'MOD_PLAN_INST_EXCL');
   }
 
   ngOnInit(): void {
@@ -71,67 +71,67 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     this.carregaEixos();
     this.buildTree();
   }
-  
+
   ngOnChanges() {
     this.buildTree();
   }
 
   public buildTree() {
-      const items = this.items;
-      if (!items) return;
+    const items = this.items;
+    if (!items) return;
 
-      // Reset children arrays
-      items.forEach(i => i.objetivos = []);
+    // Reset children arrays
+    items.forEach(i => i.objetivos = []);
 
-      // Map for easy access
-      const map = new Map<string, PlanejamentoObjetivo>();
-      items.forEach(i => map.set(i.id, i));
+    // Map for easy access
+    const map = new Map<string, PlanejamentoObjetivo>();
+    items.forEach(i => map.set(i.id, i));
 
-      // Build hierarchy
-      const roots: PlanejamentoObjetivo[] = [];
-      items.forEach(item => {
-          if (item.objetivo_pai_id && map.has(item.objetivo_pai_id)) {
-              const parent = map.get(item.objetivo_pai_id);
-              parent!.objetivos!.push(item);
-          } else {
-              roots.push(item);
-          }
-      });
+    // Build hierarchy
+    const roots: PlanejamentoObjetivo[] = [];
+    items.forEach(item => {
+      if (item.objetivo_pai_id && map.has(item.objetivo_pai_id)) {
+        const parent = map.get(item.objetivo_pai_id);
+        parent!.objetivos!.push(item);
+      } else {
+        roots.push(item);
+      }
+    });
 
-      // Sort by sequencia
-      const sortBySequencia = (a: PlanejamentoObjetivo, b: PlanejamentoObjetivo) => (a.sequencia || 0) - (b.sequencia || 0);
-      roots.sort(sortBySequencia);
-      items.forEach(i => i.objetivos?.sort(sortBySequencia));
+    // Sort by sequencia
+    const sortBySequencia = (a: PlanejamentoObjetivo, b: PlanejamentoObjetivo) => (a.sequencia || 0) - (b.sequencia || 0);
+    roots.sort(sortBySequencia);
+    items.forEach(i => i.objetivos?.sort(sortBySequencia));
 
-      this.treeNodes = roots;
+    this.treeNodes = roots;
 
-      // Group by Eixo
-      const groups = new Map<string, PlanejamentoObjetivo[]>();
-      const nullKey = "null";
-      
-      roots.forEach(root => {
-          const key = root.eixo_tematico_id || nullKey;
-          if (!groups.has(key)) groups.set(key, []);
-          groups.get(key)!.push(root);
-      });
-      
-      this.groupedRoots = Array.from(groups.entries()).map(([key, value]) => {
-          const eixo = key === nullKey ? undefined : this.eixos.find(x => x.id === key);
-          return {
-              id: key,
-              eixo: eixo,
-              objetivos: value
-          };
-      });
-      
-      // Sort groups: Eixos first (by name), then "Sem Eixo"
-      this.groupedRoots.sort((a, b) => {
-          if (a.id === nullKey) return 1;
-          if (b.id === nullKey) return -1;
-          return (a.eixo?.nome || "").localeCompare(b.eixo?.nome || "");
-      });
+    // Group by Eixo
+    const groups = new Map<string, PlanejamentoObjetivo[]>();
+    const nullKey = "null";
 
-      this.cdRef.detectChanges();
+    roots.forEach(root => {
+      const key = root.eixo_tematico_id || nullKey;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(root);
+    });
+
+    this.groupedRoots = Array.from(groups.entries()).map(([key, value]) => {
+      const eixo = key === nullKey ? undefined : this.eixos.find(x => x.id === key);
+      return {
+        id: key,
+        eixo: eixo,
+        objetivos: value
+      };
+    });
+
+    // Sort groups: Eixos first (by name), then "Sem Eixo"
+    this.groupedRoots.sort((a, b) => {
+      if (a.id === nullKey) return 1;
+      if (b.id === nullKey) return -1;
+      return (a.eixo?.nome || "").localeCompare(b.eixo?.nome || "");
+    });
+
+    this.cdRef.detectChanges();
   }
 
   public async drop(event: CdkDragDrop<PlanejamentoObjetivo[]>) {
@@ -145,8 +145,8 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
         event.currentIndex,
       );
       const movedItem = event.container.data[event.currentIndex];
-      const newParentId = event.container.id; 
-      
+      const newParentId = event.container.id;
+
       if (newParentId.startsWith("axis-")) {
         movedItem.objetivo_pai_id = null;
         const axisId = newParentId.replace("axis-", "");
@@ -155,56 +155,56 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
         movedItem.objetivo_pai_id = newParentId;
         // Inherit axis from parent
         const parent = this.items.find(x => x.id === newParentId);
-        if(parent) movedItem.eixo_tematico_id = parent.eixo_tematico_id;
+        if (parent) movedItem.eixo_tematico_id = parent.eixo_tematico_id;
       }
     }
-    
+
     this.updateSequences(event.previousContainer.data);
     if (event.previousContainer !== event.container) {
-        this.updateSequences(event.container.data);
+      this.updateSequences(event.container.data);
     }
 
     // Persistir ordenação
     if (!this.isNoPersist) {
-        const itensParaSalvar: PlanejamentoObjetivo[] = [];
-        if (event.previousContainer !== event.container) {
-            itensParaSalvar.push(...event.previousContainer.data);
-        }
-        itensParaSalvar.push(...event.container.data);
+      const itensParaSalvar: PlanejamentoObjetivo[] = [];
+      if (event.previousContainer !== event.container) {
+        itensParaSalvar.push(...event.previousContainer.data);
+      }
+      itensParaSalvar.push(...event.container.data);
 
-        try {
-            const results = await this.objetivoDao!.ordenar(itensParaSalvar);
-            // O backend retorna todos os objetivos atualizados
-            if(results) {
-                // Atualizar os itens na grade com os dados retornados
-                // Precisamos instanciar para garantir que sejam objetos do tipo PlanejamentoObjetivo
-                this.gridControl.value.objetivos = results.map((x: any) => new PlanejamentoObjetivo(x));
-                this.buildTree();
-            }
-        } catch (error: any) {
-            this.error(error?.error || error?.message || error);
-            // Em caso de erro, recarregar a lista original para desfazer as mudanças visuais
-            // Como não temos um método simples de "refresh" aqui sem recarregar tudo, talvez apenas o erro baste por enquanto
+      try {
+        const results = await this.objetivoDao!.ordenar(itensParaSalvar);
+        // O backend retorna todos os objetivos atualizados
+        if (results) {
+          // Atualizar os itens na grade com os dados retornados
+          // Precisamos instanciar para garantir que sejam objetos do tipo PlanejamentoObjetivo
+          this.gridControl.value.objetivos = results.map((x: any) => new PlanejamentoObjetivo(x));
+          this.buildTree();
         }
+      } catch (error: any) {
+        this.error(error?.error || error?.message || error);
+        // Em caso de erro, recarregar a lista original para desfazer as mudanças visuais
+        // Como não temos um método simples de "refresh" aqui sem recarregar tudo, talvez apenas o erro baste por enquanto
+      }
     }
   }
 
   public updateSequences(list: PlanejamentoObjetivo[]) {
-      list.forEach((item, index) => {
-          item.sequencia = index + 1;
-      });
+    list.forEach((item, index) => {
+      item.sequencia = index + 1;
+    });
   }
-  
+
   public toggle(node: PlanejamentoObjetivo) {
-      if (this.expandedIds.has(node.id)) {
-          this.expandedIds.delete(node.id);
-      } else {
-          this.expandedIds.add(node.id);
-      }
+    if (this.expandedIds.has(node.id)) {
+      this.expandedIds.delete(node.id);
+    } else {
+      this.expandedIds.add(node.id);
+    }
   }
 
   public isExpanded(node: PlanejamentoObjetivo): boolean {
-      return this.expandedIds.has(node.id);
+    return this.expandedIds.has(node.id);
   }
 
   public dynamicButtons(row: any): ToolbarButton[] {
@@ -213,6 +213,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       result.push({ hint: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (objetivo: PlanejamentoObjetivo) => { this.editObjetivo(objetivo); } });
     }
     result.push({ hint: "Gráfico", icon: "bi bi-diagram-3", color: "btn-outline-primary", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo-grafico', objetivo.id] })});
+    result.push({ hint: "Árvore", icon: "bi bi-diagram-2", color: "btn-outline-secondary", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo-arvore', objetivo.id] })});
     return result;
   }
 
@@ -222,44 +223,44 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   }
 
   public async addObjetivo() {
-    let objetivo = new PlanejamentoObjetivo({ 
-      _status: "ADD", 
+    let objetivo = new PlanejamentoObjetivo({
+      _status: "ADD",
       id: this.dao!.generateUuid(),
       planejamento_id: this.entity?.id
     });
     this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo'] }, {
-      metadata: { 
-        planejamento: this.entity!, 
+      metadata: {
+        planejamento: this.entity!,
         objetivo: objetivo,
-        objetivos: this.objetivosPai(objetivo.id) 
+        objetivos: this.objetivosPai(objetivo.id)
       },
       modalClose: async (modalResult) => {
         if (modalResult) {
           try {
             this.carregaEixos();
-            
+
             // Auto-sequencia
             if (!modalResult.sequencia) {
-                const siblings = this.items.filter(x => x.objetivo_pai_id == modalResult.objetivo_pai_id);
-                const maxSeq = siblings.reduce((max, curr) => Math.max(max, curr.sequencia || 0), 0);
-                modalResult.sequencia = maxSeq + 1;
+              const siblings = this.items.filter(x => x.objetivo_pai_id == modalResult.objetivo_pai_id);
+              const maxSeq = siblings.reduce((max, curr) => Math.max(max, curr.sequencia || 0), 0);
+              modalResult.sequencia = maxSeq + 1;
             }
 
-            if(this.isNoPersist) {
-                this.items.push(modalResult);
+            if (this.isNoPersist) {
+              this.items.push(modalResult);
             } else {
-                const saved = await this.objetivoDao!.save(modalResult);
-                if (saved) {
-                  const merged = new PlanejamentoObjetivo(saved);
-                  merged.tipo_objetivo = modalResult.tipo_objetivo;
-                  this.items.push(merged);
-                } else {
-                  this.items.push(modalResult);
-                }
+              const saved = await this.objetivoDao!.save(modalResult);
+              if (saved) {
+                const merged = new PlanejamentoObjetivo(saved);
+                merged.tipo_objetivo = modalResult.tipo_objetivo;
+                this.items.push(merged);
+              } else {
+                this.items.push(modalResult);
+              }
             }
             this.buildTree();
           } catch (error: any) {
-            this.error(error?.error || error?.message || error);            
+            this.error(error?.error || error?.message || error);
           }
         };
       }
@@ -269,14 +270,14 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
   public objetivosPai(filhoId: string) {
     let items: PlanejamentoObjetivo[] = [];
     let addItens = (list: PlanejamentoObjetivo[]) => {
-      for(let item of list) {
-        if(item.id != filhoId) {
+      for (let item of list) {
+        if (item.id != filhoId) {
           items.push(item);
-          addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a,b) => (a.sequencia || 0) - (b.sequencia || 0)));
+          addItens(this.items.filter(x => x.objetivo_pai_id == item.id).sort((a, b) => (a.sequencia || 0) - (b.sequencia || 0)));
         }
       }
     }
-    addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a,b) => (a.sequencia || 0) - (b.sequencia || 0)));
+    addItens(this.items.filter(x => !x.objetivo_pai_id).sort((a, b) => (a.sequencia || 0) - (b.sequencia || 0)));
     return items;
   }
 
@@ -284,30 +285,30 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     objetivo._status = objetivo._status == "ADD" ? "ADD" : "EDIT";
     let index = this.items.indexOf(objetivo);
     this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo'] }, {
-      metadata: { 
-        planejamento: this.entity!, 
+      metadata: {
+        planejamento: this.entity!,
         objetivo: objetivo,
-        objetivos: this.objetivosPai(objetivo.id) 
+        objetivos: this.objetivosPai(objetivo.id)
       },
       modalClose: async (modalResult) => {
         if (modalResult) {
           // Preservar filhos existentes na estrutura em memória
           const oldItem = this.items[index];
           if (oldItem && oldItem.objetivos) {
-             modalResult.objetivos = oldItem.objetivos;
+            modalResult.objetivos = oldItem.objetivos;
           }
 
           if (!this.isNoPersist) {
-              const savedItem = await this.objetivoDao?.save(modalResult);
-              if (savedItem) {
-                const merged = new PlanejamentoObjetivo(savedItem);
-                merged.tipo_objetivo = modalResult.tipo_objetivo;
-                this.items[index] = merged;
-              } else {
-                  this.items[index] = modalResult;
-              }
-          } else {
+            const savedItem = await this.objetivoDao?.save(modalResult);
+            if (savedItem) {
+              const merged = new PlanejamentoObjetivo(savedItem);
+              merged.tipo_objetivo = modalResult.tipo_objetivo;
+              this.items[index] = merged;
+            } else {
               this.items[index] = modalResult;
+            }
+          } else {
+            this.items[index] = modalResult;
           }
 
           this.carregaEixos();
@@ -338,7 +339,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
     return this.eixos?.find(x => x.id == id);
   }
 
-  public carregaEixos(){
+  public carregaEixos() {
     this.eixoDao?.query().getAll().then(eixos => {
       this.eixos = eixos;
       this.buildTree();

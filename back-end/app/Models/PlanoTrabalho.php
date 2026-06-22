@@ -122,6 +122,11 @@ class PlanoTrabalho extends ModelBase implements HasStatusHistory
         });
     }
 
+    public function identificacaoEnvio(): string
+    {
+        return 'PT #'.$this->numero.' ('.$this->id.')';
+    }
+
     // Has
     public function statusHistorico()
     {

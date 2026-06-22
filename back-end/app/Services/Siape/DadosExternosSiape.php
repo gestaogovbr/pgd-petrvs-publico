@@ -2,6 +2,7 @@
 
 namespace App\Services\Siape;
 
+use App\Facades\SiapeLog;
 use App\Services\Siape\BuscarDados\BuscarDadosSiape;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
@@ -32,21 +33,25 @@ trait DadosExternosSiape
     {
         $this->inicializaSiape('buscaDadosUnidade');
         $codOrgao = strval(intval($this->configIntegracaoSiape['codOrgao']));
+        try {
+            /** @var BuscarDadosSiapeUnidade $buscaDados */
+            $buscaDados = $this->siapeClassBuscaDados;
 
-        /** @var BuscarDadosSiapeUnidade $buscaDados */
-        $buscaDados = $this->siapeClassBuscaDados;
+            $xmlData =  $buscaDados->getUorgAsXml(
+                $this->configIntegracaoSiape['siglaSistema'],
+                $this->configIntegracaoSiape['nomeSistema'],
+                $this->configIntegracaoSiape['senha'],
+                $this->configIntegracaoSiape['cpf'],
+                $codOrgao,
+                $codigoSiape
+            );
 
-        $xmlData =  $buscaDados->getUorgAsXml(
-            $this->configIntegracaoSiape['siglaSistema'],
-            $this->configIntegracaoSiape['nomeSistema'],
-            $this->configIntegracaoSiape['senha'],
-            $this->configIntegracaoSiape['cpf'],
-            $codOrgao,
-            $codigoSiape
-        );
-
-        $retorno = $this->siapeClassBuscaDados->buscaSincrona($xmlData);
-        return $this->siapeClassBuscaDados->prepareResponseXml($retorno);
+            $retorno = $this->siapeClassBuscaDados->buscaSincrona($xmlData);
+            return $this->siapeClassBuscaDados->prepareResponseXml($retorno);
+        } catch (\Throwable $e) {
+            SiapeLog::error('Erro ao buscar dados funcionais da unidade no SIAPE: ' .$e->getMessage());
+            throw new \Exception('Houve uma falha na comunicação com o SIAPE ao processar esta unidade. Por favor, tente novamente mais tarde.');
+        }
     }
 
     /**
@@ -60,71 +65,82 @@ trait DadosExternosSiape
         $this->inicializaSiape('buscaServidor');
         $codOrgao = strval(intval($this->configIntegracaoSiape['codOrgao']));
 
-        // Dados funcionais
-        /** @var BuscarDadosSiapeServidor $buscaDados */
-        $buscaDados = $this->siapeClassBuscaDados;
-        $xmlDataFuncionais = $buscaDados->consultaDadosFuncionais(
-            $this->configIntegracaoSiape['siglaSistema'],
-            $this->configIntegracaoSiape['nomeSistema'],
-            $this->configIntegracaoSiape['senha'],
-            $cpf,
-            $codOrgao,
-            $this->configIntegracaoSiape['parmExistPag'],
-            $this->configIntegracaoSiape['parmTipoVinculo']
-        );
+        try {
+            // Dados funcionais
+            /** @var BuscarDadosSiapeServidor $buscaDados */
+            $buscaDados = $this->siapeClassBuscaDados;
+            $xmlDataFuncionais = $buscaDados->consultaDadosFuncionais(
+                $this->configIntegracaoSiape['siglaSistema'],
+                $this->configIntegracaoSiape['nomeSistema'],
+                $this->configIntegracaoSiape['senha'],
+                $cpf,
+                $codOrgao,
+                $this->configIntegracaoSiape['parmExistPag'],
+                $this->configIntegracaoSiape['parmTipoVinculo']
+            );
 
-        $retornoFuncionais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataFuncionais);
-        $xmlFuncional = $this->siapeClassBuscaDados->prepareResponseXml($retornoFuncionais);
-        (new SiapeServidorFaultProcessor($xmlFuncional, $cpf, $retornoFuncionais, 'FUNCIONAL'))->process();
+            $retornoFuncionais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataFuncionais);
+            $xmlFuncional = $this->siapeClassBuscaDados->prepareResponseXml($retornoFuncionais);
+            (new SiapeServidorFaultProcessor($xmlFuncional, $cpf, $retornoFuncionais, 'FUNCIONAL'))->process();
 
-        // Tratar múltiplos dados funcionais seguindo ProcessaDadosSiapeBD
-        $xmlFuncional->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
-        $xmlFuncional->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
-        $xmlFuncional->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+            // Tratar múltiplos dados funcionais seguindo ProcessaDadosSiapeBD
+            $xmlFuncional->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+            $xmlFuncional->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+            $xmlFuncional->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
 
-        $dadosFuncionaisElements = $xmlFuncional->xpath('//tipo:DadosFuncionais') ?: [];
-        $dadosFuncionaisArray = [];
+            $dadosFuncionaisElements = $xmlFuncional->xpath('//tipo:DadosFuncionais') ?: [];
+            $dadosFuncionaisArray = [];
 
-        if (count($dadosFuncionaisElements) === 1) {
-            $dadosFuncionaisArray = [simpleXmlElementToArray($dadosFuncionaisElements[0])];
-        } else {
-            foreach ($dadosFuncionaisElements as $df) {
-                $dados = simpleXmlElementToArray($df);
-                if (!empty($dados['dataOcorrExclusao'])) {
-                    continue;
+            if (count($dadosFuncionaisElements) === 1) {
+                $dadosFuncionaisArray = [simpleXmlElementToArray($dadosFuncionaisElements[0])];
+            } else {
+                foreach ($dadosFuncionaisElements as $df) {
+                    $dados = simpleXmlElementToArray($df);
+                    if (!empty($dados['dataOcorrExclusao'])) {
+                        continue;
+                    }
+                    $dadosFuncionaisArray[] = $dados;
                 }
-                $dadosFuncionaisArray[] = $dados;
             }
+        } catch (\Throwable $e) {
+            SiapeLog::error('Erro ao buscar dados funcionais do servidor no SIAPE - CPF: ' . $cpf . ' - ' . $e->getMessage());
+            throw new \Exception('Houve uma falha na comunicação com o SIAPE ao processar este CPF. Por favor, tente novamente mais tarde.');
         }
 
-        // Dados pessoais (manter saída mínima necessária)
-        /** @var BuscarDadosSiapeServidor $buscaDados */
-        $buscaDados = $this->siapeClassBuscaDados;
-        $xmlDataPessoais = $buscaDados->consultaDadosPessoais(
-            $this->configIntegracaoSiape['siglaSistema'],
-            $this->configIntegracaoSiape['nomeSistema'],
-            $this->configIntegracaoSiape['senha'],
-            $cpf,
-            $codOrgao,
-            $this->configIntegracaoSiape['parmExistPag'],
-            $this->configIntegracaoSiape['parmTipoVinculo']
-        );
+        try {
+            // Dados pessoais (manter saída mínima necessária)
+            /** @var BuscarDadosSiapeServidor $buscaDados */
+            $buscaDados = $this->siapeClassBuscaDados;
+            $xmlDataPessoais = $buscaDados->consultaDadosPessoais(
+                $this->configIntegracaoSiape['siglaSistema'],
+                $this->configIntegracaoSiape['nomeSistema'],
+                $this->configIntegracaoSiape['senha'],
+                $cpf,
+                $codOrgao,
+                $this->configIntegracaoSiape['parmExistPag'],
+                $this->configIntegracaoSiape['parmTipoVinculo']
+            );
 
-        $retornoPessoais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataPessoais);
-        $xmlPessoal = $this->siapeClassBuscaDados->prepareResponseXml($retornoPessoais);
-        (new SiapeServidorFaultProcessor($xmlPessoal, $cpf, $retornoPessoais, 'PESSOAL'))->process();
+            $retornoPessoais = $this->siapeClassBuscaDados->buscaSincrona($xmlDataPessoais);
+            $xmlPessoal = $this->siapeClassBuscaDados->prepareResponseXml($retornoPessoais);
+            (new SiapeServidorFaultProcessor($xmlPessoal, $cpf, $retornoPessoais, 'PESSOAL'))->process();
 
-        $outNodes = $xmlPessoal->xpath('//out');
-        $out = isset($outNodes[0]) ? $outNodes[0] : null;
-        $dadosPessoaisArray = [];
+            $outNodes = $xmlPessoal->xpath('//out');
+            $out = isset($outNodes[0]) ? $outNodes[0] : null;
+            $dadosPessoaisArray = [];
 
-        if ($out instanceof SimpleXMLElement) {
-            $todosCampos = simpleXmlElementToArray($out);
-            foreach (['nome', 'dataNascimento'] as $field) {
-                if (array_key_exists($field, $todosCampos)) {
-                    $dadosPessoaisArray[$field] = $todosCampos[$field];
+            if ($out instanceof SimpleXMLElement) {
+                $todosCampos = simpleXmlElementToArray($out);
+                foreach (['nome', 'dataNascimento'] as $field) {
+                    if (array_key_exists($field, $todosCampos)) {
+                        $dadosPessoaisArray[$field] = $todosCampos[$field];
+                    }
                 }
             }
+
+        } catch (\Throwable $e) {
+            SiapeLog::error('Erro ao buscar dados pessoais do servidor no SIAPE - CPF: ' . $cpf . ' - ' . $e->getMessage());
+            throw new \Exception('Houve uma falha na comunicação com o SIAPE ao processar este CPF. Por favor, tente novamente mais tarde.');
         }
 
         return [

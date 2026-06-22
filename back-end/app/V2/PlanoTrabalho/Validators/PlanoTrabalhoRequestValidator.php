@@ -46,6 +46,7 @@ class PlanoTrabalhoRequestValidator
             'modalidade_pgd' => ['required', 'string', Rule::in(ModalidadePgd::keys())],
             'justificativa' => ['nullable', 'string', 'max:500'],
             'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
+            'clone_de' => ['nullable', 'uuid'],
         ], [
             'usuario_id.required' => 'O participante é obrigatório.',
             'usuario_id.uuid' => 'O valor informado para o participante é inválido.',

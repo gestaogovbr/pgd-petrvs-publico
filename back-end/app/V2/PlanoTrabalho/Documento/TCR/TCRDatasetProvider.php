@@ -28,6 +28,7 @@ class TCRDatasetProvider
             ['field' => 'data_inicio', 'label' => 'Data inicial do plano', 'type' => 'DATETIME'],
             ['field' => 'data_fim', 'label' => 'Data final do plano', 'type' => 'DATETIME'],
             ['field' => 'tipo_modalidade', 'label' => 'Tipo de modalidade', 'fields' => [['field' => 'nome', 'label' => 'Nome']], 'type' => 'OBJECT', 'value' => fn ($ctx) => (object) ['nome' => $ctx->modalidade_pgd_label]],
+            ['field' => 'modalidade_pgd', 'label' => 'Modalidade', 'value' => fn ($ctx) => $ctx->modalidade_pgd_label],
             ['field' => 'unidade', 'label' => 'Unidade', 'fields' => $this->unidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->unidade],
             ['field' => 'usuario', 'label' => 'Usuário', 'fields' => $this->usuarioFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->usuario],
             ['field' => 'programa', 'label' => 'Programa', 'fields' => $this->programaFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->programa],
@@ -42,14 +43,38 @@ class TCRDatasetProvider
             ['field' => 'codigo', 'label' => 'Código'],
             ['field' => 'sigla', 'label' => 'Sigla'],
             ['field' => 'nome', 'label' => 'Nome'],
+            ['field' => 'gestor', 'label' => 'Gestor', 'fields' => $this->usuarioFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->gestor?->usuario],
+            ['field' => 'gestores_substitutos', 'label' => 'Gestores substitutos', 'fields' => $this->usuarioFields(), 'type' => 'ARRAY', 'value' => fn ($ctx) => $ctx->gestoresSubstitutos?->map(fn ($i) => $i->usuario)],
+            ['field' => 'entidade', 'label' => 'Entidade', 'fields' => $this->entidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->entidade],
+            ['field' => 'cidade', 'label' => 'Cidade', 'fields' => $this->cidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->cidade],
             ['field' => 'texto_complementar_plano', 'label' => 'Particularidades da Unidade Executora', 'type' => 'TEMPLATE'],
+        ];
+    }
+
+    private function entidadeFields(): array
+    {
+        return [
+            ['field' => 'sigla', 'label' => 'Sigla'],
+            ['field' => 'nome', 'label' => 'Nome'],
+            ['field' => 'gestor', 'label' => 'Gestor', 'fields' => $this->usuarioFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->gestor],
+            ['field' => 'gestor_substituto', 'label' => 'Gestor substituto', 'fields' => $this->usuarioFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->gestorSubstituto],
+            ['field' => 'cidade', 'label' => 'Cidade', 'fields' => $this->cidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->cidade],
+        ];
+    }
+
+    private function cidadeFields(): array
+    {
+        return [
+            ['field' => 'codigo_ibge', 'label' => 'Código IBGE'],
+            ['field' => 'nome', 'label' => 'Nome'],
+            ['field' => 'uf', 'label' => 'UF'],
         ];
     }
 
     private function usuarioFields(): array
     {
         return [
-            ['field' => 'nome', 'label' => 'Nome'],
+            ['field' => 'nome', 'label' => 'Nome', 'value' => fn ($ctx) => empty($ctx->nome_social) ? $ctx->nome : $ctx->nome_social . " (" . $ctx->nome . ')'],
             ['field' => 'email', 'label' => 'E-mail'],
             ['field' => 'cpf', 'label' => 'CPF'],
             ['field' => 'matricula', 'label' => 'Matrícula'],

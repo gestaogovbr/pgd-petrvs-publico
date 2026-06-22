@@ -8,6 +8,7 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Facades\SiapeLog;
+use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\PerfilRepository;
@@ -197,7 +198,7 @@ class UsuarioService extends ServiceBase
         }
     }
 
-    public function verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio): bool
+    public function verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio, array &$matriculasAlteradasNoBatch = []): bool
     {
         if (!empty($cpfCheck) && !empty($unidadeExercicioIdCheck)) {
             $usuarioLotadoMesmaUnidade = $this->usuarioRepository->findByCpfAndLotacao($cpfCheck, $unidadeExercicioIdCheck);
@@ -205,12 +206,45 @@ class UsuarioService extends ServiceBase
             if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
                 $dadosAtualizacao = ['matricula' => $matriculaNova];
                 $integracaoServidor = $this->integracaoServidorRepository->getServidor($cpfCheck, $matriculaNova);
-
+                $matriculaAtual = $usuarioLotadoMesmaUnidade->matricula;               
                 if ($integracaoServidor && $integracaoServidor->participa_pgd !== null) {
                     $dadosAtualizacao['participa_pgd'] = $integracaoServidor->participa_pgd;
                 }
 
+                // Usuario sem matricula: preencher normalmente
+                if (empty($matriculaAtual)) {
+                    $this->usuarioRepository->update($usuarioLotadoMesmaUnidade->id, $dadosAtualizacao);
+
+                    SiapeLog::info(sprintf('Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
+                        (string) $cpfCheck,
+                        (string) $matriculaNova,
+                        (string) $codigoExercicio
+                    ));
+                    return false;
+                }
+
+                // Matricula igual: nada a fazer
+                if ($matriculaAtual === $matriculaNova) {
+                    return false;
+                }
+
+                $chaveBatch = $cpfCheck . '|' . $unidadeExercicioIdCheck;
+
+                // Já alterou matrícula deste CPF+unidade neste batch: criar novo usuário
+                if (isset($matriculasAlteradasNoBatch[$chaveBatch])) {
+                    SiapeLog::info(sprintf(
+                        'CPF %s: matricula existente %s e nova %s ambas ativas na unidade %s. Criando novo usuario para matricula nova.',
+                        (string) $cpfCheck,
+                        (string) $matriculaAtual,
+                        (string) $matriculaNova,
+                        (string) $codigoExercicio
+                    ));
+                    return true;
+                }
+
+                // Primeira execução no batch: atualizar matrícula e registrar
                 $this->usuarioRepository->update($usuarioLotadoMesmaUnidade->id, $dadosAtualizacao);
+                $matriculasAlteradasNoBatch[$chaveBatch] = true;
 
                 SiapeLog::info(sprintf('Atualizada matrícula do usuário CPF %s para %s (unidade exercício código %s) sem criar novo usuário.',
                     (string) $cpfCheck,
@@ -874,6 +908,10 @@ class UsuarioService extends ServiceBase
         $unidadesVinculadasPayloadByKey = [];
 
         foreach ($usuarios as $usuarioPorCpf) {
+            if (!$usuarioPorCpf instanceof Usuario) {
+                continue;
+            }
+
             $matricula = $usuarioPorCpf->getAttribute('matricula') ?? null;
             $situacaoFuncional = $usuarioPorCpf->getAttribute('situacao_funcional') ?? null;
 
@@ -881,6 +919,10 @@ class UsuarioService extends ServiceBase
                 ->findAllComAtribuicoesAtivasByUsuario(strval($usuarioPorCpf->id));
 
             foreach ($integrantes as $integrante) {
+                if (!$integrante instanceof UnidadeIntegrante) {
+                    continue;
+                }
+
                 $unidade = $integrante->unidade;
                 if ($unidade === null) {
                     continue;

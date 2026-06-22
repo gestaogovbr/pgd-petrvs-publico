@@ -628,6 +628,7 @@ use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQue
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('envio-participante', [EnvioParticipanteQueryController::class, 'index']);
     Route::get('envio-plano-trabalho', [EnvioPlanoTrabalhoQueryController::class, 'index']);
+    Route::post('envio-plano-trabalho/{id}/enviar', [EnvioPlanoTrabalhoQueryController::class, 'enviar']);
     Route::get('envio-plano-entrega', [EnvioPlanoEntregaQueryController::class, 'index']);
 
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
@@ -675,6 +676,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
     Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);
     Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'buscarPorId'])->whereUuid('usuarioId');
+    Route::patch('usuario/nome-social', [UsuarioV2::class, 'atualizarNomeSocial']);
 
     Route::get('unidade', [UnidadeV2::class, 'buscarPorNomeOuCodigo']);
     Route::get('unidade/{unidadeId}/is-gestor-hierarquia', [UnidadeV2::class, 'isGestorHierarquia']);
@@ -688,6 +690,8 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::delete('planejamento/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'destroy']);
 
     Route::get('planejamento/objetivo/{id}/esforco-total', [PlanejamentoObjetivoV2::class, 'esforcoTotal'])->whereUuid('id');
+    Route::get('planejamento/objetivo/{id}/arvore-visualizacao', [PlanejamentoObjetivoV2::class, 'arvoreVisualizacao'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoV2::class, 'entregas'])->whereUuid('id');
+    Route::get('planejamento/objetivo/{id}/equipes', [PlanejamentoObjetivoV2::class, 'equipes'])->whereUuid('id');
 });
 

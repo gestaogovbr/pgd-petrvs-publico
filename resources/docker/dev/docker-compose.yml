@@ -76,7 +76,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-rabbitmq
-    image: petrvs-rabbitmq:dev
     container_name: petrvs_rabbitmq
     # definitions.json no repo só tem filas; o entrypoint faz merge com RABBITMQ_* do back-end/.env (Dockerfile-rabbitmq).
     # Zerar dados: docker volume rm petrvs_rabbitmq_data_dev

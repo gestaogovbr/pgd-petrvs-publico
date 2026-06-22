@@ -1,6 +1,7 @@
 import { Component, Injector, Input, ViewChild } from "@angular/core";
 import { AbstractControl, FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
+import { PlanoEntregaEntregaDaoService } from "src/app/dao/plano-entrega-entrega-dao.service";
 import { PlanoEntregaEntregaProgressoDaoService } from "src/app/dao/plano-entrega-entrega-progresso-dao.service";
 import { PlanoEntregaEntregaProgresso } from "src/app/models/plano-entrega-entrega-progresso.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
@@ -18,10 +19,13 @@ export class PlanoEntregaListProgressoComponent extends PageListBase<PlanoEntreg
  
   public planoEntregaEntregaId: string = "";
   public planoEntregaService: PlanoEntregaService;
+  public entregaDao: PlanoEntregaEntregaDaoService;
+  public isPlanoAtivo: boolean = false;
 
   constructor(public injector: Injector) {
     super(injector, PlanoEntregaEntregaProgresso, PlanoEntregaEntregaProgressoDaoService);
     this.planoEntregaService = injector.get<PlanoEntregaService>(PlanoEntregaService);
+    this.entregaDao = injector.get<PlanoEntregaEntregaDaoService>(PlanoEntregaEntregaDaoService);
     this.title = this.lex.translate("Histórico de Execução");
     this.orderBy = [['data_progresso','desc']];
     this.join = ['plano_entrega_entrega.entrega'];
@@ -36,9 +40,11 @@ export class PlanoEntregaListProgressoComponent extends PageListBase<PlanoEntreg
     (rows as PlanoEntregaEntregaProgresso[])?.forEach(x => x.entrega = x.plano_entrega_entrega?.entrega);
   }
 
-  public ngOnInit() {
+  public async ngOnInit() {
     super.ngOnInit();
     this.planoEntregaEntregaId = this.urlParams!.get("entrega_id") || "";
+    const entrega = await this.entregaDao.getById(this.planoEntregaEntregaId, ['plano_entrega']);
+    this.isPlanoAtivo = entrega?.plano_entrega?.status === 'ATIVO';
   }
 
   public filterWhere = (filter: FormGroup) => {

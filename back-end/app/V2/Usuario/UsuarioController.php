@@ -2,6 +2,7 @@
 
 namespace App\V2\Usuario;
 
+use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\Controller;
 use App\V2\Usuario\UsuarioValidacoes;
 use App\V2\Usuario\UsuarioService;
@@ -20,6 +21,23 @@ class UsuarioController extends Controller
     public function __construct(UsuarioService $service)
     {
         $this->service = $service;
+    }
+
+    public function atualizarNomeSocial(Request $request): JsonResponse
+    {
+        try {
+            $data = UsuarioValidacoes::atualizarNomeSocial($request);
+            $this->service->atualizarNomeSocial(Auth::id(), $data['nome_social']);
+
+            return response()->json(['success' => true]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function buscarPorNomeMatricula(Request $request): JsonResponse

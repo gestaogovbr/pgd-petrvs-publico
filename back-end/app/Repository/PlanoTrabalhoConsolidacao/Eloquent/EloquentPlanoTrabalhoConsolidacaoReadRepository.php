@@ -216,7 +216,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
     private function basePendentesAvaliacaoQuery(\DateTimeInterface $dataCorte): \Illuminate\Database\Eloquent\Builder
     {
         return $this->query()
-            ->with(['planoTrabalho:id,unidade_id,usuario_id,numero', 'planoTrabalho.usuario:id,nome,apelido,url_foto'])
+            ->with(['planoTrabalho:id,unidade_id,usuario_id,numero', 'planoTrabalho.usuario:id,nome,apelido,nome_social,url_foto'])
             ->where('status', StatusEnum::CONCLUIDO->value)
             ->whereHas('latestStatus', function ($q) use ($dataCorte) {
                 $q->where('codigo', StatusEnum::CONCLUIDO->value)
@@ -260,8 +260,8 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             'tarefas' => static fn ($relacao) => $relacao->withTrashed(),
             'tarefas.tipoTarefa:id,nome',
             'comentarios' => static fn ($relacao) => $relacao->withTrashed(),
-            'comentarios.usuario:id,nome,apelido',
-            'reacoes.usuario:id,nome,apelido',
+            'comentarios.usuario:id,nome,apelido,nome_social',
+            'reacoes.usuario:id,nome,apelido,nome_social',
         ]);
 
         if ($concluido) {
