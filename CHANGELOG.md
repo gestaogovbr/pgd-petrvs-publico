@@ -3,16 +3,16 @@
 ### Modificado
 - Reforçada a verificação da atualização de chefias pelo SIAPE, contemplando situações em que o servidor pertence à própria unidade ou está em outra unidade de exercício.
 - Limite de caracteres do registro de execução (trabalho executado) ampliado para 10.000 caracteres
-- Adicionado componente "ver mais" para exibição colapsável de textos longos nos registros de execução
+- Alterada visualização dos registro de execução para mostar um botão "ver mais" para exibição colapsável de textos longos
 - Clonagem de Plano de Trabalho v2 redesenhada: ao clonar, o usuário é redirecionado para a tela de criação com os campos pré-preenchidos (agente público, unidade, modalidade), exceto datas de início e fim. Apenas entregas com período vigente são copiadas, e o clone passa pelas mesmas validações de criação.
-- Corrigido bug que permitia clique duplo no botão de finalizar registro de execução, causando requisições duplicadas
 - Renomeado "Tipo de Objetivo" para "Elementos do Planejamento" no menu lateral e telas de planejamento institucional
+- Adicionadas variáveis faltantes na geração do TCR v2: gestor da unidade, gestores substitutos, entidade e cidade
+
+### Corrigido
+- Corrigido bug que permitia clique duplo no botão de finalizar registro de execução, causando requisições duplicadas
 - Corrigida ordenação inconsistente do menu lateral entre navegadores
 - Corrigido erro que quebrava a tela de listagem de regramentos quando um regramento não possuía unidade vinculada
-- Adicionadas variáveis faltantes na geração do TCR v2: gestor da unidade, gestores substitutos, entidade e cidade
 - Corrigida visualização de variáveis disponíveis no modal "Adicionar macro" do editor de template do TCR: campos folha agora são clicáveis e campos de array exibem notação correta (ex: `entregas[].descricao`)
-
-
 
 ## 3.0.3 18/06/2026
 
