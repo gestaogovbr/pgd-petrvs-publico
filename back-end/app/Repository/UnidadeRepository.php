@@ -66,6 +66,11 @@ class UnidadeRepository
         return $this->readRepository->getUnidadesGerenciadas($usuarioId);
     }
 
+    public function getUnidadesGestorOuSubstituto(string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->getUnidadesGestorOuSubstituto($usuarioId);
+    }
+
     public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection
     {
         return $this->readRepository->getSubordinadas($ids);

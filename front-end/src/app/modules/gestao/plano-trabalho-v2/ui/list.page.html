@@ -36,6 +36,16 @@
           <div class="col-12 col-md-6">
             <div class="d-flex flex-wrap gap-3">
 
+              @if (isChefia) {
+              <div class="br-switch icon small mr-3">
+                <input type="checkbox"
+                      id="minha_equipe"
+                      formControlName="minha_equipe"
+                      (change)="onFilterChange()" />
+                <label for="minha_equipe">Minha Equipe</label>
+              </div>
+              }
+
               @if (!isParticipante) {
               <div class="br-switch icon small mr-3">
                 <input type="checkbox"

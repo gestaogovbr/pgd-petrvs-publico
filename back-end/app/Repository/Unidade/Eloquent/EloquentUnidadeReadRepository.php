@@ -167,6 +167,16 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->get();
     }
 
+    public function getUnidadesGestorOuSubstituto(string $usuarioId): Collection
+    {
+        return $this->query()
+            ->where(function ($q) use ($usuarioId) {
+                $q->whereHas('gestor', fn($q) => $q->where('usuario_id', $usuarioId))
+                  ->orWhereHas('gestoresSubstitutos', fn($q) => $q->where('usuario_id', $usuarioId));
+            })
+            ->get();
+    }
+
     public function getSubordinadas(array $ids): Collection
     {
         return $this->query()->whereIn('unidade_pai_id', $ids)->get();

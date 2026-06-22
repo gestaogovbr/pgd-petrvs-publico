@@ -25,6 +25,10 @@ class PlanoTrabalhoIndexValidator
             return $filtro;
         }
 
+        if ($filtro->minhaEquipe) {
+            return $this->validarMinhaEquipe($filtro);
+        }
+
         $usuario = $this->usuarioRepository->findById($filtro->usuarioLogadoId);
         $nivel = $usuario->perfil->nivel;
 
@@ -41,6 +45,20 @@ class PlanoTrabalhoIndexValidator
         }
 
         return $this->validarPerfilUnidade($filtro);
+    }
+
+    private function validarMinhaEquipe(PlanoTrabalhoIndexDTO $filtro): PlanoTrabalhoIndexDTO
+    {
+        $unidades = $this->unidadeRepository
+            ->getUnidadesGestorOuSubstituto($filtro->usuarioLogadoId)
+            ->pluck('id')
+            ->toArray();
+
+        if (empty($unidades)) {
+            throw new ValidateException("Usuário não possui função de chefia ativa em nenhuma unidade.");
+        }
+
+        return $filtro->withUnidadesId($unidades);
     }
 
     private function validarPerfilConsulta(PlanoTrabalhoIndexDTO $filtro): PlanoTrabalhoIndexDTO
