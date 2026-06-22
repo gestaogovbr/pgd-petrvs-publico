@@ -38,4 +38,6 @@ interface PlanoTrabalhoReadRepositoryContract
     public function findById(string|int $id): ?PlanoTrabalho;
 
     public function possuiAssinatura(string $planoId): bool;
+
+    public function loadRelacoesClonar(PlanoTrabalho $plano): PlanoTrabalho;
 }

@@ -3,6 +3,8 @@
 ### Modificado
 - Limite de caracteres do registro de execução (trabalho executado) ampliado para 10.000 caracteres
 - Adicionado componente "ver mais" para exibição colapsável de textos longos nos registros de execução
+- Clonagem de Plano de Trabalho v2 redesenhada: ao clonar, o usuário é redirecionado para a tela de criação com os campos pré-preenchidos (agente público, unidade, modalidade), exceto datas de início e fim. Apenas entregas com período vigente são copiadas, e o clone passa pelas mesmas validações de criação.
+
 
 ## 3.0.3 18/06/2026
 
