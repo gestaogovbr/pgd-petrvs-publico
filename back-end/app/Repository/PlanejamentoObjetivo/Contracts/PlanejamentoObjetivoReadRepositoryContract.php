@@ -35,6 +35,6 @@ interface PlanejamentoObjetivoReadRepositoryContract
     /** @return list<\stdClass> */
     public function listarEntregasPlanoEntregaPorObjetivoId(string $objetivoId): array;
 
-    /** @return list<\stdClass> */
+    /** @return list<\stdClass> Unidades do PE vinculadas ao objetivo; esforço soma PTs concluídos (pode ser zero). */
     public function listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId(string $objetivoId): array;
 }

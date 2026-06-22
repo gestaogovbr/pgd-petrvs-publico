@@ -689,6 +689,8 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::delete('planejamento/tipo-objetivo/{id}', [TipoPlanejamentoObjetivoController::class, 'destroy']);
 
     Route::get('planejamento/objetivo/{id}/esforco-total', [PlanejamentoObjetivoV2::class, 'esforcoTotal'])->whereUuid('id');
+    Route::get('planejamento/objetivo/{id}/arvore-visualizacao', [PlanejamentoObjetivoV2::class, 'arvoreVisualizacao'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoV2::class, 'entregas'])->whereUuid('id');
+    Route::get('planejamento/objetivo/{id}/equipes', [PlanejamentoObjetivoV2::class, 'equipes'])->whereUuid('id');
 });
 

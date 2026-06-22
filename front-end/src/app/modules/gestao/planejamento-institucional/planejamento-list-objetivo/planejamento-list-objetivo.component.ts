@@ -213,6 +213,7 @@ export class PlanejamentoListObjetivoComponent extends PageFrameBase {
       result.push({ hint: "Alterar", icon: "bi bi-pencil-square", color: "btn-outline-info", onClick: (objetivo: PlanejamentoObjetivo) => { this.editObjetivo(objetivo); } });
     }
     result.push({ hint: "Gráfico", icon: "bi bi-diagram-3", color: "btn-outline-primary", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo-grafico', objetivo.id] })});
+    result.push({ hint: "Árvore", icon: "bi bi-diagram-2", color: "btn-outline-secondary", onClick: (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo-arvore', objetivo.id] })});
     return result;
   }
 
