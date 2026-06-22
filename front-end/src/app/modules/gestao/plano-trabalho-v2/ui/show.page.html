@@ -258,7 +258,7 @@
 
                 @if (podeConcluirConsolidacao(consolidacao)) {
                   <div class="card-footer d-flex justify-content-end p-2x">
-                    <br-button emphasis="primary" (click)="facade.concluirConsolidacao(consolidacao)">
+                    <br-button emphasis="primary" (click)="facade.concluirConsolidacao(consolidacao)" [disabled]="!!facade.processandoAcaoId()">
                       Finalizar Registro
                     </br-button>
                   </div>
@@ -280,7 +280,7 @@
                         <br-button emphasis="secondary" (click)="facade.cancelarReabertura()">Cancelar</br-button>
                         <br-button
                           emphasis="primary"
-                          [disabled]="!facade.justificativaReabrir().trim()"
+                          [disabled]="!facade.justificativaReabrir().trim() || !!facade.processandoAcaoId()"
                           (click)="facade.confirmarReabertura(consolidacao)"
                         >Confirmar Reabertura</br-button>
                       </div>
@@ -438,7 +438,7 @@
     </div>
     <div slot="footer">
       <br-button class="mx-1" emphasis="secondary" (click)="facade.confirmacaoPendente.set(null)">Cancelar</br-button>
-      <br-button class="mx-1" emphasis="primary" (click)="facade.confirmacaoPendente()?.onConfirmar(); facade.confirmacaoPendente.set(null)">Confirmar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="facade.confirmacaoPendente()?.onConfirmar(); facade.confirmacaoPendente.set(null)" [disabled]="!!facade.processandoAcaoId()">Confirmar</br-button>
     </div>
   </br-modal>
 </br-scrim>
