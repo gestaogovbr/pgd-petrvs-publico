@@ -163,6 +163,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     }
 
     /** @return list<\stdClass> */
+    /** Unidades do plano de entregas (PE) vinculadas ao objetivo, com esforço somado de PTs concluídos (pode ser zero). */
     public function listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId(string $objetivoId): array
     {
         $jornadaDivisor = self::ESFORCO_COD_JORNADA_SEMANA_DIVISOR;
@@ -188,14 +189,13 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
             INNER JOIN planos_entregas_entregas pee
                 ON pee.id = peeo.entrega_id AND pee.deleted_at IS NULL
             INNER JOIN unidades u ON u.id = pee.unidade_id AND u.deleted_at IS NULL
-            INNER JOIN planos_trabalhos_entregas pte
+            LEFT JOIN planos_trabalhos_entregas pte
                 ON pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL
-            INNER JOIN planos_trabalhos pt
+            LEFT JOIN planos_trabalhos pt
                 ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL AND pt.status IN ('CONCLUIDO')
-            INNER JOIN usuarios us ON us.id = pt.usuario_id AND us.deleted_at IS NULL
+            LEFT JOIN usuarios us ON us.id = pt.usuario_id AND us.deleted_at IS NULL
             WHERE peeo.planejamento_objetivo_id = ? AND peeo.deleted_at IS NULL
             GROUP BY u.id, u.nome, u.sigla
-            HAVING esforco_horas_total > 0
             ORDER BY u.nome
         SQL, [$objetivoId]);
     }

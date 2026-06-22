@@ -30,10 +30,38 @@ class PlanejamentoObjetivoController extends Controller
         }
     }
 
+    public function arvoreVisualizacao(string $id): JsonResponse
+    {
+        try {
+            $data = $this->service->getArvoreVisualizacao($id);
+
+            return response()->json(['success' => true, 'data' => $data]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function entregas(string $id): JsonResponse
     {
         try {
             $data = $this->service->getEntregasComEsforco($id);
+
+            return response()->json(['success' => true, 'data' => $data]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function equipes(string $id): JsonResponse
+    {
+        try {
+            $data = $this->service->getEquipesComEsforco($id);
 
             return response()->json(['success' => true, 'data' => $data]);
         } catch (IBaseException $e) {
