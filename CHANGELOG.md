@@ -7,6 +7,7 @@
 - Corrigido bug que permitia clique duplo no botão de finalizar registro de execução, causando requisições duplicadas
 - Renomeado "Tipo de Objetivo" para "Elementos do Planejamento" no menu lateral e telas de planejamento institucional
 - Corrigida ordenação inconsistente do menu lateral entre navegadores
+- Corrigido erro que quebrava a tela de listagem de regramentos quando um regramento não possuía unidade vinculada
 
 
 ## 3.0.3 18/06/2026

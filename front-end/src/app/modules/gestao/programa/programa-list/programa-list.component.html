@@ -19,8 +19,8 @@
         </column>
         <column title="Unidade instituidora" [template]="columnUnidadeInstituidora">
             <ng-template let-row="row" #columnUnidadeInstituidora>
-                <span> {{row.unidade.nome}}</span><br>
-                <small> {{row.unidade.sigla}}</small>
+                <span> {{row.unidade?.nome}}</span><br>
+                <small> {{row.unidade?.sigla}}</small>
             </ng-template>
         </column>
         <column title="Início da Vigência" [template]="columnInicioVigencia">
