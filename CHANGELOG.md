@@ -11,6 +11,7 @@
 - Renomeado "Tipo de Objetivo" para "Elementos do Planejamento" no menu lateral e telas de planejamento institucional
 - Adicionadas variáveis faltantes na geração do TCR v2: gestor da unidade, gestores substitutos, entidade e cidade
 - Removidas logos do programa e do governo do rodapé do sistema em observância ao período de defeso eleitoral
+- Melhoria no desempenho dos envios
 
 ### Corrigido
 - Corrigido bug que permitia clique duplo no botão de finalizar registro de execução, causando requisições duplicadas
@@ -21,6 +22,7 @@
 - Corrigida nomenclatura das modalidades
 - Corrigido bug no cancelamento de conclusão de Plano de Entrega
 - Módulo de Ocorrências disponilizado para perfil de Participante
+- Correção no envio de Planos de Trabalho sem Avaliação
 
 ## 3.0.3 18/06/2026
 
