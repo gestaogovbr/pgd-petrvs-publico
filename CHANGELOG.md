@@ -7,12 +7,15 @@
 - Clonagem de Plano de Trabalho v2 redesenhada: ao clonar, o usuário é redirecionado para a tela de criação com os campos pré-preenchidos (agente público, unidade, modalidade), exceto datas de início e fim. Apenas entregas com período vigente são copiadas, e o clone passa pelas mesmas validações de criação.
 - Renomeado "Tipo de Objetivo" para "Elementos do Planejamento" no menu lateral e telas de planejamento institucional
 - Adicionadas variáveis faltantes na geração do TCR v2: gestor da unidade, gestores substitutos, entidade e cidade
+- Removidas logos do programa e do governo do rodapé do sistema em observância ao período de defeso eleitoral
 
 ### Corrigido
 - Corrigido bug que permitia clique duplo no botão de finalizar registro de execução, causando requisições duplicadas
 - Corrigida ordenação inconsistente do menu lateral entre navegadores
 - Corrigido erro que quebrava a tela de listagem de regramentos quando um regramento não possuía unidade vinculada
 - Corrigida visualização de variáveis disponíveis no modal "Adicionar macro" do editor de template do TCR: campos folha agora são clicáveis e campos de array exibem notação correta (ex: `entregas[].descricao`)
+- Corrigida mensagem de erro para status HTTP 400 (Bad Request) para consulta de CPF e Unidade (SIAPE)
+- Corrigida nomenclatura das modalidades
 
 ## 3.0.3 18/06/2026
 
