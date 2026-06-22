@@ -8,6 +8,9 @@
 - Renomeado "Tipo de Objetivo" para "Elementos do Planejamento" no menu lateral e telas de planejamento institucional
 - Corrigida ordenação inconsistente do menu lateral entre navegadores
 - Corrigido erro que quebrava a tela de listagem de regramentos quando um regramento não possuía unidade vinculada
+- Adicionadas variáveis faltantes na geração do TCR v2: gestor da unidade, gestores substitutos, entidade e cidade
+- Corrigida visualização de variáveis disponíveis no modal "Adicionar macro" do editor de template do TCR: campos folha agora são clicáveis e campos de array exibem notação correta (ex: `entregas[].descricao`)
+
 
 
 ## 3.0.3 18/06/2026

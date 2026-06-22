@@ -427,11 +427,12 @@ export class InputEditorComponent extends InputBase implements OnInit {
       data: {path: currentPath},
       type: templateDataset.type,
       children: [],
-      selectable: templateDataset.type && !["ARRAY", "OBJECT"].includes(templateDataset.type)
+      selectable: !templateDataset.type || !["ARRAY", "OBJECT"].includes(templateDataset.type)
     };
   
     if (templateDataset.fields) {
-      treeNode.children = this.convertArrayToTreeNodes(templateDataset.fields, currentPath);
+      const childPath = templateDataset.type === "ARRAY" ? currentPath + "[]" : currentPath;
+      treeNode.children = this.convertArrayToTreeNodes(templateDataset.fields, childPath);
     }
     if (templateDataset.type === "ARRAY") this.listas.push({ key: templateDataset.field, value: templateDataset.label });
 
