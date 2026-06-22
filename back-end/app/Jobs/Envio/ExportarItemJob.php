@@ -66,12 +66,16 @@ abstract class ExportarItemJob implements ShouldQueue
     }
 
     public function getModel(): ?Model {
+        return $this->getRepository()->findById($this->id);
+    }
+
+    public function getModelParaEnvio(): ?Model {
         return $this->getRepository()->findOneParaEnvio($this->id);
     }
 
     abstract public function getRepository(): EnvioRepositoryInterface;
 
-    abstract public function getResource(): JsonResource;
+    abstract public function getResource($model): JsonResource;
 
     abstract public function tag();
 
@@ -99,15 +103,11 @@ abstract class ExportarItemJob implements ShouldQueue
         $model = null;
 
         try{
-            /** @var Usuario|PlanoEntrega|PlanoTrabalho $model */
-            $model = $this->getModel();
+            $model = $this->getModelParaEnvio();
+            $resource = $this->getResource($model);
 
              if (!$model) {
                 $this->logInfo("Item não encontrado para envio.");
-                $modelIndisponivel = $this->getRepository()->findById($this->id);
-                if ($modelIndisponivel !== null) {
-                    $this->getRepository()->registrarLog($modelIndisponivel, 'Item não encontrado para envio.');
-                }
                 return;
             }
 
@@ -118,7 +118,7 @@ abstract class ExportarItemJob implements ShouldQueue
 
             $this->registrarTentativa($model);
 
-            $resource = $this->getResource();
+            //$this->logInfo("ENVIANDO");
 
             $success = $this->enviar($resource);
 

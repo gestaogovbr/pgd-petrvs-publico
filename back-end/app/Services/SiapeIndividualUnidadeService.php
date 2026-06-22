@@ -168,14 +168,17 @@ class SiapeIndividualUnidadeService extends ServiceBase
             );
 
             return $retorno;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            $msgErro = 'Houve uma falha na comunicação com o SIAPE ao processar esta unidade. Por favor, tente novamente mais tarde.';
+            SiapeLog::error('Erro ao processar unidade no SIAPE: ' . $codigoUnidade . ' - ' . $e->getMessage());
+
             $this->resumo = [
                 $this->montarItemResumo(
                     $codigoUnidade,
                     $unidadeAntes,
                     $this->capturarEstadoUnidade($codigoUnidade),
                     self::STATUS_ERRO,
-                    $e->getMessage()
+                    $msgErro
                 )
             ];
 
@@ -185,10 +188,10 @@ class SiapeIndividualUnidadeService extends ServiceBase
                 CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
                 false,
                 $dadosRelatorio,
-                $e->getMessage()
+                $msgErro
             );
 
-            throw $e;
+            throw new \Exception($msgErro);
         }
     }
 
