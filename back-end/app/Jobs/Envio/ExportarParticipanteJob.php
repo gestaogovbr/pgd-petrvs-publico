@@ -36,15 +36,23 @@ class ExportarParticipanteJob extends ExportarItemJob
         return app(UsuarioRepository::class);
     }
 
-    public function getResource(): ParticipanteResource
+    public function getModelParaEnvio(): ?Usuario
     {
-        $usuarioRepository = app(UsuarioRepository::class);
-        $model = $usuarioRepository->findOneParaEnvio($this->id);
+        $usuario = parent::getModelParaEnvio();
 
-        if (!$model) {
+        if (!$usuario) {
             throw new ExportPgdException("Usuário inválido ou sem lotação", $this->id);
         }
 
+        if (!$usuario instanceof Usuario) {
+            throw new ExportPgdException("Usuário inválido ou sem lotação", $this->id);
+        }
+
+        return $usuario;
+    }
+
+    public function getResource($model): ParticipanteResource
+    {
         return new ParticipanteResource($model);
     }
 

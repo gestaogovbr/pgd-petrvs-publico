@@ -145,8 +145,8 @@ export class AppComponent implements IAppComponent {
         route: ['cadastros', 'eixo-tematico'],
         icon: this.entity.getIcon('EixoTematico'),
       },
-      TIPOS_OBJETIVOS: {
-        name: this.lex.translate("Tipos de Objetivos"),
+      ELEMENTOS_PLANEJAMENTO: {
+        name: this.lex.translate("Elementos do Planejamento"),
         permition: 'MOD_TIPO_OBJETIVO',
         route: ['cadastros', 'tipo-objetivo'],
         icon: this.entity.getIcon('TipoObjetivo'),
@@ -538,7 +538,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.PLANOS_ENTREGAS,
           this.menuSchema.EXECUCAO_PLANOS_ENTREGAS,
           this.menuSchema.AVALIACAO_PLANOS_ENTREGAS,
-        ].sort(this.orderMenu),
+        ],
       },
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS),
       Object.assign({}, this.menuSchema.OCORRENCIAS),
@@ -549,12 +549,12 @@ export class AppComponent implements IAppComponent {
         menu: [
           this.menuSchema.PLANEJAMENTOS_INSTITUCIONAIS,
           this.menuSchema.CADEIAS_VALORES,
-          this.menuSchema.TIPOS_OBJETIVOS,
           this.menuSchema.PROGRAMAS_GESTAO,
-          this.menuSchema.EIXOS_TEMATICOS,
           this.menuSchema.UNIDADES,
           this.menuSchema.USUARIOS,
-        ].sort(this.orderMenu),
+          this.menuSchema.EIXOS_TEMATICOS,
+          this.menuSchema.ELEMENTOS_PLANEJAMENTO,
+        ],
       },
       {
         name: this.lex.translate("Relatórios"),
@@ -566,7 +566,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.RELATORIO_USUARIOS,
           this.menuSchema.RELATORIO_UNIDADES,
           this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE,
-        ].sort(this.orderMenu),
+        ],
       },
       {
         name: this.lex.translate("Indicadores"),
@@ -575,7 +575,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.INDICADORES_ENTREGAS,
           this.menuSchema.INDICADORES_EQUIPES,
           this.menuSchema.INDICADORES_GESTAO,
-        ].sort(this.orderMenu),
+        ],
       },
     ];
 
@@ -585,6 +585,7 @@ export class AppComponent implements IAppComponent {
           minha_unidade: true,
         },
       }),
+      Object.assign({}, this.menuSchema.OCORRENCIAS),
       Object.assign({}, this.menuSchema.RELATORIO_USUARIOS, {
         name: this.lex.translate("Relatório de Agentes Públicos"),
       }),
@@ -595,7 +596,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.INDICADORES_ENTREGAS,
           this.menuSchema.INDICADORES_EQUIPES,
           this.menuSchema.INDICADORES_GESTAO,
-        ].sort(this.orderMenu),
+        ],
       },
     ];
 
@@ -610,7 +611,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.RELATORIO_USUARIOS,
           this.menuSchema.RELATORIO_UNIDADES,
           this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE,
-        ].sort(this.orderMenu),
+        ],
       },
       {
         name: this.lex.translate("Indicadores"),
@@ -619,7 +620,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.INDICADORES_ENTREGAS,
           this.menuSchema.INDICADORES_EQUIPES,
           this.menuSchema.INDICADORES_GESTAO,
-        ].sort(this.orderMenu),
+        ],
       },
     ];
 
@@ -680,10 +681,6 @@ export class AppComponent implements IAppComponent {
         menu: this.moduloDev,
       },
     ];
-  }
-
-  public orderMenu(a: any, b: any) {
-    return a.nome < b.nome ? -1 : 1;
   }
 
   public rootMenuClick(item: any) {

@@ -59,9 +59,41 @@ export type ObjetivoEntregasListagemApi = {
   esforco_por_unidade: ObjetivoEsforcoPorUnidadeApi[];
 };
 
+export type ObjetivoEquipesListagemApi = {
+  objetivo_id: string;
+  itens: ObjetivoEsforcoPorUnidadeApi[];
+};
+
+export type ObjetivoArvoreSuperiorResumoApi = {
+  objetivo_id: string;
+  objetivo_nome: string;
+  planejamento_nome: string;
+  hierarquia_linhas: string[];
+  nivel_superior: number;
+  objetivo_superior_id: string | null;
+};
+
+export type ObjetivoArvoreVisualizacaoApi = {
+  objetivo_raiz_id: string;
+  nos: Record<string, EsforcoObjetivoNodeApi>;
+  cadeia_superior: ObjetivoArvoreSuperiorResumoApi[];
+};
+
+type ArvoreVisualizacaoResponse = {
+  success?: boolean;
+  data?: ObjetivoArvoreVisualizacaoApi;
+  error?: string;
+};
+
 type EntregasResponse = {
   success?: boolean;
   data?: ObjetivoEntregasListagemApi;
+  error?: string;
+};
+
+type EquipesResponse = {
+  success?: boolean;
+  data?: ObjetivoEquipesListagemApi;
   error?: string;
 };
 
@@ -89,6 +121,36 @@ export class PlanejamentoObjetivoEsforcoApiClient {
   getEntregasPorObjetivo(objetivoId: string): Observable<ObjetivoEntregasListagemApi> {
     const url = `${this.gb.servidorURL}${this.base}/${objetivoId}/entregas`;
     return this.http.get<EntregasResponse>(url, { withCredentials: true }).pipe(
+      map(res => {
+        if (res?.error) {
+          throw new Error(res.error);
+        }
+        if (!res?.data || typeof res.data !== 'object') {
+          throw new Error('Resposta inválida do servidor.');
+        }
+        return res.data;
+      })
+    );
+  }
+
+  getEquipesPorObjetivo(objetivoId: string): Observable<ObjetivoEquipesListagemApi> {
+    const url = `${this.gb.servidorURL}${this.base}/${objetivoId}/equipes`;
+    return this.http.get<EquipesResponse>(url, { withCredentials: true }).pipe(
+      map(res => {
+        if (res?.error) {
+          throw new Error(res.error);
+        }
+        if (!res?.data || typeof res.data !== 'object') {
+          throw new Error('Resposta inválida do servidor.');
+        }
+        return res.data;
+      })
+    );
+  }
+
+  getArvoreVisualizacao(objetivoId: string): Observable<ObjetivoArvoreVisualizacaoApi> {
+    const url = `${this.gb.servidorURL}${this.base}/${objetivoId}/arvore-visualizacao`;
+    return this.http.get<ArvoreVisualizacaoResponse>(url, { withCredentials: true }).pipe(
       map(res => {
         if (res?.error) {
           throw new Error(res.error);

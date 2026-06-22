@@ -16,7 +16,7 @@ class PlanoTrabalhoAvaliacaoResource extends JsonResource
             "id_periodo_avaliativo"           => $this->id,
             "data_inicio_periodo_avaliativo"  => $this->data_inicio,
             "data_fim_periodo_avaliativo"     => $this->data_fim,
-            "avaliacao_registros_execucao"    => $this->converteAvaliacao($this->avaliacao->nota),
+            "avaliacao_registros_execucao"    => $this->converteAvaliacao($this->avaliacao?->nota),
             "data_avaliacao_registros_execucao" => Carbon::parse($this->avaliacao->data_avaliacao ?? '')->format('Y-m-d'),
         ];
     }

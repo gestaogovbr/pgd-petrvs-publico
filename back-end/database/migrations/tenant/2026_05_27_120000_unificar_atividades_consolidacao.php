@@ -10,11 +10,14 @@ use Illuminate\Support\Facades\Schema;
  * Unifica atividades duplicadas no mesmo período avaliativo (e mesma entrega),
  * concatenando as descrições em um único registro.
  *
- * Implementação set-based (sem loop PHP) para escalar em produção com dezenas de tenants.
+ * Uma passagem em `atividades` via window functions (MySQL 8 / MariaDB 10.2+);
+ * leituras posteriores usam apenas temps indexadas (sem segundo full scan).
  */
 return new class extends Migration
 {
     private const BACKUP_TABLE = 'atividades_unificacao_merge_backup';
+
+    private const TEMP_RANKED = 'tmp_atividades_merge_ranked';
 
     private const TEMP_GRUPOS = 'tmp_atividades_merge_grupos';
 
@@ -44,9 +47,11 @@ return new class extends Migration
         }
 
         $this->criarBackup();
+        $this->configurarSessaoMigracao();
         $this->prepararTabelasTemporarias();
 
         try {
+            $this->popularRanked();
             $this->popularGruposEMapeamento();
 
             $grupos = (int) DB::table(self::TEMP_GRUPOS)->count();
@@ -55,8 +60,6 @@ return new class extends Migration
 
                 return;
             }
-
-            $this->configurarSessaoParaAgregacao();
 
             DB::beginTransaction();
 
@@ -132,18 +135,34 @@ return new class extends Migration
 
     private function prepararTabelasTemporarias(): void
     {
+        $ranked = self::TEMP_RANKED;
         $grupos = self::TEMP_GRUPOS;
         $map = self::TEMP_MAP;
 
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . $ranked . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . $grupos . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . $map . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_DESCRICOES . '`');
 
         DB::statement(<<<SQL
+            CREATE TEMPORARY TABLE `{$ranked}` (
+                `id` CHAR(36) NOT NULL,
+                `plano_trabalho_consolidacao_id` CHAR(36) NOT NULL,
+                `plano_trabalho_entrega_id` CHAR(36) NULL,
+                `entrega_id_key` CHAR(36) NOT NULL,
+                `rn` INT UNSIGNED NOT NULL,
+                `grp_cnt` INT UNSIGNED NOT NULL,
+                PRIMARY KEY (`id`),
+                KEY `idx_grupo_rn` (`plano_trabalho_consolidacao_id`, `entrega_id_key`, `rn`),
+                KEY `idx_grupo_dup` (`plano_trabalho_consolidacao_id`, `entrega_id_key`, `grp_cnt`)
+            ) ENGINE=InnoDB
+        SQL);
+
+        DB::statement(<<<SQL
             CREATE TEMPORARY TABLE `{$grupos}` (
                 `plano_trabalho_consolidacao_id` CHAR(36) NOT NULL,
                 `plano_trabalho_entrega_id` CHAR(36) NULL,
-                `entrega_id_key` CHAR(36) NOT NULL COMMENT 'COALESCE(plano_trabalho_entrega_id, "") — PK não aceita NULL',
+                `entrega_id_key` CHAR(36) NOT NULL,
                 `keeper_id` CHAR(36) NOT NULL,
                 PRIMARY KEY (`plano_trabalho_consolidacao_id`, `entrega_id_key`),
                 KEY `idx_keeper` (`keeper_id`)
@@ -159,50 +178,75 @@ return new class extends Migration
         SQL);
     }
 
+    /**
+     * Único full scan em `atividades`: classifica keeper (rn=1) e tamanho do grupo.
+     */
+    private function popularRanked(): void
+    {
+        $ranked = self::TEMP_RANKED;
+
+        DB::statement(<<<SQL
+            INSERT INTO `{$ranked}` (
+                `id`,
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                `entrega_id_key`,
+                `rn`,
+                `grp_cnt`
+            )
+            SELECT
+                `id`,
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                COALESCE(`plano_trabalho_entrega_id`, '') AS `entrega_id_key`,
+                ROW_NUMBER() OVER (
+                    PARTITION BY `plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`
+                    ORDER BY `created_at` ASC, `id` ASC
+                ) AS `rn`,
+                COUNT(*) OVER (
+                    PARTITION BY `plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`
+                ) AS `grp_cnt`
+            FROM `atividades`
+            WHERE `deleted_at` IS NULL
+              AND `plano_trabalho_consolidacao_id` IS NOT NULL
+        SQL);
+    }
+
     private function popularGruposEMapeamento(): void
     {
+        $ranked = self::TEMP_RANKED;
         $grupos = self::TEMP_GRUPOS;
         $map = self::TEMP_MAP;
 
         DB::statement(<<<SQL
-            INSERT INTO `{$grupos}` (`plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`, `entrega_id_key`, `keeper_id`)
+            INSERT INTO `{$grupos}` (
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                `entrega_id_key`,
+                `keeper_id`
+            )
             SELECT
-                `dup`.`plano_trabalho_consolidacao_id`,
-                `dup`.`plano_trabalho_entrega_id`,
-                COALESCE(`dup`.`plano_trabalho_entrega_id`, '') AS `entrega_id_key`,
-                MIN(`a`.`id`) AS `keeper_id`
-            FROM (
-                SELECT
-                    `plano_trabalho_consolidacao_id`,
-                    `plano_trabalho_entrega_id`,
-                    MIN(`created_at`) AS `min_created_at`
-                FROM `atividades`
-                WHERE `deleted_at` IS NULL
-                  AND `plano_trabalho_consolidacao_id` IS NOT NULL
-                GROUP BY `plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`
-                HAVING COUNT(*) > 1
-            ) AS `dup`
-            INNER JOIN `atividades` AS `a`
-                ON `a`.`plano_trabalho_consolidacao_id` = `dup`.`plano_trabalho_consolidacao_id`
-                AND `a`.`plano_trabalho_entrega_id` <=> `dup`.`plano_trabalho_entrega_id`
-                AND `a`.`created_at` = `dup`.`min_created_at`
-                AND `a`.`deleted_at` IS NULL
-            GROUP BY
-                `dup`.`plano_trabalho_consolidacao_id`,
-                `dup`.`plano_trabalho_entrega_id`
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                `entrega_id_key`,
+                `id` AS `keeper_id`
+            FROM `{$ranked}`
+            WHERE `rn` = 1
+              AND `grp_cnt` > 1
         SQL);
 
         DB::statement(<<<SQL
             INSERT INTO `{$map}` (`duplicate_id`, `keeper_id`)
             SELECT
-                `a`.`id`,
-                `g`.`keeper_id`
-            FROM `atividades` AS `a`
-            INNER JOIN `{$grupos}` AS `g`
-                ON `g`.`plano_trabalho_consolidacao_id` = `a`.`plano_trabalho_consolidacao_id`
-                AND `g`.`entrega_id_key` = COALESCE(`a`.`plano_trabalho_entrega_id`, '')
-            WHERE `a`.`deleted_at` IS NULL
-              AND `a`.`id` <> `g`.`keeper_id`
+                `r`.`id` AS `duplicate_id`,
+                `k`.`id` AS `keeper_id`
+            FROM `{$ranked}` AS `r`
+            INNER JOIN `{$ranked}` AS `k`
+                ON `k`.`plano_trabalho_consolidacao_id` = `r`.`plano_trabalho_consolidacao_id`
+                AND `k`.`entrega_id_key` = `r`.`entrega_id_key`
+                AND `k`.`rn` = 1
+            WHERE `r`.`grp_cnt` > 1
+              AND `r`.`id` <> `k`.`id`
         SQL);
     }
 
@@ -249,6 +293,7 @@ return new class extends Migration
     private function atualizarDescricoesUnificadas(): void
     {
         $grupos = self::TEMP_GRUPOS;
+        $ranked = self::TEMP_RANKED;
         $descricoes = self::TEMP_DESCRICOES;
         $maxChars = self::DESCRICAO_MAX_CHARS;
 
@@ -266,16 +311,16 @@ return new class extends Migration
                 COALESCE(
                     GROUP_CONCAT(
                         NULLIF(TRIM(`a2`.`descricao`), '')
-                        ORDER BY `a2`.`created_at` ASC, `a2`.`id` ASC
+                        ORDER BY `r`.`rn` ASC
                         SEPARATOR '\n\n'
                     ),
                     ''
                 ) AS `descricao_unificada`
             FROM `{$grupos}` AS `g`
-            INNER JOIN `atividades` AS `a2`
-                ON `a2`.`plano_trabalho_consolidacao_id` = `g`.`plano_trabalho_consolidacao_id`
-                AND COALESCE(`a2`.`plano_trabalho_entrega_id`, '') = `g`.`entrega_id_key`
-                AND `a2`.`deleted_at` IS NULL
+            INNER JOIN `{$ranked}` AS `r`
+                ON `r`.`plano_trabalho_consolidacao_id` = `g`.`plano_trabalho_consolidacao_id`
+                AND `r`.`entrega_id_key` = `g`.`entrega_id_key`
+            INNER JOIN `atividades` AS `a2` ON `a2`.`id` = `r`.`id`
             GROUP BY `g`.`keeper_id`
         SQL);
 
@@ -316,18 +361,21 @@ return new class extends Migration
 
     private function limparTabelasTemporarias(): void
     {
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_RANKED . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_GRUPOS . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_MAP . '`');
         DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_DESCRICOES . '`');
     }
 
     /**
-     * MySQL e MariaDB usam group_concat_max_len baixo por padrão (1024), o que
-     * dispara erro 1260 ("Row was cut by GROUP_CONCAT") ao unificar descrições.
+     * Ajustes de sessão para leitura analítica e escritas em lote em tenant com carga.
      */
-    private function configurarSessaoParaAgregacao(): void
+    private function configurarSessaoMigracao(): void
     {
+        DB::statement('SET SESSION innodb_lock_wait_timeout = 600');
+        DB::statement('SET SESSION lock_wait_timeout = 600');
         DB::statement('SET SESSION group_concat_max_len = 1048576');
+        DB::statement('SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED');
     }
 
     /**
