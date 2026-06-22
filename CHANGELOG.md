@@ -1,5 +1,9 @@
 ## 3.0.4 22/06/2026
 
+### Modificado
+- Limite de caracteres do registro de execução (trabalho executado) ampliado para 10.000 caracteres
+- Adicionado componente "ver mais" para exibição colapsável de textos longos nos registros de execução
+
 ## 3.0.3 18/06/2026
 
 ### Adicionado
