@@ -106,12 +106,22 @@
             <th scope="col">Envio concluído em</th>
             <th scope="col">Recebido pela API em</th>
             <th scope="col">Log de envio</th>
+            <th scope="col" class="text-end">Ações</th>
           </tr>
         </thead>
         <tbody>
           @for (row of facade.items(); track row.id) {
           <tr>
-            <td data-th="#ID">#{{ row.numero }}</td>
+            <td data-th="#ID">
+              <div>#{{ row.numero }}</div>
+              @if (row.status) {
+              <badge
+                class="mt-1"
+                [color]="lookup.getColor(lookup.PLANO_TRABALHO_STATUS, row.status)"
+                [icon]="lookup.getIcon(lookup.PLANO_TRABALHO_STATUS, row.status)"
+                [label]="lookup.getValue(lookup.PLANO_TRABALHO_STATUS, row.status)" />
+              }
+            </td>
             <td data-th="Unidade">{{ row.unidade?.sigla || 'Não definida' }}</td>
             <td data-th="Programa">{{ row.programa?.nome || 'Não definido' }}</td>
             <td data-th="Vigência">
@@ -135,11 +145,26 @@
               }}</span>
             </td>
             <td data-th="Log de envio">{{ row.log_envio || '-' }}</td>
+            <td data-th="Ações" class="text-end">
+              @let enviando = enviandoPorId()[row.id] === true;
+              <br-button
+                shape="circle"
+                type="button"
+                [disabled]="enviando"
+                (click)="onEnviar(row)"
+                title="Enviar plano de trabalho ao PGD"
+                ariaLabel="Enviar plano de trabalho ao PGD">
+                <i
+                  class="fas"
+                  [ngClass]="enviando ? 'fa-spinner fa-spin' : 'fa-paper-plane'"
+                  [attr.aria-hidden]="true"></i>
+              </br-button>
+            </td>
           </tr>
           }
           @if (facade.items().length === 0 && !facade.loading()) {
           <tr>
-            <td colspan="10" class="text-center p-3">
+            <td colspan="11" class="text-center p-3">
               @if (!hasAnyFilter()) {
               Defina pelo menos um filtro e clique em Consultar.
               } @else {

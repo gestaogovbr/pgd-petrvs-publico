@@ -42,6 +42,14 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
       onClick: (objetivo: PlanejamentoObjetivo) =>
         this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo-grafico', objetivo.id] })
     });
+    this.addOption({
+      icon: 'bi bi-diagram-2',
+      label: 'Árvore',
+      hint: 'Árvore hierárquica expansível',
+      color: 'btn-outline-secondary',
+      onClick: (objetivo: PlanejamentoObjetivo) =>
+        this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo-arvore', objetivo.id] })
+    });
     this.rowsLimit = 10000;
   }
 

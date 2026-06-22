@@ -8,8 +8,10 @@ use App\Exceptions\NotFoundException;
 use App\Models\PlanejamentoObjetivo;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
+use App\V2\Planejamento\Objetivo\DTOs\ObjetivoArvoreVisualizacaoDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregaPlanoItemDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregasListagemDTO;
+use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEquipesListagemDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEsforcoPorUnidadeDTO;
 
 class PlanejamentoObjetivoService
@@ -17,6 +19,7 @@ class PlanejamentoObjetivoService
     public function __construct(
         private readonly PlanejamentoObjetivoReadRepositoryContract $repository,
         private readonly EsforcoTotalGraphAssembler $esforcoGraphAssembler,
+        private readonly ObjetivoArvoreVisualizacaoAssembler $arvoreVisualizacaoAssembler,
     ) {}
 
     /**
@@ -39,6 +42,16 @@ class PlanejamentoObjetivoService
             $this->repository->loadEsforcoPorIds($ids),
             fn (array $idsVinculo) => $this->repository->lookupNomes($idsVinculo),
         );
+    }
+
+    /**
+     * Árvore de filhos (mesmo planejamento) com cadeia de superiores em resumo textual.
+     */
+    public function getArvoreVisualizacao(string $objetivoId): ObjetivoArvoreVisualizacaoDTO
+    {
+        $mapa = $this->getEsforcoTotal($objetivoId);
+
+        return $this->arvoreVisualizacaoAssembler->assemble($objetivoId, $mapa);
     }
 
     /**
@@ -66,6 +79,25 @@ class PlanejamentoObjetivoService
             total_entregas: count($itens),
             itens: $itens,
             esforco_por_unidade: $porUnidade,
+        );
+    }
+
+    /**
+     * Unidades (equipes) do plano de entregas vinculadas ao objetivo, com esforço de PTs concluídos.
+     */
+    public function getEquipesComEsforco(string $objetivoId): ObjetivoEquipesListagemDTO
+    {
+        $this->findObjetivoOrFail($objetivoId);
+
+        $rowsUnidades = $this->repository->listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId($objetivoId);
+        $itens = array_map(
+            static fn (\stdClass $row) => ObjetivoEsforcoPorUnidadeDTO::fromRow($row),
+            $rowsUnidades,
+        );
+
+        return new ObjetivoEquipesListagemDTO(
+            objetivo_id: $objetivoId,
+            itens: $itens,
         );
     }
 

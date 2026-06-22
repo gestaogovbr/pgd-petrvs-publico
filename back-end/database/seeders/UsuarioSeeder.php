@@ -121,13 +121,13 @@ class UsuarioSeeder extends Seeder
         'is_admin' => true,
       ],
        [
-        'email' => 'rafaelstibery@gmail.com',
-        'nome' => ' Rafael Tibery',
-        'cpf' => '05210244121',
-        'apelido' => 'Rafael',
+        'email' => 'amanda.melo@gestao.gov.br',
+        'nome' => ' Amanda Alves De Melo',
+        'cpf' => '01859875246',
+        'apelido' => 'Amanda',
         'perfil_id' => $perfilDesenvolvedorId,
         'modalidade_pgd' => 'presencial',
-        'sexo' => 'MASCULINO',
+        'sexo' => 'FEMININO',
         'is_admin' => true,
        ],
        [
@@ -162,7 +162,7 @@ class UsuarioSeeder extends Seeder
       ]
     ];
 
-    $cpfsParaExcluir = ['05182319177'];
+    $cpfsParaExcluir = ['05182319177', '05210244121'];
     Usuario::whereIn('cpf', $cpfsParaExcluir)->delete();
 
     $usuario = Usuario::onlyTrashed()->where('cpf', '40921185898')->first();
