@@ -829,7 +829,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     if (!dataInicio || !dataFim) {
       this.programaId.set('');
       this.programasVisiveis.set([]);
-      this.erroRegramento.set('');
+      this.erroRegramento.set('Selecione as datas de vigência do plano');
       return;
     }
     const visiveis = programas.filter(p =>
@@ -888,7 +888,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     this.erroAgentePublico.set('');
 
     if (!unidades || unidades.length === 0 || (usuario as any).participa_pgd === 'não'
-        || (!(usuario as any).participa_pgd && !usuario.modalidade_pgd)) {
+      || (!(usuario as any).participa_pgd && !usuario.modalidade_pgd)) {
       this.erroAgentePublico.set('Usuário não participante do PGD ou não habilitado para pactuar Plano de Trabalho nesta unidade.');
     }
 

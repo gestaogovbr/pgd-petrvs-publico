@@ -43,24 +43,10 @@
               }
             </div>
 
-            <div class="col-md-4 mb-3">
+            <div class="col-md-2 mb-3">
               <br-select label="Unidade" formControlName="unidade_id" [options]="unidadesOptions()" />
             </div>
 
-            <div class="col-md-4 mb-3">
-              <div class="br-input">
-                <br-select label="Regramento de Instituição PGD" [options]="programasOptions()" (valueChange)="selecionarPrograma($event)" />
-              </div>
-              @if (erroRegramento()) {
-                <span class="feedback warning" role="alert">
-                  <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
-                  {{ erroRegramento() }}
-                </span>
-              }
-            </div>
-          </div>
-
-          <div class="row mt-2">
             <div class="col-md-3 mb-3">
               <div class="br-input">
                 <label>Início</label>
@@ -73,6 +59,20 @@
                 <label>Final</label>
                 <input type="date" formControlName="data_fim" />
               </div>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-md-6 mb-3">
+              <div class="br-input">
+                <br-select label="Regramento de Instituição PGD" [options]="programasOptions()" (valueChange)="selecionarPrograma($event)" />
+              </div>
+              @if (erroRegramento()) {
+                <span class="feedback warning" role="alert">
+                  <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                  {{ erroRegramento() }}
+                </span>
+              }
             </div>
 
             <div class="col-md-6 mb-3">
