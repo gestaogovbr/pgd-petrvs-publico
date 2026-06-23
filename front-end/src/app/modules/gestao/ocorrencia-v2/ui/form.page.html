@@ -1,0 +1,83 @@
+
+<div class="container-fluid py-3 govbr-v2">
+  <app-breadcrumb></app-breadcrumb>
+  <h2 class="mb-3">{{ modoEdicao ? 'Editar' : 'Nova' }} Ocorrência</h2>
+
+  @if (carregando()) {
+    <div class="d-flex justify-content-center py-5">
+      <br-loading></br-loading>
+    </div>
+  } @else {
+    <div class="br-card p-3" [formGroup]="fg">
+      <div class="row g-3">
+        @if (agentesOptions().length > 1) {
+          <div class="col-md-6">
+            <br-select
+              label="Agente Público *"
+              formControlName="usuario_id"
+              [options]="agentesOptions()"
+              class="w-100">
+            </br-select>
+          </div>
+        }
+        <div class="col-md-6">
+          <br-select
+            label="Motivo *"
+            formControlName="tipo_motivo_afastamento_id"
+            [options]="tiposOptions()"
+            class="w-100">
+          </br-select>
+        </div>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="br-input">
+            <label for="data_inicio">Início *</label>
+            <input id="data_inicio" type="date" formControlName="data_inicio" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="br-input">
+            <label for="data_fim">Fim *</label>
+            <input id="data_fim" type="date" formControlName="data_fim" />
+          </div>
+        </div>
+        @if (tipoSelecionadoUsaHoras) {
+          <div class="col-md-4">
+            <div class="br-input">
+              <label for="horas">Horas</label>
+              <input id="horas" type="number" min="1" max="9999" formControlName="horas" />
+            </div>
+          </div>
+        }
+        <div class="col-md-12">
+          <div class="br-textarea">
+            <label for="observacoes">Observações *</label>
+            <textarea id="observacoes" rows="3" formControlName="observacoes"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 mt-3">
+        <br-button emphasis="secondary" [disabled]="salvando()" (click)="cancelar()">Cancelar</br-button>
+        <br-button emphasis="primary" [disabled]="salvando() || fg.invalid" (click)="salvar()">
+          {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </br-button>
+      </div>
+    </div>
+  }
+</div>
+
+<br-scrim [isOpen]="!!modal()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!modal()" [titleText]="modal()?.titulo || ''" size="small" alignFooter="end" (brModalBeforeClose)="fecharModal()">
+    <p>{{ modal()?.mensagem }}</p>
+    <div slot="footer">
+      @if (modal()?.titulo === 'Operação bloqueada') {
+        <br-button emphasis="primary" (click)="fecharModal()">Entendi</br-button>
+      } @else {
+        <br-button class="mx-1" emphasis="secondary" (click)="fecharModal()">Cancelar</br-button>
+        <br-button class="mx-1" emphasis="primary" (click)="confirmarModal()">Confirmar</br-button>
+      }
+    </div>
+  </br-modal>
+</br-scrim>
