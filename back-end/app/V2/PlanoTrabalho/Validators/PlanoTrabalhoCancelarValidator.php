@@ -40,7 +40,10 @@ class PlanoTrabalhoCancelarValidator
             throw new ValidateException('Apenas planos com status ATIVO ou SUSPENSO podem ser cancelados.');
         }
 
-        $this->validarSemConsolidacaoFinalizada($plano);
+        if ($plano->status !== StatusEnum::SUSPENSO->value) {
+            $this->validarSemConsolidacaoFinalizada($plano);
+        }
+
         $this->validarAutorizacao($plano, $usuarioLogadoId);
 
         return $plano;

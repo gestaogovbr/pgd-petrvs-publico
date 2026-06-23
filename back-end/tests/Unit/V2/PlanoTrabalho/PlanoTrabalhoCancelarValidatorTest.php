@@ -90,7 +90,19 @@ describe('PlanoTrabalhoCancelarValidator', function () {
         $plano->usuario_id = 'user-1';
         $plano->unidade_id = 'unidade-1';
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
-        $this->consolidacaoRepo->shouldReceive('possuiConsolidacaoFinalizadaPorPlano')->with('plano-1')->andReturn(false);
+        $this->consolidacaoRepo->shouldNotReceive('possuiConsolidacaoFinalizadaPorPlano');
+
+        expect($this->validator->validar('plano-1', 'user-1'))->toBe($plano);
+    });
+
+    test('retorna plano quando PT suspenso com consolidacao finalizada', function () {
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->status = 'SUSPENSO';
+        $plano->usuario_id = 'user-1';
+        $plano->unidade_id = 'unidade-1';
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->consolidacaoRepo->shouldNotReceive('possuiConsolidacaoFinalizadaPorPlano');
 
         expect($this->validator->validar('plano-1', 'user-1'))->toBe($plano);
     });
