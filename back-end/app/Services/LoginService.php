@@ -153,63 +153,7 @@ class LoginService
             throw new Exception("Usuário não logado");
         }
 
-        $usuario = Auth::guard('web')->user();
-        $usuario = $this->checkSwitchUserByMatricula($request, $usuario, $data['matricula'] ?? null);
-
-        $usuario = $this->usuarioRepository->findWithAreaTrabalho($usuario->id, $data['unidade_id']);
-
-        if (!$usuario) {
-            throw new Exception("Unidade não encontrada no usuário");
-        }
-
-        if (!$this->usuarioHasAreaTrabalho($usuario)) {
-            throw new Exception("Unidade não encontrada no usuário");
-        }
-
-        $this->updateUserUnidadeConfig($request, $usuario, $data['unidade_id']);
-
-        return [
-            'status'  => 'OK',
-            'unidade' => $this->unidadeRepository->findById($data['unidade_id']),
-        ];
-    }
-
-    private function usuarioHasAreaTrabalho(Usuario $usuario): bool
-    {
-        $firstAreaId = $usuario->areasTrabalho?->first()?->id;
-
-        return !empty($firstAreaId);
-    }
-
-    private function checkSwitchUserByMatricula(Request $request, Usuario $currentUser, ?string $matricula): Usuario
-    {
-        if (empty($matricula)) {
-            return $currentUser;
-        }
-
-        $usuarioMatricula = $this->usuarioRepository->findByMatricula($matricula);
-
-        if ($usuarioMatricula && $usuarioMatricula->id !== $currentUser->id) {
-            Auth::guard('web')->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-
-            Auth::guard('web')->loginUsingId($usuarioMatricula->id, remember: false);
-            $request->session()->regenerate();
-
-            return $usuarioMatricula;
-        }
-
-        return $currentUser;
-    }
-
-    private function updateUserUnidadeConfig(Request $request, Usuario $usuario, string $unidadeId): void
-    {
-        $request->session()->put('unidade_id', $unidadeId);
-        $config = $usuario->config ?? [];
-        $config['unidade_id'] = $unidadeId;
-        $usuario->config = $config;
-        $usuario->save();
+        return $this->usuarioService->selecionaUnidade($request, Auth::guard('web')->user(), $data);
     }
 
     public function horarioUnidade(Request $request): string

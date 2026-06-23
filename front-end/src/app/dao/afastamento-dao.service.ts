@@ -8,7 +8,7 @@ import { DaoBaseService } from './dao-base.service';
 export class AfastamentoDaoService extends DaoBaseService<Afastamento> {
 
   constructor(protected injector: Injector) { 
-    super("Afastamento", injector);
+    super("Ocorrencia", injector);
     this.inputSearchConfig.searchFields = ["observacoes"];
   }  
 }

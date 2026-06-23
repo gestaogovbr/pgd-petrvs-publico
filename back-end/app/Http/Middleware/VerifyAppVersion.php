@@ -24,7 +24,10 @@ class VerifyAppVersion
          $tenant = Tenant::where('id', env("PETRVS_ENTIDADE"))->first(); 
  
          if ($tenant && version_compare($appVersion, $tenant->version, '<')) {
-            throw new ServerException("ValidateVersion", "Versão errada");
+            throw new ServerException(
+                "ValidateVersion",
+                "Versão do app ({$appVersion}) em conflito com a versão da entidade ({$tenant->version})"
+            );
          }
  
          return $next($request);

@@ -11,9 +11,12 @@ export class ErrorsInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
+        if (error.status === 400) {
+          const msg = (error.error && (error.error.error || error.error.message)) || 'Requisição inválida.';
+          this.toastService.showError(msg);
+        }
         if (error.status === 500) {
           console.error('Erro 500 global:', error);
-          //retornar um toast do bootstrap
           this.toastService.showError('Erro interno do servidor. Por favor, tente novamente mais tarde.');
         }
         return throwError(() => error);

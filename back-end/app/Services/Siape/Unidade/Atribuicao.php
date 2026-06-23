@@ -66,7 +66,7 @@ trait Atribuicao
          /**
          * @var \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $curadores
          */
-        $curadores = $this->getUnidadeIntegranteRepository()->findCuradoresByUsuario($usuario->id);
+        $curadores = $this->getUnidadeIntegranteRepository()->findAllCuradoresByUsuario($usuario->id);
         foreach ($curadores as $curador) {
             if (!$curador) continue;
             if ($curador->unidade_id != $unidadeDestino->id) continue;
@@ -85,7 +85,7 @@ trait Atribuicao
         /**
          * @var \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $colaboracoes
          */
-        $colaboracoes = $this->getUnidadeIntegranteRepository()->findColaboracoesByUsuario($usuario->id);
+        $colaboracoes = $this->getUnidadeIntegranteRepository()->findAllColaboracoesByUsuario($usuario->id);
 
         foreach ($colaboracoes as $colaboracao) {
             if (!$colaboracao) continue;
@@ -110,7 +110,7 @@ trait Atribuicao
         /**
          * @var \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
          */
-        $lotacoes = $this->getUnidadeIntegranteRepository()->findGerenciasSubstitutasByUsuario($usuario->id);
+        $lotacoes = $this->getUnidadeIntegranteRepository()->findAllGerenciasSubstitutasByUsuario($usuario->id);
 
         foreach ($lotacoes as $lotacao) {
             if ($lotacao->unidade_id != $unidadeDestino->id) continue;
@@ -128,7 +128,7 @@ trait Atribuicao
         /**
          * @var \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
          */
-        $lotacoes = $this->getUnidadeIntegranteRepository()->findGerenciasDelegadasByUsuario($usuario->id);
+        $lotacoes = $this->getUnidadeIntegranteRepository()->findAllGerenciasDelegadasByUsuario($usuario->id);
 
         foreach ($lotacoes as $lotacao) {
             if ($lotacao->unidade_id != $unidadeDestino->id) continue;
@@ -195,7 +195,7 @@ trait Atribuicao
 
     protected function removeTodasAsGestoesDoUsuario(Usuario $usuario): void
     {
-        $this->getUnidadeIntegranteRepository()->findGerenciasTitularesByUsuario($usuario->id)->each(function (UnidadeIntegrante $gestao) {
+        $this->getUnidadeIntegranteRepository()->findAllGerenciasTitularesByUsuario($usuario->id)->each(function (UnidadeIntegrante $gestao) {
             $gestao->gestores()->get()->each(function (UnidadeIntegranteAtribuicao $gestor) {
                 if ($gestor->atribuicao == EnumAtribuicao::GESTOR->value) {
                     $this->getUnidadeIntegranteAtribuicaoRepository()->delete($gestor->id);
@@ -207,7 +207,7 @@ trait Atribuicao
     protected function removeUsuarioDaGestaoAtual(Usuario $usuario): void
     {
         /** @var UnidadeIntegrante|null $gerenciaTitular */
-        $gerenciaTitular = $this->getUnidadeIntegranteRepository()->findGerenciasTitularesByUsuario($usuario->id)->first();
+        $gerenciaTitular = $this->getUnidadeIntegranteRepository()->findAllGerenciasTitularesByUsuario($usuario->id)->first();
         if ($gerenciaTitular && $gerenciaTitular->gestor) {
             $this->getUnidadeIntegranteAtribuicaoRepository()->delete($gerenciaTitular->gestor->id);
         }
@@ -231,7 +231,7 @@ trait Atribuicao
     private function getUnidadeOndeOUsuarioEGestor(Usuario $usuario): Unidade|null
     {
         /** @var UnidadeIntegrante|null $gerenciaTitular */
-        $gerenciaTitular = $this->getUnidadeIntegranteRepository()->findGerenciasTitularesByUsuario($usuario->id)->first();
+        $gerenciaTitular = $this->getUnidadeIntegranteRepository()->findAllGerenciasTitularesByUsuario($usuario->id)->first();
         return $gerenciaTitular ? $gerenciaTitular->unidade : null;
     }
 
@@ -244,7 +244,7 @@ trait Atribuicao
     private function getUnidadeAtualDoUsuario(Usuario $usuario): Unidade|null
     {
         /** @var UnidadeIntegrante|null $lotacao */
-        $lotacao = $this->getUnidadeIntegranteRepository()->findLotacoesByUsuario($usuario->id)->first();
+        $lotacao = $this->getUnidadeIntegranteRepository()->findAllLotacoesByUsuario($usuario->id)->first();
         return $lotacao ? $lotacao->unidade : null;
     }
 
@@ -276,7 +276,7 @@ trait Atribuicao
 
     protected function removeLotacao(Usuario $usuario): void
     {
-        $lotacoes = $this->getUnidadeIntegranteRepository()->findLotacoesByUsuario($usuario->id);
+        $lotacoes = $this->getUnidadeIntegranteRepository()->findAllLotacoesByUsuario($usuario->id);
         foreach ($lotacoes as $lotacao) {
             /** @var UnidadeIntegrante $lotacao */
             if ($lotacao->lotado->atribuicao == EnumAtribuicao::LOTADO->value) {

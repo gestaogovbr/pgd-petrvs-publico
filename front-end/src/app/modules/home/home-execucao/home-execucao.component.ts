@@ -25,6 +25,7 @@ export class HomeExecucaoComponent implements OnInit {
   public pendenciasConsolidacao: any[] = [];
   public pendenciasConsolidacaoAgrupadas: { plano_trabalho: any, pendencias: any[] }[] = [];
   public inconsistenciasConsolidacao: any[] = [];
+  public recursosDisponiveis: any[] = [];
   public loadingPendencias: boolean = false;
   public loadingInconsistencias: boolean = false;
 
@@ -46,7 +47,9 @@ export class HomeExecucaoComponent implements OnInit {
   public async loadPendenciasConsolidacao() {
     this.loadingPendencias = true;
     try {
-      this.pendenciasConsolidacao = await this.consolidacaoDao.pendenciasUsuario();
+      const res = await this.consolidacaoDao.pendenciasUsuario();
+      this.pendenciasConsolidacao = res.dados;
+      this.recursosDisponiveis = res.recursos_disponiveis;
       this.pendenciasConsolidacaoAgrupadas = this.agruparPendenciasPorPlano(this.pendenciasConsolidacao);
       this.cdr.detectChanges();
     } catch (error) {
@@ -72,6 +75,10 @@ export class HomeExecucaoComponent implements OnInit {
 
   public abrirConsolidacao() {
     this.go.navigate({route: ['gestao', 'plano-trabalho', 'consolidacao']});
+  }
+
+  public abrirRecurso(recurso: any) {
+    this.go.navigate({route: ['gestao', 'plano-trabalho-v2', 'consultar', recurso.plano_trabalho?.id]});
   }
 
   public abrirDetalhesInconsistencia(inconsistencia: any) {

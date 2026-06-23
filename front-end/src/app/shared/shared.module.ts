@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { NgxMaskDirective, NgxMaskPipe, NgxMaskOptions, provideNgxMask } from 'ngx-mask';
-import { TreeModule } from 'primeng/tree';
-import { TreeSelectModule } from 'primeng/treeselect';
 import { GridComponent } from '../components/grid/grid.component';
 import { ColumnComponent } from '../components/grid/column/column.component';
 import { ColumnHeaderComponent } from '../components/grid/column-header/column-header.component';
@@ -150,9 +148,7 @@ const maskConfigFunction: () => NgxMaskOptions = () => {
     //CurrencyMaskModule,
     NgxMaskDirective, 
     NgxMaskPipe,
-    EditorModule,
-    TreeModule,
-    TreeSelectModule
+    EditorModule
   ],
   exports: [
     GridComponent,

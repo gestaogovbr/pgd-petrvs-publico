@@ -4,7 +4,7 @@
     [hasEdit]="auth.hasPermissionTo('MOD_OCOR_EDT')">
     <toolbar *ngIf="!selectable"></toolbar>
     <filter [form]="filter" [where]="filterWhere" [submit]="filterSubmit.bind(this)" [collapseChange]="filterCollapseChange.bind(this)" [collapsed]="filterCollapsed" [deleted]="this.auth.hasPermissionTo('MOD_AUDIT_DEL')">
-        <div class="row">
+        <div class="row" *ngIf="auth.hasPermissionTo('MOD_OCOR_EDT')">
             <input-search [size]="6" #usuario [control]="filter!.controls.usuario_id" controlName="usuario_id" [dao]="usuarioDao"></input-search>
             <input-search [size]="6" #planoTrabalho [control]="filter!.controls.plano_trabalho_id" controlName="plano_trabalho_id" [dao]="planoTrabalhoDao"></input-search>
         </div>
@@ -19,10 +19,10 @@
             <ng-template let-row="row" #columnUsuario>
                 <div class="d-flex">
                     <div class="ms-3">
-                        <profile-picture [url]="row.usuario.url_foto" [size]="40" [hint]="row.usuario.nome"></profile-picture>
+                        <profile-picture [url]="row.usuario.url_foto" [size]="40" [hint]="row.usuario.nome_exibicao"></profile-picture>
                     </div>
                     <div class="flex-fill ms-3">
-                        <strong>{{row.usuario.nome || ""}}</strong><br>
+                        <strong>{{row.usuario.nome_exibicao || ""}}</strong><br>
                         <badge *ngIf="row.plano_trabalho" color="light" [maxWidth]="300" [icon]="entityService.getIcon('PlanoTrabalho')" [label]="row.plano_trabalho.unidade.sigla + ' - #' + row.plano_trabalho.numero" [textValue]="util.getDateFormatted(row.plano_trabalho.data_inicio) + ' à ' + util.getDateFormatted(row.plano_trabalho.data_fim)" [hint]="lex.translate('Plano de trabalho')"></badge>
                     </div>
                 </div>

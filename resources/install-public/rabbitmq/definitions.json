@@ -1,0 +1,14 @@
+{
+  "vhosts": [
+    { "name": "/" }
+  ],
+  "queues": [
+    {
+      "name": "pgd_queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ]
+}

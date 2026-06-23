@@ -1,0 +1,396 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
+
+/**
+ * Unifica atividades duplicadas no mesmo período avaliativo (e mesma entrega),
+ * concatenando as descrições em um único registro.
+ *
+ * Uma passagem em `atividades` via window functions (MySQL 8 / MariaDB 10.2+);
+ * leituras posteriores usam apenas temps indexadas (sem segundo full scan).
+ */
+return new class extends Migration
+{
+    private const BACKUP_TABLE = 'atividades_unificacao_merge_backup';
+
+    private const TEMP_RANKED = 'tmp_atividades_merge_ranked';
+
+    private const TEMP_GRUPOS = 'tmp_atividades_merge_grupos';
+
+    private const TEMP_MAP = 'tmp_atividades_merge_map';
+
+    private const TEMP_DESCRICOES = 'tmp_atividades_merge_descricoes';
+
+    /** Limite seguro para coluna TEXT utf8mb4 (65535 bytes). */
+    private const DESCRICAO_MAX_CHARS = 16383;
+
+    /** @var list<string> */
+    private const TABELAS_COM_ATIVIDADE_ID = [
+        'atividades_pausas',
+        'atividades_tarefas',
+        'comentarios',
+        'documentos',
+        'planos_trabalhos_consolidacoes_atividades',
+        'projetos_tarefas',
+        'reacoes',
+        'status_justificativas',
+    ];
+
+    public function up(): void
+    {
+        if (!Schema::hasTable('atividades')) {
+            return;
+        }
+
+        $this->criarBackup();
+        $this->configurarSessaoMigracao();
+        $this->prepararTabelasTemporarias();
+
+        try {
+            $this->popularRanked();
+            $this->popularGruposEMapeamento();
+
+            $grupos = (int) DB::table(self::TEMP_GRUPOS)->count();
+            if ($grupos === 0) {
+                Log::info('Migration unificar_atividades_consolidacao: nenhum grupo duplicado encontrado.');
+
+                return;
+            }
+
+            DB::beginTransaction();
+
+            $this->popularBackup();
+            $this->atualizarDescricoesUnificadas();
+            $this->redirecionarReferenciasEmLote();
+            $this->softDeleteDuplicatas();
+
+            DB::commit();
+
+            $removidas = (int) DB::table(self::TEMP_MAP)->count();
+
+            Log::info('Migration unificar_atividades_consolidacao concluída.', [
+                'grupos_unificados' => $grupos,
+                'atividades_removidas' => $removidas,
+            ]);
+        } catch (\Throwable $e) {
+            if (DB::transactionLevel() > 0) {
+                DB::rollBack();
+            }
+
+            Log::error('Erro na migration unificar_atividades_consolidacao.', [
+                'mensagem' => $e->getMessage(),
+            ]);
+
+            throw $e;
+        } finally {
+            $this->limparTabelasTemporarias();
+        }
+    }
+
+    public function down(): void
+    {
+        if (!Schema::hasTable(self::BACKUP_TABLE)) {
+            return;
+        }
+
+        DB::transaction(function () {
+            $backup = self::BACKUP_TABLE;
+
+            DB::statement(<<<SQL
+                UPDATE atividades AS a
+                INNER JOIN `{$backup}` AS b ON b.atividade_id = a.id AND b.merged_into_id IS NULL
+                SET a.descricao = b.descricao, a.updated_at = NOW()
+            SQL);
+
+            DB::statement(<<<SQL
+                UPDATE atividades AS a
+                INNER JOIN `{$backup}` AS b ON b.atividade_id = a.id AND b.merged_into_id IS NOT NULL
+                SET a.descricao = b.descricao, a.deleted_at = NULL, a.updated_at = NOW()
+            SQL);
+
+            Schema::dropIfExists(self::BACKUP_TABLE);
+        });
+    }
+
+    private function criarBackup(): void
+    {
+        if (Schema::hasTable(self::BACKUP_TABLE)) {
+            return;
+        }
+
+        Schema::create(self::BACKUP_TABLE, function (Blueprint $table) {
+            $table->uuid('atividade_id')->primary();
+            $table->uuid('plano_trabalho_consolidacao_id');
+            $table->uuid('plano_trabalho_entrega_id')->nullable();
+            $table->text('descricao')->nullable();
+            $table->timestamp('deleted_at')->nullable();
+            $table->uuid('merged_into_id')->nullable()->comment('Preenchido quando o registro foi unificado em outro');
+            $table->timestamp('created_at')->useCurrent();
+        });
+    }
+
+    private function prepararTabelasTemporarias(): void
+    {
+        $ranked = self::TEMP_RANKED;
+        $grupos = self::TEMP_GRUPOS;
+        $map = self::TEMP_MAP;
+
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . $ranked . '`');
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . $grupos . '`');
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . $map . '`');
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_DESCRICOES . '`');
+
+        DB::statement(<<<SQL
+            CREATE TEMPORARY TABLE `{$ranked}` (
+                `id` CHAR(36) NOT NULL,
+                `plano_trabalho_consolidacao_id` CHAR(36) NOT NULL,
+                `plano_trabalho_entrega_id` CHAR(36) NULL,
+                `entrega_id_key` CHAR(36) NOT NULL,
+                `rn` INT UNSIGNED NOT NULL,
+                `grp_cnt` INT UNSIGNED NOT NULL,
+                PRIMARY KEY (`id`),
+                KEY `idx_grupo_rn` (`plano_trabalho_consolidacao_id`, `entrega_id_key`, `rn`),
+                KEY `idx_grupo_dup` (`plano_trabalho_consolidacao_id`, `entrega_id_key`, `grp_cnt`)
+            ) ENGINE=InnoDB
+        SQL);
+
+        DB::statement(<<<SQL
+            CREATE TEMPORARY TABLE `{$grupos}` (
+                `plano_trabalho_consolidacao_id` CHAR(36) NOT NULL,
+                `plano_trabalho_entrega_id` CHAR(36) NULL,
+                `entrega_id_key` CHAR(36) NOT NULL,
+                `keeper_id` CHAR(36) NOT NULL,
+                PRIMARY KEY (`plano_trabalho_consolidacao_id`, `entrega_id_key`),
+                KEY `idx_keeper` (`keeper_id`)
+            ) ENGINE=InnoDB
+        SQL);
+
+        DB::statement(<<<SQL
+            CREATE TEMPORARY TABLE `{$map}` (
+                `duplicate_id` CHAR(36) NOT NULL PRIMARY KEY,
+                `keeper_id` CHAR(36) NOT NULL,
+                KEY `idx_keeper` (`keeper_id`)
+            ) ENGINE=InnoDB
+        SQL);
+    }
+
+    /**
+     * Único full scan em `atividades`: classifica keeper (rn=1) e tamanho do grupo.
+     */
+    private function popularRanked(): void
+    {
+        $ranked = self::TEMP_RANKED;
+
+        DB::statement(<<<SQL
+            INSERT INTO `{$ranked}` (
+                `id`,
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                `entrega_id_key`,
+                `rn`,
+                `grp_cnt`
+            )
+            SELECT
+                `id`,
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                COALESCE(`plano_trabalho_entrega_id`, '') AS `entrega_id_key`,
+                ROW_NUMBER() OVER (
+                    PARTITION BY `plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`
+                    ORDER BY `created_at` ASC, `id` ASC
+                ) AS `rn`,
+                COUNT(*) OVER (
+                    PARTITION BY `plano_trabalho_consolidacao_id`, `plano_trabalho_entrega_id`
+                ) AS `grp_cnt`
+            FROM `atividades`
+            WHERE `deleted_at` IS NULL
+              AND `plano_trabalho_consolidacao_id` IS NOT NULL
+        SQL);
+    }
+
+    private function popularGruposEMapeamento(): void
+    {
+        $ranked = self::TEMP_RANKED;
+        $grupos = self::TEMP_GRUPOS;
+        $map = self::TEMP_MAP;
+
+        DB::statement(<<<SQL
+            INSERT INTO `{$grupos}` (
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                `entrega_id_key`,
+                `keeper_id`
+            )
+            SELECT
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                `entrega_id_key`,
+                `id` AS `keeper_id`
+            FROM `{$ranked}`
+            WHERE `rn` = 1
+              AND `grp_cnt` > 1
+        SQL);
+
+        DB::statement(<<<SQL
+            INSERT INTO `{$map}` (`duplicate_id`, `keeper_id`)
+            SELECT
+                `r`.`id` AS `duplicate_id`,
+                `k`.`id` AS `keeper_id`
+            FROM `{$ranked}` AS `r`
+            INNER JOIN `{$ranked}` AS `k`
+                ON `k`.`plano_trabalho_consolidacao_id` = `r`.`plano_trabalho_consolidacao_id`
+                AND `k`.`entrega_id_key` = `r`.`entrega_id_key`
+                AND `k`.`rn` = 1
+            WHERE `r`.`grp_cnt` > 1
+              AND `r`.`id` <> `k`.`id`
+        SQL);
+    }
+
+    private function popularBackup(): void
+    {
+        $backup = self::BACKUP_TABLE;
+        $grupos = self::TEMP_GRUPOS;
+        $map = self::TEMP_MAP;
+
+        DB::statement(<<<SQL
+            INSERT INTO `{$backup}` (
+                `atividade_id`,
+                `plano_trabalho_consolidacao_id`,
+                `plano_trabalho_entrega_id`,
+                `descricao`,
+                `deleted_at`,
+                `merged_into_id`,
+                `created_at`
+            )
+            SELECT
+                `a`.`id`,
+                `a`.`plano_trabalho_consolidacao_id`,
+                `a`.`plano_trabalho_entrega_id`,
+                `a`.`descricao`,
+                NULL,
+                `m`.`keeper_id`,
+                NOW()
+            FROM `atividades` AS `a`
+            INNER JOIN `{$map}` AS `m` ON `m`.`duplicate_id` = `a`.`id`
+            UNION ALL
+            SELECT
+                `a`.`id`,
+                `a`.`plano_trabalho_consolidacao_id`,
+                `a`.`plano_trabalho_entrega_id`,
+                `a`.`descricao`,
+                NULL,
+                NULL,
+                NOW()
+            FROM `atividades` AS `a`
+            INNER JOIN `{$grupos}` AS `g` ON `g`.`keeper_id` = `a`.`id`
+        SQL);
+    }
+
+    private function atualizarDescricoesUnificadas(): void
+    {
+        $grupos = self::TEMP_GRUPOS;
+        $ranked = self::TEMP_RANKED;
+        $descricoes = self::TEMP_DESCRICOES;
+        $maxChars = self::DESCRICAO_MAX_CHARS;
+
+        DB::statement(<<<SQL
+            CREATE TEMPORARY TABLE `{$descricoes}` (
+                `keeper_id` CHAR(36) NOT NULL PRIMARY KEY,
+                `descricao_unificada` LONGTEXT NOT NULL
+            ) ENGINE=InnoDB
+        SQL);
+
+        DB::statement(<<<SQL
+            INSERT INTO `{$descricoes}` (`keeper_id`, `descricao_unificada`)
+            SELECT
+                `g`.`keeper_id`,
+                COALESCE(
+                    GROUP_CONCAT(
+                        NULLIF(TRIM(`a2`.`descricao`), '')
+                        ORDER BY `r`.`rn` ASC
+                        SEPARATOR '\n\n'
+                    ),
+                    ''
+                ) AS `descricao_unificada`
+            FROM `{$grupos}` AS `g`
+            INNER JOIN `{$ranked}` AS `r`
+                ON `r`.`plano_trabalho_consolidacao_id` = `g`.`plano_trabalho_consolidacao_id`
+                AND `r`.`entrega_id_key` = `g`.`entrega_id_key`
+            INNER JOIN `atividades` AS `a2` ON `a2`.`id` = `r`.`id`
+            GROUP BY `g`.`keeper_id`
+        SQL);
+
+        DB::statement(<<<SQL
+            UPDATE `atividades` AS `a`
+            INNER JOIN `{$descricoes}` AS `d` ON `d`.`keeper_id` = `a`.`id`
+            SET
+                `a`.`descricao` = LEFT(`d`.`descricao_unificada`, {$maxChars}),
+                `a`.`updated_at` = NOW()
+        SQL);
+    }
+
+    private function redirecionarReferenciasEmLote(): void
+    {
+        $map = self::TEMP_MAP;
+
+        foreach ($this->tabelasComAtividadeIdDisponiveis() as $tabela) {
+            DB::statement(<<<SQL
+                UPDATE `{$tabela}` AS `t`
+                INNER JOIN `{$map}` AS `m` ON `m`.`duplicate_id` = `t`.`atividade_id`
+                SET `t`.`atividade_id` = `m`.`keeper_id`
+            SQL);
+        }
+    }
+
+    private function softDeleteDuplicatas(): void
+    {
+        $map = self::TEMP_MAP;
+
+        DB::statement(<<<SQL
+            UPDATE `atividades` AS `a`
+            INNER JOIN `{$map}` AS `m` ON `m`.`duplicate_id` = `a`.`id`
+            SET
+                `a`.`deleted_at` = NOW(),
+                `a`.`updated_at` = NOW()
+        SQL);
+    }
+
+    private function limparTabelasTemporarias(): void
+    {
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_RANKED . '`');
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_GRUPOS . '`');
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_MAP . '`');
+        DB::statement('DROP TEMPORARY TABLE IF EXISTS `' . self::TEMP_DESCRICOES . '`');
+    }
+
+    /**
+     * Ajustes de sessão para leitura analítica e escritas em lote em tenant com carga.
+     */
+    private function configurarSessaoMigracao(): void
+    {
+        DB::statement('SET SESSION innodb_lock_wait_timeout = 600');
+        DB::statement('SET SESSION lock_wait_timeout = 600');
+        DB::statement('SET SESSION group_concat_max_len = 1048576');
+        DB::statement('SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED');
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function tabelasComAtividadeIdDisponiveis(): array
+    {
+        $tabelas = [];
+
+        foreach (self::TABELAS_COM_ATIVIDADE_ID as $tabela) {
+            if (Schema::hasTable($tabela) && Schema::hasColumn($tabela, 'atividade_id')) {
+                $tabelas[] = $tabela;
+            }
+        }
+
+        return $tabelas;
+    }
+};

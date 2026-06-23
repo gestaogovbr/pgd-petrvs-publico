@@ -8,7 +8,8 @@ export class Perfil extends Base {
         ADM_NEGOCIAL: 2,
         UNIDADE: 3,
         PARTICIPANTE: 5,
-        COLABORADOR: 6
+        COLABORADOR: 6,
+        CONSULTA: 7
     } as const;
 
     public capacidades: Capacidade[] = []; /* Objecto com lista de capacidades */

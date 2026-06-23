@@ -13,10 +13,10 @@ final class ModalidadePgd
     /** @var array<string, string> */
     private const LABELS = [
         self::PRESENCIAL => 'Presencial',
-        self::PARCIAL => 'Teletrabalho (Parcial)',
-        self::INTEGRAL => 'Teletrabalho (Integral)',
-        self::NO_EXTERIOR_SUBSTITUICAO => 'Teletrabalho no exterior (substituição)',
-        self::NO_EXTERIOR => 'Teletrabalho no exterior',
+        self::PARCIAL => 'Teletrabalho Parcial',
+        self::INTEGRAL => 'Teletrabalho Integral',
+        self::NO_EXTERIOR_SUBSTITUICAO => 'Teletrabalho no Exterior (Substituição- VIII, art. 12, D. 11.072/22)',
+        self::NO_EXTERIOR => 'Teletrabalho no Exterior (Discricionária- §7º, art. 12, D. 11.072/22)',
     ];
 
     /** @var array<string, int> */
@@ -120,6 +120,12 @@ final class ModalidadePgd
             "WHEN LOWER({$column}) = 'no exterior substituicao' THEN 'Teletrabalho no exterior (substituição)' " .
             "WHEN LOWER({$column}) = 'no exterior' THEN 'Teletrabalho no exterior' " .
             "ELSE {$column} END";
+    }
+
+    /** @return string[] */
+    public static function keys(): array
+    {
+        return array_keys(self::LABELS);
     }
 
     /** @return array<int, array{key: string, value: string}> */

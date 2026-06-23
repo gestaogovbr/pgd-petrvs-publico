@@ -322,6 +322,7 @@ CREATE TABLE `usuarios` (
   `matricula` varchar(255) DEFAULT NULL,
   `apelido` varchar(255) DEFAULT NULL,
   `situacao_siape` varchar(255) DEFAULT NULL,
+  `participa_pgd` enum('sim','não') DEFAULT NULL COMMENT 'Indica se o usuário participa do PGD.',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,

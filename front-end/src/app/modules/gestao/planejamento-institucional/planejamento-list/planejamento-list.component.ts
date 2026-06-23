@@ -43,6 +43,7 @@ export class PlanejamentoListComponent extends PageListBase<Planejamento, Planej
       'objetivos',
       'objetivos.eixo_tematico:id,nome,cor,icone',
       'objetivos.objetivo_superior:id,nome',
+      'objetivos.tipo_objetivo:id,nome',
       'planejamento_superior:id,nome',
       'planejamento_superior.objetivos'
     ];

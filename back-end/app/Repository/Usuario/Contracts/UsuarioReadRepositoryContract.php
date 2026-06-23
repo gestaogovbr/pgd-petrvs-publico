@@ -10,8 +10,11 @@ use Illuminate\Database\Eloquent\Collection;
 interface UsuarioReadRepositoryContract
 {
     public function findById(string|int $id, bool $deleteTrashed = false): ?Usuario;
+
+    /** Utilizador com eager load `areasTrabalho.unidade` (ex.: contexto de controllers). */
+    public function findByIdComAreasTrabalho(string|int $id): ?Usuario;
+
     public function findByCpfOrEmail(string $cpf, ?string $email, ?string $exceptId = null, bool $withTrashed = false): ?Usuario;
-    public function isParticipanteHabilitado(string $usuarioId, string $programaId): bool;
     public function isIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): bool;
     public function getAtribuicoes(string $usuarioId, string $unidadeId): array;
     public function isLotacao(string $usuarioId, string $unidadeId): bool;
@@ -21,11 +24,17 @@ interface UsuarioReadRepositoryContract
     public function getUnidadesVinculadas(string $cpf): Collection;
     public function search(array $params, int $limit = 0);
     public function findByMatricula(string $matricula): ?Usuario;
-    public function findByEmail(?string $email): ?Usuario;
+    public function findAllByNomeMatricula(string $nomeMatricula, ?string $unidadeId = null): Collection;
+    public function findAgentesPublicosNoEscopoCadastrante(string $nomeMatricula, string $cadastranteId, int $limite = 50): Collection;
+    public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool;
+    public function findByEmail(string $email): ?Usuario;
     public function findActivesByCpf(string $cpf): Collection;
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario;
     public function findWithAreaTrabalho(string $userId, string $unidadeId): ?Usuario;
     public function findByCpf(string $cpf): ?Usuario;
-    public function findByCpfWithLotacao(string $cpf): Collection;
+    public function findAllByCpfWithLotacao(string $cpf): Collection;
     public function findAllByCpfUnfiltered(string $cpf): Collection;
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
+
+    public function findOneParaEnvio(string $id): ?Usuario;
 }

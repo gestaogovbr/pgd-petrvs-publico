@@ -8,7 +8,6 @@ import { UsuarioDaoService } from './usuario-dao.service';
 import { PlanoEntregaDaoService } from './plano-entrega-dao.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { Usuario } from '../models/usuario.model';
-import { TreeNode } from 'primeng/api';
 import { LookupItem } from '../services/lookup.service';
 import { Planejamento } from '../models/planejamento.model';
 import { firstValueFrom } from 'rxjs';
@@ -51,8 +50,8 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
       { field: "nome", label: "Nome" },
       { field: "gestor", label: "Gestor", fields: this.usuarioDao.dataset([]), type: "OBJECT" },
       { field: "gestores_substitutos", label: "Gestor substituto", fields: this.usuarioDao.dataset([]), type: "ARRAY" },
-      { field: "entidade", label: "Entidade", dao: this.entidadeDao },
-      { field: "cidade", label: "Cidade", dao: this.cidadeDao },
+      { field: "entidade", label: "Entidade", fields: this.entidadeDao.dataset([]), type: "OBJECT" },
+      { field: "cidade", label: "Cidade", fields: this.cidadeDao.dataset([]), type: "OBJECT" },
       { field: "texto_complementar_plano", label: "Mensagem do Plano de trabalho", type: "TEMPLATE" }
     ], deeps);
   }

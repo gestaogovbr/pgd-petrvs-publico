@@ -11,10 +11,26 @@
                 <button (click)="insertVariable()" class="btn btn-success" [disabled]="getVariableString() == ''">Inserir</button>
             </div>
             <div style="max-height: 400px; overflow-y: auto;">
-                <p-tree [value]="variaveis" class="w-full md:w-30rem" selectionMode="single" (onNodeSelect)="nodeSelect($event)" [selection]="selectedVariable"></p-tree>
+                <ul class="list-unstyled mb-0">
+                    <ng-container *ngFor="let node of variaveis">
+                        <ng-container *ngTemplateOutlet="variableNode; context:{ $implicit: node, level: 0 }"></ng-container>
+                    </ng-container>
+                </ul>
             </div> 
             
         </tab>
+        <ng-template #variableNode let-node let-level="level">
+            <li class="mb-1">
+                <button type="button" class="btn btn-link p-0 text-start" [disabled]="!node.selectable" (click)="onVariableClick(node)">
+                    <span [style.paddingLeft.px]="level * 12">{{ node.label }}</span>
+                </button>
+                <ul class="list-unstyled mb-0" *ngIf="node.children?.length">
+                    <ng-container *ngFor="let child of node.children">
+                        <ng-container *ngTemplateOutlet="variableNode; context:{ $implicit: child, level: level + 1 }"></ng-container>
+                    </ng-container>
+                </ul>
+            </li>
+        </ng-template>
 
         <tab key="OPERADORES" label="Operadores lógicos">
             <form  [formGroup]="operatorForm" (submit)="insertOperator()">
@@ -42,7 +58,10 @@
                                 <div class="col-md-6"  *ngIf="tipoComparadorUm == 'variable' ">
                                     <label class="d-block mb-1">Variável</label>
                                     <div class="d-block">
-                                        <p-treeSelect class="md:w-20rem w-full" containerStyleClass="w-full"  formControlName="comparadorUmValor" [options]="variaveis" (onNodeSelect)="selectVariable($event, 1)"></p-treeSelect>
+                                        <select class="form-select" formControlName="comparadorUmValor">
+                                            <option [ngValue]="null">Selecione</option>
+                                            <option *ngFor="let opt of variaveisSelectOptions" [ngValue]="opt.node">{{ opt.label }}</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -64,7 +83,10 @@
                                 <div class="col-md-6"  *ngIf="tipoComparadorDois == 'variable' ">
                                     <label class="d-block mb-1">Variável</label>
                                     <div class="d-block">
-                                        <p-treeSelect class="md:w-20rem w-full" containerStyleClass="w-full" formControlName="comparadorDoisValor" [options]="variaveis" (onNodeSelect)="selectVariable($event, 2)"></p-treeSelect>
+                                        <select class="form-select" formControlName="comparadorDoisValor">
+                                            <option [ngValue]="null">Selecione</option>
+                                            <option *ngFor="let opt of variaveisSelectOptions" [ngValue]="opt.node">{{ opt.label }}</option>
+                                        </select>
                                     </div>
                                 </div>
 

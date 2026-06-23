@@ -6,3 +6,13 @@
 - metodos grandes devem ser evitados, utilize metodos pequenos.
 - Evite comentários desnecessários, isso não inclui PhpDoc, TODO, @var e comentários relevantes.
 - remover importes não usados
+- Prefer nomes positivos para métodos booleanos (ex: `isPlanoCriadoParaSi()` em vez de `isPlanoCriadoParaOutraPessoa()`)
+- Early returns são válidos quando evitam chamadas desnecessárias ao banco
+- Siglas devem ser escritas em maiúsculo nos nomes de classe (ex: `TCRDocumentoDTO`, não `TcrDocumentoDTO`)
+- Evitar overengineering: Chain of Responsibility com steps de 2 linhas é overhead — manter inline quando o fluxo é linear
+- Evitar criar service dedicado para uma única action — manter no service do módulo quando a complexidade não justifica
+- Ao quebrar dependência com ServiceBase/V1, remover completamente a referência — não manter delegação parcial
+- Front-end: não rodar build a menos que solicitado explicitamente
+- Antes de commitar, SEMPRE perguntar ao usuário se está satisfeito com as mudanças
+- NÃO commitar automaticamente — aguardar confirmação explícita do usuário
+- Mensagens de commit seguem Conventional Commits em português, com número do ticket extraído do branch name

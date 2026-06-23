@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { PlanoEntregaEntrega } from '../models/plano-entrega-entrega.model';
 import { DaoBaseService } from './dao-base.service';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
-import { TreeNode } from 'primeng/api';
+import { LookupTreeNode } from '../services/lookup.service';
 
 
 @Injectable({
@@ -27,7 +27,7 @@ export class PlanoEntregaEntregaDaoService extends DaoBaseService<PlanoEntregaEn
     ], deeps);
   }
 
-  public hierarquia(PlanoEntregaEntregaId: string): Promise<TreeNode[]>{
+  public hierarquia(PlanoEntregaEntregaId: string): Promise<LookupTreeNode[]>{
     return new Promise<any>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/hierarquia', {
         entrega_id: PlanoEntregaEntregaId
@@ -40,19 +40,19 @@ export class PlanoEntregaEntregaDaoService extends DaoBaseService<PlanoEntregaEn
     });
   }
 
-  private loadHierarquiaDados(data: any, entrega_id: string): TreeNode[] {
-    const entregaAtual: TreeNode = this.mapHierarquia(data, entrega_id);
+  private loadHierarquiaDados(data: any, entrega_id: string): LookupTreeNode[] {
+    const entregaAtual: LookupTreeNode = this.mapHierarquia(data, entrega_id);
     const children = data.filhos ? data.filhos.flatMap((filho: any) => this.loadHierarquiaDados(filho, entrega_id)) : [];
   
     if (data.pai) {
-      const pai: TreeNode = this.mapHierarquia(data.pai, entrega_id);
+      const pai: LookupTreeNode = this.mapHierarquia(data.pai, entrega_id);
       return [ { ...pai, children: [ { ...entregaAtual, children } ] } ];
     } 
   
     return [ { ...entregaAtual, children } ];
   }
   
-  private mapHierarquia(data: any, entrega_id: string): TreeNode {
+  private mapHierarquia(data: any, entrega_id: string): LookupTreeNode {
     return {
       label: data.descricao,
       key: data.id,

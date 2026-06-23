@@ -1,3 +1,128 @@
+## 3.0.4 22/06/2026
+
+### Adicionado
+- Adicionar vLibras para acessibilidade
+
+### Modificado
+- Reforçada a verificação da atualização de chefias pelo SIAPE, contemplando situações em que o servidor pertence à própria unidade ou está em outra unidade de exercício.
+- Limite de caracteres do registro de execução (trabalho executado) ampliado para 10.000 caracteres
+- Alterada visualização dos registro de execução para mostar um botão "ver mais" para exibição colapsável de textos longos
+- Clonagem de Plano de Trabalho v2 redesenhada: ao clonar, o usuário é redirecionado para a tela de criação com os campos pré-preenchidos (agente público, unidade, modalidade), exceto datas de início e fim. Apenas entregas com período vigente são copiadas, e o clone passa pelas mesmas validações de criação.
+- Renomeado "Tipo de Objetivo" para "Elementos do Planejamento" no menu lateral e telas de planejamento institucional
+- Adicionadas variáveis faltantes na geração do TCR v2: gestor da unidade, gestores substitutos, entidade e cidade
+- Removidas logos do programa e do governo do rodapé do sistema em observância ao período de defeso eleitoral
+- Melhoria no desempenho dos envios
+
+### Corrigido
+- Corrigido bug que permitia clique duplo no botão de finalizar registro de execução, causando requisições duplicadas
+- Corrigida ordenação inconsistente do menu lateral entre navegadores
+- Corrigido erro que quebrava a tela de listagem de regramentos quando um regramento não possuía unidade vinculada
+- Corrigida visualização de variáveis disponíveis no modal "Adicionar macro" do editor de template do TCR: campos folha agora são clicáveis e campos de array exibem notação correta (ex: `entregas[].descricao`)
+- Corrigida mensagem de erro para status HTTP 400 (Bad Request) para consulta de CPF e Unidade (SIAPE)
+- Corrigida nomenclatura das modalidades
+- Corrigido bug no cancelamento de conclusão de Plano de Entrega
+- Módulo de Ocorrências disponilizado para perfil de Participante
+- Correção no envio de Planos de Trabalho sem Avaliação
+
+## 3.0.3 18/06/2026
+
+### Adicionado
+- Opção de envio do PT a partir da Consulta de Envios de PT
+
+### Modificado
+- RabbitMQ atualizado para versão 4.3.1
+- Envios com Timeout não são mais reagendados
+- Timeouts do Envio
+
+### Corrigido
+- Bugs no Agendamento de Planos de Trabalho
+- Variáveis de ambiente duplicadas para RabbitMQ
+
+### Removido
+- Nome de imagem do RabbitMQ
+
+## 3.0.2 16/06/2026
+
+### Adicionado
+- **Nome Social**: campo opcional disponível na aba Principal do perfil do Agente Público, editável exclusivamente pelo próprio titular. Quando preenchido, o nome social substitui o nome civil em todas as listagens e exibições do sistema; quando não preenchido, utiliza o nome proveniente do SIAPE. Na pesquisa de participantes é possível buscar pelo nome social. No TCR, exibe no formato "Nome Social (Nome Civil)". Em contextos informais (header, saudações), exibe apenas o primeiro nome do nome social.
+
+### Corrigido
+- Corrigidos bugs ao editar atribuições de usuário: lista de atribuições agora é populada corretamente ao abrir edição, filtro "não executora" opera sobre a lista já processada, e
+componente input-search carrega o valor pré-existente ao montar.
+- Campos data_inicial_pedagio, data_final_pedagio e tipo_pedagio adicionados na lista fillable do model Usuario
+- Corrigida visualização dos registros de execução (progresso) em entregas do Plano de Entrega já finalizadas: o botão "Históricos de Execução" agora é exibido para status além de ATIVO (Concluído, Avaliado, Suspenso, Cancelado), porém em modo somente leitura — inclusão, edição e exclusão de progresso são bloqueadas tanto no front-end quanto no back-end quando o Plano de Entregas não está ATIVO.
+- Correções na importação do SIAPE
+
+## 3.0.1 09/06/2026
+
+### Corrigido
+- Acesso à Personificação
+- Correções na importação de SIAPE
+
+## 3.0.0 08/06/2026
+
+### Adicionado
+- Adicionado novo container de RabbitMQ para envio de dados.
+  Novas variáveis de ambiente devem ser configuradas ao final do .env (Antes de executar o update):
+    RABBITMQ_HOST=petrvs_rabbitmq
+    RABBITMQ_PORT=5672
+    RABBITMQ_LOGIN=petrvs
+    RABBITMQ_PASSWORD=<sua senha>
+    RABBITMQ_QUEUE=pgd_queue
+- Novo **Plano de Trabalho v2** (módulo Angular e API `v2/plano-trabalho`), com interface GovBR, substituindo o fluxo legado para gestão do ciclo de vida do PT.
+- **Listagem** de planos com filtros avançados (unidade, regramento, agente, status, modalidade, vigência, arquivados), ordenação por coluna, tags de situação (vigente, aguardando reavaliação, reavaliado) e menu de ações consolidado.
+- **Cadastro e edição** do PT em etapas: informações gerais, planejamento (entregas vinculadas ao Plano de Entrega) e execução/avaliação por períodos consolidados.
+- **Assinatura do TCR** com dupla assinatura, geração automática de períodos avaliativos, mensagens específicas para chefia da unidade executora e chefia substituta da unidade superior, e invalidação de assinaturas ao alterar dados relevantes do plano.
+- **Registro de execução**: inclusão, edição e exclusão de atividades por período; conclusão e reabertura de registro; integração com ocorrências do módulo de Ocorrências.
+- **Avaliação e recurso**: avaliação de período, solicitação de recurso (inclusive com plano em status avaliado), reavaliação e exibição de pendências com recurso disponível.
+- **Ações do plano**: cancelar, encerrar (incluindo encerramento antecipado), clonar, arquivar (com regras de elegibilidade e autorização por perfil) e consulta de **logs** do PT v2.
+- **Autorização no back-end** como fonte da verdade para edição e demais ações sensíveis (`acoes` na API), com escopo por perfil (participante, colaborador, unidade, chefia recursiva, administrador).
+- **Perfil colaborador**: listagem e arquivamento restritos às unidades de vinculação e subordinadas.
+- Migração de tenant para **unificar atividades duplicadas** na mesma consolidação/entrega, preservando a mais antiga e concatenando descrições.
+- **Planejamento institucional**: cadastro de tipos de objetivo (API v2), gráfico de objetivos com esforço e endpoint de entregas por unidade com cache de esforço.
+- Logs de auditoria e melhorias de pipeline (Jenkins, Docker) e segurança (auditoria com severidade).
+- **Envios de Participantes** (novo formato)
+- **Envios de Planos de Entrega** (novo formato)
+- **Envios de Planos de Trabalho** (novo formato)
+
+### Modificado
+- Atualização do front-end para **Angular 21** e componentes **GovBR Design System** nos módulos v2.
+- Arquitetura front-end v2 em camadas (`domain`, `application`, `infra`, `ui`), com use cases, policies e clients HTTP dedicados.
+- Back-end do PT v2 organizado por contexto de negócio (services, validators, DTOs, repositories), sem `ServiceBase`, com testes Pest e transações em operações com múltiplas escritas.
+- Exibição do status **Incluído** como **Rascunho** e do status **Ativo** como **Em execução**.
+- Rótulos **Programa** alterados para **Regramento** nos fluxos de PT e PE.
+- Campos de **justificativa** (modalidade distinta, carga horária, cancelamento, avaliação, recurso, encerramento, reabertura, trabalho planejado) migrados para `br-textarea`, com limite de caracteres visível onde aplicável.
+- Tela de detalhe do PT com informações gerais em modo leitura (texto) em vez de inputs somente leitura.
+- Filtros da listagem de PT **isolados por usuário**; filtro **Plano do Dia** deixou de ser o padrão ao abrir a tela.
+- **Impersonate**: título e comportamento ao personificar usuário (menu e dados do personificado).
+- Botão **Entrar com gov.br** ajustado na tela de login.
+- Modificada forma de envio para a API PGD, que não será mais em lotes, mas individualizada;
+- Mudança do layout de Ocorrências
+- Mudança no layout dos logs do Plano de Trabalho
+- Mudança de mensagem na assinatura de PT quando agente público dono do plano for chefe da sua UE e substituto da unidade superior;
+- Habilitar módulo Ocorrências para o perfil participante, permitindo que ele inclua nova ocorrência e visualize somente as próprias ocorrências
+- Modificado o módulo Ocorrências para perfil Unidade permitindo que visualizem e editem somente as ocorrências da própria unidade e de unidades subordinadas
+- Modificado o módulo Ocorrências para tornar o campo HORAS obrigatório
+
+### Corrigido
+- Regras de negócio do PT v2 (#1683): validação de agente público e participação PGD (`participa_pgd`), modalidade pré-preenchida e alerta de divergência (RN24), limite de vigência de um ano, CHD com justificativa persistida, entregas de PE homologadas e força de trabalho máxima.
+- Permissões: chefia e chefia superior podem avaliar, assinar, editar e excluir rascunhos conforme hierarquia; perfil consulta sem ações de alteração; botões de assinatura e cancelamento de assinatura exibidos apenas quando aplicável.
+- Listagem: filtros `usuario_nome`, `unidade_regramento` e `status`; filtro vigentes considerando qualquer status dentro do período; ordenação quando `orderBy` é informado explicitamente.
+- Consolidação e avaliação: bloqueio após encerramento do PT; atualização dinâmica dos períodos após encerrar; recurso oculto quando a nota não permite; confirmações e toasts nas ações de registro e avaliação.
+- TCR e documentos: hierarquia local de assinatura, justificativa de CHD no documento gerado, ocorrências somente leitura após assinatura, edição de datas de ocorrência na consolidação.
+- Integração SIAPE: uso do e-mail do servidor quando o e-mail institucional não é informado, evitando falhas em perfis sem e-mail funcional.
+- Integração SIAPE: preservação da participação PGD existente quando o retorno do SIAPE não informa o campo, inclusive em trocas de matrícula.
+- Integração SIAPE: reativação correta de usuários e remoção definitiva de registros de blacklist quando a matrícula volta a aparecer como ativa.
+- Carga individual SIAPE: normalização de códigos de unidade e lotação correta de contratos temporários quando a unidade de exercício vem vazia.
+- Correções pontuais em tenant (schema na criação), perfis sem e-mail (SIAPE), navegação Angular (`forChild`) e preservação de atribuições manuais de integrantes.
+
+### Removido
+- Logs dos Envios
+- Forçar Envio
+- Resetar Envios
+- Campos de FORMATO e INTEGRAÇÃO do módulo Ocorrências
+
+
 ## 2.10.1 15/05/2026
 ### Corrigido
 - Remove a obrigatoriedade do campo de e-mail dos usuário, uma vez que não há mais geração de e-mail fictícios para servidores sem e-mail funcional no SIAPE.

@@ -35,7 +35,7 @@ class TenantController extends ControllerBase {
                     'entity' => ['required'],
                     'with' => ['array']
                 ]);
-                
+
 
                 if(!$this->checkUserPermission($data['entity']['id']))
                     return response()->json(['error' => 'Tenant não encontrado.'], 404);
@@ -109,25 +109,6 @@ class TenantController extends ControllerBase {
                 'tenant_id' => ['string'],
             ]);
             $this->service->forcarSiape($data['tenant_id']);
-            return response()->json([
-                'success' => true,
-            ]);
-        }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()]);
-        }
-        catch (Throwable $e) {
-            $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
-        }
-    }
-
-    public function forcarEnvio(Request $request) {
-        try {
-            $data = $request->validate([
-                'tenant_id' => ['string'],
-            ]);
-            $this->service->forcarEnvio($data['tenant_id']);
             return response()->json([
                 'success' => true,
             ]);

@@ -1,6 +1,29 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
 .card {
+  display: flex;
+  flex-direction: column;
+
   &:hover {
     box-shadow: inset 5px -8px 9px #a5a5a554;
   }
+}
+
+.card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: calc(var(--bs-card-spacer-y, 1rem) + 1.25rem);
+}
+
+.button-dashboard-bi {
+  display: block;
+  font-size: 3rem;
+  line-height: 1;
+  margin: 0 auto 0.25rem;
 }
 

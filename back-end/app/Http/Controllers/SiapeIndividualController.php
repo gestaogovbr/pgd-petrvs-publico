@@ -110,16 +110,18 @@ class SiapeIndividualController extends ControllerBase
 
     public function relatorioProcessamentoUnidade(Request $request)
     {
+        $data = $request->validate([
+            'unidade' => ['required'],
+        ]);
+
         try {
-            $data = $request->validate([
-                'unidade' => [],
-            ]);
+            $codUnidade = (string) $data['unidade'];
 
             return response()->json(
-                $this->service->relatorioProcessamentoUnidade($data['unidade']),
+                $this->service->relatorioProcessamentoUnidade($codUnidade),
                 Response::HTTP_OK
             );
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),

@@ -10,6 +10,7 @@ import { UsuarioDaoService } from 'src/app/dao/usuario-dao.service';
 import { InputSearchComponent } from 'src/app/components/input/input-search/input-search.component';
 import { TipoMotivoAfastamento } from 'src/app/models/tipo-motivo-afastamento.model';
 import { PlanoTrabalhoConsolidacao } from 'src/app/models/plano-trabalho-consolidacao.model';
+import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 
 @Component({
     selector: 'app-afastamento-form',
@@ -25,13 +26,17 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
   public form: FormGroup;
   public tipoMotivoAfastamentoDao: TipoMotivoAfastamentoDaoService;
   public usuarioDao: UsuarioDaoService;
+  public unidadeDao: UnidadeDaoService;
   public usuarioId?: string;
   public consolidacao?: PlanoTrabalhoConsolidacao;
+  public unidades?: any[];
+  public apenasProprioUsuario: Boolean = true;
 
   constructor(public injector: Injector) {
     super(injector, Afastamento, AfastamentoDaoService);
     this.tipoMotivoAfastamentoDao = injector.get<TipoMotivoAfastamentoDaoService>(TipoMotivoAfastamentoDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.title = this.lex.translate('Ocorrências');
     this.form = this.fh.FormBuilder({
       observacoes: {default: ""},
@@ -44,6 +49,36 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
     this.join = ["usuario", "tipo_motivo_afastamento"];
   }
 
+  public async ngOnInit() {
+    super.ngOnInit();
+
+    this.unidades = [];
+
+    this.apenasProprioUsuario = !this.auth.hasPermissionTo('MOD_OCOR_TODAS_UNIDADES')
+      && (!this.auth.hasPermissionTo('MOD_OCOR_UNIDADE'));
+
+    if (this.apenasProprioUsuario && this.auth.usuario) {
+      this.usuarioId = this.auth.usuario.id;
+      this.form.controls.usuario_id.setValue(this.usuarioId);
+    }
+
+    if (!this.apenasProprioUsuario && this.auth.unidade && !this.auth.hasPermissionTo('MOD_OCOR_TODAS_UNIDADES')) {
+      let unidades = [this.auth.unidade];
+      // carrega todas as vinculacoes do usuario e subordinadas
+      if (this.auth.hasPermissionTo('MOD_OCOR_UNIDADES_VINCULADAS')) {
+        if (this.auth.unidades) {
+          unidades = this.auth.unidades;
+        }
+      }
+
+      for(let unidade of unidades) {
+        this.unidades.push(unidade.id);
+        const subordinadas = (await this.unidadeDao.subordinadas(unidade?.id)).map((item: any) => item.id);
+        this.unidades = this.unidades.concat(subordinadas);
+      }
+    }
+  }
+
   public isHoras(){
     if(this.form.controls.tipo_motivo_afastamento_id.value?.length && (this.tipoMotivoAfastamento?.selectedEntity as TipoMotivoAfastamento)?.horas){//Então é em Horas
       return true;
@@ -54,12 +89,20 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
 
-    if(['usuario_id', 'tipo_motivo_afastamento_id'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if(!this.apenasProprioUsuario && (controlName == 'usuario_id') && !this.usuario?.selectedEntity) {
+      result = "Obrigatório";
+    }
+
+    if(['tipo_motivo_afastamento_id'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if(['data_inicio', 'data_fim'].indexOf(controlName) >= 0 && !this.dao?.validDateTime(control.value)) {
       result = "Inválido";
     } else if(['horas'].indexOf(controlName) >= 0 && (control.value < 0 || control.value > 9999)) {
       result = "Inválido";
+    }
+
+    if ((controlName == 'horas') && !control.value) {
+      result = "Obrigatório";
     }
 
     return result;
@@ -90,6 +133,9 @@ export class AfastamentoFormComponent extends PageFormBase<Afastamento, Afastame
     return new Promise<Afastamento>((resolve, reject) => {
       let afastamento = this.util.fill(new Afastamento(), this.entity!);
       afastamento = this.util.fillForm(afastamento, this.form!.value);
+      if (this.apenasProprioUsuario) {
+        afastamento.usuario_id = this.usuarioId!;
+      }
       if (!this.isHoras()){
         afastamento.data_inicio.setHours(0,0,0);
         afastamento.data_fim.setHours(23,59,0);

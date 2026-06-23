@@ -34,6 +34,22 @@ export class PlanejamentoListObjetivosEntregasComponent extends PageListBase<Pla
     });
     this.OPTION_INFORMACOES.onClick = (objetivo: PlanejamentoObjetivo) => this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo', objetivo.id, 'consult'] }, { modal: true });
     this.addOption(this.OPTION_INFORMACOES);
+    this.addOption({
+      icon: 'bi bi-diagram-3',
+      label: 'Gráfico',
+      hint: 'Gráfico de relacionamento e esforço',
+      color: 'btn-outline-primary',
+      onClick: (objetivo: PlanejamentoObjetivo) =>
+        this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo-grafico', objetivo.id] })
+    });
+    this.addOption({
+      icon: 'bi bi-diagram-2',
+      label: 'Árvore',
+      hint: 'Árvore hierárquica expansível',
+      color: 'btn-outline-secondary',
+      onClick: (objetivo: PlanejamentoObjetivo) =>
+        this.go.navigate({ route: ['gestao', 'planejamento', 'objetivo-arvore', objetivo.id] })
+    });
     this.rowsLimit = 10000;
   }
 

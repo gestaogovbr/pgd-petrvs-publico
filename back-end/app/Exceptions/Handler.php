@@ -56,7 +56,12 @@ class Handler extends ExceptionHandler
         });
 
         $this->renderable(function (Throwable $e, Request $request) {
+            if ($e instanceof \ParseError) {
+                return; // não faz nada
+            }
+
             $response = response()->make('', Response::HTTP_INTERNAL_SERVER_ERROR);
+
             (new ErrorInterceptor())->intercept($e, $request, $response);
             return null;
         });

@@ -85,13 +85,16 @@ export class PlanoTrabalhoConsolidacaoDaoService extends DaoBaseService<PlanoTra
     });
   }
 
-  public pendenciasUsuario(): Promise<any[]> {
-    return new Promise<any[]>((resolve, reject) => {
+  public pendenciasUsuario(): Promise<{ dados: any[], recursos_disponiveis: any[] }> {
+    return new Promise<{ dados: any[], recursos_disponiveis: any[] }>((resolve, reject) => {
       this.server.post('api/' + this.collection + '/pendencias-usuario', {}).subscribe(response => {
         if(response?.error) {
           reject(response?.error);
         } else {
-          resolve(response?.dados || []);
+          resolve({
+            dados: response?.dados || [],
+            recursos_disponiveis: response?.recursos_disponiveis || []
+          });
         }
       }, error => reject(error));
     });

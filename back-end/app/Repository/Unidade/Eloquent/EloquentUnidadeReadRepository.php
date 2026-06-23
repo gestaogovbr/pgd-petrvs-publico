@@ -8,7 +8,10 @@ use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
+use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
+use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @extends AbstractEloquentReadRepository<Unidade>
@@ -57,6 +60,64 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $result[0]->count > 0;
     }
 
+    public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        $result = $this->model->getConnection()->select("
+            SELECT COUNT(*) as count
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id = ?
+              AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO')
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", [$unidadeId, $usuarioId]);
+
+        return $result[0]->count > 0;
+    }
+
+    public function isUsuarioGestorTitularDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        $result = $this->model->getConnection()->select("
+            SELECT COUNT(*) as count
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id = ?
+              AND uia.atribuicao = 'GESTOR'
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", [$unidadeId, $usuarioId]);
+
+        return $result[0]->count > 0;
+    }
+
+    public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO
+    {
+        $sql = <<<SQL
+            SELECT
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as participante_gestor_titular,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO') THEN 1 ELSE 0 END) as participante_gestor,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as assinante_gestor_titular
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id IN (?, ?)
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        SQL;
+
+        $row = $this->model->getConnection()->select($sql, [
+            $participanteId, $participanteId, $assinanteId, $unidadeId, $participanteId, $assinanteId,
+        ])[0];
+
+        return new AssinaturaHierarquiaDTO(
+            participanteGestor: (bool) $row->participante_gestor,
+            participanteGestorTitular: (bool) $row->participante_gestor_titular,
+            assinanteGestorTitular: (bool) $row->assinante_gestor_titular,
+        );
+    }
+
     /**
      * Helper to generate the raw where clause for areas de trabalho
      */
@@ -97,7 +158,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $unidade;
     }
 
-    public function getUnidadesGerenciadas(string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    public function getUnidadesGerenciadas(string $usuarioId): Collection
     {
         return $this->query()
             ->whereHas('gestor', fn($q) => $q->where('usuario_id', $usuarioId))
@@ -106,9 +167,41 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->get();
     }
 
-    public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection
+    public function getSubordinadas(array $ids): Collection
     {
         return $this->query()->whereIn('unidade_pai_id', $ids)->get();
+    }
+
+    public function getSubordinadasRecursivas(array $ids): Collection
+    {
+        if (empty($ids)) {
+            return $this->model->newCollection();
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+        $subordinadaIds = $this->model->getConnection()->select("
+            WITH RECURSIVE subordinadas AS (
+                SELECT id, unidade_pai_id
+                FROM unidades
+                WHERE unidade_pai_id IN ($placeholders)
+
+                UNION ALL
+
+                SELECT u.id, u.unidade_pai_id
+                FROM unidades u
+                INNER JOIN subordinadas s ON u.unidade_pai_id = s.id
+            )
+            SELECT id FROM subordinadas
+        ", $ids);
+
+        $resultIds = array_map(fn($row) => $row->id, $subordinadaIds);
+
+        if (empty($resultIds)) {
+            return $this->model->newCollection();
+        }
+
+        return $this->query()->whereIn('id', $resultIds)->get();
     }
 
     public function existsByCodigo(string $codigo): bool
@@ -130,6 +223,26 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $unidade;
     }
 
+    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection
+    {
+        $query = $this->query()->select('id', 'nome', 'codigo', 'sigla');
+
+        if ($dto->termo) {
+            $termoLower = mb_strtolower($dto->termo);
+            $query->where(function ($q) use ($termoLower) {
+                $q->whereRaw('LOWER(nome) like ?', ["%{$termoLower}%"])
+                  ->orWhereRaw('LOWER(codigo) like ?', ["%{$termoLower}%"])
+                  ->orWhereRaw('LOWER(sigla) like ?', ["%{$termoLower}%"]);
+            });
+        }
+
+        if (!$dto->todos) {
+            $query->limit(50);
+        }
+
+        return $query->get();
+    }
+
     public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade
     {
         /** @var Unidade|null $unidade */
@@ -139,5 +252,24 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->first();
 
         return $unidade;
+    }
+
+    /** @return string[] IDs da raiz até a unidade informada */
+    public function linhaAscendente(string $unidadeId): array
+    {
+        $rows = DB::select(<<<SQL
+            WITH RECURSIVE ascendentes AS (
+                SELECT id, unidade_pai_id
+                FROM unidades WHERE id = ? AND deleted_at IS NULL
+                UNION ALL
+                SELECT u.id, u.unidade_pai_id
+                FROM unidades u
+                INNER JOIN ascendentes a ON u.id = a.unidade_pai_id
+                WHERE u.deleted_at IS NULL
+            )
+            SELECT id FROM ascendentes
+        SQL, [$unidadeId]);
+
+        return array_reverse(array_column($rows, 'id'));
     }
 }

@@ -108,7 +108,7 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
                   this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
                   if (result?.success) {
                     await this.loadUnidade();
-                    if (result?.resumo) {
+                    if (result?.resumo?.length > 0) {
                       const relatorio = await this.obterRelatorioProcessamentoSafely();
                       await this.mostrarResumo(result.resumo, result.message, relatorio, this.ultimoRelatorioCargaId);
                     } else {
@@ -118,9 +118,9 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
                   } else {
                     if (result?.resumo) {
                       const relatorio = await this.obterRelatorioProcessamentoSafely();
-                      await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade: " + result?.message, relatorio, this.ultimoRelatorioCargaId);
+                      await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade", relatorio, this.ultimoRelatorioCargaId);
                     } else {
-                      this.dialog.alert("Erro", "Erro ao processar a Unidade: " + result?.message);
+                      this.dialog.alert("Erro", result?.message || "Erro desconhecido ao processar a Unidade");
                     }
                   }
                 },
@@ -128,11 +128,11 @@ export class ConsultaUnidadeSiapeResultComponent extends PageFormBase<Unidade, U
                   this.loading = false;
                   const result = error.error;
                   this.ultimoRelatorioCargaId = result?.relatorio_carga_id ?? result?.relatorio_carga?.id ?? this.ultimoRelatorioCargaId;
-                  if (result?.resumo) {
+                  if (result?.resumo?.length > 0) {
                     const relatorio = await this.obterRelatorioProcessamentoSafely();
-                    await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade: " + (result.message ?? error.message), relatorio, this.ultimoRelatorioCargaId);
+                    await this.mostrarResumo(result.resumo, "Erro ao processar a Unidade",relatorio, this.ultimoRelatorioCargaId);
                   } else {
-                    this.dialog.alert("Erro", "Erro ao processar a Unidade: " + (error.message ?? error.error?.message));
+                    this.dialog.alert("Erro", result?.message ?? error?.message ?? "Erro ao processar a Unidade");
                   }
                   this.log = result?.log ?? error.error?.message ?? error.message;
                 }

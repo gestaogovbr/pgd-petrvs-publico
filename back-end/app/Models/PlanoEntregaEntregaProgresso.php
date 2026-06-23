@@ -7,6 +7,9 @@ use App\Models\PlanoEntregaEntrega;
 use App\Models\Usuario;
 use App\Casts\AsJson;
 
+/**
+ * @property PlanoEntregaEntrega $planoEntregaEntrega
+ */
 class PlanoEntregaEntregaProgresso extends ModelBase
 {
   protected $table = 'planos_entregas_entregas_progressos';

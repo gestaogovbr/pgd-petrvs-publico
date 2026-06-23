@@ -66,7 +66,9 @@ class ProgramaFactory extends Factory
             
             $programa->tipo_avaliacao_plano_trabalho_id = $tipoAvaliacaoId;
             $programa->tipo_avaliacao_plano_entrega_id = $tipoAvaliacaoId;
-            $programa->unidade_id = $unidadeId;
+            if (!$programa->unidade_id) {
+                $programa->unidade_id = $unidadeId;
+            }
         });
     }
 }

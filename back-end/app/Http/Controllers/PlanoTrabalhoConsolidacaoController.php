@@ -56,7 +56,7 @@ class PlanoTrabalhoConsolidacaoController extends ControllerBase {
             ]);
             return response()->json([
                 'success' => true,
-                'dados' => $this->service->concluir($data["id"], $data["justificativa_conclusao"])
+                'dados' => $this->service->concluir($data["id"], $data["justificativa_conclusao"] ?? '')
             ]);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);
@@ -91,9 +91,11 @@ class PlanoTrabalhoConsolidacaoController extends ControllerBase {
     public function pendenciasUsuario(Request $request) {
         try {
             $this->checkPermissions('QUERY', $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
+            $usuarioId = $this->getUsuario($request)->id;
             return response()->json([
                 'success' => true,
-                'dados' => $this->service->pendenciasUsuario($this->getUsuario($request)->id)
+                'dados' => $this->service->pendenciasUsuario($usuarioId),
+                'recursos_disponiveis' => $this->service->pendenciasRecursoUsuario($usuarioId),
             ]);
         }  catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()]);

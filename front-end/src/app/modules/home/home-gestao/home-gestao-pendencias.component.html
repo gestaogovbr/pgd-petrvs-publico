@@ -20,9 +20,9 @@
                   <div><strong>Plano Trabalho: </strong> {{r.plano_trabalho?.numero}}</div>
                   <div><strong>Status: </strong><badge [color]="lookup.getColor(lookup.CONSOLIDACAO_STATUS, r.status)" [icon]="lookup.getIcon(lookup.CONSOLIDACAO_STATUS, r.status)" [label]="lookup.getValue(lookup.CONSOLIDACAO_STATUS, r.status)"></badge></div>
                   <div><strong>Período :</strong> {{formatDate(r.data_inicio)}} - {{formatDate(r.data_fim)}}</div>
-                  <div><strong>Usuário: </strong> {{r.plano_trabalho?.usuario?.nome}}</div>
+                  <div><strong>Usuário: </strong> {{r.plano_trabalho?.usuario?.nome_exibicao}}</div>
                 </div>
-                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirConsolidacoes(r.plano_trabalho?.usuario_id, r.plano_trabalho?.unidade_id, r.plano_trabalho?.numero)">Avaliar</button>
+                <button class="btn btn-primary btn-sm align-self-start" (click)="abrirConsolidacoes(r.plano_trabalho?.id)">Avaliar</button>
               </div>
             </li>
           </ul>
@@ -48,7 +48,7 @@
                   <div><strong>Status: </strong><badge [color]="lookup.getColor(lookup.PLANO_TRABALHO_STATUS, p.status)" [icon]="lookup.getIcon(lookup.PLANO_TRABALHO_STATUS, p.status)" [label]="lookup.getValue(lookup.PLANO_TRABALHO_STATUS, p.status)"></badge><br>
 </div>
                   <div><strong>Período: </strong> {{formatDate(p.data_inicio)}} - {{formatDate(p.data_fim)}}</div>
-                  <div><strong>Usuário: </strong> {{p.usuario?.nome}}</div>
+                  <div><strong>Usuário: </strong> {{p.usuario?.nome_exibicao}}</div>
                 </div>
                 <button class="btn btn-primary btn-sm align-self-start" (click)="abrirPlanosTrabalho(p.numero)">Assinar</button>
               </div>

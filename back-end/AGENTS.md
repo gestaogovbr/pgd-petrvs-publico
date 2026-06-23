@@ -60,6 +60,61 @@
 - PHPStan completo em `app`:
   `docker exec petrvs_php sh -lc "cd /var/www && vendor/bin/phpstan analyse app --configuration=phpstan.neon.dist --memory-limit=1G --no-progress"`
 
+## Regras de Transação (`DB::transaction`)
+
+### Quando usar
+
+- **Obrigatório** quando um método de Service faz 2 ou mais operações de escrita (create, update, delete, insert) que devem ser atômicas.
+- **Obrigatório** quando uma escrita é seguida de uma transição de status via `StatusService::atualizaStatus()` — o status e a escrita devem ser consistentes.
+- **Obrigatório** em loops que criam/atualizam múltiplos registros (ex: clonar entregas, vincular consolidações).
+
+### Quando NÃO usar
+
+- Métodos com apenas 1 operação de escrita — a transação é implícita.
+- Métodos que apenas leem dados (queries, validações, carregamento de relações).
+
+### Onde colocar
+
+- A transação fica no **Service**, nunca no Controller nem no Repository.
+- **Validações e leituras ficam FORA** da transação — só escritas dentro.
+- O padrão é: validar → carregar dados → `DB::transaction(function () { escritas })`.
+
+```php
+// ✅ Correto: validação fora, escritas dentro
+public function encerrar(string $id, string $justificativa): PlanoTrabalho
+{
+    $plano = $this->validator->validar($id, Auth::id());  // fora
+
+    DB::transaction(function () use ($id, $plano, $justificativa) {
+        $this->writeRepository->update($id, ['encerrado_at' => now()->format('Y-m-d')]);
+        $this->statusService->atualizaStatus($plano, StatusEnum::CONCLUIDO->value, $justificativa);
+    });
+
+    return $plano->refresh();
+}
+
+// ❌ Errado: validação dentro da transação (segura lock desnecessário)
+public function encerrar(string $id, string $justificativa): PlanoTrabalho
+{
+    return DB::transaction(function () use ($id, $justificativa) {
+        $plano = $this->validator->validar($id, Auth::id());  // lock desnecessário
+        $this->writeRepository->update($id, ['encerrado_at' => now()->format('Y-m-d')]);
+        $this->statusService->atualizaStatus($plano, StatusEnum::CONCLUIDO->value, $justificativa);
+        return $plano->refresh();
+    });
+}
+```
+
+### Transações aninhadas
+
+- Se um método chamado dentro da transação já tem seu próprio `DB::transaction` (ex: `GeradorPeriodosAvaliativos::gerar()`), o Laravel usa savepoints automaticamente — não há problema.
+- Não remova a transação interna de um método só porque ele será chamado dentro de outra transação.
+
+### Retorno de valor
+
+- Quando o método precisa retornar o resultado de uma escrita, use `return DB::transaction(function () { ... return $entity; })`.
+- Quando o método é `void`, use `DB::transaction(function () { ... })` sem return.
+
 ## Segurança e Performance
 
 - Valide entradas, aplique autorização e proteja o escopo tenant antes do acesso a dados.

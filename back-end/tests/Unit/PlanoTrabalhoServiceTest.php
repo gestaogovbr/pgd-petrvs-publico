@@ -15,7 +15,7 @@ beforeEach(function () {
 
     $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->app->instance(PlanoTrabalhoRepository::class, $this->planoTrabalhoRepository);
-    
+
     $this->service = $this->app->make(PlanoTrabalhoService::class);
 });
 
@@ -29,13 +29,13 @@ test('deve retornar true quando existem planos pendentes com data fim vencida', 
     $dataAssinatura = Carbon::now();
 
     $resultado = $this->service->hasUsuarioPendencias(
-        $usuarioId, 
-        $planoTrabalhoId, 
+        $usuarioId,
+        $planoTrabalhoId,
         $dataAssinatura
     );
 
     expect($resultado)->toBeFalse();
-})->skip('Testes desabilitados esperando novas definições para o bloqueio por pendencias.');
+});
 
 test('deve retornar false quando nao existem planos pendentes', function () {
     $usuarioId = 'user-sem-planos';
@@ -43,10 +43,10 @@ test('deve retornar false quando nao existem planos pendentes', function () {
     $dataAssinatura = Carbon::now();
 
     $resultado = $this->service->hasUsuarioPendencias(
-        $usuarioId, 
-        $planoTrabalhoId, 
+        $usuarioId,
+        $planoTrabalhoId,
         $dataAssinatura
     );
 
     expect($resultado)->toBeFalse();
-})->skip('Testes desabilitados esperando novas definições para o bloqueio por pendencias.');
+});

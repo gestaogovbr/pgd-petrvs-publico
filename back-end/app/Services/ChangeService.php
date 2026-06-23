@@ -17,6 +17,8 @@ class ChangeService extends ServiceBase
         $filters = $this->prepareFilters($data);
         $modelClass = $filters['auditable_type'] ?? null;
         $modelId = $filters['auditable_id'] ?? $filters['row_id'] ?? null;
+        $onlyRelatedModel = $filters['only_related_model'] ?? null;
+        $onlyDirectAudits = (bool) ($filters['only_direct_audits'] ?? false);
 
         if (!$modelClass && $modelId) {
             $modelClass = Audit::where('auditable_id', $modelId)
@@ -24,53 +26,35 @@ class ChangeService extends ServiceBase
                 ->value('auditable_type');
         }
 
-        $query = Audit::query();
-
-        if ($modelClass) {
-            $auditableType = str_replace('\\\\', '\\', $modelClass);
-            $query->where('auditable_type', $auditableType);
-        }
-
-        if ($modelId) {
-            $query->where('auditable_id', $modelId);
-        }
-
-        if (filled($filters['type'] ?? null)) {
-            $query->where('event', $filters['type']);
-        }
-
-        if (filled($filters['user_id'] ?? null)) {
-            $query->where('user_id', $filters['user_id']);
-        }
-
-        if (filled($filters['date_from'] ?? null)) {
-            $query->whereDate('created_at', '>=', $filters['date_from']);
-        }
-
-        if (filled($filters['date_to'] ?? null)) {
-            $query->whereDate('created_at', '<=', $filters['date_to']);
-        }
-
-        if (filled($filters['search'] ?? null)) {
-            $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('old_values', 'like', "%{$search}%")
-                    ->orWhere('new_values', 'like', "%{$search}%")
-                    ->orWhere('tags', 'like', "%{$search}%")
-                    ->orWhere('url', 'like', "%{$search}%");
-            });
-        }
-
-        $query->with('user');
-
         $page = request('page', 1);
         $perPage = request('per_page', 20);
 
-        $paginator = $query->orderByDesc('created_at')->paginate($perPage, ['*'], 'page', $page);
+        $skipMainQuery = $onlyRelatedModel !== null && $onlyRelatedModel !== $modelClass;
+
+        if ($skipMainQuery) {
+            $paginator = new LengthAwarePaginator([], 0, $perPage, $page);
+        } else {
+            $query = Audit::query();
+
+            if ($modelClass) {
+                $auditableType = str_replace('\\\\', '\\', $modelClass);
+                $query->where('auditable_type', $auditableType);
+            }
+
+            if ($modelId) {
+                $query->where('auditable_id', $modelId);
+            }
+
+            $this->applyAuditFilters($query, $filters);
+
+            $query->with('user');
+
+            $paginator = $query->orderByDesc('created_at')->paginate($perPage, ['*'], 'page', $page);
+        }
 
         $relatedAudits = collect();
-        if ($modelClass && $modelId) {
-            $relatedAudits = $this->getRelatedAudits($modelClass,  $modelId, $filters);
+        if (!$onlyDirectAudits && $modelClass && $modelId) {
+            $relatedAudits = $this->getRelatedAudits($modelClass, $modelId, $filters, $onlyRelatedModel);
         }
 
         $allAudits = $paginator->getCollection()->concat($relatedAudits)->sortByDesc('created_at');
@@ -142,8 +126,12 @@ class ChangeService extends ServiceBase
     /**
      * Retorna audits de relacionamentos relacionados ao modelo principal.
      */
-    private function getRelatedAudits(string $modelClass, string $modelId, array $filters = []): \Illuminate\Support\Collection
-    {
+    private function getRelatedAudits(
+        string $modelClass,
+        string $modelId,
+        array $filters = [],
+        ?string $onlyRelationModel = null,
+    ): \Illuminate\Support\Collection {
         $relatedAudits = collect();
         $modelInstance = new $modelClass;
 
@@ -152,6 +140,10 @@ class ChangeService extends ServiceBase
         }
 
         foreach ($modelInstance->getAuditRelations() as $relation) {
+            if ($onlyRelationModel !== null && $relation['model'] !== $onlyRelationModel) {
+                continue;
+            }
+
             $relatedIds = collect();
 
             $getModelQuery = function ($model) {
@@ -187,31 +179,7 @@ class ChangeService extends ServiceBase
                 $query = Audit::where('auditable_type', $relation['model'])
                     ->whereIn('auditable_id', $chunk->toArray());
 
-                if (filled($filters['type'] ?? null)) {
-                    $query->where('event', $filters['type']);
-                }
-
-                if (filled($filters['user_id'] ?? null)) {
-                    $query->where('user_id', $filters['user_id']);
-                }
-
-                if (filled($filters['date_from'] ?? null)) {
-                    $query->whereDate('created_at', '>=', $filters['date_from']);
-                }
-
-                if (filled($filters['date_to'] ?? null)) {
-                    $query->whereDate('created_at', '<=', $filters['date_to']);
-                }
-
-                if (filled($filters['search'] ?? null)) {
-                    $search = $filters['search'];
-                    $query->where(function ($q) use ($search) {
-                        $q->where('old_values', 'like', "%{$search}%")
-                            ->orWhere('new_values', 'like', "%{$search}%")
-                            ->orWhere('tags', 'like', "%{$search}%")
-                            ->orWhere('url', 'like', "%{$search}%");
-                    });
-                }
+                $this->applyAuditFilters($query, $filters);
 
                 $audits = $query->get();
                 $relatedAudits = $relatedAudits->merge($audits);
@@ -221,6 +189,50 @@ class ChangeService extends ServiceBase
         return $relatedAudits->unique('id')->sortByDesc('created_at');
     }
 
+    private function applyAuditFilters($query, array $filters): void
+    {
+        if (filled($filters['type'] ?? null)) {
+            $query->where('event', $filters['type']);
+        }
 
+        if (filled($filters['user_id'] ?? null)) {
+            $query->where('user_id', $filters['user_id']);
+        }
 
+        if (filled($filters['usuario_nome'] ?? null)) {
+            $this->applyUsuarioNomeFilter($query, (string) $filters['usuario_nome']);
+        }
+
+        if (filled($filters['date_from'] ?? null)) {
+            $query->whereDate('created_at', '>=', $filters['date_from']);
+        }
+
+        if (filled($filters['date_to'] ?? null)) {
+            $query->whereDate('created_at', '<=', $filters['date_to']);
+        }
+
+        if (filled($filters['search'] ?? null)) {
+            $this->applySearchFilter($query, (string) $filters['search']);
+        }
+    }
+
+    private function applySearchFilter($query, string $search): void
+    {
+        $like = '%' . addcslashes($search, '%_\\') . '%';
+
+        $query->where(function ($q) use ($like) {
+            $q->whereRaw('CAST(old_values AS CHAR) LIKE ?', [$like])
+                ->orWhereRaw('CAST(new_values AS CHAR) LIKE ?', [$like])
+                ->orWhere('tags', 'like', $like)
+                ->orWhere('url', 'like', $like)
+                ->orWhereHas('user', fn ($userQuery) => $userQuery->where('nome', 'like', $like));
+        });
+    }
+
+    private function applyUsuarioNomeFilter($query, string $nome): void
+    {
+        $like = '%' . addcslashes($nome, '%_\\') . '%';
+
+        $query->whereHas('user', fn ($userQuery) => $userQuery->where('nome', 'like', $like));
+    }
 }

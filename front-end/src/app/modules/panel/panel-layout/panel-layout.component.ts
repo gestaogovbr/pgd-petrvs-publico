@@ -22,16 +22,21 @@ export class PanelLayoutComponent extends PageBase implements OnInit {
 		private tenantDao: TenantDaoService,
 	) {
 		super(injector);
+	}
+
+	ngOnInit(): void {
 		this.setTitleUser();
 	}
 
-	ngOnInit(): void {}
-
 	private setTitleUser() {
 		this.authService.detailUser().then((user) => {
+			if (!user) {
+				return;
+			}
 			this.currentUser = user;
 			this.title =
 				"Bem-vindo, " + user.nome + "! Você está em ambiente " + this.gb.ENV;
+			this.cdRef.detectChanges();
 		});
 	}
 

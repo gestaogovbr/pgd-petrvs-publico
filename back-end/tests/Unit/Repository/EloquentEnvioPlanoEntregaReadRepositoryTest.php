@@ -1,0 +1,114 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+
+uses(Tests\TestCase::class);
+
+afterEach(function () {
+    Mockery::close();
+});
+
+function preparaDbMockEnvioPlanoEntrega(int $count, Collection $rows): void
+{
+    $builder = Mockery::mock(Builder::class);
+    $builder->shouldReceive('leftJoin')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('select')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('whereNull')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('whereNotNull')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('where')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('orWhereColumn')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('orderByDesc')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('orderBy')->andReturnSelf()->byDefault();
+    $builder->shouldReceive('forPage')->andReturnSelf()->byDefault();
+
+    $builder->shouldReceive('count')->once()->withNoArgs()->andReturn($count);
+    $builder->shouldReceive('get')->once()->withNoArgs()->andReturn($rows);
+
+    DB::shouldReceive('table')->once()->with('planos_entregas as pe')->andReturn($builder);
+}
+
+test('query devolve count e rows conforme o builder', function (array $where, int $count, Collection $rows) {
+    preparaDbMockEnvioPlanoEntrega($count, $rows);
+
+    $repository = new EloquentEnvioPlanoEntregaReadRepository();
+    $result = $repository->query([
+        'where' => $where,
+        'page' => 1,
+        'limit' => 10,
+    ]);
+
+    expect($result['count'])->toBe($count);
+    expect($result['rows']->count())->toBe($rows->count());
+
+    if ($rows->isNotEmpty()) {
+        expect($result['rows']->first()->unidade->sigla)->toBe('U1');
+        expect($result['rows']->first()->programa->nome)->toBe('Programa 1');
+    }
+})->with([
+    'envio_com_falha' => [
+        [['envio_com_falha', '==', 1]],
+        1,
+        collect([
+            (object) [
+                'id' => 'pe-1',
+                'numero' => 1,
+                'nome' => 'Plano 1',
+                'data_inicio' => '2026-04-01 00:00:00',
+                'data_fim' => '2026-04-30 00:00:00',
+                'updated_at' => '2026-04-24 10:00:00',
+                'data_agendamento_envio' => '2026-04-24 11:00:00',
+                'data_tentativa_envio' => '2026-04-24 10:30:00',
+                'data_conclusao_envio' => '2026-04-24 10:45:00',
+                'data_envio_api_pgd' => '2026-04-24 10:40:00',
+                'log_envio' => 'Erro de envio',
+                'unidade_id' => 'u-1',
+                'unidade_sigla' => 'U1',
+                'programa_id' => 'p-1',
+                'programa_nome' => 'Programa 1',
+            ],
+        ]),
+    ],
+    'numero_like' => [
+        [['numero', 'like', '%10%']],
+        0,
+        collect(),
+    ],
+    'nome_like' => [
+        [['nome', 'like', '%Plano%']],
+        0,
+        collect(),
+    ],
+    'is_nao_enviado' => [
+        [['data_envio_api_pgd', '==', null]],
+        0,
+        collect(),
+    ],
+    'envios_pendentes' => [
+        [['envios_pendentes', '==', 1]],
+        0,
+        collect(),
+    ],
+    'updated_at_gte' => [
+        [['updated_at', '>=', '2026-03-01']],
+        0,
+        collect(),
+    ],
+    'updated_at_range' => [
+        [
+            ['updated_at', '>=', '2026-04-01'],
+            ['updated_at', '<', '2026-05-01'],
+        ],
+        0,
+        collect(),
+    ],
+    'isConcluido' => [
+        [['isConcluido', '==', true]],
+        0,
+        collect(),
+    ],
+]);

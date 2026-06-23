@@ -1,0 +1,28 @@
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+  <span class="pagination-info">
+    {{ total() }} registro(s) &bull; Página {{ page() }} de {{ lastPage() }}
+  </span>
+  <div class="d-flex align-items-center gap-1">
+    <br-button shape="circle" emphasis="secondary" type="button" (click)="emit(1)" [disabled]="page() <= 1" title="Primeira página" ariaLabel="Primeira página">
+      <i class="fas fa-angle-double-left"></i>
+    </br-button>
+    <br-button shape="circle" emphasis="secondary" type="button" (click)="emit(page() - 1)" [disabled]="page() <= 1" title="Anterior" ariaLabel="Página anterior">
+      <i class="fas fa-chevron-left"></i>
+    </br-button>
+    @for (p of pageNumbers(); track $index) {
+      @if (p === null) {
+        <span class="px-1 text-muted">...</span>
+      } @else {
+        <br-button shape="circle" [emphasis]="p === page() ? 'primary' : 'secondary'" type="button" (click)="emit(p)" title="Página {{ p }}" ariaLabel="Página {{ p }}">
+          {{ p }}
+        </br-button>
+      }
+    }
+    <br-button shape="circle" emphasis="secondary" type="button" (click)="emit(page() + 1)" [disabled]="page() >= lastPage()" title="Próxima" ariaLabel="Próxima página">
+      <i class="fas fa-chevron-right"></i>
+    </br-button>
+    <br-button shape="circle" emphasis="secondary" type="button" (click)="emit(lastPage())" [disabled]="page() >= lastPage()" title="Última página" ariaLabel="Última página">
+      <i class="fas fa-angle-double-right"></i>
+    </br-button>
+  </div>
+</div>

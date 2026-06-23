@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\AsJson;
+use App\Contracts\HasStatusHistory;
 use App\Models\ModelBase;
 use App\Models\Usuario;
 use App\Models\Unidade;
@@ -19,8 +20,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property mixed $metadados
  */
-class Atividade extends ModelBase
+class Atividade extends ModelBase implements HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'atividade_id';
+    }
   protected $table = 'atividades';
 
   protected $with = [];

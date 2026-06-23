@@ -7,6 +7,7 @@ namespace App\Repository\IntegracaoUnidade\Eloquent;
 use App\Models\IntegracaoUnidade;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\IntegracaoUnidade\Contracts\IntegracaoUnidadeReadRepositoryContract;
+use App\Services\UtilService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -41,5 +42,32 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
             ->first();
 
         return $registro instanceof IntegracaoUnidade ? $registro : null;
+    }
+
+    /**
+     * @return Collection<int, non-falsy-string>
+     */
+    public function getCodigosByCpfTitular(string $cpf, ?string $codigoExcluido = null): Collection
+    {
+        $cpf = UtilService::onlyNumbers($cpf);
+
+        if ($cpf === '') {
+            return collect();
+        }
+
+        $cpfNormalizadoSql = "REPLACE(REPLACE(REPLACE(cpf_titular_autoridade_uorg, '.', ''), '-', ''), ' ', '')";
+
+        return $this->query()
+            ->whereNull('deleted_at')
+            ->whereRaw($cpfNormalizadoSql . ' = ?', [$cpf])
+            ->when($codigoExcluido !== null && $codigoExcluido !== '', function ($query) use ($codigoExcluido): void {
+                $query->where('id_servo', '<>', $codigoExcluido)
+                    ->where('codigo_siape', '<>', $codigoExcluido);
+            })
+            ->get(['id_servo', 'codigo_siape'])
+            ->map(fn (IntegracaoUnidade $unidade): ?string => $unidade->id_servo ?: $unidade->codigo_siape)
+            ->filter()
+            ->unique()
+            ->values();
     }
 }

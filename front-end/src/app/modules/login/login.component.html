@@ -16,7 +16,6 @@
                 </div>
 
                 <div class="text-center mb-5 d-flex align-items-center justify-content-center">
-                    <img src="../assets/images/logo_pgd.png" class="logo-pgd">
                     <img [src]="globals.getResourcePath('assets/images/' + globals.IMAGES.login)" class="logo-petrvs" alt="Petrvs"/>
                 </div>
                 <div class="text-center mb-5">
@@ -38,7 +37,7 @@
                           <div *ngIf="globals.hasLoginUnicoLogin" class="line-separator"></div>
                         </div>
                         <div class="govbr" *ngIf="globals.hasLoginUnicoLogin">
-                            <button class="br-button btn btn-primary rounded-pill mt-3" type="button" (click)="signInLoginUnicoBackEnd()">
+                            <button class="br-button mt-3" type="button" (click)="signInLoginUnicoBackEnd()">
                                 Entrar com <span>gov.br</span>
                             </button>
                         </div>
@@ -74,7 +73,6 @@
                 <p class="m-0"><small class="text-primary">Versão: {{globals.VERSAO_SYS}}</small></p>
             </div>
 
-            <img src="../assets/images/logo_gov.png">
         </div>        
     </div>
 </div>

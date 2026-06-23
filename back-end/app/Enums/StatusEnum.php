@@ -65,4 +65,13 @@ enum StatusEnum: string
             self::ATIVO->value
         ];
     }
+
+    public static function permitemEnvio(): array
+    {
+        return [
+            self::ATIVO->value,
+            self::CONCLUIDO->value,
+            self::AVALIADO->value
+        ];
+    }
 }

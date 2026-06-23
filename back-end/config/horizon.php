@@ -196,7 +196,7 @@ return [
                 'maxProcesses' => 3,
                 'minProcesses' => 3,
                 'tries' => 3,
-                'timeout' => 90
+                'timeout' => 3600
             ],
             'supervisor-siape' => [
                 'connection' => 'redis',
@@ -207,13 +207,13 @@ return [
                 'timeout' => 60 * 60 * 24 * 2
             ],
             'supervisor-pgd' => [
-                'connection' => 'redis',
+                'connection' => 'rabbitmq',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
                 'processes' => env('PGD_PROCESSES', 4),
-                'tries' => 1,
-                'backoff' => 60 * 60 * 2,
-                'timeout' => 60 * 60 * 3,
+                'tries' => 0,
+                'backoff' => 0,
+                'timeout' => 60 * 60 * 24,
                 'memory' => env('PGD_MEMORY', 1024 * 4),
             ],
         ],
@@ -226,7 +226,7 @@ return [
                 'maxProcesses' => 3,
                 'minProcesses' => 3,
                 'tries' => 3,
-                'timeout' => 90
+                'timeout' => 3600
             ],
             'supervisor-siape' => [
                 'connection' => 'redis',
@@ -237,13 +237,13 @@ return [
                 'timeout' => 60 * 60 * 24 * 2
             ],
             'supervisor-pgd' => [
-                'connection' => 'redis',
+                'connection' => 'rabbitmq',
                 'queue' => ['pgd_queue'],
                 'balance' => 'simple',
-                'processes' => env('PGD_PROCESSES', 1),
-                'tries' => 1,
-                'backoff' => 60 * 60 * 2,
-                'timeout' => 60 * 60 * 3,
+                'processes' => env('PGD_PROCESSES', 10),
+                'tries' => 0,
+                'backoff' => 0,
+                'timeout' => 60 * 60 * 24,
                 'memory' => env('PGD_MEMORY', 1024 * 1),
                 'maxJobs' => 1000
             ],

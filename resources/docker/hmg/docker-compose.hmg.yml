@@ -4,10 +4,8 @@ services:
 
   # PHP
   petrvs_php:
+    image: segescginf/pgdpetrvs-develop:hmg
     container_name: petrvs_php_hmg
-    ports:
-      - "80:80"
-      - "443:443"
     deploy:
       resources:
         limits:
@@ -16,12 +14,14 @@ services:
 
   # QUEUE
   petrvs_queue:
+    image: segescginf/pgdpetrvs-develop:hmg
     container_name: petrvs_queue
+    volumes: []
     environment:
       - TZ=America/Bahia
+      - APP_CONTEXT=queue
+      - RABBITMQ_HOST=petrvs_rabbitmq
     command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
-    depends_on:
-      - petrvs_php
     stdin_open: true
     tty: true
 
@@ -39,12 +39,14 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./my.cnf:/etc/mysql/my.cnf
+    env_file:
+      - ../../../back-end/.env
     environment:
-      MYSQL_ROOT_PASSWORD: PsEeTnRhVaS
-      MYSQL_DATABASE: petrvs
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: root
-      MYSQL_PASSWORD: PsEeTnRhVaS
-      MYSQL_TCP_PORT: 3306  
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_TCP_PORT: ${DB_PORT}
 
 volumes:
   db_data:

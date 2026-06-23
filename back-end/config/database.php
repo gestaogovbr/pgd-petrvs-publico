@@ -67,6 +67,7 @@ return [
 		'tenant' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
+            'database' => env('TENANT_DB', 'petrvs_mgi'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'username' => env('DB_USERNAME', 'forge'),

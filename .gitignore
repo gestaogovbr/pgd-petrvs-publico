@@ -26,9 +26,10 @@ front-end/.angular/*
 
 /resources/mysql/*
 /resources/docker/mariadb/*
+/resources/rabbitmq/*
+
 
 back-end/database/seeders/LogSeeder.php
-resources/docker/dev/docker-compose.yml
 Dump Tabela Atividades.sql
 
 # Farias
@@ -56,6 +57,7 @@ front-end/src/proxy.conf.json
 front-end/tsconfig.json
 *.bak
 front-end/.vscode/settings.json
+front-end/out-tsc/*
 
 # Dario
 back-end/storage/tenant*/*/
@@ -65,6 +67,7 @@ resources/documentacao/Gestão/plano_trabalho.pdf
 
 # Para Apple
 *.DS_Store
+.DS_Store
 
 microservice/api-pgd/storage/logs/schedule.log
 back-end/supervisord.log
@@ -73,4 +76,13 @@ back-end/storage/logs/*.log
 kubectl
 .trae/diagnostics/
 .vscode/diagnostics/
+back-end/public/app.json
+back-end/public/app.json
 review-pr-*
+front-end/out-tsc/app/main.js
+front-end/dist/*
+
+docs/*
+scripts/release/*
+AGENTS.md
+.agents/skills/*

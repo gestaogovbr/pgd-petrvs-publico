@@ -37,6 +37,7 @@ use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Services\UtilService;
 use App\Support\ModalidadePgd;
+use App\Contracts\HasStatusHistory;
 use App\Traits\AutoUuid;
 use App\Traits\HasPermissions;
 use App\Traits\MergeRelations;
@@ -67,8 +68,6 @@ class UsuarioConfig
     public $notificacoes;
 }
 
-
-
 /**
  * @property string $id
  * @property string $nome
@@ -76,11 +75,17 @@ class UsuarioConfig
  * @property string $cpf
  * @property string $matricula
  * @property string $apelido
+ * @property string|null $nome_social
  * @property string $telefone
  * @property string $sexo
  * @property string $situacao_funcional
  * @property string $perfil_id
  * @property string|null $modalidade_pgd
+ * @property Carbon|null $data_agendamento_envio
+ * @property Carbon|null $data_envio_api_pgd
+ * @property Carbon|null $data_tentativa_envio
+ * @property Carbon|null $data_conclusao_envio
+ * @property string|null $log_envio
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
  * @property-read \App\Models\UnidadeIntegrante|null $lotacao
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
@@ -93,8 +98,13 @@ class UsuarioConfig
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasSubstitutas
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $gerenciasDelegadas
  */
-class Usuario extends Authenticatable implements AuditableContract
+class Usuario extends Authenticatable implements AuditableContract, HasStatusHistory
 {
+    public function getStatusFkColumn(): string
+    {
+        return 'usuario_id';
+    }
+
     use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable,Impersonate;
 
     // protected $areasTrabalho; // dynamic property
@@ -102,14 +112,15 @@ class Usuario extends Authenticatable implements AuditableContract
     protected $table = "usuarios";
 
     protected $with = ['perfil'];
-    protected $appends = ['pedagio', 'modalidade_pgd_label'];
+    protected $appends = ['pedagio', 'modalidade_pgd_label', 'nome_exibicao'];
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
         'email', /* varchar(100); NULL; */ // E-mail do usuário
         'email_verified_at', /* timestamp; */ // Data de verificação do e-mail do usuário
         'cpf', /* varchar(11); NOT NULL; */ // CPF do usuário
         'matricula', /* varchar(50); */ // Matrícula funcional do usuário
-        'apelido', /* varchar(100); NOT NULL; */ // Apelido/Nome de guerra/Nome social
+        'apelido', /* varchar(100); NOT NULL; */ // Apelido/Nome de guerra
+        'nome_social', /* varchar(100); NULL; */ // Nome social do usuário
         'telefone', /* varchar(50); */ // Telefone do usuário
         'sexo', /* enum('MASCULINO','FEMININO'); */ // Sexo do usuário
         'config', /* json; */ // Configurações do usuário
@@ -140,6 +151,9 @@ class Usuario extends Authenticatable implements AuditableContract
         'usuario_externo',
         'is_admin',
         'pedagio',
+        'data_inicial_pedagio',
+        'data_final_pedagio',
+        'tipo_pedagio',
         'data_ativacao_temporaria' /* date; */
     ];
 
@@ -178,6 +192,9 @@ class Usuario extends Authenticatable implements AuditableContract
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'data_agendamento_envio' => 'datetime',
+        'data_tentativa_envio' => 'datetime',
+        'data_envio_api_pgd' => 'datetime',
         'notificacoes' => AsJson::class
     ];
 
@@ -471,6 +488,20 @@ class Usuario extends Authenticatable implements AuditableContract
         return $this->hasOne(UnidadeIntegrante::class)->has('colaborador');
     } // unidade com a qual possui TCR
 
+    public function getNomeExibicaoAttribute(): string
+    {
+        return $this->nome_social ?? $this->nome ?? '';
+    }
+
+    public function getNomeCompletoTcrAttribute(): string
+    {
+        if (empty($this->nome_social)) {
+            return $this->nome ?? '';
+        }
+
+        return $this->nome_social . " (" . $this->nome . ')';
+    }
+
     public function getModalidadePgdLabelAttribute(): string
     {
         return ModalidadePgd::label($this->modalidade_pgd ?? null);
@@ -557,9 +588,19 @@ class Usuario extends Authenticatable implements AuditableContract
         }
     }
 
-    public function canImpersonate()
+    public function identificacaoEnvio(): string
     {
-        // For example
+        $matricula = trim((string) ($this->matricula ?? ''));
+
+        if ($matricula !== '') {
+            return 'Participante #'.$matricula.' ('.$this->id.')';
+        }
+
+        return 'Participante ('.$this->id.')';
+    }
+
+    public function canImpersonate(): bool
+    {
         return $this->is_admin == 1;
     }
 

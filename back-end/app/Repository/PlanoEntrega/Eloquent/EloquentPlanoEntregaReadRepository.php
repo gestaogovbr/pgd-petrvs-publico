@@ -10,6 +10,8 @@ use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Facades\DB;
 
 class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository implements PlanoEntregaReadRepositoryContract
 {
@@ -28,6 +30,38 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
     public function __construct(PlanoEntrega $model)
     {
         $this->model = $model;
+    }
+
+    public function findById(string|int $id): ?PlanoEntrega
+    {
+        /** @var PlanoEntrega|null */
+        return parent::findById($id);
+    }
+
+    public function findOneParaEnvio(string|int $id): ?PlanoEntrega
+    {
+        /** @var PlanoEntrega|null */
+        return $this->model->newQuery()
+            ->with([
+                'programa',
+                'programa.unidade',
+                'unidade',
+                'entregas',
+                'entregas.unidade',
+            ])
+            ->find($id);
+    }
+
+    public function findAllParaEnvio(int $chunkSize, callable $onChunk): void
+    {
+        DB::table('planos_entregas')
+            ->whereNull('planos_entregas.deleted_at')
+            ->whereIn('planos_entregas.status', StatusEnum::permitemEnvio())
+            ->select('planos_entregas.id')
+            ->orderBy('planos_entregas.id')
+            ->chunkById($chunkSize, function (SupportCollection $planosEntrega) use ($onChunk): void {
+                $onChunk($planosEntrega);
+            });
     }
 
     public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection
@@ -83,5 +117,35 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
                 'planoEntrega' => static fn ($query) => $query->select(self::PLANO_ENTREGA_SELECT_FIELDS),
             ])
             ->get();
+    }
+
+    public function findAllByUnidadeId(string $unidadeId, ?string $dataInicio = null, ?string $dataFim = null): Collection
+    {
+        $query = $this->query()
+            ->where('unidade_id', $unidadeId)
+            ->select('id', 'nome', 'numero', 'status', 'data_inicio', 'data_fim');
+
+        if ($dataInicio !== null) {
+            $query->where('data_fim', '>=', $dataInicio);
+        }
+
+        if ($dataFim !== null) {
+            $query->where('data_inicio', '<=', $dataFim);
+        }
+
+        return $query->orderBy('data_inicio', 'desc')->get();
+    }
+
+    public function findAllEntregasByPlanoId(string $planoEntregaId): Collection
+    {
+        return PlanoEntregaEntrega::where('plano_entrega_id', $planoEntregaId)
+            ->select('id', 'plano_entrega_id', 'entrega_id', 'descricao', 'descricao_entrega')
+            ->with(['entrega:id,nome'])
+            ->get();
+    }
+
+    public function findEntregaById(string $entregaId): ?PlanoEntregaEntrega
+    {
+        return PlanoEntregaEntrega::find($entregaId);
     }
 }

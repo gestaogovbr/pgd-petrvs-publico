@@ -1,7 +1,7 @@
 <?php
 
 use App\Exceptions\ExportPgdException;
-use App\Services\API_PGD\Resources\ModalidadeResource;
+use App\Jobs\Envio\Resources\ModalidadeResource;
 use App\Support\ModalidadePgd;
 
 describe('ModalidadePgd', function () {

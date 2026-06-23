@@ -41,6 +41,7 @@ class PlanejamentoObjetivo extends ModelBase
     'integra_okr',  /* tinyint(1); NOT NULL; */ // Objetivos que serão visíveis no OKR
     //'deleted_at', /* timestamp; */
     'objetivo_superior_id', /* char(36); */
+    'tipo_objetivo_id', /* char(36); */
   ];
 
   public $delete_cascade = ["objetivos"];
@@ -80,5 +81,10 @@ class PlanejamentoObjetivo extends ModelBase
   public function objetivoSuperior(): BelongsTo
   {
     return $this->belongsTo(PlanejamentoObjetivo::class, 'objetivo_superior_id');
+  }
+
+  public function tipoObjetivo(): BelongsTo
+  {
+    return $this->belongsTo(TipoPlanejamentoObjetivo::class, 'tipo_objetivo_id');
   }
 }

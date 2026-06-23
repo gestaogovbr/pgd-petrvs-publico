@@ -1,3 +1,4 @@
+import { TipoObjetivo } from '../modules/cadastros/tipo-objetivo-v2/domain/types';
 import { Base } from './base.model';
 import { EixoTematico } from './eixo-tematico.model';
 import { Planejamento } from './planejamento.model';
@@ -9,7 +10,9 @@ export class PlanejamentoObjetivo extends Base {
     public objetivo_pai?: PlanejamentoObjetivo;
     public objetivo_superior?: PlanejamentoObjetivo;
     public objetivos?: PlanejamentoObjetivo[];
-    
+
+    public tipo_objetivo?: TipoObjetivo;
+    public tipo_objetivo_id: string | null = null;
     public nome: string = ""; /* Nome do objetivo */
     public fundamentacao: string = ""; /* Fundamentação para a definição do objetivo */
     public sequencia: number = 0; 

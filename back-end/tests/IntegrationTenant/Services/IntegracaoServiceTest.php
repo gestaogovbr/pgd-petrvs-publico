@@ -2,10 +2,13 @@
 
 use App\Models\Usuario;
 use App\Services\IntegracaoService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+
 beforeEach(function () {
+    Bus::fake();
     $this->service = new IntegracaoService();
 
     $this->perfilParticipanteId = Str::uuid()->toString();
@@ -24,7 +27,7 @@ beforeEach(function () {
 test('deve alterar email de usuario existente ativo para liberar email', function () {
     $email = 'conflito@teste.gov.br';
     $id = Str::uuid()->toString();
-    
+
     DB::table('usuarios')->insert([
         'id' => $id,
         'email' => $email,
@@ -43,14 +46,14 @@ test('deve alterar email de usuario existente ativo para liberar email', functio
     $this->service->liberarEmailDuplicadoDefinindoComoNulo($email, '22222');
 
     $usuarioAntigo = DB::table('usuarios')->where('id', $id)->first();
-    
+
     expect($usuarioAntigo->email)->toBeNull();
 });
 
 test('deve alterar email de usuario existente soft deleted para liberar email', function () {
     $email = 'conflito_deleted@teste.gov.br';
     $id = Str::uuid()->toString();
-    
+
     DB::table('usuarios')->insert([
         'id' => $id,
         'email' => $email,
@@ -62,7 +65,7 @@ test('deve alterar email de usuario existente soft deleted para liberar email', 
         'updated_at' => now(),
         'deleted_at' => now()
     ]);
-    
+
     $this->assertDatabaseHas('usuarios', ['id' => $id, 'email' => $email]);
 
     Usuario::flushEventListeners();
@@ -70,14 +73,14 @@ test('deve alterar email de usuario existente soft deleted para liberar email', 
     $this->service->liberarEmailDuplicadoDefinindoComoNulo($email, '44444');
 
     $usuarioAntigo = DB::table('usuarios')->where('id', $id)->first();
-    
+
     expect($usuarioAntigo->email)->toBeNull();
 });
 
 test('nao deve alterar email se for o proprio usuario ignorado', function () {
     $email = 'proprio@teste.gov.br';
     $id = Str::uuid()->toString();
-    
+
     DB::table('usuarios')->insert([
         'id' => $id,
         'email' => $email,
@@ -88,13 +91,13 @@ test('nao deve alterar email se for o proprio usuario ignorado', function () {
         'created_at' => now(),
         'updated_at' => now()
     ]);
-    
+
     Usuario::flushEventListeners();
 
     $this->service->liberarEmailDuplicadoDefinindoComoNulo($email, '55555', $id);
 
     $usuario = DB::table('usuarios')->where('id', $id)->first();
-    
+
     expect($usuario->email)->toBe($email);
 });
 
@@ -333,7 +336,9 @@ test('deve ser idempotente ao executar fluxo de servidores com dados já consist
         ],
     ];
 
-    $this->service->processarServidoresTransaction($servidores);
+    Usuario::withoutEvents(function () use ($servidores) {
+        $this->service->processarServidoresTransaction($servidores);
+    });
 
     $usuario1 = DB::table('usuarios')->where('matricula', '1')->first();
     $usuario2 = DB::table('usuarios')->where('matricula', '2')->first();

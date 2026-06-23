@@ -52,14 +52,25 @@
 }
 
 .br-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
   background-color: #1351b4;
   font-weight: 500;
   width: 320px;
+  min-height: 44px;
+  padding: 0.75rem 1.25rem;
   color: #fff;
   font-size: 16.8px;
+  line-height: 1;
+  border: 0;
+  border-radius: 9999px;
+  vertical-align: middle;
   span {
     font-weight: 900;
     font-size: 16.8px;
+    line-height: 1;
   }
 }
 

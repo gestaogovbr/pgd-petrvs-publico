@@ -63,13 +63,13 @@ class AtividadeService extends ServiceBase
         "pausas",
         "usuario:id,nome,matricula,apelido,email,url_foto",
         "unidade:id,nome,sigla,codigo,path,atividades_arquivamento_automatico,checklist,etiquetas,distribuicao_forma_contagem_prazos,cidade_id,entidade_id,entrega_forma_contagem_prazos",
-        "comentarios.usuario:id,nome,apelido,email,url_foto",
+        "comentarios.usuario:id,nome,apelido,nome_social,email,url_foto",
         "tarefas.tarefa",
-        "tarefas.comentarios.usuario:id,nome,apelido,email,url_foto",
+        "tarefas.comentarios.usuario:id,nome,apelido,nome_social,email,url_foto",
         "planoTrabalho.entregas.entrega:id,nome",
         "usuario.afastamentos",
         "usuario.planosTrabalho.entregas.entrega:id,nome",
-        "reacoes.usuario:id,nome,apelido"
+        "reacoes.usuario:id,nome,apelido,nome_social"
     ];
 
     public function validateIniciar($data) {

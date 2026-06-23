@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Exceptions\Contracts\IBaseException;
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 class ServerException extends Exception implements IBaseException
 {
@@ -33,6 +34,9 @@ class ServerException extends Exception implements IBaseException
         "ProgramaUpdate" => "Usuário não tem permissão para alterar regramentos",
         "ProgramaDestroy" => "Usuário não tem permissão para excluir regramentos",
         "RelatorioCapacidade" => "Usuário não tem permissão para abrir este Relatório",
+        "RelatorioEnvioParticipantes" => "Acesso negado ao relatório de envio de participantes.",
+        "RelatorioEnvioPlanoTrabalho" => "Acesso negado ao relatório de envio de planos de trabalho.",
+        "RelatorioEnvioPlanoEntrega" => "Acesso negado ao relatório de envio de planos de entrega.",
         "ValidateAvaliacao" => "Erro ao validar avaliacao",
         "ValidateRecursoAvaliacao" => "Erro ao validar o recurso da avaliação",
         "ValidateAtividade" => "Erro ao validar atividade",
@@ -56,6 +60,7 @@ class ServerException extends Exception implements IBaseException
         "ValidateRelato" => "Erro ao enviar o relato",
         "ValidateUnidade" => "Erro ao validar Unidade",
         "ValidateUsuario" => "Erro ao validar o usuário",
+        "ValidateVersion" => "Erro de versão da aplicação",
         "TipoClienteExcluir" => "Tipo de Cliente",
         "UsuarioDestroy" => "Usuário não tem permissão para excluir Agentes",
         "UsuarioDestroyNaoColaborador" => "Não é possível excluir usuários com nível diferente de Colaborador",
@@ -66,7 +71,19 @@ class ServerException extends Exception implements IBaseException
         if(!empty($extra)) {
             $message[] = $extra;
         }
-        parent::__construct(implode($separator, $message));
+        $fullMessage = implode($separator, $message);
+        $httpCode = $this->httpStatusForExceptionCode($code);
+        parent::__construct($fullMessage, $httpCode);
+    }
+
+    private function httpStatusForExceptionCode(string $code): int
+    {
+        return match ($code) {
+            'RelatorioEnvioParticipantes' => Response::HTTP_FORBIDDEN,
+            'RelatorioEnvioPlanoTrabalho' => Response::HTTP_FORBIDDEN,
+            'RelatorioEnvioPlanoEntrega' => Response::HTTP_FORBIDDEN,
+            default => 0,
+        };
     }
 
     private function getMessageException(string $code) : string

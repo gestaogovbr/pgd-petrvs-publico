@@ -15,4 +15,9 @@ interface IntegracaoUnidadeReadRepositoryContract
     public function getUnidadesComChefias(): \Illuminate\Support\Collection;
 
     public function findByCodigo(string $codigo): ?\App\Models\IntegracaoUnidade;
+
+    /**
+     * @return \Illuminate\Support\Collection<int, non-falsy-string>
+     */
+    public function getCodigosByCpfTitular(string $cpf, ?string $codigoExcluido = null): \Illuminate\Support\Collection;
 }

@@ -1,1 +1,0 @@
-{"version":3,"file":"system-log.model.js","sourceRoot":"","sources":["../../../../src/app/models/system-log.model.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,MAAM,cAAc,CAAC;AAEpC,MAAM,OAAO,SAAU,SAAQ,IAAI;IAMjC,YAAmB,IAAU;QAC3B,KAAK,EAAE,CAAC;QACR,IAAI,CAAC,cAAc,CAAC,IAAI,CAAC,CAAC;IAC5B,CAAC;CACF"}

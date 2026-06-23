@@ -1,0 +1,37 @@
+<div class="br-mainpanel">
+  <app-breadcrumb />
+
+  <p class="text-secondary">Consulta de envios à API PGD. Escolha abaixo o tipo de registro.</p>
+
+  <div class="row mt-4">
+    <div class="col-6 col-sm-4 mb-3" *ngIf="auth.hasPermissionTo('MOD_ENVIO_USUARIO')">
+      <app-button-dashboard
+        [title]="'Envios de Participantes'"
+        iconClass="bi bi-people-fill"
+        textColor="#1369f0"
+        borderColor="#1369f0"
+        [route]="{ route: ['envios', 'participantes'] }"
+      ></app-button-dashboard>
+    </div>
+
+    <div class="col-6 col-sm-4 mb-3" *ngIf="auth.hasPermissionTo('MOD_ENVIO_PE')">
+      <app-button-dashboard
+        [title]="'Envios de Planos de Entrega'"
+        iconClass="bi bi-box-seam"
+        textColor="#1369f0"
+        borderColor="#1369f0"
+        [route]="{ route: ['envios', 'planos-entrega'] }"
+      ></app-button-dashboard>
+    </div>
+
+    <div class="col-6 col-sm-4 mb-3" *ngIf="auth.hasPermissionTo('MOD_ENVIO_PT')">
+      <app-button-dashboard
+        [title]="'Envios de Planos de Trabalho'"
+        iconClass="bi bi-clipboard2-check"
+        textColor="#1369f0"
+        borderColor="#1369f0"
+        [route]="{ route: ['envios', 'planos-trabalho'] }"
+      ></app-button-dashboard>
+    </div>
+  </div>
+</div>

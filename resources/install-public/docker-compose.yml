@@ -21,6 +21,7 @@ services:
     <<: *security_defaults
     image: segescginf/pgdpetrvs:latest  # Substitua pela sua imagem real
     container_name: petrvs_php
+      - APP_CONTEXT=web
     ports:
       - "80:80"
       - "443:443"
@@ -29,6 +30,13 @@ services:
         limits:
           cpus: '2.0'
           memory: 4048M
+    depends_on:
+      petrvs_db:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
     volumes:
       - "./.env:/var/www/.env"
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
@@ -36,16 +44,50 @@ services:
     <<: *security_defaults
     image: segescginf/pgdpetrvs:latest
     container_name: petrvs_queue
+    command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
     environment:
       - TZ=America/Bahia
-    command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
-    depends_on:
-      - petrvs_php
+      - APP_CONTEXT=queue
     volumes:
       - "./.env:/var/www/.env"
       - ./php.ini:/usr/local/etc/php/conf.d/custom-php.ini
     stdin_open: true
     tty: true
+    depends_on:
+      petrvs_db:
+        condition: service_started
+      petrvs_redis:
+        condition: service_started
+      petrvs_rabbitmq:
+        condition: service_healthy
+  petrvs_rabbitmq:
+    <<: *security_defaults
+    build:
+      context: .
+      dockerfile: Dockerfile-rabbitmq
+    container_name: petrvs_rabbitmq
+    env_file:
+      - ./.env
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # UI de gerenciamento
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping && rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    environment:
+      TZ: "America/Bahia"
+    volumes:
+      - petrvs_rabbitmq_data:/var/lib/rabbitmq
+      - ../../rabbitmq/logs:/var/log/rabbitmq
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
   petrvs_redis:
     <<: *security_defaults
     image: redis:alpine
@@ -57,3 +99,5 @@ services:
 volumes:
   db_data:  # Declara o volume persistente
   redis-data:
+  petrvs_rabbitmq_data:
+    name: petrvs_rabbitmq_data_dev

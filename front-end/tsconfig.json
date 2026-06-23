@@ -16,7 +16,8 @@
     "target": "ES2022",
     "module": "ES2022",
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,    
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "lib": [
       "ES2022",
       "dom"

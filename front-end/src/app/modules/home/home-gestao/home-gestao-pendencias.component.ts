@@ -7,6 +7,7 @@ import { GlobalsService } from 'src/app/services/globals.service';
 import { LexicalService } from 'src/app/services/lexical.service';
 import { LookupService } from 'src/app/services/lookup.service';
 import { NavigateService } from 'src/app/services/navigate.service';
+import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 
 @Component({
     selector: 'app-home-gestao-pendencias',
@@ -27,6 +28,7 @@ export class HomeGestaoPendenciasComponent extends PageBase {
   public auth: AuthService;
   public go: NavigateService;
   public lookup: LookupService;
+  private filterStorage: FilterStorageService;
 
   constructor(injector: Injector) {
     super(injector);
@@ -36,6 +38,7 @@ export class HomeGestaoPendenciasComponent extends PageBase {
     this.gb = injector.get<GlobalsService>(GlobalsService);
     this.auth = injector.get<AuthService>(AuthService);
     this.go = injector.get<NavigateService>(NavigateService);
+    this.filterStorage = injector.get<FilterStorageService>(FilterStorageService);
     this.title = 'Pendências da unidade';
     this.modalWidth = 900;
   }
@@ -70,16 +73,10 @@ export class HomeGestaoPendenciasComponent extends PageBase {
   public trackById(_: number, item: any) { return item?.id; }
 
   public abrirPlanosTrabalho(numero: string) {
-    let rota = this.go.navigate({
-      route: ['gestao', 'plano-trabalho'], 
-      params: {
-        filter: {
-          numero: numero, 
-          meus_planos: false,
-          unidade_id: null
-        }
-      }
-    });
+    const userId = this.auth.usuario?.id;
+    const filterKey = userId ? `plano-trabalho-v2:filters:${userId}` : 'plano-trabalho-v2:filters';
+    this.filterStorage.save(filterKey, { numero, meus_planos: false, vigentes: false, advanced: true, subordinadas: true   });
+    const rota = this.go.navigate({ route: ['gestao', 'plano-trabalho-v2'] });
     rota.then(success => {
       if (success) this.fecharModal();
     });
@@ -119,17 +116,9 @@ export class HomeGestaoPendenciasComponent extends PageBase {
     });
   }
 
-  public abrirConsolidacoes(usuario_id: string, unidade_id: string, numero: string) {
+  public abrirConsolidacoes(planoId: string) {
     let rota = this.go.navigate({
-      route: ['avaliacao', 'plano-trabalho', 'consolidacao', 'avaliacao'], 
-      params: {
-        filter: {
-          usuario_id: usuario_id,
-          unidade_id: unidade_id,
-          incluir_arquivados: true,
-          numero: numero
-        }
-      }
+      route: ['gestao', 'plano-trabalho-v2', 'consultar', planoId]
     });
     rota.then(success => {
       if (success) this.fecharModal();

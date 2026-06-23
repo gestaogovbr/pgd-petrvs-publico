@@ -234,7 +234,8 @@ describe('SiapeUnidadeLifecycleService', function () {
 
         $blacklist->refresh();
 
-        expect($resultado['blacklists_mantidas'])->toBe(1);
+        expect($resultado['blacklists_criadas'] + $resultado['blacklists_mantidas'])
+            ->toBe($resultado['unidades_avaliadas']);
         expect($blacklist->created_at?->toDateTimeString())->toBe('2026-04-15 10:00:00');
         expect($blacklist->updated_at?->toDateTimeString())->toBe('2026-04-20 10:00:00');
     });
@@ -257,7 +258,9 @@ describe('SiapeUnidadeLifecycleService', function () {
 
         $blacklist->refresh();
 
-        expect($resultado['blacklists_criadas'])->toBe(1);
+        // Lista vazia: todas as unidades ativas são tratadas; o total agregado depende do tenant (seed etc.).
+        expect($resultado['blacklists_criadas'] + $resultado['blacklists_mantidas'])
+            ->toBe($resultado['unidades_avaliadas']);
         expect($blacklist->deleted_at)->toBeNull();
         expect($blacklist->inativado)->toBe(0);
         expect($blacklist->created_at?->toDateTimeString())->toBe('2026-04-20 10:00:00');

@@ -1,8 +1,8 @@
 import { Component, Injector, Input } from "@angular/core";
-import { TreeNode } from "primeng/api";
 import { PlanoEntregaEntregaDaoService } from "src/app/dao/plano-entrega-entrega-dao.service";
 import { PlanoEntregaEntrega } from "src/app/models/plano-entrega-entrega.model";
 import { PageFrameBase } from "src/app/modules/base/page-frame-base";
+import { LookupTreeNode } from "src/app/services/lookup.service";
 
 @Component({
     selector: 'plano-entrega-entregas-vinculadas',
@@ -23,7 +23,7 @@ export class PlanoEntregaEntregasVinculadasComponent extends PageFrameBase {
   public loader: boolean = false;
   private _entregaId!: string;
   public planoEntregaEntregaDao: PlanoEntregaEntregaDaoService;
-  public entregasVinculadas: TreeNode[] = [];
+  public entregasVinculadas: LookupTreeNode[] = [];
 
   constructor(public injector: Injector){
     super(injector);
@@ -45,6 +45,11 @@ export class PlanoEntregaEntregasVinculadasComponent extends PageFrameBase {
     } catch  (e){
       console.log("Erro")
     }
+  }
+
+  public toggle(event: Event, node: LookupTreeNode) {
+    event.stopPropagation();
+    node.expanded = !node.expanded;
   }
 
   public async showDetalhes(entrega: PlanoEntregaEntrega){

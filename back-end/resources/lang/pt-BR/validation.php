@@ -81,5 +81,5 @@ return [
     'timezone' => 'O campo :attribute deve ser um fuso horário válido.',
     'unique' => 'O valor informado para :attribute já está em uso.',
     'url' => 'O campo :attribute deve ser uma URL válida.',
-    'uuid' => 'O campo :attribute deve ser um UUID válido.'
+    'uuid' => 'O valor informado para o campo :attribute é inválido.'
 ];

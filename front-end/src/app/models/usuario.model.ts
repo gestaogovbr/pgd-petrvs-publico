@@ -131,6 +131,7 @@ export class Usuario extends Base implements HasNotificacao {
     public audits_externo?: any= [];
     public regramentos?: string[] = [];
 
+    public is_admin: boolean = false;
     public nome: string = ""; /* Nome do Usuário */
     public email: string = ""; /* Email do Usuário */
     public usuario_externo: boolean = true;
@@ -138,6 +139,8 @@ export class Usuario extends Base implements HasNotificacao {
     public cpf: string = ""; /* CPF do usuário */
     public matricula: string | null = null; /* Matrícula do usuário */
     public apelido: string = ""; /* Apelido / Nome de Guerra / Nome funcional */
+    public nome_social: string | null = null; /* Nome Social do usuário */
+    public nome_exibicao: string = ""; /* Nome social ou nome civil (computado pelo back-end) */
     public telefone: string | null = null; /* Telefone */
     public data_nascimento: Date = new Date(); /* Data de nascimento do Usuário */
     public uf: string = "DF"; /* UF - Setar a primeira do LIST */
@@ -160,6 +163,11 @@ export class Usuario extends Base implements HasNotificacao {
     public modalidade_pgd: string | null = null; /* Modalidade PGD */
     public modalidade_pgd_label: string = "Não definida";
     public participa_pgd: string = 'sim'; /* Participa PGD */
+
+    public data_agendamento_envio?: Date | null = null; /* Data de agendamento do envio */
+    public data_tentativa_envio?: Date | null = null; /* Data da última tentativa de envio */
+    public data_envio_api_pgd?: Date | null = null; /* Data do envio para a API do PGD */
+    public log_envio: string | null = null; /* Log do envio do para a API do PGD */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
