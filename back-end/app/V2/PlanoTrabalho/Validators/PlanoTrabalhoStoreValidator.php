@@ -72,8 +72,17 @@ class PlanoTrabalhoStoreValidator
 
     private function validarRegramentoVigente(PlanoTrabalhoStoreDTO $dto): void
     {
+        $programa = $this->programaRepository->findById($dto->programaId);
+
+        if (!$programa) {
+            throw new ValidateException('O Regramento informado não foi encontrado.');
+        }
+
+        $dataInicio = Carbon::parse($programa->data_inicio)->format('d/m/Y');
+        $dataFim = Carbon::parse($programa->data_fim)->format('d/m/Y');
+
         if (!$this->programaRepository->isVigenteParaUnidade($dto->programaId, $dto->unidadeId, $dto->dataInicio, $dto->dataFim)) {
-            throw new ValidateException('O período selecionado para o plano não possui Regramento ativo. Selecione outro período.');
+            throw new ValidateException("O período do plano de trabalho deve coincidir integralmente com o período do Regramento: {$dataInicio} a {$dataFim}");
         }
     }
 

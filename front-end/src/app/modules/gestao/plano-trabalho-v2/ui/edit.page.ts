@@ -63,7 +63,8 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly confirmacao = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
 
   private programas = signal<Programa[]>([]);
-  private programaId = signal('');
+  programaId = signal('');
+  programasVisiveis = signal<Programa[]>([]);
 
   readonly agentePublicoQuery = this.fb.nonNullable.control('');
   sugestoesUsuarios = signal<UsuarioSearchItem[]>([]);
@@ -141,7 +142,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly formStatus = signal(this.form.status);
 
   readonly podeSalvar = computed(() =>
-    this.formStatus() === 'VALID' && !!this.programaId() && !this.saving()
+    this.formStatus() === 'VALID' && !!this.programaId() && !this.saving() && !this.erroRegramento()
   );
 
   readonly podeAssinar = computed(() =>
@@ -197,6 +198,11 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly programaNome = computed(() => {
     const id = this.programaId();
     return this.programas().find(p => p.id === id)?.nome ?? '';
+  });
+
+  readonly programasOptions = computed<SelectOption[]>(() => {
+    const sel = this.programaId();
+    return this.programasVisiveis().map(p => ({ value: p.id, label: p.nome, selected: p.id === sel }));
   });
 
   readonly origemSelectOptions = computed<SelectOption[]>(() => {
@@ -500,7 +506,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   }
 
   private salvarPlano(onSuccess: () => void) {
-    if (this.saving() || this.form.invalid || !this.programaId() || !this.planoId()) return;
+    if (this.saving() || this.form.invalid || !this.programaId() || !this.planoId() || this.erroRegramento()) return;
 
     const plano = this.plano();
     if (plano?.documento_id) {
@@ -814,17 +820,58 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
 
   private selecionarProgramaPorPeriodo() {
     const programas = this.programas();
-    if (programas.length === 0) return;
+    if (programas.length === 0) {
+      this.programasVisiveis.set([]);
+      return;
+    }
     const dataInicio = this.form.controls.data_inicio.value;
     const dataFim = this.form.controls.data_fim.value;
     if (!dataInicio || !dataFim) {
       this.programaId.set('');
+      this.programasVisiveis.set([]);
       this.erroRegramento.set('');
       return;
     }
-    const programa = this.programaService.selecionaProgramaPorPeriodo(programas, dataInicio, dataFim);
-    this.programaId.set(programa?.id ?? '');
-    this.erroRegramento.set(programa ? '' : 'O período selecionado para o plano não possui Regramento ativo. Selecione outro período.');
+    const visiveis = programas.filter(p =>
+      String(p.data_inicio).substring(0, 10) <= dataFim && String(p.data_fim).substring(0, 10) >= dataInicio
+    );
+    this.programasVisiveis.set(visiveis);
+    if (visiveis.length === 0) {
+      this.programaId.set('');
+      this.erroRegramento.set('O período selecionado para o plano não possui Regramento ativo. Selecione outro período.');
+      return;
+    }
+    if (visiveis.length === 1) {
+      this.programaId.set(visiveis[0].id);
+    } else if (!visiveis.find(p => p.id === this.programaId())) {
+      this.programaId.set('');
+    }
+    this.validarCoberturaProgramaSelecionado(dataInicio, dataFim);
+  }
+
+  selecionarPrograma(event: any) {
+    const id = event?.detail ?? event?.target?.value ?? event ?? '';
+    this.programaId.set(id);
+    const dataInicio = this.form.controls.data_inicio.value;
+    const dataFim = this.form.controls.data_fim.value;
+    if (dataInicio && dataFim) {
+      this.validarCoberturaProgramaSelecionado(dataInicio, dataFim);
+    }
+  }
+
+  private validarCoberturaProgramaSelecionado(dataInicio: string, dataFim: string) {
+    const programa = this.programasVisiveis().find(p => p.id === this.programaId());
+    if (!programa) {
+      this.erroRegramento.set('');
+      return;
+    }
+    if (!this.programaService.programaCobrePeriodo(programa, dataInicio, dataFim)) {
+      const inicio = String(programa.data_inicio).substring(0, 10).split('-').reverse().join('/');
+      const fim = String(programa.data_fim).substring(0, 10).split('-').reverse().join('/');
+      this.erroRegramento.set(`O período do plano de trabalho deve coincidir integralmente com o período do Regramento: ${inicio} a ${fim}`);
+      return;
+    }
+    this.erroRegramento.set('');
   }
 
   private buscarUsuarios(term: string) {

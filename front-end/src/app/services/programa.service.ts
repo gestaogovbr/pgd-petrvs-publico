@@ -30,9 +30,11 @@ export class ProgramaService {
   }
 
   public selecionaProgramaPorPeriodo(programas: Programa[], dataInicio: string, dataFim: string): Programa | undefined {
-    const inicio = new Date(dataInicio);
-    const fim = new Date(dataFim);
-    return programas.find(p => new Date(p.data_inicio) <= inicio && new Date(p.data_fim) >= fim);
+    return programas.find(p => String(p.data_inicio).substring(0, 10) <= dataFim && String(p.data_fim).substring(0, 10) >= dataInicio);
+  }
+
+  public programaCobrePeriodo(programa: Programa, dataInicio: string, dataFim: string): boolean {
+    return String(programa.data_inicio).substring(0, 10) <= dataInicio && String(programa.data_fim).substring(0, 10) >= dataFim;
   }
 
 }

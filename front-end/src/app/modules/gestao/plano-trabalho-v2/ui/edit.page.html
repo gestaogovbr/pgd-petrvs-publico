@@ -121,8 +121,7 @@
 
               <div class="col-md-4 mb-3">
                 <div class="br-input">
-                  <label>Regramento de Instituição PGD</label>
-                  <input type="text" readonly [value]="programaNome()" />
+                  <br-select label="Regramento de Instituição PGD" [options]="programasOptions()" (valueChange)="selecionarPrograma($event)" />
                 </div>
                 @if (erroRegramento()) {
                   <span class="feedback warning" role="alert">
