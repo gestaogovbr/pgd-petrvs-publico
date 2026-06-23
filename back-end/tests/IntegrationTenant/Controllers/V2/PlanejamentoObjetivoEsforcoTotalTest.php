@@ -443,7 +443,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/entregas', function () {
         expect((float) $porUnidade[0]['esforco_horas_total'])->toBeGreaterThan(0);
     });
 
-    test('lista entrega do PE mesmo sem PT concluído, com esforço zero e sem totais por unidade', function () {
+    test('lista entrega do PE mesmo sem PT concluído, com esforço zero e unidade do PE com esforço zero', function () {
         $base = criarEstruturaBase();
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Só PT ativo');
 
@@ -482,6 +482,82 @@ describe('GET /api/v2/planejamento/objetivo/{id}/entregas', function () {
         expect($itens)->toHaveCount(1);
         expect((float) $itens[0]['esforco_horas_total'])->toEqual(0.0);
 
-        expect($response->json('data.esforco_por_unidade'))->toBe([]);
+        $porUnidade = $response->json('data.esforco_por_unidade');
+        expect($porUnidade)->toHaveCount(1);
+        expect((float) $porUnidade[0]['esforco_horas_total'])->toEqual(0.0);
+    });
+});
+
+describe('GET /api/v2/planejamento/objetivo/{id}/equipes', function () {
+
+    test('retorna 404 para objetivo inexistente', function () {
+        $this->getJson('/api/__tests/v2/planejamento/objetivo/' . Str::uuid()->toString() . '/equipes')
+            ->assertStatus(404);
+    });
+
+    test('retorna lista vazia quando não há entregas vinculadas', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Sem vínculo PE');
+
+        $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/equipes")
+            ->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.objetivo_id', $obj->id)
+            ->assertJsonPath('data.itens', []);
+    });
+
+    test('lista unidade do PE com esforço zero quando não há PT concluído', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Só PT ativo');
+
+        $planoEntregaEntrega = PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $base['planoEntrega']->id,
+            'entrega_id' => $base['entrega']->id,
+            'unidade_id' => $base['unidade']->id,
+        ]);
+
+        PlanoEntregaEntregaObjetivo::create([
+            'id' => Str::uuid()->toString(),
+            'planejamento_objetivo_id' => $obj->id,
+            'entrega_id' => $planoEntregaEntrega->id,
+        ]);
+
+        $planoTrabalho = PlanoTrabalho::factory()->ativo()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $base['unidade']->id,
+            'programa_id' => $base['programa']->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-01-07',
+        ]);
+
+        PlanoTrabalhoEntrega::factory()->create([
+            'plano_trabalho_id' => $planoTrabalho->id,
+            'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
+            'forca_trabalho' => 100,
+        ]);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/equipes");
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $itens = $response->json('data.itens');
+        expect($itens)->toHaveCount(1);
+        expect((float) $itens[0]['esforco_horas_total'])->toEqual(0.0);
+    });
+
+    test('lista unidade com esforço total (PT concluído)', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Com PT concluído');
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 7, forcaTrabalho: 100.0);
+
+        $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/equipes");
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $itens = $response->json('data.itens');
+        expect($itens)->toHaveCount(1);
+        expect($itens[0])->toHaveKeys(['unidade_id', 'unidade_nome', 'unidade_sigla', 'esforco_horas_total']);
+        expect((float) $itens[0]['esforco_horas_total'])->toBeGreaterThan(0);
     });
 });

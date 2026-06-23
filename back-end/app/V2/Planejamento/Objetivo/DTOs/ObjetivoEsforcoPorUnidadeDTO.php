@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\Planejamento\Objetivo\DTOs;
 
-/** Somatório de esforço (horas) por unidade do plano de trabalho (apenas PT concluído). */
+/** Somatório de esforço (horas) por unidade do plano de entregas (PE); esforço vem só de PTs concluídos. */
 final class ObjetivoEsforcoPorUnidadeDTO implements \JsonSerializable
 {
     public static function fromRow(\stdClass $row): self
