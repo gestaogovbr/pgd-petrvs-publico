@@ -208,11 +208,10 @@ Identificados por `tipos_motivos_afastamentos.calculo = 'ACRESCIMO'`:
 
 ## Pendências
 
-### Branch atual (#2145)
+### Melhorias
 - [ ] Cache `avaliacao-dispensa:{usuario-uuid}:{pt-uuid}` com invalidação
-- [ ] Efeitos colaterais do CUD: dispensar consolidação → concluir PT; remover dispensa → reabrir consolidação/PT
 
-### Branch #2270 — Eliminar tabela pivot
+### Após validação de 1 mês dos nóvos módulos v2
 - Remover `planos_trabalhos_consolidacoes_afastamentos`
 - Remover `vincularConsolidacoes` do OcorrenciaService
 - Remover `Services/Snapshot/` (9 classes @deprecated)
