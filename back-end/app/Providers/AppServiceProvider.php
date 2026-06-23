@@ -89,6 +89,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('siape-log', function () {
             return new SiapeLog;
         });
+
+        $this->app->singleton(\App\Cache\CacheInvalidator::class, \App\Cache\RedisCacheInvalidator::class);
     }
 
     /**

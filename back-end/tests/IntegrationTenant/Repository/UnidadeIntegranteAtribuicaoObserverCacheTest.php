@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 
 beforeEach(function () {
     Cache::flush();
+    app()->singleton(\App\Cache\CacheInvalidator::class, \Tests\Helpers\CacheInvalidatorE2E::class);
 
     $this->entidade = Entidade::on('tenant')->firstOrCreate(
         ['sigla' => 'OBS-TEST'],

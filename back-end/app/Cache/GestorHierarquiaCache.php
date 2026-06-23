@@ -6,7 +6,6 @@ namespace App\Cache;
 
 use Closure;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Redis;
 
 class GestorHierarquiaCache
 {
@@ -41,36 +40,10 @@ class GestorHierarquiaCache
 
     public static function invalidarTudo(): void
     {
-        if (!(Cache::getStore() instanceof \Illuminate\Cache\RedisStore)) {
-            return;
-        }
-
-        $connectionName = config('cache.stores.redis.connection', 'cache');
-
-        /** @var \Redis $client */
-        $client = Redis::connection($connectionName)->client();
-
-        $clientPrefix = $client->getOption(\Redis::OPT_PREFIX) ?: '';
-        $storePrefix = Cache::getStore()->getPrefix();
-        $fullPrefix = $clientPrefix . $storePrefix;
-
-        $patterns = [
-            $fullPrefix . '*' . self::PREFIX_HIERARQUIA . '*',
-            $fullPrefix . '*' . self::PREFIX_GERIDAS . '*',
-        ];
-
-        $client->setOption(\Redis::OPT_PREFIX, '');
-
-        foreach ($patterns as $pattern) {
-            $cursor = null;
-            do {
-                $keys = $client->scan($cursor, $pattern, 100);
-                if ($keys !== false && !empty($keys)) {
-                    $client->del(...$keys);
-                }
-            } while ($cursor > 0);
-        }
-
-        $client->setOption(\Redis::OPT_PREFIX, $clientPrefix);
+        $invalidator = app(CacheInvalidator::class);
+        $invalidator->invalidateByPrefix([
+            self::PREFIX_HIERARQUIA,
+            self::PREFIX_GERIDAS,
+        ]);
     }
 }
