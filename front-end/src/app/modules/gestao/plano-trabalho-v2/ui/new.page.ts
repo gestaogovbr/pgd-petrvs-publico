@@ -278,7 +278,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     if (!dataInicio || !dataFim) {
       this.programaId.set('');
       this.programasVisiveis.set([]);
-      this.erroRegramento.set('');
+      this.erroRegramento.set('Selecione as datas de vigência do plano');
       return;
     }
     const visiveis = programas.filter(p =>
