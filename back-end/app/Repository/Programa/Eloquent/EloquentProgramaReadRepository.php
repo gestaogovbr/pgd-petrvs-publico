@@ -30,14 +30,15 @@ class EloquentProgramaReadRepository extends AbstractEloquentReadRepository impl
             ->get(['id', 'sequencia', 'nota', 'descricao', 'justifica']);
     }
 
-    public function isVigenteParaUnidade(string $programaId, string $unidadeId): bool
+    public function isVigenteParaUnidade(string $programaId, string $unidadeId, string $dataInicio, string $dataFim): bool
     {
         $unidadesAscendentes = $this->unidadeReadRepository->linhaAscendente($unidadeId);
 
         return $this->query()
             ->where('id', $programaId)
             ->whereIn('unidade_id', $unidadesAscendentes)
-            ->where('data_fim', '>=', now())
+            ->where('data_inicio', '<=', $dataInicio)
+            ->where('data_fim', '>=', $dataFim)
             ->exists();
     }
 }

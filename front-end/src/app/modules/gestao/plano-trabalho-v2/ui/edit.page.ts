@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, Injector, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, of, switchMap, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, merge, of, switchMap, take } from 'rxjs';
 
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Programa } from 'src/app/models/programa.model';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -57,11 +58,13 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   loading = signal(true);
   saving = signal(false);
   carregandoRegramento = signal(false);
+  erroRegramento = signal('');
 
   readonly confirmacao = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
 
-  programaNome = signal('');
-  private programaId = signal('');
+  private programas = signal<Programa[]>([]);
+  programaId = signal('');
+  programasVisiveis = signal<Programa[]>([]);
 
   readonly agentePublicoQuery = this.fb.nonNullable.control('');
   sugestoesUsuarios = signal<UsuarioSearchItem[]>([]);
@@ -137,7 +140,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly formStatus = signal(this.form.status);
 
   readonly podeSalvar = computed(() =>
-    this.formStatus() === 'VALID' && !!this.programaId() && !this.saving()
+    this.formStatus() === 'VALID' && !!this.programaId() && !this.saving() && !this.erroRegramento()
   );
 
   readonly podeAssinar = computed(() =>
@@ -188,6 +191,16 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly modalidadesOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedModalidadeId();
     return this.modalidades().map(m => ({ value: m.key, label: m.value, selected: m.key === sel }));
+  });
+
+  readonly programaNome = computed(() => {
+    const id = this.programaId();
+    return this.programas().find(p => p.id === id)?.nome ?? '';
+  });
+
+  readonly programasOptions = computed<SelectOption[]>(() => {
+    const sel = this.programaId();
+    return this.programasVisiveis().map(p => ({ value: p.id, label: p.nome, selected: p.id === sel }));
   });
 
   readonly origemSelectOptions = computed<SelectOption[]>(() => {
@@ -280,6 +293,13 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       distinctUntilChanged(),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(id => this.selectedModalidadeId.set(id ?? ''));
+
+    merge(
+      this.form.controls.data_inicio.valueChanges,
+      this.form.controls.data_fim.valueChanges
+    ).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.selecionarProgramaPorPeriodo());
 
     this.entregaForm.controls.origem.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
@@ -412,7 +432,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     if (this.agentePublicoSomenteLeitura()) return;
     this.unidades.set([]);
     this.programaId.set('');
-    this.programaNome.set('');
+    this.programas.set([]);
     this.erroAgentePublico.set('');
     this.agentePublicoQuery.setValue('');
     this.form.controls.usuario_id.setValue('');
@@ -467,7 +487,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   }
 
   private salvarPlano(onSuccess: () => void) {
-    if (this.saving() || this.form.invalid || !this.programaId() || !this.planoId()) return;
+    if (this.saving() || this.form.invalid || !this.programaId() || !this.planoId() || this.erroRegramento()) return;
 
     const plano = this.plano();
     if (plano?.documento_id) {
@@ -744,8 +764,12 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     }
 
     if (plano.programa?.nome) {
-      this.programaNome.set(plano.programa.nome);
       this.programaId.set(plano.programa_id ?? plano.programa.id ?? '');
+      if (plano.unidade_id) {
+        await this.carregarRegramento(plano.unidade_id);
+      } else {
+        this.programas.set([plano.programa]);
+      }
     } else if (plano.unidade_id) {
       await this.carregarRegramento(plano.unidade_id);
     }
@@ -762,13 +786,71 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     this.carregandoRegramento.set(true);
     try {
       const programas = await this.programaApi.buscarPorUnidadeExecutora(unidadeId, this.joinPrograma);
-      const programaVigente = this.programaService.selecionaProgramaVigente(programas);
-      const programa = programaVigente ?? programas[0];
-      this.programaId.set(programa?.id ?? '');
-      this.programaNome.set(programa?.nome ?? '');
+      this.programas.set(programas);
+      const atual = this.programaId();
+      const atualNaLista = atual && programas.some(p => p.id === atual);
+      if (!atualNaLista) {
+        this.selecionarProgramaPorPeriodo();
+      }
     } finally {
       this.carregandoRegramento.set(false);
     }
+  }
+
+  private selecionarProgramaPorPeriodo() {
+    const programas = this.programas();
+    if (programas.length === 0) {
+      this.programasVisiveis.set([]);
+      return;
+    }
+    const dataInicio = this.form.controls.data_inicio.value;
+    const dataFim = this.form.controls.data_fim.value;
+    if (!dataInicio || !dataFim) {
+      this.programaId.set('');
+      this.programasVisiveis.set([]);
+      this.erroRegramento.set('');
+      return;
+    }
+    const visiveis = programas.filter(p =>
+      String(p.data_inicio).substring(0, 10) <= dataFim && String(p.data_fim).substring(0, 10) >= dataInicio
+    );
+    this.programasVisiveis.set(visiveis);
+    if (visiveis.length === 0) {
+      this.programaId.set('');
+      this.erroRegramento.set('O período selecionado para o plano não possui Regramento ativo. Selecione outro período.');
+      return;
+    }
+    if (visiveis.length === 1) {
+      this.programaId.set(visiveis[0].id);
+    } else if (!visiveis.find(p => p.id === this.programaId())) {
+      this.programaId.set('');
+    }
+    this.validarCoberturaProgramaSelecionado(dataInicio, dataFim);
+  }
+
+  selecionarPrograma(event: any) {
+    const id = event?.detail ?? event?.target?.value ?? event ?? '';
+    this.programaId.set(id);
+    const dataInicio = this.form.controls.data_inicio.value;
+    const dataFim = this.form.controls.data_fim.value;
+    if (dataInicio && dataFim) {
+      this.validarCoberturaProgramaSelecionado(dataInicio, dataFim);
+    }
+  }
+
+  private validarCoberturaProgramaSelecionado(dataInicio: string, dataFim: string) {
+    const programa = this.programasVisiveis().find(p => p.id === this.programaId());
+    if (!programa) {
+      this.erroRegramento.set('');
+      return;
+    }
+    if (!this.programaService.programaCobrePeriodo(programa, dataInicio, dataFim)) {
+      const inicio = String(programa.data_inicio).substring(0, 10).split('-').reverse().join('/');
+      const fim = String(programa.data_fim).substring(0, 10).split('-').reverse().join('/');
+      this.erroRegramento.set(`O período do plano de trabalho deve coincidir integralmente com o período do Regramento: ${inicio} a ${fim}`);
+      return;
+    }
+    this.erroRegramento.set('');
   }
 
   private buscarUsuarios(term: string) {
