@@ -11,7 +11,6 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
-use App\V2\StatusService;
 use App\V2\StatusTemplates;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -20,7 +19,6 @@ class AfastamentoObserver
 {
     public function __construct(
         private readonly DispensaAvaliacaoPolicy $dispensaPolicy,
-        private readonly StatusService $statusService,
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
     ) {
@@ -34,6 +32,14 @@ class AfastamentoObserver
     public function updated(Afastamento $afastamento): void
     {
         $this->verificarConclusaoPTs($afastamento);
+
+        if ($afastamento->wasChanged(['data_inicio', 'data_fim'])) {
+            $this->verificarConclusaoPTsComDatas(
+                $afastamento->getOriginal('data_inicio'),
+                $afastamento->getOriginal('data_fim'),
+                $afastamento,
+            );
+        }
     }
 
     public function deleted(Afastamento $afastamento): void
@@ -43,9 +49,18 @@ class AfastamentoObserver
 
     private function verificarConclusaoPTs(Afastamento $afastamento): void
     {
+        $this->verificarConclusaoPTsComDatas(
+            $afastamento->data_inicio,
+            $afastamento->data_fim,
+            $afastamento,
+        );
+    }
+
+    private function verificarConclusaoPTsComDatas(mixed $dataInicio, mixed $dataFim, Afastamento $afastamento): void
+    {
         $planos = $this->planoTrabalhoRepository->planosAtivosPorData(
-            Carbon::parse($afastamento->data_inicio)->toString(),
-            Carbon::parse($afastamento->data_fim)->toString(),
+            Carbon::parse($dataInicio)->toDateTimeString(),
+            Carbon::parse($dataFim)->toDateTimeString(),
             $afastamento->usuario_id,
         )->filter(fn (PlanoTrabalho $p) => in_array($p->status, [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value], true));
 
@@ -54,7 +69,6 @@ class AfastamentoObserver
         }
     }
 
-    // TODO: ocorrências não podem sair concluindo e reabrindo consolidações ad infinitum. Principalmente as arquivadas não me parecem fazer sentido.
     private function verificarConclusao(PlanoTrabalho $plano, Afastamento $afastamento): void
     {
         $vigencia = CarbonPeriod::create(
@@ -74,7 +88,9 @@ class AfastamentoObserver
             $consolidacoes,
         );
 
-        $todasAvaliadas = $consolidacoes->filter(fn(PlanoTrabalhoConsolidacao $c) => $c->status != StatusEnum::AVALIADO->value && !in_array($c->id, $dispensadasIds))->isEmpty();
+        $todasAvaliadas = $consolidacoes->filter(
+            fn(PlanoTrabalhoConsolidacao $c) => $c->status != StatusEnum::AVALIADO->value && !in_array($c->id, $dispensadasIds)
+        )->isEmpty();
 
         if ($todasAvaliadas && $plano->status === StatusEnum::ATIVO->value) {
             $this->planoTrabalhoRepository->update($plano->id, ['avaliado_at' => date('Y-m-d')]);
