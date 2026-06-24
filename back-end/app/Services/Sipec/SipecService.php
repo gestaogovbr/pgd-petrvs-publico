@@ -53,12 +53,12 @@ class SipecService
 
         if (curl_errno($curl)) {
             $error = curl_error($curl);
-            curl_close($curl);
+            $curl = null;
             Log::error('SIPEC token cURL error: ' . $error);
             throw new RequestConectaGovException('SIPEC cURL error: ' . $error);
         }
 
-        curl_close($curl);
+        $curl = null;
 
         $data = json_decode($response, true);
 
@@ -193,12 +193,12 @@ class SipecService
 
         if (curl_errno($curl)) {
             $error = curl_error($curl);
-            curl_close($curl);
+            $curl = null;
             Log::error('SIPEC cURL error: ' . $error);
             throw new RequestConectaGovException('SIPEC cURL error: ' . $error);
         }
 
-        curl_close($curl);
+        $curl = null;
 
         if ($httpCode >= 400) {
             Log::error('SIPEC HTTP ' . $httpCode, ['response' => $response]);

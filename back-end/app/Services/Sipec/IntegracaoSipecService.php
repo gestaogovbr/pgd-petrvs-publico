@@ -132,7 +132,7 @@ class IntegracaoSipecService
             ];
 
             $funcional = [
-                'emailfuncional' => null,
+                'emailfuncional' => $dto->emailInstitucional,
                 'cpf_chefia_imediata' => null,
                 'email_chefia_imediata' => null,
                 'matriculas' => [
@@ -145,6 +145,7 @@ class IntegracaoSipecService
                         'codigo_servo_exercicio' => $dto->codUorgExercicio,
                         'nomeguerra' => '',
                         'codsitfuncional' => $dto->codSitFuncional,
+                        'nomesitfuncional' => $dto->nomeSitFuncional,
                         'codupag' => $dto->codUpag,
                         'dataexercicionoorgao' => $dto->dataOcorrIngressoOrgao,
                         'funcoes' => !empty($dto->codAtivFun) ? [

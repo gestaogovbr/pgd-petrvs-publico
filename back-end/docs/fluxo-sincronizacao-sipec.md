@@ -137,26 +137,35 @@ Queue: `sipec_queue`
 | `dataUltimaTransacao` | `data_modificacao` |
 | `dadoComplementar.indicadorUorgRegimenta` | `regimental` |
 
-### Servidores (API → formato Pessoas[])
+### Servidores — Mapeamento completo (API SIPEC → DTO → integracao_servidores → usuarios)
 
-| Campo API (ServidorDetalhadoDTO) | Campo interno |
-|----------------------------------|---------------|
-| `cpf` | `pessoal.cpf` |
-| `nome` | `pessoal.nome` |
-| `matriculaSiape` | `funcionais[].matriculas.dados.matriculasiape` |
-| `codUorgExercicio` | `funcionais[].matriculas.dados.coduorgexercicio` |
-| `codUorgLotacao` | `funcionais[].matriculas.dados.coduorglotacao` |
-| `codSitFuncional` | `funcionais[].matriculas.dados.codsitfuncional` |
-| `codCargo` | `funcionais[].matriculas.dados.tipo` |
-| `codUpag` | `funcionais[].matriculas.dados.codupag` |
-| `codJornada` | `funcionais[].matriculas.dados.cod_jornada` |
-| `jornadaTrabalho.nome` | `funcionais[].matriculas.dados.nome_jornada` |
-| `modalidadePGD` | `funcionais[].matriculas.dados.modalidade_pgd` |
-| `participaPGD` | `funcionais[].matriculas.dados.participa_pgd` |
-| `identUnica` | `funcionais[].matriculas.dados.ident_unica` |
-| `dataOcorrIngressoOrgao` | `funcionais[].matriculas.dados.dataexercicionoorgao` |
-| `codAtivFun` | Mapeado para `funcoes` se preenchido |
-| `dataOcorrExclusao` | Servidor ignorado se presente |
+| Campo API SIPEC (path no JSON) | Propriedade `ServidorSipecDTO` | Campo `integracao_servidores` | Campo final `usuarios` |
+|-------------------------------|-------------------------------|------------------------------|------------------------|
+| `cpf` | `cpf` | `cpf` | `cpf` |
+| `nome` | `nome` | `nome` | `nome` |
+| `matriculaSiape` | `matriculaSiape` | `matriculasiape` | `matricula` |
+| `codOrgao` | `codOrgao` | — (usado em validação) | — |
+| `codUorgExercicio` | `codUorgExercicio` | `coduorgexercicio`, `codigo_servo_exercicio` | lotação via `unidades_integrantes` |
+| `codUorgLotacao` | `codUorgLotacao` | `coduorglotacao` | — (usado em processamento) |
+| `codSitFuncional` | `codSitFuncional` | `codigo_situacao_funcional` | — |
+| `situacaoServidor.nomeSitFuncional` | `nomeSitFuncional` | `situacao_funcional` (via enum + fallback) | `situacao_funcional` |
+| `codCargo` | `codCargo` | `codigo_cargo` | — |
+| `codAtivFun` | `codAtivFun` | `funcoes` (JSON) | — |
+| `codUpag` | `codUpag` | `codupag` | — |
+| `codJornada` | `codJornada` | `cod_jornada` | `cod_jornada` |
+| `jornadaTrabalho.nomeJornada` | `nomeJornada` | `nome_jornada` | `nome_jornada` |
+| `modalidadePGD` | `modalidadePGD` | `modalidade_pgd` | `modalidade_pgd` |
+| `participaPGD` | `participaPGD` | `participa_pgd` | `participa_pgd` |
+| `identUnica` | `identUnica` | `ident_unica` | `ident_unica` |
+| `dataOcorrIngressoOrgao` | `dataOcorrIngressoOrgao` | `dataexercicionoorgao` | — |
+| `dataOcorrExclusao` | `dataOcorrExclusao` | — (servidor ignorado se presente) | — |
+| `dataUltimaTransacao` | `dataUltimaTransacao` | `data_modificacao` | `data_modificacao` |
+| `servidorDisponivel.emailInstitucional` | `emailInstitucional` | `emailfuncional` | `email` |
+
+**Observações:**
+- `emailInstitucional`: o DTO filtra placeholder `naoinformado@`; o processador valida formato de email antes de gravar.
+- `situacao_funcional`: o processador `PreparaServidor::getSituacaoFuncional()` resolve via `SituacaoFuncionalEnum::fromCodigo($codSitFuncional)`. Se o enum retornar `'DESCONHECIDO'` (código não mapeado), usa `$dto->nomeSitFuncional` (ex: `"CEDIDO/REQUISITADO"`) como fallback. Isso garante que códigos novos ainda não cadastrados no enum sejam preenchidos com o texto descritivo vindo da API SIPEC.
+- `dataOcorrExclusao`: quando preenchido, o servidor é descartado (não entra em `integracao_servidores`).
 
 ## Comparação SIAPE vs SIPEC
 
@@ -169,6 +178,70 @@ Queue: `sipec_queue`
 | Job | `SincronizarSiapeJob` | `SincronizarSipecJob` |
 | Queue | `siape_queue` | `sipec_queue` |
 | Fases 1-3 | `IntegracaoService::sincronizacao()` | Mesmo (via adapter) |
+
+## Campos de `integracao_servidores` — Status de preenchimento via SIPEC
+
+### Campos preenchidos via `ServidorSipecDTO`
+
+| Campo `integracao_servidores` | Origem no DTO | Status |
+|-------------------------------|---------------|--------|
+| `cpf` | `$dto->cpf` | ✅ |
+| `nome` | `$dto->nome` | ✅ |
+| `emailfuncional` | `$dto->emailInstitucional` | ✅ (filtra `naoinformado@`) |
+| `matriculasiape` | `$dto->matriculaSiape` | ✅ |
+| `codigo_cargo` | `$dto->codCargo` | ✅ |
+| `coduorgexercicio` | `$dto->codUorgExercicio` | ✅ |
+| `coduorglotacao` | `$dto->codUorgLotacao` | ✅ |
+| `codigo_servo_exercicio` | `$dto->codUorgExercicio` | ✅ |
+| `codigo_situacao_funcional` | `$dto->codSitFuncional` | ✅ |
+| `situacao_funcional` | Derivado via `SituacaoFuncionalEnum` + fallback `$dto->nomeSitFuncional` | ✅ (auto) |
+| `codupag` | `$dto->codUpag` | ✅ |
+| `dataexercicionoorgao` | `$dto->dataOcorrIngressoOrgao` | ✅ |
+| `funcoes` | `$dto->codAtivFun` (se preenchido) | ✅ |
+| `ident_unica` | `$dto->identUnica` | ✅ |
+| `modalidade_pgd` | `$dto->modalidadePGD` | ✅ |
+| `participa_pgd` | `$dto->participaPGD` | ✅ |
+| `cod_jornada` | `$dto->codJornada` | ✅ |
+| `nome_jornada` | `$dto->nomeJornada` | ✅ |
+| `data_modificacao` | `$dto->dataUltimaTransacao` | ✅ |
+| `cpf_ativo` | hardcoded `true` | ✅ |
+| `vinculo_ativo` | hardcoded `true` | ✅ |
+
+### Campos do model SEM correspondência no JSON SIPEC
+
+Estes campos **não possuem** equivalente no payload de servidores da API SIPEC:
+
+| Campo `integracao_servidores` | Situação |
+|-------------------------------|----------|
+| `sexo` | Não retornado pela API SIPEC |
+| `municipio` | Não retornado pela API SIPEC (dado pessoal do servidor) |
+| `uf` | Não retornado pela API SIPEC (dado pessoal do servidor) |
+| `data_nascimento` | Não retornado pela API SIPEC |
+| `telefone` | Não retornado pela API SIPEC |
+| `nomeguerra` | Não retornado pela API SIPEC (hardcoded `''`) |
+| `cpf_chefia_imediata` | Não retornado pela API SIPEC (vem apenas no fluxo SIAPE) |
+| `email_chefia_imediata` | Não retornado pela API SIPEC (vem apenas no fluxo SIAPE) |
+
+### Campos SIPEC disponíveis mas não mapeados para nenhum campo do model
+
+Campos presentes no JSON que poderiam ser úteis futuramente mas não têm coluna em `integracao_servidores`:
+
+| Campo SIPEC | Descrição | Uso potencial |
+|-------------|-----------|---------------|
+| `vinculos[n].siglaRegimeJuridico` | Ex: `"EST"` (Estatutário) | Filtro/relatório por regime jurídico |
+| `vinculos[n].regimeJuridico.nomeRegimeJuridico` | Ex: `"ESTATUTARIO"` | Exibição do regime completo |
+| `vinculos[n].codOrgaoRequisitante` | Ex: `17500` | Identificar órgão requisitante em cessões |
+| `vinculos[n].doOrgaoOrigem` | Ex: `17400` | Órgão de origem (servidor cedido) |
+| `vinculos[n].codUorgLocalizacao` | Ex: `3439` | Localização física do servidor |
+| `vinculos[n].codClasse` | Ex: `"C"` | Classe na carreira |
+| `vinculos[n].classe.nomeClasse` | Ex: `"CLASSE C"` | Descrição da classe |
+| `vinculos[n].codPadrao` | Ex: `"I"` | Padrão/nível na classe |
+| `vinculos[n].cargo.nomeCargo` | Ex: `"OFICIAL SERVICOS DE APOIO"` | Nome do cargo efetivo |
+| `vinculos[n].servidorDisponivel.emailServidor` | Email pessoal do servidor | Contato alternativo |
+| `vinculos[n].dataOcorrIngressoServPublico` | Data ingresso no serviço público | Tempo de serviço |
+| `vinculos[n].dataOcupacaoCargo` | Data de ocupação do cargo | Histórico funcional |
+| `vinculos[n].codOcorrIngressoOrgao` | Código da ocorrência de ingresso | Tipo de ingresso (ex: 50 = redistribuição) |
+| `vinculos[n].dataObito` | Data de óbito | Controle de exclusão por falecimento |
 
 ## Troubleshooting
 

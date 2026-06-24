@@ -14,6 +14,7 @@ final readonly class ServidorSipecDTO
         public ?string $codUorgExercicio,
         public ?string $codUorgLotacao,
         public ?string $codSitFuncional,
+        public ?string $nomeSitFuncional,
         public ?string $codCargo,
         public ?string $codAtivFun,
         public ?string $codUpag,
@@ -25,6 +26,7 @@ final readonly class ServidorSipecDTO
         public ?string $dataOcorrIngressoOrgao,
         public ?string $dataOcorrExclusao,
         public ?string $dataUltimaTransacao,
+        public ?string $emailInstitucional,
     ) {
     }
 
@@ -33,6 +35,11 @@ final readonly class ServidorSipecDTO
      */
     public static function fromArray(array $data): self
     {
+        $emailInstitucional = $data['servidorDisponivel']['emailInstitucional'] ?? null;
+        if ($emailInstitucional && str_contains($emailInstitucional, 'naoinformado@')) {
+            $emailInstitucional = null;
+        }
+
         return new self(
             cpf: $data['cpf'] ?? null,
             nome: $data['nome'] ?? null,
@@ -41,17 +48,19 @@ final readonly class ServidorSipecDTO
             codUorgExercicio: isset($data['codUorgExercicio']) ? (string) $data['codUorgExercicio'] : null,
             codUorgLotacao: isset($data['codUorgLotacao']) ? (string) $data['codUorgLotacao'] : null,
             codSitFuncional: $data['codSitFuncional'] ?? null,
+            nomeSitFuncional: $data['situacaoServidor']['nomeSitFuncional'] ?? null,
             codCargo: isset($data['codCargo']) ? (string) $data['codCargo'] : null,
             codAtivFun: isset($data['codAtivFun']) ? (string) $data['codAtivFun'] : null,
             codUpag: $data['codUpag'] ?? null,
             codJornada: isset($data['codJornada']) ? (string) $data['codJornada'] : null,
-            nomeJornada: $data['jornadaTrabalho']['nome'] ?? null,
+            nomeJornada: $data['jornadaTrabalho']['nomeJornada'] ?? null,
             modalidadePGD: isset($data['modalidadePGD']) ? (string) $data['modalidadePGD'] : null,
             participaPGD: $data['participaPGD'] ?? null,
             identUnica: isset($data['identUnica']) ? (string) $data['identUnica'] : null,
             dataOcorrIngressoOrgao: $data['dataOcorrIngressoOrgao'] ?? null,
             dataOcorrExclusao: $data['dataOcorrExclusao'] ?? null,
             dataUltimaTransacao: $data['dataUltimaTransacao'] ?? null,
+            emailInstitucional: $emailInstitucional,
         );
     }
 
@@ -104,6 +113,7 @@ final readonly class ServidorSipecDTO
             'codUorgExercicio' => $this->codUorgExercicio,
             'codUorgLotacao' => $this->codUorgLotacao,
             'codSitFuncional' => $this->codSitFuncional,
+            'nomeSitFuncional' => $this->nomeSitFuncional,
             'codCargo' => $this->codCargo,
             'codAtivFun' => $this->codAtivFun,
             'codUpag' => $this->codUpag,
@@ -115,6 +125,7 @@ final readonly class ServidorSipecDTO
             'dataOcorrIngressoOrgao' => $this->dataOcorrIngressoOrgao,
             'dataOcorrExclusao' => $this->dataOcorrExclusao,
             'dataUltimaTransacao' => $this->dataUltimaTransacao,
+            'emailInstitucional' => $this->emailInstitucional,
         ];
     }
 }
