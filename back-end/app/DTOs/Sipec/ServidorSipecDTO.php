@@ -31,7 +31,8 @@ final readonly class ServidorSipecDTO
     }
 
     /**
-     * Cria o DTO a partir do array retornado pela API SIPEC (ServidorDetalhadoDTO).
+     * Cria o DTO a partir de um único vínculo (array flat com campos funcionais).
+     * Usado quando o JSON já está no nível do vínculo.
      */
     public static function fromArray(array $data): self
     {
@@ -40,11 +41,17 @@ final readonly class ServidorSipecDTO
             $emailInstitucional = null;
         }
 
+        $matriculaSiape = isset($data['matriculaSiape']) ? (string) $data['matriculaSiape'] : null;
+        $codOrgao = isset($data['codOrgao']) ? (string) $data['codOrgao'] : null;
+        if ($matriculaSiape && $codOrgao && str_starts_with($matriculaSiape, $codOrgao)) {
+            $matriculaSiape = substr($matriculaSiape, strlen($codOrgao));
+        }
+
         return new self(
             cpf: $data['cpf'] ?? null,
             nome: $data['nome'] ?? null,
-            matriculaSiape: isset($data['matriculaSiape']) ? (string) $data['matriculaSiape'] : null,
-            codOrgao: isset($data['codOrgao']) ? (string) $data['codOrgao'] : null,
+            matriculaSiape: $matriculaSiape,
+            codOrgao: $codOrgao,
             codUorgExercicio: isset($data['codUorgExercicio']) ? (string) $data['codUorgExercicio'] : null,
             codUorgLotacao: isset($data['codUorgLotacao']) ? (string) $data['codUorgLotacao'] : null,
             codSitFuncional: $data['codSitFuncional'] ?? null,
@@ -62,6 +69,42 @@ final readonly class ServidorSipecDTO
             dataUltimaTransacao: $data['dataUltimaTransacao'] ?? null,
             emailInstitucional: $emailInstitucional,
         );
+    }
+
+    /**
+     * Parseia o objeto raiz retornado pela API SIPEC (contém cpf, nome, vinculos).
+     * Retorna dados pessoais (1x) e array de DTOs funcionais (1 por vínculo).
+     *
+     * @return array{dadosPessoais: array, vinculos: self[]}
+     */
+    public static function fromServidor(array $servidor): array
+    {
+        $dadosPessoais = [
+            'cpf' => $servidor['cpf'] ?? null,
+            'nome' => $servidor['nome'] ?? null,
+        ];
+
+        $vinculos = $servidor['vinculos'] ?? [];
+
+        // Se não possui vinculos, tenta tratar como flat (retrocompatibilidade)
+        if (empty($vinculos)) {
+            return [
+                'dadosPessoais' => $dadosPessoais,
+                'vinculos' => [self::fromArray($servidor)],
+            ];
+        }
+
+        $dtos = [];
+        foreach ($vinculos as $vinculo) {
+            $vinculo['cpf'] = $vinculo['cpf'] ?? $servidor['cpf'] ?? null;
+            $vinculo['nome'] = $vinculo['nome'] ?? $servidor['nome'] ?? null;
+            $dtos[] = self::fromArray($vinculo);
+        }
+
+        return [
+            'dadosPessoais' => $dadosPessoais,
+            'vinculos' => $dtos,
+        ];
     }
 
     /**

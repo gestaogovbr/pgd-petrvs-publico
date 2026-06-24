@@ -117,61 +117,63 @@ class IntegracaoSipecService
                 continue;
             }
 
-            $dto = ServidorSipecDTO::fromArray($dados);
+            $parsed = ServidorSipecDTO::fromServidor($dados);
+            $dadosPessoais = $parsed['dadosPessoais'];
 
-            $pessoal = [
-                'cpf_ativo' => true,
-                'data_modificacao' => $dados['dataUltimaTransacao'] ?? $registro->data_modificacao,
-                'cpf' => $dto->cpf,
-                'nome' => $dto->nome,
-                'sexo' => null,
-                'municipio' => null,
-                'uf' => null,
-                'data_nascimento' => null,
-                'telefone' => '',
-            ];
+            foreach ($parsed['vinculos'] as $dto) {
+                if (!empty($dto->dataOcorrExclusao)) {
+                    continue;
+                }
 
-            $funcional = [
-                'emailfuncional' => $dto->emailInstitucional,
-                'cpf_chefia_imediata' => null,
-                'email_chefia_imediata' => null,
-                'matriculas' => [
-                    'dados' => [
-                        'vinculo_ativo' => true,
-                        'matriculasiape' => $dto->matriculaSiape,
-                        'tipo' => $dto->codCargo,
-                        'coduorgexercicio' => $dto->codUorgExercicio,
-                        'coduorglotacao' => $dto->codUorgLotacao,
-                        'codigo_servo_exercicio' => $dto->codUorgExercicio,
-                        'nomeguerra' => '',
-                        'codsitfuncional' => $dto->codSitFuncional,
-                        'nomesitfuncional' => $dto->nomeSitFuncional,
-                        'codupag' => $dto->codUpag,
-                        'dataexercicionoorgao' => $dto->dataOcorrIngressoOrgao,
-                        'funcoes' => !empty($dto->codAtivFun) ? [
-                            'funcao' => [
-                                'tipo_funcao' => '1',
-                                'uorg_funcao' => $dto->codUorgExercicio,
-                            ],
-                        ] : null,
-                        'ident_unica' => $dto->identUnica,
-                        'modalidade_pgd' => $dto->modalidadePGD,
-                        'participa_pgd' => $dto->participaPGD,
-                        'cod_jornada' => $dto->codJornada,
-                        'nome_jornada' => $dto->nomeJornada,
+                $pessoal = [
+                    'cpf_ativo' => true,
+                    'data_modificacao' => $dto->dataUltimaTransacao ?? $registro->data_modificacao,
+                    'cpf' => $dadosPessoais['cpf'],
+                    'nome' => $dadosPessoais['nome'],
+                    'sexo' => null,
+                    'municipio' => null,
+                    'uf' => null,
+                    'data_nascimento' => null,
+                    'telefone' => '',
+                ];
+
+                $funcional = [
+                    'emailfuncional' => $dto->emailInstitucional,
+                    'cpf_chefia_imediata' => null,
+                    'email_chefia_imediata' => null,
+                    'matriculas' => [
+                        'dados' => [
+                            'vinculo_ativo' => true,
+                            'matriculasiape' => $dto->matriculaSiape,
+                            'tipo' => $dto->codCargo,
+                            'coduorgexercicio' => $dto->codUorgExercicio,
+                            'coduorglotacao' => $dto->codUorgLotacao,
+                            'codigo_servo_exercicio' => $dto->codUorgExercicio,
+                            'nomeguerra' => '',
+                            'codsitfuncional' => $dto->codSitFuncional,
+                            'nome_sit_funcional' => $dto->nomeSitFuncional,
+                            'codupag' => $dto->codUpag,
+                            'dataexercicionoorgao' => $dto->dataOcorrIngressoOrgao,
+                            'funcoes' => !empty($dto->codAtivFun) ? [
+                                'funcao' => [
+                                    'tipo_funcao' => '1',
+                                    'uorg_funcao' => $dto->codUorgExercicio,
+                                ],
+                            ] : null,
+                            'ident_unica' => $dto->identUnica,
+                            'modalidade_pgd' => $dto->modalidadePGD,
+                            'participa_pgd' => $dto->participaPGD,
+                            'cod_jornada' => $dto->codJornada,
+                            'nome_jornada' => $dto->nomeJornada,
+                        ],
                     ],
-                ],
-            ];
+                ];
 
-            if (!empty($dto->dataOcorrExclusao)) {
-                $registro->update(['processado' => true]);
-                continue;
+                $pessoasPetrvs['Pessoas'][] = [
+                    'pessoal' => $pessoal,
+                    'funcionais' => [$funcional],
+                ];
             }
-
-            $pessoasPetrvs['Pessoas'][] = [
-                'pessoal' => $pessoal,
-                'funcionais' => [$funcional],
-            ];
 
             $registro->update(['processado' => true]);
         }

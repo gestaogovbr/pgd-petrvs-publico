@@ -1003,19 +1003,19 @@ class UsuarioService extends ServiceBase
             throw new \Exception("Servidor com CPF {$cpf} não encontrado no SIPEC.");
         }
 
-        $dto = ServidorSipecDTO::fromArray($servidorRaw);
-        $dadosFuncionais = [$dto->toDadosFuncionais()];
-        $dadosPessoais = $dto->toDadosPessoais();
+        $dto = ServidorSipecDTO::fromServidor($servidorRaw);
+        $dadosPessoais = $dto['dadosPessoais'];
 
-        $dadosFuncionais = array_map(function($item) {
+        $vinculos = array_map(function($vinculo) {
+            $item = $vinculo->toDadosFuncionais();
             $unidade = $this->unidadeRepository->findByCodigo($item['codUorgExercicio'] ?? '');
             $item['unidadeSigla'] = $unidade?->sigla;
             return $item;
-        }, $dadosFuncionais);
+        }, $dto['vinculos']);
 
         return [
             'pessoais'    => $dadosPessoais,
-            'funcionais'  => $dadosFuncionais,
+            'funcionais'  => $vinculos,
         ];
     }
 

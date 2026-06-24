@@ -286,12 +286,13 @@ class SipecService
             $totalPages = $data['totalPages'] ?? 1;
 
             foreach ($itens as $item) {
+                $primeiroVinculo = $item['vinculos'][0] ?? $item['vinculos']['0'] ?? [];
                 \App\Models\SipecServidor::create([
                     'cpf' => $item['cpf'] ?? null,
-                    'matricula' => isset($item['matriculaSiape']) ? (string) $item['matriculaSiape'] : null,
+                    'matricula' => isset($primeiroVinculo['matriculaSiape']) ? (string) $primeiroVinculo['matriculaSiape'] : null,
                     'response' => json_encode($item, JSON_UNESCAPED_UNICODE),
                     'processado' => false,
-                    'data_modificacao' => $item['dataUltimaTransacao'] ?? null,
+                    'data_modificacao' => $primeiroVinculo['dataUltimaTransacao'] ?? null,
                 ]);
                 $total++;
             }

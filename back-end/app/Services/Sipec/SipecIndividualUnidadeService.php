@@ -199,7 +199,10 @@ class SipecIndividualUnidadeService extends ServiceBase
         $dtos = [];
         foreach ($servidores as $raw) {
             if (!is_array($raw)) continue;
-            $dtos[] = ServidorSipecDTO::fromArray($raw);
+            $parsed = ServidorSipecDTO::fromServidor($raw);
+            foreach ($parsed['vinculos'] as $dto) {
+                $dtos[] = $dto;
+            }
         }
         return $dtos;
     }

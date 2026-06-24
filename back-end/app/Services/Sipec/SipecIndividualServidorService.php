@@ -115,9 +115,9 @@ class SipecIndividualServidorService extends ServiceBase
                 throw new Exception("SIPEC: Servidor com CPF {$cpfLimpo} não encontrado na resposta da API.");
             }
 
-            $dto = ServidorSipecDTO::fromArray($servidorRaw);
-            $dadosFuncionais = [$dto->toDadosFuncionais()];
-            $dadosPessoais = $dto->toDadosPessoais();
+            $parsed = ServidorSipecDTO::fromServidor($servidorRaw);
+            $dadosPessoais = $parsed['dadosPessoais'];
+            $dadosFuncionais = array_map(fn($d) => $d->toDadosFuncionais(), $parsed['vinculos']);
 
             $dadosRelatorio['dadosFuncionais'] = $dadosFuncionais;
             $dadosRelatorio['dadosPessoais'] = $dadosPessoais;
