@@ -4,11 +4,10 @@ namespace App\Observers;
 
 use App\Cache\GestorHierarquiaCache;
 use App\Models\UnidadeIntegranteAtribuicao;
+use App\Services\Siape\Unidade\Enum\Atribuicao as AtribuicaoEnum;
 
 class UnidadeIntegranteAtribuicaoObserver
 {
-    private const ATRIBUICOES_GESTOR = ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'];
-
     public function created(UnidadeIntegranteAtribuicao $model): void
     {
         $this->invalidarCacheUsuario($model);
@@ -26,7 +25,7 @@ class UnidadeIntegranteAtribuicaoObserver
 
     private function invalidarCacheUsuario(UnidadeIntegranteAtribuicao $model): void
     {
-        if (!in_array($model->atribuicao, self::ATRIBUICOES_GESTOR, true)) {
+        if (!AtribuicaoEnum::isGestor($model->atribuicao)) {
             return;
         }
 
