@@ -31,12 +31,14 @@ class PlanoTrabalhoEntregaRepository
         return $entrega;
     }
 
-    public function update(string $id, array $attributes): PlanoTrabalhoEntrega
+    public function update(string $id, array $attributes): ?PlanoTrabalhoEntrega
     {
-        $this->writeRepository->update($id, $attributes);
+        /** @var PlanoTrabalhoEntrega|null */
+        $entrega = $this->writeRepository->update($id, $attributes);
 
-        /** @var PlanoTrabalhoEntrega */
-        $entrega = $this->readRepository->find($id);
+        if ($entrega === null) {
+            return null;
+        }
 
         $entrega->load([
             'planoEntregaEntrega:id,descricao,entrega_id,plano_entrega_id',
