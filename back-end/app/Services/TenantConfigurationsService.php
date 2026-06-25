@@ -102,6 +102,7 @@ class TenantConfigurationsService
         config(['integracao.sipec.conectagov_senha'     => $settings['integracao_sipec_conectagov_senha']       ?? env('INTEGRACAO_SIPEC_CONECTAGOV_SENHA')]);
         config(['integracao.sipec.cpf'                  => $settings['integracao_sipec_cpf']                    ?? env('INTEGRACAO_SIPEC_CPF')]);
         config(['integracao.sipec.codUorg'              => $settings['integracao_sipec_coduorg']                ?? env('INTEGRACAO_SIPEC_CODUORG')]);
+        config(['integracao.sipec.codOrgao'             => $settings['integracao_sipec_codorgao']               ?? env('INTEGRACAO_SIPEC_CODORGAO')]);
 
         config(['integracao.perfilComum'          => $settings['integracao_usuario_comum']            ?? env('INTEGRACAO_USUARIO_COMUM')]);
         config(['integracao.perfilChefe'          => $settings['integracao_usuario_chefe']            ?? env('INTEGRACAO_USUARIO_CHEFE')]);

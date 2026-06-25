@@ -14,6 +14,7 @@ class SipecService
     private string $secret;
     private string $cpf;
     private string $codUorg;
+    private string $codOrgao;
     private string $authorizationHeader;
 
     private static ?string $token = null;
@@ -27,6 +28,7 @@ class SipecService
         $this->secret = $config['conectagov_senha'];
         $this->cpf = $config['cpf'];
         $this->codUorg = $config['codUorg'] ?? '';
+        $this->codOrgao = $config['codOrgao'] ?? '';
         $this->authorizationHeader = 'Basic ' . base64_encode($this->client . ':' . $this->secret);
     }
 
@@ -83,10 +85,14 @@ class SipecService
         $codUorg = $codUorg ?? $this->codUorg;
         $token = $this->getToken();
 
-        $url = $this->url . '/api-sipec/v1/servidores?codUorg=' . $codUorg;
-        if ($participaPgd) {
-            $url .= '&participaPGD';
+        $params = ['codUorg' => $codUorg];
+        if ($this->codOrgao !== '') {
+            $params['codOrgao'] = $this->codOrgao;
         }
+        if ($participaPgd) {
+            $params['participaPGD'] = '';
+        }
+        $url = $this->url . '/api-sipec/v1/servidores?' . http_build_query($params);
 
         return $this->executarGet($url, $token);
     }
@@ -103,7 +109,11 @@ class SipecService
         $codUorg = $codUorg ?? $this->codUorg;
         $token = $this->getToken();
 
-        $url = $this->url . '/api-sipec/v1/servidores?codUorg=' . $codUorg . '&cpf=' . $cpf;
+        $params = ['codUorg' => $codUorg, 'cpf' => $cpf];
+        if ($this->codOrgao !== '') {
+            $params['codOrgao'] = $this->codOrgao;
+        }
+        $url = $this->url . '/api-sipec/v1/servidores?' . http_build_query($params);
 
         $data = $this->executarGet($url, $token);
 
@@ -147,8 +157,11 @@ class SipecService
     public function buscarUnidade(string $codUorg): ?array
     {
         $token = $this->getToken();
-        // codOrgao
-        $url   = $this->url . '/api-sipec/v1/unidades?' . http_build_query(['codUorg' => $codUorg]);
+        $params = ['codUorg' => $codUorg];
+        if ($this->codOrgao !== '') {
+            $params['codOrgao'] = $this->codOrgao;
+        }
+        $url = $this->url . '/api-sipec/v1/unidades?' . http_build_query($params);
 
         try {
             $data    = $this->executarGet($url, $token);
@@ -224,7 +237,7 @@ class SipecService
      */
     public function buscarTodasUnidades(?string $codOrgao = null): int
     {
-        $codOrgao = $codOrgao ?? $this->codUorg;
+        $codOrgao = $codOrgao ?? $this->codOrgao;
         $token = $this->getToken();
         $page = 0;
         $size = 100;

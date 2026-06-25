@@ -40,6 +40,7 @@ return [
         'conectagov_senha' => env('INTEGRACAO_SIPEC_CONECTAGOV_SENHA', ''),
         'cpf' => env('INTEGRACAO_SIPEC_CPF', ''),
         'codUorg' => env('INTEGRACAO_SIPEC_CODUORG', ''),
+        'codOrgao' => env('INTEGRACAO_SIPEC_CODORGAO', ''),
     ],
     'siape_relatorio_carga_individual' => [
         'retencao_dias' => (int) env('SIAPE_RELATORIO_CARGA_INDIVIDUAL_RETENCAO_DIAS', 30),
