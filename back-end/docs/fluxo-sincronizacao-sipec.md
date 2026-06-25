@@ -227,6 +227,7 @@ Queue: `sipec_queue`
 | `dataOcorrExclusao` | `dataOcorrExclusao` | — (servidor ignorado se presente) | — |
 | `dataUltimaTransacao` | `dataUltimaTransacao` | `data_modificacao` | `data_modificacao` |
 | `servidorDisponivel.emailInstitucional` | `emailInstitucional` | `emailfuncional` | `email` |
+| `rh.cpfChefiaImediata` | `cpfChefiaImediata` | `cpf_chefia_imediata` | — |
 
 **Observações:**
 - `emailInstitucional`: o DTO filtra placeholder `naoinformado@`; o processador valida formato de email antes de gravar.
@@ -270,6 +271,7 @@ Queue: `sipec_queue`
 | `cod_jornada` | `$dto->codJornada` | ✅ |
 | `nome_jornada` | `$dto->nomeJornada` | ✅ |
 | `data_modificacao` | `$dto->dataUltimaTransacao` | ✅ |
+| `cpf_chefia_imediata` | `$dto->cpfChefiaImediata` | ✅ |
 | `cpf_ativo` | hardcoded `true` | ✅ |
 | `vinculo_ativo` | hardcoded `true` | ✅ |
 
@@ -285,8 +287,7 @@ Estes campos **não possuem** equivalente no payload de servidores da API SIPEC:
 | `data_nascimento` | Não retornado pela API SIPEC |
 | `telefone` | Não retornado pela API SIPEC |
 | `nomeguerra` | Não retornado pela API SIPEC (hardcoded `''`) |
-| `cpf_chefia_imediata` | Não retornado pela API SIPEC (vem apenas no fluxo SIAPE) |
-| `email_chefia_imediata` | Não retornado pela API SIPEC (vem apenas no fluxo SIAPE) |
+| `email_chefia_imediata` | Não retornado pela API SIPEC |
 
 ### Campos SIPEC disponíveis mas não mapeados para nenhum campo do model
 

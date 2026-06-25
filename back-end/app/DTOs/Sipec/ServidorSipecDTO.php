@@ -27,6 +27,7 @@ final readonly class ServidorSipecDTO
         public ?string $dataOcorrExclusao,
         public ?string $dataUltimaTransacao,
         public ?string $emailInstitucional,
+        public ?string $cpfChefiaImediata,
     ) {
     }
 
@@ -46,6 +47,10 @@ final readonly class ServidorSipecDTO
         if ($matriculaSiape && $codOrgao && str_starts_with($matriculaSiape, $codOrgao)) {
             $matriculaSiape = substr($matriculaSiape, strlen($codOrgao));
         }
+
+        $cpfChefiaImediata = isset($data['rh']['cpfChefiaImediata'])
+            ? (string) $data['rh']['cpfChefiaImediata']
+            : null;
 
         return new self(
             cpf: $data['cpf'] ?? null,
@@ -68,6 +73,7 @@ final readonly class ServidorSipecDTO
             dataOcorrExclusao: $data['dataOcorrExclusao'] ?? null,
             dataUltimaTransacao: $data['dataUltimaTransacao'] ?? null,
             emailInstitucional: $emailInstitucional,
+            cpfChefiaImediata: $cpfChefiaImediata,
         );
     }
 
@@ -129,6 +135,7 @@ final readonly class ServidorSipecDTO
             'dataOcorrIngressoOrgao' => $this->dataOcorrIngressoOrgao,
             'dataOcorrExclusao' => $this->dataOcorrExclusao,
             'dataUltimaTransacao' => $this->dataUltimaTransacao,
+            'cpfChefiaImediata' => $this->cpfChefiaImediata,
         ];
     }
 
@@ -169,6 +176,7 @@ final readonly class ServidorSipecDTO
             'dataOcorrExclusao' => $this->dataOcorrExclusao,
             'dataUltimaTransacao' => $this->dataUltimaTransacao,
             'emailInstitucional' => $this->emailInstitucional,
+            'cpfChefiaImediata' => $this->cpfChefiaImediata,
         ];
     }
 }
