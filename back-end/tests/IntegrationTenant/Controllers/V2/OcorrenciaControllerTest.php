@@ -381,3 +381,112 @@ describe('GET /api/v2/ocorrencia/agentes', function () {
         expect(collect($agentes)->pluck('id')->toArray())->toContain($this->usuario->id);
     });
 });
+
+// ── Hierarquia: gestor vê/cria para subordinados ────────────────────
+
+describe('Hierarquia: gestor opera sobre usuários de unidades subordinadas', function () {
+
+    beforeEach(function () {
+        if (!Route::has('__tests.v2.ocorrencia.agentes')) {
+            Route::middleware(['api'])->get('/api/__tests/v2/ocorrencia/agentes', [OcorrenciaController::class, 'agentes'])
+                ->name('__tests.v2.ocorrencia.agentes');
+        }
+
+        // Unidade pai (gestor logado) → unidade filha (subordinado)
+        $this->unidadePai = \App\Models\Unidade::factory()->create();
+        $this->unidadeFilha = \App\Models\Unidade::factory()->create(['unidade_pai_id' => $this->unidadePai->id]);
+
+        // Gestor: lotado + atribuição GESTOR na unidade pai
+        $integranteGestorId = Str::uuid()->toString();
+        DB::connection('tenant')->table('unidades_integrantes')->insert([
+            'id' => $integranteGestorId,
+            'unidade_id' => $this->unidadePai->id,
+            'usuario_id' => $this->usuario->id,
+            'created_at' => now(), 'updated_at' => now(),
+        ]);
+        DB::connection('tenant')->table('unidades_integrantes_atribuicoes')->insert([
+            'id' => Str::uuid()->toString(),
+            'unidade_integrante_id' => $integranteGestorId,
+            'atribuicao' => 'GESTOR',
+            'created_at' => now(), 'updated_at' => now(),
+        ]);
+
+        // Subordinado: lotado na unidade filha
+        $this->subordinado = Usuario::factory()->create();
+        $integranteSubordinadoId = Str::uuid()->toString();
+        DB::connection('tenant')->table('unidades_integrantes')->insert([
+            'id' => $integranteSubordinadoId,
+            'unidade_id' => $this->unidadeFilha->id,
+            'usuario_id' => $this->subordinado->id,
+            'created_at' => now(), 'updated_at' => now(),
+        ]);
+        DB::connection('tenant')->table('unidades_integrantes_atribuicoes')->insert([
+            'id' => Str::uuid()->toString(),
+            'unidade_integrante_id' => $integranteSubordinadoId,
+            'atribuicao' => 'LOTADO',
+            'created_at' => now(), 'updated_at' => now(),
+        ]);
+    });
+
+    test('agentes retorna subordinado de unidade filha', function () {
+        $response = $this->getJson('/api/__tests/v2/ocorrencia/agentes');
+
+        $response->assertStatus(200);
+
+        $ids = collect($response->json('data'))->pluck('id')->toArray();
+        expect($ids)->toContain($this->subordinado->id);
+        expect($ids)->toContain($this->usuario->id);
+    });
+
+    test('gestor cria ocorrência para subordinado em unidade filha', function () {
+        $response = $this->postJson('/api/__tests/v2/ocorrencia', [
+            'usuario_id' => $this->subordinado->id,
+            'observacoes' => 'Ocorrência do subordinado',
+            'data_inicio' => '2025-01-10',
+            'data_fim' => '2025-01-15',
+            'tipo_motivo_afastamento_id' => $this->tipoMotivo->id,
+        ]);
+
+        $response->assertStatus(201);
+        expect($response->json('data.observacoes'))->toBe('Ocorrência do subordinado');
+
+        $this->assertDatabaseHas('afastamentos', [
+            'usuario_id' => $this->subordinado->id,
+            'observacoes' => 'Ocorrência do subordinado',
+        ]);
+    });
+
+    test('index retorna ocorrências do subordinado para o gestor', function () {
+        // Cria ocorrência para o subordinado via DB
+        DB::connection('tenant')->table('afastamentos')->insert([
+            'id' => Str::uuid()->toString(),
+            'usuario_id' => $this->subordinado->id,
+            'data_inicio' => '2025-03-01',
+            'data_fim' => '2025-03-10',
+            'tipo_motivo_afastamento_id' => $this->tipoMotivo->id,
+            'observacoes' => 'Visível ao gestor',
+            'created_at' => now(), 'updated_at' => now(),
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/ocorrencia?page=1&size=50');
+
+        $response->assertStatus(200);
+
+        $observacoes = collect($response->json('data.data'))->pluck('observacoes')->toArray();
+        expect($observacoes)->toContain('Visível ao gestor');
+    });
+
+    test('gestor sem vínculo com o subordinado não pode criar ocorrência', function () {
+        $outroUsuario = Usuario::factory()->create(); // sem lotação nas unidades gerenciadas
+
+        $response = $this->postJson('/api/__tests/v2/ocorrencia', [
+            'usuario_id' => $outroUsuario->id,
+            'observacoes' => 'Deve ser negado',
+            'data_inicio' => '2025-01-10',
+            'data_fim' => '2025-01-15',
+            'tipo_motivo_afastamento_id' => $this->tipoMotivo->id,
+        ]);
+
+        $response->assertStatus(403);
+    });
+});

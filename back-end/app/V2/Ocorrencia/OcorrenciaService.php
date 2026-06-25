@@ -35,7 +35,7 @@ class OcorrenciaService
     public function agentes(): Collection
     {
         $usuarioLogadoId = Auth::id();
-        $unidadeIds = $this->getUnidadeIdsSubordinadas($usuarioLogadoId);
+        $unidadeIds = $this->getUnidadeIdsWithSubordinadas($usuarioLogadoId);
 
         return $this->usuarioRepository->findAgentesVisiveis($usuarioLogadoId, $unidadeIds);
     }
@@ -43,7 +43,7 @@ class OcorrenciaService
     public function index(array $data): LengthAwarePaginator
     {
         $usuarioLogadoId = Auth::id();
-        $unidadeIds = $this->getUnidadeIdsSubordinadas($usuarioLogadoId);
+        $unidadeIds = $this->getUnidadeIdsWithSubordinadas($usuarioLogadoId);
         $dto = OcorrenciaIndexDTO::fromRequest($data, $usuarioLogadoId, $unidadeIds);
 
         return $this->afastamentoRepository->buscarOcorrenciasListagem($dto);
@@ -123,11 +123,12 @@ class OcorrenciaService
     /**
      * @return list<string>
      */
-    private function getUnidadeIdsSubordinadas(string $usuarioId): array
+    private function getUnidadeIdsWithSubordinadas(string $usuarioId): array
     {
         $gerendciadasIds = $this->unidadeRepository->getUnidadesGerenciadas($usuarioId)->pluck('id')->all();
+        $subordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($gerendciadasIds)->pluck('id')->all();
 
-        return $this->unidadeRepository->getSubordinadasRecursivas($gerendciadasIds)->pluck('id')->all();
+        return array_values(array_unique(array_merge($gerendciadasIds, $subordinadasIds)));
     }
 
     private function vincularConsolidacoes(Afastamento $afastamento): void
