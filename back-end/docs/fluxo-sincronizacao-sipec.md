@@ -118,24 +118,90 @@ Queue: `sipec_queue`
 
 ### Unidades (API → integracao_unidades)
 
-| Campo API (UnidadeDetalhadaDTO) | Campo integracao_unidades |
-|---------------------------------|---------------------------|
-| `codUorg` | `id_servo`, `codigo_siape` |
-| `codUorgPai` | `pai_servo`, `pai_siape` |
-| `codUorgPagadora` | `codupag` |
-| `nomeExtendido` / `nomeUorg` | `nomeuorg` |
-| `siglaUorg` | `siglauorg` |
-| `numTelefoneUorg` | `telefone` |
-| `emailUorg` | `email` |
-| `cnpjUpag` | `cnpjupag` |
-| `endereco.codMunicipio` | `municipio_ibge` |
-| `endereco.noMunicipioTemp` | `municipio_nome` |
-| `endereco.ufUorg` | `municipio_uf` |
-| `endereco.logradouroUorg` | `logradouro` |
-| `endereco.bairroUorg` | `bairro` |
-| `endereco.cepUorg` | `cep` |
-| `dataUltimaTransacao` | `data_modificacao` |
-| `dadoComplementar.indicadorUorgRegimenta` | `regimental` |
+#### Campos preenchidos via JSON `/unidades`
+
+| Campo API SIPEC (path no JSON) | Campo `integracao_unidades` | Observação |
+|-------------------------------|----------------------------|------------|
+| `codUorg` | `id_servo` | Identificador principal da UORG |
+| `codUorgPai` | `pai_servo` | Código da UORG pai |
+| `codUorgPai` | `pai_siape` | Mesmo valor de `pai_servo` — no fluxo SIAPE ambos vinham da mesma fonte |
+| `codUnidadeSiafi` | `codigo_siape` | Código SIAFI da unidade |
+| `codUorg` | `cod_unidade` | Mesmo valor de `id_servo` — identificador da UORG |
+| `dadoComplementar.codUorgPagadora` | `codupag` | Código da UORG pagadora |
+| `nomeUorg` | `nomeuorg` | Nome da unidade |
+| `siglaUorg` | `siglauorg` | Sigla da unidade |
+| `contato.numTelefoneUorg` | `telefone` | Pode conter múltiplos separados por `,` |
+| `contato.emailUorg` | `email` | Pode conter múltiplos separados por `,` |
+| `tipoUorg` | `tipo` | Ex: `"URG"` |
+| `endereco.logradouroUorg` | `logradouro` | Logradouro com número |
+| `endereco.bairroUorg` | `bairro` | Bairro |
+| `endereco.cepUorg` | `cep` | CEP (pode vir sem zeros à esquerda) |
+| `endereco.codMunicipio` | `municipio_ibge` | Código IBGE do município |
+| `municipio.nomeMunicipio` | `municipio_nome` | Pode vir vazio no JSON |
+| `endereco.ufUorg` | `municipio_uf` | UF (2 caracteres) |
+| `situacaoUorg` | `ativa` | Ex: `"ATV"` (ativa) |
+| `dadoComplementar.indicadorUorgRegimenta` | `regimental` | `1` = regimental |
+| `dataUltimaTransacao` | `data_modificacao` | Formato ISO 8601 |
+| `cnpjUpag` | `cnpjupag` | CNPJ da UPAG (sem formatação) |
+| `rh.cpfTitularAutoridadeUorg` | `cpf_titular_autoridade_uorg` | CPF do titular |
+| `rh.cpfSubstitutoAutoridadeUorg` | `cpf_substituto_autoridade_uorg` | Pode vir como objeto `{"0": "..."}` — usa primeiro valor |
+
+#### Campos mapeados para `UnidadeSipecDTO::toRelatorio()`
+
+| Chave retornada por `toRelatorio()` | Propriedade do DTO | Campo API SIPEC (path no JSON) |
+|-------------------------------------|--------------------|---------------------------------|
+| `codUorg` | `$this->idServo` | `codUorg` |
+| `codUorgPai` | `$this->paiServo` | `codUorgPai` |
+| `codOrgao` | `$this->codOrgao` | `codOrgao` |
+| `siglaUorg` | `$this->siglauorg` | `siglaUorg` |
+| `nomeUorg` | `$this->nomeuorg` | `nomeUorg` |
+| `nomeExtendido` | `$this->nomeextendido` | `nomeExtendido` |
+| `siglaOrgao` | `$this->siglaOrgao` | `siglaOrgao` |
+| `dataUltimaTransacao` | `$this->dataModificacao` | `dataUltimaTransacao` |
+| `dataCriacaoUorg` | `$this->dataCriacaoUorg` | `dataCriacaoUorg` |
+| `idUnidadePai` | `$this->paiServo` | `codUorgPai` (mesmo valor que `codUorgPai`) |
+| `emailUorg` | `$this->email` | `contato.emailUorg` |
+| `uf` | `$this->municipioUf` | `endereco.ufUorg` |
+| `cpfTitularAutoridadeUorg` | `$this->cpfTitularAutoridadeUorg` | `rh.cpfTitularAutoridadeUorg` |
+| `cpfSubstitutoAutoridadeUorg` | `$this->cpfSubstitutoAutoridadeUorg` | `rh.cpfSubstitutoAutoridadeUorg` |
+
+#### Campos do model SEM correspondência no JSON `/unidades`
+
+| Campo `integracao_unidades` | Situação |
+|-----------------------------|----------|
+| `natureza` | Não retornado pela API SIPEC |
+| `fronteira` | Não retornado pela API SIPEC |
+| `fuso_horario` | Não retornado pela API SIPEC |
+| `cod_uop` | Não retornado pela API SIPEC |
+| `tipo_desc` | Não retornado pela API SIPEC |
+| `na_rodovia` | Não retornado pela API SIPEC |
+| `ptn_ge_coordenada` | Não retornado pela API SIPEC |
+| `municipio_siafi_siape` | Não retornado pela API SIPEC |
+| `municipio_siscom` | Não retornado pela API SIPEC |
+| `und_nu_adicional` | Não retornado pela API SIPEC |
+
+#### Campos do JSON `/unidades` disponíveis mas não mapeados para o model
+
+| Campo SIPEC (path no JSON) | Descrição | Uso potencial |
+|----------------------------|-----------|---------------|
+| `codOrgao` | Código do órgão (ex: `17500`) | Filtro por órgão |
+| `codOrgaoUorg` | Código órgão-UORG | Relação órgão ↔ UORG |
+| `nomeOrgao` | Nome do órgão | Exibição |
+| `nomeUorgMaiusculo` | Nome abreviado maiúsculo | Exibição compacta |
+| `nomeExtendido` | Nome completo da UORG | Alternativa a `nomeUorg` |
+| `siglaUnidadeSiape` | Sigla SIAPE (diferente da sigla UORG) | Referência cruzada SIAPE |
+| `siglaOrgao` | Sigla do órgão (ex: `"MGI"`) | Exibição |
+| `dataCriacaoUorg` | Data de criação da UORG | Histórico |
+| `endereco.numeroUorg` | Número do endereço | Endereço completo |
+| `endereco.complementoUorg` | Complemento | Endereço completo |
+| `dadoComplementar.indicadorUorgUpag` | Flag UPAG | Identificar se é pagadora |
+| `dadoComplementar.indicadorUorgAdministrativa` | Flag administrativa | Classificação |
+| `areaAtuacao.codAreaAtuaUorg` | Código área de atuação | Classificação funcional |
+| `areaAtuacao.nomeAreaAtuaUorg` | Nome área de atuação | Exibição |
+| `contato.numFaxUorg` | Fax | Contato alternativo |
+| `atoLegal[].diplomaLegalCriacaoUorg` | Diploma legal de criação | Referência normativa |
+| `uorg.codUorgPessoal` | Código UORG pessoal | Relação RH |
+| `uorg.cnpjLocalizador` | CNPJ localizador | Identificação fiscal |
 
 ### Servidores — Mapeamento completo (API SIPEC → DTO → integracao_servidores → usuarios)
 
@@ -249,3 +315,149 @@ Campos presentes no JSON que poderiam ser úteis futuramente mas não têm colun
 - **Unidade sem endereço**: Campos de município ficarão vazios — unidade será criada/atualizada sem `cidade_id`.
 - **Servidor com `dataOcorrExclusao`**: Será ignorado (não processado).
 - **Tabelas intermediárias cheias**: Registros com `processado=true` podem ser purgados periodicamente.
+
+
+
+- **Digrama de sequencia SincronizarSiapeJob**
+
+sequenceDiagram
+    participant Laravel as Laravel schedule:run
+    participant Kernel as Kernel schedule
+    participant JobBase as JobBase
+    participant SyncJob as SincronizarSiapeJob
+    participant Service as IntegracaoService
+
+    Laravel->>Kernel: schedule:run
+
+    Kernel->>Kernel: JobSchedule::where(ativo,true)
+    Kernel->>Kernel: foreach → new JobBase
+    Kernel->>Kernel: $schedule->job(...)->cron(...)
+
+    Kernel->>JobBase: dispatch
+
+    JobBase->>JobBase: inicializeTenant()
+    JobBase->>JobBase: loadingTenantConfig()
+
+    JobBase->>SyncJob: dispatch(new SincronizarSiapeJob)
+
+    SyncJob->>Service: new IntegracaoService([], tenantId)
+
+    SyncJob->>SyncJob: Entidade::all()
+
+    loop Para cada entidade
+        SyncJob->>Service: sincronizar(inputs)
+
+        Service->>Service: sincronizacao(inputs)
+        Service->>Service: getToken()
+        Service->>Service: getIntegracaoAdapter()
+
+        Service->>Service: retornarUorgs()
+        Service->>Service: retornarServidores()
+
+        Service->>Service: atualizaUnidades
+        Service->>Service: atualizaServidores
+        Service->>Service: atualizaGestores
+
+        Service-->>SyncJob: resultado
+    end
+
+
+┌──────────────┐     ┌──────────┐       ┌─────────┐      ┌──────────────────────┐     ┌────────────────────┐
+│ Laravel      │     │ Kernel   │       │ JobBase │      │ SincronizarSiapeJob  │     │ IntegracaoService  │
+│ schedule:run │     │ schedule │       │ handle()│      │ handle()             │     │                    │
+└──────┬───────┘     └────┬─────┘       └────┬────┘      └──────────┬───────────┘     └─────────┬──────────┘
+       │                  │                  │                      │                           │
+       │ schedule:run     │                  │                      │                           │
+       │─────────────────►│                  │                      │                           │
+       │                  │                  │                      │                           │
+       │   JobSchedule::where(ativo,true)    │                      │                           │
+       │   foreach → new JobBase($jobEntity) │                      │                           │
+       │   $schedule->job($job)->cron(...)   │                      │                           │
+       │                  │                  │                      │                           │
+       │                  │  dispatch        │                      │                           │
+       │                  │─────────────────►│                      │                           │
+       │                  │                  │                      │                           │
+       │                  │                  │ inicializeTenant()   │                           │
+       │                  │                  │ loadingTenantConfig()│                           │
+       │                  │                  │ dispatch(new         │                           │
+       │                  │                  │  SincronizarSiapeJob │                           │
+       │                  │                  │  ($tenantId))        │                           │
+       │                  │                  │─────────────────────►│                           │
+       │                  │                  │                      │                           │
+       │                  │                  │                      │ new IntegracaoService(    │
+       │                  │                  │                      │   [], $tenantId)          │
+       │                  │                  │                      │──────────────────────────►│
+       │                  │                  │                      │                           │
+       │                  │                  │                      │ Entidade::all()           │
+       │                  │                  │                      │                           │
+       │                  │                  │                      │ foreach $entidade:        │
+       │                  │                  │                      │   sincronizar($inputs)    │
+       │                  │                  │                      │──────────────────────────►│
+       │                  │                  │                      │                           │
+       │                  │                  │                      │                           │ sincronizacao($inputs)
+       │                  │                  │                      │                           │   → getToken()
+       │                  │                  │                      │                           │   → getIntegracaoAdapter()
+       │                  │                  │                      │                           │       →retornarUorgs()
+       │                  │                  │                      │                           │       →retornarServidores()
+       │                  │                  │                      │                           │   → atualizaUnidades
+       │                  │                  │                      │                           │   → atualizaServidores
+       │                  │                  │                      │                           │   → atualizaGestores
+       │                  │                  │                      │                           │
+       │                  │                  │                      │                           │ store(resultado)
+       │                  │                  │                      │◄──────────────────────────│
+
+
+
+┌────────┐     ┌──────────────────────────┐     ┌──────────────────────┐
+│ Client │     │ JobScheduleController    │     │ SincronizarSiapeJob  │
+│ (HTTP) │     │ sincronizarSiape()       │     │                      │
+└───┬────┘     └───────────┬──────────────┘     └──────────┬───────────┘
+    │                      │                               │
+    │ POST /api/job-...    │                               │
+    │─────────────────────►│                               │
+    │                      │                               │
+    │                      │ SincronizarSiapeJob::dispatch │
+    │                      │  ($usuario_id)                │
+    │                      │──────────────────────────────►│
+    │                      │                               │
+    │  200 JSON            │                               │ (mesma lógica acima)
+    │◄─────────────────────│                               │
+
+
+
+
+dispatch(new SincronizarSiapeJob($tenantId))
+         │
+         │  O job declara $this->queue = 'siape_queue'
+         │
+         ▼
+┌─────────────────────────────┐
+│  Redis (driver: redis)      │
+│  Queue: "siape_queue"       │
+│  Serializa o job como JSON  │
+│  e publica na lista Redis   │
+└──────────────┬──────────────┘
+               │
+               │  Polling contínuo
+               ▼
+┌──────────────────────────────────────────────────┐
+│  Laravel Horizon                                 │
+│  Supervisor: "supervisor-siape"                  │
+│  ─────────────────────────────────────────────── │
+│  connection: redis                               │
+│  queue: ['siape_queue']                          │
+│  balance: simple                                 │
+│  processes: 1 (worker único, sem paralelismo)    │
+│  tries: 1 (sem retry)                            │
+│  timeout: 172800s (48h)                          │
+└──────────────┬───────────────────────────────────┘
+               │
+               │  Worker desserializa o job
+               │  e chama handle()
+               ▼
+┌──────────────────────────────────────────────────┐
+│  SincronizarSiapeJob::handle(IntegracaoService)  │
+│  → new IntegracaoService([], $tenantId)          │
+│  → foreach Entidade::all()                       │
+│      → $integracaoService->sincronizar($inputs)  │
+└──────────────────────────────────────────────────┘

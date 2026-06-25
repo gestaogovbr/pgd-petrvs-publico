@@ -173,13 +173,14 @@ class SipecIndividualUnidadeService extends ServiceBase
 
         $unidadeRaw = $this->sipecService->buscarUnidade($codUorg);
         $unidadeDto = $unidadeRaw ? UnidadeSipecDTO::fromArray($unidadeRaw) : null;
-
-        $respostaServidores = $this->sipecService->buscarServidoresDaUnidade($codUorg);
-        $servidores         = is_array($respostaServidores['content'] ?? $respostaServidores)
-            ? ($respostaServidores['content'] ?? $respostaServidores)
-            : [];
-
-        $dtos = $this->parsearServidores($servidores);
+        $dtos = [];
+        if($unidadeDto){
+            $respostaServidores = $this->sipecService->buscarServidoresDaUnidade($codUorg);
+            $servidores         = is_array($respostaServidores['content'] ?? $respostaServidores)
+                ? ($respostaServidores['content'] ?? $respostaServidores)
+                : [];
+                $dtos = $this->parsearServidores($servidores);
+        }
 
         return [
             'codUorg'          => $codUorg,

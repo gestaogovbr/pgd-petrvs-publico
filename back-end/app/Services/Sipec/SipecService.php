@@ -86,12 +86,13 @@ class SipecService
         $token = $this->getToken();
 
         $params = ['codUorg' => $codUorg];
+        $params =['codSitFuncional' =>'1'];
         if ($this->codOrgao !== '') {
             $params['codOrgao'] = $this->codOrgao;
         }
-        if ($participaPgd) {
-            $params['participaPGD'] = '';
-        }
+        // if ($participaPgd) {
+        //     $params['participaPGD'] = '';
+        // }
         $url = $this->url . '/api-sipec/v1/servidores?' . http_build_query($params);
 
         return $this->executarGet($url, $token);
@@ -151,11 +152,12 @@ class SipecService
      * Busca os dados de uma unidade pelo código UORG.
      * Endpoint: GET /unidades  (UnidadeDetalhadaDTO — OpenAPI SIGEPE-Integra)
      *
-     * @param string $codUorg Código da UORG
+     * @param string|null $codUorg Código da UORG (usa config se null)
      * @return array|null Dados da unidade ou null se não encontrada
      */
-    public function buscarUnidade(string $codUorg): ?array
+    public function buscarUnidade(?string $codUorg = null): ?array
     {
+        $codUorg = $codUorg ?? $this->codUorg;
         $token = $this->getToken();
         $params = ['codUorg' => $codUorg];
         if ($this->codOrgao !== '') {
