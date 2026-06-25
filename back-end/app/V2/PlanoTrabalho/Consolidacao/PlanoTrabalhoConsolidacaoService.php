@@ -7,6 +7,7 @@ namespace App\V2\PlanoTrabalho\Consolidacao;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\ProgramaRepository;
@@ -33,6 +34,7 @@ class PlanoTrabalhoConsolidacaoService
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly ProgramaRepository $programaRepository,
         private readonly UnidadeRepository $unidadeRepository,
+        private readonly AfastamentoRepository $afastamentoRepository,
         private readonly AtividadeAuthorizationValidator $authValidator,
         private readonly ConcluirConsolidacaoValidator $concluirValidator,
         private readonly ReabrirConsolidacaoValidator $reabrirValidator,
@@ -136,6 +138,25 @@ class PlanoTrabalhoConsolidacaoService
             $vigencia,
             $consolidacoes,
         );
+    }
+
+    public function ocorrencias(string $consolidacaoId): Collection
+    {
+        $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($consolidacaoId);
+
+        if ($consolidacao === null) {
+            throw new NotFoundException('Período avaliativo não encontrado.');
+        }
+
+        $plano = $this->planoTrabalhoRepository->findById($consolidacao->plano_trabalho_id);
+
+        $vigencia = CarbonPeriod::create(
+            Carbon::parse($consolidacao->data_inicio)->startOfDay(),
+            Carbon::parse($consolidacao->data_fim)->startOfDay(),
+        );
+
+        return $this->afastamentoRepository->findAfastamentosParaDispensa($plano->usuario_id, $vigencia)
+            ->load('tipoMotivoAfastamento:id,nome,sigla,horas');
     }
 
     public function notasAvaliacao(string $planoTrabalhoId): Collection

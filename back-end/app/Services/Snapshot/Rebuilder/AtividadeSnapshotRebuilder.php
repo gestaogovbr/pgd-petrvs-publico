@@ -7,6 +7,9 @@ use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 use App\Services\AtividadeService;
 use App\Services\UtilService;
 
+/**
+ * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+ */
 class AtividadeSnapshotRebuilder extends BaseRebuilder
 {
     private AtividadeService $atividadeService;

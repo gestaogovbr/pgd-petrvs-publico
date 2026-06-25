@@ -7,6 +7,9 @@ use App\Models\ModelBase;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Afastamento;
 
+/**
+ * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+ */
 class PlanoTrabalhoConsolidacaoAfastamento extends ModelBase
 {
   protected $table = 'planos_trabalhos_consolidacoes_afastamentos';
