@@ -263,7 +263,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
     public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool
     {
         $usuario = $this->query()->find($agenteId);
-        if ($usuario === null) {
+        if (!$usuario instanceof Usuario) {
             return false;
         }
 
@@ -474,5 +474,20 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             ->chunkById($chunkSize, function (SupportCollection $usuarios) use ($onChunk): void {
                 $onChunk($usuarios);
             });
+    }
+
+    /** @param list<string> $unidadeIds */
+    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection
+    {
+        $query = $this->model->newQuery();
+
+        if (empty($unidadeIds)) {
+            $query->where('id', $usuarioId);
+        } else {
+            $query->where('id', $usuarioId)
+                ->orWhereHas('unidadesIntegrantes', fn ($q) => $q->whereIn('unidade_id', $unidadeIds));
+        }
+
+        return $query->orderBy('nome')->get(['id', 'nome']);
     }
 }

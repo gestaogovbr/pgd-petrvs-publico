@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, merge, of, switchMap, take, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Programa } from 'src/app/models/programa.model';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -21,12 +22,13 @@ import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb
   selector: 'app-plano-trabalho-v2-new-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, WebcomponentsAngularModule, BreadcrumbComponent],
   templateUrl: './new.page.html'
 })
 export class PlanoTrabalhoV2NewPage implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly api = inject(PlanoTrabalhoApiClient);
   private readonly usuarioService = inject(UsuarioService);
   private readonly programaApi = inject(ProgramaApiService);
@@ -40,9 +42,13 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   carregandoRegramento = signal(false);
   readonly confirmacao = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
   erroPeriodo = signal(false);
+  readonly cloneDe = signal<string | null>(null);
+  readonly cloneDeNumero = signal<number | null>(null);
+  erroRegramento = signal('');
 
-  programaNome = signal('');
-  private programaId = signal('');
+  private programas = signal<Programa[]>([]);
+  programaId = signal('');
+  programasVisiveis = signal<Programa[]>([]);
 
   readonly agentePublicoQuery = this.fb.nonNullable.control('');
   sugestoesUsuarios = signal<UsuarioSearchItem[]>([]);
@@ -75,7 +81,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   readonly formStatus = signal(this.form.status);
 
   readonly podeSalvar = computed(() =>
-    this.formStatus() === 'VALID' && !!this.programaId() && !this.saving()
+    this.formStatus() === 'VALID' && !!this.programaId() && !this.saving() && !this.erroRegramento()
   );
 
   readonly agentePublicoSomenteLeitura = computed(() => this.auth.isUsuarioParticipante());
@@ -99,6 +105,16 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     return this.modalidades().map(m => ({ value: m.key, label: m.value, selected: m.key === sel }));
   });
 
+  readonly programaNome = computed(() => {
+    const id = this.programaId();
+    return this.programas().find(p => p.id === id)?.nome ?? '';
+  });
+
+  readonly programasOptions = computed<SelectOption[]>(() => {
+    const sel = this.programaId();
+    return this.programasVisiveis().map(p => ({ value: p.id, label: p.nome, selected: p.id === sel }));
+  });
+
   ngOnInit(): void {
     this.form.statusChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
@@ -115,6 +131,11 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       ctrl.updateValueAndValidity();
     }, { injector: this.injector });
 
+    const fonteId = this.route.snapshot.queryParamMap.get('clone_de');
+    if (fonteId) {
+      this.cloneDe.set(fonteId);
+    }
+
     timer(0, 250)
       .pipe(
         map(() => this.auth.usuario),
@@ -123,7 +144,9 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(usuario => {
-        this.preselectUsuario(usuario);
+        if (!this.cloneDe()) {
+          this.preselectUsuario(usuario);
+        }
         if (this.auth.isUsuarioParticipante()) {
           this.agentePublicoQuery.disable({ emitEvent: false });
         }
@@ -155,7 +178,14 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       this.form.controls.data_fim.valueChanges
     ).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => this.erroPeriodo.set(false));
+    ).subscribe(() => {
+      this.erroPeriodo.set(false);
+      this.selecionarProgramaPorPeriodo();
+    });
+
+    if (this.cloneDe()) {
+      this.carregarDadosFonte(this.cloneDe()!);
+    }
   }
 
   voltar() {
@@ -188,7 +218,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.unidades.set([]);
     this.modalidades.set([]);
     this.programaId.set('');
-    this.programaNome.set('');
+    this.programas.set([]);
     this.erroAgentePublico.set('');
     this.usuarioModalidadePgd.set('');
     this.selectedModalidade.set('');
@@ -199,7 +229,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   }
 
   salvar() {
-    if (this.saving() || this.form.invalid || !this.programaId()) return;
+    if (this.saving() || this.form.invalid || !this.programaId() || this.erroRegramento()) return;
     const { data_inicio, data_fim } = this.form.controls;
     if (data_inicio.value && data_fim.value && data_fim.value < data_inicio.value) {
       this.erroPeriodo.set(true);
@@ -213,7 +243,8 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       data_inicio: this.form.controls.data_inicio.value,
       data_fim: this.form.controls.data_fim.value,
       modalidade_pgd: this.form.controls.modalidade_pgd.value,
-      justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null
+      justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null,
+      clone_de: this.cloneDe() || null
     };
 
     this.saving.set(true);
@@ -229,13 +260,67 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.carregandoRegramento.set(true);
     try {
       const programas = await this.programaApi.buscarPorUnidadeExecutora(unidadeId, this.joinPrograma);
-      const programaVigente = this.programaService.selecionaProgramaVigente(programas);
-      const programa = programaVigente ?? programas[0];
-      this.programaId.set(programa?.id ?? '');
-      this.programaNome.set(programa?.nome ?? '');
+      this.programas.set(programas);
+      this.selecionarProgramaPorPeriodo();
     } finally {
       this.carregandoRegramento.set(false);
     }
+  }
+
+  private selecionarProgramaPorPeriodo() {
+    const programas = this.programas();
+    if (programas.length === 0) {
+      this.programasVisiveis.set([]);
+      return;
+    }
+    const dataInicio = this.form.controls.data_inicio.value;
+    const dataFim = this.form.controls.data_fim.value;
+    if (!dataInicio || !dataFim) {
+      this.programaId.set('');
+      this.programasVisiveis.set([]);
+      this.erroRegramento.set('Selecione as datas de vigência do plano');
+      return;
+    }
+    const visiveis = programas.filter(p =>
+      String(p.data_inicio).substring(0, 10) <= dataFim && String(p.data_fim).substring(0, 10) >= dataInicio
+    );
+    this.programasVisiveis.set(visiveis);
+    if (visiveis.length === 0) {
+      this.programaId.set('');
+      this.erroRegramento.set('O período selecionado para o plano não possui Regramento ativo. Selecione outro período.');
+      return;
+    }
+    if (visiveis.length === 1) {
+      this.programaId.set(visiveis[0].id);
+    } else if (!visiveis.find(p => p.id === this.programaId())) {
+      this.programaId.set('');
+    }
+    this.validarCoberturaProgramaSelecionado(dataInicio, dataFim);
+  }
+
+  selecionarPrograma(event: any) {
+    const id = event?.detail ?? event?.target?.value ?? event ?? '';
+    this.programaId.set(id);
+    const dataInicio = this.form.controls.data_inicio.value;
+    const dataFim = this.form.controls.data_fim.value;
+    if (dataInicio && dataFim) {
+      this.validarCoberturaProgramaSelecionado(dataInicio, dataFim);
+    }
+  }
+
+  private validarCoberturaProgramaSelecionado(dataInicio: string, dataFim: string) {
+    const programa = this.programasVisiveis().find(p => p.id === this.programaId());
+    if (!programa) {
+      this.erroRegramento.set('');
+      return;
+    }
+    if (!this.programaService.programaCobrePeriodo(programa, dataInicio, dataFim)) {
+      const inicio = String(programa.data_inicio).substring(0, 10).split('-').reverse().join('/');
+      const fim = String(programa.data_fim).substring(0, 10).split('-').reverse().join('/');
+      this.erroRegramento.set(`O período do plano de trabalho deve coincidir integralmente com o período do Regramento: ${inicio} a ${fim}`);
+      return;
+    }
+    this.erroRegramento.set('');
   }
 
   private buscarUsuarios(term: string) {
@@ -262,7 +347,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.erroAgentePublico.set('');
 
     if (!unidades || unidades.length === 0 || (usuario as any).participa_pgd === 'não'
-        || (!(usuario as any).participa_pgd && !usuario.modalidade_pgd)) {
+      || (!(usuario as any).participa_pgd && !usuario.modalidade_pgd)) {
       this.erroAgentePublico.set('Usuário não participante do PGD ou não habilitado para pactuar Plano de Trabalho nesta unidade.');
     }
 
@@ -297,6 +382,51 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       const firstKey = this.modalidades()[0].key;
       this.selectedModalidade.set(firstKey);
       this.form.controls.modalidade_pgd.setValue(firstKey);
+    }
+  }
+
+  private carregarDadosFonte(fonteId: string) {
+    this.api.getById(fonteId).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: plano => {
+        this.cloneDeNumero.set(plano.numero ?? null);
+        this.usuarioService.getById(plano.usuario_id).pipe(
+          take(1)
+        ).subscribe(usuario => {
+          this.form.controls.usuario_id.setValue(usuario.id);
+          this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
+          void this.carregarUnidadesComPreselecao(usuario, plano.unidade_id, plano.modalidade_pgd);
+        });
+      },
+      error: () => {
+        this.cloneDe.set(null);
+        if (this.auth.usuario) {
+          this.preselectUsuario(this.auth.usuario);
+        }
+      }
+    });
+  }
+
+  private async carregarUnidadesComPreselecao(usuario: Usuario, unidadeId: string, modalidade: string | null) {
+    const unidades = await firstValueFrom(this.usuarioService.getUnidadesVinculadas(usuario.cpf));
+    this.unidades.set(unidades ?? []);
+
+    if (unidadeId) {
+      this.selectedUnidadeId.set(unidadeId);
+      this.form.controls.unidade_id.setValue(unidadeId, { emitEvent: false });
+      await this.carregarRegramento(unidadeId);
+    }
+
+    if (typeof usuario.modalidade_pgd === 'string' && usuario.modalidade_pgd.length) {
+      this.usuarioModalidadePgd.set(usuario.modalidade_pgd);
+    }
+
+    this.modalidades.set(await this.tipoModalidadeApi.listar());
+
+    if (modalidade) {
+      this.selectedModalidade.set(modalidade);
+      this.form.controls.modalidade_pgd.setValue(modalidade);
     }
   }
 }

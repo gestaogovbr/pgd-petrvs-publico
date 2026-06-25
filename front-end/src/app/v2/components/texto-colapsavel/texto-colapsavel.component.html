@@ -1,0 +1,6 @@
+<span class="white-space">{{ textoExibido }}</span>
+@if (deveColapsar) {
+  <button class="btn-ver-mais" (click)="toggle()">
+    {{ expandido() ? 'ver menos' : 'ver mais' }}
+  </button>
+}

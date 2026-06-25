@@ -1,6 +1,7 @@
 <?php
 
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoService;
+use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoPolicy;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\DTOs\AvaliacaoStoreDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoDestroyValidator;
@@ -21,6 +22,7 @@ beforeEach(function () {
     $this->destroyValidator = Mockery::mock(AvaliacaoDestroyValidator::class);
     $this->avaliacaoRepo = Mockery::mock(AvaliacaoRepository::class);
     $this->statusService = Mockery::mock(StatusService::class);
+    $this->avaliacaoPolicy = Mockery::mock(AvaliacaoPolicy::class);
 
     $this->service = new AvaliacaoService(
         $this->authValidator,
@@ -28,6 +30,7 @@ beforeEach(function () {
         $this->destroyValidator,
         $this->avaliacaoRepo,
         $this->statusService,
+        $this->avaliacaoPolicy,
     );
 });
 
@@ -55,10 +58,13 @@ describe('AvaliacaoService::destroy', function () {
     })->throws(ForbiddenException::class, 'Apenas quem realizou a avaliação pode cancelá-la.');
 
     test('deleta avaliação e atualiza status para CONCLUIDO', function () {
+        $avaliacoesCollection = new \Illuminate\Database\Eloquent\Collection();
+
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
         $consolidacao->id = 'cons-1';
         $consolidacao->shouldReceive('refresh')->andReturnSelf();
         $consolidacao->shouldReceive('load')->andReturnSelf();
+        $consolidacao->shouldReceive('getAttribute')->with('avaliacoes')->andReturn($avaliacoesCollection);
 
         $avaliacao = Mockery::mock(\App\Models\Avaliacao::class)->makePartial();
         $avaliacao->id = 'av-1';
@@ -66,6 +72,11 @@ describe('AvaliacaoService::destroy', function () {
 
         $this->destroyValidator->shouldReceive('validar')->andReturn($avaliacao);
         $this->avaliacaoRepo->shouldReceive('delete')->with('av-1')->once()->andReturn(true);
+        $this->avaliacaoRepo->shouldReceive('findMaisRecenteDaConsolidacao')
+            ->with('cons-1')
+            ->once()
+            ->andReturn(null);
+        $consolidacao->shouldReceive('save')->once();
         $this->statusService->shouldReceive('atualizaStatus')
             ->with($consolidacao, 'CONCLUIDO', 'Avaliação do período avaliativo cancelada pela chefia.')
             ->once();

@@ -16,6 +16,7 @@ export type PlanoTrabalhoCreatePayload = {
   data_fim: string;
   modalidade_pgd: string;
   justificativa_modalidade?: string | null;
+  clone_de?: string | null;
 };
 
 export type { Page } from 'src/app/v2/domain/pagination';
@@ -117,6 +118,7 @@ export type AvaliacaoConsolidacao = {
   avaliador?: { id: string; nome_exibicao: string };
   recurso: string | null;
   data_recurso: string | null;
+  pode_cancelar?: boolean;
 };
 
 export type NotaAvaliacao = {

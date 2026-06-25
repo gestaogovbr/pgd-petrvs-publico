@@ -112,6 +112,12 @@ class PlanoTrabalhoDocumentoService
     {
         $usuarioId = Auth::id();
         $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
+
+        $assinaturaExistente = $this->buscarAssinaturaExistente($planoTrabalhoId, $usuarioId);
+        if ($assinaturaExistente !== null) {
+            return $assinaturaExistente;
+        }
+
         $documento = $this->assinarValidator->validar($plano, $usuarioId);
 
         $dto = TCRAssinaturaDTO::fromDocumento($documento, $usuarioId);
@@ -156,5 +162,16 @@ class PlanoTrabalhoDocumentoService
                 "Cancelada a assinatura do servidor: " . Auth::user()->nome . "."
             );
         });
+    }
+
+    private function buscarAssinaturaExistente(string $planoTrabalhoId, string $usuarioId): ?DocumentoAssinatura
+    {
+        $documento = $this->documentoRepository->findTcrByPlanoTrabalhoId($planoTrabalhoId);
+
+        if ($documento === null) {
+            return null;
+        }
+
+        return $this->assinaturaRepository->findByDocumentoAndUsuario($documento->id, $usuarioId);
     }
 }

@@ -12,6 +12,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ExportarPlanoTrabalhoJob extends ExportarItemJob
 {
+    protected ?int $ptNumero = null;
+
+    public function __construct(
+        string $tenantId,
+        string $id,
+        string $origem = '',
+        ?int $ptNumero = null,
+    ) {
+        $this->ptNumero = $ptNumero;
+        parent::__construct($tenantId, $id, $origem);
+    }
+
     public static function getDescricao(): string
     {
         return 'Enviar Plano de Trabalho para API';
@@ -37,23 +49,22 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
         return $planoTrabalho;
     }
 
-    public function getResource(): PlanoTrabalhoResource {
-        $planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
-        $planoTrabalho = $planoTrabalhoRepository->findOneParaEnvio($this->id);
+    public function getResource($model): PlanoTrabalhoResource {
+        $planoTrabalho = $this->getRepository()->findOneParaEnvio($this->id);
 
-        if (!$planoTrabalho) {
+        if (!$model) {
             throw new ExportPgdException("Plano de Trabalho removido ou inválido", $this->id);
         }
 
-        if (!$planoTrabalho->usuario->lotacao){
+        if (!$model->usuario->lotacao){
             throw new ExportPgdException("Usuário do Plano de Trabalho não possui Lotação", $this->id);
         }
 
-        if (!$planoTrabalho->entregas) {
+        if (!$model->entregas) {
             throw new ExportPgdException("Plano de Trabalho não possui contribuições", $this->id);
         }
 
-        return new PlanoTrabalhoResource($planoTrabalho);
+        return new PlanoTrabalhoResource($model);
     }
 
     public function enviar(JsonResource $resource): bool {
@@ -65,6 +76,22 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
 
     public function tag() {
         return 'Plano de Trabalho';
+    }
+
+    protected function logItemLabel(): string
+    {
+        if ($this->ptNumero !== null) {
+            return 'PT #'.$this->ptNumero.' ('.$this->id.')';
+        }
+
+        if (tenancy()->initialized) {
+            $planoTrabalho = $this->getRepository()->findById($this->id);
+            if ($planoTrabalho instanceof PlanoTrabalho) {
+                return $planoTrabalho->identificacaoEnvio();
+            }
+        }
+
+        return 'PT ('.$this->id.')';
     }
 }
 

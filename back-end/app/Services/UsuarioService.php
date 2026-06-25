@@ -8,6 +8,8 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Facades\SiapeLog;
+use App\Models\PlanoEntrega;
+use App\Models\UnidadeIntegrante;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\PerfilRepository;
@@ -203,9 +205,10 @@ class UsuarioService extends ServiceBase
             $usuarioLotadoMesmaUnidade = $this->usuarioRepository->findByCpfAndLotacao($cpfCheck, $unidadeExercicioIdCheck);
 
             if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
+                $matriculaAtual = $usuarioLotadoMesmaUnidade->matricula;
                 $dadosAtualizacao = ['matricula' => $matriculaNova];
                 $integracaoServidor = $this->integracaoServidorRepository->getServidor($cpfCheck, $matriculaNova);
-                $matriculaAtual = $usuarioLotadoMesmaUnidade->matricula;               
+
                 if ($integracaoServidor && $integracaoServidor->participa_pgd !== null) {
                     $dadosAtualizacao['participa_pgd'] = $integracaoServidor->participa_pgd;
                 }
@@ -907,6 +910,10 @@ class UsuarioService extends ServiceBase
         $unidadesVinculadasPayloadByKey = [];
 
         foreach ($usuarios as $usuarioPorCpf) {
+            if (!$usuarioPorCpf instanceof Usuario) {
+                continue;
+            }
+
             $matricula = $usuarioPorCpf->getAttribute('matricula') ?? null;
             $situacaoFuncional = $usuarioPorCpf->getAttribute('situacao_funcional') ?? null;
 
@@ -914,6 +921,10 @@ class UsuarioService extends ServiceBase
                 ->findAllComAtribuicoesAtivasByUsuario(strval($usuarioPorCpf->id));
 
             foreach ($integrantes as $integrante) {
+                if (!$integrante instanceof UnidadeIntegrante) {
+                    continue;
+                }
+
                 $unidade = $integrante->unidade;
                 if ($unidade === null) {
                     continue;
@@ -1165,13 +1176,13 @@ class UsuarioService extends ServiceBase
         $planosTrabalhoAssinatura = $this->planoTrabalhoRepository->getPlanosTrabalhoAssinatura($unidades_ids, $unidadesFilhasIds, $usuario_id);
 
         // 3. Planos de entrega aguardando avaliação
-        $planosEntregaAvaliacao = $this->planoEntregaRepository->getPlanosEntregaAvaliacao($unidadesFilhasIds);
+        $planosEntregaAvaliacao = $this->planoEntregaRepository->getPlanosEntregaAvaliacao($unidadesFilhasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE);
 
         // 4. Planos de entrega aguardando homologação
         $planosEntregaHomologacao = $this->planoEntregaRepository->getPlanosEntregaHomologacao($unidadesFilhasIds);
 
         // 5. Entregas de planos de entrega que precisam ter progresso
-        $entregasPlanoEntregaExecucao = $this->planoEntregaRepository->getEntregasPlanoEntregaExecucao($unidadesFilhasIds);
+        $entregasPlanoEntregaExecucao = $this->planoEntregaRepository->getEntregasPlanoEntregaExecucao($unidadesFilhasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE);
 
         return [
             'registrosExecucao' => $registrosExecucao,

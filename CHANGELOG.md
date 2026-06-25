@@ -1,3 +1,46 @@
+## 3.0.4 22/06/2026
+
+### Adicionado
+- Adicionar vLibras para acessibilidade
+
+### Modificado
+- Reforçada a verificação da atualização de chefias pelo SIAPE, contemplando situações em que o servidor pertence à própria unidade ou está em outra unidade de exercício.
+- Limite de caracteres do registro de execução (trabalho executado) ampliado para 10.000 caracteres
+- Alterada visualização dos registro de execução para mostar um botão "ver mais" para exibição colapsável de textos longos
+- Clonagem de Plano de Trabalho v2 redesenhada: ao clonar, o usuário é redirecionado para a tela de criação com os campos pré-preenchidos (agente público, unidade, modalidade), exceto datas de início e fim. Apenas entregas com período vigente são copiadas, e o clone passa pelas mesmas validações de criação.
+- Renomeado "Tipo de Objetivo" para "Elementos do Planejamento" no menu lateral e telas de planejamento institucional
+- Adicionadas variáveis faltantes na geração do TCR v2: gestor da unidade, gestores substitutos, entidade e cidade
+- Removidas logos do programa e do governo do rodapé do sistema em observância ao período de defeso eleitoral
+- Melhoria no desempenho dos envios
+
+### Corrigido
+- Corrigido bug que permitia clique duplo no botão de finalizar registro de execução, causando requisições duplicadas
+- Corrigida ordenação inconsistente do menu lateral entre navegadores
+- Corrigido erro que quebrava a tela de listagem de regramentos quando um regramento não possuía unidade vinculada
+- Corrigida visualização de variáveis disponíveis no modal "Adicionar macro" do editor de template do TCR: campos folha agora são clicáveis e campos de array exibem notação correta (ex: `entregas[].descricao`)
+- Corrigida mensagem de erro para status HTTP 400 (Bad Request) para consulta de CPF e Unidade (SIAPE)
+- Corrigida nomenclatura das modalidades
+- Corrigido bug no cancelamento de conclusão de Plano de Entrega
+- Módulo de Ocorrências disponilizado para perfil de Participante
+- Correção no envio de Planos de Trabalho sem Avaliação
+
+## 3.0.3 18/06/2026
+
+### Adicionado
+- Opção de envio do PT a partir da Consulta de Envios de PT
+
+### Modificado
+- RabbitMQ atualizado para versão 4.3.1
+- Envios com Timeout não são mais reagendados
+- Timeouts do Envio
+
+### Corrigido
+- Bugs no Agendamento de Planos de Trabalho
+- Variáveis de ambiente duplicadas para RabbitMQ
+
+### Removido
+- Nome de imagem do RabbitMQ
+
 ## 3.0.2 16/06/2026
 
 ### Adicionado

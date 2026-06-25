@@ -15,13 +15,13 @@ interface PlanoEntregaReadRepositoryContract
 
     public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
 
-    public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection;
+    public function getPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): Collection;
 
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection;
 
     public function getEntregasPlanoEntregaHomologacao(array $unidadesIds): Collection;
 
-    public function getEntregasPlanoEntregaExecucao(array $unidadesIds): Collection;
+    public function getEntregasPlanoEntregaExecucao(array $unidadesIds, ?string $planoEntregaCriadoApos = null): Collection;
 
     public function findAllByUnidadeId(string $unidadeId, ?string $dataInicio = null, ?string $dataFim = null): Collection;
 

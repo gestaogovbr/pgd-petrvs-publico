@@ -1,6 +1,10 @@
 <div class="container-fluid py-3 govbr-v2">
   <app-breadcrumb />
-  <h2 class="mb-0">Novo Plano de Trabalho</h2>
+  @if (cloneDe()) {
+    <h2 class="mb-0">Clonar Plano de Trabalho <a [routerLink]="['/gestao', 'plano-trabalho-v2', 'consultar', cloneDe()]" style="font-size: inherit">#{{ cloneDeNumero() }}</a></h2>
+  } @else {
+    <h2 class="mb-0">Novo Plano de Trabalho</h2>
+  }
 
   <div class="br-card">
     <div class="card-header text-weight-semi-bold text-up-02 p-2x bg-gray-10">
@@ -22,7 +26,7 @@
             <div class="col-md-4 mb-3 position-relative">
               <div class="d-flex align-items-end gap-2">
                 <div class="br-input flex-grow-1">
-                  <label>Agente Público</label>
+                  <label>Participante</label>
                   <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" [readonly]="agentePublicoSomenteLeitura()" />
                 </div>
                 @if (!agentePublicoSomenteLeitura()) {
@@ -43,19 +47,10 @@
               }
             </div>
 
-            <div class="col-md-4 mb-3">
+            <div class="col-md-2 mb-3">
               <br-select label="Unidade" formControlName="unidade_id" [options]="unidadesOptions()" />
             </div>
 
-            <div class="col-md-4 mb-3">
-              <div class="br-input">
-                <label>Regramento de Instituição PGD</label>
-                <input type="text" readonly [value]="programaNome()" />                
-              </div>
-            </div>
-          </div>
-
-          <div class="row mt-2">
             <div class="col-md-3 mb-3">
               <div class="br-input">
                 <label>Início</label>
@@ -68,6 +63,20 @@
                 <label>Final</label>
                 <input type="date" formControlName="data_fim" />
               </div>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-md-6 mb-3">
+              <div class="br-input">
+                <br-select label="Regramento de Instituição PGD" [options]="programasOptions()" (valueChange)="selecionarPrograma($event)" />
+              </div>
+              @if (erroRegramento()) {
+                <span class="feedback warning" role="alert">
+                  <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+                  {{ erroRegramento() }}
+                </span>
+              }
             </div>
 
             <div class="col-md-6 mb-3">

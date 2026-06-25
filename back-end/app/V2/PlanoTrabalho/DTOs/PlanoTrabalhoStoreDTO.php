@@ -14,13 +14,18 @@ class PlanoTrabalhoStoreDTO
         public readonly string $dataFim,
         public readonly string $modalidadePgd,
         public readonly string $criacaoUsuarioId,
-        public readonly ?string $justificativa = null,
         public readonly ?string $justificativaModalidade = null,
+        public readonly ?string $cloneDe = null,
     ) {}
 
     public function isPlanoCriadoParaSi(): bool
     {
         return $this->usuarioId === $this->criacaoUsuarioId;
+    }
+
+    public function isClone(): bool
+    {
+        return $this->cloneDe !== null;
     }
 
     public static function fromArray(array $data, string $criacaoUsuarioId): self
@@ -33,8 +38,8 @@ class PlanoTrabalhoStoreDTO
             dataFim: $data['data_fim'],
             modalidadePgd: $data['modalidade_pgd'],
             criacaoUsuarioId: $criacaoUsuarioId,
-            justificativa: $data['justificativa'] ?? null,
             justificativaModalidade: $data['justificativa_modalidade'] ?? null,
+            cloneDe: $data['clone_de'] ?? null,
         );
     }
 
@@ -49,7 +54,6 @@ class PlanoTrabalhoStoreDTO
             'data_fim' => $this->dataFim,
             'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->criacaoUsuarioId,
-            'justificativa' => $this->justificativa,
             'justificativa_modalidade' => $this->justificativaModalidade,
         ];
     }

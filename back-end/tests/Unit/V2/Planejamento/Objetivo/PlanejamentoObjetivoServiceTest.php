@@ -19,10 +19,12 @@ afterEach(function () {
 function criarPlanejamentoObjetivoService(
     ?PlanejamentoObjetivoReadRepositoryContract $repository = null,
     ?EsforcoTotalGraphAssembler $assembler = null,
+    ?\App\V2\Planejamento\Objetivo\ObjetivoArvoreVisualizacaoAssembler $arvoreAssembler = null,
 ): PlanejamentoObjetivoService {
     return new PlanejamentoObjetivoService(
         $repository ?? Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class),
         $assembler ?? new EsforcoTotalGraphAssembler(),
+        $arvoreAssembler ?? new \App\V2\Planejamento\Objetivo\ObjetivoArvoreVisualizacaoAssembler(),
     );
 }
 
@@ -180,5 +182,42 @@ describe('PlanejamentoObjetivoService::getEntregasComEsforco', function () {
         expect($result->total_entregas)->toBe(0)
             ->and($result->itens)->toBe([])
             ->and($result->esforco_por_unidade)->toBe([]);
+    });
+});
+
+describe('PlanejamentoObjetivoService::getEquipesComEsforco', function () {
+
+    test('lança NotFoundException quando objetivo não existe', function () {
+        $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $repo->shouldReceive('find')->once()->with('inexistente')->andReturn(null);
+        $repo->shouldNotReceive('listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId');
+
+        $service = criarPlanejamentoObjetivoService(repository: $repo);
+        $service->getEquipesComEsforco('inexistente');
+    })->throws(NotFoundException::class);
+
+    test('monta DTO com unidades e esforço total', function () {
+        $objetivo = objetivoModel('obj-1');
+        $rowUnidade = (object) [
+            'unidade_id' => 'un-1',
+            'unidade_nome' => 'Unidade',
+            'unidade_sigla' => 'UN',
+            'esforco_horas_total' => 56.0,
+        ];
+
+        $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
+        $repo->shouldReceive('listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId')
+            ->once()
+            ->with('obj-1')
+            ->andReturn([$rowUnidade]);
+        $repo->shouldNotReceive('listarEntregasPlanoEntregaPorObjetivoId');
+
+        $result = criarPlanejamentoObjetivoService(repository: $repo)->getEquipesComEsforco('obj-1');
+
+        expect($result->objetivo_id)->toBe('obj-1')
+            ->and($result->itens)->toHaveCount(1)
+            ->and($result->itens[0]->unidade_sigla)->toBe('UN')
+            ->and($result->itens[0]->esforco_horas_total)->toEqual(56.0);
     });
 });

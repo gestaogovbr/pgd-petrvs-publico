@@ -8,23 +8,70 @@ use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoAcoesDTO;
 use App\V2\Traits\ValidaAutorizacaoTrait;
+use Carbon\Carbon;
 
 class PlanoTrabalhoAuthorization
 {
     use ValidaAutorizacaoTrait;
 
+    private const PRAZO_RECURSO_DIAS = 30;
+
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
+        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
     ) {}
 
     public function acoes(PlanoTrabalho $plano, Usuario $usuario): PlanoTrabalhoAcoesDTO
     {
         return new PlanoTrabalhoAcoesDTO(
             editar: $this->podeEditar($plano, $usuario),
+            arquivar: $this->podeArquivar($plano, $usuario),
+            encerrar: $this->podeEncerrar($plano, $usuario),
         );
+    }
+
+    public function podeEncerrar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if (!$this->isElegivelParaEncerramento($plano)) {
+            return false;
+        }
+
+        return $this->isAutorizadoEncerrar($plano, $usuario);
+    }
+
+    public function isElegivelParaEncerramento(PlanoTrabalho $plano): bool
+    {
+        if ($plano->status !== StatusEnum::ATIVO->value) {
+            return false;
+        }
+
+        $hoje = now()->format('Y-m-d');
+
+        return $plano->data_inicio <= $hoje && $plano->data_fim >= $hoje;
+    }
+
+    // TODO: spec 4.23-b exige que o adm negocial seja de uma unidade instituidora na linha
+    //       ascendente do PT. Atualmente permite qualquer adm negocial. Avaliar uso de admNegocialNoEscopoInstituidora.
+    public function isAutorizadoEncerrar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        return $this->isDonoOuChefiaOuAdm($plano, $usuario);
+    }
+
+    public function podeArquivar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($plano->data_arquivamento !== null) {
+            return false;
+        }
+
+        if (!$this->isElegivelParaArquivamento($plano)) {
+            return false;
+        }
+
+        return $this->isAutorizadoArquivar($plano, $usuario);
     }
 
     public function podeEditar(PlanoTrabalho $plano, Usuario $usuario): bool
@@ -84,5 +131,54 @@ class PlanoTrabalhoAuthorization
         }
 
         return false;
+    }
+
+    public function isElegivelParaArquivamento(PlanoTrabalho $plano): bool
+    {
+        $resumo = $this->consolidacaoRepository->resumoParaArquivamento(
+            $plano->id,
+            Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS),
+        );
+
+        if ($resumo->isAguardandoReavaliacao) {
+            return false;
+        }
+
+        if ($plano->status === StatusEnum::CANCELADO->value) {
+            return true;
+        }
+
+        if ($plano->encerrado_at !== null && !$resumo->possuiPendencias) {
+            return true;
+        }
+
+        if ($plano->status === StatusEnum::CONCLUIDO->value && $resumo->todosAvaliados && !$resumo->avaliacaoRecente) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isAutorizadoArquivar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($this->isDonoOuChefia($plano, $usuario->id, $plano->unidade_id)) {
+            return true;
+        }
+
+        if ($usuario->perfil?->nivel === PerfilEnum::COLABORADOR->value
+            && $this->unidadeRepository->hasUsuarioLotacao($plano->unidade_id, $usuario->id, true)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function isDonoOuChefiaOuAdm(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($this->isDonoOuChefia($plano, $usuario->id, $plano->unidade_id)) {
+            return true;
+        }
+
+        return $usuario->perfil !== null && $usuario->perfil->nivel <= PerfilEnum::ADMINISTRADOR_NEGOCIAL->value;
     }
 }

@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 
 class PlanoTrabalhoConsolidacaoRequestValidator
 {
+    public static function dispensas(string $planoTrabalhoId): void
+    {
+        validator(
+            ['plano_trabalho_id' => $planoTrabalhoId],
+            ['plano_trabalho_id' => ['required', 'uuid']],
+        )->validate();
+    }
+
     public static function reabrir(Request $request): array
     {
         return $request->validate([

@@ -27,6 +27,7 @@ class PlanoTrabalhoIndexDTO
         public readonly ?string $usuarioLogadoId = null,
         public readonly ?string $orderBy = null,
         public readonly ?string $orderDir = null,
+        public readonly bool $minhaEquipe = false,
     ) {}
 
     public function withUnidadesId(array $unidadesId): self
@@ -50,6 +51,7 @@ class PlanoTrabalhoIndexDTO
             usuarioLogadoId: $this->usuarioLogadoId,
             orderBy: $this->orderBy,
             orderDir: $this->orderDir,
+            minhaEquipe: $this->minhaEquipe,
         );
     }
 
@@ -85,11 +87,12 @@ class PlanoTrabalhoIndexDTO
         $incluirSubordinadas = $filters['incluir_subordinadas'] ?? null;
         $unidadeRegramento = $filters['unidade_regramento'] ?? null;
         $usuarioNome = $filters['usuario_nome'] ?? null;
+        $minhaEquipe = (bool) ($filters['minha_equipe'] ?? false);
 
         $possuiFiltro = $dataInicio || $dataFim || $vigentes || $arquivados
             || $usuarioId || $numero || $modalidadePgd || $status
             || $unidadesId || $incluirSubordinadas || $unidadeRegramento
-            || $usuarioNome;
+            || $usuarioNome || $minhaEquipe;
 
         if (!$possuiFiltro) {
             throw new ValidateException("Informe ao menos um filtro para a busca.");
@@ -114,6 +117,7 @@ class PlanoTrabalhoIndexDTO
             usuarioLogadoId: $usuarioLogadoId,
             orderBy: $filters['order_by'] ?? null,
             orderDir: $filters['order_dir'] ?? null,
+            minhaEquipe: $minhaEquipe,
         );
     }
 }

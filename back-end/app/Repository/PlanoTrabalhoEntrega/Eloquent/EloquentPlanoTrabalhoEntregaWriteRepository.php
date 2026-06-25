@@ -17,4 +17,12 @@ class EloquentPlanoTrabalhoEntregaWriteRepository extends AbstractEloquentWriteR
     {
         $this->model = $model;
     }
+
+    /** @return PlanoTrabalhoEntrega */
+    public function createForPlano(string $planoTrabalhoId, array $attributes): \Illuminate\Database\Eloquent\Model
+    {
+        return $this->model->newQuery()->create(array_merge($attributes, [
+            'plano_trabalho_id' => $planoTrabalhoId,
+        ]));
+    }
 }

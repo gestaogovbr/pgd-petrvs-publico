@@ -37,4 +37,9 @@ interface UsuarioReadRepositoryContract
     public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
 
     public function findOneParaEnvio(string $id): ?Usuario;
+
+    /**
+     * @param list<string> $unidadeIds
+     */
+    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection;
 }

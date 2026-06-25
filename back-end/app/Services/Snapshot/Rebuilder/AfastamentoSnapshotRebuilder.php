@@ -5,6 +5,9 @@ namespace App\Services\Snapshot\Rebuilder;
 use App\Models\Afastamento;
 use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
 
+/**
+ * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+ */
 class AfastamentoSnapshotRebuilder extends BaseRebuilder
 {
     public function rebuildFromSnapshot($afastamento, $consolidacaoId, $consolidacaoDataConclusao)

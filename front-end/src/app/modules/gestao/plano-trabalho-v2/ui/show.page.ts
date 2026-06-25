@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal } from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal, computed } from "@angular/core";
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from "src/app/v2/components/breadcrumb/breadcrumb.component";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -20,12 +20,13 @@ import { MessageService } from "src/app/v2/services/message.service";
 import { AssinarPlanoUseCase } from "../application/assinar-plano.usecase";
 import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
 import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
+import { TextoColapsavelComponent } from "src/app/v2/components/texto-colapsavel/texto-colapsavel.component";
 
 @Component({
   selector: 'app-plano-trabalho-v2-show-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent],
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent, TextoColapsavelComponent],
   templateUrl: './show.page.html'
 })
 export class PlanoTrabalhoV2ShowPage implements OnInit {
@@ -56,6 +57,10 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
+
+  readonly totalForcaTrabalho = computed(() =>
+    (this.planoTrabalho()?.entregas ?? []).reduce((sum, e) => sum + (Number(e.forca_trabalho) || 0), 0)
+  );
   ngOnInit(): void {
     this.route.paramMap.pipe(
       map(params => params.get('id')),
@@ -113,6 +118,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   podeConcluirConsolidacao(consolidacao: Consolidacao): boolean {
     const plano = this.planoTrabalho();
     if (!plano) return false;
+    if (this.facade.isDispensada(consolidacao.id)) return false;
     return this.consolidacaoPolicy.podeRegistrar(plano, consolidacao)
       && consolidacao.status === ConsolidacaoStatus.INCLUIDO
       && this.todasEntregasComAtividade(consolidacao);
@@ -121,6 +127,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   podeReabrirConsolidacao(consolidacao: Consolidacao): boolean {
     const plano = this.planoTrabalho();
     if (!plano) return false;
+    if (this.facade.isDispensada(consolidacao.id)) return false;
     if (plano.status !== PlanoTrabalhoStatus.ATIVO && !plano.encerrado_at) return false;
     if (plano.encerrado_at && new Date(consolidacao.data_inicio) > new Date(plano.encerrado_at)) return false;
     return ConsolidacaoStatusGroups.reabrivel.includes(consolidacao.status)
@@ -145,6 +152,9 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   }
 
   statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
+    if (this.facade.isDispensada(consolidacao.id)) {
+      return 'Dispensado';
+    }
     const plano = this.planoTrabalho();
     if (plano?.encerrado_at && new Date(consolidacao.data_inicio) > new Date(plano.encerrado_at)) {
       return 'Encerrado antecipadamente';

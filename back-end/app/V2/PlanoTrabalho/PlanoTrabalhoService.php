@@ -3,10 +3,12 @@
 namespace App\V2\PlanoTrabalho;
 
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Usuario;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaWriteRepositoryContract;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\V2\PlanoTrabalho\Authorization\PlanoTrabalhoAuthorization;
@@ -54,6 +56,7 @@ class PlanoTrabalhoService
         private readonly StatusService $statusService,
         private readonly TCRInvalidador $tcrInvalidador,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
+        private readonly PlanoTrabalhoEntregaWriteRepositoryContract $entregaWriteRepository,
     ) {}
 
 
@@ -62,7 +65,7 @@ class PlanoTrabalhoService
         $filtro = PlanoTrabalhoIndexDTO::fromRequest($data, Auth::id());
         $filtro = $this->indexValidator->validar($filtro);
 
-        if ($filtro->subordinadas && $filtro->unidadesId) {
+        if (!$filtro->minhaEquipe && $filtro->subordinadas && $filtro->unidadesId) {
             $idsBase = $filtro->unidadesId;
             $subordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($idsBase)->pluck('id')->toArray();
             $filtro = $filtro->withUnidadesId(array_merge($idsBase, $subordinadasIds));
@@ -86,7 +89,33 @@ class PlanoTrabalhoService
         $this->storeValidator->validarAutorizacao($dto);
         $this->storeValidator->validar($dto);
 
-        return $this->writeRepository->create($dto->toArray());
+        if (!$dto->isClone()) {
+            return $this->writeRepository->create($dto->toArray());
+        }
+
+        $planoOriginal = $this->clonarValidator->validar($dto->cloneDe, Auth::id());
+
+        return DB::transaction(function () use ($dto, $planoOriginal) {
+            $clone = $this->writeRepository->create($dto->toArray());
+
+            $this->readRepository->loadRelacoesClonar($planoOriginal);
+
+            foreach ($planoOriginal->entregas as $entrega) {
+                $entregaDTO = PlanoTrabalhoEntregaCloneDTO::fromEntrega($entrega);
+
+                if ($entregaDTO === null) {
+                    continue;
+                }
+
+                if (!$this->entregaTemIntersecaoPeriodo($entrega, $dto->dataInicio, $dto->dataFim)) {
+                    continue;
+                }
+
+                $this->entregaWriteRepository->createForPlano($clone->id, $entregaDTO->toArray());
+            }
+
+            return $clone;
+        });
     }
 
     public function update(string $id, array $data): PlanoTrabalho
@@ -206,7 +235,7 @@ class PlanoTrabalhoService
         return DB::transaction(function () use ($planoOriginal, $planoDTO) {
             $clone = $this->writeRepository->create($planoDTO->toArray());
 
-            $planoOriginal->load('entregas.planoEntregaEntrega');
+            $this->readRepository->loadRelacoesClonar($planoOriginal);
 
             foreach ($planoOriginal->entregas as $entrega) {
                 $entregaDTO = PlanoTrabalhoEntregaCloneDTO::fromEntrega($entrega);
@@ -215,7 +244,7 @@ class PlanoTrabalhoService
                     continue;
                 }
 
-                $clone->entregas()->create($entregaDTO->toArray());
+                $this->entregaWriteRepository->createForPlano($clone->id, $entregaDTO->toArray());
             }
 
             return $clone;
@@ -244,5 +273,24 @@ class PlanoTrabalhoService
         $usuario->loadMissing('perfil');
 
         return $usuario;
+    }
+
+    private function entregaTemIntersecaoPeriodo(PlanoTrabalhoEntrega $entrega, string $dataInicio, string $dataFim): bool
+    {
+        $planoEntregaEntrega = $entrega->planoEntregaEntrega;
+
+        if ($planoEntregaEntrega === null) {
+            return true;
+        }
+
+        if ($planoEntregaEntrega->data_inicio > $dataFim) {
+            return false;
+        }
+
+        if ($planoEntregaEntrega->data_fim !== null && $planoEntregaEntrega->data_fim < $dataInicio) {
+            return false;
+        }
+
+        return true;
     }
 }
