@@ -50,7 +50,7 @@ class PlanoTrabalhoIndexValidator
     private function validarMinhaEquipe(PlanoTrabalhoIndexDTO $filtro): PlanoTrabalhoIndexDTO
     {
         $unidades = $this->unidadeRepository
-            ->getUnidadesGestorOuSubstituto($filtro->usuarioLogadoId)
+            ->getUnidadesGerenciadas($filtro->usuarioLogadoId, ['delegado'])
             ->pluck('id')
             ->toArray();
 

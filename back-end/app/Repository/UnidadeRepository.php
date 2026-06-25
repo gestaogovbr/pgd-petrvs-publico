@@ -61,14 +61,9 @@ class UnidadeRepository
         return $this->readRepository->findByCodigoWithPai($codigo);
     }
 
-    public function getUnidadesGerenciadas(string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->readRepository->getUnidadesGerenciadas($usuarioId);
-    }
-
-    public function getUnidadesGestorOuSubstituto(string $usuarioId): \Illuminate\Database\Eloquent\Collection
-    {
-        return $this->readRepository->getUnidadesGestorOuSubstituto($usuarioId);
+        return $this->readRepository->getUnidadesGerenciadas($usuarioId, $exclude);
     }
 
     public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection

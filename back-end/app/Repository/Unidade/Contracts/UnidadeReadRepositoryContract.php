@@ -30,9 +30,7 @@ interface UnidadeReadRepositoryContract
 
     public function findBySigla(string $sigla): ?Unidade;
 
-    public function getUnidadesGerenciadas(string $usuarioId): Collection;
-
-    public function getUnidadesGestorOuSubstituto(string $usuarioId): Collection;
+    public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): Collection;
 
     public function findByCodigoWithPai(string $codigo): ?\App\Models\Unidade;
 
