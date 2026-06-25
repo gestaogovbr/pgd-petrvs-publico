@@ -605,6 +605,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.INDICADORES_GESTAO,
         ].sort(this.orderMenu),
       },
+      Object.assign({}, this.menuSchema.OCORRENCIAS_V2),
     ];
 
     this.moduloAdministrador = [
