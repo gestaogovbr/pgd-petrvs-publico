@@ -591,8 +591,13 @@ class UsuarioService extends ServiceBase
                 $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $query) use ($condition) {
                     $query->whereIn('atribuicao', $condition[2]);
                 });
-            }
-            else {
+            } else if (is_array($condition) && $condition[0] == "programa_id") {
+                if ($condition[2]) {
+                    $query->whereHas('participacoesProgramas', function (Builder $query) use ($condition) {
+                        $query->where('programa_id', $condition[2]);
+                    });
+                }
+            } else {
                 array_push($where, $condition);
             }
         }
