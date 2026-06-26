@@ -7,14 +7,31 @@ O fluxo SIPEC é uma alternativa ao fluxo SIAPE (SOAP/XML) para sincronização 
 ```
 SincronizarSipecJob
 │
-├─ FASE 0: Coleta de dados da API SIPEC (REST)
-│    ├─ SipecService::buscarTodasUnidades()
-│    │    └─ GET /api-sipec/v1/unidades?codOrgao=X (paginado)
-│    │    └─ Grava JSON em sipec_unidades (processado=false)
+├─ FASE 0: Coleta resiliente da API SIPEC (REST)
 │    │
-│    └─ SipecService::buscarTodosServidores()
-│         └─ GET /api-sipec/v1/servidores?codUorg=X (paginado)
-│         └─ Grava JSON em sipec_servidores (processado=false)
+│    ├─ SipecService::executarFase0($tenantId)
+│    │    ├─ Adquire Redis lock (TTL 600s) → impede overlap
+│    │    ├─ Lê/cria checkpoint (sipec_sync_checkpoints)
+│    │    │
+│    │    ├─ Etapa 'unidades': coletarUnidadesPaginado()
+│    │    │    └─ Retoma da última página salva no checkpoint
+│    │    │    └─ GET /api-sipec/v1/unidades?codOrgao=X&page=N (paginado)
+│    │    │    └─ updateOrCreate em sipec_unidades (by 'codigo')
+│    │    │    └─ Atualiza checkpoint.ultima_pagina após cada página
+│    │    │
+│    │    ├─ Etapa 'servidores': coletarServidoresPaginado()
+│    │    │    └─ Retoma da última página salva no checkpoint
+│    │    │    └─ GET /api-sipec/v1/servidores?codUorg=X&page=N (paginado)
+│    │    │    └─ updateOrCreate em sipec_servidores (by ['cpf','matricula'])
+│    │    │    └─ Atualiza checkpoint.ultima_pagina após cada página
+│    │    │
+│    │    ├─ Marca checkpoint.etapa = 'completo'
+│    │    └─ Libera Redis lock
+│    │
+│    └─ Retry adaptativo por tipo de erro (executarGetComRetry):
+│         ├─ 4XX → fail fast (não retryable)
+│         ├─ 5XX → backoff exponencial longo (5s, 15s, 45s)
+│         └─ cURL/rede → backoff exponencial curto (2s, 4s, 8s)
 │
 ├─ FASE 1: IntegracaoSipecService::retornarUorgs()
 │    └─ Lê sipec_unidades (processado=false)
@@ -46,17 +63,20 @@ SincronizarSipecJob
 |--------|-----------|-------------------|
 | `sipec_unidades` | JSON bruto de cada unidade vinda da API | `id`, `codigo`, `response` (JSON), `processado`, `data_modificacao` |
 | `sipec_servidores` | JSON bruto de cada servidor vindo da API | `id`, `cpf`, `matricula`, `response` (JSON), `processado`, `data_modificacao` |
+| `sipec_sync_checkpoints` | Checkpoint de progresso da Fase 0 | `id`, `tenant_id` (unique), `etapa` (enum), `ultima_pagina`, `total_paginas` |
 
 ### Classes
 
 | Classe | Responsabilidade |
 |--------|-----------------|
 | `App\Jobs\SincronizarSipecJob` | Orquestra o fluxo completo (Fase 0 + dispatch de sincronização) |
-| `App\Services\Sipec\SipecService` | Client HTTP autenticado (OAuth2 JWT) para API SIPEC |
+| `App\Services\Sipec\SipecService` | Client HTTP autenticado (OAuth2 JWT) para API SIPEC + Fase 0 resiliente |
 | `App\Services\Sipec\IntegracaoSipecService` | Lê tabelas intermediárias e retorna no formato esperado pelo `IntegracaoService` |
 | `App\Services\IntegracaoService` | Orquestrador de sincronização (fases 1-3), usa `integracaoServiceAdapter` |
 | `App\Models\SipecUnidade` | Model Eloquent para `sipec_unidades` |
 | `App\Models\SipecServidor` | Model Eloquent para `sipec_servidores` |
+| `App\Models\SipecSyncCheckpoint` | Model Eloquent para checkpoint de progresso da Fase 0 |
+| `App\Exceptions\SipecApiRetryableException` | Exception para erros retryable (5XX/timeout) após esgotar tentativas |
 
 ### Adapter Pattern
 
@@ -90,12 +110,58 @@ Config: `config/integracao.php` → chave `sipec`.
 
 ### Paginação
 
-Ambos endpoints suportam `page` e `size` como query params. O `SipecService` pagina automaticamente até `totalPages`.
+Ambos endpoints suportam `page` e `size` como query params. O `SipecService` pagina automaticamente até `totalPages` com checkpoint por página.
 
 ### Autenticação
 
 - Header `Authorization: Bearer <jwt_token>`
 - Header `x-cpf-usuario: <cpf_configurado>`
+
+## Resiliência da Fase 0
+
+### Garantias
+
+| Garantia | Mecanismo |
+|----------|----------|
+| Sem overlap | Redis lock exclusivo por tenant (TTL 600s) |
+| Retomada do ponto de falha | Checkpoint persiste última página com sucesso em `sipec_sync_checkpoints` |
+| Idempotência | `updateOrCreate` por chave natural (`codigo` para unidades, `['cpf','matricula']` para servidores) |
+| Atomicidade | Checkpoint atualizado APÓS persistir dados da página |
+
+### Política de Retry (executarGetComRetry)
+
+| Tipo de erro | Comportamento | Delay entre tentativas |
+|---|---|---|
+| 4XX (client error) | Fail fast — não retenta | — |
+| 5XX (server error) | 3 tentativas, backoff exponencial longo | 5s → 15s → 45s |
+| cURL/timeout (rede) | 3 tentativas, backoff exponencial curto | 2s → 4s → 8s |
+
+Após esgotar tentativas, lança `SipecApiRetryableException`. O checkpoint preserva o progresso e a próxima execução do job retoma da página seguinte à última salva.
+
+### Fluxo de recuperação
+
+```
+1ª execução: páginas 0..5 OK, falha na página 6
+   → checkpoint: { etapa: 'unidades', ultima_pagina: 6 }
+
+2ª execução (retry do job ou disparo manual):
+   → Redis lock OK
+   → Lê checkpoint: retoma da página 6
+   → Continua até totalPages
+   → Avança para etapa 'servidores', ultima_pagina: 0
+   → Completa servidores
+   → checkpoint: { etapa: 'completo' }
+```
+
+### Reset de checkpoint
+
+Para forçar re-execução completa (re-coleta de todos os dados):
+
+```php
+$sipecService->resetarCheckpoint($tenantId);
+```
+
+Isso deleta o registro de checkpoint, fazendo a próxima execução iniciar da página 0 da etapa 'unidades'.
 
 ## Disparo
 
