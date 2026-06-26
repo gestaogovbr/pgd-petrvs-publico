@@ -40,14 +40,16 @@ class SincronizarSipecJob implements ShouldQueue, ContratoJobSchedule
             $sipecService = app(SipecService::class);
             $integracaoSipecService = app(IntegracaoSipecService::class);
 
-            // FASE 0: Busca dados da API SIPEC e grava nas tabelas intermediárias
-            Log::info("SincronizarSipec: Buscando unidades da API SIPEC...");
-            $totalUnidades = $sipecService->buscarTodasUnidades();
-            Log::info("SincronizarSipec: {$totalUnidades} unidades gravadas em sipec_unidades");
+            // FASE 0: Coleta resiliente com checkpoint e retry
+            Log::info("SincronizarSipec: Iniciando Fase 0 (coleta API SIPEC)...");
+            $resultado = $sipecService->executarFase0($this->tenantId);
 
-            Log::info("SincronizarSipec: Buscando servidores da API SIPEC...");
-            $totalServidores = $sipecService->buscarTodosServidores();
-            Log::info("SincronizarSipec: {$totalServidores} servidores gravados em sipec_servidores");
+            if ($resultado['status'] === 'locked') {
+                Log::warning("SincronizarSipec: Fase 0 já em execução, abortando.");
+                return;
+            }
+
+            Log::info("SincronizarSipec: Fase 0 concluída", $resultado);
 
             // FASE 1-3: Processa dados intermediários e sincroniza
             $this->sincronizarEntidades($integracaoSipecService);

@@ -2,8 +2,13 @@
 
 namespace App\Services\Sipec;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\RequestConectaGovException;
+use App\Exceptions\SipecApiRetryableException;
+use App\Models\SipecSyncCheckpoint;
+use App\Models\SipecUnidade;
+use App\Models\SipecServidor;
 
 class SipecService
 {
@@ -112,7 +117,7 @@ class SipecService
 
         $params = ['codUorg' => $codUorg, 'cpf' => $cpf];
         if ($this->codOrgao !== '') {
-            $params['codOrgao'] = $this->codOrgao;
+            // $params['codOrgao'] = $this->codOrgao;
         }
         $url = $this->url . '/api-sipec/v1/servidores?' . http_build_query($params);
 
@@ -217,7 +222,7 @@ class SipecService
 
         if ($httpCode >= 400) {
             Log::error('SIPEC HTTP ' . $httpCode, ['response' => $response]);
-            throw new RequestConectaGovException('SIPEC: HTTP ' . $httpCode . ' - ' . $response);
+            throw new RequestConectaGovException('SIPEC: HTTP ' . $httpCode . ' - ' . $response, $httpCode);
         }
 
         $data = json_decode($response, true);
@@ -231,42 +236,128 @@ class SipecService
     }
 
     /**
-     * Busca TODAS as unidades do órgão com paginação automática.
-     * Grava cada página de resultados na tabela sipec_unidades.
-     *
-     * @param string|null $codOrgao Código do órgão (usa config se null)
-     * @return int Total de registros gravados
+     * Executa Fase 0 completa com resiliência: Redis lock, checkpoint por página, retry adaptativo.
+     * Retomável do ponto de falha sem overlap.
      */
-    public function buscarTodasUnidades(?string $codOrgao = null): int
+    public function executarFase0(?string $tenantId = null): array
     {
-        $codOrgao = $codOrgao ?? $this->codOrgao;
-        $token = $this->getToken();
-        $page = 0;
+        $lockKey = 'sipec_fase0_' . ($tenantId ?? 'default');
+        $lock = Cache::lock($lockKey, 600);
+
+        if (!$lock->get()) {
+            Log::warning("SIPEC Fase 0: já em execução para tenant {$tenantId}");
+            return ['status' => 'locked', 'unidades' => 0, 'servidores' => 0];
+        }
+
+        try {
+            $checkpoint = SipecSyncCheckpoint::firstOrCreate(
+                ['tenant_id' => $tenantId],
+                ['etapa' => 'unidades', 'ultima_pagina' => 0]
+            );
+
+            $totalUnidades = 0;
+            $totalServidores = 0;
+
+            if ($checkpoint->etapa === 'unidades') {
+                $totalUnidades = $this->coletarUnidadesPaginado($checkpoint);
+                $checkpoint->update(['etapa' => 'servidores', 'ultima_pagina' => 0, 'total_paginas' => null]);
+            }
+
+            if ($checkpoint->etapa === 'servidores') {
+                $totalServidores = $this->coletarServidoresPaginado($checkpoint);
+                $checkpoint->update(['etapa' => 'completo']);
+            }
+
+            return ['status' => 'completo', 'unidades' => $totalUnidades, 'servidores' => $totalServidores];
+        } finally {
+            $lock->release();
+        }
+    }
+
+    /**
+     * Reseta checkpoint para permitir re-execução completa.
+     */
+    public function resetarCheckpoint(?string $tenantId = null): void
+    {
+        SipecSyncCheckpoint::where('tenant_id', $tenantId)->delete();
+    }
+
+    private function coletarUnidadesPaginado(SipecSyncCheckpoint $checkpoint): int
+    {
+        $page = $checkpoint->ultima_pagina;
         $size = 100;
         $total = 0;
 
         do {
             $params = http_build_query([
-                'codOrgao' => $codOrgao,
+                'codOrgao' => $this->codOrgao,
                 'page' => $page,
                 'size' => $size,
             ]);
             $url = $this->url . '/api-sipec/v1/unidades?' . $params;
-            $data = $this->executarGet($url, $token);
 
+            $data = $this->executarGetComRetry($url);
             $itens = $data['content'] ?? [];
             $totalPages = $data['totalPages'] ?? 1;
 
             foreach ($itens as $item) {
-                \App\Models\SipecUnidade::create([
-                    'codigo' => (string) ($item['codUorg'] ?? ''),
-                    'response' => json_encode($item, JSON_UNESCAPED_UNICODE),
-                    'processado' => false,
-                    'data_modificacao' => $item['dataUltimaTransacao'] ?? null,
-                ]);
+                SipecUnidade::updateOrCreate(
+                    ['codigo' => (string) ($item['codUorg'] ?? '')],
+                    [
+                        'response' => json_encode($item, JSON_UNESCAPED_UNICODE),
+                        'processado' => false,
+                        'data_modificacao' => $item['dataUltimaTransacao'] ?? null,
+                    ]
+                );
                 $total++;
             }
 
+            $checkpoint->update(['ultima_pagina' => $page + 1, 'total_paginas' => $totalPages]);
+            $page++;
+        } while ($page < $totalPages);
+
+        return $total;
+    }
+
+    private function coletarServidoresPaginado(SipecSyncCheckpoint $checkpoint): int
+    {
+        $page = $checkpoint->ultima_pagina;
+        $size = 100;
+        $total = 0;
+
+        do {
+            $params = http_build_query([
+                'codUorg' => $this->codUorg,
+                'codSitFuncional' => '1',
+                'codOrgao' => $this->codOrgao,
+                'page' => $page,
+                'size' => $size,
+            ]);
+            $url = $this->url . '/api-sipec/v1/servidores?' . $params;
+
+            $data = $this->executarGetComRetry($url);
+            $itens = $data['content'] ?? [];
+            $totalPages = $data['totalPages'] ?? 1;
+
+            foreach ($itens as $item) {
+                $primeiroVinculo = $item['vinculos'][0] ?? $item['vinculos']['0'] ?? [];
+                $cpf = $item['cpf'] ?? null;
+                $matricula = isset($primeiroVinculo['matriculaSiape']) ? (string) $primeiroVinculo['matriculaSiape'] : null;
+
+                if ($cpf) {
+                    SipecServidor::updateOrCreate(
+                        ['cpf' => $cpf, 'matricula' => $matricula],
+                        [
+                            'response' => json_encode($item, JSON_UNESCAPED_UNICODE),
+                            'processado' => false,
+                            'data_modificacao' => $primeiroVinculo['dataUltimaTransacao'] ?? null,
+                        ]
+                    );
+                    $total++;
+                }
+            }
+
+            $checkpoint->update(['ultima_pagina' => $page + 1, 'total_paginas' => $totalPages]);
             $page++;
         } while ($page < $totalPages);
 
@@ -274,48 +365,53 @@ class SipecService
     }
 
     /**
-     * Busca TODOS os servidores do órgão com paginação automática.
-     * Grava cada página de resultados na tabela sipec_servidores.
-     *
-     * @param string|null $codUorg Código da UORG (usa config se null)
-     * @return int Total de registros gravados
+     * GET com retry adaptativo:
+     * - 5XX / timeout: backoff exponencial longo (5s, 15s, 45s)
+     * - 4XX: fail fast (não retryable)
+     * - cURL error: retry com backoff curto (2s, 4s, 8s)
      */
-    public function buscarTodosServidores(?string $codUorg = null): int
+    private function executarGetComRetry(string $url, int $maxRetries = 3): array
     {
-        $codUorg = $codUorg ?? $this->codUorg;
-        $token = $this->getToken();
-        $page = 0;
-        $size = 100;
-        $total = 0;
+        $attempt = 0;
 
-        do {
-            $params = http_build_query([
-                'codUorg' => $codUorg,
-                'page' => $page,
-                'size' => $size,
-            ]);
-            $url = $this->url . '/api-sipec/v1/servidores?' . $params;
-            $data = $this->executarGet($url, $token);
+        while (true) {
+            try {
+                $token = $this->getToken();
+                return $this->executarGet($url, $token);
+            } catch (RequestConectaGovException $e) {
+                $attempt++;
+                $httpCode = $e->getCode();
 
-            $itens = $data['content'] ?? [];
-            $totalPages = $data['totalPages'] ?? 1;
+                // 4XX: não retryable — erro de cliente
+                if ($httpCode >= 400 && $httpCode < 500) {
+                    throw $e;
+                }
 
-            foreach ($itens as $item) {
-                $primeiroVinculo = $item['vinculos'][0] ?? $item['vinculos']['0'] ?? [];
-                \App\Models\SipecServidor::create([
-                    'cpf' => $item['cpf'] ?? null,
-                    'matricula' => isset($primeiroVinculo['matriculaSiape']) ? (string) $primeiroVinculo['matriculaSiape'] : null,
-                    'response' => json_encode($item, JSON_UNESCAPED_UNICODE),
-                    'processado' => false,
-                    'data_modificacao' => $primeiroVinculo['dataUltimaTransacao'] ?? null,
+                if ($attempt >= $maxRetries) {
+                    throw new SipecApiRetryableException(
+                        $httpCode ?: 0,
+                        "Falha após {$maxRetries} tentativas: {$e->getMessage()}",
+                        $e
+                    );
+                }
+
+                // 5XX: backoff exponencial longo (5s, 15s, 45s)
+                if ($httpCode >= 500) {
+                    $delay = 5 * pow(3, $attempt - 1);
+                } else {
+                    // Erro de rede/cURL: backoff curto (2s, 4s, 8s)
+                    $delay = 2 * pow(2, $attempt - 1);
+                }
+
+                Log::warning("SIPEC retry {$attempt}/{$maxRetries}", [
+                    'url' => $url,
+                    'httpCode' => $httpCode,
+                    'delay_seconds' => $delay,
                 ]);
-                $total++;
+
+                sleep($delay);
             }
-
-            $page++;
-        } while ($page < $totalPages);
-
-        return $total;
+        }
     }
 
     /**
