@@ -6,7 +6,6 @@ use App\V2\Ocorrencia\OcorrenciaController;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
-use App\Models\TipoAvaliacao;
 use App\Models\TipoMotivoAfastamento;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
@@ -17,10 +16,6 @@ beforeEach(function () {
     if (!Route::has('__tests.v2.ocorrencia.store')) {
         Route::middleware(['api'])->post('/api/__tests/v2/ocorrencia', [OcorrenciaController::class, 'store'])
             ->name('__tests.v2.ocorrencia.store');
-    }
-    if (!Route::has('__tests.v2.ocorrencia.update')) {
-        Route::middleware(['api'])->put('/api/__tests/v2/ocorrencia/{ocorrenciaId}', [OcorrenciaController::class, 'update'])
-            ->name('__tests.v2.ocorrencia.update');
     }
     if (!Route::has('__tests.v2.ocorrencia.destroy')) {
         Route::middleware(['api'])->delete('/api/__tests/v2/ocorrencia/{ocorrenciaId}', [OcorrenciaController::class, 'destroy'])
@@ -114,170 +109,6 @@ describe('POST /api/v2/ocorrencia (happy path)', function () {
     });
 });
 
-// ── POST bloqueio por impacto ───────────────────────────────────────
-
-describe('POST /api/v2/ocorrencia (bloqueio por impacto)', function () {
-
-    test('bloqueia criação quando geraria dispensa em PT concluído com recurso', function () {
-        $tipoAvaliacao = \App\Models\TipoAvaliacao::factory()->create();
-        $notaId = Str::uuid()->toString();
-        DB::connection('tenant')->table('tipos_avaliacoes_notas')->insert([
-            'id' => $notaId, 'tipo_avaliacao_id' => $tipoAvaliacao->id, 'sequencia' => 1,
-            'nota' => json_encode(['valor' => 'IV']), 'descricao' => 'Nota IV', 'pergunta' => 'P',
-            'aprova' => 0, 'justifica' => 0, 'icone' => 'bi bi-star', 'cor' => '#FF0000',
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
-
-        $this->plano->update(['status' => 'CONCLUIDO']);
-
-        DB::connection('tenant')->table('avaliacoes')->insert([
-            'id' => Str::uuid()->toString(),
-            'plano_trabalho_consolidacao_id' => $this->consolidacao->id,
-            'avaliador_id' => $this->usuario->id,
-            'data_avaliacao' => '2025-02-01',
-            'nota' => json_encode(['nota' => 'IV']),
-            'justificativas' => json_encode([]),
-            'tipo_avaliacao_id' => $tipoAvaliacao->id,
-            'tipo_avaliacao_nota_id' => $notaId,
-            'recurso' => 'Discordo',
-            'data_recurso' => '2025-02-05',
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
-
-        // Ocorrência que cobriria toda a consolidação → geraria dispensa → bloqueio
-        $response = $this->postJson('/api/__tests/v2/ocorrencia', [
-            'usuario_id' => $this->usuario->id,
-            'observacoes' => 'Teste bloqueio',
-            'data_inicio' => '2025-01-01',
-            'data_fim' => '2025-01-31',
-            'tipo_motivo_afastamento_id' => $this->tipoMotivo->id,
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonPath('error', 'Não é possível criar a ocorrência pois um dos períodos avaliativos abrangidos por ela tem avaliações que já não podem mais ser alteradas.');
-    });
-});
-
-// ── PUT update ──────────────────────────────────────────────────────
-
-describe('PUT /api/v2/ocorrencia/:id (happy path)', function () {
-
-    test('atualiza observações da ocorrência', function () {
-        $afastamentoId = $this->postJson('/api/__tests/v2/ocorrencia', validPayload($this))->json('data.id');
-
-        $response = $this->putJson("/api/__tests/v2/ocorrencia/{$afastamentoId}", [
-            'usuario_id' => $this->usuario->id,
-            'observacoes' => 'Atualizado',
-        ]);
-
-        $response->assertStatus(200)
-            ->assertJsonPath('success', true)
-            ->assertJsonPath('data.observacoes', 'Atualizado');
-    });
-
-    test('recria vínculos com consolidações ao alterar período', function () {
-        $afastamentoId = $this->postJson('/api/__tests/v2/ocorrencia', validPayload($this))->json('data.id');
-
-        $this->putJson("/api/__tests/v2/ocorrencia/{$afastamentoId}", [
-            'usuario_id' => $this->usuario->id,
-            'data_inicio' => '2025-02-01',
-            'data_fim' => '2025-02-15',
-        ])->assertStatus(200);
-
-        // Vínculos antigos (janeiro) removidos, novos para fevereiro criados ou nenhum se não há consolidação
-        $vinculos = PlanoTrabalhoConsolidacaoAfastamento::where('afastamento_id', $afastamentoId)->get();
-        // Consolidação é jan, novo período é fev → sem vínculo
-        expect($vinculos->count())->toBe(0);
-    });
-});
-
-// ── PUT bloqueio por impacto ────────────────────────────────────────
-
-describe('PUT /api/v2/ocorrencia/:id (bloqueio por mudança de tipo)', function () {
-
-    beforeEach(function () {
-        $this->tipoCompensacao = TipoMotivoAfastamento::firstOrCreate(
-            ['codigo' => '15'],
-            ['nome' => 'Greve (compensação)', 'sigla' => 'GC', 'calculo' => 'ACRESCIMO', 'data_inicio' => now(), 'situacao' => 'ATIVO', 'icone' => 'bi bi-flag', 'cor' => '#FFFF00', 'horas' => 0, 'integracao' => 0]
-        );
-
-        $tipoAvaliacao = TipoAvaliacao::factory()->create();
-        $notaId = Str::uuid()->toString();
-        DB::connection('tenant')->table('tipos_avaliacoes_notas')->insert([
-            'id' => $notaId,
-            'tipo_avaliacao_id' => $tipoAvaliacao->id,
-            'sequencia' => 1,
-            'nota' => json_encode(['valor' => 'IV']),
-            'descricao' => 'Nota IV',
-            'pergunta' => 'Pergunta',
-            'aprova' => 0,
-            'justifica' => 0,
-            'icone' => 'bi bi-star',
-            'cor' => '#FF0000',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // PT concluído com consolidação contendo avaliação com recurso
-        $this->plano->update(['status' => 'CONCLUIDO']);
-
-        DB::connection('tenant')->table('avaliacoes')->insert([
-            'id' => Str::uuid()->toString(),
-            'plano_trabalho_consolidacao_id' => $this->consolidacao->id,
-            'avaliador_id' => $this->usuario->id,
-            'data_avaliacao' => '2026-06-01',
-            'nota' => json_encode(['nota' => 'IV']),
-            'justificativas' => json_encode([]),
-            'tipo_avaliacao_id' => $tipoAvaliacao->id,
-            'tipo_avaliacao_nota_id' => $notaId,
-            'recurso' => 'Discordo da nota',
-            'data_recurso' => '2026-06-05',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-    });
-
-    test('bloqueia update quando mudar de não-compensação para compensação remove dispensa em PT concluído com recurso', function () {
-        // Duas ocorrências não-compensação cobrindo toda a consolidação
-        $af1Id = Str::uuid()->toString();
-        $af2Id = Str::uuid()->toString();
-
-        DB::connection('tenant')->table('afastamentos')->insert([
-            ['id' => $af1Id, 'usuario_id' => $this->usuario->id, 'data_inicio' => '2025-01-01', 'data_fim' => '2025-01-15', 'tipo_motivo_afastamento_id' => $this->tipoMotivo->id, 'observacoes' => 'af1', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => $af2Id, 'usuario_id' => $this->usuario->id, 'data_inicio' => '2025-01-16', 'data_fim' => '2025-01-31', 'tipo_motivo_afastamento_id' => $this->tipoMotivo->id, 'observacoes' => 'af2', 'created_at' => now(), 'updated_at' => now()],
-        ]);
-
-        // Editar af2 para tipo compensação → remove dispensa → bloqueio
-        $response = $this->putJson("/api/__tests/v2/ocorrencia/{$af2Id}", [
-            'usuario_id' => $this->usuario->id,
-            'tipo_motivo_afastamento_id' => $this->tipoCompensacao->id,
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonPath('error', 'Não é possível editar a ocorrência pois um dos períodos avaliativos abrangidos por ela tem avaliações que já não podem mais ser alteradas.');
-    });
-
-    test('bloqueia update quando mudar de compensação para não-compensação gera dispensa em PT concluído com recurso', function () {
-        // Uma não-compensação + uma compensação cobrindo toda a consolidação
-        $af1Id = Str::uuid()->toString();
-        $af2Id = Str::uuid()->toString();
-
-        DB::connection('tenant')->table('afastamentos')->insert([
-            ['id' => $af1Id, 'usuario_id' => $this->usuario->id, 'data_inicio' => '2025-01-01', 'data_fim' => '2025-01-15', 'tipo_motivo_afastamento_id' => $this->tipoMotivo->id, 'observacoes' => 'af1', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => $af2Id, 'usuario_id' => $this->usuario->id, 'data_inicio' => '2025-01-16', 'data_fim' => '2025-01-31', 'tipo_motivo_afastamento_id' => $this->tipoCompensacao->id, 'observacoes' => 'af2 comp', 'created_at' => now(), 'updated_at' => now()],
-        ]);
-
-        // Editar af2 de compensação para não-compensação → gera dispensa → bloqueio
-        $response = $this->putJson("/api/__tests/v2/ocorrencia/{$af2Id}", [
-            'usuario_id' => $this->usuario->id,
-            'tipo_motivo_afastamento_id' => $this->tipoMotivo->id,
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonPath('error', 'Não é possível editar a ocorrência pois um dos períodos avaliativos abrangidos por ela tem avaliações que já não podem mais ser alteradas.');
-    });
-});
-
 // ── DELETE destroy ──────────────────────────────────────────────────
 
 describe('DELETE /api/v2/ocorrencia/:id', function () {
@@ -299,46 +130,19 @@ describe('DELETE /api/v2/ocorrencia/:id', function () {
         ])->assertStatus(404);
     });
 
-    test('bloqueia exclusão quando removeria dispensa em PT concluído com recurso', function () {
-        $tipoAvaliacao = \App\Models\TipoAvaliacao::factory()->create();
-        $notaId = Str::uuid()->toString();
-        DB::connection('tenant')->table('tipos_avaliacoes_notas')->insert([
-            'id' => $notaId, 'tipo_avaliacao_id' => $tipoAvaliacao->id, 'sequencia' => 1,
-            'nota' => json_encode(['valor' => 'IV']), 'descricao' => 'Nota IV', 'pergunta' => 'P',
-            'aprova' => 0, 'justifica' => 0, 'icone' => 'bi bi-star', 'cor' => '#FF0000',
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
-
-        $this->plano->update(['status' => 'CONCLUIDO']);
-
-        DB::connection('tenant')->table('avaliacoes')->insert([
-            'id' => Str::uuid()->toString(),
-            'plano_trabalho_consolidacao_id' => $this->consolidacao->id,
-            'avaliador_id' => $this->usuario->id,
-            'data_avaliacao' => '2025-02-01',
-            'nota' => json_encode(['nota' => 'IV']),
-            'justificativas' => json_encode([]),
-            'tipo_avaliacao_id' => $tipoAvaliacao->id,
-            'tipo_avaliacao_nota_id' => $notaId,
-            'recurso' => 'Discordo',
-            'data_recurso' => '2025-02-05',
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
-
-        // Ocorrência que cobre toda a consolidação (dispensada)
+    test('bloqueia exclusão de ocorrência criada há mais de 365 dias', function () {
         $afId = Str::uuid()->toString();
         DB::connection('tenant')->table('afastamentos')->insert([
             'id' => $afId, 'usuario_id' => $this->usuario->id,
             'data_inicio' => '2025-01-01', 'data_fim' => '2025-01-31',
             'tipo_motivo_afastamento_id' => $this->tipoMotivo->id,
-            'observacoes' => 'Dispensa', 'created_at' => now(), 'updated_at' => now(),
+            'observacoes' => 'Antiga', 'created_at' => now()->subDays(400), 'updated_at' => now()->subDays(400),
         ]);
 
-        // Excluir → removeria dispensa → bloqueio
         $this->deleteJson("/api/__tests/v2/ocorrencia/{$afId}", [
             'usuario_id' => $this->usuario->id,
         ])->assertStatus(422)
-            ->assertJsonPath('error', 'Não é possível excluir a ocorrência pois um dos períodos avaliativos abrangidos por ela tem avaliações que já não podem mais ser alteradas.');
+            ->assertJsonPath('error', 'Ocorrência cadastrada há mais de 1 ano não pode ser excluída.');
     });
 });
 

@@ -99,9 +99,6 @@
               <td>{{ oc.observacoes ?? '-' }}</td>
               <td class="text-end">
                 <div class="d-inline-flex gap-2">
-                  <br-button emphasis="tertiary" shape="circle" (click)="editar(oc.id)" title="Editar">
-                    <i class="fa fa-pencil"></i>
-                  </br-button>
                   <br-button emphasis="tertiary" shape="circle" (click)="excluir(oc)" title="Excluir">
                     <i class="fa fa-trash"></i>
                   </br-button>
@@ -119,14 +116,10 @@
 
 <br-scrim [isOpen]="!!modal()" [disableCloseOnClick]="true">
   <br-modal [show]="!!modal()" [titleText]="modal()?.titulo || ''" size="small" alignFooter="end" (brModalBeforeClose)="fecharModal()">
-    <p>{{ modal()?.mensagem }}</p>
+    <p [innerHTML]="modal()?.mensagem"></p>
     <div slot="footer">
-      @if (modal()?.bloqueada) {
-        <br-button emphasis="primary" (click)="fecharModal()">Entendi</br-button>
-      } @else {
         <br-button class="mx-1" emphasis="secondary" (click)="fecharModal()">Cancelar</br-button>
         <br-button class="mx-1" emphasis="primary" (click)="confirmarModal()">Confirmar</br-button>
-      }
     </div>
   </br-modal>
 </br-scrim>

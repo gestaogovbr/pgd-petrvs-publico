@@ -7,7 +7,8 @@ import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb
 import { PaginationV2Component } from 'src/app/v2/components/pagination/pagination.component';
 import { OcorrenciaApiClient } from '../infra/ocorrencia-api.client';
 import { AuthService } from 'src/app/services/auth.service';
-import { Ocorrencia, TipoMotivoAfastamento, ImpactoConsolidacoes } from '../domain/types';
+import { Ocorrencia, TipoMotivoAfastamento } from '../domain/types';
+import { MessageService } from 'src/app/v2/services/message.service';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -20,9 +21,9 @@ export interface SelectOption { value: string; label: string; selected?: boolean
 })
 export class OcorrenciaV2ListPage implements OnInit {
   private readonly api = inject(OcorrenciaApiClient);
-  private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly message = inject(MessageService);
 
   readonly ocorrencias = signal<Ocorrencia[]>([]);
   readonly tipos = signal<TipoMotivoAfastamento[]>([]);
@@ -76,7 +77,10 @@ export class OcorrenciaV2ListPage implements OnInit {
         this.total.set(result?.total ?? 0);
         this.carregando.set(false);
       },
-      error: () => this.carregando.set(false),
+      error: (e) => {
+        this.carregando.set(false);
+        this.message.error(e.error?.error || 'Erro ao carregar ocorrências.');
+      },
     });
   }
 
@@ -100,11 +104,7 @@ export class OcorrenciaV2ListPage implements OnInit {
     this.router.navigate(['/gestao/ocorrencia-v2/nova']);
   }
 
-  editar(id: string): void {
-    this.router.navigate(['/gestao/ocorrencia-v2/editar', id]);
-  }
-
-  readonly modal = signal<{ titulo: string; mensagem: string; bloqueada: boolean } | null>(null);
+  readonly modal = signal<{ titulo: string; mensagem: string } | null>(null);
   private pendingExclusao: Ocorrencia | null = null;
 
   excluir(ocorrencia: Ocorrencia): void {
@@ -117,29 +117,24 @@ export class OcorrenciaV2ListPage implements OnInit {
     }).subscribe({
       next: (impacto) => {
         if (impacto.operacao_bloqueada) {
-          this.modal.set({
-            titulo: 'Operação bloqueada',
-            mensagem: 'Esta ocorrência não pode ser alterada ou excluída, pois impacta período avaliativo dispensado pertencente a Plano de Trabalho concluído com prazo recursal encerrado.',
-            bloqueada: true,
-          });
+          this.message.error('Não é possível excluir esta ocorrência pois foi cadastrada há mais de 1 ano.');
           return;
         }
 
-        if (impacto.gera_dispensa || impacto.remove_dispensa) {
+        if (impacto.remove_dispensa) {
           this.pendingExclusao = ocorrencia;
-          const mensagem = impacto.pt_concluido
-            ? 'A alteração desta ocorrência removerá a dispensa de registro de execução e avaliação de um ou mais períodos avaliativos. Os períodos afetados retornarão ao status anterior e o Plano de Trabalho retornará ao status "Em execução". Deseja confirmar?'
-            : 'A alteração desta ocorrência removerá a dispensa de registro de execução e avaliação de um ou mais períodos avaliativos. Os períodos afetados retornarão ao status anterior. Deseja confirmar?';
-          this.modal.set({ titulo: 'Confirmação', mensagem, bloqueada: false });
+          const mensagem = 'Com a exclusão desta ocorrência, registros de execução e avaliações de um ou mais períodos avaliativos anteriormente dispensados poderão voltar a ser exigidos. <u><strong>O(s) período(s) e o plano de trabalho voltarão aos status anteriores</strong></u>. Essa ação não poderá ser desfeita. Deseja confirmar?';
+          this.modal.set({ titulo: 'Confirmar exclusão', mensagem });
           return;
         }
 
         this.pendingExclusao = ocorrencia;
-        this.modal.set({ titulo: 'Confirmar exclusão', mensagem: 'Deseja excluir esta ocorrência?', bloqueada: false });
+        this.modal.set({ titulo: 'Confirmar exclusão', mensagem: 'Deseja excluir esta ocorrência?' });
       },
-      error: () => {
+      error: (e) => {
+        this.message.error(e.error?.error || 'Erro ao processar solicitação.');
         this.pendingExclusao = ocorrencia;
-        this.modal.set({ titulo: 'Confirmar exclusão', mensagem: 'Deseja excluir esta ocorrência?', bloqueada: false });
+        this.modal.set({ titulo: 'Confirmar exclusão', mensagem: 'Deseja excluir esta ocorrência?' });
       },
     });
   }
@@ -160,6 +155,7 @@ export class OcorrenciaV2ListPage implements OnInit {
   private executarExclusao(ocorrencia: Ocorrencia): void {
     this.api.excluir(ocorrencia.id, ocorrencia.usuario_id).subscribe({
       next: () => this.carregar(),
+      error: (e) => this.message.error(e.error?.error || 'Erro ao excluir ocorrência.'),
     });
   }
 
