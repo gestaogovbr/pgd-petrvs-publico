@@ -162,4 +162,11 @@ export class OcorrenciaV2ListPage implements OnInit {
   formatarData(data: string): string {
     return new Date(data.replace(' ', 'T')).toLocaleDateString('pt-BR');
   }
+
+  podeExcluir(oc: Ocorrencia): boolean {
+    if (!oc.created_at) return true;
+    const UM_ANO_MS = 365 * 24 * 60 * 60 * 1000;
+    const diffMs = Date.now() - new Date(oc.created_at.replace(' ', 'T')).getTime();
+    return diffMs < UM_ANO_MS;
+  }
 }

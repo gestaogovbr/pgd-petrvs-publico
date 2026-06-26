@@ -99,9 +99,11 @@
               <td>{{ oc.observacoes ?? '-' }}</td>
               <td class="text-end">
                 <div class="d-inline-flex gap-2">
+                  @if (podeExcluir(oc)) {
                   <br-button emphasis="tertiary" shape="circle" (click)="excluir(oc)" title="Excluir">
                     <i class="fa fa-trash"></i>
                   </br-button>
+                  }
                 </div>
               </td>
             </tr>
