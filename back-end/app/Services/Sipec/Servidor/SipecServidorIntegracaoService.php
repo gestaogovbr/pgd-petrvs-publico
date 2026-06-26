@@ -26,19 +26,29 @@ class SipecServidorIntegracaoService
     }
 
     /**
-     * @return array{inseridos: int, atualizados: int, descartados: int}
+     * @return array{inseridos: int, atualizados: int, descartados: int, erros: int}
      */
     public function processar(): array
     {
-        $contadores = ['inseridos' => 0, 'atualizados' => 0, 'descartados' => 0];
+        $contadores = ['inseridos' => 0, 'atualizados' => 0, 'descartados' => 0, 'erros' => 0];
 
         SipecServidor::where('processado', false)
             ->whereNull('deleted_at')
             ->chunkById(self::CHUNK_SIZE, function ($registros) use (&$contadores) {
                 foreach ($registros as $registro) {
-                    $resultado = $this->processarRegistro($registro);
-                    $contadores[$resultado]++;
-                    $registro->update(['processado' => true]);
+                    try {
+                        $resultado = $this->processarRegistro($registro);
+                        $contadores[$resultado]++;
+                        $registro->update(['processado' => true]);
+                    } catch (\Throwable $e) {
+                        $contadores['erros']++;
+                        report($e);
+                        SiapeLog::error('SIPEC: falha ao processar servidor', [
+                            'sipec_servidor_id' => $registro->id,
+                            'cpf' => $registro->cpf,
+                            'erro' => $e->getMessage(),
+                        ]);
+                    }
                 }
             });
 
