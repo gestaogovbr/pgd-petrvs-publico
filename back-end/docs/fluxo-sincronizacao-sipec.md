@@ -41,14 +41,18 @@ SincronizarSipecJob
 │    └─ deepReplaceUnidades() → INSERT/UPDATE unidades
 │    └─ Ativa unidades reativadas
 │
-├─ FASE 2: IntegracaoSipecService::retornarServidores()
-│    └─ Lê sipec_servidores (processado=false)
-│    └─ Parseia JSON → formato Pessoas[] (pessoal + funcionais)
-│    └─ Siape\Servidor\Integracao::processar() → popula integracao_servidores
-│    └─ ProcessadorAtualizacaoDadosSiapeService::processar()
-│         ├─ processarDadosPessoais() → UPDATE usuarios
-│         ├─ processarLotacoes() → UPDATE unidades_integrantes
-│         └─ cadastrarUsuariosAusentes() → INSERT usuarios + lotações
+├─ FASE 2: Processamento de Servidores (services dedicados SIPEC)
+│    ├─ SipecServidorIntegracaoService::processar()
+│    │    └─ Lê sipec_servidores (processado=false) em chunks de 100
+│    │    └─ Parseia JSON via ServidorSipecDTO::fromServidor()
+│    │    └─ Upsert em integracao_servidores (por CPF+matrícula)
+│    │    └─ Normaliza: email, participaPGD, modalidadePGD (via ModalidadePgd::normalize), funcoes (JSON)
+│    │    └─ Marca processado=true; try/catch por registro
+│    │
+│    └─ SipecServidorAtualizacaoService::processar()
+│         ├─ atualizarDadosPessoais() → compara integracao_servidores vs usuarios, UPDATE divergências
+│         ├─ atualizarLotacoes() → move lotações divergentes + insere ausentes
+│         └─ cadastrarNovos() → INSERT usuarios + lotação (com controle de batch para matrículas)
 │
 └─ FASE 3: IntegracaoGestorService::atualizarGestores()
      └─ montarArrayChefias() → JOIN integracao_unidades + unidades + usuarios
@@ -71,20 +75,28 @@ SincronizarSipecJob
 |--------|-----------------|
 | `App\Jobs\SincronizarSipecJob` | Orquestra o fluxo completo (Fase 0 + dispatch de sincronização) |
 | `App\Services\Sipec\SipecService` | Client HTTP autenticado (OAuth2 JWT) para API SIPEC + Fase 0 resiliente |
-| `App\Services\Sipec\IntegracaoSipecService` | Lê tabelas intermediárias e retorna no formato esperado pelo `IntegracaoService` |
-| `App\Services\IntegracaoService` | Orquestrador de sincronização (fases 1-3), usa `integracaoServiceAdapter` |
+| `App\Services\Sipec\IntegracaoSipecService` | Lê tabelas intermediárias e retorna no formato esperado pelo `IntegracaoService` (Fases 1 e 3) |
+| `App\Services\Sipec\Servidor\SipecServidorIntegracaoService` | Fase 2a: lê `sipec_servidores`, parseia via DTO, popula `integracao_servidores` |
+| `App\Services\Sipec\Servidor\SipecServidorAtualizacaoService` | Fase 2b: compara `integracao_servidores` vs `usuarios`, aplica diffs (dados pessoais, lotações, novos) |
+| `App\DTOs\Sipec\ServidorSipecDTO` | Parsing tipado do JSON de servidores da API SIPEC |
+| `App\DTOs\Sipec\AtualizacaoDadosPessoaisDTO` | Retorno tipado de `buscarAtualizacoesDados()` |
+| `App\DTOs\Sipec\AtualizacaoLotacaoDTO` | Retorno tipado de `getAtualizacoesLotacoes()` |
+| `App\DTOs\Sipec\ServidorNaoLotadoDTO` | Retorno tipado de `getServidoresInseridosNaoLotados()` |
+| `App\DTOs\Sipec\ServidorAusenteDTO` | Retorno tipado de `getUsuariosAusentes()` |
+| `App\Support\ModalidadePgd` | Normaliza modalidade PGD (texto e código numérico → valor interno) |
+| `App\Services\IntegracaoService` | Orquestrador de sincronização (fases 1 e 3), usa `integracaoServiceAdapter` |
 | `App\Models\SipecUnidade` | Model Eloquent para `sipec_unidades` |
 | `App\Models\SipecServidor` | Model Eloquent para `sipec_servidores` |
 | `App\Models\SipecSyncCheckpoint` | Model Eloquent para checkpoint de progresso da Fase 0 |
 | `App\Exceptions\SipecApiRetryableException` | Exception para erros retryable (5XX/timeout) após esgotar tentativas |
 
-### Adapter Pattern
+### Adapter Pattern (Fases 1 e 3)
 
 O `IntegracaoService` possui uma propriedade pública `integracaoServiceAdapter`. O método `getIntegracaoAdapter()` retorna:
 - O adapter injetado (quando vindo do `SincronizarSipecJob`)
 - Fallback para `$this->IntegracaoSiapeService` (fluxo SIAPE original)
 
-Isso permite que as Fases 1-3 sejam **reutilizadas integralmente** sem duplicação.
+Isso permite que as Fases 1 e 3 sejam reutilizadas sem duplicação. A **Fase 2 foi desacoplada** e usa services dedicados (`SipecServidorIntegracaoService` + `SipecServidorAtualizacaoService`) com injeção explícita de dependências, sem herança de `ServiceBase`.
 
 ## Configuração
 
@@ -306,11 +318,17 @@ Queue: `sipec_queue`
 |---------|-------|-------|
 | Protocolo | SOAP/XML (WSO2) | REST/JSON (SIGEPE-Integra) |
 | Tabelas intermediárias | `siape_dadosUORG`, `siape_consultaDados*` | `sipec_unidades`, `sipec_servidores` |
-| Processamento XML | `ProcessaDadosSiapeBD` | N/A (JSON direto) |
-| Service de leitura | `IntegracaoSiapeService` | `IntegracaoSipecService` |
+| Processamento XML | `ProcessaDadosSiapeBD` | N/A (JSON direto via DTO) |
+| Service de leitura | `IntegracaoSiapeService` | `IntegracaoSipecService` (Fases 1,3) |
+| Fase 2 — popular integracao | `Siape\Servidor\Integracao` (trait + array manual) | `SipecServidorIntegracaoService` (DTO tipado + upsert) |
+| Fase 2 — atualizar usuarios | `ProcessadorAtualizacaoDadosSiapeService` (ServiceBase, stdClass) | `SipecServidorAtualizacaoService` (DTOs tipados, 0 PHPStan) |
+| Tratamento de erros | Catch global, tudo-ou-nada | Try/catch por registro, continua processando |
+| Transactions | Monolítica (todo o batch) | Chunks de 50 com retry(3) |
+| Tipagem | `stdClass` genérico, 13+ erros PHPStan | DTOs readonly, 0 erros PHPStan |
+| Dependências | `ServiceBase` magic properties | Injeção explícita via construtor |
 | Job | `SincronizarSiapeJob` | `SincronizarSipecJob` |
 | Queue | `siape_queue` | `sipec_queue` |
-| Fases 1-3 | `IntegracaoService::sincronizacao()` | Mesmo (via adapter) |
+| Fases 1,3 | `IntegracaoService::sincronizacao()` | Mesmo (via adapter) |
 
 ## Campos de `integracao_servidores` — Status de preenchimento via SIPEC
 
