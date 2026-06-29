@@ -246,7 +246,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         }
 
         if ($filtro->modalidadePgd !== null) {
-            $query->where('modalidade_pgd', $filtro->modalidadePgd);
+            $query->where('planos_trabalhos.modalidade_pgd', $filtro->modalidadePgd);
         }
 
         if ($filtro->status !== null) {
