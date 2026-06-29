@@ -905,8 +905,11 @@ class ServiceBase extends DynamicMethods
         if ($data['data'] == null) {
           $model::findOrFail($data['id'])->update([$data['field'] => null]);
         } else {
-          $model::findOrFail($data['id'])->addBinding(json_encode($data['data']), 'join')->update([
-            $data['field'] => DB::raw("JSON_MERGE_PATCH(IFNULL(" . preg_replace('/[^a-z0-9_]/i', '', $data['field']) . ", '{}'), ?)")
+          $field = preg_replace('/[^a-z0-9_]/i', '', $data['field']);
+          $dataJson = str_replace("'", "\\'", json_encode($data['data']));
+          
+          $model::findOrFail($data['id'])->update([
+            $data['field'] => DB::raw("JSON_MERGE_PATCH(IFNULL(" . $field . ", '{}'), '" . $dataJson . "')")
           ]);
         }
         $entity->fresh();

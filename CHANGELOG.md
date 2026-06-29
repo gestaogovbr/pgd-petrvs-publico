@@ -7,6 +7,13 @@
 - Seleção de regramento na criação/edição do Plano de Trabalho v2 redesenhada: o regramento agora é determinado com base nas datas de início e fim do PT, apresentando todos os regramentos com interseção de período em um select, com mensagem de erro caso o selecionado não cubra o período completo do plano
 - Alterada ordem dos campos na tela de criação/edição do Plano de Trabalho v2
 
+### Corrigido
+- Corrigido erro ao tentar alterar preferencias do usário
+- Corrigido erro ao buscar por lotação que não existe
+- Corrigido erro ao filtrar plano de trabalho por modalidade
+- Corrigido erro ao gerar relatório de indicadores
+- Corrigidos pequenos erros.
+
 ## 3.0.4 22/06/2026
 
 ### Adicionado
