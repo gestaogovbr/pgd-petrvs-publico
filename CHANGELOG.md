@@ -11,6 +11,7 @@
 - Corrigido cancelamento de Planos de Trabalho suspensos: PTs com status SUSPENSO agora podem ser cancelados, inclusive quando possuem consolidações finalizadas
 - Excluídos Planos de Entrega anteriores a 12/01/2026 da tela de pendências, pois possuíam regra de validação diferente
 - Corrigido link de pendência do Plano de Trabalho para direcionar corretamente para a tela v2
+- Corrigido filtro "Situação" no Relatório de Agentes Públicos para considerar usuários com `participa_pgd = não` como inativos, tornando o filtro consistente com a listagem
 - Corrigido erro ao tentar alterar preferencias do usário
 - Corrigido erro ao buscar por lotação que não existe
 - Corrigido erro ao filtrar plano de trabalho por modalidade
