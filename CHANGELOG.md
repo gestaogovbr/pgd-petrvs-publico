@@ -1,3 +1,12 @@
+## 3.0.5 29/06/2026
+
+### Adicionado
+- Validação de regramento vigente na edição do Plano de Trabalho v2 (antes só existia na criação), garantindo que o programa cobre o período completo do plano e pertence à hierarquia ascendente da unidade
+
+### Modificado
+- Seleção de regramento na criação/edição do Plano de Trabalho v2 redesenhada: o regramento agora é determinado com base nas datas de início e fim do PT, apresentando todos os regramentos com interseção de período em um select, com mensagem de erro caso o selecionado não cubra o período completo do plano
+- Alterada ordem dos campos na tela de criação/edição do Plano de Trabalho v2
+
 ## 3.0.4 22/06/2026
 
 ### Adicionado
