@@ -1,3 +1,12 @@
+## 3.0.5 29/06/2026
+
+### Corrigido
+- Corrigido erro ao tentar alterar preferencias do usário
+- Corrigido erro ao buscar por lotação que não existe
+- Corrigido erro ao filtrar plano de trabalho por modalidade
+- Corrigido erro ao gerar relatório de indicadores
+- Corrigidos pequenos erros.
+
 ## 3.0.4 22/06/2026
 
 ### Adicionado
