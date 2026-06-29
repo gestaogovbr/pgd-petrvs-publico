@@ -21,6 +21,11 @@ class DocumentoAssinaturaRepository
         return $this->readRepository->existsByDocumentoAndUsuario($documentoId, $usuarioId);
     }
 
+    public function findByDocumentoAndUsuario(string $documentoId, string $usuarioId): ?DocumentoAssinatura
+    {
+        return $this->readRepository->findByDocumentoAndUsuario($documentoId, $usuarioId);
+    }
+
     public function participanteAssinou(string $documentoId, string $participanteId): bool
     {
         return $this->readRepository->participanteAssinou($documentoId, $participanteId);
