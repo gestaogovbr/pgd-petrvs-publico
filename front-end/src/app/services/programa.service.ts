@@ -29,4 +29,12 @@ export class ProgramaService {
     return programas.find((prog: Programa) => this.programaVigente(prog));
   }
 
+  public selecionaProgramaPorPeriodo(programas: Programa[], dataInicio: string, dataFim: string): Programa | undefined {
+    return programas.find(p => String(p.data_inicio).substring(0, 10) <= dataFim && String(p.data_fim).substring(0, 10) >= dataInicio);
+  }
+
+  public programaCobrePeriodo(programa: Programa, dataInicio: string, dataFim: string): boolean {
+    return String(programa.data_inicio).substring(0, 10) <= dataInicio && String(programa.data_fim).substring(0, 10) >= dataFim;
+  }
+
 }

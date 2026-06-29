@@ -246,7 +246,7 @@ TEXT;
 
         $situacaoSiape = $this->extractWhere($data, 'situacao');
         if (isset($situacaoSiape[2])) {
-            $sql .= ' and ( `u`.`situacao_siape` = ? )';
+            $sql .= " and (CASE WHEN `u`.`participa_pgd` = 'não' THEN 'INATIVO' ELSE `u`.`situacao_siape` END) = ?";
             $params[] = $situacaoSiape[2];
         }
 

@@ -394,6 +394,15 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                         $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $q) use ($condition) {
                             $q->whereIn('atribuicao', $condition[2]);
                         });
+                    } elseif ($condition[0] == "areasTrabalhoFilter") {
+                        $unidadeIds = $condition[1];
+                        $subordinadas = $condition[2];
+                        $hierarquiaIds = $subordinadas
+                            ? Unidade::naHierarquiaDe($unidadeIds)->pluck('id')
+                            : $unidadeIds;
+                        $query->whereHas('lotacoes', function (Builder $q) use ($hierarquiaIds) {
+                            $q->whereIn('unidade_id', $hierarquiaIds);
+                        });
                     } elseif ($condition[0] == "subordinadas") {
                         // Handled separately or ignored if not relevant for query building
                     } elseif ($condition[0] == "deleted_at") {

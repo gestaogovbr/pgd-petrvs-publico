@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { debounceTime, distinctUntilChanged, filter, finalize, firstValueFrom, map, merge, of, switchMap, take, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Programa } from 'src/app/models/programa.model';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { Usuario } from 'src/app/models/usuario.model';
 import { Unidade } from 'src/app/models/unidade.model';
@@ -43,9 +44,11 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   erroPeriodo = signal(false);
   readonly cloneDe = signal<string | null>(null);
   readonly cloneDeNumero = signal<number | null>(null);
+  erroRegramento = signal('');
 
-  programaNome = signal('');
-  private programaId = signal('');
+  private programas = signal<Programa[]>([]);
+  programaId = signal('');
+  programasVisiveis = signal<Programa[]>([]);
 
   readonly agentePublicoQuery = this.fb.nonNullable.control('');
   sugestoesUsuarios = signal<UsuarioSearchItem[]>([]);
@@ -78,7 +81,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   readonly formStatus = signal(this.form.status);
 
   readonly podeSalvar = computed(() =>
-    this.formStatus() === 'VALID' && !!this.programaId() && !this.saving()
+    this.formStatus() === 'VALID' && !!this.programaId() && !this.saving() && !this.erroRegramento()
   );
 
   readonly agentePublicoSomenteLeitura = computed(() => this.auth.isUsuarioParticipante());
@@ -100,6 +103,16 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   readonly modalidadesOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedModalidade();
     return this.modalidades().map(m => ({ value: m.key, label: m.value, selected: m.key === sel }));
+  });
+
+  readonly programaNome = computed(() => {
+    const id = this.programaId();
+    return this.programas().find(p => p.id === id)?.nome ?? '';
+  });
+
+  readonly programasOptions = computed<SelectOption[]>(() => {
+    const sel = this.programaId();
+    return this.programasVisiveis().map(p => ({ value: p.id, label: p.nome, selected: p.id === sel }));
   });
 
   ngOnInit(): void {
@@ -165,7 +178,10 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       this.form.controls.data_fim.valueChanges
     ).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => this.erroPeriodo.set(false));
+    ).subscribe(() => {
+      this.erroPeriodo.set(false);
+      this.selecionarProgramaPorPeriodo();
+    });
 
     if (this.cloneDe()) {
       this.carregarDadosFonte(this.cloneDe()!);
@@ -202,7 +218,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.unidades.set([]);
     this.modalidades.set([]);
     this.programaId.set('');
-    this.programaNome.set('');
+    this.programas.set([]);
     this.erroAgentePublico.set('');
     this.usuarioModalidadePgd.set('');
     this.selectedModalidade.set('');
@@ -213,7 +229,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   }
 
   salvar() {
-    if (this.saving() || this.form.invalid || !this.programaId()) return;
+    if (this.saving() || this.form.invalid || !this.programaId() || this.erroRegramento()) return;
     const { data_inicio, data_fim } = this.form.controls;
     if (data_inicio.value && data_fim.value && data_fim.value < data_inicio.value) {
       this.erroPeriodo.set(true);
@@ -244,13 +260,67 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.carregandoRegramento.set(true);
     try {
       const programas = await this.programaApi.buscarPorUnidadeExecutora(unidadeId, this.joinPrograma);
-      const programaVigente = this.programaService.selecionaProgramaVigente(programas);
-      const programa = programaVigente ?? programas[0];
-      this.programaId.set(programa?.id ?? '');
-      this.programaNome.set(programa?.nome ?? '');
+      this.programas.set(programas);
+      this.selecionarProgramaPorPeriodo();
     } finally {
       this.carregandoRegramento.set(false);
     }
+  }
+
+  private selecionarProgramaPorPeriodo() {
+    const programas = this.programas();
+    if (programas.length === 0) {
+      this.programasVisiveis.set([]);
+      return;
+    }
+    const dataInicio = this.form.controls.data_inicio.value;
+    const dataFim = this.form.controls.data_fim.value;
+    if (!dataInicio || !dataFim) {
+      this.programaId.set('');
+      this.programasVisiveis.set([]);
+      this.erroRegramento.set('Selecione as datas de vigência do plano');
+      return;
+    }
+    const visiveis = programas.filter(p =>
+      String(p.data_inicio).substring(0, 10) <= dataFim && String(p.data_fim).substring(0, 10) >= dataInicio
+    );
+    this.programasVisiveis.set(visiveis);
+    if (visiveis.length === 0) {
+      this.programaId.set('');
+      this.erroRegramento.set('O período selecionado para o plano não possui Regramento ativo. Selecione outro período.');
+      return;
+    }
+    if (visiveis.length === 1) {
+      this.programaId.set(visiveis[0].id);
+    } else if (!visiveis.find(p => p.id === this.programaId())) {
+      this.programaId.set('');
+    }
+    this.validarCoberturaProgramaSelecionado(dataInicio, dataFim);
+  }
+
+  selecionarPrograma(event: any) {
+    const id = event?.detail ?? event?.target?.value ?? event ?? '';
+    this.programaId.set(id);
+    const dataInicio = this.form.controls.data_inicio.value;
+    const dataFim = this.form.controls.data_fim.value;
+    if (dataInicio && dataFim) {
+      this.validarCoberturaProgramaSelecionado(dataInicio, dataFim);
+    }
+  }
+
+  private validarCoberturaProgramaSelecionado(dataInicio: string, dataFim: string) {
+    const programa = this.programasVisiveis().find(p => p.id === this.programaId());
+    if (!programa) {
+      this.erroRegramento.set('');
+      return;
+    }
+    if (!this.programaService.programaCobrePeriodo(programa, dataInicio, dataFim)) {
+      const inicio = String(programa.data_inicio).substring(0, 10).split('-').reverse().join('/');
+      const fim = String(programa.data_fim).substring(0, 10).split('-').reverse().join('/');
+      this.erroRegramento.set(`O período do plano de trabalho deve coincidir integralmente com o período do Regramento: ${inicio} a ${fim}`);
+      return;
+    }
+    this.erroRegramento.set('');
   }
 
   private buscarUsuarios(term: string) {
@@ -277,7 +347,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     this.erroAgentePublico.set('');
 
     if (!unidades || unidades.length === 0 || (usuario as any).participa_pgd === 'não'
-        || (!(usuario as any).participa_pgd && !usuario.modalidade_pgd)) {
+      || (!(usuario as any).participa_pgd && !usuario.modalidade_pgd)) {
       this.erroAgentePublico.set('Usuário não participante do PGD ou não habilitado para pactuar Plano de Trabalho nesta unidade.');
     }
 
