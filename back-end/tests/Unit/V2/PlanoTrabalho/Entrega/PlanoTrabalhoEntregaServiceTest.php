@@ -71,6 +71,48 @@ describe('PlanoTrabalhoEntregaService::store', function () {
     })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
 });
 
+describe('PlanoTrabalhoEntregaService::update', function () {
+
+    test('valida, atualiza e invalida TCR', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1');
+
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
+            'origem' => 'PROPRIA_UNIDADE',
+            'plano_entrega_entrega_id' => 'pee-1',
+            'descricao' => 'Entrega atualizada',
+        ], 'plano-1', 'entrega-1');
+
+        $this->storeValidator->shouldReceive('validar')->once()->with($dto);
+
+        $entrega = Mockery::mock(PlanoTrabalhoEntrega::class)->makePartial();
+        $entrega->shouldReceive('refresh')->once()->andReturnSelf();
+        $this->repository->shouldReceive('update')->once()->with('entrega-1', $dto->toArray())->andReturn($entrega);
+        $this->tcrInvalidador->shouldReceive('invalidar')->once()->with('plano-1');
+
+        $result = $this->service->update('entrega-1', $dto);
+
+        expect($result)->toBe($entrega);
+    });
+
+    test('lança NotFoundException quando entrega não existe', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1');
+
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
+            'origem' => 'PROPRIA_UNIDADE',
+            'plano_entrega_entrega_id' => 'pee-1',
+            'descricao' => 'Entrega inexistente',
+        ], 'plano-1', 'entrega-inexistente');
+
+        $this->storeValidator->shouldReceive('validar')->once()->with($dto);
+        $this->repository->shouldReceive('update')->once()->with('entrega-inexistente', $dto->toArray())->andReturn(null);
+        $this->tcrInvalidador->shouldNotReceive('invalidar');
+
+        $this->service->update('entrega-inexistente', $dto);
+    })->throws(NotFoundException::class, 'Entrega do Plano de Trabalho não encontrada.');
+});
+
 describe('PlanoTrabalhoEntregaService::destroy', function () {
 
     test('valida, remove e invalida TCR', function () {
