@@ -394,6 +394,91 @@ Campos presentes no JSON que poderiam ser úteis futuramente mas não têm colun
 | `vinculos[n].codOcorrIngressoOrgao` | Código da ocorrência de ingresso | Tipo de ingresso (ex: 50 = redistribuição) |
 | `vinculos[n].dataObito` | Data de óbito | Controle de exclusão por falecimento |
 
+## Campos do SIAPE efetivamente usados vs dead storage
+
+Análise dos campos retornados pelas APIs SOAP do SIAPE (`consultaDadosFuncionais`, `consultaDadosPessoais`, `dadosUorg`) que são de fato consumidos pelo sistema após serem persistidos nas tabelas `integracao_servidores` e `integracao_unidades`. Campos classificados como "dead storage" são persistidos mas nenhuma query, validação ou regra de negócio os lê posteriormente.
+
+### `integracao_servidores` — Campos efetivamente usados
+
+| Campo | Destino / Uso |
+|-------|---------------|
+| `cpf` | `usuarios.cpf`, identificador em todas as buscas |
+| `nome` | `usuarios.nome` (atualização e cadastro) |
+| `emailfuncional` | `usuarios.email` (atualização e cadastro) |
+| `matriculasiape` | `usuarios.matricula`, JOIN principal entre tabelas |
+| `nomeguerra` | `usuarios.apelido` |
+| `codigo_servo_exercicio` | Define lotação do servidor (JOIN com `unidades.codigo`) |
+| `ident_unica` | `usuarios.ident_unica` |
+| `modalidade_pgd` | `usuarios.modalidade_pgd` — validações de PT, relatórios, envio API |
+| `participa_pgd` | `usuarios.participa_pgd` — validações de PT, indicadores, envio API |
+| `cod_jornada` | `usuarios.cod_jornada` |
+| `nome_jornada` | `usuarios.nome_jornada` |
+| `data_modificacao` | `usuarios.data_modificacao`, controle de necessidade de atualização |
+| `data_nascimento` | `usuarios.data_nascimento` |
+| `funcoes` | Processamento de chefias (`IntegracaoGestorService`) |
+| `cpf_chefia_imediata` | Processamento de chefias |
+| `situacao_funcional` | `usuarios.situacao_funcional` (apenas no cadastro de novos) |
+| `codigo_situacao_funcional` | Filtro de ativos, classificação, contrato temporário |
+| `coduorglotacao` | Fallback quando `codigo_servo_exercicio` é vazio (contrato temporário) |
+| `sexo` | `usuarios.sexo` (apenas no cadastro de novos) |
+| `uf` | `usuarios.uf` (apenas no cadastro de novos) |
+| `telefone` | `usuarios.telefone` (apenas no cadastro de novos) |
+
+### `integracao_servidores` — Dead storage (nunca lidos após persist)
+
+| Campo | Observação |
+|-------|------------|
+| `cpf_ativo` | Hardcoded `true`, nunca consultado |
+| `vinculo_ativo` | Hardcoded `true`, nunca consultado |
+| `codigo_cargo` | Armazenado, nenhuma query o lê |
+| `coduorgexercicio` | Redundante com `codigo_servo_exercicio` — este último é o usado |
+| `codupag` | Armazenado, nenhuma query o lê |
+| `dataexercicionoorgao` | Armazenado, nunca consultado downstream |
+| `email_chefia_imediata` | Armazenado, nunca consultado (apenas `cpf_chefia_imediata` é usado) |
+
+### `integracao_unidades` — Campos efetivamente usados
+
+| Campo | Destino / Uso |
+|-------|---------------|
+| `id_servo` | `unidades.codigo`, identificador principal |
+| `pai_servo` | Hierarquia de unidades (`unidades.unidade_pai_id` via código) |
+| `codigo_siape` | Usado em `getUnidadesComChefias()`, JOIN com `unidades.codigo` |
+| `nomeuorg` | `unidades.nome` |
+| `siglauorg` | `unidades.sigla` |
+| `municipio_ibge` | Busca `cidades.codigo_ibge` → `unidades.cidade_id` |
+| `cpf_titular_autoridade_uorg` | Define chefia titular (`IntegracaoGestorService::montarArrayChefias`) |
+| `cpf_substituto_autoridade_uorg` | Consulta de unidade no front-end (`UnidadeResource`) |
+| `ativa` | Controle de ativação/inativação de unidades |
+| `data_modificacao` | Controle de necessidade de atualização |
+| `telefone` | Armazenado na `integracao_unidades`, não vai para `unidades` mas é lido em relatórios |
+| `email` | Armazenado na `integracao_unidades`, não vai para `unidades` mas é lido em relatórios |
+| `municipio_uf` | Armazenado, uso em relatórios |
+| `municipio_nome` | Armazenado, uso em relatórios |
+| `codupag` | Armazenado, uso em relatórios |
+| `regimental` | Armazenado, uso em relatórios |
+| `cnpjupag` | Armazenado, uso em relatórios |
+| `pai_siape` | Redundante com `pai_servo`, usado em contextos legados |
+
+### `integracao_unidades` — Dead storage (nunca lidos após persist)
+
+| Campo | Observação |
+|-------|------------|
+| `natureza` | Persistido, nenhuma query o lê |
+| `fronteira` | Persistido, nenhuma query o lê |
+| `fuso_horario` | Persistido, nenhuma query o lê |
+| `cod_uop` | Persistido, nenhuma query o lê |
+| `cod_unidade` | Persistido, nenhuma query o lê |
+| `tipo` | Persistido, nenhuma query o lê |
+| `tipo_desc` | Persistido, nenhuma query o lê |
+| `na_rodovia` | Persistido, nenhuma query o lê |
+| `logradouro` | Persistido, nenhuma query o lê |
+| `bairro` | Persistido, nenhuma query o lê |
+| `cep` | Persistido, nenhuma query o lê |
+| `ptn_ge_coordenada` | Persistido, nenhuma query o lê |
+| `municipio_siafi_siape` | Persistido, nenhuma query o lê |
+| `municipio_siscom` | Persistido, nenhuma query o lê |
+| `und_nu_adicional` | Persistido, nenhuma query o lê |
+
 ## Troubleshooting
 
 - **Token expirado**: O `SipecService` cacheia o token por 59 min. Se houver erro 401, chamar `SipecService::invalidateToken()`.
@@ -546,3 +631,4 @@ dispatch(new SincronizarSiapeJob($tenantId))
 │  → foreach Entidade::all()                       │
 │      → $integracaoService->sincronizar($inputs)  │
 └──────────────────────────────────────────────────┘
+
