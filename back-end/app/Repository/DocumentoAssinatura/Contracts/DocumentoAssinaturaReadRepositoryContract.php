@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Repository\DocumentoAssinatura\Contracts;
 
+use App\Models\DocumentoAssinatura;
+
 interface DocumentoAssinaturaReadRepositoryContract
 {
     public function existsByDocumentoAndUsuario(string $documentoId, string $usuarioId): bool;
+
+    public function findByDocumentoAndUsuario(string $documentoId, string $usuarioId): ?DocumentoAssinatura;
 
     public function participanteAssinou(string $documentoId, string $participanteId): bool;
 

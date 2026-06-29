@@ -6,6 +6,7 @@ use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Services\UsuarioService;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () {
@@ -513,3 +514,153 @@ describe('UsuarioService - isGestorUnidadeRecursivo (Integration)', function () 
     });
 
 });
+
+describe('UsuarioService - proxyQuery filtro hierarquia (Integration)', function () {
+
+    beforeEach(function () {
+        config(['database.default' => 'tenant']);
+        DB::setDefaultConnection('tenant');
+
+        $this->entidadeId = Str::uuid()->toString();
+        DB::connection('tenant')->table('entidades')->insertOrIgnore([
+            'id' => $this->entidadeId,
+            'sigla' => 'PQT',
+            'nome' => 'Entidade ProxyQuery Test',
+            'abrangencia' => 'NACIONAL',
+            'carga_horaria_padrao' => 8,
+            'gravar_historico_processo' => 0,
+            'layout_formulario_atividade' => 'COMPLETO',
+            'forma_contagem_carga_horaria' => 'DIA',
+            'expediente' => json_encode([]),
+            'habilitar_relatos_siape' => 0,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $this->service = new UsuarioService();
+
+        $this->gestor = proxyQueryCriarUsuario('gestor@test.com', '00000000001');
+        $this->unidadeA = proxyQueryCriarUnidade('UA', 'Unidade A', $this->entidadeId);
+        $this->unidadeFilhaA = proxyQueryCriarUnidade('UFA', 'Unidade Filha A', $this->entidadeId, $this->unidadeA->id, "/{$this->unidadeA->id}/");
+        $this->unidadeB = proxyQueryCriarUnidade('UB', 'Unidade B', $this->entidadeId);
+
+        proxyQueryCriarIntegrante($this->gestor->id, $this->unidadeA->id, 'GESTOR');
+
+        $this->usuarioSubordinado = proxyQueryCriarUsuario('sub@test.com', '00000000002');
+        proxyQueryCriarIntegrante($this->usuarioSubordinado->id, $this->unidadeFilhaA->id, 'LOTADO');
+
+        $this->usuarioDireto = proxyQueryCriarUsuario('direto@test.com', '00000000003');
+        proxyQueryCriarIntegrante($this->usuarioDireto->id, $this->unidadeA->id, 'LOTADO');
+
+        $this->usuarioFora = proxyQueryCriarUsuario('fora@test.com', '00000000004');
+        proxyQueryCriarIntegrante($this->usuarioFora->id, $this->unidadeB->id, 'LOTADO');
+    });
+
+    test('com subordinadas=true retorna usuarios lotados na unidade e subordinadas', function () {
+        $this->actingAs($this->gestor);
+
+        $query = Usuario::query();
+        $data = ['where' => [['subordinadas', '==', true]]];
+
+        $this->service->proxyQuery($query, $data);
+
+        $ids = $query->pluck('id')->all();
+
+        expect($ids)->toContain($this->usuarioDireto->id)
+            ->and($ids)->toContain($this->usuarioSubordinado->id)
+            ->and($ids)->not->toContain($this->usuarioFora->id);
+    });
+
+    test('com subordinadas=false retorna apenas usuarios lotados na unidade direta', function () {
+        $this->actingAs($this->gestor);
+
+        $query = Usuario::query();
+        $data = ['where' => [['subordinadas', '==', false]]];
+
+        $this->service->proxyQuery($query, $data);
+
+        $ids = $query->pluck('id')->all();
+
+        expect($ids)->toContain($this->usuarioDireto->id)
+            ->and($ids)->not->toContain($this->usuarioSubordinado->id)
+            ->and($ids)->not->toContain($this->usuarioFora->id);
+    });
+
+    test('usuario com MOD_USER_TUDO não aplica filtro de hierarquia', function () {
+        $admin = proxyQueryCriarUsuario('admin@test.com', '00000000005');
+
+        $adminMock = Mockery::mock($admin)->makePartial();
+        $adminMock->shouldReceive('hasPermissionTo')->with('MOD_USER_TUDO')->andReturn(true);
+        Auth::shouldReceive('user')->andReturn($adminMock);
+
+        $service = new UsuarioService();
+        $query = Usuario::query();
+        $data = ['where' => []];
+
+        $service->proxyQuery($query, $data);
+
+        $ids = $query->pluck('id')->all();
+
+        expect($ids)->toContain($this->usuarioDireto->id)
+            ->and($ids)->toContain($this->usuarioSubordinado->id)
+            ->and($ids)->toContain($this->usuarioFora->id);
+    });
+});
+
+// Helpers para proxyQuery tests
+
+function proxyQueryCriarUsuario(string $email, string $cpf): Usuario
+{
+    $user = new Usuario();
+    $user->setConnection('tenant');
+    $user->forceFill([
+        'id' => Str::uuid()->toString(),
+        'nome' => "User {$cpf}",
+        'email' => $email,
+        'cpf' => $cpf,
+        'password' => 'password',
+        'apelido' => "User {$cpf}",
+        'modalidade_pgd' => 'presencial',
+    ])->save();
+    return $user;
+}
+
+function proxyQueryCriarUnidade(string $sigla, string $nome, string $entidadeId, ?string $paiId = null, ?string $path = null): Unidade
+{
+    $unidade = new Unidade();
+    $unidade->setConnection('tenant');
+    $unidade->forceFill([
+        'id' => Str::uuid()->toString(),
+        'nome' => $nome,
+        'codigo' => $sigla,
+        'sigla' => $sigla,
+        'instituidora' => 0,
+        'atividades_arquivamento_automatico' => 0,
+        'distribuicao_forma_contagem_prazos' => 'DIAS_UTEIS',
+        'entrega_forma_contagem_prazos' => 'HORAS_UTEIS',
+        'executora' => true,
+        'entidade_id' => $entidadeId,
+        'unidade_pai_id' => $paiId,
+        'path' => $path,
+    ])->save();
+    return $unidade;
+}
+
+function proxyQueryCriarIntegrante(string $usuarioId, string $unidadeId, string $atribuicao): void
+{
+    $integrante = new UnidadeIntegrante();
+    $integrante->setConnection('tenant');
+    $integrante->forceFill([
+        'id' => Str::uuid()->toString(),
+        'unidade_id' => $unidadeId,
+        'usuario_id' => $usuarioId,
+    ])->save();
+
+    $attr = new UnidadeIntegranteAtribuicao();
+    $attr->setConnection('tenant');
+    $attr->forceFill([
+        'id' => Str::uuid()->toString(),
+        'unidade_integrante_id' => $integrante->id,
+        'atribuicao' => $atribuicao,
+    ])->save();
+}
