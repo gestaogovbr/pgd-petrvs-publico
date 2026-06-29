@@ -8,6 +8,7 @@
 - Alterada ordem dos campos na tela de criação/edição do Plano de Trabalho v2
 
 ### Corrigido
+- Corrigido cancelamento de Planos de Trabalho suspensos: PTs com status SUSPENSO agora podem ser cancelados, inclusive quando possuem consolidações finalizadas
 - Corrigido erro ao tentar alterar preferencias do usário
 - Corrigido erro ao buscar por lotação que não existe
 - Corrigido erro ao filtrar plano de trabalho por modalidade
