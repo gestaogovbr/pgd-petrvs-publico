@@ -156,6 +156,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
 
     test('registra assinatura e atualiza status para AGUARDANDO_ASSINATURA', function () {
         $this->authValidator->shouldReceive('validar')->once()->andReturn($this->plano);
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->once()->with('plano-1')->andReturn(null);
 
         /** @var Documento $documento */
         $documento = Mockery::mock(Documento::class)->makePartial();
@@ -185,6 +186,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
 
     test('atualiza status para ATIVO quando todas assinaturas realizadas', function () {
         $this->authValidator->shouldReceive('validar')->once()->andReturn($this->plano);
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->once()->with('plano-1')->andReturn(null);
 
         /** @var Documento $documento */
         $documento = Mockery::mock(Documento::class)->makePartial();
