@@ -64,13 +64,18 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             });
     }
 
-    public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection
+    public function getPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): Collection
     {
-        return $this->query()
+        $query = $this->query()
             ->where('status', StatusEnum::CONCLUIDO->value)
             ->whereIn('unidade_id', $unidadesIds)
-            ->with(['unidade:id,sigla,nome'])
-            ->get();
+            ->with(['unidade:id,sigla,nome']);
+
+        if ($criadosApos !== null) {
+            $query->where('created_at', '>', $criadosApos);
+        }
+
+        return $query->get();
     }
 
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection
@@ -94,7 +99,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->get();
     }
 
-    public function getEntregasPlanoEntregaExecucao(array $unidadesIds): Collection
+    public function getEntregasPlanoEntregaExecucao(array $unidadesIds, ?string $planoEntregaCriadoApos = null): Collection
     {
         return PlanoEntregaEntrega::query()
             ->whereHas('planoEntrega.unidade', fn ($query) => $query->whereIn('id', $unidadesIds))
@@ -104,10 +109,14 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
                     ->from(self::PROGRESSOS_TABLE)
                     ->whereColumn(self::PROGRESSO_FK_COLUMN, self::PLANO_ENTREGA_PK_COLUMN);
             })
-            ->whereHas('planoEntrega', static function ($query): void {
+            ->whereHas('planoEntrega', static function ($query) use ($planoEntregaCriadoApos): void {
                 $query
                     ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
                     ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO));
+
+                if ($planoEntregaCriadoApos !== null) {
+                    $query->where('created_at', '>', $planoEntregaCriadoApos);
+                }
             })
             ->selectRaw(
                 self::PLANO_ENTREGA_ID_COLUMN . ', COUNT(*) as ' . self::TOTAL_SEM_PROGRESSO_ALIAS

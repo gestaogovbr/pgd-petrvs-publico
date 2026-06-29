@@ -1,3 +1,24 @@
+## 3.0.5 29/06/2026
+
+### Adicionado
+- Validação de regramento vigente na edição do Plano de Trabalho v2 (antes só existia na criação), garantindo que o programa cobre o período completo do plano e pertence à hierarquia ascendente da unidade
+
+### Modificado
+- Seleção de regramento na criação/edição do Plano de Trabalho v2 redesenhada: o regramento agora é determinado com base nas datas de início e fim do PT, apresentando todos os regramentos com interseção de período em um select, com mensagem de erro caso o selecionado não cubra o período completo do plano
+- Alterada ordem dos campos na tela de criação/edição do Plano de Trabalho v2
+
+### Corrigido
+- Corrigido cancelamento de Planos de Trabalho suspensos: PTs com status SUSPENSO agora podem ser cancelados, inclusive quando possuem consolidações finalizadas
+- Excluídos Planos de Entrega anteriores a 12/01/2026 da tela de pendências, pois possuíam regra de validação diferente
+- Corrigido link de pendência do Plano de Trabalho para direcionar corretamente para a tela v2
+- Corrigido filtro "Situação" no Relatório de Agentes Públicos para considerar usuários com `participa_pgd = não` como inativos, tornando o filtro consistente com a listagem
+- Corrigido erro na assinatura do Plano de Trabalho: assinatura tornada idempotente, evitando erro ao tentar assinar um PT que o usuário já assinou
+- Corrigido erro ao tentar alterar preferencias do usário
+- Corrigido erro ao buscar por lotação que não existe
+- Corrigido erro ao filtrar plano de trabalho por modalidade
+- Corrigido erro ao gerar relatório de indicadores
+- Corrigidos pequenos erros.
+
 ## 3.0.4 22/06/2026
 
 ### Adicionado

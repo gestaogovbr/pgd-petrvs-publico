@@ -363,14 +363,15 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (guard)', fun
             ->assertStatus(404);
     });
 
-    test('retorna 422 quando usuário já assinou', function () {
+    test('retorna 201 com assinatura existente quando usuário já assinou (idempotente)', function () {
         $this->actingAs($this->usuario, 'web');
 
         postDocumento($this);
-        postAssinar($this)->assertStatus(201);
+        $primeira = postAssinar($this)->assertStatus(201);
 
-        postAssinar($this)
-            ->assertStatus(422);
+        $segunda = postAssinar($this)->assertStatus(201);
+
+        expect($segunda->json('data.id'))->toBe($primeira->json('data.id'));
     });
 });
 

@@ -187,7 +187,7 @@ test('pendencias chefe inclui subordinadas para planos de trabalho e registros d
 
     $this->planoEntregaRepository->shouldReceive('getPlanosEntregaAvaliacao')
         ->once()
-        ->with(['u2', 'u3'])
+        ->with(['u2', 'u3'], Mockery::any())
         ->andReturn(new Collection());
     $this->planoEntregaRepository->shouldReceive('getPlanosEntregaHomologacao')
         ->once()
@@ -195,7 +195,7 @@ test('pendencias chefe inclui subordinadas para planos de trabalho e registros d
         ->andReturn(new Collection());
     $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaExecucao')
         ->once()
-        ->with(['u2', 'u3'])
+        ->with(['u2', 'u3'], Mockery::any())
         ->andReturn(new Collection());
     $this->planoEntregaRepository->shouldReceive('getEntregasPlanoEntregaHomologacao')->andReturn(new Collection());
 

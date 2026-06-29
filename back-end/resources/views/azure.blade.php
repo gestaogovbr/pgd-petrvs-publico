@@ -10,7 +10,6 @@
             setTimeout(() => window.close(), 1000);
         }
     </script>
-    <link rel="stylesheet" href="styles.css">
 </head>
 <body onload="loginFinished()">
     Redirecionando . . .

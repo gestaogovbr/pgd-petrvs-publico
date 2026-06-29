@@ -73,8 +73,8 @@ export class HomeExecucaoComponent implements OnInit {
     }
   }
 
-  public abrirConsolidacao() {
-    this.go.navigate({route: ['gestao', 'plano-trabalho', 'consolidacao']});
+  public abrirConsolidacao(grupo: { plano_trabalho: any, pendencias: any[] }) {
+    this.go.navigate({route: ['gestao', 'plano-trabalho-v2', 'consultar', grupo.plano_trabalho?.id]});
   }
 
   public abrirRecurso(recurso: any) {
