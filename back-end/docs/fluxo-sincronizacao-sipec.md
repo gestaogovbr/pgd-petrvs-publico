@@ -90,6 +90,16 @@ SincronizarSipecJob
 | `App\Models\SipecSyncCheckpoint` | Model Eloquent para checkpoint de progresso da Fase 0 |
 | `App\Exceptions\SipecApiRetryableException` | Exception para erros retryable (5XX/timeout) após esgotar tentativas |
 
+### Repositories (Fase 0)
+
+| Repository | Responsabilidade |
+|---|---|
+| `App\Repository\SipecUnidadeRepository` | Persistência de unidades SIPEC (`updateOrCreateByCodigo`) |
+| `App\Repository\SipecServidorRepository` | Persistência de servidores SIPEC (`updateOrCreateByCpfAndMatricula`) |
+| `App\Repository\SipecSyncCheckpointRepository` | Gerenciamento do checkpoint (`firstOrCreateByTenantId`, `updateByTenantId`, `deleteByTenantId`) |
+
+O `SipecService` não acessa models diretamente para persistência — toda escrita/leitura é delegada aos repositories, tornando-o testável com mocks via DI.
+
 ### Adapter Pattern (Fases 1 e 3)
 
 O `IntegracaoService` possui uma propriedade pública `integracaoServiceAdapter`. O método `getIntegracaoAdapter()` retorna:
@@ -147,6 +157,8 @@ Ambos endpoints suportam `page` e `size` como query params. O `SipecService` pag
 | 4XX (client error) | Fail fast — não retenta | — |
 | 5XX (server error) | 3 tentativas, backoff exponencial longo | 5s → 15s → 45s |
 | cURL/timeout (rede) | 3 tentativas, backoff exponencial curto | 2s → 4s → 8s |
+
+O delay entre tentativas é executado via método `retrySleep(int $seconds)` (protected), permitindo override em testes unitários para eliminar espera real.
 
 Após esgotar tentativas, lança `SipecApiRetryableException`. O checkpoint preserva o progresso e a próxima execução do job retoma da página seguinte à última salva.
 

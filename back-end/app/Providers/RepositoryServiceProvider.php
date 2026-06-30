@@ -123,6 +123,18 @@ use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryCo
 use App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository;
 use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
 use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
+use App\Repository\SipecUnidade\Contracts\SipecUnidadeReadRepositoryContract;
+use App\Repository\SipecUnidade\Contracts\SipecUnidadeWriteRepositoryContract;
+use App\Repository\SipecUnidade\Eloquent\EloquentSipecUnidadeReadRepository;
+use App\Repository\SipecUnidade\Eloquent\EloquentSipecUnidadeWriteRepository;
+use App\Repository\SipecServidor\Contracts\SipecServidorReadRepositoryContract;
+use App\Repository\SipecServidor\Contracts\SipecServidorWriteRepositoryContract;
+use App\Repository\SipecServidor\Eloquent\EloquentSipecServidorReadRepository;
+use App\Repository\SipecServidor\Eloquent\EloquentSipecServidorWriteRepository;
+use App\Repository\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointReadRepositoryContract;
+use App\Repository\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteRepositoryContract;
+use App\Repository\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointReadRepository;
+use App\Repository\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointWriteRepository;
 
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
@@ -466,6 +478,32 @@ final class RepositoryServiceProvider extends ServiceProvider
             EloquentEnvioPlanoTrabalhoReadRepository::class,
         );
 
+        $this->app->bind(
+            SipecUnidadeReadRepositoryContract::class,
+            EloquentSipecUnidadeReadRepository::class,
+        );
+        $this->app->bind(
+            SipecUnidadeWriteRepositoryContract::class,
+            EloquentSipecUnidadeWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SipecServidorReadRepositoryContract::class,
+            EloquentSipecServidorReadRepository::class,
+        );
+        $this->app->bind(
+            SipecServidorWriteRepositoryContract::class,
+            EloquentSipecServidorWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SipecSyncCheckpointReadRepositoryContract::class,
+            EloquentSipecSyncCheckpointReadRepository::class,
+        );
+        $this->app->bind(
+            SipecSyncCheckpointWriteRepositoryContract::class,
+            EloquentSipecSyncCheckpointWriteRepository::class,
+        );
     }
 
     public function boot(): void

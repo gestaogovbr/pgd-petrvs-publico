@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\RequestConectaGovException;
 use App\Exceptions\SipecApiRetryableException;
-use App\Models\SipecSyncCheckpoint;
-use App\Models\SipecUnidade;
-use App\Models\SipecServidor;
+use App\Repository\SipecUnidadeRepository;
+use App\Repository\SipecServidorRepository;
+use App\Repository\SipecSyncCheckpointRepository;
 
 class SipecService
 {
@@ -25,6 +25,10 @@ class SipecService
     private static ?string $token = null;
     private static $tokenExpiresAt = null;
 
+    private SipecUnidadeRepository $sipecUnidadeRepository;
+    private SipecServidorRepository $sipecServidorRepository;
+    private SipecSyncCheckpointRepository $checkpointRepository;
+
     public function __construct(?array $config = null)
     {
         $config = $config ?? config('integracao.sipec');
@@ -35,6 +39,10 @@ class SipecService
         $this->codUorg = $config['codUorg'] ?? '';
         $this->codOrgao = $config['codOrgao'] ?? '';
         $this->authorizationHeader = 'Basic ' . base64_encode($this->client . ':' . $this->secret);
+
+        $this->sipecUnidadeRepository = app(SipecUnidadeRepository::class);
+        $this->sipecServidorRepository = app(SipecServidorRepository::class);
+        $this->checkpointRepository = app(SipecSyncCheckpointRepository::class);
     }
 
     public function getToken(): string
@@ -195,7 +203,7 @@ class SipecService
     /**
      * Executa requisição GET autenticada na API SIPEC.
      */
-    private function executarGet(string $url, string $token): array
+    protected function executarGet(string $url, string $token): array
     {
         $curl = curl_init();
 
@@ -250,22 +258,20 @@ class SipecService
         }
 
         try {
-            $checkpoint = SipecSyncCheckpoint::firstOrCreate(
-                ['tenant_id' => $tenantId],
-                ['etapa' => 'unidades', 'ultima_pagina' => 0]
-            );
+            $checkpoint = $this->checkpointRepository->firstOrCreateByTenantId($tenantId, 'unidades', 0);
 
             $totalUnidades = 0;
             $totalServidores = 0;
 
             if ($checkpoint->etapa === 'unidades') {
-                $totalUnidades = $this->coletarUnidadesPaginado($checkpoint);
-                $checkpoint->update(['etapa' => 'servidores', 'ultima_pagina' => 0, 'total_paginas' => null]);
+                $totalUnidades = $this->coletarUnidadesPaginado($tenantId, $checkpoint->ultima_pagina);
+                $this->checkpointRepository->updateByTenantId($tenantId, 'servidores', 0, null);
+                $checkpoint = $this->checkpointRepository->findByTenantId($tenantId);
             }
 
             if ($checkpoint->etapa === 'servidores') {
-                $totalServidores = $this->coletarServidoresPaginado($checkpoint);
-                $checkpoint->update(['etapa' => 'completo']);
+                $totalServidores = $this->coletarServidoresPaginado($tenantId, $checkpoint->ultima_pagina ?? 0);
+                $this->checkpointRepository->updateByTenantId($tenantId, 'completo', 0, null);
             }
 
             return ['status' => 'completo', 'unidades' => $totalUnidades, 'servidores' => $totalServidores];
@@ -279,12 +285,12 @@ class SipecService
      */
     public function resetarCheckpoint(?string $tenantId = null): void
     {
-        SipecSyncCheckpoint::where('tenant_id', $tenantId)->delete();
+        $this->checkpointRepository->deleteByTenantId($tenantId);
     }
 
-    private function coletarUnidadesPaginado(SipecSyncCheckpoint $checkpoint): int
+    private function coletarUnidadesPaginado(?string $tenantId, int $startPage): int
     {
-        $page = $checkpoint->ultima_pagina;
+        $page = $startPage;
         $size = 100;
         $total = 0;
 
@@ -301,27 +307,25 @@ class SipecService
             $totalPages = $data['totalPages'] ?? 1;
 
             foreach ($itens as $item) {
-                SipecUnidade::updateOrCreate(
-                    ['codigo' => (string) ($item['codUorg'] ?? '')],
-                    [
-                        'response' => json_encode($item, JSON_UNESCAPED_UNICODE),
-                        'processado' => false,
-                        'data_modificacao' => $item['dataUltimaTransacao'] ?? null,
-                    ]
+                $this->sipecUnidadeRepository->updateOrCreateByCodigo(
+                    (string) ($item['codUorg'] ?? ''),
+                    json_encode($item, JSON_UNESCAPED_UNICODE),
+                    false,
+                    $item['dataUltimaTransacao'] ?? null
                 );
                 $total++;
             }
 
-            $checkpoint->update(['ultima_pagina' => $page + 1, 'total_paginas' => $totalPages]);
+            $this->checkpointRepository->updateByTenantId($tenantId, 'unidades', $page + 1, $totalPages);
             $page++;
         } while ($page < $totalPages);
 
         return $total;
     }
 
-    private function coletarServidoresPaginado(SipecSyncCheckpoint $checkpoint): int
+    private function coletarServidoresPaginado(?string $tenantId, int $startPage): int
     {
-        $page = $checkpoint->ultima_pagina;
+        $page = $startPage;
         $size = 100;
         $total = 0;
 
@@ -345,19 +349,18 @@ class SipecService
                 $matricula = isset($primeiroVinculo['matriculaSiape']) ? (string) $primeiroVinculo['matriculaSiape'] : null;
 
                 if ($cpf) {
-                    SipecServidor::updateOrCreate(
-                        ['cpf' => $cpf, 'matricula' => $matricula],
-                        [
-                            'response' => json_encode($item, JSON_UNESCAPED_UNICODE),
-                            'processado' => false,
-                            'data_modificacao' => $primeiroVinculo['dataUltimaTransacao'] ?? null,
-                        ]
+                    $this->sipecServidorRepository->updateOrCreateByCpfAndMatricula(
+                        $cpf,
+                        $matricula,
+                        json_encode($item, JSON_UNESCAPED_UNICODE),
+                        false,
+                        $primeiroVinculo['dataUltimaTransacao'] ?? null
                     );
                     $total++;
                 }
             }
 
-            $checkpoint->update(['ultima_pagina' => $page + 1, 'total_paginas' => $totalPages]);
+            $this->checkpointRepository->updateByTenantId($tenantId, 'servidores', $page + 1, $totalPages);
             $page++;
         } while ($page < $totalPages);
 
@@ -370,7 +373,7 @@ class SipecService
      * - 4XX: fail fast (não retryable)
      * - cURL error: retry com backoff curto (2s, 4s, 8s)
      */
-    private function executarGetComRetry(string $url, int $maxRetries = 3): array
+    protected function executarGetComRetry(string $url, int $maxRetries = 3): array
     {
         $attempt = 0;
 
@@ -409,9 +412,17 @@ class SipecService
                     'delay_seconds' => $delay,
                 ]);
 
-                sleep($delay);
+                $this->retrySleep($delay);
             }
         }
+    }
+
+    /**
+     * Pausa entre tentativas de retry. Extraído para permitir override em testes.
+     */
+    protected function retrySleep(int $seconds): void
+    {
+        sleep($seconds);
     }
 
     /**
