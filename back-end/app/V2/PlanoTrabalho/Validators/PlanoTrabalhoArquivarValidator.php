@@ -10,12 +10,15 @@ use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
+use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
 use App\V2\Traits\ValidaAutorizacaoTrait;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class PlanoTrabalhoArquivarValidator
 {
@@ -28,6 +31,7 @@ class PlanoTrabalhoArquivarValidator
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly UnidadeRepository $unidadeRepository,
         private readonly UsuarioRepository $usuarioRepository,
+        private readonly DispensaAvaliacaoPolicy $dispensaPolicy,
     ) {}
 
 
@@ -68,7 +72,40 @@ class PlanoTrabalhoArquivarValidator
             return;
         }
 
+        if ($plano->status === StatusEnum::CONCLUIDO->value && !$resumo->todosAvaliados && !$resumo->avaliacaoRecente) {
+            if ($this->naoAvaliadosSaoDispensados($plano)) {
+                return;
+            }
+        }
+
         throw new ValidateException('Este Plano de Trabalho não atende aos requisitos para arquivamento.');
+    }
+
+    private function naoAvaliadosSaoDispensados(PlanoTrabalho $plano): bool
+    {
+        $vigencia = CarbonPeriod::create(
+            Carbon::parse($plano->data_inicio)->startOfDay(),
+            Carbon::parse($plano->data_fim)->startOfDay(),
+        );
+
+        $consolidacoes = $this->consolidacaoRepository->findConsolidacoesVigentes($plano->id, $plano->encerrado_at);
+        $naoAvaliadas = $consolidacoes->filter(
+            fn (PlanoTrabalhoConsolidacao $c) => $c->status !== StatusEnum::AVALIADO->value
+        );
+
+        if ($naoAvaliadas->isEmpty()) {
+            return true;
+        }
+
+        $dispensadasIds = $this->dispensaPolicy->consolidacoesDispensadas(
+            $plano->usuario_id,
+            $vigencia,
+            $consolidacoes,
+        );
+
+        return $naoAvaliadas->every(
+            fn (PlanoTrabalhoConsolidacao $c) => in_array($c->id, $dispensadasIds, true)
+        );
     }
 
     private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void
