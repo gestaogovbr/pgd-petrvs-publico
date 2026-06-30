@@ -16,14 +16,20 @@ final class EloquentSipecServidorReadRepository extends AbstractEloquentReadRepo
         $this->model = $model;
     }
 
-    /**
-     * @return SipecServidor|null
-     */
     public function findByCpfAndMatricula(string $cpf, ?string $matricula): ?Model
     {
+        /** @var SipecServidor|null */
         return $this->query()
             ->where('cpf', $cpf)
             ->where('matricula', $matricula)
             ->first();
+    }
+
+    public function chunkNaoProcessados(int $chunkSize, callable $callback): void
+    {
+        $this->query()
+            ->where('processado', false)
+            ->whereNull('deleted_at')
+            ->chunkById($chunkSize, $callback);
     }
 }

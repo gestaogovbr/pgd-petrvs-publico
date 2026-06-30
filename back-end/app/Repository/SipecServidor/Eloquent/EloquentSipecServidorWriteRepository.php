@@ -16,11 +16,9 @@ final class EloquentSipecServidorWriteRepository extends AbstractEloquentWriteRe
         $this->model = $model;
     }
 
-    /**
-     * @return SipecServidor
-     */
     public function updateOrCreateByCpfAndMatricula(string $cpf, ?string $matricula, string $response, bool $processado, ?string $dataModificacao): Model
     {
+        /** @var SipecServidor */
         return $this->model->newQuery()->updateOrCreate(
             ['cpf' => $cpf, 'matricula' => $matricula],
             [
@@ -29,5 +27,10 @@ final class EloquentSipecServidorWriteRepository extends AbstractEloquentWriteRe
                 'data_modificacao' => $dataModificacao,
             ]
         );
+    }
+
+    public function marcarComoProcessado(SipecServidor $registro): bool
+    {
+        return $registro->update(['processado' => true]);
     }
 }

@@ -10,6 +10,7 @@ use App\Facades\SiapeLog;
 use App\Models\IntegracaoServidor;
 use App\Models\SipecServidor;
 use App\Repository\IntegracaoServidorRepository;
+use App\Repository\SipecServidorRepository;
 use App\Support\ModalidadePgd;
 
 /**
@@ -22,6 +23,7 @@ class SipecServidorIntegracaoService
 
     public function __construct(
         private readonly IntegracaoServidorRepository $integracaoServidorRepository,
+        private readonly SipecServidorRepository $sipecServidorRepository,
     ) {
     }
 
@@ -32,25 +34,23 @@ class SipecServidorIntegracaoService
     {
         $contadores = ['inseridos' => 0, 'atualizados' => 0, 'descartados' => 0, 'erros' => 0];
 
-        SipecServidor::where('processado', false)
-            ->whereNull('deleted_at')
-            ->chunkById(self::CHUNK_SIZE, function ($registros) use (&$contadores) {
-                foreach ($registros as $registro) {
-                    try {
-                        $resultado = $this->processarRegistro($registro);
-                        $contadores[$resultado]++;
-                        $registro->update(['processado' => true]);
-                    } catch (\Throwable $e) {
-                        $contadores['erros']++;
-                        report($e);
-                        SiapeLog::error('SIPEC: falha ao processar servidor', [
-                            'sipec_servidor_id' => $registro->id,
-                            'cpf' => $registro->cpf,
-                            'erro' => $e->getMessage(),
-                        ]);
-                    }
+        $this->sipecServidorRepository->chunkNaoProcessados(self::CHUNK_SIZE, function ($registros) use (&$contadores) {
+            foreach ($registros as $registro) {
+                try {
+                    $resultado = $this->processarRegistro($registro);
+                    $contadores[$resultado]++;
+                    $this->sipecServidorRepository->marcarComoProcessado($registro);
+                } catch (\Throwable $e) {
+                    $contadores['erros']++;
+                    report($e);
+                    SiapeLog::error('SIPEC: falha ao processar servidor', [
+                        'sipec_servidor_id' => $registro->id,
+                        'cpf' => $registro->cpf,
+                        'erro' => $e->getMessage(),
+                    ]);
                 }
-            });
+            }
+        });
 
         SiapeLog::info('SIPEC Servidor Integração: processamento concluído', $contadores);
 

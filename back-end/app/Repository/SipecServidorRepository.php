@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\SipecServidor;
 use App\Repository\SipecServidor\Contracts\SipecServidorReadRepositoryContract;
 use App\Repository\SipecServidor\Contracts\SipecServidorWriteRepositoryContract;
-use Illuminate\Database\Eloquent\Model;
 
 class SipecServidorRepository
 {
@@ -17,18 +17,30 @@ class SipecServidorRepository
     }
 
     /**
-     * @return Model|null
+     * @return SipecServidor|null
      */
-    public function findByCpfAndMatricula(string $cpf, ?string $matricula): ?Model
+    public function findByCpfAndMatricula(string $cpf, ?string $matricula): ?SipecServidor
     {
+        /** @var SipecServidor|null */
         return $this->readRepository->findByCpfAndMatricula($cpf, $matricula);
     }
 
     /**
-     * @return Model
+     * @return SipecServidor
      */
-    public function updateOrCreateByCpfAndMatricula(string $cpf, ?string $matricula, string $response, bool $processado, ?string $dataModificacao): Model
+    public function updateOrCreateByCpfAndMatricula(string $cpf, ?string $matricula, string $response, bool $processado, ?string $dataModificacao): SipecServidor
     {
+        /** @var SipecServidor */
         return $this->writeRepository->updateOrCreateByCpfAndMatricula($cpf, $matricula, $response, $processado, $dataModificacao);
+    }
+
+    public function chunkNaoProcessados(int $chunkSize, callable $callback): void
+    {
+        $this->readRepository->chunkNaoProcessados($chunkSize, $callback);
+    }
+
+    public function marcarComoProcessado(SipecServidor $registro): bool
+    {
+        return $this->writeRepository->marcarComoProcessado($registro);
     }
 }
