@@ -2,11 +2,14 @@
 
 namespace Tests\IntegrationTenant\Controllers\V2;
 
+use App\Models\Afastamento;
 use App\V2\Ocorrencia\OcorrenciaController;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
 use App\Models\TipoMotivoAfastamento;
+use App\Models\UnidadeIntegrante;
+use App\Models\UnidadeIntegranteAtribuicao as Atribuicao;
 use App\Models\Usuario;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -200,36 +203,21 @@ describe('Hierarquia: gestor opera sobre usuários de unidades subordinadas', fu
         $this->unidadePai = \App\Models\Unidade::factory()->create();
         $this->unidadeFilha = \App\Models\Unidade::factory()->create(['unidade_pai_id' => $this->unidadePai->id]);
 
-        // Gestor: lotado + atribuição GESTOR na unidade pai
-        $integranteGestorId = Str::uuid()->toString();
-        DB::connection('tenant')->table('unidades_integrantes')->insert([
-            'id' => $integranteGestorId,
-            'unidade_id' => $this->unidadePai->id,
-            'usuario_id' => $this->usuario->id,
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
-        DB::connection('tenant')->table('unidades_integrantes_atribuicoes')->insert([
-            'id' => Str::uuid()->toString(),
-            'unidade_integrante_id' => $integranteGestorId,
-            'atribuicao' => 'GESTOR',
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
+        // Gestor: atribuição GESTOR na unidade pai
+        Atribuicao::factory()
+            ->paraUsuarioUnidade($this->usuario->id, $this->unidadePai->id)
+            ->gestor()
+            ->create();
 
         // Subordinado: lotado na unidade filha
         $this->subordinado = Usuario::factory()->create();
-        $integranteSubordinadoId = Str::uuid()->toString();
-        DB::connection('tenant')->table('unidades_integrantes')->insert([
-            'id' => $integranteSubordinadoId,
-            'unidade_id' => $this->unidadeFilha->id,
-            'usuario_id' => $this->subordinado->id,
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
-        DB::connection('tenant')->table('unidades_integrantes_atribuicoes')->insert([
-            'id' => Str::uuid()->toString(),
-            'unidade_integrante_id' => $integranteSubordinadoId,
-            'atribuicao' => 'LOTADO',
-            'created_at' => now(), 'updated_at' => now(),
-        ]);
+        Atribuicao::factory()
+            ->paraUsuarioUnidade($this->subordinado->id, $this->unidadeFilha->id)
+            ->lotado()
+            ->create();
+
+        $this->unlistedSubordinado = Usuario::factory()->create(); // Sem atribuição: não é subordinado do gestor
+        UnidadeIntegrante::create(['usuario_id' => $this->unlistedSubordinado->id, 'unidade_id' => $this->unidadeFilha->id]);
     });
 
     test('agentes retorna subordinado de unidade filha', function () {
@@ -240,6 +228,7 @@ describe('Hierarquia: gestor opera sobre usuários de unidades subordinadas', fu
         $ids = collect($response->json('data'))->pluck('id')->toArray();
         expect($ids)->toContain($this->subordinado->id);
         expect($ids)->toContain($this->usuario->id);
+        expect($ids)->not->toContain($this->unlistedSubordinado->id);
     });
 
     test('gestor cria ocorrência para subordinado em unidade filha', function () {
@@ -271,6 +260,8 @@ describe('Hierarquia: gestor opera sobre usuários de unidades subordinadas', fu
             'observacoes' => 'Visível ao gestor',
             'created_at' => now(), 'updated_at' => now(),
         ]);
+        
+        $unlistedAfatamento = Afastamento::factory()->create(['usuario_id' => $this->unlistedSubordinado->id]);
 
         $response = $this->getJson('/api/__tests/v2/ocorrencia?page=1&size=50');
 
@@ -278,6 +269,7 @@ describe('Hierarquia: gestor opera sobre usuários de unidades subordinadas', fu
 
         $observacoes = collect($response->json('data.data'))->pluck('observacoes')->toArray();
         expect($observacoes)->toContain('Visível ao gestor');
+        expect($observacoes)->not->toContain($unlistedAfatamento->observacoes);
     });
 
     test('gestor sem vínculo com o subordinado não pode criar ocorrência', function () {

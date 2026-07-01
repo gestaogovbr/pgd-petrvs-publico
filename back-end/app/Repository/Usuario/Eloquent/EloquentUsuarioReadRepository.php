@@ -484,7 +484,10 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             $query->where('id', $usuarioId);
         } else {
             $query->where('id', $usuarioId)
-                ->orWhereHas('unidadesIntegrantes', fn ($q) => $q->whereIn('unidade_id', $unidadeIds));
+                ->orWhereHas('unidadesIntegrantes', fn ($q) => $q
+                    ->whereIn('unidade_id', $unidadeIds)
+                    ->has('atribuicoes')
+                );
         }
 
         return $query->orderBy('nome')->get(['id', 'nome']);
