@@ -1,0 +1,32 @@
+.painel-lateral {
+  &__title {
+    font-size: 1rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  &__section {
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+    border-top: 1px solid #e5e5e5;
+
+    &:first-of-type {
+      border-top: none;
+      margin-top: 0;
+      padding-top: 0;
+    }
+  }
+
+  &__section-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #1351b4;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.detail-card--empty {
+  min-height: 120px;
+}

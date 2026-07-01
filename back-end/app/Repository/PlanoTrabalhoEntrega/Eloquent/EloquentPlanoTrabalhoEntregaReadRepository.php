@@ -8,6 +8,7 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaReadRepositoryContract;
 use App\V2\PlanoTrabalho\Entrega\DTOs\ResumoForcaTrabalhoDTO;
+use App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -43,6 +44,38 @@ class EloquentPlanoTrabalhoEntregaReadRepository extends AbstractEloquentReadRep
         return new ResumoForcaTrabalhoDTO(
             quantidadeEntregas: (int) $result->count,
             somatorioForcaTrabalho: (float) $result->somatorio,
+        );
+    }
+
+    public function somatoriosEsforcoProjetados(
+        string $planoTrabalhoId,
+        ?string $entregaIdEmEdicao,
+        float $forcaTrabalhoProjeto,
+        float $esforcoExecutadoProjeto,
+    ): SomatoriosEsforcoDTO {
+        if ($entregaIdEmEdicao === null) {
+            $result = DB::selectOne(
+                'SELECT
+                    COALESCE(SUM(forca_trabalho), 0) + ? AS somatorio_planejado,
+                    COALESCE(SUM(esforco_executado), 0) + ? AS somatorio_executado
+                 FROM planos_trabalhos_entregas
+                 WHERE plano_trabalho_id = ? AND deleted_at IS NULL',
+                [$forcaTrabalhoProjeto, $esforcoExecutadoProjeto, $planoTrabalhoId]
+            );
+        } else {
+            $result = DB::selectOne(
+                'SELECT
+                    COALESCE(SUM(CASE WHEN id = ? THEN ? ELSE forca_trabalho END), 0) AS somatorio_planejado,
+                    COALESCE(SUM(CASE WHEN id = ? THEN ? ELSE esforco_executado END), 0) AS somatorio_executado
+                 FROM planos_trabalhos_entregas
+                 WHERE plano_trabalho_id = ? AND deleted_at IS NULL',
+                [$entregaIdEmEdicao, $forcaTrabalhoProjeto, $entregaIdEmEdicao, $esforcoExecutadoProjeto, $planoTrabalhoId]
+            );
+        }
+
+        return new SomatoriosEsforcoDTO(
+            somatorioPlanejado: (float) ($result->somatorio_planejado ?? 0),
+            somatorioExecutado: (float) ($result->somatorio_executado ?? 0),
         );
     }
 }

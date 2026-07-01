@@ -13,6 +13,8 @@ use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregaPlanoItemDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregasListagemDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEquipesListagemDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEsforcoPorUnidadeDTO;
+use App\V2\Planejamento\Objetivo\DTOs\ObjetivoPainelEntregasDetalhamentoDTO;
+use App\V2\Planejamento\Objetivo\DTOs\ObjetivoPainelResumoDTO;
 
 class PlanejamentoObjetivoService
 {
@@ -20,6 +22,7 @@ class PlanejamentoObjetivoService
         private readonly PlanejamentoObjetivoReadRepositoryContract $repository,
         private readonly EsforcoTotalGraphAssembler $esforcoGraphAssembler,
         private readonly ObjetivoArvoreVisualizacaoAssembler $arvoreVisualizacaoAssembler,
+        private readonly ObjetivoPainelAssembler $painelAssembler,
     ) {}
 
     /**
@@ -99,6 +102,40 @@ class PlanejamentoObjetivoService
             objetivo_id: $objetivoId,
             itens: $itens,
         );
+    }
+
+    public function getPainelResumo(string $objetivoId): ObjetivoPainelResumoDTO
+    {
+        $this->findObjetivoOrFail($objetivoId);
+
+        $geral = $this->repository->buscarDadosGeraisPainel($objetivoId);
+        if ($geral === null) {
+            throw new NotFoundException("Objetivo com id '{$objetivoId}' não foi encontrado ou foi removido.");
+        }
+
+        $agg = $this->repository->agregarPainelEsforcoPessoasEntregas($objetivoId);
+
+        return $this->painelAssembler->montarResumo($geral, $agg);
+    }
+
+    public function getEntregasDetalhamentoPainel(
+        string $objetivoId,
+        ?string $planoEntregaEntregaId = null,
+        ?string $unidadeId = null,
+        ?string $dataInicio = null,
+        ?string $dataFim = null,
+    ): ObjetivoPainelEntregasDetalhamentoDTO {
+        $this->findObjetivoOrFail($objetivoId);
+
+        $rows = $this->repository->listarDetalhamentoEntregasPainel(
+            $objetivoId,
+            $planoEntregaEntregaId,
+            $unidadeId,
+            $dataInicio,
+            $dataFim,
+        );
+
+        return $this->painelAssembler->montarDetalhamento($objetivoId, $rows);
     }
 
     private function findObjetivoOrFail(string $objetivoId): PlanejamentoObjetivo

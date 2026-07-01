@@ -153,13 +153,13 @@
                   <p class="text-weight-semi-bold mb-3">Detalhamentos</p>
                   <div class="br-table">
                     <div class="table-wrap">
-                      <table style="table-layout: fixed; width: 100%;">
+                      <table class="execucao-detalhamentos-table">
                         <colgroup>
                           @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
-                          <col style="width: 27%">
-                          <col style="width: 27%">
-                          <col style="width: 27%">
-                          <col style="width: 19%">
+                          <col style="width: 25%">
+                          <col style="width: 25%">
+                          <col style="width: 34%">
+                          <col style="width: 16%">
                         } @else {
                           <col style="width: 33%">
                           <col style="width: 33%">
@@ -185,22 +185,48 @@
                                   <small class="text-muted">{{ getPlanoEntregaInfo(entrega).plano }}</small>
                                 </td>
                                 <td><span class="white-space">{{ entrega.descricao || '-' }}</span></td>
-                                <td>
+                                <td class="execucao-trabalho-cell">
                                   @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
                                     @if (editando || !atividade) {
-                                      <br-textarea
-                                        show-counter
-                                        class="w-100"
-                                        [maxlength]="10000"
-                                        [value]="facade.getTexto(consolidacao.id, entrega.id)"
-                                        (input)="facade.setTexto(consolidacao.id, entrega.id, $any($event.target).value)"
-                                        placeholder="Descreva o trabalho executado..."
-                                      ></br-textarea>
+                                      <div class="execucao-esforco-field mb-2">
+                                        <label class="form-label small mb-1" [attr.for]="'esforco-' + consolidacao.id + '-' + entrega.id">
+                                          % CHD executado
+                                        </label>
+                                        <input
+                                          [id]="'esforco-' + consolidacao.id + '-' + entrega.id"
+                                          type="number"
+                                          class="form-control form-control-sm execucao-esforco-input"
+                                          min="0.01"
+                                          max="999.99"
+                                          step="0.01"
+                                          [value]="facade.getEsforcoExecutado(consolidacao.id, entrega)"
+                                          (input)="facade.setEsforcoExecutado(consolidacao.id, entrega.id, $any($event.target).value)"
+                                        />
+                                        <small class="text-muted">Planejado: {{ entrega.forca_trabalho }}%</small>
+                                      </div>
+                                      <div class="execucao-trabalho-textarea">
+                                        <br-textarea
+                                          resizeVertical
+                                          show-counter
+                                          [maxlength]="10000"
+                                          [value]="facade.getTexto(consolidacao.id, entrega.id)"
+                                          (input)="facade.setTexto(consolidacao.id, entrega.id, $any($event.target).value)"
+                                          placeholder="Descreva o trabalho executado..."
+                                        ></br-textarea>
+                                      </div>
                                     } @else {
+                                      <p class="small text-muted mb-2">
+                                        <strong>% CHD executado:</strong>
+                                        {{ facade.getEsforcoExecutado(consolidacao.id, entrega) }}%
+                                      </p>
                                       <app-texto-colapsavel [texto]="atividade!.descricao" />
                                     }
                                   } @else {
                                     @if (atividade?.descricao) {
+                                      <p class="small text-muted mb-2">
+                                        <strong>% CHD executado:</strong>
+                                        {{ facade.getEsforcoExecutado(consolidacao.id, entrega) }}%
+                                      </p>
                                       <app-texto-colapsavel [texto]="atividade!.descricao" />
                                     } @else {
                                       <span>-</span>
@@ -208,19 +234,19 @@
                                   }
                                 </td>
                                 @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
-                                  <td class="text-nowrap">
+                                  <td class="execucao-acoes-cell text-nowrap">
                                     @if (editando || !atividade) {
                                       <div class="d-flex gap-1">
                                         <br-button
                                           emphasis="primary"
                                           density="small"
                                           (click)="facade.confirmarAtividade(consolidacao, entrega)"
-                                          [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id) || !facade.getTexto(consolidacao.id, entrega.id).trim()"
+                                          [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id) || !facade.getTexto(consolidacao.id, entrega.id).trim() || !facade.esforcoExecutadoValido(consolidacao.id, entrega)"
                                         >Confirmar</br-button>
                                         <br-button
                                           emphasis="secondary"
                                           density="small"
-                                          (click)="facade.cancelarEdicao(consolidacao.id, entrega.id, atividade)"
+                                          (click)="facade.cancelarEdicao(consolidacao.id, entrega.id, atividade, entrega)"
                                           [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id)"
                                         >Cancelar</br-button>
                                       </div>
@@ -229,7 +255,7 @@
                                         <br-button
                                           emphasis="secondary"
                                           density="small"
-                                          (click)="facade.iniciarEdicao(consolidacao.id, entrega.id, atividade.descricao)"
+                                          (click)="facade.iniciarEdicao(consolidacao.id, entrega.id, atividade.descricao, facade.getEsforcoExecutado(consolidacao.id, entrega))"
                                         >Editar</br-button>
                                         <br-button
                                           class="text-danger"
