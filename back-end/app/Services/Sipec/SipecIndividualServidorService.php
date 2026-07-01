@@ -47,7 +47,7 @@ class SipecIndividualServidorService extends ServiceBase
     public function __construct(
         $collection = null
     ) {
-        $this->sipecService = app(SipecService::class);
+        $this->sipecService = new SipecService();
         $this->blackListService = app(SiapeBlackListServidorService::class);
         $this->integracaoServiceFactory = app(IntegracaoServiceFactory::class);
         $this->entidadeRepository = app(EntidadeRepository::class);

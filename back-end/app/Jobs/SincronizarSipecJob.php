@@ -7,6 +7,7 @@ use App\Models\Entidade;
 use App\Services\IntegracaoService;
 use App\Services\Sipec\IntegracaoSipecService;
 use App\Services\Sipec\SipecService;
+use App\Services\TenantConfigurationsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -37,7 +38,11 @@ class SincronizarSipecJob implements ShouldQueue, ContratoJobSchedule
         try {
             Log::info("Job SincronizarSipec START");
 
-            $sipecService = app(SipecService::class);
+            $this->inicializarTenant();
+
+            $sipecService = new SipecService();
+
+            /** @var IntegracaoSipecService $integracaoSipecService */
             $integracaoSipecService = app(IntegracaoSipecService::class);
 
             // FASE 0: Coleta resiliente com checkpoint e retry
@@ -78,5 +83,19 @@ class SincronizarSipecJob implements ShouldQueue, ContratoJobSchedule
             Log::info("SincronizarSipec: Sincronizando entidade " . json_encode($inputs));
             $integracaoService->sincronizar($inputs);
         }
+    }
+
+    private function inicializarTenant(): void
+    {
+        if (!$this->tenantId) {
+            return;
+        }
+
+        $tenant = tenancy()->find($this->tenantId);
+        if ($tenant) {
+            tenancy()->initialize($tenant);
+        }
+
+        (new TenantConfigurationsService())->handle($this->tenantId);
     }
 }

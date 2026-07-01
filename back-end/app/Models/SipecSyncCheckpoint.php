@@ -2,9 +2,17 @@
 
 namespace App\Models;
 
-class SipecSyncCheckpoint extends ModelBase
+use App\Traits\AutoUuid;
+use Illuminate\Database\Eloquent\Model;
+
+class SipecSyncCheckpoint extends Model
 {
+    use AutoUuid;
+
     protected $table = 'sipec_sync_checkpoints';
+
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
         'id',

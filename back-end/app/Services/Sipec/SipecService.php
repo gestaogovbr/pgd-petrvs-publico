@@ -12,7 +12,8 @@ use App\Repository\SipecSyncCheckpointRepository;
 
 class SipecService
 {
-    private const TOKEN_TTL_MINUTES = 59;
+    private const CACHE_KEY_PREFIX = 'sipec_token:';
+    private const TOKEN_TTL_MARGIN_SECONDS = 300;
 
     private string $url;
     private string $client;
@@ -22,8 +23,8 @@ class SipecService
     private string $codOrgao;
     private string $authorizationHeader;
 
-    private static ?string $token = null;
-    private static $tokenExpiresAt = null;
+    private ?string $cachedToken = null;
+    private $cachedTokenExpiresAt = null;
 
     private SipecUnidadeRepository $sipecUnidadeRepository;
     private SipecServidorRepository $sipecServidorRepository;
@@ -47,10 +48,25 @@ class SipecService
 
     public function getToken(): string
     {
-        if (self::$token && now()->lessThan(self::$tokenExpiresAt)) {
-            return self::$token;
+        // 1. Cache em memória (mesma instância)
+        if ($this->cachedToken && now()->lessThan($this->cachedTokenExpiresAt)) {
+            return $this->cachedToken;
         }
 
+        // 2. Cache Redis (compartilhado entre processos, segregado por tenant)
+        $cacheKey = $this->getCacheKey();
+        $cached = Cache::get($cacheKey);
+        if ($cached && isset($cached['token'], $cached['expires_at'])) {
+            $expiresAt = $cached['expires_at'];
+            if (now()->timestamp < $expiresAt) {
+                $this->cachedToken = $cached['token'];
+                $this->cachedTokenExpiresAt = now()->setTimestamp($expiresAt);
+                return $this->cachedToken;
+            }
+            Cache::forget($cacheKey);
+        }
+
+        // 3. Solicitar novo token ao ConectaGov
         $curl = curl_init();
 
         curl_setopt_array($curl, [
@@ -78,12 +94,51 @@ class SipecService
         $data = json_decode($response, true);
 
         if (isset($data['access_token'])) {
-            self::$token = $data['access_token'];
-            self::$tokenExpiresAt = now()->addMinutes(self::TOKEN_TTL_MINUTES);
-            return self::$token;
+            return $this->storeToken($data['access_token']);
         }
 
         throw new RequestConectaGovException('SIPEC: Falha ao gerar token. Response: ' . $response);
+    }
+
+    /**
+     * Armazena token em memória e Redis com TTL baseado no exp do JWT.
+     */
+    private function storeToken(string $token): string
+    {
+        $ttlSeconds = $this->extractTtlFromJwt($token);
+        $expiresAt = now()->addSeconds($ttlSeconds);
+
+        $this->cachedToken = $token;
+        $this->cachedTokenExpiresAt = $expiresAt;
+
+        Cache::put($this->getCacheKey(), [
+            'token' => $token,
+            'expires_at' => $expiresAt->timestamp,
+        ], $ttlSeconds);
+
+        return $token;
+    }
+
+    /**
+     * Extrai TTL em segundos do campo `exp` do JWT, com margem de segurança.
+     * Retorna fallback de 55 minutos se não conseguir decodificar.
+     */
+    private function extractTtlFromJwt(string $jwt): int
+    {
+        $parts = explode('.', $jwt);
+        if (count($parts) < 2) {
+            return 55 * 60;
+        }
+
+        $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/')), true);
+
+        if (!is_array($payload) || !isset($payload['exp'])) {
+            return 55 * 60;
+        }
+
+        $ttl = (int) $payload['exp'] - time() - self::TOKEN_TTL_MARGIN_SECONDS;
+
+        return max($ttl, 60);
     }
 
     /**
@@ -426,11 +481,18 @@ class SipecService
     }
 
     /**
-     * Invalida o token em cache (útil para testes).
+     * Invalida o token em cache (instância + Redis).
      */
-    public static function invalidateToken(): void
+    public function invalidateToken(): void
     {
-        self::$token = null;
-        self::$tokenExpiresAt = null;
+        $this->cachedToken = null;
+        $this->cachedTokenExpiresAt = null;
+        Cache::forget($this->getCacheKey());
+    }
+
+    private function getCacheKey(): string
+    {
+        $tenantId = function_exists('tenant') ? (tenant('id') ?? 'default') : 'default';
+        return self::CACHE_KEY_PREFIX . $tenantId;
     }
 }

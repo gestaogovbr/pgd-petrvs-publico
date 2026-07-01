@@ -996,7 +996,7 @@ class UsuarioService extends ServiceBase
 
     public function consultaCPFSipec(string $cpf): array
     {
-        $sipecService = app(SipecService::class);
+        $sipecService = new SipecService();
         $servidorRaw = $sipecService->buscarServidorPorCpf($cpf);
 
         if (!$servidorRaw) {
