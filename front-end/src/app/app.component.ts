@@ -224,13 +224,6 @@ export class AppComponent implements IAppComponent {
       OCORRENCIAS: {
         name: this.lex.translate("Ocorrências"),
         permition: 'MOD_OCOR',
-        route: ['gestao', 'ocorrencia'],
-        icon: this.entity.getIcon('Ocorrencia'),
-      },
-      /* Gestão */
-      OCORRENCIAS_V2: {
-        name: this.lex.translate("Ocorrências V2"),
-        permition: 'MOD_OCOR',
         route: ['gestao', 'ocorrencia-v2'],
         icon: this.entity.getIcon('Ocorrencia'),
       },
@@ -549,7 +542,6 @@ export class AppComponent implements IAppComponent {
       },
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS),
       Object.assign({}, this.menuSchema.OCORRENCIAS),
-      Object.assign({}, this.menuSchema.OCORRENCIAS_V2),
       {
         name: this.lex.translate("Institucional"),
         permition: "MENU_GESTAO_ACESSO",
@@ -593,6 +585,7 @@ export class AppComponent implements IAppComponent {
           minha_unidade: true,
         },
       }),
+      Object.assign({}, this.menuSchema.OCORRENCIAS),
       Object.assign({}, this.menuSchema.RELATORIO_USUARIOS, {
         name: this.lex.translate("Relatório de Agentes Públicos"),
       }),
@@ -605,7 +598,6 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.INDICADORES_GESTAO,
         ].sort(this.orderMenu),
       },
-      Object.assign({}, this.menuSchema.OCORRENCIAS_V2),
     ];
 
     this.moduloAdministrador = [
