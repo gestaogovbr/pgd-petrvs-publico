@@ -7,6 +7,7 @@ namespace App\V2\PlanoTrabalho\Validators;
 use App\Enums\PerfilEnum;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\ValidateException;
+use App\Support\ModalidadePgd;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\ProgramaRepository;
 use App\Repository\UnidadeRepository;
@@ -115,7 +116,7 @@ class PlanoTrabalhoStoreValidator
     {
         $agente = $this->usuarioRepository->findById($dto->usuarioId);
 
-        if ($agente->modalidade_pgd === $dto->modalidadePgd) {
+        if (ModalidadePgd::normalize($agente->modalidade_pgd) === ModalidadePgd::normalize($dto->modalidadePgd)) {
             return;
         }
 
