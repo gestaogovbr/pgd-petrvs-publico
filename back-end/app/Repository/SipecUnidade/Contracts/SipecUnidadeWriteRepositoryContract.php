@@ -12,4 +12,6 @@ interface SipecUnidadeWriteRepositoryContract
      * @return Model
      */
     public function updateOrCreateByCodigo(string $codigo, string $response, bool $processado, ?string $dataModificacao): Model;
+
+    public function marcarComoProcessado(Model $registro): bool;
 }

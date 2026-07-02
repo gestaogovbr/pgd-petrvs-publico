@@ -31,4 +31,14 @@ class SipecUnidadeRepository
     {
         return $this->writeRepository->updateOrCreateByCodigo($codigo, $response, $processado, $dataModificacao);
     }
+
+    public function chunkNaoProcessados(int $chunkSize, callable $callback): void
+    {
+        $this->readRepository->chunkNaoProcessados($chunkSize, $callback);
+    }
+
+    public function marcarComoProcessado(Model $registro): bool
+    {
+        return $this->writeRepository->marcarComoProcessado($registro);
+    }
 }

@@ -21,6 +21,7 @@ final class EloquentSipecUnidadeWriteRepository extends AbstractEloquentWriteRep
      */
     public function updateOrCreateByCodigo(string $codigo, string $response, bool $processado, ?string $dataModificacao): Model
     {
+        /** @var SipecUnidade */
         return $this->model->newQuery()->updateOrCreate(
             ['codigo' => $codigo],
             [
@@ -29,5 +30,10 @@ final class EloquentSipecUnidadeWriteRepository extends AbstractEloquentWriteRep
                 'data_modificacao' => $dataModificacao,
             ]
         );
+    }
+
+    public function marcarComoProcessado(Model $registro): bool
+    {
+        return (bool) $registro->update(['processado' => true]);
     }
 }

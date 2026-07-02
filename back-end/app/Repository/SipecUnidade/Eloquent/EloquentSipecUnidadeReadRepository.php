@@ -21,6 +21,15 @@ final class EloquentSipecUnidadeReadRepository extends AbstractEloquentReadRepos
      */
     public function findByCodigo(string $codigo): ?Model
     {
+        /** @var SipecUnidade|null */
         return $this->query()->where('codigo', $codigo)->first();
+    }
+
+    public function chunkNaoProcessados(int $chunkSize, callable $callback): void
+    {
+        $this->query()
+            ->where('processado', false)
+            ->whereNull('deleted_at')
+            ->chunkById($chunkSize, $callback);
     }
 }

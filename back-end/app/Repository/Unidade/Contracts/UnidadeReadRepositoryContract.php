@@ -48,4 +48,9 @@ interface UnidadeReadRepositoryContract
 
     /** @return string[] */
     public function linhaAscendente(string $unidadeId): array;
+
+    /**
+     * @return Collection<int, Unidade>
+     */
+    public function findAllComCodigo(): Collection;
 }

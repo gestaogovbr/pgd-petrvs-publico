@@ -12,4 +12,6 @@ interface SipecUnidadeReadRepositoryContract
      * @return Model|null
      */
     public function findByCodigo(string $codigo): ?Model;
+
+    public function chunkNaoProcessados(int $chunkSize, callable $callback): void;
 }

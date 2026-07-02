@@ -18,16 +18,12 @@ use App\Services\UnidadeIntegranteService;
 use App\Support\ModalidadePgd;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Compara integracao_servidores com usuarios/lotações e aplica diffs.
  */
 class SipecServidorAtualizacaoService
 {
-    private const CHUNK_SIZE = 50;
-    private const TRANSACTION_RETRIES = 3;
-
     public function __construct(
         private readonly IntegracaoServidorRepository $integracaoServidorRepository,
         private readonly UsuarioRepository $usuarioRepository,
@@ -70,25 +66,23 @@ class SipecServidorAtualizacaoService
             fn(object $row) => AtualizacaoDadosPessoaisDTO::fromStdClass($row),
             $this->integracaoServidorRepository->buscarAtualizacoesDados()
         );
-        $chunks = array_chunk($atualizacoes, self::CHUNK_SIZE);
         $total = 0;
 
-        foreach ($chunks as $chunk) {
-            DB::transaction(function () use ($chunk, &$total) {
-                foreach ($chunk as $dto) {
-                    try {
-                        if ($this->aplicarAtualizacaoDadosPessoais($dto)) {
-                            $total++;
-                        }
-                    } catch (\Throwable $e) {
-                        report($e);
-                        SiapeLog::error('SIPEC: falha ao atualizar dados pessoais', [
-                            'matricula' => $dto->matriculasiape,
-                            'erro' => $e->getMessage(),
-                        ]);
-                    }
+        foreach ($atualizacoes as $dto) {
+            DB::beginTransaction();
+            try {
+                if ($this->aplicarAtualizacaoDadosPessoais($dto)) {
+                    $total++;
                 }
-            }, self::TRANSACTION_RETRIES);
+                DB::commit();
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                report($e);
+                SiapeLog::error('SIPEC: falha ao atualizar dados pessoais', [
+                    'matricula' => $dto->matriculasiape,
+                    'erro' => $e->getMessage(),
+                ]);
+            }
         }
 
         return $total;
@@ -145,30 +139,27 @@ class SipecServidorAtualizacaoService
             array_map(fn(AtualizacaoLotacaoDTO $dto) => ['usuario_id' => $dto->usuarioId, 'unidade_id' => $dto->exercicioAtualId, 'tipo' => 'movida'], $atualizacoesLotacoes),
         );
 
-        $chunks = array_chunk($registros, self::CHUNK_SIZE);
+        foreach ($registros as $registro) {
+            if (empty($registro['unidade_id'])) {
+                SiapeLog::info('SIPEC: servidor sem unidade de exercício, não será alocado', [
+                    'usuario_id' => $registro['usuario_id'],
+                ]);
+                continue;
+            }
 
-        foreach ($chunks as $chunk) {
-            DB::transaction(function () use ($chunk, &$contadores) {
-                foreach ($chunk as $registro) {
-                    try {
-                        if (empty($registro['unidade_id'])) {
-                            SiapeLog::info('SIPEC: servidor sem unidade de exercício, não será alocado', [
-                                'usuario_id' => $registro['usuario_id'],
-                            ]);
-                            continue;
-                        }
-
-                        $this->salvarLotacao($registro['usuario_id'], $registro['unidade_id']);
-                        $contadores[$registro['tipo'] === 'inserida' ? 'inseridas' : 'movidas']++;
-                    } catch (\Throwable $e) {
-                        report($e);
-                        SiapeLog::error('SIPEC: falha ao atualizar lotação', [
-                            'usuario_id' => $registro['usuario_id'],
-                            'erro' => $e->getMessage(),
-                        ]);
-                    }
-                }
-            }, self::TRANSACTION_RETRIES);
+            DB::beginTransaction();
+            try {
+                $this->salvarLotacao($registro['usuario_id'], $registro['unidade_id']);
+                $contadores[$registro['tipo'] === 'inserida' ? 'inseridas' : 'movidas']++;
+                DB::commit();
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                report($e);
+                SiapeLog::error('SIPEC: falha ao atualizar lotação', [
+                    'usuario_id' => $registro['usuario_id'],
+                    'erro' => $e->getMessage(),
+                ]);
+            }
         }
 
         return $contadores;
@@ -290,7 +281,6 @@ class SipecServidorAtualizacaoService
         }
 
         $atributos = [
-            'id' => Uuid::uuid4()->toString(),
             'cpf' => $dto->cpf,
             'nome' => $dto->nome,
             'email' => $email,

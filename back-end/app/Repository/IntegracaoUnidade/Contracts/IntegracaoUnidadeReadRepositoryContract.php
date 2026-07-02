@@ -20,4 +20,9 @@ interface IntegracaoUnidadeReadRepositoryContract
      * @return \Illuminate\Support\Collection<int, non-falsy-string>
      */
     public function getCodigosByCpfTitular(string $cpf, ?string $codigoExcluido = null): \Illuminate\Support\Collection;
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\IntegracaoUnidade>
+     */
+    public function findAllAtivas(): \Illuminate\Database\Eloquent\Collection;
 }

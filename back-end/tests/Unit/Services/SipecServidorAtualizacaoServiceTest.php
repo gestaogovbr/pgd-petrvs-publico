@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Perfil;
-use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\UnidadeRepository;
@@ -9,7 +8,6 @@ use App\Repository\UsuarioRepository;
 use App\Services\Sipec\Servidor\SipecServidorAtualizacaoService;
 use App\Services\UnidadeIntegranteService;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
@@ -36,8 +34,9 @@ function buildService(
     ?UnidadeIntegranteService $unidadeIntegranteService = null,
     ?Perfil $perfil = null,
 ): SipecServidorAtualizacaoService {
-    $p = $perfil ?? Mockery::mock(Perfil::class)->makePartial();
-    if (!isset($p->id)) {
+    $p = $perfil;
+    if ($p === null) {
+        $p = new Perfil();
         $p->id = 'perfil-participante-id';
     }
 
@@ -94,7 +93,7 @@ describe('SipecServidorAtualizacaoService - atualizarDadosPessoais', function ()
         $usuarioRepo->shouldReceive('findAllSemMatricula')->andReturn(new EloquentCollection());
         $usuarioRepo->shouldReceive('findByEmail')->andReturn(null);
 
-        DB::shouldReceive('transaction')->zeroOrMoreTimes()->andReturnUsing(fn($cb) => $cb());
+
 
         $service = buildService($integracaoRepo, $usuarioRepo);
         $resultado = $service->processar();
@@ -131,7 +130,7 @@ describe('SipecServidorAtualizacaoService - atualizarDadosPessoais', function ()
         $usuarioRepo->shouldNotReceive('update');
         $usuarioRepo->shouldReceive('findAllSemMatricula')->andReturn(new EloquentCollection());
 
-        DB::shouldReceive('transaction')->zeroOrMoreTimes()->andReturnUsing(fn($cb) => $cb());
+
 
         $service = buildService($integracaoRepo, $usuarioRepo);
         $resultado = $service->processar();
@@ -162,7 +161,7 @@ describe('SipecServidorAtualizacaoService - atualizarLotacoes', function () {
             ->with(Mockery::on(fn(array $v) => $v[0]['usuario_id'] === 'user-1' && $v[0]['unidade_id'] === 'unidade-nova-id'), false, true)
             ->once()->andReturn([]);
 
-        DB::shouldReceive('transaction')->zeroOrMoreTimes()->andReturnUsing(fn($cb) => $cb());
+
 
         $service = buildService($integracaoRepo, $usuarioRepo, null, $unidadeIntegranteService);
         $resultado = $service->processar();
@@ -188,7 +187,7 @@ describe('SipecServidorAtualizacaoService - atualizarLotacoes', function () {
         $unidadeIntegranteService = Mockery::mock(UnidadeIntegranteService::class);
         $unidadeIntegranteService->shouldReceive('salvarIntegrantes')->once()->andReturn([]);
 
-        DB::shouldReceive('transaction')->zeroOrMoreTimes()->andReturnUsing(fn($cb) => $cb());
+
 
         $service = buildService($integracaoRepo, $usuarioRepo, null, $unidadeIntegranteService);
         $resultado = $service->processar();
@@ -197,151 +196,6 @@ describe('SipecServidorAtualizacaoService - atualizarLotacoes', function () {
     });
 });
 
-describe('SipecServidorAtualizacaoService - cadastrarNovos', function () {
+// Testes de cadastrarNovos movidos para tests/IntegrationTenant/Services/SipecServidorAtualizacaoServiceTest.php
+// Requerem BD real com factories para testar corretamente o fluxo de matrículas duplicadas.
 
-    test('deve criar novo usuário quando matrícula não existe', function () {
-        setupLogMockAtualizacao();
-
-        $ausente = (object) [
-            'matricula' => '9999999', 'nome' => 'Maria Nova', 'cpf' => '98765432100',
-            'emailfuncional' => 'maria@gov.br', 'sexo' => 'FEMININO', 'uf' => 'DF',
-            'data_nascimento' => '1985-05-10', 'telefone' => null, 'apelido' => 'Maria',
-            'exercicio' => '2000', 'situacao_funcional' => 'ATIVO_PERMANENTE',
-            'data_modificacao' => '2025-06-01', 'ident_unica' => '123', 'modalidade_pgd' => '2', 'gestor' => null,
-        ];
-
-        $unidade = Mockery::mock(Unidade::class)->makePartial();
-        $unidade->id = 'unidade-2000-id';
-
-        $usuarioCriado = Mockery::mock(Usuario::class)->makePartial();
-        $usuarioCriado->id = 'new-user-id';
-
-        $integracaoRepo = Mockery::mock(IntegracaoServidorRepository::class);
-        $integracaoRepo->shouldReceive('buscarAtualizacoesDados')->andReturn([]);
-        $integracaoRepo->shouldReceive('getAtualizacoesLotacoes')->andReturn([]);
-        $integracaoRepo->shouldReceive('getServidoresInseridosNaoLotados')->andReturn([]);
-        $integracaoRepo->shouldReceive('getUsuariosAusentes')->once()->andReturn([$ausente]);
-        $integracaoRepo->shouldReceive('getMatriculaByCpf')->andReturn(null);
-
-        $usuarioRepo = Mockery::mock(UsuarioRepository::class);
-        $usuarioRepo->shouldReceive('findAllSemMatricula')->andReturn(new EloquentCollection());
-        $usuarioRepo->shouldReceive('findByCpfAndLotacao')->with('98765432100', 'unidade-2000-id', 'LOTADO')->andReturn(null);
-        $usuarioRepo->shouldReceive('findByEmail')->andReturn(null);
-        $usuarioRepo->shouldReceive('create')
-            ->with(Mockery::on(fn(array $a) => $a['cpf'] === '98765432100' && $a['matricula'] === '9999999' && $a['modalidade_pgd'] === 'parcial'))
-            ->once()->andReturn($usuarioCriado);
-
-        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('findByCodigo')->with('2000')->andReturn($unidade);
-
-        $unidadeIntegranteService = Mockery::mock(UnidadeIntegranteService::class);
-        $unidadeIntegranteService->shouldReceive('salvarIntegrantes')->once()->andReturn([]);
-
-        DB::shouldReceive('transaction')->zeroOrMoreTimes()->andReturnUsing(fn($cb) => $cb());
-
-        $service = buildService($integracaoRepo, $usuarioRepo, $unidadeRepo, $unidadeIntegranteService);
-        $resultado = $service->processar();
-
-        expect($resultado['usuarios_criados'])->toBe(1)
-            ->and($resultado['erros'])->toBe(0);
-    });
-
-    test('deve atualizar matrícula quando CPF já existe na mesma unidade sem matrícula', function () {
-        setupLogMockAtualizacao();
-
-        $ausente = (object) [
-            'matricula' => '8888888', 'nome' => 'Pedro', 'cpf' => '11122233344',
-            'emailfuncional' => null, 'sexo' => null, 'uf' => null,
-            'data_nascimento' => null, 'telefone' => null, 'apelido' => null,
-            'exercicio' => '3000', 'situacao_funcional' => 'ATIVO_PERMANENTE',
-            'data_modificacao' => null, 'ident_unica' => null, 'modalidade_pgd' => null, 'gestor' => null,
-        ];
-
-        $unidade = Mockery::mock(Unidade::class)->makePartial();
-        $unidade->id = 'unidade-3000-id';
-
-        $usuarioExistente = Mockery::mock(Usuario::class)->makePartial();
-        $usuarioExistente->id = 'existing-user-id';
-        $usuarioExistente->matricula = null;
-
-        $integracaoRepo = Mockery::mock(IntegracaoServidorRepository::class);
-        $integracaoRepo->shouldReceive('buscarAtualizacoesDados')->andReturn([]);
-        $integracaoRepo->shouldReceive('getAtualizacoesLotacoes')->andReturn([]);
-        $integracaoRepo->shouldReceive('getServidoresInseridosNaoLotados')->andReturn([]);
-        $integracaoRepo->shouldReceive('getUsuariosAusentes')->andReturn([$ausente]);
-        $integracaoRepo->shouldReceive('getMatriculaByCpf')->andReturn(null);
-
-        $usuarioRepo = Mockery::mock(UsuarioRepository::class);
-        $usuarioRepo->shouldReceive('findAllSemMatricula')->andReturn(new EloquentCollection());
-        $usuarioRepo->shouldReceive('findByCpfAndLotacao')->with('11122233344', 'unidade-3000-id', 'LOTADO')->andReturn($usuarioExistente);
-        $usuarioRepo->shouldReceive('update')->with('existing-user-id', ['matricula' => '8888888'])->once()->andReturn($usuarioExistente);
-
-        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('findByCodigo')->with('3000')->andReturn($unidade);
-
-        DB::shouldReceive('transaction')->zeroOrMoreTimes()->andReturnUsing(fn($cb) => $cb());
-
-        $service = buildService($integracaoRepo, $usuarioRepo, $unidadeRepo);
-        $resultado = $service->processar();
-
-        expect($resultado['matriculas_atualizadas'])->toBe(1)
-            ->and($resultado['usuarios_criados'])->toBe(0);
-    });
-
-    test('deve criar novo usuário quando batch já alterou matrícula do mesmo CPF+unidade', function () {
-        setupLogMockAtualizacao();
-
-        $ausente1 = (object) [
-            'matricula' => '1111111', 'nome' => 'Ana', 'cpf' => '55566677788',
-            'emailfuncional' => null, 'sexo' => null, 'uf' => null, 'data_nascimento' => null,
-            'telefone' => null, 'apelido' => null, 'exercicio' => '4000',
-            'situacao_funcional' => 'ATIVO_PERMANENTE', 'data_modificacao' => null,
-            'ident_unica' => null, 'modalidade_pgd' => null, 'gestor' => null,
-        ];
-        $ausente2 = (object) [
-            'matricula' => '2222222', 'nome' => 'Ana', 'cpf' => '55566677788',
-            'emailfuncional' => null, 'sexo' => null, 'uf' => null, 'data_nascimento' => null,
-            'telefone' => null, 'apelido' => null, 'exercicio' => '4000',
-            'situacao_funcional' => 'ATIVO_PERMANENTE', 'data_modificacao' => null,
-            'ident_unica' => null, 'modalidade_pgd' => null, 'gestor' => null,
-        ];
-
-        $unidade = Mockery::mock(Unidade::class)->makePartial();
-        $unidade->id = 'unidade-4000-id';
-
-        $usuarioExistente = Mockery::mock(Usuario::class)->makePartial();
-        $usuarioExistente->id = 'existing-id';
-        $usuarioExistente->matricula = '0000000';
-
-        $usuarioCriado = Mockery::mock(Usuario::class)->makePartial();
-        $usuarioCriado->id = 'new-id';
-
-        $integracaoRepo = Mockery::mock(IntegracaoServidorRepository::class);
-        $integracaoRepo->shouldReceive('buscarAtualizacoesDados')->andReturn([]);
-        $integracaoRepo->shouldReceive('getAtualizacoesLotacoes')->andReturn([]);
-        $integracaoRepo->shouldReceive('getServidoresInseridosNaoLotados')->andReturn([]);
-        $integracaoRepo->shouldReceive('getUsuariosAusentes')->once()->andReturn([$ausente1, $ausente2]);
-        $integracaoRepo->shouldReceive('getMatriculaByCpf')->andReturn(null);
-
-        $usuarioRepo = Mockery::mock(UsuarioRepository::class);
-        $usuarioRepo->shouldReceive('findAllSemMatricula')->andReturn(new EloquentCollection());
-        $usuarioRepo->shouldReceive('findByCpfAndLotacao')->with('55566677788', 'unidade-4000-id', 'LOTADO')->andReturn($usuarioExistente);
-        $usuarioRepo->shouldReceive('update')->with('existing-id', ['matricula' => '1111111'])->once()->andReturn($usuarioExistente);
-        $usuarioRepo->shouldReceive('findByEmail')->andReturn(null);
-        $usuarioRepo->shouldReceive('create')->once()->andReturn($usuarioCriado);
-
-        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('findByCodigo')->with('4000')->andReturn($unidade);
-
-        $unidadeIntegranteService = Mockery::mock(UnidadeIntegranteService::class);
-        $unidadeIntegranteService->shouldReceive('salvarIntegrantes')->once()->andReturn([]);
-
-        DB::shouldReceive('transaction')->zeroOrMoreTimes()->andReturnUsing(fn($cb) => $cb());
-
-        $service = buildService($integracaoRepo, $usuarioRepo, $unidadeRepo, $unidadeIntegranteService);
-        $resultado = $service->processar();
-
-        expect($resultado['matriculas_atualizadas'])->toBe(1)
-            ->and($resultado['usuarios_criados'])->toBe(1);
-    });
-});

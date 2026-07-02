@@ -9,5 +9,14 @@ namespace App\Repository\IntegracaoUnidade\Contracts;
  */
 interface IntegracaoUnidadeWriteRepositoryContract
 {
-    //
+    /**
+     * @param array<string, mixed> $attributes
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function create(array $attributes): \Illuminate\Database\Eloquent\Model;
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function updateByIdServo(string $idServo, array $attributes): bool;
 }

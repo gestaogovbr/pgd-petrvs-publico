@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\DTOs\Sipec;
 
+use App\Services\UtilService;
+
 /**
  * Mapeamento de UnidadeDetalhadaDTO (SIGEPE-Integra) → IntegracaoUnidade
  */
@@ -89,17 +91,17 @@ final readonly class UnidadeSipecDTO
             'codigo_siape'                  => $this->codigoSiape,
             'cod_unidade'                   => $this->codUnidade,
             'codupag'                       => $this->codupag,
-            'nomeuorg'                      => $this->nomeuorg,
+            'nomeuorg'                      => $this->normalizarNome(),
             'siglauorg'                     => $this->siglauorg,
-            'telefone'                      => $this->telefone,
-            'email'                         => $this->email,
+            'telefone'                      => $this->normalizarTelefone(),
+            'email'                         => $this->normalizarEmail(),
             'tipo'                          => $this->tipo,
             'logradouro'                    => $this->logradouro,
             'bairro'                        => $this->bairro,
             'cep'                           => $this->cep,
             'municipio_ibge'                => $this->municipioIbge,
             'municipio_uf'                  => $this->municipioUf,
-            'ativa'                         => $this->ativa,
+            'ativa'                         => $this->isAtiva() ? 'true' : 'false',
             'regimental'                    => $this->regimental,
             'data_modificacao'              => $this->dataModificacao,
             'cnpjupag'                      => $this->cnpjupag,
@@ -131,5 +133,56 @@ final readonly class UnidadeSipecDTO
     private static function nullableString(mixed $value): ?string
     {
         return ($value === '' || $value === null) ? null : (string) $value;
+    }
+
+    private function normalizarNome(): ?string
+    {
+        if (empty($this->nomeuorg)) {
+            return null;
+        }
+
+        return UtilService::getNomeFormatado($this->nomeuorg);
+    }
+
+    private function isAtiva(): bool
+    {
+        if (empty($this->ativa)) {
+            return false;
+        }
+
+        $valor = mb_strtoupper(trim($this->ativa), 'UTF-8');
+
+        return in_array($valor, ['ATV', 'ATIVA', 'TRUE', '1'], true);
+    }
+
+    private function normalizarEmail(): ?string
+    {
+        if (empty($this->email)) {
+            return null;
+        }
+
+        // TODO: tratar múltiplos emails (vêm separados por vírgula da API SIPEC)
+        $primeiro = explode(',', $this->email)[0];
+        $primeiro = trim(mb_strtolower($primeiro, 'UTF-8'));
+
+        return mb_substr($primeiro, 0, 100) ?: null;
+    }
+
+    private function normalizarTelefone(): ?string
+    {
+        if (empty($this->telefone)) {
+            return null;
+        }
+
+        // TODO: tratar múltiplos telefones (vêm separados por vírgula da API SIPEC)
+        $primeiro = explode(',', $this->telefone)[0];
+        $primeiro = trim(str_replace(['#', ' '], '', $primeiro));
+
+        // Remove código do país (55) do início
+        if (str_starts_with($primeiro, '55') && strlen($primeiro) > 10) {
+            $primeiro = substr($primeiro, 2);
+        }
+
+        return mb_substr($primeiro, 0, 50) ?: null;
     }
 }

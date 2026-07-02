@@ -36,12 +36,26 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
 
     public function findByCodigo(string $codigo): ?IntegracaoUnidade
     {
-        $registro = $this->query()
+        $registro = $this->model->newQuery()
+            ->withTrashed()
             ->where('id_servo', $codigo)
             ->orWhere('codigo_siape', $codigo)
             ->first();
 
         return $registro instanceof IntegracaoUnidade ? $registro : null;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, IntegracaoUnidade>
+     */
+    public function findAllAtivas(): \Illuminate\Database\Eloquent\Collection
+    {
+        /** @var \Illuminate\Database\Eloquent\Collection<int, IntegracaoUnidade> */
+        return $this->query()
+            ->whereNull('deleted_at')
+            ->where('ativa', 'true')
+            ->select(['id_servo', 'pai_servo', 'nomeuorg', 'siglauorg', 'municipio_ibge', 'data_modificacao'])
+            ->get();
     }
 
     /**
