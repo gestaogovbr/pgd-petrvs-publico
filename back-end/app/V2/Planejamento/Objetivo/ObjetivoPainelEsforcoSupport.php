@@ -17,7 +17,7 @@ final class ObjetivoPainelEsforcoSupport
     private const PT_STATUS_PLANEJADO = ['AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO', 'AVALIADO'];
 
     /** PTs que contam para esforço executado. */
-    private const PT_STATUS_EXECUTADO = ['CONCLUIDO', 'AVALIADO'];
+    private const PT_STATUS_EXECUTADO = ['CONCLUIDO'];
 
     public static function jornadaDivisor(): float
     {
