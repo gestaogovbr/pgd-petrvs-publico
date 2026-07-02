@@ -66,7 +66,13 @@ class SipecService
             Cache::forget($cacheKey);
         }
 
-        // 3. Solicitar novo token ao ConectaGov
+        // 3. Token via variável de ambiente (dev/debug)
+        $envToken = env('TOKEN_SIPEC');
+        if (!empty($envToken)) {
+            return $this->storeToken($envToken);
+        }
+
+        // 4. Solicitar novo token ao ConectaGov
         $curl = curl_init();
 
         curl_setopt_array($curl, [
