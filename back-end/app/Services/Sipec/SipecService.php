@@ -6,9 +6,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use App\Exceptions\RequestConectaGovException;
 use App\Exceptions\SipecApiRetryableException;
-use App\Repository\SipecUnidadeRepository;
-use App\Repository\SipecServidorRepository;
 use App\Repository\SipecSyncCheckpointRepository;
+use App\Services\Sipec\Servidor\SipecServidoresSincronizacaoService;
 
 class SipecService
 {
@@ -26,9 +25,9 @@ class SipecService
     private ?string $cachedToken = null;
     private $cachedTokenExpiresAt = null;
 
-    private SipecUnidadeRepository $sipecUnidadeRepository;
-    private SipecServidorRepository $sipecServidorRepository;
     private SipecSyncCheckpointRepository $checkpointRepository;
+    private SipecUnidadesSincronizacaoService $sipecUnidadesService;
+    private SipecServidoresSincronizacaoService $sipecServidoresService;
 
     public function __construct(?array $config = null)
     {
@@ -41,9 +40,9 @@ class SipecService
         $this->codOrgao = $config['codOrgao'] ?? '';
         $this->authorizationHeader = 'Basic ' . base64_encode($this->client . ':' . $this->secret);
 
-        $this->sipecUnidadeRepository = app(SipecUnidadeRepository::class);
-        $this->sipecServidorRepository = app(SipecServidorRepository::class);
         $this->checkpointRepository = app(SipecSyncCheckpointRepository::class);
+        $this->sipecUnidadesService = new SipecUnidadesSincronizacaoService($this);
+        $this->sipecServidoresService = new SipecServidoresSincronizacaoService($this);
     }
 
     public function getToken(): string
@@ -148,128 +147,54 @@ class SipecService
     }
 
     /**
-     * Consulta servidores por código UORG.
-     *
-     * @param string|null $codUorg Código da UORG (usa config se null)
-     * @param bool $participaPgd Filtrar apenas participantes PGD
-     * @return array Dados dos servidores retornados pela API SIPEC
+     * Delega para SipecServidoresSincronizacaoService.
      */
     public function buscarServidores(?string $codUorg = null, bool $participaPgd = true): array
     {
-        $codUorg = $codUorg ?? $this->codUorg;
-        $token = $this->getToken();
-
-        $params = ['codUorg' => $codUorg];
-        $params =['codSitFuncional' =>'1'];
-        if ($this->codOrgao !== '') {
-            $params['codOrgao'] = $this->codOrgao;
-        }
-        // if ($participaPgd) {
-        //     $params['participaPGD'] = '';
-        // }
-        $url = $this->url . '/api-sipec/v1/servidores?' . http_build_query($params);
-
-        return $this->executarGet($url, $token);
+        return $this->sipecServidoresService->buscarServidores($codUorg, $participaPgd);
     }
 
-    /**
-     * Busca um servidor específico por CPF.
-     *
-     * @param string $cpf CPF do servidor (apenas dígitos)
-     * @param string|null $codUorg Código da UORG (usa config se null)
-     * @return array|null Dados do servidor ou null se não encontrado
-     */
     public function buscarServidorPorCpf(string $cpf, ?string $codUorg = null): ?array
     {
-        $codUorg = $codUorg ?? $this->codUorg;
-        $token = $this->getToken();
-
-        $params = ['codUorg' => $codUorg, 'cpf' => $cpf];
-        if ($this->codOrgao !== '') {
-            // $params['codOrgao'] = $this->codOrgao;
-        }
-        $url = $this->url . '/api-sipec/v1/servidores?' . http_build_query($params);
-
-        $data = $this->executarGet($url, $token);
-
-        // API pode retornar lista paginada (content) ou array direto
-        $servidores = $data['content'] ?? $data;
-
-        if (!is_array($servidores)) {
-            return null;
-        }
-
-        // Se retornou lista, filtrar pelo CPF
-        foreach ($servidores as $servidor) {
-            $cpfServidor = preg_replace('/[^0-9]/', '', $servidor['cpf'] ?? '');
-            if ($cpfServidor === $cpf) {
-                return $servidor;
-            }
-        }
-
-        return null;
+        return $this->sipecServidoresService->buscarServidorPorCpf($cpf, $codUorg);
     }
 
-    /**
-     * Consulta todos os servidores de uma UORG (usado na sincronização de unidade).
-     *
-     * @param string $codUorg Código da UORG
-     * @param bool $participaPgd Filtrar apenas participantes PGD
-     * @return array Lista paginada (chave 'content') com os servidores
-     */
     public function buscarServidoresDaUnidade(string $codUorg, bool $participaPgd = true): array
     {
-        return $this->buscarServidores($codUorg, $participaPgd);
+        return $this->sipecServidoresService->buscarServidoresDaUnidade($codUorg, $participaPgd);
     }
 
     /**
      * Busca os dados de uma unidade pelo código UORG.
-     * Endpoint: GET /unidades  (UnidadeDetalhadaDTO — OpenAPI SIGEPE-Integra)
-     *
-     * @param string|null $codUorg Código da UORG (usa config se null)
-     * @return array|null Dados da unidade ou null se não encontrada
+     * Delega para SipecUnidadesService.
      */
     public function buscarUnidade(?string $codUorg = null): ?array
     {
-        $codUorg = $codUorg ?? $this->codUorg;
-        $token = $this->getToken();
-        $params = ['codUorg' => $codUorg];
-        if ($this->codOrgao !== '') {
-            $params['codOrgao'] = $this->codOrgao;
-        }
-        $url = $this->url . '/api-sipec/v1/unidades?' . http_build_query($params);
+        return $this->sipecUnidadesService->buscarUnidade($codUorg);
+    }
 
-        try {
-            $data    = $this->executarGet($url, $token);
-            $itens   = $data['content'] ?? $data;
+    public function getCodUorg(): string
+    {
+        return $this->codUorg;
+    }
 
-            if (!is_array($itens) || empty($itens)) {
-                return null;
-            }
-
-            // Filtra pelo código exato caso a API retorne mais de um resultado
-            foreach ($itens as $item) {
-                if ((string) ($item['codUorg'] ?? '') === $codUorg) {
-                    return $item;
-                }
-            }
-
-            return $itens[0] ?? null;
-        } catch (\Exception $e) {
-            Log::warning('SIPEC: unidade não encontrada', ['codUorg' => $codUorg, 'error' => $e->getMessage()]);
-            return null;
-        }
+    public function getCodOrgao(): string
+    {
+        return $this->codOrgao;
     }
 
     /**
      * Executa requisição GET autenticada na API SIPEC.
+     *
+     * @param string $path Path relativo (ex: '/api-sipec/v1/unidades?codUorg=123')
+     * @param string $token Token de autenticação
      */
-    protected function executarGet(string $url, string $token): array
+    public function executarGet(string $path, string $token): array
     {
         $curl = curl_init();
 
         curl_setopt_array($curl, [
-            CURLOPT_URL => $url,
+            CURLOPT_URL => $this->url . $path,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => [
                 'Authorization: Bearer ' . $token,
@@ -325,13 +250,13 @@ class SipecService
             $totalServidores = 0;
 
             if ($checkpoint->etapa === 'unidades') {
-                $totalUnidades = $this->coletarUnidadesPaginado($tenantId, $checkpoint->ultima_pagina);
+                $totalUnidades = $this->sipecUnidadesService->coletarUnidadesPaginado($tenantId, $checkpoint->ultima_pagina);
                 $this->checkpointRepository->updateByTenantId($tenantId, 'servidores', 0, null);
                 $checkpoint = $this->checkpointRepository->findByTenantId($tenantId);
             }
 
             if ($checkpoint->etapa === 'servidores') {
-                $totalServidores = $this->coletarServidoresPaginado($tenantId, $checkpoint->ultima_pagina ?? 0);
+                $totalServidores = $this->sipecServidoresService->coletarServidoresPaginado($tenantId, $checkpoint->ultima_pagina ?? 0);
                 $this->checkpointRepository->updateByTenantId($tenantId, 'completo', 0, null);
             }
 
@@ -349,107 +274,23 @@ class SipecService
         $this->checkpointRepository->deleteByTenantId($tenantId);
     }
 
-    private function coletarUnidadesPaginado(?string $tenantId, int $startPage): int
-    {
-        $page = $startPage;
-        $size = 100;
-        $total = 0;
-
-        do {
-            $params = http_build_query([
-                'codOrgao' => $this->codOrgao,
-                'page' => $page,
-                'size' => $size,
-            ]);
-            $url = $this->url . '/api-sipec/v1/unidades?' . $params;
-
-            $data = $this->executarGetComRetry($url);
-            $itens = $data['content'] ?? [];
-            $totalPages = $data['totalPages'] ?? 1;
-
-            foreach ($itens as $item) {
-                $this->sipecUnidadeRepository->updateOrCreateByCodigo(
-                    (string) ($item['codUorg'] ?? ''),
-                    json_encode($item, JSON_UNESCAPED_UNICODE),
-                    false,
-                    $item['dataUltimaTransacao'] ?? null
-                );
-                $total++;
-            }
-
-            $this->checkpointRepository->updateByTenantId($tenantId, 'unidades', $page + 1, $totalPages);
-            $page++;
-        } while ($page < $totalPages);
-
-        return $total;
-    }
-
-    private function coletarServidoresPaginado(?string $tenantId, int $startPage): int
-    {
-        $page = $startPage;
-        $size = 100;
-        $total = 0;
-
-        do {
-            $params = http_build_query([
-                'codUorg' => $this->codUorg,
-                'codSitFuncional' => '1',
-                'codOrgao' => $this->codOrgao,
-                'page' => $page,
-                'size' => $size,
-            ]);
-            $url = $this->url . '/api-sipec/v1/servidores?' . $params;
-
-            $data = $this->executarGetComRetry($url);
-            $itens = $data['content'] ?? [];
-            $totalPages = $data['totalPages'] ?? 1;
-
-            foreach ($itens as $item) {
-                $primeiroVinculo = $item['vinculos'][0] ?? $item['vinculos']['0'] ?? [];
-                $cpf = $item['cpf'] ?? null;
-                $matricula = isset($primeiroVinculo['matriculaSiape']) ? (string) $primeiroVinculo['matriculaSiape'] : null;
-
-                if ($cpf) {
-                    $this->sipecServidorRepository->updateOrCreateByCpfAndMatricula(
-                        $cpf,
-                        $matricula,
-                        json_encode($item, JSON_UNESCAPED_UNICODE),
-                        false,
-                        $primeiroVinculo['dataUltimaTransacao'] ?? null
-                    );
-                    $total++;
-                }
-            }
-
-            $this->checkpointRepository->updateByTenantId($tenantId, 'servidores', $page + 1, $totalPages);
-            $page++;
-        } while ($page < $totalPages);
-
-        return $total;
-    }
-
     /**
      * GET com retry adaptativo:
      * - 5XX / timeout: backoff exponencial longo (5s, 15s, 45s)
      * - 4XX: fail fast (não retryable)
      * - cURL error: retry com backoff curto (2s, 4s, 8s)
      */
-    protected function executarGetComRetry(string $url, int $maxRetries = 3): array
+    public function executarGetComRetry(string $path, int $maxRetries = 3): array
     {
         $attempt = 0;
 
         while (true) {
             try {
                 $token = $this->getToken();
-                return $this->executarGet($url, $token);
+                return $this->executarGet($path, $token);
             } catch (RequestConectaGovException $e) {
                 $attempt++;
                 $httpCode = $e->getCode();
-
-                // 4XX: não retryable — erro de cliente
-                if ($httpCode >= 400 && $httpCode < 500) {
-                    throw $e;
-                }
 
                 if ($attempt >= $maxRetries) {
                     throw new SipecApiRetryableException(
@@ -468,7 +309,7 @@ class SipecService
                 }
 
                 Log::warning("SIPEC retry {$attempt}/{$maxRetries}", [
-                    'url' => $url,
+                    'path' => $path,
                     'httpCode' => $httpCode,
                     'delay_seconds' => $delay,
                 ]);
