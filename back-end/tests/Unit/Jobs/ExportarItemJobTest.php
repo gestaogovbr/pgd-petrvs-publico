@@ -45,7 +45,7 @@ class ExportarItemJobFake extends ExportarItemJob
         return app(EnvioRepositoryInterface::class);
     }
 
-    public function getResource(): JsonResource
+    public function getResource($model): JsonResource
     {
         return Mockery::mock(JsonResource::class);
     }

@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Perfil;
 use App\Services\IntegracaoService;
+use App\Services\NivelAcessoService;
 use App\Services\UsuarioService;
 use App\Services\UnidadeIntegranteService;
 use App\Services\ProcessadorAtualizacaoDadosSiapeService;
@@ -312,8 +314,9 @@ describe('ProcessadorAtualizacaoDadosSiapeService - cadastrarUsuariosAusentes co
         $unidadeIntegranteMock = Mockery::mock(UnidadeIntegranteService::class);
         $unidadeIntegranteMock->shouldReceive('salvarIntegrantes')->once();
 
-        $nivelAcessoMock = Mockery::mock('alias:' . \App\Services\NivelAcessoService::class);
-        $perfilMock = (object) ['id' => 'perfil-participante-id'];
+        $nivelAcessoMock = Mockery::mock(NivelAcessoService::class);
+        $perfilMock = Mockery::mock(Perfil::class)->makePartial();
+        $perfilMock->id = 'perfil-participante-id';
         $nivelAcessoMock->shouldReceive('getPerfilParticipante')->andReturn($perfilMock);
 
         $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
