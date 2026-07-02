@@ -6,7 +6,7 @@ use App\Repository\SipecServidorRepository;
 use App\Repository\SipecSyncCheckpointRepository;
 use App\Services\Sipec\SipecService;
 
-class SipecServidoresSincronizacaoService
+class SipecServidorSincronizacaoService
 {
     private SipecService $sipecService;
     private SipecServidorRepository $sipecServidorRepository;

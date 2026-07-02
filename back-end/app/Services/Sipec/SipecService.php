@@ -3,11 +3,12 @@
 namespace App\Services\Sipec;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use App\Exceptions\RequestConectaGovException;
+use App\Facades\SipecLog;
 use App\Exceptions\SipecApiRetryableException;
 use App\Repository\SipecSyncCheckpointRepository;
-use App\Services\Sipec\Servidor\SipecServidoresSincronizacaoService;
+use App\Services\Sipec\Servidor\SipecServidorSincronizacaoService;
+use App\Services\Sipec\Unidade\SipecUnidadeSincronizacaoService;
 
 class SipecService
 {
@@ -26,8 +27,8 @@ class SipecService
     private $cachedTokenExpiresAt = null;
 
     private SipecSyncCheckpointRepository $checkpointRepository;
-    private SipecUnidadesSincronizacaoService $sipecUnidadesService;
-    private SipecServidoresSincronizacaoService $sipecServidoresService;
+    private SipecUnidadeSincronizacaoService $sipecUnidadesService;
+    private SipecServidorSincronizacaoService $sipecServidoresService;
 
     public function __construct(?array $config = null)
     {
@@ -41,8 +42,8 @@ class SipecService
         $this->authorizationHeader = 'Basic ' . base64_encode($this->client . ':' . $this->secret);
 
         $this->checkpointRepository = app(SipecSyncCheckpointRepository::class);
-        $this->sipecUnidadesService = new SipecUnidadesSincronizacaoService($this);
-        $this->sipecServidoresService = new SipecServidoresSincronizacaoService($this);
+        $this->sipecUnidadesService = new SipecUnidadeSincronizacaoService($this);
+        $this->sipecServidoresService = new SipecServidorSincronizacaoService($this);
     }
 
     public function getToken(): string
@@ -90,7 +91,7 @@ class SipecService
         if (curl_errno($curl)) {
             $error = curl_error($curl);
             $curl = null;
-            Log::error('SIPEC token cURL error: ' . $error);
+            SipecLog::error('SIPEC token cURL error: ' . $error);
             throw new RequestConectaGovException('SIPEC cURL error: ' . $error);
         }
 
@@ -147,7 +148,7 @@ class SipecService
     }
 
     /**
-     * Delega para SipecServidoresSincronizacaoService.
+     * Delega para SipecServidorSincronizacaoService.
      */
     public function buscarServidores(?string $codUorg = null, bool $participaPgd = true): array
     {
@@ -208,21 +209,21 @@ class SipecService
         if (curl_errno($curl)) {
             $error = curl_error($curl);
             $curl = null;
-            Log::error('SIPEC cURL error: ' . $error);
+            SipecLog::error('SIPEC cURL error: ' . $error);
             throw new RequestConectaGovException('SIPEC cURL error: ' . $error);
         }
 
         $curl = null;
 
         if ($httpCode >= 400) {
-            Log::error('SIPEC HTTP ' . $httpCode, ['response' => $response]);
+            SipecLog::error('SIPEC HTTP ' . $httpCode, ['response' => $response]);
             throw new RequestConectaGovException('SIPEC: HTTP ' . $httpCode . ' - ' . $response, $httpCode);
         }
 
         $data = json_decode($response, true);
 
         if (!is_array($data)) {
-            Log::error('SIPEC: resposta inválida', ['response' => $response]);
+            SipecLog::error('SIPEC: resposta inválida', ['response' => $response]);
             throw new RequestConectaGovException('SIPEC: resposta inválida');
         }
 
@@ -239,7 +240,7 @@ class SipecService
         $lock = Cache::lock($lockKey, 600);
 
         if (!$lock->get()) {
-            Log::warning("SIPEC Fase 0: já em execução para tenant {$tenantId}");
+            SipecLog::warning("SIPEC Fase 0: já em execução para tenant {$tenantId}");
             return ['status' => 'locked', 'unidades' => 0, 'servidores' => 0];
         }
 
@@ -308,7 +309,7 @@ class SipecService
                     $delay = 2 * pow(2, $attempt - 1);
                 }
 
-                Log::warning("SIPEC retry {$attempt}/{$maxRetries}", [
+                SipecLog::warning("SIPEC retry {$attempt}/{$maxRetries}", [
                     'path' => $path,
                     'httpCode' => $httpCode,
                     'delay_seconds' => $delay,

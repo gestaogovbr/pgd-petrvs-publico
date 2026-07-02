@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Services\Sipec;
+namespace App\Services\Sipec\Unidade;
 
 use Illuminate\Support\Facades\Log;
 use App\Repository\SipecUnidadeRepository;
 use App\Repository\SipecSyncCheckpointRepository;
+use App\Services\Sipec\SipecService;
 
-class SipecUnidadesSincronizacaoService
+class SipecUnidadeSincronizacaoService
 {
     private SipecService $sipecService;
     private SipecUnidadeRepository $sipecUnidadeRepository;

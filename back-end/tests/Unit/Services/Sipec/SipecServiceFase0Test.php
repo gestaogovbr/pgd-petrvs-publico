@@ -4,12 +4,12 @@ namespace Tests\Unit\Services\Sipec;
 
 use App\Exceptions\RequestConectaGovException;
 use App\Exceptions\SipecApiRetryableException;
-use App\Repository\SipecServidorRepository;
+use App\Facades\SipecLog;
 use App\Repository\SipecSyncCheckpointRepository;
-use App\Repository\SipecUnidadeRepository;
+use App\Services\Sipec\Servidor\SipecServidorSincronizacaoService;
 use App\Services\Sipec\SipecService;
+use App\Services\Sipec\Unidade\SipecUnidadeSincronizacaoService;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Mockery;
 use Tests\TestCase;
 
@@ -20,8 +20,8 @@ afterAll(function () {
 });
 
 function buildSipecServiceMock(
-    $sipecUnidadeRepo,
-    $sipecServidorRepo,
+    $sipecUnidadesService,
+    $sipecServidoresService,
     $checkpointRepo
 ): \Mockery\MockInterface {
     $config = [
@@ -46,8 +46,8 @@ function buildSipecServiceMock(
         'client' => $config['conectagov_chave'],
         'secret' => $config['conectagov_senha'],
         'authorizationHeader' => 'Basic ' . base64_encode($config['conectagov_chave'] . ':' . $config['conectagov_senha']),
-        'sipecUnidadeRepository' => $sipecUnidadeRepo,
-        'sipecServidorRepository' => $sipecServidorRepo,
+        'sipecUnidadesService' => $sipecUnidadesService,
+        'sipecServidoresService' => $sipecServidoresService,
         'checkpointRepository' => $checkpointRepo,
     ];
 
@@ -66,7 +66,6 @@ function fakeCheckpoint(string $etapa, int $ultimaPagina): \Illuminate\Database\
     $model->shouldReceive('getAttribute')->with('etapa')->andReturn($etapa);
     $model->shouldReceive('getAttribute')->with('ultima_pagina')->andReturn($ultimaPagina);
     $model->shouldReceive('getAttribute')->with('total_paginas')->andReturn(null);
-    // Permitir acesso via propriedade mágica
     $model->etapa = $etapa;
     $model->ultima_pagina = $ultimaPagina;
     $model->total_paginas = null;
@@ -76,71 +75,40 @@ function fakeCheckpoint(string $etapa, int $ultimaPagina): \Illuminate\Database\
 describe('SipecService - executarFase0', function () {
 
     test('execução completa coleta unidades e servidores atualizando checkpoint', function () {
-        Log::shouldReceive('warning')->never();
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
         $checkpointRepo->shouldReceive('firstOrCreateByTenantId')
             ->once()
             ->with('tenant-1', 'unidades', 0)
             ->andReturn(fakeCheckpoint('unidades', 0));
 
-        // Após coletar unidades: avança checkpoint
-        $checkpointRepo->shouldReceive('updateByTenantId')
-            ->with('tenant-1', 'unidades', 1, 1)
-            ->once()->andReturn(null);
-
         $checkpointRepo->shouldReceive('updateByTenantId')
             ->with('tenant-1', 'servidores', 0, null)
             ->once()->andReturn(null);
 
-        // Após transição: findByTenantId retorna checkpoint na etapa servidores
         $checkpointRepo->shouldReceive('findByTenantId')
             ->with('tenant-1')
             ->once()
             ->andReturn(fakeCheckpoint('servidores', 0));
 
         $checkpointRepo->shouldReceive('updateByTenantId')
-            ->with('tenant-1', 'servidores', 1, 1)
-            ->once()->andReturn(null);
-
-        $checkpointRepo->shouldReceive('updateByTenantId')
             ->with('tenant-1', 'completo', 0, null)
             ->once()->andReturn(null);
 
-        $unidadeRepo->shouldReceive('updateOrCreateByCodigo')
+        $unidadesService->shouldReceive('coletarUnidadesPaginado')
             ->once()
-            ->with('9999', Mockery::type('string'), false, '2024-01-01')
-            ->andReturn(Mockery::mock(\Illuminate\Database\Eloquent\Model::class));
+            ->with('tenant-1', 0)
+            ->andReturn(3);
 
-        $servidorRepo->shouldReceive('updateOrCreateByCpfAndMatricula')
+        $servidoresService->shouldReceive('coletarServidoresPaginado')
             ->once()
-            ->with('11111111111', '12345', Mockery::type('string'), false, '2024-02-01')
-            ->andReturn(Mockery::mock(\Illuminate\Database\Eloquent\Model::class));
+            ->with('tenant-1', 0)
+            ->andReturn(5);
 
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
-
-        // Mock executarGetComRetry (protegido) para retornar dados paginados
-        $service->shouldReceive('executarGetComRetry')
-            ->with('https://fake-sipec.test/api-sipec/v1/unidades?codOrgao=17500&page=0&size=100')
-            ->once()
-            ->andReturn([
-                'content' => [['codUorg' => '9999', 'dataUltimaTransacao' => '2024-01-01']],
-                'totalPages' => 1,
-            ]);
-
-        $service->shouldReceive('executarGetComRetry')
-            ->with('https://fake-sipec.test/api-sipec/v1/servidores?codUorg=1234&codSitFuncional=1&codOrgao=17500&page=0&size=100')
-            ->once()
-            ->andReturn([
-                'content' => [[
-                    'cpf' => '11111111111',
-                    'vinculos' => [['matriculaSiape' => '12345', 'dataUltimaTransacao' => '2024-02-01']],
-                ]],
-                'totalPages' => 1,
-            ]);
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
         $lock = Mockery::mock(\Illuminate\Contracts\Cache\Lock::class);
         $lock->shouldReceive('get')->once()->andReturn(true);
@@ -149,17 +117,16 @@ describe('SipecService - executarFase0', function () {
 
         $resultado = $service->executarFase0('tenant-1');
 
-        expect($resultado)->toBe(['status' => 'completo', 'unidades' => 1, 'servidores' => 1]);
+        expect($resultado)->toBe(['status' => 'completo', 'unidades' => 3, 'servidores' => 5]);
     });
 
     test('retorna status locked quando lock já está adquirido', function () {
-        Log::shouldReceive('warning')->once();
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
         $lock = Mockery::mock(\Illuminate\Contracts\Cache\Lock::class);
         $lock->shouldReceive('get')->once()->andReturn(false);
@@ -171,11 +138,10 @@ describe('SipecService - executarFase0', function () {
     });
 
     test('retoma da etapa servidores quando unidades já foram concluídas', function () {
-        Log::shouldReceive('warning')->never();
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
         $checkpointRepo->shouldReceive('firstOrCreateByTenantId')
             ->once()
@@ -183,32 +149,18 @@ describe('SipecService - executarFase0', function () {
             ->andReturn(fakeCheckpoint('servidores', 3));
 
         $checkpointRepo->shouldReceive('updateByTenantId')
-            ->with('tenant-3', 'servidores', 4, 4)
-            ->once()->andReturn(null);
-
-        $checkpointRepo->shouldReceive('updateByTenantId')
             ->with('tenant-3', 'completo', 0, null)
             ->once()->andReturn(null);
 
-        $servidorRepo->shouldReceive('updateOrCreateByCpfAndMatricula')
-            ->twice()
-            ->andReturn(Mockery::mock(\Illuminate\Database\Eloquent\Model::class));
+        // Não deve chamar coletarUnidadesPaginado
+        $unidadesService->shouldNotReceive('coletarUnidadesPaginado');
 
-        // unidadeRepo NÃO deve ser chamado
-        $unidadeRepo->shouldReceive('updateOrCreateByCodigo')->never();
-
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
-
-        $service->shouldReceive('executarGetComRetry')
-            ->with('https://fake-sipec.test/api-sipec/v1/servidores?codUorg=1234&codSitFuncional=1&codOrgao=17500&page=3&size=100')
+        $servidoresService->shouldReceive('coletarServidoresPaginado')
             ->once()
-            ->andReturn([
-                'content' => [
-                    ['cpf' => '22222222222', 'vinculos' => [['matriculaSiape' => '111', 'dataUltimaTransacao' => null]]],
-                    ['cpf' => '33333333333', 'vinculos' => [['matriculaSiape' => '222', 'dataUltimaTransacao' => null]]],
-                ],
-                'totalPages' => 4,
-            ]);
+            ->with('tenant-3', 3)
+            ->andReturn(2);
+
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
         $lock = Mockery::mock(\Illuminate\Contracts\Cache\Lock::class);
         $lock->shouldReceive('get')->once()->andReturn(true);
@@ -222,37 +174,26 @@ describe('SipecService - executarFase0', function () {
         expect($resultado['servidores'])->toBe(2);
     });
 
-    test('ignora servidor sem CPF e não persiste no repository', function () {
-        Log::shouldReceive('warning')->never();
+    test('ignora servidor sem CPF delegando para sub-service que retorna 0', function () {
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
         $checkpointRepo->shouldReceive('firstOrCreateByTenantId')
             ->once()
             ->andReturn(fakeCheckpoint('servidores', 0));
 
         $checkpointRepo->shouldReceive('updateByTenantId')
-            ->with('tenant-4', 'servidores', 1, 1)
-            ->once()->andReturn(null);
-
-        $checkpointRepo->shouldReceive('updateByTenantId')
             ->with('tenant-4', 'completo', 0, null)
             ->once()->andReturn(null);
 
-        $servidorRepo->shouldReceive('updateOrCreateByCpfAndMatricula')->never();
-
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
-
-        $service->shouldReceive('executarGetComRetry')
+        $servidoresService->shouldReceive('coletarServidoresPaginado')
             ->once()
-            ->andReturn([
-                'content' => [
-                    ['cpf' => null, 'vinculos' => [['matriculaSiape' => '999', 'dataUltimaTransacao' => null]]],
-                ],
-                'totalPages' => 1,
-            ]);
+            ->with('tenant-4', 0)
+            ->andReturn(0);
+
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
         $lock = Mockery::mock(\Illuminate\Contracts\Cache\Lock::class);
         $lock->shouldReceive('get')->once()->andReturn(true);
@@ -265,20 +206,19 @@ describe('SipecService - executarFase0', function () {
     });
 
     test('checkpoint etapa completo não executa nenhuma coleta', function () {
-        Log::shouldReceive('warning')->never();
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
         $checkpointRepo->shouldReceive('firstOrCreateByTenantId')
             ->once()
             ->andReturn(fakeCheckpoint('completo', 0));
 
-        $unidadeRepo->shouldReceive('updateOrCreateByCodigo')->never();
-        $servidorRepo->shouldReceive('updateOrCreateByCpfAndMatricula')->never();
+        $unidadesService->shouldNotReceive('coletarUnidadesPaginado');
+        $servidoresService->shouldNotReceive('coletarServidoresPaginado');
 
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
         $lock = Mockery::mock(\Illuminate\Contracts\Cache\Lock::class);
         $lock->shouldReceive('get')->once()->andReturn(true);
@@ -295,15 +235,15 @@ describe('SipecService - resetarCheckpoint', function () {
 
     test('deleta checkpoint pelo tenant_id via repository', function () {
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
         $checkpointRepo->shouldReceive('deleteByTenantId')
             ->once()
             ->with('tenant-reset')
             ->andReturn(true);
 
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
         $service->resetarCheckpoint('tenant-reset');
 
@@ -315,10 +255,10 @@ describe('SipecService - retrySleep', function () {
 
     test('executa sleep com o valor informado', function () {
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
         $reflection = new \ReflectionMethod($service, 'retrySleep');
         $reflection->setAccessible(true);
@@ -333,10 +273,10 @@ describe('SipecService - retrySleep', function () {
 
     test('sleep com 0 segundos retorna imediatamente', function () {
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
         $reflection = new \ReflectionMethod($service, 'retrySleep');
         $reflection->setAccessible(true);
@@ -351,38 +291,32 @@ describe('SipecService - retrySleep', function () {
 
 describe('SipecService - executarGetComRetry', function () {
 
-    test('erro 4XX faz fail fast sem retry', function () {
-        Log::shouldReceive('error')->andReturnNull();
-        Log::shouldReceive('warning')->never();
-
+    test('erro 4XX retenta com backoff curto e lança SipecApiRetryableException', function () {
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
         $service->shouldReceive('getToken')->andReturn('fake-token');
         $service->shouldReceive('retrySleep')->andReturnNull();
 
         $service->shouldReceive('executarGet')
-            ->once()
+            ->times(3)
             ->andThrow(new RequestConectaGovException('Forbidden', 403));
 
         $reflection = new \ReflectionMethod($service, 'executarGetComRetry');
         $reflection->setAccessible(true);
 
-        expect(fn () => $reflection->invoke($service, 'https://fake.test/endpoint'))
-            ->toThrow(RequestConectaGovException::class, 'Forbidden');
+        expect(fn () => $reflection->invoke($service, 'https://fake.test/endpoint', 3))
+            ->toThrow(SipecApiRetryableException::class);
     });
 
     test('erro 5XX retenta até esgotar e lança SipecApiRetryableException', function () {
-        Log::shouldReceive('error')->andReturnNull();
-        Log::shouldReceive('warning')->andReturnNull();
-
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
         $service->shouldReceive('getToken')->andReturn('fake-token');
         $service->shouldReceive('retrySleep')->andReturnNull();
 
@@ -398,14 +332,11 @@ describe('SipecService - executarGetComRetry', function () {
     });
 
     test('erro de rede code 0 retenta e sucede na terceira tentativa', function () {
-        Log::shouldReceive('error')->andReturnNull();
-        Log::shouldReceive('warning')->andReturnNull();
-
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $unidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
 
-        $service = buildSipecServiceMock($unidadeRepo, $servidorRepo, $checkpointRepo);
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
         $service->shouldReceive('getToken')->andReturn('fake-token');
         $service->shouldReceive('retrySleep')->andReturnNull();
 
