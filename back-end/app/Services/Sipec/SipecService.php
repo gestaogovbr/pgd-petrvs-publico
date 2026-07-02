@@ -67,7 +67,7 @@ class SipecService
         }
 
         // 3. Token via variável de ambiente (dev/debug)
-        $envToken = env('TOKEN_SIPEC');
+        $envToken = config('integracao.sipec.token');
         if (!empty($envToken)) {
             return $this->storeToken($envToken);
         }
