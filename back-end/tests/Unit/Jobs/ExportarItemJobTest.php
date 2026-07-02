@@ -69,7 +69,7 @@ describe('ExportarItemJob', function () {
         $model->id = 'item-1';
 
         $repository = Mockery::mock(EnvioRepositoryInterface::class);
-        $repository->shouldReceive('findOneParaEnvio')
+        $repository->shouldReceive('findById')
             ->once()
             ->with('item-1')
             ->andReturn($model);
