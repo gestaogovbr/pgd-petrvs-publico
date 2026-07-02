@@ -13,6 +13,7 @@ use App\Models\PlanoTrabalho;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\DocumentoRepository;
 use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 
 class PlanoTrabalhoDocumentoAssinarValidator
@@ -28,12 +29,14 @@ class PlanoTrabalhoDocumentoAssinarValidator
         private readonly DocumentoRepository $documentoRepository,
         private readonly DocumentoAssinaturaRepository $assinaturaRepository,
         private readonly UnidadeRepository $unidadeRepository,
+        private readonly UsuarioRepository $usuarioRepository,
     ) {}
 
-    public function validar(PlanoTrabalho $plano, string $usuarioId): Documento
+    public function validar(PlanoTrabalho $plano, string $usuarioId, string $cpf): Documento
     {
         $this->validarStatus($plano);
         $this->validarEntregas($plano);
+        $this->validarNaoProprietario($plano, $usuarioId, $cpf);
         $this->validarChefiaHierarquica($plano, $usuarioId);
 
         $documento = $this->documentoRepository->findTcrByPlanoTrabalhoId($plano->id);
@@ -42,7 +45,7 @@ class PlanoTrabalhoDocumentoAssinarValidator
             throw new NotFoundException('Plano de Trabalho não possui documento TCR gerado.');
         }
 
-        if ($this->assinaturaRepository->usuarioJaAssinou($documento->id, $usuarioId)) {
+        if ($this->assinaturaRepository->usuarioJaAssinou($documento->id, $cpf)) {
             throw new ValidateException('Usuário já assinou este documento.');
         }
 
@@ -115,5 +118,26 @@ class PlanoTrabalhoDocumentoAssinarValidator
         }
 
         return false;
+    }
+
+    /**
+     * Impede que um usuário com o mesmo CPF do participante assine como chefia.
+     * A assinatura como participante é permitida (usuario_id coincide).
+     */
+    private function validarNaoProprietario(PlanoTrabalho $plano, string $usuarioId, string $cpf): void
+    {
+        if ($plano->usuario_id === $usuarioId) {
+            return;
+        }
+
+        $participante = $this->usuarioRepository->findById($plano->usuario_id);
+
+        if ($participante === null) {
+            return;
+        }
+
+        if ($participante->cpf === $cpf) {
+            throw new ForbiddenException('Não é permitido assinar o próprio Plano de Trabalho como chefia.');
+        }
     }
 }

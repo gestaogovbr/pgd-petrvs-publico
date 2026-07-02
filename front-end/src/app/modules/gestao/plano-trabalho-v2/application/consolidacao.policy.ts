@@ -17,6 +17,7 @@ export class ConsolidacaoPolicy {
   }
 
   podeAvaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho, isGestorHierarquia = false): boolean {
+    if (planoTrabalho.is_proprio) return false;
     if (planoTrabalho.encerrado_at && new Date(consolidacao.data_inicio) > new Date(planoTrabalho.encerrado_at)) return false;
     return this.auth.usuario?.id != planoTrabalho.usuario_id
       && consolidacao.status === ConsolidacaoStatus.CONCLUIDO
@@ -35,6 +36,7 @@ export class ConsolidacaoPolicy {
   }
 
   podeReavaliarConsolidacao(consolidacao: Consolidacao, planoTrabalho: PlanoTrabalho, isGestorHierarquia = false): boolean {
+    if (planoTrabalho.is_proprio) return false;
     const ultimaAvaliacao = consolidacao.avaliacoes[consolidacao.avaliacoes.length - 1];
     return consolidacao.avaliacoes.length === 1
       && !!ultimaAvaliacao?.recurso
