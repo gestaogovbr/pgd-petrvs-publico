@@ -25,6 +25,9 @@ beforeEach(function () {
             Route::get('/api/__tests/v2/planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoController::class, 'entregas'])
                 ->whereUuid('id')
                 ->name('__tests.v2.objetivo.entregas');
+            Route::get('/api/__tests/v2/planejamento/objetivo/{id}/equipes', [PlanejamentoObjetivoController::class, 'equipes'])
+                ->whereUuid('id')
+                ->name('__tests.v2.objetivo.equipes');
         });
     }
 
