@@ -65,7 +65,7 @@ class PlanoTrabalhoService
         $filtro = PlanoTrabalhoIndexDTO::fromRequest($data, Auth::id());
         $filtro = $this->indexValidator->validar($filtro);
 
-        if ($filtro->subordinadas && $filtro->unidadesId) {
+        if (!$filtro->minhaEquipe && $filtro->subordinadas && $filtro->unidadesId) {
             $idsBase = $filtro->unidadesId;
             $subordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($idsBase)->pluck('id')->toArray();
             $filtro = $filtro->withUnidadesId(array_merge($idsBase, $subordinadasIds));

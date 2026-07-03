@@ -226,7 +226,16 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         }
 
         if ($filtro->unidadesId !== null) {
-            $query->whereIn('unidade_id', $filtro->unidadesId);
+            if ($filtro->minhaEquipe) {
+                $query->whereIn('usuario_id', function ($sub) use ($filtro) {
+                    $sub->select('usuario_id')
+                        ->from('unidades_integrantes')
+                        ->whereIn('unidade_id', $filtro->unidadesId)
+                        ->whereNull('deleted_at');
+                });
+            } else {
+                $query->whereIn('unidade_id', $filtro->unidadesId);
+            }
         }
 
         if ($filtro->usuarioId !== null) {
