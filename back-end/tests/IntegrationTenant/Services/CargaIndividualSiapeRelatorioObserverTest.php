@@ -262,6 +262,7 @@ test('observer monta secoes para servidor com multiplas matriculas', function ()
         'nome' => 'Servidor Vinculo A',
         'email' => 'a@orgao.gov.br',
         'matricula' => '111111',
+        'situacao_funcional' => 'NOMEADO_CARGO_COMISSIONADO',
         'modalidade_pgd' => 'presencial',
     ]);
     Usuario::factory()->create([
@@ -286,10 +287,13 @@ test('observer monta secoes para servidor com multiplas matriculas', function ()
                 [
                     'matriculaSiape' => '111111',
                     'emailInstitucional' => 'a@orgao.gov.br',
+                    'nomeSitFuncional' => 'NOMEADO CARGO COMIS.',
+                    'codSitFuncional' => '04',
                 ],
                 [
                     'matriculaSiape' => '222222',
                     'emailInstitucional' => 'b@orgao.gov.br',
+                    'dataOcorrExclusao' => '2026-01-02',
                 ],
             ],
         ],
@@ -299,8 +303,22 @@ test('observer monta secoes para servidor com multiplas matriculas', function ()
     ));
 
     expect($relatorio->secoes)->toHaveCount(2);
-    expect($relatorio->secoes[0]['titulo'])->toBe('Vinculo SIAPE 1');
-    expect($relatorio->secoes[1]['titulo'])->toBe('Vinculo SIAPE 2');
+    expect($relatorio->secoes[0]['titulo'])->toBe('Matricula 111111');
+    expect($relatorio->secoes[0]['matricula'])->toBe('111111');
+    expect($relatorio->secoes[0]['status_vinculo'])->toBe('ativo');
+    expect($relatorio->secoes[1]['titulo'])->toBe('Matricula 222222 (vinculo excluido/inativo)');
+    expect($relatorio->secoes[1]['matricula'])->toBe('222222');
+    expect($relatorio->secoes[1]['status_vinculo'])->toBe('excluido');
+    expect($relatorio->secoes[1]['data_ocorrencia_exclusao'])->toBe('2026-01-02');
+
+    $campoSituacao = collect($relatorio->secoes[0]['campos'])->firstWhere('campo', 'nomeSitFuncional');
+    expect($campoSituacao['status'])->toBe('ajustado');
+    expect($campoSituacao['recebido_siape'])->toBe('NOMEADO CARGO COMIS. (04)');
+    expect($campoSituacao['registrado_petrvs'])->toBe('NOMEADO_CARGO_COMISSIONADO');
+
+    $campoVinculo = collect($relatorio->secoes[1]['campos'])->firstWhere('campo', 'statusVinculoSiape');
+    expect($campoVinculo['status'])->toBe('nao_aplicavel');
+    expect($campoVinculo['recebido_siape'])->toContain('2026-01-02');
 });
 
 test('observer persiste relatorio amigavel para falha SOAP sem XML nem termos tecnicos', function () {

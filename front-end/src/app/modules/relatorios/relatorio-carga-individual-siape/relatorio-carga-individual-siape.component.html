@@ -1,7 +1,12 @@
-<div class="relatorio-carga-siape">
+<div class="relatorio-carga-siape-pagina">
   <toolbar></toolbar>
 
-  <form class="relatorio-filtros" [formGroup]="filtro" (ngSubmit)="buscarPorId()">
+  <header class="relatorio-carga-siape-cabecalho">
+    <h1>Relatório de Carga Individual SIAPE</h1>
+    <p>Consulta e visualização dos relatórios retornados pelo backend.</p>
+  </header>
+
+  <form class="relatorio-carga-siape-filtros" [formGroup]="filtro" (ngSubmit)="buscarPorId()">
     <label>
       <span>Identificador</span>
       <input class="form-control" formControlName="id" placeholder="ID do relatório">
@@ -9,7 +14,7 @@
 
     <label>
       <span>Tipo</span>
-      <select class="form-select" formControlName="tipo" (change)="listarRecentes()">
+      <select class="form-select" formControlName="tipo">
         <option value="">Todos</option>
         <option value="servidor">Servidor</option>
         <option value="unidade">Unidade</option>
@@ -21,81 +26,144 @@
       <input class="form-control" formControlName="chave" placeholder="Buscar recentes">
     </label>
 
-    <div class="acoes">
-      <button class="btn btn-primary" type="submit">
-        <i class="bi bi-search"></i>
-        Buscar
-      </button>
-      <button class="btn btn-outline-secondary" type="button" (click)="listarRecentes()">
-        <i class="bi bi-clock-history"></i>
-        Recentes
-      </button>
-      <button class="btn btn-outline-secondary" type="button" (click)="limpar()">
-        <i class="bi bi-x-circle"></i>
-        Limpar
-      </button>
+    <div class="relatorio-carga-siape-acoes">
+      <button class="btn btn-primary" type="submit">Buscar</button>
+      <button class="btn btn-outline-secondary" type="button" (click)="listarRecentes()">Recentes</button>
+      <button class="btn btn-outline-secondary" type="button" (click)="limpar()">Limpar</button>
     </div>
   </form>
 
-  <section *ngIf="exibindoDetalhe && relatorio" class="relatorio-detalhe">
-    <header class="relatorio-cabecalho">
+  <section *ngIf="exibindoDetalhe && relatorio" class="relatorio-carga-siape-bloco relatorio-carga-siape-detalhe">
+    <div class="relatorio-carga-siape-detalhe__topo">
       <div>
-        <h2>{{ relatorio.tipo === 'servidor' ? 'Servidor' : 'Unidade' }}</h2>
+        <h2>{{ tipoLabel(relatorio.tipo) }}</h2>
         <p>{{ relatorio.mensagem_usuario }}</p>
       </div>
-      <span class="status-geral" [class.erro]="relatorio.status === 'erro'" [class.parcial]="relatorio.status === 'parcial'">
-        {{ relatorio.status === 'sucesso' ? 'Concluído' : (relatorio.status === 'parcial' ? 'Atenção' : 'Não concluído') }}
-      </span>
-    </header>
-
-    <div class="meta">
-      <span>Consulta: {{ relatorio.chave }}</span>
-      <span *ngIf="relatorio.processado_em">Processado em {{ formatarProcessadoEm(relatorio.processado_em) }}</span>
-      <span>{{ relatorio.entrada_valida ? 'Dados recebidos no formato esperado' : 'Dados recebidos com inconsistência' }}</span>
+      <button class="btn btn-outline-secondary" type="button" (click)="listarRecentes()">Voltar</button>
     </div>
 
-    <section *ngFor="let secao of relatorio.secoes" class="secao">
-      <h3>{{ secao.titulo }}</h3>
-      <div class="tabela">
-        <div class="linha cabecalho">
-          <span>Campo</span>
-          <span>Recebido do SIAPE</span>
-          <span>Registrado no Petrvs</span>
-          <span>Situação</span>
-        </div>
-        <div class="linha" *ngFor="let campo of secao.campos; trackBy: campoTrack">
-          <span>{{ campo.rotulo }}</span>
-          <span>{{ valorCampo(campo, 'recebido_siape') }}</span>
-          <span>{{ valorCampo(campo, 'registrado_petrvs') }}</span>
-          <span>
-            <strong [class]="statusClass(campo.status)">{{ statusLabel(campo.status) }}</strong>
-          </span>
-        </div>
-      </div>
-    </section>
+    <div class="relatorio-carga-siape-meta">
+      <span><strong>ID:</strong> {{ relatorio.id }}</span>
+      <span><strong>Chave:</strong> {{ relatorio.chave }}</span>
+      <span><strong>Status:</strong> {{ statusResumoLabel(relatorio.status) }}</span>
+      <span><strong>Processado em:</strong> {{ formatarProcessadoEm(relatorio.processado_em) || '-' }}</span>
+    </div>
 
-    <section class="orientacoes" *ngIf="relatorio.orientacoes.length">
+    <section class="relatorio-carga-siape-box" *ngIf="relatorio.orientacoes.length">
       <h3>Orientações</h3>
-      <ul>
+      <ul class="relatorio-carga-siape-orientacoes">
         <li *ngFor="let orientacao of relatorio.orientacoes">{{ orientacao }}</li>
       </ul>
     </section>
+
+    <ng-container *ngIf="relatorio.secoes.length; else semSecoes">
+      <div *ngIf="deveExibirAbas()" class="relatorio-carga-siape-tabs">
+        <div class="relatorio-carga-siape-tablist" role="tablist" aria-label="Matrículas processadas">
+          <button
+            *ngFor="let secao of relatorio.secoes; let i = index"
+            class="relatorio-carga-siape-tab"
+            type="button"
+            role="tab"
+            [class.relatorio-carga-siape-tab--ativa]="secaoAtivaIndex === i"
+            [attr.aria-selected]="secaoAtivaIndex === i"
+            [attr.aria-controls]="'relatorio-carga-siape-secao-' + i"
+            [id]="'relatorio-carga-siape-aba-' + i"
+            (click)="selecionarSecao(i)">
+            {{ labelAba(secao, i) }}
+          </button>
+        </div>
+
+        <section
+          *ngIf="secaoAtiva() as secao"
+          class="relatorio-carga-siape-box"
+          role="tabpanel"
+          [id]="'relatorio-carga-siape-secao-' + secaoAtivaIndex"
+          [attr.aria-labelledby]="'relatorio-carga-siape-aba-' + secaoAtivaIndex">
+          <div class="relatorio-carga-siape-secao-topo">
+            <h3>{{ secao.titulo }}</h3>
+            <span [class]="statusVinculoClass(secao)">{{ statusVinculoLabel(secao) }}</span>
+          </div>
+          <ng-container *ngTemplateOutlet="tabelaSecao; context: { secao: secao }"></ng-container>
+        </section>
+      </div>
+
+      <ng-container *ngIf="!deveExibirAbas()">
+        <section *ngFor="let secao of relatorio.secoes" class="relatorio-carga-siape-box">
+          <div class="relatorio-carga-siape-secao-topo">
+            <h3>{{ secao.titulo }}</h3>
+            <span *ngIf="relatorio.tipo === 'servidor'" [class]="statusVinculoClass(secao)">
+              {{ statusVinculoLabel(secao) }}
+            </span>
+          </div>
+          <ng-container *ngTemplateOutlet="tabelaSecao; context: { secao: secao }"></ng-container>
+        </section>
+      </ng-container>
+    </ng-container>
   </section>
 
-  <section *ngIf="!exibindoDetalhe" class="recentes">
+  <section *ngIf="!exibindoDetalhe" class="relatorio-carga-siape-bloco">
     <h2>Relatórios recentes</h2>
-    <div class="lista-recentes" *ngIf="recentes.length; else vazio">
-      <button class="item-recente" type="button" *ngFor="let item of recentes" (click)="abrir(item)">
-        <span>
-          <strong>{{ item.tipo === 'servidor' ? 'Servidor' : 'Unidade' }}</strong>
-          {{ item.chave }}
-        </span>
-        <small>{{ formatarProcessadoEm(item.processado_em) }}</small>
-        <em>{{ item.status === 'sucesso' ? 'Concluído' : (item.status === 'parcial' ? 'Atenção' : 'Não concluído') }}</em>
-      </button>
+
+    <div class="relatorio-carga-siape-lista" *ngIf="recentes.length; else semRecentes">
+      <article class="relatorio-carga-siape-card" *ngFor="let item of recentes">
+        <div class="relatorio-carga-siape-card__topo">
+          <div>
+            <strong>{{ tipoLabel(item.tipo) }}</strong>
+            <span class="relatorio-carga-siape-muted">{{ item.chave }}</span>
+          </div>
+          <span class="relatorio-carga-siape-chip" [ngClass]="statusResumoClass(item.status)">
+            {{ statusResumoLabel(item.status) }}
+          </span>
+        </div>
+
+        <div class="relatorio-carga-siape-card__meta">
+          <span><strong>ID:</strong> {{ item.id }}</span>
+          <span><strong>Processado em:</strong> {{ formatarProcessadoEm(item.processado_em) || '-' }}</span>
+        </div>
+
+        <p class="relatorio-carga-siape-card__mensagem">{{ item.mensagem_usuario }}</p>
+
+        <div class="relatorio-carga-siape-card__acoes">
+          <button class="btn btn-sm btn-outline-primary" type="button" (click)="abrir(item)">
+            Abrir detalhe
+          </button>
+        </div>
+      </article>
     </div>
-    <ng-template #vazio>
-      <p class="vazio">Nenhum relatório encontrado.</p>
-    </ng-template>
   </section>
 </div>
+
+<ng-template #tabelaSecao let-secao="secao">
+  <p *ngIf="!secao.campos.length" class="relatorio-carga-siape-vazio">Nenhum campo disponível nesta seção.</p>
+
+  <div class="relatorio-carga-siape-tabela-wrapper" *ngIf="secao.campos.length">
+    <table class="relatorio-carga-siape-tabela">
+      <thead>
+        <tr>
+          <th>Campo</th>
+          <th>Recebido do SIAPE</th>
+          <th>Registrado no Petrvs</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let campo of secao.campos">
+          <td>{{ campo.rotulo }}</td>
+          <td>{{ valorCampo(campo, 'recebido_siape') }}</td>
+          <td>{{ valorCampo(campo, 'registrado_petrvs') }}</td>
+          <td>
+            <span [class]="statusCampoClass(campo.status)">{{ statusLabel(campo.status) }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-template>
+
+<ng-template #semSecoes>
+  <p class="relatorio-carga-siape-vazio">Nenhuma seção disponível neste relatório.</p>
+</ng-template>
+
+<ng-template #semRecentes>
+  <p class="relatorio-carga-siape-vazio">Nenhum relatório encontrado.</p>
+</ng-template>
