@@ -251,10 +251,14 @@
                           </table>
                     </div>
                   </div>
-                  <app-consolidacao-ocorrencias
-                    [consolidacao]="consolidacao"
-                    [planoTrabalho]="planoTrabalho()!"
-                  />
+                  @defer (on viewport) {
+                    <app-consolidacao-ocorrencias
+                      [consolidacao]="consolidacao"
+                      [planoTrabalho]="planoTrabalho()!"
+                    />
+                  } @placeholder {
+                    <span></span>
+                  }
 
                 @if (podeConcluirConsolidacao(consolidacao)) {
                   <div class="card-footer d-flex justify-content-end p-2x">

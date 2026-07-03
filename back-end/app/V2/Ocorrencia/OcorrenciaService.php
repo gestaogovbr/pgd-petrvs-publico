@@ -11,14 +11,13 @@ use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
-use App\V2\Ocorrencia\DTOs\ConsolidacaoAfastamentoDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaIndexDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaImpactoDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaOperacaoDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
 use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -57,13 +56,9 @@ class OcorrenciaService
     {
         $this->validator->validarAutorizacao($dto->usuarioId, Auth::id());
 
-        return DB::transaction(function () use ($dto) {
-            $afastamento = $this->afastamentoRepository->insert($dto->toPersistArray());
+        $afastamento = $this->afastamentoRepository->insert($dto->toPersistArray());
 
-            $this->vincularConsolidacoes($afastamento);
-
-            return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
-        });
+        return $afastamento->load('tipoMotivoAfastamento:id,nome,horas');
     }
 
     public function destroy(string $ocorrenciaId, string $usuarioId): void
@@ -103,29 +98,5 @@ class OcorrenciaService
         $subordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($gerendciadasIds)->pluck('id')->all();
 
         return array_values(array_unique(array_merge($gerendciadasIds, $subordinadasIds)));
-    }
-
-    private function vincularConsolidacoes(Afastamento $afastamento): void
-    {
-        $planos = $this->planoTrabalhoRepository->planosAtivosPorData(
-            $afastamento->data_inicio,
-            $afastamento->data_fim,
-            $afastamento->usuario_id,
-        );
-
-        foreach ($planos as $plano) {
-            /** @var \App\Models\PlanoTrabalho $plano */
-            $consolidacoes = $this->consolidacaoRepository->findAllByPlanoTrabalhoIdAndPeriodo(
-                $plano->id,
-                $afastamento->data_inicio,
-                $afastamento->data_fim,
-            );
-
-            foreach ($consolidacoes as $consolidacao) {
-                $this->consolidacaoRepository->createAfastamentoVinculo(
-                    ConsolidacaoAfastamentoDTO::fromModels($consolidacao, $afastamento)->toPersistArray(),
-                );
-            }
-        }
     }
 }

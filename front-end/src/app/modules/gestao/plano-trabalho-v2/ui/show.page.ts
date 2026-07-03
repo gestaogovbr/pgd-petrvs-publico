@@ -85,6 +85,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
               this.assinatura.init(updated, updated.entregas || []);
             });
             this.facade.loadConsolidacoes();
+            this.facade.loadDispensas();
           };
           this.route.fragment.pipe(take(1)).subscribe(f => {
             if (f) setTimeout(() => document.getElementById(f)?.scrollIntoView({ behavior: 'smooth' }), 300);

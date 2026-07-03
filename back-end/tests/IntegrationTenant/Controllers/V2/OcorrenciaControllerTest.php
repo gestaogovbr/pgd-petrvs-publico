@@ -93,15 +93,6 @@ describe('POST /api/v2/ocorrencia (happy path)', function () {
         expect($data['observacoes'])->toBe('Consulta médica');
     });
 
-    test('vincula ocorrência às consolidações interceptadas', function () {
-        $response = $this->postJson('/api/__tests/v2/ocorrencia', validPayload($this));
-
-        $afastamentoId = $response->json('data.id');
-
-        $vinculos = PlanoTrabalhoConsolidacaoAfastamento::where('afastamento_id', $afastamentoId)->count();
-        expect($vinculos)->toBeGreaterThan(0);
-    });
-
     test('persiste no banco com usuario_id correto', function () {
         $this->postJson('/api/__tests/v2/ocorrencia', validPayload($this));
 

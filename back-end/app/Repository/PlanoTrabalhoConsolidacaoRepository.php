@@ -94,16 +94,25 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->writeRepository->delete($id);
     }
 
+    /**
+     * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+     */
     public function createAfastamentoVinculo(array $attributes): void
     {
         $this->writeRepository->createAfastamentoVinculo($attributes);
     }
 
+    /**
+     * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+     */
     public function updateAfastamentoSnapshot(string $afastamentoId, string $snapshot): void
     {
         $this->writeRepository->updateAfastamentoSnapshot($afastamentoId, $snapshot);
     }
 
+    /**
+     * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+     */
     public function deleteAfastamentoVinculos(string $afastamentoId): void
     {
         $this->writeRepository->deleteAfastamentoVinculos($afastamentoId);
