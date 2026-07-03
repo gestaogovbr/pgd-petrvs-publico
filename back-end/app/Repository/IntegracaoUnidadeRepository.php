@@ -46,6 +46,14 @@ class IntegracaoUnidadeRepository
     }
 
     /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getUnidadesComChefiasCompleto(): \Illuminate\Support\Collection
+    {
+        return $this->readRepository->getUnidadesComChefiasCompleto();
+    }
+
+    /**
      * @param array<string, mixed> $attributes
      * @return \App\Models\IntegracaoUnidade
      */

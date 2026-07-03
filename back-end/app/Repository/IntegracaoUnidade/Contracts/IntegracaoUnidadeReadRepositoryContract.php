@@ -25,4 +25,11 @@ interface IntegracaoUnidadeReadRepositoryContract
      * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\IntegracaoUnidade>
      */
     public function findAllAtivas(): \Illuminate\Database\Eloquent\Collection;
+
+    /**
+     * Retorna unidades com CPF de titular e/ou substituto para atribuição de gestores.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getUnidadesComChefiasCompleto(): \Illuminate\Support\Collection;
 }

@@ -36,13 +36,13 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
 
     public function findByCodigo(string $codigo): ?IntegracaoUnidade
     {
-        $registro = $this->model->newQuery()
-            ->withTrashed()
+        /** @var IntegracaoUnidade|null $registro */
+        $registro = $this->model->withTrashed()
             ->where('id_servo', $codigo)
             ->orWhere('codigo_siape', $codigo)
             ->first();
 
-        return $registro instanceof IntegracaoUnidade ? $registro : null;
+        return $registro;
     }
 
     /**
@@ -83,5 +83,21 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
             ->filter()
             ->unique()
             ->values();
+    }
+
+    public function getUnidadesComChefiasCompleto(): Collection
+    {
+        return DB::table('integracao_unidades as iu')
+            ->join('unidades as u', 'iu.id_servo', '=', 'u.codigo')
+            ->select([
+                'u.id as id_unidade',
+                'u.codigo as codigo_unidade',
+                'iu.cpf_titular_autoridade_uorg as cpf_titular',
+                'iu.cpf_substituto_autoridade_uorg as cpf_substituto',
+            ])
+            ->whereNull('u.deleted_at')
+            ->whereNull('u.data_inativacao')
+            ->whereNull('iu.deleted_at')
+            ->get();
     }
 }
