@@ -227,6 +227,13 @@ export class AppComponent implements IAppComponent {
         route: ['gestao', 'ocorrencia'],
         icon: this.entity.getIcon('Ocorrencia'),
       },
+      /* Gestão */
+      OCORRENCIAS_V2: {
+        name: this.lex.translate("Ocorrências V2"),
+        permition: 'MOD_OCOR',
+        route: ['gestao', 'ocorrencia-v2'],
+        icon: this.entity.getIcon('Ocorrencia'),
+      },
       CADEIAS_VALORES: {
         name: this.lex.translate("Cadeias de Valores"),
         permition: 'MOD_CADV',
@@ -542,6 +549,7 @@ export class AppComponent implements IAppComponent {
       },
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS),
       Object.assign({}, this.menuSchema.OCORRENCIAS),
+      Object.assign({}, this.menuSchema.OCORRENCIAS_V2),
       {
         name: this.lex.translate("Institucional"),
         permition: "MENU_GESTAO_ACESSO",

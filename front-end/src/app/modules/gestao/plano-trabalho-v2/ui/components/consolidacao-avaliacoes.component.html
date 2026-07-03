@@ -1,3 +1,4 @@
+@if (!facade.isDispensada(consolidacao.id)) {
 @if (consolidacao.avaliacoes.length > 0) {
   <div class="mt-4">
     <p class="text-weight-semi-bold mb-2">Avaliação do Período</p>
@@ -60,7 +61,7 @@
                       [disabled]="facade.cancelandoAvaliacaoIds().has(avaliacao.id)"
                       (click)="facade.cancelarAvaliacao(consolidacao, avaliacao.id)"
                     >
-                      <i class="fas fa-ban mr-1"></i>Cancelar
+                      <i class="fas fa-ban mr-1"></i>Cancelar avaliação
                     </br-button>
                   }
                 </td>
@@ -101,4 +102,5 @@
     (justificativaChange)="facade.setJustificativaAvaliacao(consolidacao.id, $event)"
     (submeter)="facade.avaliarConsolidacao(consolidacao)"
   />
+}
 }

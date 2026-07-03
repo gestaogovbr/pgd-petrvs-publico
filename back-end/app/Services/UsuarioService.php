@@ -205,6 +205,7 @@ class UsuarioService extends ServiceBase
             $usuarioLotadoMesmaUnidade = $this->usuarioRepository->findByCpfAndLotacao($cpfCheck, $unidadeExercicioIdCheck);
 
             if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
+                $matriculaAtual = $usuarioLotadoMesmaUnidade->matricula;
                 $dadosAtualizacao = ['matricula' => $matriculaNova];
                 $integracaoServidor = $this->integracaoServidorRepository->getServidor($cpfCheck, $matriculaNova);
                 $matriculaAtual = $usuarioLotadoMesmaUnidade->matricula;

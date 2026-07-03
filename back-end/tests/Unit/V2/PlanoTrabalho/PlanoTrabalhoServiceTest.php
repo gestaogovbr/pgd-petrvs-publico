@@ -153,7 +153,7 @@ describe('PlanoTrabalhoService::index', function () {
         $result = $this->service->index(['filters' => ['vigentes' => true]]);
 
         expect($result)->toBe($paginator)
-            ->and($planoItem->getAttribute('acoes'))->toBe(['editar' => true]);
+            ->and($planoItem->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'encerrar' => false]);
     });
 
     test('expande unidades com subordinadas quando flag subordinadas=true', function () {
@@ -379,7 +379,7 @@ describe('PlanoTrabalhoService::show', function () {
         $result = $this->service->show('plano-1');
 
         expect($result)->toBe($plano)
-            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true]);
+            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'encerrar' => false]);
     });
 
     test('retorna plano quando tem entregas', function () {

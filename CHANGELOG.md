@@ -1,3 +1,19 @@
+## 3.0.6 03/07/2026
+
+### Adicionado
+- Exibição da carga horária total no bloco Planejamento do Plano de Trabalho v2
+
+### Modificado
+- Unificada lógica de permissão de encerramento e arquivamento do PT v2: elegibilidade e autorização agora são calculadas no back-end e expostas via campo `acoes` na API
+- Cancelamento de avaliação restrito: não é mais permitido cancelar avaliação após 20 dias da conclusão do registro de execução, nem cancelar avaliação que já possua recurso (regra aplicável a PTs criados a partir de 10/06/2026)
+- Filtros "Unidades Subordinadas" e "Meus Planos" na listagem de PT v2 tornados mutuamente exclusivos
+- Removido campo "Justificativa" da tela de edição do Plano de Trabalho v2
+- Ajustados textos de "Agente Público" para "Participante" na interface do PT v2
+- Renomeado botão de remoção de avaliação para "Cancelar Avaliação"
+
+### Corrigido
+- Corrigido arquivamento de Plano de Trabalho em reavaliação: PTs com período aguardando reavaliação agora são corretamente bloqueados para arquivamento
+
 ## 3.0.5 29/06/2026
 
 ### Adicionado
