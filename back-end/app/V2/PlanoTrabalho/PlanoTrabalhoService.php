@@ -75,7 +75,8 @@ class PlanoTrabalhoService
         $usuario = $this->usuarioLogadoComPerfilEAreas();
 
         $paginator->getCollection()->transform(function (PlanoTrabalho $plano) use ($usuario) {
-            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+            $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
+            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
 
             return $plano;
         });
@@ -156,7 +157,8 @@ class PlanoTrabalhoService
         }
 
         $usuario = $this->usuarioLogadoComPerfilEAreas();
-        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+        $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
+        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
 
         return $plano;
     }

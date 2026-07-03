@@ -16,11 +16,6 @@ export const routes: Routes = [
         data: { breadcrumb: 'Nova' },
         loadComponent: () => import('./ui/form.page').then(m => m.OcorrenciaV2FormPage),
       },
-      {
-        path: 'editar/:id',
-        data: { breadcrumb: 'Editar' },
-        loadComponent: () => import('./ui/form.page').then(m => m.OcorrenciaV2FormPage),
-      },
     ],
   },
 ];

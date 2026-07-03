@@ -2,6 +2,11 @@
 
 ### Adicionado
 - Exibição da carga horária total no bloco Planejamento do Plano de Trabalho v2
+- **Dispensa automática de períodos avaliativos**: períodos completamente cobertos por ocorrências de afastamento são automaticamente dispensados de avaliação. Quando todos os períodos não-dispensados estão avaliados, o PT é concluído automaticamente; ao remover/editar ocorrência que desfaz uma dispensa, o PT é reaberto
+- **Módulo de Ocorrências V2 standalone** (desacoplado do Plano de Trabalho): CRUD independente com listagem paginada server-side, filtro por agente público, seleção de agentes visíveis (unidades gerenciadas + subordinadas) e capacidade `MOD_OCOR` para perfil Consulta
+- Endpoint `GET /api/v2/ocorrencia/impacto-consolidacoes`: consulta preditiva do impacto de uma operação (criação/exclusão) nos períodos avaliativos, com modais de confirmação no front-end informando quais dispensas serão geradas ou removidas
+- Vinculação automática de ocorrências com consolidações (`planos_trabalhos_consolidacoes_afastamentos`) ao criar uma ocorrência
+- Prazo máximo de exclusão de ocorrências: ocorrências cadastradas há mais de 1 ano não podem ser excluídas
 
 ### Modificado
 - Unificada lógica de permissão de encerramento e arquivamento do PT v2: elegibilidade e autorização agora são calculadas no back-end e expostas via campo `acoes` na API
@@ -10,9 +15,14 @@
 - Removido campo "Justificativa" da tela de edição do Plano de Trabalho v2
 - Ajustados textos de "Agente Público" para "Participante" na interface do PT v2
 - Renomeado botão de remoção de avaliação para "Cancelar Avaliação"
+- Dispensa de períodos movida para o back-end como fonte da verdade: front-end consome o estado calculado pela API ao invés de verificar localmente
+- Ocorrências do tipo compensação (cálculo = ACRESCIMO) não geram dispensa de períodos avaliativos
+- Removida rota `PUT /api/v2/ocorrencia/:id` (edição de ocorrência); mantidas apenas criação e exclusão
+- Observer de ocorrências recalcula dispensas ao editar datas ou excluir, incluindo limpeza do campo `data_arquivamento` ao reabrir PT concluído
 
 ### Corrigido
 - Corrigido arquivamento de Plano de Trabalho em reavaliação: PTs com período aguardando reavaliação agora são corretamente bloqueados para arquivamento
+- Corrigido typo no seeder de tipos de motivo de afastamento: "Liença nojo" corrigido para "Licença nojo", com migração para unificar registros duplicados
 
 ## 3.0.5 29/06/2026
 

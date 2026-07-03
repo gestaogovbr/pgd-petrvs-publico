@@ -2,7 +2,6 @@
 
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
-use App\Models\TipoAvaliacao;
 use App\Models\TipoMotivoAfastamento;
 use App\Models\Usuario;
 use App\V2\Ocorrencia\OcorrenciaController;
@@ -216,114 +215,30 @@ describe('GET /api/v2/ocorrencia/impacto-consolidacoes', function () {
 
         $response->assertStatus(422);
     });
-});
 
-describe('Mudança de tipo compensação/não-compensação', function () {
-
-    beforeEach(function () {
-        $tipoAvaliacao = TipoAvaliacao::factory()->create();
-        $this->tipoAvaliacaoNotaId = Str::uuid()->toString();
-        DB::connection('tenant')->table('tipos_avaliacoes_notas')->insert([
-            'id' => $this->tipoAvaliacaoNotaId,
-            'tipo_avaliacao_id' => $tipoAvaliacao->id,
-            'sequencia' => 1,
-            'nota' => json_encode(['valor' => 'IV']),
-            'descricao' => 'Nota IV',
-            'pergunta' => 'Pergunta',
-            'aprova' => 0,
-            'justifica' => 0,
-            'icone' => 'bi bi-star',
-            'cor' => '#FF0000',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-        $this->tipoAvaliacaoId = $tipoAvaliacao->id;
-
-        $this->tipoCompensacao = TipoMotivoAfastamento::firstOrCreate(
-            ['codigo' => '15'],
-            ['nome' => 'Greve (compensação)', 'sigla' => 'GC', 'calculo' => 'ACRESCIMO', 'data_inicio' => now(), 'situacao' => 'ATIVO', 'icone' => 'bi bi-flag', 'cor' => '#FFFF00', 'horas' => 0, 'integracao' => 0]
-        );
-    });
-
-    test('bloqueia ao mudar ocorrência para compensação quando a dispensa resultante é removida em PT concluído com recurso', function () {
-        $this->plano->update(['status' => 'CONCLUIDO']);
-
-        DB::connection('tenant')->table('avaliacoes')->insert([
-            'id' => Str::uuid()->toString(),
-            'plano_trabalho_consolidacao_id' => $this->consolidacao->id,
-            'avaliador_id' => $this->usuario->id,
-            'data_avaliacao' => '2026-06-01',
-            'nota' => json_encode(['nota' => 'IV']),
-            'justificativas' => json_encode([]),
-            'tipo_avaliacao_id' => $this->tipoAvaliacaoId,
-            'tipo_avaliacao_nota_id' => $this->tipoAvaliacaoNotaId,
-            'recurso' => 'Discordo da nota',
-            'data_recurso' => '2026-06-05',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $af1Id = Str::uuid()->toString();
-        $af2Id = Str::uuid()->toString();
-
+    test('bloqueia exclusão de ocorrência criada há mais de 365 dias', function () {
+        $afId = Str::uuid()->toString();
         DB::connection('tenant')->table('afastamentos')->insert([
-            ['id' => $af1Id, 'usuario_id' => $this->usuario->id, 'data_inicio' => '2026-05-01', 'data_fim' => '2026-05-15', 'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id, 'observacoes' => 'af1', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => $af2Id, 'usuario_id' => $this->usuario->id, 'data_inicio' => '2026-05-16', 'data_fim' => '2026-05-31', 'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id, 'observacoes' => 'af2', 'created_at' => now(), 'updated_at' => now()],
-        ]);
-
-        // Editar af2 para tipo compensação → remove dispensa → PT concluído com recurso → bloqueio
-        $response = $this->getJson('/api/__tests/v2/ocorrencia/impacto-consolidacoes?' . http_build_query([
+            'id' => $afId,
             'usuario_id' => $this->usuario->id,
-            'data_inicio' => '2026-05-16',
+            'data_inicio' => '2026-05-01',
             'data_fim' => '2026-05-31',
-            'ocorrencia_id' => $af2Id,
-            'operacao' => 'editar',
-            'tipo_motivo_afastamento_id' => $this->tipoCompensacao->id,
-        ]));
-
-        $response->assertStatus(200)
-            ->assertJsonPath('data.operacao_bloqueada', true)
-            ->assertJsonPath('data.remove_dispensa', true);
-    });
-
-    test('bloqueia ao mudar ocorrência de compensação para não-compensação quando gera dispensa em PT concluído com recurso', function () {
-        $this->plano->update(['status' => 'CONCLUIDO']);
-
-        DB::connection('tenant')->table('avaliacoes')->insert([
-            'id' => Str::uuid()->toString(),
-            'plano_trabalho_consolidacao_id' => $this->consolidacao->id,
-            'avaliador_id' => $this->usuario->id,
-            'data_avaliacao' => '2026-06-01',
-            'nota' => json_encode(['nota' => 'IV']),
-            'justificativas' => json_encode([]),
-            'tipo_avaliacao_id' => $this->tipoAvaliacaoId,
-            'tipo_avaliacao_nota_id' => $this->tipoAvaliacaoNotaId,
-            'recurso' => 'Discordo da nota',
-            'data_recurso' => '2026-06-05',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $af1Id = Str::uuid()->toString();
-        $af2Id = Str::uuid()->toString();
-
-        DB::connection('tenant')->table('afastamentos')->insert([
-            ['id' => $af1Id, 'usuario_id' => $this->usuario->id, 'data_inicio' => '2026-05-01', 'data_fim' => '2026-05-15', 'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id, 'observacoes' => 'af1', 'created_at' => now(), 'updated_at' => now()],
-            ['id' => $af2Id, 'usuario_id' => $this->usuario->id, 'data_inicio' => '2026-05-16', 'data_fim' => '2026-05-31', 'tipo_motivo_afastamento_id' => $this->tipoCompensacao->id, 'observacoes' => 'af2 comp', 'created_at' => now(), 'updated_at' => now()],
-        ]);
-
-        // Editar af2 de compensação para não-compensação → gera dispensa → PT concluído com recurso → bloqueio
-        $response = $this->getJson('/api/__tests/v2/ocorrencia/impacto-consolidacoes?' . http_build_query([
-            'usuario_id' => $this->usuario->id,
-            'data_inicio' => '2026-05-16',
-            'data_fim' => '2026-05-31',
-            'ocorrencia_id' => $af2Id,
-            'operacao' => 'editar',
             'tipo_motivo_afastamento_id' => $this->tipoNaoCompensacao->id,
+            'observacoes' => 'Antiga',
+            'created_at' => now()->subDays(400),
+            'updated_at' => now()->subDays(400),
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/ocorrencia/impacto-consolidacoes?' . http_build_query([
+            'usuario_id' => $this->usuario->id,
+            'data_inicio' => '2026-05-01',
+            'data_fim' => '2026-05-31',
+            'ocorrencia_id' => $afId,
+            'operacao' => 'excluir',
         ]));
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.operacao_bloqueada', true)
-            ->assertJsonPath('data.gera_dispensa', true);
+            ->assertJsonPath('data.operacao_bloqueada', true);
     });
 });
+
