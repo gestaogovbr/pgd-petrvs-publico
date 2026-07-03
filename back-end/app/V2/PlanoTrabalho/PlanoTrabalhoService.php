@@ -31,6 +31,7 @@ use App\V2\Traits\ValidaAutorizacaoTrait;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator as ConcreteLengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -74,11 +75,13 @@ class PlanoTrabalhoService
         $paginator = $this->readRepository->buscarPlanosListagem($filtro);
         $usuario = $this->usuarioLogadoComPerfilEAreas();
 
-        $paginator->getCollection()->transform(function (PlanoTrabalho $plano) use ($usuario) {
-            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+        if ($paginator instanceof ConcreteLengthAwarePaginator) {
+            $paginator->getCollection()->transform(function (PlanoTrabalho $plano) use ($usuario) {
+                $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
 
-            return $plano;
-        });
+                return $plano;
+            });
+        }
 
         return $paginator;
     }
