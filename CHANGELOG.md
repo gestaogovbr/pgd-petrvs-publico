@@ -21,10 +21,12 @@
 - Removida rota `PUT /api/v2/ocorrencia/:id` (edição de ocorrência); mantidas apenas criação e exclusão
 - Observer de ocorrências recalcula dispensas ao editar datas ou excluir, incluindo limpeza do campo `data_arquivamento` ao reabrir PT concluído
 - Ajustado título da tela de login para "PGD Petrvs - Sistema do Programa de Gestão e Desempenho da Administração Pública Federal" em substituição ao título "Acesso", devido à remoção das logos no período de defeso eleitoral
+- Modificada regra para envio de PTs pendentes
 
 ### Corrigido
 - Corrigido arquivamento de Plano de Trabalho em reavaliação: PTs com período aguardando reavaliação agora são corretamente bloqueados para arquivamento
 - Corrigido typo no seeder de tipos de motivo de afastamento: "Liença nojo" corrigido para "Licença nojo", com migração para unificar registros duplicados
+- Correção de permissões para acesso à Consulta de Envios
 
 ## 3.0.5 29/06/2026
 
