@@ -190,10 +190,9 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         PlanoTrabalho::query()
             ->whereNull('deleted_at')
             ->whereIn('status', StatusEnum::permitemEnvio())
-            ->whereNotNull('data_agendamento_envio')
             ->where(function ($query) {
-                $query->whereColumn('data_agendamento_envio', '>', 'data_conclusao_envio')
-                    ->orWhereNull('data_conclusao_envio');
+                $query->whereNull('data_envio_api_pgd')
+                    ->orWhereColumn('updated_at', '>', 'data_envio_api_pgd');
             })
             ->chunkById($size, $callback);
     }
