@@ -67,6 +67,16 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->findAvaliadasComPrazoRecurso($usuarioId, $prazoDias);
     }
 
+    public function findConsolidacoesParaImpactoDispensa(string $usuarioId, string $dataInicio, string $dataFim): \Illuminate\Support\Collection
+    {
+        return $this->readRepository->findConsolidacoesParaImpactoDispensa($usuarioId, $dataInicio, $dataFim);
+    }
+
+    public function findConsolidacoesVigentes(string $planoTrabalhoId, ?string $encerradoAt): Collection
+    {
+        return $this->readRepository->findConsolidacoesVigentes($planoTrabalhoId, $encerradoAt);
+    }
+
     public function create(array $attributes): PlanoTrabalhoConsolidacao
     {
         /** @var PlanoTrabalhoConsolidacao */
@@ -84,16 +94,25 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->writeRepository->delete($id);
     }
 
+    /**
+     * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+     */
     public function createAfastamentoVinculo(array $attributes): void
     {
         $this->writeRepository->createAfastamentoVinculo($attributes);
     }
 
+    /**
+     * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+     */
     public function updateAfastamentoSnapshot(string $afastamentoId, string $snapshot): void
     {
         $this->writeRepository->updateAfastamentoSnapshot($afastamentoId, $snapshot);
     }
 
+    /**
+     * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+     */
     public function deleteAfastamentoVinculos(string $afastamentoId): void
     {
         $this->writeRepository->deleteAfastamentoVinculos($afastamentoId);

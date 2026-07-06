@@ -219,4 +219,12 @@ class UsuarioRepository implements EnvioRepositoryInterface
     {
         return $this->writeRepository->updateConfig($usuarioId, $unidadeId);
     }
+
+    /**
+     * @param list<string> $unidadeIds
+     */
+    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection
+    {
+        return $this->readRepository->findAgentesVisiveis($usuarioId, $unidadeIds);
+    }
 }

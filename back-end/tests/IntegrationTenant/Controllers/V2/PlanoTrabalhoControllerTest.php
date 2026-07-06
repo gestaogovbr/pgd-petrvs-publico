@@ -1182,6 +1182,161 @@ describe('PATCH /api/v2/plano-trabalho/:id/arquivar', function () {
         $this->patchJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/arquivar')
             ->assertStatus(404);
     });
+
+    test('arquiva plano concluido com periodos nao avaliados dispensados por afastamento', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-06-30',
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $nota = TipoAvaliacaoNota::create([
+            'id' => fake()->uuid(),
+            'sequencia' => 3,
+            'nota' => json_encode('Adequado'),
+            'descricao' => 'Adequado',
+            'pergunta' => '?',
+            'aprova' => 1,
+            'justifica' => 0,
+            'icone' => 'bi bi-check',
+            'cor' => '#28a745',
+            'tipo_avaliacao_id' => $this->programa->tipo_avaliacao_plano_trabalho_id,
+        ]);
+
+        $consolidacaoAvaliada = PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-03-31',
+            'status' => 'AVALIADO',
+        ]);
+
+        Avaliacao::create([
+            'data_avaliacao' => now()->subDays(31)->format('Y-m-d H:i:s'),
+            'nota' => $nota->nota,
+            'justificativa' => null,
+            'justificativas' => [],
+            'avaliador_id' => $this->usuario->id,
+            'plano_trabalho_consolidacao_id' => $consolidacaoAvaliada->id,
+            'tipo_avaliacao_id' => $nota->tipo_avaliacao_id,
+            'tipo_avaliacao_nota_id' => $nota->id,
+        ]);
+
+        $consolidacaoNaoAvaliada = PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => '2025-04-01',
+            'data_fim' => '2025-06-30',
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $tipoMotivo = TipoMotivoAfastamento::firstOrCreate(
+            ['nome' => 'Licença Médica'],
+            ['codigo' => 'LM', 'sigla' => 'LM', 'calculo' => 'DECRESCIMO', 'data_inicio' => now(), 'situacao' => 'ATIVO', 'icone' => 'bi bi-heart-pulse', 'cor' => '#FF0000', 'horas' => 0, 'integracao' => 0]
+        );
+
+        Afastamento::create([
+            'observacoes' => 'Afastamento cobrindo período inteiro',
+            'data_inicio' => '2025-04-01',
+            'data_fim' => '2025-06-30',
+            'horas' => 0,
+            'usuario_id' => $this->usuario->id,
+            'tipo_motivo_afastamento_id' => $tipoMotivo->id,
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(200);
+
+        $plano->refresh();
+        expect($plano->data_arquivamento)->not->toBeNull();
+    });
+
+    test('retorna 422 quando concluido com periodos nao avaliados e sem afastamento cobrindo', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-06-30',
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $nota = TipoAvaliacaoNota::create([
+            'id' => fake()->uuid(),
+            'sequencia' => 3,
+            'nota' => json_encode('Adequado'),
+            'descricao' => 'Adequado',
+            'pergunta' => '?',
+            'aprova' => 1,
+            'justifica' => 0,
+            'icone' => 'bi bi-check',
+            'cor' => '#28a745',
+            'tipo_avaliacao_id' => $this->programa->tipo_avaliacao_plano_trabalho_id,
+        ]);
+
+        $consolidacaoAvaliada = PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-03-31',
+            'status' => 'AVALIADO',
+        ]);
+
+        Avaliacao::create([
+            'data_avaliacao' => now()->subDays(31)->format('Y-m-d H:i:s'),
+            'nota' => $nota->nota,
+            'justificativa' => null,
+            'justificativas' => [],
+            'avaliador_id' => $this->usuario->id,
+            'plano_trabalho_consolidacao_id' => $consolidacaoAvaliada->id,
+            'tipo_avaliacao_id' => $nota->tipo_avaliacao_id,
+            'tipo_avaliacao_nota_id' => $nota->id,
+        ]);
+
+        PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => '2025-04-01',
+            'data_fim' => '2025-06-30',
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando plano encerrado mas com pendencias nao dispensadas', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'modalidade_pgd' => $this->modalidadePgd,
+            'criacao_usuario_id' => $this->usuario->id,
+            'programa_id' => $this->programa->id,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-06-30',
+            'status' => 'CONCLUIDO',
+            'encerrado_at' => now()->subDays(5)->format('Y-m-d'),
+        ]);
+
+        PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-03-31',
+            'status' => 'CONCLUIDO',
+        ]);
+
+        $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/arquivar")
+            ->assertStatus(422);
+    });
 });
 
 // ── POST clonar ─────────────────────────────────────────────────────

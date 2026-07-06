@@ -484,4 +484,22 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                 $onChunk($usuarios);
             });
     }
+
+    /** @param list<string> $unidadeIds */
+    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection
+    {
+        $query = $this->model->newQuery();
+
+        if (empty($unidadeIds)) {
+            $query->where('id', $usuarioId);
+        } else {
+            $query->where('id', $usuarioId)
+                ->orWhereHas('unidadesIntegrantes', fn ($q) => $q
+                    ->whereIn('unidade_id', $unidadeIds)
+                    ->has('atribuicoes')
+                );
+        }
+
+        return $query->orderBy('nome')->get(['id', 'nome']);
+    }
 }

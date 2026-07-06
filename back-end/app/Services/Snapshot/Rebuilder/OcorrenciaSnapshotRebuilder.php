@@ -5,6 +5,9 @@ namespace App\Services\Snapshot\Rebuilder;
 use App\Models\Ocorrencia;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 
+/**
+ * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+ */
 class OcorrenciaSnapshotRebuilder extends BaseRebuilder
 {
     public function rebuildFromSnapshot($ocorrencia, $consolidacaoId, $consolidacaoDataConclusao)
