@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Out
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
-import { OcorrenciaFormValue, TipoMotivoAfastamento } from '../../domain/types';
-import { SelectOption } from '../edit.page';
+import { OcorrenciaFormValue, TipoMotivoAfastamento } from '../../../plano-trabalho-v2/domain/types';
+import { SelectOption } from '../../../plano-trabalho-v2/ui/edit.page';
 
 @Component({
   selector: 'app-ocorrencia-form',

@@ -14,6 +14,11 @@ use Illuminate\Support\Collection;
  */
 class EloquentTipoMotivoAfastamentoReadRepository extends AbstractEloquentReadRepository implements TipoMotivoAfastamentoReadRepositoryContract
 {
+    private const TIPOS_OCULTOS_DROPDOWN = [
+        'Comparecimento para fins de saúde (não se aplica para teletrabalho integral)',
+        'Redução de jornada sem redução salarial',
+    ];
+
     public function __construct(TipoMotivoAfastamento $model)
     {
         $this->model = $model;
@@ -23,6 +28,7 @@ class EloquentTipoMotivoAfastamentoReadRepository extends AbstractEloquentReadRe
     {
         return $this->query()
             ->select(['id', 'codigo', 'nome', 'horas'])
+            ->whereNotIn('nome', self::TIPOS_OCULTOS_DROPDOWN)
             ->orderBy('nome')
             ->get();
     }

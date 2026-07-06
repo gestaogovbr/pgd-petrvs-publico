@@ -94,12 +94,11 @@ describe('PlanoTrabalhoRequestValidator::store', function () {
         expect($result['usuario_id'])->toBe($validPayload['usuario_id']);
     });
 
-    test('aceita campos opcionais de justificativa', function () use ($validPayload) {
+    test('aceita campos opcionais de justificativa_modalidade', function () use ($validPayload) {
         $result = PlanoTrabalhoRequestValidator::store(makeRequest(array_merge($validPayload, [
-            'justificativa' => 'Motivo X',
             'justificativa_modalidade' => 'Motivo Y',
         ])));
-        expect($result['justificativa'])->toBe('Motivo X');
+        expect($result['justificativa_modalidade'])->toBe('Motivo Y');
     });
 
     test('rejeita sem usuario_id', function () use ($validPayload) {
@@ -154,12 +153,6 @@ describe('PlanoTrabalhoRequestValidator::store', function () {
     test('rejeita usuario_id não uuid', function () use ($validPayload) {
         PlanoTrabalhoRequestValidator::store(makeRequest(array_merge($validPayload, [
             'usuario_id' => 'nao-uuid',
-        ])));
-    })->throws(ValidationException::class);
-
-    test('rejeita justificativa acima de 500 caracteres', function () use ($validPayload) {
-        PlanoTrabalhoRequestValidator::store(makeRequest(array_merge($validPayload, [
-            'justificativa' => str_repeat('a', 501),
         ])));
     })->throws(ValidationException::class);
 

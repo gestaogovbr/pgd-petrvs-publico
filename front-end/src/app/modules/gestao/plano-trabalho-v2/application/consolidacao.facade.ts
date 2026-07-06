@@ -24,6 +24,7 @@ export class ConsolidacaoFacade {
   // --- Estado principal ---
   readonly consolidacoes = signal<Consolidacao[]>([]);
   readonly notas = signal<NotaAvaliacao[]>([]);
+  readonly dispensadas = signal<Set<string>>(new Set());
 
   // --- Confirmação genérica ---
   readonly confirmacaoPendente = signal<{ titulo: string; mensagem: string; onConfirmar: () => void } | null>(null);
@@ -64,6 +65,7 @@ export class ConsolidacaoFacade {
     this.loadConsolidacoes();
     this.loadNotas();
     this.loadTiposMotivo();
+    this.loadDispensas();
   }
 
   loadConsolidacoes(): void {
@@ -71,6 +73,16 @@ export class ConsolidacaoFacade {
       this.consolidacoes.set(consolidacoes);
       this.inicializarTextos(consolidacoes);
     });
+  }
+
+  loadDispensas(): void {
+    this.api.getDispensas(this.planoId).subscribe(ids => {
+      this.dispensadas.set(new Set(ids));
+    });
+  }
+
+  isDispensada(consolidacaoId: string): boolean {
+    return this.dispensadas().has(consolidacaoId);
   }
 
   loadNotas(): void {

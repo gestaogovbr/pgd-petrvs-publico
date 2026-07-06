@@ -1,0 +1,127 @@
+<div class="br-mainpanel">
+  <app-breadcrumb />
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Ocorrências</h2>
+    <br-button emphasis="primary" (click)="nova()">
+      <i class="fas fa-plus mr-1"></i>Nova Ocorrência
+    </br-button>
+  </div>
+
+  <form [formGroup]="filtros" class="mb-3">
+    <div class="br-card">
+      <div class="card-content">
+        <div class="row g-3 align-items-end mb-3">
+
+          <div class="col-12 col-sm-6 col-md-4">
+            <br-select
+              label="Agente Público"
+              formControlName="usuario_id"
+              [options]="agentesOptions()"
+              (change)="aplicarFiltros()"
+              class="w-100">
+            </br-select>
+          </div>
+
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="w-100">
+              <br-select
+                label="Motivo"
+                formControlName="tipo_motivo_afastamento_id"
+                [options]="tiposOptions()"
+                (change)="aplicarFiltros()"
+                class="w-100">
+              </br-select>
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100 mb-1">
+              <label>Início</label>
+              <input type="date"
+                    formControlName="data_inicio"
+                    (change)="aplicarFiltros()" />
+            </div>
+          </div>
+
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100 mb-1">
+              <label>Fim</label>
+              <input type="date"
+                    formControlName="data_fim"
+                    (change)="aplicarFiltros()" />
+            </div>
+          </div>
+
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end">
+          <br-button emphasis="secondary" (click)="aplicarFiltros()">
+            <i class="fas fa-search mr-1"></i>Consultar
+          </br-button>
+          <br-button emphasis="tertiary" (click)="limparFiltros()">
+            <i class="fas fa-times mr-1"></i>Limpar
+          </br-button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <div class="d-flex justify-content-center py-5">
+      <br-loading></br-loading>
+    </div>
+  } @else if (ocorrencias().length === 0) {
+    <div class="br-message info">
+      <div class="content">Nenhuma ocorrência cadastrada.</div>
+    </div>
+  } @else {
+    <div class="br-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Agente Público</th>
+            <th>Motivo</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Horas</th>
+            <th>Observações</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (oc of ocorrencias(); track oc.id) {
+            <tr>
+              <td>{{ oc.usuario?.nome ?? '-' }}</td>
+              <td>{{ oc.tipo_motivo_afastamento?.nome ?? '-' }}</td>
+              <td>{{ formatarData(oc.data_inicio) }}</td>
+              <td>{{ formatarData(oc.data_fim) }}</td>
+              <td>{{ oc.horas ?? '-' }}</td>
+              <td>{{ oc.observacoes ?? '-' }}</td>
+              <td class="text-end">
+                <div class="d-inline-flex gap-2">
+                  @if (podeExcluir(oc)) {
+                  <br-button emphasis="tertiary" shape="circle" (click)="excluir(oc)" title="Excluir">
+                    <i class="fa fa-trash"></i>
+                  </br-button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <app-v2-pagination class="mt-3 d-block" [page]="page()" [lastPage]="lastPage()" [total]="total()" (pageChange)="onPageChange($event)" />
+  }
+</div>
+
+<br-scrim [isOpen]="!!modal()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!modal()" [titleText]="modal()?.titulo || ''" size="small" alignFooter="end" (brModalBeforeClose)="fecharModal()">
+    <p [innerHTML]="modal()?.mensagem"></p>
+    <div slot="footer">
+        <br-button class="mx-1" emphasis="secondary" (click)="fecharModal()">Cancelar</br-button>
+        <br-button class="mx-1" emphasis="primary" (click)="confirmarModal()">Confirmar</br-button>
+    </div>
+  </br-modal>
+</br-scrim>

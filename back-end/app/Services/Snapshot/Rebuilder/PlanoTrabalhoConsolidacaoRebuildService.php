@@ -5,6 +5,9 @@ namespace App\Services\Snapshot\Rebuilder;
 use App\Models\PlanoTrabalhoConsolidacao;
 use Illuminate\Database\Eloquent\Collection;
 
+/**
+ * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+ */
 class PlanoTrabalhoConsolidacaoRebuildService
 {
     /** @var array<string, SnapshotRebuilderInterface> */

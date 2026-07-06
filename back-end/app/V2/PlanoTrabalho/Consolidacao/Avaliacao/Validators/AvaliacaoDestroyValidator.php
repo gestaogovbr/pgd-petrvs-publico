@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators;
 
-use App\Enums\StatusEnum;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use App\Models\Avaliacao;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\AvaliacaoRepository;
+use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoPolicy;
 
 class AvaliacaoDestroyValidator
 {
     public function __construct(
         private readonly AvaliacaoRepository $avaliacaoRepository,
+        private readonly AvaliacaoPolicy $avaliacaoPolicy,
     ) {}
 
     public function validar(string $planoTrabalhoId, string $consolidacaoId, string $avaliacaoId, string $usuarioLogadoId): Avaliacao
@@ -24,9 +25,7 @@ class AvaliacaoDestroyValidator
         $consolidacao = $this->findConsolidacaoOrFail($avaliacao);
 
         $this->validarPertencimento($consolidacao, $planoTrabalhoId, $consolidacaoId);
-        $this->validarAutoria($avaliacao, $usuarioLogadoId);
-        $this->validarStatus($consolidacao);
-        $this->validarMaisRecente($avaliacao, $consolidacao);
+        $this->validarPodeCancelar($avaliacao, $consolidacao, $usuarioLogadoId);
 
         return $avaliacao;
     }
@@ -50,6 +49,8 @@ class AvaliacaoDestroyValidator
             throw new NotFoundException('Período avaliativo não encontrado.');
         }
 
+        $consolidacao->loadMissing(['avaliacoes', 'statusHistorico']);
+
         return $consolidacao;
     }
 
@@ -62,26 +63,28 @@ class AvaliacaoDestroyValidator
         }
     }
 
-    private function validarAutoria(Avaliacao $avaliacao, string $usuarioLogadoId): void
+    private function validarPodeCancelar(Avaliacao $avaliacao, PlanoTrabalhoConsolidacao $consolidacao, string $usuarioLogadoId): void
     {
-        if ($avaliacao->avaliador_id !== $usuarioLogadoId) {
-            throw new ForbiddenException('Apenas quem realizou a avaliação pode cancelá-la.');
-        }
-    }
+        $planoTrabalho = $consolidacao->planoTrabalho;
 
-    private function validarStatus(PlanoTrabalhoConsolidacao $consolidacao): void
-    {
-        if ($consolidacao->status !== StatusEnum::AVALIADO->value) {
+        if (!$this->avaliacaoPolicy->isStatusAvaliado($consolidacao)) {
             throw new ValidateException('O período avaliativo precisa estar com status AVALIADO para cancelar a avaliação.');
         }
-    }
 
-    private function validarMaisRecente(Avaliacao $avaliacao, PlanoTrabalhoConsolidacao $consolidacao): void
-    {
-        $maisRecente = $this->avaliacaoRepository->findMaisRecenteDaConsolidacao($consolidacao->id);
+        if (!$this->avaliacaoPolicy->isAvaliador($avaliacao, $usuarioLogadoId)) {
+            throw new ForbiddenException('Apenas quem realizou a avaliação pode cancelá-la.');
+        }
 
-        if ($maisRecente?->id !== $avaliacao->id) {
+        if (!$this->avaliacaoPolicy->isMaisRecente($avaliacao, $consolidacao)) {
             throw new ValidateException('Apenas a avaliação mais recente pode ser cancelada.');
+        }
+
+        if (!$this->avaliacaoPolicy->naoTemRecurso($avaliacao, $planoTrabalho)) {
+            throw new ValidateException('Não é possível cancelar uma avaliação que possui recurso.');
+        }
+
+        if (!$this->avaliacaoPolicy->estaDentroDoPrazo($consolidacao, $planoTrabalho)) {
+            throw new ValidateException('O prazo de ' . AvaliacaoPolicy::PRAZO_CANCELAMENTO_DIAS . ' dias para cancelar a avaliação expirou.');
         }
     }
 }

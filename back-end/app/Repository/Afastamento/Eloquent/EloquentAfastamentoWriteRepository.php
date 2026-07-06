@@ -26,4 +26,15 @@ class EloquentAfastamentoWriteRepository extends AbstractEloquentWriteRepository
         /** @var Afastamento|null */
         return parent::update($id, $attributes);
     }
+
+    public function delete(string|int $id): bool
+    {
+        $model = $this->model->newQuery()->find($id);
+
+        if ($model === null) {
+            return false;
+        }
+
+        return (bool) $model->delete();
+    }
 }

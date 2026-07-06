@@ -30,7 +30,7 @@
         @if (!editandoInformacoesGerais()) {
           <div class="row">
             <div class="col-md-4 mb-3">
-              <p class="mb-1 text-weight-semi-bold text-up-01">Agente Público</p>
+              <p class="mb-1 text-weight-semi-bold text-up-01">Participante</p>
               <p class="mb-0">{{ agenteExibicao() }}</p>
             </div>
             <div class="col-md-4 mb-3">
@@ -68,14 +68,6 @@
               </div>
             </div>
           }
-          @if (plano()?.justificativa) {
-            <div class="row mt-2">
-              <div class="col-md-12">
-                <p class="mb-1 text-weight-semi-bold text-up-01">Justificativa da carga horária</p>
-                <p class="mb-0">{{ plano()?.justificativa }}</p>
-              </div>
-            </div>
-          }
         } @else {
           <form [formGroup]="form">
             @if (erroAgentePublico()) {
@@ -93,7 +85,7 @@
               <div class="col-md-4 mb-3 position-relative">
                 <div class="d-flex align-items-end gap-2">
                   <div class="br-input w-100">
-                    <label>Agente Público</label>
+                    <label>Participante</label>
                     <input type="text" placeholder="Digite nome ou matrícula (mín. 3)" [formControl]="agentePublicoQuery" autocomplete="on" [readonly]="agentePublicoSomenteLeitura()" />
                   </div>
                   @if (!agentePublicoSomenteLeitura()) {
@@ -169,22 +161,6 @@
                     placeholder="Descreva a justificativa para a modalidade escolhida..."
                     [value]="form.get('justificativa_modalidade')!.value || ''"
                     (input)="form.get('justificativa_modalidade')!.setValue($any($event.target).value)"
-                  ></br-textarea>
-                </div>
-              </div>
-            }
-
-            @if (totalForcaTrabalho() !== 100) {
-              <div class="row mt-2">
-                <div class="col-md-12 mb-3">
-                  <br-textarea
-                    [label]="'Justificativa para carga horária ' + (totalForcaTrabalho() < 100 ? 'insuficiente' : 'excedente') + ' *'"
-                    show-counter
-                    class="w-100"
-                    [maxlength]="500"
-                    placeholder="Descreva a justificativa para a carga horária..."
-                    [value]="form.get('justificativa')!.value || ''"
-                    (input)="form.get('justificativa')!.setValue($any($event.target).value)"
                   ></br-textarea>
                 </div>
               </div>
