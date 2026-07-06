@@ -8,6 +8,10 @@ use App\DTOs\ListResult;
 use App\Models\Afastamento;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
+use App\V2\Ocorrencia\DTOs\OcorrenciaIndexDTO;
+use Carbon\CarbonPeriod;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class AfastamentoRepository
 {
@@ -57,5 +61,15 @@ class AfastamentoRepository
     public function destroy(string $id): bool
     {
         return $this->writeRepository->delete($id);
+    }
+    
+    public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia): Collection
+    {
+        return $this->readRepository->findAfastamentosParaDispensa($usuarioId, $vigencia);
+    }
+
+    public function buscarOcorrenciasListagem(OcorrenciaIndexDTO $dto): LengthAwarePaginator
+    {
+        return $this->readRepository->buscarOcorrenciasListagem($dto);
     }
 }

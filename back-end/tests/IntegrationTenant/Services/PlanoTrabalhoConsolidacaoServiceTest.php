@@ -117,7 +117,7 @@ describe('PlanoTrabalhoConsolidacaoService::concluir', function () {
         expect($consolidacao->data_conclusao)->not->toBeNull();
         expect($consolidacao->justificativa_conclusao)->toBe('Justificativa teste');
     });
-});
+})->skip('substituido pela V2');
 
 describe('PlanoTrabalhoConsolidacaoService::consolidacaoDados', function () {
     test('retorna dados completos da consolidação', function () {
@@ -148,4 +148,4 @@ describe('PlanoTrabalhoConsolidacaoService::consolidacaoDados', function () {
         expect(fn() => $this->service->consolidacaoDados('inexistente-id'))
             ->toThrow(\Exception::class);
     });
-});
+})->skip('substituido pela V2');

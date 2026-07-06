@@ -10,6 +10,7 @@ use App\Exceptions\EnvioNaoAgendadoException;
 class PlanoTrabalhoObserver
 {
     public $afterCommit = true;
+    public static bool $skipProcessar = false;
 
     public function __construct()
     {
@@ -24,6 +25,10 @@ class PlanoTrabalhoObserver
 
     public function updated(PlanoTrabalho $planoTrabalho)
     {
+        if (self::$skipProcessar) {
+            return true;
+        }
+
         if (!tenancy()->initialized) {
             Log::warning('Tentativa de agendar envio de plano de trabalho sem tenant inicializado');
             return true;
