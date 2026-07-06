@@ -30,6 +30,7 @@ type PlanoTrabalhoStatusGroupName =
     | 'editavel'
     | 'assinavel'
     | 'vigente'
+    | 'avaliavel'
     | 'comExecucaoVisivel'
     | 'arquivavel'
     | 'clonavel'
@@ -40,6 +41,7 @@ export const PlanoTrabalhoStatusGroups: Record<PlanoTrabalhoStatusGroupName, rea
     editavel: [PlanoTrabalhoStatus.INCLUIDO, PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA],
     assinavel: [PlanoTrabalhoStatus.INCLUIDO, PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA],
     vigente: [PlanoTrabalhoStatus.ATIVO],
+    avaliavel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO],
     comExecucaoVisivel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO, PlanoTrabalhoStatus.AVALIADO],
     arquivavel: [PlanoTrabalhoStatus.CONCLUIDO, PlanoTrabalhoStatus.CANCELADO],
     clonavel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO],
