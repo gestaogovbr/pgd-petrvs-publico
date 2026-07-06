@@ -74,4 +74,13 @@ enum StatusEnum: string
             self::AVALIADO->value
         ];
     }
+
+    /** Status de consolidação que indicam finalização (concluído ou avaliado). */
+    public static function consolidacaoFinalizada(): array
+    {
+        return [
+            self::CONCLUIDO->value,
+            self::AVALIADO->value,
+        ];
+    }
 }
