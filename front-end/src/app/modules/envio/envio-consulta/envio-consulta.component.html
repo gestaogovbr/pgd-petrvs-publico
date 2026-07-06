@@ -4,7 +4,7 @@
   <p class="text-secondary">Consulta de envios à API PGD. Escolha abaixo o tipo de registro.</p>
 
   <div class="row mt-4">
-    <div class="col-6 col-sm-4 mb-3" *ngIf="auth.hasPermissionTo('MOD_ENVIO_USUARIO')">
+    <div class="col-6 col-sm-4 mb-3">
       <app-button-dashboard
         [title]="'Envios de Participantes'"
         iconClass="bi bi-people-fill"
@@ -14,7 +14,7 @@
       ></app-button-dashboard>
     </div>
 
-    <div class="col-6 col-sm-4 mb-3" *ngIf="auth.hasPermissionTo('MOD_ENVIO_PE')">
+    <div class="col-6 col-sm-4 mb-3">
       <app-button-dashboard
         [title]="'Envios de Planos de Entrega'"
         iconClass="bi bi-box-seam"
@@ -24,7 +24,7 @@
       ></app-button-dashboard>
     </div>
 
-    <div class="col-6 col-sm-4 mb-3" *ngIf="auth.hasPermissionTo('MOD_ENVIO_PT')">
+    <div class="col-6 col-sm-4 mb-3">
       <app-button-dashboard
         [title]="'Envios de Planos de Trabalho'"
         iconClass="bi bi-clipboard2-check"

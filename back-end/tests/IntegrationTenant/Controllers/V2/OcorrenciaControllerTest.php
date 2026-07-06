@@ -2,120 +2,58 @@
 
 namespace Tests\IntegrationTenant\Controllers\V2;
 
-use App\V2\PlanoTrabalho\Ocorrencia\OcorrenciaController;
-use App\V2\PlanoTrabalho\Documento\DocumentoController;
 use App\Models\Afastamento;
-use App\Models\Entrega;
-use App\Models\Perfil;
-use App\Models\PlanoEntrega;
-use App\Models\PlanoEntregaEntrega;
+use App\V2\Ocorrencia\OcorrenciaController;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
-use App\Models\PlanoTrabalhoEntrega;
-use App\Models\Programa;
-use App\Models\Template;
 use App\Models\TipoMotivoAfastamento;
-use App\Models\Unidade;
+use App\Models\UnidadeIntegrante;
+use App\Models\UnidadeIntegranteAtribuicao as Atribuicao;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
 beforeEach(function () {
     if (!Route::has('__tests.v2.ocorrencia.store')) {
-        Route::middleware(['api'])->post(
-            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/ocorrencia',
-            [OcorrenciaController::class, 'store']
-        )->name('__tests.v2.ocorrencia.store');
+        Route::middleware(['api'])->post('/api/__tests/v2/ocorrencia', [OcorrenciaController::class, 'store'])
+            ->name('__tests.v2.ocorrencia.store');
     }
-
-    if (!Route::has('__tests.v2.ocorrencia.update')) {
-        Route::middleware(['api'])->patch(
-            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/ocorrencia/{ocorrenciaId}',
-            [OcorrenciaController::class, 'update']
-        )->name('__tests.v2.ocorrencia.update');
-    }
-
     if (!Route::has('__tests.v2.ocorrencia.destroy')) {
-        Route::middleware(['api'])->delete(
-            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/ocorrencia/{ocorrenciaId}',
-            [OcorrenciaController::class, 'destroy']
-        )->name('__tests.v2.ocorrencia.destroy');
+        Route::middleware(['api'])->delete('/api/__tests/v2/ocorrencia/{ocorrenciaId}', [OcorrenciaController::class, 'destroy'])
+            ->name('__tests.v2.ocorrencia.destroy');
+    }
+    if (!Route::has('__tests.v2.ocorrencia.index')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/ocorrencia', [OcorrenciaController::class, 'index'])
+            ->name('__tests.v2.ocorrencia.index');
     }
 
-    if (!Route::has('__tests.v2.ocorrencia.documento.store')) {
-        Route::middleware(['api'])->post(
-            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/documento',
-            [DocumentoController::class, 'store']
-        )->name('__tests.v2.ocorrencia.documento.store');
-    }
-
-    if (!Route::has('__tests.v2.ocorrencia.documento.assinar')) {
-        Route::middleware(['api'])->post(
-            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/documento/assinatura-tcr',
-            [DocumentoController::class, 'assinar']
-        )->name('__tests.v2.ocorrencia.documento.assinar');
-    }
-
-    $perfil = Perfil::factory()->create(['nivel' => 3]);
-    $this->unidade = Unidade::factory()->create();
-    $this->usuario = Usuario::factory()->create([
-        'perfil_id' => $perfil->id,
-    ]);
-
-    $template = Template::factory()->create();
-
-    $this->programa = Programa::factory()->create([
-        'data_inicio' => '2024-01-01',
-        'data_fim' => '2026-12-31',
-        'template_tcr_id' => $template->id,
-    ]);
-
-    $this->plano = PlanoTrabalho::factory()->create([
-        'usuario_id' => $this->usuario->id,
-        'unidade_id' => $this->unidade->id,
-        'criacao_usuario_id' => $this->usuario->id,
-        'programa_id' => $this->programa->id,
-        'data_inicio' => '2025-01-01',
-        'data_fim' => '2025-06-30',
-        'status' => 'INCLUIDO',
-    ]);
-
-    $entregaCatalogo = Entrega::factory()->create(['unidade_id' => $this->unidade->id]);
-    $planoEntrega = PlanoEntrega::factory()->create([
-        'unidade_id' => $this->unidade->id,
-        'programa_id' => $this->programa->id,
-        'criacao_usuario_id' => $this->usuario->id,
-    ]);
-    $planoEntregaEntrega = PlanoEntregaEntrega::factory()->create([
-        'plano_entrega_id' => $planoEntrega->id,
-        'entrega_id' => $entregaCatalogo->id,
-        'unidade_id' => $this->unidade->id,
-    ]);
-
-    PlanoTrabalhoEntrega::factory()->create([
-        'plano_trabalho_id' => $this->plano->id,
-        'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
-        'forca_trabalho' => 100,
-    ]);
+    $this->usuario = Usuario::factory()->create();
+    $this->actingAs($this->usuario);
 
     $this->tipoMotivo = TipoMotivoAfastamento::firstOrCreate(
         ['nome' => 'Licença Médica'],
         ['codigo' => 'LM', 'sigla' => 'LM', 'calculo' => 'DECRESCIMO', 'data_inicio' => now(), 'situacao' => 'ATIVO', 'icone' => 'bi bi-heart-pulse', 'cor' => '#FF0000', 'horas' => 0, 'integracao' => 0]
     );
 
-    Session::put('entidade_id', $this->unidade->entidade_id);
+    $this->plano = PlanoTrabalho::factory()->ativo()->create([
+        'usuario_id' => $this->usuario->id,
+        'data_inicio' => '2025-01-01',
+        'data_fim' => '2025-06-30',
+    ]);
+
+    $this->consolidacao = PlanoTrabalhoConsolidacao::factory()->create([
+        'plano_trabalho_id' => $this->plano->id,
+        'data_inicio' => '2025-01-01',
+        'data_fim' => '2025-01-31',
+    ]);
 });
 
-function ativarPlanoOcorrencia($ctx): void
-{
-    $ctx->postJson("/api/__tests/v2/plano-trabalho/{$ctx->plano->id}/documento");
-    $ctx->postJson("/api/__tests/v2/plano-trabalho/{$ctx->plano->id}/documento/assinatura-tcr");
-    $ctx->plano->refresh();
-}
-
-function validOcorrenciaPayload($ctx): array
+function validPayload($ctx): array
 {
     return [
+        'usuario_id' => $ctx->usuario->id,
         'observacoes' => 'Consulta médica',
         'data_inicio' => '2025-01-10',
         'data_fim' => '2025-01-15',
@@ -125,46 +63,27 @@ function validOcorrenciaPayload($ctx): array
 
 // ── POST store ──────────────────────────────────────────────────────
 
-describe('POST /api/v2/plano-trabalho/:id/ocorrencia (validação)', function () {
+describe('POST /api/v2/ocorrencia (validação)', function () {
 
     test('retorna 422 quando campos obrigatórios ausentes', function () {
-        $this->actingAs($this->usuario, 'web');
-        ativarPlanoOcorrencia($this);
-
-        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia", [])
+        $this->postJson('/api/__tests/v2/ocorrencia', [])
             ->assertStatus(422);
     });
 
-    test('retorna 404 quando plano não encontrado', function () {
-        $this->actingAs($this->usuario, 'web');
+    test('retorna 422 quando data_fim anterior a data_inicio', function () {
+        $payload = validPayload($this);
+        $payload['data_inicio'] = '2025-01-15';
+        $payload['data_fim'] = '2025-01-10';
 
-        $this->postJson('/api/__tests/v2/plano-trabalho/' . fake()->uuid() . '/ocorrencia', validOcorrenciaPayload($this))
-            ->assertStatus(404);
-    });
-
-    test('retorna 422 quando período fora da vigência do plano', function () {
-        $this->actingAs($this->usuario, 'web');
-        ativarPlanoOcorrencia($this);
-
-        $payload = validOcorrenciaPayload($this);
-        $payload['data_inicio'] = '2026-01-01';
-        $payload['data_fim'] = '2026-01-15';
-
-        $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia", $payload)
+        $this->postJson('/api/__tests/v2/ocorrencia', $payload)
             ->assertStatus(422);
     });
 });
 
-describe('POST /api/v2/plano-trabalho/:id/ocorrencia (happy path)', function () {
+describe('POST /api/v2/ocorrencia (happy path)', function () {
 
     test('cria ocorrência e retorna 201', function () {
-        $this->actingAs($this->usuario, 'web');
-        ativarPlanoOcorrencia($this);
-
-        $response = $this->postJson(
-            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia",
-            validOcorrenciaPayload($this)
-        );
+        $response = $this->postJson('/api/__tests/v2/ocorrencia', validPayload($this));
 
         $response->assertStatus(201)
             ->assertJsonPath('success', true);
@@ -174,29 +93,8 @@ describe('POST /api/v2/plano-trabalho/:id/ocorrencia (happy path)', function () 
         expect($data['observacoes'])->toBe('Consulta médica');
     });
 
-    test('vincula ocorrência às consolidações do período', function () {
-        $this->actingAs($this->usuario, 'web');
-        ativarPlanoOcorrencia($this);
-
-        $response = $this->postJson(
-            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia",
-            validOcorrenciaPayload($this)
-        );
-
-        $afastamentoId = $response->json('data.id');
-
-        $vinculos = PlanoTrabalhoConsolidacaoAfastamento::where('afastamento_id', $afastamentoId)->count();
-        expect($vinculos)->toBeGreaterThan(0);
-    });
-
-    test('persiste no banco com usuario_id do dono do plano', function () {
-        $this->actingAs($this->usuario, 'web');
-        ativarPlanoOcorrencia($this);
-
-        $this->postJson(
-            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia",
-            validOcorrenciaPayload($this)
-        );
+    test('persiste no banco com usuario_id correto', function () {
+        $this->postJson('/api/__tests/v2/ocorrencia', validPayload($this));
 
         $this->assertDatabaseHas('afastamentos', [
             'usuario_id' => $this->usuario->id,
@@ -205,74 +103,177 @@ describe('POST /api/v2/plano-trabalho/:id/ocorrencia (happy path)', function () 
     });
 });
 
-// ── PATCH update ────────────────────────────────────────────────────
-
-describe('PATCH /api/v2/plano-trabalho/:id/ocorrencia/:oid (happy path)', function () {
-
-    test('atualiza observações da ocorrência', function () {
-        $this->actingAs($this->usuario, 'web');
-        ativarPlanoOcorrencia($this);
-
-        $afastamentoId = $this->postJson(
-            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia",
-            validOcorrenciaPayload($this)
-        )->json('data.id');
-
-        $response = $this->patchJson(
-            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia/{$afastamentoId}",
-            ['observacoes' => 'Atualizado']
-        );
-
-        $response->assertStatus(200)
-            ->assertJsonPath('success', true)
-            ->assertJsonPath('data.observacoes', 'Atualizado');
-    });
-
-    test('atualiza snapshot nas consolidações vinculadas', function () {
-        $this->actingAs($this->usuario, 'web');
-        ativarPlanoOcorrencia($this);
-
-        $afastamentoId = $this->postJson(
-            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia",
-            validOcorrenciaPayload($this)
-        )->json('data.id');
-
-        $this->patchJson(
-            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia/{$afastamentoId}",
-            ['observacoes' => 'Snapshot atualizado']
-        )->assertStatus(200);
-
-        $vinculo = PlanoTrabalhoConsolidacaoAfastamento::where('afastamento_id', $afastamentoId)->first();
-
-        expect($vinculo->snapshot->observacoes)->toBe('Snapshot atualizado');
-    });
-});
-
 // ── DELETE destroy ──────────────────────────────────────────────────
 
-describe('DELETE /api/v2/plano-trabalho/:id/ocorrencia/:oid', function () {
+describe('DELETE /api/v2/ocorrencia/:id', function () {
 
     test('remove ocorrência e vínculos com consolidações', function () {
-        $this->actingAs($this->usuario, 'web');
-        ativarPlanoOcorrencia($this);
+        $afastamentoId = $this->postJson('/api/__tests/v2/ocorrencia', validPayload($this))->json('data.id');
 
-        $afastamentoId = $this->postJson(
-            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia",
-            validOcorrenciaPayload($this)
-        )->json('data.id');
-
-        $this->deleteJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia/{$afastamentoId}")
-            ->assertStatus(204);
+        $this->deleteJson("/api/__tests/v2/ocorrencia/{$afastamentoId}", [
+            'usuario_id' => $this->usuario->id,
+        ])->assertStatus(204);
 
         $this->assertDatabaseMissing('afastamentos', ['id' => $afastamentoId, 'deleted_at' => null]);
         expect(PlanoTrabalhoConsolidacaoAfastamento::where('afastamento_id', $afastamentoId)->count())->toBe(0);
     });
 
     test('retorna 404 quando ocorrência não encontrada', function () {
-        $this->actingAs($this->usuario, 'web');
-        ativarPlanoOcorrencia($this);
+        $this->deleteJson('/api/__tests/v2/ocorrencia/' . fake()->uuid(), [
+            'usuario_id' => $this->usuario->id,
+        ])->assertStatus(404);
+    });
 
-        $this->deleteJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/ocorrencia/" . fake()->uuid())
-            ->assertStatus(404);
+    test('bloqueia exclusão de ocorrência criada há mais de 365 dias', function () {
+        $afId = Str::uuid()->toString();
+        DB::connection('tenant')->table('afastamentos')->insert([
+            'id' => $afId, 'usuario_id' => $this->usuario->id,
+            'data_inicio' => '2025-01-01', 'data_fim' => '2025-01-31',
+            'tipo_motivo_afastamento_id' => $this->tipoMotivo->id,
+            'observacoes' => 'Antiga', 'created_at' => now()->subDays(400), 'updated_at' => now()->subDays(400),
+        ]);
+
+        $this->deleteJson("/api/__tests/v2/ocorrencia/{$afId}", [
+            'usuario_id' => $this->usuario->id,
+        ])->assertStatus(422)
+            ->assertJsonPath('error', 'Ocorrência cadastrada há mais de 1 ano não pode ser excluída.');
+    });
+});
+
+// ── GET index ───────────────────────────────────────────────────────
+
+describe('GET /api/v2/ocorrencia', function () {
+
+    test('retorna listagem paginada', function () {
+        $this->postJson('/api/__tests/v2/ocorrencia', validPayload($this));
+
+        $response = $this->getJson('/api/__tests/v2/ocorrencia?page=1&size=15');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->assertJsonStructure(['data' => ['data', 'current_page', 'last_page', 'total']]);
+
+        expect($response->json('data.data'))->not->toBeEmpty();
+    });
+});
+
+// ── GET agentes ─────────────────────────────────────────────────────
+
+describe('GET /api/v2/ocorrencia/agentes', function () {
+
+    beforeEach(function () {
+        if (!Route::has('__tests.v2.ocorrencia.agentes')) {
+            Route::middleware(['api'])->get('/api/__tests/v2/ocorrencia/agentes', [OcorrenciaController::class, 'agentes'])
+                ->name('__tests.v2.ocorrencia.agentes');
+        }
+    });
+
+    test('retorna ao menos o próprio usuário', function () {
+        $response = $this->getJson('/api/__tests/v2/ocorrencia/agentes');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $agentes = $response->json('data');
+        expect($agentes)->not->toBeEmpty();
+        expect(collect($agentes)->pluck('id')->toArray())->toContain($this->usuario->id);
+    });
+});
+
+// ── Hierarquia: gestor vê/cria para subordinados ────────────────────
+
+describe('Hierarquia: gestor opera sobre usuários de unidades subordinadas', function () {
+
+    beforeEach(function () {
+        if (!Route::has('__tests.v2.ocorrencia.agentes')) {
+            Route::middleware(['api'])->get('/api/__tests/v2/ocorrencia/agentes', [OcorrenciaController::class, 'agentes'])
+                ->name('__tests.v2.ocorrencia.agentes');
+        }
+
+        // Unidade pai (gestor logado) → unidade filha (subordinado)
+        $this->unidadePai = \App\Models\Unidade::factory()->create();
+        $this->unidadeFilha = \App\Models\Unidade::factory()->create(['unidade_pai_id' => $this->unidadePai->id]);
+
+        // Gestor: atribuição GESTOR na unidade pai
+        Atribuicao::factory()
+            ->paraUsuarioUnidade($this->usuario->id, $this->unidadePai->id)
+            ->gestor()
+            ->create();
+
+        // Subordinado: lotado na unidade filha
+        $this->subordinado = Usuario::factory()->create();
+        Atribuicao::factory()
+            ->paraUsuarioUnidade($this->subordinado->id, $this->unidadeFilha->id)
+            ->lotado()
+            ->create();
+
+        $this->unlistedSubordinado = Usuario::factory()->create(); // Sem atribuição: não é subordinado do gestor
+        UnidadeIntegrante::create(['usuario_id' => $this->unlistedSubordinado->id, 'unidade_id' => $this->unidadeFilha->id]);
+    });
+
+    test('agentes retorna subordinado de unidade filha', function () {
+        $response = $this->getJson('/api/__tests/v2/ocorrencia/agentes');
+
+        $response->assertStatus(200);
+
+        $ids = collect($response->json('data'))->pluck('id')->toArray();
+        expect($ids)->toContain($this->subordinado->id);
+        expect($ids)->toContain($this->usuario->id);
+        expect($ids)->not->toContain($this->unlistedSubordinado->id);
+    });
+
+    test('gestor cria ocorrência para subordinado em unidade filha', function () {
+        $response = $this->postJson('/api/__tests/v2/ocorrencia', [
+            'usuario_id' => $this->subordinado->id,
+            'observacoes' => 'Ocorrência do subordinado',
+            'data_inicio' => '2025-01-10',
+            'data_fim' => '2025-01-15',
+            'tipo_motivo_afastamento_id' => $this->tipoMotivo->id,
+        ]);
+
+        $response->assertStatus(201);
+        expect($response->json('data.observacoes'))->toBe('Ocorrência do subordinado');
+
+        $this->assertDatabaseHas('afastamentos', [
+            'usuario_id' => $this->subordinado->id,
+            'observacoes' => 'Ocorrência do subordinado',
+        ]);
+    });
+
+    test('index retorna ocorrências do subordinado para o gestor', function () {
+        // Cria ocorrência para o subordinado via DB
+        DB::connection('tenant')->table('afastamentos')->insert([
+            'id' => Str::uuid()->toString(),
+            'usuario_id' => $this->subordinado->id,
+            'data_inicio' => '2025-03-01',
+            'data_fim' => '2025-03-10',
+            'tipo_motivo_afastamento_id' => $this->tipoMotivo->id,
+            'observacoes' => 'Visível ao gestor',
+            'created_at' => now(), 'updated_at' => now(),
+        ]);
+        
+        $unlistedAfatamento = Afastamento::factory()->create(['usuario_id' => $this->unlistedSubordinado->id]);
+
+        $response = $this->getJson('/api/__tests/v2/ocorrencia?page=1&size=50');
+
+        $response->assertStatus(200);
+
+        $observacoes = collect($response->json('data.data'))->pluck('observacoes')->toArray();
+        expect($observacoes)->toContain('Visível ao gestor');
+        expect($observacoes)->not->toContain($unlistedAfatamento->observacoes);
+    });
+
+    test('gestor sem vínculo com o subordinado não pode criar ocorrência', function () {
+        $outroUsuario = Usuario::factory()->create(); // sem lotação nas unidades gerenciadas
+
+        $response = $this->postJson('/api/__tests/v2/ocorrencia', [
+            'usuario_id' => $outroUsuario->id,
+            'observacoes' => 'Deve ser negado',
+            'data_inicio' => '2025-01-10',
+            'data_fim' => '2025-01-15',
+            'tipo_motivo_afastamento_id' => $this->tipoMotivo->id,
+        ]);
+
+        $response->assertStatus(403);
     });
 });
