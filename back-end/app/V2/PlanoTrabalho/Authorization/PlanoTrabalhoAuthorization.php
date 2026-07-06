@@ -20,11 +20,53 @@ class PlanoTrabalhoAuthorization
         private readonly UnidadeRepository $unidadeRepository,
     ) {}
 
-    public function acoes(PlanoTrabalho $plano, Usuario $usuario): PlanoTrabalhoAcoesDTO
+    public function acoes(PlanoTrabalho $plano, Usuario $usuario, bool $isElegivelParaArquivamento): PlanoTrabalhoAcoesDTO
     {
         return new PlanoTrabalhoAcoesDTO(
             editar: $this->podeEditar($plano, $usuario),
+            arquivar: $this->podeArquivar($plano, $usuario, $isElegivelParaArquivamento),
+            encerrar: $this->podeEncerrar($plano, $usuario),
         );
+    }
+
+    public function podeEncerrar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if (!$this->isElegivelParaEncerramento($plano)) {
+            return false;
+        }
+
+        return $this->isAutorizadoEncerrar($plano, $usuario);
+    }
+
+    public function isElegivelParaEncerramento(PlanoTrabalho $plano): bool
+    {
+        if ($plano->status !== StatusEnum::ATIVO->value) {
+            return false;
+        }
+
+        $hoje = now()->format('Y-m-d');
+
+        return $plano->data_inicio <= $hoje && $plano->data_fim >= $hoje;
+    }
+
+    // TODO: spec 4.23-b exige que o adm negocial seja de uma unidade instituidora na linha
+    //       ascendente do PT. Atualmente permite qualquer adm negocial. Avaliar uso de admNegocialNoEscopoInstituidora.
+    public function isAutorizadoEncerrar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        return $this->isDonoOuChefiaOuAdm($plano, $usuario);
+    }
+
+    public function podeArquivar(PlanoTrabalho $plano, Usuario $usuario, bool $isElegivelParaArquivamento): bool
+    {
+        if ($plano->data_arquivamento !== null) {
+            return false;
+        }
+
+        if (!$isElegivelParaArquivamento) {
+            return false;
+        }
+
+        return $this->isAutorizadoArquivar($plano, $usuario);
     }
 
     public function podeEditar(PlanoTrabalho $plano, Usuario $usuario): bool
@@ -84,5 +126,28 @@ class PlanoTrabalhoAuthorization
         }
 
         return false;
+    }
+
+    public function isAutorizadoArquivar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($this->isDonoOuChefia($plano, $usuario->id, $plano->unidade_id)) {
+            return true;
+        }
+
+        if ($usuario->perfil?->nivel === PerfilEnum::COLABORADOR->value
+            && $this->unidadeRepository->hasUsuarioLotacao($plano->unidade_id, $usuario->id, true)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function isDonoOuChefiaOuAdm(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($this->isDonoOuChefia($plano, $usuario->id, $plano->unidade_id)) {
+            return true;
+        }
+
+        return $usuario->perfil !== null && $usuario->perfil->nivel <= PerfilEnum::ADMINISTRADOR_NEGOCIAL->value;
     }
 }

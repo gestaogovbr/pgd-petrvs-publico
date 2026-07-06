@@ -7,6 +7,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\SolucaoController;
 use App\Http\Controllers\TipoClienteController;
+use App\Models\Afastamento;
 use App\Models\Avaliacao;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoEntregaEntrega;
@@ -16,6 +17,7 @@ use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\StatusJustificativa;
 use App\Models\Usuario;
+use App\Observers\AfastamentoObserver;
 use App\Observers\AvaliacaoObserver;
 use App\Observers\PlanoEntregaEntregaObserver;
 use App\Observers\PlanoEntregaEntregaProgressoObserver;
@@ -119,7 +121,8 @@ class AppServiceProvider extends ServiceProvider
         //StatusJustificativa::observe(StatusJustificativaObserver::class);
         PlanoTrabalho::observe(PlanoTrabalhoObserver::class);
         PlanoTrabalhoEntrega::observe(PlanoTrabalhoEntregaObserver::class);
-        \App\Models\PlanoTrabalhoConsolidacao::observe(PlanoTrabalhoConsolidacaoObserver::class);
+        PlanoTrabalhoConsolidacao::observe(PlanoTrabalhoConsolidacaoObserver::class);
+        Afastamento::observe(AfastamentoObserver::class);
 
     }
 }

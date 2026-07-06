@@ -65,7 +65,7 @@ class PlanoTrabalhoService
         $filtro = PlanoTrabalhoIndexDTO::fromRequest($data, Auth::id());
         $filtro = $this->indexValidator->validar($filtro);
 
-        if ($filtro->subordinadas && $filtro->unidadesId) {
+        if (!$filtro->minhaEquipe && $filtro->subordinadas && $filtro->unidadesId) {
             $idsBase = $filtro->unidadesId;
             $subordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($idsBase)->pluck('id')->toArray();
             $filtro = $filtro->withUnidadesId(array_merge($idsBase, $subordinadasIds));
@@ -75,7 +75,8 @@ class PlanoTrabalhoService
         $usuario = $this->usuarioLogadoComPerfilEAreas();
 
         $paginator->getCollection()->transform(function (PlanoTrabalho $plano) use ($usuario) {
-            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+            $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
+            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
 
             return $plano;
         });
@@ -156,7 +157,8 @@ class PlanoTrabalhoService
         }
 
         $usuario = $this->usuarioLogadoComPerfilEAreas();
-        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+        $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
+        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
 
         return $plano;
     }

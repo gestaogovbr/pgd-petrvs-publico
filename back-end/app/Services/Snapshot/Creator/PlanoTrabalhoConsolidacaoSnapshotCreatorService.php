@@ -2,6 +2,9 @@
 
 namespace App\Services\Snapshot\Creator;
 
+/**
+ * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+ */
 class PlanoTrabalhoConsolidacaoSnapshotCreatorService
 {
     /** @var array<string, SnapshotCreatorInterface> */

@@ -48,7 +48,8 @@ class TipoMotivoAfastamentoSeeder extends Seeder
         ['tipo' => 'Acréscimo', 'horas' => 'Dias',  'nome' => 'Política de consequência do PGD (compensação)'],
         ['tipo' => 'Acréscimo', 'horas' => 'Dias',   'nome' => 'Recesso (compensação)'],
         ['tipo' => 'Acréscimo', 'horas' => 'Horas',  'nome' => 'Outras hipóteses (compensação)'],
-        ['tipo' => 'Acréscimo', 'horas' => 'Horas',  'nome' => 'Atendimento à convocação presencial excepcional']
+        ['tipo' => 'Acréscimo', 'horas' => 'Horas',  'nome' => 'Atendimento à convocação presencial excepcional'],
+        ['tipo' => 'Acréscimo', 'horas' => 'Horas',  'nome' => 'Trabalho Presencial Regular']
       ];
 
       foreach ($rows as $row) {

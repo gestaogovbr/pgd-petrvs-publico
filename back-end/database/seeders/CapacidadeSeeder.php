@@ -32,6 +32,7 @@ class CapacidadeSeeder extends Seeder
     $capacidades_consulta = [
       ["codigo" => "CTXT_EXEC"],
       ["codigo" => "MENU_GESTAO_ACESSO"],
+      ["codigo" => "MOD_OCOR"],
       ["codigo" => "MOD_PTR"],
       ["codigo" => "MOD_PTR_CSLD"],
     ];
