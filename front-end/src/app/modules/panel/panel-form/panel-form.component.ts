@@ -133,6 +133,13 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       integracao_siape_conectagov_chave: { default: "" },
       integracao_siape_conectagov_senha: { default: "" },
       integracao_siape_conectagov_qtd_max_requisicoes: { default: 10 },
+      // SIPEC
+      integracao_sipec_url: { default: "" },
+      integracao_sipec_conectagov_chave: { default: "" },
+      integracao_sipec_conectagov_senha: { default: "" },
+      integracao_sipec_cpf: { default: "" },
+      integracao_sipec_coduorg: { default: "" },
+      integracao_sipec_codorgao: { default: "" },
       // SEI
       modulo_sei_habilitado: { default: false },
       modulo_sei_private_key: { default: "" },
