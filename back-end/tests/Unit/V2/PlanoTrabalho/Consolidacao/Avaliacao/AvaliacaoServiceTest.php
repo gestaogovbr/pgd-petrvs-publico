@@ -7,6 +7,7 @@ use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoAuthorizatio
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoDestroyValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoStoreValidator;
 use App\Repository\AvaliacaoRepository;
+use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusService;
 use App\V2\StatusService;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
@@ -23,6 +24,7 @@ beforeEach(function () {
     $this->avaliacaoRepo = Mockery::mock(AvaliacaoRepository::class);
     $this->statusService = Mockery::mock(StatusService::class);
     $this->avaliacaoPolicy = Mockery::mock(AvaliacaoPolicy::class);
+    $this->planoAvaliacaoStatusService = Mockery::mock(PlanoTrabalhoAvaliacaoStatusService::class);
 
     $this->service = new AvaliacaoService(
         $this->authValidator,
@@ -31,6 +33,7 @@ beforeEach(function () {
         $this->avaliacaoRepo,
         $this->statusService,
         $this->avaliacaoPolicy,
+        $this->planoAvaliacaoStatusService,
     );
 });
 
@@ -79,6 +82,9 @@ describe('AvaliacaoService::destroy', function () {
         $consolidacao->shouldReceive('save')->once();
         $this->statusService->shouldReceive('atualizaStatus')
             ->with($consolidacao, 'CONCLUIDO', 'Avaliação do período avaliativo cancelada pela chefia.')
+            ->once();
+        $this->planoAvaliacaoStatusService->shouldReceive('sincronizarAposMudancaConsolidacao')
+            ->with($consolidacao)
             ->once();
 
         $result = $this->service->destroy('plano-1', 'cons-1', 'av-1', 'user-1');
