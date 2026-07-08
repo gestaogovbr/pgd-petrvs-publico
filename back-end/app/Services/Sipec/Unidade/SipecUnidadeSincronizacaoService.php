@@ -57,18 +57,22 @@ class SipecUnidadeSincronizacaoService
     /**
      * Coleta unidades paginadas do órgão e persiste na tabela sipec_unidades.
      */
-    public function coletarUnidadesPaginado(?string $tenantId, int $startPage): int
+    public function coletarUnidadesPaginado(?string $tenantId, int $startPage, ?string $dataUltimaTransacao = null): int
     {
         $page = $startPage;
         $size = 100;
         $total = 0;
 
         do {
-            $params = http_build_query([
+            $queryParams = [
                 'codOrgao' => $this->sipecService->getCodOrgao(),
                 'page' => $page,
                 'size' => $size,
-            ]);
+            ];
+            if ($dataUltimaTransacao) {
+                $queryParams['dataUltimaTransacao'] = $dataUltimaTransacao;
+            }
+            $params = http_build_query($queryParams);
             $path = '/api-sipec/v1/unidades?' . $params;
 
             $data = $this->sipecService->executarGetComRetry($path, 2);

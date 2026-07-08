@@ -100,12 +100,12 @@ describe('SipecService - executarFase0', function () {
 
         $unidadesService->shouldReceive('coletarUnidadesPaginado')
             ->once()
-            ->with('tenant-1', 0)
+            ->with('tenant-1', 0, null)
             ->andReturn(3);
 
         $servidoresService->shouldReceive('coletarServidoresPaginado')
             ->once()
-            ->with('tenant-1', 0)
+            ->with('tenant-1', 0, null)
             ->andReturn(5);
 
         $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
@@ -157,7 +157,7 @@ describe('SipecService - executarFase0', function () {
 
         $servidoresService->shouldReceive('coletarServidoresPaginado')
             ->once()
-            ->with('tenant-3', 3)
+            ->with('tenant-3', 3, null)
             ->andReturn(2);
 
         $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
@@ -190,7 +190,7 @@ describe('SipecService - executarFase0', function () {
 
         $servidoresService->shouldReceive('coletarServidoresPaginado')
             ->once()
-            ->with('tenant-4', 0)
+            ->with('tenant-4', 0, null)
             ->andReturn(0);
 
         $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);

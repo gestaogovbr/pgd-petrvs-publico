@@ -79,20 +79,24 @@ class SipecServidorSincronizacaoService
     /**
      * Coleta servidores paginados e persiste na tabela sipec_servidores.
      */
-    public function coletarServidoresPaginado(?string $tenantId, int $startPage): int
+    public function coletarServidoresPaginado(?string $tenantId, int $startPage, ?string $dataUltimaTransacao = null): int
     {
         $page = $startPage;
         $size = 100;
         $total = 0;
 
         do {
-            $params = http_build_query([
+            $queryParams = [
                 'codUorg' => $this->sipecService->getCodUorg(),
                 'codSitFuncional' => '1',
                 'codOrgao' => $this->sipecService->getCodOrgao(),
                 'page' => $page,
                 'size' => $size,
-            ]);
+            ];
+            if ($dataUltimaTransacao) {
+                $queryParams['dataUltimaTransacao'] = $dataUltimaTransacao;
+            }
+            $params = http_build_query($queryParams);
             $path = '/api-sipec/v1/servidores?' . $params;
 
             $data = $this->sipecService->executarGetComRetry($path);

@@ -233,8 +233,12 @@ class SipecService
     /**
      * Executa Fase 0 completa com resiliência: Redis lock, checkpoint por página, retry adaptativo.
      * Retomável do ponto de falha sem overlap.
+     *
+     * @param string|null $tenantId
+     * @param string|null $dataUltimaTransacaoUnidades Data da última execução sem falhas de unidades (filtro delta)
+     * @param string|null $dataUltimaTransacaoServidores Data da última execução sem falhas de servidores (filtro delta)
      */
-    public function executarFase0(?string $tenantId = null): array
+    public function executarFase0(?string $tenantId = null, ?string $dataUltimaTransacaoUnidades = null, ?string $dataUltimaTransacaoServidores = null): array
     {
         $lockKey = 'sipec_fase0_' . ($tenantId ?? 'default');
         $lock = Cache::lock($lockKey, 600);
@@ -251,13 +255,13 @@ class SipecService
             $totalServidores = 0;
 
             if ($checkpoint->etapa === 'unidades') {
-                $totalUnidades = $this->sipecUnidadesService->coletarUnidadesPaginado($tenantId, $checkpoint->ultima_pagina);
+                $totalUnidades = $this->sipecUnidadesService->coletarUnidadesPaginado($tenantId, $checkpoint->ultima_pagina, $dataUltimaTransacaoUnidades);
                 $this->checkpointRepository->updateByTenantId($tenantId, 'servidores', 0, null);
                 $checkpoint = $this->checkpointRepository->findByTenantId($tenantId);
             }
 
             if ($checkpoint->etapa === 'servidores') {
-                $totalServidores = $this->sipecServidoresService->coletarServidoresPaginado($tenantId, $checkpoint->ultima_pagina ?? 0);
+                $totalServidores = $this->sipecServidoresService->coletarServidoresPaginado($tenantId, $checkpoint->ultima_pagina ?? 0, $dataUltimaTransacaoServidores);
                 $this->checkpointRepository->updateByTenantId($tenantId, 'completo', 0, null);
             }
 
