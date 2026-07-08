@@ -37,7 +37,8 @@ class TCRTemplateRenderer
         while ($tag = $this->tagSplit($next, self::OPEN_TAG, self::CLOSE_TAG)) {
             try {
                 if (preg_match(self::EXPRESSION_VAR, $tag['content'])) {
-                    $content = ($this->getExpressionValue($tag['content'], $context) . '') . '';
+                    $value = $this->getExpressionValue($tag['content'], $context);
+                    $content = $this->valueToString($value);
                     $tag['content'] = $this->renderTemplate($content, $context);
                 } elseif (preg_match(self::EXPRESSION_IF, $tag['content'])) {
                     $this->processIf($tag, $context);
@@ -270,5 +271,22 @@ class TCRTemplateRenderer
     {
         $lookups = LookupService::LOOKUPS[$lookup] ?? null;
         return $lookups ? LookupService::getValue($lookups, $valor) : null;
+    }
+
+    private function valueToString(mixed $value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        if (is_scalar($value)) {
+            return (string) $value;
+        }
+
+        if (is_array($value) || is_object($value)) {
+            return '';
+        }
+
+        return '';
     }
 }
