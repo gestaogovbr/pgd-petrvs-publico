@@ -4,6 +4,7 @@ namespace App\Services\Sipec\Servidor;
 
 use App\Repository\SipecServidorRepository;
 use App\Repository\SipecSyncCheckpointRepository;
+use App\Repository\UnidadeRepository;
 use App\Services\Sipec\SipecService;
 
 class SipecServidorSincronizacaoService
@@ -11,12 +12,14 @@ class SipecServidorSincronizacaoService
     private SipecService $sipecService;
     private SipecServidorRepository $sipecServidorRepository;
     private SipecSyncCheckpointRepository $checkpointRepository;
+    private UnidadeRepository $unidadeRepository;
 
     public function __construct(SipecService $sipecService)
     {
         $this->sipecService = $sipecService;
         $this->sipecServidorRepository = app(SipecServidorRepository::class);
         $this->checkpointRepository = app(SipecSyncCheckpointRepository::class);
+        $this->unidadeRepository = app(UnidadeRepository::class);
     }
 
     /**
@@ -78,8 +81,28 @@ class SipecServidorSincronizacaoService
 
     /**
      * Coleta servidores paginados e persiste na tabela sipec_servidores.
+     * Quando $codUorg é null, itera sobre todas as UORGs do tenant.
      */
-    public function coletarServidoresPaginado(?string $tenantId, int $startPage, ?string $dataUltimaTransacao = null): int
+    public function coletarServidoresPaginado(?string $tenantId, int $startPage, ?string $dataUltimaTransacao = null, ?string $codUorg = null): int
+    {
+        if ($codUorg !== null) {
+            return $this->coletarServidoresDaUorgPaginado($tenantId, $codUorg, $startPage, $dataUltimaTransacao);
+        }
+
+        $unidades = $this->unidadeRepository->findAllComCodigo();
+        $total = 0;
+
+        foreach ($unidades as $unidade) {
+            $total += $this->coletarServidoresDaUorgPaginado($tenantId, $unidade->codigo, 0, $dataUltimaTransacao);
+        }
+
+        return $total;
+    }
+
+    /**
+     * Coleta servidores paginados de uma UORG específica.
+     */
+    private function coletarServidoresDaUorgPaginado(?string $tenantId, string $codUorg, int $startPage, ?string $dataUltimaTransacao): int
     {
         $page = $startPage;
         $size = 100;
@@ -87,7 +110,7 @@ class SipecServidorSincronizacaoService
 
         do {
             $queryParams = [
-                'codUorg' => $this->sipecService->getCodUorg(),
+                'codUorg' => $codUorg,
                 'codSitFuncional' => '1',
                 'codOrgao' => $this->sipecService->getCodOrgao(),
                 'page' => $page,

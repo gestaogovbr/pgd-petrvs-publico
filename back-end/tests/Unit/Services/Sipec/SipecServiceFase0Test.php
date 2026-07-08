@@ -5,12 +5,18 @@ namespace Tests\Unit\Services\Sipec;
 use App\Exceptions\RequestConectaGovException;
 use App\Exceptions\SipecApiRetryableException;
 use App\Facades\SipecLog;
+use App\Models\SipecSyncCheckpoint;
 use App\Repository\SipecSyncCheckpointRepository;
 use App\Services\Sipec\Servidor\SipecServidorSincronizacaoService;
 use App\Services\Sipec\SipecService;
 use App\Services\Sipec\Unidade\SipecUnidadeSincronizacaoService;
+use Illuminate\Contracts\Cache\Lock;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Mockery;
+use Mockery\MockInterface;
+use ReflectionClass;
+use ReflectionMethod;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -23,7 +29,7 @@ function buildSipecServiceMock(
     $sipecUnidadesService,
     $sipecServidoresService,
     $checkpointRepo
-): \Mockery\MockInterface {
+): MockInterface {
     $config = [
         'url' => 'https://fake-sipec.test',
         'conectagov_chave' => 'client_id',
@@ -36,7 +42,7 @@ function buildSipecServiceMock(
     $service = Mockery::mock(SipecService::class)->makePartial();
     $service->shouldAllowMockingProtectedMethods();
 
-    $reflection = new \ReflectionClass(SipecService::class);
+    $reflection = new ReflectionClass(SipecService::class);
 
     $props = [
         'url' => $config['url'],
@@ -53,16 +59,15 @@ function buildSipecServiceMock(
 
     foreach ($props as $name => $value) {
         $prop = $reflection->getProperty($name);
-        $prop->setAccessible(true);
         $prop->setValue($service, $value);
     }
 
     return $service;
 }
 
-function fakeCheckpoint(string $etapa, int $ultimaPagina): \Illuminate\Database\Eloquent\Model
+function fakeCheckpoint(string $etapa, int $ultimaPagina): Model
 {
-    $model = Mockery::mock(\App\Models\SipecSyncCheckpoint::class)->makePartial();
+    $model = Mockery::mock(SipecSyncCheckpoint::class)->makePartial();
     $model->shouldReceive('getAttribute')->with('etapa')->andReturn($etapa);
     $model->shouldReceive('getAttribute')->with('ultima_pagina')->andReturn($ultimaPagina);
     $model->shouldReceive('getAttribute')->with('total_paginas')->andReturn(null);
@@ -100,7 +105,7 @@ describe('SipecService - executarFase0', function () {
 
         $unidadesService->shouldReceive('coletarUnidadesPaginado')
             ->once()
-            ->with('tenant-1', 0, null)
+            ->with('tenant-1', 0, null, '1234')
             ->andReturn(3);
 
         $servidoresService->shouldReceive('coletarServidoresPaginado')
@@ -110,7 +115,7 @@ describe('SipecService - executarFase0', function () {
 
         $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
-        $lock = Mockery::mock(\Illuminate\Contracts\Cache\Lock::class);
+        $lock = Mockery::mock(Lock::class);
         $lock->shouldReceive('get')->once()->andReturn(true);
         $lock->shouldReceive('release')->once();
         Cache::shouldReceive('lock')->with('sipec_fase0_tenant-1', 600)->once()->andReturn($lock);
@@ -128,7 +133,7 @@ describe('SipecService - executarFase0', function () {
 
         $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
-        $lock = Mockery::mock(\Illuminate\Contracts\Cache\Lock::class);
+        $lock = Mockery::mock(Lock::class);
         $lock->shouldReceive('get')->once()->andReturn(false);
         Cache::shouldReceive('lock')->with('sipec_fase0_tenant-2', 600)->once()->andReturn($lock);
 
@@ -162,7 +167,7 @@ describe('SipecService - executarFase0', function () {
 
         $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
-        $lock = Mockery::mock(\Illuminate\Contracts\Cache\Lock::class);
+        $lock = Mockery::mock(Lock::class);
         $lock->shouldReceive('get')->once()->andReturn(true);
         $lock->shouldReceive('release')->once();
         Cache::shouldReceive('lock')->with('sipec_fase0_tenant-3', 600)->once()->andReturn($lock);
@@ -195,7 +200,7 @@ describe('SipecService - executarFase0', function () {
 
         $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
-        $lock = Mockery::mock(\Illuminate\Contracts\Cache\Lock::class);
+        $lock = Mockery::mock(Lock::class);
         $lock->shouldReceive('get')->once()->andReturn(true);
         $lock->shouldReceive('release')->once();
         Cache::shouldReceive('lock')->with('sipec_fase0_tenant-4', 600)->once()->andReturn($lock);
@@ -220,7 +225,7 @@ describe('SipecService - executarFase0', function () {
 
         $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
-        $lock = Mockery::mock(\Illuminate\Contracts\Cache\Lock::class);
+        $lock = Mockery::mock(Lock::class);
         $lock->shouldReceive('get')->once()->andReturn(true);
         $lock->shouldReceive('release')->once();
         Cache::shouldReceive('lock')->with('sipec_fase0_tenant-5', 600)->once()->andReturn($lock);
@@ -260,8 +265,7 @@ describe('SipecService - retrySleep', function () {
 
         $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
-        $reflection = new \ReflectionMethod($service, 'retrySleep');
-        $reflection->setAccessible(true);
+        $reflection = new ReflectionMethod($service, 'retrySleep');
 
         $start = microtime(true);
         $reflection->invoke($service, 1);
@@ -278,8 +282,7 @@ describe('SipecService - retrySleep', function () {
 
         $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
 
-        $reflection = new \ReflectionMethod($service, 'retrySleep');
-        $reflection->setAccessible(true);
+        $reflection = new ReflectionMethod($service, 'retrySleep');
 
         $start = microtime(true);
         $reflection->invoke($service, 0);
@@ -304,8 +307,7 @@ describe('SipecService - executarGetComRetry', function () {
             ->times(3)
             ->andThrow(new RequestConectaGovException('Forbidden', 403));
 
-        $reflection = new \ReflectionMethod($service, 'executarGetComRetry');
-        $reflection->setAccessible(true);
+        $reflection = new ReflectionMethod($service, 'executarGetComRetry');
 
         expect(fn () => $reflection->invoke($service, 'https://fake.test/endpoint', 3))
             ->toThrow(SipecApiRetryableException::class);
@@ -324,8 +326,7 @@ describe('SipecService - executarGetComRetry', function () {
             ->times(3)
             ->andThrow(new RequestConectaGovException('Internal Server Error', 500));
 
-        $reflection = new \ReflectionMethod($service, 'executarGetComRetry');
-        $reflection->setAccessible(true);
+        $reflection = new ReflectionMethod($service, 'executarGetComRetry');
 
         expect(fn () => $reflection->invoke($service, 'https://fake.test/endpoint', 3))
             ->toThrow(SipecApiRetryableException::class);
@@ -351,8 +352,7 @@ describe('SipecService - executarGetComRetry', function () {
                 return ['content' => [], 'totalPages' => 1];
             });
 
-        $reflection = new \ReflectionMethod($service, 'executarGetComRetry');
-        $reflection->setAccessible(true);
+        $reflection = new ReflectionMethod($service, 'executarGetComRetry');
 
         $result = $reflection->invoke($service, 'https://fake.test/endpoint', 3);
 

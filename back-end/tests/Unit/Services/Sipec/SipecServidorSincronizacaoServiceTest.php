@@ -2,8 +2,10 @@
 
 use App\Repository\SipecServidorRepository;
 use App\Repository\SipecSyncCheckpointRepository;
+use App\Repository\UnidadeRepository;
 use App\Services\Sipec\Servidor\SipecServidorSincronizacaoService;
 use App\Services\Sipec\SipecService;
+use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -16,22 +18,25 @@ function buildSincronizacaoService(
     ?SipecService $sipecService = null,
     ?SipecServidorRepository $servidorRepo = null,
     ?SipecSyncCheckpointRepository $checkpointRepo = null,
+    ?UnidadeRepository $unidadeRepo = null,
 ): SipecServidorSincronizacaoService {
     $sipecService ??= Mockery::mock(SipecService::class);
     $servidorRepo ??= Mockery::mock(SipecServidorRepository::class);
     $checkpointRepo ??= Mockery::mock(SipecSyncCheckpointRepository::class);
+    $unidadeRepo ??= Mockery::mock(UnidadeRepository::class);
 
     $service = new SipecServidorSincronizacaoService($sipecService);
 
     $reflection = new ReflectionClass($service);
 
     $prop = $reflection->getProperty('sipecServidorRepository');
-    $prop->setAccessible(true);
     $prop->setValue($service, $servidorRepo);
 
     $prop = $reflection->getProperty('checkpointRepository');
-    $prop->setAccessible(true);
     $prop->setValue($service, $checkpointRepo);
+
+    $prop = $reflection->getProperty('unidadeRepository');
+    $prop->setValue($service, $unidadeRepo);
 
     return $service;
 }
@@ -141,7 +146,6 @@ describe('SipecServidorSincronizacaoService - coletarServidoresPaginado', functi
 
     test('deve persistir servidores e atualizar checkpoint por página', function () {
         $sipecService = Mockery::mock(SipecService::class);
-        $sipecService->shouldReceive('getCodUorg')->andReturn('1234');
         $sipecService->shouldReceive('getCodOrgao')->andReturn('17500');
         $sipecService->shouldReceive('executarGetComRetry')
             ->once()
@@ -167,14 +171,13 @@ describe('SipecServidorSincronizacaoService - coletarServidoresPaginado', functi
             ->once();
 
         $service = buildSincronizacaoService($sipecService, $servidorRepo, $checkpointRepo);
-        $total = $service->coletarServidoresPaginado('tenant-1', 0);
+        $total = $service->coletarServidoresPaginado('tenant-1', 0, null, '1234');
 
         expect($total)->toBe(2);
     });
 
     test('deve iterar múltiplas páginas até totalPages', function () {
         $sipecService = Mockery::mock(SipecService::class);
-        $sipecService->shouldReceive('getCodUorg')->andReturn('1234');
         $sipecService->shouldReceive('getCodOrgao')->andReturn('17500');
 
         $sipecService->shouldReceive('executarGetComRetry')
@@ -194,14 +197,13 @@ describe('SipecServidorSincronizacaoService - coletarServidoresPaginado', functi
             ->with('tenant-1', 'servidores', 2, 2)->once();
 
         $service = buildSincronizacaoService($sipecService, $servidorRepo, $checkpointRepo);
-        $total = $service->coletarServidoresPaginado('tenant-1', 0);
+        $total = $service->coletarServidoresPaginado('tenant-1', 0, null, '1234');
 
         expect($total)->toBe(2);
     });
 
     test('deve ignorar servidor sem CPF', function () {
         $sipecService = Mockery::mock(SipecService::class);
-        $sipecService->shouldReceive('getCodUorg')->andReturn('1234');
         $sipecService->shouldReceive('getCodOrgao')->andReturn('17500');
         $sipecService->shouldReceive('executarGetComRetry')
             ->once()
@@ -217,14 +219,13 @@ describe('SipecServidorSincronizacaoService - coletarServidoresPaginado', functi
         $checkpointRepo->shouldReceive('updateByTenantId')->once();
 
         $service = buildSincronizacaoService($sipecService, $servidorRepo, $checkpointRepo);
-        $total = $service->coletarServidoresPaginado('tenant-1', 0);
+        $total = $service->coletarServidoresPaginado('tenant-1', 0, null, '1234');
 
         expect($total)->toBe(0);
     });
 
     test('deve usar matricula do primeiro vínculo', function () {
         $sipecService = Mockery::mock(SipecService::class);
-        $sipecService->shouldReceive('getCodUorg')->andReturn('1234');
         $sipecService->shouldReceive('getCodOrgao')->andReturn('17500');
         $sipecService->shouldReceive('executarGetComRetry')
             ->once()
@@ -248,8 +249,37 @@ describe('SipecServidorSincronizacaoService - coletarServidoresPaginado', functi
         $checkpointRepo->shouldReceive('updateByTenantId')->once();
 
         $service = buildSincronizacaoService($sipecService, $servidorRepo, $checkpointRepo);
-        $total = $service->coletarServidoresPaginado('tenant-1', 0);
+        $total = $service->coletarServidoresPaginado('tenant-1', 0, null, '1234');
 
         expect($total)->toBe(1);
+    });
+
+    test('deve iterar todas UORGs do tenant quando codUorg não informado', function () {
+        $sipecService = Mockery::mock(SipecService::class);
+        $sipecService->shouldReceive('getCodOrgao')->andReturn('17500');
+        $sipecService->shouldReceive('executarGetComRetry')
+            ->twice()
+            ->andReturn(
+                ['content' => [['cpf' => '11111111111', 'vinculos' => [['matriculaSiape' => '111', 'dataUltimaTransacao' => null]]]], 'totalPages' => 1],
+                ['content' => [['cpf' => '22222222222', 'vinculos' => [['matriculaSiape' => '222', 'dataUltimaTransacao' => null]]]], 'totalPages' => 1],
+            );
+
+        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $servidorRepo->shouldReceive('updateOrCreateByCpfAndMatricula')->twice();
+
+        $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
+        $checkpointRepo->shouldReceive('updateByTenantId')->twice();
+
+        $unidade1 = (object) ['codigo' => '1234'];
+        $unidade2 = (object) ['codigo' => '5678'];
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+        $unidadeRepo->shouldReceive('findAllComCodigo')
+            ->once()
+            ->andReturn(new Collection([$unidade1, $unidade2]));
+
+        $service = buildSincronizacaoService($sipecService, $servidorRepo, $checkpointRepo, $unidadeRepo);
+        $total = $service->coletarServidoresPaginado('tenant-1', 0);
+
+        expect($total)->toBe(2);
     });
 });

@@ -255,7 +255,8 @@ class SipecService
             $totalServidores = 0;
 
             if ($checkpoint->etapa === 'unidades') {
-                $totalUnidades = $this->sipecUnidadesService->coletarUnidadesPaginado($tenantId, $checkpoint->ultima_pagina, $dataUltimaTransacaoUnidades);
+                $codUorg = $this->codUorg !== '' ? $this->codUorg : null;
+                $totalUnidades = $this->sipecUnidadesService->coletarUnidadesPaginado($tenantId, $checkpoint->ultima_pagina, $dataUltimaTransacaoUnidades, $codUorg);
                 $this->checkpointRepository->updateByTenantId($tenantId, 'servidores', 0, null);
                 $checkpoint = $this->checkpointRepository->findByTenantId($tenantId);
             }
