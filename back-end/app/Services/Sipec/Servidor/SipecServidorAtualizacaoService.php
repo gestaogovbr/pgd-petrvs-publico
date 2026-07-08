@@ -9,7 +9,7 @@ use App\DTOs\Sipec\AtualizacaoLotacaoDTO;
 use App\DTOs\Sipec\ServidorAusenteDTO;
 use App\DTOs\Sipec\ServidorNaoLotadoDTO;
 use App\Enums\Atribuicao;
-use App\Facades\SiapeLog;
+use App\Facades\SipecLog;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
@@ -55,7 +55,7 @@ class SipecServidorAtualizacaoService
         $resultado['matriculas_atualizadas'] = $novos['matriculas_atualizadas'];
         $resultado['erros'] = $novos['erros'];
 
-        SiapeLog::info('SIPEC Servidor Atualização: processamento concluído', $resultado);
+        SipecLog::info('SIPEC Servidor Atualização: processamento concluído', $resultado);
 
         return $resultado;
     }
@@ -78,7 +78,7 @@ class SipecServidorAtualizacaoService
             } catch (\Throwable $e) {
                 DB::rollBack();
                 report($e);
-                SiapeLog::error('SIPEC: falha ao atualizar dados pessoais', [
+                SipecLog::error('SIPEC: falha ao atualizar dados pessoais', [
                     'matricula' => $dto->matriculasiape,
                     'erro' => $e->getMessage(),
                 ]);
@@ -141,7 +141,7 @@ class SipecServidorAtualizacaoService
 
         foreach ($registros as $registro) {
             if (empty($registro['unidade_id'])) {
-                SiapeLog::info('SIPEC: servidor sem unidade de exercício, não será alocado', [
+                SipecLog::info('SIPEC: servidor sem unidade de exercício, não será alocado', [
                     'usuario_id' => $registro['usuario_id'],
                 ]);
                 continue;
@@ -155,7 +155,7 @@ class SipecServidorAtualizacaoService
             } catch (\Throwable $e) {
                 DB::rollBack();
                 report($e);
-                SiapeLog::error('SIPEC: falha ao atualizar lotação', [
+                SipecLog::error('SIPEC: falha ao atualizar lotação', [
                     'usuario_id' => $registro['usuario_id'],
                     'erro' => $e->getMessage(),
                 ]);
@@ -184,7 +184,7 @@ class SipecServidorAtualizacaoService
         $perfilParticipante = $this->getPerfilParticipante();
 
         if (!$perfilParticipante) {
-            SiapeLog::error('SIPEC: Perfil participante não encontrado. Cadastro de novos abortado.');
+            SipecLog::error('SIPEC: Perfil participante não encontrado. Cadastro de novos abortado.');
             return $contadores;
         }
 
@@ -197,7 +197,7 @@ class SipecServidorAtualizacaoService
             } catch (\Throwable $e) {
                 $contadores['erros']++;
                 report($e);
-                SiapeLog::error('SIPEC: falha ao cadastrar servidor', [
+                SipecLog::error('SIPEC: falha ao cadastrar servidor', [
                     'matricula' => $dto->matricula,
                     'cpf' => $dto->cpf,
                     'erro' => $e->getMessage(),
@@ -214,7 +214,7 @@ class SipecServidorAtualizacaoService
     private function processarServidorAusente(ServidorAusenteDTO $dto, string $perfilParticipanteId, array &$matriculasAlteradasNoBatch): string
     {
         if (empty($dto->matricula)) {
-            SiapeLog::info('SIPEC: servidor ausente sem matrícula, ignorado', ['cpf' => $dto->cpf]);
+            SipecLog::info('SIPEC: servidor ausente sem matrícula, ignorado', ['cpf' => $dto->cpf]);
             return 'erros';
         }
 
@@ -246,7 +246,7 @@ class SipecServidorAtualizacaoService
 
         if (empty($matriculaAtual)) {
             $this->usuarioRepository->update($usuarioExistente->id, ['matricula' => $matriculaNova]);
-            SiapeLog::info('SIPEC: matrícula preenchida em usuário sem matrícula', [
+            SipecLog::info('SIPEC: matrícula preenchida em usuário sem matrícula', [
                 'cpf' => $cpf, 'matricula' => $matriculaNova,
             ]);
             return 'matriculas_atualizadas';
@@ -265,7 +265,7 @@ class SipecServidorAtualizacaoService
         $this->usuarioRepository->update($usuarioExistente->id, ['matricula' => $matriculaNova]);
         $matriculasAlteradasNoBatch[$chaveBatch] = true;
 
-        SiapeLog::info('SIPEC: matrícula atualizada sem criar novo usuário', [
+        SipecLog::info('SIPEC: matrícula atualizada sem criar novo usuário', [
             'cpf' => $cpf, 'de' => $matriculaAtual, 'para' => $matriculaNova,
         ]);
 
@@ -298,7 +298,7 @@ class SipecServidorAtualizacaoService
 
         $usuario = $this->usuarioRepository->create($atributos);
 
-        SiapeLog::info('SIPEC: novo usuário criado', ['id' => $usuario->id, 'matricula' => $dto->matricula]);
+        SipecLog::info('SIPEC: novo usuário criado', ['id' => $usuario->id, 'matricula' => $dto->matricula]);
 
         if (!empty($unidadeExercicioId)) {
             $this->salvarLotacao($usuario->id, $unidadeExercicioId);
@@ -328,7 +328,7 @@ class SipecServidorAtualizacaoService
 
             if (!empty($matricula)) {
                 $this->usuarioRepository->update($usuario->id, ['matricula' => $matricula]);
-                SiapeLog::info('SIPEC: matrícula preenchida via CPF', [
+                SipecLog::info('SIPEC: matrícula preenchida via CPF', [
                     'usuario_id' => $usuario->id, 'matricula' => $matricula,
                 ]);
             }
@@ -344,7 +344,7 @@ class SipecServidorAtualizacaoService
         }
 
         $this->usuarioRepository->update($duplicados->id, ['email' => null]);
-        SiapeLog::info('SIPEC: email duplicado liberado', [
+        SipecLog::info('SIPEC: email duplicado liberado', [
             'usuario_id' => $duplicados->id, 'email' => $email,
         ]);
     }

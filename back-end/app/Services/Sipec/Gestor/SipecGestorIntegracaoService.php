@@ -6,7 +6,7 @@ namespace App\Services\Sipec\Gestor;
 
 use App\DTOs\Sipec\UnidadeChefiasDTO;
 use App\Enums\Atribuicao;
-use App\Facades\SiapeLog;
+use App\Facades\SipecLog;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\IntegracaoUnidadeRepository;
@@ -59,7 +59,7 @@ class SipecGestorIntegracaoService
                 DB::rollBack();
                 $contadores['erros']++;
                 report($e);
-                SiapeLog::error('SIPEC Gestor: erro ao sincronizar chefia', [
+                SipecLog::error('SIPEC Gestor: erro ao sincronizar chefia', [
                     'unidade_id' => $dto->unidadeId,
                     'codigo' => $dto->codigoUnidade,
                     'erro' => $e->getMessage(),
@@ -67,7 +67,7 @@ class SipecGestorIntegracaoService
             }
         }
 
-        SiapeLog::info('SIPEC Gestor: sincronização concluída', $contadores);
+        SipecLog::info('SIPEC Gestor: sincronização concluída', $contadores);
 
         return $contadores;
     }
@@ -92,7 +92,7 @@ class SipecGestorIntegracaoService
         }
 
         if ($this->estaLotadoEmOutraUnidade($novoTitular, $dto->unidadeId)) {
-            SiapeLog::info('SIPEC Gestor: servidor lotado em outra unidade, não será atribuído como gestor', [
+            SipecLog::info('SIPEC Gestor: servidor lotado em outra unidade, não será atribuído como gestor', [
                 'usuario_id' => $novoTitular->id,
                 'unidade_destino' => $dto->unidadeId,
             ]);
@@ -153,7 +153,7 @@ class SipecGestorIntegracaoService
         $servidor = $this->integracaoServidorRepository->findByCpfAndCodigoExercicio($cpf, $codigoUnidade);
 
         if (!$servidor) {
-            SiapeLog::warning('SIPEC Gestor: servidor não encontrado em integracao_servidores', [
+            SipecLog::warning('SIPEC Gestor: servidor não encontrado em integracao_servidores', [
                 'cpf' => $cpf, 'codigo_unidade' => $codigoUnidade,
             ]);
             return null;
@@ -164,7 +164,7 @@ class SipecGestorIntegracaoService
             : $this->usuarioRepository->findByCpf($cpf);
 
         if (!$usuario) {
-            SiapeLog::warning('SIPEC Gestor: usuario não encontrado', [
+            SipecLog::warning('SIPEC Gestor: usuario não encontrado', [
                 'cpf' => $cpf, 'matricula' => $servidor->matriculasiape,
             ]);
         }
@@ -228,7 +228,7 @@ class SipecGestorIntegracaoService
         }
 
         $this->unidadeIntegranteAtribuicaoRepository->delete($gestorAtual->gestor->id);
-        SiapeLog::info('SIPEC Gestor: titular anterior revogado', [
+        SipecLog::info('SIPEC Gestor: titular anterior revogado', [
             'unidade_id' => $unidadeId,
             'usuario_id' => $gestorAtual->usuario_id,
         ]);

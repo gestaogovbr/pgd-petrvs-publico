@@ -19,7 +19,7 @@ function setupSiapeLogMockSipecServidor(): void
 {
     $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
     $loggerMock->shouldReceive('info', 'warning', 'error', 'debug', 'notice')->withAnyArgs();
-    Log::shouldReceive('channel')->with('siape')->andReturn($loggerMock);
+    Log::shouldReceive('channel')->with('sipec')->andReturn($loggerMock);
 }
 
 function criarServidorSipecJson(array $overrides = []): array

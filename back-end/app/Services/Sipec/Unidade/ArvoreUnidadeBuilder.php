@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Sipec\Unidade;
 
-use App\Facades\SiapeLog;
+use App\Facades\SipecLog;
 
 /**
  * Constrói árvore de unidades a partir de uma lista flat (codigo → pai)
@@ -36,7 +36,7 @@ class ArvoreUnidadeBuilder
     public function getNiveisPorProfundidade(): array
     {
         if ($this->codigoRaiz === null) {
-            SiapeLog::warning('SIPEC: não foi possível identificar raiz da árvore de unidades');
+            SipecLog::warning('SIPEC: não foi possível identificar raiz da árvore de unidades');
             return [];
         }
 
@@ -65,7 +65,7 @@ class ArvoreUnidadeBuilder
 
         $orfaos = $this->detectarOrfaos($visitados);
         if (!empty($orfaos)) {
-            SiapeLog::warning('SIPEC: unidades órfãs detectadas (não alcançáveis pela raiz)', [
+            SipecLog::warning('SIPEC: unidades órfãs detectadas (não alcançáveis pela raiz)', [
                 'total' => count($orfaos),
                 'codigos' => array_slice($orfaos, 0, 20),
             ]);

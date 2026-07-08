@@ -6,7 +6,7 @@ namespace App\Services\Sipec\Servidor;
 
 use App\DTOs\Sipec\ServidorSipecDTO;
 use App\Enums\SituacaoFuncionalEnum;
-use App\Facades\SiapeLog;
+use App\Facades\SipecLog;
 use App\Models\IntegracaoServidor;
 use App\Models\SipecServidor;
 use App\Repository\IntegracaoServidorRepository;
@@ -43,7 +43,7 @@ class SipecServidorIntegracaoService
                 } catch (\Throwable $e) {
                     $contadores['erros']++;
                     report($e);
-                    SiapeLog::error('SIPEC: falha ao processar servidor', [
+                    SipecLog::error('SIPEC: falha ao processar servidor', [
                         'sipec_servidor_id' => $registro->id,
                         'cpf' => $registro->cpf,
                         'erro' => $e->getMessage(),
@@ -52,7 +52,7 @@ class SipecServidorIntegracaoService
             }
         });
 
-        SiapeLog::info('SIPEC Servidor Integração: processamento concluído', $contadores);
+        SipecLog::info('SIPEC Servidor Integração: processamento concluído', $contadores);
 
         return $contadores;
     }
@@ -65,7 +65,7 @@ class SipecServidorIntegracaoService
         $dados = json_decode($registro->response, true);
 
         if (empty($dados) || empty($dados['cpf'])) {
-            SiapeLog::info('SIPEC: registro sipec_servidores sem CPF', ['id' => $registro->id]);
+            SipecLog::info('SIPEC: registro sipec_servidores sem CPF', ['id' => $registro->id]);
             return 'descartados';
         }
 
@@ -79,7 +79,7 @@ class SipecServidorIntegracaoService
             }
 
             if (empty($dto->matriculaSiape)) {
-                SiapeLog::info('SIPEC: vínculo sem matrícula', ['cpf' => $dadosPessoais['cpf']]);
+                SipecLog::info('SIPEC: vínculo sem matrícula', ['cpf' => $dadosPessoais['cpf']]);
                 continue;
             }
 

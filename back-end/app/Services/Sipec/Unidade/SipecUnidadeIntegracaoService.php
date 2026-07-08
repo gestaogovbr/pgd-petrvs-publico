@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Sipec\Unidade;
 
 use App\DTOs\Sipec\UnidadeSipecDTO;
-use App\Facades\SiapeLog;
+use App\Facades\SipecLog;
 use App\Models\SipecUnidade;
 use App\Repository\IntegracaoUnidadeRepository;
 use App\Repository\SipecUnidadeRepository;
@@ -40,7 +40,7 @@ class SipecUnidadeIntegracaoService
                 } catch (\Throwable $e) {
                     $contadores['erros']++;
                     report($e);
-                    SiapeLog::error('SIPEC: falha ao processar unidade', [
+                    SipecLog::error('SIPEC: falha ao processar unidade', [
                         'sipec_unidade_id' => $registro->id,
                         'codigo' => $registro->codigo,
                         'erro' => $e->getMessage(),
@@ -49,7 +49,7 @@ class SipecUnidadeIntegracaoService
             }
         });
 
-        SiapeLog::info('SIPEC Unidade Integração: processamento concluído', $contadores);
+        SipecLog::info('SIPEC Unidade Integração: processamento concluído', $contadores);
 
         return $contadores;
     }
@@ -62,7 +62,7 @@ class SipecUnidadeIntegracaoService
         $dados = json_decode($registro->response, true);
 
         if (empty($dados) || empty($dados['codUorg'])) {
-            SiapeLog::info('SIPEC: registro sipec_unidades sem codUorg', ['id' => $registro->id]);
+            SipecLog::info('SIPEC: registro sipec_unidades sem codUorg', ['id' => $registro->id]);
             return 'descartadas';
         }
 

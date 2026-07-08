@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Sipec\Unidade;
 
-use App\Facades\SiapeLog;
+use App\Facades\SipecLog;
 use App\Models\IntegracaoUnidade;
 use App\Models\Unidade;
 use App\Repository\IntegracaoUnidadeRepository;
@@ -58,7 +58,7 @@ class SipecUnidadeAtualizacaoService
         $resultado['erros'] = $syncResult['erros'];
         $resultado['ativadas'] = $this->ativarUnidades();
 
-        SiapeLog::info('SIPEC Unidade Atualização: processamento concluído', $resultado);
+        SipecLog::info('SIPEC Unidade Atualização: processamento concluído', $resultado);
 
         return $resultado;
     }
@@ -81,14 +81,14 @@ class SipecUnidadeAtualizacaoService
         $codigoRaiz = (string) (config('integracao.sipec.codUorg') ?: config('integracao.codigoUnidadeRaiz'));
 
         if (empty($codigoRaiz)) {
-            SiapeLog::info('SIPEC: código da unidade raiz não configurado');
+            SipecLog::info('SIPEC: código da unidade raiz não configurado');
             return;
         }
 
         $integracaoRaiz = $this->integracaoUnidadeRepository->findByCodigo($codigoRaiz);
 
         if (!$integracaoRaiz) {
-            SiapeLog::info('SIPEC: unidade raiz não encontrada em integracao_unidades', [
+            SipecLog::info('SIPEC: unidade raiz não encontrada em integracao_unidades', [
                 'codigo' => $codigoRaiz,
             ]);
             return;
@@ -97,7 +97,7 @@ class SipecUnidadeAtualizacaoService
         $unidadeRaiz = $this->unidadeRepository->findBySigla($integracaoRaiz->siglauorg);
 
         if (!$unidadeRaiz) {
-            SiapeLog::info('SIPEC: unidade raiz não encontrada na tabela unidades', [
+            SipecLog::info('SIPEC: unidade raiz não encontrada na tabela unidades', [
                 'sigla' => $integracaoRaiz->siglauorg,
             ]);
             return;
@@ -107,7 +107,7 @@ class SipecUnidadeAtualizacaoService
             $this->unidadeRepository->update($unidadeRaiz->id, [
                 'codigo' => $integracaoRaiz->id_servo,
             ]);
-            SiapeLog::info('SIPEC: código da unidade raiz corrigido', [
+            SipecLog::info('SIPEC: código da unidade raiz corrigido', [
                 'de' => $unidadeRaiz->codigo,
                 'para' => $integracaoRaiz->id_servo,
             ]);
@@ -153,7 +153,7 @@ class SipecUnidadeAtualizacaoService
                         $errosNoNivel++;
                         $contadores['erros']++;
                         report($e);
-                        SiapeLog::error('SIPEC: falha ao sincronizar unidade', [
+                        SipecLog::error('SIPEC: falha ao sincronizar unidade', [
                             'codigo' => $integracao->id_servo ?? null,
                             'erro' => $e->getMessage(),
                         ]);
@@ -162,7 +162,7 @@ class SipecUnidadeAtualizacaoService
 
                 if ($errosNoNivel > 0) {
                     DB::rollBack();
-                    SiapeLog::error('SIPEC: nível de hierarquia com erros, rollback e interrompendo', [
+                    SipecLog::error('SIPEC: nível de hierarquia com erros, rollback e interrompendo', [
                         'nivel' => $nivel,
                         'erros_no_nivel' => $errosNoNivel,
                     ]);
@@ -172,7 +172,7 @@ class SipecUnidadeAtualizacaoService
                 DB::commit();
             } catch (\Throwable $e) {
                 DB::rollBack();
-                SiapeLog::error('SIPEC: erro inesperado no nível, interrompendo sincronização', [
+                SipecLog::error('SIPEC: erro inesperado no nível, interrompendo sincronização', [
                     'nivel' => $nivel,
                     'erro' => $e->getMessage(),
                 ]);
