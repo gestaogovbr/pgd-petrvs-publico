@@ -5,6 +5,9 @@ namespace App\Services\Snapshot\Creator;
 use App\Models\Afastamento;
 use App\Models\PlanoTrabalhoConsolidacaoAfastamento;
 
+/**
+ * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+ */
 class AfastamentoSnapshotCreator implements SnapshotCreatorInterface
 {
     public function create(string $entityId, string $consolidacaoId, $dataConclusao): void

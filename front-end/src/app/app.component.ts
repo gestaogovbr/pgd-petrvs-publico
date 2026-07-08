@@ -224,7 +224,7 @@ export class AppComponent implements IAppComponent {
       OCORRENCIAS: {
         name: this.lex.translate("Ocorrências"),
         permition: 'MOD_OCOR',
-        route: ['gestao', 'ocorrencia'],
+        route: ['gestao', 'ocorrencia-v2'],
         icon: this.entity.getIcon('Ocorrencia'),
       },
       CADEIAS_VALORES: {

@@ -5,6 +5,9 @@ namespace App\Services\Snapshot\Creator;
 use App\Models\Atividade;
 use App\Models\PlanoTrabalhoConsolidacaoAtividade;
 
+/**
+ * @deprecated #2270 - Será eliminado com a remoção da tabela pivot
+ */
 class AtividadeSnapshotCreator implements SnapshotCreatorInterface
 {
     public function create(string $entityId, string $consolidacaoId, $dataConclusao): void
