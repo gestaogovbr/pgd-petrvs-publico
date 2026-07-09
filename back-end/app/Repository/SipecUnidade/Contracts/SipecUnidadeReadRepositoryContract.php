@@ -14,4 +14,9 @@ interface SipecUnidadeReadRepositoryContract
     public function findByCodigo(string $codigo): ?Model;
 
     public function chunkNaoProcessados(int $chunkSize, callable $callback): void;
+
+    /**
+     * @return string[] Códigos de todas as unidades SIPEC coletadas
+     */
+    public function getAllCodigos(): array;
 }

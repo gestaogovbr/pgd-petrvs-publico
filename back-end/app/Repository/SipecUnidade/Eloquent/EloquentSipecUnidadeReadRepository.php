@@ -32,4 +32,12 @@ final class EloquentSipecUnidadeReadRepository extends AbstractEloquentReadRepos
             ->whereNull('deleted_at')
             ->chunkById($chunkSize, $callback);
     }
+
+    public function getAllCodigos(): array
+    {
+        return $this->query()
+            ->whereNull('deleted_at')
+            ->pluck('codigo')
+            ->all();
+    }
 }

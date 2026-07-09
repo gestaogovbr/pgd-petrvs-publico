@@ -41,4 +41,12 @@ class SipecUnidadeRepository
     {
         return $this->writeRepository->marcarComoProcessado($registro);
     }
+
+    /**
+     * @return string[] Códigos de todas as unidades SIPEC coletadas
+     */
+    public function getAllCodigos(): array
+    {
+        return $this->readRepository->getAllCodigos();
+    }
 }

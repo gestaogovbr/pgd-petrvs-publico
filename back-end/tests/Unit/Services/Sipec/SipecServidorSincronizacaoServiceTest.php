@@ -2,10 +2,9 @@
 
 use App\Repository\SipecServidorRepository;
 use App\Repository\SipecSyncCheckpointRepository;
-use App\Repository\UnidadeRepository;
+use App\Repository\SipecUnidadeRepository;
 use App\Services\Sipec\Servidor\SipecServidorSincronizacaoService;
 use App\Services\Sipec\SipecService;
-use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -18,12 +17,12 @@ function buildSincronizacaoService(
     ?SipecService $sipecService = null,
     ?SipecServidorRepository $servidorRepo = null,
     ?SipecSyncCheckpointRepository $checkpointRepo = null,
-    ?UnidadeRepository $unidadeRepo = null,
+    ?SipecUnidadeRepository $sipecUnidadeRepo = null,
 ): SipecServidorSincronizacaoService {
     $sipecService ??= Mockery::mock(SipecService::class);
     $servidorRepo ??= Mockery::mock(SipecServidorRepository::class);
     $checkpointRepo ??= Mockery::mock(SipecSyncCheckpointRepository::class);
-    $unidadeRepo ??= Mockery::mock(UnidadeRepository::class);
+    $sipecUnidadeRepo ??= Mockery::mock(SipecUnidadeRepository::class);
 
     $service = new SipecServidorSincronizacaoService($sipecService);
 
@@ -35,8 +34,8 @@ function buildSincronizacaoService(
     $prop = $reflection->getProperty('checkpointRepository');
     $prop->setValue($service, $checkpointRepo);
 
-    $prop = $reflection->getProperty('unidadeRepository');
-    $prop->setValue($service, $unidadeRepo);
+    $prop = $reflection->getProperty('sipecUnidadeRepository');
+    $prop->setValue($service, $sipecUnidadeRepo);
 
     return $service;
 }
@@ -270,14 +269,12 @@ describe('SipecServidorSincronizacaoService - coletarServidoresPaginado', functi
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
         $checkpointRepo->shouldReceive('updateByTenantId')->twice();
 
-        $unidade1 = (object) ['codigo' => '1234'];
-        $unidade2 = (object) ['codigo' => '5678'];
-        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('findAllComCodigo')
+        $sipecUnidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
+        $sipecUnidadeRepo->shouldReceive('getAllCodigos')
             ->once()
-            ->andReturn(new Collection([$unidade1, $unidade2]));
+            ->andReturn(['1234', '5678']);
 
-        $service = buildSincronizacaoService($sipecService, $servidorRepo, $checkpointRepo, $unidadeRepo);
+        $service = buildSincronizacaoService($sipecService, $servidorRepo, $checkpointRepo, $sipecUnidadeRepo);
         $total = $service->coletarServidoresPaginado('tenant-1', 0);
 
         expect($total)->toBe(2);

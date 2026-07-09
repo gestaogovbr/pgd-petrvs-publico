@@ -4,7 +4,7 @@ namespace App\Services\Sipec\Servidor;
 
 use App\Repository\SipecServidorRepository;
 use App\Repository\SipecSyncCheckpointRepository;
-use App\Repository\UnidadeRepository;
+use App\Repository\SipecUnidadeRepository;
 use App\Services\Sipec\SipecService;
 
 class SipecServidorSincronizacaoService
@@ -12,14 +12,14 @@ class SipecServidorSincronizacaoService
     private SipecService $sipecService;
     private SipecServidorRepository $sipecServidorRepository;
     private SipecSyncCheckpointRepository $checkpointRepository;
-    private UnidadeRepository $unidadeRepository;
+    private SipecUnidadeRepository $sipecUnidadeRepository;
 
     public function __construct(SipecService $sipecService)
     {
         $this->sipecService = $sipecService;
         $this->sipecServidorRepository = app(SipecServidorRepository::class);
         $this->checkpointRepository = app(SipecSyncCheckpointRepository::class);
-        $this->unidadeRepository = app(UnidadeRepository::class);
+        $this->sipecUnidadeRepository = app(SipecUnidadeRepository::class);
     }
 
     /**
@@ -89,11 +89,11 @@ class SipecServidorSincronizacaoService
             return $this->coletarServidoresDaUorgPaginado($tenantId, $codUorg, $startPage, $dataUltimaTransacao);
         }
 
-        $unidades = $this->unidadeRepository->findAllComCodigo();
+        $codigos = $this->sipecUnidadeRepository->getAllCodigos();
         $total = 0;
 
-        foreach ($unidades as $unidade) {
-            $total += $this->coletarServidoresDaUorgPaginado($tenantId, $unidade->codigo, 0, $dataUltimaTransacao);
+        foreach ($codigos as $codigo) {
+            $total += $this->coletarServidoresDaUorgPaginado($tenantId, $codigo, 0, $dataUltimaTransacao);
         }
 
         return $total;
@@ -111,7 +111,6 @@ class SipecServidorSincronizacaoService
         do {
             $queryParams = [
                 'codUorg' => $codUorg,
-                'codSitFuncional' => '1',
                 'codOrgao' => $this->sipecService->getCodOrgao(),
                 'page' => $page,
                 'size' => $size,

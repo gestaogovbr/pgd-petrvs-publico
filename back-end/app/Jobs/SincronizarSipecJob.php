@@ -86,44 +86,69 @@ class SincronizarSipecJob implements ShouldQueue, ContratoJobSchedule
 
     private function sincronizarEntidades(IntegracaoSipecService $integracaoSipecService, array $resultadoFase0): void
     {
-        $entidades = Entidade::all();
+        $dataUltimaUnidades = null;//$this->getUltimaExecucaoSemFalhas('unidades');
+        $dataUltimaServidores = null;//$this->getUltimaExecucaoSemFalhas('servidores');
 
-        foreach ($entidades as $entidade) {
-            $inicioEntidade = microtime(true);
-            SipecLog::info("Sincronizando entidade", ['entidade_id' => $entidade->id]);
+        SipecLog::info('Filtro delta sync', [
+            'dataUltimaTransacao_unidades' => $dataUltimaUnidades,
+            'dataUltimaTransacao_servidores' => $dataUltimaServidores,
+        ]);
 
-            try {
-                $integracaoService = new IntegracaoService([], $this->tenantId);
-                $integracaoService->integracaoServiceAdapter = $integracaoSipecService;
+        SipecLog::info('Coleta API iniciada');
 
-                $inputs = [
-                    'unidades' => true,
-                    'servidores' => true,
-                    'gestores' => true,
-                    'entidade' => $entidade->id,
-                ];
+        $sipecService = app(SipecService::class);
+        $resultado = $sipecService->executarFase0($this->tenantId, $dataUltimaUnidades, $dataUltimaServidores);
 
-                $integracaoService->sincronizacao($inputs);
-
-                $resultado = array_merge($integracaoService->result, [
-                    'fase0' => $resultadoFase0,
-                    'duracao_segundos' => round(microtime(true) - $inicioEntidade, 2),
-                ]);
-
-                $this->persistirIntegracao($entidade->id, $resultado);
-
-                SipecLog::info("Entidade sincronizada com sucesso", [
-                    'entidade_id' => $entidade->id,
-                    'duracao_segundos' => $resultado['duracao_segundos'],
-                ]);
-            } catch (\Throwable $e) {
-                SipecLog::error("Erro ao sincronizar entidade", [
-                    'entidade_id' => $entidade->id,
-                    'erro' => $e->getMessage(),
-                    'linha' => $e->getFile() . ':' . $e->getLine(),
-                ]);
-            }
+        if ($resultado['status'] === 'locked') {
+            SipecLog::warning('Coleta já em execução, abortando.');
+            return false;
         }
+
+        SipecLog::info('Coleta concluída', [
+            'unidades_coletadas' => $resultado['unidades'] ?? null,
+            'servidores_coletados' => $resultado['servidores'] ?? null,
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Processa unidades: sipec_unidades → integracao_unidades → unidades
+     */
+    private function sincronizarUnidades(): void
+    {
+        SipecLog::info('Sincronização de unidades iniciada');
+
+        $integracaoResult = app(SipecUnidadeIntegracaoService::class)->processar();
+        SipecLog::info('Unidades: integração concluída', $integracaoResult);
+
+        $atualizacaoResult = app(SipecUnidadeAtualizacaoService::class)->processar();
+        SipecLog::info('Unidades: atualização concluída', $atualizacaoResult);
+    }
+
+    /**
+     * Processa servidores: sipec_servidores → integracao_servidores → usuarios/lotações
+     */
+    private function sincronizarServidores(): void
+    {
+        SipecLog::info('Sincronização de servidores iniciada');
+
+        $integracaoResult = app(SipecServidorIntegracaoService::class)->processar();
+        SipecLog::info('Servidores: integração concluída', $integracaoResult);
+
+        $atualizacaoResult = app(SipecServidorAtualizacaoService::class)->processar();
+        SipecLog::info('Servidores: atualização concluída', $atualizacaoResult);
+    }
+
+    /**
+     * Atribui gestores (titular) baseando-se nos CPFs de integracao_unidades.
+     */
+    private function sincronizarGestores(): void
+    {
+        SipecLog::info('Sincronização de gestores iniciada');
+
+        $resultado = app(SipecGestorIntegracaoService::class)->processar();
+        SipecLog::info('Gestores: concluído', $resultado);
     }
 
     private function inicializarTenant(): void
