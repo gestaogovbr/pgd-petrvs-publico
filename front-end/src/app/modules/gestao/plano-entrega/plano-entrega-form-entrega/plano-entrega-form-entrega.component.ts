@@ -195,9 +195,9 @@ export class PlanoEntregaFormEntregaComponent extends PageFormBase<PlanoEntregaE
       return "Data de fim inválida";
     } else if (inicio > fim) {
       return "A data do fim não pode ser anterior à data do início!";
-    } else if (!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
+    } else if (this.planoEntrega && inicio < this.planoEntrega.data_inicio) {
       return "Data de inicio menor que a data de inicio " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_inicio);
-    } else if (!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
+    } else if (this.planoEntrega && this.planoEntrega.data_fim && fim > this.planoEntrega.data_fim) {
       return "Data de fim maior que a data de fim " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(this.planoEntrega.data_fim);
     }
     return undefined;
