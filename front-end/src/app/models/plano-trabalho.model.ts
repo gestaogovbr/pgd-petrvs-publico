@@ -112,5 +112,8 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     /** Permissões calculadas pelo back-end (index/show). */
     public acoes?: PlanoTrabalhoAcoes;
 
+    /** Indica se o CPF do usuário logado é o mesmo do participante do PT. */
+    public is_proprio?: boolean;
+
     public constructor(data?: any) { super(); this.initialization(data); }
 }
