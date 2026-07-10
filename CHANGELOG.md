@@ -1,3 +1,8 @@
+## 3.0.7 10/07/2026
+
+### Corrigido
+- Validação do pertencimento do PT ao usuário via CPF, não mais via uuid
+
 ## 3.0.6 03/07/2026
 
 ### Adicionado
