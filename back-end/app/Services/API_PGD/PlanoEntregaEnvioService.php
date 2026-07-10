@@ -13,12 +13,12 @@ class PlanoEntregaEnvioService
     {
         $job = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoEntrega, $origem);
         if (!$job) {
-            Log::info('PE não selecionável para envio');
+            Log::info("{$planoEntrega->identificacaoEnvio()} não selecionável para envio");
             return false;
         }
 
         dispatch($job);
-        Log::info('PE agendado');
+        Log::info("{$planoEntrega->identificacaoEnvio()} agendado", [$origem]);
         return true;
     }
 }

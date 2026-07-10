@@ -42,7 +42,7 @@ class PlanoEntregaEntregaObserver
         try{
             PlanoEntregaEnvioService::processar(tenant('id'), $planoEntregaEntrega->planoEntrega, 'PlanoEntregaEntrega');
         }catch(EnvioNaoAgendadoException $e) {
-            Log::info("Envio do PE #{$planoEntregaEntrega->planoEntrega->id} não agendado: " . $e->getMessage());
+            Log::info("Envio do {$planoEntregaEntrega->planoEntrega->identificacaoEnvio()} não agendado: " . $e->getMessage());
         }
     }
 }

@@ -55,7 +55,7 @@ class AgendarEnvioPlanosEntregasService
                     try {
                         PlanoEntregaEnvioService::processar($tenant->id, $model, self::ORIGEM_LOG);
                     } catch (EnvioNaoAgendadoException $e) {
-                        Log::error("Erro ao agendar via Job o PE #{$planoEntrega->id}: {$e->getMessage()}");
+                        Log::error("Erro ao agendar via Job o {$model->identificacaoEnvio()}: {$e->getMessage()}");
                     }
                 }
 
