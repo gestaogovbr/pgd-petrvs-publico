@@ -8,6 +8,7 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaReadRepositoryContract;
 use App\V2\PlanoTrabalho\Entrega\DTOs\ResumoForcaTrabalhoDTO;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -44,5 +45,24 @@ class EloquentPlanoTrabalhoEntregaReadRepository extends AbstractEloquentReadRep
             quantidadeEntregas: (int) $result->count,
             somatorioForcaTrabalho: (float) $result->somatorio,
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buscarEntregasParaIndicadores(array $planoIds): Collection
+    {
+        return $this->model->newQuery()
+            ->select(
+                'planos_trabalhos_entregas.plano_trabalho_id',
+                'planos_trabalhos_entregas.plano_entrega_entrega_id',
+                'planos_trabalhos_entregas.forca_trabalho',
+                'planos_entregas.unidade_id as pe_unidade_id'
+            )
+            ->leftJoin('planos_entregas_entregas', 'planos_entregas_entregas.id', '=', 'planos_trabalhos_entregas.plano_entrega_entrega_id')
+            ->leftJoin('planos_entregas', 'planos_entregas.id', '=', 'planos_entregas_entregas.plano_entrega_id')
+            ->whereIn('planos_trabalhos_entregas.plano_trabalho_id', $planoIds)
+            ->get()
+            ->toBase();
     }
 }

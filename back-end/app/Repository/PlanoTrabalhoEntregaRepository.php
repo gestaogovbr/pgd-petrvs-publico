@@ -8,6 +8,7 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaReadRepositoryContract;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Entrega\DTOs\ResumoForcaTrabalhoDTO;
+use Illuminate\Support\Collection;
 
 class PlanoTrabalhoEntregaRepository
 {
@@ -63,5 +64,14 @@ class PlanoTrabalhoEntregaRepository
     public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO
     {
         return $this->readRepository->resumoForcaTrabalhoPorPlano($planoTrabalhoId);
+    }
+
+    /**
+     * @param array<string> $planoIds
+     * @return Collection
+     */
+    public function buscarEntregasParaIndicadores(array $planoIds): Collection
+    {
+        return $this->readRepository->buscarEntregasParaIndicadores($planoIds);
     }
 }

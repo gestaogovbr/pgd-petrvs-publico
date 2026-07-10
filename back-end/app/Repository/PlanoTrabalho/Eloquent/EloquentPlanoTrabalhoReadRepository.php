@@ -345,4 +345,31 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
 
         return $plano;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function buscarPlanosParaIndicadores(array $unidadeIds, array $filtros): SupportCollection
+    {
+        $query = $this->model->newQuery()
+            ->select('planos_trabalhos.id', 'planos_trabalhos.usuario_id', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.unidade_id', 'planos_trabalhos.carga_horaria')
+            ->join('usuarios', function ($join) {
+                $join->on('usuarios.id', '=', 'planos_trabalhos.usuario_id')
+                    ->whereNull('usuarios.deleted_at');
+            })
+            ->whereIn('planos_trabalhos.unidade_id', $unidadeIds)
+            ->whereIn('planos_trabalhos.status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+
+        if ($filtros['data_inicial'] !== null) {
+            $query->where('planos_trabalhos.data_inicio', '>=', $filtros['data_inicial']);
+        }
+        if ($filtros['data_final'] !== null) {
+            $query->whereRaw('date(`planos_trabalhos`.`data_fim`) <= ?', [$filtros['data_final']]);
+        }
+        if ($filtros['somente_vigentes']) {
+            $query->whereRaw('now() between date(`planos_trabalhos`.`data_inicio`) and date(`planos_trabalhos`.`data_fim`)');
+        }
+
+        return $query->get()->toBase();
+    }
 }
