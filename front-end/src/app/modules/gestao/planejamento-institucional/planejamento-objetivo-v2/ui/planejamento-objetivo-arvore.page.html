@@ -105,6 +105,15 @@
                         <p class="node-card__title">{{ node.nome }}</p>
                         <p class="node-card__plan">{{ node.planejamentoNome }}</p>
                         <p class="node-card__tipo">{{ node.tipoObjetivoNome }}</p>
+                        @if (node.percentualDoPai === null) {
+                          <p class="node-card__esforco" title="Esforço planejado em relação ao disponível (mesmo cálculo do painel)">
+                            Esforço planejado: {{ formatPercent(node.planejadoPercentualDisponivel) }} do disponível
+                          </p>
+                        } @else {
+                          <p class="node-card__esforco" title="Participação no esforço planejado acumulado do nó pai">
+                            Esforço planejado: {{ formatPercent(node.percentualDoPai) }} do pai
+                          </p>
+                        }
                         <span class="node-card__vinculos-tag">{{ node.vinculosCount }} vínculos</span>
                       </div>
                     </foreignObject>

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\V2\Planejamento\Objetivo\DTOs;
 
+use App\V2\Planejamento\Objetivo\ObjetivoPainelEsforcoSupport;
+
 class EsforcoNodeDTO implements \JsonSerializable
 {
     /**
@@ -22,8 +24,10 @@ class EsforcoNodeDTO implements \JsonSerializable
         public readonly string $tipo_objetivo_nome,
         public readonly int $total_entregas,
         public readonly int $total_vinculos,
+        public readonly float $esforco_disponivel_horas,
         public readonly float $esforco_proprio,
         public float $esforco_total_horas,
+        public readonly float $planejado_percentual_disponivel,
         /** @var list<string> */
         public array $filhos = [],
         /** @var list<string> */
@@ -39,6 +43,9 @@ class EsforcoNodeDTO implements \JsonSerializable
      */
     public static function fromNode(array $node): self
     {
+        $disponivel = (float) ($node['esforco_disponivel_horas'] ?? 0);
+        $planejado = (float) $node['esforco_proprio'];
+
         return new self(
             objetivo_id: (string) $node['objetivo_id'],
             objetivo_nome: (string) $node['objetivo_nome'],
@@ -48,8 +55,10 @@ class EsforcoNodeDTO implements \JsonSerializable
             tipo_objetivo_nome: (string) ($node['tipo_objetivo_nome'] ?? ''),
             total_entregas: (int) $node['total_entregas'],
             total_vinculos: (int) ($node['total_vinculos'] ?? count((array) ($node['filhos'] ?? []))),
-            esforco_proprio: (float) $node['esforco_proprio'],
+            esforco_disponivel_horas: $disponivel,
+            esforco_proprio: $planejado,
             esforco_total_horas: (float) $node['esforco_total_horas'],
+            planejado_percentual_disponivel: ObjetivoPainelEsforcoSupport::percentual($planejado, $disponivel),
             filhos: array_values((array) ($node['filhos'] ?? [])),
             filhos_pai: array_values((array) ($node['filhos_pai'] ?? [])),
             filhos_superior: array_values((array) ($node['filhos_superior'] ?? [])),
@@ -70,8 +79,10 @@ class EsforcoNodeDTO implements \JsonSerializable
             'tipo_objetivo_nome' => $this->tipo_objetivo_nome,
             'total_entregas' => $this->total_entregas,
             'total_vinculos' => $this->total_vinculos,
+            'esforco_disponivel_horas' => $this->esforco_disponivel_horas,
             'esforco_proprio' => $this->esforco_proprio,
             'esforco_total_horas' => $this->esforco_total_horas,
+            'planejado_percentual_disponivel' => $this->planejado_percentual_disponivel,
             'filhos' => $this->filhos,
             'filhos_pai' => $this->filhos_pai,
             'filhos_superior' => $this->filhos_superior,

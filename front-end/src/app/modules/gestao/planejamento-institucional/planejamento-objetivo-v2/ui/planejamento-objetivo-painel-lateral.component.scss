@@ -17,6 +17,27 @@
     }
   }
 
+  &__filtro .form-select {
+    max-width: 100%;
+  }
+
+  &__metricas {
+    position: relative;
+  }
+
+  &__metricas--loading {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  &__metricas-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.65);
+  }
+
   &__section-title {
     font-size: 0.8125rem;
     font-weight: 700;

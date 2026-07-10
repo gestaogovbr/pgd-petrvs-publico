@@ -15,6 +15,8 @@ final class ObjetivoPainelResumoDTO implements \JsonSerializable
         public readonly ObjetivoPainelEsforcoResumoDTO $esforco,
         public readonly ObjetivoPainelPessoasResumoDTO $pessoas,
         public readonly ObjetivoPainelEntregasResumoDTO $entregas,
+        /** @var list<array{id: string, label: string}> */
+        public readonly array $filtro_unidades = [],
     ) {}
 
     /** @return array<string, mixed> */
@@ -29,6 +31,7 @@ final class ObjetivoPainelResumoDTO implements \JsonSerializable
             'esforco' => $this->esforco,
             'pessoas' => $this->pessoas,
             'entregas' => $this->entregas,
+            'filtro_unidades' => $this->filtro_unidades,
         ];
     }
 }

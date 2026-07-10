@@ -249,9 +249,9 @@ describe('PlanejamentoObjetivoService::getPainelResumo', function () {
             'tem_pt_pactuado' => 1,
             'tem_pt_concluido' => 0,
             'tem_pe_homologado' => 1,
-            'total_participantes' => 1,
-            'participantes_unidade_propria' => 1,
-            'participantes_outras_unidades' => 0,
+            'participantes_somente_unidade_propria' => 1,
+            'participantes_somente_outras_unidades' => 0,
+            'participantes_em_ambas' => 0,
             'total_entregas' => 1,
             'entregas_concluidas' => 0,
         ];
@@ -259,7 +259,8 @@ describe('PlanejamentoObjetivoService::getPainelResumo', function () {
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
         $repo->shouldReceive('buscarDadosGeraisPainel')->once()->with('obj-1')->andReturn($geral);
-        $repo->shouldReceive('agregarPainelEsforcoPessoasEntregas')->once()->with('obj-1')->andReturn($agg);
+        $repo->shouldReceive('agregarPainelEsforcoPessoasEntregas')->once()->with('obj-1', null)->andReturn($agg);
+        $repo->shouldReceive('listarUnidadesPainelPorObjetivoId')->once()->with('obj-1')->andReturn([]);
 
         $result = criarPlanejamentoObjetivoService(repository: $repo)->getPainelResumo('obj-1');
 
@@ -291,8 +292,9 @@ describe('PlanejamentoObjetivoService::getEntregasDetalhamentoPainel', function 
             'homologado' => 0,
             'registro_execucao' => null,
             'participantes_total' => 1,
-            'participantes_unidade_propria' => 1,
-            'participantes_outras_unidades' => 0,
+            'participantes_somente_unidade_propria' => 1,
+            'participantes_somente_outras_unidades' => 0,
+            'participantes_em_ambas' => 0,
             'esforco_disponivel_horas' => 40,
             'esforco_planejado_horas' => 20,
             'esforco_executado_horas' => 10,

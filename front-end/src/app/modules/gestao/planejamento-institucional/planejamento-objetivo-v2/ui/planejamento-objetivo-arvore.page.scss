@@ -121,6 +121,18 @@
     text-overflow: ellipsis;
   }
 
+  &__esforco {
+    margin: 2px 0 0;
+    font-size: 8px;
+    font-weight: 700;
+    color: #1351b4;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   &__vinculos-tag {
     align-self: flex-start;
     margin-top: auto;

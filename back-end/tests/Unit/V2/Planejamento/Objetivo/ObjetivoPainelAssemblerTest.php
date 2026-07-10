@@ -26,8 +26,9 @@ describe('ObjetivoPainelAssembler', function () {
             'tem_pt_concluido' => 1,
             'tem_pe_homologado' => 1,
             'total_participantes' => 4,
-            'participantes_unidade_propria' => 3,
-            'participantes_outras_unidades' => 1,
+            'participantes_somente_unidade_propria' => 2,
+            'participantes_somente_outras_unidades' => 1,
+            'participantes_em_ambas' => 1,
             'total_entregas' => 2,
             'entregas_concluidas' => 1,
         ];
@@ -40,8 +41,42 @@ describe('ObjetivoPainelAssembler', function () {
             ->and($resumo->esforco->executado_percentual_planejado)->toBe(50.0)
             ->and($resumo->esforco->mostrar_planejado)->toBeTrue()
             ->and($resumo->esforco->mostrar_executado)->toBeTrue()
-            ->and($resumo->pessoas->percentual_unidade_propria)->toBe(75.0)
+            ->and($resumo->pessoas->percentual_somente_unidade_propria)->toBe(50.0)
+            ->and($resumo->pessoas->percentual_em_ambas)->toBe(25.0)
             ->and($resumo->entregas->percentual_concluidas)->toBe(50.0);
+    });
+
+    test('total de participantes é soma das partições exclusivas', function () {
+        $assembler = new ObjetivoPainelAssembler();
+
+        $geral = (object) [
+            'objetivo_id' => 'obj-1',
+            'objetivo_nome' => 'Objetivo',
+            'planejamento_nome' => 'Planejamento',
+            'tipo_objetivo_nome' => '',
+            'eixo_tematico_nome' => '',
+        ];
+
+        $agg = (object) [
+            'esforco_disponivel_horas' => 0,
+            'esforco_planejado_horas' => 0,
+            'esforco_executado_horas' => 0,
+            'tem_pt_pactuado' => 0,
+            'tem_pt_concluido' => 0,
+            'tem_pe_homologado' => 0,
+            'participantes_somente_unidade_propria' => 6,
+            'participantes_somente_outras_unidades' => 14,
+            'participantes_em_ambas' => 1,
+            'total_entregas' => 1,
+            'entregas_concluidas' => 0,
+        ];
+
+        $resumo = $assembler->montarResumo($geral, $agg);
+
+        expect($resumo->pessoas->total_participantes)->toBe(21)
+            ->and($resumo->pessoas->percentual_somente_unidade_propria)->toBe(28.57)
+            ->and($resumo->pessoas->percentual_somente_outras_unidades)->toBe(66.67)
+            ->and($resumo->pessoas->percentual_em_ambas)->toBe(4.76);
     });
 
     test('monta detalhamento com filtros e visibilidade por linha', function () {
@@ -64,8 +99,9 @@ describe('ObjetivoPainelAssembler', function () {
                 'homologado' => 0,
                 'registro_execucao' => 'Entrega em andamento conforme cronograma.',
                 'participantes_total' => 2,
-                'participantes_unidade_propria' => 2,
-                'participantes_outras_unidades' => 0,
+                'participantes_somente_unidade_propria' => 2,
+                'participantes_somente_outras_unidades' => 0,
+                'participantes_em_ambas' => 0,
                 'esforco_disponivel_horas' => 100,
                 'esforco_planejado_horas' => 0,
                 'esforco_executado_horas' => 0,

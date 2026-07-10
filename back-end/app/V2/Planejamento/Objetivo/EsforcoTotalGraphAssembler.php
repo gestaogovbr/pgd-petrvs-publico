@@ -47,6 +47,7 @@ final class EsforcoTotalGraphAssembler
                 'planejamento_nome' => $row->planejamento_nome,
                 'tipo_objetivo_nome' => isset($row->tipo_objetivo_nome) ? (string) $row->tipo_objetivo_nome : '',
                 'total_entregas' => (int) $row->total_entregas,
+                'esforco_disponivel_horas' => (float) ($row->esforco_disponivel_horas ?? 0),
                 'esforco_proprio' => (float) $row->esforco_proprio,
                 'esforco_total_horas' => (float) $row->esforco_proprio,
                 'filhos' => [],

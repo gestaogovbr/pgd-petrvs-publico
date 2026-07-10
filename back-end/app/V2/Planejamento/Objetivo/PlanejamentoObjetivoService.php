@@ -104,7 +104,7 @@ class PlanejamentoObjetivoService
         );
     }
 
-    public function getPainelResumo(string $objetivoId): ObjetivoPainelResumoDTO
+    public function getPainelResumo(string $objetivoId, ?string $unidadeId = null): ObjetivoPainelResumoDTO
     {
         $this->findObjetivoOrFail($objetivoId);
 
@@ -113,9 +113,16 @@ class PlanejamentoObjetivoService
             throw new NotFoundException("Objetivo com id '{$objetivoId}' não foi encontrado ou foi removido.");
         }
 
-        $agg = $this->repository->agregarPainelEsforcoPessoasEntregas($objetivoId);
+        $agg = $this->repository->agregarPainelEsforcoPessoasEntregas($objetivoId, $unidadeId);
+        $filtroUnidades = array_map(
+            static fn (\stdClass $row): array => [
+                'id' => (string) $row->unidade_id,
+                'label' => (string) $row->unidade_sigla . ' — ' . (string) $row->unidade_nome,
+            ],
+            $this->repository->listarUnidadesPainelPorObjetivoId($objetivoId),
+        );
 
-        return $this->painelAssembler->montarResumo($geral, $agg);
+        return $this->painelAssembler->montarResumo($geral, $agg, $filtroUnidades);
     }
 
     public function getEntregasDetalhamentoPainel(

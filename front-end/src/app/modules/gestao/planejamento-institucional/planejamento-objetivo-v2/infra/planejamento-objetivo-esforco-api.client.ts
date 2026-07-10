@@ -12,10 +12,14 @@ export type EsforcoObjetivoNodeApi = {
   tipo_objetivo_nome?: string;
   total_entregas: number;
   total_vinculos?: number;
-  /** Horas só do próprio nó (entregas concluídas). */
+  /** Horas disponíveis do próprio nó (mesma regra do painel). */
+  esforco_disponivel_horas?: number;
+  /** Horas planejadas só do próprio nó. */
   esforco_proprio?: number;
-  /** Horas próprias + descendentes na árvore do esforço. */
+  /** Horas planejadas próprias + descendentes na árvore do esforço. */
   esforco_total_horas: number;
+  /** Planejado / disponível do próprio nó (igual ao painel). */
+  planejado_percentual_disponivel?: number;
   /** União de filhos_pai e filhos_superior — mantido por compatibilidade. */
   filhos?: string[];
   /** Descendentes ligados por objetivo_pai_id (mesmo planejamento). */
@@ -110,12 +114,16 @@ export type ObjetivoPainelEsforcoResumoApi = {
   mostrar_executado: boolean;
 };
 
+export type ObjetivoPainelFiltroOpcaoApi = { id: string; label: string };
+
 export type ObjetivoPainelPessoasResumoApi = {
   total_participantes: number;
-  participantes_unidade_propria: number;
-  participantes_outras_unidades: number;
-  percentual_unidade_propria: number;
-  percentual_outras_unidades: number;
+  participantes_somente_unidade_propria: number;
+  participantes_somente_outras_unidades: number;
+  participantes_em_ambas: number;
+  percentual_somente_unidade_propria: number;
+  percentual_somente_outras_unidades: number;
+  percentual_em_ambas: number;
 };
 
 export type ObjetivoPainelEntregasResumoApi = {
@@ -133,6 +141,7 @@ export type ObjetivoPainelResumoApi = {
   esforco: ObjetivoPainelEsforcoResumoApi;
   pessoas: ObjetivoPainelPessoasResumoApi;
   entregas: ObjetivoPainelEntregasResumoApi;
+  filtro_unidades: ObjetivoPainelFiltroOpcaoApi[];
 };
 
 export type ObjetivoPainelEntregaDetalheLinhaApi = {
@@ -151,8 +160,9 @@ export type ObjetivoPainelEntregaDetalheLinhaApi = {
   homologado: boolean;
   registro_execucao: string | null;
   participantes_total: number;
-  participantes_unidade_propria: number;
-  participantes_outras_unidades: number;
+  participantes_somente_unidade_propria: number;
+  participantes_somente_outras_unidades: number;
+  participantes_em_ambas: number;
   esforco_disponivel_horas: number;
   esforco_planejado_horas: number;
   esforco_executado_horas: number;
@@ -161,13 +171,15 @@ export type ObjetivoPainelEntregaDetalheLinhaApi = {
   mostrar_executado: boolean;
 };
 
-export type ObjetivoPainelFiltroOpcaoApi = { id: string; label: string };
-
 export type ObjetivoPainelEntregasDetalhamentoApi = {
   objetivo_id: string;
   itens: ObjetivoPainelEntregaDetalheLinhaApi[];
   filtro_entregas: ObjetivoPainelFiltroOpcaoApi[];
   filtro_unidades: ObjetivoPainelFiltroOpcaoApi[];
+};
+
+export type ObjetivoPainelResumoFiltros = {
+  unidade_id?: string;
 };
 
 type PainelResumoResponse = {
@@ -255,8 +267,13 @@ export class PlanejamentoObjetivoEsforcoApiClient {
     );
   }
 
-  getPainelResumo(objetivoId: string): Observable<ObjetivoPainelResumoApi> {
-    const url = `${this.gb.servidorURL}${this.base}/${objetivoId}/painel-resumo`;
+  getPainelResumo(objetivoId: string, filtros: ObjetivoPainelResumoFiltros = {}): Observable<ObjetivoPainelResumoApi> {
+    const params = new URLSearchParams();
+    if (filtros.unidade_id) {
+      params.set('unidade_id', filtros.unidade_id);
+    }
+    const qs = params.toString();
+    const url = `${this.gb.servidorURL}${this.base}/${objetivoId}/painel-resumo${qs ? `?${qs}` : ''}`;
     return this.http.get<PainelResumoResponse>(url, { withCredentials: true }).pipe(
       map(res => {
         if (res?.error) {

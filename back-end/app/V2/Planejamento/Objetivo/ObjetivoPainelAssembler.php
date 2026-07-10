@@ -13,7 +13,7 @@ use App\V2\Planejamento\Objetivo\DTOs\ObjetivoPainelResumoDTO;
 
 final class ObjetivoPainelAssembler
 {
-    public function montarResumo(\stdClass $geral, \stdClass $agg): ObjetivoPainelResumoDTO
+    public function montarResumo(\stdClass $geral, \stdClass $agg, array $filtroUnidades = []): ObjetivoPainelResumoDTO
     {
         $disponivel = (float) ($agg->esforco_disponivel_horas ?? 0);
         $planejado = (float) ($agg->esforco_planejado_horas ?? 0);
@@ -24,9 +24,10 @@ final class ObjetivoPainelAssembler
 
         $visibilidade = ObjetivoPainelEsforcoSupport::visibilidadeEsforco($peStatus, $temPtPactuado, $temPtConcluido);
 
-        $totalParticipantes = (int) ($agg->total_participantes ?? 0);
-        $propria = (int) ($agg->participantes_unidade_propria ?? 0);
-        $outras = (int) ($agg->participantes_outras_unidades ?? 0);
+        $somentePropria = (int) ($agg->participantes_somente_unidade_propria ?? 0);
+        $somenteOutras = (int) ($agg->participantes_somente_outras_unidades ?? 0);
+        $emAmbas = (int) ($agg->participantes_em_ambas ?? 0);
+        $totalParticipantes = $somentePropria + $somenteOutras + $emAmbas;
         $totalEntregas = (int) ($agg->total_entregas ?? 0);
         $concluidas = (int) ($agg->entregas_concluidas ?? 0);
 
@@ -48,16 +49,19 @@ final class ObjetivoPainelAssembler
             ),
             pessoas: new ObjetivoPainelPessoasResumoDTO(
                 total_participantes: $totalParticipantes,
-                participantes_unidade_propria: $propria,
-                participantes_outras_unidades: $outras,
-                percentual_unidade_propria: ObjetivoPainelEsforcoSupport::percentual((float) $propria, (float) $totalParticipantes),
-                percentual_outras_unidades: ObjetivoPainelEsforcoSupport::percentual((float) $outras, (float) $totalParticipantes),
+                participantes_somente_unidade_propria: $somentePropria,
+                participantes_somente_outras_unidades: $somenteOutras,
+                participantes_em_ambas: $emAmbas,
+                percentual_somente_unidade_propria: ObjetivoPainelEsforcoSupport::percentual((float) $somentePropria, (float) $totalParticipantes),
+                percentual_somente_outras_unidades: ObjetivoPainelEsforcoSupport::percentual((float) $somenteOutras, (float) $totalParticipantes),
+                percentual_em_ambas: ObjetivoPainelEsforcoSupport::percentual((float) $emAmbas, (float) $totalParticipantes),
             ),
             entregas: new ObjetivoPainelEntregasResumoDTO(
                 total_entregas: $totalEntregas,
                 entregas_concluidas: $concluidas,
                 percentual_concluidas: ObjetivoPainelEsforcoSupport::percentual((float) $concluidas, (float) $totalEntregas),
             ),
+            filtro_unidades: $filtroUnidades,
         );
     }
 
@@ -114,8 +118,9 @@ final class ObjetivoPainelAssembler
                     ? (string) $row->registro_execucao
                     : null,
                 participantes_total: (int) ($row->participantes_total ?? 0),
-                participantes_unidade_propria: (int) ($row->participantes_unidade_propria ?? 0),
-                participantes_outras_unidades: (int) ($row->participantes_outras_unidades ?? 0),
+                participantes_somente_unidade_propria: (int) ($row->participantes_somente_unidade_propria ?? 0),
+                participantes_somente_outras_unidades: (int) ($row->participantes_somente_outras_unidades ?? 0),
+                participantes_em_ambas: (int) ($row->participantes_em_ambas ?? 0),
                 esforco_disponivel_horas: (float) ($row->esforco_disponivel_horas ?? 0),
                 esforco_planejado_horas: (float) ($row->esforco_planejado_horas ?? 0),
                 esforco_executado_horas: (float) ($row->esforco_executado_horas ?? 0),

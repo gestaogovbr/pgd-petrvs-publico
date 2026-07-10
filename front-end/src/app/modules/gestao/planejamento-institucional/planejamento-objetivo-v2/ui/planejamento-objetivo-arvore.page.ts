@@ -39,6 +39,10 @@ type TreeNodeVm = {
   entregasCount: number;
   esforcoProprioHoras: number;
   esforcoTotalHoras: number;
+  /** Planejado % do disponível do próprio nó (igual ao painel). */
+  planejadoPercentualDisponivel: number;
+  /** % do esforço planejado acumulado do pai visível; `null` = nó de referência. */
+  percentualDoPai: number | null;
   filhosPai: string[];
   isConsultado: boolean;
   level: number;
@@ -53,7 +57,7 @@ type EdgeVm = {
 };
 
 const NODE_W = 220;
-const NODE_H = 104;
+const NODE_H = 128;
 const NODE_HALF_W = NODE_W / 2;
 const NODE_HALF_H = NODE_H / 2;
 const H_GAP = 40;
@@ -225,7 +229,7 @@ export class PlanejamentoObjetivoArvorePage {
   }
 
   zoomIn(): void {
-    this.zoom.update(v => Math.min(1.6, Number((v + 0.1).toFixed(2))));
+    this.zoom.update(v => Math.min(2.5, Number((v + 0.1).toFixed(2))));
   }
 
   zoomOut(): void {
@@ -412,12 +416,29 @@ export class PlanejamentoObjetivoArvorePage {
       entregasCount: n.total_entregas ?? 0,
       esforcoProprioHoras: n.esforco_proprio ?? 0,
       esforcoTotalHoras: n.esforco_total_horas ?? 0,
+      planejadoPercentualDisponivel: n.planejado_percentual_disponivel
+        ?? this.percentualContribuicao(n.esforco_proprio ?? 0, n.esforco_disponivel_horas ?? 0),
+      percentualDoPai: null,
       filhosPai,
       isConsultado,
       level,
       x,
       y
     };
+  }
+
+  private percentualContribuicao(filhoHoras: number, paiHoras: number): number {
+    if (paiHoras <= 0) {
+      return 0;
+    }
+    return Math.round((filhoHoras / paiHoras) * 10000) / 100;
+  }
+
+  formatPercent(value: number): string {
+    if (!Number.isFinite(value)) {
+      return '0%';
+    }
+    return `${(Math.round(value * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
   }
 
   private buildLayout(
@@ -508,6 +529,21 @@ export class PlanejamentoObjetivoArvorePage {
           path: this.edgePath(nodeById.get(supId)!, vm)
         });
       }
+    }
+
+    for (const [id, vm] of nodeById) {
+      const paiId = nos[id]?.objetivo_pai_id ?? nos[id]?.objetivo_pai?.id;
+      const supId = nos[id]?.objetivo_superior_id ?? nos[id]?.objetivo_superior?.id;
+      const parentId =
+        paiId && nodeById.has(paiId) ? paiId : supId && nodeById.has(supId) ? supId : null;
+
+      if (!parentId) {
+        vm.percentualDoPai = null;
+        continue;
+      }
+
+      const parent = nodeById.get(parentId)!;
+      vm.percentualDoPai = this.percentualContribuicao(vm.esforcoTotalHoras, parent.esforcoTotalHoras);
     }
 
     const treeNodes = [...nodeById.values()];

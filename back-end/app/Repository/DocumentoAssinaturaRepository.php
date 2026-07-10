@@ -8,6 +8,7 @@ use App\Models\DocumentoAssinatura;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\TCRAssinaturaDTO;
+use Illuminate\Database\Eloquent\Collection;
 
 class DocumentoAssinaturaRepository
 {
@@ -65,5 +66,11 @@ class DocumentoAssinaturaRepository
     public function deleteAssinaturasDocumento(string $documentoId): int
     {
         return $this->writeRepository->deleteByDocumentoId($documentoId);
+    }
+
+    /** @return Collection<int, DocumentoAssinatura> */
+    public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection
+    {
+        return $this->readRepository->listarRevogadasPorPlanoTrabalho($planoTrabalhoId);
     }
 }

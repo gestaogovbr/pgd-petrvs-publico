@@ -73,10 +73,13 @@ class PlanejamentoObjetivoController extends Controller
         }
     }
 
-    public function painelResumo(string $id): JsonResponse
+    public function painelResumo(string $id, Request $request): JsonResponse
     {
         try {
-            $data = $this->service->getPainelResumo($id);
+            $unidadeId = $request->query('unidade_id');
+            $unidadeId = is_string($unidadeId) && $unidadeId !== '' ? $unidadeId : null;
+
+            $data = $this->service->getPainelResumo($id, $unidadeId);
 
             return response()->json(['success' => true, 'data' => $data]);
         } catch (IBaseException $e) {

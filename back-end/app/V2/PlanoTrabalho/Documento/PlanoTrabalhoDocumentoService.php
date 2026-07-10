@@ -48,22 +48,57 @@ class PlanoTrabalhoDocumentoService
         $this->authValidator->validar($planoTrabalhoId, Auth::id());
 
         $documento = $this->documentoRepository->findTcrByPlanoTrabalhoId($planoTrabalhoId);
+        $assinaturasRevogadas = $this->assinaturaRepository->listarRevogadasPorPlanoTrabalho($planoTrabalhoId);
 
         if ($documento === null) {
-            throw new NotFoundException('Documento não encontrado para este Plano de Trabalho.');
+            if ($assinaturasRevogadas->isEmpty()) {
+                throw new NotFoundException('Documento não encontrado para este Plano de Trabalho.');
+            }
+
+            return [
+                'numero' => null,
+                'titulo' => null,
+                'conteudo' => null,
+                'assinaturas' => [],
+                'assinaturas_revogadas' => $assinaturasRevogadas
+                    ->map(fn (DocumentoAssinatura $assinatura) => $this->mapearAssinaturaRevogada($assinatura))
+                    ->values()
+                    ->all(),
+            ];
         }
 
         return [
             'numero' => $documento->numero,
             'titulo' => $documento->titulo,
             'conteudo' => $documento->conteudo,
-            'assinaturas' => $documento->assinaturas->map(function (DocumentoAssinatura $assinatura) {
-                return [
-                    'usuario_id' => $assinatura->usuario_id,
-                    'usuario_nome' => $assinatura->usuario->nome_social ?? $assinatura->usuario->nome,
-                    'data_assinatura' => $assinatura->data_assinatura
-                ];
-            })
+            'assinaturas' => $documento->assinaturas->map(fn (DocumentoAssinatura $assinatura) => $this->mapearAssinaturaAtiva($assinatura))->values()->all(),
+            'assinaturas_revogadas' => $assinaturasRevogadas
+                ->map(fn (DocumentoAssinatura $assinatura) => $this->mapearAssinaturaRevogada($assinatura))
+                ->values()
+                ->all(),
+        ];
+    }
+
+    /** @return array{id: string, usuario_id: string, usuario_nome: string, data_assinatura: mixed} */
+    private function mapearAssinaturaAtiva(DocumentoAssinatura $assinatura): array
+    {
+        return [
+            'id' => $assinatura->id,
+            'usuario_id' => $assinatura->usuario_id,
+            'usuario_nome' => $assinatura->usuario->nome_social ?? $assinatura->usuario->nome,
+            'data_assinatura' => $assinatura->data_assinatura,
+        ];
+    }
+
+    /** @return array{id: string, usuario_id: string, usuario_nome: string, data_assinatura: mixed, data_revogacao: mixed} */
+    private function mapearAssinaturaRevogada(DocumentoAssinatura $assinatura): array
+    {
+        return [
+            'id' => $assinatura->id,
+            'usuario_id' => $assinatura->usuario_id,
+            'usuario_nome' => $assinatura->usuario->nome_social ?? $assinatura->usuario->nome,
+            'data_assinatura' => $assinatura->data_assinatura,
+            'data_revogacao' => $assinatura->deleted_at,
         ];
     }
 

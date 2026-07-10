@@ -31,6 +31,7 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   readonly lookup = inject(LookupService);
 
   readonly objetivoId = input.required<string>();
+  readonly unidadeIdInicial = input('');
   readonly modalClosed = output<void>();
 
   readonly loading = signal(false);
@@ -46,7 +47,9 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   constructor() {
     effect(() => {
       const id = this.objetivoId();
+      const unidadeInicial = this.unidadeIdInicial();
       if (id) {
+        this.filtroUnidadeId.set(unidadeInicial);
         void this.carregar();
       }
     });

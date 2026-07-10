@@ -200,7 +200,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   irParaTcr() {
     const id = this.planoTrabalho()?.id;
     if (!id) return;
-    if (this.planoTrabalho()?.documento_id || this.assinatura.documento()) {
+    if (this.planoTrabalho()?.documento_id || this.assinatura.temTcrAtivo()) {
       this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
     } else {
       this.assinatura.gerarDocumento(() =>

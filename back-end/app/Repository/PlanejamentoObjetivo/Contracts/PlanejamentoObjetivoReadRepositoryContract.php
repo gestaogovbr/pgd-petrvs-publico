@@ -42,9 +42,13 @@ interface PlanejamentoObjetivoReadRepositoryContract
 
     public function agregarPainelEsforcoPessoasEntregas(
         string $objetivoId,
+        ?string $unidadeId = null,
         ?string $dataInicio = null,
         ?string $dataFim = null,
     ): \stdClass;
+
+    /** @return list<\stdClass> */
+    public function listarUnidadesPainelPorObjetivoId(string $objetivoId): array;
 
     /**
      * @return list<\stdClass>

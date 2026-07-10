@@ -135,18 +135,51 @@ describe('PlanoTrabalhoDocumentoService::show', function () {
         $documento->shouldReceive('getAttribute')->with('assinaturas')->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
+        $this->assinaturaRepo->shouldReceive('listarRevogadasPorPlanoTrabalho')
+            ->once()
+            ->with('plano-1')
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
         $result = $this->service->show('plano-1');
 
         expect($result['numero'])->toBe(42);
         expect($result['titulo'])->toBe('Termo de Ciência e Responsabilidade');
         expect($result['conteudo'])->toBe('<html>Conteúdo</html>');
-        expect($result)->toHaveKey('assinaturas');
+        expect($result)->toHaveKeys(['assinaturas', 'assinaturas_revogadas']);
+        expect($result['assinaturas_revogadas'])->toBe([]);
+    });
+
+    test('retorna apenas assinaturas revogadas quando não há TCR ativo', function () {
+        $this->authValidator->shouldReceive('validar')->once();
+
+        $assinaturaRevogada = Mockery::mock(DocumentoAssinatura::class)->makePartial();
+        $assinaturaRevogada->id = 'assinatura-1';
+        $assinaturaRevogada->usuario_id = 'user-1';
+        $assinaturaRevogada->data_assinatura = '2026-05-22 11:33:00';
+        $assinaturaRevogada->deleted_at = '2026-05-22 12:00:00';
+        $assinaturaRevogada->usuario = (object) ['nome' => 'Geisimar', 'nome_social' => null];
+
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn(null);
+        $this->assinaturaRepo->shouldReceive('listarRevogadasPorPlanoTrabalho')
+            ->once()
+            ->with('plano-1')
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([$assinaturaRevogada]));
+
+        $result = $this->service->show('plano-1');
+
+        expect($result['numero'])->toBeNull();
+        expect($result['assinaturas'])->toBe([]);
+        expect($result['assinaturas_revogadas'])->toHaveCount(1);
+        expect($result['assinaturas_revogadas'][0]['usuario_nome'])->toBe('Geisimar');
     });
 
     test('lança exceção quando plano não possui documento TCR', function () {
         $this->authValidator->shouldReceive('validar')->once();
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn(null);
+        $this->assinaturaRepo->shouldReceive('listarRevogadasPorPlanoTrabalho')
+            ->once()
+            ->with('plano-1')
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());
 
         $this->service->show('plano-1');
     })->throws(NotFoundException::class);

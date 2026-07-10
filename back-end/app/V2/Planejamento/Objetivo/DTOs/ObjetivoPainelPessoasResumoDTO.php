@@ -8,10 +8,12 @@ final class ObjetivoPainelPessoasResumoDTO implements \JsonSerializable
 {
     public function __construct(
         public readonly int $total_participantes,
-        public readonly int $participantes_unidade_propria,
-        public readonly int $participantes_outras_unidades,
-        public readonly float $percentual_unidade_propria,
-        public readonly float $percentual_outras_unidades,
+        public readonly int $participantes_somente_unidade_propria,
+        public readonly int $participantes_somente_outras_unidades,
+        public readonly int $participantes_em_ambas,
+        public readonly float $percentual_somente_unidade_propria,
+        public readonly float $percentual_somente_outras_unidades,
+        public readonly float $percentual_em_ambas,
     ) {}
 
     /** @return array<string, mixed> */
@@ -19,10 +21,12 @@ final class ObjetivoPainelPessoasResumoDTO implements \JsonSerializable
     {
         return [
             'total_participantes' => $this->total_participantes,
-            'participantes_unidade_propria' => $this->participantes_unidade_propria,
-            'participantes_outras_unidades' => $this->participantes_outras_unidades,
-            'percentual_unidade_propria' => $this->percentual_unidade_propria,
-            'percentual_outras_unidades' => $this->percentual_outras_unidades,
+            'participantes_somente_unidade_propria' => $this->participantes_somente_unidade_propria,
+            'participantes_somente_outras_unidades' => $this->participantes_somente_outras_unidades,
+            'participantes_em_ambas' => $this->participantes_em_ambas,
+            'percentual_somente_unidade_propria' => $this->percentual_somente_unidade_propria,
+            'percentual_somente_outras_unidades' => $this->percentual_somente_outras_unidades,
+            'percentual_em_ambas' => $this->percentual_em_ambas,
         ];
     }
 }

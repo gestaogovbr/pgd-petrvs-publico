@@ -16,6 +16,7 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { firstValueFrom } from 'rxjs';
 import {
   PlanejamentoObjetivoEsforcoApiClient,
+  type ObjetivoPainelFiltroOpcaoApi,
   type ObjetivoPainelResumoApi
 } from '../infra/planejamento-objetivo-esforco-api.client';
 import { PlanejamentoObjetivoEntregasDetalhamentoModalComponent } from './planejamento-objetivo-entregas-detalhamento-modal.component';
@@ -38,17 +39,28 @@ export class PlanejamentoObjetivoPainelLateralComponent implements OnDestroy {
   readonly centralizar = output<string>();
 
   readonly loading = signal(false);
+  readonly atualizandoMetricas = signal(false);
   readonly error = signal<string | null>(null);
   readonly resumo = signal<ObjetivoPainelResumoApi | null>(null);
+  readonly unidadesFiltro = signal<ObjetivoPainelFiltroOpcaoApi[]>([]);
+  readonly filtroUnidadeId = signal('');
 
   private detalhamentoOverlayRef: OverlayRef | null = null;
   private detalhamentoBackdropSub: { unsubscribe: () => void } | null = null;
+  private carregamentoId = 0;
 
   constructor() {
     effect(() => {
       const id = this.objetivoId();
+      this.filtroUnidadeId.set('');
       void this.carregarResumo(id);
     });
+  }
+
+  onFiltroUnidadeChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.filtroUnidadeId.set(value);
+    void this.carregarMetricas(this.objetivoId(), value || undefined);
   }
 
   ngOnDestroy(): void {
@@ -82,6 +94,7 @@ export class PlanejamentoObjetivoPainelLateralComponent implements OnDestroy {
     );
     const componentRef = this.detalhamentoOverlayRef.attach(portal);
     componentRef.setInput('objetivoId', id);
+    componentRef.setInput('unidadeIdInicial', this.filtroUnidadeId());
     componentRef.instance.modalClosed.subscribe(() => this.fecharDetalhamento());
     this.detalhamentoBackdropSub = this.detalhamentoOverlayRef.backdropClick().subscribe(() => {
       this.fecharDetalhamento();
@@ -112,28 +125,66 @@ export class PlanejamentoObjetivoPainelLateralComponent implements OnDestroy {
   private async carregarResumo(id: string | null): Promise<void> {
     if (!id?.length) {
       this.resumo.set(null);
+      this.unidadesFiltro.set([]);
       this.error.set(null);
       this.loading.set(false);
       return;
     }
 
+    const reqId = ++this.carregamentoId;
     this.loading.set(true);
     this.error.set(null);
     try {
       const data = await firstValueFrom(this.api.getPainelResumo(id));
-      if (this.objetivoId() !== id) {
+      if (this.objetivoId() !== id || reqId !== this.carregamentoId) {
         return;
       }
       this.resumo.set(data);
+      this.unidadesFiltro.set(data.filtro_unidades ?? []);
     } catch (err: unknown) {
-      if (this.objetivoId() !== id) {
+      if (this.objetivoId() !== id || reqId !== this.carregamentoId) {
         return;
       }
       this.resumo.set(null);
+      this.unidadesFiltro.set([]);
       this.error.set(err instanceof Error ? err.message : 'Não foi possível carregar o painel.');
     } finally {
-      if (this.objetivoId() === id) {
+      if (this.objetivoId() === id && reqId === this.carregamentoId) {
         this.loading.set(false);
+      }
+    }
+  }
+
+  private async carregarMetricas(id: string | null, unidadeId?: string): Promise<void> {
+    if (!id?.length || !this.resumo()) {
+      return;
+    }
+
+    const reqId = ++this.carregamentoId;
+    this.atualizandoMetricas.set(true);
+    this.error.set(null);
+    try {
+      const data = await firstValueFrom(this.api.getPainelResumo(id, { unidade_id: unidadeId }));
+      if (this.objetivoId() !== id || reqId !== this.carregamentoId) {
+        return;
+      }
+      this.resumo.update(atual => atual
+        ? {
+            ...atual,
+            esforco: data.esforco,
+            pessoas: data.pessoas,
+            entregas: data.entregas,
+          }
+        : atual,
+      );
+    } catch (err: unknown) {
+      if (this.objetivoId() !== id || reqId !== this.carregamentoId) {
+        return;
+      }
+      this.error.set(err instanceof Error ? err.message : 'Não foi possível filtrar as métricas.');
+    } finally {
+      if (this.objetivoId() === id && reqId === this.carregamentoId) {
+        this.atualizandoMetricas.set(false);
       }
     }
   }

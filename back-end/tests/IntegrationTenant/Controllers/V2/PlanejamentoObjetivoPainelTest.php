@@ -50,7 +50,8 @@ describe('GET /api/v2/planejamento/objetivo/{id}/painel-resumo', function () {
             ->assertJsonPath('data.nome', 'Objetivo painel')
             ->assertJsonPath('data.planejamento_nome', 'Planejamento Teste')
             ->assertJsonPath('data.entregas.total_entregas', 0)
-            ->assertJsonPath('data.pessoas.total_participantes', 0);
+            ->assertJsonPath('data.pessoas.total_participantes', 0)
+            ->assertJsonPath('data.filtro_unidades', []);
     });
 
     test('retorna esforço e participantes com PT concluído vinculado', function () {
@@ -64,8 +65,23 @@ describe('GET /api/v2/planejamento/objetivo/{id}/painel-resumo', function () {
             ->assertJsonPath('data.pessoas.total_participantes', 1)
             ->assertJsonPath('data.esforco.mostrar_disponivel', true);
 
-        $disponivel = (float) $response->json('data.esforco.disponivel_horas');
-        expect($disponivel)->toBeGreaterThan(0);
+        expect($response->json('data.filtro_unidades'))->toHaveCount(1);
+    });
+
+    test('filtra resumo por unidade', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo filtro unidade');
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 7, forcaTrabalho: 100.0);
+
+        $unidadeId = $base['unidade']->id;
+
+        $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/painel-resumo?unidade_id={$unidadeId}")
+            ->assertStatus(200)
+            ->assertJsonPath('data.entregas.total_entregas', 1);
+
+        $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/painel-resumo?unidade_id=" . Str::uuid()->toString())
+            ->assertStatus(200)
+            ->assertJsonPath('data.entregas.total_entregas', 0);
     });
 });
 

@@ -107,7 +107,7 @@
                 <tr>
                   <th scope="col">Plano de Entrega</th>
                   <th scope="col">Entrega</th>
-                  <th scope="col">% CHD <br-tag class="count">{{ totalForcaTrabalho() }}%</br-tag></th>
+                  <th scope="col">% CH Planejada<br-tag class="count">{{ totalForcaTrabalho() }}%</br-tag></th>
                   <th scope="col">Trabalho Planejado</th>
                 </tr>
               </thead>
@@ -343,7 +343,7 @@
       </div>
     }
     <!-- Assinaturas -->
-    @if (assinatura.documento() || policy.podeAssinar(planoTrabalho()!)) {
+    @if (assinatura.documento() || assinatura.temAssinaturasRevogadas() || policy.podeAssinar(planoTrabalho()!)) {
       <div id="assinaturas" class="br-card mb-4">
         <div class="card-header text-weight-semi-bold text-up-02 bg-gray-10 p-2x">Assinaturas</div>
         <div class="card-content">
@@ -370,6 +370,32 @@
             </div>
           } @else {
             <p class="text-body-secondary mb-4">Nenhuma assinatura registrada.</p>
+          }
+
+          @if (assinatura.documento()?.assinaturas_revogadas?.length) {
+            <p class="text-weight-semi-bold mb-2">Assinaturas revogadas</p>
+            <div class="br-table mb-4">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Usuário</th>
+                      <th scope="col">Assinatura</th>
+                      <th scope="col">Revogação</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (a of assinatura.documento()?.assinaturas_revogadas; track a.id) {
+                      <tr>
+                        <td>{{ a.usuario_nome || '-' }}</td>
+                        <td>{{ a.data_assinatura | date:'dd/MM/yyyy HH:mm' }}</td>
+                        <td>{{ a.data_revogacao | date:'dd/MM/yyyy HH:mm' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
           }
 
           <div class="d-flex gap-2">

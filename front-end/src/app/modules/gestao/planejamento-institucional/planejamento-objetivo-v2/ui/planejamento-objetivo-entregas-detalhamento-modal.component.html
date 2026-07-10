@@ -144,10 +144,16 @@
                           <div>
                             <h6 class="detalhamento-modal__detail-title">Participantes</h6>
                             <p class="mb-1">
-                              <strong>Participantes envolvidos:</strong> {{ item.participantes_unidade_propria }}
+                              <strong>Total envolvidos:</strong> {{ item.participantes_total }}
+                            </p>
+                            <p class="mb-1">
+                              <strong>Somente unidade própria:</strong> {{ item.participantes_somente_unidade_propria }}
+                            </p>
+                            <p class="mb-1">
+                              <strong>Somente outras unidades:</strong> {{ item.participantes_somente_outras_unidades }}
                             </p>
                             <p class="mb-0">
-                              <strong>Participantes de outras unidades:</strong> {{ item.participantes_outras_unidades }}
+                              <strong>Em ambas:</strong> {{ item.participantes_em_ambas }}
                             </p>
                           </div>
                           <div>
@@ -172,9 +178,10 @@
                             <h6 class="detalhamento-modal__detail-title">Registro de execução da entrega</h6>
                             <p class="mb-1"><strong>Meta:</strong> {{ formatPercent(item.progresso_esperado) }}</p>
                             <p class="mb-1"><strong>Realizado:</strong> {{ formatPercent(item.progresso_realizado) }}</p>
-                            <p class="mb-1">
-                              <strong>Homologado:</strong> {{ item.homologado ? 'Sim' : 'Não' }}
-                            </p>
+                           
+                           
+                          </div>
+                          <div>
                             @if (item.registro_execucao) {
                               <p class="mb-0">
                                 <strong>Registro de execução:</strong>
