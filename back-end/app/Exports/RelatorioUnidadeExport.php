@@ -39,7 +39,9 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
             'Sigla',
             'Unidade',
             'Uorg',
-            'Tipo',
+            'Instituidora',
+            'Executora',
+            'PE Vigente',
             'Chefia',
             'Chefia substituta',
             'Delegados',
@@ -53,11 +55,13 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
             'A' => 20, // Sigla
             'B' => 45, // Unidade
             'C' => 10, // Uorg
-            'D' => 15, // Tipo
-            'E' => 40, // Chefia
-            'F' => 10, // Chefia substituta
-            'G' => 10, // Delegados
-            'H' => 10, // Vinculados
+            'D' => 12, // Instituidora
+            'E' => 12, // Executora
+            'F' => 12, // PE Vigente
+            'G' => 40, // Chefia
+            'H' => 10, // Chefia substituta
+            'I' => 10, // Delegados
+            'J' => 10, // Vinculados
         ];
     }
 
@@ -67,7 +71,9 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
             $row->sigla,
             $row->unidadeHierarquia,
             $row->codigo,
-            $row->tipo,
+            $row->instituidora,
+            $row->executora,
+            $row->possuiPEVigente,
             $row->chefiaNome,
             $row->totalSubstitutos,
             $row->totalDelegados,
@@ -102,7 +108,7 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
     {
         return [
             // borda no conjunto inteiro + 1 linha de header
-            'A1:H'.(count($this->rows) + 1) => [
+            'A1:J'.(count($this->rows) + 1) => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -123,7 +129,7 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
                     ],
                 ]
             ],
-            'C:H' => [
+            'C:J' => [
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ]
@@ -135,7 +141,7 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
     {
         $event->sheet->getDelegate()->getRowDimension('1')->setRowHeight(60);
         $event->sheet->getDelegate()->getStyle('1')->getAlignment()->setWrapText(true);
-        $event->sheet->getStyle('A1:H1')->getFill()
+        $event->sheet->getStyle('A1:J1')->getFill()
           ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
           ->getStartColor()->setARGB('fc9fc0');
     }
