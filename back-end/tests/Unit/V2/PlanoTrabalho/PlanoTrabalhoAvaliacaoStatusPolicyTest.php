@@ -5,7 +5,7 @@ use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
-use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusService;
+use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusPolicy;
 use App\V2\StatusService;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
@@ -31,7 +31,7 @@ function mockPlanoTrabalhoRelation(PlanoTrabalhoConsolidacao $consolidacao, Plan
     $consolidacao->shouldReceive('planoTrabalho')->andReturn($planoTrabalhoRelation);
 }
 
-describe('PlanoTrabalhoAvaliacaoStatusService::sincronizarAposMudancaConsolidacao', function () {
+describe('PlanoTrabalhoAvaliacaoStatusPolicy::sincronizarAposMudancaConsolidacao', function () {
 
     test('conclui plano ATIVO quando todas consolidações vigentes estão avaliadas', function () {
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
@@ -66,8 +66,8 @@ describe('PlanoTrabalhoAvaliacaoStatusService::sincronizarAposMudancaConsolidaca
             ->with($plano, StatusEnum::CONCLUIDO->value, Mockery::type('string'));
         app()->instance(StatusService::class, $statusService);
 
-        $service = new PlanoTrabalhoAvaliacaoStatusService($consolidacaoRepository, $dispensaPolicy);
-        $service->sincronizarAposMudancaConsolidacao($consolidacao);
+        $policy = new PlanoTrabalhoAvaliacaoStatusPolicy($consolidacaoRepository, $dispensaPolicy);
+        $policy->sincronizarAposMudancaConsolidacao($consolidacao);
     });
 
     test('não altera plano ATIVO quando ainda há consolidação pendente de avaliação', function () {
@@ -102,8 +102,8 @@ describe('PlanoTrabalhoAvaliacaoStatusService::sincronizarAposMudancaConsolidaca
         $statusService->shouldReceive('atualizaStatus')->never();
         app()->instance(StatusService::class, $statusService);
 
-        $service = new PlanoTrabalhoAvaliacaoStatusService($consolidacaoRepository, $dispensaPolicy);
-        $service->sincronizarAposMudancaConsolidacao($consolidacao);
+        $policy = new PlanoTrabalhoAvaliacaoStatusPolicy($consolidacaoRepository, $dispensaPolicy);
+        $policy->sincronizarAposMudancaConsolidacao($consolidacao);
     });
 
     test('ignora planos sem consolidações vigentes', function () {
@@ -121,7 +121,7 @@ describe('PlanoTrabalhoAvaliacaoStatusService::sincronizarAposMudancaConsolidaca
         $dispensaPolicy = Mockery::mock(DispensaAvaliacaoPolicy::class);
         $dispensaPolicy->shouldReceive('consolidacoesDispensadas')->never();
 
-        $service = new PlanoTrabalhoAvaliacaoStatusService($consolidacaoRepository, $dispensaPolicy);
-        $service->sincronizarAposMudancaConsolidacao($consolidacao);
+        $policy = new PlanoTrabalhoAvaliacaoStatusPolicy($consolidacaoRepository, $dispensaPolicy);
+        $policy->sincronizarAposMudancaConsolidacao($consolidacao);
     });
 });

@@ -12,7 +12,7 @@ use App\V2\StatusTemplates;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 
-class PlanoTrabalhoAvaliacaoStatusService
+class PlanoTrabalhoAvaliacaoStatusPolicy
 {
     public function __construct(
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,

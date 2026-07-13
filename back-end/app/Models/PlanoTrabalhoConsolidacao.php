@@ -8,7 +8,7 @@ use App\Models\PlanoTrabalho;
 use App\Models\Comparecimento;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\StatusJustificativa;
-use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusService;
+use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusPolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,7 +43,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
         return;
       }
 
-      app(PlanoTrabalhoAvaliacaoStatusService::class)->sincronizarAposMudancaConsolidacao($consolidacao);
+      app(PlanoTrabalhoAvaliacaoStatusPolicy::class)->sincronizarAposMudancaConsolidacao($consolidacao);
     });
   }
 

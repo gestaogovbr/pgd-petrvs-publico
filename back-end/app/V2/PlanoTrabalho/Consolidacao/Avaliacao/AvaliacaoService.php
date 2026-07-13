@@ -12,7 +12,7 @@ use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\DTOs\AvaliacaoStoreDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoDestroyValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoStoreValidator;
-use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusService;
+use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusPolicy;
 use App\V2\StatusService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +26,7 @@ class AvaliacaoService
         private readonly AvaliacaoRepository $avaliacaoRepository,
         private readonly StatusService $statusService,
         private readonly AvaliacaoPolicy $avaliacaoPolicy,
-        private readonly PlanoTrabalhoAvaliacaoStatusService $planoAvaliacaoStatusService,
+        private readonly PlanoTrabalhoAvaliacaoStatusPolicy $planoAvaliacaoStatusPolicy,
     ) {}
 
     public function store(AvaliacaoStoreDTO $dto): Avaliacao
@@ -51,7 +51,7 @@ class AvaliacaoService
                 $justificativa,
             );
 
-            $this->planoAvaliacaoStatusService->sincronizarAposMudancaConsolidacao($consolidacao);
+            $this->planoAvaliacaoStatusPolicy->sincronizarAposMudancaConsolidacao($consolidacao);
 
             $consolidacao->refresh()->load(['avaliacoes', 'statusHistorico']);
             $planoTrabalho = $consolidacao->planoTrabalho;
@@ -78,7 +78,7 @@ class AvaliacaoService
                 'Avaliação do período avaliativo cancelada pela chefia.',
             );
 
-            $this->planoAvaliacaoStatusService->sincronizarAposMudancaConsolidacao($consolidacao);
+            $this->planoAvaliacaoStatusPolicy->sincronizarAposMudancaConsolidacao($consolidacao);
 
             $consolidacao = $consolidacao->refresh()->load(['avaliacoes.avaliador', 'atividades', 'afastamentos.afastamento', 'statusHistorico']);
 
