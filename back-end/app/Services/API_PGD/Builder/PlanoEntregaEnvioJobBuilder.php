@@ -21,18 +21,20 @@ class PlanoEntregaEnvioJobBuilder
             return new ExportarPlanoEntregaJob(
                 $tenantId,
                 $planoEntrega->id,
-                $origem
+                $origem,
+                $planoEntrega->numero
             );
         }
 
         $planoEntregaRepository = app()->make(PlanoEntregaRepository::class);
-        $planoEntregaRepository->registrarLog($planoEntrega, 'PE não está em status válido para envio ao PGD.');
+        $planoEntregaRepository->registrarLog($planoEntrega, 'PE não está em status válido para envio ao PGD: ' . $planoEntrega->status);
 
         throw new EnvioNaoAgendadoException(
             tenant('id'),
             'PlanoEntrega',
             $planoEntrega->id,
-            "PE não está em status válido para envio ao PGD."
+            "PE não está em status válido para envio ao PGD: " . $planoEntrega->status,
+            $planoEntrega->numero
         );
     }
 }

@@ -99,6 +99,49 @@
   margin-top: 12px;
 }
 
+.relatorio-carga-siape-secao-topo {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.relatorio-carga-siape-secao-topo h3 {
+  margin: 0;
+}
+
+.relatorio-carga-siape-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.relatorio-carga-siape-tablist {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.relatorio-carga-siape-tab {
+  border: 1px solid #d0d5dd;
+  border-radius: 8px 8px 0 0;
+  background: #ffffff;
+  color: #344054;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+
+.relatorio-carga-siape-tab--ativa {
+  border-color: #2563eb;
+  border-bottom-color: #ffffff;
+  color: #1d4ed8;
+}
+
 .relatorio-carga-siape-muted {
   margin-left: 8px;
   color: #667085;
