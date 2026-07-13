@@ -70,7 +70,7 @@ class ExportarParticipanteJob extends ExportarItemJob
     protected function logItemLabel(): string
     {
         if ($this->matriculaParticipante !== null) {
-            return 'Participante #'.$this->matriculaParticipante.' ('.$this->id.')';
+            return 'Participante #'.$this->matriculaParticipante;
         }
 
         if (tenancy()->initialized) {
@@ -80,7 +80,20 @@ class ExportarParticipanteJob extends ExportarItemJob
             }
         }
 
-        return 'Participante ('.$this->id.')';
+        return 'Participante';
+    }
+
+    public function tags()
+    {
+        $tags = [$this->tenantId];
+
+        if ($this->matriculaParticipante !== null) {
+            $tags[] = $this->matriculaParticipante;
+        } else {
+            $tags[] = $this->id;
+        }
+
+        return $tags;
     }
 }
 

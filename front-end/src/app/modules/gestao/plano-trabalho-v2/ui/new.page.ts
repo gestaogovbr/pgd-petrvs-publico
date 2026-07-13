@@ -17,6 +17,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { SelectOption } from './edit.page';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { modalidadeDivergenteDoSiape, modalidadeSiapeNormalizada } from '../domain/modalidade-divergente';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 
 @Component({
   selector: 'app-plano-trabalho-v2-new-page',
@@ -37,6 +39,7 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly injector = inject(Injector);
+  private readonly modalidadePgdService = inject(ModalidadePgdService);
 
   saving = signal(false);
   carregandoRegramento = signal(false);
@@ -88,12 +91,13 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
 
   // TODO: definir comportamento quando usuario.modalidade_pgd é null (sem registro no SIAPE).
   // Atualmente trata como divergente, exigindo justificativa.
-  readonly modalidadeDivergente = computed(() => {
-    const selecionada = this.selectedModalidade();
-    const doUsuario = this.usuarioModalidadePgd();
-    if (!selecionada || !doUsuario) return false;
-    return selecionada !== doUsuario;
-  });
+  readonly modalidadeDivergente = computed(() =>
+    modalidadeDivergenteDoSiape(
+      this.modalidadePgdService,
+      this.selectedModalidade() || this.form.controls.modalidade_pgd.value,
+      this.usuarioModalidadePgd() || null
+    )
+  );
 
   readonly unidadesOptions = computed<SelectOption[]>(() => {
     const sel = this.selectedUnidadeId();
@@ -362,26 +366,20 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       }
     }
 
-    const modalidadePgd = usuario.modalidade_pgd;
-    if (typeof modalidadePgd === 'string' && modalidadePgd.length) {
-      this.selectedModalidade.set(modalidadePgd);
-      this.usuarioModalidadePgd.set(modalidadePgd);
-    }
-
     this.modalidades.set(await this.tipoModalidadeApi.listar());
+    this.usuarioModalidadePgd.set(modalidadeSiapeNormalizada(this.modalidadePgdService, usuario.modalidade_pgd));
 
-    if (typeof modalidadePgd === 'string' && modalidadePgd.length) {
-      const isValid = this.modalidades().some(m => m.key === modalidadePgd);
-      if (isValid) {
-        this.form.controls.modalidade_pgd.setValue(modalidadePgd);
-        return;
-      }
+    const modalidadeSiape = this.usuarioModalidadePgd();
+    if (modalidadeSiape && this.modalidades().some(m => m.key === modalidadeSiape)) {
+      this.selectedModalidade.set(modalidadeSiape);
+      this.form.controls.modalidade_pgd.setValue(modalidadeSiape, { emitEvent: false });
+      return;
     }
 
     if (this.modalidades().length > 0) {
       const firstKey = this.modalidades()[0].key;
       this.selectedModalidade.set(firstKey);
-      this.form.controls.modalidade_pgd.setValue(firstKey);
+      this.form.controls.modalidade_pgd.setValue(firstKey, { emitEvent: false });
     }
   }
 
@@ -418,15 +416,12 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       await this.carregarRegramento(unidadeId);
     }
 
-    if (typeof usuario.modalidade_pgd === 'string' && usuario.modalidade_pgd.length) {
-      this.usuarioModalidadePgd.set(usuario.modalidade_pgd);
-    }
-
     this.modalidades.set(await this.tipoModalidadeApi.listar());
+    this.usuarioModalidadePgd.set(modalidadeSiapeNormalizada(this.modalidadePgdService, usuario.modalidade_pgd));
 
     if (modalidade) {
       this.selectedModalidade.set(modalidade);
-      this.form.controls.modalidade_pgd.setValue(modalidade);
+      this.form.controls.modalidade_pgd.setValue(modalidade, { emitEvent: false });
     }
   }
 }

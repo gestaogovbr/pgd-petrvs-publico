@@ -4,9 +4,12 @@ use App\V2\PlanoTrabalho\Documento\Validators\PlanoTrabalhoDocumentoAssinarValid
 use App\Repository\DocumentoRepository;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\Documento;
+use App\Models\Usuario;
 use App\Enums\StatusEnum;
+use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,7 +21,8 @@ beforeEach(function () {
     $this->documentoRepo = Mockery::mock(DocumentoRepository::class);
     $this->assinaturaRepo = Mockery::mock(DocumentoAssinaturaRepository::class);
     $this->unidadeRepo = Mockery::mock(UnidadeRepository::class);
-    $this->validator = new PlanoTrabalhoDocumentoAssinarValidator($this->documentoRepo, $this->assinaturaRepo, $this->unidadeRepo);
+    $this->usuarioRepo = Mockery::mock(UsuarioRepository::class);
+    $this->validator = new PlanoTrabalhoDocumentoAssinarValidator($this->documentoRepo, $this->assinaturaRepo, $this->unidadeRepo, $this->usuarioRepo);
 });
 
 afterEach(function () {
@@ -45,7 +49,7 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
     test('lança exceção quando status é ATIVO', function () {
         $plano = fakePlanoAssinar(StatusEnum::ATIVO->value);
 
-        $this->validator->validar($plano, 'user-1');
+        $this->validator->validar($plano, 'user-1', '12345678901');
     })->throws(ValidateException::class, 'Plano de Trabalho deve estar com status Incluído ou Aguardando Assinatura para ser assinado.');
 
     test('lança exceção quando plano não possui entregas', function () {
@@ -58,7 +62,7 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
         $plano->status = StatusEnum::INCLUIDO->value;
         $plano->shouldReceive('entregas')->andReturn($relation);
 
-        $this->validator->validar($plano, 'user-1');
+        $this->validator->validar($plano, 'user-1', '12345678901');
     })->throws(ValidateException::class, 'Plano de Trabalho deve possuir ao menos uma entrega para ser assinado.');
 
     test('lança exceção quando TCR não existe', function () {
@@ -68,7 +72,7 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
             ->with('plano-1')
             ->andReturn(null);
 
-        $this->validator->validar($plano, 'user-1');
+        $this->validator->validar($plano, 'user-1', '12345678901');
     })->throws(NotFoundException::class, 'Plano de Trabalho não possui documento TCR gerado.');
 
     test('lança exceção quando usuário já assinou', function () {
@@ -80,10 +84,10 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
 
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
         $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')
-            ->with('doc-1', 'user-1')
+            ->with('doc-1', '12345678901')
             ->andReturn(true);
 
-        $this->validator->validar($plano, 'user-1');
+        $this->validator->validar($plano, 'user-1', '12345678901');
     })->throws(ValidateException::class, 'Usuário já assinou este documento.');
 
     test('retorna documento quando todas as validações passam', function () {
@@ -100,7 +104,7 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
         $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->andReturn(false);
 
-        expect($this->validator->validar($plano, 'user-1'))->toBe($documento);
+        expect($this->validator->validar($plano, 'user-1', '12345678901'))->toBe($documento);
     });
 
     test('permite com status AGUARDANDO_ASSINATURA', function () {
@@ -117,7 +121,7 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
         $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->andReturn(false);
 
-        expect($this->validator->validar($plano, 'user-1'))->toBe($documento);
+        expect($this->validator->validar($plano, 'user-1', '12345678901'))->toBe($documento);
     });
 
     test('lança exceção quando já atingiu o máximo de assinaturas', function () {
@@ -134,8 +138,29 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
         $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->andReturn(false);
 
-        $this->validator->validar($plano, 'user-1');
+        $this->validator->validar($plano, 'user-1', '12345678901');
     })->throws(ValidateException::class, 'Todas as assinaturas exigidas já foram realizadas.');
 
+    test('bloqueia assinatura como chefia quando usuario diferente possui mesmo CPF do participante', function () {
+        $relation = Mockery::mock(HasMany::class);
+        $relation->shouldReceive('exists')->andReturn(true);
+
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->usuario_id = 'participante-1';
+        $plano->unidade_id = 'unidade-1';
+        $plano->status = StatusEnum::INCLUIDO->value;
+        $plano->shouldReceive('entregas')->andReturn($relation);
+
+        $participante = Mockery::mock(Usuario::class)->makePartial();
+        $participante->cpf = '12345678901';
+
+        $this->usuarioRepo->shouldReceive('findById')
+            ->with('participante-1')
+            ->andReturn($participante);
+
+        $this->validator->validar($plano, 'chefia-outro-registro', '12345678901');
+    })->throws(ForbiddenException::class, 'Não é permitido assinar o próprio Plano de Trabalho como chefia.');
 
 });

@@ -63,6 +63,7 @@ beforeEach(function () {
 
     $usuario = Mockery::mock(Usuario::class)->makePartial();
     $usuario->nome = 'João';
+    $usuario->cpf = '12345678901';
 
     Auth::shouldReceive('id')->andReturn('user-1');
     Auth::shouldReceive('user')->andReturn($usuario);
