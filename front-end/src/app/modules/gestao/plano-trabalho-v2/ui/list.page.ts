@@ -10,7 +10,7 @@ import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
 import { Router } from '@angular/router';
 import { Subject, Subscription, debounceTime } from 'rxjs';
 import { PlanoTrabalho, planoTrabalhoStatusLabel } from '../domain/types';
-import { PlanoTrabalhoStatus } from 'src/app/models/plano-trabalho.model';
+import { PlanoTrabalhoStatus, PlanoTrabalhoStatusGroups } from 'src/app/models/plano-trabalho.model';
 import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ExcluirPlanoUseCase } from '../application/excluir-plano.usecase';
 import { EncerrarPlanoUseCase } from '../application/encerrar-plano.usecase';
@@ -56,6 +56,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly message = inject(MessageService);
   private readonly cdr = inject(ChangeDetectorRef);
   private logsOverlayRef: OverlayRef | null = null;
+
+  readonly statusGroups = PlanoTrabalhoStatusGroups;
 
   private readonly FILTER_KEY_PREFIX = 'plano-trabalho-v2:filters';
 
@@ -332,6 +334,17 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   statusLabel(value: PlanoTrabalhoStatus | undefined, plano?: PlanoTrabalho): string {
     return planoTrabalhoStatusLabel(value, plano);
+  }
+
+  isPlanoDoDia(p: PlanoTrabalho): boolean {
+    if (!p.data_inicio || !p.data_fim) return false;
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const inicio = new Date(p.data_inicio);
+    inicio.setHours(0, 0, 0, 0);
+    const fim = new Date(p.data_fim);
+    fim.setHours(0, 0, 0, 0);
+    return inicio <= hoje && fim >= hoje;
   }
 
   novoPlano() {

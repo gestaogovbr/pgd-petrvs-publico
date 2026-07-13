@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Siape\CargaIndividual;
 
+use App\Enums\SituacaoFuncionalEnum;
 use App\Models\Usuario;
 use App\Repository\UsuarioRepository;
 use App\Support\ModalidadePgd;
@@ -34,13 +35,52 @@ class CargaIndividualSiapeRelatorioServidorBuilder
         $secoes = [];
         foreach ($dadosFuncionais as $indice => $funcional) {
             $matricula = (string) ($funcional['matriculaSiape'] ?? '');
+            $vinculoExcluido = $this->vinculoExcluido($funcional);
             /** @var Usuario|null $usuario */
             $usuario = $matricula !== '' ? $usuarios->get($matricula) : $usuarios->first();
 
             $secoes[] = [
-                'titulo' => count($dadosFuncionais) > 1 ? 'Vinculo SIAPE ' . ($indice + 1) : 'Dados do servidor',
+                'titulo' => $this->tituloSecao($matricula, $indice, count($dadosFuncionais), $vinculoExcluido),
                 'tipo' => 'servidor',
+                'matricula' => $matricula !== '' ? $matricula : null,
+                'indice' => $indice + 1,
+                'status_vinculo' => $vinculoExcluido ? 'excluido' : 'ativo',
+                'data_ocorrencia_exclusao' => $this->valorEscalar($funcional['dataOcorrExclusao'] ?? null),
                 'campos' => $this->camposServidor($dadosPessoais, $funcional, $usuario),
+            ];
+        }
+
+        return $secoes;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $resumo
+     * @param array<string, mixed> $dadosSiape
+     * @return array<int, array<string, mixed>>
+     */
+    public function construirResumoErro(array $resumo, string $cpf, array $dadosSiape = []): array
+    {
+        $dadosFuncionais = $this->normalizarFuncionais($dadosSiape['dadosFuncionais'] ?? []);
+        $dadosPessoais = is_array($dadosSiape['dadosPessoais'] ?? null) ? $dadosSiape['dadosPessoais'] : [];
+        $usuarios = $this->usuarioRepository->findAllByCpfUnfiltered($this->somenteNumeros($cpf) ?? $cpf)
+            ->keyBy(fn(Usuario $usuario) => (string) ($usuario->matricula ?? $usuario->id));
+        $funcionaisPorMatricula = collect($dadosFuncionais)
+            ->filter(fn(array $funcional) => !empty($funcional['matriculaSiape']))
+            ->keyBy(fn(array $funcional) => (string) $funcional['matriculaSiape']);
+
+        $secoes = [];
+        foreach ($resumo as $indice => $itemResumo) {
+            $matricula = (string) ($itemResumo['matricula'] ?? $itemResumo['matriculaSiape'] ?? '');
+            /** @var Usuario|null $usuario */
+            $usuario = $matricula !== '' ? $usuarios->get($matricula) : $usuarios->first();
+            $funcional = $matricula !== '' ? ($funcionaisPorMatricula->get($matricula) ?? []) : [];
+
+            $secoes[] = [
+                'titulo' => $matricula !== ''
+                    ? 'Matrícula SIAPE ' . $matricula
+                    : 'Vínculo SIAPE ' . ($indice + 1),
+                'tipo' => 'servidor',
+                'campos' => $this->camposServidorErro($dadosPessoais, $funcional, $itemResumo, $usuario),
             ];
         }
 
@@ -55,8 +95,14 @@ class CargaIndividualSiapeRelatorioServidorBuilder
     private function camposServidor(array $dadosPessoais, array $funcional, ?Usuario $usuario): array
     {
         $situacaoFuncional = $this->campoSituacaoFuncional($funcional, $usuario);
+        $campos = [];
+
+        if ($this->vinculoExcluido($funcional)) {
+            $campos[] = $this->campoVinculoExcluido($funcional);
+        }
 
         return [
+            ...$campos,
             $this->comparator->comparar('nome', 'Nome', $dadosPessoais['nome'] ?? null, $usuario?->nome),
             $this->comparator->comparar('emailInstitucional', 'E-mail institucional', $funcional['emailInstitucional'] ?? null, $usuario?->email),
             // TODO/FIXME: reexibir a ultima atualizacao do servidor quando houver fonte confiavel.
@@ -74,15 +120,35 @@ class CargaIndividualSiapeRelatorioServidorBuilder
     }
 
     /**
+     * @param array<string, mixed> $dadosPessoais
+     * @param array<string, mixed> $funcional
+     * @param array<string, mixed> $resumo
+     * @return array<int, array<string, mixed>>
+     */
+    private function camposServidorErro(array $dadosPessoais, array $funcional, array $resumo, ?Usuario $usuario): array
+    {
+        return [
+            $this->comparator->comparar('matriculaSiape', 'Matrícula SIAPE', $resumo['matricula'] ?? $funcional['matriculaSiape'] ?? null, $usuario?->matricula),
+            $this->comparator->comparar('nome', 'Nome', $resumo['nome'] ?? $dadosPessoais['nome'] ?? null, $usuario?->nome),
+            $this->comparator->comparar('codUorgExercicio', 'Unidade de exercício', $funcional['codUorgExercicio'] ?? null, $usuario?->lotacao?->unidade?->codigo),
+            $this->comparator->comparar('lotacao_associada', 'Lotação associada', $resumo['lotacao_associada'] ?? null, !empty($usuario?->lotacao)),
+            $this->linhaInformativa('status', 'Situação do processamento', $this->statusResumo($resumo)),
+            $this->linhaInformativa('mensagem', 'Mensagem', $resumo['mensagem'] ?? null),
+        ];
+    }
+
+    /**
      * @param array<string, mixed> $funcional
      * @return array<string, mixed>
      */
     private function campoSituacaoFuncional(array $funcional, ?Usuario $usuario): array
     {
+        $valorComparacao = $this->situacaoFuncionalSiapeParaComparacao($funcional['codSitFuncional'] ?? null)
+            ?? $funcional['nomeSitFuncional'] ?? null;
         $campo = $this->comparator->comparar(
             'nomeSitFuncional',
             'Situacao funcional',
-            $funcional['nomeSitFuncional'] ?? null,
+            $valorComparacao,
             $usuario?->situacao_funcional,
         );
 
@@ -95,7 +161,62 @@ class CargaIndividualSiapeRelatorioServidorBuilder
             $campo['recebido_siape'] = $recebidoSiape;
         }
 
+        $nomeSiape = $this->valorEscalar($funcional['nomeSitFuncional'] ?? null);
+        if ($campo['status'] === 'confirmado'
+            && $nomeSiape !== null
+            && is_string($valorComparacao)
+            && $this->normalizarTexto($nomeSiape) !== $this->normalizarTexto($valorComparacao)
+        ) {
+            $campo['status'] = 'ajustado';
+        }
+
         return $campo;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function campoVinculoExcluido(array $funcional): array
+    {
+        $dataExclusao = $this->valorEscalar($funcional['dataOcorrExclusao'] ?? null);
+
+        return [
+            'campo' => 'statusVinculoSiape',
+            'rotulo' => 'Situacao do vinculo SIAPE',
+            'recebido_siape' => $dataExclusao !== null
+                ? 'Vinculo excluido/inativo no SIAPE desde ' . $dataExclusao
+                : 'Vinculo excluido/inativo no SIAPE',
+            'registrado_petrvs' => 'Nao processado para sincronizacao',
+            'status' => 'nao_aplicavel',
+        ];
+    }
+
+    private function tituloSecao(string $matricula, int $indice, int $total, bool $vinculoExcluido): string
+    {
+        $titulo = $matricula !== ''
+            ? 'Matricula ' . $matricula
+            : ($total > 1 ? 'Vinculo SIAPE ' . ($indice + 1) : 'Dados do servidor');
+
+        return $vinculoExcluido ? $titulo . ' (vinculo excluido/inativo)' : $titulo;
+    }
+
+    private function vinculoExcluido(array $funcional): bool
+    {
+        return $this->valorEscalar($funcional['dataOcorrExclusao'] ?? null) !== null;
+    }
+
+    private function situacaoFuncionalSiapeParaComparacao(mixed $codigo): ?string
+    {
+        if (!is_scalar($codigo)) {
+            return null;
+        }
+
+        $codigo = trim((string) $codigo);
+        if ($codigo === '' || !ctype_digit($codigo)) {
+            return null;
+        }
+
+        return SituacaoFuncionalEnum::fromCodigo((int) $codigo);
     }
 
     private function situacaoFuncionalSiapeParaExibicao(mixed $nome, mixed $codigo): ?string
@@ -112,6 +233,22 @@ class CargaIndividualSiapeRelatorioServidorBuilder
         $codigo = is_scalar($codigo) ? trim((string) $codigo) : '';
 
         return $codigo !== '' ? "{$nome} ({$codigo})" : $nome;
+    }
+
+    private function valorEscalar(mixed $valor): ?string
+    {
+        if (!is_scalar($valor)) {
+            return null;
+        }
+
+        $texto = trim((string) $valor);
+
+        return $texto !== '' ? $texto : null;
+    }
+
+    private function normalizarTexto(string $valor): string
+    {
+        return mb_strtolower(trim($valor));
     }
 
     /**
@@ -149,5 +286,41 @@ class CargaIndividualSiapeRelatorioServidorBuilder
         $digitos = preg_replace('/\D/', '', (string) $valor);
 
         return is_string($digitos) && $digitos !== '' ? $digitos : null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function linhaInformativa(string $campo, string $rotulo, mixed $valor, bool $confirmado = false): array
+    {
+        return [
+            'campo' => $campo,
+            'rotulo' => $rotulo,
+            'recebido_siape' => $this->valorExibicao($valor),
+            'registrado_petrvs' => null,
+            'status' => $confirmado ? 'confirmado' : 'nao_aplicavel',
+        ];
+    }
+
+    private function statusResumo(array $resumo): ?string
+    {
+        $status = $resumo['status'] ?? null;
+
+        return is_scalar($status) ? (string) $status : null;
+    }
+
+    private function valorExibicao(mixed $valor): ?string
+    {
+        if ($valor === null) {
+            return null;
+        }
+
+        if (is_bool($valor)) {
+            return $valor ? 'Sim' : 'Nao';
+        }
+
+        $texto = trim((string) $valor);
+
+        return $texto !== '' ? $texto : null;
     }
 }

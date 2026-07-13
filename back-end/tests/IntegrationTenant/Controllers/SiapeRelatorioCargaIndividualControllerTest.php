@@ -9,8 +9,13 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\Sanctum;
+use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 
 beforeEach(function () {
+    // DatabaseTenantTestCase já inicializa o tenant. Repetir a resolução pelo
+    // header durante a requisição pode perder o registro central com RefreshDatabase.
+    $this->withoutMiddleware(InitializeTenancyByRequestData::class);
+
     if (!Schema::connection('tenant')->hasTable('cargas_individuais_siape_relatorios')) {
         $this->artisan('migrate', [
             '--path' => 'database/migrations/tenant/2026_04_22_000000_create_cargas_individuais_siape_relatorios_table.php',

@@ -1,3 +1,16 @@
+## 3.0.7 10/07/2026
+
+### Adicionado
+- Tag "Aguardando Avaliação" na listagem de Planos de Trabalho v2, indicando planos com períodos concluídos pendentes de avaliação
+- Ícone "Plano do Dia" na coluna Período da listagem de PT v2, destacando planos vigentes na data atual
+- Envio de Planos de Trabalho e Planos de Entrega cancelados
+
+### Corrigido
+- Validação do pertencimento do PT ao usuário via CPF, não mais via uuid
+- Corrigida detecção de inconsistências em Planos de Trabalho: a verificação de registros de execução preenchidos agora consulta a tabela de atividades em vez de snapshots
+- Corrigido filtro "Código Unidade" na lista de unidades indisponíveis que não funcionava corretamente
+- Exigência de justificativa no PT quando modalidade do usuário do servidor for inconsistente
+
 ## 3.0.6 03/07/2026
 
 ### Adicionado
