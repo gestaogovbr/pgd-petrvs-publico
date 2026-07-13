@@ -1,0 +1,69 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\V2\Home;
+
+use App\V2\Home\DataProviders\AniversariantesDoDia;
+use App\V2\Home\DataProviders\EmFeriasHoje;
+use App\V2\Home\DataProviders\PendenciasUsuario;
+use App\V2\Home\DataProviders\PlanosVigentes;
+use App\V2\Home\DataProviders\ResumoEquipe;
+use App\V2\Home\DTOs\HomeRequestDTO;
+use App\V2\Home\Validators\HomeAuthorizationValidator;
+use Illuminate\Support\Facades\Auth;
+
+class HomeService
+{
+    public function __construct(
+        private readonly HomeAuthorizationValidator $authValidator,
+        private readonly PendenciasUsuario $pendenciasUsuario,
+        private readonly PlanosVigentes $planosVigentes,
+        private readonly ResumoEquipe $resumoEquipe,
+        private readonly AniversariantesDoDia $aniversariantes,
+        private readonly EmFeriasHoje $emFeriasHoje,
+    ) {}
+
+    public function getPendencias(array $data): array
+    {
+        $dto = $this->buildDTO($data);
+
+        return $this->pendenciasUsuario->getData($dto);
+    }
+
+    public function getPlanosVigentes(array $data): array
+    {
+        $dto = $this->buildDTO($data);
+
+        return $this->planosVigentes->getData($dto);
+    }
+
+    public function getResumoEquipe(array $data): array
+    {
+        $dto = $this->buildDTO($data);
+
+        return $this->resumoEquipe->getData($dto);
+    }
+
+    public function getAniversariantes(array $data): array
+    {
+        $dto = $this->buildDTO($data);
+
+        return $this->aniversariantes->getData($dto);
+    }
+
+    public function getEmFerias(array $data): array
+    {
+        $dto = $this->buildDTO($data);
+
+        return $this->emFeriasHoje->getData($dto);
+    }
+
+    private function buildDTO(array $data): HomeRequestDTO
+    {
+        $dto = HomeRequestDTO::fromArray($data, Auth::id());
+        $this->authValidator->validar($dto->unidadeId, $dto->usuarioId);
+
+        return $dto;
+    }
+}
