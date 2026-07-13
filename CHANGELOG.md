@@ -8,6 +8,7 @@
 - Validação do pertencimento do PT ao usuário via CPF, não mais via uuid
 - Corrigida detecção de inconsistências em Planos de Trabalho: a verificação de registros de execução preenchidos agora consulta a tabela de atividades em vez de snapshots
 - Corrigido filtro "Código Unidade" na lista de unidades indisponíveis que não funcionava corretamente
+- Exigência de justificativa no PT quando modalidade do usuário do servidor for inconsistente
 
 ## 3.0.6 03/07/2026
 
