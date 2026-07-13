@@ -26,6 +26,14 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->exists();
     }
 
+    public function existsByDocumentoAndCpf(string $documentoId, string $cpf): bool
+    {
+        return $this->query()
+            ->where('documento_id', $documentoId)
+            ->whereHas('usuario', fn ($q) => $q->where('cpf', $cpf))
+            ->exists();
+    }
+
     public function findByDocumentoAndUsuario(string $documentoId, string $usuarioId): ?DocumentoAssinatura
     {
         /** @var DocumentoAssinatura|null */

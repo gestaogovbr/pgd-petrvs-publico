@@ -593,10 +593,10 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
         $matricula = trim((string) ($this->matricula ?? ''));
 
         if ($matricula !== '') {
-            return 'Participante #'.$matricula.' ('.$this->id.')';
+            return 'Participante #'.$matricula;
         }
 
-        return 'Participante ('.$this->id.')';
+        return 'Participante';
     }
 
     public function canImpersonate(): bool

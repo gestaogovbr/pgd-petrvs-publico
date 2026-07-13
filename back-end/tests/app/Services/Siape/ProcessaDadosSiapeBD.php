@@ -243,6 +243,18 @@ it('processaDadosFuncionais filtra inativas e retorna ativas', function () {
     expect($arr[0]['matriculaSiape'])->toBe('123');
 });
 
+it('processaDadosFuncionaisParaRelatorio retorna todas as matriculas sem filtrar inativas', function () {
+    $service = new ProcessaDadosSiapeBD();
+    $cpf = '32132132132';
+    $xml = '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns1:resp xmlns:ns1="http://servico.wssiapenet" xmlns:tipo="http://tipo.servico.wssiapenet"><tipo:DadosFuncionais><matriculaSiape>123</matriculaSiape></tipo:DadosFuncionais><tipo:DadosFuncionais><matriculaSiape>456</matriculaSiape><dataOcorrExclusao>2020-01-01</dataOcorrExclusao></tipo:DadosFuncionais></ns1:resp></soap:Body></soap:Envelope>';
+    $arr = $service->processaDadosFuncionaisParaRelatorio($cpf, $xml);
+
+    expect($arr)->toBeArray()->toHaveCount(2);
+    expect($arr[0]['matriculaSiape'])->toBe('123');
+    expect($arr[1]['matriculaSiape'])->toBe('456');
+    expect($arr[1]['dataOcorrExclusao'])->toBe('2020-01-01');
+});
+
 it('obterMatriculasAtivas retorna únicos', function () {
     $service = new ProcessaDadosSiapeBD();
     $method = new ReflectionMethod(ProcessaDadosSiapeBD::class, 'obterMatriculasAtivas');
