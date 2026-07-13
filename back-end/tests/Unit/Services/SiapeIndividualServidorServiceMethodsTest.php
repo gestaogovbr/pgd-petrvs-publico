@@ -276,6 +276,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'criarItemResumo');
         $method->setAccessible(true);
         $item = $method->invoke($service, $uDepois, null, 'sucesso', 'msg');
+        expect($item['matricula'])->toBe('M1');
         expect($item['status'])->toBe('parcial');
 
         $uAntes = ['lotacao_id' => 1];

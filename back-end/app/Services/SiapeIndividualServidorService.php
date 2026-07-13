@@ -41,6 +41,7 @@ class SiapeIndividualServidorService extends ServiceBase
     private SiapeIndividualService $service;
     private ?array $resumo = null;
     private ?array $relatorioCarga = null;
+    private ?array $relatorioCargaDetalhada = null;
 
     public function __construct(
         protected IntegracaoServiceFactory $integracaoServiceFactory,
@@ -101,6 +102,7 @@ class SiapeIndividualServidorService extends ServiceBase
         $this->service = $service;
         $this->resumo = null;
         $this->relatorioCarga = null;
+        $this->relatorioCargaDetalhada = null;
         $processamentoId = (string) Str::uuid();
         $dadosRelatorio = [
             'dadosPessoais' => [],
@@ -159,6 +161,8 @@ class SiapeIndividualServidorService extends ServiceBase
                 null
             );
 
+            $this->sincronizarResumoComRelatorioCarga();
+
             return $this->resumo;
 
         } catch (\Throwable $e) {
@@ -174,7 +178,9 @@ class SiapeIndividualServidorService extends ServiceBase
                 $dadosRelatorio,
                 $msgErro
             );
-            throw new Exception($msgErro);
+
+            $this->sincronizarResumoComRelatorioCarga();
+            throw $e;
         }
     }
 
@@ -218,6 +224,11 @@ class SiapeIndividualServidorService extends ServiceBase
             'status' => $relatorio->status,
             'tipo' => $relatorio->tipo,
         ] : null;
+
+        $this->relatorioCargaDetalhada = $relatorio ? [
+            'status' => $relatorio->status,
+            'secoes' => $relatorio->secoes ?? [],
+        ] : null;
     }
 
     /**
@@ -230,6 +241,74 @@ class SiapeIndividualServidorService extends ServiceBase
         }
 
         return CargaIndividualSiapeProcessamentoDTO::STATUS_SUCESSO;
+    }
+
+    private function sincronizarResumoComRelatorioCarga(): void
+    {
+        if ($this->resumo === null || $this->relatorioCargaDetalhada === null) {
+            return;
+        }
+
+        if (($this->relatorioCargaDetalhada['status'] ?? null) !== CargaIndividualSiapeProcessamentoDTO::STATUS_PARCIAL) {
+            return;
+        }
+
+        $secaoPorMatricula = collect($this->relatorioCargaDetalhada['secoes'] ?? [])
+            ->mapWithKeys(function (array $secao, int $indice): array {
+                $matricula = $this->matriculaDaSecao($secao);
+                $chave = $matricula ?? (string) $indice;
+
+                return [$chave => $this->secaoTemProblema($secao)];
+            });
+
+        foreach ($this->resumo as $indice => &$itemResumo) {
+            $matricula = (string) ($itemResumo['matricula'] ?? '');
+            $chave = $matricula !== '' ? $matricula : (string) $indice;
+
+            if (($secaoPorMatricula->get($chave) ?? false) === true) {
+                $itemResumo['status'] = self::STATUS_PARCIAL;
+            }
+        }
+        unset($itemResumo);
+    }
+
+    /**
+     * @param array<string, mixed> $secao
+     */
+    private function secaoTemProblema(array $secao): bool
+    {
+        foreach (($secao['campos'] ?? []) as $campo) {
+            if (in_array($campo['status'] ?? null, ['divergente', 'nao_encontrado'], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array<string, mixed> $secao
+     */
+    private function matriculaDaSecao(array $secao): ?string
+    {
+        foreach (($secao['campos'] ?? []) as $campo) {
+            if (($campo['campo'] ?? null) === 'matriculaSiape') {
+                $matricula = $campo['recebido_siape'] ?? null;
+
+                return is_scalar($matricula) ? (string) $matricula : null;
+            }
+        }
+
+        $titulo = $secao['titulo'] ?? null;
+        if (!is_string($titulo)) {
+            return null;
+        }
+
+        if (preg_match('/(\d{4,})$/', $titulo, $matches) === 1) {
+            return $matches[1];
+        }
+
+        return null;
     }
 
     protected function instanciarIntegracaoService(): IntegracaoService
@@ -413,8 +492,10 @@ class SiapeIndividualServidorService extends ServiceBase
         ]);
         
         $codigoUnidade = $this->resolverCodigoUnidadeServidor($dados);
-        $this->validarUnidadeProcessada($cpf, $codigoUnidade, $dados);
-
+        if (!$this->validarUnidadeProcessada($cpf, $codigoUnidade, $dados)) {
+            return;
+        }
+        
         $this->sincronizarDadosUnidade($cpf, $codigoUnidade);
     }
 
@@ -459,21 +540,21 @@ class SiapeIndividualServidorService extends ServiceBase
         return $this->unidadeRepository->existsByCodigo($codigoUnidade);
     }
 
-    private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, array $dados): void
+    private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, array $dados): bool
     {
         $unidadeProcessada = $this->verificarExistenciaUnidade($codigoUnidade);
 
         if (!$unidadeProcessada) {
-            SiapeLog::error('Unidade não processada encontrada', [
+            $matricula = (string) ($dados['matriculaSiape'] ?? 'N/A');
+            SiapeLog::warning('Unidade não processada encontrada; matrícula ignorada', [
                 'cpf' => $cpf,
                 'codigo_unidade' => $codigoUnidade,
-                'dados_funcionais' => $dados
+                'matricula_siape' => $matricula,
             ]);
-            throw new Exception(
-                "O CPF {$cpf} pertence à unidade de código {$codigoUnidade}, que ainda não foi processada. " .
-                "É preciso fazer uma carga total na unidade primeiro."
-            );
+            return false;
         }
+
+        return true;
     }
 
     private function sincronizarDadosUnidade(string $cpf, string $codigoUnidade): void
@@ -646,6 +727,7 @@ class SiapeIndividualServidorService extends ServiceBase
     {
         $item = [
             'status' => $status,
+            'matricula' => $uDepois->matricula,
             'nome' => $uDepois->nome,
             'usuario_existia' => !!$uAntes,
             'usuario_inserido' => !$uAntes,
