@@ -43,7 +43,7 @@ export const PlanoTrabalhoStatusGroups: Record<PlanoTrabalhoStatusGroupName, rea
     comExecucaoVisivel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO, PlanoTrabalhoStatus.AVALIADO],
     arquivavel: [PlanoTrabalhoStatus.CONCLUIDO, PlanoTrabalhoStatus.CANCELADO],
     clonavel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.CONCLUIDO],
-    cancelavel: [PlanoTrabalhoStatus.ATIVO],
+    cancelavel: [PlanoTrabalhoStatus.ATIVO, PlanoTrabalhoStatus.SUSPENSO],
     excluivel: [PlanoTrabalhoStatus.INCLUIDO],
 };
 
@@ -111,6 +111,9 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
 
     /** Permissões calculadas pelo back-end (index/show). */
     public acoes?: PlanoTrabalhoAcoes;
+
+    /** Indica se o CPF do usuário logado é o mesmo do participante do PT. */
+    public is_proprio?: boolean;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

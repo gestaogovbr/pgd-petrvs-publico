@@ -7,24 +7,26 @@ namespace App\V2\Ocorrencia\DTOs;
 class OcorrenciaImpactoDTO
 {
     public function __construct(
-        public readonly bool $operacaoBloqueada,
+        public readonly bool $operacaoBloqueada = false,
         public readonly bool $geraDispensa = false,
         public readonly bool $removeDispensa = false,
-        public readonly bool $ptConcluido = false,
     ) {}
 
     public static function semImpacto(): self
     {
-        return new self(operacaoBloqueada: false);
+        return new self();
     }
 
-    public static function fromFlags(bool $geraDispensa, bool $removeDispensa, bool $bloqueada, bool $ptConcluido): self
+    public static function bloqueada(): self
+    {
+        return new self(operacaoBloqueada: true);
+    }
+
+    public static function fromFlags(bool $geraDispensa, bool $removeDispensa): self
     {
         return new self(
-            operacaoBloqueada: $bloqueada,
             geraDispensa: $geraDispensa,
             removeDispensa: $removeDispensa,
-            ptConcluido: $ptConcluido,
         );
     }
 
@@ -40,7 +42,6 @@ class OcorrenciaImpactoDTO
             'operacao_bloqueada' => $this->operacaoBloqueada,
             'gera_dispensa' => $this->geraDispensa,
             'remove_dispensa' => $this->removeDispensa,
-            'pt_concluido' => $this->ptConcluido,
         ];
     }
 }

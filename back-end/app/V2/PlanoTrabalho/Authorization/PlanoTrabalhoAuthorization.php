@@ -8,28 +8,23 @@ use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
-use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoAcoesDTO;
 use App\V2\Traits\ValidaAutorizacaoTrait;
-use Carbon\Carbon;
 
 class PlanoTrabalhoAuthorization
 {
     use ValidaAutorizacaoTrait;
 
-    private const PRAZO_RECURSO_DIAS = 30;
-
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
-        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
     ) {}
 
-    public function acoes(PlanoTrabalho $plano, Usuario $usuario): PlanoTrabalhoAcoesDTO
+    public function acoes(PlanoTrabalho $plano, Usuario $usuario, bool $isElegivelParaArquivamento): PlanoTrabalhoAcoesDTO
     {
         return new PlanoTrabalhoAcoesDTO(
             editar: $this->podeEditar($plano, $usuario),
-            arquivar: $this->podeArquivar($plano, $usuario),
+            arquivar: $this->podeArquivar($plano, $usuario, $isElegivelParaArquivamento),
             encerrar: $this->podeEncerrar($plano, $usuario),
         );
     }
@@ -61,13 +56,13 @@ class PlanoTrabalhoAuthorization
         return $this->isDonoOuChefiaOuAdm($plano, $usuario);
     }
 
-    public function podeArquivar(PlanoTrabalho $plano, Usuario $usuario): bool
+    public function podeArquivar(PlanoTrabalho $plano, Usuario $usuario, bool $isElegivelParaArquivamento): bool
     {
         if ($plano->data_arquivamento !== null) {
             return false;
         }
 
-        if (!$this->isElegivelParaArquivamento($plano)) {
+        if (!$isElegivelParaArquivamento) {
             return false;
         }
 
@@ -128,32 +123,6 @@ class PlanoTrabalhoAuthorization
             if (in_array($unidade->id, $linhaAscendente, true)) {
                 return true;
             }
-        }
-
-        return false;
-    }
-
-    public function isElegivelParaArquivamento(PlanoTrabalho $plano): bool
-    {
-        $resumo = $this->consolidacaoRepository->resumoParaArquivamento(
-            $plano->id,
-            Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS),
-        );
-
-        if ($resumo->isAguardandoReavaliacao) {
-            return false;
-        }
-
-        if ($plano->status === StatusEnum::CANCELADO->value) {
-            return true;
-        }
-
-        if ($plano->encerrado_at !== null && !$resumo->possuiPendencias) {
-            return true;
-        }
-
-        if ($plano->status === StatusEnum::CONCLUIDO->value && $resumo->todosAvaliados && !$resumo->avaliacaoRecente) {
-            return true;
         }
 
         return false;

@@ -10,6 +10,8 @@ interface DocumentoAssinaturaReadRepositoryContract
 {
     public function existsByDocumentoAndUsuario(string $documentoId, string $usuarioId): bool;
 
+    public function existsByDocumentoAndCpf(string $documentoId, string $cpf): bool;
+
     public function findByDocumentoAndUsuario(string $documentoId, string $usuarioId): ?DocumentoAssinatura;
 
     public function participanteAssinou(string $documentoId, string $participanteId): bool;

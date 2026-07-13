@@ -114,7 +114,10 @@ class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryCont
         } else {
             $query->where(fn (Builder $q) => $q
                 ->where('usuario_id', $dto->usuarioLogadoId)
-                ->orWhereHas('usuario.unidadesIntegrantes', fn (Builder $sub) => $sub->whereIn('unidade_id', $dto->unidadeIds))
+                ->orWhereHas('usuario.unidadesIntegrantes', fn (Builder $sub) => $sub
+                    ->whereIn('unidade_id', $dto->unidadeIds)
+                    ->has('atribuicoes')
+                )
             );
         }
 

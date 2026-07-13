@@ -658,6 +658,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao', [PlanoTrabalhoConsolidacaoV2::class, 'index']);
     Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao/dispensas', [PlanoTrabalhoConsolidacaoV2::class, 'dispensas']);
     Route::get('plano-trabalho/{planoTrabalhoId}/consolidacao/notas-avaliacao', [PlanoTrabalhoConsolidacaoV2::class, 'notasAvaliacao']);
+    Route::get('plano-trabalho-consolidacao/{consolidacaoId}/ocorrencias', [PlanoTrabalhoConsolidacaoV2::class, 'ocorrencias']);
     Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/concluir', [PlanoTrabalhoConsolidacaoV2::class, 'concluir']);
     Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/reabrir', [PlanoTrabalhoConsolidacaoV2::class, 'reabrir']);
     Route::patch('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/recurso', [PlanoTrabalhoConsolidacaoV2::class, 'recurso']);
@@ -674,7 +675,6 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('ocorrencia', [OcorrenciaV2::class, 'index']);
     Route::get('ocorrencia/impacto-consolidacoes', [OcorrenciaV2::class, 'impactoConsolidacoes']);
     Route::post('ocorrencia', [OcorrenciaV2::class, 'store']);
-    Route::put('ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'update']);
     Route::delete('ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'destroy']);
 
     Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);

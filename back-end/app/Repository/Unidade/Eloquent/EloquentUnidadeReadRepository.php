@@ -158,12 +158,20 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $unidade;
     }
 
-    public function getUnidadesGerenciadas(string $usuarioId): Collection
+    public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): Collection
     {
         return $this->query()
-            ->whereHas('gestor', fn($q) => $q->where('usuario_id', $usuarioId))
-            ->orWhereHas('gestoresSubstitutos', fn($q) => $q->where('usuario_id', $usuarioId))
-            ->orWhereHas('gestoresDelegados', fn($q) => $q->where('usuario_id', $usuarioId))
+            ->where(function ($q) use ($usuarioId, $exclude) {
+                $q->whereHas('gestor', fn($q) => $q->where('usuario_id', $usuarioId));
+
+                if (!in_array('substituto', $exclude)) {
+                    $q->orWhereHas('gestoresSubstitutos', fn($q) => $q->where('usuario_id', $usuarioId));
+                }
+
+                if (!in_array('delegado', $exclude)) {
+                    $q->orWhereHas('gestoresDelegados', fn($q) => $q->where('usuario_id', $usuarioId));
+                }
+            })
             ->get();
     }
 

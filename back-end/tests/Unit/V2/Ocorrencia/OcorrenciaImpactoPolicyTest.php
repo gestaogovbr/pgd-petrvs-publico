@@ -50,16 +50,15 @@ describe('OcorrenciaImpactoPolicy::calcularImpacto', function () {
         $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-05-01', '2026-05-31', null, 'criar'));
 
         expect($resultado->temImpacto())->toBeFalse();
-        expect($resultado->operacaoBloqueada)->toBeFalse();
     });
 
-    test('retorna com impacto quando gera dispensa em PT ativo', function () {
+    test('retorna gera_dispensa quando criação dispensa consolidação', function () {
         $policy = makePolicy([buildRow()], isDispensadaAtual: false, seraDispensadaApos: true);
 
         $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', null, 'criar'));
 
-        expect($resultado->temImpacto())->toBeTrue();
-        expect($resultado->operacaoBloqueada)->toBeFalse();
+        expect($resultado->geraDispensa)->toBeTrue();
+        expect($resultado->removeDispensa)->toBeFalse();
     });
 
     test('retorna sem impacto quando estado não muda', function () {
@@ -70,73 +69,12 @@ describe('OcorrenciaImpactoPolicy::calcularImpacto', function () {
         expect($resultado->temImpacto())->toBeFalse();
     });
 
-    test('bloqueia quando PT é CONCLUIDO e há recurso', function () {
-        $policy = makePolicy(
-            [buildRow(['pt_status' => 'CONCLUIDO', 'has_recurso' => true])],
-            isDispensadaAtual: false,
-            seraDispensadaApos: true,
-        );
-
-        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', null, 'criar'));
-
-        expect($resultado->operacaoBloqueada)->toBeTrue();
-    });
-
-    test('bloqueia quando PT é CONCLUIDO e prazo de avaliação expirou', function () {
-        $policy = makePolicy(
-            [buildRow(['pt_status' => 'CONCLUIDO', 'is_prazo_avaliacao_terminado' => true])],
-            isDispensadaAtual: false,
-            seraDispensadaApos: true,
-        );
-
-        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', null, 'criar'));
-
-        expect($resultado->operacaoBloqueada)->toBeTrue();
-    });
-
-    test('permite quando PT é CONCLUIDO sem recurso e dentro do prazo', function () {
-        $policy = makePolicy(
-            [buildRow(['pt_status' => 'CONCLUIDO'])],
-            isDispensadaAtual: false,
-            seraDispensadaApos: true,
-        );
-
-        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', null, 'criar'));
-
-        expect($resultado->temImpacto())->toBeTrue();
-        expect($resultado->operacaoBloqueada)->toBeFalse();
-    });
-
-    test('detecta remoção de dispensa na edição', function () {
-        $policy = makePolicy([buildRow()], isDispensadaAtual: true, seraDispensadaApos: false);
-
-        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-05-10', '2026-05-20', 'oc-existente', 'editar'));
-
-        expect($resultado->temImpacto())->toBeTrue();
-        expect($resultado->operacaoBloqueada)->toBeFalse();
-    });
-
     test('detecta remoção de dispensa na exclusão', function () {
         $policy = makePolicy([buildRow()], isDispensadaAtual: true, seraDispensadaApos: false);
 
         $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', 'oc-existente', 'excluir'));
 
-        expect($resultado->temImpacto())->toBeTrue();
-        expect($resultado->operacaoBloqueada)->toBeFalse();
-    });
-
-    test('prioriza bloqueio sobre impacto quando múltiplas consolidações', function () {
-        $policy = makePolicy(
-            [
-                buildRow(['pt_status' => 'CONCLUIDO', 'has_recurso' => true, 'cons_id' => 'cons-1']),
-                buildRow(['pt_status' => 'ATIVO', 'cons_id' => 'cons-2']),
-            ],
-            isDispensadaAtual: false,
-            seraDispensadaApos: true,
-        );
-
-        $resultado = $policy->calcularImpacto(new OcorrenciaOperacaoDTO('user-1', '2026-04-15', '2026-06-15', null, 'criar'));
-
-        expect($resultado->operacaoBloqueada)->toBeTrue();
+        expect($resultado->removeDispensa)->toBeTrue();
+        expect($resultado->geraDispensa)->toBeFalse();
     });
 });

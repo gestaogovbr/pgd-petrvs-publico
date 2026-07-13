@@ -14,6 +14,7 @@ use App\Repository\UnidadeRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Exceptions\NotFoundException;
+use App\Repository\Afastamento\AfastamentoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,7 @@ beforeEach(function () {
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->consolidacaoRepo = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
     $this->programaRepo = Mockery::mock(ProgramaRepository::class);
+    $this->afastamentoRepo = Mockery::mock(AfastamentoRepository::class);
     $this->unidadeRepo = Mockery::mock(UnidadeRepository::class);
     $this->authValidator = Mockery::mock(AtividadeAuthorizationValidator::class);
     $this->concluirValidator = Mockery::mock(ConcluirConsolidacaoValidator::class);
@@ -39,6 +41,7 @@ beforeEach(function () {
         $this->consolidacaoRepo,
         $this->programaRepo,
         $this->unidadeRepo,
+        $this->afastamentoRepo,
         $this->authValidator,
         $this->concluirValidator,
         $this->reabrirValidator,

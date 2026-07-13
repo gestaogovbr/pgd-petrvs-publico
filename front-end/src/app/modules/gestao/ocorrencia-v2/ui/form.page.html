@@ -1,7 +1,7 @@
 
 <div class="container-fluid py-3 govbr-v2">
   <app-breadcrumb></app-breadcrumb>
-  <h2 class="mb-3">{{ modoEdicao ? 'Editar' : 'Nova' }} Ocorrência</h2>
+  <h2 class="mb-3">Nova Ocorrência</h2>
 
   @if (carregando()) {
     <div class="d-flex justify-content-center py-5">
@@ -70,14 +70,10 @@
 
 <br-scrim [isOpen]="!!modal()" [disableCloseOnClick]="true">
   <br-modal [show]="!!modal()" [titleText]="modal()?.titulo || ''" size="small" alignFooter="end" (brModalBeforeClose)="fecharModal()">
-    <p>{{ modal()?.mensagem }}</p>
+    <p [innerHTML]="modal()?.mensagem"></p>
     <div slot="footer">
-      @if (modal()?.titulo === 'Operação bloqueada') {
-        <br-button emphasis="primary" (click)="fecharModal()">Entendi</br-button>
-      } @else {
-        <br-button class="mx-1" emphasis="secondary" (click)="fecharModal()">Cancelar</br-button>
-        <br-button class="mx-1" emphasis="primary" (click)="confirmarModal()">Confirmar</br-button>
-      }
+      <br-button class="mx-1" emphasis="secondary" (click)="fecharModal()">Cancelar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="confirmarModal()">Confirmar</br-button>
     </div>
   </br-modal>
 </br-scrim>

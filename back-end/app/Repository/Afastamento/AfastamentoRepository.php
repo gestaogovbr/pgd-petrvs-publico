@@ -10,8 +10,8 @@ use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
 use App\V2\Ocorrencia\DTOs\OcorrenciaIndexDTO;
 use Carbon\CarbonPeriod;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class AfastamentoRepository
 {

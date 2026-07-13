@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
-import { Consolidacao, PlanoTrabalho } from '../../domain/types';
-import { ConsolidacaoFacade } from '../../application/consolidacao.facade';
+import { Consolidacao, Ocorrencia, PlanoTrabalho } from '../../domain/types';
+import { ConsolidacaoApiClient } from '../../infra/consolidacao-api.client';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-consolidacao-ocorrencias',
@@ -11,9 +12,19 @@ import { ConsolidacaoFacade } from '../../application/consolidacao.facade';
   imports: [CommonModule, WebcomponentsAngularModule],
   templateUrl: './consolidacao-ocorrencias.component.html',
 })
-export class ConsolidacaoOcorrenciasComponent {
+export class ConsolidacaoOcorrenciasComponent implements OnInit {
   @Input({ required: true }) consolidacao!: Consolidacao;
   @Input({ required: true }) planoTrabalho!: PlanoTrabalho;
 
-  readonly facade = inject(ConsolidacaoFacade);
+  private readonly api = inject(ConsolidacaoApiClient);
+
+  readonly ocorrencias = signal<Ocorrencia[]>([]);
+  readonly carregando = signal(false);
+
+  ngOnInit(): void {
+    this.carregando.set(true);
+    this.api.getOcorrenciasConsolidacao(this.consolidacao.id)
+      .pipe(finalize(() => this.carregando.set(false)))
+      .subscribe(data => this.ocorrencias.set(data));
+  }
 }
