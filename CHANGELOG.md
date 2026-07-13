@@ -3,6 +3,7 @@
 ### Adicionado
 - Tag "Aguardando Avaliação" na listagem de Planos de Trabalho v2, indicando planos com períodos concluídos pendentes de avaliação
 - Ícone "Plano do Dia" na coluna Período da listagem de PT v2, destacando planos vigentes na data atual
+- Envio de Planos de Trabalho e Planos de Entrega cancelados
 
 ### Corrigido
 - Validação do pertencimento do PT ao usuário via CPF, não mais via uuid
