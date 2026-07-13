@@ -10,7 +10,7 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
   styleUrls: ['../home.styles.scss'],
   template: `
     <div class="d-flex gap-3 justify-content-center">
-      <br-button class="home-btn-atalho" emphasis="secondary" (click)="irParaPainelGerencial()">
+      <br-button class="home-btn-atalho" emphasis="secondary" (click)="irParaPainelGerencial()" [disabled]="true">
         Painel Gerencial
       </br-button>
       <br-button class="home-btn-atalho" emphasis="secondary" (click)="irParaPlanoEntregas()">
@@ -26,7 +26,7 @@ export class AcoesGerenciaisComponent {
   private readonly router = inject(Router);
 
   irParaPainelGerencial(): void {
-    this.router.navigate(['panel']);
+    // this.router.navigate(['panel']); // não se trata do panel login, mas sim  da feature do card #2359
   }
 
   irParaPlanoEntregas(): void {

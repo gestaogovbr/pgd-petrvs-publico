@@ -1,4 +1,18 @@
 .home-card--scrollable {
-  max-height: 250px;
+  max-height: 15em;
   overflow-y: auto;
+  margin-top: 1em;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: sticky;
+    bottom: -1px;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 2em;
+    background: linear-gradient(to bottom, transparent, white);
+    pointer-events: none;
+  }
 }

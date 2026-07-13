@@ -9,9 +9,9 @@ import { HomeApiClient, EmFeriasItem } from '../../infra/home-api.client';
   imports: [CommonModule],
   styleUrls: ['../home.styles.scss'],
   template: `
-    <div class="br-card home-card home-card--scrollable">
-      <div class="card-content p-3">
-        <h6 class="fw-bold text-center">De férias hoje</h6>
+    <div class="br-card home-card p-3">
+      <h6 class="fw-bold text-center">De férias hoje</h6>
+      <div class="home-card--scrollable">
         @if (loading()) {
           <div class="d-flex justify-content-center py-2">
             <span class="br-loading small" role="progressbar"></span>
