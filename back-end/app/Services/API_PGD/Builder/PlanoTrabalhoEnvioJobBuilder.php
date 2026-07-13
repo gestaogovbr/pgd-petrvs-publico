@@ -21,7 +21,8 @@ class PlanoTrabalhoEnvioJobBuilder
                 tenant('id'),
                 'PlanoTrabalho',
                 $planoTrabalho->id,
-                "PT não está em status válido para envio ao PGD."
+                "PT não está em status válido para envio ao PGD.",
+                $planoTrabalho->numero
             );
         }
 

@@ -118,7 +118,7 @@ class PlanoTrabalhoDocumentoService
             return $assinaturaExistente;
         }
 
-        $documento = $this->assinarValidator->validar($plano, $usuarioId);
+        $documento = $this->assinarValidator->validar($plano, $usuarioId, Auth::user()->cpf);
 
         $dto = TCRAssinaturaDTO::fromDocumento($documento, $usuarioId);
 
@@ -147,7 +147,7 @@ class PlanoTrabalhoDocumentoService
     {
         $usuarioId = Auth::id();
         $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
-        $documento = $this->cancelarAssinaturaValidator->validar($plano, $usuarioId);
+        $documento = $this->cancelarAssinaturaValidator->validar($plano, $usuarioId, Auth::user()->cpf);
 
         DB::transaction(function () use ($plano, $documento, $usuarioId) {
             $this->assinaturaRepository->deleteAssinaturaUsuario($documento->id, $usuarioId);

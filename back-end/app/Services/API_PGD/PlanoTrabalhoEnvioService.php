@@ -5,6 +5,7 @@ namespace App\Services\API_PGD;
 use App\Exceptions\EnvioNaoAgendadoException;
 use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
+use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UsuarioRepository;
 use App\Services\API_PGD\Builder\PlanoEntregaEnvioJobBuilder;
@@ -89,17 +90,36 @@ class PlanoTrabalhoEnvioService
     private static function montarMensagemErroDependencia(EnvioNaoAgendadoException $e): string
     {
         return match ($e->getTipo()) {
-            'PlanoEntrega' => "Erro no agendamento do plano de entrega #{$e->getItemId()} relacionado: {$e->getMessage()}",
+            'PlanoEntrega' => self::mensagemErroPlanoEntrega($e),
+            'PlanoTrabalho' => self::mensagemErroPlanoTrabalho($e),
             'Usuario', 'Participante' => self::mensagemErroParticipante($e),
             default => $e->getMessage(),
         };
+    }
+
+    private static function mensagemErroPlanoEntrega(EnvioNaoAgendadoException $e): string
+    {
+        $planoEntregaRepository = app()->make(PlanoEntregaRepository::class);
+        $planoEntrega = $planoEntregaRepository->findById($e->getItemId());
+        $identificacao = $planoEntrega?->identificacaoEnvio() ?? 'PE';
+
+        return "Erro no agendamento do {$identificacao} relacionado: {$e->getMessage()}";
+    }
+
+    private static function mensagemErroPlanoTrabalho(EnvioNaoAgendadoException $e): string
+    {
+        $planoTrabalhoRepository = app()->make(PlanoTrabalhoRepository::class);
+        $planoTrabalho = $planoTrabalhoRepository->findById($e->getItemId());
+        $identificacao = $planoTrabalho?->identificacaoEnvio() ?? 'PT';
+
+        return "Erro no agendamento do {$identificacao}: {$e->getMessage()}";
     }
 
     private static function mensagemErroParticipante(EnvioNaoAgendadoException $e): string
     {
         $usuarioRepository = app()->make(UsuarioRepository::class);
         $usuario = $usuarioRepository->findById($e->getItemId());
-        $identificacao = $usuario?->identificacaoEnvio() ?? 'Participante ('.$e->getItemId().')';
+        $identificacao = $usuario?->identificacaoEnvio() ?? 'Participante';
 
         return "Erro no agendamento do {$identificacao}: {$e->getMessage()}";
     }

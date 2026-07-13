@@ -217,6 +217,11 @@ class PlanoEntrega extends ModelBase implements HasStatusHistory
         ];
     }
 
+    public function identificacaoEnvio(): string
+    {
+        return 'PE #'.$this->numero;
+    }
+
     public function isEmStatusParaEnvio() {
         if ($this->status instanceof \App\Enums\StatusEnum) {
             $status = $this->status->value;
@@ -224,9 +229,6 @@ class PlanoEntrega extends ModelBase implements HasStatusHistory
             $status = (string)$this->status;
         }
 
-        return ($status == StatusEnum::ATIVO->value)
-            || ($status == StatusEnum::CONCLUIDO->value)
-            || ($status == StatusEnum::AVALIADO->value)
-        ;
+        return in_array($status, StatusEnum::permitemEnvioPlanoEntrega(), true);
     }
 }

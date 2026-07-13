@@ -56,7 +56,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
     {
         DB::table('planos_entregas')
             ->whereNull('planos_entregas.deleted_at')
-            ->whereIn('planos_entregas.status', StatusEnum::permitemEnvio())
+            ->whereIn('planos_entregas.status', StatusEnum::permitemEnvioPlanoEntrega())
             ->select('planos_entregas.id')
             ->orderBy('planos_entregas.id')
             ->chunkById($chunkSize, function (SupportCollection $planosEntrega) use ($onChunk): void {
