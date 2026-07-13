@@ -71,8 +71,14 @@ enum StatusEnum: string
         return [
             self::ATIVO->value,
             self::CONCLUIDO->value,
-            self::AVALIADO->value
+            self::AVALIADO->value,
+            self::CANCELADO->value
         ];
+    }
+
+    public static function permitemEnvioPlanoEntrega(): array
+    {
+        return self::permitemEnvio();
     }
 
     /** Status de consolidação que indicam finalização (concluído ou avaliado). */
