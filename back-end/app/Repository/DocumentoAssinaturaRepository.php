@@ -16,9 +16,9 @@ class DocumentoAssinaturaRepository
         private readonly DocumentoAssinaturaWriteRepositoryContract $writeRepository,
     ) {}
 
-    public function usuarioJaAssinou(string $documentoId, string $usuarioId): bool
+    public function usuarioJaAssinou(string $documentoId, string $cpf): bool
     {
-        return $this->readRepository->existsByDocumentoAndUsuario($documentoId, $usuarioId);
+        return $this->readRepository->existsByDocumentoAndCpf($documentoId, $cpf);
     }
 
     public function findByDocumentoAndUsuario(string $documentoId, string $usuarioId): ?DocumentoAssinatura

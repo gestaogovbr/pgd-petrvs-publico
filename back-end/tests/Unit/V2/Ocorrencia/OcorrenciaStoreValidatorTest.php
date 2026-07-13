@@ -7,7 +7,6 @@ use App\Exceptions\NotFoundException;
 use App\Models\Afastamento;
 use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\UnidadeRepository;
-use App\V2\Ocorrencia\OcorrenciaImpactoPolicy;
 use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
 use Illuminate\Database\Eloquent\Collection;
 use Mockery;
@@ -24,7 +23,6 @@ function criarValidator(?AfastamentoRepository $afastamentoRepo = null, ?Unidade
     return new OcorrenciaStoreValidator(
         $afastamentoRepo ?? Mockery::mock(AfastamentoRepository::class),
         $unidadeRepo ?? Mockery::mock(UnidadeRepository::class),
-        Mockery::mock(OcorrenciaImpactoPolicy::class),
     );
 }
 

@@ -121,7 +121,7 @@ class SiapeIndividualServidorService extends ServiceBase
             list($respFuncionais, $respPessoais) = $this->executarConsultasSiape($cpfLimpo, $xmlFuncionais, $xmlPessoais);
 
             $dadosFuncionais = $this->processarRespostaFuncionais($cpfLimpo, $respFuncionais);
-            $dadosRelatorio['dadosFuncionais'] = $dadosFuncionais;
+            $dadosRelatorio['dadosFuncionais'] = $this->processarRespostaFuncionaisParaRelatorio($cpfLimpo, $respFuncionais, $dadosFuncionais);
             $dadosRelatorio['dadosPessoais'] = $this->processarDadosPessoaisParaRelatorio($cpfLimpo, $respPessoais);
 
             $this->processarUnidadesDosServidores($cpfLimpo, $dadosFuncionais);
@@ -444,6 +444,23 @@ class SiapeIndividualServidorService extends ServiceBase
         } catch (Exception $e) {
             report($e);
             throw new Exception("Erro ao processar dados funcionais do SIAPE: " . $e->getMessage());
+        }
+    }
+
+    private function processarRespostaFuncionaisParaRelatorio(string $cpf, string $responseXml, array $fallback): array
+    {
+        try {
+            $dadosArray = $this->service->getProcessaDadosSiape()->processaDadosFuncionaisParaRelatorio($cpf, $responseXml);
+
+            return $this->normalizarDadosFuncionais($cpf, $dadosArray);
+        } catch (\Throwable $e) {
+            report($e);
+            SiapeLog::warning('Nao foi possivel montar dados funcionais completos para relatorio; usando dados processados', [
+                'cpf' => $cpf,
+                'erro' => $e->getMessage(),
+            ]);
+
+            return $fallback;
         }
     }
 

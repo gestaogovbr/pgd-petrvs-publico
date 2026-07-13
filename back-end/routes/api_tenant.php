@@ -675,7 +675,6 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('ocorrencia', [OcorrenciaV2::class, 'index']);
     Route::get('ocorrencia/impacto-consolidacoes', [OcorrenciaV2::class, 'impactoConsolidacoes']);
     Route::post('ocorrencia', [OcorrenciaV2::class, 'store']);
-    Route::put('ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'update']);
     Route::delete('ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'destroy']);
 
     Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);

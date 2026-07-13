@@ -6,7 +6,6 @@ use App\Repository\DocumentoAssinaturaRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\Documento;
 use App\Enums\StatusEnum;
-use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use Tests\TestCase;
@@ -43,15 +42,15 @@ describe('PlanoTrabalhoDocumentoCancelarAssinaturaValidator', function () {
         $documento->id = 'doc-1';
 
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->with('plano-1')->andReturn($documento);
-        $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->with('doc-1', 'user-outro')->andReturn(false);
+        $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->with('doc-1', '99988877766')->andReturn(false);
 
-        $this->validator->validar($plano, 'user-outro');
+        $this->validator->validar($plano, 'user-outro', '99988877766');
     })->throws(ValidateException::class, 'Usuário não possui assinatura neste documento.');
 
     test('lança ValidateException quando status não é AGUARDANDO_ASSINATURA', function () {
         $plano = fakePlanoCancelar('user-1', StatusEnum::INCLUIDO->value);
 
-        $this->validator->validar($plano, 'user-1');
+        $this->validator->validar($plano, 'user-1', '12345678901');
     })->throws(ValidateException::class, 'Plano de Trabalho deve estar com status Aguardando Assinatura para cancelar.');
 
     test('lança NotFoundException quando TCR não existe', function () {
@@ -59,7 +58,7 @@ describe('PlanoTrabalhoDocumentoCancelarAssinaturaValidator', function () {
 
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->with('plano-1')->andReturn(null);
 
-        $this->validator->validar($plano, 'user-1');
+        $this->validator->validar($plano, 'user-1', '12345678901');
     })->throws(NotFoundException::class, 'Documento TCR não encontrado para este Plano de Trabalho.');
 
     test('lança ValidateException quando usuário não assinou', function () {
@@ -70,9 +69,9 @@ describe('PlanoTrabalhoDocumentoCancelarAssinaturaValidator', function () {
         $documento->id = 'doc-1';
 
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
-        $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->with('doc-1', 'user-1')->andReturn(false);
+        $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->with('doc-1', '12345678901')->andReturn(false);
 
-        $this->validator->validar($plano, 'user-1');
+        $this->validator->validar($plano, 'user-1', '12345678901');
     })->throws(ValidateException::class, 'Usuário não possui assinatura neste documento.');
 
     test('retorna documento quando todas as validações passam', function () {
@@ -85,6 +84,6 @@ describe('PlanoTrabalhoDocumentoCancelarAssinaturaValidator', function () {
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
         $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->andReturn(true);
 
-        expect($this->validator->validar($plano, 'user-1'))->toBe($documento);
+        expect($this->validator->validar($plano, 'user-1', '12345678901'))->toBe($documento);
     });
 });

@@ -1,21 +1,12 @@
 <?php
 
 use App\Models\Afastamento;
-use App\Models\PlanoTrabalho;
-use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\TipoMotivoAfastamento;
 use App\Models\Usuario;
-use App\V2\Ocorrencia\OcorrenciaController;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
-    if (!Route::has('__tests.v2.observer-dates.update')) {
-        Route::middleware(['api'])->put('/api/__tests/v2/ocorrencia/{ocorrenciaId}', [OcorrenciaController::class, 'update'])
-            ->name('__tests.v2.observer-dates.update');
-    }
-
     $this->usuario = Usuario::factory()->create();
     $this->actingAs($this->usuario);
 
@@ -40,12 +31,9 @@ describe('AfastamentoObserver::updated - edição sem impacto em PTs', function 
             'updated_at' => now(),
         ]);
 
-        $response = $this->putJson("/api/__tests/v2/ocorrencia/{$afId}", [
-            'usuario_id' => $this->usuario->id,
-            'observacoes' => 'Atualizado',
-        ]);
+        $afastamento = Afastamento::find($afId);
+        $afastamento->update(['observacoes' => 'Atualizado']);
 
-        $response->assertStatus(200);
         expect(Afastamento::find($afId)->observacoes)->toBe('Atualizado');
     });
 
@@ -62,15 +50,11 @@ describe('AfastamentoObserver::updated - edição sem impacto em PTs', function 
             'updated_at' => now(),
         ]);
 
-        $response = $this->putJson("/api/__tests/v2/ocorrencia/{$afId}", [
-            'usuario_id' => $this->usuario->id,
-            'data_inicio' => '2026-08-01',
-            'data_fim' => '2026-08-31',
-        ]);
+        $afastamento = Afastamento::find($afId);
+        $afastamento->update(['data_inicio' => '2026-08-01', 'data_fim' => '2026-08-31']);
 
-        $response->assertStatus(200);
         $af = Afastamento::find($afId);
-        expect($af->data_inicio)->toContain('2026-08-01');
-        expect($af->data_fim)->toContain('2026-08-31');
+        expect((string) $af->data_inicio)->toContain('2026-08-01');
+        expect((string) $af->data_fim)->toContain('2026-08-31');
     });
 });

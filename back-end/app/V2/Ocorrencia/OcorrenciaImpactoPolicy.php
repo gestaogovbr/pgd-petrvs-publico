@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\V2\Ocorrencia;
 
-use App\Enums\StatusEnum;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\TipoMotivoAfastamentoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
@@ -46,11 +45,7 @@ class OcorrenciaImpactoPolicy
             }
         }
 
-        $bloqueada = $comMudanca->contains(fn (object $row) => $row->has_recurso || $row->is_prazo_avaliacao_terminado);
-
-        $ptConcluido = $comMudanca->contains(fn (object $row) => $row->pt_status === StatusEnum::CONCLUIDO->value);
-
-        return OcorrenciaImpactoDTO::fromFlags($geraDispensa, $removeDispensa, $bloqueada, $ptConcluido);
+        return OcorrenciaImpactoDTO::fromFlags($geraDispensa, $removeDispensa);
     }
 
     private function isDispensadaAtual(object $row, OcorrenciaOperacaoDTO $dto): bool

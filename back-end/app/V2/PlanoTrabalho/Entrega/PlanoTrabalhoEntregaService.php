@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Entrega;
 
+use App\Exceptions\NotFoundException;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\PlanoTrabalhoEntregaRepository;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
@@ -43,6 +44,10 @@ class PlanoTrabalhoEntregaService
 
         return DB::transaction(function () use ($entregaId, $dto) {
             $entrega = $this->repository->update($entregaId, $dto->toArray());
+
+            if ($entrega === null) {
+                throw new NotFoundException('Entrega do Plano de Trabalho não encontrada.');
+            }
 
             $this->tcrInvalidador->invalidar($dto->planoTrabalhoId);
 

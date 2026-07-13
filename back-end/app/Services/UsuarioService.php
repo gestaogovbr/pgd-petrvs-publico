@@ -8,8 +8,9 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
 use App\Facades\SiapeLog;
-use App\Models\PlanoEntrega;
+use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
+use App\Models\PlanoEntrega;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\PerfilRepository;
@@ -21,7 +22,6 @@ use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Repository\SiapeBlackListServidorRepository;
 use App\Services\IntegracaoService;
-use App\Services\RawWhere;
 use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
 use App\Services\UnidadeService;
@@ -208,7 +208,7 @@ class UsuarioService extends ServiceBase
                 $matriculaAtual = $usuarioLotadoMesmaUnidade->matricula;
                 $dadosAtualizacao = ['matricula' => $matriculaNova];
                 $integracaoServidor = $this->integracaoServidorRepository->getServidor($cpfCheck, $matriculaNova);
-
+                $matriculaAtual = $usuarioLotadoMesmaUnidade->matricula;
                 if ($integracaoServidor && $integracaoServidor->participa_pgd !== null) {
                     $dadosAtualizacao['participa_pgd'] = $integracaoServidor->participa_pgd;
                 }
@@ -593,19 +593,28 @@ class UsuarioService extends ServiceBase
                 $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $query) use ($condition) {
                     $query->whereIn('atribuicao', $condition[2]);
                 });
-            }
-            else {
+            } else if (is_array($condition) && $condition[0] == "programa_id") {
+                if ($condition[2]) {
+                    $query->whereHas('participacoesProgramas', function (Builder $query) use ($condition) {
+                        $query->where('programa_id', $condition[2]);
+                    });
+                }
+            } else {
                 array_push($where, $condition);
             }
         }
 
         if (!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
-            $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
-            array_push($where, RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))", []));
+            $unidadeIds = $usuario->areasTrabalho->pluck('unidade_id')->all();
+            $hierarquiaIds = $subordinadas
+                ? Unidade::naHierarquiaDe($unidadeIds)->pluck('id')
+                : $unidadeIds;
+            $query->whereHas('lotacoes', function (Builder $q) use ($hierarquiaIds) {
+                $q->whereIn('unidade_id', $hierarquiaIds);
+            });
         }
         $data["where"] = $where;
 
-        \Log::info(print_r($data['where'], true));
         return $data;
     }
 
@@ -848,8 +857,8 @@ class UsuarioService extends ServiceBase
 
         $usuario = parent::loggedUser();
         if ($usuario && !$usuario->hasPermissionTo("MOD_USER_TUDO")) {
-            $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($usuario->id, $subordinadas, "where_unidades");
-            $data['where'][] = RawWhere::raw("EXISTS(SELECT where_lotacoes.id FROM lotacoes where_lotacoes LEFT JOIN unidades where_unidades ON (where_unidades.id = where_lotacoes.unidade_id) WHERE where_lotacoes.usuario_id = usuarios.id AND ($areasTrabalhoWhere))");
+            $unidadeIds = $usuario->areasTrabalho->pluck('unidade_id')->all();
+            $data['where'][] = ['areasTrabalhoFilter', $unidadeIds, $subordinadas];
         }
 
         $rows = $this->usuarioRepository->search($data);

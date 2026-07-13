@@ -4,20 +4,15 @@ declare(strict_types=1);
 
 namespace App\Repository\EnvioUsuario\Eloquent;
 
+use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
-use App\Repository\UnidadeRepository;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class EloquentEnvioUsuarioReadRepository implements EnvioUsuarioReadRepositoryContract
 {
-    public function __construct(
-        private readonly UnidadeRepository $unidadeRepository
-    ) {
-    }
-
     public function query(array $data, Usuario $requestUser): array
     {
         $query = $this->baseQuery($requestUser);
@@ -59,13 +54,20 @@ class EloquentEnvioUsuarioReadRepository implements EnvioUsuarioReadRepositoryCo
             ->whereNull('u.deleted_at');
 
         if (!$requestUser->hasPermissionTo('MOD_USER_TUDO')) {
-            $areasTrabalhoWhere = $this->unidadeRepository->getAreasTrabalhoWhereClause($requestUser->id, true, 'where_unidades');
-            $query->whereExists(function (Builder $q) use ($areasTrabalhoWhere): void {
+            $unidadeIds = $requestUser->areasTrabalho->pluck('unidade_id')->all();
+            $hierarquiaIds = Unidade::naHierarquiaDe($unidadeIds)->pluck('id');
+
+            $query->whereExists(function (Builder $q) use ($hierarquiaIds): void {
                 $q->select(DB::raw(1))
-                    ->from('lotacoes as where_lotacoes')
-                    ->leftJoin('unidades as where_unidades', 'where_unidades.id', '=', 'where_lotacoes.unidade_id')
+                    ->from('unidades_integrantes as where_lotacoes')
+                    ->join('unidades_integrantes_atribuicoes as where_lotacoes_attr', function ($join) {
+                        $join->on('where_lotacoes_attr.unidade_integrante_id', '=', 'where_lotacoes.id')
+                            ->whereNull('where_lotacoes_attr.deleted_at')
+                            ->where('where_lotacoes_attr.atribuicao', '=', 'LOTADO');
+                    })
                     ->whereColumn('where_lotacoes.usuario_id', 'u.id')
-                    ->whereRaw('('.$areasTrabalhoWhere.')');
+                    ->whereNull('where_lotacoes.deleted_at')
+                    ->whereIn('where_lotacoes.unidade_id', $hierarquiaIds);
             });
         }
 

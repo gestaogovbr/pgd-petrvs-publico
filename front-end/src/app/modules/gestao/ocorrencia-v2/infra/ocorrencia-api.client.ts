@@ -26,11 +26,6 @@ export class OcorrenciaApiClient {
       .pipe(map(r => r?.data));
   }
 
-  atualizar(id: string, payload: any): Observable<Ocorrencia> {
-    return this.http.put<any>(`${this.gb.servidorURL}${this.base}/${id}`, payload)
-      .pipe(map(r => r?.data));
-  }
-
   excluir(id: string, usuarioId: string): Observable<void> {
     return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${id}`, {
       body: { usuario_id: usuarioId },
@@ -46,7 +41,7 @@ export class OcorrenciaApiClient {
     usuario_id: string;
     data_inicio: string;
     data_fim: string;
-    operacao: 'criar' | 'editar' | 'excluir';
+    operacao: 'criar' | 'excluir';
     ocorrencia_id?: string;
     tipo_motivo_afastamento_id?: string;
   }): Observable<ImpactoConsolidacoes> {

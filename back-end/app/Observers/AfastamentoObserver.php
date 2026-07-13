@@ -98,7 +98,7 @@ class AfastamentoObserver
         }
 
         if (!$todasAvaliadas && $plano->status === StatusEnum::CONCLUIDO->value && !$plano->encerrado_at) {
-            $this->planoTrabalhoRepository->update($plano->id, ['avaliado_at' => null]);
+            $this->planoTrabalhoRepository->update($plano->id, ['avaliado_at' => null, 'data_arquivamento' => null]);
             StatusTemplates::reabrirPTConcluidoPorDispensa($plano, $afastamento->id);
         }
     }

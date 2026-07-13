@@ -75,7 +75,8 @@ class PlanoTrabalhoService
         $usuario = $this->usuarioLogadoComPerfilEAreas();
 
         $paginator->getCollection()->transform(function (PlanoTrabalho $plano) use ($usuario) {
-            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+            $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
+            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
 
             return $plano;
         });
@@ -156,7 +157,9 @@ class PlanoTrabalhoService
         }
 
         $usuario = $this->usuarioLogadoComPerfilEAreas();
-        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+        $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
+        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
+        $plano->setAttribute('is_proprio', $this->isMesmoCpfDoParticipante($plano));
 
         return $plano;
     }
@@ -292,5 +295,16 @@ class PlanoTrabalhoService
         }
 
         return true;
+    }
+
+    private function isMesmoCpfDoParticipante(PlanoTrabalho $plano): bool
+    {
+        $participante = $this->usuarioRepository->findById($plano->usuario_id);
+
+        if ($participante === null) {
+            return false;
+        }
+
+        return $participante->cpf === Auth::user()->cpf;
     }
 }
