@@ -25,7 +25,7 @@ class CargaIndividualSiapeRelatorioService
     {
         $processadoEm = $contexto->processadoEm();
         $secoes = $contexto->status === CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO
-            ? []
+            ? $this->construirSecoesErro($contexto)
             : $this->construirSecoes($contexto);
 
         return $this->repository->create([
@@ -92,6 +92,34 @@ class CargaIndividualSiapeRelatorioService
         }
 
         return $this->servidorBuilder->construir($contexto->dadosSiape, $contexto->chave);
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function construirSecoesErro(CargaIndividualSiapeProcessamentoDTO $contexto): array
+    {
+        if ($contexto->tipo === CargaIndividualSiapeProcessamentoDTO::TIPO_UNIDADE) {
+            return [];
+        }
+
+        if ($contexto->resumo === null || $contexto->resumo === []) {
+            return [];
+        }
+
+        $possuiMatricula = collect($contexto->resumo)->contains(
+            fn(array $item) => !empty($item['matricula']) || !empty($item['matriculaSiape'])
+        );
+
+        if (!$possuiMatricula) {
+            return [];
+        }
+
+        return $this->servidorBuilder->construirResumoErro(
+            $contexto->resumo,
+            $contexto->chave,
+            $contexto->dadosSiape,
+        );
     }
 
     /**

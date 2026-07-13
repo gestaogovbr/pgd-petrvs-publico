@@ -18,6 +18,10 @@ export type RelatorioCargaIndividualSiapeCampo = {
 export type RelatorioCargaIndividualSiapeSecao = {
   titulo: string;
   tipo: RelatorioCargaIndividualSiapeTipo;
+  matricula?: string | null;
+  indice?: number | null;
+  status_vinculo?: 'ativo' | 'excluido' | null;
+  data_ocorrencia_exclusao?: string | null;
   campos: RelatorioCargaIndividualSiapeCampo[];
 };
 

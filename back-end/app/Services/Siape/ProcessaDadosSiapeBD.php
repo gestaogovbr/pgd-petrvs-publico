@@ -128,6 +128,30 @@ class ProcessaDadosSiapeBD
         }
     }
 
+    public function processaDadosFuncionaisParaRelatorio(
+        string $cpf,
+        string $dadosFuncionais
+    ): array {
+        try {
+            $xmlResponse = $this->prepareResponseXml($dadosFuncionais);
+            $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
+            $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
+            $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
+
+            $dadosFuncionaisElements = $xmlResponse->xpath('//tipo:DadosFuncionais') ?: [];
+
+            return array_map(
+                fn(SimpleXMLElement $dadosFuncionais) => $this->simpleXmlElementToArray($dadosFuncionais),
+                $dadosFuncionaisElements
+            );
+        } catch (Exception $e) {
+            report($e);
+            SiapeLog::error(sprintf("CPF:#%s Falha nos dados funcionais para relatorio:", $cpf), [$dadosFuncionais]);
+            $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
+            throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape para relatorio, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape_{$tenantId}.log");
+        }
+    }
+
     private function decideDadosFuncionais(array $dadosfuncionaisArray): array
     {
         if (count($dadosfuncionaisArray) == 1) {

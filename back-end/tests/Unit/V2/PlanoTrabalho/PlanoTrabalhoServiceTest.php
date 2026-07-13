@@ -125,6 +125,18 @@ function mockShowEnriquecimentoAcoes(PlanoTrabalho $plano): void
         ->shouldReceive('acoes')
         ->with($plano, $usuario, Mockery::type('bool'))
         ->andReturn(new PlanoTrabalhoAcoesDTO(editar: false));
+
+    $participante = Mockery::mock(Usuario::class)->makePartial();
+    $participante->cpf = '12345678901';
+
+    test()->usuarioRepository
+        ->shouldReceive('findById')
+        ->with($plano->usuario_id)
+        ->andReturn($participante);
+
+    $authUser = Mockery::mock(Usuario::class)->makePartial();
+    $authUser->cpf = '12345678901';
+    Auth::shouldReceive('user')->andReturn($authUser);
 }
 
 describe('PlanoTrabalhoService::index', function () {
@@ -399,10 +411,23 @@ describe('PlanoTrabalhoService::show', function () {
             ->with($plano, $usuario, false)
             ->andReturn(new PlanoTrabalhoAcoesDTO(editar: true));
 
+        $participante = Mockery::mock(Usuario::class)->makePartial();
+        $participante->cpf = '12345678901';
+
+        $this->usuarioRepository
+            ->shouldReceive('findById')
+            ->with('user-1')
+            ->andReturn($participante);
+
+        $authUser = Mockery::mock(Usuario::class)->makePartial();
+        $authUser->cpf = '12345678901';
+        Auth::shouldReceive('user')->andReturn($authUser);
+
         $result = $this->service->show('plano-1');
 
         expect($result)->toBe($plano)
-            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'encerrar' => false]);
+            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'encerrar' => false])
+            ->and($plano->getAttribute('is_proprio'))->toBeTrue();
     });
 
     test('retorna plano quando tem entregas', function () {

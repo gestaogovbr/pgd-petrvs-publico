@@ -105,7 +105,10 @@ export abstract class InputBase extends ComponentBase {
     public ngAfterViewInit() {
         super.ngAfterViewInit();
         try { this.formDirective = this.injector.get<FormGroupDirective>(FormGroupDirective); } catch {}
-        this.form = this.form || this.formDirective?.form;      
+        this.form = this.form || this.formDirective?.form;
+        if(this.controlName?.length && !this.getControl()) {
+            console.warn(`[InputBase] Control "${this.controlName}" não resolvido. Passe [form] explicitamente no template.`);
+        }
         if(this.isRequired){
             this.validators.push(this.requiredValidator.bind(this));
             if(this.control!.validator) this.validators.push(this.control!.validator);
