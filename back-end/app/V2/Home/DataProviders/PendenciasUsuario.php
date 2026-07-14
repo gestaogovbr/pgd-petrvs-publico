@@ -10,7 +10,6 @@ use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\Home\DTOs\HomeRequestDTO;
-use Carbon\Carbon;
 
 class PendenciasUsuario
 {
@@ -38,26 +37,15 @@ class PendenciasUsuario
             ? $this->unidadeRepository->getSubordinadasRecursivas([$unidadeId])->pluck('id')->toArray()
             : [];
 
+        $escopo = array_merge([$unidadeId], $unidadesSubordinadasIds);
+
         return [
             'assinaturas_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaHomologacao($unidadesSubordinadasIds),
             'assinaturas_pt_pendentes' => $this->planoTrabalhoRepository->countPlanosTrabalhoAssinatura([$unidadeId], $unidadesSubordinadasIds, $dto->usuarioId),
             'registros_execucao_pe_atraso' => $this->planoEntregaRepository->countEntregasSemProgresso($unidadesSubordinadasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
             'registros_execucao_pt_atraso' => $this->consolidacaoRepository->countConsolidacoesAtrasadas($dto->usuarioId, [$unidadeId]),
-            'avaliacoes_pt_pendentes' => $this->countAvaliacoesPT([$unidadeId], $unidadesSubordinadasIds, $dto->usuarioId),
+            'avaliacoes_pt_pendentes' => $this->planoTrabalhoRepository->countAguardandoMinhaAvaliacao($escopo, $dto->usuarioId),
             'avaliacoes_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaAvaliacao($unidadesSubordinadasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
         ];
-    }
-
-    private function countAvaliacoesPT(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): int
-    {
-        $diasAvaliacao = (int) config('petrvs.dias-avaliacao-registro-execucao', 21);
-        $dataCorte = Carbon::now()->subDays($diasAvaliacao);
-
-        return $this->consolidacaoRepository->countPendentesAvaliacao(
-            $unidadesGerenciadasIds,
-            $unidadesSubordinadasIds,
-            $usuarioId,
-            $dataCorte
-        );
     }
 }

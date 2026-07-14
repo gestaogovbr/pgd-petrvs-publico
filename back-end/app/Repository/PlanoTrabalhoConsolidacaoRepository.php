@@ -77,20 +77,6 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->findConsolidacoesVigentes($planoTrabalhoId, $encerradoAt);
     }
 
-    public function countPendentesAvaliacao(
-        array $unidadesGerenciadasIds,
-        array $unidadesSubordinadasIds,
-        string $usuarioId,
-        \DateTimeInterface $dataCorte
-    ): int {
-        return $this->readRepository->countPendentesAvaliacao(
-            $unidadesGerenciadasIds,
-            $unidadesSubordinadasIds,
-            $usuarioId,
-            $dataCorte
-        );
-    }
-
     public function countConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds): int
     {
         return $this->readRepository->countConsolidacoesAtrasadas($usuarioId, $unidadesIds);

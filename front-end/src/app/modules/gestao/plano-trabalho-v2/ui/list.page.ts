@@ -108,6 +108,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     unidade_regramento: FormControl<string>;
     tipo_modalidade_id: FormControl<string>;
     status: FormControl<string>;
+    aguardando_avaliacao: FormControl<boolean>;
+    unidade_id: FormControl<string>;
   }> = this.fb.group({
     periodo_inicio: this.fb.control<string | null>(null),
     periodo_fim: this.fb.control<string | null>(null),
@@ -120,7 +122,9 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     usuario: this.fb.nonNullable.control(''),
     unidade_regramento: this.fb.nonNullable.control(''),
     tipo_modalidade_id: this.fb.nonNullable.control(''),
-    status: this.fb.nonNullable.control('')
+    status: this.fb.nonNullable.control(''),
+    aguardando_avaliacao: this.fb.nonNullable.control(false),
+    unidade_id: this.fb.nonNullable.control(''),
   });
 
 
@@ -256,7 +260,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   private saveFilters() {
     const raw = this.filters.getRawValue();
-    this.filterStorage.save(this.filterStorageKey, { ...raw, advanced: this.advanced() });
+    const { unidade_id, aguardando_avaliacao, ...persistable } = raw;
+    this.filterStorage.save(this.filterStorageKey, { ...persistable, advanced: this.advanced() });
   }
 
   private restoreFilters(): boolean {
@@ -287,7 +292,11 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       result['minha_equipe'] = true;
     } else {
       if (raw.incluir_subordinadas) result['incluir_subordinadas'] = true;
-      if (!raw.incluir_subordinadas) result['unidade_id'] = this.auth.unidade?.id;
+      if (raw.unidade_id) {
+        result['unidade_id'] = raw.unidade_id;
+      } else if (!raw.incluir_subordinadas) {
+        result['unidade_id'] = this.auth.unidade?.id;
+      }
     }
 
     const numero = String(raw.numero ?? '').trim();
@@ -298,6 +307,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     if (usuario.length) result['usuario_nome'] = usuario;
     const unidadeRegramento = String(raw.unidade_regramento ?? '').trim();
     if (unidadeRegramento.length) result['unidade_regramento'] = unidadeRegramento;
+    if (raw.aguardando_avaliacao) result['aguardando_avaliacao'] = true;
 
     return result;
   }

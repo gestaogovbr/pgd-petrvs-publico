@@ -19,6 +19,13 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     /** Número mínimo de avaliações para considerar uma consolidação como reavaliada. */
     private const MINIMO_AVALIACOES_REAVALIACAO = 1;
 
+    /** Status de PT elegíveis para avaliação de consolidações. */
+    private const STATUS_AVALIAVEL = [
+        'ATIVO',
+        'CONCLUIDO',
+        'AVALIADO',
+    ];
+
     public function __construct(PlanoTrabalho $model)
     {
         $this->model = $model;
@@ -208,12 +215,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.criacao_usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.programa_id', 'planos_trabalhos.modalidade_pgd', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status', 'planos_trabalhos.encerrado_at', 'planos_trabalhos.documento_id', 'planos_trabalhos.avaliado_at')
               ->addSelect(DB::raw('(SELECT COALESCE(SUM(e.forca_trabalho), 0) FROM planos_trabalhos_entregas e WHERE e.plano_trabalho_id = planos_trabalhos.id AND e.deleted_at IS NULL) AS carga_trabalho_total'))
               ->withCount(['consolidacoes as aguardando_avaliacao' => function ($q) {
-                  $q->where('status', StatusEnum::CONCLUIDO)
-                    ->whereDoesntHave('avaliacoes')
-                    ->where(function ($sub) {
-                        $sub->whereColumn('planos_trabalhos_consolidacoes.data_inicio', '<=', 'planos_trabalhos.encerrado_at')
-                            ->orWhereNull('planos_trabalhos.encerrado_at');
-                    });
+                  $this->aplicarConsolidacaoPendenteAvaliacao($q);
               }])
               ->withCount(['consolidacoes as aguardando_reavaliacao' => function ($q) {
                   $q->where('status', StatusEnum::CONCLUIDO)
@@ -291,6 +293,31 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             $today = today();
             $query->where('data_inicio', '<=', $today)
                   ->where('data_fim', '>=', $today);
+        }
+
+        if ($filtro->aguardandoAvaliacao) {
+            $usuarioLogadoId = $filtro->usuarioLogadoId;
+            $gerenciadasNoEscopo = $filtro->unidadesId !== null
+                ? $this->resolverGerenciadasNoEscopo($filtro->unidadesId, $usuarioLogadoId)
+                : [];
+
+            $query->whereIn('planos_trabalhos.status', self::STATUS_AVALIAVEL)
+                ->where('usuario_id', '!=', $usuarioLogadoId)
+                ->whereHas('consolidacoes', function ($q) {
+                    $this->aplicarConsolidacaoPendenteAvaliacao($q);
+                })
+                ->whereNotExists(function ($sub) use ($usuarioLogadoId) {
+                    $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($sub, $usuarioLogadoId);
+                })
+                ->where(function ($q) use ($gerenciadasNoEscopo) {
+                    $q->whereIn('unidade_id', $gerenciadasNoEscopo)
+                        ->orWhere(function ($subordinadas) use ($gerenciadasNoEscopo) {
+                            $subordinadas->whereNotIn('unidade_id', $gerenciadasNoEscopo)
+                                ->whereExists(function ($sub) {
+                                    $this->subqueryPlanoEhDoGestorTitular($sub);
+                                });
+                        });
+                });
         }
 
         if ($filtro->usuarioNome !== null && $filtro->usuarioNome !== '') {
@@ -394,5 +421,90 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         }
 
         return $count;
+    }
+
+    /**
+     * Conta PTs distintos que o usuário logado deve avaliar dentro do escopo de unidades.
+     * Resolve internamente quais unidades são gerenciadas (qualquer participante)
+     * e quais são subordinadas (apenas titular).
+     *
+     * @param string[] $unidadesEscopo IDs das unidades no escopo (selecionada + subordinadas)
+     */
+    public function countAguardandoMinhaAvaliacao(array $unidadesEscopo, string $usuarioId): int
+    {
+        if ($unidadesEscopo === []) {
+            return 0;
+        }
+
+        $gerenciadas = $this->resolverGerenciadasNoEscopo($unidadesEscopo, $usuarioId);
+        $subordinadas = array_values(array_diff($unidadesEscopo, $gerenciadas));
+
+        $count = 0;
+
+        if ($gerenciadas !== []) {
+            $count += $this->baseAguardandoMinhaAvaliacaoQuery()
+                ->whereIn('unidade_id', $gerenciadas)
+                ->where('usuario_id', '!=', $usuarioId)
+                ->whereNotExists(function ($query) use ($usuarioId) {
+                    $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($query, $usuarioId);
+                })
+                ->count();
+        }
+
+        if ($subordinadas !== []) {
+            $count += $this->baseAguardandoMinhaAvaliacaoQuery()
+                ->whereIn('unidade_id', $subordinadas)
+                ->where('usuario_id', '!=', $usuarioId)
+                ->whereExists(function ($query) {
+                    $this->subqueryPlanoEhDoGestorTitular($query);
+                })
+                ->count();
+        }
+
+        return $count;
+    }
+
+    /**
+     * Query base para PTs que o usuário deve avaliar:
+     * PT em status avaliável + ao menos 1 consolidação pendente de avaliação.
+     */
+    private function baseAguardandoMinhaAvaliacaoQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return $this->query()
+            ->whereIn('status', self::STATUS_AVALIAVEL)
+            ->whereHas('consolidacoes', function ($q) {
+                $this->aplicarConsolidacaoPendenteAvaliacao($q);
+            });
+    }
+
+    /**
+     * Resolve quais unidades do escopo o usuário gerencia diretamente
+     * (é GESTOR, GESTOR_SUBSTITUTO ou GESTOR_DELEGADO).
+     *
+     * @param string[] $unidadesEscopo
+     * @return string[]
+     */
+    private function resolverGerenciadasNoEscopo(array $unidadesEscopo, string $usuarioId): array
+    {
+        return DB::table('unidades_integrantes as ui')
+            ->join('unidades_integrantes_atribuicoes as uia', 'uia.unidade_integrante_id', '=', 'ui.id')
+            ->where('ui.usuario_id', $usuarioId)
+            ->whereIn('uia.atribuicao', ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'])
+            ->whereIn('ui.unidade_id', $unidadesEscopo)
+            ->pluck('ui.unidade_id')
+            ->unique()
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * Aplica critério de consolidação pendente de avaliação sobre um builder de consolidação.
+     * Consolidação CONCLUIDO sem nenhuma avaliação registrada.
+     * Usado pelo withCount (tag) e pelas queries de avaliação pendente.
+     */
+    private function aplicarConsolidacaoPendenteAvaliacao(\Illuminate\Database\Eloquent\Builder $q): void
+    {
+        $q->where('planos_trabalhos_consolidacoes.status', StatusEnum::CONCLUIDO->value)
+            ->whereDoesntHave('avaliacoes');
     }
 }

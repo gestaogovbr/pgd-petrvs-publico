@@ -374,41 +374,6 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->get();
     }
 
-    public function countPendentesAvaliacao(
-        array $unidadesGerenciadasIds,
-        array $unidadesSubordinadasIds,
-        string $usuarioId,
-        \DateTimeInterface $dataCorte
-    ): int {
-        $count = 0;
-
-        if ($unidadesGerenciadasIds !== []) {
-            $count += $this->basePendentesAvaliacaoQuery($dataCorte)
-                ->whereHas('planoTrabalho', function ($q) use ($unidadesGerenciadasIds, $usuarioId) {
-                    $q->whereIn('unidade_id', $unidadesGerenciadasIds)
-                        ->where('usuario_id', '!=', $usuarioId)
-                        ->whereNotExists(function ($query) use ($usuarioId) {
-                            $this->subqueryChefeSubstitutoNaoAvaliaGestorTitular($query, $usuarioId);
-                        });
-                })
-                ->count();
-        }
-
-        if ($unidadesSubordinadasIds !== []) {
-            $count += $this->basePendentesAvaliacaoQuery($dataCorte)
-                ->whereHas('planoTrabalho', function ($q) use ($unidadesSubordinadasIds, $usuarioId) {
-                    $q->whereIn('unidade_id', $unidadesSubordinadasIds)
-                        ->where('usuario_id', '!=', $usuarioId)
-                        ->whereExists(function ($query) {
-                            $this->subqueryPlanoEhDoGestorTitular($query);
-                        });
-                })
-                ->count();
-        }
-
-        return $count;
-    }
-
     public function countConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds): int
     {
         return $this->query()
