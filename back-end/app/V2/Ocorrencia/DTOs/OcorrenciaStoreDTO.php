@@ -8,7 +8,7 @@ class OcorrenciaStoreDTO
 {
     public function __construct(
         public readonly string $usuarioId,
-        public readonly string $observacoes,
+        public readonly ?string $observacoes,
         public readonly string $dataInicio,
         public readonly string $dataFim,
         public readonly string $tipoMotivoAfastamentoId,
@@ -19,7 +19,7 @@ class OcorrenciaStoreDTO
     {
         return new self(
             usuarioId: $data['usuario_id'],
-            observacoes: $data['observacoes'],
+            observacoes: $data['observacoes'] ?? null,
             dataInicio: $data['data_inicio'],
             dataFim: $data['data_fim'],
             tipoMotivoAfastamentoId: $data['tipo_motivo_afastamento_id'],
