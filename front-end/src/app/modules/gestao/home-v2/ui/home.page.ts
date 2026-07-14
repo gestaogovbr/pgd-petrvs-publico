@@ -48,7 +48,8 @@ export class HomeV2Page implements OnInit {
   }
 
   onUnidadeChange(event: any): void {
-    const value = event?.detail ?? event?.target?.value ?? event ?? '';
+    const value = event?.target?.value;
+    if (!value) return;
     this.selectedUnidadeId.set(value);
   }
 

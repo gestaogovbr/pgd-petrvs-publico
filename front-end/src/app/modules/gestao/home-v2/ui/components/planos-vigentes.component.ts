@@ -16,14 +16,24 @@ import { HomeApiClient, PlanosVigentes } from '../../infra/home-api.client';
     } @else if (data()) {
       <div class="br-card home-card--pill mb-3">
         <div class="card-content p-3 d-flex justify-content-between align-items-center">
-          <span>Planos de Entregas vigentes hoje</span>
-          <strong>{{ data()!.unidades_com_plano_entregas.quantidade }} ({{ data()!.unidades_com_plano_entregas.percentual }}%)</strong>
+          <span>
+            Unidades Executoras com Plano de Entregas vigente hoje
+            <i class="fas fa-info-circle text-muted ml-1"
+               title="Quando a opção Unidades Subordinadas estiver habilitada, também serão considerados os dados das respectivas unidades subordinadas."
+               aria-label="Informação sobre o indicador de unidades executoras"></i>
+          </span>
+          <strong>{{ data()!.unidades_com_plano_entregas.quantidade }}/{{ data()!.unidades_com_plano_entregas.total }} ({{ data()!.unidades_com_plano_entregas.percentual }}%)</strong>
         </div>
       </div>
       <div class="br-card home-card--pill">
         <div class="card-content p-3 d-flex justify-content-between align-items-center">
-          <span>Planos de Trabalho vigentes hoje</span>
-          <strong>{{ data()!.participantes_com_plano_trabalho.quantidade }} ({{ data()!.participantes_com_plano_trabalho.percentual }}%)</strong>
+          <span>
+            Participantes com Plano de Trabalho vigente hoje
+            <i class="fas fa-info-circle text-muted ml-1"
+               title="Quando a opção Unidades Subordinadas estiver habilitada, também serão considerados os dados das respectivas unidades subordinadas."
+               aria-label="Informação sobre o indicador de participantes"></i>
+          </span>
+          <strong>{{ data()!.participantes_com_plano_trabalho.quantidade }}/{{ data()!.participantes_com_plano_trabalho.total }} ({{ data()!.participantes_com_plano_trabalho.percentual }}%)</strong>
         </div>
       </div>
     }
