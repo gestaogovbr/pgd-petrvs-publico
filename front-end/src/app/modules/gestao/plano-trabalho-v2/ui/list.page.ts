@@ -108,7 +108,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     unidade_regramento: FormControl<string>;
     tipo_modalidade_id: FormControl<string>;
     status: FormControl<string>;
-    aguardando_avaliacao: FormControl<boolean>;
+    aguardando_minha_avaliacao: FormControl<boolean>;
+    aguardando_minha_assinatura: FormControl<boolean>;
     unidade_id: FormControl<string>;
   }> = this.fb.group({
     periodo_inicio: this.fb.control<string | null>(null),
@@ -123,7 +124,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     unidade_regramento: this.fb.nonNullable.control(''),
     tipo_modalidade_id: this.fb.nonNullable.control(''),
     status: this.fb.nonNullable.control(''),
-    aguardando_avaliacao: this.fb.nonNullable.control(false),
+    aguardando_minha_avaliacao: this.fb.nonNullable.control(false),
+    aguardando_minha_assinatura: this.fb.nonNullable.control(false),
     unidade_id: this.fb.nonNullable.control(''),
   });
 
@@ -260,7 +262,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   private saveFilters() {
     const raw = this.filters.getRawValue();
-    const { unidade_id, aguardando_avaliacao, ...persistable } = raw;
+    const { unidade_id, aguardando_minha_avaliacao, aguardando_minha_assinatura, ...persistable } = raw;
     this.filterStorage.save(this.filterStorageKey, { ...persistable, advanced: this.advanced() });
   }
 
@@ -307,7 +309,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     if (usuario.length) result['usuario_nome'] = usuario;
     const unidadeRegramento = String(raw.unidade_regramento ?? '').trim();
     if (unidadeRegramento.length) result['unidade_regramento'] = unidadeRegramento;
-    if (raw.aguardando_avaliacao) result['aguardando_avaliacao'] = true;
+    if (raw.aguardando_minha_avaliacao) result['aguardando_minha_avaliacao'] = true;
+    if (raw.aguardando_minha_assinatura) result['aguardando_minha_assinatura'] = true;
 
     return result;
   }

@@ -99,7 +99,7 @@ export class PendenciasUsuarioComponent {
   }
 
   irParaAssinaturasPT(): void {
-    this.salvarFiltrosPT({ status: 'AGUARDANDO_ASSINATURA', incluir_subordinadas: this.subordinadas(), meus_planos: false, unidade_id: this.unidadeId() });
+    this.salvarFiltrosPT({ aguardando_minha_assinatura: true, incluir_subordinadas: this.subordinadas(), meus_planos: false, unidade_id: this.unidadeId() });
     this.router.navigate(['gestao', 'plano-trabalho-v2']);
   }
 
@@ -117,7 +117,7 @@ export class PendenciasUsuarioComponent {
 
   irParaAvaliacoesPT(): void {
     this.salvarFiltrosPT({
-      aguardando_avaliacao: true,
+      aguardando_minha_avaliacao: true,
       incluir_subordinadas: this.subordinadas(),
       meus_planos: false,
       unidade_id: this.unidadeId(),

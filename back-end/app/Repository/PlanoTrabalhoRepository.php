@@ -39,9 +39,9 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
         return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesGerenciadasIds, $unidadesSubordinadasIds, $usuarioId);
     }
 
-    public function countPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): int
+    public function countPlanosTrabalhoAssinatura(array $unidadesEscopo, string $usuarioId): int
     {
-        return $this->readRepository->countPlanosTrabalhoAssinatura($unidadesGerenciadasIds, $unidadesSubordinadasIds, $usuarioId);
+        return $this->readRepository->countPlanosTrabalhoAssinatura($unidadesEscopo, $usuarioId);
     }
 
     public function countAguardandoMinhaAvaliacao(array $unidadesEscopo, string $usuarioId): int

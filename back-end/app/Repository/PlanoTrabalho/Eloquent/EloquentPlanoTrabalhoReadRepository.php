@@ -126,6 +126,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         return $this->query()
             ->where('status', StatusEnum::AGUARDANDO_ASSINATURA->value)
+            ->whereNull('data_arquivamento')
             ->with(['usuario:id,nome,apelido,nome_social,url_foto']);
     }
 
@@ -295,7 +296,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                   ->where('data_fim', '>=', $today);
         }
 
-        if ($filtro->aguardandoAvaliacao) {
+        if ($filtro->aguardandoMinhaAvaliacao) {
             $usuarioLogadoId = $filtro->usuarioLogadoId;
             $gerenciadasNoEscopo = $filtro->unidadesId !== null
                 ? $this->resolverGerenciadasNoEscopo($filtro->unidadesId, $usuarioLogadoId)
@@ -306,6 +307,28 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                 ->whereHas('consolidacoes', function ($q) {
                     $this->aplicarConsolidacaoPendenteAvaliacao($q);
                 })
+                ->whereNotExists(function ($sub) use ($usuarioLogadoId) {
+                    $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($sub, $usuarioLogadoId);
+                })
+                ->where(function ($q) use ($gerenciadasNoEscopo) {
+                    $q->whereIn('unidade_id', $gerenciadasNoEscopo)
+                        ->orWhere(function ($subordinadas) use ($gerenciadasNoEscopo) {
+                            $subordinadas->whereNotIn('unidade_id', $gerenciadasNoEscopo)
+                                ->whereExists(function ($sub) {
+                                    $this->subqueryPlanoEhDoGestorTitular($sub);
+                                });
+                        });
+                });
+        }
+
+        if ($filtro->aguardandoMinhaAssinatura) {
+            $usuarioLogadoId = $filtro->usuarioLogadoId;
+            $gerenciadasNoEscopo = $filtro->unidadesId !== null
+                ? $this->resolverGerenciadasNoEscopo($filtro->unidadesId, $usuarioLogadoId)
+                : [];
+
+            $query->where('status', StatusEnum::AGUARDANDO_ASSINATURA->value)
+                ->where('usuario_id', '!=', $usuarioLogadoId)
                 ->whereNotExists(function ($sub) use ($usuarioLogadoId) {
                     $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($sub, $usuarioLogadoId);
                 })
@@ -396,13 +419,27 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         return $plano;
     }
 
-    public function countPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): int
+    /**
+     * Conta PTs aguardando assinatura que o usuário logado deve assinar.
+     * Nas gerenciadas: qualquer participante (exceto substituto assinando titular).
+     * Nas subordinadas: apenas PTs do gestor titular.
+     *
+     * @param string[] $unidadesEscopo IDs das unidades no escopo (selecionada + subordinadas)
+     */
+    public function countPlanosTrabalhoAssinatura(array $unidadesEscopo, string $usuarioId): int
     {
+        if ($unidadesEscopo === []) {
+            return 0;
+        }
+
+        $gerenciadas = $this->resolverGerenciadasNoEscopo($unidadesEscopo, $usuarioId);
+        $subordinadas = array_values(array_diff($unidadesEscopo, $gerenciadas));
+
         $count = 0;
 
-        if ($unidadesGerenciadasIds !== []) {
+        if ($gerenciadas !== []) {
             $count += $this->basePlanosTrabalhoAssinaturaQuery()
-                ->whereIn('unidade_id', $unidadesGerenciadasIds)
+                ->whereIn('unidade_id', $gerenciadas)
                 ->where('usuario_id', '!=', $usuarioId)
                 ->whereNotExists(function ($query) use ($usuarioId) {
                     $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($query, $usuarioId);
@@ -410,9 +447,9 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                 ->count();
         }
 
-        if ($unidadesSubordinadasIds !== []) {
+        if ($subordinadas !== []) {
             $count += $this->basePlanosTrabalhoAssinaturaQuery()
-                ->whereIn('unidade_id', $unidadesSubordinadasIds)
+                ->whereIn('unidade_id', $subordinadas)
                 ->where('usuario_id', '!=', $usuarioId)
                 ->whereExists(function ($query) {
                     $this->subqueryPlanoEhDoGestorTitular($query);
@@ -472,6 +509,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         return $this->query()
             ->whereIn('status', self::STATUS_AVALIAVEL)
+            ->whereNull('data_arquivamento')
             ->whereHas('consolidacoes', function ($q) {
                 $this->aplicarConsolidacaoPendenteAvaliacao($q);
             });
