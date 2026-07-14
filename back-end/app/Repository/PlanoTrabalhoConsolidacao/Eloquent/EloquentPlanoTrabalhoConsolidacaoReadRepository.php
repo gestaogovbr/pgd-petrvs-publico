@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\DB;
 
 final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloquentReadRepository implements PlanoTrabalhoConsolidacaoReadRepositoryContract
 {
+    private const DIAS_TOLERANCIA_CONSOLIDACAO_PADRAO = 10;
+
     public function __construct(PlanoTrabalhoConsolidacao $model)
     {
         $this->model = $model;
@@ -370,5 +372,67 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->when($encerradoAt, fn ($q) => $q->where('data_inicio', '<=', $encerradoAt))
             ->orderBy('data_inicio')
             ->get();
+    }
+
+    public function countPendentesAvaliacao(
+        array $unidadesGerenciadasIds,
+        array $unidadesSubordinadasIds,
+        string $usuarioId,
+        \DateTimeInterface $dataCorte
+    ): int {
+        $count = 0;
+
+        if ($unidadesGerenciadasIds !== []) {
+            $count += $this->basePendentesAvaliacaoQuery($dataCorte)
+                ->whereHas('planoTrabalho', function ($q) use ($unidadesGerenciadasIds, $usuarioId) {
+                    $q->whereIn('unidade_id', $unidadesGerenciadasIds)
+                        ->where('usuario_id', '!=', $usuarioId)
+                        ->whereNotExists(function ($query) use ($usuarioId) {
+                            $this->subqueryChefeSubstitutoNaoAvaliaGestorTitular($query, $usuarioId);
+                        });
+                })
+                ->count();
+        }
+
+        if ($unidadesSubordinadasIds !== []) {
+            $count += $this->basePendentesAvaliacaoQuery($dataCorte)
+                ->whereHas('planoTrabalho', function ($q) use ($unidadesSubordinadasIds, $usuarioId) {
+                    $q->whereIn('unidade_id', $unidadesSubordinadasIds)
+                        ->where('usuario_id', '!=', $usuarioId)
+                        ->whereExists(function ($query) {
+                            $this->subqueryPlanoEhDoGestorTitular($query);
+                        });
+                })
+                ->count();
+        }
+
+        return $count;
+    }
+
+    public function countConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds): int
+    {
+        return $this->query()
+            ->where('status', StatusEnum::INCLUIDO->value)
+            ->whereHas('planoTrabalho', function ($query) use ($usuarioId, $unidadesIds) {
+                $query->where('usuario_id', $usuarioId)
+                    ->whereIn('status', [
+                        StatusEnum::ATIVO->value,
+                        StatusEnum::CONCLUIDO->value,
+                        StatusEnum::AVALIADO->value,
+                    ]);
+
+                if ($unidadesIds !== []) {
+                    $query->whereIn('unidade_id', $unidadesIds);
+                }
+            })
+            ->whereRaw(
+                'data_fim < DATE_SUB(NOW(), INTERVAL COALESCE(('
+                . 'SELECT p.dias_tolerancia_consolidacao FROM programas p '
+                . 'INNER JOIN planos_trabalhos pt ON pt.programa_id = p.id '
+                . 'WHERE pt.id = planos_trabalhos_consolidacoes.plano_trabalho_id'
+                . '), ?) DAY)',
+                [self::DIAS_TOLERANCIA_CONSOLIDACAO_PADRAO]
+            )
+            ->count();
     }
 }

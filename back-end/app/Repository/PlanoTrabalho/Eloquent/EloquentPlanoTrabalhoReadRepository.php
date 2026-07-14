@@ -368,4 +368,31 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
 
         return $plano;
     }
+
+    public function countPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): int
+    {
+        $count = 0;
+
+        if ($unidadesGerenciadasIds !== []) {
+            $count += $this->basePlanosTrabalhoAssinaturaQuery()
+                ->whereIn('unidade_id', $unidadesGerenciadasIds)
+                ->where('usuario_id', '!=', $usuarioId)
+                ->whereNotExists(function ($query) use ($usuarioId) {
+                    $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($query, $usuarioId);
+                })
+                ->count();
+        }
+
+        if ($unidadesSubordinadasIds !== []) {
+            $count += $this->basePlanosTrabalhoAssinaturaQuery()
+                ->whereIn('unidade_id', $unidadesSubordinadasIds)
+                ->where('usuario_id', '!=', $usuarioId)
+                ->whereExists(function ($query) {
+                    $this->subqueryPlanoEhDoGestorTitular($query);
+                })
+                ->count();
+        }
+
+        return $count;
+    }
 }

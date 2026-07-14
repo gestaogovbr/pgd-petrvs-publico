@@ -17,6 +17,8 @@ interface PlanoTrabalhoReadRepositoryContract
 
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection;
 
+    public function countPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): int;
+
     public function planosAtivos(string $usuarioId): Collection;
 
     public function planosAtivosPorData(string $dataInicial, string $dataFinal, string $usuarioId): Collection;
