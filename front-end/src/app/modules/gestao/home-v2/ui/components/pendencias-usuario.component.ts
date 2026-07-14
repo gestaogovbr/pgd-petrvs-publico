@@ -94,7 +94,7 @@ export class PendenciasUsuarioComponent {
   irParaAssinaturasPE(): void {
     this.go.navigate({
       route: ['gestao', 'plano-entrega'],
-      params: { filter: { status: 'HOMOLOGANDO', unidades_filhas: true, meus_planos: false } },
+      params: { filter: { status: 'HOMOLOGANDO', subordinadas: this.subordinadas(), meus_planos: false, unidade_id: this.unidadeId() } },
     });
   }
 
@@ -128,7 +128,7 @@ export class PendenciasUsuarioComponent {
   irParaAvaliacoesPE(): void {
     this.go.navigate({
       route: ['gestao', 'plano-entrega'],
-      params: { avaliacao: true, filter: { meus_planos: false } },
+      params: { avaliacao: true, filter: { status: 'CONCLUIDO', meus_planos: false, unidade_id: this.unidadeId(), subordinadas: this.subordinadas() } },
     });
   }
 

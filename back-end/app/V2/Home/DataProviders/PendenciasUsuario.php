@@ -46,7 +46,7 @@ class PendenciasUsuario
         return [
             'assinaturas_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaHomologacao($subordinadasIds),
             'assinaturas_pt_pendentes' => $this->planoTrabalhoRepository->countPlanosTrabalhoAssinatura($escopo, $dto->usuarioId),
-            'registros_execucao_pe_atraso' => $this->planoEntregaRepository->countEntregasSemProgresso($subordinadasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
+            'registros_execucao_pe_atraso' => $this->planoEntregaRepository->countEntregasSemProgresso([$dto->unidadeId], PlanoEntrega::DATA_MUDANCA_REGRA_PE),
             'registros_execucao_pt_atraso' => $this->consolidacaoRepository->countConsolidacoesAtrasadas($dto->usuarioId, [$dto->unidadeId]),
             'avaliacoes_pt_pendentes' => $this->planoTrabalhoRepository->countAguardandoMinhaAvaliacao($escopo, $dto->usuarioId),
             'avaliacoes_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaAvaliacao($subordinadasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),

@@ -156,6 +156,15 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id');
     }
 
+    private function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId): void
+    {
+        $query->select(DB::raw(1))
+            ->from('documentos_assinaturas')
+            ->whereColumn('documentos_assinaturas.documento_id', 'planos_trabalhos.documento_id')
+            ->where('documentos_assinaturas.usuario_id', $usuarioId)
+            ->whereNull('documentos_assinaturas.deleted_at');
+    }
+
     public function planosAtivos(string $usuarioId): Collection
     {
         return $this->query()
@@ -328,16 +337,26 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                 : [];
 
             $query->where('status', StatusEnum::AGUARDANDO_ASSINATURA->value)
-                ->where('usuario_id', '!=', $usuarioLogadoId)
                 ->whereNotExists(function ($sub) use ($usuarioLogadoId) {
-                    $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($sub, $usuarioLogadoId);
+                    $this->subqueryUsuarioJaAssinou($sub, $usuarioLogadoId);
                 })
-                ->where(function ($q) use ($gerenciadasNoEscopo) {
-                    $q->whereIn('unidade_id', $gerenciadasNoEscopo)
-                        ->orWhere(function ($subordinadas) use ($gerenciadasNoEscopo) {
-                            $subordinadas->whereNotIn('unidade_id', $gerenciadasNoEscopo)
-                                ->whereExists(function ($sub) {
-                                    $this->subqueryPlanoEhDoGestorTitular($sub);
+                ->where(function ($q) use ($usuarioLogadoId, $gerenciadasNoEscopo) {
+                    // PTs do próprio usuário (como participante)
+                    $q->where('usuario_id', $usuarioLogadoId)
+                        // OU PTs de outros onde o logado é gestor
+                        ->orWhere(function ($outros) use ($usuarioLogadoId, $gerenciadasNoEscopo) {
+                            $outros->where('usuario_id', '!=', $usuarioLogadoId)
+                                ->whereNotExists(function ($sub) use ($usuarioLogadoId) {
+                                    $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($sub, $usuarioLogadoId);
+                                })
+                                ->where(function ($hierarquia) use ($gerenciadasNoEscopo) {
+                                    $hierarquia->whereIn('unidade_id', $gerenciadasNoEscopo)
+                                        ->orWhere(function ($subordinadas) use ($gerenciadasNoEscopo) {
+                                            $subordinadas->whereNotIn('unidade_id', $gerenciadasNoEscopo)
+                                                ->whereExists(function ($sub) {
+                                                    $this->subqueryPlanoEhDoGestorTitular($sub);
+                                                });
+                                        });
                                 });
                         });
                 });
@@ -437,6 +456,16 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
 
         $count = 0;
 
+        // PTs do próprio usuário que ele precisa assinar (como participante)
+        $count += $this->basePlanosTrabalhoAssinaturaQuery()
+            ->whereIn('unidade_id', $unidadesEscopo)
+            ->where('usuario_id', $usuarioId)
+            ->whereNotExists(function ($query) use ($usuarioId) {
+                $this->subqueryUsuarioJaAssinou($query, $usuarioId);
+            })
+            ->count();
+
+        // PTs de outros onde o logado é gestor (gerenciadas)
         if ($gerenciadas !== []) {
             $count += $this->basePlanosTrabalhoAssinaturaQuery()
                 ->whereIn('unidade_id', $gerenciadas)
@@ -447,6 +476,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                 ->count();
         }
 
+        // PTs de outros nas subordinadas (só titular)
         if ($subordinadas !== []) {
             $count += $this->basePlanosTrabalhoAssinaturaQuery()
                 ->whereIn('unidade_id', $subordinadas)
