@@ -530,6 +530,12 @@ export class AppComponent implements IAppComponent {
 
     this.moduloGestao = [
       {
+        name: this.lex.translate("Painéis Gerenciais"),
+        icon: 'bi bi-bar-chart-line',
+        route: ['gestao', 'paineis-gerenciais'],
+        hideForConsulta: true,
+      },
+      {
         name: this.lex.translate("Planos de Entregas"),
         permition: "MENU_GESTAO_ACESSO",
         id: "navbarDropdownGestaoExecucao",
@@ -580,6 +586,12 @@ export class AppComponent implements IAppComponent {
     ];
 
     this.moduloExecucao = [
+      {
+        name: this.lex.translate("Painéis Gerenciais"),
+        icon: 'bi bi-bar-chart-line',
+        route: ['gestao', 'paineis-gerenciais'],
+        hideForConsulta: true,
+      },
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, {
         metadata: {
           minha_unidade: true,
