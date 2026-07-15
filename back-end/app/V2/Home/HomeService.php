@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\Home;
 
 use App\V2\Home\DataProviders\AniversariantesDoDia;
+use App\V2\Home\DataProviders\ContribuicoesParticipantes;
 use App\V2\Home\DataProviders\EmFeriasHoje;
 use App\V2\Home\DataProviders\PendenciasUsuario;
 use App\V2\Home\DataProviders\PlanosVigentes;
@@ -20,6 +21,7 @@ class HomeService
         private readonly PendenciasUsuario $pendenciasUsuario,
         private readonly PlanosVigentes $planosVigentes,
         private readonly ResumoEquipe $resumoEquipe,
+        private readonly ContribuicoesParticipantes $contribuicoes,
         private readonly AniversariantesDoDia $aniversariantes,
         private readonly EmFeriasHoje $emFeriasHoje,
     ) {}
@@ -57,6 +59,13 @@ class HomeService
         $dto = $this->buildDTO($data);
 
         return $this->emFeriasHoje->getData($dto);
+    }
+
+    public function getContribuicoes(array $data): array
+    {
+        $dto = $this->buildDTO($data);
+
+        return $this->contribuicoes->getData($dto);
     }
 
     private function buildDTO(array $data): HomeRequestDTO

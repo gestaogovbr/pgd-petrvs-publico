@@ -8,6 +8,7 @@ import { PendenciasUsuarioComponent } from './components/pendencias-usuario.comp
 import { PlanosVigentesComponent } from './components/planos-vigentes.component';
 import { AcoesGerenciaisComponent } from './components/acoes-gerenciais.component';
 import { ResumoEquipeComponent } from './components/resumo-equipe.component';
+import { ContribuicoesComponent } from './components/contribuicoes.component';
 import { AniversariantesComponent } from './components/aniversariantes.component';
 import { EmFeriasComponent } from './components/em-ferias.component';
 
@@ -30,6 +31,7 @@ export interface SelectOption {
     PlanosVigentesComponent,
     AcoesGerenciaisComponent,
     ResumoEquipeComponent,
+    ContribuicoesComponent,
     AniversariantesComponent,
     EmFeriasComponent,
   ],

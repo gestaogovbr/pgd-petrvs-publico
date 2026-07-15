@@ -15,7 +15,7 @@ import { HomeApiClient, ResumoEquipe } from '../../infra/home-api.client';
       </div>
     } @else if (data()) {
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="br-card home-card h-100">
             <div class="card-content text-center">
               <h6 class="fw-bold">Participantes do PGD</h6>
@@ -24,24 +24,12 @@ import { HomeApiClient, ResumoEquipe } from '../../infra/home-api.client';
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="br-card home-card h-100">
             <div class="card-content text-center">
               <h6 class="fw-bold">Capacidade da equipe no PGD</h6>
               <p class="display-6 mb-0">{{ data()!.capacidade_equipe_horas_mensais }}</p>
               <small>horas mensais</small>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="br-card home-card h-100">
-            <div class="card-content">
-              <h6 class="fw-bold text-center">Contribuições dos Participantes</h6>
-              <ul class="list-unstyled py-2 small">
-                <li>Entregas da própria unidade - {{ data()!.contribuicoes.entregas_propria_unidade_percentual }}%</li>
-                <li>Entregas de outras unidades - {{ data()!.contribuicoes.entregas_outras_unidades_percentual }}%</li>
-                <li>Não vinculada a entregas - {{ data()!.contribuicoes.nao_vinculada_entregas_percentual }}%</li>
-              </ul>
             </div>
           </div>
         </div>

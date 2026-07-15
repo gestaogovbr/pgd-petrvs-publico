@@ -11,6 +11,7 @@ class AniversariantesDoDia
     public function getData(HomeRequestDTO $dto): array
     {
         // TODO: implementar consulta real via dados SIAPE
+        // TODO: Atualmente não há a data de nascimento do usuário
         return [
             'aniversariantes' => [],
         ];

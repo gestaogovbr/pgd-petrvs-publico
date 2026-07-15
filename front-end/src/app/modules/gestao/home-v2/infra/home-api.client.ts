@@ -25,11 +25,12 @@ export interface PlanosVigentes {
 export interface ResumoEquipe {
   participantes_pgd: IndicadorQuantitativo;
   capacidade_equipe_horas_mensais: number;
-  contribuicoes: {
-    entregas_propria_unidade_percentual: number;
-    entregas_outras_unidades_percentual: number;
-    nao_vinculada_entregas_percentual: number;
-  };
+}
+
+export interface Contribuicoes {
+  entregas_propria_unidade_percentual: number;
+  entregas_outras_unidades_percentual: number;
+  nao_vinculada_entregas_percentual: number;
 }
 
 export interface AniversarianteItem {
@@ -67,6 +68,12 @@ export class HomeApiClient extends TenantV2ResourceApiBase {
 
   getResumoEquipe(unidadeId: string, subordinadas: boolean): Observable<ResumoEquipe> {
     return this.http.get<{ data: ResumoEquipe }>(this.resourceUrl('/resumo-equipe'), { params: this.params(unidadeId, subordinadas) }).pipe(
+      map(r => r.data),
+    );
+  }
+
+  getContribuicoes(unidadeId: string, subordinadas: boolean): Observable<Contribuicoes> {
+    return this.http.get<{ data: Contribuicoes }>(this.resourceUrl('/contribuicoes'), { params: this.params(unidadeId, subordinadas) }).pipe(
       map(r => r.data),
     );
   }

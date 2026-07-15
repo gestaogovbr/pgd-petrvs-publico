@@ -630,6 +630,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('home/pendencias', [HomeV2::class, 'pendencias']);
     Route::get('home/planos-vigentes', [HomeV2::class, 'planosVigentes']);
     Route::get('home/resumo-equipe', [HomeV2::class, 'resumoEquipe']);
+    Route::get('home/contribuicoes', [HomeV2::class, 'contribuicoes']);
     Route::get('home/aniversariantes', [HomeV2::class, 'aniversariantes']);
     Route::get('home/em-ferias', [HomeV2::class, 'emFerias']);
 
