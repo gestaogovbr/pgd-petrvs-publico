@@ -621,6 +621,8 @@ use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
 use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
 use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoObjetivoV2;
+use App\V2\PainelGerencial\PainelGerencialController as PainelGerencialV2;
+use App\V2\PainelGerencial\AlinhamentoDesempenho\AlinhamentoDesempenhoController as AlinhamentoDesempenhoV2;
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
@@ -697,5 +699,10 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('planejamento/objetivo/{id}/arvore-visualizacao', [PlanejamentoObjetivoV2::class, 'arvoreVisualizacao'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoV2::class, 'entregas'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/equipes', [PlanejamentoObjetivoV2::class, 'equipes'])->whereUuid('id');
+
+    Route::get('painel-gerencial/unidade-inicial', [PainelGerencialV2::class, 'unidadeInicial']);
+    Route::get('painel-gerencial/alinhamento-desempenho/alinhamento-institucional', [AlinhamentoDesempenhoV2::class, 'alinhamentoInstitucional']);
+    Route::get('painel-gerencial/alinhamento-desempenho/avaliacoes-plano-entrega', [AlinhamentoDesempenhoV2::class, 'avaliacoesPlanoEntrega']);
+    Route::get('painel-gerencial/alinhamento-desempenho/avaliacoes-plano-trabalho', [AlinhamentoDesempenhoV2::class, 'avaliacoesPlanoTrabalho']);
 });
 
