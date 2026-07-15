@@ -11,7 +11,12 @@ import { HomeApiClient, Contribuicoes } from '../../infra/home-api.client';
   template: `
     <div class="br-card home-card h-100">
       <div class="card-content p-3">
-        <h6 class="fw-bold text-center">Contribuições dos Participantes</h6>
+        <h6 class="fw-bold text-center">
+          Contribuições dos Participantes
+          <i class="fas fa-info-circle text-muted ml-1"
+             title="Representa a distribuição do esforço da equipe considerando todo o histórico de Planos de Trabalho pactuados na unidade selecionada. Quando a opção Unidades Subordinadas estiver habilitada, também serão considerados os dados das respectivas unidades subordinadas."
+             aria-label="Informação sobre contribuições dos participantes"></i>
+        </h6>
         @if (loading()) {
           <div class="d-flex justify-content-center py-2">
             <span class="br-loading small" role="progressbar"></span>

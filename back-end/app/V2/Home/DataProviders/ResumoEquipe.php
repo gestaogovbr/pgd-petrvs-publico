@@ -40,7 +40,7 @@ class ResumoEquipe
         $result = Usuario::query()
             ->whereHas('unidadesIntegrantes', fn ($q) => $q
                 ->whereIn('unidade_id', $unidadeIds)
-                ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', 'LOTADO'))
+                ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', ['LOTADO', 'COLABORADOR']))
             )
             ->get();
 

@@ -10,7 +10,12 @@ import { HomeApiClient, AniversarianteItem } from '../../infra/home-api.client';
   styleUrls: ['../home.styles.scss'],
   template: `
     <div class="br-card home-card p-3">
-      <h6 class="fw-bold text-center">Aniversariantes do dia</h6>
+      <h6 class="fw-bold text-center">
+        Aniversariantes do dia
+        <i class="fas fa-info-circle text-muted ml-1"
+           title="Quando a opção Unidades Subordinadas estiver habilitada, também serão considerados os dados das respectivas unidades subordinadas."
+           aria-label="Informação sobre aniversariantes"></i>
+      </h6>
       <div class="home-card--scrollable">
         @if (loading()) {
           <div class="d-flex justify-content-center py-2">
