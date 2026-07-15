@@ -253,7 +253,7 @@ describe('SipecUnidadeSincronizacaoService - coletarUnidadesPaginado', function 
         $unidadeRepo->shouldReceive('updateOrCreateByCodigo')->times(3);
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $checkpointRepo->shouldReceive('updateByTenantId')->times(4);
+        $checkpointRepo->shouldNotReceive('updateByTenantId');
 
         $service = buildUnidadeSincronizacaoService($sipecService, $unidadeRepo, $checkpointRepo);
         $total = $service->coletarUnidadesPaginado('tenant-1', 0, null, '100');
@@ -289,7 +289,7 @@ describe('SipecUnidadeSincronizacaoService - coletarFilhosERetornarCodigos (via 
         $unidadeRepo->shouldReceive('updateOrCreateByCodigo')->once();
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $checkpointRepo->shouldReceive('updateByTenantId')->twice();
+        $checkpointRepo->shouldNotReceive('updateByTenantId');
 
         $service = buildUnidadeSincronizacaoService($sipecService, $unidadeRepo, $checkpointRepo);
         $total = $service->coletarUnidadesPaginado('tenant-1', 0, null, '500');
@@ -332,7 +332,7 @@ describe('SipecUnidadeSincronizacaoService - coletarFilhosERetornarCodigos (via 
         $unidadeRepo->shouldReceive('updateOrCreateByCodigo')->twice();
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $checkpointRepo->shouldReceive('updateByTenantId')->times(3);
+        $checkpointRepo->shouldNotReceive('updateByTenantId');
 
         $service = buildUnidadeSincronizacaoService($sipecService, $unidadeRepo, $checkpointRepo);
         $total = $service->coletarUnidadesPaginado('tenant-1', 0, '2025-06-01', '800');
@@ -382,7 +382,7 @@ describe('SipecUnidadeSincronizacaoService - coletarFilhosERetornarCodigos (via 
             ->with('40', Mockery::type('string'), false, null)->once();
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $checkpointRepo->shouldReceive('updateByTenantId')->times(5);
+        $checkpointRepo->shouldNotReceive('updateByTenantId');
 
         $service = buildUnidadeSincronizacaoService($sipecService, $unidadeRepo, $checkpointRepo);
         $total = $service->coletarUnidadesPaginado('tenant-1', 0, null, '10');
@@ -422,7 +422,7 @@ describe('SipecUnidadeSincronizacaoService - coletarFilhosERetornarCodigos (via 
         $unidadeRepo->shouldReceive('updateOrCreateByCodigo')->times(3);
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $checkpointRepo->shouldReceive('updateByTenantId')->times(5);
+        $checkpointRepo->shouldNotReceive('updateByTenantId');
 
         $service = buildUnidadeSincronizacaoService($sipecService, $unidadeRepo, $checkpointRepo);
         $total = $service->coletarUnidadesPaginado('tenant-1', 0, null, '50');

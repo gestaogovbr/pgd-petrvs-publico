@@ -169,7 +169,6 @@ class SipecUnidadeSincronizacaoService
                 $total++;
             }
 
-            $this->checkpointRepository->updateByTenantId($tenantId, 'unidades', $page + 1, $totalPages);
             $page++;
         } while ($page < $totalPages);
 
@@ -216,7 +215,6 @@ class SipecUnidadeSincronizacaoService
                 }
             }
 
-            $this->checkpointRepository->updateByTenantId($tenantId, 'unidades', $page + 1, $totalPages);
             $page++;
         } while ($page < $totalPages);
 

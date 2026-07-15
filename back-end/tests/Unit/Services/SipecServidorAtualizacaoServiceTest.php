@@ -17,7 +17,7 @@ afterEach(function () {
     Mockery::close();
 });
 
-function setupLogMockAtualizacao(): void
+function setupLogMockServidorAtualizacao(): void
 {
     $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
     $loggerMock->shouldReceive('info', 'warning', 'error', 'debug', 'notice', 'log', 'critical', 'alert', 'emergency')->withAnyArgs();
@@ -61,7 +61,7 @@ function buildService(
 describe('SipecServidorAtualizacaoService - atualizarDadosPessoais', function () {
 
     test('deve atualizar dados quando há divergência', function () {
-        setupLogMockAtualizacao();
+        setupLogMockServidorAtualizacao();
 
         $linha = (object) [
             'id' => 'user-1',
@@ -102,7 +102,7 @@ describe('SipecServidorAtualizacaoService - atualizarDadosPessoais', function ()
     });
 
     test('deve pular registro sem id', function () {
-        setupLogMockAtualizacao();
+        setupLogMockServidorAtualizacao();
 
         $linha = (object) [
             'id' => null,
@@ -142,7 +142,7 @@ describe('SipecServidorAtualizacaoService - atualizarDadosPessoais', function ()
 describe('SipecServidorAtualizacaoService - atualizarLotacoes', function () {
 
     test('deve mover lotação quando unidade mudou', function () {
-        setupLogMockAtualizacao();
+        setupLogMockServidorAtualizacao();
 
         $lotacao = (object) ['usuario_id' => 'user-1', 'exercicio_atual_id' => 'unidade-nova-id'];
 
@@ -170,7 +170,7 @@ describe('SipecServidorAtualizacaoService - atualizarLotacoes', function () {
     });
 
     test('deve inserir lotação de servidor não lotado', function () {
-        setupLogMockAtualizacao();
+        setupLogMockServidorAtualizacao();
 
         $naoLotado = (object) ['usuario_id' => 'user-2', 'unidade_id' => 'unidade-id', 'matricula' => '7777777'];
 

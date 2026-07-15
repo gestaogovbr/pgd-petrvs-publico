@@ -42,6 +42,11 @@ function criarIntegracaoUnidadeModel(array $attrs): IntegracaoUnidade
     return $model;
 }
 
+function mockMapaCidades(array $cidadesMap = []): void
+{
+    DB::shouldReceive('table->whereNotNull->pluck->all')->andReturn($cidadesMap);
+}
+
 describe('SipecUnidadeAtualizacaoService - processar', function () {
 
     test('deve retornar contadores zerados quando não há unidades de integração', function () {
@@ -50,18 +55,18 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
         $integracaoRepo = Mockery::mock(IntegracaoUnidadeRepository::class);
 
-        $unidadeRepo->shouldReceive('findAllComCodigoParaSincronizacao')
+        $unidadeRepo->shouldReceive('findAllComCodigo')
             ->once()
             ->andReturn(new Collection());
 
         $integracaoRepo->shouldReceive('findByCodigo')->andReturnNull();
-        $integracaoRepo->shouldReceive('findAllAtivasParaSincronizacao')
+        $integracaoRepo->shouldReceive('findAllAtivas')
             ->once()
             ->andReturn(new Collection());
 
         $unidadeRepo->shouldReceive('reativarPorIntegracao')->once()->andReturn(0);
 
-        DB::shouldReceive('table->whereNotNull->pluck->all')->andReturn([]);
+        mockMapaCidades();
 
         config(['integracao.sipec.codUorg' => null, 'integracao.codigoUnidadeRaiz' => null]);
 
@@ -94,7 +99,7 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
             'entidade_id' => 'entidade-1',
         ]);
 
-        $unidadeRepo->shouldReceive('findAllComCodigoParaSincronizacao')
+        $unidadeRepo->shouldReceive('findAllComCodigo')
             ->once()
             ->andReturn(new Collection([$unidadeRaiz]));
 
@@ -116,7 +121,7 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
             'data_modificacao' => '2024-01-01 00:00:00',
         ]);
 
-        $integracaoRepo->shouldReceive('findAllAtivasParaSincronizacao')
+        $integracaoRepo->shouldReceive('findAllAtivas')
             ->once()
             ->andReturn(new Collection([$integracaoRaiz, $integracaoNova]));
 
@@ -140,13 +145,9 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
         $unidadeRepo->shouldReceive('reativarPorIntegracao')->once()->andReturn(0);
         $unidadeRepo->shouldReceive('findBySigla')->andReturnNull();
 
-        DB::shouldReceive('table')->andReturnSelf();
-        DB::shouldReceive('whereNotNull')->andReturnSelf();
-        DB::shouldReceive('pluck')->andReturnSelf();
-        DB::shouldReceive('all')->andReturn(['3550308' => 'cidade-sp']);
-        DB::shouldReceive('transaction')->andReturnUsing(function ($callback) {
-            return $callback();
-        });
+        mockMapaCidades(['3550308' => 'cidade-sp']);
+        DB::shouldReceive('beginTransaction')->twice();
+        DB::shouldReceive('commit')->twice();
 
         config(['integracao.sipec.codUorg' => 'RAIZ', 'integracao.codigoUnidadeRaiz' => 'RAIZ']);
 
@@ -173,7 +174,7 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
             'entidade_id' => 'entidade-1',
         ]);
 
-        $unidadeRepo->shouldReceive('findAllComCodigoParaSincronizacao')
+        $unidadeRepo->shouldReceive('findAllComCodigo')
             ->once()
             ->andReturn(new Collection([$unidadeExistente]));
 
@@ -186,7 +187,7 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
             'data_modificacao' => '2024-06-01 00:00:00',
         ]);
 
-        $integracaoRepo->shouldReceive('findAllAtivasParaSincronizacao')
+        $integracaoRepo->shouldReceive('findAllAtivas')
             ->once()
             ->andReturn(new Collection([$integracaoAtualizada]));
 
@@ -201,13 +202,9 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
 
         $unidadeRepo->shouldReceive('reativarPorIntegracao')->once()->andReturn(0);
 
-        DB::shouldReceive('table')->andReturnSelf();
-        DB::shouldReceive('whereNotNull')->andReturnSelf();
-        DB::shouldReceive('pluck')->andReturnSelf();
-        DB::shouldReceive('all')->andReturn([]);
-        DB::shouldReceive('transaction')->andReturnUsing(function ($callback) {
-            return $callback();
-        });
+        mockMapaCidades();
+        DB::shouldReceive('beginTransaction')->once();
+        DB::shouldReceive('commit')->once();
 
         config(['integracao.sipec.codUorg' => 'COD1', 'integracao.codigoUnidadeRaiz' => 'COD1']);
 
@@ -234,7 +231,7 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
             'entidade_id' => 'entidade-1',
         ]);
 
-        $unidadeRepo->shouldReceive('findAllComCodigoParaSincronizacao')
+        $unidadeRepo->shouldReceive('findAllComCodigo')
             ->once()
             ->andReturn(new Collection([$unidadeExistente]));
 
@@ -247,7 +244,7 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
             'data_modificacao' => '2024-01-01 00:00:00',
         ]);
 
-        $integracaoRepo->shouldReceive('findAllAtivasParaSincronizacao')
+        $integracaoRepo->shouldReceive('findAllAtivas')
             ->once()
             ->andReturn(new Collection([$integracaoIgual]));
 
@@ -257,13 +254,9 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
         $unidadeRepo->shouldNotReceive('create');
         $unidadeRepo->shouldReceive('reativarPorIntegracao')->once()->andReturn(0);
 
-        DB::shouldReceive('table')->andReturnSelf();
-        DB::shouldReceive('whereNotNull')->andReturnSelf();
-        DB::shouldReceive('pluck')->andReturnSelf();
-        DB::shouldReceive('all')->andReturn(['1234' => 'cidade-1']);
-        DB::shouldReceive('transaction')->andReturnUsing(function ($callback) {
-            return $callback();
-        });
+        mockMapaCidades(['1234' => 'cidade-1']);
+        DB::shouldReceive('beginTransaction')->once();
+        DB::shouldReceive('commit')->once();
 
         config(['integracao.sipec.codUorg' => 'COD1', 'integracao.codigoUnidadeRaiz' => 'COD1']);
 
@@ -281,21 +274,18 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
         $integracaoRepo = Mockery::mock(IntegracaoUnidadeRepository::class);
 
-        $unidadeRepo->shouldReceive('findAllComCodigoParaSincronizacao')
+        $unidadeRepo->shouldReceive('findAllComCodigo')
             ->once()
             ->andReturn(new Collection());
 
         $integracaoRepo->shouldReceive('findByCodigo')->andReturnNull();
-        $integracaoRepo->shouldReceive('findAllAtivasParaSincronizacao')
+        $integracaoRepo->shouldReceive('findAllAtivas')
             ->once()
             ->andReturn(new Collection());
 
         $unidadeRepo->shouldReceive('reativarPorIntegracao')->once()->andReturn(5);
 
-        DB::shouldReceive('table')->andReturnSelf();
-        DB::shouldReceive('whereNotNull')->andReturnSelf();
-        DB::shouldReceive('pluck')->andReturnSelf();
-        DB::shouldReceive('all')->andReturn([]);
+        mockMapaCidades();
 
         config(['integracao.sipec.codUorg' => null, 'integracao.codigoUnidadeRaiz' => null]);
 
@@ -355,7 +345,7 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
             'entidade_id' => 'entidade-1',
         ]);
 
-        $unidadeRepo->shouldReceive('findAllComCodigoParaSincronizacao')
+        $unidadeRepo->shouldReceive('findAllComCodigo')
             ->once()
             ->andReturn(new Collection([$raiz, $paiA, $paiB, $filha]));
 
@@ -395,7 +385,7 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
             'data_modificacao' => '2024-06-01 00:00:00',
         ]);
 
-        $integracaoRepo->shouldReceive('findAllAtivasParaSincronizacao')
+        $integracaoRepo->shouldReceive('findAllAtivas')
             ->once()
             ->andReturn(new Collection([$integracaoRaiz, $integracaoPaiA, $integracaoPaiB, $integracaoFilha]));
 
@@ -416,13 +406,9 @@ describe('SipecUnidadeAtualizacaoService - processar', function () {
 
         $unidadeRepo->shouldReceive('reativarPorIntegracao')->once()->andReturn(0);
 
-        DB::shouldReceive('table')->andReturnSelf();
-        DB::shouldReceive('whereNotNull')->andReturnSelf();
-        DB::shouldReceive('pluck')->andReturnSelf();
-        DB::shouldReceive('all')->andReturn([]);
-        DB::shouldReceive('transaction')->andReturnUsing(function ($callback) {
-            return $callback();
-        });
+        mockMapaCidades();
+        DB::shouldReceive('beginTransaction')->times(3);
+        DB::shouldReceive('commit')->times(3);
 
         config(['integracao.sipec.codUorg' => 'RAIZ', 'integracao.codigoUnidadeRaiz' => 'RAIZ']);
 

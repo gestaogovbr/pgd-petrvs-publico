@@ -31,7 +31,6 @@ class SipecServidorSincronizacaoService
         $token = $this->sipecService->getToken();
 
         $params = ['codUorg' => $codUorg];
-        $params = ['codSitFuncional' => '1'];
         if ($this->sipecService->getCodOrgao() !== '') {
             $params['codOrgao'] = $this->sipecService->getCodOrgao();
         }
