@@ -20,6 +20,7 @@ import {
 import ChartjsPluginStacked100 from 'chartjs-plugin-stacked100';
 import { Indicador } from '../../infra/painel-api.client';
 import { CHART_COLORS } from 'src/app/services/chart';
+import { IndicadorCardComponent } from './indicador-card.component';
 
 Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip, ChartjsPluginStacked100);
 
@@ -27,7 +28,7 @@ Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip, C
   selector: 'indicador-barra-horizontal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, BaseChartDirective, IndicadorCardComponent],
   templateUrl: './indicador-barra-horizontal.component.html',
   styleUrls: ['./indicador-barra-horizontal.component.scss'],
 })
