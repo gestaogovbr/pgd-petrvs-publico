@@ -19,14 +19,9 @@ import {
 } from 'chart.js';
 import ChartjsPluginStacked100 from 'chartjs-plugin-stacked100';
 import { Indicador } from '../../infra/painel-api.client';
+import { CHART_COLORS } from 'src/app/services/chart';
 
 Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip, ChartjsPluginStacked100);
-
-/** Cores padrão para os segmentos, reutilizável por todos os painéis. */
-const CORES_PADRAO = [
-  '#1351B4', '#0C884A', '#FFCD07', '#E66C37', '#E60000',
-  '#6929C4', '#009D9A', '#9F1853', '#198038', '#002D9C',
-];
 
 @Component({
   selector: 'indicador-barra-horizontal',
@@ -45,7 +40,7 @@ export class IndicadorBarraHorizontalComponent {
   @Input() informacaoAdicional = '';
   @Input() origemDados = '';
   @Input() carregando = false;
-  @Input() cores: string[] = CORES_PADRAO;
+  @Input() cores: string[] = CHART_COLORS;
 
   readonly _dados = signal<Indicador | null>(null);
 
