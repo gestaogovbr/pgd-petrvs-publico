@@ -20,7 +20,6 @@ import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra
     IndicadorBarraHorizontalComponent,
   ],
   templateUrl: './alinhamento-desempenho.page.html',
-  styleUrls: ['./alinhamento-desempenho.page.scss'],
 })
 export class AlinhamentoDesempenhoPage implements OnInit {
   private readonly api = inject(PainelApiClient);
