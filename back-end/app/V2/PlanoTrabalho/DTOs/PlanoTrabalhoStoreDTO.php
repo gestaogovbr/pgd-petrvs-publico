@@ -14,6 +14,7 @@ class PlanoTrabalhoStoreDTO
         public readonly string $dataFim,
         public readonly string $modalidadePgd,
         public readonly string $criacaoUsuarioId,
+        public readonly float $cargaHoraria = 8.0,
         public readonly ?string $justificativaModalidade = null,
         public readonly ?string $cloneDe = null,
     ) {}
@@ -38,8 +39,25 @@ class PlanoTrabalhoStoreDTO
             dataFim: $data['data_fim'],
             modalidadePgd: $data['modalidade_pgd'],
             criacaoUsuarioId: $criacaoUsuarioId,
+            cargaHoraria: (float) ($data['carga_horaria'] ?? 8.0),
             justificativaModalidade: $data['justificativa_modalidade'] ?? null,
             cloneDe: $data['clone_de'] ?? null,
+        );
+    }
+
+    public function withCargaHoraria(float $cargaHoraria): self
+    {
+        return new self(
+            usuarioId: $this->usuarioId,
+            unidadeId: $this->unidadeId,
+            programaId: $this->programaId,
+            dataInicio: $this->dataInicio,
+            dataFim: $this->dataFim,
+            modalidadePgd: $this->modalidadePgd,
+            criacaoUsuarioId: $this->criacaoUsuarioId,
+            cargaHoraria: $cargaHoraria,
+            justificativaModalidade: $this->justificativaModalidade,
+            cloneDe: $this->cloneDe,
         );
     }
 
@@ -54,6 +72,7 @@ class PlanoTrabalhoStoreDTO
             'data_fim' => $this->dataFim,
             'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->criacaoUsuarioId,
+            'carga_horaria' => $this->cargaHoraria,
             'justificativa_modalidade' => $this->justificativaModalidade,
         ];
     }

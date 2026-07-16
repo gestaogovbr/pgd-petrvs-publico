@@ -100,7 +100,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
     'data_inicio', /* date; NOT NULL; */ // Data inicial da consolidacão
     'data_fim', /* date; NOT NULL; */ // Data final da consolidação
     'plano_trabalho_id', /* char(36); NOT NULL; */
-    //'data_conclusao', /* date; NOT NULL; */
+    'data_conclusao', /* date; NULL; */
     'status', /* enum('INCLUIDO','CONCLUIDO','AVALIADO'); */// Status atual da consolidação
     //'avaliacao_id', /* char(36); */
     //'deleted_at', /* timestamp; */
