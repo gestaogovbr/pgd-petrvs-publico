@@ -120,6 +120,12 @@ class AlinhamentoInstitucional
             ->whereIn('unidade_id', $unidadeIds)
             ->whereNull('deleted_at');
 
+        if ($filtros->isSituacaoAtual()) {
+            $hoje = now()->toDateString();
+            $query->where('data_inicio', '<=', $hoje)
+                ->where('data_fim', '>=', $hoje);
+        }
+
         if ($filtros->isHistorico()) {
             $query->where('data_inicio', '<=', $filtros->dataFim)
                 ->where('data_fim', '>=', $filtros->dataInicio);

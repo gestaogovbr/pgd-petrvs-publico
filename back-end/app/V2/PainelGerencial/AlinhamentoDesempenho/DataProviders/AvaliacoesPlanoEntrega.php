@@ -123,17 +123,22 @@ class AvaliacoesPlanoEntrega
      */
     private function buildBaseQuery(array $unidadeIds, FiltrosPainelDTO $filtros): Builder
     {
+        $hoje = now()->toDateString();
+
         $query = Avaliacao::query()
             ->whereNotNull('plano_entrega_id')
             ->whereNull('deleted_at')
-            ->whereHas('planoEntrega', function (Builder $q) use ($unidadeIds) {
+            ->whereHas('planoEntrega', function (Builder $q) use ($unidadeIds, $filtros, $hoje) {
                 $q->whereIn('unidade_id', $unidadeIds);
+                if ($filtros->isSituacaoAtual()) {
+                    $q->where('data_inicio', '<=', $hoje)
+                        ->where('data_fim', '>=', $hoje);
+                }
+                if ($filtros->isHistorico()) {
+                    $q->where('data_inicio', '<=', $filtros->dataFim)
+                        ->where('data_fim', '>=', $filtros->dataInicio);
+                }
             });
-
-        if ($filtros->isHistorico()) {
-            $query->where('data_avaliacao', '>=', $filtros->dataInicio)
-                ->where('data_avaliacao', '<=', $filtros->dataFim);
-        }
 
         return $query;
     }
