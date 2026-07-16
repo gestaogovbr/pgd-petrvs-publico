@@ -23,6 +23,13 @@
     font-size: var(--font-size-scale-up-01);
   }
 
+  &__vazio {
+    color: var(--color-secondary-05);
+    font-style: italic;
+    padding: var(--spacing-scale-3x) 0;
+    text-align: center;
+  }
+
   &__chart-wrapper {
     display: flex;
     align-items: stretch;

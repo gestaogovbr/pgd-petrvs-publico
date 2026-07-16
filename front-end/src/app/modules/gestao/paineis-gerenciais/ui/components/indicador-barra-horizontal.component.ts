@@ -44,6 +44,13 @@ export class IndicadorBarraHorizontalComponent {
 
   readonly _dados = signal<Indicador | null>(null);
 
+  readonly semDados = computed(() => {
+    const dados = this._dados();
+    if (!dados) return true;
+    if (dados.distribuicoes.length === 0) return true;
+    return dados.distribuicoes.every(d => d.total === 0);
+  });
+
   readonly chartData = computed<ChartData<'bar'>>(() => {
     const dados = this._dados();
     if (!dados) return { labels: [], datasets: [] };

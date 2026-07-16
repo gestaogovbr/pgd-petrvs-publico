@@ -89,6 +89,7 @@ export class PainelFiltrosComponent implements OnChanges {
   @Input() unidadeInicialNome = '';
 
   @Output() filtrosChange = new EventEmitter<FiltrosPainel>();
+  @Output() unidadeChange = new EventEmitter<{ sigla: string; nome: string }>();
 
   readonly tipoConsultaOptions = [
     { value: 'situacao_atual', label: 'Situação Atual', selected: true },
@@ -153,6 +154,7 @@ export class PainelFiltrosComponent implements OnChanges {
     this.unidadeSelecionada.set(unidade);
     this.unidadeDisplay.set(`${unidade.sigla} - ${unidade.nome}`);
     this.sugestoes.set([]);
+    this.unidadeChange.emit({ sigla: unidade.sigla, nome: unidade.nome });
     this.emitirFiltros();
   }
 
