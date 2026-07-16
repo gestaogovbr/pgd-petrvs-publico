@@ -4,6 +4,7 @@ namespace App\Services;
 
 
 use App\Jobs\BuscarDadosSiapeJob;
+use App\Jobs\BuscarDadosSipecJob;
 use App\Exceptions\NotFoundException;
 use App\Models\Cidade;
 use App\Models\Entidade;
@@ -165,6 +166,13 @@ class TenantService extends ServiceBase
         $this->TenantConfigurationsService->handle($tenantId);
         $this->limpaTabelas();
         BuscarDadosSiapeJob::dispatch($tenantId);
+    }
+
+    public function forcarSipec(string $tenantId)
+    {
+        $this->inicializeTenant($tenantId);
+        $this->TenantConfigurationsService->handle($tenantId);
+        BuscarDadosSipecJob::dispatch($tenantId);
     }
 
     public function inicializeTenant($tenantId): void
