@@ -4,7 +4,9 @@ namespace App\Jobs;
 
 use App\Facades\SipecLog;
 use App\Jobs\Contratos\ContratoJobSchedule;
+use App\Models\Integracao;
 use App\Services\Sipec\Gestor\SipecGestorIntegracaoService;
+use App\Services\Sipec\IntegracaoSipecService;
 use App\Services\Sipec\Servidor\SipecServidorAtualizacaoService;
 use App\Services\Sipec\Servidor\SipecServidorIntegracaoService;
 use App\Services\Sipec\SipecService;
@@ -84,7 +86,7 @@ class SincronizarSipecJob implements ShouldQueue, ContratoJobSchedule
         }
     }
 
-    private function sincronizarEntidades(IntegracaoSipecService $integracaoSipecService, array $resultadoFase0): void
+    private function sincronizarEntidades(IntegracaoSipecService $integracaoSipecService, array $resultadoFase0): bool
     {
         $dataUltimaUnidades = null;//$this->getUltimaExecucaoSemFalhas('unidades');
         $dataUltimaServidores = null;//$this->getUltimaExecucaoSemFalhas('servidores');
