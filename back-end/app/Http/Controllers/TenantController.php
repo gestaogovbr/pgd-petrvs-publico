@@ -127,7 +127,7 @@ class TenantController extends ControllerBase {
             $data = $request->validate([
                 'tenant_id' => ['string'],
             ]);
-            $this->service->forcarSiape($data['tenant_id']);
+            $this->service->forcarSipec($data['tenant_id']);
             return response()->json([
                 'success' => true,
             ]);
