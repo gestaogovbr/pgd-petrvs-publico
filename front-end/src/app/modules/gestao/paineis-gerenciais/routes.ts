@@ -1,11 +1,20 @@
 import { Routes } from '@angular/router';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authTenantVersionInterceptor, errorInterceptor } from 'src/app/v2/infra/http/interceptors';
 import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
+import { UnidadeService } from 'src/app/v2/services/unidade.service';
+import { PainelApiClient } from './infra/painel-api.client';
 
 export const routes: Routes = [
   {
     path: '',
     data: { breadcrumb: 'Painéis Gerenciais' },
-    providers: [BreadcrumbService],
+    providers: [
+      provideHttpClient(withInterceptors([authTenantVersionInterceptor, errorInterceptor])),
+      BreadcrumbService,
+      UnidadeService,
+      PainelApiClient,
+    ],
     children: [
       {
         path: '',

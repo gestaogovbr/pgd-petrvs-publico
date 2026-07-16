@@ -18,10 +18,6 @@ class AlinhamentoInstitucional
 {
     use ResolveHierarquiaPainel;
 
-    private const TITULO = 'Alinhamento institucional das Unidades por nível estratégico';
-    private const INFORMACAO_ADICIONAL = 'Apresenta a distribuição percentual das entregas de acordo com seu nível de alinhamento institucional, considerando entregas vinculadas ao Planejamento Institucional, à Cadeia de Valor e entregas sem vinculação. São consideradas vinculadas ao Planejamento Institucional as entregas cujo encadeamento alcance o nível de Objetivo Estratégico (nível 1). São consideradas vinculadas à Cadeia de Valor as entregas cujo encadeamento alcance, no mínimo, o terceiro nível de processo (nível 3).';
-    private const ORIGEM_DADOS = 'Sistema PGD Petrvs';
-
     private const SEGMENTOS = [
         'Vinculadas a Objetivos Estratégicos ao PEI',
         'Vinculadas a Processo da CV',
@@ -53,9 +49,6 @@ class AlinhamentoInstitucional
         }
 
         return (new IndicadorDTO(
-            titulo: self::TITULO,
-            informacaoAdicional: self::INFORMACAO_ADICIONAL,
-            origemDados: self::ORIGEM_DADOS,
             segmentos: self::SEGMENTOS,
             distribuicoes: $distribuicoes,
         ))->ordenarSubordinadasPorTotal();

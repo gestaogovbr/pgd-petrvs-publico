@@ -21,10 +21,6 @@ class AvaliacoesPlanoTrabalho
 {
     use ResolveHierarquiaPainel;
 
-    private const TITULO = 'Notas das avaliações dos Planos de Trabalho de acordo com as Unidades';
-    private const INFORMACAO_ADICIONAL = 'Apresenta a distribuição percentual das notas atribuídas aos períodos avaliativos dos Planos de Trabalho por unidade organizacional.';
-    private const ORIGEM_DADOS = 'Sistema PGD Petrvs';
-
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
     ) {}
@@ -55,9 +51,6 @@ class AvaliacoesPlanoTrabalho
         }
 
         return (new IndicadorDTO(
-            titulo: self::TITULO,
-            informacaoAdicional: self::INFORMACAO_ADICIONAL,
-            origemDados: self::ORIGEM_DADOS,
             segmentos: $segmentos,
             distribuicoes: $distribuicoes,
         ))->ordenarSubordinadasPorTotal();
@@ -76,7 +69,7 @@ class AvaliacoesPlanoTrabalho
     private function obterNotas(array $unidadeIds): SupportCollection
     {
         $tipoAvaliacaoId = PlanoTrabalho::query()
-            ->whereIn('unidade_id', $unidadeIds)
+            ->whereIn('planos_trabalhos.unidade_id', $unidadeIds)
             ->whereNull('planos_trabalhos.deleted_at')
             ->whereHas('consolidacoes', fn (Builder $q) => $q->whereHas('avaliacoes'))
             ->join('programas', 'programas.id', '=', 'planos_trabalhos.programa_id')

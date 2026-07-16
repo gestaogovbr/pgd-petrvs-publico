@@ -7,16 +7,10 @@ namespace App\V2\PainelGerencial\DTOs;
 class IndicadorDTO
 {
     /**
-     * @param string $titulo
-     * @param string $informacaoAdicional Texto explicativo do indicador
-     * @param string $origemDados
      * @param array<string> $segmentos Nomes dos segmentos/dimensões do indicador
      * @param array<DistribuicaoUnidadeDTO> $distribuicoes Primeira = unidade selecionada, demais = subordinadas
      */
     public function __construct(
-        public readonly string $titulo,
-        public readonly string $informacaoAdicional,
-        public readonly string $origemDados,
         public readonly array $segmentos,
         public array $distribuicoes,
     ) {}
@@ -44,9 +38,6 @@ class IndicadorDTO
     public function toArray(): array
     {
         return [
-            'titulo' => $this->titulo,
-            'informacao_adicional' => $this->informacaoAdicional,
-            'origem_dados' => $this->origemDados,
             'segmentos' => $this->segmentos,
             'distribuicoes' => array_map(fn (DistribuicaoUnidadeDTO $d) => $d->toArray(), $this->distribuicoes),
         ];

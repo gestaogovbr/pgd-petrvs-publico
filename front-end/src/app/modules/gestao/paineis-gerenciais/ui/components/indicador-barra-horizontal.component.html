@@ -1,0 +1,49 @@
+<div class="indicador">
+  <!-- Título + ícone info -->
+  <div class="indicador__header">
+    <h3 class="indicador__titulo">{{ titulo }}</h3>
+    @if (informacaoAdicional) {
+      <span class="indicador__info" [title]="informacaoAdicional" aria-label="Informação adicional">
+        <i class="bi bi-info-circle" aria-hidden="true"></i>
+      </span>
+    }
+  </div>
+
+  <!-- Gráfico ou loading -->
+  @if (carregando) {
+    <div class="d-flex justify-content-center py-4">
+      <div class="br-loading" aria-label="Carregando dados"></div>
+    </div>
+  } @else if (_dados(); as dados) {
+    <div class="indicador__chart-wrapper">
+      <div class="indicador__chart" [style.height.px]="chartHeight()">
+        <canvas
+          baseChart
+          type="bar"
+          [data]="chartData()"
+          [options]="chartOptions()">
+        </canvas>
+      </div>
+      <div class="indicador__totais" [style.height.px]="chartHeight()">
+        @for (total of totais(); track $index) {
+          <span class="indicador__total">{{ total }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- Legenda -->
+    <div class="indicador__legenda">
+      @for (segmento of dados.segmentos; track segmento) {
+        <div class="indicador__legenda-item">
+          <span class="indicador__legenda-cor" [style.background-color]="cores[$index] ?? '#ccc'"></span>
+          <span class="indicador__legenda-label">{{ segmento }}</span>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Origem dos dados -->
+  @if (origemDados) {
+    <p class="indicador__origem">{{ origemDados }}</p>
+  }
+</div>

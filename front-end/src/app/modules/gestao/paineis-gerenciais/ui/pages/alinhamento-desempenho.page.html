@@ -1,0 +1,30 @@
+<app-breadcrumb></app-breadcrumb>
+
+<div class="container-fluid px-4 py-3">
+  <painel-filtros
+    [unidadeInicialId]="unidadeInicialId()"
+    [unidadeInicialSigla]="unidadeInicialSigla()"
+    [unidadeInicialNome]="unidadeInicialNome()"
+    (filtrosChange)="onFiltrosChange($event)" />
+
+  <indicador-barra-horizontal
+    [dados]="alinhamentoInstitucional()"
+    [carregando]="carregandoAlinhamento()"
+    titulo="Alinhamento institucional das Unidades por nível estratégico"
+    informacaoAdicional="Apresenta a distribuição percentual das entregas de acordo com seu nível de alinhamento institucional, considerando entregas vinculadas ao Planejamento Institucional, à Cadeia de Valor e entregas sem vinculação. São consideradas vinculadas ao Planejamento Institucional as entregas cujo encadeamento alcance o nível de Objetivo Estratégico (nível 1). São consideradas vinculadas à Cadeia de Valor as entregas cujo encadeamento alcance, no mínimo, o terceiro nível de processo (nível 3)."
+    origemDados="Sistema PGD Petrvs" />
+
+  <indicador-barra-horizontal
+    [dados]="avaliacoesPlanoEntrega()"
+    [carregando]="carregandoAvaliacoesPE()"
+    titulo="Notas das avaliações dos Planos de Entregas por Unidade organizacional"
+    informacaoAdicional="Apresenta a distribuição percentual das notas atribuídas aos Planos de Entregas por unidade organizacional."
+    origemDados="Sistema PGD Petrvs" />
+
+  <indicador-barra-horizontal
+    [dados]="avaliacoesPlanoTrabalho()"
+    [carregando]="carregandoAvaliacoesPT()"
+    titulo="Notas das avaliações dos Planos de Trabalho de acordo com as Unidades"
+    informacaoAdicional="Apresenta a distribuição percentual das notas atribuídas aos períodos avaliativos dos Planos de Trabalho por unidade organizacional."
+    origemDados="Sistema PGD Petrvs" />
+</div>
