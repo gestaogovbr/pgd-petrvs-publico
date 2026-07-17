@@ -14,6 +14,13 @@ export interface Indicador {
   distribuicoes: DistribuicaoUnidade[];
 }
 
+export interface IndicadorTeletrabalho {
+  taxa: number;
+  limite: number;
+  participantes_modalidade: number;
+  total_participantes: number;
+}
+
 export interface UnidadeInicial {
   unidade_id: string | null;
   unidade_sigla: string | null;
@@ -66,6 +73,30 @@ export class PainelApiClient extends TenantV2ResourceApiBase {
   getAvaliacoesPlanoTrabalho(filtros: FiltrosPainel): Observable<Indicador> {
     return this.http
       .get<{ data: Indicador }>(this.resourceUrl('/alinhamento-desempenho/avaliacoes-plano-trabalho'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getTeletrabalhoSubstituicao(filtros: FiltrosPainel): Observable<IndicadorTeletrabalho> {
+    return this.http
+      .get<{ data: IndicadorTeletrabalho }>(this.resourceUrl('/modalidades/teletrabalho-substituicao'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getTeletrabalhoDiscricionario(filtros: FiltrosPainel): Observable<IndicadorTeletrabalho> {
+    return this.http
+      .get<{ data: IndicadorTeletrabalho }>(this.resourceUrl('/modalidades/teletrabalho-discricionario'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getModalidadesPorUnidade(filtros: FiltrosPainel): Observable<Indicador> {
+    return this.http
+      .get<{ data: Indicador }>(this.resourceUrl('/modalidades/por-unidade'), {
         params: this.filtrosToParams(filtros),
       })
       .pipe(map(r => r.data));

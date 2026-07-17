@@ -1,18 +1,156 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { PainelApiClient, FiltrosPainel, Indicador, IndicadorTeletrabalho } from '../../infra/painel-api.client';
+import { PainelPdfService } from '../../infra/painel-pdf.service';
+import { PainelFiltrosComponent } from '../components/painel-filtros.component';
+import { IndicadorBarraVerticalComponent } from '../components/indicador-barra-vertical.component';
+import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
+import { CHART_COLORS } from 'src/app/services/chart';
 
 @Component({
   selector: 'modalidades-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [BreadcrumbComponent],
-  template: `
-    <app-breadcrumb></app-breadcrumb>
-    <div class="container-fluid px-4 py-3">
-      <h2>Modalidades</h2>
-      <!-- TODO: implementar painel de modalidades -->
-      <p class="text-muted">Painel em desenvolvimento.</p>
-    </div>
-  `,
+  imports: [
+    CommonModule,
+    WebcomponentsAngularModule,
+    BreadcrumbComponent,
+    PainelFiltrosComponent,
+    IndicadorBarraVerticalComponent,
+    IndicadorBarraHorizontalComponent,
+  ],
+  templateUrl: './modalidades.page.html',
 })
-export class ModalidadesPage {}
+export class ModalidadesPage implements OnInit {
+  private readonly api = inject(PainelApiClient);
+  private readonly pdfService = inject(PainelPdfService);
+
+  readonly unidadeInicialId = signal('');
+  readonly unidadeInicialSigla = signal('');
+  readonly unidadeInicialNome = signal('');
+
+  readonly teletrabalhoSubstituicao = signal<IndicadorTeletrabalho | null>(null);
+  readonly teletrabalhoDiscricionario = signal<IndicadorTeletrabalho | null>(null);
+  readonly modalidadesPorUnidade = signal<Indicador | null>(null);
+
+  readonly carregandoSubstituicao = signal(false);
+  readonly carregandoDiscricionario = signal(false);
+  readonly carregandoModalidades = signal(false);
+
+  readonly carregandoAlgum = computed(() =>
+    this.carregandoSubstituicao() || this.carregandoDiscricionario() || this.carregandoModalidades()
+  );
+
+  private readonly filtrosAtuais = signal<FiltrosPainel | null>(null);
+  private readonly unidadeAtualLabel = signal('');
+
+  readonly saibaMaisParamsSubstituicao = computed(() => this.buildSaibaMaisParams('no exterior substituicao'));
+  readonly saibaMaisParamsDiscricionario = computed(() => this.buildSaibaMaisParams('no exterior'));
+
+  ngOnInit(): void {
+    this.api.getUnidadeInicial().subscribe(unidade => {
+      if (!unidade.unidade_id) return;
+
+      this.unidadeInicialId.set(unidade.unidade_id);
+      this.unidadeInicialSigla.set(unidade.unidade_sigla ?? '');
+      this.unidadeInicialNome.set(unidade.unidade_nome ?? '');
+      this.unidadeAtualLabel.set(`${unidade.unidade_sigla ?? ''} - ${unidade.unidade_nome ?? ''}`);
+
+      this.carregarDados({
+        tipo_consulta: 'situacao_atual',
+        unidade_id: unidade.unidade_id,
+      });
+    });
+  }
+
+  onFiltrosChange(filtros: FiltrosPainel): void {
+    this.carregarDados(filtros);
+  }
+
+  onUnidadeChange(unidade: { sigla: string; nome: string }): void {
+    this.unidadeAtualLabel.set(`${unidade.sigla} - ${unidade.nome}`);
+  }
+
+  exportarPdf(): void {
+    const container = document.querySelector('modalidades-page');
+    if (!container) return;
+
+    const indicadorEls = container.querySelectorAll('indicador-barra-vertical, indicador-barra-horizontal');
+    const cores = CHART_COLORS;
+
+    const indicadores = [
+      {
+        titulo: 'Participação na modalidade Teletrabalho no Exterior (VIII, art. 12, D.11072/22 - substituição)',
+        informacaoAdicional: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no inciso VIII (substituição), permitindo compará-lo ao limite legal aplicável.',
+        origemDados: 'Sistema PGD Petrvs',
+        canvasEl: indicadorEls[0]?.querySelector('canvas') as HTMLCanvasElement | null,
+        segmentos: [{ nome: 'Taxa de participação', cor: cores[3] }, { nome: 'Limite legal', cor: cores[2] }],
+        distribuicoes: [] as { sigla: string; total: number }[],
+      },
+      {
+        titulo: 'Participação na modalidade Teletrabalho no Exterior (§7º, art. 12, D.11072/22 - discricionário)',
+        informacaoAdicional: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no §7º, art. 12, D.11072/22 (discricionário), permitindo compará-lo ao limite legal aplicável.',
+        origemDados: 'Sistema PGD Petrvs',
+        canvasEl: indicadorEls[1]?.querySelector('canvas') as HTMLCanvasElement | null,
+        segmentos: [{ nome: 'Taxa de participação', cor: cores[3] }, { nome: 'Limite legal', cor: cores[2] }],
+        distribuicoes: [] as { sigla: string; total: number }[],
+      },
+      {
+        titulo: 'Modalidades de trabalho por unidade organizacional',
+        informacaoAdicional: 'Apresenta a distribuição percentual dos participantes do PGD por modalidade de trabalho, de acordo com a unidade organizacional.',
+        origemDados: 'Sistema PGD Petrvs',
+        canvasEl: indicadorEls[2]?.querySelector('canvas') as HTMLCanvasElement | null,
+        segmentos: (this.modalidadesPorUnidade()?.segmentos ?? []).map((nome, j) => ({ nome, cor: cores[j] ?? '#ccc' })),
+        distribuicoes: (this.modalidadesPorUnidade()?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
+      },
+    ];
+
+    this.pdfService.exportar(
+      {
+        painel: 'Modalidades',
+        tipoConsulta: this.filtrosAtuais()?.tipo_consulta === 'historico' ? 'Histórico' : 'Situação Atual',
+        unidade: this.unidadeAtualLabel(),
+        periodo: this.filtrosAtuais()?.data_inicio && this.filtrosAtuais()?.data_fim
+          ? `${this.filtrosAtuais()!.data_inicio} a ${this.filtrosAtuais()!.data_fim}`
+          : undefined,
+      },
+      indicadores,
+    );
+  }
+
+  private buildSaibaMaisParams(modalidade: string): Record<string, string> {
+    const filtros = this.filtrosAtuais();
+    const params: Record<string, string> = { modalidade };
+    if (filtros?.unidade_id) params['unidade_id'] = filtros.unidade_id;
+    return params;
+  }
+
+  private carregarDados(filtros: FiltrosPainel): void {
+    this.filtrosAtuais.set(filtros);
+
+    this.teletrabalhoSubstituicao.set(null);
+    this.teletrabalhoDiscricionario.set(null);
+    this.modalidadesPorUnidade.set(null);
+
+    this.carregandoSubstituicao.set(true);
+    this.carregandoDiscricionario.set(true);
+    this.carregandoModalidades.set(true);
+
+    this.api.getTeletrabalhoSubstituicao(filtros).subscribe({
+      next: dados => { this.teletrabalhoSubstituicao.set(dados); this.carregandoSubstituicao.set(false); },
+      error: () => this.carregandoSubstituicao.set(false),
+    });
+
+    this.api.getTeletrabalhoDiscricionario(filtros).subscribe({
+      next: dados => { this.teletrabalhoDiscricionario.set(dados); this.carregandoDiscricionario.set(false); },
+      error: () => this.carregandoDiscricionario.set(false),
+    });
+
+    this.api.getModalidadesPorUnidade(filtros).subscribe({
+      next: dados => { this.modalidadesPorUnidade.set(dados); this.carregandoModalidades.set(false); },
+      error: () => this.carregandoModalidades.set(false),
+    });
+  }
+}
