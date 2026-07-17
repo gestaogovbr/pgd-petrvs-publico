@@ -1,3 +1,9 @@
+## 3.0.8 17/07/2026
+
+### Corrigido
+- Corrigindo permissões de assinaturas de forma  que chefia substituta assine PT de delegado e impedindo que delegados avaliem registros de execução
+
+
 ## 3.0.7 10/07/2026
 
 ### Adicionado
