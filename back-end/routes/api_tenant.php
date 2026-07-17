@@ -623,6 +623,7 @@ use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
 use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoObjetivoV2;
 use App\V2\PainelGerencial\PainelGerencialController as PainelGerencialV2;
 use App\V2\PainelGerencial\AlinhamentoDesempenho\AlinhamentoDesempenhoController as AlinhamentoDesempenhoV2;
+use App\V2\PainelGerencial\Adesao\AdesaoController as AdesaoV2;
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
@@ -704,5 +705,11 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('painel-gerencial/alinhamento-desempenho/alinhamento-institucional', [AlinhamentoDesempenhoV2::class, 'alinhamentoInstitucional']);
     Route::get('painel-gerencial/alinhamento-desempenho/avaliacoes-plano-entrega', [AlinhamentoDesempenhoV2::class, 'avaliacoesPlanoEntrega']);
     Route::get('painel-gerencial/alinhamento-desempenho/avaliacoes-plano-trabalho', [AlinhamentoDesempenhoV2::class, 'avaliacoesPlanoTrabalho']);
+
+    Route::get('painel-gerencial/adesao/unidades-executoras', [AdesaoV2::class, 'unidadesExecutoras']);
+    Route::get('painel-gerencial/adesao/evolucao-unidades', [AdesaoV2::class, 'evolucaoUnidades']);
+    Route::get('painel-gerencial/adesao/participantes-pgd', [AdesaoV2::class, 'participantesPGD']);
+    Route::get('painel-gerencial/adesao/evolucao-participantes', [AdesaoV2::class, 'evolucaoParticipantes']);
+    Route::get('painel-gerencial/adesao/periodos-disponiveis', [AdesaoV2::class, 'periodosDisponiveis']);
 });
 
