@@ -22,5 +22,7 @@ interface DocumentoAssinaturaReadRepositoryContract
 
     public function gestorTitularDiferenteDoParticipanteAssinou(string $documentoId, string $unidadeId, string $participanteId): bool;
 
+    public function gestorSubstitutoDiferenteDoParticipanteAssinou(string $documentoId, string $unidadeId, string $participanteId): bool;
+
     public function existeAlgumaAssinatura(string $documentoId): bool;
 }

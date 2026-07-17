@@ -92,13 +92,31 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $result[0]->count > 0;
     }
 
+    public function isUsuarioGestorSubstitutoDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->usuarioPossuiAtribuicaoNaUnidade($unidadeId, $usuarioId, ['GESTOR_SUBSTITUTO']);
+    }
+
+    public function isUsuarioGestorDelegadoDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->usuarioPossuiAtribuicaoNaUnidade($unidadeId, $usuarioId, ['GESTOR_DELEGADO']);
+    }
+
+    public function isUsuarioChefiaDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->usuarioPossuiAtribuicaoNaUnidade($unidadeId, $usuarioId, ['GESTOR', 'GESTOR_SUBSTITUTO']);
+    }
+
     public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO
     {
         $sql = <<<SQL
             SELECT
                 MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as participante_gestor_titular,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR_SUBSTITUTO' THEN 1 ELSE 0 END) as participante_gestor_substituto,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR_DELEGADO' THEN 1 ELSE 0 END) as participante_gestor_delegado,
                 MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO') THEN 1 ELSE 0 END) as participante_gestor,
-                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as assinante_gestor_titular
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as assinante_gestor_titular,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR_SUBSTITUTO' THEN 1 ELSE 0 END) as assinante_gestor_substituto
             FROM unidades_integrantes ui
             INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
             WHERE ui.unidade_id = ?
@@ -108,14 +126,43 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         SQL;
 
         $row = $this->model->getConnection()->select($sql, [
-            $participanteId, $participanteId, $assinanteId, $unidadeId, $participanteId, $assinanteId,
+            $participanteId,
+            $participanteId,
+            $participanteId,
+            $participanteId,
+            $assinanteId,
+            $assinanteId,
+            $unidadeId,
+            $participanteId,
+            $assinanteId,
         ])[0];
 
         return new AssinaturaHierarquiaDTO(
             participanteGestor: (bool) $row->participante_gestor,
             participanteGestorTitular: (bool) $row->participante_gestor_titular,
+            participanteGestorSubstituto: (bool) $row->participante_gestor_substituto,
+            participanteGestorDelegado: (bool) $row->participante_gestor_delegado,
             assinanteGestorTitular: (bool) $row->assinante_gestor_titular,
+            assinanteGestorSubstituto: (bool) $row->assinante_gestor_substituto,
         );
+    }
+
+    private function usuarioPossuiAtribuicaoNaUnidade(string $unidadeId, string $usuarioId, array $atribuicoes): bool
+    {
+        $placeholders = implode(', ', array_fill(0, count($atribuicoes), '?'));
+
+        $result = $this->model->getConnection()->select("
+            SELECT COUNT(*) as count
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id = ?
+              AND uia.atribuicao IN ($placeholders)
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", array_merge([$unidadeId, $usuarioId], $atribuicoes));
+
+        return $result[0]->count > 0;
     }
 
     /**
