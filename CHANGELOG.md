@@ -1,6 +1,8 @@
 ## 3.0.8 17/07/2026
 
 ### Corrigido
+- Corrigida a carga individual do SIAPE para cadastrar servidores mesmo quando a unidade de exercício não é informada, sem interromper a sincronização
+- Corrigida a comparação de modalidade no Relatório de Agentes para tratar nomes normalizados e evitar divergências indevidas
 - Corrigindo permissões de assinaturas de forma  que chefia substituta assine PT de delegado e impedindo que delegados avaliem registros de execução
 - Corrigida validação de duração do Plano de Entrega que permitia criação com duração superior ao limite configurado no regramento para alguns perfis
 
