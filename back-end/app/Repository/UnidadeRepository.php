@@ -36,6 +36,21 @@ class UnidadeRepository
         return $this->readRepository->isUsuarioGestorTitularDaUnidade($unidadeId, $usuarioId);
     }
 
+    public function isUsuarioGestorSubstitutoDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->readRepository->isUsuarioGestorSubstitutoDaUnidade($unidadeId, $usuarioId);
+    }
+
+    public function isUsuarioGestorDelegadoDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->readRepository->isUsuarioGestorDelegadoDaUnidade($unidadeId, $usuarioId);
+    }
+
+    public function isUsuarioChefiaDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->readRepository->isUsuarioChefiaDaUnidade($unidadeId, $usuarioId);
+    }
+
     public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO
     {
         return $this->readRepository->getHierarquiaAssinatura($unidadeId, $participanteId, $assinanteId);

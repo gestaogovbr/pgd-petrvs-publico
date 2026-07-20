@@ -77,7 +77,8 @@ class PlanoTrabalhoDocumentoAssinarValidator
      *
      * Regra baseada no papel do participante NA UNIDADE DO PT:
      * - Participante é apenas lotado → gestor da mesma unidade ou da unidade pai pode assinar
-     * - Participante é GESTOR_SUBSTITUTO/DELEGADO → GESTOR titular da mesma unidade pode assinar
+     * - Participante é GESTOR_SUBSTITUTO → GESTOR titular da mesma unidade pode assinar
+     * - Participante é GESTOR_DELEGADO → GESTOR titular ou GESTOR_SUBSTITUTO da mesma unidade pode assinar
      * - Participante é GESTOR titular → gestor da unidade pai deve assinar
      */
     private function validarChefiaHierarquica(PlanoTrabalho $plano, string $usuarioId): void
@@ -113,11 +114,19 @@ class PlanoTrabalhoDocumentoAssinarValidator
             return true;
         }
 
-        if (!$hierarquia->participanteGestorTitular) {
+        if ($hierarquia->participanteGestorTitular) {
+            return false;
+        }
+
+        if ($hierarquia->participanteGestorDelegado) {
+            return $hierarquia->assinanteGestorTitular || $hierarquia->assinanteGestorSubstituto;
+        }
+
+        if ($hierarquia->participanteGestorSubstituto) {
             return $hierarquia->assinanteGestorTitular;
         }
 
-        return false;
+        return $hierarquia->assinanteGestorTitular;
     }
 
     /**
