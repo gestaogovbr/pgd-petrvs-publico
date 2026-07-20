@@ -73,14 +73,18 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
           this.loading.set(false);
           this.assinatura.init(plano, plano.entregas || []);
-          this.assinatura.onAfterAssinar = () => {
+          const atualizarPlanoNaTela = () => {
             this.api.getById(plano.id).subscribe(updated => {
               this.planoTrabalho.set(updated);
               this.assinatura.init(updated, updated.entregas || []);
             });
+          };
+          this.assinatura.onAfterAssinar = () => {
+            atualizarPlanoNaTela();
             this.facade.loadConsolidacoes();
             this.facade.loadDispensas();
           };
+          this.facade.init(plano.id, atualizarPlanoNaTela);
           this.route.fragment.pipe(take(1)).subscribe(f => {
             if (f) setTimeout(() => document.getElementById(f)?.scrollIntoView({ behavior: 'smooth' }), 300);
           });
@@ -90,8 +94,6 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.loading.set(false);
         }
       });
-
-      this.facade.init(id!);
     });
   }
 
