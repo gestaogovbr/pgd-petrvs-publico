@@ -2,18 +2,13 @@
 
 namespace App\Models;
 
-use App\Enums\StatusEnum;
 use App\Contracts\HasStatusHistory;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
 use App\Models\Comparecimento;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\StatusJustificativa;
-use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
-use App\V2\StatusService;
-use App\V2\StatusTemplates;
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
+use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusPolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,54 +39,11 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
   protected static function booted()
   {
     static::updated(function (PlanoTrabalhoConsolidacao $consolidacao) {
-      if (!$consolidacao->isDirty('status')) {
+      if (!$consolidacao->wasChanged('status')) {
         return;
       }
 
-      /** @var StatusService $statusService */
-      $statusService = app(StatusService::class);
-      /** @var DispensaAvaliacaoPolicy $dispensaPolicy */
-      $dispensaPolicy = app(DispensaAvaliacaoPolicy::class);
-
-      $planoTrabalho = $consolidacao->planoTrabalho()->first();
-
-      $vigencia = CarbonPeriod::create(
-        Carbon::parse($planoTrabalho->getAttribute('data_inicio'))->startOfDay(),
-        Carbon::parse($planoTrabalho->getAttribute('data_fim'))->startOfDay(),
-      );
-
-      $consolidacoes = app(\App\Repository\PlanoTrabalhoConsolidacaoRepository::class)
-        ->findConsolidacoesVigentes($planoTrabalho->id, $planoTrabalho->encerrado_at);
-
-      $dispensadasIds = $dispensaPolicy->consolidacoesDispensadas(
-        $planoTrabalho->getAttribute('usuario_id'),
-        $vigencia,
-        $consolidacoes,
-      );
-
-      $todasAvaliadas = $consolidacoes->filter(fn(PlanoTrabalhoConsolidacao $c) => $c->status != StatusEnum::AVALIADO->value && !in_array($c->id, $dispensadasIds))->isEmpty();
-
-      if ($todasAvaliadas && $planoTrabalho->status === StatusEnum::ATIVO->value) {
-        $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
-        StatusTemplates::concluirPTPorAvaliacoes($planoTrabalho);
-        return;
-      }
-
-      if ($todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value && !$planoTrabalho->avaliado_at) {
-        $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
-        return;
-      }
-
-      $foiRecurso = $consolidacao->possuiRecursoSemReavaliacao();
-
-      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
-        $planoTrabalho->update(['avaliado_at' => null]);
-
-        // Só reverte para ATIVO se não foi encerrado e não é recurso
-        if (!$planoTrabalho->encerrado_at && !$foiRecurso) {
-          StatusTemplates::reabrirPTPorAvaliacoes($planoTrabalho);
-        }
-      }
+      app(PlanoTrabalhoAvaliacaoStatusPolicy::class)->sincronizarAposMudancaConsolidacao($consolidacao);
     });
   }
 

@@ -14,6 +14,8 @@ describe('modalidadeDivergenteDoSiape', () => {
 
   it('retorna false quando os valores normalizados são equivalentes', () => {
     expect(modalidadeDivergenteDoSiape(service, 'integral', 'Teletrabalho (Integral)')).toBeFalse();
+    expect(modalidadeDivergenteDoSiape(service, 'parcial', 'Teletrabalho Parcial')).toBeFalse();
+    expect(modalidadeDivergenteDoSiape(service, 'parcial', 'Teletrabalho (Parcial)')).toBeFalse();
   });
 
   it('retorna true quando os valores normalizados divergem', () => {
