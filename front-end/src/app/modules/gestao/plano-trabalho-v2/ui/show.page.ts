@@ -53,7 +53,6 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly error = signal<string | null>(null);
   readonly encerrando = signal(false);
   readonly justificativaEncerramento = signal('');
-  readonly isGestorHierarquia = signal(false);
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
@@ -74,19 +73,18 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
           this.loading.set(false);
           this.assinatura.init(plano, plano.entregas || []);
-          if (this.auth.usuario?.id !== plano.usuario_id
-            && !this.unidadeService.isGestorUnidade(plano.unidade_id)
-            && !this.unidadeService.isGestorUnidade(plano.unidade?.unidade_pai_id ?? null)) {
-            this.unidadeService.isGestorHierarquia(plano.unidade_id).subscribe(v => this.isGestorHierarquia.set(v));
-          }
-          this.assinatura.onAfterAssinar = () => {
+          const atualizarPlanoNaTela = () => {
             this.api.getById(plano.id).subscribe(updated => {
               this.planoTrabalho.set(updated);
               this.assinatura.init(updated, updated.entregas || []);
             });
+          };
+          this.assinatura.onAfterAssinar = () => {
+            atualizarPlanoNaTela();
             this.facade.loadConsolidacoes();
             this.facade.loadDispensas();
           };
+          this.facade.init(plano.id, atualizarPlanoNaTela);
           this.route.fragment.pipe(take(1)).subscribe(f => {
             if (f) setTimeout(() => document.getElementById(f)?.scrollIntoView({ behavior: 'smooth' }), 300);
           });
@@ -96,8 +94,6 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.loading.set(false);
         }
       });
-
-      this.facade.init(id!);
     });
   }
 
