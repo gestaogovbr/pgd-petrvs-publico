@@ -52,9 +52,19 @@ class TCRAssinaturaPolicy
             return true;
         }
 
-        // Participante é GESTOR_SUBSTITUTO/DELEGADO — GESTOR titular da mesma unidade satisfaz
-        if ($isParticipanteGestorDaUnidade && !$isParticipanteGestorTitular) {
+        // Participante é GESTOR_SUBSTITUTO — GESTOR titular da mesma unidade satisfaz
+        if ($isParticipanteGestorDaUnidade && !$isParticipanteGestorTitular
+            && $this->unidadeRepository->isUsuarioGestorSubstitutoDaUnidade($unidadePt->id, $plano->usuario_id)) {
             if ($this->assinaturaRepository->gestorTitularDiferenteDoParticipanteAssinou($documentoId, $unidadePt->id, $plano->usuario_id)) {
+                return true;
+            }
+        }
+
+        // Participante é GESTOR_DELEGADO — GESTOR titular ou substituto da mesma unidade satisfaz
+        if ($isParticipanteGestorDaUnidade && !$isParticipanteGestorTitular
+            && $this->unidadeRepository->isUsuarioGestorDelegadoDaUnidade($unidadePt->id, $plano->usuario_id)) {
+            if ($this->assinaturaRepository->gestorTitularDiferenteDoParticipanteAssinou($documentoId, $unidadePt->id, $plano->usuario_id)
+                || $this->assinaturaRepository->gestorSubstitutoDiferenteDoParticipanteAssinou($documentoId, $unidadePt->id, $plano->usuario_id)) {
                 return true;
             }
         }

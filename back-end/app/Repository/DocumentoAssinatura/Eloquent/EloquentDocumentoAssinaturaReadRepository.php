@@ -27,6 +27,14 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->exists();
     }
 
+    public function existsByDocumentoAndCpf(string $documentoId, string $cpf): bool
+    {
+        return $this->query()
+            ->where('documento_id', $documentoId)
+            ->whereHas('usuario', fn ($q) => $q->where('cpf', $cpf))
+            ->exists();
+    }
+
     public function findByDocumentoAndUsuario(string $documentoId, string $usuarioId): ?DocumentoAssinatura
     {
         /** @var DocumentoAssinatura|null */
@@ -72,6 +80,18 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->whereHas('usuario.unidadesIntegrantes', function ($q) use ($unidadeId) {
                 $q->where('unidade_id', $unidadeId)
                   ->whereHas('atribuicoes', fn ($q2) => $q2->where('atribuicao', 'GESTOR'));
+            })
+            ->exists();
+    }
+
+    public function gestorSubstitutoDiferenteDoParticipanteAssinou(string $documentoId, string $unidadeId, string $participanteId): bool
+    {
+        return $this->query()
+            ->where('documento_id', $documentoId)
+            ->where('usuario_id', '!=', $participanteId)
+            ->whereHas('usuario.unidadesIntegrantes', function ($q) use ($unidadeId) {
+                $q->where('unidade_id', $unidadeId)
+                  ->whereHas('atribuicoes', fn ($q2) => $q2->where('atribuicao', 'GESTOR_SUBSTITUTO'));
             })
             ->exists();
     }

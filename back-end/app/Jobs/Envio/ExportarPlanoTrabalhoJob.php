@@ -81,7 +81,7 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
     protected function logItemLabel(): string
     {
         if ($this->ptNumero !== null) {
-            return 'PT #'.$this->ptNumero.' ('.$this->id.')';
+            return 'PT #'.$this->ptNumero;
         }
 
         if (tenancy()->initialized) {
@@ -91,7 +91,19 @@ class ExportarPlanoTrabalhoJob extends ExportarItemJob
             }
         }
 
-        return 'PT ('.$this->id.')';
+        return 'PT';
+    }
+
+    public function tags()
+    {
+        $tags = [$this->tenantId];
+
+        if ($this->ptNumero !== null) {
+            $tags[] = (string) $this->ptNumero;
+        } else {
+            $tags[] = $this->id;
+        }
+
+        return $tags;
     }
 }
-

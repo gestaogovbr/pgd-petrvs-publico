@@ -1,3 +1,25 @@
+## 3.0.8 17/07/2026
+
+### Corrigido
+- Corrigida a carga individual do SIAPE para cadastrar servidores mesmo quando a unidade de exercício não é informada, sem interromper a sincronização
+- Corrigida a comparação de modalidade no Relatório de Agentes para tratar nomes normalizados e evitar divergências indevidas
+- Corrigindo permissões de assinaturas de forma  que chefia substituta assine PT de delegado e impedindo que delegados avaliem registros de execução
+- Corrigida validação de duração do Plano de Entrega que permitia criação com duração superior ao limite configurado no regramento para alguns perfis
+- Planos de trabalho permaneciam “Em execução” após avaliação.
+
+## 3.0.7 10/07/2026
+
+### Adicionado
+- Tag "Aguardando Avaliação" na listagem de Planos de Trabalho v2, indicando planos com períodos concluídos pendentes de avaliação
+- Ícone "Plano do Dia" na coluna Período da listagem de PT v2, destacando planos vigentes na data atual
+- Envio de Planos de Trabalho e Planos de Entrega cancelados
+
+### Corrigido
+- Validação do pertencimento do PT ao usuário via CPF, não mais via uuid
+- Corrigida detecção de inconsistências em Planos de Trabalho: a verificação de registros de execução preenchidos agora consulta a tabela de atividades em vez de snapshots
+- Corrigido filtro "Código Unidade" na lista de unidades indisponíveis que não funcionava corretamente
+- Exigência de justificativa no PT quando modalidade do usuário do servidor for inconsistente
+
 ## 3.0.6 03/07/2026
 
 ### Adicionado

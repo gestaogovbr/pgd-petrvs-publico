@@ -20,6 +20,7 @@ export class ConsolidacaoFacade {
   private readonly message = inject(MessageService);
 
   private planoId = '';
+  private onAfterMudancaStatusPlano?: () => void;
 
   // --- Estado principal ---
   readonly consolidacoes = signal<Consolidacao[]>([]);
@@ -62,8 +63,9 @@ export class ConsolidacaoFacade {
 
   // --- Inicialização ---
 
-  init(planoId: string): void {
+  init(planoId: string, onAfterMudancaStatusPlano?: () => void): void {
     this.planoId = planoId;
+    this.onAfterMudancaStatusPlano = onAfterMudancaStatusPlano;
     this.loadConsolidacoes();
     this.loadNotas();
     this.loadTiposMotivo();
@@ -428,6 +430,7 @@ export class ConsolidacaoFacade {
             this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
             this.notasSelecionadas.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
             this.justificativasAvaliacao.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
+            this.onAfterMudancaStatusPlano?.();
             this.message.success(isReavaliacao ? 'Reavaliação realizada com sucesso.' : 'Avaliação realizada com sucesso.');
           },
           error: () => {
@@ -447,6 +450,7 @@ export class ConsolidacaoFacade {
         this.api.cancelarAvaliacao(this.planoId, consolidacao.id, avaliacaoId).subscribe({
           next: () => {
             this.loadConsolidacoes();
+            this.onAfterMudancaStatusPlano?.();
             this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
             this.message.success('Avaliação cancelada com sucesso.');
           },
