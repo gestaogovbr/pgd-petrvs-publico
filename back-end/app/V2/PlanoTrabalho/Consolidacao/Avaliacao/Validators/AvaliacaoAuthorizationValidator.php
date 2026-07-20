@@ -30,7 +30,7 @@ class AvaliacaoAuthorizationValidator
 
         $this->validarNaoProprietario($plano);
 
-        if (!$this->unidadeRepository->isUsuarioGestorRecursivo($plano->unidade_id, $usuarioLogadoId)) {
+        if (!$this->podeAvaliar($plano, $usuarioLogadoId)) {
             throw new ForbiddenException('Apenas a chefia da unidade pode avaliar períodos avaliativos.');
         }
 
@@ -48,5 +48,39 @@ class AvaliacaoAuthorizationValidator
         if ($participante->cpf === Auth::user()->cpf) {
             throw new ForbiddenException('Não é permitido avaliar o próprio Plano de Trabalho.');
         }
+    }
+
+    /**
+     * Regras de avaliação conforme PTR:TABELA_1.
+     * Delegados não podem avaliar registros de execução.
+     */
+    private function podeAvaliar(PlanoTrabalho $plano, string $usuarioLogadoId): bool
+    {
+        $unidadeId = $plano->unidade_id;
+        $participanteId = $plano->usuario_id;
+        $chefiaSuperior = $this->isChefiaUnidadeSuperior($unidadeId, $usuarioLogadoId);
+
+        if ($this->unidadeRepository->isUsuarioGestorTitularDaUnidade($unidadeId, $participanteId)) {
+            return $chefiaSuperior;
+        }
+
+        if ($this->unidadeRepository->isUsuarioGestorSubstitutoDaUnidade($unidadeId, $participanteId)) {
+            return $chefiaSuperior
+                || $this->unidadeRepository->isUsuarioGestorTitularDaUnidade($unidadeId, $usuarioLogadoId);
+        }
+
+        return $chefiaSuperior
+            || $this->unidadeRepository->isUsuarioChefiaDaUnidade($unidadeId, $usuarioLogadoId);
+    }
+
+    private function isChefiaUnidadeSuperior(string $unidadeId, string $usuarioLogadoId): bool
+    {
+        $unidade = $this->unidadeRepository->findById($unidadeId);
+
+        if ($unidade === null || $unidade->unidade_pai_id === null) {
+            return false;
+        }
+
+        return $this->unidadeRepository->isUsuarioChefiaDaUnidade($unidade->unidade_pai_id, $usuarioLogadoId);
     }
 }
