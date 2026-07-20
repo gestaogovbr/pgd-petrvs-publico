@@ -9,8 +9,10 @@ import { PlanosVigentesComponent } from './components/planos-vigentes.component'
 import { AcoesGerenciaisComponent } from './components/acoes-gerenciais.component';
 import { ResumoEquipeComponent } from './components/resumo-equipe.component';
 import { ContribuicoesComponent } from './components/contribuicoes.component';
-import { AniversariantesComponent } from './components/aniversariantes.component';
 import { EmFeriasComponent } from './components/em-ferias.component';
+
+// TODO: Reativar AniversariantesComponent quando o campo data_nascimento for adicionado ao retorno da api SIAPE.
+//       Se não for implementado até Jan/2027, considerar remover o componente e o endpoint.
 
 export interface SelectOption {
   value: string;
@@ -32,7 +34,6 @@ export interface SelectOption {
     AcoesGerenciaisComponent,
     ResumoEquipeComponent,
     ContribuicoesComponent,
-    AniversariantesComponent,
     EmFeriasComponent,
   ],
   templateUrl: './home.page.html',
