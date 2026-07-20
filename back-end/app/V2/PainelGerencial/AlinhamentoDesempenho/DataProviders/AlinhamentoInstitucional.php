@@ -21,8 +21,15 @@ class AlinhamentoInstitucional
     private const SEGMENTOS = [
         'Vinculadas a Objetivos Estratégicos ao PEI',
         'Vinculadas a Processo da CV',
+        'Vinculadas a ambos',
         'Não vinculadas',
     ];
+
+    private const INDICE_SOMENTE_PEI = 0;
+    private const INDICE_SOMENTE_CV = 1;
+    private const INDICE_AMBOS = 2;
+    private const INDICE_NAO_VINCULADAS = 3;
+    private const QUANTIDADE_SEGMENTOS = 4;
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -59,7 +66,7 @@ class AlinhamentoInstitucional
      *
      * @param Collection<int, Unidade> $filhasParaConsolidar
      */
-    private function calcularDistribuicao(Unidade $unidade, Collection $filhasParaConsolidar, FiltrosPainelDTO $filtros): DistribuicaoUnidadeDTO
+    protected function calcularDistribuicao(Unidade $unidade, Collection $filhasParaConsolidar, FiltrosPainelDTO $filtros): DistribuicaoUnidadeDTO
     {
         $unidadeIds = [$unidade->id, ...$filhasParaConsolidar->pluck('id')->toArray()];
 
@@ -71,44 +78,92 @@ class AlinhamentoInstitucional
             return new DistribuicaoUnidadeDTO(
                 unidadeId: $unidade->id,
                 unidadeSigla: $unidade->sigla,
-                valores: [0, 0, 0],
+                valores: array_fill(0, self::QUANTIDADE_SEGMENTOS, 0),
                 total: 0,
             );
         }
 
-        $vinculadasPEI = (clone $baseQuery)
-            ->whereHas('objetivos', function (Builder $q) {
-                $q->whereHas('objetivo', function (Builder $obj) {
-                    // Nível 1 = objetivo raiz (sem pai dentro do mesmo planejamento)
-                    $obj->whereNull('objetivo_pai_id');
-                })->orWhereHas('objetivo', function (Builder $obj) {
-                    // Ou que tenha no encadeamento um ancestral de nível 1
-                    $obj->whereHas('objetivoPai', fn (Builder $pai) => $pai->whereNull('objetivo_pai_id'));
-                });
-            })
-            ->count();
+        $vinculadasAmbos = $this->contarVinculadasAmbos(clone $baseQuery);
+        $vinculadasSomentePEI = $this->contarVinculadasSomentePEI(clone $baseQuery);
+        $vinculadasSomenteCV = $this->contarVinculadasSomenteCV(clone $baseQuery);
+        $naoVinculadas = $this->contarNaoVinculadas(clone $baseQuery);
 
-        $vinculadasCV = (clone $baseQuery)
-            ->whereHas('processos', function (Builder $q) {
-                $q->whereHas('processo', function (Builder $proc) {
-                    // Nível 3+ = path tem pelo menos 2 separadores (2 ancestrais)
-                    $proc->whereRaw("LENGTH(path) - LENGTH(REPLACE(path, '/', '')) >= 2");
-                });
-            })
-            ->count();
-
-        // Entregas sem nenhum vínculo (nem a objetivos do PEI, nem a processos da CV)
-        $naoVinculadas = (clone $baseQuery)
-            ->whereDoesntHave('objetivos')
-            ->whereDoesntHave('processos')
-            ->count();
+        $valores = array_fill(0, self::QUANTIDADE_SEGMENTOS, 0);
+        $valores[self::INDICE_SOMENTE_PEI] = $vinculadasSomentePEI;
+        $valores[self::INDICE_SOMENTE_CV] = $vinculadasSomenteCV;
+        $valores[self::INDICE_AMBOS] = $vinculadasAmbos;
+        $valores[self::INDICE_NAO_VINCULADAS] = $naoVinculadas;
 
         return new DistribuicaoUnidadeDTO(
             unidadeId: $unidade->id,
             unidadeSigla: $unidade->sigla,
-            valores: [$vinculadasPEI, $vinculadasCV, $naoVinculadas],
+            valores: $valores,
             total: $total,
         );
+    }
+
+    private function contarVinculadasAmbos(Builder $query): int
+    {
+        return $query
+            ->where(fn (Builder $q) => $q
+                ->whereHas('objetivos', $this->scopeObjetivoNivel1())
+                ->whereHas('processos', $this->scopeProcessoNivel3()))
+            ->count();
+    }
+
+    private function contarVinculadasSomentePEI(Builder $query): int
+    {
+        return $query
+            ->whereHas('objetivos', $this->scopeObjetivoNivel1())
+            ->whereDoesntHave('processos', $this->scopeProcessoNivel3())
+            ->count();
+    }
+
+    private function contarVinculadasSomenteCV(Builder $query): int
+    {
+        return $query
+            ->whereDoesntHave('objetivos', $this->scopeObjetivoNivel1())
+            ->whereHas('processos', $this->scopeProcessoNivel3())
+            ->count();
+    }
+
+    private function contarNaoVinculadas(Builder $query): int
+    {
+        return $query
+            ->whereDoesntHave('objetivos', $this->scopeObjetivoNivel1())
+            ->whereDoesntHave('processos', $this->scopeProcessoNivel3())
+            ->count();
+    }
+
+    /**
+     * Scope para objetivos que alcançam nível 1 do planejamento (objetivo raiz).
+     *
+     * @return \Closure(Builder): void
+     */
+    private function scopeObjetivoNivel1(): \Closure
+    {
+        return function (Builder $q): void {
+            $q->whereHas('objetivo', function (Builder $obj) {
+                $obj->where(function (Builder $inner) {
+                    $inner->whereNull('objetivo_pai_id')
+                        ->orWhereHas('objetivoPai', fn (Builder $pai) => $pai->whereNull('objetivo_pai_id'));
+                });
+            });
+        };
+    }
+
+    /**
+     * Scope para processos que alcançam nível 3 da cadeia de valor.
+     *
+     * @return \Closure(Builder): void
+     */
+    private function scopeProcessoNivel3(): \Closure
+    {
+        return function (Builder $q): void {
+            $q->whereHas('processo', function (Builder $proc) {
+                $proc->whereRaw("LENGTH(path) - LENGTH(REPLACE(path, '/', '')) >= 2");
+            });
+        };
     }
 
     /**
