@@ -91,7 +91,7 @@ export class AlinhamentoDesempenhoPage implements OnInit {
     const cores = CHART_COLORS;
 
     const indicadoresData = [
-      { dados: this.alinhamentoInstitucional(), titulo: 'Alinhamento institucional das Unidades por nível estratégico', info: 'Apresenta a distribuição percentual das entregas de acordo com seu nível de alinhamento institucional, considerando entregas vinculadas ao Planejamento Institucional, à Cadeia de Valor e entregas sem vinculação.' },
+      { dados: this.alinhamentoInstitucional(), titulo: 'Alinhamento institucional das Unidades por nível estratégico', info: 'Apresenta a distribuição percentual das entregas de acordo com seu nível de alinhamento institucional, considerando entregas vinculadas ao Planejamento Institucional, à Cadeia de Valor, a ambos e entregas sem vinculação.' },
       { dados: this.avaliacoesPlanoEntrega(), titulo: 'Notas das avaliações dos Planos de Entregas por Unidade organizacional', info: 'Apresenta a distribuição percentual das notas atribuídas aos Planos de Entregas por unidade organizacional.' },
       { dados: this.avaliacoesPlanoTrabalho(), titulo: 'Notas das avaliações dos Planos de Trabalho de acordo com as Unidades', info: 'Apresenta a distribuição percentual das notas atribuídas aos períodos avaliativos dos Planos de Trabalho por unidade organizacional.' },
     ];
