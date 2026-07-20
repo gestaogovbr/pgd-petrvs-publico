@@ -11,13 +11,11 @@ use App\V2\Home\DataProviders\PendenciasUsuario;
 use App\V2\Home\DataProviders\PlanosVigentes;
 use App\V2\Home\DataProviders\ResumoEquipe;
 use App\V2\Home\DTOs\HomeRequestDTO;
-use App\V2\Home\Validators\HomeAuthorizationValidator;
 use Illuminate\Support\Facades\Auth;
 
 class HomeService
 {
     public function __construct(
-        private readonly HomeAuthorizationValidator $authValidator,
         private readonly PendenciasUsuario $pendenciasUsuario,
         private readonly PlanosVigentes $planosVigentes,
         private readonly ResumoEquipe $resumoEquipe,
@@ -70,9 +68,6 @@ class HomeService
 
     private function buildDTO(array $data): HomeRequestDTO
     {
-        $dto = HomeRequestDTO::fromArray($data, Auth::id());
-        $this->authValidator->validar($dto->unidadeId, $dto->usuarioId);
-
-        return $dto;
+        return HomeRequestDTO::fromArray($data, Auth::id());
     }
 }
