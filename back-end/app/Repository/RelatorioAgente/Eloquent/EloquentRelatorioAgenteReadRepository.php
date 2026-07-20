@@ -15,6 +15,8 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
     {
         $modalidadeUsuario = ModalidadePgd::sqlLabelExpression('`u`.`modalidade_pgd`');
         $modalidadePlano = ModalidadePgd::sqlLabelExpression('`pt_ultimo_pactuado`.`modalidade_pgd`');
+        $modalidadeUsuarioNormalizada = ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`');
+        $modalidadePlanoNormalizada = ModalidadePgd::sqlNormalizeExpression('`pt_ultimo_pactuado`.`modalidade_pgd`');
 
         $sql = <<<TEXT
         with lotacoes as (
@@ -46,7 +48,7 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
             end AS `modalidadeSouGov`,
             case
                 when  `u`.`situacao_siape` = 'INATIVO' OR `pt_ultimo_pactuado`.`modalidade_pgd` IS NULL OR `u`.`participa_pgd` = 'não' then '-'
-                when COALESCE(`u`.`modalidade_pgd`, '') = COALESCE(`pt_ultimo_pactuado`.`modalidade_pgd`, '') then 'IGUAL'
+                when COALESCE({$modalidadeUsuarioNormalizada}, '') = COALESCE({$modalidadePlanoNormalizada}, '') then 'IGUAL'
                 else 'DIFERENTE'
             end as comparacaoSouGovPetrvs,
             `u`.`perfil_id` AS `perfil_id`,
@@ -234,14 +236,14 @@ TEXT;
 
         $modalidade = $this->extractWhere($data, 'modalidadeSouGov');
         if (isset($modalidade[2])) {
-            $sql .= ' and `u`.`modalidade_pgd` = ?';
-            $params[] = $modalidade[2];
+            $sql .= ' and ' . ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`') . ' = ?';
+            $params[] = ModalidadePgd::normalize($modalidade[2]);
         }
 
         $modalidadePgd = $this->extractWhere($data, 'modalidade_pgd');
         if (isset($modalidadePgd[2])) {
-            $sql .= ' and `u`.`modalidade_pgd` = ?';
-            $params[] = $modalidadePgd[2];
+            $sql .= ' and ' . ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`') . ' = ?';
+            $params[] = ModalidadePgd::normalize($modalidadePgd[2]);
         }
 
         $situacaoSiape = $this->extractWhere($data, 'situacao');
@@ -257,14 +259,16 @@ TEXT;
             if ($operacaoComparacao == '-') {
                 $sql .= " and ( `u`.`situacao_siape` = 'INATIVO' OR `pt_ultimo_pactuado`.`modalidade_pgd` IS NULL OR `u`.`participa_pgd` = 'não' ) ";
             } elseif ($operacaoComparacao != '') {
-                $sql .= " and ( `u`.`participa_pgd` = 'sim' and COALESCE(`u`.`modalidade_pgd`, '') $operacaoComparacao COALESCE(`pt_ultimo_pactuado`.`modalidade_pgd`, '') and COALESCE(`pt_ultimo_pactuado`.`modalidade_pgd`, '') != '') ";
+                $modalidadeUsuarioNormalizada = ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`');
+                $modalidadePlanoNormalizada = ModalidadePgd::sqlNormalizeExpression('`pt_ultimo_pactuado`.`modalidade_pgd`');
+                $sql .= " and ( `u`.`participa_pgd` = 'sim' and COALESCE({$modalidadeUsuarioNormalizada}, '') $operacaoComparacao COALESCE({$modalidadePlanoNormalizada}, '') and COALESCE({$modalidadePlanoNormalizada}, '') != '') ";
             }
         }
 
         $tipo_modalidade_id = $this->extractWhere($data, 'tipo_modalidade_id');
         if (isset($tipo_modalidade_id[2])) {
-            $sql .= ' and `u`.`modalidade_pgd` = ?';
-            $params[] = $tipo_modalidade_id[2];
+            $sql .= ' and ' . ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`') . ' = ?';
+            $params[] = ModalidadePgd::normalize($tipo_modalidade_id[2]);
         }
 
         $tipo_pedagio = $this->extractWhere($data, 'tipo_pedagio');
