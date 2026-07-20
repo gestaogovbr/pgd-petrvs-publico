@@ -1,6 +1,7 @@
 <?php
 
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ConcluirConsolidacaoValidator;
+use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeEsforcoExecutadoValidator;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\AtividadeRepository;
 use App\Models\PlanoTrabalho;
@@ -17,10 +18,12 @@ uses(TestCase::class);
 beforeEach(function () {
     $this->consolidacaoRepo = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
     $this->atividadeRepo = Mockery::mock(AtividadeRepository::class);
+    $this->esforcoValidator = Mockery::mock(AtividadeEsforcoExecutadoValidator::class);
 
     $this->validator = new ConcluirConsolidacaoValidator(
         $this->consolidacaoRepo,
         $this->atividadeRepo,
+        $this->esforcoValidator,
     );
 });
 
@@ -28,7 +31,7 @@ afterEach(fn () => Mockery::close());
 
 describe('ConcluirConsolidacaoValidator', function () {
 
-    test('valida com sucesso quando todas entregas têm atividade', function () {
+    test('valida com sucesso quando todas entregas têm atividade e somatório confere', function () {
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $plano->id = 'plano-1';
@@ -50,6 +53,10 @@ describe('ConcluirConsolidacaoValidator', function () {
 
         $this->atividadeRepo->shouldReceive('entregaIdsComAtividade')
             ->with('consolidacao-1')->andReturn(new SupportCollection(['entrega-1']));
+
+        $this->esforcoValidator->shouldReceive('validarSomatorioPlano')
+            ->once()
+            ->with('plano-1');
 
         $result = $this->validator->validar($plano, 'consolidacao-1');
 
@@ -149,4 +156,32 @@ describe('ConcluirConsolidacaoValidator', function () {
 
         $this->validator->validar($plano, 'c-1');
     })->throws(ValidateException::class, 'O Plano de Trabalho não possui entregas cadastradas.');
+
+    test('lança exceção quando somatório de esforço executado diverge do planejado', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->status = 'ATIVO';
+
+        /** @var PlanoTrabalhoEntrega $entrega */
+        $entrega = Mockery::mock(PlanoTrabalhoEntrega::class)->makePartial();
+        $entrega->id = 'entrega-1';
+        $plano->setRelation('entregas', new Collection([$entrega]));
+
+        /** @var PlanoTrabalhoConsolidacao $consolidacao */
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->plano_trabalho_id = 'plano-1';
+        $consolidacao->status = 'INCLUIDO';
+
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn($consolidacao);
+        $this->atividadeRepo->shouldReceive('entregaIdsComAtividade')
+            ->andReturn(new SupportCollection(['entrega-1']));
+        $this->esforcoValidator->shouldReceive('validarSomatorioPlano')
+            ->with('plano-1')
+            ->andThrow(new ValidateException(
+                'O somatório do esforço executado deve ser igual ao somatório do esforço planejado no Plano de Trabalho.'
+            ));
+
+        $this->validator->validar($plano, 'c-1');
+    })->throws(ValidateException::class, 'O somatório do esforço executado deve ser igual ao somatório do esforço planejado no Plano de Trabalho.');
 });
