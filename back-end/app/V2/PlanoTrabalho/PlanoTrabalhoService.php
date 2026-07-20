@@ -315,7 +315,7 @@ class PlanoTrabalhoService
         $usuario = $this->usuarioRepository->findById($usuarioId);
 
         if ($usuario === null || $usuario->cod_jornada === null || $usuario->cod_jornada === 99) {
-            return 8.0;
+            return PlanoTrabalhoStoreDTO::HORAS_DIARIAS_JORNADA_INTEGRAL_PADRAO;
         }
 
         return round($usuario->cod_jornada / 5, 2);
