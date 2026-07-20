@@ -24,6 +24,16 @@ class EvolucaoAdesaoUnidades
         return $this->unidadeRepository;
     }
 
+    /** @return string[] */
+    public function getPeriodosDisponiveis(): array
+    {
+        return DB::table('serie_unidades_executoras')
+            ->distinct()
+            ->orderBy('periodo')
+            ->pluck('periodo')
+            ->toArray();
+    }
+
     public function getData(FiltrosPainelDTO $filtros): array
     {
         $hierarquia = $this->resolverHierarquia($filtros->unidadeId);

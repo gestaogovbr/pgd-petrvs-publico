@@ -103,11 +103,7 @@ class AdesaoController extends Controller
     public function periodosDisponiveis(): JsonResponse
     {
         try {
-            $periodos = \Illuminate\Support\Facades\DB::table('serie_unidades_executoras')
-                ->distinct()
-                ->orderBy('periodo')
-                ->pluck('periodo')
-                ->toArray();
+            $periodos = $this->evolucaoUnidades->getPeriodosDisponiveis();
 
             return response()->json(['success' => true, 'data' => $periodos]);
         } catch (Throwable $e) {

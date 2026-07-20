@@ -19,11 +19,19 @@ class ConsolidarSerieAdesao implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
+        private readonly ?string $tenantId = null,
         private readonly ?string $periodo = null,
-    ) {}
+    ) {
+        $this->queue = 'default';
+    }
 
     public function handle(): void
     {
+        if ($this->tenantId) {
+            $tenant = tenancy()->find($this->tenantId);
+            tenancy()->initialize($tenant);
+        }
+
         $periodo = $this->periodo ?? now()->format('Y-m');
 
         $this->consolidarUnidadesExecutoras($periodo);
