@@ -4,6 +4,7 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PainelApiClient, Indicador, SerieAdesao } from '../../infra/painel-api.client';
 import { PainelPdfService } from '../../infra/painel-pdf.service';
+import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { CHART_COLORS } from 'src/app/services/chart';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
 import { IndicadorCardComponent } from '../components/indicador-card.component';
@@ -28,6 +29,27 @@ import { GestaoPgdFiltrosComponent, FiltrosGestaoPgd } from '../components/gesta
 export class GestaoPgdPage implements OnInit {
   private readonly api = inject(PainelApiClient);
   private readonly pdfService = inject(PainelPdfService);
+
+  readonly origemDados = ORIGEM_DADOS;
+
+  readonly textos = {
+    unidadesExecutoras: {
+      titulo: 'Unidades Executoras por unidade organizacional',
+      info: 'Apresenta a distribuição percentual das unidades organizacionais de acordo com sua classificação como Unidade Executora ou Unidade não Executora. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
+    },
+    evolucaoUnidades: {
+      titulo: 'Evolução da adesão das Unidades ao PGD',
+      info: 'Apresenta a evolução da adesão das unidades organizacionais ao PGD ao longo do período consultado.',
+    },
+    participantesPGD: {
+      titulo: 'Participantes do PGD por unidade organizacional',
+      info: 'Apresenta a distribuição percentual dos agentes públicos ativos de acordo com sua participação no PGD. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
+    },
+    evolucaoParticipantes: {
+      titulo: 'Evolução da adesão dos agentes públicos ao PGD',
+      info: 'Apresenta a evolução da adesão dos agentes públicos ao PGD ao longo do período consultado.',
+    },
+  };
 
   readonly unidadeInicialId = signal('');
   readonly unidadeInicialSigla = signal('');
@@ -85,33 +107,33 @@ export class GestaoPgdPage implements OnInit {
 
     const indicadores = [
       {
-        titulo: 'Unidades Executoras por unidade organizacional',
-        informacaoAdicional: 'Apresenta a distribuição percentual das unidades organizacionais de acordo com sua classificação como Unidade Executora ou Unidade não Executora. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
-        origemDados: 'Sistema PGD Petrvs',
+        titulo: this.textos.unidadesExecutoras.titulo,
+        informacaoAdicional: this.textos.unidadesExecutoras.info,
+        origemDados: ORIGEM_DADOS,
         canvasEl: this.unidadesExecutoras() && !this.semDadosUnidadesExec() ? canvasEls[0] ?? null : null,
         segmentos: ['Executoras', 'Não Executoras'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
         distribuicoes: (this.unidadesExecutoras()?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
       },
       {
-        titulo: 'Evolução da adesão das Unidades ao PGD',
-        informacaoAdicional: 'Apresenta a evolução da adesão das unidades organizacionais ao PGD ao longo do período consultado.',
-        origemDados: 'Sistema PGD Petrvs',
+        titulo: this.textos.evolucaoUnidades.titulo,
+        informacaoAdicional: this.textos.evolucaoUnidades.info,
+        origemDados: ORIGEM_DADOS,
         canvasEl: this.evolucaoUnidades()?.serie?.length ? canvasEls[1] ?? null : null,
         segmentos: ['Executoras', 'Não Executoras'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
         distribuicoes: [],
       },
       {
-        titulo: 'Participantes do PGD por unidade organizacional',
-        informacaoAdicional: 'Apresenta a distribuição percentual dos agentes públicos ativos de acordo com sua participação no PGD. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
-        origemDados: 'Sistema PGD Petrvs',
+        titulo: this.textos.participantesPGD.titulo,
+        informacaoAdicional: this.textos.participantesPGD.info,
+        origemDados: ORIGEM_DADOS,
         canvasEl: this.participantesPGD() && !this.semDadosParticipantes() ? canvasEls[2] ?? null : null,
         segmentos: ['Participantes', 'Não Participantes'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
         distribuicoes: (this.participantesPGD()?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
       },
       {
-        titulo: 'Evolução da adesão dos agentes públicos ao PGD',
-        informacaoAdicional: 'Apresenta a evolução da adesão dos agentes públicos ao PGD ao longo do período consultado.',
-        origemDados: 'Sistema PGD Petrvs',
+        titulo: this.textos.evolucaoParticipantes.titulo,
+        informacaoAdicional: this.textos.evolucaoParticipantes.info,
+        origemDados: ORIGEM_DADOS,
         canvasEl: this.evolucaoParticipantes()?.serie?.length ? canvasEls[3] ?? null : null,
         segmentos: ['Participantes', 'Não Participantes'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
         distribuicoes: [],

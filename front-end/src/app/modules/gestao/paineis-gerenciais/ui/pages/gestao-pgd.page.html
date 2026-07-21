@@ -19,15 +19,15 @@
     <indicador-barra-horizontal
       [dados]="unidadesExecutoras()"
       [carregando]="carregandoUnidadesExec()"
-      titulo="Unidades Executoras por unidade organizacional"
-      informacaoAdicional="Apresenta a distribuição percentual das unidades organizacionais de acordo com sua classificação como Unidade Executora ou Unidade não Executora. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas."
-      origemDados="Sistema PGD Petrvs" />
+      [titulo]="textos.unidadesExecutoras.titulo"
+      [informacaoAdicional]="textos.unidadesExecutoras.info"
+      [origemDados]="origemDados" />
 
     <!-- Gráfico 2: Evolução da adesão das Unidades ao PGD -->
     <indicador-card
-      titulo="Evolução da adesão das Unidades ao PGD"
-      informacaoAdicional="Apresenta a evolução da adesão das unidades organizacionais ao PGD ao longo do período consultado."
-      origemDados="Sistema PGD Petrvs"
+      [titulo]="textos.evolucaoUnidades.titulo"
+      [informacaoAdicional]="textos.evolucaoUnidades.info"
+      [origemDados]="origemDados"
       [carregando]="carregandoEvolucaoUni()"
       [semDados]="!carregandoEvolucaoUni() && !evolucaoUnidades()">
       @if (evolucaoUnidades()) {
@@ -44,15 +44,15 @@
     <indicador-barra-horizontal
       [dados]="participantesPGD()"
       [carregando]="carregandoParticipantes()"
-      titulo="Participantes do PGD por unidade organizacional"
-      informacaoAdicional="Apresenta a distribuição percentual dos agentes públicos ativos de acordo com sua participação no PGD. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas."
-      origemDados="Sistema PGD Petrvs" />
+      [titulo]="textos.participantesPGD.titulo"
+      [informacaoAdicional]="textos.participantesPGD.info"
+      [origemDados]="origemDados" />
 
     <!-- Gráfico 4: Evolução da adesão dos agentes públicos ao PGD -->
     <indicador-card
-      titulo="Evolução da adesão dos agentes públicos ao PGD"
-      informacaoAdicional="Apresenta a evolução da adesão dos agentes públicos ao PGD ao longo do período consultado."
-      origemDados="Sistema PGD Petrvs"
+      [titulo]="textos.evolucaoParticipantes.titulo"
+      [informacaoAdicional]="textos.evolucaoParticipantes.info"
+      [origemDados]="origemDados"
       [carregando]="carregandoEvolucaoPart()"
       [semDados]="!carregandoEvolucaoPart() && !evolucaoParticipantes()">
       @if (evolucaoParticipantes()) {
