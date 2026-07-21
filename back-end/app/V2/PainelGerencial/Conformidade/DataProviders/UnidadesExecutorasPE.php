@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PainelGerencial\Conformidade\DataProviders;
 
+use App\Enums\StatusEnum;
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
 use App\V2\PainelGerencial\DTOs\DistribuicaoUnidadeDTO;
@@ -75,7 +76,7 @@ class UnidadesExecutorasPE
                     ->from('planos_entregas')
                     ->whereColumn('planos_entregas.unidade_id', 'unidades.id')
                     ->whereNull('planos_entregas.deleted_at')
-                    ->whereNotIn('planos_entregas.status', ['CANCELADO', 'SUSPENSO']);
+                    ->whereNotIn('planos_entregas.status', [StatusEnum::CANCELADO->value, StatusEnum::SUSPENSO->value]);
 
                 $this->aplicarFiltroTemporal($sub, $filtros);
             })

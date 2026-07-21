@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PainelGerencial\Conformidade\DataProviders;
 
+use App\Enums\StatusEnum;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
@@ -70,7 +71,7 @@ class RegistroExecucaoPT
         // Concluídos: status CONCLUIDO ou AVALIADO
         $concluidos = (clone $baseQuery)
             ->where('planos_trabalhos_consolidacoes.data_fim', '<', $hoje)
-            ->whereIn('planos_trabalhos_consolidacoes.status', ['CONCLUIDO', 'AVALIADO'])
+            ->whereIn('planos_trabalhos_consolidacoes.status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value])
             ->count();
 
         $pendentes = $total - $concluidos;
@@ -95,7 +96,7 @@ class RegistroExecucaoPT
             ->whereHas('planoTrabalho', function (Builder $pt) use ($unidadeIds, $filtros, $hoje) {
                 $pt->whereIn('unidade_id', $unidadeIds)
                     ->whereNull('deleted_at')
-                    ->whereIn('status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+                    ->whereIn('status', [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
 
                 if ($filtros->isSituacaoAtual()) {
                     $pt->where('data_inicio', '<=', $hoje)

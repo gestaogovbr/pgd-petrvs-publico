@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PainelGerencial\Conformidade\DataProviders;
 
+use App\Enums\StatusEnum;
 use App\Models\PlanoEntrega;
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
@@ -65,7 +66,7 @@ class AvaliacaoPE
         }
 
         $avaliados = (clone $baseQuery)
-            ->where('status', 'AVALIADO')
+            ->where('status', StatusEnum::AVALIADO->value)
             ->count();
 
         $pendentes = $total - $avaliados;
@@ -90,7 +91,7 @@ class AvaliacaoPE
         $query = PlanoEntrega::query()
             ->whereIn('unidade_id', $unidadeIds)
             ->whereNull('deleted_at')
-            ->whereIn('status', ['CONCLUIDO', 'AVALIADO']);
+            ->whereIn('status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
 
         if ($filtros->isSituacaoAtual()) {
             $query->where('data_inicio', '<=', $hoje)

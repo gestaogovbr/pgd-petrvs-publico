@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PainelGerencial\Conformidade\DataProviders;
 
+use App\Enums\StatusEnum;
 use App\Models\PlanoEntrega;
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
@@ -65,7 +66,7 @@ class RegistroExecucaoPE
 
         // Concluído: PE que já passou por CONCLUIDO (status CONCLUIDO ou AVALIADO)
         $concluidos = (clone $baseQuery)
-            ->whereIn('status', ['CONCLUIDO', 'AVALIADO'])
+            ->whereIn('status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value])
             ->count();
 
         $pendentes = $total - $concluidos;
@@ -88,7 +89,7 @@ class RegistroExecucaoPE
         $query = PlanoEntrega::query()
             ->whereIn('unidade_id', $unidadeIds)
             ->whereNull('deleted_at')
-            ->whereNotIn('status', ['CANCELADO', 'SUSPENSO']);
+            ->whereNotIn('status', [StatusEnum::CANCELADO->value, StatusEnum::SUSPENSO->value]);
 
         if ($filtros->isSituacaoAtual()) {
             $query->where('data_inicio', '<=', $hoje)
