@@ -175,18 +175,16 @@
                             }
                           </div>
                           <div>
-                            <h6 class="detalhamento-modal__detail-title">Registro de execução da entrega</h6>
-                            <p class="mb-1"><strong>Meta:</strong> {{ formatPercent(item.progresso_esperado) }}</p>
-                            <p class="mb-1"><strong>Realizado:</strong> {{ formatPercent(item.progresso_realizado) }}</p>
-                           
-                           
+                            <h6 class="detalhamento-modal__detail-title">Meta</h6>
+                            <p class="mb-1"><strong>Planejado:</strong> {{ formatPercent(item.progresso_esperado) }}</p>
+                            <p class="mb-0"><strong>Realizado:</strong> {{ formatPercent(item.progresso_realizado) }}</p>
                           </div>
                           <div>
+                            <h6 class="detalhamento-modal__detail-title">Registro de Execução da Entrega</h6>
                             @if (item.registro_execucao) {
-                              <p class="mb-0">
-                                <strong>Registro de execução:</strong>
-                                <span class="detalhamento-modal__registro-execucao">{{ item.registro_execucao }}</span>
-                              </p>
+                              <p class="detalhamento-modal__registro-execucao mb-0">{{ item.registro_execucao }}</p>
+                            } @else {
+                              <p class="mb-0">Sem registro</p>
                             }
                           </div>
                         </div>
