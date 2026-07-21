@@ -38,16 +38,16 @@ class AvaliacoesPlanoEntrega
         /** @var Collection<int, Unidade> $filhas */
         $filhas = $hierarquia['filhas'];
 
-        $todosIds = $this->todosIdsHierarquia($unidade, $filhas);
+        $todosIds = $this->idsComTodasSubordinadas($unidade);
         $notas = $this->obterNotas($todosIds);
         $segmentos = $notas->pluck('label')->toArray();
         $notaIds = $notas->pluck('id')->toArray();
 
         $distribuicoes = [];
-        $distribuicoes[] = $this->calcularDistribuicao($unidade, $filhas, $filtros, $notaIds);
+        $distribuicoes[] = $this->calcularDistribuicao($unidade, $filtros, $notaIds);
 
         foreach ($filhas as $filha) {
-            $distribuicoes[] = $this->calcularDistribuicao($filha, new Collection(), $filtros, $notaIds);
+            $distribuicoes[] = $this->calcularDistribuicao($filha, $filtros, $notaIds);
         }
 
         return (new IndicadorDTO(
@@ -91,12 +91,11 @@ class AvaliacoesPlanoEntrega
     }
 
     /**
-     * @param Collection<int, Unidade> $filhasParaConsolidar
      * @param string[] $notaIds
      */
-    private function calcularDistribuicao(Unidade $unidade, Collection $filhasParaConsolidar, FiltrosPainelDTO $filtros, array $notaIds): DistribuicaoUnidadeDTO
+    private function calcularDistribuicao(Unidade $unidade, FiltrosPainelDTO $filtros, array $notaIds): DistribuicaoUnidadeDTO
     {
-        $unidadeIds = [$unidade->id, ...$filhasParaConsolidar->pluck('id')->toArray()];
+        $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
         $contagens = $this->buildBaseQuery($unidadeIds, $filtros)
             ->selectRaw('tipo_avaliacao_nota_id, COUNT(*) as total')
