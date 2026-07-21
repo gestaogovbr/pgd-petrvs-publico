@@ -30,67 +30,8 @@ Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip);
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, BaseChartDirective, IndicadorCardComponent],
-  template: `
-    <indicador-card
-      [titulo]="titulo"
-      [informacaoAdicional]="informacaoAdicional"
-      [origemDados]="origemDados"
-      [carregando]="carregando"
-      [semDados]="semDados()">
-
-      @if (_dados(); as dados) {
-        <div style="height: 200px; position: relative;">
-          <canvas
-            baseChart
-            type="bar"
-            [data]="chartData()"
-            [options]="chartOptions()">
-          </canvas>
-        </div>
-
-        <div class="indicador-vertical__legenda">
-          <span class="indicador-vertical__legenda-item">
-            <span class="indicador-vertical__legenda-cor" [style.background-color]="CORES[0]"></span>
-            Taxa de participação
-          </span>
-          <span class="indicador-vertical__legenda-item">
-            <span class="indicador-vertical__legenda-cor" [style.background-color]="CORES[1]"></span>
-            Limite legal
-          </span>
-        </div>
-
-        @if (saibaMaisRoute.length > 0) {
-          <p class="indicador-vertical__saiba-mais">
-            <a (click)="navegarSaibaMais()" style="cursor: pointer;">Saiba mais</a>
-          </p>
-        }
-      }
-
-    </indicador-card>
-  `,
-  styles: [`
-    .indicador-vertical__legenda {
-      display: flex;
-      gap: var(--spacing-scale-2x);
-      margin-top: var(--spacing-scale-2x);
-    }
-    .indicador-vertical__legenda-item {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-scale-half);
-      font-size: var(--font-size-scale-down-01);
-    }
-    .indicador-vertical__legenda-cor {
-      width: 12px;
-      height: 12px;
-      border-radius: 2px;
-      display: inline-block;
-    }
-    .indicador-vertical__saiba-mais {
-      margin-top: var(--spacing-scale-base);
-      font-size: var(--font-size-scale-down-01);
-    }
-  `],
+  templateUrl: './indicador-barra-vertical.component.html',
+  styleUrls: ['./indicador-barra-vertical.component.scss'],
 })
 export class IndicadorBarraVerticalComponent {
   private readonly go = inject(NavigateService);
