@@ -33,7 +33,9 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
       unidadeNome: { default: "" },
       nome: { default: "" },
       uorg: { default: "" },
-      tipo: { default: "" },
+      instituidora: { default: "" },
+      executora: { default: "" },
+      possuiPEVigente: { default: "" },
       chefiaNome: { default: "" },
       totalVinculados: { default: "" },
       totalSubstitutos: { default: "" },
@@ -75,8 +77,16 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
       result.push(["codigo", "like", "%" + form.uorg + "%"]);
     }
 
-    if (form.tipo?.length) {
-      result.push(["tipo", "==", form.tipo]);
+    if (form.instituidora?.length) {
+      result.push(["instituidora", "==", form.instituidora]);
+    }
+
+    if (form.executora?.length) {
+      result.push(["executora", "==", form.executora]);
+    }
+
+    if (form.possuiPEVigente?.length) {
+      result.push(["possuiPEVigente", "==", form.possuiPEVigente]);
     }
 
     if (form.chefiaNome?.length) {

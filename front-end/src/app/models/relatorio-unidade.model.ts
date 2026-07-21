@@ -5,7 +5,9 @@ export class RelatorioUnidade extends Base {
     public unidadeHierarquia: string = "";
     public nome: string = "";
     public codigo: string = "";
-    public tipo: 'Instituidora' | 'Executora' = 'Executora';
+    public instituidora: 'Sim' | 'Não' = 'Não';
+    public executora: 'Sim' | 'Não' = 'Não';
+    public possuiPEVigente: 'Sim' | 'Não' = 'Não';
     public chefiaId: number | null = null;
     public chefiaNome: string | null = null;
     public totalVinculados: number = 0;

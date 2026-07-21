@@ -97,25 +97,69 @@
             </ng-template>
         </column>
 
-        <column title="Tipo"
-            [template]="columnTipo"
-            [titleTemplate]="titleTipo"
+        <column title="Instituidora"
+            [template]="columnInstituidora"
+            [titleTemplate]="titleInstituidora"
             [verticalAlign]="'bottom'"
-            [width]="100"
+            [width]="80"
             [align]="'center'"
         >
-            <ng-template let-header="header" #titleTipo>
+            <ng-template let-header="header" #titleInstituidora>
                 <input-select 
-                    [items]="lookup.RELATORIO_UNIDADE_TIPOS" 
-                    [control]="filter!.controls.tipo"
-                    controlName="this.filter.tipo"
+                    [items]="lookup.SIM_NAO" 
+                    [control]="filter!.controls.instituidora"
+                    controlName="this.filter.instituidora"
                     (change)="onValueChange($event)"
                     nullable
                 ></input-select> 
             </ng-template>
 
-            <ng-template let-row="row" #columnTipo>
-                <span> {{row.tipo || '-'}}</span>
+            <ng-template let-row="row" #columnInstituidora>
+                <span> {{row.instituidora || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Executora"
+            [template]="columnExecutora"
+            [titleTemplate]="titleExecutora"
+            [verticalAlign]="'bottom'"
+            [width]="80"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleExecutora>
+                <input-select 
+                    [items]="lookup.SIM_NAO" 
+                    [control]="filter!.controls.executora"
+                    controlName="this.filter.executora"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select> 
+            </ng-template>
+
+            <ng-template let-row="row" #columnExecutora>
+                <span> {{row.executora || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="PE Vigente"
+            [template]="columnPEVigente"
+            [titleTemplate]="titlePEVigente"
+            [verticalAlign]="'bottom'"
+            [width]="80"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titlePEVigente>
+                <input-select 
+                    [items]="lookup.SIM_NAO" 
+                    [control]="filter!.controls.possuiPEVigente"
+                    controlName="this.filter.possuiPEVigente"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select> 
+            </ng-template>
+
+            <ng-template let-row="row" #columnPEVigente>
+                <span> {{row.possuiPEVigente || '-'}}</span>
             </ng-template>
         </column>
 
