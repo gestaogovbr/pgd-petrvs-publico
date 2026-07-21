@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\V2\PainelGerencial\Modalidades\DataProviders;
 
+use App\Enums\Atribuicao;
+use App\Enums\ParticipaPgd;
+use App\Enums\StatusEnum;
 use App\Models\PlanoTrabalho;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -87,11 +90,11 @@ class TeletrabalhoExterior
     private function contarParticipantesPgd(array $unidadeIds): int
     {
         return Usuario::query()
-            ->where('participa_pgd', 'sim')
+            ->where('participa_pgd', ParticipaPgd::SIM->value)
             ->whereNull('deleted_at')
             ->whereHas('unidadesIntegrantes', function ($q) use ($unidadeIds) {
                 $q->whereIn('unidade_id', $unidadeIds)
-                    ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', 'LOTADO'));
+                    ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', Atribuicao::LOTADO->value));
             })
             ->count();
     }
@@ -104,7 +107,7 @@ class TeletrabalhoExterior
             ->where('modalidade_pgd', $modalidade)
             ->whereIn('unidade_id', $unidadeIds)
             ->whereNull('deleted_at')
-            ->whereIn('status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+            ->whereIn('status', [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
 
         if ($filtros->isSituacaoAtual()) {
             $query->where('data_inicio', '<=', $hoje)

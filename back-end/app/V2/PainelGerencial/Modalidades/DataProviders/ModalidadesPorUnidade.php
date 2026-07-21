@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PainelGerencial\Modalidades\DataProviders;
 
+use App\Enums\StatusEnum;
 use App\Models\PlanoTrabalho;
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
@@ -92,7 +93,7 @@ class ModalidadesPorUnidade
         $query = PlanoTrabalho::query()
             ->whereIn('unidade_id', $unidadeIds)
             ->whereNull('deleted_at')
-            ->whereIn('status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+            ->whereIn('status', [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
 
         if ($filtros->isSituacaoAtual()) {
             $query->where('data_inicio', '<=', $hoje)
