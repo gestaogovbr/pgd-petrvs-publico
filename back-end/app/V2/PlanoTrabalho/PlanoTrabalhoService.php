@@ -72,6 +72,7 @@ class PlanoTrabalhoService
             $filtro = $filtro->withUnidadesId(array_merge($idsBase, $subordinadasIds));
         }
 
+        /** @var ConcreteLengthAwarePaginator $paginator */
         $paginator = $this->readRepository->buscarPlanosListagem($filtro);
         $usuario = $this->usuarioLogadoComPerfilEAreas();
 
@@ -79,9 +80,8 @@ class PlanoTrabalhoService
             $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
             $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
 
-                return $plano;
-            });
-        }
+            return $plano;
+        });
 
         return $paginator;
     }

@@ -17,11 +17,11 @@ uses(TestCase::class);
 
 /*
  * Testes para o método processarDadosPessoais de IntegracaoService.
- * 
+ *
  * Propósito:
  * O método processarDadosPessoais é responsável por persistir atualizações de dados dos servidores
  * em lotes (chunks) dentro de transações de banco de dados, minimizando deadlocks e tempo de bloqueio.
- * 
+ *
  * Requisitos:
  * - Entrada: Array de objetos com dados dos servidores e string SQL de atualização.
  * - Saída: Void. Efetua atualizações no banco.
@@ -31,7 +31,7 @@ uses(TestCase::class);
  * - Deve registrar logs.
  */
 describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
-    
+
     afterEach(function () {
         Mockery::close();
     });
@@ -89,7 +89,7 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         Log::shouldReceive('channel')
             ->with('siape')
             ->andReturn($loggerMock);
-            
+
 
         // Mock UtilService
         $criar_mock_utils = false; # O mock mexe com a implementação do método, então influi na execução dos outros testes
@@ -120,7 +120,7 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
             'servidores' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
             'gestores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []]
         ]);
-        
+
         // Inject Repository Mock
         $repoProperty = $reflection->getProperty('integracaoServidorRepository');
         $repoProperty->setAccessible(true);
@@ -129,7 +129,7 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         // Configuração de services dependentes
         $integracaoServiceMock = Mockery::mock(IntegracaoService::class);
         $usuarioServiceMock = Mockery::mock(UsuarioService::class);
-        
+
         $usuarioServiceMock->shouldReceive('atualizarServidor')
             ->times(55);
 
@@ -149,25 +149,25 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         // Arrange
         $atualizacoesDados = [];
         $sqlUpdateDados = "UPDATE ...";
-        
+
         // Mock Repository
         $integracaoServidorRepositoryMock = Mockery::mock(IntegracaoServidorRepository::class);
         $integracaoServidorRepositoryMock->shouldReceive('buscarAtualizacoesDados')
             ->andReturn($atualizacoesDados);
 
         DB::shouldReceive('transaction')->never();
-        
+
         $service = Mockery::mock(ProcessadorAtualizacaoDadosSiapeService::class)->makePartial();
 
         $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosSiapeService::class);
         $method = $reflection->getMethod('processarDadosPessoais');
         $method->setAccessible(true);
-        
+
         // Inject Repository Mock
         $repoProperty = $reflection->getProperty('integracaoServidorRepository');
         $repoProperty->setAccessible(true);
         $repoProperty->setValue($service, $integracaoServidorRepositoryMock);
-        
+
         // Inject result property
         $property = $reflection->getProperty('result');
         $property->setAccessible(true);
@@ -206,12 +206,12 @@ describe('ProcessadorAtualizacaoDadosSiapeService - processar', function () {
         $reflection = new ReflectionClass(ProcessadorAtualizacaoDadosSiapeService::class);
         $method = $reflection->getMethod('processarDadosPessoais');
         $method->setAccessible(true);
-        
+
         // Inject Repository Mock
         $repoProperty = $reflection->getProperty('integracaoServidorRepository');
         $repoProperty->setAccessible(true);
         $repoProperty->setValue($service, $integracaoServidorRepositoryMock);
-        
+
         // Inject result property
         $property = $reflection->getProperty('result');
         $property->setAccessible(true);
@@ -314,8 +314,8 @@ describe('ProcessadorAtualizacaoDadosSiapeService - cadastrarUsuariosAusentes co
         $unidadeIntegranteMock = Mockery::mock(UnidadeIntegranteService::class);
         $unidadeIntegranteMock->shouldReceive('salvarIntegrantes')->once();
 
-        $nivelAcessoMock = Mockery::mock(NivelAcessoService::class);
-        $perfilMock = Mockery::mock(Perfil::class)->makePartial();
+        $nivelAcessoMock = Mockery::mock(\App\Services\NivelAcessoService::class);
+        $perfilMock = Mockery::mock(\App\Models\Perfil::class)->makePartial();
         $perfilMock->id = 'perfil-participante-id';
         $nivelAcessoMock->shouldReceive('getPerfilParticipante')->andReturn($perfilMock);
 
