@@ -35,44 +35,22 @@ class UnidadesExecutoras
         /** @var Collection<int, Unidade> $filhas */
         $filhas = $hierarquia['filhas'];
 
-        $distribuicoesFilhas = [];
+        $distribuicoes = [];
+        $distribuicoes[] = $this->calcularDistribuicao($unidade);
 
         foreach ($filhas as $filha) {
-            $netasFilha = $this->getUnidadeRepository()->getSubordinadas([$filha->id]);
-            $distribuicoesFilhas[] = $this->calcularDistribuicao($filha, $netasFilha);
+            $distribuicoes[] = $this->calcularDistribuicao($filha);
         }
-
-        $distribuicaoPrincipal = $this->calcularDistribuicaoPrincipal($unidade, $distribuicoesFilhas);
 
         return (new IndicadorDTO(
             segmentos: self::SEGMENTOS,
-            distribuicoes: [$distribuicaoPrincipal, ...$distribuicoesFilhas],
+            distribuicoes: $distribuicoes,
         ))->ordenarSubordinadasPorTotal();
     }
 
-    /**
-     * A unidade principal consolida: self + somatório dos totais de cada filha.
-     * @param DistribuicaoUnidadeDTO[] $distribuicoesFilhas
-     */
-    private function calcularDistribuicaoPrincipal(Unidade $unidade, array $distribuicoesFilhas): DistribuicaoUnidadeDTO
+    private function calcularDistribuicao(Unidade $unidade): DistribuicaoUnidadeDTO
     {
-        $selfExecutora = (bool) $unidade->executora ? 1 : 0;
-        $selfNaoExecutora = 1 - $selfExecutora;
-
-        $executoras = $selfExecutora + array_sum(array_map(fn (DistribuicaoUnidadeDTO $d) => $d->valores[0], $distribuicoesFilhas));
-        $naoExecutoras = $selfNaoExecutora + array_sum(array_map(fn (DistribuicaoUnidadeDTO $d) => $d->valores[1], $distribuicoesFilhas));
-
-        return new DistribuicaoUnidadeDTO(
-            unidadeId: $unidade->id,
-            unidadeSigla: $unidade->sigla,
-            valores: [$executoras, $naoExecutoras],
-            total: $executoras + $naoExecutoras,
-        );
-    }
-
-    private function calcularDistribuicao(Unidade $unidade, Collection $filhasParaConsolidar): DistribuicaoUnidadeDTO
-    {
-        $unidadeIds = [$unidade->id, ...$filhasParaConsolidar->pluck('id')->toArray()];
+        $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
         $unidades = Unidade::query()
             ->whereIn('id', $unidadeIds)

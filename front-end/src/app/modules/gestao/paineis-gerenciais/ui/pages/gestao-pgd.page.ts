@@ -86,7 +86,7 @@ export class GestaoPgdPage implements OnInit {
     const indicadores = [
       {
         titulo: 'Unidades Executoras por unidade organizacional',
-        informacaoAdicional: 'Apresenta a distribuição percentual das unidades organizacionais de acordo com sua classificação como Unidade Executora ou Unidade não Executora.',
+        informacaoAdicional: 'Apresenta a distribuição percentual das unidades organizacionais de acordo com sua classificação como Unidade Executora ou Unidade não Executora. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
         origemDados: 'Sistema PGD Petrvs',
         canvasEl: this.unidadesExecutoras() && !this.semDadosUnidadesExec() ? canvasEls[0] ?? null : null,
         segmentos: ['Executoras', 'Não Executoras'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
@@ -102,7 +102,7 @@ export class GestaoPgdPage implements OnInit {
       },
       {
         titulo: 'Participantes do PGD por unidade organizacional',
-        informacaoAdicional: 'Apresenta a distribuição percentual dos agentes públicos ativos de acordo com sua participação no PGD.',
+        informacaoAdicional: 'Apresenta a distribuição percentual dos agentes públicos ativos de acordo com sua participação no PGD. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
         origemDados: 'Sistema PGD Petrvs',
         canvasEl: this.participantesPGD() && !this.semDadosParticipantes() ? canvasEls[2] ?? null : null,
         segmentos: ['Participantes', 'Não Participantes'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),

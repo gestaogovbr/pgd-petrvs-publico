@@ -40,7 +40,7 @@ class EvolucaoAdesaoUnidades
         /** @var Unidade $unidade */
         $unidade = $hierarquia['unidade'];
 
-        $unidadeIds = $this->todosIdsHierarquia($unidade, $hierarquia['filhas']);
+        $unidadeIds = $this->idsComTodasSubordinadas($unidade);
         $periodos = $this->gerarPeriodos($filtros);
 
         $serie = DB::table('serie_unidades_executoras')
