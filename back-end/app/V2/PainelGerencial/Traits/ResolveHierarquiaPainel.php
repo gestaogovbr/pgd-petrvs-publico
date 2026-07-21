@@ -14,7 +14,7 @@ trait ResolveHierarquiaPainel
     abstract protected function getUnidadeRepository(): UnidadeRepository;
 
     /**
-     * Resolve a unidade selecionada e suas filhas diretas (RN17-20).
+     * Resolve a unidade selecionada e suas filhas diretas.
      *
      * @return array{unidade: Unidade, filhas: Collection<int, Unidade>}
      */
@@ -36,13 +36,14 @@ trait ResolveHierarquiaPainel
     }
 
     /**
-     * Retorna todos os IDs relevantes (unidade selecionada + filhas diretas).
+     * Retorna os IDs de uma unidade + todas as suas subordinadas recursivas.
      *
-     * @param Collection<int, Unidade> $filhas
      * @return string[]
      */
-    protected function todosIdsHierarquia(Unidade $unidade, Collection $filhas): array
+    protected function idsComTodasSubordinadas(Unidade $unidade): array
     {
-        return [$unidade->id, ...$filhas->pluck('id')->toArray()];
+        $subordinadas = $this->getUnidadeRepository()->getSubordinadasRecursivas([$unidade->id]);
+
+        return [$unidade->id, ...$subordinadas->pluck('id')->toArray()];
     }
 }
