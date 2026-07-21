@@ -21,9 +21,9 @@
         <indicador-barra-vertical
           [dados]="teletrabalhoSubstituicao()"
           [carregando]="carregandoSubstituicao()"
-          titulo="Participação na modalidade Teletrabalho no Exterior (VIII, art. 12, D.11072/22 - substituição)"
-          informacaoAdicional="Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no inciso VIII (substituição), permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade."
-          origemDados="Sistema PGD Petrvs"
+          [titulo]="textos.substituicao.titulo"
+          [informacaoAdicional]="textos.substituicao.info"
+          [origemDados]="origemDados"
           [saibaMaisRoute]="['relatorios', 'agentes']"
           [saibaMaisQueryParams]="saibaMaisParamsSubstituicao()" />
       </div>
@@ -31,9 +31,9 @@
         <indicador-barra-vertical
           [dados]="teletrabalhoDiscricionario()"
           [carregando]="carregandoDiscricionario()"
-          titulo="Participação na modalidade Teletrabalho no Exterior (§7º, art. 12, D.11072/22 - discricionário)"
-          informacaoAdicional="Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no §7º, art. 12, D.11072/22 (discricionário), permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade."
-          origemDados="Sistema PGD Petrvs"
+          [titulo]="textos.discricionario.titulo"
+          [informacaoAdicional]="textos.discricionario.info"
+          [origemDados]="origemDados"
           [saibaMaisRoute]="['relatorios', 'agentes']"
           [saibaMaisQueryParams]="saibaMaisParamsDiscricionario()" />
       </div>
@@ -42,8 +42,8 @@
     <indicador-barra-horizontal
       [dados]="modalidadesPorUnidade()"
       [carregando]="carregandoModalidades()"
-      titulo="Modalidades de trabalho por unidade organizacional"
-      informacaoAdicional="Apresenta a distribuição percentual dos participantes do PGD por modalidade de trabalho, de acordo com a unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas."
-      origemDados="Sistema PGD Petrvs" />
+      [titulo]="textos.modalidadesPorUnidade.titulo"
+      [informacaoAdicional]="textos.modalidadesPorUnidade.info"
+      [origemDados]="origemDados" />
   </div>
 </div>

@@ -4,6 +4,7 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PainelApiClient, FiltrosPainel, Indicador, IndicadorTeletrabalho } from '../../infra/painel-api.client';
 import { PainelPdfService } from '../../infra/painel-pdf.service';
+import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
 import { IndicadorBarraVerticalComponent } from '../components/indicador-barra-vertical.component';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
@@ -26,6 +27,23 @@ import { CHART_COLORS } from 'src/app/services/chart';
 export class ModalidadesPage implements OnInit {
   private readonly api = inject(PainelApiClient);
   private readonly pdfService = inject(PainelPdfService);
+
+  readonly origemDados = ORIGEM_DADOS;
+
+  readonly textos = {
+    substituicao: {
+      titulo: 'Participação na modalidade Teletrabalho no Exterior (VIII, art. 12, D.11072/22 - substituição)',
+      info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no inciso VIII (substituição), permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
+    },
+    discricionario: {
+      titulo: 'Participação na modalidade Teletrabalho no Exterior (§7º, art. 12, D.11072/22 - discricionário)',
+      info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no §7º, art. 12, D.11072/22 (discricionário), permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
+    },
+    modalidadesPorUnidade: {
+      titulo: 'Modalidades de trabalho por unidade organizacional',
+      info: 'Apresenta a distribuição percentual dos participantes do PGD por modalidade de trabalho, de acordo com a unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
+    },
+  };
 
   readonly unidadeInicialId = signal('');
   readonly unidadeInicialSigla = signal('');
@@ -82,25 +100,25 @@ export class ModalidadesPage implements OnInit {
 
     const indicadores = [
       {
-        titulo: 'Participação na modalidade Teletrabalho no Exterior (VIII, art. 12, D.11072/22 - substituição)',
-        informacaoAdicional: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no inciso VIII (substituição), permitindo compará-lo ao limite legal aplicável.',
-        origemDados: 'Sistema PGD Petrvs',
+        titulo: this.textos.substituicao.titulo,
+        informacaoAdicional: this.textos.substituicao.info,
+        origemDados: ORIGEM_DADOS,
         canvasEl: indicadorEls[0]?.querySelector('canvas') as HTMLCanvasElement | null,
         segmentos: [{ nome: 'Taxa de participação', cor: cores[3] }, { nome: 'Limite legal', cor: cores[2] }],
         distribuicoes: [] as { sigla: string; total: number }[],
       },
       {
-        titulo: 'Participação na modalidade Teletrabalho no Exterior (§7º, art. 12, D.11072/22 - discricionário)',
-        informacaoAdicional: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no §7º, art. 12, D.11072/22 (discricionário), permitindo compará-lo ao limite legal aplicável.',
-        origemDados: 'Sistema PGD Petrvs',
+        titulo: this.textos.discricionario.titulo,
+        informacaoAdicional: this.textos.discricionario.info,
+        origemDados: ORIGEM_DADOS,
         canvasEl: indicadorEls[1]?.querySelector('canvas') as HTMLCanvasElement | null,
         segmentos: [{ nome: 'Taxa de participação', cor: cores[3] }, { nome: 'Limite legal', cor: cores[2] }],
         distribuicoes: [] as { sigla: string; total: number }[],
       },
       {
-        titulo: 'Modalidades de trabalho por unidade organizacional',
-        informacaoAdicional: 'Apresenta a distribuição percentual dos participantes do PGD por modalidade de trabalho, de acordo com a unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
-        origemDados: 'Sistema PGD Petrvs',
+        titulo: this.textos.modalidadesPorUnidade.titulo,
+        informacaoAdicional: this.textos.modalidadesPorUnidade.info,
+        origemDados: ORIGEM_DADOS,
         canvasEl: indicadorEls[2]?.querySelector('canvas') as HTMLCanvasElement | null,
         segmentos: (this.modalidadesPorUnidade()?.segmentos ?? []).map((nome, j) => ({ nome, cor: cores[j] ?? '#ccc' })),
         distribuicoes: (this.modalidadesPorUnidade()?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
