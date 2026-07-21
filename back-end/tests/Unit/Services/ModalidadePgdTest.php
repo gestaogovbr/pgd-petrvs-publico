@@ -7,6 +7,8 @@ use App\Support\ModalidadePgd;
 describe('ModalidadePgd', function () {
     it('normaliza e rotula modalidades conhecidas', function () {
         expect(ModalidadePgd::normalize('Teletrabalho (Integral)'))->toBe('integral')
+            ->and(ModalidadePgd::normalize('Teletrabalho Parcial'))->toBe('parcial')
+            ->and(ModalidadePgd::normalize('Teletrabalho (Parcial)'))->toBe('parcial')
             ->and(ModalidadePgd::normalize('Teletrabalho no exterior - inciso VIII'))->toBe('no exterior substituicao')
             ->and(ModalidadePgd::label(null))->toBe('Não definida')
             ->and(ModalidadePgd::label('modalidade customizada'))->toBe('modalidade customizada');

@@ -22,6 +22,12 @@ interface UnidadeReadRepositoryContract
 
     public function isUsuarioGestorTitularDaUnidade(string $unidadeId, string $usuarioId): bool;
 
+    public function isUsuarioGestorSubstitutoDaUnidade(string $unidadeId, string $usuarioId): bool;
+
+    public function isUsuarioGestorDelegadoDaUnidade(string $unidadeId, string $usuarioId): bool;
+
+    public function isUsuarioChefiaDaUnidade(string $unidadeId, string $usuarioId): bool;
+
     public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO;
 
     public function getAreasTrabalhoWhereClause(string $usuarioId, bool $subordinadas, string $prefix = ""): string;
