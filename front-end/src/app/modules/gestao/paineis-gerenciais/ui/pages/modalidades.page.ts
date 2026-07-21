@@ -99,7 +99,7 @@ export class ModalidadesPage implements OnInit {
       },
       {
         titulo: 'Modalidades de trabalho por unidade organizacional',
-        informacaoAdicional: 'Apresenta a distribuição percentual dos participantes do PGD por modalidade de trabalho, de acordo com a unidade organizacional.',
+        informacaoAdicional: 'Apresenta a distribuição percentual dos participantes do PGD por modalidade de trabalho, de acordo com a unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
         origemDados: 'Sistema PGD Petrvs',
         canvasEl: indicadorEls[2]?.querySelector('canvas') as HTMLCanvasElement | null,
         segmentos: (this.modalidadesPorUnidade()?.segmentos ?? []).map((nome, j) => ({ nome, cor: cores[j] ?? '#ccc' })),

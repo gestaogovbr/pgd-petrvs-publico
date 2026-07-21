@@ -43,10 +43,10 @@ class ModalidadesPorUnidade
         $modalidadeKeys = ModalidadePgd::keys();
 
         $distribuicoes = [];
-        $distribuicoes[] = $this->calcularDistribuicao($unidade, $filhas, $filtros, $modalidadeKeys);
+        $distribuicoes[] = $this->calcularDistribuicao($unidade, $filtros, $modalidadeKeys);
 
         foreach ($filhas as $filha) {
-            $distribuicoes[] = $this->calcularDistribuicao($filha, new Collection(), $filtros, $modalidadeKeys);
+            $distribuicoes[] = $this->calcularDistribuicao($filha, $filtros, $modalidadeKeys);
         }
 
         return (new IndicadorDTO(
@@ -56,12 +56,11 @@ class ModalidadesPorUnidade
     }
 
     /**
-     * @param Collection<int, Unidade> $filhasParaConsolidar
      * @param string[] $modalidadeKeys
      */
-    private function calcularDistribuicao(Unidade $unidade, Collection $filhasParaConsolidar, FiltrosPainelDTO $filtros, array $modalidadeKeys): DistribuicaoUnidadeDTO
+    private function calcularDistribuicao(Unidade $unidade, FiltrosPainelDTO $filtros, array $modalidadeKeys): DistribuicaoUnidadeDTO
     {
-        $unidadeIds = [$unidade->id, ...$filhasParaConsolidar->pluck('id')->toArray()];
+        $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
         $contagens = $this->buildBaseQuery($unidadeIds, $filtros)
             ->selectRaw('modalidade_pgd, COUNT(DISTINCT usuario_id) as total')
