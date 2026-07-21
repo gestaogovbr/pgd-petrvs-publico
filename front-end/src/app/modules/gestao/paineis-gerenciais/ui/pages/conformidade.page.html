@@ -19,45 +19,45 @@
     <indicador-barra-horizontal
       [dados]="registroExecucaoPE()"
       [carregando]="carregando1()"
-      titulo="Registro de execução dos Planos de Entregas por unidade organizacional"
-      informacaoAdicional="Apresenta a distribuição percentual da situação dos registros de execução dos Planos de Entregas por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas."
-      origemDados="Sistema PGD Petrvs"
+      [titulo]="textos.registroExecucaoPE.titulo"
+      [informacaoAdicional]="textos.registroExecucaoPE.info"
+      [origemDados]="origemDados"
       [saibaMaisRoute]="['relatorios', 'planos-entrega']"
       [saibaMaisQueryParams]="saibaMaisRegistroExecucaoPE()" />
 
     <indicador-barra-horizontal
       [dados]="avaliacaoPE()"
       [carregando]="carregando2()"
-      titulo="Avaliação dos Planos de Entregas por unidade organizacional"
-      informacaoAdicional="Apresenta a distribuição percentual da situação das avaliações dos Planos de Entregas por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas."
-      origemDados="Sistema PGD Petrvs"
+      [titulo]="textos.avaliacaoPE.titulo"
+      [informacaoAdicional]="textos.avaliacaoPE.info"
+      [origemDados]="origemDados"
       [saibaMaisRoute]="['relatorios', 'planos-entrega']"
       [saibaMaisQueryParams]="saibaMaisAvaliacaoPE()" />
 
     <indicador-barra-horizontal
       [dados]="registroExecucaoPT()"
       [carregando]="carregando3()"
-      titulo="Registro de execução dos Planos de Trabalho por unidade organizacional"
-      informacaoAdicional="Apresenta a distribuição percentual da situação dos registros de execução dos períodos avaliativos dos Planos de Trabalho por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas."
-      origemDados="Sistema PGD Petrvs"
+      [titulo]="textos.registroExecucaoPT.titulo"
+      [informacaoAdicional]="textos.registroExecucaoPT.info"
+      [origemDados]="origemDados"
       [saibaMaisRoute]="['relatorios', 'planos-trabalho']"
       [saibaMaisQueryParams]="saibaMaisRegistroExecucaoPT()" />
 
     <indicador-barra-horizontal
       [dados]="avaliacaoPT()"
       [carregando]="carregando4()"
-      titulo="Avaliação dos Planos de Trabalho por unidade organizacional"
-      informacaoAdicional="Apresenta a distribuição percentual da situação das avaliações dos períodos avaliativos dos Planos de Trabalho por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas."
-      origemDados="Sistema PGD Petrvs"
+      [titulo]="textos.avaliacaoPT.titulo"
+      [informacaoAdicional]="textos.avaliacaoPT.info"
+      [origemDados]="origemDados"
       [saibaMaisRoute]="['relatorios', 'planos-trabalho']"
       [saibaMaisQueryParams]="saibaMaisAvaliacaoPT()" />
 
     <indicador-barra-horizontal
       [dados]="unidadesExecutorasPE()"
       [carregando]="carregando5()"
-      titulo="Existência de Plano de Entregas vigente nas Unidades Executoras"
-      informacaoAdicional="Apresenta a distribuição percentual das Unidades Executoras que possuem e que não possuem Plano de Entregas vigente, por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas."
-      origemDados="Sistema PGD Petrvs"
+      [titulo]="textos.unidadesExecutorasPE.titulo"
+      [informacaoAdicional]="textos.unidadesExecutorasPE.info"
+      [origemDados]="origemDados"
       [saibaMaisRoute]="['relatorios', 'unidades']"
       [saibaMaisQueryParams]="saibaMaisUnidadesExecutoras()" />
   </div>

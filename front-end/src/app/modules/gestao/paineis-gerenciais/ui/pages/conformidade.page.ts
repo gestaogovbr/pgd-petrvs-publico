@@ -4,6 +4,7 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PainelApiClient, FiltrosPainel, Indicador } from '../../infra/painel-api.client';
 import { PainelPdfService } from '../../infra/painel-pdf.service';
+import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
 import { CHART_COLORS } from 'src/app/services/chart';
@@ -24,6 +25,31 @@ import { CHART_COLORS } from 'src/app/services/chart';
 export class ConformidadePage implements OnInit {
   private readonly api = inject(PainelApiClient);
   private readonly pdfService = inject(PainelPdfService);
+
+  readonly origemDados = ORIGEM_DADOS;
+
+  readonly textos = {
+    registroExecucaoPE: {
+      titulo: 'Registro de execução dos Planos de Entregas por unidade organizacional',
+      info: 'Apresenta a distribuição percentual da situação dos registros de execução dos Planos de Entregas por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
+    },
+    avaliacaoPE: {
+      titulo: 'Avaliação dos Planos de Entregas por unidade organizacional',
+      info: 'Apresenta a distribuição percentual da situação das avaliações dos Planos de Entregas por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
+    },
+    registroExecucaoPT: {
+      titulo: 'Registro de execução dos Planos de Trabalho por unidade organizacional',
+      info: 'Apresenta a distribuição percentual da situação dos registros de execução dos períodos avaliativos dos Planos de Trabalho por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
+    },
+    avaliacaoPT: {
+      titulo: 'Avaliação dos Planos de Trabalho por unidade organizacional',
+      info: 'Apresenta a distribuição percentual da situação das avaliações dos períodos avaliativos dos Planos de Trabalho por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
+    },
+    unidadesExecutorasPE: {
+      titulo: 'Existência de Plano de Entregas vigente nas Unidades Executoras',
+      info: 'Apresenta a distribuição percentual das Unidades Executoras que possuem e que não possuem Plano de Entregas vigente, por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
+    },
+  };
 
   readonly unidadeInicialId = signal('');
   readonly unidadeInicialSigla = signal('');
@@ -92,11 +118,11 @@ export class ConformidadePage implements OnInit {
     const cores = CHART_COLORS;
 
     const indicadoresConfig = [
-      { dados: this.registroExecucaoPE(), titulo: 'Registro de execução dos Planos de Entregas por unidade organizacional', info: 'Apresenta a distribuição percentual da situação dos registros de execução dos Planos de Entregas por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.' },
-      { dados: this.avaliacaoPE(), titulo: 'Avaliação dos Planos de Entregas por unidade organizacional', info: 'Apresenta a distribuição percentual da situação das avaliações dos Planos de Entregas por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.' },
-      { dados: this.registroExecucaoPT(), titulo: 'Registro de execução dos Planos de Trabalho por unidade organizacional', info: 'Apresenta a distribuição percentual da situação dos registros de execução dos períodos avaliativos dos Planos de Trabalho por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.' },
-      { dados: this.avaliacaoPT(), titulo: 'Avaliação dos Planos de Trabalho por unidade organizacional', info: 'Apresenta a distribuição percentual da situação das avaliações dos períodos avaliativos dos Planos de Trabalho por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.' },
-      { dados: this.unidadesExecutorasPE(), titulo: 'Existência de Plano de Entregas vigente nas Unidades Executoras', info: 'Apresenta a distribuição percentual das Unidades Executoras que possuem e que não possuem Plano de Entregas vigente, por unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.' },
+      { dados: this.registroExecucaoPE(), titulo: this.textos.registroExecucaoPE.titulo, info: this.textos.registroExecucaoPE.info },
+      { dados: this.avaliacaoPE(), titulo: this.textos.avaliacaoPE.titulo, info: this.textos.avaliacaoPE.info },
+      { dados: this.registroExecucaoPT(), titulo: this.textos.registroExecucaoPT.titulo, info: this.textos.registroExecucaoPT.info },
+      { dados: this.avaliacaoPT(), titulo: this.textos.avaliacaoPT.titulo, info: this.textos.avaliacaoPT.info },
+      { dados: this.unidadesExecutorasPE(), titulo: this.textos.unidadesExecutorasPE.titulo, info: this.textos.unidadesExecutorasPE.info },
     ];
 
     const indicadores = indicadoresConfig.map((item, i) => {
@@ -105,7 +131,7 @@ export class ConformidadePage implements OnInit {
       return {
         titulo: item.titulo,
         informacaoAdicional: item.info,
-        origemDados: 'Sistema PGD Petrvs',
+        origemDados: ORIGEM_DADOS,
         canvasEl: temDados ? canvasEl : null,
         segmentos: (item.dados?.segmentos ?? []).map((nome, j) => ({ nome, cor: cores[j] ?? '#ccc' })),
         distribuicoes: (item.dados?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
