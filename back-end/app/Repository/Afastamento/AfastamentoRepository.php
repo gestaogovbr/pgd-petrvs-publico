@@ -72,4 +72,13 @@ class AfastamentoRepository
     {
         return $this->readRepository->buscarOcorrenciasListagem($dto);
     }
+
+    /**
+     * @param array<string> $usuarioIds
+     * @return array<string, array<array{data_inicio: string, data_fim: string}>>
+     */
+    public function buscarAfastamentosPorUsuarios(array $usuarioIds): array
+    {
+        return $this->readRepository->buscarAfastamentosPorUsuarios($usuarioIds);
+    }
 }
