@@ -38,25 +38,32 @@
         <p class="mb-0"><strong>Eixo temático:</strong> {{ r.eixo_tematico_nome || '—' }}</p>
       </section>
 
-      @if (unidadesFiltro().length > 0) {
-        <div class="painel-lateral__filtro painel-lateral__section">
-          <label class="form-label small mb-1" for="painel-filtro-unidade">Unidade</label>
-          <select
-            id="painel-filtro-unidade"
-            class="form-select form-select-sm"
-            [value]="filtroUnidadeId()"
-            [disabled]="atualizandoMetricas()"
-            (change)="onFiltroUnidadeChange($event)"
-          >
-            <option value="">Todas</option>
-            @for (op of unidadesFiltro(); track op.id) {
-              <option [value]="op.id">{{ op.label }}</option>
-            }
-          </select>
-        </div>
-      }
-
       <div class="painel-lateral__metricas" [class.painel-lateral__metricas--loading]="atualizandoMetricas()">
+
+
+        @if (unidadesFiltro().length > 0) {
+          <section class="painel-lateral__section">
+            <h6 class="painel-lateral__section-title">Unidades</h6>
+            <p class="mb-1"><strong>Total de unidades envolvidas:</strong> {{ unidadesFiltro().length }}</p>
+            <div class="painel-lateral__filtro painel-lateral__section">
+              <label class="form-label small mb-1" for="painel-filtro-unidade">Filtrar por:</label>
+              <select
+                id="painel-filtro-unidade"
+                class="form-select form-select-sm"
+                [value]="filtroUnidadeId()"
+                [disabled]="atualizandoMetricas()"
+                (change)="onFiltroUnidadeChange($event)"
+              >
+                <option value="">Todas</option>
+                @for (op of unidadesFiltro(); track op.id) {
+                  <option [value]="op.id">{{ op.label }}</option>
+                }
+              </select>
+            </div>
+          </section>
+          
+        }
+
         @if (atualizandoMetricas()) {
           <div class="painel-lateral__metricas-overlay d-flex align-items-center gap-2 text-muted">
             <div class="br-loading" role="progressbar" aria-label="atualizando métricas"></div>
@@ -97,22 +104,7 @@
 
         <section class="painel-lateral__section">
           <h6 class="painel-lateral__section-title">Pessoas</h6>
-          <p class="mb-1"><strong>Total de participantes envolvidos:</strong> {{ r.pessoas.total_participantes }}</p>
-          <p class="mb-1">
-            <strong>Somente unidade própria:</strong>
-            {{ r.pessoas.participantes_somente_unidade_propria }}
-            <span class="text-muted">({{ formatPercent(r.pessoas.percentual_somente_unidade_propria) }} do total)</span>
-          </p>
-          <p class="mb-1">
-            <strong>Somente outras unidades:</strong>
-            {{ r.pessoas.participantes_somente_outras_unidades }}
-            <span class="text-muted">({{ formatPercent(r.pessoas.percentual_somente_outras_unidades) }} do total)</span>
-          </p>
-          <p class="mb-0">
-            <strong>Em ambas:</strong>
-            {{ r.pessoas.participantes_em_ambas }}
-            <span class="text-muted">({{ formatPercent(r.pessoas.percentual_em_ambas) }} do total)</span>
-          </p>
+          <p class="mb-1"><strong>Total de participantes envolvidos:</strong> {{ r.pessoas.total_participantes }}</p>          
         </section>
 
         <section class="painel-lateral__section">
