@@ -38,10 +38,10 @@ class AvaliacaoPT
         $filhas = $hierarquia['filhas'];
 
         $distribuicoes = [];
-        $distribuicoes[] = $this->calcularDistribuicao($unidade, $filhas, $filtros);
+        $distribuicoes[] = $this->calcularDistribuicao($unidade, $filtros);
 
         foreach ($filhas as $filha) {
-            $distribuicoes[] = $this->calcularDistribuicao($filha, new Collection(), $filtros);
+            $distribuicoes[] = $this->calcularDistribuicao($filha, $filtros);
         }
 
         return (new IndicadorDTO(
@@ -51,11 +51,10 @@ class AvaliacaoPT
     }
 
     /**
-     * @param Collection<int, Unidade> $filhasParaConsolidar
      */
-    private function calcularDistribuicao(Unidade $unidade, Collection $filhasParaConsolidar, FiltrosPainelDTO $filtros): DistribuicaoUnidadeDTO
+    private function calcularDistribuicao(Unidade $unidade, FiltrosPainelDTO $filtros): DistribuicaoUnidadeDTO
     {
-        $unidadeIds = [$unidade->id, ...$filhasParaConsolidar->pluck('id')->toArray()];
+        $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
         // Total: consolidações já concluídas (passíveis de avaliação)
         $baseQuery = $this->buildBaseQuery($unidadeIds, $filtros);
