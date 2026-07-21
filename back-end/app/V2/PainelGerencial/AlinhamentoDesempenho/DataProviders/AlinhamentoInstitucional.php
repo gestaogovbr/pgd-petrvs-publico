@@ -49,10 +49,10 @@ class AlinhamentoInstitucional
         $filhas = $hierarquia['filhas'];
 
         $distribuicoes = [];
-        $distribuicoes[] = $this->calcularDistribuicao($unidade, $filhas, $filtros);
+        $distribuicoes[] = $this->calcularDistribuicao($unidade, $filtros);
 
         foreach ($filhas as $filha) {
-            $distribuicoes[] = $this->calcularDistribuicao($filha, new Collection(), $filtros);
+            $distribuicoes[] = $this->calcularDistribuicao($filha, $filtros);
         }
 
         return (new IndicadorDTO(
@@ -62,13 +62,11 @@ class AlinhamentoInstitucional
     }
 
     /**
-     * Calcula a distribuição de entregas para uma unidade (e opcionalmente suas filhas diretas para o consolidado).
-     *
-     * @param Collection<int, Unidade> $filhasParaConsolidar
+     * Calcula a distribuição de entregas para uma unidade + todas as suas subordinadas recursivas.
      */
-    protected function calcularDistribuicao(Unidade $unidade, Collection $filhasParaConsolidar, FiltrosPainelDTO $filtros): DistribuicaoUnidadeDTO
+    protected function calcularDistribuicao(Unidade $unidade, FiltrosPainelDTO $filtros): DistribuicaoUnidadeDTO
     {
-        $unidadeIds = [$unidade->id, ...$filhasParaConsolidar->pluck('id')->toArray()];
+        $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
         $baseQuery = $this->buildBaseQuery($unidadeIds, $filtros);
 
