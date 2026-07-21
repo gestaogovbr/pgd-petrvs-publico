@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\V2\PainelGerencial\Adesao\DataProviders;
 
 use App\Models\Unidade;
-use App\Models\Usuario;
 use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\V2\PainelGerencial\DTOs\DistribuicaoUnidadeDTO;
 use App\V2\PainelGerencial\DTOs\FiltrosPainelDTO;
 use App\V2\PainelGerencial\DTOs\IndicadorDTO;
@@ -18,9 +18,11 @@ class ParticipantesPGD
     use ResolveHierarquiaPainel;
 
     private const SEGMENTOS = ['Participantes', 'Não Participantes'];
+    private const ATRIBUICOES_PARTICIPANTE = ['LOTADO', 'COLABORADOR'];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
+        private readonly UsuarioRepository $usuarioRepository,
     ) {}
 
     protected function getUnidadeRepository(): UnidadeRepository
@@ -53,15 +55,9 @@ class ParticipantesPGD
     {
         $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
-        $usuarios = Usuario::query()
-            ->whereHas('unidadesIntegrantes', fn ($q) => $q
-                ->whereIn('unidade_id', $unidadeIds)
-                ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', ['LOTADO', 'COLABORADOR']))
-            )
-            ->whereNull('deleted_at')
-            ->get();
+        $usuarios = $this->usuarioRepository->findIntegrantesPorUnidades($unidadeIds, self::ATRIBUICOES_PARTICIPANTE);
 
-        $participantes = $usuarios->filter(fn (Usuario $u) => $u->participa_pgd === 'sim')->count();
+        $participantes = $usuarios->filter(fn ($u) => $u->participa_pgd === 'sim')->count();
         $naoParticipantes = $usuarios->count() - $participantes;
 
         return new DistribuicaoUnidadeDTO(

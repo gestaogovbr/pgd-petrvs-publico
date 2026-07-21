@@ -31,7 +31,7 @@ beforeEach(function () {
 describe('ConsolidarSerieAdesao', function () {
 
     test('consolida unidades executoras para o período informado', function () {
-        (new ConsolidarSerieAdesao('2026-07'))->handle();
+        (new ConsolidarSerieAdesao(null, '2026-07'))->handle(app(\App\V2\PainelGerencial\Adesao\SerieAdesaoService::class));
 
         $registro = DB::table('serie_unidades_executoras')
             ->where('unidade_id', $this->unidadePai->id)
@@ -54,7 +54,7 @@ describe('ConsolidarSerieAdesao', function () {
         UnidadeIntegranteAtribuicao::factory()->lotado()
             ->paraUsuarioUnidade($naoParticipante->id, $this->unidadePai->id)->create();
 
-        (new ConsolidarSerieAdesao('2026-07'))->handle();
+        (new ConsolidarSerieAdesao(null, '2026-07'))->handle(app(\App\V2\PainelGerencial\Adesao\SerieAdesaoService::class));
 
         $registro = DB::table('serie_participantes_pgd')
             ->where('unidade_id', $this->unidadePai->id)
@@ -68,7 +68,7 @@ describe('ConsolidarSerieAdesao', function () {
     });
 
     test('usa período atual quando não informado', function () {
-        (new ConsolidarSerieAdesao())->handle();
+        (new ConsolidarSerieAdesao())->handle(app(\App\V2\PainelGerencial\Adesao\SerieAdesaoService::class));
 
         $periodo = now()->format('Y-m');
         $count = DB::table('serie_unidades_executoras')
@@ -79,12 +79,12 @@ describe('ConsolidarSerieAdesao', function () {
     });
 
     test('atualiza registro existente ao rodar novamente para o mesmo período', function () {
-        (new ConsolidarSerieAdesao('2026-07'))->handle();
+        (new ConsolidarSerieAdesao(null, '2026-07'))->handle(app(\App\V2\PainelGerencial\Adesao\SerieAdesaoService::class));
 
         // Muda o estado
         $this->unidadeNaoExec->update(['executora' => true]);
 
-        (new ConsolidarSerieAdesao('2026-07'))->handle();
+        (new ConsolidarSerieAdesao(null, '2026-07'))->handle(app(\App\V2\PainelGerencial\Adesao\SerieAdesaoService::class));
 
         $registro = DB::table('serie_unidades_executoras')
             ->where('unidade_id', $this->unidadePai->id)
@@ -97,7 +97,7 @@ describe('ConsolidarSerieAdesao', function () {
     });
 
     test('persiste unidade_sigla independente da unidade ser deletada depois', function () {
-        (new ConsolidarSerieAdesao('2026-07'))->handle();
+        (new ConsolidarSerieAdesao(null, '2026-07'))->handle(app(\App\V2\PainelGerencial\Adesao\SerieAdesaoService::class));
 
         $siglaOriginal = $this->unidadePai->sigla;
         $this->unidadePai->delete();

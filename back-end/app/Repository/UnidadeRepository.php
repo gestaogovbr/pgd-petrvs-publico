@@ -101,4 +101,9 @@ class UnidadeRepository
     {
         return $this->readRepository->linhaAscendente($unidadeId);
     }
+
+    public function findAll(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->findAllWhere([]);
+    }
 }

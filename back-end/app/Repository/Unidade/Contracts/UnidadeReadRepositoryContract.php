@@ -8,6 +8,7 @@ use App\Models\Unidade;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 /**
  * @see \App\Repository\Unidade\Eloquent\EloquentUnidadeReadRepository
@@ -48,4 +49,6 @@ interface UnidadeReadRepositoryContract
 
     /** @return string[] */
     public function linhaAscendente(string $unidadeId): array;
+
+    public function findAllWhere(array $criteria): SupportCollection;
 }
