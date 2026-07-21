@@ -66,7 +66,7 @@ class PlanoTrabalhoService
         $filtro = PlanoTrabalhoIndexDTO::fromRequest($data, Auth::id());
         $filtro = $this->indexValidator->validar($filtro);
 
-        if ($filtro->subordinadas && $filtro->unidadesId) {
+        if (!$filtro->minhaEquipe && $filtro->subordinadas && $filtro->unidadesId) {
             $idsBase = $filtro->unidadesId;
             $subordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($idsBase)->pluck('id')->toArray();
             $filtro = $filtro->withUnidadesId(array_merge($idsBase, $subordinadasIds));
@@ -75,9 +75,9 @@ class PlanoTrabalhoService
         $paginator = $this->readRepository->buscarPlanosListagem($filtro);
         $usuario = $this->usuarioLogadoComPerfilEAreas();
 
-        if ($paginator instanceof ConcreteLengthAwarePaginator) {
-            $paginator->getCollection()->transform(function (PlanoTrabalho $plano) use ($usuario) {
-                $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+        $paginator->getCollection()->transform(function (PlanoTrabalho $plano) use ($usuario) {
+            $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
+            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
 
                 return $plano;
             });
@@ -159,7 +159,9 @@ class PlanoTrabalhoService
         }
 
         $usuario = $this->usuarioLogadoComPerfilEAreas();
-        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+        $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
+        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
+        $plano->setAttribute('is_proprio', $this->isMesmoCpfDoParticipante($plano));
 
         return $plano;
     }
@@ -295,5 +297,16 @@ class PlanoTrabalhoService
         }
 
         return true;
+    }
+
+    private function isMesmoCpfDoParticipante(PlanoTrabalho $plano): bool
+    {
+        $participante = $this->usuarioRepository->findById($plano->usuario_id);
+
+        if ($participante === null) {
+            return false;
+        }
+
+        return $participante->cpf === Auth::user()->cpf;
     }
 }

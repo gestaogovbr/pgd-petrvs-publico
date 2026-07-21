@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal } from "@angular/core";
+import { Component, ChangeDetectionStrategy, OnInit, DestroyRef, inject, signal, computed } from "@angular/core";
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from "src/app/v2/components/breadcrumb/breadcrumb.component";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -53,10 +53,13 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly error = signal<string | null>(null);
   readonly encerrando = signal(false);
   readonly justificativaEncerramento = signal('');
-  readonly isGestorHierarquia = signal(false);
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
+
+  readonly totalForcaTrabalho = computed(() =>
+    (this.planoTrabalho()?.entregas ?? []).reduce((sum, e) => sum + (Number(e.forca_trabalho) || 0), 0)
+  );
   ngOnInit(): void {
     this.route.paramMap.pipe(
       map(params => params.get('id')),
@@ -70,18 +73,18 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
           this.loading.set(false);
           this.assinatura.init(plano, plano.entregas || []);
-          if (this.auth.usuario?.id !== plano.usuario_id
-            && !this.unidadeService.isGestorUnidade(plano.unidade_id)
-            && !this.unidadeService.isGestorUnidade(plano.unidade?.unidade_pai_id ?? null)) {
-            this.unidadeService.isGestorHierarquia(plano.unidade_id).subscribe(v => this.isGestorHierarquia.set(v));
-          }
-          this.assinatura.onAfterAssinar = () => {
+          const atualizarPlanoNaTela = () => {
             this.api.getById(plano.id).subscribe(updated => {
               this.planoTrabalho.set(updated);
               this.assinatura.init(updated, updated.entregas || []);
             });
-            this.facade.loadConsolidacoes();
           };
+          this.assinatura.onAfterAssinar = () => {
+            atualizarPlanoNaTela();
+            this.facade.loadConsolidacoes();
+            this.facade.loadDispensas();
+          };
+          this.facade.init(plano.id, atualizarPlanoNaTela);
           this.route.fragment.pipe(take(1)).subscribe(f => {
             if (f) setTimeout(() => document.getElementById(f)?.scrollIntoView({ behavior: 'smooth' }), 300);
           });
@@ -91,8 +94,6 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.loading.set(false);
         }
       });
-
-      this.facade.init(id!);
     });
   }
 
@@ -146,6 +147,9 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   }
 
   statusConsolidacaoDisplay(consolidacao: Consolidacao): string {
+    if (this.facade.isDispensada(consolidacao.id)) {
+      return 'Dispensado';
+    }
     const plano = this.planoTrabalho();
     if (plano?.encerrado_at && new Date(consolidacao.data_inicio) > new Date(plano.encerrado_at)) {
       return 'Encerrado antecipadamente';

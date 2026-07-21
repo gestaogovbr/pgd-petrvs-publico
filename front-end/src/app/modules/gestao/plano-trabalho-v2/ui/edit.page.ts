@@ -23,6 +23,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
 import { AssinarPlanoUseCase } from '../application/assinar-plano.usecase';
 import { PlanoTrabalho, getPlanoEntregaInfo, planoTrabalhoStatusLabel } from '../domain/types';
+import { modalidadeDivergenteDoSiape, modalidadeSiapeNormalizada } from '../domain/modalidade-divergente';
+import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -50,6 +52,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
   readonly policy = inject(PlanoTrabalhoPolicy);
   readonly assinatura = inject(AssinarPlanoUseCase);
   private readonly auth = inject(AuthService);
+  private readonly modalidadePgdService = inject(ModalidadePgdService);
 
   readonly agentePublicoSomenteLeitura = computed(() => this.auth.isUsuarioParticipante());
 
@@ -116,7 +119,6 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     data_fim: FormControl<string>;
     modalidade_pgd: FormControl<string>;
     justificativa_modalidade: FormControl<string>;
-    justificativa: FormControl<string>;
   }> = this.fb.group({
     usuario_id: this.fb.nonNullable.control('', Validators.required),
     unidade_id: this.fb.nonNullable.control('', Validators.required),
@@ -124,7 +126,6 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     data_fim: this.fb.nonNullable.control('', Validators.required),
     modalidade_pgd: this.fb.nonNullable.control('', Validators.required),
     justificativa_modalidade: this.fb.nonNullable.control(''),
-    justificativa: this.fb.nonNullable.control('')
   });
 
   readonly entregaForm = this.fb.group({
@@ -176,12 +177,13 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     return planoTrabalhoStatusLabel(plano?.status, plano!);
   });
 
-  readonly modalidadeDivergente = computed(() => {
-    const selecionada = this.selectedModalidadeId();
-    const doUsuario = this.usuarioModalidadePgd();
-    if (!selecionada || !doUsuario) return false;
-    return selecionada !== doUsuario;
-  });
+  readonly modalidadeDivergente = computed(() =>
+    modalidadeDivergenteDoSiape(
+      this.modalidadePgdService,
+      this.selectedModalidadeId() || this.form.controls.modalidade_pgd.value,
+      this.usuarioModalidadePgd() || null
+    )
+  );
 
   // Options para BrSelectComponent — inclui `selected: true` para o item atual,
   // pois o br-select/Stencil processa options antes que writeValue tenha efeito.
@@ -248,23 +250,6 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       } else {
         ctrl.clearValidators();
         ctrl.setValue('');
-      }
-      ctrl.updateValueAndValidity();
-    }, { injector: this.injector });
-
-    // Justificativa de carga horária obrigatória quando CHD != 100%
-    effect(() => {
-      const ctrl = this.form.controls.justificativa;
-      if (this.totalForcaTrabalho() !== 100) {
-        ctrl.setValidators(Validators.required);
-      } else {
-        ctrl.clearValidators();
-        if (ctrl.value) {
-          ctrl.setValue('');
-          if (this.planoId()) {
-            this.api.update(this.planoId()!, { justificativa: null } as any).subscribe();
-          }
-        }
       }
       ctrl.updateValueAndValidity();
     }, { injector: this.injector });
@@ -534,7 +519,6 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       data_fim: this.form.controls.data_fim.value,
       modalidade_pgd: this.form.controls.modalidade_pgd.value,
       justificativa_modalidade: this.form.controls.justificativa_modalidade.value || null,
-      justificativa: this.form.controls.justificativa.value || null
     };
 
     this.saving.set(true);
@@ -768,13 +752,12 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       { emitEvent: false }
     );
     this.form.controls.justificativa_modalidade.setValue(plano.justificativa_modalidade || '', { emitEvent: false });
-    this.form.controls.justificativa.setValue(plano.justificativa || '', { emitEvent: false });
 
     if (plano.usuario_id) {
       const usuario = await firstValueFrom(this.usuarioService.getById(plano.usuario_id));
       this.form.controls.usuario_id.setValue(usuario.id, { emitEvent: false });
       this.agentePublicoQuery.setValue(usuario.nome, { emitEvent: false });
-      await this.carregarUnidades(usuario);
+      await this.carregarUnidades(usuario, { preencherModalidadePadrao: false });
       this.selectedUnidadeId.set(plano.unidade_id ?? '');
       this.form.controls.unidade_id.setValue(plano.unidade_id ?? '', { emitEvent: false });
       this.selectedModalidadeId.set(plano.modalidade_pgd ?? '');
@@ -882,7 +865,11 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     return this.usuarioService.searchByNomeMatricula(value);
   }
 
-  private async carregarUnidades(usuario: Usuario) {
+  private async carregarUnidades(
+    usuario: Usuario,
+    opcoes: { preencherModalidadePadrao?: boolean } = {}
+  ) {
+    const { preencherModalidadePadrao = true } = opcoes;
     const unidades = await firstValueFrom(this.usuarioService.getUnidadesVinculadas(usuario.cpf));
     this.unidades.set(unidades ?? []);
     this.erroAgentePublico.set('');
@@ -904,20 +891,23 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     }
 
     this.modalidades.set(await this.tipoModalidadeApi.listar());
+    this.usuarioModalidadePgd.set(modalidadeSiapeNormalizada(this.modalidadePgdService, usuario.modalidade_pgd));
 
-    const tipoModalidadeId = usuario.modalidade_pgd;
-    if (typeof tipoModalidadeId === 'string' && tipoModalidadeId.length) {
-      const tipoModalidadeValue = tipoModalidadeId.trim();
-      const isValid = this.modalidades().some(m => m.key === tipoModalidadeValue);
-      if (isValid) {
-        this.usuarioModalidadePgd.set(tipoModalidadeValue);
-        this.form.controls.modalidade_pgd.setValue(tipoModalidadeValue);
-        return;
-      }
+    if (!preencherModalidadePadrao) {
+      return;
+    }
+
+    const modalidadeSiape = this.usuarioModalidadePgd();
+    if (modalidadeSiape && this.modalidades().some(m => m.key === modalidadeSiape)) {
+      this.selectedModalidadeId.set(modalidadeSiape);
+      this.form.controls.modalidade_pgd.setValue(modalidadeSiape, { emitEvent: false });
+      return;
     }
 
     if (this.modalidades().length > 0) {
-      this.form.controls.modalidade_pgd.setValue(this.modalidades()[0].key);
+      const firstKey = this.modalidades()[0].key;
+      this.selectedModalidadeId.set(firstKey);
+      this.form.controls.modalidade_pgd.setValue(firstKey, { emitEvent: false });
     }
   }
 }

@@ -23,7 +23,7 @@ class PlanoEntregaResource extends JsonResource
             "cod_unidade_executora"       => $this->unidade->codigo,
             "data_inicio"                 => Carbon::parse($this->data_inicio)->format('Y-m-d'),
             "data_termino"                => Carbon::parse($this->data_fim)->format('Y-m-d'),
-            "status"                      => $this->getStatus(),
+            "status"                      => $this->converteStatus($this->status),
             "avaliacao"                   => $this->getAvaliacao(),
             "data_avaliacao"              => $this->avaliacao?->data_avaliacao ?
                 Carbon::parse($this->avaliacao?->data_avaliacao)->format('Y-m-d')
@@ -34,9 +34,11 @@ class PlanoEntregaResource extends JsonResource
         ];
     }
 
-    function getStatus()
+    function converteStatus($status)
     {
-        switch ($this->status) {
+        switch ($status) {
+            case 'CANCELADO':
+                return EnvioPlanoEntregaStatusEnum::CANCELADO->value;
             case 'ATIVO':
                 return EnvioPlanoEntregaStatusEnum::EM_EXECUCAO->value;
             case 'CONCLUIDO':
@@ -44,7 +46,7 @@ class PlanoEntregaResource extends JsonResource
             case 'AVALIADO':
                 return EnvioPlanoEntregaStatusEnum::AVALIADO->value;
             default:
-                throw new ExportPgdException('Plano de Entrega com status inválido para Envio: '.$this->status);
+                throw new ExportPgdException('Plano de Entrega com status inválido para Envio: '.$status);
         }
     }
 

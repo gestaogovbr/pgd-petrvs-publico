@@ -36,6 +36,21 @@ class UnidadeRepository
         return $this->readRepository->isUsuarioGestorTitularDaUnidade($unidadeId, $usuarioId);
     }
 
+    public function isUsuarioGestorSubstitutoDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->readRepository->isUsuarioGestorSubstitutoDaUnidade($unidadeId, $usuarioId);
+    }
+
+    public function isUsuarioGestorDelegadoDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->readRepository->isUsuarioGestorDelegadoDaUnidade($unidadeId, $usuarioId);
+    }
+
+    public function isUsuarioChefiaDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->readRepository->isUsuarioChefiaDaUnidade($unidadeId, $usuarioId);
+    }
+
     public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO
     {
         return $this->readRepository->getHierarquiaAssinatura($unidadeId, $participanteId, $assinanteId);
@@ -61,9 +76,9 @@ class UnidadeRepository
         return $this->readRepository->findByCodigoWithPai($codigo);
     }
 
-    public function getUnidadesGerenciadas(string $usuarioId): \Illuminate\Database\Eloquent\Collection
+    public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->readRepository->getUnidadesGerenciadas($usuarioId);
+        return $this->readRepository->getUnidadesGerenciadas($usuarioId, $exclude);
     }
 
     public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection

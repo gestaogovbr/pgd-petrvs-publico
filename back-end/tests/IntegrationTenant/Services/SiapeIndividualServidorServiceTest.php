@@ -12,8 +12,14 @@ use App\Models\SiapeListaUORGS;
 use App\Services\NivelAcessoService;
 use App\Models\TipoModalidade;
 use App\Models\Usuario;
+use App\Repository\IntegracaoServidorRepository;
+use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
+use App\Services\IntegracaoService;
+use App\Services\ProcessadorAtualizacaoDadosSiapeService;
 use App\Services\SiapeIndividualService;
 use App\Services\SiapeIndividualServidorService;
+use App\Services\UnidadeIntegranteService;
 use App\Services\UsuarioService;
 use App\Services\Siape\ProcessaDadosSiapeBD;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeServidor;
@@ -32,7 +38,14 @@ beforeEach(function () {
     // DatabaseTenantTestCase handles tenant creation and schema loading.
     Bus::fake();
 
-    prepararPerfisSiapeIndividualServidor();
+    Perfil::firstOrCreate(
+        ['nivel' => NivelAcessoService::PERFIL_PARTICIPANTE],
+        ['nome' => 'Participante', 'descricao' => 'Perfil participante']
+    );
+    Perfil::firstOrCreate(
+        ['nivel' => NivelAcessoService::PERFIL_CONSULTA],
+        ['nome' => 'Consulta', 'descricao' => 'Perfil consulta']
+    );
 
     $this->service = app(SiapeIndividualServidorService::class);
 
@@ -661,7 +674,7 @@ test('issue 2175 - reativacao definitiva restaura participante lotado em qualque
     'usuario ativo temporario' => [UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value, '52998224732', '2175012'],
 ]);
 
-test('issue 2185 - carga individual deve usar emailServidor quando emailInstitucional vem vazio', function () {
+test('issue 2185 - carga individual deve usar emailServidor e sinalizar parcial quando dados funcionais ficam incompletos', function () {
     $cpf = '52998224725';
     $matricula = '1180001';
     $codigoUnidade = '18';
@@ -805,7 +818,8 @@ test('issue 2185 - carga individual deve usar emailServidor quando emailInstituc
 
     $response->assertOk();
     $response->assertJsonPath('success', true);
-    $response->assertJsonPath('resumo.0.status', 'sucesso');
+    $response->assertJsonPath('resumo.0.status', 'parcial');
+    $response->assertJsonPath('relatorio_carga.status', 'parcial');
     $response->assertJsonPath('resumo.0.usuario_existia', true);
 
     $usuario->refresh();
@@ -815,7 +829,7 @@ test('issue 2185 - carga individual deve usar emailServidor quando emailInstituc
         ->and($alteracoes)->toContain('email');
 });
 
-test('issue 2093 - carga individual deve lotar contrato temporario quando exercicio vem vazio e lotacao vem preenchida', function () {
+test('issue 2093 - carga individual deve lotar contrato temporario e sinalizar parcial quando exercicio vem vazio', function () {
     $cpf = '52998224725';
     $matricula = '2093001';
     $codigoLotacao = '1281';
@@ -938,7 +952,8 @@ test('issue 2093 - carga individual deve lotar contrato temporario quando exerci
 
     $response->assertOk();
     $response->assertJsonPath('success', true);
-    $response->assertJsonPath('resumo.0.status', 'sucesso');
+    $response->assertJsonPath('resumo.0.status', 'parcial');
+    $response->assertJsonPath('relatorio_carga.status', 'parcial');
     $response->assertJsonPath('resumo.0.usuario_inserido', true);
     $response->assertJsonPath('resumo.0.lotacao_associada', true);
 
@@ -952,6 +967,110 @@ test('issue 2093 - carga individual deve lotar contrato temporario quando exerci
         'unidade_id' => $unidade->id,
         'deleted_at' => null,
     ], 'tenant');
+});
+
+test('issue 2313 - cadastro de usuario ausente com exercicio nulo nao deve abortar sincronizacao', function () {
+    $cpf = '52998224733';
+    $matricula = '2313001';
+
+    $vinculoSemExercicio = (object) [
+        'cpf' => $cpf,
+        'matricula' => $matricula,
+        'exercicio' => null,
+        'nome' => 'Servidor Issue 2313',
+        'apelido' => 'Servidor 2313',
+        'telefone' => null,
+        'data_nascimento' => '1990-01-01',
+        'sexo' => 'MASCULINO',
+        'situacao_funcional' => 'ATIVO_PERMANENTE',
+        'modalidade_pgd' => null,
+        'uf' => 'DF',
+        'data_modificacao' => '2026-07-14',
+        'ident_unica' => 'ISSUE2313',
+        'emailfuncional' => 'servidor.issue2313@teste.gov.br',
+    ];
+
+    $integracaoServidorRepository = Mockery::mock(IntegracaoServidorRepository::class);
+    $integracaoServidorRepository->shouldReceive('getUsuariosAusentes')
+        ->once()
+        ->andReturn([$vinculoSemExercicio]);
+
+    $unidadeRepository = Mockery::mock(UnidadeRepository::class);
+    $unidadeRepository->shouldReceive('findByCodigo')->never();
+
+    $registro = new Usuario([
+        'id' => (string) Str::uuid(),
+        'nome' => 'Servidor Issue 2313',
+        'email' => 'servidor.issue2313@teste.gov.br',
+        'cpf' => $cpf,
+        'apelido' => 'Servidor 2313',
+        'matricula' => $matricula,
+        'situacao_funcional' => 'ATIVO_PERMANENTE',
+        'modalidade_pgd' => null,
+    ]);
+
+    $usuarioService = Mockery::mock(UsuarioService::class);
+    $usuarioService->shouldReceive('verificaSeUsuarioSoMudouMatricula')
+        ->once()
+        ->with($cpf, null, $matricula, null, Mockery::on(fn ($batch) => is_array($batch)))
+        ->andReturn(true);
+    $usuarioService->shouldReceive('gerarUsuario')
+        ->once()
+        ->andReturn($registro);
+
+    $integracaoService = Mockery::mock(IntegracaoService::class);
+    $integracaoService->shouldReceive('validarModalidadePgd')->once()->with('')->andReturn(null);
+    $integracaoService->shouldReceive('liberarEmailDuplicadoDefinindoComoNulo')
+        ->once()
+        ->with('servidor.issue2313@teste.gov.br', $matricula);
+
+    $usuarioRepository = Mockery::mock(UsuarioRepository::class);
+    $usuarioCriado = new Usuario(['id' => (string) Str::uuid(), 'matricula' => $matricula]);
+    $usuarioRepository->shouldReceive('create')
+        ->once()
+        ->with(Mockery::on(fn (array $attributes) => ($attributes['matricula'] ?? null) === $matricula))
+        ->andReturn($usuarioCriado);
+
+    $unidadeIntegrante = Mockery::mock(UnidadeIntegranteService::class);
+    $unidadeIntegrante->shouldReceive('salvarIntegrantes')->never();
+
+    $service = app(ProcessadorAtualizacaoDadosSiapeService::class);
+    $reflection = new \ReflectionClass(ProcessadorAtualizacaoDadosSiapeService::class);
+
+    foreach ([
+        'integracaoServidorRepository' => $integracaoServidorRepository,
+        'unidadeRepository' => $unidadeRepository,
+        'usuarioRepository' => $usuarioRepository,
+    ] as $propertyName => $value) {
+        $property = $reflection->getProperty($propertyName);
+        $property->setAccessible(true);
+        $property->setValue($service, $value);
+    }
+
+    $resultProperty = $reflection->getProperty('result');
+    $resultProperty->setAccessible(true);
+    $resultProperty->setValue($service, [
+        'unidades' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []],
+        'servidores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []],
+        'gestores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []],
+    ]);
+
+    $usuarioComumProperty = $reflection->getProperty('usuarioComum');
+    $usuarioComumProperty->setAccessible(true);
+    $usuarioComumProperty->setValue($service, 'Participante');
+
+    $servicesProperty = $reflection->getParentClass()->getProperty('_services');
+    $servicesProperty->setAccessible(true);
+    $servicesProperty->setValue($service, [
+        'usuarioService' => $usuarioService,
+        'integracaoService' => $integracaoService,
+        'unidadeIntegrante' => $unidadeIntegrante,
+    ]);
+
+    $method = $reflection->getMethod('cadastrarUsuariosAusentes');
+    $method->setAccessible(true);
+
+    expect(fn () => $method->invoke($service))->not->toThrow(\Throwable::class);
 });
 
 test('issue 2163 - backend deve salvar atribuicoes de usuario interno com email nulo', function () {

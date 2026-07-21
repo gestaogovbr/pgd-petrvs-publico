@@ -196,6 +196,52 @@ describe('PlanoTrabalhoStoreValidator', function () {
 
         expect(true)->toBeTrue();
     });
+
+    test('permite quando modalidade do SIAPE está em formato legível e coincide após normalização', function () {
+        $unidade = Mockery::mock(Unidade::class)->makePartial();
+        $unidade->data_inativacao = null;
+
+        $programa = Mockery::mock(Programa::class)->makePartial();
+        $programa->data_inicio = '2024-01-01';
+        $programa->data_fim = '2024-12-31';
+
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->modalidade_pgd = 'Teletrabalho (Integral)';
+        $agente->participa_pgd = 'sim';
+
+        $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->programaRepo->shouldReceive('findById')->with('programa-1')->andReturn($programa);
+        $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
+        $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+
+        $this->validacao->validar(buildStoreDTO(['modalidade_pgd' => 'integral']));
+
+        expect(true)->toBeTrue();
+    });
+
+    test('issue 2313 - permite modalidade parcial quando SouGov retorna teletrabalho parcial em formato legível', function () {
+        $unidade = Mockery::mock(Unidade::class)->makePartial();
+        $unidade->data_inativacao = null;
+
+        $programa = Mockery::mock(Programa::class)->makePartial();
+        $programa->data_inicio = '2024-01-01';
+        $programa->data_fim = '2024-12-31';
+
+        $agente = Mockery::mock(Usuario::class)->makePartial();
+        $agente->modalidade_pgd = 'Teletrabalho Parcial';
+        $agente->participa_pgd = 'sim';
+
+        $this->unidadeRepo->shouldReceive('findById')->andReturn($unidade);
+        $this->programaRepo->shouldReceive('findById')->with('programa-1')->andReturn($programa);
+        $this->programaRepo->shouldReceive('isVigenteParaUnidade')->andReturn(true);
+        $this->planoRepo->shouldReceive('existeConflitoPeriodo')->andReturn(false);
+        $this->usuarioRepo->shouldReceive('findById')->with('user-1')->andReturn($agente);
+
+        $this->validacao->validar(buildStoreDTO(['modalidade_pgd' => 'parcial']));
+
+        expect(true)->toBeTrue();
+    });
 });
 
 describe('PlanoTrabalhoStoreValidator - autorização', function () {

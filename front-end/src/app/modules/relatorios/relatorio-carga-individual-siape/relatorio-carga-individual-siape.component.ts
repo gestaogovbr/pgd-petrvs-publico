@@ -1,5 +1,4 @@
 import { Component, Injector, OnInit, ViewEncapsulation } from '@angular/core';
-import { SafeHtml } from '@angular/platform-browser';
 import { FormControl, FormGroup } from '@angular/forms';
 import { RelatorioCargaIndividualSiapeDaoService } from 'src/app/dao/relatorio-carga-individual-siape-dao.service';
 import {
@@ -13,49 +12,7 @@ import { PageBase } from '../../base/page-base';
 
 @Component({
   selector: 'relatorio-carga-individual-siape',
-  template: `
-    <div class="relatorio-carga-siape-pagina">
-      <toolbar></toolbar>
-
-      <header class="relatorio-carga-siape-cabecalho">
-        <h1>Relatorio de Carga Individual SIAPE</h1>
-        <p>Consulta e visualizacao dos relatorios retornados pelo backend.</p>
-      </header>
-
-      <form class="relatorio-carga-siape-filtros" [formGroup]="filtro" (ngSubmit)="buscarPorId()">
-        <label>
-          <span>Identificador</span>
-          <input class="form-control" formControlName="id" placeholder="ID do relatorio">
-        </label>
-
-        <label>
-          <span>Tipo</span>
-          <select class="form-select" formControlName="tipo">
-            <option value="">Todos</option>
-            <option value="servidor">Servidor</option>
-            <option value="unidade">Unidade</option>
-          </select>
-        </label>
-
-        <label>
-          <span>CPF ou unidade</span>
-          <input class="form-control" formControlName="chave" placeholder="Buscar recentes">
-        </label>
-
-        <div class="relatorio-carga-siape-acoes">
-          <button class="btn btn-primary" type="submit">Buscar</button>
-          <button class="btn btn-outline-secondary" type="button" (click)="listarRecentes()">Recentes</button>
-          <button class="btn btn-outline-secondary" type="button" (click)="limpar()">Limpar</button>
-        </div>
-      </form>
-
-      <section
-        class="relatorio-carga-siape-conteudo"
-        (click)="onConteudoClick($event)"
-        [innerHTML]="conteudoHtml">
-      </section>
-    </div>
-  `,
+  templateUrl: './relatorio-carga-individual-siape.component.html',
   styleUrls: ['./relatorio-carga-individual-siape.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: false
@@ -69,7 +26,7 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
   public relatorio: RelatorioCargaIndividualSiape | null = null;
   public recentes: RelatorioCargaIndividualSiape[] = [];
   public exibindoDetalhe: boolean = false;
-  public conteudoHtml: SafeHtml = '';
+  public secaoAtivaIndex: number = 0;
 
   private relatorioDao: RelatorioCargaIndividualSiapeDaoService;
   private sequenciaRequisicao: number = 0;
@@ -83,7 +40,6 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
     super.ngOnInit();
     this.title = 'Carga Individual SIAPE';
     this.code = 'MOD_SIAPE_RELATORIO_CARGA';
-    this.renderizarConteudo();
 
     if (!this.auth.hasPermissionTo('MOD_SIAPE_RELATORIO_CARGA')) {
       await this.dialog.alert('Acesso restrito', 'Você não tem permissão para acessar este relatório.');
@@ -124,12 +80,11 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
 
       if (!this.relatorio) {
         this.exibindoDetalhe = false;
-        this.renderizarConteudo();
         await this.dialog.alert('Relatório não encontrado', 'Não encontramos relatório para o identificador informado.');
         return;
       }
 
-      this.renderizarConteudo();
+      this.secaoAtivaIndex = 0;
       this.cdRef.detectChanges();
     } catch (error: unknown) {
       if (sequencia !== this.sequenciaRequisicao) {
@@ -138,7 +93,7 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
 
       this.exibindoDetalhe = false;
       this.relatorio = null;
-      this.renderizarConteudo();
+      this.secaoAtivaIndex = 0;
       await this.dialog.alert('Erro', this.mensagemErro(error, 'Não foi possível carregar o relatório.'));
     } finally {
       if (sequencia === this.sequenciaRequisicao) {
@@ -166,7 +121,6 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
       }
 
       this.recentes = recentes;
-      this.renderizarConteudo();
       this.cdRef.detectChanges();
     } catch (error: unknown) {
       if (sequencia !== this.sequenciaRequisicao) {
@@ -174,7 +128,6 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
       }
 
       this.recentes = [];
-      this.renderizarConteudo();
       await this.dialog.alert('Erro', this.mensagemErro(error, 'Não foi possível carregar os relatórios.'));
     } finally {
       if (sequencia === this.sequenciaRequisicao) {
@@ -187,7 +140,7 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
     this.relatorio = this.normalizarRelatorio(relatorio);
     this.exibindoDetalhe = !!this.relatorio;
     this.filtro.controls.id.setValue(relatorio.id);
-    this.renderizarConteudo();
+    this.secaoAtivaIndex = 0;
     this.cdRef.detectChanges();
   }
 
@@ -195,35 +148,9 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
     this.exibindoDetalhe = false;
     this.relatorio = null;
     this.recentes = [];
+    this.secaoAtivaIndex = 0;
     this.filtro.reset({ id: '', tipo: '', chave: '' });
-    this.renderizarConteudo();
     void this.listarRecentes();
-  }
-
-  public onConteudoClick(event: Event): void {
-    const target = event.target as HTMLElement | null;
-    const elemento = target?.closest('[data-relatorio-id], [data-acao]') as HTMLElement | null;
-
-    if (!elemento) {
-      return;
-    }
-
-    const relatorioId = elemento.getAttribute('data-relatorio-id');
-    if (relatorioId) {
-      const relatorio = this.recentes.find((item) => item.id === relatorioId);
-      if (relatorio) {
-        this.abrir(relatorio);
-      } else {
-        this.filtro.controls.id.setValue(relatorioId);
-        void this.buscarPorId();
-      }
-      return;
-    }
-
-    const acao = elemento.getAttribute('data-acao');
-    if (acao === 'recentes') {
-      void this.listarRecentes();
-    }
   }
 
   public valor(valor: unknown): string {
@@ -302,141 +229,11 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
     return this.util.getDateTimeFormatted(data);
   }
 
-  private renderizarConteudo(): void {
-    const html = this.exibindoDetalhe && this.relatorio
-      ? this.renderizarDetalhe(this.relatorio)
-      : this.renderizarLista(this.recentes);
-
-    this.conteudoHtml = this.gb.sanitizer.bypassSecurityTrustHtml(html);
-  }
-
-  private renderizarLista(relatorios: RelatorioCargaIndividualSiape[]): string {
-    if (!relatorios.length) {
-      return `
-        <div class="relatorio-carga-siape-bloco">
-          <h2>Relatorios recentes</h2>
-          <p class="relatorio-carga-siape-vazio">Nenhum relatorio encontrado.</p>
-        </div>
-      `;
-    }
-
-    const cards = relatorios.map((item) => `
-      <article class="relatorio-carga-siape-card">
-        <div class="relatorio-carga-siape-card__topo">
-          <div>
-            <strong>${this.escaparHtml(this.tipoLabel(item.tipo))}</strong>
-            <span class="relatorio-carga-siape-muted">${this.escaparHtml(item.chave)}</span>
-          </div>
-          <span class="relatorio-carga-siape-chip ${this.statusResumoClass(item.status)}">
-            ${this.escaparHtml(this.statusResumoLabel(item.status))}
-          </span>
-        </div>
-
-        <div class="relatorio-carga-siape-card__meta">
-          <span><strong>ID:</strong> ${this.escaparHtml(item.id)}</span>
-          <span><strong>Processado em:</strong> ${this.escaparHtml(this.formatarProcessadoEm(item.processado_em) || '-')}</span>
-        </div>
-
-        <p class="relatorio-carga-siape-card__mensagem">${this.escaparHtml(item.mensagem_usuario)}</p>
-
-        <div class="relatorio-carga-siape-card__acoes">
-          <button class="btn btn-sm btn-outline-primary" type="button" data-relatorio-id="${this.escaparAtributo(item.id)}">
-            Abrir detalhe
-          </button>
-        </div>
-      </article>
-    `).join('');
-
-    return `
-      <div class="relatorio-carga-siape-bloco">
-        <h2>Relatorios recentes</h2>
-        <div class="relatorio-carga-siape-lista">
-          ${cards}
-        </div>
-      </div>
-    `;
-  }
-
-  private renderizarDetalhe(relatorio: RelatorioCargaIndividualSiape): string {
-    const orientacoes = relatorio.orientacoes.length
-      ? `
-        <section class="relatorio-carga-siape-box">
-          <h3>Orientacoes</h3>
-          <ul class="relatorio-carga-siape-orientacoes">
-            ${relatorio.orientacoes.map((item) => `<li>${this.escaparHtml(item)}</li>`).join('')}
-          </ul>
-        </section>
-      `
-      : '';
-
-    const secoes = relatorio.secoes.map((secao) => `
-      <section class="relatorio-carga-siape-box">
-        <h3>${this.escaparHtml(secao.titulo)}</h3>
-        ${this.renderizarTabelaSecao(secao)}
-      </section>
-    `).join('');
-
-    return `
-      <div class="relatorio-carga-siape-bloco relatorio-carga-siape-detalhe">
-        <div class="relatorio-carga-siape-detalhe__topo">
-          <div>
-            <h2>${this.escaparHtml(this.tipoLabel(relatorio.tipo))}</h2>
-            <p>${this.escaparHtml(relatorio.mensagem_usuario)}</p>
-          </div>
-          <button class="btn btn-outline-secondary" type="button" data-acao="recentes">Voltar</button>
-        </div>
-
-        <div class="relatorio-carga-siape-meta">
-          <span><strong>ID:</strong> ${this.escaparHtml(relatorio.id)}</span>
-          <span><strong>Chave:</strong> ${this.escaparHtml(relatorio.chave)}</span>
-          <span><strong>Status:</strong> ${this.escaparHtml(this.statusResumoLabel(relatorio.status))}</span>
-          <span><strong>Processado em:</strong> ${this.escaparHtml(this.formatarProcessadoEm(relatorio.processado_em) || '-')}</span>
-        </div>
-
-        ${orientacoes}
-        ${secoes || '<p class="relatorio-carga-siape-vazio">Nenhuma secao disponivel neste relatorio.</p>'}
-      </div>
-    `;
-  }
-
-  private renderizarTabelaSecao(secao: RelatorioCargaIndividualSiapeSecao): string {
-    if (!secao.campos.length) {
-      return '<p class="relatorio-carga-siape-vazio">Nenhum campo disponivel nesta secao.</p>';
-    }
-
-    const linhas = secao.campos.map((campo) => `
-      <tr>
-        <td>${this.escaparHtml(campo.rotulo)}</td>
-        <td>${this.escaparHtml(this.valorCampo(campo, 'recebido_siape'))}</td>
-        <td>${this.escaparHtml(this.valorCampo(campo, 'registrado_petrvs'))}</td>
-        <td><span class="${this.statusCampoClass(campo.status)}">${this.escaparHtml(this.statusLabel(campo.status))}</span></td>
-      </tr>
-    `).join('');
-
-    return `
-      <div class="relatorio-carga-siape-tabela-wrapper">
-        <table class="relatorio-carga-siape-tabela">
-          <thead>
-            <tr>
-              <th>Campo</th>
-              <th>Recebido do SIAPE</th>
-              <th>Registrado no Petrvs</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${linhas}
-          </tbody>
-        </table>
-      </div>
-    `;
-  }
-
-  private tipoLabel(tipo: RelatorioCargaIndividualSiapeTipo): string {
+  public tipoLabel(tipo: RelatorioCargaIndividualSiapeTipo): string {
     return tipo === 'servidor' ? 'Servidor' : 'Unidade';
   }
 
-  private statusResumoLabel(status: RelatorioCargaIndividualSiape['status']): string {
+  public statusResumoLabel(status: RelatorioCargaIndividualSiape['status']): string {
     const labels: Record<RelatorioCargaIndividualSiape['status'], string> = {
       sucesso: 'Concluido',
       parcial: 'Atencao',
@@ -446,7 +243,7 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
     return labels[status] ?? status;
   }
 
-  private statusResumoClass(status: RelatorioCargaIndividualSiape['status']): string {
+  public statusResumoClass(status: RelatorioCargaIndividualSiape['status']): string {
     const classes: Record<RelatorioCargaIndividualSiape['status'], string> = {
       sucesso: 'relatorio-carga-siape-chip--sucesso',
       parcial: 'relatorio-carga-siape-chip--parcial',
@@ -456,7 +253,7 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
     return classes[status] ?? 'relatorio-carga-siape-chip--parcial';
   }
 
-  private statusCampoClass(status: RelatorioCargaIndividualSiapeStatusCampo): string {
+  public statusCampoClass(status: RelatorioCargaIndividualSiapeStatusCampo): string {
     const classes: Record<RelatorioCargaIndividualSiapeStatusCampo, string> = {
       confirmado: 'relatorio-carga-siape-status relatorio-carga-siape-status--confirmado',
       ajustado: 'relatorio-carga-siape-status relatorio-carga-siape-status--ajustado',
@@ -466,6 +263,44 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
     };
 
     return classes[status] ?? 'relatorio-carga-siape-status relatorio-carga-siape-status--neutro';
+  }
+
+  public selecionarSecao(index: number): void {
+    this.secaoAtivaIndex = index;
+  }
+
+  public secaoAtiva(): RelatorioCargaIndividualSiapeSecao | null {
+    if (!this.relatorio?.secoes.length) {
+      return null;
+    }
+
+    return this.relatorio.secoes[this.secaoAtivaIndex] ?? this.relatorio.secoes[0] ?? null;
+  }
+
+  public deveExibirAbas(): boolean {
+    return this.relatorio?.tipo === 'servidor' && (this.relatorio?.secoes.length ?? 0) > 1;
+  }
+
+  public labelAba(secao: RelatorioCargaIndividualSiapeSecao, index: number): string {
+    const matricula = secao.matricula ?? this.matriculaDaSecao(secao);
+    const label = matricula ? `Matricula ${matricula}` : `Vinculo ${index + 1}`;
+
+    return secao.status_vinculo === 'excluido' ? `${label} (excluido)` : label;
+  }
+
+  public statusVinculoLabel(secao: RelatorioCargaIndividualSiapeSecao): string {
+    return secao.status_vinculo === 'excluido' ? 'Vinculo excluido/inativo' : 'Vinculo ativo';
+  }
+
+  public statusVinculoClass(secao: RelatorioCargaIndividualSiapeSecao): string {
+    return secao.status_vinculo === 'excluido'
+      ? 'relatorio-carga-siape-chip relatorio-carga-siape-chip--erro'
+      : 'relatorio-carga-siape-chip relatorio-carga-siape-chip--sucesso';
+  }
+
+  private matriculaDaSecao(secao: RelatorioCargaIndividualSiapeSecao): string | null {
+    const campoMatricula = secao.campos.find((campo) => campo.campo === 'matriculaSiape');
+    return campoMatricula?.recebido_siape ?? campoMatricula?.registrado_petrvs ?? null;
   }
 
   private mensagemErro(error: unknown, fallback: string): string {
@@ -520,6 +355,10 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
           ? secaoParcial.titulo
           : `Secao ${secaoIndex + 1}`,
         tipo: secaoParcial.tipo === 'unidade' ? 'unidade' : 'servidor',
+        matricula: this.normalizarValorCampo(secaoParcial.matricula),
+        indice: typeof secaoParcial.indice === 'number' ? secaoParcial.indice : secaoIndex + 1,
+        status_vinculo: secaoParcial.status_vinculo === 'excluido' ? 'excluido' : secaoParcial.status_vinculo === 'ativo' ? 'ativo' : null,
+        data_ocorrencia_exclusao: this.normalizarValorCampo(secaoParcial.data_ocorrencia_exclusao),
         campos: campos.map((campo, campoIndex) => {
           const campoParcial = (typeof campo === 'object' && campo !== null ? campo : {}) as Partial<RelatorioCargaIndividualSiapeCampo>;
 
@@ -638,18 +477,5 @@ export class RelatorioCargaIndividualSiapeComponent extends PageBase implements 
       String(mes).padStart(2, '0'),
       String(ano).padStart(4, '0'),
     ].join('-');
-  }
-
-  private escaparHtml(valor: string): string {
-    return valor
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;');
-  }
-
-  private escaparAtributo(valor: string): string {
-    return this.escaparHtml(valor);
   }
 }

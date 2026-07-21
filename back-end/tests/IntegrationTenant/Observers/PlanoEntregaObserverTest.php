@@ -50,12 +50,12 @@ describe('PlanoEntregaObserver', function () {
         Bus::assertDispatched(ExportarPlanoEntregaJob::class);
     });
 
-    it('PlanoEntrega Observer NÃO é chamado ao alterar plano de entrega CANCELADO', function () {
+    it('PlanoEntrega Observer É chamado ao alterar plano de entrega CANCELADO', function () {
         $planoEntrega = PlanoEntrega::factory()->create();
         $planoEntrega->status = PlanoEntregaStatus::CANCELADO->value;
         $planoEntrega->save();
 
-        Bus::assertNotDispatched(ExportarPlanoEntregaJob::class);
+        Bus::assertDispatched(ExportarPlanoEntregaJob::class);
     });
 
 });

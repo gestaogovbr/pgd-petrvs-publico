@@ -182,8 +182,10 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             $v_isr = UtilService::object2array($v_isr);
             $cpfCheck = UtilService::valueOrDefault($v_isr['cpf']);
             $matriculaNova = UtilService::valueOrDefault($v_isr['matricula']);
-            $codigoExercicio = UtilService::valueOrDefault($v_isr['exercicio']);
-            $unidadeExercicio = $this->unidadeRepository->findByCodigo($codigoExercicio);
+            $codigoExercicio = UtilService::valueOrDefault($v_isr['exercicio'] ?? null);
+            $unidadeExercicio = !empty($codigoExercicio)
+                ? $this->unidadeRepository->findByCodigo($codigoExercicio)
+                : null;
             $unidadeExercicioIdCheck = isset($unidadeExercicio->id) ? $unidadeExercicio->id : null;
 
             if(!$this->usuarioService->verificaSeUsuarioSoMudouMatricula($cpfCheck, $unidadeExercicioIdCheck, $matriculaNova, $codigoExercicio, $matriculasAlteradasNoBatch)) {
@@ -213,7 +215,9 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             $usuarioId = $usuarioCriado->id;
 
             $unidadeExercicioId = null;
-            $unidadeExercicioObj = $this->unidadeRepository->findByCodigo($v_isr["exercicio"]);
+            $unidadeExercicioObj = !empty($codigoExercicio)
+                ? $this->unidadeRepository->findByCodigo($codigoExercicio)
+                : null;
             $unidadeExercicioId = $unidadeExercicioObj ? $unidadeExercicioObj->id : null;
 
             if (is_null($unidadeExercicioId)) {

@@ -84,6 +84,7 @@ afterEach(function () {
 function mockPaginatorComEnriquecimentoAcoes(): LengthAwarePaginator
 {
     $planoItem = Mockery::mock(PlanoTrabalho::class)->makePartial();
+    $planoItem->id = 'plano-mock';
     $collection = new Collection([$planoItem]);
     $paginator = Mockery::mock(LengthAwarePaginator::class);
     $paginator->shouldReceive('getCollection')->andReturn($collection);
@@ -95,6 +96,10 @@ function mockPaginatorComEnriquecimentoAcoes(): LengthAwarePaginator
         ->shouldReceive('findByIdComAreasTrabalho')
         ->with('user-1')
         ->andReturn($usuario);
+
+    test()->arquivarValidator
+        ->shouldReceive('isElegivelParaArquivamento')
+        ->andReturn(false);
 
     test()->authorization
         ->shouldReceive('acoes')
@@ -112,10 +117,26 @@ function mockShowEnriquecimentoAcoes(PlanoTrabalho $plano): void
         ->shouldReceive('findByIdComAreasTrabalho')
         ->andReturn($usuario);
 
+    test()->arquivarValidator
+        ->shouldReceive('isElegivelParaArquivamento')
+        ->andReturn(false);
+
     test()->authorization
         ->shouldReceive('acoes')
-        ->with($plano, $usuario)
+        ->with($plano, $usuario, Mockery::type('bool'))
         ->andReturn(new PlanoTrabalhoAcoesDTO(editar: false));
+
+    $participante = Mockery::mock(Usuario::class)->makePartial();
+    $participante->cpf = '12345678901';
+
+    test()->usuarioRepository
+        ->shouldReceive('findById')
+        ->with($plano->usuario_id)
+        ->andReturn($participante);
+
+    $authUser = Mockery::mock(Usuario::class)->makePartial();
+    $authUser->cpf = '12345678901';
+    Auth::shouldReceive('user')->andReturn($authUser);
 }
 
 describe('PlanoTrabalhoService::index', function () {
@@ -125,6 +146,7 @@ describe('PlanoTrabalhoService::index', function () {
         $this->indexValidator->shouldReceive('validar')->once()->with(Mockery::type(PlanoTrabalhoIndexDTO::class))->andReturnUsing(fn ($f) => $f);
 
         $planoItem = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $planoItem->id = 'plano-1';
         $collection = new Collection([$planoItem]);
         $paginator = Mockery::mock(LengthAwarePaginator::class);
         $paginator->shouldReceive('getCollection')->once()->andReturn($collection);
@@ -144,16 +166,22 @@ describe('PlanoTrabalhoService::index', function () {
             ->with('user-1')
             ->andReturn($usuario);
 
+        $this->arquivarValidator
+            ->shouldReceive('isElegivelParaArquivamento')
+            ->once()
+            ->with($planoItem)
+            ->andReturn(false);
+
         $this->authorization
             ->shouldReceive('acoes')
             ->once()
-            ->with($planoItem, $usuario)
+            ->with($planoItem, $usuario, false)
             ->andReturn(new PlanoTrabalhoAcoesDTO(editar: true));
 
         $result = $this->service->index(['filters' => ['vigentes' => true]]);
 
         expect($result)->toBe($paginator)
-            ->and($planoItem->getAttribute('acoes'))->toBe(['editar' => true]);
+            ->and($planoItem->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'encerrar' => false]);
     });
 
     test('expande unidades com subordinadas quando flag subordinadas=true', function () {
@@ -352,6 +380,7 @@ describe('PlanoTrabalhoService::show', function () {
 
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
         $plano->usuario_id = 'user-1';
         $plano->unidade_id = 'u-1';
 
@@ -370,16 +399,35 @@ describe('PlanoTrabalhoService::show', function () {
             ->with('user-1')
             ->andReturn($usuario);
 
+        $this->arquivarValidator
+            ->shouldReceive('isElegivelParaArquivamento')
+            ->once()
+            ->with($plano)
+            ->andReturn(false);
+
         $this->authorization
             ->shouldReceive('acoes')
             ->once()
-            ->with($plano, $usuario)
+            ->with($plano, $usuario, false)
             ->andReturn(new PlanoTrabalhoAcoesDTO(editar: true));
+
+        $participante = Mockery::mock(Usuario::class)->makePartial();
+        $participante->cpf = '12345678901';
+
+        $this->usuarioRepository
+            ->shouldReceive('findById')
+            ->with('user-1')
+            ->andReturn($participante);
+
+        $authUser = Mockery::mock(Usuario::class)->makePartial();
+        $authUser->cpf = '12345678901';
+        Auth::shouldReceive('user')->andReturn($authUser);
 
         $result = $this->service->show('plano-1');
 
         expect($result)->toBe($plano)
-            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true]);
+            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'encerrar' => false])
+            ->and($plano->getAttribute('is_proprio'))->toBeTrue();
     });
 
     test('retorna plano quando tem entregas', function () {
@@ -387,6 +435,7 @@ describe('PlanoTrabalhoService::show', function () {
 
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-2';
         $plano->usuario_id = 'user-1';
         $plano->unidade_id = 'u-1';
         $plano->setRelation('entregas', new Collection([
@@ -424,6 +473,7 @@ describe('PlanoTrabalhoService::show', function () {
 
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
         $plano->usuario_id = 'dono-1';
         $plano->unidade_id = 'unidade-1';
         $plano->setRelation('consolidacoes', new Collection([$consolidacao]));
@@ -443,6 +493,7 @@ describe('PlanoTrabalhoService::show', function () {
 
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
         $plano->usuario_id = 'outro-user';
         $plano->unidade_id = 'unidade-1';
         $plano->setRelation('consolidacoes', new Collection([$consolidacao]));
@@ -464,6 +515,7 @@ describe('PlanoTrabalhoService::show', function () {
 
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
         $plano->usuario_id = 'outro-user';
         $plano->unidade_id = 'unidade-1';
         $plano->setRelation('consolidacoes', new Collection([$consolidacao]));

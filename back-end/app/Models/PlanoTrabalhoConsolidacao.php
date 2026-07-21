@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use App\Enums\StatusEnum;
 use App\Contracts\HasStatusHistory;
 use App\Models\ModelBase;
 use App\Models\PlanoTrabalho;
 use App\Models\Comparecimento;
 use App\Models\PlanoTrabalhoConsolidacaoOcorrencia;
 use App\Models\StatusJustificativa;
+use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusPolicy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,57 +39,11 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
   protected static function booted()
   {
     static::updated(function (PlanoTrabalhoConsolidacao $consolidacao) {
-      if (!$consolidacao->isDirty('status')) {
+      if (!$consolidacao->wasChanged('status')) {
         return;
       }
 
-      /** @var \App\V2\StatusService $statusService */
-      $statusService = app(\App\V2\StatusService::class);
-      $planoTrabalho = $consolidacao->planoTrabalho()->first();
-
-      $todasAvaliadas = $planoTrabalho->consolidacoes()
-        ->where('status', '!=', StatusEnum::AVALIADO->value)
-        ->when($planoTrabalho->encerrado_at, fn ($q) => $q->where('data_inicio', '<=', $planoTrabalho->encerrado_at))
-        ->doesntExist();
-
-      if ($todasAvaliadas && $planoTrabalho->status === StatusEnum::ATIVO->value) {
-        $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
-        $statusService->atualizaStatus(
-          $planoTrabalho,
-          StatusEnum::CONCLUIDO->value,
-          'Plano de Trabalho concluído: todos os períodos avaliativos foram avaliados.',
-        );
-        return;
-      }
-
-      if ($todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value && !$planoTrabalho->avaliado_at) {
-        $planoTrabalho->update(['avaliado_at' => date('Y-m-d')]);
-        return;
-      }
-
-      $foiRecurso = $consolidacao->possuiRecursoSemReavaliacao();
-
-      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::CONCLUIDO->value) {
-        $planoTrabalho->update(['avaliado_at' => null]);
-
-        // Só reverte para ATIVO se não foi encerrado e não é recurso
-        if (!$planoTrabalho->encerrado_at && !$foiRecurso) {
-          $statusService->atualizaStatus(
-            $planoTrabalho,
-            StatusEnum::ATIVO->value,
-            'Plano de Trabalho reaberto: um período avaliativo deixou de estar avaliado.',
-          );
-        }
-      }
-
-      if (!$todasAvaliadas && $planoTrabalho->status === StatusEnum::AVALIADO->value) {
-        $planoTrabalho->update(['avaliado_at' => null]);
-        $statusService->atualizaStatus(
-          $planoTrabalho,
-          StatusEnum::CONCLUIDO->value,
-          'Avaliação cancelada: plano retornou ao status anterior.',
-        );
-      }
+      app(PlanoTrabalhoAvaliacaoStatusPolicy::class)->sincronizarAposMudancaConsolidacao($consolidacao);
     });
   }
 

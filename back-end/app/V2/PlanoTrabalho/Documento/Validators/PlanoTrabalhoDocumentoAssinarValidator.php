@@ -13,6 +13,7 @@ use App\Models\PlanoTrabalho;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\DocumentoRepository;
 use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 
 class PlanoTrabalhoDocumentoAssinarValidator
@@ -28,12 +29,14 @@ class PlanoTrabalhoDocumentoAssinarValidator
         private readonly DocumentoRepository $documentoRepository,
         private readonly DocumentoAssinaturaRepository $assinaturaRepository,
         private readonly UnidadeRepository $unidadeRepository,
+        private readonly UsuarioRepository $usuarioRepository,
     ) {}
 
-    public function validar(PlanoTrabalho $plano, string $usuarioId): Documento
+    public function validar(PlanoTrabalho $plano, string $usuarioId, string $cpf): Documento
     {
         $this->validarStatus($plano);
         $this->validarEntregas($plano);
+        $this->validarNaoProprietario($plano, $usuarioId, $cpf);
         $this->validarChefiaHierarquica($plano, $usuarioId);
 
         $documento = $this->documentoRepository->findTcrByPlanoTrabalhoId($plano->id);
@@ -42,7 +45,7 @@ class PlanoTrabalhoDocumentoAssinarValidator
             throw new NotFoundException('Plano de Trabalho não possui documento TCR gerado.');
         }
 
-        if ($this->assinaturaRepository->usuarioJaAssinou($documento->id, $usuarioId)) {
+        if ($this->assinaturaRepository->usuarioJaAssinou($documento->id, $cpf)) {
             throw new ValidateException('Usuário já assinou este documento.');
         }
 
@@ -74,7 +77,8 @@ class PlanoTrabalhoDocumentoAssinarValidator
      *
      * Regra baseada no papel do participante NA UNIDADE DO PT:
      * - Participante é apenas lotado → gestor da mesma unidade ou da unidade pai pode assinar
-     * - Participante é GESTOR_SUBSTITUTO/DELEGADO → GESTOR titular da mesma unidade pode assinar
+     * - Participante é GESTOR_SUBSTITUTO → GESTOR titular da mesma unidade pode assinar
+     * - Participante é GESTOR_DELEGADO → GESTOR titular ou GESTOR_SUBSTITUTO da mesma unidade pode assinar
      * - Participante é GESTOR titular → gestor da unidade pai deve assinar
      */
     private function validarChefiaHierarquica(PlanoTrabalho $plano, string $usuarioId): void
@@ -110,10 +114,39 @@ class PlanoTrabalhoDocumentoAssinarValidator
             return true;
         }
 
-        if (!$hierarquia->participanteGestorTitular) {
+        if ($hierarquia->participanteGestorTitular) {
+            return false;
+        }
+
+        if ($hierarquia->participanteGestorDelegado) {
+            return $hierarquia->assinanteGestorTitular || $hierarquia->assinanteGestorSubstituto;
+        }
+
+        if ($hierarquia->participanteGestorSubstituto) {
             return $hierarquia->assinanteGestorTitular;
         }
 
-        return false;
+        return $hierarquia->assinanteGestorTitular;
+    }
+
+    /**
+     * Impede que um usuário com o mesmo CPF do participante assine como chefia.
+     * A assinatura como participante é permitida (usuario_id coincide).
+     */
+    private function validarNaoProprietario(PlanoTrabalho $plano, string $usuarioId, string $cpf): void
+    {
+        if ($plano->usuario_id === $usuarioId) {
+            return;
+        }
+
+        $participante = $this->usuarioRepository->findById($plano->usuario_id);
+
+        if ($participante === null) {
+            return;
+        }
+
+        if ($participante->cpf === $cpf) {
+            throw new ForbiddenException('Não é permitido assinar o próprio Plano de Trabalho como chefia.');
+        }
     }
 }
