@@ -145,21 +145,36 @@
             [template]="columnPEVigente"
             [titleTemplate]="titlePEVigente"
             [verticalAlign]="'bottom'"
-            [width]="80"
+            [width]="200"
             [align]="'center'"
+            [titleHint]="'Considera-se apenas os Planos de Entregas Em execução'"
         >
             <ng-template let-header="header" #titlePEVigente>
-                <input-select 
-                    [items]="lookup.SIM_NAO" 
-                    [control]="filter!.controls.possuiPEVigente"
-                    controlName="this.filter.possuiPEVigente"
-                    (change)="onValueChange($event)"
-                    nullable
-                ></input-select> 
+                <input-text 
+                    [control]="filter!.controls.peVigenteNome"
+                    controlName="this.filter.peVigenteNome"
+                    (blur)="onValueChange($event)"
+                ></input-text>
             </ng-template>
 
             <ng-template let-row="row" #columnPEVigente>
-                <span> {{row.possuiPEVigente || '-'}}</span>
+                <a *ngIf="row.peVigenteId" class="nav-link px-0" role="button"
+                    (click)="go.navigate({
+                        route: ['gestao', 'plano-entrega'],
+                        params: {
+                            planejamento: true,
+                            filter: {
+                                unidade_id: row.unidade_id,
+                                data_filtro: 'VIGENTE',
+                                principais: false,
+                                meus_planos: false
+                            }
+                        }
+                    })"
+                >
+                    {{row.peVigenteNome}}
+                </a>
+                <span *ngIf="!row.peVigenteId">-</span>
             </ng-template>
         </column>
 

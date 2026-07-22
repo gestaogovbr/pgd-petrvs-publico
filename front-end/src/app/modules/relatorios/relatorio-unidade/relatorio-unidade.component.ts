@@ -6,7 +6,6 @@ import { RelatorioUnidadeDaoService } from "src/app/dao/relatorio-unidade-dao.se
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { RelatorioUnidade } from "src/app/models/relatorio-unidade.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
-import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { of } from "rxjs";
 import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
@@ -35,7 +34,7 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
       uorg: { default: "" },
       instituidora: { default: "" },
       executora: { default: "" },
-      possuiPEVigente: { default: "" },
+      peVigenteNome: { default: "" },
       chefiaNome: { default: "" },
       totalVinculados: { default: "" },
       totalSubstitutos: { default: "" },
@@ -85,8 +84,8 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
       result.push(["executora", "==", form.executora]);
     }
 
-    if (form.possuiPEVigente?.length) {
-      result.push(["possuiPEVigente", "==", form.possuiPEVigente]);
+    if (form.peVigenteNome?.length) {
+      result.push(["peVigenteNome", "like", "%" + form.peVigenteNome + "%"]);
     }
 
     if (form.chefiaNome?.length) {
