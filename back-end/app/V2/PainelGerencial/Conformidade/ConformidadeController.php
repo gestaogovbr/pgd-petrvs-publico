@@ -33,6 +33,7 @@ class ConformidadeController extends Controller
     public function registroExecucaoPE(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
 
             return response()->json(['success' => true, 'data' => $this->registroExecucaoPE->getData($filtros)->toArray()]);
@@ -50,6 +51,7 @@ class ConformidadeController extends Controller
     public function avaliacaoPE(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
 
             return response()->json(['success' => true, 'data' => $this->avaliacaoPE->getData($filtros)->toArray()]);
@@ -67,6 +69,7 @@ class ConformidadeController extends Controller
     public function registroExecucaoPT(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
 
             return response()->json(['success' => true, 'data' => $this->registroExecucaoPT->getData($filtros)->toArray()]);
@@ -84,6 +87,7 @@ class ConformidadeController extends Controller
     public function avaliacaoPT(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
 
             return response()->json(['success' => true, 'data' => $this->avaliacaoPT->getData($filtros)->toArray()]);
@@ -101,6 +105,7 @@ class ConformidadeController extends Controller
     public function unidadesExecutorasPE(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
 
             return response()->json(['success' => true, 'data' => $this->unidadesExecutorasPE->getData($filtros)->toArray()]);
