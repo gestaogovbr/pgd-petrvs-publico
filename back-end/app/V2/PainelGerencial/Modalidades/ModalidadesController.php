@@ -27,6 +27,7 @@ class ModalidadesController extends Controller
     public function teletrabalhoSubstituicao(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
             $result = $this->teletrabalhoExterior->getDataSubstituicao($filtros);
 
@@ -45,6 +46,7 @@ class ModalidadesController extends Controller
     public function teletrabalhoDiscricionario(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
             $result = $this->teletrabalhoExterior->getDataDiscricionario($filtros);
 
@@ -63,6 +65,7 @@ class ModalidadesController extends Controller
     public function modalidadesPorUnidade(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
             $result = $this->modalidadesPorUnidade->getData($filtros);
 
