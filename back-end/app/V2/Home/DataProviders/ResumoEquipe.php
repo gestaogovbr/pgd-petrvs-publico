@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace App\V2\Home\DataProviders;
 
+use App\Enums\StatusEnum;
 use App\Models\Usuario;
 use App\Repository\UnidadeRepository;
 use App\Services\CalendarioService;
 use App\V2\Home\DTOs\HomeRequestDTO;
 use App\V2\Home\Traits\ResolveUnidades;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class ResumoEquipe
 {
     use ResolveUnidades;
+
+    private const PARTICIPA_PGD = 'sim';
+    private const ATRIBUICOES_PARTICIPANTE = ['LOTADO', 'COLABORADOR'];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -40,11 +43,11 @@ class ResumoEquipe
         $result = Usuario::query()
             ->whereHas('unidadesIntegrantes', fn ($q) => $q
                 ->whereIn('unidade_id', $unidadeIds)
-                ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', ['LOTADO', 'COLABORADOR']))
+                ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', self::ATRIBUICOES_PARTICIPANTE))
             )
             ->get();
 
-        $participantes = $result->filter(fn ($u) => $u->participa_pgd === 'sim')->count();
+        $participantes = $result->filter(fn ($u) => $u->participa_pgd === self::PARTICIPA_PGD)->count();
         $total = $result->count();
 
         return [
@@ -63,12 +66,12 @@ class ResumoEquipe
             SELECT pt.id, pt.carga_horaria, DATE(pt.data_inicio) AS data_inicio, DATE(pt.data_fim) AS data_fim, pt.unidade_id
             FROM planos_trabalhos pt
             WHERE pt.deleted_at IS NULL
-              AND pt.status = 'ATIVO'
+              AND pt.status = ?
               AND DATE(pt.data_inicio) <= ?
               AND DATE(pt.data_fim) >= ?
               AND pt.unidade_id IN ({$this->placeholders($unidadeIds)})
             ORDER BY pt.unidade_id
-        SQL, [$fimMes->toDateString(), $inicioMes->toDateString(), ...$unidadeIds]);
+        SQL, [StatusEnum::ATIVO->value, $fimMes->toDateString(), $inicioMes->toDateString(), ...$unidadeIds]);
 
         if (empty($planos)) {
             return 0;
@@ -87,11 +90,7 @@ class ResumoEquipe
             $ptInicio = max($inicioMes->toDateString(), $pt->data_inicio);
             $ptFim = min($fimMes->toDateString(), $pt->data_fim);
 
-            $diasUteis = $this->contarDiasUteis(
-                Carbon::parse($ptInicio),
-                Carbon::parse($ptFim),
-                $feriadosUnidade,
-            );
+            $diasUteis = $this->contarDiasUteis($ptInicio, $ptFim, $feriadosUnidade);
 
             $horasTotal += (float) $pt->carga_horaria * $diasUteis;
         }
@@ -99,28 +98,27 @@ class ResumoEquipe
         return round($horasTotal, 1);
     }
 
-    private function contarDiasUteis(Carbon $inicio, Carbon $fim, array $feriadosCadastrados): int
+    private function contarDiasUteis(string $inicio, string $fim, array $feriadosCadastrados): int
     {
+        $inicioTs = strtotime($inicio);
+        $fimTs = strtotime($fim);
         $diasUteis = 0;
-        $dia = $inicio->copy()->startOfDay();
-        $limite = $fim->copy()->startOfDay();
 
-        while ($dia->lte($limite)) {
-            if ($dia->isWeekday() && !$this->isFeriado($dia, $feriadosCadastrados)) {
+        for ($ts = $inicioTs; $ts <= $fimTs; $ts += 86400) {
+            if (!CalendarioService::isFinalSemana($ts) && !$this->isFeriadoCadastrado($ts, $feriadosCadastrados)) {
                 $diasUteis++;
             }
-            $dia->addDay();
         }
 
         return $diasUteis;
     }
 
-    private function isFeriado(Carbon $dia, array $feriadosCadastrados): bool
+    private function isFeriadoCadastrado(int $timestamp, array $feriadosCadastrados): bool
     {
-        $chaveRecorrente = '-' . $dia->format('m-d');
-        $chaveFixa = $dia->format('Y-m-d');
+        $chaveFixa = date('Y-m-d', $timestamp);
+        $chaveRecorrente = '-' . date('m-d', $timestamp);
 
-        return isset($feriadosCadastrados[$chaveRecorrente]) || isset($feriadosCadastrados[$chaveFixa]);
+        return isset($feriadosCadastrados[$chaveFixa]) || isset($feriadosCadastrados[$chaveRecorrente]);
     }
 
     private function placeholders(array $items): string

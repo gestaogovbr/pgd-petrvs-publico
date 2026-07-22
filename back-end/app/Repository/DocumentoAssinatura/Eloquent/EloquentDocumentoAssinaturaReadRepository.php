@@ -101,4 +101,13 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->where('documento_id', $documentoId)
             ->exists();
     }
+
+    public function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId, string $documentoIdColumn = 'planos_trabalhos.documento_id'): void
+    {
+        $query->select(\Illuminate\Support\Facades\DB::raw(1))
+            ->from('documentos_assinaturas')
+            ->whereColumn('documentos_assinaturas.documento_id', $documentoIdColumn)
+            ->where('documentos_assinaturas.usuario_id', $usuarioId)
+            ->whereNull('documentos_assinaturas.deleted_at');
+    }
 }

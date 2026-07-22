@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\V2\Home\DataProviders;
 
-use App\Models\PlanoEntrega;
-use App\Models\PlanoTrabalho;
+use App\Enums\Atribuicao;
+use App\Enums\StatusEnum;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Repository\UnidadeRepository;
@@ -15,6 +15,8 @@ use App\V2\Home\Traits\ResolveUnidades;
 class PlanosVigentes
 {
     use ResolveUnidades;
+
+    private const PARTICIPA_PGD = 'sim';
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -61,7 +63,7 @@ class PlanosVigentes
             ->where('executora', true)
             ->whereIn('id', $unidadesEscopo)
             ->whereHas('planosEntrega', function ($q) use ($hoje) {
-                $q->where('status', 'ATIVO')
+                $q->where('status', StatusEnum::ATIVO->value)
                     ->where('data_inicio', '<=', $hoje)
                     ->where('data_fim', '>=', $hoje);
             })
@@ -82,10 +84,10 @@ class PlanosVigentes
         $hoje = now()->toDateString();
 
         $total = Usuario::query()
-            ->where('participa_pgd', 'sim')
+            ->where('participa_pgd', self::PARTICIPA_PGD)
             ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
                 $q->whereIn('unidade_id', $unidadesEscopo)
-                    ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', 'LOTADO'));
+                    ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', Atribuicao::LOTADO->value));
             })
             ->count();
 
@@ -94,13 +96,13 @@ class PlanosVigentes
         }
 
         $quantidade = Usuario::query()
-            ->where('participa_pgd', 'sim')
+            ->where('participa_pgd', self::PARTICIPA_PGD)
             ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
                 $q->whereIn('unidade_id', $unidadesEscopo)
-                    ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', 'LOTADO'));
+                    ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', Atribuicao::LOTADO->value));
             })
             ->whereHas('planosTrabalho', function ($q) use ($hoje, $unidadesEscopo) {
-                $q->where('status', 'ATIVO')
+                $q->where('status', StatusEnum::ATIVO->value)
                     ->where('data_inicio', '<=', $hoje)
                     ->where('data_fim', '>=', $hoje)
                     ->whereIn('unidade_id', $unidadesEscopo);

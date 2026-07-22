@@ -7,6 +7,7 @@ namespace App\Repository\PlanoTrabalho\Eloquent;
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\Models\PlanoTrabalho;
 use App\Enums\StatusEnum;
+use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -26,8 +27,10 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         'AVALIADO',
     ];
 
-    public function __construct(PlanoTrabalho $model)
-    {
+    public function __construct(
+        PlanoTrabalho $model,
+        private readonly DocumentoAssinaturaRepository $documentoAssinaturaRepository,
+    ) {
         $this->model = $model;
     }
 
@@ -158,11 +161,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
 
     private function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId): void
     {
-        $query->select(DB::raw(1))
-            ->from('documentos_assinaturas')
-            ->whereColumn('documentos_assinaturas.documento_id', 'planos_trabalhos.documento_id')
-            ->where('documentos_assinaturas.usuario_id', $usuarioId)
-            ->whereNull('documentos_assinaturas.deleted_at');
+        $this->documentoAssinaturaRepository->subqueryUsuarioJaAssinou($query, $usuarioId);
     }
 
     public function planosAtivos(string $usuarioId): Collection
@@ -557,7 +556,11 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         return DB::table('unidades_integrantes as ui')
             ->join('unidades_integrantes_atribuicoes as uia', 'uia.unidade_integrante_id', '=', 'ui.id')
             ->where('ui.usuario_id', $usuarioId)
-            ->whereIn('uia.atribuicao', ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO'])
+            ->whereIn('uia.atribuicao', [
+                \App\Enums\Atribuicao::GESTOR->value,
+                \App\Enums\Atribuicao::GESTOR_SUBSTITUTO->value,
+                \App\Enums\Atribuicao::DELEGADO->value,
+            ])
             ->whereIn('ui.unidade_id', $unidadesEscopo)
             ->pluck('ui.unidade_id')
             ->unique()

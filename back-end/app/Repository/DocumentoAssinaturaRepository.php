@@ -71,4 +71,9 @@ class DocumentoAssinaturaRepository
     {
         return $this->writeRepository->deleteByDocumentoId($documentoId);
     }
+
+    public function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId, string $documentoIdColumn = 'planos_trabalhos.documento_id'): void
+    {
+        $this->readRepository->subqueryUsuarioJaAssinou($query, $usuarioId, $documentoIdColumn);
+    }
 }

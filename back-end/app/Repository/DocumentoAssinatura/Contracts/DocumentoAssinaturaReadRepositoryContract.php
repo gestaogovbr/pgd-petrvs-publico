@@ -25,4 +25,10 @@ interface DocumentoAssinaturaReadRepositoryContract
     public function gestorSubstitutoDiferenteDoParticipanteAssinou(string $documentoId, string $unidadeId, string $participanteId): bool;
 
     public function existeAlgumaAssinatura(string $documentoId): bool;
+
+    /**
+     * Constrói subquery correlacionada para verificar se o usuário já assinou um documento.
+     * Uso: whereNotExists(fn ($sub) => $repo->subqueryUsuarioJaAssinou($sub, $usuarioId))
+     */
+    public function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId, string $documentoIdColumn = 'planos_trabalhos.documento_id'): void;
 }
