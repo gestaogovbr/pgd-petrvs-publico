@@ -12,63 +12,7 @@ import { NavigateService } from 'src/app/services/navigate.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   styleUrls: ['../home.styles.scss'],
-  template: `
-    <div class="br-card home-card">
-      <div class="card-content p-3">
-        <h5 class="text-center fw-bold mb-3">Pendências do usuário</h5>
-        @if (loading()) {
-          <div class="d-flex justify-content-center py-3">
-            <span class="br-loading small" role="progressbar"></span>
-          </div>
-        } @else if (data()) {
-          <ul class="list-unstyled mb-0">
-            <li class="d-flex justify-content-between py-1">
-              <span>Assinaturas de PE pendentes</span>
-              <a class="fw-bold text-decoration-none" role="link" tabindex="0"
-                (click)="irParaAssinaturasPE()" (keydown.enter)="irParaAssinaturasPE()">
-                {{ data()!.assinaturas_pe_pendentes }}
-              </a>
-            </li>
-            <li class="d-flex justify-content-between py-1">
-              <span>Assinaturas de PT pendentes</span>
-              <a class="fw-bold text-decoration-none" role="link" tabindex="0"
-                (click)="irParaAssinaturasPT()" (keydown.enter)="irParaAssinaturasPT()">
-                {{ data()!.assinaturas_pt_pendentes }}
-              </a>
-            </li>
-            <li class="d-flex justify-content-between py-1">
-              <span>Registros de execução de PE em atraso</span>
-              <a class="fw-bold text-decoration-none" role="link" tabindex="0"
-                (click)="irParaRegistrosExecucaoPE()" (keydown.enter)="irParaRegistrosExecucaoPE()">
-                {{ data()!.registros_execucao_pe_atraso }}
-              </a>
-            </li>
-            <li class="d-flex justify-content-between py-1">
-              <span>Registros de execução de PT em atraso</span>
-              <a class="fw-bold text-decoration-none" role="link" tabindex="0"
-                (click)="irParaRegistrosExecucaoPT()" (keydown.enter)="irParaRegistrosExecucaoPT()">
-                {{ data()!.registros_execucao_pt_atraso }}
-              </a>
-            </li>
-            <li class="d-flex justify-content-between py-1">
-              <span>Avaliações de PT pendentes</span>
-              <a class="fw-bold text-decoration-none" role="link" tabindex="0"
-                (click)="irParaAvaliacoesPT()" (keydown.enter)="irParaAvaliacoesPT()">
-                {{ data()!.avaliacoes_pt_pendentes }}
-              </a>
-            </li>
-            <li class="d-flex justify-content-between py-1">
-              <span>Avaliações de PE pendentes</span>
-              <a class="fw-bold text-decoration-none" role="link" tabindex="0"
-                (click)="irParaAvaliacoesPE()" (keydown.enter)="irParaAvaliacoesPE()">
-                {{ data()!.avaliacoes_pe_pendentes }}
-              </a>
-            </li>
-          </ul>
-        }
-      </div>
-    </div>
-  `,
+  templateUrl: './pendencias-usuario.component.html',
 })
 export class PendenciasUsuarioComponent {
   private readonly homeApi = inject(HomeApiClient);

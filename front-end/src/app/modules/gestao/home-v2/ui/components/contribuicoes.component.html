@@ -1,0 +1,21 @@
+<div class="br-card home-card h-100">
+  <div class="card-content p-3">
+    <h6 class="fw-bold text-center">
+      Contribuições dos Participantes
+      <i class="fas fa-info-circle text-muted ml-1"
+         title="Representa a distribuição do esforço da equipe considerando todo o histórico de Planos de Trabalho pactuados na unidade selecionada. Quando a opção Unidades Subordinadas estiver habilitada, também serão considerados os dados das respectivas unidades subordinadas."
+         aria-label="Informação sobre contribuições dos participantes"></i>
+    </h6>
+    @if (loading()) {
+      <div class="d-flex justify-content-center py-2">
+        <span class="br-loading small" role="progressbar"></span>
+      </div>
+    } @else if (data()) {
+      <ul class="list-unstyled py-2 small">
+        <li>Entregas da própria unidade - {{ data()!.entregas_propria_unidade_percentual }}%</li>
+        <li>Entregas de outras unidades - {{ data()!.entregas_outras_unidades_percentual }}%</li>
+        <li>Não vinculada a entregas - {{ data()!.nao_vinculada_entregas_percentual }}%</li>
+      </ul>
+    }
+  </div>
+</div>
