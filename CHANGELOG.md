@@ -1,3 +1,8 @@
+## 3.0.9 23/07/2026
+
+### Adicionado
+- Novo módulo de acompanhamento dos objetivos do planejamento institucional 
+
 ## 3.0.8 17/07/2026
 
 ### Corrigido
