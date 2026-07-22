@@ -26,59 +26,7 @@ export interface UnidadeOption {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, WebcomponentsAngularModule],
-  template: `
-    <div class="row g-3 mb-4">
-      <!-- Tipo de Consulta -->
-      <div class="col-12 col-md-3">
-        <br-select
-          label="Tipo de Consulta"
-          [options]="tipoConsultaOptions"
-          (valueChange)="onTipoConsultaChange($event)"
-          class="w-100">
-        </br-select>
-      </div>
-
-      <!-- Busca Unidade -->
-      <div class="col-12 col-md-4 position-relative">
-        <div class="br-input w-100">
-          <label for="unidade-busca">Unidade</label>
-          <input
-            id="unidade-busca"
-            type="text"
-            [value]="unidadeDisplay()"
-            (input)="onBuscaInput($event)"
-            placeholder="Pesquise por nome ou sigla"
-            autocomplete="off"
-          />
-        </div>
-        @if (sugestoes().length > 0) {
-          <div class="br-card position-absolute w-100" style="z-index: 1050; max-height: 200px; overflow-y: auto;">
-            @for (u of sugestoes(); track u.id) {
-              <div class="px-3 py-2 card-content" style="cursor: pointer;" (click)="selecionarUnidade(u)">
-                <strong>{{ u.sigla }}</strong> - {{ u.nome }}
-              </div>
-            }
-          </div>
-        }
-      </div>
-
-      <!-- Datas (apenas no modo histórico) -->
-      @if (tipoConsulta() === 'historico') {
-        <div class="col-12 col-sm-6 col-md-2">
-          <div class="br-input w-100">
-            <label for="data-inicio">Data Inicial</label>
-            <input id="data-inicio" type="date" [value]="dataInicio()" (change)="onDataInicioChange($event)" />
-          </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-2">
-          <div class="br-input w-100">
-            <label for="data-fim">Data Final</label>
-            <input id="data-fim" type="date" [value]="dataFim()" (change)="onDataFimChange($event)" />
-          </div>
-        </div>
-      }
-    </div>
-  `,
+  templateUrl: './painel-filtros.component.html',
 })
 export class PainelFiltrosComponent implements OnChanges {
   private readonly unidadeService = inject(UnidadeService);

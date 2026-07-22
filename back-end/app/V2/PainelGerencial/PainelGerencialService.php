@@ -18,26 +18,31 @@ class PainelGerencialService
     ) {}
 
     /**
-     * Constrói o DTO de filtros validando autorização.
+     * RN02/RN11: Valida se o usuário autenticado tem acesso aos Painéis Gerenciais.
      */
-    public function buildFiltros(array $data): FiltrosPainelDTO
+    public function validarAcesso(): void
     {
         /** @var Usuario $usuario */
         $usuario = Auth::user();
         $this->authValidator->validar($usuario);
+    }
 
+    /**
+     * Constrói o DTO de filtros a partir dos dados da requisição.
+     */
+    public function buildFiltros(array $data): FiltrosPainelDTO
+    {
         return FiltrosPainelDTO::fromArray($data);
     }
 
     /**
      * RN12: Retorna a unidade de maior nível hierárquico em que o usuário possui atribuição.
-     * Unidade com path mais curto (ou null) = maior nível hierárquico.
+     * Unidade com menos ancestrais (menor profundidade) = maior nível hierárquico.
      */
     public function getUnidadeInicial(): array
     {
         /** @var Usuario $usuario */
         $usuario = Auth::user();
-        $this->authValidator->validar($usuario);
 
         $areasTrabalho = $usuario->areasTrabalho ?? [];
         $unidadeInicial = null;
@@ -49,7 +54,7 @@ class PainelGerencialService
                 continue;
             }
 
-            $nivel = $this->calcularNivelHierarquico($unidade->path);
+            $nivel = $this->calcularNivelHierarquico($unidade);
 
             if ($nivel < $menorNivel) {
                 $menorNivel = $nivel;
@@ -69,17 +74,23 @@ class PainelGerencialService
     }
 
     /**
-     * Calcula o nível hierárquico a partir do path.
-     * Path null/vazio = nível 1 (raiz), path com N segmentos = nível N+1.
+     * Calcula o nível hierárquico navegando via unidade_pai_id.
+     * Raiz (sem pai) = nível 1, cada ancestral adiciona 1.
      */
-    private function calcularNivelHierarquico(?string $path): int
+    private function calcularNivelHierarquico(\App\Models\Unidade $unidade): int
     {
-        if ($path === null || $path === '') {
-            return 1;
+        $nivel = 1;
+        $atual = $unidade;
+
+        while ($atual->unidade_pai_id !== null) {
+            $nivel++;
+            $atual = $atual->unidadePai;
+
+            if (!$atual) {
+                break;
+            }
         }
 
-        $segmentos = array_filter(explode('/', $path));
-
-        return count($segmentos) + 1;
+        return $nivel;
     }
 }
