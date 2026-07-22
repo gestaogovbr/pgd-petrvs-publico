@@ -57,7 +57,7 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
             'C' => 10, // Uorg
             'D' => 12, // Instituidora
             'E' => 12, // Executora
-            'F' => 12, // PE Vigente
+            'F' => 40, // PE Vigente
             'G' => 40, // Chefia
             'H' => 10, // Chefia substituta
             'I' => 10, // Delegados
@@ -73,7 +73,7 @@ class RelatorioUnidadeExport implements FromCollection, WithMapping, WithHeading
             $row->codigo,
             $row->instituidora,
             $row->executora,
-            $row->possuiPEVigente,
+            $row->peVigenteNome ?? '',
             $row->chefiaNome,
             $row->totalSubstitutos,
             $row->totalDelegados,

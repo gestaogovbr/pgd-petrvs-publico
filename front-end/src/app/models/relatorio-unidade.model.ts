@@ -7,7 +7,8 @@ export class RelatorioUnidade extends Base {
     public codigo: string = "";
     public instituidora: 'Sim' | 'Não' = 'Não';
     public executora: 'Sim' | 'Não' = 'Não';
-    public possuiPEVigente: 'Sim' | 'Não' = 'Não';
+    public peVigenteId: string | null = null;
+    public peVigenteNome: string | null = null;
     public chefiaId: number | null = null;
     public chefiaNome: string | null = null;
     public totalVinculados: number = 0;
