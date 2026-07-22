@@ -19,39 +19,35 @@ import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb
 import { NavigateService } from 'src/app/services/navigate.service';
 import {
   PlanejamentoObjetivoEsforcoApiClient,
-  type ObjetivoArvoreVisualizacaoApi,
-  type ObjetivoEntregasListagemApi,
-  type ObjetivoEquipesListagemApi
+  type EsforcoObjetivoNodeApi,
+  type ObjetivoArvoreVisualizacaoApi
 } from '../infra/planejamento-objetivo-esforco-api.client';
+import { PlanejamentoObjetivoPainelLateralComponent } from './planejamento-objetivo-painel-lateral.component';
+
+type AncestorStep = {
+  id: string;
+  link: 'PAI' | 'SUPERIOR';
+  childId: string;
+};
 
 type TreeNodeVm = {
   id: string;
   nome: string;
   planejamentoNome: string;
+  tipoObjetivoNome: string;
+  vinculosCount: number;
   entregasCount: number;
   esforcoProprioHoras: number;
   esforcoTotalHoras: number;
+  /** Planejado % do disponível do próprio nó (igual ao painel). */
+  planejadoPercentualDisponivel: number;
+  /** % do esforço planejado acumulado do pai visível; `null` = nó de referência. */
+  percentualDoPai: number | null;
   filhosPai: string[];
-  objetivoSuperiorId: string | null;
-  isRaiz: boolean;
-  depth: number;
+  isConsultado: boolean;
+  level: number;
   x: number;
   y: number;
-  hasFilhos: boolean;
-};
-
-type SuperiorResumoVm = {
-  id: string;
-  objetivoId: string;
-  nome: string;
-  planejamentoNome: string;
-  hierarquiaLinhas: string[];
-  nivelSuperior: number;
-  objetivoSuperiorId: string | null;
-  ligadoAObjetivoId: string;
-  x: number;
-  y: number;
-  height: number;
 };
 
 type EdgeVm = {
@@ -60,24 +56,21 @@ type EdgeVm = {
   path: string;
 };
 
-const NODE_W = 200;
-const NODE_H = 88;
+const NODE_W = 220;
+const NODE_H = 128;
 const NODE_HALF_W = NODE_W / 2;
 const NODE_HALF_H = NODE_H / 2;
-const SUPERIOR_W = 220;
-const LINE_H = 14;
-const SUPERIOR_PAD = 28;
-const SUPERIOR_HEADER = 36;
-const H_GAP = 48;
-const V_GAP = 32;
-const CANVAS_PAD = 48;
+const H_GAP = 40;
+const V_GAP = 36;
+const CANVAS_PAD = 56;
+const DEFAULT_LEVELS = 2;
 const ROTA_ARVORE = ['gestao', 'planejamento', 'objetivo-arvore'] as const;
 
 @Component({
   selector: 'app-planejamento-objetivo-arvore-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent],
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, PlanejamentoObjetivoPainelLateralComponent],
   templateUrl: './planejamento-objetivo-arvore.page.html',
   styleUrl: './planejamento-objetivo-arvore.page.scss'
 })
@@ -92,31 +85,43 @@ export class PlanejamentoObjetivoArvorePage {
   readonly loading = signal(true);
   readonly loadError = signal<string | null>(null);
   readonly dados = signal<ObjetivoArvoreVisualizacaoApi | null>(null);
-  readonly expandedIds = signal<Set<string>>(new Set());
   readonly selectedNodeId = signal<string | null>(null);
+  readonly levelsAbove = signal(DEFAULT_LEVELS);
+  readonly levelsBelow = signal(DEFAULT_LEVELS);
   readonly zoom = signal(1);
   readonly panX = signal(0);
   readonly panY = signal(0);
-  readonly entregasResposta = signal<ObjetivoEntregasListagemApi | null>(null);
-  readonly entregasLoading = signal(false);
-  readonly entregasError = signal<string | null>(null);
-  readonly entregasPainelAberto = signal(false);
-  readonly equipesResposta = signal<ObjetivoEquipesListagemApi | null>(null);
-  readonly equipesLoading = signal(false);
-  readonly equipesError = signal<string | null>(null);
 
   readonly nodeW = NODE_W;
   readonly nodeH = NODE_H;
   readonly nodeHalfW = NODE_HALF_W;
   readonly nodeHalfH = NODE_HALF_H;
-  readonly superiorW = SUPERIOR_W;
 
   private panDrag: { startX: number; startY: number; originPanX: number; originPanY: number } | null = null;
 
-  readonly layout = computed(() => this.buildLayout(this.dados(), this.expandedIds()));
+  readonly consultadoId = computed(() => this.dados()?.objetivo_raiz_id ?? null);
+
+  readonly upChain = computed(() => {
+    const focal = this.consultadoId();
+    const nos = this.dados()?.nos;
+    return focal && nos ? this.buildUpChain(focal, nos) : [];
+  });
+
+  readonly canExpandUp = computed(() => this.upChain().length > this.levelsAbove());
+  readonly canExpandDown = computed(() => {
+    const focal = this.consultadoId();
+    const nos = this.dados()?.nos;
+    if (!focal || !nos) {
+      return false;
+    }
+    return this.maxDescendantDepth(focal, nos) > this.levelsBelow();
+  });
+
+  readonly layout = computed(() =>
+    this.buildLayout(this.dados(), this.consultadoId(), this.levelsAbove(), this.levelsBelow())
+  );
 
   readonly treeNodes = computed(() => this.layout().treeNodes);
-  readonly superiorResumos = computed(() => this.layout().superiorResumos);
   readonly edges = computed(() => this.layout().edges);
   readonly canvasW = computed(() => this.layout().width);
   readonly canvasH = computed(() => this.layout().height);
@@ -126,20 +131,16 @@ export class PlanejamentoObjetivoArvorePage {
     const cw = this.canvasW();
     const ch = this.canvasH();
     const w = Math.max(cw, 800) / zoom;
-    const h = Math.max(ch, 500) / zoom;
-    const cx = cw / 2 + this.panX();
-    const cy = ch / 2 + this.panY();
+    const h = Math.max(ch, 520) / zoom;
+    const focal = this.treeNodes().find(n => n.isConsultado);
+    const cx = focal ? focal.x + this.panX() : cw / 2 + this.panX();
+    const cy = focal ? focal.y + this.panY() : ch / 2 + this.panY();
     return `${cx - w / 2} ${cy - h / 2} ${w} ${h}`;
   });
 
   readonly selectedNode = computed(() => {
     const id = this.selectedNodeId();
-    return id ? this.treeNodes().find(n => n.id === id) ?? null : null;
-  });
-
-  readonly equipesEsforcoTotal = computed(() => {
-    const itens = this.equipesResposta()?.itens ?? [];
-    return itens.reduce((acc, item) => acc + (Number.isFinite(item.esforco_horas_total) ? item.esforco_horas_total : 0), 0);
+    return id ? this.treeNodes().find(n => n.id === id) ?? this.nodeVmFromApi(id) : null;
   });
 
   constructor() {
@@ -156,19 +157,19 @@ export class PlanejamentoObjetivoArvorePage {
   async carregar(id: string): Promise<void> {
     this.loading.set(true);
     this.loadError.set(null);
-    this.expandedIds.set(new Set());
-    this.selectedNodeId.set(null);
+    this.levelsAbove.set(DEFAULT_LEVELS);
+    this.levelsBelow.set(DEFAULT_LEVELS);
     this.panX.set(0);
     this.panY.set(0);
     this.zoom.set(1);
-    this.resetPainelEntregas();
-    this.resetPainelEquipes();
 
     try {
       const data = await firstValueFrom(this.api.getArvoreVisualizacao(id));
       this.dados.set(data);
+      this.selectedNodeId.set(data.objetivo_raiz_id);
     } catch (err: unknown) {
       this.dados.set(null);
+      this.selectedNodeId.set(null);
       this.loadError.set(this.mensagemErro(err));
     } finally {
       this.loading.set(false);
@@ -177,32 +178,32 @@ export class PlanejamentoObjetivoArvorePage {
 
   onNodeClick(nodeId: string, event: Event): void {
     event.stopPropagation();
-    const nodeChanged = this.selectedNodeId() !== nodeId;
-    if (nodeChanged) {
-      this.resetPainelEntregas();
-      this.resetPainelEquipes();
-    }
     this.selectedNodeId.set(nodeId);
-    if (nodeChanged) {
-      void this.carregarEquipes(nodeId);
-    }
-    const node = this.dados()?.nos[nodeId];
-    if (!node?.filhos_pai?.length) {
-      return;
-    }
-    this.expandedIds.update(set => {
-      const next = new Set(set);
-      if (next.has(nodeId)) {
-        next.delete(nodeId);
-      } else {
-        next.add(nodeId);
-      }
-      return next;
-    });
   }
 
-  isExpanded(nodeId: string): boolean {
-    return this.expandedIds().has(nodeId);
+  expandUp(): void {
+    if (!this.canExpandUp()) {
+      return;
+    }
+    this.levelsAbove.update(v => v + 1);
+    if (this.levelsBelow() > 0) {
+      this.levelsBelow.update(v => v - 1);
+    }
+  }
+
+  expandDown(): void {
+    if (!this.canExpandDown()) {
+      return;
+    }
+    this.levelsBelow.update(v => v + 1);
+    if (this.levelsAbove() > 0) {
+      this.levelsAbove.update(v => v - 1);
+    }
+  }
+
+  resetLevels(): void {
+    this.levelsAbove.set(DEFAULT_LEVELS);
+    this.levelsBelow.set(DEFAULT_LEVELS);
   }
 
   abrirArvoreOutroObjetivo(objetivoId: string, event?: Event): void {
@@ -212,97 +213,6 @@ export class PlanejamentoObjetivoArvorePage {
       return;
     }
     void this.go.navigate({ route: [...ROTA_ARVORE, objetivoId] });
-  }
-
-  formatHoras(value: number): string {
-    if (!Number.isFinite(value)) {
-      return '0';
-    }
-    return (Math.round(value * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-  }
-
-  formatPercent(value: number): string {
-    if (!Number.isFinite(value)) {
-      return '0%';
-    }
-    const rounded = Math.round(value * 100) / 100;
-    return `${rounded.toLocaleString('pt-BR', { maximumFractionDigits: 2, useGrouping: true })}%`;
-  }
-
-  togglePainelEntregas(): void {
-    this.entregasPainelAberto.update(v => !v);
-  }
-
-  async carregarEntregasDetalhe(): Promise<void> {
-    const id = this.selectedNodeId();
-    if (!id?.length) {
-      return;
-    }
-    this.entregasLoading.set(true);
-    this.entregasError.set(null);
-    try {
-      const data = await firstValueFrom(this.api.getEntregasPorObjetivo(id));
-      this.entregasResposta.set(data);
-      this.entregasPainelAberto.set(true);
-    } catch (err: unknown) {
-      let msg = 'Não foi possível carregar as entregas.';
-      if (err instanceof HttpErrorResponse) {
-        const body = err.error as { error?: string } | undefined;
-        msg = (typeof body?.error === 'string' ? body.error : err.message) || msg;
-      } else if (err instanceof Error) {
-        msg = err.message;
-      }
-      this.entregasError.set(msg);
-      this.entregasResposta.set(null);
-    } finally {
-      this.entregasLoading.set(false);
-    }
-  }
-
-  private resetPainelEntregas(): void {
-    this.entregasResposta.set(null);
-    this.entregasError.set(null);
-    this.entregasLoading.set(false);
-    this.entregasPainelAberto.set(false);
-  }
-
-  async carregarEquipes(objetivoId?: string): Promise<void> {
-    const id = objetivoId ?? this.selectedNodeId();
-    if (!id?.length) {
-      return;
-    }
-    this.equipesLoading.set(true);
-    this.equipesError.set(null);
-    try {
-      const data = await firstValueFrom(this.api.getEquipesPorObjetivo(id));
-      if (this.selectedNodeId() !== id) {
-        return;
-      }
-      this.equipesResposta.set(data);
-    } catch (err: unknown) {
-      if (this.selectedNodeId() !== id) {
-        return;
-      }
-      let msg = 'Não foi possível carregar as equipes.';
-      if (err instanceof HttpErrorResponse) {
-        const body = err.error as { error?: string } | undefined;
-        msg = (typeof body?.error === 'string' ? body.error : err.message) || msg;
-      } else if (err instanceof Error) {
-        msg = err.message;
-      }
-      this.equipesError.set(msg);
-      this.equipesResposta.set(null);
-    } finally {
-      if (this.selectedNodeId() === id) {
-        this.equipesLoading.set(false);
-      }
-    }
-  }
-
-  private resetPainelEquipes(): void {
-    this.equipesResposta.set(null);
-    this.equipesError.set(null);
-    this.equipesLoading.set(false);
   }
 
   onPanDown(event: PointerEvent): void {
@@ -319,7 +229,7 @@ export class PlanejamentoObjetivoArvorePage {
   }
 
   zoomIn(): void {
-    this.zoom.update(v => Math.min(1.6, Number((v + 0.1).toFixed(2))));
+    this.zoom.update(v => Math.min(2.5, Number((v + 0.1).toFixed(2))));
   }
 
   zoomOut(): void {
@@ -361,185 +271,303 @@ export class PlanejamentoObjetivoArvorePage {
     return 'Não foi possível carregar a árvore.';
   }
 
-  private buildLayout(
-    dados: ObjetivoArvoreVisualizacaoApi | null,
-    expanded: Set<string>
-  ): { treeNodes: TreeNodeVm[]; superiorResumos: SuperiorResumoVm[]; edges: EdgeVm[]; width: number; height: number } {
-    if (!dados?.nos[dados.objetivo_raiz_id]) {
-      return { treeNodes: [], superiorResumos: [], edges: [], width: 800, height: 500 };
+  private nodeVmFromApi(id: string): TreeNodeVm | null {
+    const n = this.dados()?.nos[id];
+    if (!n) {
+      return null;
+    }
+    return this.toNodeVm(n, id === this.consultadoId(), 0, 0, 0);
+  }
+
+  private buildUpChain(focalId: string, nos: Record<string, EsforcoObjetivoNodeApi>): AncestorStep[] {
+    const steps: AncestorStep[] = [];
+    let cur = focalId;
+
+    while (true) {
+      const n = nos[cur];
+      if (!n) {
+        break;
+      }
+      const supId = n.objetivo_superior_id;
+      if (supId && nos[supId]) {
+        steps.push({ id: supId, link: 'SUPERIOR', childId: cur });
+        cur = supId;
+        continue;
+      }
+      const paiId = n.objetivo_pai_id ?? n.objetivo_pai?.id;
+      if (paiId && nos[paiId]) {
+        steps.push({ id: paiId, link: 'PAI', childId: cur });
+        cur = paiId;
+        continue;
+      }
+      break;
     }
 
-    const nos = dados.nos;
-    const raizId = dados.objetivo_raiz_id;
+    return steps;
+  }
 
-    const positions = new Map<string, { depth: number; row: number }>();
+  private getDownLinks(
+    parentId: string,
+    nos: Record<string, EsforcoObjetivoNodeApi>
+  ): { id: string; link: 'PAI' | 'SUPERIOR' }[] {
+    const n = nos[parentId];
+    if (!n) {
+      return [];
+    }
 
-    const layoutSubtree = (id: string, depth: number, startRow: number): number => {
-      const node = nos[id];
-      if (!node) {
-        return 0;
+    const links: { id: string; link: 'PAI' | 'SUPERIOR' }[] = [];
+    const seen = new Set<string>();
+
+    for (const id of n.filhos_pai ?? []) {
+      if (nos[id] && !seen.has(id)) {
+        seen.add(id);
+        links.push({ id, link: 'PAI' });
       }
-
-      const filhos = expanded.has(id)
-        ? (node.filhos_pai ?? []).filter(fid => !!nos[fid])
-        : [];
-
-      if (filhos.length === 0) {
-        positions.set(id, { depth, row: startRow });
-        return 1;
+    }
+    for (const id of n.filhos_superior ?? []) {
+      if (nos[id] && !seen.has(id)) {
+        seen.add(id);
+        links.push({ id, link: 'SUPERIOR' });
       }
+    }
 
-      let cursor = startRow;
-      const spans: number[] = [];
-      for (const filhoId of filhos) {
-        spans.push(layoutSubtree(filhoId, depth + 1, cursor));
-        cursor += spans[spans.length - 1];
+    return links;
+  }
+
+  private maxDescendantDepth(focalId: string, nos: Record<string, EsforcoObjetivoNodeApi>): number {
+    let max = 0;
+
+    const walk = (id: string, depth: number, visited: Set<string>): void => {
+      if (visited.has(id)) {
+        return;
       }
+      visited.add(id);
+      max = Math.max(max, depth);
 
-      const totalSpan = spans.reduce((a, b) => a + b, 0);
-      positions.set(id, { depth, row: startRow + totalSpan / 2 - 0.5 });
-      return totalSpan;
+      for (const { id: childId } of this.getDownLinks(id, nos)) {
+        walk(childId, depth + 1, visited);
+      }
     };
 
-    layoutSubtree(raizId, 0, 0);
-
-    const raizRow = positions.get(raizId)?.row ?? 0;
-    const maxRow = Math.max(0, ...[...positions.values()].map(p => p.row));
-    const centerX = CANVAS_PAD + raizRow * (NODE_W + H_GAP) + NODE_HALF_W;
-
-    /** Do planejamento mais alto ao imediato (MGI → … → SEGES → DINOV). */
-    const cadeiaExibicao = [...dados.cadeia_superior].sort(
-      (a, b) => b.nivel_superior - a.nivel_superior
-    );
-
-    const superiorResumos: SuperiorResumoVm[] = [];
-    const resumoByObjetivoId = new Map<string, SuperiorResumoVm>();
-    let stackY = CANVAS_PAD;
-
-    for (const resumo of cadeiaExibicao) {
-      const lineCount = Math.max(1, resumo.hierarquia_linhas.length);
-      const height = SUPERIOR_HEADER + lineCount * LINE_H + SUPERIOR_PAD;
-      const y = stackY + height / 2;
-
-      const vm: SuperiorResumoVm = {
-        id: `resumo:${resumo.objetivo_id}`,
-        objetivoId: resumo.objetivo_id,
-        nome: resumo.objetivo_nome,
-        planejamentoNome: resumo.planejamento_nome,
-        hierarquiaLinhas: resumo.hierarquia_linhas,
-        nivelSuperior: resumo.nivel_superior,
-        objetivoSuperiorId: resumo.objetivo_superior_id,
-        ligadoAObjetivoId: resumo.nivel_superior === 1 ? raizId : '',
-        x: centerX,
-        y,
-        height
-      };
-
-      superiorResumos.push(vm);
-      resumoByObjetivoId.set(resumo.objetivo_id, vm);
-      stackY += height + V_GAP;
+    for (const { id } of this.getDownLinks(focalId, nos)) {
+      walk(id, 1, new Set());
     }
 
-    const treeBaseY = (cadeiaExibicao.length > 0 ? stackY : CANVAS_PAD) + NODE_HALF_H;
+    return max;
+  }
 
-    const treeNodes: TreeNodeVm[] = [];
-    for (const [id, pos] of positions) {
-      const n = nos[id];
-      treeNodes.push({
-        id,
-        nome: n.objetivo_nome,
-        planejamentoNome: n.planejamento_nome,
-        entregasCount: n.total_entregas ?? 0,
-        esforcoProprioHoras: n.esforco_proprio ?? 0,
-        esforcoTotalHoras: n.esforco_total_horas ?? 0,
-        filhosPai: n.filhos_pai ?? [],
-        objetivoSuperiorId: n.objetivo_superior_id ?? n.objetivo_superior?.id ?? null,
-        isRaiz: id === raizId,
-        depth: pos.depth,
-        x: CANVAS_PAD + pos.row * (NODE_W + H_GAP) + NODE_HALF_W,
-        y: treeBaseY + pos.depth * (NODE_H + V_GAP),
-        hasFilhos: (n.filhos_pai ?? []).length > 0
-      });
+  private collectDescendantsByDepth(
+    focalId: string,
+    maxDepth: number,
+    nos: Record<string, EsforcoObjetivoNodeApi>
+  ): Map<number, string[]> {
+    const byDepth = new Map<number, string[]>();
+    if (maxDepth <= 0) {
+      return byDepth;
     }
 
-    const treeById = new Map(treeNodes.map(n => [n.id, n]));
-    const edges: EdgeVm[] = [];
+    let frontier = [focalId];
 
-    for (const node of treeNodes) {
-      const paiId = nos[node.id]?.objetivo_pai_id ?? nos[node.id]?.objetivo_pai?.id;
-      if (paiId && treeById.has(paiId)) {
-        edges.push({
-          key: `pai:${node.id}:${paiId}`,
-          type: 'PAI',
-          path: this.edgePaiPath(treeById.get(paiId)!, node)
-        });
+    for (let depth = 1; depth <= maxDepth; depth++) {
+      const idsAtDepth: string[] = [];
+      const seenAtDepth = new Set<string>();
+      const nextFrontier: string[] = [];
+
+      for (const parentId of frontier) {
+        for (const { id } of this.getDownLinks(parentId, nos)) {
+          if (seenAtDepth.has(id)) {
+            continue;
+          }
+          seenAtDepth.add(id);
+          idsAtDepth.push(id);
+          nextFrontier.push(id);
+        }
       }
 
-      const supId = node.objetivoSuperiorId;
-      if (supId && resumoByObjetivoId.has(supId)) {
-        edges.push({
-          key: `sup:${node.id}:${supId}`,
-          type: 'SUPERIOR',
-          path: this.edgeSuperiorPath(node, resumoByObjetivoId.get(supId)!)
-        });
+      if (idsAtDepth.length === 0) {
+        break;
       }
+
+      byDepth.set(depth, idsAtDepth);
+      frontier = nextFrontier;
     }
 
-    for (const resumo of superiorResumos) {
-      if (!resumo.objetivoSuperiorId) {
-        continue;
-      }
-      const supResumo = resumoByObjetivoId.get(resumo.objetivoSuperiorId);
-      if (!supResumo) {
-        continue;
-      }
-      edges.push({
-        key: `sup-chain:${resumo.objetivoId}:${resumo.objetivoSuperiorId}`,
-        type: 'SUPERIOR',
-        path: this.edgeSuperiorResumoChainPath(resumo, supResumo)
-      });
-    }
+    return byDepth;
+  }
 
-    const maxTreeX = Math.max(...treeNodes.map(n => n.x + NODE_HALF_W), centerX + NODE_HALF_W) + CANVAS_PAD;
-    const maxTreeY = Math.max(...treeNodes.map(n => n.y + NODE_HALF_H), treeBaseY + NODE_HALF_H);
-    const maxSupY = superiorResumos.length
-      ? Math.max(...superiorResumos.map(s => s.y + s.height / 2))
-      : 0;
+  private toNodeVm(
+    n: EsforcoObjetivoNodeApi,
+    isConsultado: boolean,
+    level: number,
+    x: number,
+    y: number
+  ): TreeNodeVm {
+    const filhosPai = n.filhos_pai ?? [];
+    const vinculos =
+      n.total_vinculos ??
+      (n.filhos?.length ?? filhosPai.length + (n.filhos_superior?.length ?? 0));
 
     return {
-      treeNodes,
-      superiorResumos,
-      edges,
-      width: Math.max(800, maxTreeX),
-      height: Math.max(500, maxTreeY, maxSupY) + CANVAS_PAD
+      id: n.objetivo_id,
+      nome: n.objetivo_nome,
+      planejamentoNome: n.planejamento_nome,
+      tipoObjetivoNome: n.tipo_objetivo_nome?.trim() || '—',
+      vinculosCount: vinculos,
+      entregasCount: n.total_entregas ?? 0,
+      esforcoProprioHoras: n.esforco_proprio ?? 0,
+      esforcoTotalHoras: n.esforco_total_horas ?? 0,
+      planejadoPercentualDisponivel: n.planejado_percentual_disponivel
+        ?? this.percentualContribuicao(n.esforco_proprio ?? 0, n.esforco_disponivel_horas ?? 0),
+      percentualDoPai: null,
+      filhosPai,
+      isConsultado,
+      level,
+      x,
+      y
     };
   }
 
-  /** Filho abaixo do pai — linha contínua, roteamento em L. */
-  private edgePaiPath(parent: TreeNodeVm, child: TreeNodeVm): string {
+  private percentualContribuicao(filhoHoras: number, paiHoras: number): number {
+    if (paiHoras <= 0) {
+      return 0;
+    }
+    return Math.round((filhoHoras / paiHoras) * 10000) / 100;
+  }
+
+  formatPercent(value: number): string {
+    if (!Number.isFinite(value)) {
+      return '0%';
+    }
+    return `${(Math.round(value * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
+  }
+
+  private buildLayout(
+    dados: ObjetivoArvoreVisualizacaoApi | null,
+    consultadoId: string | null,
+    levelsAbove: number,
+    levelsBelow: number
+  ): { treeNodes: TreeNodeVm[]; edges: EdgeVm[]; width: number; height: number } {
+    if (!dados?.nos[consultadoId ?? ''] || !consultadoId) {
+      return { treeNodes: [], edges: [], width: 800, height: 520 };
+    }
+
+    const nos = dados.nos;
+    const upSteps = this.buildUpChain(consultadoId, nos).slice(0, levelsAbove);
+    const descendants = this.collectDescendantsByDepth(consultadoId, levelsBelow, nos);
+
+    const centerX = 400;
+    const centerY = CANVAS_PAD + levelsAbove * (NODE_H + V_GAP) + NODE_HALF_H;
+
+    const nodeById = new Map<string, TreeNodeVm>();
+    const edges: EdgeVm[] = [];
+    const edgeKeys = new Set<string>();
+
+    const pushEdge = (edge: EdgeVm): void => {
+      if (edgeKeys.has(edge.key)) {
+        return;
+      }
+      edgeKeys.add(edge.key);
+      edges.push(edge);
+    };
+
+    for (let i = 0; i < upSteps.length; i++) {
+      const step = upSteps[i];
+      const n = nos[step.id];
+      if (!n) {
+        continue;
+      }
+      const level = -(i + 1);
+      const y = centerY + level * (NODE_H + V_GAP);
+      const vm = this.toNodeVm(n, false, level, centerX, y);
+      nodeById.set(step.id, vm);
+    }
+
+    const focal = nos[consultadoId];
+    const focalVm = this.toNodeVm(focal, true, 0, centerX, centerY);
+    nodeById.set(consultadoId, focalVm);
+
+    for (const step of upSteps) {
+      const parent = nodeById.get(step.id);
+      const child = nodeById.get(step.childId);
+      if (parent && child) {
+        pushEdge({
+          key: `${step.link}:${step.childId}:${step.id}`,
+          type: step.link,
+          path: this.edgePath(parent, child)
+        });
+      }
+    }
+
+    for (const [depth, ids] of [...descendants.entries()].sort((a, b) => a[0] - b[0])) {
+      const rowSpan = ids.length;
+      ids.forEach((id, index) => {
+        const n = nos[id];
+        if (!n) {
+          return;
+        }
+        const x = centerX + (index - (rowSpan - 1) / 2) * (NODE_W + H_GAP);
+        const y = centerY + depth * (NODE_H + V_GAP);
+        nodeById.set(id, this.toNodeVm(n, false, depth, x, y));
+      });
+    }
+
+    for (const [id, vm] of nodeById) {
+      const paiId = nos[id]?.objetivo_pai_id ?? nos[id]?.objetivo_pai?.id;
+      if (paiId && nodeById.has(paiId)) {
+        pushEdge({
+          key: `pai:${id}:${paiId}`,
+          type: 'PAI',
+          path: this.edgePath(nodeById.get(paiId)!, vm)
+        });
+      }
+
+      const supId = nos[id]?.objetivo_superior_id ?? nos[id]?.objetivo_superior?.id;
+      if (supId && nodeById.has(supId) && paiId !== supId) {
+        pushEdge({
+          key: `SUPERIOR:${id}:${supId}`,
+          type: 'SUPERIOR',
+          path: this.edgePath(nodeById.get(supId)!, vm)
+        });
+      }
+    }
+
+    for (const [id, vm] of nodeById) {
+      const paiId = nos[id]?.objetivo_pai_id ?? nos[id]?.objetivo_pai?.id;
+      const supId = nos[id]?.objetivo_superior_id ?? nos[id]?.objetivo_superior?.id;
+      const parentId =
+        paiId && nodeById.has(paiId) ? paiId : supId && nodeById.has(supId) ? supId : null;
+
+      if (!parentId) {
+        vm.percentualDoPai = null;
+        continue;
+      }
+
+      const parent = nodeById.get(parentId)!;
+      vm.percentualDoPai = this.percentualContribuicao(vm.esforcoTotalHoras, parent.esforcoTotalHoras);
+    }
+
+    const treeNodes = [...nodeById.values()];
+    const xs = treeNodes.map(n => n.x);
+    const ys = treeNodes.map(n => n.y);
+    const minX = Math.min(...xs, centerX) - NODE_HALF_W - CANVAS_PAD;
+    const maxX = Math.max(...xs, centerX) + NODE_HALF_W + CANVAS_PAD;
+    const minY = Math.min(...ys, centerY) - NODE_HALF_H - CANVAS_PAD;
+    const maxY = Math.max(...ys, centerY) + NODE_HALF_H + CANVAS_PAD;
+
+    return {
+      treeNodes,
+      edges,
+      width: Math.max(800, maxX - minX),
+      height: Math.max(520, maxY - minY)
+    };
+  }
+
+  private edgePath(parent: TreeNodeVm, child: TreeNodeVm): string {
     const x1 = parent.x;
     const y1 = parent.y + NODE_HALF_H;
     const x2 = child.x;
     const y2 = child.y - NODE_HALF_H;
     const midY = (y1 + y2) / 2;
     return `M ${x1} ${y1} L ${x1} ${midY} L ${x2} ${midY} L ${x2} ${y2}`;
-  }
-
-  /** Vínculo com planejamento superior — tracejado, vertical acima do nó. */
-  private edgeSuperiorPath(source: TreeNodeVm, target: SuperiorResumoVm): string {
-    const x1 = source.x;
-    const y1 = source.y - NODE_HALF_H;
-    const x2 = target.x;
-    const y2 = target.y + target.height / 2;
-    const laneY = y2 + 8;
-    return `M ${x1} ${y1} L ${x1} ${laneY} L ${x2} ${laneY} L ${x2} ${y2}`;
-  }
-
-  private edgeSuperiorResumoChainPath(from: SuperiorResumoVm, to: SuperiorResumoVm): string {
-    const x1 = from.x;
-    const y1 = from.y - from.height / 2;
-    const x2 = to.x;
-    const y2 = to.y + to.height / 2;
-    return `M ${x1} ${y1} L ${x2} ${y2}`;
   }
 }

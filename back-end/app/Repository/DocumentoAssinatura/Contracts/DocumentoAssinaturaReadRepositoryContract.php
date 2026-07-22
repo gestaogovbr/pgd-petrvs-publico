@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\DocumentoAssinatura\Contracts;
 
 use App\Models\DocumentoAssinatura;
+use Illuminate\Database\Eloquent\Collection;
 
 interface DocumentoAssinaturaReadRepositoryContract
 {
@@ -25,4 +26,7 @@ interface DocumentoAssinaturaReadRepositoryContract
     public function gestorSubstitutoDiferenteDoParticipanteAssinou(string $documentoId, string $unidadeId, string $participanteId): bool;
 
     public function existeAlgumaAssinatura(string $documentoId): bool;
+
+    /** @return Collection<int, DocumentoAssinatura> */
+    public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection;
 }

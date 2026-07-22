@@ -9,11 +9,17 @@ export type EsforcoObjetivoNodeApi = {
   objetivo_pai_id: string | null;
   objetivo_superior_id: string | null;
   planejamento_nome: string;
+  tipo_objetivo_nome?: string;
   total_entregas: number;
-  /** Horas só do próprio nó (entregas concluídas). */
+  total_vinculos?: number;
+  /** Horas disponíveis do próprio nó (mesma regra do painel). */
+  esforco_disponivel_horas?: number;
+  /** Horas planejadas só do próprio nó. */
   esforco_proprio?: number;
-  /** Horas próprias + descendentes na árvore do esforço. */
+  /** Horas planejadas próprias + descendentes na árvore do esforço. */
   esforco_total_horas: number;
+  /** Planejado / disponível do próprio nó (igual ao painel). */
+  planejado_percentual_disponivel?: number;
   /** União de filhos_pai e filhos_superior — mantido por compatibilidade. */
   filhos?: string[];
   /** Descendentes ligados por objetivo_pai_id (mesmo planejamento). */
@@ -97,6 +103,104 @@ type EquipesResponse = {
   error?: string;
 };
 
+export type ObjetivoPainelEsforcoResumoApi = {
+  disponivel_horas: number;
+  planejado_horas: number;
+  executado_horas: number;
+  planejado_percentual_disponivel: number;
+  executado_percentual_planejado: number;
+  mostrar_disponivel: boolean;
+  mostrar_planejado: boolean;
+  mostrar_executado: boolean;
+};
+
+export type ObjetivoPainelFiltroOpcaoApi = { id: string; label: string };
+
+export type ObjetivoPainelPessoasResumoApi = {
+  total_participantes: number;
+  participantes_somente_unidade_propria: number;
+  participantes_somente_outras_unidades: number;
+  participantes_em_ambas: number;
+  percentual_somente_unidade_propria: number;
+  percentual_somente_outras_unidades: number;
+  percentual_em_ambas: number;
+};
+
+export type ObjetivoPainelEntregasResumoApi = {
+  total_entregas: number;
+  entregas_concluidas: number;
+  percentual_concluidas: number;
+};
+
+export type ObjetivoPainelResumoApi = {
+  objetivo_id: string;
+  nome: string;
+  planejamento_nome: string;
+  tipo_objetivo_nome: string;
+  eixo_tematico_nome: string;
+  esforco: ObjetivoPainelEsforcoResumoApi;
+  pessoas: ObjetivoPainelPessoasResumoApi;
+  entregas: ObjetivoPainelEntregasResumoApi;
+  filtro_unidades: ObjetivoPainelFiltroOpcaoApi[];
+};
+
+export type ObjetivoPainelEntregaDetalheLinhaApi = {
+  plano_entrega_entrega_id: string;
+  unidade_id: string;
+  unidade_sigla: string;
+  unidade_nome: string;
+  plano_entrega_id: string;
+  plano_entrega_nome: string;
+  plano_entrega_status: string;
+  plano_entrega_vigencia_inicio: string;
+  plano_entrega_vigencia_fim: string | null;
+  entrega_titulo: string;
+  progresso_esperado: number;
+  progresso_realizado: number;
+  homologado: boolean;
+  registro_execucao: string | null;
+  participantes_total: number;
+  participantes_somente_unidade_propria: number;
+  participantes_somente_outras_unidades: number;
+  participantes_em_ambas: number;
+  esforco_disponivel_horas: number;
+  esforco_planejado_horas: number;
+  esforco_executado_horas: number;
+  mostrar_disponivel: boolean;
+  mostrar_planejado: boolean;
+  mostrar_executado: boolean;
+};
+
+export type ObjetivoPainelEntregasDetalhamentoApi = {
+  objetivo_id: string;
+  itens: ObjetivoPainelEntregaDetalheLinhaApi[];
+  filtro_entregas: ObjetivoPainelFiltroOpcaoApi[];
+  filtro_unidades: ObjetivoPainelFiltroOpcaoApi[];
+};
+
+export type ObjetivoPainelResumoFiltros = {
+  unidade_id?: string;
+};
+
+type PainelResumoResponse = {
+  success?: boolean;
+  data?: ObjetivoPainelResumoApi;
+  error?: string;
+};
+
+type EntregasDetalhamentoResponse = {
+  success?: boolean;
+  data?: ObjetivoPainelEntregasDetalhamentoApi;
+  error?: string;
+};
+
+export type ObjetivoEntregasDetalhamentoFiltros = {
+  plano_entrega_entrega_id?: string;
+  unidade_id?: string;
+  data_inicio?: string;
+  data_fim?: string;
+};
+
 @Injectable()
 export class PlanejamentoObjetivoEsforcoApiClient {
   private readonly http = inject(HttpClient);
@@ -151,6 +255,58 @@ export class PlanejamentoObjetivoEsforcoApiClient {
   getArvoreVisualizacao(objetivoId: string): Observable<ObjetivoArvoreVisualizacaoApi> {
     const url = `${this.gb.servidorURL}${this.base}/${objetivoId}/arvore-visualizacao`;
     return this.http.get<ArvoreVisualizacaoResponse>(url, { withCredentials: true }).pipe(
+      map(res => {
+        if (res?.error) {
+          throw new Error(res.error);
+        }
+        if (!res?.data || typeof res.data !== 'object') {
+          throw new Error('Resposta inválida do servidor.');
+        }
+        return res.data;
+      })
+    );
+  }
+
+  getPainelResumo(objetivoId: string, filtros: ObjetivoPainelResumoFiltros = {}): Observable<ObjetivoPainelResumoApi> {
+    const params = new URLSearchParams();
+    if (filtros.unidade_id) {
+      params.set('unidade_id', filtros.unidade_id);
+    }
+    const qs = params.toString();
+    const url = `${this.gb.servidorURL}${this.base}/${objetivoId}/painel-resumo${qs ? `?${qs}` : ''}`;
+    return this.http.get<PainelResumoResponse>(url, { withCredentials: true }).pipe(
+      map(res => {
+        if (res?.error) {
+          throw new Error(res.error);
+        }
+        if (!res?.data || typeof res.data !== 'object') {
+          throw new Error('Resposta inválida do servidor.');
+        }
+        return res.data;
+      })
+    );
+  }
+
+  getEntregasDetalhamento(
+    objetivoId: string,
+    filtros: ObjetivoEntregasDetalhamentoFiltros = {}
+  ): Observable<ObjetivoPainelEntregasDetalhamentoApi> {
+    const params = new URLSearchParams();
+    if (filtros.plano_entrega_entrega_id) {
+      params.set('plano_entrega_entrega_id', filtros.plano_entrega_entrega_id);
+    }
+    if (filtros.unidade_id) {
+      params.set('unidade_id', filtros.unidade_id);
+    }
+    if (filtros.data_inicio) {
+      params.set('data_inicio', filtros.data_inicio);
+    }
+    if (filtros.data_fim) {
+      params.set('data_fim', filtros.data_fim);
+    }
+    const qs = params.toString();
+    const url = `${this.gb.servidorURL}${this.base}/${objetivoId}/entregas-detalhamento${qs ? `?${qs}` : ''}`;
+    return this.http.get<EntregasDetalhamentoResponse>(url, { withCredentials: true }).pipe(
       map(res => {
         if (res?.error) {
           throw new Error(res.error);

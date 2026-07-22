@@ -37,4 +37,27 @@ interface PlanejamentoObjetivoReadRepositoryContract
 
     /** @return list<\stdClass> Unidades do PE vinculadas ao objetivo; esforço soma PTs concluídos (pode ser zero). */
     public function listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId(string $objetivoId): array;
+
+    public function buscarDadosGeraisPainel(string $objetivoId): ?\stdClass;
+
+    public function agregarPainelEsforcoPessoasEntregas(
+        string $objetivoId,
+        ?string $unidadeId = null,
+        ?string $dataInicio = null,
+        ?string $dataFim = null,
+    ): \stdClass;
+
+    /** @return list<\stdClass> */
+    public function listarUnidadesPainelPorObjetivoId(string $objetivoId): array;
+
+    /**
+     * @return list<\stdClass>
+     */
+    public function listarDetalhamentoEntregasPainel(
+        string $objetivoId,
+        ?string $planoEntregaEntregaId = null,
+        ?string $unidadeId = null,
+        ?string $dataInicio = null,
+        ?string $dataFim = null,
+    ): array;
 }

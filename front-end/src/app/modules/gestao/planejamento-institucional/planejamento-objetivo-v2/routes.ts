@@ -19,7 +19,10 @@ export const planejamentoObjetivoV2Routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: {
       title: 'Gráfico de objetivos e esforço',
-      breadcrumb: 'Gráfico de objetivos e esforço'
+      breadcrumb: 'Gráfico de objetivos e esforço',
+      breadcrumbParents: [
+        { label: 'Planejamentos Institucionais', url: '/gestao/planejamento' }
+      ]
     },
     providers: [
       provideHttpClient(withInterceptors([authTenantVersionInterceptor, errorInterceptor])),
@@ -36,7 +39,10 @@ export const planejamentoObjetivoV2Routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: {
       title: 'Árvore de objetivos',
-      breadcrumb: 'Árvore de objetivos'
+      breadcrumb: 'Árvore de objetivos',
+      breadcrumbParents: [
+        { label: 'Planejamentos Institucionais', url: '/gestao/planejamento' }
+      ]
     },
     providers: [
       provideHttpClient(withInterceptors([authTenantVersionInterceptor, errorInterceptor])),
