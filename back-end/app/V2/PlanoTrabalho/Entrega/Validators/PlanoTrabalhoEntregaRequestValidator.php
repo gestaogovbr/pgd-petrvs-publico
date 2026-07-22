@@ -25,6 +25,7 @@ class PlanoTrabalhoEntregaRequestValidator
             'plano_entrega_entrega_id' => ['required_if:origem,PROPRIA_UNIDADE', 'required_if:origem,OUTRA_UNIDADE', 'nullable', 'uuid'],
             'orgao' => ['required_if:tipo,OUTRO_ORGAO', 'nullable', 'string', 'max:256'],
             'forca_trabalho' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:999.99'],
+            'esforco_executado' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:999.99'],
             'descricao' => ['sometimes', 'nullable', 'string', 'max:1000'],
         ], [
             'origem.required' => 'A origem da entrega é obrigatório.',
@@ -34,6 +35,7 @@ class PlanoTrabalhoEntregaRequestValidator
             'orgao.required_if' => 'O nome do órgão é obrigatório para este tipo.',
             'orgao.max' => 'O nome do órgão não pode exceder 256 caracteres.',
             'forca_trabalho.min' => 'A força de trabalho não pode ser negativa.',
+            'esforco_executado.min' => 'O esforço executado não pode ser negativo.',
             'descricao.max' => 'A descrição não pode exceder 1000 caracteres.',
         ]);
     }

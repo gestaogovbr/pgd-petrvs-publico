@@ -16,5 +16,7 @@ interface IAtividadeWriteDTO
 
     public function planoTrabalhoEntregaId(): ?string;
 
+    public function esforcoExecutado(): ?float;
+
     public function toArray(): array;
 }

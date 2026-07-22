@@ -7,6 +7,7 @@ namespace App\Repository\DocumentoAssinatura\Eloquent;
 use App\Models\DocumentoAssinatura;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @extends AbstractEloquentReadRepository<DocumentoAssinatura>
@@ -30,7 +31,7 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
     {
         return $this->query()
             ->where('documento_id', $documentoId)
-            ->whereHas('usuario', fn ($q) => $q->where('cpf', $cpf))
+            ->whereHas('usuario', fn($q) => $q->where('cpf', $cpf))
             ->exists();
     }
 
@@ -54,7 +55,7 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->where('documento_id', $documentoId)
             ->whereHas('usuario.unidadesIntegrantes', function ($q) use ($unidadeId) {
                 $q->where('unidade_id', $unidadeId)
-                  ->whereHas('atribuicoes', fn ($q2) => $q2->whereIn('atribuicao', ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO']));
+                    ->whereHas('atribuicoes', fn($q2) => $q2->whereIn('atribuicao', ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO']));
             })
             ->exists();
     }
@@ -66,7 +67,7 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->where('usuario_id', '!=', $participanteId)
             ->whereHas('usuario.unidadesIntegrantes', function ($q) use ($unidadeId) {
                 $q->where('unidade_id', $unidadeId)
-                  ->whereHas('atribuicoes', fn ($q2) => $q2->whereIn('atribuicao', ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO']));
+                    ->whereHas('atribuicoes', fn($q2) => $q2->whereIn('atribuicao', ['GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO']));
             })
             ->exists();
     }
@@ -78,7 +79,7 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->where('usuario_id', '!=', $participanteId)
             ->whereHas('usuario.unidadesIntegrantes', function ($q) use ($unidadeId) {
                 $q->where('unidade_id', $unidadeId)
-                  ->whereHas('atribuicoes', fn ($q2) => $q2->where('atribuicao', 'GESTOR'));
+                    ->whereHas('atribuicoes', fn($q2) => $q2->where('atribuicao', 'GESTOR'));
             })
             ->exists();
     }
@@ -90,7 +91,7 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->where('usuario_id', '!=', $participanteId)
             ->whereHas('usuario.unidadesIntegrantes', function ($q) use ($unidadeId) {
                 $q->where('unidade_id', $unidadeId)
-                  ->whereHas('atribuicoes', fn ($q2) => $q2->where('atribuicao', 'GESTOR_SUBSTITUTO'));
+                    ->whereHas('atribuicoes', fn($q2) => $q2->where('atribuicao', 'GESTOR_SUBSTITUTO'));
             })
             ->exists();
     }
@@ -109,5 +110,20 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->whereColumn('documentos_assinaturas.documento_id', $documentoIdColumn)
             ->where('documentos_assinaturas.usuario_id', $usuarioId)
             ->whereNull('documentos_assinaturas.deleted_at');
+    }
+
+    public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection
+    {
+        /** @var Collection<int, DocumentoAssinatura> */
+        return $this->model->newQuery()
+            ->onlyTrashed()
+            ->whereHas('documento', function ($query) use ($planoTrabalhoId) {
+                $query->withTrashed()
+                    ->where('plano_trabalho_id', $planoTrabalhoId)
+                    ->where('especie', 'TCR');
+            })
+            ->with(['usuario:id,nome,nome_social'])
+            ->orderByDesc('deleted_at')
+            ->get();
     }
 }

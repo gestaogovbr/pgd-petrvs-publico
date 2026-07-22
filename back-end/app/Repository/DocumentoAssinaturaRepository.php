@@ -8,6 +8,7 @@ use App\Models\DocumentoAssinatura;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\TCRAssinaturaDTO;
+use Illuminate\Database\Eloquent\Collection;
 
 class DocumentoAssinaturaRepository
 {
@@ -75,5 +76,11 @@ class DocumentoAssinaturaRepository
     public function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId, string $documentoIdColumn = 'planos_trabalhos.documento_id'): void
     {
         $this->readRepository->subqueryUsuarioJaAssinou($query, $usuarioId, $documentoIdColumn);
+    }
+
+    /** @return Collection<int, DocumentoAssinatura> */
+    public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection
+    {
+        return $this->readRepository->listarRevogadasPorPlanoTrabalho($planoTrabalhoId);
     }
 }

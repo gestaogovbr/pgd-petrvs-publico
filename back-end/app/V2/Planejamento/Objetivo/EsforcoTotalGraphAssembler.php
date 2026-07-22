@@ -45,7 +45,9 @@ final class EsforcoTotalGraphAssembler
                 'objetivo_pai_id' => $row->objetivo_pai_id,
                 'objetivo_superior_id' => $row->objetivo_superior_id,
                 'planejamento_nome' => $row->planejamento_nome,
+                'tipo_objetivo_nome' => isset($row->tipo_objetivo_nome) ? (string) $row->tipo_objetivo_nome : '',
                 'total_entregas' => (int) $row->total_entregas,
+                'esforco_disponivel_horas' => (float) ($row->esforco_disponivel_horas ?? 0),
                 'esforco_proprio' => (float) $row->esforco_proprio,
                 'esforco_total_horas' => (float) $row->esforco_proprio,
                 'filhos' => [],
@@ -78,6 +80,7 @@ final class EsforcoTotalGraphAssembler
 
         foreach ($map as $id => &$node) {
             $node['filhos'] = array_values(array_unique(array_merge($node['filhos_pai'], $node['filhos_superior'])));
+            $node['total_vinculos'] = count($node['filhos']);
         }
         unset($node);
     }
