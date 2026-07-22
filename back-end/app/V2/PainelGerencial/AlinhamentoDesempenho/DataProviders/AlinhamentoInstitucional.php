@@ -153,13 +153,17 @@ class AlinhamentoInstitucional
     /**
      * Scope para processos que alcançam nível 3 da cadeia de valor.
      *
+     * Nível 3 significa que o processo possui avô (processo_pai_id → processo_pai_id).
+     *
      * @return \Closure(Builder): void
      */
     private function scopeProcessoNivel3(): \Closure
     {
         return function (Builder $q): void {
             $q->whereHas('processo', function (Builder $proc) {
-                $proc->whereRaw("LENGTH(path) - LENGTH(REPLACE(path, '/', '')) >= 2");
+                $proc->whereHas('processoPai', function (Builder $pai) {
+                    $pai->whereNotNull('processo_pai_id');
+                });
             });
         };
     }
