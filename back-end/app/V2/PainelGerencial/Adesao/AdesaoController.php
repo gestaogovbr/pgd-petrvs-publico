@@ -31,6 +31,7 @@ class AdesaoController extends Controller
     public function unidadesExecutoras(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
             $result = $this->unidadesExecutoras->getData($filtros);
 
@@ -49,6 +50,7 @@ class AdesaoController extends Controller
     public function evolucaoUnidades(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
             $result = $this->evolucaoUnidades->getData($filtros);
 
@@ -67,6 +69,7 @@ class AdesaoController extends Controller
     public function participantesPGD(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
             $result = $this->participantesPGD->getData($filtros);
 
@@ -85,6 +88,7 @@ class AdesaoController extends Controller
     public function evolucaoParticipantes(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
             $result = $this->evolucaoParticipantes->getData($filtros);
 
@@ -103,6 +107,7 @@ class AdesaoController extends Controller
     public function periodosDisponiveis(): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $periodos = $this->evolucaoUnidades->getPeriodosDisponiveis();
 
             return response()->json(['success' => true, 'data' => $periodos]);
