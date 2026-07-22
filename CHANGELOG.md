@@ -3,6 +3,9 @@
 ### Adicionado
 - Novo módulo de acompanhamento dos objetivos do planejamento institucional 
 
+### Modificado
+- Relatório de Unidades: coluna "Tipo" dividida em "Instituidora" e "Executora", e adicionada coluna "PE Vigente" com hiperlink para o Plano de Entregas em execução
+
 ## 3.0.8 17/07/2026
 
 ### Corrigido
