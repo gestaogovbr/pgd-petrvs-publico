@@ -86,7 +86,7 @@ class AvaliacoesPlanoEntrega
             ->get()
             ->map(fn (TipoAvaliacaoNota $nota) => [
                 'id' => $nota->id,
-                'label' => (string) (json_decode($nota->nota, true) ?? $nota->nota),
+                'label' => trim((string) $nota->nota, '"'),
             ]);
     }
 

@@ -29,6 +29,7 @@ class AlinhamentoDesempenhoController extends Controller
     public function alinhamentoInstitucional(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
             $result = $this->alinhamentoInstitucional->getData($filtros);
 
@@ -47,6 +48,7 @@ class AlinhamentoDesempenhoController extends Controller
     public function avaliacoesPlanoEntrega(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
             $result = $this->avaliacoesPlanoEntrega->getData($filtros);
 
@@ -65,6 +67,7 @@ class AlinhamentoDesempenhoController extends Controller
     public function avaliacoesPlanoTrabalho(Request $request): JsonResponse
     {
         try {
+            $this->painelService->validarAcesso();
             $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
             $result = $this->avaliacoesPlanoTrabalho->getData($filtros);
 

@@ -20,6 +20,7 @@ class PainelGerencialController extends Controller
     public function unidadeInicial(): JsonResponse
     {
         try {
+            $this->service->validarAcesso();
             $result = $this->service->getUnidadeInicial();
 
             return response()->json(['success' => true, 'data' => $result]);
