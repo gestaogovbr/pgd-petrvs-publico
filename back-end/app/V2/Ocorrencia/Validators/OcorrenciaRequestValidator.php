@@ -12,14 +12,13 @@ class OcorrenciaRequestValidator
     {
         return $request->validate([
             'usuario_id' => ['required', 'uuid'],
-            'observacoes' => ['required', 'string'],
+            'observacoes' => ['nullable', 'string'],
             'data_inicio' => ['required', 'date'],
             'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
             'tipo_motivo_afastamento_id' => ['required', 'uuid'],
             'horas' => ['nullable', 'integer', 'min:1', 'max:9999'],
         ], [
             'usuario_id.required' => 'O ID do usuário é obrigatório.',
-            'observacoes.required' => 'A descrição da ocorrência é obrigatória.',
             'data_inicio.required' => 'A data de início é obrigatória.',
             'data_fim.required' => 'A data de fim é obrigatória.',
             'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
