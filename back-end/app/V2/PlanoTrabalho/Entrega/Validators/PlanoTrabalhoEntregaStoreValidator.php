@@ -41,6 +41,7 @@ class PlanoTrabalhoEntregaStoreValidator
         $entrega = $this->findEntregaOrFail($dto->planoEntregaEntregaId);
         $this->validarUnicidade($dto->planoTrabalhoId, $entrega->id, $dto->entregaId);
         $this->validarIntersecaoPeriodo($plano, $entrega);
+        $this->validarSomatorioEsforcoExecutado($dto);
     }
 
     public function validarDestroy(string $planoTrabalhoId): void
@@ -96,6 +97,26 @@ class PlanoTrabalhoEntregaStoreValidator
 
         if ($semIntersecao) {
             throw new ValidateException('O período da entrega do plano de entregas não possui interseção com o período do plano de trabalho.');
+        }
+    }
+
+    private function validarSomatorioEsforcoExecutado(PlanoTrabalhoEntregaStoreDTO $dto): void
+    {
+        if (!$dto->informouEsforcoExecutado) {
+            return;
+        }
+
+        $somatorios = $this->planoTrabalhoEntregaRepository->somatoriosEsforcoProjetados(
+            $dto->planoTrabalhoId,
+            $dto->entregaId,
+            $dto->forcaTrabalho,
+            $dto->esforcoExecutado,
+        );
+
+        if (!$somatorios->planejadoIgualExecutado()) {
+            throw new ValidateException(
+                'O somatório do esforço executado deve ser igual ao somatório do esforço planejado no Plano de Trabalho.'
+            );
         }
     }
 }

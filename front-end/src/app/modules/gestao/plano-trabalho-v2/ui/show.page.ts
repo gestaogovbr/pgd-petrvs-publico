@@ -21,13 +21,15 @@ import { AssinarPlanoUseCase } from "../application/assinar-plano.usecase";
 import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
 import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
 import { TextoColapsavelComponent } from "src/app/v2/components/texto-colapsavel/texto-colapsavel.component";
+import { BrTextareaResizeVerticalDirective } from "./br-textarea-resize-vertical.directive";
 
 @Component({
   selector: 'app-plano-trabalho-v2-show-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent, TextoColapsavelComponent],
-  templateUrl: './show.page.html'
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent, TextoColapsavelComponent, BrTextareaResizeVerticalDirective],
+  templateUrl: './show.page.html',
+  styleUrl: './show.page.scss'
 })
 export class PlanoTrabalhoV2ShowPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -72,6 +74,16 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.planoTrabalho.set(plano);
           this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
           this.loading.set(false);
+          this.facade.registerEntregaEsforcoAtualizado((entregaId, esforco) => {
+            this.planoTrabalho.update(p => {
+              const entrega = p?.entregas?.find(e => e.id === entregaId);
+              if (!entrega) {
+                return p;
+              }
+              entrega.esforco_executado = esforco;
+              return p;
+            });
+          });
           this.assinatura.init(plano, plano.entregas || []);
           const atualizarPlanoNaTela = () => {
             this.api.getById(plano.id).subscribe(updated => {
@@ -184,7 +196,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   irParaTcr() {
     const id = this.planoTrabalho()?.id;
     if (!id) return;
-    if (this.planoTrabalho()?.documento_id || this.assinatura.documento()) {
+    if (this.planoTrabalho()?.documento_id || this.assinatura.temTcrAtivo()) {
       this.router.navigate(['gestao', 'plano-trabalho-v2', 'tcr', id]);
     } else {
       this.assinatura.gerarDocumento(() =>

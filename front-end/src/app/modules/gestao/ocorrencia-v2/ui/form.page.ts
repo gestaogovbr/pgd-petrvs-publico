@@ -38,7 +38,7 @@ export class OcorrenciaV2FormPage implements OnInit {
     data_inicio: ['', Validators.required],
     data_fim: ['', Validators.required],
     horas: [''],
-    observacoes: ['', Validators.required],
+    observacoes: [''],
   });
 
   get tipoSelecionadoUsaHoras(): boolean {

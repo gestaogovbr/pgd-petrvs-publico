@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\PlanoTrabalhoEntrega\Contracts;
 
 use App\V2\PlanoTrabalho\Entrega\DTOs\ResumoForcaTrabalhoDTO;
+use App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -21,4 +22,11 @@ interface PlanoTrabalhoEntregaReadRepositoryContract
     public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId, ?string $excludeId = null): bool;
 
     public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO;
+
+    public function somatoriosEsforcoProjetados(
+        string $planoTrabalhoId,
+        ?string $entregaIdEmEdicao,
+        float $forcaTrabalhoProjeto,
+        float $esforcoExecutadoProjeto,
+    ): SomatoriosEsforcoDTO;
 }

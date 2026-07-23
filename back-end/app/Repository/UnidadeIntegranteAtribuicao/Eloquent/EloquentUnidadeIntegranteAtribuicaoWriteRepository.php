@@ -17,4 +17,15 @@ class EloquentUnidadeIntegranteAtribuicaoWriteRepository extends AbstractEloquen
     {
         $this->model = $model;
     }
+
+    public function delete(string|int $id): bool
+    {
+        $model = $this->model->newQuery()->find($id);
+
+        if ($model === null) {
+            return false;
+        }
+
+        return (bool) $model->delete();
+    }
 }

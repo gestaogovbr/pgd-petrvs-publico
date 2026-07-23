@@ -129,6 +129,7 @@ function vincularEntregaComEsforco(
         'plano_trabalho_id' => $planoTrabalho->id,
         'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
         'forca_trabalho' => $forcaTrabalho,
+        'esforco_executado' => $forcaTrabalho,
     ]);
 }
 
