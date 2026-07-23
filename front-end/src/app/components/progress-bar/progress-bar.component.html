@@ -4,11 +4,13 @@
     </div>
 </div>
 <ng-template #stacked>
-    <div class="progress-stacked" [style.height.px]="height" [style.min-width.px]="minWidth">
-        <div class="progress" role="progressbar" aria-label="Valor"  [style.width.%]="percentage" [attr.aria-valuenow]="value" [attr.aria-valuemin]="min" [attr.aria-valuemax]="max">
-            <div [class]="progressClass"></div>
+    <div class="progress-stacked" [style.height.px]="height" [style.min-width.px]="minWidth" title="Realizado: {{percentage}}% | Esperado: {{goal}}%">
+        <div class="progress" role="progressbar" aria-label="Valor" [style.width.%]="basePercentage" [attr.aria-valuenow]="value" [attr.aria-valuemin]="min" [attr.aria-valuemax]="max">
+            <div [class]="progressClass">
+                <ng-container *ngIf="!isNoPercentage"><span>{{percentage}}%</span></ng-container>
+            </div>
         </div>
-        <div class="progress" role="progressbar" aria-label="Meta" [style.width.%]="goalPercentage" [attr.aria-valuenow]="goalValue" [attr.aria-valuemin]="min" [attr.aria-valuemax]="max">
+        <div class="progress" role="progressbar" aria-label="Excedente da meta" [style.width.%]="goalPercentage" [attr.aria-valuenow]="goalValue" [attr.aria-valuemin]="min" [attr.aria-valuemax]="max">
             <div class="progress-bar progress-bar-striped bg-warning"></div>
         </div>
     </div>

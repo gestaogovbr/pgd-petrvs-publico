@@ -9,7 +9,7 @@ import { PlanejamentoListObjetivosEntregasComponent } from './planejamento-list-
 import { planejamentoObjetivoV2Routes } from './planejamento-objetivo-v2/routes';
 
 const routes: Routes = [
-  { path: '', component: PlanejamentoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Planejamentos Institucionais" } },
+  { path: '', component: PlanejamentoListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Planejamentos Institucionais", breadcrumb: "Planejamentos Institucionais" } },
   { path: 'new', component: PlanejamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Planejamento Institucional", modal: true } },
   { path: ':id/edit', component: PlanejamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Planejamento Institucional", modal: true } },
   { path: ':id/consult', component: PlanejamentoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Planejamento Institucional", modal: true } },

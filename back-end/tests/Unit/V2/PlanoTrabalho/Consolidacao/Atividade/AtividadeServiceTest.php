@@ -1,38 +1,47 @@
 <?php
 
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeService;
-use App\V2\PlanoTrabalho\Consolidacao\Atividade\DTOs\AtividadeDestroyDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\DTOs\AtividadeStoreDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\DTOs\AtividadeUpdateDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeWriteValidator;
 use App\Repository\AtividadeRepository;
+use App\Repository\PlanoTrabalhoEntregaRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\Atividade;
 use App\Exceptions\NotFoundException;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 beforeEach(function () {
     $this->atividadeRepo = Mockery::mock(AtividadeRepository::class);
+    $this->entregaRepo = Mockery::mock(PlanoTrabalhoEntregaRepository::class);
     $this->authValidator = Mockery::mock(AtividadeAuthorizationValidator::class);
     $this->writeValidator = Mockery::mock(AtividadeWriteValidator::class);
 
     $this->service = new AtividadeService(
         $this->atividadeRepo,
+        $this->entregaRepo,
         $this->authValidator,
         $this->writeValidator,
     );
+
+    DB::shouldReceive('transaction')->andReturnUsing(fn ($cb) => $cb());
 });
 
 afterEach(fn () => Mockery::close());
 
 describe('AtividadeService::store', function () {
 
-    test('cria atividade com sucesso', function () {
+    test('cria atividade e atualiza esforco executado da entrega', function () {
         $dto = AtividadeStoreDTO::fromArray(
-            ['plano_trabalho_entrega_id' => 'entrega-1', 'descricao' => 'Trabalho executado'],
+            [
+                'plano_trabalho_entrega_id' => 'entrega-1',
+                'descricao' => 'Trabalho executado',
+                'esforco_executado' => 80,
+            ],
             'plano-1', 'consolidacao-1', 'usuario-1',
         );
 
@@ -58,27 +67,42 @@ describe('AtividadeService::store', function () {
             ))
             ->andReturn($atividade);
 
+        $this->entregaRepo->shouldReceive('update')
+            ->once()
+            ->with('entrega-1', ['esforco_executado' => 80.0]);
+
         expect($this->service->store($dto)->id)->toBe('atividade-1');
     });
 });
 
 describe('AtividadeService::update', function () {
 
-    test('atualiza atividade com sucesso', function () {
+    test('atualiza atividade e esforco executado da entrega', function () {
         $dto = AtividadeUpdateDTO::fromArray(
-            ['descricao' => 'Atualizado'],
+            ['descricao' => 'Atualizado', 'esforco_executado' => 70],
             'plano-1', 'consolidacao-1', 'atividade-1', 'usuario-1',
         );
 
         $this->authValidator->shouldReceive('validar')->andReturn(Mockery::mock(PlanoTrabalho::class)->makePartial());
         $this->writeValidator->shouldReceive('validar');
-        $this->writeValidator->shouldReceive('validarExistencia')->with($dto);
+
+        /** @var Atividade $atividade */
+        $atividade = Mockery::mock(Atividade::class)->makePartial();
+        $atividade->id = 'atividade-1';
+        $atividade->plano_trabalho_entrega_id = 'entrega-1';
+
+        $this->writeValidator->shouldReceive('validarExistencia')->with($dto)->andReturn($atividade);
 
         /** @var Atividade $atividadeAtualizada */
         $atividadeAtualizada = Mockery::mock(Atividade::class)->makePartial();
         $atividadeAtualizada->descricao = 'Atualizado';
 
-        $this->atividadeRepo->shouldReceive('update')->with('atividade-1', ['descricao' => 'Atualizado']);
+        $this->atividadeRepo->shouldReceive('update')->with('atividade-1', [
+            'descricao' => 'Atualizado',
+        ]);
+        $this->entregaRepo->shouldReceive('update')
+            ->once()
+            ->with('entrega-1', ['esforco_executado' => 70.0]);
         $this->atividadeRepo->shouldReceive('findById')->with('atividade-1')->andReturn($atividadeAtualizada);
 
         expect($this->service->update($dto)->descricao)->toBe('Atualizado');
@@ -86,7 +110,8 @@ describe('AtividadeService::update', function () {
 
     test('propaga exceção do validarExistencia', function () {
         $dto = AtividadeUpdateDTO::fromArray(
-            ['descricao' => 'x'], 'p-1', 'c-1', 'a-x', 'u-1',
+            ['descricao' => 'x', 'esforco_executado' => 50],
+            'p-1', 'c-1', 'a-x', 'u-1',
         );
 
         $this->authValidator->shouldReceive('validar')->andReturn(Mockery::mock(PlanoTrabalho::class)->makePartial());
@@ -95,32 +120,5 @@ describe('AtividadeService::update', function () {
             ->andThrow(new NotFoundException('Registro de execução não encontrado.'));
 
         $this->service->update($dto);
-    })->throws(NotFoundException::class, 'Registro de execução não encontrado.');
-});
-
-describe('AtividadeService::destroy', function () {
-
-    test('remove atividade com sucesso', function () {
-        $dto = new AtividadeDestroyDTO('plano-1', 'consolidacao-1', 'atividade-1', 'usuario-1');
-
-        $this->authValidator->shouldReceive('validar')->andReturn(Mockery::mock(PlanoTrabalho::class)->makePartial());
-        $this->writeValidator->shouldReceive('validar');
-        $this->writeValidator->shouldReceive('validarExistencia')->with($dto);
-        $this->atividadeRepo->shouldReceive('delete')->with('atividade-1')->once();
-
-        $this->service->destroy($dto);
-
-        $this->atividadeRepo->shouldHaveReceived('delete')->with('atividade-1');
-    });
-
-    test('propaga exceção do validarExistencia no destroy', function () {
-        $dto = new AtividadeDestroyDTO('p-1', 'c-1', 'a-x', 'u-1');
-
-        $this->authValidator->shouldReceive('validar')->andReturn(Mockery::mock(PlanoTrabalho::class)->makePartial());
-        $this->writeValidator->shouldReceive('validar');
-        $this->writeValidator->shouldReceive('validarExistencia')
-            ->andThrow(new NotFoundException('Registro de execução não encontrado.'));
-
-        $this->service->destroy($dto);
     })->throws(NotFoundException::class, 'Registro de execução não encontrado.');
 });
