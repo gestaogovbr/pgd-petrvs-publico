@@ -2,6 +2,7 @@
 
 namespace App\Services\Siape\Unidade;
 
+use App\Cache\GestorHierarquiaCache;
 use App\Facades\SiapeLog;
 use App\Models\SiapeBlacklistUnidade;
 use App\Models\Unidade;
@@ -301,6 +302,10 @@ class SiapeUnidadeLifecycleService
                 'integrantes_afetados' => $inativacao['integrantes_afetados'],
                 'atribuicoes_removidas' => $inativacao['atribuicoes_removidas'],
             ]);
+        }
+
+        if ($resultado['atribuicoes_removidas'] > 0) {
+            GestorHierarquiaCache::invalidarTudo();
         }
 
         return $resultado;
