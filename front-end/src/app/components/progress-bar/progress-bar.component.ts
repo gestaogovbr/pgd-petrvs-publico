@@ -31,8 +31,17 @@ export class ProgressBarComponent implements OnInit {
     return Math.round((this.value - this.min) * 100 / (this.max - this.min));
   }
 
+  private get goalPct(): number {
+    return Math.round((this.goal - this.min) * 100 / (this.max - this.min));
+  }
+
+  /** Parcela do valor limitada à meta (evita que o excedente seja contado duas vezes no modo empilhado) */
+  public get basePercentage(): number {
+    return Math.min(this.percentage, this.goalPct);
+  }
+
   public get goalPercentage(): number {
-    return Math.max(this.percentage - Math.round((this.goal - this.min) * 100 / (this.max - this.min)), 0);
+    return Math.max(this.percentage - this.goalPct, 0);
   }
 
   public get goalValue(): number {

@@ -23,6 +23,7 @@ class PlanoTrabalhoEntrega extends ModelBase
     'orgao',
     'descricao', /* varchar(256); NOT NULL; */ // Detalhamento da entrega
     'forca_trabalho', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */ // Percentual da força de trabalho associado a esta entrega
+    'esforco_executado', /* decimal(5,2); NOT NULL; DEFAULT: '0.00'; */ // Percentual executado (registro de execução)
     'plano_trabalho_id', /* char(36); NOT NULL; */
     //'deleted_at', /* timestamp; */
     //'meta', /* json; */// Meta para a entrega

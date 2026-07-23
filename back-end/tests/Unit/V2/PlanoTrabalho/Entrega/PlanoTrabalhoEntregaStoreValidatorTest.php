@@ -178,6 +178,44 @@ describe('PlanoTrabalhoEntregaStoreValidator::validar', function () {
 
         expect(true)->toBeTrue();
     });
+
+    test('lança exceção quando somatório executado difere do planejado', function () {
+        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::INCLUIDO->value));
+        $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(mockEntregaPE('2025-02-01', '2025-05-31'));
+        $this->ptEntregaRepo->shouldReceive('existeVinculo')->andReturn(false);
+        $this->ptEntregaRepo->shouldReceive('somatoriosEsforcoProjetados')
+            ->once()
+            ->with('plano-1', 'entrega-1', 60.0, 30.0)
+            ->andReturn(new \App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO(100.0, 70.0));
+
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
+            'origem' => 'PROPRIA_UNIDADE',
+            'plano_entrega_entrega_id' => 'pee-1',
+            'forca_trabalho' => 60,
+            'esforco_executado' => 30,
+        ], 'plano-1', 'entrega-1');
+
+        $this->validator->validar($dto);
+    })->throws(ValidateException::class, 'O somatório do esforço executado deve ser igual ao somatório do esforço planejado no Plano de Trabalho.');
+
+    test('permite esforço executado quando somatórios permanecem iguais', function () {
+        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::INCLUIDO->value));
+        $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(mockEntregaPE('2025-02-01', '2025-05-31'));
+        $this->ptEntregaRepo->shouldReceive('existeVinculo')->andReturn(false);
+        $this->ptEntregaRepo->shouldReceive('somatoriosEsforcoProjetados')
+            ->once()
+            ->with('plano-1', 'entrega-1', 60.0, 40.0)
+            ->andReturn(new \App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO(100.0, 100.0));
+
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
+            'origem' => 'PROPRIA_UNIDADE',
+            'plano_entrega_entrega_id' => 'pee-1',
+            'forca_trabalho' => 60,
+            'esforco_executado' => 40,
+        ], 'plano-1', 'entrega-1');
+
+        $this->validator->validar($dto);
+    })->throwsNoExceptions();
 });
 
 describe('PlanoTrabalhoEntregaStoreValidator::validarDestroy', function () {

@@ -48,7 +48,11 @@ describe('AtividadeWriteValidator::validar', function () {
             ->with('consolidacao-1')->andReturn($consolidacao);
 
         $dto = AtividadeStoreDTO::fromArray(
-            ['plano_trabalho_entrega_id' => 'entrega-1', 'descricao' => 'Desc'],
+            [
+                'plano_trabalho_entrega_id' => 'entrega-1',
+                'descricao' => 'Desc',
+                'esforco_executado' => 100,
+            ],
             'plano-1', 'consolidacao-1', 'usuario-1',
         );
 
