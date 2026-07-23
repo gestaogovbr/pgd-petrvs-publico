@@ -284,10 +284,8 @@ class TenantService extends ServiceBase
         foreach ($tenants as $tenant) {
             /** @var Tenant $tenant */
             $this->inicializeTenant($tenant->id);
-            $users += DB::table('programas_participantes')
-                ->select('usuario_id')
-                ->distinct()
-                ->where('habilitado', 1)
+            $users += DB::table('usuarios')
+                ->where('participa_pgd', 'sim')
                 ->count();
         }
 
