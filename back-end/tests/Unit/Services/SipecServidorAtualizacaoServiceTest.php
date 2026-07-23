@@ -9,6 +9,7 @@ use App\Services\Sipec\Servidor\SipecServidorAtualizacaoService;
 use App\Services\UnidadeIntegranteService;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -19,7 +20,7 @@ afterEach(function () {
 
 function setupLogMockServidorAtualizacao(): void
 {
-    $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
+    $loggerMock = Mockery::mock(LoggerInterface::class);
     $loggerMock->shouldReceive('info', 'warning', 'error', 'debug', 'notice', 'log', 'critical', 'alert', 'emergency')->withAnyArgs();
     Log::shouldReceive('channel')->andReturn($loggerMock);
     Log::shouldReceive('error', 'info', 'warning', 'debug', 'critical', 'log', 'alert', 'emergency', 'notice')->withAnyArgs();

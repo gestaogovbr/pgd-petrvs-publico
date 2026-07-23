@@ -7,6 +7,7 @@ use App\Facades\SiapeLog;
 use App\Models\SipecServidor;
 use App\Models\SipecUnidade;
 use App\Services\UtilService;
+use App\Support\ModalidadePgd;
 use Illuminate\Support\Facades\DB;
 
 class IntegracaoSipecService
@@ -161,7 +162,7 @@ class IntegracaoSipecService
                                 ],
                             ] : null,
                             'ident_unica' => $dto->identUnica,
-                            'modalidade_pgd' => $dto->modalidadePGD,
+                            'modalidade_pgd' => ModalidadePgd::normalize($dto->nomeModalidadePGD),
                             'participa_pgd' => $dto->participaPGD,
                             'cod_jornada' => $dto->codJornada,
                             'nome_jornada' => $dto->nomeJornada,

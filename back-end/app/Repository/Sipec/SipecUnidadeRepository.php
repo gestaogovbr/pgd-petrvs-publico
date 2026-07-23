@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Sipec;
 
-use App\Repository\SipecUnidade\Contracts\SipecUnidadeReadRepositoryContract;
-use App\Repository\SipecUnidade\Contracts\SipecUnidadeWriteRepositoryContract;
+use App\Repository\Sipec\SipecUnidade\Contracts\SipecUnidadeReadRepositoryContract;
+use App\Repository\Sipec\SipecUnidade\Contracts\SipecUnidadeWriteRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 
 class SipecUnidadeRepository

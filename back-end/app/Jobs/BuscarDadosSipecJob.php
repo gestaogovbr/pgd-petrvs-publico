@@ -4,8 +4,10 @@ namespace App\Jobs;
 
 use App\Facades\SipecLog;
 use App\Jobs\Contratos\ContratoJobSchedule;
+use App\Repository\Sipec\SipecBuscaHistoricoRepository;
 use App\Services\Sipec\SipecService;
 use App\Services\TenantConfigurationsService;
+use Illuminate\Support\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -45,12 +47,31 @@ class BuscarDadosSipecJob implements ShouldQueue, ContratoJobSchedule
             }
 
             $sipecService = new SipecService($config);
-            $resultado = $sipecService->executarFase0($this->tenantId);
+            
+            $historicoRepository = app(SipecBuscaHistoricoRepository::class);
+
+            // Busca datas da última execução sem falhas para delta sync
+            $dataUltimaUnidades = $this->getUltimaExecucao($historicoRepository);
+            $dataUltimaServidores = $dataUltimaUnidades;
+
+            SipecLog::info("Filtro delta sync", [
+                'dataUltimaTransacao_unidades' => $dataUltimaUnidades,
+                'dataUltimaTransacao_servidores' => $dataUltimaServidores,
+            ]);
+            
+            $resultado = $sipecService->executarFase0($this->tenantId, $dataUltimaUnidades, $dataUltimaServidores);
 
             if ($resultado['status'] === 'locked') {
-                SipecLog::warning('BuscarDadosSipecJob: Fase 0 já em execução, abortando.');
+                SipecLog::warning("Fase de busca [fase 0] já em execução, abortando.");
                 return;
             }
+
+            $historicoRepository->registrar(
+                json_encode([
+                    'unidades_coletadas'   => $resultado['unidades'] ?? 0,
+                    'servidores_coletados' => $resultado['servidores'] ?? 0,
+                ], JSON_UNESCAPED_UNICODE),
+            );
 
             SipecLog::info('Job BuscarDadosSipecJob END', [
                 'unidades' => $resultado['unidades'] ?? 0,
@@ -74,5 +95,15 @@ class BuscarDadosSipecJob implements ShouldQueue, ContratoJobSchedule
         }
 
         (new TenantConfigurationsService())->handle($this->tenantId);
+    }
+
+    /**
+     * Retorna a data_execucao do registro mais recente (toda execução gravada é sem falhas).
+     */
+    private function getUltimaExecucao(SipecBuscaHistoricoRepository $historicoRepository): ?string
+    {
+        $registro = $historicoRepository->findMaisRecente();
+
+        return $registro?->data_execucao?->toIso8601String();
     }
 }

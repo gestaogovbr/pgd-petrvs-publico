@@ -2,9 +2,9 @@
 
 namespace App\Services\Sipec\Servidor;
 
-use App\Repository\SipecServidorRepository;
-use App\Repository\SipecSyncCheckpointRepository;
-use App\Repository\SipecUnidadeRepository;
+use App\Repository\Sipec\SipecServidorRepository;
+use App\Repository\Sipec\SipecSyncCheckpointRepository;
+use App\Repository\Sipec\SipecUnidadeRepository;
 use App\Services\Sipec\SipecService;
 
 class SipecServidorSincronizacaoService
@@ -80,7 +80,8 @@ class SipecServidorSincronizacaoService
 
     /**
      * Coleta servidores paginados e persiste na tabela sipec_servidores.
-     * Quando $codUorg é null, itera sobre todas as UORGs do tenant.
+     * Quando $codUorg é null, busca todos os servidores do órgão sem filtro de unidade,
+     * registrando checkpoint por página global.
      */
     public function coletarServidoresPaginado(?string $tenantId, int $startPage, ?string $dataUltimaTransacao = null, ?string $codUorg = null): int
     {
@@ -88,14 +89,21 @@ class SipecServidorSincronizacaoService
             return $this->coletarServidoresDaUorgPaginado($tenantId, $codUorg, $startPage, $dataUltimaTransacao);
         }
 
-        $codigos = $this->sipecUnidadeRepository->getAllCodigos();
-        $total = 0;
+        return $this->coletarTodosServidoresPaginado($tenantId, $startPage, $dataUltimaTransacao);
+    }
 
-        foreach ($codigos as $codigo) {
-            $total += $this->coletarServidoresDaUorgPaginado($tenantId, $codigo, 0, $dataUltimaTransacao);
+    /**
+     * Coleta todos os servidores do órgão sem filtro de UORG, com checkpoint por página.
+     */
+    private function coletarTodosServidoresPaginado(?string $tenantId, int $startPage, ?string $dataUltimaTransacao): int
+    {
+        $codOrgao = $this->sipecService->getCodOrgao();
+        $baseParams = ['codOrgao' => $codOrgao, 'size' => SipecService::SIPEC_PAGE_SIZE];
+        if ($dataUltimaTransacao) {
+            $baseParams['dataUltimaTransacao'] = $dataUltimaTransacao;
         }
 
-        return $total;
+        return $this->executarLoopPaginado($tenantId, $baseParams, $startPage, $codOrgao);
     }
 
     /**
@@ -103,23 +111,22 @@ class SipecServidorSincronizacaoService
      */
     private function coletarServidoresDaUorgPaginado(?string $tenantId, string $codUorg, int $startPage, ?string $dataUltimaTransacao): int
     {
+        $codOrgao = $this->sipecService->getCodOrgao();
+        $baseParams = ['codUorg' => $codUorg, 'codOrgao' => $codOrgao, 'size' => SipecService::SIPEC_PAGE_SIZE];
+        if ($dataUltimaTransacao) {
+            $baseParams['dataUltimaTransacao'] = $dataUltimaTransacao;
+        }
+
+        return $this->executarLoopPaginado($tenantId, $baseParams, $startPage, $codOrgao);
+    }
+
+    private function executarLoopPaginado(?string $tenantId, array $baseParams, int $startPage, string $codOrgao): int
+    {
         $page = $startPage;
-        $size = 100;
         $total = 0;
 
         do {
-            $queryParams = [
-                'codUorg' => $codUorg,
-                'codOrgao' => $this->sipecService->getCodOrgao(),
-                'page' => $page,
-                'size' => $size,
-            ];
-            if ($dataUltimaTransacao) {
-                $queryParams['dataUltimaTransacao'] = $dataUltimaTransacao;
-            }
-            $params = http_build_query($queryParams);
-            $path = '/api-sipec/v1/servidores?' . $params;
-
+            $path = '/api-sipec/v1/servidores?' . http_build_query(array_merge($baseParams, ['page' => $page]));
             $data = $this->sipecService->executarGetComRetry($path);
             $itens = $data['content'] ?? [];
             $totalPages = $data['totalPages'] ?? 1;
@@ -127,7 +134,8 @@ class SipecServidorSincronizacaoService
             foreach ($itens as $item) {
                 $primeiroVinculo = $item['vinculos'][0] ?? $item['vinculos']['0'] ?? [];
                 $cpf = $item['cpf'] ?? null;
-                $matricula = isset($primeiroVinculo['matriculaSiape']) ? (string) $primeiroVinculo['matriculaSiape'] : null;
+                $matriculaSiape = isset($primeiroVinculo['matriculaSiape']) ? (string) $primeiroVinculo['matriculaSiape'] : null;
+                $matricula = $matriculaSiape !== null ? $this->resolverMatricula($matriculaSiape, $codOrgao) : null;
 
                 if ($cpf) {
                     $this->sipecServidorRepository->updateOrCreateByCpfAndMatricula(
@@ -146,5 +154,12 @@ class SipecServidorSincronizacaoService
         } while ($page < $totalPages);
 
         return $total;
+    }
+
+    private function resolverMatricula(string $matriculaSiape, string $codOrgao): string
+    {
+        return str_starts_with($matriculaSiape, $codOrgao)
+            ? substr($matriculaSiape, strlen($codOrgao))
+            : $matriculaSiape;
     }
 }

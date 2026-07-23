@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\SipecSyncCheckpoint\Eloquent;
+namespace App\Repository\Sipec\SipecSyncCheckpoint\Eloquent;
 
 use App\Models\SipecSyncCheckpoint;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
-use App\Repository\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointReadRepositoryContract;
+use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointReadRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 
 final class EloquentSipecSyncCheckpointReadRepository extends AbstractEloquentReadRepository implements SipecSyncCheckpointReadRepositoryContract

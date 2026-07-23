@@ -8,7 +8,7 @@ use App\DTOs\Sipec\UnidadeSipecDTO;
 use App\Facades\SipecLog;
 use App\Models\SipecUnidade;
 use App\Repository\IntegracaoUnidadeRepository;
-use App\Repository\SipecUnidadeRepository;
+use App\Repository\Sipec\SipecUnidadeRepository;
 
 /**
  * Lê sipec_unidades não processados, parseia via UnidadeSipecDTO

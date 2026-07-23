@@ -123,19 +123,22 @@ use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryCo
 use App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository;
 use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
 use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
-use App\Repository\SipecUnidade\Contracts\SipecUnidadeReadRepositoryContract;
-use App\Repository\SipecUnidade\Contracts\SipecUnidadeWriteRepositoryContract;
-use App\Repository\SipecUnidade\Eloquent\EloquentSipecUnidadeReadRepository;
-use App\Repository\SipecUnidade\Eloquent\EloquentSipecUnidadeWriteRepository;
-use App\Repository\SipecServidor\Contracts\SipecServidorReadRepositoryContract;
-use App\Repository\SipecServidor\Contracts\SipecServidorWriteRepositoryContract;
-use App\Repository\SipecServidor\Eloquent\EloquentSipecServidorReadRepository;
-use App\Repository\SipecServidor\Eloquent\EloquentSipecServidorWriteRepository;
-use App\Repository\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointReadRepositoryContract;
-use App\Repository\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteRepositoryContract;
-use App\Repository\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointReadRepository;
-use App\Repository\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointWriteRepository;
-
+use App\Repository\Sipec\SipecUnidade\Contracts\SipecUnidadeReadRepositoryContract;
+use App\Repository\Sipec\SipecUnidade\Contracts\SipecUnidadeWriteRepositoryContract;
+use App\Repository\Sipec\SipecUnidade\Eloquent\EloquentSipecUnidadeReadRepository;
+use App\Repository\Sipec\SipecUnidade\Eloquent\EloquentSipecUnidadeWriteRepository;
+use App\Repository\Sipec\SipecServidor\Contracts\SipecServidorReadRepositoryContract;
+use App\Repository\Sipec\SipecServidor\Contracts\SipecServidorWriteRepositoryContract;
+use App\Repository\Sipec\SipecServidor\Eloquent\EloquentSipecServidorReadRepository;
+use App\Repository\Sipec\SipecServidor\Eloquent\EloquentSipecServidorWriteRepository;
+use App\Repository\Sipec\SipecBuscaHistorico\Contracts\SipecBuscaHistoricoReadRepositoryContract;
+use App\Repository\Sipec\SipecBuscaHistorico\Contracts\SipecBuscaHistoricoWriteRepositoryContract;
+use App\Repository\Sipec\SipecBuscaHistorico\Eloquent\EloquentSipecBuscaHistoricoReadRepository;
+use App\Repository\Sipec\SipecBuscaHistorico\Eloquent\EloquentSipecBuscaHistoricoWriteRepository;
+use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointReadRepositoryContract;
+use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteRepositoryContract;
+use App\Repository\Sipec\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointReadRepository;
+use App\Repository\Sipec\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointWriteRepository;
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioWriteRepositoryContract;
@@ -503,6 +506,15 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             SipecSyncCheckpointWriteRepositoryContract::class,
             EloquentSipecSyncCheckpointWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SipecBuscaHistoricoReadRepositoryContract::class,
+            EloquentSipecBuscaHistoricoReadRepository::class,
+        );
+        $this->app->bind(
+            SipecBuscaHistoricoWriteRepositoryContract::class,
+            EloquentSipecBuscaHistoricoWriteRepository::class,
         );
     }
 

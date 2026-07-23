@@ -1,8 +1,8 @@
 <?php
 
-use App\Repository\SipecServidorRepository;
-use App\Repository\SipecSyncCheckpointRepository;
-use App\Repository\SipecUnidadeRepository;
+use App\Repository\Sipec\SipecServidorRepository;
+use App\Repository\Sipec\SipecSyncCheckpointRepository;
+use App\Repository\Sipec\SipecUnidadeRepository;
 use App\Services\Sipec\Servidor\SipecServidorSincronizacaoService;
 use App\Services\Sipec\SipecService;
 use Tests\TestCase;
@@ -253,28 +253,51 @@ describe('SipecServidorSincronizacaoService - coletarServidoresPaginado', functi
         expect($total)->toBe(1);
     });
 
-    test('deve iterar todas UORGs do tenant quando codUorg não informado', function () {
+    test('deve buscar todos servidores sem codUorg no path quando codUorg não informado', function () {
+        $sipecService = Mockery::mock(SipecService::class);
+        $sipecService->shouldReceive('getCodOrgao')->andReturn('17500');
+        $sipecService->shouldReceive('executarGetComRetry')
+            ->once()
+            ->with(Mockery::on(fn(string $path) => !str_contains($path, 'codUorg') && str_contains($path, 'codOrgao=17500')))
+            ->andReturn([
+                'content' => [['cpf' => '11111111111', 'vinculos' => [['matriculaSiape' => '111', 'dataUltimaTransacao' => null]]]],
+                'totalPages' => 1,
+            ]);
+
+        $servidorRepo = Mockery::mock(SipecServidorRepository::class);
+        $servidorRepo->shouldReceive('updateOrCreateByCpfAndMatricula')->once();
+
+        $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
+        $checkpointRepo->shouldReceive('updateByTenantId')
+            ->with('tenant-1', 'servidores', 1, 1)
+            ->once();
+
+        $service = buildSincronizacaoService($sipecService, $servidorRepo, $checkpointRepo);
+        $total = $service->coletarServidoresPaginado('tenant-1', 0);
+
+        expect($total)->toBe(1);
+    });
+
+    test('deve registrar checkpoint por página global quando codUorg não informado', function () {
         $sipecService = Mockery::mock(SipecService::class);
         $sipecService->shouldReceive('getCodOrgao')->andReturn('17500');
         $sipecService->shouldReceive('executarGetComRetry')
             ->twice()
             ->andReturn(
-                ['content' => [['cpf' => '11111111111', 'vinculos' => [['matriculaSiape' => '111', 'dataUltimaTransacao' => null]]]], 'totalPages' => 1],
-                ['content' => [['cpf' => '22222222222', 'vinculos' => [['matriculaSiape' => '222', 'dataUltimaTransacao' => null]]]], 'totalPages' => 1],
+                ['content' => [['cpf' => '11111111111', 'vinculos' => [['matriculaSiape' => '111', 'dataUltimaTransacao' => null]]]], 'totalPages' => 2],
+                ['content' => [['cpf' => '22222222222', 'vinculos' => [['matriculaSiape' => '222', 'dataUltimaTransacao' => null]]]], 'totalPages' => 2],
             );
 
         $servidorRepo = Mockery::mock(SipecServidorRepository::class);
         $servidorRepo->shouldReceive('updateOrCreateByCpfAndMatricula')->twice();
 
         $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
-        $checkpointRepo->shouldReceive('updateByTenantId')->twice();
+        $checkpointRepo->shouldReceive('updateByTenantId')
+            ->with('tenant-1', 'servidores', 1, 2)->once();
+        $checkpointRepo->shouldReceive('updateByTenantId')
+            ->with('tenant-1', 'servidores', 2, 2)->once();
 
-        $sipecUnidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
-        $sipecUnidadeRepo->shouldReceive('getAllCodigos')
-            ->once()
-            ->andReturn(['1234', '5678']);
-
-        $service = buildSincronizacaoService($sipecService, $servidorRepo, $checkpointRepo, $sipecUnidadeRepo);
+        $service = buildSincronizacaoService($sipecService, $servidorRepo, $checkpointRepo);
         $total = $service->coletarServidoresPaginado('tenant-1', 0);
 
         expect($total)->toBe(2);

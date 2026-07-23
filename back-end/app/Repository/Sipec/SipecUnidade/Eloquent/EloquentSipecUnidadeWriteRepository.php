@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\SipecUnidade\Eloquent;
+namespace App\Repository\Sipec\SipecUnidade\Eloquent;
 
 use App\Models\SipecUnidade;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
-use App\Repository\SipecUnidade\Contracts\SipecUnidadeWriteRepositoryContract;
+use App\Repository\Sipec\SipecUnidade\Contracts\SipecUnidadeWriteRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 
 final class EloquentSipecUnidadeWriteRepository extends AbstractEloquentWriteRepository implements SipecUnidadeWriteRepositoryContract

@@ -12,6 +12,13 @@ describe('ModalidadePgd', function () {
             ->and(ModalidadePgd::label('modalidade customizada'))->toBe('modalidade customizada');
     });
 
+    it('normaliza strings brutas do sistema legado', function () {
+        expect(ModalidadePgd::normalize('TELETRABALHO PARCIAL'))->toBe('parcial')
+            ->and(ModalidadePgd::normalize('TELETRABALHO INTEGRAL'))->toBe('integral')
+            ->and(ModalidadePgd::normalize('PRESENCIAL'))->toBe('presencial')
+            ->and(ModalidadePgd::normalize('TELE. EXTERIOR (DEC. 11.072/22, ART. 12, VIII - SUBSTITUICAO)'))->toBe('no exterior substituicao');
+    });
+
     it('mapeia modalidade textual para codigo da API PGD e rejeita valor invalido', function () {
         expect((new ModalidadeResource('presencial'))->get())->toBe(1)
             ->and((new ModalidadeResource('parcial'))->get())->toBe(2)

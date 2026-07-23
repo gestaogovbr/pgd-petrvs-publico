@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\SipecServidor\Eloquent;
+namespace App\Repository\Sipec\SipecServidor\Eloquent;
 
 use App\Models\SipecServidor;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
-use App\Repository\SipecServidor\Contracts\SipecServidorReadRepositoryContract;
+use App\Repository\Sipec\SipecServidor\Contracts\SipecServidorReadRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 
 final class EloquentSipecServidorReadRepository extends AbstractEloquentReadRepository implements SipecServidorReadRepositoryContract

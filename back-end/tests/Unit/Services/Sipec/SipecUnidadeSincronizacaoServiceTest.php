@@ -1,7 +1,7 @@
 <?php
 
-use App\Repository\SipecSyncCheckpointRepository;
-use App\Repository\SipecUnidadeRepository;
+use App\Repository\Sipec\SipecSyncCheckpointRepository;
+use App\Repository\Sipec\SipecUnidadeRepository;
 use App\Services\Sipec\SipecService;
 use App\Services\Sipec\Unidade\SipecUnidadeSincronizacaoService;
 use Illuminate\Support\Facades\Log;
@@ -280,7 +280,7 @@ describe('SipecUnidadeSincronizacaoService - coletarFilhosERetornarCodigos (via 
                 str_contains($p, 'codUorgPai=500') &&
                 str_contains($p, 'codOrgao=26000') &&
                 str_contains($p, 'page=0') &&
-                str_contains($p, 'size=100')
+                str_contains($p, 'size=' . SipecService::SIPEC_PAGE_SIZE)
             ), 2)
             ->once()
             ->andReturn(['content' => [], 'totalPages' => 1]);

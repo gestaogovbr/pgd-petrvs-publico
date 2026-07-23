@@ -10,7 +10,7 @@ use App\Facades\SipecLog;
 use App\Models\IntegracaoServidor;
 use App\Models\SipecServidor;
 use App\Repository\IntegracaoServidorRepository;
-use App\Repository\SipecServidorRepository;
+use App\Repository\Sipec\SipecServidorRepository;
 use App\Support\ModalidadePgd;
 
 /**
@@ -129,7 +129,7 @@ class SipecServidorIntegracaoService
             'cpf_chefia_imediata' => null,
             'email_chefia_imediata' => null,
             'ident_unica' => $dto->identUnica,
-            'modalidade_pgd' => ModalidadePgd::normalize($dto->modalidadePGD),
+            'modalidade_pgd' => ModalidadePgd::normalize($dto->nomeModalidadePGD),
             'participa_pgd' => $this->normalizarParticipaPGD($dto->participaPGD),
             'cod_jornada' => $dto->codJornada,
             'nome_jornada' => $dto->nomeJornada,

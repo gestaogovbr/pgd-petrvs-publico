@@ -6,12 +6,13 @@ use Illuminate\Support\Facades\Cache;
 use App\Exceptions\RequestConectaGovException;
 use App\Facades\SipecLog;
 use App\Exceptions\SipecApiRetryableException;
-use App\Repository\SipecSyncCheckpointRepository;
+use App\Repository\Sipec\SipecSyncCheckpointRepository;
 use App\Services\Sipec\Servidor\SipecServidorSincronizacaoService;
 use App\Services\Sipec\Unidade\SipecUnidadeSincronizacaoService;
 
 class SipecService
 {
+    public const SIPEC_PAGE_SIZE = 600;
     private const CACHE_KEY_PREFIX = 'sipec_token:';
     private const TOKEN_TTL_MARGIN_SECONDS = 300;
 

@@ -4,9 +4,10 @@ use App\DTOs\Sipec\ServidorSipecDTO;
 use App\Models\IntegracaoServidor;
 use App\Models\SipecServidor;
 use App\Repository\IntegracaoServidorRepository;
-use App\Repository\SipecServidorRepository;
+use App\Repository\Sipec\SipecServidorRepository;
 use App\Services\Sipec\Servidor\SipecServidorIntegracaoService;
 use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -17,7 +18,7 @@ afterEach(function () {
 
 function setupSiapeLogMockSipecServidor(): void
 {
-    $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
+    $loggerMock = Mockery::mock(LoggerInterface::class);
     $loggerMock->shouldReceive('info', 'warning', 'error', 'debug', 'notice')->withAnyArgs();
     Log::shouldReceive('channel')->with('sipec')->andReturn($loggerMock);
 }
@@ -128,7 +129,7 @@ describe('SipecServidorIntegracaoService', function () {
 
             $integracaoRepo = Mockery::mock(IntegracaoServidorRepository::class);
             $integracaoRepo->shouldReceive('getServidor')
-                ->andThrow(new \RuntimeException('Erro de conexão'));
+                ->andThrow(new RuntimeException('Erro de conexão'));
 
             $service = new SipecServidorIntegracaoService($integracaoRepo, $sipecRepo);
             $resultado = $service->processar();

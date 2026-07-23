@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\SipecSyncCheckpoint\Eloquent;
+namespace App\Repository\Sipec\SipecSyncCheckpoint\Eloquent;
 
 use App\Models\SipecSyncCheckpoint;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
-use App\Repository\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteRepositoryContract;
+use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 
 final class EloquentSipecSyncCheckpointWriteRepository extends AbstractEloquentWriteRepository implements SipecSyncCheckpointWriteRepositoryContract

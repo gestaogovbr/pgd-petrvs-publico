@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\SipecServidor\Eloquent;
+namespace App\Repository\Sipec\SipecServidor\Eloquent;
 
 use App\Models\SipecServidor;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
-use App\Repository\SipecServidor\Contracts\SipecServidorWriteRepositoryContract;
+use App\Repository\Sipec\SipecServidor\Contracts\SipecServidorWriteRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 
 final class EloquentSipecServidorWriteRepository extends AbstractEloquentWriteRepository implements SipecServidorWriteRepositoryContract

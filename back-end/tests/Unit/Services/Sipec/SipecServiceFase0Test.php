@@ -6,7 +6,7 @@ use App\Exceptions\RequestConectaGovException;
 use App\Exceptions\SipecApiRetryableException;
 use App\Facades\SipecLog;
 use App\Models\SipecSyncCheckpoint;
-use App\Repository\SipecSyncCheckpointRepository;
+use App\Repository\Sipec\SipecSyncCheckpointRepository;
 use App\Services\Sipec\Servidor\SipecServidorSincronizacaoService;
 use App\Services\Sipec\SipecService;
 use App\Services\Sipec\Unidade\SipecUnidadeSincronizacaoService;

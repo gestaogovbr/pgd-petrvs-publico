@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Sipec;
 
 use App\Models\SipecServidor;
-use App\Repository\SipecServidor\Contracts\SipecServidorReadRepositoryContract;
-use App\Repository\SipecServidor\Contracts\SipecServidorWriteRepositoryContract;
+use App\Repository\Sipec\SipecServidor\Contracts\SipecServidorReadRepositoryContract;
+use App\Repository\Sipec\SipecServidor\Contracts\SipecServidorWriteRepositoryContract;
 
 class SipecServidorRepository
 {

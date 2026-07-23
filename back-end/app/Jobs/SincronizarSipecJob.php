@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Facades\SipecLog;
 use App\Jobs\Contratos\ContratoJobSchedule;
+use App\Models\Entidade;
 use App\Models\Integracao;
 use App\Services\Sipec\Gestor\SipecGestorIntegracaoService;
 use App\Services\Sipec\IntegracaoSipecService;
@@ -52,27 +53,22 @@ class SincronizarSipecJob implements ShouldQueue, ContratoJobSchedule
             /** @var IntegracaoSipecService $integracaoSipecService */
             $integracaoSipecService = app(IntegracaoSipecService::class);
 
-            // Busca datas da última execução sem falhas para delta sync
-            $dataUltimaUnidades = $this->getUltimaExecucaoSemFalhas('unidades');
-            $dataUltimaServidores = $this->getUltimaExecucaoSemFalhas('servidores');
+            $entidades = Entidade::all();
+            foreach ($entidades as $entidade) {
 
-            SipecLog::info("Filtro delta sync", [
-                'dataUltimaTransacao_unidades' => $dataUltimaUnidades,
-                'dataUltimaTransacao_servidores' => $dataUltimaServidores,
-            ]);
+                // FASE 0: Coleta resiliente com checkpoint e retry
+                SipecLog::info("Sincronização de entidade [$entidade] iniciada");
 
-            // FASE 0: Coleta resiliente com checkpoint e retry
-            SipecLog::info("Fase 0: coleta API iniciada");
-            $resultadoFase0 = $sipecService->executarFase0($this->tenantId, $dataUltimaUnidades, $dataUltimaServidores);
+                $resultadoUnidades = $this->sincronizarUnidades();
+                $resultadoServidores = $this->sincronizarServidores();
+                $resultadoGestores = $this->sincronizarGestores();
 
-            if ($resultadoFase0['status'] === 'locked') {
-                SipecLog::warning("Fase 0 já em execução, abortando.");
-                return;
+                $this->persistirIntegracao($entidade->id, [
+                    'unidades'  => $resultadoUnidades,
+                    'servidores' => $resultadoServidores,
+                    'gestores'  => $resultadoGestores,
+                ]);
             }
-
-            $this->sincronizarUnidades();
-            $this->sincronizarServidores();
-            $this->sincronizarGestores();
 
             $duracao = round(microtime(true) - $inicio, 2);
             SipecLog::info('Job END', ['duracao_segundos' => $duracao]);
@@ -117,7 +113,7 @@ class SincronizarSipecJob implements ShouldQueue, ContratoJobSchedule
     /**
      * Processa unidades: sipec_unidades → integracao_unidades → unidades
      */
-    private function sincronizarUnidades(): void
+    private function sincronizarUnidades(): array
     {
         SipecLog::info('Sincronização de unidades iniciada');
 
@@ -126,12 +122,14 @@ class SincronizarSipecJob implements ShouldQueue, ContratoJobSchedule
 
         $atualizacaoResult = app(SipecUnidadeAtualizacaoService::class)->processar();
         SipecLog::info('Unidades: atualização concluída', $atualizacaoResult);
+
+        return array_merge($integracaoResult, $atualizacaoResult);
     }
 
     /**
      * Processa servidores: sipec_servidores → integracao_servidores → usuarios/lotações
      */
-    private function sincronizarServidores(): void
+    private function sincronizarServidores(): array
     {
         SipecLog::info('Sincronização de servidores iniciada');
 
@@ -140,17 +138,21 @@ class SincronizarSipecJob implements ShouldQueue, ContratoJobSchedule
 
         $atualizacaoResult = app(SipecServidorAtualizacaoService::class)->processar();
         SipecLog::info('Servidores: atualização concluída', $atualizacaoResult);
+
+        return array_merge($integracaoResult, $atualizacaoResult);
     }
 
     /**
      * Atribui gestores (titular) baseando-se nos CPFs de integracao_unidades.
      */
-    private function sincronizarGestores(): void
+    private function sincronizarGestores(): array
     {
         SipecLog::info('Sincronização de gestores iniciada');
 
         $resultado = app(SipecGestorIntegracaoService::class)->processar();
         SipecLog::info('Gestores: concluído', $resultado);
+
+        return $resultado;
     }
 
     private function inicializarTenant(): void
@@ -165,26 +167,6 @@ class SincronizarSipecJob implements ShouldQueue, ContratoJobSchedule
         }
 
         (new TenantConfigurationsService())->handle($this->tenantId);
-    }
-
-    /**
-     * Busca a data_execucao da última integração sem falhas para a etapa informada.
-     * Retorna null se nunca houve execução bem-sucedida (full sync).
-     */
-    private function getUltimaExecucaoSemFalhas(string $etapa): ?string
-    {
-        $registro = Integracao::whereNotNull('data_execucao')
-            ->where('resultado', '!=', '')
-            ->orderBy('data_execucao', 'desc')
-            ->get()
-            ->first(function (Integracao $integracao) use ($etapa) {
-                $resultado = json_decode($integracao->resultado, true);
-                return is_array($resultado)
-                    && isset($resultado[$etapa]['Falhas'])
-                    && empty($resultado[$etapa]['Falhas']);
-            });
-
-        return $registro?->data_execucao?->toIso8601String();
     }
 
     /**

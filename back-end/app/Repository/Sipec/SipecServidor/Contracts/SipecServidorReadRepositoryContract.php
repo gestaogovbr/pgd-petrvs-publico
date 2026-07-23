@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\SipecServidor\Contracts;
+namespace App\Repository\Sipec\SipecServidor\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 

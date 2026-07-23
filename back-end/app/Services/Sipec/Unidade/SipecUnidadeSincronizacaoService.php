@@ -3,8 +3,8 @@
 namespace App\Services\Sipec\Unidade;
 
 use Illuminate\Support\Facades\Log;
-use App\Repository\SipecUnidadeRepository;
-use App\Repository\SipecSyncCheckpointRepository;
+use App\Repository\Sipec\SipecUnidadeRepository;
+use App\Repository\Sipec\SipecSyncCheckpointRepository;
 use App\Services\Sipec\SipecService;
 
 class SipecUnidadeSincronizacaoService
@@ -74,14 +74,13 @@ class SipecUnidadeSincronizacaoService
     private function coletarTodasUnidadesPaginado(?string $tenantId, int $startPage, ?string $dataUltimaTransacao): int
     {
         $page = $startPage;
-        $size = 100;
         $total = 0;
 
         do {
             $queryParams = [
                 'codOrgao' => $this->sipecService->getCodOrgao(),
                 'page' => $page,
-                'size' => $size,
+                'size' => SipecService::SIPEC_PAGE_SIZE,
             ];
             if ($dataUltimaTransacao) {
                 $queryParams['dataUltimaTransacao'] = $dataUltimaTransacao;
@@ -141,14 +140,13 @@ class SipecUnidadeSincronizacaoService
     private function coletarUnidadesPorFiltro(?string $tenantId, array $filtro, ?string $dataUltimaTransacao): int
     {
         $page = 0;
-        $size = 100;
         $total = 0;
 
         do {
             $queryParams = array_merge($filtro, [
                 'codOrgao' => $this->sipecService->getCodOrgao(),
                 'page' => $page,
-                'size' => $size,
+                'size' => SipecService::SIPEC_PAGE_SIZE,
             ]);
             if ($dataUltimaTransacao) {
                 $queryParams['dataUltimaTransacao'] = $dataUltimaTransacao;
@@ -183,7 +181,6 @@ class SipecUnidadeSincronizacaoService
     private function coletarFilhosERetornarCodigos(?string $tenantId, string $codUorgPai, ?string $dataUltimaTransacao): array
     {
         $page = 0;
-        $size = 100;
         $codigos = [];
 
         do {
@@ -191,7 +188,7 @@ class SipecUnidadeSincronizacaoService
                 'codUorgPai' => $codUorgPai,
                 'codOrgao' => $this->sipecService->getCodOrgao(),
                 'page' => $page,
-                'size' => $size,
+                'size' => SipecService::SIPEC_PAGE_SIZE,
             ];
             if ($dataUltimaTransacao) {
                 $queryParams['dataUltimaTransacao'] = $dataUltimaTransacao;

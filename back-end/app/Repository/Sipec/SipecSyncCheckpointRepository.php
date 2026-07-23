@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Sipec;
 
-use App\Repository\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointReadRepositoryContract;
-use App\Repository\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteRepositoryContract;
+use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointReadRepositoryContract;
+use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteRepositoryContract;
 use Illuminate\Database\Eloquent\Model;
 
 class SipecSyncCheckpointRepository

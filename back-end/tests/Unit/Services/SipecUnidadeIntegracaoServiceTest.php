@@ -2,9 +2,12 @@
 
 use App\Models\IntegracaoUnidade;
 use App\Models\SipecUnidade;
+use App\Repository\IntegracaoUnidadeRepository;
+use App\Repository\Sipec\SipecUnidadeRepository;
 use App\Services\Sipec\Unidade\ArvoreUnidadeBuilder;
 use App\Services\Sipec\Unidade\SipecUnidadeIntegracaoService;
 use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -15,7 +18,7 @@ afterEach(function () {
 
 function setupLogMockUnidade(): void
 {
-    $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
+    $loggerMock = Mockery::mock(LoggerInterface::class);
     $loggerMock->shouldReceive('info', 'warning', 'error', 'debug', 'notice', 'log', 'critical')->withAnyArgs();
     Log::shouldReceive('channel')->andReturn($loggerMock);
     Log::shouldReceive('error', 'info', 'warning', 'debug')->withAnyArgs();
@@ -151,8 +154,8 @@ describe('SipecUnidadeIntegracaoService', function () {
         $registro->response = json_encode(['nomeUorg' => 'Sem Codigo']);
         $registro->processado = false;
 
-        $sipecUnidadeRepo = Mockery::mock(\App\Repository\SipecUnidadeRepository::class);
-        $integracaoUnidadeRepo = Mockery::mock(\App\Repository\IntegracaoUnidadeRepository::class);
+        $sipecUnidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
+        $integracaoUnidadeRepo = Mockery::mock(IntegracaoUnidadeRepository::class);
 
         $service = new SipecUnidadeIntegracaoService($sipecUnidadeRepo, $integracaoUnidadeRepo);
 
@@ -173,8 +176,8 @@ describe('SipecUnidadeIntegracaoService', function () {
         $registro->response = json_encode([]);
         $registro->processado = false;
 
-        $sipecUnidadeRepo = Mockery::mock(\App\Repository\SipecUnidadeRepository::class);
-        $integracaoUnidadeRepo = Mockery::mock(\App\Repository\IntegracaoUnidadeRepository::class);
+        $sipecUnidadeRepo = Mockery::mock(SipecUnidadeRepository::class);
+        $integracaoUnidadeRepo = Mockery::mock(IntegracaoUnidadeRepository::class);
 
         $service = new SipecUnidadeIntegracaoService($sipecUnidadeRepo, $integracaoUnidadeRepo);
 

@@ -5,10 +5,14 @@ use App\Models\IntegracaoServidor;
 use App\Models\Usuario;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\IntegracaoUnidadeRepository;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UsuarioRepository;
+use App\Services\NivelAcessoService;
 use App\Services\Sipec\Gestor\SipecGestorIntegracaoService;
 use App\Services\UnidadeIntegranteService;
 use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -19,7 +23,7 @@ afterEach(function () {
 
 function setupLogMockGestor(): void
 {
-    $loggerMock = Mockery::mock(\Psr\Log\LoggerInterface::class);
+    $loggerMock = Mockery::mock(LoggerInterface::class);
     $loggerMock->shouldReceive('info', 'warning', 'error', 'debug', 'notice', 'log', 'critical', 'alert', 'emergency')->withAnyArgs();
     Log::shouldReceive('channel')->andReturn($loggerMock);
     Log::shouldReceive('error', 'info', 'warning', 'debug', 'critical', 'log', 'alert', 'emergency', 'notice')->withAnyArgs();
@@ -31,15 +35,15 @@ function buildGestorService(
     ?UsuarioRepository $usuarioRepo = null,
     ?UnidadeIntegranteService $unidadeIntegranteService = null,
 ): SipecGestorIntegracaoService {
-    $nivelAcessoService = Mockery::mock(\App\Services\NivelAcessoService::class);
+    $nivelAcessoService = Mockery::mock(NivelAcessoService::class);
 
     return new SipecGestorIntegracaoService(
         $integracaoUnidadeRepo ?? Mockery::mock(IntegracaoUnidadeRepository::class),
         $integracaoServidorRepo ?? Mockery::mock(IntegracaoServidorRepository::class),
         $usuarioRepo ?? Mockery::mock(UsuarioRepository::class),
         $unidadeIntegranteService ?? Mockery::mock(UnidadeIntegranteService::class),
-        Mockery::mock(\App\Repository\UnidadeIntegranteRepository::class),
-        Mockery::mock(\App\Repository\UnidadeIntegranteAtribuicaoRepository::class),
+        Mockery::mock(UnidadeIntegranteRepository::class),
+        Mockery::mock(UnidadeIntegranteAtribuicaoRepository::class),
         $nivelAcessoService,
     );
 }
