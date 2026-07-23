@@ -621,7 +621,7 @@ describe('PlanoTrabalhoService::encerrar', function () {
 
         $this->consolidacaoRepository->shouldReceive('encerrarPeriodosFuturos')
             ->once()
-            ->with($planoId, $hoje);
+            ->with($planoId, $hoje, 'motivo teste');
 
         $this->statusService->shouldReceive('atualizaStatus')
             ->once()
