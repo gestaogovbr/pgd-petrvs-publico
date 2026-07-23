@@ -13,6 +13,7 @@ class AtividadeUpdateDTO implements IAtividadeWriteDTO
         public readonly string $usuarioId,
         public readonly ?string $descricao,
         public readonly ?string $planoTrabalhoEntregaId,
+        public readonly ?float $esforcoExecutado,
     ) {}
 
     public static function fromArray(array $data, string $planoTrabalhoId, string $consolidacaoId, string $atividadeId, string $usuarioId): self
@@ -24,6 +25,9 @@ class AtividadeUpdateDTO implements IAtividadeWriteDTO
             usuarioId: $usuarioId,
             descricao: $data['descricao'] ?? null,
             planoTrabalhoEntregaId: $data['plano_trabalho_entrega_id'] ?? null,
+            esforcoExecutado: array_key_exists('esforco_executado', $data)
+                ? (float) $data['esforco_executado']
+                : null,
         );
     }
 
@@ -32,12 +36,13 @@ class AtividadeUpdateDTO implements IAtividadeWriteDTO
     public function usuarioId(): string { return $this->usuarioId; }
     public function atividadeId(): ?string { return $this->atividadeId; }
     public function planoTrabalhoEntregaId(): ?string { return $this->planoTrabalhoEntregaId; }
+    public function esforcoExecutado(): ?float { return $this->esforcoExecutado; }
 
     public function toArray(): array
     {
         return array_filter([
             'descricao' => $this->descricao,
             'plano_trabalho_entrega_id' => $this->planoTrabalhoEntregaId,
-        ], fn($v) => $v !== null);
+        ], fn ($v) => $v !== null);
     }
 }

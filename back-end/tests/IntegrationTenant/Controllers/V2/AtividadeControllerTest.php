@@ -128,6 +128,7 @@ describe('POST /api/v2/plano-trabalho/:id/consolidacao/:cid/atividade', function
             [
                 'plano_trabalho_entrega_id' => $this->entrega->id,
                 'descricao' => 'Trabalho executado na entrega',
+                'esforco_executado' => 100,
             ]
         );
 
@@ -138,6 +139,11 @@ describe('POST /api/v2/plano-trabalho/:id/consolidacao/:cid/atividade', function
             'plano_trabalho_consolidacao_id' => $consolidacaoId,
             'plano_trabalho_entrega_id' => $this->entrega->id,
             'descricao' => 'Trabalho executado na entrega',
+        ]);
+
+        $this->assertDatabaseHas('planos_trabalhos_entregas', [
+            'id' => $this->entrega->id,
+            'esforco_executado' => 100,
         ]);
     });
 
