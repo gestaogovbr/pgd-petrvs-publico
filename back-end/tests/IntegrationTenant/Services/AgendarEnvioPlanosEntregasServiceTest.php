@@ -33,7 +33,9 @@ describe('AgendarEnvioPlanosEntregasService', function () {
         $plano->shouldReceive('getAttribute')->with('programa')->andReturn($programa);
         $plano->shouldReceive('getAttribute')->with('unidade')->andReturn(Mockery::mock(Unidade::class));
         $plano->shouldReceive('getAttribute')->with('id')->andReturn($id);
+        $plano->shouldReceive('getAttribute')->with('numero')->andReturn((int) $id);
         $plano->shouldReceive('isEmStatusParaEnvio')->andReturnTrue();
+        $plano->shouldReceive('identificacaoEnvio')->andReturn("PE #{$id}");
 
         return $plano;
     }
