@@ -13,7 +13,7 @@ use App\Models\Usuario;
 use App\Repository\UnidadeRepository;
 use App\V2\PainelGerencial\DTOs\FiltrosPainelDTO;
 
-class TeletrabalhoExterior
+class TeletrabalhoExteriorDataProvider
 {
     private const LIMITE_SUBSTITUICAO = 0.10;
     private const LIMITE_DISCRICIONARIO = 0.02;

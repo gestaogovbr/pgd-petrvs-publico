@@ -16,7 +16,7 @@ use App\V2\PainelGerencial\Traits\ResolveHierarquiaPainel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class ModalidadesPorUnidade
+class ModalidadesPorUnidadeDataProvider
 {
     use ResolveHierarquiaPainel;
 

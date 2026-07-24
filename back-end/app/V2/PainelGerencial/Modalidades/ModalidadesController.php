@@ -6,8 +6,8 @@ namespace App\V2\PainelGerencial\Modalidades;
 
 use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\Controller;
-use App\V2\PainelGerencial\Modalidades\DataProviders\ModalidadesPorUnidade;
-use App\V2\PainelGerencial\Modalidades\DataProviders\TeletrabalhoExterior;
+use App\V2\PainelGerencial\Modalidades\DataProviders\ModalidadesPorUnidadeDataProvider;
+use App\V2\PainelGerencial\Modalidades\DataProviders\TeletrabalhoExteriorDataProvider;
 use App\V2\PainelGerencial\PainelGerencialService;
 use App\V2\PainelGerencial\Validators\PainelRequestValidator;
 use Illuminate\Http\JsonResponse;
@@ -20,8 +20,8 @@ class ModalidadesController extends Controller
 {
     public function __construct(
         private readonly PainelGerencialService $painelService,
-        private readonly TeletrabalhoExterior $teletrabalhoExterior,
-        private readonly ModalidadesPorUnidade $modalidadesPorUnidade,
+        private readonly TeletrabalhoExteriorDataProvider $teletrabalhoExterior,
+        private readonly ModalidadesPorUnidadeDataProvider $modalidadesPorUnidade,
     ) {}
 
     public function teletrabalhoSubstituicao(Request $request): JsonResponse
