@@ -8,19 +8,7 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [WebcomponentsAngularModule],
   styleUrls: ['../home.styles.scss'],
-  template: `
-    <div class="d-flex gap-3 justify-content-center">
-      <br-button class="home-btn-atalho" emphasis="secondary" (click)="irParaPainelGerencial()" [disabled]="true">
-        Painel Gerencial
-      </br-button>
-      <br-button class="home-btn-atalho" emphasis="secondary" (click)="irParaPlanoEntregas()">
-        Meu Plano de Entregas Vigente
-      </br-button>
-      <br-button class="home-btn-atalho" emphasis="secondary" (click)="irParaPlanoTrabalho()">
-        Meu Plano de Trabalho Vigente
-      </br-button>
-    </div>
-  `,
+  templateUrl: './acoes-gerenciais.component.html',
 })
 export class AcoesGerenciaisComponent {
   private readonly router = inject(Router);

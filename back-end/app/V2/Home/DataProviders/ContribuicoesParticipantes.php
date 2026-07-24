@@ -8,12 +8,14 @@ use App\Repository\UnidadeRepository;
 use App\Services\CalendarioService;
 use App\V2\Home\DTOs\HomeRequestDTO;
 use App\V2\Home\Traits\ResolveUnidades;
+use App\Traits\SqlPlaceholders;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class ContribuicoesParticipantes
 {
     use ResolveUnidades;
+    use SqlPlaceholders;
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -49,7 +51,7 @@ class ContribuicoesParticipantes
             LEFT JOIN planos_entregas pe ON pe.id = pee.plano_entrega_id
             WHERE pt.deleted_at IS NULL
               AND pt.status IN ('ATIVO', 'CONCLUIDO', 'AVALIADO')
-              AND pt.unidade_id IN ({$this->placeholders($unidadeIds)})
+              AND pt.unidade_id IN ({$this->sqlPlaceholders($unidadeIds)})
             ORDER BY pt.unidade_id, pt.id
         SQL, $unidadeIds);
 
@@ -137,10 +139,5 @@ class ContribuicoesParticipantes
         $chaveFixa = $dia->format('Y-m-d');
 
         return isset($feriadosCadastrados[$chaveRecorrente]) || isset($feriadosCadastrados[$chaveFixa]);
-    }
-
-    private function placeholders(array $items): string
-    {
-        return implode(',', array_fill(0, count($items), '?'));
     }
 }
