@@ -11,7 +11,7 @@ use App\V2\PainelGerencial\Traits\ResolveHierarquiaPainel;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class EvolucaoAdesaoUnidades
+class EvolucaoAdesaoUnidadesDataProvider
 {
     use ResolveHierarquiaPainel;
 

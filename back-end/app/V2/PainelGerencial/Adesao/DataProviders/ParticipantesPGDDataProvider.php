@@ -6,20 +6,23 @@ namespace App\V2\PainelGerencial\Adesao\DataProviders;
 
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
+use App\Repository\UsuarioRepository;
 use App\V2\PainelGerencial\DTOs\DistribuicaoUnidadeDTO;
 use App\V2\PainelGerencial\DTOs\FiltrosPainelDTO;
 use App\V2\PainelGerencial\DTOs\IndicadorDTO;
 use App\V2\PainelGerencial\Traits\ResolveHierarquiaPainel;
 use Illuminate\Database\Eloquent\Collection;
 
-class UnidadesExecutoras
+class ParticipantesPGDDataProvider
 {
     use ResolveHierarquiaPainel;
 
-    private const SEGMENTOS = ['Executoras', 'Não Executoras'];
+    private const SEGMENTOS = ['Participantes', 'Não Participantes'];
+    private const ATRIBUICOES_PARTICIPANTE = ['LOTADO', 'COLABORADOR'];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
+        private readonly UsuarioRepository $usuarioRepository,
     ) {}
 
     protected function getUnidadeRepository(): UnidadeRepository
@@ -52,19 +55,16 @@ class UnidadesExecutoras
     {
         $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
-        $unidades = Unidade::query()
-            ->whereIn('id', $unidadeIds)
-            ->whereNull('deleted_at')
-            ->get();
+        $usuarios = $this->usuarioRepository->findIntegrantesPorUnidades($unidadeIds, self::ATRIBUICOES_PARTICIPANTE);
 
-        $executoras = $unidades->filter(fn (Unidade $u) => (bool) $u->executora)->count();
-        $naoExecutoras = $unidades->count() - $executoras;
+        $participantes = $usuarios->filter(fn ($u) => $u->participa_pgd === 'sim')->count();
+        $naoParticipantes = $usuarios->count() - $participantes;
 
         return new DistribuicaoUnidadeDTO(
             unidadeId: $unidade->id,
             unidadeSigla: $unidade->sigla,
-            valores: [$executoras, $naoExecutoras],
-            total: $unidades->count(),
+            valores: [$participantes, $naoParticipantes],
+            total: $usuarios->count(),
         );
     }
 }

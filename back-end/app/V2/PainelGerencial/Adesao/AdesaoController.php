@@ -6,10 +6,10 @@ namespace App\V2\PainelGerencial\Adesao;
 
 use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\Controller;
-use App\V2\PainelGerencial\Adesao\DataProviders\EvolucaoAdesaoParticipantes;
-use App\V2\PainelGerencial\Adesao\DataProviders\EvolucaoAdesaoUnidades;
-use App\V2\PainelGerencial\Adesao\DataProviders\ParticipantesPGD;
-use App\V2\PainelGerencial\Adesao\DataProviders\UnidadesExecutoras;
+use App\V2\PainelGerencial\Adesao\DataProviders\EvolucaoAdesaoParticipantesDataProvider;
+use App\V2\PainelGerencial\Adesao\DataProviders\EvolucaoAdesaoUnidadesDataProvider;
+use App\V2\PainelGerencial\Adesao\DataProviders\ParticipantesPGDDataProvider;
+use App\V2\PainelGerencial\Adesao\DataProviders\UnidadesExecutorasDataProvider;
 use App\V2\PainelGerencial\PainelGerencialService;
 use App\V2\PainelGerencial\Validators\PainelRequestValidator;
 use Illuminate\Http\JsonResponse;
@@ -22,10 +22,10 @@ class AdesaoController extends Controller
 {
     public function __construct(
         private readonly PainelGerencialService $painelService,
-        private readonly UnidadesExecutoras $unidadesExecutoras,
-        private readonly EvolucaoAdesaoUnidades $evolucaoUnidades,
-        private readonly ParticipantesPGD $participantesPGD,
-        private readonly EvolucaoAdesaoParticipantes $evolucaoParticipantes,
+        private readonly UnidadesExecutorasDataProvider $unidadesExecutoras,
+        private readonly EvolucaoAdesaoUnidadesDataProvider $evolucaoUnidades,
+        private readonly ParticipantesPGDDataProvider $participantesPGD,
+        private readonly EvolucaoAdesaoParticipantesDataProvider $evolucaoParticipantes,
     ) {}
 
     public function unidadesExecutoras(Request $request): JsonResponse
