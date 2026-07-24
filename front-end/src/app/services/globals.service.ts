@@ -104,6 +104,7 @@ export class GlobalsService {
    * para Painéis Gerenciais.
    */
   private deveRedirecionarParaPaineisGerenciais(): boolean {
+    if (!this.auth.hasPermissionTo('MOD_PAINEL_GER')) return false;
     if (!this.auth.usuario?.perfil) return false;
 
     const nivel = this.auth.usuario.perfil.nivel;

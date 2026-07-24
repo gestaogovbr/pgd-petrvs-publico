@@ -121,9 +121,6 @@ export class AppShellV2Component implements OnInit {
       );
       items = [...items, ...devItems];
     }
-    if (this.auth.isUsuarioConsulta()) {
-      items = items.filter((item: { hideForConsulta?: boolean }) => !item.hideForConsulta);
-    }
     return items;
   }
 

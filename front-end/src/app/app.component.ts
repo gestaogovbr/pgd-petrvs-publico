@@ -533,7 +533,7 @@ export class AppComponent implements IAppComponent {
         name: this.lex.translate("Painéis Gerenciais"),
         icon: 'bi bi-bar-chart-line',
         route: ['gestao', 'paineis-gerenciais'],
-        hideForConsulta: true,
+        permition: 'MOD_PAINEL_GER',
       },
       {
         name: this.lex.translate("Planos de Entregas"),
@@ -590,7 +590,7 @@ export class AppComponent implements IAppComponent {
         name: this.lex.translate("Painéis Gerenciais"),
         icon: 'bi bi-bar-chart-line',
         route: ['gestao', 'paineis-gerenciais'],
-        hideForConsulta: true,
+        permition: 'MOD_PAINEL_GER',
       },
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, {
         metadata: {
