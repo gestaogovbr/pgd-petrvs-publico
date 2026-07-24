@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\Home\DataProviders;
 
+use App\Enums\StatusEnum;
 use App\Repository\UnidadeRepository;
 use App\Services\CalendarioService;
 use App\V2\Home\DTOs\HomeRequestDTO;
@@ -35,6 +36,8 @@ class ContribuicoesParticipantes
 
     private function calcular(array $unidadeIds): array
     {
+        $statusAtivos = [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value];
+
         $planos = DB::select(<<<SQL
             SELECT
                 pt.id AS plano_id,
@@ -50,10 +53,10 @@ class ContribuicoesParticipantes
             LEFT JOIN planos_entregas_entregas pee ON pee.id = pte.plano_entrega_entrega_id
             LEFT JOIN planos_entregas pe ON pe.id = pee.plano_entrega_id
             WHERE pt.deleted_at IS NULL
-              AND pt.status IN ('ATIVO', 'CONCLUIDO', 'AVALIADO')
+              AND pt.status IN ({$this->sqlPlaceholders($statusAtivos)})
               AND pt.unidade_id IN ({$this->sqlPlaceholders($unidadeIds)})
             ORDER BY pt.unidade_id, pt.id
-        SQL, $unidadeIds);
+        SQL, [...$statusAtivos, ...$unidadeIds]);
 
         if (empty($planos)) {
             return [
