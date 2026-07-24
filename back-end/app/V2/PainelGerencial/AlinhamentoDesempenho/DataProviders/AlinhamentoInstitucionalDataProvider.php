@@ -14,7 +14,7 @@ use App\V2\PainelGerencial\Traits\ResolveHierarquiaPainel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class AlinhamentoInstitucional
+class AlinhamentoInstitucionalDataProvider
 {
     use ResolveHierarquiaPainel;
 

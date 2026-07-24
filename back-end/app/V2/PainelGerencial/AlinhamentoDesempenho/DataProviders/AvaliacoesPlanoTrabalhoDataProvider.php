@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\V2\PainelGerencial\AlinhamentoDesempenho\DataProviders;
 
 use App\Models\Avaliacao;
-use App\Models\PlanoEntrega;
+use App\Models\PlanoTrabalho;
 use App\Models\TipoAvaliacaoNota;
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 
-class AvaliacoesPlanoEntrega
+class AvaliacoesPlanoTrabalhoDataProvider
 {
     use ResolveHierarquiaPainel;
 
@@ -57,7 +57,7 @@ class AvaliacoesPlanoEntrega
     }
 
     /**
-     * Busca as notas de avaliação de PE a partir do programa dos planos avaliados no escopo.
+     * Busca as notas de avaliação de PT a partir do programa dos planos avaliados no escopo.
      *
      * Premissa: todos os programas utilizam a mesma escala de avaliação (mesmos 5 níveis).
      * Caso programas com escalas diferentes coexistam no escopo, apenas a escala do primeiro
@@ -68,12 +68,12 @@ class AvaliacoesPlanoEntrega
      */
     private function obterNotas(array $unidadeIds): SupportCollection
     {
-        $tipoAvaliacaoId = PlanoEntrega::query()
-            ->whereIn('planos_entregas.unidade_id', $unidadeIds)
-            ->whereHas('avaliacoes')
-            ->whereNull('planos_entregas.deleted_at')
-            ->join('programas', 'programas.id', '=', 'planos_entregas.programa_id')
-            ->value('programas.tipo_avaliacao_plano_entrega_id');
+        $tipoAvaliacaoId = PlanoTrabalho::query()
+            ->whereIn('planos_trabalhos.unidade_id', $unidadeIds)
+            ->whereNull('planos_trabalhos.deleted_at')
+            ->whereHas('consolidacoes', fn (Builder $q) => $q->whereHas('avaliacoes'))
+            ->join('programas', 'programas.id', '=', 'planos_trabalhos.programa_id')
+            ->value('programas.tipo_avaliacao_plano_trabalho_id');
 
         if (!$tipoAvaliacaoId) {
             return collect();
@@ -125,18 +125,20 @@ class AvaliacoesPlanoEntrega
         $hoje = now()->toDateString();
 
         $query = Avaliacao::query()
-            ->whereNotNull('plano_entrega_id')
+            ->whereNotNull('plano_trabalho_consolidacao_id')
             ->whereNull('deleted_at')
-            ->whereHas('planoEntrega', function (Builder $q) use ($unidadeIds, $filtros, $hoje) {
-                $q->whereIn('unidade_id', $unidadeIds);
-                if ($filtros->isSituacaoAtual()) {
-                    $q->where('data_inicio', '<=', $hoje)
-                        ->where('data_fim', '>=', $hoje);
-                }
-                if ($filtros->isHistorico()) {
-                    $q->where('data_inicio', '<=', $filtros->dataFim)
-                        ->where('data_fim', '>=', $filtros->dataInicio);
-                }
+            ->whereHas('planoTrabalhoConsolidacao', function (Builder $q) use ($unidadeIds, $filtros, $hoje) {
+                $q->whereHas('planoTrabalho', function (Builder $pt) use ($unidadeIds, $filtros, $hoje) {
+                    $pt->whereIn('unidade_id', $unidadeIds);
+                    if ($filtros->isSituacaoAtual()) {
+                        $pt->where('data_inicio', '<=', $hoje)
+                            ->where('data_fim', '>=', $hoje);
+                    }
+                    if ($filtros->isHistorico()) {
+                        $pt->where('data_inicio', '<=', $filtros->dataFim)
+                            ->where('data_fim', '>=', $filtros->dataInicio);
+                    }
+                });
             });
 
         return $query;

@@ -2,7 +2,7 @@
 
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
-use App\V2\PainelGerencial\AlinhamentoDesempenho\DataProviders\AlinhamentoInstitucional;
+use App\V2\PainelGerencial\AlinhamentoDesempenho\DataProviders\AlinhamentoInstitucionalDataProvider;
 use App\V2\PainelGerencial\DTOs\DistribuicaoUnidadeDTO;
 use App\V2\PainelGerencial\DTOs\FiltrosPainelDTO;
 use App\V2\PainelGerencial\DTOs\IndicadorDTO;
@@ -233,7 +233,7 @@ function criarProvider(
     $unidadeRepo,
     array $distribuicoes,
     ?Collection $filhas = null,
-): AlinhamentoInstitucional {
+): AlinhamentoInstitucionalDataProvider {
     $filhas = $filhas ?? new Collection();
 
     $unidade = Mockery::mock(Unidade::class)->makePartial();
@@ -243,7 +243,7 @@ function criarProvider(
     $unidadeRepo->shouldReceive('findById')->with('unidade-1')->andReturn($unidade);
     $unidadeRepo->shouldReceive('getSubordinadas')->with(['unidade-1'])->andReturn($filhas);
 
-    $provider = Mockery::mock(AlinhamentoInstitucional::class, [$unidadeRepo])->makePartial();
+    $provider = Mockery::mock(AlinhamentoInstitucionalDataProvider::class, [$unidadeRepo])->makePartial();
     $provider->shouldAllowMockingProtectedMethods();
 
     $provider->shouldReceive('calcularDistribuicao')
