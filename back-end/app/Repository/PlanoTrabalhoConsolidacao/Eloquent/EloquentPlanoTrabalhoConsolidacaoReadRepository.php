@@ -395,6 +395,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
                 . 'SELECT p.dias_tolerancia_consolidacao FROM programas p '
                 . 'INNER JOIN planos_trabalhos pt ON pt.programa_id = p.id '
                 . 'WHERE pt.id = planos_trabalhos_consolidacoes.plano_trabalho_id'
+                . ' AND pt.deleted_at IS NULL'
                 . '), ?) DAY)',
                 [self::DIAS_TOLERANCIA_CONSOLIDACAO_PADRAO]
             )

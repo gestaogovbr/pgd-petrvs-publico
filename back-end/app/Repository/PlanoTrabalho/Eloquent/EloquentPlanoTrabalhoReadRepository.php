@@ -6,6 +6,7 @@ namespace App\Repository\PlanoTrabalho\Eloquent;
 
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\Models\PlanoTrabalho;
+use App\Enums\Atribuicao;
 use App\Enums\StatusEnum;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
@@ -556,11 +557,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         return DB::table('unidades_integrantes as ui')
             ->join('unidades_integrantes_atribuicoes as uia', 'uia.unidade_integrante_id', '=', 'ui.id')
             ->where('ui.usuario_id', $usuarioId)
-            ->whereIn('uia.atribuicao', [
-                \App\Enums\Atribuicao::GESTOR->value,
-                \App\Enums\Atribuicao::GESTOR_SUBSTITUTO->value,
-                \App\Enums\Atribuicao::DELEGADO->value,
-            ])
+            ->whereIn('uia.atribuicao', Atribuicao::chefia())
             ->whereIn('ui.unidade_id', $unidadesEscopo)
             ->pluck('ui.unidade_id')
             ->unique()
