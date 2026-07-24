@@ -15,11 +15,11 @@ use App\V2\PainelGerencial\Traits\ResolveHierarquiaPainel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class RegistroExecucaoPE
+class AvaliacaoPEDataProvider
 {
     use ResolveHierarquiaPainel;
 
-    private const SEGMENTOS = ['Concluído', 'Pendente'];
+    private const SEGMENTOS = ['Avaliado', 'Pendente'];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -57,6 +57,7 @@ class RegistroExecucaoPE
     {
         $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
+        // Total: PEs que já foram concluídos (passíveis de avaliação)
         $baseQuery = $this->buildBaseQuery($unidadeIds, $filtros);
         $total = (clone $baseQuery)->count();
 
@@ -64,22 +65,23 @@ class RegistroExecucaoPE
             return new DistribuicaoUnidadeDTO($unidade->id, $unidade->sigla, [0, 0], 0);
         }
 
-        // Concluído: PE que já passou por CONCLUIDO (status CONCLUIDO ou AVALIADO)
-        $concluidos = (clone $baseQuery)
-            ->whereIn('status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value])
+        $avaliados = (clone $baseQuery)
+            ->where('status', StatusEnum::AVALIADO->value)
             ->count();
 
-        $pendentes = $total - $concluidos;
+        $pendentes = $total - $avaliados;
 
         return new DistribuicaoUnidadeDTO(
             unidadeId: $unidade->id,
             unidadeSigla: $unidade->sigla,
-            valores: [$concluidos, $pendentes],
+            valores: [$avaliados, $pendentes],
             total: $total,
         );
     }
 
     /**
+     * PEs concluídos ou avaliados (passíveis de avaliação).
+     *
      * @param string[] $unidadeIds
      */
     private function buildBaseQuery(array $unidadeIds, FiltrosPainelDTO $filtros): Builder
@@ -89,7 +91,7 @@ class RegistroExecucaoPE
         $query = PlanoEntrega::query()
             ->whereIn('unidade_id', $unidadeIds)
             ->whereNull('deleted_at')
-            ->whereNotIn('status', [StatusEnum::CANCELADO->value, StatusEnum::SUSPENSO->value]);
+            ->whereIn('status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
 
         if ($filtros->isSituacaoAtual()) {
             $query->where('data_inicio', '<=', $hoje)

@@ -6,11 +6,11 @@ namespace App\V2\PainelGerencial\Conformidade;
 
 use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\Controller;
-use App\V2\PainelGerencial\Conformidade\DataProviders\AvaliacaoPE;
-use App\V2\PainelGerencial\Conformidade\DataProviders\AvaliacaoPT;
-use App\V2\PainelGerencial\Conformidade\DataProviders\RegistroExecucaoPE;
-use App\V2\PainelGerencial\Conformidade\DataProviders\RegistroExecucaoPT;
-use App\V2\PainelGerencial\Conformidade\DataProviders\UnidadesExecutorasPE;
+use App\V2\PainelGerencial\Conformidade\DataProviders\AvaliacaoPEDataProvider;
+use App\V2\PainelGerencial\Conformidade\DataProviders\AvaliacaoPTDataProvider;
+use App\V2\PainelGerencial\Conformidade\DataProviders\RegistroExecucaoPEDataProvider;
+use App\V2\PainelGerencial\Conformidade\DataProviders\RegistroExecucaoPTDataProvider;
+use App\V2\PainelGerencial\Conformidade\DataProviders\UnidadesExecutorasPEDataProvider;
 use App\V2\PainelGerencial\PainelGerencialService;
 use App\V2\PainelGerencial\Validators\PainelRequestValidator;
 use Illuminate\Http\JsonResponse;
@@ -23,11 +23,11 @@ class ConformidadeController extends Controller
 {
     public function __construct(
         private readonly PainelGerencialService $painelService,
-        private readonly RegistroExecucaoPE $registroExecucaoPE,
-        private readonly AvaliacaoPE $avaliacaoPE,
-        private readonly RegistroExecucaoPT $registroExecucaoPT,
-        private readonly AvaliacaoPT $avaliacaoPT,
-        private readonly UnidadesExecutorasPE $unidadesExecutorasPE,
+        private readonly RegistroExecucaoPEDataProvider $registroExecucaoPE,
+        private readonly AvaliacaoPEDataProvider $avaliacaoPE,
+        private readonly RegistroExecucaoPTDataProvider $registroExecucaoPT,
+        private readonly AvaliacaoPTDataProvider $avaliacaoPT,
+        private readonly UnidadesExecutorasPEDataProvider $unidadesExecutorasPE,
     ) {}
 
     public function registroExecucaoPE(Request $request): JsonResponse

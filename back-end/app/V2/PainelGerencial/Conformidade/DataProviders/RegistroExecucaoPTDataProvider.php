@@ -15,11 +15,11 @@ use App\V2\PainelGerencial\Traits\ResolveHierarquiaPainel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class AvaliacaoPT
+class RegistroExecucaoPTDataProvider
 {
     use ResolveHierarquiaPainel;
 
-    private const SEGMENTOS = ['Avaliado', 'Pendente'];
+    private const SEGMENTOS = ['Concluído', 'Pendente'];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -56,32 +56,35 @@ class AvaliacaoPT
     private function calcularDistribuicao(Unidade $unidade, FiltrosPainelDTO $filtros): DistribuicaoUnidadeDTO
     {
         $unidadeIds = $this->idsComTodasSubordinadas($unidade);
+        $hoje = now()->toDateString();
 
-        // Total: consolidações já concluídas (passíveis de avaliação)
         $baseQuery = $this->buildBaseQuery($unidadeIds, $filtros);
-        $total = (clone $baseQuery)->count();
+
+        // Consolidações cujo período já encerrou (data_fim < hoje)
+        $totalQuery = (clone $baseQuery)->where('planos_trabalhos_consolidacoes.data_fim', '<', $hoje);
+        $total = $totalQuery->count();
 
         if ($total === 0) {
             return new DistribuicaoUnidadeDTO($unidade->id, $unidade->sigla, [0, 0], 0);
         }
 
-        $avaliados = (clone $baseQuery)
-            ->where('planos_trabalhos_consolidacoes.status', StatusEnum::AVALIADO->value)
+        // Concluídos: status CONCLUIDO ou AVALIADO
+        $concluidos = (clone $baseQuery)
+            ->where('planos_trabalhos_consolidacoes.data_fim', '<', $hoje)
+            ->whereIn('planos_trabalhos_consolidacoes.status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value])
             ->count();
 
-        $pendentes = $total - $avaliados;
+        $pendentes = $total - $concluidos;
 
         return new DistribuicaoUnidadeDTO(
             unidadeId: $unidade->id,
             unidadeSigla: $unidade->sigla,
-            valores: [$avaliados, $pendentes],
+            valores: [$concluidos, $pendentes],
             total: $total,
         );
     }
 
     /**
-     * Consolidações concluídas ou avaliadas (passíveis de avaliação).
-     *
      * @param string[] $unidadeIds
      */
     private function buildBaseQuery(array $unidadeIds, FiltrosPainelDTO $filtros): Builder
@@ -90,7 +93,6 @@ class AvaliacaoPT
 
         $query = PlanoTrabalhoConsolidacao::query()
             ->whereNull('planos_trabalhos_consolidacoes.deleted_at')
-            ->whereIn('planos_trabalhos_consolidacoes.status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value])
             ->whereHas('planoTrabalho', function (Builder $pt) use ($unidadeIds, $filtros, $hoje) {
                 $pt->whereIn('unidade_id', $unidadeIds)
                     ->whereNull('deleted_at')

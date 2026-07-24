@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\V2\PainelGerencial\Conformidade\DataProviders;
 
 use App\Enums\StatusEnum;
-use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\PlanoEntrega;
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
 use App\V2\PainelGerencial\DTOs\DistribuicaoUnidadeDTO;
@@ -15,7 +15,7 @@ use App\V2\PainelGerencial\Traits\ResolveHierarquiaPainel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class RegistroExecucaoPT
+class RegistroExecucaoPEDataProvider
 {
     use ResolveHierarquiaPainel;
 
@@ -56,22 +56,17 @@ class RegistroExecucaoPT
     private function calcularDistribuicao(Unidade $unidade, FiltrosPainelDTO $filtros): DistribuicaoUnidadeDTO
     {
         $unidadeIds = $this->idsComTodasSubordinadas($unidade);
-        $hoje = now()->toDateString();
 
         $baseQuery = $this->buildBaseQuery($unidadeIds, $filtros);
-
-        // Consolidações cujo período já encerrou (data_fim < hoje)
-        $totalQuery = (clone $baseQuery)->where('planos_trabalhos_consolidacoes.data_fim', '<', $hoje);
-        $total = $totalQuery->count();
+        $total = (clone $baseQuery)->count();
 
         if ($total === 0) {
             return new DistribuicaoUnidadeDTO($unidade->id, $unidade->sigla, [0, 0], 0);
         }
 
-        // Concluídos: status CONCLUIDO ou AVALIADO
+        // Concluído: PE que já passou por CONCLUIDO (status CONCLUIDO ou AVALIADO)
         $concluidos = (clone $baseQuery)
-            ->where('planos_trabalhos_consolidacoes.data_fim', '<', $hoje)
-            ->whereIn('planos_trabalhos_consolidacoes.status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value])
+            ->whereIn('status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value])
             ->count();
 
         $pendentes = $total - $concluidos;
@@ -91,23 +86,20 @@ class RegistroExecucaoPT
     {
         $hoje = now()->toDateString();
 
-        $query = PlanoTrabalhoConsolidacao::query()
-            ->whereNull('planos_trabalhos_consolidacoes.deleted_at')
-            ->whereHas('planoTrabalho', function (Builder $pt) use ($unidadeIds, $filtros, $hoje) {
-                $pt->whereIn('unidade_id', $unidadeIds)
-                    ->whereNull('deleted_at')
-                    ->whereIn('status', [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
+        $query = PlanoEntrega::query()
+            ->whereIn('unidade_id', $unidadeIds)
+            ->whereNull('deleted_at')
+            ->whereNotIn('status', [StatusEnum::CANCELADO->value, StatusEnum::SUSPENSO->value]);
 
-                if ($filtros->isSituacaoAtual()) {
-                    $pt->where('data_inicio', '<=', $hoje)
-                        ->where('data_fim', '>=', $hoje);
-                }
+        if ($filtros->isSituacaoAtual()) {
+            $query->where('data_inicio', '<=', $hoje)
+                ->where('data_fim', '>=', $hoje);
+        }
 
-                if ($filtros->isHistorico()) {
-                    $pt->where('data_inicio', '<=', $filtros->dataFim)
-                        ->where('data_fim', '>=', $filtros->dataInicio);
-                }
-            });
+        if ($filtros->isHistorico()) {
+            $query->where('data_inicio', '<=', $filtros->dataFim)
+                ->where('data_fim', '>=', $filtros->dataInicio);
+        }
 
         return $query;
     }

@@ -5,21 +5,19 @@ declare(strict_types=1);
 namespace App\V2\PainelGerencial\Conformidade\DataProviders;
 
 use App\Enums\StatusEnum;
-use App\Models\PlanoEntrega;
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
 use App\V2\PainelGerencial\DTOs\DistribuicaoUnidadeDTO;
 use App\V2\PainelGerencial\DTOs\FiltrosPainelDTO;
 use App\V2\PainelGerencial\DTOs\IndicadorDTO;
 use App\V2\PainelGerencial\Traits\ResolveHierarquiaPainel;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
-class AvaliacaoPE
+class UnidadesExecutorasPEDataProvider
 {
     use ResolveHierarquiaPainel;
 
-    private const SEGMENTOS = ['Avaliado', 'Pendente'];
+    private const SEGMENTOS = ['Com PE vigente', 'Sem PE vigente'];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -57,52 +55,55 @@ class AvaliacaoPE
     {
         $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
-        // Total: PEs que já foram concluídos (passíveis de avaliação)
-        $baseQuery = $this->buildBaseQuery($unidadeIds, $filtros);
-        $total = (clone $baseQuery)->count();
+        // Total de UE no escopo
+        $totalUE = Unidade::query()
+            ->where('executora', true)
+            ->whereIn('id', $unidadeIds)
+            ->whereNull('deleted_at')
+            ->count();
 
-        if ($total === 0) {
+        if ($totalUE === 0) {
             return new DistribuicaoUnidadeDTO($unidade->id, $unidade->sigla, [0, 0], 0);
         }
 
-        $avaliados = (clone $baseQuery)
-            ->where('status', StatusEnum::AVALIADO->value)
+        // UE com PE vigente
+        $comPEVigente = Unidade::query()
+            ->where('executora', true)
+            ->whereIn('id', $unidadeIds)
+            ->whereNull('deleted_at')
+            ->whereExists(function ($sub) use ($filtros) {
+                $sub->selectRaw('1')
+                    ->from('planos_entregas')
+                    ->whereColumn('planos_entregas.unidade_id', 'unidades.id')
+                    ->whereNull('planos_entregas.deleted_at')
+                    ->whereNotIn('planos_entregas.status', [StatusEnum::CANCELADO->value, StatusEnum::SUSPENSO->value]);
+
+                $this->aplicarFiltroTemporal($sub, $filtros);
+            })
             ->count();
 
-        $pendentes = $total - $avaliados;
+        $semPEVigente = $totalUE - $comPEVigente;
 
         return new DistribuicaoUnidadeDTO(
             unidadeId: $unidade->id,
             unidadeSigla: $unidade->sigla,
-            valores: [$avaliados, $pendentes],
-            total: $total,
+            valores: [$comPEVigente, $semPEVigente],
+            total: $totalUE,
         );
     }
 
-    /**
-     * PEs concluídos ou avaliados (passíveis de avaliação).
-     *
-     * @param string[] $unidadeIds
-     */
-    private function buildBaseQuery(array $unidadeIds, FiltrosPainelDTO $filtros): Builder
+    private function aplicarFiltroTemporal(mixed $query, FiltrosPainelDTO $filtros): void
     {
         $hoje = now()->toDateString();
 
-        $query = PlanoEntrega::query()
-            ->whereIn('unidade_id', $unidadeIds)
-            ->whereNull('deleted_at')
-            ->whereIn('status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
-
         if ($filtros->isSituacaoAtual()) {
-            $query->where('data_inicio', '<=', $hoje)
-                ->where('data_fim', '>=', $hoje);
+            $query->where('planos_entregas.data_inicio', '<=', $hoje)
+                ->where('planos_entregas.data_fim', '>=', $hoje);
         }
 
         if ($filtros->isHistorico()) {
-            $query->where('data_inicio', '<=', $filtros->dataFim)
-                ->where('data_fim', '>=', $filtros->dataInicio);
+            $query->where('planos_entregas.data_inicio', '<=', $filtros->dataFim)
+                ->where('planos_entregas.data_fim', '>=', $filtros->dataInicio);
         }
-
-        return $query;
     }
 }
