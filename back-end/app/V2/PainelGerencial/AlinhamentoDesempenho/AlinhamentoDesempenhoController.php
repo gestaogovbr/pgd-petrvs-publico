@@ -6,9 +6,9 @@ namespace App\V2\PainelGerencial\AlinhamentoDesempenho;
 
 use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\Controller;
-use App\V2\PainelGerencial\AlinhamentoDesempenho\DataProviders\AlinhamentoInstitucional;
-use App\V2\PainelGerencial\AlinhamentoDesempenho\DataProviders\AvaliacoesPlanoEntrega;
-use App\V2\PainelGerencial\AlinhamentoDesempenho\DataProviders\AvaliacoesPlanoTrabalho;
+use App\V2\PainelGerencial\AlinhamentoDesempenho\DataProviders\AlinhamentoInstitucionalDataProvider;
+use App\V2\PainelGerencial\AlinhamentoDesempenho\DataProviders\AvaliacoesPlanoEntregaDataProvider;
+use App\V2\PainelGerencial\AlinhamentoDesempenho\DataProviders\AvaliacoesPlanoTrabalhoDataProvider;
 use App\V2\PainelGerencial\PainelGerencialService;
 use App\V2\PainelGerencial\Validators\PainelRequestValidator;
 use Illuminate\Http\JsonResponse;
@@ -21,9 +21,9 @@ class AlinhamentoDesempenhoController extends Controller
 {
     public function __construct(
         private readonly PainelGerencialService $painelService,
-        private readonly AlinhamentoInstitucional $alinhamentoInstitucional,
-        private readonly AvaliacoesPlanoEntrega $avaliacoesPlanoEntrega,
-        private readonly AvaliacoesPlanoTrabalho $avaliacoesPlanoTrabalho,
+        private readonly AlinhamentoInstitucionalDataProvider $alinhamentoInstitucional,
+        private readonly AvaliacoesPlanoEntregaDataProvider $avaliacoesPlanoEntrega,
+        private readonly AvaliacoesPlanoTrabalhoDataProvider $avaliacoesPlanoTrabalho,
     ) {}
 
     public function alinhamentoInstitucional(Request $request): JsonResponse
