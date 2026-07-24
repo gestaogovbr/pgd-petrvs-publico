@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PainelGerencial\Adesao;
 
+use App\Enums\Atribuicao;
 use App\Models\Unidade;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class SerieAdesaoService
 {
-    private const ATRIBUICOES_PARTICIPANTE = ['LOTADO', 'COLABORADOR'];
+    private const ATRIBUICOES_PARTICIPANTE = [Atribuicao::LOTADO, Atribuicao::COLABORADOR];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
