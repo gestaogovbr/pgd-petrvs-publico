@@ -20,10 +20,6 @@ class ResumoEquipe
     use SqlPlaceholders;
 
     private const PARTICIPA_PGD = 'sim';
-    private const ATRIBUICOES_PARTICIPANTE = [
-        Atribuicao::LOTADO->value,
-        Atribuicao::COLABORADOR->value,
-    ];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -50,7 +46,7 @@ class ResumoEquipe
         $result = Usuario::query()
             ->whereHas('unidadesIntegrantes', fn ($q) => $q
                 ->whereIn('unidade_id', $unidadeIds)
-                ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', self::ATRIBUICOES_PARTICIPANTE))
+                ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', Atribuicao::participante()))
             )
             ->get();
 

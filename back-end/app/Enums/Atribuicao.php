@@ -19,4 +19,13 @@ enum Atribuicao: string
             self::DELEGADO->value,
         ];
     }
+
+    /** @return string[] */
+    public static function participante(): array
+    {
+        return [
+            self::LOTADO->value,
+            self::COLABORADOR->value,
+        ];
+    }
 }
