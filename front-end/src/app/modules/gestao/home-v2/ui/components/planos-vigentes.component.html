@@ -25,4 +25,11 @@
       <strong>{{ data()!.participantes_com_plano_trabalho.quantidade }}/{{ data()!.participantes_com_plano_trabalho.total }} ({{ data()!.participantes_com_plano_trabalho.percentual }}%)</strong>
     </div>
   </div>
+} @else if (erro()) {
+  <div class="br-card home-card--pill">
+    <div class="card-content p-3 text-center text-muted small">
+      <i class="fas fa-exclamation-triangle mb-2" aria-hidden="true"></i>
+      <p class="mb-0">{{ erro() }}</p>
+    </div>
+  </div>
 }

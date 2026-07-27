@@ -16,6 +16,11 @@
         <li>Entregas de outras unidades - {{ data()!.entregas_outras_unidades_percentual }}%</li>
         <li>Não vinculada a entregas - {{ data()!.nao_vinculada_entregas_percentual }}%</li>
       </ul>
+    } @else if (erro()) {
+      <div class="text-center text-muted small pb-2">
+        <i class="fas fa-exclamation-triangle mb-2" aria-hidden="true"></i>
+        <p class="mb-0">{{ erro() }}</p>
+      </div>
     }
   </div>
 </div>

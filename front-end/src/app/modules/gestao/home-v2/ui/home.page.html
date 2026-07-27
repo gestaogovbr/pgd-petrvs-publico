@@ -12,15 +12,17 @@
       </br-select>
     </div>
     <div class="col-md-3 d-flex align-items-center mt-auto flex-fill justify-content-end">
-      <div class="br-switch">
-        <input
-          id="subordinadas-toggle"
-          type="checkbox"
-          [checked]="subordinadas()"
-          (change)="onSubordinadasChange($any($event.target).checked)"
-        />
-        <label for="subordinadas-toggle">Unidades Subordinadas</label>
-      </div>
+      @if (isGestorUnidade()) {
+        <div class="br-switch">
+          <input
+            id="subordinadas-toggle"
+            type="checkbox"
+            [checked]="subordinadas()"
+            (change)="onSubordinadasChange($any($event.target).checked)"
+          />
+          <label for="subordinadas-toggle">Unidades Subordinadas</label>
+        </div>
+      }
     </div>
   </div>
 
