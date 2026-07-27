@@ -12,6 +12,7 @@ use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 /**
  * @extends AbstractEloquentReadRepository<Unidade>
@@ -279,5 +280,10 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         SQL, [$unidadeId]);
 
         return array_reverse(array_column($rows, 'id'));
+    }
+
+    public function findAllWhere(array $criteria): SupportCollection
+    {
+        return parent::findAllWhere($criteria);
     }
 }

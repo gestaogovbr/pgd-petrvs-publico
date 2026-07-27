@@ -34,6 +34,18 @@ export interface FiltrosPainel {
   data_fim?: string;
 }
 
+export interface SerieAdesaoItem {
+  periodo: string;
+  executoras?: number;
+  nao_executoras?: number;
+  participantes?: number;
+  nao_participantes?: number;
+}
+
+export interface SerieAdesao {
+  serie: SerieAdesaoItem[];
+}
+
 @Injectable()
 export class PainelApiClient extends TenantV2ResourceApiBase {
   protected readonly apiPath = '/api/v2/painel-gerencial';
@@ -140,5 +152,60 @@ export class PainelApiClient extends TenantV2ResourceApiBase {
         params: this.filtrosToParams(filtros),
       })
       .pipe(map(r => r.data));
+  }
+
+  // Adesão
+
+  getUnidadesExecutoras(filtros: FiltrosPainel): Observable<Indicador> {
+    return this.http
+      .get<{ data: Indicador }>(this.resourceUrl('/adesao/unidades-executoras'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getEvolucaoUnidades(filtros: FiltrosPainel): Observable<SerieAdesao> {
+    return this.http
+      .get<{ data: SerieAdesao }>(this.resourceUrl('/adesao/evolucao-unidades'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getParticipantesPGD(filtros: FiltrosPainel): Observable<Indicador> {
+    return this.http
+      .get<{ data: Indicador }>(this.resourceUrl('/adesao/participantes-pgd'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getEvolucaoParticipantes(filtros: FiltrosPainel): Observable<SerieAdesao> {
+    return this.http
+      .get<{ data: SerieAdesao }>(this.resourceUrl('/adesao/evolucao-participantes'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getPeriodosDisponiveis(): Observable<string[]> {
+    return this.http
+      .get<{ data: string[] }>(this.resourceUrl('/adesao/periodos-disponiveis'))
+      .pipe(map(r => r.data));
+  }
+
+  /** Converte filtros de mês/ano para FiltrosPainel (data_inicio = jan do ano, data_fim = último dia do mês) */
+  buildFiltrosFromMesAno(unidadeId: string, mes: number, ano: number): FiltrosPainel {
+    const anoAtual = new Date().getFullYear();
+    const mesAtual = new Date().getMonth() + 1;
+    const isSituacaoAtual = ano === anoAtual && mes === mesAtual;
+
+    const dataFim = new Date(ano, mes, 0); // último dia do mês
+    return {
+      tipo_consulta: isSituacaoAtual ? 'situacao_atual' : 'historico',
+      unidade_id: unidadeId,
+      data_inicio: `${ano}-01-01`,
+      data_fim: dataFim.toISOString().split('T')[0],
+    };
   }
 }
