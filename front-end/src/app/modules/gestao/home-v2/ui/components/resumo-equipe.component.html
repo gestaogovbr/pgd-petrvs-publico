@@ -33,4 +33,11 @@
       </div>
     </div>
   </div>
+} @else if (erro()) {
+  <div class="br-card home-card h-100 d-flex justify-content-center align-items-center">
+    <div class="card-content text-center text-muted small py-3">
+      <i class="fas fa-exclamation-triangle mb-2" aria-hidden="true"></i>
+      <p class="mb-0">{{ erro() }}</p>
+    </div>
+  </div>
 }

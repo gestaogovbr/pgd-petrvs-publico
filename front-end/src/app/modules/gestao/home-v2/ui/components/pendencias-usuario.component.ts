@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, signal } fro
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HomeApiClient, PendenciasUsuario } from '../../infra/home-api.client';
+import { HOME_ERRO_RECUPERAR_DADOS } from '../../home.constants';
 import { AuthService } from 'src/app/services/auth.service';
 import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { NavigateService } from 'src/app/services/navigate.service';
@@ -26,6 +27,7 @@ export class PendenciasUsuarioComponent {
 
   readonly data = signal<PendenciasUsuario | null>(null);
   readonly loading = signal(false);
+  readonly erro = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -78,9 +80,10 @@ export class PendenciasUsuarioComponent {
 
   private fetch(unidadeId: string, subordinadas: boolean): void {
     this.loading.set(true);
+    this.erro.set(null);
     this.homeApi.getPendencias(unidadeId, subordinadas).subscribe({
       next: (r) => { this.data.set(r); this.loading.set(false); },
-      error: () => { this.data.set(null); this.loading.set(false); },
+      error: () => { this.data.set(null); this.erro.set(HOME_ERRO_RECUPERAR_DADOS); this.loading.set(false); },
     });
   }
 

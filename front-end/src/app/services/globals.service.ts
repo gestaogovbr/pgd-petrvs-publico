@@ -67,11 +67,7 @@ export class GlobalsService {
   }
 
   public goHome() {
-    if (this.contexto?.key === 'GESTAO' && this.auth.isGestorAlgumaAreaTrabalho()) {
-      this.go.navigate({ route: ['gestao', 'home-v2'] });
-      return;
-    }
-    this.go.navigate({ route: ["home", this.contexto!.key.toLowerCase()] });
+    this.go.navigate({ route: ['home-v2'] });
   }
 
   public is(entidade: string): boolean {
@@ -95,11 +91,7 @@ export class GlobalsService {
   }
 
   public get initialRoute(): string[] {
-    if (this.contexto?.key === 'GESTAO' && this.auth.isGestorAlgumaAreaTrabalho()) {
-      return ['gestao', 'home-v2'];
-    }
-    const strRoute = (this.contexto ? "/home/"+ this.contexto!.key.toLowerCase() : "/home");
-    return strRoute.substring(strRoute.startsWith("/") ? 1 : 0).split("/");
+        return ['home-v2'];
   }
 
   /**

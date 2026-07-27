@@ -10,6 +10,11 @@
       <div class="d-flex justify-content-center py-2">
         <span class="br-loading small" role="progressbar"></span>
       </div>
+    } @else if (erro()) {
+      <div class="text-center text-muted small py-2">
+        <i class="fas fa-exclamation-triangle mb-2" aria-hidden="true"></i>
+        <p class="mb-0">{{ erro() }}</p>
+      </div>
     } @else if (data().length === 0) {
       <p class="text-center text-muted small">Nenhum participante em férias hoje.</p>
     } @else {
