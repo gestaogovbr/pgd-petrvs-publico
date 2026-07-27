@@ -16,6 +16,7 @@ use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\StatusJustificativa;
+use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Observers\AfastamentoObserver;
 use App\Observers\AvaliacaoObserver;
@@ -26,6 +27,7 @@ use App\Observers\PlanoTrabalhoConsolidacaoObserver;
 use App\Observers\PlanoTrabalhoEntregaObserver;
 use App\Observers\PlanoTrabalhoObserver;
 use App\Observers\StatusJustificativaObserver;
+use App\Observers\UnidadeIntegranteAtribuicaoObserver;
 use App\Observers\UsuarioObserver;
 use App\Services\Validador\ClienteValidador;
 use App\Services\Validador\IValidador;
@@ -89,6 +91,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('siape-log', function () {
             return new SiapeLog;
         });
+
+        $this->app->singleton(\App\Cache\CacheInvalidator::class, \App\Cache\RedisCacheInvalidator::class);
     }
 
     /**
@@ -123,6 +127,7 @@ class AppServiceProvider extends ServiceProvider
         PlanoTrabalhoEntrega::observe(PlanoTrabalhoEntregaObserver::class);
         PlanoTrabalhoConsolidacao::observe(PlanoTrabalhoConsolidacaoObserver::class);
         Afastamento::observe(AfastamentoObserver::class);
+        UnidadeIntegranteAtribuicao::observe(UnidadeIntegranteAtribuicaoObserver::class);
 
     }
 }

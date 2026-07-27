@@ -20,8 +20,6 @@
 } @else if (resumo(); as r) {
   <div class="br-card detail-card">
     <div class="card-content p-3 painel-lateral">
-      <h5 class="painel-lateral__title mb-3">{{ r.nome }}</h5>
-
       @if (objetivoId() !== consultadoId()) {
         <div class="mb-3">
           <br-button emphasis="secondary" (click)="centralizar.emit(objetivoId()!)">

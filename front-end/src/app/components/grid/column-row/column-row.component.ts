@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { AbstractControl, ControlContainer, FormGroupDirective } from '@angular/forms';
 import { IIndexable } from 'src/app/models/base.model';
 import { LookupService } from 'src/app/services/lookup.service';
@@ -29,7 +29,8 @@ export class ColumnRowComponent implements OnInit {
 
   constructor(
     public lookup: LookupService,
-    public util: UtilService
+    public util: UtilService,
+    private cdRef: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -86,6 +87,8 @@ export class ColumnRowComponent implements OnInit {
         this.grid!.editingColumn = undefined;
         this.column.editing = false;
       }
+      // Atualiza a grid inteira para refletir alterações do save em outras colunas da linha (ex.: Progresso)
+      (this.grid?.cdRef || this.cdRef).detectChanges();
     }
   }
 

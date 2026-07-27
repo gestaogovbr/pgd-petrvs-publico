@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Cache\GestorHierarquiaCache;
 use App\Jobs\Contratos\ContratoJobSchedule;
 use App\Models\Entidade;
 use Illuminate\Bus\Queueable;
@@ -54,6 +55,7 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
                 Log::alert("Job SincronizarPetrvs: " . json_encode($inputs));
                 $integracaoService->sincronizar($inputs);
             }
+            GestorHierarquiaCache::invalidarTudo();
             Log::info("Job SincronizarPetrvs END ");
         } catch (\Exception $e) {
             Log::error("Erro ao processar Job SincronizarPetrvs " . $e->getMessage());
