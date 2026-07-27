@@ -129,4 +129,9 @@ class UnidadeRepository
     {
         return $this->readRepository->buscarComLocalidade($unidadeIds);
     }
+
+    public function findAll(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->findAllWhere([]);
+    }
 }

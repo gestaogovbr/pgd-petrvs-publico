@@ -1,0 +1,40 @@
+<app-breadcrumb></app-breadcrumb>
+
+<div class="container-fluid px-4 py-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <painel-filtros
+      [unidadeInicialId]="unidadeInicialId()"
+      [unidadeInicialSigla]="unidadeInicialSigla()"
+      [unidadeInicialNome]="unidadeInicialNome()"
+      (filtrosChange)="onFiltrosChange($event)"
+      (unidadeChange)="onUnidadeChange($event)"
+      class="flex-grow-1" />
+
+    <br-button emphasis="secondary" (click)="exportarPdf()" class="btn-exportar" [isLoading]="carregandoAlgum()" [disabled]="carregandoAlgum()">
+      <i class="fas fa-file-pdf mr-1" aria-hidden="true"></i>Exportar PDF
+    </br-button>
+  </div>
+
+  <div>
+    <indicador-barra-horizontal
+      [dados]="alinhamentoInstitucional()"
+      [carregando]="carregandoAlinhamento()"
+      [titulo]="textos.alinhamento.titulo"
+      [informacaoAdicional]="textos.alinhamento.info"
+      [origemDados]="origemDados" />
+
+    <indicador-barra-horizontal
+      [dados]="avaliacoesPlanoEntrega()"
+      [carregando]="carregandoAvaliacoesPE()"
+      [titulo]="textos.avaliacoesPE.titulo"
+      [informacaoAdicional]="textos.avaliacoesPE.info"
+      [origemDados]="origemDados" />
+
+    <indicador-barra-horizontal
+      [dados]="avaliacoesPlanoTrabalho()"
+      [carregando]="carregandoAvaliacoesPT()"
+      [titulo]="textos.avaliacoesPT.titulo"
+      [informacaoAdicional]="textos.avaliacoesPT.info"
+      [origemDados]="origemDados" />
+  </div>
+</div>
