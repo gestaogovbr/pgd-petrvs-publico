@@ -167,6 +167,8 @@ use App\Repository\TipoPlanejamentoObjetivo\Eloquent\EloquentTipoPlanejamentoObj
 use App\Repository\TipoPlanejamentoObjetivo\Eloquent\EloquentTipoPlanejamentoObjetivoWriteRepository;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
 use App\Repository\PlanejamentoObjetivo\Eloquent\EloquentPlanejamentoObjetivoReadRepository;
+use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
+use App\Repository\CadeiaValor\Eloquent\EloquentCadeiaValorReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\Repository\Unidade\Eloquent\EloquentUnidadeReadRepository;
@@ -449,6 +451,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             PlanejamentoObjetivoReadRepositoryContract::class,
             EloquentPlanejamentoObjetivoReadRepository::class,
+        );
+
+        $this->app->bind(
+            CadeiaValorReadRepositoryContract::class,
+            EloquentCadeiaValorReadRepository::class,
         );
 
         $this->app->bind(

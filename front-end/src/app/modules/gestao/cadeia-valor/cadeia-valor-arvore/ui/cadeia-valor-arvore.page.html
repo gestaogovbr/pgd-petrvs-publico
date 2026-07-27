@@ -1,7 +1,7 @@
 <div class="br-mainpanel">
   <app-breadcrumb />
 
-  <h2 class="mb-3">Árvore de objetivos</h2>
+  <h2 class="mb-3">Árvore da Cadeia de Valor</h2>
 
   @if (loadError()) {
     <div class="alert alert-warning" role="alert">{{ loadError() }}</div>
@@ -16,7 +16,8 @@
       <div class="br-card mt-2">
         <div class="card-header">
           <div class="p-2">
-            <h4 class="mb-1">Hierarquia centrada no objetivo consultado</h4>            
+            <h4 class="mb-1">Hierarquia centrada no item consultado</h4>
+            <small class="text-muted">{{ dados()!.cadeia_valor_nome }}</small>
           </div>
         </div>
 
@@ -40,8 +41,8 @@
             </span>
 
             <span class="legend-hint">
-              <strong>Linha contínua</strong> = hierarquia no mesmo planejamento ·
-              <strong>Linha tracejada</strong> = vínculo entre planejamentos
+              <strong>Linha contínua</strong> = hierarquia na mesma cadeia de valor ·
+              <strong>Linha tracejada</strong> = vínculo com outra cadeia de valor
             </span>
           </div>
 
@@ -54,10 +55,10 @@
                 (pointerdown)="onPanDown($event)"
               >
                 <defs>
-                  <marker id="arrowPai" viewBox="0 0 10 6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <marker id="arrowMesmaCadeia" viewBox="0 0 10 6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
                     <path d="M0,0 L0,6 L8,3 z" fill="#636363"></path>
                   </marker>
-                  <marker id="arrowSuperior" viewBox="0 0 10 6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <marker id="arrowCrossCadeia" viewBox="0 0 10 6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
                     <path d="M0,0 L0,6 L8,3 z" fill="#1351b4"></path>
                   </marker>
                 </defs>
@@ -66,18 +67,18 @@
                   <path
                     [attr.d]="edge.path"
                     fill="none"
-                    [attr.stroke]="edge.type === 'PAI' ? '#636363' : '#1351b4'"
-                    [attr.stroke-width]="edge.type === 'PAI' ? '2' : '1.6'"
-                    [attr.stroke-dasharray]="edge.type === 'SUPERIOR' ? '7 6' : null"
-                    [attr.marker-end]="edge.type === 'PAI' ? 'url(#arrowPai)' : 'url(#arrowSuperior)'"
-                    [attr.opacity]="edge.type === 'SUPERIOR' ? '0.85' : '1'"
+                    [attr.stroke]="edge.type === 'MESMA_CADEIA' ? '#636363' : '#1351b4'"
+                    [attr.stroke-width]="edge.type === 'MESMA_CADEIA' ? '2' : '1.6'"
+                    [attr.stroke-dasharray]="edge.type === 'CROSS_CADEIA' ? '7 6' : null"
+                    [attr.marker-end]="edge.type === 'MESMA_CADEIA' ? 'url(#arrowMesmaCadeia)' : 'url(#arrowCrossCadeia)'"
+                    [attr.opacity]="edge.type === 'CROSS_CADEIA' ? '0.85' : '1'"
                   ></path>
                 }
 
                 @for (node of treeNodes(); track node.id) {
                   <g
                     class="tree-node"
-                    [class.tree-node--consultado]="node.isConsultado"
+                    [class.tree-node--consultado]="node.isFocal"
                     [class.tree-node--selected]="selectedNodeId() === node.id"
                     [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
                     (click)="onNodeClick(node.id, $event)"
@@ -89,7 +90,7 @@
                       [attr.width]="nodeW"
                       [attr.height]="nodeH"
                       rx="8"
-                      [attr.fill]="node.isConsultado ? '#fff9e6' : '#ffffff'"
+                      [attr.fill]="node.isFocal ? '#fff9e6' : '#ffffff'"
                     ></rect>
                     <foreignObject
                       [attr.x]="-nodeHalfW"
@@ -99,22 +100,20 @@
                       pointer-events="none"
                     >
                       <div xmlns="http://www.w3.org/1999/xhtml" class="node-card" lang="pt-BR">
-                        @if (node.isConsultado) {
-                          <span class="node-card__badge">consultado</span>
+                        @if (node.isFocal) {
+                          <span class="node-card__badge">central</span>
                         }
                         <p class="node-card__title">{{ node.nome }}</p>
-                        <p class="node-card__plan">{{ node.planejamentoNome }}</p>
-                        <p class="node-card__tipo">{{ node.tipoObjetivoNome }}</p>
-                        @if (node.percentualDoPai === null) {
-                          <p class="node-card__esforco" title="Esforço planejado em relação ao disponível (mesmo cálculo do painel)">
-                            Esforço planejado: {{ formatPercent(node.planejadoPercentualDisponivel) }} do disponível
-                          </p>
-                        } @else {
-                          <p class="node-card__esforco" title="Participação no esforço planejado acumulado do nó pai">
-                            Esforço planejado: {{ formatPercent(node.percentualDoPai) }} do pai
+                        <p class="node-card__plan">{{ node.cadeiaValorNome }}</p>
+                        @if (node.etiqueta) {
+                          <p class="node-card__tipo">{{ node.etiqueta }}</p>
+                        }
+                        @if (node.percentualEsforco !== null) {
+                          <p class="node-card__esforco">
+                            Esforço planejado: {{ formatPercent(node.percentualEsforco) }}
                           </p>
                         }
-                        <span class="node-card__vinculos-tag">{{ node.vinculosCount }} vínculos</span>
+                        <span class="node-card__vinculos-tag">{{ node.totalVinculos }} vínculos</span>
                       </div>
                     </foreignObject>
                   </g>
@@ -123,10 +122,11 @@
             </div>
 
             <div class="col-12 col-lg-4 detail-col">
-              <app-planejamento-objetivo-painel-lateral
-                [objetivoId]="selectedNodeId()"
+              <app-cadeia-valor-painel-lateral
+                [processoId]="selectedNodeId()"
+                [cadeiaValorId]="cadeiaValorId()"
                 [consultadoId]="consultadoId()"
-                (centralizar)="abrirArvoreOutroObjetivo($event)"
+                (centralizar)="navegarParaProcesso($event)"
               />
             </div>
           </div>
