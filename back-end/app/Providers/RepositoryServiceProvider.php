@@ -121,6 +121,8 @@ use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
 use App\Repository\EnvioUsuario\Eloquent\EloquentEnvioUsuarioReadRepository;
 use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryContract;
 use App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository;
+use App\Repository\RelatorioEntrega\Contracts\RelatorioEntregaReadRepositoryContract;
+use App\Repository\RelatorioEntrega\Eloquent\EloquentRelatorioEntregaReadRepository;
 use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
 use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
 
@@ -464,6 +466,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             EnvioPlanoTrabalhoReadRepositoryContract::class,
             EloquentEnvioPlanoTrabalhoReadRepository::class,
+        );
+
+        $this->app->bind(
+            RelatorioEntregaReadRepositoryContract::class,
+            EloquentRelatorioEntregaReadRepository::class,
         );
 
     }

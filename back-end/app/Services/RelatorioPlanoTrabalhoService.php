@@ -23,7 +23,8 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
                 && ($item[0] !== 'incluir_periodos_avaliativos')
                 && ($item[0] !== 'periodoInicio')
                 && ($item[0] !== 'periodoFim')
-                && ($item[0] !== 'unidade_id');
+                && ($item[0] !== 'unidade_id')
+                && ($item[0] !== 'plano_entrega_entrega_id');
         }));
 
         $somenteVigentes = $this->extractWhere($data, "somente_vigentes");
@@ -31,6 +32,7 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
         $unidadeId = $this->extractWhere($data, "unidade_id");
         $periodoInicio = $this->extractWhere($data, "periodoInicio");
         $periodoFim = $this->extractWhere($data, "periodoFim");
+        $planoEntregaEntregaId = $this->extractWhere($data, "plano_entrega_entrega_id");
 
         if (isset($unidadeId[2])) {
             $unidadeIds = [$unidadeId[2]];
@@ -77,6 +79,17 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
                     [$periodoFim[2]]
                 );
             }
+        }
+
+        if (isset($planoEntregaEntregaId[2])) {
+            $where[] = new RawWhere(
+                'id in (
+                    select distinct plano_trabalho_id
+                    from planos_trabalhos_entregas
+                    where plano_entrega_entrega_id = ? and deleted_at is null
+                )',
+                [$planoEntregaEntregaId[2]]
+            );
         }
 
         $data["where"] = $where;
