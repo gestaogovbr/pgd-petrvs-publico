@@ -1,0 +1,42 @@
+<indicador-card
+  [titulo]="titulo"
+  [informacaoAdicional]="informacaoAdicional"
+  [origemDados]="origemDados"
+  [carregando]="carregando"
+  [semDados]="semDados()">
+
+  @if (_dados(); as dados) {
+    <div class="indicador-barra__chart-wrapper">
+      <div class="indicador-barra__chart" [style.height.px]="chartHeight()">
+        <canvas
+          baseChart
+          type="bar"
+          [data]="chartData()"
+          [options]="chartOptions()">
+        </canvas>
+      </div>
+      <div class="indicador-barra__totais" [style.height.px]="chartHeight()">
+        @for (total of totais(); track $index) {
+          <span class="indicador-barra__total">{{ total }}</span>
+        }
+      </div>
+    </div>
+
+    <!-- Legenda -->
+    <div class="indicador-barra__legenda">
+      @for (segmento of dados.segmentos; track segmento) {
+        <div class="indicador-barra__legenda-item">
+          <span class="indicador-barra__legenda-cor" [style.background-color]="cores[$index] ?? '#ccc'"></span>
+          <span class="indicador-barra__legenda-label">{{ segmento }}</span>
+        </div>
+      }
+    </div>
+
+    @if (saibaMaisRoute.length > 0) {
+      <p class="indicador-barra__saiba-mais">
+        <a (click)="navegarSaibaMais()" style="cursor: pointer;">Saiba mais</a>
+      </p>
+    }
+  }
+
+</indicador-card>

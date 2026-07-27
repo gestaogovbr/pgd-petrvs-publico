@@ -6,6 +6,7 @@ import { IAppComponent, MenuContexto } from '../app-types';
 import { DOCUMENT } from '@angular/common';
 import { AuthService } from './auth.service';
 import { NavigateService } from './navigate.service';
+import { Perfil } from '../models/perfil.model';
 
 export type EntidadePetrvs = "ANTAQ" | "PRF" | "";
 
@@ -14,7 +15,7 @@ export type EntidadePetrvs = "ANTAQ" | "PRF" | "";
 })
 export class GlobalsService {
   public VERSAO_DB: number = 1;
-  public VERSAO_SYS: number =  environment.versao;
+  public VERSAO_SYS: number = environment.versao;
   public IMAGES = environment.images;
   public ENTIDADE = environment.entidade || "";
   public ENV = environment.env || "";
@@ -22,13 +23,13 @@ export class GlobalsService {
   public app?: IAppComponent;
   public set toolbarButtons(value: ToolbarButton[]) {
     this._toolbarButtons = value;
-    if(this.refresh) this.refresh();
+    if (this.refresh) this.refresh();
   }
   public get toolbarButtons(): ToolbarButton[] {
     return this._toolbarButtons;
   }
 
-  private urlBuffer: {[url: string]: SafeUrl} = {};
+  private urlBuffer: { [url: string]: SafeUrl } = {};
   private _toolbarButtons: ToolbarButton[] = [];
 
   public horarioDelta = {
@@ -42,7 +43,7 @@ export class GlobalsService {
 
   constructor(@Inject(DOCUMENT) private document: any, public injector: Injector) {
     this.auth = injector.get<AuthService>(AuthService);
-    this.go = injector.get<NavigateService>(NavigateService);    
+    this.go = injector.get<NavigateService>(NavigateService);
   }
 
   public refresh() {
@@ -54,13 +55,13 @@ export class GlobalsService {
   }
 
   public setContexto(context: string, goToContextoHome: boolean = true) {
-    if(this.contexto?.key != context) {
+    if (this.contexto?.key != context) {
       let novoContexto = this.app!.menuContexto.find(x => x.key == context);
-      if(!this.auth.usuario || !novoContexto?.permition || this.auth.capacidades.includes(novoContexto.permition)) this.contexto = novoContexto;
-      if(this.contexto && goToContextoHome) this.goHome();
+      if (!this.auth.usuario || !novoContexto?.permition || this.auth.capacidades.includes(novoContexto.permition)) this.contexto = novoContexto;
+      if (this.contexto && goToContextoHome) this.goHome();
       this.app!.cdRef.detectChanges();
     }
-    if(this.auth.usuario && this.auth.usuarioConfig.menu_contexto != this.contexto?.key) {
+    if (this.auth.usuario && this.auth.usuarioConfig.menu_contexto != this.contexto?.key) {
       this.auth.usuarioConfig = { menu_contexto: this.contexto?.key || "" };
     }
   }
@@ -99,6 +100,27 @@ export class GlobalsService {
     }
     const strRoute = (this.contexto ? "/home/"+ this.contexto!.key.toLowerCase() : "/home");
     return strRoute.substring(strRoute.startsWith("/") ? 1 : 0).split("/");
+  }
+
+  /**
+   * RN07: Adm Master, Adm Negocial, Chefia Titular e Chefia Substituta com atribuição em
+   * Unidades Autorizadoras (nível 1) ou Instituidoras (nível 2) são direcionados
+   * para Painéis Gerenciais.
+   */
+  private deveRedirecionarParaPaineisGerenciais(): boolean {
+    if (!this.auth.hasPermissionTo('MOD_PAINEL_GER')) return false;
+    if (!this.auth.usuario?.perfil) return false;
+
+    const nivel = this.auth.usuario.perfil.nivel;
+    const isAdmMaster = nivel === Perfil.NIVEL.ADM_MASTER;
+    const isAdmNegocial = nivel === Perfil.NIVEL.ADM_NEGOCIAL;
+    const isChefia = this.auth.isGestorAlgumaAreaTrabalho(false, true);
+
+    if (!isAdmMaster && !isAdmNegocial && !isChefia) return false;
+
+    return this.auth.unidades?.some(
+      unidade => unidade.unidade_pai_id === null || unidade.instituidora === 1
+    ) ?? false;
   }
 
   public get requireLogged(): boolean {

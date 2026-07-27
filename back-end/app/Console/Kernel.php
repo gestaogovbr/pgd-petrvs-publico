@@ -68,6 +68,15 @@ class Kernel extends ConsoleKernel
                 \App\Jobs\InativacaoUnidadesTemporarios::dispatch($tenant->id);
             }
         })->dailyAt('00:30')->name('Inativação Unidades Temporários')->withoutOverlapping();
+
+        // Job para consolidar série histórica de adesão ao PGD no dia 1 de cada mês
+        $schedule->call(function () {
+            $tenants = \App\Models\Tenant::all();
+            foreach ($tenants as $tenant) {
+                /** @var \App\Models\Tenant $tenant */
+                \App\Jobs\ConsolidarSerieAdesao::dispatch($tenant->id);
+            }
+        })->monthlyOn(1, '01:00')->name('Consolidar Série Adesão PGD')->withoutOverlapping();
         
         $agendamentosPrincipal = JobSchedule::where('ativo', true)->get();
         foreach ($agendamentosPrincipal as $jobEntity) {

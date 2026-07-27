@@ -63,4 +63,6 @@ interface UnidadeReadRepositoryContract
      * @return SupportCollection
      */
     public function buscarComLocalidade(array $unidadeIds): SupportCollection;
+
+    public function findAllWhere(array $criteria): SupportCollection;
 }

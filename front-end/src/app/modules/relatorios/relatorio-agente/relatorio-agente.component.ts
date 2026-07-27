@@ -1,5 +1,5 @@
 import { Component, Injector, ViewChild } from "@angular/core";
-import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
+import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioAgenteDaoService } from "src/app/dao/relatorio-agente-dao.service";
@@ -7,7 +7,6 @@ import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { RelatorioAgente } from "src/app/models/relatorio-agente.model";
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
-import { PerfilDaoService } from "src/app/dao/perfil-dao.service";
 import { of } from "rxjs";
 import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
 import { ModalidadePgdService } from "src/app/services/modalidade-pgd.service";
@@ -22,15 +21,11 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public permissao: string = 'MOD_RELATORIO_USUARIO';
-  public perfilDao: PerfilDaoService;
   public botoes: ToolbarButton[] = [];
   public tiposModalidade: LookupItem[] = [];
-  public tiposSituacao: LookupItem[] = [];
-  public perfis: LookupItem[] = [];
 
   constructor(public injector: Injector, dao: RelatorioAgenteDaoService) {
       super(injector, RelatorioAgente, RelatorioAgenteDaoService);
-      this.perfilDao = injector.get<PerfilDaoService>(PerfilDaoService);
       this.tiposModalidade = injector.get<ModalidadePgdService>(ModalidadePgdService).items;
 
       this.filter = this.fh.FormBuilder({
@@ -40,13 +35,9 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
         id: { default: "" },
         nome: { default: "" },
         unidadeNome: { default: "" },
-        status: { default: "" },
         matricula: { default: "" },
-        jornada: { default: "" },
-        perfil_id: { default: "" },
         situacao: { default: "" },
         selecao: { default: "" },
-        lotado: { default: this.metadata?.lotado ?? "" },
         modalidade: { default: "" },
         modalidadeSouGov: { default: "" },
         comparacaoSouGovPetrvs: { default: "" },
@@ -69,14 +60,6 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
         this.filter?.controls.unidade_id.setValue(this.metadata?.unidade_id);
         this.saveUsuarioConfig();
       }
-
-      this.perfilDao.query().asPromise().then(perfis => {
-          this.perfis = this.lookup.map(perfis, 'id', 'nome')
-            .map(item => ({
-              key: item.key,
-              value: item.value.replace('Perfil ', '')
-            })); // Remove a palavra 'Perfil' dos perfis
-      });
   }
 
   public ngAfterViewInit(): void {
@@ -108,14 +91,6 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
       result.push(["matricula", "like", "%" + form.matricula + "%"]);
     }
 
-    if (form.jornada?.length) {
-      result.push(["jornada", "==", form.jornada]);
-    }
-
-    if (form.perfil_id?.length) {
-      result.push(["perfil_id", "==", form.perfil_id]);
-    }
-
     if (form.situacao?.length) {
       result.push(["situacao", "==", form.situacao]);
     }
@@ -141,7 +116,7 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
     }
 
     if (form.data_inicial_pedagio) {
-      result.push(["data_inicial_pedagio", "==",  form.data_inicial_pedagio.toISOString().slice(0,10)]);
+      result.push(["data_inicial_pedagio", "==", form.data_inicial_pedagio.toISOString().slice(0,10)]);
     }
 
     if (form.data_final_pedagio) {
@@ -156,13 +131,11 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
   };
 
   public onButtonFilterClick = (filter: FormGroup) => {
-    let form: any = filter.value;
-    let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
-
     if (this.filter!.valid) {
       if (this.grid && this.grid.query) {
         this.loaded = true;
       }
+      let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
       this.grid?.query?.reload(queryOptions);
     } else {
       this.filter!.markAllAsTouched(); 
@@ -171,7 +144,7 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
     this.loading = true;
-    try{
+    try {
       return this.dao!.exportarXls({
         where: queryOptions.where,
         orderBy: queryOptions.orderBy

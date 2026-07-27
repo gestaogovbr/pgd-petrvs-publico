@@ -1,0 +1,64 @@
+<app-breadcrumb></app-breadcrumb>
+
+<div class="container-fluid px-4 py-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <painel-filtros
+      [unidadeInicialId]="unidadeInicialId()"
+      [unidadeInicialSigla]="unidadeInicialSigla()"
+      [unidadeInicialNome]="unidadeInicialNome()"
+      (filtrosChange)="onFiltrosChange($event)"
+      (unidadeChange)="onUnidadeChange($event)"
+      class="flex-grow-1" />
+
+    <br-button emphasis="secondary" (click)="exportarPdf()" class="btn-exportar" [isLoading]="carregandoAlgum()" [disabled]="carregandoAlgum()">
+      <i class="fas fa-file-pdf mr-1" aria-hidden="true"></i>Exportar PDF
+    </br-button>
+  </div>
+
+  <div>
+    <indicador-barra-horizontal
+      [dados]="registroExecucaoPE()"
+      [carregando]="carregando1()"
+      [titulo]="textos.registroExecucaoPE.titulo"
+      [informacaoAdicional]="textos.registroExecucaoPE.info"
+      [origemDados]="origemDados"
+      [saibaMaisRoute]="['relatorios', 'planos-entrega']"
+      [saibaMaisQueryParams]="saibaMaisRegistroExecucaoPE()" />
+
+    <indicador-barra-horizontal
+      [dados]="avaliacaoPE()"
+      [carregando]="carregando2()"
+      [titulo]="textos.avaliacaoPE.titulo"
+      [informacaoAdicional]="textos.avaliacaoPE.info"
+      [origemDados]="origemDados"
+      [saibaMaisRoute]="['relatorios', 'planos-entrega']"
+      [saibaMaisQueryParams]="saibaMaisAvaliacaoPE()" />
+
+    <indicador-barra-horizontal
+      [dados]="registroExecucaoPT()"
+      [carregando]="carregando3()"
+      [titulo]="textos.registroExecucaoPT.titulo"
+      [informacaoAdicional]="textos.registroExecucaoPT.info"
+      [origemDados]="origemDados"
+      [saibaMaisRoute]="['relatorios', 'planos-trabalho']"
+      [saibaMaisQueryParams]="saibaMaisRegistroExecucaoPT()" />
+
+    <indicador-barra-horizontal
+      [dados]="avaliacaoPT()"
+      [carregando]="carregando4()"
+      [titulo]="textos.avaliacaoPT.titulo"
+      [informacaoAdicional]="textos.avaliacaoPT.info"
+      [origemDados]="origemDados"
+      [saibaMaisRoute]="['relatorios', 'planos-trabalho']"
+      [saibaMaisQueryParams]="saibaMaisAvaliacaoPT()" />
+
+    <indicador-barra-horizontal
+      [dados]="unidadesExecutorasPE()"
+      [carregando]="carregando5()"
+      [titulo]="textos.unidadesExecutorasPE.titulo"
+      [informacaoAdicional]="textos.unidadesExecutorasPE.info"
+      [origemDados]="origemDados"
+      [saibaMaisRoute]="['relatorios', 'unidades']"
+      [saibaMaisQueryParams]="saibaMaisUnidadesExecutoras()" />
+  </div>
+</div>

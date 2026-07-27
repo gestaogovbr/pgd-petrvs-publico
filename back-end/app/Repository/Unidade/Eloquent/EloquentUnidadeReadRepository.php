@@ -38,11 +38,11 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         $result = $this->model->getConnection()->select("
             WITH RECURSIVE unidade_hierarchy AS (
                 SELECT id, unidade_pai_id, 0 as level
-                FROM unidades 
+                FROM unidades
                 WHERE id = ?
-                
+
                 UNION ALL
-                
+
                 SELECT u.id, u.unidade_pai_id, uh.level + 1
                 FROM unidades u
                 INNER JOIN unidade_hierarchy uh ON u.id = uh.unidade_pai_id
@@ -57,7 +57,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
               AND ui.deleted_at IS NULL
               AND uia.deleted_at IS NULL
         ", [$unidadeId, $usuarioId]);
-        
+
         return $result[0]->count > 0;
     }
 
@@ -174,7 +174,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         $where = [];
         $prefix = empty($prefix) ? "" : $prefix . ".";
         $usuario = Usuario::find($usuarioId);
-        
+
         if (!$usuario) {
             return "false";
         }
@@ -341,5 +341,10 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->get()
             ->toBase()
             ->keyBy('id');
+    }
+
+    public function findAllWhere(array $criteria): SupportCollection
+    {
+        return parent::findAllWhere($criteria);
     }
 }

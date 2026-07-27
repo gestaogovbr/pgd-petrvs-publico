@@ -34,6 +34,7 @@
             >
             </input-search>
             <input-switch
+                *ngIf="!auth.isUsuarioParticipante()"
                 [size]="2"
                 label="Unidades Subordinadas"
                 controlName="incluir_unidades_subordinadas"
@@ -43,7 +44,7 @@
     </filter>
     <columns>
 
-        <column title="Nome"
+        <column title="Agente Público"
             [template]="columnNome"
             [titleTemplate]="titleNome" [verticalAlign]="'bottom'"
             [width]="200"
@@ -57,11 +58,11 @@
             </ng-template>
 
             <ng-template let-row="row" #columnNome>
-                <span> {{row.nome_exibicao}}</span>
+                <a [routerLink]="['/configuracoes', 'usuario', row.id, 'edit']">{{row.nome_exibicao}}</a>
             </ng-template>
         </column>
 
-        <column title="Matrícula SIAPE"
+        <column title="Matrícula Siape"
             [template]="columnMatricula"
             [titleTemplate]="titleMatricula" [verticalAlign]="'bottom'"
             [width]="80"
@@ -75,47 +76,7 @@
             </ng-template>
 
             <ng-template let-row="row" #columnMatricula>
-                <span> {{row.matricula || '-'}}</span>
-            </ng-template>
-        </column>
-
-        <column title="Jornada"
-            [template]="columnJornada"
-            [titleTemplate]="titleJornada" [verticalAlign]="'bottom'"
-            [width]="80"
-            [align]="'center'"
-        >
-            <ng-template let-header="header" #titleJornada>
-                <input-text 
-                    [control]="filter!.controls.jornada"
-                    controlName="this.filter.jornada"
-                    (blur)="onValueChange($event)"
-                ></input-text>
-            </ng-template>
-
-            <ng-template let-row="row" #columnJornada>
-                <span> {{row.jornada ? row.jornada : '-'}}</span>
-            </ng-template>
-        </column>
-
-        <column title="Perfil"
-            [template]="columnPerfil"
-            [titleTemplate]="titlePerfil" [verticalAlign]="'bottom'"
-            [width]="150"
-            [align]="'center'"
-        >
-            <ng-template let-header="header" #titlePerfil>
-                <input-select 
-                    [items]="perfis" 
-                    [control]="filter!.controls.perfil_id"
-                    controlName="this.filter.perfil_id"
-                    (change)="onValueChange($event)"
-                    nullable
-                ></input-select> 
-            </ng-template>
-
-            <ng-template let-row="row" #columnPerfil>
-                <span> {{row.perfil.replace('Perfil ', '') || '-'}}</span>
+                <span>{{row.matricula || '-'}}</span>
             </ng-template>
         </column>
 
@@ -136,11 +97,11 @@
             </ng-template>
 
             <ng-template let-row="row" #columnSituacao>
-                <span> {{lookup.getValue(lookup.USUARIO_SITUACAO_SIAPE, row.situacao) || '-'}}</span>
+                <span>{{lookup.getValue(lookup.USUARIO_SITUACAO_SIAPE, row.situacao) || '-'}}</span>
             </ng-template>
         </column>
 
-        <column title="Seleção"
+        <column title="Regramento"
             [template]="columnSelecao"
             [titleTemplate]="titleSelecao" [verticalAlign]="'bottom'"
             [width]="100"
@@ -154,11 +115,11 @@
             </ng-template>
 
             <ng-template let-row="row" #columnSelecao>
-                <span> {{row.programaNome || '-'}}</span>
+                <span>{{row.programaNome || '-'}}</span>
             </ng-template>
         </column>
 
-        <column title="Lotado"
+        <column title="Lotação"
             [template]="columnLotado"
             [titleTemplate]="titleLotado" [verticalAlign]="'bottom'"
             [width]="200"
@@ -172,7 +133,43 @@
             </ng-template>
 
             <ng-template let-row="row" #columnLotado>
-                <span> {{row.unidadeHierarquia || '-'}}</span>
+                <span>{{row.unidadeHierarquia || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Participante do PGD"
+            [template]="columnParticipantePGD"
+            [verticalAlign]="'bottom'"
+            [width]="100"
+            [align]="'center'"
+        >
+            <ng-template let-row="row" #columnParticipantePGD>
+                <span>{{row.participantePGD || '-'}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Plano de Trabalho do Dia"
+            [template]="columnPlanoTrabalhoDia"
+            [verticalAlign]="'bottom'"
+            [width]="150"
+            [align]="'center'"
+        >
+            <ng-template let-row="row" #columnPlanoTrabalhoDia>
+                <a *ngIf="row.plano_trabalho_id" [routerLink]="['/gestao', 'plano-trabalho-v2', 'consultar', row.plano_trabalho_id]">
+                    PT #{{row.plano_trabalho_numero}}
+                </a>
+                <span *ngIf="!row.plano_trabalho_id">-</span>
+            </ng-template>
+        </column>
+
+        <column title="Status do Plano de Trabalho do Dia"
+            [template]="columnStatusPT"
+            [verticalAlign]="'bottom'"
+            [width]="150"
+            [align]="'center'"
+        >
+            <ng-template let-row="row" #columnStatusPT>
+                <span>{{row.plano_trabalho_status_label || '-'}}</span>
             </ng-template>
         </column>
 
@@ -196,7 +193,9 @@
             </ng-template>
         </column>
 
-        <column title="Modalidade do último Plano de Trabalho" [template]="columnModalidade" [titleTemplate]="titleModalidade"
+        <column title="Modalidade do Plano de Trabalho do Dia"
+            [template]="columnModalidade"
+            [titleTemplate]="titleModalidade"
             [verticalAlign]="'bottom'" [align]="'center'"
             [width]="150"
         >
@@ -210,7 +209,7 @@
                 ></input-select>
             </ng-template>
             <ng-template let-row="row" #columnModalidade>
-                <span>{{row.tipoModalidadeNome}}</span>
+                <span>{{row.tipoModalidadeNome || '-'}}</span>
             </ng-template>
         </column>
 
@@ -229,7 +228,7 @@
             </ng-template>
 
             <ng-template let-row="row" #columnComparacao>
-                <span> {{row.comparacaoSouGovPetrvs || '-'}}</span>
+                <span>{{row.comparacaoSouGovPetrvs || '-'}}</span>
             </ng-template>
         </column>
 
@@ -250,7 +249,7 @@
             </ng-template>
 
             <ng-template let-row="row" #columnIndisponibilidadeTeletrabalho>
-                <span> {{ row.tipoPedagio || '-'}}</span>
+                <span>{{ row.tipoPedagio || '-'}}</span>
             </ng-template>
         </column>
 
