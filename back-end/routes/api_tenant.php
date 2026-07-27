@@ -624,6 +624,7 @@ use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoO
 use App\V2\PainelGerencial\PainelGerencialController as PainelGerencialV2;
 use App\V2\PainelGerencial\AlinhamentoDesempenho\AlinhamentoDesempenhoController as AlinhamentoDesempenhoV2;
 use App\V2\PainelGerencial\Modalidades\ModalidadesController as ModalidadesV2;
+use App\V2\PainelGerencial\Conformidade\ConformidadeController as ConformidadeV2;
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
@@ -709,5 +710,11 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('painel-gerencial/modalidades/teletrabalho-substituicao', [ModalidadesV2::class, 'teletrabalhoSubstituicao']);
     Route::get('painel-gerencial/modalidades/teletrabalho-discricionario', [ModalidadesV2::class, 'teletrabalhoDiscricionario']);
     Route::get('painel-gerencial/modalidades/por-unidade', [ModalidadesV2::class, 'modalidadesPorUnidade']);
+
+    Route::get('painel-gerencial/conformidade/registro-execucao-pe', [ConformidadeV2::class, 'registroExecucaoPE']);
+    Route::get('painel-gerencial/conformidade/avaliacao-pe', [ConformidadeV2::class, 'avaliacaoPE']);
+    Route::get('painel-gerencial/conformidade/registro-execucao-pt', [ConformidadeV2::class, 'registroExecucaoPT']);
+    Route::get('painel-gerencial/conformidade/avaliacao-pt', [ConformidadeV2::class, 'avaliacaoPT']);
+    Route::get('painel-gerencial/conformidade/unidades-executoras-pe', [ConformidadeV2::class, 'unidadesExecutorasPE']);
 });
 

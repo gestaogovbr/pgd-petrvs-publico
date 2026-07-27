@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  inject,
   signal,
   computed,
 } from '@angular/core';
@@ -20,6 +21,7 @@ import {
 import ChartjsPluginStacked100 from 'chartjs-plugin-stacked100';
 import { Indicador } from '../../infra/painel-api.client';
 import { CHART_COLORS } from 'src/app/services/chart';
+import { NavigateService } from 'src/app/services/navigate.service';
 import { IndicadorCardComponent } from './indicador-card.component';
 
 Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip, ChartjsPluginStacked100);
@@ -33,6 +35,8 @@ Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip, C
   styleUrls: ['./indicador-barra-horizontal.component.scss'],
 })
 export class IndicadorBarraHorizontalComponent {
+  private readonly go = inject(NavigateService);
+
   @Input({ required: true }) set dados(value: Indicador | null) {
     this._dados.set(value);
   }
@@ -42,6 +46,8 @@ export class IndicadorBarraHorizontalComponent {
   @Input() origemDados = '';
   @Input() carregando = false;
   @Input() cores: string[] = CHART_COLORS;
+  @Input() saibaMaisRoute: string[] = [];
+  @Input() saibaMaisQueryParams: Record<string, string> = {};
 
   readonly _dados = signal<Indicador | null>(null);
 
@@ -123,4 +129,12 @@ export class IndicadorBarraHorizontalComponent {
     const linhas = dados?.distribuicoes.length ?? 1;
     return Math.max(150, linhas * 40 + 40);
   });
+
+  navegarSaibaMais(): void {
+    if (this.saibaMaisRoute.length === 0) return;
+    this.go.navigate(
+      { route: this.saibaMaisRoute, params: { filter: this.saibaMaisQueryParams } },
+      { root: true }
+    );
+  }
 }

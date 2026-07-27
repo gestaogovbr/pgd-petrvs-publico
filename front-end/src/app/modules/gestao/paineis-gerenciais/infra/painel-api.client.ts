@@ -101,4 +101,44 @@ export class PainelApiClient extends TenantV2ResourceApiBase {
       })
       .pipe(map(r => r.data));
   }
+
+  getConformidadeAvaliacaoPE(filtros: FiltrosPainel): Observable<Indicador> {
+    return this.http
+      .get<{ data: Indicador }>(this.resourceUrl('/conformidade/avaliacao-pe'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getConformidadeRegistroExecucaoPE(filtros: FiltrosPainel): Observable<Indicador> {
+    return this.http
+      .get<{ data: Indicador }>(this.resourceUrl('/conformidade/registro-execucao-pe'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getConformidadeRegistroExecucaoPT(filtros: FiltrosPainel): Observable<Indicador> {
+    return this.http
+      .get<{ data: Indicador }>(this.resourceUrl('/conformidade/registro-execucao-pt'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getConformidadeAvaliacaoPT(filtros: FiltrosPainel): Observable<Indicador> {
+    return this.http
+      .get<{ data: Indicador }>(this.resourceUrl('/conformidade/avaliacao-pt'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
+
+  getConformidadeUnidadesExecutorasPE(filtros: FiltrosPainel): Observable<Indicador> {
+    return this.http
+      .get<{ data: Indicador }>(this.resourceUrl('/conformidade/unidades-executoras-pe'), {
+        params: this.filtrosToParams(filtros),
+      })
+      .pipe(map(r => r.data));
+  }
 }

@@ -64,6 +64,17 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
       this.filter.get('unidade_id')?.updateValueAndValidity();
 
       this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
+
+      this.loadFilterParams = (params: any, filter?: any) => {
+        const parsed = { ...params };
+        if (parsed.periodo_inicio && typeof parsed.periodo_inicio === 'string') {
+          parsed.periodo_inicio = new Date(parsed.periodo_inicio + 'T00:00:00');
+        }
+        if (parsed.periodo_fim && typeof parsed.periodo_fim === 'string') {
+          parsed.periodo_fim = new Date(parsed.periodo_fim + 'T00:00:00');
+        }
+        filter?.patchValue(parsed, { emitEvent: true });
+      };
   }
 
   public async ngOnInit() {
