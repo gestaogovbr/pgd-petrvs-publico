@@ -68,6 +68,9 @@ describe('AvaliacaoService::destroy', function () {
         $consolidacao->shouldReceive('refresh')->andReturnSelf();
         $consolidacao->shouldReceive('load')->andReturnSelf();
         $consolidacao->shouldReceive('getAttribute')->with('avaliacoes')->andReturn($avaliacoesCollection);
+        $consolidacao->shouldReceive('getAttribute')->with('planoTrabalho')->andReturn(
+            Mockery::mock(PlanoTrabalho::class)->makePartial()
+        );
 
         $avaliacao = Mockery::mock(\App\Models\Avaliacao::class)->makePartial();
         $avaliacao->id = 'av-1';
@@ -75,11 +78,6 @@ describe('AvaliacaoService::destroy', function () {
 
         $this->destroyValidator->shouldReceive('validar')->andReturn($avaliacao);
         $this->avaliacaoRepo->shouldReceive('delete')->with('av-1')->once()->andReturn(true);
-        $this->avaliacaoRepo->shouldReceive('findMaisRecenteDaConsolidacao')
-            ->with('cons-1')
-            ->once()
-            ->andReturn(null);
-        $consolidacao->shouldReceive('save')->once();
         $this->statusService->shouldReceive('atualizaStatus')
             ->with($consolidacao, 'CONCLUIDO', 'Avaliação do período avaliativo cancelada pela chefia.')
             ->once();
