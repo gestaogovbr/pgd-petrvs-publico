@@ -170,7 +170,17 @@
                             <tr>
                               <th scope="col">Entrega</th>
                               <th scope="col">Trabalho Planejado</th>
-                              <th scope="col">Trabalho Executado</th>
+                              <th scope="col">
+                                Trabalho Executado
+                                <br-tag
+                                  class="count"
+                                  [class.count--divergente]="esforcoExecutadoDiverge(consolidacao)"
+                                  [bgColor]="esforcoExecutadoDiverge(consolidacao) ? '#f39c12' : ''"
+                                  [attr.title]="esforcoExecutadoDiverge(consolidacao)
+                                    ? 'Diferente do planejado (' + totalForcaTrabalho() + '%)'
+                                    : null"
+                                >{{ totalEsforcoExecutado(consolidacao) }}%</br-tag>
+                              </th>
                               @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) { <th scope="col"></th> }
                             </tr>
                           </thead>
@@ -196,7 +206,7 @@
                                           [id]="'esforco-' + consolidacao.id + '-' + entrega.id"
                                           type="number"
                                           class="form-control form-control-sm execucao-esforco-input"
-                                          min="0.01"
+                                          min="0"
                                           max="999.99"
                                           step="0.01"
                                           [value]="facade.getEsforcoExecutado(consolidacao.id, entrega)"
