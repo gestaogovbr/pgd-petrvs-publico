@@ -108,7 +108,6 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
 
         $rows = DB::select(<<<SQL
             SELECT
-                -- Esforço
                 ROUND(COALESCE(SUM(
                     (COALESCE(pt.carga_horaria, {$jornadaPadrao} / {$jornadaDivisor}))
                     * (DATEDIFF(pt.data_fim, pt.data_inicio) + 1)
@@ -129,12 +128,10 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
                     ELSE 0 END
                 ), 0), 2) AS esforco_executado_horas,
 
-                -- Flags
                 CASE WHEN COUNT(CASE WHEN pt.status IN ({$statusPlanejado}) THEN 1 END) > 0 THEN 1 ELSE 0 END AS tem_pt_pactuado,
                 CASE WHEN COUNT(CASE WHEN pt.status IN ({$statusExecutado}) THEN 1 END) > 0 THEN 1 ELSE 0 END AS tem_pt_concluido,
                 CASE WHEN COUNT(CASE WHEN pe.status IN ('ATIVO', 'CONCLUIDO', 'AVALIADO') THEN 1 END) > 0 THEN 1 ELSE 0 END AS tem_pe_homologado,
 
-                -- Entregas
                 COUNT(DISTINCT pee.id) AS total_entregas,
                 COUNT(DISTINCT CASE WHEN pee.progresso_realizado >= 100 THEN pee.id END) AS entregas_concluidas
 
@@ -214,7 +211,6 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
                 COALESCE(pee.progresso_esperado, 0) AS progresso_esperado,
                 COALESCE(pee.progresso_realizado, 0) AS progresso_realizado,
 
-                -- Registro de execução (último)
                 (
                     SELECT a.descricao
                     FROM atividades a
@@ -225,7 +221,6 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
                     LIMIT 1
                 ) AS registro_execucao,
 
-                -- Esforço (subqueries correlacionadas)
                 COALESCE((
                     SELECT ROUND(SUM(
                         (COALESCE(pt.carga_horaria, {$jornadaPadrao} / {$jornadaDivisor}))
@@ -264,7 +259,6 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
                     WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL
                 ), 0) AS esforco_executado_horas,
 
-                -- Flags
                 CASE WHEN EXISTS (
                     SELECT 1 FROM planos_trabalhos_entregas pte
                     INNER JOIN planos_trabalhos pt ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL
@@ -279,7 +273,6 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
                         AND pt.status IN ({$statusExecutado})
                 ) THEN 1 ELSE 0 END AS tem_pt_concluido,
 
-                -- Participantes (total)
                 COALESCE((
                     SELECT COUNT(DISTINCT pt.usuario_id)
                     FROM planos_trabalhos_entregas pte
@@ -289,7 +282,6 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
                     WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL
                 ), 0) AS participantes_total,
 
-                -- Participantes somente unidade própria
                 COALESCE((
                     SELECT COUNT(DISTINCT pt.usuario_id)
                     FROM planos_trabalhos_entregas pte
@@ -308,7 +300,6 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
                         )
                 ), 0) AS participantes_somente_unidade_propria,
 
-                -- Participantes somente outras unidades
                 COALESCE((
                     SELECT COUNT(DISTINCT pt.usuario_id)
                     FROM planos_trabalhos_entregas pte
@@ -327,7 +318,6 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
                         )
                 ), 0) AS participantes_somente_outras_unidades,
 
-                -- Participantes em ambas
                 COALESCE((
                     SELECT COUNT(DISTINCT pt.usuario_id)
                     FROM planos_trabalhos_entregas pte

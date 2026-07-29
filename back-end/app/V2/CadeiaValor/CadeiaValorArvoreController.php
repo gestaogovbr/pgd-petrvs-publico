@@ -57,7 +57,7 @@ class CadeiaValorArvoreController extends Controller
     }
 
     /**
-     * GET /api/v2/cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas
+     * GET /api/v2/cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas-detalhamento
      *
      * Query params: unidade_id, plano_entrega_entrega_id, data_inicio, data_fim
      */
