@@ -74,37 +74,7 @@ class SipecService
         }
 
         // 4. Solicitar novo token ao ConectaGov
-        $curl = curl_init();
-
-        curl_setopt_array($curl, [
-            CURLOPT_URL => $this->url . '/oauth2/jwt-token',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/x-www-form-urlencoded',
-                'Authorization: ' . $this->authorizationHeader,
-            ],
-            CURLOPT_POSTFIELDS => http_build_query(['grant_type' => 'client_credentials']),
-        ]);
-
-        $response = curl_exec($curl);
-
-        if (curl_errno($curl)) {
-            $error = curl_error($curl);
-            $curl = null;
-            SipecLog::error('SIPEC token cURL error: ' . $error);
-            throw new RequestConectaGovException('SIPEC cURL error: ' . $error);
-        }
-
-        $curl = null;
-
-        $data = json_decode($response, true);
-
-        if (isset($data['access_token'])) {
-            return $this->storeToken($data['access_token']);
-        }
-
-        throw new RequestConectaGovException('SIPEC: Falha ao gerar token. Response: ' . $response);
+        return $this->storeToken($this->requestToken());
     }
 
     /**
@@ -342,6 +312,45 @@ class SipecService
         $this->cachedToken = null;
         $this->cachedTokenExpiresAt = null;
         Cache::forget($this->getCacheKey());
+    }
+
+    /**
+     * Solicita um novo token ao ConectaGov sem ler nem gravar cache.
+     * Use para validar credenciais sem afetar tokens em uso por outros processos.
+     */
+    public function requestToken(): string
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $this->url . '/oauth2/jwt-token',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/x-www-form-urlencoded',
+                'Authorization: ' . $this->authorizationHeader,
+            ],
+            CURLOPT_POSTFIELDS => http_build_query(['grant_type' => 'client_credentials']),
+        ]);
+
+        $response = curl_exec($curl);
+
+        if (curl_errno($curl)) {
+            $error = curl_error($curl);
+            $curl = null;
+            SipecLog::error('SIPEC token cURL error: ' . $error);
+            throw new RequestConectaGovException('SIPEC cURL error: ' . $error);
+        }
+
+        $curl = null;
+
+        $data = json_decode($response, true);
+
+        if (isset($data['access_token'])) {
+            return $data['access_token'];
+        }
+
+        throw new RequestConectaGovException('SIPEC: Falha ao gerar token. Response: ' . $response);
     }
 
     private function getCacheKey(): string

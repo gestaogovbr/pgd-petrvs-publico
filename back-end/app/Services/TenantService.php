@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Jobs\BuscarDadosSiapeJob;
 use App\Jobs\BuscarDadosSipecJob;
 use App\Exceptions\NotFoundException;
+use App\Services\Sipec\SipecService;
 use App\Models\Cidade;
 use App\Models\Entidade;
 use App\Models\Perfil;
@@ -166,6 +167,30 @@ class TenantService extends ServiceBase
         $this->TenantConfigurationsService->handle($tenantId);
         $this->limpaTabelas();
         BuscarDadosSiapeJob::dispatch($tenantId);
+    }
+
+    public function testarSipec(string $tenantId): void
+    {
+        $tenant = $this->tenantRepository->findOrFail($tenantId);
+
+        if (empty($tenant->integracao_sipec_conectagov_chave) ||
+            empty($tenant->integracao_sipec_conectagov_senha) ||
+            empty($tenant->integracao_sipec_cpf) ||
+            empty($tenant->integracao_sipec_codorgao) ||
+            empty($tenant->integracao_sipec_url)) {
+            throw new ServerException('Tenant', 'Configurações SIPEC incompletas. Salve a integração antes de testar.');
+        }
+
+        $sipec = new SipecService([
+            'url'              => $tenant->integracao_sipec_url,
+            'conectagov_chave' => $tenant->integracao_sipec_conectagov_chave,
+            'conectagov_senha' => $tenant->integracao_sipec_conectagov_senha,
+            'cpf'              => $tenant->integracao_sipec_cpf,
+            'codOrgao'         => $tenant->integracao_sipec_codorgao,
+            'codUorg'          => $tenant->integracao_sipec_coduorg ?? '',
+        ]);
+
+        $sipec->requestToken();
     }
 
     public function forcarSipec(string $tenantId)

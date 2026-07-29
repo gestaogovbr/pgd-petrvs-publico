@@ -163,6 +163,22 @@
                 <div class="row">
                     <input-text [size]="6" label="Código UORG" controlName="integracao_sipec_coduorg" [attr.maxlength]=250></input-text>
                 </div>
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-end align-items-center gap-2">
+                        <span id="sipec-teste-hint" role="tooltip" class="visually-hidden">{{sipecTesteHint}}</span>
+                        <action-button
+                            [label]="testandoSipec ? 'Testando...' : 'Testar Conexão SIPEC'"
+                            [hint]="sipecTesteHint"
+                            [disabled]="!sipecTesteHabilitado || testandoSipec"
+                            [running]="testandoSipec"
+                            [onClick]="testarConexaoSipec.bind(this)">
+                        </action-button>
+                        
+                        @if(!sipecTesteHabilitado){
+                        <i #sipecHintIcon class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" data-bs-placement="top" [title]="sipecTesteHint" style="cursor:help; font-size:1.1rem"></i>
+                        }
+                    </div>
+                </div>
             </div>
             }
             @if (form?.controls?.tipo_integracao?.value == 'WSO2') {

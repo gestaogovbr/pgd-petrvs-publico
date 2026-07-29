@@ -236,6 +236,90 @@ describe('SipecService - executarFase0', function () {
     });
 });
 
+describe('SipecService - requestToken', function () {
+
+    test('retorna access_token da resposta do ConectaGov sem gravar cache', function () {
+        $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
+
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
+        $service->shouldReceive('requestToken')
+            ->once()
+            ->andReturn('jwt.token.fake');
+
+        Cache::shouldReceive('put')->never();
+
+        $token = $service->requestToken();
+
+        expect($token)->toBe('jwt.token.fake');
+    });
+
+    test('lança RequestConectaGovException quando resposta não contém access_token', function () {
+        $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
+
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
+        $service->shouldReceive('requestToken')
+            ->once()
+            ->andThrow(new RequestConectaGovException('SIPEC: Falha ao gerar token. Response: {"error":"invalid_client"}'));
+
+        expect(fn () => $service->requestToken())
+            ->toThrow(RequestConectaGovException::class, 'Falha ao gerar token');
+    });
+
+    test('lança RequestConectaGovException em erro de rede cURL', function () {
+        $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
+
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
+        $service->shouldReceive('requestToken')
+            ->once()
+            ->andThrow(new RequestConectaGovException('SIPEC cURL error: Could not resolve host'));
+
+        expect(fn () => $service->requestToken())
+            ->toThrow(RequestConectaGovException::class, 'cURL error');
+    });
+
+    test('getToken usa requestToken quando cache está expirado', function () {
+        $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
+
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
+        $service->shouldReceive('requestToken')
+            ->once()
+            ->andReturn('jwt.novo.token');
+
+        Cache::shouldReceive('get')->once()->andReturn(null);
+        Cache::shouldReceive('put')->once();
+
+        $token = $service->getToken();
+
+        expect($token)->toBe('jwt.novo.token');
+    });
+
+    test('getToken retorna do cache Redis sem chamar requestToken', function () {
+        $checkpointRepo = Mockery::mock(SipecSyncCheckpointRepository::class);
+        $unidadesService = Mockery::mock(SipecUnidadeSincronizacaoService::class);
+        $servidoresService = Mockery::mock(SipecServidorSincronizacaoService::class);
+
+        $service = buildSipecServiceMock($unidadesService, $servidoresService, $checkpointRepo);
+        $service->shouldNotReceive('requestToken');
+
+        Cache::shouldReceive('get')->once()->andReturn([
+            'token' => 'jwt.cached.token',
+            'expires_at' => now()->addHour()->timestamp,
+        ]);
+
+        $token = $service->getToken();
+
+        expect($token)->toBe('jwt.cached.token');
+    });
+});
+
 describe('SipecService - resetarCheckpoint', function () {
 
     test('deleta checkpoint pelo tenant_id via repository', function () {
