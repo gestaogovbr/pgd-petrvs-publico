@@ -45,6 +45,7 @@ const routes: Routes = [
   { path: 'gestao/planejamento', loadChildren: () => import('./modules/gestao/planejamento-institucional/planejamento.module').then(m => m.PlanejamentoModule), canActivate: [AuthGuard] },
   { path: 'gestao/plano-trabalho', loadChildren: () => import('./modules/gestao/plano-trabalho/plano-trabalho.module').then(m => m.PlanoTrabalhoModule), canActivate: [AuthGuard] },
   { path: 'gestao/plano-trabalho-v2', loadChildren: () => import('./modules/gestao/plano-trabalho-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
+  { path: 'home-v2', loadChildren: () => import('./modules/gestao/home-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
   { path: 'gestao/ocorrencia-v2', loadChildren: () => import('./modules/gestao/ocorrencia-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
   { path: 'gestao/paineis-gerenciais', loadChildren: () => import('./modules/gestao/paineis-gerenciais/routes').then(m => m.routes), canActivate: [AuthGuard], data: { permission: 'MOD_PAINEL_GER' } },
   { path: 'gestao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
