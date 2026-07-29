@@ -157,7 +157,9 @@ class PlanoTrabalhoDocumentoService
 
         $dto = TCRAssinaturaDTO::fromDocumento($documento, $usuarioId);
 
-        return DB::transaction(function () use ($plano, $documento, $dto) {
+        return DB::transaction(function () use ($plano, $documento, $dto, $usuarioId) {
+            $this->assinarValidator->validarSlotGestorDisponivel($plano, $usuarioId, $documento);
+
             $assinatura = $this->assinaturaRepository->createFromTCR($dto);
 
             $status = $this->assinaturaPolicy->todasRealizadas($plano, $documento->id)

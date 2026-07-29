@@ -138,7 +138,6 @@ export class AssinarPlanoUseCase {
         this.onAfterAssinar?.();
         this.message.success('Assinatura realizada com sucesso.');
       },
-      error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao assinar o documento.')
     });
   }
 
@@ -167,7 +166,6 @@ export class AssinarPlanoUseCase {
         this.message.success('Assinatura cancelada com sucesso.');
         this.onAfterCancelar?.();
       },
-      error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao cancelar a assinatura.')
     });
   }
 
@@ -205,7 +203,6 @@ export class AssinarPlanoUseCase {
         this.plano.update(p => p ? { ...p, documento_id: doc.id } as any : p);
         this.onDocumentoCriado?.();
       },
-      error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao gerar o documento TCR.')
     });
   }
 }
