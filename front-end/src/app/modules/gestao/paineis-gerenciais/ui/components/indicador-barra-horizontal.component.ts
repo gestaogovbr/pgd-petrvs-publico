@@ -2,9 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  Output,
+  EventEmitter,
   inject,
   signal,
   computed,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
@@ -36,6 +40,9 @@ Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip, C
 })
 export class IndicadorBarraHorizontalComponent {
   private readonly go = inject(NavigateService);
+  private readonly elRef = inject(ElementRef);
+
+  @ViewChild(BaseChartDirective) chartDirective?: BaseChartDirective;
 
   @Input({ required: true }) set dados(value: Indicador | null) {
     this._dados.set(value);
@@ -48,8 +55,14 @@ export class IndicadorBarraHorizontalComponent {
   @Input() cores: string[] = CHART_COLORS;
   @Input() saibaMaisRoute: string[] = [];
   @Input() saibaMaisQueryParams: Record<string, string> = {};
+  @Input() siglaPai = '';
+  @Input() set drillAtivo(value: boolean) { this._drillAtivo.set(value); }
+
+  @Output() unidadeClick = new EventEmitter<{ unidade_id: string; unidade_sigla: string }>();
+  @Output() voltarClick = new EventEmitter<void>();
 
   readonly _dados = signal<Indicador | null>(null);
+  readonly _drillAtivo = signal(false);
 
   readonly semDados = computed(() => {
     const dados = this._dados();
@@ -85,6 +98,8 @@ export class IndicadorBarraHorizontalComponent {
         y: {
           grid: { display: false },
           ticks: {
+            color: '#1351b4',
+            font: { weight: 'bold' },
             callback: (_: string | number, index: number) => {
               if (!dados) return '';
               const dist = dados.distribuicoes[index];
@@ -130,11 +145,52 @@ export class IndicadorBarraHorizontalComponent {
     return Math.max(150, linhas * 40 + 40);
   });
 
+  onChartAreaClick(e: MouseEvent): void {
+    const index = this.getLabelIndex(e);
+    if (index <= 0) return;
+
+    const dados = this._dados();
+    if (!dados || index >= dados.distribuicoes.length) return;
+
+    const dist = dados.distribuicoes[index];
+    this.unidadeClick.emit({ unidade_id: dist.unidade_id, unidade_sigla: dist.unidade_sigla });
+  }
+
   navegarSaibaMais(): void {
     if (this.saibaMaisRoute.length === 0) return;
     this.go.navigate(
       { route: this.saibaMaisRoute, params: { filter: this.saibaMaisQueryParams } },
       { root: true }
     );
+  }
+
+  onVoltar(): void {
+    this.voltarClick.emit();
+  }
+
+  private getLabelIndex(e: MouseEvent): number {
+    const chart = this.chartDirective?.chart;
+    if (!chart) return -1;
+
+    const dados = this._dados();
+    if (!dados || dados.distribuicoes.length === 0) return -1;
+
+    const canvas = chart.canvas;
+    const rect = canvas.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+
+    const yScale = chart.scales['y'];
+    if (!yScale) return -1;
+
+    // Aceita cliques em qualquer lugar na altura do gráfico
+    if (y < yScale.top || y > yScale.bottom) return -1;
+
+    const value = yScale.getValueForPixel(y);
+    if (value == null || value < 0) return -1;
+
+    const index = Math.round(value);
+    if (index >= dados.distribuicoes.length) return -1;
+
+    return index;
   }
 }

@@ -1,4 +1,22 @@
 .indicador-barra {
+  &__voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-scale-half);
+    background: none;
+    border: none;
+    color: var(--interactive);
+    font-size: var(--font-size-scale-down-01);
+    font-weight: var(--font-weight-semi-bold);
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: var(--spacing-scale-base);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
   &__chart-wrapper {
     display: flex;
     align-items: stretch;

@@ -57,6 +57,8 @@ export class ModalidadesPage implements OnInit {
   readonly carregandoDiscricionario = signal(false);
   readonly carregandoModalidades = signal(false);
 
+  readonly drillUnidadeModalidades = signal<string | null>(null);
+
   readonly carregandoAlgum = computed(() =>
     this.carregandoSubstituicao() || this.carregandoDiscricionario() || this.carregandoModalidades()
   );
@@ -152,6 +154,8 @@ export class ModalidadesPage implements OnInit {
     this.teletrabalhoDiscricionario.set(null);
     this.modalidadesPorUnidade.set(null);
 
+    this.drillUnidadeModalidades.set(null);
+
     this.carregandoSubstituicao.set(true);
     this.carregandoDiscricionario.set(true);
     this.carregandoModalidades.set(true);
@@ -168,6 +172,35 @@ export class ModalidadesPage implements OnInit {
 
     this.api.getModalidadesPorUnidade(filtros).subscribe({
       next: dados => { this.modalidadesPorUnidade.set(dados); this.carregandoModalidades.set(false); },
+      error: () => this.carregandoModalidades.set(false),
+    });
+  }
+
+  onDrillDown(unidade: { unidade_id: string; unidade_sigla: string }): void {
+    const filtros = this.filtrosAtuais();
+    if (!filtros) return;
+
+    this.drillUnidadeModalidades.set(unidade.unidade_sigla);
+    this.carregandoModalidades.set(true);
+    this.modalidadesPorUnidade.set(null);
+
+    const drillFiltros: FiltrosPainel = { ...filtros, unidade_id: unidade.unidade_id };
+    this.api.getModalidadesPorUnidade(drillFiltros).subscribe({
+      next: d => { this.modalidadesPorUnidade.set(d); this.carregandoModalidades.set(false); },
+      error: () => this.carregandoModalidades.set(false),
+    });
+  }
+
+  onVoltarDrill(): void {
+    const filtros = this.filtrosAtuais();
+    if (!filtros) return;
+
+    this.drillUnidadeModalidades.set(null);
+    this.carregandoModalidades.set(true);
+    this.modalidadesPorUnidade.set(null);
+
+    this.api.getModalidadesPorUnidade(filtros).subscribe({
+      next: d => { this.modalidadesPorUnidade.set(d); this.carregandoModalidades.set(false); },
       error: () => this.carregandoModalidades.set(false),
     });
   }

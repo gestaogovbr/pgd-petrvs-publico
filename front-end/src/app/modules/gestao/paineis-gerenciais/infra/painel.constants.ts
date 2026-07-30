@@ -1,1 +1,1 @@
-export const ORIGEM_DADOS = 'Sistema PGD Petrvs';
+export const ORIGEM_DADOS = 'Fonte: Sistema PGD Petrvs';

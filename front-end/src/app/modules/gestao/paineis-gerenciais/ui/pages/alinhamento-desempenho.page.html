@@ -15,26 +15,44 @@
     </br-button>
   </div>
 
-  <div>
-    <indicador-barra-horizontal
-      [dados]="alinhamentoInstitucional()"
-      [carregando]="carregandoAlinhamento()"
-      [titulo]="textos.alinhamento.titulo"
-      [informacaoAdicional]="textos.alinhamento.info"
-      [origemDados]="origemDados" />
+  <div class="row g-3">
+    <div class="col-md-6">
+      <indicador-barra-horizontal
+        [dados]="alinhamentoInstitucional()"
+        [carregando]="carregandoAlinhamento()"
+        [titulo]="textos.alinhamento.titulo"
+        [informacaoAdicional]="textos.alinhamento.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillAlinhamento()"
+        (unidadeClick)="onDrillDown(1, $event)"
+        (voltarClick)="onVoltarDrill(1)" />
+    </div>
 
-    <indicador-barra-horizontal
-      [dados]="avaliacoesPlanoEntrega()"
-      [carregando]="carregandoAvaliacoesPE()"
-      [titulo]="textos.avaliacoesPE.titulo"
-      [informacaoAdicional]="textos.avaliacoesPE.info"
-      [origemDados]="origemDados" />
+    <div class="col-md-6">
+      <indicador-barra-horizontal
+        [dados]="avaliacoesPlanoEntrega()"
+        [carregando]="carregandoAvaliacoesPE()"
+        [titulo]="textos.avaliacoesPE.titulo"
+        [informacaoAdicional]="textos.avaliacoesPE.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillAvaliacoesPE()"
+        (unidadeClick)="onDrillDown(2, $event)"
+        (voltarClick)="onVoltarDrill(2)" />
+    </div>
 
-    <indicador-barra-horizontal
-      [dados]="avaliacoesPlanoTrabalho()"
-      [carregando]="carregandoAvaliacoesPT()"
-      [titulo]="textos.avaliacoesPT.titulo"
-      [informacaoAdicional]="textos.avaliacoesPT.info"
-      [origemDados]="origemDados" />
+    <div class="col-md-6 offset-md-3">
+      <indicador-barra-horizontal
+        [dados]="avaliacoesPlanoTrabalho()"
+        [carregando]="carregandoAvaliacoesPT()"
+        [titulo]="textos.avaliacoesPT.titulo"
+        [informacaoAdicional]="textos.avaliacoesPT.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillAvaliacoesPT()"
+        (unidadeClick)="onDrillDown(3, $event)"
+        (voltarClick)="onVoltarDrill(3)" />
+    </div>
   </div>
 </div>

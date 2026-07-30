@@ -14,55 +14,71 @@
     </br-button>
   </div>
 
-  <div>
-    <!-- Gráfico 1: Unidades Executoras por unidade organizacional -->
-    <indicador-barra-horizontal
-      [dados]="unidadesExecutoras()"
-      [carregando]="carregandoUnidadesExec()"
-      [titulo]="textos.unidadesExecutoras.titulo"
-      [informacaoAdicional]="textos.unidadesExecutoras.info"
-      [origemDados]="origemDados" />
+  <div class="row g-3">
+    <div class="col-md-6">
+      <!-- Gráfico 1: Unidades Executoras por unidade organizacional -->
+      <indicador-barra-horizontal
+        [dados]="unidadesExecutoras()"
+        [carregando]="carregandoUnidadesExec()"
+        [titulo]="textos.unidadesExecutoras.titulo"
+        [informacaoAdicional]="textos.unidadesExecutoras.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillUnidadesExecutoras()"
+        (unidadeClick)="onDrillDown(1, $event)"
+        (voltarClick)="onVoltarDrill(1)" />
+    </div>
 
-    <!-- Gráfico 2: Evolução da adesão das Unidades ao PGD -->
-    <indicador-card
-      [titulo]="textos.evolucaoUnidades.titulo"
-      [informacaoAdicional]="textos.evolucaoUnidades.info"
-      [origemDados]="origemDados"
-      [carregando]="carregandoEvolucaoUni()"
-      [semDados]="!carregandoEvolucaoUni() && !evolucaoUnidades()">
-      @if (evolucaoUnidades()) {
-        <evolucao-adesao-chart
-          [serie]="evolucaoUnidades()!.serie"
-          labelPositivo="Executoras"
-          labelNegativo="Não Executoras"
-          campoPositivo="executoras"
-          campoNegativo="nao_executoras" />
-      }
-    </indicador-card>
+    <div class="col-md-6">
+      <!-- Gráfico 2: Evolução da adesão das Unidades ao PGD -->
+      <indicador-card
+        [titulo]="textos.evolucaoUnidades.titulo"
+        [informacaoAdicional]="textos.evolucaoUnidades.info"
+        [origemDados]="origemDados"
+        [carregando]="carregandoEvolucaoUni()"
+        [semDados]="!carregandoEvolucaoUni() && !evolucaoUnidades()">
+        @if (evolucaoUnidades()) {
+          <evolucao-adesao-chart
+            [serie]="evolucaoUnidades()!.serie"
+            labelPositivo="Executoras"
+            labelNegativo="Não Executoras"
+            campoPositivo="executoras"
+            campoNegativo="nao_executoras" />
+        }
+      </indicador-card>
+    </div>
 
-    <!-- Gráfico 3: Participantes do PGD por unidade organizacional -->
-    <indicador-barra-horizontal
-      [dados]="participantesPGD()"
-      [carregando]="carregandoParticipantes()"
-      [titulo]="textos.participantesPGD.titulo"
-      [informacaoAdicional]="textos.participantesPGD.info"
-      [origemDados]="origemDados" />
+    <div class="col-md-6">
+      <!-- Gráfico 3: Participantes do PGD por unidade organizacional -->
+      <indicador-barra-horizontal
+        [dados]="participantesPGD()"
+        [carregando]="carregandoParticipantes()"
+        [titulo]="textos.participantesPGD.titulo"
+        [informacaoAdicional]="textos.participantesPGD.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillParticipantes()"
+        (unidadeClick)="onDrillDown(3, $event)"
+        (voltarClick)="onVoltarDrill(3)" />
+    </div>
 
-    <!-- Gráfico 4: Evolução da adesão dos agentes públicos ao PGD -->
-    <indicador-card
-      [titulo]="textos.evolucaoParticipantes.titulo"
-      [informacaoAdicional]="textos.evolucaoParticipantes.info"
-      [origemDados]="origemDados"
-      [carregando]="carregandoEvolucaoPart()"
-      [semDados]="!carregandoEvolucaoPart() && !evolucaoParticipantes()">
-      @if (evolucaoParticipantes()) {
-        <evolucao-adesao-chart
-          [serie]="evolucaoParticipantes()!.serie"
-          labelPositivo="Participantes"
-          labelNegativo="Não Participantes"
-          campoPositivo="participantes"
-          campoNegativo="nao_participantes" />
-      }
-    </indicador-card>
+    <div class="col-md-6">
+      <!-- Gráfico 4: Evolução da adesão dos agentes públicos ao PGD -->
+      <indicador-card
+        [titulo]="textos.evolucaoParticipantes.titulo"
+        [informacaoAdicional]="textos.evolucaoParticipantes.info"
+        [origemDados]="origemDados"
+        [carregando]="carregandoEvolucaoPart()"
+        [semDados]="!carregandoEvolucaoPart() && !evolucaoParticipantes()">
+        @if (evolucaoParticipantes()) {
+          <evolucao-adesao-chart
+            [serie]="evolucaoParticipantes()!.serie"
+            labelPositivo="Participantes"
+            labelNegativo="Não Participantes"
+            campoPositivo="participantes"
+            campoNegativo="nao_participantes" />
+        }
+      </indicador-card>
+    </div>
   </div>
 </div>

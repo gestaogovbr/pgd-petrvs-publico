@@ -61,14 +61,20 @@ export class ConformidadePage implements OnInit {
   readonly avaliacaoPT = signal<Indicador | null>(null);
   readonly unidadesExecutorasPE = signal<Indicador | null>(null);
 
-  readonly carregando1 = signal(false);
-  readonly carregando2 = signal(false);
-  readonly carregando3 = signal(false);
-  readonly carregando4 = signal(false);
-  readonly carregando5 = signal(false);
+  readonly carregandoRegistroExecucaoPE = signal(false);
+  readonly carregandoAvaliacaoPE = signal(false);
+  readonly carregandoRegistroExecucaoPT = signal(false);
+  readonly carregandoAvaliacaoPT = signal(false);
+  readonly carregandoUnidadesExecutorasPE = signal(false);
+
+  readonly drillRegistroExecucaoPE = signal<string | null>(null);
+  readonly drillAvaliacaoPE = signal<string | null>(null);
+  readonly drillRegistroExecucaoPT = signal<string | null>(null);
+  readonly drillAvaliacaoPT = signal<string | null>(null);
+  readonly drillUnidadesExecutorasPE = signal<string | null>(null);
 
   readonly carregandoAlgum = computed(() =>
-    this.carregando1() || this.carregando2() || this.carregando3() || this.carregando4() || this.carregando5()
+    this.carregandoRegistroExecucaoPE() || this.carregandoAvaliacaoPE() || this.carregandoRegistroExecucaoPT() || this.carregandoAvaliacaoPT() || this.carregandoUnidadesExecutorasPE()
   );
 
   private readonly filtrosAtuais = signal<FiltrosPainel | null>(null);
@@ -167,35 +173,83 @@ export class ConformidadePage implements OnInit {
     this.avaliacaoPT.set(null);
     this.unidadesExecutorasPE.set(null);
 
-    this.carregando1.set(true);
-    this.carregando2.set(true);
-    this.carregando3.set(true);
-    this.carregando4.set(true);
-    this.carregando5.set(true);
+    this.drillRegistroExecucaoPE.set(null);
+    this.drillAvaliacaoPE.set(null);
+    this.drillRegistroExecucaoPT.set(null);
+    this.drillAvaliacaoPT.set(null);
+    this.drillUnidadesExecutorasPE.set(null);
+
+    this.carregandoRegistroExecucaoPE.set(true);
+    this.carregandoAvaliacaoPE.set(true);
+    this.carregandoRegistroExecucaoPT.set(true);
+    this.carregandoAvaliacaoPT.set(true);
+    this.carregandoUnidadesExecutorasPE.set(true);
 
     this.api.getConformidadeRegistroExecucaoPE(filtros).subscribe({
-      next: d => { this.registroExecucaoPE.set(d); this.carregando1.set(false); },
-      error: () => this.carregando1.set(false),
+      next: d => { this.registroExecucaoPE.set(d); this.carregandoRegistroExecucaoPE.set(false); },
+      error: () => this.carregandoRegistroExecucaoPE.set(false),
     });
 
     this.api.getConformidadeAvaliacaoPE(filtros).subscribe({
-      next: d => { this.avaliacaoPE.set(d); this.carregando2.set(false); },
-      error: () => this.carregando2.set(false),
+      next: d => { this.avaliacaoPE.set(d); this.carregandoAvaliacaoPE.set(false); },
+      error: () => this.carregandoAvaliacaoPE.set(false),
     });
 
     this.api.getConformidadeRegistroExecucaoPT(filtros).subscribe({
-      next: d => { this.registroExecucaoPT.set(d); this.carregando3.set(false); },
-      error: () => this.carregando3.set(false),
+      next: d => { this.registroExecucaoPT.set(d); this.carregandoRegistroExecucaoPT.set(false); },
+      error: () => this.carregandoRegistroExecucaoPT.set(false),
     });
 
     this.api.getConformidadeAvaliacaoPT(filtros).subscribe({
-      next: d => { this.avaliacaoPT.set(d); this.carregando4.set(false); },
-      error: () => this.carregando4.set(false),
+      next: d => { this.avaliacaoPT.set(d); this.carregandoAvaliacaoPT.set(false); },
+      error: () => this.carregandoAvaliacaoPT.set(false),
     });
 
     this.api.getConformidadeUnidadesExecutorasPE(filtros).subscribe({
-      next: d => { this.unidadesExecutorasPE.set(d); this.carregando5.set(false); },
-      error: () => this.carregando5.set(false),
+      next: d => { this.unidadesExecutorasPE.set(d); this.carregandoUnidadesExecutorasPE.set(false); },
+      error: () => this.carregandoUnidadesExecutorasPE.set(false),
+    });
+  }
+
+  onDrillDown(grafico: number, unidade: { unidade_id: string; unidade_sigla: string }): void {
+    const filtros = this.filtrosAtuais();
+    if (!filtros) return;
+
+    const drillFiltros: FiltrosPainel = { ...filtros, unidade_id: unidade.unidade_id };
+    this.drillSignals[grafico - 1].set(unidade.unidade_sigla);
+    this.carregarGraficoIndividual(grafico, drillFiltros);
+  }
+
+  onVoltarDrill(grafico: number): void {
+    const filtros = this.filtrosAtuais();
+    if (!filtros) return;
+
+    this.drillSignals[grafico - 1].set(null);
+    this.carregarGraficoIndividual(grafico, filtros);
+  }
+
+  private get drillSignals() {
+    return [this.drillRegistroExecucaoPE, this.drillAvaliacaoPE, this.drillRegistroExecucaoPT, this.drillAvaliacaoPT, this.drillUnidadesExecutorasPE];
+  }
+
+  private carregarGraficoIndividual(grafico: number, filtros: FiltrosPainel): void {
+    const carregandoSignals = [this.carregandoRegistroExecucaoPE, this.carregandoAvaliacaoPE, this.carregandoRegistroExecucaoPT, this.carregandoAvaliacaoPT, this.carregandoUnidadesExecutorasPE];
+    const dadosSignals = [this.registroExecucaoPE, this.avaliacaoPE, this.registroExecucaoPT, this.avaliacaoPT, this.unidadesExecutorasPE];
+    const apiFns = [
+      (f: FiltrosPainel) => this.api.getConformidadeRegistroExecucaoPE(f),
+      (f: FiltrosPainel) => this.api.getConformidadeAvaliacaoPE(f),
+      (f: FiltrosPainel) => this.api.getConformidadeRegistroExecucaoPT(f),
+      (f: FiltrosPainel) => this.api.getConformidadeAvaliacaoPT(f),
+      (f: FiltrosPainel) => this.api.getConformidadeUnidadesExecutorasPE(f),
+    ];
+
+    const idx = grafico - 1;
+    carregandoSignals[idx].set(true);
+    dadosSignals[idx].set(null);
+
+    apiFns[idx](filtros).subscribe({
+      next: d => { dadosSignals[idx].set(d); carregandoSignals[idx].set(false); },
+      error: () => carregandoSignals[idx].set(false),
     });
   }
 }
