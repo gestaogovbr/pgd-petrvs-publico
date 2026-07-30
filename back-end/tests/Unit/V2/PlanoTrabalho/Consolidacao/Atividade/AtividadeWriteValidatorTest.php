@@ -137,7 +137,7 @@ describe('AtividadeWriteValidator::validar', function () {
         $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn($consolidacao);
 
         $dto = AtividadeStoreDTO::fromArray(
-            ['plano_trabalho_entrega_id' => 'entrega-inexistente', 'descricao' => 'Desc'],
+            ['plano_trabalho_entrega_id' => 'entrega-inexistente', 'descricao' => 'Desc', 'esforco_executado' => 0],
             'plano-1', 'c-1', 'u-1',
         );
 
