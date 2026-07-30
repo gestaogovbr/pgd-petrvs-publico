@@ -128,7 +128,7 @@ class SiapeIndividualServidorService extends ServiceBase
             $this->salvarDadosConsulta($cpfLimpo, $respFuncionais, $respPessoais);
 
             $this->atualizarVinculosUsuarios($cpfLimpo, $dadosFuncionais);
-            $this->executarSincronizacaoFinal($cpfLimpo);
+            $this->executarSincronizacaoFinal($cpfLimpo, $dadosFuncionais);
 
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_SUCESSO);
 
@@ -191,7 +191,13 @@ class SiapeIndividualServidorService extends ServiceBase
     {
         try {
             return $this->service->getProcessaDadosSiape()->processaDadosPessoais($cpf, $respPessoais);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            SiapeLog::warning('Nao foi possivel montar dados pessoais para relatorio', [
+                'cpf' => $cpf,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return [];
         }
     }
@@ -662,21 +668,23 @@ class SiapeIndividualServidorService extends ServiceBase
         return $this->entidadeRepository->findAll();
     }
 
-    private function executarSincronizacaoFinal(string $cpf): void
+    private function executarSincronizacaoFinal(string $cpf, array $dadosFuncionais): void
     {
         SiapeLog::info('Iniciando sincronização final', ['cpf' => $cpf]);
 
         try {
             $integracaoService = $this->instanciarIntegracaoService();
             $entidades = $this->buscarTodasEntidades();
+            $escopoServidor = $this->montarEscopoCargaIndividualServidor($cpf, $dadosFuncionais);
 
             SiapeLog::info('Processando entidades para sincronização', [
                 'cpf' => $cpf,
+                'matriculas' => $escopoServidor['matriculas'],
                 'total_entidades' => $entidades->count()
             ]);
 
             foreach ($entidades as $entidade) {
-                $this->sincronizarEntidadeUnica($integracaoService, $entidade, $cpf);
+                $this->sincronizarEntidadeUnica($integracaoService, $entidade, $cpf, $escopoServidor);
             }
 
             SiapeLog::info('Processo de sincronização concluído com sucesso', ['cpf' => $cpf]);
@@ -686,10 +694,11 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    private function sincronizarEntidadeUnica(IntegracaoService $service, Entidade $entidade, string $cpf): void
+    private function sincronizarEntidadeUnica(IntegracaoService $service, Entidade $entidade, string $cpf, array $escopoServidor): void
     {
         SiapeLog::info('Sincronizando entidade', [
             'cpf' => $cpf,
+            'matriculas' => $escopoServidor['matriculas'],
             'entidade_id' => $entidade->id,
             'entidade_nome' => $entidade->nome ?? 'sem nome'
         ]);
@@ -698,8 +707,40 @@ class SiapeIndividualServidorService extends ServiceBase
             'unidades' => true,
             'servidores' => true,
             'gestores' => true,
-            'entidade' => $entidade->id
+            'entidade' => $entidade->id,
+            'escopo_carga_individual_servidor' => $escopoServidor,
         ]);
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $dadosFuncionais
+     * @return array{origem: string, cpf: string, matriculas: array<int, string>}
+     */
+    private function montarEscopoCargaIndividualServidor(string $cpf, array $dadosFuncionais): array
+    {
+        $matriculas = collect($dadosFuncionais)
+            ->map(fn(array $dados): ?string => $this->normalizarMatriculaEscopo($dados['matriculaSiape'] ?? null))
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        return [
+            'origem' => 'carga_individual_servidor',
+            'cpf' => $cpf,
+            'matriculas' => $matriculas,
+        ];
+    }
+
+    private function normalizarMatriculaEscopo(mixed $matricula): ?string
+    {
+        if (!is_scalar($matricula)) {
+            return null;
+        }
+
+        $matricula = trim((string) $matricula);
+
+        return $matricula !== '' ? $matricula : null;
     }
 
     protected function gerarUsuariosResumo(string $cpf) {

@@ -13,6 +13,7 @@ use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection as SupportCollection;
 
 /**
  * @implements EnvioRepositoryInterface<PlanoTrabalho>
@@ -37,6 +38,16 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
     public function getPlanosTrabalhoAssinatura(array $unidadesGerenciadasIds, array $unidadesSubordinadasIds, string $usuarioId): Collection
     {
         return $this->readRepository->getPlanosTrabalhoAssinatura($unidadesGerenciadasIds, $unidadesSubordinadasIds, $usuarioId);
+    }
+
+    public function countPlanosTrabalhoAssinatura(array $unidadesEscopo, string $usuarioId): int
+    {
+        return $this->readRepository->countPlanosTrabalhoAssinatura($unidadesEscopo, $usuarioId);
+    }
+
+    public function countAguardandoMinhaAvaliacao(array $unidadesEscopo, string $usuarioId): int
+    {
+        return $this->readRepository->countAguardandoMinhaAvaliacao($unidadesEscopo, $usuarioId);
     }
 
     public function findWithAtividades(string|int $id): ?PlanoTrabalho
@@ -161,5 +172,15 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
             'usuario',
             'entregas.entrega',
         ]);
+    }
+
+    /**
+     * @param array<string> $unidadeIds
+     * @param array{data_inicial: string|null, data_final: string|null, somente_vigentes: bool} $filtros
+     * @return SupportCollection
+     */
+    public function buscarPlanosParaIndicadores(array $unidadeIds, array $filtros): SupportCollection
+    {
+        return $this->readRepository->buscarPlanosParaIndicadores($unidadeIds, $filtros);
     }
 }

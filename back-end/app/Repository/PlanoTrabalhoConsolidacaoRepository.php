@@ -77,6 +77,11 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->findConsolidacoesVigentes($planoTrabalhoId, $encerradoAt);
     }
 
+    public function countConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds): int
+    {
+        return $this->readRepository->countConsolidacoesAtrasadas($usuarioId, $unidadesIds);
+    }
+
     public function create(array $attributes): PlanoTrabalhoConsolidacao
     {
         /** @var PlanoTrabalhoConsolidacao */

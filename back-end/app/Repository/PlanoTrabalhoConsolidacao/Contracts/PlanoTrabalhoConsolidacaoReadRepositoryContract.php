@@ -34,4 +34,6 @@ interface PlanoTrabalhoConsolidacaoReadRepositoryContract
     public function findConsolidacoesParaImpactoDispensa(string $usuarioId, string $dataInicio, string $dataFim): \Illuminate\Support\Collection;
 
     public function findConsolidacoesVigentes(string $planoTrabalhoId, ?string $encerradoAt): \Illuminate\Database\Eloquent\Collection;
+
+    public function countConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds): int;
 }

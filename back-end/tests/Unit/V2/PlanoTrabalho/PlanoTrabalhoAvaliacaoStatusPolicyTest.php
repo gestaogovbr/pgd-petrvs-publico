@@ -27,9 +27,9 @@ function criarConsolidacaoParaSync(string $planoId = 'plano-1'): PlanoTrabalhoCo
 
 function mockPlanoTrabalhoRelation(PlanoTrabalhoConsolidacao $consolidacao, PlanoTrabalho $plano): void
 {
-    $belongsTo = Mockery::mock(BelongsTo::class);
-    $belongsTo->shouldReceive('first')->andReturn($plano);
-    $consolidacao->shouldReceive('planoTrabalho')->andReturn($belongsTo);
+    $planoTrabalhoRelation = Mockery::mock(BelongsTo::class);
+    $planoTrabalhoRelation->shouldReceive('first')->andReturn($plano);
+    $consolidacao->shouldReceive('planoTrabalho')->andReturn($planoTrabalhoRelation);
 }
 
 describe('PlanoTrabalhoAvaliacaoStatusPolicy::sincronizarAposMudancaConsolidacao', function () {

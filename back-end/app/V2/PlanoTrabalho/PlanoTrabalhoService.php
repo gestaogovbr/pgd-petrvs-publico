@@ -31,6 +31,7 @@ use App\V2\Traits\ValidaAutorizacaoTrait;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator as ConcreteLengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -71,6 +72,7 @@ class PlanoTrabalhoService
             $filtro = $filtro->withUnidadesId(array_merge($idsBase, $subordinadasIds));
         }
 
+        /** @var ConcreteLengthAwarePaginator $paginator */
         $paginator = $this->readRepository->buscarPlanosListagem($filtro);
         $usuario = $this->usuarioLogadoComPerfilEAreas();
 
@@ -89,6 +91,8 @@ class PlanoTrabalhoService
         $dto = PlanoTrabalhoStoreDTO::fromArray($data, Auth::id());
         $this->storeValidator->validarAutorizacao($dto);
         $this->storeValidator->validar($dto);
+
+        $dto = $dto->withCargaHoraria($this->calcularCargaHoraria($dto->usuarioId));
 
         if (!$dto->isClone()) {
             return $this->writeRepository->create($dto->toArray());
@@ -307,5 +311,16 @@ class PlanoTrabalhoService
         }
 
         return $participante->cpf === Auth::user()->cpf;
+    }
+
+    private function calcularCargaHoraria(string $usuarioId): float
+    {
+        $usuario = $this->usuarioRepository->findById($usuarioId);
+
+        if ($usuario === null || $usuario->cod_jornada === null || $usuario->cod_jornada === 99) {
+            return PlanoTrabalhoStoreDTO::HORAS_DIARIAS_JORNADA_INTEGRAL_PADRAO;
+        }
+
+        return round($usuario->cod_jornada / 5, 2);
     }
 }

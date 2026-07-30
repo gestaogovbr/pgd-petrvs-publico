@@ -65,16 +65,17 @@ describe('AvaliacaoService::destroy', function () {
 
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
         $consolidacao->id = 'cons-1';
-        $consolidacao->shouldReceive('refresh')->andReturnSelf();
-        $consolidacao->shouldReceive('load')->andReturnSelf();
-        $consolidacao->shouldReceive('getAttribute')->with('avaliacoes')->andReturn($avaliacoesCollection);
-        $consolidacao->shouldReceive('getAttribute')->with('planoTrabalho')->andReturn(
-            Mockery::mock(PlanoTrabalho::class)->makePartial()
-        );
+        $consolidacao->setRelation('avaliacoes', $avaliacoesCollection);
+        $consolidacao->setRelation('planoTrabalho', Mockery::mock(PlanoTrabalho::class)->makePartial());
+        $consolidacao->shouldReceive('refresh')->once()->andReturnSelf();
+        $consolidacao->shouldReceive('load')
+            ->once()
+            ->with(['avaliacoes.avaliador', 'atividades', 'afastamentos.afastamento', 'statusHistorico'])
+            ->andReturnSelf();
 
         $avaliacao = Mockery::mock(\App\Models\Avaliacao::class)->makePartial();
         $avaliacao->id = 'av-1';
-        $avaliacao->shouldReceive('getAttribute')->with('planoTrabalhoConsolidacao')->andReturn($consolidacao);
+        $avaliacao->setRelation('planoTrabalhoConsolidacao', $consolidacao);
 
         $this->destroyValidator->shouldReceive('validar')->andReturn($avaliacao);
         $this->avaliacaoRepo->shouldReceive('delete')->with('av-1')->once()->andReturn(true);

@@ -70,13 +70,19 @@ class PlanoTrabalhoConsolidacaoService
         $plano = $this->authValidator->validar($planoTrabalhoId, Auth::id());
         $consolidacao = $this->concluirValidator->validar($plano, $consolidacaoId);
 
-        $this->statusService->atualizaStatus(
-            $consolidacao,
-            StatusEnum::CONCLUIDO->value,
-            'Período concluído pelo servidor: ' . Auth::user()->nome . '.',
-        );
+        return DB::transaction(function () use ($consolidacao) {
+            $this->consolidacaoRepository->update($consolidacao->id, [
+                'data_conclusao' => now(),
+            ]);
 
-        return $consolidacao;
+            $this->statusService->atualizaStatus(
+                $consolidacao,
+                StatusEnum::CONCLUIDO->value,
+                'Período concluído pelo servidor: ' . Auth::user()->nome . '.',
+            );
+
+            return $consolidacao->refresh();
+        });
     }
 
     public function reabrir(string $planoTrabalhoId, string $consolidacaoId, string $justificativa): PlanoTrabalhoConsolidacao
@@ -84,13 +90,19 @@ class PlanoTrabalhoConsolidacaoService
         $plano = $this->authValidator->validar($planoTrabalhoId, Auth::id());
         $consolidacao = $this->reabrirValidator->validar($plano, $consolidacaoId);
 
-        $this->statusService->atualizaStatus(
-            $consolidacao,
-            StatusEnum::INCLUIDO->value,
-            'Período reaberto pelo servidor ' . Auth::user()->nome . '. Justificativa: ' . $justificativa,
-        );
+        return DB::transaction(function () use ($consolidacao, $justificativa) {
+            $this->consolidacaoRepository->update($consolidacao->id, [
+                'data_conclusao' => null,
+            ]);
 
-        return $consolidacao;
+            $this->statusService->atualizaStatus(
+                $consolidacao,
+                StatusEnum::INCLUIDO->value,
+                'Período reaberto pelo servidor ' . Auth::user()->nome . '. Justificativa: ' . $justificativa,
+            );
+
+            return $consolidacao->refresh();
+        });
     }
 
     public function recurso(string $planoTrabalhoId, string $consolidacaoId, string $justificativa): PlanoTrabalhoConsolidacao
