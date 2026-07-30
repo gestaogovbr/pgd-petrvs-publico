@@ -111,4 +111,15 @@ class TenantConfigurationsService
 
         // Log::info("Configs carregadas: " . json_encode(config('integracao')));
     }
+
+    public static function tenantHasSipecConfigured(): bool
+    {
+        $sipec = config('integracao.sipec', []);
+        foreach (['url', 'conectagov_chave', 'conectagov_senha', 'cpf', 'codUorg', 'codOrgao'] as $field) {
+            if (!empty(trim($sipec[$field] ?? ''))) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
