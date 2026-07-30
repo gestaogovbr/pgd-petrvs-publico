@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } 
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
-import { PainelApiClient, Indicador, SerieAdesao } from '../../infra/painel-api.client';
+import { PainelApiClient, FiltrosPainel, Indicador, SerieAdesao } from '../../infra/painel-api.client';
 import { PainelPdfService } from '../../infra/painel-pdf.service';
 import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { CHART_COLORS } from 'src/app/services/chart';
@@ -57,6 +57,7 @@ export class GestaoPgdPage implements OnInit {
 
   private readonly unidadeAtualLabel = signal('');
   private readonly periodoAtualLabel = signal('');
+  private readonly filtrosAtuais = signal<FiltrosPainel | null>(null);
 
   readonly unidadesExecutoras = signal<Indicador | null>(null);
   readonly evolucaoUnidades = signal<SerieAdesao | null>(null);
@@ -67,6 +68,9 @@ export class GestaoPgdPage implements OnInit {
   readonly carregandoEvolucaoUni = signal(false);
   readonly carregandoParticipantes = signal(false);
   readonly carregandoEvolucaoPart = signal(false);
+
+  readonly drillUnidadesExecutoras = signal<string | null>(null);
+  readonly drillParticipantes = signal<string | null>(null);
 
   readonly semDadosUnidadesExec = computed(() =>
     !this.carregandoUnidadesExec() && (!this.unidadesExecutoras() || this.unidadesExecutoras()!.distribuicoes.every(d => d.total === 0))
@@ -153,6 +157,7 @@ export class GestaoPgdPage implements OnInit {
 
   private carregarDados(unidadeId: string, mes: number, ano: number): void {
     const filtros = this.api.buildFiltrosFromMesAno(unidadeId, mes, ano);
+    this.filtrosAtuais.set(filtros);
     const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
     this.periodoAtualLabel.set(`${meses[mes - 1]}/${ano}`);
     this.unidadeAtualLabel.set(`${this.unidadeInicialSigla()} - ${this.unidadeInicialNome()}`);
@@ -161,6 +166,9 @@ export class GestaoPgdPage implements OnInit {
     this.evolucaoUnidades.set(null);
     this.participantesPGD.set(null);
     this.evolucaoParticipantes.set(null);
+
+    this.drillUnidadesExecutoras.set(null);
+    this.drillParticipantes.set(null);
 
     this.carregandoUnidadesExec.set(true);
     this.carregandoEvolucaoUni.set(true);
@@ -186,5 +194,57 @@ export class GestaoPgdPage implements OnInit {
       next: dados => { this.evolucaoParticipantes.set(dados); this.carregandoEvolucaoPart.set(false); },
       error: () => this.carregandoEvolucaoPart.set(false),
     });
+  }
+
+  onDrillDown(grafico: number, unidade: { unidade_id: string; unidade_sigla: string }): void {
+    const filtros = this.filtrosAtuais();
+    if (!filtros) return;
+
+    const drillFiltros = { ...filtros, unidade_id: unidade.unidade_id };
+
+    if (grafico === 1) {
+      this.drillUnidadesExecutoras.set(unidade.unidade_sigla);
+      this.carregandoUnidadesExec.set(true);
+      this.unidadesExecutoras.set(null);
+      this.api.getUnidadesExecutoras(drillFiltros).subscribe({
+        next: d => { this.unidadesExecutoras.set(d); this.carregandoUnidadesExec.set(false); },
+        error: () => this.carregandoUnidadesExec.set(false),
+      });
+    }
+
+    if (grafico === 3) {
+      this.drillParticipantes.set(unidade.unidade_sigla);
+      this.carregandoParticipantes.set(true);
+      this.participantesPGD.set(null);
+      this.api.getParticipantesPGD(drillFiltros).subscribe({
+        next: d => { this.participantesPGD.set(d); this.carregandoParticipantes.set(false); },
+        error: () => this.carregandoParticipantes.set(false),
+      });
+    }
+  }
+
+  onVoltarDrill(grafico: number): void {
+    const filtros = this.filtrosAtuais();
+    if (!filtros) return;
+
+    if (grafico === 1) {
+      this.drillUnidadesExecutoras.set(null);
+      this.carregandoUnidadesExec.set(true);
+      this.unidadesExecutoras.set(null);
+      this.api.getUnidadesExecutoras(filtros).subscribe({
+        next: d => { this.unidadesExecutoras.set(d); this.carregandoUnidadesExec.set(false); },
+        error: () => this.carregandoUnidadesExec.set(false),
+      });
+    }
+
+    if (grafico === 3) {
+      this.drillParticipantes.set(null);
+      this.carregandoParticipantes.set(true);
+      this.participantesPGD.set(null);
+      this.api.getParticipantesPGD(filtros).subscribe({
+        next: d => { this.participantesPGD.set(d); this.carregandoParticipantes.set(false); },
+        error: () => this.carregandoParticipantes.set(false),
+      });
+    }
   }
 }

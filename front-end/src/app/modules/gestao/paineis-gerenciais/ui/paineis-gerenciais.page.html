@@ -3,11 +3,16 @@
 <div class="container-fluid px-4 py-3">
   <h2>Painéis Gerenciais</h2>
 
-  <div class="d-flex gap-3 flex-column flex-md-row">
+  <div class="row mt-4">
     @for (painel of paineis; track painel.rota) {
-      <br-button emphasis="secondary" shape="block" (click)="navegarPara(painel.rota)">
-        {{ painel.titulo }}
-      </br-button>
+      <div class="col-6 col-sm-4 col-md-3 mb-3">
+        <div class="card h-100 painel-card" (click)="navegarPara(painel.rota)" role="button" tabindex="0" (keydown.enter)="navegarPara(painel.rota)">
+          <div class="card-body text-center d-flex flex-column justify-content-start pt-4">
+            <i [class]="painel.icon" style="font-size: 3rem; color: #1369f0;" aria-hidden="true"></i>
+            <h3 class="fs-5 fw-semibold mt-3">{{ painel.titulo }}</h3>
+          </div>
+        </div>
+      </div>
     }
   </div>
 </div>

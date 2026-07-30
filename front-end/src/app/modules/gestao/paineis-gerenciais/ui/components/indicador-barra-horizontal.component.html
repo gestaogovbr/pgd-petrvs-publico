@@ -3,16 +3,24 @@
   [informacaoAdicional]="informacaoAdicional"
   [origemDados]="origemDados"
   [carregando]="carregando"
-  [semDados]="semDados()">
+  [semDados]="semDados() && !_drillAtivo()">
+
+  @if (_drillAtivo() && siglaPai) {
+    <button class="indicador-barra__voltar" (click)="onVoltar()">
+      <i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar para {{ siglaPai }}
+    </button>
+  }
 
   @if (_dados(); as dados) {
     <div class="indicador-barra__chart-wrapper">
-      <div class="indicador-barra__chart" [style.height.px]="chartHeight()">
+      <div class="indicador-barra__chart"
+        [style.height.px]="chartHeight()">
         <canvas
           baseChart
           type="bar"
           [data]="chartData()"
-          [options]="chartOptions()">
+          [options]="chartOptions()"
+          (click)="onChartAreaClick($event)">
         </canvas>
       </div>
       <div class="indicador-barra__totais" [style.height.px]="chartHeight()">
@@ -37,6 +45,8 @@
         <a (click)="navegarSaibaMais()" style="cursor: pointer;">Saiba mais</a>
       </p>
     }
+  } @else if (_drillAtivo()) {
+    <p class="indicador__vazio">Sem dados para exibir.</p>
   }
 
 </indicador-card>

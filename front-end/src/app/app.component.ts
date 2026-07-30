@@ -530,12 +530,6 @@ export class AppComponent implements IAppComponent {
 
     this.moduloGestao = [
       {
-        name: this.lex.translate("Painéis Gerenciais"),
-        icon: 'bi bi-bar-chart-line',
-        route: ['gestao', 'paineis-gerenciais'],
-        permition: 'MOD_PAINEL_GER',
-      },
-      {
         name: this.lex.translate("Planos de Entregas"),
         permition: "MENU_GESTAO_ACESSO",
         id: "navbarDropdownGestaoExecucao",
@@ -575,23 +569,14 @@ export class AppComponent implements IAppComponent {
         ],
       },
       {
-        name: this.lex.translate("Indicadores"),
-        id: "navbarDropdownIndicadores",
-        menu: [
-          this.menuSchema.INDICADORES_ENTREGAS,
-          this.menuSchema.INDICADORES_EQUIPES,
-          this.menuSchema.INDICADORES_GESTAO,
-        ],
+        name: this.lex.translate("Painéis Gerenciais"),
+        icon: 'bi bi-list',
+        route: ['gestao', 'paineis-gerenciais'],
+        permition: 'MOD_PAINEL_GER',
       },
     ];
 
     this.moduloExecucao = [
-      {
-        name: this.lex.translate("Painéis Gerenciais"),
-        icon: 'bi bi-bar-chart-line',
-        route: ['gestao', 'paineis-gerenciais'],
-        permition: 'MOD_PAINEL_GER',
-      },
       Object.assign({}, this.menuSchema.PLANOS_TRABALHOS, {
         metadata: {
           minha_unidade: true,
@@ -602,13 +587,10 @@ export class AppComponent implements IAppComponent {
         name: this.lex.translate("Relatório de Agentes Públicos"),
       }),
       {
-        name: this.lex.translate("Indicadores"),
-        id: "navbarDropdownIndicadores",
-        menu: [
-          this.menuSchema.INDICADORES_ENTREGAS,
-          this.menuSchema.INDICADORES_EQUIPES,
-          this.menuSchema.INDICADORES_GESTAO,
-        ],
+        name: this.lex.translate("Painéis Gerenciais"),
+        icon: 'bi bi-list',
+        route: ['gestao', 'paineis-gerenciais'],
+        permition: 'MOD_PAINEL_GER',
       },
     ];
 
@@ -626,13 +608,10 @@ export class AppComponent implements IAppComponent {
         ],
       },
       {
-        name: this.lex.translate("Indicadores"),
-        id: "navbarDropdownIndicadores",
-        menu: [
-          this.menuSchema.INDICADORES_ENTREGAS,
-          this.menuSchema.INDICADORES_EQUIPES,
-          this.menuSchema.INDICADORES_GESTAO,
-        ],
+        name: this.lex.translate("Painéis Gerenciais"),
+        icon: 'bi bi-list',
+        route: ['gestao', 'paineis-gerenciais'],
+        permition: 'MOD_PAINEL_GER',
       },
     ];
 

@@ -55,6 +55,10 @@ export class AlinhamentoDesempenhoPage implements OnInit {
   readonly carregandoAvaliacoesPE = signal(false);
   readonly carregandoAvaliacoesPT = signal(false);
 
+  readonly drillAlinhamento = signal<string | null>(null);
+  readonly drillAvaliacoesPE = signal<string | null>(null);
+  readonly drillAvaliacoesPT = signal<string | null>(null);
+
   readonly carregandoAlgum = computed(() =>
     this.carregandoAlinhamento() || this.carregandoAvaliacoesPE() || this.carregandoAvaliacoesPT()
   );
@@ -141,10 +145,13 @@ export class AlinhamentoDesempenhoPage implements OnInit {
   private carregarDados(filtros: FiltrosPainel): void {
     this.filtrosAtuais.set(filtros);
 
-    // Limpa dados anteriores para evitar estado inconsistente
     this.alinhamentoInstitucional.set(null);
     this.avaliacoesPlanoEntrega.set(null);
     this.avaliacoesPlanoTrabalho.set(null);
+
+    this.drillAlinhamento.set(null);
+    this.drillAvaliacoesPE.set(null);
+    this.drillAvaliacoesPT.set(null);
 
     this.carregandoAlinhamento.set(true);
     this.carregandoAvaliacoesPE.set(true);
@@ -163,6 +170,47 @@ export class AlinhamentoDesempenhoPage implements OnInit {
     this.api.getAvaliacoesPlanoTrabalho(filtros).subscribe({
       next: dados => { this.avaliacoesPlanoTrabalho.set(dados); this.carregandoAvaliacoesPT.set(false); },
       error: () => this.carregandoAvaliacoesPT.set(false),
+    });
+  }
+
+  onDrillDown(grafico: number, unidade: { unidade_id: string; unidade_sigla: string }): void {
+    const filtros = this.filtrosAtuais();
+    if (!filtros) return;
+
+    const drillFiltros: FiltrosPainel = { ...filtros, unidade_id: unidade.unidade_id };
+    this.setDrillSignal(grafico, unidade.unidade_sigla);
+    this.carregarGraficoIndividual(grafico, drillFiltros);
+  }
+
+  onVoltarDrill(grafico: number): void {
+    const filtros = this.filtrosAtuais();
+    if (!filtros) return;
+
+    this.setDrillSignal(grafico, null);
+    this.carregarGraficoIndividual(grafico, filtros);
+  }
+
+  private setDrillSignal(grafico: number, valor: string | null): void {
+    const signals = [this.drillAlinhamento, this.drillAvaliacoesPE, this.drillAvaliacoesPT];
+    signals[grafico - 1]?.set(valor);
+  }
+
+  private carregarGraficoIndividual(grafico: number, filtros: FiltrosPainel): void {
+    const carregandoSignals = [this.carregandoAlinhamento, this.carregandoAvaliacoesPE, this.carregandoAvaliacoesPT];
+    const dadosSignals = [this.alinhamentoInstitucional, this.avaliacoesPlanoEntrega, this.avaliacoesPlanoTrabalho];
+    const apiFns = [
+      (f: FiltrosPainel) => this.api.getAlinhamentoInstitucional(f),
+      (f: FiltrosPainel) => this.api.getAvaliacoesPlanoEntrega(f),
+      (f: FiltrosPainel) => this.api.getAvaliacoesPlanoTrabalho(f),
+    ];
+
+    const idx = grafico - 1;
+    carregandoSignals[idx].set(true);
+    dadosSignals[idx].set(null);
+
+    apiFns[idx](filtros).subscribe({
+      next: d => { dadosSignals[idx].set(d); carregandoSignals[idx].set(false); },
+      error: () => carregandoSignals[idx].set(false),
     });
   }
 }

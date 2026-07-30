@@ -15,35 +15,39 @@
     </br-button>
   </div>
 
-  <div>
-    <div class="row g-3 mb-3">
-      <div class="col-md-6">
-        <indicador-barra-vertical
-          [dados]="teletrabalhoSubstituicao()"
-          [carregando]="carregandoSubstituicao()"
-          [titulo]="textos.substituicao.titulo"
-          [informacaoAdicional]="textos.substituicao.info"
-          [origemDados]="origemDados"
-          [saibaMaisRoute]="['relatorios', 'agentes']"
-          [saibaMaisQueryParams]="saibaMaisParamsSubstituicao()" />
-      </div>
-      <div class="col-md-6">
-        <indicador-barra-vertical
-          [dados]="teletrabalhoDiscricionario()"
-          [carregando]="carregandoDiscricionario()"
-          [titulo]="textos.discricionario.titulo"
-          [informacaoAdicional]="textos.discricionario.info"
-          [origemDados]="origemDados"
-          [saibaMaisRoute]="['relatorios', 'agentes']"
-          [saibaMaisQueryParams]="saibaMaisParamsDiscricionario()" />
-      </div>
+  <div class="row g-3">
+    <div class="col-md-6">
+      <indicador-barra-vertical
+        [dados]="teletrabalhoSubstituicao()"
+        [carregando]="carregandoSubstituicao()"
+        [titulo]="textos.substituicao.titulo"
+        [informacaoAdicional]="textos.substituicao.info"
+        [origemDados]="origemDados"
+        [saibaMaisRoute]="['relatorios', 'agentes']"
+        [saibaMaisQueryParams]="saibaMaisParamsSubstituicao()" />
+    </div>
+    <div class="col-md-6">
+      <indicador-barra-vertical
+        [dados]="teletrabalhoDiscricionario()"
+        [carregando]="carregandoDiscricionario()"
+        [titulo]="textos.discricionario.titulo"
+        [informacaoAdicional]="textos.discricionario.info"
+        [origemDados]="origemDados"
+        [saibaMaisRoute]="['relatorios', 'agentes']"
+        [saibaMaisQueryParams]="saibaMaisParamsDiscricionario()" />
     </div>
 
-    <indicador-barra-horizontal
-      [dados]="modalidadesPorUnidade()"
-      [carregando]="carregandoModalidades()"
-      [titulo]="textos.modalidadesPorUnidade.titulo"
-      [informacaoAdicional]="textos.modalidadesPorUnidade.info"
-      [origemDados]="origemDados" />
+    <div class="col-md-6 offset-md-3">
+      <indicador-barra-horizontal
+        [dados]="modalidadesPorUnidade()"
+        [carregando]="carregandoModalidades()"
+        [titulo]="textos.modalidadesPorUnidade.titulo"
+        [informacaoAdicional]="textos.modalidadesPorUnidade.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillUnidadeModalidades()"
+        (unidadeClick)="onDrillDown($event)"
+        (voltarClick)="onVoltarDrill()" />
+    </div>
   </div>
 </div>

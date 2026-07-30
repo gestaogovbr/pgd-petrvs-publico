@@ -15,50 +15,80 @@
     </br-button>
   </div>
 
-  <div>
-    <indicador-barra-horizontal
-      [dados]="registroExecucaoPE()"
-      [carregando]="carregando1()"
-      [titulo]="textos.registroExecucaoPE.titulo"
-      [informacaoAdicional]="textos.registroExecucaoPE.info"
-      [origemDados]="origemDados"
-      [saibaMaisRoute]="['relatorios', 'planos-entrega']"
-      [saibaMaisQueryParams]="saibaMaisRegistroExecucaoPE()" />
+  <div class="row g-3">
+    <div class="col-md-6">
+      <indicador-barra-horizontal
+        [dados]="registroExecucaoPE()"
+        [carregando]="carregandoRegistroExecucaoPE()"
+        [titulo]="textos.registroExecucaoPE.titulo"
+        [informacaoAdicional]="textos.registroExecucaoPE.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillRegistroExecucaoPE()"
+        [saibaMaisRoute]="['relatorios', 'planos-entrega']"
+        [saibaMaisQueryParams]="saibaMaisRegistroExecucaoPE()"
+        (unidadeClick)="onDrillDown(1, $event)"
+        (voltarClick)="onVoltarDrill(1)" />
+    </div>
 
-    <indicador-barra-horizontal
-      [dados]="avaliacaoPE()"
-      [carregando]="carregando2()"
-      [titulo]="textos.avaliacaoPE.titulo"
-      [informacaoAdicional]="textos.avaliacaoPE.info"
-      [origemDados]="origemDados"
-      [saibaMaisRoute]="['relatorios', 'planos-entrega']"
-      [saibaMaisQueryParams]="saibaMaisAvaliacaoPE()" />
+    <div class="col-md-6">
+      <indicador-barra-horizontal
+        [dados]="avaliacaoPE()"
+        [carregando]="carregandoAvaliacaoPE()"
+        [titulo]="textos.avaliacaoPE.titulo"
+        [informacaoAdicional]="textos.avaliacaoPE.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillAvaliacaoPE()"
+        [saibaMaisRoute]="['relatorios', 'planos-entrega']"
+        [saibaMaisQueryParams]="saibaMaisAvaliacaoPE()"
+        (unidadeClick)="onDrillDown(2, $event)"
+        (voltarClick)="onVoltarDrill(2)" />
+    </div>
 
-    <indicador-barra-horizontal
-      [dados]="registroExecucaoPT()"
-      [carregando]="carregando3()"
-      [titulo]="textos.registroExecucaoPT.titulo"
-      [informacaoAdicional]="textos.registroExecucaoPT.info"
-      [origemDados]="origemDados"
-      [saibaMaisRoute]="['relatorios', 'planos-trabalho']"
-      [saibaMaisQueryParams]="saibaMaisRegistroExecucaoPT()" />
+    <div class="col-md-6">
+      <indicador-barra-horizontal
+        [dados]="registroExecucaoPT()"
+        [carregando]="carregandoRegistroExecucaoPT()"
+        [titulo]="textos.registroExecucaoPT.titulo"
+        [informacaoAdicional]="textos.registroExecucaoPT.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillRegistroExecucaoPT()"
+        [saibaMaisRoute]="['relatorios', 'planos-trabalho']"
+        [saibaMaisQueryParams]="saibaMaisRegistroExecucaoPT()"
+        (unidadeClick)="onDrillDown(3, $event)"
+        (voltarClick)="onVoltarDrill(3)" />
+    </div>
 
-    <indicador-barra-horizontal
-      [dados]="avaliacaoPT()"
-      [carregando]="carregando4()"
-      [titulo]="textos.avaliacaoPT.titulo"
-      [informacaoAdicional]="textos.avaliacaoPT.info"
-      [origemDados]="origemDados"
-      [saibaMaisRoute]="['relatorios', 'planos-trabalho']"
-      [saibaMaisQueryParams]="saibaMaisAvaliacaoPT()" />
+    <div class="col-md-6">
+      <indicador-barra-horizontal
+        [dados]="avaliacaoPT()"
+        [carregando]="carregandoAvaliacaoPT()"
+        [titulo]="textos.avaliacaoPT.titulo"
+        [informacaoAdicional]="textos.avaliacaoPT.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillAvaliacaoPT()"
+        [saibaMaisRoute]="['relatorios', 'planos-trabalho']"
+        [saibaMaisQueryParams]="saibaMaisAvaliacaoPT()"
+        (unidadeClick)="onDrillDown(4, $event)"
+        (voltarClick)="onVoltarDrill(4)" />
+    </div>
 
-    <indicador-barra-horizontal
-      [dados]="unidadesExecutorasPE()"
-      [carregando]="carregando5()"
-      [titulo]="textos.unidadesExecutorasPE.titulo"
-      [informacaoAdicional]="textos.unidadesExecutorasPE.info"
-      [origemDados]="origemDados"
-      [saibaMaisRoute]="['relatorios', 'unidades']"
-      [saibaMaisQueryParams]="saibaMaisUnidadesExecutoras()" />
+    <div class="col-md-6 offset-md-3">
+      <indicador-barra-horizontal
+        [dados]="unidadesExecutorasPE()"
+        [carregando]="carregandoUnidadesExecutorasPE()"
+        [titulo]="textos.unidadesExecutorasPE.titulo"
+        [informacaoAdicional]="textos.unidadesExecutorasPE.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillUnidadesExecutorasPE()"
+        [saibaMaisRoute]="['relatorios', 'unidades']"
+        [saibaMaisQueryParams]="saibaMaisUnidadesExecutoras()"
+        (unidadeClick)="onDrillDown(5, $event)"
+        (voltarClick)="onVoltarDrill(5)" />
+    </div>
   </div>
 </div>
