@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\StatusEnum;
 use App\V2\CadeiaValor\CadeiaValorPainelAssembler;
 use App\V2\CadeiaValor\DTOs\CadeiaValorPainelEntregaDetalheLinhaDTO;
 use App\V2\CadeiaValor\DTOs\CadeiaValorPainelEntregasDetalhamentoDTO;
@@ -136,7 +137,7 @@ describe('CadeiaValorPainelAssembler - montarDetalhamento', function () {
                 'unidade_nome' => 'Unidade A',
                 'plano_entrega_id' => 'pe-1',
                 'plano_entrega_nome' => 'PE 1',
-                'plano_entrega_status' => 'ATIVO',
+                'plano_entrega_status' => StatusEnum::ATIVO->value,
                 'plano_entrega_data_inicio' => '2025-01-01',
                 'plano_entrega_data_fim' => '2025-12-31',
                 'entrega_titulo' => 'Entrega Teste',
@@ -177,7 +178,7 @@ describe('CadeiaValorPainelAssembler - montarDetalhamento', function () {
         $baseRow = [
             'plano_entrega_id' => 'pe-1',
             'plano_entrega_nome' => 'PE 1',
-            'plano_entrega_status' => 'ATIVO',
+            'plano_entrega_status' => StatusEnum::ATIVO->value,
             'plano_entrega_data_inicio' => '2025-01-01',
             'plano_entrega_data_fim' => '2025-12-31',
             'progresso_esperado' => 0,
@@ -239,7 +240,7 @@ describe('CadeiaValorPainelAssembler - montarDetalhamento', function () {
                 'unidade_nome' => 'Unidade A',
                 'plano_entrega_id' => 'pe-1',
                 'plano_entrega_nome' => 'PE 1',
-                'plano_entrega_status' => 'ATIVO',
+                'plano_entrega_status' => StatusEnum::ATIVO->value,
                 'plano_entrega_data_inicio' => '2025-01-01',
                 'plano_entrega_data_fim' => null,
                 'entrega_titulo' => 'Entrega',

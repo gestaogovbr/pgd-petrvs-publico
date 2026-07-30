@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\CadeiaValor;
 
+use App\Enums\StatusEnum;
 use App\V2\CadeiaValor\DTOs\CadeiaValorPainelEntregaDetalheLinhaDTO;
 use App\V2\CadeiaValor\DTOs\CadeiaValorPainelEntregasDetalhamentoDTO;
 use App\V2\CadeiaValor\DTOs\CadeiaValorPainelResumoDTO;
@@ -24,7 +25,7 @@ final class CadeiaValorPainelAssembler
         $executado = (float) ($agg->esforco_executado_horas ?? 0);
         $temPtPactuado = (bool) ($agg->tem_pt_pactuado ?? false);
         $temPtConcluido = (bool) ($agg->tem_pt_concluido ?? false);
-        $peStatus = ($agg->tem_pe_homologado ?? false) ? 'ATIVO' : 'HOMOLOGANDO';
+        $peStatus = ($agg->tem_pe_homologado ?? false) ? StatusEnum::ATIVO->value : StatusEnum::HOMOLOGANDO->value;
 
         $visibilidade = ObjetivoPainelEsforcoSupport::visibilidadeEsforco($peStatus, $temPtPactuado, $temPtConcluido);
 
