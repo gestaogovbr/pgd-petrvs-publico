@@ -8,6 +8,7 @@ use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoArquivarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoClonarValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDesarquivarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoEncerrarValidator;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
@@ -45,6 +46,7 @@ beforeEach(function () {
     $this->cancelarValidator = Mockery::mock(PlanoTrabalhoCancelarValidator::class);
     $this->encerrarValidator = Mockery::mock(PlanoTrabalhoEncerrarValidator::class);
     $this->arquivarValidator = Mockery::mock(PlanoTrabalhoArquivarValidator::class);
+    $this->desarquivarValidator = Mockery::mock(PlanoTrabalhoDesarquivarValidator::class);
     $this->clonarValidator = Mockery::mock(PlanoTrabalhoClonarValidator::class);
     $this->indexValidator = Mockery::mock(PlanoTrabalhoIndexValidator::class);
     $this->updateAuthorizationValidator = Mockery::mock(PlanoTrabalhoUpdateAuthorizationValidator::class);
@@ -65,6 +67,7 @@ beforeEach(function () {
         $this->cancelarValidator,
         $this->encerrarValidator,
         $this->arquivarValidator,
+        $this->desarquivarValidator,
         $this->clonarValidator,
         $this->indexValidator,
         $this->updateAuthorizationValidator,
@@ -181,7 +184,7 @@ describe('PlanoTrabalhoService::index', function () {
         $result = $this->service->index(['filters' => ['vigentes' => true]]);
 
         expect($result)->toBe($paginator)
-            ->and($planoItem->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'encerrar' => false]);
+            ->and($planoItem->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'desarquivar' => false, 'encerrar' => false]);
     });
 
     test('expande unidades com subordinadas quando flag subordinadas=true', function () {
@@ -426,7 +429,7 @@ describe('PlanoTrabalhoService::show', function () {
         $result = $this->service->show('plano-1');
 
         expect($result)->toBe($plano)
-            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'encerrar' => false])
+            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'desarquivar' => false, 'encerrar' => false])
             ->and($plano->getAttribute('is_proprio'))->toBeTrue();
     });
 

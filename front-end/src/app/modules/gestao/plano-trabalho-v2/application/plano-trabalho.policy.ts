@@ -68,4 +68,8 @@ export class PlanoTrabalhoPolicy {
   podeArquivar(p: PlanoTrabalho): boolean {
     return p.acoes?.arquivar === true;
   }
+
+  podeDesarquivar(p: PlanoTrabalho): boolean {
+    return p.acoes?.desarquivar === true;
+  }
 }
