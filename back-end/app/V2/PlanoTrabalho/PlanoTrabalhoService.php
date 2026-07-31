@@ -92,6 +92,8 @@ class PlanoTrabalhoService
         $this->storeValidator->validarAutorizacao($dto);
         $this->storeValidator->validar($dto);
 
+        $dto = $dto->withCargaHoraria($this->calcularCargaHoraria($dto->usuarioId));
+
         if (!$dto->isClone()) {
             return $this->writeRepository->create($dto->toArray());
         }
@@ -207,7 +209,7 @@ class PlanoTrabalhoService
             $this->consolidacaoRepository->ajustarDataFimVigente($id, $dataEncerramento);
 
             // Concluir todos os períodos iniciados após a data do encerramento
-            $this->consolidacaoRepository->encerrarPeriodosFuturos($id, $dataEncerramento);
+            $this->consolidacaoRepository->encerrarPeriodosFuturos($id, $dataEncerramento, $justificativa);
 
             $this->statusService->atualizaStatus(
                 $plano,
@@ -308,5 +310,16 @@ class PlanoTrabalhoService
         }
 
         return $participante->cpf === Auth::user()->cpf;
+    }
+
+    private function calcularCargaHoraria(string $usuarioId): float
+    {
+        $usuario = $this->usuarioRepository->findById($usuarioId);
+
+        if ($usuario === null || $usuario->cod_jornada === null || $usuario->cod_jornada === 99) {
+            return PlanoTrabalhoStoreDTO::HORAS_DIARIAS_JORNADA_INTEGRAL_PADRAO;
+        }
+
+        return round($usuario->cod_jornada / 5, 2);
     }
 }
