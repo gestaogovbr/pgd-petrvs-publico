@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Exports;
 
 use App\Models\PlanoEntrega;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaRowDTO;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
@@ -76,27 +77,27 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
         ];
     }
 
+    /** @param RelatorioEntregaRowDTO $row */
     public function map($row): array
     {
-        $status = $row->plano_status ?? '';
-        $statusLabel = PlanoEntrega::STATUSES[$status] ?? $status;
-        $percentual = (float) ($row->meta_percentual ?? 0);
+        $statusLabel = PlanoEntrega::STATUSES[$row->plano_status] ?? $row->plano_status;
+        $percentual = $row->meta_percentual;
 
         return [
-            $row->unidadeHierarquia ?? $row->unidade_hierarquia ?? '',
-            $row->entregaNome ?? $row->entrega_nome ?? '',
-            $this->dateValue($row->data_inicio ?? null),
-            $this->dateValue($row->data_fim ?? null),
-            $row->meta_planejado ?? 0,
-            $row->meta_alcancado ?? 0,
+            $row->unidadeHierarquia,
+            $row->entregaNome,
+            $this->dateValue($row->data_inicio),
+            $this->dateValue($row->data_fim),
+            $row->meta_planejado,
+            $row->meta_alcancado,
             $percentual.'%',
-            $row->qtd_planejamento_institucional ?? 0,
-            $row->qtd_cadeia_valor ?? 0,
-            $row->plano_rotulo ?? $row->plano_nome ?? '',
-            '#'.($row->plano_numero ?? ''),
+            $row->qtd_planejamento_institucional,
+            $row->qtd_cadeia_valor,
+            $row->plano_rotulo,
+            '#'.$row->plano_numero,
             $statusLabel,
-            $row->qtd_participantes ?? 0,
-            $row->qtd_planos_trabalho ?? 0,
+            $row->qtd_participantes,
+            $row->qtd_planos_trabalho,
         ];
     }
 

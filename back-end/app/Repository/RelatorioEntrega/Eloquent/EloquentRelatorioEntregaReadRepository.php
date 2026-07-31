@@ -6,9 +6,10 @@ namespace App\Repository\RelatorioEntrega\Eloquent;
 
 use App\Repository\RelatorioEntrega\Contracts\RelatorioEntregaReadRepositoryContract;
 use App\Services\UnidadeService;
-use App\V2\RelatorioEntrega\Support\RelatorioEntregaMetaHelper;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaIndexFiltersDTO;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaQueryDTO;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaRowDTO;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepositoryContract
@@ -32,21 +33,23 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
         'qtd_planos_trabalho' => 'qtd_planos_trabalho',
     ];
 
-    public function query(array $data): array
+    public function query(RelatorioEntregaQueryDTO $data): array
     {
         $query = $this->baseQuery();
-        $this->applyFiltros($query, $data);
-        $this->applyOrderBy($query, $data);
+        $this->applyFiltros($query, $data->filters);
+        $this->applyOrderBy($query, $data->orderBy);
 
         $count = (clone $query)->count();
 
-        $limit = (int) ($data['limit'] ?? 0);
-        $page = max((int) ($data['page'] ?? 1), 1);
+        $limit = $data->limit;
+        $page = max($data->page, 1);
         if ($limit > 0) {
             $query->forPage($page, $limit);
         }
 
-        $rows = collect($query->get())->map(fn ($row) => $this->mapRow($row));
+        $rows = collect($query->get())->map(
+            fn ($row) => RelatorioEntregaRowDTO::fromQueryRow($row)
+        );
 
         return [
             'count' => $count,
@@ -116,61 +119,23 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
         return "CASE WHEN ({$planejado}) > 0 THEN ROUND(({$alcancado}) / ({$planejado}) * 100, 2) ELSE 0 END";
     }
 
-    private function applyFiltros(Builder $query, array $data): void
+    private function applyFiltros(Builder $query, RelatorioEntregaIndexFiltersDTO $filters): void
     {
-        $where = $data['where'] ?? [];
-        $unidadeId = null;
-        $incluirSubordinadas = false;
-        $periodoInicio = null;
-        $periodoFim = null;
-        $consultaData = null;
-
-        foreach ($where as $condition) {
-            if (! is_array($condition) || count($condition) !== 3) {
-                continue;
-            }
-
-            [$field, $operator, $value] = $condition;
-
-            if ($field === 'unidade_id') {
-                $unidadeId = (string) $value;
-                continue;
-            }
-
-            if ($field === 'incluir_unidades_subordinadas') {
-                $incluirSubordinadas = true;
-                continue;
-            }
-
-            if ($field === 'periodoInicio') {
-                $periodoInicio = (string) $value;
-                continue;
-            }
-
-            if ($field === 'periodoFim') {
-                $periodoFim = (string) $value;
-                continue;
-            }
-
-            if ($field === 'consultaData') {
-                $consultaData = (string) $value;
-            }
-        }
-
-        if ($unidadeId !== null && $unidadeId !== '') {
-            $unidadeIds = [$unidadeId];
-            if ($incluirSubordinadas) {
+        if ($filters->unidadeId !== null && $filters->unidadeId !== '') {
+            $unidadeIds = [$filters->unidadeId];
+            if ($filters->incluirUnidadesSubordinadas) {
                 /** @var UnidadeService $unidadeService */
                 $unidadeService = app(UnidadeService::class);
-                $subordinadasIds = $unidadeService->subordinadas($unidadeId)->pluck('id')->toArray();
+                $subordinadasIds = $unidadeService->subordinadas($filters->unidadeId)->pluck('id')->toArray();
                 $unidadeIds = array_values(array_unique(array_merge($unidadeIds, $subordinadasIds)));
             }
             $query->whereIn('pee.unidade_id', $unidadeIds);
         }
 
-        if ($periodoInicio !== null && $periodoFim !== null) {
-            $this->applyIntersecaoPeriodo($query, $periodoInicio, $periodoFim);
-        } elseif ($consultaData !== null) {
+        if ($filters->hasPeriodoCompleto()) {
+            $this->applyIntersecaoPeriodo($query, $filters->periodoInicio, $filters->periodoFim);
+        } elseif ($filters->usaDataConsultaHoje()) {
+            $consultaData = now()->toDateString();
             $this->applyIntersecaoPeriodo($query, $consultaData, $consultaData);
         }
     }
@@ -188,21 +153,19 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
         );
     }
 
-    private function applyOrderBy(Builder $query, array $data): void
+    /**
+     * @param list<array{0: string, 1: string}> $orderBy
+     */
+    private function applyOrderBy(Builder $query, array $orderBy): void
     {
-        $orderBy = $data['orderBy'] ?? [['unidadeHierarquia', 'asc'], ['entregaNome', 'asc']];
         $applied = false;
 
-        foreach ($orderBy as $order) {
-            if (! is_array($order) || count($order) !== 2) {
-                continue;
-            }
-            [$column, $direction] = $order;
+        foreach ($orderBy as [$column, $direction]) {
             $sqlColumn = self::SORTABLE_COLUMNS[$column] ?? null;
             if ($sqlColumn === null) {
                 continue;
             }
-            $dir = strtolower((string) $direction) === 'desc' ? 'desc' : 'asc';
+            $dir = strtolower($direction) === 'desc' ? 'desc' : 'asc';
             $query->orderBy($sqlColumn, $dir);
             $applied = true;
         }
@@ -210,58 +173,5 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
         if (! $applied) {
             $query->orderBy('unidade_hierarquia', 'asc')->orderBy('entrega_nome', 'asc');
         }
-    }
-
-    private function mapRow(object $row): object
-    {
-        $tipoIndicador = $row->tipo_indicador ?? null;
-        $row->meta_planejado = (float) ($row->meta_planejado ?? RelatorioEntregaMetaHelper::valorNumericoAbsoluto($row->meta ?? null, $tipoIndicador));
-        $row->meta_alcancado = (float) ($row->meta_alcancado ?? RelatorioEntregaMetaHelper::valorNumericoAbsoluto($row->realizado ?? null, $tipoIndicador));
-        $row->unidadeHierarquia = $row->unidade_hierarquia ?? '';
-        $row->entregaNome = $row->entrega_nome ?? '';
-        $row->qtd_planejamento_institucional = (int) ($row->qtd_planejamento_institucional ?? 0);
-        $row->qtd_cadeia_valor = (int) ($row->qtd_cadeia_valor ?? 0);
-        $row->qtd_participantes = (int) ($row->qtd_participantes ?? 0);
-        $row->qtd_planos_trabalho = (int) ($row->qtd_planos_trabalho ?? 0);
-        $row->meta_percentual = (float) ($row->meta_percentual ?? 0);
-        $row->plano_rotulo = $this->formatPlanoRotulo(
-            (string) ($row->plano_nome ?? ''),
-            $row->plano_data_inicio ?? null,
-            $row->plano_data_fim ?? null,
-        );
-
-        return $row;
-    }
-
-    private function formatPlanoRotulo(string $nome, mixed $dataInicio, mixed $dataFim): string
-    {
-        $nome = trim($nome);
-        $inicio = $this->formatDateBr($dataInicio);
-        $fim = $this->formatDateBr($dataFim);
-
-        if ($nome === '') {
-            return '-';
-        }
-
-        if ($inicio === '' && $fim === '') {
-            return $nome;
-        }
-
-        if ($fim === '' || $fim === $inicio) {
-            return "{$nome} - {$inicio}";
-        }
-
-        return "{$nome} - {$inicio} - {$fim}";
-    }
-
-    private function formatDateBr(mixed $value): string
-    {
-        if ($value === null || $value === '') {
-            return '';
-        }
-
-        $timestamp = strtotime((string) $value);
-
-        return $timestamp !== false ? date('d/m/Y', $timestamp) : '';
     }
 }

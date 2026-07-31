@@ -4,17 +4,13 @@ declare(strict_types=1);
 
 namespace App\Repository\RelatorioEntrega\Contracts;
 
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaQueryDTO;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaRowDTO;
+
 interface RelatorioEntregaReadRepositoryContract
 {
     /**
-     * @param array{
-     *     page?: int,
-     *     limit?: int,
-     *     orderBy?: list<array{0: string, 1: string}>,
-     *     where?: list<array{0: string, 1: string, 2: mixed}>
-     * } $data
-     *
-     * @return array{count: int, rows: \Illuminate\Support\Collection<int, object>}
+     * @return array{count: int, rows: \Illuminate\Support\Collection<int, RelatorioEntregaRowDTO>}
      */
-    public function query(array $data): array;
+    public function query(RelatorioEntregaQueryDTO $query): array;
 }

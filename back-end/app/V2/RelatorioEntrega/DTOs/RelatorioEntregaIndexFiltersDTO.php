@@ -43,32 +43,10 @@ final class RelatorioEntregaIndexFiltersDTO
         return $hasInicio xor $hasFim;
     }
 
-    /**
-     * @return array<int, array{0: string, 1: string, 2: mixed}>
-     */
-    public function toWhereArray(): array
+    /** Consulta sem período informado usa a data de hoje (RN07 validada antes). */
+    public function usaDataConsultaHoje(): bool
     {
-        $where = [];
-
-        if ($this->unidadeId !== null && $this->unidadeId !== '') {
-            $where[] = ['unidade_id', '==', $this->unidadeId];
-        }
-
-        if ($this->incluirUnidadesSubordinadas) {
-            $where[] = ['incluir_unidades_subordinadas', '==', 1];
-        }
-
-        if ($this->hasPeriodoCompleto()) {
-            $where[] = ['periodoInicio', '>=', $this->periodoInicio];
-            $where[] = ['periodoFim', '<=', $this->periodoFim];
-        } elseif (
-            ($this->periodoInicio === null || $this->periodoInicio === '')
-            && ($this->periodoFim === null || $this->periodoFim === '')
-        ) {
-            $where[] = ['consultaData', '==', now()->toDateString()];
-        }
-
-        return $where;
+        return ! $this->hasPeriodoCompleto() && ! $this->hasPeriodoParcial();
     }
 
     private static function trimmedStringOrNull(mixed $value): ?string

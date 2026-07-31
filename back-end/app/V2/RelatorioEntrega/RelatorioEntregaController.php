@@ -30,10 +30,10 @@ class RelatorioEntregaController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $data = RelatorioEntregaIndexRequestValidator::index($request);
+            $dto = RelatorioEntregaIndexRequestValidator::index($request);
             $this->authorizeRelatorio();
 
-            $result = $this->service->index($data, $request);
+            $result = $this->service->index($dto, $request);
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
@@ -50,10 +50,10 @@ class RelatorioEntregaController extends Controller
     public function export(Request $request)
     {
         try {
-            $data = RelatorioEntregaIndexRequestValidator::index($request);
+            $dto = RelatorioEntregaIndexRequestValidator::index($request);
             $this->authorizeRelatorio();
 
-            $rows = $this->service->exportRows($data);
+            $rows = $this->service->exportRows($dto);
 
             return Excel::download(
                 new RelatorioEntregaExport($rows),

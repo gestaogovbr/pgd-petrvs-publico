@@ -34,22 +34,12 @@ final class RelatorioEntregaIndexDTO
         );
     }
 
-    /**
-     * @return array{
-     *     page: int,
-     *     limit: int,
-     *     orderBy: list<array{0: string, 1: string}>,
-     *     where: list<array{0: string, 1: string, 2: mixed}>
-     * }
-     */
-    public function toQueryPayload(bool $paginate = true): array
+    public function toQuery(bool $paginate = true): RelatorioEntregaQueryDTO
     {
-        return [
-            'page' => $this->page,
-            'limit' => $paginate ? self::PAGE_SIZE : 0,
-            'orderBy' => $this->orderBy,
-            'where' => $this->filters->toWhereArray(),
-        ];
+        return RelatorioEntregaQueryDTO::fromIndexDto(
+            $this,
+            $paginate ? self::PAGE_SIZE : 0,
+        );
     }
 
     /**

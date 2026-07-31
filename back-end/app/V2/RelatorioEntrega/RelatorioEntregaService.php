@@ -6,6 +6,7 @@ namespace App\V2\RelatorioEntrega;
 
 use App\Repository\RelatorioEntregaRepository;
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaIndexDTO;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaRowDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as ConcretePaginator;
@@ -17,11 +18,9 @@ class RelatorioEntregaService
     ) {
     }
 
-    public function index(array $data, Request $httpRequest): LengthAwarePaginator
+    public function index(RelatorioEntregaIndexDTO $dto, Request $httpRequest): LengthAwarePaginator
     {
-        $dto = RelatorioEntregaIndexDTO::fromValidatedRequest($data);
-        $payload = $dto->toQueryPayload(true);
-        $result = $this->relatorioEntregaRepository->query($payload);
+        $result = $this->relatorioEntregaRepository->query($dto->toQuery(true));
 
         return $this->buildPaginator(
             $result['rows'] ?? collect(),
@@ -33,13 +32,11 @@ class RelatorioEntregaService
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, object>
+     * @return \Illuminate\Support\Collection<int, RelatorioEntregaRowDTO>
      */
-    public function exportRows(array $data): \Illuminate\Support\Collection
+    public function exportRows(RelatorioEntregaIndexDTO $dto): \Illuminate\Support\Collection
     {
-        $dto = RelatorioEntregaIndexDTO::fromValidatedRequest($data);
-        $payload = $dto->toQueryPayload(false);
-        $result = $this->relatorioEntregaRepository->query($payload);
+        $result = $this->relatorioEntregaRepository->query($dto->toQuery(false));
 
         return collect($result['rows'] ?? []);
     }

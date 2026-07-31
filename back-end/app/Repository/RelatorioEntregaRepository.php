@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Repository\RelatorioEntrega\Contracts\RelatorioEntregaReadRepositoryContract;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaQueryDTO;
 
 class RelatorioEntregaRepository
 {
@@ -13,8 +14,8 @@ class RelatorioEntregaRepository
     ) {
     }
 
-    public function query(array $data): array
+    public function query(RelatorioEntregaQueryDTO $query): array
     {
-        return $this->readRepository->query($data);
+        return $this->readRepository->query($query);
     }
 }

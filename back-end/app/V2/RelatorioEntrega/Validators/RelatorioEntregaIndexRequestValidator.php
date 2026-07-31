@@ -29,8 +29,7 @@ class RelatorioEntregaIndexRequestValidator
         'qtd_planos_trabalho',
     ];
 
-    /** @return array<string, mixed> */
-    public static function index(Request $request): array
+    public static function index(Request $request): RelatorioEntregaIndexDTO
     {
         $validated = $request->validate([
             'page' => ['sometimes', 'integer', 'min:1'],
@@ -46,7 +45,7 @@ class RelatorioEntregaIndexRequestValidator
         $dto = RelatorioEntregaIndexDTO::fromValidatedRequest($validated);
         self::validatePeriodo($dto);
 
-        return $validated;
+        return $dto;
     }
 
     private static function validatePeriodo(RelatorioEntregaIndexDTO $dto): void
