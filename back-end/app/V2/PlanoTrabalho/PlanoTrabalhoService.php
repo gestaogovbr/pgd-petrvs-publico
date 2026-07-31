@@ -31,6 +31,7 @@ use App\V2\Traits\ValidaAutorizacaoTrait;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator as ConcreteLengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -71,6 +72,7 @@ class PlanoTrabalhoService
             $filtro = $filtro->withUnidadesId(array_merge($idsBase, $subordinadasIds));
         }
 
+        /** @var ConcreteLengthAwarePaginator $paginator */
         $paginator = $this->readRepository->buscarPlanosListagem($filtro);
         $usuario = $this->usuarioLogadoComPerfilEAreas();
 
