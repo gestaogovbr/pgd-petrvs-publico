@@ -58,7 +58,7 @@
             </ng-template>
 
             <ng-template let-row="row" #columnNome>
-                <a [routerLink]="['/configuracoes', 'usuario', row.id, 'edit']">{{row.nome_exibicao}}</a>
+                <a class="link" (click)="go.navigate({ route: ['configuracoes', 'usuario', row.id, 'edit'] })">{{row.nome_exibicao}}</a>
             </ng-template>
         </column>
 
