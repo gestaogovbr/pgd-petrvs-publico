@@ -198,6 +198,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
         $documento->conteudo = '<html>TCR</html>';
 
         $this->assinarValidator->shouldReceive('validar')->once()->andReturn($documento);
+        $this->assinarValidator->shouldReceive('validarSlotGestorDisponivel')->once();
 
         $assinatura = Mockery::mock(DocumentoAssinatura::class)->makePartial();
         $this->assinaturaRepo->shouldReceive('createFromTCR')
@@ -228,6 +229,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
         $documento->conteudo = '<html>TCR</html>';
 
         $this->assinarValidator->shouldReceive('validar')->once()->andReturn($documento);
+        $this->assinarValidator->shouldReceive('validarSlotGestorDisponivel')->once();
 
         $assinatura = Mockery::mock(DocumentoAssinatura::class)->makePartial();
         $this->assinaturaRepo->shouldReceive('createFromTCR')->once()->andReturn($assinatura);

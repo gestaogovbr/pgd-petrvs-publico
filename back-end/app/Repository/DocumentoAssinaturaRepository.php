@@ -57,6 +57,11 @@ class DocumentoAssinaturaRepository
         return $this->readRepository->existeAlgumaAssinatura($documentoId);
     }
 
+    public function existeAssinaturaDeNaoParticipante(string $documentoId, string $participanteId): bool
+    {
+        return $this->readRepository->existeAssinaturaDeNaoParticipante($documentoId, $participanteId);
+    }
+
     public function createFromTCR(TCRAssinaturaDTO $dto): DocumentoAssinatura
     {
         /** @var DocumentoAssinatura */
