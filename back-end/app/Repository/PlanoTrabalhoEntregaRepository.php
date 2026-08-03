@@ -9,6 +9,7 @@ use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaReadReposi
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Entrega\DTOs\ResumoForcaTrabalhoDTO;
 use App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO;
+use Illuminate\Support\Collection;
 
 class PlanoTrabalhoEntregaRepository
 {
@@ -78,5 +79,14 @@ class PlanoTrabalhoEntregaRepository
             $forcaTrabalhoProjeto,
             $esforcoExecutadoProjeto,
         );
+    }
+
+    /**
+     * @param array<string> $planoIds
+     * @return Collection
+     */
+    public function buscarEntregasParaIndicadores(array $planoIds): Collection
+    {
+        return $this->readRepository->buscarEntregasParaIndicadores($planoIds);
     }
 }
