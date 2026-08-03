@@ -18,6 +18,8 @@ import {PanelEnvComponent} from "./panel-env/panel-env.component";
 import {PanelAuditComponent} from "./panel-audit/panel-audit.component";
 import { PanelJobAgendadosListComponent } from './panel-jobs-agendados-list/panel-jobs-agendados-list.component';
 import { PanelJobsAgendadosFormComponent } from './panel-jobs-agendados-form/panel-jobs-agendados-form.component';
+import { PanelMuralListComponent } from './panel-mural-list/panel-mural-list.component';
+import { PanelMuralFormComponent } from './panel-mural-form/panel-mural-form.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,9 @@ import { PanelJobsAgendadosFormComponent } from './panel-jobs-agendados-form/pan
     JobAgendadoComponent,
     PanelJobAgendadosListComponent,
     PanelJobsAgendadosFormComponent,
-    PanelEnvComponent
+    PanelEnvComponent,
+    PanelMuralListComponent,
+    PanelMuralFormComponent
   ],
     imports: [
         CommonModule,

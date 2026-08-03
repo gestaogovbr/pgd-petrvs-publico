@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\EnvController;
 use App\Http\Controllers\PainelUsuarioController;
+use App\V2\MuralAviso\MuralAvisoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -79,4 +80,12 @@ Route::middleware(['panel'])->prefix('UserPanel')->group(function () {
 Route::middleware(['panel'])->prefix('Audit')->group(function () {
     Route::get('getAll', [AuditController::class, 'listar']);
     Route::post('query', [AuditController::class, 'query']);
+});
+
+Route::middleware(['panel'])->prefix('mural-aviso')->group(function () {
+    Route::get('/', [MuralAvisoController::class, 'query']);
+    Route::get('/{id}', [MuralAvisoController::class, 'show']);
+    Route::post('/', [MuralAvisoController::class, 'store']);
+    Route::put('/{id}', [MuralAvisoController::class, 'update']);
+    Route::delete('/{id}', [MuralAvisoController::class, 'destroy']);
 });
