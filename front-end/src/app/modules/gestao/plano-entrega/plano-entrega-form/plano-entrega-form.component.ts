@@ -138,24 +138,52 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       // array de ids com vinculos excluídos
       const possuiVinculosExcluidos = await this.planoEntregaEntregaDao.possuiVinculosExcluidos(entregas.map(e => e.id));
       // filtra entregas que não possuem vínculos excluídos
-      entity.entregas = entregas.filter(entrega => !possuiVinculosExcluidos.includes(entrega.id));
-      entity.entregas = entity.entregas.map(entrega => {
-        entrega.id = this.planoEntregaDao.generateUuid();
-        entrega.plano_entrega_id = null;
-        entrega._status = "ADD";
-        entrega.progresso_realizado = 0;
-        entrega.progresso_esperado = 0;
-        entrega.realizado.valor = 0;
-        entrega.realizado.porcentagem = 0;
-        entrega.data_inicio = new Date();
-        entrega.data_fim = moment().add(1, 'day').toDate();
-        return entrega as PlanoEntregaEntrega;
-      });
+      entity.entregas = entregas
+        .filter(entrega => !possuiVinculosExcluidos.includes(entrega.id))
+        .map(entrega => this.clonarEntrega(entrega));
     }
 
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));    
     this.cdRef.detectChanges();
+  }
+
+  /**
+   * Clona a entrega e seus vínculos (objetivos/processos) com novos IDs.
+   * Sem isso, o backend reaproveita os IDs originais e move o relacionamento do PE fonte para o clone.
+   */
+  private clonarEntrega(fonte: PlanoEntregaEntrega): PlanoEntregaEntrega {
+    const entrega = this.util.clone(fonte) as PlanoEntregaEntrega;
+    const novaEntregaId = this.planoEntregaDao.generateUuid();
+
+    entrega.id = novaEntregaId;
+    entrega.plano_entrega_id = null;
+    entrega._status = "ADD";
+    entrega.progresso_realizado = 0;
+    entrega.progresso_esperado = 0;
+    entrega.realizado = { ...(entrega.realizado || {}), valor: 0, porcentagem: 0 };
+    entrega.data_inicio = new Date();
+    entrega.data_fim = moment().add(1, 'day').toDate();
+    entrega.comentarios = [];
+    entrega.reacoes = [];
+    entrega.produtos = [];
+    entrega.objetivos = this.clonarVinculos(entrega.objetivos, novaEntregaId);
+    entrega.processos = this.clonarVinculos(entrega.processos, novaEntregaId);
+
+    return entrega;
+  }
+
+  private clonarVinculos<T extends { id: string; entrega_id?: string; _status?: string }>(
+    vinculos: T[] | undefined,
+    novaEntregaId: string
+  ): T[] {
+    return (vinculos || []).map(vinculo => {
+      const clone = this.util.clone(vinculo) as T;
+      clone.id = this.planoEntregaDao.generateUuid();
+      clone.entrega_id = novaEntregaId;
+      clone._status = "ADD";
+      return clone;
+    });
   }
 
   public async initializeData(form: FormGroup) {   
