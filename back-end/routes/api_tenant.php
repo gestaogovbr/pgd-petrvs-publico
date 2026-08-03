@@ -621,15 +621,12 @@ use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
 use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
 use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoObjetivoV2;
-<<<<<<< HEAD
 use App\V2\PainelGerencial\PainelGerencialController as PainelGerencialV2;
 use App\V2\PainelGerencial\AlinhamentoDesempenho\AlinhamentoDesempenhoController as AlinhamentoDesempenhoV2;
 use App\V2\PainelGerencial\Modalidades\ModalidadesController as ModalidadesV2;
 use App\V2\PainelGerencial\Conformidade\ConformidadeController as ConformidadeV2;
 use App\V2\PainelGerencial\Adesao\AdesaoController as AdesaoV2;
-=======
 use App\V2\CadeiaValor\CadeiaValorArvoreController as CadeiaValorArvoreV2;
->>>>>>> feat/#2402-arvore-cadeia-de-valor
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
