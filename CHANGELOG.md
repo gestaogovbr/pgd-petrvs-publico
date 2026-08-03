@@ -2,6 +2,7 @@
 
 ### Adicionado
 - Migração dos indicadores de horas para a API V2 com novo endpoint `POST /api/v2/indicadores/horas`, incluindo cálculo corrigido de dias úteis com feriados religiosos, exclusão de usuários deletados e tratamento de afastamentos com hora
+- Botão "Históricos de Execução" visível na tela de avaliação do Plano de Entrega
 
 ## 3.0.9 23/07/2026
 
