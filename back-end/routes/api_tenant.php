@@ -621,11 +621,15 @@ use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
 use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
 use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoObjetivoV2;
+<<<<<<< HEAD
 use App\V2\PainelGerencial\PainelGerencialController as PainelGerencialV2;
 use App\V2\PainelGerencial\AlinhamentoDesempenho\AlinhamentoDesempenhoController as AlinhamentoDesempenhoV2;
 use App\V2\PainelGerencial\Modalidades\ModalidadesController as ModalidadesV2;
 use App\V2\PainelGerencial\Conformidade\ConformidadeController as ConformidadeV2;
 use App\V2\PainelGerencial\Adesao\AdesaoController as AdesaoV2;
+=======
+use App\V2\CadeiaValor\CadeiaValorArvoreController as CadeiaValorArvoreV2;
+>>>>>>> feat/#2402-arvore-cadeia-de-valor
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
@@ -736,5 +740,15 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('painel-gerencial/adesao/participantes-pgd', [AdesaoV2::class, 'participantesPGD']);
     Route::get('painel-gerencial/adesao/evolucao-participantes', [AdesaoV2::class, 'evolucaoParticipantes']);
     Route::get('painel-gerencial/adesao/periodos-disponiveis', [AdesaoV2::class, 'periodosDisponiveis']);
+
+    Route::get('cadeia-valor/{cadeiaValorId}/arvore/{processoId}', [CadeiaValorArvoreV2::class, 'arvore'])
+        ->whereUuid('cadeiaValorId')
+        ->whereUuid('processoId');
+    Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/resumo', [CadeiaValorArvoreV2::class, 'resumo'])
+        ->whereUuid('cadeiaValorId')
+        ->whereUuid('processoId');
+    Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas-detalhamento', [CadeiaValorArvoreV2::class, 'entregas'])
+        ->whereUuid('cadeiaValorId')
+        ->whereUuid('processoId');
 });
 
