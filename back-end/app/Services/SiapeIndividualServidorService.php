@@ -21,10 +21,12 @@ use App\Repository\UsuarioRepository;
 use App\Services\Siape\CargaIndividual\CargaIndividualSiapeSubject;
 use App\Services\Siape\Unidade\Atribuicao;
 use App\Services\IntegracaoServiceFactory;
+use App\Support\ModalidadePgd;
 use App\Support\SiapeDate;
 use Illuminate\Support\Str;
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Brazanation\Documents\Cpf;
 
@@ -123,6 +125,7 @@ class SiapeIndividualServidorService extends ServiceBase
             $dadosFuncionais = $this->processarRespostaFuncionais($cpfLimpo, $respFuncionais);
             $dadosRelatorio['dadosFuncionais'] = $this->processarRespostaFuncionaisParaRelatorio($cpfLimpo, $respFuncionais, $dadosFuncionais);
             $dadosRelatorio['dadosPessoais'] = $this->processarDadosPessoaisParaRelatorio($cpfLimpo, $respPessoais);
+            $this->atualizarDadosFuncionaisParciais($cpfLimpo, $dadosFuncionais, $dadosRelatorio['dadosPessoais']);
 
             $this->processarUnidadesDosServidores($cpfLimpo, $dadosFuncionais);
             $this->salvarDadosConsulta($cpfLimpo, $respFuncionais, $respPessoais);
@@ -200,6 +203,143 @@ class SiapeIndividualServidorService extends ServiceBase
 
             return [];
         }
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $dadosFuncionais
+     * @param array<string, mixed> $dadosPessoais
+     */
+    private function atualizarDadosFuncionaisParciais(string $cpf, array $dadosFuncionais, array $dadosPessoais): void
+    {
+        if ($dadosPessoais !== []) {
+            return;
+        }
+
+        if (!$this->dadosFuncionaisPossuemAtributosParciais($dadosFuncionais)) {
+            return;
+        }
+
+        $usuariosPorMatricula = $this->usuarioRepository->findAllByCpfUnfiltered($cpf)
+            ->keyBy(fn(Usuario $usuario): string => (string) $usuario->matricula);
+
+        if ($usuariosPorMatricula->isEmpty()) {
+            return;
+        }
+
+        DB::transaction(function () use ($cpf, $dadosFuncionais, $usuariosPorMatricula): void {
+            foreach ($dadosFuncionais as $dados) {
+                $matricula = $this->normalizarMatriculaEscopo($dados['matriculaSiape'] ?? null);
+                if ($matricula === null) {
+                    continue;
+                }
+
+                /** @var Usuario|null $usuario */
+                $usuario = $usuariosPorMatricula->get($matricula);
+                if ($usuario === null) {
+                    continue;
+                }
+
+                $attributes = $this->montarAtributosFuncionaisParciais($dados);
+                if ($attributes === []) {
+                    continue;
+                }
+
+                $this->usuarioRepository->update($usuario->id, $attributes);
+                SiapeLog::info('Dados funcionais da carga individual parcial atualizados', [
+                    'cpf' => $cpf,
+                    'matricula' => $matricula,
+                    'campos' => array_keys($attributes),
+                ]);
+            }
+        });
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $dadosFuncionais
+     */
+    private function dadosFuncionaisPossuemAtributosParciais(array $dadosFuncionais): bool
+    {
+        foreach ($dadosFuncionais as $dados) {
+            if ($this->montarAtributosFuncionaisParciais($dados) !== []) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array<string, mixed> $dados
+     * @return array<string, mixed>
+     */
+    private function montarAtributosFuncionaisParciais(array $dados): array
+    {
+        $attributes = [];
+
+        $modalidadePgd = ModalidadePgd::normalize($dados['modalidadePGD'] ?? null);
+        if ($modalidadePgd !== null) {
+            $attributes['modalidade_pgd'] = $modalidadePgd;
+        }
+
+        $participaPgd = $this->normalizarParticipaPgd($dados['participaPGD'] ?? null);
+        if ($participaPgd !== null) {
+            $attributes['participa_pgd'] = $participaPgd;
+        }
+
+        $email = $this->normalizarEmailFuncional($dados['emailInstitucional'] ?? null)
+            ?? $this->normalizarEmailFuncional($dados['emailServidor'] ?? null);
+        if ($email !== null) {
+            $attributes['email'] = $email;
+        }
+
+        return $attributes;
+    }
+
+    private function normalizarParticipaPgd(mixed $value): ?string
+    {
+        if (!is_scalar($value)) {
+            return null;
+        }
+
+        $value = trim(mb_strtolower((string) $value, 'UTF-8'));
+        if ($value === '') {
+            return null;
+        }
+
+        $semAcento = $value;
+        if (function_exists('iconv')) {
+            $converted = @iconv('UTF-8', 'ASCII//TRANSLIT', $value);
+            if ($converted !== false) {
+                $semAcento = $converted;
+            }
+        }
+        $semAcento = preg_replace('/[^a-z0-9]/', '', (string) $semAcento);
+
+        if (in_array($value, ['1', 's', 'sim', 'yes', 'true'], true) || in_array($semAcento, ['1', 's', 'sim', 'yes', 'true'], true)) {
+            return 'sim';
+        }
+
+        if (in_array($value, ['0', 'n', 'não', 'nao', 'no', 'false'], true) || in_array($semAcento, ['0', 'n', 'nao', 'no', 'false'], true)) {
+            return 'não';
+        }
+
+        return null;
+    }
+
+    private function normalizarEmailFuncional(mixed $email): ?string
+    {
+        if (!is_string($email)) {
+            return null;
+        }
+
+        $email = trim(mb_strtolower($email, 'UTF-8'));
+        if ($email === '') {
+            return null;
+        }
+
+        $validator = Validator::make(['email' => $email], ['email' => 'email']);
+
+        return $validator->fails() ? null : $email;
     }
 
     /**
@@ -668,7 +808,7 @@ class SiapeIndividualServidorService extends ServiceBase
         return $this->entidadeRepository->findAll();
     }
 
-    private function executarSincronizacaoFinal(string $cpf, array $dadosFuncionais): void
+    private function executarSincronizacaoFinal(string $cpf, array $dadosFuncionais = []): void
     {
         SiapeLog::info('Iniciando sincronização final', ['cpf' => $cpf]);
 
