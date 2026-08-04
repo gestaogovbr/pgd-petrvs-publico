@@ -80,57 +80,39 @@ describe('CHDBrutaCalculator → contarDiasDeSemana', function () {
     });
 });
 
-describe('CHDBrutaCalculator → jornadaDiaria', function () {
-    test('jornada 40h retorna 8h/dia', function () {
-        expect(CHDBrutaCalculator::jornadaDiaria(40))->toBe(8.0);
-    });
-
-    test('jornada 30h retorna 6h/dia', function () {
-        expect(CHDBrutaCalculator::jornadaDiaria(30))->toBe(6.0);
-    });
-
-    test('jornada 20h retorna 4h/dia', function () {
-        expect(CHDBrutaCalculator::jornadaDiaria(20))->toBe(4.0);
-    });
-
-    test('jornada null assume 40h e retorna 8h/dia', function () {
-        expect(CHDBrutaCalculator::jornadaDiaria(null))->toBe(8.0);
-    });
-});
-
-describe('CHDBrutaCalculator → calcular (integração)', function () {
-    test('PT de 1 semana com jornada 40h retorna 40h', function () {
+describe('CHDBrutaCalculator → calcular', function () {
+    test('PT de 1 semana com 8h/dia retorna 40h', function () {
         $inicio = Carbon::parse('2026-07-27'); // segunda
         $fim = Carbon::parse('2026-07-31');    // sexta
 
-        expect(CHDBrutaCalculator::calcular($inicio, $fim, 40))->toBe(40.0);
+        expect(CHDBrutaCalculator::calcular($inicio, $fim, 8.0))->toBe(40.0);
     });
 
-    test('PT de 1 semana com jornada 30h retorna 30h', function () {
+    test('PT de 1 semana com 6h/dia retorna 30h', function () {
         $inicio = Carbon::parse('2026-07-27'); // segunda
         $fim = Carbon::parse('2026-07-31');    // sexta
 
-        expect(CHDBrutaCalculator::calcular($inicio, $fim, 30))->toBe(30.0);
+        expect(CHDBrutaCalculator::calcular($inicio, $fim, 6.0))->toBe(30.0);
     });
 
-    test('PT de 1 semana com jornada 20h retorna 20h', function () {
+    test('PT de 1 semana com 4h/dia retorna 20h', function () {
         $inicio = Carbon::parse('2026-07-27'); // segunda
         $fim = Carbon::parse('2026-07-31');    // sexta
 
-        expect(CHDBrutaCalculator::calcular($inicio, $fim, 20))->toBe(20.0);
+        expect(CHDBrutaCalculator::calcular($inicio, $fim, 4.0))->toBe(20.0);
     });
 
-    test('PT de 2 semanas com jornada null retorna 80h (assume 40h)', function () {
+    test('PT de 2 semanas com 8h/dia retorna 80h', function () {
         $inicio = Carbon::parse('2026-07-27'); // segunda
         $fim = Carbon::parse('2026-08-07');    // sexta
 
-        expect(CHDBrutaCalculator::calcular($inicio, $fim, null))->toBe(80.0);
+        expect(CHDBrutaCalculator::calcular($inicio, $fim, 8.0))->toBe(80.0);
     });
 
-    test('PT de 30 dias a partir de segunda com jornada 40h retorna 176h', function () {
+    test('PT de 30 dias a partir de segunda com 8h/dia retorna 176h', function () {
         $inicio = Carbon::parse('2026-07-06'); // segunda
         $fim = Carbon::parse('2026-08-04');    // terça (30 dias, 22 seg-sex)
 
-        expect(CHDBrutaCalculator::calcular($inicio, $fim, 40))->toBe(176.0);
+        expect(CHDBrutaCalculator::calcular($inicio, $fim, 8.0))->toBe(176.0);
     });
 });

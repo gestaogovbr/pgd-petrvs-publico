@@ -164,7 +164,7 @@ class PlanoTrabalhoService
         $plano->setAttribute('chd_bruta', CHDBrutaCalculator::calcular(
             Carbon::parse($plano->data_inicio),
             Carbon::parse($plano->data_fim),
-            $plano->usuario?->cod_jornada
+            (float) $plano->carga_horaria
         ));
 
         return $plano;

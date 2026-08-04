@@ -9,37 +9,23 @@ use Carbon\Carbon;
 /**
  * Calcula a Carga Horária Disponível (CHD) Bruta de um Plano de Trabalho.
  *
- * CHD Bruta = jornada diária do participante × dias de semana (seg-sex) no período.
+ * CHD Bruta = carga horária diária do plano × dias de semana (seg-sex) no período.
  * Não desconta feriados, afastamentos, férias ou quaisquer outras ocorrências.
  */
 final class CHDBrutaCalculator
 {
-    private const DIAS_POR_SEMANA = 5;
     private const DIAS_CORRIDOS_POR_SEMANA = 7;
-    private const JORNADA_SEMANAL_PADRAO = 40;
 
     /**
      * @param Carbon $inicio Data de início do período (inclusiva)
      * @param Carbon $fim    Data de fim do período (inclusiva)
-     * @param int|null $codJornada Jornada semanal SIAPE (40, 30, 20). Assume 40 se null.
+     * @param float  $cargaHorariaDiaria Carga horária diária do plano de trabalho
      */
-    public static function calcular(Carbon $inicio, Carbon $fim, ?int $codJornada): float
+    public static function calcular(Carbon $inicio, Carbon $fim, float $cargaHorariaDiaria): float
     {
-        $jornadaDiaria = self::jornadaDiaria($codJornada);
         $diasDeSemana = self::contarDiasDeSemana($inicio, $fim);
 
-        return $jornadaDiaria * $diasDeSemana;
-    }
-
-    /**
-     * Converte a jornada semanal SIAPE em jornada diária.
-     * Ex: 40h/semana → 8h/dia, 30h → 6h, 20h → 4h.
-     */
-    public static function jornadaDiaria(?int $codJornada): float
-    {
-        $jornadaSemanal = $codJornada ?? self::JORNADA_SEMANAL_PADRAO;
-
-        return $jornadaSemanal / self::DIAS_POR_SEMANA;
+        return $cargaHorariaDiaria * $diasDeSemana;
     }
 
     /**
