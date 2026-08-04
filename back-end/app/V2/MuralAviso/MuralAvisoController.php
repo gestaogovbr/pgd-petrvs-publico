@@ -24,7 +24,7 @@ class MuralAvisoController extends Controller
         private readonly MuralAvisoService $service,
     ) {}
 
-    public function query(Request $request): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
             $data = MuralAvisoRequestValidator::query($request);

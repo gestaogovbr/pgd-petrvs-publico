@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('mural_avisos', function (Blueprint $table) {
-            $table->char('id', 36)->primary();
+            $table->uuid('id')->primary();
             $table->string('titulo', 255);
             $table->text('conteudo');
             $table->enum('destinatario', ['TODOS', 'TENANT_ESPECIFICO']);

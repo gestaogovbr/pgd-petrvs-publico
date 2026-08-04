@@ -83,7 +83,7 @@ Route::middleware(['panel'])->prefix('Audit')->group(function () {
 });
 
 Route::middleware(['panel'])->prefix('mural-aviso')->group(function () {
-    Route::get('/', [MuralAvisoController::class, 'query']);
+    Route::get('/', [MuralAvisoController::class, 'index']);
     Route::get('/{id}', [MuralAvisoController::class, 'show']);
     Route::post('/', [MuralAvisoController::class, 'store']);
     Route::put('/{id}', [MuralAvisoController::class, 'update']);

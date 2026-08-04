@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('mural_avisos_leituras', function (Blueprint $table) {
-            $table->char('id', 36)->primary();
-            $table->char('usuario_id', 36);
+            $table->uuid('id')->primary();
+            $table->uuid('usuario_id');
             $table->dateTime('data_confirmacao');
             $table->timestamp('created_at')->nullable();
 
