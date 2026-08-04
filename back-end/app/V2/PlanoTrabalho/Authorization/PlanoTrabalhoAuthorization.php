@@ -25,6 +25,7 @@ class PlanoTrabalhoAuthorization
         return new PlanoTrabalhoAcoesDTO(
             editar: $this->podeEditar($plano, $usuario),
             arquivar: $this->podeArquivar($plano, $usuario, $isElegivelParaArquivamento),
+            desarquivar: $this->podeDesarquivar($plano, $usuario),
             encerrar: $this->podeEncerrar($plano, $usuario),
         );
     }
@@ -63,6 +64,15 @@ class PlanoTrabalhoAuthorization
         }
 
         if (!$isElegivelParaArquivamento) {
+            return false;
+        }
+
+        return $this->isAutorizadoArquivar($plano, $usuario);
+    }
+
+    public function podeDesarquivar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($plano->data_arquivamento === null) {
             return false;
         }
 

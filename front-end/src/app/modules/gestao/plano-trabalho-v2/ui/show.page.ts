@@ -218,9 +218,30 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
       mensagem: 'Ao arquivar este Plano de Trabalho, ele será removido da tela, ficando disponível apenas quando consultado. Deseja confirmar?',
       onConfirmar: () => {
         this.arquivarPlanoUC.execute(plano.id).subscribe({
-          next: (atualizado) => {
-            this.planoTrabalho.set(atualizado);
-            this.message.success('Plano de trabalho arquivado com sucesso.');
+          next: () => {
+            this.api.getById(plano.id).subscribe(atualizado => {
+              this.planoTrabalho.set(atualizado);
+              this.message.success('Plano de trabalho arquivado com sucesso.');
+            });
+          }
+        });
+      }
+    });
+  }
+
+  desarquivarPlano() {
+    const plano = this.planoTrabalho();
+    if (!plano) return;
+    this.facade.confirmacaoPendente.set({
+      titulo: 'Desarquivar Plano de Trabalho',
+      mensagem: 'Ao desarquivar este Plano de Trabalho, ele voltará a ser exibido na listagem. Deseja confirmar?',
+      onConfirmar: () => {
+        this.api.unarchive(plano.id).subscribe({
+          next: () => {
+            this.api.getById(plano.id).subscribe(atualizado => {
+              this.planoTrabalho.set(atualizado);
+              this.message.success('Plano de trabalho desarquivado com sucesso.');
+            });
           }
         });
       }

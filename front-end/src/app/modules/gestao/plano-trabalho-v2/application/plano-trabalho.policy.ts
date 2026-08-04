@@ -69,4 +69,8 @@ export class PlanoTrabalhoPolicy {
     return !p.data_arquivamento
       && PlanoTrabalhoStatusGroups.arquivavel.includes(p.status);
   }
+
+  podeDesarquivar(p: PlanoTrabalho): boolean {
+    return p.acoes?.desarquivar === true;
+  }
 }
