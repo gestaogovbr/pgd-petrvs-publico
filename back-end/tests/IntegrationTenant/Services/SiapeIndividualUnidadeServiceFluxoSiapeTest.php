@@ -315,6 +315,8 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
 
     test('falha mantem resumo com status erro quando ha estado da unidade', function () {
         $codigo = '26104';
+        $mensagemErro = 'Houve uma falha na comunicação com o SIAPE ao processar esta unidade. Por favor, tente novamente mais tarde.';
+
         Unidade::factory()->create([
             'codigo' => $codigo,
             'nome' => 'Unidade Com Erro',
@@ -326,13 +328,13 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         $service = app(SiapeIndividualUnidadeService::class);
 
         expect(fn() => $service->fluxoSiape($codigo, $this->mockSiapeService))
-            ->toThrow(Exception::class, 'Falha simulada no SIAPE');
+            ->toThrow(Exception::class, $mensagemErro);
 
         $resumo = $service->getResumo();
 
         expect($resumo)->toHaveCount(1);
         expect($resumo[0]['status'])->toBe('erro');
-        expect($resumo[0]['mensagem'])->toBe('Falha simulada no SIAPE');
+        expect($resumo[0]['mensagem'])->toBe($mensagemErro);
         expect($resumo[0]['unidade_existia'])->toBeTrue();
     });
 

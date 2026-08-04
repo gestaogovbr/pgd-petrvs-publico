@@ -104,17 +104,19 @@ abstract class ExportarItemJob implements ShouldQueue
 
         try{
             $model = $this->getModelParaEnvio();
-            $resource = $this->getResource($model);
 
-             if (!$model) {
+            if (!$model) {
                 $this->logInfo("Item não encontrado para envio.");
                 return;
             }
 
-            if ($this->timestamp && $this->timestamp->lt($model->data_agendamento_envio)) {
+            $dataAgendamentoEnvio = $model->getAttribute('data_agendamento_envio');
+            if ($this->timestamp && $dataAgendamentoEnvio instanceof Carbon && $this->timestamp->lt($dataAgendamentoEnvio)) {
                 $this->logInfo("Ignorando envio defasado.");
                 return;
             }
+
+            $resource = $this->getResource($model);
 
             $this->registrarTentativa($model);
 

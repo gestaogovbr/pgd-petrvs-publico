@@ -10,10 +10,12 @@ use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Services\IntegracaoService;
 use App\Services\IntegracaoServidorService;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
+    Bus::fake();
     criarEntidadeIssueRegression();
     criarPerfilIssueRegression(5, 'Participante');
     criarPerfilIssueRegression(7, 'Consulta');
