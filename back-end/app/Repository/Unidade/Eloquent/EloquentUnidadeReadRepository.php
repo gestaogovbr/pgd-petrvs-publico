@@ -13,6 +13,7 @@ use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 /**
  * @extends AbstractEloquentReadRepository<Unidade>
@@ -323,5 +324,19 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         SQL, [$unidadeId]);
 
         return array_reverse(array_column($rows, 'id'));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buscarComLocalidade(array $unidadeIds): SupportCollection
+    {
+        return $this->model->newQuery()
+            ->select('unidades.id', 'unidades.entidade_id', 'unidades.cidade_id', 'cidades.uf')
+            ->leftJoin('cidades', 'cidades.id', '=', 'unidades.cidade_id')
+            ->whereIn('unidades.id', $unidadeIds)
+            ->get()
+            ->toBase()
+            ->keyBy('id');
     }
 }
