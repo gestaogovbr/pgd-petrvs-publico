@@ -1143,3 +1143,20 @@ test('issue 2163 - backend deve salvar atribuicoes de usuario interno com email 
         'deleted_at' => null,
     ], 'tenant');
 });
+
+function prepararPerfisSiapeIndividualServidor(): void
+{
+    foreach ([
+        NivelAcessoService::PERFIL_CONSULTA => 'Consulta',
+        NivelAcessoService::PERFIL_PARTICIPANTE => 'Participante',
+    ] as $nivel => $nome) {
+        Perfil::firstOrCreate(
+            ['nivel' => $nivel],
+            [
+                'id' => (string) Str::uuid(),
+                'nome' => $nome,
+                'descricao' => $nome,
+            ]
+        );
+    }
+}
