@@ -20,7 +20,7 @@ use Carbon\CarbonPeriod;
 
 class PlanoTrabalhoArquivarValidator
 {
-    private const PRAZO_RECURSO_DIAS = 30;
+    private const PRAZO_RECURSO_DIAS = 20;
 
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
@@ -79,8 +79,8 @@ class PlanoTrabalhoArquivarValidator
         );
 
         if ($resumo->isAguardandoReavaliacao || $resumo->avaliacaoRecente) {
-            return 'Este plano de trabalho não pode ser arquivado porque está no prazo para recurso.'
-                . ' O arquivamento será liberado automaticamente 30 dias após a data da avaliação.';
+            return 'Este Plano de Trabalho não pode ser arquivado porque ainda está dentro do período de recurso.'
+                . ' O arquivamento será liberado automaticamente em até 20 dias após a data da avaliação.';
         }
 
         if ($plano->encerrado_at !== null && !$resumo->possuiPendencias) {
