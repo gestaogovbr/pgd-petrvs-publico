@@ -17,7 +17,7 @@ import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Programa } from 'src/app/models/programa.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import moment from 'moment';
+import { addDays } from 'date-fns';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { ProgramaService } from 'src/app/services/programa.service';
@@ -130,7 +130,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     if(action == 'clone') {
       entity.id = "";
       entity.data_inicio = new Date();
-      entity.data_fim = moment().add(1, 'day').toDate();
+      entity.data_fim = addDays(new Date(), 1);
 
       // só clonar entregas que não possuem vínculos excluídos
       const entregas = entity.entregas || [];
@@ -163,7 +163,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     entrega.progresso_esperado = 0;
     entrega.realizado = { ...(entrega.realizado || {}), valor: 0, porcentagem: 0 };
     entrega.data_inicio = new Date();
-    entrega.data_fim = moment().add(1, 'day').toDate();
+    entrega.data_fim = addDays(new Date(), 1);
     entrega.comentarios = [];
     entrega.reacoes = [];
     entrega.produtos = [];
