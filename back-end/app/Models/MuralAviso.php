@@ -2,19 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Traits\AutoUuid;
-
-class MuralAviso extends Model
+class MuralAviso extends ModelBase
 {
-    use SoftDeletes, AutoUuid;
-
     protected $table = 'mural_avisos';
-
-    public $incrementing = false;
-
-    protected $keyType = 'string';
 
     public function __construct(array $attributes = [])
     {
