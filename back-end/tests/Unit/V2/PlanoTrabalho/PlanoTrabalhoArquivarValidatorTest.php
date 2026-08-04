@@ -100,8 +100,8 @@ describe('PlanoTrabalhoArquivarValidator::motivoImpedimento', function () {
 
         $resultado = $this->validator->motivoImpedimento($plano);
 
-        expect($resultado)->toContain('prazo para recurso')
-            ->and($resultado)->toContain('30 dias após a data da avaliação');
+        expect($resultado)->toContain('período de recurso')
+            ->and($resultado)->toContain('20 dias após a data da avaliação');
     });
 
     test('retorna mensagem RN04 quando aguardando reavaliacao', function () {
@@ -117,7 +117,7 @@ describe('PlanoTrabalhoArquivarValidator::motivoImpedimento', function () {
 
         $resultado = $this->validator->motivoImpedimento($plano);
 
-        expect($resultado)->toContain('prazo para recurso');
+        expect($resultado)->toContain('período de recurso');
     });
 
     test('retorna mensagem RN05 quando plano encerrado com pendencias', function () {
@@ -194,7 +194,7 @@ describe('PlanoTrabalhoArquivarValidator::validar', function () {
             ));
 
         $this->validator->validar('plano-1', 'user-1');
-    })->throws(ValidateException::class, 'prazo para recurso');
+    })->throws(ValidateException::class, 'período de recurso');
 
     test('lanca ForbiddenException quando usuario nao autorizado', function () {
         $plano = criarPlano('CANCELADO');
