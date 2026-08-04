@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\MuralAviso;
 
+use App\Enums\MuralAvisoDestinatario;
 use App\Models\MuralAviso;
 use App\Repository\MuralAviso\MuralAvisoRepository;
 use App\Repository\MuralAvisoLeitura\MuralAvisoLeituraRepository;
@@ -70,7 +71,7 @@ class MuralAvisoService
             'titulo' => $dto->titulo,
             'conteudo' => $dto->conteudo,
             'destinatario' => $dto->destinatario,
-            'tenant_id' => $dto->destinatario === 'TODOS' ? null : $dto->tenantId,
+            'tenant_id' => $dto->destinatario === MuralAvisoDestinatario::TODOS->value ? null : $dto->tenantId,
             'remetente_tipo' => $remetenteTipo,
             'remetente_tenant_id' => $remetenteTenantId,
             'publicado_por_id' => $usuarioId,
@@ -104,7 +105,7 @@ class MuralAvisoService
             'titulo' => $dto->titulo,
             'conteudo' => $dto->conteudo,
             'destinatario' => $dto->destinatario,
-            'tenant_id' => $dto->destinatario === 'TODOS' ? null : $dto->tenantId,
+            'tenant_id' => $dto->destinatario === MuralAvisoDestinatario::TODOS->value ? null : $dto->tenantId,
             'remetente_tipo' => $remetenteTipo,
             'remetente_tenant_id' => $remetenteTenantId,
             'data_publicacao' => now(),

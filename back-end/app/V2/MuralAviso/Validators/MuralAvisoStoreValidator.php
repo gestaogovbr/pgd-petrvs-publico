@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\MuralAviso\Validators;
 
+use App\Enums\MuralAvisoDestinatario;
 use App\Exceptions\ValidateException;
 
 class MuralAvisoStoreValidator
@@ -27,7 +28,7 @@ class MuralAvisoStoreValidator
 
     private function validarDestinatarioTodos(string $destinatario, int $nivelUsuario): void
     {
-        if ($destinatario !== 'TODOS') {
+        if ($destinatario !== MuralAvisoDestinatario::TODOS->value) {
             return;
         }
 
@@ -45,7 +46,7 @@ class MuralAvisoStoreValidator
         int $nivelUsuario,
         array $tenantIdsDoUsuario,
     ): void {
-        if ($destinatario !== 'TENANT_ESPECIFICO') {
+        if ($destinatario !== MuralAvisoDestinatario::TENANT_ESPECIFICO->value) {
             return;
         }
 

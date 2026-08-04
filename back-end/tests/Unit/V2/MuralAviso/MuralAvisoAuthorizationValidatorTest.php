@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\V2\MuralAviso;
 
+use App\Enums\MuralAvisoDestinatario;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Models\MuralAviso;
@@ -37,7 +38,7 @@ describe('MuralAvisoAuthorizationValidator::validar', function () {
     test('permite órgão central acessar qualquer aviso', function () {
         $aviso = Mockery::mock(MuralAviso::class)->makePartial();
         $aviso->id = 'aviso-1';
-        $aviso->destinatario = 'TODOS';
+        $aviso->destinatario = MuralAvisoDestinatario::TODOS->value;
 
         $repo = Mockery::mock(MuralAvisoRepository::class);
         $repo->shouldReceive('findById')->with('aviso-1')->andReturn($aviso);
@@ -68,7 +69,7 @@ describe('MuralAvisoAuthorizationValidator::validar', function () {
     test('rejeita usuário não-central ao tentar alterar aviso TODOS', function () {
         $aviso = Mockery::mock(MuralAviso::class)->makePartial();
         $aviso->id = 'aviso-1';
-        $aviso->destinatario = 'TODOS';
+        $aviso->destinatario = MuralAvisoDestinatario::TODOS->value;
         $aviso->tenant_id = null;
 
         $repo = Mockery::mock(MuralAvisoRepository::class);

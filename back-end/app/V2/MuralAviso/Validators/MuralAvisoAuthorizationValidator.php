@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\MuralAviso\Validators;
 
+use App\Enums\MuralAvisoDestinatario;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Models\MuralAviso;
@@ -35,7 +36,7 @@ class MuralAvisoAuthorizationValidator
             return $aviso;
         }
 
-        $isAvisoGlobal = $aviso->destinatario === 'TODOS';
+        $isAvisoGlobal = $aviso->destinatario === MuralAvisoDestinatario::TODOS->value;
         $isDoTenantDoUsuario = in_array($aviso->tenant_id, $tenantIdsDoUsuario, true);
 
         if ($isAvisoGlobal || !$isDoTenantDoUsuario) {

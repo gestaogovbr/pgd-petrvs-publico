@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\V2\MuralAviso;
 
+use App\Enums\MuralAvisoDestinatario;
 use App\Models\MuralAviso;
 use App\Models\MuralAvisoLeitura;
 use App\Repository\MuralAviso\MuralAvisoRepository;
@@ -73,13 +74,13 @@ describe('MuralAvisoService::store', function () {
         $dto = MuralAvisoStoreDTO::fromArray([
             'titulo' => 'Teste',
             'conteudo' => 'Conteúdo',
-            'destinatario' => 'TODOS',
+            'destinatario' => MuralAvisoDestinatario::TODOS->value,
             'tenant_id' => null,
         ]);
 
         $this->storeValidator->shouldReceive('validar')
             ->once()
-            ->with('TODOS', null, 1, []);
+            ->with(MuralAvisoDestinatario::TODOS->value, null, 1, []);
 
         $aviso = Mockery::mock(MuralAviso::class)->makePartial();
         $aviso->id = 'aviso-new';
@@ -89,7 +90,7 @@ describe('MuralAvisoService::store', function () {
             ->with(Mockery::on(function (array $data) {
                 return $data['titulo'] === 'Teste'
                     && $data['conteudo'] === 'Conteúdo'
-                    && $data['destinatario'] === 'TODOS'
+                    && $data['destinatario'] === MuralAvisoDestinatario::TODOS->value
                     && $data['tenant_id'] === null
                     && $data['remetente_tipo'] === 'ORGAO_CENTRAL'
                     && $data['remetente_tenant_id'] === null
@@ -133,7 +134,7 @@ describe('MuralAvisoService::update', function () {
         $dto = MuralAvisoStoreDTO::fromArray([
             'titulo' => 'Atualizado',
             'conteudo' => 'Novo conteúdo',
-            'destinatario' => 'TODOS',
+            'destinatario' => MuralAvisoDestinatario::TODOS->value,
             'tenant_id' => null,
         ]);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository\MuralAviso\Eloquent;
 
+use App\Enums\MuralAvisoDestinatario;
 use App\Models\MuralAviso;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\MuralAviso\Contracts\MuralAvisoReadRepositoryContract;
@@ -32,7 +33,7 @@ class EloquentMuralAvisoReadRepository extends AbstractEloquentReadRepository im
         if ($tenantIds !== []) {
             $query->where(function ($q) use ($tenantIds) {
                 $q->whereIn('tenant_id', $tenantIds)
-                  ->orWhere('destinatario', 'TODOS');
+                  ->orWhere('destinatario', MuralAvisoDestinatario::TODOS->value);
             });
         }
 
@@ -46,7 +47,7 @@ class EloquentMuralAvisoReadRepository extends AbstractEloquentReadRepository im
     {
         $query = $this->query()
             ->where(function ($q) use ($tenantId) {
-                $q->where('destinatario', 'TODOS')
+                $q->where('destinatario', MuralAvisoDestinatario::TODOS->value)
                   ->orWhere('tenant_id', $tenantId);
             })
             ->orderBy('data_publicacao', 'desc');
