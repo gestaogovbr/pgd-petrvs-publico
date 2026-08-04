@@ -1,3 +1,12 @@
+## 3.0.10 31/07/2026
+
+### Adicionado
+- Migração dos indicadores de horas para a API V2 com novo endpoint `POST /api/v2/indicadores/horas`, incluindo cálculo corrigido de dias úteis com feriados religiosos, exclusão de usuários deletados e tratamento de afastamentos com hora
+- Botão "Históricos de Execução" visível na tela de avaliação do Plano de Entrega
+
+### Corrigido
+- Arquivamento automático de Planos de Entregas e Planos de Trabalho: planos que não estavam concluídos e avaliados eram arquivados indevidamente pelo job diário, e voltavam a ser arquivados mesmo após desarquivamento manual
+
 ## 3.0.9 23/07/2026
 
 ### Adicionado
