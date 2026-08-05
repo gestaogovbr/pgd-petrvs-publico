@@ -144,7 +144,7 @@ describe('PlanoTrabalhoDocumentoService::store', function () {
 
         $novoDoc = Mockery::mock(Documento::class)->makePartial();
         $novoDoc->id = 'doc-novo';
-        $this->planoRepo->shouldReceive('update')->twice()->andReturn(true);
+        $this->planoRepo->shouldReceive('update')->twice()->andReturn($this->plano);
         $this->documentoRepo->shouldReceive('createFromTCR')->once()->with(Mockery::on(function ($dto) {
             return $dto instanceof TCRDocumentoDTO && $dto->entidadeId === 'entidade-unidade';
         }))->andReturn($novoDoc);
