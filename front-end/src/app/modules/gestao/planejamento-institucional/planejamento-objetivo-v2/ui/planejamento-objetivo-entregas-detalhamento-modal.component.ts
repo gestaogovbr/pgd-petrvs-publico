@@ -6,7 +6,8 @@ import {
   inject,
   input,
   output,
-  signal
+  signal,
+  untracked
 } from '@angular/core';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { firstValueFrom } from 'rxjs';
@@ -44,13 +45,19 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   readonly filtroDataInicio = signal('');
   readonly filtroDataFim = signal('');
 
+  private carregamentoId = 0;
+
   constructor() {
     effect(() => {
       const id = this.objetivoId();
       const unidadeInicial = this.unidadeIdInicial();
       if (id) {
-        this.filtroUnidadeId.set(unidadeInicial);
-        void this.carregar();
+        // untracked: sem isso, os signals de filtro lidos dentro de carregar() entram na
+        // dependência do effect, que re-executa a cada mudança de filtro e reseta a unidade.
+        untracked(() => {
+          this.filtroUnidadeId.set(unidadeInicial);
+          void this.carregar();
+        });
       }
     });
   }
@@ -177,25 +184,26 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
       return;
     }
 
+    const reqId = ++this.carregamentoId;
     this.loading.set(true);
     this.error.set(null);
     try {
       const data = await firstValueFrom(
         this.api.getEntregasDetalhamento(objetivoId, this.filtrosAtuais())
       );
-      if (this.objetivoId() !== objetivoId) {
+      if (this.objetivoId() !== objetivoId || reqId !== this.carregamentoId) {
         return;
       }
       this.dados.set(data);
       this.linhaExpandidaId.set(null);
     } catch (err: unknown) {
-      if (this.objetivoId() !== objetivoId) {
+      if (this.objetivoId() !== objetivoId || reqId !== this.carregamentoId) {
         return;
       }
       this.dados.set(null);
       this.error.set(err instanceof Error ? err.message : 'Não foi possível carregar o detalhamento.');
     } finally {
-      if (this.objetivoId() === objetivoId) {
+      if (this.objetivoId() === objetivoId && reqId === this.carregamentoId) {
         this.loading.set(false);
       }
     }

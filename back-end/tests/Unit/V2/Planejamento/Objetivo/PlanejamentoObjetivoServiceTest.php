@@ -233,7 +233,7 @@ describe('PlanejamentoObjetivoService::getPainelResumo', function () {
         criarPlanejamentoObjetivoService(repository: $repo)->getPainelResumo('inexistente');
     })->throws(NotFoundException::class);
 
-    test('monta resumo do painel lateral', function () {
+    test('monta resumo do painel lateral com seções item e consolidado', function () {
         $objetivo = objetivoModel('obj-1');
         $geral = (object) [
             'objetivo_id' => 'obj-1',
@@ -242,7 +242,7 @@ describe('PlanejamentoObjetivoService::getPainelResumo', function () {
             'tipo_objetivo_nome' => 'Tipo',
             'eixo_tematico_nome' => 'Eixo',
         ];
-        $agg = (object) [
+        $aggItem = (object) [
             'esforco_disponivel_horas' => 10,
             'esforco_planejado_horas' => 5,
             'esforco_executado_horas' => 2,
@@ -253,22 +253,43 @@ describe('PlanejamentoObjetivoService::getPainelResumo', function () {
             'participantes_somente_outras_unidades' => 0,
             'participantes_em_ambas' => 0,
             'total_entregas' => 1,
+            'total_entregas_avaliadas' => 0,
             'entregas_concluidas' => 0,
+        ];
+        $aggConsolidado = (object) [
+            'esforco_disponivel_horas' => 30,
+            'esforco_planejado_horas' => 15,
+            'esforco_executado_horas' => 6,
+            'tem_pt_pactuado' => 1,
+            'tem_pt_concluido' => 0,
+            'tem_pe_homologado' => 1,
+            'participantes_somente_unidade_propria' => 3,
+            'participantes_somente_outras_unidades' => 0,
+            'participantes_em_ambas' => 0,
+            'total_entregas' => 4,
+            'total_entregas_avaliadas' => 2,
+            'entregas_concluidas' => 1,
         ];
 
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
         $repo->shouldReceive('buscarDadosGeraisPainel')->once()->with('obj-1')->andReturn($geral);
-        $repo->shouldReceive('agregarPainelEsforcoPessoasEntregas')->once()->with('obj-1', null)->andReturn($agg);
+        $repo->shouldReceive('agregarPainelEsforcoPessoasEntregas')->once()->with(['obj-1'], null)->andReturn($aggItem);
+        $repo->shouldReceive('coletarIdsSubordinados')->once()->with('obj-1')->andReturn(['obj-1', 'obj-2']);
+        $repo->shouldReceive('agregarPainelEsforcoPessoasEntregas')->once()->with(['obj-1', 'obj-2'], null)->andReturn($aggConsolidado);
         $repo->shouldReceive('listarUnidadesPainelPorObjetivoId')->once()->with('obj-1')->andReturn([]);
 
         $result = criarPlanejamentoObjetivoService(repository: $repo)->getPainelResumo('obj-1');
 
         expect($result->objetivo_id)->toBe('obj-1')
             ->and($result->nome)->toBe('Objetivo')
-            ->and($result->esforco->disponivel_horas)->toBe(10.0)
-            ->and($result->pessoas->total_participantes)->toBe(1)
-            ->and($result->entregas->total_entregas)->toBe(1);
+            ->and($result->item->esforco->disponivel_horas)->toBe(10.0)
+            ->and($result->item->pessoas->total_participantes)->toBe(1)
+            ->and($result->item->entregas->total_entregas)->toBe(1)
+            ->and($result->consolidado->esforco->disponivel_horas)->toBe(30.0)
+            ->and($result->consolidado->pessoas->total_participantes)->toBe(3)
+            ->and($result->consolidado->entregas->total_entregas)->toBe(4)
+            ->and($result->consolidado->entregas->percentual_concluidas)->toBe(50.0);
     });
 });
 

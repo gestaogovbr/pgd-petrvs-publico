@@ -15,12 +15,6 @@ use Illuminate\Support\Facades\DB;
  */
 class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRepository implements PlanejamentoObjetivoReadRepositoryContract
 {
-    /** Divisor aplicado a {@see \App\Models\Usuario::$cod_jornada} no cálculo de esforço (jornada semanal → fator diário). */
-    private const ESFORCO_COD_JORNADA_SEMANA_DIVISOR = 5.0;
-
-    /** Horas semanais padrão quando {@see \App\Models\Usuario::$cod_jornada} é NULL no cálculo de esforço. */
-    private const ESFORCO_COD_JORNADA_PADRAO = 40;
-
     /**
      * Dias do período do PT no cálculo de esforço.
      * Alinhado às demais consultas deste repositório (esforço-total, entregas, equipes).
@@ -58,6 +52,39 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                     $queue[] = $parentId;
                 }
             }
+
+            $childRows = DB::select(
+                'SELECT id FROM planejamentos_objetivos WHERE deleted_at IS NULL AND (objetivo_pai_id = ? OR objetivo_superior_id = ?)',
+                [$id, $id]
+            );
+            foreach ($childRows as $child) {
+                $childId = (string) $child->id;
+                if (!isset($seen[$childId])) {
+                    $queue[] = $childId;
+                }
+            }
+        }
+
+        return array_keys($seen);
+    }
+
+    /**
+     * Ids do objetivo e de todos os itens hierarquicamente subordinados
+     * (descendentes via objetivo_pai_id ou objetivo_superior_id), sem subir para os pais.
+     *
+     * @return list<string>
+     */
+    public function coletarIdsSubordinados(string $objetivoId): array
+    {
+        $seen = [];
+        $queue = [$objetivoId];
+
+        while ($queue !== []) {
+            $id = array_shift($queue);
+            if (isset($seen[$id])) {
+                continue;
+            }
+            $seen[$id] = true;
 
             $childRows = DB::select(
                 'SELECT id FROM planejamentos_objetivos WHERE deleted_at IS NULL AND (objetivo_pai_id = ? OR objetivo_superior_id = ?)',
@@ -116,8 +143,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     /** @return list<\stdClass> */
     public function listarEntregasPlanoEntregaPorObjetivoId(string $objetivoId): array
     {
-        $jornadaDivisor = self::ESFORCO_COD_JORNADA_SEMANA_DIVISOR;
-        $jornadaPadrao = self::ESFORCO_COD_JORNADA_PADRAO;
+        $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
 
         return DB::select(<<<SQL
             SELECT
@@ -134,7 +160,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ROUND(
                     COALESCE(
                         SUM(
-                            (COALESCE(us.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
+                            {$chd}
                             * (DATEDIFF(pt.data_fim, pt.data_inicio) + 1)
                             * (pte.forca_trabalho / 100.0)
                         ),
@@ -151,7 +177,6 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ON pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL
             LEFT JOIN planos_trabalhos pt
                 ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL AND pt.status IN ('CONCLUIDO')
-            LEFT JOIN usuarios us ON us.id = pt.usuario_id AND us.deleted_at IS NULL
             WHERE peeo.planejamento_objetivo_id = ? AND peeo.deleted_at IS NULL
             GROUP BY
                 pee.id,
@@ -173,8 +198,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     /** Unidades do plano de entregas (PE) vinculadas ao objetivo, com esforço somado de PTs concluídos (pode ser zero). */
     public function listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId(string $objetivoId): array
     {
-        $jornadaDivisor = self::ESFORCO_COD_JORNADA_SEMANA_DIVISOR;
-        $jornadaPadrao = self::ESFORCO_COD_JORNADA_PADRAO;
+        $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
 
         return DB::select(<<<SQL
             SELECT
@@ -184,7 +208,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ROUND(
                     COALESCE(
                         SUM(
-                            (COALESCE(us.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
+                            {$chd}
                             * (DATEDIFF(pt.data_fim, pt.data_inicio) + 1)
                             * (pte.forca_trabalho / 100.0)
                         ),
@@ -200,7 +224,6 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ON pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL
             LEFT JOIN planos_trabalhos pt
                 ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL AND pt.status IN ('CONCLUIDO')
-            LEFT JOIN usuarios us ON us.id = pt.usuario_id AND us.deleted_at IS NULL
             WHERE peeo.planejamento_objetivo_id = ? AND peeo.deleted_at IS NULL
             GROUP BY u.id, u.nome, u.sigla
             ORDER BY u.nome
@@ -214,8 +237,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     private function selectEsforcoMetricRowsForObjetivoIds(array $ids): array
     {
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $jornadaDivisor = ObjetivoPainelEsforcoSupport::jornadaDivisor();
-        $jornadaPadrao = ObjetivoPainelEsforcoSupport::jornadaPadrao();
+        $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
         $ptPlanejadoIn = ObjetivoPainelEsforcoSupport::ptStatusPlanejadoIn();
         $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
 
@@ -229,12 +251,12 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 tpo.nome AS tipo_objetivo_nome,
                 COUNT(DISTINCT pee.id) AS total_entregas,
                 ROUND(COALESCE(SUM(
-                    (COALESCE(u.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
+                    {$chd}
                     * {$diasPeriodo}
                 ), 0), 2) AS esforco_disponivel_horas,
                 ROUND(COALESCE(SUM(CASE
                     WHEN pt.status IN ({$ptPlanejadoIn}) THEN
-                        (COALESCE(u.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
+                        {$chd}
                         * {$diasPeriodo}
                         * (pte.forca_trabalho / 100.0)
                 END), 0), 2) AS esforco_proprio
@@ -252,8 +274,6 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ON pt.id = pte.plano_trabalho_id
                 AND pt.deleted_at IS NULL
                 AND pt.status NOT IN ('CANCELADO', 'SUSPENSO')
-            LEFT JOIN usuarios u
-                ON u.id = pt.usuario_id AND u.deleted_at IS NULL
             WHERE d.id IN ({$placeholders}) AND d.deleted_at IS NULL
             GROUP BY d.id, d.nome, d.objetivo_pai_id, d.objetivo_superior_id, pla.nome, tpo.nome
             ORDER BY d.nome
@@ -279,13 +299,33 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     }
 
     public function agregarPainelEsforcoPessoasEntregas(
-        string $objetivoId,
+        array $objetivoIds,
         ?string $unidadeId = null,
         ?string $dataInicio = null,
         ?string $dataFim = null,
     ): \stdClass {
-        $jornadaDivisor = ObjetivoPainelEsforcoSupport::jornadaDivisor();
-        $jornadaPadrao = ObjetivoPainelEsforcoSupport::jornadaPadrao();
+        $vazio = (object) [
+            'total_entregas' => 0,
+            'total_entregas_avaliadas' => 0,
+            'entregas_concluidas' => 0,
+            'participantes_somente_unidade_propria' => 0,
+            'participantes_somente_outras_unidades' => 0,
+            'participantes_em_ambas' => 0,
+            'esforco_disponivel_horas' => 0,
+            'esforco_planejado_horas' => 0,
+            'esforco_executado_horas' => 0,
+            'tem_pt_pactuado' => 0,
+            'tem_pt_concluido' => 0,
+            'tem_pe_homologado' => 0,
+        ];
+
+        $objetivoIds = array_values(array_unique(array_filter(array_map('strval', $objetivoIds))));
+        if ($objetivoIds === []) {
+            return $vazio;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($objetivoIds), '?'));
+        $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
         $ptPlanejadoIn = ObjetivoPainelEsforcoSupport::ptStatusPlanejadoIn();
         $ptExecutadoIn = ObjetivoPainelEsforcoSupport::ptStatusExecutadoIn();
         $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
@@ -306,7 +346,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                     ON pt.id = pte.plano_trabalho_id
                     AND pt.deleted_at IS NULL
                     AND pt.status NOT IN ('CANCELADO', 'SUSPENSO')
-                WHERE peeo.planejamento_objetivo_id = ?
+                WHERE peeo.planejamento_objetivo_id IN ({$placeholders})
                   AND peeo.deleted_at IS NULL
                   AND pt.usuario_id IS NOT NULL
                   AND (? IS NULL OR pee.unidade_id = ?)
@@ -317,24 +357,27 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
             SELECT
                 COUNT(DISTINCT pee.id) AS total_entregas,
                 COUNT(DISTINCT CASE
-                    WHEN COALESCE(pee.progresso_realizado, 0) >= 100 OR pee.homologado = 1 THEN pee.id
+                    WHEN pe.status = 'AVALIADO' THEN pee.id
+                END) AS total_entregas_avaliadas,
+                COUNT(DISTINCT CASE
+                    WHEN pe.status = 'AVALIADO' AND COALESCE(pee.progresso_realizado, 0) >= 100 THEN pee.id
                 END) AS entregas_concluidas,
                 (SELECT COALESCE(SUM(CASE WHEN tem_propria = 1 AND tem_outras = 0 THEN 1 ELSE 0 END), 0) FROM pt_vinculo) AS participantes_somente_unidade_propria,
                 (SELECT COALESCE(SUM(CASE WHEN tem_propria = 0 AND tem_outras = 1 THEN 1 ELSE 0 END), 0) FROM pt_vinculo) AS participantes_somente_outras_unidades,
                 (SELECT COALESCE(SUM(CASE WHEN tem_propria = 1 AND tem_outras = 1 THEN 1 ELSE 0 END), 0) FROM pt_vinculo) AS participantes_em_ambas,
                 ROUND(COALESCE(SUM(
-                    (COALESCE(us.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
+                    {$chd}
                     * {$diasPeriodo}
                 ), 0), 2) AS esforco_disponivel_horas,
                 ROUND(COALESCE(SUM(CASE
                     WHEN pt.status IN ({$ptPlanejadoIn}) THEN
-                        (COALESCE(us.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
+                        {$chd}
                         * {$diasPeriodo}
                         * (pte.forca_trabalho / 100.0)
                 END), 0), 2) AS esforco_planejado_horas,
                 ROUND(COALESCE(SUM(CASE
                     WHEN pt.status IN ({$ptExecutadoIn}) THEN
-                        (COALESCE(us.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
+                        {$chd}
                         * {$diasPeriodo}
                         * (COALESCE(pte.esforco_executado, pte.forca_trabalho) / 100.0)
                 END), 0), 2) AS esforco_executado_horas,
@@ -351,30 +394,19 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ON pt.id = pte.plano_trabalho_id
                 AND pt.deleted_at IS NULL
                 AND pt.status NOT IN ('CANCELADO', 'SUSPENSO')
-            LEFT JOIN usuarios us ON us.id = pt.usuario_id AND us.deleted_at IS NULL
-            WHERE peeo.planejamento_objetivo_id = ?
+            WHERE peeo.planejamento_objetivo_id IN ({$placeholders})
               AND peeo.deleted_at IS NULL
               AND (? IS NULL OR pee.unidade_id = ?)
               AND (? IS NULL OR DATE(pt.data_fim) >= ?)
               AND (? IS NULL OR DATE(pt.data_inicio) <= ?)
         SQL, array_merge(
-            [$objetivoId, $unidadeId, $unidadeId, $dataInicio, $dataInicio, $dataFim, $dataFim],
-            [$objetivoId, $unidadeId, $unidadeId, $dataInicio, $dataInicio, $dataFim, $dataFim],
+            $objetivoIds,
+            [$unidadeId, $unidadeId, $dataInicio, $dataInicio, $dataFim, $dataFim],
+            $objetivoIds,
+            [$unidadeId, $unidadeId, $dataInicio, $dataInicio, $dataFim, $dataFim],
         ));
 
-        return $row ?? (object) [
-            'total_entregas' => 0,
-            'entregas_concluidas' => 0,
-            'participantes_somente_unidade_propria' => 0,
-            'participantes_somente_outras_unidades' => 0,
-            'participantes_em_ambas' => 0,
-            'esforco_disponivel_horas' => 0,
-            'esforco_planejado_horas' => 0,
-            'esforco_executado_horas' => 0,
-            'tem_pt_pactuado' => 0,
-            'tem_pt_concluido' => 0,
-            'tem_pe_homologado' => 0,
-        ];
+        return $row ?? $vazio;
     }
 
     public function listarUnidadesPainelPorObjetivoId(string $objetivoId): array
@@ -401,8 +433,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
         ?string $dataInicio = null,
         ?string $dataFim = null,
     ): array {
-        $jornadaDivisor = ObjetivoPainelEsforcoSupport::jornadaDivisor();
-        $jornadaPadrao = ObjetivoPainelEsforcoSupport::jornadaPadrao();
+        $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
         $ptPlanejadoIn = ObjetivoPainelEsforcoSupport::ptStatusPlanejadoIn();
         $ptExecutadoIn = ObjetivoPainelEsforcoSupport::ptStatusExecutadoIn();
         $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
@@ -452,7 +483,9 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 pe.status AS plano_entrega_status,
                 pe.data_inicio AS plano_entrega_data_inicio,
                 pe.data_fim AS plano_entrega_data_fim,
-                COALESCE(pee.descricao_entrega, pee.descricao, '') AS entrega_titulo,
+                COALESCE(pee.descricao, '') AS entrega_titulo,
+                COALESCE(pee.descricao_entrega, '') AS entrega_descricao,
+                COALESCE(pee.descricao_meta, '') AS descricao_meta,
                 COALESCE(MAX(peep.progresso_esperado), MAX(pee.progresso_esperado)) AS progresso_esperado,
                 COALESCE(MAX(peep.progresso_realizado), MAX(pee.progresso_realizado)) AS progresso_realizado,
                 COALESCE(MAX(peep.homologado), MAX(pee.homologado)) AS homologado,
@@ -467,18 +500,18 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 COALESCE(MAX(pp.participantes_somente_outras_unidades), 0) AS participantes_somente_outras_unidades,
                 COALESCE(MAX(pp.participantes_em_ambas), 0) AS participantes_em_ambas,
                 ROUND(COALESCE(SUM(
-                    (COALESCE(us.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
+                    {$chd}
                     * {$diasPeriodo}
                 ), 0), 2) AS esforco_disponivel_horas,
                 ROUND(COALESCE(SUM(CASE
                     WHEN pt.status IN ({$ptPlanejadoIn}) THEN
-                        (COALESCE(us.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
+                        {$chd}
                         * {$diasPeriodo}
                         * (pte.forca_trabalho / 100.0)
                 END), 0), 2) AS esforco_planejado_horas,
                 ROUND(COALESCE(SUM(CASE
                     WHEN pt.status IN ({$ptExecutadoIn}) THEN
-                        (COALESCE(us.cod_jornada, {$jornadaPadrao}) / {$jornadaDivisor})
+                        {$chd}
                         * {$diasPeriodo}
                         * (COALESCE(pte.esforco_executado, pte.forca_trabalho) / 100.0)
                 END), 0), 2) AS esforco_executado_horas,
@@ -504,7 +537,6 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ON pt.id = pte.plano_trabalho_id
                 AND pt.deleted_at IS NULL
                 AND pt.status NOT IN ('CANCELADO', 'SUSPENSO')
-            LEFT JOIN usuarios us ON us.id = pt.usuario_id AND us.deleted_at IS NULL
             LEFT JOIN participantes_por_entrega pp ON pp.plano_entrega_entrega_id = pee.id
             WHERE peeo.planejamento_objetivo_id = ?
               AND peeo.deleted_at IS NULL
@@ -523,8 +555,9 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 pe.data_inicio,
                 pe.data_fim,
                 pee.descricao_entrega,
-                pee.descricao
-            ORDER BY pe.data_inicio DESC, u.sigla, pee.descricao_entrega, pee.descricao
+                pee.descricao,
+                pee.descricao_meta
+            ORDER BY pe.data_inicio DESC, u.sigla, pee.descricao
         SQL, array_merge(
             [
                 $objetivoId,

@@ -113,7 +113,11 @@ class PlanejamentoObjetivoService
             throw new NotFoundException("Objetivo com id '{$objetivoId}' não foi encontrado ou foi removido.");
         }
 
-        $agg = $this->repository->agregarPainelEsforcoPessoasEntregas($objetivoId, $unidadeId);
+        $aggItem = $this->repository->agregarPainelEsforcoPessoasEntregas([$objetivoId], $unidadeId);
+
+        $idsConsolidado = $this->repository->coletarIdsSubordinados($objetivoId);
+        $aggConsolidado = $this->repository->agregarPainelEsforcoPessoasEntregas($idsConsolidado, $unidadeId);
+
         $filtroUnidades = array_map(
             static fn (\stdClass $row): array => [
                 'id' => (string) $row->unidade_id,
@@ -122,7 +126,7 @@ class PlanejamentoObjetivoService
             $this->repository->listarUnidadesPainelPorObjetivoId($objetivoId),
         );
 
-        return $this->painelAssembler->montarResumo($geral, $agg, $filtroUnidades);
+        return $this->painelAssembler->montarResumo($geral, $aggItem, $aggConsolidado, $filtroUnidades);
     }
 
     public function getEntregasDetalhamentoPainel(

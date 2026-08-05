@@ -128,8 +128,17 @@ export type ObjetivoPainelPessoasResumoApi = {
 
 export type ObjetivoPainelEntregasResumoApi = {
   total_entregas: number;
+  /** Entregas em Planos de Entregas AVALIADOS — base do percentual de concluídas. */
+  total_entregas_avaliadas: number;
   entregas_concluidas: number;
   percentual_concluidas: number;
+};
+
+/** Agrupamentos de uma seção do painel ("Item selecionado" ou "Consolidado"). */
+export type ObjetivoPainelSecaoResumoApi = {
+  esforco: ObjetivoPainelEsforcoResumoApi;
+  pessoas: ObjetivoPainelPessoasResumoApi;
+  entregas: ObjetivoPainelEntregasResumoApi;
 };
 
 export type ObjetivoPainelResumoApi = {
@@ -138,9 +147,10 @@ export type ObjetivoPainelResumoApi = {
   planejamento_nome: string;
   tipo_objetivo_nome: string;
   eixo_tematico_nome: string;
-  esforco: ObjetivoPainelEsforcoResumoApi;
-  pessoas: ObjetivoPainelPessoasResumoApi;
-  entregas: ObjetivoPainelEntregasResumoApi;
+  /** Seção "Item selecionado": somente o objetivo selecionado (RN02). */
+  item: ObjetivoPainelSecaoResumoApi;
+  /** Seção "Consolidado": item selecionado + subordinados (RN15). */
+  consolidado: ObjetivoPainelSecaoResumoApi;
   filtro_unidades: ObjetivoPainelFiltroOpcaoApi[];
 };
 
@@ -155,6 +165,8 @@ export type ObjetivoPainelEntregaDetalheLinhaApi = {
   plano_entrega_vigencia_inicio: string;
   plano_entrega_vigencia_fim: string | null;
   entrega_titulo: string;
+  entrega_descricao: string;
+  descricao_meta: string;
   progresso_esperado: number;
   progresso_realizado: number;
   homologado: boolean;

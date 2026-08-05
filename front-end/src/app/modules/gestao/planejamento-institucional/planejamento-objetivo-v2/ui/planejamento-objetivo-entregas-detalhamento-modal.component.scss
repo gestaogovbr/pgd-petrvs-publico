@@ -103,8 +103,45 @@
   &__detail-grid {
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: 1fr;
     padding: 0.5rem 0.25rem;
+
+    // Participantes e Esforço compactos; Registro de Execução ocupa o restante
+    @media (min-width: 768px) {
+      grid-template-columns: minmax(180px, 240px) minmax(180px, 240px) 1fr;
+    }
+  }
+
+  &__detail-registro {
+    min-width: 0;
+  }
+
+  // Segunda linha do detalhe: descrições da entrega e da meta lado a lado
+  &__detail-linha2 {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  &__texto-longo {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.875rem;
+    color: #333;
+  }
+
+  &__descricao-info {
+    color: #1351b4;
+    cursor: help;
+    font-size: 0.875rem;
+    margin-left: 0.25rem;
   }
 
   &__detail-title {

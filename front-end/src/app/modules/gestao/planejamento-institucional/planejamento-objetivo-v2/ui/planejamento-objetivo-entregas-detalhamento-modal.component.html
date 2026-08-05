@@ -132,7 +132,17 @@
                     <td class="text-nowrap">
                       {{ formatVigencia(item.plano_entrega_vigencia_inicio, item.plano_entrega_vigencia_fim) }}
                     </td>
-                    <td>{{ item.entrega_titulo }}</td>
+                    <td>
+                      {{ item.entrega_titulo }}
+                      @if (item.entrega_descricao) {
+                        <i
+                          class="bi bi-info-circle detalhamento-modal__descricao-info"
+                          role="img"
+                          aria-label="Ver descrição da entrega"
+                          [title]="item.entrega_descricao"
+                        ></i>
+                      }
+                    </td>
                     <td class="text-end text-nowrap">{{ formatPercent(item.progresso_esperado) }}</td>
                     <td class="text-end text-nowrap">{{ formatPercent(item.progresso_realizado) }}</td>
                     <td class="text-end text-nowrap">{{ formatPercent(calcProgresso(item)) }}</td>
@@ -165,18 +175,31 @@
                               </p>
                             }
                           </div>
-                          <div>
-                            <h6 class="detalhamento-modal__detail-title">Meta</h6>
-                            <p class="mb-1"><strong>Planejado:</strong> {{ formatPercent(item.progresso_esperado) }}</p>
-                            <p class="mb-0"><strong>Realizado:</strong> {{ formatPercent(item.progresso_realizado) }}</p>
-                          </div>
-                          <div>
+                          <div class="detalhamento-modal__detail-registro">
                             <h6 class="detalhamento-modal__detail-title">Registro de Execução da Entrega</h6>
                             @if (item.registro_execucao) {
                               <p class="detalhamento-modal__registro-execucao mb-0">{{ item.registro_execucao }}</p>
                             } @else {
                               <p class="mb-0">Sem registro</p>
                             }
+                          </div>
+                          <div class="detalhamento-modal__detail-linha2">
+                            <div>
+                              <h6 class="detalhamento-modal__detail-title">Descrição da Entrega</h6>
+                              @if (item.entrega_descricao) {
+                                <p class="detalhamento-modal__texto-longo mb-0">{{ item.entrega_descricao }}</p>
+                              } @else {
+                                <p class="mb-0">Sem descrição</p>
+                              }
+                            </div>
+                            <div>
+                              <h6 class="detalhamento-modal__detail-title">Descrição da Meta</h6>
+                              @if (item.descricao_meta) {
+                                <p class="detalhamento-modal__texto-longo mb-0">{{ item.descricao_meta }}</p>
+                              } @else {
+                                <p class="mb-0">Sem descrição</p>
+                              }
+                            </div>
                           </div>
                         </div>
                       </td>

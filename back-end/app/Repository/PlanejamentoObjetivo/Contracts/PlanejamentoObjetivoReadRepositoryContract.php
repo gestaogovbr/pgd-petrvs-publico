@@ -19,6 +19,13 @@ interface PlanejamentoObjetivoReadRepositoryContract
     public function coletarIdsFechamento(string $objetivoId): array;
 
     /**
+     * Ids do objetivo e de todos os itens hierarquicamente subordinados (somente descendentes).
+     *
+     * @return list<string>
+     */
+    public function coletarIdsSubordinados(string $objetivoId): array;
+
+    /**
      * Métricas de esforço e metadados por objetivo (uma linha por id).
      *
      * @param  list<string>  $ids
@@ -40,8 +47,14 @@ interface PlanejamentoObjetivoReadRepositoryContract
 
     public function buscarDadosGeraisPainel(string $objetivoId): ?\stdClass;
 
+    /**
+     * Agrega esforço/pessoas/entregas das entregas vinculadas aos objetivos informados
+     * (participantes deduplicados por usuário em todo o conjunto).
+     *
+     * @param  list<string>  $objetivoIds
+     */
     public function agregarPainelEsforcoPessoasEntregas(
-        string $objetivoId,
+        array $objetivoIds,
         ?string $unidadeId = null,
         ?string $dataInicio = null,
         ?string $dataFim = null,
