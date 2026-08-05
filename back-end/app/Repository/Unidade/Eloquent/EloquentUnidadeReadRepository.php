@@ -344,4 +344,18 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
     {
         return parent::findAllWhere($criteria);
     }
+
+    /**
+     * @return Collection<int, Unidade>
+     */
+    public function findAllComCodigo(): Collection
+    {
+        /** @var Collection<int, Unidade> */
+        return $this->query()
+            ->whereNotNull('codigo')
+            ->where('codigo', '!=', '')
+            ->without(['gestor', 'gestoresSubstitutos'])
+            ->select(['id', 'codigo', 'nome', 'sigla', 'path', 'unidade_pai_id', 'cidade_id', 'entidade_id'])
+            ->get();
+    }
 }

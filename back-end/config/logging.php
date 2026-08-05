@@ -121,6 +121,10 @@ return [
             'driver' => 'custom',
             'via' => App\Logging\SiapeLogger::class,
         ],
+        'sipec' => [
+            'driver' => 'custom',
+            'via' => App\Logging\SipecLogger::class,
+        ],
     ],
 
 ];

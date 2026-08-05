@@ -63,6 +63,11 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			label: "Forçar SIAPE",
 			onClick: this.forcarSiape.bind(this),
 		});
+		this.options.push({
+			icon: "bi bi-exclamation-octagon-fill",
+			label: "Forçar SIPEC",
+			onClick: this.forcarSipec.bind(this),
+		});
 		if (this.currentUser && this.currentUser.nivel === 1) {
 			this.options.push({
 				icon: "bi bi-trash",
@@ -264,6 +269,27 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 								"Erro",
 								messageError
 							);
+						});
+				}
+			});
+	}
+	public forcarSipec(row: any) {
+		const self = this;
+		this.dialog
+			.confirm(
+				"Forçar SIPEC?",
+				"Deseja realmente buscar os dados do SIPEC?"
+			)
+			.then((confirm) => {
+				if (confirm) {
+					this.dao!.forcaSipec(row)
+						.then(function () {
+							self.dialog.alert("Sucesso", "Busca de dados SIPEC iniciada com sucesso!");
+						})
+						.catch(function (error) {
+							let messageError = error?.message ? error?.message : error;
+							console.log("Erro: ", error);
+							self.dialog.alert("Erro", messageError);
 						});
 				}
 			});
