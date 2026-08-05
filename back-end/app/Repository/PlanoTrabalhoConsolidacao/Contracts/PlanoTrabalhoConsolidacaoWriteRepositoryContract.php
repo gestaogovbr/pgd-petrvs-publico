@@ -24,5 +24,5 @@ interface PlanoTrabalhoConsolidacaoWriteRepositoryContract
 
     public function ajustarDataFimVigente(string $planoTrabalhoId, string $dataEncerramento): void;
 
-    public function encerrarPeriodosFuturos(string $planoTrabalhoId, string $dataEncerramento): void;
+    public function encerrarPeriodosFuturos(string $planoTrabalhoId, string $dataEncerramento, string $justificativa): void;
 }

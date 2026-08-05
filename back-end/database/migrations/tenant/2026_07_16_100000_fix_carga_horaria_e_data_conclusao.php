@@ -30,6 +30,7 @@ return new class extends Migration
 
     private function corrigirDataConclusaoConsolidacoes(): void
     {
+        // Consolidações concluídas pelo servidor
         DB::statement(<<<SQL
             UPDATE planos_trabalhos_consolidacoes ptc
             INNER JOIN planos_trabalhos pt ON pt.id = ptc.plano_trabalho_id
@@ -40,6 +41,24 @@ return new class extends Migration
                   AND deleted_at IS NULL
                 GROUP BY plano_trabalho_consolidacao_id
             ) sj ON sj.plano_trabalho_consolidacao_id = ptc.id
+            SET ptc.data_conclusao = sj.data_conclusao
+            WHERE ptc.status IN ('CONCLUIDO', 'AVALIADO')
+              AND ptc.data_conclusao IS NULL
+              AND pt.created_at >= ?
+              AND ptc.deleted_at IS NULL
+        SQL, [self::RELEASE_DATE]);
+
+        // Consolidações concluídas por encerramento antecipado do plano
+        DB::statement(<<<SQL
+            UPDATE planos_trabalhos_consolidacoes ptc
+            INNER JOIN planos_trabalhos pt ON pt.id = ptc.plano_trabalho_id
+            INNER JOIN (
+                SELECT plano_trabalho_id, MAX(created_at) AS data_conclusao
+                FROM status_justificativas
+                WHERE justificativa LIKE 'Plano encerrado antecipadamente%'
+                  AND deleted_at IS NULL
+                GROUP BY plano_trabalho_id
+            ) sj ON sj.plano_trabalho_id = pt.id
             SET ptc.data_conclusao = sj.data_conclusao
             WHERE ptc.status IN ('CONCLUIDO', 'AVALIADO')
               AND ptc.data_conclusao IS NULL

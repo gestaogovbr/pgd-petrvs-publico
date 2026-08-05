@@ -212,7 +212,7 @@ class PlanoTrabalhoService
             $this->consolidacaoRepository->ajustarDataFimVigente($id, $dataEncerramento);
 
             // Concluir todos os períodos iniciados após a data do encerramento
-            $this->consolidacaoRepository->encerrarPeriodosFuturos($id, $dataEncerramento);
+            $this->consolidacaoRepository->encerrarPeriodosFuturos($id, $dataEncerramento, $justificativa);
 
             $this->statusService->atualizaStatus(
                 $plano,

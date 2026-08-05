@@ -74,8 +74,13 @@ trait PreparaServidor
     public function getSituacaoFuncional(array $ativo): string
     {
         $codigo = intval($ativo['codsitfuncional'] ?? 0);
+        $resultado = SituacaoFuncionalEnum::fromCodigo($codigo);
 
-        return SituacaoFuncionalEnum::fromCodigo($codigo);
+        if ($resultado === 'DESCONHECIDO' && !empty($ativo['nome_sit_funcional'])) {
+            return $ativo['nomesitfuncional'];
+        }
+
+        return $resultado;
     }
 
     public function getNome(array $servidor): ?string

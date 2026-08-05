@@ -62,6 +62,7 @@ class IntegracaoService extends ServiceBase
   public $localServidores = "";       // eventual alteração deve ser feita no arquivo .env
   private $servidores_registrados_is = [];
   public $nivelAcessoService;
+  public ?object $integracaoServiceAdapter = null;
 
   function __construct($config = null, string $tenantId = null)
   {
@@ -83,6 +84,14 @@ class IntegracaoService extends ServiceBase
     if (is_null($tenantId)) return;
     $tenantConfigurations = new TenantConfigurationsService();
     $tenantConfigurations->handle($tenantId);
+  }
+
+  /**
+   * Retorna o adapter de integração. Se não definido, usa IntegracaoSiapeService via __get.
+   */
+  public function getIntegracaoAdapter(): object
+  {
+    return $this->integracaoServiceAdapter ?? $this->IntegracaoSiapeService;
   }
 
 
@@ -377,7 +386,7 @@ class IntegracaoService extends ServiceBase
     if (!empty($inputs['unidades']) && $inputs['unidades'] && !empty($entidade_id)) {
       SiapeLog::info("Iniciando sincronização de Unidades");
       try {
-        $unidades = $this->IntegracaoSiapeService->retornarUorgs()["uorg"];
+        $unidades = $this->getIntegracaoAdapter()->retornarUorgs()["uorg"];
         if (count($unidades) > 0) {
             DB::transaction(function () use (&$unidades) {
                 foreach ($unidades as $uo) {
@@ -584,7 +593,7 @@ class IntegracaoService extends ServiceBase
       SiapeLog::info("Iniciando sincronização de Servidores");
       try {
         $servidores = [];
-        $servidores = $this->IntegracaoSiapeService->retornarServidores()["Pessoas"];
+        $servidores = $this->getIntegracaoAdapter()->retornarServidores()["Pessoas"];
         $servidores = $this->filtrarServidoresPorEscopoCargaIndividual($servidores, $escopoCargaIndividualServidor);
         SiapeLog::info("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
         if ($escopoCargaIndividualServidor !== null && empty($servidores)) {

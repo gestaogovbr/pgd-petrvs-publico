@@ -47,6 +47,14 @@ final class ModalidadePgd
             return null;
         }
 
+        $asInt = (int) $original;
+        if ($asInt > 0) {
+            $flipped = array_flip(self::API_PGD_CODES);
+            if (isset($flipped[$asInt])) {
+                return $flipped[$asInt];
+            }
+        }
+
         $normalized = self::normalizeText($original);
 
         return match (true) {
