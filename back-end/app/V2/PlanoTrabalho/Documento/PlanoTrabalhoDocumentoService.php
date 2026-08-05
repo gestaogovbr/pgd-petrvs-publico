@@ -6,8 +6,10 @@ namespace App\V2\PlanoTrabalho\Documento;
 
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
+use App\Exceptions\ValidateException;
 use App\Models\Documento;
 use App\Models\DocumentoAssinatura;
+use App\Models\PlanoTrabalho;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
@@ -116,11 +118,17 @@ class PlanoTrabalhoDocumentoService
         $plano = $this->planoTrabalhoRepository->loadRelacoesTCR($plano);
 
         $template = $this->datasourceBuilder->getTemplate($plano);
+        if ($template === '') {
+            throw new ValidateException(
+                'O regramento do Plano de Trabalho não possui template de TCR configurado.'
+            );
+        }
+
         $datasource = $this->datasourceBuilder->getDatasource($plano);
 
         $dto = new TCRDocumentoDTO(
             planoTrabalhoId: $planoTrabalhoId,
-            entidadeId: Session::get('entidade_id'),
+            entidadeId: $this->resolverEntidadeId($plano),
             conteudo: $this->renderer->render($template, $datasource),
             template: $template,
             dataset: $this->datasourceBuilder->getDataset(),
@@ -210,5 +218,20 @@ class PlanoTrabalhoDocumentoService
         }
 
         return $this->assinaturaRepository->findByDocumentoAndUsuario($documento->id, $usuarioId);
+    }
+
+    private function resolverEntidadeId(PlanoTrabalho $plano): string
+    {
+        $entidadeId = Session::get('entidade_id')
+            ?? $plano->unidade?->entidade_id
+            ?? $plano->unidade?->entidade?->id;
+
+        if (!is_string($entidadeId) || $entidadeId === '') {
+            throw new ValidateException(
+                'Não foi possível identificar a entidade para gerar o documento TCR. Faça login novamente.'
+            );
+        }
+
+        return $entidadeId;
     }
 }

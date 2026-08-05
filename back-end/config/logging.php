@@ -38,7 +38,9 @@ return [
         'stack' => [
             'driver' => 'stack',
             'channels' => ['tenant_custom'],
-            'ignore_exceptions' => false,
+            // Evita que falha de permissão/IO no arquivo de log derrube a requisição
+            // (ex.: afterCommit de observers após assinar/cancelar TCR).
+            'ignore_exceptions' => true,
         ],
 
         'tenant_custom' => [
