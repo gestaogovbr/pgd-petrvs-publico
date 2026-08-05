@@ -129,4 +129,40 @@ class UnidadeRepository
     {
         return $this->readRepository->buscarComLocalidade($unidadeIds);
     }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function create(array $attributes): \App\Models\Unidade
+    {
+        /** @var \App\Models\Unidade */
+        return $this->writeRepository->create($attributes);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function update(string $id, array $attributes): ?\App\Models\Unidade
+    {
+        /** @var \App\Models\Unidade|null */
+        return $this->writeRepository->update($id, $attributes);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\Unidade>
+     */
+    public function findAllComCodigo(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->findAllComCodigo();
+    }
+
+    public function recalcularPaths(string $pathAntigo, string $pathNovo): int
+    {
+        return $this->writeRepository->recalcularPaths($pathAntigo, $pathNovo);
+    }
+
+    public function reativarPorIntegracao(): int
+    {
+        return $this->writeRepository->reativarPorIntegracao();
+    }
 }

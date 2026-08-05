@@ -83,6 +83,7 @@ use App\Http\Controllers\RotinaDiariaController;
 use App\Http\Controllers\SiapeBlackListServidorController;
 use App\Http\Controllers\SiapeBlacklistUnidadeController;
 use App\Http\Controllers\SiapeIndividualController;
+use App\Http\Controllers\SipecIndividualController;
 use App\Http\Controllers\SolucaoController;
 use App\Http\Controllers\SolucaoUnidadeController;
 use App\Http\Controllers\SystemLogsController;
@@ -533,6 +534,7 @@ Route::middleware(['auth:sanctum'])->prefix('Relato')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/usuario/consultar-cpf-siape', [UsuarioController::class, 'consultarCPFSiape']);
+    Route::post('/usuario/consultar-cpf-sipec', [UsuarioController::class, 'consultarCPFSipec']);
     Route::post('/usuario/exportar-cpf-siape', [UsuarioController::class, 'exportarCPFSiape']);
     Route::post('/usuario/download-cpf-siape', [UsuarioController::class, 'downloadLogSiape']);
     Route::post('/unidade/consultar-unidade-siape', [UnidadeController::class, 'consultaUnidadeSiape']);
@@ -542,6 +544,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/unidade/processar-siape', [SiapeIndividualController::class, 'processaUnidade']);
     Route::post('/unidade/relatorio-processamento-siape', [SiapeIndividualController::class, 'relatorioProcessamentoUnidade']);
     Route::post('/siape/relatorio-carga-individual', [SiapeIndividualController::class, 'relatorioCargaIndividual']);
+    Route::post('/usuario/processar-sipec', [SipecIndividualController::class, 'processaServidor']);
+    Route::post('/unidade/processar-sipec', [SipecIndividualController::class, 'processaUnidade']);
+    Route::post('/unidade/consultar-sipec', [SipecIndividualController::class, 'consultaUnidade']);
     Route::post('/siape-blacklist/remover-cpf', [SiapeBlackListServidorController::class, 'remover']);
     Route::post('/SiapeBlacklistServidor/query', [SiapeBlackListServidorController::class, 'query']);
 

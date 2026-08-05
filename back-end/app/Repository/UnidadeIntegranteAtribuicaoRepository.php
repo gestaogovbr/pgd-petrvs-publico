@@ -29,4 +29,9 @@ class UnidadeIntegranteAtribuicaoRepository
     {
         return $this->writeRepository->delete($id);
     }
+
+    public function deleteGestorByUsuario(string $usuarioId, bool $ignorarInformais = true): int
+    {
+        return $this->writeRepository->deleteGestorByUsuario($usuarioId, $ignorarInformais);
+    }
 }
