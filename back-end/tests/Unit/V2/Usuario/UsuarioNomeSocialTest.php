@@ -43,7 +43,7 @@ describe('Usuario::getNomeCompletoTcrAttribute', function () {
         $usuario->nome = 'João da Silva';
         $usuario->nome_social = 'Maria Silva';
 
-        expect($usuario->nome_completo_tcr)->toBe("Maria Silva\n(João da Silva)");
+        expect($usuario->nome_completo_tcr)->toBe('Maria Silva (João da Silva)');
     });
 
     test('retorna apenas nome civil quando nome_social é nulo', function () {

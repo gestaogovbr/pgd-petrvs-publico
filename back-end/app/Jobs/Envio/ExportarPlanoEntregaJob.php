@@ -38,7 +38,7 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
     {
         $planoEntrega = parent::getModelParaEnvio();
 
-        if (!$planoEntrega){
+        if (!$planoEntrega instanceof PlanoEntrega) {
             throw new ExportPgdException("Plano de Entrega removido ou inválido", $this->id);
         }
 

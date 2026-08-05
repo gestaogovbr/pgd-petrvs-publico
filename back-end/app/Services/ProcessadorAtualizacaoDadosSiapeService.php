@@ -18,6 +18,7 @@ use Throwable;
  * @property UsuarioService $usuarioService
  * @property UnidadeIntegranteService $unidadeIntegrante
  * @property IntegracaoService $integracaoService
+ * @property NivelAcessoService $nivelAcessoService
  */
 class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 {
@@ -164,7 +165,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
     {
         $vinculos_isr = $this->integracaoServidorRepository->getUsuariosAusentes();
 
-        $perfilParticipante = NivelAcessoService::getPerfilParticipante();
+        $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
         $perfilParticipanteId = null;
         if (!empty($perfilParticipante)) $perfilParticipanteId = $perfilParticipante->id;
 

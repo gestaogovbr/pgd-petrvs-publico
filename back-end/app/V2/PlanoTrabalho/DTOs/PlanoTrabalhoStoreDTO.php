@@ -6,6 +6,8 @@ namespace App\V2\PlanoTrabalho\DTOs;
 
 class PlanoTrabalhoStoreDTO
 {
+    public const HORAS_DIARIAS_JORNADA_INTEGRAL_PADRAO = 8.0;
+
     public function __construct(
         public readonly string $usuarioId,
         public readonly string $unidadeId,
@@ -14,6 +16,7 @@ class PlanoTrabalhoStoreDTO
         public readonly string $dataFim,
         public readonly string $modalidadePgd,
         public readonly string $criacaoUsuarioId,
+        public readonly float $cargaHoraria = self::HORAS_DIARIAS_JORNADA_INTEGRAL_PADRAO,
         public readonly ?string $justificativaModalidade = null,
         public readonly ?string $cloneDe = null,
     ) {}
@@ -38,8 +41,25 @@ class PlanoTrabalhoStoreDTO
             dataFim: $data['data_fim'],
             modalidadePgd: $data['modalidade_pgd'],
             criacaoUsuarioId: $criacaoUsuarioId,
+            cargaHoraria: (float) ($data['carga_horaria'] ?? self::HORAS_DIARIAS_JORNADA_INTEGRAL_PADRAO),
             justificativaModalidade: $data['justificativa_modalidade'] ?? null,
             cloneDe: $data['clone_de'] ?? null,
+        );
+    }
+
+    public function withCargaHoraria(float $cargaHoraria): self
+    {
+        return new self(
+            usuarioId: $this->usuarioId,
+            unidadeId: $this->unidadeId,
+            programaId: $this->programaId,
+            dataInicio: $this->dataInicio,
+            dataFim: $this->dataFim,
+            modalidadePgd: $this->modalidadePgd,
+            criacaoUsuarioId: $this->criacaoUsuarioId,
+            cargaHoraria: $cargaHoraria,
+            justificativaModalidade: $this->justificativaModalidade,
+            cloneDe: $this->cloneDe,
         );
     }
 
@@ -54,6 +74,7 @@ class PlanoTrabalhoStoreDTO
             'data_fim' => $this->dataFim,
             'modalidade_pgd' => $this->modalidadePgd,
             'criacao_usuario_id' => $this->criacaoUsuarioId,
+            'carga_horaria' => $this->cargaHoraria,
             'justificativa_modalidade' => $this->justificativaModalidade,
         ];
     }

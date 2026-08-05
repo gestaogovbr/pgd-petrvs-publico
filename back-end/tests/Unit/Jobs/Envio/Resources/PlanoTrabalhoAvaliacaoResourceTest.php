@@ -3,32 +3,25 @@
 use App\Jobs\Envio\Resources\PlanoTrabalhoAvaliacaoResource;
 use App\Models\Avaliacao;
 use App\Models\PlanoTrabalhoConsolidacao;
-use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 describe('PlanoTrabalhoAvaliacaoResource', function () {
-    test('usa a avaliação mais recente da relação avaliacoes quando avaliacao_id está nulo', function () {
+    test('converte nota da relação avaliacao para código numérico', function () {
         $consolidacao = new PlanoTrabalhoConsolidacao([
             'id' => 'cons-1',
             'data_inicio' => '2026-01-01',
             'data_fim' => '2026-01-31',
         ]);
 
-        $avaliacaoAntiga = new Avaliacao([
-            'nota' => 'Adequado',
-            'data_avaliacao' => '2026-02-01 10:00:00',
-            'created_at' => '2026-02-01 10:00:00',
-        ]);
-        $avaliacaoRecente = new Avaliacao([
+        $avaliacao = new Avaliacao([
             'nota' => 'Alto desempenho',
             'data_avaliacao' => '2026-02-10 10:00:00',
             'created_at' => '2026-02-10 10:00:00',
         ]);
 
-        $consolidacao->setRelation('avaliacoes', new Collection([$avaliacaoAntiga, $avaliacaoRecente]));
-        $consolidacao->setRelation('avaliacao', null);
+        $consolidacao->setRelation('avaliacao', $avaliacao);
 
         $payload = (new PlanoTrabalhoAvaliacaoResource($consolidacao))->resolve();
 

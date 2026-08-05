@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Documento\TCR;
 
 use App\Models\PlanoTrabalho;
+use App\Models\Usuario;
 
 class TCRDatasetProvider
 {
@@ -77,7 +78,7 @@ class TCRDatasetProvider
     private function usuarioFields(): array
     {
         return [
-            ['field' => 'nome', 'label' => 'Nome', 'value' => fn ($ctx) => empty($ctx->nome_social) ? $ctx->nome : $ctx->nome_social . " (" . $ctx->nome . ')'],
+            ['field' => 'nome', 'label' => 'Nome', 'value' => fn (Usuario $ctx) => empty($ctx->nome_social) ? $ctx->nome : $ctx->nome_social . " (" . $ctx->nome . ')'],
             ['field' => 'email', 'label' => 'E-mail'],
             ['field' => 'cpf', 'label' => 'CPF'],
             ['field' => 'matricula', 'label' => 'Matrícula'],
