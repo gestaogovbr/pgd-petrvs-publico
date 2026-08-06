@@ -677,10 +677,15 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::post('ocorrencia', [OcorrenciaV2::class, 'store']);
     Route::delete('ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'destroy']);
 
-    Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
-    Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);
-    Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'buscarPorId'])->whereUuid('usuarioId');
-    Route::patch('usuario/nome-social', [UsuarioV2::class, 'atualizarNomeSocial']);
+    Route::get('usuario', [UsuarioV2::class, 'searchByNomeMatricula']);
+    Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'unidadesVinculadasPorCpf']);
+    Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'show'])->whereUuid('usuarioId');
+    Route::post('usuario', [UsuarioV2::class, 'store']);
+    Route::patch('usuario/nome-social', [UsuarioV2::class, 'updateNomeSocial']);
+    Route::patch('usuario/{usuarioId}/dados-pessoais', [UsuarioV2::class, 'updateDadosPessoais'])->whereUuid('usuarioId');
+    Route::patch('usuario/{usuarioId}/texto-complementar', [UsuarioV2::class, 'updateTextoComplementar'])->whereUuid('usuarioId');
+    Route::patch('usuario/{usuarioId}/perfil', [UsuarioV2::class, 'updatePerfil'])->whereUuid('usuarioId');
+    Route::put('usuario/{usuarioId}/atribuicoes', [UsuarioV2::class, 'updateAtribuicoes'])->whereUuid('usuarioId');
 
     Route::get('unidade', [UnidadeV2::class, 'buscarPorNomeOuCodigo']);
     Route::get('unidade/{unidadeId}/is-gestor-hierarquia', [UnidadeV2::class, 'isGestorHierarquia']);
