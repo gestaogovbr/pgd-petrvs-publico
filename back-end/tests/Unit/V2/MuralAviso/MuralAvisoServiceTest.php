@@ -94,7 +94,7 @@ describe('MuralAvisoService::store', function () {
                     && $data['tenant_id'] === null
                     && $data['remetente_tipo'] === 'ORGAO_CENTRAL'
                     && $data['remetente_tenant_id'] === null
-                    && $data['publicado_por_id'] === 'user-1';
+                    && $data['publicado_por_user_panel_id'] === 'user-1';
             }))
             ->andReturn($aviso);
 

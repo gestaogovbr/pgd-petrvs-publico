@@ -74,7 +74,7 @@ class MuralAvisoService
             'tenant_id' => $dto->destinatario === MuralAvisoDestinatario::TODOS->value ? null : $dto->tenantId,
             'remetente_tipo' => $remetenteTipo,
             'remetente_tenant_id' => $remetenteTenantId,
-            'publicado_por_id' => $usuarioId,
+            'publicado_por_user_panel_id' => $usuarioId,
             'data_publicacao' => now(),
         ]);
     }

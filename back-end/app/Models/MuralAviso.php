@@ -19,7 +19,7 @@ class MuralAviso extends ModelBase
         'tenant_id',
         'remetente_tipo',
         'remetente_tenant_id',
-        'publicado_por_id',
+        'publicado_por_user_panel_id',
         'data_publicacao',
     ];
 
@@ -39,6 +39,6 @@ class MuralAviso extends ModelBase
 
     public function publicadoPor(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(PainelUsuario::class, 'publicado_por_id');
+        return $this->belongsTo(PainelUsuario::class, 'publicado_por_user_panel_id');
     }
 }

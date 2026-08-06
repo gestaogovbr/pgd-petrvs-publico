@@ -16,14 +16,14 @@ return new class extends Migration
             $table->string('tenant_id')->nullable();
             $table->enum('remetente_tipo', ['ORGAO_CENTRAL', 'TENANT']);
             $table->string('remetente_tenant_id')->nullable();
-            $table->bigInteger('publicado_por_id')->unsigned();
+            $table->bigInteger('publicado_por_user_panel_id')->unsigned();
             $table->dateTime('data_publicacao');
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('set null');
             $table->foreign('remetente_tenant_id')->references('id')->on('tenants')->onDelete('set null');
-            $table->foreign('publicado_por_id')->references('id')->on('users_panel')->onDelete('cascade');
+            $table->foreign('publicado_por_user_panel_id')->references('id')->on('users_panel')->onDelete('cascade');
 
             $table->index('destinatario');
             $table->index('tenant_id');
