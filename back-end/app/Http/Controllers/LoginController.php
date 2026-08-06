@@ -467,7 +467,7 @@ class LoginController extends Controller
     {
         $entidade = $this->registrarEntidade($request);
         if (!$entidade) {
-            return response()->json(['error' => 'Entidade não identificada'], 422);
+            return response()->json(['error' => 'Entidade não identificada'], 404);
         }
         $url_dinamica_callback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
         $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
@@ -480,7 +480,7 @@ class LoginController extends Controller
     {
         $entidade = $this->registrarEntidade($request);
         if (!$entidade) {
-            return response()->json(['error' => 'Entidade não identificada'], 422);
+            return response()->json(['error' => 'Entidade não identificada'], 404);
         }
         $url_dinamica_callback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
         $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
@@ -634,5 +634,37 @@ class LoginController extends Controller
             return LogError::newWarn('Falha de conexão ao GovBR.');
         }
         return $response;
+    }
+
+    public function simulateAzureCallback(Request $request)
+    {
+        $entidade = $this->registrarEntidade($request);
+        $url_dinamica_callback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
+        $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
+        $user = new Usuario();
+        $user->token = "token";
+        $user->email = $request->input('email');
+
+        //$this->azureProvider($config = $azure_select_tenancy)->user();
+        if (!empty($user)) {
+            $token = $user->token;
+            $email = $user->email;
+            $email = explode("#", $email);
+            $email = $email[0];
+            //$email = str_replace("_", "@", $email);
+            $usuario = $this->registrarUsuario($request, Usuario::where('email', $email)->first());
+            if (($usuario)) {
+                Auth::loginUsingId($usuario->id);
+                $request->session()->regenerate();
+                $request->session()->put("kind", "AZURE");
+                return redirect(config('app.url'));
+            } else {
+                return LogError::newError('As credenciais fornecidas são inválidas. Email: ' . $email, new Exception("signInAzureCallback"));
+            }
+        } else {
+            return $this->azureProvider($config = $azure_select_tenancy)
+                        ->scopes(['openid', 'email', 'profile'])
+                        ->redirect();
+        }
     }
 }
