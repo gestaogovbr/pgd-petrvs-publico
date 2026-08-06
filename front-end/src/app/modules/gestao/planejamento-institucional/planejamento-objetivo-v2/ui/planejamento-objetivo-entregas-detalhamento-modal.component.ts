@@ -14,10 +14,13 @@ import { firstValueFrom } from 'rxjs';
 import { LookupService } from 'src/app/services/lookup.service';
 import {
   PlanejamentoObjetivoEsforcoApiClient,
+  type ObjetivoEntregasAbrangencia,
   type ObjetivoPainelEntregaDetalheLinhaApi,
   type ObjetivoPainelEntregasDetalhamentoApi,
   type ObjetivoEntregasDetalhamentoFiltros
 } from '../infra/planejamento-objetivo-esforco-api.client';
+
+type AbrangenciaOpcao = { value: ObjetivoEntregasAbrangencia; label: string };
 
 @Component({
   selector: 'app-planejamento-objetivo-entregas-detalhamento-modal',
@@ -44,6 +47,19 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   readonly filtroUnidadeId = signal('');
   readonly filtroDataInicio = signal('');
   readonly filtroDataFim = signal('');
+  readonly filtroAbrangencia = signal<'' | ObjetivoEntregasAbrangencia>('');
+
+  /** RN34 / RN38 — opções e tooltip do filtro Abrangência. */
+  readonly abrangenciaOpcoes: AbrangenciaOpcao[] = [
+    { value: 'item_selecionado', label: 'Item selecionado' },
+    { value: 'itens_subordinados', label: 'Itens subordinados' },
+    { value: 'item_e_subordinados', label: 'Item selecionado e itens subordinados' },
+    { value: 'unidade_selecionada', label: 'Unidade selecionada' },
+    { value: 'unidade_e_subordinadas', label: 'Unidade selecionada e unidades subordinadas' }
+  ];
+
+  readonly abrangenciaTooltip =
+    'Permite restringir a consulta de entregas conforme o escopo do Planejamento Institucional ou da estrutura organizacional.';
 
   private carregamentoId = 0;
 
@@ -90,11 +106,18 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
     void this.carregar();
   }
 
+  onFiltroAbrangenciaChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as '' | ObjetivoEntregasAbrangencia;
+    this.filtroAbrangencia.set(value);
+    void this.carregar();
+  }
+
   limparFiltros(): void {
     this.filtroEntregaId.set('');
     this.filtroUnidadeId.set('');
     this.filtroDataInicio.set('');
     this.filtroDataFim.set('');
+    this.filtroAbrangencia.set('');
     void this.carregar();
   }
 
@@ -108,7 +131,7 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   }
 
   linhaKey(item: ObjetivoPainelEntregaDetalheLinhaApi): string {
-    return item.plano_entrega_entrega_id;
+    return `${item.plano_entrega_entrega_id}:${item.planejamento_objetivo_id}`;
   }
 
   statusLabel(status: string): string {
@@ -174,7 +197,8 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
       plano_entrega_entrega_id: this.filtroEntregaId() || undefined,
       unidade_id: this.filtroUnidadeId() || undefined,
       data_inicio: this.filtroDataInicio() || undefined,
-      data_fim: this.filtroDataFim() || undefined
+      data_fim: this.filtroDataFim() || undefined,
+      abrangencia: this.filtroAbrangencia() || undefined
     };
   }
 

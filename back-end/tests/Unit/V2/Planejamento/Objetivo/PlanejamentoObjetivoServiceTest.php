@@ -327,7 +327,7 @@ describe('PlanejamentoObjetivoService::getEntregasDetalhamentoPainel', function 
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
         $repo->shouldReceive('listarDetalhamentoEntregasPainel')
             ->once()
-            ->with('obj-1', 'pee-1', 'un-1', '2025-01-01', '2025-06-30')
+            ->with(['obj-1'], 'pee-1', ['un-1'], '2025-01-01', '2025-06-30')
             ->andReturn([$row]);
 
         $result = criarPlanejamentoObjetivoService(repository: $repo)->getEntregasDetalhamentoPainel(
@@ -342,5 +342,59 @@ describe('PlanejamentoObjetivoService::getEntregasDetalhamentoPainel', function 
             ->and($result->itens)->toHaveCount(1)
             ->and($result->itens[0]->entrega_titulo)->toBe('Entrega')
             ->and($result->filtro_entregas[0]['id'])->toBe('pee-1');
+    });
+
+    test('abrangência item_e_subordinados consulta hierarquia completa', function () {
+        $objetivo = objetivoModel('obj-1');
+        $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
+        $repo->shouldReceive('coletarIdsSubordinados')->once()->with('obj-1')->andReturn(['obj-1', 'obj-2']);
+        $repo->shouldReceive('listarDetalhamentoEntregasPainel')
+            ->once()
+            ->with(['obj-1', 'obj-2'], null, null, null, null)
+            ->andReturn([]);
+
+        $result = criarPlanejamentoObjetivoService(repository: $repo)->getEntregasDetalhamentoPainel(
+            'obj-1',
+            abrangencia: 'item_e_subordinados',
+        );
+
+        expect($result->itens)->toBe([]);
+    });
+
+    test('abrangência itens_subordinados exclui o item selecionado', function () {
+        $objetivo = objetivoModel('obj-1');
+        $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
+        $repo->shouldReceive('coletarIdsSubordinados')->once()->with('obj-1')->andReturn(['obj-1', 'obj-2']);
+        $repo->shouldReceive('listarDetalhamentoEntregasPainel')
+            ->once()
+            ->with(['obj-2'], null, null, null, null)
+            ->andReturn([]);
+
+        criarPlanejamentoObjetivoService(repository: $repo)->getEntregasDetalhamentoPainel(
+            'obj-1',
+            abrangencia: 'itens_subordinados',
+        );
+    });
+
+    test('abrangência unidade_e_subordinadas expande unidades a partir do filtro', function () {
+        $objetivo = objetivoModel('obj-1');
+        $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
+        $repo->shouldReceive('coletarIdsUnidadesComSubordinadas')
+            ->once()
+            ->with('un-1')
+            ->andReturn(['un-1', 'un-2']);
+        $repo->shouldReceive('listarDetalhamentoEntregasPainel')
+            ->once()
+            ->with(['obj-1'], null, ['un-1', 'un-2'], null, null)
+            ->andReturn([]);
+
+        criarPlanejamentoObjetivoService(repository: $repo)->getEntregasDetalhamentoPainel(
+            'obj-1',
+            unidadeId: 'un-1',
+            abrangencia: 'unidade_e_subordinadas',
+        );
     });
 });

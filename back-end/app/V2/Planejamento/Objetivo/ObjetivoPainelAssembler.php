@@ -118,6 +118,8 @@ final class ObjetivoPainelAssembler
 
             $itens[] = new ObjetivoPainelEntregaDetalheLinhaDTO(
                 plano_entrega_entrega_id: $peeId,
+                planejamento_objetivo_id: (string) ($row->planejamento_objetivo_id ?? ''),
+                planejamento_objetivo_nome: (string) ($row->planejamento_objetivo_nome ?? ''),
                 unidade_id: $unidadeId,
                 unidade_sigla: (string) $row->unidade_sigla,
                 unidade_nome: (string) $row->unidade_nome,
@@ -129,6 +131,7 @@ final class ObjetivoPainelAssembler
                 entrega_titulo: (string) $row->entrega_titulo,
                 entrega_descricao: (string) ($row->entrega_descricao ?? ''),
                 descricao_meta: (string) ($row->descricao_meta ?? ''),
+                etiquetas: $this->normalizarEtiquetas($row->etiquetas ?? null),
                 progresso_esperado: (float) $row->progresso_esperado,
                 progresso_realizado: (float) $row->progresso_realizado,
                 homologado: (bool) $row->homologado,
@@ -154,5 +157,38 @@ final class ObjetivoPainelAssembler
             filtro_entregas: $filtroEntregas,
             filtro_unidades: $filtroUnidades,
         );
+    }
+
+    /**
+     * @return list<array{key: string, value: string, icon: string|null, color: string|null}>
+     */
+    private function normalizarEtiquetas(mixed $raw): array
+    {
+        if (is_string($raw) && $raw !== '') {
+            $decoded = json_decode($raw, true);
+            $raw = is_array($decoded) ? $decoded : [];
+        }
+        if (!is_array($raw)) {
+            return [];
+        }
+
+        $out = [];
+        foreach ($raw as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $value = isset($item['value']) ? trim((string) $item['value']) : '';
+            if ($value === '') {
+                continue;
+            }
+            $out[] = [
+                'key' => (string) ($item['key'] ?? $value),
+                'value' => $value,
+                'icon' => isset($item['icon']) && $item['icon'] !== '' ? (string) $item['icon'] : null,
+                'color' => isset($item['color']) && $item['color'] !== '' ? (string) $item['color'] : null,
+            ];
+        }
+
+        return $out;
     }
 }

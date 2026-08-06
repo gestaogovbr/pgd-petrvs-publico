@@ -154,8 +154,25 @@ export type ObjetivoPainelResumoApi = {
   filtro_unidades: ObjetivoPainelFiltroOpcaoApi[];
 };
 
+export type ObjetivoPainelEntregaEtiquetaApi = {
+  key: string;
+  value: string;
+  icon?: string | null;
+  color?: string | null;
+};
+
+/** Escopos do filtro Abrangência no detalhamento de entregas (RN33–RN39). */
+export type ObjetivoEntregasAbrangencia =
+  | 'item_selecionado'
+  | 'itens_subordinados'
+  | 'item_e_subordinados'
+  | 'unidade_selecionada'
+  | 'unidade_e_subordinadas';
+
 export type ObjetivoPainelEntregaDetalheLinhaApi = {
   plano_entrega_entrega_id: string;
+  planejamento_objetivo_id: string;
+  planejamento_objetivo_nome: string;
   unidade_id: string;
   unidade_sigla: string;
   unidade_nome: string;
@@ -167,6 +184,7 @@ export type ObjetivoPainelEntregaDetalheLinhaApi = {
   entrega_titulo: string;
   entrega_descricao: string;
   descricao_meta: string;
+  etiquetas: ObjetivoPainelEntregaEtiquetaApi[];
   progresso_esperado: number;
   progresso_realizado: number;
   homologado: boolean;
@@ -211,6 +229,7 @@ export type ObjetivoEntregasDetalhamentoFiltros = {
   unidade_id?: string;
   data_inicio?: string;
   data_fim?: string;
+  abrangencia?: ObjetivoEntregasAbrangencia;
 };
 
 @Injectable()
@@ -315,6 +334,9 @@ export class PlanejamentoObjetivoEsforcoApiClient {
     }
     if (filtros.data_fim) {
       params.set('data_fim', filtros.data_fim);
+    }
+    if (filtros.abrangencia) {
+      params.set('abrangencia', filtros.abrangencia);
     }
     const qs = params.toString();
     const url = `${this.gb.servidorURL}${this.base}/${objetivoId}/entregas-detalhamento${qs ? `?${qs}` : ''}`;

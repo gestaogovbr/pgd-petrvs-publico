@@ -101,6 +101,28 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
         return array_keys($seen);
     }
 
+    public function coletarIdsUnidadesComSubordinadas(string $unidadeId): array
+    {
+        $rows = DB::select(<<<SQL
+            WITH RECURSIVE arvore AS (
+                SELECT id
+                FROM unidades
+                WHERE id = ?
+                  AND deleted_at IS NULL
+
+                UNION ALL
+
+                SELECT u.id
+                FROM unidades u
+                INNER JOIN arvore a ON u.unidade_pai_id = a.id
+                WHERE u.deleted_at IS NULL
+            )
+            SELECT id FROM arvore
+        SQL, [$unidadeId]);
+
+        return array_map(static fn (\stdClass $row): string => (string) $row->id, $rows);
+    }
+
     /**
      * @param  list<string>  $ids
      * @return list<\stdClass>
@@ -427,16 +449,45 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     }
 
     public function listarDetalhamentoEntregasPainel(
-        string $objetivoId,
+        array $objetivoIds,
         ?string $planoEntregaEntregaId = null,
-        ?string $unidadeId = null,
+        ?array $unidadeIds = null,
         ?string $dataInicio = null,
         ?string $dataFim = null,
     ): array {
+        $objetivoIds = array_values(array_unique(array_filter(array_map('strval', $objetivoIds))));
+        if ($objetivoIds === []) {
+            return [];
+        }
+        if ($unidadeIds !== null) {
+            $unidadeIds = array_values(array_unique(array_filter(array_map('strval', $unidadeIds))));
+            if ($unidadeIds === []) {
+                return [];
+            }
+        }
+
         $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
         $ptPlanejadoIn = ObjetivoPainelEsforcoSupport::ptStatusPlanejadoIn();
         $ptExecutadoIn = ObjetivoPainelEsforcoSupport::ptStatusExecutadoIn();
         $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
+
+        $objPlaceholders = implode(',', array_fill(0, count($objetivoIds), '?'));
+        $unidadeSql = $unidadeIds === null
+            ? ''
+            : 'AND pee.unidade_id IN (' . implode(',', array_fill(0, count($unidadeIds), '?')) . ')';
+
+        $bindingsCte = array_merge(
+            $objetivoIds,
+            [$planoEntregaEntregaId, $planoEntregaEntregaId],
+            $unidadeIds ?? [],
+            [$dataInicio, $dataInicio, $dataFim, $dataFim],
+        );
+        $bindingsMain = array_merge(
+            $objetivoIds,
+            [$planoEntregaEntregaId, $planoEntregaEntregaId],
+            $unidadeIds ?? [],
+            [$dataInicio, $dataInicio, $dataFim, $dataFim],
+        );
 
         return DB::select(<<<SQL
             WITH pt_vinculo AS (
@@ -455,11 +506,11 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                     ON pt.id = pte.plano_trabalho_id
                     AND pt.deleted_at IS NULL
                     AND pt.status NOT IN ('CANCELADO', 'SUSPENSO')
-                WHERE peeo.planejamento_objetivo_id = ?
+                WHERE peeo.planejamento_objetivo_id IN ({$objPlaceholders})
                   AND peeo.deleted_at IS NULL
                   AND pt.usuario_id IS NOT NULL
                   AND (? IS NULL OR pee.id = ?)
-                  AND (? IS NULL OR pee.unidade_id = ?)
+                  {$unidadeSql}
                   AND (? IS NULL OR DATE(pt.data_fim) >= ?)
                   AND (? IS NULL OR DATE(pt.data_inicio) <= ?)
                 GROUP BY pee.id, pt.usuario_id
@@ -475,6 +526,8 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
             )
             SELECT
                 pee.id AS plano_entrega_entrega_id,
+                po.id AS planejamento_objetivo_id,
+                po.nome AS planejamento_objetivo_nome,
                 u.id AS unidade_id,
                 u.sigla AS unidade_sigla,
                 u.nome AS unidade_nome,
@@ -486,6 +539,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 COALESCE(pee.descricao, '') AS entrega_titulo,
                 COALESCE(pee.descricao_entrega, '') AS entrega_descricao,
                 COALESCE(pee.descricao_meta, '') AS descricao_meta,
+                pee.etiquetas AS etiquetas,
                 COALESCE(MAX(peep.progresso_esperado), MAX(pee.progresso_esperado)) AS progresso_esperado,
                 COALESCE(MAX(peep.progresso_realizado), MAX(pee.progresso_realizado)) AS progresso_realizado,
                 COALESCE(MAX(peep.homologado), MAX(pee.homologado)) AS homologado,
@@ -520,6 +574,8 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
             FROM planos_entregas_entregas_objetivos peeo
             INNER JOIN planos_entregas_entregas pee
                 ON pee.id = peeo.entrega_id AND pee.deleted_at IS NULL
+            INNER JOIN planejamentos_objetivos po
+                ON po.id = peeo.planejamento_objetivo_id AND po.deleted_at IS NULL
             INNER JOIN unidades u ON u.id = pee.unidade_id AND u.deleted_at IS NULL
             INNER JOIN planos_entregas pe ON pe.id = pee.plano_entrega_id AND pe.deleted_at IS NULL
             LEFT JOIN planos_entregas_entregas_progressos peep
@@ -538,14 +594,16 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 AND pt.deleted_at IS NULL
                 AND pt.status NOT IN ('CANCELADO', 'SUSPENSO')
             LEFT JOIN participantes_por_entrega pp ON pp.plano_entrega_entrega_id = pee.id
-            WHERE peeo.planejamento_objetivo_id = ?
+            WHERE peeo.planejamento_objetivo_id IN ({$objPlaceholders})
               AND peeo.deleted_at IS NULL
               AND (? IS NULL OR pee.id = ?)
-              AND (? IS NULL OR pee.unidade_id = ?)
+              {$unidadeSql}
               AND (? IS NULL OR DATE(pt.data_fim) >= ?)
               AND (? IS NULL OR DATE(pt.data_inicio) <= ?)
             GROUP BY
                 pee.id,
+                po.id,
+                po.nome,
                 u.id,
                 u.sigla,
                 u.nome,
@@ -556,31 +614,9 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 pe.data_fim,
                 pee.descricao_entrega,
                 pee.descricao,
-                pee.descricao_meta
-            ORDER BY pe.data_inicio DESC, u.sigla, pee.descricao
-        SQL, array_merge(
-            [
-                $objetivoId,
-                $planoEntregaEntregaId,
-                $planoEntregaEntregaId,
-                $unidadeId,
-                $unidadeId,
-                $dataInicio,
-                $dataInicio,
-                $dataFim,
-                $dataFim,
-            ],
-            [
-                $objetivoId,
-                $planoEntregaEntregaId,
-                $planoEntregaEntregaId,
-                $unidadeId,
-                $unidadeId,
-                $dataInicio,
-                $dataInicio,
-                $dataFim,
-                $dataFim,
-            ],
-        ));
+                pee.descricao_meta,
+                pee.etiquetas
+            ORDER BY pe.data_inicio DESC, u.sigla, po.nome, pee.descricao
+        SQL, array_merge($bindingsCte, $bindingsMain));
     }
 }

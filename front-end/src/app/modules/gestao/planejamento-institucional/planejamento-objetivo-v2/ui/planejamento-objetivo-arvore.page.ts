@@ -201,11 +201,6 @@ export class PlanejamentoObjetivoArvorePage {
     }
   }
 
-  resetLevels(): void {
-    this.levelsAbove.set(DEFAULT_LEVELS);
-    this.levelsBelow.set(DEFAULT_LEVELS);
-  }
-
   abrirArvoreOutroObjetivo(objetivoId: string, event?: Event): void {
     event?.stopPropagation();
     event?.preventDefault();
@@ -229,11 +224,11 @@ export class PlanejamentoObjetivoArvorePage {
   }
 
   zoomIn(): void {
-    this.zoom.update(v => Math.min(2.5, Number((v + 0.1).toFixed(2))));
+    this.zoom.update(v => Math.min(4, Number((v + 0.1).toFixed(2))));
   }
 
   zoomOut(): void {
-    this.zoom.update(v => Math.max(0.55, Number((v - 0.1).toFixed(2))));
+    this.zoom.update(v => Math.max(0.2, Number((v - 0.1).toFixed(2))));
   }
 
   resetView(): void {

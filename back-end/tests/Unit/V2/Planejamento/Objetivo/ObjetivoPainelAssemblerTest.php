@@ -113,6 +113,8 @@ describe('ObjetivoPainelAssembler', function () {
         $rows = [
             (object) [
                 'plano_entrega_entrega_id' => 'pee-1',
+                'planejamento_objetivo_id' => 'obj-1',
+                'planejamento_objetivo_nome' => 'Objetivo A',
                 'unidade_id' => 'un-1',
                 'unidade_sigla' => 'UN',
                 'unidade_nome' => 'Unidade',
@@ -124,6 +126,7 @@ describe('ObjetivoPainelAssembler', function () {
                 'entrega_titulo' => 'Entrega A',
                 'entrega_descricao' => 'Descrição detalhada da entrega A',
                 'descricao_meta' => 'Meta descrita em detalhes',
+                'etiquetas' => '[{"key":"e1","value":"Prioritária","icon":"bi bi-flag","color":"#198754"}]',
                 'progresso_esperado' => 80,
                 'progresso_realizado' => 40,
                 'homologado' => 0,
@@ -150,8 +153,13 @@ describe('ObjetivoPainelAssembler', function () {
             ->and($detalhe->itens[0]->mostrar_planejado)->toBeFalse()
             ->and($detalhe->itens[0]->mostrar_executado)->toBeFalse()
             ->and($detalhe->itens[0]->entrega_titulo)->toBe('Entrega A')
+            ->and($detalhe->itens[0]->planejamento_objetivo_id)->toBe('obj-1')
+            ->and($detalhe->itens[0]->planejamento_objetivo_nome)->toBe('Objetivo A')
             ->and($detalhe->itens[0]->entrega_descricao)->toBe('Descrição detalhada da entrega A')
             ->and($detalhe->itens[0]->descricao_meta)->toBe('Meta descrita em detalhes')
+            ->and($detalhe->itens[0]->etiquetas)->toBe([
+                ['key' => 'e1', 'value' => 'Prioritária', 'icon' => 'bi bi-flag', 'color' => '#198754'],
+            ])
             ->and($detalhe->itens[0]->registro_execucao)->toBe('Entrega em andamento conforme cronograma.');
     });
 });

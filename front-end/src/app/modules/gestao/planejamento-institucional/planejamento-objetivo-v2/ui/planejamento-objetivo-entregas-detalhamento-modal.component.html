@@ -15,8 +15,8 @@
 
   <div class="detalhamento-modal-content">
     <div class="detalhamento-modal">
-      <div class="detalhamento-modal__filtros row g-2 mb-3">
-        <div class="col-12 col-md-4">
+      <div class="detalhamento-modal__filtros row g-2 mb-3 align-items-end">
+        <div class="col-12 col-md-6 col-xl">
           <label class="form-label small mb-1" for="filtro-entrega">Entrega</label>
           <select
             id="filtro-entrega"
@@ -30,7 +30,7 @@
             }
           </select>
         </div>
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-6 col-xl">
           <label class="form-label small mb-1" for="filtro-unidade">Unidade</label>
           <select
             id="filtro-unidade"
@@ -44,7 +44,28 @@
             }
           </select>
         </div>
-        <div class="col-6 col-md-2">
+        <div class="col-12 col-md-6 col-xl">
+          <label class="form-label small mb-1" for="filtro-abrangencia">
+            Abrangência
+            <i
+              class="bi bi-info-circle detalhamento-modal__info"
+              [attr.title]="abrangenciaTooltip"
+              [attr.aria-label]="abrangenciaTooltip"
+            ></i>
+          </label>
+          <select
+            id="filtro-abrangencia"
+            class="form-select form-select-sm"
+            [value]="filtroAbrangencia()"
+            (change)="onFiltroAbrangenciaChange($event)"
+          >
+            <option value="">Selecione...</option>
+            @for (op of abrangenciaOpcoes; track op.value) {
+              <option [value]="op.value">{{ op.label }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-6 col-md-3 col-xl-auto detalhamento-modal__filtro-data">
           <label class="form-label small mb-1" for="filtro-inicio">Início</label>
           <input
             id="filtro-inicio"
@@ -54,7 +75,7 @@
             (change)="onFiltroDataInicioChange($event)"
           />
         </div>
-        <div class="col-6 col-md-2">
+        <div class="col-6 col-md-3 col-xl-auto detalhamento-modal__filtro-data">
           <label class="form-label small mb-1" for="filtro-fim">Fim</label>
           <input
             id="filtro-fim"
@@ -95,7 +116,7 @@
                 </tr>
               </thead>
               <tbody>
-                @for (item of d.itens; track item.plano_entrega_entrega_id) {
+                @for (item of d.itens; track linhaKey(item)) {
                   <tr
                     class="detalhamento-modal__row"
                     [class.detalhamento-modal__row--expanded]="linhaExpandida(item)"
@@ -133,14 +154,21 @@
                       {{ formatVigencia(item.plano_entrega_vigencia_inicio, item.plano_entrega_vigencia_fim) }}
                     </td>
                     <td>
-                      {{ item.entrega_titulo }}
-                      @if (item.entrega_descricao) {
-                        <i
-                          class="bi bi-info-circle detalhamento-modal__descricao-info"
-                          role="img"
-                          aria-label="Ver descrição da entrega"
-                          [title]="item.entrega_descricao"
-                        ></i>
+                      <span class="d-block">{{ item.entrega_titulo }}</span>
+                      @if (item.etiquetas?.length) {
+                        <div class="detalhamento-modal__etiquetas">
+                          @for (et of item.etiquetas; track et.key) {
+                            <span
+                              class="detalhamento-modal__etiqueta"
+                              [style.background-color]="et.color || '#6c757d'"
+                            >
+                              @if (et.icon) {
+                                <i [class]="et.icon" aria-hidden="true"></i>
+                              }
+                              {{ et.value }}
+                            </span>
+                          }
+                        </div>
                       }
                     </td>
                     <td class="text-end text-nowrap">{{ formatPercent(item.progresso_esperado) }}</td>
@@ -151,6 +179,12 @@
                     <tr class="detalhamento-modal__detail-row">
                       <td colspan="8">
                         <div class="detalhamento-modal__detail-grid">
+                          <div class="detalhamento-modal__detail-item-planejamento">
+                            <h6 class="detalhamento-modal__detail-title">Item do planejamento</h6>
+                            <p class="detalhamento-modal__texto-longo mb-0">
+                              {{ item.planejamento_objetivo_nome || '—' }}
+                            </p>
+                          </div>
                           <div>
                             <h6 class="detalhamento-modal__detail-title">Participantes</h6>
                             <p class="mb-1">

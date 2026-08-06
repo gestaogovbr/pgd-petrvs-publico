@@ -19,11 +19,18 @@ interface PlanejamentoObjetivoReadRepositoryContract
     public function coletarIdsFechamento(string $objetivoId): array;
 
     /**
-     * Ids do objetivo e de todos os itens hierarquicamente subordinados (somente descendentes).
+     * Ids do objetivo e de todos os itens hierarquicamente subordinados (inclui o próprio).
      *
      * @return list<string>
      */
     public function coletarIdsSubordinados(string $objetivoId): array;
+
+    /**
+     * Ids da unidade e de todas as unidades hierarquicamente subordinadas (inclui a própria).
+     *
+     * @return list<string>
+     */
+    public function coletarIdsUnidadesComSubordinadas(string $unidadeId): array;
 
     /**
      * Métricas de esforço e metadados por objetivo (uma linha por id).
@@ -64,12 +71,14 @@ interface PlanejamentoObjetivoReadRepositoryContract
     public function listarUnidadesPainelPorObjetivoId(string $objetivoId): array;
 
     /**
+     * @param  list<string>  $objetivoIds
+     * @param  list<string>|null  $unidadeIds  null = sem filtro de unidade; [] = nenhum resultado
      * @return list<\stdClass>
      */
     public function listarDetalhamentoEntregasPainel(
-        string $objetivoId,
+        array $objetivoIds,
         ?string $planoEntregaEntregaId = null,
-        ?string $unidadeId = null,
+        ?array $unidadeIds = null,
         ?string $dataInicio = null,
         ?string $dataFim = null,
     ): array;
