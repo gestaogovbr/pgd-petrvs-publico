@@ -2060,6 +2060,7 @@ CREATE TABLE `planos_trabalhos_entregas` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `forca_trabalho` decimal(5,2) NOT NULL DEFAULT 0.00 COMMENT 'Percentual da força de trabalho associado a esta entrega',
+  `esforco_executado` decimal(5,2) NOT NULL DEFAULT 0.00,
   `meta` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Meta para a entrega' CHECK (json_valid(`meta`)),
   `orgao` varchar(256) DEFAULT NULL COMMENT 'Órgão externo',
   `descricao` text NOT NULL,
