@@ -3,6 +3,7 @@
 namespace Tests\Unit\V2\MuralAviso;
 
 use App\Enums\MuralAvisoDestinatario;
+use App\Enums\MuralAvisoRemetenteTipo;
 use App\Models\MuralAviso;
 use App\Models\MuralAvisoLeitura;
 use App\Repository\MuralAviso\MuralAvisoRepository;
@@ -106,7 +107,7 @@ describe('MuralAvisoService::store', function () {
                     && $data['conteudo'] === 'Conteúdo'
                     && $data['destinatario'] === MuralAvisoDestinatario::TODOS->value
                     && $data['tenant_id'] === null
-                    && $data['remetente_tipo'] === 'ORGAO_CENTRAL'
+                    && $data['remetente_tipo'] === MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value
                     && $data['remetente_tenant_id'] === null
                     && $data['publicado_por_user_panel_id'] === 'user-1';
             }))
@@ -134,7 +135,7 @@ describe('MuralAvisoService::store', function () {
         $this->repository->shouldReceive('create')
             ->once()
             ->with(Mockery::on(function (array $data) {
-                return $data['remetente_tipo'] === 'TENANT'
+                return $data['remetente_tipo'] === MuralAvisoRemetenteTipo::TENANT->value
                     && $data['remetente_tenant_id'] === 'tenant-1'
                     && $data['tenant_id'] === 'tenant-1';
             }))
@@ -225,7 +226,7 @@ describe('MuralAvisoService::pendentes', function () {
                     'id' => 'aviso-1',
                     'titulo' => 'Aviso 1',
                     'conteudo' => 'Conteúdo 1',
-                    'remetente_tipo' => 'ORGAO_CENTRAL',
+                    'remetente_tipo' => MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value,
                     'remetente_tenant_id' => null,
                     'data_publicacao' => '2026-01-01 10:00:00',
                 ],
@@ -266,7 +267,7 @@ describe('MuralAvisoService::pendentes', function () {
                     'id' => 'aviso-1',
                     'titulo' => 'Aviso',
                     'conteudo' => 'Conteúdo',
-                    'remetente_tipo' => 'TENANT',
+                    'remetente_tipo' => MuralAvisoRemetenteTipo::TENANT->value,
                     'remetente_tenant_id' => 'tenant-x',
                     'data_publicacao' => '2026-01-01 10:00:00',
                 ],

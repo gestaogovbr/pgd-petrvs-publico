@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\MuralAviso;
 
 use App\Enums\MuralAvisoDestinatario;
+use App\Enums\MuralAvisoRemetenteTipo;
 use App\Exceptions\NotFoundException;
 use App\Models\MuralAviso;
 use App\Repository\MuralAviso\MuralAvisoRepository;
@@ -48,7 +49,7 @@ class MuralAvisoService
     {
         $this->storeValidator->validar($dto);
 
-        $remetenteTipo = $dto->isOrgaoCentral() ? 'ORGAO_CENTRAL' : 'TENANT';
+        $remetenteTipo = $dto->isOrgaoCentral() ? MuralAvisoRemetenteTipo::ORGAO_CENTRAL : MuralAvisoRemetenteTipo::TENANT;
         $remetenteTenantId = $dto->isOrgaoCentral() ? null : $dto->tenantId;
 
         return $this->repository->create([
@@ -56,7 +57,7 @@ class MuralAvisoService
             'conteudo' => $dto->conteudo,
             'destinatario' => $dto->destinatario,
             'tenant_id' => $dto->destinatario === MuralAvisoDestinatario::TODOS->value ? null : $dto->tenantId,
-            'remetente_tipo' => $remetenteTipo,
+            'remetente_tipo' => $remetenteTipo->value,
             'remetente_tenant_id' => $remetenteTenantId,
             'publicado_por_user_panel_id' => $dto->usuarioId,
             'data_publicacao' => now(),
@@ -69,7 +70,7 @@ class MuralAvisoService
 
         $this->storeValidator->validar($dto);
 
-        $remetenteTipo = $dto->isOrgaoCentral() ? 'ORGAO_CENTRAL' : 'TENANT';
+        $remetenteTipo = $dto->isOrgaoCentral() ? MuralAvisoRemetenteTipo::ORGAO_CENTRAL : MuralAvisoRemetenteTipo::TENANT;
         $remetenteTenantId = $dto->isOrgaoCentral() ? null : $dto->tenantId;
 
         /** @var MuralAviso */
@@ -78,7 +79,7 @@ class MuralAvisoService
             'conteudo' => $dto->conteudo,
             'destinatario' => $dto->destinatario,
             'tenant_id' => $dto->destinatario === MuralAvisoDestinatario::TODOS->value ? null : $dto->tenantId,
-            'remetente_tipo' => $remetenteTipo,
+            'remetente_tipo' => $remetenteTipo->value,
             'remetente_tenant_id' => $remetenteTenantId,
             'data_publicacao' => now(),
         ]);
@@ -123,7 +124,7 @@ class MuralAvisoService
      */
     private function resolveRemetente(array $aviso): string
     {
-        if ($aviso['remetente_tipo'] === 'ORGAO_CENTRAL') {
+        if ($aviso['remetente_tipo'] === MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value) {
             return 'Órgão Central';
         }
 
