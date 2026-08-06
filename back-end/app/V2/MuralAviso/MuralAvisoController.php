@@ -7,6 +7,8 @@ namespace App\V2\MuralAviso;
 use App\Exceptions\Contracts\IBaseException;
 use App\Http\Controllers\Controller;
 use App\Models\PainelUsuario;
+use App\V2\MuralAviso\DTOs\MuralAvisoDestroyDTO;
+use App\V2\MuralAviso\DTOs\MuralAvisoQueryDTO;
 use App\V2\MuralAviso\DTOs\MuralAvisoStoreDTO;
 use App\V2\MuralAviso\Validators\MuralAvisoRequestValidator;
 use Illuminate\Http\JsonResponse;
@@ -27,15 +29,16 @@ class MuralAvisoController extends Controller
     public function index(Request $request): JsonResponse
     {
         try {
-            $data = MuralAvisoRequestValidator::query($request);
+            $data = MuralAvisoRequestValidator::index($request);
             $user = $this->getUser();
-            $perPage = (int) ($data['per_page'] ?? self::DEFAULT_PER_PAGE);
 
-            $result = $this->service->query(
-                $this->getTenantIds($user),
-                $user->nivel,
-                $perPage,
+            $dto = new MuralAvisoQueryDTO(
+                nivelUsuario: $user->nivel,
+                tenantIds: $this->getTenantIds($user),
+                perPage: (int) ($data['per_page'] ?? self::DEFAULT_PER_PAGE),
             );
+
+            $result = $this->service->index($dto);
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
@@ -67,14 +70,15 @@ class MuralAvisoController extends Controller
         try {
             $data = MuralAvisoRequestValidator::store($request);
             $user = $this->getUser();
-            $dto = MuralAvisoStoreDTO::fromArray($data);
 
-            $entity = $this->service->store(
-                $dto,
+            $dto = MuralAvisoStoreDTO::fromArray(
+                $data,
                 (string) $user->id,
                 $user->nivel,
                 $this->getTenantIds($user),
             );
+
+            $entity = $this->service->store($dto);
 
             return response()->json(['success' => true, 'data' => $entity], Response::HTTP_CREATED);
         } catch (ValidationException $e) {
@@ -92,14 +96,15 @@ class MuralAvisoController extends Controller
         try {
             $data = MuralAvisoRequestValidator::update($request);
             $user = $this->getUser();
-            $dto = MuralAvisoStoreDTO::fromArray($data);
 
-            $entity = $this->service->update(
-                $id,
-                $dto,
+            $dto = MuralAvisoStoreDTO::fromArray(
+                $data,
+                (string) $user->id,
                 $user->nivel,
                 $this->getTenantIds($user),
             );
+
+            $entity = $this->service->update($id, $dto);
 
             return response()->json(['success' => true, 'data' => $entity]);
         } catch (ValidationException $e) {
@@ -117,11 +122,13 @@ class MuralAvisoController extends Controller
         try {
             $user = $this->getUser();
 
-            $this->service->destroy(
-                $id,
-                $user->nivel,
-                $this->getTenantIds($user),
+            $dto = new MuralAvisoDestroyDTO(
+                id: $id,
+                nivelUsuario: $user->nivel,
+                tenantIds: $this->getTenantIds($user),
             );
+
+            $this->service->destroy($dto);
 
             return response()->json(['success' => true]);
         } catch (IBaseException $e) {

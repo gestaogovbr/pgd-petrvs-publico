@@ -8,7 +8,9 @@ use App\Models\MuralAvisoLeitura;
 use App\Repository\MuralAviso\MuralAvisoRepository;
 use App\Repository\MuralAvisoLeitura\MuralAvisoLeituraRepository;
 use App\Repository\TenantRepository;
+use App\V2\MuralAviso\DTOs\MuralAvisoDestroyDTO;
 use App\V2\MuralAviso\DTOs\MuralAvisoPendenteDTO;
+use App\V2\MuralAviso\DTOs\MuralAvisoQueryDTO;
 use App\V2\MuralAviso\DTOs\MuralAvisoStoreDTO;
 use App\V2\MuralAviso\MuralAvisoService;
 use App\V2\MuralAviso\Validators\MuralAvisoAuthorizationValidator;
@@ -39,7 +41,7 @@ afterEach(function () {
     Mockery::close();
 });
 
-describe('MuralAvisoService::query', function () {
+describe('MuralAvisoService::index', function () {
 
     test('órgão central consulta sem filtro de tenant', function () {
         $paginator = Mockery::mock(LengthAwarePaginator::class);
@@ -49,7 +51,13 @@ describe('MuralAvisoService::query', function () {
             ->with([], 15)
             ->andReturn($paginator);
 
-        $result = $this->service->query(['tenant-1'], 1, 15);
+        $dto = new MuralAvisoQueryDTO(
+            nivelUsuario: 1,
+            tenantIds: ['tenant-1'],
+            perPage: 15,
+        );
+
+        $result = $this->service->index($dto);
 
         expect($result)->toBe($paginator);
     });
@@ -62,7 +70,13 @@ describe('MuralAvisoService::query', function () {
             ->with(['tenant-1', 'tenant-2'], 10)
             ->andReturn($paginator);
 
-        $result = $this->service->query(['tenant-1', 'tenant-2'], 2, 10);
+        $dto = new MuralAvisoQueryDTO(
+            nivelUsuario: 2,
+            tenantIds: ['tenant-1', 'tenant-2'],
+            perPage: 10,
+        );
+
+        $result = $this->service->index($dto);
 
         expect($result)->toBe($paginator);
     });
@@ -71,16 +85,16 @@ describe('MuralAvisoService::query', function () {
 describe('MuralAvisoService::store', function () {
 
     test('cria aviso chamando validator e repository', function () {
-        $dto = MuralAvisoStoreDTO::fromArray([
-            'titulo' => 'Teste',
-            'conteudo' => 'Conteúdo',
-            'destinatario' => MuralAvisoDestinatario::TODOS->value,
-            'tenant_id' => null,
-        ]);
+        $dto = MuralAvisoStoreDTO::fromArray(
+            ['titulo' => 'Teste', 'conteudo' => 'Conteúdo', 'destinatario' => MuralAvisoDestinatario::TODOS->value, 'tenant_id' => null],
+            'user-1',
+            1,
+            [],
+        );
 
         $this->storeValidator->shouldReceive('validar')
             ->once()
-            ->with(MuralAvisoDestinatario::TODOS->value, null, 1, []);
+            ->with($dto);
 
         $aviso = Mockery::mock(MuralAviso::class)->makePartial();
         $aviso->id = 'aviso-new';
@@ -98,20 +112,22 @@ describe('MuralAvisoService::store', function () {
             }))
             ->andReturn($aviso);
 
-        $result = $this->service->store($dto, 'user-1', 1, []);
+        $result = $this->service->store($dto);
 
         expect($result->id)->toBe('aviso-new');
     });
 
     test('define remetente_tipo TENANT para usuário não-central', function () {
-        $dto = MuralAvisoStoreDTO::fromArray([
-            'titulo' => 'Teste',
-            'conteudo' => 'Conteúdo',
-            'destinatario' => 'TENANT_ESPECIFICO',
-            'tenant_id' => 'tenant-1',
-        ]);
+        $dto = MuralAvisoStoreDTO::fromArray(
+            ['titulo' => 'Teste', 'conteudo' => 'Conteúdo', 'destinatario' => 'TENANT_ESPECIFICO', 'tenant_id' => 'tenant-1'],
+            'user-2',
+            2,
+            ['tenant-1'],
+        );
 
-        $this->storeValidator->shouldReceive('validar')->once();
+        $this->storeValidator->shouldReceive('validar')
+            ->once()
+            ->with($dto);
 
         $aviso = Mockery::mock(MuralAviso::class)->makePartial();
 
@@ -124,19 +140,19 @@ describe('MuralAvisoService::store', function () {
             }))
             ->andReturn($aviso);
 
-        $this->service->store($dto, 'user-2', 2, ['tenant-1']);
+        $this->service->store($dto);
     });
 });
 
 describe('MuralAvisoService::update', function () {
 
     test('valida autorização e atualiza', function () {
-        $dto = MuralAvisoStoreDTO::fromArray([
-            'titulo' => 'Atualizado',
-            'conteudo' => 'Novo conteúdo',
-            'destinatario' => MuralAvisoDestinatario::TODOS->value,
-            'tenant_id' => null,
-        ]);
+        $dto = MuralAvisoStoreDTO::fromArray(
+            ['titulo' => 'Atualizado', 'conteudo' => 'Novo conteúdo', 'destinatario' => MuralAvisoDestinatario::TODOS->value, 'tenant_id' => null],
+            'user-1',
+            1,
+            [],
+        );
 
         $avisoExistente = Mockery::mock(MuralAviso::class)->makePartial();
         $avisoExistente->id = 'aviso-1';
@@ -146,7 +162,9 @@ describe('MuralAvisoService::update', function () {
             ->with('aviso-1', 1, [])
             ->andReturn($avisoExistente);
 
-        $this->storeValidator->shouldReceive('validar')->once();
+        $this->storeValidator->shouldReceive('validar')
+            ->once()
+            ->with($dto);
 
         $avisoAtualizado = Mockery::mock(MuralAviso::class)->makePartial();
         $avisoAtualizado->id = 'aviso-1';
@@ -157,7 +175,7 @@ describe('MuralAvisoService::update', function () {
             ->with('aviso-1', Mockery::type('array'))
             ->andReturn($avisoAtualizado);
 
-        $result = $this->service->update('aviso-1', $dto, 1, []);
+        $result = $this->service->update('aviso-1', $dto);
 
         expect($result->titulo)->toBe('Atualizado');
     });
@@ -179,7 +197,13 @@ describe('MuralAvisoService::destroy', function () {
             ->with('aviso-1')
             ->andReturn(true);
 
-        $this->service->destroy('aviso-1', 2, ['tenant-1']);
+        $dto = new MuralAvisoDestroyDTO(
+            id: 'aviso-1',
+            nivelUsuario: 2,
+            tenantIds: ['tenant-1'],
+        );
+
+        $this->service->destroy($dto);
 
         expect(true)->toBeTrue();
     });

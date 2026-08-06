@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\V2\MuralAviso;
 
 use App\Enums\MuralAvisoDestinatario;
+use App\Exceptions\NotFoundException;
 use App\Models\MuralAviso;
 use App\Repository\MuralAviso\MuralAvisoRepository;
 use App\Repository\MuralAvisoLeitura\MuralAvisoLeituraRepository;
 use App\Repository\TenantRepository;
+use App\V2\MuralAviso\DTOs\MuralAvisoDestroyDTO;
 use App\V2\MuralAviso\DTOs\MuralAvisoPendenteDTO;
+use App\V2\MuralAviso\DTOs\MuralAvisoQueryDTO;
 use App\V2\MuralAviso\DTOs\MuralAvisoStoreDTO;
 use App\V2\MuralAviso\Validators\MuralAvisoAuthorizationValidator;
 use App\V2\MuralAviso\Validators\MuralAvisoStoreValidator;
@@ -17,8 +20,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class MuralAvisoService
 {
-    private const NIVEL_ORGAO_CENTRAL = 1;
-
     public function __construct(
         private readonly MuralAvisoRepository $repository,
         private readonly MuralAvisoLeituraRepository $leituraRepository,
@@ -27,14 +28,9 @@ class MuralAvisoService
         private readonly MuralAvisoAuthorizationValidator $authorizationValidator,
     ) {}
 
-    /**
-     * @param list<string> $tenantIds
-     */
-    public function query(array $tenantIds, int $nivelUsuario, int $perPage): LengthAwarePaginator
+    public function index(MuralAvisoQueryDTO $dto): LengthAwarePaginator
     {
-        $filterTenantIds = $nivelUsuario === self::NIVEL_ORGAO_CENTRAL ? [] : $tenantIds;
-
-        return $this->repository->paginateForPainel($filterTenantIds, $perPage);
+        return $this->repository->paginateForPainel($dto->getFilterTenantIds(), $dto->perPage);
     }
 
     public function show(string $id): MuralAviso
@@ -42,30 +38,18 @@ class MuralAvisoService
         $aviso = $this->repository->findById($id);
 
         if ($aviso === null) {
-            throw new \App\Exceptions\NotFoundException('Aviso não encontrado.');
+            throw new NotFoundException('Aviso não encontrado.');
         }
 
         return $aviso;
     }
 
-    /**
-     * @param list<string> $tenantIdsDoUsuario
-     */
-    public function store(
-        MuralAvisoStoreDTO $dto,
-        string $usuarioId,
-        int $nivelUsuario,
-        array $tenantIdsDoUsuario,
-    ): MuralAviso {
-        $this->storeValidator->validar(
-            $dto->destinatario,
-            $dto->tenantId,
-            $nivelUsuario,
-            $tenantIdsDoUsuario,
-        );
+    public function store(MuralAvisoStoreDTO $dto): MuralAviso
+    {
+        $this->storeValidator->validar($dto);
 
-        $remetenteTipo = $nivelUsuario === self::NIVEL_ORGAO_CENTRAL ? 'ORGAO_CENTRAL' : 'TENANT';
-        $remetenteTenantId = $nivelUsuario !== self::NIVEL_ORGAO_CENTRAL ? $dto->tenantId : null;
+        $remetenteTipo = $dto->isOrgaoCentral() ? 'ORGAO_CENTRAL' : 'TENANT';
+        $remetenteTenantId = $dto->isOrgaoCentral() ? null : $dto->tenantId;
 
         return $this->repository->create([
             'titulo' => $dto->titulo,
@@ -74,31 +58,19 @@ class MuralAvisoService
             'tenant_id' => $dto->destinatario === MuralAvisoDestinatario::TODOS->value ? null : $dto->tenantId,
             'remetente_tipo' => $remetenteTipo,
             'remetente_tenant_id' => $remetenteTenantId,
-            'publicado_por_user_panel_id' => $usuarioId,
+            'publicado_por_user_panel_id' => $dto->usuarioId,
             'data_publicacao' => now(),
         ]);
     }
 
-    /**
-     * @param list<string> $tenantIdsDoUsuario
-     */
-    public function update(
-        string $id,
-        MuralAvisoStoreDTO $dto,
-        int $nivelUsuario,
-        array $tenantIdsDoUsuario,
-    ): MuralAviso {
-        $this->authorizationValidator->validar($id, $nivelUsuario, $tenantIdsDoUsuario);
+    public function update(string $id, MuralAvisoStoreDTO $dto): MuralAviso
+    {
+        $this->authorizationValidator->validar($id, $dto->nivelUsuario, $dto->tenantIds);
 
-        $this->storeValidator->validar(
-            $dto->destinatario,
-            $dto->tenantId,
-            $nivelUsuario,
-            $tenantIdsDoUsuario,
-        );
+        $this->storeValidator->validar($dto);
 
-        $remetenteTipo = $nivelUsuario === self::NIVEL_ORGAO_CENTRAL ? 'ORGAO_CENTRAL' : 'TENANT';
-        $remetenteTenantId = $nivelUsuario !== self::NIVEL_ORGAO_CENTRAL ? $dto->tenantId : null;
+        $remetenteTipo = $dto->isOrgaoCentral() ? 'ORGAO_CENTRAL' : 'TENANT';
+        $remetenteTenantId = $dto->isOrgaoCentral() ? null : $dto->tenantId;
 
         /** @var MuralAviso */
         return $this->repository->update($id, [
@@ -112,14 +84,11 @@ class MuralAvisoService
         ]);
     }
 
-    /**
-     * @param list<string> $tenantIdsDoUsuario
-     */
-    public function destroy(string $id, int $nivelUsuario, array $tenantIdsDoUsuario): void
+    public function destroy(MuralAvisoDestroyDTO $dto): void
     {
-        $this->authorizationValidator->validar($id, $nivelUsuario, $tenantIdsDoUsuario);
+        $this->authorizationValidator->validar($dto->id, $dto->nivelUsuario, $dto->tenantIds);
 
-        $this->repository->delete($id);
+        $this->repository->delete($dto->id);
     }
 
     /**

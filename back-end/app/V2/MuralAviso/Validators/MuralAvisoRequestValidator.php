@@ -39,7 +39,7 @@ class MuralAvisoRequestValidator
     /**
      * @return array<string, mixed>
      */
-    public static function query(Request $request): array
+    public static function index(Request $request): array
     {
         return $request->validate([
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],

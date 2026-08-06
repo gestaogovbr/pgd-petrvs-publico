@@ -6,6 +6,7 @@ namespace App\V2\MuralAviso\Validators;
 
 use App\Enums\MuralAvisoDestinatario;
 use App\Exceptions\ValidateException;
+use App\V2\MuralAviso\DTOs\MuralAvisoStoreDTO;
 
 class MuralAvisoStoreValidator
 {
@@ -13,52 +14,39 @@ class MuralAvisoStoreValidator
 
     /**
      * Valida regras de negócio para criação/atualização de aviso.
-     *
-     * @param list<string> $tenantIdsDoUsuario
      */
-    public function validar(
-        string $destinatario,
-        ?string $tenantId,
-        int $nivelUsuario,
-        array $tenantIdsDoUsuario,
-    ): void {
-        $this->validarDestinatarioTodos($destinatario, $nivelUsuario);
-        $this->validarDestinatarioTenantEspecifico($destinatario, $tenantId, $nivelUsuario, $tenantIdsDoUsuario);
+    public function validar(MuralAvisoStoreDTO $dto): void
+    {
+        $this->validarDestinatarioTodos($dto);
+        $this->validarDestinatarioTenantEspecifico($dto);
     }
 
-    private function validarDestinatarioTodos(string $destinatario, int $nivelUsuario): void
+    private function validarDestinatarioTodos(MuralAvisoStoreDTO $dto): void
     {
-        if ($destinatario !== MuralAvisoDestinatario::TODOS->value) {
+        if ($dto->destinatario !== MuralAvisoDestinatario::TODOS->value) {
             return;
         }
 
-        if ($nivelUsuario !== self::NIVEL_ORGAO_CENTRAL) {
+        if ($dto->nivelUsuario !== self::NIVEL_ORGAO_CENTRAL) {
             throw new ValidateException('Apenas o Órgão Central pode publicar avisos para todos os tenants.');
         }
     }
 
-    /**
-     * @param list<string> $tenantIdsDoUsuario
-     */
-    private function validarDestinatarioTenantEspecifico(
-        string $destinatario,
-        ?string $tenantId,
-        int $nivelUsuario,
-        array $tenantIdsDoUsuario,
-    ): void {
-        if ($destinatario !== MuralAvisoDestinatario::TENANT_ESPECIFICO->value) {
+    private function validarDestinatarioTenantEspecifico(MuralAvisoStoreDTO $dto): void
+    {
+        if ($dto->destinatario !== MuralAvisoDestinatario::TENANT_ESPECIFICO->value) {
             return;
         }
 
-        if (empty($tenantId)) {
+        if (empty($dto->tenantId)) {
             throw new ValidateException('É necessário informar o tenant destinatário.');
         }
 
-        if ($nivelUsuario === self::NIVEL_ORGAO_CENTRAL) {
+        if ($dto->nivelUsuario === self::NIVEL_ORGAO_CENTRAL) {
             return;
         }
 
-        if (!in_array($tenantId, $tenantIdsDoUsuario, true)) {
+        if (!in_array($dto->tenantId, $dto->tenantIds, true)) {
             throw new ValidateException('Você só pode publicar avisos para tenants aos quais está vinculado.');
         }
     }
