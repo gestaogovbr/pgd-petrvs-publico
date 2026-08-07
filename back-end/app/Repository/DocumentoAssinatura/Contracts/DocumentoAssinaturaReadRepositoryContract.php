@@ -27,6 +27,8 @@ interface DocumentoAssinaturaReadRepositoryContract
 
     public function existeAlgumaAssinatura(string $documentoId): bool;
 
+    public function existeAssinaturaDeNaoParticipante(string $documentoId, string $participanteId): bool;
+
     /** @return Collection<int, DocumentoAssinatura> */
     public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection;
 }

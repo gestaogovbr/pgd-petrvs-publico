@@ -14,6 +14,7 @@
  - Correção de clonagem do Plano de entregas
  - Correção na assinatura de TCR
  - Corrigida coluna Nome no Relatório de Agentes Públicos que não retornava dados
+ - Corrigida assinatura do TCR que permitia múltiplos gestores assinarem o mesmo plano
 
 ## 3.0.10 31/07/2026
 
