@@ -34,6 +34,18 @@ class EloquentPlanoTrabalhoEntregaReadRepository extends AbstractEloquentReadRep
         return $query->exists();
     }
 
+    /**
+     * @return list<string>
+     */
+    public function idsPlanosTrabalhoPorPlanoEntregaEntrega(string $planoEntregaEntregaId): array
+    {
+        return $this->query()
+            ->where('plano_entrega_entrega_id', $planoEntregaEntregaId)
+            ->distinct()
+            ->pluck('plano_trabalho_id')
+            ->all();
+    }
+
     public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO
     {
         $result = DB::selectOne(

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Repository\PlanoTrabalhoEntregaRepository;
 use App\Services\ServiceBase;
-use Illuminate\Support\Facades\DB;
 
 class RelatorioPlanoTrabalhoService extends ServiceBase
 {
@@ -82,14 +82,10 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
         }
 
         if (isset($planoEntregaEntregaId[2])) {
-            $where[] = new RawWhere(
-                'id in (
-                    select distinct plano_trabalho_id
-                    from planos_trabalhos_entregas
-                    where plano_entrega_entrega_id = ? and deleted_at is null
-                )',
-                [$planoEntregaEntregaId[2]]
-            );
+            $planoTrabalhoIds = app(PlanoTrabalhoEntregaRepository::class)
+                ->idsPlanosTrabalhoPorPlanoEntregaEntrega($planoEntregaEntregaId[2]);
+
+            $where[] = ['id', 'in', $planoTrabalhoIds];
         }
 
         $data["where"] = $where;

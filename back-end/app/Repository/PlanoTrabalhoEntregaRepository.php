@@ -61,6 +61,14 @@ class PlanoTrabalhoEntregaRepository
         return $this->readRepository->existeVinculo($planoTrabalhoId, $planoEntregaEntregaId, $excludeId);
     }
 
+    /**
+     * @return list<string>
+     */
+    public function idsPlanosTrabalhoPorPlanoEntregaEntrega(string $planoEntregaEntregaId): array
+    {
+        return $this->readRepository->idsPlanosTrabalhoPorPlanoEntregaEntrega($planoEntregaEntregaId);
+    }
+
     public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO
     {
         return $this->readRepository->resumoForcaTrabalhoPorPlano($planoTrabalhoId);
