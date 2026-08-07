@@ -624,6 +624,7 @@ use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoO
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
+use App\V2\Indicadores\IndicadoresHorasController as IndicadoresHorasV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('envio-participante', [EnvioParticipanteQueryController::class, 'index']);
@@ -697,5 +698,9 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('planejamento/objetivo/{id}/arvore-visualizacao', [PlanejamentoObjetivoV2::class, 'arvoreVisualizacao'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoV2::class, 'entregas'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/equipes', [PlanejamentoObjetivoV2::class, 'equipes'])->whereUuid('id');
+    Route::get('planejamento/objetivo/{id}/painel-resumo', [PlanejamentoObjetivoV2::class, 'painelResumo'])->whereUuid('id');
+    Route::get('planejamento/objetivo/{id}/entregas-detalhamento', [PlanejamentoObjetivoV2::class, 'entregasDetalhamento'])->whereUuid('id');
+
+    Route::post('indicadores/horas', [IndicadoresHorasV2::class, 'horas']);
 });
 

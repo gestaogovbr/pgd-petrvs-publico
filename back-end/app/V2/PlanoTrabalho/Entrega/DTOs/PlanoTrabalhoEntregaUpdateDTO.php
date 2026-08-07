@@ -12,6 +12,7 @@ class PlanoTrabalhoEntregaUpdateDTO
         public readonly ?string $planoEntregaEntregaId,
         public readonly ?string $orgao,
         public readonly float $forcaTrabalho,
+        public readonly float $esforcoExecutado,
         public readonly string $descricao,
     ) {}
 
@@ -23,6 +24,7 @@ class PlanoTrabalhoEntregaUpdateDTO
             planoEntregaEntregaId: $data['plano_entrega_entrega_id'] ?? null,
             orgao: $data['orgao'] ?? null,
             forcaTrabalho: (float) ($data['forca_trabalho'] ?? 0),
+            esforcoExecutado: (float) ($data['esforco_executado'] ?? $data['forca_trabalho'] ?? 0),
             descricao: $data['descricao'] ?? '',
         );
     }
@@ -34,6 +36,7 @@ class PlanoTrabalhoEntregaUpdateDTO
             'plano_entrega_entrega_id' => in_array($this->origem, ['PROPRIA_UNIDADE', 'OUTRA_UNIDADE']) ? $this->planoEntregaEntregaId : null,
             'orgao' => $this->origem === 'OUTRO_ORGAO' ? $this->orgao : null,
             'forca_trabalho' => $this->forcaTrabalho,
+            'esforco_executado' => $this->esforcoExecutado,
             'descricao' => $this->descricao,
         ];
     }

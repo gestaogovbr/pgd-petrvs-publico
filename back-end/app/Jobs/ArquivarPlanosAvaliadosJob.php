@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\StatusEnum;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
 use App\Models\Tenant;
@@ -34,10 +35,12 @@ class ArquivarPlanosAvaliadosJob implements ShouldQueue
             
             DB::transaction(function () use ($cutoffDate, $now, $tenant) {
                 $ptCount = PlanoTrabalho::whereNull('data_arquivamento')
+                    ->whereIn('status', StatusEnum::consolidacaoFinalizada())
                     ->where('avaliado_at', '<=', $cutoffDate)
                     ->update(['data_arquivamento' => $now]);
 
                 $peCount = PlanoEntrega::whereNull('data_arquivamento')
+                    ->whereIn('status', StatusEnum::consolidacaoFinalizada())
                     ->where('avaliado_at', '<=', $cutoffDate)
                     ->update(['data_arquivamento' => $now]);
 

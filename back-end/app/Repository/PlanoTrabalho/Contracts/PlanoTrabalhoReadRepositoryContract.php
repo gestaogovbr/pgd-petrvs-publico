@@ -8,6 +8,7 @@ use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Models\PlanoTrabalho;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 interface PlanoTrabalhoReadRepositoryContract
 {
@@ -40,4 +41,13 @@ interface PlanoTrabalhoReadRepositoryContract
     public function possuiAssinatura(string $planoId): bool;
 
     public function loadRelacoesClonar(PlanoTrabalho $plano): PlanoTrabalho;
+
+    /**
+     * Busca planos válidos para cálculo de indicadores de horas.
+     *
+     * @param array<string> $unidadeIds
+     * @param array{data_inicial: string|null, data_final: string|null, somente_vigentes: bool} $filtros
+     * @return SupportCollection
+     */
+    public function buscarPlanosParaIndicadores(array $unidadeIds, array $filtros): SupportCollection;
 }

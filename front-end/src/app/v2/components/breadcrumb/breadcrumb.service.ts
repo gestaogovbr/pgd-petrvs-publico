@@ -60,6 +60,12 @@ export class BreadcrumbService {
     }
 
     if (crumbs.length) {
+      const parents = this.readBreadcrumbParents(snap);
+      if (parents.length) {
+        const insertAt = crumbs.length - 1;
+        crumbs.splice(insertAt, 0, ...parents.map(p => ({ ...p, target: '_self' as const })));
+      }
+
       const last = crumbs[crumbs.length - 1];
       delete last.url;
       delete last.target;
@@ -67,5 +73,23 @@ export class BreadcrumbService {
     }
 
     return crumbs;
+  }
+
+  private readBreadcrumbParents(leaf: ActivatedRouteSnapshot): BreadcrumbCrumb[] {
+    const raw = leaf.routeConfig?.data?.['breadcrumbParents'];
+    if (!Array.isArray(raw)) {
+      return [];
+    }
+
+    return raw
+      .filter((item): item is { label: string; url: string } => {
+        return !!item
+          && typeof item === 'object'
+          && typeof item.label === 'string'
+          && item.label.length > 0
+          && typeof item.url === 'string'
+          && item.url.length > 0;
+      })
+      .map(item => ({ label: item.label, url: item.url }));
   }
 }

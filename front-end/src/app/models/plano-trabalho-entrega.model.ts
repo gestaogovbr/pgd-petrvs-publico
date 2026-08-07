@@ -13,6 +13,7 @@ export class PlanoTrabalhoEntrega extends Base implements HasReacoes {
     public descricao: string = "";
     public orgao: string | null = null;
     public forca_trabalho: number = 1;
+    public esforco_executado: number = 1;
 
     public plano_trabalho_id: string = "";
     public plano_entrega_entrega_id: string | null = null;

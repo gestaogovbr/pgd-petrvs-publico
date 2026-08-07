@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Documento\TCR;
 
 use App\Models\PlanoTrabalho;
+use App\Models\Usuario;
 
 class TCRDatasetProvider
 {
@@ -44,7 +45,7 @@ class TCRDatasetProvider
             ['field' => 'sigla', 'label' => 'Sigla'],
             ['field' => 'nome', 'label' => 'Nome'],
             ['field' => 'gestor', 'label' => 'Gestor', 'fields' => $this->usuarioFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->gestor?->usuario],
-            ['field' => 'gestores_substitutos', 'label' => 'Gestores substitutos', 'fields' => $this->usuarioFields(), 'type' => 'ARRAY', 'value' => fn ($ctx) => $ctx->gestoresSubstitutos?->map(fn ($i) => $i->usuario)],
+            ['field' => 'gestores_substitutos', 'label' => 'Gestores substitutos', 'fields' => $this->usuarioFields(), 'type' => 'ARRAY', 'value' => fn ($ctx) => $ctx->gestoresSubstitutos?->map(fn ($i) => $i->usuario()->withTrashed()->first())],
             ['field' => 'entidade', 'label' => 'Entidade', 'fields' => $this->entidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->entidade],
             ['field' => 'cidade', 'label' => 'Cidade', 'fields' => $this->cidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->cidade],
             ['field' => 'texto_complementar_plano', 'label' => 'Particularidades da Unidade Executora', 'type' => 'TEMPLATE'],
@@ -74,7 +75,7 @@ class TCRDatasetProvider
     private function usuarioFields(): array
     {
         return [
-            ['field' => 'nome', 'label' => 'Nome', 'value' => fn ($ctx) => empty($ctx->nome_social) ? $ctx->nome : $ctx->nome_social . " (" . $ctx->nome . ')'],
+            ['field' => 'nome', 'label' => 'Nome', 'value' => fn (Usuario $ctx) => empty($ctx->nome_social) ? $ctx->nome : $ctx->nome_social . " (" . $ctx->nome . ')'],
             ['field' => 'email', 'label' => 'E-mail'],
             ['field' => 'cpf', 'label' => 'CPF'],
             ['field' => 'matricula', 'label' => 'Matrícula'],

@@ -1003,7 +1003,7 @@ describe('PATCH /api/v2/plano-trabalho/:id/encerrar', function () {
         $this->patchJson("/api/__tests/v2/plano-trabalho/{$plano->id}/encerrar", [
             'justificativa' => 'Tentativa de encerrar plano expirado.',
         ])->assertStatus(422)
-          ->assertJsonPath('error', 'Não é possível encerrar antecipadamente um plano cuja vigência já expirou.');
+          ->assertJsonPath('error', 'Este Plano de Trabalho não atende aos requisitos para encerramento.');
     });
 });
 
