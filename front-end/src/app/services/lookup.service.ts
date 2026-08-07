@@ -999,6 +999,11 @@ export class LookupService implements IIndexable {
     { key: 'Executora', value: "Executora" }
   ];
 
+  public SIM_NAO: LookupItem[] = [
+    { key: 'Sim', value: "Sim" },
+    { key: 'Não', value: "Não" }
+  ];
+
   public ENVIO_USUARIO_STATUS: LookupItem[] = [
     { key: 'Todos', value: "Todos" },
     { key: 'Não agendados', value: "Não agendados" },

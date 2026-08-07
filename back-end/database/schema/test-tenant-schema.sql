@@ -3381,6 +3381,7 @@ CREATE TABLE `usuarios` (
   `remember_token` varchar(100) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL COMMENT 'E-mail do usuário',
   `nome` varchar(256) NOT NULL COMMENT 'Nome do usuário',
+  `nome_social` VARCHAR(100) NULL COMMENT 'Nome social do usuário',
   `password` varchar(255) DEFAULT NULL COMMENT 'Senha do usuário',
   `cpf` varchar(14) NOT NULL,
   `matricula` varchar(50) DEFAULT NULL COMMENT 'Matrícula funcional do usuário',

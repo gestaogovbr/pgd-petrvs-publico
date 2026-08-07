@@ -1,0 +1,33 @@
+.execucao-detalhamentos-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.execucao-trabalho-cell {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: visible;
+  vertical-align: top;
+}
+
+.execucao-trabalho-textarea {
+  max-width: 100%;
+  min-width: 0;
+
+  br-textarea {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.execucao-esforco-input {
+  max-width: 8rem;
+}
+
+.execucao-acoes-cell {
+  vertical-align: top;
+  white-space: nowrap;
+}
