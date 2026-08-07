@@ -7,6 +7,8 @@ namespace App\Providers;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 
 use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
+use App\Repository\Feriado\Contracts\FeriadoReadRepositoryContract;
+use App\Repository\Feriado\Eloquent\EloquentFeriadoReadRepository;
 
 use App\Repository\Afastamento\Eloquent\EloquentAfastamentoReadRepository;
 
@@ -471,6 +473,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             RelatorioEntregaReadRepositoryContract::class,
             EloquentRelatorioEntregaReadRepository::class,
+        );
+
+        $this->app->bind(
+            FeriadoReadRepositoryContract::class,
+            EloquentFeriadoReadRepository::class,
         );
 
     }

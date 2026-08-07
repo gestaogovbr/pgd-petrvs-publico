@@ -45,7 +45,7 @@ class ExportarItemJobFake extends ExportarItemJob
         return app(EnvioRepositoryInterface::class);
     }
 
-    public function getResource(): JsonResource
+    public function getResource($model): JsonResource
     {
         return Mockery::mock(JsonResource::class);
     }
@@ -69,7 +69,7 @@ describe('ExportarItemJob', function () {
         $model->id = 'item-1';
 
         $repository = Mockery::mock(EnvioRepositoryInterface::class);
-        $repository->shouldReceive('findOneParaEnvio')
+        $repository->shouldReceive('findById')
             ->once()
             ->with('item-1')
             ->andReturn($model);

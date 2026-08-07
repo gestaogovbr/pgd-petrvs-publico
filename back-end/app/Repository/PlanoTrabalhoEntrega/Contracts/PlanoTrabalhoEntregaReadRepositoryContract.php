@@ -7,6 +7,7 @@ namespace App\Repository\PlanoTrabalhoEntrega\Contracts;
 use App\V2\PlanoTrabalho\Entrega\DTOs\ResumoForcaTrabalhoDTO;
 use App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
  * @see \App\Repository\PlanoTrabalhoEntrega\Eloquent\EloquentPlanoTrabalhoEntregaReadRepository
@@ -34,4 +35,12 @@ interface PlanoTrabalhoEntregaReadRepositoryContract
         float $forcaTrabalhoProjeto,
         float $esforcoExecutadoProjeto,
     ): SomatoriosEsforcoDTO;
+
+    /**
+     * Busca entregas com unidade do PE para cálculo de indicadores.
+     *
+     * @param array<string> $planoIds
+     * @return Collection
+     */
+    public function buscarEntregasParaIndicadores(array $planoIds): Collection;
 }

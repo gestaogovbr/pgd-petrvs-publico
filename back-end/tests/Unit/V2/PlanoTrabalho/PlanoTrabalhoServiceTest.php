@@ -50,6 +50,12 @@ beforeEach(function () {
     $this->updateAuthorizationValidator = Mockery::mock(PlanoTrabalhoUpdateAuthorizationValidator::class);
     $this->authorization = Mockery::mock(PlanoTrabalhoAuthorization::class);
     $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
+    $this->usuarioRepository->shouldReceive('findById')->byDefault()->andReturnUsing(function () {
+        $u = Mockery::mock(Usuario::class)->makePartial();
+        $u->cod_jornada = 40;
+        $u->cpf = '12345678901';
+        return $u;
+    });
     $this->statusService = Mockery::mock(StatusService::class);
     $this->tcrInvalidador = Mockery::mock(TCRInvalidador::class);
     $this->consolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
@@ -260,6 +266,14 @@ describe('PlanoTrabalhoService::store', function () {
 
         $plano = Mockery::mock(PlanoTrabalho::class);
 
+        $usuario = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $usuario->cod_jornada = 40;
+
+        $this->usuarioRepository
+            ->shouldReceive('findById')
+            ->with('user-1')
+            ->andReturn($usuario);
+
         $this->storeValidator
             ->shouldReceive('validarAutorizacao')
             ->once();
@@ -272,7 +286,7 @@ describe('PlanoTrabalhoService::store', function () {
         $this->writeRepository
             ->shouldReceive('create')
             ->once()
-            ->with(Mockery::type('array'))
+            ->with(Mockery::on(fn ($data) => $data['carga_horaria'] === 8.0))
             ->andReturn($plano);
 
         $result = $this->service->store([
@@ -316,6 +330,14 @@ describe('PlanoTrabalhoService::store', function () {
 
         $plano = Mockery::mock(PlanoTrabalho::class);
 
+        $usuario = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $usuario->cod_jornada = 40;
+
+        $this->usuarioRepository
+            ->shouldReceive('findById')
+            ->with('user-1')
+            ->andReturn($usuario);
+
         $this->storeValidator->shouldReceive('validarAutorizacao')->once();
         $this->storeValidator->shouldReceive('validar')->once();
 
@@ -324,6 +346,7 @@ describe('PlanoTrabalhoService::store', function () {
             ->once()
             ->with(Mockery::on(fn (array $attrs) =>
                 $attrs['criacao_usuario_id'] === 'criador-xyz'
+                && $attrs['carga_horaria'] === 8.0
             ))
             ->andReturn($plano);
 
@@ -598,7 +621,7 @@ describe('PlanoTrabalhoService::encerrar', function () {
 
         $this->consolidacaoRepository->shouldReceive('encerrarPeriodosFuturos')
             ->once()
-            ->with($planoId, $hoje);
+            ->with($planoId, $hoje, 'motivo teste');
 
         $this->statusService->shouldReceive('atualizaStatus')
             ->once()
