@@ -2,9 +2,19 @@
 
 namespace App\Models;
 
-class MuralAvisoLeitura extends ModelBase
+use App\Traits\AutoUuid;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class MuralAvisoLeitura extends Model
 {
+    use HasFactory, AutoUuid;
+
     protected $table = 'mural_avisos_leituras';
+
+    protected $keyType = 'string';
+
+    public $incrementing = false;
 
     public $timestamps = false;
 
