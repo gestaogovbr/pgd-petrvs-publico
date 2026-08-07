@@ -1,3 +1,10 @@
+
+## 3.0.11 09/07/2026
+
+### Corrigido
+ - Correção de clonagem do Plano de entregas
+ - Correção na assinatura de TCR
+
 ## 3.0.10 31/07/2026
 
 ### Adicionado
