@@ -7,9 +7,13 @@
 ### Modificado
  - Prazo de bloqueio de arquivamento por recurso alterado de 30 para 20 dias após a avaliação
 
+### Modificado
+ - Relatório de Agentes Públicos: renomeadas colunas (Nome→Agente Público, Matrícula SIAPE→Matrícula Siape, Seleção→Regramento, Lotado→Lotação, Modalidade do último PT→Modalidade do PT do Dia), removidas colunas Jornada e Perfil, adicionadas colunas Participante do PGD, Plano de Trabalho do Dia (com link para tela V2) e Status do PT do Dia; perfil Participante visualiza apenas seus próprios dados; acesso bloqueado para perfil Consulta
+
 ### Corrigido
  - Correção de clonagem do Plano de entregas
  - Correção na assinatura de TCR
+ - Corrigida coluna Nome no Relatório de Agentes Públicos que não retornava dados
 
 ## 3.0.10 31/07/2026
 
