@@ -74,6 +74,10 @@ export class IndicadorBarraVerticalComponent {
     return {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
       scales: {
         x: {
           grid: { display: false },
