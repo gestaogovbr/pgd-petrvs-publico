@@ -99,6 +99,7 @@ export class GestaoPgdPage implements OnInit {
   }
 
   onFiltrosChange(filtros: FiltrosGestaoPgd): void {
+    this.unidadeInicialSigla.set(filtros.unidade_sigla);
     this.carregarDados(filtros.unidade_id, filtros.mes, filtros.ano);
   }
 

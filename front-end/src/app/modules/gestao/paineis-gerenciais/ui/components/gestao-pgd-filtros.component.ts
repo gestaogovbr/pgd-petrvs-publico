@@ -19,6 +19,7 @@ import { PainelApiClient } from '../../infra/painel-api.client';
 
 export interface FiltrosGestaoPgd {
   unidade_id: string;
+  unidade_sigla: string;
   mes: number;
   ano: number;
 }
@@ -167,6 +168,7 @@ export class GestaoPgdFiltrosComponent implements OnInit, OnChanges {
 
     this.filtrosChange.emit({
       unidade_id: unidade.id,
+      unidade_sigla: unidade.sigla,
       mes,
       ano,
     });

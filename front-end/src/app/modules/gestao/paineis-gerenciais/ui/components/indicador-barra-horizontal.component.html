@@ -5,9 +5,9 @@
   [carregando]="carregando"
   [semDados]="semDados() && !_drillAtivo()">
 
-  @if (_drillAtivo() && siglaPai) {
+  @if (_drillAtivo()) {
     <button class="indicador-barra__voltar" (click)="onVoltar()">
-      <i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar para {{ siglaPai }}
+      <i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar{{ siglaPai ? ' para ' + siglaPai : '' }}
     </button>
   }
 

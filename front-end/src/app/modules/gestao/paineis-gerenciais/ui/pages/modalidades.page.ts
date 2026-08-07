@@ -90,6 +90,7 @@ export class ModalidadesPage implements OnInit {
   }
 
   onUnidadeChange(unidade: { sigla: string; nome: string }): void {
+    this.unidadeInicialSigla.set(unidade.sigla);
     this.unidadeAtualLabel.set(`${unidade.sigla} - ${unidade.nome}`);
   }
 
