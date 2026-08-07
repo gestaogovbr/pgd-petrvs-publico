@@ -490,6 +490,7 @@ class PlanoEntregaController extends ControllerBase
     public function homologar(Request $request)
     {
         try {
+            $this->checkPermissions("HOMOLOGAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required'],
                 'justificativa' => ['present']
