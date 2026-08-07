@@ -94,7 +94,17 @@ export class IndicadorBarraHorizontalComponent {
       responsive: true,
       maintainAspectRatio: false,
       scales: {
-        x: { display: false },
+        x: {
+          display: true,
+          min: 0,
+          max: 100,
+          ticks: {
+            stepSize: 25,
+            callback: (value: string | number) => `${value}%`,
+          },
+          grid: { display: false },
+          border: { display: false },
+        },
         y: {
           grid: { display: false },
           ticks: {
