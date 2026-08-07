@@ -1,6 +1,12 @@
 
 ## 3.0.11 09/07/2026
 
+### Adicionado
+ - Mensagens específicas de impedimento no arquivamento de Planos de Trabalho, informando o motivo pelo qual o plano não pode ser arquivado (prazo de recurso, pendências de encerramento, períodos avaliativos pendentes)
+
+### Modificado
+ - Prazo de bloqueio de arquivamento por recurso alterado de 30 para 20 dias após a avaliação
+
 ### Corrigido
  - Correção de clonagem do Plano de entregas
  - Correção na assinatura de TCR
