@@ -1,13 +1,15 @@
 <div class="row g-3 mb-4">
   <!-- Tipo de Consulta -->
-  <div class="col-12 col-md-3">
-    <br-select
-      label="Tipo de Consulta"
-      [options]="tipoConsultaOptions"
-      (valueChange)="onTipoConsultaChange($event)"
-      class="w-100">
-    </br-select>
-  </div>
+  @if (permitirHistorico) {
+    <div class="col-12 col-md-3">
+      <br-select
+        label="Tipo de Consulta"
+        [options]="tipoConsultaOptions"
+        (valueChange)="onTipoConsultaChange($event)"
+        class="w-100">
+      </br-select>
+    </div>
+  }
 
   <!-- Busca Unidade -->
   <div class="col-12 col-md-4 position-relative">

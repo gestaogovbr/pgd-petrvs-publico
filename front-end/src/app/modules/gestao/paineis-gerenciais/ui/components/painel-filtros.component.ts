@@ -35,6 +35,7 @@ export class PainelFiltrosComponent implements OnChanges {
   @Input() unidadeInicialId = '';
   @Input() unidadeInicialSigla = '';
   @Input() unidadeInicialNome = '';
+  @Input() permitirHistorico = true;
 
   @Output() filtrosChange = new EventEmitter<FiltrosPainel>();
   @Output() unidadeChange = new EventEmitter<{ sigla: string; nome: string }>();

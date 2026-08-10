@@ -131,21 +131,19 @@ export class ModalidadesPage implements OnInit {
     this.pdfService.exportar(
       {
         painel: 'Modalidades',
-        tipoConsulta: this.filtrosAtuais()?.tipo_consulta === 'historico' ? 'Histórico' : 'Situação Atual',
+        tipoConsulta: 'Situação Atual',
         unidade: this.unidadeAtualLabel(),
-        periodo: this.filtrosAtuais()?.data_inicio && this.filtrosAtuais()?.data_fim
-          ? `${this.filtrosAtuais()!.data_inicio} a ${this.filtrosAtuais()!.data_fim}`
-          : undefined,
       },
       indicadores,
     );
   }
 
   private buildSaibaMaisParams(modalidade: string): Record<string, string> {
-    const filtros = this.filtrosAtuais();
-    const params: Record<string, string> = { modalidade };
-    if (filtros?.unidade_id) params['unidade_id'] = filtros.unidade_id;
-    return params;
+    return {
+      modalidadeSouGov: modalidade,
+      unidade_id: this.unidadeInicialId(),
+      incluir_unidades_subordinadas: 'true',
+    };
   }
 
   private carregarDados(filtros: FiltrosPainel): void {

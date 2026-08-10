@@ -17,4 +17,11 @@ class PainelRequestValidator
             'data_fim' => ['required_if:tipo_consulta,historico', 'nullable', 'date', 'after_or_equal:data_inicio'],
         ]);
     }
+
+    public static function filtrosSemHistorico(Request $request): array
+    {
+        return $request->validate([
+            'unidade_id' => ['required', 'uuid'],
+        ]);
+    }
 }
