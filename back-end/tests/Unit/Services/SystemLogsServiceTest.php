@@ -1,315 +1,280 @@
 <?php
 
-namespace Tests\Unit;
-
 use App\Enums\PerfilEnum;
+use App\Exceptions\ServerException;
 use App\Models\Perfil;
 use App\Models\Usuario;
 use App\Services\SystemLogsService;
 use Illuminate\Support\Facades\File;
-use Tests\TestCase;
-use Mockery;
-use Symfony\Component\Finder\SplFileInfo;
-use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Log;
+use Mockery\MockInterface;
+use Symfony\Component\Finder\SplFileInfo;
+use Tests\TestCase;
 
-class SystemLogsServiceTest extends TestCase
+uses(TestCase::class);
+
+afterEach(fn () => Mockery::close());
+
+function usuarioComPerfilSystemLogs(int $nivel): Usuario
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
+    $usuario = new Usuario(['id' => 'usuario-test']);
+    $usuario->setRelation('perfil', new Perfil(['nivel' => $nivel]));
+
+    return $usuario;
+}
+
+function mockLogFileSystemLogs(string $filename, int $mtime, string $extension = 'log'): SplFileInfo|MockInterface
+{
+    $file = Mockery::mock(SplFileInfo::class);
+    $file->shouldReceive('getExtension')->andReturn($extension);
+    $file->shouldReceive('getFilename')->andReturn($filename);
+
+    if ($extension === 'log') {
+        $file->shouldReceive('getSize')->andReturn(1024);
+        $file->shouldReceive('getMTime')->andReturn($mtime);
     }
 
-    public function test_it_returns_only_current_tenant_logs_for_non_developer()
-    {
-        $logPath = storage_path('logs');
+    return $file;
+}
 
-        File::shouldReceive('exists')
-            ->with($logPath)
-            ->andReturn(true);
+it('returns only current tenant logs for non developer', function () {
+    $logPath = storage_path('logs');
 
-        File::shouldReceive('files')
-            ->with($logPath)
-            ->andReturn([
-                $this->mockLogFile('MGI-04-08-2026-laravel.log', time()),
-                $this->mockLogFile('siape_MGI.log', time() - 60),
-                $this->mockLogFile('CEFET-MG-04-08-2026-laravel.log', time() - 120),
-                $this->mockLogFile('siape_CEFET-MG.log', time() - 180),
-                $this->mockLogFile('laravel.log', time() - 240),
-                $this->mockLogFile('04-08-2026-mysql-slow.log', time() - 300),
-                $this->mockLogFile('siape_central.log', time() - 330),
-                $this->mockLogFile('ignored.txt', time() - 360, 'txt'),
-            ]);
+    File::shouldReceive('exists')
+        ->with($logPath)
+        ->andReturn(true);
 
-        $service = new SystemLogsService();
+    File::shouldReceive('files')
+        ->with($logPath)
+        ->andReturn([
+            mockLogFileSystemLogs('MGI-04-08-2026-laravel.log', time()),
+            mockLogFileSystemLogs('siape_MGI.log', time() - 60),
+            mockLogFileSystemLogs('CEFET-MG-04-08-2026-laravel.log', time() - 120),
+            mockLogFileSystemLogs('siape_CEFET-MG.log', time() - 180),
+            mockLogFileSystemLogs('laravel.log', time() - 240),
+            mockLogFileSystemLogs('04-08-2026-mysql-slow.log', time() - 300),
+            mockLogFileSystemLogs('siape_central.log', time() - 330),
+            mockLogFileSystemLogs('ignored.txt', time() - 360, 'txt'),
+        ]);
 
-        $result = $service->index(
-            ['limit' => 10, 'page' => 1],
-            'MGI',
-            $this->usuarioComPerfil(PerfilEnum::PARTICIPANTE->value)
-        );
+    $result = (new SystemLogsService())->index(
+        ['limit' => 10, 'page' => 1],
+        'MGI',
+        usuarioComPerfilSystemLogs(PerfilEnum::PARTICIPANTE->value)
+    );
 
-        $this->assertTrue($result['success']);
-        $this->assertCount(2, $result['data']);
-        $this->assertEquals('MGI-04-08-2026-laravel.log', $result['data'][0]['filename']);
-        $this->assertEquals('siape_MGI.log', $result['data'][1]['filename']);
-        $this->assertEquals(2, $result['meta']['total']);
-        $this->assertArrayNotHasKey('path', $result['data'][0]);
-    }
+    expect($result['success'])->toBeTrue()
+        ->and($result['data'])->toHaveCount(2)
+        ->and($result['data'][0]['filename'])->toBe('MGI-04-08-2026-laravel.log')
+        ->and($result['data'][1]['filename'])->toBe('siape_MGI.log')
+        ->and($result['meta']['total'])->toBe(2)
+        ->and($result['data'][0])->not->toHaveKey('path');
+});
 
-    public function test_it_returns_current_tenant_and_generic_logs_for_developer()
-    {
-        $logPath = storage_path('logs');
+it('returns current tenant and generic logs for developer', function () {
+    $logPath = storage_path('logs');
 
-        File::shouldReceive('exists')
-            ->with($logPath)
-            ->andReturn(true);
+    File::shouldReceive('exists')
+        ->with($logPath)
+        ->andReturn(true);
 
-        File::shouldReceive('files')
-            ->with($logPath)
-            ->andReturn([
-                $this->mockLogFile('MGI-04-08-2026-laravel.log', time()),
-                $this->mockLogFile('siape_MGI.log', time() - 60),
-                $this->mockLogFile('CEFET-MG-04-08-2026-laravel.log', time() - 120),
-                $this->mockLogFile('siape_CEFET-MG.log', time() - 180),
-                $this->mockLogFile('laravel.log', time() - 240),
-                $this->mockLogFile('04-08-2026-mysql-slow.log', time() - 300),
-                $this->mockLogFile('horizon.log', time() - 360),
-                $this->mockLogFile('siape_central.log', time() - 420),
-            ]);
+    File::shouldReceive('files')
+        ->with($logPath)
+        ->andReturn([
+            mockLogFileSystemLogs('MGI-04-08-2026-laravel.log', time()),
+            mockLogFileSystemLogs('siape_MGI.log', time() - 60),
+            mockLogFileSystemLogs('CEFET-MG-04-08-2026-laravel.log', time() - 120),
+            mockLogFileSystemLogs('siape_CEFET-MG.log', time() - 180),
+            mockLogFileSystemLogs('laravel.log', time() - 240),
+            mockLogFileSystemLogs('04-08-2026-mysql-slow.log', time() - 300),
+            mockLogFileSystemLogs('horizon.log', time() - 360),
+            mockLogFileSystemLogs('siape_central.log', time() - 420),
+        ]);
 
-        $service = new SystemLogsService();
+    $result = (new SystemLogsService())->index(
+        ['limit' => 10, 'page' => 1],
+        'MGI',
+        usuarioComPerfilSystemLogs(PerfilEnum::DESENVOLVEDOR->value)
+    );
 
-        $result = $service->index(
-            ['limit' => 10, 'page' => 1],
-            'MGI',
-            $this->usuarioComPerfil(PerfilEnum::DESENVOLVEDOR->value)
-        );
-
-        $this->assertTrue($result['success']);
-        $this->assertEquals(6, $result['meta']['total']);
-        $this->assertSame([
+    expect($result['success'])->toBeTrue()
+        ->and($result['meta']['total'])->toBe(6)
+        ->and(array_column($result['data'], 'filename'))->toBe([
             'MGI-04-08-2026-laravel.log',
             'siape_MGI.log',
             'laravel.log',
             '04-08-2026-mysql-slow.log',
             'horizon.log',
             'siape_central.log',
-        ], array_column($result['data'], 'filename'));
-    }
+        ]);
+});
 
-    public function test_it_paginates_after_filtering_authorized_logs()
-    {
-        $logPath = storage_path('logs');
+it('paginates after filtering authorized logs', function () {
+    $logPath = storage_path('logs');
 
-        File::shouldReceive('exists')
-            ->with($logPath)
-            ->andReturn(true);
+    File::shouldReceive('exists')
+        ->with($logPath)
+        ->andReturn(true);
 
-        File::shouldReceive('files')
-            ->with($logPath)
-            ->andReturn([
-                $this->mockLogFile('MGI-04-08-2026-laravel.log', time()),
-                $this->mockLogFile('siape_MGI.log', time() - 60),
-                $this->mockLogFile('MGI-03-08-2026-laravel.log', time() - 120),
-                $this->mockLogFile('CEFET-MG-04-08-2026-laravel.log', time() - 180),
-            ]);
+    File::shouldReceive('files')
+        ->with($logPath)
+        ->andReturn([
+            mockLogFileSystemLogs('MGI-04-08-2026-laravel.log', time()),
+            mockLogFileSystemLogs('siape_MGI.log', time() - 60),
+            mockLogFileSystemLogs('MGI-03-08-2026-laravel.log', time() - 120),
+            mockLogFileSystemLogs('CEFET-MG-04-08-2026-laravel.log', time() - 180),
+        ]);
 
-        $service = new SystemLogsService();
+    $result = (new SystemLogsService())->index(
+        ['limit' => 2, 'page' => 2],
+        'MGI',
+        usuarioComPerfilSystemLogs(PerfilEnum::PARTICIPANTE->value)
+    );
 
-        $result = $service->index(
-            ['limit' => 2, 'page' => 2],
-            'MGI',
-            $this->usuarioComPerfil(PerfilEnum::PARTICIPANTE->value)
-        );
+    expect($result['data'])->toHaveCount(1)
+        ->and($result['data'][0]['filename'])->toBe('MGI-03-08-2026-laravel.log')
+        ->and($result['meta']['total'])->toBe(3)
+        ->and($result['meta']['current_page'])->toBe(2);
+});
 
-        $this->assertCount(1, $result['data']);
-        $this->assertEquals('MGI-03-08-2026-laravel.log', $result['data'][0]['filename']);
-        $this->assertEquals(3, $result['meta']['total']);
-        $this->assertEquals(2, $result['meta']['current_page']);
-    }
+it('returns empty when log directory does not exist', function () {
+    $logPath = storage_path('logs');
 
-    public function test_it_returns_empty_when_log_directory_does_not_exist()
-    {
-        // Arrange
-        $logPath = storage_path('logs');
-        
-        File::shouldReceive('exists')
-            ->with($logPath)
-            ->andReturn(false);
+    File::shouldReceive('exists')
+        ->with($logPath)
+        ->andReturn(false);
 
-        $service = new SystemLogsService();
+    $result = (new SystemLogsService())->index([]);
 
-        // Act
-        $result = $service->index([]);
+    expect($result['success'])->toBeTrue()
+        ->and($result['data'])->toBeEmpty()
+        ->and($result['meta']['total'])->toBe(0);
+});
 
-        // Assert
-        $this->assertTrue($result['success']);
-        $this->assertEmpty($result['data']);
-        $this->assertEquals(0, $result['meta']['total']);
-    }
+it('downloads small file', function () {
+    $filename = 'MGI-04-08-2026-laravel.log';
+    $path = storage_path('logs/' . $filename);
 
-    public function test_it_downloads_small_file()
-    {
-        $filename = 'MGI-04-08-2026-laravel.log';
-        $path = storage_path('logs/' . $filename);
-        
-        Log::shouldReceive('info')->once();
-        
-        File::shouldReceive('exists')->with($path)->andReturn(true);
-        File::shouldReceive('size')->with($path)->andReturn(1024); // 1KB
-        
-        $service = new SystemLogsService();
-        $result = $service->downloadLog($filename, 'MGI', $this->usuarioComPerfil(PerfilEnum::PARTICIPANTE->value));
-        
-        $this->assertEquals('file', $result['type']);
-        $this->assertEquals($path, $result['data']);
-        $this->assertEquals($filename, $result['filename']);
-    }
+    Log::shouldReceive('info')->once();
 
-    public function test_it_downloads_large_file_truncated()
-    {
-        $filename = 'MGI-04-08-2026-laravel.log';
-        $path = storage_path('logs/' . $filename);
-        
-        // Create real file for fopen/fread
-        $content = str_repeat('A', 2 * 1024 * 1024 + 100); // 2MB + 100 bytes
-        file_put_contents($path, $content);
-        
-        try {
-            // Mock Security Log
-            Log::shouldReceive('info')->once();
-            
-            // Mock File facade
-            File::shouldReceive('exists')->with($path)->andReturn(true);
-            File::shouldReceive('size')->with($path)->andReturn(strlen($content));
-            
-            $service = new SystemLogsService();
-            $result = $service->downloadLog($filename, 'MGI', $this->usuarioComPerfil(PerfilEnum::PARTICIPANTE->value));
-            
-            $this->assertEquals('content', $result['type']);
-            $this->assertEquals(2 * 1024 * 1024, strlen($result['data']));
-            $this->assertEquals($filename, $result['filename']);
-        } finally {
-            if (file_exists($path)) unlink($path);
-        }
-    }
+    File::shouldReceive('exists')->with($path)->andReturn(true);
+    File::shouldReceive('size')->with($path)->andReturn(1024);
 
-    public function test_it_throws_exception_for_invalid_filename()
-    {
-        Log::shouldReceive('info')->once();
-        Log::shouldReceive('warning')->once();
-        
-        $service = new SystemLogsService();
-        
-        $this->expectException(ServerException::class);
-        $this->expectExceptionMessage("Nome de arquivo inválido.");
-        
-        $service->downloadLog('../../../etc/passwd', 'MGI', $this->usuarioComPerfil(PerfilEnum::PARTICIPANTE->value));
-    }
+    $result = (new SystemLogsService())->downloadLog(
+        $filename,
+        'MGI',
+        usuarioComPerfilSystemLogs(PerfilEnum::PARTICIPANTE->value)
+    );
 
-    public function test_it_throws_exception_for_invalid_extension()
-    {
-        Log::shouldReceive('info')->once();
-        Log::shouldReceive('warning')->once();
-        
-        $service = new SystemLogsService();
-        
-        $this->expectException(ServerException::class);
-        $this->expectExceptionMessage("Tipo de arquivo não permitido.");
-        
-        $service->downloadLog('test.txt', 'MGI', $this->usuarioComPerfil(PerfilEnum::PARTICIPANTE->value));
-    }
+    expect($result['type'])->toBe('file')
+        ->and($result['data'])->toBe($path)
+        ->and($result['filename'])->toBe($filename);
+});
 
-    public function test_it_throws_exception_if_file_not_found()
-    {
-        $filename = 'MGI-04-08-2026-laravel.log';
-        $path = storage_path('logs/' . $filename);
-        
-        Log::shouldReceive('info')->once();
-        
-        File::shouldReceive('exists')->with($path)->andReturn(false);
-        
-        $service = new SystemLogsService();
-        
-        $this->expectException(ServerException::class);
-        $this->expectExceptionMessage("Arquivo não encontrado.");
-        
-        $service->downloadLog($filename, 'MGI', $this->usuarioComPerfil(PerfilEnum::PARTICIPANTE->value));
-    }
+it('downloads large file truncated', function () {
+    $filename = 'MGI-04-08-2026-laravel.log';
+    $path = storage_path('logs/' . $filename);
+    $content = str_repeat('A', 2 * 1024 * 1024 + 100);
 
-    public function test_it_blocks_other_tenant_log_download()
-    {
-        Log::shouldReceive('info')->once();
-        Log::shouldReceive('warning')->once();
+    file_put_contents($path, $content);
 
-        $service = new SystemLogsService();
-
-        $this->expectException(ServerException::class);
-        $this->expectExceptionMessage("Arquivo não encontrado.");
-
-        $service->downloadLog(
-            'CEFET-MG-04-08-2026-laravel.log',
-            'MGI',
-            $this->usuarioComPerfil(PerfilEnum::DESENVOLVEDOR->value)
-        );
-    }
-
-    public function test_it_blocks_generic_log_download_for_non_developer()
-    {
-        Log::shouldReceive('info')->once();
-        Log::shouldReceive('warning')->once();
-
-        $service = new SystemLogsService();
-
-        $this->expectException(ServerException::class);
-        $this->expectExceptionMessage("Arquivo não encontrado.");
-
-        $service->downloadLog(
-            'laravel.log',
-            'MGI',
-            $this->usuarioComPerfil(PerfilEnum::PARTICIPANTE->value)
-        );
-    }
-
-    public function test_it_allows_generic_log_download_for_developer()
-    {
-        $filename = '04-08-2026-mysql-slow.log';
-        $path = storage_path('logs/' . $filename);
-
+    try {
         Log::shouldReceive('info')->once();
 
         File::shouldReceive('exists')->with($path)->andReturn(true);
-        File::shouldReceive('size')->with($path)->andReturn(1024);
+        File::shouldReceive('size')->with($path)->andReturn(strlen($content));
 
-        $service = new SystemLogsService();
-        $result = $service->downloadLog($filename, 'MGI', $this->usuarioComPerfil(PerfilEnum::DESENVOLVEDOR->value));
+        $result = (new SystemLogsService())->downloadLog(
+            $filename,
+            'MGI',
+            usuarioComPerfilSystemLogs(PerfilEnum::PARTICIPANTE->value)
+        );
 
-        $this->assertEquals('file', $result['type']);
-        $this->assertEquals($path, $result['data']);
-        $this->assertEquals($filename, $result['filename']);
-    }
-
-    private function usuarioComPerfil(int $nivel): Usuario
-    {
-        $usuario = new Usuario(['id' => 'usuario-test']);
-        $usuario->setRelation('perfil', new Perfil(['nivel' => $nivel]));
-
-        return $usuario;
-    }
-
-    private function mockLogFile(string $filename, int $mtime, string $extension = 'log'): SplFileInfo
-    {
-        $file = Mockery::mock(SplFileInfo::class);
-        $file->shouldReceive('getExtension')->andReturn($extension);
-        $file->shouldReceive('getFilename')->andReturn($filename);
-
-        if ($extension === 'log') {
-            $file->shouldReceive('getSize')->andReturn(1024);
-            $file->shouldReceive('getMTime')->andReturn($mtime);
+        expect($result['type'])->toBe('content')
+            ->and(strlen($result['data']))->toBe(2 * 1024 * 1024)
+            ->and($result['filename'])->toBe($filename);
+    } finally {
+        if (file_exists($path)) {
+            unlink($path);
         }
-
-        return $file;
     }
-}
+});
+
+it('throws exception for invalid filename', function () {
+    Log::shouldReceive('info')->once();
+    Log::shouldReceive('warning')->once();
+
+    expect(fn () => (new SystemLogsService())->downloadLog(
+        '../../../etc/passwd',
+        'MGI',
+        usuarioComPerfilSystemLogs(PerfilEnum::PARTICIPANTE->value)
+    ))->toThrow(ServerException::class, 'Nome de arquivo inválido.');
+});
+
+it('throws exception for invalid extension', function () {
+    Log::shouldReceive('info')->once();
+    Log::shouldReceive('warning')->once();
+
+    expect(fn () => (new SystemLogsService())->downloadLog(
+        'test.txt',
+        'MGI',
+        usuarioComPerfilSystemLogs(PerfilEnum::PARTICIPANTE->value)
+    ))->toThrow(ServerException::class, 'Tipo de arquivo não permitido.');
+});
+
+it('throws exception if file not found', function () {
+    $filename = 'MGI-04-08-2026-laravel.log';
+    $path = storage_path('logs/' . $filename);
+
+    Log::shouldReceive('info')->once();
+
+    File::shouldReceive('exists')->with($path)->andReturn(false);
+
+    expect(fn () => (new SystemLogsService())->downloadLog(
+        $filename,
+        'MGI',
+        usuarioComPerfilSystemLogs(PerfilEnum::PARTICIPANTE->value)
+    ))->toThrow(ServerException::class, 'Arquivo não encontrado.');
+});
+
+it('blocks other tenant log download', function () {
+    Log::shouldReceive('info')->once();
+    Log::shouldReceive('warning')->once();
+
+    expect(fn () => (new SystemLogsService())->downloadLog(
+        'CEFET-MG-04-08-2026-laravel.log',
+        'MGI',
+        usuarioComPerfilSystemLogs(PerfilEnum::DESENVOLVEDOR->value)
+    ))->toThrow(ServerException::class, 'Arquivo não encontrado.');
+});
+
+it('blocks generic log download for non developer', function () {
+    Log::shouldReceive('info')->once();
+    Log::shouldReceive('warning')->once();
+
+    expect(fn () => (new SystemLogsService())->downloadLog(
+        'laravel.log',
+        'MGI',
+        usuarioComPerfilSystemLogs(PerfilEnum::PARTICIPANTE->value)
+    ))->toThrow(ServerException::class, 'Arquivo não encontrado.');
+});
+
+it('allows generic log download for developer', function () {
+    $filename = '04-08-2026-mysql-slow.log';
+    $path = storage_path('logs/' . $filename);
+
+    Log::shouldReceive('info')->once();
+
+    File::shouldReceive('exists')->with($path)->andReturn(true);
+    File::shouldReceive('size')->with($path)->andReturn(1024);
+
+    $result = (new SystemLogsService())->downloadLog(
+        $filename,
+        'MGI',
+        usuarioComPerfilSystemLogs(PerfilEnum::DESENVOLVEDOR->value)
+    );
+
+    expect($result['type'])->toBe('file')
+        ->and($result['data'])->toBe($path)
+        ->and($result['filename'])->toBe($filename);
+});
