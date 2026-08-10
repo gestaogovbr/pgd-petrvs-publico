@@ -161,6 +161,7 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
             'unidade.cidade',
             'usuario',
             'entregas.entrega',
+            'entregas.planoEntregaEntrega',
         ]);
     }
 

@@ -160,7 +160,7 @@ test('acoes retorna todas as permissões calculadas', function () {
 
     $acoes = $this->authorization->acoes($plano, $usuario, false)->toArray();
 
-    expect($acoes)->toBe(['editar' => false, 'arquivar' => false, 'encerrar' => false]);
+    expect($acoes)->toBe(['editar' => false, 'arquivar' => false, 'desarquivar' => false, 'encerrar' => false]);
 });
 
 // --- podeArquivar ---

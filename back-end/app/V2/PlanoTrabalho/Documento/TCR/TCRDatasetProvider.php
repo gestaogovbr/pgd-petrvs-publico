@@ -45,7 +45,10 @@ class TCRDatasetProvider
             ['field' => 'sigla', 'label' => 'Sigla'],
             ['field' => 'nome', 'label' => 'Nome'],
             ['field' => 'gestor', 'label' => 'Gestor', 'fields' => $this->usuarioFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->gestor?->usuario],
-            ['field' => 'gestores_substitutos', 'label' => 'Gestores substitutos', 'fields' => $this->usuarioFields(), 'type' => 'ARRAY', 'value' => fn ($ctx) => $ctx->gestoresSubstitutos?->map(fn ($i) => $i->usuario()->withTrashed()->first())],
+            ['field' => 'gestores_substitutos', 'label' => 'Gestores substitutos', 'fields' => $this->usuarioFields(), 'type' => 'ARRAY', 'value' => fn ($ctx) => $ctx->gestoresSubstitutos
+                ?->map(fn ($i) => $i->usuario()->withTrashed()->first())
+                ->filter()
+                ->values()],
             ['field' => 'entidade', 'label' => 'Entidade', 'fields' => $this->entidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->entidade],
             ['field' => 'cidade', 'label' => 'Cidade', 'fields' => $this->cidadeFields(), 'type' => 'OBJECT', 'value' => fn ($ctx) => $ctx->cidade],
             ['field' => 'texto_complementar_plano', 'label' => 'Particularidades da Unidade Executora', 'type' => 'TEMPLATE'],
