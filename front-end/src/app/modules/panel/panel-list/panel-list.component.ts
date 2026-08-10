@@ -63,13 +63,6 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			label: "Forçar SIAPE",
 			onClick: this.forcarSiape.bind(this),
 		});
-		if (this.currentUser && this.currentUser.nivel === 1) {
-			this.options.push({
-				icon: "bi bi-trash",
-				label: "Excluir",
-				onClick: this.deleteTenant.bind(this),
-			});
-		}
 		
 		this.options.push({
 			icon: "bi bi-database-fill-gear",
@@ -124,6 +117,13 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				.then((user) => {
 					this.currentUser = user;
 					this.tenants = user.tenants;
+					if (user && user.nivel === 1) {
+						this.options.push({
+							icon: "bi bi-trash",
+							label: "Excluir",
+							onClick: this.deleteTenant.bind(this),
+						});
+					}
 					resolve();
 				})
 				.catch((error) => {
