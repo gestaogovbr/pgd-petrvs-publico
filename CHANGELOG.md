@@ -3,6 +3,7 @@
 
 ### Adicionado
  - Mensagens específicas de impedimento no arquivamento de Planos de Trabalho, informando o motivo pelo qual o plano não pode ser arquivado (prazo de recurso, pendências de encerramento, períodos avaliativos pendentes)
+ - Adiciona a opção de desarquivar para PTs arquivados
 
 ### Modificado
  - Prazo de bloqueio de arquivamento por recurso alterado de 30 para 20 dias após a avaliação
