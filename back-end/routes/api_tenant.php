@@ -711,5 +711,6 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('painel-gerencial/adesao/participantes-pgd', [AdesaoV2::class, 'participantesPGD']);
     Route::get('painel-gerencial/adesao/evolucao-participantes', [AdesaoV2::class, 'evolucaoParticipantes']);
     Route::get('painel-gerencial/adesao/periodos-disponiveis', [AdesaoV2::class, 'periodosDisponiveis']);
+    Route::get('painel-gerencial/adesao/unidades-historicas', [AdesaoV2::class, 'unidadesHistoricas']);
 });
 

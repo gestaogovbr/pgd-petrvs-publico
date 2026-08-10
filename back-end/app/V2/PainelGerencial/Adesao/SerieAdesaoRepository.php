@@ -18,6 +18,7 @@ class SerieAdesaoRepository
             [
                 'id' => Str::uuid()->toString(),
                 'unidade_sigla' => $dto->unidadeSigla,
+                'unidade_nome' => $dto->unidadeNome,
                 'unidade_pai_id' => $dto->unidadePaiId,
                 'executoras_qtd' => $dto->executorasQtd,
                 'nao_executoras_qtd' => $dto->naoExecutorasQtd,
@@ -34,6 +35,7 @@ class SerieAdesaoRepository
             [
                 'id' => Str::uuid()->toString(),
                 'unidade_sigla' => $dto->unidadeSigla,
+                'unidade_nome' => $dto->unidadeNome,
                 'unidade_pai_id' => $dto->unidadePaiId,
                 'participantes_qtd' => $dto->participantesQtd,
                 'nao_participantes_qtd' => $dto->naoParticipantesQtd,
