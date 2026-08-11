@@ -11,6 +11,7 @@ class SerieUnidadesExecutorasDTO
     public function __construct(
         public readonly string $unidadeId,
         public readonly string $unidadeSigla,
+        public readonly string $unidadeNome,
         public readonly ?string $unidadePaiId,
         public readonly string $periodo,
         public readonly int $executorasQtd,
@@ -22,6 +23,7 @@ class SerieUnidadesExecutorasDTO
         return new self(
             unidadeId: $unidade->id,
             unidadeSigla: $unidade->sigla,
+            unidadeNome: $unidade->nome,
             unidadePaiId: $unidade->unidade_pai_id,
             periodo: $periodo,
             executorasQtd: $executorasQtd,

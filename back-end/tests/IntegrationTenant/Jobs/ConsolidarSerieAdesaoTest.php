@@ -17,6 +17,13 @@ beforeEach(function () {
         ]);
     }
 
+    if (!Schema::hasColumn('serie_unidades_executoras', 'unidade_nome')) {
+        $this->artisan('migrate', [
+            '--path' => 'database/migrations/tenant/2026_08_10_160000_add_unidade_nome_to_serie_adesao_tables.php',
+            '--realpath' => false,
+        ]);
+    }
+
     $this->unidadePai = Unidade::factory()->create(['executora' => true]);
     $this->unidadeFilha = Unidade::factory()->create([
         'unidade_pai_id' => $this->unidadePai->id,
@@ -96,10 +103,11 @@ describe('ConsolidarSerieAdesao', function () {
         expect((int) $registro->nao_executoras_qtd)->toBe(0);
     });
 
-    test('persiste unidade_sigla independente da unidade ser deletada depois', function () {
+    test('persiste unidade_sigla e unidade_nome independente da unidade ser deletada depois', function () {
         (new ConsolidarSerieAdesao(null, '2026-07'))->handle(app(\App\V2\PainelGerencial\Adesao\SerieAdesaoService::class));
 
         $siglaOriginal = $this->unidadePai->sigla;
+        $nomeOriginal = $this->unidadePai->nome;
         $this->unidadePai->delete();
 
         $registro = DB::table('serie_unidades_executoras')
@@ -109,5 +117,6 @@ describe('ConsolidarSerieAdesao', function () {
 
         expect($registro)->not->toBeNull();
         expect($registro->unidade_sigla)->toBe($siglaOriginal);
+        expect($registro->unidade_nome)->toBe($nomeOriginal);
     });
 });
