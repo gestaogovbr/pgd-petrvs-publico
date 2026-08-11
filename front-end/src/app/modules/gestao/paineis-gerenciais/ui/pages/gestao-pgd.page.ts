@@ -180,7 +180,6 @@ export class GestaoPgdPage implements OnInit {
     this.pdfService.exportar(
       {
         painel: 'Gestão do PGD',
-        tipoConsulta: 'Situação Atual',
         unidade: this.unidadeAtualLabel(),
         periodo: this.periodoAtualLabel() || undefined,
       },

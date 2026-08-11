@@ -139,7 +139,6 @@ export class ModalidadesPage implements OnInit {
     this.pdfService.exportar(
       {
         painel: 'Modalidades',
-        tipoConsulta: 'Situação Atual',
         unidade: this.unidadeAtualLabel(),
       },
       indicadores,
