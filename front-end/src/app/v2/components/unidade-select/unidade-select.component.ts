@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
-import { Observable, Subject, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
+import { Observable, Subject, debounceTime, switchMap, tap } from 'rxjs';
 import { UnidadeService, UnidadeIndexResponse } from 'src/app/v2/services/unidade.service';
 import { Unidade } from 'src/app/models/unidade.model';
 
@@ -60,7 +60,6 @@ export class UnidadeSelectComponent implements OnChanges {
   constructor() {
     this.searchSubject.pipe(
       debounceTime(300),
-      distinctUntilChanged(),
       tap(() => {
         this.page = 1;
         this.hasMore = true;
@@ -79,8 +78,10 @@ export class UnidadeSelectComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['unidadeId'] || changes['unidadeSigla'] || changes['unidadeNome']) && this.unidadeId) {
-      this.displayValue.set(`${this.unidadeSigla} - ${this.unidadeNome}`);
-      this.selectedId.set(this.unidadeId);
+      if (!this.selectedId()) {
+        this.displayValue.set(`${this.unidadeSigla} - ${this.unidadeNome}`);
+        this.selectedId.set(this.unidadeId);
+      }
     }
   }
 
@@ -124,7 +125,6 @@ export class UnidadeSelectComponent implements OnChanges {
   }
 
   onItemClick(item: Unidade): void {
-    if (item.id === this.selectedId()) return;
     this.selectItem(item);
   }
 
