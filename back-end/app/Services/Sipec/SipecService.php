@@ -260,14 +260,23 @@ class SipecService
     public function executarGetComRetry(string $path, int $maxRetries = 3): array
     {
         $attempt = 0;
+        $tokenInvalidado = false;
 
         while (true) {
             try {
                 $token = $this->getToken();
                 return $this->executarGet($path, $token);
             } catch (RequestConectaGovException $e) {
-                $attempt++;
                 $httpCode = $e->getCode();
+
+                if ($httpCode === 400 && !$tokenInvalidado && str_contains($e->getMessage(), 'Token JWT inválido ou expirado')) {
+                    SipecLog::warning('SIPEC token expirado, renovando e retentando', ['path' => $path]);
+                    $this->invalidateToken();
+                    $tokenInvalidado = true;
+                    continue;
+                }
+
+                $attempt++;
 
                 if ($attempt >= $maxRetries) {
                     throw new SipecApiRetryableException(
