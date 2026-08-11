@@ -221,6 +221,7 @@ class PlanoEntregaService extends ServiceBase
             $result["planoCancelado"] = ($planoEntrega['status'] == "CANCELADO");
             $result["planoStatus"] = empty($planoEntrega['id']) ? null : PlanoEntrega::find($planoEntrega['id'])->status;
             $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id'], incluiDelegado: false);
+            $result["gestorDelegadoUnidadePlano"] = $this->usuario->atribuicoesGestor($planoEntrega['unidade_id'])['gestorDelegado'];
             $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_pai_id'], incluiDelegado: false);
             $result["gestorLinhaAscendenteUnidadePlano"] = !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u, incluiDelegado: false));
             $result["unidadePlanoPaiEhUnidadePaiUnidadePlano"] = $planoEntrega['plano_entrega_id'] ? $planoEntregaPai->unidade_id == $planoEntrega['unidade']['unidade_pai_id'] : false;
