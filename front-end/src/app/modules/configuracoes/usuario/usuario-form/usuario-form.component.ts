@@ -193,11 +193,10 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     const integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];
     if (integrantesConsolidados.some(ic => !!ic._status)) {
       const atribuicoes = integrantesConsolidados
-        .filter(ic => ic._status !== 'DELETE')
         .filter(ic => ic.unidade_id)
         .map(ic => ({
           unidade_id: ic.unidade_id!,
-          atribuicoes: ic.atribuicoes as string[],
+          atribuicoes: ic._status === 'DELETE' ? [] : ic.atribuicoes as string[],
         }));
       requests.push(firstValueFrom(this.usuarioService.atualizarAtribuicoes(usuarioId, atribuicoes)));
     }
