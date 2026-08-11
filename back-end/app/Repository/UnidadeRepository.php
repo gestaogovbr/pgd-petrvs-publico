@@ -7,6 +7,9 @@ namespace App\Repository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
+use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use App\V2\Unidade\DTOs\UnidadeIndexDTO;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class UnidadeRepository
 {
@@ -91,9 +94,14 @@ class UnidadeRepository
         return $this->readRepository->existsByCodigo($codigo);
     }
 
-    public function buscarPorNomeOuCodigo(\App\V2\Unidade\DTOs\UnidadeBuscaDTO $dto): \Illuminate\Database\Eloquent\Collection
+    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): \Illuminate\Database\Eloquent\Collection
     {
         return $this->readRepository->buscarPorNomeOuCodigo($dto);
+    }
+
+    public function index(UnidadeIndexDTO $dto): LengthAwarePaginator
+    {
+        return $this->readRepository->index($dto);
     }
 
     /** @return string[] IDs das unidades na linha ascendente (da raiz até a unidade informada) */

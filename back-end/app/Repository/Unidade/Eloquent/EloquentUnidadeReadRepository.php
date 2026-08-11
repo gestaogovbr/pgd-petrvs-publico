@@ -10,8 +10,10 @@ use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use App\V2\Unidade\DTOs\UnidadeIndexDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection as SupportCollection;
 
 /**
@@ -250,6 +252,24 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         }
 
         return $query->get();
+    }
+
+    public function index(UnidadeIndexDTO $dto): LengthAwarePaginator
+    {
+        $query = $this->query()->select('id', 'nome', 'codigo', 'sigla');
+
+        if ($dto->termo) {
+            $termoLower = mb_strtolower($dto->termo);
+            $query->where(function ($q) use ($termoLower) {
+                $q->whereRaw('LOWER(nome) like ?', ["%{$termoLower}%"])
+                  ->orWhereRaw('LOWER(codigo) like ?', ["%{$termoLower}%"])
+                  ->orWhereRaw('LOWER(sigla) like ?', ["%{$termoLower}%"]);
+            });
+        }
+
+        $query->orderBy('sigla', 'asc');
+
+        return $query->paginate($dto->perPage, ['*'], 'page', $dto->page);
     }
 
     public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade

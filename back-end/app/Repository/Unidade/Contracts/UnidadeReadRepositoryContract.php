@@ -7,7 +7,9 @@ namespace App\Repository\Unidade\Contracts;
 use App\Models\Unidade;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use App\V2\Unidade\DTOs\UnidadeIndexDTO;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection as SupportCollection;
 
 /**
@@ -46,6 +48,8 @@ interface UnidadeReadRepositoryContract
     public function existsByCodigo(string $codigo): bool;
 
     public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection;
+
+    public function index(UnidadeIndexDTO $dto): LengthAwarePaginator;
 
     /** @return string[] */
     public function linhaAscendente(string $unidadeId): array;
