@@ -20,10 +20,9 @@ import {
 } from 'chart.js';
 import { SerieAdesaoItem } from '../../infra/painel-api.client';
 import { CHART_COLORS } from 'src/app/services/chart';
+import { MESES_ABREVIADOS } from '../../infra/painel.constants';
 
 Chart.register(CategoryScale, LinearScale, LineController, LineElement, PointElement, Tooltip, Legend);
-
-const MESES_LABELS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 @Component({
   selector: 'evolucao-adesao-chart',
@@ -58,7 +57,7 @@ export class EvolucaoAdesaoChartComponent {
     // Determinar o ano a partir da série (primeiro item) ou ano atual
     const ano = serie.length > 0 ? serie[0].periodo.split('-')[0] : String(new Date().getFullYear());
 
-    const labels = MESES_LABELS;
+    const labels = [...MESES_ABREVIADOS];
     const dadosPositivo: (number | null)[] = [];
     const dadosNegativo: (number | null)[] = [];
 

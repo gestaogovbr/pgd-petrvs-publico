@@ -26,11 +26,7 @@ class EvolucaoAdesaoParticipantesDataProvider
 
     public function getData(FiltrosPainelDTO $filtros): array
     {
-        $hierarquia = $this->resolverHierarquia($filtros->unidadeId);
-        /** @var Unidade $unidade */
-        $unidade = $hierarquia['unidade'];
-
-        $unidadeIds = $this->idsComTodasSubordinadas($unidade);
+        $unidadeIds = $this->resolverUnidadeIds($filtros->unidadeId);
         $periodos = $this->gerarPeriodos($filtros);
 
         $serie = DB::table('serie_participantes_pgd')

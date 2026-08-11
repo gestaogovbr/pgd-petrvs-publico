@@ -11,6 +11,7 @@ use App\V2\PainelGerencial\DTOs\FiltrosPainelDTO;
 use App\V2\PainelGerencial\DTOs\IndicadorDTO;
 use App\V2\PainelGerencial\Traits\ResolveHierarquiaPainel;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class UnidadesExecutorasDataProvider
 {
@@ -29,17 +30,29 @@ class UnidadesExecutorasDataProvider
 
     public function getData(FiltrosPainelDTO $filtros): IndicadorDTO
     {
-        $hierarquia = $this->resolverHierarquia($filtros->unidadeId);
-        /** @var Unidade $unidade */
-        $unidade = $hierarquia['unidade'];
+        if ($filtros->isHistorico()) {
+            return $this->getDataHistorico($filtros);
+        }
+
+        return $this->getDataSituacaoAtual($filtros);
+    }
+
+    private function getDataSituacaoAtual(FiltrosPainelDTO $filtros): IndicadorDTO
+    {
+        $unidade = $this->getUnidadeRepository()->findById($filtros->unidadeId);
+
+        if (!$unidade) {
+            return new IndicadorDTO(segmentos: self::SEGMENTOS, distribuicoes: []);
+        }
+
         /** @var Collection<int, Unidade> $filhas */
-        $filhas = $hierarquia['filhas'];
+        $filhas = $this->getUnidadeRepository()->getSubordinadas([$unidade->id]);
 
         $distribuicoes = [];
-        $distribuicoes[] = $this->calcularDistribuicao($unidade);
+        $distribuicoes[] = $this->calcularDistribuicaoAtual($unidade);
 
         foreach ($filhas as $filha) {
-            $distribuicoes[] = $this->calcularDistribuicao($filha);
+            $distribuicoes[] = $this->calcularDistribuicaoAtual($filha);
         }
 
         return (new IndicadorDTO(
@@ -48,7 +61,56 @@ class UnidadesExecutorasDataProvider
         ))->ordenarSubordinadasPorTotal();
     }
 
-    private function calcularDistribuicao(Unidade $unidade): DistribuicaoUnidadeDTO
+    private function getDataHistorico(FiltrosPainelDTO $filtros): IndicadorDTO
+    {
+        $periodo = $this->extrairUltimoPeriodo($filtros);
+
+        $unidadeId = $filtros->unidadeId;
+
+        $filhasIds = DB::table('serie_unidades_executoras')
+            ->where('unidade_pai_id', $unidadeId)
+            ->where('periodo', $periodo)
+            ->pluck('unidade_id')
+            ->toArray();
+
+        $registroPai = DB::table('serie_unidades_executoras')
+            ->where('unidade_id', $unidadeId)
+            ->where('periodo', $periodo)
+            ->first();
+
+        if (!$registroPai) {
+            return new IndicadorDTO(segmentos: self::SEGMENTOS, distribuicoes: []);
+        }
+
+        $distribuicoes = [];
+        $distribuicoes[] = new DistribuicaoUnidadeDTO(
+            unidadeId: $registroPai->unidade_id,
+            unidadeSigla: $registroPai->unidade_sigla,
+            valores: [(int) $registroPai->executoras_qtd, (int) $registroPai->nao_executoras_qtd],
+            total: (int) $registroPai->executoras_qtd + (int) $registroPai->nao_executoras_qtd,
+        );
+
+        $registrosFilhas = DB::table('serie_unidades_executoras')
+            ->whereIn('unidade_id', $filhasIds)
+            ->where('periodo', $periodo)
+            ->get();
+
+        foreach ($registrosFilhas as $r) {
+            $distribuicoes[] = new DistribuicaoUnidadeDTO(
+                unidadeId: $r->unidade_id,
+                unidadeSigla: $r->unidade_sigla,
+                valores: [(int) $r->executoras_qtd, (int) $r->nao_executoras_qtd],
+                total: (int) $r->executoras_qtd + (int) $r->nao_executoras_qtd,
+            );
+        }
+
+        return (new IndicadorDTO(
+            segmentos: self::SEGMENTOS,
+            distribuicoes: $distribuicoes,
+        ))->ordenarSubordinadasPorTotal();
+    }
+
+    private function calcularDistribuicaoAtual(Unidade $unidade): DistribuicaoUnidadeDTO
     {
         $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
@@ -66,5 +128,16 @@ class UnidadesExecutorasDataProvider
             valores: [$executoras, $naoExecutoras],
             total: $unidades->count(),
         );
+    }
+
+    private function extrairUltimoPeriodo(FiltrosPainelDTO $filtros): string
+    {
+        if (!$filtros->dataFim) {
+            return now()->format('Y-m');
+        }
+
+        $date = \Carbon\Carbon::parse($filtros->dataFim);
+
+        return $date->format('Y-m');
     }
 }

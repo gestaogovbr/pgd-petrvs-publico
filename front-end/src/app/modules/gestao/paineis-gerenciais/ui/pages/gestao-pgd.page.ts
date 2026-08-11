@@ -1,15 +1,25 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
-import { PainelApiClient, FiltrosPainel, Indicador, SerieAdesao } from '../../infra/painel-api.client';
+import { UnidadeSearchFn } from 'src/app/v2/components/unidade-select/unidade-select.component';
+import { UnidadeIndexResponse } from 'src/app/v2/services/unidade.service';
+import { Unidade } from 'src/app/models/unidade.model';
+import { PainelApiClient, FiltrosPainel, Indicador, SerieAdesao, UnidadeHistorica } from '../../infra/painel-api.client';
 import { PainelPdfService } from '../../infra/painel-pdf.service';
-import { ORIGEM_DADOS } from '../../infra/painel.constants';
+import { ORIGEM_DADOS, MESES_ABREVIADOS } from '../../infra/painel.constants';
 import { CHART_COLORS } from 'src/app/services/chart';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
 import { IndicadorCardComponent } from '../components/indicador-card.component';
 import { EvolucaoAdesaoChartComponent } from '../components/evolucao-adesao-chart.component';
-import { GestaoPgdFiltrosComponent, FiltrosGestaoPgd } from '../components/gestao-pgd-filtros.component';
+import { PainelFiltrosComponent } from '../components/painel-filtros.component';
+
+export enum Grafico {
+  UNIDADES_EXECUTORAS = 'unidades_executoras',
+  PARTICIPANTES_PGD = 'participantes_pgd',
+}
 
 @Component({
   selector: 'gestao-pgd-page',
@@ -19,7 +29,7 @@ import { GestaoPgdFiltrosComponent, FiltrosGestaoPgd } from '../components/gesta
     CommonModule,
     WebcomponentsAngularModule,
     BreadcrumbComponent,
-    GestaoPgdFiltrosComponent,
+    PainelFiltrosComponent,
     IndicadorBarraHorizontalComponent,
     IndicadorCardComponent,
     EvolucaoAdesaoChartComponent,
@@ -29,6 +39,23 @@ import { GestaoPgdFiltrosComponent, FiltrosGestaoPgd } from '../components/gesta
 export class GestaoPgdPage implements OnInit {
   private readonly api = inject(PainelApiClient);
   private readonly pdfService = inject(PainelPdfService);
+
+  readonly Grafico = Grafico;
+
+  private unidadesCache: UnidadeHistorica[] | null = null;
+
+  readonly unidadeSearchFn: UnidadeSearchFn = (termo, page, size) => {
+    if (this.unidadesCache) {
+      return of(this.paginateUnidades(this.unidadesCache, termo, page, size));
+    }
+
+    return this.api.getUnidadesHistoricas().pipe(
+      map(unidades => {
+        this.unidadesCache = unidades;
+        return this.paginateUnidades(unidades, termo, page, size);
+      })
+    );
+  };
 
   readonly origemDados = ORIGEM_DADOS;
 
@@ -92,15 +119,20 @@ export class GestaoPgdPage implements OnInit {
       this.unidadeInicialSigla.set(unidade.unidade_sigla ?? '');
       this.unidadeInicialNome.set(unidade.unidade_nome ?? '');
 
-      const mesAtual = new Date().getMonth() + 1;
-      const anoAtual = new Date().getFullYear();
-      this.carregarDados(unidade.unidade_id, mesAtual, anoAtual);
+      this.carregarDados({
+        tipo_consulta: 'situacao_atual',
+        unidade_id: unidade.unidade_id,
+      });
     });
   }
 
-  onFiltrosChange(filtros: FiltrosGestaoPgd): void {
-    this.unidadeInicialSigla.set(filtros.unidade_sigla);
-    this.carregarDados(filtros.unidade_id, filtros.mes, filtros.ano);
+  onFiltrosChange(filtros: FiltrosPainel): void {
+    this.carregarDados(filtros);
+  }
+
+  onUnidadeChange(unidade: { sigla: string; nome: string }): void {
+    this.unidadeInicialSigla.set(unidade.sigla);
+    this.unidadeInicialNome.set(unidade.nome);
   }
 
   exportarPdf(): void {
@@ -156,12 +188,17 @@ export class GestaoPgdPage implements OnInit {
     );
   }
 
-  private carregarDados(unidadeId: string, mes: number, ano: number): void {
-    const filtros = this.api.buildFiltrosFromMesAno(unidadeId, mes, ano);
+  private carregarDados(filtros: FiltrosPainel): void {
     this.filtrosAtuais.set(filtros);
-    const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    this.periodoAtualLabel.set(`${meses[mes - 1]}/${ano}`);
     this.unidadeAtualLabel.set(`${this.unidadeInicialSigla()} - ${this.unidadeInicialNome()}`);
+
+    if (filtros.data_fim) {
+      const [ano, mesStr] = filtros.data_fim.split('-');
+      this.periodoAtualLabel.set(`${MESES_ABREVIADOS[+mesStr - 1]}/${ano}`);
+    } else {
+      const now = new Date();
+      this.periodoAtualLabel.set(`${MESES_ABREVIADOS[now.getMonth()]}/${now.getFullYear()}`);
+    }
 
     this.unidadesExecutoras.set(null);
     this.evolucaoUnidades.set(null);
@@ -197,55 +234,101 @@ export class GestaoPgdPage implements OnInit {
     });
   }
 
-  onDrillDown(grafico: number, unidade: { unidade_id: string; unidade_sigla: string }): void {
+  onDrillDown(grafico: Grafico, unidade: { unidade_id: string; unidade_sigla: string }): void {
     const filtros = this.filtrosAtuais();
     if (!filtros) return;
 
     const drillFiltros = { ...filtros, unidade_id: unidade.unidade_id };
 
-    if (grafico === 1) {
+    if (grafico === Grafico.UNIDADES_EXECUTORAS) {
       this.drillUnidadesExecutoras.set(unidade.unidade_sigla);
       this.carregandoUnidadesExec.set(true);
+      this.carregandoEvolucaoUni.set(true);
       this.unidadesExecutoras.set(null);
+      this.evolucaoUnidades.set(null);
+
       this.api.getUnidadesExecutoras(drillFiltros).subscribe({
         next: d => { this.unidadesExecutoras.set(d); this.carregandoUnidadesExec.set(false); },
         error: () => this.carregandoUnidadesExec.set(false),
       });
+      this.api.getEvolucaoUnidades(drillFiltros).subscribe({
+        next: d => { this.evolucaoUnidades.set(d); this.carregandoEvolucaoUni.set(false); },
+        error: () => this.carregandoEvolucaoUni.set(false),
+      });
     }
 
-    if (grafico === 3) {
+    if (grafico === Grafico.PARTICIPANTES_PGD) {
       this.drillParticipantes.set(unidade.unidade_sigla);
       this.carregandoParticipantes.set(true);
+      this.carregandoEvolucaoPart.set(true);
       this.participantesPGD.set(null);
+      this.evolucaoParticipantes.set(null);
+
       this.api.getParticipantesPGD(drillFiltros).subscribe({
         next: d => { this.participantesPGD.set(d); this.carregandoParticipantes.set(false); },
         error: () => this.carregandoParticipantes.set(false),
       });
+      this.api.getEvolucaoParticipantes(drillFiltros).subscribe({
+        next: d => { this.evolucaoParticipantes.set(d); this.carregandoEvolucaoPart.set(false); },
+        error: () => this.carregandoEvolucaoPart.set(false),
+      });
     }
   }
 
-  onVoltarDrill(grafico: number): void {
+  onVoltarDrill(grafico: Grafico): void {
     const filtros = this.filtrosAtuais();
     if (!filtros) return;
 
-    if (grafico === 1) {
+    if (grafico === Grafico.UNIDADES_EXECUTORAS) {
       this.drillUnidadesExecutoras.set(null);
       this.carregandoUnidadesExec.set(true);
+      this.carregandoEvolucaoUni.set(true);
       this.unidadesExecutoras.set(null);
+      this.evolucaoUnidades.set(null);
+
       this.api.getUnidadesExecutoras(filtros).subscribe({
         next: d => { this.unidadesExecutoras.set(d); this.carregandoUnidadesExec.set(false); },
         error: () => this.carregandoUnidadesExec.set(false),
       });
+      this.api.getEvolucaoUnidades(filtros).subscribe({
+        next: d => { this.evolucaoUnidades.set(d); this.carregandoEvolucaoUni.set(false); },
+        error: () => this.carregandoEvolucaoUni.set(false),
+      });
     }
 
-    if (grafico === 3) {
+    if (grafico === Grafico.PARTICIPANTES_PGD) {
       this.drillParticipantes.set(null);
       this.carregandoParticipantes.set(true);
+      this.carregandoEvolucaoPart.set(true);
       this.participantesPGD.set(null);
+      this.evolucaoParticipantes.set(null);
+
       this.api.getParticipantesPGD(filtros).subscribe({
         next: d => { this.participantesPGD.set(d); this.carregandoParticipantes.set(false); },
         error: () => this.carregandoParticipantes.set(false),
       });
+      this.api.getEvolucaoParticipantes(filtros).subscribe({
+        next: d => { this.evolucaoParticipantes.set(d); this.carregandoEvolucaoPart.set(false); },
+        error: () => this.carregandoEvolucaoPart.set(false),
+      });
     }
+  }
+
+  private paginateUnidades(unidades: UnidadeHistorica[], termo: string | null, page: number, size: number): UnidadeIndexResponse {
+    let filtered = unidades;
+
+    if (termo) {
+      const lower = termo.toLowerCase();
+      filtered = unidades.filter(u =>
+        u.sigla.toLowerCase().includes(lower) || u.nome.toLowerCase().includes(lower)
+      );
+    }
+
+    const total = filtered.length;
+    const lastPage = Math.max(1, Math.ceil(total / size));
+    const start = (page - 1) * size;
+    const data = filtered.slice(start, start + size).map(u => ({ id: u.id, sigla: u.sigla, nome: u.nome }) as unknown as Unidade);
+
+    return { data, total, current_page: page, last_page: lastPage, per_page: size };
   }
 }

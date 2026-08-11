@@ -36,6 +36,24 @@ trait ResolveHierarquiaPainel
     }
 
     /**
+     * Resolve os IDs para consulta na série.
+     * Para unidades que existem no model: inclui subordinadas recursivas.
+     * Para unidades históricas (apenas na série): retorna somente o próprio ID.
+     *
+     * @return string[]
+     */
+    protected function resolverUnidadeIds(string $unidadeId): array
+    {
+        $unidade = $this->getUnidadeRepository()->findById($unidadeId);
+
+        if (!$unidade) {
+            return [$unidadeId];
+        }
+
+        return $this->idsComTodasSubordinadas($unidade);
+    }
+
+    /**
      * Retorna os IDs de uma unidade + todas as suas subordinadas recursivas.
      *
      * @return string[]

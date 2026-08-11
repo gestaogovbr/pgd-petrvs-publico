@@ -120,6 +120,25 @@ class AdesaoController extends Controller
         }
     }
 
+    public function periodosDisponiveisPorUnidade(Request $request): JsonResponse
+    {
+        try {
+            $this->painelService->validarAcesso();
+            $unidadeId = $request->validate(['unidade_id' => ['required', 'uuid']])['unidade_id'];
+            $periodos = $this->evolucaoUnidades->getPeriodosDisponiveisPorUnidade($unidadeId);
+
+            return response()->json(['success' => true, 'data' => $periodos]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function unidadesHistoricas(): JsonResponse
     {
         try {
