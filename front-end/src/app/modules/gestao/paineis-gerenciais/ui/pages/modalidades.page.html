@@ -47,6 +47,8 @@
         [origemDados]="origemDados"
         [siglaPai]="unidadeInicialSigla()"
         [drillAtivo]="!!drillUnidadeModalidades()"
+        [saibaMaisRoute]="['relatorios', 'agentes']"
+        [saibaMaisQueryParams]="saibaMaisParamsModalidadesPorUnidade()"
         (unidadeClick)="onDrillDown($event)"
         (voltarClick)="onVoltarDrill()" />
     </div>

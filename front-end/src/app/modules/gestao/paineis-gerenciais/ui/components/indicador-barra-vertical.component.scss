@@ -21,4 +21,13 @@
 .indicador-vertical__saiba-mais {
   margin-top: var(--spacing-scale-base);
   font-size: var(--font-size-scale-down-01);
+
+  a {
+    color: var(--interactive);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }

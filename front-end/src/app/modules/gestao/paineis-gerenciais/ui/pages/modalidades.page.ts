@@ -57,7 +57,7 @@ export class ModalidadesPage implements OnInit {
   readonly carregandoDiscricionario = signal(false);
   readonly carregandoModalidades = signal(false);
 
-  readonly drillUnidadeModalidades = signal<string | null>(null);
+  readonly drillUnidadeModalidades = signal<{ unidade_id: string; unidade_sigla: string } | null>(null);
 
   readonly carregandoAlgum = computed(() =>
     this.carregandoSubstituicao() || this.carregandoDiscricionario() || this.carregandoModalidades()
@@ -68,6 +68,14 @@ export class ModalidadesPage implements OnInit {
 
   readonly saibaMaisParamsSubstituicao = computed(() => this.buildSaibaMaisParams('no exterior substituicao'));
   readonly saibaMaisParamsDiscricionario = computed(() => this.buildSaibaMaisParams('no exterior'));
+  readonly saibaMaisParamsModalidadesPorUnidade = computed(() => {
+    const drill = this.drillUnidadeModalidades();
+    const unidadeId = drill?.unidade_id ?? this.filtrosAtuais()?.unidade_id ?? '';
+    return {
+      unidade_id: unidadeId,
+      incluir_unidades_subordinadas: 'true',
+    };
+  });
 
   ngOnInit(): void {
     this.api.getUnidadeInicial().subscribe(unidade => {
@@ -179,7 +187,7 @@ export class ModalidadesPage implements OnInit {
     const filtros = this.filtrosAtuais();
     if (!filtros) return;
 
-    this.drillUnidadeModalidades.set(unidade.unidade_sigla);
+    this.drillUnidadeModalidades.set(unidade);
     this.carregandoModalidades.set(true);
     this.modalidadesPorUnidade.set(null);
 
