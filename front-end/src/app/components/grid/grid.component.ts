@@ -405,23 +405,21 @@ export class GridComponent extends ComponentBase implements OnInit {
 				events.after && events.after();
 				this.cdRef.detectChanges();
 					setTimeout(() => {
-						// Dispose existing tooltips to prevent duplicates
-					(document.querySelectorAll('[data-bs-toggle="tooltip"]') as NodeListOf<HTMLElement>).forEach(el => {
-						const instance = bootstrap.Tooltip.getInstance(el);
-						if (instance) instance.dispose();
-					});
-
-						const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
-						const tooltipList = Array.from(tooltipTriggerList).map(tooltipTriggerEl => {
-							const tooltip = new bootstrap.Tooltip(tooltipTriggerEl, {
-								trigger: 'manual'
-							});
-
-							tooltipTriggerEl.addEventListener('mouseenter', () => tooltip.show());
-							tooltipTriggerEl.addEventListener('mouseleave', () => tooltip.hide());
-							tooltipTriggerEl.addEventListener('click', () => tooltip.hide());
-
-							return tooltip;
+						/* Inicializa tooltips apenas em elementos ainda não vinculados; o instante é resolvido
+						   no momento do evento para evitar referência a instâncias descartadas (dispose) */
+						(document.querySelectorAll('[data-bs-toggle="tooltip"]') as NodeListOf<HTMLElement>).forEach(el => {
+							if (el.dataset.tooltipBound) return;
+							el.dataset.tooltipBound = "true";
+							const safeAction = (action: 'show' | 'hide') => {
+								try {
+									if (!document.body.contains(el)) return;
+									const tooltip = bootstrap.Tooltip.getOrCreateInstance(el, { trigger: 'manual' });
+									action == 'show' ? tooltip.show() : tooltip.hide();
+								} catch (_) { /* no-op */ }
+							};
+							el.addEventListener('mouseenter', () => safeAction('show'));
+							el.addEventListener('mouseleave', () => safeAction('hide'));
+							el.addEventListener('click', () => safeAction('hide'));
 						});
 					}, 300);
 			},

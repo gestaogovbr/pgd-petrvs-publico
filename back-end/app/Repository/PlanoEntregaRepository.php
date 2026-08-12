@@ -38,9 +38,9 @@ class PlanoEntregaRepository implements EnvioRepositoryInterface
         $this->readRepository->findAllParaEnvio($chunkSize, $onChunk);
     }
 
-    public function getPlanosEntregaAvaliacao(array $unidadesIds): Collection
+    public function getPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): Collection
     {
-        return $this->readRepository->getPlanosEntregaAvaliacao($unidadesIds);
+        return $this->readRepository->getPlanosEntregaAvaliacao($unidadesIds, $criadosApos);
     }
 
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection
@@ -53,9 +53,9 @@ class PlanoEntregaRepository implements EnvioRepositoryInterface
         return $this->readRepository->getEntregasPlanoEntregaHomologacao($unidadesIds);
     }
 
-    public function getEntregasPlanoEntregaExecucao(array $unidadesIds): Collection
+    public function getEntregasPlanoEntregaExecucao(array $unidadesIds, ?string $planoEntregaCriadoApos = null): Collection
     {
-        return $this->readRepository->getEntregasPlanoEntregaExecucao($unidadesIds);
+        return $this->readRepository->getEntregasPlanoEntregaExecucao($unidadesIds, $planoEntregaCriadoApos);
     }
 
     public function agendarEnvio(Model $planoEntrega, Carbon $dataAgendamento): void

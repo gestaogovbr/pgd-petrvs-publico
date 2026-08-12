@@ -36,13 +36,23 @@
           <div class="col-12 col-md-6">
             <div class="d-flex flex-wrap gap-3">
 
+              @if (isChefia) {
+              <div class="br-switch icon small mr-3">
+                <input type="checkbox"
+                      id="minha_equipe"
+                      formControlName="minha_equipe"
+                      (change)="onFilterChange()" />
+                <label for="minha_equipe">Meus subordinados</label>
+              </div>
+              }
+
               @if (!isParticipante) {
               <div class="br-switch icon small mr-3">
                 <input type="checkbox"
                       id="incluir_subordinadas"
                       formControlName="incluir_subordinadas"
                       (change)="onFilterChange()" />
-                <label for="incluir_subordinadas">Subordinadas</label>
+                <label for="incluir_subordinadas">Unidades subordinadas</label>
               </div>
               }
 
@@ -202,17 +212,27 @@
             <td data-th="Modalidade">{{ p.modalidade_pgd_label || '-' }}</td>
             <td data-th="Status">
               <br-tag shape="rounded" density="small" [bgColor]="statusClass(p.status)" [label]="statusLabel(p.status, p)"></br-tag>
-              @if ($any(p).aguardando_reavaliacao) {
+              @if ($any(p).aguardando_avaliacao > 0 && statusGroups.avaliavel.includes(p.status)) {
+                <br-tag class="ml-1" shape="rounded" density="small" bgColor="#f39c12" label="Aguardando Avaliação"></br-tag>
+              }
+              @if ($any(p).aguardando_reavaliacao > 0 && statusGroups.avaliavel.includes(p.status)) {
                 <br-tag class="ml-1" shape="rounded" density="small" bgColor="#e67e22" label="Aguardando Reavaliação"></br-tag>
               }
-              @if ($any(p).reavaliado) {
+              @if ($any(p).reavaliado > 0) {
                 <br-tag class="ml-1" shape="rounded" density="small" bgColor="#2980b9" label="Reavaliado"></br-tag>
               }
               @if (p.data_arquivamento) {
                 <br-tag class="ml-1" shape="rounded" density="small" bgColor="#81088b" label="Arquivado" title="Arquivado em {{ p.data_arquivamento | date:'dd/MM/yyyy' }}"></br-tag>
               }
             </td>
-            <td data-th="Período">{{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}</td>
+            <td data-th="Período">
+              <div class="d-flex align-items-center">
+                {{ p.data_inicio | date:'dd/MM/yyyy' }} - {{ p.data_fim | date:'dd/MM/yyyy' }}
+                @if (isPlanoDoDia(p)) {
+                  <i class="fas fa-calendar-day ml-1" title="Plano do dia" aria-label="Plano do dia"></i>
+                }
+              </div>
+            </td>
             <td data-th="Ações">
               <div class="d-flex gap-1 align-items-center">
                 <br-button shape="circle" (click)="detalhesDoPlano(p)" title="Visualizar" ariaLabel="Visualizar plano">
@@ -257,6 +277,13 @@
                         <i class="fas fa-archive"></i> Arquivar
                       </a>
                     </li>
+                    @if (policy.podeDesarquivar(p)) {
+                      <li>
+                        <a class="dropdown-item d-flex align-items-center gap-2" role="button" (click)="desarquivarPlano(p)">
+                          <i class="fas fa-box-open"></i> Desarquivar
+                        </a>
+                      </li>
+                    }
                     <li>
                       <a class="dropdown-item d-flex align-items-center gap-2" role="button" [class.disabled]="!policy.podeClonar(p)" (click)="policy.podeClonar(p) && clonarPlano(p)">
                         <i class="fas fa-clone"></i> Clonar

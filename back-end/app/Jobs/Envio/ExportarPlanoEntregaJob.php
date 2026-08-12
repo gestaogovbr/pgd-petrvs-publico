@@ -9,10 +9,21 @@ use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoEntregaRepository;
 use App\Services\API_PGD\PgdService;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Log;
 
 class ExportarPlanoEntregaJob extends ExportarItemJob
 {
+    protected ?int $peNumero = null;
+
+    public function __construct(
+        string $tenantId,
+        string $id,
+        string $origem = '',
+        ?int $peNumero = null,
+    ) {
+        $this->peNumero = $peNumero;
+        parent::__construct($tenantId, $id, $origem);
+    }
+
     public static function getDescricao(): string
     {
         return 'Enviar Plano de Entrega para API';
@@ -27,7 +38,7 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
     {
         $planoEntrega = parent::getModelParaEnvio();
 
-        if (!$planoEntrega){
+        if (!$planoEntrega instanceof PlanoEntrega) {
             throw new ExportPgdException("Plano de Entrega removido ou inválido", $this->id);
         }
 
@@ -60,5 +71,33 @@ class ExportarPlanoEntregaJob extends ExportarItemJob
     public function tag() {
         return 'Plano de Entrega';
     }
-}
 
+    protected function logItemLabel(): string
+    {
+        if ($this->peNumero !== null) {
+            return 'PE #'.$this->peNumero;
+        }
+
+        if (tenancy()->initialized) {
+            $planoEntrega = $this->getRepository()->findById($this->id);
+            if ($planoEntrega instanceof PlanoEntrega) {
+                return $planoEntrega->identificacaoEnvio();
+            }
+        }
+
+        return 'PE';
+    }
+
+    public function tags()
+    {
+        $tags = [$this->tenantId];
+
+        if ($this->peNumero !== null) {
+            $tags[] = (string) $this->peNumero;
+        } else {
+            $tags[] = $this->id;
+        }
+
+        return $tags;
+    }
+}

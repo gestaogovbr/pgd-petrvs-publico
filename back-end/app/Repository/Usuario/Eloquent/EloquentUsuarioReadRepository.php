@@ -394,6 +394,15 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                         $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $q) use ($condition) {
                             $q->whereIn('atribuicao', $condition[2]);
                         });
+                    } elseif ($condition[0] == "areasTrabalhoFilter") {
+                        $unidadeIds = $condition[1];
+                        $subordinadas = $condition[2];
+                        $hierarquiaIds = $subordinadas
+                            ? Unidade::naHierarquiaDe($unidadeIds)->pluck('id')
+                            : $unidadeIds;
+                        $query->whereHas('lotacoes', function (Builder $q) use ($hierarquiaIds) {
+                            $q->whereIn('unidade_id', $hierarquiaIds);
+                        });
                     } elseif ($condition[0] == "subordinadas") {
                         // Handled separately or ignored if not relevant for query building
                     } elseif ($condition[0] == "deleted_at") {
@@ -474,5 +483,23 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             ->chunkById($chunkSize, function (SupportCollection $usuarios) use ($onChunk): void {
                 $onChunk($usuarios);
             });
+    }
+
+    /** @param list<string> $unidadeIds */
+    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection
+    {
+        $query = $this->model->newQuery();
+
+        if (empty($unidadeIds)) {
+            $query->where('id', $usuarioId);
+        } else {
+            $query->where('id', $usuarioId)
+                ->orWhereHas('unidadesIntegrantes', fn ($q) => $q
+                    ->whereIn('unidade_id', $unidadeIds)
+                    ->has('atribuicoes')
+                );
+        }
+
+        return $query->orderBy('nome')->get(['id', 'nome']);
     }
 }

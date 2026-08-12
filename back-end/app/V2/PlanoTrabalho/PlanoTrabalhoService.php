@@ -22,6 +22,7 @@ use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoArquivarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoClonarValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDesarquivarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoEncerrarValidator;
 use App\V2\StatusService;
@@ -31,6 +32,7 @@ use App\V2\Traits\ValidaAutorizacaoTrait;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\LengthAwarePaginator as ConcreteLengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -48,6 +50,7 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoCancelarValidator $cancelarValidator,
         private readonly PlanoTrabalhoEncerrarValidator $encerrarValidator,
         private readonly PlanoTrabalhoArquivarValidator $arquivarValidator,
+        private readonly PlanoTrabalhoDesarquivarValidator $desarquivarValidator,
         private readonly PlanoTrabalhoClonarValidator $clonarValidator,
         private readonly PlanoTrabalhoIndexValidator $indexValidator,
         private readonly PlanoTrabalhoUpdateAuthorizationValidator $updateAuthorizationValidator,
@@ -65,17 +68,19 @@ class PlanoTrabalhoService
         $filtro = PlanoTrabalhoIndexDTO::fromRequest($data, Auth::id());
         $filtro = $this->indexValidator->validar($filtro);
 
-        if ($filtro->subordinadas && $filtro->unidadesId) {
+        if (!$filtro->minhaEquipe && $filtro->subordinadas && $filtro->unidadesId) {
             $idsBase = $filtro->unidadesId;
             $subordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($idsBase)->pluck('id')->toArray();
             $filtro = $filtro->withUnidadesId(array_merge($idsBase, $subordinadasIds));
         }
 
+        /** @var ConcreteLengthAwarePaginator $paginator */
         $paginator = $this->readRepository->buscarPlanosListagem($filtro);
         $usuario = $this->usuarioLogadoComPerfilEAreas();
 
         $paginator->getCollection()->transform(function (PlanoTrabalho $plano) use ($usuario) {
-            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+            $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
+            $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
 
             return $plano;
         });
@@ -88,6 +93,8 @@ class PlanoTrabalhoService
         $dto = PlanoTrabalhoStoreDTO::fromArray($data, Auth::id());
         $this->storeValidator->validarAutorizacao($dto);
         $this->storeValidator->validar($dto);
+
+        $dto = $dto->withCargaHoraria($this->calcularCargaHoraria($dto->usuarioId));
 
         if (!$dto->isClone()) {
             return $this->writeRepository->create($dto->toArray());
@@ -156,7 +163,9 @@ class PlanoTrabalhoService
         }
 
         $usuario = $this->usuarioLogadoComPerfilEAreas();
-        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario)->toArray());
+        $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
+        $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
+        $plano->setAttribute('is_proprio', $this->isMesmoCpfDoParticipante($plano));
 
         return $plano;
     }
@@ -202,7 +211,7 @@ class PlanoTrabalhoService
             $this->consolidacaoRepository->ajustarDataFimVigente($id, $dataEncerramento);
 
             // Concluir todos os períodos iniciados após a data do encerramento
-            $this->consolidacaoRepository->encerrarPeriodosFuturos($id, $dataEncerramento);
+            $this->consolidacaoRepository->encerrarPeriodosFuturos($id, $dataEncerramento, $justificativa);
 
             $this->statusService->atualizaStatus(
                 $plano,
@@ -223,6 +232,15 @@ class PlanoTrabalhoService
         $plano = $this->arquivarValidator->validar($id, Auth::id());
 
         $this->writeRepository->update($id, ['data_arquivamento' => now()]);
+
+        return $plano->refresh();
+    }
+
+    public function desarquivar(string $id): PlanoTrabalho
+    {
+        $plano = $this->desarquivarValidator->validar($id, Auth::id());
+
+        $this->writeRepository->update($id, ['data_arquivamento' => null]);
 
         return $plano->refresh();
     }
@@ -292,5 +310,27 @@ class PlanoTrabalhoService
         }
 
         return true;
+    }
+
+    private function isMesmoCpfDoParticipante(PlanoTrabalho $plano): bool
+    {
+        $participante = $this->usuarioRepository->findById($plano->usuario_id);
+
+        if ($participante === null) {
+            return false;
+        }
+
+        return $participante->cpf === Auth::user()->cpf;
+    }
+
+    private function calcularCargaHoraria(string $usuarioId): float
+    {
+        $usuario = $this->usuarioRepository->findById($usuarioId);
+
+        if ($usuario === null || $usuario->cod_jornada === null || $usuario->cod_jornada === 99) {
+            return PlanoTrabalhoStoreDTO::HORAS_DIARIAS_JORNADA_INTEGRAL_PADRAO;
+        }
+
+        return round($usuario->cod_jornada / 5, 2);
     }
 }

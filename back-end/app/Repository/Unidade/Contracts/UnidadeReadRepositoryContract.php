@@ -8,6 +8,7 @@ use App\Models\Unidade;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 /**
  * @see \App\Repository\Unidade\Eloquent\EloquentUnidadeReadRepository
@@ -22,6 +23,12 @@ interface UnidadeReadRepositoryContract
 
     public function isUsuarioGestorTitularDaUnidade(string $unidadeId, string $usuarioId): bool;
 
+    public function isUsuarioGestorSubstitutoDaUnidade(string $unidadeId, string $usuarioId): bool;
+
+    public function isUsuarioGestorDelegadoDaUnidade(string $unidadeId, string $usuarioId): bool;
+
+    public function isUsuarioChefiaDaUnidade(string $unidadeId, string $usuarioId): bool;
+
     public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO;
 
     public function getAreasTrabalhoWhereClause(string $usuarioId, bool $subordinadas, string $prefix = ""): string;
@@ -30,9 +37,9 @@ interface UnidadeReadRepositoryContract
 
     public function findBySigla(string $sigla): ?Unidade;
 
-    public function getUnidadesGerenciadas(string $usuarioId): Collection;
+    public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): Collection;
 
-    public function findByCodigoWithPai(string $codigo): ?\App\Models\Unidade;
+    public function findByCodigoWithPai(string $codigo): ?Unidade;
 
     public function getSubordinadas(array $ids): Collection;
 
@@ -40,7 +47,7 @@ interface UnidadeReadRepositoryContract
 
     public function findById(string|int $id): ?Unidade;
 
-    public function findWithPlanosTrabalhoAtividades(string|int $id): ?\App\Models\Unidade;
+    public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade;
 
     public function existsByCodigo(string $codigo): bool;
 
@@ -48,4 +55,12 @@ interface UnidadeReadRepositoryContract
 
     /** @return string[] */
     public function linhaAscendente(string $unidadeId): array;
+
+    /**
+     * Busca unidades com dados de localidade (entidade_id, cidade_id, uf).
+     *
+     * @param array<string> $unidadeIds
+     * @return SupportCollection
+     */
+    public function buscarComLocalidade(array $unidadeIds): SupportCollection;
 }

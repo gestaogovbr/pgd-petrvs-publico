@@ -323,7 +323,55 @@ describe('GET /api/v2/plano-trabalho/:id/documento', function () {
         $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento")
             ->json('data');
 
-        expect(array_keys($data))->toBe(['numero', 'titulo', 'conteudo', 'assinaturas']);
+        expect(array_keys($data))->toBe(['numero', 'titulo', 'conteudo', 'assinaturas', 'assinaturas_revogadas']);
+    });
+
+    test('retorna assinaturas revogadas após cancelamento', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+        postAssinar($this);
+
+        $this->plano->status = 'AGUARDANDO_ASSINATURA';
+        $this->plano->save();
+
+        deleteAssinatura($this)->assertStatus(200);
+
+        $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento")
+            ->assertStatus(200)
+            ->json('data');
+
+        expect($data['assinaturas'])->toBe([]);
+        expect($data['assinaturas_revogadas'])->toHaveCount(1);
+        expect($data['assinaturas_revogadas'][0]['usuario_id'])->toBe($this->usuario->id);
+        expect($data['assinaturas_revogadas'][0]['data_assinatura'])->not->toBeNull();
+        expect($data['assinaturas_revogadas'][0]['data_revogacao'])->not->toBeNull();
+    });
+
+    test('retorna assinaturas revogadas mesmo sem TCR ativo após invalidação', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        postDocumento($this);
+        postAssinar($this);
+
+        $documentoId = $this->plano->fresh()->documento_id;
+
+        $this->plano->status = 'AGUARDANDO_ASSINATURA';
+        $this->plano->save();
+        deleteAssinatura($this)->assertStatus(200);
+
+        \App\Models\Documento::where('id', $documentoId)->delete();
+        $this->plano->documento_id = null;
+        $this->plano->status = 'INCLUIDO';
+        $this->plano->save();
+
+        $data = $this->getJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/documento")
+            ->assertStatus(200)
+            ->json('data');
+
+        expect($data['numero'])->toBeNull();
+        expect($data['assinaturas'])->toBe([]);
+        expect($data['assinaturas_revogadas'])->toHaveCount(1);
     });
 });
 
@@ -363,14 +411,15 @@ describe('POST /api/v2/plano-trabalho/:id/documento/assinatura-tcr (guard)', fun
             ->assertStatus(404);
     });
 
-    test('retorna 422 quando usuário já assinou', function () {
+    test('retorna 201 com assinatura existente quando usuário já assinou (idempotente)', function () {
         $this->actingAs($this->usuario, 'web');
 
         postDocumento($this);
-        postAssinar($this)->assertStatus(201);
+        $primeira = postAssinar($this)->assertStatus(201);
 
-        postAssinar($this)
-            ->assertStatus(422);
+        $segunda = postAssinar($this)->assertStatus(201);
+
+        expect($segunda->json('data.id'))->toBe($primeira->json('data.id'));
     });
 });
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Injector, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { PlanoTrabalhoListFacade } from '../application/list.facade';
@@ -10,11 +10,12 @@ import { PlanoTrabalhoPolicy } from '../application/plano-trabalho.policy';
 import { Router } from '@angular/router';
 import { Subject, Subscription, debounceTime } from 'rxjs';
 import { PlanoTrabalho, planoTrabalhoStatusLabel } from '../domain/types';
-import { PlanoTrabalhoStatus } from 'src/app/models/plano-trabalho.model';
+import { PlanoTrabalhoStatus, PlanoTrabalhoStatusGroups } from 'src/app/models/plano-trabalho.model';
 import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ExcluirPlanoUseCase } from '../application/excluir-plano.usecase';
 import { EncerrarPlanoUseCase } from '../application/encerrar-plano.usecase';
 import { ArquivarPlanoUseCase } from '../application/arquivar-plano.usecase';
+import { PlanoApiClient } from '../infra/plano-api.client';
 import { AssinarPlanoUseCase } from '../application/assinar-plano.usecase';
 import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
@@ -48,13 +49,17 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
   private readonly excluirPlanoUC = inject(ExcluirPlanoUseCase);
   private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
+  private readonly planoApi = inject(PlanoApiClient);
   readonly assinatura = inject(AssinarPlanoUseCase);
   private readonly filterStorage = inject(FilterStorageService);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
   private readonly overlay = inject(Overlay);
   private readonly injector = inject(Injector);
   private readonly message = inject(MessageService);
+  private readonly cdr = inject(ChangeDetectorRef);
   private logsOverlayRef: OverlayRef | null = null;
+
+  readonly statusGroups = PlanoTrabalhoStatusGroups;
 
   private readonly FILTER_KEY_PREFIX = 'plano-trabalho-v2:filters';
 
@@ -99,6 +104,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     vigentes: FormControl<boolean>;
     incluir_arquivados: FormControl<boolean>;
     meus_planos: FormControl<boolean>;
+    minha_equipe: FormControl<boolean>;
     numero: FormControl<string>;
     usuario: FormControl<string>;
     unidade_regramento: FormControl<string>;
@@ -111,6 +117,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     vigentes: this.fb.nonNullable.control(false),
     incluir_arquivados: this.fb.nonNullable.control(false),
     meus_planos: this.fb.nonNullable.control(false),
+    minha_equipe: this.fb.nonNullable.control(false),
     numero: this.fb.nonNullable.control(''),
     usuario: this.fb.nonNullable.control(''),
     unidade_regramento: this.fb.nonNullable.control(''),
@@ -123,6 +130,10 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     return this.auth.isUsuarioParticipante();
   }
 
+  get isChefia(): boolean {
+    return this.auth.isGestorAlgumaAreaTrabalho(false, true);
+  }
+
   ngOnInit(): void {
     if (this.isParticipante) {
       this.filters.controls.incluir_subordinadas.setValue(false);
@@ -133,7 +144,19 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       this.filters.controls.meus_planos.disable({ emitEvent: false });
     }
 
-    this.restoreFilters();
+    const hadStoredFilters = this.restoreFilters();
+
+    if (this.isChefia) {
+      if (!hadStoredFilters) {
+        this.filters.controls.minha_equipe.setValue(true, { emitEvent: false });
+        this.filters.controls.incluir_subordinadas.setValue(false, { emitEvent: false });
+      }
+      if (this.filters.getRawValue().minha_equipe) {
+        this.filters.controls.incluir_subordinadas.disable({ emitEvent: false });
+        this.filters.controls.meus_planos.disable({ emitEvent: false });
+      }
+    }
+
     this.applyFiltersAndLoad(true);
     this.setupSubscriptions();
 
@@ -166,16 +189,21 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     this.filters.reset({
       periodo_inicio: null,
       periodo_fim: null,
-      incluir_subordinadas: !this.isParticipante,
+      incluir_subordinadas: !this.isParticipante && !this.isChefia,
       vigentes: false,
       incluir_arquivados: false,
       meus_planos: this.isParticipante,
+      minha_equipe: this.isChefia,
       numero: '',
       usuario: '',
       unidade_regramento: '',
       tipo_modalidade_id: '',
       status: ''
     }, { emitEvent: false });
+    if (this.isChefia) {
+      this.filters.controls.incluir_subordinadas.disable({ emitEvent: false });
+      this.filters.controls.meus_planos.disable({ emitEvent: false });
+    }
     this.applyFiltersAndLoad(true);
   }
 
@@ -186,6 +214,9 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private setupSubscriptions() {
     const arquivados = this.filters.controls.incluir_arquivados;
     const vigentes = this.filters.controls.vigentes;
+    const meusPlanos = this.filters.controls.meus_planos;
+    const subordinadas = this.filters.controls.incluir_subordinadas;
+    const minhaEquipe = this.filters.controls.minha_equipe;
 
     this.subscriptions.push(
       this.filterChange$.pipe(debounceTime(400)).subscribe(() => this.applyFiltersAndLoad(true)),
@@ -195,6 +226,29 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       }),
       vigentes.valueChanges.subscribe(checked => {
         if (checked) arquivados.setValue(false, { emitEvent: false });
+        this.onFilterChange();
+      }),
+      meusPlanos.valueChanges.subscribe(checked => {
+        if (checked) subordinadas.setValue(false, { emitEvent: false });
+        this.onFilterChange();
+      }),
+      subordinadas.valueChanges.subscribe(checked => {
+        if (checked) meusPlanos.setValue(false, { emitEvent: false });
+        this.onFilterChange();
+      }),
+      minhaEquipe.valueChanges.subscribe(checked => {
+        if (checked) {
+          this.filters.controls.incluir_subordinadas.setValue(false, { emitEvent: false });
+          this.filters.controls.incluir_subordinadas.disable({ emitEvent: false });
+          this.filters.controls.meus_planos.setValue(false, { emitEvent: false });
+          this.filters.controls.meus_planos.disable({ emitEvent: false });
+        } else {
+          if (!this.isParticipante) {
+            this.filters.controls.incluir_subordinadas.enable({ emitEvent: false });
+            this.filters.controls.meus_planos.enable({ emitEvent: false });
+          }
+        }
+        this.cdr.markForCheck();
         this.onFilterChange();
       }),
       this.filters.controls.tipo_modalidade_id.valueChanges.subscribe(() => this.onFilterChange()),
@@ -207,11 +261,12 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     this.filterStorage.save(this.filterStorageKey, { ...raw, advanced: this.advanced() });
   }
 
-  private restoreFilters() {
+  private restoreFilters(): boolean {
     const parsed = this.filterStorage.load<Record<string, unknown>>(this.filterStorageKey);
-    if (!parsed) return;
+    if (!parsed) return false;
     this.filters.patchValue(parsed, { emitEvent: false });
     if (parsed['advanced']) this.advanced.set(true);
+    return true;
   }
 
   private applyFiltersAndLoad(resetPage: boolean) {
@@ -230,7 +285,12 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     if (raw.vigentes) result['vigentes'] = true;
     if (raw.incluir_arquivados) result['arquivados'] = true;
     if (raw.meus_planos) result['usuario_id'] = this.auth.usuario?.id;
-    if (raw.incluir_subordinadas) result['incluir_subordinadas'] = true;
+    if (raw.minha_equipe) {
+      result['minha_equipe'] = true;
+    } else {
+      if (raw.incluir_subordinadas) result['incluir_subordinadas'] = true;
+      if (!raw.incluir_subordinadas) result['unidade_id'] = this.auth.unidade?.id;
+    }
 
     const numero = String(raw.numero ?? '').trim();
     if (numero.length) result['numero'] = numero;
@@ -240,8 +300,6 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     if (usuario.length) result['usuario_nome'] = usuario;
     const unidadeRegramento = String(raw.unidade_regramento ?? '').trim();
     if (unidadeRegramento.length) result['unidade_regramento'] = unidadeRegramento;
-
-    if (!raw.incluir_subordinadas) result['unidade_id'] = this.auth.unidade?.id;
 
     return result;
   }
@@ -278,6 +336,17 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   statusLabel(value: PlanoTrabalhoStatus | undefined, plano?: PlanoTrabalho): string {
     return planoTrabalhoStatusLabel(value, plano);
+  }
+
+  isPlanoDoDia(p: PlanoTrabalho): boolean {
+    if (!p.data_inicio || !p.data_fim) return false;
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const inicio = new Date(p.data_inicio);
+    inicio.setHours(0, 0, 0, 0);
+    const fim = new Date(p.data_fim);
+    fim.setHours(0, 0, 0, 0);
+    return inicio <= hoje && fim >= hoje;
   }
 
   novoPlano() {
@@ -364,6 +433,17 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       onConfirm: () => this.arquivarPlanoUC.execute(p.id).subscribe(() => {
         this.applyFiltersAndLoad(false);
         this.message.success('Plano de trabalho arquivado com sucesso.');
+      })
+    });
+  }
+
+  desarquivarPlano(p: PlanoTrabalho) {
+    this.confirmacaoPendente.set({
+      titulo: 'Desarquivar Plano de Trabalho',
+      mensagem: 'Ao desarquivar este Plano de Trabalho, ele voltará a ser exibido na listagem. Deseja confirmar?',
+      onConfirm: () => this.planoApi.unarchive(p.id).subscribe(() => {
+        this.applyFiltersAndLoad(false);
+        this.message.success('Plano de trabalho desarquivado com sucesso.');
       })
     });
   }

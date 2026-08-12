@@ -66,7 +66,6 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'data_fim' => '2024-12-31',
             'modalidade_pgd' => 'presencial',
             'criacao_usuario_id' => 'criador-999',
-            'justificativa' => null,
             'justificativa_modalidade' => 'Justificativa',
         ]);
     });

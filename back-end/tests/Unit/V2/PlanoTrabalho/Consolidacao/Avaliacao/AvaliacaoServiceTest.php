@@ -1,11 +1,13 @@
 <?php
 
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoService;
+use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoPolicy;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\DTOs\AvaliacaoStoreDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoDestroyValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoStoreValidator;
 use App\Repository\AvaliacaoRepository;
+use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusPolicy;
 use App\V2\StatusService;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
@@ -21,6 +23,8 @@ beforeEach(function () {
     $this->destroyValidator = Mockery::mock(AvaliacaoDestroyValidator::class);
     $this->avaliacaoRepo = Mockery::mock(AvaliacaoRepository::class);
     $this->statusService = Mockery::mock(StatusService::class);
+    $this->avaliacaoPolicy = Mockery::mock(AvaliacaoPolicy::class);
+    $this->planoAvaliacaoStatusPolicy = Mockery::mock(PlanoTrabalhoAvaliacaoStatusPolicy::class);
 
     $this->service = new AvaliacaoService(
         $this->authValidator,
@@ -28,6 +32,8 @@ beforeEach(function () {
         $this->destroyValidator,
         $this->avaliacaoRepo,
         $this->statusService,
+        $this->avaliacaoPolicy,
+        $this->planoAvaliacaoStatusPolicy,
     );
 });
 
@@ -55,24 +61,28 @@ describe('AvaliacaoService::destroy', function () {
     })->throws(ForbiddenException::class, 'Apenas quem realizou a avaliação pode cancelá-la.');
 
     test('deleta avaliação e atualiza status para CONCLUIDO', function () {
+        $avaliacoesCollection = new \Illuminate\Database\Eloquent\Collection();
+
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
         $consolidacao->id = 'cons-1';
-        $consolidacao->shouldReceive('refresh')->andReturnSelf();
-        $consolidacao->shouldReceive('load')->andReturnSelf();
+        $consolidacao->setRelation('avaliacoes', $avaliacoesCollection);
+        $consolidacao->shouldReceive('refresh')->once()->andReturnSelf();
+        $consolidacao->shouldReceive('load')
+            ->once()
+            ->with(['avaliacoes.avaliador', 'atividades', 'afastamentos.afastamento', 'statusHistorico'])
+            ->andReturnSelf();
 
         $avaliacao = Mockery::mock(\App\Models\Avaliacao::class)->makePartial();
         $avaliacao->id = 'av-1';
-        $avaliacao->shouldReceive('getAttribute')->with('planoTrabalhoConsolidacao')->andReturn($consolidacao);
+        $avaliacao->setRelation('planoTrabalhoConsolidacao', $consolidacao);
 
         $this->destroyValidator->shouldReceive('validar')->andReturn($avaliacao);
         $this->avaliacaoRepo->shouldReceive('delete')->with('av-1')->once()->andReturn(true);
-        $this->avaliacaoRepo->shouldReceive('findMaisRecenteDaConsolidacao')
-            ->with('cons-1')
-            ->once()
-            ->andReturn(null);
-        $consolidacao->shouldReceive('save')->once();
         $this->statusService->shouldReceive('atualizaStatus')
             ->with($consolidacao, 'CONCLUIDO', 'Avaliação do período avaliativo cancelada pela chefia.')
+            ->once();
+        $this->planoAvaliacaoStatusPolicy->shouldReceive('sincronizarAposMudancaConsolidacao')
+            ->with($consolidacao)
             ->once();
 
         $result = $this->service->destroy('plano-1', 'cons-1', 'av-1', 'user-1');

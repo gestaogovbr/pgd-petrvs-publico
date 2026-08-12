@@ -8,6 +8,8 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaReadRepositoryContract;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Entrega\DTOs\ResumoForcaTrabalhoDTO;
+use App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO;
+use Illuminate\Support\Collection;
 
 class PlanoTrabalhoEntregaRepository
 {
@@ -31,12 +33,14 @@ class PlanoTrabalhoEntregaRepository
         return $entrega;
     }
 
-    public function update(string $id, array $attributes): PlanoTrabalhoEntrega
+    public function update(string $id, array $attributes): ?PlanoTrabalhoEntrega
     {
-        $this->writeRepository->update($id, $attributes);
+        /** @var PlanoTrabalhoEntrega|null */
+        $entrega = $this->writeRepository->update($id, $attributes);
 
-        /** @var PlanoTrabalhoEntrega */
-        $entrega = $this->readRepository->find($id);
+        if ($entrega === null) {
+            return null;
+        }
 
         $entrega->load([
             'planoEntregaEntrega:id,descricao,entrega_id,plano_entrega_id',
@@ -61,5 +65,28 @@ class PlanoTrabalhoEntregaRepository
     public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO
     {
         return $this->readRepository->resumoForcaTrabalhoPorPlano($planoTrabalhoId);
+    }
+
+    public function somatoriosEsforcoProjetados(
+        string $planoTrabalhoId,
+        ?string $entregaIdEmEdicao,
+        float $forcaTrabalhoProjeto,
+        float $esforcoExecutadoProjeto,
+    ): SomatoriosEsforcoDTO {
+        return $this->readRepository->somatoriosEsforcoProjetados(
+            $planoTrabalhoId,
+            $entregaIdEmEdicao,
+            $forcaTrabalhoProjeto,
+            $esforcoExecutadoProjeto,
+        );
+    }
+
+    /**
+     * @param array<string> $planoIds
+     * @return Collection
+     */
+    public function buscarEntregasParaIndicadores(array $planoIds): Collection
+    {
+        return $this->readRepository->buscarEntregasParaIndicadores($planoIds);
     }
 }

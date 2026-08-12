@@ -640,10 +640,8 @@ class PlanoEntregaService extends ServiceBase
             throw new ServerException("ValidatePlanoEntrega", "A unidade está inativa.");
         }
 
-        if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_EXTRPL')) {
-            if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity))
-                throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
-        }
+        if (!$this->verificaDuracaoPlano($dataOrEntity) || !$this->verificaDatasEntregas($dataOrEntity))
+            throw new ServerException("ValidatePlanoEntrega", "O prazo das datas não satisfaz a duração estipulada no programa.");
         if ($this->temSobreposicaoDeDatas($dataOrEntity))
             throw new ServerException("ValidatePlanoEntrega", "Esta unidade já possui plano de entregas cadastrado para o período.");
 

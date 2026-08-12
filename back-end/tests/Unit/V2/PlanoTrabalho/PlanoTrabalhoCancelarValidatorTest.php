@@ -83,13 +83,37 @@ describe('PlanoTrabalhoCancelarValidator', function () {
         $this->validator->validar('plano-x', 'user-1');
     })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
 
-    test('lanca excecao quando plano nao esta ativo', function () {
+    test('retorna plano quando PT suspenso e participante dono cancela', function () {
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->status = 'SUSPENSO';
+        $plano->usuario_id = 'user-1';
+        $plano->unidade_id = 'unidade-1';
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->consolidacaoRepo->shouldNotReceive('possuiConsolidacaoFinalizadaPorPlano');
+
+        expect($this->validator->validar('plano-1', 'user-1'))->toBe($plano);
+    });
+
+    test('retorna plano quando PT suspenso com consolidacao finalizada', function () {
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->status = 'SUSPENSO';
+        $plano->usuario_id = 'user-1';
+        $plano->unidade_id = 'unidade-1';
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->consolidacaoRepo->shouldNotReceive('possuiConsolidacaoFinalizadaPorPlano');
+
+        expect($this->validator->validar('plano-1', 'user-1'))->toBe($plano);
+    });
+
+    test('lanca excecao quando plano nao esta ativo nem suspenso', function () {
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $plano->status = 'INCLUIDO';
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
 
         $this->validator->validar('plano-1', 'user-1');
-    })->throws(ValidateException::class, 'Apenas planos com status ATIVO podem ser cancelados.');
+    })->throws(ValidateException::class, 'Apenas planos com status ATIVO ou SUSPENSO podem ser cancelados.');
 
     test('lanca excecao quando possui consolidacao finalizada', function () {
         $plano = mockPlanoAtivo('user-1');

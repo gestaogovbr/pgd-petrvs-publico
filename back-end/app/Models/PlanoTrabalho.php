@@ -124,7 +124,7 @@ class PlanoTrabalho extends ModelBase implements HasStatusHistory
 
     public function identificacaoEnvio(): string
     {
-        return 'PT #'.$this->numero.' ('.$this->id.')';
+        return 'PT #'.$this->numero;
     }
 
     // Has
@@ -245,6 +245,7 @@ class PlanoTrabalho extends ModelBase implements HasStatusHistory
         return ($status == StatusEnum::ATIVO->value)
             || ($status == StatusEnum::CONCLUIDO->value)
             || ($status == StatusEnum::AVALIADO->value)
+            || ($status == StatusEnum::CANCELADO->value)
         ;
     }
 

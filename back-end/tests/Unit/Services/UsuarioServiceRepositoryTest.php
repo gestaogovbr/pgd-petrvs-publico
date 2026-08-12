@@ -102,16 +102,17 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         $data = ['fields' => [], 'where' => []];
         $usuarioId = 'user-id';
 
-        $userMock = Mockery::mock(Usuario::class);
-        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
+        $area = Mockery::mock(UnidadeIntegrante::class)->makePartial();
+        $area->unidade_id = 'u1';
+
+        $userMock = Mockery::mock(Usuario::class)->makePartial();
+        $userMock->id = $usuarioId;
+        $userMock->setRelation('areasTrabalho', new Collection([$area]));
         $userMock->shouldReceive('hasPermissionTo')->with('MOD_USER_TUDO')->andReturn(false);
 
         Auth::shouldReceive('user')->andReturn($userMock);
 
-        $this->unidadeRepository->shouldReceive('getAreasTrabalhoWhereClause')
-            ->once()
-            ->with($usuarioId, true, 'where_unidades')
-            ->andReturn("unidade_id = 'u1'");
+        $this->unidadeRepository->shouldReceive('getAreasTrabalhoWhereClause')->never();
 
         $this->usuarioRepository->shouldReceive('search')
             ->once()
@@ -121,7 +122,11 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
                 }
 
                 foreach ($arg['where'] as $where) {
-                    if ($where instanceof RawWhere && str_contains($where->expression, "unidade_id = 'u1'")) {
+                    if (is_array($where)
+                        && ($where[0] ?? null) === 'areasTrabalhoFilter'
+                        && ($where[1] ?? null) === ['u1']
+                        && ($where[2] ?? null) === true
+                    ) {
                         return true;
                     }
                 }
@@ -151,7 +156,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
             ->once()
             ->with(Mockery::on(function (array $arg): bool {
                 foreach ($arg['where'] as $where) {
-                    if ($where instanceof RawWhere && str_contains($where->expression, "unidade_id = 'u1'")) {
+                    if (is_array($where) && ($where[0] ?? null) === 'areasTrabalhoFilter') {
                         return false;
                     }
                 }

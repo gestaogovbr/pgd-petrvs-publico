@@ -61,6 +61,9 @@ class PlanoEntregaRepositoryTest extends DatabaseTenantTestCase
         $ativo = PlanoEntrega::factory()->create();
         $ativo->forceFill(['status' => StatusEnum::ATIVO->value])->save();
 
+        $cancelado = PlanoEntrega::factory()->create();
+        $cancelado->forceFill(['status' => StatusEnum::CANCELADO->value])->save();
+
         $deleted = PlanoEntrega::factory()->create();
         $deleted->forceFill(['status' => StatusEnum::ATIVO->value])->save();
         $deleted->delete();
@@ -72,9 +75,10 @@ class PlanoEntregaRepositoryTest extends DatabaseTenantTestCase
             }
         });
 
-        $this->assertContains($ativo->id, $ids, 'PT não está em status para envio');
-        $this->assertNotContains($incluido->id, $ids, 'PT em status INCLUIDO não deveria ser retornado');
-        $this->assertNotContains($deleted->id, $ids, 'PT excluído não deveria ser retornado');
+        $this->assertContains($ativo->id, $ids, 'PE em status ATIVO deveria ser retornado');
+        $this->assertContains($cancelado->id, $ids, 'PE em status CANCELADO deveria ser retornado');
+        $this->assertNotContains($incluido->id, $ids, 'PE em status INCLUIDO não deveria ser retornado');
+        $this->assertNotContains($deleted->id, $ids, 'PE excluído não deveria ser retornado');
     }
 
     public function testGetPlanosEntregaAvaliacao(): void

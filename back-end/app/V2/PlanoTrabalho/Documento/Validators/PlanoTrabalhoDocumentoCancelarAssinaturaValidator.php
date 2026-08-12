@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Documento\Validators;
 
 use App\Enums\StatusEnum;
-use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use App\Models\Documento;
@@ -20,7 +19,7 @@ class PlanoTrabalhoDocumentoCancelarAssinaturaValidator
         private readonly DocumentoAssinaturaRepository $assinaturaRepository,
     ) {}
 
-    public function validar(PlanoTrabalho $plano, string $usuarioId): Documento
+    public function validar(PlanoTrabalho $plano, string $usuarioId, string $cpf): Documento
     {
         if ($plano->status !== StatusEnum::AGUARDANDO_ASSINATURA->value) {
             throw new ValidateException('Plano de Trabalho deve estar com status Aguardando Assinatura para cancelar.');
@@ -32,7 +31,7 @@ class PlanoTrabalhoDocumentoCancelarAssinaturaValidator
             throw new NotFoundException('Documento TCR não encontrado para este Plano de Trabalho.');
         }
 
-        if (!$this->assinaturaRepository->usuarioJaAssinou($documento->id, $usuarioId)) {
+        if (!$this->assinaturaRepository->usuarioJaAssinou($documento->id, $cpf)) {
             throw new ValidateException('Usuário não possui assinatura neste documento.');
         }
 

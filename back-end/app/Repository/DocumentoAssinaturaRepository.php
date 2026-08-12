@@ -8,6 +8,7 @@ use App\Models\DocumentoAssinatura;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\TCRAssinaturaDTO;
+use Illuminate\Database\Eloquent\Collection;
 
 class DocumentoAssinaturaRepository
 {
@@ -16,9 +17,14 @@ class DocumentoAssinaturaRepository
         private readonly DocumentoAssinaturaWriteRepositoryContract $writeRepository,
     ) {}
 
-    public function usuarioJaAssinou(string $documentoId, string $usuarioId): bool
+    public function usuarioJaAssinou(string $documentoId, string $cpf): bool
     {
-        return $this->readRepository->existsByDocumentoAndUsuario($documentoId, $usuarioId);
+        return $this->readRepository->existsByDocumentoAndCpf($documentoId, $cpf);
+    }
+
+    public function findByDocumentoAndUsuario(string $documentoId, string $usuarioId): ?DocumentoAssinatura
+    {
+        return $this->readRepository->findByDocumentoAndUsuario($documentoId, $usuarioId);
     }
 
     public function participanteAssinou(string $documentoId, string $participanteId): bool
@@ -41,9 +47,19 @@ class DocumentoAssinaturaRepository
         return $this->readRepository->gestorTitularDiferenteDoParticipanteAssinou($documentoId, $unidadeId, $participanteId);
     }
 
+    public function gestorSubstitutoDiferenteDoParticipanteAssinou(string $documentoId, string $unidadeId, string $participanteId): bool
+    {
+        return $this->readRepository->gestorSubstitutoDiferenteDoParticipanteAssinou($documentoId, $unidadeId, $participanteId);
+    }
+
     public function existeAlgumaAssinatura(string $documentoId): bool
     {
         return $this->readRepository->existeAlgumaAssinatura($documentoId);
+    }
+
+    public function existeAssinaturaDeNaoParticipante(string $documentoId, string $participanteId): bool
+    {
+        return $this->readRepository->existeAssinaturaDeNaoParticipante($documentoId, $participanteId);
     }
 
     public function createFromTCR(TCRAssinaturaDTO $dto): DocumentoAssinatura
@@ -60,5 +76,11 @@ class DocumentoAssinaturaRepository
     public function deleteAssinaturasDocumento(string $documentoId): int
     {
         return $this->writeRepository->deleteByDocumentoId($documentoId);
+    }
+
+    /** @return Collection<int, DocumentoAssinatura> */
+    public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection
+    {
+        return $this->readRepository->listarRevogadasPorPlanoTrabalho($planoTrabalhoId);
     }
 }

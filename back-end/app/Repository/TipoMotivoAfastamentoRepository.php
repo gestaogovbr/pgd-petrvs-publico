@@ -18,4 +18,10 @@ class TipoMotivoAfastamentoRepository
     {
         return $this->readRepository->getAllForDropdown();
     }
+
+    public function findById(string $id): ?\App\Models\TipoMotivoAfastamento
+    {
+        /** @var \App\Models\TipoMotivoAfastamento|null */
+        return $this->readRepository->findById($id);
+    }
 }

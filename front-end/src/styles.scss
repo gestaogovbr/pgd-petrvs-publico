@@ -331,6 +331,10 @@
       --color-secondary-04: var(--bs-border-color);
     }
 
+    .cdk-overlay-container {
+      z-index: 1200 !important;
+    }
+
     br-modal.logs-modal-panel {
       --modal-xsmall: 80vw;
       --modal-small: 80vw;

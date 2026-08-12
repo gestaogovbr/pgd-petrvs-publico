@@ -1,3 +1,113 @@
+
+## 3.0.11 09/07/2026
+
+### Adicionado
+ - Mensagens específicas de impedimento no arquivamento de Planos de Trabalho, informando o motivo pelo qual o plano não pode ser arquivado (prazo de recurso, pendências de encerramento, períodos avaliativos pendentes)
+ - Adiciona a opção de desarquivar para PTs arquivados
+
+### Modificado
+ - Prazo de bloqueio de arquivamento por recurso alterado de 30 para 20 dias após a avaliação
+
+### Modificado
+ - Relatório de Agentes Públicos: renomeadas colunas (Nome→Agente Público, Matrícula SIAPE→Matrícula Siape, Seleção→Regramento, Lotado→Lotação, Modalidade do último PT→Modalidade do PT do Dia), removidas colunas Jornada e Perfil, adicionadas colunas Participante do PGD, Plano de Trabalho do Dia (com link para tela V2) e Status do PT do Dia; perfil Participante visualiza apenas seus próprios dados; acesso bloqueado para perfil Consulta
+
+### Corrigido
+ - Correção de clonagem do Plano de entregas
+ - Correção na assinatura de TCR
+ - Corrigida coluna Nome no Relatório de Agentes Públicos que não retornava dados
+ - Corrigida assinatura do TCR que permitia múltiplos gestores assinarem o mesmo plano
+
+## 3.0.10 31/07/2026
+
+### Adicionado
+- Migração dos indicadores de horas para a API V2 com novo endpoint `POST /api/v2/indicadores/horas`, incluindo cálculo corrigido de dias úteis com feriados religiosos, exclusão de usuários deletados e tratamento de afastamentos com hora
+- Botão "Históricos de Execução" visível na tela de avaliação do Plano de Entrega
+
+### Corrigido
+- Arquivamento automático de Planos de Entregas e Planos de Trabalho: planos que não estavam concluídos e avaliados eram arquivados indevidamente pelo job diário, e voltavam a ser arquivados mesmo após desarquivamento manual
+
+## 3.0.9 23/07/2026
+
+### Adicionado
+- Novo módulo de acompanhamento dos objetivos do planejamento institucional 
+
+### Modificado
+- Relatório de Unidades: coluna "Tipo" dividida em "Instituidora" e "Executora", e adicionada coluna "PE Vigente" com hiperlink para o Plano de Entregas em execução
+- Ocorrências: descrição não é mais obrigatória na criação de uma ocorrência
+
+## 3.0.8 17/07/2026
+
+### Corrigido
+- Corrigida a carga individual do SIAPE para cadastrar servidores mesmo quando a unidade de exercício não é informada, sem interromper a sincronização
+- Corrigida a comparação de modalidade no Relatório de Agentes para tratar nomes normalizados e evitar divergências indevidas
+- Corrigindo permissões de assinaturas de forma  que chefia substituta assine PT de delegado e impedindo que delegados avaliem registros de execução
+- Corrigida validação de duração do Plano de Entrega que permitia criação com duração superior ao limite configurado no regramento para alguns perfis
+- Planos de trabalho permaneciam “Em execução” após avaliação.
+
+## 3.0.7 10/07/2026
+
+### Adicionado
+- Tag "Aguardando Avaliação" na listagem de Planos de Trabalho v2, indicando planos com períodos concluídos pendentes de avaliação
+- Ícone "Plano do Dia" na coluna Período da listagem de PT v2, destacando planos vigentes na data atual
+- Envio de Planos de Trabalho e Planos de Entrega cancelados
+
+### Corrigido
+- Validação do pertencimento do PT ao usuário via CPF, não mais via uuid
+- Corrigida detecção de inconsistências em Planos de Trabalho: a verificação de registros de execução preenchidos agora consulta a tabela de atividades em vez de snapshots
+- Corrigido filtro "Código Unidade" na lista de unidades indisponíveis que não funcionava corretamente
+- Exigência de justificativa no PT quando modalidade do usuário do servidor for inconsistente
+
+## 3.0.6 03/07/2026
+
+### Adicionado
+- Exibição da carga horária total no bloco Planejamento do Plano de Trabalho v2
+- Filtro "Meus subordinados" na consulta de planos de trabalho, permitindo que chefias visualizem planos dos subordinados de todas as unidades sob sua gestão, com ações de assinatura e avaliação restritas à unidade de execução do plano
+- **Dispensa automática de períodos avaliativos**: períodos completamente cobertos por ocorrências de afastamento são automaticamente dispensados de avaliação. Quando todos os períodos não-dispensados estão avaliados, o PT é concluído automaticamente; ao remover/editar ocorrência que desfaz uma dispensa, o PT é reaberto
+- **Módulo de Ocorrências V2 standalone** (desacoplado do Plano de Trabalho): CRUD independente com listagem paginada server-side, filtro por agente público, seleção de agentes visíveis (unidades gerenciadas + subordinadas) e capacidade `MOD_OCOR` para perfil Consulta
+- Endpoint `GET /api/v2/ocorrencia/impacto-consolidacoes`: consulta preditiva do impacto de uma operação (criação/exclusão) nos períodos avaliativos, com modais de confirmação no front-end informando quais dispensas serão geradas ou removidas
+- Vinculação automática de ocorrências com consolidações (`planos_trabalhos_consolidacoes_afastamentos`) ao criar uma ocorrência
+- Prazo máximo de exclusão de ocorrências: ocorrências cadastradas há mais de 1 ano não podem ser excluídas
+
+### Modificado
+- Unificada lógica de permissão de encerramento e arquivamento do PT v2: elegibilidade e autorização agora são calculadas no back-end e expostas via campo `acoes` na API
+- Cancelamento de avaliação restrito: não é mais permitido cancelar avaliação após 20 dias da conclusão do registro de execução, nem cancelar avaliação que já possua recurso (regra aplicável a PTs criados a partir de 10/06/2026)
+- Filtros "Unidades Subordinadas" e "Meus Planos" na listagem de PT v2 tornados mutuamente exclusivos
+- Removido campo "Justificativa" da tela de edição do Plano de Trabalho v2
+- Ajustados textos de "Agente Público" para "Participante" na interface do PT v2
+- Renomeado botão de remoção de avaliação para "Cancelar Avaliação"
+- Dispensa de períodos movida para o back-end como fonte da verdade: front-end consome o estado calculado pela API ao invés de verificar localmente
+- Ocorrências do tipo compensação (cálculo = ACRESCIMO) não geram dispensa de períodos avaliativos
+- Removida rota `PUT /api/v2/ocorrencia/:id` (edição de ocorrência); mantidas apenas criação e exclusão
+- Observer de ocorrências recalcula dispensas ao editar datas ou excluir, incluindo limpeza do campo `data_arquivamento` ao reabrir PT concluído
+- Ajustado título da tela de login para "PGD Petrvs - Sistema do Programa de Gestão e Desempenho da Administração Pública Federal" em substituição ao título "Acesso", devido à remoção das logos no período de defeso eleitoral
+- Modificada regra para envio de PTs pendentes
+
+### Corrigido
+- Corrigido arquivamento de Plano de Trabalho em reavaliação: PTs com período aguardando reavaliação agora são corretamente bloqueados para arquivamento
+- Corrigido typo no seeder de tipos de motivo de afastamento: "Liença nojo" corrigido para "Licença nojo", com migração para unificar registros duplicados
+- Correção de permissões para acesso à Consulta de Envios
+
+## 3.0.5 29/06/2026
+
+### Adicionado
+- Validação de regramento vigente na edição do Plano de Trabalho v2 (antes só existia na criação), garantindo que o programa cobre o período completo do plano e pertence à hierarquia ascendente da unidade
+
+### Modificado
+- Seleção de regramento na criação/edição do Plano de Trabalho v2 redesenhada: o regramento agora é determinado com base nas datas de início e fim do PT, apresentando todos os regramentos com interseção de período em um select, com mensagem de erro caso o selecionado não cubra o período completo do plano
+- Alterada ordem dos campos na tela de criação/edição do Plano de Trabalho v2
+
+### Corrigido
+- Corrigido cancelamento de Planos de Trabalho suspensos: PTs com status SUSPENSO agora podem ser cancelados, inclusive quando possuem consolidações finalizadas
+- Excluídos Planos de Entrega anteriores a 12/01/2026 da tela de pendências, pois possuíam regra de validação diferente
+- Corrigido link de pendência do Plano de Trabalho para direcionar corretamente para a tela v2
+- Corrigido filtro "Situação" no Relatório de Agentes Públicos para considerar usuários com `participa_pgd = não` como inativos, tornando o filtro consistente com a listagem
+- Corrigido erro na assinatura do Plano de Trabalho: assinatura tornada idempotente, evitando erro ao tentar assinar um PT que o usuário já assinou
+- Corrigido erro ao tentar alterar preferencias do usário
+- Corrigido erro ao buscar por lotação que não existe
+- Corrigido erro ao filtrar plano de trabalho por modalidade
+- Corrigido erro ao gerar relatório de indicadores
+- Corrigidos pequenos erros.
+
 ## 3.0.4 22/06/2026
 
 ### Adicionado

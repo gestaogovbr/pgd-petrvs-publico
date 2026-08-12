@@ -4,32 +4,31 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Validators;
 
-use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
-use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
-use App\V2\Traits\ValidaAutorizacaoTrait;
+use App\V2\PlanoTrabalho\Authorization\PlanoTrabalhoAuthorization;
+use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class PlanoTrabalhoArquivarValidator
 {
-    use ValidaAutorizacaoTrait;
-
-    private const PRAZO_RECURSO_DIAS = 30;
+    private const PRAZO_RECURSO_DIAS = 20;
 
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
-        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
-        private readonly UnidadeRepository $unidadeRepository,
+        private readonly PlanoTrabalhoAuthorization $authorization,
         private readonly UsuarioRepository $usuarioRepository,
+        private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
+        private readonly DispensaAvaliacaoPolicy $dispensaPolicy,
     ) {}
-
 
     public function validar(string $planoId, string $usuarioLogadoId): PlanoTrabalho
     {
@@ -43,16 +42,35 @@ class PlanoTrabalhoArquivarValidator
             throw new ValidateException('Este Plano de Trabalho já está arquivado.');
         }
 
-        $this->validarElegibilidade($plano);
-        $this->validarAutorizacao($plano, $usuarioLogadoId);
+        $motivoImpedimento = $this->motivoImpedimento($plano);
+
+        if ($motivoImpedimento !== null) {
+            throw new ValidateException($motivoImpedimento);
+        }
+
+        $usuario = $this->usuarioRepository->findByIdComAreasTrabalho($usuarioLogadoId);
+
+        if ($usuario === null) {
+            throw new NotFoundException('Usuário não encontrado.');
+        }
+
+        $usuario->loadMissing('perfil');
+
+        if (!$this->authorization->isAutorizadoArquivar($plano, $usuario)) {
+            throw new ForbiddenException('Usuário não tem permissão para arquivar este Plano de Trabalho.');
+        }
 
         return $plano;
     }
 
-    private function validarElegibilidade(PlanoTrabalho $plano): void
+    public function motivoImpedimento(PlanoTrabalho $plano): ?string
     {
         if ($plano->status === StatusEnum::CANCELADO->value) {
-            return;
+            return null;
+        }
+
+        if ($plano->status !== StatusEnum::CONCLUIDO->value) {
+            return 'Este plano de trabalho não pode ser arquivado porque ainda está em andamento.';
         }
 
         $resumo = $this->consolidacaoRepository->resumoParaArquivamento(
@@ -60,31 +78,59 @@ class PlanoTrabalhoArquivarValidator
             Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS),
         );
 
+        if ($resumo->isAguardandoReavaliacao || $resumo->avaliacaoRecente) {
+            return 'Este Plano de Trabalho não pode ser arquivado porque ainda está dentro do período de recurso.'
+                . ' O arquivamento será liberado automaticamente em até 20 dias após a data da avaliação.';
+        }
+
         if ($plano->encerrado_at !== null && !$resumo->possuiPendencias) {
-            return;
+            return null;
         }
 
-        if ($plano->status === StatusEnum::CONCLUIDO->value && $resumo->todosAvaliados && !$resumo->avaliacaoRecente) {
-            return;
+        if ($plano->encerrado_at !== null) {
+            return 'Este plano de trabalho não pode ser arquivado porque possui registros de execução ou avaliações pendentes.';
         }
 
-        throw new ValidateException('Este Plano de Trabalho não atende aos requisitos para arquivamento.');
+        if ($resumo->todosAvaliados) {
+            return null;
+        }
+
+        if ($this->naoAvaliadosSaoDispensados($plano)) {
+            return null;
+        }
+
+        return 'Este plano de trabalho não pode ser arquivado porque possui períodos avaliativos pendentes de avaliação.';
     }
 
-    private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void
+    public function isElegivelParaArquivamento(PlanoTrabalho $plano): bool
     {
-        // Já verifica recursivamente a autorização do usuário
-        if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id)) {
-            return;
+        return $this->motivoImpedimento($plano) === null;
+    }
+
+    private function naoAvaliadosSaoDispensados(PlanoTrabalho $plano): bool
+    {
+        $vigencia = CarbonPeriod::create(
+            Carbon::parse($plano->data_inicio)->startOfDay(),
+            Carbon::parse($plano->data_fim)->startOfDay(),
+        );
+
+        $consolidacoes = $this->consolidacaoRepository->findConsolidacoesVigentes($plano->id, $plano->encerrado_at);
+        $naoAvaliadas = $consolidacoes->filter(
+            fn (PlanoTrabalhoConsolidacao $c) => $c->status !== StatusEnum::AVALIADO->value
+        );
+
+        if ($naoAvaliadas->isEmpty()) {
+            return true;
         }
 
-        $usuario = $this->usuarioRepository->findById($usuarioLogadoId);
+        $dispensadasIds = $this->dispensaPolicy->consolidacoesDispensadas(
+            $plano->usuario_id,
+            $vigencia,
+            $consolidacoes,
+        );
 
-        if ($usuario?->perfil?->nivel === PerfilEnum::COLABORADOR->value
-            && $this->unidadeRepository->hasUsuarioLotacao($plano->unidade_id, $usuarioLogadoId, true)) {
-            return;
-        }
-
-        throw new ForbiddenException('Usuário não tem permissão para arquivar este Plano de Trabalho.');
+        return $naoAvaliadas->every(
+            fn (PlanoTrabalhoConsolidacao $c) => in_array($c->id, $dispensadasIds, true)
+        );
     }
 }

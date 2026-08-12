@@ -45,8 +45,8 @@ describe('PlanoTrabalhoEnvioService', function () {
         expect($planoTrabalhoAtualizado->data_agendamento_envio)->toBeNull();
         expect($planoTrabalhoAtualizado->data_conclusao_envio)->not->toBeNull();
         expect($planoTrabalhoAtualizado->log_envio)
-            ->toContain('Erro no agendamento do plano de entrega')
-            ->toContain((string) $planoEntrega->id);
+            ->toContain('Erro no agendamento do '.$planoEntrega->identificacaoEnvio())
+            ->not->toContain((string) $planoEntrega->id);
 
         Queue::assertNotPushed(ExportarParticipanteJob::class);
     });

@@ -7,6 +7,7 @@ namespace App\V2\PlanoTrabalho\Validators;
 use App\Enums\PerfilEnum;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\ValidateException;
+use App\Support\ModalidadePgd;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\ProgramaRepository;
 use App\Repository\UnidadeRepository;
@@ -72,8 +73,17 @@ class PlanoTrabalhoStoreValidator
 
     private function validarRegramentoVigente(PlanoTrabalhoStoreDTO $dto): void
     {
-        if (!$this->programaRepository->isVigenteParaUnidade($dto->programaId, $dto->unidadeId)) {
-            throw new ValidateException('O regramento selecionado não está vigente para a unidade informada.');
+        $programa = $this->programaRepository->findById($dto->programaId);
+
+        if (!$programa) {
+            throw new ValidateException('O Regramento informado não foi encontrado.');
+        }
+
+        $dataInicio = Carbon::parse($programa->data_inicio)->format('d/m/Y');
+        $dataFim = Carbon::parse($programa->data_fim)->format('d/m/Y');
+
+        if (!$this->programaRepository->isVigenteParaUnidade($dto->programaId, $dto->unidadeId, $dto->dataInicio, $dto->dataFim)) {
+            throw new ValidateException("O período do plano de trabalho deve coincidir integralmente com o período do Regramento: {$dataInicio} a {$dataFim}");
         }
     }
 
@@ -87,16 +97,11 @@ class PlanoTrabalhoStoreValidator
 
     private function validarPeriodoDentroDoRegramento(PlanoTrabalhoStoreDTO $dto): void
     {
-        $programa = $this->programaRepository->findById($dto->programaId);
         $inicioPlano = Carbon::parse($dto->dataInicio);
         $fimPlano = Carbon::parse($dto->dataFim);
 
         if ($inicioPlano->diffInDays($fimPlano) > 365) {
             throw new ValidateException('O período do plano de trabalho não pode ser superior a 1 ano.');
-        }
-
-        if ($inicioPlano < $programa->data_inicio || $fimPlano > $programa->data_fim) {
-            throw new ValidateException('As datas do plano de trabalho estão fora do período de vigência do regramento.');
         }
     }
 
@@ -111,7 +116,7 @@ class PlanoTrabalhoStoreValidator
     {
         $agente = $this->usuarioRepository->findById($dto->usuarioId);
 
-        if ($agente->modalidade_pgd === $dto->modalidadePgd) {
+        if (ModalidadePgd::normalize($agente->modalidade_pgd) === ModalidadePgd::normalize($dto->modalidadePgd)) {
             return;
         }
 

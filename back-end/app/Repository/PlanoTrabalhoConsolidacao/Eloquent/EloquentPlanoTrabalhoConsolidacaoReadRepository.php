@@ -92,6 +92,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
                 'avaliacoes.tipoAvaliacaoNota:id,aprova',
                 'afastamentos.afastamento:id,observacoes,data_inicio,data_fim,horas,tipo_motivo_afastamento_id',
                 'afastamentos.afastamento.tipoMotivoAfastamento:id,nome,sigla,horas',
+                'statusHistorico:id,plano_trabalho_consolidacao_id,codigo,created_at',
             ])
             ->where('plano_trabalho_id', $planoTrabalhoId)
             ->orderBy('data_inicio')
@@ -179,10 +180,18 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->whereHas('avaliacoes', fn ($q) => $q->where('data_avaliacao', '>', $limiteRecurso))
             ->exists();
 
+        $isAguardandoReavaliacao = $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->where('status', StatusEnum::CONCLUIDO->value)
+            ->whereHas('avaliacoes', fn ($q) => $q->whereNotNull('recurso'))
+            ->has('avaliacoes', '=', 1)
+            ->exists();
+
         return new ResumoConsolidacoesDTO(
             todosAvaliados: (bool) $result->todos_avaliados,
             avaliacaoRecente: $avaliacaoRecente,
             possuiPendencias: (bool) $result->possui_pendencias,
+            isAguardandoReavaliacao: $isAguardandoReavaliacao,
         );
     }
 
@@ -320,6 +329,56 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->where(static fn ($relacao) => $relacao
                 ->whereNull('plano_trabalho_id')
                 ->orWhere('plano_trabalho_id', '=', $consolidacao->planoTrabalho->id))
+            ->get();
+    }
+
+    private const PRAZO_CANCELAMENTO_AVALIACAO_DIAS = 20;
+
+    public function findConsolidacoesParaImpactoDispensa(string $usuarioId, string $dataInicio, string $dataFim): \Illuminate\Support\Collection
+    {
+        $prazoDias = self::PRAZO_CANCELAMENTO_AVALIACAO_DIAS;
+
+        return DB::table('planos_trabalhos_consolidacoes as c')
+            ->join('planos_trabalhos as pt', 'pt.id', '=', 'c.plano_trabalho_id')
+            ->where('pt.usuario_id', $usuarioId)
+            ->whereIn('pt.status', [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value])
+            ->whereNull('pt.deleted_at')
+            ->whereNull('c.deleted_at')
+            ->where('c.data_fim', '>=', $dataInicio)
+            ->where('c.data_inicio', '<=', $dataFim)
+            ->select([
+                'c.id as cons_id',
+                'c.data_inicio as cons_data_inicio',
+                'c.data_fim as cons_data_fim',
+                'c.plano_trabalho_id',
+                'pt.status as pt_status',
+                'pt.data_inicio as pt_data_inicio',
+                'pt.data_fim as pt_data_fim',
+                DB::raw('EXISTS(SELECT 1 FROM atividades a WHERE a.plano_trabalho_consolidacao_id = c.id AND a.deleted_at IS NULL) as has_atividade'),
+                DB::raw('EXISTS(SELECT 1 FROM avaliacoes av WHERE av.plano_trabalho_consolidacao_id = c.id AND av.recurso IS NOT NULL AND av.deleted_at IS NULL) as has_recurso'),
+                DB::raw("EXISTS(SELECT 1 FROM avaliacoes av2 WHERE av2.plano_trabalho_consolidacao_id = c.id AND av2.deleted_at IS NULL AND av2.data_avaliacao < DATE_SUB(NOW(), INTERVAL {$prazoDias} DAY)) as is_prazo_avaliacao_terminado"),
+            ])
+            ->orderByRaw("FIELD(pt.status, 'CONCLUIDO', 'ATIVO')")
+            ->orderBy('c.data_inicio')
+            ->get();
+    }
+
+    public function findConsolidacoesVigentes(string $planoTrabalhoId, ?string $encerradoAt): Collection
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->when($encerradoAt, fn ($q) => $q->where('data_inicio', '<=', $encerradoAt))
+            ->orderBy('data_inicio')
+            ->get();
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoTrabalhoConsolidacao> */
+    public function findFuturasIncluidas(string $planoTrabalhoId, string $dataEncerramento): \Illuminate\Database\Eloquent\Collection
+    {
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoTrabalhoConsolidacao> */
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->where('data_inicio', '>', $dataEncerramento)
             ->get();
     }
 }

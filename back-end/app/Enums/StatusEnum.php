@@ -16,10 +16,10 @@ enum StatusEnum: string
     public function label(): string
     {
         return match ($this) {
-            self::INCLUIDO => 'Incluído',
+            self::INCLUIDO => 'Rascunho',
             self::HOMOLOGANDO => 'Homologando',
             self::AGUARDANDO_ASSINATURA => 'Aguardando Assinatura',
-            self::ATIVO => 'Ativo',
+            self::ATIVO => 'Em execução',
             self::CONCLUIDO => 'Concluído',
             self::AVALIADO => 'Avaliado',
             self::SUSPENSO => 'Suspenso',
@@ -71,7 +71,22 @@ enum StatusEnum: string
         return [
             self::ATIVO->value,
             self::CONCLUIDO->value,
-            self::AVALIADO->value
+            self::AVALIADO->value,
+            self::CANCELADO->value
+        ];
+    }
+
+    public static function permitemEnvioPlanoEntrega(): array
+    {
+        return self::permitemEnvio();
+    }
+
+    /** Status de consolidação que indicam finalização (concluído ou avaliado). */
+    public static function consolidacaoFinalizada(): array
+    {
+        return [
+            self::CONCLUIDO->value,
+            self::AVALIADO->value,
         ];
     }
 }

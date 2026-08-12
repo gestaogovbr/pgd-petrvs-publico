@@ -37,7 +37,7 @@ class IndicadoresService extends ServiceBase
             $filtros .= " and pt.unidade_id in ($unidadeIds)";
         }
 
-        $this->applyFiltros($data, $sql, $params);
+        $this->applyFiltros($data, $filtros, $params);
 
         $sql = <<<TEXT
             WITH avaliacoes_pt as (

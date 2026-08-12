@@ -53,6 +53,8 @@ class PlanoTrabalhoResource extends JsonResource
     function converteStatus($status)
     {
         switch ($status) {
+            case 'CANCELADO':
+                return EnvioPlanoTrabalhoStatusEnum::CANCELADO->value;
             case 'ATIVO':
                 return EnvioPlanoTrabalhoStatusEnum::EM_EXECUCAO->value;
             case 'CONCLUIDO':

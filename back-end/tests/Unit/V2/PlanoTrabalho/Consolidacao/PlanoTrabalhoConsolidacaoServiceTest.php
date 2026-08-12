@@ -2,6 +2,7 @@
 
 use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoService;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizationValidator;
+use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoPolicy;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ConcluirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\ReabrirConsolidacaoValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Validators\RecursoValidator;
@@ -13,8 +14,11 @@ use App\Repository\UnidadeRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Exceptions\NotFoundException;
+use App\Repository\Afastamento\AfastamentoRepository;
+use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -23,23 +27,29 @@ beforeEach(function () {
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->consolidacaoRepo = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
     $this->programaRepo = Mockery::mock(ProgramaRepository::class);
+    $this->afastamentoRepo = Mockery::mock(AfastamentoRepository::class);
     $this->unidadeRepo = Mockery::mock(UnidadeRepository::class);
     $this->authValidator = Mockery::mock(AtividadeAuthorizationValidator::class);
     $this->concluirValidator = Mockery::mock(ConcluirConsolidacaoValidator::class);
     $this->reabrirValidator = Mockery::mock(ReabrirConsolidacaoValidator::class);
     $this->recursoValidator = Mockery::mock(RecursoValidator::class);
     $this->statusService = Mockery::mock(StatusService::class);
+    $this->avaliacaoPolicy = Mockery::mock(AvaliacaoPolicy::class);
+    $this->dispensaPolicy = Mockery::mock(DispensaAvaliacaoPolicy::class);
 
     $this->service = new PlanoTrabalhoConsolidacaoService(
         $this->planoRepo,
         $this->consolidacaoRepo,
         $this->programaRepo,
         $this->unidadeRepo,
+        $this->afastamentoRepo,
         $this->authValidator,
         $this->concluirValidator,
         $this->reabrirValidator,
         $this->recursoValidator,
         $this->statusService,
+        $this->avaliacaoPolicy,
+        $this->dispensaPolicy
     );
 });
 
@@ -55,13 +65,18 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
         $plano->usuario_id = 'dono-1';
         $plano->unidade_id = 'u-1';
 
+        $consolidacao1 = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao1->shouldReceive('getAttribute')->with('avaliacoes')->andReturn(new Collection());
+        $consolidacao1->shouldReceive('getAttribute')->with('planoTrabalho')->andReturn($plano);
+
+        $consolidacao2 = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao2->shouldReceive('getAttribute')->with('avaliacoes')->andReturn(new Collection());
+        $consolidacao2->shouldReceive('getAttribute')->with('planoTrabalho')->andReturn($plano);
+
         $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn($plano);
         $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')
             ->with('plano-1')
-            ->andReturn(new Collection([
-                Mockery::mock(PlanoTrabalhoConsolidacao::class),
-                Mockery::mock(PlanoTrabalhoConsolidacao::class),
-            ]));
+            ->andReturn(new Collection([$consolidacao1, $consolidacao2]));
 
         expect($this->service->index('plano-1'))->toHaveCount(2);
     });
@@ -95,6 +110,8 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
 
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
         $consolidacao->shouldReceive('unsetRelation')->with('afastamentos')->once();
+        $consolidacao->shouldReceive('getAttribute')->with('avaliacoes')->andReturn(new Collection());
+        $consolidacao->shouldReceive('getAttribute')->with('planoTrabalho')->andReturn($plano);
 
         $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')
             ->andReturn(new Collection([$consolidacao]));
@@ -115,6 +132,8 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
 
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
         $consolidacao->shouldNotReceive('unsetRelation');
+        $consolidacao->shouldReceive('getAttribute')->with('avaliacoes')->andReturn(new Collection());
+        $consolidacao->shouldReceive('getAttribute')->with('planoTrabalho')->andReturn($plano);
 
         $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')
             ->andReturn(new Collection([$consolidacao]));
@@ -128,6 +147,7 @@ describe('PlanoTrabalhoConsolidacaoService::concluir', function () {
     test('conclui consolidação com sucesso', function () {
         Auth::shouldReceive('id')->andReturn('usuario-1');
         Auth::shouldReceive('user')->andReturn((object) ['nome' => 'João']);
+        DB::shouldReceive('transaction')->once()->andReturnUsing(fn (callable $cb) => $cb());
 
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
@@ -137,9 +157,15 @@ describe('PlanoTrabalhoConsolidacaoService::concluir', function () {
 
         /** @var PlanoTrabalhoConsolidacao $consolidacao */
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->id = 'consolidacao-1';
+        $consolidacao->shouldReceive('refresh')->once()->andReturnSelf();
 
         $this->concluirValidator->shouldReceive('validar')
             ->with($plano, 'consolidacao-1')->andReturn($consolidacao);
+
+        $this->consolidacaoRepo->shouldReceive('update')
+            ->with('consolidacao-1', Mockery::on(fn (array $attrs) => isset($attrs['data_conclusao'])))
+            ->once();
 
         $this->statusService->shouldReceive('atualizaStatus')
             ->with($consolidacao, 'CONCLUIDO', Mockery::type('string'))->once();
@@ -153,6 +179,7 @@ describe('PlanoTrabalhoConsolidacaoService::reabrir', function () {
     test('reabre consolidação com sucesso', function () {
         Auth::shouldReceive('id')->andReturn('usuario-1');
         Auth::shouldReceive('user')->andReturn((object) ['nome' => 'João']);
+        DB::shouldReceive('transaction')->once()->andReturnUsing(fn (callable $cb) => $cb());
 
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
@@ -162,9 +189,15 @@ describe('PlanoTrabalhoConsolidacaoService::reabrir', function () {
 
         /** @var PlanoTrabalhoConsolidacao $consolidacao */
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->id = 'consolidacao-1';
+        $consolidacao->shouldReceive('refresh')->once()->andReturnSelf();
 
         $this->reabrirValidator->shouldReceive('validar')
             ->with($plano, 'consolidacao-1')->andReturn($consolidacao);
+
+        $this->consolidacaoRepo->shouldReceive('update')
+            ->with('consolidacao-1', ['data_conclusao' => null])
+            ->once();
 
         $this->statusService->shouldReceive('atualizaStatus')
             ->with($consolidacao, 'INCLUIDO', Mockery::type('string'))->once();

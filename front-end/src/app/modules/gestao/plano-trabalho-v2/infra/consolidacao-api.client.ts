@@ -20,6 +20,16 @@ export class ConsolidacaoApiClient {
       }))));
   }
 
+  getDispensas(planoId: PlanoTrabalhoId): Observable<string[]> {
+    return this.http.get<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/dispensas`)
+      .pipe(map((r: any) => r?.data ?? []));
+  }
+
+  getOcorrenciasConsolidacao(consolidacaoId: string): Observable<Ocorrencia[]> {
+    return this.http.get<any>(`${this.gb.servidorURL}/api/v2/plano-trabalho-consolidacao/${consolidacaoId}/ocorrencias`)
+      .pipe(map((r: any) => r?.data ?? []));
+  }
+
   concluirConsolidacao(planoId: string, consolidacaoId: string): Observable<Consolidacao> {
     return this.http.patch<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/concluir`, {})
       .pipe(map((r: any) => r?.data ?? r));
@@ -50,12 +60,12 @@ export class ConsolidacaoApiClient {
       .pipe(map((r: any) => r?.data ?? []));
   }
 
-  createAtividade(planoId: string, consolidacaoId: string, payload: { plano_trabalho_entrega_id: string; descricao: string }): Observable<AtividadeConsolidacao> {
+  createAtividade(planoId: string, consolidacaoId: string, payload: { plano_trabalho_entrega_id: string; descricao: string; esforco_executado: number }): Observable<AtividadeConsolidacao> {
     return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/atividade`, payload)
       .pipe(map((r: any) => r?.data ?? r));
   }
 
-  updateAtividade(planoId: string, consolidacaoId: string, atividadeId: string, payload: { descricao: string }): Observable<AtividadeConsolidacao> {
+  updateAtividade(planoId: string, consolidacaoId: string, atividadeId: string, payload: { descricao: string; esforco_executado: number }): Observable<AtividadeConsolidacao> {
     return this.http.put<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/atividade/${atividadeId}`, payload)
       .pipe(map((r: any) => r?.data ?? r));
   }

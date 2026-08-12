@@ -259,7 +259,7 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
         $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
 
         expect(fn() => $this->service->fluxoSiape($validCpf, $this->siapeService))
-            ->toThrow(Exception::class, 'Erro ao consultar dados no SIAPE: Erro API');
+            ->toThrow(Exception::class, 'Houve uma falha na comunicação com o SIAPE ao processar este CPF. Por favor, tente novamente mais tarde.');
     });
 
     it('deve lidar com dados funcionais vazios', function () {
@@ -291,13 +291,17 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
         }
     });
 
-    it('deve lidar com unidade não processada', function () {
+    it('deve ignorar unidade nao processada e seguir com o fluxo', function () {
         $validCpf = '52998224725';
-        $cpfLimpo = $validCpf;
 
         $this->service->shouldReceive('buscarUsuariosPorCpf')->andReturn([]);
         $this->service->shouldReceive('limparDadosSiape')->once();
         $this->service->shouldReceive('gerarUsuariosResumo')->andReturn(collect([]));
+        $this->service->shouldReceive('buscarUsuariosSimples')->andReturn(collect([]));
+        $this->service->shouldReceive('removendoDaBlackList')->with($validCpf)->once();
+        $this->service->shouldReceive('salvarDadosConsultaDb')->with($validCpf, 'xml_resp', 'xml_resp')->once();
+        $this->service->shouldReceive('instanciarIntegracaoService')->andReturn(Mockery::mock(IntegracaoService::class, ['sincronizar' => null]));
+        $this->service->shouldReceive('buscarTodasEntidades')->andReturn(collect([]));
 
         $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
         $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn('xml');
@@ -312,8 +316,10 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
         // Unit does not exist
         $this->service->shouldReceive('verificarExistenciaUnidade')->with('999')->andReturn(false);
 
-        expect(fn() => $this->service->fluxoSiape($validCpf, $this->siapeService))
-            ->toThrow(Exception::class, "O CPF {$cpfLimpo} pertence à unidade de código 999, que ainda não foi processada.");
+        $resumo = $this->service->fluxoSiape($validCpf, $this->siapeService);
+
+        expect($resumo)->toHaveCount(1)
+            ->and($resumo[0]['status'])->toBe('parcial');
     });
 
     it('deve remover vinculos e blacklist quando usuario existe', function () {

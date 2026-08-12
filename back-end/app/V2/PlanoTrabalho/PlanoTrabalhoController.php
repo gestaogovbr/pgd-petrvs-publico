@@ -149,6 +149,20 @@ class PlanoTrabalhoController extends Controller
         }
     }
 
+    public function desarquivar(string $id): JsonResponse
+    {
+        try {
+            $plano = $this->service->desarquivar($id);
+
+            return response()->json(['success' => true, 'data' => $plano]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function clonar(string $id): JsonResponse
     {
         try {

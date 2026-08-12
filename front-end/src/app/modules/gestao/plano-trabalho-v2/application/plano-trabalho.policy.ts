@@ -20,7 +20,7 @@ export class PlanoTrabalhoPolicy {
   podeCancelar(p: PlanoTrabalho): boolean {
     return this.auth.hasPermissionTo('MOD_PTR_CNC')
       && PlanoTrabalhoStatusGroups.cancelavel.includes(p.status)
-      && !p.has_consolidacao_concluida
+      && (p.status != PlanoTrabalhoStatus.ATIVO || !p.has_consolidacao_concluida)
       && (this.auth.usuario?.id == p.usuario_id || this.unidadeService.isGestorUnidade(p.unidade_id));
   }
 
@@ -35,11 +35,14 @@ export class PlanoTrabalhoPolicy {
 
   podeAssinar(p: PlanoTrabalho): boolean {
     const temEntregas = (p.entregas?.length > 0) || (Number((p as any).carga_trabalho_total) > 0);
-    return PlanoTrabalhoStatusGroups.assinavel.includes(p.status)
-      && temEntregas
-      && (p.usuario_id === this.auth.usuario?.id
-        || this.unidadeService.isGestorUnidade(p.unidade_id)
-        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
+    if (!PlanoTrabalhoStatusGroups.assinavel.includes(p.status) || !temEntregas) return false;
+
+    if (p.usuario_id === this.auth.usuario?.id) return true;
+
+    if (p.is_proprio) return false;
+
+    return this.unidadeService.isGestorUnidade(p.unidade_id)
+      || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null);
   }
 
   podeVerTcr(p: PlanoTrabalho): boolean {
@@ -47,12 +50,7 @@ export class PlanoTrabalhoPolicy {
   }
 
   podeEncerrar(p: PlanoTrabalho): boolean {
-    const hoje = new Date().toISOString().split('T')[0];
-    return p.status === PlanoTrabalhoStatus.ATIVO
-      && String(p.data_fim).slice(0, 10) >= hoje
-      && (p.usuario_id === this.auth.usuario?.id
-        || this.unidadeService.isGestorUnidade(p.unidade_id)
-        || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null));
+    return p.acoes?.encerrar === true;
   }
 
   podeExcluir(p: PlanoTrabalho): boolean {
@@ -68,23 +66,11 @@ export class PlanoTrabalhoPolicy {
   }
 
   podeArquivar(p: PlanoTrabalho): boolean {
-    if (!PlanoTrabalhoStatusGroups.arquivavel.includes(p.status) || p.data_arquivamento) {
-      return false;
-    }
+    return !p.data_arquivamento
+      && PlanoTrabalhoStatusGroups.arquivavel.includes(p.status);
+  }
 
-    if (p.usuario_id === this.auth.usuario?.id) {
-      return true;
-    }
-
-    if (this.unidadeService.isGestorUnidade(p.unidade_id)
-      || this.unidadeService.isGestorUnidade(p.unidade?.unidade_pai_id ?? null)) {
-      return true;
-    }
-
-    if (this.auth.isUsuarioColaborador()) {
-      return !!this.auth.usuario?.areas_trabalho?.some(area => area.unidade_id === p.unidade_id);
-    }
-
-    return false;
+  podeDesarquivar(p: PlanoTrabalho): boolean {
+    return p.acoes?.desarquivar === true;
   }
 }
