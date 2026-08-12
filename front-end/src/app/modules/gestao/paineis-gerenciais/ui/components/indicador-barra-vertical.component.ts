@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  ViewChild,
   signal,
   computed,
   inject,
@@ -35,6 +36,8 @@ Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip);
 })
 export class IndicadorBarraVerticalComponent {
   private readonly go = inject(NavigateService);
+
+  @ViewChild(BaseChartDirective) chartDirective?: BaseChartDirective;
 
   @Input({ required: true }) set dados(value: IndicadorTeletrabalho | null) {
     this._dados.set(value);
@@ -108,6 +111,19 @@ export class IndicadorBarraVerticalComponent {
       },
     } as any;
   });
+
+  getChartExportData(): { type: string; data: any; options: any; width: number; height: number } | null {
+    const chart = this.chartDirective?.chart;
+    if (!chart) return null;
+
+    return {
+      type: (chart.config as any).type as string,
+      data: chart.config.data,
+      options: chart.config.options,
+      width: chart.width,
+      height: chart.height,
+    };
+  }
 
   navegarSaibaMais(): void {
     this.go.navigate(

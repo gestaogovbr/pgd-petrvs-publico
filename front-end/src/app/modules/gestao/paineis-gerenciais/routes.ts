@@ -4,7 +4,6 @@ import { authTenantVersionInterceptor, errorInterceptor } from 'src/app/v2/infra
 import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { PainelApiClient } from './infra/painel-api.client';
-import { PainelPdfService } from './infra/painel-pdf.service';
 
 export const routes: Routes = [
   {
@@ -15,7 +14,6 @@ export const routes: Routes = [
       BreadcrumbService,
       UnidadeService,
       PainelApiClient,
-      PainelPdfService,
     ],
     children: [
       {

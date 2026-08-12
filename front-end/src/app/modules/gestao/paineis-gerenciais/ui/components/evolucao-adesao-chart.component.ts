@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  ViewChild,
   signal,
   computed,
 } from '@angular/core';
@@ -40,6 +41,8 @@ Chart.register(CategoryScale, LinearScale, LineController, LineElement, PointEle
   `,
 })
 export class EvolucaoAdesaoChartComponent {
+  @ViewChild(BaseChartDirective) chartDirective?: BaseChartDirective;
+
   @Input({ required: true }) set serie(value: SerieAdesaoItem[]) {
     this._serie.set(value);
   }
@@ -127,6 +130,19 @@ export class EvolucaoAdesaoChartComponent {
       },
     },
   };
+
+  getChartExportData(): { type: string; data: any; options: any; width: number; height: number } | null {
+    const chart = this.chartDirective?.chart;
+    if (!chart) return null;
+
+    return {
+      type: (chart.config as any).type as string,
+      data: chart.config.data,
+      options: chart.config.options,
+      width: chart.width,
+      height: chart.height,
+    };
+  }
 
   private temDados(item: SerieAdesaoItem): boolean {
     const positivo = (item as any)[this.campoPositivo] ?? 0;

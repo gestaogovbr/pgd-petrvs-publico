@@ -12,22 +12,15 @@
   }
 
   @if (_dados(); as dados) {
-    <div class="indicador-barra__chart-wrapper">
-      <div class="indicador-barra__chart"
-        [style.height.px]="chartHeight()">
-        <canvas
-          baseChart
-          type="bar"
-          [data]="chartData()"
-          [options]="chartOptions()"
-          (click)="onChartAreaClick($event)">
-        </canvas>
-      </div>
-      <div class="indicador-barra__totais" [style.height.px]="chartHeight()">
-        @for (total of totais(); track $index) {
-          <span class="indicador-barra__total">{{ total }}</span>
-        }
-      </div>
+    <div class="indicador-barra__chart"
+      [style.height.px]="chartHeight()">
+      <canvas
+        baseChart
+        type="bar"
+        [data]="chartData()"
+        [options]="chartOptions()"
+        (click)="onChartAreaClick($event)">
+      </canvas>
     </div>
 
     <!-- Legenda -->

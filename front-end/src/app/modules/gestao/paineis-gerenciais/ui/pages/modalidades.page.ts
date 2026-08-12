@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PainelApiClient, FiltrosPainel, Indicador, IndicadorTeletrabalho } from '../../infra/painel-api.client';
-import { PainelPdfService } from '../../infra/painel-pdf.service';
 import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
 import { IndicadorBarraVerticalComponent } from '../components/indicador-barra-vertical.component';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
 import { CHART_COLORS } from 'src/app/services/chart';
+import { PdfPainelComponent, PdfIndicadorConfig } from '../components/pdf/pdf-painel.component';
 
 @Component({
   selector: 'modalidades-page',
@@ -21,12 +21,16 @@ import { CHART_COLORS } from 'src/app/services/chart';
     PainelFiltrosComponent,
     IndicadorBarraVerticalComponent,
     IndicadorBarraHorizontalComponent,
+    PdfPainelComponent,
   ],
   templateUrl: './modalidades.page.html',
 })
 export class ModalidadesPage implements OnInit {
   private readonly api = inject(PainelApiClient);
-  private readonly pdfService = inject(PainelPdfService);
+
+  @ViewChild(PdfPainelComponent) pdfPainel!: PdfPainelComponent;
+  @ViewChildren(IndicadorBarraVerticalComponent) barrasVerticais!: QueryList<IndicadorBarraVerticalComponent>;
+  @ViewChildren(IndicadorBarraHorizontalComponent) barrasHorizontais!: QueryList<IndicadorBarraHorizontalComponent>;
 
   readonly origemDados = ORIGEM_DADOS;
 
@@ -103,40 +107,38 @@ export class ModalidadesPage implements OnInit {
   }
 
   exportarPdf(): void {
-    const container = document.querySelector('modalidades-page');
-    if (!container) return;
-
-    const indicadorEls = container.querySelectorAll('indicador-barra-vertical, indicador-barra-horizontal');
     const cores = CHART_COLORS;
+    const verticais = this.barrasVerticais.toArray();
+    const horizontais = this.barrasHorizontais.toArray();
 
-    const indicadores = [
+    const indicadores: PdfIndicadorConfig[] = [
       {
         titulo: this.textos.substituicao.titulo,
         informacaoAdicional: this.textos.substituicao.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: indicadorEls[0]?.querySelector('canvas') as HTMLCanvasElement | null,
+        chartComponent: verticais[0] ?? null,
         segmentos: [{ nome: 'Taxa de participação', cor: cores[3] }, { nome: 'Limite legal', cor: cores[2] }],
-        distribuicoes: [] as { sigla: string; total: number }[],
+        distribuicoes: [],
       },
       {
         titulo: this.textos.discricionario.titulo,
         informacaoAdicional: this.textos.discricionario.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: indicadorEls[1]?.querySelector('canvas') as HTMLCanvasElement | null,
+        chartComponent: verticais[1] ?? null,
         segmentos: [{ nome: 'Taxa de participação', cor: cores[3] }, { nome: 'Limite legal', cor: cores[2] }],
-        distribuicoes: [] as { sigla: string; total: number }[],
+        distribuicoes: [],
       },
       {
         titulo: this.textos.modalidadesPorUnidade.titulo,
         informacaoAdicional: this.textos.modalidadesPorUnidade.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: indicadorEls[2]?.querySelector('canvas') as HTMLCanvasElement | null,
+        chartComponent: horizontais[0] ?? null,
         segmentos: (this.modalidadesPorUnidade()?.segmentos ?? []).map((nome, j) => ({ nome, cor: cores[j] ?? '#ccc' })),
         distribuicoes: (this.modalidadesPorUnidade()?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
       },
     ];
 
-    this.pdfService.exportar(
+    this.pdfPainel.imprimir(
       {
         painel: 'Modalidades',
         unidade: this.unidadeAtualLabel(),

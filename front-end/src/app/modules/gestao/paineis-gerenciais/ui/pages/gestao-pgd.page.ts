@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { Observable, of } from 'rxjs';
@@ -8,13 +8,13 @@ import { UnidadeSearchFn } from 'src/app/v2/components/unidade-select/unidade-se
 import { UnidadeIndexResponse } from 'src/app/v2/services/unidade.service';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PainelApiClient, FiltrosPainel, Indicador, SerieAdesao, UnidadeHistorica } from '../../infra/painel-api.client';
-import { PainelPdfService } from '../../infra/painel-pdf.service';
 import { ORIGEM_DADOS, MESES_ABREVIADOS } from '../../infra/painel.constants';
 import { CHART_COLORS } from 'src/app/services/chart';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
 import { IndicadorCardComponent } from '../components/indicador-card.component';
 import { EvolucaoAdesaoChartComponent } from '../components/evolucao-adesao-chart.component';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
+import { PdfPainelComponent, PdfIndicadorConfig } from '../components/pdf/pdf-painel.component';
 
 export enum Grafico {
   UNIDADES_EXECUTORAS = 'unidades_executoras',
@@ -33,12 +33,16 @@ export enum Grafico {
     IndicadorBarraHorizontalComponent,
     IndicadorCardComponent,
     EvolucaoAdesaoChartComponent,
+    PdfPainelComponent,
   ],
   templateUrl: './gestao-pgd.page.html',
 })
 export class GestaoPgdPage implements OnInit {
   private readonly api = inject(PainelApiClient);
-  private readonly pdfService = inject(PainelPdfService);
+
+  @ViewChild(PdfPainelComponent) pdfPainel!: PdfPainelComponent;
+  @ViewChildren(IndicadorBarraHorizontalComponent) barrasHorizontais!: QueryList<IndicadorBarraHorizontalComponent>;
+  @ViewChildren(EvolucaoAdesaoChartComponent) evolucaoCharts!: QueryList<EvolucaoAdesaoChartComponent>;
 
   readonly Grafico = Grafico;
 
@@ -136,18 +140,16 @@ export class GestaoPgdPage implements OnInit {
   }
 
   exportarPdf(): void {
-    const container = document.querySelector('gestao-pgd-page');
-    if (!container) return;
-
-    const canvasEls = container.querySelectorAll('canvas');
     const cores = CHART_COLORS;
+    const barras = this.barrasHorizontais.toArray();
+    const evolucoes = this.evolucaoCharts.toArray();
 
-    const indicadores = [
+    const indicadores: PdfIndicadorConfig[] = [
       {
         titulo: this.textos.unidadesExecutoras.titulo,
         informacaoAdicional: this.textos.unidadesExecutoras.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: this.unidadesExecutoras() && !this.semDadosUnidadesExec() ? canvasEls[0] ?? null : null,
+        chartComponent: this.unidadesExecutoras() && !this.semDadosUnidadesExec() ? barras[0] ?? null : null,
         segmentos: ['Executoras', 'Não Executoras'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
         distribuicoes: (this.unidadesExecutoras()?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
       },
@@ -155,7 +157,7 @@ export class GestaoPgdPage implements OnInit {
         titulo: this.textos.evolucaoUnidades.titulo,
         informacaoAdicional: this.textos.evolucaoUnidades.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: this.evolucaoUnidades()?.serie?.length ? canvasEls[1] ?? null : null,
+        chartComponent: this.evolucaoUnidades()?.serie?.length ? evolucoes[0] ?? null : null,
         segmentos: ['Executoras', 'Não Executoras'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
         distribuicoes: [],
       },
@@ -163,7 +165,7 @@ export class GestaoPgdPage implements OnInit {
         titulo: this.textos.participantesPGD.titulo,
         informacaoAdicional: this.textos.participantesPGD.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: this.participantesPGD() && !this.semDadosParticipantes() ? canvasEls[2] ?? null : null,
+        chartComponent: this.participantesPGD() && !this.semDadosParticipantes() ? barras[1] ?? null : null,
         segmentos: ['Participantes', 'Não Participantes'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
         distribuicoes: (this.participantesPGD()?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
       },
@@ -171,13 +173,13 @@ export class GestaoPgdPage implements OnInit {
         titulo: this.textos.evolucaoParticipantes.titulo,
         informacaoAdicional: this.textos.evolucaoParticipantes.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: this.evolucaoParticipantes()?.serie?.length ? canvasEls[3] ?? null : null,
+        chartComponent: this.evolucaoParticipantes()?.serie?.length ? evolucoes[1] ?? null : null,
         segmentos: ['Participantes', 'Não Participantes'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
         distribuicoes: [],
       },
     ];
 
-    this.pdfService.exportar(
+    this.pdfPainel.imprimir(
       {
         painel: 'Gestão do PGD',
         unidade: this.unidadeAtualLabel(),

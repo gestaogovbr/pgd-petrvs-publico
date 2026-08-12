@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PainelApiClient, FiltrosPainel, Indicador } from '../../infra/painel-api.client';
-import { PainelPdfService } from '../../infra/painel-pdf.service';
 import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
 import { CHART_COLORS } from 'src/app/services/chart';
+import { PdfPainelComponent, PdfIndicadorConfig } from '../components/pdf/pdf-painel.component';
 
 @Component({
   selector: 'conformidade-page',
@@ -19,12 +19,15 @@ import { CHART_COLORS } from 'src/app/services/chart';
     BreadcrumbComponent,
     PainelFiltrosComponent,
     IndicadorBarraHorizontalComponent,
+    PdfPainelComponent,
   ],
   templateUrl: './conformidade.page.html',
 })
 export class ConformidadePage implements OnInit {
   private readonly api = inject(PainelApiClient);
-  private readonly pdfService = inject(PainelPdfService);
+
+  @ViewChild(PdfPainelComponent) pdfPainel!: PdfPainelComponent;
+  @ViewChildren(IndicadorBarraHorizontalComponent) barrasHorizontais!: QueryList<IndicadorBarraHorizontalComponent>;
 
   readonly origemDados = ORIGEM_DADOS;
 
@@ -118,11 +121,8 @@ export class ConformidadePage implements OnInit {
   }
 
   exportarPdf(): void {
-    const container = document.querySelector('conformidade-page');
-    if (!container) return;
-
-    const indicadorEls = container.querySelectorAll('indicador-barra-horizontal');
     const cores = CHART_COLORS;
+    const barras = this.barrasHorizontais.toArray();
 
     const indicadoresConfig = [
       { dados: this.registroExecucaoPE(), titulo: this.textos.registroExecucaoPE.titulo, info: this.textos.registroExecucaoPE.info },
@@ -132,20 +132,19 @@ export class ConformidadePage implements OnInit {
       { dados: this.unidadesExecutorasPE(), titulo: this.textos.unidadesExecutorasPE.titulo, info: this.textos.unidadesExecutorasPE.info },
     ];
 
-    const indicadores = indicadoresConfig.map((item, i) => {
+    const indicadores: PdfIndicadorConfig[] = indicadoresConfig.map((item, i) => {
       const temDados = item.dados && item.dados.distribuicoes.length > 0 && item.dados.distribuicoes.some(d => d.total > 0);
-      const canvasEl = indicadorEls[i]?.querySelector('canvas') as HTMLCanvasElement | null;
       return {
         titulo: item.titulo,
         informacaoAdicional: item.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: temDados ? canvasEl : null,
+        chartComponent: temDados ? barras[i] ?? null : null,
         segmentos: (item.dados?.segmentos ?? []).map((nome, j) => ({ nome, cor: cores[j] ?? '#ccc' })),
         distribuicoes: (item.dados?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
       };
     });
 
-    this.pdfService.exportar(
+    this.pdfPainel.imprimir(
       {
         painel: 'Conformidade',
         tipoConsulta: this.tipoConsultaLabel(),

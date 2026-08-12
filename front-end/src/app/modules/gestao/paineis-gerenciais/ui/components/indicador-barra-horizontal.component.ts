@@ -27,6 +27,7 @@ import { Indicador } from '../../infra/painel-api.client';
 import { CHART_COLORS } from 'src/app/services/chart';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { IndicadorCardComponent } from './indicador-card.component';
+import './bar-totals.plugin';
 
 Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip, ChartjsPluginStacked100);
 
@@ -88,11 +89,15 @@ export class IndicadorBarraHorizontalComponent {
 
   readonly chartOptions = computed<ChartConfiguration<'bar'>['options']>(() => {
     const dados = this._dados();
+    const totals = dados?.distribuicoes.map(d => d.total) ?? [];
 
     return {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: { right: 40 },
+      },
       scales: {
         x: {
           display: true,
@@ -121,6 +126,7 @@ export class IndicadorBarraHorizontalComponent {
       plugins: {
         legend: { display: false },
         stacked100: { enable: true, replaceTooltipLabel: false },
+        barTotals: { totals },
         tooltip: {
           callbacks: {
             label: (context: any) => {
@@ -144,16 +150,24 @@ export class IndicadorBarraHorizontalComponent {
     } as any;
   });
 
-  readonly totais = computed(() => {
-    const dados = this._dados();
-    return dados?.distribuicoes.map(d => d.total) ?? [];
-  });
-
   readonly chartHeight = computed(() => {
     const dados = this._dados();
     const linhas = dados?.distribuicoes.length ?? 1;
     return Math.max(150, linhas * 40 + 40);
   });
+
+  getChartExportData(): { type: string; data: any; options: any; width: number; height: number } | null {
+    const chart = this.chartDirective?.chart;
+    if (!chart) return null;
+
+    return {
+      type: (chart.config as any).type as string,
+      data: chart.config.data,
+      options: chart.config.options,
+      width: chart.width,
+      height: chart.height,
+    };
+  }
 
   onChartAreaClick(e: MouseEvent): void {
     const index = this.getLabelIndex(e);

@@ -17,29 +17,8 @@
     }
   }
 
-  &__chart-wrapper {
-    display: flex;
-    align-items: stretch;
-    gap: var(--spacing-scale-base);
-  }
-
   &__chart {
-    flex: 1;
     position: relative;
-  }
-
-  &__totais {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-
-  &__total {
-    font-size: var(--font-size-scale-down-01);
-    font-weight: var(--font-weight-semi-bold);
-    white-space: nowrap;
   }
 
   &__legenda {
