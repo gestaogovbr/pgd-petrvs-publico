@@ -38,6 +38,24 @@ describe('TCRTemplateRenderer', function () {
         expect($this->renderer->render('{{inexistente}}', (object) []))->toBe('');
     });
 
+    test('variável apontando para objeto renderiza (ERRO) sem lançar exceção', function () {
+        $result = $this->renderer->render(
+            'Unidade: {{unidade}} - {{unidade.sigla}}',
+            (object) ['unidade' => (object) ['sigla' => 'CGPGD']]
+        );
+
+        expect($result)->toBe('Unidade: (ERRO) - CGPGD');
+    });
+
+    test('variável apontando para array renderiza (ERRO) sem lançar exceção', function () {
+        $result = $this->renderer->render(
+            '{{itens}}',
+            (object) ['itens' => [1, 2, 3]]
+        );
+
+        expect($result)->toBe('(ERRO)');
+    });
+
     test('renderiza if verdadeiro', function () {
         $result = $this->renderer->render(
             '{{if:status="ATIVO"}}Ativo{{end-if}}',

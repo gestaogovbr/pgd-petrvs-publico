@@ -49,6 +49,10 @@ export function errorInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn)
           const msg = (error.error && (error.error.error || error.error.message)) || 'Acesso negado.';
           message.error(msg);
         }
+        if (error.status === 404) {
+          const msg = (error.error && (error.error.error || error.error.message)) || 'Recurso não encontrado.';
+          message.error(msg);
+        }
       }
       return throwError(() => error);
     })
