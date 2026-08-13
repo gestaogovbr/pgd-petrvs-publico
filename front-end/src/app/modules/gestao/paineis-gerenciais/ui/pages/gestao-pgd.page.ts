@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { UnidadeSearchFn } from 'src/app/v2/components/unidade-select/unidade-select.component';
@@ -11,7 +11,6 @@ import { PainelApiClient, FiltrosPainel, Indicador, SerieAdesao, UnidadeHistoric
 import { ORIGEM_DADOS, MESES_ABREVIADOS } from '../../infra/painel.constants';
 import { CHART_COLORS } from 'src/app/services/chart';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
-import { IndicadorCardComponent } from '../components/indicador-card.component';
 import { EvolucaoAdesaoChartComponent } from '../components/evolucao-adesao-chart.component';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
 import { PdfPainelComponent, PdfIndicadorConfig } from '../components/pdf/pdf-painel.component';
@@ -31,7 +30,6 @@ export enum Grafico {
     BreadcrumbComponent,
     PainelFiltrosComponent,
     IndicadorBarraHorizontalComponent,
-    IndicadorCardComponent,
     EvolucaoAdesaoChartComponent,
     PdfPainelComponent,
   ],
@@ -157,7 +155,7 @@ export class GestaoPgdPage implements OnInit {
         titulo: this.textos.evolucaoUnidades.titulo,
         informacaoAdicional: this.textos.evolucaoUnidades.info,
         origemDados: ORIGEM_DADOS,
-        chartComponent: this.evolucaoUnidades()?.serie?.length ? evolucoes[0] ?? null : null,
+        chartComponent: evolucoes[0] && !evolucoes[0].semDados() ? evolucoes[0] : null,
         segmentos: ['Executoras', 'Não Executoras'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
         distribuicoes: [],
       },
@@ -173,7 +171,7 @@ export class GestaoPgdPage implements OnInit {
         titulo: this.textos.evolucaoParticipantes.titulo,
         informacaoAdicional: this.textos.evolucaoParticipantes.info,
         origemDados: ORIGEM_DADOS,
-        chartComponent: this.evolucaoParticipantes()?.serie?.length ? evolucoes[1] ?? null : null,
+        chartComponent: evolucoes[1] && !evolucoes[1].semDados() ? evolucoes[1] : null,
         segmentos: ['Participantes', 'Não Participantes'].map((nome, i) => ({ nome, cor: cores[i] ?? '#ccc' })),
         distribuicoes: [],
       },

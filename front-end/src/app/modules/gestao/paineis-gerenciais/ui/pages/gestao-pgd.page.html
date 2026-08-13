@@ -34,21 +34,16 @@
 
     <div class="col-md-6">
       <!-- Gráfico 2: Evolução da adesão das Unidades ao PGD -->
-      <indicador-card
+      <evolucao-adesao-chart
+        [serie]="evolucaoUnidades()?.serie ?? []"
         [titulo]="textos.evolucaoUnidades.titulo"
         [informacaoAdicional]="textos.evolucaoUnidades.info"
         [origemDados]="origemDados"
         [carregando]="carregandoEvolucaoUni()"
-        [semDados]="!carregandoEvolucaoUni() && !evolucaoUnidades()">
-        @if (evolucaoUnidades()) {
-          <evolucao-adesao-chart
-            [serie]="evolucaoUnidades()!.serie"
-            labelPositivo="Executoras"
-            labelNegativo="Não Executoras"
-            campoPositivo="executoras"
-            campoNegativo="nao_executoras" />
-        }
-      </indicador-card>
+        labelPositivo="Executoras"
+        labelNegativo="Não Executoras"
+        campoPositivo="executoras"
+        campoNegativo="nao_executoras" />
     </div>
 
     <div class="col-md-6">
@@ -67,21 +62,16 @@
 
     <div class="col-md-6">
       <!-- Gráfico 4: Evolução da adesão dos agentes públicos ao PGD -->
-      <indicador-card
+      <evolucao-adesao-chart
+        [serie]="evolucaoParticipantes()?.serie ?? []"
         [titulo]="textos.evolucaoParticipantes.titulo"
         [informacaoAdicional]="textos.evolucaoParticipantes.info"
         [origemDados]="origemDados"
         [carregando]="carregandoEvolucaoPart()"
-        [semDados]="!carregandoEvolucaoPart() && !evolucaoParticipantes()">
-        @if (evolucaoParticipantes()) {
-          <evolucao-adesao-chart
-            [serie]="evolucaoParticipantes()!.serie"
-            labelPositivo="Participantes"
-            labelNegativo="Não Participantes"
-            campoPositivo="participantes"
-            campoNegativo="nao_participantes" />
-        }
-      </indicador-card>
+        labelPositivo="Participantes"
+        labelNegativo="Não Participantes"
+        campoPositivo="participantes"
+        campoNegativo="nao_participantes" />
     </div>
   </div>
 </div>
