@@ -13,6 +13,7 @@ use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
 use App\Models\Usuario;
+use App\Services\CodigoOrgaoService;
 use App\Services\NivelAcessoService;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -340,7 +341,7 @@ class ProcessaDadosSiapeBD
 
     public function dadosUorg(): array
     {
-        $response = SiapeDadosUORG::where('codigo_orgao', \App\Services\CodigoOrgaoService::atual())
+        $response = SiapeDadosUORG::where('codigo_orgao', CodigoOrgaoService::atual())
             ->where('processado', 0)
             ->whereNotNull('codigo')
             ->orderBy('updated_at', 'desc')->get();
@@ -452,7 +453,7 @@ class ProcessaDadosSiapeBD
                 return in_array($faultString, $faultStrings, true) || in_array($decoded, $faultStrings, true);
             })()
         ) {
-            $codigoOrgao = \App\Services\CodigoOrgaoService::atual();
+            $codigoOrgao = CodigoOrgaoService::atual();
             $test = SiapeBlacklistUnidade::firstOrCreate(
                 ['codigo_orgao' => $codigoOrgao, 'codigo' => $codigo],
                 ['id' => (string) Str::uuid(), 'response' => $response]
