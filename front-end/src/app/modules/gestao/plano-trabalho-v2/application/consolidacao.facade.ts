@@ -20,6 +20,7 @@ export class ConsolidacaoFacade {
   private readonly message = inject(MessageService);
 
   private planoId = '';
+  private onAfterMudancaStatusPlano?: () => void;
 
   // --- Estado principal ---
   readonly consolidacoes = signal<Consolidacao[]>([]);
@@ -31,8 +32,10 @@ export class ConsolidacaoFacade {
 
   // --- Estado de atividades ---
   readonly textos = signal<Record<string, string>>({});
+  readonly esforcosExecutados = signal<Record<string, number>>({});
   readonly editando = signal<Set<string>>(new Set());
   readonly salvando = signal<Set<string>>(new Set());
+  private entregaEsforcoAtualizado?: (entregaId: string, esforco: number) => void;
 
   // --- Estado de reabertura ---
   readonly reabrindoId = signal<string | null>(null);
@@ -60,12 +63,17 @@ export class ConsolidacaoFacade {
 
   // --- Inicialização ---
 
-  init(planoId: string): void {
+  init(planoId: string, onAfterMudancaStatusPlano?: () => void): void {
     this.planoId = planoId;
+    this.onAfterMudancaStatusPlano = onAfterMudancaStatusPlano;
     this.loadConsolidacoes();
     this.loadNotas();
     this.loadTiposMotivo();
     this.loadDispensas();
+  }
+
+  registerEntregaEsforcoAtualizado(callback: (entregaId: string, esforco: number) => void): void {
+    this.entregaEsforcoAtualizado = callback;
   }
 
   loadConsolidacoes(): void {
@@ -212,32 +220,75 @@ export class ConsolidacaoFacade {
     this.textos.update(t => ({ ...t, [`${consolidacaoId}-${entregaId}`]: valor }));
   }
 
-  iniciarEdicao(consolidacaoId: string, entregaId: string, textoAtual: string): void {
-    this.textos.update(t => ({ ...t, [`${consolidacaoId}-${entregaId}`]: textoAtual }));
-    this.editando.update(s => new Set([...s, `${consolidacaoId}-${entregaId}`]));
+  getEsforcoExecutado(consolidacaoId: string, entrega: PlanoTrabalhoEntrega): number {
+    const key = `${consolidacaoId}-${entrega.id}`;
+    const custom = this.esforcosExecutados()[key];
+    if (custom !== undefined) {
+      return custom;
+    }
+    return Number(entrega.esforco_executado ?? entrega.forca_trabalho ?? 0);
   }
 
-  cancelarEdicao(consolidacaoId: string, entregaId: string, atividade: AtividadeConsolidacao | null): void {
+  setEsforcoExecutado(consolidacaoId: string, entregaId: string, valor: string): void {
+    const parsed = Number(valor);
+    this.esforcosExecutados.update(mapa => ({
+      ...mapa,
+      [`${consolidacaoId}-${entregaId}`]: Number.isFinite(parsed) ? parsed : 0,
+    }));
+  }
+
+  esforcoExecutadoValido(consolidacaoId: string, entrega: PlanoTrabalhoEntrega): boolean {
+    const value = this.getEsforcoExecutado(consolidacaoId, entrega);
+    return value >= 0 && value <= 999.99;
+  }
+
+  iniciarEdicao(consolidacaoId: string, entregaId: string, textoAtual: string, esforcoAtual?: number): void {
+    const key = `${consolidacaoId}-${entregaId}`;
+    this.textos.update(t => ({ ...t, [key]: textoAtual }));
+    if (esforcoAtual !== undefined) {
+      this.esforcosExecutados.update(m => ({ ...m, [key]: esforcoAtual }));
+    }
+    this.editando.update(s => new Set([...s, key]));
+  }
+
+  cancelarEdicao(
+    consolidacaoId: string,
+    entregaId: string,
+    atividade: AtividadeConsolidacao | null,
+    entrega?: PlanoTrabalhoEntrega,
+  ): void {
     const key = `${consolidacaoId}-${entregaId}`;
     this.textos.update(t => ({ ...t, [key]: atividade?.descricao ?? '' }));
+    if (entrega) {
+      this.esforcosExecutados.update(m => ({
+        ...m,
+        [key]: Number(entrega.esforco_executado ?? entrega.forca_trabalho ?? 0),
+      }));
+    }
     this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
   }
 
   confirmarAtividade(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): void {
     const key = `${consolidacao.id}-${entrega.id}`;
     const descricao = this.textos()[key]?.trim();
-    if (!descricao) return;
+    const esforcoExecutado = this.getEsforcoExecutado(consolidacao.id, entrega);
+    if (!descricao || !this.esforcoExecutadoValido(consolidacao.id, entrega)) return;
 
     const atividade = this.getAtividade(consolidacao, entrega.id);
     this.salvando.update(s => new Set([...s, key]));
 
+    const payload = { descricao, esforco_executado: esforcoExecutado };
     const obs = atividade
-      ? this.api.updateAtividade(this.planoId, consolidacao.id, atividade.id, { descricao })
-      : this.api.createAtividade(this.planoId, consolidacao.id, { plano_trabalho_entrega_id: entrega.id, descricao });
+      ? this.api.updateAtividade(this.planoId, consolidacao.id, atividade.id, payload)
+      : this.api.createAtividade(this.planoId, consolidacao.id, {
+          plano_trabalho_entrega_id: entrega.id,
+          ...payload,
+        });
 
     obs.subscribe({
       next: (atividadeSalva) => {
         this.atualizarAtividadeNaConsolidacao(consolidacao.id, entrega.id, atividadeSalva);
+        this.entregaEsforcoAtualizado?.(entrega.id, esforcoExecutado);
         this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
         this.salvando.update(s => { const n = new Set(s); n.delete(key); return n; });
       },
@@ -257,6 +308,7 @@ export class ConsolidacaoFacade {
       onConfirmar: () => {
         this.api.deleteAtividade(this.planoId, consolidacao.id, atividade.id).subscribe(() => {
           this.atualizarAtividadeNaConsolidacao(consolidacao.id, entrega.id, null);
+          this.entregaEsforcoAtualizado?.(entrega.id, Number(entrega.forca_trabalho ?? 0));
           const key = `${consolidacao.id}-${entrega.id}`;
           this.textos.update(t => ({ ...t, [key]: '' }));
           this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
@@ -378,6 +430,7 @@ export class ConsolidacaoFacade {
             this.avaliandoIds.update(s => { const n = new Set(s); n.delete(consolidacao.id); return n; });
             this.notasSelecionadas.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
             this.justificativasAvaliacao.update(m => { const n = { ...m }; delete n[consolidacao.id]; return n; });
+            this.onAfterMudancaStatusPlano?.();
             this.message.success(isReavaliacao ? 'Reavaliação realizada com sucesso.' : 'Avaliação realizada com sucesso.');
           },
           error: () => {
@@ -397,6 +450,7 @@ export class ConsolidacaoFacade {
         this.api.cancelarAvaliacao(this.planoId, consolidacao.id, avaliacaoId).subscribe({
           next: () => {
             this.loadConsolidacoes();
+            this.onAfterMudancaStatusPlano?.();
             this.cancelandoAvaliacaoIds.update(s => { const n = new Set(s); n.delete(avaliacaoId); return n; });
             this.message.success('Avaliação cancelada com sucesso.');
           },

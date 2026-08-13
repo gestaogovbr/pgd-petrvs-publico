@@ -122,6 +122,20 @@ final class ModalidadePgd
             "ELSE {$column} END";
     }
 
+    public static function sqlNormalizeExpression(string $column): string
+    {
+        $normalizedColumn = "LOWER(TRIM({$column}))";
+
+        return "CASE " .
+            "WHEN {$column} IS NULL OR TRIM({$column}) = '' THEN NULL " .
+            "WHEN {$normalizedColumn} LIKE '%presencial%' THEN 'presencial' " .
+            "WHEN {$normalizedColumn} LIKE '%parcial%' THEN 'parcial' " .
+            "WHEN {$normalizedColumn} LIKE '%integral%' THEN 'integral' " .
+            "WHEN {$normalizedColumn} LIKE '%substituicao%' OR {$normalizedColumn} LIKE '%substitui%' OR {$normalizedColumn} LIKE '%inciso viii%' THEN 'no exterior substituicao' " .
+            "WHEN {$normalizedColumn} LIKE '%exterior%' THEN 'no exterior' " .
+            "ELSE {$normalizedColumn} END";
+    }
+
     /** @return string[] */
     public static function keys(): array
     {

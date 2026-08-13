@@ -174,7 +174,7 @@ test('findAgentesPublicosNoEscopoCadastrante aplica participa_pgd sim e filtros 
     $builder = \Mockery::mock(Builder::class);
     $builder->shouldReceive('select')
         ->once()
-        ->with(['usuarios.id', 'usuarios.nome', 'usuarios.matricula', 'usuarios.cpf', 'usuarios.modalidade_pgd', 'usuarios.participa_pgd'])
+        ->with(['usuarios.id', 'usuarios.nome', 'usuarios.nome_social', 'usuarios.matricula', 'usuarios.cpf', 'usuarios.modalidade_pgd', 'usuarios.participa_pgd'])
         ->andReturnSelf();
     $builder->shouldReceive('where')
         ->once()
@@ -185,6 +185,7 @@ test('findAgentesPublicosNoEscopoCadastrante aplica participa_pgd sim e filtros 
 
             $inner = \Mockery::mock(Builder::class);
             $inner->shouldReceive('where')->once()->with('usuarios.nome', 'like', '%João%')->andReturnSelf();
+            $inner->shouldReceive('orWhere')->once()->with('usuarios.nome_social', 'like', '%João%')->andReturnSelf();
             $inner->shouldReceive('orWhere')->once()->with('usuarios.matricula', 'like', '%João%')->andReturnSelf();
             $callback($inner);
 

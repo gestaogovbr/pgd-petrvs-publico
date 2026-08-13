@@ -7,6 +7,7 @@ namespace App\Repository\DocumentoAssinatura\Eloquent;
 use App\Models\DocumentoAssinatura;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @extends AbstractEloquentReadRepository<DocumentoAssinatura>
@@ -83,10 +84,45 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->exists();
     }
 
+    public function gestorSubstitutoDiferenteDoParticipanteAssinou(string $documentoId, string $unidadeId, string $participanteId): bool
+    {
+        return $this->query()
+            ->where('documento_id', $documentoId)
+            ->where('usuario_id', '!=', $participanteId)
+            ->whereHas('usuario.unidadesIntegrantes', function ($q) use ($unidadeId) {
+                $q->where('unidade_id', $unidadeId)
+                  ->whereHas('atribuicoes', fn ($q2) => $q2->where('atribuicao', 'GESTOR_SUBSTITUTO'));
+            })
+            ->exists();
+    }
+
     public function existeAlgumaAssinatura(string $documentoId): bool
     {
         return $this->query()
             ->where('documento_id', $documentoId)
             ->exists();
+    }
+
+    public function existeAssinaturaDeNaoParticipante(string $documentoId, string $participanteId): bool
+    {
+        return $this->query()
+            ->where('documento_id', $documentoId)
+            ->where('usuario_id', '!=', $participanteId)
+            ->exists();
+    }
+
+    public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection
+    {
+        /** @var Collection<int, DocumentoAssinatura> */
+        return $this->model->newQuery()
+            ->onlyTrashed()
+            ->whereHas('documento', function ($query) use ($planoTrabalhoId) {
+                $query->withTrashed()
+                    ->where('plano_trabalho_id', $planoTrabalhoId)
+                    ->where('especie', 'TCR');
+            })
+            ->with(['usuario:id,nome,nome_social'])
+            ->orderByDesc('deleted_at')
+            ->get();
     }
 }

@@ -8,6 +8,7 @@ use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoArquivarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoClonarValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDesarquivarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoEncerrarValidator;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
@@ -45,11 +46,18 @@ beforeEach(function () {
     $this->cancelarValidator = Mockery::mock(PlanoTrabalhoCancelarValidator::class);
     $this->encerrarValidator = Mockery::mock(PlanoTrabalhoEncerrarValidator::class);
     $this->arquivarValidator = Mockery::mock(PlanoTrabalhoArquivarValidator::class);
+    $this->desarquivarValidator = Mockery::mock(PlanoTrabalhoDesarquivarValidator::class);
     $this->clonarValidator = Mockery::mock(PlanoTrabalhoClonarValidator::class);
     $this->indexValidator = Mockery::mock(PlanoTrabalhoIndexValidator::class);
     $this->updateAuthorizationValidator = Mockery::mock(PlanoTrabalhoUpdateAuthorizationValidator::class);
     $this->authorization = Mockery::mock(PlanoTrabalhoAuthorization::class);
     $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
+    $this->usuarioRepository->shouldReceive('findById')->byDefault()->andReturnUsing(function () {
+        $u = Mockery::mock(Usuario::class)->makePartial();
+        $u->cod_jornada = 40;
+        $u->cpf = '12345678901';
+        return $u;
+    });
     $this->statusService = Mockery::mock(StatusService::class);
     $this->tcrInvalidador = Mockery::mock(TCRInvalidador::class);
     $this->consolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
@@ -65,6 +73,7 @@ beforeEach(function () {
         $this->cancelarValidator,
         $this->encerrarValidator,
         $this->arquivarValidator,
+        $this->desarquivarValidator,
         $this->clonarValidator,
         $this->indexValidator,
         $this->updateAuthorizationValidator,
@@ -181,7 +190,7 @@ describe('PlanoTrabalhoService::index', function () {
         $result = $this->service->index(['filters' => ['vigentes' => true]]);
 
         expect($result)->toBe($paginator)
-            ->and($planoItem->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'encerrar' => false]);
+            ->and($planoItem->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'desarquivar' => false, 'encerrar' => false]);
     });
 
     test('expande unidades com subordinadas quando flag subordinadas=true', function () {
@@ -260,6 +269,14 @@ describe('PlanoTrabalhoService::store', function () {
 
         $plano = Mockery::mock(PlanoTrabalho::class);
 
+        $usuario = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $usuario->cod_jornada = 40;
+
+        $this->usuarioRepository
+            ->shouldReceive('findById')
+            ->with('user-1')
+            ->andReturn($usuario);
+
         $this->storeValidator
             ->shouldReceive('validarAutorizacao')
             ->once();
@@ -272,7 +289,7 @@ describe('PlanoTrabalhoService::store', function () {
         $this->writeRepository
             ->shouldReceive('create')
             ->once()
-            ->with(Mockery::type('array'))
+            ->with(Mockery::on(fn ($data) => $data['carga_horaria'] === 8.0))
             ->andReturn($plano);
 
         $result = $this->service->store([
@@ -316,6 +333,14 @@ describe('PlanoTrabalhoService::store', function () {
 
         $plano = Mockery::mock(PlanoTrabalho::class);
 
+        $usuario = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $usuario->cod_jornada = 40;
+
+        $this->usuarioRepository
+            ->shouldReceive('findById')
+            ->with('user-1')
+            ->andReturn($usuario);
+
         $this->storeValidator->shouldReceive('validarAutorizacao')->once();
         $this->storeValidator->shouldReceive('validar')->once();
 
@@ -324,6 +349,7 @@ describe('PlanoTrabalhoService::store', function () {
             ->once()
             ->with(Mockery::on(fn (array $attrs) =>
                 $attrs['criacao_usuario_id'] === 'criador-xyz'
+                && $attrs['carga_horaria'] === 8.0
             ))
             ->andReturn($plano);
 
@@ -426,7 +452,7 @@ describe('PlanoTrabalhoService::show', function () {
         $result = $this->service->show('plano-1');
 
         expect($result)->toBe($plano)
-            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'encerrar' => false])
+            ->and($plano->getAttribute('acoes'))->toBe(['editar' => true, 'arquivar' => false, 'desarquivar' => false, 'encerrar' => false])
             ->and($plano->getAttribute('is_proprio'))->toBeTrue();
     });
 
@@ -598,7 +624,7 @@ describe('PlanoTrabalhoService::encerrar', function () {
 
         $this->consolidacaoRepository->shouldReceive('encerrarPeriodosFuturos')
             ->once()
-            ->with($planoId, $hoje);
+            ->with($planoId, $hoje, 'motivo teste');
 
         $this->statusService->shouldReceive('atualizaStatus')
             ->once()
@@ -807,4 +833,120 @@ describe('PlanoTrabalhoService::store com clone_de', function () {
             'clone_de' => 'plano-original',
         ]);
     });
+});
+
+describe('PlanoTrabalhoService::update (happy path)', function () {
+
+    test('valida autorização, valida regras e persiste via repository', function () {
+        Auth::shouldReceive('id')->andReturn('chefia-1');
+        DB::shouldReceive('transaction')->once()->andReturnUsing(fn (callable $cb) => $cb());
+
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+
+        $updated = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $updated->id = 'plano-1';
+
+        $this->readRepository->shouldReceive('findById')->with('plano-1')->andReturn($plano);
+        $this->updateAuthorizationValidator->shouldReceive('validar')->once()->with($plano, 'chefia-1');
+        $this->updateValidator->shouldReceive('validar')->once();
+        $this->writeRepository->shouldReceive('update')->once()->with('plano-1', Mockery::type('array'))->andReturn($updated);
+        $this->tcrInvalidador->shouldReceive('invalidar')->once()->with('plano-1');
+
+        $result = $this->service->update('plano-1', [
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'modalidade_pgd' => 'presencial',
+        ]);
+
+        expect($result)->toBe($updated);
+    });
+
+    test('lança NotFoundException quando plano não encontrado', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
+        $this->readRepository->shouldReceive('findById')->with('plano-inexistente')->andReturn(null);
+
+        $this->service->update('plano-inexistente', [
+            'usuario_id' => 'user-1',
+            'unidade_id' => 'unidade-1',
+            'programa_id' => 'programa-1',
+            'data_inicio' => '2024-01-01',
+            'data_fim' => '2024-12-31',
+            'modalidade_pgd' => 'presencial',
+        ]);
+    })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
+});
+
+describe('PlanoTrabalhoService::arquivar', function () {
+
+    test('valida e seta data_arquivamento via repository', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->shouldReceive('refresh')->once()->andReturnSelf();
+
+        $this->arquivarValidator->shouldReceive('validar')
+            ->once()
+            ->with('plano-1', 'user-1')
+            ->andReturn($plano);
+
+        $this->writeRepository->shouldReceive('update')
+            ->once()
+            ->with('plano-1', Mockery::on(fn ($data) => $data['data_arquivamento'] !== null));
+
+        $result = $this->service->arquivar('plano-1');
+
+        expect($result)->toBe($plano);
+    });
+
+    test('propaga exceção do validator', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
+        $this->arquivarValidator->shouldReceive('validar')
+            ->andThrow(new \App\Exceptions\ValidateException('Este Plano de Trabalho já está arquivado.'));
+
+        $this->writeRepository->shouldNotReceive('update');
+
+        $this->service->arquivar('plano-1');
+    })->throws(\App\Exceptions\ValidateException::class, 'Este Plano de Trabalho já está arquivado.');
+});
+
+describe('PlanoTrabalhoService::desarquivar', function () {
+
+    test('valida e seta data_arquivamento null via repository', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->shouldReceive('refresh')->once()->andReturnSelf();
+
+        $this->desarquivarValidator->shouldReceive('validar')
+            ->once()
+            ->with('plano-1', 'user-1')
+            ->andReturn($plano);
+
+        $this->writeRepository->shouldReceive('update')
+            ->once()
+            ->with('plano-1', ['data_arquivamento' => null]);
+
+        $result = $this->service->desarquivar('plano-1');
+
+        expect($result)->toBe($plano);
+    });
+
+    test('propaga exceção quando plano não está arquivado', function () {
+        Auth::shouldReceive('id')->andReturn('user-1');
+
+        $this->desarquivarValidator->shouldReceive('validar')
+            ->andThrow(new \App\Exceptions\ValidateException('Este Plano de Trabalho não está arquivado.'));
+
+        $this->writeRepository->shouldNotReceive('update');
+
+        $this->service->desarquivar('plano-1');
+    })->throws(\App\Exceptions\ValidateException::class, 'Este Plano de Trabalho não está arquivado.');
 });

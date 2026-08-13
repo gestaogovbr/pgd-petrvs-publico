@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository\Unidade\Eloquent;
 
+use App\Cache\GestorHierarquiaCache;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
@@ -36,31 +37,27 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
 
     public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool
     {
+        $unidadesGeridas = GestorHierarquiaCache::getUnidadesGeridas(
+            $usuarioId,
+            fn () => $this->getUnidadesGerenciadas($usuarioId)->pluck('id')->all(),
+        );
 
-        $result = $this->model->getConnection()->select("
-            WITH RECURSIVE unidade_hierarchy AS (
-                SELECT id, unidade_pai_id, 0 as level
-                FROM unidades 
-                WHERE id = ?
-                
-                UNION ALL
-                
-                SELECT u.id, u.unidade_pai_id, uh.level + 1
-                FROM unidades u
-                INNER JOIN unidade_hierarchy uh ON u.id = uh.unidade_pai_id
-                WHERE uh.level < 10
-            )
-            SELECT COUNT(*) as count
-            FROM unidade_hierarchy uh
-            INNER JOIN unidades_integrantes ui ON ui.unidade_id = uh.id
-            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
-            WHERE ui.usuario_id = ?
-              AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO')
-              AND ui.deleted_at IS NULL
-              AND uia.deleted_at IS NULL
-        ", [$unidadeId, $usuarioId]);
-        
-        return $result[0]->count > 0;
+        if (in_array($unidadeId, $unidadesGeridas, true)) {
+            return true;
+        }
+
+        foreach ($unidadesGeridas as $unidadeGeridaId) {
+            $subordinadas = GestorHierarquiaCache::getSubordinadas(
+                $unidadeGeridaId,
+                fn () => $this->getSubordinadasRecursivas([$unidadeGeridaId])->pluck('id')->all(),
+            );
+
+            if (in_array($unidadeId, $subordinadas, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool
@@ -95,13 +92,31 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $result[0]->count > 0;
     }
 
+    public function isUsuarioGestorSubstitutoDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->usuarioPossuiAtribuicaoNaUnidade($unidadeId, $usuarioId, ['GESTOR_SUBSTITUTO']);
+    }
+
+    public function isUsuarioGestorDelegadoDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->usuarioPossuiAtribuicaoNaUnidade($unidadeId, $usuarioId, ['GESTOR_DELEGADO']);
+    }
+
+    public function isUsuarioChefiaDaUnidade(string $unidadeId, string $usuarioId): bool
+    {
+        return $this->usuarioPossuiAtribuicaoNaUnidade($unidadeId, $usuarioId, ['GESTOR', 'GESTOR_SUBSTITUTO']);
+    }
+
     public function getHierarquiaAssinatura(string $unidadeId, string $participanteId, string $assinanteId): AssinaturaHierarquiaDTO
     {
         $sql = <<<SQL
             SELECT
                 MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as participante_gestor_titular,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR_SUBSTITUTO' THEN 1 ELSE 0 END) as participante_gestor_substituto,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR_DELEGADO' THEN 1 ELSE 0 END) as participante_gestor_delegado,
                 MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao IN ('GESTOR', 'GESTOR_SUBSTITUTO', 'GESTOR_DELEGADO') THEN 1 ELSE 0 END) as participante_gestor,
-                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as assinante_gestor_titular
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR' THEN 1 ELSE 0 END) as assinante_gestor_titular,
+                MAX(CASE WHEN ui.usuario_id = ? AND uia.atribuicao = 'GESTOR_SUBSTITUTO' THEN 1 ELSE 0 END) as assinante_gestor_substituto
             FROM unidades_integrantes ui
             INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
             WHERE ui.unidade_id = ?
@@ -111,14 +126,43 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         SQL;
 
         $row = $this->model->getConnection()->select($sql, [
-            $participanteId, $participanteId, $assinanteId, $unidadeId, $participanteId, $assinanteId,
+            $participanteId,
+            $participanteId,
+            $participanteId,
+            $participanteId,
+            $assinanteId,
+            $assinanteId,
+            $unidadeId,
+            $participanteId,
+            $assinanteId,
         ])[0];
 
         return new AssinaturaHierarquiaDTO(
             participanteGestor: (bool) $row->participante_gestor,
             participanteGestorTitular: (bool) $row->participante_gestor_titular,
+            participanteGestorSubstituto: (bool) $row->participante_gestor_substituto,
+            participanteGestorDelegado: (bool) $row->participante_gestor_delegado,
             assinanteGestorTitular: (bool) $row->assinante_gestor_titular,
+            assinanteGestorSubstituto: (bool) $row->assinante_gestor_substituto,
         );
+    }
+
+    private function usuarioPossuiAtribuicaoNaUnidade(string $unidadeId, string $usuarioId, array $atribuicoes): bool
+    {
+        $placeholders = implode(', ', array_fill(0, count($atribuicoes), '?'));
+
+        $result = $this->model->getConnection()->select("
+            SELECT COUNT(*) as count
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.unidade_id = ?
+              AND ui.usuario_id = ?
+              AND uia.atribuicao IN ($placeholders)
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", array_merge([$unidadeId, $usuarioId], $atribuicoes));
+
+        return $result[0]->count > 0;
     }
 
     /**
@@ -129,7 +173,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         $where = [];
         $prefix = empty($prefix) ? "" : $prefix . ".";
         $usuario = Usuario::find($usuarioId);
-        
+
         if (!$usuario) {
             return "false";
         }
@@ -305,5 +349,19 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
     public function findAllWhere(array $criteria): SupportCollection
     {
         return parent::findAllWhere($criteria);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buscarComLocalidade(array $unidadeIds): SupportCollection
+    {
+        return $this->model->newQuery()
+            ->select('unidades.id', 'unidades.entidade_id', 'unidades.cidade_id', 'cidades.uf')
+            ->leftJoin('cidades', 'cidades.id', '=', 'unidades.cidade_id')
+            ->whereIn('unidades.id', $unidadeIds)
+            ->get()
+            ->toBase()
+            ->keyBy('id');
     }
 }

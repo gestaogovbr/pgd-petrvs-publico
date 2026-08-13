@@ -13,6 +13,7 @@ use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection as SupportCollection;
 
 /**
  * @implements EnvioRepositoryInterface<PlanoTrabalho>
@@ -160,6 +161,17 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
             'unidade.cidade',
             'usuario',
             'entregas.entrega',
+            'entregas.planoEntregaEntrega',
         ]);
+    }
+
+    /**
+     * @param array<string> $unidadeIds
+     * @param array{data_inicial: string|null, data_final: string|null, somente_vigentes: bool} $filtros
+     * @return SupportCollection
+     */
+    public function buscarPlanosParaIndicadores(array $unidadeIds, array $filtros): SupportCollection
+    {
+        return $this->readRepository->buscarPlanosParaIndicadores($unidadeIds, $filtros);
     }
 }

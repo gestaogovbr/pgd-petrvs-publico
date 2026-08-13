@@ -12,6 +12,7 @@ class AtividadeStoreDTO implements IAtividadeWriteDTO
         public readonly string $usuarioId,
         public readonly string $planoTrabalhoEntregaId,
         public readonly string $descricao,
+        public readonly float $esforcoExecutado,
     ) {}
 
     public static function fromArray(array $data, string $planoTrabalhoId, string $consolidacaoId, string $usuarioId): self
@@ -22,6 +23,7 @@ class AtividadeStoreDTO implements IAtividadeWriteDTO
             usuarioId: $usuarioId,
             planoTrabalhoEntregaId: $data['plano_trabalho_entrega_id'],
             descricao: $data['descricao'],
+            esforcoExecutado: (float) $data['esforco_executado'],
         );
     }
 
@@ -30,12 +32,14 @@ class AtividadeStoreDTO implements IAtividadeWriteDTO
     public function usuarioId(): string { return $this->usuarioId; }
     public function atividadeId(): ?string { return null; }
     public function planoTrabalhoEntregaId(): ?string { return $this->planoTrabalhoEntregaId; }
+    public function esforcoExecutado(): ?float { return $this->esforcoExecutado; }
 
     public function toArray(): array
     {
         return [
             'plano_trabalho_entrega_id' => $this->planoTrabalhoEntregaId,
             'descricao' => $this->descricao,
+            'esforco_executado' => $this->esforcoExecutado,
         ];
     }
 

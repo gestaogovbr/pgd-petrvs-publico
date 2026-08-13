@@ -17,7 +17,7 @@ import { PlanoEntrega } from 'src/app/models/plano-entrega.model';
 import { Programa } from 'src/app/models/programa.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PageFormBase } from 'src/app/modules/base/page-form-base';
-import moment from 'moment';
+import { addDays } from 'date-fns';
 import { PlanoEntregaEntregaDaoService } from 'src/app/dao/plano-entrega-entrega-dao.service';
 import { InputSelectComponent } from 'src/app/components/input/input-select/input-select.component';
 import { ProgramaService } from 'src/app/services/programa.service';
@@ -118,8 +118,8 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     } else {
       const entregas = this.form!.controls.entregas.value || [];
       for (let entrega of entregas) {
-        if (!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && entrega.data_inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
-        if (!this.auth.hasPermissionTo("MOD_PENT_ENTR_EXTRPL") && entrega.data_fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);
+        if (entrega.data_inicio < inicio) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data inicial anterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(inicio);
+        if (entrega.data_fim > fim) return "A " + this.lex.translate("entrega") + " '" + entrega.descricao + "' possui data fim posterior à " + this.lex.translate("do Plano de Entrega") + ": " + this.util.getDateFormatted(fim);
       }
     }
     return undefined;
@@ -130,7 +130,7 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
     if(action == 'clone') {
       entity.id = "";
       entity.data_inicio = new Date();
-      entity.data_fim = moment().add(1, 'day').toDate();
+      entity.data_fim = addDays(new Date(), 1);
 
       // só clonar entregas que não possuem vínculos excluídos
       const entregas = entity.entregas || [];
@@ -138,24 +138,52 @@ export class PlanoEntregaFormComponent extends PageFormBase<PlanoEntrega, PlanoE
       // array de ids com vinculos excluídos
       const possuiVinculosExcluidos = await this.planoEntregaEntregaDao.possuiVinculosExcluidos(entregas.map(e => e.id));
       // filtra entregas que não possuem vínculos excluídos
-      entity.entregas = entregas.filter(entrega => !possuiVinculosExcluidos.includes(entrega.id));
-      entity.entregas = entity.entregas.map(entrega => {
-        entrega.id = this.planoEntregaDao.generateUuid();
-        entrega.plano_entrega_id = null;
-        entrega._status = "ADD";
-        entrega.progresso_realizado = 0;
-        entrega.progresso_esperado = 0;
-        entrega.realizado.valor = 0;
-        entrega.realizado.porcentagem = 0;
-        entrega.data_inicio = new Date();
-        entrega.data_fim = moment().add(1, 'day').toDate();
-        return entrega as PlanoEntregaEntrega;
-      });
+      entity.entregas = entregas
+        .filter(entrega => !possuiVinculosExcluidos.includes(entrega.id))
+        .map(entrega => this.clonarEntrega(entrega));
     }
 
     let formValue = Object.assign({}, form.value);
     form.patchValue(this.util.fillForm(formValue, entity));    
     this.cdRef.detectChanges();
+  }
+
+  /**
+   * Clona a entrega e seus vínculos (objetivos/processos) com novos IDs.
+   * Sem isso, o backend reaproveita os IDs originais e move o relacionamento do PE fonte para o clone.
+   */
+  private clonarEntrega(fonte: PlanoEntregaEntrega): PlanoEntregaEntrega {
+    const entrega = this.util.clone(fonte) as PlanoEntregaEntrega;
+    const novaEntregaId = this.planoEntregaDao.generateUuid();
+
+    entrega.id = novaEntregaId;
+    entrega.plano_entrega_id = null;
+    entrega._status = "ADD";
+    entrega.progresso_realizado = 0;
+    entrega.progresso_esperado = 0;
+    entrega.realizado = { ...(entrega.realizado || {}), valor: 0, porcentagem: 0 };
+    entrega.data_inicio = new Date();
+    entrega.data_fim = addDays(new Date(), 1);
+    entrega.comentarios = [];
+    entrega.reacoes = [];
+    entrega.produtos = [];
+    entrega.objetivos = this.clonarVinculos(entrega.objetivos, novaEntregaId);
+    entrega.processos = this.clonarVinculos(entrega.processos, novaEntregaId);
+
+    return entrega;
+  }
+
+  private clonarVinculos<T extends { id: string; entrega_id?: string; _status?: string }>(
+    vinculos: T[] | undefined,
+    novaEntregaId: string
+  ): T[] {
+    return (vinculos || []).map(vinculo => {
+      const clone = this.util.clone(vinculo) as T;
+      clone.id = this.planoEntregaDao.generateUuid();
+      clone.entrega_id = novaEntregaId;
+      clone._status = "ADD";
+      return clone;
+    });
   }
 
   public async initializeData(form: FormGroup) {   
