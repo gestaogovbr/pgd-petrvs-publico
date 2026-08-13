@@ -7,13 +7,14 @@ import {
   inject,
   Input,
   OnChanges,
+  OnDestroy,
   Output,
   signal,
   SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
-import { Observable, Subject, debounceTime, switchMap, tap } from 'rxjs';
+import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
 import { UnidadeService, UnidadeIndexResponse } from 'src/app/v2/services/unidade.service';
 import { Unidade } from 'src/app/models/unidade.model';
 
@@ -25,6 +26,11 @@ export interface UnidadeSelectEvent {
 
 export type UnidadeSearchFn = (termo: string | null, page: number, size: number) => Observable<UnidadeIndexResponse>;
 
+interface FetchCommand {
+  termo: string | null;
+  page: number;
+}
+
 @Component({
   selector: 'unidade-select',
   standalone: true,
@@ -33,10 +39,13 @@ export type UnidadeSearchFn = (termo: string | null, page: number, size: number)
   templateUrl: './unidade-select.component.html',
   styleUrls: ['./unidade-select.component.scss'],
 })
-export class UnidadeSelectComponent implements OnChanges {
+export class UnidadeSelectComponent implements OnChanges, OnDestroy {
   private readonly unidadeService = inject(UnidadeService);
   private readonly elementRef = inject(ElementRef);
+
   private readonly searchSubject = new Subject<string>();
+  private readonly fetchSubject = new Subject<FetchCommand>();
+  private readonly subscription = new Subscription();
 
   @Input() unidadeId = '';
   @Input() unidadeSigla = '';
@@ -58,22 +67,31 @@ export class UnidadeSelectComponent implements OnChanges {
   private currentTermo: string | null = null;
 
   constructor() {
-    this.searchSubject.pipe(
-      debounceTime(300),
-      tap(() => {
+    this.subscription.add(
+      this.searchSubject.pipe(
+        debounceTime(300),
+      ).subscribe(termo => {
+        this.currentTermo = termo || null;
         this.page = 1;
         this.hasMore = true;
         this.items.set([]);
-        this.loading.set(true);
-      }),
-      switchMap(termo => {
-        this.currentTermo = termo || null;
-        return this.fetchData(this.currentTermo, 1, this.perPage);
-      }),
-    ).subscribe({
-      next: (response) => this.handleResponse(response),
-      error: () => this.loading.set(false),
-    });
+        this.fetchSubject.next({ termo: this.currentTermo, page: 1 });
+      })
+    );
+
+    this.subscription.add(
+      this.fetchSubject.pipe(
+        tap(() => this.loading.set(true)),
+        switchMap(cmd => this.fetchData(cmd.termo, cmd.page, this.perPage)),
+      ).subscribe({
+        next: (response) => this.handleResponse(response),
+        error: () => this.loading.set(false),
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -161,14 +179,9 @@ export class UnidadeSelectComponent implements OnChanges {
   }
 
   private loadPage(page: number, termo: string | null): void {
-    this.loading.set(true);
     this.page = page;
     this.currentTermo = termo;
-
-    this.fetchData(termo, page, this.perPage).subscribe({
-      next: (response) => this.handleResponse(response),
-      error: () => this.loading.set(false),
-    });
+    this.fetchSubject.next({ termo, page });
   }
 
   private loadNextPage(): void {
