@@ -95,11 +95,25 @@ export class UnidadeSelectComponent implements OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ((changes['unidadeId'] || changes['unidadeSigla'] || changes['unidadeNome']) && this.unidadeId) {
-      if (!this.selectedId()) {
-        this.displayValue.set(`${this.unidadeSigla} - ${this.unidadeNome}`);
-        this.selectedId.set(this.unidadeId);
+    if (changes['unidadeId'] || changes['unidadeSigla'] || changes['unidadeNome']) {
+      if (this.unidadeId) {
+        if (!this.selectedId()) {
+          this.displayValue.set(`${this.unidadeSigla} - ${this.unidadeNome}`);
+          this.selectedId.set(this.unidadeId);
+        }
+      } else {
+        this.displayValue.set('');
+        this.selectedId.set('');
+        this.unidadeSigla = '';
+        this.unidadeNome = '';
       }
+    }
+
+    if (changes['searchFn']) {
+      this.items.set([]);
+      this.page = 1;
+      this.hasMore = true;
+      this.currentTermo = null;
     }
   }
 

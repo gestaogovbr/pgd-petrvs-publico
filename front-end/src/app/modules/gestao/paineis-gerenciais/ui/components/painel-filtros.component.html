@@ -14,9 +14,9 @@
   <!-- Step 2: Busca Unidade -->
   <div class="col-12 col-md-4">
     <unidade-select
-      [unidadeId]="unidadeInicialId"
-      [unidadeSigla]="unidadeInicialSigla"
-      [unidadeNome]="unidadeInicialNome"
+      [unidadeId]="unidadeSelecionada()?.id ?? ''"
+      [unidadeSigla]="unidadeSelecionada()?.sigla ?? ''"
+      [unidadeNome]="unidadeSelecionada()?.nome ?? ''"
       [searchFn]="activeSearchFn()"
       (unidadeSelected)="selecionarUnidade($event)"
     ></unidade-select>
