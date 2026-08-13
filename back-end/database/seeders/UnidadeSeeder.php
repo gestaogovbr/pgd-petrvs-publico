@@ -2,9 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Unidade;
 use App\Models\Cidade;
+use App\Models\Unidade;
+use App\Services\CodigoOrgaoService;
+use Illuminate\Database\Seeder;
 
 class UnidadeSeeder extends Seeder
 {
@@ -31,7 +32,7 @@ class UnidadeSeeder extends Seeder
       "updated_at" => $this->timenow,
       "deleted_at" => NULL,
       "codigo" => "1",
-      "codigo_orgao" => \App\Services\CodigoOrgaoService::atual(),
+      "codigo_orgao" => CodigoOrgaoService::atual(),
       "sigla" => "MGI",
       "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
       "instituidora" => 1,

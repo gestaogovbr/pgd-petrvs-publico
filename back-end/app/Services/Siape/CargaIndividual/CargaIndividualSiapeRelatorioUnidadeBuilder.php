@@ -10,6 +10,7 @@ use App\Models\Usuario;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
+use App\Services\CodigoOrgaoService;
 use App\Services\IntegracaoService;
 use App\Support\SiapeDate;
 
@@ -31,7 +32,7 @@ class CargaIndividualSiapeRelatorioUnidadeBuilder
     {
         $codigoSiape = $this->normalizarCodigo((string) ($dadosSiape['codUorg'] ?? $codigo));
         $unidade = $this->unidadeRepository->findByCodigoOrgaoWithPai(
-            \App\Services\CodigoOrgaoService::atual(),
+            CodigoOrgaoService::atual(),
             $codigoSiape
         );
         $paiSiape = $this->normalizarCodigo((string) ($dadosSiape['codUorgPai'] ?? ''));

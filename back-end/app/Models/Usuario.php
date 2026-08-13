@@ -35,6 +35,7 @@ use App\Models\QuestionarioPreenchimento;
 use App\Models\StatusJustificativa;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
+use App\Services\CodigoOrgaoService;
 use App\Services\UtilService;
 use App\Support\ModalidadePgd;
 use App\Contracts\HasStatusHistory;
@@ -511,7 +512,7 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
     public function integracaoServidor()
     {
         return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf')
-            ->where('codigo_orgao', \App\Services\CodigoOrgaoService::atual());
+            ->where('codigo_orgao', CodigoOrgaoService::atual());
     }
 
    /**

@@ -20,6 +20,7 @@ use App\Models\NotificacaoConfig;
 use App\Models\HistoricoLotacao;
 use App\Models\HistoricoFuncao;
 use App\Models\CurriculumProfissional;
+use App\Services\CodigoOrgaoService;
 use App\Traits\AutoUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -110,7 +111,7 @@ class Unidade extends ModelBase
     protected static function booted()
     {
         static::creating(function ($unidade) {
-            $unidade->codigo_orgao = \App\Services\CodigoOrgaoService::atual();
+            $unidade->codigo_orgao = CodigoOrgaoService::atual();
             $unidade->notificacoes = empty($unidade->notificacoes) ? json_decode('{}') : $unidade->notificacoes;
             $unidade->etiquetas = $unidade->etiquetas ?? [];
         });
