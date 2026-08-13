@@ -63,7 +63,7 @@ describe('SystemLogsService::index', function () {
         expect($result['meta']['total'])->toBe(2);
     });
 
-    it('filters logs by filename', function () {
+    it('returns all log files even when a filename filter is sent', function () {
         $logPath = storage_path('logs');
 
         File::shouldReceive('exists')
@@ -94,9 +94,10 @@ describe('SystemLogsService::index', function () {
         $result = $service->index(['limit' => 10, 'page' => 1, 'filters' => ['filename' => 'siape']]);
 
         expect($result['success'])->toBeTrue();
-        expect($result['data'])->toHaveCount(1);
-        expect($result['data'][0]['filename'])->toBe('siape_central.log');
-        expect($result['meta']['total'])->toBe(1);
+        expect($result['data'])->toHaveCount(2);
+        expect($result['data'][0]['filename'])->toBe('MGI-31-07-2026-laravel.log');
+        expect($result['data'][1]['filename'])->toBe('siape_central.log');
+        expect($result['meta']['total'])->toBe(2);
     });
 
     it('returns empty when log directory does not exist', function () {
