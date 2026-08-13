@@ -13,4 +13,9 @@ interface UnidadeIntegranteAtribuicaoWriteRepositoryContract
 {
     public function create(array $attributes): Model;
     public function delete(string $id): bool;
+
+    /**
+     * @param list<string> $unidadeIntegranteIds
+     */
+    public function deleteAtivasByUnidadeIntegranteIds(array $unidadeIntegranteIds): int;
 }

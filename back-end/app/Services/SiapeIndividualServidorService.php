@@ -611,7 +611,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function verificarExistenciaUnidade(string $codigoUnidade): bool
     {
-        return $this->unidadeRepository->existsByCodigo($codigoUnidade);
+        return $this->unidadeRepository->existsByCodigoOrgao(CodigoOrgaoService::atual(), $codigoUnidade);
     }
 
     private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, DadosFuncionaisSiapeDTO $dados): bool
@@ -656,7 +656,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function buscarUorgNaoProcessada()
     {
-        return $this->siapeListaUORGSRepository->findUnprocessed();
+        return $this->siapeListaUORGSRepository->findUnprocessed(CodigoOrgaoService::atual());
     }
 
     private function buscarUnidadeNaLista(string $codigoUnidade): ?array
@@ -671,6 +671,7 @@ class SiapeIndividualServidorService extends ServiceBase
     {
         $this->siapeDadosUORGRepository->create([
             'id' => Str::uuid(),
+            'codigo_orgao' => CodigoOrgaoService::atual(),
             'data_modificacao' => SiapeDate::dataUltimaTransacaoParaBancoOuFalha($unidadeSiape['dataUltimaTransacao']),
             'response' => $responseXml,
             'created_at' => Carbon::now(),

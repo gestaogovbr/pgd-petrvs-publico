@@ -30,7 +30,10 @@ class CargaIndividualSiapeRelatorioUnidadeBuilder
     public function construir(array $dadosSiape, string $codigo): array
     {
         $codigoSiape = $this->normalizarCodigo((string) ($dadosSiape['codUorg'] ?? $codigo));
-        $unidade = $this->unidadeRepository->findByCodigoWithPai($codigoSiape);
+        $unidade = $this->unidadeRepository->findByCodigoOrgaoWithPai(
+            \App\Services\CodigoOrgaoService::atual(),
+            $codigoSiape
+        );
         $paiSiape = $this->normalizarCodigo((string) ($dadosSiape['codUorgPai'] ?? ''));
         $unidadeRaiz = $paiSiape === (string) IntegracaoService::CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI;
 

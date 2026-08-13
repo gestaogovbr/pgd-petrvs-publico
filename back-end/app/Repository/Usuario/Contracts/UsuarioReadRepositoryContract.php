@@ -28,6 +28,8 @@ interface UsuarioReadRepositoryContract
     public function findAgentesPublicosNoEscopoCadastrante(string $nomeMatricula, string $cadastranteId, int $limite = 50): Collection;
     public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool;
     public function findByEmail(string $email): ?Usuario;
+    public function findAllByEmailWithoutGlobalScopes(string $email, ?string $ignoreId = null): Collection;
+    public function findAllExternosPresentesNaIntegracao(): Collection;
     public function findActivesByCpf(string $cpf): Collection;
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario;
     public function findWithAreaTrabalho(string $userId, string $unidadeId): ?Usuario;

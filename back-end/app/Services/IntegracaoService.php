@@ -20,8 +20,9 @@ use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegrante;
-use App\Models\UnidadeIntegranteAtribuicao;
 use App\Repository\IntegracaoServidorRepository;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UsuarioRepository;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
 use App\Services\Siape\Servidor\Integracao;
 use Illuminate\Support\Facades\Log;
@@ -55,6 +56,7 @@ class IntegracaoService extends ServiceBase
   public $echo = false;
   public $integracao_config = [];
   public $unidadeRaiz = "";
+  public string $codigoOrgao = '';
   public $validaCertificado = "";     // eventual alteração deve ser feita no arquivo .env
   public $useLocalFiles = "";         // eventual alteração deve ser feita no arquivo .env
   public $storeLocalFiles = "";       // eventual alteração deve ser feita no arquivo .env
@@ -75,6 +77,10 @@ class IntegracaoService extends ServiceBase
     $this->localUnidades = $this->integracao_config['localUnidades']; // "unidades.xml";
     $this->localServidores = $this->integracao_config['localServidores']; // "servidores.xml";
     $this->unidadeRaiz = $this->integracao_config['codigoUnidadeRaiz'] ?: "1";
+    $this->codigoOrgao = CodigoOrgaoService::obrigatorio(
+      $this->integracao_config['siape']['codOrgao'] ?? null,
+      'O Código do Órgão da API Consulta SIAPE é obrigatório para executar a integração.'
+    );
     $this->nivelAcessoService = new NivelAcessoService();
   }
 
@@ -91,9 +97,12 @@ class IntegracaoService extends ServiceBase
   {
     $resultado = false;
     $query = DB::select("SELECT s.*, u.id AS unidade_servidor, c.uf AS unidade_uf FROM integracao_servidores s " .
-      "LEFT JOIN unidades u ON (u.codigo = s.codigo_servo_exercicio) " .
+      "LEFT JOIN unidades u ON (u.codigo = s.codigo_servo_exercicio AND u.codigo_orgao = s.codigo_orgao) " .
       "LEFT JOIN cidades c ON (c.id = u.cidade_id) " .
-      "WHERE emailfuncional = :email", [":email" => $usuario->email]);
+      "WHERE emailfuncional = :email AND s.codigo_orgao = :codigo_orgao", [
+        ":email" => $usuario->email,
+        ":codigo_orgao" => $this->codigoOrgao,
+      ]);
     if ($servidor = current($query)) {
       $usuario->cpf = $servidor->cpf;
       $usuario->nome = $servidor->nome;
@@ -168,6 +177,7 @@ class IntegracaoService extends ServiceBase
     // Prepara os principais atributos da Unidade.
     $values = [
       ':codigo' => $unidade->id_servo,
+      ':codigo_orgao' => $this->codigoOrgao,
       ':nome' => $unidade->nomeuorg,
       ':sigla' => $unidade->siglauorg,
       ':cidade_id' => $unidade->cidade_id
@@ -181,7 +191,9 @@ class IntegracaoService extends ServiceBase
         $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
         $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
         $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
-        $unidadeJaExisteNoBanco = Unidade::where("codigo", $unidade->id_servo)->first();
+        $unidadeJaExisteNoBanco = Unidade::where('codigo_orgao', $this->codigoOrgao)
+          ->where("codigo", $unidade->id_servo)
+          ->first();
         if ($unidadeJaExisteNoBanco) {
           throw new BadGatewayException(sprintf("Já existe uma unidade para o código %s", $unidade->id_servo));
         }
@@ -190,6 +202,8 @@ class IntegracaoService extends ServiceBase
             'id' => $values[':id'],
             'path' => $values[':path'],
             'codigo' => $values[':codigo'],
+            'codigo_orgao' => $values[':codigo_orgao'],
+            'unidade_antiga' => false,
             'nome' => $values[':nome'],
             'sigla' => $values[':sigla'],
             'cidade_id' => $values[':cidade_id'],
@@ -384,8 +398,12 @@ class IntegracaoService extends ServiceBase
             $uorg_codigo = UtilService::valueOrDefault($uo["id_servo"]);
             $uorg_ativa = UtilService::valueOrDefault($uo["ativa"]) == 'true';
 
-            $query_iu = DB::table('integracao_unidades')->where('id_servo', $uorg_codigo);
-            $query_u = DB::table('unidades')->where('codigo', $uorg_codigo);
+            $query_iu = DB::table('integracao_unidades')
+              ->where('codigo_orgao', $this->codigoOrgao)
+              ->where('id_servo', $uorg_codigo);
+            $query_u = DB::table('unidades')
+              ->where('codigo_orgao', $this->codigoOrgao)
+              ->where('codigo', $uorg_codigo);
 
             $uorg_siape_data_modificacao = UtilService::asTimeStamp(UtilService::valueOrDefault($uo["data_modificacao"]));
 
@@ -426,6 +444,7 @@ class IntegracaoService extends ServiceBase
 
               if (!is_null($nomeuorg)) $nomeuorg = UtilService::getNomeFormatado($nomeuorg);
               $unidade = [
+                'codigo_orgao' => $this->codigoOrgao,
                 'id_servo' => UtilService::valueOrDefault($uo["id_servo"], null, $option = "uorg"),
                 'pai_servo' => UtilService::valueOrDefault($uo["pai_servo"], null, $option = "uorg"),
                 'codigo_siape' => UtilService::valueOrDefault($uo["codigo_siape"], null, $option = "uorg"),
@@ -486,7 +505,9 @@ class IntegracaoService extends ServiceBase
           if (!empty($uorg['id_servo'])) return $uorg['id_servo'];
         }, $unidades);
 
-        $unidades_integracao = DB::table("integracao_unidades")->pluck('id_servo')->toArray();
+        $unidades_integracao = DB::table("integracao_unidades")
+          ->where('codigo_orgao', $this->codigoOrgao)
+          ->pluck('id_servo')->toArray();
 
         $unidades_integracao = array_map(function ($uorg) {
           if (!empty($uorg->id_servo)) return $uorg->id_servo;
@@ -499,7 +520,7 @@ class IntegracaoService extends ServiceBase
         // $unidades_integracao_remover ? DB::table('integracao_unidades')->wherein('id_servo', $unidades_integracao_remover)->update(['deleted_at' => $datahora_remocao]) : true;
         // $this->logSiape("Unidades removidas da tabela integracao_unidades", $unidades_integracao_remover, Tipo::INFO);
         SiapeLog::info("Concluída a fase de reconstrução da tabela integracao_unidades!.....");
-        $n = IntegracaoUnidade::count();
+        $n = IntegracaoUnidade::where('codigo_orgao', $this->codigoOrgao)->count();
         array_push($this->result['unidades']["Observações"], 'Total de unidades importadas do SIAPE: ' . $n . ' (apenas ATIVAS)');
         array_push($this->result['unidades']['Observações'], 'Os dados das Unidades foram obtidos ' . ($this->useLocalFiles ? 'através de arquivo XML armazenado localmente!' : 'através de consulta à API do SIAPE!'));
 
@@ -525,9 +546,9 @@ class IntegracaoService extends ServiceBase
           "" .
           "FROM integracao_unidades iu " .
           "" .
-          "LEFT JOIN unidades u ON (iu.id_servo = u.codigo) " .
+          "LEFT JOIN unidades u ON (iu.id_servo = u.codigo AND iu.codigo_orgao = u.codigo_orgao) " .
           "LEFT JOIN unidades un_atual_pai ON (un_atual_pai.id = u.unidade_pai_id) " .
-          "LEFT JOIN unidades und ON (iu.pai_servo = und.codigo) " .
+          "LEFT JOIN unidades und ON (iu.pai_servo = und.codigo AND iu.codigo_orgao = und.codigo_orgao) " .
           "LEFT JOIN cidades c ON (iu.municipio_ibge = c.codigo_ibge) " .
           "LEFT JOIN cidades c2 ON u.cidade_id = c2.id " .
           "" .
@@ -536,9 +557,9 @@ class IntegracaoService extends ServiceBase
           "OR iu.pai_servo != " .
           "(SELECT codigo as cod_unidade_pai FROM unidades u2 " .
           "WHERE id = u.unidade_pai_id)" .
-          ") AND iu.ativa = 'true' AND iu.deleted_at is NULL";
+          ") AND iu.ativa = 'true' AND iu.deleted_at is NULL AND iu.codigo_orgao = ?";
 
-        $this->unidadesSelecionadas = DB::select($consulta_sql);
+        $this->unidadesSelecionadas = DB::select($consulta_sql, [$this->codigoOrgao]);
         // Executa atualizações das unidades caso necessário.
         if (!empty($this->unidadesSelecionadas)) {
           SiapeLog::info("Iniciando atualização de unidades selecionadas", ['count' => count($this->unidadesSelecionadas)]);
@@ -559,7 +580,10 @@ class IntegracaoService extends ServiceBase
 
         //TODO esse codigo será removido e passado para um job a parte.
         // $DbResultDesativadas = $this->inativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NOW() WHERE data_inativacao IS NULL AND u.codigo IS NOT NULL and u.codigo != '' AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NOT NULL)");
-        $DbResultAtivadas = $this->ativadas = DB::update("UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.deleted_at IS NULL);");
+        $DbResultAtivadas = $this->ativadas = DB::update(
+          "UPDATE unidades AS u SET data_inativacao = NULL WHERE data_inativacao IS NOT NULL AND u.codigo_orgao = ? AND EXISTS (SELECT id FROM integracao_unidades iu WHERE iu.id_servo = u.codigo AND iu.codigo_orgao = u.codigo_orgao AND iu.deleted_at IS NULL)",
+          [$this->codigoOrgao]
+        );
 
         $this->result['unidades']['Resultado'] = 'Sucesso';
         array_push($this->result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->count() . ' unidades!');
@@ -715,21 +739,15 @@ class IntegracaoService extends ServiceBase
       return;
     }
 
-    $usuarios = Usuario::withoutGlobalScopes()
-        ->where('email', $email)
-        ->when($ignoreId, function ($query) use ($ignoreId) {
-            return $query->where('id', '!=', $ignoreId);
-        })
-        ->get();
+    $usuarios = $this->usuarioRepository()->findAllByEmailWithoutGlobalScopes($email, $ignoreId);
 
     foreach ($usuarios as $usuario) {
-      if (!empty($usuario)) {
-        LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
+      /** @var Usuario $usuario */
+      LogError::newError(sprintf("IntegracaoService: Durante integração, foi encontrado email duplicado na tabela usuários. Matricula: %s, Email: %s", $matricula, $email));
 
-        SiapeLog::info("IntegracaoService: Liberando email duplicado definindo como nulo", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
+      SiapeLog::info("IntegracaoService: Liberando email duplicado definindo como nulo", ['matricula' => $matricula, 'email' => $email, 'usuario' => $usuario->toJson()]);
 
-        DB::table('usuarios')->where('id', $usuario->id)->update(['email' => null]);
-      }
+      $this->usuarioRepository()->limparEmail((string) $usuario->id);
     }
   }
 
@@ -755,7 +773,10 @@ class IntegracaoService extends ServiceBase
         $lotacao->usuario_id = $usuario->id;
         $lotacao->save();
         $lotacao->refresh();
-        UnidadeIntegranteAtribuicao::create(['unidade_integrante_id' => $lotacao->id, 'atribuicao' => 'LOTADO'])->save();
+        $this->unidadeIntegranteAtribuicaoRepository()->create([
+          'unidade_integrante_id' => $lotacao->id,
+          'atribuicao' => 'LOTADO',
+        ]);
       }
     } else {
       $usuario = null; // se quem está logando não existe na tabela integracao_servidores
@@ -780,7 +801,9 @@ class IntegracaoService extends ServiceBase
 
   public function buscaProcessamentosPendentes(): array
   {
-    $siapeDadosUORG = SiapeDadosUORG::where('processado', 0)->count() > 1;
+    $siapeDadosUORG = SiapeDadosUORG::where('codigo_orgao', $this->codigoOrgao)
+      ->where('processado', 0)
+      ->count() > 1;
     $siapeDadosPessoais = SiapeConsultaDadosPessoais::where('processado', 0)->count() > 1;
     $siapeDadosFuncionais = SiapeConsultaDadosFuncionais::where('processado', 0)->count() > 1;
 
@@ -793,13 +816,17 @@ class IntegracaoService extends ServiceBase
 
   private function processaUnidadeRaiz(): void
   {
-    $siapeUnidadeRaiz = IntegracaoUnidade::where('pai_servo', self::CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI)->first();
+    $siapeUnidadeRaiz = IntegracaoUnidade::where('codigo_orgao', $this->codigoOrgao)
+      ->where('pai_servo', self::CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI)
+      ->first();
     if (is_null($siapeUnidadeRaiz)) {
       SiapeLog::info("Unidade raiz nao encontrada na tabela de integracao_unidades.");
       return;
     }
 
-    $unidadeRaiz = Unidade::where('sigla', $siapeUnidadeRaiz->siglauorg)->first();
+    $unidadeRaiz = Unidade::where('codigo_orgao', $this->codigoOrgao)
+      ->where('sigla', $siapeUnidadeRaiz->siglauorg)
+      ->first();
     if (is_null($unidadeRaiz)) {
       SiapeLog::info(sprintf("Unidade raiz %s nao encontrada na tabela de unidades.", $siapeUnidadeRaiz->siglauorg));
       return;
@@ -820,25 +847,19 @@ class IntegracaoService extends ServiceBase
   private function verificarUsuariosExternosIntegracao(): void
   {
     try {
-      $usuariosExternos = DB::select(
-        "SELECT u.* FROM usuarios AS u
-         INNER JOIN integracao_servidores AS ise ON u.matricula = ise.matriculasiape
-         WHERE u.usuario_externo = 1"
-      );
+      $usuariosExternos = $this->usuarioRepository()->findAllExternosPresentesNaIntegracao();
 
-      if (empty($usuariosExternos)) {
+      if ($usuariosExternos->isEmpty()) {
         return;
       }
 
       SiapeLog::info(sprintf("Encontrados %d usuários externos para atualizar.", count($usuariosExternos)));
 
       foreach ($usuariosExternos as $usuarioData) {
-        DB::update(
-          "UPDATE usuarios SET usuario_externo = 0 WHERE id = ?",
-          [$usuarioData->id]
-        );
+        /** @var Usuario $usuarioData */
+        $this->usuarioRepository()->update((string) $usuarioData->id, ['usuario_externo' => 0]);
 
-        $usuario = Usuario::find($usuarioData->id);
+        $usuario = $this->usuarioRepository()->findById((string) $usuarioData->id);
         if ($usuario && $usuario->perfil) {
           $perfilColaborador = $this->nivelAcessoService->getPerfilColaborador();
           $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
@@ -867,6 +888,16 @@ class IntegracaoService extends ServiceBase
         $e->getMessage()
       ));
     }
+  }
+
+  private function usuarioRepository(): UsuarioRepository
+  {
+    return app(UsuarioRepository::class);
+  }
+
+  private function unidadeIntegranteAtribuicaoRepository(): UnidadeIntegranteAtribuicaoRepository
+  {
+    return app(UnidadeIntegranteAtribuicaoRepository::class);
   }
 
 

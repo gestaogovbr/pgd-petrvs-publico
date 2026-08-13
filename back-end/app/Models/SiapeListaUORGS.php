@@ -13,6 +13,7 @@ class SiapeListaUORGS extends ModelBase
 
 
     protected $fillable = [
+        'codigo_orgao',
         'response',
          'processado'
     ];

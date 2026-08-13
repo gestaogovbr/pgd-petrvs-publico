@@ -1234,6 +1234,7 @@ DROP TABLE IF EXISTS `integracao_servidores`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `integracao_servidores` (
   `id` char(36) NOT NULL,
+  `codigo_orgao` varchar(20) NOT NULL DEFAULT '20000',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
@@ -1266,7 +1267,8 @@ CREATE TABLE `integracao_servidores` (
   `modalidade_pgd` varchar(50) DEFAULT NULL COMMENT 'Modalidade do Usuário no PGD',
   `participa_pgd` enum('sim','não') NOT NULL COMMENT 'Indica se o usuário participa do PGD.',
   `ident_unica` varchar(50) DEFAULT NULL COMMENT 'Identificador único do servidor',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `integracao_servidores_codigo_orgao_index` (`codigo_orgao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1279,6 +1281,7 @@ DROP TABLE IF EXISTS `integracao_unidades`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `integracao_unidades` (
   `id` char(36) NOT NULL,
+  `codigo_orgao` varchar(20) NOT NULL DEFAULT '20000',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
@@ -1315,7 +1318,8 @@ CREATE TABLE `integracao_unidades` (
   `cnpjupag` varchar(60) DEFAULT NULL,
   `cpf_titular_autoridade_uorg` varchar(14) DEFAULT NULL,
   `cpf_substituto_autoridade_uorg` varchar(14) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `integracao_unidades_codigo_orgao_index` (`codigo_orgao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2755,13 +2759,15 @@ DROP TABLE IF EXISTS `siape_blacklist_unidades`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `siape_blacklist_unidades` (
   `id` char(36) NOT NULL,
+  `codigo_orgao` varchar(20) NOT NULL DEFAULT '20000',
   `codigo` varchar(50) NOT NULL,
   `response` longtext NOT NULL,
   `inativado` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Indica se a unidade foi inativada (0 = não, 1 = sim)',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `siape_blacklist_unidades_codigo_orgao_index` (`codigo_orgao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2814,6 +2820,7 @@ DROP TABLE IF EXISTS `siape_dadosUORG`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `siape_dadosUORG` (
   `id` char(36) NOT NULL,
+  `codigo_orgao` varchar(20) NOT NULL DEFAULT '20000',
   `codigo` varchar(50) DEFAULT NULL,
   `response` longtext NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
@@ -2821,7 +2828,8 @@ CREATE TABLE `siape_dadosUORG` (
   `processado` tinyint(1) NOT NULL DEFAULT 0,
   `data_modificacao` datetime DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `siape_dadosuorg_codigo_orgao_index` (`codigo_orgao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2853,12 +2861,14 @@ DROP TABLE IF EXISTS `siape_listaUORG`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `siape_listaUORG` (
   `id` char(36) NOT NULL,
+  `codigo_orgao` varchar(20) NOT NULL DEFAULT '20000',
   `response` longtext NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `processado` tinyint(1) NOT NULL DEFAULT 0,
   `deleted_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `siape_listauorg_codigo_orgao_index` (`codigo_orgao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3251,6 +3261,8 @@ CREATE TABLE `unidades` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `codigo` varchar(12) DEFAULT NULL COMMENT 'Código da unidade',
+  `codigo_orgao` varchar(20) NOT NULL DEFAULT '20000',
+  `unidade_antiga` tinyint(1) NOT NULL DEFAULT 0,
   `sigla` varchar(100) NOT NULL COMMENT 'Sigla da unidade',
   `nome` varchar(256) NOT NULL COMMENT 'Nome da unidade',
   `instituidora` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Se a unidade é instituidora (Programas)',
@@ -3282,6 +3294,9 @@ CREATE TABLE `unidades` (
   KEY `unidades_unidade_pai_id_foreign` (`unidade_pai_id`),
   KEY `unidades_entidade_id_foreign` (`entidade_id`),
   KEY `unidades_codigo_index` (`codigo`),
+  KEY `unidades_codigo_orgao_index` (`codigo_orgao`),
+  KEY `unidades_unidade_antiga_index` (`unidade_antiga`),
+  UNIQUE KEY `unidades_codigo_orgao_codigo_unique` (`codigo_orgao`,`codigo`),
   FULLTEXT KEY `unidades_path_fulltext` (`path`),
   CONSTRAINT `unidades_cidade_id_foreign` FOREIGN KEY (`cidade_id`) REFERENCES `cidades` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `unidades_entidade_id_foreign` FOREIGN KEY (`entidade_id`) REFERENCES `entidades` (`id`) ON UPDATE CASCADE,

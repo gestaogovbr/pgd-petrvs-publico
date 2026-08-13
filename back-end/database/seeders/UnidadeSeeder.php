@@ -31,6 +31,7 @@ class UnidadeSeeder extends Seeder
       "updated_at" => $this->timenow,
       "deleted_at" => NULL,
       "codigo" => "1",
+      "codigo_orgao" => \App\Services\CodigoOrgaoService::atual(),
       "sigla" => "MGI",
       "nome" => "Ministério da Gestão e da Inovação em Serviços Públicos",
       "instituidora" => 1,
