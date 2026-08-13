@@ -106,7 +106,7 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
     public function findAllComAtribuicoesAtivasByUsuario(string $usuarioId): Collection
     {
         return $this->model->newQuery()
-            ->with('unidade:id,sigla')
+            ->with('unidade:id,sigla,unidade_antiga')
             ->where('usuario_id', $usuarioId)
             ->has('atribuicoes')
             ->get();
