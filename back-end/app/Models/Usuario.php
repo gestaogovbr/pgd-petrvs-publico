@@ -510,7 +510,8 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
 
     public function integracaoServidor()
     {
-        return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf');
+        return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf')
+            ->where('codigo_orgao', \App\Services\CodigoOrgaoService::atual());
     }
 
    /**

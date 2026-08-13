@@ -7,6 +7,7 @@ namespace App\Repository\Unidade\Contracts;
 use App\Models\Unidade;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 
@@ -33,13 +34,26 @@ interface UnidadeReadRepositoryContract
 
     public function getAreasTrabalhoWhereClause(string $usuarioId, bool $subordinadas, string $prefix = ""): string;
 
-    public function findByCodigo(string $codigo): ?Unidade;
+    public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?Unidade;
+
+    /**
+     * @param list<string> $codigos
+     */
+    public function findAllByCodigoOrgaoCodigos(string $codigoOrgao, array $codigos): Collection;
 
     public function findBySigla(string $sigla): ?Unidade;
 
     public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): Collection;
 
-    public function findByCodigoWithPai(string $codigo): ?Unidade;
+    public function findByCodigoOrgaoWithPai(string $codigoOrgao, string $codigo): ?Unidade;
+
+    public function findByIdForUpdate(string|int $id): ?Unidade;
+
+    public function findAllAtivasComCodigoByCodigoOrgao(string $codigoOrgao): Collection;
+
+    public function findAllSemInicioInativacaoByCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): Collection;
+
+    public function findAllPendentesInativacaoByCodigoOrgaoAte(string $codigoOrgao, CarbonInterface $dataLimite): Collection;
 
     public function getSubordinadas(array $ids): Collection;
 
@@ -49,7 +63,7 @@ interface UnidadeReadRepositoryContract
 
     public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade;
 
-    public function existsByCodigo(string $codigo): bool;
+    public function existsByCodigoOrgao(string $codigoOrgao, string $codigo): bool;
 
     public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection;
 

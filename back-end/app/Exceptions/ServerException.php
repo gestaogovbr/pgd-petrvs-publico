@@ -62,6 +62,7 @@ class ServerException extends Exception implements IBaseException
         "ValidateUsuario" => "Erro ao validar o usuário",
         "ValidateVersion" => "Erro de versão da aplicação",
         "TipoClienteExcluir" => "Tipo de Cliente",
+        "Tenant" => "Erro ao validar Tenant",
         "UsuarioDestroy" => "Usuário não tem permissão para excluir Agentes",
         "UsuarioDestroyNaoColaborador" => "Não é possível excluir usuários com nível diferente de Colaborador",
     ];

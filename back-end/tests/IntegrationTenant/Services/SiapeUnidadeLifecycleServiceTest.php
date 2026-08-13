@@ -549,7 +549,7 @@ describe('SiapeUnidadeLifecycleService', function () {
             'conectagov_chave' => 'chave',
             'conectagov_senha' => 'senha',
             'conectagov_qtd_max_requisicoes' => 10,
-            'codOrgao' => '1',
+            'codOrgao' => '20000',
             'siglaSistema' => 'SIGLA',
             'nomeSistema' => 'NOME',
             'senha' => 'SENHA',

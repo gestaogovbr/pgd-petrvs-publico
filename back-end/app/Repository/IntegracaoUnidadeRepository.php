@@ -19,21 +19,21 @@ class IntegracaoUnidadeRepository
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function getUnidadesComChefias(): \Illuminate\Support\Collection
+    public function getUnidadesComChefias(string $codigoOrgao): \Illuminate\Support\Collection
     {
-        return $this->readRepository->getUnidadesComChefias();
+        return $this->readRepository->getUnidadesComChefias($codigoOrgao);
     }
 
-    public function findByCodigo(string $codigo): ?IntegracaoUnidade
+    public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?IntegracaoUnidade
     {
-        return $this->readRepository->findByCodigo($codigo);
+        return $this->readRepository->findByCodigoOrgao($codigoOrgao, $codigo);
     }
 
     /**
      * @return \Illuminate\Support\Collection<int, non-falsy-string>
      */
-    public function getCodigosByCpfTitular(string $cpf, ?string $codigoExcluido = null): \Illuminate\Support\Collection
+    public function getCodigosByCpfTitular(string $cpf, string $codigoOrgao, ?string $codigoExcluido = null): \Illuminate\Support\Collection
     {
-        return $this->readRepository->getCodigosByCpfTitular($cpf, $codigoExcluido);
+        return $this->readRepository->getCodigosByCpfTitular($cpf, $codigoOrgao, $codigoExcluido);
     }
 }

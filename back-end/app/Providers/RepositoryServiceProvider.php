@@ -139,6 +139,10 @@ use App\Repository\SiapeBlackListServidor\Contracts\SiapeBlackListServidorWriteR
 
 use App\Repository\SiapeBlackListServidor\Eloquent\EloquentSiapeBlackListServidorReadRepository;
 use App\Repository\SiapeBlackListServidor\Eloquent\EloquentSiapeBlackListServidorWriteRepository;
+use App\Repository\SiapeBlacklistUnidade\Contracts\SiapeBlacklistUnidadeReadRepositoryContract;
+use App\Repository\SiapeBlacklistUnidade\Contracts\SiapeBlacklistUnidadeWriteRepositoryContract;
+use App\Repository\SiapeBlacklistUnidade\Eloquent\EloquentSiapeBlacklistUnidadeReadRepository;
+use App\Repository\SiapeBlacklistUnidade\Eloquent\EloquentSiapeBlacklistUnidadeWriteRepository;
 use App\Repository\SiapeConsultaDadosFuncionais\Contracts\SiapeConsultaDadosFuncionaisReadRepositoryContract;
 use App\Repository\SiapeConsultaDadosFuncionais\Contracts\SiapeConsultaDadosFuncionaisWriteRepositoryContract;
 use App\Repository\SiapeConsultaDadosFuncionais\Eloquent\EloquentSiapeConsultaDadosFuncionaisReadRepository;
@@ -234,6 +238,16 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             IntegracaoUnidadeWriteRepositoryContract::class,
             EloquentIntegracaoUnidadeWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeBlacklistUnidadeReadRepositoryContract::class,
+            EloquentSiapeBlacklistUnidadeReadRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeBlacklistUnidadeWriteRepositoryContract::class,
+            EloquentSiapeBlacklistUnidadeWriteRepository::class,
         );
 
         $this->app->bind(

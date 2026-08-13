@@ -21,24 +21,32 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
         $this->model = $model;
     }
 
-    public function getUnidadesComChefias(): Collection
+    public function getUnidadesComChefias(string $codigoOrgao): Collection
     {
         return DB::table('integracao_unidades as iu')
-            ->join('unidades as u', 'iu.codigo_siape', '=', 'u.codigo')
+            ->join('unidades as u', function ($join): void {
+                $join->on('iu.codigo_siape', '=', 'u.codigo')
+                    ->on('iu.codigo_orgao', '=', 'u.codigo_orgao');
+            })
             ->select([
                 'u.id as id_unidade',
                 'u.codigo as codigo_unidade',
+                'u.codigo_orgao',
                 'iu.cpf_titular_autoridade_uorg as cpf_chefe'
             ])
+            ->where('iu.codigo_orgao', $codigoOrgao)
             ->whereNull('u.deleted_at')
             ->get();
     }
 
-    public function findByCodigo(string $codigo): ?IntegracaoUnidade
+    public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?IntegracaoUnidade
     {
         $registro = $this->query()
-            ->where('id_servo', $codigo)
-            ->orWhere('codigo_siape', $codigo)
+            ->where('codigo_orgao', $codigoOrgao)
+            ->where(function ($query) use ($codigo): void {
+                $query->where('id_servo', $codigo)
+                    ->orWhere('codigo_siape', $codigo);
+            })
             ->first();
 
         return $registro instanceof IntegracaoUnidade ? $registro : null;
@@ -47,7 +55,7 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
     /**
      * @return Collection<int, non-falsy-string>
      */
-    public function getCodigosByCpfTitular(string $cpf, ?string $codigoExcluido = null): Collection
+    public function getCodigosByCpfTitular(string $cpf, string $codigoOrgao, ?string $codigoExcluido = null): Collection
     {
         $cpf = UtilService::onlyNumbers($cpf);
 
@@ -58,6 +66,7 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
         $cpfNormalizadoSql = "REPLACE(REPLACE(REPLACE(cpf_titular_autoridade_uorg, '.', ''), '-', ''), ' ', '')";
 
         return $this->query()
+            ->where('codigo_orgao', $codigoOrgao)
             ->whereNull('deleted_at')
             ->whereRaw($cpfNormalizadoSql . ' = ?', [$cpf])
             ->when($codigoExcluido !== null && $codigoExcluido !== '', function ($query) use ($codigoExcluido): void {

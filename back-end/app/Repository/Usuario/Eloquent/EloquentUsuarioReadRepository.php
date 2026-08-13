@@ -298,6 +298,25 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
+    public function findAllByEmailWithoutGlobalScopes(string $email, ?string $ignoreId = null): Collection
+    {
+        return Usuario::withoutGlobalScopes()
+            ->where('email', $email)
+            ->when($ignoreId, function ($query) use ($ignoreId) {
+                return $query->where('id', '!=', $ignoreId);
+            })
+            ->get();
+    }
+
+    public function findAllExternosPresentesNaIntegracao(): Collection
+    {
+        return $this->query()
+            ->select('usuarios.*')
+            ->join('integracao_servidores as ise', 'usuarios.matricula', '=', 'ise.matriculasiape')
+            ->where('usuarios.usuario_externo', 1)
+            ->get();
+    }
+
     public function findActivesByCpf(string $cpf): Collection
     {
         /** @var Collection $usuarios */

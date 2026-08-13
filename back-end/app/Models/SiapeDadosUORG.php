@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $codigo_orgao
+ */
 class SiapeDadosUORG extends ModelBase
 {
     use HasFactory;
@@ -14,6 +17,7 @@ class SiapeDadosUORG extends ModelBase
 
     protected $fillable = [
         'id',
+        'codigo_orgao',
         'codigo',
         'response',
         'processado',

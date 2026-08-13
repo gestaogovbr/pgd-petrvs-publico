@@ -33,6 +33,10 @@ afterAll(function () {
 
 describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function () {
 
+    beforeEach(function () {
+        config()->set('integracao.siape.codOrgao', '20000');
+    });
+
     it('executa fluxo completo de testes de banco de dados', function () {
         $mockFactory = Mockery::mock(IntegracaoServiceFactory::class);
 
@@ -103,8 +107,8 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $method->invoke($service, $cpf);
 
 
-        $unidadeRepository->shouldReceive('existsByCodigo')->with('U123')->andReturn(true);
-        $unidadeRepository->shouldReceive('existsByCodigo')->with('U999')->andReturn(false);
+        $unidadeRepository->shouldReceive('existsByCodigoOrgao')->with('20000', 'U123')->andReturn(true);
+        $unidadeRepository->shouldReceive('existsByCodigoOrgao')->with('20000', 'U999')->andReturn(false);
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'verificarExistenciaUnidade');
         $method->setAccessible(true);
@@ -115,7 +119,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
 
         $mockListaUorgs = new \App\Models\SiapeListaUORGS();
         $mockListaUorgs->cod_uorg = 'U2';
-        $siapeListaUORGSRepository->shouldReceive('findUnprocessed')->andReturn($mockListaUorgs);
+        $siapeListaUORGSRepository->shouldReceive('findUnprocessed')->with('20000')->andReturn($mockListaUorgs);
 
         $method = new ReflectionMethod(SiapeIndividualServidorService::class, 'buscarUorgNaoProcessada');
         $method->setAccessible(true);
@@ -132,6 +136,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
             ->with(Mockery::on(function (array $arg): bool {
                 return isset($arg['id'])
                     && ($arg['response'] ?? null) === '<xml></xml>'
+                    && ($arg['codigo_orgao'] ?? null) === '20000'
                     && ($arg['data_modificacao'] ?? null) === '2023-01-01 00:00:00'
                     && isset($arg['created_at'])
                     && isset($arg['updated_at']);
@@ -261,7 +266,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $method->setAccessible(true);
         
         try {
-            $method->invoke($service, $cpf);
+            $method->invoke($service, $cpf, []);
         } catch (\Exception $e) {
             expect($e->getMessage())->toContain('Erro na sincronização final');
         }

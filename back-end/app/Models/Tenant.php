@@ -41,6 +41,7 @@ use App\Builders\TenantBuilder;
  * @property string|null $login_login_unico_client_id
  * @property string|null $login_login_unico_secret
  * @property string|null $tipo_integracao
+ * @property string|null $integracao_siape_codorgao
  * @property string|null $api_cod_unidade_autorizadora
  * @property string|null $api_url
  * @property string|null $version

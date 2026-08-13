@@ -18,6 +18,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        \App\Events\CodigoOrgaoAlterado::class => [
+            \App\Listeners\EnfileirarMarcacaoUnidadesAntigas::class,
+        ],
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
                 \SocialiteProviders\GovBR\GovBRExtendSocialite::class.'@handle',
                 \SocialiteProviders\Azure\AzureExtendSocialite::class.'@handle',
