@@ -57,7 +57,7 @@ describe('PlanoTrabalhoCancelarValidator', function () {
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
         $this->consolidacaoRepo->shouldReceive('possuiConsolidacaoFinalizadaPorPlano')->andReturn(false);
         $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
-            ->with('unidade-1', 'chefia-1')->andReturn(true);
+            ->with('unidade-1', 'chefia-1', true)->andReturn(true);
 
         expect($this->validator->validar('plano-1', 'chefia-1'))->toBe($plano);
     });

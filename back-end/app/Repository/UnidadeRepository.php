@@ -25,9 +25,9 @@ class UnidadeRepository
         return $this->readRepository->hasUsuarioLotacao($unidadeId, $usuarioId, $subordinadas);
     }
 
-    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool
+    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId, bool $incluirDelegado = true): bool
     {
-        return $this->readRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId);
+        return $this->readRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId, $incluirDelegado);
     }
 
     public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool

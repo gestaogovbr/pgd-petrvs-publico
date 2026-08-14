@@ -20,6 +20,7 @@ trait ValidaAutorizacaoTrait
         string $usuarioId,
         string $unidadeId,
         string|array $ownerColumns = 'usuario_id',
+        bool $incluirDelegado = true,
     ): bool {
         foreach ((array) $ownerColumns as $column) {
             if ($entity->{$column} === $usuarioId) {
@@ -27,7 +28,7 @@ trait ValidaAutorizacaoTrait
             }
         }
 
-        return $this->unidadeRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId);
+        return $this->unidadeRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId, $incluirDelegado);
     }
 
     protected function autorizarDonoOuChefia(
@@ -36,8 +37,9 @@ trait ValidaAutorizacaoTrait
         string $unidadeId,
         string $mensagem = 'Usuário não tem permissão para realizar esta ação.',
         string|array $ownerColumns = 'usuario_id',
+        bool $incluirDelegado = true,
     ): void {
-        if ($this->isDonoOuChefia($entity, $usuarioId, $unidadeId, $ownerColumns)) {
+        if ($this->isDonoOuChefia($entity, $usuarioId, $unidadeId, $ownerColumns, $incluirDelegado)) {
             return;
         }
 

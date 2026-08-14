@@ -526,7 +526,7 @@ describe('PlanoTrabalhoService::show', function () {
 
         $this->readRepository->shouldReceive('findByIdComRelacoes')->andReturn($plano);
         $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-            ->with('unidade-1', 'chefia-1')->andReturn(true);
+            ->with('unidade-1', 'chefia-1', true)->andReturn(true);
 
         mockShowEnriquecimentoAcoes($plano);
 
@@ -548,7 +548,7 @@ describe('PlanoTrabalhoService::show', function () {
 
         $this->readRepository->shouldReceive('findByIdComRelacoes')->andReturn($plano);
         $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-            ->with('unidade-1', 'estranho-1')->andReturn(false);
+            ->with('unidade-1', 'estranho-1', true)->andReturn(false);
 
         mockShowEnriquecimentoAcoes($plano);
 

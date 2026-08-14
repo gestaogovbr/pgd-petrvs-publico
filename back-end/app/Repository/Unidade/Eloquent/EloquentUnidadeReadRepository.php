@@ -33,11 +33,14 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->exists();
     }
 
-    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool
+    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId, bool $incluirDelegado = true): bool
     {
+        $exclude = $incluirDelegado ? [] : ['delegado'];
+
         $unidadesGeridas = GestorHierarquiaCache::getUnidadesGeridas(
             $usuarioId,
-            fn () => $this->getUnidadesGerenciadas($usuarioId)->pluck('id')->all(),
+            fn () => $this->getUnidadesGerenciadas($usuarioId, $exclude)->pluck('id')->all(),
+            $incluirDelegado,
         );
 
         if (in_array($unidadeId, $unidadesGeridas, true)) {
