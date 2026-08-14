@@ -1,5 +1,11 @@
+## 3.0.12 14/08/2026
 
-## 3.0.11 09/07/2026
+### Adicionado
+
+### Corrigido
+- Erro ao consultar Relatórios de Envio
+
+## 3.0.11 09/08/2026
 
 ### Adicionado
  - Mensagens específicas de impedimento no arquivamento de Planos de Trabalho, informando o motivo pelo qual o plano não pode ser arquivado (prazo de recurso, pendências de encerramento, períodos avaliativos pendentes)
