@@ -14,7 +14,10 @@ import { ModalidadePgdService } from "src/app/services/modalidade-pgd.service";
 @Component({
     selector: 'relatorio-agente',
     templateUrl: './relatorio-agente.component.html',
-    styleUrls: ['./relatorio-agente.component.scss'],
+    styleUrls: [
+        '../relatorio-base/relatorio-base.component.scss',
+        './relatorio-agente.component.scss'
+    ],
     standalone: false
 })
 export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAgente, RelatorioAgenteDaoService> {

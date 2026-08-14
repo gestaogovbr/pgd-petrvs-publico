@@ -12,7 +12,10 @@ import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.compone
 @Component({
     selector: 'relatorio-unidade',
     templateUrl: './relatorio-unidade.component.html',
-    styleUrls: ['./relatorio-unidade.component.scss'],
+    styleUrls: [
+        '../relatorio-base/relatorio-base.component.scss',
+        './relatorio-unidade.component.scss'
+    ],
     standalone: false
 })
 export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioUnidade, RelatorioUnidadeDaoService> {

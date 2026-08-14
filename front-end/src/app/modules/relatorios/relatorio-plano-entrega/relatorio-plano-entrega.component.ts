@@ -15,7 +15,10 @@ import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.compone
 @Component({
     selector: 'relatorio-plano-entrega',
     templateUrl: './relatorio-plano-entrega.component.html',
-    styleUrls: ['./relatorio-plano-entrega.component.scss'],
+    styleUrls: [
+        '../relatorio-base/relatorio-base.component.scss',
+        './relatorio-plano-entrega.component.scss'
+    ],
     standalone: false
 })
 export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<RelatorioPlanoEntrega, RelatorioPlanoEntregaDaoService> {

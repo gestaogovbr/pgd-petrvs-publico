@@ -19,7 +19,10 @@ import { ModalidadePgdService } from "src/app/services/modalidade-pgd.service";
 @Component({
     selector: 'relatorio-plano-trabalho',
     templateUrl: './relatorio-plano-trabalho.component.html',
-    styleUrls: ['./relatorio-plano-trabalho.component.scss'],
+    styleUrls: [
+        '../relatorio-base/relatorio-base.component.scss',
+        './relatorio-plano-trabalho.component.scss'
+    ],
     standalone: false
 })
 export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService> {
