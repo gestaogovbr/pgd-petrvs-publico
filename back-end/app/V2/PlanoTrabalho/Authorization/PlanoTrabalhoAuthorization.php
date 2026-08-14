@@ -16,6 +16,9 @@ class PlanoTrabalhoAuthorization
 {
     use ValidaAutorizacaoTrait;
 
+    public const CAPACIDADE_CANCELAR = 'MOD_PTR_CNC';
+    public const CAPACIDADE_CANCELAR_FORCADO = 'MOD_PTR_CNC_FORC';
+
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
     ) {}
@@ -27,6 +30,7 @@ class PlanoTrabalhoAuthorization
             arquivar: $this->podeArquivar($plano, $usuario, $isElegivelParaArquivamento),
             desarquivar: $this->podeDesarquivar($plano, $usuario),
             encerrar: $this->podeEncerrar($plano, $usuario),
+            cancelar: $this->podeCancelar($plano, $usuario),
         );
     }
 
@@ -37,6 +41,23 @@ class PlanoTrabalhoAuthorization
         }
 
         return $this->isAutorizadoEncerrar($plano, $usuario);
+    }
+
+    public function podeCancelar(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if (!$usuario->hasPermissionTo(self::CAPACIDADE_CANCELAR)) {
+            return false;
+        }
+
+        if ($this->isStatusCancelavelBase($plano)) {
+            return $this->isAutorizadoCancelarBase($plano, $usuario);
+        }
+
+        if ($plano->status === StatusEnum::CONCLUIDO->value) {
+            return $this->isAutorizadoCancelarConcluido($plano, $usuario);
+        }
+
+        return false;
     }
 
     public function isElegivelParaEncerramento(PlanoTrabalho $plano): bool
@@ -159,5 +180,44 @@ class PlanoTrabalhoAuthorization
         }
 
         return $usuario->perfil !== null && $usuario->perfil->nivel <= PerfilEnum::ADMINISTRADOR_NEGOCIAL->value;
+    }
+
+    private function isStatusCancelavelBase(PlanoTrabalho $plano): bool
+    {
+        return in_array($plano->status, [
+            StatusEnum::ATIVO->value,
+            StatusEnum::SUSPENSO->value,
+        ], true);
+    }
+
+    private function isAutorizadoCancelarBase(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($this->isDonoOuChefia($plano, $usuario->id, $plano->unidade_id)) {
+            return true;
+        }
+
+        $perfil = $usuario->perfil;
+
+        return $perfil !== null && $perfil->nivel <= PerfilEnum::ADMINISTRADOR_NEGOCIAL->value;
+    }
+
+    private function isAutorizadoCancelarConcluido(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if (!$usuario->hasPermissionTo(self::CAPACIDADE_CANCELAR_FORCADO)) {
+            return false;
+        }
+
+        $perfil = $usuario->perfil;
+
+        if ($perfil !== null && $perfil->nivel <= PerfilEnum::ADMINISTRADOR_MASTER->value) {
+            return true;
+        }
+
+        if ($perfil !== null && $perfil->nivel === PerfilEnum::ADMINISTRADOR_NEGOCIAL->value) {
+            return $this->unidadeRepository->isUsuarioGestorSubstitutoDaUnidade($plano->unidade_id, $usuario->id)
+                || $this->unidadeRepository->isUsuarioGestorDelegadoDaUnidade($plano->unidade_id, $usuario->id);
+        }
+
+        return false;
     }
 }

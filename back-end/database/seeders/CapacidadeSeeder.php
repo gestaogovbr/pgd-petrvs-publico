@@ -311,6 +311,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PRGT_CONCL"],
       ["codigo" => "MOD_PTR"],
       ["codigo" => "MOD_PTR_CNC"],
+      ["codigo" => "MOD_PTR_CNC_FORC"],
       ["codigo" => "MOD_PTR_CSLD"],
       ["codigo" => "MOD_PTR_CSLD_AVAL"],
       ["codigo" => "MOD_PTR_CSLD_CANC_AVAL"],
@@ -453,7 +454,8 @@ class CapacidadeSeeder extends Seeder
             "MOD_UND_INTG_EXCL",
             "MOD_UND_INTG_GST",
             "MOD_UND_INTG_INCL",
-            "MOD_UND_INST"
+            "MOD_UND_INST",
+            "MOD_PTR_CNC_FORC"
         ]);
     });
 
