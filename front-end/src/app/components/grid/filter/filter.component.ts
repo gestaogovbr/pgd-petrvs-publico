@@ -1,12 +1,13 @@
-import { Component, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Injector, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, FormGroupDirective } from '@angular/forms';
 import { QueryContext } from 'src/app/dao/query-context';
 import { QueryOptions } from 'src/app/dao/query-options';
 import { Base } from 'src/app/models/base.model';
 import { IFormGroupHelper } from 'src/app/services/form-helper.service';
+import { DialogService } from 'src/app/services/dialog.service';
 import { ComponentBase } from '../../component-base';
 import { GridComponent } from '../grid.component';
-import { Observable } from 'rxjs';
+import { Observable, finalize } from 'rxjs';
 
 @Component({
     selector: 'filter',
@@ -23,7 +24,7 @@ import { Observable } from 'rxjs';
     ],
     standalone: false
 })
-export class FilterComponent extends ComponentBase implements OnInit {
+export class FilterComponent extends ComponentBase implements OnInit, OnDestroy {
   @ViewChild(FormGroupDirective) formDirective?: FormGroupDirective;
   @Output() filterClear = new EventEmitter<void>();
   @Input() form?: FormGroup;
@@ -47,12 +48,21 @@ export class FilterComponent extends ComponentBase implements OnInit {
   @Input() excelFileName: string = 'export.xlsx';
 
   public deletedControl: FormControl = new FormControl(false);
+  public exportingExcel: boolean = false;
+  public dialog: DialogService;
 
   constructor(injector: Injector) {
     super(injector);
+    this.dialog = injector.get<DialogService>(DialogService);
   }
 
   ngOnInit(): void {
+  }
+
+  ngOnDestroy(): void {
+    if (this.exportingExcel) {
+      this.stopExcelExportFeedback();
+    }
   }
 
   public getId(relativeId?: string): string {
@@ -104,12 +114,15 @@ export class FilterComponent extends ComponentBase implements OnInit {
     let form: any = this.form!.value;
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
 
-    if (this.form!.valid && this.exportExcel) {
-      this.grid!.loading = true;
-      try {
-        this.exportExcel?.(form, queryOptions).subscribe(res => {
+    if (this.form!.valid && this.exportExcel && !this.exportingExcel) {
+      const export$ = this.exportExcel(form, queryOptions);
+      this.startExcelExportFeedback();
+      export$.pipe(
+        finalize(() => this.stopExcelExportFeedback())
+      ).subscribe({
+        next: (res) => {
           if (res && res.body) {
-            const blob = new Blob([res.body!], {
+            const blob = new Blob([res.body], {
               type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             });
             const url = window.URL.createObjectURL(blob);
@@ -119,15 +132,32 @@ export class FilterComponent extends ComponentBase implements OnInit {
             link.click();
             window.URL.revokeObjectURL(url);
           }
-        }, error => {
+        },
+        error: (error) => {
           console.log(error);
-        });
-
-        this.grid!.loading = false;
-      } finally {
-        this.grid!.loading = false;
-      }
-      
+          this.dialog.alert('Erro', 'Não foi possível gerar o arquivo Excel.');
+        }
+      });
     }
+  }
+
+  private startExcelExportFeedback() {
+    this.exportingExcel = true;
+    if (this.grid) {
+      this.grid.loading = true;
+    }
+    this.dialog.showSppinerOverlay(
+      'O arquivo Excel está sendo gerado. Relatórios grandes podem levar alguns instantes.'
+    );
+    this.detectChanges();
+  }
+
+  private stopExcelExportFeedback() {
+    this.dialog.closeSppinerOverlay();
+    this.exportingExcel = false;
+    if (this.grid) {
+      this.grid.loading = false;
+    }
+    this.detectChanges();
   }
 }

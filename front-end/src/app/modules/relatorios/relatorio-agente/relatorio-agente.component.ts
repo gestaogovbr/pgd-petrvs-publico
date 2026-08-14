@@ -143,7 +143,6 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
     try {
       return this.dao!.exportarXls({
         where: queryOptions.where,
@@ -151,8 +150,6 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
       });
     } catch (error: any) {
       this.error(error);
-    } finally {
-      this.loading = false;
     }
 
     return of(null);

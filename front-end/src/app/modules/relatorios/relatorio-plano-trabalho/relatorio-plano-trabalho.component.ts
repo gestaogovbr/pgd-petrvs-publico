@@ -269,7 +269,6 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
     try{
       return this.dao!.exportarXls(!form.incluir_periodos_avaliativos, {
         where: queryOptions.where,
@@ -277,8 +276,6 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
       });
     } catch (error: any) {
       this.error(error);
-    } finally {
-      this.loading = false;
     }
 
     return of(null);

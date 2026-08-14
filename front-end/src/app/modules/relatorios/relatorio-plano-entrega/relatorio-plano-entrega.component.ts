@@ -177,7 +177,6 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
     try{
       return this.dao!.exportarXls({
         where: queryOptions.where,
@@ -185,8 +184,6 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
       });
     } catch (error: any) {
       this.error(error);
-    } finally {
-      this.loading = false;
     }
 
     return of(null);
