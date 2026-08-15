@@ -544,6 +544,94 @@
     height: 100%;
   }
 
+  /*
+    Filtros no cabeçalho da grade: width:100% (col-md-*) não resolve
+    dentro de td/th com table-layout:auto — o campo fica no tamanho intrínseco.
+    Hosts em bloco com width:auto preenchem a célula; só então o 100% interno vale.
+  */
+  .grid-scroll-container thead th {
+    column-header,
+    .grid-header-filter,
+    input-text,
+    input-select,
+    input-search,
+    input-text input-container,
+    input-select input-container {
+      display: block !important;
+      width: auto !important;
+      max-width: none !important;
+      min-width: 0 !important;
+      flex: none !important;
+      float: none !important;
+      box-sizing: border-box !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    .grid-header-filter {
+      text-align: left;
+    }
+
+    input-text [class*="col-md-"],
+    input-select [class*="col-md-"] {
+      width: auto !important;
+      max-width: none !important;
+      flex: none !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    input-text .input-group,
+    input-text .d-flex,
+    input-select .input-group,
+    input-select .dropdown,
+    input-select .d-flex {
+      display: flex !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    input-text .form-control,
+    input-select .form-control,
+    input-select .btn.dropdown-toggle {
+      width: 100% !important;
+      max-width: none !important;
+      box-sizing: border-box !important;
+    }
+
+    input-datetime,
+    input-datetime input-container,
+    input-datetime [class*="col-md-"] {
+      display: inline-block !important;
+      width: max-content !important;
+      max-width: max-content !important;
+      flex: none !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    input-datetime .input-group,
+    input-datetime .d-flex {
+      display: flex !important;
+      width: max-content !important;
+      max-width: max-content !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+
+    input-datetime .form-control {
+      width: auto !important;
+      max-width: none !important;
+    }
+  }
+
   .buttons-home path {
     fill: var(--bs-body-color);
   }

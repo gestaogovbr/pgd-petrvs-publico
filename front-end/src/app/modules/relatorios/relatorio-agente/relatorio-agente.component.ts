@@ -40,6 +40,7 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
         unidadeNome: { default: "" },
         matricula: { default: "" },
         situacao: { default: "" },
+        participantePGD: { default: "" },
         selecao: { default: "" },
         modalidade: { default: "" },
         modalidadeSouGov: { default: "" },
@@ -96,6 +97,10 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
 
     if (form.situacao?.length) {
       result.push(["situacao", "==", form.situacao]);
+    }
+
+    if (form.participantePGD?.length) {
+      result.push(["participantePGD", "==", form.participantePGD]);
     }
 
     if (form.selecao?.length) {

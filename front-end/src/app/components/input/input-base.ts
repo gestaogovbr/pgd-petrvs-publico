@@ -99,7 +99,11 @@ export abstract class InputBase extends ComponentBase {
     }
 
     public ngOnInit() {
-        if(this.size > 0) this.class += " " + this.hostClass + " col-md-" + this.size;       
+        if(this.size > 0) {
+            this.class += " " + this.hostClass + " col-md-" + this.size;
+        } else if (this.hostClass) {
+            this.class += " " + this.hostClass;
+        }
     }
 
     public ngAfterViewInit() {
