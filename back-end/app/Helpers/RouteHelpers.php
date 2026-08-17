@@ -18,3 +18,15 @@ if (!function_exists('defaultRoutes')) {
         Route::post('delete-file', [$controllerClass, 'deleteFile']);
     }
 }
+
+if (!function_exists('loadTenantApiRouteFiles')) {
+    function loadTenantApiRouteFiles(string $directory): void
+    {
+        $files = glob($directory . '/*.php') ?: [];
+        sort($files);
+
+        foreach ($files as $routeFile) {
+            require_once $routeFile;
+        }
+    }
+}
