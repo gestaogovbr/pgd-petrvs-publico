@@ -1,9 +1,16 @@
 ## 3.0.12 14/08/2026
 
 ### Adicionado
+- Permissão para gestor delegado excluir Plano de Entrega não homologado da própria unidade
+
+### Modificado
+- Reorganização interna da verificação de permissões nos Planos de Trabalho para melhor manutenção do código
 
 ### Corrigido
 - Erro ao consultar Relatórios de Envio
+- Carga individual do SIAPE restrita ao CPF e às matrículas consultadas, evitando alterações em outros servidores durante a sincronização
+- Corrigida permissão que permitia gestor delegado homologar Plano de Entrega de unidade subordinada
+
 
 ## 3.0.11 09/08/2026
 
