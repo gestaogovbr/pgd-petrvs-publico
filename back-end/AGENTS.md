@@ -23,9 +23,18 @@
 - Controllers devem permanecer finos: apenas validação/manuseio da request, pontos de entrada de autorização, delegação e formatação de resposta.
 - Regra de negócio pertence a Services, colaboradores específicos de domínio, validators, repositories, DTOs, policies, resources, jobs ou commands.
 - Prefira injeção por construtor e contracts quando repositories ou integrações externas estiverem envolvidos.
-- Mantenha métodos pequenos, prefira retornos antecipados em vez de condicionais aninhadas, evite números mágicos e remova imports não utilizados.
+- Mantenha métodos pequenos, prefira retornos antecipados em vez de condicionais aninhadas e remova imports não utilizados.
 - Preserve explicitamente os limites de tenancy. Tenha cuidado com conexões central vs tenant, inicialização de tenant e isolamento de dados.
 - Preserve comportamento de auditoria/log, especialmente `SiapeLog`, logs Laravel, auditing e logs de processamento de integração.
+
+## Regra Obrigatória para Valores Nomeados
+
+- É proibido introduzir números mágicos, strings mágicas ou flags booleanas/inteiras sem nome no código de produção.
+- Valores que representem estados, papéis, status, atribuições, sentinelas, limites ou regras de domínio devem usar enum, constante nomeada ou configuração.
+- Antes de criar uma definição, procure e reutilize o enum, a constante ou a configuração já existente no domínio.
+- Use enums para conjuntos fechados de valores de domínio, constantes para valores estáveis e reutilizáveis e configuração para valores dependentes do ambiente.
+- Literais são permitidos somente quando forem estruturalmente óbvios e não carregarem significado de domínio.
+- A revisão de código deve solicitar mudanças quando um novo valor mágico for introduzido.
 
 ## Regras de Repository
 
