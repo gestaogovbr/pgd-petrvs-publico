@@ -313,7 +313,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $this->query()
             ->select('usuarios.*')
             ->join('integracao_servidores as ise', 'usuarios.matricula', '=', 'ise.matriculasiape')
-            ->where('usuarios.usuario_externo', 1)
+            ->where('usuarios.usuario_externo', Usuario::USUARIO_EXTERNO)
             ->get();
     }
 

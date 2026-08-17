@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Atribuicao;
 use App\Exceptions\BadGatewayException;
 use Throwable;
 use Carbon\Carbon;
@@ -775,7 +776,7 @@ class IntegracaoService extends ServiceBase
         $lotacao->refresh();
         $this->unidadeIntegranteAtribuicaoRepository()->create([
           'unidade_integrante_id' => $lotacao->id,
-          'atribuicao' => 'LOTADO',
+          'atribuicao' => Atribuicao::LOTADO->value,
         ]);
       }
     } else {

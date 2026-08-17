@@ -21,7 +21,7 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
 
         $codigoOrgao = CodigoOrgaoService::obrigatorio($this->getConfig()['codOrgao'] ?? null);
         $response = SiapeListaUORGS::where('codigo_orgao', $codigoOrgao)
-                ->where('processado', 1)
+                ->where('processado', SiapeListaUORGS::PROCESSADO)
                 ->orderBy('updated_at', 'desc')
                 ->first();
                 
