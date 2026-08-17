@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\View;
 use App\Services\PetrvsService;
 use App\Http\Controllers\ControllerBase;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Stancl\Tenancy\Database\Models\Domain;
 use Throwable;
 
@@ -43,7 +44,9 @@ class PetrvsController extends ControllerBase
     if ($domain == "petrvs_php") $domain = "localhost";
 
     /** @phpstan-ignore-next-line */
-    $tenant = Domain::where('domain', $domain)->with('tenant')->first();
+    $tenant = Cache::remember('domain:domain:'.$domain, 900, fn() =>
+      Domain::where('domain', $domain)->with('tenant')->first()
+    );
 
     if (!$tenant) {
       $app_config = config("app");
