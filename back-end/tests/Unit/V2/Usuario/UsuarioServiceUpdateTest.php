@@ -9,6 +9,7 @@ use App\Services\UnidadeIntegranteService;
 use App\V2\Usuario\DTOs\UsuarioAtribuicoesDTO;
 use App\V2\Usuario\DTOs\UsuarioDadosPessoaisDTO;
 use App\V2\Usuario\UsuarioService;
+use App\V2\Usuario\Validators\UsuarioShowAuthorizationValidator;
 use App\V2\Usuario\Validators\UsuarioUpdateAuthorizationValidator;
 use App\V2\Usuario\Validators\UsuarioUpdateValidator;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,7 @@ uses(TestCase::class);
 beforeEach(function () {
     $this->usuarioRepo = Mockery::mock(UsuarioRepository::class);
     $this->authValidator = Mockery::mock(UsuarioUpdateAuthorizationValidator::class);
+    $this->showAuthValidator = Mockery::mock(UsuarioShowAuthorizationValidator::class);
     $this->updateValidator = Mockery::mock(UsuarioUpdateValidator::class);
     $this->storeValidator = Mockery::mock(\App\V2\Usuario\Validators\UsuarioStoreValidator::class);
     $this->integranteService = Mockery::mock(UnidadeIntegranteService::class);
@@ -28,6 +30,7 @@ beforeEach(function () {
     $this->service = new UsuarioService(
         $this->usuarioRepo,
         $this->authValidator,
+        $this->showAuthValidator,
         $this->updateValidator,
         $this->storeValidator,
         $this->integranteService,

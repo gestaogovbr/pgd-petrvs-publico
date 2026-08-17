@@ -71,7 +71,6 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_TRF"],
       ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_USER"],
-      ["codigo" => "MOD_USER_TUDO"],
       ["codigo" => "MOD_PENT"],
       ["codigo" => "MOD_PRGT"],
       ["codigo" => "MOD_PROD"],
@@ -203,7 +202,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_UND_EDT"],
       ["codigo" => "MOD_UND_INCL"],
       ["codigo" => "MOD_USER"],
-      ["codigo" => "MOD_USER_TUDO"],
+      ["codigo" => "MOD_USER_VIS"],
       ["codigo" => "MOD_USER_EDT"],
       ["codigo" => "MOD_USER_ATRIB"],
       ["codigo" => "MOD_PROD"],
@@ -360,12 +359,12 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_UND_INTG_INCL"],
       ["codigo" => "MOD_UND_TUDO"],
       ["codigo" => "MOD_USER"],
+      ["codigo" => "MOD_USER_VIS"],
       ["codigo" => "MOD_USER_EDT"],
       ["codigo" => "MOD_USER_EXCL"],
       ["codigo" => "MOD_USER_INCL"],
       ["codigo" => "MOD_USER_REATIVAR"],
       ["codigo" => "MOD_USER_LIST_ALL"],
-      ["codigo" => "MOD_USER_TUDO"],
       ["codigo" => "MOD_USER_ATRIB"],
       ["codigo" => "MOD_CFG_USER_PERFIL"],
       ["codigo" => "MOD_PROD"],
@@ -415,6 +414,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_SIAPE_RELATORIO_CARGA"],
       ["codigo" => "MOD_IND_TODAS_UNIDADES"],
       ["codigo" => "MOD_UND_INST"],
+      ["codigo" => "MOD_USER_TUDO"],
       ["codigo" => "MOD_PART_PEDAGIO"],
       ["codigo" => "MOD_AUDIT_LOG"],
       ["codigo" => "MOD_TIPO_OBJETIVO"],
@@ -453,7 +453,8 @@ class CapacidadeSeeder extends Seeder
             "MOD_UND_INTG_GST",
             "MOD_UND_INTG_INCL",
             "MOD_UND_INST",
-            "MOD_USER_EDT"
+            "MOD_USER_EDT",
+            "MOD_USER_VIS"
         ]);
     });
 

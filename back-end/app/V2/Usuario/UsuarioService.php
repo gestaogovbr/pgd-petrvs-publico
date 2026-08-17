@@ -11,6 +11,7 @@ use App\Services\UnidadeIntegranteService;
 use App\V2\Usuario\DTOs\UsuarioAtribuicoesDTO;
 use App\V2\Usuario\DTOs\UsuarioDadosPessoaisDTO;
 use App\V2\Usuario\DTOs\UsuarioStoreDTO;
+use App\V2\Usuario\Validators\UsuarioShowAuthorizationValidator;
 use App\V2\Usuario\Validators\UsuarioStoreValidator;
 use App\V2\Usuario\Validators\UsuarioUpdateAuthorizationValidator;
 use App\V2\Usuario\Validators\UsuarioUpdateValidator;
@@ -25,6 +26,7 @@ class UsuarioService
     public function __construct(
         protected UsuarioRepository $usuarioRepository,
         protected UsuarioUpdateAuthorizationValidator $authorizationValidator,
+        protected UsuarioShowAuthorizationValidator $showAuthorizationValidator,
         protected UsuarioUpdateValidator $updateValidator,
         protected UsuarioStoreValidator $storeValidator,
         protected UnidadeIntegranteService $unidadeIntegranteService,
@@ -33,7 +35,7 @@ class UsuarioService
 
     public function store(UsuarioStoreDTO $dto): Usuario
     {
-        $editor = $this->getEditorLogado();
+        $editor = $this->getUsuarioLogado();
 
         if (!$editor->hasPermissionTo(self::CAPACIDADE_INCLUIR_USUARIO)) {
             throw new ForbiddenException('Seu perfil não permite incluir usuários.');
@@ -53,7 +55,7 @@ class UsuarioService
     public function updateDadosPessoais(string $usuarioId, UsuarioDadosPessoaisDTO $dto): Usuario
     {
         $alvo = $this->findUsuarioOrFail($usuarioId);
-        $editor = $this->getEditorLogado();
+        $editor = $this->getUsuarioLogado();
 
         $this->authorizationValidator->validarEscopo($editor, $alvo);
 
@@ -67,7 +69,7 @@ class UsuarioService
     public function updateTextoComplementar(string $usuarioId, ?string $texto): Usuario
     {
         $alvo = $this->findUsuarioOrFail($usuarioId);
-        $editor = $this->getEditorLogado();
+        $editor = $this->getUsuarioLogado();
 
         $this->authorizationValidator->validarEscopo($editor, $alvo);
 
@@ -79,7 +81,7 @@ class UsuarioService
     public function updatePerfil(string $usuarioId, string $perfilId): Usuario
     {
         $alvo = $this->findUsuarioOrFail($usuarioId);
-        $editor = $this->getEditorLogado();
+        $editor = $this->getUsuarioLogado();
 
         $this->authorizationValidator->validarEscopo($editor, $alvo);
         $this->authorizationValidator->validarAlteracaoPerfil($editor, $alvo, $perfilId);
@@ -94,7 +96,7 @@ class UsuarioService
     public function updateAtribuicoes(UsuarioAtribuicoesDTO $dto): Usuario
     {
         $alvo = $this->findUsuarioOrFail($dto->usuarioId);
-        $editor = $this->getEditorLogado();
+        $editor = $this->getUsuarioLogado();
 
         $this->authorizationValidator->validarEscopo($editor, $alvo);
         $this->updateValidator->validarAtribuicoes($dto->atribuicoes, (bool) $alvo->usuario_externo);
@@ -114,16 +116,36 @@ class UsuarioService
 
     public function searchByNomeMatricula(string $nomeMatricula, string $cadastranteId): Collection
     {
+        $solicitante = $this->getUsuarioLogado();
+
+        if (!$solicitante->hasPermissionTo('MOD_USER_VIS')) {
+            return new Collection();
+        }
+
         return $this->usuarioRepository->findAgentesPublicosNoEscopoCadastrante($nomeMatricula, $cadastranteId);
     }
 
     public function show(string $usuarioId): Usuario
     {
-        return $this->findUsuarioOrFail($usuarioId);
+        $alvo = $this->findUsuarioOrFail($usuarioId);
+        $solicitante = $this->getUsuarioLogado();
+
+        $this->showAuthorizationValidator->validarEscopo($solicitante, $alvo);
+
+        return $alvo;
     }
 
     public function unidadesVinculadasPorCpf(string $cpf): Collection
     {
+        $alvo = $this->usuarioRepository->findByCpf($cpf);
+
+        if ($alvo === null) {
+            throw new NotFoundException('Usuário não encontrado para o CPF informado.');
+        }
+
+        $solicitante = $this->getUsuarioLogado();
+        $this->showAuthorizationValidator->validarEscopo($solicitante, $alvo);
+
         return $this->usuarioRepository->getUnidadesVinculadas($cpf);
     }
 
@@ -171,16 +193,16 @@ class UsuarioService
         return $usuario;
     }
 
-    private function getEditorLogado(): Usuario
+    private function getUsuarioLogado(): Usuario
     {
-        $editor = $this->usuarioRepository->findByIdComAreasTrabalho(Auth::id());
+        $usuario = $this->usuarioRepository->findByIdComAreasTrabalho(Auth::id());
 
-        if ($editor === null) {
+        if ($usuario === null) {
             throw new NotFoundException('Usuário logado não encontrado.');
         }
 
-        $editor->loadMissing('perfil');
+        $usuario->loadMissing('perfil');
 
-        return $editor;
+        return $usuario;
     }
 }
