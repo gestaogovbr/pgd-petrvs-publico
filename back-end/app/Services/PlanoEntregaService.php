@@ -220,9 +220,10 @@ class PlanoEntregaService extends ServiceBase
             $result["planoSuspenso"] = $this->isPlano("SUSPENSO", $planoEntrega);
             $result["planoCancelado"] = ($planoEntrega['status'] == "CANCELADO");
             $result["planoStatus"] = empty($planoEntrega['id']) ? null : PlanoEntrega::find($planoEntrega['id'])->status;
-            $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id']);
-            $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_pai_id']);
-            $result["gestorLinhaAscendenteUnidadePlano"] = !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u));
+            $result["gestorUnidadePlano"] = $this->usuario->isGestorUnidade($planoEntrega['unidade_id'], incluiDelegado: false);
+            $result["gestorDelegadoUnidadePlano"] = $this->usuario->atribuicoesGestor($planoEntrega['unidade_id'])['gestorDelegado'];
+            $result["gestorUnidadePaiUnidadePlano"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($planoEntrega['unidade']['unidade_pai_id'], incluiDelegado: false);
+            $result["gestorLinhaAscendenteUnidadePlano"] = !!array_filter($this->unidade->linhaAscendente($planoEntrega['unidade_id']), fn($u) => $this->usuario->isGestorUnidade($u, incluiDelegado: false));
             $result["unidadePlanoPaiEhUnidadePaiUnidadePlano"] = $planoEntrega['plano_entrega_id'] ? $planoEntregaPai->unidade_id == $planoEntrega['unidade']['unidade_pai_id'] : false;
             $result["unidadePlanoEhLotacao"] = $this->usuarioRepository->isLotacao(parent::loggedUser()->id, $planoEntrega['unidade_id']);
             $result["unidadePaiUnidadePlanoEhLotacao"] = !empty($planoEntrega['unidade']['unidade_pai_id']) && $this->usuarioRepository->isLotacao(parent::loggedUser()->id, $planoEntrega['unidade']['unidade_pai_id']);
@@ -612,8 +613,8 @@ class PlanoEntregaService extends ServiceBase
             - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND" (independente de qualquer outra condição);
         */
         $dataOrEntity['unidade'] = Unidade::find($dataOrEntity['unidade_id'])->toArray();
-        $condition1 = $this->usuario->isGestorUnidade($dataOrEntity['unidade_id']) ||
-            (!empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($dataOrEntity['unidade']['unidade_pai_id']));
+        $condition1 = $this->usuario->isGestorUnidade($dataOrEntity['unidade_id'], incluiDelegado: true) ||
+            (!empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($dataOrEntity['unidade']['unidade_pai_id'], incluiDelegado: false));
         $condition2 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
         if (!$condition1 && !$condition2) {
             throw new ServerException("ValidateUsuario", "O usuário logado precisa atender a pelo menos uma das seguintes condições:\n" .
@@ -663,7 +664,7 @@ class PlanoEntregaService extends ServiceBase
             $condicoes = $this->buscaCondicoes($dataOrEntity);
             if (!$condicoes['planoValido'])
                 throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não é válido, ou seja, foi apagado, cancelado ou arquivado.\n[ver RN_PENT_L]");
-            $condition1 = ($condicoes['planoIncluido'] || $condicoes['planoHomologando']) && $condicoes['gestorUnidadePlano'];
+            $condition1 = ($condicoes['planoIncluido'] || $condicoes['planoHomologando']) && ($condicoes['gestorUnidadePlano'] || $this->usuario->isGestorUnidade($dataOrEntity['unidade_id'], incluiDelegado: true));
             $condition2 = $condicoes['gestorUnidadePaiUnidadePlano'] && $usuario->hasPermissionTo("MOD_PENT_EDT_FLH");
             $condition3 = $condicoes['planoAtivo'] && ($condicoes['gestorUnidadePlano'] || $condicoes['gestorUnidadePaiUnidadePlano']) && $usuario->hasPermissionTo(['MOD_PENT_EDT_ATV_HOMOL', 'MOD_PENT_EDT_ATV_ATV']);
             $condition4 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
