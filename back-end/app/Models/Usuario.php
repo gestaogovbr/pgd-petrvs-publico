@@ -101,6 +101,8 @@ class UsuarioConfig
  */
 class Usuario extends Authenticatable implements AuditableContract, HasStatusHistory
 {
+    public const USUARIO_EXTERNO = 1;
+
     public function getStatusFkColumn(): string
     {
         return 'usuario_id';

@@ -30,7 +30,7 @@ class EloquentSiapeDadosUORGWriteRepository extends AbstractEloquentWriteReposit
         $this->model->newQuery()
             ->withTrashed()
             ->where('codigo_orgao', $codigoOrgao)
-            ->where('processado', 1)
+            ->where('processado', SiapeDadosUORG::PROCESSADO)
             ->forceDelete();
     }
 }

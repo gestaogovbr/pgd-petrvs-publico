@@ -12,6 +12,8 @@ class SiapeDadosUORG extends ModelBase
 {
     use HasFactory;
 
+    public const PROCESSADO = 1;
+
     protected $table = 'siape_dadosUORG';
 
 
