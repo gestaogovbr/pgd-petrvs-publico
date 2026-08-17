@@ -136,4 +136,29 @@ class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryCont
 
         return $query->orderBy('data_inicio', 'desc')->paginate(perPage: $dto->perPage, page: $dto->page);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function buscarAfastamentosPorUsuarios(array $usuarioIds): array
+    {
+        if (empty($usuarioIds)) {
+            return [];
+        }
+
+        $rows = $this->afastamento->newQuery()
+            ->select('usuario_id', 'data_inicio', 'data_fim')
+            ->whereIn('usuario_id', $usuarioIds)
+            ->get();
+
+        $agrupados = [];
+        foreach ($rows as $row) {
+            $agrupados[$row->usuario_id][] = [
+                'data_inicio' => $row->data_inicio,
+                'data_fim' => $row->data_fim,
+            ];
+        }
+
+        return $agrupados;
+    }
 }

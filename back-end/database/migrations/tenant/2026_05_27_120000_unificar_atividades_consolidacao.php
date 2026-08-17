@@ -239,14 +239,13 @@ return new class extends Migration
             INSERT INTO `{$map}` (`duplicate_id`, `keeper_id`)
             SELECT
                 `r`.`id` AS `duplicate_id`,
-                `k`.`id` AS `keeper_id`
+                `g`.`keeper_id`
             FROM `{$ranked}` AS `r`
-            INNER JOIN `{$ranked}` AS `k`
-                ON `k`.`plano_trabalho_consolidacao_id` = `r`.`plano_trabalho_consolidacao_id`
-                AND `k`.`entrega_id_key` = `r`.`entrega_id_key`
-                AND `k`.`rn` = 1
+            INNER JOIN `{$grupos}` AS `g`
+                ON `g`.`plano_trabalho_consolidacao_id` = `r`.`plano_trabalho_consolidacao_id`
+                AND `g`.`entrega_id_key` = `r`.`entrega_id_key`
             WHERE `r`.`grp_cnt` > 1
-              AND `r`.`id` <> `k`.`id`
+              AND `r`.`id` <> `g`.`keeper_id`
         SQL);
     }
 

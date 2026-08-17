@@ -103,6 +103,14 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->exists();
     }
 
+    public function existeAssinaturaDeNaoParticipante(string $documentoId, string $participanteId): bool
+    {
+        return $this->query()
+            ->where('documento_id', $documentoId)
+            ->where('usuario_id', '!=', $participanteId)
+            ->exists();
+    }
+
     public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection
     {
         /** @var Collection<int, DocumentoAssinatura> */

@@ -1,3 +1,31 @@
+
+## 3.0.11 09/07/2026
+
+### Adicionado
+ - Mensagens específicas de impedimento no arquivamento de Planos de Trabalho, informando o motivo pelo qual o plano não pode ser arquivado (prazo de recurso, pendências de encerramento, períodos avaliativos pendentes)
+ - Adiciona a opção de desarquivar para PTs arquivados
+
+### Modificado
+ - Prazo de bloqueio de arquivamento por recurso alterado de 30 para 20 dias após a avaliação
+
+### Modificado
+ - Relatório de Agentes Públicos: renomeadas colunas (Nome→Agente Público, Matrícula SIAPE→Matrícula Siape, Seleção→Regramento, Lotado→Lotação, Modalidade do último PT→Modalidade do PT do Dia), removidas colunas Jornada e Perfil, adicionadas colunas Participante do PGD, Plano de Trabalho do Dia (com link para tela V2) e Status do PT do Dia; perfil Participante visualiza apenas seus próprios dados; acesso bloqueado para perfil Consulta
+
+### Corrigido
+ - Correção de clonagem do Plano de entregas
+ - Correção na assinatura de TCR
+ - Corrigida coluna Nome no Relatório de Agentes Públicos que não retornava dados
+ - Corrigida assinatura do TCR que permitia múltiplos gestores assinarem o mesmo plano
+
+## 3.0.10 31/07/2026
+
+### Adicionado
+- Migração dos indicadores de horas para a API V2 com novo endpoint `POST /api/v2/indicadores/horas`, incluindo cálculo corrigido de dias úteis com feriados religiosos, exclusão de usuários deletados e tratamento de afastamentos com hora
+- Botão "Históricos de Execução" visível na tela de avaliação do Plano de Entrega
+
+### Corrigido
+- Arquivamento automático de Planos de Entregas e Planos de Trabalho: planos que não estavam concluídos e avaliados eram arquivados indevidamente pelo job diário, e voltavam a ser arquivados mesmo após desarquivamento manual
+
 ## 3.0.9 23/07/2026
 
 ### Adicionado

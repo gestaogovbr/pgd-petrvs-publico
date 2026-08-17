@@ -624,6 +624,7 @@ use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoO
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
+use App\V2\Indicadores\IndicadoresHorasController as IndicadoresHorasV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('envio-participante', [EnvioParticipanteQueryController::class, 'index']);
@@ -642,6 +643,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::patch('plano-trabalho/{id}/cancelar', [PlanoTrabalhoV2::class, 'cancelar']);
     Route::patch('plano-trabalho/{id}/encerrar', [PlanoTrabalhoV2::class, 'encerrar']);
     Route::patch('plano-trabalho/{id}/arquivar', [PlanoTrabalhoV2::class, 'arquivar']);
+    Route::patch('plano-trabalho/{id}/desarquivar', [PlanoTrabalhoV2::class, 'desarquivar']);
     Route::post('plano-trabalho/{id}/clonar', [PlanoTrabalhoV2::class, 'clonar']);
     Route::get('plano-trabalho/{planoTrabalhoId}/logs', [PlanoTrabalhoLogV2::class, 'index']);
     Route::get('plano-trabalho/{planoTrabalhoId}/logs/modelos', [PlanoTrabalhoLogV2::class, 'modelos']);
@@ -699,5 +701,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('planejamento/objetivo/{id}/equipes', [PlanejamentoObjetivoV2::class, 'equipes'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/painel-resumo', [PlanejamentoObjetivoV2::class, 'painelResumo'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/entregas-detalhamento', [PlanejamentoObjetivoV2::class, 'entregasDetalhamento'])->whereUuid('id');
+
+    Route::post('indicadores/horas', [IndicadoresHorasV2::class, 'horas']);
 });
 
