@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Repository\PlanoEntregaEntrega\Contracts\PlanoEntregaEntregaReadRepositoryContract;
+use App\Repository\PlanoEntregaEntrega\Contracts\PlanoEntregaEntregaWriteRepositoryContract;
+use App\Repository\PlanoEntregaEntrega\Eloquent\EloquentPlanoEntregaEntregaReadRepository;
+use App\Repository\PlanoEntregaEntrega\Eloquent\EloquentPlanoEntregaEntregaWriteRepository;
+use App\Repository\PlanoEntregaEntregaProgresso\Contracts\PlanoEntregaEntregaProgressoReadRepositoryContract;
+use App\Repository\PlanoEntregaEntregaProgresso\Eloquent\EloquentPlanoEntregaEntregaProgressoReadRepository;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 
 use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
@@ -473,6 +479,20 @@ final class RepositoryServiceProvider extends ServiceProvider
             EloquentFeriadoReadRepository::class,
         );
 
+
+        $this->app->bind(
+            PlanoEntregaEntregaReadRepositoryContract::class,
+            EloquentPlanoEntregaEntregaReadRepository::class,
+        );
+        $this->app->bind(
+            PlanoEntregaEntregaWriteRepositoryContract::class,
+            EloquentPlanoEntregaEntregaWriteRepository::class,
+        );
+
+        $this->app->bind(
+            PlanoEntregaEntregaProgressoReadRepositoryContract::class,
+            EloquentPlanoEntregaEntregaProgressoReadRepository::class,
+        );
     }
 
     public function boot(): void
