@@ -24,12 +24,16 @@ beforeEach(function () {
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade',
             [AtividadeController::class, 'store']
         )->name('__tests.v2.atividade.store');
+    }
 
+    if (!Route::has('__tests.v2.atividade.update')) {
         Route::middleware(['api'])->put(
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}',
             [AtividadeController::class, 'update']
         )->name('__tests.v2.atividade.update');
+    }
 
+    if (!Route::has('__tests.v2.atividade.destroy')) {
         Route::middleware(['api'])->delete(
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}',
             [AtividadeController::class, 'destroy']
@@ -167,6 +171,7 @@ describe('POST /api/v2/plano-trabalho/:id/consolidacao/:cid/atividade', function
             [
                 'plano_trabalho_entrega_id' => $this->entrega->id,
                 'descricao' => 'Teste',
+                'esforco_executado' => 100,
             ]
         );
 
@@ -181,6 +186,7 @@ describe('POST /api/v2/plano-trabalho/:id/consolidacao/:cid/atividade', function
             [
                 'plano_trabalho_entrega_id' => $this->entrega->id,
                 'descricao' => 'Teste',
+                'esforco_executado' => 100,
             ]
         );
 
@@ -196,6 +202,7 @@ describe('POST /api/v2/plano-trabalho/:id/consolidacao/:cid/atividade', function
             [
                 'plano_trabalho_entrega_id' => fake()->uuid(),
                 'descricao' => 'Teste',
+                'esforco_executado' => 100,
             ]
         );
 
@@ -216,8 +223,10 @@ describe('PUT /api/v2/plano-trabalho/:id/consolidacao/:cid/atividade/:aid', func
             [
                 'plano_trabalho_entrega_id' => $this->entrega->id,
                 'descricao' => 'Original',
+                'esforco_executado' => 100,
             ]
         );
+        $createResponse->assertCreated();
 
         $atividadeId = $createResponse->json('data.id');
 
@@ -261,8 +270,10 @@ describe('DELETE /api/v2/plano-trabalho/:id/consolidacao/:cid/atividade/:aid', f
             [
                 'plano_trabalho_entrega_id' => $this->entrega->id,
                 'descricao' => 'Para remover',
+                'esforco_executado' => 100,
             ]
         );
+        $createResponse->assertCreated();
 
         $atividadeId = $createResponse->json('data.id');
 

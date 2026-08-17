@@ -14,11 +14,11 @@ interface IntegracaoServidorReadRepositoryContract
 
     public function findByCpfAndCodigoExercicio(string $cpf, string $codigoExercicio): ?IntegracaoServidor;
 
-    public function buscarAtualizacoesDados(): array;
+    public function buscarAtualizacoesDados(?array $escopoServidor = null): array;
 
-    public function getAtualizacoesLotacoes(): array;
+    public function getAtualizacoesLotacoes(?array $escopoServidor = null): array;
 
-    public function getServidoresInseridosNaoLotados(): array;
+    public function getServidoresInseridosNaoLotados(?array $escopoServidor = null): array;
 
-    public function getUsuariosAusentes(): array;
+    public function getUsuariosAusentes(?array $escopoServidor = null): array;
 }
