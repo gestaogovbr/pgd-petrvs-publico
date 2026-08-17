@@ -624,6 +624,7 @@ use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoO
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
+use App\V2\RelatorioEntrega\RelatorioEntregaController as RelatorioEntregaV2Controller;
 use App\V2\Indicadores\IndicadoresHorasController as IndicadoresHorasV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
@@ -631,6 +632,9 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('envio-plano-trabalho', [EnvioPlanoTrabalhoQueryController::class, 'index']);
     Route::post('envio-plano-trabalho/{id}/enviar', [EnvioPlanoTrabalhoQueryController::class, 'enviar']);
     Route::get('envio-plano-entrega', [EnvioPlanoEntregaQueryController::class, 'index']);
+    Route::get('relatorio-entrega/unidade-padrao', [RelatorioEntregaV2Controller::class, 'unidadePadrao']);
+    Route::get('relatorio-entrega/xls', [RelatorioEntregaV2Controller::class, 'export']);
+    Route::get('relatorio-entrega', [RelatorioEntregaV2Controller::class, 'index']);
 
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
     Route::get('tipos-motivos-afastamentos', [TipoMotivoAfastamentoV2::class, 'index']);
