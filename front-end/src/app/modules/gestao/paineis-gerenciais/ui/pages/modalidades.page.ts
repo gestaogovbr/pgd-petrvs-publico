@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, V
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
-import { PainelApiClient, FiltrosPainel, Indicador, IndicadorTeletrabalho } from '../../infra/painel-api.client';
+import { PainelApiClient, FiltrosPainel, Indicador, IndicadorTeletrabalho, DrillTarget } from '../../infra/painel-api.client';
 import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
 import { IndicadorBarraVerticalComponent } from '../components/indicador-barra-vertical.component';
@@ -61,7 +61,7 @@ export class ModalidadesPage implements OnInit {
   readonly carregandoDiscricionario = signal(false);
   readonly carregandoModalidades = signal(false);
 
-  readonly drillUnidadeModalidades = signal<{ unidade_id: string; unidade_sigla: string } | null>(null);
+  readonly drillUnidadeModalidades = signal<DrillTarget | null>(null);
 
   readonly carregandoAlgum = computed(() =>
     this.carregandoSubstituicao() || this.carregandoDiscricionario() || this.carregandoModalidades()
@@ -184,7 +184,7 @@ export class ModalidadesPage implements OnInit {
     });
   }
 
-  onDrillDown(unidade: { unidade_id: string; unidade_sigla: string }): void {
+  onDrillDown(unidade: DrillTarget): void {
     const filtros = this.filtrosAtuais();
     if (!filtros) return;
 

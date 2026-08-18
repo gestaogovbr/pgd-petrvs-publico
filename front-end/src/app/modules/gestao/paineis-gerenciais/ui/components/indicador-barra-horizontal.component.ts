@@ -23,7 +23,7 @@ import {
   Tooltip,
 } from 'chart.js';
 import ChartjsPluginStacked100 from 'chartjs-plugin-stacked100';
-import { Indicador } from '../../infra/painel-api.client';
+import { Indicador, DrillTarget } from '../../infra/painel-api.client';
 import { CHART_COLORS } from 'src/app/services/chart';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { IndicadorCardComponent } from './indicador-card.component';
@@ -59,7 +59,7 @@ export class IndicadorBarraHorizontalComponent {
   @Input() siglaPai = '';
   @Input() set drillAtivo(value: boolean) { this._drillAtivo.set(value); }
 
-  @Output() unidadeClick = new EventEmitter<{ unidade_id: string; unidade_sigla: string }>();
+  @Output() unidadeClick = new EventEmitter<DrillTarget>();
   @Output() voltarClick = new EventEmitter<void>();
 
   readonly _dados = signal<Indicador | null>(null);

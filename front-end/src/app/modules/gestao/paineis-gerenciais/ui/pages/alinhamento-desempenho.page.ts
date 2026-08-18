@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, V
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
-import { PainelApiClient, FiltrosPainel, Indicador } from '../../infra/painel-api.client';
+import { PainelApiClient, FiltrosPainel, Indicador, DrillTarget } from '../../infra/painel-api.client';
 import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { CHART_COLORS } from 'src/app/services/chart';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
@@ -171,7 +171,7 @@ export class AlinhamentoDesempenhoPage implements OnInit {
     });
   }
 
-  onDrillDown(grafico: number, unidade: { unidade_id: string; unidade_sigla: string }): void {
+  onDrillDown(grafico: number, unidade: DrillTarget): void {
     const filtros = this.filtrosAtuais();
     if (!filtros) return;
 

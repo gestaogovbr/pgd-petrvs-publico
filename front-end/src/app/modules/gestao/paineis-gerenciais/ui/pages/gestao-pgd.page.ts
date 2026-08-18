@@ -7,7 +7,7 @@ import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb
 import { UnidadeSearchFn } from 'src/app/v2/components/unidade-select/unidade-select.component';
 import { UnidadeIndexResponse } from 'src/app/v2/services/unidade.service';
 import { Unidade } from 'src/app/models/unidade.model';
-import { PainelApiClient, FiltrosPainel, Indicador, SerieAdesao, UnidadeHistorica } from '../../infra/painel-api.client';
+import { PainelApiClient, FiltrosPainel, Indicador, SerieAdesao, UnidadeHistorica, DrillTarget } from '../../infra/painel-api.client';
 import { ORIGEM_DADOS, MESES_ABREVIADOS } from '../../infra/painel.constants';
 import { CHART_COLORS } from 'src/app/services/chart';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
@@ -233,7 +233,7 @@ export class GestaoPgdPage implements OnInit {
     });
   }
 
-  onDrillDown(grafico: Grafico, unidade: { unidade_id: string; unidade_sigla: string }): void {
+  onDrillDown(grafico: Grafico, unidade: DrillTarget): void {
     const filtros = this.filtrosAtuais();
     if (!filtros) return;
 

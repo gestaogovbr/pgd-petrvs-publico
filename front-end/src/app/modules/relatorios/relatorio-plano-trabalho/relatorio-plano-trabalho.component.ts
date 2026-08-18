@@ -95,6 +95,17 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
         if (parsed.periodo_fim && typeof parsed.periodo_fim === 'string') {
           parsed.periodo_fim = new Date(parsed.periodo_fim + 'T00:00:00');
         }
+        if (parsed.incluir_unidades_subordinadas === 'true' || parsed.incluir_unidades_subordinadas === '1') {
+          parsed.incluir_unidades_subordinadas = true;
+        }
+        if (parsed.incluir_periodos_avaliativos === 'true' || parsed.incluir_periodos_avaliativos === '1') {
+          parsed.incluir_periodos_avaliativos = true;
+          this.resumido = false;
+          this.dao!.collection = 'Relatorio/planos-trabalho-detalhado';
+        }
+        if (parsed.somente_vigentes === 'true' || parsed.somente_vigentes === '1') {
+          parsed.somente_vigentes = true;
+        }
         filter?.patchValue(parsed, { emitEvent: true });
       };
   }
@@ -126,6 +137,14 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   public ngAfterViewInit(): void {
       super.ngAfterViewInit();
       this.loaded = true;
+  }
+
+  public onLoad() {
+    if (!this.resumido && this.grid) {
+      this.cdRef.detectChanges();
+      this.grid.loadColumns();
+    }
+    super.onLoad();
   }
 
   public filterWhere = (filter: FormGroup) => {

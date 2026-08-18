@@ -19,7 +19,7 @@ class AvaliacaoPEDataProvider
 {
     use ResolveHierarquiaPainel;
 
-    private const SEGMENTOS = ['Avaliado', 'Pendente'];
+    private const SEGMENTOS = ['Avaliado', 'Aguardando'];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -57,24 +57,36 @@ class AvaliacaoPEDataProvider
     {
         $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
-        // Total: PEs que já foram concluídos (passíveis de avaliação)
         $baseQuery = $this->buildBaseQuery($unidadeIds, $filtros);
-        $total = (clone $baseQuery)->count();
+
+        // Avaliados: PEs com status AVALIADO
+        $avaliados = (clone $baseQuery)
+            ->where('status', StatusEnum::AVALIADO->value)
+            ->count();
+
+        // Aguardando: PEs concluídos (não avaliados) cuja conclusão foi há <= 30 dias
+        $aguardando = (clone $baseQuery)
+            ->where('status', StatusEnum::CONCLUIDO->value)
+            ->whereExists(function ($sub) {
+                $sub->selectRaw('1')
+                    ->from('status_justificativas')
+                    ->whereColumn('status_justificativas.plano_entrega_id', 'planos_entregas.id')
+                    ->where('status_justificativas.codigo', 'CONCLUIDO')
+                    ->whereNull('status_justificativas.deleted_at')
+                    ->whereRaw('CURDATE() <= DATE_ADD(CAST(status_justificativas.created_at AS DATE), INTERVAL 30 DAY)');
+            })
+            ->count();
+
+        $total = $avaliados + $aguardando;
 
         if ($total === 0) {
             return new DistribuicaoUnidadeDTO($unidade->id, $unidade->sigla, [0, 0], 0);
         }
 
-        $avaliados = (clone $baseQuery)
-            ->where('status', StatusEnum::AVALIADO->value)
-            ->count();
-
-        $pendentes = $total - $avaliados;
-
         return new DistribuicaoUnidadeDTO(
             unidadeId: $unidade->id,
             unidadeSigla: $unidade->sigla,
-            valores: [$avaliados, $pendentes],
+            valores: [$avaliados, $aguardando],
             total: $total,
         );
     }

@@ -9,6 +9,11 @@ export interface DistribuicaoUnidade {
   total: number;
 }
 
+export interface DrillTarget {
+  unidade_id: string;
+  unidade_sigla: string;
+}
+
 export interface Indicador {
   segmentos: string[];
   distribuicoes: DistribuicaoUnidade[];

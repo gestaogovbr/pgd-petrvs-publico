@@ -19,7 +19,7 @@ class RegistroExecucaoPTDataProvider
 {
     use ResolveHierarquiaPainel;
 
-    private const SEGMENTOS = ['Concluído', 'Pendente'];
+    private const SEGMENTOS = ['Concluído', 'Aguardando'];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -60,26 +60,29 @@ class RegistroExecucaoPTDataProvider
 
         $baseQuery = $this->buildBaseQuery($unidadeIds, $filtros);
 
-        // Consolidações cujo período já encerrou (data_fim < hoje)
-        $totalQuery = (clone $baseQuery)->where('planos_trabalhos_consolidacoes.data_fim', '<', $hoje);
-        $total = $totalQuery->count();
-
-        if ($total === 0) {
-            return new DistribuicaoUnidadeDTO($unidade->id, $unidade->sigla, [0, 0], 0);
-        }
-
-        // Concluídos: status CONCLUIDO ou AVALIADO
+        // Concluídos: consolidações com status CONCLUIDO ou AVALIADO e período encerrado
         $concluidos = (clone $baseQuery)
             ->where('planos_trabalhos_consolidacoes.data_fim', '<', $hoje)
             ->whereIn('planos_trabalhos_consolidacoes.status', [StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value])
             ->count();
 
-        $pendentes = $total - $concluidos;
+        // Aguardando: consolidações INCLUIDO cujo período venceu há <= 10 dias (sem conclusão, dentro do prazo)
+        $aguardando = (clone $baseQuery)
+            ->where('planos_trabalhos_consolidacoes.data_fim', '<', $hoje)
+            ->where('planos_trabalhos_consolidacoes.status', StatusEnum::INCLUIDO->value)
+            ->whereRaw('CURDATE() <= DATE_ADD(CAST(planos_trabalhos_consolidacoes.data_fim AS DATE), INTERVAL 10 DAY)')
+            ->count();
+
+        $total = $concluidos + $aguardando;
+
+        if ($total === 0) {
+            return new DistribuicaoUnidadeDTO($unidade->id, $unidade->sigla, [0, 0], 0);
+        }
 
         return new DistribuicaoUnidadeDTO(
             unidadeId: $unidade->id,
             unidadeSigla: $unidade->sigla,
-            valores: [$concluidos, $pendentes],
+            valores: [$concluidos, $aguardando],
             total: $total,
         );
     }
