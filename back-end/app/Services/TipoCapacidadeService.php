@@ -386,6 +386,7 @@ class TipoCapacidadeService extends ServiceBase
       "descricao" => "Módulo Usuários",
       "capacidades" => [
         /* Capacidades do módulo USUÁRIOS */
+        ["MOD_USER_VIS", "Permite visualizar perfil de outros usuários"],
         ["MOD_USER_EDT", "Permite alterar usuário"],
         ["MOD_USER_EXCL", "Permite excluir usuário"],
         ["MOD_USER_INCL", "Permite incluir usuário"],
