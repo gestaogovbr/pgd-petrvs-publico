@@ -626,6 +626,7 @@ use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalho
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
 use App\V2\RelatorioEntrega\RelatorioEntregaController as RelatorioEntregaV2Controller;
 use App\V2\Indicadores\IndicadoresHorasController as IndicadoresHorasV2;
+use App\V2\MuralAviso\MuralAvisoController as MuralAvisoV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('envio-participante', [EnvioParticipanteQueryController::class, 'index']);
@@ -712,5 +713,8 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('planejamento/objetivo/{id}/entregas-detalhamento', [PlanejamentoObjetivoV2::class, 'entregasDetalhamento'])->whereUuid('id');
 
     Route::post('indicadores/horas', [IndicadoresHorasV2::class, 'horas']);
+
+    Route::get('mural-aviso/pendentes', [MuralAvisoV2::class, 'pendentes']);
+    Route::post('mural-aviso/confirmar', [MuralAvisoV2::class, 'confirmar']);
 });
 
