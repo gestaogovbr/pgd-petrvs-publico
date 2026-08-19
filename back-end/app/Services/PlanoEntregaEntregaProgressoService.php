@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\StatusEnum;
 use App\Exceptions\ServerException;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoEntregaEntregaProgresso;
@@ -9,8 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PlanoEntregaEntregaProgressoService extends ServiceBase
 {
-  private const STATUS_ATIVO = 'ATIVO';
-
   public function validateStore($data, $unidade, $action)
   {
     $this->validatePlanoEntregaAtivo($data['plano_entrega_entrega_id']);
@@ -34,11 +33,16 @@ class PlanoEntregaEntregaProgressoService extends ServiceBase
 
   private function validatePlanoEntregaAtivo(string $planoEntregaEntregaId): void
   {
-    $entrega = $this->findEntrega($planoEntregaEntregaId);
-    $status = $entrega?->planoEntrega?->status;
-    if ($status !== self::STATUS_ATIVO) {
+    $status = $this->statusPlanoEntrega($planoEntregaEntregaId);
+    if ($status !== StatusEnum::ATIVO->value) {
       throw new ServerException("ValidatePlanoEntrega", "O progresso só pode ser alterado quando o Plano de Entregas estiver com status ATIVO.");
     }
+  }
+
+  private function statusPlanoEntrega(string $planoEntregaEntregaId): ?string
+  {
+    $entrega = $this->findEntrega($planoEntregaEntregaId);
+    return $entrega?->planoEntrega?->status;
   }
 
   protected function findEntrega(string $id): ?PlanoEntregaEntrega
@@ -46,7 +50,7 @@ class PlanoEntregaEntregaProgressoService extends ServiceBase
     return PlanoEntregaEntrega::find($id);
   }
 
-  private function updateEntrega($data){
+  protected function updateEntrega($data){
     $entrega = PlanoEntregaEntrega::find($data["plano_entrega_entrega_id"]);
     $progressos = PlanoEntregaEntregaProgresso::where("plano_entrega_entrega_id", $entrega->id)->orderBy('data_progresso', 'desc')->get();
     
