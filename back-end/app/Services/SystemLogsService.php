@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\PerfilEnum;
 use Illuminate\Support\Facades\File;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use App\Exceptions\ServerException;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\Log;
 
 class SystemLogsService
@@ -18,7 +20,7 @@ class SystemLogsService
 
     private const MAX_DOWNLOAD_SIZE = 2 * 1024 * 1024; // 2MB
 
-    public function index(array $data): array
+    public function index(array $data, ?string $tenantId = null, ?Usuario $usuario = null): array
     {
         $logPath = storage_path('logs');
 
@@ -34,12 +36,13 @@ class SystemLogsService
         $logs = [];
 
         foreach ($files as $file) {
-            if ($file->getExtension() === self::LOG_EXTENSION) {
+            $filename = $file->getFilename();
+
+            if ($file->getExtension() === self::LOG_EXTENSION && $this->usuarioPodeAcessarLog($filename, $tenantId, $usuario)) {
                 $logs[] = [
-                    'filename' => $file->getFilename(),
+                    'filename' => $filename,
                     'size' => $file->getSize(),
                     'last_modified' => date('Y-m-d H:i:s', $file->getMTime()),
-                    'path' => $file->getPathname()
                 ];
             }
         }
@@ -74,7 +77,7 @@ class SystemLogsService
         ];
     }
 
-    public function downloadLog(string $filename): array
+    public function downloadLog(string $filename, ?string $tenantId = null, ?Usuario $usuario = null): array
     {
         // Security Log
         Log::info("Security: Attempt to download log file: {$filename}", [
@@ -92,6 +95,14 @@ class SystemLogsService
         if (pathinfo($filename, PATHINFO_EXTENSION) !== self::LOG_EXTENSION) {
              Log::warning("Security: Invalid file extension attempt: {$filename}");
              throw new ServerException("SystemLogs", "Tipo de arquivo não permitido.");
+        }
+
+        if (!$this->usuarioPodeAcessarLog($filename, $tenantId, $usuario)) {
+            Log::warning("Security: Unauthorized log file access attempt: {$filename}", [
+                'tenant_id' => $tenantId,
+                'user_id' => $usuario?->id ?? auth()->id() ?? 'guest',
+            ]);
+            throw new ServerException("SystemLogs", "Arquivo não encontrado.");
         }
 
         $path = storage_path('logs/' . $filename);
@@ -124,5 +135,64 @@ class SystemLogsService
             'data' => $path,
             'filename' => $filename
         ];
+    }
+
+    private function usuarioPodeAcessarLog(string $filename, ?string $tenantId, ?Usuario $usuario): bool
+    {
+        $classificacao = $this->classificarLog($filename, $tenantId);
+
+        if ($classificacao === 'tenant-atual') {
+            return true;
+        }
+
+        if ($classificacao === 'generico' && $this->usuarioEhDesenvolvedor($usuario)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function classificarLog(string $filename, ?string $tenantId): string
+    {
+        if ($filename === 'siape_central.log') {
+            return 'generico';
+        }
+
+        if ($tenantId !== null && preg_match('/^' . preg_quote($tenantId, '/') . '-\d{2}-\d{2}-\d{4}-laravel\.log$/', $filename) === 1) {
+            return 'tenant-atual';
+        }
+
+        if ($tenantId !== null && $filename === 'siape_' . $tenantId . '.log') {
+            return 'tenant-atual';
+        }
+
+        if ($this->ehLogLaravelTenant($filename) || $this->ehLogSiapeTenant($filename)) {
+            return 'outro-tenant';
+        }
+
+        return 'generico';
+    }
+
+    private function ehLogLaravelTenant(string $filename): bool
+    {
+        return preg_match('/^.+-\d{2}-\d{2}-\d{4}-laravel\.log$/', $filename) === 1;
+    }
+
+    private function ehLogSiapeTenant(string $filename): bool
+    {
+        return $filename !== 'siape_central.log' && preg_match('/^siape_.+\.log$/', $filename) === 1;
+    }
+
+    private function usuarioEhDesenvolvedor(?Usuario $usuario): bool
+    {
+        if ($usuario === null) {
+            return false;
+        }
+
+        if (!$usuario->relationLoaded('perfil')) {
+            $usuario->loadMissing('perfil');
+        }
+
+        return (int) $usuario->perfil?->nivel === PerfilEnum::DESENVOLVEDOR->value;
     }
 }

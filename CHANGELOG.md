@@ -1,5 +1,20 @@
+## 3.0.12 14/08/2026
 
-## 3.0.11 09/07/2026
+### Adicionado
+- Permissão para gestor delegado excluir Plano de Entrega não homologado da própria unidade
+- Cache para desonerar o banco em requisições para tenant
+
+### Modificado
+- Reorganização interna da verificação de permissões nos Planos de Trabalho para melhor manutenção do código
+
+### Corrigido
+- Erro ao consultar Relatórios de Envio
+- Carga individual do SIAPE restrita ao CPF e às matrículas consultadas, evitando alterações em outros servidores durante a sincronização
+- Corrigida permissão que permitia gestor delegado homologar Plano de Entrega de unidade subordinada
+- Alterar dominio de tenant não removia dominio anterior
+
+
+## 3.0.11 09/08/2026
 
 ### Adicionado
  - Mensagens específicas de impedimento no arquivamento de Planos de Trabalho, informando o motivo pelo qual o plano não pode ser arquivado (prazo de recurso, pendências de encerramento, períodos avaliativos pendentes)

@@ -1,19 +1,14 @@
 <?php
 
-namespace Tests\Unit\Services;
+namespace Tests\IntegrationTenant\Services;
 
 use App\Jobs\Envio\ExportarParticipanteJob;
-use App\Models\Tenant;
 use App\Models\Usuario;
-use App\Repository\EnvioParticipanteRepository;
 use App\Repository\UsuarioRepository;
 use App\Services\Envio\AgendarEnvioParticipantesService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Mockery;
-use Tests\TenantTestCase;
-
-uses(TenantTestCase::class);
 
 afterEach(function () {
     Mockery::close();
