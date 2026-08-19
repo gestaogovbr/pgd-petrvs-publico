@@ -84,7 +84,7 @@ test('podeEditar retorna true para chefia recursiva da unidade do plano', functi
     $this->unidadeRepository
         ->shouldReceive('isUsuarioGestorRecursivo')
         ->once()
-        ->with('unidade-plano', 'chefia-1')
+        ->with('unidade-plano', 'chefia-1', true)
         ->andReturn(true);
 
     expect($this->authorization->podeEditar($plano, $usuario))->toBeTrue();
@@ -114,7 +114,7 @@ test('podeEditar retorna true para adm negocial com instituidora na linha ascend
     $this->unidadeRepository
         ->shouldReceive('isUsuarioGestorRecursivo')
         ->once()
-        ->with('unidade-plano', 'adm-neg')
+        ->with('unidade-plano', 'adm-neg', true)
         ->andReturn(false);
 
     $this->unidadeRepository
@@ -148,7 +148,7 @@ test('podeEditar retorna false para adm negocial fora do escopo instituidor', fu
     $this->unidadeRepository
         ->shouldReceive('isUsuarioGestorRecursivo')
         ->once()
-        ->with('unidade-plano', 'adm-neg')
+        ->with('unidade-plano', 'adm-neg', true)
         ->andReturn(false);
 
     expect($this->authorization->podeEditar($plano, $usuario))->toBeFalse();
@@ -201,7 +201,7 @@ test('podeArquivar retorna false para usuário sem autorização mesmo com elegi
     $usuario->id = 'outro-user';
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'outro-user')
+        ->with('unidade-plano', 'outro-user', true)
         ->andReturn(false);
 
     expect($this->authorization->podeArquivar($plano, $usuario, true))->toBeFalse();
@@ -214,7 +214,7 @@ test('podeArquivar retorna true para chefia da unidade com elegibilidade', funct
     $usuario->id = 'chefia-1';
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'chefia-1')
+        ->with('unidade-plano', 'chefia-1', true)
         ->andReturn(true);
 
     expect($this->authorization->podeArquivar($plano, $usuario, true))->toBeTrue();
@@ -227,7 +227,7 @@ test('podeArquivar retorna true para colaborador com lotação na unidade com el
     $usuario->id = 'colab-1';
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'colab-1')
+        ->with('unidade-plano', 'colab-1', true)
         ->andReturn(false);
 
     $this->unidadeRepository->shouldReceive('hasUsuarioLotacao')
@@ -285,7 +285,7 @@ test('podeEncerrar retorna true para chefia da unidade', function () {
     $usuario->id = 'chefia-1';
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'chefia-1')
+        ->with('unidade-plano', 'chefia-1', true)
         ->andReturn(true);
 
     expect($this->authorization->podeEncerrar($plano, $usuario))->toBeTrue();
@@ -299,7 +299,7 @@ test('podeEncerrar retorna true para adm negocial', function () {
     $usuario->id = 'adm-neg';
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'adm-neg')
+        ->with('unidade-plano', 'adm-neg', true)
         ->andReturn(false);
 
     expect($this->authorization->podeEncerrar($plano, $usuario))->toBeTrue();
@@ -313,7 +313,7 @@ test('podeEncerrar retorna false para usuário sem autorização', function () {
     $usuario->id = 'outro-user';
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'outro-user')
+        ->with('unidade-plano', 'outro-user', true)
         ->andReturn(false);
 
     expect($this->authorization->podeEncerrar($plano, $usuario))->toBeFalse();
@@ -337,7 +337,7 @@ test('podeCancelar retorna true para chefia com status SUSPENSO', function () {
     $usuario->shouldReceive('hasPermissionTo')->with('MOD_PTR_CNC')->andReturn(true);
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'chefia-1')
+        ->with('unidade-plano', 'chefia-1', true)
         ->andReturn(true);
 
     expect($this->authorization->podeCancelar($plano, $usuario))->toBeTrue();
@@ -350,7 +350,7 @@ test('podeCancelar retorna false para participante sem ser dono com status ATIVO
     $usuario->shouldReceive('hasPermissionTo')->with('MOD_PTR_CNC')->andReturn(true);
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'outro-user')
+        ->with('unidade-plano', 'outro-user', true)
         ->andReturn(false);
 
     expect($this->authorization->podeCancelar($plano, $usuario))->toBeFalse();

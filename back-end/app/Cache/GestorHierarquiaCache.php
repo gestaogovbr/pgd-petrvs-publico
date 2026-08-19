@@ -14,10 +14,10 @@ class GestorHierarquiaCache
     private const PREFIX_GERIDAS = 'unidades-geridas:';
 
     /** @return string[] */
-    public static function getUnidadesGeridas(string $usuarioId, Closure $loader): array
+    public static function getUnidadesGeridas(string $usuarioId, Closure $loader, bool $incluirDelegado = true): array
     {
         return Cache::remember(
-            self::PREFIX_GERIDAS . $usuarioId,
+            self::keyGeridas($usuarioId, $incluirDelegado),
             self::TTL_SECONDS,
             $loader,
         );
@@ -35,7 +35,13 @@ class GestorHierarquiaCache
 
     public static function forgetUsuario(string $usuarioId): void
     {
-        Cache::forget(self::PREFIX_GERIDAS . $usuarioId);
+        Cache::forget(self::keyGeridas($usuarioId, true));
+        Cache::forget(self::keyGeridas($usuarioId, false));
+    }
+
+    private static function keyGeridas(string $usuarioId, bool $incluirDelegado): string
+    {
+        return self::PREFIX_GERIDAS . $usuarioId . ($incluirDelegado ? '' : ':sem-delegado');
     }
 
     public static function invalidarTudo(): void
