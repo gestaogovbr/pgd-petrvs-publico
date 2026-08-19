@@ -26,7 +26,7 @@
 - Mantenha métodos pequenos, prefira retornos antecipados em vez de condicionais aninhadas, evite números mágicos e remova imports não utilizados.
 - Preserve explicitamente os limites de tenancy. Tenha cuidado com conexões central vs tenant, inicialização de tenant e isolamento de dados.
 - Preserve comportamento de auditoria/log, especialmente `SiapeLog`, logs Laravel, auditing e logs de processamento de integração.
-- Rotas tenant da API ficam em `routes/api_tenant/<modulo>.php` (v1) e `routes/api_tenant/v2/<modulo>.php` (v2). O arquivo `routes/api_tenant.php` só carrega esses módulos — não acrescente rotas nele. Módulo novo = arquivo novo, para evitar conflito de merge.
+- Rotas tenant da API ficam em `routes/api_tenant/<modulo>.php` ou `routes/api_tenant/<dominio>/<modulo>.php` (v1) e `routes/api_tenant/v2/<modulo>.php` (v2). O arquivo `routes/api_tenant.php` só carrega esses módulos — não acrescente rotas nele. Módulo novo = arquivo novo, para evitar conflito de merge.
 
 ## Regras de Repository
 
