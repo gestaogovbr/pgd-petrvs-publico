@@ -8,6 +8,7 @@ use App\Enums\Atribuicao;
 use App\Models\DocumentoAssinatura;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @extends AbstractEloquentReadRepository<DocumentoAssinatura>
@@ -110,5 +111,28 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->whereColumn('documentos_assinaturas.documento_id', $documentoIdColumn)
             ->where('documentos_assinaturas.usuario_id', $usuarioId)
             ->whereNull('documentos_assinaturas.deleted_at');
+    }
+
+    public function existeAssinaturaDeNaoParticipante(string $documentoId, string $participanteId): bool
+    {
+        return $this->query()
+            ->where('documento_id', $documentoId)
+            ->where('usuario_id', '!=', $participanteId)
+            ->exists();
+    }
+
+    public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection
+    {
+        /** @var Collection<int, DocumentoAssinatura> */
+        return $this->model->newQuery()
+            ->onlyTrashed()
+            ->whereHas('documento', function ($query) use ($planoTrabalhoId) {
+                $query->withTrashed()
+                    ->where('plano_trabalho_id', $planoTrabalhoId)
+                    ->where('especie', 'TCR');
+            })
+            ->with(['usuario:id,nome,nome_social'])
+            ->orderByDesc('deleted_at')
+            ->get();
     }
 }

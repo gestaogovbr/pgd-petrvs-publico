@@ -11,12 +11,14 @@ use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\AtividadeRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeEsforcoExecutadoValidator;
 
 class ConcluirConsolidacaoValidator
 {
     public function __construct(
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly AtividadeRepository $atividadeRepository,
+        private readonly AtividadeEsforcoExecutadoValidator $esforcoExecutadoValidator,
     ) {}
 
     public function validar(PlanoTrabalho $plano, string $consolidacaoId): PlanoTrabalhoConsolidacao
@@ -41,6 +43,7 @@ class ConcluirConsolidacaoValidator
         }
 
         $this->validarEntregasPreenchidas($plano, $consolidacaoId);
+        $this->esforcoExecutadoValidator->validarSomatorioPlano($plano->id);
 
         return $consolidacao;
     }

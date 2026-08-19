@@ -1,6 +1,8 @@
-import { Component, HostBinding, Injector, Input, OnInit } from '@angular/core';
+import { Component, HostBinding, Injector, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, ControlContainer, FormGroup, FormGroupDirective } from '@angular/forms';
 import { InputBase, LabelPosition } from '../input-base';
+
+declare var bootstrap: any;
 
 @Component({
     selector: 'input-container',
@@ -14,7 +16,7 @@ import { InputBase, LabelPosition } from '../input-base';
     ],
     standalone: false
 })
-export class InputContainerComponent extends InputBase implements OnInit {
+export class InputContainerComponent extends InputBase implements OnInit, OnDestroy {
   @HostBinding('class') class = '';
   @Input() hostClass: string = "mt-2"; 
   @Input() labelPosition: LabelPosition = "top";
@@ -47,6 +49,8 @@ export class InputContainerComponent extends InputBase implements OnInit {
 
  
 
+  private labelInfoTooltip?: any;
+
   constructor(public injector: Injector) {
     super(injector);
   }
@@ -57,6 +61,20 @@ export class InputContainerComponent extends InputBase implements OnInit {
 
   public ngAfterViewInit(): void {
     super.ngAfterViewInit();
-   
+    this.initLabelInfoTooltip();
+  }
+
+  public ngOnDestroy(): void {
+    try { this.labelInfoTooltip?.dispose(); } catch (_) { /* no-op */ }
+    this.labelInfoTooltip = undefined;
+  }
+
+  /* Inicializa o tooltip do ícone (i), pois componentes renderizados após o init da página (ex.: dentro de *ngIf) não são alcançados pela inicialização global de tooltips do PageBase */
+  private initLabelInfoTooltip(): void {
+    if (!this.labelInfo.length || typeof bootstrap == "undefined" || !bootstrap?.Tooltip) return;
+    const el = this.selfElement?.nativeElement?.querySelector('.label-info') as HTMLElement | null;
+    if (!el || el.dataset.tooltipBound) return;
+    el.dataset.tooltipBound = "true";
+    this.labelInfoTooltip = bootstrap.Tooltip.getOrCreateInstance(el, { trigger: 'hover' });
   }
 }

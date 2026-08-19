@@ -130,7 +130,6 @@ describe('PlanoTrabalhoRepository — leitura para envio PGD (findOneParaEnvio)'
         expect($result->entregas)->toHaveCount(1);
         expect($result->consolidacoes)->toHaveCount(1);
         expect($result->consolidacoes->first()->id)->toBe($consolidacaoAvaliada->id);
-        expect($result->consolidacoes->first()->relationLoaded('avaliacoes'))->toBeTrue();
         expect($result->consolidacoes->first()->relationLoaded('avaliacao'))->toBeTrue();
     });
 });

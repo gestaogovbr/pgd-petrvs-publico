@@ -14,6 +14,7 @@ use App\Services\LoginService;
 use App\Services\UnidadeService;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Sanctum;
@@ -21,6 +22,7 @@ use Laravel\Socialite\Facades\Socialite;
 use Mockery;
 
 beforeEach(function () {
+    Cache::flush();
     if (!Route::has('__tests.login.authenticateUserPassword')) {
         Route::middleware(['api'])->post('/api/__tests/login/authenticate-user-password', [LoginController::class, 'authenticateUserPassword'])
             ->name('__tests.login.authenticateUserPassword');
@@ -440,6 +442,8 @@ test('authenticateSession retorna 500 quando ocorre exceção inesperada', funct
 })->group('login-controller');
 
 test('rate limiting bloqueia requisições excedentes no endpoint de login', function () {
+    Cache::store()->flush();
+
     $usuario = Usuario::factory()->create([
         'password' => bcrypt('senha-teste'),
     ]);

@@ -29,7 +29,8 @@ describe('PlanoTrabalhoStoreDTO', function () {
             ->and($dto->dataFim)->toBe('2024-12-31')
             ->and($dto->modalidadePgd)->toBe('presencial')
             ->and($dto->justificativaModalidade)->toBe('Justificativa teste')
-            ->and($dto->criacaoUsuarioId)->toBe('criador-999');
+            ->and($dto->criacaoUsuarioId)->toBe('criador-999')
+            ->and($dto->cargaHoraria)->toBe(PlanoTrabalhoStoreDTO::HORAS_DIARIAS_JORNADA_INTEGRAL_PADRAO);
     });
 
     test('justificativa é null quando não informada', function () {
@@ -66,6 +67,7 @@ describe('PlanoTrabalhoStoreDTO', function () {
             'data_fim' => '2024-12-31',
             'modalidade_pgd' => 'presencial',
             'criacao_usuario_id' => 'criador-999',
+            'carga_horaria' => 8.0,
             'justificativa_modalidade' => 'Justificativa',
         ]);
     });
