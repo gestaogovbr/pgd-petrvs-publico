@@ -625,6 +625,7 @@ use App\V2\CadeiaValor\CadeiaValorArvoreController as CadeiaValorArvoreV2;
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
+use App\V2\Indicadores\IndicadoresHorasController as IndicadoresHorasV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('envio-participante', [EnvioParticipanteQueryController::class, 'index']);
@@ -643,6 +644,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::patch('plano-trabalho/{id}/cancelar', [PlanoTrabalhoV2::class, 'cancelar']);
     Route::patch('plano-trabalho/{id}/encerrar', [PlanoTrabalhoV2::class, 'encerrar']);
     Route::patch('plano-trabalho/{id}/arquivar', [PlanoTrabalhoV2::class, 'arquivar']);
+    Route::patch('plano-trabalho/{id}/desarquivar', [PlanoTrabalhoV2::class, 'desarquivar']);
     Route::post('plano-trabalho/{id}/clonar', [PlanoTrabalhoV2::class, 'clonar']);
     Route::get('plano-trabalho/{planoTrabalhoId}/logs', [PlanoTrabalhoLogV2::class, 'index']);
     Route::get('plano-trabalho/{planoTrabalhoId}/logs/modelos', [PlanoTrabalhoLogV2::class, 'modelos']);
@@ -704,13 +706,13 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('cadeia-valor/{cadeiaValorId}/arvore/{processoId}', [CadeiaValorArvoreV2::class, 'arvore'])
         ->whereUuid('cadeiaValorId')
         ->whereUuid('processoId');
-
     Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/resumo', [CadeiaValorArvoreV2::class, 'resumo'])
         ->whereUuid('cadeiaValorId')
         ->whereUuid('processoId');
-
     Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas-detalhamento', [CadeiaValorArvoreV2::class, 'entregas'])
         ->whereUuid('cadeiaValorId')
         ->whereUuid('processoId');
+
+    Route::post('indicadores/horas', [IndicadoresHorasV2::class, 'horas']);
 });
 

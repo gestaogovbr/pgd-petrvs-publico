@@ -25,6 +25,9 @@ beforeEach(function () {
             Route::get('/api/__tests/v2/planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoController::class, 'entregas'])
                 ->whereUuid('id')
                 ->name('__tests.v2.objetivo.entregas');
+            Route::get('/api/__tests/v2/planejamento/objetivo/{id}/equipes', [PlanejamentoObjetivoController::class, 'equipes'])
+                ->whereUuid('id')
+                ->name('__tests.v2.objetivo.equipes');
         });
     }
 
@@ -292,9 +295,10 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
     });
 
     /**
-     * Cenário: plano de trabalho NÃO concluído não conta no esforço
+     * Cenário: plano ainda não pactuado (INCLUIDO) não conta no esforço planejado.
+     * Status pactuados: AGUARDANDO_ASSINATURA, ATIVO, CONCLUIDO, AVALIADO.
      */
-    test('ignora planos de trabalho que não estão CONCLUIDO', function () {
+    test('ignora planos de trabalho que ainda não foram pactuados', function () {
         $base = criarEstruturaBase();
 
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo');
@@ -311,14 +315,14 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
             'entrega_id' => $planoEntregaEntrega->id,
         ]);
 
-        // Plano ATIVO (não concluído)
-        $planoTrabalho = PlanoTrabalho::factory()->ativo()->create([
+        $planoTrabalho = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $base['unidade']->id,
             'programa_id' => $base['programa']->id,
             'criacao_usuario_id' => $this->usuario->id,
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-01-07',
+            'status' => 'INCLUIDO',
         ]);
 
         PlanoTrabalhoEntrega::factory()->create([

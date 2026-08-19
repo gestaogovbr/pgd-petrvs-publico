@@ -16,12 +16,12 @@ class TCRDatasourceBuilder
 
     public function getTemplate(PlanoTrabalho $plano): string
     {
-        return $plano->programa->templateTcr->conteudo ?? '';
+        return $plano->programa?->templateTcr?->conteudo ?? '';
     }
 
     public function getTemplateId(PlanoTrabalho $plano): ?string
     {
-        return $plano->programa->template_tcr_id;
+        return $plano->programa?->template_tcr_id;
     }
 
     public function getDataset(): array
@@ -52,9 +52,13 @@ class TCRDatasourceBuilder
             }
 
             if (is_array($valor) || $valor instanceof Collection) {
+                $itens = array_values(array_filter(
+                    $valor instanceof Collection ? $valor->all() : $valor,
+                    static fn ($item) => $item !== null,
+                ));
                 $result[$field['field']] = array_map(
                     fn ($item) => $this->buildFields($item, $field['fields']),
-                    $valor instanceof Collection ? $valor->all() : $valor
+                    $itens,
                 );
                 continue;
             }
