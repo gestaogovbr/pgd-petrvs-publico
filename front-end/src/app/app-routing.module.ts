@@ -10,7 +10,7 @@ import { ConfigResolver } from './resolvies/config.resolver';
 import { LoginUnicoComponent } from "./modules/login/login-unico/login-unico.component";
 import { PanelGuard } from "./guards/panel.guard";
 import { PanelLoginComponent } from "./modules/panel/panel-login/panel-login.component";
-import {TesteImpersonateComponent} from "./modules/teste/teste-impersonate/teste-impersonate.component";
+import { TesteImpersonateComponent } from "./modules/teste/teste-impersonate/teste-impersonate.component";
 
 const routes: Routes = [
   { path: 'panel-login', component: PanelLoginComponent },
@@ -47,6 +47,7 @@ const routes: Routes = [
   { path: 'gestao/plano-trabalho-v2', loadChildren: () => import('./modules/gestao/plano-trabalho-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
   { path: 'home-v2', loadChildren: () => import('./modules/gestao/home-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
   { path: 'gestao/ocorrencia-v2', loadChildren: () => import('./modules/gestao/ocorrencia-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
+  { path: 'gestao/paineis-gerenciais', loadChildren: () => import('./modules/gestao/paineis-gerenciais/routes').then(m => m.routes), canActivate: [AuthGuard], data: { permission: 'MOD_PAINEL_GER' } },
   { path: 'gestao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
   { path: 'gestao/desdobramento', loadChildren: () => import('./modules/gestao/desdobramento/desdobramento.module').then(m => m.DesdobramentoModule), canActivate: [AuthGuard] },
   { path: 'gestao/produto', loadChildren: () => import('./modules/gestao/produto/produto.module').then(m => m.ProdutoModule), canActivate: [AuthGuard] },

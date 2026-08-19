@@ -1,0 +1,54 @@
+<div class="row g-3 mb-4">
+  <!-- Step 1: Tipo de Consulta -->
+  @if (permitirHistorico) {
+    <div class="col-12 col-md-3">
+      <br-select
+        label="Tipo de Consulta"
+        [options]="tipoConsultaOptions"
+        (valueChange)="onTipoConsultaChange($event)"
+        class="w-100">
+      </br-select>
+    </div>
+  }
+
+  <!-- Step 2: Busca Unidade -->
+  <div class="col-12 col-md-4">
+    <unidade-select
+      [unidadeId]="unidadeSelecionada()?.id ?? ''"
+      [unidadeSigla]="unidadeSelecionada()?.sigla ?? ''"
+      [unidadeNome]="unidadeSelecionada()?.nome ?? ''"
+      [searchFn]="activeSearchFn()"
+      (unidadeSelected)="selecionarUnidade($event)"
+    ></unidade-select>
+  </div>
+
+  <!-- Step 3: Datas (apenas no modo histórico) -->
+  @if (tipoConsulta() === 'historico') {
+    @if (modoData === 'range') {
+      <div class="col-12 col-sm-6 col-md-2">
+        <div class="br-input w-100">
+          <label for="data-inicio">Data Inicial</label>
+          <input id="data-inicio" type="date" [value]="dataInicio()" (change)="onDataInicioChange($event)" />
+        </div>
+      </div>
+      <div class="col-12 col-sm-6 col-md-2">
+        <div class="br-input w-100">
+          <label for="data-fim">Data Final</label>
+          <input id="data-fim" type="date" [value]="dataFim()" (change)="onDataFimChange($event)" />
+        </div>
+      </div>
+    }
+
+    @if (modoData === 'referencia' && mostrarPeriodo()) {
+      <div class="col-12 col-md-3">
+        <br-select
+          label="Data de Referência"
+          placeholder="Selecione o período"
+          [options]="periodosOptions()"
+          (valueChange)="onPeriodoChange($event)"
+          class="w-100">
+        </br-select>
+      </div>
+    }
+  }
+</div>

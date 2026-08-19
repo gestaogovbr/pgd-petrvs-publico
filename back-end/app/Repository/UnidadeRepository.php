@@ -9,6 +9,8 @@ use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use App\V2\Unidade\DTOs\UnidadeIndexDTO;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
@@ -115,10 +117,20 @@ class UnidadeRepository
         return $this->readRepository->buscarPorNomeOuCodigo($dto);
     }
 
+    public function index(UnidadeIndexDTO $dto): LengthAwarePaginator
+    {
+        return $this->readRepository->index($dto);
+    }
+
     /** @return string[] IDs das unidades na linha ascendente (da raiz até a unidade informada) */
     public function linhaAscendente(string $unidadeId): array
     {
         return $this->readRepository->linhaAscendente($unidadeId);
+    }
+
+    public function findAll(): EloquentCollection
+    {
+        return $this->readRepository->findAllWhere([]);
     }
 
     /**
