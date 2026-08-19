@@ -8,7 +8,6 @@ use App\Models\Afastamento;
 use App\Repository\Afastamento\AfastamentoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
-use Illuminate\Database\Eloquent\Collection;
 use Mockery;
 use Tests\TestCase;
 
@@ -36,14 +35,11 @@ describe('OcorrenciaStoreValidator::validarAutorizacao', function () {
         expect(true)->toBeTrue();
     });
 
-    test('permite quando usuário logado é gestor de unidade onde o alvo está lotado', function () {
+    test('permite quando alvo está lotado em unidade gerenciada ou subordinada', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('getUnidadesGerenciadas')
+        $unidadeRepo->shouldReceive('getGerenciadasComSubordinadasIds')
             ->with('gestor-1')
-            ->andReturn(new Collection([(object) ['id' => 'unidade-1']]));
-        $unidadeRepo->shouldReceive('getSubordinadasRecursivas')
-            ->with(['unidade-1'])
-            ->andReturn(new Collection([(object) ['id' => 'unidade-1'], (object) ['id' => 'unidade-sub']]));
+            ->andReturn(['unidade-1', 'unidade-sub']);
 
         $afastamentoRepo = Mockery::mock(AfastamentoRepository::class);
         $afastamentoRepo->shouldReceive('usuarioPossuiVinculoEmUnidades')
@@ -57,28 +53,44 @@ describe('OcorrenciaStoreValidator::validarAutorizacao', function () {
         expect(true)->toBeTrue();
     });
 
+    test('permite quando alvo está lotado na própria unidade gerenciada (sem subordinadas)', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+        $unidadeRepo->shouldReceive('getGerenciadasComSubordinadasIds')
+            ->with('gestor-1')
+            ->andReturn(['unidade-1']);
+
+        $afastamentoRepo = Mockery::mock(AfastamentoRepository::class);
+        $afastamentoRepo->shouldReceive('usuarioPossuiVinculoEmUnidades')
+            ->with('user-alvo', ['unidade-1'])
+            ->andReturn(true);
+
+        $validator = criarValidator($afastamentoRepo, $unidadeRepo);
+
+        $validator->validarAutorizacao('user-alvo', 'gestor-1');
+
+        expect(true)->toBeTrue();
+    });
+
     test('rejeita quando usuário logado não gerencia nenhuma unidade', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('getUnidadesGerenciadas')
+        $unidadeRepo->shouldReceive('getGerenciadasComSubordinadasIds')
             ->with('user-sem-gestao')
-            ->andReturn(new Collection());
+            ->andReturn([]);
 
         $validator = criarValidator(unidadeRepo: $unidadeRepo);
 
         $validator->validarAutorizacao('user-alvo', 'user-sem-gestao');
     })->throws(ForbiddenException::class);
 
-    test('rejeita quando alvo não está lotado em unidades gerenciadas', function () {
+    test('rejeita quando alvo não está lotado em unidades gerenciadas nem subordinadas', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('getUnidadesGerenciadas')
-            ->andReturn(new Collection([(object) ['id' => 'unidade-1']]));
-        $unidadeRepo->shouldReceive('getSubordinadasRecursivas')
-            ->with(['unidade-1'])
-            ->andReturn(new Collection([(object) ['id' => 'unidade-1']]));
+        $unidadeRepo->shouldReceive('getGerenciadasComSubordinadasIds')
+            ->with('gestor-1')
+            ->andReturn(['unidade-1', 'unidade-sub']);
 
         $afastamentoRepo = Mockery::mock(AfastamentoRepository::class);
         $afastamentoRepo->shouldReceive('usuarioPossuiVinculoEmUnidades')
-            ->with('user-alvo', ['unidade-1'])
+            ->with('user-alvo', ['unidade-1', 'unidade-sub'])
             ->andReturn(false);
 
         $validator = criarValidator($afastamentoRepo, $unidadeRepo);
