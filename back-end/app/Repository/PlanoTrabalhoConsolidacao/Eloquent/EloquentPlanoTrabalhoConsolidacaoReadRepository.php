@@ -237,26 +237,38 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
     {
         $query->select(DB::raw(1))
             ->from('unidades_integrantes as ui_t')
-            ->join('unidades_integrantes_atribuicoes as uia_t', 'uia_t.unidade_integrante_id', '=', 'ui_t.id')
+            ->join('unidades_integrantes_atribuicoes as uia_t', function ($join) {
+                $join->on('uia_t.unidade_integrante_id', '=', 'ui_t.id')
+                    ->whereNull('uia_t.deleted_at');
+            })
             ->join('unidades_integrantes as ui_s', function ($join) use ($usuarioId) {
                 $join->on('ui_s.unidade_id', '=', 'ui_t.unidade_id')
-                    ->where('ui_s.usuario_id', '=', $usuarioId);
+                    ->where('ui_s.usuario_id', '=', $usuarioId)
+                    ->whereNull('ui_s.deleted_at');
             })
-            ->join('unidades_integrantes_atribuicoes as uia_s', 'uia_s.unidade_integrante_id', '=', 'ui_s.id')
+            ->join('unidades_integrantes_atribuicoes as uia_s', function ($join) {
+                $join->on('uia_s.unidade_integrante_id', '=', 'ui_s.id')
+                    ->whereNull('uia_s.deleted_at');
+            })
             ->where('uia_t.atribuicao', 'GESTOR')
             ->where('uia_s.atribuicao', 'GESTOR_SUBSTITUTO')
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
-            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id');
+            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
+            ->whereNull('ui_t.deleted_at');
     }
 
     private function subqueryPlanoEhDoGestorTitular(\Illuminate\Database\Query\Builder $query): void
     {
         $query->select(DB::raw(1))
             ->from('unidades_integrantes as ui_t')
-            ->join('unidades_integrantes_atribuicoes as uia_t', 'uia_t.unidade_integrante_id', '=', 'ui_t.id')
+            ->join('unidades_integrantes_atribuicoes as uia_t', function ($join) {
+                $join->on('uia_t.unidade_integrante_id', '=', 'ui_t.id')
+                    ->whereNull('uia_t.deleted_at');
+            })
             ->where('uia_t.atribuicao', 'GESTOR')
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
-            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id');
+            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
+            ->whereNull('ui_t.deleted_at');
     }
 
     private function getAtividades(PlanoTrabalhoConsolidacao $consolidacao, bool $concluido): Collection
