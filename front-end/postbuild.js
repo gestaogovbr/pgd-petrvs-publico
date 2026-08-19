@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const ANGULAR_BUNDLE_PATTERN = /^(?:(?:runtime|polyfills|main|scripts|styles|common|blue|light|dark)(?:\.[a-f0-9]+)?\.(?:js|css)|\d+(?:\.[a-f0-9]+)?\.js|(?:src_|default-node_modules_).+\.js)(?:\.map)?$/i;
+
 console.log("POST-BUILD:");
 
 function findRepoRoot(startDir) {
@@ -32,11 +34,31 @@ if (!repoRoot) {
   process.exit(1);
 }
 
-// Cria o angular.blade.php e edita o app.json para colocar os arquivos com hash do build angular
-const indexHtmlPath = path.join(repoRoot, 'back-end/public/index.html');
-const appJsonPath = path.join(repoRoot, 'back-end/public/app.json');
-const angularBladePath = path.join(repoRoot, 'back-end/resources/views/angular.blade.php');
+function listFiles(directory) {
+  if (!fs.existsSync(directory)) {
+    return [];
+  }
 
+  return fs.readdirSync(directory, { withFileTypes: true })
+    .filter(entry => entry.isFile())
+    .map(entry => entry.name);
+}
+
+function cleanObsoleteAngularBundles(buildOutputDir, publicDir) {
+  const currentBuildFiles = new Set(listFiles(buildOutputDir));
+  const obsoleteBundles = listFiles(publicDir)
+    .filter(file => ANGULAR_BUNDLE_PATTERN.test(file) && !currentBuildFiles.has(file));
+
+  obsoleteBundles.forEach(file => fs.unlinkSync(path.join(publicDir, file)));
+  return obsoleteBundles;
+}
+
+// Cria o angular.blade.php, sincroniza o build e remove somente bundles Angular obsoletos.
+const buildOutputDir = path.join(__dirname, 'dist/petrvs');
+const publicDir = path.join(repoRoot, 'back-end/public');
+const indexHtmlPath = path.join(buildOutputDir, 'index.html');
+const appJsonPath = path.join(buildOutputDir, 'app.json');
+const angularBladePath = path.join(repoRoot, 'back-end/resources/views/angular.blade.php');
 
 if (!fs.existsSync(indexHtmlPath)) {
   console.error("Arquivo index.html não encontrado em", indexHtmlPath);
@@ -70,13 +92,16 @@ try {
     process.exit(1);
   }
 
-  if (fs.existsSync(angularBladePath)) {
-    fs.unlinkSync(angularBladePath);
-    console.log("Arquivo angular.blade.php existente removido.");
-  }
+  fs.mkdirSync(publicDir, { recursive: true });
+  fs.cpSync(buildOutputDir, publicDir, { recursive: true, force: true });
 
-  fs.renameSync(indexHtmlPath, angularBladePath);
-  console.log("Arquivo index.html movido para angular.blade.php com sucesso.");
+  const obsoleteBundles = cleanObsoleteAngularBundles(buildOutputDir, publicDir);
+  console.log('Bundles Angular obsoletos removidos:', obsoleteBundles);
+
+  fs.rmSync(path.join(publicDir, 'index.html'), { force: true });
+
+  fs.writeFileSync(angularBladePath, indexContent);
+  console.log("Arquivo angular.blade.php atualizado com sucesso.");
 } catch (error) {
   console.error("Erro ao processar index.html e app.json:", error);
   process.exit(1);
@@ -127,3 +152,6 @@ const buildInfoPath = path.join(repoRoot, 'back-end/public/assets/build-info.jso
 fs.mkdirSync(path.dirname(buildInfoPath), { recursive: true });
 fs.writeFileSync(buildInfoPath, JSON.stringify(buildInfo, null, 2));
 console.log('Build info gerado:', buildInfo);
+
+fs.rmSync(buildOutputDir, { recursive: true, force: true });
+console.log('Diretório temporário do build Angular removido:', buildOutputDir);
