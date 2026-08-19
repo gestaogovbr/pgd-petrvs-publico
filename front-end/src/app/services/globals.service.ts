@@ -57,7 +57,6 @@ export class GlobalsService {
     if(this.contexto?.key != context) {
       let novoContexto = this.app!.menuContexto.find(x => x.key == context);
       if(!this.auth.usuario || !novoContexto?.permition || this.auth.capacidades.includes(novoContexto.permition)) this.contexto = novoContexto;
-      if(this.contexto && goToContextoHome) this.goHome();
       this.app!.cdRef.detectChanges();
     }
     if(this.auth.usuario && this.auth.usuarioConfig.menu_contexto != this.contexto?.key) {
@@ -66,7 +65,7 @@ export class GlobalsService {
   }
 
   public goHome() {
-    this.go.navigate({ route: ["home", this.contexto!.key.toLowerCase()] });
+    this.go.navigate({ route: this.initialRoute });
   }
 
   public is(entidade: string): boolean {
@@ -90,9 +89,12 @@ export class GlobalsService {
   }
 
   public get initialRoute(): string[] {
-    //@ts-ignore
-    const strRoute = (this.contexto ? "/home/"+ this.contexto!.key.toLowerCase() : "/home");
-    return strRoute.substring(strRoute.startsWith("/") ? 1 : 0).split("/");
+    // RN07: Chefias de Unidade Autorizadora (Nível 1) e Instituidora (Nível 2)
+    // deverão ser direcionados para o módulo de Painéis Gerenciais após autenticação.
+    // TODO: descomentar quando o Painel Gerencial estiver implementado
+    // if (this.isChefiaUnidadeAutorizadoraOuInstituidora()) return ['gestao', 'paineis-gerenciais'];
+    if (!this.auth.isUsuarioConsulta()) return ['home-v2'];
+    return ['home'];
   }
 
   public get requireLogged(): boolean {

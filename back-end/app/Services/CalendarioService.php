@@ -169,6 +169,37 @@ class CalendarioService
     return date("N", $timestamp) > 5;
   }
 
+  /**
+   * Conta dias úteis entre duas datas, excluindo finais de semana e feriados.
+   * Utiliza a lista de feriados retornada por CalendarioService::feriadosCadastrados().
+   *
+   * Nota: o método qtdDiasUteis() existente não foi utilizado porque possui incompatibilidades
+   * no formato de dados entre listaFeriadosCadastrados() (array sequencial com mktime invertido)
+   * e isFeriadoCadastrado() (espera array associativo com chaves de data). Este método usa o
+   * formato correto retornado pelo método estático feriadosCadastrados() (chaves "-MM-DD" e "YYYY-MM-DD").
+   *
+   * @param string $inicio Data no formato Y-m-d
+   * @param string $fim Data no formato Y-m-d
+   * @param array<string, string> $feriadosCadastrados Chaves no formato "-MM-DD" (recorrente) ou "YYYY-MM-DD" (fixo)
+   */
+  public function contarDiasUteis(string $inicio, string $fim, array $feriadosCadastrados): int
+  {
+    $inicioTs = strtotime($inicio);
+    $fimTs = strtotime($fim);
+    $diasUteis = 0;
+
+    for ($ts = $inicioTs; $ts <= $fimTs; $ts += self::DIA_EM_SEGUNDOS) {
+      $chaveFixa = date('Y-m-d', $ts);
+      $chaveRecorrente = '-' . date('m-d', $ts);
+
+      if (!static::isFinalSemana($ts) && !isset($feriadosCadastrados[$chaveFixa]) && !isset($feriadosCadastrados[$chaveRecorrente])) {
+        $diasUteis++;
+      }
+    }
+
+    return $diasUteis;
+  }
+
   public static function isFeriadoReligioso($timestamp, $listaFeriados = null): string|null
   {
     $listaFeriados = $listaFeriados ?? static::listaFeriadosReligiosos($timestamp, $timestamp);
@@ -257,18 +288,29 @@ class CalendarioService
 
   public function listaFeriadosCadastrados($inicio, $fim, $unidade)
   {
-    $feriados = Feriado::whereRaw(
-      "(entidade_id IS NULL OR entidade_id = :entidade_id) AND ("
-      . "(abrangencia = 'NACIONAL') OR"
-      . "(abrangencia = 'ESTADUAL' && uf = :uf) OR"
-      . "(abrangencia = 'MUNICIPAL' && cidade_id = :cidade_id)"
-      . ")",
-      [
-        ":entidade_id" => $unidade->entidade_id,
-        ":uf" => $unidade->cidade->uf,
-        ":cidade_id" => $unidade->cidade_id
-      ]
-    )->get();
+    if ($unidade->cidade !== null) {
+      $feriados = Feriado::whereRaw(
+        "(entidade_id IS NULL OR entidade_id = :entidade_id) AND ("
+        . "(abrangencia = 'NACIONAL') OR"
+        . "(abrangencia = 'ESTADUAL' && uf = :uf) OR"
+        . "(abrangencia = 'MUNICIPAL' && cidade_id = :cidade_id)"
+        . ")",
+        [
+          ":entidade_id" => $unidade->entidade_id,
+          ":uf" => $unidade->cidade->uf,
+          ":cidade_id" => $unidade->cidade_id
+        ]
+      )->get();
+    } else {
+      $feriados = Feriado::whereRaw(
+        "(entidade_id IS NULL OR entidade_id = :entidade_id) AND ("
+        . "(abrangencia = 'NACIONAL')"
+        . ")",
+        [
+          ":entidade_id" => $unidade->entidade_id
+        ]
+      )->get();
+    }
     $result = [];
     for ($ano = intval(date('Y', $inicio)), $anoFim = intval(date('Y', $fim)); $ano <= $anoFim; $ano++) {
       foreach ($feriados as $feriado) {

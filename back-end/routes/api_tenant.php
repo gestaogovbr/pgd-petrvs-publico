@@ -626,10 +626,19 @@ use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQue
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
 use App\V2\RelatorioEntrega\RelatorioEntregaController as RelatorioEntregaV2Controller;
+use App\V2\Home\HomeController as HomeV2;
 use App\V2\Indicadores\IndicadoresHorasController as IndicadoresHorasV2;
 use App\V2\MuralAviso\MuralAvisoController as MuralAvisoV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
+    Route::get('home/pendencias', [HomeV2::class, 'pendencias']);
+    Route::get('home/planos-vigentes', [HomeV2::class, 'planosVigentes']);
+    Route::get('home/meus-planos-vigentes', [HomeV2::class, 'meusPlanosVigentes']);
+    Route::get('home/resumo-equipe', [HomeV2::class, 'resumoEquipe']);
+    Route::get('home/contribuicoes', [HomeV2::class, 'contribuicoes']);
+    Route::get('home/aniversariantes', [HomeV2::class, 'aniversariantes']);
+    Route::get('home/em-ferias', [HomeV2::class, 'emFerias']);
+
     Route::get('envio-participante', [EnvioParticipanteQueryController::class, 'index']);
     Route::get('envio-plano-trabalho', [EnvioPlanoTrabalhoQueryController::class, 'index']);
     Route::post('envio-plano-trabalho/{id}/enviar', [EnvioPlanoTrabalhoQueryController::class, 'enviar']);
