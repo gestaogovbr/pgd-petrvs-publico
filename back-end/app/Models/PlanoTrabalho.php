@@ -94,10 +94,10 @@ class PlanoTrabalho extends ModelBase implements HasStatusHistory
     ];
 
   public const STATUSES = [
-    'INCLUIDO' => 'Incluído',
+    'INCLUIDO' => 'Rascunho',
     'AGUARDANDO_ASSINATURA' => 'Aguardando Assinatura',
-    'ATIVO' => 'Aprovado',
-    'CONCLUIDO' => 'Executado',
+    'ATIVO' => 'Execução',
+    'CONCLUIDO' => 'Concluído',
     'AVALIADO' => 'Avaliado',
     'SUSPENSO' => 'Suspenso',
     'CANCELADO' => 'Cancelado'

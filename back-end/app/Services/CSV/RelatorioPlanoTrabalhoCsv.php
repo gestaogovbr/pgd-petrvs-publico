@@ -2,6 +2,8 @@
 
 namespace App\Services\CSV;
 
+use App\Models\PlanoTrabalho;
+
 class RelatorioPlanoTrabalhoCsv extends CsvExporter
 {
     protected static function getHeaders(): array
@@ -24,7 +26,7 @@ class RelatorioPlanoTrabalhoCsv extends CsvExporter
             $row->unidadeHierarquia,
             number_format((float) $row->chd, 2, ','),
             $row->dataFim,
-            $row->status
+            PlanoTrabalho::STATUSES[$row->status] ?? $row->status
         ];
     }
 }
