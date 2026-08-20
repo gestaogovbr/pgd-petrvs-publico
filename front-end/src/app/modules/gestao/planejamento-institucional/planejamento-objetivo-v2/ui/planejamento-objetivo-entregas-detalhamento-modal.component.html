@@ -35,12 +35,11 @@
           <select
             id="filtro-unidade"
             class="form-select form-select-sm"
-            [value]="filtroUnidadeId()"
             (change)="onFiltroUnidadeChange($event)"
           >
-            <option value="">Todas</option>
+            <option value="" [selected]="!filtroUnidadeId()">Todas</option>
             @for (op of dados()?.filtro_unidades ?? []; track op.id) {
-              <option [value]="op.id">{{ op.label }}</option>
+              <option [value]="op.id" [selected]="op.id === filtroUnidadeId()">{{ op.label }}</option>
             }
           </select>
         </div>
