@@ -50,13 +50,24 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   readonly filtroAbrangencia = signal<'' | ObjetivoEntregasAbrangencia>('');
 
   /** RN34 / RN38 — opções e tooltip do filtro Abrangência. */
-  readonly abrangenciaOpcoes: AbrangenciaOpcao[] = [
+  private readonly abrangenciaOpcoesBase: AbrangenciaOpcao[] = [
     { value: 'item_selecionado', label: 'Item selecionado' },
     { value: 'itens_subordinados', label: 'Itens subordinados' },
     { value: 'item_e_subordinados', label: 'Item selecionado e itens subordinados' },
-    { value: 'unidade_selecionada', label: 'Unidade selecionada' },
-    { value: 'unidade_e_subordinadas', label: 'Unidade selecionada e unidades subordinadas' }
   ];
+
+  private readonly abrangenciaOpcoesUnidade: AbrangenciaOpcao[] = [
+    { value: 'unidade_selecionada', label: 'Unidade selecionada' },
+    { value: 'unidade_e_subordinadas', label: 'Unidade selecionada e unidades subordinadas' },
+  ];
+
+  /** RN37/RN39 — opções de unidade aparecem apenas quando há unidade selecionada no filtro do modal. */
+  get abrangenciaOpcoes(): AbrangenciaOpcao[] {
+    if (this.filtroUnidadeId()) {
+      return [...this.abrangenciaOpcoesBase, ...this.abrangenciaOpcoesUnidade];
+    }
+    return this.abrangenciaOpcoesBase;
+  }
 
   readonly abrangenciaTooltip =
     'Permite restringir a consulta de entregas conforme o escopo do Planejamento Institucional ou da estrutura organizacional.';
@@ -68,10 +79,15 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
       const id = this.objetivoId();
       const unidadeInicial = this.unidadeIdInicial();
       if (id) {
-        // untracked: sem isso, os signals de filtro lidos dentro de carregar() entram na
-        // dependência do effect, que re-executa a cada mudança de filtro e reseta a unidade.
         untracked(() => {
           this.filtroUnidadeId.set(unidadeInicial);
+          // RN37/RN39: se modal abriu com unidade pré-selecionada, opções de unidade já ficam visíveis
+          if (!unidadeInicial) {
+            const abr = this.filtroAbrangencia();
+            if (abr === 'unidade_selecionada' || abr === 'unidade_e_subordinadas') {
+              this.filtroAbrangencia.set('');
+            }
+          }
           void this.carregar();
         });
       }
@@ -91,6 +107,11 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   onFiltroUnidadeChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.filtroUnidadeId.set(value);
+    // RN37/RN39: ao desmarcar unidade, limpa abrangência de unidade se estava selecionada
+    const abr = this.filtroAbrangencia();
+    if (!value && (abr === 'unidade_selecionada' || abr === 'unidade_e_subordinadas')) {
+      this.filtroAbrangencia.set('');
+    }
     void this.carregar();
   }
 

@@ -16,10 +16,11 @@ use Illuminate\Support\Facades\DB;
 class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRepository implements PlanejamentoObjetivoReadRepositoryContract
 {
     /**
-     * Dias do período do PT no cálculo de esforço.
-     * Alinhado às demais consultas deste repositório (esforço-total, entregas, equipes).
+     * Dias úteis (segunda a sexta, sem feriados) do período do PT no cálculo de esforço (RN03).
+     * Fórmula MySQL equivalente a NETWORKDAYS(pt.data_inicio, pt.data_fim) sem feriados.
+     * WEEKDAY(): 0=segunda … 6=domingo. Lookup-table 7×7 mapeia o fragmento semanal restante.
      */
-    private const ESFORCO_DIAS_PERIODO_PT_SQL = '(DATEDIFF(pt.data_fim, pt.data_inicio) + 1)';
+    private const ESFORCO_DIAS_PERIODO_PT_SQL = "(5 * (DATEDIFF(pt.data_fim, pt.data_inicio) DIV 7) + SUBSTRING('1234555512344445123333451222234511112345001234550', 7 * WEEKDAY(pt.data_inicio) + WEEKDAY(pt.data_fim) + 1, 1))";
 
     public function __construct(PlanejamentoObjetivo $model)
     {
@@ -166,6 +167,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     public function listarEntregasPlanoEntregaPorObjetivoId(string $objetivoId): array
     {
         $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
+        $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
 
         return DB::select(<<<SQL
             SELECT
@@ -183,7 +185,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                     COALESCE(
                         SUM(
                             {$chd}
-                            * (DATEDIFF(pt.data_fim, pt.data_inicio) + 1)
+                            * {$diasPeriodo}
                             * (pte.forca_trabalho / 100.0)
                         ),
                         0
@@ -221,6 +223,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     public function listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId(string $objetivoId): array
     {
         $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
+        $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
 
         return DB::select(<<<SQL
             SELECT
@@ -231,7 +234,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                     COALESCE(
                         SUM(
                             {$chd}
-                            * (DATEDIFF(pt.data_fim, pt.data_inicio) + 1)
+                            * {$diasPeriodo}
                             * (pte.forca_trabalho / 100.0)
                         ),
                         0

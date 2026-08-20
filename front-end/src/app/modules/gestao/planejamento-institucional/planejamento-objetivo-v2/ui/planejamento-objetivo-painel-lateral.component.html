@@ -111,15 +111,13 @@
         <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.esforcoPlanejado"></i>
       </p>
     }
-    @if (secao.esforco.mostrar_executado) {
-      <p class="mb-0">
-        <strong>Esforço total executado:</strong>
-        {{ formatHoras(secao.esforco.executado_horas) }} h
-        <span class="text-muted">({{ formatPercent(secao.esforco.executado_percentual_planejado) }} do planejado)</span>
-        <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.esforcoExecutado"></i>
-      </p>
-    }
-    @if (!secao.esforco.mostrar_planejado && !secao.esforco.mostrar_executado && !secao.esforco.mostrar_disponivel) {
+    <p class="mb-0">
+      <strong>Esforço total executado:</strong>
+      {{ formatHoras(secao.esforco.executado_horas) }} h
+      <span class="text-muted">({{ formatPercent(secao.esforco.executado_percentual_planejado) }} do planejado)</span>
+      <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.esforcoExecutado"></i>
+    </p>
+    @if (!secao.esforco.mostrar_planejado && !secao.esforco.mostrar_disponivel) {
       <p class="mb-0 text-muted">Sem dados de esforço no período.</p>
     }
   </div>
@@ -139,6 +137,12 @@
       <strong>Total de entregas envolvidas:</strong>
       {{ secao.entregas.total_entregas }}
       <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.totalEntregas"></i>
+    </p>
+    <p class="mb-0">
+      <strong>Entregas concluídas:</strong>
+      {{ secao.entregas.entregas_concluidas }}
+      <span class="text-muted">({{ formatPercent(secao.entregas.percentual_concluidas) }} das avaliadas)</span>
+      <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.entregasConcluidas"></i>
     </p>
   </div>
 </ng-template>
