@@ -51,6 +51,10 @@ describe('CadeiaValorEntregasService', function () {
                     'entrega_titulo' => 'Entrega Teste',
                     'progresso_esperado' => 50.0,
                     'progresso_realizado' => 30.0,
+                    'meta' => '{"porcentagem": 100}',
+                    'realizado' => '{"porcentagem": 40}',
+                    'tipo_indicador' => 'PORCENTAGEM',
+                    'lista_qualitativos' => null,
                     'registro_execucao' => 'Última atividade realizada',
                     'participantes_total' => 3,
                     'participantes_somente_unidade_propria' => 2,
@@ -63,6 +67,12 @@ describe('CadeiaValorEntregasService', function () {
                     'tem_pt_concluido' => true,
                 ],
             ]);
+        $repo->shouldReceive('listarFiltroUnidadesPainel')
+            ->with('proc-1')
+            ->andReturn([['id' => 'u-1', 'label' => 'UA — Unidade A']]);
+        $repo->shouldReceive('listarFiltroEntregasPainel')
+            ->with('proc-1')
+            ->andReturn([['id' => 'pee-1', 'label' => 'Entrega Teste']]);
 
         $service = criarEntregasService($repo);
         $result = $service->getEntregas('cv-1', 'proc-1');
@@ -99,6 +109,12 @@ describe('CadeiaValorEntregasService', function () {
             ->with('proc-1', $filtros)
             ->once()
             ->andReturn([]);
+        $repo->shouldReceive('listarFiltroUnidadesPainel')
+            ->with('proc-1')
+            ->andReturn([]);
+        $repo->shouldReceive('listarFiltroEntregasPainel')
+            ->with('proc-1')
+            ->andReturn([]);
 
         $service = criarEntregasService($repo);
         $result = $service->getEntregas('cv-1', 'proc-1', $filtros);
@@ -126,7 +142,7 @@ describe('CadeiaValorEntregasService', function () {
         $service->getEntregas('cv-1', 'proc-inexistente');
     })->throws(\App\Exceptions\NotFoundException::class);
 
-    test('getEntregas monta filtro_entregas e filtro_unidades sem duplicatas', function () {
+    test('getEntregas usa filtros do repository independentes dos dados filtrados', function () {
         $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
         $cadeiaValor = Mockery::mock(CadeiaValor::class)->makePartial();
         $processo = Mockery::mock(CadeiaValorProcesso::class)->makePartial();
@@ -139,6 +155,10 @@ describe('CadeiaValorEntregasService', function () {
             'plano_entrega_data_fim' => '2025-12-31',
             'progresso_esperado' => 50.0,
             'progresso_realizado' => 30.0,
+            'meta' => null,
+            'realizado' => null,
+            'tipo_indicador' => null,
+            'lista_qualitativos' => null,
             'registro_execucao' => null,
             'participantes_total' => 0,
             'participantes_somente_unidade_propria' => 0,
@@ -161,26 +181,24 @@ describe('CadeiaValorEntregasService', function () {
                 'unidade_nome' => 'Unidade A',
                 'entrega_titulo' => 'Entrega 1',
             ]),
-            (object) array_merge($baseRow, [
-                'plano_entrega_entrega_id' => 'pee-1',
-                'unidade_id' => 'u-2',
-                'unidade_sigla' => 'UB',
-                'unidade_nome' => 'Unidade B',
-                'entrega_titulo' => 'Entrega 1',
-            ]),
-            (object) array_merge($baseRow, [
-                'plano_entrega_entrega_id' => 'pee-2',
-                'unidade_id' => 'u-1',
-                'unidade_sigla' => 'UA',
-                'unidade_nome' => 'Unidade A',
-                'entrega_titulo' => 'Entrega 2',
-            ]),
         ]);
+        $repo->shouldReceive('listarFiltroUnidadesPainel')
+            ->with('proc-1')
+            ->andReturn([
+                ['id' => 'u-1', 'label' => 'UA — Unidade A'],
+                ['id' => 'u-2', 'label' => 'UB — Unidade B'],
+            ]);
+        $repo->shouldReceive('listarFiltroEntregasPainel')
+            ->with('proc-1')
+            ->andReturn([
+                ['id' => 'pee-1', 'label' => 'Entrega 1'],
+                ['id' => 'pee-2', 'label' => 'Entrega 2'],
+            ]);
 
         $service = criarEntregasService($repo);
         $result = $service->getEntregas('cv-1', 'proc-1');
 
-        expect($result->itens)->toHaveCount(3);
+        expect($result->itens)->toHaveCount(1);
         expect($result->filtro_entregas)->toHaveCount(2);
         expect($result->filtro_unidades)->toHaveCount(2);
         expect($result->filtro_entregas[0]['id'])->toBe('pee-1');

@@ -7,7 +7,8 @@ import {
   inject,
   input,
   output,
-  signal
+  signal,
+  untracked
 } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { LookupService } from 'src/app/services/lookup.service';
@@ -49,8 +50,10 @@ export class CadeiaValorEntregasDetalhamentoModalComponent {
       const processoId = this.processoId();
       const unidadeInicial = this.unidadeIdInicial();
       if (processoId) {
-        this.filtroUnidadeId.set(unidadeInicial);
-        void this.carregar();
+        untracked(() => {
+          this.filtroUnidadeId.set(unidadeInicial);
+          void this.carregar();
+        });
       }
     });
   }
@@ -130,11 +133,12 @@ export class CadeiaValorEntregasDetalhamentoModalComponent {
     return `${(Math.round(value * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
   }
 
-  calcProgresso(item: CadeiaValorPainelEntregaDetalheLinhaApi): number {
-    if (item.progresso_esperado > 0) {
-      return Math.min(100, (item.progresso_realizado / item.progresso_esperado) * 100);
-    }
-    return item.progresso_realizado;
+  formatMeta(item: CadeiaValorPainelEntregaDetalheLinhaApi): string {
+    return this.formatValorIndicador(item.meta, item.tipo_indicador, item.lista_qualitativos);
+  }
+
+  formatRealizado(item: CadeiaValorPainelEntregaDetalheLinhaApi): string {
+    return this.formatValorIndicador(item.realizado, item.tipo_indicador, item.lista_qualitativos);
   }
 
   formatVigencia(inicio: string, fim: string | null): string {
@@ -160,6 +164,23 @@ export class CadeiaValorEntregasDetalhamentoModalComponent {
     }
 
     return date.toLocaleDateString('pt-BR');
+  }
+
+  private formatValorIndicador(valor: Record<string, unknown> | null, tipoIndicador: string | null, listaQualitativos: Array<{ key: string; value: string }> | null): string {
+    if (!valor || !tipoIndicador) {
+      return '—';
+    }
+    switch (tipoIndicador) {
+      case 'PORCENTAGEM': return `${valor['porcentagem'] ?? 0}%`;
+      case 'QUANTIDADE': return `${valor['quantitativo'] ?? 0}`;
+      case 'VALOR': return `${valor['valor'] ?? 0}`;
+      case 'QUALITATIVO': {
+        const key = valor['qualitativo'] as string;
+        const item = listaQualitativos?.find(q => q.key === key);
+        return item?.value ?? key ?? '—';
+      }
+      default: return '—';
+    }
   }
 
   private buildParams(): Record<string, string> {
