@@ -6,6 +6,7 @@ namespace App\Repository\PlanoTrabalho\Eloquent;
 
 use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use App\Models\PlanoTrabalho;
+use App\Enums\Atribuicao;
 use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
@@ -154,8 +155,8 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                 $join->on('uia_s.unidade_integrante_id', '=', 'ui_s.id')
                     ->whereNull('uia_s.deleted_at');
             })
-            ->where('uia_t.atribuicao', 'GESTOR')
-            ->where('uia_s.atribuicao', 'GESTOR_SUBSTITUTO')
+            ->where('uia_t.atribuicao', Atribuicao::GESTOR->value)
+            ->where('uia_s.atribuicao', Atribuicao::GESTOR_SUBSTITUTO->value)
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
             ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
             ->whereNull('ui_t.deleted_at');
@@ -169,7 +170,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                 $join->on('uia_t.unidade_integrante_id', '=', 'ui_t.id')
                     ->whereNull('uia_t.deleted_at');
             })
-            ->where('uia_t.atribuicao', 'GESTOR')
+            ->where('uia_t.atribuicao', Atribuicao::GESTOR->value)
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
             ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
             ->whereNull('ui_t.deleted_at');
@@ -346,7 +347,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('usuario_id', $usuarioId)
             ->where('data_inicio', '<=', $dataFim)
             ->where('data_fim', '>=', $dataInicio)
-            ->where('status', '!=', 'CANCELADO')
+            ->where('status', '!=', StatusEnum::CANCELADO->value)
             ->exists();
     }
 
@@ -356,7 +357,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('usuario_id', $usuarioId)
             ->where('data_inicio', '<=', $dataFim)
             ->where('data_fim', '>=', $dataInicio)
-            ->where('status', '!=', 'CANCELADO')
+            ->where('status', '!=', StatusEnum::CANCELADO->value)
             ->where('id', '!=', $excluirPlanoId)
             ->exists();
     }
@@ -408,7 +409,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                     ->whereNull('usuarios.deleted_at');
             })
             ->whereIn('planos_trabalhos.unidade_id', $unidadeIds)
-            ->whereIn('planos_trabalhos.status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+            ->whereIn('planos_trabalhos.status', [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
 
         if ($filtros['data_inicial'] !== null) {
             $query->where('planos_trabalhos.data_inicio', '>=', $filtros['data_inicial']);

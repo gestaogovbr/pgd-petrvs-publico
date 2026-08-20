@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\PlanoTrabalhoConsolidacao\Eloquent;
 
 use App\DTOs\PlanoTrabalho\PlanoTrabalhoConsolidacaoDataDTO;
+use App\Enums\Atribuicao;
 use App\Enums\StatusEnum;
 use App\Models\Afastamento;
 use App\Models\Atividade;
@@ -250,8 +251,8 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
                 $join->on('uia_s.unidade_integrante_id', '=', 'ui_s.id')
                     ->whereNull('uia_s.deleted_at');
             })
-            ->where('uia_t.atribuicao', 'GESTOR')
-            ->where('uia_s.atribuicao', 'GESTOR_SUBSTITUTO')
+            ->where('uia_t.atribuicao', Atribuicao::GESTOR->value)
+            ->where('uia_s.atribuicao', Atribuicao::GESTOR_SUBSTITUTO->value)
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
             ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
             ->whereNull('ui_t.deleted_at');
@@ -265,7 +266,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
                 $join->on('uia_t.unidade_integrante_id', '=', 'ui_t.id')
                     ->whereNull('uia_t.deleted_at');
             })
-            ->where('uia_t.atribuicao', 'GESTOR')
+            ->where('uia_t.atribuicao', Atribuicao::GESTOR->value)
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
             ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
             ->whereNull('ui_t.deleted_at');
@@ -370,7 +371,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
                 DB::raw('EXISTS(SELECT 1 FROM avaliacoes av WHERE av.plano_trabalho_consolidacao_id = c.id AND av.recurso IS NOT NULL AND av.deleted_at IS NULL) as has_recurso'),
                 DB::raw("EXISTS(SELECT 1 FROM avaliacoes av2 WHERE av2.plano_trabalho_consolidacao_id = c.id AND av2.deleted_at IS NULL AND av2.data_avaliacao < DATE_SUB(NOW(), INTERVAL {$prazoDias} DAY)) as is_prazo_avaliacao_terminado"),
             ])
-            ->orderByRaw("FIELD(pt.status, 'CONCLUIDO', 'ATIVO')")
+            ->orderByRaw("FIELD(pt.status, ?, ?)", [StatusEnum::CONCLUIDO->value, StatusEnum::ATIVO->value])
             ->orderBy('c.data_inicio')
             ->get();
     }
