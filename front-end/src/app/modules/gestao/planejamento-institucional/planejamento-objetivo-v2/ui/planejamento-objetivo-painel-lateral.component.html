@@ -73,46 +73,17 @@
           <div class="alert alert-warning py-2 px-3 small mb-3" role="alert">{{ error() }}</div>
         }
 
-        <section class="painel-lateral__section">
-          <h6 class="painel-lateral__section-title">Esforço</h6>
-          @if (r.esforco.mostrar_disponivel) {
-            <p class="mb-1">
-              <strong>Esforço total disponível:</strong>
-              {{ formatHoras(r.esforco.disponivel_horas) }} h
-            </p>
-          }
-          @if (r.esforco.mostrar_planejado) {
-            <p class="mb-1">
-              <strong>Esforço total planejado:</strong>
-              {{ formatHoras(r.esforco.planejado_horas) }} h
-              <span class="text-muted">({{ formatPercent(r.esforco.planejado_percentual_disponivel) }} do disponível)</span>
-            </p>
-          }
-          @if (r.esforco.mostrar_executado) {
-            <p class="mb-0">
-              <strong>Esforço total executado:</strong>
-              {{ formatHoras(r.esforco.executado_horas) }} h
-              <span class="text-muted">({{ formatPercent(r.esforco.executado_percentual_planejado) }} do planejado)</span>
-            </p>
-          }
-          @if (!r.esforco.mostrar_planejado && !r.esforco.mostrar_executado && !r.esforco.mostrar_disponivel) {
-            <p class="mb-0 text-muted">Sem dados de esforço no período.</p>
-          }
+        <section class="painel-lateral__section painel-lateral__secao">
+          <h6 class="painel-lateral__section-title">Item selecionado</h6>
+          <ng-container *ngTemplateOutlet="metricasSecao; context: { secao: r.item, tt: tooltips.item }" />
+        </section>
+
+        <section class="painel-lateral__section painel-lateral__secao">
+          <h6 class="painel-lateral__section-title">Consolidado</h6>
+          <ng-container *ngTemplateOutlet="metricasSecao; context: { secao: r.consolidado, tt: tooltips.consolidado }" />
         </section>
 
         <section class="painel-lateral__section">
-          <h6 class="painel-lateral__section-title">Pessoas</h6>
-          <p class="mb-1"><strong>Total de participantes envolvidos:</strong> {{ r.pessoas.total_participantes }}</p>          
-        </section>
-
-        <section class="painel-lateral__section">
-          <h6 class="painel-lateral__section-title">Entregas</h6>
-          <p class="mb-1"><strong>Total de entregas envolvidas:</strong> {{ r.entregas.total_entregas }}</p>
-          <p class="mb-3">
-            <strong>Entregas concluídas:</strong>
-            {{ r.entregas.entregas_concluidas }}
-            <span class="text-muted">({{ formatPercent(r.entregas.percentual_concluidas) }} do total)</span>
-          </p>
           <br-button emphasis="secondary" (click)="abrirDetalhamento()">
             Detalhamento das entregas
           </br-button>
@@ -121,3 +92,53 @@
     </div>
   </div>
 }
+
+<ng-template #metricasSecao let-secao="secao" let-tt="tt">
+  <div class="painel-lateral__grupo">
+    <h6 class="painel-lateral__grupo-title">Esforço</h6>
+    @if (secao.esforco.mostrar_disponivel) {
+      <p class="mb-1">
+        <strong>Esforço total disponível:</strong>
+        {{ formatHoras(secao.esforco.disponivel_horas) }} h
+        <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.esforcoDisponivel"></i>
+      </p>
+    }
+    @if (secao.esforco.mostrar_planejado) {
+      <p class="mb-1">
+        <strong>Esforço total planejado:</strong>
+        {{ formatHoras(secao.esforco.planejado_horas) }} h
+        <span class="text-muted">({{ formatPercent(secao.esforco.planejado_percentual_disponivel) }} do disponível)</span>
+        <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.esforcoPlanejado"></i>
+      </p>
+    }
+    @if (secao.esforco.mostrar_executado) {
+      <p class="mb-0">
+        <strong>Esforço total executado:</strong>
+        {{ formatHoras(secao.esforco.executado_horas) }} h
+        <span class="text-muted">({{ formatPercent(secao.esforco.executado_percentual_planejado) }} do planejado)</span>
+        <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.esforcoExecutado"></i>
+      </p>
+    }
+    @if (!secao.esforco.mostrar_planejado && !secao.esforco.mostrar_executado && !secao.esforco.mostrar_disponivel) {
+      <p class="mb-0 text-muted">Sem dados de esforço no período.</p>
+    }
+  </div>
+
+  <div class="painel-lateral__grupo">
+    <h6 class="painel-lateral__grupo-title">Pessoas</h6>
+    <p class="mb-0">
+      <strong>Total de participantes envolvidos:</strong>
+      {{ secao.pessoas.total_participantes }}
+      <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.participantes"></i>
+    </p>
+  </div>
+
+  <div class="painel-lateral__grupo">
+    <h6 class="painel-lateral__grupo-title">Entregas</h6>
+    <p class="mb-1">
+      <strong>Total de entregas envolvidas:</strong>
+      {{ secao.entregas.total_entregas }}
+      <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.totalEntregas"></i>
+    </p>
+  </div>
+</ng-template>

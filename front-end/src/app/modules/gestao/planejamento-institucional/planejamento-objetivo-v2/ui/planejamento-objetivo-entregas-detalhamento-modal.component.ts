@@ -6,17 +6,21 @@ import {
   inject,
   input,
   output,
-  signal
+  signal,
+  untracked
 } from '@angular/core';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { firstValueFrom } from 'rxjs';
 import { LookupService } from 'src/app/services/lookup.service';
 import {
   PlanejamentoObjetivoEsforcoApiClient,
+  type ObjetivoEntregasAbrangencia,
   type ObjetivoPainelEntregaDetalheLinhaApi,
   type ObjetivoPainelEntregasDetalhamentoApi,
   type ObjetivoEntregasDetalhamentoFiltros
 } from '../infra/planejamento-objetivo-esforco-api.client';
+
+type AbrangenciaOpcao = { value: ObjetivoEntregasAbrangencia; label: string };
 
 @Component({
   selector: 'app-planejamento-objetivo-entregas-detalhamento-modal',
@@ -43,14 +47,33 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   readonly filtroUnidadeId = signal('');
   readonly filtroDataInicio = signal('');
   readonly filtroDataFim = signal('');
+  readonly filtroAbrangencia = signal<'' | ObjetivoEntregasAbrangencia>('');
+
+  /** RN34 / RN38 — opções e tooltip do filtro Abrangência. */
+  readonly abrangenciaOpcoes: AbrangenciaOpcao[] = [
+    { value: 'item_selecionado', label: 'Item selecionado' },
+    { value: 'itens_subordinados', label: 'Itens subordinados' },
+    { value: 'item_e_subordinados', label: 'Item selecionado e itens subordinados' },
+    { value: 'unidade_selecionada', label: 'Unidade selecionada' },
+    { value: 'unidade_e_subordinadas', label: 'Unidade selecionada e unidades subordinadas' }
+  ];
+
+  readonly abrangenciaTooltip =
+    'Permite restringir a consulta de entregas conforme o escopo do Planejamento Institucional ou da estrutura organizacional.';
+
+  private carregamentoId = 0;
 
   constructor() {
     effect(() => {
       const id = this.objetivoId();
       const unidadeInicial = this.unidadeIdInicial();
       if (id) {
-        this.filtroUnidadeId.set(unidadeInicial);
-        void this.carregar();
+        // untracked: sem isso, os signals de filtro lidos dentro de carregar() entram na
+        // dependência do effect, que re-executa a cada mudança de filtro e reseta a unidade.
+        untracked(() => {
+          this.filtroUnidadeId.set(unidadeInicial);
+          void this.carregar();
+        });
       }
     });
   }
@@ -83,11 +106,18 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
     void this.carregar();
   }
 
+  onFiltroAbrangenciaChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as '' | ObjetivoEntregasAbrangencia;
+    this.filtroAbrangencia.set(value);
+    void this.carregar();
+  }
+
   limparFiltros(): void {
     this.filtroEntregaId.set('');
     this.filtroUnidadeId.set('');
     this.filtroDataInicio.set('');
     this.filtroDataFim.set('');
+    this.filtroAbrangencia.set('');
     void this.carregar();
   }
 
@@ -101,7 +131,7 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   }
 
   linhaKey(item: ObjetivoPainelEntregaDetalheLinhaApi): string {
-    return item.plano_entrega_entrega_id;
+    return `${item.plano_entrega_entrega_id}:${item.planejamento_objetivo_id}`;
   }
 
   statusLabel(status: string): string {
@@ -167,7 +197,8 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
       plano_entrega_entrega_id: this.filtroEntregaId() || undefined,
       unidade_id: this.filtroUnidadeId() || undefined,
       data_inicio: this.filtroDataInicio() || undefined,
-      data_fim: this.filtroDataFim() || undefined
+      data_fim: this.filtroDataFim() || undefined,
+      abrangencia: this.filtroAbrangencia() || undefined
     };
   }
 
@@ -177,25 +208,26 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
       return;
     }
 
+    const reqId = ++this.carregamentoId;
     this.loading.set(true);
     this.error.set(null);
     try {
       const data = await firstValueFrom(
         this.api.getEntregasDetalhamento(objetivoId, this.filtrosAtuais())
       );
-      if (this.objetivoId() !== objetivoId) {
+      if (this.objetivoId() !== objetivoId || reqId !== this.carregamentoId) {
         return;
       }
       this.dados.set(data);
       this.linhaExpandidaId.set(null);
     } catch (err: unknown) {
-      if (this.objetivoId() !== objetivoId) {
+      if (this.objetivoId() !== objetivoId || reqId !== this.carregamentoId) {
         return;
       }
       this.dados.set(null);
       this.error.set(err instanceof Error ? err.message : 'Não foi possível carregar o detalhamento.');
     } finally {
-      if (this.objetivoId() === objetivoId) {
+      if (this.objetivoId() === objetivoId && reqId === this.carregamentoId) {
         this.loading.set(false);
       }
     }
