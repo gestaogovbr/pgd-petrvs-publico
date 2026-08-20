@@ -62,6 +62,13 @@ interface CadeiaValorReadRepositoryContract
     public function listarFiltroUnidadesPainel(string $processoId): array;
 
     /**
+     * Retorna lista de entregas vinculadas ao processo para popular dropdown de filtro.
+     *
+     * @return list<array{id: string, label: string}>
+     */
+    public function listarFiltroEntregasPainel(string $processoId): array;
+
+    /**
      * @return \stdClass{esforco_disponivel: float, esforco_planejado: float, esforco_executado: float}
      */
     public function calcularEsforcoPorEntrega(string $entregaId): \stdClass;

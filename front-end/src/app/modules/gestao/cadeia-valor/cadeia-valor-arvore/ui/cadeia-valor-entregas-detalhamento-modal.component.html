@@ -137,9 +137,9 @@
                       {{ formatVigencia(item.plano_entrega_vigencia_inicio, item.plano_entrega_vigencia_fim) }}
                     </td>
                     <td>{{ item.entrega_titulo }}</td>
-                    <td class="text-end text-nowrap">{{ formatPercent(item.progresso_esperado) }}</td>
+                    <td class="text-end text-nowrap">{{ formatMeta(item) }}</td>
+                    <td class="text-end text-nowrap">{{ formatRealizado(item) }}</td>
                     <td class="text-end text-nowrap">{{ formatPercent(item.progresso_realizado) }}</td>
-                    <td class="text-end text-nowrap">{{ formatPercent(calcProgresso(item)) }}</td>
                   </tr>
                   @if (linhaExpandida(item)) {
                     <tr class="detalhamento-modal__detail-row">
@@ -180,8 +180,9 @@
                           </div>
                           <div>
                             <h6 class="detalhamento-modal__detail-title">Meta</h6>
-                            <p class="mb-1"><strong>Planejado:</strong> {{ formatPercent(item.progresso_esperado) }}</p>
-                            <p class="mb-0"><strong>Realizado:</strong> {{ formatPercent(item.progresso_realizado) }}</p>
+                            <p class="mb-1"><strong>Planejada:</strong> {{ formatMeta(item) }}</p>
+                            <p class="mb-1"><strong>Realizada:</strong> {{ formatRealizado(item) }}</p>
+                            <p class="mb-0"><strong>Progresso:</strong> {{ formatPercent(item.progresso_realizado) }}</p>
                           </div>
                           <div>
                             <h6 class="detalhamento-modal__detail-title">Registro de Execução</h6>

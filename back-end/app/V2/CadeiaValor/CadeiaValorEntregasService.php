@@ -28,8 +28,10 @@ class CadeiaValorEntregasService
         $this->validarProcesso($cadeiaValorId, $processoId);
 
         $rows = $this->repository->listarDetalhamentoEntregasPainel($processoId, $filtros);
+        $filtroUnidades = $this->repository->listarFiltroUnidadesPainel($processoId);
+        $filtroEntregas = $this->repository->listarFiltroEntregasPainel($processoId);
 
-        return $this->assembler->montarDetalhamento($processoId, $rows);
+        return $this->assembler->montarDetalhamento($processoId, $rows, $filtroUnidades, $filtroEntregas);
     }
 
     private function validarProcesso(string $cadeiaValorId, string $processoId): void

@@ -86,7 +86,10 @@ export type CadeiaValorPainelEntregaDetalheLinhaApi = {
   entrega_titulo: string;
   progresso_esperado: number;
   progresso_realizado: number;
-  homologado: boolean;
+  meta: Record<string, unknown> | null;
+  realizado: Record<string, unknown> | null;
+  tipo_indicador: string | null;
+  lista_qualitativos: Array<{ key: string; value: string }> | null;
   registro_execucao: string | null;
   participantes_total: number;
   participantes_somente_unidade_propria: number;
