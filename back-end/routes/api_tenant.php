@@ -727,7 +727,6 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('planejamento/objetivo/{id}/painel-resumo', [PlanejamentoObjetivoV2::class, 'painelResumo'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/entregas-detalhamento', [PlanejamentoObjetivoV2::class, 'entregasDetalhamento'])->whereUuid('id');
 
-<<<<<<< HEAD
     Route::get('painel-gerencial/unidade-inicial', [PainelGerencialV2::class, 'unidadeInicial']);
     Route::get('painel-gerencial/alinhamento-desempenho/alinhamento-institucional', [AlinhamentoDesempenhoV2::class, 'alinhamentoInstitucional']);
     Route::get('painel-gerencial/alinhamento-desempenho/avaliacoes-plano-entrega', [AlinhamentoDesempenhoV2::class, 'avaliacoesPlanoEntrega']);
