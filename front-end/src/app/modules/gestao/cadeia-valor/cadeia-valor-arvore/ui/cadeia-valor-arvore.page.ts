@@ -13,39 +13,27 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { distinctUntilChanged, filter, firstValueFrom, map } from 'rxjs';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { SvgPanZoomService } from 'src/app/v2/services/svg-pan-zoom.service';
 import {
-  PlanejamentoObjetivoEsforcoApiClient,
-  type EsforcoObjetivoNodeApi,
-  type ObjetivoArvoreVisualizacaoApi
-} from '../infra/planejamento-objetivo-esforco-api.client';
-import { PlanejamentoObjetivoPainelLateralComponent } from './planejamento-objetivo-painel-lateral.component';
-
-type AncestorStep = {
-  id: string;
-  link: 'PAI' | 'SUPERIOR';
-  childId: string;
-};
+  CadeiaValorArvoreApiClient,
+  type CadeiaValorArvoreApi,
+  type CadeiaValorProcessoNodeApi
+} from '../infra/cadeia-valor-arvore-api.client';
+import { CadeiaValorPainelLateralComponent } from './cadeia-valor-painel-lateral.component';
 
 type TreeNodeVm = {
   id: string;
   nome: string;
-  planejamentoNome: string;
-  tipoObjetivoNome: string;
-  vinculosCount: number;
-  entregasCount: number;
-  esforcoProprioHoras: number;
-  esforcoTotalHoras: number;
-  /** Planejado % do disponível do próprio nó (igual ao painel). */
-  planejadoPercentualDisponivel: number;
-  /** % do esforço planejado acumulado do pai visível; `null` = nó de referência. */
-  percentualDoPai: number | null;
-  filhosPai: string[];
-  isConsultado: boolean;
+  cadeiaValorNome: string;
+  etiqueta: string | null;
+  totalVinculos: number;
+  percentualEsforco: number | null;
+  isFocal: boolean;
+  hasCrossCadeia: boolean;
   level: number;
   x: number;
   y: number;
@@ -53,7 +41,7 @@ type TreeNodeVm = {
 
 type EdgeVm = {
   key: string;
-  type: 'PAI' | 'SUPERIOR';
+  type: 'MESMA_CADEIA' | 'CROSS_CADEIA';
   path: string;
 };
 
@@ -65,21 +53,21 @@ const H_GAP = 40;
 const V_GAP = 36;
 const CANVAS_PAD = 56;
 const DEFAULT_LEVELS = 2;
-const ROTA_ARVORE = ['gestao', 'planejamento', 'objetivo-arvore'] as const;
+const ROTA_ARVORE = ['gestao', 'cadeia-valor', 'arvore'] as const;
 
 @Component({
-  selector: 'app-planejamento-objetivo-arvore-page',
+  selector: 'app-cadeia-valor-arvore-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, PlanejamentoObjetivoPainelLateralComponent],
-  templateUrl: './planejamento-objetivo-arvore.page.html',
-  styleUrl: './planejamento-objetivo-arvore.page.scss',
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, CadeiaValorPainelLateralComponent],
+  templateUrl: './cadeia-valor-arvore.page.html',
+  styleUrl: './cadeia-valor-arvore.page.scss',
   providers: [SvgPanZoomService]
 })
-export class PlanejamentoObjetivoArvorePage {
+export class CadeiaValorArvorePage {
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly api = inject(PlanejamentoObjetivoEsforcoApiClient);
+  private readonly api = inject(CadeiaValorArvoreApiClient);
   private readonly go = inject(NavigateService);
   readonly panZoom = inject(SvgPanZoomService);
 
@@ -87,7 +75,7 @@ export class PlanejamentoObjetivoArvorePage {
 
   readonly loading = signal(true);
   readonly loadError = signal<string | null>(null);
-  readonly dados = signal<ObjetivoArvoreVisualizacaoApi | null>(null);
+  readonly dados = signal<CadeiaValorArvoreApi | null>(null);
   readonly selectedNodeId = signal<string | null>(null);
   readonly levelsAbove = signal(DEFAULT_LEVELS);
   readonly levelsBelow = signal(DEFAULT_LEVELS);
@@ -97,22 +85,25 @@ export class PlanejamentoObjetivoArvorePage {
   readonly nodeHalfW = NODE_HALF_W;
   readonly nodeHalfH = NODE_HALF_H;
 
-  readonly consultadoId = computed(() => this.dados()?.objetivo_raiz_id ?? null);
+  readonly consultadoId = computed(() => this.dados()?.processo_focal_id ?? null);
+  readonly cadeiaValorId = computed(() => this.dados()?.cadeia_valor_id ?? null);
 
-  readonly upChain = computed(() => {
+  readonly canExpandUp = computed(() => {
     const focal = this.consultadoId();
     const nos = this.dados()?.nos;
-    return focal && nos ? this.buildUpChain(focal, nos) : [];
+    if (!focal || !nos || !nos[focal]) return false;
+    const nivelFocal = nos[focal].nivel;
+    return nivelFocal > 1 && this.levelsAbove() < nivelFocal - 1;
   });
 
-  readonly canExpandUp = computed(() => this.upChain().length > this.levelsAbove());
   readonly canExpandDown = computed(() => {
     const focal = this.consultadoId();
-    const nos = this.dados()?.nos;
-    if (!focal || !nos) {
-      return false;
-    }
-    return this.maxDescendantDepth(focal, nos) > this.levelsBelow();
+    const dados = this.dados();
+    if (!focal || !dados?.nos[focal]) return false;
+    // Verificar se há nós reais no próximo nível abaixo do que está visível
+    const proxNivel = this.levelsBelow() + 1;
+    const descendants = this.collectDescendantsByDepth(focal, proxNivel, dados.nos);
+    return descendants.has(proxNivel);
   });
 
   readonly layout = computed(() =>
@@ -125,27 +116,25 @@ export class PlanejamentoObjetivoArvorePage {
   readonly canvasH = computed(() => this.layout().height);
 
   readonly viewBoxString = computed(() => {
-    const focal = this.treeNodes().find(n => n.isConsultado);
+    const focal = this.treeNodes().find(n => n.isFocal);
     return this.panZoom.computeViewBox(this.canvasW(), this.canvasH(), focal?.x, focal?.y);
-  });
-
-  readonly selectedNode = computed(() => {
-    const id = this.selectedNodeId();
-    return id ? this.treeNodes().find(n => n.id === id) ?? this.nodeVmFromApi(id) : null;
   });
 
   constructor() {
     this.route.paramMap
       .pipe(
-        map(pm => pm.get('id')?.trim() ?? ''),
-        filter(id => id.length > 0),
-        distinctUntilChanged(),
+        map(pm => ({
+          cadeiaValorId: pm.get('cadeiaValorId')?.trim() ?? '',
+          processoId: pm.get('processoId')?.trim() ?? ''
+        })),
+        filter(p => p.cadeiaValorId.length > 0 && p.processoId.length > 0),
+        distinctUntilChanged((a, b) => a.cadeiaValorId === b.cadeiaValorId && a.processoId === b.processoId),
         takeUntilDestroyed(this.destroyRef)
       )
-      .subscribe(id => void this.carregar(id));
+      .subscribe(p => void this.carregar(p.cadeiaValorId, p.processoId));
   }
 
-  async carregar(id: string): Promise<void> {
+  async carregar(cadeiaValorId: string, processoId: string): Promise<void> {
     this.loading.set(true);
     this.loadError.set(null);
     this.levelsAbove.set(DEFAULT_LEVELS);
@@ -153,9 +142,9 @@ export class PlanejamentoObjetivoArvorePage {
     this.panZoom.reset();
 
     try {
-      const data = await firstValueFrom(this.api.getArvoreVisualizacao(id));
+      const data = await firstValueFrom(this.api.getArvore(cadeiaValorId, processoId));
       this.dados.set(data);
-      this.selectedNodeId.set(data.objetivo_raiz_id);
+      this.selectedNodeId.set(data.processo_focal_id);
     } catch (err: unknown) {
       this.dados.set(null);
       this.selectedNodeId.set(null);
@@ -190,13 +179,17 @@ export class PlanejamentoObjetivoArvorePage {
     }
   }
 
-  abrirArvoreOutroObjetivo(objetivoId: string, event?: Event): void {
-    event?.stopPropagation();
-    event?.preventDefault();
-    if (!objetivoId) {
+  resetLevels(): void {
+    this.levelsAbove.set(DEFAULT_LEVELS);
+    this.levelsBelow.set(DEFAULT_LEVELS);
+  }
+
+  navegarParaProcesso(processoId: string): void {
+    const dados = this.dados();
+    if (!dados || !processoId) {
       return;
     }
-    void this.go.navigate({ route: [...ROTA_ARVORE, objetivoId] });
+    void this.go.navigate({ route: [...ROTA_ARVORE, dados.cadeia_valor_id, processoId] });
   }
 
   onPanDown(event: PointerEvent): void {
@@ -215,6 +208,13 @@ export class PlanejamentoObjetivoArvorePage {
     this.panZoom.onPointerUp();
   }
 
+  formatPercent(value: number | null): string {
+    if (value === null || !Number.isFinite(value)) {
+      return '0%';
+    }
+    return `${(Math.round(value * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
+  }
+
   private mensagemErro(err: unknown): string {
     if (err instanceof HttpErrorResponse) {
       const body = err.error as { error?: string } | undefined;
@@ -226,95 +226,18 @@ export class PlanejamentoObjetivoArvorePage {
     return 'Não foi possível carregar a árvore.';
   }
 
-  private nodeVmFromApi(id: string): TreeNodeVm | null {
-    const n = this.dados()?.nos[id];
-    if (!n) {
-      return null;
-    }
-    return this.toNodeVm(n, id === this.consultadoId(), 0, 0, 0);
-  }
-
-  private buildUpChain(focalId: string, nos: Record<string, EsforcoObjetivoNodeApi>): AncestorStep[] {
-    const steps: AncestorStep[] = [];
-    let cur = focalId;
-
-    while (true) {
-      const n = nos[cur];
-      if (!n) {
-        break;
-      }
-      const supId = n.objetivo_superior_id;
-      if (supId && nos[supId]) {
-        steps.push({ id: supId, link: 'SUPERIOR', childId: cur });
-        cur = supId;
-        continue;
-      }
-      const paiId = n.objetivo_pai_id ?? n.objetivo_pai?.id;
-      if (paiId && nos[paiId]) {
-        steps.push({ id: paiId, link: 'PAI', childId: cur });
-        cur = paiId;
-        continue;
-      }
-      break;
-    }
-
-    return steps;
-  }
-
-  private getDownLinks(
-    parentId: string,
-    nos: Record<string, EsforcoObjetivoNodeApi>
-  ): { id: string; link: 'PAI' | 'SUPERIOR' }[] {
+  private getDownLinks(parentId: string, nos: Record<string, CadeiaValorProcessoNodeApi>): string[] {
     const n = nos[parentId];
     if (!n) {
       return [];
     }
-
-    const links: { id: string; link: 'PAI' | 'SUPERIOR' }[] = [];
-    const seen = new Set<string>();
-
-    for (const id of n.filhos_pai ?? []) {
-      if (nos[id] && !seen.has(id)) {
-        seen.add(id);
-        links.push({ id, link: 'PAI' });
-      }
-    }
-    for (const id of n.filhos_superior ?? []) {
-      if (nos[id] && !seen.has(id)) {
-        seen.add(id);
-        links.push({ id, link: 'SUPERIOR' });
-      }
-    }
-
-    return links;
-  }
-
-  private maxDescendantDepth(focalId: string, nos: Record<string, EsforcoObjetivoNodeApi>): number {
-    let max = 0;
-
-    const walk = (id: string, depth: number, visited: Set<string>): void => {
-      if (visited.has(id)) {
-        return;
-      }
-      visited.add(id);
-      max = Math.max(max, depth);
-
-      for (const { id: childId } of this.getDownLinks(id, nos)) {
-        walk(childId, depth + 1, visited);
-      }
-    };
-
-    for (const { id } of this.getDownLinks(focalId, nos)) {
-      walk(id, 1, new Set());
-    }
-
-    return max;
+    return n.filhos_ids.filter(id => !!nos[id]);
   }
 
   private collectDescendantsByDepth(
     focalId: string,
     maxDepth: number,
-    nos: Record<string, EsforcoObjetivoNodeApi>
+    nos: Record<string, CadeiaValorProcessoNodeApi>
   ): Map<number, string[]> {
     const byDepth = new Map<number, string[]>();
     if (maxDepth <= 0) {
@@ -329,13 +252,13 @@ export class PlanejamentoObjetivoArvorePage {
       const nextFrontier: string[] = [];
 
       for (const parentId of frontier) {
-        for (const { id } of this.getDownLinks(parentId, nos)) {
-          if (seenAtDepth.has(id)) {
+        for (const childId of this.getDownLinks(parentId, nos)) {
+          if (seenAtDepth.has(childId)) {
             continue;
           }
-          seenAtDepth.add(id);
-          idsAtDepth.push(id);
-          nextFrontier.push(id);
+          seenAtDepth.add(childId);
+          idsAtDepth.push(childId);
+          nextFrontier.push(childId);
         }
       }
 
@@ -351,53 +274,29 @@ export class PlanejamentoObjetivoArvorePage {
   }
 
   private toNodeVm(
-    n: EsforcoObjetivoNodeApi,
-    isConsultado: boolean,
+    n: CadeiaValorProcessoNodeApi,
+    isFocal: boolean,
     level: number,
     x: number,
     y: number
   ): TreeNodeVm {
-    const filhosPai = n.filhos_pai ?? [];
-    const vinculos =
-      n.total_vinculos ??
-      (n.filhos?.length ?? filhosPai.length + (n.filhos_superior?.length ?? 0));
-
     return {
-      id: n.objetivo_id,
-      nome: n.objetivo_nome,
-      planejamentoNome: n.planejamento_nome,
-      tipoObjetivoNome: n.tipo_objetivo_nome?.trim() || '—',
-      vinculosCount: vinculos,
-      entregasCount: n.total_entregas ?? 0,
-      esforcoProprioHoras: n.esforco_proprio ?? 0,
-      esforcoTotalHoras: n.esforco_total_horas ?? 0,
-      planejadoPercentualDisponivel: n.planejado_percentual_disponivel
-        ?? this.percentualContribuicao(n.esforco_proprio ?? 0, n.esforco_disponivel_horas ?? 0),
-      percentualDoPai: null,
-      filhosPai,
-      isConsultado,
+      id: n.processo_id,
+      nome: n.nome,
+      cadeiaValorNome: n.cadeia_valor_nome,
+      etiqueta: n.etiquetas?.length ? n.etiquetas[0] : null,
+      totalVinculos: n.total_vinculos,
+      percentualEsforco: null,
+      isFocal,
+      hasCrossCadeia: (n.vinculos_cross_cadeia?.length ?? 0) > 0,
       level,
       x,
       y
     };
   }
 
-  private percentualContribuicao(filhoHoras: number, paiHoras: number): number {
-    if (paiHoras <= 0) {
-      return 0;
-    }
-    return Math.round((filhoHoras / paiHoras) * 10000) / 100;
-  }
-
-  formatPercent(value: number): string {
-    if (!Number.isFinite(value)) {
-      return '0%';
-    }
-    return `${(Math.round(value * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
-  }
-
   private buildLayout(
-    dados: ObjetivoArvoreVisualizacaoApi | null,
+    dados: CadeiaValorArvoreApi | null,
     consultadoId: string | null,
     levelsAbove: number,
     levelsBelow: number
@@ -407,7 +306,22 @@ export class PlanejamentoObjetivoArvorePage {
     }
 
     const nos = dados.nos;
-    const upSteps = this.buildUpChain(consultadoId, nos).slice(0, levelsAbove);
+
+    // Coletar ancestrais subindo por processo_pai_id
+    const upSteps: { id: string; childId: string }[] = [];
+    let cur = consultadoId;
+    while (upSteps.length < levelsAbove) {
+      const n = nos[cur];
+      if (!n) break;
+      const paiId = n.processo_pai_id;
+      if (paiId && nos[paiId]) {
+        upSteps.push({ id: paiId, childId: cur });
+        cur = paiId;
+      } else {
+        break;
+      }
+    }
+
     const descendants = this.collectDescendantsByDepth(consultadoId, levelsBelow, nos);
 
     const centerX = 400;
@@ -446,8 +360,8 @@ export class PlanejamentoObjetivoArvorePage {
       const child = nodeById.get(step.childId);
       if (parent && child) {
         pushEdge({
-          key: `${step.link}:${step.childId}:${step.id}`,
-          type: step.link,
+          key: `pai:${step.childId}:${step.id}`,
+          type: 'MESMA_CADEIA',
           path: this.edgePath(parent, child)
         });
       }
@@ -467,38 +381,27 @@ export class PlanejamentoObjetivoArvorePage {
     }
 
     for (const [id, vm] of nodeById) {
-      const paiId = nos[id]?.objetivo_pai_id ?? nos[id]?.objetivo_pai?.id;
+      const paiId = nos[id]?.processo_pai_id;
       if (paiId && nodeById.has(paiId)) {
         pushEdge({
           key: `pai:${id}:${paiId}`,
-          type: 'PAI',
+          type: 'MESMA_CADEIA',
           path: this.edgePath(nodeById.get(paiId)!, vm)
         });
       }
 
-      const supId = nos[id]?.objetivo_superior_id ?? nos[id]?.objetivo_superior?.id;
-      if (supId && nodeById.has(supId) && paiId !== supId) {
-        pushEdge({
-          key: `SUPERIOR:${id}:${supId}`,
-          type: 'SUPERIOR',
-          path: this.edgePath(nodeById.get(supId)!, vm)
-        });
+      const nData = nos[id];
+      if (nData?.vinculos_cross_cadeia?.length) {
+        for (const vc of nData.vinculos_cross_cadeia) {
+          if (nodeById.has(vc.processo_id)) {
+            pushEdge({
+              key: `cross:${id}:${vc.processo_id}`,
+              type: 'CROSS_CADEIA',
+              path: this.edgePath(vm, nodeById.get(vc.processo_id)!)
+            });
+          }
+        }
       }
-    }
-
-    for (const [id, vm] of nodeById) {
-      const paiId = nos[id]?.objetivo_pai_id ?? nos[id]?.objetivo_pai?.id;
-      const supId = nos[id]?.objetivo_superior_id ?? nos[id]?.objetivo_superior?.id;
-      const parentId =
-        paiId && nodeById.has(paiId) ? paiId : supId && nodeById.has(supId) ? supId : null;
-
-      if (!parentId) {
-        vm.percentualDoPai = null;
-        continue;
-      }
-
-      const parent = nodeById.get(parentId)!;
-      vm.percentualDoPai = this.percentualContribuicao(vm.esforcoTotalHoras, parent.esforcoTotalHoras);
     }
 
     const treeNodes = [...nodeById.values()];

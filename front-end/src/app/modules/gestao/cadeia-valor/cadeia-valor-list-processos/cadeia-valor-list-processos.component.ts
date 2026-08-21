@@ -302,4 +302,11 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
     }
     return false;
   }
+
+  public onArvoreClick(processo: CadeiaValorProcesso) {
+    const cadeiaValorId = this.entity?.id || this.gridControl.value?.id;
+    if (cadeiaValorId && processo.id) {
+      this.go.navigate({ route: ['gestao', 'cadeia-valor', 'arvore', cadeiaValorId, processo.id] });
+    }
+  }
 }
