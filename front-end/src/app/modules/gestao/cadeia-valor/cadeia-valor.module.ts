@@ -10,6 +10,7 @@ import { CadeiaValorListGridComponent } from './cadeia-valor-list-grid/cadeia-va
 import { CadeiaValorMapaComponent } from './cadeia-valor-mapa/cadeia-valor-mapa.component';
 import { CadeiaValorListProcessosComponent } from './cadeia-valor-list-processos/cadeia-valor-list-processos.component';
 import { CadeiaValorListProcessosEntregasComponent } from './cadeia-valor-list-processos-entregas/cadeia-valor-list-processos-entregas.component';
+import { CadeiaValorFormProcessoComponent } from './cadeia-valor-form-processo/cadeia-valor-form-processo.component';
 
 
 
@@ -21,6 +22,7 @@ import { CadeiaValorListProcessosEntregasComponent } from './cadeia-valor-list-p
     CadeiaValorListProcessosComponent,
     CadeiaValorMapaComponent,
     CadeiaValorListProcessosEntregasComponent,
+    CadeiaValorFormProcessoComponent,
   ],
   imports: [
     CommonModule,

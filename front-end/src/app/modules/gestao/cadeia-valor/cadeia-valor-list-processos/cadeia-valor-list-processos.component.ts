@@ -71,15 +71,26 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
 
   public async addProcesso() {
     const processo = new CadeiaValorProcesso({
+      _status: "ADD",
       id: this.dao!.generateUuid(),
       cadeia_valor_id: this.entity?.id,
+      processo_pai_id: null,
       sequencia: this.items.filter(x => !x.processo_pai_id).length + 1,
       nome: ""
     });
-    this.gridControl.value.processos.push(processo);
-    this.editingId = processo.id;
-    this.cdRef.detectChanges();
-    this.scrollToProcesso(processo);
+    this.go.navigate({ route: ['gestao', 'cadeia-valor', 'processo'] }, {
+      metadata: { processo },
+      modalClose: async (modalResult: any) => {
+        if (modalResult) {
+          if (!this.isNoPersist && this.processosDao) {
+            const saved = await this.processosDao.save(modalResult);
+            modalResult.id = saved.id;
+          }
+          this.gridControl.value.processos.push(modalResult);
+          this.cdRef.detectChanges();
+        }
+      }
+    });
   }
 
   public async addChildProcesso(pai: CadeiaValorProcesso) {
@@ -90,16 +101,42 @@ export class CadeiaValorListProcessosComponent extends PageFrameBase {
     await this.saveProcesso(pai);
 
     const processo = new CadeiaValorProcesso({
+      _status: "ADD",
       id: this.dao!.generateUuid(),
       cadeia_valor_id: this.entity?.id,
       processo_pai_id: pai.id,
       sequencia: this.items.filter(x => x.processo_pai_id === pai.id).length + 1,
       nome: ""
     });
-    this.gridControl.value.processos.push(processo);
-    this.editingId = processo.id;
-    this.cdRef.detectChanges();
-    this.scrollToProcesso(processo);
+    this.go.navigate({ route: ['gestao', 'cadeia-valor', 'processo'] }, {
+      metadata: { processo },
+      modalClose: async (modalResult: any) => {
+        if (modalResult) {
+          if (!this.isNoPersist && this.processosDao) {
+            const saved = await this.processosDao.save(modalResult);
+            modalResult.id = saved.id;
+          }
+          this.gridControl.value.processos.push(modalResult);
+          this.cdRef.detectChanges();
+        }
+      }
+    });
+  }
+
+  public abrirEdicaoModal(processo: CadeiaValorProcesso) {
+    this.go.navigate({ route: ['gestao', 'cadeia-valor', 'processo'] }, {
+      metadata: { processo },
+      modalClose: async (modalResult: any) => {
+        if (modalResult) {
+          processo.nome = modalResult.nome;
+          processo.tipo_elemento_id = modalResult.tipo_elemento_id;
+          if (!this.isNoPersist && this.processosDao) {
+            await this.processosDao.save(processo);
+          }
+          this.cdRef.detectChanges();
+        }
+      }
+    });
   }
 
   public scrollToProcesso(processo: CadeiaValorProcesso) {

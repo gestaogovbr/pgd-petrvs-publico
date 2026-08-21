@@ -38,7 +38,7 @@
           </div>
           
           <div class="btn-group btn-group-sm ms-2" *ngIf="editingId !== processo.id">
-            <button type="button" class="btn btn-outline-info" (click)="editingId = processo.id" title="Editar">
+            <button type="button" class="btn btn-outline-info" (click)="abrirEdicaoModal(processo)" title="Editar">
               <i class="bi bi-pencil-square"></i>
             </button>
             <button type="button" class="btn btn-outline-primary" (click)="addChildProcesso(processo)" title="Adicionar filho">
