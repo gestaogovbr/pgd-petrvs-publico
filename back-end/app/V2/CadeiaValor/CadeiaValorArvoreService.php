@@ -8,6 +8,8 @@ use App\Exceptions\NotFoundException;
 use App\Models\CadeiaValor;
 use App\Models\CadeiaValorProcesso;
 use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphAssembler;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoSupport;
 use App\V2\CadeiaValor\DTOs\CadeiaValorArvoreDTO;
 use App\V2\CadeiaValor\DTOs\CadeiaValorProcessoNodeDTO;
 use App\V2\CadeiaValor\DTOs\CadeiaValorVinculoCrossCadeiaDTO;
@@ -17,6 +19,7 @@ class CadeiaValorArvoreService
 {
     public function __construct(
         private readonly CadeiaValorReadRepositoryContract $repository,
+        private readonly ArvoreInstitucionalEsforcoGraphAssembler $graphAssembler,
     ) {}
 
     /**
@@ -46,7 +49,10 @@ class CadeiaValorArvoreService
 
         $contagemVinculos = $this->repository->contarVinculosPorProcesso($todosIds);
 
-        $nos = $this->montarNos($todosProcessos, $todosProcessos, $cadeiaValor, $vinculosCrossCadeia, $contagemVinculos);
+        // Calcular esforço por processo usando o assembler genérico
+        $esforcoMap = $this->calcularEsforcoProcessos($cadeiaValorId);
+
+        $nos = $this->montarNos($todosProcessos, $todosProcessos, $cadeiaValor, $vinculosCrossCadeia, $contagemVinculos, $esforcoMap);
 
         $raizIds = $todosProcessos
             ->whereNull('processo_pai_id')
@@ -120,6 +126,7 @@ class CadeiaValorArvoreService
         CadeiaValor $cadeiaValor,
         array $vinculosCrossCadeia,
         array $contagemVinculos,
+        array $esforcoMap,
     ): array {
         $nos = [];
         foreach ($processos as $processo) {
@@ -131,6 +138,7 @@ class CadeiaValorArvoreService
                 ->all();
 
             $nivel = $this->calcularNivel($processo, $todosProcessos);
+            $esforco = $esforcoMap[$processo->id] ?? null;
 
             $nos[$processo->id] = CadeiaValorProcessoNodeDTO::fromArray([
                 'processo_id' => $processo->id,
@@ -141,13 +149,54 @@ class CadeiaValorArvoreService
                 'cadeia_valor_nome' => $cadeiaValor->nome,
                 'nivel' => $nivel,
                 'total_vinculos' => $contagemVinculos[$processo->id] ?? 0,
-                'etiquetas' => null,
+                'etiquetas' => $processo->tipoElemento?->nome ? [$processo->tipoElemento->nome] : null,
                 'filhos_ids' => $filhosIds,
                 'vinculos_cross_cadeia' => $vinculosCrossCadeia[$processo->id] ?? [],
+                'esforco_disponivel_horas' => (float) ($esforco['esforco_disponivel_horas'] ?? 0),
+                'esforco_proprio' => (float) ($esforco['esforco_proprio'] ?? 0),
+                'esforco_total_horas' => (float) ($esforco['esforco_total_horas'] ?? 0),
+                'planejado_percentual_disponivel' => (float) ($esforco['planejado_percentual_disponivel'] ?? 0),
             ]);
         }
 
         return $nos;
+    }
+
+    /**
+     * Calcula esforço próprio e total (acumulado) para todos os processos da cadeia.
+     *
+     * @return array<string, array{esforco_disponivel_horas: float, esforco_proprio: float, esforco_total_horas: float, planejado_percentual_disponivel: float}>
+     */
+    private function calcularEsforcoProcessos(string $cadeiaValorId): array
+    {
+        $rows = $this->repository->loadEsforcoPorProcessosDaCadeia($cadeiaValorId);
+
+        if ($rows === []) {
+            return [];
+        }
+
+        // Montar mapa para o assembler genérico
+        $mapa = [];
+        foreach ($rows as $row) {
+            $disponivel = (float) ($row->esforco_disponivel_horas ?? 0);
+            $planejado = (float) ($row->esforco_proprio ?? 0);
+
+            $mapa[$row->processo_id] = [
+                'processo_pai_id' => $row->processo_pai_id,
+                'esforco_disponivel_horas' => $disponivel,
+                'esforco_proprio' => $planejado,
+                'esforco_total_horas' => $planejado,
+                'planejado_percentual_disponivel' => ArvoreInstitucionalEsforcoSupport::percentual($planejado, $disponivel),
+            ];
+        }
+
+        // Conectar filhos e acumular horas usando assembler genérico
+        $this->graphAssembler->conectarFilhos($mapa, [
+            ['field' => 'processo_pai_id', 'key' => 'filhos_processo_pai'],
+        ]);
+        $this->graphAssembler->acumularHoras($mapa);
+
+        return $mapa;
     }
 
     private function calcularNivel(CadeiaValorProcesso $processo, Collection $todosProcessos): int

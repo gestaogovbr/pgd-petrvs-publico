@@ -2,14 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\V2\Planejamento\Objetivo\DTOs;
+namespace App\V2\ArvoreInstitucional\DTOs;
 
-final class ObjetivoPainelEntregaDetalheLinhaDTO implements \JsonSerializable
+/**
+ * Linha do detalhamento de entregas — contrato unificado entre Planejamento e Cadeia de Valor.
+ */
+final class EntregaDetalheLinhaDTO implements \JsonSerializable
 {
+    /**
+     * @param list<array{key: string, value: string, icon?: string|null, color?: string|null}>|null $etiquetas
+     * @param mixed $meta Valor estruturado da meta do indicador (JSON)
+     * @param mixed $realizado Valor estruturado do realizado do indicador (JSON)
+     * @param list<array{key: string, value: string}>|null $lista_qualitativos
+     */
     public function __construct(
         public readonly string $plano_entrega_entrega_id,
-        public readonly string $planejamento_objetivo_id,
-        public readonly string $planejamento_objetivo_nome,
         public readonly string $unidade_id,
         public readonly string $unidade_sigla,
         public readonly string $unidade_nome,
@@ -21,11 +28,13 @@ final class ObjetivoPainelEntregaDetalheLinhaDTO implements \JsonSerializable
         public readonly string $entrega_titulo,
         public readonly string $entrega_descricao,
         public readonly string $descricao_meta,
-        /** @var list<array{key: string, value: string, icon?: string|null, color?: string|null}> */
-        public readonly array $etiquetas,
+        public readonly ?array $etiquetas,
         public readonly float $progresso_esperado,
         public readonly float $progresso_realizado,
-        public readonly bool $homologado,
+        public readonly mixed $meta,
+        public readonly mixed $realizado,
+        public readonly ?string $tipo_indicador,
+        public readonly ?array $lista_qualitativos,
         public readonly ?string $registro_execucao,
         public readonly int $participantes_total,
         public readonly int $participantes_somente_unidade_propria,
@@ -37,15 +46,16 @@ final class ObjetivoPainelEntregaDetalheLinhaDTO implements \JsonSerializable
         public readonly bool $mostrar_disponivel,
         public readonly bool $mostrar_planejado,
         public readonly bool $mostrar_executado,
+        // Opcional — identifica o nó de origem (relevante quando abrangência inclui subordinados)
+        public readonly ?string $no_origem_id = null,
+        public readonly ?string $no_origem_nome = null,
     ) {}
 
     /** @return array<string, mixed> */
     public function jsonSerialize(): array
     {
-        return [
+        $data = [
             'plano_entrega_entrega_id' => $this->plano_entrega_entrega_id,
-            'planejamento_objetivo_id' => $this->planejamento_objetivo_id,
-            'planejamento_objetivo_nome' => $this->planejamento_objetivo_nome,
             'unidade_id' => $this->unidade_id,
             'unidade_sigla' => $this->unidade_sigla,
             'unidade_nome' => $this->unidade_nome,
@@ -60,7 +70,10 @@ final class ObjetivoPainelEntregaDetalheLinhaDTO implements \JsonSerializable
             'etiquetas' => $this->etiquetas,
             'progresso_esperado' => $this->progresso_esperado,
             'progresso_realizado' => $this->progresso_realizado,
-            'homologado' => $this->homologado,
+            'meta' => $this->meta,
+            'realizado' => $this->realizado,
+            'tipo_indicador' => $this->tipo_indicador,
+            'lista_qualitativos' => $this->lista_qualitativos,
             'registro_execucao' => $this->registro_execucao,
             'participantes_total' => $this->participantes_total,
             'participantes_somente_unidade_propria' => $this->participantes_somente_unidade_propria,
@@ -73,5 +86,12 @@ final class ObjetivoPainelEntregaDetalheLinhaDTO implements \JsonSerializable
             'mostrar_planejado' => $this->mostrar_planejado,
             'mostrar_executado' => $this->mostrar_executado,
         ];
+
+        if ($this->no_origem_id !== null) {
+            $data['no_origem_id'] = $this->no_origem_id;
+            $data['no_origem_nome'] = $this->no_origem_nome;
+        }
+
+        return $data;
     }
 }

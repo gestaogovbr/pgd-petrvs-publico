@@ -7,7 +7,7 @@ namespace App\Repository\PlanejamentoObjetivo\Eloquent;
 use App\Models\PlanejamentoObjetivo;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
-use App\V2\Planejamento\Objetivo\ObjetivoPainelEsforcoSupport;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoSupport;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -166,7 +166,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     /** @return list<\stdClass> */
     public function listarEntregasPlanoEntregaPorObjetivoId(string $objetivoId): array
     {
-        $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
+        $chd = ArvoreInstitucionalEsforcoSupport::chdPtSql();
         $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
 
         return DB::select(<<<SQL
@@ -222,7 +222,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     /** Unidades do plano de entregas (PE) vinculadas ao objetivo, com esforço somado de PTs concluídos (pode ser zero). */
     public function listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId(string $objetivoId): array
     {
-        $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
+        $chd = ArvoreInstitucionalEsforcoSupport::chdPtSql();
         $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
 
         return DB::select(<<<SQL
@@ -262,8 +262,8 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
     private function selectEsforcoMetricRowsForObjetivoIds(array $ids): array
     {
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
-        $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
-        $ptPlanejadoIn = ObjetivoPainelEsforcoSupport::ptStatusPlanejadoIn();
+        $chd = ArvoreInstitucionalEsforcoSupport::chdPtSql();
+        $ptPlanejadoIn = ArvoreInstitucionalEsforcoSupport::ptStatusPlanejadoIn();
         $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
 
         return DB::select(<<<SQL
@@ -350,9 +350,9 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
         }
 
         $placeholders = implode(',', array_fill(0, count($objetivoIds), '?'));
-        $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
-        $ptPlanejadoIn = ObjetivoPainelEsforcoSupport::ptStatusPlanejadoIn();
-        $ptExecutadoIn = ObjetivoPainelEsforcoSupport::ptStatusExecutadoIn();
+        $chd = ArvoreInstitucionalEsforcoSupport::chdPtSql();
+        $ptPlanejadoIn = ArvoreInstitucionalEsforcoSupport::ptStatusPlanejadoIn();
+        $ptExecutadoIn = ArvoreInstitucionalEsforcoSupport::ptStatusExecutadoIn();
         $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
 
         $row = DB::selectOne(<<<SQL
@@ -469,9 +469,9 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
             }
         }
 
-        $chd = ObjetivoPainelEsforcoSupport::chdPtSql();
-        $ptPlanejadoIn = ObjetivoPainelEsforcoSupport::ptStatusPlanejadoIn();
-        $ptExecutadoIn = ObjetivoPainelEsforcoSupport::ptStatusExecutadoIn();
+        $chd = ArvoreInstitucionalEsforcoSupport::chdPtSql();
+        $ptPlanejadoIn = ArvoreInstitucionalEsforcoSupport::ptStatusPlanejadoIn();
+        $ptExecutadoIn = ArvoreInstitucionalEsforcoSupport::ptStatusExecutadoIn();
         $diasPeriodo = self::ESFORCO_DIAS_PERIODO_PT_SQL;
 
         $objPlaceholders = implode(',', array_fill(0, count($objetivoIds), '?'));
@@ -547,6 +547,10 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 COALESCE(MAX(peep.progresso_realizado), MAX(pee.progresso_realizado)) AS progresso_realizado,
                 COALESCE(MAX(peep.homologado), MAX(pee.homologado)) AS homologado,
                 MAX(peep.registro_execucao) AS registro_execucao,
+                COALESCE(MAX(peep.meta), pee.meta) AS meta,
+                COALESCE(MAX(peep.realizado), pee.realizado) AS realizado,
+                e.tipo_indicador,
+                e.lista_qualitativos,
                 COALESCE(
                     MAX(pp.participantes_somente_unidade_propria)
                     + MAX(pp.participantes_somente_outras_unidades)
@@ -581,6 +585,7 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 ON po.id = peeo.planejamento_objetivo_id AND po.deleted_at IS NULL
             INNER JOIN unidades u ON u.id = pee.unidade_id AND u.deleted_at IS NULL
             INNER JOIN planos_entregas pe ON pe.id = pee.plano_entrega_id AND pe.deleted_at IS NULL
+            LEFT JOIN entregas e ON e.id = pee.entrega_id AND e.deleted_at IS NULL
             LEFT JOIN planos_entregas_entregas_progressos peep
                 ON peep.id = (
                     SELECT p2.id
@@ -618,7 +623,11 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
                 pee.descricao_entrega,
                 pee.descricao,
                 pee.descricao_meta,
-                pee.etiquetas
+                pee.etiquetas,
+                pee.meta,
+                pee.realizado,
+                e.tipo_indicador,
+                e.lista_qualitativos
             ORDER BY pe.data_inicio DESC, u.sigla, po.nome, pee.descricao
         SQL, array_merge($bindingsCte, $bindingsMain));
     }

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\V2\Planejamento\Objetivo\DTOs;
+namespace App\V2\ArvoreInstitucional\DTOs;
 
-final class ObjetivoPainelEsforcoResumoDTO implements \JsonSerializable
+final class EsforcoResumoDTO implements \JsonSerializable
 {
     public function __construct(
         public readonly float $disponivel_horas,

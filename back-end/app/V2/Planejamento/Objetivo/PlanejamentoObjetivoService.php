@@ -8,6 +8,7 @@ use App\Exceptions\NotFoundException;
 use App\Models\PlanejamentoObjetivo;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangencia;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoArvoreVisualizacaoDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregaPlanoItemDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregasListagemDTO;
@@ -166,37 +167,13 @@ class PlanejamentoObjetivoService
         ?string $unidadeId,
         ?string $abrangencia,
     ): array {
-        $abrangencia = ObjetivoPainelAbrangencia::isValida($abrangencia) ? $abrangencia : null;
-
-        $objetivoIds = [$objetivoId];
-        $unidadeIds = $unidadeId ? [$unidadeId] : null;
-
-        return match ($abrangencia) {
-            ObjetivoPainelAbrangencia::ITEM_SELECIONADO => [$objetivoIds, $unidadeIds],
-            ObjetivoPainelAbrangencia::ITENS_SUBORDINADOS => [
-                array_values(array_filter(
-                    $this->repository->coletarIdsSubordinados($objetivoId),
-                    static fn (string $id): bool => $id !== $objetivoId,
-                )),
-                $unidadeIds,
-            ],
-            ObjetivoPainelAbrangencia::ITEM_E_SUBORDINADOS => [
-                $this->repository->coletarIdsSubordinados($objetivoId),
-                $unidadeIds,
-            ],
-            ObjetivoPainelAbrangencia::UNIDADE_SELECIONADA => [
-                $objetivoIds,
-                $unidadeId ? [$unidadeId] : [],
-            ],
-            ObjetivoPainelAbrangencia::UNIDADE_E_SUBORDINADAS => [
-                $objetivoIds,
-                $unidadeId
-                    ? $this->repository->coletarIdsUnidadesComSubordinadas($unidadeId)
-                    : [],
-            ],
-            // RN36: sem valor → comportamento padrão (sem restrição extra de abrangência)
-            default => [$objetivoIds, $unidadeIds],
-        };
+        return ArvoreInstitucionalAbrangencia::resolverEscopo(
+            $objetivoId,
+            $unidadeId,
+            $abrangencia,
+            fn (string $id) => $this->repository->coletarIdsSubordinados($id),
+            fn (string $id) => $this->repository->coletarIdsUnidadesComSubordinadas($id),
+        );
     }
 
     private function findObjetivoOrFail(string $objetivoId): PlanejamentoObjetivo

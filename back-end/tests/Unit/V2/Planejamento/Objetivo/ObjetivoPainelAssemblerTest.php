@@ -1,5 +1,6 @@
 <?php
 
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelAssembler;
 use App\V2\Planejamento\Objetivo\ObjetivoPainelAssembler;
 use Tests\TestCase;
 
@@ -8,7 +9,7 @@ uses(TestCase::class);
 describe('ObjetivoPainelAssembler', function () {
 
     test('monta resumo com seções item e consolidado e visibilidade condicionada ao status do PE', function () {
-        $assembler = new ObjetivoPainelAssembler();
+        $assembler = new ObjetivoPainelAssembler(new ArvoreInstitucionalPainelAssembler());
 
         $geral = (object) [
             'objetivo_id' => 'obj-1',
@@ -72,7 +73,7 @@ describe('ObjetivoPainelAssembler', function () {
     });
 
     test('total de participantes é soma das partições exclusivas', function () {
-        $assembler = new ObjetivoPainelAssembler();
+        $assembler = new ObjetivoPainelAssembler(new ArvoreInstitucionalPainelAssembler());
 
         $geral = (object) [
             'objetivo_id' => 'obj-1',
@@ -108,7 +109,7 @@ describe('ObjetivoPainelAssembler', function () {
     });
 
     test('monta detalhamento com filtros e visibilidade por linha', function () {
-        $assembler = new ObjetivoPainelAssembler();
+        $assembler = new ObjetivoPainelAssembler(new ArvoreInstitucionalPainelAssembler());
 
         $rows = [
             (object) [
@@ -153,8 +154,8 @@ describe('ObjetivoPainelAssembler', function () {
             ->and($detalhe->itens[0]->mostrar_planejado)->toBeFalse()
             ->and($detalhe->itens[0]->mostrar_executado)->toBeFalse()
             ->and($detalhe->itens[0]->entrega_titulo)->toBe('Entrega A')
-            ->and($detalhe->itens[0]->planejamento_objetivo_id)->toBe('obj-1')
-            ->and($detalhe->itens[0]->planejamento_objetivo_nome)->toBe('Objetivo A')
+            ->and($detalhe->itens[0]->no_origem_id)->toBe('obj-1')
+            ->and($detalhe->itens[0]->no_origem_nome)->toBe('Objetivo A')
             ->and($detalhe->itens[0]->entrega_descricao)->toBe('Descrição detalhada da entrega A')
             ->and($detalhe->itens[0]->descricao_meta)->toBe('Meta descrita em detalhes')
             ->and($detalhe->itens[0]->etiquetas)->toBe([

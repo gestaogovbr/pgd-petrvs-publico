@@ -1,12 +1,13 @@
 <?php
 
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphAssembler;
 use App\V2\Planejamento\Objetivo\EsforcoTotalGraphAssembler;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->assembler = new EsforcoTotalGraphAssembler();
+    $this->assembler = new EsforcoTotalGraphAssembler(new ArvoreInstitucionalEsforcoGraphAssembler());
 });
 
 /**

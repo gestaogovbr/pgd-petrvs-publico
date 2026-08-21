@@ -12,44 +12,47 @@ import {
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { firstValueFrom } from 'rxjs';
 import { LookupService } from 'src/app/services/lookup.service';
-import {
-  PlanejamentoObjetivoEsforcoApiClient,
-  type ObjetivoEntregasAbrangencia,
-  type ObjetivoPainelEntregaDetalheLinhaApi,
-  type ObjetivoPainelEntregasDetalhamentoApi,
-  type ObjetivoEntregasDetalhamentoFiltros
-} from '../infra/planejamento-objetivo-esforco-api.client';
+import type {
+  Abrangencia,
+  EntregaDetalheLinha,
+  EntregasDetalhamentoData,
+  EntregasDetalhamentoFiltros
+} from '../domain/types';
+import { ARVORE_CONFIG, ARVORE_DATA_PROVIDER } from '../tokens';
+import { ArvoreLayoutService } from '../infra/arvore-layout.service';
 
-type AbrangenciaOpcao = { value: ObjetivoEntregasAbrangencia; label: string };
+type AbrangenciaOpcao = { value: Abrangencia; label: string };
 
 @Component({
-  selector: 'app-planejamento-objetivo-entregas-detalhamento-modal',
+  selector: 'app-arvore-institucional-entregas-detalhamento-modal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, WebcomponentsAngularModule],
-  templateUrl: './planejamento-objetivo-entregas-detalhamento-modal.component.html',
-  styleUrl: './planejamento-objetivo-entregas-detalhamento-modal.component.scss'
+  templateUrl: './entregas-detalhamento-modal.component.html',
+  styleUrl: './entregas-detalhamento-modal.component.scss',
+  providers: [ArvoreLayoutService]
 })
-export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
-  private readonly api = inject(PlanejamentoObjetivoEsforcoApiClient);
+export class ArvoreInstitucionalEntregasDetalhamentoModalComponent {
+  private readonly provider = inject(ARVORE_DATA_PROVIDER);
+  readonly config = inject(ARVORE_CONFIG);
   readonly lookup = inject(LookupService);
+  readonly fmt = inject(ArvoreLayoutService);
 
-  readonly objetivoId = input.required<string>();
+  readonly nodeId = input.required<string>();
   readonly unidadeIdInicial = input('');
   readonly modalClosed = output<void>();
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
-  readonly dados = signal<ObjetivoPainelEntregasDetalhamentoApi | null>(null);
+  readonly dados = signal<EntregasDetalhamentoData | null>(null);
   readonly linhaExpandidaId = signal<string | null>(null);
 
   readonly filtroEntregaId = signal('');
   readonly filtroUnidadeId = signal('');
   readonly filtroDataInicio = signal('');
   readonly filtroDataFim = signal('');
-  readonly filtroAbrangencia = signal<'' | ObjetivoEntregasAbrangencia>('');
+  readonly filtroAbrangencia = signal<'' | Abrangencia>('');
 
-  /** RN34 / RN38 — opções e tooltip do filtro Abrangência. */
   private readonly abrangenciaOpcoesBase: AbrangenciaOpcao[] = [
     { value: 'item_selecionado', label: 'Item selecionado' },
     { value: 'itens_subordinados', label: 'Itens subordinados' },
@@ -61,7 +64,7 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
     { value: 'unidade_e_subordinadas', label: 'Unidade selecionada e unidades subordinadas' },
   ];
 
-  /** RN37/RN39 — opções de unidade aparecem apenas quando há unidade selecionada no filtro do modal. */
+  /** Opções de unidade aparecem somente quando há unidade selecionada. */
   get abrangenciaOpcoes(): AbrangenciaOpcao[] {
     if (this.filtroUnidadeId()) {
       return [...this.abrangenciaOpcoesBase, ...this.abrangenciaOpcoesUnidade];
@@ -70,18 +73,17 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   }
 
   readonly abrangenciaTooltip =
-    'Permite restringir a consulta de entregas conforme o escopo do Planejamento Institucional ou da estrutura organizacional.';
+    'Permite restringir a consulta de entregas conforme o escopo hierárquico ou da estrutura organizacional.';
 
   private carregamentoId = 0;
 
   constructor() {
     effect(() => {
-      const id = this.objetivoId();
+      const id = this.nodeId();
       const unidadeInicial = this.unidadeIdInicial();
       if (id) {
         untracked(() => {
           this.filtroUnidadeId.set(unidadeInicial);
-          // RN37/RN39: se modal abriu com unidade pré-selecionada, opções de unidade já ficam visíveis
           if (!unidadeInicial) {
             const abr = this.filtroAbrangencia();
             if (abr === 'unidade_selecionada' || abr === 'unidade_e_subordinadas') {
@@ -107,7 +109,6 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   onFiltroUnidadeChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.filtroUnidadeId.set(value);
-    // RN37/RN39: ao desmarcar unidade, limpa abrangência de unidade se estava selecionada
     const abr = this.filtroAbrangencia();
     if (!value && (abr === 'unidade_selecionada' || abr === 'unidade_e_subordinadas')) {
       this.filtroAbrangencia.set('');
@@ -128,7 +129,7 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   }
 
   onFiltroAbrangenciaChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value as '' | ObjetivoEntregasAbrangencia;
+    const value = (event.target as HTMLSelectElement).value as '' | Abrangencia;
     this.filtroAbrangencia.set(value);
     void this.carregar();
   }
@@ -142,17 +143,19 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
     void this.carregar();
   }
 
-  toggleLinha(item: ObjetivoPainelEntregaDetalheLinhaApi): void {
+  toggleLinha(item: EntregaDetalheLinha): void {
     const key = this.linhaKey(item);
     this.linhaExpandidaId.update(current => (current === key ? null : key));
   }
 
-  linhaExpandida(item: ObjetivoPainelEntregaDetalheLinhaApi): boolean {
+  linhaExpandida(item: EntregaDetalheLinha): boolean {
     return this.linhaExpandidaId() === this.linhaKey(item);
   }
 
-  linhaKey(item: ObjetivoPainelEntregaDetalheLinhaApi): string {
-    return `${item.plano_entrega_entrega_id}:${item.planejamento_objetivo_id}`;
+  linhaKey(item: EntregaDetalheLinha): string {
+    return item.no_origem_id
+      ? `${item.plano_entrega_entrega_id}:${item.no_origem_id}`
+      : item.plano_entrega_entrega_id;
   }
 
   statusLabel(status: string): string {
@@ -167,21 +170,7 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
     return this.lookup.getIcon(this.lookup.PLANO_ENTREGA_STATUS, status) || '';
   }
 
-  formatHoras(value: number): string {
-    if (!Number.isFinite(value)) {
-      return '0';
-    }
-    return (Math.round(value * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-  }
-
-  formatPercent(value: number): string {
-    if (!Number.isFinite(value)) {
-      return '0%';
-    }
-    return `${(Math.round(value * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
-  }
-
-  calcProgresso(item: ObjetivoPainelEntregaDetalheLinhaApi): number {
+  calcProgresso(item: EntregaDetalheLinha): number {
     if (item.progresso_esperado > 0) {
       return Math.min(100, (item.progresso_realizado / item.progresso_esperado) * 100);
     }
@@ -194,38 +183,64 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
     return `${ini} a ${end}`;
   }
 
-  private formatData(value: string): string {
+  formatMeta(item: EntregaDetalheLinha): string {
+    return this.formatValorIndicador(item.meta, item.tipo_indicador, item.lista_qualitativos);
+  }
+
+  formatRealizado(item: EntregaDetalheLinha): string {
+    return this.formatValorIndicador(item.realizado, item.tipo_indicador, item.lista_qualitativos);
+  }
+
+  formatData(value: string): string {
     if (!value) {
       return '—';
     }
-
     const match = value.trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
     if (!match) {
       return value;
     }
-
     const [, year, month, day] = match;
     const date = new Date(Number(year), Number(month) - 1, Number(day));
     if (Number.isNaN(date.getTime())) {
       return value;
     }
-
     return date.toLocaleDateString('pt-BR');
   }
 
-  private filtrosAtuais(): ObjetivoEntregasDetalhamentoFiltros {
+  private formatValorIndicador(
+    valor: Record<string, unknown> | null,
+    tipoIndicador: string | null,
+    listaQualitativos: Array<{ key: string; value: string }> | null
+  ): string {
+    if (!valor || !tipoIndicador) {
+      return '—';
+    }
+    switch (tipoIndicador) {
+      case 'PORCENTAGEM': return `${valor['porcentagem'] ?? 0}%`;
+      case 'QUANTIDADE': return `${valor['quantitativo'] ?? 0}`;
+      case 'VALOR': return `${valor['valor'] ?? 0}`;
+      case 'QUALITATIVO': {
+        const key = valor['qualitativo'] as string;
+        const item = listaQualitativos?.find(q => q.key === key);
+        return item?.value ?? key ?? '—';
+      }
+      default: return '—';
+    }
+  }
+
+  private filtrosAtuais(): EntregasDetalhamentoFiltros {
     return {
       plano_entrega_entrega_id: this.filtroEntregaId() || undefined,
       unidade_id: this.filtroUnidadeId() || undefined,
       data_inicio: this.filtroDataInicio() || undefined,
       data_fim: this.filtroDataFim() || undefined,
-      abrangencia: this.filtroAbrangencia() || undefined
+      abrangencia: this.filtroAbrangencia() || undefined,
     };
   }
 
   private async carregar(): Promise<void> {
-    const objetivoId = this.objetivoId();
-    if (!objetivoId?.length) {
+    const nodeId = this.nodeId();
+    if (!nodeId?.length) {
       return;
     }
 
@@ -234,21 +249,21 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
     this.error.set(null);
     try {
       const data = await firstValueFrom(
-        this.api.getEntregasDetalhamento(objetivoId, this.filtrosAtuais())
+        this.provider.carregarEntregasDetalhamento(nodeId, this.filtrosAtuais())
       );
-      if (this.objetivoId() !== objetivoId || reqId !== this.carregamentoId) {
+      if (this.nodeId() !== nodeId || reqId !== this.carregamentoId) {
         return;
       }
       this.dados.set(data);
       this.linhaExpandidaId.set(null);
     } catch (err: unknown) {
-      if (this.objetivoId() !== objetivoId || reqId !== this.carregamentoId) {
+      if (this.nodeId() !== nodeId || reqId !== this.carregamentoId) {
         return;
       }
       this.dados.set(null);
       this.error.set(err instanceof Error ? err.message : 'Não foi possível carregar o detalhamento.');
     } finally {
-      if (this.objetivoId() === objetivoId && reqId === this.carregamentoId) {
+      if (this.nodeId() === nodeId && reqId === this.carregamentoId) {
         this.loading.set(false);
       }
     }

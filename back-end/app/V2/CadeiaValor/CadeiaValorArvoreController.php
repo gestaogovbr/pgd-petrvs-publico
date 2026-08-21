@@ -59,7 +59,7 @@ class CadeiaValorArvoreController extends Controller
     /**
      * GET /api/v2/cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas-detalhamento
      *
-     * Query params: unidade_id, plano_entrega_entrega_id, data_inicio, data_fim
+     * Query params: unidade_id, plano_entrega_entrega_id, data_inicio, data_fim, abrangencia
      */
     public function entregas(string $cadeiaValorId, string $processoId, Request $request): JsonResponse
     {
@@ -69,6 +69,7 @@ class CadeiaValorArvoreController extends Controller
                 'plano_entrega_entrega_id' => $request->query('plano_entrega_entrega_id'),
                 'data_inicio' => $request->query('data_inicio'),
                 'data_fim' => $request->query('data_fim'),
+                'abrangencia' => $request->query('abrangencia'),
             ];
 
             $data = $this->entregasService->getEntregas($cadeiaValorId, $processoId, $filtros);

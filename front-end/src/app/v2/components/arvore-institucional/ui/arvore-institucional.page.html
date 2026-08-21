@@ -1,7 +1,7 @@
 <div class="br-mainpanel">
   <app-breadcrumb />
 
-  <h2 class="mb-3">Árvore da Cadeia de Valor</h2>
+  <h2 class="mb-3">{{ config.titulo }}</h2>
 
   @if (loadError()) {
     <div class="alert alert-warning" role="alert">{{ loadError() }}</div>
@@ -17,7 +17,9 @@
         <div class="card-header">
           <div class="p-2">
             <h4 class="mb-1">Hierarquia centrada no item consultado</h4>
-            <small class="text-muted">{{ dados()!.cadeia_valor_nome }}</small>
+            @if (subtitulo()) {
+              <small class="text-muted">{{ subtitulo() }}</small>
+            }
           </div>
         </div>
 
@@ -37,12 +39,11 @@
               <br-button emphasis="secondary" [disabled]="!canExpandDown()" (click)="expandDown()">
                 Expandir abaixo
               </br-button>
-              <br-button emphasis="tertiary" (click)="resetLevels()">Restaurar janela</br-button>
             </span>
 
             <span class="legend-hint">
-              <strong>Linha contínua</strong> = hierarquia na mesma cadeia de valor ·
-              <strong>Linha tracejada</strong> = vínculo com outra cadeia de valor
+              <strong>Linha contínua</strong> = {{ config.legendaPrimary }} ·
+              <strong>Linha tracejada</strong> = {{ config.legendaSecondary }}
             </span>
           </div>
 
@@ -55,10 +56,10 @@
                 (pointerdown)="onPanDown($event)"
               >
                 <defs>
-                  <marker id="arrowMesmaCadeia" viewBox="0 0 10 6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <marker id="arrowPrimary" viewBox="0 0 10 6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
                     <path d="M0,0 L0,6 L8,3 z" fill="#636363"></path>
                   </marker>
-                  <marker id="arrowCrossCadeia" viewBox="0 0 10 6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <marker id="arrowSecondary" viewBox="0 0 10 6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
                     <path d="M0,0 L0,6 L8,3 z" fill="#1351b4"></path>
                   </marker>
                 </defs>
@@ -67,11 +68,11 @@
                   <path
                     [attr.d]="edge.path"
                     fill="none"
-                    [attr.stroke]="edge.type === 'MESMA_CADEIA' ? '#636363' : '#1351b4'"
-                    [attr.stroke-width]="edge.type === 'MESMA_CADEIA' ? '2' : '1.6'"
-                    [attr.stroke-dasharray]="edge.type === 'CROSS_CADEIA' ? '7 6' : null"
-                    [attr.marker-end]="edge.type === 'MESMA_CADEIA' ? 'url(#arrowMesmaCadeia)' : 'url(#arrowCrossCadeia)'"
-                    [attr.opacity]="edge.type === 'CROSS_CADEIA' ? '0.85' : '1'"
+                    [attr.stroke]="edge.type === 'PRIMARY' ? '#636363' : '#1351b4'"
+                    [attr.stroke-width]="edge.type === 'PRIMARY' ? '2' : '1.6'"
+                    [attr.stroke-dasharray]="edge.type === 'SECONDARY' ? '7 6' : null"
+                    [attr.marker-end]="edge.type === 'PRIMARY' ? 'url(#arrowPrimary)' : 'url(#arrowSecondary)'"
+                    [attr.opacity]="edge.type === 'SECONDARY' ? '0.85' : '1'"
                   ></path>
                 }
 
@@ -101,16 +102,18 @@
                     >
                       <div xmlns="http://www.w3.org/1999/xhtml" class="node-card" lang="pt-BR">
                         @if (node.isFocal) {
-                          <span class="node-card__badge">central</span>
+                          <span class="node-card__badge">{{ config.badgeFocal }}</span>
                         }
                         <p class="node-card__title">{{ node.nome }}</p>
-                        <p class="node-card__plan">{{ node.cadeiaValorNome }}</p>
-                        @if (node.etiqueta) {
-                          <p class="node-card__tipo">{{ node.etiqueta }}</p>
-                        }
-                        @if (node.percentualEsforco !== null) {
-                          <p class="node-card__esforco">
-                            Esforço planejado: {{ formatPercent(node.percentualEsforco) }}
+                        <p class="node-card__plan">{{ node.containerNome }}</p>
+                        <p class="node-card__tipo">{{ node.tipoNome || '—' }}</p>
+                        @if (node.percentualDoPai === null) {
+                          <p class="node-card__esforco" title="Esforço planejado em relação ao disponível">
+                            Esforço planejado: {{ layoutService.formatPercent(node.planejadoPercentualDisponivel) }} do disponível
+                          </p>
+                        } @else {
+                          <p class="node-card__esforco" title="Participação no esforço planejado acumulado do nó pai">
+                            Esforço planejado: {{ layoutService.formatPercent(node.percentualDoPai) }} do pai
                           </p>
                         }
                         <span class="node-card__vinculos-tag">{{ node.totalVinculos }} vínculos</span>
@@ -122,11 +125,10 @@
             </div>
 
             <div class="col-12 col-lg-4 detail-col">
-              <app-cadeia-valor-painel-lateral
-                [processoId]="selectedNodeId()"
-                [cadeiaValorId]="cadeiaValorId()"
+              <app-arvore-institucional-painel-lateral
+                [nodeId]="selectedNodeId()"
                 [consultadoId]="consultadoId()"
-                (centralizar)="navegarParaProcesso($event)"
+                (centralizar)="onCentralizar($event)"
               />
             </div>
           </div>

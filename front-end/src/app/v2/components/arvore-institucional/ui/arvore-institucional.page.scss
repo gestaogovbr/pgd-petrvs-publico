@@ -149,17 +149,11 @@
 }
 
 .detail-col {
-  @media (min-width: 992px) {
-    position: sticky;
-    top: 0.75rem;
-    align-self: flex-start;
-    max-height: calc(100vh - 8rem);
-    overflow: auto;
-  }
-}
+  .br-card {
+    height: 100%;
 
-.detail-card {
-  &--empty {
-    min-height: 120px;
+    .card-content {
+      overflow: auto;
+    }
   }
 }

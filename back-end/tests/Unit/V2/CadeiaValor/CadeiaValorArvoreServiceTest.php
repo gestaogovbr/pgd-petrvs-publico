@@ -2,6 +2,7 @@
 
 use App\Models\CadeiaValorProcesso;
 use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphAssembler;
 use App\V2\CadeiaValor\CadeiaValorArvoreService;
 use App\V2\CadeiaValor\DTOs\CadeiaValorArvoreDTO;
 use App\V2\CadeiaValor\DTOs\CadeiaValorProcessoNodeDTO;
@@ -30,7 +31,7 @@ function criarProcessoMock(string $id, string $cadeiaValorId, ?string $paiId = n
 function criarServiceComMock(): CadeiaValorArvoreService
 {
     $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
-    return new CadeiaValorArvoreService($repo);
+    return new CadeiaValorArvoreService($repo, new ArvoreInstitucionalEsforcoGraphAssembler());
 }
 
 describe('CadeiaValorArvoreService - coletarTodosAncestrais', function () {

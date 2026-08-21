@@ -3,6 +3,8 @@
 use App\Exceptions\NotFoundException;
 use App\Models\PlanejamentoObjetivo;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphAssembler;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelAssembler;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregasListagemDTO;
 use App\V2\Planejamento\Objetivo\EsforcoTotalGraphAssembler;
@@ -24,9 +26,9 @@ function criarPlanejamentoObjetivoService(
 ): PlanejamentoObjetivoService {
     return new PlanejamentoObjetivoService(
         $repository ?? Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class),
-        $assembler ?? new EsforcoTotalGraphAssembler(),
+        $assembler ?? new EsforcoTotalGraphAssembler(new ArvoreInstitucionalEsforcoGraphAssembler()),
         $arvoreAssembler ?? new \App\V2\Planejamento\Objetivo\ObjetivoArvoreVisualizacaoAssembler(),
-        $painelAssembler ?? new \App\V2\Planejamento\Objetivo\ObjetivoPainelAssembler(),
+        $painelAssembler ?? new \App\V2\Planejamento\Objetivo\ObjetivoPainelAssembler(new ArvoreInstitucionalPainelAssembler()),
     );
 }
 

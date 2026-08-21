@@ -25,6 +25,10 @@ class CadeiaValorProcessoNodeDTO implements \JsonSerializable
         public readonly ?array $etiquetas,
         public readonly array $filhos_ids = [],
         public readonly array $vinculos_cross_cadeia = [],
+        public readonly float $esforco_disponivel_horas = 0,
+        public readonly float $esforco_proprio = 0,
+        public readonly float $esforco_total_horas = 0,
+        public readonly float $planejado_percentual_disponivel = 0,
     ) {}
 
     public static function fromArray(array $data): self
@@ -41,6 +45,10 @@ class CadeiaValorProcessoNodeDTO implements \JsonSerializable
             etiquetas: $data['etiquetas'] ?? null,
             filhos_ids: $data['filhos_ids'] ?? [],
             vinculos_cross_cadeia: $data['vinculos_cross_cadeia'] ?? [],
+            esforco_disponivel_horas: (float) ($data['esforco_disponivel_horas'] ?? 0),
+            esforco_proprio: (float) ($data['esforco_proprio'] ?? 0),
+            esforco_total_horas: (float) ($data['esforco_total_horas'] ?? 0),
+            planejado_percentual_disponivel: (float) ($data['planejado_percentual_disponivel'] ?? 0),
         );
     }
 
@@ -59,6 +67,10 @@ class CadeiaValorProcessoNodeDTO implements \JsonSerializable
             'etiquetas' => $this->etiquetas,
             'filhos_ids' => $this->filhos_ids,
             'vinculos_cross_cadeia' => $this->vinculos_cross_cadeia,
+            'esforco_disponivel_horas' => $this->esforco_disponivel_horas,
+            'esforco_proprio' => $this->esforco_proprio,
+            'esforco_total_horas' => $this->esforco_total_horas,
+            'planejado_percentual_disponivel' => $this->planejado_percentual_disponivel,
         ];
     }
 }

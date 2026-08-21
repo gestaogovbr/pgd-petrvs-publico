@@ -1,14 +1,14 @@
 <?php
 
-use App\V2\Planejamento\Objetivo\ObjetivoPainelEsforcoSupport;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoSupport;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
-describe('ObjetivoPainelEsforcoSupport::visibilidadeEsforco', function () {
+describe('ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco', function () {
 
     test('PE aguardando homologação exibe apenas esforço disponível', function () {
-        $vis = ObjetivoPainelEsforcoSupport::visibilidadeEsforco('HOMOLOGANDO', true, true);
+        $vis = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco('HOMOLOGANDO', true, true);
 
         expect($vis['mostrar_disponivel'])->toBeTrue()
             ->and($vis['mostrar_planejado'])->toBeFalse()
@@ -16,7 +16,7 @@ describe('ObjetivoPainelEsforcoSupport::visibilidadeEsforco', function () {
     });
 
     test('PE em execução com PT pactuado exibe disponível e planejado', function () {
-        $vis = ObjetivoPainelEsforcoSupport::visibilidadeEsforco('ATIVO', true, false);
+        $vis = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco('ATIVO', true, false);
 
         expect($vis['mostrar_disponivel'])->toBeTrue()
             ->and($vis['mostrar_planejado'])->toBeTrue()
@@ -24,7 +24,7 @@ describe('ObjetivoPainelEsforcoSupport::visibilidadeEsforco', function () {
     });
 
     test('PE em execução com PT concluído exibe executado', function () {
-        $vis = ObjetivoPainelEsforcoSupport::visibilidadeEsforco('ATIVO', true, true);
+        $vis = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco('ATIVO', true, true);
 
         expect($vis['mostrar_disponivel'])->toBeTrue()
             ->and($vis['mostrar_planejado'])->toBeTrue()
@@ -32,7 +32,7 @@ describe('ObjetivoPainelEsforcoSupport::visibilidadeEsforco', function () {
     });
 
     test('PE concluído exibe todos os tipos de esforço', function () {
-        $vis = ObjetivoPainelEsforcoSupport::visibilidadeEsforco('CONCLUIDO', false, false);
+        $vis = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco('CONCLUIDO', false, false);
 
         expect($vis['mostrar_disponivel'])->toBeTrue()
             ->and($vis['mostrar_planejado'])->toBeFalse()
@@ -40,15 +40,15 @@ describe('ObjetivoPainelEsforcoSupport::visibilidadeEsforco', function () {
     });
 });
 
-describe('ObjetivoPainelEsforcoSupport::percentual', function () {
+describe('ArvoreInstitucionalEsforcoSupport::percentual', function () {
 
     test('calcula percentual com duas casas decimais', function () {
-        expect(ObjetivoPainelEsforcoSupport::percentual(25, 100))->toBe(25.0)
-            ->and(ObjetivoPainelEsforcoSupport::percentual(1, 3))->toBe(33.33);
+        expect(ArvoreInstitucionalEsforcoSupport::percentual(25, 100))->toBe(25.0)
+            ->and(ArvoreInstitucionalEsforcoSupport::percentual(1, 3))->toBe(33.33);
     });
 
     test('retorna zero quando total é zero ou negativo', function () {
-        expect(ObjetivoPainelEsforcoSupport::percentual(10, 0))->toBe(0.0)
-            ->and(ObjetivoPainelEsforcoSupport::percentual(10, -5))->toBe(0.0);
+        expect(ArvoreInstitucionalEsforcoSupport::percentual(10, 0))->toBe(0.0)
+            ->and(ArvoreInstitucionalEsforcoSupport::percentual(10, -5))->toBe(0.0);
     });
 });

@@ -2,6 +2,16 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { GlobalsService } from 'src/app/services/globals.service';
+import type { EntregaDetalheLinha, FiltroOpcao, SecaoResumo } from 'src/app/v2/components/arvore-institucional/domain/types';
+
+// ─── Tipos específicos da Cadeia de Valor (endpoint de árvore) ─────────────────
+
+export type VinculoCrossCadeiaApi = {
+  processo_id: string;
+  processo_nome: string;
+  cadeia_valor_id: string;
+  cadeia_valor_nome: string;
+};
 
 export type CadeiaValorProcessoNodeApi = {
   processo_id: string;
@@ -15,13 +25,10 @@ export type CadeiaValorProcessoNodeApi = {
   etiquetas: string[] | null;
   filhos_ids: string[];
   vinculos_cross_cadeia: VinculoCrossCadeiaApi[];
-};
-
-export type VinculoCrossCadeiaApi = {
-  processo_id: string;
-  processo_nome: string;
-  cadeia_valor_id: string;
-  cadeia_valor_nome: string;
+  esforco_disponivel_horas?: number;
+  esforco_proprio?: number;
+  esforco_total_horas?: number;
+  planejado_percentual_disponivel?: number;
 };
 
 export type CadeiaValorArvoreApi = {
@@ -34,81 +41,25 @@ export type CadeiaValorArvoreApi = {
   nivel_maximo: number;
 };
 
-export type FiltroOpcaoApi = {
-  id: string;
-  label: string;
-};
-
-export type CadeiaValorResumoEsforcoApi = {
-  disponivel_horas: number;
-  planejado_horas: number;
-  executado_horas: number;
-  planejado_percentual_disponivel: number;
-  executado_percentual_planejado: number;
-  mostrar_disponivel: boolean;
-  mostrar_planejado: boolean;
-  mostrar_executado: boolean;
-};
-
-export type CadeiaValorResumoPessoasApi = {
-  total_participantes: number;
-  participantes_somente_unidade_propria: number;
-  participantes_somente_outras_unidades: number;
-  participantes_em_ambas: number;
-};
-
-export type CadeiaValorResumoEntregasApi = {
-  total_entregas: number;
-  entregas_concluidas: number;
-  percentual_concluidas: number;
-};
+// ─── Tipos do Painel (usam tipos centrais) ─────────────────────────────────────
 
 export type CadeiaValorResumoApi = {
   processo_id: string;
   processo_nome: string;
   nivel: number;
-  esforco: CadeiaValorResumoEsforcoApi;
-  pessoas: CadeiaValorResumoPessoasApi;
-  entregas: CadeiaValorResumoEntregasApi;
-  filtro_unidades: FiltroOpcaoApi[];
-};
-
-export type CadeiaValorPainelEntregaDetalheLinhaApi = {
-  plano_entrega_entrega_id: string;
-  unidade_id: string;
-  unidade_sigla: string;
-  unidade_nome: string;
-  plano_entrega_id: string;
-  plano_entrega_nome: string;
-  plano_entrega_status: string;
-  plano_entrega_vigencia_inicio: string;
-  plano_entrega_vigencia_fim: string;
-  entrega_titulo: string;
-  progresso_esperado: number;
-  progresso_realizado: number;
-  meta: Record<string, unknown> | null;
-  realizado: Record<string, unknown> | null;
-  tipo_indicador: string | null;
-  lista_qualitativos: Array<{ key: string; value: string }> | null;
-  registro_execucao: string | null;
-  participantes_total: number;
-  participantes_somente_unidade_propria: number;
-  participantes_somente_outras_unidades: number;
-  participantes_em_ambas: number;
-  esforco_disponivel_horas: number;
-  esforco_planejado_horas: number;
-  esforco_executado_horas: number;
-  mostrar_disponivel: boolean;
-  mostrar_planejado: boolean;
-  mostrar_executado: boolean;
+  item: SecaoResumo;
+  consolidado: SecaoResumo;
+  filtro_unidades: FiltroOpcao[];
 };
 
 export type CadeiaValorPainelEntregasDetalhamentoApi = {
   processo_id: string;
-  itens: CadeiaValorPainelEntregaDetalheLinhaApi[];
-  filtro_entregas: FiltroOpcaoApi[];
-  filtro_unidades: FiltroOpcaoApi[];
+  itens: EntregaDetalheLinha[];
+  filtro_entregas: FiltroOpcao[];
+  filtro_unidades: FiltroOpcao[];
 };
+
+// ─── Service ───────────────────────────────────────────────────────────────────
 
 type ApiResponse<T> = { success?: boolean; data?: T; error?: string };
 

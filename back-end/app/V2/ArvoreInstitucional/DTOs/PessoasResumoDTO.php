@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\V2\Planejamento\Objetivo\DTOs;
+namespace App\V2\ArvoreInstitucional\DTOs;
 
-final class ObjetivoPainelPessoasResumoDTO implements \JsonSerializable
+final class PessoasResumoDTO implements \JsonSerializable
 {
     public function __construct(
         public readonly int $total_participantes,

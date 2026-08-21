@@ -4,46 +4,70 @@ declare(strict_types=1);
 
 namespace App\V2\CadeiaValor;
 
-use App\Exceptions\NotFoundException;
-use App\Models\CadeiaValor;
-use App\Models\CadeiaValorProcesso;
 use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangencia;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoSupport;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelAssembler;
 use App\V2\CadeiaValor\DTOs\CadeiaValorPainelEntregasDetalhamentoDTO;
+use App\V2\CadeiaValor\Validators\CadeiaValorProcessoValidator;
 
 class CadeiaValorEntregasService
 {
     public function __construct(
         private readonly CadeiaValorReadRepositoryContract $repository,
-        private readonly CadeiaValorPainelAssembler $assembler,
+        private readonly ArvoreInstitucionalPainelAssembler $painelAssembler,
+        private readonly CadeiaValorProcessoValidator $validator,
     ) {}
 
     /**
-     * Retorna dados inline das entregas vinculadas ao processo, com filtros opcionais.
-     * Cada linha já inclui participantes, esforço, flags e registro de execução.
+     * Retorna dados inline das entregas vinculadas ao processo, com filtros opcionais e abrangência.
      *
-     * @param array{unidade_id?: string|null, plano_entrega_entrega_id?: string|null, data_inicio?: string|null, data_fim?: string|null} $filtros
+     * @param array{unidade_id?: string|null, plano_entrega_entrega_id?: string|null, data_inicio?: string|null, data_fim?: string|null, abrangencia?: string|null} $filtros
      */
     public function getEntregas(string $cadeiaValorId, string $processoId, array $filtros = []): CadeiaValorPainelEntregasDetalhamentoDTO
     {
-        $this->validarProcesso($cadeiaValorId, $processoId);
+        $this->validator->validar($cadeiaValorId, $processoId);
 
-        $rows = $this->repository->listarDetalhamentoEntregasPainel($processoId, $filtros);
-        $filtroUnidades = $this->repository->listarFiltroUnidadesPainel($processoId);
-        $filtroEntregas = $this->repository->listarFiltroEntregasPainel($processoId);
+        [$processoIds, $unidadeIds] = ArvoreInstitucionalAbrangencia::resolverEscopo(
+            $processoId,
+            $filtros['unidade_id'] ?? null,
+            $filtros['abrangencia'] ?? null,
+            fn (string $id) => $this->repository->coletarIdsFilhosRecursivo($id),
+            fn (string $id) => $this->repository->coletarIdsUnidadesComSubordinadas($id),
+        );
 
-        return $this->assembler->montarDetalhamento($processoId, $rows, $filtroUnidades, $filtroEntregas);
-    }
+        $filtrosQuery = [
+            'unidade_id' => null,
+            'plano_entrega_entrega_id' => $filtros['plano_entrega_entrega_id'] ?? null,
+            'data_inicio' => $filtros['data_inicio'] ?? null,
+            'data_fim' => $filtros['data_fim'] ?? null,
+        ];
 
-    private function validarProcesso(string $cadeiaValorId, string $processoId): void
-    {
-        $cadeiaValor = $this->repository->findCadeiaValor($cadeiaValorId);
-        if (!$cadeiaValor instanceof CadeiaValor) {
-            throw new NotFoundException("Cadeia de valor com id '{$cadeiaValorId}' não encontrada.");
+        if ($unidadeIds !== null) {
+            $filtrosQuery['unidade_ids'] = $unidadeIds;
+        } elseif (!empty($filtros['unidade_id'])) {
+            $filtrosQuery['unidade_id'] = $filtros['unidade_id'];
         }
 
-        $processo = $this->repository->findProcesso($processoId, $cadeiaValorId);
-        if (!$processo instanceof CadeiaValorProcesso) {
-            throw new NotFoundException("Processo com id '{$processoId}' não encontrado na cadeia de valor.");
+        $rows = $this->repository->listarDetalhamentoEntregasPainelMultiplos($processoIds, $filtrosQuery);
+
+        $itens = [];
+        foreach ($rows as $row) {
+            $peStatus = (string) $row->plano_entrega_status;
+            $temPtPactuado = (bool) ($row->tem_pt_pactuado ?? false);
+            $temPtConcluido = (bool) ($row->tem_pt_concluido ?? false);
+            $vis = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco($peStatus, $temPtPactuado, $temPtConcluido);
+
+            $itens[] = $this->painelAssembler->montarLinha($row, $vis);
         }
+
+        $filtrosExtraidos = $this->painelAssembler->extrairFiltros($rows);
+
+        return new CadeiaValorPainelEntregasDetalhamentoDTO(
+            processo_id: $processoId,
+            itens: $itens,
+            filtro_entregas: $filtrosExtraidos['filtro_entregas'],
+            filtro_unidades: $filtrosExtraidos['filtro_unidades'],
+        );
     }
 }

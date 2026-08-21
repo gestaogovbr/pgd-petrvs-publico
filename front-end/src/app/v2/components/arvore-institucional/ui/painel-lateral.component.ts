@@ -14,36 +14,36 @@ import {
 } from '@angular/core';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { firstValueFrom } from 'rxjs';
-import {
-  CadeiaValorArvoreApiClient,
-  type CadeiaValorResumoApi,
-  type FiltroOpcaoApi
-} from '../infra/cadeia-valor-arvore-api.client';
-import { CadeiaValorEntregasDetalhamentoModalComponent } from './cadeia-valor-entregas-detalhamento-modal.component';
+import type { FiltroOpcao, PainelResumoData, SecaoResumo } from '../domain/types';
+import { ARVORE_CONFIG, ARVORE_DATA_PROVIDER } from '../tokens';
+import { ArvoreLayoutService } from '../infra/arvore-layout.service';
+import { ArvoreInstitucionalEntregasDetalhamentoModalComponent } from './entregas-detalhamento-modal.component';
 
 @Component({
-  selector: 'app-cadeia-valor-painel-lateral',
+  selector: 'app-arvore-institucional-painel-lateral',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, WebcomponentsAngularModule],
-  templateUrl: './cadeia-valor-painel-lateral.component.html',
-  styleUrl: './cadeia-valor-painel-lateral.component.scss'
+  templateUrl: './painel-lateral.component.html',
+  styleUrl: './painel-lateral.component.scss',
+  providers: [ArvoreLayoutService]
 })
-export class CadeiaValorPainelLateralComponent implements OnDestroy {
-  private readonly api = inject(CadeiaValorArvoreApiClient);
+export class ArvoreInstitucionalPainelLateralComponent implements OnDestroy {
+  private readonly provider = inject(ARVORE_DATA_PROVIDER);
+  readonly config = inject(ARVORE_CONFIG);
   private readonly overlay = inject(Overlay);
   private readonly injector = inject(Injector);
+  readonly fmt = inject(ArvoreLayoutService);
 
-  readonly processoId = input<string | null>(null);
-  readonly cadeiaValorId = input<string | null>(null);
+  readonly nodeId = input<string | null>(null);
   readonly consultadoId = input<string | null>(null);
   readonly centralizar = output<string>();
 
   readonly loading = signal(false);
   readonly atualizandoMetricas = signal(false);
   readonly error = signal<string | null>(null);
-  readonly resumo = signal<CadeiaValorResumoApi | null>(null);
-  readonly unidadesFiltro = signal<FiltroOpcaoApi[]>([]);
+  readonly resumo = signal<PainelResumoData | null>(null);
+  readonly unidadesFiltro = signal<FiltroOpcao[]>([]);
   readonly filtroUnidadeId = signal('');
 
   private detalhamentoOverlayRef: OverlayRef | null = null;
@@ -52,7 +52,7 @@ export class CadeiaValorPainelLateralComponent implements OnDestroy {
 
   constructor() {
     effect(() => {
-      const id = this.processoId();
+      const id = this.nodeId();
       this.filtroUnidadeId.set('');
       void this.carregarResumo(id);
     });
@@ -61,7 +61,7 @@ export class CadeiaValorPainelLateralComponent implements OnDestroy {
   onFiltroUnidadeChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.filtroUnidadeId.set(value);
-    void this.carregarMetricas(this.processoId(), value || undefined);
+    void this.carregarMetricas(this.nodeId(), value || undefined);
   }
 
   ngOnDestroy(): void {
@@ -69,9 +69,8 @@ export class CadeiaValorPainelLateralComponent implements OnDestroy {
   }
 
   abrirDetalhamento(): void {
-    const processoId = this.processoId();
-    const cadeiaId = this.cadeiaValorId();
-    if (!processoId?.length || !cadeiaId?.length) {
+    const id = this.nodeId();
+    if (!id?.length) {
       return;
     }
 
@@ -90,13 +89,12 @@ export class CadeiaValorPainelLateralComponent implements OnDestroy {
     });
 
     const portal = new ComponentPortal(
-      CadeiaValorEntregasDetalhamentoModalComponent,
+      ArvoreInstitucionalEntregasDetalhamentoModalComponent,
       null,
       this.injector
     );
     const componentRef = this.detalhamentoOverlayRef.attach(portal);
-    componentRef.setInput('cadeiaValorId', cadeiaId);
-    componentRef.setInput('processoId', processoId);
+    componentRef.setInput('nodeId', id);
     componentRef.setInput('unidadeIdInicial', this.filtroUnidadeId());
     componentRef.instance.modalClosed.subscribe(() => this.fecharDetalhamento());
     this.detalhamentoBackdropSub = this.detalhamentoOverlayRef.backdropClick().subscribe(() => {
@@ -111,23 +109,8 @@ export class CadeiaValorPainelLateralComponent implements OnDestroy {
     this.detalhamentoOverlayRef = null;
   }
 
-  formatHoras(value: number): string {
-    if (!Number.isFinite(value)) {
-      return '0';
-    }
-    return (Math.round(value * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
-  }
-
-  formatPercent(value: number): string {
-    if (!Number.isFinite(value)) {
-      return '0%';
-    }
-    return `${(Math.round(value * 100) / 100).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%`;
-  }
-
-  private async carregarResumo(processoId: string | null): Promise<void> {
-    const cadeiaId = this.cadeiaValorId();
-    if (!processoId?.length || !cadeiaId?.length) {
+  private async carregarResumo(id: string | null): Promise<void> {
+    if (!id?.length) {
       this.resumo.set(null);
       this.unidadesFiltro.set([]);
       this.error.set(null);
@@ -139,29 +122,28 @@ export class CadeiaValorPainelLateralComponent implements OnDestroy {
     this.loading.set(true);
     this.error.set(null);
     try {
-      const data = await firstValueFrom(this.api.getResumo(cadeiaId, processoId));
-      if (this.processoId() !== processoId || reqId !== this.carregamentoId) {
+      const data = await firstValueFrom(this.provider.carregarResumo(id));
+      if (this.nodeId() !== id || reqId !== this.carregamentoId) {
         return;
       }
       this.resumo.set(data);
       this.unidadesFiltro.set(data.filtro_unidades);
     } catch (err: unknown) {
-      if (this.processoId() !== processoId || reqId !== this.carregamentoId) {
+      if (this.nodeId() !== id || reqId !== this.carregamentoId) {
         return;
       }
       this.resumo.set(null);
       this.unidadesFiltro.set([]);
       this.error.set(err instanceof Error ? err.message : 'Não foi possível carregar o painel.');
     } finally {
-      if (this.processoId() === processoId && reqId === this.carregamentoId) {
+      if (this.nodeId() === id && reqId === this.carregamentoId) {
         this.loading.set(false);
       }
     }
   }
 
-  private async carregarMetricas(processoId: string | null, unidadeId?: string): Promise<void> {
-    const cadeiaId = this.cadeiaValorId();
-    if (!processoId?.length || !cadeiaId?.length || !this.resumo()) {
+  private async carregarMetricas(id: string | null, unidadeId?: string): Promise<void> {
+    if (!id?.length || !this.resumo()) {
       return;
     }
 
@@ -169,19 +151,23 @@ export class CadeiaValorPainelLateralComponent implements OnDestroy {
     this.atualizandoMetricas.set(true);
     this.error.set(null);
     try {
-      const params = unidadeId ? { unidade_id: unidadeId } : undefined;
-      const data = await firstValueFrom(this.api.getResumo(cadeiaId, processoId, params));
-      if (this.processoId() !== processoId || reqId !== this.carregamentoId) {
+      const data = await firstValueFrom(
+        this.provider.carregarResumo(id, { unidade_id: unidadeId })
+      );
+      if (this.nodeId() !== id || reqId !== this.carregamentoId) {
         return;
       }
-      this.resumo.set(data);
+      this.resumo.update(atual => atual
+        ? { ...atual, item: data.item, consolidado: data.consolidado }
+        : atual
+      );
     } catch (err: unknown) {
-      if (this.processoId() !== processoId || reqId !== this.carregamentoId) {
+      if (this.nodeId() !== id || reqId !== this.carregamentoId) {
         return;
       }
       this.error.set(err instanceof Error ? err.message : 'Não foi possível filtrar as métricas.');
     } finally {
-      if (this.processoId() === processoId && reqId === this.carregamentoId) {
+      if (this.nodeId() === id && reqId === this.carregamentoId) {
         this.atualizandoMetricas.set(false);
       }
     }
