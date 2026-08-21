@@ -8,6 +8,7 @@ final class ObjetivoPainelEntregasResumoDTO implements \JsonSerializable
 {
     public function __construct(
         public readonly int $total_entregas,
+        public readonly int $total_entregas_avaliadas,
         public readonly int $entregas_concluidas,
         public readonly float $percentual_concluidas,
     ) {}
@@ -17,6 +18,7 @@ final class ObjetivoPainelEntregasResumoDTO implements \JsonSerializable
     {
         return [
             'total_entregas' => $this->total_entregas,
+            'total_entregas_avaliadas' => $this->total_entregas_avaliadas,
             'entregas_concluidas' => $this->entregas_concluidas,
             'percentual_concluidas' => $this->percentual_concluidas,
         ];

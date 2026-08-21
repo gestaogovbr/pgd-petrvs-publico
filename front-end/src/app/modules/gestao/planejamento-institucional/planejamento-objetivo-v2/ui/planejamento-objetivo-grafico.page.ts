@@ -455,11 +455,11 @@ export class PlanejamentoObjetivoGraficoPage {
   }
 
   zoomIn() {
-    this.zoom.update(value => Math.min(1.6, Number((value + 0.1).toFixed(2))));
+    this.zoom.update(value => Math.min(4, Number((value + 0.1).toFixed(2))));
   }
 
   zoomOut() {
-    this.zoom.update(value => Math.max(0.55, Number((value - 0.1).toFixed(2))));
+    this.zoom.update(value => Math.max(0.2, Number((value - 0.1).toFixed(2))));
   }
 
   resetZoom() {

@@ -295,10 +295,10 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
     });
 
     /**
-     * Cenário: plano ainda não pactuado (INCLUIDO) não conta no esforço planejado.
-     * Status pactuados: AGUARDANDO_ASSINATURA, ATIVO, CONCLUIDO, AVALIADO.
+     * Cenário: plano de trabalho NÃO pactuado (INCLUIDO) não conta no esforço.
+     * PTs pactuados (AGUARDANDO_ASSINATURA/ATIVO/CONCLUIDO/AVALIADO) contam — ver ObjetivoPainelEsforcoSupport.
      */
-    test('ignora planos de trabalho que ainda não foram pactuados', function () {
+    test('ignora planos de trabalho não pactuados', function () {
         $base = criarEstruturaBase();
 
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo');
@@ -315,6 +315,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
             'entrega_id' => $planoEntregaEntrega->id,
         ]);
 
+        // Plano INCLUIDO (não pactuado)
         $planoTrabalho = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $base['unidade']->id,

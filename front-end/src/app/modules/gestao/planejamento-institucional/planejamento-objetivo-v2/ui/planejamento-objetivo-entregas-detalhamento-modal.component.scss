@@ -76,6 +76,13 @@
     flex-shrink: 0;
   }
 
+  &__filtro-data {
+    @media (min-width: 1200px) {
+      flex: 0 0 9.75rem;
+      width: 9.75rem;
+    }
+  }
+
   &__table-wrap {
     flex: 1;
     min-height: 0;
@@ -103,8 +110,83 @@
   &__detail-grid {
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: 1fr;
     padding: 0.5rem 0.25rem;
+
+    // Participantes e Esforço compactos; Registro de Execução ocupa o restante
+    @media (min-width: 768px) {
+      grid-template-columns: minmax(180px, 240px) minmax(180px, 240px) 1fr;
+    }
+  }
+
+  &__detail-registro {
+    min-width: 0;
+  }
+
+  &__detail-item-planejamento {
+    grid-column: 1 / -1;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  // Segunda linha do detalhe: descrições da entrega e da meta lado a lado
+  &__detail-linha2 {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  &__texto-longo {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.875rem;
+    color: #333;
+  }
+
+  &__descricao-info {
+    color: #1351b4;
+    cursor: help;
+    font-size: 0.875rem;
+    margin-left: 0.25rem;
+  }
+
+  &__info {
+    color: #1351b4;
+    cursor: help;
+    font-size: 0.875rem;
+    margin-left: 0.25rem;
+  }
+
+  &__etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.35rem;
+  }
+
+  &__etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    max-width: 100%;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+
+    i {
+      font-size: 0.75rem;
+    }
   }
 
   &__detail-title {
