@@ -374,6 +374,73 @@ test('podeCancelar retorna false para usuario sem capacidade MOD_PTR_CNC', funct
     expect($this->authorization->podeCancelar($plano, $usuario))->toBeFalse();
 });
 
+test('podeCancelar retorna true para adm master com status ATIVO', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $usuario = makeUsuario(PerfilEnum::ADMINISTRADOR_MASTER->value);
+    $usuario->id = 'adm-master';
+    $usuario->shouldReceive('hasPermissionTo')->with('MOD_PTR_CNC')->andReturn(true);
+
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
+        ->with('unidade-plano', 'adm-master')
+        ->andReturn(false);
+
+    expect($this->authorization->podeCancelar($plano, $usuario))->toBeTrue();
+});
+
+test('podeCancelar retorna true para adm negocial substituto com status ATIVO', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $usuario = makeUsuario(PerfilEnum::ADMINISTRADOR_NEGOCIAL->value);
+    $usuario->id = 'adm-neg';
+    $usuario->shouldReceive('hasPermissionTo')->with('MOD_PTR_CNC')->andReturn(true);
+
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
+        ->with('unidade-plano', 'adm-neg')
+        ->andReturn(false);
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorSubstitutoDaUnidade')
+        ->with('unidade-plano', 'adm-neg')
+        ->andReturn(true);
+
+    expect($this->authorization->podeCancelar($plano, $usuario))->toBeTrue();
+});
+
+test('podeCancelar retorna true para adm negocial delegado com status ATIVO', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $usuario = makeUsuario(PerfilEnum::ADMINISTRADOR_NEGOCIAL->value);
+    $usuario->id = 'adm-neg';
+    $usuario->shouldReceive('hasPermissionTo')->with('MOD_PTR_CNC')->andReturn(true);
+
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
+        ->with('unidade-plano', 'adm-neg')
+        ->andReturn(false);
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorSubstitutoDaUnidade')
+        ->with('unidade-plano', 'adm-neg')
+        ->andReturn(false);
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorDelegadoDaUnidade')
+        ->with('unidade-plano', 'adm-neg')
+        ->andReturn(true);
+
+    expect($this->authorization->podeCancelar($plano, $usuario))->toBeTrue();
+});
+
+test('podeCancelar retorna false para adm negocial sem atribuicao na unidade com status ATIVO', function () {
+    $plano = makePlano(StatusEnum::ATIVO->value);
+    $usuario = makeUsuario(PerfilEnum::ADMINISTRADOR_NEGOCIAL->value);
+    $usuario->id = 'adm-neg';
+    $usuario->shouldReceive('hasPermissionTo')->with('MOD_PTR_CNC')->andReturn(true);
+
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
+        ->with('unidade-plano', 'adm-neg')
+        ->andReturn(false);
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorSubstitutoDaUnidade')
+        ->with('unidade-plano', 'adm-neg')
+        ->andReturn(false);
+    $this->unidadeRepository->shouldReceive('isUsuarioGestorDelegadoDaUnidade')
+        ->with('unidade-plano', 'adm-neg')
+        ->andReturn(false);
+
+    expect($this->authorization->podeCancelar($plano, $usuario))->toBeFalse();
+});
+
 test('podeCancelar retorna true para adm master com capacidade em PT concluido', function () {
     $plano = makePlano(StatusEnum::CONCLUIDO->value);
     $usuario = makeUsuario(PerfilEnum::ADMINISTRADOR_MASTER->value);

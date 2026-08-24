@@ -196,9 +196,7 @@ class PlanoTrabalhoAuthorization
             return true;
         }
 
-        $perfil = $usuario->perfil;
-
-        return $perfil !== null && $perfil->nivel <= PerfilEnum::ADMINISTRADOR_NEGOCIAL->value;
+        return $this->isMasterOuNegocialNaUnidade($plano, $usuario);
     }
 
     private function isAutorizadoCancelarConcluido(PlanoTrabalho $plano, Usuario $usuario): bool
@@ -207,6 +205,11 @@ class PlanoTrabalhoAuthorization
             return false;
         }
 
+        return $this->isMasterOuNegocialNaUnidade($plano, $usuario);
+    }
+
+    private function isMasterOuNegocialNaUnidade(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
         $perfil = $usuario->perfil;
 
         if ($perfil !== null && $perfil->nivel <= PerfilEnum::ADMINISTRADOR_MASTER->value) {
