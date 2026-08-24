@@ -20,6 +20,7 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
         public readonly float $meta_percentual,
         public readonly int $qtd_planejamento_institucional,
         public readonly int $qtd_cadeia_valor,
+        public readonly int $qtd_outras_entregas,
         public readonly string $plano_id,
         public readonly string $plano_numero,
         public readonly string $plano_nome,
@@ -32,6 +33,17 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
     public static function fromQueryRow(object $row): self
     {
         $tipoIndicador = $row->tipo_indicador ?? null;
+        $temRegistroExecucao = ((int) ($row->qtd_registros_execucao ?? 0)) > 0;
+        $metaPlanejado = (float) ($row->meta_planejado ?? RelatorioEntregaMetaHelper::valorPlanejado(
+            $row->meta ?? null,
+            $tipoIndicador,
+            $row->progresso_esperado ?? 0,
+        ));
+        $metaAlcancado = (float) ($row->meta_alcancado ?? RelatorioEntregaMetaHelper::valorAlcancado(
+            $row->realizado ?? null,
+            $tipoIndicador,
+            $temRegistroExecucao,
+        ));
 
         return new self(
             id: (string) ($row->id ?? ''),
@@ -40,11 +52,15 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
             entregaNome: (string) ($row->entrega_nome ?? ''),
             data_inicio: self::nullableString($row->data_inicio ?? null),
             data_fim: self::nullableString($row->data_fim ?? null),
-            meta_planejado: (float) ($row->meta_planejado ?? RelatorioEntregaMetaHelper::valorNumericoAbsoluto($row->meta ?? null, $tipoIndicador)),
-            meta_alcancado: (float) ($row->meta_alcancado ?? RelatorioEntregaMetaHelper::valorNumericoAbsoluto($row->realizado ?? null, $tipoIndicador)),
-            meta_percentual: (float) ($row->meta_percentual ?? 0),
+            meta_planejado: $metaPlanejado,
+            meta_alcancado: $metaAlcancado,
+            meta_percentual: (float) ($row->meta_percentual ?? RelatorioEntregaMetaHelper::valorPercentualAlcance(
+                $metaPlanejado,
+                $metaAlcancado,
+            )),
             qtd_planejamento_institucional: (int) ($row->qtd_planejamento_institucional ?? 0),
             qtd_cadeia_valor: (int) ($row->qtd_cadeia_valor ?? 0),
+            qtd_outras_entregas: (int) ($row->qtd_outras_entregas ?? 0),
             plano_id: (string) ($row->plano_id ?? ''),
             plano_numero: (string) ($row->plano_numero ?? ''),
             plano_nome: (string) ($row->plano_nome ?? ''),
@@ -74,6 +90,7 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
             'meta_percentual' => $this->meta_percentual,
             'qtd_planejamento_institucional' => $this->qtd_planejamento_institucional,
             'qtd_cadeia_valor' => $this->qtd_cadeia_valor,
+            'qtd_outras_entregas' => $this->qtd_outras_entregas,
             'plano_id' => $this->plano_id,
             'plano_numero' => $this->plano_numero,
             'plano_nome' => $this->plano_nome,

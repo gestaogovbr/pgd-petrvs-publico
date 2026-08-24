@@ -21,6 +21,7 @@ class RelatorioEntregaIndexRequestValidator
         'meta_percentual',
         'qtd_planejamento_institucional',
         'qtd_cadeia_valor',
+        'qtd_outras_entregas',
         'plano_nome',
         'plano_rotulo',
         'plano_numero',

@@ -10,6 +10,7 @@ export interface RelatorioEntregaRow {
   meta_percentual: number;
   qtd_planejamento_institucional: number;
   qtd_cadeia_valor: number;
+  qtd_outras_entregas: number;
   plano_id: string;
   plano_numero: string;
   plano_nome: string;
@@ -36,6 +37,7 @@ export type RelatorioEntregaSortColumn =
   | 'meta_percentual'
   | 'qtd_planejamento_institucional'
   | 'qtd_cadeia_valor'
+  | 'qtd_outras_entregas'
   | 'plano_nome'
   | 'plano_rotulo'
   | 'plano_numero'

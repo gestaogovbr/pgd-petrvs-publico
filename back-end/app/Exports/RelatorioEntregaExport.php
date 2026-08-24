@@ -45,10 +45,11 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             'Data de início',
             'Data de fim',
             'Planejado',
-            'Alcançado',
+            'Realizado',
             '% de alcance',
             'Planejamento Institucional',
             'Cadeia de Valor',
+            'Outras Entregas',
             'Plano',
             '# ID',
             'Status do Plano',
@@ -69,11 +70,12 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             'G' => 12,
             'H' => 12,
             'I' => 12,
-            'J' => 35,
-            'K' => 10,
-            'L' => 18,
-            'M' => 14,
-            'N' => 16,
+            'J' => 12,
+            'K' => 35,
+            'L' => 10,
+            'M' => 18,
+            'N' => 14,
+            'O' => 16,
         ];
     }
 
@@ -93,6 +95,7 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             $percentual.'%',
             $row->qtd_planejamento_institucional,
             $row->qtd_cadeia_valor,
+            $row->qtd_outras_entregas,
             $row->plano_rotulo,
             '#'.$row->plano_numero,
             $statusLabel,
@@ -135,7 +138,7 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
         $lastRow = max(1, $this->rows->count()) + 1;
 
         return [
-            'A1:N'.$lastRow => [
+            'A1:O'.$lastRow => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -154,7 +157,7 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
     {
         $event->sheet->getDelegate()->getRowDimension(1)->setRowHeight(45);
         $event->sheet->getDelegate()->getStyle('1')->getAlignment()->setWrapText(true);
-        $event->sheet->getStyle('A1:N1')->getFill()
+        $event->sheet->getStyle('A1:O1')->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setARGB('fc9fc0');
     }

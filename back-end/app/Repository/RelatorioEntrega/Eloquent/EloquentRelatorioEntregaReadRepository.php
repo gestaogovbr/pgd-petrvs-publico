@@ -26,6 +26,7 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
         'plano_rotulo' => 'pe.nome',
         'qtd_planejamento_institucional' => 'qtd_planejamento_institucional',
         'qtd_cadeia_valor' => 'qtd_cadeia_valor',
+        'qtd_outras_entregas' => 'qtd_outras_entregas',
         'plano_nome' => 'pe.nome',
         'plano_numero' => 'pe.numero',
         'plano_status' => 'pe.status',
@@ -88,6 +89,9 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
                     WHERE o.entrega_id = pee.id AND o.deleted_at IS NULL) as qtd_planejamento_institucional'),
                 DB::raw('(SELECT COUNT(*) FROM planos_entregas_entregas_processos p
                     WHERE p.entrega_id = pee.id AND p.deleted_at IS NULL) as qtd_cadeia_valor'),
+                DB::raw('(SELECT COUNT(*) FROM planos_entregas_entregas oe
+                    WHERE oe.deleted_at IS NULL
+                    AND (oe.entrega_pai_id = pee.id OR oe.id = pee.entrega_pai_id)) as qtd_outras_entregas'),
                 DB::raw('(SELECT COUNT(DISTINCT pt.usuario_id)
                     FROM planos_trabalhos_entregas pte
                     INNER JOIN planos_trabalhos pt ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL
@@ -95,9 +99,11 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
                 DB::raw('(SELECT COUNT(DISTINCT pte.plano_trabalho_id)
                     FROM planos_trabalhos_entregas pte
                     WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL) as qtd_planos_trabalho'),
-                DB::raw($this->metaNumericoSql('pee.meta', 'e.tipo_indicador').' as meta_planejado'),
-                DB::raw($this->metaNumericoSql('pee.realizado', 'e.tipo_indicador').' as meta_alcancado'),
-                DB::raw($this->metaPercentualSql('pee.meta', 'pee.realizado', 'e.tipo_indicador').' as meta_percentual'),
+                DB::raw($this->metaPlanejadoSql('pee.meta', 'e.tipo_indicador', 'pee.progresso_esperado').' as meta_planejado'),
+                DB::raw($this->metaAlcancadoSql('pee.realizado', 'e.tipo_indicador').' as meta_alcancado'),
+                DB::raw($this->metaPercentualSql('pee.meta', 'pee.realizado', 'e.tipo_indicador', 'pee.progresso_esperado').' as meta_percentual'),
+                DB::raw('(SELECT COUNT(*) FROM planos_entregas_entregas_progressos p
+                    WHERE p.plano_entrega_entrega_id = pee.id AND p.deleted_at IS NULL) as qtd_registros_execucao'),
             ])
             ->whereNull('pee.deleted_at');
     }
@@ -111,12 +117,42 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
             ELSE 0 END";
     }
 
-    private function metaPercentualSql(string $metaColumn, string $realizadoColumn, string $tipoColumn): string
+    /** RN18 — Planejado = Meta * Parcela da entrega no plano / 100. */
+    private function metaPlanejadoSql(string $metaColumn, string $tipoColumn, string $parcelaColumn): string
     {
-        $planejado = $this->metaNumericoSql($metaColumn, $tipoColumn);
-        $alcancado = $this->metaNumericoSql($realizadoColumn, $tipoColumn);
+        $meta = $this->metaNumericoSql($metaColumn, $tipoColumn);
 
-        return "CASE WHEN ({$planejado}) > 0 THEN ROUND(({$alcancado}) / ({$planejado}) * 100, 2) ELSE 0 END";
+        return "({$meta}) * COALESCE({$parcelaColumn}, 0) / 100";
+    }
+
+    /** RN19.1 — Alcançado = 0 quando não houver registro de execução da entrega. */
+    private function metaAlcancadoSql(string $realizadoColumn, string $tipoColumn): string
+    {
+        $realizado = $this->metaNumericoSql($realizadoColumn, $tipoColumn);
+        $temRegistroExecucao = $this->temRegistroExecucaoSql();
+
+        return "CASE WHEN {$temRegistroExecucao} THEN ({$realizado}) ELSE 0 END";
+    }
+
+    private function temRegistroExecucaoSql(): string
+    {
+        return 'EXISTS (
+            SELECT 1 FROM planos_entregas_entregas_progressos p
+            WHERE p.plano_entrega_entrega_id = pee.id AND p.deleted_at IS NULL
+        )';
+    }
+
+    /** RN19.2 — Percentual de Alcance = (Valor Planejado / Valor Realizado) x 100. */
+    private function metaPercentualSql(
+        string $metaColumn,
+        string $realizadoColumn,
+        string $tipoColumn,
+        string $parcelaColumn,
+    ): string {
+        $planejado = $this->metaPlanejadoSql($metaColumn, $tipoColumn, $parcelaColumn);
+        $alcancado = $this->metaAlcancadoSql($realizadoColumn, $tipoColumn);
+
+        return "CASE WHEN ({$alcancado}) > 0 THEN ROUND(({$planejado}) / ({$alcancado}) * 100, 2) ELSE 0 END";
     }
 
     private function applyFiltros(Builder $query, RelatorioEntregaIndexFiltersDTO $filters): void
