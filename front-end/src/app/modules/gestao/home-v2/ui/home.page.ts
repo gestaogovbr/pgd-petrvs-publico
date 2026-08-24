@@ -52,6 +52,19 @@ export class HomeV2Page implements OnInit {
     return unidadeId ? this.unidadeService.isGestorUnidade(unidadeId) : false;
   });
 
+  readonly saudacao = computed(() => {
+    const hora = new Date().getHours();
+    if (hora < 12) return 'Bom dia';
+    if (hora < 18) return 'Boa tarde';
+    return 'Boa noite';
+  });
+
+  readonly nomeUsuario = computed(() => {
+    const usuario = this.auth.usuario;
+    const nome = usuario?.apelido || usuario?.nome_exibicao || usuario?.nome || '';
+    return nome.split(' ')[0];
+  });
+
   ngOnInit(): void {
     this.loadUnidadesGerenciadas();
   }
