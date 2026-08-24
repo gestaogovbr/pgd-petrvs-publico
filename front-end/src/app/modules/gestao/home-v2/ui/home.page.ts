@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { AuthService } from 'src/app/services/auth.service';
-import { UnidadeService } from 'src/app/services/unidade.service';
 import { PendenciasUsuarioComponent } from './components/pendencias-usuario.component';
 import { PlanosVigentesComponent } from './components/planos-vigentes.component';
 import { AcoesGerenciaisComponent } from './components/acoes-gerenciais.component';
@@ -42,14 +41,12 @@ export interface SelectOption {
 })
 export class HomeV2Page implements OnInit {
   private readonly auth = inject(AuthService);
-  private readonly unidadeService = inject(UnidadeService);
 
   readonly unidadeOptions = signal<SelectOption[]>([]);
   readonly selectedUnidadeId = signal<string>('');
   readonly subordinadas = signal(false);
-  readonly isGestorUnidade = computed(() => {
-    const unidadeId = this.selectedUnidadeId();
-    return unidadeId ? this.unidadeService.isGestorUnidade(unidadeId) : false;
+  readonly exibeToggleSubordinadas = computed(() => {
+    return !this.auth.isUsuarioParticipante() && !this.auth.isUsuarioConsulta();
   });
 
   readonly saudacao = computed(() => {
