@@ -34,20 +34,20 @@ export class ModalidadesPage implements OnInit {
 
   readonly origemDados = ORIGEM_DADOS;
 
-  readonly textos = {
+  readonly textos = computed(() => ({
     substituicao: {
-      titulo: 'Participação na modalidade Teletrabalho no Exterior (VIII, art. 12, D.11072/22 - substituição)',
-      info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no inciso VIII (substituição), permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
+      titulo: `Participação na modalidade Teletrabalho no Exterior (VIII, art. 12, D.11072/22 - substituição) - ${this.unidadeInicialSigla() || '...'}`,
+      info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no inciso VII (substituição) na Unidade Autorizadora, permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
     },
     discricionario: {
-      titulo: 'Participação na modalidade Teletrabalho no Exterior (§7º, art. 12, D.11072/22 - discricionário)',
-      info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no §7º, art. 12, D.11072/22 (discricionário), permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
+      titulo: `Participação na modalidade Teletrabalho no Exterior (§7º, art. 12, D.11072/22 - discricionário) - ${this.unidadeInicialSigla() || '...'}`,
+      info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no §7º, art. 12, D.11072/22 (discricionário) na Unidade Autorizadora, permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
     },
     modalidadesPorUnidade: {
       titulo: 'Modalidades de trabalho por unidade organizacional',
       info: 'Apresenta a distribuição percentual dos participantes do PGD por modalidade de trabalho, de acordo com a unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
     },
-  };
+  }));
 
   readonly unidadeInicialId = signal('');
   readonly unidadeInicialSigla = signal('');
@@ -113,24 +113,24 @@ export class ModalidadesPage implements OnInit {
 
     const indicadores: PdfIndicadorConfig[] = [
       {
-        titulo: this.textos.substituicao.titulo,
-        informacaoAdicional: this.textos.substituicao.info,
+        titulo: this.textos().substituicao.titulo,
+        informacaoAdicional: this.textos().substituicao.info,
         origemDados: ORIGEM_DADOS,
         chartComponent: verticais[0] ?? null,
         segmentos: [{ nome: 'Taxa de participação', cor: cores[3] }, { nome: 'Limite legal', cor: cores[2] }],
         distribuicoes: [],
       },
       {
-        titulo: this.textos.discricionario.titulo,
-        informacaoAdicional: this.textos.discricionario.info,
+        titulo: this.textos().discricionario.titulo,
+        informacaoAdicional: this.textos().discricionario.info,
         origemDados: ORIGEM_DADOS,
         chartComponent: verticais[1] ?? null,
         segmentos: [{ nome: 'Taxa de participação', cor: cores[3] }, { nome: 'Limite legal', cor: cores[2] }],
         distribuicoes: [],
       },
       {
-        titulo: this.textos.modalidadesPorUnidade.titulo,
-        informacaoAdicional: this.textos.modalidadesPorUnidade.info,
+        titulo: this.textos().modalidadesPorUnidade.titulo,
+        informacaoAdicional: this.textos().modalidadesPorUnidade.info,
         origemDados: ORIGEM_DADOS,
         chartComponent: horizontais[0] ?? null,
         segmentos: (this.modalidadesPorUnidade()?.segmentos ?? []).map((nome, j) => ({ nome, cor: cores[j] ?? '#ccc' })),

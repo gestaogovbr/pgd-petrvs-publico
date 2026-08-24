@@ -8,15 +8,17 @@
     }
   </div>
 
-  @if (carregando) {
-    <div class="d-flex justify-content-center py-4">
-      <div class="br-loading" aria-label="Carregando dados"></div>
-    </div>
-  } @else if (semDados) {
-    <p class="indicador__vazio">Sem dados para exibir.</p>
-  } @else {
-    <ng-content></ng-content>
-  }
+  <div class="indicador__content">
+    @if (carregando) {
+      <div class="d-flex justify-content-center py-4">
+        <div class="br-loading" aria-label="Carregando dados"></div>
+      </div>
+    } @else if (semDados) {
+      <p class="indicador__vazio">Sem dados para exibir.</p>
+    } @else {
+      <ng-content></ng-content>
+    }
+  </div>
 
   @if (origemDados) {
     <p class="indicador__origem">{{ origemDados }}</p>

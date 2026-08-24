@@ -36,6 +36,12 @@ export interface UnidadeOption {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, WebcomponentsAngularModule, UnidadeSelectComponent],
   templateUrl: './painel-filtros.component.html',
+  styles: [`
+    .painel-filtros__info {
+      color: var(--interactive);
+      cursor: help;
+    }
+  `],
 })
 export class PainelFiltrosComponent implements OnChanges {
   private readonly api = inject(PainelApiClient);
@@ -61,6 +67,31 @@ export class PainelFiltrosComponent implements OnChanges {
   readonly dataFim = signal('');
   readonly periodos = signal<string[]>([]);
   readonly periodoSelecionado = signal('');
+  readonly anoSelecionado = signal('');
+  readonly mesSelecionado = signal('');
+
+  readonly anoOptions = computed<SelectOption[]>(() => {
+    const anos = new Set(this.periodos().map(p => p.split('-')[0]));
+    const sel = this.anoSelecionado();
+    return [...anos].sort().reverse().map(ano => ({
+      value: ano,
+      label: ano,
+      selected: ano === sel,
+    }));
+  });
+
+  readonly mesOptions = computed<SelectOption[]>(() => {
+    const ano = this.anoSelecionado();
+    if (!ano) return [];
+    const sel = this.mesSelecionado();
+    return this.periodos()
+      .filter(p => p.startsWith(ano + '-'))
+      .map(p => {
+        const mes = p.split('-')[1];
+        return { value: mes, label: MESES_ABREVIADOS[+mes - 1], selected: mes === sel };
+      })
+      .sort((a, b) => +a.value - +b.value);
+  });
 
   readonly periodosOptions = computed<SelectOption[]>(() => {
     const sel = this.periodoSelecionado();
@@ -97,6 +128,8 @@ export class PainelFiltrosComponent implements OnChanges {
     if ((value === 'situacao_atual' || value === 'historico') && value !== this.tipoConsulta()) {
       this.tipoConsulta.set(value);
       this.periodoSelecionado.set('');
+      this.anoSelecionado.set('');
+      this.mesSelecionado.set('');
       this.periodos.set([]);
 
       if (this.modoData === 'referencia') {
@@ -112,6 +145,8 @@ export class PainelFiltrosComponent implements OnChanges {
     this.unidadeSelecionada.set(unidade);
     this.unidadeChange.emit({ sigla: event.sigla, nome: event.nome });
     this.periodoSelecionado.set('');
+    this.anoSelecionado.set('');
+    this.mesSelecionado.set('');
     this.carregarPeriodosSeNecessario(unidade.id);
     this.emitirFiltros();
   }
@@ -133,6 +168,25 @@ export class PainelFiltrosComponent implements OnChanges {
     if (!value) return;
     this.periodoSelecionado.set(value);
     this.emitirFiltros();
+  }
+
+  onAnoChange(event: any): void {
+    const value = event?.target?.value ?? event?.detail ?? event;
+    if (!value || value === this.anoSelecionado()) return;
+    this.anoSelecionado.set(value);
+    this.mesSelecionado.set('');
+    this.periodoSelecionado.set('');
+  }
+
+  onMesChange(event: any): void {
+    const value = event?.target?.value ?? event?.detail ?? event;
+    if (!value) return;
+    this.mesSelecionado.set(value);
+    const ano = this.anoSelecionado();
+    if (ano && value) {
+      this.periodoSelecionado.set(`${ano}-${value}`);
+      this.emitirFiltros();
+    }
   }
 
   private carregarPeriodosSeNecessario(unidadeId: string | undefined): void {

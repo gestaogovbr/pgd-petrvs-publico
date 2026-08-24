@@ -41,7 +41,7 @@ export const routes: Routes = [
       },
       {
         path: 'gestao-pgd',
-        data: { breadcrumb: 'Gestão do PGD' },
+        data: { breadcrumb: 'Abrangência do PGD' },
         loadComponent: () =>
           import('./ui/pages/gestao-pgd.page').then(m => m.GestaoPgdPage),
       },

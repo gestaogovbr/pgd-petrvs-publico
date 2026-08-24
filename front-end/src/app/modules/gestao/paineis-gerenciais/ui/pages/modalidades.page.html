@@ -21,8 +21,8 @@
       <indicador-barra-vertical
         [dados]="teletrabalhoSubstituicao()"
         [carregando]="carregandoSubstituicao()"
-        [titulo]="textos.substituicao.titulo"
-        [informacaoAdicional]="textos.substituicao.info"
+        [titulo]="textos().substituicao.titulo"
+        [informacaoAdicional]="textos().substituicao.info"
         [origemDados]="origemDados"
         [saibaMaisRoute]="['relatorios', 'agentes']"
         [saibaMaisQueryParams]="saibaMaisParamsSubstituicao()" />
@@ -31,8 +31,8 @@
       <indicador-barra-vertical
         [dados]="teletrabalhoDiscricionario()"
         [carregando]="carregandoDiscricionario()"
-        [titulo]="textos.discricionario.titulo"
-        [informacaoAdicional]="textos.discricionario.info"
+        [titulo]="textos().discricionario.titulo"
+        [informacaoAdicional]="textos().discricionario.info"
         [origemDados]="origemDados"
         [saibaMaisRoute]="['relatorios', 'agentes']"
         [saibaMaisQueryParams]="saibaMaisParamsDiscricionario()" />
@@ -42,8 +42,8 @@
       <indicador-barra-horizontal
         [dados]="modalidadesPorUnidade()"
         [carregando]="carregandoModalidades()"
-        [titulo]="textos.modalidadesPorUnidade.titulo"
-        [informacaoAdicional]="textos.modalidadesPorUnidade.info"
+        [titulo]="textos().modalidadesPorUnidade.titulo"
+        [informacaoAdicional]="textos().modalidadesPorUnidade.info"
         [origemDados]="origemDados"
         [siglaPai]="unidadeInicialSigla()"
         [drillAtivo]="!!drillUnidadeModalidades()"
