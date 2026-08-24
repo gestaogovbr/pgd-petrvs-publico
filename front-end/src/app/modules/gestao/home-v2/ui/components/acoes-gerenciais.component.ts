@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { AtalhoCardComponent } from './atalho-card.component';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { HomeApiClient, MeusPlanosVigentesResponse } from '../../infra/home-api.client';
@@ -9,7 +10,7 @@ import { MessageService } from 'src/app/v2/services/message.service';
   selector: 'home-acoes-gerenciais',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule],
+  imports: [AtalhoCardComponent, CommonModule, WebcomponentsAngularModule],
   styleUrls: ['../home.styles.scss'],
   templateUrl: './acoes-gerenciais.component.html',
 })
