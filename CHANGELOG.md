@@ -7,6 +7,8 @@
 
 ### Corrigido
 - Atribuições de usuários não eram salvas ou removidas corretamente ao editar pelo formulário
+- Falha na migração da versão 2 para a 3 em ambientes com charset legado ao unificar descrições de atividades
+- Relatório de Carga Individual do SIAPE era exibido sem conteúdo
 
 
 ## 3.0.12 14/08/2026
