@@ -37,10 +37,10 @@
         <!-- Linha 1: Pendências + Planos Vigentes -->
         <div class="row mb-3">
           <div class="col-md-7">
-            <home-pendencias-usuario [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+            <home-pendencias-usuario class="" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
           </div>
           <div class="col-md-5">
-            <home-planos-vigentes [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+            <home-planos-vigentes class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
           </div>
         </div>
 
@@ -63,8 +63,9 @@
       </div>
 
       <!-- Coluna Lateral (25%) -->
-      <div class="col-lg-3">
-        <home-em-ferias [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+      <div class="col-lg-3 d-flex flex-column gap-3 mb-3">
+        <home-em-ferias class="flex-fill d-flex mx-0" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+        <home-aniversariantes class="flex-fill d-flex mx-0" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
       </div>
     </div>
   }

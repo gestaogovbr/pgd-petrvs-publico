@@ -10,9 +10,7 @@ import { AcoesGerenciaisComponent } from './components/acoes-gerenciais.componen
 import { ResumoEquipeComponent } from './components/resumo-equipe.component';
 import { ContribuicoesComponent } from './components/contribuicoes.component';
 import { EmFeriasComponent } from './components/em-ferias.component';
-
-// TODO: Reativar AniversariantesComponent quando o campo data_nascimento for adicionado ao retorno da api SIAPE.
-//       Se não for implementado até Jan/2027, considerar remover o componente e o endpoint.
+import { AniversariantesComponent } from './components/aniversariantes.component';
 
 export interface SelectOption {
   value: string;
@@ -35,6 +33,7 @@ export interface SelectOption {
     ResumoEquipeComponent,
     ContribuicoesComponent,
     EmFeriasComponent,
+    AniversariantesComponent,
   ],
   templateUrl: './home.page.html',
   styleUrls: ['./home.styles.scss'],
@@ -84,16 +83,29 @@ export class HomeV2Page implements OnInit {
     const areas = this.auth.usuario?.areas_trabalho ?? [];
     const unidades = areas
       .filter(a => a.unidade)
-      .map(a => ({ id: a.unidade_id, sigla: a.unidade!.sigla, nome: a.unidade!.nome }));
+      .map(a => ({
+        id: a.unidade_id,
+        sigla: a.unidade!.sigla,
+        nome: a.unidade!.nome,
+        isGestorTitular: !!a.gestor,
+        isLotado: !!a.lotado,
+      }));
 
     const unique = [...new Map(unidades.map(u => [u.id, u])).values()];
 
+    const defaultUnidade =
+      unique.find(u => u.isGestorTitular) ??
+      unique.find(u => u.isLotado) ??
+      [...unique].sort((a, b) => a.sigla.localeCompare(b.sigla))[0];
+
+    const defaultId = defaultUnidade?.id ?? '';
+
     this.unidadeOptions.set(
-      unique.map((u, i) => ({ value: u.id, label: `${u.sigla} - ${u.nome}`, selected: i === 0 }))
+      unique.map(u => ({ value: u.id, label: `${u.sigla} - ${u.nome}`, selected: u.id === defaultId }))
     );
 
-    if (unique.length > 0) {
-      this.selectedUnidadeId.set(unique[0].id);
+    if (defaultId) {
+      this.selectedUnidadeId.set(defaultId);
     }
   }
 }

@@ -1,10 +1,11 @@
+<div class="d-flex flex-column gap-3 h-100">
 @if (loading()) {
-  <div class="d-flex justify-content-center py-3">
+  <div class="d-flex justify-content-center align-items-center flex-fill">
     <span class="br-loading small" role="progressbar"></span>
   </div>
 } @else if (data()) {
-  <div class="br-card home-card--pill mb-3">
-    <div class="card-content p-3 d-flex justify-content-between align-items-center">
+  <div class="br-card home-card--pill flex-fill">
+    <div class="card-content p-3 d-flex justify-content-between align-items-center h-100">
       <span>
         Unidades Executoras com Plano de Entregas vigente hoje
         <i class="fas fa-info-circle text-muted ml-1"
@@ -14,8 +15,8 @@
       <strong>{{ data()!.unidades_com_plano_entregas.quantidade }}/{{ data()!.unidades_com_plano_entregas.total }} ({{ data()!.unidades_com_plano_entregas.percentual }}%)</strong>
     </div>
   </div>
-  <div class="br-card home-card--pill">
-    <div class="card-content p-3 d-flex justify-content-between align-items-center">
+  <div class="br-card home-card--pill flex-fill">
+    <div class="card-content p-3 d-flex justify-content-between align-items-center h-100">
       <span>
         Participantes com Plano de Trabalho vigente hoje
         <i class="fas fa-info-circle text-muted ml-1"
@@ -26,10 +27,11 @@
     </div>
   </div>
 } @else if (erro()) {
-  <div class="br-card home-card--pill">
+  <div class="br-card home-card--pill flex-fill">
     <div class="card-content p-3 text-center text-muted small">
       <i class="fas fa-exclamation-triangle mb-2" aria-hidden="true"></i>
       <p class="mb-0">{{ erro() }}</p>
     </div>
   </div>
 }
+</div>

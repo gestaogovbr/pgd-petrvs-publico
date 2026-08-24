@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
+import { AtalhoCardComponent } from './atalho-card.component';
 
 @Component({
   selector: 'home-acoes-gerenciais',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [WebcomponentsAngularModule],
+  imports: [AtalhoCardComponent],
   styleUrls: ['../home.styles.scss'],
   templateUrl: './acoes-gerenciais.component.html',
 })
