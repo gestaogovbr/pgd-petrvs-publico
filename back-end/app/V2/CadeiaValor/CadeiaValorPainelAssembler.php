@@ -61,6 +61,7 @@ final class CadeiaValorPainelAssembler
             ),
             entregas: new ObjetivoPainelEntregasResumoDTO(
                 total_entregas: $totalEntregas,
+                total_entregas_avaliadas: (int) ($agg->total_entregas_avaliadas ?? 0),
                 entregas_concluidas: $concluidas,
                 percentual_concluidas: ObjetivoPainelEsforcoSupport::percentual((float) $concluidas, (float) $totalEntregas),
             ),

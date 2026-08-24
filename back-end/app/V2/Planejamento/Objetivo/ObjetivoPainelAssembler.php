@@ -10,10 +10,29 @@ use App\V2\Planejamento\Objetivo\DTOs\ObjetivoPainelEntregasResumoDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoPainelEsforcoResumoDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoPainelPessoasResumoDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoPainelResumoDTO;
+use App\V2\Planejamento\Objetivo\DTOs\ObjetivoPainelSecaoResumoDTO;
 
 final class ObjetivoPainelAssembler
 {
-    public function montarResumo(\stdClass $geral, \stdClass $agg, array $filtroUnidades = []): ObjetivoPainelResumoDTO
+    public function montarResumo(
+        \stdClass $geral,
+        \stdClass $aggItem,
+        \stdClass $aggConsolidado,
+        array $filtroUnidades = [],
+    ): ObjetivoPainelResumoDTO {
+        return new ObjetivoPainelResumoDTO(
+            objetivo_id: (string) $geral->objetivo_id,
+            nome: (string) $geral->objetivo_nome,
+            planejamento_nome: (string) $geral->planejamento_nome,
+            tipo_objetivo_nome: (string) $geral->tipo_objetivo_nome,
+            eixo_tematico_nome: (string) $geral->eixo_tematico_nome,
+            item: $this->montarSecao($aggItem),
+            consolidado: $this->montarSecao($aggConsolidado),
+            filtro_unidades: $filtroUnidades,
+        );
+    }
+
+    private function montarSecao(\stdClass $agg): ObjetivoPainelSecaoResumoDTO
     {
         $disponivel = (float) ($agg->esforco_disponivel_horas ?? 0);
         $planejado = (float) ($agg->esforco_planejado_horas ?? 0);
@@ -29,14 +48,10 @@ final class ObjetivoPainelAssembler
         $emAmbas = (int) ($agg->participantes_em_ambas ?? 0);
         $totalParticipantes = $somentePropria + $somenteOutras + $emAmbas;
         $totalEntregas = (int) ($agg->total_entregas ?? 0);
+        $totalEntregasAvaliadas = (int) ($agg->total_entregas_avaliadas ?? 0);
         $concluidas = (int) ($agg->entregas_concluidas ?? 0);
 
-        return new ObjetivoPainelResumoDTO(
-            objetivo_id: (string) $geral->objetivo_id,
-            nome: (string) $geral->objetivo_nome,
-            planejamento_nome: (string) $geral->planejamento_nome,
-            tipo_objetivo_nome: (string) $geral->tipo_objetivo_nome,
-            eixo_tematico_nome: (string) $geral->eixo_tematico_nome,
+        return new ObjetivoPainelSecaoResumoDTO(
             esforco: new ObjetivoPainelEsforcoResumoDTO(
                 disponivel_horas: $disponivel,
                 planejado_horas: $planejado,
@@ -58,10 +73,11 @@ final class ObjetivoPainelAssembler
             ),
             entregas: new ObjetivoPainelEntregasResumoDTO(
                 total_entregas: $totalEntregas,
+                total_entregas_avaliadas: $totalEntregasAvaliadas,
                 entregas_concluidas: $concluidas,
-                percentual_concluidas: ObjetivoPainelEsforcoSupport::percentual((float) $concluidas, (float) $totalEntregas),
+                // RN13/RN26: percentual sobre o total de entregas dos PEs avaliados
+                percentual_concluidas: ObjetivoPainelEsforcoSupport::percentual((float) $concluidas, (float) $totalEntregasAvaliadas),
             ),
-            filtro_unidades: $filtroUnidades,
         );
     }
 
@@ -102,6 +118,8 @@ final class ObjetivoPainelAssembler
 
             $itens[] = new ObjetivoPainelEntregaDetalheLinhaDTO(
                 plano_entrega_entrega_id: $peeId,
+                planejamento_objetivo_id: (string) ($row->planejamento_objetivo_id ?? ''),
+                planejamento_objetivo_nome: (string) ($row->planejamento_objetivo_nome ?? ''),
                 unidade_id: $unidadeId,
                 unidade_sigla: (string) $row->unidade_sigla,
                 unidade_nome: (string) $row->unidade_nome,
@@ -111,6 +129,9 @@ final class ObjetivoPainelAssembler
                 plano_entrega_vigencia_inicio: (string) $row->plano_entrega_data_inicio,
                 plano_entrega_vigencia_fim: $row->plano_entrega_data_fim ? (string) $row->plano_entrega_data_fim : null,
                 entrega_titulo: (string) $row->entrega_titulo,
+                entrega_descricao: (string) ($row->entrega_descricao ?? ''),
+                descricao_meta: (string) ($row->descricao_meta ?? ''),
+                etiquetas: $this->normalizarEtiquetas($row->etiquetas ?? null),
                 progresso_esperado: (float) $row->progresso_esperado,
                 progresso_realizado: (float) $row->progresso_realizado,
                 homologado: (bool) $row->homologado,
@@ -136,5 +157,38 @@ final class ObjetivoPainelAssembler
             filtro_entregas: $filtroEntregas,
             filtro_unidades: $filtroUnidades,
         );
+    }
+
+    /**
+     * @return list<array{key: string, value: string, icon: string|null, color: string|null}>
+     */
+    private function normalizarEtiquetas(mixed $raw): array
+    {
+        if (is_string($raw) && $raw !== '') {
+            $decoded = json_decode($raw, true);
+            $raw = is_array($decoded) ? $decoded : [];
+        }
+        if (!is_array($raw)) {
+            return [];
+        }
+
+        $out = [];
+        foreach ($raw as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $value = isset($item['value']) ? trim((string) $item['value']) : '';
+            if ($value === '') {
+                continue;
+            }
+            $out[] = [
+                'key' => (string) ($item['key'] ?? $value),
+                'value' => $value,
+                'icon' => isset($item['icon']) && $item['icon'] !== '' ? (string) $item['icon'] : null,
+                'color' => isset($item['color']) && $item['color'] !== '' ? (string) $item['color'] : null,
+            ];
+        }
+
+        return $out;
     }
 }

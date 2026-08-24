@@ -113,7 +113,11 @@ class PlanejamentoObjetivoService
             throw new NotFoundException("Objetivo com id '{$objetivoId}' não foi encontrado ou foi removido.");
         }
 
-        $agg = $this->repository->agregarPainelEsforcoPessoasEntregas($objetivoId, $unidadeId);
+        $aggItem = $this->repository->agregarPainelEsforcoPessoasEntregas([$objetivoId], $unidadeId);
+
+        $idsConsolidado = $this->repository->coletarIdsSubordinados($objetivoId);
+        $aggConsolidado = $this->repository->agregarPainelEsforcoPessoasEntregas($idsConsolidado, $unidadeId);
+
         $filtroUnidades = array_map(
             static fn (\stdClass $row): array => [
                 'id' => (string) $row->unidade_id,
@@ -122,7 +126,7 @@ class PlanejamentoObjetivoService
             $this->repository->listarUnidadesPainelPorObjetivoId($objetivoId),
         );
 
-        return $this->painelAssembler->montarResumo($geral, $agg, $filtroUnidades);
+        return $this->painelAssembler->montarResumo($geral, $aggItem, $aggConsolidado, $filtroUnidades);
     }
 
     public function getEntregasDetalhamentoPainel(
@@ -131,18 +135,68 @@ class PlanejamentoObjetivoService
         ?string $unidadeId = null,
         ?string $dataInicio = null,
         ?string $dataFim = null,
+        ?string $abrangencia = null,
     ): ObjetivoPainelEntregasDetalhamentoDTO {
         $this->findObjetivoOrFail($objetivoId);
 
-        $rows = $this->repository->listarDetalhamentoEntregasPainel(
+        [$objetivoIds, $unidadeIds] = $this->resolverEscopoAbrangencia(
             $objetivoId,
-            $planoEntregaEntregaId,
             $unidadeId,
+            $abrangencia,
+        );
+
+        $rows = $this->repository->listarDetalhamentoEntregasPainel(
+            $objetivoIds,
+            $planoEntregaEntregaId,
+            $unidadeIds,
             $dataInicio,
             $dataFim,
         );
 
         return $this->painelAssembler->montarDetalhamento($objetivoId, $rows);
+    }
+
+    /**
+     * Resolve ids de objetivos e unidades conforme o filtro Abrangência (RN33–RN39).
+     *
+     * @return array{0: list<string>, 1: list<string>|null}
+     */
+    private function resolverEscopoAbrangencia(
+        string $objetivoId,
+        ?string $unidadeId,
+        ?string $abrangencia,
+    ): array {
+        $abrangencia = ObjetivoPainelAbrangencia::isValida($abrangencia) ? $abrangencia : null;
+
+        $objetivoIds = [$objetivoId];
+        $unidadeIds = $unidadeId ? [$unidadeId] : null;
+
+        return match ($abrangencia) {
+            ObjetivoPainelAbrangencia::ITEM_SELECIONADO => [$objetivoIds, $unidadeIds],
+            ObjetivoPainelAbrangencia::ITENS_SUBORDINADOS => [
+                array_values(array_filter(
+                    $this->repository->coletarIdsSubordinados($objetivoId),
+                    static fn (string $id): bool => $id !== $objetivoId,
+                )),
+                $unidadeIds,
+            ],
+            ObjetivoPainelAbrangencia::ITEM_E_SUBORDINADOS => [
+                $this->repository->coletarIdsSubordinados($objetivoId),
+                $unidadeIds,
+            ],
+            ObjetivoPainelAbrangencia::UNIDADE_SELECIONADA => [
+                $objetivoIds,
+                $unidadeId ? [$unidadeId] : [],
+            ],
+            ObjetivoPainelAbrangencia::UNIDADE_E_SUBORDINADAS => [
+                $objetivoIds,
+                $unidadeId
+                    ? $this->repository->coletarIdsUnidadesComSubordinadas($unidadeId)
+                    : [],
+            ],
+            // RN36: sem valor → comportamento padrão (sem restrição extra de abrangência)
+            default => [$objetivoIds, $unidadeIds],
+        };
     }
 
     private function findObjetivoOrFail(string $objetivoId): PlanejamentoObjetivo

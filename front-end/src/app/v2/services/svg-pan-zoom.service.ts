@@ -19,8 +19,8 @@ export class SvgPanZoomService {
   private svgRef: ElementRef<SVGSVGElement> | null = null;
   private viewBoxFn: (() => string) | null = null;
 
-  readonly MIN_ZOOM = 0.55;
-  readonly MAX_ZOOM = 2.5;
+  readonly MIN_ZOOM = 0.2;
+  readonly MAX_ZOOM = 4;
   readonly ZOOM_STEP = 0.1;
 
   setSvgRef(ref: ElementRef<SVGSVGElement>): void {
