@@ -102,16 +102,17 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
         $data = ['fields' => [], 'where' => []];
         $usuarioId = 'user-id';
 
-        $userMock = Mockery::mock(Usuario::class);
-        $userMock->shouldReceive('getAttribute')->with('id')->andReturn($usuarioId);
+        $area = Mockery::mock(UnidadeIntegrante::class)->makePartial();
+        $area->unidade_id = 'u1';
+
+        $userMock = Mockery::mock(Usuario::class)->makePartial();
+        $userMock->id = $usuarioId;
+        $userMock->setRelation('areasTrabalho', new Collection([$area]));
         $userMock->shouldReceive('hasPermissionTo')->with('MOD_USER_TUDO')->andReturn(false);
 
         Auth::shouldReceive('user')->andReturn($userMock);
 
-        $this->unidadeRepository->shouldReceive('getAreasTrabalhoWhereClause')
-            ->once()
-            ->with($usuarioId, true, 'where_unidades')
-            ->andReturn("unidade_id = 'u1'");
+        $this->unidadeRepository->shouldReceive('getAreasTrabalhoWhereClause')->never();
 
         $this->usuarioRepository->shouldReceive('search')
             ->once()
@@ -121,7 +122,11 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
                 }
 
                 foreach ($arg['where'] as $where) {
-                    if ($where instanceof RawWhere && str_contains($where->expression, "unidade_id = 'u1'")) {
+                    if (is_array($where)
+                        && ($where[0] ?? null) === 'areasTrabalhoFilter'
+                        && ($where[1] ?? null) === ['u1']
+                        && ($where[2] ?? null) === true
+                    ) {
                         return true;
                     }
                 }
@@ -151,7 +156,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
             ->once()
             ->with(Mockery::on(function (array $arg): bool {
                 foreach ($arg['where'] as $where) {
-                    if ($where instanceof RawWhere && str_contains($where->expression, "unidade_id = 'u1'")) {
+                    if (is_array($where) && ($where[0] ?? null) === 'areasTrabalhoFilter') {
                         return false;
                     }
                 }
@@ -679,4 +684,80 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
 
         $this->service->proxyUpdateJson($data, null);
     })->throws(\App\Exceptions\ValidateException::class);
+});
+
+describe('UsuarioService::isGestorUnidade - incluiDelegado', function () {
+
+    test('retorna true para gestor titular independente de incluiDelegado', function () {
+        $unidadeId = 'unidade-1';
+        $this->usuarioRepository->shouldReceive('getAtribuicoes')
+            ->with('user-1', $unidadeId)
+            ->andReturn(['GESTOR']);
+
+        $userMock = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn('user-1');
+        Auth::shouldReceive('user')->andReturn($userMock);
+
+        expect($this->service->isGestorUnidade($unidadeId, incluiDelegado: true))->toBeTrue();
+        expect($this->service->isGestorUnidade($unidadeId, incluiDelegado: false))->toBeTrue();
+    });
+
+    test('retorna true para gestor substituto independente de incluiDelegado', function () {
+        $unidadeId = 'unidade-2';
+        $this->usuarioRepository->shouldReceive('getAtribuicoes')
+            ->with('user-1', $unidadeId)
+            ->andReturn(['GESTOR_SUBSTITUTO']);
+
+        $userMock = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn('user-1');
+        Auth::shouldReceive('user')->andReturn($userMock);
+
+        expect($this->service->isGestorUnidade($unidadeId, incluiDelegado: true))->toBeTrue();
+        expect($this->service->isGestorUnidade($unidadeId, incluiDelegado: false))->toBeTrue();
+    });
+
+    test('retorna true para gestor delegado somente quando incluiDelegado é true', function () {
+        $unidadeId = 'unidade-3';
+        $this->usuarioRepository->shouldReceive('getAtribuicoes')
+            ->with('user-1', $unidadeId)
+            ->andReturn(['GESTOR_DELEGADO']);
+
+        $userMock = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn('user-1');
+        Auth::shouldReceive('user')->andReturn($userMock);
+
+        expect($this->service->isGestorUnidade($unidadeId, incluiDelegado: true))->toBeTrue();
+        expect($this->service->isGestorUnidade($unidadeId, incluiDelegado: false))->toBeFalse();
+    });
+
+    test('buffer diferencia chamadas com incluiDelegado true e false para mesma unidade', function () {
+        $unidadeId = 'unidade-4';
+        $this->usuarioRepository->shouldReceive('getAtribuicoes')
+            ->with('user-1', $unidadeId)
+            ->andReturn(['GESTOR_DELEGADO']);
+
+        $userMock = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn('user-1');
+        Auth::shouldReceive('user')->andReturn($userMock);
+
+        $resultComDelegado = $this->service->isGestorUnidade($unidadeId, incluiDelegado: true);
+        $resultSemDelegado = $this->service->isGestorUnidade($unidadeId, incluiDelegado: false);
+
+        expect($resultComDelegado)->toBeTrue();
+        expect($resultSemDelegado)->toBeFalse();
+    });
+
+    test('retorna false quando usuario nao tem atribuicao de gestor', function () {
+        $unidadeId = 'unidade-5';
+        $this->usuarioRepository->shouldReceive('getAtribuicoes')
+            ->with('user-1', $unidadeId)
+            ->andReturn(['LOTADO']);
+
+        $userMock = Mockery::mock(\App\Models\Usuario::class)->makePartial();
+        $userMock->shouldReceive('getAttribute')->with('id')->andReturn('user-1');
+        Auth::shouldReceive('user')->andReturn($userMock);
+
+        expect($this->service->isGestorUnidade($unidadeId, incluiDelegado: true))->toBeFalse();
+        expect($this->service->isGestorUnidade($unidadeId, incluiDelegado: false))->toBeFalse();
+    });
 });

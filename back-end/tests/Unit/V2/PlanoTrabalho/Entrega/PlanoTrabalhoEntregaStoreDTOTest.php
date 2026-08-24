@@ -64,7 +64,31 @@ describe('PlanoTrabalhoEntregaStoreDTO', function () {
             'plano_entrega_entrega_id' => 'pee-1',
             'orgao' => null,
             'forca_trabalho' => 30.0,
+            'esforco_executado' => 30.0,
             'descricao' => 'Teste',
         ]);
+    });
+
+    test('esforco executado segue planejado quando não informado', function () {
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
+            'origem' => 'PROPRIA_UNIDADE',
+            'plano_entrega_entrega_id' => 'pee-1',
+            'forca_trabalho' => 40,
+        ], 'plano-1');
+
+        expect($dto->esforcoExecutado)->toBe(40.0)
+            ->and($dto->informouEsforcoExecutado)->toBeFalse();
+    });
+
+    test('esforco executado pode divergir do planejado quando informado', function () {
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
+            'origem' => 'PROPRIA_UNIDADE',
+            'plano_entrega_entrega_id' => 'pee-1',
+            'forca_trabalho' => 60,
+            'esforco_executado' => 35,
+        ], 'plano-1');
+
+        expect($dto->esforcoExecutado)->toBe(35.0)
+            ->and($dto->informouEsforcoExecutado)->toBeTrue();
     });
 });

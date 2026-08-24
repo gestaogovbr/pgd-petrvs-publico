@@ -29,6 +29,19 @@ const routes: Routes = [
     data: { 
       title: "Relatório de Planos de Entrega",
     }
+  },
+  {
+    path: 'entregas',
+    loadChildren: () => import('./relatorio-entrega/routes').then((m) => m.routes),
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: 'Entregas',
+      breadcrumb: 'Entregas',
+      breadcrumbParents: [{ label: 'Relatórios' }],
+      permission: 'MOD_RELATORIO_PE',
+    },
   }, {
    path: 'agentes',
     component: RelatorioAgenteComponent,
@@ -37,6 +50,7 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: { 
       title: "Relatório de Agentes Públicos",
+      permission: "MOD_RELATORIO_USUARIO"
     }
   }, {
    path: 'unidades',

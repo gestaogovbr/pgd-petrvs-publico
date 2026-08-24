@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -13,6 +14,8 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -20,6 +23,27 @@ class RelatorioAgenteExport implements FromCollection, WithMapping, WithHeadings
     WithColumnFormatting, WithProperties, WithStyles, WithColumnWidths, WithEvents
 {
     use RegistersEventListeners;
+
+    private const COLUMN_WIDTHS = [
+        'A' => 40, // Agente Público
+        'B' => 15, // Matrícula Siape
+        'C' => 15, // Situação
+        'D' => 30, // Regramento
+        'E' => 30, // Lotação
+        'F' => 18, // Participante do PGD
+        'G' => 25, // Plano de Trabalho do Dia
+        'H' => 30, // Status do Plano de Trabalho do Dia
+        'I' => 20, // Modalidade Siape
+        'J' => 30, // Modalidade do Plano de Trabalho do Dia
+        'K' => 20, // Comparação Siape x Petrvs
+        'L' => 40, // Indisponibilidade de teletrabalho
+        'M' => 15, // Início Indisponibilidade
+        'N' => 15, // Fim Indisponibilidade
+    ];
+
+    private const DATE_COLUMNS = ['M', 'N'];
+
+    private const WRAP_TEXT_COLUMN = 'L';
 
     protected $rows;
 
@@ -33,128 +57,123 @@ class RelatorioAgenteExport implements FromCollection, WithMapping, WithHeadings
         return $this->rows;
     }
 
+    private static function lastColumn(): string
+    {
+        $keys = array_keys(self::COLUMN_WIDTHS);
+
+        return end($keys);
+    }
+
     public function headings(): array
     {
         return [
-            'Nome',
-            'Matrícula SIAPE',
-            'Jornada',
-            'Perfil',
+            'Agente Público',
+            'Matrícula Siape',
             'Situação',
-            'Seleção',
-            'Lotado',
+            'Regramento',
+            'Lotação',
+            'Participante do PGD',
+            'Plano de Trabalho do Dia',
+            'Status do Plano de Trabalho do Dia',
             'Modalidade Siape',
-            'Modalidade do último Plano de Trabalho',
+            'Modalidade do Plano de Trabalho do Dia',
             'Comparação Siape x Petrvs',
             'Indisponibilidade de teletrabalho',
             'Início Indisponibilidade de teletrabalho',
-            'Fim Indisponibilidade de teletrabalho'
+            'Fim Indisponibilidade de teletrabalho',
         ];
     }
 
     public function columnWidths(): array
     {
-        return [
-            'A' => 40, // Nome
-            'B' => 10, // Matrícula SIAPE
-            'C' => 10, // Jornada
-            'D' => 20, // Perfil
-            'E' => 20, // Situação
-            'F' => 30, // Seleção
-            'G' => 30, // Lotado
-            'H' => 20, // Modalidade Siape
-            'I' => 30, // Modalidade do último Plano de Trabalho
-            'J' => 15, // Comparação Siape x Petrvs
-            'K' => 40, // Indisponibilidade de teletrabalho
-            'L' => 15, // Início Indisponibilidade de teletrabalho
-            'M' => 15, // Fim Indisponibilidade de teletrabalho
-        ];
+        return self::COLUMN_WIDTHS;
     }
 
     public function map($row): array
     {
         return [
-            $row->nome,
-            $row->matricula,
-            $row->jornada ?? '-',
-            $row->perfil,
+            $row->nome_exibicao ?? $row->nome,
+            $row->matricula ?? '-',
             $row->situacao ?? '-',
-            $row->programaNome,
-            $row->unidadeHierarquia,
-            $row->modalidadeSouGov,
-            $row->tipoModalidadeNome,
-            $row->comparacaoSouGovPetrvs,
-            $row->tipoPedagio,
+            $row->programaNome ?? '-',
+            $row->unidadeHierarquia ?? '-',
+            $row->participantePGD ?? 'Não',
+            $row->plano_trabalho_numero ? 'PT #' . $row->plano_trabalho_numero : '-',
+            $row->plano_trabalho_status_label ?? '-',
+            $row->modalidadeSouGov ?? '-',
+            $row->tipoModalidadeNome ?? '-',
+            $row->comparacaoSouGovPetrvs ?? '-',
+            $row->tipoPedagio ?? '-',
             Date::stringToExcel($row->data_inicial_pedagio),
-            Date::stringToExcel($row->data_final_pedagio)
+            Date::stringToExcel($row->data_final_pedagio),
         ];
-    }
-
-    public function coalesce($value)
-    {
-        return strlen(trim($value)) ? $value : '-';
     }
 
     public function columnFormats(): array
     {
-        return [
-            'L' => NumberFormat::FORMAT_DATE_DDMMYYYY,
-            'M' => NumberFormat::FORMAT_DATE_DDMMYYYY
-        ];
+        $formats = [];
+        foreach (self::DATE_COLUMNS as $col) {
+            $formats[$col] = NumberFormat::FORMAT_DATE_DDMMYYYY;
+        }
+
+        return $formats;
     }
 
     public function properties(): array
     {
         return [
-            'creator'        => 'MGI',
-            'title'          => 'Relatório de Agentes Públicos',
-            'description'    => 'Relatório de Agentes do PGD Petrvs',
-            'subject'        => 'Agentes Públicos',
-            'keywords'       => 'pgd,agentes',
-            'company'        => 'MGI',
+            'creator' => 'MGI',
+            'title' => 'Relatório de Agentes Públicos',
+            'description' => 'Relatório de Agentes do PGD Petrvs',
+            'subject' => 'Agentes Públicos',
+            'keywords' => 'pgd,agentes',
+            'company' => 'MGI',
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
+        $lastColumn = self::lastColumn();
+        $lastRow = count($this->rows) + 1;
+
         return [
-            // borda no conjunto inteiro + 1 linha de header
-            'A1:M'.(count($this->rows) + 1) => [
+            "A1:{$lastColumn}{$lastRow}" => [
                 'borders' => [
                     'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'borderStyle' => Border::BORDER_THIN,
                         'color' => ['argb' => '000000'],
                     ],
-                ]
+                ],
             ],
-            // cabeçalho
-            1    => [
+            1 => [
                 'font' => ['bold' => true],
                 'alignment' => [
                     'vertical' => Alignment::VERTICAL_CENTER,
                 ],
                 'borders' => [
                     'allBorders' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'borderStyle' => Border::BORDER_THIN,
                         'color' => ['argb' => '000000'],
                     ],
-                ]
+                ],
             ],
-            'B:M' => [
+            "B:{$lastColumn}" => [
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
     public static function afterSheet(AfterSheet $event)
     {
+        $lastColumn = self::lastColumn();
+
         $event->sheet->getDelegate()->getRowDimension('1')->setRowHeight(60);
         $event->sheet->getDelegate()->getStyle('1')->getAlignment()->setWrapText(true);
-        $event->sheet->getStyle('A1:M1')->getFill()
-          ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-          ->getStartColor()->setARGB('fc9fc0');
-        $event->sheet->getStyle('K')->getAlignment()->setWrapText(true); // quebra de texto
+        $event->sheet->getStyle("A1:{$lastColumn}1")->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setARGB('fc9fc0');
+        $event->sheet->getStyle(self::WRAP_TEXT_COLUMN)->getAlignment()->setWrapText(true);
     }
 }

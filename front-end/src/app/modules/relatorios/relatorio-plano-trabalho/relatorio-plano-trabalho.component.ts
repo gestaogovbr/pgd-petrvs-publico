@@ -86,6 +86,28 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
       this.filter.get('data_fim')?.updateValueAndValidity();
 
       this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
+
+      this.loadFilterParams = (params: any, filter?: any) => {
+        const parsed = { ...params };
+        if (parsed.periodo_inicio && typeof parsed.periodo_inicio === 'string') {
+          parsed.periodo_inicio = new Date(parsed.periodo_inicio + 'T00:00:00');
+        }
+        if (parsed.periodo_fim && typeof parsed.periodo_fim === 'string') {
+          parsed.periodo_fim = new Date(parsed.periodo_fim + 'T00:00:00');
+        }
+        if (parsed.incluir_unidades_subordinadas === 'true' || parsed.incluir_unidades_subordinadas === '1') {
+          parsed.incluir_unidades_subordinadas = true;
+        }
+        if (parsed.incluir_periodos_avaliativos === 'true' || parsed.incluir_periodos_avaliativos === '1') {
+          parsed.incluir_periodos_avaliativos = true;
+          this.resumido = false;
+          this.dao!.collection = 'Relatorio/planos-trabalho-detalhado';
+        }
+        if (parsed.somente_vigentes === 'true' || parsed.somente_vigentes === '1') {
+          parsed.somente_vigentes = true;
+        }
+        filter?.patchValue(parsed, { emitEvent: true });
+      };
   }
   
   public periodoValidator(control: AbstractControl): ValidationErrors | null
@@ -98,6 +120,10 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
 
   public async ngOnInit() {
       super.ngOnInit();
+
+      if (this.metadata?.unidade_id) {
+        this.filter?.controls.unidade_id.setValue(this.metadata.unidade_id);
+      }
 
       this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
           .asPromise().then(notas => {
@@ -115,6 +141,14 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   public ngAfterViewInit(): void {
       super.ngAfterViewInit();
       this.loaded = true;
+  }
+
+  public onLoad() {
+    if (!this.resumido && this.grid) {
+      this.cdRef.detectChanges();
+      this.grid.loadColumns();
+    }
+    super.onLoad();
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -228,6 +262,10 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
       if (form.data_conclusao) {
         result.push(["data_conclusao", "==", form.data_conclusao.toISOString().slice(0,10)]);
       }
+    }
+
+    if (this.metadata?.plano_entrega_entrega_id) {
+      result.push(["plano_entrega_entrega_id", "==", this.metadata.plano_entrega_entrega_id]);
     }
     
     return result;

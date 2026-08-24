@@ -44,23 +44,23 @@ class IntegracaoServidorRepository
         return $this->writeRepository->updateByCpfAndMatricula($cpf, $matricula, $data);
     }
 
-    public function buscarAtualizacoesDados(): array
+    public function buscarAtualizacoesDados(?array $escopoServidor = null): array
     {
-        return $this->readRepository->buscarAtualizacoesDados();
+        return $this->readRepository->buscarAtualizacoesDados($escopoServidor);
     }
 
-    public function getAtualizacoesLotacoes(): array
+    public function getAtualizacoesLotacoes(?array $escopoServidor = null): array
     {
-        return $this->readRepository->getAtualizacoesLotacoes();
+        return $this->readRepository->getAtualizacoesLotacoes($escopoServidor);
     }
 
-    public function getServidoresInseridosNaoLotados(): array
+    public function getServidoresInseridosNaoLotados(?array $escopoServidor = null): array
     {
-        return $this->readRepository->getServidoresInseridosNaoLotados();
+        return $this->readRepository->getServidoresInseridosNaoLotados($escopoServidor);
     }
 
-    public function getUsuariosAusentes(): array
+    public function getUsuariosAusentes(?array $escopoServidor = null): array
     {
-        return $this->readRepository->getUsuariosAusentes();
+        return $this->readRepository->getUsuariosAusentes($escopoServidor);
     }
 }

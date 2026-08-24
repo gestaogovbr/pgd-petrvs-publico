@@ -502,4 +502,20 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
 
         return $query->orderBy('nome')->get(['id', 'nome']);
     }
+
+    /**
+     * @param string[] $unidadeIds
+     * @param string[] $atribuicoes
+     * @return Collection<int, Usuario>
+     */
+    public function findIntegrantesPorUnidades(array $unidadeIds, array $atribuicoes): Collection
+    {
+        return $this->model->newQuery()
+            ->whereHas('unidadesIntegrantes', fn ($q) => $q
+                ->whereIn('unidade_id', $unidadeIds)
+                ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', $atribuicoes))
+            )
+            ->whereNull('deleted_at')
+            ->get(['id', 'participa_pgd']);
+    }
 }

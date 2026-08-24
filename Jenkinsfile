@@ -121,8 +121,7 @@ pipeline {
                             set -eu
                             npm install --legacy-peer-deps
                             mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
-                            npx ng build --configuration=production --output-path=../back-end/public
-                            node ./postbuild.js
+                            npm run build
                         "
 
                     echo "=== VALIDAÇÃO DOS ARTEFATOS GERADOS ==="
@@ -148,8 +147,8 @@ pipeline {
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs'
                 DOCKER_HUB_TAG_LATEST = 'latest'
-                DOCKER_HUB_TAG_NEW = '3.0.8'
-                DOCKER_HUB_TAG_OLD = '3.0.7'
+                DOCKER_HUB_TAG_NEW = '3.0.12'
+                DOCKER_HUB_TAG_OLD = '3.0.11'
             }
             steps {
                 withCredentials([
@@ -179,8 +178,7 @@ pipeline {
                             set -eu
                             npm install --legacy-peer-deps
                             mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
-                            npx ng build --configuration=production --output-path=../back-end/public
-                            node ./postbuild.js
+                            npm run build
                         '
 
                         echo "=== VALIDAÇÃO DOS ARTEFATOS ==="

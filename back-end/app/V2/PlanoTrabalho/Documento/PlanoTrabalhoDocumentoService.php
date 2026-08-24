@@ -6,8 +6,10 @@ namespace App\V2\PlanoTrabalho\Documento;
 
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
+use App\Exceptions\ValidateException;
 use App\Models\Documento;
 use App\Models\DocumentoAssinatura;
+use App\Models\PlanoTrabalho;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
@@ -48,22 +50,57 @@ class PlanoTrabalhoDocumentoService
         $this->authValidator->validar($planoTrabalhoId, Auth::id());
 
         $documento = $this->documentoRepository->findTcrByPlanoTrabalhoId($planoTrabalhoId);
+        $assinaturasRevogadas = $this->assinaturaRepository->listarRevogadasPorPlanoTrabalho($planoTrabalhoId);
 
         if ($documento === null) {
-            throw new NotFoundException('Documento não encontrado para este Plano de Trabalho.');
+            if ($assinaturasRevogadas->isEmpty()) {
+                throw new NotFoundException('Documento não encontrado para este Plano de Trabalho.');
+            }
+
+            return [
+                'numero' => null,
+                'titulo' => null,
+                'conteudo' => null,
+                'assinaturas' => [],
+                'assinaturas_revogadas' => $assinaturasRevogadas
+                    ->map(fn (DocumentoAssinatura $assinatura) => $this->mapearAssinaturaRevogada($assinatura))
+                    ->values()
+                    ->all(),
+            ];
         }
 
         return [
             'numero' => $documento->numero,
             'titulo' => $documento->titulo,
             'conteudo' => $documento->conteudo,
-            'assinaturas' => $documento->assinaturas->map(function (DocumentoAssinatura $assinatura) {
-                return [
-                    'usuario_id' => $assinatura->usuario_id,
-                    'usuario_nome' => $assinatura->usuario->nome_social ?? $assinatura->usuario->nome,
-                    'data_assinatura' => $assinatura->data_assinatura
-                ];
-            })
+            'assinaturas' => $documento->assinaturas->map(fn (DocumentoAssinatura $assinatura) => $this->mapearAssinaturaAtiva($assinatura))->values()->all(),
+            'assinaturas_revogadas' => $assinaturasRevogadas
+                ->map(fn (DocumentoAssinatura $assinatura) => $this->mapearAssinaturaRevogada($assinatura))
+                ->values()
+                ->all(),
+        ];
+    }
+
+    /** @return array{id: string, usuario_id: string, usuario_nome: string, data_assinatura: mixed} */
+    private function mapearAssinaturaAtiva(DocumentoAssinatura $assinatura): array
+    {
+        return [
+            'id' => $assinatura->id,
+            'usuario_id' => $assinatura->usuario_id,
+            'usuario_nome' => $assinatura->usuario->nome_social ?? $assinatura->usuario->nome,
+            'data_assinatura' => $assinatura->data_assinatura,
+        ];
+    }
+
+    /** @return array{id: string, usuario_id: string, usuario_nome: string, data_assinatura: mixed, data_revogacao: mixed} */
+    private function mapearAssinaturaRevogada(DocumentoAssinatura $assinatura): array
+    {
+        return [
+            'id' => $assinatura->id,
+            'usuario_id' => $assinatura->usuario_id,
+            'usuario_nome' => $assinatura->usuario->nome_social ?? $assinatura->usuario->nome,
+            'data_assinatura' => $assinatura->data_assinatura,
+            'data_revogacao' => $assinatura->deleted_at,
         ];
     }
 
@@ -81,11 +118,17 @@ class PlanoTrabalhoDocumentoService
         $plano = $this->planoTrabalhoRepository->loadRelacoesTCR($plano);
 
         $template = $this->datasourceBuilder->getTemplate($plano);
+        if ($template === '') {
+            throw new ValidateException(
+                'O regramento do Plano de Trabalho não possui template de TCR configurado.'
+            );
+        }
+
         $datasource = $this->datasourceBuilder->getDatasource($plano);
 
         $dto = new TCRDocumentoDTO(
             planoTrabalhoId: $planoTrabalhoId,
-            entidadeId: Session::get('entidade_id'),
+            entidadeId: $this->resolverEntidadeId($plano),
             conteudo: $this->renderer->render($template, $datasource),
             template: $template,
             dataset: $this->datasourceBuilder->getDataset(),
@@ -111,7 +154,7 @@ class PlanoTrabalhoDocumentoService
     public function assinar(string $planoTrabalhoId): DocumentoAssinatura
     {
         $usuarioId = Auth::id();
-        $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
+        $plano = $this->authValidator->validarAssinatura($planoTrabalhoId, $usuarioId);
 
         $assinaturaExistente = $this->buscarAssinaturaExistente($planoTrabalhoId, $usuarioId);
         if ($assinaturaExistente !== null) {
@@ -122,7 +165,9 @@ class PlanoTrabalhoDocumentoService
 
         $dto = TCRAssinaturaDTO::fromDocumento($documento, $usuarioId);
 
-        return DB::transaction(function () use ($plano, $documento, $dto) {
+        return DB::transaction(function () use ($plano, $documento, $dto, $usuarioId) {
+            $this->assinarValidator->validarSlotGestorDisponivel($plano, $usuarioId, $documento);
+
             $assinatura = $this->assinaturaRepository->createFromTCR($dto);
 
             $status = $this->assinaturaPolicy->todasRealizadas($plano, $documento->id)
@@ -173,5 +218,20 @@ class PlanoTrabalhoDocumentoService
         }
 
         return $this->assinaturaRepository->findByDocumentoAndUsuario($documento->id, $usuarioId);
+    }
+
+    private function resolverEntidadeId(PlanoTrabalho $plano): string
+    {
+        $entidadeId = Session::get('entidade_id')
+            ?? $plano->unidade?->entidade_id
+            ?? $plano->unidade?->entidade?->id;
+
+        if (!is_string($entidadeId) || $entidadeId === '') {
+            throw new ValidateException(
+                'Não foi possível identificar a entidade para gerar o documento TCR. Faça login novamente.'
+            );
+        }
+
+        return $entidadeId;
     }
 }

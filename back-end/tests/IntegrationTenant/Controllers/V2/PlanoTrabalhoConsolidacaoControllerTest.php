@@ -128,11 +128,11 @@ function concluirConsolidacao($context, string $consolidacaoId): void
 {
     $context->postJson(
         "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/atividade",
-        ['plano_trabalho_entrega_id' => $context->entrega->id, 'descricao' => 'Trabalho executado']
-    );
+        ['plano_trabalho_entrega_id' => $context->entrega->id, 'descricao' => 'Trabalho executado', 'esforco_executado' => 100]
+    )->assertSuccessful();
     $context->patchJson(
         "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/concluir"
-    );
+    )->assertSuccessful();
 }
 
 // ── GET consolidacao ────────────────────────────────────────────────

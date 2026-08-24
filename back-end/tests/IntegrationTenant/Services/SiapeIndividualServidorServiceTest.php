@@ -829,6 +829,311 @@ test('issue 2185 - carga individual deve usar emailServidor e sinalizar parcial 
         ->and($alteracoes)->toContain('email');
 });
 
+test('issue 2313 - carga individual deve persistir modalidade e participa pgd de usuario existente', function () {
+    $cpf = '52998224725';
+    $matricula = '2313002';
+    $codigoUnidade = '23132';
+    $emailServidor = 'servidor.modalidade.issue2313@teste.gov.br';
+
+    $perfilParticipante = NivelAcessoService::getPerfilParticipante();
+
+    $unidade = Unidade::factory()->create([
+        'codigo' => $codigoUnidade,
+        'sigla' => 'M2313',
+        'nome' => 'Unidade Modalidade Issue 2313',
+    ]);
+
+    $usuario = Usuario::create([
+        'nome' => 'Servidor Modalidade Issue 2313',
+        'email' => 'modalidade-antiga.issue2313@teste.gov.br',
+        'cpf' => $cpf,
+        'apelido' => 'Servidor Modalidade 2313',
+        'matricula' => $matricula,
+        'situacao_siape' => 'ATIVO',
+        'perfil_id' => $perfilParticipante->id,
+        'modalidade_pgd' => null,
+        'participa_pgd' => 'não',
+    ]);
+
+    $integrante = UnidadeIntegrante::create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidade->id,
+    ]);
+
+    UnidadeIntegranteAtribuicao::create([
+        'unidade_integrante_id' => $integrante->id,
+        'atribuicao' => 'LOTADO',
+    ]);
+
+    SiapeListaUORGS::create([
+        'id' => (string) Str::uuid(),
+        'response' => '<uorgs />',
+        'processado' => 0,
+    ]);
+
+    $funcionaisRequest = 'xml-funcionais-request-2313-modalidade';
+    $pessoaisRequest = 'xml-pessoais-request-2313-modalidade';
+    $unidadeRequest = 'xml-unidade-request-2313-modalidade';
+
+    $funcionaisResponse = <<<XML
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns1:consultaDadosFuncionaisResponse xmlns:ns1="http://servico.wssiapenet" xmlns:tipo="http://tipo.servico.wssiapenet">
+                <out>
+                    <tipo:DadosFuncionais>
+                        <matriculaSiape>{$matricula}</matriculaSiape>
+                        <codUorgExercicio>{$codigoUnidade}</codUorgExercicio>
+                        <codUorgLotacao>{$codigoUnidade}</codUorgLotacao>
+                        <codSitFuncional>1</codSitFuncional>
+                        <emailInstitucional>{$emailServidor}</emailInstitucional>
+                        <dataOcorrIngressoOrgao>01012024</dataOcorrIngressoOrgao>
+                        <participaPGD>sim</participaPGD>
+                        <modalidadePGD>Teletrabalho Parcial</modalidadePGD>
+                    </tipo:DadosFuncionais>
+                </out>
+            </ns1:consultaDadosFuncionaisResponse>
+        </soap:Body>
+    </soap:Envelope>
+    XML;
+
+    $pessoaisResponse = <<<XML
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns1:consultaDadosPessoaisResponse xmlns:ns1="http://servico.wssiapenet">
+                <out>
+                    <nome>Servidor Modalidade Issue 2313</nome>
+                    <nomeSexo>MASCULINO</nomeSexo>
+                    <nomeMunicipNasc>Brasilia</nomeMunicipNasc>
+                    <ufNascimento>DF</ufNascimento>
+                    <dataNascimento>01011990</dataNascimento>
+                </out>
+            </ns1:consultaDadosPessoaisResponse>
+        </soap:Body>
+    </soap:Envelope>
+    XML;
+
+    $unidadeResponse = <<<XML
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns1:dadosUorgResponse xmlns:ns1="http://servico.wssiapenet">
+                <out>
+                    <codUorg>{$codigoUnidade}</codUorg>
+                    <codUorgPai></codUorgPai>
+                    <codUorgPagadora>{$codigoUnidade}</codUorgPagadora>
+                    <nomeExtendido>Unidade Modalidade Issue 2313</nomeExtendido>
+                    <siglaUorg>M2313</siglaUorg>
+                    <dataUltimaTransacao>01012024</dataUltimaTransacao>
+                </out>
+            </ns1:dadosUorgResponse>
+        </soap:Body>
+    </soap:Envelope>
+    XML;
+
+    $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+    $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn($funcionaisRequest);
+    $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn($pessoaisRequest);
+    $buscarDadosServidor->shouldReceive('executaRequisicao')
+        ->with($funcionaisRequest)
+        ->andReturn($funcionaisResponse);
+    $buscarDadosServidor->shouldReceive('executaRequisicao')
+        ->with($pessoaisRequest)
+        ->andReturn($pessoaisResponse);
+
+    $buscarDadosUnidade = Mockery::mock(BuscarDadosSiapeUnidade::class);
+    $buscarDadosUnidade->shouldReceive('getUorgAsXml')->andReturn($unidadeRequest);
+    $buscarDadosUnidade->shouldReceive('executaRequisicao')->with($unidadeRequest)->andReturn($unidadeResponse);
+    $buscarDadosUnidade->shouldReceive('getCpf')->andReturn('00000000000');
+    $buscarDadosUnidade->shouldReceive('getUnidades')->andReturn([[
+        'codigo' => $codigoUnidade,
+        'dataUltimaTransacao' => '01012024',
+    ]]);
+
+    $buscarDadosUnidades = Mockery::mock(BuscarDadosSiapeUnidades::class);
+    $buscarDadosUnidades->shouldReceive('listaUorgs')->andReturnNull();
+
+    $siapeService = app(SiapeIndividualService::class);
+    $reflection = new \ReflectionClass(SiapeIndividualService::class);
+
+    foreach ([
+        'buscarDadosSiapeServidor' => $buscarDadosServidor,
+        'buscarDadosSiapeUnidade' => $buscarDadosUnidade,
+        'buscarDadosSiapeUnidades' => $buscarDadosUnidades,
+        'processaDadosSiape' => new ProcessaDadosSiapeBD(),
+    ] as $property => $value) {
+        $reflectionProperty = $reflection->getProperty($property);
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($siapeService, $value);
+    }
+
+    $this->app->instance(SiapeIndividualService::class, $siapeService);
+
+    Sanctum::actingAs(Usuario::factory()->create());
+
+    $response = $this->withHeader('X-ENTIDADE', $this->tenantId)
+        ->postJson('/api/usuario/processar-siape', ['cpf' => $cpf]);
+
+    $response->assertOk();
+    $response->assertJsonPath('success', true);
+    $response->assertJsonPath('resumo.0.status', 'parcial');
+    $response->assertJsonPath('resumo.0.usuario_existia', true);
+    $response->assertJsonPath('resumo.0.lotacao_associada', true);
+
+    $usuario->refresh();
+
+    expect($usuario->modalidade_pgd)->toBe('parcial')
+        ->and($usuario->participa_pgd)->toBe('sim')
+        ->and($usuario->email)->toBe($emailServidor);
+});
+
+test('issue 2313 - carga parcial com dados pessoais invalidos deve persistir modalidade funcional', function () {
+    $cpf = '52998224725';
+    $matricula = '2313003';
+    $codigoUnidade = '23133';
+    $emailServidor = 'servidor.parcial-modalidade.issue2313@teste.gov.br';
+
+    $perfilParticipante = NivelAcessoService::getPerfilParticipante();
+
+    $unidade = Unidade::factory()->create([
+        'codigo' => $codigoUnidade,
+        'sigla' => 'P2313',
+        'nome' => 'Unidade Parcial Modalidade Issue 2313',
+    ]);
+
+    $usuario = Usuario::create([
+        'nome' => 'Servidor Parcial Modalidade Issue 2313',
+        'email' => 'parcial-modalidade-antiga.issue2313@teste.gov.br',
+        'cpf' => $cpf,
+        'apelido' => 'Servidor Parcial Modalidade 2313',
+        'matricula' => $matricula,
+        'situacao_siape' => 'ATIVO',
+        'perfil_id' => $perfilParticipante->id,
+        'modalidade_pgd' => null,
+        'participa_pgd' => 'não',
+    ]);
+
+    $integrante = UnidadeIntegrante::create([
+        'usuario_id' => $usuario->id,
+        'unidade_id' => $unidade->id,
+    ]);
+
+    UnidadeIntegranteAtribuicao::create([
+        'unidade_integrante_id' => $integrante->id,
+        'atribuicao' => 'LOTADO',
+    ]);
+
+    SiapeListaUORGS::create([
+        'id' => (string) Str::uuid(),
+        'response' => '<uorgs />',
+        'processado' => 0,
+    ]);
+
+    $funcionaisRequest = 'xml-funcionais-request-2313-modalidade-parcial';
+    $pessoaisRequest = 'xml-pessoais-request-2313-modalidade-parcial';
+    $unidadeRequest = 'xml-unidade-request-2313-modalidade-parcial';
+
+    $funcionaisResponse = <<<XML
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns1:consultaDadosFuncionaisResponse xmlns:ns1="http://servico.wssiapenet" xmlns:tipo="http://tipo.servico.wssiapenet">
+                <out>
+                    <tipo:DadosFuncionais>
+                        <matriculaSiape>{$matricula}</matriculaSiape>
+                        <codUorgExercicio>{$codigoUnidade}</codUorgExercicio>
+                        <codUorgLotacao>{$codigoUnidade}</codUorgLotacao>
+                        <codSitFuncional>1</codSitFuncional>
+                        <emailInstitucional>{$emailServidor}</emailInstitucional>
+                        <dataOcorrIngressoOrgao>01012024</dataOcorrIngressoOrgao>
+                        <participaPGD>sim</participaPGD>
+                        <modalidadePGD>Teletrabalho Parcial</modalidadePGD>
+                    </tipo:DadosFuncionais>
+                </out>
+            </ns1:consultaDadosFuncionaisResponse>
+        </soap:Body>
+    </soap:Envelope>
+    XML;
+
+    $pessoaisResponse = <<<XML
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns1:consultaDadosPessoaisResponse xmlns:ns1="http://servico.wssiapenet">
+                <out></out>
+            </ns1:consultaDadosPessoaisResponse>
+        </soap:Body>
+    </soap:Envelope>
+    XML;
+
+    $unidadeResponse = <<<XML
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+            <ns1:dadosUorgResponse xmlns:ns1="http://servico.wssiapenet">
+                <out>
+                    <codUorg>{$codigoUnidade}</codUorg>
+                    <codUorgPai></codUorgPai>
+                    <codUorgPagadora>{$codigoUnidade}</codUorgPagadora>
+                    <nomeExtendido>Unidade Parcial Modalidade Issue 2313</nomeExtendido>
+                    <siglaUorg>P2313</siglaUorg>
+                    <dataUltimaTransacao>01012024</dataUltimaTransacao>
+                </out>
+            </ns1:dadosUorgResponse>
+        </soap:Body>
+    </soap:Envelope>
+    XML;
+
+    $buscarDadosServidor = Mockery::mock(BuscarDadosSiapeServidor::class);
+    $buscarDadosServidor->shouldReceive('consultaDadosFuncionais')->andReturn($funcionaisRequest);
+    $buscarDadosServidor->shouldReceive('consultaDadosPessoais')->andReturn($pessoaisRequest);
+    $buscarDadosServidor->shouldReceive('executaRequisicao')
+        ->with($funcionaisRequest)
+        ->andReturn($funcionaisResponse);
+    $buscarDadosServidor->shouldReceive('executaRequisicao')
+        ->with($pessoaisRequest)
+        ->andReturn($pessoaisResponse);
+
+    $buscarDadosUnidade = Mockery::mock(BuscarDadosSiapeUnidade::class);
+    $buscarDadosUnidade->shouldReceive('getUorgAsXml')->andReturn($unidadeRequest);
+    $buscarDadosUnidade->shouldReceive('executaRequisicao')->with($unidadeRequest)->andReturn($unidadeResponse);
+    $buscarDadosUnidade->shouldReceive('getCpf')->andReturn('00000000000');
+    $buscarDadosUnidade->shouldReceive('getUnidades')->andReturn([[
+        'codigo' => $codigoUnidade,
+        'dataUltimaTransacao' => '01012024',
+    ]]);
+
+    $buscarDadosUnidades = Mockery::mock(BuscarDadosSiapeUnidades::class);
+    $buscarDadosUnidades->shouldReceive('listaUorgs')->andReturnNull();
+
+    $siapeService = app(SiapeIndividualService::class);
+    $reflection = new \ReflectionClass(SiapeIndividualService::class);
+
+    foreach ([
+        'buscarDadosSiapeServidor' => $buscarDadosServidor,
+        'buscarDadosSiapeUnidade' => $buscarDadosUnidade,
+        'buscarDadosSiapeUnidades' => $buscarDadosUnidades,
+        'processaDadosSiape' => new ProcessaDadosSiapeBD(),
+    ] as $property => $value) {
+        $reflectionProperty = $reflection->getProperty($property);
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($siapeService, $value);
+    }
+
+    $this->app->instance(SiapeIndividualService::class, $siapeService);
+
+    Sanctum::actingAs(Usuario::factory()->create());
+
+    $response = $this->withHeader('X-ENTIDADE', $this->tenantId)
+        ->postJson('/api/usuario/processar-siape', ['cpf' => $cpf]);
+
+    $response->assertOk();
+    $response->assertJsonPath('success', true);
+    $response->assertJsonPath('resumo.0.status', 'parcial');
+    $response->assertJsonPath('resumo.0.usuario_existia', true);
+
+    $usuario->refresh();
+
+    expect($usuario->modalidade_pgd)->toBe('parcial')
+        ->and($usuario->participa_pgd)->toBe('sim')
+        ->and($usuario->email)->toBe($emailServidor);
+});
+
 test('issue 2093 - carga individual deve lotar contrato temporario e sinalizar parcial quando exercicio vem vazio', function () {
     $cpf = '52998224725';
     $matricula = '2093001';
@@ -1143,3 +1448,20 @@ test('issue 2163 - backend deve salvar atribuicoes de usuario interno com email 
         'deleted_at' => null,
     ], 'tenant');
 });
+
+function prepararPerfisSiapeIndividualServidor(): void
+{
+    foreach ([
+        NivelAcessoService::PERFIL_CONSULTA => 'Consulta',
+        NivelAcessoService::PERFIL_PARTICIPANTE => 'Participante',
+    ] as $nivel => $nome) {
+        Perfil::firstOrCreate(
+            ['nivel' => $nivel],
+            [
+                'id' => (string) Str::uuid(),
+                'nome' => $nome,
+                'descricao' => $nome,
+            ]
+        );
+    }
+}

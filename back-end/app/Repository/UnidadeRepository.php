@@ -4,9 +4,15 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Models\Unidade;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
+use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use App\V2\Unidade\DTOs\UnidadeIndexDTO;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 
 class UnidadeRepository
 {
@@ -21,9 +27,9 @@ class UnidadeRepository
         return $this->readRepository->hasUsuarioLotacao($unidadeId, $usuarioId, $subordinadas);
     }
 
-    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool
+    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId, bool $incluirDelegado = true): bool
     {
-        return $this->readRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId);
+        return $this->readRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId, $incluirDelegado);
     }
 
     public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool
@@ -61,42 +67,42 @@ class UnidadeRepository
         return $this->readRepository->getAreasTrabalhoWhereClause($usuarioId, $subordinadas, $prefix);
     }
 
-    public function findByCodigo(string $codigo): ?\App\Models\Unidade
+    public function findByCodigo(string $codigo): ?Unidade
     {
         return $this->readRepository->findByCodigo($codigo);
     }
 
-    public function findBySigla(string $sigla): ?\App\Models\Unidade
+    public function findBySigla(string $sigla): ?Unidade
     {
         return $this->readRepository->findBySigla($sigla);
     }
 
-    public function findByCodigoWithPai(string $codigo): ?\App\Models\Unidade
+    public function findByCodigoWithPai(string $codigo): ?Unidade
     {
         return $this->readRepository->findByCodigoWithPai($codigo);
     }
 
-    public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): \Illuminate\Database\Eloquent\Collection
+    public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): EloquentCollection
     {
         return $this->readRepository->getUnidadesGerenciadas($usuarioId, $exclude);
     }
 
-    public function getSubordinadas(array $ids): \Illuminate\Database\Eloquent\Collection
+    public function getSubordinadas(array $ids): EloquentCollection
     {
         return $this->readRepository->getSubordinadas($ids);
     }
 
-    public function getSubordinadasRecursivas(array $ids): \Illuminate\Database\Eloquent\Collection
+    public function getSubordinadasRecursivas(array $ids): EloquentCollection
     {
         return $this->readRepository->getSubordinadasRecursivas($ids);
     }
 
-    public function findById(string $id): ?\App\Models\Unidade
+    public function findById(string $id): ?Unidade
     {
         return $this->readRepository->findById($id);
     }
 
-    public function findWithPlanosTrabalhoAtividades(string|int $id): ?\App\Models\Unidade
+    public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade
     {
         return $this->readRepository->findWithPlanosTrabalhoAtividades($id);
     }
@@ -106,14 +112,33 @@ class UnidadeRepository
         return $this->readRepository->existsByCodigo($codigo);
     }
 
-    public function buscarPorNomeOuCodigo(\App\V2\Unidade\DTOs\UnidadeBuscaDTO $dto): \Illuminate\Database\Eloquent\Collection
+    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): EloquentCollection
     {
         return $this->readRepository->buscarPorNomeOuCodigo($dto);
+    }
+
+    public function index(UnidadeIndexDTO $dto): LengthAwarePaginator
+    {
+        return $this->readRepository->index($dto);
     }
 
     /** @return string[] IDs das unidades na linha ascendente (da raiz até a unidade informada) */
     public function linhaAscendente(string $unidadeId): array
     {
         return $this->readRepository->linhaAscendente($unidadeId);
+    }
+
+    public function findAll(): EloquentCollection
+    {
+        return $this->readRepository->findAllWhere([]);
+    }
+
+    /**
+     * @param array<string> $unidadeIds
+     * @return Collection
+     */
+    public function buscarComLocalidade(array $unidadeIds): Collection
+    {
+        return $this->readRepository->buscarComLocalidade($unidadeIds);
     }
 }

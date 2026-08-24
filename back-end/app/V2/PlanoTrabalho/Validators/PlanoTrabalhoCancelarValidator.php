@@ -4,29 +4,36 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Validators;
 
-use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use App\Models\PlanoTrabalho;
+use App\Models\Usuario;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
-use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
-use App\V2\Traits\ValidaAutorizacaoTrait;
+use App\V2\PlanoTrabalho\Authorization\PlanoTrabalhoAuthorization;
 
 class PlanoTrabalhoCancelarValidator
 {
-    use ValidaAutorizacaoTrait;
+    private const STATUS_CANCELAVEIS_BASE = [
+        StatusEnum::ATIVO,
+        StatusEnum::SUSPENSO,
+    ];
+
+    private const STATUS_CANCELAVEIS_EXPANDIDOS = [
+        StatusEnum::ATIVO,
+        StatusEnum::SUSPENSO,
+        StatusEnum::CONCLUIDO,
+    ];
 
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
-        private readonly UnidadeRepository $unidadeRepository,
         private readonly UsuarioRepository $usuarioRepository,
+        private readonly PlanoTrabalhoAuthorization $authorization,
     ) {}
-
 
     public function validar(string $planoId, string $usuarioLogadoId): PlanoTrabalho
     {
@@ -36,17 +43,54 @@ class PlanoTrabalhoCancelarValidator
             throw new NotFoundException('Plano de Trabalho não encontrado.');
         }
 
-        if (!in_array($plano->status, [StatusEnum::ATIVO->value, StatusEnum::SUSPENSO->value])) {
-            throw new ValidateException('Apenas planos com status ATIVO ou SUSPENSO podem ser cancelados.');
+        $usuario = $this->usuarioRepository->findById($usuarioLogadoId);
+
+        if (!$usuario->hasPermissionTo(PlanoTrabalhoAuthorization::CAPACIDADE_CANCELAR)) {
+            throw new ForbiddenException('Usuário não tem permissão para cancelar planos de trabalho.');
         }
 
-        if ($plano->status !== StatusEnum::SUSPENSO->value) {
+        $statusPermitidos = $this->resolverStatusPermitidos($usuario);
+
+        if (!in_array($plano->status, array_map(fn (StatusEnum $s) => $s->value, $statusPermitidos), true)) {
+            throw new ValidateException('O plano não pode ser cancelado neste status.');
+        }
+
+        if ($this->deveValidarConsolidacaoFinalizada($plano, $usuario)) {
             $this->validarSemConsolidacaoFinalizada($plano);
         }
 
-        $this->validarAutorizacao($plano, $usuarioLogadoId);
+        if (!$this->authorization->podeCancelar($plano, $usuario)) {
+            throw new ForbiddenException('Usuário não tem permissão para cancelar este Plano de Trabalho.');
+        }
 
         return $plano;
+    }
+
+    /** @return StatusEnum[] */
+    private function resolverStatusPermitidos(Usuario $usuario): array
+    {
+        if ($usuario->hasPermissionTo(PlanoTrabalhoAuthorization::CAPACIDADE_CANCELAR_FORCADO)) {
+            return self::STATUS_CANCELAVEIS_EXPANDIDOS;
+        }
+
+        return self::STATUS_CANCELAVEIS_BASE;
+    }
+
+    private function deveValidarConsolidacaoFinalizada(PlanoTrabalho $plano, Usuario $usuario): bool
+    {
+        if ($plano->status === StatusEnum::SUSPENSO->value) {
+            return false;
+        }
+
+        if ($plano->status === StatusEnum::CONCLUIDO->value) {
+            return false;
+        }
+
+        if ($usuario->hasPermissionTo(PlanoTrabalhoAuthorization::CAPACIDADE_CANCELAR_FORCADO)) {
+            return false;
+        }
+
+        return true;
     }
 
     private function validarSemConsolidacaoFinalizada(PlanoTrabalho $plano): void
@@ -54,20 +98,5 @@ class PlanoTrabalhoCancelarValidator
         if ($this->consolidacaoRepository->possuiConsolidacaoFinalizadaPorPlano($plano->id)) {
             throw new ValidateException('O plano não pode ser cancelado pois possui período avaliativo com registro finalizado.');
         }
-    }
-
-    private function validarAutorizacao(PlanoTrabalho $plano, string $usuarioLogadoId): void
-    {
-        if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id)) {
-            return;
-        }
-
-        $usuario = $this->usuarioRepository->findById($usuarioLogadoId);
-
-        if ($usuario->perfil->nivel <= PerfilEnum::ADMINISTRADOR_NEGOCIAL->value) {
-            return;
-        }
-
-        throw new ForbiddenException('Usuário não tem permissão para cancelar este Plano de Trabalho.');
     }
 }

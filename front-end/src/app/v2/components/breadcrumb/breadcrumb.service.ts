@@ -60,6 +60,12 @@ export class BreadcrumbService {
     }
 
     if (crumbs.length) {
+      const parents = this.readBreadcrumbParents(snap);
+      if (parents.length) {
+        const insertAt = crumbs.length - 1;
+        crumbs.splice(insertAt, 0, ...parents.map(p => ({ ...p, target: '_self' as const })));
+      }
+
       const last = crumbs[crumbs.length - 1];
       delete last.url;
       delete last.target;
@@ -67,5 +73,33 @@ export class BreadcrumbService {
     }
 
     return crumbs;
+  }
+
+  private readBreadcrumbParents(leaf: ActivatedRouteSnapshot): BreadcrumbCrumb[] {
+    let current: ActivatedRouteSnapshot | null = leaf;
+    while (current) {
+      const raw = current.routeConfig?.data?.['breadcrumbParents'];
+      if (Array.isArray(raw) && raw.length) {
+        return this.parseBreadcrumbParents(raw);
+      }
+      current = current.parent;
+    }
+
+    return [];
+  }
+
+  private parseBreadcrumbParents(raw: unknown[]): BreadcrumbCrumb[] {
+    return raw
+      .filter((item): item is { label: string; url?: string } => {
+        if (!item || typeof item !== 'object') {
+          return false;
+        }
+        const candidate = item as { label?: unknown; url?: unknown };
+        return typeof candidate.label === 'string' && candidate.label.length > 0;
+      })
+      .map(item => ({
+        label: item.label,
+        ...(typeof item.url === 'string' && item.url.length > 0 ? { url: item.url } : {}),
+      }));
   }
 }

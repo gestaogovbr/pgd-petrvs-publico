@@ -1,0 +1,213 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.detalhamento-modal-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--bs-body-bg, #fff);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  outline: none;
+}
+
+.detalhamento-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+  flex-shrink: 0;
+
+  &__title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1351b4;
+  }
+
+  &__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: #555;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+  }
+}
+
+.detalhamento-modal-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 1rem 1.25rem;
+}
+
+.detalhamento-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--bs-border-color, #dee2e6);
+  flex-shrink: 0;
+}
+
+.detalhamento-modal {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  &__filtros {
+    flex-shrink: 0;
+  }
+
+  &__filtro-data {
+    @media (min-width: 1200px) {
+      flex: 0 0 9.75rem;
+      width: 9.75rem;
+    }
+  }
+
+  &__table-wrap {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  &__col-expand {
+    width: 2rem;
+  }
+
+  &__expand-btn {
+    color: #1351b4;
+    text-decoration: none;
+  }
+
+  &__row--expanded > td {
+    background: #f8f9fa;
+  }
+
+  &__detail-row > td {
+    background: #f1f5fb;
+    border-top: none;
+  }
+
+  &__detail-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+    padding: 0.5rem 0.25rem;
+
+    // Participantes e Esforço compactos; Registro de Execução ocupa o restante
+    @media (min-width: 768px) {
+      grid-template-columns: minmax(180px, 240px) minmax(180px, 240px) 1fr;
+    }
+  }
+
+  &__detail-registro {
+    min-width: 0;
+  }
+
+  &__detail-item-planejamento {
+    grid-column: 1 / -1;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  // Segunda linha do detalhe: descrições da entrega e da meta lado a lado
+  &__detail-linha2 {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  &__texto-longo {
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.875rem;
+    color: #333;
+  }
+
+  &__descricao-info {
+    color: #1351b4;
+    cursor: help;
+    font-size: 0.875rem;
+    margin-left: 0.25rem;
+  }
+
+  &__info {
+    color: #1351b4;
+    cursor: help;
+    font-size: 0.875rem;
+    margin-left: 0.25rem;
+  }
+
+  &__etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.35rem;
+  }
+
+  &__etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    max-width: 100%;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+
+    i {
+      font-size: 0.75rem;
+    }
+  }
+
+  &__detail-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #1351b4;
+    margin-bottom: 0.5rem;
+  }
+
+  &__registro-execucao {
+    display: block;
+    margin-top: 0.25rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 0.875rem;
+    color: #333;
+  }
+}
+
+.detalhamento-modal__table {
+  min-width: 960px;
+}

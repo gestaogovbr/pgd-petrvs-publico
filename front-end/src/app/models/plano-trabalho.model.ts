@@ -59,6 +59,8 @@ export type PlanoTrabalhoAcoes = {
     editar: boolean;
     arquivar: boolean;
     encerrar: boolean;
+    desarquivar: boolean;
+    cancelar: boolean;
 };
 
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
@@ -116,6 +118,9 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
 
     /** Indica se o CPF do usuário logado é o mesmo do participante do PT. */
     public is_proprio?: boolean;
+
+    /** Carga Horária Disponível Bruta calculada pelo back-end. */
+    public chd_bruta?: number;
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }

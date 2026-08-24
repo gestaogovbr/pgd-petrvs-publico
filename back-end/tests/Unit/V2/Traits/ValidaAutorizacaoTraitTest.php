@@ -45,7 +45,7 @@ describe('ValidaAutorizacaoTrait::isDonoOuChefia', function () {
 
     test('retorna true quando usuário é chefia', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('u-1', 'chefia-1')->andReturn(true);
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('u-1', 'chefia-1', true)->andReturn(true);
         $trait = criarClasseComTrait($unidadeRepo);
 
         $entity = criarModel(['usuario_id' => 'outro', 'unidade_id' => 'u-1']);
@@ -55,7 +55,7 @@ describe('ValidaAutorizacaoTrait::isDonoOuChefia', function () {
 
     test('retorna false quando não é dono nem chefia', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('u-1', 'estranho')->andReturn(false);
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('u-1', 'estranho', true)->andReturn(false);
         $trait = criarClasseComTrait($unidadeRepo);
 
         $entity = criarModel(['usuario_id' => 'outro', 'unidade_id' => 'u-1']);
@@ -105,4 +105,56 @@ describe('ValidaAutorizacaoTrait::autorizarDonoOuChefia', function () {
 
         $trait->autorizarDonoOuChefia($entity, 'x', 'u-1', 'Não pode clonar.');
     })->throws(ForbiddenException::class, 'Não pode clonar.');
+
+    test('incluirDelegado=false permite chefia titular da unidade', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('u-1', 'chefia-1', false)
+            ->andReturn(true);
+
+        $trait = criarClasseComTrait($unidadeRepo);
+        $entity = criarModel(['usuario_id' => 'outro', 'unidade_id' => 'u-1']);
+
+        $trait->autorizarDonoOuChefia($entity, 'chefia-1', 'u-1', 'Sem permissão.', incluirDelegado: false);
+        expect(true)->toBeTrue();
+    });
+
+    test('incluirDelegado=false bloqueia delegado puro', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('u-1', 'delegado-1', false)
+            ->andReturn(false);
+
+        $trait = criarClasseComTrait($unidadeRepo);
+        $entity = criarModel(['usuario_id' => 'outro', 'unidade_id' => 'u-1']);
+
+        $trait->autorizarDonoOuChefia($entity, 'delegado-1', 'u-1', 'Sem permissão.', incluirDelegado: false);
+    })->throws(ForbiddenException::class, 'Sem permissão.');
+
+    test('incluirDelegado=false permite chefia de unidade superior via subordinadas', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('u-filha', 'chefia-1', false)
+            ->andReturn(true);
+
+        $trait = criarClasseComTrait($unidadeRepo);
+        $entity = criarModel(['usuario_id' => 'outro', 'unidade_id' => 'u-filha']);
+
+        $trait->autorizarDonoOuChefia($entity, 'chefia-1', 'u-filha', 'Sem permissão.', incluirDelegado: false);
+        expect(true)->toBeTrue();
+    });
+
+    test('incluirDelegado=false permite dono do plano independentemente de atribuição', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+        $unidadeRepo->shouldNotReceive('isUsuarioGestorRecursivo');
+        $trait = criarClasseComTrait($unidadeRepo);
+
+        $entity = criarModel(['usuario_id' => 'delegado-1', 'unidade_id' => 'u-1']);
+
+        $trait->autorizarDonoOuChefia($entity, 'delegado-1', 'u-1', 'Sem permissão.', incluirDelegado: false);
+        expect(true)->toBeTrue();
+    });
 });

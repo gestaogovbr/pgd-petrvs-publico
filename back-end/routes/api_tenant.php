@@ -621,14 +621,24 @@ use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
 use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
 use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoObjetivoV2;
+use App\V2\CadeiaValor\CadeiaValorArvoreController as CadeiaValorArvoreV2;
+use App\V2\PainelGerencial\PainelGerencialController as PainelGerencialV2;
+use App\V2\PainelGerencial\AlinhamentoDesempenho\AlinhamentoDesempenhoController as AlinhamentoDesempenhoV2;
+use App\V2\PainelGerencial\Modalidades\ModalidadesController as ModalidadesV2;
+use App\V2\PainelGerencial\Conformidade\ConformidadeController as ConformidadeV2;
+use App\V2\PainelGerencial\Adesao\AdesaoController as AdesaoV2;
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
+use App\V2\RelatorioEntrega\RelatorioEntregaController as RelatorioEntregaV2Controller;
 use App\V2\Home\HomeController as HomeV2;
+use App\V2\Indicadores\IndicadoresHorasController as IndicadoresHorasV2;
+use App\V2\MuralAviso\MuralAvisoController as MuralAvisoV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('home/pendencias', [HomeV2::class, 'pendencias']);
     Route::get('home/planos-vigentes', [HomeV2::class, 'planosVigentes']);
+    Route::get('home/meus-planos-vigentes', [HomeV2::class, 'meusPlanosVigentes']);
     Route::get('home/resumo-equipe', [HomeV2::class, 'resumoEquipe']);
     Route::get('home/contribuicoes', [HomeV2::class, 'contribuicoes']);
     Route::get('home/aniversariantes', [HomeV2::class, 'aniversariantes']);
@@ -638,6 +648,9 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('envio-plano-trabalho', [EnvioPlanoTrabalhoQueryController::class, 'index']);
     Route::post('envio-plano-trabalho/{id}/enviar', [EnvioPlanoTrabalhoQueryController::class, 'enviar']);
     Route::get('envio-plano-entrega', [EnvioPlanoEntregaQueryController::class, 'index']);
+    Route::get('relatorio-entrega/unidade-padrao', [RelatorioEntregaV2Controller::class, 'unidadePadrao']);
+    Route::get('relatorio-entrega/xls', [RelatorioEntregaV2Controller::class, 'export']);
+    Route::get('relatorio-entrega', [RelatorioEntregaV2Controller::class, 'index']);
 
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
     Route::get('tipos-motivos-afastamentos', [TipoMotivoAfastamentoV2::class, 'index']);
@@ -650,6 +663,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::patch('plano-trabalho/{id}/cancelar', [PlanoTrabalhoV2::class, 'cancelar']);
     Route::patch('plano-trabalho/{id}/encerrar', [PlanoTrabalhoV2::class, 'encerrar']);
     Route::patch('plano-trabalho/{id}/arquivar', [PlanoTrabalhoV2::class, 'arquivar']);
+    Route::patch('plano-trabalho/{id}/desarquivar', [PlanoTrabalhoV2::class, 'desarquivar']);
     Route::post('plano-trabalho/{id}/clonar', [PlanoTrabalhoV2::class, 'clonar']);
     Route::get('plano-trabalho/{planoTrabalhoId}/logs', [PlanoTrabalhoLogV2::class, 'index']);
     Route::get('plano-trabalho/{planoTrabalhoId}/logs/modelos', [PlanoTrabalhoLogV2::class, 'modelos']);
@@ -685,12 +699,17 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::post('ocorrencia', [OcorrenciaV2::class, 'store']);
     Route::delete('ocorrencia/{ocorrenciaId}', [OcorrenciaV2::class, 'destroy']);
 
-    Route::get('usuario', [UsuarioV2::class, 'buscarPorNomeMatricula']);
-    Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);
-    Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'buscarPorId'])->whereUuid('usuarioId');
-    Route::patch('usuario/nome-social', [UsuarioV2::class, 'atualizarNomeSocial']);
+    Route::get('usuario', [UsuarioV2::class, 'searchByNomeMatricula']);
+    Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'unidadesVinculadasPorCpf']);
+    Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'show'])->whereUuid('usuarioId');
+    Route::post('usuario', [UsuarioV2::class, 'store']);
+    Route::patch('usuario/nome-social', [UsuarioV2::class, 'updateNomeSocial']);
+    Route::patch('usuario/{usuarioId}/dados-pessoais', [UsuarioV2::class, 'updateDadosPessoais'])->whereUuid('usuarioId');
+    Route::patch('usuario/{usuarioId}/texto-complementar', [UsuarioV2::class, 'updateTextoComplementar'])->whereUuid('usuarioId');
+    Route::patch('usuario/{usuarioId}/perfil', [UsuarioV2::class, 'updatePerfil'])->whereUuid('usuarioId');
+    Route::put('usuario/{usuarioId}/atribuicoes', [UsuarioV2::class, 'updateAtribuicoes'])->whereUuid('usuarioId');
 
-    Route::get('unidade', [UnidadeV2::class, 'buscarPorNomeOuCodigo']);
+    Route::get('unidade', [UnidadeV2::class, 'index']);
     Route::get('unidade/{unidadeId}/is-gestor-hierarquia', [UnidadeV2::class, 'isGestorHierarquia']);
 
     Route::get('plano-entrega', [PlanoEntregaV2::class, 'buscarPorUnidade']);
@@ -705,5 +724,47 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('planejamento/objetivo/{id}/arvore-visualizacao', [PlanejamentoObjetivoV2::class, 'arvoreVisualizacao'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoV2::class, 'entregas'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/equipes', [PlanejamentoObjetivoV2::class, 'equipes'])->whereUuid('id');
+    Route::get('planejamento/objetivo/{id}/painel-resumo', [PlanejamentoObjetivoV2::class, 'painelResumo'])->whereUuid('id');
+    Route::get('planejamento/objetivo/{id}/entregas-detalhamento', [PlanejamentoObjetivoV2::class, 'entregasDetalhamento'])->whereUuid('id');
+
+    Route::get('painel-gerencial/unidade-inicial', [PainelGerencialV2::class, 'unidadeInicial']);
+    Route::get('painel-gerencial/alinhamento-desempenho/alinhamento-institucional', [AlinhamentoDesempenhoV2::class, 'alinhamentoInstitucional']);
+    Route::get('painel-gerencial/alinhamento-desempenho/avaliacoes-plano-entrega', [AlinhamentoDesempenhoV2::class, 'avaliacoesPlanoEntrega']);
+    Route::get('painel-gerencial/alinhamento-desempenho/avaliacoes-plano-trabalho', [AlinhamentoDesempenhoV2::class, 'avaliacoesPlanoTrabalho']);
+
+    Route::get('painel-gerencial/modalidades/teletrabalho-substituicao', [ModalidadesV2::class, 'teletrabalhoSubstituicao']);
+    Route::get('painel-gerencial/modalidades/teletrabalho-discricionario', [ModalidadesV2::class, 'teletrabalhoDiscricionario']);
+    Route::get('painel-gerencial/modalidades/por-unidade', [ModalidadesV2::class, 'modalidadesPorUnidade']);
+
+    Route::get('painel-gerencial/conformidade/registro-execucao-pe', [ConformidadeV2::class, 'registroExecucaoPE']);
+    Route::get('painel-gerencial/conformidade/avaliacao-pe', [ConformidadeV2::class, 'avaliacaoPE']);
+    Route::get('painel-gerencial/conformidade/registro-execucao-pt', [ConformidadeV2::class, 'registroExecucaoPT']);
+    Route::get('painel-gerencial/conformidade/avaliacao-pt', [ConformidadeV2::class, 'avaliacaoPT']);
+    Route::get('painel-gerencial/conformidade/unidades-executoras-pe', [ConformidadeV2::class, 'unidadesExecutorasPE']);
+
+    Route::get('painel-gerencial/adesao/unidades-executoras', [AdesaoV2::class, 'unidadesExecutoras']);
+    Route::get('painel-gerencial/adesao/evolucao-unidades', [AdesaoV2::class, 'evolucaoUnidades']);
+    Route::get('painel-gerencial/adesao/participantes-pgd', [AdesaoV2::class, 'participantesPGD']);
+    Route::get('painel-gerencial/adesao/evolucao-participantes', [AdesaoV2::class, 'evolucaoParticipantes']);
+    Route::get('painel-gerencial/adesao/periodos-disponiveis', [AdesaoV2::class, 'periodosDisponiveis']);
+    Route::get('painel-gerencial/adesao/periodos-disponiveis-por-unidade', [AdesaoV2::class, 'periodosDisponiveisPorUnidade']);
+    Route::get('painel-gerencial/adesao/unidades-historicas', [AdesaoV2::class, 'unidadesHistoricas']);
+
+    Route::post('indicadores/horas', [IndicadoresHorasV2::class, 'horas']);
+
+    Route::get('mural-aviso/pendentes', [MuralAvisoV2::class, 'pendentes']);
+    Route::post('mural-aviso/confirmar', [MuralAvisoV2::class, 'confirmar']);
+
+    Route::get('cadeia-valor/{cadeiaValorId}/arvore/{processoId}', [CadeiaValorArvoreV2::class, 'arvore'])
+        ->whereUuid('cadeiaValorId')
+        ->whereUuid('processoId');
+    Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/resumo', [CadeiaValorArvoreV2::class, 'resumo'])
+        ->whereUuid('cadeiaValorId')
+        ->whereUuid('processoId');
+    Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas-detalhamento', [CadeiaValorArvoreV2::class, 'entregas'])
+        ->whereUuid('cadeiaValorId')
+        ->whereUuid('processoId');
+
+    Route::post('indicadores/horas', [IndicadoresHorasV2::class, 'horas']);
 });
 

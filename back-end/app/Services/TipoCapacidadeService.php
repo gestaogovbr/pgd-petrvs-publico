@@ -176,6 +176,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PTR_INCL", "Permite incluir planos de trabalho"],
         ["MOD_PTR_EDT_ATV", "Permite editar planos de trabalho ativos"],
         ["MOD_PTR_CNC", "Permite cancelar planos de trabalho"],
+        ["MOD_PTR_CNC_FORC", "Permite forçar cancelamento de planos de trabalho concluídos ou com consolidações concluídas"],
         ["MOD_PTR_USERS_INCL",   "Permite incluir planos de trabalho para usuários que não estão lotados nas áreas de trabalho do usuário logado"],
       ]
     ], [
@@ -232,9 +233,9 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
         ["MOD_PENT_ENTR_EXTRPL", "Permite incluir entregas que extrapolem o plano de entregas"],
         /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS - PROGRESSOS*/
-        ["MOD_PENT_ENTR_PRO_INCL", "Permite incluir o progresso da entrega de um plano de entregas"],
+        ["MOD_PENT_ENTR_PRO_INCL", "Permite incluir o progresso da entrega de um plano de entregas e excluí-lo enquanto o plano estiver ATIVO"],
         ["MOD_PENT_ENTR_PRO_EDT", "Permite editar o progresso da entrega de um plano de entregas"],
-        ["MOD_PENT_ENTR_PRO_EXCL", "Permite excluir o progresso da entrega de um plano de entregas"],
+        ["MOD_PENT_ENTR_PRO_EXCL", "Permite excluir o progresso da entrega de um plano de entregas enquanto o plano estiver ATIVO"],
       ]
     ], [
       "codigo" => "MOD_PRGT",
@@ -386,6 +387,7 @@ class TipoCapacidadeService extends ServiceBase
       "descricao" => "Módulo Usuários",
       "capacidades" => [
         /* Capacidades do módulo USUÁRIOS */
+        ["MOD_USER_VIS", "Permite visualizar perfil de outros usuários"],
         ["MOD_USER_EDT", "Permite alterar usuário"],
         ["MOD_USER_EXCL", "Permite excluir usuário"],
         ["MOD_USER_INCL", "Permite incluir usuário"],
@@ -456,6 +458,17 @@ class TipoCapacidadeService extends ServiceBase
         "descricao" => "Relatório de Planos de Entrega - Listar todas as unidades",
     ],
     [
+        "codigo" => "MOD_RELATORIO_ENTREGA",
+        "descricao" => "Relatório de Entregas",
+        "capacidades" => [
+            ["MOD_RELATORIO_ENTREGA_UNIDADES_VINCULADAS", "Relatório de Entregas - Permite usuário filtrar por todas as unidades vinculadas"],
+        ],
+    ],
+    [
+        "codigo" => "MOD_RELATORIO_ENTREGA_TODAS_UNIDADES",
+        "descricao" => "Relatório de Entregas - Listar todas as unidades",
+    ],
+    [
         "codigo" => "MOD_RELATORIO_USUARIO",
         "descricao" => "Relatório de Agentes Públicos",
         "capacidades" => [
@@ -493,6 +506,10 @@ class TipoCapacidadeService extends ServiceBase
     [
       "codigo" => "MOD_TIPO_OBJETIVO",
       "descricao" => "Módulo de Tipos de Objetivos",
+    ],
+    [
+      "codigo" => "MOD_PAINEL_GER",
+      "descricao" => "Módulo de Painéis Gerenciais",
     ]
   ];
 

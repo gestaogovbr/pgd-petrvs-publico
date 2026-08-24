@@ -5,7 +5,7 @@ namespace App\Observers;
 use App\Models\PlanoTrabalho;
 use App\Services\API_PGD\PlanoTrabalhoEnvioService;
 use Illuminate\Support\Facades\Log;
-use App\Exceptions\EnvioNaoAgendadoException;
+use Throwable;
 
 class PlanoTrabalhoObserver
 {
@@ -30,16 +30,28 @@ class PlanoTrabalhoObserver
         }
 
         if (!tenancy()->initialized) {
-            Log::warning('Tentativa de agendar envio de plano de trabalho sem tenant inicializado');
+            self::logSeguro('Tentativa de agendar envio de plano de trabalho sem tenant inicializado');
             return true;
         }
 
-        try{
+        try {
             PlanoTrabalhoEnvioService::processar(tenant('id'), $planoTrabalho, 'PlanoTrabalho');
-        }catch(EnvioNaoAgendadoException $e) {
-            Log::info("Envio do {$planoTrabalho->identificacaoEnvio()} não agendado: " . $e->getMessage());
+        } catch (Throwable $e) {
+            // afterCommit: a alteração do PT já foi persistida; falha de log/envio não deve quebrar a requisição
+            self::logSeguro(
+                "Falha ao agendar envio do {$planoTrabalho->identificacaoEnvio()}: " . $e->getMessage()
+            );
         }
 
         return true;
+    }
+
+    private static function logSeguro(string $mensagem): void
+    {
+        try {
+            Log::warning($mensagem);
+        } catch (Throwable) {
+            error_log($mensagem);
+        }
     }
 }

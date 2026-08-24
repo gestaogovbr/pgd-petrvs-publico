@@ -14,9 +14,9 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
     public function query(array $data): array
     {
         $modalidadeUsuario = ModalidadePgd::sqlLabelExpression('`u`.`modalidade_pgd`');
-        $modalidadePlano = ModalidadePgd::sqlLabelExpression('`pt_ultimo_pactuado`.`modalidade_pgd`');
+        $modalidadePlano = ModalidadePgd::sqlLabelExpression('`pt_do_dia`.`modalidade_pgd`');
         $modalidadeUsuarioNormalizada = ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`');
-        $modalidadePlanoNormalizada = ModalidadePgd::sqlNormalizeExpression('`pt_ultimo_pactuado`.`modalidade_pgd`');
+        $modalidadePlanoNormalizada = ModalidadePgd::sqlNormalizeExpression('`pt_do_dia`.`modalidade_pgd`');
 
         $sql = <<<TEXT
         with lotacoes as (
@@ -33,13 +33,25 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
                 and `uia`.`atribuicao` = 'LOTADO'
             order by
                 `ui`.`usuario_id`
+        ),
+        pt_do_dia_ranked as (
+            select
+                `pt`.`usuario_id`,
+                `pt`.`id` AS `plano_trabalho_id`,
+                `pt`.`numero` AS `plano_trabalho_numero`,
+                `pt`.`modalidade_pgd`,
+                `pt`.`status` AS `plano_trabalho_status`,
+                row_number() over (partition by `pt`.`usuario_id` order by `pt`.`data_inicio` desc, `pt`.`created_at` desc) as `rn`
+            from `planos_trabalhos` `pt`
+            where `pt`.`deleted_at` is null
+              and CURDATE() between `pt`.`data_inicio` and `pt`.`data_fim`
         )
         SELECT
             distinct `u`.`id` AS `id`,
+            COALESCE(`u`.`nome_social`, `u`.`nome`) AS `nome_exibicao`,
             `u`.`nome` AS `nome`,
             `u`.`matricula` AS `matricula`,
-            `u`.`nome_jornada` AS `jornada`,
-            `u`.`participa_pgd` AS `participaPGD`,
+            CASE WHEN `u`.`participa_pgd` = 'sim' THEN 'Sim' ELSE 'Não' END AS `participantePGD`,
             CASE WHEN `u`.`participa_pgd` = 'não' THEN 'INATIVO' ELSE `u`.`situacao_siape` END AS `situacao`,
             case
                 when `u`.`participa_pgd` = 'sim' then {$modalidadeUsuario}
@@ -47,13 +59,12 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
                 else 'Não definida'
             end AS `modalidadeSouGov`,
             case
-                when  `u`.`situacao_siape` = 'INATIVO' OR `pt_ultimo_pactuado`.`modalidade_pgd` IS NULL OR `u`.`participa_pgd` = 'não' then '-'
+                when `u`.`situacao_siape` = 'INATIVO' OR `pt_do_dia`.`modalidade_pgd` IS NULL OR `u`.`participa_pgd` = 'não' then '-'
                 when COALESCE({$modalidadeUsuarioNormalizada}, '') = COALESCE({$modalidadePlanoNormalizada}, '') then 'IGUAL'
                 else 'DIFERENTE'
             end as comparacaoSouGovPetrvs,
             `u`.`perfil_id` AS `perfil_id`,
             `p`.`nome` AS `perfil`,
-            `u`.`situacao_funcional` AS `situacao_funcional`,
             `programa_ultimo`.`programanome` AS `programaNome`,
             `uia`.`atribuicao` AS `atribuicao`,
             `fn_obter_unidade_hierarquia`(`uni_lotacao`.`id`) AS `unidadeHierarquia`,
@@ -66,6 +77,9 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
                 WHEN `u`.`participa_pgd` = 'não' THEN '-'
                 ELSE 'Não definida'
             END AS `tipoModalidadeNome`,
+            `pt_do_dia`.`plano_trabalho_id` AS `plano_trabalho_id`,
+            `pt_do_dia`.`plano_trabalho_numero` AS `plano_trabalho_numero`,
+            `pt_do_dia`.`plano_trabalho_status` AS `plano_trabalho_status`,
             `u`.`data_inicial_pedagio` AS `data_inicial_pedagio`,
             `u`.`data_final_pedagio` AS `data_final_pedagio`,
             `u`.`tipo_pedagio` AS `tipo_pedagio`
@@ -94,33 +108,8 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
             where
                 `pp1`.`rn` = 1) `programa_ultimo` on
             (`programa_ultimo`.`usuario_id` = `u`.`id`)
-        left join (
-            select
-                `pt`.`usuario_id` AS `usuario_id`,
-                `pt`.`id` AS `id`,
-                `pt`.`modalidade_pgd` AS `modalidade_pgd`
-            from
-                `planos_trabalhos` `pt`
-            where
-                `pt`.`deleted_at` is null
-                and `pt`.`status` in ('ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO')
-                    and (`pt`.`data_inicio`,
-                    `pt`.`id`) = (
-                    select
-                        `pt2`.`data_inicio`,
-                        max(`pt2`.`id`)
-                    from
-                        `planos_trabalhos` `pt2`
-                    where
-                        `pt2`.`usuario_id` = `pt`.`usuario_id`
-                        and `pt2`.`deleted_at` is null
-                        and `pt2`.`status` in ('ATIVO', 'CONCLUIDO', 'AVALIADO', 'SUSPENSO')
-                    group by
-                        `pt2`.`data_inicio`
-                    order by
-                        `pt2`.`data_inicio` desc
-                    limit 1)) `pt_ultimo_pactuado` on
-            (`pt_ultimo_pactuado`.`usuario_id` = `u`.`id`)
+        left join `pt_do_dia_ranked` `pt_do_dia` on
+            (`pt_do_dia`.`usuario_id` = `u`.`id` and `pt_do_dia`.`rn` = 1)
         left join `unidades_integrantes` `ui` on
             (`ui`.`usuario_id` = `u`.`id`
                 and `ui`.`deleted_at` is null)
@@ -198,9 +187,15 @@ TEXT;
 
     private function applyFiltros(array &$data, string &$sql, array &$params): void
     {
+        $usuarioId = $this->extractWhere($data, 'usuario_id');
+        if (isset($usuarioId[2])) {
+            $sql .= ' and u.id = ?';
+            $params[] = $usuarioId[2];
+        }
+
         $nome = $this->extractWhere($data, 'nome');
         if (isset($nome[2])) {
-            $sql .= ' and u.nome like ?';
+            $sql .= ' and COALESCE(`u`.`nome_social`, `u`.`nome`) like ?';
             $params[] = $nome[2];
         }
 
@@ -214,18 +209,6 @@ TEXT;
         if (isset($matricula[2])) {
             $sql .= ' and u.matricula like ?';
             $params[] = $matricula[2];
-        }
-
-        $jornada = $this->extractWhere($data, 'jornada');
-        if (isset($jornada[2])) {
-            $sql .= ' and u.nome_jornada = ?';
-            $params[] = $jornada[2];
-        }
-
-        $perfil_id = $this->extractWhere($data, 'perfil_id');
-        if (isset($perfil_id[2])) {
-            $sql .= ' and u.perfil_id = ?';
-            $params[] = $perfil_id[2];
         }
 
         $programaNome = $this->extractWhere($data, 'programaNome');
@@ -257,10 +240,10 @@ TEXT;
             $operacaoComparacao = $this->getComparacaoSouGov($comparacaoSouGovPetrvs[2]);
 
             if ($operacaoComparacao == '-') {
-                $sql .= " and ( `u`.`situacao_siape` = 'INATIVO' OR `pt_ultimo_pactuado`.`modalidade_pgd` IS NULL OR `u`.`participa_pgd` = 'não' ) ";
+                $sql .= " and ( `u`.`situacao_siape` = 'INATIVO' OR `pt_do_dia`.`modalidade_pgd` IS NULL OR `u`.`participa_pgd` = 'não' ) ";
             } elseif ($operacaoComparacao != '') {
                 $modalidadeUsuarioNormalizada = ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`');
-                $modalidadePlanoNormalizada = ModalidadePgd::sqlNormalizeExpression('`pt_ultimo_pactuado`.`modalidade_pgd`');
+                $modalidadePlanoNormalizada = ModalidadePgd::sqlNormalizeExpression('`pt_do_dia`.`modalidade_pgd`');
                 $sql .= " and ( `u`.`participa_pgd` = 'sim' and COALESCE({$modalidadeUsuarioNormalizada}, '') $operacaoComparacao COALESCE({$modalidadePlanoNormalizada}, '') and COALESCE({$modalidadePlanoNormalizada}, '') != '') ";
             }
         }
@@ -275,6 +258,17 @@ TEXT;
         if (isset($tipo_pedagio[2])) {
             $sql .= ' and `u`.`tipo_pedagio` = ?';
             $params[] = $tipo_pedagio[2];
+        }
+
+        $planoEntregaEntregaId = $this->extractWhere($data, 'plano_entrega_entrega_id');
+        if (isset($planoEntregaEntregaId[2])) {
+            $sql .= ' and `u`.`id` in (
+                select distinct `pt`.`usuario_id`
+                from `planos_trabalhos_entregas` `pte`
+                inner join `planos_trabalhos` `pt` on `pt`.`id` = `pte`.`plano_trabalho_id` and `pt`.`deleted_at` is null
+                where `pte`.`plano_entrega_entrega_id` = ? and `pte`.`deleted_at` is null
+            )';
+            $params[] = $planoEntregaEntregaId[2];
         }
 
         $data_inicial_pedagio = $this->extractWhere($data, 'data_inicial_pedagio');

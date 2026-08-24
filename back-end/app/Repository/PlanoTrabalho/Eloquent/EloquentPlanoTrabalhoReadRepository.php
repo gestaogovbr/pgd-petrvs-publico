@@ -131,7 +131,22 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         return $this->query()
             ->where('status', StatusEnum::AGUARDANDO_ASSINATURA->value)
             ->whereNull('data_arquivamento')
+            ->whereNotExists(function ($query) {
+                $this->subqueryJaPossuiAssinaturaDeGestor($query);
+            })
             ->with(['usuario:id,nome,apelido,nome_social,url_foto']);
+    }
+
+    /**
+     * Exclui PTs cujo documento TCR já possui assinatura de alguém diferente do participante (slot de gestor preenchido).
+     */
+    private function subqueryJaPossuiAssinaturaDeGestor(\Illuminate\Database\Query\Builder $query): void
+    {
+        $query->select(DB::raw(1))
+            ->from('documentos_assinaturas as da')
+            ->whereColumn('da.documento_id', 'planos_trabalhos.documento_id')
+            ->whereColumn('da.usuario_id', '!=', 'planos_trabalhos.usuario_id')
+            ->whereNull('da.deleted_at');
     }
 
     private function subqueryChefeSubstitutoNaoAssinaGestorTitular(\Illuminate\Database\Query\Builder $query, string $usuarioId): void
@@ -407,7 +422,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         /** @var PlanoTrabalho|null $plano */
         $plano = PlanoTrabalho::with([
-            'usuario:id,nome,apelido,nome_social',
+            'usuario:id,nome,apelido,nome_social,cod_jornada',
             'usuario.lotacao:id,usuario_id,unidade_id',
             'usuario.lotacao.unidade:id,unidade_pai_id',
             'unidade:id,sigla,nome,unidade_pai_id',
@@ -574,5 +589,32 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         $q->where('planos_trabalhos_consolidacoes.status', StatusEnum::CONCLUIDO->value)
             ->whereDoesntHave('avaliacoes');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buscarPlanosParaIndicadores(array $unidadeIds, array $filtros): SupportCollection
+    {
+        $query = $this->model->newQuery()
+            ->select('planos_trabalhos.id', 'planos_trabalhos.usuario_id', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.unidade_id', 'planos_trabalhos.carga_horaria')
+            ->join('usuarios', function ($join) {
+                $join->on('usuarios.id', '=', 'planos_trabalhos.usuario_id')
+                    ->whereNull('usuarios.deleted_at');
+            })
+            ->whereIn('planos_trabalhos.unidade_id', $unidadeIds)
+            ->whereIn('planos_trabalhos.status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+
+        if ($filtros['data_inicial'] !== null) {
+            $query->where('planos_trabalhos.data_inicio', '>=', $filtros['data_inicial']);
+        }
+        if ($filtros['data_final'] !== null) {
+            $query->whereRaw('date(`planos_trabalhos`.`data_fim`) <= ?', [$filtros['data_final']]);
+        }
+        if ($filtros['somente_vigentes']) {
+            $query->whereRaw('now() between date(`planos_trabalhos`.`data_inicio`) and date(`planos_trabalhos`.`data_fim`)');
+        }
+
+        return $query->get()->toBase();
     }
 }

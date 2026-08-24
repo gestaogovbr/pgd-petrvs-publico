@@ -18,6 +18,7 @@ class AtividadeDestroyDTO implements IAtividadeWriteDTO
     public function usuarioId(): string { return $this->usuarioId; }
     public function atividadeId(): ?string { return $this->atividadeId; }
     public function planoTrabalhoEntregaId(): ?string { return null; }
+    public function esforcoExecutado(): ?float { return null; }
 
     public function toArray(): array { return []; }
 }

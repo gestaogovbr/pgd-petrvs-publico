@@ -76,10 +76,12 @@ class PlanoTrabalhoDocumentoAssinarValidator
      * Valida se o assinante possui autoridade hierárquica para assinar o TCR de outro participante.
      *
      * Regra baseada no papel do participante NA UNIDADE DO PT:
-     * - Participante é apenas lotado → gestor da mesma unidade ou da unidade pai pode assinar
+     * - Participante é apenas lotado → gestor titular ou substituto da mesma unidade ou da unidade pai pode assinar
      * - Participante é GESTOR_SUBSTITUTO → GESTOR titular da mesma unidade pode assinar
      * - Participante é GESTOR_DELEGADO → GESTOR titular ou GESTOR_SUBSTITUTO da mesma unidade pode assinar
      * - Participante é GESTOR titular → gestor da unidade pai deve assinar
+     *
+     * Delegados são barrados pelo AuthorizationValidator (validarAssinatura → isChefiaSemDelegado).
      */
     private function validarChefiaHierarquica(PlanoTrabalho $plano, string $usuarioId): void
     {
@@ -89,10 +91,6 @@ class PlanoTrabalhoDocumentoAssinarValidator
 
         $unidade = $this->unidadeRepository->findById($plano->unidade_id);
 
-        // Unidade raiz (sem pai): não há hierarquia superior para exigir.
-        // Não verifica se o assinante é gestor porque o AuthorizationValidator
-        // (executado antes) já garante que apenas o dono do PT ou gestores da unidade
-        // chegam até aqui (via autorizarDonoOuChefia → isUsuarioGestorRecursivo).
         if ($unidade === null || $unidade->unidade_pai_id === null) {
             return;
         }
@@ -127,6 +125,22 @@ class PlanoTrabalhoDocumentoAssinarValidator
         }
 
         return $hierarquia->assinanteGestorTitular;
+    }
+
+    /**
+     * Impede que mais de um gestor assine o mesmo TCR.
+     * Se o assinante não é o participante e já existe assinatura de outro gestor (não-participante),
+     * a vaga de gestor está preenchida.
+     */
+    public function validarSlotGestorDisponivel(PlanoTrabalho $plano, string $usuarioId, Documento $documento): void
+    {
+        if ($plano->usuario_id === $usuarioId) {
+            return;
+        }
+
+        if ($this->assinaturaRepository->existeAssinaturaDeNaoParticipante($documento->id, $plano->usuario_id)) {
+            throw new ValidateException('Já existe assinatura de gestor registrada para este Plano de Trabalho.');
+        }
     }
 
     /**

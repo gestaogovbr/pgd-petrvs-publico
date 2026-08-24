@@ -8,6 +8,8 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaReadRepositoryContract;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Entrega\DTOs\ResumoForcaTrabalhoDTO;
+use App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO;
+use Illuminate\Support\Collection;
 
 class PlanoTrabalhoEntregaRepository
 {
@@ -60,8 +62,39 @@ class PlanoTrabalhoEntregaRepository
         return $this->readRepository->existeVinculo($planoTrabalhoId, $planoEntregaEntregaId, $excludeId);
     }
 
+    /**
+     * @return list<string>
+     */
+    public function idsPlanosTrabalhoPorPlanoEntregaEntrega(string $planoEntregaEntregaId): array
+    {
+        return $this->readRepository->idsPlanosTrabalhoPorPlanoEntregaEntrega($planoEntregaEntregaId);
+    }
+
     public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO
     {
         return $this->readRepository->resumoForcaTrabalhoPorPlano($planoTrabalhoId);
+    }
+
+    public function somatoriosEsforcoProjetados(
+        string $planoTrabalhoId,
+        ?string $entregaIdEmEdicao,
+        float $forcaTrabalhoProjeto,
+        float $esforcoExecutadoProjeto,
+    ): SomatoriosEsforcoDTO {
+        return $this->readRepository->somatoriosEsforcoProjetados(
+            $planoTrabalhoId,
+            $entregaIdEmEdicao,
+            $forcaTrabalhoProjeto,
+            $esforcoExecutadoProjeto,
+        );
+    }
+
+    /**
+     * @param array<string> $planoIds
+     * @return Collection
+     */
+    public function buscarEntregasParaIndicadores(array $planoIds): Collection
+    {
+        return $this->readRepository->buscarEntregasParaIndicadores($planoIds);
     }
 }

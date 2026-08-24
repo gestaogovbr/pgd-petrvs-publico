@@ -4,9 +4,17 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Repository\PlanoEntregaEntrega\Contracts\PlanoEntregaEntregaReadRepositoryContract;
+use App\Repository\PlanoEntregaEntrega\Contracts\PlanoEntregaEntregaWriteRepositoryContract;
+use App\Repository\PlanoEntregaEntrega\Eloquent\EloquentPlanoEntregaEntregaReadRepository;
+use App\Repository\PlanoEntregaEntrega\Eloquent\EloquentPlanoEntregaEntregaWriteRepository;
+use App\Repository\PlanoEntregaEntregaProgresso\Contracts\PlanoEntregaEntregaProgressoReadRepositoryContract;
+use App\Repository\PlanoEntregaEntregaProgresso\Eloquent\EloquentPlanoEntregaEntregaProgressoReadRepository;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 
 use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
+use App\Repository\Feriado\Contracts\FeriadoReadRepositoryContract;
+use App\Repository\Feriado\Eloquent\EloquentFeriadoReadRepository;
 
 use App\Repository\Afastamento\Eloquent\EloquentAfastamentoReadRepository;
 
@@ -121,8 +129,18 @@ use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
 use App\Repository\EnvioUsuario\Eloquent\EloquentEnvioUsuarioReadRepository;
 use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryContract;
 use App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository;
+use App\Repository\RelatorioEntrega\Contracts\RelatorioEntregaReadRepositoryContract;
+use App\Repository\RelatorioEntrega\Eloquent\EloquentRelatorioEntregaReadRepository;
 use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
 use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
+use App\Repository\MuralAviso\Contracts\MuralAvisoReadRepositoryContract;
+use App\Repository\MuralAviso\Contracts\MuralAvisoWriteRepositoryContract;
+use App\Repository\MuralAviso\Eloquent\EloquentMuralAvisoReadRepository;
+use App\Repository\MuralAviso\Eloquent\EloquentMuralAvisoWriteRepository;
+use App\Repository\MuralAvisoLeitura\Contracts\MuralAvisoLeituraReadRepositoryContract;
+use App\Repository\MuralAvisoLeitura\Contracts\MuralAvisoLeituraWriteRepositoryContract;
+use App\Repository\MuralAvisoLeitura\Eloquent\EloquentMuralAvisoLeituraReadRepository;
+use App\Repository\MuralAvisoLeitura\Eloquent\EloquentMuralAvisoLeituraWriteRepository;
 
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
@@ -167,6 +185,8 @@ use App\Repository\TipoPlanejamentoObjetivo\Eloquent\EloquentTipoPlanejamentoObj
 use App\Repository\TipoPlanejamentoObjetivo\Eloquent\EloquentTipoPlanejamentoObjetivoWriteRepository;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
 use App\Repository\PlanejamentoObjetivo\Eloquent\EloquentPlanejamentoObjetivoReadRepository;
+use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
+use App\Repository\CadeiaValor\Eloquent\EloquentCadeiaValorReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\Repository\Unidade\Eloquent\EloquentUnidadeReadRepository;
@@ -452,6 +472,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            CadeiaValorReadRepositoryContract::class,
+            EloquentCadeiaValorReadRepository::class,
+        );
+
+        $this->app->bind(
             EnvioUsuarioReadRepositoryContract::class,
             EloquentEnvioUsuarioReadRepository::class,
         );
@@ -466,6 +491,46 @@ final class RepositoryServiceProvider extends ServiceProvider
             EloquentEnvioPlanoTrabalhoReadRepository::class,
         );
 
+        $this->app->bind(
+            RelatorioEntregaReadRepositoryContract::class,
+            EloquentRelatorioEntregaReadRepository::class,
+        );
+
+        $this->app->bind(
+            FeriadoReadRepositoryContract::class,
+            EloquentFeriadoReadRepository::class,
+        );
+
+
+        $this->app->bind(
+            PlanoEntregaEntregaReadRepositoryContract::class,
+            EloquentPlanoEntregaEntregaReadRepository::class,
+        );
+        $this->app->bind(
+            PlanoEntregaEntregaWriteRepositoryContract::class,
+            EloquentPlanoEntregaEntregaWriteRepository::class,
+        );
+        $this->app->bind(
+            PlanoEntregaEntregaProgressoReadRepositoryContract::class,
+            EloquentPlanoEntregaEntregaProgressoReadRepository::class,
+        );
+
+        $this->app->bind(
+            MuralAvisoReadRepositoryContract::class,
+            EloquentMuralAvisoReadRepository::class,
+        );
+        $this->app->bind(
+            MuralAvisoWriteRepositoryContract::class,
+            EloquentMuralAvisoWriteRepository::class,
+        );
+        $this->app->bind(
+            MuralAvisoLeituraReadRepositoryContract::class,
+            EloquentMuralAvisoLeituraReadRepository::class,
+        );
+        $this->app->bind(
+            MuralAvisoLeituraWriteRepositoryContract::class,
+            EloquentMuralAvisoLeituraWriteRepository::class,
+        );
     }
 
     public function boot(): void

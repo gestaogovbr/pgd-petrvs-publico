@@ -15,6 +15,7 @@ import { CancelarPlanoUseCase } from '../application/cancelar-plano.usecase';
 import { ExcluirPlanoUseCase } from '../application/excluir-plano.usecase';
 import { EncerrarPlanoUseCase } from '../application/encerrar-plano.usecase';
 import { ArquivarPlanoUseCase } from '../application/arquivar-plano.usecase';
+import { PlanoApiClient } from '../infra/plano-api.client';
 import { AssinarPlanoUseCase } from '../application/assinar-plano.usecase';
 import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
@@ -48,6 +49,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   private readonly encerrarPlanoUC = inject(EncerrarPlanoUseCase);
   private readonly excluirPlanoUC = inject(ExcluirPlanoUseCase);
   private readonly arquivarPlanoUC = inject(ArquivarPlanoUseCase);
+  private readonly planoApi = inject(PlanoApiClient);
   readonly assinatura = inject(AssinarPlanoUseCase);
   private readonly filterStorage = inject(FilterStorageService);
   private readonly tipoModalidadeApi = inject(TipoModalidadeService);
@@ -444,6 +446,17 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       onConfirm: () => this.arquivarPlanoUC.execute(p.id).subscribe(() => {
         this.applyFiltersAndLoad(false);
         this.message.success('Plano de trabalho arquivado com sucesso.');
+      })
+    });
+  }
+
+  desarquivarPlano(p: PlanoTrabalho) {
+    this.confirmacaoPendente.set({
+      titulo: 'Desarquivar Plano de Trabalho',
+      mensagem: 'Ao desarquivar este Plano de Trabalho, ele voltará a ser exibido na listagem. Deseja confirmar?',
+      onConfirm: () => this.planoApi.unarchive(p.id).subscribe(() => {
+        this.applyFiltersAndLoad(false);
+        this.message.success('Plano de trabalho desarquivado com sucesso.');
       })
     });
   }
