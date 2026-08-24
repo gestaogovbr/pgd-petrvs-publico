@@ -31,27 +31,30 @@
 
   <!-- Conteúdo do Dashboard -->
   @if (selectedUnidadeId()) {
-    <div class="row">
-      <!-- Coluna Principal (75%) -->
-      <div class="col-lg-9">
-        <!-- Linha 1: Pendências + Planos Vigentes -->
-        <div class="row mb-3">
-          <div class="col-md-7">
-            <home-pendencias-usuario class="" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
-          </div>
-          <div class="col-md-5">
-            <home-planos-vigentes class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
-          </div>
-        </div>
+    <!-- Linha 1: Pendências + Planos Vigentes + De Férias -->
+    <div class="row mb-3">
+      <div class="col-md-5">
+        <home-pendencias-usuario [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+      </div>
+      <div class="col-md-4">
+        <home-planos-vigentes class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+      </div>
+      <div class="col-md-3">
+        <home-em-ferias [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+      </div>
+    </div>
 
-        <!-- Linha 2: Ações Gerenciais -->
+    <!-- Linha 2: Conteúdo principal + Aniversariantes -->
+    <div class="row">
+      <div class="col-lg-9">
+        <!-- Ações Gerenciais -->
         <div class="row mb-3">
           <div class="col-12">
             <home-acoes-gerenciais />
           </div>
         </div>
 
-        <!-- Linha 3: Resumo Equipe -->
+        <!-- Resumo Equipe + Contribuições -->
         <div class="row mb-3">
           <div class="col-md-8">
             <home-resumo-equipe [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
@@ -62,10 +65,9 @@
         </div>
       </div>
 
-      <!-- Coluna Lateral (25%) -->
-      <div class="col-lg-3 d-flex flex-column gap-3 mb-3">
-        <home-em-ferias class="flex-fill d-flex mx-0" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
-        <home-aniversariantes class="flex-fill d-flex mx-0" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+      <!-- Aniversariantes -->
+      <div class="col-lg-3 mb-3">
+        <home-aniversariantes [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
       </div>
     </div>
   }

@@ -1,5 +1,23 @@
 .home-card--scrollable {
-  max-height: 15em;
+  height: 12em;
+  overflow-y: auto;
+  margin-top: 1em;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: sticky;
+    bottom: -1px;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 2em;
+    background: linear-gradient(to bottom, transparent, white);
+    pointer-events: none;
+  }
+}
+
+.home-card--scrollable-fill {
   overflow-y: auto;
   margin-top: 1em;
   position: relative;
