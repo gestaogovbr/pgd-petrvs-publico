@@ -115,6 +115,43 @@ describe('PlanoTrabalhoDocumentoService::store', function () {
         expect($this->service->store('plano-1'))->toBe($novoDoc);
     });
 
+    test('falha com ValidateException quando template TCR está vazio', function () {
+        $this->authValidator->shouldReceive('validar')->once()->andReturn($this->plano);
+        $this->storeValidator->shouldReceive('validar')->once()->andReturn(null);
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn(null);
+        $this->planoRepo->shouldReceive('loadRelacoesTCR')->once()->andReturn($this->plano);
+        $this->datasourceBuilder->shouldReceive('getTemplate')->andReturn('');
+        $this->documentoRepo->shouldNotReceive('createFromTCR');
+
+        $this->service->store('plano-1');
+    })->throws(\App\Exceptions\ValidateException::class);
+
+    test('usa entidade da unidade quando sessão não tem entidade_id', function () {
+        $unidade = Mockery::mock(\App\Models\Unidade::class)->makePartial();
+        $unidade->entidade_id = 'entidade-unidade';
+        $this->plano->shouldReceive('getAttribute')->with('unidade')->andReturn($unidade);
+
+        $this->authValidator->shouldReceive('validar')->once()->andReturn($this->plano);
+        $this->storeValidator->shouldReceive('validar')->once()->andReturn(null);
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn(null);
+        $this->planoRepo->shouldReceive('loadRelacoesTCR')->once()->andReturn($this->plano);
+        $this->datasourceBuilder->shouldReceive('getTemplate')->andReturn('<html></html>');
+        $this->datasourceBuilder->shouldReceive('getDataset')->andReturn([]);
+        $this->datasourceBuilder->shouldReceive('getDatasource')->andReturn((object) []);
+        $this->datasourceBuilder->shouldReceive('getTemplateId')->andReturn(null);
+        $this->renderer->shouldReceive('render')->andReturn('<html></html>');
+        Session::shouldReceive('get')->with('entidade_id')->andReturn(null);
+
+        $novoDoc = Mockery::mock(Documento::class)->makePartial();
+        $novoDoc->id = 'doc-novo';
+        $this->planoRepo->shouldReceive('update')->twice()->andReturn($this->plano);
+        $this->documentoRepo->shouldReceive('createFromTCR')->once()->with(Mockery::on(function ($dto) {
+            return $dto instanceof TCRDocumentoDTO && $dto->entidadeId === 'entidade-unidade';
+        }))->andReturn($novoDoc);
+
+        expect($this->service->store('plano-1'))->toBe($novoDoc);
+    });
+
     test('não persiste quando autorização falha', function () {
         $this->authValidator->shouldReceive('validar')->andThrow(new ForbiddenException('Sem permissão.'));
         $this->storeValidator->shouldNotReceive('validar');
@@ -198,6 +235,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
         $documento->conteudo = '<html>TCR</html>';
 
         $this->assinarValidator->shouldReceive('validar')->once()->andReturn($documento);
+        $this->assinarValidator->shouldReceive('validarSlotGestorDisponivel')->once();
 
         $assinatura = Mockery::mock(DocumentoAssinatura::class)->makePartial();
         $this->assinaturaRepo->shouldReceive('createFromTCR')
@@ -228,6 +266,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
         $documento->conteudo = '<html>TCR</html>';
 
         $this->assinarValidator->shouldReceive('validar')->once()->andReturn($documento);
+        $this->assinarValidator->shouldReceive('validarSlotGestorDisponivel')->once();
 
         $assinatura = Mockery::mock(DocumentoAssinatura::class)->makePartial();
         $this->assinaturaRepo->shouldReceive('createFromTCR')->once()->andReturn($assinatura);

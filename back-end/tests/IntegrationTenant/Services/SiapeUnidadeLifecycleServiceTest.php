@@ -40,16 +40,20 @@ use App\Services\IntegracaoUnidadeService;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 use App\Services\UnidadeService;
+use App\Cache\CacheInvalidator;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Tests\Helpers\CacheInvalidatorE2E;
 
 afterEach(function () {
     Carbon::setTestNow();
 });
 
 beforeEach(function () {
+    Cache::flush();
+    app()->singleton(CacheInvalidator::class, CacheInvalidatorE2E::class);
     $codigos = [
         '100',
         '101',

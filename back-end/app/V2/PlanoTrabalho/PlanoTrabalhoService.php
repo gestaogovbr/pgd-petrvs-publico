@@ -22,6 +22,7 @@ use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoStoreValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoArquivarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoCancelarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoClonarValidator;
+use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDesarquivarValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoDestroyValidator;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoEncerrarValidator;
 use App\V2\StatusService;
@@ -49,6 +50,7 @@ class PlanoTrabalhoService
         private readonly PlanoTrabalhoCancelarValidator $cancelarValidator,
         private readonly PlanoTrabalhoEncerrarValidator $encerrarValidator,
         private readonly PlanoTrabalhoArquivarValidator $arquivarValidator,
+        private readonly PlanoTrabalhoDesarquivarValidator $desarquivarValidator,
         private readonly PlanoTrabalhoClonarValidator $clonarValidator,
         private readonly PlanoTrabalhoIndexValidator $indexValidator,
         private readonly PlanoTrabalhoUpdateAuthorizationValidator $updateAuthorizationValidator,
@@ -230,6 +232,15 @@ class PlanoTrabalhoService
         $plano = $this->arquivarValidator->validar($id, Auth::id());
 
         $this->writeRepository->update($id, ['data_arquivamento' => now()]);
+
+        return $plano->refresh();
+    }
+
+    public function desarquivar(string $id): PlanoTrabalho
+    {
+        $plano = $this->desarquivarValidator->validar($id, Auth::id());
+
+        $this->writeRepository->update($id, ['data_arquivamento' => null]);
 
         return $plano->refresh();
     }

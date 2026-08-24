@@ -47,8 +47,10 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             ->first();
     }
 
-    public function buscarAtualizacoesDados(): array
+    public function buscarAtualizacoesDados(?array $escopoServidor = null): array
     {
+        [$escopoSql, $bindings] = $this->escopoServidorSql($escopoServidor, 'isr.cpf', 'isr.matriculasiape', 'u.cpf');
+
         return DB::select(
             "SELECT
                 u.id,
@@ -87,12 +89,16 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
                 COALESCE(isr.modalidade_pgd, '') != COALESCE(u.modalidade_pgd, '') OR
                 (isr.participa_pgd != u.participa_pgd OR isr.participa_pgd IS NOT NULL AND u.participa_pgd IS NULL) OR
                 (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL))
-            AND u.id IS NOT NULL"
+            AND u.id IS NOT NULL
+            {$escopoSql}",
+            $bindings
         );
     }
 
-    public function getAtualizacoesLotacoes(): array
+    public function getAtualizacoesLotacoes(?array $escopoServidor = null): array
     {
+        [$escopoSql, $bindings] = $this->escopoServidorSql($escopoServidor, 'isr.cpf', 'isr.matriculasiape', 'usuario.cpf');
+
         return DB::select(
             "SELECT usuario.id AS usuario_id, isr.nome AS nome, " .
             "  u.codigo AS exercicio_antigo, " .
@@ -112,12 +118,16 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             "JOIN integracao_servidores AS isr ON isr.matriculasiape = usuario.matricula " .
             "WHERE uia.atribuicao = 'LOTADO' AND u.codigo <> isr.codigo_servo_exercicio and ui.deleted_at IS NULL " .
             "AND uia.deleted_at IS NULL " .
-            "ORDER BY exercicio_antigo ASC"
+            $escopoSql . " " .
+            "ORDER BY exercicio_antigo ASC",
+            $bindings
         );
     }
 
-    public function getServidoresInseridosNaoLotados(): array
+    public function getServidoresInseridosNaoLotados(?array $escopoServidor = null): array
     {
+        [$escopoSql, $bindings] = $this->escopoServidorSql($escopoServidor, 'ius.cpf', 'ius.matriculasiape', 'u.cpf');
+
         return DB::select(
             "SELECT u.id AS usuario_id, un.id AS unidade_id , u.matricula
             FROM usuarios AS u
@@ -131,12 +141,19 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
                 INNER  JOIN unidades_integrantes_atribuicoes AS uia ON ui.id = uia.unidade_integrante_id
                 WHERE uia.atribuicao = 'LOTADO'
                   AND uia.deleted_at IS NULL
-                GROUP BY u.id)"
+                GROUP BY u.id)
+            {$escopoSql}",
+            $bindings
         );
     }
 
-    public function getUsuariosAusentes(): array
+    public function getUsuariosAusentes(?array $escopoServidor = null): array
     {
+        [$escopoSql, $bindings] = $this->escopoServidorSql($escopoServidor, 'isr.cpf', 'isr.matriculasiape');
+        $joinCpfEscopado = $this->escopoAtivo($escopoServidor)
+            ? " AND {$this->cpfNormalizadoSql('u.cpf')} = {$this->cpfNormalizadoSql('isr.cpf')}"
+            : "";
+
         return DB::select(
             "SELECT " .
             "isr.matriculasiape as matricula, " .
@@ -154,8 +171,59 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             "isr.modalidade_pgd, ".
             "isr.funcoes as gestor " .
             "FROM integracao_servidores as isr " .
-            "LEFT JOIN usuarios u on u.matricula = isr.matriculasiape " .
-            "WHERE u.matricula is NULL"
+            "LEFT JOIN usuarios u on u.matricula = isr.matriculasiape {$joinCpfEscopado} " .
+            "WHERE u.matricula is NULL {$escopoSql}",
+            $bindings
         );
+    }
+
+    /**
+     * @return array{0: string, 1: array<int, string>}
+     */
+    private function escopoServidorSql(?array $escopoServidor, string $cpfColumn, string $matriculaColumn, ?string $usuarioCpfColumn = null): array
+    {
+        if (!$this->escopoAtivo($escopoServidor)) {
+            return ['', []];
+        }
+
+        $bindings = [];
+        $conditions = [];
+        $cpf = UtilService::onlyNumbers((string) ($escopoServidor['cpf'] ?? ''));
+
+        if ($cpf !== '') {
+            $conditions[] = $this->cpfNormalizadoSql($cpfColumn) . ' = ?';
+            $bindings[] = $cpf;
+
+            if ($usuarioCpfColumn !== null) {
+                $conditions[] = $this->cpfNormalizadoSql($usuarioCpfColumn) . ' = ?';
+                $bindings[] = $cpf;
+            }
+        }
+
+        $matriculas = collect($escopoServidor['matriculas'] ?? [])
+            ->filter(fn($matricula): bool => is_scalar($matricula) && trim((string) $matricula) !== '')
+            ->map(fn($matricula): string => trim((string) $matricula))
+            ->unique()
+            ->values()
+            ->all();
+
+        if ($matriculas !== []) {
+            $conditions[] = $matriculaColumn . ' IN (' . implode(', ', array_fill(0, count($matriculas), '?')) . ')';
+            $bindings = array_merge($bindings, $matriculas);
+        }
+
+        return $conditions === [] ? ['', []] : [' AND ' . implode(' AND ', $conditions), $bindings];
+    }
+
+    private function escopoAtivo(?array $escopoServidor): bool
+    {
+        return is_array($escopoServidor)
+            && ($escopoServidor['origem'] ?? null) === 'carga_individual_servidor'
+            && UtilService::onlyNumbers((string) ($escopoServidor['cpf'] ?? '')) !== '';
+    }
+
+    private function cpfNormalizadoSql(string $column): string
+    {
+        return "REPLACE(REPLACE(REPLACE({$column}, '.', ''), '-', ''), ' ', '')";
     }
 }

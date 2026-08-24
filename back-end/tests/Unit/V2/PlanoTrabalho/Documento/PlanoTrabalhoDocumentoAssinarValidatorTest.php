@@ -7,6 +7,7 @@ use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\Documento;
+use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Enums\StatusEnum;
 use App\Exceptions\ForbiddenException;
@@ -162,5 +163,60 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
 
         $this->validator->validar($plano, 'chefia-outro-registro', '12345678901');
     })->throws(ForbiddenException::class, 'Não é permitido assinar o próprio Plano de Trabalho como chefia.');
+
+    test('lança exceção quando gestor tenta assinar e já existe assinatura de outro gestor', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->usuario_id = 'participante-1';
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+
+        $this->assinaturaRepo->shouldReceive('existeAssinaturaDeNaoParticipante')
+            ->with('doc-1', 'participante-1')
+            ->andReturn(true);
+
+        $this->validator->validarSlotGestorDisponivel($plano, 'gestor-2', $documento);
+    })->throws(ValidateException::class, 'Já existe assinatura de gestor registrada para este Plano de Trabalho.');
+
+    test('permite gestor assinar quando não existe assinatura de outro gestor', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->usuario_id = 'participante-1';
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+
+        $this->assinaturaRepo->shouldReceive('existeAssinaturaDeNaoParticipante')
+            ->with('doc-1', 'participante-1')
+            ->andReturn(false);
+
+        $this->validator->validarSlotGestorDisponivel($plano, 'gestor-1', $documento);
+
+        // Se não lançou exceção, passou
+        expect(true)->toBeTrue();
+    });
+
+    test('participante pode assinar mesmo que gestor já tenha assinado', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->usuario_id = 'user-1';
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+
+        // NÃO deve chamar existeAssinaturaDeNaoParticipante pois é o participante
+        $this->assinaturaRepo->shouldNotReceive('existeAssinaturaDeNaoParticipante');
+
+        $this->validator->validarSlotGestorDisponivel($plano, 'user-1', $documento);
+
+        expect(true)->toBeTrue();
+    });
 
 });
