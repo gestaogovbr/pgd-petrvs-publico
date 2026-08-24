@@ -121,8 +121,7 @@ pipeline {
                             set -eu
                             npm install --legacy-peer-deps
                             mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
-                            npx ng build --configuration=production --output-path=../back-end/public
-                            node ./postbuild.js
+                            npm run build
                         "
 
                     echo "=== VALIDAÇÃO DOS ARTEFATOS GERADOS ==="
@@ -179,8 +178,7 @@ pipeline {
                             set -eu
                             npm install --legacy-peer-deps
                             mkdir -p ../back-end/resources/views ../back-end/public/pages ../back-end/public/assets
-                            npx ng build --configuration=production --output-path=../back-end/public
-                            node ./postbuild.js
+                            npm run build
                         '
 
                         echo "=== VALIDAÇÃO DOS ARTEFATOS ==="
