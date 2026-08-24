@@ -95,13 +95,6 @@ interface CadeiaValorReadRepositoryContract
     public function agregarPainelConsolidado(string $processoId, ?string $unidadeId = null): \stdClass;
 
     /**
-     * Retorna IDs da unidade informada + todas as subordinadas recursivamente.
-     *
-     * @return list<string>
-     */
-    public function coletarIdsUnidadesComSubordinadas(string $unidadeId): array;
-
-    /**
      * Lista entregas para múltiplos processos com filtros (usado com abrangência).
      *
      * @param list<string> $processoIds

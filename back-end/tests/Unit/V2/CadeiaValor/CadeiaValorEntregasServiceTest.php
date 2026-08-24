@@ -4,6 +4,8 @@ use App\Enums\StatusEnum;
 use App\Models\CadeiaValor;
 use App\Models\CadeiaValorProcesso;
 use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
+use App\Repository\UnidadeRepository;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangenciaPolicy;
 use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelAssembler;
 use App\V2\ArvoreInstitucional\DTOs\EntregaDetalheLinhaDTO;
 use App\V2\CadeiaValor\CadeiaValorEntregasService;
@@ -21,10 +23,12 @@ function criarEntregasService(
     ?CadeiaValorReadRepositoryContract $repo = null,
 ): CadeiaValorEntregasService {
     $repo = $repo ?? Mockery::mock(CadeiaValorReadRepositoryContract::class);
+    $unidadeRepo = Mockery::mock(UnidadeRepository::class);
     return new CadeiaValorEntregasService(
         $repo,
         new ArvoreInstitucionalPainelAssembler(),
         new CadeiaValorProcessoValidator($repo),
+        new ArvoreInstitucionalAbrangenciaPolicy($unidadeRepo),
     );
 }
 

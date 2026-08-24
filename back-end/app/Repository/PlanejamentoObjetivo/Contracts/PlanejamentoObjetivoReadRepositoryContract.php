@@ -26,13 +26,6 @@ interface PlanejamentoObjetivoReadRepositoryContract
     public function coletarIdsSubordinados(string $objetivoId): array;
 
     /**
-     * Ids da unidade e de todas as unidades hierarquicamente subordinadas (inclui a própria).
-     *
-     * @return list<string>
-     */
-    public function coletarIdsUnidadesComSubordinadas(string $unidadeId): array;
-
-    /**
      * Métricas de esforço e metadados por objetivo (uma linha por id).
      *
      * @param  list<string>  $ids

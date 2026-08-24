@@ -3,8 +3,10 @@
 use App\Exceptions\NotFoundException;
 use App\Models\PlanejamentoObjetivo;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
+use App\Repository\UnidadeRepository;
 use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphAssembler;
 use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelAssembler;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangenciaPolicy;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregasListagemDTO;
 use App\V2\Planejamento\Objetivo\EsforcoTotalGraphAssembler;
@@ -23,12 +25,15 @@ function criarPlanejamentoObjetivoService(
     ?EsforcoTotalGraphAssembler $assembler = null,
     ?\App\V2\Planejamento\Objetivo\ObjetivoArvoreVisualizacaoAssembler $arvoreAssembler = null,
     ?\App\V2\Planejamento\Objetivo\ObjetivoPainelAssembler $painelAssembler = null,
+    ?UnidadeRepository $unidadeRepo = null,
 ): PlanejamentoObjetivoService {
+    $unidadeRepo = $unidadeRepo ?? Mockery::mock(UnidadeRepository::class);
     return new PlanejamentoObjetivoService(
         $repository ?? Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class),
         $assembler ?? new EsforcoTotalGraphAssembler(new ArvoreInstitucionalEsforcoGraphAssembler()),
         $arvoreAssembler ?? new \App\V2\Planejamento\Objetivo\ObjetivoArvoreVisualizacaoAssembler(),
         $painelAssembler ?? new \App\V2\Planejamento\Objetivo\ObjetivoPainelAssembler(new ArvoreInstitucionalPainelAssembler()),
+        new ArvoreInstitucionalAbrangenciaPolicy($unidadeRepo),
     );
 }
 
@@ -384,16 +389,21 @@ describe('PlanejamentoObjetivoService::getEntregasDetalhamentoPainel', function 
         $objetivo = objetivoModel('obj-1');
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
-        $repo->shouldReceive('coletarIdsUnidadesComSubordinadas')
-            ->once()
-            ->with('un-1')
-            ->andReturn(['un-1', 'un-2']);
         $repo->shouldReceive('listarDetalhamentoEntregasPainel')
             ->once()
             ->with(['obj-1'], null, ['un-1', 'un-2'], null, null)
             ->andReturn([]);
 
-        criarPlanejamentoObjetivoService(repository: $repo)->getEntregasDetalhamentoPainel(
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+        $unidadeRepo->shouldReceive('getSubordinadasRecursivas')
+            ->once()
+            ->with(['un-1'])
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([
+                (object) ['id' => 'un-1'],
+                (object) ['id' => 'un-2'],
+            ]));
+
+        criarPlanejamentoObjetivoService(repository: $repo, unidadeRepo: $unidadeRepo)->getEntregasDetalhamentoPainel(
             'obj-1',
             unidadeId: 'un-1',
             abrangencia: 'unidade_e_subordinadas',

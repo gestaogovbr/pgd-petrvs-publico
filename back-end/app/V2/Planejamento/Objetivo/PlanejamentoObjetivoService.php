@@ -9,6 +9,7 @@ use App\Models\PlanejamentoObjetivo;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
 use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangencia;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangenciaPolicy;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoArvoreVisualizacaoDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregaPlanoItemDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregasListagemDTO;
@@ -24,6 +25,7 @@ class PlanejamentoObjetivoService
         private readonly EsforcoTotalGraphAssembler $esforcoGraphAssembler,
         private readonly ObjetivoArvoreVisualizacaoAssembler $arvoreVisualizacaoAssembler,
         private readonly ObjetivoPainelAssembler $painelAssembler,
+        private readonly ArvoreInstitucionalAbrangenciaPolicy $abrangenciaPolicy,
     ) {}
 
     /**
@@ -167,12 +169,11 @@ class PlanejamentoObjetivoService
         ?string $unidadeId,
         ?string $abrangencia,
     ): array {
-        return ArvoreInstitucionalAbrangencia::resolverEscopo(
+        return $this->abrangenciaPolicy->resolver(
             $objetivoId,
             $unidadeId,
-            $abrangencia,
+            ArvoreInstitucionalAbrangencia::tryFrom($abrangencia ?? ''),
             fn (string $id) => $this->repository->coletarIdsSubordinados($id),
-            fn (string $id) => $this->repository->coletarIdsUnidadesComSubordinadas($id),
         );
     }
 

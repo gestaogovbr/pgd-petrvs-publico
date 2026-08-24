@@ -102,28 +102,6 @@ class EloquentPlanejamentoObjetivoReadRepository extends AbstractEloquentReadRep
         return array_keys($seen);
     }
 
-    public function coletarIdsUnidadesComSubordinadas(string $unidadeId): array
-    {
-        $rows = DB::select(<<<SQL
-            WITH RECURSIVE arvore AS (
-                SELECT id
-                FROM unidades
-                WHERE id = ?
-                  AND deleted_at IS NULL
-
-                UNION ALL
-
-                SELECT u.id
-                FROM unidades u
-                INNER JOIN arvore a ON u.unidade_pai_id = a.id
-                WHERE u.deleted_at IS NULL
-            )
-            SELECT id FROM arvore
-        SQL, [$unidadeId]);
-
-        return array_map(static fn (\stdClass $row): string => (string) $row->id, $rows);
-    }
-
     /**
      * @param  list<string>  $ids
      * @return list<\stdClass>

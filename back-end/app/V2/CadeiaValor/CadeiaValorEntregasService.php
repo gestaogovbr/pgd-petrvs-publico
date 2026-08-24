@@ -6,6 +6,7 @@ namespace App\V2\CadeiaValor;
 
 use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
 use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangencia;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangenciaPolicy;
 use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoSupport;
 use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelAssembler;
 use App\V2\CadeiaValor\DTOs\CadeiaValorPainelEntregasDetalhamentoDTO;
@@ -17,6 +18,7 @@ class CadeiaValorEntregasService
         private readonly CadeiaValorReadRepositoryContract $repository,
         private readonly ArvoreInstitucionalPainelAssembler $painelAssembler,
         private readonly CadeiaValorProcessoValidator $validator,
+        private readonly ArvoreInstitucionalAbrangenciaPolicy $abrangenciaPolicy,
     ) {}
 
     /**
@@ -28,12 +30,11 @@ class CadeiaValorEntregasService
     {
         $this->validator->validar($cadeiaValorId, $processoId);
 
-        [$processoIds, $unidadeIds] = ArvoreInstitucionalAbrangencia::resolverEscopo(
+        [$processoIds, $unidadeIds] = $this->abrangenciaPolicy->resolver(
             $processoId,
             $filtros['unidade_id'] ?? null,
-            $filtros['abrangencia'] ?? null,
+            ArvoreInstitucionalAbrangencia::tryFrom($filtros['abrangencia'] ?? ''),
             fn (string $id) => $this->repository->coletarIdsFilhosRecursivo($id),
-            fn (string $id) => $this->repository->coletarIdsUnidadesComSubordinadas($id),
         );
 
         $filtrosQuery = [
