@@ -1,0 +1,116 @@
+@if (!processoId()) {
+  <div class="br-card detail-card detail-card--empty">
+    <div class="card-content p-3 text-muted">
+      Clique em um card da árvore para ver as informações.
+    </div>
+  </div>
+} @else if (loading()) {
+  <div class="br-card detail-card">
+    <div class="card-content p-3 d-flex align-items-center gap-2 text-muted">
+      <div class="br-loading" role="progressbar" aria-label="carregando painel"></div>
+      Carregando informações…
+    </div>
+  </div>
+} @else if (error() && !resumo()) {
+  <div class="br-card detail-card">
+    <div class="card-content p-3">
+      <div class="alert alert-warning mb-0" role="alert">{{ error() }}</div>
+    </div>
+  </div>
+} @else if (resumo(); as r) {
+  <div class="br-card detail-card">
+    <div class="card-content p-3 painel-lateral">
+      @if (processoId() !== consultadoId()) {
+        <div class="mb-3">
+          <br-button emphasis="secondary" (click)="centralizar.emit(processoId()!)">
+            Centralizar neste processo
+          </br-button>
+        </div>
+      }
+
+      <section class="painel-lateral__section">
+        <h6 class="painel-lateral__section-title">Informações gerais</h6>
+        <p class="mb-1"><strong>Nome:</strong> {{ r.processo_nome }}</p>
+        <p class="mb-0"><strong>Nível:</strong> {{ r.nivel }}</p>
+      </section>
+
+      <div class="painel-lateral__metricas" [class.painel-lateral__metricas--loading]="atualizandoMetricas()">
+
+        <section class="painel-lateral__section">
+          <h6 class="painel-lateral__section-title">Unidades</h6>
+          <p class="mb-1"><strong>Total de unidades envolvidas:</strong> {{ unidadesFiltro().length }}</p>
+          @if (unidadesFiltro().length > 0) {
+            <div class="painel-lateral__filtro">
+              <label class="form-label small mb-1" for="painel-filtro-unidade">Selecionar unidade:</label>
+              <select
+                id="painel-filtro-unidade"
+                class="form-select form-select-sm"
+                [value]="filtroUnidadeId()"
+                [disabled]="atualizandoMetricas()"
+                (change)="onFiltroUnidadeChange($event)"
+              >
+                <option value="">Todas</option>
+                @for (op of unidadesFiltro(); track op.id) {
+                  <option [value]="op.id">{{ op.label }}</option>
+                }
+              </select>
+            </div>
+          }
+        </section>
+
+        @if (atualizandoMetricas()) {
+          <div class="painel-lateral__metricas-overlay d-flex align-items-center gap-2 text-muted">
+            <div class="br-loading" role="progressbar" aria-label="atualizando métricas"></div>
+            Atualizando…
+          </div>
+        }
+
+        @if (error()) {
+          <div class="alert alert-warning py-2 px-3 small mb-3" role="alert">{{ error() }}</div>
+        }
+
+        <section class="painel-lateral__section">
+          <h6 class="painel-lateral__section-title">Esforço</h6>
+          @if (r.esforco.mostrar_disponivel) {
+            <p class="mb-1">
+              <strong>Esforço total disponível:</strong>
+              {{ formatHoras(r.esforco.disponivel_horas) }} h
+            </p>
+          }
+          @if (r.esforco.mostrar_planejado) {
+            <p class="mb-1">
+              <strong>Esforço total planejado:</strong>
+              {{ formatHoras(r.esforco.planejado_horas) }} h
+              <span class="text-muted">({{ formatPercent(r.esforco.planejado_percentual_disponivel) }} do disponível)</span>
+            </p>
+          }
+          @if (r.esforco.mostrar_executado) {
+            <p class="mb-0">
+              <strong>Esforço total executado:</strong>
+              {{ formatHoras(r.esforco.executado_horas) }} h
+              <span class="text-muted">({{ formatPercent(r.esforco.executado_percentual_planejado) }} do planejado)</span>
+            </p>
+          }
+        </section>
+
+        <section class="painel-lateral__section">
+          <h6 class="painel-lateral__section-title">Pessoas</h6>
+          <p class="mb-0"><strong>Total de participantes envolvidos:</strong> {{ r.pessoas.total_participantes }}</p>
+        </section>
+
+        <section class="painel-lateral__section">
+          <h6 class="painel-lateral__section-title">Entregas</h6>
+          <p class="mb-1"><strong>Total de entregas envolvidas:</strong> {{ r.entregas.total_entregas }}</p>
+          <p class="mb-3">
+            <strong>Entregas concluídas:</strong>
+            {{ r.entregas.entregas_concluidas }}
+            <span class="text-muted">({{ formatPercent(r.entregas.percentual_concluidas) }} do total)</span>
+          </p>
+          <br-button emphasis="secondary" (click)="abrirDetalhamento()">
+            Detalhamento das entregas
+          </br-button>
+        </section>
+      </div>
+    </div>
+  </div>
+}
