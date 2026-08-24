@@ -23,10 +23,10 @@
         <div class="card-content">
           <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
             <span class="zoom-controls" aria-label="Controles de zoom">
-              <br-button emphasis="tertiary" (click)="zoomOut()">Afastar</br-button>
-              <span class="zoom-controls__value">{{ zoom() * 100 | number:'1.0-0' }}%</span>
-              <br-button emphasis="tertiary" (click)="zoomIn()">Aproximar</br-button>
-              <br-button emphasis="tertiary" (click)="resetView()">100%</br-button>
+              <br-button emphasis="tertiary" (click)="panZoom.zoomOut()">Afastar</br-button>
+              <span class="zoom-controls__value">{{ panZoom.zoom() * 100 | number:'1.0-0' }}%</span>
+              <br-button emphasis="tertiary" (click)="panZoom.zoomIn()">Aproximar</br-button>
+              <br-button emphasis="tertiary" (click)="panZoom.reset()">100%</br-button>
             </span>
 
             <span class="arvore-expand-controls" aria-label="Expandir níveis">
@@ -36,7 +36,6 @@
               <br-button emphasis="secondary" [disabled]="!canExpandDown()" (click)="expandDown()">
                 Expandir abaixo
               </br-button>
-              <br-button emphasis="tertiary" (click)="resetLevels()">Restaurar janela</br-button>
             </span>
 
             <span class="legend-hint">

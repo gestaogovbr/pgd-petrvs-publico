@@ -9,8 +9,13 @@ namespace App\V2\Planejamento\Objetivo;
  */
 final class ObjetivoPainelEsforcoSupport
 {
+    /** CHD (horas/dia) usada quando o PT não possui carga_horaria informada (= 0). */
+    private const CHD_FALLBACK_HORAS = 8;
+
+    /** Divisor da jornada semanal para obter a CHD (usado pela Cadeia de Valor). */
     private const JORNADA_DIVISOR = 5.0;
 
+    /** Jornada semanal padrão em horas (usado pela Cadeia de Valor). */
     private const JORNADA_PADRAO = 40;
 
     /** PTs que contam para esforço planejado (pactuados). */
@@ -18,6 +23,18 @@ final class ObjetivoPainelEsforcoSupport
 
     /** PTs que contam para esforço executado. */
     private const PT_STATUS_EXECUTADO = ['CONCLUIDO'];
+
+    /**
+     * Expressão SQL da CHD (carga horária diária) do PT, fonte do cálculo de esforço.
+     * Usa a CHD registrada no próprio plano de trabalho (informação do período),
+     * com fallback fixo quando o PT tem carga_horaria zerada.
+     */
+    public static function chdPtSql(): string
+    {
+        $fallback = self::CHD_FALLBACK_HORAS;
+
+        return "COALESCE(NULLIF(pt.carga_horaria, 0), {$fallback})";
+    }
 
     public static function jornadaDivisor(): float
     {
