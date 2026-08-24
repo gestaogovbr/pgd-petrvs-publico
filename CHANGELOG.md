@@ -1,7 +1,7 @@
 ## 3.0.13 24/08/2026
 
 ### Adicionado
-
+- Exibição da CHD Bruta no bloco Informações Gerais do Plano de Trabalho
 
 
 ## 3.0.12 14/08/2026

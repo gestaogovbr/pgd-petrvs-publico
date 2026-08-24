@@ -409,6 +409,9 @@ describe('PlanoTrabalhoService::show', function () {
         $plano->id = 'plano-1';
         $plano->usuario_id = 'user-1';
         $plano->unidade_id = 'u-1';
+        $plano->data_inicio = '2026-07-27';
+        $plano->data_fim = '2026-07-31';
+        $plano->carga_horaria = 8.0;
 
         $usuario = Mockery::mock(Usuario::class)->makePartial();
         $usuario->shouldReceive('loadMissing')->with('perfil')->andReturnSelf();
@@ -464,6 +467,9 @@ describe('PlanoTrabalhoService::show', function () {
         $plano->id = 'plano-2';
         $plano->usuario_id = 'user-1';
         $plano->unidade_id = 'u-1';
+        $plano->data_inicio = '2026-07-27';
+        $plano->data_fim = '2026-07-31';
+        $plano->carga_horaria = 8.0;
         $plano->setRelation('entregas', new Collection([
             (object) ['id' => 'entrega-1'],
         ]));
@@ -502,6 +508,9 @@ describe('PlanoTrabalhoService::show', function () {
         $plano->id = 'plano-1';
         $plano->usuario_id = 'dono-1';
         $plano->unidade_id = 'unidade-1';
+        $plano->data_inicio = '2026-07-27';
+        $plano->data_fim = '2026-07-31';
+        $plano->carga_horaria = 8.0;
         $plano->setRelation('consolidacoes', new Collection([$consolidacao]));
 
         $this->readRepository->shouldReceive('findByIdComRelacoes')->andReturn($plano);
@@ -522,6 +531,9 @@ describe('PlanoTrabalhoService::show', function () {
         $plano->id = 'plano-1';
         $plano->usuario_id = 'outro-user';
         $plano->unidade_id = 'unidade-1';
+        $plano->data_inicio = '2026-07-27';
+        $plano->data_fim = '2026-07-31';
+        $plano->carga_horaria = 8.0;
         $plano->setRelation('consolidacoes', new Collection([$consolidacao]));
 
         $this->readRepository->shouldReceive('findByIdComRelacoes')->andReturn($plano);
@@ -544,6 +556,9 @@ describe('PlanoTrabalhoService::show', function () {
         $plano->id = 'plano-1';
         $plano->usuario_id = 'outro-user';
         $plano->unidade_id = 'unidade-1';
+        $plano->data_inicio = '2026-07-27';
+        $plano->data_fim = '2026-07-31';
+        $plano->carga_horaria = 8.0;
         $plano->setRelation('consolidacoes', new Collection([$consolidacao]));
 
         $this->readRepository->shouldReceive('findByIdComRelacoes')->andReturn($plano);
