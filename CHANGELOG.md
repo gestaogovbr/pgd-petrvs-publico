@@ -2,6 +2,10 @@
 
 ### Adicionado
 - Exibição da CHD Bruta no bloco Informações Gerais do Plano de Trabalho
+- Controle de permissões na visualização e edição de usuários: apenas quem possui permissão e está na mesma hierarquia de unidades pode visualizar ou editar outros agentes públicos. Alteração de perfil não pode ser feita pelo próprio usuário nem atribuir nível superior ao seu
+
+### Corrigido
+- Atribuições de usuários não eram salvas ou removidas corretamente ao editar pelo formulário
 
 
 ## 3.0.12 14/08/2026
