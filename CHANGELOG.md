@@ -3,6 +3,7 @@
 ### Adicionado
 - Exibição da CHD Bruta no bloco Informações Gerais do Plano de Trabalho
 - Controle de permissões na visualização e edição de usuários: apenas quem possui permissão e está na mesma hierarquia de unidades pode visualizar ou editar outros agentes públicos. Alteração de perfil não pode ser feita pelo próprio usuário nem atribuir nível superior ao seu
+- Tela de árvore da cadeia de valor com visualização hierárquica dos processos, painel lateral com resumo de unidades, esforço, pessoas e entregas, e modal de detalhamento com filtros por unidade e entrega
 
 ### Corrigido
 - Atribuições de usuários não eram salvas ou removidas corretamente ao editar pelo formulário

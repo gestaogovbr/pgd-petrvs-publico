@@ -1,0 +1,213 @@
+<div
+  class="detalhamento-modal-panel"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="detalhamento-modal-titulo"
+  (mousedown)="$event.stopPropagation()"
+  (click)="$event.stopPropagation()"
+>
+  <header class="detalhamento-modal-header">
+    <h2 id="detalhamento-modal-titulo" class="detalhamento-modal-header__title">Detalhamento das entregas</h2>
+    <button type="button" class="detalhamento-modal-header__close" aria-label="Fechar" (click)="onFechar()">
+      <i class="fas fa-times" aria-hidden="true"></i>
+    </button>
+  </header>
+
+  <div class="detalhamento-modal-content">
+    <div class="detalhamento-modal">
+      <div class="detalhamento-modal__filtros row g-2 mb-3">
+        <div class="col-12 col-md-4">
+          <label class="form-label small mb-1" for="filtro-unidade">Unidade</label>
+          <select
+            id="filtro-unidade"
+            class="form-select form-select-sm"
+            [value]="filtroUnidadeId()"
+            (change)="onFiltroUnidadeChange($event)"
+          >
+            <option value="">Todas</option>
+            @if (dados(); as d) {
+              @for (op of d.filtro_unidades; track op.id) {
+                <option [value]="op.id">{{ op.label }}</option>
+              }
+            }
+          </select>
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="form-label small mb-1" for="filtro-entrega">Entrega</label>
+          <select
+            id="filtro-entrega"
+            class="form-select form-select-sm"
+            [value]="filtroEntregaId()"
+            (change)="onFiltroEntregaChange($event)"
+          >
+            <option value="">Todas</option>
+            @if (dados(); as d) {
+              @for (op of d.filtro_entregas; track op.id) {
+                <option [value]="op.id">{{ op.label }}</option>
+              }
+            }
+          </select>
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1" for="filtro-inicio">Início</label>
+          <input
+            id="filtro-inicio"
+            type="date"
+            class="form-control form-control-sm"
+            [value]="filtroDataInicio()"
+            (change)="onFiltroDataInicioChange($event)"
+          />
+        </div>
+        <div class="col-6 col-md-2">
+          <label class="form-label small mb-1" for="filtro-fim">Fim</label>
+          <input
+            id="filtro-fim"
+            type="date"
+            class="form-control form-control-sm"
+            [value]="filtroDataFim()"
+            (change)="onFiltroDataFimChange($event)"
+          />
+        </div>
+        <div class="col-12 d-flex justify-content-end">
+          <br-button emphasis="tertiary" (click)="limparFiltros()">Limpar filtros</br-button>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="d-flex align-items-center gap-2 text-muted py-3">
+          <div class="br-loading" role="progressbar" aria-label="carregando detalhamento"></div>
+          Carregando detalhamento…
+        </div>
+      } @else if (error()) {
+        <div class="alert alert-warning" role="alert">{{ error() }}</div>
+      } @else if (dados(); as d) {
+        @if (d.itens.length === 0) {
+          <p class="text-muted mb-0">Nenhuma entrega encontrada para os filtros informados.</p>
+        } @else {
+          <div class="table-responsive detalhamento-modal__table-wrap">
+            <table class="table table-sm table-bordered detalhamento-modal__table mb-0">
+              <thead>
+                <tr>
+                  <th scope="col" class="detalhamento-modal__col-expand"></th>
+                  <th scope="col">Unidade</th>
+                  <th scope="col">PE / Status</th>
+                  <th scope="col">Vigência</th>
+                  <th scope="col">Entrega</th>
+                  <th scope="col" class="text-end">Meta</th>
+                  <th scope="col" class="text-end">Realizado</th>
+                  <th scope="col" class="text-end">Progresso</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of d.itens; track item.plano_entrega_entrega_id) {
+                  <tr
+                    class="detalhamento-modal__row"
+                    [class.detalhamento-modal__row--expanded]="linhaExpandida(item)"
+                  >
+                    <td class="text-center align-middle">
+                      <button
+                        type="button"
+                        class="btn btn-link btn-sm p-0 detalhamento-modal__expand-btn"
+                        [attr.aria-expanded]="linhaExpandida(item)"
+                        [attr.aria-label]="linhaExpandida(item) ? 'Recolher detalhes' : 'Expandir detalhes'"
+                        (click)="toggleLinha(item)"
+                      >
+                        <i
+                          class="bi"
+                          [class.bi-chevron-down]="linhaExpandida(item)"
+                          [class.bi-chevron-right]="!linhaExpandida(item)"
+                          aria-hidden="true"
+                        ></i>
+                      </button>
+                    </td>
+                    <td>
+                      <span class="fw-semibold">{{ item.unidade_sigla }}</span>
+                      <span class="d-block small text-muted">{{ item.unidade_nome }}</span>
+                    </td>
+                    <td>
+                      <span class="d-block">{{ item.plano_entrega_nome }}</span>
+                      <span class="badge rounded-pill text-bg-{{ statusColor(item.plano_entrega_status) }} mt-1">
+                        @if (statusIcon(item.plano_entrega_status)) {
+                          <i [class]="statusIcon(item.plano_entrega_status)" aria-hidden="true"></i>
+                        }
+                        {{ statusLabel(item.plano_entrega_status) }}
+                      </span>
+                    </td>
+                    <td class="text-nowrap">
+                      {{ formatVigencia(item.plano_entrega_vigencia_inicio, item.plano_entrega_vigencia_fim) }}
+                    </td>
+                    <td>{{ item.entrega_titulo }}</td>
+                    <td class="text-end text-nowrap">{{ formatMeta(item) }}</td>
+                    <td class="text-end text-nowrap">{{ formatRealizado(item) }}</td>
+                    <td class="text-end text-nowrap">{{ formatPercent(item.progresso_realizado) }}</td>
+                  </tr>
+                  @if (linhaExpandida(item)) {
+                    <tr class="detalhamento-modal__detail-row">
+                      <td colspan="8">
+                        <div class="detalhamento-modal__detail-grid">
+                          <div>
+                            <h6 class="detalhamento-modal__detail-title">Participantes</h6>
+                            <p class="mb-1">
+                              <strong>Total:</strong> {{ item.participantes_total }}
+                            </p>
+                            <p class="mb-1">
+                              <strong>Somente unidade própria:</strong> {{ item.participantes_somente_unidade_propria }}
+                            </p>
+                            <p class="mb-1">
+                              <strong>Somente outras unidades:</strong> {{ item.participantes_somente_outras_unidades }}
+                            </p>
+                            <p class="mb-0">
+                              <strong>Em ambas:</strong> {{ item.participantes_em_ambas }}
+                            </p>
+                          </div>
+                          <div>
+                            <h6 class="detalhamento-modal__detail-title">Esforço</h6>
+                            @if (item.mostrar_disponivel) {
+                              <p class="mb-1">
+                                <strong>Esforço disponível:</strong> {{ formatHoras(item.esforco_disponivel_horas) }} h
+                              </p>
+                            }
+                            @if (item.mostrar_planejado) {
+                              <p class="mb-1">
+                                <strong>Esforço planejado:</strong> {{ formatHoras(item.esforco_planejado_horas) }} h
+                              </p>
+                            }
+                            @if (item.mostrar_executado) {
+                              <p class="mb-0">
+                                <strong>Esforço executado:</strong> {{ formatHoras(item.esforco_executado_horas) }} h
+                              </p>
+                            }
+                          </div>
+                          <div>
+                            <h6 class="detalhamento-modal__detail-title">Meta</h6>
+                            <p class="mb-1"><strong>Planejada:</strong> {{ formatMeta(item) }}</p>
+                            <p class="mb-1"><strong>Realizada:</strong> {{ formatRealizado(item) }}</p>
+                            <p class="mb-0"><strong>Progresso:</strong> {{ formatPercent(item.progresso_realizado) }}</p>
+                          </div>
+                          <div>
+                            <h6 class="detalhamento-modal__detail-title">Registro de Execução</h6>
+                            @if (item.registro_execucao) {
+                              <p class="detalhamento-modal__registro-execucao mb-0">
+                                {{ item.registro_execucao }}
+                              </p>
+                            } @else {
+                              <p class="mb-0 text-muted">Sem registro</p>
+                            }
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <footer class="detalhamento-modal-footer">
+    <br-button emphasis="secondary" (click)="onFechar()">Fechar</br-button>
+  </footer>
+</div>
