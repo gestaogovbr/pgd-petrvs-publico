@@ -332,3 +332,67 @@ describe('PlanoTrabalhoIndexValidacao — perfil Consulta', function () {
         expect($resultado->usuarioId)->toBe('outro-user');
     });
 });
+
+describe('PlanoTrabalhoIndexValidacao — perfil Adm Master', function () {
+
+    test('adm master não tem restrição de unidade', function () {
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-master';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::ADMINISTRADOR_MASTER->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-master')->andReturn($usuario);
+        $this->integranteRepo->shouldNotReceive('findAllComAtribuicoesAtivasByUsuario');
+        $this->unidadeRepo->shouldNotReceive('getSubordinadasRecursivas');
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'vigentes' => true,
+            'usuarioLogadoId' => 'user-master',
+        ]);
+
+        $resultado = $this->validacao->validar($filtro);
+
+        expect($resultado->unidadesId)->toBeNull();
+    });
+
+    test('adm master pode visualizar planos de qualquer usuário', function () {
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-master';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::ADMINISTRADOR_MASTER->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-master')->andReturn($usuario);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'usuario_id' => 'outro-user',
+            'vigentes' => true,
+            'usuarioLogadoId' => 'user-master',
+        ]);
+
+        $resultado = $this->validacao->validar($filtro);
+
+        expect($resultado->usuarioId)->toBe('outro-user');
+    });
+
+    test('adm master pode filtrar por qualquer unidade sem restrição', function () {
+        $usuario = Mockery::mock(Usuario::class)->makePartial();
+        $usuario->id = 'user-master';
+        $perfil = Mockery::mock(Perfil::class)->makePartial();
+        $perfil->nivel = PerfilEnum::ADMINISTRADOR_MASTER->value;
+        $usuario->setRelation('perfil', $perfil);
+
+        $this->usuarioRepo->shouldReceive('findById')->with('user-master')->andReturn($usuario);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'unidade_id' => ['unidade-qualquer'],
+            'vigentes' => true,
+            'usuarioLogadoId' => 'user-master',
+        ]);
+
+        $resultado = $this->validacao->validar($filtro);
+
+        expect($resultado->unidadesId)->toBe(['unidade-qualquer']);
+    });
+});

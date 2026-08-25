@@ -300,7 +300,7 @@ return new class extends Migration
             CREATE TEMPORARY TABLE `{$descricoes}` (
                 `keeper_id` CHAR(36) NOT NULL PRIMARY KEY,
                 `descricao_unificada` LONGTEXT NOT NULL
-            ) ENGINE=InnoDB
+            ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
         SQL);
 
         DB::statement(<<<SQL

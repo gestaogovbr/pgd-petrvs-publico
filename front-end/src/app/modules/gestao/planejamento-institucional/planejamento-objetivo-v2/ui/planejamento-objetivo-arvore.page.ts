@@ -17,6 +17,7 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { distinctUntilChanged, filter, firstValueFrom, map } from 'rxjs';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { NavigateService } from 'src/app/services/navigate.service';
+import { SvgPanZoomService } from 'src/app/v2/services/svg-pan-zoom.service';
 import {
   PlanejamentoObjetivoEsforcoApiClient,
   type EsforcoObjetivoNodeApi,
@@ -72,13 +73,15 @@ const ROTA_ARVORE = ['gestao', 'planejamento', 'objetivo-arvore'] as const;
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, PlanejamentoObjetivoPainelLateralComponent],
   templateUrl: './planejamento-objetivo-arvore.page.html',
-  styleUrl: './planejamento-objetivo-arvore.page.scss'
+  styleUrl: './planejamento-objetivo-arvore.page.scss',
+  providers: [SvgPanZoomService]
 })
 export class PlanejamentoObjetivoArvorePage {
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
   private readonly api = inject(PlanejamentoObjetivoEsforcoApiClient);
   private readonly go = inject(NavigateService);
+  readonly panZoom = inject(SvgPanZoomService);
 
   @ViewChild('svgRef', { static: false }) svgRef?: ElementRef<SVGSVGElement>;
 
@@ -88,16 +91,11 @@ export class PlanejamentoObjetivoArvorePage {
   readonly selectedNodeId = signal<string | null>(null);
   readonly levelsAbove = signal(DEFAULT_LEVELS);
   readonly levelsBelow = signal(DEFAULT_LEVELS);
-  readonly zoom = signal(1);
-  readonly panX = signal(0);
-  readonly panY = signal(0);
 
   readonly nodeW = NODE_W;
   readonly nodeH = NODE_H;
   readonly nodeHalfW = NODE_HALF_W;
   readonly nodeHalfH = NODE_HALF_H;
-
-  private panDrag: { startX: number; startY: number; originPanX: number; originPanY: number } | null = null;
 
   readonly consultadoId = computed(() => this.dados()?.objetivo_raiz_id ?? null);
 
@@ -127,15 +125,8 @@ export class PlanejamentoObjetivoArvorePage {
   readonly canvasH = computed(() => this.layout().height);
 
   readonly viewBoxString = computed(() => {
-    const zoom = this.zoom();
-    const cw = this.canvasW();
-    const ch = this.canvasH();
-    const w = Math.max(cw, 800) / zoom;
-    const h = Math.max(ch, 520) / zoom;
     const focal = this.treeNodes().find(n => n.isConsultado);
-    const cx = focal ? focal.x + this.panX() : cw / 2 + this.panX();
-    const cy = focal ? focal.y + this.panY() : ch / 2 + this.panY();
-    return `${cx - w / 2} ${cy - h / 2} ${w} ${h}`;
+    return this.panZoom.computeViewBox(this.canvasW(), this.canvasH(), focal?.x, focal?.y);
   });
 
   readonly selectedNode = computed(() => {
@@ -159,9 +150,7 @@ export class PlanejamentoObjetivoArvorePage {
     this.loadError.set(null);
     this.levelsAbove.set(DEFAULT_LEVELS);
     this.levelsBelow.set(DEFAULT_LEVELS);
-    this.panX.set(0);
-    this.panY.set(0);
-    this.zoom.set(1);
+    this.panZoom.reset();
 
     try {
       const data = await firstValueFrom(this.api.getArvoreVisualizacao(id));
@@ -201,11 +190,6 @@ export class PlanejamentoObjetivoArvorePage {
     }
   }
 
-  resetLevels(): void {
-    this.levelsAbove.set(DEFAULT_LEVELS);
-    this.levelsBelow.set(DEFAULT_LEVELS);
-  }
-
   abrirArvoreOutroObjetivo(objetivoId: string, event?: Event): void {
     event?.stopPropagation();
     event?.preventDefault();
@@ -216,48 +200,19 @@ export class PlanejamentoObjetivoArvorePage {
   }
 
   onPanDown(event: PointerEvent): void {
-    if (event.button !== 0) {
-      return;
-    }
-    event.preventDefault();
-    this.panDrag = {
-      startX: event.clientX,
-      startY: event.clientY,
-      originPanX: this.panX(),
-      originPanY: this.panY()
-    };
-  }
-
-  zoomIn(): void {
-    this.zoom.update(v => Math.min(2.5, Number((v + 0.1).toFixed(2))));
-  }
-
-  zoomOut(): void {
-    this.zoom.update(v => Math.max(0.55, Number((v - 0.1).toFixed(2))));
-  }
-
-  resetView(): void {
-    this.zoom.set(1);
-    this.panX.set(0);
-    this.panY.set(0);
+    this.panZoom.setSvgRef(this.svgRef!);
+    this.panZoom.setViewBoxFn(() => this.viewBoxString());
+    this.panZoom.onPanDown(event);
   }
 
   @HostListener('window:pointermove', ['$event'])
   onPointerMove(event: PointerEvent): void {
-    if (!this.panDrag || !this.svgRef?.nativeElement) {
-      return;
-    }
-    const rect = this.svgRef.nativeElement.getBoundingClientRect();
-    const parts = this.viewBoxString().split(' ').map(Number);
-    const scaleX = parts[2] / rect.width;
-    const scaleY = parts[3] / rect.height;
-    this.panX.set(this.panDrag.originPanX - (event.clientX - this.panDrag.startX) * scaleX);
-    this.panY.set(this.panDrag.originPanY - (event.clientY - this.panDrag.startY) * scaleY);
+    this.panZoom.onPointerMove(event);
   }
 
   @HostListener('window:pointerup')
   onPointerUp(): void {
-    this.panDrag = null;
+    this.panZoom.onPointerUp();
   }
 
   private mensagemErro(err: unknown): string {
