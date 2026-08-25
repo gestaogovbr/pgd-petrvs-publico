@@ -41,9 +41,9 @@ function showMockAlvoComLotacao(string $id, int $nivel, string $unidadeId): Usua
     $usuario->shouldReceive('loadMissing')->andReturnSelf();
     $usuario->setRelation('perfil', $perfil);
 
-    $lotacao = Mockery::mock(UnidadeIntegrante::class)->makePartial();
-    $lotacao->unidade_id = $unidadeId;
-    $usuario->setRelation('lotacoes', new Collection([$lotacao]));
+    $integrante = Mockery::mock(UnidadeIntegrante::class)->makePartial();
+    $integrante->unidade_id = $unidadeId;
+    $usuario->setRelation('areasTrabalho', new Collection([$integrante]));
 
     return $usuario;
 }
