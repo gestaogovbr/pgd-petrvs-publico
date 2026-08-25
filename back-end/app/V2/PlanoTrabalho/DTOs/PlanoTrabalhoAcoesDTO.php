@@ -11,10 +11,11 @@ final readonly class PlanoTrabalhoAcoesDTO
         public bool $arquivar = false,
         public bool $desarquivar = false,
         public bool $encerrar = false,
+        public bool $cancelar = false,
     ) {}
 
     /**
-     * @return array{editar: bool, arquivar: bool, desarquivar: bool, encerrar: bool}
+     * @return array{editar: bool, arquivar: bool, desarquivar: bool, encerrar: bool, cancelar: bool}
      */
     public function toArray(): array
     {
@@ -23,6 +24,7 @@ final readonly class PlanoTrabalhoAcoesDTO
             'arquivar' => $this->arquivar,
             'desarquivar' => $this->desarquivar,
             'encerrar' => $this->encerrar,
+            'cancelar' => $this->cancelar,
         ];
     }
 }

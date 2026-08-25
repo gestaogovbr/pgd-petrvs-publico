@@ -49,7 +49,8 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
       unidade_id: { default: "" },
       perfil_id: { default: null },
       atribuicoes: { default: null },
-      situacao: { default: null }
+      situacao: { default: null },
+      dispensa_pt: { default: null }
     });
     this.justificativaForm = this.fh.FormBuilder({
       justificativa: { default: ""},
@@ -172,6 +173,9 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     }
     if (filter?.controls.situacao?.value?.length) {
       result.push(["situacao", "==", filter?.controls.situacao?.value]);
+    }
+    if (filter?.controls.dispensa_pt?.value?.length) {
+      result.push(["dispensa_pt", "==", filter?.controls.dispensa_pt?.value]);
     }
     return result;
   }

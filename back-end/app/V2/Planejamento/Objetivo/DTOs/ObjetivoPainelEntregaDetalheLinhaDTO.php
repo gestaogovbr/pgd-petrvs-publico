@@ -8,6 +8,8 @@ final class ObjetivoPainelEntregaDetalheLinhaDTO implements \JsonSerializable
 {
     public function __construct(
         public readonly string $plano_entrega_entrega_id,
+        public readonly string $planejamento_objetivo_id,
+        public readonly string $planejamento_objetivo_nome,
         public readonly string $unidade_id,
         public readonly string $unidade_sigla,
         public readonly string $unidade_nome,
@@ -17,6 +19,10 @@ final class ObjetivoPainelEntregaDetalheLinhaDTO implements \JsonSerializable
         public readonly string $plano_entrega_vigencia_inicio,
         public readonly ?string $plano_entrega_vigencia_fim,
         public readonly string $entrega_titulo,
+        public readonly string $entrega_descricao,
+        public readonly string $descricao_meta,
+        /** @var list<array{key: string, value: string, icon?: string|null, color?: string|null}> */
+        public readonly array $etiquetas,
         public readonly float $progresso_esperado,
         public readonly float $progresso_realizado,
         public readonly bool $homologado,
@@ -38,6 +44,8 @@ final class ObjetivoPainelEntregaDetalheLinhaDTO implements \JsonSerializable
     {
         return [
             'plano_entrega_entrega_id' => $this->plano_entrega_entrega_id,
+            'planejamento_objetivo_id' => $this->planejamento_objetivo_id,
+            'planejamento_objetivo_nome' => $this->planejamento_objetivo_nome,
             'unidade_id' => $this->unidade_id,
             'unidade_sigla' => $this->unidade_sigla,
             'unidade_nome' => $this->unidade_nome,
@@ -47,6 +55,9 @@ final class ObjetivoPainelEntregaDetalheLinhaDTO implements \JsonSerializable
             'plano_entrega_vigencia_inicio' => $this->plano_entrega_vigencia_inicio,
             'plano_entrega_vigencia_fim' => $this->plano_entrega_vigencia_fim,
             'entrega_titulo' => $this->entrega_titulo,
+            'entrega_descricao' => $this->entrega_descricao,
+            'descricao_meta' => $this->descricao_meta,
+            'etiquetas' => $this->etiquetas,
             'progresso_esperado' => $this->progresso_esperado,
             'progresso_realizado' => $this->progresso_realizado,
             'homologado' => $this->homologado,

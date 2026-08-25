@@ -215,7 +215,9 @@ describe('PlanoTrabalhoEntregaStoreValidator::validar', function () {
         ], 'plano-1', 'entrega-1');
 
         $this->validator->validar($dto);
-    })->throwsNoExceptions();
+
+        expect(true)->toBeTrue();
+    });
 });
 
 describe('PlanoTrabalhoEntregaStoreValidator::validarDestroy', function () {

@@ -601,8 +601,10 @@ class UsuarioService extends ServiceBase
                     $query->whereIn('atribuicao', $condition[2]);
                 });
             } else if (is_array($condition) && $condition[0] == "situacao") {
-                if ($condition[2] === 'DISPENSA_PT') {
-                    $hoje = Carbon::today()->toDateString();
+                $query->where('situacao_siape', $condition[2]);
+            } else if (is_array($condition) && $condition[0] == "dispensa_pt") {
+                $hoje = Carbon::today()->toDateString();
+                if ($condition[2] === 'Sim') {
                     $query->whereHas('dispensaPlanoTrabalho', function (Builder $q) use ($hoje) {
                         $q->whereDate('data_inicio', '<=', $hoje)
                             ->where(function (Builder $q2) use ($hoje) {
@@ -610,8 +612,14 @@ class UsuarioService extends ServiceBase
                                     ->orWhereDate('data_fim', '>=', $hoje);
                             });
                     });
-                } else {
-                    $query->where('situacao_siape', $condition[2]);
+                } elseif ($condition[2] === 'Não') {
+                    $query->whereDoesntHave('dispensaPlanoTrabalho', function (Builder $q) use ($hoje) {
+                        $q->whereDate('data_inicio', '<=', $hoje)
+                            ->where(function (Builder $q2) use ($hoje) {
+                                $q2->whereNull('data_fim')
+                                    ->orWhereDate('data_fim', '>=', $hoje);
+                            });
+                    });
                 }
             } else if (is_array($condition) && $condition[0] == "programa_id") {
                 if ($condition[2]) {
