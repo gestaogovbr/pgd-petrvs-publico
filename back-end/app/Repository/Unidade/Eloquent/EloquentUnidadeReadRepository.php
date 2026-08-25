@@ -433,4 +433,12 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->toBase()
             ->keyBy('id');
     }
+
+    public function findRaiz(): ?Unidade
+    {
+        return $this->model->newQuery()
+            ->whereNull('unidade_pai_id')
+            ->whereNull('deleted_at')
+            ->first();
+    }
 }

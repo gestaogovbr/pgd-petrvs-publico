@@ -179,7 +179,7 @@ export class GestaoPgdPage implements OnInit {
 
     this.pdfPainel.imprimir(
       {
-        painel: 'Gestão do PGD',
+        painel: 'Abrangência do PGD',
         unidade: this.unidadeAtualLabel(),
         periodo: this.periodoAtualLabel() || undefined,
       },

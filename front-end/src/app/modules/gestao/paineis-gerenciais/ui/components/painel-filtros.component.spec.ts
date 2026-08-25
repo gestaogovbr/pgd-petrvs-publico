@@ -270,6 +270,72 @@ describe('PainelFiltrosComponent', () => {
     });
   });
 
+  describe('Seleção de ano e mês (modo referencia)', () => {
+    beforeEach(() => {
+      component.modoData = 'referencia';
+      component['tipoConsulta'].set('historico');
+      component['unidadeSelecionada'].set({ id: 'u1', sigla: 'S', nome: 'N' });
+      component['periodos'].set(['2024-01', '2024-02', '2024-03', '2025-06', '2025-07']);
+    });
+
+    it('deve derivar anos disponíveis em ordem decrescente', () => {
+      expect(component.anoOptions().map(o => o.value)).toEqual(['2025', '2024']);
+    });
+
+    it('deve retornar meses vazios quando nenhum ano selecionado', () => {
+      expect(component.mesOptions()).toEqual([]);
+    });
+
+    it('deve filtrar meses disponíveis pelo ano selecionado', () => {
+      component.onAnoChange({ target: { value: '2024' } });
+      const meses = component.mesOptions();
+      expect(meses.map(m => m.value)).toEqual(['01', '02', '03']);
+      expect(meses.map(m => m.label)).toEqual(['Jan', 'Fev', 'Mar']);
+    });
+
+    it('deve limpar mês ao trocar ano', () => {
+      component['mesSelecionado'].set('01');
+      component.onAnoChange({ target: { value: '2025' } });
+      expect(component.mesSelecionado()).toBe('');
+    });
+
+    it('deve emitir filtros ao selecionar mês com ano já definido', () => {
+      component.onAnoChange({ target: { value: '2024' } });
+      spyOn(component.filtrosChange, 'emit');
+
+      component.onMesChange({ target: { value: '03' } });
+
+      expect(component.filtrosChange.emit).toHaveBeenCalledWith(jasmine.objectContaining({
+        tipo_consulta: 'historico',
+        unidade_id: 'u1',
+        data_inicio: '2024-01-01',
+        data_fim: '2024-03-31',
+      }));
+    });
+
+    it('não deve emitir filtros ao selecionar apenas ano sem mês', () => {
+      spyOn(component.filtrosChange, 'emit');
+      component.onAnoChange({ target: { value: '2024' } });
+      expect(component.filtrosChange.emit).not.toHaveBeenCalled();
+    });
+
+    it('deve limpar ano e mês ao trocar tipo de consulta', () => {
+      component['anoSelecionado'].set('2024');
+      component['mesSelecionado'].set('01');
+      component.onTipoConsultaChange({ target: { value: 'situacao_atual' } });
+      expect(component.anoSelecionado()).toBe('');
+      expect(component.mesSelecionado()).toBe('');
+    });
+
+    it('deve limpar ano e mês ao selecionar nova unidade', () => {
+      component['anoSelecionado'].set('2024');
+      component['mesSelecionado'].set('02');
+      component.selecionarUnidade({ id: 'u2', sigla: 'X', nome: 'Y' });
+      expect(component.anoSelecionado()).toBe('');
+      expect(component.mesSelecionado()).toBe('');
+    });
+  });
+
   describe('Computed mostrarPeriodo', () => {
     it('deve ser true em referencia + historico + unidade selecionada', () => {
       component.modoData = 'referencia';

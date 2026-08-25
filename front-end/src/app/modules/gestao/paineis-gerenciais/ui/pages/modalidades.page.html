@@ -1,28 +1,20 @@
 <app-breadcrumb></app-breadcrumb>
 
 <div class="container-fluid px-4 py-3">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <painel-filtros
-      [unidadeInicialId]="unidadeInicialId()"
-      [unidadeInicialSigla]="unidadeInicialSigla()"
-      [unidadeInicialNome]="unidadeInicialNome()"
-      [permitirHistorico]="false"
-      (filtrosChange)="onFiltrosChange($event)"
-      (unidadeChange)="onUnidadeChange($event)"
-      class="flex-grow-1" />
-
+  <div class="d-flex justify-content-end mb-3">
     <br-button emphasis="secondary" (click)="exportarPdf()" class="btn-exportar" [isLoading]="carregandoAlgum()" [disabled]="carregandoAlgum()">
       <i class="fas fa-file-pdf mr-1" aria-hidden="true"></i>Exportar PDF
     </br-button>
   </div>
 
+  <!-- Gráficos 1 e 2: Teletrabalho no Exterior (não dependem do filtro de unidade) -->
   <div class="row g-3">
     <div class="col-md-6">
       <indicador-barra-vertical
         [dados]="teletrabalhoSubstituicao()"
         [carregando]="carregandoSubstituicao()"
-        [titulo]="textos.substituicao.titulo"
-        [informacaoAdicional]="textos.substituicao.info"
+        [titulo]="textos().substituicao.titulo"
+        [informacaoAdicional]="textos().substituicao.info"
         [origemDados]="origemDados"
         [saibaMaisRoute]="['relatorios', 'agentes']"
         [saibaMaisQueryParams]="saibaMaisParamsSubstituicao()" />
@@ -31,19 +23,33 @@
       <indicador-barra-vertical
         [dados]="teletrabalhoDiscricionario()"
         [carregando]="carregandoDiscricionario()"
-        [titulo]="textos.discricionario.titulo"
-        [informacaoAdicional]="textos.discricionario.info"
+        [titulo]="textos().discricionario.titulo"
+        [informacaoAdicional]="textos().discricionario.info"
         [origemDados]="origemDados"
         [saibaMaisRoute]="['relatorios', 'agentes']"
         [saibaMaisQueryParams]="saibaMaisParamsDiscricionario()" />
     </div>
+  </div>
 
+  <!-- Filtro de unidade (afeta apenas o gráfico 3) -->
+  <div class="mt-4 mb-3">
+    <painel-filtros
+      [unidadeInicialId]="unidadeInicialId()"
+      [unidadeInicialSigla]="unidadeInicialSigla()"
+      [unidadeInicialNome]="unidadeInicialNome()"
+      [permitirHistorico]="false"
+      (filtrosChange)="onFiltrosChange($event)"
+      (unidadeChange)="onUnidadeChange($event)" />
+  </div>
+
+  <!-- Gráfico 3: Modalidades por unidade (depende do filtro) -->
+  <div class="row g-3">
     <div class="col-md-6 offset-md-3">
       <indicador-barra-horizontal
         [dados]="modalidadesPorUnidade()"
         [carregando]="carregandoModalidades()"
-        [titulo]="textos.modalidadesPorUnidade.titulo"
-        [informacaoAdicional]="textos.modalidadesPorUnidade.info"
+        [titulo]="textos().modalidadesPorUnidade.titulo"
+        [informacaoAdicional]="textos().modalidadesPorUnidade.info"
         [origemDados]="origemDados"
         [siglaPai]="unidadeInicialSigla()"
         [drillAtivo]="!!drillUnidadeModalidades()"

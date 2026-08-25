@@ -27,27 +27,50 @@
     @if (modoData === 'range') {
       <div class="col-12 col-sm-6 col-md-2">
         <div class="br-input w-100">
-          <label for="data-inicio">Data Inicial</label>
+          <label for="data-inicio">Data de Consulta Inicial</label>
           <input id="data-inicio" type="date" [value]="dataInicio()" (change)="onDataInicioChange($event)" />
         </div>
       </div>
       <div class="col-12 col-sm-6 col-md-2">
         <div class="br-input w-100">
-          <label for="data-fim">Data Final</label>
+          <label for="data-fim">
+            Data de Consulta Final
+            <span class="painel-filtros__info" title="Valores vigentes dentro do intervalo selecionado" aria-label="Informação sobre o filtro de datas">
+                <i class="bi bi-info-circle" aria-hidden="true"></i>
+            </span>
+          </label>
           <input id="data-fim" type="date" [value]="dataFim()" (change)="onDataFimChange($event)" />
         </div>
       </div>
     }
 
     @if (modoData === 'referencia' && mostrarPeriodo()) {
-      <div class="col-12 col-md-3">
-        <br-select
-          label="Data de Referência"
-          placeholder="Selecione o período"
-          [options]="periodosOptions()"
-          (valueChange)="onPeriodoChange($event)"
-          class="w-100">
-        </br-select>
+      <div class="col-12 col-md-2">
+        <div class="br-input w-100">
+          <label class="m-0">
+            Data da Consulta
+            <span class="painel-filtros__info" title="Dados se referem ao último dia do mês selecionado" aria-label="Informação sobre a data da consulta">
+              <i class="bi bi-info-circle" aria-hidden="true"></i>
+            </span>
+          </label>
+          <br-select
+            placeholder="Ano"
+            [options]="anoOptions()"
+            (valueChange)="onAnoChange($event)"
+            class="w-100">
+          </br-select>
+        </div>
+      </div>
+      <div class="col-12 col-md-2">
+        <div class="br-input w-100">
+          <label class="m-0">&nbsp;</label>
+          <br-select
+            placeholder="Mês"
+            [options]="mesOptions()"
+            (valueChange)="onMesChange($event)"
+            class="w-100">
+          </br-select>
+        </div>
       </div>
     }
   }

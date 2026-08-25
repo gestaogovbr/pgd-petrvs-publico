@@ -33,7 +33,7 @@ export class AlinhamentoDesempenhoPage implements OnInit {
 
   readonly textos = {
     alinhamento: {
-      titulo: 'Alinhamento institucional das Unidades por nível estratégico',
+      titulo: 'Alinhamento institucional das Entregas por nível estratégico',
       info: 'Apresenta a distribuição percentual das entregas de acordo com seu nível de alinhamento institucional, considerando entregas vinculadas ao Planejamento Institucional, à Cadeia de Valor, a ambos e entregas sem vinculação. São consideradas vinculadas ao Planejamento Institucional as entregas cujo encadeamento alcance o nível mais alto do planejamento (nível 1). São consideradas vinculadas à Cadeia de Valor as entregas cujo encadeamento alcance, no mínimo, o terceiro nível de processo (nível 3). A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
     },
     avaliacoesPE: {

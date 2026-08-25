@@ -203,12 +203,10 @@ describe('ModalidadesPage', () => {
       modalidades$.next(mockIndicador());
     });
 
-    it('deve limpar dados anteriores ao trocar filtro', () => {
+    it('deve limpar dados de modalidades ao trocar filtro', () => {
       resetApiSubjects();
       component.onFiltrosChange({ tipo_consulta: 'historico', unidade_id: 'u2', data_inicio: '2024-01-01', data_fim: '2024-06-30' });
 
-      expect(component.teletrabalhoSubstituicao()).toBeNull();
-      expect(component.teletrabalhoDiscricionario()).toBeNull();
       expect(component.modalidadesPorUnidade()).toBeNull();
     });
 
@@ -221,51 +219,54 @@ describe('ModalidadesPage', () => {
       expect(component.drillUnidadeModalidades()).toBeNull();
     });
 
-    it('deve reativar flags de carregamento ao trocar filtro', () => {
+    it('deve reativar flag de carregamento de modalidades ao trocar filtro', () => {
       resetApiSubjects();
       component.onFiltrosChange({ tipo_consulta: 'situacao_atual', unidade_id: 'u2' });
 
-      expect(component.carregandoSubstituicao()).toBeTrue();
-      expect(component.carregandoDiscricionario()).toBeTrue();
       expect(component.carregandoModalidades()).toBeTrue();
     });
 
-    it('deve chamar APIs com os novos filtros', () => {
+    it('deve NÃO recarregar teletrabalho ao trocar filtro', () => {
       resetApiSubjects();
       apiSpy.getTeletrabalhoSubstituicao.calls.reset();
       apiSpy.getTeletrabalhoDiscricionario.calls.reset();
+
+      component.onFiltrosChange({ tipo_consulta: 'situacao_atual', unidade_id: 'u2' });
+
+      expect(apiSpy.getTeletrabalhoSubstituicao).not.toHaveBeenCalled();
+      expect(apiSpy.getTeletrabalhoDiscricionario).not.toHaveBeenCalled();
+    });
+
+    it('deve chamar API de modalidades com os novos filtros', () => {
+      resetApiSubjects();
       apiSpy.getModalidadesPorUnidade.calls.reset();
 
       const novosFiltros: FiltrosPainel = { tipo_consulta: 'historico', unidade_id: 'u3', data_inicio: '2024-01-01', data_fim: '2024-12-31' };
       component.onFiltrosChange(novosFiltros);
 
-      expect(apiSpy.getTeletrabalhoSubstituicao).toHaveBeenCalledWith(novosFiltros);
-      expect(apiSpy.getTeletrabalhoDiscricionario).toHaveBeenCalledWith(novosFiltros);
       expect(apiSpy.getModalidadesPorUnidade).toHaveBeenCalledWith(novosFiltros);
     });
 
-    it('respostas tardias da chamada anterior são ignoradas graças ao clear prévio', () => {
-      // Primeiro carregamento completo, dados de u1 já populados
-      expect(component.teletrabalhoSubstituicao()).not.toBeNull();
+    it('respostas tardias da chamada anterior de modalidades são ignoradas graças ao clear prévio', () => {
+      // Primeiro carregamento completo, dados já populados
+      expect(component.modalidadesPorUnidade()).not.toBeNull();
 
-      // Troca para u2 - novos subjects
-      const newSub$ = new Subject<IndicadorTeletrabalho>();
-      apiSpy.getTeletrabalhoSubstituicao.and.returnValue(newSub$.asObservable());
-      apiSpy.getTeletrabalhoDiscricionario.and.returnValue(new Subject<IndicadorTeletrabalho>().asObservable());
-      apiSpy.getModalidadesPorUnidade.and.returnValue(new Subject<Indicador>().asObservable());
+      // Troca para u2 - novo subject
+      const newMod$ = new Subject<Indicador>();
+      apiSpy.getModalidadesPorUnidade.and.returnValue(newMod$.asObservable());
 
       component.onFiltrosChange({ tipo_consulta: 'situacao_atual', unidade_id: 'u2' });
 
       // Dados limpos
-      expect(component.teletrabalhoSubstituicao()).toBeNull();
-      expect(component.carregandoSubstituicao()).toBeTrue();
+      expect(component.modalidadesPorUnidade()).toBeNull();
+      expect(component.carregandoModalidades()).toBeTrue();
 
       // Resposta do segundo request chega
-      const novoDado = mockTeletrabalho(15, 20);
-      newSub$.next(novoDado);
+      const novoDado = mockIndicador();
+      newMod$.next(novoDado);
 
-      expect(component.teletrabalhoSubstituicao()).toEqual(novoDado);
-      expect(component.carregandoSubstituicao()).toBeFalse();
+      expect(component.modalidadesPorUnidade()).toEqual(novoDado);
+      expect(component.carregandoModalidades()).toBeFalse();
     });
   });
 
