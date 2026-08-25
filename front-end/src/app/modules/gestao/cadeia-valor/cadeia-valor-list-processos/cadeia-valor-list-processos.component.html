@@ -38,6 +38,9 @@
           </div>
           
           <div class="btn-group btn-group-sm ms-2" *ngIf="editingId !== processo.id">
+            <button type="button" class="btn btn-outline-secondary" (click)="onArvoreClick(processo)" title="Árvore">
+              <i class="bi bi-diagram-2"></i>
+            </button>
             <button type="button" class="btn btn-outline-info" (click)="editingId = processo.id" title="Editar">
               <i class="bi bi-pencil-square"></i>
             </button>
