@@ -153,26 +153,38 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         $query->select(DB::raw(1))
             ->from('unidades_integrantes as ui_t')
-            ->join('unidades_integrantes_atribuicoes as uia_t', 'uia_t.unidade_integrante_id', '=', 'ui_t.id')
+            ->join('unidades_integrantes_atribuicoes as uia_t', function ($join) {
+                $join->on('uia_t.unidade_integrante_id', '=', 'ui_t.id')
+                    ->whereNull('uia_t.deleted_at');
+            })
             ->join('unidades_integrantes as ui_s', function ($join) use ($usuarioId) {
                 $join->on('ui_s.unidade_id', '=', 'ui_t.unidade_id')
-                    ->where('ui_s.usuario_id', '=', $usuarioId);
+                    ->where('ui_s.usuario_id', '=', $usuarioId)
+                    ->whereNull('ui_s.deleted_at');
             })
-            ->join('unidades_integrantes_atribuicoes as uia_s', 'uia_s.unidade_integrante_id', '=', 'ui_s.id')
-            ->where('uia_t.atribuicao', 'GESTOR')
-            ->where('uia_s.atribuicao', 'GESTOR_SUBSTITUTO')
+            ->join('unidades_integrantes_atribuicoes as uia_s', function ($join) {
+                $join->on('uia_s.unidade_integrante_id', '=', 'ui_s.id')
+                    ->whereNull('uia_s.deleted_at');
+            })
+            ->where('uia_t.atribuicao', Atribuicao::GESTOR->value)
+            ->where('uia_s.atribuicao', Atribuicao::GESTOR_SUBSTITUTO->value)
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
-            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id');
+            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
+            ->whereNull('ui_t.deleted_at');
     }
 
     private function subqueryPlanoEhDoGestorTitular(\Illuminate\Database\Query\Builder $query): void
     {
         $query->select(DB::raw(1))
             ->from('unidades_integrantes as ui_t')
-            ->join('unidades_integrantes_atribuicoes as uia_t', 'uia_t.unidade_integrante_id', '=', 'ui_t.id')
-            ->where('uia_t.atribuicao', 'GESTOR')
+            ->join('unidades_integrantes_atribuicoes as uia_t', function ($join) {
+                $join->on('uia_t.unidade_integrante_id', '=', 'ui_t.id')
+                    ->whereNull('uia_t.deleted_at');
+            })
+            ->where('uia_t.atribuicao', Atribuicao::GESTOR->value)
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
-            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id');
+            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
+            ->whereNull('ui_t.deleted_at');
     }
 
     private function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId): void
@@ -403,7 +415,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('usuario_id', $usuarioId)
             ->where('data_inicio', '<=', $dataFim)
             ->where('data_fim', '>=', $dataInicio)
-            ->where('status', '!=', 'CANCELADO')
+            ->where('status', '!=', StatusEnum::CANCELADO->value)
             ->exists();
     }
 
@@ -413,7 +425,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             ->where('usuario_id', $usuarioId)
             ->where('data_inicio', '<=', $dataFim)
             ->where('data_fim', '>=', $dataInicio)
-            ->where('status', '!=', 'CANCELADO')
+            ->where('status', '!=', StatusEnum::CANCELADO->value)
             ->where('id', '!=', $excluirPlanoId)
             ->exists();
     }
@@ -603,7 +615,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                     ->whereNull('usuarios.deleted_at');
             })
             ->whereIn('planos_trabalhos.unidade_id', $unidadeIds)
-            ->whereIn('planos_trabalhos.status', ['ATIVO', 'CONCLUIDO', 'AVALIADO']);
+            ->whereIn('planos_trabalhos.status', [StatusEnum::ATIVO->value, StatusEnum::CONCLUIDO->value, StatusEnum::AVALIADO->value]);
 
         if ($filtros['data_inicial'] !== null) {
             $query->where('planos_trabalhos.data_inicio', '>=', $filtros['data_inicial']);
