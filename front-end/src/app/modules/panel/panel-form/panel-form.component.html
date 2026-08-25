@@ -123,6 +123,11 @@
             <div *ngIf="form?.controls!.tipo_integracao.value == 'SIAPE'" class="row">
                 <separator title="API Consulta SIAPE" labeInfo="As informações dessa tela são referentes às inseridas no cadastro do SIAPE"></separator>
                 <div class="row">
+                    <div class="col-12">
+                        <top-alert type="danger" [message]="'Atenção: alterar o Código do Órgão inicia uma nova estrutura organizacional. As unidades do código anterior serão marcadas como antigas e a próxima integração poderá criar novas unidades e alterar lotações. Confirme o código e planeje a execução antes de gravar.'"></top-alert>
+                    </div>
+                </div>
+                <div class="row">
                     <input-text [size]="6" label="URL" controlName="integracao_siape_url" [attr.maxlength]=250></input-text>
                     <input-text [size]="6" label="Sigla do Sistema" controlName="integracao_siape_sigla" [attr.maxlength]=250></input-text>
                 </div>
@@ -137,7 +142,7 @@
                     <input-text password [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
-                    <input-text [size]="4" label="Codigo do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]=250></input-text>
+                    <input-text [size]="4" label="Código do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]="20"></input-text>
                     <input-select [size]="4" label="Existe Pagador" controlName="integracao_siape_existepag" [items]="lookup.EXISTE_PAGADOR"></input-select>
                     <input-select [size]="4" label="Tipo de Vínculo" controlName="integracao_siape_tipovinculo" [items]="lookup.TIPO_VINCULO"></input-select>
                 </div>

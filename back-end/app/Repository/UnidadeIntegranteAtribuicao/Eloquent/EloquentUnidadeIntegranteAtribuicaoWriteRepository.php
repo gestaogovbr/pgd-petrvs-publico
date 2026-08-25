@@ -28,4 +28,16 @@ class EloquentUnidadeIntegranteAtribuicaoWriteRepository extends AbstractEloquen
 
         return (bool) $model->delete();
     }
+
+    public function deleteAtivasByUnidadeIntegranteIds(array $unidadeIntegranteIds): int
+    {
+        if ($unidadeIntegranteIds === []) {
+            return 0;
+        }
+
+        return $this->model->newQuery()
+            ->whereIn('unidade_integrante_id', $unidadeIntegranteIds)
+            ->whereNull('deleted_at')
+            ->delete();
+    }
 }

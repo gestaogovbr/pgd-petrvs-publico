@@ -35,6 +35,7 @@ use App\Models\QuestionarioPreenchimento;
 use App\Models\StatusJustificativa;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
+use App\Services\CodigoOrgaoService;
 use App\Services\UtilService;
 use App\Support\ModalidadePgd;
 use App\Contracts\HasStatusHistory;
@@ -101,6 +102,8 @@ class UsuarioConfig
  */
 class Usuario extends Authenticatable implements AuditableContract, HasStatusHistory
 {
+    public const USUARIO_EXTERNO = 1;
+
     public function getStatusFkColumn(): string
     {
         return 'usuario_id';
@@ -511,7 +514,8 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
 
     public function integracaoServidor()
     {
-        return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf');
+        return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf')
+            ->where('codigo_orgao', CodigoOrgaoService::atual());
     }
 
    /**

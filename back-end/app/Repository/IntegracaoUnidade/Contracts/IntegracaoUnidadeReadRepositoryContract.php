@@ -12,12 +12,12 @@ interface IntegracaoUnidadeReadRepositoryContract
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function getUnidadesComChefias(): \Illuminate\Support\Collection;
+    public function getUnidadesComChefias(string $codigoOrgao): \Illuminate\Support\Collection;
 
-    public function findByCodigo(string $codigo): ?\App\Models\IntegracaoUnidade;
+    public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?\App\Models\IntegracaoUnidade;
 
     /**
      * @return \Illuminate\Support\Collection<int, non-falsy-string>
      */
-    public function getCodigosByCpfTitular(string $cpf, ?string $codigoExcluido = null): \Illuminate\Support\Collection;
+    public function getCodigosByCpfTitular(string $cpf, string $codigoOrgao, ?string $codigoExcluido = null): \Illuminate\Support\Collection;
 }

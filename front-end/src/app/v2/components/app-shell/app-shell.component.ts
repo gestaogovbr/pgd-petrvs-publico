@@ -240,6 +240,10 @@ export class AppShellV2Component implements OnInit {
     return this.auth.unidadesVinculadas || [];
   }
 
+  get temUnidadeAntiga(): boolean {
+    return this.unidadesVinculadas.some((unidade) => unidade.unidade_antiga);
+  }
+
   get logoSrc(): string {
     return this.gb.getResourcePath('assets/images/icon_' + this.gb.theme + '.png');
   }
