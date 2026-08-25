@@ -190,6 +190,13 @@ export class LookupService implements IIndexable {
     { key: "ATIVO_TEMPORARIO", value: "Ativo Temporário" }
   ];
 
+  public USUARIO_SITUACAO_FILTRO: LookupItem[] = [
+    { key: "ATIVO", value: "Ativo" },
+    { key: "INATIVO", value: "Inativo" },
+    { key: "ATIVO_TEMPORARIO", value: "Ativo Temporário" },
+    { key: "DISPENSA_PT", value: "Dispensa de PT" }
+  ];
+
   public ATIVIDADE_STATUS: LookupItem[] = [
     { key: "INCLUIDO", value: "Não iniciado", icon: "bi bi-stop-circle", color: "warning" },
     { key: "INICIADO", value: "Iniciado", icon: "bi bi-play-circle", color: "info" },

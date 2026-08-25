@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Atribuicao;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Exceptions\DBException;
 use App\Exceptions\NotFoundException;
@@ -569,6 +570,11 @@ class UsuarioService extends ServiceBase
         $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
+
+        if ($this->querySolicitaDispensaPlanoTrabalho($data)) {
+            $this->aplicarSelectElegivelDispensaPt($data);
+        }
+
         foreach ($data["where"] as $condition) {
             if (is_array($condition) && $condition[0] == "lotacao") {
                 $lotacao = $condition;
@@ -594,6 +600,19 @@ class UsuarioService extends ServiceBase
                 $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $query) use ($condition) {
                     $query->whereIn('atribuicao', $condition[2]);
                 });
+            } else if (is_array($condition) && $condition[0] == "situacao") {
+                if ($condition[2] === 'DISPENSA_PT') {
+                    $hoje = Carbon::today()->toDateString();
+                    $query->whereHas('dispensaPlanoTrabalho', function (Builder $q) use ($hoje) {
+                        $q->whereDate('data_inicio', '<=', $hoje)
+                            ->where(function (Builder $q2) use ($hoje) {
+                                $q2->whereNull('data_fim')
+                                    ->orWhereDate('data_fim', '>=', $hoje);
+                            });
+                    });
+                } else {
+                    $query->where('situacao_siape', $condition[2]);
+                }
             } else if (is_array($condition) && $condition[0] == "programa_id") {
                 if ($condition[2]) {
                     $query->whereHas('participacoesProgramas', function (Builder $query) use ($condition) {
@@ -617,6 +636,44 @@ class UsuarioService extends ServiceBase
         $data["where"] = $where;
 
         return $data;
+    }
+
+    /**
+     * Inclui EXISTS de elegibilidade (chefia titular/substituta em unidade executora)
+     * apenas quando a listagem solicita a relação de dispensa.
+     */
+    private function querySolicitaDispensaPlanoTrabalho(array $data): bool
+    {
+        foreach ($data['with'] ?? [] as $with) {
+            $relation = is_string($with) ? explode(':', $with, 2)[0] : '';
+            if ($relation === 'dispensaPlanoTrabalho' || $relation === 'dispensa_plano_trabalho') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function aplicarSelectElegivelDispensaPt(array &$data): void
+    {
+        $gestor = Atribuicao::GESTOR->value;
+        $substituto = Atribuicao::GESTOR_SUBSTITUTO->value;
+
+        $data['select'] = $data['select'] ?? ['usuarios.*'];
+        $data['select'][] = DB::raw(
+            "EXISTS (
+                SELECT 1
+                FROM unidades_integrantes ui
+                INNER JOIN unidades_integrantes_atribuicoes uia
+                    ON uia.unidade_integrante_id = ui.id AND uia.deleted_at IS NULL
+                INNER JOIN unidades u
+                    ON u.id = ui.unidade_id AND u.deleted_at IS NULL
+                WHERE ui.usuario_id = usuarios.id
+                  AND ui.deleted_at IS NULL
+                  AND u.executora = 1
+                  AND uia.atribuicao IN ('{$gestor}', '{$substituto}')
+            ) AS dispensa_pt_elegivel"
+        );
     }
 
     public function proxySearch($query, &$data, &$text)

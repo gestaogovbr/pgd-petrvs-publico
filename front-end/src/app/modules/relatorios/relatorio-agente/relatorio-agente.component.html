@@ -292,6 +292,64 @@
                 <span>{{dao!.getDateFormatted(row.data_final_pedagio)}}</span>
             </ng-template>
         </column>
+
+        <column title="Dispensa de Plano de Trabalho"
+            [template]="columnDispensaPt"
+            [titleTemplate]="titleDispensaPt" [verticalAlign]="'bottom'"
+            [width]="180"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleDispensaPt>
+                <input-select
+                    [items]="[{key: 'Sim', value: 'Sim'}, {key: 'Não', value: 'Não'}]"
+                    [control]="filter!.controls.dispensa_plano_trabalho"
+                    controlName="dispensa_plano_trabalho"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select>
+            </ng-template>
+            <ng-template let-row="row" #columnDispensaPt>
+                <span>{{ row.dispensa_plano_trabalho || 'Não' }}</span>
+            </ng-template>
+        </column>
+
+        <column title="Início da Dispensa de Plano de Trabalho"
+            [template]="columnInicioDispensaPt"
+            [titleTemplate]="titleInicioDispensaPt" [verticalAlign]="'bottom'"
+            [width]="180"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleInicioDispensaPt>
+                <input-datetime
+                    date
+                    controlName="data_inicio_dispensa_pt"
+                    [control]="filter!.controls.data_inicio_dispensa_pt"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnInicioDispensaPt>
+                <span>{{dao!.getDateFormatted(row.data_inicio_dispensa_pt)}}</span>
+            </ng-template>
+        </column>
+
+        <column title="Fim da Dispensa de Plano de Trabalho"
+            [template]="columnFimDispensaPt"
+            [titleTemplate]="titleFimDispensaPt" [verticalAlign]="'bottom'"
+            [width]="180"
+            [align]="'center'"
+        >
+            <ng-template let-header="header" #titleFimDispensaPt>
+                <input-datetime
+                    date
+                    controlName="data_fim_dispensa_pt"
+                    [control]="filter!.controls.data_fim_dispensa_pt"
+                    (blur)="onValueChange($event)"
+                ></input-datetime>
+            </ng-template>
+            <ng-template let-row="row" #columnFimDispensaPt>
+                <span>{{dao!.getDateFormatted(row.data_fim_dispensa_pt)}}</span>
+            </ng-template>
+        </column>
     </columns>
     <pagination
         [rows]="rowsLimit"

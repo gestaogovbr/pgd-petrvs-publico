@@ -41,14 +41,15 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     /* Inicializações */
     this.title = this.lex.translate("Usuários");
     this.code = "MOD_CFG_USER";
-    this.join = ["perfil:id,nome"];
+    this.join = ["perfil:id,nome", "dispensaPlanoTrabalho"];
     
     this.filter = this.fh.FormBuilder({
       usuario: { default: "" },
       cpf: { default: "" },
       unidade_id: { default: "" },
       perfil_id: { default: null },
-      atribuicoes: { default: null }
+      atribuicoes: { default: null },
+      situacao: { default: null }
     });
     this.justificativaForm = this.fh.FormBuilder({
       justificativa: { default: ""},
@@ -106,11 +107,49 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
       result.push({ label: "Ativar temporariamente", icon: "bi bi-check2",  onClick: (usuario: Usuario) => { this.abrirFormAtivar(usuario); }});
     }
 
+    if (this.podeAbrirDispensaPt(row)) {
+      result.push({
+        label: this.possuiDispensaPt(row) ? "Alterar dispensa de Plano de Trabalho" : "Dispensar de Plano de Trabalho",
+        icon: "bi bi-file-earmark-minus",
+        onClick: (usuario: Usuario) => this.abrirDispensaPt(usuario)
+      });
+    }
+
     if(row.perfil.nivel === Perfil.NIVEL.COLABORADOR && !!row.usuario_externo ) {
       result.push(this.OPTION_EXCLUIR)
     }
 
     return result;
+  }
+
+  public podeAbrirDispensaPt(row: any): boolean {
+    const nivel = this.auth.usuario?.perfil?.nivel ?? -1;
+    const perfilAutorizado = nivel === Perfil.NIVEL.DESENVOLVEDOR
+      || nivel === Perfil.NIVEL.ADM_MASTER
+      || nivel === Perfil.NIVEL.ADM_NEGOCIAL;
+    if (!perfilAutorizado) {
+      return false;
+    }
+    // RN05/RN15: só elegível (chefia executora) ou quem já possui dispensa formalizada.
+    return !!row?.dispensa_pt_elegivel || this.possuiDispensaPt(row);
+  }
+
+  public possuiDispensaPt(row: any): boolean {
+    return !!(row?.dispensa_plano_trabalho || row?.dispensa_pt_vigente);
+  }
+
+  public abrirDispensaPt(usuario: Usuario): void {
+    this.go.navigate(
+      { route: ['configuracoes', 'usuario', usuario.id, 'dispensa-plano-trabalho'] },
+      {
+        modalClose: async (modalResult) => {
+          if (modalResult) {
+            this.refresh();
+            this.cdRef.detectChanges();
+          }
+        }
+      }
+    );
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -130,6 +169,9 @@ export class UsuarioListComponent extends PageListBase<Usuario, UsuarioDaoServic
     }
     if (filter?.controls.cpf?.value?.length) {
       result.push(["cpf", "==", filter?.controls.cpf?.value]);
+    }
+    if (filter?.controls.situacao?.value?.length) {
+      result.push(["situacao", "==", filter?.controls.situacao?.value]);
     }
     return result;
   }

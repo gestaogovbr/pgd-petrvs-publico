@@ -10,6 +10,7 @@
             <input-text [size]="3" [label]="lex.translate('Usuário')" controlName="usuario" [control]="filter!.controls.usuario" placeholder="Nome" [attr.maxlength]=250></input-text>
             <input-search [size]="3" [label]="lex.translate('Lotação')" [control]="filter!.controls.unidade_id" controlName="unidade_id" [dao]="unidadeDao"></input-search>
             <input-select [size]="3" [label]="lex.translate('Perfil')" controlName="perfil_id" nullable [control]="filter!.controls.perfil_id" [dao]="perfilDao"></input-select>
+            <input-select [size]="3" label="Situação" controlName="situacao" nullable itemNull="Todas" [control]="filter!.controls.situacao" [items]="lookup.USUARIO_SITUACAO_FILTRO"></input-select>
             <input-check [size]="12" [label]="lex.translate('Atribuições')" controlName="atribuicoes" [control]="filter!.controls.atribuicoes" [items]="lookup.UNIDADE_INTEGRANTE_TIPO" [inline]="true"></input-check>
         </div>
     </filter>
@@ -42,6 +43,9 @@
             <ng-template let-row="row" #columnSituacaoSiape>
                 <label class="py-1 px-3 rounded-4" [ngClass]="{'text-bg-success': row.situacao_siape == 'ATIVO', 'text-bg-primary': row.situacao_siape == 'ATIVO_TEMPORARIO', 'text-bg-light': row.situacao_siape == 'INATIVO'}">
                     <small class="fw-medium">{{lookup.getValue(lookup.USUARIO_SITUACAO_SIAPE, row.situacao_siape) || "-"}}</small>
+                </label>
+                <label class="py-1 px-3 rounded-4 text-bg-info ms-1" *ngIf="row.dispensa_pt_vigente">
+                    <small class="fw-medium">Dispensa de PT</small>
                 </label>
             </ng-template>
         </column>

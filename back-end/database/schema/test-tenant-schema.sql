@@ -769,6 +769,58 @@ CREATE TABLE `disciplinas` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `dispensas_plano_trabalho`
+--
+
+DROP TABLE IF EXISTS `dispensas_plano_trabalho`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dispensas_plano_trabalho` (
+  `id` char(36) NOT NULL,
+  `usuario_id` char(36) NOT NULL,
+  `data_inicio` date NOT NULL COMMENT 'Início da dispensa de Plano de Trabalho',
+  `data_fim` date DEFAULT NULL COMMENT 'Fim da dispensa; null = vigente até encerramento',
+  `ciencia_em` datetime NOT NULL COMMENT 'Momento em que a ciência foi fornecida',
+  `responsavel_id` char(36) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `dispensas_plano_trabalho_usuario_id_unique` (`usuario_id`),
+  KEY `dispensas_plano_trabalho_responsavel_id_foreign` (`responsavel_id`),
+  CONSTRAINT `dispensas_plano_trabalho_responsavel_id_foreign` FOREIGN KEY (`responsavel_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `dispensas_plano_trabalho_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `dispensas_plano_trabalho_historico`
+--
+
+DROP TABLE IF EXISTS `dispensas_plano_trabalho_historico`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dispensas_plano_trabalho_historico` (
+  `id` char(36) NOT NULL,
+  `dispensa_id` char(36) NOT NULL,
+  `usuario_id` char(36) NOT NULL,
+  `data_inicio` date NOT NULL,
+  `data_fim` date DEFAULT NULL,
+  `operacao` enum('FORMALIZAR','ALTERAR','ENCERRAR') NOT NULL,
+  `ciencia_em` datetime NOT NULL,
+  `responsavel_id` char(36) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `dispensas_plano_trabalho_historico_dispensa_id_foreign` (`dispensa_id`),
+  KEY `dispensas_plano_trabalho_historico_usuario_id_foreign` (`usuario_id`),
+  KEY `dispensas_plano_trabalho_historico_responsavel_id_foreign` (`responsavel_id`),
+  CONSTRAINT `dispensas_plano_trabalho_historico_dispensa_id_foreign` FOREIGN KEY (`dispensa_id`) REFERENCES `dispensas_plano_trabalho` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `dispensas_plano_trabalho_historico_responsavel_id_foreign` FOREIGN KEY (`responsavel_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `dispensas_plano_trabalho_historico_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `documentos`
 --
 

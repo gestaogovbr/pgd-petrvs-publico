@@ -617,6 +617,7 @@ use App\V2\PlanoTrabalho\Log\PlanoTrabalhoLogController as PlanoTrabalhoLogV2;
 use App\V2\TipoModalidade\TipoModalidadeController as TipoModalidadeV2;
 use App\V2\TipoMotivoAfastamento\TipoMotivoAfastamentoController as TipoMotivoAfastamentoV2;
 use App\V2\Usuario\UsuarioController as UsuarioV2;
+use App\V2\Usuario\DispensaPlanoTrabalho\DispensaPlanoTrabalhoController as DispensaPlanoTrabalhoV2;
 use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
 use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
@@ -683,6 +684,9 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('usuario/cpf/{cpf}/unidades', [UsuarioV2::class, 'buscarUnidadesVinculadasPorCpf']);
     Route::get('usuario/{usuarioId}', [UsuarioV2::class, 'buscarPorId'])->whereUuid('usuarioId');
     Route::patch('usuario/nome-social', [UsuarioV2::class, 'atualizarNomeSocial']);
+    Route::get('usuario/{id}/dispensa-plano-trabalho', [DispensaPlanoTrabalhoV2::class, 'show'])->whereUuid('id');
+    Route::post('usuario/{id}/dispensa-plano-trabalho', [DispensaPlanoTrabalhoV2::class, 'store'])->whereUuid('id');
+    Route::post('usuario/{id}/dispensa-plano-trabalho/encerrar', [DispensaPlanoTrabalhoV2::class, 'encerrar'])->whereUuid('id');
 
     Route::get('unidade', [UnidadeV2::class, 'buscarPorNomeOuCodigo']);
     Route::get('unidade/{unidadeId}/is-gestor-hierarquia', [UnidadeV2::class, 'isGestorHierarquia']);
