@@ -30,6 +30,8 @@ export interface UnidadeInicial {
   unidade_id: string | null;
   unidade_sigla: string | null;
   unidade_nome: string | null;
+  unidade_raiz_id: string | null;
+  unidade_raiz_sigla: string | null;
 }
 
 export interface FiltrosPainel {

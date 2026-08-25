@@ -68,4 +68,9 @@ interface UnidadeReadRepositoryContract
      * @return SupportCollection
      */
     public function buscarComLocalidade(array $unidadeIds): SupportCollection;
+
+    /**
+     * Retorna a unidade raiz da entidade (unidade sem pai).
+     */
+    public function findRaiz(): ?Unidade;
 }

@@ -36,11 +36,11 @@ export class ModalidadesPage implements OnInit {
 
   readonly textos = computed(() => ({
     substituicao: {
-      titulo: `Participação na modalidade Teletrabalho no Exterior (VIII, art. 12, D.11072/22 - substituição) - ${this.unidadeInicialSigla() || '...'}`,
+      titulo: `Participação na modalidade Teletrabalho no Exterior (VIII, art. 12, D.11072/22 - substituição) - ${this.siglaRaiz() || '...'}`,
       info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no inciso VII (substituição) na Unidade Autorizadora, permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
     },
     discricionario: {
-      titulo: `Participação na modalidade Teletrabalho no Exterior (§7º, art. 12, D.11072/22 - discricionário) - ${this.unidadeInicialSigla() || '...'}`,
+      titulo: `Participação na modalidade Teletrabalho no Exterior (§7º, art. 12, D.11072/22 - discricionário) - ${this.siglaRaiz() || '...'}`,
       info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no §7º, art. 12, D.11072/22 (discricionário) na Unidade Autorizadora, permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
     },
     modalidadesPorUnidade: {
@@ -52,6 +52,8 @@ export class ModalidadesPage implements OnInit {
   readonly unidadeInicialId = signal('');
   readonly unidadeInicialSigla = signal('');
   readonly unidadeInicialNome = signal('');
+  private readonly siglaRaiz = signal('');
+  private readonly idRaiz = signal('');
 
   readonly teletrabalhoSubstituicao = signal<IndicadorTeletrabalho | null>(null);
   readonly teletrabalhoDiscricionario = signal<IndicadorTeletrabalho | null>(null);
@@ -88,17 +90,25 @@ export class ModalidadesPage implements OnInit {
       this.unidadeInicialId.set(unidade.unidade_id);
       this.unidadeInicialSigla.set(unidade.unidade_sigla ?? '');
       this.unidadeInicialNome.set(unidade.unidade_nome ?? '');
+      this.siglaRaiz.set(unidade.unidade_raiz_sigla ?? unidade.unidade_sigla ?? '');
+      this.idRaiz.set(unidade.unidade_raiz_id ?? unidade.unidade_id ?? '');
       this.unidadeAtualLabel.set(`${unidade.unidade_sigla ?? ''} - ${unidade.unidade_nome ?? ''}`);
 
-      this.carregarDados({
+      const filtrosIniciais: FiltrosPainel = {
         tipo_consulta: 'situacao_atual',
-        unidade_id: unidade.unidade_id,
+        unidade_id: unidade.unidade_id!,
+      };
+
+      this.carregarTeletrabalho({
+        tipo_consulta: 'situacao_atual',
+        unidade_id: unidade.unidade_raiz_id ?? unidade.unidade_id!,
       });
+      this.carregarModalidades(filtrosIniciais);
     });
   }
 
   onFiltrosChange(filtros: FiltrosPainel): void {
-    this.carregarDados(filtros);
+    this.carregarModalidades(filtros);
   }
 
   onUnidadeChange(unidade: { sigla: string; nome: string }): void {
@@ -150,23 +160,17 @@ export class ModalidadesPage implements OnInit {
   private buildSaibaMaisParams(modalidade: string): Record<string, string> {
     return {
       modalidadeSouGov: modalidade,
-      unidade_id: this.unidadeInicialId(),
+      unidade_id: this.idRaiz(),
       incluir_unidades_subordinadas: 'true',
     };
   }
 
-  private carregarDados(filtros: FiltrosPainel): void {
-    this.filtrosAtuais.set(filtros);
-
+  private carregarTeletrabalho(filtros: FiltrosPainel): void {
     this.teletrabalhoSubstituicao.set(null);
     this.teletrabalhoDiscricionario.set(null);
-    this.modalidadesPorUnidade.set(null);
-
-    this.drillUnidadeModalidades.set(null);
 
     this.carregandoSubstituicao.set(true);
     this.carregandoDiscricionario.set(true);
-    this.carregandoModalidades.set(true);
 
     this.api.getTeletrabalhoSubstituicao(filtros).subscribe({
       next: dados => { this.teletrabalhoSubstituicao.set(dados); this.carregandoSubstituicao.set(false); },
@@ -177,6 +181,13 @@ export class ModalidadesPage implements OnInit {
       next: dados => { this.teletrabalhoDiscricionario.set(dados); this.carregandoDiscricionario.set(false); },
       error: () => this.carregandoDiscricionario.set(false),
     });
+  }
+
+  private carregarModalidades(filtros: FiltrosPainel): void {
+    this.filtrosAtuais.set(filtros);
+    this.modalidadesPorUnidade.set(null);
+    this.drillUnidadeModalidades.set(null);
+    this.carregandoModalidades.set(true);
 
     this.api.getModalidadesPorUnidade(filtros).subscribe({
       next: dados => { this.modalidadesPorUnidade.set(dados); this.carregandoModalidades.set(false); },

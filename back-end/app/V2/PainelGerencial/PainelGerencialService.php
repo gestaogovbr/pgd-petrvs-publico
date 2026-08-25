@@ -63,13 +63,17 @@ class PainelGerencialService
         }
 
         if (!$unidadeInicial) {
-            return ['unidade_id' => null, 'unidade_sigla' => null, 'unidade_nome' => null];
+            return ['unidade_id' => null, 'unidade_sigla' => null, 'unidade_nome' => null, 'unidade_raiz_id' => null, 'unidade_raiz_sigla' => null];
         }
+
+        $unidadeRaiz = $this->unidadeRepository->findRaiz();
 
         return [
             'unidade_id' => $unidadeInicial->id,
             'unidade_sigla' => $unidadeInicial->sigla,
             'unidade_nome' => $unidadeInicial->nome,
+            'unidade_raiz_id' => $unidadeRaiz?->id,
+            'unidade_raiz_sigla' => $unidadeRaiz?->sigla,
         ];
     }
 

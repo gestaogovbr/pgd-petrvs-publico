@@ -141,4 +141,9 @@ class UnidadeRepository
     {
         return $this->readRepository->buscarComLocalidade($unidadeIds);
     }
+
+    public function findRaiz(): ?Unidade
+    {
+        return $this->readRepository->findRaiz();
+    }
 }
