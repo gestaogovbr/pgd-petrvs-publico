@@ -37,69 +37,10 @@ interface CadeiaValorReadRepositoryContract
     public function buscarDadosGeraisPainel(string $processoId, string $cadeiaValorId): \stdClass;
 
     /**
-     * Agrega esforço, participantes e entregas numa única query.
-     *
-     * @return \stdClass Campos: esforco_disponivel_horas, esforco_planejado_horas, esforco_executado_horas,
-     *                          tem_pt_pactuado, tem_pt_concluido, tem_pe_homologado,
-     *                          participantes_somente_unidade_propria, participantes_somente_outras_unidades,
-     *                          participantes_em_ambas, total_entregas, entregas_concluidas
-     */
-    public function agregarPainelEsforcoPessoasEntregas(string $processoId, ?string $unidadeId = null): \stdClass;
-
-    /**
-     * Lista as entregas inline com participantes, esforço e registro de execução para o detalhamento.
-     *
-     * @param array{unidade_id?: string|null, plano_entrega_entrega_id?: string|null, data_inicio?: string|null, data_fim?: string|null} $filtros
-     * @return list<\stdClass>
-     */
-    public function listarDetalhamentoEntregasPainel(string $processoId, array $filtros = []): array;
-
-    /**
-     * Retorna lista de unidades vinculadas ao processo para popular dropdown de filtro.
-     *
-     * @return list<array{id: string, label: string}>
-     */
-    public function listarFiltroUnidadesPainel(string $processoId): array;
-
-    /**
-     * Retorna lista de entregas vinculadas ao processo para popular dropdown de filtro.
-     *
-     * @return list<array{id: string, label: string}>
-     */
-    public function listarFiltroEntregasPainel(string $processoId): array;
-
-    /**
-     * @return \stdClass{esforco_disponivel: float, esforco_planejado: float, esforco_executado: float}
-     */
-    public function calcularEsforcoPorEntrega(string $entregaId): \stdClass;
-
-    /**
-     * Retorna linhas com esforço próprio de cada processo da cadeia para montagem do grafo.
-     * Cada linha contém: processo_id, nome, processo_pai_id, cadeia_valor_nome, total_entregas,
-     * esforco_disponivel_horas, esforco_proprio.
-     *
-     * @return list<\stdClass>
-     */
-    public function loadEsforcoPorProcessosDaCadeia(string $cadeiaValorId): array;
-
-    /**
      * Retorna IDs do processo informado + todos os descendentes recursivamente.
      *
      * @return list<string>
      */
     public function coletarIdsFilhosRecursivo(string $processoId): array;
 
-    /**
-     * Agrega esforço, participantes e entregas para o processo + todos os filhos recursivos.
-     */
-    public function agregarPainelConsolidado(string $processoId, ?string $unidadeId = null): \stdClass;
-
-    /**
-     * Lista entregas para múltiplos processos com filtros (usado com abrangência).
-     *
-     * @param list<string> $processoIds
-     * @param array{unidade_id?: string|null, unidade_ids?: list<string>|null, plano_entrega_entrega_id?: string|null, data_inicio?: string|null, data_fim?: string|null} $filtros
-     * @return list<\stdClass>
-     */
-    public function listarDetalhamentoEntregasPainelMultiplos(array $processoIds, array $filtros = []): array;
 }

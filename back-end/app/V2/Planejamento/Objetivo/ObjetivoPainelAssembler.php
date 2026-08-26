@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\V2\Planejamento\Objetivo;
 
-use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoSupport;
 use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelAssembler;
 use App\V2\ArvoreInstitucional\DTOs\SecaoResumoDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoPainelEntregasDetalhamentoDTO;
@@ -38,28 +37,17 @@ final class ObjetivoPainelAssembler
     }
 
     /**
-     * @param  list<\stdClass>  $rows
+     * @param list<\stdClass> $rows
      */
     public function montarDetalhamento(string $objetivoId, array $rows): ObjetivoPainelEntregasDetalhamentoDTO
     {
-        $itens = [];
-
-        foreach ($rows as $row) {
-            $peStatus = (string) $row->plano_entrega_status;
-            $temPtPactuado = (bool) ($row->tem_pt_pactuado ?? false);
-            $temPtConcluido = (bool) ($row->tem_pt_concluido ?? false);
-            $vis = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco($peStatus, $temPtPactuado, $temPtConcluido);
-
-            $itens[] = $this->painelAssembler->montarLinha($row, $vis);
-        }
-
-        $filtros = $this->painelAssembler->extrairFiltros($rows);
+        $detalhamento = $this->painelAssembler->montarDetalhamento($rows);
 
         return new ObjetivoPainelEntregasDetalhamentoDTO(
             objetivo_id: $objetivoId,
-            itens: $itens,
-            filtro_entregas: $filtros['filtro_entregas'],
-            filtro_unidades: $filtros['filtro_unidades'],
+            itens: $detalhamento['itens'],
+            filtro_entregas: $detalhamento['filtro_entregas'],
+            filtro_unidades: $detalhamento['filtro_unidades'],
         );
     }
 }

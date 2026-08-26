@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { GlobalsService } from 'src/app/services/globals.service';
 import type {
+  ArvoreApiResponse,
   EntregaDetalheLinha,
   EntregasDetalhamentoFiltros,
   FiltroOpcao,
@@ -40,11 +41,7 @@ export type ObjetivoArvoreSuperiorResumoApi = {
   objetivo_superior_id: string | null;
 };
 
-export type ObjetivoArvoreVisualizacaoApi = {
-  objetivo_raiz_id: string;
-  nos: Record<string, EsforcoObjetivoNodeApi>;
-  cadeia_superior: ObjetivoArvoreSuperiorResumoApi[];
-};
+export type ObjetivoArvoreVisualizacaoApi = ArvoreApiResponse;
 
 /** Entrega do plano de entregas (PE) com progresso; usado no gráfico antigo. */
 export type ObjetivoEntregaPlanoItemApi = {

@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\V2\Planejamento\Objetivo\DTOs;
+namespace App\V2\ArvoreInstitucional\DTOs;
 
-/** Somatório de esforço (horas) por unidade do plano de entregas (PE); esforço vem só de PTs concluídos. */
-final class ObjetivoEsforcoPorUnidadeDTO implements \JsonSerializable
+/**
+ * Somatório de esforço (horas) por unidade do plano de entregas; esforço vem só de PTs concluídos.
+ */
+final class EsforcoPorUnidadeDTO implements \JsonSerializable
 {
     public static function fromRow(\stdClass $row): self
     {

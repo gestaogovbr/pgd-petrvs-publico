@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\V2\Planejamento\Objetivo\DTOs;
+namespace App\V2\ArvoreInstitucional\DTOs;
 
 /**
- * Entrega do plano de entregas vinculada ao objetivo, com progresso no PE e esforço agregado
+ * Entrega do plano de entregas vinculada a um nó da árvore, com progresso no PE e esforço agregado
  * (somente planos de trabalho concluídos que usam essa entrega).
  */
-final class ObjetivoEntregaPlanoItemDTO implements \JsonSerializable
+final class EntregaPlanoItemDTO implements \JsonSerializable
 {
     public static function fromRow(\stdClass $row): self
     {

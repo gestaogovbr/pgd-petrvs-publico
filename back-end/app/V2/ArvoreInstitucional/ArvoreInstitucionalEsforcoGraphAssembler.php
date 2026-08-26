@@ -46,7 +46,7 @@ final class ArvoreInstitucionalEsforcoGraphAssembler
             }
         }
 
-        // Computar filhos (união) e total_vinculos
+        // Computar filhos (união)
         foreach ($mapa as $id => &$node) {
             $allFilhos = [];
             foreach ($linkFields as $link) {
@@ -55,7 +55,6 @@ final class ArvoreInstitucionalEsforcoGraphAssembler
                 }
             }
             $node['filhos'] = array_keys($allFilhos);
-            $node['total_vinculos'] = count($node['filhos']);
         }
         unset($node);
     }

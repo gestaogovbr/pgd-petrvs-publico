@@ -1,5 +1,31 @@
 import { Observable } from 'rxjs';
 
+// ─── Tipos de API (contrato back-end → front-end) ─────────────────────────────
+
+/** Nó genérico retornado pela API (ArvoreNodeResponseDTO no back-end). */
+export type ArvoreNodeApi = {
+  id: string;
+  nome: string;
+  container_nome: string;
+  tipo_nome: string | null;
+  parent_id: string | null;
+  secondary_parent_id: string | null;
+  filhos_ids: string[];
+  filhos_secondary_ids: string[];
+  total_vinculos: number;
+  esforco_disponivel_horas: number;
+  esforco_proprio_horas: number;
+  esforco_total_horas: number;
+  planejado_percentual_disponivel: number;
+};
+
+/** Resposta genérica do endpoint de árvore (ArvoreResponseDTO no back-end). */
+export type ArvoreApiResponse = {
+  focal_id: string;
+  nos: Record<string, ArvoreNodeApi>;
+  metadata: Record<string, unknown>;
+};
+
 // ─── Configuração da Árvore Institucional ──────────────────────────────────────
 
 /** Campo exibido nos cards da árvore SVG. */

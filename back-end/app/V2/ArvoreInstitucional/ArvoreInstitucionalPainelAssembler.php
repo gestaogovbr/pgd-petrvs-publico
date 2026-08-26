@@ -110,8 +110,8 @@ final class ArvoreInstitucionalPainelAssembler
             mostrar_disponivel: $visibilidade['mostrar_disponivel'],
             mostrar_planejado: $visibilidade['mostrar_planejado'],
             mostrar_executado: $visibilidade['mostrar_executado'],
-            no_origem_id: isset($row->no_origem_id) ? (string) $row->no_origem_id : (isset($row->planejamento_objetivo_id) ? (string) $row->planejamento_objetivo_id : null),
-            no_origem_nome: isset($row->no_origem_nome) ? (string) $row->no_origem_nome : (isset($row->planejamento_objetivo_nome) ? (string) $row->planejamento_objetivo_nome : null),
+            no_origem_id: isset($row->no_origem_id) ? (string) $row->no_origem_id : null,
+            no_origem_nome: isset($row->no_origem_nome) ? (string) $row->no_origem_nome : null,
         );
     }
 
@@ -146,6 +146,33 @@ final class ArvoreInstitucionalPainelAssembler
         }
 
         return $out;
+    }
+
+    /**
+     * Monta linhas de detalhamento + filtros a partir das rows do DataProvider.
+     *
+     * @param list<\stdClass> $rows
+     * @return array{itens: list<EntregaDetalheLinhaDTO>, filtro_entregas: list<array{id: string, label: string}>, filtro_unidades: list<array{id: string, label: string}>}
+     */
+    public function montarDetalhamento(array $rows): array
+    {
+        $itens = [];
+        foreach ($rows as $row) {
+            $peStatus = (string) $row->plano_entrega_status;
+            $temPtPactuado = (bool) ($row->tem_pt_pactuado ?? false);
+            $temPtConcluido = (bool) ($row->tem_pt_concluido ?? false);
+            $vis = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco($peStatus, $temPtPactuado, $temPtConcluido);
+
+            $itens[] = $this->montarLinha($row, $vis);
+        }
+
+        $filtros = $this->extrairFiltros($rows);
+
+        return [
+            'itens' => $itens,
+            'filtro_entregas' => $filtros['filtro_entregas'],
+            'filtro_unidades' => $filtros['filtro_unidades'],
+        ];
     }
 
     /**

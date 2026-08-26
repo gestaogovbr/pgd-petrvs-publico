@@ -11,12 +11,11 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class CadeiaValorArvoreController extends Controller
+class CadeiaValorProcessoController extends Controller
 {
     public function __construct(
         private readonly CadeiaValorArvoreService $arvoreService,
-        private readonly CadeiaValorResumoService $resumoService,
-        private readonly CadeiaValorEntregasService $entregasService,
+        private readonly CadeiaValorPainelService $painelService,
     ) {}
 
     /**
@@ -38,14 +37,12 @@ class CadeiaValorArvoreController extends Controller
 
     /**
      * GET /api/v2/cadeia-valor/{cadeiaValorId}/processo/{processoId}/resumo
-     *
-     * Query params: unidade_id
      */
     public function resumo(string $cadeiaValorId, string $processoId, Request $request): JsonResponse
     {
         try {
             $unidadeId = $request->query('unidade_id');
-            $data = $this->resumoService->getResumo($cadeiaValorId, $processoId, $unidadeId);
+            $data = $this->painelService->getResumo($cadeiaValorId, $processoId, $unidadeId);
 
             return response()->json(['success' => true, 'data' => $data]);
         } catch (IBaseException $e) {
@@ -58,8 +55,6 @@ class CadeiaValorArvoreController extends Controller
 
     /**
      * GET /api/v2/cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas-detalhamento
-     *
-     * Query params: unidade_id, plano_entrega_entrega_id, data_inicio, data_fim, abrangencia
      */
     public function entregas(string $cadeiaValorId, string $processoId, Request $request): JsonResponse
     {
@@ -72,7 +67,41 @@ class CadeiaValorArvoreController extends Controller
                 'abrangencia' => $request->query('abrangencia'),
             ];
 
-            $data = $this->entregasService->getEntregas($cadeiaValorId, $processoId, $filtros);
+            $data = $this->painelService->getEntregasDetalhamento($cadeiaValorId, $processoId, $filtros);
+
+            return response()->json(['success' => true, 'data' => $data]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * GET /api/v2/cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas
+     */
+    public function entregasPorNo(string $cadeiaValorId, string $processoId): JsonResponse
+    {
+        try {
+            $data = $this->painelService->getEntregasPorNo($cadeiaValorId, $processoId);
+
+            return response()->json(['success' => true, 'data' => $data]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * GET /api/v2/cadeia-valor/{cadeiaValorId}/processo/{processoId}/equipes
+     */
+    public function equipes(string $cadeiaValorId, string $processoId): JsonResponse
+    {
+        try {
+            $data = $this->painelService->getEquipesPorNo($cadeiaValorId, $processoId);
 
             return response()->json(['success' => true, 'data' => $data]);
         } catch (IBaseException $e) {

@@ -114,8 +114,8 @@ describe('ObjetivoPainelAssembler', function () {
         $rows = [
             (object) [
                 'plano_entrega_entrega_id' => 'pee-1',
-                'planejamento_objetivo_id' => 'obj-1',
-                'planejamento_objetivo_nome' => 'Objetivo A',
+                'no_origem_id' => 'obj-1',
+                'no_origem_nome' => 'Objetivo A',
                 'unidade_id' => 'un-1',
                 'unidade_sigla' => 'UN',
                 'unidade_nome' => 'Unidade',

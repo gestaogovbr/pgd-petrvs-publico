@@ -48,6 +48,15 @@ final class ArvoreInstitucionalEsforcoSupport
     ];
 
     /**
+     * Expressão SQL de dias úteis (segunda a sexta, sem feriados) do período do PT.
+     * Equivalente a NETWORKDAYS(pt.data_inicio, pt.data_fim) sem feriados.
+     */
+    public static function diasPeriodoPtSql(): string
+    {
+        return "(5 * (DATEDIFF(pt.data_fim, pt.data_inicio) DIV 7) + SUBSTRING('1234555512344445123333451222234511112345001234550', 7 * WEEKDAY(pt.data_inicio) + WEEKDAY(pt.data_fim) + 1, 1))";
+    }
+
+    /**
      * Expressão SQL da CHD (carga horária diária) do PT, fonte do cálculo de esforço.
      */
     public static function chdPtSql(): string

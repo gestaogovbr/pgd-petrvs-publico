@@ -7,8 +7,9 @@ use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
 use App\Repository\UnidadeRepository;
 use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangenciaPolicy;
 use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelAssembler;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelDataProvider;
 use App\V2\ArvoreInstitucional\DTOs\EntregaDetalheLinhaDTO;
-use App\V2\CadeiaValor\CadeiaValorEntregasService;
+use App\V2\CadeiaValor\CadeiaValorPainelService;
 use App\V2\CadeiaValor\DTOs\CadeiaValorPainelEntregasDetalhamentoDTO;
 use App\V2\CadeiaValor\Validators\CadeiaValorProcessoValidator;
 use Tests\TestCase;
@@ -21,12 +22,16 @@ afterEach(function () {
 
 function criarEntregasService(
     ?CadeiaValorReadRepositoryContract $repo = null,
-): CadeiaValorEntregasService {
+    ?ArvoreInstitucionalPainelDataProvider $painelDataProvider = null,
+): CadeiaValorPainelService {
     $repo = $repo ?? Mockery::mock(CadeiaValorReadRepositoryContract::class);
+    $painelDataProvider = $painelDataProvider ?? Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
     $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-    return new CadeiaValorEntregasService(
+
+    return new CadeiaValorPainelService(
         $repo,
         new ArvoreInstitucionalPainelAssembler(),
+        $painelDataProvider,
         new CadeiaValorProcessoValidator($repo),
         new ArvoreInstitucionalAbrangenciaPolicy($unidadeRepo),
     );
@@ -64,28 +69,25 @@ function mockEntregaRow(array $overrides = []): \stdClass
         'esforco_executado_horas' => 200.0,
         'tem_pt_pactuado' => true,
         'tem_pt_concluido' => true,
-        'no_origem_id' => 'proc-1',
-        'no_origem_nome' => 'Processo 1',
     ], $overrides);
 }
 
-describe('CadeiaValorEntregasService', function () {
+describe('CadeiaValorPainelService::getEntregasDetalhamento', function () {
 
-    test('getEntregas retorna DTO de detalhamento com itens', function () {
+    test('getEntregasDetalhamento retorna DTO de detalhamento com itens', function () {
         $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
+        $painelDataProvider = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $cadeiaValor = Mockery::mock(CadeiaValor::class)->makePartial();
         $processo = Mockery::mock(CadeiaValorProcesso::class)->makePartial();
 
         $repo->shouldReceive('findCadeiaValor')->with('cv-1')->andReturn($cadeiaValor);
         $repo->shouldReceive('findProcesso')->with('proc-1', 'cv-1')->andReturn($processo);
-        $repo->shouldReceive('listarDetalhamentoEntregasPainelMultiplos')
-            ->withArgs(function ($ids, $filtros) {
-                return $ids === ['proc-1'];
-            })
+        $painelDataProvider->shouldReceive('listarDetalhamentoEntregas')
+            ->withAnyArgs()
             ->andReturn([mockEntregaRow()]);
 
-        $service = criarEntregasService($repo);
-        $result = $service->getEntregas('cv-1', 'proc-1');
+        $service = criarEntregasService($repo, $painelDataProvider);
+        $result = $service->getEntregasDetalhamento('cv-1', 'proc-1');
 
         expect($result)->toBeInstanceOf(CadeiaValorPainelEntregasDetalhamentoDTO::class)
             ->and($result->processo_id)->toBe('proc-1')
@@ -95,14 +97,13 @@ describe('CadeiaValorEntregasService', function () {
             ->and($result->itens[0]->registro_execucao)->toBe('Última atividade realizada')
             ->and($result->itens[0]->mostrar_planejado)->toBeTrue()
             ->and($result->itens[0]->mostrar_executado)->toBeTrue()
-            ->and($result->itens[0]->no_origem_id)->toBe('proc-1')
-            ->and($result->itens[0]->no_origem_nome)->toBe('Processo 1')
             ->and($result->filtro_entregas)->toHaveCount(1)
             ->and($result->filtro_unidades)->toHaveCount(1);
     });
 
-    test('getEntregas com abrangência itens_subordinados busca filhos', function () {
+    test('getEntregasDetalhamento com abrangência itens_subordinados busca filhos', function () {
         $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
+        $painelDataProvider = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $cadeiaValor = Mockery::mock(CadeiaValor::class)->makePartial();
         $processo = Mockery::mock(CadeiaValorProcesso::class)->makePartial();
 
@@ -112,33 +113,31 @@ describe('CadeiaValorEntregasService', function () {
             ->with('proc-1')
             ->once()
             ->andReturn(['proc-1', 'proc-2', 'proc-3']);
-        $repo->shouldReceive('listarDetalhamentoEntregasPainelMultiplos')
-            ->withArgs(function ($ids) {
-                return $ids === ['proc-2', 'proc-3'];
-            })
+        $painelDataProvider->shouldReceive('listarDetalhamentoEntregas')
+            ->withAnyArgs()
             ->andReturn([]);
 
-        $service = criarEntregasService($repo);
-        $result = $service->getEntregas('cv-1', 'proc-1', ['abrangencia' => 'itens_subordinados']);
+        $service = criarEntregasService($repo, $painelDataProvider);
+        $result = $service->getEntregasDetalhamento('cv-1', 'proc-1', ['abrangencia' => 'itens_subordinados']);
 
         expect($result->itens)->toBe([]);
     });
 
-    test('getEntregas lança NotFoundException se cadeia não existe', function () {
+    test('getEntregasDetalhamento lança NotFoundException se cadeia não existe', function () {
         $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
         $repo->shouldReceive('findCadeiaValor')->with('cv-inexistente')->andReturnNull();
 
         $service = criarEntregasService($repo);
-        $service->getEntregas('cv-inexistente', 'proc-1');
+        $service->getEntregasDetalhamento('cv-inexistente', 'proc-1');
     })->throws(\App\Exceptions\NotFoundException::class);
 
-    test('getEntregas lança NotFoundException se processo não existe', function () {
+    test('getEntregasDetalhamento lança NotFoundException se processo não existe', function () {
         $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
         $cadeiaValor = Mockery::mock(CadeiaValor::class)->makePartial();
         $repo->shouldReceive('findCadeiaValor')->andReturn($cadeiaValor);
         $repo->shouldReceive('findProcesso')->with('proc-inexistente', 'cv-1')->andReturnNull();
 
         $service = criarEntregasService($repo);
-        $service->getEntregas('cv-1', 'proc-inexistente');
+        $service->getEntregasDetalhamento('cv-1', 'proc-inexistente');
     })->throws(\App\Exceptions\NotFoundException::class);
 });

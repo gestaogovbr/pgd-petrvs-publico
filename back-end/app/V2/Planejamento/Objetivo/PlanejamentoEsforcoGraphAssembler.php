@@ -13,7 +13,7 @@ use stdClass;
  * Monta o mapa de esforço acumulado (fechamento bidirecional) a partir das linhas do repository.
  * Delega a lógica genérica (conexão de filhos, acumulação, hidratação) ao assembler compartilhado.
  */
-final class EsforcoTotalGraphAssembler
+final class PlanejamentoEsforcoGraphAssembler
 {
     public function __construct(
         private readonly ArvoreInstitucionalEsforcoGraphAssembler $graphAssembler,
@@ -52,13 +52,13 @@ final class EsforcoTotalGraphAssembler
             $disponivel = (float) ($row->esforco_disponivel_horas ?? 0);
             $planejado = (float) $row->esforco_proprio;
 
-            $map[$row->objetivo_id] = [
-                'objetivo_id' => $row->objetivo_id,
-                'objetivo_nome' => $row->objetivo_nome,
-                'objetivo_pai_id' => $row->objetivo_pai_id,
-                'objetivo_superior_id' => $row->objetivo_superior_id,
-                'planejamento_nome' => $row->planejamento_nome,
-                'tipo_objetivo_nome' => isset($row->tipo_objetivo_nome) ? (string) $row->tipo_objetivo_nome : '',
+            $map[$row->no_id] = [
+                'objetivo_id' => $row->no_id,
+                'objetivo_nome' => $row->no_nome,
+                'objetivo_pai_id' => $row->no_pai_id,
+                'objetivo_superior_id' => $row->no_pai_secundario_id ?? null,
+                'planejamento_nome' => $row->container_nome ?? '',
+                'tipo_objetivo_nome' => isset($row->tipo_nome) ? (string) $row->tipo_nome : '',
                 'total_entregas' => (int) $row->total_entregas,
                 'esforco_disponivel_horas' => $disponivel,
                 'esforco_proprio' => $planejado,

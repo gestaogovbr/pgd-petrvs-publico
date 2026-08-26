@@ -1,13 +1,10 @@
 <?php
 
-use App\Models\CadeiaValorProcesso;
 use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
-use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphAssembler;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphDataProvider;
+use App\V2\ArvoreInstitucional\DTOs\ArvoreNodeResponseDTO;
+use App\V2\ArvoreInstitucional\DTOs\ArvoreResponseDTO;
 use App\V2\CadeiaValor\CadeiaValorArvoreService;
-use App\V2\CadeiaValor\DTOs\CadeiaValorArvoreDTO;
-use App\V2\CadeiaValor\DTOs\CadeiaValorProcessoNodeDTO;
-use App\V2\CadeiaValor\DTOs\CadeiaValorVinculoCrossCadeiaDTO;
-use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -16,163 +13,129 @@ afterEach(function () {
     Mockery::close();
 });
 
-function criarProcessoMock(string $id, string $cadeiaValorId, ?string $paiId = null, int $sequencia = 1, string $nome = 'Processo'): CadeiaValorProcesso
-{
-    $model = Mockery::mock(CadeiaValorProcesso::class)->makePartial();
-    $model->id = $id;
-    $model->cadeia_valor_id = $cadeiaValorId;
-    $model->processo_pai_id = $paiId;
-    $model->sequencia = $sequencia;
-    $model->nome = $nome;
-
-    return $model;
-}
-
 function criarServiceComMock(): CadeiaValorArvoreService
 {
     $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
-    return new CadeiaValorArvoreService($repo, new ArvoreInstitucionalEsforcoGraphAssembler());
+    $esforcoGraphDataProvider = Mockery::mock(ArvoreInstitucionalEsforcoGraphDataProvider::class);
+    return new CadeiaValorArvoreService($repo, $esforcoGraphDataProvider);
 }
 
-describe('CadeiaValorArvoreService - coletarTodosAncestrais', function () {
+describe('CadeiaValorArvoreService::getArvore', function () {
 
-    test('retorna lista vazia para nó raiz', function () {
-        $service = criarServiceComMock();
-        $reflection = new ReflectionMethod($service, 'coletarTodosAncestrais');
-        $reflection->setAccessible(true);
+    test('retorna ArvoreResponseDTO com nós genéricos', function () {
+        $cadeiaValor = Mockery::mock(\App\Models\CadeiaValor::class)->makePartial();
+        $cadeiaValor->id = 'cv-1';
+        $cadeiaValor->nome = 'Cadeia Teste';
 
-        $processoRaiz = criarProcessoMock('p1', 'cv-1', null);
-        $todosProcessos = new Collection([$processoRaiz]);
+        $processoFocal = Mockery::mock(\App\Models\CadeiaValorProcesso::class)->makePartial();
+        $processoFocal->id = 'p1';
 
-        $result = $reflection->invoke($service, $processoRaiz, $todosProcessos);
+        $processo1 = Mockery::mock(\App\Models\CadeiaValorProcesso::class)->makePartial();
+        $processo1->id = 'p1';
+        $processo1->nome = 'Processo 1';
+        $processo1->sequencia = 1;
+        $processo1->processo_pai_id = null;
+        $tipoElemento1 = (object) ['nome' => 'Tipo A'];
+        $processo1->shouldReceive('getAttribute')->with('tipoElemento')->andReturn($tipoElemento1);
 
-        expect($result)->toBe([]);
-    });
+        $processo2 = Mockery::mock(\App\Models\CadeiaValorProcesso::class)->makePartial();
+        $processo2->id = 'p2';
+        $processo2->nome = 'Processo 2';
+        $processo2->sequencia = 2;
+        $processo2->processo_pai_id = 'p1';
+        $processo2->shouldReceive('getAttribute')->with('tipoElemento')->andReturn(null);
 
-    test('retorna todos os ancestrais do mais próximo ao mais distante', function () {
-        $service = criarServiceComMock();
-        $reflection = new ReflectionMethod($service, 'coletarTodosAncestrais');
-        $reflection->setAccessible(true);
+        $collection = new \Illuminate\Database\Eloquent\Collection([$processo1, $processo2]);
 
-        $pBisavo = criarProcessoMock('p-bisavo', 'cv-1', null, 1, 'Bisavô');
-        $pAvo = criarProcessoMock('p-avo', 'cv-1', 'p-bisavo', 1, 'Avô');
-        $pPai = criarProcessoMock('p-pai', 'cv-1', 'p-avo', 1, 'Pai');
-        $pFilho = criarProcessoMock('p-filho', 'cv-1', 'p-pai', 1, 'Filho');
+        $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
+        $repo->shouldReceive('findCadeiaValor')->with('cv-1')->andReturn($cadeiaValor);
+        $repo->shouldReceive('findProcesso')->with('p1', 'cv-1')->andReturn($processoFocal);
 
-        $todosProcessos = new Collection([$pBisavo, $pAvo, $pPai, $pFilho]);
-
-        $result = $reflection->invoke($service, $pFilho, $todosProcessos);
-
-        expect($result)->toBe(['p-pai', 'p-avo', 'p-bisavo']);
-    });
-});
-
-describe('CadeiaValorArvoreService - calcularNivel', function () {
-
-    test('retorna 1 para nó raiz', function () {
-        $service = criarServiceComMock();
-        $reflection = new ReflectionMethod($service, 'calcularNivel');
-        $reflection->setAccessible(true);
-
-        $pRaiz = criarProcessoMock('p-raiz', 'cv-1', null);
-        $todosProcessos = new Collection([$pRaiz]);
-
-        $result = $reflection->invoke($service, $pRaiz, $todosProcessos);
-
-        expect($result)->toBe(1);
-    });
-
-    test('retorna nível correto para nó profundo', function () {
-        $service = criarServiceComMock();
-        $reflection = new ReflectionMethod($service, 'calcularNivel');
-        $reflection->setAccessible(true);
-
-        $pRaiz = criarProcessoMock('p-raiz', 'cv-1', null);
-        $pNivel2 = criarProcessoMock('p-n2', 'cv-1', 'p-raiz');
-        $pNivel3 = criarProcessoMock('p-n3', 'cv-1', 'p-n2');
-
-        $todosProcessos = new Collection([$pRaiz, $pNivel2, $pNivel3]);
-
-        $result = $reflection->invoke($service, $pNivel3, $todosProcessos);
-
-        expect($result)->toBe(3);
-    });
-});
-
-describe('DTOs - serialização', function () {
-
-    test('CadeiaValorProcessoNodeDTO serializa corretamente', function () {
-        $dto = CadeiaValorProcessoNodeDTO::fromArray([
-            'processo_id' => 'p1',
-            'nome' => 'Processo 1',
-            'sequencia' => 3,
-            'processo_pai_id' => 'p0',
-            'cadeia_valor_id' => 'cv1',
-            'cadeia_valor_nome' => 'Cadeia A',
-            'nivel' => 2,
-            'total_vinculos' => 5,
-            'etiquetas' => ['tag1', 'tag2'],
-            'filhos_ids' => ['p2', 'p3'],
-            'vinculos_cross_cadeia' => [],
+        $esforcoGraphDataProvider = Mockery::mock(ArvoreInstitucionalEsforcoGraphDataProvider::class);
+        $esforcoGraphDataProvider->shouldReceive('carregarEsforcoAcumulado')->once()->andReturn([
+            'p1' => [
+                'no_nome' => 'Processo 1',
+                'no_pai_id' => null,
+                'no_pai_secundario_id' => null,
+                'container_nome' => 'Cadeia Teste',
+                'tipo_nome' => 'Tipo A',
+                'total_entregas' => 3,
+                'esforco_disponivel_horas' => 100.0,
+                'esforco_proprio' => 50.0,
+                'esforco_total_horas' => 80.0,
+                'planejado_percentual_disponivel' => 80.0,
+                'filhos_pai' => ['p2'],
+                'filhos_secundario' => [],
+                'filhos' => ['p2'],
+            ],
+            'p2' => [
+                'no_nome' => 'Processo 2',
+                'no_pai_id' => 'p1',
+                'no_pai_secundario_id' => null,
+                'container_nome' => 'Cadeia Teste',
+                'tipo_nome' => '',
+                'total_entregas' => 0,
+                'esforco_disponivel_horas' => 40.0,
+                'esforco_proprio' => 20.0,
+                'esforco_total_horas' => 30.0,
+                'planejado_percentual_disponivel' => 75.0,
+                'filhos_pai' => [],
+                'filhos_secundario' => [],
+                'filhos' => [],
+            ],
         ]);
 
-        $json = $dto->jsonSerialize();
+        $service = new CadeiaValorArvoreService($repo, $esforcoGraphDataProvider);
+        $result = $service->getArvore('cv-1', 'p1');
 
-        expect($json['processo_id'])->toBe('p1');
-        expect($json['nome'])->toBe('Processo 1');
-        expect($json['sequencia'])->toBe(3);
-        expect($json['nivel'])->toBe(2);
-        expect($json['total_vinculos'])->toBe(5);
-        expect($json['filhos_ids'])->toBe(['p2', 'p3']);
+        expect($result)->toBeInstanceOf(ArvoreResponseDTO::class);
+        expect($result->focal_id)->toBe('p1');
+        expect($result->metadata)->toBe(['cadeia_valor_id' => 'cv-1', 'cadeia_valor_nome' => 'Cadeia Teste']);
+        expect($result->nos)->toHaveCount(2);
+        expect($result->nos['p1'])->toBeInstanceOf(ArvoreNodeResponseDTO::class);
+        expect($result->nos['p1']->filhos_ids)->toBe(['p2']);
+        expect($result->nos['p1']->total_vinculos)->toBe(3);
+        expect($result->nos['p2']->parent_id)->toBe('p1');
+        expect($result->nos['p2']->total_vinculos)->toBe(0);
     });
 
-    test('CadeiaValorProcessoNodeDTO trata processo_pai_id nulo', function () {
-        $dto = CadeiaValorProcessoNodeDTO::fromArray([
-            'processo_id' => 'p1',
-            'nome' => 'Raiz',
-            'sequencia' => 1,
-            'processo_pai_id' => null,
-            'cadeia_valor_id' => 'cv1',
-            'cadeia_valor_nome' => 'Cadeia A',
-            'nivel' => 1,
-            'total_vinculos' => 0,
-        ]);
+    test('lança NotFoundException quando cadeia não existe', function () {
+        $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
+        $repo->shouldReceive('findCadeiaValor')->with('inexistente')->andReturn(null);
 
-        expect($dto->processo_pai_id)->toBeNull();
-    });
+        $esforcoGraphDataProvider = Mockery::mock(ArvoreInstitucionalEsforcoGraphDataProvider::class);
+        $service = new CadeiaValorArvoreService($repo, $esforcoGraphDataProvider);
 
-    test('CadeiaValorVinculoCrossCadeiaDTO serializa corretamente', function () {
-        $dto = CadeiaValorVinculoCrossCadeiaDTO::fromArray([
-            'processo_id' => 'p-ext',
-            'processo_nome' => 'Processo Externo',
-            'cadeia_valor_id' => 'cv-ext',
-            'cadeia_valor_nome' => 'Outra Cadeia',
-        ]);
+        $service->getArvore('inexistente', 'p1');
+    })->throws(\App\Exceptions\NotFoundException::class);
 
-        $json = $dto->jsonSerialize();
+    test('lança NotFoundException quando processo não existe na cadeia', function () {
+        $cadeiaValor = Mockery::mock(\App\Models\CadeiaValor::class)->makePartial();
+        $cadeiaValor->id = 'cv-1';
+        $cadeiaValor->nome = 'Cadeia';
 
-        expect($json['processo_id'])->toBe('p-ext');
-        expect($json['processo_nome'])->toBe('Processo Externo');
-        expect($json['cadeia_valor_id'])->toBe('cv-ext');
-        expect($json['cadeia_valor_nome'])->toBe('Outra Cadeia');
-    });
+        $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
+        $repo->shouldReceive('findCadeiaValor')->with('cv-1')->andReturn($cadeiaValor);
+        $repo->shouldReceive('findProcesso')->with('inexistente', 'cv-1')->andReturn(null);
 
-    test('CadeiaValorArvoreDTO serializa corretamente', function () {
-        $dto = new CadeiaValorArvoreDTO(
-            processo_focal_id: 'pf-1',
-            cadeia_valor_id: 'cv-1',
-            cadeia_valor_nome: 'Cadeia Teste',
+        $esforcoGraphDataProvider = Mockery::mock(ArvoreInstitucionalEsforcoGraphDataProvider::class);
+        $service = new CadeiaValorArvoreService($repo, $esforcoGraphDataProvider);
+
+        $service->getArvore('cv-1', 'inexistente');
+    })->throws(\App\Exceptions\NotFoundException::class);
+
+    test('ArvoreResponseDTO serializa corretamente via jsonSerialize', function () {
+        $dto = new ArvoreResponseDTO(
+            focal_id: 'pf-1',
             nos: [],
-            ancestrais_ids: ['anc-1', 'anc-2'],
-            raiz_ids: ['raiz-1'],
-            nivel_maximo: 4,
+            metadata: ['cadeia_valor_id' => 'cv-1', 'cadeia_valor_nome' => 'Cadeia Teste'],
         );
 
         $json = $dto->jsonSerialize();
 
-        expect($json['processo_focal_id'])->toBe('pf-1');
-        expect($json['ancestrais_ids'])->toBe(['anc-1', 'anc-2']);
-        expect($json['raiz_ids'])->toBe(['raiz-1']);
-        expect($json['nivel_maximo'])->toBe(4);
+        expect($json['focal_id'])->toBe('pf-1');
+        expect($json['metadata']['cadeia_valor_id'])->toBe('cv-1');
+        expect($json['metadata']['cadeia_valor_nome'])->toBe('Cadeia Teste');
+        expect($json['nos'])->toBe([]);
     });
 });

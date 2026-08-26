@@ -5,6 +5,7 @@ import type {
   ArvoreData,
   ArvoreDataProvider,
   ArvoreInstitucionalConfig,
+  ArvoreNodeApi,
   ArvoreNodeData,
   EntregasDetalhamentoData,
   EntregasDetalhamentoFiltros,
@@ -12,7 +13,6 @@ import type {
 } from 'src/app/v2/components/arvore-institucional/domain/types';
 import {
   CadeiaValorArvoreApiClient,
-  type CadeiaValorProcessoNodeApi
 } from './cadeia-valor-arvore-api.client';
 
 const ROTA_ARVORE = ['gestao', 'cadeia-valor', 'arvore'] as const;
@@ -30,12 +30,9 @@ export class CadeiaValorArvoreAdapter implements ArvoreDataProvider {
 
     return this.api.getArvore(cadeiaValorId, processoId).pipe(
       map(data => ({
-        focalId: data.processo_focal_id,
+        focalId: data.focal_id,
         nos: this.mapearNos(data.nos),
-        metadata: {
-          cadeia_valor_id: data.cadeia_valor_id,
-          cadeia_valor_nome: data.cadeia_valor_nome,
-        }
+        metadata: data.metadata ?? {}
       }))
     );
   }
@@ -81,22 +78,22 @@ export class CadeiaValorArvoreAdapter implements ArvoreDataProvider {
     void this.go.navigate({ route: [...ROTA_ARVORE, this.cadeiaValorId, nodeId] });
   }
 
-  private mapearNos(nos: Record<string, CadeiaValorProcessoNodeApi>): Record<string, ArvoreNodeData> {
+  private mapearNos(nos: Record<string, ArvoreNodeApi>): Record<string, ArvoreNodeData> {
     const resultado: Record<string, ArvoreNodeData> = {};
 
     for (const [id, n] of Object.entries(nos)) {
       resultado[id] = {
-        id: n.processo_id,
+        id: n.id,
         nome: n.nome,
-        containerNome: n.cadeia_valor_nome,
-        tipoNome: n.etiquetas?.length ? n.etiquetas[0] : null,
-        parentId: n.processo_pai_id,
-        secondaryParentId: null,
-        filhosIds: n.filhos_ids,
-        filhosSecondaryIds: [],
-        totalVinculos: n.total_vinculos,
+        containerNome: n.container_nome,
+        tipoNome: n.tipo_nome || null,
+        parentId: n.parent_id,
+        secondaryParentId: n.secondary_parent_id,
+        filhosIds: n.filhos_ids ?? [],
+        filhosSecondaryIds: n.filhos_secondary_ids ?? [],
+        totalVinculos: n.total_vinculos ?? 0,
         esforcoDisponivel: n.esforco_disponivel_horas ?? 0,
-        esforcoProprioHoras: n.esforco_proprio ?? 0,
+        esforcoProprioHoras: n.esforco_proprio_horas ?? 0,
         esforcoTotalHoras: n.esforco_total_horas ?? 0,
         planejadoPercentualDisponivel: n.planejado_percentual_disponivel ?? 0,
       };

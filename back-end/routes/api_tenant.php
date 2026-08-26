@@ -621,7 +621,7 @@ use App\V2\Unidade\UnidadeController as UnidadeV2;
 use App\V2\PlanoEntrega\PlanoEntregaController as PlanoEntregaV2;
 use App\V2\Planejamento\TipoObjetivo\TipoPlanejamentoObjetivoController;
 use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoController as PlanejamentoObjetivoV2;
-use App\V2\CadeiaValor\CadeiaValorArvoreController as CadeiaValorArvoreV2;
+use App\V2\CadeiaValor\CadeiaValorProcessoController as CadeiaValorProcessoV2;
 use App\V2\EnvioParticipante\EnvioParticipanteController as EnvioParticipanteQueryController;
 use App\V2\EnvioPlanoTrabalho\EnvioPlanoTrabalhoController as EnvioPlanoTrabalhoQueryController;
 use App\V2\EnvioPlanoEntrega\EnvioPlanoEntregaController as EnvioPlanoEntregaQueryController;
@@ -703,13 +703,19 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('planejamento/objetivo/{id}/painel-resumo', [PlanejamentoObjetivoV2::class, 'painelResumo'])->whereUuid('id');
     Route::get('planejamento/objetivo/{id}/entregas-detalhamento', [PlanejamentoObjetivoV2::class, 'entregasDetalhamento'])->whereUuid('id');
 
-    Route::get('cadeia-valor/{cadeiaValorId}/arvore/{processoId}', [CadeiaValorArvoreV2::class, 'arvore'])
+    Route::get('cadeia-valor/{cadeiaValorId}/arvore/{processoId}', [CadeiaValorProcessoV2::class, 'arvore'])
         ->whereUuid('cadeiaValorId')
         ->whereUuid('processoId');
-    Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/resumo', [CadeiaValorArvoreV2::class, 'resumo'])
+    Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/resumo', [CadeiaValorProcessoV2::class, 'resumo'])
         ->whereUuid('cadeiaValorId')
         ->whereUuid('processoId');
-    Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas-detalhamento', [CadeiaValorArvoreV2::class, 'entregas'])
+    Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas-detalhamento', [CadeiaValorProcessoV2::class, 'entregas'])
+        ->whereUuid('cadeiaValorId')
+        ->whereUuid('processoId');
+    Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/entregas', [CadeiaValorProcessoV2::class, 'entregasPorNo'])
+        ->whereUuid('cadeiaValorId')
+        ->whereUuid('processoId');
+    Route::get('cadeia-valor/{cadeiaValorId}/processo/{processoId}/equipes', [CadeiaValorProcessoV2::class, 'equipes'])
         ->whereUuid('cadeiaValorId')
         ->whereUuid('processoId');
 
