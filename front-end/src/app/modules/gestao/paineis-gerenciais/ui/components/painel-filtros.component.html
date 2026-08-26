@@ -27,15 +27,15 @@
     @if (modoData === 'range') {
       <div class="col-12 col-sm-6 col-md-2">
         <div class="br-input w-100">
-          <label for="data-inicio">Data de Consulta Inicial</label>
+          <label for="data-inicio">Data Inicial de Consulta</label>
           <input id="data-inicio" type="date" [value]="dataInicio()" (change)="onDataInicioChange($event)" />
         </div>
       </div>
       <div class="col-12 col-sm-6 col-md-2">
         <div class="br-input w-100">
           <label for="data-fim">
-            Data de Consulta Final
-            <span class="painel-filtros__info" title="Valores vigentes dentro do intervalo selecionado" aria-label="Informação sobre o filtro de datas">
+            Data Final de Consulta
+            <span class="painel-filtros__info" title="Serão apresentados dados referentes aos Planos de Entregas e Planos de Trabalho vigentes no intervalo selecionado para a consulta." aria-label="Informação sobre o filtro de datas">
                 <i class="bi bi-info-circle" aria-hidden="true"></i>
             </span>
           </label>
