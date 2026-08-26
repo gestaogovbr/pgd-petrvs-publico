@@ -12,6 +12,7 @@ use App\Repository\UnidadeRepository;
 use App\V2\Home\DTOs\HomeRequestDTO;
 use App\V2\Home\Traits\ResolveUnidades;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAssinaturaDataProvider;
+use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAvaliacaoDataProvider;
 
 class PendenciasUsuario
 {
@@ -23,6 +24,7 @@ class PendenciasUsuario
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly PlanoEntregaRepository $planoEntregaRepository,
         private readonly AguardandoMinhaAssinaturaDataProvider $aguardandoAssinatura,
+        private readonly AguardandoMinhaAvaliacaoDataProvider $aguardandoAvaliacao,
     ) {}
 
     protected function getUnidadeRepository(): UnidadeRepository
@@ -91,7 +93,7 @@ class PendenciasUsuario
             'assinaturas_pt_pendentes' => $this->aguardandoAssinatura->count($usuarioId),
             'registros_execucao_pe_atraso' => $this->planoEntregaRepository->countEntregasSemProgresso($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
             'registros_execucao_pt_atraso' => $reAtrasadosProprios,
-            'avaliacoes_pt_pendentes' => $this->planoTrabalhoRepository->countAguardandoMinhaAvaliacao($unidadeIds, $usuarioId),
+            'avaliacoes_pt_pendentes' => $this->aguardandoAvaliacao->count($usuarioId),
             'avaliacoes_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaAvaliacao($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
         ];
     }

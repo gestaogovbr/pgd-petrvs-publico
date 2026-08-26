@@ -27,6 +27,12 @@ export class PlanoApiClient extends TenantV2ResourceApiBase {
       .pipe(map((response) => TenantV2ResourceApiBase.mapLaravelWrappedPage<PlanoTrabalho>(response, size)));
   }
 
+  queryAguardandoMinhaAvaliacao(page: number = 1, size: number = 15): Observable<Page<PlanoTrabalho>> {
+    return this.http
+      .get<unknown>(this.resourceUrl('/aguardando-minha-avaliacao'), { params: { page: String(page), size: String(size) } })
+      .pipe(map((response) => TenantV2ResourceApiBase.mapLaravelWrappedPage<PlanoTrabalho>(response, size)));
+  }
+
   getById(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {
     return this.http
       .get<any>(this.resourceUrl(`/${id}`))

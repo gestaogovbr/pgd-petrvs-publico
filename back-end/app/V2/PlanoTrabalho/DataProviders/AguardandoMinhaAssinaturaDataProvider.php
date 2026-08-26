@@ -47,7 +47,7 @@ class AguardandoMinhaAssinaturaDataProvider
                     });
                 }
             })
-            ->with(['unidade:id,sigla,nome', 'usuario:id,nome,apelido'])
+            ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome'])
             ->orderByDesc('updated_at')
             ->paginate(perPage: $perPage, page: $page);
     }

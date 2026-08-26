@@ -305,31 +305,6 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                   ->where('data_fim', '>=', $today);
         }
 
-        if ($filtro->aguardandoMinhaAvaliacao) {
-            $usuarioLogadoId = $filtro->usuarioLogadoId;
-            $gerenciadasNoEscopo = $filtro->unidadesId !== null
-                ? $this->resolverGerenciadasNoEscopo($filtro->unidadesId, $usuarioLogadoId)
-                : [];
-
-            $query->whereIn('planos_trabalhos.status', self::STATUS_AVALIAVEL)
-                ->where('usuario_id', '!=', $usuarioLogadoId)
-                ->whereHas('consolidacoes', function ($q) {
-                    $this->aplicarConsolidacaoPendenteAvaliacao($q);
-                })
-                ->whereNotExists(function ($sub) use ($usuarioLogadoId) {
-                    $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($sub, $usuarioLogadoId);
-                })
-                ->where(function ($q) use ($gerenciadasNoEscopo) {
-                    $q->whereIn('unidade_id', $gerenciadasNoEscopo)
-                        ->orWhere(function ($subordinadas) use ($gerenciadasNoEscopo) {
-                            $subordinadas->whereNotIn('unidade_id', $gerenciadasNoEscopo)
-                                ->whereExists(function ($sub) {
-                                    $this->subqueryPlanoEhDoGestorTitular($sub);
-                                });
-                        });
-                });
-        }
-
         if ($filtro->usuarioNome !== null && $filtro->usuarioNome !== '') {
             $query->whereHas('usuario', fn ($q) => $q->where('nome', 'like', '%' . $filtro->usuarioNome . '%'));
         }

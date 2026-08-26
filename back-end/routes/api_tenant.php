@@ -644,6 +644,7 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('tipos-motivos-afastamentos', [TipoMotivoAfastamentoV2::class, 'index']);
     Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
     Route::get('plano-trabalho/aguardando-minha-assinatura', [PlanoTrabalhoV2::class, 'aguardandoMinhaAssinatura']);
+    Route::get('plano-trabalho/aguardando-minha-avaliacao', [PlanoTrabalhoV2::class, 'aguardandoMinhaAvaliacao']);
     Route::get('plano-trabalho/statuses', [PlanoTrabalhoV2::class, 'statuses']);
     Route::get('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'show']);
     Route::post('plano-trabalho', [PlanoTrabalhoV2::class, 'store']);
