@@ -129,7 +129,7 @@ export class AssinarPlanoUseCase {
         this.onAfterAssinar?.();
         this.message.success('Assinatura realizada com sucesso.');
       },
-      error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao assinar o documento.')
+      error: () => {}
     });
   }
 

@@ -3,11 +3,13 @@
 namespace App\V2\PlanoTrabalho;
 
 use App\Http\Controllers\Controller;
+use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAssinaturaDataProvider;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoRequestValidator;
 use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use App\Exceptions\Contracts\IBaseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,12 +17,10 @@ use Throwable;
 
 class PlanoTrabalhoController extends Controller
 {
-    protected PlanoTrabalhoService $service;
-
-    public function __construct(PlanoTrabalhoService $service)
-    {
-        $this->service = $service;
-    }
+    public function __construct(
+        private readonly PlanoTrabalhoService $service,
+        private readonly AguardandoMinhaAssinaturaDataProvider $aguardandoAssinatura,
+    ) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -159,6 +159,22 @@ class PlanoTrabalhoController extends Controller
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function aguardandoMinhaAssinatura(Request $request): JsonResponse
+    {
+        try {
+            $page = (int) $request->input('page', 1);
+            $perPage = (int) $request->input('size', 15);
+
+            $result = $this->aguardandoAssinatura->buscar(Auth::id(), $page, $perPage);
+
+            return response()->json(['success' => true, 'data' => $result]);
+        } catch (Throwable $e) {
+            report($e);
+
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

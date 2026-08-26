@@ -53,6 +53,10 @@ class PlanoTrabalhoDocumentoAssinarValidator
             throw new ValidateException('Todas as assinaturas exigidas já foram realizadas.');
         }
 
+        if ($plano->usuario_id !== $usuarioId) {
+            $this->validarAssinaturaChefiaNaoRealizada($documento, $plano->usuario_id);
+        }
+
         return $documento;
     }
 
@@ -105,6 +109,20 @@ class PlanoTrabalhoDocumentoAssinarValidator
 
         if (!$this->unidadeRepository->isUsuarioGestorRecursivo($unidade->unidade_pai_id, $usuarioId)) {
             throw new ForbiddenException('O assinante deve ser gestor da mesma unidade do participante ou de uma unidade superior.');
+        }
+    }
+
+    /**
+     * Verifica se já existe uma assinatura de chefia (alguém que não é o participante do PT).
+     */
+    private function validarAssinaturaChefiaNaoRealizada(Documento $documento, string $participanteId): void
+    {
+        $existeAssinaturaChefia = $documento->assinaturas()
+            ->where('usuario_id', '!=', $participanteId)
+            ->exists();
+
+        if ($existeAssinaturaChefia) {
+            throw new ValidateException('A assinatura de chefia já foi realizada para este documento.');
         }
     }
 

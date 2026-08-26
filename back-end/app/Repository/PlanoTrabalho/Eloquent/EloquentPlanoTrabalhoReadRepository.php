@@ -330,38 +330,6 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                 });
         }
 
-        if ($filtro->aguardandoMinhaAssinatura) {
-            $usuarioLogadoId = $filtro->usuarioLogadoId;
-            $gerenciadasNoEscopo = $filtro->unidadesId !== null
-                ? $this->resolverGerenciadasNoEscopo($filtro->unidadesId, $usuarioLogadoId)
-                : [];
-
-            $query->where('status', StatusEnum::AGUARDANDO_ASSINATURA->value)
-                ->whereNotExists(function ($sub) use ($usuarioLogadoId) {
-                    $this->subqueryUsuarioJaAssinou($sub, $usuarioLogadoId);
-                })
-                ->where(function ($q) use ($usuarioLogadoId, $gerenciadasNoEscopo) {
-                    // PTs do próprio usuário (como participante)
-                    $q->where('usuario_id', $usuarioLogadoId)
-                        // OU PTs de outros onde o logado é gestor
-                        ->orWhere(function ($outros) use ($usuarioLogadoId, $gerenciadasNoEscopo) {
-                            $outros->where('usuario_id', '!=', $usuarioLogadoId)
-                                ->whereNotExists(function ($sub) use ($usuarioLogadoId) {
-                                    $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($sub, $usuarioLogadoId);
-                                })
-                                ->where(function ($hierarquia) use ($gerenciadasNoEscopo) {
-                                    $hierarquia->whereIn('unidade_id', $gerenciadasNoEscopo)
-                                        ->orWhere(function ($subordinadas) use ($gerenciadasNoEscopo) {
-                                            $subordinadas->whereNotIn('unidade_id', $gerenciadasNoEscopo)
-                                                ->whereExists(function ($sub) {
-                                                    $this->subqueryPlanoEhDoGestorTitular($sub);
-                                                });
-                                        });
-                                });
-                        });
-                });
-        }
-
         if ($filtro->usuarioNome !== null && $filtro->usuarioNome !== '') {
             $query->whereHas('usuario', fn ($q) => $q->where('nome', 'like', '%' . $filtro->usuarioNome . '%'));
         }
