@@ -18,7 +18,7 @@ function criarStoreValidator(): MuralAvisoStoreValidator
 function criarDTO(string $destinatario, ?string $tenantId, int $nivelUsuario, array $tenantIds): MuralAvisoStoreDTO
 {
     return MuralAvisoStoreDTO::fromArray(
-        ['titulo' => 'Teste', 'conteudo' => 'Conteúdo', 'destinatario' => $destinatario, 'tenant_id' => $tenantId],
+        ['titulo' => 'Teste', 'conteudo' => 'Conteúdo', 'destinatario' => $destinatario, 'tenant_id' => $tenantId, 'data_publicacao' => '2026-08-20', 'data_expiracao' => '2026-09-20'],
         'user-1',
         $nivelUsuario,
         $tenantIds,

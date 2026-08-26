@@ -1,116 +1,116 @@
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
-import { MuralAvisoApiClient } from "src/app/dao/mural-aviso-dao.service";
+import { Component, Injector, ViewChild } from "@angular/core";
+import { AbstractControl, FormGroup } from "@angular/forms";
+import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
+import { IIndexable } from "src/app/models/base.model";
+import { MuralAviso } from "src/app/models/mural-aviso.model";
+import { MuralAvisoDaoService } from "src/app/dao/mural-aviso-dao.service";
 import { TenantDaoService } from "src/app/dao/tenant-dao.service";
+import { PageFormBase } from "src/app/modules/base/page-form-base";
+import { LookupItem } from "src/app/services/lookup.service";
 import { AuthPanelService } from "src/app/services/auth-panel.service";
-import { DialogService } from "src/app/services/dialog.service";
-
-interface TenantOption {
-  id: string;
-  nome?: string;
-}
 
 @Component({
-    selector: 'panel-mural-form',
-    templateUrl: './panel-mural-form.component.html',
-    standalone: false
+  selector: 'panel-mural-form',
+  templateUrl: './panel-mural-form.component.html',
+  standalone: false
 })
-export class PanelMuralFormComponent implements OnInit {
-  public form: FormGroup;
-  public tenants: TenantOption[] = [];
+export class PanelMuralFormComponent extends PageFormBase<MuralAviso, MuralAvisoDaoService> {
+  @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+
+  public tenantsDao: TenantDaoService;
+  public authPanel: AuthPanelService;
+  public tenantItems: LookupItem[] = [];
+  public destinatarioItems: LookupItem[] = [
+    { key: 'TODOS', value: 'Todos os tenants' },
+    { key: 'TENANT_ESPECIFICO', value: 'Tenant específico' }
+  ];
   public currentUser: any;
-  public loading = false;
-  public isEdicao = false;
-  private avisoId: string | null = null;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: MuralAvisoApiClient,
-    private authPanel: AuthPanelService,
-    private tenantsDao: TenantDaoService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private dialog: DialogService
-  ) {
-    this.form = this.fb.group({
-      titulo: ['', [Validators.required, Validators.maxLength(255)]],
-      conteudo: ['', Validators.required],
-      destinatario: ['TODOS', Validators.required],
-      tenant_id: [null],
-    });
+  constructor(public injector: Injector) {
+    super(injector, MuralAviso, MuralAvisoDaoService);
+    this.tenantsDao = injector.get<TenantDaoService>(TenantDaoService);
+    this.authPanel = injector.get<AuthPanelService>(AuthPanelService);
+
+    this.form = this.fh.FormBuilder({
+      titulo: { default: "" },
+      conteudo: { default: "" },
+      destinatario: { default: "TODOS" },
+      tenant_id: { default: null },
+      data_publicacao: { default: new Date() },
+      data_expiracao: { default: null },
+    }, this.cdRef, this.validate);
   }
 
-  async ngOnInit(): Promise<void> {
+  async ngOnInit() {
+    super.ngOnInit();
     this.currentUser = await this.authPanel.detailUser();
-    this.carregarTenants();
+    await this.loadTenants();
 
-    this.avisoId = this.route.snapshot.params['id'] || null;
-    if (this.avisoId) {
-      this.isEdicao = true;
-      this.carregarAviso(this.avisoId);
+    if (this.currentUser?.nivel != 1) {
+      this.form!.controls['destinatario'].setValue('TENANT_ESPECIFICO');
+      this.form!.controls['destinatario'].disable();
     }
 
-    // Configuradores só podem escolher TENANT_ESPECIFICO
-    if (this.currentUser.nivel != 1) {
-      this.form.controls['destinatario'].setValue('TENANT_ESPECIFICO');
-      this.form.controls['destinatario'].disable();
+    this.form!.controls['destinatario'].valueChanges.subscribe(() => {
+      this.form!.controls['tenant_id'].updateValueAndValidity();
+    });
+  }
+
+  public validate = (control: AbstractControl, controlName: string) => {
+    let result = null;
+
+    if (controlName === 'titulo' && !control.value?.trim()?.length) {
+      result = "O título é obrigatório";
     }
-  }
 
-  carregarTenants(): void {
-    this.tenantsDao.query().asPromise().then((tenants: any[]) => {
-      const allTenants: TenantOption[] = tenants.map((t: any) => ({ id: t.id, nome: t.id }));
-      if (this.currentUser.nivel != 1) {
-        this.tenants = allTenants.filter(t => this.currentUser.tenants?.includes(t.id));
-      } else {
-        this.tenants = allTenants;
+    if (controlName === 'conteudo' && !control.value?.trim()?.length) {
+      result = "O conteúdo é obrigatório";
+    }
+
+    if (controlName === 'data_publicacao' && !control.value) {
+      result = "A data de publicação é obrigatória";
+    }
+
+    if (controlName === 'data_expiracao' && !control.value) {
+      result = "A data de expiração é obrigatória";
+    }
+
+    if (controlName === 'tenant_id') {
+      const destinatario = control.parent?.get('destinatario')?.value;
+      if (destinatario === 'TENANT_ESPECIFICO' && !control.value) {
+        result = "Selecione o tenant destinatário";
       }
+    }
+
+    return result;
+  }
+
+  public async loadData(entity: MuralAviso, form: FormGroup) {
+    form.patchValue(this.util.fillForm(form.value, entity));
+  }
+
+  public initializeData(form: FormGroup): void {
+    this.entity = new MuralAviso();
+    this.loadData(this.entity, form);
+  }
+
+  public saveData(form: IIndexable): Promise<MuralAviso> {
+    return new Promise<MuralAviso>((resolve) => {
+      const aviso = this.util.fill(new MuralAviso(), this.entity!);
+      resolve(this.util.fillForm(aviso, this.form!.getRawValue()));
     });
   }
 
-  carregarAviso(id: string): void {
-    this.loading = true;
-    this.api.buscarPorId(id).subscribe({
-      next: (aviso) => {
-        this.form.patchValue({
-          titulo: aviso.titulo,
-          conteudo: aviso.conteudo,
-          destinatario: aviso.destinatario,
-          tenant_id: aviso.tenant_id,
-        });
-        this.loading = false;
-      },
-      error: () => {
-        this.dialog.alert('Erro', 'Não foi possível carregar o aviso.');
-        this.loading = false;
-      }
-    });
+  public get isDestinatarioTenant(): boolean {
+    return this.form?.controls['destinatario']?.value === 'TENANT_ESPECIFICO';
   }
 
-  get isDestinatarioTenant(): boolean {
-    return this.form.controls['destinatario'].value === 'TENANT_ESPECIFICO';
-  }
-
-  salvar(): void {
-    if (this.form.invalid) return;
-
-    const payload = {
-      ...this.form.getRawValue(),
-      tenant_id: this.form.controls['destinatario'].value === 'TODOS' ? null : this.form.controls['tenant_id'].value,
-    };
-
-    const request$ = this.isEdicao
-      ? this.api.atualizar(this.avisoId!, payload)
-      : this.api.criar(payload);
-
-    request$.subscribe({
-      next: () => this.router.navigate(['/panel/mural']),
-      error: (err) => this.dialog.alert('Erro', err?.error?.error || 'Erro ao salvar aviso.')
-    });
-  }
-
-  cancelar(): void {
-    this.router.navigate(['/panel/mural']);
+  private async loadTenants(): Promise<void> {
+    try {
+      const tenants = await this.tenantsDao.query().asPromise();
+      this.tenantItems = tenants.map((t: any) => ({ key: t.id, value: t.nome_entidade || t.id }));
+    } catch (error) {
+      console.error("Erro ao carregar tenants:", error);
+    }
   }
 }

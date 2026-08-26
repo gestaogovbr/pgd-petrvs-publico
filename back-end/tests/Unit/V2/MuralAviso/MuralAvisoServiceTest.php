@@ -87,7 +87,7 @@ describe('MuralAvisoService::store', function () {
 
     test('cria aviso chamando validator e repository', function () {
         $dto = MuralAvisoStoreDTO::fromArray(
-            ['titulo' => 'Teste', 'conteudo' => 'Conteúdo', 'destinatario' => MuralAvisoDestinatario::TODOS->value, 'tenant_id' => null],
+            ['titulo' => 'Teste', 'conteudo' => 'Conteúdo', 'destinatario' => MuralAvisoDestinatario::TODOS->value, 'tenant_id' => null, 'data_publicacao' => '2026-08-20', 'data_expiracao' => '2026-09-20'],
             'user-1',
             1,
             [],
@@ -109,7 +109,9 @@ describe('MuralAvisoService::store', function () {
                     && $data['tenant_id'] === null
                     && $data['remetente_tipo'] === MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value
                     && $data['remetente_tenant_id'] === null
-                    && $data['publicado_por_user_panel_id'] === 'user-1';
+                    && $data['publicado_por_user_panel_id'] === 'user-1'
+                    && $data['data_publicacao'] === '2026-08-20'
+                    && $data['data_expiracao'] === '2026-09-20';
             }))
             ->andReturn($aviso);
 
@@ -120,7 +122,7 @@ describe('MuralAvisoService::store', function () {
 
     test('define remetente_tipo TENANT para usuário não-central', function () {
         $dto = MuralAvisoStoreDTO::fromArray(
-            ['titulo' => 'Teste', 'conteudo' => 'Conteúdo', 'destinatario' => 'TENANT_ESPECIFICO', 'tenant_id' => 'tenant-1'],
+            ['titulo' => 'Teste', 'conteudo' => 'Conteúdo', 'destinatario' => 'TENANT_ESPECIFICO', 'tenant_id' => 'tenant-1', 'data_publicacao' => '2026-08-20', 'data_expiracao' => '2026-09-20'],
             'user-2',
             2,
             ['tenant-1'],
@@ -149,7 +151,7 @@ describe('MuralAvisoService::update', function () {
 
     test('valida autorização e atualiza', function () {
         $dto = MuralAvisoStoreDTO::fromArray(
-            ['titulo' => 'Atualizado', 'conteudo' => 'Novo conteúdo', 'destinatario' => MuralAvisoDestinatario::TODOS->value, 'tenant_id' => null],
+            ['titulo' => 'Atualizado', 'conteudo' => 'Novo conteúdo', 'destinatario' => MuralAvisoDestinatario::TODOS->value, 'tenant_id' => null, 'data_publicacao' => '2026-08-20', 'data_expiracao' => '2026-09-20'],
             'user-1',
             1,
             [],
@@ -173,7 +175,11 @@ describe('MuralAvisoService::update', function () {
 
         $this->repository->shouldReceive('update')
             ->once()
-            ->with('aviso-1', Mockery::type('array'))
+            ->with('aviso-1', Mockery::on(function (array $data) {
+                return $data['titulo'] === 'Atualizado'
+                    && $data['data_publicacao'] === '2026-08-20'
+                    && $data['data_expiracao'] === '2026-09-20';
+            }))
             ->andReturn($avisoAtualizado);
 
         $result = $this->service->update('aviso-1', $dto);

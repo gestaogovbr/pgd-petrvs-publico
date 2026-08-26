@@ -21,10 +21,12 @@ class MuralAviso extends ModelBase
         'remetente_tenant_id',
         'publicado_por_user_panel_id',
         'data_publicacao',
+        'data_expiracao',
     ];
 
     protected $casts = [
         'data_publicacao' => 'datetime',
+        'data_expiracao' => 'datetime',
     ];
 
     public function tenant(): \Illuminate\Database\Eloquent\Relations\BelongsTo

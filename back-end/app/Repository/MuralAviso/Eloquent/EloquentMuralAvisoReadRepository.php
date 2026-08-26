@@ -50,6 +50,8 @@ class EloquentMuralAvisoReadRepository extends AbstractEloquentReadRepository im
                 $q->where('destinatario', MuralAvisoDestinatario::TODOS->value)
                   ->orWhere('tenant_id', $tenantId);
             })
+            ->where('data_publicacao', '<=', now())
+            ->where('data_expiracao', '>=', now())
             ->orderBy('data_publicacao', 'desc');
 
         if ($dataConfirmacao !== null) {

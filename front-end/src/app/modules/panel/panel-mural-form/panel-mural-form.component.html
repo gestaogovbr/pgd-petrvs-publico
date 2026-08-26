@@ -1,47 +1,57 @@
-<div class="container-fluid">
-  <h5>{{isEdicao ? 'Editar Aviso' : 'Novo Aviso'}}</h5>
-  <hr>
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="titulo" (submit)="onSaveData()" (cancel)="onCancel()">
+  <div class="row">
+    <input-text
+      [size]="12"
+      label="Título"
+      controlName="titulo"
+      [control]="form!.controls.titulo"
+      [attr.maxlength]="255"
+      required
+    ></input-text>
 
-  <form [formGroup]="form" (ngSubmit)="salvar()" aria-label="Formulário de aviso">
-    <div class="row g-3">
-      <div class="col-12">
-        <label class="form-label" for="mural-titulo">Título *</label>
-        <input type="text" class="form-control" id="mural-titulo" formControlName="titulo" maxlength="255"
-               aria-required="true">
-      </div>
+    <input-textarea
+      [size]="12"
+      label="Conteúdo"
+      controlName="conteudo"
+      [control]="form!.controls.conteudo"
+      [rows]="6"
+      required
+    ></input-textarea>
 
-      <div class="col-12">
-        <label class="form-label" for="mural-conteudo">Conteúdo *</label>
-        <textarea class="form-control" id="mural-conteudo" formControlName="conteudo" rows="6"
-                  aria-required="true"></textarea>
-      </div>
+    <input-datetime
+      [size]="6"
+      label="Data/Hora de Publicação"
+      labelInfo="Define a data e o horário exatos a partir dos quais o aviso ficará visível aos usuários."
+      controlName="data_publicacao"
+      [control]="form!.controls.data_publicacao"
+      required
+    ></input-datetime>
 
-      <div class="col-md-6">
-        <label class="form-label" for="mural-destinatario">Destinatário *</label>
-        <select class="form-select" id="mural-destinatario" formControlName="destinatario"
-                aria-required="true">
-          <option value="TODOS">Todos os tenants</option>
-          <option value="TENANT_ESPECIFICO">Tenant específico</option>
-        </select>
-      </div>
+    <input-datetime
+      [size]="6"
+      label="Data/Hora de Expiração"
+      labelInfo="Define a data e o horário limites para a exibição do aviso. Após este momento, a mensagem deixa de ser apresentada no login dos usuários."
+      controlName="data_expiracao"
+      [control]="form!.controls.data_expiracao"
+      required
+    ></input-datetime>
 
-      @if (isDestinatarioTenant) {
-        <div class="col-md-6">
-          <label class="form-label" for="mural-tenant">Tenant *</label>
-          <select class="form-select" id="mural-tenant" formControlName="tenant_id"
-                  aria-required="true">
-            <option [ngValue]="null" disabled>Selecione...</option>
-            @for (t of tenants; track t.id) {
-              <option [ngValue]="t.id">{{t.nome || t.id}}</option>
-            }
-          </select>
-        </div>
-      }
-    </div>
+    <input-select
+      [size]="6"
+      label="Destinatário"
+      controlName="destinatario"
+      [control]="form!.controls.destinatario"
+      [items]="destinatarioItems"
+      required
+    ></input-select>
 
-    <div class="d-flex justify-content-end gap-2 mt-4">
-      <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Salvar</button>
-    </div>
-  </form>
-</div>
+    <input-select *ngIf="isDestinatarioTenant"
+      [size]="6"
+      label="Tenant"
+      controlName="tenant_id"
+      [control]="form!.controls.tenant_id"
+      [items]="tenantItems"
+      required
+    ></input-select>
+  </div>
+</editable-form>

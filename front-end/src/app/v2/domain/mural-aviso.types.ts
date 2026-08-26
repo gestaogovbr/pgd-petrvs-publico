@@ -8,6 +8,7 @@ export type MuralAviso = {
   remetente_tenant_id: string | null;
   publicado_por_id: number;
   data_publicacao: string;
+  data_expiracao: string;
 };
 
 export type MuralAvisoPendente = {

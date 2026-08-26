@@ -1,48 +1,38 @@
-<div class="container-fluid">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5>Mural de Avisos</h5>
-    <button class="btn btn-success" (click)="novo()" aria-label="Criar novo aviso">
-      <i class="bi bi-plus" aria-hidden="true"></i> Novo Aviso
-    </button>
-  </div>
-
-  @if (loading) {
-    <div class="text-center py-4" role="status" aria-live="polite">
-      <span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Carregando...
-    </div>
-  } @else {
-    <table class="table table-striped table-hover" aria-label="Lista de avisos do mural">
-      <thead>
-        <tr>
-          <th scope="col">Título</th>
-          <th scope="col">Destinatário</th>
-          <th scope="col">Data de Publicação</th>
-          <th scope="col">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (aviso of avisos; track aviso.id) {
-          <tr>
-            <td>{{aviso.titulo}}</td>
-            <td>{{getDestinatarioLabel(aviso.destinatario)}}</td>
-            <td>{{formatarData(aviso.data_publicacao)}}</td>
-            <td>
-              <button class="btn btn-sm btn-outline-primary me-1" (click)="editar(aviso)"
-                      [attr.aria-label]="'Editar aviso: ' + aviso.titulo">
-                <i class="bi bi-pencil" aria-hidden="true"></i>
-              </button>
-              <button class="btn btn-sm btn-outline-danger" (click)="excluir(aviso)"
-                      [attr.aria-label]="'Excluir aviso: ' + aviso.titulo">
-                <i class="bi bi-trash" aria-hidden="true"></i>
-              </button>
-            </td>
-          </tr>
-        } @empty {
-          <tr>
-            <td colspan="4" class="text-center text-muted">Nenhum aviso cadastrado.</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  }
-</div>
+<grid [dao]="dao"
+    [add]="add"
+    [title]="isModal ? '' : title"
+    [orderBy]="orderBy"
+    [join]="join"
+    [hasAdd]="true"
+    [hasEdit]="true"
+    labelAdd="Novo Aviso"
+>
+  <toolbar></toolbar>
+  <columns>
+    <column title="Título" field="titulo">
+      <ng-template let-row="row" #columnTitulo>
+        <span>{{row.titulo}}</span>
+      </ng-template>
+    </column>
+    <column title="Destinatário" [template]="columnDestinatario">
+      <ng-template let-row="row" #columnDestinatario>
+        <span>{{getDestinatarioLabel(row.destinatario)}}</span>
+      </ng-template>
+    </column>
+    <column title="Data de Publicação" [template]="columnPublicacao">
+      <ng-template let-row="row" #columnPublicacao>
+        <span>{{dao!.getDateTimeFormatted(row.data_publicacao)}}</span>
+      </ng-template>
+    </column>
+    <column title="Data de Expiração" [template]="columnExpiracao">
+      <ng-template let-row="row" #columnExpiracao>
+        <span>{{dao!.getDateTimeFormatted(row.data_expiracao)}}</span>
+      </ng-template>
+    </column>
+    <column type="options"
+        [onEdit]="edit"
+        [dynamicButtons]="dynamicButtons.bind(this)"
+    ></column>
+  </columns>
+  <pagination [rows]="rowsLimit"></pagination>
+</grid>

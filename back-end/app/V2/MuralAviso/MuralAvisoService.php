@@ -60,7 +60,8 @@ class MuralAvisoService
             'remetente_tipo' => $remetenteTipo->value,
             'remetente_tenant_id' => $remetenteTenantId,
             'publicado_por_user_panel_id' => $dto->usuarioId,
-            'data_publicacao' => now(),
+            'data_publicacao' => $dto->dataPublicacao,
+            'data_expiracao' => $dto->dataExpiracao,
         ]);
     }
 
@@ -81,7 +82,8 @@ class MuralAvisoService
             'tenant_id' => $dto->destinatario === MuralAvisoDestinatario::TODOS->value ? null : $dto->tenantId,
             'remetente_tipo' => $remetenteTipo->value,
             'remetente_tenant_id' => $remetenteTenantId,
-            'data_publicacao' => now(),
+            'data_publicacao' => $dto->dataPublicacao,
+            'data_expiracao' => $dto->dataExpiracao,
         ]);
     }
 

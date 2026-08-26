@@ -19,6 +19,8 @@ class MuralAvisoStoreDTO
         public readonly string $usuarioId,
         public readonly int $nivelUsuario,
         public readonly array $tenantIds,
+        public readonly string $dataPublicacao,
+        public readonly string $dataExpiracao,
     ) {}
 
     public function isOrgaoCentral(): bool
@@ -40,6 +42,8 @@ class MuralAvisoStoreDTO
             usuarioId: $usuarioId,
             nivelUsuario: $nivelUsuario,
             tenantIds: $tenantIds,
+            dataPublicacao: $data['data_publicacao'],
+            dataExpiracao: $data['data_expiracao'],
         );
     }
 }
