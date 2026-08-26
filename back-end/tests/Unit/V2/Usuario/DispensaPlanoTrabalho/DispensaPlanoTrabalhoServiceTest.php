@@ -65,6 +65,16 @@ describe('DispensaPlanoTrabalhoAuthorization', function () {
         expect(fn () => $auth->assertElegivel('agente-1'))
             ->toThrow(ValidateException::class, DispensaPlanoTrabalhoAuthorization::MSG_ELEGIBILIDADE);
     });
+
+    test('isElegivel delega ao repositório de integrante', function () {
+        $this->integranteRepo
+            ->shouldReceive('usuarioEhChefiaDeUnidadeExecutora')
+            ->once()
+            ->with('agente-1')
+            ->andReturn(true);
+
+        expect($this->authorization->isElegivel('agente-1'))->toBeTrue();
+    });
 });
 
 describe('DispensaPlanoTrabalhoAssembler', function () {

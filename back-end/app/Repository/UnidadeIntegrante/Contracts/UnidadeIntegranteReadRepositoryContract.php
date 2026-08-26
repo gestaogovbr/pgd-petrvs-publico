@@ -25,4 +25,9 @@ interface UnidadeIntegranteReadRepositoryContract
     public function findAllComAtribuicoesAtivasByUsuario(string $usuarioId): Collection;
 
     public function countLotadosByUnidade(string $unidadeId): int;
+
+    /**
+     * RN05: chefia titular ou substituta em unidade executora.
+     */
+    public function usuarioEhChefiaDeUnidadeExecutora(string $usuarioId): bool;
 }

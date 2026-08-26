@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\V2\Usuario\DispensaPlanoTrabalho;
 
-use App\Enums\Atribuicao;
 use App\Enums\PerfilEnum;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
@@ -12,7 +11,6 @@ use App\Exceptions\ValidateException;
 use App\Models\Usuario;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\UnidadeIntegrante\Contracts\UnidadeIntegranteReadRepositoryContract;
-use Illuminate\Support\Facades\DB;
 
 class DispensaPlanoTrabalhoAuthorization
 {
@@ -81,24 +79,7 @@ class DispensaPlanoTrabalhoAuthorization
 
     public function isElegivel(string $usuarioId): bool
     {
-        $rows = DB::select(<<<SQL
-            SELECT COUNT(*) AS total
-            FROM unidades_integrantes ui
-            INNER JOIN unidades_integrantes_atribuicoes uia
-                ON uia.unidade_integrante_id = ui.id AND uia.deleted_at IS NULL
-            INNER JOIN unidades u
-                ON u.id = ui.unidade_id AND u.deleted_at IS NULL
-            WHERE ui.usuario_id = ?
-              AND ui.deleted_at IS NULL
-              AND u.executora = 1
-              AND uia.atribuicao IN (?, ?)
-        SQL, [
-            $usuarioId,
-            Atribuicao::GESTOR->value,
-            Atribuicao::GESTOR_SUBSTITUTO->value,
-        ]);
-
-        return ((int) ($rows[0]->total ?? 0)) > 0;
+        return $this->unidadeIntegranteRepository->usuarioEhChefiaDeUnidadeExecutora($usuarioId);
     }
 
     public function assertElegivel(string $usuarioId): void

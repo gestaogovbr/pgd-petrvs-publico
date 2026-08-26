@@ -6,8 +6,9 @@ namespace App\V2\Usuario\DispensaPlanoTrabalho;
 
 use App\Exceptions\ValidateException;
 use App\Models\DispensaPlanoTrabalho;
-use App\Models\DispensaPlanoTrabalhoHistorico;
 use App\Models\Usuario;
+use App\Repository\DispensaPlanoTrabalho\Contracts\DispensaPlanoTrabalhoReadRepositoryContract;
+use App\Repository\DispensaPlanoTrabalho\Contracts\DispensaPlanoTrabalhoWriteRepositoryContract;
 use App\V2\Usuario\DispensaPlanoTrabalho\DTOs\DispensaPlanoTrabalhoResumoDTO;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,8 @@ final class DispensaPlanoTrabalhoService
     public function __construct(
         private readonly DispensaPlanoTrabalhoAuthorization $authorization,
         private readonly DispensaPlanoTrabalhoAssembler $assembler,
+        private readonly DispensaPlanoTrabalhoReadRepositoryContract $readRepository,
+        private readonly DispensaPlanoTrabalhoWriteRepositoryContract $writeRepository,
     ) {}
 
     public function show(string $usuarioId, Usuario $ator): DispensaPlanoTrabalhoResumoDTO
@@ -37,9 +40,7 @@ final class DispensaPlanoTrabalhoService
         $this->authorization->assertPerfilPodeFormalizar($ator);
         $this->authorization->assertEscopoUnidade($ator, $agente);
 
-        $existente = DispensaPlanoTrabalho::query()
-            ->where('usuario_id', $agente->id)
-            ->first();
+        $existente = $this->readRepository->findByUsuarioId((string) $agente->id);
 
         if (!$existente instanceof DispensaPlanoTrabalho) {
             $this->authorization->assertElegivel($usuarioId);
@@ -53,16 +54,14 @@ final class DispensaPlanoTrabalhoService
                 : DispensaPlanoTrabalhoOperacao::FORMALIZAR;
 
             if ($existente) {
-                $existente->fill([
+                $dispensa = $this->writeRepository->atualizar($existente, [
                     'data_inicio' => $dados['data_inicio'],
                     'data_fim' => $dados['data_fim'],
                     'ciencia_em' => $agora,
                     'responsavel_id' => $ator->id,
                 ]);
-                $existente->save();
-                $dispensa = $existente;
             } else {
-                $dispensa = DispensaPlanoTrabalho::query()->create([
+                $dispensa = $this->writeRepository->create([
                     'usuario_id' => $agente->id,
                     'data_inicio' => $dados['data_inicio'],
                     'data_fim' => $dados['data_fim'],
@@ -85,10 +84,7 @@ final class DispensaPlanoTrabalhoService
         $this->authorization->assertPerfilPodeFormalizar($ator);
         $this->authorization->assertEscopoUnidade($ator, $agente);
 
-        /** @var DispensaPlanoTrabalho|null $dispensa */
-        $dispensa = DispensaPlanoTrabalho::query()
-            ->where('usuario_id', $agente->id)
-            ->first();
+        $dispensa = $this->readRepository->findByUsuarioId((string) $agente->id);
 
         if (!$dispensa instanceof DispensaPlanoTrabalho || !$dispensa->isVigente()) {
             throw new ValidateException('Não há dispensa vigente para encerrar.');
@@ -102,10 +98,11 @@ final class DispensaPlanoTrabalhoService
         $hoje = Carbon::today()->toDateString();
 
         DB::transaction(function () use ($dispensa, $ator, $agora, $hoje) {
-            $dispensa->data_fim = $hoje;
-            $dispensa->ciencia_em = $agora;
-            $dispensa->responsavel_id = $ator->id;
-            $dispensa->save();
+            $dispensa = $this->writeRepository->atualizar($dispensa, [
+                'data_fim' => $hoje,
+                'ciencia_em' => $agora,
+                'responsavel_id' => $ator->id,
+            ]);
 
             $this->registrarHistorico($dispensa, DispensaPlanoTrabalhoOperacao::ENCERRAR, $ator, $agora);
         });
@@ -117,18 +114,12 @@ final class DispensaPlanoTrabalhoService
 
     private function montar(Usuario $agente, Usuario $ator): DispensaPlanoTrabalhoResumoDTO
     {
-        $dispensa = DispensaPlanoTrabalho::query()
-            ->with(['responsavel'])
-            ->where('usuario_id', $agente->id)
-            ->first();
+        $dispensa = $this->readRepository->findByUsuarioIdComResponsavel((string) $agente->id);
 
         $historicos = [];
         if ($dispensa) {
-            $historicos = DispensaPlanoTrabalhoHistorico::query()
-                ->with('responsavel')
-                ->where('dispensa_id', $dispensa->id)
-                ->orderByDesc('created_at')
-                ->get()
+            $historicos = $this->readRepository
+                ->findHistoricosByDispensaId((string) $dispensa->id)
                 ->all();
         }
 
@@ -151,7 +142,7 @@ final class DispensaPlanoTrabalhoService
         Usuario $ator,
         Carbon $cienciaEm,
     ): void {
-        DispensaPlanoTrabalhoHistorico::query()->create([
+        $this->writeRepository->createHistorico([
             'dispensa_id' => $dispensa->id,
             'usuario_id' => $dispensa->usuario_id,
             'data_inicio' => $dispensa->data_inicio,
