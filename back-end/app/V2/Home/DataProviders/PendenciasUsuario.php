@@ -11,6 +11,8 @@ use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\Home\DTOs\HomeRequestDTO;
 use App\V2\Home\Traits\ResolveUnidades;
+use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAssinaturaDataProvider;
+use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAvaliacaoDataProvider;
 
 class PendenciasUsuario
 {
@@ -21,6 +23,8 @@ class PendenciasUsuario
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly PlanoEntregaRepository $planoEntregaRepository,
+        private readonly AguardandoMinhaAssinaturaDataProvider $aguardandoAssinatura,
+        private readonly AguardandoMinhaAvaliacaoDataProvider $aguardandoAvaliacao,
     ) {}
 
     protected function getUnidadeRepository(): UnidadeRepository
@@ -50,6 +54,47 @@ class PendenciasUsuario
             'registros_execucao_pt_atraso' => $this->consolidacaoRepository->countConsolidacoesAtrasadas($dto->usuarioId, [$dto->unidadeId]),
             'avaliacoes_pt_pendentes' => $this->planoTrabalhoRepository->countAguardandoMinhaAvaliacao($escopo, $dto->usuarioId),
             'avaliacoes_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaAvaliacao($subordinadasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
+        ];
+    }
+
+    /**
+     * Calcula pendências somando todas as unidades onde o usuário é diretamente chefia (titular ou substituto).
+     * Para RE de PT em atraso: conta todos os REs atrasados das unidades (visão chefia) + os próprios (visão participante).
+     *
+     * @return array{
+     *   assinaturas_pe_pendentes: int,
+     *   assinaturas_pt_pendentes: int,
+     *   registros_execucao_pe_atraso: int,
+     *   registros_execucao_pt_atraso: int,
+     *   avaliacoes_pt_pendentes: int,
+     *   avaliacoes_pe_pendentes: int,
+     * }
+     */
+    public function getDataGlobal(string $usuarioId): array
+    {
+        $unidadesGerenciadas = $this->unidadeRepository->getUnidadesGerenciadas($usuarioId);
+        $unidadeIds = $unidadesGerenciadas->pluck('id')->toArray();
+
+        $reAtrasadosProprios = $this->consolidacaoRepository->countConsolidacoesAtrasadas($usuarioId, []);
+
+        if (empty($unidadeIds)) {
+            return [
+                'assinaturas_pe_pendentes' => 0,
+                'assinaturas_pt_pendentes' => 0,
+                'registros_execucao_pe_atraso' => 0,
+                'registros_execucao_pt_atraso' => $reAtrasadosProprios,
+                'avaliacoes_pt_pendentes' => 0,
+                'avaliacoes_pe_pendentes' => 0,
+            ];
+        }
+
+        return [
+            'assinaturas_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaHomologacao($unidadeIds),
+            'assinaturas_pt_pendentes' => $this->aguardandoAssinatura->count($usuarioId),
+            'registros_execucao_pe_atraso' => $this->planoEntregaRepository->countEntregasSemProgresso($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
+            'registros_execucao_pt_atraso' => $reAtrasadosProprios,
+            'avaliacoes_pt_pendentes' => $this->aguardandoAvaliacao->count($usuarioId),
+            'avaliacoes_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaAvaliacao($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
         ];
     }
 }

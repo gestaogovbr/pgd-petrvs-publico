@@ -65,6 +65,12 @@ export class HomeApiClient extends TenantV2ResourceApiBase {
     );
   }
 
+  getPendenciasGlobal(): Observable<PendenciasUsuario> {
+    return this.http.get<{ data: PendenciasUsuario }>(this.resourceUrl('/pendencias-global')).pipe(
+      map(r => r.data),
+    );
+  }
+
   getPlanosVigentes(unidadeId: string, subordinadas: boolean): Observable<PlanosVigentes> {
     return this.http.get<{ data: PlanosVigentes }>(this.resourceUrl('/planos-vigentes'), { params: this.params(unidadeId, subordinadas) }).pipe(
       map(r => r.data),

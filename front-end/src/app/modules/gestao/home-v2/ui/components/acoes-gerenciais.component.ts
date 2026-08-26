@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { HomeApiClient, MeusPlanosVigentesResponse } from '../../infra/home-api.client';
 import { MessageService } from 'src/app/v2/services/message.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 
 @Component({
   selector: 'home-acoes-gerenciais',
@@ -18,6 +20,8 @@ export class AcoesGerenciaisComponent {
   private readonly router = inject(Router);
   private readonly homeApi = inject(HomeApiClient);
   private readonly message = inject(MessageService);
+  private readonly auth = inject(AuthService);
+  private readonly filterStorage = inject(FilterStorageService);
 
   readonly unidadeId = input.required<string>();
 
@@ -61,7 +65,8 @@ export class AcoesGerenciaisComponent {
   irParaPlanoTrabalho(): void {
     const id = this.data()?.plano_trabalho_id;
     if (!id) {
-      this.message.info('Sem Plano de Trabalho vigente.');
+      this.salvarFiltrosPT({ vigentes: true, meus_planos: true, incluir_subordinadas: false });
+      this.router.navigate(['gestao', 'plano-trabalho-v2']);
       return;
     }
     this.router.navigate(['gestao', 'plano-trabalho-v2', 'consultar', id]);
@@ -73,5 +78,11 @@ export class AcoesGerenciaisComponent {
       next: (r) => { this.data.set(r); this.loading.set(false); },
       error: () => { this.data.set(null); this.loading.set(false); },
     });
+  }
+
+  private salvarFiltrosPT(filtros: Record<string, unknown>): void {
+    const userId = this.auth.usuario?.id;
+    const key = userId ? `plano-trabalho-v2:filters:${userId}` : 'plano-trabalho-v2:filters';
+    this.filterStorage.save(key, filtros);
   }
 }

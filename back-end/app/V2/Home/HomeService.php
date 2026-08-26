@@ -35,6 +35,11 @@ class HomeService
         return $this->pendenciasUsuario->getData($dto);
     }
 
+    public function getPendenciasGlobal(): array
+    {
+        return $this->pendenciasUsuario->getDataGlobal(Auth::id());
+    }
+
     public function getPlanosVigentes(array $data): array
     {
         $dto = $this->buildDTO($data);

@@ -1,6 +1,12 @@
 <div class="br-card home-card">
   <div class="card-content p-3">
-    <h5 class="text-center fw-bold mb-3">Pendências do usuário</h5>
+    <h5 class="text-center fw-bold mb-3">
+      Pendências do usuário
+      <i class="fas fa-info-circle text-muted ml-1"
+         title="Apresenta as pendências do usuário em todas as unidades com as quais possua relacionamento."
+         aria-hidden="true"
+         style="cursor: help;"></i>
+    </h5>
     @if (loading()) {
       <div class="d-flex justify-content-center py-3">
         <span class="br-loading small" role="progressbar"></span>

@@ -637,6 +637,7 @@ use App\V2\MuralAviso\MuralAvisoController as MuralAvisoV2;
 
 Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('home/pendencias', [HomeV2::class, 'pendencias']);
+    Route::get('home/pendencias-global', [HomeV2::class, 'pendenciasGlobal']);
     Route::get('home/planos-vigentes', [HomeV2::class, 'planosVigentes']);
     Route::get('home/meus-planos-vigentes', [HomeV2::class, 'meusPlanosVigentes']);
     Route::get('home/resumo-equipe', [HomeV2::class, 'resumoEquipe']);
@@ -655,6 +656,8 @@ Route::middleware(['auth:sanctum'])->prefix('v2')->group(function () {
     Route::get('tipo-modalidade', [TipoModalidadeV2::class, 'index']);
     Route::get('tipos-motivos-afastamentos', [TipoMotivoAfastamentoV2::class, 'index']);
     Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
+    Route::get('plano-trabalho/aguardando-minha-assinatura', [PlanoTrabalhoV2::class, 'aguardandoMinhaAssinatura']);
+    Route::get('plano-trabalho/aguardando-minha-avaliacao', [PlanoTrabalhoV2::class, 'aguardandoMinhaAvaliacao']);
     Route::get('plano-trabalho/statuses', [PlanoTrabalhoV2::class, 'statuses']);
     Route::get('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'show']);
     Route::post('plano-trabalho', [PlanoTrabalhoV2::class, 'store']);
