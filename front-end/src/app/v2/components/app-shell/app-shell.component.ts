@@ -7,6 +7,7 @@ import {
   inject,
   OnInit,
   signal,
+  TemplateRef,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -44,6 +45,7 @@ export class AppShellV2Component implements OnInit {
 
   @ViewChild('menuTrigger') menuTriggerRef?: ElementRef<HTMLButtonElement>;
   @ViewChild('menuClose')   menuCloseRef?:   ElementRef<HTMLButtonElement>;
+  @ViewChild('muralTemplate') muralTemplate!: TemplateRef<any>;
 
   readonly unidadeAberta = signal(false);
   readonly perfilAberto  = signal(false);
@@ -94,37 +96,25 @@ export class AppShellV2Component implements OnInit {
   }
 
   private exibirModalMural(avisos: { titulo: string; conteudo: string; remetente: string; data_publicacao: string }[]): void {
-    const avisosHtml = avisos.map(aviso => {
-      const data = new Date(aviso.data_publicacao).toLocaleDateString('pt-BR', {
-        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-      });
-      return `
-        <div class="border-bottom py-3">
-          <h5 class="mb-1">${this.escapeHtml(aviso.titulo)}</h5>
-          <small class="text-muted">${this.escapeHtml(aviso.remetente)} • ${data}</small>
-          <p class="mt-2 text-break text-wrap">${this.escapeHtml(aviso.conteudo)}</p>
-        </div>`;
-    }).join('');
+    const avisosFormatados = avisos.map(aviso => {
+      const date = new Date(aviso.data_publicacao);
+      return {
+        ...aviso,
+        dataFormatada: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+        horaFormatada: date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      };
+    });
 
-    const html = `
-      <div class="overflow-auto px-2 mural-aviso-container">
-        ${avisosHtml}
-      </div>`;
-
-    const result = this.dialog.html(
+    const result = this.dialog.template(
       { title: 'Mural de Avisos', modalWidth: 700 },
-      html,
-      [{ label: 'Li e estou ciente', color: 'btn-primary', value: true }]
+      this.muralTemplate,
+      [{ label: 'Li e estou ciente', color: 'btn-primary', value: true }],
+      { avisos: avisosFormatados },
     );
     result.result.then(({ dialog: dlg }) => {
       dlg.close();
       this.muralService.confirmarLeitura();
     });
-  }
-
-  private escapeHtml(text: string): string {
-    const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-    return text.replace(/[&<>"']/g, char => map[char]);
   }
 
   // Fecha o overlay mais externo ao pressionar Escape

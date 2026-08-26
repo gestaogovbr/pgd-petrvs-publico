@@ -272,3 +272,16 @@
     </div>
   </div>
 }
+
+<!-- ─── Template: Mural de Avisos ──────────────────────────────────────────── -->
+<ng-template #muralTemplate let-avisos="avisos">
+  <div class="overflow-auto px-2 mural-aviso-container">
+    @for (aviso of avisos; track aviso.titulo) {
+      <div class="border-bottom py-3">
+        <h5 class="mb-1">{{ aviso.titulo }}</h5>
+        <small class="text-muted">Enviado por {{ aviso.remetente }} em {{ aviso.dataFormatada }} às {{ aviso.horaFormatada }}</small>
+        <p class="mt-2 text-break text-wrap">{{ aviso.conteudo }}</p>
+      </div>
+    }
+  </div>
+</ng-template>
