@@ -12,13 +12,14 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
-function showMockUsuario(string $id, int $nivel, bool $temPermissaoVis = true, bool $temPermissaoTudo = false): Usuario
+function showMockUsuario(string $id, int $nivel, bool $temPermissaoVis = true, bool $temPermissaoTudo = false, string $cpf = '00000000000'): Usuario
 {
     $perfil = Mockery::mock(Perfil::class)->makePartial();
     $perfil->nivel = $nivel;
 
     $usuario = Mockery::mock(Usuario::class)->makePartial();
     $usuario->id = $id;
+    $usuario->cpf = $cpf;
     $usuario->shouldReceive('loadMissing')->andReturnSelf();
     $usuario->shouldReceive('hasPermissionTo')
         ->with('MOD_USER_VIS')
@@ -31,13 +32,14 @@ function showMockUsuario(string $id, int $nivel, bool $temPermissaoVis = true, b
     return $usuario;
 }
 
-function showMockAlvoComLotacao(string $id, int $nivel, string $unidadeId): Usuario
+function showMockAlvoComLotacao(string $id, int $nivel, string $unidadeId, string $cpf = '99999999999'): Usuario
 {
     $perfil = Mockery::mock(Perfil::class)->makePartial();
     $perfil->nivel = $nivel;
 
     $usuario = Mockery::mock(Usuario::class)->makePartial();
     $usuario->id = $id;
+    $usuario->cpf = $cpf;
     $usuario->shouldReceive('loadMissing')->andReturnSelf();
     $usuario->setRelation('perfil', $perfil);
 
@@ -70,23 +72,32 @@ afterEach(fn () => Mockery::close());
 describe('validarEscopo', function () {
 
     test('auto-consulta sempre permitida independente de capacidades', function () {
-        $user = showMockUsuario('u1', PerfilEnum::PARTICIPANTE->value, false, false);
+        $user = showMockUsuario('u1', PerfilEnum::PARTICIPANTE->value, false, false, '12345678901');
 
         $result = $this->validator->validarEscopo($user, $user);
 
         expect($result->id)->toBe('u1');
     });
 
+    test('auto-consulta por CPF permitida mesmo com IDs diferentes (múltiplas matrículas)', function () {
+        $solicitante = showMockUsuario('matricula-ativa', PerfilEnum::PARTICIPANTE->value, false, false, '12345678901');
+        $alvo = showMockAlvoComLotacao('matricula-inativa', PerfilEnum::PARTICIPANTE->value, 'u1', '12345678901');
+
+        $result = $this->validator->validarEscopo($solicitante, $alvo);
+
+        expect($result->id)->toBe('matricula-inativa');
+    });
+
     test('participante sem MOD_USER_VIS não pode visualizar outro usuário', function () {
-        $solicitante = showMockUsuario('solicitante', PerfilEnum::PARTICIPANTE->value, false, false);
-        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'u1');
+        $solicitante = showMockUsuario('solicitante', PerfilEnum::PARTICIPANTE->value, false, false, '11111111111');
+        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'u1', '22222222222');
 
         $this->validator->validarEscopo($solicitante, $alvo);
     })->throws(ForbiddenException::class, 'Seu perfil não permite visualizar outros usuários.');
 
     test('usuário com MOD_USER_TUDO pode visualizar qualquer um sem verificar escopo', function () {
-        $solicitante = showMockUsuario('solicitante', PerfilEnum::ADMINISTRADOR_MASTER->value, true, true);
-        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'qualquer');
+        $solicitante = showMockUsuario('solicitante', PerfilEnum::ADMINISTRADOR_MASTER->value, true, true, '11111111111');
+        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'qualquer', '22222222222');
 
         $this->unidadeRepo->shouldNotReceive('getUnidadesGerenciadas');
 
@@ -96,8 +107,8 @@ describe('validarEscopo', function () {
     });
 
     test('chefia com MOD_USER_VIS pode visualizar subordinado', function () {
-        $solicitante = showMockUsuario('solicitante', PerfilEnum::UNIDADE->value, true, false);
-        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'filha');
+        $solicitante = showMockUsuario('solicitante', PerfilEnum::UNIDADE->value, true, false, '11111111111');
+        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'filha', '22222222222');
 
         $this->unidadeRepo->shouldReceive('getUnidadesGerenciadas')
             ->with('solicitante')->andReturn(showMockUnidades(['pai']));
@@ -110,8 +121,8 @@ describe('validarEscopo', function () {
     });
 
     test('chefia com MOD_USER_VIS não pode visualizar fora do escopo', function () {
-        $solicitante = showMockUsuario('solicitante', PerfilEnum::UNIDADE->value, true, false);
-        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'outra');
+        $solicitante = showMockUsuario('solicitante', PerfilEnum::UNIDADE->value, true, false, '11111111111');
+        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'outra', '22222222222');
 
         $this->unidadeRepo->shouldReceive('getUnidadesGerenciadas')
             ->with('solicitante')->andReturn(showMockUnidades(['pai']));
@@ -122,8 +133,8 @@ describe('validarEscopo', function () {
     })->throws(ForbiddenException::class, 'O usuário não está no seu escopo de atuação.');
 
     test('chefia sem vinculação de chefia não pode visualizar outros', function () {
-        $solicitante = showMockUsuario('solicitante', PerfilEnum::UNIDADE->value, true, false);
-        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'u1');
+        $solicitante = showMockUsuario('solicitante', PerfilEnum::UNIDADE->value, true, false, '11111111111');
+        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'u1', '22222222222');
 
         $this->unidadeRepo->shouldReceive('getUnidadesGerenciadas')
             ->with('solicitante')->andReturn(showMockUnidades([]));
@@ -132,8 +143,8 @@ describe('validarEscopo', function () {
     })->throws(ForbiddenException::class, 'Você não possui vinculação de chefia em nenhuma unidade.');
 
     test('adm negocial com MOD_USER_VIS pode visualizar em unidade gerenciada', function () {
-        $solicitante = showMockUsuario('solicitante', PerfilEnum::ADMINISTRADOR_NEGOCIAL->value, true, false);
-        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'gerenciada');
+        $solicitante = showMockUsuario('solicitante', PerfilEnum::ADMINISTRADOR_NEGOCIAL->value, true, false, '11111111111');
+        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'gerenciada', '22222222222');
 
         $this->unidadeRepo->shouldReceive('getUnidadesGerenciadas')
             ->with('solicitante')->andReturn(showMockUnidades(['gerenciada']));
@@ -146,8 +157,8 @@ describe('validarEscopo', function () {
     });
 
     test('adm negocial com MOD_USER_VIS pode visualizar em subordinada da unidade gerenciada', function () {
-        $solicitante = showMockUsuario('solicitante', PerfilEnum::ADMINISTRADOR_NEGOCIAL->value, true, false);
-        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'sub');
+        $solicitante = showMockUsuario('solicitante', PerfilEnum::ADMINISTRADOR_NEGOCIAL->value, true, false, '11111111111');
+        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'sub', '22222222222');
 
         $this->unidadeRepo->shouldReceive('getUnidadesGerenciadas')
             ->with('solicitante')->andReturn(showMockUnidades(['gerenciada']));
@@ -160,8 +171,8 @@ describe('validarEscopo', function () {
     });
 
     test('sem MOD_USER_VIS não chama repository para verificar escopo', function () {
-        $solicitante = showMockUsuario('solicitante', PerfilEnum::PARTICIPANTE->value, false, false);
-        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'u1');
+        $solicitante = showMockUsuario('solicitante', PerfilEnum::PARTICIPANTE->value, false, false, '11111111111');
+        $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'u1', '22222222222');
 
         $this->unidadeRepo->shouldNotReceive('getUnidadesGerenciadas');
 
