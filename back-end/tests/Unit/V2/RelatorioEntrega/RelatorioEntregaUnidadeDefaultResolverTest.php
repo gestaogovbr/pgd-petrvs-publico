@@ -18,7 +18,7 @@ afterEach(function () {
     Session::forget('unidade_id');
 });
 
-function makeUsuario(string $id = 'usuario-1'): Usuario
+function makeUsuarioRE(string $id = 'usuario-1'): Usuario
 {
     $usuario = new Usuario();
     $usuario->id = $id;
@@ -51,7 +51,7 @@ test('retorna unidade mais alta na hierarquia com atribuicao ativa', function ()
 
     $resolver = new RelatorioEntregaUnidadeDefaultResolver($unidadeRepository, $integranteRepository);
 
-    expect($resolver->resolve(makeUsuario()))->toBe('unidade-pai');
+    expect($resolver->resolve(makeUsuarioRE()))->toBe('unidade-pai');
 });
 
 test('ignora unidades apenas com atribuicao removida', function () {
@@ -68,7 +68,7 @@ test('ignora unidades apenas com atribuicao removida', function () {
 
     $resolver = new RelatorioEntregaUnidadeDefaultResolver($unidadeRepository, $integranteRepository);
 
-    expect($resolver->resolve(makeUsuario()))->toBe('unidade-ativa');
+    expect($resolver->resolve(makeUsuarioRE()))->toBe('unidade-ativa');
 });
 
 test('em empate no mesmo nivel prioriza unidade atual do usuario', function () {
@@ -89,7 +89,7 @@ test('em empate no mesmo nivel prioriza unidade atual do usuario', function () {
 
     $resolver = new RelatorioEntregaUnidadeDefaultResolver($unidadeRepository, $integranteRepository);
 
-    expect($resolver->resolve(makeUsuario()))->toBe('unidade-b');
+    expect($resolver->resolve(makeUsuarioRE()))->toBe('unidade-b');
 });
 
 test('nao usa unidade da sessao quando nao possui atribuicao ativa nela', function () {
@@ -110,7 +110,7 @@ test('nao usa unidade da sessao quando nao possui atribuicao ativa nela', functi
 
     $resolver = new RelatorioEntregaUnidadeDefaultResolver($unidadeRepository, $integranteRepository);
 
-    expect($resolver->resolve(makeUsuario()))->toBe('unidade-cgm');
+    expect($resolver->resolve(makeUsuarioRE()))->toBe('unidade-cgm');
 });
 
 test('retorna null quando usuario nao possui atribuicao ativa', function () {
@@ -122,5 +122,5 @@ test('retorna null quando usuario nao possui atribuicao ativa', function () {
 
     $resolver = new RelatorioEntregaUnidadeDefaultResolver($unidadeRepository, $integranteRepository);
 
-    expect($resolver->resolve(makeUsuario()))->toBeNull();
+    expect($resolver->resolve(makeUsuarioRE()))->toBeNull();
 });

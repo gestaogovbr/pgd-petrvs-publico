@@ -381,7 +381,7 @@ test('podeCancelar retorna true para adm master com status ATIVO', function () {
     $usuario->shouldReceive('hasPermissionTo')->with('MOD_PTR_CNC')->andReturn(true);
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'adm-master')
+        ->with('unidade-plano', 'adm-master', true)
         ->andReturn(false);
 
     expect($this->authorization->podeCancelar($plano, $usuario))->toBeTrue();
@@ -394,7 +394,7 @@ test('podeCancelar retorna true para adm negocial substituto com status ATIVO', 
     $usuario->shouldReceive('hasPermissionTo')->with('MOD_PTR_CNC')->andReturn(true);
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'adm-neg')
+        ->with('unidade-plano', 'adm-neg', true)
         ->andReturn(false);
     $this->unidadeRepository->shouldReceive('isUsuarioGestorSubstitutoDaUnidade')
         ->with('unidade-plano', 'adm-neg')
@@ -410,7 +410,7 @@ test('podeCancelar retorna true para adm negocial delegado com status ATIVO', fu
     $usuario->shouldReceive('hasPermissionTo')->with('MOD_PTR_CNC')->andReturn(true);
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'adm-neg')
+        ->with('unidade-plano', 'adm-neg', true)
         ->andReturn(false);
     $this->unidadeRepository->shouldReceive('isUsuarioGestorSubstitutoDaUnidade')
         ->with('unidade-plano', 'adm-neg')
@@ -429,7 +429,7 @@ test('podeCancelar retorna false para adm negocial sem atribuicao na unidade com
     $usuario->shouldReceive('hasPermissionTo')->with('MOD_PTR_CNC')->andReturn(true);
 
     $this->unidadeRepository->shouldReceive('isUsuarioGestorRecursivo')
-        ->with('unidade-plano', 'adm-neg')
+        ->with('unidade-plano', 'adm-neg', true)
         ->andReturn(false);
     $this->unidadeRepository->shouldReceive('isUsuarioGestorSubstitutoDaUnidade')
         ->with('unidade-plano', 'adm-neg')

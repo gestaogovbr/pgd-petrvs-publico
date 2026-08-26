@@ -122,7 +122,7 @@ describe('ValidaAutorizacaoTrait::autorizarDonoOuChefia', function () {
             ->andReturn(true);
 
         $trait = criarClasseComTrait($unidadeRepo);
-        $entity = criarModel(['usuario_id' => 'outro', 'unidade_id' => 'u-1']);
+        $entity = criarEntity(['outro']);
 
         $trait->autorizarDonoOuChefia($entity, 'chefia-1', 'u-1', 'Sem permissão.', incluirDelegado: false);
         expect(true)->toBeTrue();
@@ -136,7 +136,7 @@ describe('ValidaAutorizacaoTrait::autorizarDonoOuChefia', function () {
             ->andReturn(false);
 
         $trait = criarClasseComTrait($unidadeRepo);
-        $entity = criarModel(['usuario_id' => 'outro', 'unidade_id' => 'u-1']);
+        $entity = criarEntity(['outro']);
 
         $trait->autorizarDonoOuChefia($entity, 'delegado-1', 'u-1', 'Sem permissão.', incluirDelegado: false);
     })->throws(ForbiddenException::class, 'Sem permissão.');
@@ -149,7 +149,7 @@ describe('ValidaAutorizacaoTrait::autorizarDonoOuChefia', function () {
             ->andReturn(true);
 
         $trait = criarClasseComTrait($unidadeRepo);
-        $entity = criarModel(['usuario_id' => 'outro', 'unidade_id' => 'u-filha']);
+        $entity = criarEntity(['outro']);
 
         $trait->autorizarDonoOuChefia($entity, 'chefia-1', 'u-filha', 'Sem permissão.', incluirDelegado: false);
         expect(true)->toBeTrue();
@@ -160,7 +160,7 @@ describe('ValidaAutorizacaoTrait::autorizarDonoOuChefia', function () {
         $unidadeRepo->shouldNotReceive('isUsuarioGestorRecursivo');
         $trait = criarClasseComTrait($unidadeRepo);
 
-        $entity = criarModel(['usuario_id' => 'delegado-1', 'unidade_id' => 'u-1']);
+        $entity = criarEntity(['delegado-1']);
 
         $trait->autorizarDonoOuChefia($entity, 'delegado-1', 'u-1', 'Sem permissão.', incluirDelegado: false);
         expect(true)->toBeTrue();
