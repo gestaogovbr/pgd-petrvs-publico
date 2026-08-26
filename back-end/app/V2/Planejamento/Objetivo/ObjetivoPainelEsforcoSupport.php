@@ -12,6 +12,12 @@ final class ObjetivoPainelEsforcoSupport
     /** CHD (horas/dia) usada quando o PT não possui carga_horaria informada (= 0). */
     private const CHD_FALLBACK_HORAS = 8;
 
+    /** Divisor da jornada semanal para obter a CHD (usado pela Cadeia de Valor). */
+    private const JORNADA_DIVISOR = 5.0;
+
+    /** Jornada semanal padrão em horas (usado pela Cadeia de Valor). */
+    private const JORNADA_PADRAO = 40;
+
     /** PTs que contam para esforço planejado (pactuados). */
     private const PT_STATUS_PLANEJADO = ['AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO', 'AVALIADO'];
 
@@ -28,6 +34,16 @@ final class ObjetivoPainelEsforcoSupport
         $fallback = self::CHD_FALLBACK_HORAS;
 
         return "COALESCE(NULLIF(pt.carga_horaria, 0), {$fallback})";
+    }
+
+    public static function jornadaDivisor(): float
+    {
+        return self::JORNADA_DIVISOR;
+    }
+
+    public static function jornadaPadrao(): int
+    {
+        return self::JORNADA_PADRAO;
     }
 
     public static function ptStatusPlanejadoIn(): string

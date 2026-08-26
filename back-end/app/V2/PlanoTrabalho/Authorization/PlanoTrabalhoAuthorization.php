@@ -124,7 +124,7 @@ class PlanoTrabalhoAuthorization
             return true;
         }
 
-        if ($this->isDonoOuChefia($plano, $usuario->id, $plano->unidade_id, ['usuario_id', 'criacao_usuario_id'])) {
+        if ($this->isDonoOuChefia($plano, $usuario->id, $plano->unidade_id)) {
             return true;
         }
 
