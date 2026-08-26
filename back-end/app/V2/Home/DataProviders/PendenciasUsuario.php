@@ -52,4 +52,42 @@ class PendenciasUsuario
             'avaliacoes_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaAvaliacao($subordinadasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
         ];
     }
+
+    /**
+     * Calcula pendências somando todas as unidades onde o usuário é diretamente chefia (titular ou substituto).
+     *
+     * @return array{
+     *   assinaturas_pe_pendentes: int,
+     *   assinaturas_pt_pendentes: int,
+     *   registros_execucao_pe_atraso: int,
+     *   registros_execucao_pt_atraso: int,
+     *   avaliacoes_pt_pendentes: int,
+     *   avaliacoes_pe_pendentes: int,
+     * }
+     */
+    public function getDataGlobal(string $usuarioId): array
+    {
+        $unidadesGerenciadas = $this->unidadeRepository->getUnidadesGerenciadas($usuarioId);
+        $unidadeIds = $unidadesGerenciadas->pluck('id')->toArray();
+
+        if (empty($unidadeIds)) {
+            return [
+                'assinaturas_pe_pendentes' => 0,
+                'assinaturas_pt_pendentes' => 0,
+                'registros_execucao_pe_atraso' => 0,
+                'registros_execucao_pt_atraso' => 0,
+                'avaliacoes_pt_pendentes' => 0,
+                'avaliacoes_pe_pendentes' => 0,
+            ];
+        }
+
+        return [
+            'assinaturas_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaHomologacao($unidadeIds),
+            'assinaturas_pt_pendentes' => $this->planoTrabalhoRepository->countPlanosTrabalhoAssinatura($unidadeIds, $usuarioId),
+            'registros_execucao_pe_atraso' => $this->planoEntregaRepository->countEntregasSemProgresso($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
+            'registros_execucao_pt_atraso' => $this->consolidacaoRepository->countConsolidacoesAtrasadas($usuarioId, $unidadeIds),
+            'avaliacoes_pt_pendentes' => $this->planoTrabalhoRepository->countAguardandoMinhaAvaliacao($unidadeIds, $usuarioId),
+            'avaliacoes_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaAvaliacao($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
+        ];
+    }
 }
