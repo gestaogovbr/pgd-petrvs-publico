@@ -33,7 +33,7 @@
     </div>
   </form>
 
-  <section *ngIf="exibindoDetalhe && relatorio" class="relatorio-carga-siape-bloco relatorio-carga-siape-detalhe">
+  <div *ngIf="exibindoDetalhe && relatorio" class="relatorio-carga-siape-bloco relatorio-carga-siape-detalhe">
     <div class="relatorio-carga-siape-detalhe__topo">
       <div>
         <h2>{{ tipoLabel(relatorio.tipo) }}</h2>
@@ -49,12 +49,12 @@
       <span><strong>Processado em:</strong> {{ formatarProcessadoEm(relatorio.processado_em) || '-' }}</span>
     </div>
 
-    <section class="relatorio-carga-siape-box" *ngIf="relatorio.orientacoes.length">
+    <div class="relatorio-carga-siape-box" *ngIf="relatorio.orientacoes.length">
       <h3>Orientações</h3>
       <ul class="relatorio-carga-siape-orientacoes">
         <li *ngFor="let orientacao of relatorio.orientacoes">{{ orientacao }}</li>
       </ul>
-    </section>
+    </div>
 
     <ng-container *ngIf="relatorio.secoes.length; else semSecoes">
       <div *ngIf="deveExibirAbas()" class="relatorio-carga-siape-tabs">
@@ -73,7 +73,7 @@
           </button>
         </div>
 
-        <section
+        <div
           *ngIf="secaoAtiva() as secao"
           class="relatorio-carga-siape-box"
           role="tabpanel"
@@ -84,11 +84,11 @@
             <span [class]="statusVinculoClass(secao)">{{ statusVinculoLabel(secao) }}</span>
           </div>
           <ng-container *ngTemplateOutlet="tabelaSecao; context: { secao: secao }"></ng-container>
-        </section>
+        </div>
       </div>
 
       <ng-container *ngIf="!deveExibirAbas()">
-        <section *ngFor="let secao of relatorio.secoes" class="relatorio-carga-siape-box">
+        <div *ngFor="let secao of relatorio.secoes" class="relatorio-carga-siape-box">
           <div class="relatorio-carga-siape-secao-topo">
             <h3>{{ secao.titulo }}</h3>
             <span *ngIf="relatorio.tipo === 'servidor'" [class]="statusVinculoClass(secao)">
@@ -96,12 +96,12 @@
             </span>
           </div>
           <ng-container *ngTemplateOutlet="tabelaSecao; context: { secao: secao }"></ng-container>
-        </section>
+        </div>
       </ng-container>
     </ng-container>
-  </section>
+  </div>
 
-  <section *ngIf="!exibindoDetalhe" class="relatorio-carga-siape-bloco">
+  <div *ngIf="!exibindoDetalhe" class="relatorio-carga-siape-bloco">
     <h2>Relatórios recentes</h2>
 
     <div class="relatorio-carga-siape-lista" *ngIf="recentes.length; else semRecentes">
@@ -130,7 +130,7 @@
         </div>
       </article>
     </div>
-  </section>
+  </div>
 </div>
 
 <ng-template #tabelaSecao let-secao="secao">

@@ -212,14 +212,14 @@ class PlanoEntregaController extends ControllerBase
                 /*
                 (RN_PENT_X) EXCLUIR
                 - o usuário logado precisa possuir a capacidade "MOD_PENT_EXCL", o plano precisa estar com o status INCLUIDO ou HOMOLOGANDO; e
-                    - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou
+                    - o usuário logado precisa ser gestor (titular, substituto ou delegado) da Unidade do plano (Unidade B), ou
                     - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado;
                 */
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 if (!$usuario->hasPermissionTo('MOD_PENT_EXCL')) throw new ServerException("CapacidadeDestroy", "O usuário logado não tem permissão para excluir planos de entregas (MOD_PENT_EXCL).\n[ver RN_PENT_X]");
                 $condition1 = $condicoes['planoIncluido'] || $condicoes['planoHomologando'];
-                $condition2 = $condicoes['gestorUnidadePlano'] || $condicoes['unidadePlanoEhLotacao'];
+                $condition2 = $condicoes['gestorUnidadePlano'] || $condicoes['gestorDelegadoUnidadePlano'] || $condicoes['unidadePlanoEhLotacao'];
                 if (!$condition1) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não pode ser excluído porque não se encontra no status INCLUIDO ou AGUARDANDO HOMOLOGAÇÃO.\n[ver RN_PENT_X]");
                 if (!$condition2) throw new ServerException("ValidateUsuario", "O plano de entregas não pode ser excluído porque o usuário logado não é lotado nem é um dos gestores da sua unidade executora.\n[ver RN_PENT_X]");
                 break;
@@ -490,6 +490,7 @@ class PlanoEntregaController extends ControllerBase
     public function homologar(Request $request)
     {
         try {
+            $this->checkPermissions("HOMOLOGAR", $request, $this->service, $this->getUnidade($request), $this->getUsuario($request));
             $data = $request->validate([
                 'id' => ['required'],
                 'justificativa' => ['present']
