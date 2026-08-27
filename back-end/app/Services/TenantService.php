@@ -127,10 +127,11 @@ class TenantService extends ServiceBase
         Log::info('Verificando se existe o tenant.');
         $tenant = $this->tenantRepository->findById($dataOrEntity->id);
         if (!$tenant->domains()->where('domain', $dataOrEntity->dominio_url)->exists()) {
-            Log::info('Cadastrando o tenant.');
+            Log::info('Cadastrando o domínio do tenant.');
             $tenant->createDomain([
                 'domain' => $dataOrEntity->dominio_url
             ]);
+            $tenant->domains()->where('domain', '!=', $dataOrEntity->dominio_url)->delete();
         }
         tenancy()->initialize($tenant);
 

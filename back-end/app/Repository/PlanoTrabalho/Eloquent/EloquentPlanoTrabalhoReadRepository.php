@@ -119,7 +119,22 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         return $this->query()
             ->where('status', StatusEnum::AGUARDANDO_ASSINATURA->value)
+            ->whereNotExists(function ($query) {
+                $this->subqueryJaPossuiAssinaturaDeGestor($query);
+            })
             ->with(['usuario:id,nome,apelido,nome_social,url_foto']);
+    }
+
+    /**
+     * Exclui PTs cujo documento TCR já possui assinatura de alguém diferente do participante (slot de gestor preenchido).
+     */
+    private function subqueryJaPossuiAssinaturaDeGestor(\Illuminate\Database\Query\Builder $query): void
+    {
+        $query->select(DB::raw(1))
+            ->from('documentos_assinaturas as da')
+            ->whereColumn('da.documento_id', 'planos_trabalhos.documento_id')
+            ->whereColumn('da.usuario_id', '!=', 'planos_trabalhos.usuario_id')
+            ->whereNull('da.deleted_at');
     }
 
     private function subqueryChefeSubstitutoNaoAssinaGestorTitular(\Illuminate\Database\Query\Builder $query, string $usuarioId): void
@@ -338,7 +353,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         /** @var PlanoTrabalho|null $plano */
         $plano = PlanoTrabalho::with([
-            'usuario:id,nome,apelido,nome_social',
+            'usuario:id,nome,apelido,nome_social,cod_jornada',
             'usuario.lotacao:id,usuario_id,unidade_id',
             'usuario.lotacao.unidade:id,unidade_pai_id',
             'unidade:id,sigla,nome,unidade_pai_id',

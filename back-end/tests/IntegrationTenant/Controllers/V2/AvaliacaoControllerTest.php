@@ -184,7 +184,7 @@ function prepararConsolidacaoConcluida($context): string
 
     $context->postJson(
         "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/atividade",
-        ['plano_trabalho_entrega_id' => $context->entrega->id, 'descricao' => 'Trabalho executado']
+        ['plano_trabalho_entrega_id' => $context->entrega->id, 'descricao' => 'Trabalho executado', 'esforco_executado' => 100]
     );
 
     $context->patchJson(
@@ -611,7 +611,7 @@ describe('avaliado_at transitions via booted()', function () {
 
         $context->postJson(
             "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/atividade",
-            ['plano_trabalho_entrega_id' => $context->entrega->id, 'descricao' => 'Trabalho']
+            ['plano_trabalho_entrega_id' => $context->entrega->id, 'descricao' => 'Trabalho', 'esforco_executado' => 100]
         );
 
         $context->patchJson(

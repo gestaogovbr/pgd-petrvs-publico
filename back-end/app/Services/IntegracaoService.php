@@ -375,6 +375,9 @@ class IntegracaoService extends ServiceBase
       'servidores' => ['Resultado' => 'Não foi executado!', 'Observações' => [], 'Falhas' => []],
       'gestores' => ['Resultado' => '', 'Observações' => [], 'Falhas' => []]
     ];
+    $escopoCargaIndividualServidor = $this->normalizarEscopoCargaIndividualServidor(
+      $inputs['escopo_carga_individual_servidor'] ?? null
+    );
     $token = $this->useLocalFiles ? "LOCAL" : $this->getToken($this->integracao_config);
     $entidade_id = $inputs["entidade"] ?: "";
     $xmlStream = "";
@@ -591,8 +594,16 @@ class IntegracaoService extends ServiceBase
       try {
         $servidores = [];
         $servidores = $this->getIntegracaoAdapter()->retornarServidores()["Pessoas"];
+        $servidores = $this->filtrarServidoresPorEscopoCargaIndividual($servidores, $escopoCargaIndividualServidor);
         SiapeLog::info("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
-        $this->processarServidoresTransaction($servidores);
+        if ($escopoCargaIndividualServidor !== null && empty($servidores)) {
+          SiapeLog::warning('Nenhum servidor do escopo da carga individual foi encontrado no retorno SIAPE', [
+            'cpf_consultado' => $escopoCargaIndividualServidor['cpf'],
+            'matriculas_consultadas' => $escopoCargaIndividualServidor['matriculas'],
+          ]);
+        } else {
+          $this->processarServidoresTransaction($servidores, $escopoCargaIndividualServidor);
+        }
 
         $this->result['servidores']['Resultado'] = 'Sucesso';
         array_push($this->result['servidores']["Observações"], 'Na tabela Usuários constam agora ' .
@@ -611,7 +622,7 @@ class IntegracaoService extends ServiceBase
     $this->result["gestores"] = $this->integracaoGestorService->atualizarGestores($inputs, $this->integracao_config);
   }
 
-  public function processarServidoresTransaction(array &$servidores): void
+  public function processarServidoresTransaction(array &$servidores, ?array $escopoServidor = null): void
   {
     DB::transaction(function () use (&$servidores) {
       $integracaoServidorProcessar = null;
@@ -630,7 +641,75 @@ class IntegracaoService extends ServiceBase
       $this->result = $integracaoServidorProcessar->getResult();
     });
 
-    $this->processadorAtualizacaoDadosSiapeService->processar($this->result, $this->integracao_config["perfilComum"]);
+    $this->processadorAtualizacaoDadosSiapeService->processar($this->result, $this->integracao_config["perfilComum"], $escopoServidor);
+  }
+
+  private function normalizarEscopoCargaIndividualServidor(mixed $escopo): ?array
+  {
+    if (!is_array($escopo) || ($escopo['origem'] ?? null) !== 'carga_individual_servidor') {
+      return null;
+    }
+
+    $cpf = UtilService::onlyNumbers((string) ($escopo['cpf'] ?? ''));
+    if ($cpf === '') {
+      return null;
+    }
+
+    $matriculas = collect($escopo['matriculas'] ?? [])
+      ->filter(fn($matricula): bool => is_scalar($matricula) && trim((string) $matricula) !== '')
+      ->map(fn($matricula): string => trim((string) $matricula))
+      ->unique()
+      ->values()
+      ->all();
+
+    return [
+      'origem' => 'carga_individual_servidor',
+      'cpf' => $cpf,
+      'matriculas' => $matriculas,
+    ];
+  }
+
+  private function filtrarServidoresPorEscopoCargaIndividual(array $servidores, ?array $escopo): array
+  {
+    if ($escopo === null) {
+      return $servidores;
+    }
+
+    return collect($servidores)
+      ->map(fn(array $servidor): ?array => $this->filtrarServidorPorEscopoCargaIndividual($servidor, $escopo))
+      ->filter()
+      ->values()
+      ->all();
+  }
+
+  private function filtrarServidorPorEscopoCargaIndividual(array $servidor, array $escopo): ?array
+  {
+    $cpfServidor = UtilService::onlyNumbers((string) data_get($servidor, 'pessoal.cpf', ''));
+    $matriculasEscopo = $escopo['matriculas'] ?? [];
+
+    if ($cpfServidor !== '' && $cpfServidor !== $escopo['cpf']) {
+      return null;
+    }
+
+    if ($matriculasEscopo === []) {
+      return $cpfServidor === $escopo['cpf'] ? $servidor : null;
+    }
+
+    $funcionais = collect($servidor['funcionais'] ?? [])
+      ->filter(function (array $funcional) use ($matriculasEscopo): bool {
+        $matricula = data_get($funcional, 'matriculas.dados.matriculasiape');
+        return is_scalar($matricula) && in_array(trim((string) $matricula), $matriculasEscopo, true);
+      })
+      ->values()
+      ->all();
+
+    if ($funcionais === []) {
+      return null;
+    }
+
+    $servidor['funcionais'] = $funcionais;
+
+    return $servidor;
   }
 
   public function liberarEmailDuplicadoDefinindoComoNulo(?string $email, ?string $matricula, ?string $ignoreId = null): void

@@ -7,6 +7,8 @@ use App\Services\CalendarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
 use App\Exceptions\ServerException;
+use App\V2\Usuario\Validators\UsuarioShowAuthorizationValidator;
+use App\Models\Usuario;
 use App\Services\NivelAcessoService;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -23,6 +25,14 @@ class UsuarioController extends ControllerBase
     public function checkPermissions($action, $request, $service, $unidade, $usuario)
     {
         switch ($action) {
+            case 'GETBYID':
+                /** @var UsuarioShowAuthorizationValidator $showValidator */
+                $showValidator = app(UsuarioShowAuthorizationValidator::class);
+                $alvo = Usuario::find($request->input('id'));
+                if ($alvo !== null) {
+                    $showValidator->validarEscopo($usuario, $alvo);
+                }
+                break;
             case 'STORE':
                 if (!$usuario->hasPermissionTo('MOD_USER_EDT'))
                     throw new ServerException("CapacidadeStore", "Inserção não realizada");

@@ -29,6 +29,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
     protected UnidadeRepository $unidadeRepository;
     protected UsuarioRepository $usuarioRepository;
     protected IntegracaoServidorRepository $integracaoServidorRepository;
+    private ?array $escopoServidor = null;
 
     public function __construct() {
         parent::__construct();
@@ -40,10 +41,11 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
     /**
      * Busca e processa atualizações de dados dos servidores em lotes.
      */
-    public function processar(&$result, $usuarioComum)
+    public function processar(&$result, $usuarioComum, ?array $escopoServidor = null)
     {
         $this->result = $result;
         $this->usuarioComum = $usuarioComum;
+        $this->escopoServidor = $escopoServidor;
 
         $this->processarDadosPessoais();
         $this->processarLotacoes();
@@ -76,20 +78,22 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 
     private function buscarAtualizacoesDados(): array
     {
-        return $this->integracaoServidorRepository->buscarAtualizacoesDados();
+        return $this->integracaoServidorRepository->buscarAtualizacoesDados($this->escopoServidor);
     }
 
     private function processarLotacoes(): void
     {
-        $atualizacoesLotacoes = $this->integracaoServidorRepository->getAtualizacoesLotacoes();
+        $atualizacoesLotacoes = $this->integracaoServidorRepository->getAtualizacoesLotacoes($this->escopoServidor);
 
 
-        $sqlServidoresInseridosNaoLotados = $this->integracaoServidorRepository->getServidoresInseridosNaoLotados();
+        $sqlServidoresInseridosNaoLotados = $this->integracaoServidorRepository->getServidoresInseridosNaoLotados($this->escopoServidor);
         
         $atualizacoesLotacoesResult = [];
         
         DB::transaction(function () use (&$atualizacoesLotacoes, &$sqlServidoresInseridosNaoLotados, &$atualizacoesLotacoesResult) {
-            $this->usuarioService->atualizarMatriculasUsuariosSemMatricula();
+            if ($this->escopoServidor === null) {
+                $this->usuarioService->atualizarMatriculasUsuariosSemMatricula();
+            }
 
             if (!empty($sqlServidoresInseridosNaoLotados)) {
                 foreach ($sqlServidoresInseridosNaoLotados as $inserirLotacao) {
@@ -163,7 +167,7 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 
     private function cadastrarUsuariosAusentes()
     {
-        $vinculos_isr = $this->integracaoServidorRepository->getUsuariosAusentes();
+        $vinculos_isr = $this->integracaoServidorRepository->getUsuariosAusentes($this->escopoServidor);
 
         $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
         $perfilParticipanteId = null;

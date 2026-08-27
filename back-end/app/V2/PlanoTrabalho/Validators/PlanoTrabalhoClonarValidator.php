@@ -28,6 +28,7 @@ class PlanoTrabalhoClonarValidator
 
     public function validar(string $planoId, string $usuarioLogadoId): PlanoTrabalho
     {
+        /** @var \App\Models\PlanoTrabalho|null $plano */
         $plano = $this->planoTrabalhoRepository->findById($planoId);
 
         if ($plano === null) {

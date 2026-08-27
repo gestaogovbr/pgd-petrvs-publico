@@ -3,13 +3,14 @@
 namespace App\Services;
 
 use App\Enums\Atribuicao;
+use App\Enums\StatusEnum;
 use App\Models\Usuario;
 use App\Repository\RelatorioAgenteRepository;
 use App\Services\ServiceBase;
-use App\Services\UnidadeService;
 
 class RelatorioAgenteService extends ServiceBase
 {
+
     private RelatorioAgenteRepository $relatorioAgenteRepository;
 
     public function __construct()
@@ -32,7 +33,6 @@ class RelatorioAgenteService extends ServiceBase
     {
         $where = $data["where"] ?? [];
 
-        // remove a condições especificadas, pois tem tratamento diferenciado no proxyQuery
         $where = array_values(array_filter($where, function ($item) {
             return ($item[0] !== 'somente_vigentes')
                 && ($item[0] !== 'incluir_unidades_subordinadas')
@@ -72,16 +72,16 @@ class RelatorioAgenteService extends ServiceBase
         $data["where"] = $where;
     }
 
-    public function proxyRows(&$rows) {
-
+    public function proxyRows(&$rows)
+    {
         $tipos = Usuario::getTiposIndisponibilidades();
 
-        foreach($rows as $row) {
+        foreach ($rows as $row) {
             $row->tipoPedagio = $tipos[$row->tipo_pedagio] ?? '-';
-            $row->perfil = str_replace('Perfil ', '', $row->perfil);
+            $row->perfil = str_replace('Perfil ', '', $row->perfil ?? '');
+            $row->plano_trabalho_status_label = StatusEnum::tryFrom($row->plano_trabalho_status ?? '')?->label() ?? '-';
         }
 
         return $rows;
     }
-
 }

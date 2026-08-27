@@ -62,6 +62,18 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly totalForcaTrabalho = computed(() =>
     (this.planoTrabalho()?.entregas ?? []).reduce((sum, e) => sum + (Number(e.forca_trabalho) || 0), 0)
   );
+
+  totalEsforcoExecutado(consolidacao: Consolidacao): number {
+    const entregas = this.planoTrabalho()?.entregas ?? [];
+    return entregas.reduce(
+      (sum, e) => sum + (Number(this.facade.getEsforcoExecutado(consolidacao.id, e)) || 0),
+      0,
+    );
+  }
+
+  esforcoExecutadoDiverge(consolidacao: Consolidacao): boolean {
+    return this.totalEsforcoExecutado(consolidacao) !== this.totalForcaTrabalho();
+  }
   ngOnInit(): void {
     this.route.paramMap.pipe(
       map(params => params.get('id')),
@@ -218,9 +230,30 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
       mensagem: 'Ao arquivar este Plano de Trabalho, ele será removido da tela, ficando disponível apenas quando consultado. Deseja confirmar?',
       onConfirmar: () => {
         this.arquivarPlanoUC.execute(plano.id).subscribe({
-          next: (atualizado) => {
-            this.planoTrabalho.set(atualizado);
-            this.message.success('Plano de trabalho arquivado com sucesso.');
+          next: () => {
+            this.api.getById(plano.id).subscribe(atualizado => {
+              this.planoTrabalho.set(atualizado);
+              this.message.success('Plano de trabalho arquivado com sucesso.');
+            });
+          }
+        });
+      }
+    });
+  }
+
+  desarquivarPlano() {
+    const plano = this.planoTrabalho();
+    if (!plano) return;
+    this.facade.confirmacaoPendente.set({
+      titulo: 'Desarquivar Plano de Trabalho',
+      mensagem: 'Ao desarquivar este Plano de Trabalho, ele voltará a ser exibido na listagem. Deseja confirmar?',
+      onConfirmar: () => {
+        this.api.unarchive(plano.id).subscribe({
+          next: () => {
+            this.api.getById(plano.id).subscribe(atualizado => {
+              this.planoTrabalho.set(atualizado);
+              this.message.success('Plano de trabalho desarquivado com sucesso.');
+            });
           }
         });
       }
