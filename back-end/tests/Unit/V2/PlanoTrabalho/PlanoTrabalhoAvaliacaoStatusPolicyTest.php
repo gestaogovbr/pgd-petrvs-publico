@@ -8,6 +8,7 @@ use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
 use App\V2\PlanoTrabalho\PlanoTrabalhoAvaliacaoStatusPolicy;
 use App\V2\StatusService;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -26,7 +27,7 @@ function criarConsolidacaoParaSync(string $planoId = 'plano-1'): PlanoTrabalhoCo
 
 function mockPlanoTrabalhoRelation(PlanoTrabalhoConsolidacao $consolidacao, PlanoTrabalho $plano): void
 {
-    $planoTrabalhoRelation = Mockery::mock();
+    $planoTrabalhoRelation = Mockery::mock(BelongsTo::class);
     $planoTrabalhoRelation->shouldReceive('first')->andReturn($plano);
     $consolidacao->shouldReceive('planoTrabalho')->andReturn($planoTrabalhoRelation);
 }

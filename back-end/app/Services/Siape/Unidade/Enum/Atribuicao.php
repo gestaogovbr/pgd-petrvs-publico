@@ -18,6 +18,19 @@ enum Atribuicao: string
     {
         return array_map(fn($atrib) => $atrib->value, Atribuicao::cases());
     }
+
+    public static function isGestor(string $atribuicao): bool
+    {
+        return in_array($atribuicao,
+                array_map(fn($a): string => $a->value, [
+                    Atribuicao::GESTOR,
+                    Atribuicao::GESTOR_DELEGADO,
+                    Atribuicao::GESTOR_SUBSTITUTO
+                ]
+            ),
+            true
+        );
+    }
 }
 
 ?>

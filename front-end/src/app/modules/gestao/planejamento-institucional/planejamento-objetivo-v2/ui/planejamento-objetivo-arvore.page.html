@@ -16,25 +16,31 @@
       <div class="br-card mt-2">
         <div class="card-header">
           <div class="p-2">
-            <h4 class="mb-1">Hierarquia expansível</h4>
-            <small>
-              Clique em um objetivo para expandir ou recolher apenas os filhos do mesmo planejamento.
-              Planejamentos superiores aparecem acima em resumo (do mais alto ao imediato), sem expansão.
-            </small>
+            <h4 class="mb-1">Hierarquia centrada no objetivo consultado</h4>            
           </div>
         </div>
 
         <div class="card-content">
           <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
             <span class="zoom-controls" aria-label="Controles de zoom">
-              <br-button emphasis="tertiary" (click)="zoomOut()">Afastar</br-button>
-              <span class="zoom-controls__value">{{ zoom() * 100 | number:'1.0-0' }}%</span>
-              <br-button emphasis="tertiary" (click)="zoomIn()">Aproximar</br-button>
-              <br-button emphasis="tertiary" (click)="resetView()">100%</br-button>
+              <br-button emphasis="tertiary" (click)="panZoom.zoomOut()">Afastar</br-button>
+              <span class="zoom-controls__value">{{ panZoom.zoom() * 100 | number:'1.0-0' }}%</span>
+              <br-button emphasis="tertiary" (click)="panZoom.zoomIn()">Aproximar</br-button>
+              <br-button emphasis="tertiary" (click)="panZoom.reset()">100%</br-button>
             </span>
+
+            <span class="arvore-expand-controls" aria-label="Expandir níveis">
+              <br-button emphasis="secondary" [disabled]="!canExpandUp()" (click)="expandUp()">
+                Expandir acima
+              </br-button>
+              <br-button emphasis="secondary" [disabled]="!canExpandDown()" (click)="expandDown()">
+                Expandir abaixo
+              </br-button>
+            </span>
+
             <span class="legend-hint">
-              <strong>Linha contínua</strong> = filho abaixo do pai (mesmo planejamento) ·
-              <strong>Linha tracejada</strong> = vínculo com planejamento superior (acima)
+              <strong>Linha contínua</strong> = hierarquia no mesmo planejamento ·
+              <strong>Linha tracejada</strong> = vínculo entre planejamentos
             </span>
           </div>
 
@@ -60,60 +66,29 @@
                     [attr.d]="edge.path"
                     fill="none"
                     [attr.stroke]="edge.type === 'PAI' ? '#636363' : '#1351b4'"
-                    [attr.stroke-width]="edge.type === 'PAI' ? '2' : '1.8'"
+                    [attr.stroke-width]="edge.type === 'PAI' ? '2' : '1.6'"
                     [attr.stroke-dasharray]="edge.type === 'SUPERIOR' ? '7 6' : null"
                     [attr.marker-end]="edge.type === 'PAI' ? 'url(#arrowPai)' : 'url(#arrowSuperior)'"
+                    [attr.opacity]="edge.type === 'SUPERIOR' ? '0.85' : '1'"
                   ></path>
-                }
-
-                @for (resumo of superiorResumos(); track resumo.id) {
-                  <g [attr.transform]="'translate(' + resumo.x + ',' + resumo.y + ')'">
-                    <rect
-                      [attr.x]="-superiorW / 2"
-                      [attr.y]="-resumo.height / 2"
-                      [attr.width]="superiorW"
-                      [attr.height]="resumo.height"
-                      rx="8"
-                      fill="#f3f6fc"
-                      stroke="#1351b4"
-                      stroke-width="1.8"
-                      stroke-dasharray="5 4"
-                    ></rect>
-                    <foreignObject
-                      [attr.x]="-superiorW / 2"
-                      [attr.y]="-resumo.height / 2"
-                      [attr.width]="superiorW"
-                      [attr.height]="resumo.height"
-                      pointer-events="none"
-                    >
-                      <div xmlns="http://www.w3.org/1999/xhtml" class="superior-card" lang="pt-BR">
-                        <p class="superior-card__plan">{{ resumo.planejamentoNome }}</p>
-                        <p class="superior-card__badge">Planejamento superior</p>
-                        @for (linha of resumo.hierarquiaLinhas; track $index) {
-                          <p class="superior-card__line" [style.padding-left.px]="8 + $index * 10">{{ linha }}</p>
-                        }
-                      </div>
-                    </foreignObject>
-                  </g>
                 }
 
                 @for (node of treeNodes(); track node.id) {
                   <g
                     class="tree-node"
-                    [class.tree-node--raiz]="node.isRaiz"
+                    [class.tree-node--consultado]="node.isConsultado"
                     [class.tree-node--selected]="selectedNodeId() === node.id"
                     [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
                     (click)="onNodeClick(node.id, $event)"
                   >
                     <rect
+                      class="tree-node__rect"
                       [attr.x]="-nodeHalfW"
                       [attr.y]="-nodeHalfH"
                       [attr.width]="nodeW"
                       [attr.height]="nodeH"
                       rx="8"
-                      [attr.fill]="node.isRaiz ? '#fff4cc' : '#ffffff'"
-                      [attr.stroke]="node.isRaiz ? '#9c6f00' : (selectedNodeId() === node.id ? '#071d41' : '#1351b4')"
-                      [attr.stroke-width]="node.isRaiz ? 3 : 2"
+                      [attr.fill]="node.isConsultado ? '#fff9e6' : '#ffffff'"
                     ></rect>
                     <foreignObject
                       [attr.x]="-nodeHalfW"
@@ -123,17 +98,22 @@
                       pointer-events="none"
                     >
                       <div xmlns="http://www.w3.org/1999/xhtml" class="node-card" lang="pt-BR">
-                        @if (node.isRaiz) {
+                        @if (node.isConsultado) {
                           <span class="node-card__badge">consultado</span>
                         }
-                        <p class="node-card__plan">{{ node.planejamentoNome }}</p>
                         <p class="node-card__title">{{ node.nome }}</p>
-                        <p class="node-card__meta">
-                          {{ node.entregasCount }} entregas · {{ formatHoras(node.esforcoTotalHoras) }} h
-                        </p>
-                        @if (node.hasFilhos) {
-                          <span class="node-card__toggle">{{ isExpanded(node.id) ? '−' : '+' }}</span>
+                        <p class="node-card__plan">{{ node.planejamentoNome }}</p>
+                        <p class="node-card__tipo">{{ node.tipoObjetivoNome }}</p>
+                        @if (node.percentualDoPai === null) {
+                          <p class="node-card__esforco" title="Esforço planejado em relação ao disponível (mesmo cálculo do painel)">
+                            Esforço planejado: {{ formatPercent(node.planejadoPercentualDisponivel) }} do disponível
+                          </p>
+                        } @else {
+                          <p class="node-card__esforco" title="Participação no esforço planejado acumulado do nó pai">
+                            Esforço planejado: {{ formatPercent(node.percentualDoPai) }} do pai
+                          </p>
                         }
+                        <span class="node-card__vinculos-tag">{{ node.vinculosCount }} vínculos</span>
                       </div>
                     </foreignObject>
                   </g>
@@ -142,149 +122,11 @@
             </div>
 
             <div class="col-12 col-lg-4 detail-col">
-              @if (selectedNode(); as node) {
-                <div class="br-card detail-card">
-                  <div class="card-content p-3">
-                    <h5 class="mb-2">{{ node.nome }}</h5>
-                    @if (!node.isRaiz) {
-                      <div class="mb-3">
-                        <br-button emphasis="secondary" (click)="abrirArvoreOutroObjetivo(node.id, $event)">
-                          Centralizar neste objetivo
-                        </br-button>
-                      </div>
-                    }
-                    <p class="mb-1"><strong>Planejamento:</strong> {{ node.planejamentoNome }}</p>
-                    <p class="mb-1"><strong>Esforço próprio:</strong> {{ formatHoras(node.esforcoProprioHoras) }} h</p>
-                    <p class="mb-1"><strong>Esforço total:</strong> {{ formatHoras(node.esforcoTotalHoras) }} h</p>
-                    <p class="mb-2"><strong>Total de entregas (na árvore):</strong> {{ node.entregasCount }}</p>
-
-                    <div class="detail-card__entregas-toolbar mb-2">
-                      <br-button emphasis="secondary" [disabled]="entregasLoading()" (click)="carregarEntregasDetalhe()">
-                        @if (entregasLoading()) {
-                          Carregando…
-                        } @else if (entregasResposta()) {
-                          Atualizar entregas
-                        } @else {
-                          Visualizar entregas (plano de entregas)
-                        }
-                      </br-button>
-                      @if (entregasResposta()) {
-                        <br-button emphasis="tertiary" (click)="togglePainelEntregas()">
-                          {{ entregasPainelAberto() ? 'Ocultar lista' : 'Mostrar lista' }}
-                        </br-button>
-                      }
-                    </div>
-
-                    @if (entregasError()) {
-                      <div class="alert alert-warning py-2 px-2 mb-2" role="alert">{{ entregasError() }}</div>
-                    }
-
-                    @if (entregasResposta() && entregasPainelAberto()) {
-                      <div class="detail-entregas mb-3">
-                        <p class="small text-muted mb-2">
-                          Entregas do <strong>plano de entregas</strong> com progresso no PE. O esforço (h) de cada linha soma apenas
-                          <strong>planos de trabalho concluídos</strong> que usam essa entrega.
-                        </p>
-
-                        @if (entregasResposta()!.itens.length === 0) {
-                          <p class="small text-muted mb-0">Nenhuma entrega do plano de entregas vinculada a este objetivo.</p>
-                        } @else {
-                          <div class="table-responsive detail-entregas__table-wrap">
-                            <table class="table table-sm table-bordered detail-entregas-table mb-0">
-                              <thead>
-                                <tr>
-                                  <th scope="col">Entrega (PE)</th>
-                                  <th scope="col">Unidade (PE)</th>
-                                  <th scope="col">Realizado</th>
-                                  <th scope="col">Meta</th>
-                                  <th scope="col">Esforço (h)</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                @for (item of entregasResposta()!.itens; track item.plano_entrega_entrega_id) {
-                                  <tr>
-                                    <td>
-                                      <span class="detail-entregas-table__titulo">{{ item.entrega_titulo }}</span>
-                                      @if (item.entrega_catalogo_nome) {
-                                        <span class="d-block small text-muted">Cat.: {{ item.entrega_catalogo_nome }}</span>
-                                      }
-                                    </td>
-                                    <td>{{ item.entrega_unidade_sigla }}</td>
-                                    <td>{{ formatPercent(item.progresso_realizado) }}</td>
-                                    <td>{{ formatPercent(item.progresso_esperado) }}</td>
-                                    <td class="text-nowrap">{{ formatHoras(item.esforco_horas_total) }}</td>
-                                  </tr>
-                                }
-                              </tbody>
-                            </table>
-                          </div>
-                        }
-                      </div>
-                    }
-
-                    <p class="mb-0"><strong>Filhos diretos:</strong> {{ node.filhosPai.length }}</p>
-                  </div>
-                </div>
-
-                <div class="br-card detail-card detail-card--equipes mt-3">
-                  <div class="card-content p-3">
-                    <h5 class="mb-2">Equipes no objetivo</h5>
-                    <p class="small text-muted mb-2">
-                      Unidades do <strong>plano de entregas (PE)</strong> com entregas vinculadas a este objetivo.
-                      O esforço (h) soma apenas <strong>planos de trabalho concluídos</strong> (mesma regra da tabela de entregas).
-                    </p>
-
-                    @if (equipesLoading()) {
-                      <div class="d-flex align-items-center gap-2 text-muted small">
-                        <div class="br-loading" role="progressbar" aria-label="carregando equipes"></div>
-                        Carregando equipes…
-                      </div>
-                    }
-
-                    @if (equipesError()) {
-                      <div class="alert alert-warning py-2 px-2 mb-2" role="alert">{{ equipesError() }}</div>
-                      <br-button emphasis="tertiary" (click)="carregarEquipes()">Tentar novamente</br-button>
-                    }
-
-                    @if (!equipesLoading() && !equipesError() && equipesResposta(); as equipes) {
-                      @if (equipes.itens.length === 0) {
-                        <p class="small text-muted mb-0">Nenhuma unidade com entregas vinculadas a este objetivo.</p>
-                      } @else {
-                        <div class="table-responsive detail-equipes__table-wrap">
-                          <table class="table table-sm table-bordered detail-equipes-table mb-2">
-                            <thead>
-                              <tr>
-                                <th scope="col">Unidade</th>
-                                <th scope="col" class="text-end">Esforço total (h)</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              @for (equipe of equipes.itens; track equipe.unidade_id) {
-                                <tr>
-                                  <td>
-                                    <span class="detail-equipes-table__sigla">{{ equipe.unidade_sigla }}</span>
-                                    <span class="d-block small text-muted">{{ equipe.unidade_nome }}</span>
-                                  </td>
-                                  <td class="text-end text-nowrap">{{ formatHoras(equipe.esforco_horas_total) }}</td>
-                                </tr>
-                              }
-                            </tbody>
-                          </table>
-                        </div>
-                        <p class="mb-0">
-                          <strong>Total das equipes:</strong> {{ formatHoras(equipesEsforcoTotal()) }} h
-                        </p>
-                      }
-                    }
-                  </div>
-                </div>
-              } @else {
-                <div class="br-card detail-card detail-card--empty">
-                  <div class="card-content p-3 text-muted">
-                    Clique em um objetivo da árvore para ver detalhes. Use +/− para expandir filhos.
-                  </div>
-                </div>
-              }
+              <app-planejamento-objetivo-painel-lateral
+                [objetivoId]="selectedNodeId()"
+                [consultadoId]="consultadoId()"
+                (centralizar)="abrirArvoreOutroObjetivo($event)"
+              />
             </div>
           </div>
         </div>

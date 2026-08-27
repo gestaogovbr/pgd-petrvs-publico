@@ -148,6 +148,22 @@ class PlanoTrabalhoDocumentoAssinarValidator
     }
 
     /**
+     * Impede que mais de um gestor assine o mesmo TCR.
+     * Se o assinante não é o participante e já existe assinatura de outro gestor (não-participante),
+     * a vaga de gestor está preenchida.
+     */
+    public function validarSlotGestorDisponivel(PlanoTrabalho $plano, string $usuarioId, Documento $documento): void
+    {
+        if ($plano->usuario_id === $usuarioId) {
+            return;
+        }
+
+        if ($this->assinaturaRepository->existeAssinaturaDeNaoParticipante($documento->id, $plano->usuario_id)) {
+            throw new ValidateException('Já existe assinatura de gestor registrada para este Plano de Trabalho.');
+        }
+    }
+
+    /**
      * Impede que um usuário com o mesmo CPF do participante assine como chefia.
      * A assinatura como participante é permitida (usuario_id coincide).
      */

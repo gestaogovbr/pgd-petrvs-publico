@@ -37,6 +37,7 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     data: { 
       title: "Relatório de Agentes Públicos",
+      permission: "MOD_RELATORIO_USUARIO"
     }
   }, {
    path: 'unidades',

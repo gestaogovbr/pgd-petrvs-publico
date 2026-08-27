@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\DocumentoAssinatura\Contracts;
 
 use App\Models\DocumentoAssinatura;
+use Illuminate\Database\Eloquent\Collection;
 
 interface DocumentoAssinaturaReadRepositoryContract
 {
@@ -31,4 +32,9 @@ interface DocumentoAssinaturaReadRepositoryContract
      * Uso: whereNotExists(fn ($sub) => $repo->subqueryUsuarioJaAssinou($sub, $usuarioId))
      */
     public function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId, string $documentoIdColumn = 'planos_trabalhos.documento_id'): void;
+
+    public function existeAssinaturaDeNaoParticipante(string $documentoId, string $participanteId): bool;
+
+    /** @return Collection<int, DocumentoAssinatura> */
+    public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection;
 }

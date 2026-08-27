@@ -21,6 +21,7 @@ class AtividadeAuthorizationValidator
 
     public function validar(string $planoTrabalhoId, string $usuarioLogadoId): PlanoTrabalho
     {
+        /** @var \App\Models\PlanoTrabalho|null $plano */
         $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
 
         if ($plano === null) {

@@ -125,10 +125,11 @@ class TenantService extends ServiceBase
         Log::info('Verificando se existe o tenant.');
         $tenant = $this->tenantRepository->findById($dataOrEntity->id);
         if (!$tenant->domains()->where('domain', $dataOrEntity->dominio_url)->exists()) {
-            Log::info('Cadastrando o tenant.');
+            Log::info('Cadastrando o domínio do tenant.');
             $tenant->createDomain([
                 'domain' => $dataOrEntity->dominio_url
             ]);
+            $tenant->domains()->where('domain', '!=', $dataOrEntity->dominio_url)->delete();
         }
         tenancy()->initialize($tenant);
 
@@ -284,10 +285,8 @@ class TenantService extends ServiceBase
         foreach ($tenants as $tenant) {
             /** @var Tenant $tenant */
             $this->inicializeTenant($tenant->id);
-            $users += DB::table('programas_participantes')
-                ->select('usuario_id')
-                ->distinct()
-                ->where('habilitado', 1)
+            $users += DB::table('usuarios')
+                ->where('participa_pgd', 'sim')
                 ->count();
         }
 

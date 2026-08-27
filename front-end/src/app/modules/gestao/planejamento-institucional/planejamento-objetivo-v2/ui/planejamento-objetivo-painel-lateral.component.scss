@@ -1,0 +1,72 @@
+.painel-lateral {
+  &__title {
+    font-size: 1rem;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  &__section {
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+    border-top: 1px solid #e5e5e5;
+
+  }
+
+  &__filtro .form-select {
+    max-width: 100%;
+  }
+
+  &__metricas {
+    position: relative;
+  }
+
+  &__metricas--loading {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  &__metricas-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.65);
+  }
+
+  &__section-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #1351b4;
+    margin-bottom: 0.5rem;
+  }
+
+  &__grupo {
+    padding: 0.5rem 0 0 0.25rem;
+
+    & + & {
+      margin-top: 0.25rem;
+    }
+  }
+
+  &__grupo-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #555;
+    margin-bottom: 0.375rem;
+  }
+
+  &__info {
+    color: #1351b4;
+    cursor: help;
+    font-size: 0.875rem;
+    margin-left: 0.125rem;
+  }
+}
+
+.detail-card--empty {
+  min-height: 120px;
+}

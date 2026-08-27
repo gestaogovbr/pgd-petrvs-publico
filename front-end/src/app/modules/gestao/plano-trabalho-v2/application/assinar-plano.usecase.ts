@@ -36,6 +36,14 @@ export class AssinarPlanoUseCase {
     this.jaAssinou() && this.plano()?.status === 'AGUARDANDO_ASSINATURA'
   );
 
+  readonly temAssinaturasRevogadas = computed(() =>
+    (this.documento()?.assinaturas_revogadas?.length ?? 0) > 0
+  );
+
+  readonly temTcrAtivo = computed(() =>
+    !!this.plano()?.documento_id || !!this.documento()?.conteudo
+  );
+
   get mensagemConfirmacao(): string {
     const p = this.plano();
     return mensagemConfirmacaoAssinaturaPlano(
@@ -78,13 +86,15 @@ export class AssinarPlanoUseCase {
     this.documento.set(null);
     this.jaAssinou.set(false);
     this.salvando.set(false);
-    if (plano.documento_id) {
-      this.documentoApi.getDocumento(plano.id).subscribe(doc => {
-        this.documento.set(doc);
-        const assinaturas: any[] = doc?.assinaturas ?? [];
-        this.jaAssinou.set(assinaturas.some(a => a.usuario_id === (this.auth.usuario?.id ?? '')));
-      });
-    }
+    this.recarregarDocumento(plano.id);
+  }
+
+  private recarregarDocumento(planoId: string) {
+    this.documentoApi.getDocumento(planoId).subscribe(doc => {
+      this.documento.set(doc);
+      const assinaturas: any[] = doc?.assinaturas ?? [];
+      this.jaAssinou.set(assinaturas.some(a => a.usuario_id === (this.auth.usuario?.id ?? '')));
+    });
   }
 
   abrirConfirmacaoAssinatura() {
@@ -97,7 +107,7 @@ export class AssinarPlanoUseCase {
     const id = this.plano()?.id;
     if (!id) return;
     this.confirmandoAssinatura.set(false);
-    if (!this.documento()) {
+    if (!this.temTcrAtivo()) {
       this.gerarDocumento(() => this.executarAssinatura(id));
       return;
     }
@@ -111,14 +121,12 @@ export class AssinarPlanoUseCase {
     ).subscribe({
       next: (assinatura) => {
         assinatura.usuario_nome = this.auth.usuario?.nome_exibicao;
-        this.documento.update(doc => doc
-          ? { ...doc, assinaturas: [...(doc.assinaturas ?? []), assinatura] }
-          : doc
-        );
+        const id = this.plano()?.id;
+        if (!id) return;
         this.jaAssinou.set(true);
         const p = this.plano();
         const novoStatus = assinaturaConcluiCiclo(
-          this.documento()?.assinaturas ?? [],
+          [...(this.documento()?.assinaturas ?? []), assinatura],
           this.auth.usuario?.id ?? '',
           {
             plano: p,
@@ -126,6 +134,7 @@ export class AssinarPlanoUseCase {
           }
         ) ? 'ATIVO' : 'AGUARDANDO_ASSINATURA';
         this.plano.update(pl => pl ? { ...pl, status: novoStatus } as any : pl);
+        this.recarregarDocumento(id);
         this.onAfterAssinar?.();
         this.message.success('Assinatura realizada com sucesso.');
       },
@@ -147,17 +156,17 @@ export class AssinarPlanoUseCase {
       finalize(() => this.salvando.set(false))
     ).subscribe({
       next: () => {
-        this.documento.update(doc => doc
-          ? { ...doc, assinaturas: (doc.assinaturas ?? []).filter((a: any) => a.usuario_id !== (this.auth.usuario?.id ?? '')) }
-          : doc
-        );
+        const id = this.plano()?.id;
+        if (!id) return;
         this.jaAssinou.set(false);
-        const remaining = (this.documento()?.assinaturas ?? []).length;
+        const remaining = (this.documento()?.assinaturas ?? []).filter(
+          (a: any) => a.usuario_id !== (this.auth.usuario?.id ?? ''),
+        ).length;
         this.plano.update(p => p ? { ...p, status: remaining > 0 ? 'AGUARDANDO_ASSINATURA' : 'INCLUIDO' } as any : p);
+        this.recarregarDocumento(id);
         this.message.success('Assinatura cancelada com sucesso.');
         this.onAfterCancelar?.();
       },
-      error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao cancelar a assinatura.')
     });
   }
 
@@ -188,10 +197,13 @@ export class AssinarPlanoUseCase {
       finalize(() => this.salvando.set(false))
     ).subscribe({
       next: (doc) => {
-        this.documento.set(doc);
+        const assinaturasRevogadas = this.documento()?.assinaturas_revogadas;
+        this.documento.set(
+          assinaturasRevogadas?.length ? { ...doc, assinaturas_revogadas: assinaturasRevogadas } : doc,
+        );
+        this.plano.update(p => p ? { ...p, documento_id: doc.id } as any : p);
         this.onDocumentoCriado?.();
       },
-      error: (err: any) => this.message.error(err?.error?.error || err?.error?.message || 'Erro ao gerar o documento TCR.')
     });
   }
 }

@@ -497,12 +497,13 @@ class UsuarioService extends ServiceBase
 
     public function isGestorUnidade(string $unidadeId, $incluiDelegado = true): bool
     {
-        if ($this->hasBuffer("isGestorUnidade", $unidadeId)) {
-            return $this->getBuffer("isGestorUnidade", $unidadeId);
+        $bufferKey = [$unidadeId, $incluiDelegado];
+        if ($this->hasBuffer("isGestorUnidade", $bufferKey)) {
+            return $this->getBuffer("isGestorUnidade", $bufferKey);
         } else {
             $atribuicoes = $this->atribuicoesGestor($unidadeId);
             $isGestor = $atribuicoes['gestor'] || $atribuicoes['gestorSubstituto'] || ($incluiDelegado && $atribuicoes['gestorDelegado']);
-            return $this->setBuffer("isGestorUnidade", $unidadeId, $isGestor);
+            return $this->setBuffer("isGestorUnidade", $bufferKey, $isGestor);
         }
     }
 

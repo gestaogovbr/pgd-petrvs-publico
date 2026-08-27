@@ -400,6 +400,75 @@ class CalendarioService
     }
   }
 
+  /**
+   * Calcula a quantidade de dias úteis entre duas datas, descontando feriados e afastamentos.
+   * Não faz acesso ao banco — recebe todos os dados necessários por parâmetro.
+   *
+   * @param string|DateTime $inicioData Data inicial do período
+   * @param string|DateTime $fimData Data final do período
+   * @param array<string, string> $feriados Mapa de feriados cadastrados (chave = data 'Y-m-d' ou '0000-m-d', valor = nome)
+   * @param array<string, string> $feriadosReligiosos Mapa de feriados religiosos (chave = data 'Y-m-d', valor = nome)
+   * @param array<array{data_inicio: string, data_fim: string}> $afastamentos Lista de afastamentos do usuário
+   * @param array<int, string> $feriadosDiaSemana Mapa de feriados por dia da semana (chave = DAYOFWEEK 1-7, valor = nome)
+   * @return int Quantidade de dias úteis no período
+   */
+  public function qtdDiasUteisComAfastamentos(
+    $inicioData,
+    $fimData,
+    array $feriados,
+    array $feriadosReligiosos,
+    array $afastamentos = [],
+    array $feriadosDiaSemana = []
+  ): int {
+    $inicio = $inicioData instanceof DateTime ? $inicioData->getTimestamp() : strtotime($inicioData);
+    $fim = $fimData instanceof DateTime ? $fimData->getTimestamp() : strtotime($fimData);
+
+    if ($inicio > $fim) {
+      return 0;
+    }
+
+    $diasUteis = 0;
+    for ($dia = $inicio; $dia <= $fim; $dia += self::DIA_EM_SEGUNDOS) {
+      if (static::isFinalSemana($dia)) {
+        continue;
+      }
+      if (static::isFeriadoCadastrado($dia, $feriados)) {
+        continue;
+      }
+      if (static::isFeriadoReligioso($dia, $feriadosReligiosos)) {
+        continue;
+      }
+      if (!empty($feriadosDiaSemana) && isset($feriadosDiaSemana[(int) date('w', $dia) + 1])) {
+        continue;
+      }
+      if ($this->isDiaAfastado($dia, $afastamentos)) {
+        continue;
+      }
+      $diasUteis++;
+    }
+
+    return $diasUteis;
+  }
+
+  /**
+   * Verifica se um timestamp cai dentro de algum período de afastamento.
+   *
+   * @param int $timestamp Timestamp do dia a verificar
+   * @param array<array{data_inicio: string, data_fim: string}> $afastamentos
+   */
+  private function isDiaAfastado(int $timestamp, array $afastamentos): bool
+  {
+    $dataStr = date('Y-m-d', $timestamp);
+    foreach ($afastamentos as $afastamento) {
+      $afInicio = date('Y-m-d', strtotime($afastamento['data_inicio']));
+      $afFim = date('Y-m-d', strtotime($afastamento['data_fim']));
+      if ($dataStr >= $afInicio && $dataStr <= $afFim) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public function feriados($inicioData, $fimData, $unidade_id)
   {
     $inicio = $inicioData instanceof DateTime ? $inicioData->getTimestamp() : strtotime($inicioData);

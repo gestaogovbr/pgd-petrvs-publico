@@ -8,6 +8,7 @@ use App\Models\DocumentoAssinatura;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\TCRAssinaturaDTO;
+use Illuminate\Database\Eloquent\Collection;
 
 class DocumentoAssinaturaRepository
 {
@@ -56,6 +57,11 @@ class DocumentoAssinaturaRepository
         return $this->readRepository->existeAlgumaAssinatura($documentoId);
     }
 
+    public function existeAssinaturaDeNaoParticipante(string $documentoId, string $participanteId): bool
+    {
+        return $this->readRepository->existeAssinaturaDeNaoParticipante($documentoId, $participanteId);
+    }
+
     public function createFromTCR(TCRAssinaturaDTO $dto): DocumentoAssinatura
     {
         /** @var DocumentoAssinatura */
@@ -70,6 +76,12 @@ class DocumentoAssinaturaRepository
     public function deleteAssinaturasDocumento(string $documentoId): int
     {
         return $this->writeRepository->deleteByDocumentoId($documentoId);
+    }
+
+    /** @return Collection<int, DocumentoAssinatura> */
+    public function listarRevogadasPorPlanoTrabalho(string $planoTrabalhoId): Collection
+    {
+        return $this->readRepository->listarRevogadasPorPlanoTrabalho($planoTrabalhoId);
     }
 
     public function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId, string $documentoIdColumn = 'planos_trabalhos.documento_id'): void

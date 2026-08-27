@@ -158,6 +158,9 @@ export abstract class PageBase implements OnInit, ModalPage {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = Array.from(tooltipTriggerList).map((tooltipTriggerEl: Element) => {
       if (!(tooltipTriggerEl instanceof HTMLElement)) return null;
+      /* Evita instância/listeners duplicados em elementos já inicializados (ex.: pelo input-container) */
+      if (tooltipTriggerEl.dataset.tooltipBound) return null;
+      tooltipTriggerEl.dataset.tooltipBound = "true";
 
       const tooltip = new bootstrap.Tooltip(tooltipTriggerEl, {
         trigger: 'manual'

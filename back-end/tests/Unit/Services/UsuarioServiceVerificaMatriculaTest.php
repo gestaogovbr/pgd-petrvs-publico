@@ -22,10 +22,15 @@ uses(TestCase::class);
 beforeEach(function () {
     $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
     $this->blacklistRepository = Mockery::mock(SiapeBlackListServidorRepository::class);
+    $this->integracaoServidorRepository = Mockery::mock(IntegracaoServidorRepository::class);
+    $this->integracaoServidorRepository
+        ->shouldReceive('getServidor')
+        ->andReturnNull()
+        ->byDefault();
 
     $this->app->instance(UsuarioRepository::class, $this->usuarioRepository);
     $this->app->instance(UnidadeRepository::class, Mockery::mock(UnidadeRepository::class));
-    $this->app->instance(IntegracaoServidorRepository::class, Mockery::mock(IntegracaoServidorRepository::class));
+    $this->app->instance(IntegracaoServidorRepository::class, $this->integracaoServidorRepository);
     $this->app->instance(PerfilRepository::class, Mockery::mock(PerfilRepository::class));
     $this->app->instance(PlanoTrabalhoConsolidacaoRepository::class, Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class));
     $this->app->instance(PlanoTrabalhoRepository::class, Mockery::mock(PlanoTrabalhoRepository::class));

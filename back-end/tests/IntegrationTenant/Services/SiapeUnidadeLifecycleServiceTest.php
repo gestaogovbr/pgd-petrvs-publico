@@ -40,15 +40,20 @@ use App\Services\IntegracaoUnidadeService;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 use App\Services\UnidadeService;
+use App\Cache\CacheInvalidator;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Tests\Helpers\CacheInvalidatorE2E;
 
 afterEach(function () {
     Carbon::setTestNow();
 });
 
 beforeEach(function () {
+    Cache::flush();
+    app()->singleton(CacheInvalidator::class, CacheInvalidatorE2E::class);
     $codigos = [
         '100',
         '101',
@@ -267,6 +272,8 @@ describe('SiapeUnidadeLifecycleService', function () {
     });
 
     test('segundo prazo vencido com dadosUorg negativo inativa unidade e remove atribuicoes', function () {
+        Cache::flush();
+
         Carbon::setTestNow(Carbon::parse('2026-04-20 10:00:00'));
         config(['integracao.siape.inativacao_unidade_prazo_dias' => 7]);
 
@@ -276,11 +283,24 @@ describe('SiapeUnidadeLifecycleService', function () {
             'data_inativacao' => null,
         ]);
         $integrante = criarVinculoUnidadeComAtribuicoes($unidade);
+        $usuarioId = $integrante->usuario_id;
+
+        // Popula cache com a hierarquia do gestor
+        Cache::put('unidades-geridas:' . $usuarioId, [$unidade->id], 3600);
+        Cache::put('unidade-hierarquia:' . $unidade->id, [], 3600);
+        expect(Cache::has('unidades-geridas:' . $usuarioId))->toBeTrue();
+        expect(Cache::has('unidade-hierarquia:' . $unidade->id))->toBeTrue();
 
         $service = new SiapeUnidadeLifecycleService(confirmarAusencia: fn (string $codigo): bool => $codigo === '102');
         $resultado = $service->efetivarInativacoesPendentes();
 
         expect($resultado['unidades_inativadas'])->toBe(1);
+        expect($resultado['atribuicoes_removidas'])->toBeGreaterThan(0);
+
+        // Cache deve ter sido invalidado após remoção de atribuições
+        expect(Cache::has('unidades-geridas:' . $usuarioId))->toBeFalse('Cache de unidades geridas deveria ser invalidado');
+        expect(Cache::has('unidade-hierarquia:' . $unidade->id))->toBeFalse('Cache de hierarquia deveria ser invalidado');
+
         $unidade->refresh();
         expectDataHoraString($unidade->data_inativacao, '2026-04-20 10:00:00');
         expect(UnidadeIntegranteAtribuicao::where('unidade_integrante_id', $integrante->id)->count())->toBe(0);
