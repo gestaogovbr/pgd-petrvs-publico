@@ -13,16 +13,9 @@ afterEach(function () {
     Mockery::close();
 });
 
-function criarServiceComMock(): CadeiaValorArvoreService
-{
-    $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
-    $esforcoGraphDataProvider = Mockery::mock(ArvoreInstitucionalEsforcoGraphDataProvider::class);
-    return new CadeiaValorArvoreService($repo, $esforcoGraphDataProvider);
-}
-
 describe('CadeiaValorArvoreService::getArvore', function () {
 
-    test('retorna ArvoreResponseDTO com nós genéricos', function () {
+    test('retorna ArvoreResponseDTO com nós genéricos e sem cross-cadeia', function () {
         $cadeiaValor = Mockery::mock(\App\Models\CadeiaValor::class)->makePartial();
         $cadeiaValor->id = 'cv-1';
         $cadeiaValor->nome = 'Cadeia Teste';
@@ -30,26 +23,10 @@ describe('CadeiaValorArvoreService::getArvore', function () {
         $processoFocal = Mockery::mock(\App\Models\CadeiaValorProcesso::class)->makePartial();
         $processoFocal->id = 'p1';
 
-        $processo1 = Mockery::mock(\App\Models\CadeiaValorProcesso::class)->makePartial();
-        $processo1->id = 'p1';
-        $processo1->nome = 'Processo 1';
-        $processo1->sequencia = 1;
-        $processo1->processo_pai_id = null;
-        $tipoElemento1 = (object) ['nome' => 'Tipo A'];
-        $processo1->shouldReceive('getAttribute')->with('tipoElemento')->andReturn($tipoElemento1);
-
-        $processo2 = Mockery::mock(\App\Models\CadeiaValorProcesso::class)->makePartial();
-        $processo2->id = 'p2';
-        $processo2->nome = 'Processo 2';
-        $processo2->sequencia = 2;
-        $processo2->processo_pai_id = 'p1';
-        $processo2->shouldReceive('getAttribute')->with('tipoElemento')->andReturn(null);
-
-        $collection = new \Illuminate\Database\Eloquent\Collection([$processo1, $processo2]);
-
         $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
         $repo->shouldReceive('findCadeiaValor')->with('cv-1')->andReturn($cadeiaValor);
         $repo->shouldReceive('findProcesso')->with('p1', 'cv-1')->andReturn($processoFocal);
+        $repo->shouldReceive('buscarVinculosCrossCadeia')->andReturn([]);
 
         $esforcoGraphDataProvider = Mockery::mock(ArvoreInstitucionalEsforcoGraphDataProvider::class);
         $esforcoGraphDataProvider->shouldReceive('carregarEsforcoAcumulado')->once()->andReturn([
@@ -90,13 +67,78 @@ describe('CadeiaValorArvoreService::getArvore', function () {
 
         expect($result)->toBeInstanceOf(ArvoreResponseDTO::class);
         expect($result->focal_id)->toBe('p1');
-        expect($result->metadata)->toBe(['cadeia_valor_id' => 'cv-1', 'cadeia_valor_nome' => 'Cadeia Teste']);
+        expect($result->metadata['cadeia_valor_id'])->toBe('cv-1');
+        expect($result->metadata['cadeia_valor_nome'])->toBe('Cadeia Teste');
+        expect($result->metadata['cross_cadeia_map'])->toBe([]);
         expect($result->nos)->toHaveCount(2);
         expect($result->nos['p1'])->toBeInstanceOf(ArvoreNodeResponseDTO::class);
         expect($result->nos['p1']->filhos_ids)->toBe(['p2']);
-        expect($result->nos['p1']->total_vinculos)->toBe(1); // 1 filho (p2), sem pais
+        expect($result->nos['p1']->total_vinculos)->toBe(1);
         expect($result->nos['p2']->parent_id)->toBe('p1');
-        expect($result->nos['p2']->total_vinculos)->toBe(1); // sem filhos, 1 pai (p1)
+        expect($result->nos['p2']->total_vinculos)->toBe(1);
+    });
+
+    test('injeta nós cross-cadeia como filhos secundários', function () {
+        $cadeiaValor = Mockery::mock(\App\Models\CadeiaValor::class)->makePartial();
+        $cadeiaValor->id = 'cv-1';
+        $cadeiaValor->nome = 'Cadeia A';
+
+        $processoFocal = Mockery::mock(\App\Models\CadeiaValorProcesso::class)->makePartial();
+        $processoFocal->id = 'p1';
+
+        $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
+        $repo->shouldReceive('findCadeiaValor')->with('cv-1')->andReturn($cadeiaValor);
+        $repo->shouldReceive('findProcesso')->with('p1', 'cv-1')->andReturn($processoFocal);
+        $repo->shouldReceive('buscarVinculosCrossCadeia')->andReturn([
+            (object) [
+                'processo_origem_id' => 'p1',
+                'processo_id' => 'cross-1',
+                'processo_nome' => 'Processo Cross',
+                'cadeia_valor_id' => 'cv-2',
+                'cadeia_valor_nome' => 'Cadeia B',
+            ],
+        ]);
+
+        $esforcoGraphDataProvider = Mockery::mock(ArvoreInstitucionalEsforcoGraphDataProvider::class);
+        $esforcoGraphDataProvider->shouldReceive('carregarEsforcoAcumulado')->once()->andReturn([
+            'p1' => [
+                'no_nome' => 'Processo 1',
+                'no_pai_id' => null,
+                'no_pai_secundario_id' => null,
+                'container_nome' => 'Cadeia A',
+                'tipo_nome' => null,
+                'total_entregas' => 0,
+                'esforco_disponivel_horas' => 100.0,
+                'esforco_proprio' => 50.0,
+                'esforco_total_horas' => 50.0,
+                'planejado_percentual_disponivel' => 50.0,
+                'filhos_pai' => [],
+                'filhos_secundario' => [],
+                'filhos' => [],
+            ],
+        ]);
+
+        $service = new CadeiaValorArvoreService($repo, $esforcoGraphDataProvider);
+        $result = $service->getArvore('cv-1', 'p1');
+
+        // Nó cross-cadeia injetado
+        expect($result->nos)->toHaveCount(2);
+        expect($result->nos['cross-1'])->toBeInstanceOf(ArvoreNodeResponseDTO::class);
+        expect($result->nos['cross-1']->nome)->toBe('Processo Cross');
+        expect($result->nos['cross-1']->container_nome)->toBe('Cadeia B');
+        expect($result->nos['cross-1']->secondary_parent_id)->toBe('p1');
+        expect($result->nos['cross-1']->parent_id)->toBeNull();
+
+        // Processo de origem recebe o cross como filho secundário
+        expect($result->nos['p1']->filhos_secondary_ids)->toBe(['cross-1']);
+        // total_vinculos: 1 filho secundário (cross-1), sem pais
+        expect($result->nos['p1']->total_vinculos)->toBe(1);
+
+        // Nó cross-cadeia: 1 pai secundário (p1), sem filhos
+        expect($result->nos['cross-1']->total_vinculos)->toBe(1);
+
+        // Metadata contém o mapa de navegação
+        expect($result->metadata['cross_cadeia_map'])->toBe(['cross-1' => 'cv-2']);
     });
 
     test('lança NotFoundException quando cadeia não existe', function () {
@@ -128,7 +170,7 @@ describe('CadeiaValorArvoreService::getArvore', function () {
         $dto = new ArvoreResponseDTO(
             focal_id: 'pf-1',
             nos: [],
-            metadata: ['cadeia_valor_id' => 'cv-1', 'cadeia_valor_nome' => 'Cadeia Teste'],
+            metadata: ['cadeia_valor_id' => 'cv-1', 'cadeia_valor_nome' => 'Cadeia Teste', 'cross_cadeia_map' => []],
         );
 
         $json = $dto->jsonSerialize();

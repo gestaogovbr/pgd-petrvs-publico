@@ -22,6 +22,7 @@ export class CadeiaValorArvoreAdapter implements ArvoreDataProvider {
   private readonly api = inject(CadeiaValorArvoreApiClient);
   private readonly go = inject(NavigateService);
   private cadeiaValorId = '';
+  private crossCadeiaMap: Record<string, string> = {};
 
   carregarArvore(params: Record<string, string>): Observable<ArvoreData> {
     const cadeiaValorId = params['cadeiaValorId'] ?? '';
@@ -29,11 +30,14 @@ export class CadeiaValorArvoreAdapter implements ArvoreDataProvider {
     this.cadeiaValorId = cadeiaValorId;
 
     return this.api.getArvore(cadeiaValorId, processoId).pipe(
-      map(data => ({
-        focalId: data.focal_id,
-        nos: this.mapearNos(data.nos),
-        metadata: data.metadata ?? {}
-      }))
+      map(data => {
+        this.crossCadeiaMap = (data.metadata?.['cross_cadeia_map'] as Record<string, string>) ?? {};
+        return {
+          focalId: data.focal_id,
+          nos: this.mapearNos(data.nos),
+          metadata: data.metadata ?? {}
+        };
+      })
     );
   }
 
@@ -75,7 +79,9 @@ export class CadeiaValorArvoreAdapter implements ArvoreDataProvider {
     if (!nodeId || !this.cadeiaValorId) {
       return;
     }
-    void this.go.navigate({ route: [...ROTA_ARVORE, this.cadeiaValorId, nodeId] });
+    const crossCadeiaId = this.crossCadeiaMap[nodeId];
+    const cadeiaId = crossCadeiaId ?? this.cadeiaValorId;
+    void this.go.navigate({ route: [...ROTA_ARVORE, cadeiaId, nodeId] });
   }
 
   private mapearNos(nos: Record<string, ArvoreNodeApi>): Record<string, ArvoreNodeData> {
