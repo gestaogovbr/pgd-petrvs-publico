@@ -29,12 +29,14 @@ class MuralAvisoRequestValidator
      */
     public static function store(Request $request): array
     {
+        $limitePublicacao = now()->subMinutes(5)->format('Y-m-d H:i:s');
+
         return $request->validate([
             'titulo' => ['required', 'string', 'max:255'],
             'conteudo' => ['required', 'string'],
             'destinatario' => ['required', 'string', Rule::in(array_column(MuralAvisoDestinatario::cases(), 'value'))],
             'tenant_id' => ['nullable', 'string'],
-            'data_publicacao' => ['required', 'date', 'after_or_equal:now'],
+            'data_publicacao' => ['required', 'date', "after_or_equal:{$limitePublicacao}"],
             'data_expiracao' => ['required', 'date', 'after_or_equal:data_publicacao'],
         ], self::MESSAGES);
     }
@@ -44,12 +46,14 @@ class MuralAvisoRequestValidator
      */
     public static function update(Request $request): array
     {
+        $limitePublicacao = now()->subMinutes(5)->format('Y-m-d H:i:s');
+
         return $request->validate([
             'titulo' => ['required', 'string', 'max:255'],
             'conteudo' => ['required', 'string'],
             'destinatario' => ['required', 'string', Rule::in(array_column(MuralAvisoDestinatario::cases(), 'value'))],
             'tenant_id' => ['nullable', 'string'],
-            'data_publicacao' => ['required', 'date', 'after_or_equal:now'],
+            'data_publicacao' => ['required', 'date', "after_or_equal:{$limitePublicacao}"],
             'data_expiracao' => ['required', 'date', 'after_or_equal:data_publicacao'],
         ], self::MESSAGES);
     }
