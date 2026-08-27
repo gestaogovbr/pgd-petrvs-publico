@@ -261,7 +261,7 @@ describe('SiapeIndividualServidorService - Métodos de Banco de Dados', function
         $method->setAccessible(true);
         
         try {
-            $method->invoke($service, $cpf);
+            $method->invoke($service, $cpf, []);
         } catch (\Exception $e) {
             expect($e->getMessage())->toContain('Erro na sincronização final');
         }

@@ -5,10 +5,10 @@ namespace Tests\IntegrationTenant\DataProviders\Adesao;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
-use App\V2\PainelGerencial\Adesao\DataProviders\EvolucaoAdesaoParticipantes;
-use App\V2\PainelGerencial\Adesao\DataProviders\EvolucaoAdesaoUnidades;
-use App\V2\PainelGerencial\Adesao\DataProviders\ParticipantesPGD;
-use App\V2\PainelGerencial\Adesao\DataProviders\UnidadesExecutoras;
+use App\V2\PainelGerencial\Adesao\DataProviders\EvolucaoAdesaoParticipantesDataProvider;
+use App\V2\PainelGerencial\Adesao\DataProviders\EvolucaoAdesaoUnidadesDataProvider;
+use App\V2\PainelGerencial\Adesao\DataProviders\ParticipantesPGDDataProvider;
+use App\V2\PainelGerencial\Adesao\DataProviders\UnidadesExecutorasDataProvider;
 use App\V2\PainelGerencial\DTOs\FiltrosPainelDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -68,10 +68,10 @@ beforeEach(function () {
     };
 });
 
-describe('UnidadesExecutoras', function () {
+describe('UnidadesExecutorasDataProvider', function () {
 
     test('retorna distribuição de unidades executoras e não executoras', function () {
-        $provider = app(UnidadesExecutoras::class);
+        $provider = app(UnidadesExecutorasDataProvider::class);
 
         $resultado = $provider->getData($this->filtros);
 
@@ -91,7 +91,7 @@ describe('UnidadesExecutoras', function () {
             'executora' => true,
         ]);
 
-        $provider = app(UnidadesExecutoras::class);
+        $provider = app(UnidadesExecutorasDataProvider::class);
         $resultado = $provider->getData($this->filtros);
 
         $principal = $resultado->distribuicoes[0];
@@ -109,7 +109,7 @@ describe('UnidadesExecutoras', function () {
             'executora' => true,
         ]);
 
-        $provider = app(UnidadesExecutoras::class);
+        $provider = app(UnidadesExecutorasDataProvider::class);
         $resultado = $provider->getData($this->filtros);
 
         $subordinadas = array_slice($resultado->distribuicoes, 1);
@@ -117,7 +117,7 @@ describe('UnidadesExecutoras', function () {
     });
 });
 
-describe('ParticipantesPGD', function () {
+describe('ParticipantesPGDDataProvider', function () {
 
     test('retorna distribuição de participantes e não participantes', function () {
         $participante = Usuario::factory()->create(['participa_pgd' => 'sim']);
@@ -128,7 +128,7 @@ describe('ParticipantesPGD', function () {
         UnidadeIntegranteAtribuicao::factory()->lotado()
             ->paraUsuarioUnidade($naoParticipante->id, $this->unidadePai->id)->create();
 
-        $provider = app(ParticipantesPGD::class);
+        $provider = app(ParticipantesPGDDataProvider::class);
         $resultado = $provider->getData($this->filtros);
 
         expect($resultado->segmentos)->toBe(['Participantes', 'Não Participantes']);
@@ -145,7 +145,7 @@ describe('ParticipantesPGD', function () {
         UnidadeIntegranteAtribuicao::factory()->lotado()
             ->paraUsuarioUnidade($participante->id, $this->filhaExec->id)->create();
 
-        $provider = app(ParticipantesPGD::class);
+        $provider = app(ParticipantesPGDDataProvider::class);
         $resultado = $provider->getData($this->filtros);
 
         $principal = $resultado->distribuicoes[0];
@@ -160,7 +160,7 @@ describe('ParticipantesPGD', function () {
             ->paraUsuarioUnidade($participante->id, $this->unidadePai->id)
             ->create(['atribuicao' => 'GESTOR_SUBSTITUTO']);
 
-        $provider = app(ParticipantesPGD::class);
+        $provider = app(ParticipantesPGDDataProvider::class);
         $resultado = $provider->getData($this->filtros);
 
         $principal = $resultado->distribuicoes[0];
@@ -168,7 +168,7 @@ describe('ParticipantesPGD', function () {
     });
 });
 
-describe('EvolucaoAdesaoUnidades', function () {
+describe('EvolucaoAdesaoUnidadesDataProvider', function () {
 
     test('retorna série histórica de unidades executoras', function () {
         ($this->inserirSerieUnidades)($this->unidadePai, '2026-01', 5, 2);
@@ -181,7 +181,7 @@ describe('EvolucaoAdesaoUnidades', function () {
             dataFim: '2026-02-28',
         );
 
-        $provider = app(EvolucaoAdesaoUnidades::class);
+        $provider = app(EvolucaoAdesaoUnidadesDataProvider::class);
         $resultado = $provider->getData($filtros);
 
         expect($resultado)->toHaveKey('serie');
@@ -203,7 +203,7 @@ describe('EvolucaoAdesaoUnidades', function () {
             dataFim: '2026-03-31',
         );
 
-        $provider = app(EvolucaoAdesaoUnidades::class);
+        $provider = app(EvolucaoAdesaoUnidadesDataProvider::class);
         $resultado = $provider->getData($filtros);
 
         expect($resultado['serie'])->toHaveCount(3);
@@ -222,7 +222,7 @@ describe('EvolucaoAdesaoUnidades', function () {
             dataFim: '2026-03-31',
         );
 
-        $provider = app(EvolucaoAdesaoUnidades::class);
+        $provider = app(EvolucaoAdesaoUnidadesDataProvider::class);
         $resultado = $provider->getData($filtros);
 
         $march = collect($resultado['serie'])->firstWhere('periodo', '2026-03');
@@ -235,14 +235,14 @@ describe('EvolucaoAdesaoUnidades', function () {
         ($this->inserirSerieUnidades)($this->unidadePai, '2026-01', 1, 1);
         ($this->inserirSerieUnidades)($this->filhaExec, '2026-01', 1, 1);
 
-        $provider = app(EvolucaoAdesaoUnidades::class);
+        $provider = app(EvolucaoAdesaoUnidadesDataProvider::class);
         $periodos = $provider->getPeriodosDisponiveis();
 
         expect($periodos)->toBe(['2026-01', '2026-03']);
     });
 });
 
-describe('EvolucaoAdesaoParticipantes', function () {
+describe('EvolucaoAdesaoParticipantesDataProvider', function () {
 
     test('retorna série histórica de participantes PGD', function () {
         ($this->inserirSerieParticipantes)($this->unidadePai, '2026-01', 10, 5);
@@ -255,7 +255,7 @@ describe('EvolucaoAdesaoParticipantes', function () {
             dataFim: '2026-02-28',
         );
 
-        $provider = app(EvolucaoAdesaoParticipantes::class);
+        $provider = app(EvolucaoAdesaoParticipantesDataProvider::class);
         $resultado = $provider->getData($filtros);
 
         expect($resultado)->toHaveKey('serie');
@@ -276,7 +276,7 @@ describe('EvolucaoAdesaoParticipantes', function () {
             dataFim: '2026-04-30',
         );
 
-        $provider = app(EvolucaoAdesaoParticipantes::class);
+        $provider = app(EvolucaoAdesaoParticipantesDataProvider::class);
         $resultado = $provider->getData($filtros);
 
         $april = collect($resultado['serie'])->firstWhere('periodo', '2026-04');

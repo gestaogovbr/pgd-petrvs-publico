@@ -69,11 +69,23 @@ describe('GET /api/v2/home/em-ferias', function () {
         $response->assertJsonCount(2, 'data.em_ferias');
     });
 
-    test('rejeita acesso de não-gestor', function () {
+    test('permite acesso de participante na própria unidade sem subordinadas', function () {
         $response = $this->actingAs($this->participante)
             ->getJson('/api/__tests/v2/home/em-ferias?' . http_build_query([
                 'unidade_id' => $this->unidadePai->id,
                 'subordinadas' => '0',
+            ]));
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data.em_ferias');
+        $response->assertJsonPath('data.em_ferias.0.nome', $this->participante->nome);
+    });
+
+    test('rejeita acesso de não-gestor com subordinadas', function () {
+        $response = $this->actingAs($this->participante)
+            ->getJson('/api/__tests/v2/home/em-ferias?' . http_build_query([
+                'unidade_id' => $this->unidadePai->id,
+                'subordinadas' => '1',
             ]));
 
         $response->assertStatus(403);
