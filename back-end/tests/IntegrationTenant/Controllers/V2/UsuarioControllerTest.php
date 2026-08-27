@@ -10,19 +10,19 @@ use Illuminate\Support\Facades\Route;
 use Mockery;
 
 beforeEach(function () {
-    if (!Route::has('__tests.v2.usuario.buscarPorNomeMatricula')) {
-        Route::middleware(['api'])->get('/api/__tests/v2/usuario', [UsuarioController::class, 'buscarPorNomeMatricula'])
-            ->name('__tests.v2.usuario.buscarPorNomeMatricula');
+    if (!Route::has('__tests.v2.usuario.searchByNomeMatricula')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/usuario', [UsuarioController::class, 'searchByNomeMatricula'])
+            ->name('__tests.v2.usuario.searchByNomeMatricula');
     }
 
-    if (!Route::has('__tests.v2.usuario.buscarPorId')) {
-        Route::middleware(['api'])->get('/api/__tests/v2/usuario/{usuarioId}', [UsuarioController::class, 'buscarPorId'])
-            ->name('__tests.v2.usuario.buscarPorId');
+    if (!Route::has('__tests.v2.usuario.show')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/usuario/{usuarioId}', [UsuarioController::class, 'show'])
+            ->name('__tests.v2.usuario.show')->whereUuid('usuarioId');
     }
 
-    if (!Route::has('__tests.v2.usuario.buscarUnidadesVinculadasPorCpf')) {
-        Route::middleware(['api'])->get('/api/__tests/v2/usuario/cpf/{cpf}/unidades', [UsuarioController::class, 'buscarUnidadesVinculadasPorCpf'])
-            ->name('__tests.v2.usuario.buscarUnidadesVinculadasPorCpf');
+    if (!Route::has('__tests.v2.usuario.unidadesVinculadasPorCpf')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/usuario/cpf/{cpf}/unidades', [UsuarioController::class, 'unidadesVinculadasPorCpf'])
+            ->name('__tests.v2.usuario.unidadesVinculadasPorCpf');
     }
 });
 
@@ -30,9 +30,9 @@ afterEach(function () {
     Mockery::close();
 });
 
-// ── buscarPorNomeMatricula: validação ───────────────────────────────
+// ── searchByNomeMatricula: validação ───────────────────────────────
 
-test('v2 usuario buscarPorNomeMatricula retorna 422 quando nome_matricula ausente', function () {
+test('v2 usuario searchByNomeMatricula retorna 422 quando nome_matricula ausente', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
@@ -41,7 +41,7 @@ test('v2 usuario buscarPorNomeMatricula retorna 422 quando nome_matricula ausent
     $response->assertStatus(422);
 })->group('v2-usuario');
 
-test('v2 usuario buscarPorNomeMatricula retorna 422 quando nome_matricula tem menos de 3 caracteres', function () {
+test('v2 usuario searchByNomeMatricula retorna 422 quando nome_matricula tem menos de 3 caracteres', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
@@ -53,16 +53,16 @@ test('v2 usuario buscarPorNomeMatricula retorna 422 quando nome_matricula tem me
     );
 })->group('v2-usuario');
 
-// ── buscarPorNomeMatricula: sucesso (service mockado) ───────────────
+// ── searchByNomeMatricula: sucesso (service mockado) ───────────────
 
-test('v2 usuario buscarPorNomeMatricula retorna 200 com service mockado', function () {
+test('v2 usuario searchByNomeMatricula retorna 200 com service mockado', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
-    $this->mock(UsuarioService::class, function ($mock) {
-        $mock->shouldReceive('buscarAgentesPublicosNoEscopoCadastrante')
+    $this->mock(UsuarioService::class, function ($mock) use ($usuario) {
+        $mock->shouldReceive('searchByNomeMatricula')
             ->once()
-            ->with('João', Mockery::type('string'))
+            ->with('João', $usuario->id)
             ->andReturn(new Collection([['id' => fake()->uuid(), 'nome' => 'João Silva']]));
     });
 
@@ -73,14 +73,14 @@ test('v2 usuario buscarPorNomeMatricula retorna 200 com service mockado', functi
     $response->assertJsonStructure(['success', 'data']);
 })->group('v2-usuario');
 
-// ── buscarPorNomeMatricula: erro inesperado ─────────────────────────
+// ── searchByNomeMatricula: erro inesperado ─────────────────────────
 
-test('v2 usuario buscarPorNomeMatricula retorna 500 quando service lança exceção inesperada', function () {
+test('v2 usuario searchByNomeMatricula retorna 500 quando service lança exceção inesperada', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
     $this->mock(UsuarioService::class, function ($mock) {
-        $mock->shouldReceive('buscarAgentesPublicosNoEscopoCadastrante')
+        $mock->shouldReceive('searchByNomeMatricula')
             ->andThrow(new \RuntimeException('Erro de conexão com o banco.'));
     });
 
@@ -90,18 +90,18 @@ test('v2 usuario buscarPorNomeMatricula retorna 500 quando service lança exceç
     $response->assertJsonPath('error', 'Ocorreu um erro inesperado.');
 })->group('v2-usuario');
 
-// ── buscarPorId: validação / not found / sucesso ────────────────────
+// ── show: validação / not found / sucesso ───────────────────────────
 
-test('v2 usuario buscarPorId retorna 422 quando id não é uuid', function () {
+test('v2 usuario show retorna 404 quando id não é uuid', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
     $response = $this->getJson('/api/__tests/v2/usuario/abc');
 
-    $response->assertStatus(422);
+    $response->assertStatus(404);
 })->group('v2-usuario');
 
-test('v2 usuario buscarPorId retorna 404 quando usuário não existe', function () {
+test('v2 usuario show retorna 404 quando usuário não existe', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
@@ -112,11 +112,9 @@ test('v2 usuario buscarPorId retorna 404 quando usuário não existe', function 
     $response->assertJsonPath('error', 'Usuário não encontrado.');
 })->group('v2-usuario');
 
-test('v2 usuario buscarPorId retorna 200 com usuário', function () {
-    $usuarioLogado = Usuario::factory()->create();
-    $this->actingAs($usuarioLogado, 'web');
-
+test('v2 usuario show retorna 200 com usuário', function () {
     $usuario = Usuario::factory()->create();
+    $this->actingAs($usuario, 'web');
 
     $response = $this->getJson("/api/__tests/v2/usuario/{$usuario->id}");
 
@@ -125,9 +123,9 @@ test('v2 usuario buscarPorId retorna 200 com usuário', function () {
     $response->assertJsonPath('data.id', $usuario->id);
 })->group('v2-usuario');
 
-// ── buscarUnidadesVinculadasPorCpf: validação / sucesso ─────────────
+// ── unidadesVinculadasPorCpf: validação / sucesso ───────────────────
 
-test('v2 usuario buscarUnidadesVinculadasPorCpf retorna 422 quando cpf inválido', function () {
+test('v2 usuario unidadesVinculadasPorCpf retorna 422 quando cpf inválido', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
@@ -136,15 +134,15 @@ test('v2 usuario buscarUnidadesVinculadasPorCpf retorna 422 quando cpf inválido
     $response->assertStatus(422);
 })->group('v2-usuario');
 
-test('v2 usuario buscarUnidadesVinculadasPorCpf retorna 200 com service mockado', function () {
+test('v2 usuario unidadesVinculadasPorCpf retorna 200 com service mockado', function () {
     $usuario = Usuario::factory()->create();
     $this->actingAs($usuario, 'web');
 
     $this->mock(UsuarioService::class, function ($mock) {
-        $mock->shouldReceive('buscarUnidadesVinculadas')
+        $mock->shouldReceive('unidadesVinculadasPorCpf')
             ->once()
             ->with('12345678901')
-            ->andReturn([['id' => fake()->uuid(), 'nome' => 'Unidade Teste']]);
+            ->andReturn(new Collection([['id' => fake()->uuid(), 'nome' => 'Unidade Teste']]));
     });
 
     $response = $this->getJson('/api/__tests/v2/usuario/cpf/123.456.789-01/unidades');

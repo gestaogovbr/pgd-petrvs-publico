@@ -1,0 +1,15 @@
+.arvore-layout {
+  min-height: 500px;
+}
+
+.arvore-principal {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.arvore-lateral {
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+  border-left: 1px solid #dee2e6;
+}

@@ -283,6 +283,7 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
             await this.loadData({ id: this.entity!.id }, this.form);
           } else {                    // se não persistente
             Object.assign(row, { '_status': "DELETE", 'atribuicoes': [] });
+            this.items = this.grid!.items as IntegranteConsolidado[];
             return false;
           }
         } finally {
@@ -355,13 +356,19 @@ export class UsuarioIntegranteComponent extends PageFrameBase {
           if (this.grid) this.grid!.error = "";
         } else {                // se não persistente
           row.id = this.unidade?.selectedEntity?.id;
-          this.grid!.items = this.integranteService.substituirItem({
+          const updatedItems = this.integranteService.substituirItem({
             id: row.id,
             itens: this.grid?.items || [],
             apelidoOuSigla: this.unidade?.selectedItem?.entity?.sigla,
             nome: this.unidade?.selectedItem?.entity?.nome,
             codigo: this.unidade?.selectedItem?.entity?.codigo,
           }, novasAtribuicoes.map((x: LookupItem) => x.key), new Usuario(this.entity!));
+          const modifiedIndex = updatedItems.findIndex((x: any) => x.id === row.id);
+          if (modifiedIndex >= 0) {
+            updatedItems[modifiedIndex]._status = updatedItems[modifiedIndex]._status || 'EDIT';
+          }
+          this.grid!.items = updatedItems;
+          this.items = this.grid!.items as IntegranteConsolidado[];
           this.cdRef.detectChanges();
         }
       } catch (error: any) {
