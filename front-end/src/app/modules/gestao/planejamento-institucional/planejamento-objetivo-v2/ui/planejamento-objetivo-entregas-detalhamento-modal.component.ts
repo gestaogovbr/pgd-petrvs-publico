@@ -6,17 +6,21 @@ import {
   inject,
   input,
   output,
-  signal
+  signal,
+  untracked
 } from '@angular/core';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { firstValueFrom } from 'rxjs';
 import { LookupService } from 'src/app/services/lookup.service';
 import {
   PlanejamentoObjetivoEsforcoApiClient,
+  type ObjetivoEntregasAbrangencia,
   type ObjetivoPainelEntregaDetalheLinhaApi,
   type ObjetivoPainelEntregasDetalhamentoApi,
   type ObjetivoEntregasDetalhamentoFiltros
 } from '../infra/planejamento-objetivo-esforco-api.client';
+
+type AbrangenciaOpcao = { value: ObjetivoEntregasAbrangencia; label: string };
 
 @Component({
   selector: 'app-planejamento-objetivo-entregas-detalhamento-modal',
@@ -43,14 +47,49 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   readonly filtroUnidadeId = signal('');
   readonly filtroDataInicio = signal('');
   readonly filtroDataFim = signal('');
+  readonly filtroAbrangencia = signal<'' | ObjetivoEntregasAbrangencia>('');
+
+  /** RN34 / RN38 — opções e tooltip do filtro Abrangência. */
+  private readonly abrangenciaOpcoesBase: AbrangenciaOpcao[] = [
+    { value: 'item_selecionado', label: 'Item selecionado' },
+    { value: 'itens_subordinados', label: 'Itens subordinados' },
+    { value: 'item_e_subordinados', label: 'Item selecionado e itens subordinados' },
+  ];
+
+  private readonly abrangenciaOpcoesUnidade: AbrangenciaOpcao[] = [
+    { value: 'unidade_selecionada', label: 'Unidade selecionada' },
+    { value: 'unidade_e_subordinadas', label: 'Unidade selecionada e unidades subordinadas' },
+  ];
+
+  /** RN37/RN39 — opções de unidade aparecem apenas quando há unidade selecionada no filtro do modal. */
+  get abrangenciaOpcoes(): AbrangenciaOpcao[] {
+    if (this.filtroUnidadeId()) {
+      return [...this.abrangenciaOpcoesBase, ...this.abrangenciaOpcoesUnidade];
+    }
+    return this.abrangenciaOpcoesBase;
+  }
+
+  readonly abrangenciaTooltip =
+    'Permite restringir a consulta de entregas conforme o escopo do Planejamento Institucional ou da estrutura organizacional.';
+
+  private carregamentoId = 0;
 
   constructor() {
     effect(() => {
       const id = this.objetivoId();
       const unidadeInicial = this.unidadeIdInicial();
       if (id) {
-        this.filtroUnidadeId.set(unidadeInicial);
-        void this.carregar();
+        untracked(() => {
+          this.filtroUnidadeId.set(unidadeInicial);
+          // RN37/RN39: se modal abriu com unidade pré-selecionada, opções de unidade já ficam visíveis
+          if (!unidadeInicial) {
+            const abr = this.filtroAbrangencia();
+            if (abr === 'unidade_selecionada' || abr === 'unidade_e_subordinadas') {
+              this.filtroAbrangencia.set('');
+            }
+          }
+          void this.carregar();
+        });
       }
     });
   }
@@ -68,6 +107,11 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   onFiltroUnidadeChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.filtroUnidadeId.set(value);
+    // RN37/RN39: ao desmarcar unidade, limpa abrangência de unidade se estava selecionada
+    const abr = this.filtroAbrangencia();
+    if (!value && (abr === 'unidade_selecionada' || abr === 'unidade_e_subordinadas')) {
+      this.filtroAbrangencia.set('');
+    }
     void this.carregar();
   }
 
@@ -83,11 +127,18 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
     void this.carregar();
   }
 
+  onFiltroAbrangenciaChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value as '' | ObjetivoEntregasAbrangencia;
+    this.filtroAbrangencia.set(value);
+    void this.carregar();
+  }
+
   limparFiltros(): void {
     this.filtroEntregaId.set('');
     this.filtroUnidadeId.set('');
     this.filtroDataInicio.set('');
     this.filtroDataFim.set('');
+    this.filtroAbrangencia.set('');
     void this.carregar();
   }
 
@@ -101,7 +152,7 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
   }
 
   linhaKey(item: ObjetivoPainelEntregaDetalheLinhaApi): string {
-    return item.plano_entrega_entrega_id;
+    return `${item.plano_entrega_entrega_id}:${item.planejamento_objetivo_id}`;
   }
 
   statusLabel(status: string): string {
@@ -167,7 +218,8 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
       plano_entrega_entrega_id: this.filtroEntregaId() || undefined,
       unidade_id: this.filtroUnidadeId() || undefined,
       data_inicio: this.filtroDataInicio() || undefined,
-      data_fim: this.filtroDataFim() || undefined
+      data_fim: this.filtroDataFim() || undefined,
+      abrangencia: this.filtroAbrangencia() || undefined
     };
   }
 
@@ -177,25 +229,26 @@ export class PlanejamentoObjetivoEntregasDetalhamentoModalComponent {
       return;
     }
 
+    const reqId = ++this.carregamentoId;
     this.loading.set(true);
     this.error.set(null);
     try {
       const data = await firstValueFrom(
         this.api.getEntregasDetalhamento(objetivoId, this.filtrosAtuais())
       );
-      if (this.objetivoId() !== objetivoId) {
+      if (this.objetivoId() !== objetivoId || reqId !== this.carregamentoId) {
         return;
       }
       this.dados.set(data);
       this.linhaExpandidaId.set(null);
     } catch (err: unknown) {
-      if (this.objetivoId() !== objetivoId) {
+      if (this.objetivoId() !== objetivoId || reqId !== this.carregamentoId) {
         return;
       }
       this.dados.set(null);
       this.error.set(err instanceof Error ? err.message : 'Não foi possível carregar o detalhamento.');
     } finally {
-      if (this.objetivoId() === objetivoId) {
+      if (this.objetivoId() === objetivoId && reqId === this.carregamentoId) {
         this.loading.set(false);
       }
     }

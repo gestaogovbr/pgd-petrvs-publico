@@ -114,7 +114,7 @@
           "configurations": {
             "production": {
               "optimization": true,
-              "outputHashing": "none",
+              "outputHashing": "all",
               "sourceMap": false,
               "extractLicenses": true,
               "budgets": [

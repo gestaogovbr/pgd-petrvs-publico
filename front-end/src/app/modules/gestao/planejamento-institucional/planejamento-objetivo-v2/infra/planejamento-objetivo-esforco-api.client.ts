@@ -128,8 +128,17 @@ export type ObjetivoPainelPessoasResumoApi = {
 
 export type ObjetivoPainelEntregasResumoApi = {
   total_entregas: number;
+  /** Entregas em Planos de Entregas AVALIADOS — base do percentual de concluídas. */
+  total_entregas_avaliadas: number;
   entregas_concluidas: number;
   percentual_concluidas: number;
+};
+
+/** Agrupamentos de uma seção do painel ("Item selecionado" ou "Consolidado"). */
+export type ObjetivoPainelSecaoResumoApi = {
+  esforco: ObjetivoPainelEsforcoResumoApi;
+  pessoas: ObjetivoPainelPessoasResumoApi;
+  entregas: ObjetivoPainelEntregasResumoApi;
 };
 
 export type ObjetivoPainelResumoApi = {
@@ -138,14 +147,32 @@ export type ObjetivoPainelResumoApi = {
   planejamento_nome: string;
   tipo_objetivo_nome: string;
   eixo_tematico_nome: string;
-  esforco: ObjetivoPainelEsforcoResumoApi;
-  pessoas: ObjetivoPainelPessoasResumoApi;
-  entregas: ObjetivoPainelEntregasResumoApi;
+  /** Seção "Item selecionado": somente o objetivo selecionado (RN02). */
+  item: ObjetivoPainelSecaoResumoApi;
+  /** Seção "Consolidado": item selecionado + subordinados (RN15). */
+  consolidado: ObjetivoPainelSecaoResumoApi;
   filtro_unidades: ObjetivoPainelFiltroOpcaoApi[];
 };
 
+export type ObjetivoPainelEntregaEtiquetaApi = {
+  key: string;
+  value: string;
+  icon?: string | null;
+  color?: string | null;
+};
+
+/** Escopos do filtro Abrangência no detalhamento de entregas (RN33–RN39). */
+export type ObjetivoEntregasAbrangencia =
+  | 'item_selecionado'
+  | 'itens_subordinados'
+  | 'item_e_subordinados'
+  | 'unidade_selecionada'
+  | 'unidade_e_subordinadas';
+
 export type ObjetivoPainelEntregaDetalheLinhaApi = {
   plano_entrega_entrega_id: string;
+  planejamento_objetivo_id: string;
+  planejamento_objetivo_nome: string;
   unidade_id: string;
   unidade_sigla: string;
   unidade_nome: string;
@@ -155,6 +182,9 @@ export type ObjetivoPainelEntregaDetalheLinhaApi = {
   plano_entrega_vigencia_inicio: string;
   plano_entrega_vigencia_fim: string | null;
   entrega_titulo: string;
+  entrega_descricao: string;
+  descricao_meta: string;
+  etiquetas: ObjetivoPainelEntregaEtiquetaApi[];
   progresso_esperado: number;
   progresso_realizado: number;
   homologado: boolean;
@@ -199,6 +229,7 @@ export type ObjetivoEntregasDetalhamentoFiltros = {
   unidade_id?: string;
   data_inicio?: string;
   data_fim?: string;
+  abrangencia?: ObjetivoEntregasAbrangencia;
 };
 
 @Injectable()
@@ -303,6 +334,9 @@ export class PlanejamentoObjetivoEsforcoApiClient {
     }
     if (filtros.data_fim) {
       params.set('data_fim', filtros.data_fim);
+    }
+    if (filtros.abrangencia) {
+      params.set('abrangencia', filtros.abrangencia);
     }
     const qs = params.toString();
     const url = `${this.gb.servidorURL}${this.base}/${objetivoId}/entregas-detalhamento${qs ? `?${qs}` : ''}`;
