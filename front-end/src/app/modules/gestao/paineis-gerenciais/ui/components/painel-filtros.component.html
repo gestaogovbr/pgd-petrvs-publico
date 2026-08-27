@@ -20,6 +20,12 @@
       [searchFn]="activeSearchFn()"
       (unidadeSelected)="selecionarUnidade($event)"
     ></unidade-select>
+    @if (!unidadeSelecionada()) {
+      <span class="feedback warning" role="alert">
+        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+        Selecione a Unidade
+      </span>
+    }
   </div>
 
   <!-- Step 3: Datas (apenas no modo histórico) -->
