@@ -1,5 +1,5 @@
 .home-card--scrollable {
-  max-height: 15em;
+  height: 12em;
   overflow-y: auto;
   margin-top: 1em;
   position: relative;
@@ -14,5 +14,46 @@
     height: 2em;
     background: linear-gradient(to bottom, transparent, white);
     pointer-events: none;
+  }
+}
+
+.home-card--scrollable-fill {
+  overflow-y: auto;
+  margin-top: 1em;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: sticky;
+    bottom: -1px;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 2em;
+    background: linear-gradient(to bottom, transparent, white);
+    pointer-events: none;
+  }
+}
+
+
+.home-card--atalho {
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover, &:focus-visible {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+}
+
+.home-card--atalho-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: auto;
+  transition: none;
+
+  &:hover, &:focus-visible {
+    box-shadow: none;
+    transform: none;
   }
 }

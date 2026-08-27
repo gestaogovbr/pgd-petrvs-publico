@@ -24,7 +24,7 @@ export class PaineisGerenciaisPage {
     { titulo: 'Alinhamento e Desempenho', rota: 'alinhamento-desempenho', icon: 'bi bi-graph-up-arrow' },
     { titulo: 'Conformidade', rota: 'conformidade', icon: 'bi bi-clipboard2-check' },
     { titulo: 'Modalidades', rota: 'modalidades', icon: 'bi bi-diagram-3' },
-    { titulo: 'Gestão do PGD', rota: 'gestao-pgd', icon: 'bi bi-gear' },
+    { titulo: 'Abrangência do PGD', rota: 'gestao-pgd', icon: 'bi bi-gear' },
   ];
 
   navegarPara(rota: string): void {

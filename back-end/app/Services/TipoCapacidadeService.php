@@ -233,9 +233,9 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_PENT_ENTR_INCL", "Permite incluir entregas de um plano de entregas"],
         ["MOD_PENT_ENTR_EXTRPL", "Permite incluir entregas que extrapolem o plano de entregas"],
         /* Capacidades do módulo PLANO DE ENTREGAS - ENTREGAS - PROGRESSOS*/
-        ["MOD_PENT_ENTR_PRO_INCL", "Permite incluir o progresso da entrega de um plano de entregas"],
+        ["MOD_PENT_ENTR_PRO_INCL", "Permite incluir o progresso da entrega de um plano de entregas e excluí-lo enquanto o plano estiver ATIVO"],
         ["MOD_PENT_ENTR_PRO_EDT", "Permite editar o progresso da entrega de um plano de entregas"],
-        ["MOD_PENT_ENTR_PRO_EXCL", "Permite excluir o progresso da entrega de um plano de entregas"],
+        ["MOD_PENT_ENTR_PRO_EXCL", "Permite excluir o progresso da entrega de um plano de entregas enquanto o plano estiver ATIVO"],
       ]
     ], [
       "codigo" => "MOD_PRGT",
@@ -456,6 +456,17 @@ class TipoCapacidadeService extends ServiceBase
     [
         "codigo" => "MOD_RELATORIO_PE_TODAS_UNIDADES",
         "descricao" => "Relatório de Planos de Entrega - Listar todas as unidades",
+    ],
+    [
+        "codigo" => "MOD_RELATORIO_ENTREGA",
+        "descricao" => "Relatório de Entregas",
+        "capacidades" => [
+            ["MOD_RELATORIO_ENTREGA_UNIDADES_VINCULADAS", "Relatório de Entregas - Permite usuário filtrar por todas as unidades vinculadas"],
+        ],
+    ],
+    [
+        "codigo" => "MOD_RELATORIO_ENTREGA_TODAS_UNIDADES",
+        "descricao" => "Relatório de Entregas - Listar todas as unidades",
     ],
     [
         "codigo" => "MOD_RELATORIO_USUARIO",

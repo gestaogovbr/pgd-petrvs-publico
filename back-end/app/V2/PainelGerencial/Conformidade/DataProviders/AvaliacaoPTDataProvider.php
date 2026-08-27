@@ -19,7 +19,7 @@ class AvaliacaoPTDataProvider
 {
     use ResolveHierarquiaPainel;
 
-    private const SEGMENTOS = ['Avaliado', 'Pendente'];
+    private const SEGMENTOS = ['Avaliado', 'Aguardando'];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -57,24 +57,29 @@ class AvaliacaoPTDataProvider
     {
         $unidadeIds = $this->idsComTodasSubordinadas($unidade);
 
-        // Total: consolidações já concluídas (passíveis de avaliação)
         $baseQuery = $this->buildBaseQuery($unidadeIds, $filtros);
-        $total = (clone $baseQuery)->count();
+
+        // Avaliados: consolidações com status AVALIADO
+        $avaliados = (clone $baseQuery)
+            ->where('planos_trabalhos_consolidacoes.status', StatusEnum::AVALIADO->value)
+            ->count();
+
+        // Aguardando: consolidações CONCLUIDO cuja conclusão foi há <= 20 dias (sem avaliação, dentro do prazo)
+        $aguardando = (clone $baseQuery)
+            ->where('planos_trabalhos_consolidacoes.status', StatusEnum::CONCLUIDO->value)
+            ->whereRaw('CURDATE() <= DATE_ADD(CAST(planos_trabalhos_consolidacoes.data_conclusao AS DATE), INTERVAL 20 DAY)')
+            ->count();
+
+        $total = $avaliados + $aguardando;
 
         if ($total === 0) {
             return new DistribuicaoUnidadeDTO($unidade->id, $unidade->sigla, [0, 0], 0);
         }
 
-        $avaliados = (clone $baseQuery)
-            ->where('planos_trabalhos_consolidacoes.status', StatusEnum::AVALIADO->value)
-            ->count();
-
-        $pendentes = $total - $avaliados;
-
         return new DistribuicaoUnidadeDTO(
             unidadeId: $unidade->id,
             unidadeSigla: $unidade->sigla,
-            valores: [$avaliados, $pendentes],
+            valores: [$avaliados, $aguardando],
             total: $total,
         );
     }

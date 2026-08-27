@@ -1,14 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
-import { PainelApiClient, FiltrosPainel, Indicador, IndicadorTeletrabalho } from '../../infra/painel-api.client';
-import { PainelPdfService } from '../../infra/painel-pdf.service';
+import { PainelApiClient, FiltrosPainel, Indicador, IndicadorTeletrabalho, DrillTarget } from '../../infra/painel-api.client';
 import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
 import { IndicadorBarraVerticalComponent } from '../components/indicador-barra-vertical.component';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
 import { CHART_COLORS } from 'src/app/services/chart';
+import { PdfPainelComponent, PdfIndicadorConfig } from '../components/pdf/pdf-painel.component';
 
 @Component({
   selector: 'modalidades-page',
@@ -21,33 +21,39 @@ import { CHART_COLORS } from 'src/app/services/chart';
     PainelFiltrosComponent,
     IndicadorBarraVerticalComponent,
     IndicadorBarraHorizontalComponent,
+    PdfPainelComponent,
   ],
   templateUrl: './modalidades.page.html',
 })
 export class ModalidadesPage implements OnInit {
   private readonly api = inject(PainelApiClient);
-  private readonly pdfService = inject(PainelPdfService);
+
+  @ViewChild(PdfPainelComponent) pdfPainel!: PdfPainelComponent;
+  @ViewChildren(IndicadorBarraVerticalComponent) barrasVerticais!: QueryList<IndicadorBarraVerticalComponent>;
+  @ViewChildren(IndicadorBarraHorizontalComponent) barrasHorizontais!: QueryList<IndicadorBarraHorizontalComponent>;
 
   readonly origemDados = ORIGEM_DADOS;
 
-  readonly textos = {
+  readonly textos = computed(() => ({
     substituicao: {
-      titulo: 'Participação na modalidade Teletrabalho no Exterior (VIII, art. 12, D.11072/22 - substituição)',
-      info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no inciso VIII (substituição), permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
+      titulo: `Participação na modalidade Teletrabalho no Exterior (VIII, art. 12, D.11072/22 - substituição) - ${this.siglaRaiz() || '...'}`,
+      info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no inciso VII (substituição) na Unidade Autorizadora, permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
     },
     discricionario: {
-      titulo: 'Participação na modalidade Teletrabalho no Exterior (§7º, art. 12, D.11072/22 - discricionário)',
-      info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no §7º, art. 12, D.11072/22 (discricionário), permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
+      titulo: `Participação na modalidade Teletrabalho no Exterior (§7º, art. 12, D.11072/22 - discricionário) - ${this.siglaRaiz() || '...'}`,
+      info: 'Apresenta o percentual de participantes em Teletrabalho no Exterior com fundamento no §7º, art. 12, D.11072/22 (discricionário) na Unidade Autorizadora, permitindo compará-lo ao limite legal aplicável. Para fins de conformidade, considera-se o limite legal vigente na data da concessão da autorização para participação nessa modalidade.',
     },
     modalidadesPorUnidade: {
       titulo: 'Modalidades de trabalho por unidade organizacional',
       info: 'Apresenta a distribuição percentual dos participantes do PGD por modalidade de trabalho, de acordo com a unidade organizacional. A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
     },
-  };
+  }));
 
   readonly unidadeInicialId = signal('');
   readonly unidadeInicialSigla = signal('');
   readonly unidadeInicialNome = signal('');
+  private readonly siglaRaiz = signal('');
+  private readonly idRaiz = signal('');
 
   readonly teletrabalhoSubstituicao = signal<IndicadorTeletrabalho | null>(null);
   readonly teletrabalhoDiscricionario = signal<IndicadorTeletrabalho | null>(null);
@@ -57,7 +63,7 @@ export class ModalidadesPage implements OnInit {
   readonly carregandoDiscricionario = signal(false);
   readonly carregandoModalidades = signal(false);
 
-  readonly drillUnidadeModalidades = signal<string | null>(null);
+  readonly drillUnidadeModalidades = signal<DrillTarget | null>(null);
 
   readonly carregandoAlgum = computed(() =>
     this.carregandoSubstituicao() || this.carregandoDiscricionario() || this.carregandoModalidades()
@@ -68,6 +74,14 @@ export class ModalidadesPage implements OnInit {
 
   readonly saibaMaisParamsSubstituicao = computed(() => this.buildSaibaMaisParams('no exterior substituicao'));
   readonly saibaMaisParamsDiscricionario = computed(() => this.buildSaibaMaisParams('no exterior'));
+  readonly saibaMaisParamsModalidadesPorUnidade = computed(() => {
+    const drill = this.drillUnidadeModalidades();
+    const unidadeId = drill?.unidade_id ?? this.filtrosAtuais()?.unidade_id ?? '';
+    return {
+      unidade_id: unidadeId,
+      incluir_unidades_subordinadas: 'true',
+    };
+  });
 
   ngOnInit(): void {
     this.api.getUnidadeInicial().subscribe(unidade => {
@@ -76,89 +90,87 @@ export class ModalidadesPage implements OnInit {
       this.unidadeInicialId.set(unidade.unidade_id);
       this.unidadeInicialSigla.set(unidade.unidade_sigla ?? '');
       this.unidadeInicialNome.set(unidade.unidade_nome ?? '');
+      this.siglaRaiz.set(unidade.unidade_raiz_sigla ?? unidade.unidade_sigla ?? '');
+      this.idRaiz.set(unidade.unidade_raiz_id ?? unidade.unidade_id ?? '');
       this.unidadeAtualLabel.set(`${unidade.unidade_sigla ?? ''} - ${unidade.unidade_nome ?? ''}`);
 
-      this.carregarDados({
+      const filtrosIniciais: FiltrosPainel = {
         tipo_consulta: 'situacao_atual',
-        unidade_id: unidade.unidade_id,
+        unidade_id: unidade.unidade_id!,
+      };
+
+      this.carregarTeletrabalho({
+        tipo_consulta: 'situacao_atual',
+        unidade_id: unidade.unidade_raiz_id ?? unidade.unidade_id!,
       });
+      this.carregarModalidades(filtrosIniciais);
     });
   }
 
   onFiltrosChange(filtros: FiltrosPainel): void {
-    this.carregarDados(filtros);
+    this.carregarModalidades(filtros);
   }
 
   onUnidadeChange(unidade: { sigla: string; nome: string }): void {
+    this.unidadeInicialSigla.set(unidade.sigla);
     this.unidadeAtualLabel.set(`${unidade.sigla} - ${unidade.nome}`);
   }
 
   exportarPdf(): void {
-    const container = document.querySelector('modalidades-page');
-    if (!container) return;
-
-    const indicadorEls = container.querySelectorAll('indicador-barra-vertical, indicador-barra-horizontal');
     const cores = CHART_COLORS;
+    const verticais = this.barrasVerticais.toArray();
+    const horizontais = this.barrasHorizontais.toArray();
 
-    const indicadores = [
+    const indicadores: PdfIndicadorConfig[] = [
       {
-        titulo: this.textos.substituicao.titulo,
-        informacaoAdicional: this.textos.substituicao.info,
+        titulo: this.textos().substituicao.titulo,
+        informacaoAdicional: this.textos().substituicao.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: indicadorEls[0]?.querySelector('canvas') as HTMLCanvasElement | null,
+        chartComponent: verticais[0] ?? null,
         segmentos: [{ nome: 'Taxa de participação', cor: cores[3] }, { nome: 'Limite legal', cor: cores[2] }],
-        distribuicoes: [] as { sigla: string; total: number }[],
+        distribuicoes: [],
       },
       {
-        titulo: this.textos.discricionario.titulo,
-        informacaoAdicional: this.textos.discricionario.info,
+        titulo: this.textos().discricionario.titulo,
+        informacaoAdicional: this.textos().discricionario.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: indicadorEls[1]?.querySelector('canvas') as HTMLCanvasElement | null,
+        chartComponent: verticais[1] ?? null,
         segmentos: [{ nome: 'Taxa de participação', cor: cores[3] }, { nome: 'Limite legal', cor: cores[2] }],
-        distribuicoes: [] as { sigla: string; total: number }[],
+        distribuicoes: [],
       },
       {
-        titulo: this.textos.modalidadesPorUnidade.titulo,
-        informacaoAdicional: this.textos.modalidadesPorUnidade.info,
+        titulo: this.textos().modalidadesPorUnidade.titulo,
+        informacaoAdicional: this.textos().modalidadesPorUnidade.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: indicadorEls[2]?.querySelector('canvas') as HTMLCanvasElement | null,
+        chartComponent: horizontais[0] ?? null,
         segmentos: (this.modalidadesPorUnidade()?.segmentos ?? []).map((nome, j) => ({ nome, cor: cores[j] ?? '#ccc' })),
         distribuicoes: (this.modalidadesPorUnidade()?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
       },
     ];
 
-    this.pdfService.exportar(
+    this.pdfPainel.imprimir(
       {
         painel: 'Modalidades',
-        tipoConsulta: this.filtrosAtuais()?.tipo_consulta === 'historico' ? 'Histórico' : 'Situação Atual',
         unidade: this.unidadeAtualLabel(),
-        periodo: this.filtrosAtuais()?.data_inicio && this.filtrosAtuais()?.data_fim
-          ? `${this.filtrosAtuais()!.data_inicio} a ${this.filtrosAtuais()!.data_fim}`
-          : undefined,
       },
       indicadores,
     );
   }
 
   private buildSaibaMaisParams(modalidade: string): Record<string, string> {
-    const filtros = this.filtrosAtuais();
-    const params: Record<string, string> = { modalidade };
-    if (filtros?.unidade_id) params['unidade_id'] = filtros.unidade_id;
-    return params;
+    return {
+      modalidadeSouGov: modalidade,
+      unidade_id: this.idRaiz(),
+      incluir_unidades_subordinadas: 'true',
+    };
   }
 
-  private carregarDados(filtros: FiltrosPainel): void {
-    this.filtrosAtuais.set(filtros);
-
+  private carregarTeletrabalho(filtros: FiltrosPainel): void {
     this.teletrabalhoSubstituicao.set(null);
     this.teletrabalhoDiscricionario.set(null);
-    this.modalidadesPorUnidade.set(null);
-
-    this.drillUnidadeModalidades.set(null);
 
     this.carregandoSubstituicao.set(true);
     this.carregandoDiscricionario.set(true);
-    this.carregandoModalidades.set(true);
 
     this.api.getTeletrabalhoSubstituicao(filtros).subscribe({
       next: dados => { this.teletrabalhoSubstituicao.set(dados); this.carregandoSubstituicao.set(false); },
@@ -169,6 +181,13 @@ export class ModalidadesPage implements OnInit {
       next: dados => { this.teletrabalhoDiscricionario.set(dados); this.carregandoDiscricionario.set(false); },
       error: () => this.carregandoDiscricionario.set(false),
     });
+  }
+
+  private carregarModalidades(filtros: FiltrosPainel): void {
+    this.filtrosAtuais.set(filtros);
+    this.modalidadesPorUnidade.set(null);
+    this.drillUnidadeModalidades.set(null);
+    this.carregandoModalidades.set(true);
 
     this.api.getModalidadesPorUnidade(filtros).subscribe({
       next: dados => { this.modalidadesPorUnidade.set(dados); this.carregandoModalidades.set(false); },
@@ -176,11 +195,11 @@ export class ModalidadesPage implements OnInit {
     });
   }
 
-  onDrillDown(unidade: { unidade_id: string; unidade_sigla: string }): void {
+  onDrillDown(unidade: DrillTarget): void {
     const filtros = this.filtrosAtuais();
     if (!filtros) return;
 
-    this.drillUnidadeModalidades.set(unidade.unidade_sigla);
+    this.drillUnidadeModalidades.set(unidade);
     this.carregandoModalidades.set(true);
     this.modalidadesPorUnidade.set(null);
 

@@ -30,4 +30,14 @@ interface UnidadeWriteRepositoryContract
      * Reativa unidades que voltaram a constar em integracao_unidades.
      */
     public function reativarPorIntegracao(): int;
+
+    public function cancelarInicioInativacaoPorCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): int;
+
+    public function reativarPorCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): int;
+
+    public function marcarAntigasPorCodigoOrgao(string $codigoOrgao): int;
+
+    public function iniciarInativacao(string|int $id): bool;
+
+    public function efetivarInativacao(string|int $id): bool;
 }

@@ -192,6 +192,129 @@ beforeEach(function () {
             ->and($result->pluck('usuario_id')->contains($titularSubordinada->id))->toBeTrue()
             ->and($result->pluck('usuario_id')->contains($participanteSubordinada->id))->toBeFalse();
     });
+    test('inclui plano do gestor titular quando atribuição de gestor foi soft-deleted', function () {
+        $gestorTitular = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+        ]);
+        $gestorSubstituto = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+        ]);
+
+        $integranteTitular = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $gestorTitular->id,
+        ]);
+        $atribuicaoGestor = UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'GESTOR',
+            'unidade_integrante_id' => $integranteTitular->id,
+        ]);
+        $atribuicaoGestor->delete();
+
+        $integranteSubstituto = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $gestorSubstituto->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'GESTOR_SUBSTITUTO',
+            'unidade_integrante_id' => $integranteSubstituto->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $gestorTitular->id,
+            'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
+        ]);
+
+        $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], $gestorSubstituto->id);
+
+        expect($result)->toHaveCount(1)
+            ->and($result->first()->usuario_id)->toBe($gestorTitular->id);
+    });
+
+    test('inclui plano do gestor titular quando atribuição de substituto foi soft-deleted', function () {
+        $gestorTitular = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+        ]);
+        $gestorSubstituto = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+        ]);
+        $participante = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+        ]);
+
+        $integranteTitular = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $gestorTitular->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'GESTOR',
+            'unidade_integrante_id' => $integranteTitular->id,
+        ]);
+
+        $integranteSubstituto = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $gestorSubstituto->id,
+        ]);
+        $atribuicaoSubstituto = UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'GESTOR_SUBSTITUTO',
+            'unidade_integrante_id' => $integranteSubstituto->id,
+        ]);
+        $atribuicaoSubstituto->delete();
+
+        PlanoTrabalho::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $gestorTitular->id,
+            'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $participante->id,
+            'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
+        ]);
+
+        $result = $this->repository->getPlanosTrabalhoAssinatura([$this->unidade->id], [], $gestorSubstituto->id);
+
+        expect($result)->toHaveCount(2)
+            ->and($result->pluck('usuario_id')->contains($gestorTitular->id))->toBeTrue()
+            ->and($result->pluck('usuario_id')->contains($participante->id))->toBeTrue();
+    });
+
+    test('não inclui plano de subordinada quando atribuição de gestor titular foi soft-deleted', function () {
+        $unidadeSubordinada = Unidade::factory()->create(['unidade_pai_id' => $this->unidade->id]);
+
+        $usuarioLogado = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+        ]);
+        $exTitularSubordinada = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+        ]);
+
+        $integranteExTitular = UnidadeIntegrante::query()->create([
+            'unidade_id' => $unidadeSubordinada->id,
+            'usuario_id' => $exTitularSubordinada->id,
+        ]);
+        $atribuicaoGestor = UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'GESTOR',
+            'unidade_integrante_id' => $integranteExTitular->id,
+        ]);
+        $atribuicaoGestor->delete();
+
+        PlanoTrabalho::factory()->create([
+            'unidade_id' => $unidadeSubordinada->id,
+            'usuario_id' => $exTitularSubordinada->id,
+            'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
+        ]);
+
+        $result = $this->repository->getPlanosTrabalhoAssinatura(
+            [],
+            [$unidadeSubordinada->id],
+            $usuarioLogado->id
+        );
+
+        expect($result)->toHaveCount(0);
+    });
+
 describe('PlanoTrabalhoRepository::create', function () {
 
     test('persiste o plano de trabalho no banco', function () {
@@ -484,6 +607,123 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem', function () {
 
         expect($ids[0])->toBe($usuarioZ->id)
             ->and($ids[1])->toBe($usuarioA->id);
+    });
+});
+
+describe('PlanoTrabalhoRepository::buscarPlanosListagem - minha_equipe', function () {
+
+    test('não inclui integrante com atribuição soft-deleted', function () {
+        $participante = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
+
+        $integrante = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $participante->id,
+        ]);
+        $atribuicao = UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'LOTADO',
+            'unidade_integrante_id' => $integrante->id,
+        ]);
+        $atribuicao->delete();
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $participante->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'minha_equipe' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(0);
+    });
+
+    test('inclui integrante com atribuição ativa', function () {
+        $participante = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
+
+        $integrante = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $participante->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'LOTADO',
+            'unidade_integrante_id' => $integrante->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $participante->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'minha_equipe' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1)
+            ->and($result->items()[0]->usuario_id)->toBe($participante->id);
+    });
+
+    test('não inclui PT de outra unidade mesmo que integrante tenha atribuição ativa', function () {
+        $outraUnidade = Unidade::factory()->create();
+        $participante = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
+
+        $integrante = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $participante->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'LOTADO',
+            'unidade_integrante_id' => $integrante->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $participante->id,
+            'unidade_id' => $outraUnidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'minha_equipe' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(0);
+    });
+
+    test('inclui apenas PT da unidade gerenciada quando integrante tem PTs em múltiplas unidades', function () {
+        $outraUnidade = Unidade::factory()->create();
+        $participante = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
+
+        $integrante = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $participante->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'LOTADO',
+            'unidade_integrante_id' => $integrante->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $participante->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $participante->id,
+            'unidade_id' => $outraUnidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'minha_equipe' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1)
+            ->and($result->items()[0]->unidade_id)->toBe($this->unidade->id);
     });
 });
 

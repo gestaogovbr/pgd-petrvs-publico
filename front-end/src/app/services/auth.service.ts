@@ -114,7 +114,9 @@ export class AuthService {
   constructor(public injector: Injector) { }
 
   public success(usuario: Usuario, redirectTo?: FullRoute) {
-    this.app!.go.navigate(redirectTo || { route: this.app!.gb.initialRoute });
+    const destino: FullRoute = redirectTo || { route: this.app!.gb.initialRoute };
+    destino.params = { ...destino.params, mural: '1' };
+    this.app!.go.navigate(destino);
   };
 
   public fail(error: any) {

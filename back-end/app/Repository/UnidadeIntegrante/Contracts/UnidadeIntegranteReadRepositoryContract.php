@@ -25,4 +25,11 @@ interface UnidadeIntegranteReadRepositoryContract
     public function findAllComAtribuicoesAtivasByUsuario(string $usuarioId): Collection;
 
     public function countLotadosByUnidade(string $unidadeId): int;
+
+    public function countAtivosByUnidade(string $unidadeId): int;
+
+    /**
+     * @return list<string>
+     */
+    public function findIdsAtivosByUnidade(string $unidadeId): array;
 }

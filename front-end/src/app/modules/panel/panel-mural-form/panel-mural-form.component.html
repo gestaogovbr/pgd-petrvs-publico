@@ -1,0 +1,47 @@
+<div class="container-fluid">
+  <h5>{{isEdicao ? 'Editar Aviso' : 'Novo Aviso'}}</h5>
+  <hr>
+
+  <form [formGroup]="form" (ngSubmit)="salvar()" aria-label="Formulário de aviso">
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label" for="mural-titulo">Título *</label>
+        <input type="text" class="form-control" id="mural-titulo" formControlName="titulo" maxlength="255"
+               aria-required="true">
+      </div>
+
+      <div class="col-12">
+        <label class="form-label" for="mural-conteudo">Conteúdo *</label>
+        <textarea class="form-control" id="mural-conteudo" formControlName="conteudo" rows="6"
+                  aria-required="true"></textarea>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label" for="mural-destinatario">Destinatário *</label>
+        <select class="form-select" id="mural-destinatario" formControlName="destinatario"
+                aria-required="true">
+          <option value="TODOS">Todos os tenants</option>
+          <option value="TENANT_ESPECIFICO">Tenant específico</option>
+        </select>
+      </div>
+
+      @if (isDestinatarioTenant) {
+        <div class="col-md-6">
+          <label class="form-label" for="mural-tenant">Tenant *</label>
+          <select class="form-select" id="mural-tenant" formControlName="tenant_id"
+                  aria-required="true">
+            <option [ngValue]="null" disabled>Selecione...</option>
+            @for (t of tenants; track t.id) {
+              <option [ngValue]="t.id">{{t.nome || t.id}}</option>
+            }
+          </select>
+        </div>
+      }
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">Salvar</button>
+    </div>
+  </form>
+</div>

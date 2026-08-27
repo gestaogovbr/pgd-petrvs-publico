@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
-import { PainelApiClient, FiltrosPainel, Indicador } from '../../infra/painel-api.client';
-import { PainelPdfService } from '../../infra/painel-pdf.service';
+import { PainelApiClient, FiltrosPainel, Indicador, DrillTarget } from '../../infra/painel-api.client';
 import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
 import { CHART_COLORS } from 'src/app/services/chart';
+import { PdfPainelComponent, PdfIndicadorConfig } from '../components/pdf/pdf-painel.component';
 
 @Component({
   selector: 'conformidade-page',
@@ -19,12 +19,15 @@ import { CHART_COLORS } from 'src/app/services/chart';
     BreadcrumbComponent,
     PainelFiltrosComponent,
     IndicadorBarraHorizontalComponent,
+    PdfPainelComponent,
   ],
   templateUrl: './conformidade.page.html',
 })
 export class ConformidadePage implements OnInit {
   private readonly api = inject(PainelApiClient);
-  private readonly pdfService = inject(PainelPdfService);
+
+  @ViewChild(PdfPainelComponent) pdfPainel!: PdfPainelComponent;
+  @ViewChildren(IndicadorBarraHorizontalComponent) barrasHorizontais!: QueryList<IndicadorBarraHorizontalComponent>;
 
   readonly origemDados = ORIGEM_DADOS;
 
@@ -67,11 +70,11 @@ export class ConformidadePage implements OnInit {
   readonly carregandoAvaliacaoPT = signal(false);
   readonly carregandoUnidadesExecutorasPE = signal(false);
 
-  readonly drillRegistroExecucaoPE = signal<string | null>(null);
-  readonly drillAvaliacaoPE = signal<string | null>(null);
-  readonly drillRegistroExecucaoPT = signal<string | null>(null);
-  readonly drillAvaliacaoPT = signal<string | null>(null);
-  readonly drillUnidadesExecutorasPE = signal<string | null>(null);
+  readonly drillRegistroExecucaoPE = signal<DrillTarget | null>(null);
+  readonly drillAvaliacaoPE = signal<DrillTarget | null>(null);
+  readonly drillRegistroExecucaoPT = signal<DrillTarget | null>(null);
+  readonly drillAvaliacaoPT = signal<DrillTarget | null>(null);
+  readonly drillUnidadesExecutorasPE = signal<DrillTarget | null>(null);
 
   readonly carregandoAlgum = computed(() =>
     this.carregandoRegistroExecucaoPE() || this.carregandoAvaliacaoPE() || this.carregandoRegistroExecucaoPT() || this.carregandoAvaliacaoPT() || this.carregandoUnidadesExecutorasPE()
@@ -89,11 +92,11 @@ export class ConformidadePage implements OnInit {
     return f?.data_inicio && f?.data_fim ? `${f.data_inicio} a ${f.data_fim}` : '';
   });
 
-  readonly saibaMaisRegistroExecucaoPE = computed(() => this.buildSaibaMaisParams({situacao_conclusao: 'Pendente'}) as Record<string, string>);
-  readonly saibaMaisAvaliacaoPE = computed(() => this.buildSaibaMaisParams({situacao_avaliacao: 'Pendente'}) as Record<string, string>);
-  readonly saibaMaisRegistroExecucaoPT = computed(() => this.buildSaibaMaisParams({situacao_conclusao: 'Pendente'}) as Record<string, string>);
-  readonly saibaMaisAvaliacaoPT = computed(() => this.buildSaibaMaisParams({situacao_avaliacao: 'Pendente'}) as Record<string, string>);
-  readonly saibaMaisUnidadesExecutoras = computed(() => this.buildSaibaMaisParams({plano_entregas_vigente: '', executora: 'sim'}) as Record<string, string>);
+  readonly saibaMaisRegistroExecucaoPE = computed(() => this.buildSaibaMaisParams({situacao_conclusao: 'Pendente'}, this.drillRegistroExecucaoPE()) as Record<string, string>);
+  readonly saibaMaisAvaliacaoPE = computed(() => this.buildSaibaMaisParams({situacao_avaliacao: 'Aguardando', status: 'CONCLUIDO'}, this.drillAvaliacaoPE()) as Record<string, string>);
+  readonly saibaMaisRegistroExecucaoPT = computed(() => this.buildSaibaMaisParams({incluir_periodos_avaliativos: 'true', situacao_execucao: 'Aguardando'}, this.drillRegistroExecucaoPT()) as Record<string, string>);
+  readonly saibaMaisAvaliacaoPT = computed(() => this.buildSaibaMaisParams({incluir_periodos_avaliativos: 'true', situacao_avaliacao: 'Aguardando'}, this.drillAvaliacaoPT()) as Record<string, string>);
+  readonly saibaMaisUnidadesExecutoras = computed(() => this.buildSaibaMaisParams({executora: 'Sim'}, this.drillUnidadesExecutorasPE()) as Record<string, string>);
 
   ngOnInit(): void {
     this.api.getUnidadeInicial().subscribe(unidade => {
@@ -113,15 +116,13 @@ export class ConformidadePage implements OnInit {
   }
 
   onUnidadeChange(unidade: { sigla: string; nome: string }): void {
+    this.unidadeInicialSigla.set(unidade.sigla);
     this.unidadeAtualLabel.set(`${unidade.sigla} - ${unidade.nome}`);
   }
 
   exportarPdf(): void {
-    const container = document.querySelector('conformidade-page');
-    if (!container) return;
-
-    const indicadorEls = container.querySelectorAll('indicador-barra-horizontal');
     const cores = CHART_COLORS;
+    const barras = this.barrasHorizontais.toArray();
 
     const indicadoresConfig = [
       { dados: this.registroExecucaoPE(), titulo: this.textos.registroExecucaoPE.titulo, info: this.textos.registroExecucaoPE.info },
@@ -131,20 +132,19 @@ export class ConformidadePage implements OnInit {
       { dados: this.unidadesExecutorasPE(), titulo: this.textos.unidadesExecutorasPE.titulo, info: this.textos.unidadesExecutorasPE.info },
     ];
 
-    const indicadores = indicadoresConfig.map((item, i) => {
+    const indicadores: PdfIndicadorConfig[] = indicadoresConfig.map((item, i) => {
       const temDados = item.dados && item.dados.distribuicoes.length > 0 && item.dados.distribuicoes.some(d => d.total > 0);
-      const canvasEl = indicadorEls[i]?.querySelector('canvas') as HTMLCanvasElement | null;
       return {
         titulo: item.titulo,
         informacaoAdicional: item.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: temDados ? canvasEl : null,
+        chartComponent: temDados ? barras[i] ?? null : null,
         segmentos: (item.dados?.segmentos ?? []).map((nome, j) => ({ nome, cor: cores[j] ?? '#ccc' })),
         distribuicoes: (item.dados?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
       };
     });
 
-    this.pdfService.exportar(
+    this.pdfPainel.imprimir(
       {
         painel: 'Conformidade',
         tipoConsulta: this.tipoConsultaLabel(),
@@ -155,12 +155,17 @@ export class ConformidadePage implements OnInit {
     );
   }
 
-  private buildSaibaMaisParams(extra: Record<string, string>): Record<string, string> {
+  private buildSaibaMaisParams(extra: Record<string, string>, drill?: DrillTarget | null): Record<string, string> {
     const filtros = this.filtrosAtuais();
-    const params: Record<string, string> = { ...extra };
-    if (filtros?.unidade_id) params['unidade_id'] = filtros.unidade_id;
-    if (filtros?.data_inicio) params['periodo_inicio'] = filtros.data_inicio;
-    if (filtros?.data_fim) params['periodo_fim'] = filtros.data_fim;
+    const params: Record<string, string> = { ...extra, incluir_unidades_subordinadas: 'true' };
+    const unidadeId = drill?.unidade_id ?? filtros?.unidade_id;
+    if (unidadeId) params['unidade_id'] = unidadeId;
+    if (filtros?.tipo_consulta === 'historico') {
+      if (filtros?.data_inicio) params['periodo_inicio'] = filtros.data_inicio;
+      if (filtros?.data_fim) params['periodo_fim'] = filtros.data_fim;
+    } else {
+      params['somente_vigentes'] = 'true';
+    }
     return params;
   }
 
@@ -211,12 +216,12 @@ export class ConformidadePage implements OnInit {
     });
   }
 
-  onDrillDown(grafico: number, unidade: { unidade_id: string; unidade_sigla: string }): void {
+  onDrillDown(grafico: number, unidade: DrillTarget): void {
     const filtros = this.filtrosAtuais();
     if (!filtros) return;
 
     const drillFiltros: FiltrosPainel = { ...filtros, unidade_id: unidade.unidade_id };
-    this.drillSignals[grafico - 1].set(unidade.unidade_sigla);
+    this.drillSignals[grafico - 1].set(unidade);
     this.carregarGraficoIndividual(grafico, drillFiltros);
   }
 

@@ -13,6 +13,7 @@ use App\Models\SiapeConsultaDadosFuncionais;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeDadosUORG;
 use App\Models\Usuario;
+use App\Services\CodigoOrgaoService;
 use App\Services\NivelAcessoService;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -340,7 +341,8 @@ class ProcessaDadosSiapeBD
 
     public function dadosUorg(): array
     {
-        $response = SiapeDadosUORG::where('processado', 0)
+        $response = SiapeDadosUORG::where('codigo_orgao', CodigoOrgaoService::atual())
+            ->where('processado', 0)
             ->whereNotNull('codigo')
             ->orderBy('updated_at', 'desc')->get();
 
@@ -362,7 +364,10 @@ class ProcessaDadosSiapeBD
                 continue;
             }
 
-            app(SiapeUnidadeLifecycleService::class)->reativarUnidadeEncontradaNoSiape((string) $dadosUnidades->codigo);
+            app(SiapeUnidadeLifecycleService::class)->reativarUnidadeEncontradaNoSiape(
+                (string) $dadosUnidades->codigo,
+                (string) $dadosUnidades->codigo_orgao
+            );
 
             $dadosUorgArray[] = [
                 'data_modificacao' => $dadosUnidades->data_modificacao,
@@ -448,8 +453,9 @@ class ProcessaDadosSiapeBD
                 return in_array($faultString, $faultStrings, true) || in_array($decoded, $faultStrings, true);
             })()
         ) {
+            $codigoOrgao = CodigoOrgaoService::atual();
             $test = SiapeBlacklistUnidade::firstOrCreate(
-                ['codigo' => $codigo],
+                ['codigo_orgao' => $codigoOrgao, 'codigo' => $codigo],
                 ['id' => (string) Str::uuid(), 'response' => $response]
             );
             Log::info("Unidade $codigo adicionada à blacklist", [$test]);

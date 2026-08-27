@@ -2,7 +2,9 @@
   background: var(--background);
   box-shadow: var(--surface-shadow-sm);
   padding: var(--spacing-scale-3x);
-  margin-bottom: var(--spacing-scale-3x);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 
   &__header {
     display: flex;
@@ -23,6 +25,13 @@
     font-size: var(--font-size-scale-up-01);
   }
 
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   &__vazio {
     color: var(--color-secondary-05);
     font-style: italic;
@@ -31,7 +40,8 @@
   }
 
   &__origem {
-    margin-top: var(--spacing-scale-2x);
+    margin-top: auto;
+    padding-top: var(--spacing-scale-2x);
     font-size: var(--font-size-scale-down-02);
     color: var(--color-secondary-05);
     font-style: italic;

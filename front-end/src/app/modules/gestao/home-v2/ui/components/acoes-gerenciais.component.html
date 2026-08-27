@@ -1,11 +1,11 @@
-<div class="d-flex gap-3 justify-content-center">
-  <br-button class="home-btn-atalho" emphasis="secondary" (click)="irParaPainelGerencial()" [disabled]="true">
-    Painel Gerencial
-  </br-button>
-  <br-button class="home-btn-atalho" emphasis="secondary" (click)="irParaPlanoEntregas()">
-    Meu Plano de Entregas Vigente
-  </br-button>
-  <br-button class="home-btn-atalho" emphasis="secondary" (click)="irParaPlanoTrabalho()">
-    Meu Plano de Trabalho Vigente
-  </br-button>
+<div class="row">
+  <div class="col-12 col-sm-6 col-md-4 my-1">
+    <home-atalho-card icone="bi bi-bar-chart-line" titulo="Painel Gerencial" [desabilitado]="true" (acao)="irParaPainelGerencial()" />
+  </div>
+  <div class="col-12 col-sm-6 col-md-4 my-1">
+    <home-atalho-card icone="bi bi-journal-check" titulo="Plano de Entregas Vigente" (acao)="irParaPlanoEntregas()" />
+  </div>
+  <div class="col-12 col-sm-6 col-md-4 my-1">
+    <home-atalho-card icone="bi bi-person-check" titulo="Meu Plano de Trabalho Vigente" (acao)="irParaPlanoTrabalho()" />
+  </div>
 </div>

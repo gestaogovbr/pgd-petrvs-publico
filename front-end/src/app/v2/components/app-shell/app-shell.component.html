@@ -114,8 +114,8 @@
           <!-- Direita: ações -->
           <div class="header-actions ms-auto">
 
-            <!-- Notificações -->
-            <div class="header-functions">
+            <!-- Notificações (ocultado por causa do Mural de Avisos) -->
+            <!-- <div class="header-functions">
               <button class="br-button circle" type="button"
                 [attr.aria-label]="naoLidas ? naoLidas + ' notificações não lidas' : 'Notificações'"
                 (click)="irParaNotificacoes()">
@@ -131,7 +131,7 @@
               </button>
             </div>
 
-            <span class="br-divider vertical mx-half" aria-hidden="true"></span>
+            <span class="br-divider vertical mx-half" aria-hidden="true"></span> -->
 
             <!-- Unidade / Matrícula -->
             <div class="header-functions">
@@ -142,7 +142,7 @@
                 (click)="toggleUnidade()">
                 <i class="bi bi-building me-1" aria-hidden="true"></i>
                 <span class="d-none d-sm-inline text-truncate" aria-hidden="true" style="max-width:10rem">
-                  {{ auth.unidade?.sigla }} ({{ auth.usuario?.matricula }})
+                  {{ auth.unidade?.sigla }}@if (auth.unidade?.unidade_antiga) {<span class="unidade-antiga" aria-label="Unidade da estrutura anterior"> *</span>} ({{ auth.usuario?.matricula }})
                 </span>
               </button>
             </div>
@@ -199,12 +199,18 @@
             [class.fw-bold]="u.id === auth.unidade?.id && u.matricula === auth.usuario?.matricula"
             (click)="selecionaUnidade(u.id, u.matricula ?? null)"
             (keydown)="onKeyActivate($event, selecionaUnidade.bind(this, u.id, u.matricula ?? null))">
-            <span>{{ u.sigla }}</span>
+            <span [class.unidade-antiga]="u.unidade_antiga">
+              {{ u.sigla }}@if (u.unidade_antiga) {<span aria-hidden="true"> *</span><span class="visually-hidden"> Unidade da estrutura anterior</span>}
+            </span>
             <span class="text-muted ms-2">{{ u.matricula }}</span>
           </a>
         </li>
       }
     </ul>
+
+    @if (temUnidadeAntiga) {
+      <small class="unidade-antiga-legenda">* Unidade da estrutura anterior</small>
+    }
 
     <div slot="footer">
       <br-button emphasis="secondary" (click)="unidadeAberta.set(false)">Fechar</br-button>

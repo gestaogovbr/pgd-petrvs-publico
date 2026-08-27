@@ -1,51 +1,83 @@
 <div class="row g-3 mb-4">
-  <!-- Tipo de Consulta -->
-  <div class="col-12 col-md-3">
-    <br-select
-      label="Tipo de Consulta"
-      [options]="tipoConsultaOptions"
-      (valueChange)="onTipoConsultaChange($event)"
-      class="w-100">
-    </br-select>
-  </div>
-
-  <!-- Busca Unidade -->
-  <div class="col-12 col-md-4 position-relative">
-    <div class="br-input w-100">
-      <label for="unidade-busca">Unidade</label>
-      <input
-        id="unidade-busca"
-        type="text"
-        [value]="unidadeDisplay()"
-        (input)="onBuscaInput($event)"
-        placeholder="Pesquise por nome ou sigla"
-        autocomplete="off"
-      />
+  <!-- Step 1: Tipo de Consulta -->
+  @if (permitirHistorico) {
+    <div class="col-12 col-md-3">
+      <br-select
+        label="Tipo de Consulta"
+        [options]="tipoConsultaOptions"
+        (valueChange)="onTipoConsultaChange($event)"
+        class="w-100">
+      </br-select>
     </div>
-    @if (sugestoes().length > 0) {
-      <div class="br-card position-absolute w-100" style="z-index: 1050; max-height: 200px; overflow-y: auto;">
-        @for (u of sugestoes(); track u.id) {
-          <div class="px-3 py-2 card-content" style="cursor: pointer;" (click)="selecionarUnidade(u)">
-            <strong>{{ u.sigla }}</strong> - {{ u.nome }}
-          </div>
-        }
-      </div>
+  }
+
+  <!-- Step 2: Busca Unidade -->
+  <div class="col-12 col-md-4">
+    <unidade-select
+      [unidadeId]="unidadeSelecionada()?.id ?? ''"
+      [unidadeSigla]="unidadeSelecionada()?.sigla ?? ''"
+      [unidadeNome]="unidadeSelecionada()?.nome ?? ''"
+      [searchFn]="activeSearchFn()"
+      (unidadeSelected)="selecionarUnidade($event)"
+    ></unidade-select>
+    @if (!unidadeSelecionada()) {
+      <span class="feedback warning" role="alert">
+        <i class="fas fa-exclamation-triangle" aria-hidden="true"></i>
+        Selecione a Unidade
+      </span>
     }
   </div>
 
-  <!-- Datas (apenas no modo histórico) -->
+  <!-- Step 3: Datas (apenas no modo histórico) -->
   @if (tipoConsulta() === 'historico') {
-    <div class="col-12 col-sm-6 col-md-2">
-      <div class="br-input w-100">
-        <label for="data-inicio">Data Inicial</label>
-        <input id="data-inicio" type="date" [value]="dataInicio()" (change)="onDataInicioChange($event)" />
+    @if (modoData === 'range') {
+      <div class="col-12 col-sm-6 col-md-2">
+        <div class="br-input w-100">
+          <label for="data-inicio">Data Inicial de Consulta</label>
+          <input id="data-inicio" type="date" [value]="dataInicio()" (change)="onDataInicioChange($event)" />
+        </div>
       </div>
-    </div>
-    <div class="col-12 col-sm-6 col-md-2">
-      <div class="br-input w-100">
-        <label for="data-fim">Data Final</label>
-        <input id="data-fim" type="date" [value]="dataFim()" (change)="onDataFimChange($event)" />
+      <div class="col-12 col-sm-6 col-md-2">
+        <div class="br-input w-100">
+          <label for="data-fim">
+            Data Final de Consulta
+            <span class="painel-filtros__info" title="Serão apresentados dados referentes aos Planos de Entregas e Planos de Trabalho vigentes no intervalo selecionado para a consulta." aria-label="Informação sobre o filtro de datas">
+                <i class="bi bi-info-circle" aria-hidden="true"></i>
+            </span>
+          </label>
+          <input id="data-fim" type="date" [value]="dataFim()" (change)="onDataFimChange($event)" />
+        </div>
       </div>
-    </div>
+    }
+
+    @if (modoData === 'referencia' && mostrarPeriodo()) {
+      <div class="col-12 col-md-2">
+        <div class="br-input w-100">
+          <label class="m-0">
+            Data da Consulta
+            <span class="painel-filtros__info" title="Dados se referem ao último dia do mês selecionado" aria-label="Informação sobre a data da consulta">
+              <i class="bi bi-info-circle" aria-hidden="true"></i>
+            </span>
+          </label>
+          <br-select
+            placeholder="Ano"
+            [options]="anoOptions()"
+            (valueChange)="onAnoChange($event)"
+            class="w-100">
+          </br-select>
+        </div>
+      </div>
+      <div class="col-12 col-md-2">
+        <div class="br-input w-100">
+          <label class="m-0">&nbsp;</label>
+          <br-select
+            placeholder="Mês"
+            [options]="mesOptions()"
+            (valueChange)="onMesChange($event)"
+            class="w-100">
+          </br-select>
+        </div>
+      </div>
+    }
   }
 </div>

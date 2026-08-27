@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  ViewChild,
   signal,
   computed,
 } from '@angular/core';
@@ -20,27 +21,21 @@ import {
 } from 'chart.js';
 import { SerieAdesaoItem } from '../../infra/painel-api.client';
 import { CHART_COLORS } from 'src/app/services/chart';
+import { MESES_ABREVIADOS } from '../../infra/painel.constants';
+import { IndicadorCardComponent } from './indicador-card.component';
 
 Chart.register(CategoryScale, LinearScale, LineController, LineElement, PointElement, Tooltip, Legend);
-
-const MESES_LABELS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
 @Component({
   selector: 'evolucao-adesao-chart',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, BaseChartDirective],
-  template: `
-    <div style="position: relative; height: 300px; width: 100%;">
-      <canvas baseChart
-        [data]="chartData()"
-        [options]="chartOptions"
-        type="line">
-      </canvas>
-    </div>
-  `,
+  imports: [CommonModule, BaseChartDirective, IndicadorCardComponent],
+  templateUrl: './evolucao-adesao-chart.component.html',
 })
 export class EvolucaoAdesaoChartComponent {
+  @ViewChild(BaseChartDirective) chartDirective?: BaseChartDirective;
+
   @Input({ required: true }) set serie(value: SerieAdesaoItem[]) {
     this._serie.set(value);
   }
@@ -48,8 +43,18 @@ export class EvolucaoAdesaoChartComponent {
   @Input({ required: true }) labelNegativo = '';
   @Input({ required: true }) campoPositivo = '';
   @Input({ required: true }) campoNegativo = '';
+  @Input() titulo = '';
+  @Input() informacaoAdicional = '';
+  @Input() origemDados = '';
+  @Input() carregando = false;
 
   private readonly _serie = signal<SerieAdesaoItem[]>([]);
+
+  readonly semDados = computed(() => {
+    const serie = this._serie();
+    if (!serie.length) return true;
+    return serie.every(item => !this.temDados(item));
+  });
 
   readonly chartData = computed(() => {
     const serie = this._serie();
@@ -58,7 +63,7 @@ export class EvolucaoAdesaoChartComponent {
     // Determinar o ano a partir da série (primeiro item) ou ano atual
     const ano = serie.length > 0 ? serie[0].periodo.split('-')[0] : String(new Date().getFullYear());
 
-    const labels = MESES_LABELS;
+    const labels = [...MESES_ABREVIADOS];
     const dadosPositivo: (number | null)[] = [];
     const dadosNegativo: (number | null)[] = [];
 
@@ -129,7 +134,20 @@ export class EvolucaoAdesaoChartComponent {
     },
   };
 
-  private temDados(item: SerieAdesaoItem): boolean {
+  getChartExportData(): { type: string; data: any; options: any; width: number; height: number } | null {
+    const chart = this.chartDirective?.chart;
+    if (!chart) return null;
+
+    return {
+      type: (chart.config as any).type as string,
+      data: chart.config.data,
+      options: chart.config.options,
+      width: chart.width,
+      height: chart.height,
+    };
+  }
+
+  public temDados(item: SerieAdesaoItem): boolean {
     const positivo = (item as any)[this.campoPositivo] ?? 0;
     const negativo = (item as any)[this.campoNegativo] ?? 0;
     return positivo > 0 || negativo > 0;

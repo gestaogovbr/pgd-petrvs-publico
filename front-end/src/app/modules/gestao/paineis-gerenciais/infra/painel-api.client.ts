@@ -9,6 +9,11 @@ export interface DistribuicaoUnidade {
   total: number;
 }
 
+export interface DrillTarget {
+  unidade_id: string;
+  unidade_sigla: string;
+}
+
 export interface Indicador {
   segmentos: string[];
   distribuicoes: DistribuicaoUnidade[];
@@ -25,6 +30,8 @@ export interface UnidadeInicial {
   unidade_id: string | null;
   unidade_sigla: string | null;
   unidade_nome: string | null;
+  unidade_raiz_id: string | null;
+  unidade_raiz_sigla: string | null;
 }
 
 export interface FiltrosPainel {
@@ -44,6 +51,12 @@ export interface SerieAdesaoItem {
 
 export interface SerieAdesao {
   serie: SerieAdesaoItem[];
+}
+
+export interface UnidadeHistorica {
+  id: string;
+  sigla: string;
+  nome: string;
 }
 
 @Injectable()
@@ -194,18 +207,18 @@ export class PainelApiClient extends TenantV2ResourceApiBase {
       .pipe(map(r => r.data));
   }
 
-  /** Converte filtros de mês/ano para FiltrosPainel (data_inicio = jan do ano, data_fim = último dia do mês) */
-  buildFiltrosFromMesAno(unidadeId: string, mes: number, ano: number): FiltrosPainel {
-    const anoAtual = new Date().getFullYear();
-    const mesAtual = new Date().getMonth() + 1;
-    const isSituacaoAtual = ano === anoAtual && mes === mesAtual;
-
-    const dataFim = new Date(ano, mes, 0); // último dia do mês
-    return {
-      tipo_consulta: isSituacaoAtual ? 'situacao_atual' : 'historico',
-      unidade_id: unidadeId,
-      data_inicio: `${ano}-01-01`,
-      data_fim: dataFim.toISOString().split('T')[0],
-    };
+  getPeriodosDisponiveisPorUnidade(unidadeId: string): Observable<string[]> {
+    return this.http
+      .get<{ data: string[] }>(this.resourceUrl('/adesao/periodos-disponiveis-por-unidade'), {
+        params: { unidade_id: unidadeId },
+      })
+      .pipe(map(r => r.data));
   }
+
+  getUnidadesHistoricas(): Observable<UnidadeHistorica[]> {
+    return this.http
+      .get<{ data: UnidadeHistorica[] }>(this.resourceUrl('/adesao/unidades-historicas'))
+      .pipe(map(r => r.data));
+  }
+
 }

@@ -154,7 +154,7 @@ class PlanoTrabalhoDocumentoService
     public function assinar(string $planoTrabalhoId): DocumentoAssinatura
     {
         $usuarioId = Auth::id();
-        $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
+        $plano = $this->authValidator->validarAssinatura($planoTrabalhoId, $usuarioId);
 
         $assinaturaExistente = $this->buscarAssinaturaExistente($planoTrabalhoId, $usuarioId);
         if ($assinaturaExistente !== null) {

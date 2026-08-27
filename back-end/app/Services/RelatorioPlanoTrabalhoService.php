@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Repository\PlanoTrabalhoEntregaRepository;
 use App\Services\ServiceBase;
-use Illuminate\Support\Facades\DB;
 
 class RelatorioPlanoTrabalhoService extends ServiceBase
 {
@@ -23,7 +23,8 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
                 && ($item[0] !== 'incluir_periodos_avaliativos')
                 && ($item[0] !== 'periodoInicio')
                 && ($item[0] !== 'periodoFim')
-                && ($item[0] !== 'unidade_id');
+                && ($item[0] !== 'unidade_id')
+                && ($item[0] !== 'plano_entrega_entrega_id');
         }));
 
         $somenteVigentes = $this->extractWhere($data, "somente_vigentes");
@@ -31,6 +32,7 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
         $unidadeId = $this->extractWhere($data, "unidade_id");
         $periodoInicio = $this->extractWhere($data, "periodoInicio");
         $periodoFim = $this->extractWhere($data, "periodoFim");
+        $planoEntregaEntregaId = $this->extractWhere($data, "plano_entrega_entrega_id");
 
         if (isset($unidadeId[2])) {
             $unidadeIds = [$unidadeId[2]];
@@ -45,7 +47,6 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
         }
 
         $where[] = ['unidade_id', 'in', $unidadeIds];
-
 
         if (isset($somenteVigentes[2])) {
             $where[] = new RawWhere("(now() between dataInicio and dataFim)", []);
@@ -77,6 +78,13 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
                     [$periodoFim[2]]
                 );
             }
+        }
+
+        if (isset($planoEntregaEntregaId[2])) {
+            $planoTrabalhoIds = app(PlanoTrabalhoEntregaRepository::class)
+                ->idsPlanosTrabalhoPorPlanoEntregaEntrega($planoEntregaEntregaId[2]);
+
+            $where[] = ['id', 'in', $planoTrabalhoIds];
         }
 
         $data["where"] = $where;

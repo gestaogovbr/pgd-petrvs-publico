@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, computed, ViewChild, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
-import { PainelApiClient, FiltrosPainel, Indicador } from '../../infra/painel-api.client';
-import { PainelPdfService } from '../../infra/painel-pdf.service';
+import { PainelApiClient, FiltrosPainel, Indicador, DrillTarget } from '../../infra/painel-api.client';
 import { ORIGEM_DADOS } from '../../infra/painel.constants';
 import { CHART_COLORS } from 'src/app/services/chart';
 import { PainelFiltrosComponent } from '../components/painel-filtros.component';
 import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
+import { PdfPainelComponent, PdfIndicadorConfig } from '../components/pdf/pdf-painel.component';
 
 @Component({
   selector: 'alinhamento-desempenho-page',
@@ -19,18 +19,21 @@ import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra
     BreadcrumbComponent,
     PainelFiltrosComponent,
     IndicadorBarraHorizontalComponent,
+    PdfPainelComponent,
   ],
   templateUrl: './alinhamento-desempenho.page.html',
 })
 export class AlinhamentoDesempenhoPage implements OnInit {
   private readonly api = inject(PainelApiClient);
-  private readonly pdfService = inject(PainelPdfService);
+
+  @ViewChild(PdfPainelComponent) pdfPainel!: PdfPainelComponent;
+  @ViewChildren(IndicadorBarraHorizontalComponent) barrasHorizontais!: QueryList<IndicadorBarraHorizontalComponent>;
 
   readonly origemDados = ORIGEM_DADOS;
 
   readonly textos = {
     alinhamento: {
-      titulo: 'Alinhamento institucional das Unidades por nível estratégico',
+      titulo: 'Alinhamento institucional das Entregas por nível estratégico',
       info: 'Apresenta a distribuição percentual das entregas de acordo com seu nível de alinhamento institucional, considerando entregas vinculadas ao Planejamento Institucional, à Cadeia de Valor, a ambos e entregas sem vinculação. São consideradas vinculadas ao Planejamento Institucional as entregas cujo encadeamento alcance o nível mais alto do planejamento (nível 1). São consideradas vinculadas à Cadeia de Valor as entregas cujo encadeamento alcance, no mínimo, o terceiro nível de processo (nível 3). A primeira linha do gráfico apresenta os dados da unidade selecionada, considerando as informações da própria unidade e as informações de todas as suas unidades subordinadas.',
     },
     avaliacoesPE: {
@@ -79,8 +82,6 @@ export class AlinhamentoDesempenhoPage implements OnInit {
     return `${filtros.data_inicio} a ${filtros.data_fim}`;
   });
 
-  readonly dataGeracaoLabel = () => new Date().toLocaleString('pt-BR');
-
   ngOnInit(): void {
     this.api.getUnidadeInicial().subscribe(unidade => {
       if (!unidade.unidade_id) return;
@@ -102,15 +103,13 @@ export class AlinhamentoDesempenhoPage implements OnInit {
   }
 
   onUnidadeChange(unidade: { sigla: string; nome: string }): void {
+    this.unidadeInicialSigla.set(unidade.sigla);
     this.unidadeAtualLabel.set(`${unidade.sigla} - ${unidade.nome}`);
   }
 
   exportarPdf(): void {
-    const container = document.querySelector('alinhamento-desempenho-page');
-    if (!container) return;
-
-    const indicadorEls = container.querySelectorAll('indicador-barra-horizontal');
     const cores = CHART_COLORS;
+    const barras = this.barrasHorizontais.toArray();
 
     const indicadoresData = [
       { dados: this.alinhamentoInstitucional(), titulo: this.textos.alinhamento.titulo, info: this.textos.alinhamento.info },
@@ -118,20 +117,19 @@ export class AlinhamentoDesempenhoPage implements OnInit {
       { dados: this.avaliacoesPlanoTrabalho(), titulo: this.textos.avaliacoesPT.titulo, info: this.textos.avaliacoesPT.info },
     ];
 
-    const indicadores = indicadoresData.map((item, i) => {
+    const indicadores: PdfIndicadorConfig[] = indicadoresData.map((item, i) => {
       const temDados = item.dados && item.dados.distribuicoes.length > 0 && item.dados.distribuicoes.some(d => d.total > 0);
-      const canvasEl = indicadorEls[i]?.querySelector('canvas') as HTMLCanvasElement | null;
       return {
         titulo: item.titulo,
         informacaoAdicional: item.info,
         origemDados: ORIGEM_DADOS,
-        canvasEl: temDados ? canvasEl : null,
+        chartComponent: temDados ? barras[i] ?? null : null,
         segmentos: (item.dados?.segmentos ?? []).map((nome, j) => ({ nome, cor: cores[j] ?? '#ccc' })),
         distribuicoes: (item.dados?.distribuicoes ?? []).map(d => ({ sigla: d.unidade_sigla, total: d.total })),
       };
     });
 
-    this.pdfService.exportar(
+    this.pdfPainel.imprimir(
       {
         painel: 'Alinhamento e Desempenho',
         tipoConsulta: this.tipoConsultaLabel(),
@@ -173,7 +171,7 @@ export class AlinhamentoDesempenhoPage implements OnInit {
     });
   }
 
-  onDrillDown(grafico: number, unidade: { unidade_id: string; unidade_sigla: string }): void {
+  onDrillDown(grafico: number, unidade: DrillTarget): void {
     const filtros = this.filtrosAtuais();
     if (!filtros) return;
 

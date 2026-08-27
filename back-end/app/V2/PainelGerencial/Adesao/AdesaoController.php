@@ -10,6 +10,7 @@ use App\V2\PainelGerencial\Adesao\DataProviders\EvolucaoAdesaoParticipantesDataP
 use App\V2\PainelGerencial\Adesao\DataProviders\EvolucaoAdesaoUnidadesDataProvider;
 use App\V2\PainelGerencial\Adesao\DataProviders\ParticipantesPGDDataProvider;
 use App\V2\PainelGerencial\Adesao\DataProviders\UnidadesExecutorasDataProvider;
+use App\V2\PainelGerencial\Adesao\DataProviders\UnidadesHistoricasDataProvider;
 use App\V2\PainelGerencial\PainelGerencialService;
 use App\V2\PainelGerencial\Validators\PainelRequestValidator;
 use Illuminate\Http\JsonResponse;
@@ -26,6 +27,7 @@ class AdesaoController extends Controller
         private readonly EvolucaoAdesaoUnidadesDataProvider $evolucaoUnidades,
         private readonly ParticipantesPGDDataProvider $participantesPGD,
         private readonly EvolucaoAdesaoParticipantesDataProvider $evolucaoParticipantes,
+        private readonly UnidadesHistoricasDataProvider $unidadesHistoricas,
     ) {}
 
     public function unidadesExecutoras(Request $request): JsonResponse
@@ -111,6 +113,43 @@ class AdesaoController extends Controller
             $periodos = $this->evolucaoUnidades->getPeriodosDisponiveis();
 
             return response()->json(['success' => true, 'data' => $periodos]);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function periodosDisponiveisPorUnidade(Request $request): JsonResponse
+    {
+        try {
+            $this->painelService->validarAcesso();
+            $unidadeId = $request->validate(['unidade_id' => ['required', 'uuid']])['unidade_id'];
+            $periodos = $this->evolucaoUnidades->getPeriodosDisponiveisPorUnidade($unidadeId);
+
+            return response()->json(['success' => true, 'data' => $periodos]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function unidadesHistoricas(): JsonResponse
+    {
+        try {
+            $this->painelService->validarAcesso();
+            $unidades = $this->unidadesHistoricas->getData();
+
+            $data = array_map(fn ($dto) => $dto->toArray(), $unidades);
+
+            return response()->json(['success' => true, 'data' => $data]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
             report($e);
 

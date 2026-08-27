@@ -106,7 +106,7 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
     public function findAllComAtribuicoesAtivasByUsuario(string $usuarioId): Collection
     {
         return $this->model->newQuery()
-            ->with('unidade:id,sigla')
+            ->with('unidade:id,sigla,unidade_antiga')
             ->where('usuario_id', $usuarioId)
             ->has('atribuicoes')
             ->get();
@@ -118,5 +118,23 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
             ->where('unidade_id', $unidadeId)
             ->has('lotado')
             ->count();
+    }
+
+    public function countAtivosByUnidade(string $unidadeId): int
+    {
+        return $this->model->newQuery()
+            ->where('unidade_id', $unidadeId)
+            ->whereNull('deleted_at')
+            ->count();
+    }
+
+    public function findIdsAtivosByUnidade(string $unidadeId): array
+    {
+        return $this->model->newQuery()
+            ->where('unidade_id', $unidadeId)
+            ->whereNull('deleted_at')
+            ->pluck('id')
+            ->map(static fn ($id): string => (string) $id)
+            ->all();
     }
 }

@@ -11,10 +11,14 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, first } from 'rxjs';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { AuthService, UnidadeVinculada } from 'src/app/services/auth.service';
+import { DialogService } from 'src/app/services/dialog.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { NavigateService } from 'src/app/services/navigate.service';
+import { MuralAvisoTenantService } from 'src/app/services/mural-aviso-tenant.service';
 import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
 import { UtilService } from 'src/app/services/util.service';
 import { AppComponent } from 'src/app/app.component';
@@ -34,6 +38,9 @@ export class AppShellV2Component implements OnInit {
   readonly notificacao = inject(NotificacaoService);
   readonly utils = inject(UtilService);
   readonly cdRef = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+  private readonly dialog = inject(DialogService);
+  private readonly muralService = inject(MuralAvisoTenantService);
 
   @ViewChild('menuTrigger') menuTriggerRef?: ElementRef<HTMLButtonElement>;
   @ViewChild('menuClose')   menuCloseRef?:   ElementRef<HTMLButtonElement>;
@@ -62,6 +69,62 @@ export class AppShellV2Component implements OnInit {
       }
     }
     this.auth.usuarioChanged$.subscribe(() => this.cdRef.markForCheck());
+    this.verificarMural();
+  }
+
+  private verificarMural(): void {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      first(),
+    ).subscribe(() => this.tentarExibirMural());
+  }
+
+  private tentarExibirMural(): void {
+    const urlTree = this.router.parseUrl(this.router.url);
+    if (urlTree.queryParams['mural'] !== '1') return;
+
+    // Remove o query param da URL sem recarregar
+    delete urlTree.queryParams['mural'];
+    this.router.navigateByUrl(urlTree, { replaceUrl: true });
+
+    this.muralService.getPendentes().then(avisos => {
+      if (avisos.length === 0) return;
+      this.exibirModalMural(avisos);
+    });
+  }
+
+  private exibirModalMural(avisos: { titulo: string; conteudo: string; remetente: string; data_publicacao: string }[]): void {
+    const avisosHtml = avisos.map(aviso => {
+      const data = new Date(aviso.data_publicacao).toLocaleDateString('pt-BR', {
+        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      return `
+        <div class="border-bottom py-3">
+          <h5 class="mb-1">${this.escapeHtml(aviso.titulo)}</h5>
+          <small class="text-muted">${this.escapeHtml(aviso.remetente)} • ${data}</small>
+          <p class="mt-2 text-break text-wrap">${this.escapeHtml(aviso.conteudo)}</p>
+        </div>`;
+    }).join('');
+
+    const html = `
+      <div class="overflow-auto px-2 mural-aviso-container">
+        ${avisosHtml}
+      </div>`;
+
+    const result = this.dialog.html(
+      { title: 'Mural de Avisos', modalWidth: 700 },
+      html,
+      [{ label: 'Li e estou ciente', color: 'btn-primary', value: true }]
+    );
+    result.result.then(({ dialog: dlg }) => {
+      dlg.close();
+      this.muralService.confirmarLeitura();
+    });
+  }
+
+  private escapeHtml(text: string): string {
+    const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return text.replace(/[&<>"']/g, char => map[char]);
   }
 
   // Fecha o overlay mais externo ao pressionar Escape
@@ -175,6 +238,10 @@ export class AppShellV2Component implements OnInit {
 
   get unidadesVinculadas(): UnidadeVinculada[] {
     return this.auth.unidadesVinculadas || [];
+  }
+
+  get temUnidadeAntiga(): boolean {
+    return this.unidadesVinculadas.some((unidade) => unidade.unidade_antiga);
   }
 
   get logoSrc(): string {

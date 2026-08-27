@@ -34,4 +34,12 @@ class UnidadeIntegranteAtribuicaoRepository
     {
         return $this->writeRepository->deleteGestorByUsuario($usuarioId, $ignorarInformais);
     }
+
+    /**
+     * @param list<string> $unidadeIntegranteIds
+     */
+    public function deleteAtivasByUnidadeIntegranteIds(array $unidadeIntegranteIds): int
+    {
+        return $this->writeRepository->deleteAtivasByUnidadeIntegranteIds($unidadeIntegranteIds);
+    }
 }

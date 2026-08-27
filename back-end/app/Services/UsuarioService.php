@@ -186,7 +186,10 @@ class UsuarioService extends ServiceBase
 
             foreach ($usuariosSemMatricula as $usr) {
                 /** @var Usuario $usr */
-                $matriculaSiape = $this->integracaoServidorRepository->getMatriculaByCpf($usr->cpf);
+                $matriculaSiape = $this->integracaoServidorRepository->getMatriculaByCpf(
+                    $usr->cpf,
+                    CodigoOrgaoService::atual()
+                );
 
                 if (!empty($matriculaSiape)) {
                     $this->usuarioRepository->update($usr->id, ['matricula' => $matriculaSiape]);
@@ -209,7 +212,11 @@ class UsuarioService extends ServiceBase
             if (!empty($usuarioLotadoMesmaUnidade) && isset($usuarioLotadoMesmaUnidade->id)) {
                 $matriculaAtual = $usuarioLotadoMesmaUnidade->matricula;
                 $dadosAtualizacao = ['matricula' => $matriculaNova];
-                $integracaoServidor = $this->integracaoServidorRepository->getServidor($cpfCheck, $matriculaNova);
+                $integracaoServidor = $this->integracaoServidorRepository->getServidor(
+                    $cpfCheck,
+                    $matriculaNova,
+                    CodigoOrgaoService::atual()
+                );
                 $matriculaAtual = $usuarioLotadoMesmaUnidade->matricula;
                 if ($integracaoServidor && $integracaoServidor->participa_pgd !== null) {
                     $dadosAtualizacao['participa_pgd'] = $integracaoServidor->participa_pgd;
@@ -951,6 +958,7 @@ class UsuarioService extends ServiceBase
                 $unidadesVinculadasPayloadByKey[$key] = [
                     'id' => $unidade->id,
                     'sigla' => $unidade->sigla,
+                    'unidade_antiga' => (bool) $unidade->unidade_antiga,
                     'situacao_funcional' => $situacaoFuncional,
                     'matricula' => $matricula,
                     'emProcessoDeInativacao' => (bool) $this->siapeBlackListServidorRepository->findByCpfAndOptionalMatricula(
@@ -983,9 +991,20 @@ class UsuarioService extends ServiceBase
     {
         [$dadosFuncionaisArray, $dadosPessoaisArray] = $this->buscaServidor($cpf);
 
-        $dadosFuncionaisArray = array_map(function($item) {
-            $unidade = $this->unidadeRepository->findByCodigo($item['codUorgExercicio']);
-            $item['unidadeSigla'] = $unidade?->sigla;
+        $codigoOrgao = CodigoOrgaoService::atual();
+        $unidadesPorCodigo = $this->unidadeRepository
+            ->findAllByCodigoOrgaoCodigos(
+                $codigoOrgao,
+                array_values(array_unique(array_map(
+                    static fn (array $item): string => (string) ($item['codUorgExercicio'] ?? ''),
+                    $dadosFuncionaisArray
+                )))
+            )
+            ->keyBy('codigo');
+
+        $dadosFuncionaisArray = array_map(function($item) use ($unidadesPorCodigo) {
+            $unidade = $unidadesPorCodigo->get((string) ($item['codUorgExercicio'] ?? ''));
+            $item['unidadeSigla'] = $unidade instanceof Unidade ? $unidade->sigla : null;
             return $item;
         }, $dadosFuncionaisArray);
 

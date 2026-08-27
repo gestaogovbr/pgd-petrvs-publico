@@ -10,7 +10,7 @@ import { ConfigResolver } from './resolvies/config.resolver';
 import { LoginUnicoComponent } from "./modules/login/login-unico/login-unico.component";
 import { PanelGuard } from "./guards/panel.guard";
 import { PanelLoginComponent } from "./modules/panel/panel-login/panel-login.component";
-import {TesteImpersonateComponent} from "./modules/teste/teste-impersonate/teste-impersonate.component";
+import { TesteImpersonateComponent } from "./modules/teste/teste-impersonate/teste-impersonate.component";
 
 const routes: Routes = [
   { path: 'panel-login', component: PanelLoginComponent },

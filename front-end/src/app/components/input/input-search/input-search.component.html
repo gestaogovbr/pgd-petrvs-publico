@@ -1,5 +1,5 @@
 <input-container [labelPosition]="labelPosition" [labelClass]="labelClass" [controlName]="controlName" [required]="required" [control]="control" [disabled]="disabled" [label]="label"
-    [labelInfo]="labelInfo" [icon]="icon" [bold]="bold">
+    [labelInfo]="labelInfo" [icon]="icon" [bold]="bold" [hostClass]="hostClass" [size]="0">
     <div *ngIf="isDisabled" class="input-group" [id]="generatedId(controlName) + '_search_container'">
         <input type="text" class="form-control" [id]="generatedId(controlName)" [attr.placeholder]="placeholder" readonly>
         <button class="btn btn-outline-secondary" type="button" disabled>

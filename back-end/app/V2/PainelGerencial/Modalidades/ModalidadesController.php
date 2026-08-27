@@ -28,12 +28,9 @@ class ModalidadesController extends Controller
     {
         try {
             $this->painelService->validarAcesso();
-            $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
-            $result = $this->teletrabalhoExterior->getDataSubstituicao($filtros);
+            $result = $this->teletrabalhoExterior->getDataSubstituicao();
 
             return response()->json(['success' => true, 'data' => $result]);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
@@ -47,12 +44,9 @@ class ModalidadesController extends Controller
     {
         try {
             $this->painelService->validarAcesso();
-            $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
-            $result = $this->teletrabalhoExterior->getDataDiscricionario($filtros);
+            $result = $this->teletrabalhoExterior->getDataDiscricionario();
 
             return response()->json(['success' => true, 'data' => $result]);
-        } catch (ValidationException $e) {
-            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
@@ -66,7 +60,14 @@ class ModalidadesController extends Controller
     {
         try {
             $this->painelService->validarAcesso();
-            $filtros = $this->painelService->buildFiltros(PainelRequestValidator::filtros($request));
+
+            $validated = PainelRequestValidator::filtrosSemHistorico($request);
+
+            $filtros = $this->painelService->buildFiltros([
+                'tipo_consulta' => 'situacao_atual',
+                'unidade_id' => $validated['unidade_id'],
+            ]);
+
             $result = $this->modalidadesPorUnidade->getData($filtros);
 
             return response()->json(['success' => true, 'data' => $result->toArray()]);

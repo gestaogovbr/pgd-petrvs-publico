@@ -5,29 +5,22 @@
   [carregando]="carregando"
   [semDados]="semDados() && !_drillAtivo()">
 
-  @if (_drillAtivo() && siglaPai) {
+  @if (_drillAtivo()) {
     <button class="indicador-barra__voltar" (click)="onVoltar()">
-      <i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar para {{ siglaPai }}
+      <i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar{{ siglaPai ? ' para ' + siglaPai : '' }}
     </button>
   }
 
   @if (_dados(); as dados) {
-    <div class="indicador-barra__chart-wrapper">
-      <div class="indicador-barra__chart"
-        [style.height.px]="chartHeight()">
-        <canvas
-          baseChart
-          type="bar"
-          [data]="chartData()"
-          [options]="chartOptions()"
-          (click)="onChartAreaClick($event)">
-        </canvas>
-      </div>
-      <div class="indicador-barra__totais" [style.height.px]="chartHeight()">
-        @for (total of totais(); track $index) {
-          <span class="indicador-barra__total">{{ total }}</span>
-        }
-      </div>
+    <div class="indicador-barra__chart"
+      [style.height.px]="chartHeight()">
+      <canvas
+        baseChart
+        type="bar"
+        [data]="chartData()"
+        [options]="chartOptions()"
+        (click)="onChartAreaClick($event)">
+      </canvas>
     </div>
 
     <!-- Legenda -->
