@@ -16,7 +16,7 @@
     </column>
     <column title="Destinatário" [template]="columnDestinatario">
       <ng-template let-row="row" #columnDestinatario>
-        <span>{{getDestinatarioLabel(row.destinatario)}}</span>
+        <span>{{getDestinatarioLabel(row)}}</span>
       </ng-template>
     </column>
     <column title="Data de Publicação" [template]="columnPublicacao">

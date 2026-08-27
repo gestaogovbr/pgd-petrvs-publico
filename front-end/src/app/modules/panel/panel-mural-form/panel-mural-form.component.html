@@ -1,5 +1,13 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="titulo" (submit)="onSaveData()" (cancel)="onCancel()">
   <div class="row">
+
+    <input-display *ngIf="!isNew && criadoPor"
+      [size]="12"
+      label="Criado por"
+      [value]="criadoPor"
+      icon="bi bi-person"
+    ></input-display>
+
     <input-text
       [size]="12"
       label="Título"

@@ -28,7 +28,9 @@ class EloquentMuralAvisoReadRepository extends AbstractEloquentReadRepository im
      */
     public function paginateForPainel(array $tenantIds, int $perPage): LengthAwarePaginator
     {
-        $query = $this->query()->orderBy('data_publicacao', 'desc');
+        $query = $this->query()
+            ->with(['tenant', 'publicadoPor'])
+            ->orderBy('data_publicacao', 'desc');
 
         if ($tenantIds !== []) {
             $query->where(function ($q) use ($tenantIds) {

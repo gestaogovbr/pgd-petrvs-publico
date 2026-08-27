@@ -29,7 +29,8 @@ export class PanelMuralListComponent extends PageListBase<MuralAviso, MuralAviso
     ];
   }
 
-  public getDestinatarioLabel(destinatario: string): string {
-    return destinatario === 'TODOS' ? 'Todos os tenants' : 'Tenant específico';
+  public getDestinatarioLabel(row: MuralAviso): string {
+    if (row.destinatario === 'TODOS') return 'Todos os tenants';
+    return 'Tenant específico: ' + (row.tenant_id || '');
   }
 }

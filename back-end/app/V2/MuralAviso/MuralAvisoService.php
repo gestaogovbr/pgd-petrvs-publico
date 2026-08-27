@@ -42,6 +42,8 @@ class MuralAvisoService
             throw new NotFoundException('Aviso não encontrado.');
         }
 
+        $aviso->load(['tenant', 'publicadoPor']);
+
         return $aviso;
     }
 

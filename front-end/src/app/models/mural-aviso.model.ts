@@ -10,6 +10,8 @@ export class MuralAviso extends Base {
   public publicado_por_user_panel_id: number = 0;
   public data_publicacao: Date = new Date();
   public data_expiracao: Date;
+  public publicado_por: { nome?: string; email?: string } | null = null;
+  public tenant: { id: string } | null = null;
 
   public constructor(data?: any) {
     super();

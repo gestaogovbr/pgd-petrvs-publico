@@ -25,6 +25,7 @@ export class PanelMuralFormComponent extends PageFormBase<MuralAviso, MuralAviso
     { key: 'TENANT_ESPECIFICO', value: 'Tenant específico' }
   ];
   public currentUser: any;
+  public criadoPor: string = "";
 
   constructor(public injector: Injector) {
     super(injector, MuralAviso, MuralAvisoDaoService);
@@ -87,6 +88,7 @@ export class PanelMuralFormComponent extends PageFormBase<MuralAviso, MuralAviso
 
   public async loadData(entity: MuralAviso, form: FormGroup) {
     form.patchValue(this.util.fillForm(form.value, entity));
+    this.criadoPor = entity.publicado_por?.nome || entity.publicado_por?.email || '';
   }
 
   public initializeData(form: FormGroup): void {
