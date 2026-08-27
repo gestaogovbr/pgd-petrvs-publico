@@ -77,6 +77,7 @@ use App\Http\Controllers\ReacaoController;
 use App\Http\Controllers\RelatoController;
 use App\Http\Controllers\RelatorioAgenteController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\RelatorioLacunaPlanoTrabalhoController;
 use App\Http\Controllers\RelatorioPlanoEntregaController;
 use App\Http\Controllers\RelatorioUnidadeController;
 use App\Http\Controllers\RotinaDiariaController;
@@ -569,6 +570,11 @@ Route::middleware(['auth:sanctum'])->prefix('Relatorio')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('RelatorioAgente')->group(function () {
     Route::post('query', [RelatorioAgenteController::class, 'query']);
     Route::post('xls', [RelatorioAgenteController::class, 'query']);
+});
+
+Route::middleware(['auth:sanctum'])->prefix('RelatorioLacunaPlanoTrabalho')->group(function () {
+    Route::post('query', [RelatorioLacunaPlanoTrabalhoController::class, 'query']);
+    Route::post('xls', [RelatorioLacunaPlanoTrabalhoController::class, 'query']);
 });
 
 Route::middleware(['auth:sanctum'])->prefix('RelatorioUnidade')->group(function () {
