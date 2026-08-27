@@ -25,6 +25,11 @@
       [rows]="6"
       required
     ></input-textarea>
+    <div class="col-md-12 text-end">
+      <small [class]="(form!.controls.conteudo.value?.length || 0) > maxConteudo ? 'text-danger' : 'text-muted'">
+        {{ (form!.controls.conteudo.value?.length || 0).toLocaleString('pt-BR') }} / {{ maxConteudo.toLocaleString('pt-BR') }} caracteres
+      </small>
+    </div>
 
     <input-datetime
       [size]="6"

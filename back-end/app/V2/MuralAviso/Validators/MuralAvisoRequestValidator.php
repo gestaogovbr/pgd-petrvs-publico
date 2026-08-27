@@ -10,10 +10,13 @@ use Illuminate\Validation\Rule;
 
 class MuralAvisoRequestValidator
 {
+    private const MAX_CONTEUDO = 2500;
+
     private const MESSAGES = [
         'titulo.required' => 'O título é obrigatório.',
         'titulo.max' => 'O título deve ter no máximo 255 caracteres.',
         'conteudo.required' => 'O conteúdo é obrigatório.',
+        'conteudo.max' => 'O conteúdo deve ter no máximo :max caracteres.',
         'destinatario.required' => 'O destinatário é obrigatório.',
         'destinatario.in' => 'O destinatário informado é inválido.',
         'data_publicacao.required' => 'A data de publicação é obrigatória.',
@@ -33,7 +36,7 @@ class MuralAvisoRequestValidator
 
         return $request->validate([
             'titulo' => ['required', 'string', 'max:255'],
-            'conteudo' => ['required', 'string'],
+            'conteudo' => ['required', 'string', 'max:' . self::MAX_CONTEUDO],
             'destinatario' => ['required', 'string', Rule::in(array_column(MuralAvisoDestinatario::cases(), 'value'))],
             'tenant_id' => ['nullable', 'string'],
             'data_publicacao' => ['required', 'date', "after_or_equal:{$limitePublicacao}"],
@@ -50,7 +53,7 @@ class MuralAvisoRequestValidator
 
         return $request->validate([
             'titulo' => ['required', 'string', 'max:255'],
-            'conteudo' => ['required', 'string'],
+            'conteudo' => ['required', 'string', 'max:' . self::MAX_CONTEUDO],
             'destinatario' => ['required', 'string', Rule::in(array_column(MuralAvisoDestinatario::cases(), 'value'))],
             'tenant_id' => ['nullable', 'string'],
             'data_publicacao' => ['required', 'date', "after_or_equal:{$limitePublicacao}"],

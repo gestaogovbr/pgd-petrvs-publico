@@ -17,6 +17,9 @@ import { AuthPanelService } from "src/app/services/auth-panel.service";
 export class PanelMuralFormComponent extends PageFormBase<MuralAviso, MuralAvisoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
 
+  public static readonly MAX_CONTEUDO = 2500;
+  public readonly maxConteudo = PanelMuralFormComponent.MAX_CONTEUDO;
+
   public tenantsDao: TenantDaoService;
   public authPanel: AuthPanelService;
   public tenantItems: LookupItem[] = [];
@@ -66,6 +69,10 @@ export class PanelMuralFormComponent extends PageFormBase<MuralAviso, MuralAviso
 
     if (controlName === 'conteudo' && !control.value?.trim()?.length) {
       result = "O conteúdo é obrigatório";
+    }
+
+    if (controlName === 'conteudo' && control.value?.length > PanelMuralFormComponent.MAX_CONTEUDO) {
+      result = `O conteúdo deve ter no máximo ${PanelMuralFormComponent.MAX_CONTEUDO.toLocaleString('pt-BR')} caracteres`;
     }
 
     if (controlName === 'data_publicacao' && !control.value) {
