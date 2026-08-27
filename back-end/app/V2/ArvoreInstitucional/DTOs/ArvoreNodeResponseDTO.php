@@ -44,12 +44,23 @@ final class ArvoreNodeResponseDTO implements \JsonSerializable
             secondary_parent_id: $node['no_pai_secundario_id'] ?? null,
             filhos_ids: $node['filhos_pai'] ?? [],
             filhos_secondary_ids: $node['filhos_secundario'] ?? [],
-            total_vinculos: (int) ($node['total_entregas'] ?? 0),
+            total_vinculos: self::calcularGrauNo($node),
             esforco_disponivel_horas: (float) ($node['esforco_disponivel_horas'] ?? 0),
             esforco_proprio_horas: (float) ($node['esforco_proprio'] ?? 0),
             esforco_total_horas: (float) ($node['esforco_total_horas'] ?? 0),
             planejado_percentual_disponivel: (float) ($node['planejado_percentual_disponivel'] ?? 0),
         );
+    }
+
+    /**
+     * Calcula o grau do nó no grafo: total de nós diretamente vinculados (filhos + pais).
+     */
+    private static function calcularGrauNo(array $node): int
+    {
+        $filhos = count((array) ($node['filhos_pai'] ?? [])) + count((array) ($node['filhos_secundario'] ?? []));
+        $pais = (!empty($node['no_pai_id']) ? 1 : 0) + (!empty($node['no_pai_secundario_id']) ? 1 : 0);
+
+        return $filhos + $pais;
     }
 
     /** @return array<string, mixed> */

@@ -94,9 +94,9 @@ describe('CadeiaValorArvoreService::getArvore', function () {
         expect($result->nos)->toHaveCount(2);
         expect($result->nos['p1'])->toBeInstanceOf(ArvoreNodeResponseDTO::class);
         expect($result->nos['p1']->filhos_ids)->toBe(['p2']);
-        expect($result->nos['p1']->total_vinculos)->toBe(3);
+        expect($result->nos['p1']->total_vinculos)->toBe(1); // 1 filho (p2), sem pais
         expect($result->nos['p2']->parent_id)->toBe('p1');
-        expect($result->nos['p2']->total_vinculos)->toBe(0);
+        expect($result->nos['p2']->total_vinculos)->toBe(1); // sem filhos, 1 pai (p1)
     });
 
     test('lança NotFoundException quando cadeia não existe', function () {
