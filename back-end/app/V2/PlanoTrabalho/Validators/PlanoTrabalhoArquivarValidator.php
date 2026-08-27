@@ -20,7 +20,7 @@ use Carbon\CarbonPeriod;
 
 class PlanoTrabalhoArquivarValidator
 {
-    private const PRAZO_RECURSO_DIAS = 30;
+    private const PRAZO_RECURSO_DIAS = 20;
 
     public function __construct(
         private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
@@ -42,8 +42,10 @@ class PlanoTrabalhoArquivarValidator
             throw new ValidateException('Este Plano de Trabalho já está arquivado.');
         }
 
-        if (!$this->isElegivelParaArquivamento($plano)) {
-            throw new ValidateException('Este Plano de Trabalho não atende aos requisitos para arquivamento.');
+        $motivoImpedimento = $this->motivoImpedimento($plano);
+
+        if ($motivoImpedimento !== null) {
+            throw new ValidateException($motivoImpedimento);
         }
 
         $usuario = $this->usuarioRepository->findByIdComAreasTrabalho($usuarioLogadoId);
@@ -61,10 +63,14 @@ class PlanoTrabalhoArquivarValidator
         return $plano;
     }
 
-    public function isElegivelParaArquivamento(PlanoTrabalho $plano): bool
+    public function motivoImpedimento(PlanoTrabalho $plano): ?string
     {
         if ($plano->status === StatusEnum::CANCELADO->value) {
-            return true;
+            return null;
+        }
+
+        if ($plano->status !== StatusEnum::CONCLUIDO->value) {
+            return 'Este plano de trabalho não pode ser arquivado porque ainda está em andamento.';
         }
 
         $resumo = $this->consolidacaoRepository->resumoParaArquivamento(
@@ -72,25 +78,33 @@ class PlanoTrabalhoArquivarValidator
             Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS),
         );
 
-        if ($resumo->isAguardandoReavaliacao) {
-            return false;
+        if ($resumo->isAguardandoReavaliacao || $resumo->avaliacaoRecente) {
+            return 'Este Plano de Trabalho não pode ser arquivado porque ainda está dentro do período de recurso.'
+                . ' O arquivamento será liberado automaticamente em até 20 dias após a data da avaliação.';
         }
 
         if ($plano->encerrado_at !== null && !$resumo->possuiPendencias) {
-            return true;
+            return null;
         }
 
-        if ($plano->status === StatusEnum::CONCLUIDO->value && $resumo->todosAvaliados && !$resumo->avaliacaoRecente) {
-            return true;
+        if ($plano->encerrado_at !== null) {
+            return 'Este plano de trabalho não pode ser arquivado porque possui registros de execução ou avaliações pendentes.';
         }
 
-        if ($plano->status === StatusEnum::CONCLUIDO->value && !$resumo->todosAvaliados && !$resumo->avaliacaoRecente) {
-            if ($this->naoAvaliadosSaoDispensados($plano)) {
-                return true;
-            }
+        if ($resumo->todosAvaliados) {
+            return null;
         }
 
-        return false;
+        if ($this->naoAvaliadosSaoDispensados($plano)) {
+            return null;
+        }
+
+        return 'Este plano de trabalho não pode ser arquivado porque possui períodos avaliativos pendentes de avaliação.';
+    }
+
+    public function isElegivelParaArquivamento(PlanoTrabalho $plano): bool
+    {
+        return $this->motivoImpedimento($plano) === null;
     }
 
     private function naoAvaliadosSaoDispensados(PlanoTrabalho $plano): bool

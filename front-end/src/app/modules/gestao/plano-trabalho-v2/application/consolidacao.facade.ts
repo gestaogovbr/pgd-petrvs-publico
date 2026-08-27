@@ -239,7 +239,7 @@ export class ConsolidacaoFacade {
 
   esforcoExecutadoValido(consolidacaoId: string, entrega: PlanoTrabalhoEntrega): boolean {
     const value = this.getEsforcoExecutado(consolidacaoId, entrega);
-    return value > 0 && value <= 999.99;
+    return value >= 0 && value <= 999.99;
   }
 
   iniciarEdicao(consolidacaoId: string, entregaId: string, textoAtual: string, esforcoAtual?: number): void {

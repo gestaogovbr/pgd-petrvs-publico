@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\DTOs\Siape\CargaIndividualSiapeProcessamentoDTO;
+use App\DTOs\Siape\DadosFuncionaisSiapeDTO;
 use App\Facades\SiapeLog;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Entidade;
@@ -25,6 +26,7 @@ use App\Support\SiapeDate;
 use Illuminate\Support\Str;
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Brazanation\Documents\Cpf;
 
@@ -123,12 +125,13 @@ class SiapeIndividualServidorService extends ServiceBase
             $dadosFuncionais = $this->processarRespostaFuncionais($cpfLimpo, $respFuncionais);
             $dadosRelatorio['dadosFuncionais'] = $this->processarRespostaFuncionaisParaRelatorio($cpfLimpo, $respFuncionais, $dadosFuncionais);
             $dadosRelatorio['dadosPessoais'] = $this->processarDadosPessoaisParaRelatorio($cpfLimpo, $respPessoais);
+            $this->atualizarDadosFuncionaisParciais($cpfLimpo, $dadosFuncionais, $dadosRelatorio['dadosPessoais']);
 
             $this->processarUnidadesDosServidores($cpfLimpo, $dadosFuncionais);
             $this->salvarDadosConsulta($cpfLimpo, $respFuncionais, $respPessoais);
 
             $this->atualizarVinculosUsuarios($cpfLimpo, $dadosFuncionais);
-            $this->executarSincronizacaoFinal($cpfLimpo);
+            $this->executarSincronizacaoFinal($cpfLimpo, $dadosFuncionais);
 
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_SUCESSO);
 
@@ -191,9 +194,80 @@ class SiapeIndividualServidorService extends ServiceBase
     {
         try {
             return $this->service->getProcessaDadosSiape()->processaDadosPessoais($cpf, $respPessoais);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            SiapeLog::warning('Nao foi possivel montar dados pessoais para relatorio', [
+                'cpf' => $cpf,
+                'erro' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             return [];
         }
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $dadosFuncionais
+     * @param array<string, mixed> $dadosPessoais
+     */
+    private function atualizarDadosFuncionaisParciais(string $cpf, array $dadosFuncionais, array $dadosPessoais): void
+    {
+        if ($dadosPessoais !== []) {
+            return;
+        }
+
+        $dadosFuncionaisDtos = DadosFuncionaisSiapeDTO::listFromArray($dadosFuncionais);
+
+        if (!$this->dadosFuncionaisPossuemAtributosParciais($dadosFuncionaisDtos)) {
+            return;
+        }
+
+        $usuariosPorMatricula = $this->usuarioRepository->findAllByCpfUnfiltered($cpf)
+            ->keyBy(fn(Usuario $usuario): string => (string) $usuario->matricula);
+
+        if ($usuariosPorMatricula->isEmpty()) {
+            return;
+        }
+
+        DB::transaction(function () use ($cpf, $dadosFuncionaisDtos, $usuariosPorMatricula): void {
+            foreach ($dadosFuncionaisDtos as $dados) {
+                $matricula = $dados->matriculaSiape();
+                if ($matricula === null) {
+                    continue;
+                }
+
+                /** @var Usuario|null $usuario */
+                $usuario = $usuariosPorMatricula->get($matricula);
+                if ($usuario === null) {
+                    continue;
+                }
+
+                $attributes = $dados->atributosUsuarioParciais();
+                if ($attributes === []) {
+                    continue;
+                }
+
+                $this->usuarioRepository->update($usuario->id, $attributes);
+                SiapeLog::info('Dados funcionais da carga individual parcial atualizados', [
+                    'cpf' => $cpf,
+                    'matricula' => $matricula,
+                    'campos' => array_keys($attributes),
+                ]);
+            }
+        });
+    }
+
+    /**
+     * @param array<int, DadosFuncionaisSiapeDTO> $dadosFuncionais
+     */
+    private function dadosFuncionaisPossuemAtributosParciais(array $dadosFuncionais): bool
+    {
+        foreach ($dadosFuncionais as $dados) {
+            if ($dados->atributosUsuarioParciais() !== []) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -478,17 +552,17 @@ class SiapeIndividualServidorService extends ServiceBase
 
     private function processarUnidadesDosServidores(string $cpf, array $dadosFuncionais): void
     {
-        foreach ($dadosFuncionais as $index => $dados) {
+        foreach (DadosFuncionaisSiapeDTO::listFromArray($dadosFuncionais) as $index => $dados) {
             $this->processarUnidadeIndividual($cpf, $index, $dados);
         }
     }
 
-    private function processarUnidadeIndividual(string $cpf, int $index, array $dados): void
+    private function processarUnidadeIndividual(string $cpf, int $index, DadosFuncionaisSiapeDTO $dados): void
     {
         SiapeLog::info('Iniciando o processo da unidade do servidor', [
             'cpf' => $cpf,
             'indice_dados' => $index,
-            'dados_funcionais_keys' => array_keys($dados)
+            'dados_funcionais_keys' => $dados->keys()
         ]);
         
         $codigoUnidade = $this->resolverCodigoUnidadeServidor($dados);
@@ -499,10 +573,10 @@ class SiapeIndividualServidorService extends ServiceBase
         $this->sincronizarDadosUnidade($cpf, $codigoUnidade);
     }
 
-    private function resolverCodigoUnidadeServidor(array $dados): string
+    private function resolverCodigoUnidadeServidor(DadosFuncionaisSiapeDTO $dados): string
     {
-        foreach (['codUorgExercicio', 'codUorgLotacao'] as $campo) {
-            $codigo = $this->normalizarCodigoUnidade($dados[$campo] ?? null);
+        foreach ($dados->codigosUnidadeCandidatos() as $codigoCandidato) {
+            $codigo = $this->normalizarCodigoUnidade($codigoCandidato);
 
             if ($codigo !== null) {
                 return $codigo;
@@ -540,12 +614,12 @@ class SiapeIndividualServidorService extends ServiceBase
         return $this->unidadeRepository->existsByCodigo($codigoUnidade);
     }
 
-    private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, array $dados): bool
+    private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, DadosFuncionaisSiapeDTO $dados): bool
     {
         $unidadeProcessada = $this->verificarExistenciaUnidade($codigoUnidade);
 
         if (!$unidadeProcessada) {
-            $matricula = (string) ($dados['matriculaSiape'] ?? 'N/A');
+            $matricula = $dados->matriculaSiape() ?? 'N/A';
             SiapeLog::warning('Unidade não processada encontrada; matrícula ignorada', [
                 'cpf' => $cpf,
                 'codigo_unidade' => $codigoUnidade,
@@ -662,21 +736,23 @@ class SiapeIndividualServidorService extends ServiceBase
         return $this->entidadeRepository->findAll();
     }
 
-    private function executarSincronizacaoFinal(string $cpf): void
+    private function executarSincronizacaoFinal(string $cpf, array $dadosFuncionais = []): void
     {
         SiapeLog::info('Iniciando sincronização final', ['cpf' => $cpf]);
 
         try {
             $integracaoService = $this->instanciarIntegracaoService();
             $entidades = $this->buscarTodasEntidades();
+            $escopoServidor = $this->montarEscopoCargaIndividualServidor($cpf, $dadosFuncionais);
 
             SiapeLog::info('Processando entidades para sincronização', [
                 'cpf' => $cpf,
+                'matriculas' => $escopoServidor['matriculas'],
                 'total_entidades' => $entidades->count()
             ]);
 
             foreach ($entidades as $entidade) {
-                $this->sincronizarEntidadeUnica($integracaoService, $entidade, $cpf);
+                $this->sincronizarEntidadeUnica($integracaoService, $entidade, $cpf, $escopoServidor);
             }
 
             SiapeLog::info('Processo de sincronização concluído com sucesso', ['cpf' => $cpf]);
@@ -686,10 +762,11 @@ class SiapeIndividualServidorService extends ServiceBase
         }
     }
 
-    private function sincronizarEntidadeUnica(IntegracaoService $service, Entidade $entidade, string $cpf): void
+    private function sincronizarEntidadeUnica(IntegracaoService $service, Entidade $entidade, string $cpf, array $escopoServidor): void
     {
         SiapeLog::info('Sincronizando entidade', [
             'cpf' => $cpf,
+            'matriculas' => $escopoServidor['matriculas'],
             'entidade_id' => $entidade->id,
             'entidade_nome' => $entidade->nome ?? 'sem nome'
         ]);
@@ -698,8 +775,29 @@ class SiapeIndividualServidorService extends ServiceBase
             'unidades' => true,
             'servidores' => true,
             'gestores' => true,
-            'entidade' => $entidade->id
+            'entidade' => $entidade->id,
+            'escopo_carga_individual_servidor' => $escopoServidor,
         ]);
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $dadosFuncionais
+     * @return array{origem: string, cpf: string, matriculas: array<int, string>}
+     */
+    private function montarEscopoCargaIndividualServidor(string $cpf, array $dadosFuncionais): array
+    {
+        $matriculas = collect(DadosFuncionaisSiapeDTO::listFromArray($dadosFuncionais))
+            ->map(fn(DadosFuncionaisSiapeDTO $dados): ?string => $dados->matriculaSiape())
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        return [
+            'origem' => 'carga_individual_servidor',
+            'cpf' => $cpf,
+            'matriculas' => $matriculas,
+        ];
     }
 
     protected function gerarUsuariosResumo(string $cpf) {
@@ -780,7 +878,10 @@ class SiapeIndividualServidorService extends ServiceBase
             return;
         }
 
-        $matriculasSiape = array_map(fn($dado) => $dado['matriculaSiape'] ?? null, $dadosFuncionaisArray);
+        $matriculasSiape = array_map(
+            fn(DadosFuncionaisSiapeDTO $dados): ?string => $dados->matriculaSiape(),
+            DadosFuncionaisSiapeDTO::listFromArray($dadosFuncionaisArray)
+        );
 
         foreach ($usuarios as $usuario) {
             if (in_array($usuario->matricula, $matriculasSiape)) {

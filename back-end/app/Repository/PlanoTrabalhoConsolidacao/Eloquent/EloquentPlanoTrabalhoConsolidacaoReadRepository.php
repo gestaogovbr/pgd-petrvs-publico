@@ -371,4 +371,14 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->orderBy('data_inicio')
             ->get();
     }
+
+    /** @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoTrabalhoConsolidacao> */
+    public function findFuturasIncluidas(string $planoTrabalhoId, string $dataEncerramento): \Illuminate\Database\Eloquent\Collection
+    {
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoTrabalhoConsolidacao> */
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->where('data_inicio', '>', $dataEncerramento)
+            ->get();
+    }
 }

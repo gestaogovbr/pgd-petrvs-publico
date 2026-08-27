@@ -1,11 +1,11 @@
 {
   "name": "petrvs",
-  "version": "0.0.0",
+  "version": "3.0.10",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --configuration=dev --host 0.0.0.0 --disable-host-check --poll=1000",
-    "build": "ng build --configuration=production --output-path=../back-end/public && node ./postbuild.js",
-    "build-dev": "ng build --output-path=../back-end/public && node ./postbuild.js",
+    "build": "ng build --configuration=production --output-path=dist/petrvs --delete-output-path=true && node ./postbuild.js",
+    "build-dev": "ng build --output-path=dist/petrvs --delete-output-path=true && node ./postbuild.js",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

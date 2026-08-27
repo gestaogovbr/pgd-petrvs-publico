@@ -31,3 +31,7 @@
   vertical-align: top;
   white-space: nowrap;
 }
+
+:host ::ng-deep br-tag.count.count--divergente {
+  font-weight: 600;
+}

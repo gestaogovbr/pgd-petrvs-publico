@@ -25,6 +25,9 @@ beforeEach(function () {
             Route::get('/api/__tests/v2/planejamento/objetivo/{id}/entregas', [PlanejamentoObjetivoController::class, 'entregas'])
                 ->whereUuid('id')
                 ->name('__tests.v2.objetivo.entregas');
+            Route::get('/api/__tests/v2/planejamento/objetivo/{id}/equipes', [PlanejamentoObjetivoController::class, 'equipes'])
+                ->whereUuid('id')
+                ->name('__tests.v2.objetivo.equipes');
         });
     }
 
@@ -95,15 +98,26 @@ function criarObjetivo(string $planejamentoId, string $eixoId, string $nome, ?st
 }
 
 /**
- * Helper: vincula uma entrega a um objetivo com plano de trabalho concluído
+ * Helper: vincula uma entrega a um objetivo com plano de trabalho concluído.
+ *
+ * O parâmetro $diasUteis define o número de dias ÚTEIS do PT.
+ * Internamente calcula data_fim para que o NETWORKDAYS(data_inicio, data_fim)
+ * resulte exatamente em $diasUteis (segunda a sexta, sem feriados).
+ * A data_inicio é fixada em segunda-feira (2024-01-01), portanto para N dias úteis
+ * o período calendário precisa incluir os finais de semana intermediários:
+ *   diasUteis=5 → Mon-Fri (data_fim = +4 cal), diasUteis=7 → Mon-Tue+1sem (data_fim = +8 cal).
  */
 function vincularEntregaComEsforco(
     PlanejamentoObjetivo $objetivo,
     array $base,
     Usuario $usuario,
-    int $diasPlano = 7,
+    int $diasUteis = 7,
     float $forcaTrabalho = 100.0
 ): void {
+    // Calcula dias calendário a partir de dias úteis, considerando data_inicio = segunda-feira
+    $weekendDays = intdiv($diasUteis - 1, 5) * 2; // fins de semana completos
+    $diasCalendario = $diasUteis + $weekendDays;
+
     $planoEntregaEntrega = PlanoEntregaEntrega::factory()->create([
         'plano_entrega_id' => $base['planoEntrega']->id,
         'entrega_id' => $base['entrega']->id,
@@ -122,7 +136,7 @@ function vincularEntregaComEsforco(
         'programa_id' => $base['programa']->id,
         'criacao_usuario_id' => $usuario->id,
         'data_inicio' => '2024-01-01',
-        'data_fim' => now()->parse('2024-01-01')->addDays($diasPlano - 1)->format('Y-m-d'),
+        'data_fim' => now()->parse('2024-01-01')->addDays($diasCalendario - 1)->format('Y-m-d'),
     ]);
 
     PlanoTrabalhoEntrega::factory()->create([
@@ -170,9 +184,9 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         $objFilho = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Filho', paiId: $objPai->id);
         $objNeto = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Neto', paiId: $objFilho->id);
 
-        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasPlano: 7);
-        vincularEntregaComEsforco($objFilho, $base, $this->usuario, diasPlano: 7);
-        vincularEntregaComEsforco($objNeto, $base, $this->usuario, diasPlano: 7);
+        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasUteis: 7);
+        vincularEntregaComEsforco($objFilho, $base, $this->usuario, diasUteis: 7);
+        vincularEntregaComEsforco($objNeto, $base, $this->usuario, diasUteis: 7);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objFilho->id}/esforco-total");
         $response->assertStatus(200);
@@ -208,8 +222,8 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         $objDep = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Dep', superiorId: $objSuperior->id);
         $objDepFilho = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Dep Filho', paiId: $objDep->id);
 
-        vincularEntregaComEsforco($objDep, $base, $this->usuario, diasPlano: 7);
-        vincularEntregaComEsforco($objDepFilho, $base, $this->usuario, diasPlano: 7);
+        vincularEntregaComEsforco($objDep, $base, $this->usuario, diasUteis: 7);
+        vincularEntregaComEsforco($objDepFilho, $base, $this->usuario, diasUteis: 7);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objDep->id}/esforco-total");
         $response->assertStatus(200);
@@ -243,7 +257,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         $objPai = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Pai');
         $objAlvo = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Alvo', paiId: $objPai->id, superiorId: $objSuperior->id);
 
-        vincularEntregaComEsforco($objAlvo, $base, $this->usuario, diasPlano: 7);
+        vincularEntregaComEsforco($objAlvo, $base, $this->usuario, diasUteis: 7);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objAlvo->id}/esforco-total");
         $response->assertStatus(200);
@@ -278,8 +292,8 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         $objA->objetivo_pai_id = $objB->id;
         $objA->save();
 
-        vincularEntregaComEsforco($objA, $base, $this->usuario, diasPlano: 7);
-        vincularEntregaComEsforco($objB, $base, $this->usuario, diasPlano: 7);
+        vincularEntregaComEsforco($objA, $base, $this->usuario, diasUteis: 7);
+        vincularEntregaComEsforco($objB, $base, $this->usuario, diasUteis: 7);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objA->id}/esforco-total");
         $response->assertStatus(200);
@@ -292,9 +306,10 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
     });
 
     /**
-     * Cenário: plano de trabalho NÃO concluído não conta no esforço
+     * Cenário: plano de trabalho NÃO pactuado (INCLUIDO) não conta no esforço.
+     * PTs pactuados (AGUARDANDO_ASSINATURA/ATIVO/CONCLUIDO/AVALIADO) contam — ver ObjetivoPainelEsforcoSupport.
      */
-    test('ignora planos de trabalho que não estão CONCLUIDO', function () {
+    test('ignora planos de trabalho não pactuados', function () {
         $base = criarEstruturaBase();
 
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo');
@@ -311,14 +326,15 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
             'entrega_id' => $planoEntregaEntrega->id,
         ]);
 
-        // Plano ATIVO (não concluído)
-        $planoTrabalho = PlanoTrabalho::factory()->ativo()->create([
+        // Plano INCLUIDO (não pactuado)
+        $planoTrabalho = PlanoTrabalho::factory()->create([
             'usuario_id' => $this->usuario->id,
             'unidade_id' => $base['unidade']->id,
             'programa_id' => $base['programa']->id,
             'criacao_usuario_id' => $this->usuario->id,
             'data_inicio' => '2024-01-01',
             'data_fim' => '2024-01-07',
+            'status' => 'INCLUIDO',
         ]);
 
         PlanoTrabalhoEntrega::factory()->create([
@@ -348,8 +364,8 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         $objRaiz = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Raiz');
         $objSub = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Subordinado', superiorId: $objRaiz->id);
 
-        vincularEntregaComEsforco($objRaiz, $base, $this->usuario, diasPlano: 7);
-        vincularEntregaComEsforco($objSub, $base, $this->usuario, diasPlano: 7);
+        vincularEntregaComEsforco($objRaiz, $base, $this->usuario, diasUteis: 7);
+        vincularEntregaComEsforco($objSub, $base, $this->usuario, diasUteis: 7);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objRaiz->id}/esforco-total");
         $response->assertStatus(200);
@@ -371,8 +387,8 @@ describe('GET /api/v2/planejamento/objetivo/{id}/esforco-total', function () {
         $objPai = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Pai');
         $objFilho = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Filho', paiId: $objPai->id);
 
-        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasPlano: 7, forcaTrabalho: 100.0);
-        vincularEntregaComEsforco($objFilho, $base, $this->usuario, diasPlano: 7, forcaTrabalho: 50.0);
+        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($objFilho, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 50.0);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objPai->id}/esforco-total");
         $response->assertStatus(200);
@@ -428,7 +444,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/entregas', function () {
     test('lista entrega do plano de entregas com progresso e esforço por unidade (PT concluído)', function () {
         $base = criarEstruturaBase();
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Com PT concluído');
-        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 7, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/entregas");
         $response->assertStatus(200)
@@ -550,7 +566,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/equipes', function () {
     test('lista unidade com esforço total (PT concluído)', function () {
         $base = criarEstruturaBase();
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Com PT concluído');
-        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 7, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/equipes");
         $response->assertStatus(200)

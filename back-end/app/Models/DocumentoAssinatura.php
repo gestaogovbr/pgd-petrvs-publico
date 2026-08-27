@@ -22,7 +22,7 @@ class DocumentoAssinatura extends ModelBase
 
   // Has
   // Belongs
-  public function documento()
+  public function documento(): \Illuminate\Database\Eloquent\Relations\BelongsTo
   {
     return $this->belongsTo(Documento::class);
   }

@@ -25,7 +25,7 @@ class SystemLogsController extends ControllerBase
      */
     public function index(Request $request)
     {
-        return response()->json($this->service->index($request->all()));
+        return response()->json($this->service->index($request->all(), tenant('id'), $request->user()));
     }
 
     /**
@@ -39,7 +39,7 @@ class SystemLogsController extends ControllerBase
     public function download(Request $request, string $tenantId, string $file)
     {
         try {
-            $result = $this->service->downloadLog($file);
+            $result = $this->service->downloadLog($file, tenant('id'), $request->user());
 
             if ($result['type'] === 'file') {
                  return response()->download($result['data'], $result['filename']);

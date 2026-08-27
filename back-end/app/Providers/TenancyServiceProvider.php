@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Listeners\InvalidateTenantCache;
 use App\Listeners\TenantBootstrapped;
 use App\Listeners\TenantDatabaseMigrated;
 use Illuminate\Support\Facades\Event;
@@ -14,6 +15,7 @@ use Stancl\Tenancy\Events;
 use Stancl\Tenancy\Jobs;
 use Stancl\Tenancy\Listeners;
 use Stancl\Tenancy\Middleware;
+use Stancl\Tenancy\Resolvers\RequestDataTenantResolver;
 
 class TenancyServiceProvider extends ServiceProvider
 {
@@ -41,9 +43,12 @@ class TenancyServiceProvider extends ServiceProvider
             Events\SavingTenant::class => [],
             Events\TenantSaved::class => [],
             Events\UpdatingTenant::class => [],
-            Events\TenantUpdated::class => [],
+            Events\TenantUpdated::class => [
+                InvalidateTenantCache::class,
+            ],
             Events\DeletingTenant::class => [],
             Events\TenantDeleted::class => [
+                InvalidateTenantCache::class,
                 JobPipeline::make([
                     Jobs\DeleteDatabase::class,
                 ])->send(function (Events\TenantDeleted $event) {
@@ -105,6 +110,12 @@ class TenancyServiceProvider extends ServiceProvider
     {
         Middleware\InitializeTenancyByRequestData::$header = 'X-ENTIDADE';
         Middleware\InitializeTenancyByRequestData::$queryParameter = 'entidade';
+
+        RequestDataTenantResolver::$shouldCache = true;
+        RequestDataTenantResolver::$cacheStore = app()->environment('testing')
+            ? config('cache.default')
+            : 'redis';
+        RequestDataTenantResolver::$cacheTTL = 3600;
 
         $this->bootEvents();
         $this->mapRoutes();

@@ -99,6 +99,7 @@ class PlanejamentoObjetivoController extends Controller
                 $request->query('unidade_id'),
                 $request->query('data_inicio'),
                 $request->query('data_fim'),
+                $request->query('abrangencia'),
             );
 
             return response()->json(['success' => true, 'data' => $data]);

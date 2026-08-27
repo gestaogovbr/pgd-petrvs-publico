@@ -38,7 +38,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
   public unidadeDao: UnidadeDaoService;
   public integranteDao: UnidadeIntegranteDaoService;
   public planoTrabalhoDao: PlanoTrabalhoDaoService;
-  public usuarioV2Service: UsuarioService;
+  public usuarioService: UsuarioService;
   public planoDataset: TemplateDataset[];
   public regramentos: Regramento[] = [];
 
@@ -48,7 +48,7 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.planoTrabalhoDao = injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService);
-    this.usuarioV2Service = injector.get<UsuarioService>(UsuarioService);
+    this.usuarioService = injector.get<UsuarioService>(UsuarioService);
     this.form = this.fh.FormBuilder({
       email: { default: "" },
       nome: { default: "" },
@@ -118,30 +118,117 @@ export class UsuarioFormComponent extends PageFormBase<Usuario, UsuarioDaoServic
 
   public saveData(form: IIndexable): Promise<boolean> {
     return new Promise<boolean>(async (resolve, reject) => {
-      this.unidadesIntegrantes!.grid!.confirm();
-      let usuario = this.util.fill(new Usuario(), this.entity!);
-      // retira audits_externo do objeto
-      delete usuario.audits_externo;
-      usuario = this.util.fillForm(usuario, this.form!.value);
-      usuario.perfil_id = this.unidadesIntegrantes?.formPerfil.controls.perfil_id.value;
-      let integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];
-      let indiceVinculoLotacao = integrantesConsolidados.findIndex(ic => ic.atribuicoes.includes("LOTADO"));
-      integrantesConsolidados.forEach((item, index, array) => { if(index != indiceVinculoLotacao && item._status == 'DELETE') item.atribuicoes = []; });
-      usuario.integrantes = integrantesConsolidados;
-          resolve(usuario);
+      try {
+        this.unidadesIntegrantes!.grid!.confirm();
+
+        if (this.isNew) {
+          await this.saveNew();
+          resolve(true);
+          return;
+        }
+
+        await this.saveEdit();
+        resolve(true);
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 
-  public onAfterSave(entity: any) {
-    if (this.isTitular) {
-      const nomeSocial = this.form!.controls['nome_social'].value || null;
-      firstValueFrom(this.usuarioV2Service.atualizarNomeSocial(nomeSocial)).then(() => {
+  private async saveNew(): Promise<void> {
+    const integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];
+    const atribuicoes = integrantesConsolidados
+      .filter(ic => ic.unidade_id)
+      .map(ic => ({
+        unidade_id: ic.unidade_id!,
+        atribuicoes: ic.atribuicoes as string[],
+      }));
+
+    await firstValueFrom(this.usuarioService.criar({
+      cpf: this.form!.controls.cpf.value,
+      email: this.form!.controls.email.value,
+      nome: this.form!.controls.nome.value,
+      perfil_id: this.unidadesIntegrantes?.formPerfil.controls.perfil_id.value,
+      atribuicoes,
+      apelido: this.form!.controls.apelido.value || null,
+      telefone: this.form!.controls.telefone.value || null,
+      data_nascimento: this.form!.controls.data_nascimento.value || null,
+      uf: this.form!.controls.uf.value || null,
+      sexo: this.form!.controls.sexo.value || null,
+    }));
+  }
+
+  private async saveEdit(): Promise<void> {
+    const usuarioId = this.entity!.id;
+    const requests: Promise<any>[] = [];
+
+    if (this.isTitular && this.form!.controls.nome_social.dirty) {
+      const nomeSocial = this.form!.controls.nome_social.value || null;
+      requests.push(firstValueFrom(this.usuarioService.atualizarNomeSocial(nomeSocial)).then(() => {
         if (this.auth.usuario) {
           this.auth.usuario.nome_social = nomeSocial;
           this.auth.usuarioChanged$.next();
         }
-      });
+      }));
     }
+
+    if (this.hasDadosPessoaisDirty()) {
+      requests.push(firstValueFrom(this.usuarioService.atualizarDadosPessoais(usuarioId, this.buildDadosPessoais())));
+    }
+
+    const textoComplementarAtual = this.form!.controls.texto_complementar_plano.value || '';
+    const textoComplementarOriginal = this.entity!.texto_complementar_plano || '';
+    if (textoComplementarAtual !== textoComplementarOriginal) {
+      requests.push(firstValueFrom(this.usuarioService.atualizarTextoComplementar(
+        usuarioId,
+        this.form!.controls.texto_complementar_plano.value || null,
+      )));
+    }
+
+    const perfilId = this.unidadesIntegrantes?.formPerfil.controls.perfil_id.value;
+    if (perfilId && perfilId !== this.entity!.perfil_id) {
+      requests.push(firstValueFrom(this.usuarioService.atualizarPerfil(usuarioId, perfilId)));
+    }
+
+    const integrantesConsolidados: IntegranteConsolidado[] = this.unidadesIntegrantes?.items || [];
+    if (integrantesConsolidados.some(ic => !!ic._status)) {
+      const atribuicoes = integrantesConsolidados
+        .filter(ic => ic.unidade_id)
+        .map(ic => ({
+          unidade_id: ic.unidade_id!,
+          atribuicoes: ic._status === 'DELETE' ? [] : ic.atribuicoes as string[],
+        }));
+      requests.push(firstValueFrom(this.usuarioService.atualizarAtribuicoes(usuarioId, atribuicoes)));
+    }
+
+    await Promise.all(requests);
+  }
+
+  private readonly CAMPOS_DADOS_PESSOAIS = ['telefone'];
+  private readonly CAMPOS_DADOS_PESSOAIS_EXTERNO = ['nome', 'email', 'cpf', 'data_nascimento', 'uf'];
+
+  private hasDadosPessoaisDirty(): boolean {
+    const campos = this.entity?.usuario_externo
+      ? [...this.CAMPOS_DADOS_PESSOAIS, ...this.CAMPOS_DADOS_PESSOAIS_EXTERNO]
+      : this.CAMPOS_DADOS_PESSOAIS;
+    return campos.some(c => this.form!.controls[c]?.dirty);
+  }
+
+  private buildDadosPessoais(): Record<string, any> {
+    const dados: Record<string, any> = {};
+    const campos = this.entity?.usuario_externo
+      ? [...this.CAMPOS_DADOS_PESSOAIS, ...this.CAMPOS_DADOS_PESSOAIS_EXTERNO]
+      : this.CAMPOS_DADOS_PESSOAIS;
+
+    for (const campo of campos) {
+      if (this.form!.controls[campo]?.dirty) {
+        dados[campo] = this.form!.controls[campo].value || null;
+      }
+    }
+    return dados;
+  }
+
+  public onAfterSave(entity: any) {
   }
 
   public titleEdit = (entity: Usuario): string => {

@@ -18,6 +18,7 @@ use App\Repository\Afastamento\AfastamentoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\DispensaAvaliacaoPolicy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -146,6 +147,7 @@ describe('PlanoTrabalhoConsolidacaoService::concluir', function () {
     test('conclui consolidação com sucesso', function () {
         Auth::shouldReceive('id')->andReturn('usuario-1');
         Auth::shouldReceive('user')->andReturn((object) ['nome' => 'João']);
+        DB::shouldReceive('transaction')->once()->andReturnUsing(fn (callable $cb) => $cb());
 
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
@@ -155,9 +157,15 @@ describe('PlanoTrabalhoConsolidacaoService::concluir', function () {
 
         /** @var PlanoTrabalhoConsolidacao $consolidacao */
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->id = 'consolidacao-1';
+        $consolidacao->shouldReceive('refresh')->once()->andReturnSelf();
 
         $this->concluirValidator->shouldReceive('validar')
             ->with($plano, 'consolidacao-1')->andReturn($consolidacao);
+
+        $this->consolidacaoRepo->shouldReceive('update')
+            ->with('consolidacao-1', Mockery::on(fn (array $attrs) => isset($attrs['data_conclusao'])))
+            ->once();
 
         $this->statusService->shouldReceive('atualizaStatus')
             ->with($consolidacao, 'CONCLUIDO', Mockery::type('string'))->once();
@@ -171,6 +179,7 @@ describe('PlanoTrabalhoConsolidacaoService::reabrir', function () {
     test('reabre consolidação com sucesso', function () {
         Auth::shouldReceive('id')->andReturn('usuario-1');
         Auth::shouldReceive('user')->andReturn((object) ['nome' => 'João']);
+        DB::shouldReceive('transaction')->once()->andReturnUsing(fn (callable $cb) => $cb());
 
         /** @var PlanoTrabalho $plano */
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
@@ -180,9 +189,15 @@ describe('PlanoTrabalhoConsolidacaoService::reabrir', function () {
 
         /** @var PlanoTrabalhoConsolidacao $consolidacao */
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->id = 'consolidacao-1';
+        $consolidacao->shouldReceive('refresh')->once()->andReturnSelf();
 
         $this->reabrirValidator->shouldReceive('validar')
             ->with($plano, 'consolidacao-1')->andReturn($consolidacao);
+
+        $this->consolidacaoRepo->shouldReceive('update')
+            ->with('consolidacao-1', ['data_conclusao' => null])
+            ->once();
 
         $this->statusService->shouldReceive('atualizaStatus')
             ->with($consolidacao, 'INCLUIDO', Mockery::type('string'))->once();
