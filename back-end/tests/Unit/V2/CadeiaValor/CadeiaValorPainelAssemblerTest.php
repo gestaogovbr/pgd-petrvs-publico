@@ -143,6 +143,10 @@ describe('CadeiaValorPainelAssembler - montarDetalhamento', function () {
                 'entrega_titulo' => 'Entrega Teste',
                 'progresso_esperado' => 50.0,
                 'progresso_realizado' => 25.0,
+                'meta' => '{"porcentagem": 100}',
+                'realizado' => '{"porcentagem": 40}',
+                'tipo_indicador' => 'PORCENTAGEM',
+                'lista_qualitativos' => null,
                 'registro_execucao' => 'Último registro',
                 'participantes_total' => 3,
                 'participantes_somente_unidade_propria' => 2,
@@ -156,7 +160,14 @@ describe('CadeiaValorPainelAssembler - montarDetalhamento', function () {
             ],
         ];
 
-        $result = $assembler->montarDetalhamento('proc-1', $rows);
+        $filtroUnidades = [
+            ['id' => 'u-1', 'label' => 'UA — Unidade A'],
+        ];
+        $filtroEntregas = [
+            ['id' => 'pee-1', 'label' => 'Entrega Teste'],
+        ];
+
+        $result = $assembler->montarDetalhamento('proc-1', $rows, $filtroUnidades, $filtroEntregas);
 
         expect($result)->toBeInstanceOf(CadeiaValorPainelEntregasDetalhamentoDTO::class);
         expect($result->processo_id)->toBe('proc-1');
@@ -183,6 +194,10 @@ describe('CadeiaValorPainelAssembler - montarDetalhamento', function () {
             'plano_entrega_data_fim' => '2025-12-31',
             'progresso_esperado' => 0,
             'progresso_realizado' => 0,
+            'meta' => null,
+            'realizado' => null,
+            'tipo_indicador' => null,
+            'lista_qualitativos' => null,
             'registro_execucao' => null,
             'participantes_total' => 0,
             'participantes_somente_unidade_propria' => 0,
@@ -212,7 +227,14 @@ describe('CadeiaValorPainelAssembler - montarDetalhamento', function () {
             ]),
         ];
 
-        $result = $assembler->montarDetalhamento('proc-1', $rows);
+        $filtroUnidades = [
+            ['id' => 'u-1', 'label' => 'UA — Unidade A'],
+        ];
+        $filtroEntregas = [
+            ['id' => 'pee-1', 'label' => 'Entrega 1'],
+        ];
+
+        $result = $assembler->montarDetalhamento('proc-1', $rows, $filtroUnidades, $filtroEntregas);
 
         expect($result->itens)->toHaveCount(2);
         expect($result->filtro_entregas)->toHaveCount(1);
@@ -222,7 +244,7 @@ describe('CadeiaValorPainelAssembler - montarDetalhamento', function () {
     test('retorna listas vazias quando não há rows', function () {
         $assembler = new CadeiaValorPainelAssembler();
 
-        $result = $assembler->montarDetalhamento('proc-1', []);
+        $result = $assembler->montarDetalhamento('proc-1', [], [], []);
 
         expect($result->itens)->toBe([]);
         expect($result->filtro_entregas)->toBe([]);
@@ -246,6 +268,10 @@ describe('CadeiaValorPainelAssembler - montarDetalhamento', function () {
                 'entrega_titulo' => 'Entrega',
                 'progresso_esperado' => 0,
                 'progresso_realizado' => 0,
+                'meta' => null,
+                'realizado' => null,
+                'tipo_indicador' => null,
+                'lista_qualitativos' => null,
                 'registro_execucao' => '',
                 'participantes_total' => 0,
                 'participantes_somente_unidade_propria' => 0,
@@ -259,7 +285,14 @@ describe('CadeiaValorPainelAssembler - montarDetalhamento', function () {
             ],
         ];
 
-        $result = $assembler->montarDetalhamento('proc-1', $rows);
+        $filtroUnidades = [
+            ['id' => 'u-1', 'label' => 'UA — Unidade A'],
+        ];
+        $filtroEntregas = [
+            ['id' => 'pee-1', 'label' => 'Entrega'],
+        ];
+
+        $result = $assembler->montarDetalhamento('proc-1', $rows, $filtroUnidades, $filtroEntregas);
 
         expect($result->itens[0]->registro_execucao)->toBeNull();
         expect($result->itens[0]->plano_entrega_vigencia_fim)->toBeNull();

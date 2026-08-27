@@ -58,4 +58,46 @@ export class UsuarioService {
         .patch<any>(`${this.gb.servidorURL}/${this.base}/nome-social`, { nome_social: nomeSocial })
         .pipe(map(() => void 0));
   }
+
+  criar(dados: {
+    cpf: string;
+    email: string;
+    nome: string;
+    perfil_id: string;
+    atribuicoes: { unidade_id: string; atribuicoes: string[] }[];
+    apelido?: string | null;
+    telefone?: string | null;
+    data_nascimento?: string | null;
+    uf?: string | null;
+    sexo?: string | null;
+    matricula?: string | null;
+  }): Observable<Usuario> {
+    return this.http
+        .post<any>(`${this.gb.servidorURL}/${this.base}`, dados)
+        .pipe(map((response: any) => response?.data as Usuario));
+  }
+
+  atualizarDadosPessoais(usuarioId: string, dados: { telefone?: string | null; nome?: string | null; email?: string | null; cpf?: string | null; data_nascimento?: string | null; uf?: string | null }): Observable<Usuario> {
+    return this.http
+        .patch<any>(`${this.gb.servidorURL}/${this.base}/${usuarioId}/dados-pessoais`, dados)
+        .pipe(map((response: any) => response?.data as Usuario));
+  }
+
+  atualizarTextoComplementar(usuarioId: string, texto: string | null): Observable<Usuario> {
+    return this.http
+        .patch<any>(`${this.gb.servidorURL}/${this.base}/${usuarioId}/texto-complementar`, { texto_complementar_plano: texto })
+        .pipe(map((response: any) => response?.data as Usuario));
+  }
+
+  atualizarPerfil(usuarioId: string, perfilId: string): Observable<Usuario> {
+    return this.http
+        .patch<any>(`${this.gb.servidorURL}/${this.base}/${usuarioId}/perfil`, { perfil_id: perfilId })
+        .pipe(map((response: any) => response?.data as Usuario));
+  }
+
+  atualizarAtribuicoes(usuarioId: string, atribuicoes: { unidade_id: string; atribuicoes: string[] }[]): Observable<Usuario> {
+    return this.http
+        .put<any>(`${this.gb.servidorURL}/${this.base}/${usuarioId}/atribuicoes`, { atribuicoes })
+        .pipe(map((response: any) => response?.data as Usuario));
+  }
 }

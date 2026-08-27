@@ -7,7 +7,7 @@ namespace App\V2\PlanoTrabalho\Documento\TCR;
 use App\Exceptions\DataInvalidException;
 use App\Services\LookupService;
 use App\Services\UtilService;
-use Exception;
+use Throwable;
 
 class TCRTemplateRenderer
 {
@@ -37,14 +37,14 @@ class TCRTemplateRenderer
         while ($tag = $this->tagSplit($next, self::OPEN_TAG, self::CLOSE_TAG)) {
             try {
                 if (preg_match(self::EXPRESSION_VAR, $tag['content'])) {
-                    $content = ($this->getExpressionValue($tag['content'], $context) . '') . '';
+                    $content = $this->stringifyValue($this->getExpressionValue($tag['content'], $context));
                     $tag['content'] = $this->renderTemplate($content, $context);
                 } elseif (preg_match(self::EXPRESSION_IF, $tag['content'])) {
                     $this->processIf($tag, $context);
                 } elseif (preg_match(self::EXPRESSION_FOR, $tag['content'])) {
                     $this->processFor($tag, $context);
                 }
-            } catch (Exception $error) {
+            } catch (Throwable $error) {
                 $tag['content'] = '(ERRO)';
             } finally {
                 $tag['start']['tag'] = '';
@@ -121,6 +121,22 @@ class TCRTemplateRenderer
             }
             $tag['content'] .= $this->renderTemplate($endForTag['before'], $forContext);
         }
+    }
+
+    /**
+     * Converte o valor de uma expressão em string para o template.
+     * Objetos/arrays (ex.: tag apontando para um nó e não para uma folha do
+     * datasource) não são conversíveis e renderizam como '(ERRO)'.
+     */
+    private function stringifyValue(mixed $valor): string
+    {
+        if ($valor === null) {
+            return '';
+        }
+        if (is_scalar($valor) || $valor instanceof \Stringable) {
+            return (string) $valor;
+        }
+        return '(ERRO)';
     }
 
     private function getExpressionValue(string $expression, array $context): mixed

@@ -190,11 +190,6 @@ export class PlanejamentoObjetivoArvorePage {
     }
   }
 
-  resetLevels(): void {
-    this.levelsAbove.set(DEFAULT_LEVELS);
-    this.levelsBelow.set(DEFAULT_LEVELS);
-  }
-
   abrirArvoreOutroObjetivo(objetivoId: string, event?: Event): void {
     event?.stopPropagation();
     event?.preventDefault();

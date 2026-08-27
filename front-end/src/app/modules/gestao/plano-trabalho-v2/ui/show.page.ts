@@ -62,6 +62,18 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly totalForcaTrabalho = computed(() =>
     (this.planoTrabalho()?.entregas ?? []).reduce((sum, e) => sum + (Number(e.forca_trabalho) || 0), 0)
   );
+
+  totalEsforcoExecutado(consolidacao: Consolidacao): number {
+    const entregas = this.planoTrabalho()?.entregas ?? [];
+    return entregas.reduce(
+      (sum, e) => sum + (Number(this.facade.getEsforcoExecutado(consolidacao.id, e)) || 0),
+      0,
+    );
+  }
+
+  esforcoExecutadoDiverge(consolidacao: Consolidacao): boolean {
+    return this.totalEsforcoExecutado(consolidacao) !== this.totalForcaTrabalho();
+  }
   ngOnInit(): void {
     this.route.paramMap.pipe(
       map(params => params.get('id')),

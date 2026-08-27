@@ -82,6 +82,16 @@
             <p class="mb-0">{{ statusLabel(assinatura.plano()?.status || planoTrabalho()?.status) }}</p>
           </div>
         </div>
+        <div class="row mt-2">
+          <div class="col-md-3 mb-3">
+            <p class="mb-1 text-weight-semi-bold text-up-01">
+              CHD Bruta
+              <i class="bi bi-info-circle label-info"
+                 title="Carga Horária Disponível Bruta: valor calculado pela multiplicação da jornada diária do participante pela quantidade de dias úteis (segunda a sexta-feira) do período do Plano de Trabalho. O cálculo não considera feriados, férias, afastamentos ou outras ocorrências."></i>
+            </p>
+            <p class="mb-0">{{ planoTrabalho()?.chd_bruta != null ? planoTrabalho()!.chd_bruta + 'h' : '-' }}</p>
+          </div>
+        </div>
         @if (planoTrabalho()?.justificativa_modalidade) {
           <div class="row mt-2">
             <div class="col-md-12">
@@ -175,7 +185,17 @@
                             <tr>
                               <th scope="col">Entrega</th>
                               <th scope="col">Trabalho Planejado</th>
-                              <th scope="col">Trabalho Executado</th>
+                              <th scope="col">
+                                Trabalho Executado
+                                <br-tag
+                                  class="count"
+                                  [class.count--divergente]="esforcoExecutadoDiverge(consolidacao)"
+                                  [bgColor]="esforcoExecutadoDiverge(consolidacao) ? '#f39c12' : ''"
+                                  [attr.title]="esforcoExecutadoDiverge(consolidacao)
+                                    ? 'Diferente do planejado (' + totalForcaTrabalho() + '%)'
+                                    : null"
+                                >{{ totalEsforcoExecutado(consolidacao) }}%</br-tag>
+                              </th>
                               @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) { <th scope="col"></th> }
                             </tr>
                           </thead>
@@ -201,7 +221,7 @@
                                           [id]="'esforco-' + consolidacao.id + '-' + entrega.id"
                                           type="number"
                                           class="form-control form-control-sm execucao-esforco-input"
-                                          min="0.01"
+                                          min="0"
                                           max="999.99"
                                           step="0.01"
                                           [value]="facade.getEsforcoExecutado(consolidacao.id, entrega)"

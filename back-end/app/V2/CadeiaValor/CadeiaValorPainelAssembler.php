@@ -61,6 +61,7 @@ final class CadeiaValorPainelAssembler
             ),
             entregas: new ObjetivoPainelEntregasResumoDTO(
                 total_entregas: $totalEntregas,
+                total_entregas_avaliadas: (int) ($agg->total_entregas_avaliadas ?? 0),
                 entregas_concluidas: $concluidas,
                 percentual_concluidas: ObjetivoPainelEsforcoSupport::percentual((float) $concluidas, (float) $totalEntregas),
             ),
@@ -70,14 +71,12 @@ final class CadeiaValorPainelAssembler
 
     /**
      * @param list<\stdClass> $rows
+     * @param list<array{id: string, label: string}> $filtroUnidades
+     * @param list<array{id: string, label: string}> $filtroEntregas
      */
-    public function montarDetalhamento(string $processoId, array $rows): CadeiaValorPainelEntregasDetalhamentoDTO
+    public function montarDetalhamento(string $processoId, array $rows, array $filtroUnidades, array $filtroEntregas): CadeiaValorPainelEntregasDetalhamentoDTO
     {
         $itens = [];
-        $filtroEntregas = [];
-        $filtroUnidades = [];
-        $seenEntregas = [];
-        $seenUnidades = [];
 
         foreach ($rows as $row) {
             $peStatus = (string) $row->plano_entrega_status;
@@ -86,26 +85,10 @@ final class CadeiaValorPainelAssembler
             $vis = ObjetivoPainelEsforcoSupport::visibilidadeEsforco($peStatus, $temPtPactuado, $temPtConcluido);
 
             $peeId = (string) $row->plano_entrega_entrega_id;
-            $unidadeId = (string) $row->unidade_id;
-
-            if (!isset($seenEntregas[$peeId])) {
-                $seenEntregas[$peeId] = true;
-                $filtroEntregas[] = [
-                    'id' => $peeId,
-                    'label' => (string) $row->entrega_titulo,
-                ];
-            }
-            if (!isset($seenUnidades[$unidadeId])) {
-                $seenUnidades[$unidadeId] = true;
-                $filtroUnidades[] = [
-                    'id' => $unidadeId,
-                    'label' => (string) $row->unidade_sigla . ' — ' . (string) $row->unidade_nome,
-                ];
-            }
 
             $itens[] = new CadeiaValorPainelEntregaDetalheLinhaDTO(
                 plano_entrega_entrega_id: $peeId,
-                unidade_id: $unidadeId,
+                unidade_id: (string) $row->unidade_id,
                 unidade_sigla: (string) $row->unidade_sigla,
                 unidade_nome: (string) $row->unidade_nome,
                 plano_entrega_id: (string) $row->plano_entrega_id,
@@ -116,6 +99,10 @@ final class CadeiaValorPainelAssembler
                 entrega_titulo: (string) $row->entrega_titulo,
                 progresso_esperado: (float) $row->progresso_esperado,
                 progresso_realizado: (float) $row->progresso_realizado,
+                meta: isset($row->meta) ? json_decode((string) $row->meta, true) : null,
+                realizado: isset($row->realizado) ? json_decode((string) $row->realizado, true) : null,
+                tipo_indicador: isset($row->tipo_indicador) ? (string) $row->tipo_indicador : null,
+                lista_qualitativos: isset($row->lista_qualitativos) ? json_decode((string) $row->lista_qualitativos, true) : null,
                 registro_execucao: isset($row->registro_execucao) && $row->registro_execucao !== ''
                     ? (string) $row->registro_execucao
                     : null,
