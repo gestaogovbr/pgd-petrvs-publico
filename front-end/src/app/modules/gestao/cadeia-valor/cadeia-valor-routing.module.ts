@@ -7,6 +7,7 @@ import {CadeiaValorFormComponent} from "./cadeia-valor-form/cadeia-valor-form.co
 import {CadeiaValorListGridComponent} from "./cadeia-valor-list-grid/cadeia-valor-list-grid.component";
 import { CadeiaValorListProcessosComponent } from './cadeia-valor-list-processos/cadeia-valor-list-processos.component';
 import { CadeiaValorListProcessosEntregasComponent } from './cadeia-valor-list-processos-entregas/cadeia-valor-list-processos-entregas.component';
+import { cadeiaValorArvoreRoutes } from './cadeia-valor-arvore/routes';
 
 const routes: Routes = [
   { path: '', component: CadeiaValorListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Cadeia de Valor" } },
@@ -14,7 +15,8 @@ const routes: Routes = [
   { path: 'new', component: CadeiaValorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de Cadeia de Valor", modal: true } },
   { path: ':id/edit', component: CadeiaValorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Cadeia de Valor", modal: true } },
   { path: ':id/consult', component: CadeiaValorFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Cadeia de Valor", modal: true } },
-  { path: 'processoList', component: CadeiaValorListProcessosEntregasComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista de Processos da Cadeia de Valor", modal: true } }
+  { path: 'processoList', component: CadeiaValorListProcessosEntregasComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Lista de Processos da Cadeia de Valor", modal: true } },
+  ...cadeiaValorArvoreRoutes,
 ];
 
 @NgModule({

@@ -21,6 +21,7 @@ class PlanoTrabalhoEntregaAuthorizationValidator
 
     public function validar(string $planoTrabalhoId, string $usuarioLogadoId): PlanoTrabalho
     {
+        /** @var \App\Models\PlanoTrabalho|null $plano */
         $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
 
         if ($plano === null) {
@@ -32,7 +33,6 @@ class PlanoTrabalhoEntregaAuthorizationValidator
             $usuarioLogadoId,
             $plano->unidade_id,
             'Usuário não tem permissão para gerenciar entregas deste Plano de Trabalho.',
-            ['criacao_usuario_id', 'usuario_id'],
         );
 
         return $plano;

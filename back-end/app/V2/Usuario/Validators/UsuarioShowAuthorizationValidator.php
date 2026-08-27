@@ -43,6 +43,26 @@ class UsuarioShowAuthorizationValidator
         return $alvo;
     }
 
+    /**
+     * Valida se o solicitante pode visualizar ao menos um dos alvos (ex.: CPF compartilhado).
+     *
+     * @param  iterable<int, Usuario>  $alvos
+     */
+    public function validarEscopoParaAlgumAlvo(Usuario $solicitante, iterable $alvos): Usuario
+    {
+        $ultimaExcecao = null;
+
+        foreach ($alvos as $alvo) {
+            try {
+                return $this->validarEscopo($solicitante, $alvo);
+            } catch (ForbiddenException $exception) {
+                $ultimaExcecao = $exception;
+            }
+        }
+
+        throw $ultimaExcecao ?? new ForbiddenException('O usuário não está no seu escopo de atuação.');
+    }
+
     private function validarEscopoHierarquico(Usuario $solicitante, Usuario $alvo): void
     {
         $unidadesGerenciadas = $this->unidadeRepository

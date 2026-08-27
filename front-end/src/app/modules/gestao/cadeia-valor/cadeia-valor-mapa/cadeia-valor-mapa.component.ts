@@ -63,6 +63,8 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
       }));
       this.cdRef.detectChanges();
       this.form!.controls.cadeia_valor_id.setValue(cadeiaValorId || (this.cadeiasValor.length ? this.cadeiasValor[0].key : null));
+      this.cdRef.detectChanges();
+      this.onCadeiaValorChange();
     });
   }
 
@@ -72,7 +74,8 @@ export class CadeiaValorMapaComponent extends PageFrameBase {
       level: level + x.sequencia,
       cor: this.lookup.CORES_BACKGROUND[Math.floor(Math.random() * this.lookup.CORES_BACKGROUND.length)].color
     }), x));
-    this.cadeiaValor = this.cadeiaValorInstitucional?.selectedItem?.data as CadeiaValor;
+    this.cadeiaValor = this.cadeiaValorInstitucional?.selectedItem?.data as CadeiaValor
+      || this.cadeiasValor.find(x => x.key == this.form!.controls.cadeia_valor_id.value)?.data as CadeiaValor;
     if(this.cadeiaValor) this.processos = recursiveProcesso("", this.cadeiaValor.processos.filter(x => !x.processo_pai_id));
   }
 

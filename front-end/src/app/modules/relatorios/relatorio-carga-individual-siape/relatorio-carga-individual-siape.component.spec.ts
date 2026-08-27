@@ -98,11 +98,12 @@ describe('RelatorioCargaIndividualSiapeComponent - issue 2209', () => {
 
     expect(dao.obterPorId).toHaveBeenCalledWith('relatorio-2209');
     expect(component.relatorio?.secoes.length).toBe(3);
-    const html = component.conteudoHtml as unknown as string;
-    expect(html).toContain('1002209');
-    expect(html).toContain('2002209');
-    expect(html).toContain('4002209');
-    expect(html).toContain('Atencao');
+    expect(component.relatorio?.secoes.map(secao => secao.campos[0].recebido_siape)).toEqual([
+      '1002209',
+      '2002209',
+      '4002209'
+    ]);
+    expect(component.statusResumoLabel(component.relatorio!.status)).toBe('Atencao');
   });
 
   it('lista recentes usando tipo e CPF como filtros', async () => {
@@ -113,7 +114,7 @@ describe('RelatorioCargaIndividualSiapeComponent - issue 2209', () => {
 
     expect(dao.listarRecentes).toHaveBeenCalledWith('servidor', '52998224725');
     expect(component.recentes.length).toBe(1);
-    expect(component.conteudoHtml as unknown as string).toContain('relatorio-2209');
+    expect(component.recentes[0].id).toBe('relatorio-2209');
   });
 
   it('exibe relatorio de erro sem secoes sem quebrar a pagina', async () => {
@@ -128,10 +129,9 @@ describe('RelatorioCargaIndividualSiapeComponent - issue 2209', () => {
 
     await component.buscarPorId();
 
-    const html = component.conteudoHtml as unknown as string;
     expect(component.exibindoDetalhe).toBeTrue();
-    expect(html).toContain('Nao concluido');
-    expect(html).toContain('Nenhuma secao disponivel neste relatorio.');
+    expect(component.statusResumoLabel(component.relatorio!.status)).toBe('Nao concluido');
+    expect(component.secaoAtiva()).toBeNull();
   });
 
   it('bloqueia a pagina sem a capacidade do relatorio', async () => {
@@ -148,7 +148,7 @@ describe('RelatorioCargaIndividualSiapeComponent - issue 2209', () => {
     expect(dao.obterPorId).not.toHaveBeenCalled();
   });
 
-  it('escapa HTML recebido do backend antes de montar o innerHTML', async () => {
+  it('mantem HTML recebido do backend apenas como dados interpolados pelo template', async () => {
     component.filtro.controls.id.setValue('relatorio-xss');
     dao.obterPorId.and.resolveTo(relatorio2209({
       id: 'relatorio-xss',
@@ -158,11 +158,8 @@ describe('RelatorioCargaIndividualSiapeComponent - issue 2209', () => {
 
     await component.buscarPorId();
 
-    const html = component.conteudoHtml as unknown as string;
-    expect(html).not.toContain('<script>');
-    expect(html).not.toContain('<img src=x');
-    expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
-    expect(html).toContain('&lt;img src=x onerror=alert(1)&gt;');
+    expect(component.relatorio?.mensagem_usuario).toBe('<img src=x onerror=alert(1)>');
+    expect(component.relatorio?.orientacoes).toEqual(['<script>alert(1)</script>']);
   });
 
   it('ignora resposta antiga quando uma busca mais nova termina primeiro', async () => {

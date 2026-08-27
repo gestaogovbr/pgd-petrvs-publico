@@ -911,9 +911,9 @@ export class PlanoEntregaListComponent extends PageListBase<
 					this.planoEntregaService.situacaoPlano(planoEntrega) == "HOMOLOGANDO";
 				let condition2 =
 					planoEntrega.unidade?.instituidora == 1
-						? this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id)
+						? this.unidadeService.isGestorUnidade(planoEntrega.unidade?.id, false)
 						: this.unidadeService.isGestorUnidade(
-								planoEntrega.unidade?.unidade_pai_id
+								planoEntrega.unidade?.unidade_pai_id, false
 						  );
 				let condition3 =
 					this.auth.isLotacaoUsuario(planoEntrega.unidade?.unidade_pai) &&

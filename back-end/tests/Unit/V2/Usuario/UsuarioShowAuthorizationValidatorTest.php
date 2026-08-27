@@ -109,6 +109,21 @@ describe('validarEscopo', function () {
         expect($result->id)->toBe('alvo');
     });
 
+    test('chefia com MOD_USER_VIS pode visualizar subordinado em CPF compartilhado', function () {
+        $solicitante = showMockUsuario('solicitante', PerfilEnum::UNIDADE->value, true, false);
+        $foraDoEscopo = showMockAlvoComLotacao('fora', PerfilEnum::PARTICIPANTE->value, 'outra');
+        $noEscopo = showMockAlvoComLotacao('no-escopo', PerfilEnum::PARTICIPANTE->value, 'filha');
+
+        $this->unidadeRepo->shouldReceive('getUnidadesGerenciadas')
+            ->with('solicitante')->andReturn(showMockUnidades(['pai']));
+        $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')
+            ->with(['pai'])->andReturn(showMockUnidades(['filha', 'neta']));
+
+        $result = $this->validator->validarEscopoParaAlgumAlvo($solicitante, [$foraDoEscopo, $noEscopo]);
+
+        expect($result->id)->toBe('no-escopo');
+    });
+
     test('chefia com MOD_USER_VIS não pode visualizar fora do escopo', function () {
         $solicitante = showMockUsuario('solicitante', PerfilEnum::UNIDADE->value, true, false);
         $alvo = showMockAlvoComLotacao('alvo', PerfilEnum::PARTICIPANTE->value, 'outra');
