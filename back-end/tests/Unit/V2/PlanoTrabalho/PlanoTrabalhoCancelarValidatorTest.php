@@ -42,39 +42,15 @@ function cancelarFakePlano(string $status, string $usuarioId = 'user-1', string 
     return $plano;
 }
 
-describe('PlanoTrabalhoCancelarValidator', function () {
-
-    test('retorna plano quando participante dono cancela', function () {
-        $plano = mockPlanoAtivo('user-1');
-        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
-        $this->consolidacaoRepo->shouldReceive('possuiConsolidacaoFinalizadaPorPlano')->with('plano-1')->andReturn(false);
-
-        expect($this->validator->validar('plano-1', 'user-1'))->toBe($plano);
-    });
-
-    test('retorna plano quando chefia cancela', function () {
-        $plano = mockPlanoAtivo('outro-user');
-        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
-        $this->consolidacaoRepo->shouldReceive('possuiConsolidacaoFinalizadaPorPlano')->andReturn(false);
-        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
-            ->with('unidade-1', 'chefia-1', true)->andReturn(true);
-
-        expect($this->validator->validar('plano-1', 'chefia-1'))->toBe($plano);
-    });
-
-    test('retorna plano quando adm master cancela', function () {
-        $plano = mockPlanoAtivo('outro-user');
-        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
-        $this->consolidacaoRepo->shouldReceive('possuiConsolidacaoFinalizadaPorPlano')->andReturn(false);
-        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->andReturn(false);
-
-        $usuario = Mockery::mock(Usuario::class)->makePartial();
-        $perfil = Mockery::mock(Perfil::class)->makePartial();
-        $perfil->nivel = 1;
-        $usuario->setRelation('perfil', $perfil);
-        $this->usuarioRepo->shouldReceive('findById')->andReturn($usuario);
-
-        expect($this->validator->validar('plano-1', 'adm-1'))->toBe($plano);
+function cancelarFakeUsuario(string $id, int $nivel, array $permissions = []): Usuario
+{
+    $usuario = Mockery::mock(Usuario::class)->makePartial();
+    $usuario->id = $id;
+    $perfil = Mockery::mock(Perfil::class)->makePartial();
+    $perfil->nivel = $nivel;
+    $usuario->setRelation('perfil', $perfil);
+    $usuario->shouldReceive('hasPermissionTo')->andReturnUsing(function (string $cap) use ($permissions) {
+        return in_array($cap, $permissions, true);
     });
 
     return $usuario;
