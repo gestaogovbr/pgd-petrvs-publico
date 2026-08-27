@@ -18,3 +18,26 @@ if (!function_exists('defaultRoutes')) {
         Route::post('delete-file', [$controllerClass, 'deleteFile']);
     }
 }
+
+if (!function_exists('loadTenantApiRouteFiles')) {
+    function loadTenantApiRouteFiles(string $directory, array $skipSubdirectories = []): void
+    {
+        $files = glob($directory . '/*.php') ?: [];
+        sort($files);
+
+        foreach ($files as $routeFile) {
+            require_once $routeFile;
+        }
+
+        $subdirectories = glob($directory . '/*', GLOB_ONLYDIR) ?: [];
+        sort($subdirectories);
+
+        foreach ($subdirectories as $subdirectory) {
+            if (in_array(basename($subdirectory), $skipSubdirectories, true)) {
+                continue;
+            }
+
+            loadTenantApiRouteFiles($subdirectory);
+        }
+    }
+}
