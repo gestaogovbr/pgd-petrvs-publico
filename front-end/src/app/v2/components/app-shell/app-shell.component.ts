@@ -23,12 +23,13 @@ import { MuralAvisoTenantService } from 'src/app/services/mural-aviso-tenant.ser
 import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
 import { UtilService } from 'src/app/services/util.service';
 import { AppComponent } from 'src/app/app.component';
+import { MuralAvisoCardComponent } from '../mural-aviso-card/mural-aviso-card.component';
 
 @Component({
   selector: 'app-shell-v2',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule],
+  imports: [CommonModule, WebcomponentsAngularModule, MuralAvisoCardComponent],
   templateUrl: './app-shell.component.html',
   styleUrls: ['./app-shell.component.scss']
 })

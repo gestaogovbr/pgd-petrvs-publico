@@ -1,4 +1,4 @@
-<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="titulo" (submit)="onSaveData()" (cancel)="onCancel()">
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="titulo" [buttons]="formButtons" (submit)="onSaveData()" (cancel)="onCancel()">
   <div class="row">
 
     <input-display *ngIf="!isNew && criadoPor"
@@ -68,3 +68,15 @@
     ></input-select>
   </div>
 </editable-form>
+
+<ng-template #previewTemplate let-aviso="aviso">
+  <div class="overflow-auto px-2 mural-aviso-container">
+    <mural-aviso-card
+      [titulo]="aviso.titulo"
+      [conteudo]="aviso.conteudo"
+      [remetente]="aviso.remetente"
+      [dataFormatada]="aviso.dataFormatada"
+      [horaFormatada]="aviso.horaFormatada"
+    ></mural-aviso-card>
+  </div>
+</ng-template>

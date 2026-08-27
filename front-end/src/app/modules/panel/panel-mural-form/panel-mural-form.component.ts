@@ -1,6 +1,7 @@
-import { Component, Injector, ViewChild } from "@angular/core";
+import { Component, Injector, TemplateRef, ViewChild } from "@angular/core";
 import { AbstractControl, FormGroup } from "@angular/forms";
 import { EditableFormComponent } from "src/app/components/editable-form/editable-form.component";
+import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { IIndexable } from "src/app/models/base.model";
 import { MuralAviso } from "src/app/models/mural-aviso.model";
 import { MuralAvisoDaoService } from "src/app/dao/mural-aviso-dao.service";
@@ -16,6 +17,7 @@ import { AuthPanelService } from "src/app/services/auth-panel.service";
 })
 export class PanelMuralFormComponent extends PageFormBase<MuralAviso, MuralAvisoDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
+  @ViewChild('previewTemplate') previewTemplate!: TemplateRef<any>;
 
   public static readonly MAX_CONTEUDO = 2500;
   public readonly maxConteudo = PanelMuralFormComponent.MAX_CONTEUDO;
@@ -29,6 +31,9 @@ export class PanelMuralFormComponent extends PageFormBase<MuralAviso, MuralAviso
   ];
   public currentUser: any;
   public criadoPor: string = "";
+  public formButtons: ToolbarButton[] = [
+    { label: "Pré-visualizar", icon: "bi bi-eye", color: "btn-outline-secondary", onClick: () => this.preVisualizar() }
+  ];
 
   constructor(public injector: Injector) {
     super(injector, MuralAviso, MuralAvisoDaoService);
@@ -112,6 +117,29 @@ export class PanelMuralFormComponent extends PageFormBase<MuralAviso, MuralAviso
 
   public get isDestinatarioTenant(): boolean {
     return this.form?.controls['destinatario']?.value === 'TENANT_ESPECIFICO';
+  }
+
+  public preVisualizar(): void {
+    const formValues = this.form!.getRawValue();
+    const dataPublicacao = formValues.data_publicacao ? new Date(formValues.data_publicacao) : new Date();
+
+    const remetente = this.currentUser?.nivel === 1 ? 'Órgão Central' : (formValues.tenant_id || 'Tenant');
+
+    const aviso = {
+      titulo: formValues.titulo || '(Sem título)',
+      conteudo: formValues.conteudo || '(Sem conteúdo)',
+      remetente,
+      dataFormatada: dataPublicacao.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+      horaFormatada: dataPublicacao.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+    };
+
+    const result = this.dialog.template(
+      { title: 'Pré-visualização do Aviso', modalWidth: 700 },
+      this.previewTemplate,
+      [{ label: 'Fechar', color: 'btn-secondary', value: true }],
+      { aviso },
+    );
+    result.result.then(({ dialog: dlg }) => dlg.close());
   }
 
   private async loadTenants(): Promise<void> {

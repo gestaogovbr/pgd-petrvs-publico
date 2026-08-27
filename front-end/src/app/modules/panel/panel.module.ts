@@ -20,6 +20,7 @@ import { PanelJobAgendadosListComponent } from './panel-jobs-agendados-list/pane
 import { PanelJobsAgendadosFormComponent } from './panel-jobs-agendados-form/panel-jobs-agendados-form.component';
 import { PanelMuralListComponent } from './panel-mural-list/panel-mural-list.component';
 import { PanelMuralFormComponent } from './panel-mural-form/panel-mural-form.component';
+import { MuralAvisoCardComponent } from 'src/app/v2/components/mural-aviso-card/mural-aviso-card.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { PanelMuralFormComponent } from './panel-mural-form/panel-mural-form.com
         SharedModule,
         UteisModule,
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MuralAvisoCardComponent
     ]
 })
 export class PanelModule { }
