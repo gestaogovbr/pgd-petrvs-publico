@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\AsJson;
 use App\Enums\StatusEnum;
 use App\Contracts\HasStatusHistory;
+use App\Contracts\HasOwnership;
 use App\Models\Atividade;
 use App\Models\Documento;
 use App\Models\DocumentoAssinatura;
@@ -57,11 +58,16 @@ use Illuminate\Database\Eloquent\Collection;
  * @property-read Collection|Atividade[] $atividades
  * @property-read Collection|Ocorrencia[] $ocorrencias
  */
-class PlanoTrabalho extends ModelBase implements HasStatusHistory
+class PlanoTrabalho extends ModelBase implements HasStatusHistory, HasOwnership
 {
     public function getStatusFkColumn(): string
     {
         return 'plano_trabalho_id';
+    }
+
+    public function getOwnerIds(): array
+    {
+        return array_filter([$this->usuario_id, $this->criacao_usuario_id]);
     }
     protected $table = 'planos_trabalhos';
 

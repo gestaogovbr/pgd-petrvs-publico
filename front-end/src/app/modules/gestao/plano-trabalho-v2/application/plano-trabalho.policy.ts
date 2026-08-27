@@ -18,10 +18,7 @@ export class PlanoTrabalhoPolicy {
   }
 
   podeCancelar(p: PlanoTrabalho): boolean {
-    return this.auth.hasPermissionTo('MOD_PTR_CNC')
-      && PlanoTrabalhoStatusGroups.cancelavel.includes(p.status)
-      && (p.status != PlanoTrabalhoStatus.ATIVO || !p.has_consolidacao_concluida)
-      && (this.auth.usuario?.id == p.usuario_id || this.unidadeService.isGestorUnidade(p.unidade_id));
+    return p.acoes?.cancelar === true;
   }
 
   podeEditar(p: PlanoTrabalho): boolean {
