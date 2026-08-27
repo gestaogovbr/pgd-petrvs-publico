@@ -26,7 +26,7 @@ if (!function_exists('loadTenantApiRouteFiles')) {
         sort($files);
 
         foreach ($files as $routeFile) {
-            require_once $routeFile;
+            require $routeFile;
         }
 
         $subdirectories = glob($directory . '/*', GLOB_ONLYDIR) ?: [];
