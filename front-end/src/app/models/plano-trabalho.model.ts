@@ -60,6 +60,7 @@ export type PlanoTrabalhoAcoes = {
     arquivar: boolean;
     encerrar: boolean;
     desarquivar: boolean;
+    cancelar: boolean;
 };
 
 export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {

@@ -129,6 +129,13 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 				.then((user) => {
 					this.currentUser = user;
 					this.tenants = user.tenants;
+					if (user && user.nivel === 1) {
+						this.options.push({
+							icon: "bi bi-trash",
+							label: "Excluir",
+							onClick: this.deleteTenant.bind(this),
+						});
+					}
 					resolve();
 				})
 				.catch((error) => {

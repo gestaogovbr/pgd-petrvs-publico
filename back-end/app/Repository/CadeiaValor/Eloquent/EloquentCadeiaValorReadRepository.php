@@ -207,9 +207,13 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
                 pe.status AS plano_entrega_status,
                 pe.data_inicio AS plano_entrega_data_inicio,
                 pe.data_fim AS plano_entrega_data_fim,
-                COALESCE(pee.descricao_entrega, pee.descricao) AS entrega_titulo,
-                COALESCE(pee.progresso_esperado, 0) AS progresso_esperado,
-                COALESCE(pee.progresso_realizado, 0) AS progresso_realizado,
+                pee.descricao AS entrega_titulo,
+                COALESCE(ultimo_prog.progresso_esperado, pee.progresso_esperado, 0) AS progresso_esperado,
+                COALESCE(ultimo_prog.progresso_realizado, pee.progresso_realizado, 0) AS progresso_realizado,
+                COALESCE(ultimo_prog.meta, pee.meta) AS meta,
+                COALESCE(ultimo_prog.realizado, pee.realizado) AS realizado,
+                e.tipo_indicador,
+                e.lista_qualitativos,
 
                 (
                     SELECT a.descricao
@@ -343,6 +347,17 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
                 ON pe.id = pee.plano_entrega_id AND pe.deleted_at IS NULL
             INNER JOIN unidades u
                 ON u.id = pee.unidade_id AND u.deleted_at IS NULL
+            LEFT JOIN entregas e
+                ON e.id = pee.entrega_id AND e.deleted_at IS NULL
+            LEFT JOIN planos_entregas_entregas_progressos ultimo_prog
+                ON ultimo_prog.id = (
+                    SELECT p2.id
+                    FROM planos_entregas_entregas_progressos p2
+                    WHERE p2.plano_entrega_entrega_id = pee.id
+                      AND p2.deleted_at IS NULL
+                    ORDER BY p2.data_progresso DESC, p2.created_at DESC
+                    LIMIT 1
+                )
             WHERE peep.cadeia_processo_id = ? AND peep.deleted_at IS NULL
             {$conditions}
             ORDER BY u.nome, pee.descricao
@@ -369,6 +384,29 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
             ->map(fn (\stdClass $row) => [
                 'id' => (string) $row->id,
                 'label' => (string) $row->sigla . ' — ' . (string) $row->nome,
+            ])
+            ->all();
+    }
+
+    public function listarFiltroEntregasPainel(string $processoId): array
+    {
+        return DB::table('planos_entregas_entregas_processos as peep')
+            ->join('planos_entregas_entregas as pee', function ($join) {
+                $join->on('pee.id', '=', 'peep.entrega_id')
+                    ->whereNull('pee.deleted_at');
+            })
+            ->where('peep.cadeia_processo_id', $processoId)
+            ->whereNull('peep.deleted_at')
+            ->select([
+                'pee.id',
+                'pee.descricao as label',
+            ])
+            ->distinct()
+            ->orderBy('label')
+            ->get()
+            ->map(fn (\stdClass $row) => [
+                'id' => (string) $row->id,
+                'label' => (string) $row->label,
             ])
             ->all();
     }

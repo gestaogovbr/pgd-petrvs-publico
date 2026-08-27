@@ -378,6 +378,9 @@ class IntegracaoService extends ServiceBase
     $escopoCargaIndividualServidor = $this->normalizarEscopoCargaIndividualServidor(
       $inputs['escopo_carga_individual_servidor'] ?? null
     );
+    $escopoCargaIndividualServidor = $this->normalizarEscopoCargaIndividualServidor(
+      $inputs['escopo_carga_individual_servidor'] ?? null
+    );
     $token = $this->useLocalFiles ? "LOCAL" : $this->getToken($this->integracao_config);
     $entidade_id = $inputs["entidade"] ?: "";
     $xmlStream = "";
@@ -596,6 +599,14 @@ class IntegracaoService extends ServiceBase
         $servidores = $this->getIntegracaoAdapter()->retornarServidores()["Pessoas"];
         $servidores = $this->filtrarServidoresPorEscopoCargaIndividual($servidores, $escopoCargaIndividualServidor);
         SiapeLog::info("Concluída a fase de obtenção dos dados dos servidores informados pelo SIAPE.....");
+        if ($escopoCargaIndividualServidor !== null && empty($servidores)) {
+          SiapeLog::warning('Nenhum servidor do escopo da carga individual foi encontrado no retorno SIAPE', [
+            'cpf_consultado' => $escopoCargaIndividualServidor['cpf'],
+            'matriculas_consultadas' => $escopoCargaIndividualServidor['matriculas'],
+          ]);
+        } else {
+          $this->processarServidoresTransaction($servidores, $escopoCargaIndividualServidor);
+        }
         if ($escopoCargaIndividualServidor !== null && empty($servidores)) {
           SiapeLog::warning('Nenhum servidor do escopo da carga individual foi encontrado no retorno SIAPE', [
             'cpf_consultado' => $escopoCargaIndividualServidor['cpf'],

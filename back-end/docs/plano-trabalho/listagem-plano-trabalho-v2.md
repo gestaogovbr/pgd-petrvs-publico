@@ -135,7 +135,7 @@ LengthAwarePaginator → JSON response
 
 | Camada | Arquivo |
 |---|---|
-| Rota | `routes/api_tenant.php` (linha ~619) |
+| Rota | `routes/api_tenant/v2/plano-trabalho.php` |
 | Controller | `app/V2/PlanoTrabalho/PlanoTrabalhoController.php` |
 | Request Validator | `app/V2/PlanoTrabalho/Validators/PlanoTrabalhoRequestValidator.php` |
 | DTO | `app/V2/PlanoTrabalho/DTOs/PlanoTrabalhoIndexDTO.php` |
