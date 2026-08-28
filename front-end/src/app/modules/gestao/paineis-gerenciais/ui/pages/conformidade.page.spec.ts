@@ -8,6 +8,10 @@ import {
   Indicador,
   UnidadeInicial,
 } from '../../infra/painel-api.client';
+import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { PainelFiltrosComponent } from '../components/painel-filtros.component';
+import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
+import { PdfPainelComponent } from '../components/pdf/pdf-painel.component';
 
 @Component({ selector: 'app-breadcrumb', standalone: true, template: '' })
 class MockBreadcrumbComponent {}
@@ -97,7 +101,14 @@ describe('ConformidadePage', () => {
       ],
     })
       .overrideComponent(ConformidadePage, {
-        remove: { imports: [] },
+        remove: {
+          imports: [
+            BreadcrumbComponent,
+            PainelFiltrosComponent,
+            IndicadorBarraHorizontalComponent,
+            PdfPainelComponent,
+          ],
+        },
         add: {
           imports: [
             MockBreadcrumbComponent,
@@ -120,7 +131,7 @@ describe('ConformidadePage', () => {
 
     it('deve disparar 5 chamadas API ao receber unidade inicial', () => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
 
       expect(apiSpy.getConformidadeRegistroExecucaoPE).toHaveBeenCalledWith(jasmine.objectContaining({ unidade_id: 'u1' }));
       expect(apiSpy.getConformidadeAvaliacaoPE).toHaveBeenCalledWith(jasmine.objectContaining({ unidade_id: 'u1' }));
@@ -131,7 +142,7 @@ describe('ConformidadePage', () => {
 
     it('não deve disparar chamadas se unidade_id for null', () => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: null, unidade_sigla: null, unidade_nome: null });
+      unidadeInicial$.next({ unidade_id: null, unidade_sigla: null, unidade_nome: null, unidade_raiz_id: null, unidade_raiz_sigla: null });
 
       expect(apiSpy.getConformidadeRegistroExecucaoPE).not.toHaveBeenCalled();
     });
@@ -140,7 +151,7 @@ describe('ConformidadePage', () => {
   describe('Chamadas API concorrentes', () => {
     beforeEach(() => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
     });
 
     it('deve ativar todos os 5 flags de carregamento', () => {
@@ -189,7 +200,7 @@ describe('ConformidadePage', () => {
   describe('Race conditions ao trocar filtros rapidamente', () => {
     beforeEach(() => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
 
       // Completa o primeiro carregamento
       registroExecPE$.next(mockIndicador());
@@ -212,11 +223,11 @@ describe('ConformidadePage', () => {
     });
 
     it('deve resetar todos os drill-downs ao trocar filtro', () => {
-      component['drillRegistroExecucaoPE'].set('SUB1');
-      component['drillAvaliacaoPE'].set('SUB2');
-      component['drillRegistroExecucaoPT'].set('SUB3');
-      component['drillAvaliacaoPT'].set('SUB4');
-      component['drillUnidadesExecutorasPE'].set('SUB5');
+      component['drillRegistroExecucaoPE'].set({ unidade_id: 'sub1', unidade_sigla: 'SUB1' });
+      component['drillAvaliacaoPE'].set({ unidade_id: 'sub2', unidade_sigla: 'SUB2' });
+      component['drillRegistroExecucaoPT'].set({ unidade_id: 'sub3', unidade_sigla: 'SUB3' });
+      component['drillAvaliacaoPT'].set({ unidade_id: 'sub4', unidade_sigla: 'SUB4' });
+      component['drillUnidadesExecutorasPE'].set({ unidade_id: 'sub5', unidade_sigla: 'SUB5' });
 
       resetApiSubjects();
       component.onFiltrosChange({ tipo_consulta: 'situacao_atual', unidade_id: 'u2' });
@@ -285,7 +296,7 @@ describe('ConformidadePage', () => {
   describe('Drill-down individual', () => {
     beforeEach(() => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
       registroExecPE$.next(mockIndicador());
       avaliacaoPE$.next(mockIndicador());
       registroExecPT$.next(mockIndicador());
@@ -300,7 +311,7 @@ describe('ConformidadePage', () => {
 
       component.onDrillDown(1, { unidade_id: 'sub1', unidade_sigla: 'SUB1' });
 
-      expect(component['drillRegistroExecucaoPE']()).toBe('SUB1');
+      expect(component['drillRegistroExecucaoPE']()).toEqual({ unidade_id: 'sub1', unidade_sigla: 'SUB1' });
       expect(component.carregandoRegistroExecucaoPE()).toBeTrue();
       expect(component.registroExecucaoPE()).toBeNull();
       expect(apiSpy.getConformidadeRegistroExecucaoPE).toHaveBeenCalledWith(jasmine.objectContaining({ unidade_id: 'sub1' }));
@@ -317,7 +328,7 @@ describe('ConformidadePage', () => {
 
       component.onDrillDown(5, { unidade_id: 'sub5', unidade_sigla: 'SUB5' });
 
-      expect(component['drillUnidadesExecutorasPE']()).toBe('SUB5');
+      expect(component['drillUnidadesExecutorasPE']()).toEqual({ unidade_id: 'sub5', unidade_sigla: 'SUB5' });
       expect(component.carregandoUnidadesExecutorasPE()).toBeTrue();
       expect(apiSpy.getConformidadeUnidadesExecutorasPE).toHaveBeenCalledWith(jasmine.objectContaining({ unidade_id: 'sub5' }));
     });
@@ -326,7 +337,7 @@ describe('ConformidadePage', () => {
       const newRegExec$ = new Subject<Indicador>();
       apiSpy.getConformidadeRegistroExecucaoPE.and.returnValue(newRegExec$.asObservable());
 
-      component['drillRegistroExecucaoPE'].set('SUB1');
+      component['drillRegistroExecucaoPE'].set({ unidade_id: 'sub1', unidade_sigla: 'SUB1' });
       component.onVoltarDrill(1);
 
       expect(component['drillRegistroExecucaoPE']()).toBeNull();

@@ -10,6 +10,11 @@ import {
   UnidadeInicial,
   UnidadeHistorica,
 } from '../../infra/painel-api.client';
+import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { PainelFiltrosComponent } from '../components/painel-filtros.component';
+import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
+import { EvolucaoAdesaoChartComponent } from '../components/evolucao-adesao-chart.component';
+import { PdfPainelComponent } from '../components/pdf/pdf-painel.component';
 
 // Stubs para child components
 @Component({ selector: 'app-breadcrumb', standalone: true, template: '' })
@@ -111,7 +116,15 @@ describe('GestaoPgdPage', () => {
       ],
     })
       .overrideComponent(GestaoPgdPage, {
-        remove: { imports: [] },
+        remove: {
+          imports: [
+            BreadcrumbComponent,
+            PainelFiltrosComponent,
+            IndicadorBarraHorizontalComponent,
+            EvolucaoAdesaoChartComponent,
+            PdfPainelComponent,
+          ],
+        },
         add: {
           imports: [
             MockBreadcrumbComponent,
@@ -135,7 +148,7 @@ describe('GestaoPgdPage', () => {
 
     it('deve carregar unidade inicial e disparar 4 chamadas ao API', () => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
 
       expect(apiSpy.getUnidadesExecutoras).toHaveBeenCalledWith(jasmine.objectContaining({
         tipo_consulta: 'situacao_atual',
@@ -148,14 +161,14 @@ describe('GestaoPgdPage', () => {
 
     it('não deve disparar chamadas se unidade_id for null', () => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: null, unidade_sigla: null, unidade_nome: null });
+      unidadeInicial$.next({ unidade_id: null, unidade_sigla: null, unidade_nome: null, unidade_raiz_id: null, unidade_raiz_sigla: null });
 
       expect(apiSpy.getUnidadesExecutoras).not.toHaveBeenCalled();
     });
 
     it('deve atualizar sinais de unidade inicial', () => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
 
       expect(component.unidadeInicialId()).toBe('u1');
       expect(component.unidadeInicialSigla()).toBe('SIG');
@@ -166,7 +179,7 @@ describe('GestaoPgdPage', () => {
   describe('Chamadas API concorrentes', () => {
     beforeEach(() => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
     });
 
     it('deve ativar todos os flags de carregamento ao iniciar chamadas', () => {
@@ -215,7 +228,7 @@ describe('GestaoPgdPage', () => {
     it('deve limpar dados anteriores ao receber novos filtros', () => {
       // Simula primeiro carregamento completo
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
       unidadesExec$.next(mockIndicador());
       evolucaoUni$.next(mockSerieAdesao());
       participantes$.next(mockIndicador());
@@ -249,7 +262,7 @@ describe('GestaoPgdPage', () => {
 
     it('deve disparar novas chamadas ao mudar filtros rapidamente (sem cancelamento explícito)', () => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
 
       // Troca rápida sem esperar resposta anterior
       apiSpy.getUnidadesExecutoras.calls.reset();
@@ -275,7 +288,7 @@ describe('GestaoPgdPage', () => {
 
     it('deve resetar drill-down ao trocar filtros', () => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
 
       // Simula drill-down
       component['drillUnidadesExecutoras'].set('SUB1');
@@ -297,7 +310,7 @@ describe('GestaoPgdPage', () => {
   describe('Drill-down', () => {
     beforeEach(() => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
       unidadesExec$.next(mockIndicador());
       evolucaoUni$.next(mockSerieAdesao());
       participantes$.next(mockIndicador());
@@ -357,7 +370,7 @@ describe('GestaoPgdPage', () => {
   describe('Computed signals de dados vazios', () => {
     beforeEach(() => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
     });
 
     it('semDadosUnidadesExec deve ser true quando dados vazios e não carregando', () => {
