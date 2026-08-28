@@ -1,0 +1,116 @@
+.relatorio-entrega-filters {
+  .br-input input-search {
+    display: block;
+    margin-top: var(--spacing-scale-half, 0.25rem);
+  }
+}
+
+:host ::ng-deep .relatorio-entrega-filters {
+  input-search.form-group {
+    margin-bottom: 0;
+    width: 100%;
+  }
+
+  input-search input-container {
+    display: block;
+    margin-top: 0 !important;
+    width: 100% !important;
+    max-width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  input-search .input-group .form-control {
+    height: 40px;
+  }
+
+  input-search .input-group .btn {
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.relatorio-entrega-table {
+  &.br-table th,
+  &.br-table td,
+  table th,
+  table td {
+    border: 1px solid #000 !important;
+  }
+
+  &.br-table thead tr {
+    background: #d9d9d9 !important;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    min-width: 1200px;
+    border-collapse: collapse;
+    border: 1px solid #000;
+    background: #fff;
+  }
+
+  thead th {
+    padding: 8px 10px;
+    font-weight: 700;
+    font-size: 0.875rem;
+    line-height: 1.25;
+    color: #000 !important;
+    background: #d9d9d9 !important;
+    vertical-align: middle;
+  }
+
+  tbody td {
+    padding: 8px 10px;
+    font-size: 0.875rem;
+    line-height: 1.35;
+    color: #000 !important;
+    background: #fff !important;
+    vertical-align: middle;
+  }
+
+  .sortable {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  th.sub-header.sortable {
+    white-space: normal;
+    min-width: 5.5rem;
+    max-width: 7.5rem;
+  }
+
+  .group-header,
+  .sub-header {
+    background: #d9d9d9 !important;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  td.text-center,
+  th.sub-header {
+    text-align: center;
+  }
+
+  td[data-th='Unidade'],
+  td[data-th='Entrega'],
+  td[data-th='Plano'] {
+    text-align: left;
+  }
+
+  .link {
+    cursor: pointer;
+    color: #0066cc;
+    text-decoration: underline;
+  }
+
+  tbody tr:hover td {
+    background: #fff !important;
+  }
+}

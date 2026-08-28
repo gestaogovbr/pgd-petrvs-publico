@@ -458,6 +458,17 @@ class TipoCapacidadeService extends ServiceBase
         "descricao" => "Relatório de Planos de Entrega - Listar todas as unidades",
     ],
     [
+        "codigo" => "MOD_RELATORIO_ENTREGA",
+        "descricao" => "Relatório de Entregas",
+        "capacidades" => [
+            ["MOD_RELATORIO_ENTREGA_UNIDADES_VINCULADAS", "Relatório de Entregas - Permite usuário filtrar por todas as unidades vinculadas"],
+        ],
+    ],
+    [
+        "codigo" => "MOD_RELATORIO_ENTREGA_TODAS_UNIDADES",
+        "descricao" => "Relatório de Entregas - Listar todas as unidades",
+    ],
+    [
         "codigo" => "MOD_RELATORIO_USUARIO",
         "descricao" => "Relatório de Agentes Públicos",
         "capacidades" => [
