@@ -18,7 +18,7 @@ interface UnidadeReadRepositoryContract
 {
     public function hasUsuarioLotacao(string $unidadeId, string $usuarioId, bool $subordinadas = true): bool;
 
-    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool;
+    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId, bool $incluirDelegado = true): bool;
 
     public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool;
 

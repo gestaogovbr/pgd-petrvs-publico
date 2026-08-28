@@ -53,7 +53,7 @@ describe('ValidaAutorizacaoTrait::isDonoOuChefia', function () {
 
     test('retorna true quando usuário é chefia', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('u-1', 'chefia-1')->andReturn(true);
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('u-1', 'chefia-1', true)->andReturn(true);
         $trait = criarClasseComTrait($unidadeRepo);
 
         $entity = criarEntity(['user-1', 'criador-1']);
@@ -63,7 +63,7 @@ describe('ValidaAutorizacaoTrait::isDonoOuChefia', function () {
 
     test('retorna false quando não é dono nem chefia', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('u-1', 'estranho')->andReturn(false);
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('u-1', 'estranho', true)->andReturn(false);
         $trait = criarClasseComTrait($unidadeRepo);
 
         $entity = criarEntity(['user-1', 'criador-1']);
@@ -73,7 +73,7 @@ describe('ValidaAutorizacaoTrait::isDonoOuChefia', function () {
 
     test('retorna false quando getOwnerIds é vazio e não é chefia', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('u-1', 'user-1')->andReturn(false);
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('u-1', 'user-1', true)->andReturn(false);
         $trait = criarClasseComTrait($unidadeRepo);
 
         $entity = criarEntity([]);
@@ -114,13 +114,55 @@ describe('ValidaAutorizacaoTrait::autorizarDonoOuChefia', function () {
         $trait->autorizarDonoOuChefia($entity, 'x', 'u-1', 'Não pode clonar.');
     })->throws(ForbiddenException::class, 'Não pode clonar.');
 
-    test('usa mensagem padrão quando não informada', function () {
+    test('incluirDelegado=false permite chefia titular da unidade', function () {
         $unidadeRepo = Mockery::mock(UnidadeRepository::class);
-        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->andReturn(false);
-        $trait = criarClasseComTrait($unidadeRepo);
 
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('u-1', 'chefia-1', false)
+            ->andReturn(true);
+
+        $trait = criarClasseComTrait($unidadeRepo);
         $entity = criarEntity(['outro']);
 
-        $trait->autorizarDonoOuChefia($entity, 'x', 'u-1');
-    })->throws(ForbiddenException::class, 'Usuário não tem permissão para realizar esta ação.');
+        $trait->autorizarDonoOuChefia($entity, 'chefia-1', 'u-1', 'Sem permissão.', incluirDelegado: false);
+        expect(true)->toBeTrue();
+    });
+
+    test('incluirDelegado=false bloqueia delegado puro', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('u-1', 'delegado-1', false)
+            ->andReturn(false);
+
+        $trait = criarClasseComTrait($unidadeRepo);
+        $entity = criarEntity(['outro']);
+
+        $trait->autorizarDonoOuChefia($entity, 'delegado-1', 'u-1', 'Sem permissão.', incluirDelegado: false);
+    })->throws(ForbiddenException::class, 'Sem permissão.');
+
+    test('incluirDelegado=false permite chefia de unidade superior via subordinadas', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('u-filha', 'chefia-1', false)
+            ->andReturn(true);
+
+        $trait = criarClasseComTrait($unidadeRepo);
+        $entity = criarEntity(['outro']);
+
+        $trait->autorizarDonoOuChefia($entity, 'chefia-1', 'u-filha', 'Sem permissão.', incluirDelegado: false);
+        expect(true)->toBeTrue();
+    });
+
+    test('incluirDelegado=false permite dono do plano independentemente de atribuição', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+        $unidadeRepo->shouldNotReceive('isUsuarioGestorRecursivo');
+        $trait = criarClasseComTrait($unidadeRepo);
+
+        $entity = criarEntity(['delegado-1']);
+
+        $trait->autorizarDonoOuChefia($entity, 'delegado-1', 'u-1', 'Sem permissão.', incluirDelegado: false);
+        expect(true)->toBeTrue();
+    });
 });
