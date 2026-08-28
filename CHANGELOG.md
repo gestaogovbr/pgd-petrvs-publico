@@ -21,6 +21,7 @@
 ### Corrigido
 - Delegados conseguiam assinar TCR de Plano de Trabalho indevidamente
 - Delegados não conseguiam visualizar dados de usuários vinculados (colaboradores) na mesma unidade
+- Usuários com múltiplas matrículas SIAPE não conseguiam visualizar ou editar o próprio cadastro
 
 ## 3.0.13 24/08/2026
 
