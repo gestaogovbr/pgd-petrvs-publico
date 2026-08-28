@@ -1,3 +1,23 @@
+## 3.1.0 28/08/2026
+
+### Adicionado
+- **Módulo de Painéis Gerenciais** com quatro painéis de indicadores para acompanhamento da gestão:
+  - **Alinhamento e Avaliações**: indicadores de alinhamento institucional e desempenho das avaliações por unidade
+  - **Conformidade**: indicadores de conformidade dos Planos de Trabalho e Planos de Entrega com os status esperados
+  - **Modalidades**: distribuição de modalidades de trabalho por unidade com detalhamento hierárquico
+  - **Abrangência do PGD**: indicadores de adesão ao PGD com série histórica consolidada mensalmente
+- Navegação hierárquica (drill-down/drill-up) em todos os painéis, permitindo aprofundar nos dados das unidades subordinadas
+- Consulta histórica no painel Abrangência do PGD com seleção de período por unidade
+- Exportação em PDF dos painéis gerenciais
+- Dados consolidados recursivamente por hierarquia de unidades em todos os painéis
+- Job agendado (último dia do mês) para consolidação dos dados de adesão ao PGD
+- Seletor de unidade com busca e carregamento sob demanda
+- Botão "Saiba mais" nos gráficos com navegação para os relatórios correspondentes (Planos de Trabalho, Planos de Entrega, Agentes Públicos, Unidades) com filtros pré-aplicados ao contexto visualizado
+- Redirecionamento pós-login para Painéis Gerenciais para Adm Master, Adm Negocial e Chefias com atribuição em unidades autorizadoras ou instituidoras
+
+### Modificado
+- Rota da API `GET /api/v2/unidade` alterada para suportar paginação e filtro por termo
+
 ## 3.0.13 24/08/2026
 
 ### Adicionado

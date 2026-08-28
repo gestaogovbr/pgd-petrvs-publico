@@ -495,6 +495,10 @@ class TipoCapacidadeService extends ServiceBase
     [
       "codigo" => "MOD_TIPO_OBJETIVO",
       "descricao" => "Módulo de Tipos de Objetivos",
+    ],
+    [
+      "codigo" => "MOD_PAINEL_GER",
+      "descricao" => "Módulo de Painéis Gerenciais",
     ]
   ];
 

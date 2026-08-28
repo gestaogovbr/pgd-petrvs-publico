@@ -1,0 +1,97 @@
+.pdf-painel {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #333;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  thead td {
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ccc;
+  }
+
+  tbody td {
+    vertical-align: top;
+  }
+
+  &__titulo {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+  }
+
+  &__meta {
+    margin: 2px 0;
+    font-size: 12px;
+  }
+}
+
+.pdf-indicador {
+  border: 1px solid #ddd;
+  padding: 16px;
+  page-break-inside: avoid;
+  margin-top: 16px;
+
+  &__titulo {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+  }
+
+  &__info {
+    margin: 0 0 12px 0;
+    font-size: 10px;
+    color: #666;
+    font-style: italic;
+  }
+
+  &__grafico {
+    position: relative;
+  }
+
+  &__chart-container {
+    position: relative;
+  }
+
+  &__legenda {
+    margin-top: 8px;
+  }
+
+  &__legenda-item {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 16px;
+  }
+
+  &__legenda-cor {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-right: 4px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  &__legenda-nome {
+    font-size: 11px;
+  }
+
+  &__sem-dados {
+    color: #999;
+    font-style: italic;
+  }
+
+  &__origem {
+    margin: 8px 0 0 0;
+    font-size: 9px;
+    color: #999;
+    font-style: italic;
+  }
+}
