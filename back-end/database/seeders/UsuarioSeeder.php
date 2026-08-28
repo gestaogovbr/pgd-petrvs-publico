@@ -159,6 +159,16 @@ class UsuarioSeeder extends Seeder
         'modalidade_pgd' => 'presencial',
         'sexo' => 'MASCULINO',
         'is_admin' => true,
+      ],
+      [
+        'email' => env('EMAIL_ALEXANDRE', ''),
+        'nome' => 'Alexandre Schlottgen',
+        'cpf' => env('CPF_ALEXANDRE', ''),
+        'apelido' => 'Alexandre',
+        'perfil_id' => $perfilDesenvolvedorId,
+        'modalidade_pgd' => 'presencial',
+        'sexo' => 'MASCULINO',
+        'is_admin' => true,
       ]
     ];
 
