@@ -11,6 +11,7 @@
 - Falha na migração da versão 2 para a 3 em ambientes com charset legado ao unificar descrições de atividades
 - Relatório de Carga Individual do SIAPE era exibido sem conteúdo
 - Adm Master não conseguia visualizar todos os Planos de Trabalho na listagem
+- Exclusão de registros de execução do Plano de Entrega
 
 
 ## 3.0.12 14/08/2026
