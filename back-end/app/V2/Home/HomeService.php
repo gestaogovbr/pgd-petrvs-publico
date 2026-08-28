@@ -7,15 +7,13 @@ namespace App\V2\Home;
 use App\V2\Home\DataProviders\AniversariantesDoDia;
 use App\V2\Home\DataProviders\ContribuicoesParticipantes;
 use App\V2\Home\DataProviders\EmFeriasHoje;
+use App\V2\Home\DataProviders\MeusPlanosVigentes;
 use App\V2\Home\DataProviders\PendenciasUsuario;
 use App\V2\Home\DataProviders\PlanosVigentes;
 use App\V2\Home\DataProviders\ResumoEquipe;
 use App\V2\Home\DTOs\HomeRequestDTO;
 use App\V2\Home\Validators\HomeAuthorizationValidator;
-use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
-use App\V2\PlanoTrabalho\DTOs\PlanoTrabalhoIndexDTO;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class HomeService
 {
@@ -27,7 +25,7 @@ class HomeService
         private readonly ContribuicoesParticipantes $contribuicoes,
         private readonly AniversariantesDoDia $aniversariantes,
         private readonly EmFeriasHoje $emFeriasHoje,
-        private readonly PlanoTrabalhoReadRepositoryContract $planoTrabalhoReadRepository,
+        private readonly MeusPlanosVigentes $meusPlanosVigentes,
     ) {}
 
     public function getPendencias(array $data): array
@@ -77,40 +75,18 @@ class HomeService
         return $this->contribuicoes->getData($dto);
     }
 
+    public function getMeusPlanosVigentes(array $data): array
+    {
+        $dto = $this->buildDTO($data);
+
+        return $this->meusPlanosVigentes->getData($dto);
+    }
+
     private function buildDTO(array $data): HomeRequestDTO
     {
         $dto = HomeRequestDTO::fromArray($data, Auth::id());
         $this->authzValidator->validar($dto);
 
         return $dto;
-    }
-
-    public function getMeusPlanosVigentes(string $unidadeId): array
-    {
-        $usuarioId = Auth::id();
-
-        $filtro = PlanoTrabalhoIndexDTO::fromArray([
-            'vigentes' => true,
-            'usuario_id' => $usuarioId,
-            'usuarioLogadoId' => $usuarioId,
-            'page' => 1,
-            'size' => 1,
-        ]);
-
-        $paginator = $this->planoTrabalhoReadRepository->buscarPlanosListagem($filtro);
-        $planoTrabalho = $paginator->items()[0] ?? null;
-
-        $planoEntregaId = DB::table('planos_entregas')
-            ->where('unidade_id', $unidadeId)
-            ->where('status', 'ATIVO')
-            ->where('data_inicio', '<=', now()->toDateString())
-            ->where('data_fim', '>=', now()->toDateString())
-            ->whereNull('deleted_at')
-            ->value('id');
-
-        return [
-            'plano_trabalho_id' => $planoTrabalho?->id,
-            'plano_entregas_id' => $planoEntregaId,
-        ];
     }
 }

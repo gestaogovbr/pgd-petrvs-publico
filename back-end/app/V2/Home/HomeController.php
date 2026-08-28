@@ -145,8 +145,8 @@ class HomeController extends Controller
     public function meusPlanosVigentes(Request $request): JsonResponse
     {
         try {
-            $unidadeId = $request->validate(['unidade_id' => 'required|uuid'])['unidade_id'];
-            $result = $this->service->getMeusPlanosVigentes($unidadeId);
+            $data = HomeRequestValidator::index($request);
+            $result = $this->service->getMeusPlanosVigentes($data);
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (ValidationException $e) {
