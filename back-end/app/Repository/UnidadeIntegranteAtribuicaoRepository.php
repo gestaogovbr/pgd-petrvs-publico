@@ -37,4 +37,9 @@ class UnidadeIntegranteAtribuicaoRepository
     {
         return $this->writeRepository->deleteAtivasByUnidadeIntegranteIds($unidadeIntegranteIds);
     }
+
+    public function deleteGestorByUsuario(string $usuarioId, bool $ignorarInformais = true): int
+    {
+        return $this->writeRepository->deleteGestorByUsuario($usuarioId, $ignorarInformais);
+    }
 }

@@ -24,6 +24,8 @@ use App\Repository\SiapeBlackListServidorRepository;
 use App\Services\IntegracaoService;
 use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
+use App\Services\Sipec\SipecService;
+use App\DTOs\Sipec\ServidorSipecDTO;
 use App\Services\UnidadeService;
 use App\Services\UtilService;
 use App\Support\ModalidadePgd;
@@ -830,8 +832,6 @@ class UsuarioService extends ServiceBase
 
         if ($perfil->nivel < 6 && $usuarioExterno == 1) {
             throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
-        } elseif ($perfil->nivel == 6 && $usuarioExterno == 0) {
-            throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
         }
     }
 
@@ -1009,6 +1009,31 @@ class UsuarioService extends ServiceBase
         return [
             'pessoais'    => $dadosPessoaisArray,
             'funcionais'  => $dadosFuncionaisArray,
+        ];
+    }
+
+    public function consultaCPFSipec(string $cpf): array
+    {
+        $sipecService = new SipecService();
+        $servidorRaw = $sipecService->buscarServidorPorCpf($cpf);
+
+        if (!$servidorRaw) {
+            throw new \Exception("Servidor com CPF {$cpf} não encontrado no SIPEC.");
+        }
+
+        $dto = ServidorSipecDTO::fromServidor($servidorRaw);
+        $dadosPessoais = $dto['dadosPessoais'];
+
+        $vinculos = array_map(function($vinculo) {
+            $item = $vinculo->toDadosFuncionais();
+            $unidade = $this->unidadeRepository->findByCodigo($item['codUorgExercicio'] ?? '');
+            $item['unidadeSigla'] = $unidade?->sigla;
+            return $item;
+        }, $dto['vinculos']);
+
+        return [
+            'pessoais'    => $dadosPessoais,
+            'funcionais'  => $vinculos,
         ];
     }
 

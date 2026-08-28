@@ -178,7 +178,8 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             "isr.funcoes as gestor " .
             "FROM integracao_servidores as isr " .
             "LEFT JOIN usuarios u on u.matricula = isr.matriculasiape {$joinCpfEscopado} " .
-            "WHERE u.matricula is NULL AND isr.codigo_orgao = ? {$escopoSql}",
+            "WHERE u.matricula is NULL AND isr.codigo_orgao = ? {$escopoSql} " .
+            "ORDER BY isr.cpf, isr.matriculasiape",
             array_merge([$codigoOrgao], $bindings)
         );
     }

@@ -1,0 +1,68 @@
+<app-breadcrumb></app-breadcrumb>
+
+<div class="container-fluid px-4 py-3">
+  <!-- Controles de Topo -->
+  <div class="row align-items-center mb-4">
+    <div class="col-md-4">
+      <br-select
+        label="Unidade"
+        [options]="unidadeOptions()"
+        (valueChange)="onUnidadeChange($event)"
+        class="w-100">
+      </br-select>
+    </div>
+    <div class="col-md-3 d-flex align-items-center mt-auto flex-fill justify-content-end">
+      @if (isGestorUnidade()) {
+        <div class="br-switch">
+          <input
+            id="subordinadas-toggle"
+            type="checkbox"
+            [checked]="subordinadas()"
+            (change)="onSubordinadasChange($any($event.target).checked)"
+          />
+          <label for="subordinadas-toggle">Unidades Subordinadas</label>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Conteúdo do Dashboard -->
+  @if (selectedUnidadeId()) {
+    <div class="row">
+      <!-- Coluna Principal (75%) -->
+      <div class="col-lg-9">
+        <!-- Linha 1: Pendências + Planos Vigentes -->
+        <div class="row mb-3">
+          <div class="col-md-7">
+            <home-pendencias-usuario [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+          </div>
+          <div class="col-md-5">
+            <home-planos-vigentes [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+          </div>
+        </div>
+
+        <!-- Linha 2: Ações Gerenciais -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <home-acoes-gerenciais />
+          </div>
+        </div>
+
+        <!-- Linha 3: Resumo Equipe -->
+        <div class="row mb-3">
+          <div class="col-md-8">
+            <home-resumo-equipe [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+          </div>
+          <div class="col-md-4">
+            <home-contribuicoes [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna Lateral (25%) -->
+      <div class="col-lg-3">
+        <home-em-ferias [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+      </div>
+    </div>
+  }
+</div>

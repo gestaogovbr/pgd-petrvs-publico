@@ -3,6 +3,8 @@
 namespace Tests\Unit\Services;
 
 use App\Exceptions\NotFoundException;
+use App\Exceptions\ServerException;
+use App\Models\Perfil;
 use App\Models\SiapeBlackListServidor;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
@@ -761,5 +763,65 @@ describe('UsuarioService::isGestorUnidade - incluiDelegado', function () {
 
         expect($this->service->isGestorUnidade($unidadeId, incluiDelegado: true))->toBeFalse();
         expect($this->service->isGestorUnidade($unidadeId, incluiDelegado: false))->toBeFalse();
+    });
+});
+
+describe('UsuarioService - validarColaborador (Unit)', function () {
+    it('nao lanca excecao quando usuario_externo nao foi informado no payload', function () {
+        $data = ['perfil_id' => 'perfil-id'];
+
+        $this->service->validarColaborador($data);
+    })->throwsNoExceptions();
+
+    it('continua bloqueando usuario externo em perfil de nivel inferior a 6', function () {
+        $perfil = new Perfil();
+        $perfil->forceFill(['id' => 'perfil-id', 'nivel' => 3, 'nome' => 'Perfil Unidade']);
+
+        $this->perfilRepository->shouldReceive('find')->with('perfil-id')->andReturn($perfil);
+
+        $data = ['perfil_id' => 'perfil-id', 'usuario_externo' => 1];
+
+        expect(fn () => $this->service->validarColaborador($data))
+            ->toThrow(ServerException::class, 'Usuário externo não pode ter o nível de acesso: Perfil Unidade');
+    });
+
+    it('permite usuario interno (usuario_externo=0) no Perfil Colaborador (nivel 6) - bug do card #2419', function () {
+        $perfil = new Perfil();
+        $perfil->forceFill(['id' => 'perfil-id', 'nivel' => 6, 'nome' => 'Perfil Colaborador']);
+
+        $this->perfilRepository->shouldReceive('find')->with('perfil-id')->andReturn($perfil);
+
+        $data = ['perfil_id' => 'perfil-id', 'usuario_externo' => 0];
+
+        $this->service->validarColaborador($data);
+    })->throwsNoExceptions();
+
+    it('permite usuario externo (usuario_externo=1) no Perfil Colaborador (nivel 6)', function () {
+        $perfil = new Perfil();
+        $perfil->forceFill(['id' => 'perfil-id', 'nivel' => 6, 'nome' => 'Perfil Colaborador']);
+
+        $this->perfilRepository->shouldReceive('find')->with('perfil-id')->andReturn($perfil);
+
+        $data = ['perfil_id' => 'perfil-id', 'usuario_externo' => 1];
+
+        $this->service->validarColaborador($data);
+    })->throwsNoExceptions();
+
+    it('permite usuario interno (usuario_externo=0) no Perfil Consulta (nivel 7)', function () {
+        $perfil = new Perfil();
+        $perfil->forceFill(['id' => 'perfil-id', 'nivel' => 7, 'nome' => 'Perfil Consulta']);
+
+        $this->perfilRepository->shouldReceive('find')->with('perfil-id')->andReturn($perfil);
+
+        $data = ['perfil_id' => 'perfil-id', 'usuario_externo' => 0];
+
+        $this->service->validarColaborador($data);
+    })->throwsNoExceptions();
+
+    it('lanca excecao quando perfil_id nao foi informado mas usuario_externo sim', function () {
+        $data = ['usuario_externo' => 1];
+
+        expect(fn () => $this->service->validarColaborador($data))
+            ->toThrow(ServerException::class, 'ID do perfil não foi informado.');
     });
 });

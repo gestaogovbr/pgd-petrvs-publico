@@ -74,7 +74,13 @@ interface UnidadeReadRepositoryContract
     /** @return string[] */
     public function linhaAscendente(string $unidadeId): array;
 
+    /**
+     * @return Collection<int, Unidade>
+     */
+    public function findAllComCodigo(): Collection;
+
     public function findAllWhere(array $criteria): SupportCollection;
+
     /**
      * Busca unidades com dados de localidade (entidade_id, cidade_id, uf).
      *

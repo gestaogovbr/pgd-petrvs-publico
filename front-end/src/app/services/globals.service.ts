@@ -67,7 +67,7 @@ export class GlobalsService {
   }
 
   public goHome() {
-    this.go.navigate({ route: ["home", this.contexto!.key.toLowerCase()] });
+    this.go.navigate({ route: ['home-v2'] });
   }
 
   public is(entidade: string): boolean {
@@ -91,11 +91,7 @@ export class GlobalsService {
   }
 
   public get initialRoute(): string[] {
-    if (this.deveRedirecionarParaPaineisGerenciais()) {
-      return ['gestao', 'paineis-gerenciais'];
-    }
-    const strRoute = (this.contexto ? "/home/" + this.contexto!.key.toLowerCase() : "/home");
-    return strRoute.substring(strRoute.startsWith("/") ? 1 : 0).split("/");
+        return ['home-v2'];
   }
 
   /**

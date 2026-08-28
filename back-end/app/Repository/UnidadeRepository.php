@@ -182,11 +182,6 @@ class UnidadeRepository
         return $this->readRepository->linhaAscendente($unidadeId);
     }
 
-    public function findAll(): EloquentCollection
-    {
-        return $this->readRepository->findAllWhere([]);
-    }
-
     /**
      * @param array<string> $unidadeIds
      * @return Collection
@@ -199,5 +194,46 @@ class UnidadeRepository
     public function findRaiz(): ?Unidade
     {
         return $this->readRepository->findRaiz();
+    }
+
+    public function findAll(): EloquentCollection
+    {
+        return $this->readRepository->findAllWhere([]);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function create(array $attributes): Unidade
+    {
+        /** @var Unidade */
+        return $this->writeRepository->create($attributes);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function update(string $id, array $attributes): ?Unidade
+    {
+        /** @var Unidade|null */
+        return $this->writeRepository->update($id, $attributes);
+    }
+
+    /**
+     * @return EloquentCollection<int, Unidade>
+     */
+    public function findAllComCodigo(): EloquentCollection
+    {
+        return $this->readRepository->findAllComCodigo();
+    }
+
+    public function recalcularPaths(string $pathAntigo, string $pathNovo): int
+    {
+        return $this->writeRepository->recalcularPaths($pathAntigo, $pathNovo);
+    }
+
+    public function reativarPorIntegracao(): int
+    {
+        return $this->writeRepository->reativarPorIntegracao();
     }
 }

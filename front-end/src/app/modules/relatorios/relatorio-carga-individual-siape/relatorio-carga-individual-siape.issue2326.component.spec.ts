@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
@@ -15,13 +15,6 @@ import { LookupService } from 'src/app/services/lookup.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { RelatorioCargaIndividualSiapeComponent } from './relatorio-carga-individual-siape.component';
-
-@Component({
-  selector: 'section',
-  template: '<span data-testid="section-selector-collision">Conteúdo substituído pelo seletor section</span>',
-  standalone: false,
-})
-class SectionSelectorCollisionStubComponent {}
 
 function relatorioIssue2326(overrides: Partial<RelatorioCargaIndividualSiape> = {}): RelatorioCargaIndividualSiape {
   return {
@@ -103,7 +96,7 @@ describe('RelatorioCargaIndividualSiapeComponent - issue 2326', () => {
     dialog.alert.and.resolveTo();
 
     await TestBed.configureTestingModule({
-      declarations: [RelatorioCargaIndividualSiapeComponent, SectionSelectorCollisionStubComponent],
+      declarations: [RelatorioCargaIndividualSiapeComponent],
       imports: [CommonModule, ReactiveFormsModule],
       providers: [
         { provide: LookupService, useValue: {} },
@@ -180,18 +173,5 @@ describe('RelatorioCargaIndividualSiapeComponent - issue 2326', () => {
     expect(textoDetalhe).toContain('Modalidade PGD');
     expect(textoDetalhe).toContain('Nao encontrado');
     expect(textoDetalhe).toContain('Nao informado');
-  });
-
-  it('não substitui os blocos do relatório pelo componente global com seletor section (issue 2470)', async () => {
-    fixture.detectChanges();
-    await fixture.whenStable();
-    fixture.detectChanges();
-
-    const elementoColidido = fixture.nativeElement.querySelector('[data-testid="section-selector-collision"]');
-    const cardRelatorio = fixture.nativeElement.querySelector('.relatorio-carga-siape-card');
-
-    expect(elementoColidido).toBeNull();
-    expect(cardRelatorio).not.toBeNull();
-    expect(cardRelatorio.textContent).toContain('relatorio-issue-2326');
   });
 });

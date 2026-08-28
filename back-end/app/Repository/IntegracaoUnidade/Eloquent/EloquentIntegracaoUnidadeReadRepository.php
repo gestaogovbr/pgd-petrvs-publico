@@ -41,7 +41,8 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
 
     public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?IntegracaoUnidade
     {
-        $registro = $this->query()
+        /** @var IntegracaoUnidade|null $registro */
+        $registro = $this->model->withTrashed()
             ->where('codigo_orgao', $codigoOrgao)
             ->where(function ($query) use ($codigo): void {
                 $query->where('id_servo', $codigo)
@@ -49,7 +50,20 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
             })
             ->first();
 
-        return $registro instanceof IntegracaoUnidade ? $registro : null;
+        return $registro;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, IntegracaoUnidade>
+     */
+    public function findAllAtivas(): \Illuminate\Database\Eloquent\Collection
+    {
+        /** @var \Illuminate\Database\Eloquent\Collection<int, IntegracaoUnidade> */
+        return $this->query()
+            ->whereNull('deleted_at')
+            ->where('ativa', 'true')
+            ->select(['id_servo', 'pai_servo', 'nomeuorg', 'siglauorg', 'municipio_ibge', 'data_modificacao'])
+            ->get();
     }
 
     /**
@@ -78,5 +92,21 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
             ->filter()
             ->unique()
             ->values();
+    }
+
+    public function getUnidadesComChefiasCompleto(): Collection
+    {
+        return DB::table('integracao_unidades as iu')
+            ->join('unidades as u', 'iu.id_servo', '=', 'u.codigo')
+            ->select([
+                'u.id as id_unidade',
+                'u.codigo as codigo_unidade',
+                'iu.cpf_titular_autoridade_uorg as cpf_titular',
+                'iu.cpf_substituto_autoridade_uorg as cpf_substituto',
+            ])
+            ->whereNull('u.deleted_at')
+            ->whereNull('u.data_inativacao')
+            ->whereNull('iu.deleted_at')
+            ->get();
     }
 }
