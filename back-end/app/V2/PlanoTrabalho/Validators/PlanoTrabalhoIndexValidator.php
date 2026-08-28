@@ -32,19 +32,27 @@ class PlanoTrabalhoIndexValidator
         $usuario = $this->usuarioRepository->findById($filtro->usuarioLogadoId);
         $nivel = $usuario->perfil->nivel;
 
-        if ($nivel >= PerfilEnum::CONSULTA->value) {
-            return $this->validarPerfilConsulta($filtro);
+        if ($nivel <= PerfilEnum::ADMINISTRADOR_MASTER->value) {
+            return $filtro;
+        }
+
+        if ($nivel === PerfilEnum::ADMINISTRADOR_NEGOCIAL->value) {
+            return $this->validarPerfilUnidade($filtro);
+        }
+
+        if ($nivel === PerfilEnum::UNIDADE->value) {
+            return $this->validarPerfilUnidade($filtro);
+        }
+
+        if ($nivel === PerfilEnum::PARTICIPANTE->value) {
+            return $this->validarPerfilParticipante($filtro);
         }
 
         if ($nivel === PerfilEnum::COLABORADOR->value) {
             return $this->validarPerfilColaborador($filtro);
         }
 
-        if ($nivel >= PerfilEnum::PARTICIPANTE->value) {
-            return $this->validarPerfilParticipante($filtro);
-        }
-
-        return $this->validarPerfilUnidade($filtro);
+        return $filtro;
     }
 
     private function validarMinhaEquipe(PlanoTrabalhoIndexDTO $filtro): PlanoTrabalhoIndexDTO
@@ -59,11 +67,6 @@ class PlanoTrabalhoIndexValidator
         }
 
         return $filtro->withUnidadesId($unidades);
-    }
-
-    private function validarPerfilConsulta(PlanoTrabalhoIndexDTO $filtro): PlanoTrabalhoIndexDTO
-    {
-        return $filtro;
     }
 
     private function validarPerfilColaborador(PlanoTrabalhoIndexDTO $filtro): PlanoTrabalhoIndexDTO

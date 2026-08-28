@@ -1,3 +1,18 @@
+## 3.0.13 24/08/2026
+
+### Adicionado
+- Exibição da CHD Bruta no bloco Informações Gerais do Plano de Trabalho
+- Controle de permissões na visualização e edição de usuários: apenas quem possui permissão e está na mesma hierarquia de unidades pode visualizar ou editar outros agentes públicos. Alteração de perfil não pode ser feita pelo próprio usuário nem atribuir nível superior ao seu
+- Tela de árvore da cadeia de valor com visualização hierárquica dos processos, painel lateral com resumo de unidades, esforço, pessoas e entregas, e modal de detalhamento com filtros por unidade e entrega
+- Cancelamento de Plano de Trabalho para Adm Master e Adm Negocial (quando substituto ou delegado na unidade do PT), incluindo planos concluídos ou com consolidações finalizadas
+
+### Corrigido
+- Atribuições de usuários não eram salvas ou removidas corretamente ao editar pelo formulário
+- Falha na migração da versão 2 para a 3 em ambientes com charset legado ao unificar descrições de atividades
+- Relatório de Carga Individual do SIAPE era exibido sem conteúdo
+- Adm Master não conseguia visualizar todos os Planos de Trabalho na listagem
+
+
 ## 3.0.12 14/08/2026
 
 ### Adicionado
