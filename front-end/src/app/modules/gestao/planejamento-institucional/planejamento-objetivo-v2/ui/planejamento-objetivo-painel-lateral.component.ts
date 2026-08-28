@@ -21,6 +21,16 @@ import {
 } from '../infra/planejamento-objetivo-esforco-api.client';
 import { PlanejamentoObjetivoEntregasDetalhamentoModalComponent } from './planejamento-objetivo-entregas-detalhamento-modal.component';
 
+/** Textos das informações adicionais (tooltips) de cada indicador de uma seção do painel. */
+export type PainelSecaoTooltips = {
+  esforcoDisponivel: string;
+  esforcoPlanejado: string;
+  esforcoExecutado: string;
+  participantes: string;
+  totalEntregas: string;
+  entregasConcluidas: string;
+};
+
 @Component({
   selector: 'app-planejamento-objetivo-painel-lateral',
   standalone: true,
@@ -44,6 +54,59 @@ export class PlanejamentoObjetivoPainelLateralComponent implements OnDestroy {
   readonly resumo = signal<ObjetivoPainelResumoApi | null>(null);
   readonly unidadesFiltro = signal<ObjetivoPainelFiltroOpcaoApi[]>([]);
   readonly filtroUnidadeId = signal('');
+
+  /** Informações adicionais dos indicadores — textos exatos das RN04/06/08/10/12/14 e RN17/19/21/23/25/27. */
+  readonly tooltips: { item: PainelSecaoTooltips; consolidado: PainelSecaoTooltips } = {
+    item: {
+      esforcoDisponivel:
+        'Soma da carga horária disponível de todos os participantes do PGD lotados ou vinculados às unidades ' +
+        'consideradas, independentemente de contribuírem para a realização das entregas.',
+      esforcoPlanejado:
+        'Soma das horas de trabalho planejadas, calculadas com base no percentual de contribuição de cada ' +
+        'participante para a realização das entregas. O percentual indica quanto o esforço planejado representa ' +
+        'em relação ao esforço total disponível.',
+      esforcoExecutado:
+        'Soma das horas de trabalho efetivamente registradas na execução da contribuição de cada participante ' +
+        'para a realização das entregas. O percentual indica quanto o esforço executado representa em relação ' +
+        'ao esforço total planejado.',
+      participantes:
+        'Quantidade de participantes envolvidos na realização das entregas. Cada participante é contabilizado ' +
+        'uma única vez, ainda que esteja envolvido em mais de um Plano de Trabalho.',
+      totalEntregas:
+        'Quantidade total de entregas cadastradas nas unidades para a realização do item do Planejamento ' +
+        'Institucional selecionado.',
+      entregasConcluidas:
+        'Quantidade de entregas concluídas em Planos de Entregas avaliados. O percentual indica quanto as ' +
+        'entregas concluídas representam em relação ao total de entregas desses planos.',
+    },
+    consolidado: {
+      esforcoDisponivel:
+        'Soma da carga horária disponível de todos os participantes do PGD lotados ou vinculados às unidades ' +
+        'consideradas, abrangendo o item do Planejamento Institucional selecionado e todos os itens ' +
+        'hierarquicamente subordinados, independentemente de contribuírem para a realização das entregas.',
+      esforcoPlanejado:
+        'Soma das horas de trabalho planejadas, calculadas com base no percentual de contribuição de cada ' +
+        'participante para a realização das entregas do item do Planejamento Institucional selecionado e de ' +
+        'todos os itens hierarquicamente subordinados. O percentual indica quanto o esforço planejado ' +
+        'representa em relação ao esforço total disponível.',
+      esforcoExecutado:
+        'Soma das horas de trabalho efetivamente registradas na execução da contribuição de cada participante ' +
+        'para a realização das entregas do item do Planejamento Institucional selecionado e de todos os itens ' +
+        'hierarquicamente subordinados. O percentual indica quanto o esforço executado representa em relação ' +
+        'ao esforço total planejado.',
+      participantes:
+        'Quantidade de participantes envolvidos na realização das entregas do item do Planejamento ' +
+        'Institucional selecionado e de todos os itens hierarquicamente subordinados. Cada participante é ' +
+        'contabilizado uma única vez, ainda que esteja envolvido em mais de um Plano de Trabalho.',
+      totalEntregas:
+        'Quantidade total de entregas cadastradas nas unidades para a realização do item do Planejamento ' +
+        'Institucional selecionado e de todos os itens hierarquicamente subordinados.',
+      entregasConcluidas:
+        'Quantidade de entregas concluídas em Planos de Entregas avaliados, considerando o item do ' +
+        'Planejamento Institucional selecionado e todos os itens hierarquicamente subordinados. O percentual ' +
+        'indica quanto as entregas concluídas representam em relação ao total de entregas desses planos.',
+    },
+  };
 
   private detalhamentoOverlayRef: OverlayRef | null = null;
   private detalhamentoBackdropSub: { unsubscribe: () => void } | null = null;
@@ -171,9 +234,8 @@ export class PlanejamentoObjetivoPainelLateralComponent implements OnDestroy {
       this.resumo.update(atual => atual
         ? {
             ...atual,
-            esforco: data.esforco,
-            pessoas: data.pessoas,
-            entregas: data.entregas,
+            item: data.item,
+            consolidado: data.consolidado,
           }
         : atual,
       );

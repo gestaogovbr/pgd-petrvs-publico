@@ -370,7 +370,7 @@ export class InputEditorComponent extends InputBase implements OnInit {
       });
       this.value = this.control.value;
     }
-    this.updateEditor();
+    this.updateEditor(this.control?.value || undefined);
     this.operatorForm.valueChanges.subscribe(o => {
       const tipoUm = o.comparadorUmTipo;
       const tipoDois = o.comparadorDoisTipo;

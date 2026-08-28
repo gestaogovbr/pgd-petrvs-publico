@@ -370,7 +370,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     {
         /** @var PlanoTrabalho|null $plano */
         $plano = PlanoTrabalho::with([
-            'usuario:id,nome,apelido,nome_social',
+            'usuario:id,nome,apelido,nome_social,cod_jornada',
             'usuario.lotacao:id,usuario_id,unidade_id',
             'usuario.lotacao.unidade:id,unidade_pai_id',
             'unidade:id,sigla,nome,unidade_pai_id',

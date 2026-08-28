@@ -35,6 +35,8 @@ import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 import { UnidadeIntegranteAtribuicao } from 'src/app/models/unidade-integrante-atribuicao.model';
 import { ProgramaService } from 'src/app/services/programa.service';
 import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
+import { UsuarioService } from 'src/app/v2/services/usuario.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
     selector: 'plano-trabalho-form',
@@ -58,6 +60,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
 
   public programaDao: ProgramaDaoService;
   public usuarioDao: UsuarioDaoService;
+  public usuarioService: UsuarioService;
   public unidadeDao: UnidadeDaoService;
   public documentoDao: DocumentoDaoService;
   public documentoService: DocumentoService;
@@ -104,6 +107,7 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
     this.joinPrograma = ["template_tcr"];
     this.programaDao = injector.get<ProgramaDaoService>(ProgramaDaoService);
     this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
+    this.usuarioService = injector.get<UsuarioService>(UsuarioService);
     this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
     this.documentoService = injector.get<DocumentoService>(DocumentoService);
     this.templateService = injector.get<TemplateService>(TemplateService);
@@ -556,9 +560,10 @@ export class PlanoTrabalhoFormComponent extends PageFormBase<PlanoTrabalho, Plan
         }));
       }
       if (this.form!.controls.editar_texto_complementar_usuario.value) {
-        requests.push(this.usuarioDao.update(this.entity!.usuario_id, { 
-          texto_complementar_plano: this.form!.controls.usuario_texto_complementar.value 
-        }));
+        requests.push(firstValueFrom(this.usuarioService.atualizarTextoComplementar(
+          this.entity!.usuario_id,
+          this.form!.controls.usuario_texto_complementar.value
+        )));
       }
       
       let responses = await Promise.all(requests);

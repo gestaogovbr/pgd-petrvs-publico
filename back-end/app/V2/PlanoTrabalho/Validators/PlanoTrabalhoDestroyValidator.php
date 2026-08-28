@@ -27,6 +27,7 @@ class PlanoTrabalhoDestroyValidator
 
     public function validar(string $planoId, string $usuarioLogadoId): void
     {
+        /** @var \App\Models\PlanoTrabalho|null $plano */
         $plano = $this->planoTrabalhoRepository->findById($planoId);
 
         if ($plano === null) {
@@ -41,7 +42,7 @@ class PlanoTrabalhoDestroyValidator
             throw new ValidateException('Plano de Trabalho não pode ser excluído pois já possui assinatura.');
         }
 
-        if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id, ['criacao_usuario_id', 'usuario_id'])) {
+        if ($this->isDonoOuChefia($plano, $usuarioLogadoId, $plano->unidade_id)) {
             return;
         }
 
