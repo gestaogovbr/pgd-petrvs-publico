@@ -18,7 +18,7 @@ afterEach(function () {
     Session::forget('unidade_id');
 });
 
-function makeUsuario(string $id = 'usuario-1'): Usuario
+function makeRelatorioEntregaUsuario(string $id = 'usuario-1'): Usuario
 {
     $usuario = new Usuario();
     $usuario->id = $id;
@@ -27,7 +27,7 @@ function makeUsuario(string $id = 'usuario-1'): Usuario
     return $usuario;
 }
 
-function makeIntegrantes(array $unidadeIds): Collection
+function makeRelatorioEntregaIntegrantes(array $unidadeIds): Collection
 {
     return new Collection(array_map(
         fn (string $unidadeId) => new UnidadeIntegrante(['unidade_id' => $unidadeId]),
@@ -47,11 +47,11 @@ test('retorna unidade mais alta na hierarquia com atribuicao ativa', function ()
     $integranteRepository = Mockery::mock(UnidadeIntegranteRepository::class);
     $integranteRepository->shouldReceive('findAllComAtribuicoesAtivasByUsuario')
         ->with('usuario-1')
-        ->andReturn(makeIntegrantes(['unidade-filha', 'unidade-pai']));
+        ->andReturn(makeRelatorioEntregaIntegrantes(['unidade-filha', 'unidade-pai']));
 
     $resolver = new RelatorioEntregaUnidadeDefaultResolver($unidadeRepository, $integranteRepository);
 
-    expect($resolver->resolve(makeUsuario()))->toBe('unidade-pai');
+    expect($resolver->resolve(makeRelatorioEntregaUsuario()))->toBe('unidade-pai');
 });
 
 test('ignora unidades apenas com atribuicao removida', function () {
@@ -64,11 +64,11 @@ test('ignora unidades apenas com atribuicao removida', function () {
     $integranteRepository = Mockery::mock(UnidadeIntegranteRepository::class);
     $integranteRepository->shouldReceive('findAllComAtribuicoesAtivasByUsuario')
         ->with('usuario-1')
-        ->andReturn(makeIntegrantes(['unidade-ativa']));
+        ->andReturn(makeRelatorioEntregaIntegrantes(['unidade-ativa']));
 
     $resolver = new RelatorioEntregaUnidadeDefaultResolver($unidadeRepository, $integranteRepository);
 
-    expect($resolver->resolve(makeUsuario()))->toBe('unidade-ativa');
+    expect($resolver->resolve(makeRelatorioEntregaUsuario()))->toBe('unidade-ativa');
 });
 
 test('em empate no mesmo nivel prioriza unidade atual do usuario', function () {
@@ -85,11 +85,11 @@ test('em empate no mesmo nivel prioriza unidade atual do usuario', function () {
     $integranteRepository = Mockery::mock(UnidadeIntegranteRepository::class);
     $integranteRepository->shouldReceive('findAllComAtribuicoesAtivasByUsuario')
         ->with('usuario-1')
-        ->andReturn(makeIntegrantes(['unidade-a', 'unidade-b']));
+        ->andReturn(makeRelatorioEntregaIntegrantes(['unidade-a', 'unidade-b']));
 
     $resolver = new RelatorioEntregaUnidadeDefaultResolver($unidadeRepository, $integranteRepository);
 
-    expect($resolver->resolve(makeUsuario()))->toBe('unidade-b');
+    expect($resolver->resolve(makeRelatorioEntregaUsuario()))->toBe('unidade-b');
 });
 
 test('nao usa unidade da sessao quando nao possui atribuicao ativa nela', function () {
@@ -106,11 +106,11 @@ test('nao usa unidade da sessao quando nao possui atribuicao ativa nela', functi
     $integranteRepository = Mockery::mock(UnidadeIntegranteRepository::class);
     $integranteRepository->shouldReceive('findAllComAtribuicoesAtivasByUsuario')
         ->with('usuario-1')
-        ->andReturn(makeIntegrantes(['unidade-coor-pi', 'unidade-cgm']));
+        ->andReturn(makeRelatorioEntregaIntegrantes(['unidade-coor-pi', 'unidade-cgm']));
 
     $resolver = new RelatorioEntregaUnidadeDefaultResolver($unidadeRepository, $integranteRepository);
 
-    expect($resolver->resolve(makeUsuario()))->toBe('unidade-cgm');
+    expect($resolver->resolve(makeRelatorioEntregaUsuario()))->toBe('unidade-cgm');
 });
 
 test('retorna null quando usuario nao possui atribuicao ativa', function () {
@@ -122,5 +122,5 @@ test('retorna null quando usuario nao possui atribuicao ativa', function () {
 
     $resolver = new RelatorioEntregaUnidadeDefaultResolver($unidadeRepository, $integranteRepository);
 
-    expect($resolver->resolve(makeUsuario()))->toBeNull();
+    expect($resolver->resolve(makeRelatorioEntregaUsuario()))->toBeNull();
 });
