@@ -11,6 +11,7 @@ use App\Models\IntegracaoServidor;
 use App\Models\SipecServidor;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\Sipec\SipecServidorRepository;
+use App\Services\CodigoOrgaoService;
 use App\Support\ModalidadePgd;
 
 /**
@@ -103,7 +104,10 @@ class SipecServidorIntegracaoService
         $matricula = $dto->matriculaSiape;
         $dataModificacao = $dto->dataUltimaTransacao ?? $dataModificacaoFallback?->format('Y-m-d H:i:s');
 
+        $codigoOrgao = CodigoOrgaoService::atual();
+
         $dadosIntegracao = [
+            'codigo_orgao' => $codigoOrgao,
             'cpf_ativo' => 'true',
             'data_modificacao' => $dataModificacao,
             'cpf' => $cpf,
@@ -135,10 +139,10 @@ class SipecServidorIntegracaoService
             'nome_jornada' => $dto->nomeJornada,
         ];
 
-        $existente = $this->integracaoServidorRepository->getServidor($cpf, $matricula);
+        $existente = $this->integracaoServidorRepository->getServidor($cpf, $matricula, $codigoOrgao);
 
         if ($existente) {
-            $this->integracaoServidorRepository->update($cpf, $matricula, $dadosIntegracao);
+            $this->integracaoServidorRepository->update($cpf, $matricula, $dadosIntegracao, $codigoOrgao);
             return 'atualizados';
         }
 

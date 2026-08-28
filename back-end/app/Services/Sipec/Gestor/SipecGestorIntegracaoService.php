@@ -13,6 +13,7 @@ use App\Repository\IntegracaoUnidadeRepository;
 use App\Repository\UnidadeIntegranteAtribuicaoRepository;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UsuarioRepository;
+use App\Services\CodigoOrgaoService;
 use App\Services\NivelAcessoService;
 use App\Services\UnidadeIntegranteService;
 use Illuminate\Support\Facades\DB;
@@ -150,7 +151,11 @@ class SipecGestorIntegracaoService
             return null;
         }
 
-        $servidor = $this->integracaoServidorRepository->findByCpfAndCodigoExercicio($cpf, $codigoUnidade);
+        $servidor = $this->integracaoServidorRepository->findByCpfAndCodigoExercicio(
+            $cpf,
+            $codigoUnidade,
+            CodigoOrgaoService::atual(),
+        );
 
         if (!$servidor) {
             SipecLog::warning('SIPEC Gestor: servidor não encontrado em integracao_servidores', [

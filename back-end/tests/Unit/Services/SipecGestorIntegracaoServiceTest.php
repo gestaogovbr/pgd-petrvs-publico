@@ -11,11 +11,19 @@ use App\Repository\UsuarioRepository;
 use App\Services\NivelAcessoService;
 use App\Services\Sipec\Gestor\SipecGestorIntegracaoService;
 use App\Services\UnidadeIntegranteService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 uses(TestCase::class);
+
+beforeEach(function () {
+    config()->set('integracao.siape.codOrgao', '20000');
+    DB::shouldReceive('beginTransaction')->andReturnNull();
+    DB::shouldReceive('commit')->andReturnNull();
+    DB::shouldReceive('rollBack')->andReturnNull();
+});
 
 afterEach(function () {
     Mockery::close();
@@ -69,7 +77,7 @@ describe('SipecGestorIntegracaoService', function () {
 
         $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
         $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
-            ->with('99999999999', '1000')
+            ->with('99999999999', '1000', '20000')
             ->andReturn(null);
 
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);

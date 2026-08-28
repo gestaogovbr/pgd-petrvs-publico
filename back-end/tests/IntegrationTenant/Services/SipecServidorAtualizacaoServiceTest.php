@@ -33,6 +33,7 @@ beforeEach(function () {
     DB::table('unidades')->insert([
         'id' => $this->unidadeId,
         'codigo' => '3000',
+        'codigo_orgao' => '20000',
         'nome' => 'Unidade Teste',
         'sigla' => 'UT',
         'entidade_id' => $this->entidadeId,
@@ -60,6 +61,7 @@ function inserirIntegracaoServidor(array $overrides = []): void
 {
     DB::table('integracao_servidores')->insert(array_merge([
         'id' => Str::uuid()->toString(),
+        'codigo_orgao' => '20000',
         'cpf_ativo' => 'true',
         'data_modificacao' => now(),
         'cpf' => '11122233344',

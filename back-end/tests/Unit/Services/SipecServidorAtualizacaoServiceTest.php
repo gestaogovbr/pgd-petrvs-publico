@@ -8,11 +8,19 @@ use App\Repository\UsuarioRepository;
 use App\Services\Sipec\Servidor\SipecServidorAtualizacaoService;
 use App\Services\UnidadeIntegranteService;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerInterface;
 use Tests\TestCase;
 
 uses(TestCase::class);
+
+beforeEach(function () {
+    config()->set('integracao.siape.codOrgao', '20000');
+    DB::shouldReceive('beginTransaction')->andReturnNull();
+    DB::shouldReceive('commit')->andReturnNull();
+    DB::shouldReceive('rollBack')->andReturnNull();
+});
 
 afterEach(function () {
     Mockery::close();

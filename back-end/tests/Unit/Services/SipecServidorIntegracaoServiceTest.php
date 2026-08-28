@@ -12,6 +12,10 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
+beforeEach(function () {
+    config()->set('integracao.siape.codOrgao', '20000');
+});
+
 afterEach(function () {
     Mockery::close();
 });
@@ -21,6 +25,7 @@ function setupSiapeLogMockSipecServidor(): void
     $loggerMock = Mockery::mock(LoggerInterface::class);
     $loggerMock->shouldReceive('info', 'warning', 'error', 'debug', 'notice')->withAnyArgs();
     Log::shouldReceive('channel')->with('sipec')->andReturn($loggerMock);
+    Log::shouldReceive('error', 'info', 'warning', 'debug', 'critical', 'log', 'alert', 'emergency', 'notice')->withAnyArgs();
 }
 
 function criarServidorSipecJson(array $overrides = []): array
@@ -174,7 +179,7 @@ describe('SipecServidorIntegracaoService', function () {
 
             $integracaoRepo = Mockery::mock(IntegracaoServidorRepository::class);
             $integracaoRepo->shouldReceive('getServidor')
-                ->with('12345678901', '1234567')
+                ->with('12345678901', '1234567', '20000')
                 ->once()
                 ->andReturn(null);
             $integracaoRepo->shouldReceive('save')
@@ -211,7 +216,7 @@ describe('SipecServidorIntegracaoService', function () {
 
             $integracaoRepo = Mockery::mock(IntegracaoServidorRepository::class);
             $integracaoRepo->shouldReceive('getServidor')
-                ->with('12345678901', '1234567')
+                ->with('12345678901', '1234567', '20000')
                 ->once()
                 ->andReturn($existente);
             $integracaoRepo->shouldReceive('update')
@@ -219,7 +224,7 @@ describe('SipecServidorIntegracaoService', function () {
                     return $data['cpf'] === '12345678901'
                         && $data['nome'] === 'João da Silva'
                         && $data['emailfuncional'] === 'joao@orgao.gov.br';
-                }))
+                }), '20000')
                 ->once()
                 ->andReturn(true);
 

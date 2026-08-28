@@ -13,6 +13,7 @@ use App\Facades\SipecLog;
 use App\Repository\IntegracaoServidorRepository;
 use App\Repository\UnidadeRepository;
 use App\Repository\UsuarioRepository;
+use App\Services\CodigoOrgaoService;
 use App\Services\NivelAcessoService;
 use App\Services\UnidadeIntegranteService;
 use App\Support\ModalidadePgd;
@@ -64,7 +65,7 @@ class SipecServidorAtualizacaoService
     {
         $atualizacoes = array_map(
             fn(object $row) => AtualizacaoDadosPessoaisDTO::fromStdClass($row),
-            $this->integracaoServidorRepository->buscarAtualizacoesDados()
+            $this->integracaoServidorRepository->buscarAtualizacoesDados(CodigoOrgaoService::atual())
         );
         $total = 0;
 
@@ -127,11 +128,11 @@ class SipecServidorAtualizacaoService
 
         $servidoresNaoLotados = array_map(
             fn(object $row) => ServidorNaoLotadoDTO::fromStdClass($row),
-            $this->integracaoServidorRepository->getServidoresInseridosNaoLotados()
+            $this->integracaoServidorRepository->getServidoresInseridosNaoLotados(CodigoOrgaoService::atual())
         );
         $atualizacoesLotacoes = array_map(
             fn(object $row) => AtualizacaoLotacaoDTO::fromStdClass($row),
-            $this->integracaoServidorRepository->getAtualizacoesLotacoes()
+            $this->integracaoServidorRepository->getAtualizacoesLotacoes(CodigoOrgaoService::atual())
         );
 
         $registros = array_merge(
@@ -174,7 +175,7 @@ class SipecServidorAtualizacaoService
 
         $ausentes = array_map(
             fn(object $row) => ServidorAusenteDTO::fromStdClass($row),
-            $this->integracaoServidorRepository->getUsuariosAusentes()
+            $this->integracaoServidorRepository->getUsuariosAusentes(CodigoOrgaoService::atual())
         );
 
         if (empty($ausentes)) {
@@ -218,7 +219,9 @@ class SipecServidorAtualizacaoService
             return 'erros';
         }
 
-        $unidadeExercicio = !empty($dto->exercicio) ? $this->unidadeRepository->findByCodigo($dto->exercicio) : null;
+        $unidadeExercicio = !empty($dto->exercicio)
+            ? $this->unidadeRepository->findByCodigoOrgao(CodigoOrgaoService::atual(), $dto->exercicio)
+            : null;
         $unidadeExercicioId = $unidadeExercicio?->id;
 
         if (!empty($dto->cpf) && !empty($unidadeExercicioId)) {
@@ -324,7 +327,7 @@ class SipecServidorAtualizacaoService
 
         /** @var \App\Models\Usuario $usuario */
         foreach ($usuariosSemMatricula as $usuario) {
-            $matricula = $this->integracaoServidorRepository->getMatriculaByCpf($usuario->cpf);
+            $matricula = $this->integracaoServidorRepository->getMatriculaByCpf($usuario->cpf, CodigoOrgaoService::atual());
 
             if (!empty($matricula)) {
                 $this->usuarioRepository->update($usuario->id, ['matricula' => $matricula]);
