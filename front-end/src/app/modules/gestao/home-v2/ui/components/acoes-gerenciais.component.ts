@@ -18,7 +18,7 @@ export class AcoesGerenciaisComponent {
   private readonly filterStorage = inject(FilterStorageService);
 
   irParaPainelGerencial(): void {
-    // this.router.navigate(['panel']); // não se trata do panel login, mas sim  da feature do card #2359
+    this.router.navigate(['gestao', 'paineis-gerenciais']);
   }
 
   irParaPlanoEntregas(): void {
