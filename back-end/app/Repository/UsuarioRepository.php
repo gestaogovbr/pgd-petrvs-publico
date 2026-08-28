@@ -242,4 +242,14 @@ class UsuarioRepository implements EnvioRepositoryInterface
     {
         return $this->readRepository->findAgentesVisiveis($usuarioId, $unidadeIds);
     }
+
+    /**
+     * @param string[] $unidadeIds
+     * @param string[] $atribuicoes
+     * @return Collection<int, Usuario>
+     */
+    public function findIntegrantesPorUnidades(array $unidadeIds, array $atribuicoes): Collection
+    {
+        return $this->readRepository->findIntegrantesPorUnidades($unidadeIds, $atribuicoes);
+    }
 }

@@ -146,7 +146,7 @@ export class AuthService {
       if (event?.data == "COMPLETAR_LOGIN") {
         this.dialogs.closeSppinerOverlay();
         this.authSession().then(success => {
-          if (success) this.success!(this.usuario!, { route: ["home"] });
+          if (success) this.success!(this.usuario!);
         });
       }
     }, false);
