@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HomeApiClient, PendenciasUsuario } from '../../infra/home-api.client';
@@ -15,37 +15,35 @@ import { NavigateService } from 'src/app/services/navigate.service';
   styleUrls: ['../home.styles.scss'],
   templateUrl: './pendencias-usuario.component.html',
 })
-export class PendenciasUsuarioComponent {
+export class PendenciasUsuarioComponent implements OnInit {
   private readonly homeApi = inject(HomeApiClient);
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly filterStorage = inject(FilterStorageService);
   private readonly go = inject(NavigateService);
 
-  readonly unidadeId = input.required<string>();
-  readonly subordinadas = input.required<boolean>();
-
   readonly data = signal<PendenciasUsuario | null>(null);
   readonly loading = signal(false);
   readonly erro = signal<string | null>(null);
 
-  constructor() {
-    effect(() => {
-      const unidadeId = this.unidadeId();
-      const subordinadas = this.subordinadas();
-      if (unidadeId) this.fetch(unidadeId, subordinadas);
+  ngOnInit(): void {
+    this.loading.set(true);
+    this.erro.set(null);
+    this.homeApi.getPendenciasGlobal().subscribe({
+      next: (r) => { this.data.set(r); this.loading.set(false); },
+      error: () => { this.data.set(null); this.erro.set(HOME_ERRO_RECUPERAR_DADOS); this.loading.set(false); },
     });
   }
 
   irParaAssinaturasPE(): void {
     this.go.navigate({
       route: ['gestao', 'plano-entrega'],
-      params: { filter: { status: 'HOMOLOGANDO', subordinadas: this.subordinadas(), meus_planos: false, unidade_id: this.unidadeId() } },
+      params: { filter: { status: 'HOMOLOGANDO', meus_planos: false } },
     });
   }
 
   irParaAssinaturasPT(): void {
-    this.salvarFiltrosPT({ aguardando_minha_assinatura: true, incluir_subordinadas: this.subordinadas(), meus_planos: false, unidade_id: this.unidadeId() });
+    this.salvarFiltrosPT({ aguardando_minha_assinatura: true, meus_planos: false });
     this.router.navigate(['gestao', 'plano-trabalho-v2']);
   }
 
@@ -57,33 +55,19 @@ export class PendenciasUsuarioComponent {
   }
 
   irParaRegistrosExecucaoPT(): void {
-    this.salvarFiltrosPT({ meus_planos: true, vigentes: false, status: 'ATIVO', unidade_id: this.unidadeId() });
+    this.salvarFiltrosPT({ meus_planos: true, vigentes: false, status: 'ATIVO' });
     this.router.navigate(['gestao', 'plano-trabalho-v2']);
   }
 
   irParaAvaliacoesPT(): void {
-    this.salvarFiltrosPT({
-      aguardando_minha_avaliacao: true,
-      incluir_subordinadas: this.subordinadas(),
-      meus_planos: false,
-      unidade_id: this.unidadeId(),
-    });
+    this.salvarFiltrosPT({ aguardando_minha_avaliacao: true, meus_planos: false });
     this.router.navigate(['gestao', 'plano-trabalho-v2']);
   }
 
   irParaAvaliacoesPE(): void {
     this.go.navigate({
       route: ['gestao', 'plano-entrega'],
-      params: { avaliacao: true, filter: { status: 'CONCLUIDO', meus_planos: false, unidade_id: this.unidadeId(), subordinadas: this.subordinadas() } },
-    });
-  }
-
-  private fetch(unidadeId: string, subordinadas: boolean): void {
-    this.loading.set(true);
-    this.erro.set(null);
-    this.homeApi.getPendencias(unidadeId, subordinadas).subscribe({
-      next: (r) => { this.data.set(r); this.loading.set(false); },
-      error: () => { this.data.set(null); this.erro.set(HOME_ERRO_RECUPERAR_DADOS); this.loading.set(false); },
+      params: { avaliacao: true, filter: { status: 'CONCLUIDO', meus_planos: false } },
     });
   }
 

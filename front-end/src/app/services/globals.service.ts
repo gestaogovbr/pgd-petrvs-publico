@@ -67,7 +67,7 @@ export class GlobalsService {
   }
 
   public goHome() {
-    this.go.navigate({ route: ['home-v2'] });
+    this.go.navigate({ route: this.initialRoute });
   }
 
   public is(entidade: string): boolean {
@@ -91,7 +91,13 @@ export class GlobalsService {
   }
 
   public get initialRoute(): string[] {
-        return ['home-v2'];
+    if (this.deveRedirecionarParaPaineisGerenciais()) {
+      return ['gestao', 'paineis-gerenciais'];
+    }
+
+    if (!this.auth.isUsuarioConsulta()) return ['home-v2'];
+
+    return ['home'];
   }
 
   /**

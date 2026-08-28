@@ -2,7 +2,9 @@
 
 namespace Tests\IntegrationTenant\Controllers\V2;
 
+use App\Enums\PerfilEnum;
 use App\Models\Afastamento;
+use App\Models\Perfil;
 use App\Models\TipoMotivoAfastamento;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegranteAtribuicao;
@@ -20,9 +22,11 @@ beforeEach(function () {
     $this->unidadeFilho = Unidade::factory()->create(['unidade_pai_id' => $this->unidadePai->id]);
     $this->unidadeNeto = Unidade::factory()->create(['unidade_pai_id' => $this->unidadeFilho->id]);
 
+    $perfilParticipante = Perfil::factory()->create(['nivel' => PerfilEnum::PARTICIPANTE->value, 'nome' => 'Participante']);
+
     $this->gestor = Usuario::factory()->create();
-    $this->participante = Usuario::factory()->create();
-    $this->participanteNeto = Usuario::factory()->create();
+    $this->participante = Usuario::factory()->create(['perfil_id' => $perfilParticipante->id]);
+    $this->participanteNeto = Usuario::factory()->create(['perfil_id' => $perfilParticipante->id]);
 
     UnidadeIntegranteAtribuicao::factory()->gestor()->paraUsuarioUnidade($this->gestor->id, $this->unidadePai->id)->create();
     UnidadeIntegranteAtribuicao::factory()->lotado()->paraUsuarioUnidade($this->participante->id, $this->unidadePai->id)->create();
@@ -69,7 +73,7 @@ describe('GET /api/v2/home/em-ferias', function () {
         $response->assertJsonCount(2, 'data.em_ferias');
     });
 
-    test('permite acesso de participante na própria unidade sem subordinadas', function () {
+    test('permite acesso de participante na própria unidade', function () {
         $response = $this->actingAs($this->participante)
             ->getJson('/api/__tests/v2/home/em-ferias?' . http_build_query([
                 'unidade_id' => $this->unidadePai->id,
@@ -81,14 +85,14 @@ describe('GET /api/v2/home/em-ferias', function () {
         $response->assertJsonPath('data.em_ferias.0.nome', $this->participante->nome);
     });
 
-    test('rejeita acesso de não-gestor com subordinadas', function () {
+    test('rejeita subordinadas para perfil participante', function () {
         $response = $this->actingAs($this->participante)
             ->getJson('/api/__tests/v2/home/em-ferias?' . http_build_query([
                 'unidade_id' => $this->unidadePai->id,
                 'subordinadas' => '1',
             ]));
 
-        $response->assertStatus(403);
+        $response->assertStatus(422);
     });
 
     test('rejeita requisição sem unidade_id', function () {

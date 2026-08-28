@@ -7,6 +7,8 @@ use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\Home\DataProviders\PendenciasUsuario;
 use App\V2\Home\DTOs\HomeRequestDTO;
+use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAssinaturaDataProvider;
+use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAvaliacaoDataProvider;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
@@ -17,12 +19,16 @@ beforeEach(function () {
     $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->consolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
     $this->planoEntregaRepository = Mockery::mock(PlanoEntregaRepository::class);
+    $this->aguardandoAssinatura = Mockery::mock(AguardandoMinhaAssinaturaDataProvider::class);
+    $this->aguardandoAvaliacao = Mockery::mock(AguardandoMinhaAvaliacaoDataProvider::class);
 
     $this->provider = new PendenciasUsuario(
         $this->unidadeRepository,
         $this->planoTrabalhoRepository,
         $this->consolidacaoRepository,
         $this->planoEntregaRepository,
+        $this->aguardandoAssinatura,
+        $this->aguardandoAvaliacao,
     );
 });
 
