@@ -141,4 +141,22 @@ class HomeController extends Controller
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function meusPlanosVigentes(Request $request): JsonResponse
+    {
+        try {
+            $unidadeId = $request->validate(['unidade_id' => 'required|uuid'])['unidade_id'];
+            $result = $this->service->getMeusPlanosVigentes($unidadeId);
+
+            return response()->json(['success' => true, 'data' => $result]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -4,7 +4,19 @@
   <!-- Saudação -->
   <h2 class="fw-semibold mb-3">{{ saudacao() }}, {{ nomeUsuario() }}</h2>
 
-  <!-- Controles de Topo -->
+  <!-- Row 1: Pendências + Atalhos (2x2 grid) -->
+  <div class="row mb-3">
+    <div class="col-md-6 mb-3 mb-md-0">
+      <home-pendencias-usuario />
+    </div>
+    <div class="col-md-6">
+      @if (selectedUnidadeId()) {
+        <home-acoes-gerenciais [unidadeId]="selectedUnidadeId()" />
+      }
+    </div>
+  </div>
+
+  <!-- Row 2: Unidade + Toggle Subordinadas -->
   <div class="row align-items-center mb-4">
     <div class="col-md-4">
       <br-select
@@ -29,45 +41,28 @@
     </div>
   </div>
 
-  <!-- Conteúdo do Dashboard -->
+  <!-- Conteúdo dependente de unidade selecionada -->
   @if (selectedUnidadeId()) {
-    <!-- Linha 1: Pendências + Planos Vigentes + De Férias -->
+    <!-- Row 3: Indicadores vigentes + Férias + Aniversariantes -->
     <div class="row mb-3">
-      <div class="col-md-5 mb-3 mb-md-0">
-        <home-pendencias-usuario />
-      </div>
-      <div class="col-md-4 mb-3 mb-md-0">
+      <div class="col-md-6 mb-3 mb-md-0">
         <home-planos-vigentes class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
       </div>
+      <div class="col-md-3 mb-3 mb-md-0">
+        <home-em-ferias class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+      </div>
       <div class="col-md-3">
-        <home-em-ferias [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+        <home-aniversariantes class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
       </div>
     </div>
 
-    <!-- Linha 2: Conteúdo principal + Aniversariantes -->
-    <div class="row">
-      <div class="col-lg-9">
-        <!-- Ações Gerenciais -->
-        <div class="row mb-3">
-          <div class="col-12">
-            <home-acoes-gerenciais />
-          </div>
-        </div>
-
-        <!-- Resumo Equipe + Contribuições -->
-        <div class="row mb-3">
-          <div class="col-md-8 mb-3 mb-md-0">
-            <home-resumo-equipe [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
-          </div>
-          <div class="col-md-4">
-            <home-contribuicoes [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
-          </div>
-        </div>
+    <!-- Row 4: Participantes + Capacidade + Contribuições -->
+    <div class="row mb-3">
+      <div class="col-md-8 mb-3 mb-md-0">
+        <home-resumo-equipe [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
       </div>
-
-      <!-- Aniversariantes -->
-      <div class="col-lg-3 mb-3">
-        <home-aniversariantes [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+      <div class="col-md-4">
+        <home-contribuicoes [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
       </div>
     </div>
   }

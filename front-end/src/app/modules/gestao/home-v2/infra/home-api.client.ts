@@ -43,6 +43,11 @@ export interface EmFeriasItem {
   data_fim: string;
 }
 
+export interface MeusPlanosVigentesResponse {
+  plano_entregas_id: string | null;
+  plano_trabalho_id: string | null;
+}
+
 @Injectable()
 export class HomeApiClient extends TenantV2ResourceApiBase {
   protected readonly apiPath = '/api/v2/home';
@@ -92,6 +97,12 @@ export class HomeApiClient extends TenantV2ResourceApiBase {
 
   getEmFerias(unidadeId: string, subordinadas: boolean): Observable<{ em_ferias: EmFeriasItem[] }> {
     return this.http.get<{ data: { em_ferias: EmFeriasItem[] } }>(this.resourceUrl('/em-ferias'), { params: this.params(unidadeId, subordinadas) }).pipe(
+      map(r => r.data),
+    );
+  }
+
+  getMeusPlanosVigentes(unidadeId: string): Observable<MeusPlanosVigentesResponse> {
+    return this.http.get<{ data: MeusPlanosVigentesResponse }>(this.resourceUrl('/meus-planos-vigentes'), { params: { unidade_id: unidadeId } }).pipe(
       map(r => r.data),
     );
   }
