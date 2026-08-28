@@ -23,7 +23,7 @@ export const routes: Routes = [
       },
       {
         path: 'alinhamento-desempenho',
-        data: { breadcrumb: 'Alinhamento e Desempenho' },
+        data: { breadcrumb: 'Alinhamento e Avaliações' },
         loadComponent: () =>
           import('./ui/pages/alinhamento-desempenho.page').then(m => m.AlinhamentoDesempenhoPage),
       },
