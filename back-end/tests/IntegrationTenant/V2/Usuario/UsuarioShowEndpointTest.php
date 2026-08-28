@@ -55,7 +55,8 @@ beforeEach(function () {
     $this->unidadeOutra = Unidade::factory()->create(['sigla' => 'OUTRA']);
 
     $this->chefia = Usuario::factory()->create(['perfil_id' => $this->perfilUnidade->id]);
-    $this->participante = Usuario::factory()->create(['perfil_id' => $this->perfilParticipante->id, 'cpf' => '12345678901']);
+    $this->cpfParticipante = fake()->unique()->numerify('###########');
+    $this->participante = Usuario::factory()->create(['perfil_id' => $this->perfilParticipante->id, 'cpf' => $this->cpfParticipante]);
     $this->admMaster = Usuario::factory()->create(['perfil_id' => $this->perfilAdmMaster->id]);
 
     UnidadeIntegranteAtribuicao::factory()->gestor()->paraUsuarioUnidade($this->chefia->id, $this->unidadePai->id)->create();
@@ -129,7 +130,30 @@ describe('GET /usuario/cpf/{cpf}/unidades (unidadesVinculadasPorCpf)', function 
     test('chefia pode consultar unidades de subordinado por CPF', function () {
         $this->actingAs($this->chefia);
 
-        $response = $this->getJson("/api/__tests/v2/usuario/cpf/{$this->participante->cpf}/unidades");
+        $response = $this->getJson("/api/__tests/v2/usuario/cpf/{$this->cpfParticipante}/unidades");
+
+        $response->assertStatus(200)->assertJsonPath('success', true);
+    });
+
+    test('chefia pode consultar unidades quando CPF é compartilhado e subordinado não é o primeiro registro', function () {
+        $cpfCompartilhado = fake()->unique()->numerify('###########');
+
+        $foraDoEscopo = Usuario::factory()->create([
+            'perfil_id' => $this->perfilParticipante->id,
+            'cpf' => $cpfCompartilhado,
+            'created_at' => now()->subDay(),
+        ]);
+        UnidadeIntegranteAtribuicao::factory()->lotado()->paraUsuarioUnidade($foraDoEscopo->id, $this->unidadeOutra->id)->create();
+
+        $noEscopo = Usuario::factory()->create([
+            'perfil_id' => $this->perfilParticipante->id,
+            'cpf' => $cpfCompartilhado,
+        ]);
+        UnidadeIntegranteAtribuicao::factory()->lotado()->paraUsuarioUnidade($noEscopo->id, $this->unidadeFilha->id)->create();
+
+        $this->actingAs($this->chefia);
+
+        $response = $this->getJson("/api/__tests/v2/usuario/cpf/{$cpfCompartilhado}/unidades");
 
         $response->assertStatus(200)->assertJsonPath('success', true);
     });
@@ -137,7 +161,7 @@ describe('GET /usuario/cpf/{cpf}/unidades (unidadesVinculadasPorCpf)', function 
     test('adm master pode consultar unidades de qualquer usuário por CPF', function () {
         $this->actingAs($this->admMaster);
 
-        $response = $this->getJson("/api/__tests/v2/usuario/cpf/{$this->participante->cpf}/unidades");
+        $response = $this->getJson("/api/__tests/v2/usuario/cpf/{$this->cpfParticipante}/unidades");
 
         $response->assertStatus(200)->assertJsonPath('success', true);
     });
