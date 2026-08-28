@@ -18,6 +18,10 @@
 ### Modificado
 - Rota da API `GET /api/v2/unidade` alterada para suportar paginação e filtro por termo
 
+### Corrigido
+- Delegados conseguiam assinar TCR de Plano de Trabalho indevidamente
+- Delegados não conseguiam visualizar dados de usuários vinculados (colaboradores) na mesma unidade
+
 ## 3.0.13 24/08/2026
 
 ### Adicionado
