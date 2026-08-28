@@ -87,13 +87,14 @@ export class HomeV2Page implements OnInit {
         id: a.unidade_id,
         sigla: a.unidade!.sigla,
         nome: a.unidade!.nome,
-        isGestorTitular: !!a.gestor,
-        isLotado: !!a.lotado,
+        isGestorTitular: a.atribuicoes?.some(attr => attr.atribuicao === 'GESTOR') ?? false,
+        isLotado: a.atribuicoes?.some(attr => attr.atribuicao === 'LOTADO') ?? false,
       }));
 
     const unique = [...new Map(unidades.map(u => [u.id, u])).values()];
 
     const defaultUnidade =
+      unique.find(u => u.isGestorTitular && u.isLotado) ??
       unique.find(u => u.isGestorTitular) ??
       unique.find(u => u.isLotado) ??
       [...unique].sort((a, b) => a.sigla.localeCompare(b.sigla))[0];

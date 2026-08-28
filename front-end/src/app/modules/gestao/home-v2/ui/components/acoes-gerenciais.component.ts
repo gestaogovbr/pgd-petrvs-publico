@@ -36,7 +36,7 @@ export class AcoesGerenciaisComponent {
   }
 
   irParaPainelGerencial(): void {
-    // Feature do card #2359
+    this.router.navigate(['gestao', 'paineis-gerenciais']);
   }
 
   irParaPlanoEntregas(): void {
