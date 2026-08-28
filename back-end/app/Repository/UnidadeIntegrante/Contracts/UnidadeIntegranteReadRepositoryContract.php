@@ -32,4 +32,8 @@ interface UnidadeIntegranteReadRepositoryContract
      * @return list<string>
      */
     public function findIdsAtivosByUnidade(string $unidadeId): array;
+    /**
+     * RN05: chefia titular ou substituta em unidade executora.
+     */
+    public function usuarioEhChefiaDeUnidadeExecutora(string $usuarioId): bool;
 }

@@ -395,6 +395,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
         ["MOD_USER_REATIVAR", "Permite reativar usuário"],
         ["MOD_USER_LIST_ALL", "Permite listar todos os usuários"],
+        ["MOD_USER_DISPENSA_PT", "Permite formalizar e alterar dispensa de Plano de Trabalho"],
       ]
     ], [
       "codigo" => "MOD_AUDIT",

@@ -38,6 +38,14 @@ use App\Repository\Documento\Eloquent\EloquentDocumentoReadRepository;
 
 use App\Repository\Documento\Eloquent\EloquentDocumentoWriteRepository;
 
+use App\Repository\DispensaPlanoTrabalho\Contracts\DispensaPlanoTrabalhoReadRepositoryContract;
+
+use App\Repository\DispensaPlanoTrabalho\Contracts\DispensaPlanoTrabalhoWriteRepositoryContract;
+
+use App\Repository\DispensaPlanoTrabalho\Eloquent\EloquentDispensaPlanoTrabalhoReadRepository;
+
+use App\Repository\DispensaPlanoTrabalho\Eloquent\EloquentDispensaPlanoTrabalhoWriteRepository;
+
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
 
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
@@ -415,6 +423,15 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             DocumentoWriteRepositoryContract::class,
             EloquentDocumentoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            DispensaPlanoTrabalhoReadRepositoryContract::class,
+            EloquentDispensaPlanoTrabalhoReadRepository::class,
+        );
+        $this->app->bind(
+            DispensaPlanoTrabalhoWriteRepositoryContract::class,
+            EloquentDispensaPlanoTrabalhoWriteRepository::class,
         );
 
         $this->app->bind(

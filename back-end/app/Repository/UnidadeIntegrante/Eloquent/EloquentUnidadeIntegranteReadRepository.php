@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Repository\UnidadeIntegrante\Eloquent;
 
+use App\Enums\Atribuicao;
 use App\Models\UnidadeIntegrante;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\UnidadeIntegrante\Contracts\UnidadeIntegranteReadRepositoryContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -136,5 +138,21 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
             ->pluck('id')
             ->map(static fn ($id): string => (string) $id)
             ->all();
+    }
+
+    public function usuarioEhChefiaDeUnidadeExecutora(string $usuarioId): bool
+    {
+        return $this->model->newQuery()
+            ->where('usuario_id', $usuarioId)
+            ->whereHas('unidade', function (Builder $query) {
+                $query->where('executora', true);
+            })
+            ->whereHas('atribuicoes', function (Builder $query) {
+                $query->whereIn('atribuicao', [
+                    Atribuicao::GESTOR->value,
+                    Atribuicao::GESTOR_SUBSTITUTO->value,
+                ]);
+            })
+            ->exists();
     }
 }

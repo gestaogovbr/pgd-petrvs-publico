@@ -39,9 +39,12 @@ class RelatorioAgenteExport implements FromCollection, WithMapping, WithHeadings
         'L' => 40, // Indisponibilidade de teletrabalho
         'M' => 15, // Início Indisponibilidade
         'N' => 15, // Fim Indisponibilidade
+        'O' => 22, // Dispensa de Plano de Trabalho
+        'P' => 18, // Início Dispensa
+        'Q' => 18, // Fim Dispensa
     ];
 
-    private const DATE_COLUMNS = ['M', 'N'];
+    private const DATE_COLUMNS = ['M', 'N', 'P', 'Q'];
 
     private const WRAP_TEXT_COLUMN = 'L';
 
@@ -81,6 +84,9 @@ class RelatorioAgenteExport implements FromCollection, WithMapping, WithHeadings
             'Indisponibilidade de teletrabalho',
             'Início Indisponibilidade de teletrabalho',
             'Fim Indisponibilidade de teletrabalho',
+            'Dispensa de Plano de Trabalho',
+            'Início da Dispensa de Plano de Trabalho',
+            'Fim da Dispensa de Plano de Trabalho',
         ];
     }
 
@@ -106,6 +112,9 @@ class RelatorioAgenteExport implements FromCollection, WithMapping, WithHeadings
             $row->tipoPedagio ?? '-',
             Date::stringToExcel($row->data_inicial_pedagio),
             Date::stringToExcel($row->data_final_pedagio),
+            $row->dispensa_plano_trabalho ?? 'Não',
+            Date::stringToExcel($row->data_inicio_dispensa_pt),
+            Date::stringToExcel($row->data_fim_dispensa_pt),
         ];
     }
 
