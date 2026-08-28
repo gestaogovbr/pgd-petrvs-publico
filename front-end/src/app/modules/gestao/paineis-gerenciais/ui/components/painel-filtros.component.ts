@@ -52,6 +52,7 @@ export class PainelFiltrosComponent implements OnChanges {
   @Input() permitirHistorico = true;
   @Input() modoData: ModoData = 'range';
   @Input() unidadeSearchFn?: UnidadeSearchFn;
+  @Input() tooltipDatas = 'Serão apresentados dados referentes a Planos de Entregas e Planos de Trabalho vigentes no intervalo selecionado para a consulta.';
 
   @Output() filtrosChange = new EventEmitter<FiltrosPainel>();
   @Output() unidadeChange = new EventEmitter<{ sigla: string; nome: string }>();

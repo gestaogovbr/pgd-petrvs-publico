@@ -9,6 +9,11 @@ import {
   IndicadorTeletrabalho,
   UnidadeInicial,
 } from '../../infra/painel-api.client';
+import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { PainelFiltrosComponent } from '../components/painel-filtros.component';
+import { IndicadorBarraVerticalComponent } from '../components/indicador-barra-vertical.component';
+import { IndicadorBarraHorizontalComponent } from '../components/indicador-barra-horizontal.component';
+import { PdfPainelComponent } from '../components/pdf/pdf-painel.component';
 
 @Component({ selector: 'app-breadcrumb', standalone: true, template: '' })
 class MockBreadcrumbComponent {}
@@ -104,7 +109,15 @@ describe('ModalidadesPage', () => {
       ],
     })
       .overrideComponent(ModalidadesPage, {
-        remove: { imports: [] },
+        remove: {
+          imports: [
+            BreadcrumbComponent,
+            PainelFiltrosComponent,
+            IndicadorBarraVerticalComponent,
+            IndicadorBarraHorizontalComponent,
+            PdfPainelComponent,
+          ],
+        },
         add: {
           imports: [
             MockBreadcrumbComponent,
@@ -128,23 +141,23 @@ describe('ModalidadesPage', () => {
 
     it('deve disparar 3 chamadas API ao receber unidade inicial', () => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
 
-      expect(apiSpy.getTeletrabalhoSubstituicao).toHaveBeenCalledWith(jasmine.objectContaining({ unidade_id: 'u1' }));
-      expect(apiSpy.getTeletrabalhoDiscricionario).toHaveBeenCalledWith(jasmine.objectContaining({ unidade_id: 'u1' }));
+      expect(apiSpy.getTeletrabalhoSubstituicao).toHaveBeenCalledWith(jasmine.objectContaining({ unidade_id: 'r1' }));
+      expect(apiSpy.getTeletrabalhoDiscricionario).toHaveBeenCalledWith(jasmine.objectContaining({ unidade_id: 'r1' }));
       expect(apiSpy.getModalidadesPorUnidade).toHaveBeenCalledWith(jasmine.objectContaining({ unidade_id: 'u1' }));
     });
 
     it('não deve disparar chamadas se unidade_id for null', () => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: null, unidade_sigla: null, unidade_nome: null });
+      unidadeInicial$.next({ unidade_id: null, unidade_sigla: null, unidade_nome: null, unidade_raiz_id: null, unidade_raiz_sigla: null });
 
       expect(apiSpy.getTeletrabalhoSubstituicao).not.toHaveBeenCalled();
     });
 
     it('deve atualizar sinais de unidade inicial', () => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'MOD', unidade_nome: 'Modalidades' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'MOD', unidade_nome: 'Modalidades', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
 
       expect(component.unidadeInicialId()).toBe('u1');
       expect(component.unidadeInicialSigla()).toBe('MOD');
@@ -155,7 +168,7 @@ describe('ModalidadesPage', () => {
   describe('Chamadas API concorrentes', () => {
     beforeEach(() => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
     });
 
     it('deve ativar todos os 3 flags de carregamento', () => {
@@ -195,7 +208,7 @@ describe('ModalidadesPage', () => {
   describe('Race conditions ao trocar filtros rapidamente', () => {
     beforeEach(() => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
 
       // Completa o primeiro carregamento
       substituicao$.next(mockTeletrabalho());
@@ -273,7 +286,7 @@ describe('ModalidadesPage', () => {
   describe('Drill-down de modalidades por unidade', () => {
     beforeEach(() => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
 
       substituicao$.next(mockTeletrabalho());
       discricionario$.next(mockTeletrabalho());
@@ -392,20 +405,20 @@ describe('ModalidadesPage', () => {
   describe('Computed saibaMaisParams', () => {
     beforeEach(() => {
       component.ngOnInit();
-      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome' });
+      unidadeInicial$.next({ unidade_id: 'u1', unidade_sigla: 'SIG', unidade_nome: 'Nome', unidade_raiz_id: 'r1', unidade_raiz_sigla: 'RAIZ' });
     });
 
     it('saibaMaisParamsSubstituicao deve incluir modalidade correta', () => {
       expect(component.saibaMaisParamsSubstituicao()).toEqual(jasmine.objectContaining({
         modalidadeSouGov: 'no exterior substituicao',
-        unidade_id: 'u1',
+        unidade_id: 'r1',
       }));
     });
 
     it('saibaMaisParamsDiscricionario deve incluir modalidade correta', () => {
       expect(component.saibaMaisParamsDiscricionario()).toEqual(jasmine.objectContaining({
         modalidadeSouGov: 'no exterior',
-        unidade_id: 'u1',
+        unidade_id: 'r1',
       }));
     });
 

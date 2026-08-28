@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { of, Subject } from 'rxjs';
 import { PainelFiltrosComponent, UnidadeOption } from './painel-filtros.component';
 import { PainelApiClient, FiltrosPainel } from '../../infra/painel-api.client';
-import { UnidadeSelectEvent } from 'src/app/v2/components/unidade-select/unidade-select.component';
+import { UnidadeSelectEvent, UnidadeSelectComponent } from 'src/app/v2/components/unidade-select/unidade-select.component';
 
 @Component({ selector: 'unidade-select', standalone: true, template: '' })
 class MockUnidadeSelectComponent {}
@@ -24,7 +24,7 @@ describe('PainelFiltrosComponent', () => {
       ],
     })
       .overrideComponent(PainelFiltrosComponent, {
-        remove: { imports: [/* UnidadeSelectComponent */ ] },
+        remove: { imports: [UnidadeSelectComponent] },
         add: { imports: [MockUnidadeSelectComponent] },
       })
       .compileComponents();
@@ -35,6 +35,10 @@ describe('PainelFiltrosComponent', () => {
 
   it('deve criar o componente', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('deve ter tooltipDatas com valor default sem mencionar Entregas', () => {
+    expect(component.tooltipDatas).toBe('Serão apresentados dados referentes a Planos de Entregas e Planos de Trabalho vigentes no intervalo selecionado para a consulta.');
   });
 
   describe('Troca do tipo de consulta', () => {
