@@ -141,3 +141,108 @@ describe('CadeiaValorPainelService::getEntregasDetalhamento', function () {
         $service->getEntregasDetalhamento('cv-1', 'proc-inexistente');
     })->throws(\App\Exceptions\NotFoundException::class);
 });
+
+describe('EntregaDetalheLinhaDTO', function () {
+
+    test('serializa corretamente em JSON', function () {
+        $dto = new EntregaDetalheLinhaDTO(
+            plano_entrega_entrega_id: 'pee-1',
+            unidade_id: 'u-1',
+            unidade_sigla: 'UA',
+            unidade_nome: 'Unidade A',
+            plano_entrega_id: 'pe-1',
+            plano_entrega_nome: 'PE Teste',
+            plano_entrega_status: StatusEnum::ATIVO->value,
+            plano_entrega_vigencia_inicio: '2025-01-01',
+            plano_entrega_vigencia_fim: '2025-12-31',
+            entrega_titulo: 'Entrega Teste',
+            entrega_descricao: 'Descrição',
+            descricao_meta: 'Meta',
+            etiquetas: null,
+            progresso_esperado: 75.0,
+            progresso_realizado: 50.0,
+            meta: null,
+            realizado: null,
+            tipo_indicador: null,
+            lista_qualitativos: null,
+            registro_execucao: 'Atividade recente',
+            participantes_total: 5,
+            participantes_somente_unidade_propria: 3,
+            participantes_somente_outras_unidades: 1,
+            participantes_em_ambas: 1,
+            esforco_disponivel_horas: 200.0,
+            esforco_planejado_horas: 150.0,
+            esforco_executado_horas: 100.0,
+            mostrar_disponivel: true,
+            mostrar_planejado: true,
+            mostrar_executado: true,
+        );
+
+        $json = $dto->jsonSerialize();
+
+        expect($json['plano_entrega_entrega_id'])->toBe('pee-1');
+        expect($json['registro_execucao'])->toBe('Atividade recente');
+        expect($json['participantes_total'])->toBe(5);
+        expect($json['esforco_planejado_horas'])->toBe(150.0);
+        expect($json['mostrar_planejado'])->toBeTrue();
+        expect($json['mostrar_executado'])->toBeTrue();
+    });
+
+    test('registro_execucao pode ser null', function () {
+        $dto = new EntregaDetalheLinhaDTO(
+            plano_entrega_entrega_id: 'pee-1',
+            unidade_id: 'u-1',
+            unidade_sigla: 'UA',
+            unidade_nome: 'Unidade A',
+            plano_entrega_id: 'pe-1',
+            plano_entrega_nome: 'PE',
+            plano_entrega_status: StatusEnum::INCLUIDO->value,
+            plano_entrega_vigencia_inicio: '2025-01-01',
+            plano_entrega_vigencia_fim: null,
+            entrega_titulo: 'Entrega',
+            entrega_descricao: '',
+            descricao_meta: '',
+            etiquetas: null,
+            progresso_esperado: 0.0,
+            progresso_realizado: 0.0,
+            meta: null,
+            realizado: null,
+            tipo_indicador: null,
+            lista_qualitativos: null,
+            registro_execucao: null,
+            participantes_total: 0,
+            participantes_somente_unidade_propria: 0,
+            participantes_somente_outras_unidades: 0,
+            participantes_em_ambas: 0,
+            esforco_disponivel_horas: 0.0,
+            esforco_planejado_horas: 0.0,
+            esforco_executado_horas: 0.0,
+            mostrar_disponivel: true,
+            mostrar_planejado: false,
+            mostrar_executado: false,
+        );
+
+        expect($dto->registro_execucao)->toBeNull();
+        expect($dto->plano_entrega_vigencia_fim)->toBeNull();
+        expect($dto->mostrar_planejado)->toBeFalse();
+    });
+});
+
+describe('CadeiaValorPainelEntregasDetalhamentoDTO', function () {
+
+    test('serializa com itens, filtro_entregas e filtro_unidades', function () {
+        $dto = new CadeiaValorPainelEntregasDetalhamentoDTO(
+            processo_id: 'proc-1',
+            itens: [],
+            filtro_entregas: [['id' => 'e1', 'label' => 'Entrega 1']],
+            filtro_unidades: [['id' => 'u1', 'label' => 'UA — Unidade A']],
+        );
+
+        $json = $dto->jsonSerialize();
+
+        expect($json['processo_id'])->toBe('proc-1');
+        expect($json['itens'])->toBe([]);
+        expect($json['filtro_entregas'])->toHaveCount(1);
+        expect($json['filtro_unidades'])->toHaveCount(1);
+    });
+});

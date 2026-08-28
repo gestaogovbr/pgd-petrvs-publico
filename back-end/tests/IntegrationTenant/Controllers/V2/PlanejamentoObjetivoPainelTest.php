@@ -76,7 +76,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/painel-resumo', function () {
     test('retorna esforço e participantes com PT concluído vinculado', function () {
         $base = criarEstruturaBase();
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo com PT');
-        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 9, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/painel-resumo");
         $response->assertStatus(200)
@@ -92,7 +92,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/painel-resumo', function () {
     test('usa a CHD do PT no esforço disponível, com fallback de 8h quando zerada', function () {
         $base = criarEstruturaBase();
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo CHD');
-        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 9, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
 
         $pt = PlanoTrabalho::query()->firstOrFail();
 
@@ -116,9 +116,9 @@ describe('GET /api/v2/planejamento/objetivo/{id}/painel-resumo', function () {
         $usuario2 = Usuario::factory()->create(['cod_jornada' => 40, 'participa_pgd' => 'sim']);
         $usuario3 = Usuario::factory()->create(['cod_jornada' => 40, 'participa_pgd' => 'sim']);
 
-        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasPlano: 9, forcaTrabalho: 100.0);
-        vincularEntregaComEsforco($objFilho, $base, $usuario2, diasPlano: 9, forcaTrabalho: 100.0);
-        vincularEntregaComEsforco($objNeto, $base, $usuario3, diasPlano: 9, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($objFilho, $base, $usuario2, diasUteis: 7, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($objNeto, $base, $usuario3, diasUteis: 7, forcaTrabalho: 100.0);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objFilho->id}/painel-resumo");
         $response->assertStatus(200)
@@ -138,8 +138,8 @@ describe('GET /api/v2/planejamento/objetivo/{id}/painel-resumo', function () {
         $objPai = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Pai');
         $objFilho = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Filho', paiId: $objPai->id);
 
-        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasPlano: 9, forcaTrabalho: 100.0);
-        vincularEntregaComEsforco($objFilho, $base, $this->usuario, diasPlano: 9, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($objPai, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($objFilho, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
 
         $this->getJson("/api/__tests/v2/planejamento/objetivo/{$objPai->id}/painel-resumo")
             ->assertStatus(200)
@@ -150,7 +150,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/painel-resumo', function () {
     test('entrega concluída só conta em plano de entregas AVALIADO', function () {
         $base = criarEstruturaBase();
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo conclusão');
-        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 9, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
 
         $entrega = PlanoEntregaEntrega::query()->firstOrFail();
         $entrega->update(['progresso_realizado' => 100]);
@@ -178,7 +178,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/painel-resumo', function () {
     test('filtra resumo por unidade', function () {
         $base = criarEstruturaBase();
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo filtro unidade');
-        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 9, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
 
         $unidadeId = $base['unidade']->id;
 
@@ -202,7 +202,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/entregas-detalhamento', functio
     test('retorna detalhamento com filtros e linha da entrega', function () {
         $base = criarEstruturaBase();
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo detalhe');
-        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 9, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
 
         $response = $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/entregas-detalhamento");
         $response->assertStatus(200)
@@ -227,7 +227,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/entregas-detalhamento', functio
     test('retorna progresso e registro_execucao do lançamento mais recente', function () {
         $base = criarEstruturaBase();
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo progresso');
-        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 9, forcaTrabalho: 100.0);
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 100.0);
 
         $entrega = PlanoEntregaEntrega::query()->firstOrFail();
         $entrega->update([
@@ -281,7 +281,7 @@ describe('esforco_executado em planos_trabalhos_entregas', function () {
     test('padrão de esforco_executado igual ao planejado após criação', function () {
         $base = criarEstruturaBase();
         $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo PT');
-        vincularEntregaComEsforco($obj, $base, $this->usuario, diasPlano: 9, forcaTrabalho: 60.0);
+        vincularEntregaComEsforco($obj, $base, $this->usuario, diasUteis: 7, forcaTrabalho: 60.0);
 
         $pte = PlanoTrabalhoEntrega::query()->firstOrFail();
         expect((float) $pte->esforco_executado)->toEqual((float) $pte->forca_trabalho);

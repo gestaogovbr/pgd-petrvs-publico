@@ -31,6 +31,7 @@ use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
 use App\V2\Traits\ValidaAutorizacaoTrait;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\LengthAwarePaginator as ConcreteLengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -152,6 +153,7 @@ class PlanoTrabalhoService
 
     public function show(string $id): PlanoTrabalho
     {
+        /** @var \App\Models\PlanoTrabalho|null $plano */
         $plano = $this->readRepository->findByIdComRelacoes($id);
 
         if ($plano === null) {
@@ -166,6 +168,11 @@ class PlanoTrabalhoService
         $isElegivelParaArquivamento = $this->arquivarValidator->isElegivelParaArquivamento($plano);
         $plano->setAttribute('acoes', $this->authorization->acoes($plano, $usuario, $isElegivelParaArquivamento)->toArray());
         $plano->setAttribute('is_proprio', $this->isMesmoCpfDoParticipante($plano));
+        $plano->setAttribute('chd_bruta', CHDBrutaCalculator::calcular(
+            Carbon::parse($plano->data_inicio),
+            Carbon::parse($plano->data_fim),
+            (float) $plano->carga_horaria
+        ));
 
         return $plano;
     }
