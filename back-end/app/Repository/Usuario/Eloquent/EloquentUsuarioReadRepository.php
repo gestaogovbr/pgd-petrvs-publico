@@ -249,15 +249,17 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
     {
         $unidadesDiretas = $this->unidadeIntegranteRepository
             ->findAllComAtribuicoesAtivasByUsuario($cadastranteId)
-            ->pluck('unidade_id')
-            ->toArray();
+            ->pluck('unidade_id');
 
         $subordinadasIds = $this->unidadeRepository
-            ->getSubordinadasRecursivas($unidadesDiretas)
-            ->pluck('id')
-            ->toArray();
+            ->getSubordinadasRecursivas($unidadesDiretas->all())
+            ->pluck('id');
 
-        return array_values(array_unique(array_merge($unidadesDiretas, $subordinadasIds)));
+        return $unidadesDiretas
+            ->merge($subordinadasIds)
+            ->unique()
+            ->values()
+            ->all();
     }
 
     public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool

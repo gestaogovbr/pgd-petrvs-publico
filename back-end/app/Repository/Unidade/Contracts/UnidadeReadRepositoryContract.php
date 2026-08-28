@@ -61,6 +61,9 @@ interface UnidadeReadRepositoryContract
 
     public function getSubordinadasRecursivas(array $ids): Collection;
 
+    /** @return list<string> IDs das unidades gerenciadas pelo usuário + suas subordinadas recursivas */
+    public function getGerenciadasComSubordinadasIds(string $usuarioId): array;
+
     public function findById(string|int $id): ?Unidade;
 
     public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade;

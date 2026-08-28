@@ -325,6 +325,19 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $this->query()->whereIn('id', $resultIds)->get();
     }
 
+    /** @return list<string> */
+    public function getGerenciadasComSubordinadasIds(string $usuarioId): array
+    {
+        $gerenciadasIds = $this->getUnidadesGerenciadas($usuarioId)->pluck('id');
+        $subordinadasIds = $this->getSubordinadasRecursivas($gerenciadasIds->all())->pluck('id');
+
+        return $gerenciadasIds
+            ->merge($subordinadasIds)
+            ->unique()
+            ->values()
+            ->all();
+    }
+
     public function existsByCodigoOrgao(string $codigoOrgao, string $codigo): bool
     {
         return $this->query()
