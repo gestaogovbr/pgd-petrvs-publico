@@ -21,7 +21,7 @@ export class PaineisGerenciaisPage {
   private readonly router = inject(Router);
 
   readonly paineis: PainelItem[] = [
-    { titulo: 'Alinhamento e Desempenho', rota: 'alinhamento-desempenho', icon: 'bi bi-graph-up-arrow' },
+    { titulo: 'Alinhamento e Avaliações', rota: 'alinhamento-desempenho', icon: 'bi bi-graph-up-arrow' },
     { titulo: 'Conformidade', rota: 'conformidade', icon: 'bi bi-clipboard2-check' },
     { titulo: 'Modalidades', rota: 'modalidades', icon: 'bi bi-diagram-3' },
     { titulo: 'Abrangência do PGD', rota: 'gestao-pgd', icon: 'bi bi-gear' },

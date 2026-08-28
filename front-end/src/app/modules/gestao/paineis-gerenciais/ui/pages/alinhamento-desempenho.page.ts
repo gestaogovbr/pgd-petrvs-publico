@@ -131,7 +131,7 @@ export class AlinhamentoDesempenhoPage implements OnInit {
 
     this.pdfPainel.imprimir(
       {
-        painel: 'Alinhamento e Desempenho',
+        painel: 'Alinhamento e Avaliações',
         tipoConsulta: this.tipoConsultaLabel(),
         unidade: this.unidadeLabel(),
         periodo: this.periodoLabel() || undefined,
