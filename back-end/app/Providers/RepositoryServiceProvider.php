@@ -127,6 +127,14 @@ use App\Repository\RelatorioEntrega\Contracts\RelatorioEntregaReadRepositoryCont
 use App\Repository\RelatorioEntrega\Eloquent\EloquentRelatorioEntregaReadRepository;
 use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
 use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
+use App\Repository\MuralAviso\Contracts\MuralAvisoReadRepositoryContract;
+use App\Repository\MuralAviso\Contracts\MuralAvisoWriteRepositoryContract;
+use App\Repository\MuralAviso\Eloquent\EloquentMuralAvisoReadRepository;
+use App\Repository\MuralAviso\Eloquent\EloquentMuralAvisoWriteRepository;
+use App\Repository\MuralAvisoLeitura\Contracts\MuralAvisoLeituraReadRepositoryContract;
+use App\Repository\MuralAvisoLeitura\Contracts\MuralAvisoLeituraWriteRepositoryContract;
+use App\Repository\MuralAvisoLeitura\Eloquent\EloquentMuralAvisoLeituraReadRepository;
+use App\Repository\MuralAvisoLeitura\Eloquent\EloquentMuralAvisoLeituraWriteRepository;
 
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
@@ -501,6 +509,23 @@ final class RepositoryServiceProvider extends ServiceProvider
             EloquentFeriadoReadRepository::class,
         );
 
+        $this->app->bind(
+            MuralAvisoReadRepositoryContract::class,
+            EloquentMuralAvisoReadRepository::class,
+        );
+        $this->app->bind(
+            MuralAvisoWriteRepositoryContract::class,
+            EloquentMuralAvisoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            MuralAvisoLeituraReadRepositoryContract::class,
+            EloquentMuralAvisoLeituraReadRepository::class,
+        );
+        $this->app->bind(
+            MuralAvisoLeituraWriteRepositoryContract::class,
+            EloquentMuralAvisoLeituraWriteRepository::class,
+        );
     }
 
     public function boot(): void

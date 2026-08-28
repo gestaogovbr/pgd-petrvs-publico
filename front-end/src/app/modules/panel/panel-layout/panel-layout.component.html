@@ -10,6 +10,9 @@
         <li class="nav-item">
           <a class="nav-link" role="button" [routerLink]="['/panel/tenants']" (click)="toggleNavbar()">Tenants</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" role="button" [routerLink]="['/panel/mural']" (click)="toggleNavbar()">Mural de Avisos</a>
+        </li>
         <li class="nav-item" *ngIf="currentUser && currentUser.nivel == 1">
           <a class="nav-link" [routerLink]="['/panel/admins']" (click)="toggleNavbar()">Usuários do painel</a>
         </li> 
