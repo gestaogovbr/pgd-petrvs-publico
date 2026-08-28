@@ -286,7 +286,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                         })
                         ->whereIn('ui.unidade_id', $filtro->unidadesId)
                         ->whereNull('ui.deleted_at');
-                })->whereIn('planos_trabalhos.unidade_id', $filtro->unidadesId);
+                });
             } else {
                 $query->whereIn('unidade_id', $filtro->unidadesId);
             }

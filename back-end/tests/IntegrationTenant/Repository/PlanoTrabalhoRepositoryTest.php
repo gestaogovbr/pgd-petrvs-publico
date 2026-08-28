@@ -666,7 +666,7 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem - minha_equipe', functio
             ->and($result->items()[0]->usuario_id)->toBe($participante->id);
     });
 
-    test('não inclui PT de outra unidade mesmo que integrante tenha atribuição ativa', function () {
+    test('inclui PT de outra unidade quando integrante tem atribuição ativa na unidade gerenciada', function () {
         $outraUnidade = Unidade::factory()->create();
         $participante = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
 
@@ -677,38 +677,6 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem - minha_equipe', functio
         UnidadeIntegranteAtribuicao::query()->create([
             'atribuicao' => 'LOTADO',
             'unidade_integrante_id' => $integrante->id,
-        ]);
-
-        PlanoTrabalho::factory()->create([
-            'usuario_id' => $participante->id,
-            'unidade_id' => $outraUnidade->id,
-        ]);
-
-        $filtro = PlanoTrabalhoIndexDTO::fromArray([
-            'minha_equipe' => true,
-            'unidade_id' => [$this->unidade->id],
-        ]);
-        $result = $this->repository->buscarPlanosListagem($filtro);
-
-        expect($result->total())->toBe(0);
-    });
-
-    test('inclui apenas PT da unidade gerenciada quando integrante tem PTs em múltiplas unidades', function () {
-        $outraUnidade = Unidade::factory()->create();
-        $participante = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
-
-        $integrante = UnidadeIntegrante::query()->create([
-            'unidade_id' => $this->unidade->id,
-            'usuario_id' => $participante->id,
-        ]);
-        UnidadeIntegranteAtribuicao::query()->create([
-            'atribuicao' => 'LOTADO',
-            'unidade_integrante_id' => $integrante->id,
-        ]);
-
-        PlanoTrabalho::factory()->create([
-            'usuario_id' => $participante->id,
-            'unidade_id' => $this->unidade->id,
         ]);
 
         PlanoTrabalho::factory()->create([
@@ -723,7 +691,39 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem - minha_equipe', functio
         $result = $this->repository->buscarPlanosListagem($filtro);
 
         expect($result->total())->toBe(1)
-            ->and($result->items()[0]->unidade_id)->toBe($this->unidade->id);
+            ->and($result->items()[0]->usuario_id)->toBe($participante->id);
+    });
+
+    test('inclui todos os PTs do integrante independente da unidade de execução', function () {
+        $outraUnidade = Unidade::factory()->create();
+        $participante = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
+
+        $integrante = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $participante->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'LOTADO',
+            'unidade_integrante_id' => $integrante->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $participante->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $participante->id,
+            'unidade_id' => $outraUnidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'minha_equipe' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(2);
     });
 });
 
