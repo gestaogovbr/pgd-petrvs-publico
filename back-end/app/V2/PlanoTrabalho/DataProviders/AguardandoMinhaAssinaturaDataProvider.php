@@ -88,6 +88,8 @@ class AguardandoMinhaAssinaturaDataProvider
             ->join('unidades_integrantes_atribuicoes as uia', 'uia.unidade_integrante_id', '=', 'ui.id')
             ->where('ui.usuario_id', $usuarioId)
             ->whereIn('uia.atribuicao', Atribuicao::chefia())
+            ->whereNull('ui.deleted_at')
+            ->whereNull('uia.deleted_at')
             ->pluck('ui.unidade_id')
             ->unique()
             ->values()
@@ -120,6 +122,10 @@ class AguardandoMinhaAssinaturaDataProvider
             ->where('uia_t.atribuicao', 'GESTOR')
             ->where('uia_s.atribuicao', 'GESTOR_SUBSTITUTO')
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
-            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id');
+            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
+            ->whereNull('ui_t.deleted_at')
+            ->whereNull('uia_t.deleted_at')
+            ->whereNull('ui_s.deleted_at')
+            ->whereNull('uia_s.deleted_at');
     }
 }
