@@ -26,7 +26,7 @@ class UsuarioShowAuthorizationValidator
      */
     public function validarEscopo(Usuario $solicitante, Usuario $alvo): Usuario
     {
-        if ($solicitante->id === $alvo->id) {
+        if ($solicitante->cpf === $alvo->cpf) {
             return $alvo;
         }
 
