@@ -22,6 +22,8 @@
 - Delegados conseguiam assinar TCR de Plano de Trabalho indevidamente
 - Delegados não conseguiam visualizar dados de usuários vinculados (colaboradores) na mesma unidade
 - Usuários com múltiplas matrículas SIAPE não conseguiam visualizar ou editar o próprio cadastro
+- Filtro "Meus subordinados" na listagem de Planos de Trabalho considerava vínculos já removidos
+- Telas de assinatura e avaliação de Planos de Trabalho consideravam vínculos de chefia já removidos como ativos
 
 ## 3.0.13 24/08/2026
 
