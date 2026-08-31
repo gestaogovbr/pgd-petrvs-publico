@@ -41,6 +41,12 @@ interface UnidadeReadRepositoryContract
 
     public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): Collection;
 
+    /** @return string[] IDs das unidades onde o usuário possui qualquer atribuição ativa */
+    public function getUnidadesComAtribuicaoIds(string $usuarioId): array;
+
+    /** @return Collection<int, Unidade> Unidades (id, sigla, nome) para os IDs informados */
+    public function buscarResumoPorIds(array $ids): Collection;
+
     public function findByCodigoWithPai(string $codigo): ?Unidade;
 
     public function getSubordinadas(array $ids): Collection;
@@ -49,6 +55,9 @@ interface UnidadeReadRepositoryContract
 
     /** @return list<string> IDs das unidades gerenciadas pelo usuário + suas subordinadas recursivas */
     public function getGerenciadasComSubordinadasIds(string $usuarioId): array;
+    
+    /** @return string[] */
+    public function getSubordinadasRecursivasIds(array $ids): array;
 
     public function findById(string|int $id): ?Unidade;
 

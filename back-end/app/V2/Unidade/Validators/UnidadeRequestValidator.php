@@ -27,4 +27,13 @@ class UnidadeRequestValidator
             'filters.termo' => ['sometimes', 'nullable', 'string'],
         ]);
     }
+
+    public static function minhasUnidades(Request $request): array
+    {
+        return $request->validate([
+            'subordinadas' => ['nullable', 'in:1,0,true,false'],
+        ], [
+            'subordinadas.in' => 'O parâmetro subordinadas deve ser booleano.',
+        ]);
+    }
 }

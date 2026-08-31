@@ -87,6 +87,17 @@ class UnidadeRepository
         return $this->readRepository->getUnidadesGerenciadas($usuarioId, $exclude);
     }
 
+    /** @return string[] IDs das unidades onde o usuário possui qualquer atribuição ativa */
+    public function getUnidadesComAtribuicaoIds(string $usuarioId): array
+    {
+        return $this->readRepository->getUnidadesComAtribuicaoIds($usuarioId);
+    }
+
+    public function buscarResumoPorIds(array $ids): EloquentCollection
+    {
+        return $this->readRepository->buscarResumoPorIds($ids);
+    }
+
     public function getSubordinadas(array $ids): EloquentCollection
     {
         return $this->readRepository->getSubordinadas($ids);
@@ -101,6 +112,12 @@ class UnidadeRepository
     public function getGerenciadasComSubordinadasIds(string $usuarioId): array
     {
         return $this->readRepository->getGerenciadasComSubordinadasIds($usuarioId);
+    }
+
+    /** @return string[] */
+    public function getSubordinadasRecursivasIds(array $ids): array
+    {
+        return $this->readRepository->getSubordinadasRecursivasIds($ids);
     }
 
     public function findById(string $id): ?Unidade

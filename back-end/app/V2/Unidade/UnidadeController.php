@@ -65,4 +65,23 @@ class UnidadeController extends Controller
 
         return response()->json(['data' => $isGestor]);
     }
+
+    public function minhasUnidades(Request $request): JsonResponse
+    {
+        try {
+            UnidadeRequestValidator::minhasUnidades($request);
+            $subordinadas = $request->boolean('subordinadas');
+            $result = $this->service->buscarMinhasUnidades($subordinadas);
+
+            return response()->json([
+                'success' => true,
+                'data' => array_map(fn ($dto) => $dto->toArray(), $result),
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
