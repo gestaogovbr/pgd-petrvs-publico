@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\Home\Traits;
 
+use App\Cache\GestorHierarquiaCache;
 use App\Repository\UnidadeRepository;
 use App\V2\Home\DTOs\HomeRequestDTO;
 
@@ -17,10 +18,11 @@ trait ResolveUnidades
         $unidadeIds = [$dto->unidadeId];
 
         if ($dto->subordinadas) {
-            $subordinadas = $this->getUnidadeRepository()
-                ->getSubordinadasRecursivas([$dto->unidadeId])
-                ->pluck('id')
-                ->toArray();
+            $subordinadas = GestorHierarquiaCache::getSubordinadas(
+                $dto->unidadeId,
+                fn () => $this->getUnidadeRepository()
+                    ->getSubordinadasRecursivasIds([$dto->unidadeId]),
+            );
 
             $unidadeIds = array_merge($unidadeIds, $subordinadas);
         }

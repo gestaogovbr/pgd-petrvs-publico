@@ -47,7 +47,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         foreach ($unidadesGeridas as $unidadeGeridaId) {
             $subordinadas = GestorHierarquiaCache::getSubordinadas(
                 $unidadeGeridaId,
-                fn () => $this->getSubordinadasRecursivas([$unidadeGeridaId])->pluck('id')->all(),
+                fn () => $this->getSubordinadasRecursivasIds([$unidadeGeridaId]),
             );
 
             if (in_array($unidadeId, $subordinadas, true)) {
@@ -227,8 +227,20 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
 
     public function getSubordinadasRecursivas(array $ids): Collection
     {
-        if (empty($ids)) {
+        $resultIds = $this->getSubordinadasRecursivasIds($ids);
+
+        if (empty($resultIds)) {
             return $this->model->newCollection();
+        }
+
+        return $this->query()->whereIn('id', $resultIds)->get();
+    }
+
+    /** @return string[] */
+    public function getSubordinadasRecursivasIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
         }
 
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
@@ -248,13 +260,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             SELECT id FROM subordinadas
         ", $ids);
 
-        $resultIds = array_map(fn($row) => $row->id, $subordinadaIds);
-
-        if (empty($resultIds)) {
-            return $this->model->newCollection();
-        }
-
-        return $this->query()->whereIn('id', $resultIds)->get();
+        return array_map(fn ($row) => $row->id, $subordinadaIds);
     }
 
     public function existsByCodigo(string $codigo): bool
