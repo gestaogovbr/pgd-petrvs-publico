@@ -97,6 +97,12 @@ class UnidadeRepository
         return $this->readRepository->getSubordinadasRecursivas($ids);
     }
 
+    /** @return list<string> */
+    public function getGerenciadasComSubordinadasIds(string $usuarioId): array
+    {
+        return $this->readRepository->getGerenciadasComSubordinadasIds($usuarioId);
+    }
+
     public function findById(string $id): ?Unidade
     {
         return $this->readRepository->findById($id);
