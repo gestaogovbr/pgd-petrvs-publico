@@ -249,15 +249,17 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
     {
         $unidadesDiretas = $this->unidadeIntegranteRepository
             ->findAllComAtribuicoesAtivasByUsuario($cadastranteId)
-            ->pluck('unidade_id')
-            ->toArray();
+            ->pluck('unidade_id');
 
         $subordinadasIds = $this->unidadeRepository
-            ->getSubordinadasRecursivas($unidadesDiretas)
-            ->pluck('id')
-            ->toArray();
+            ->getSubordinadasRecursivas($unidadesDiretas->all())
+            ->pluck('id');
 
-        return array_values(array_unique(array_merge($unidadesDiretas, $subordinadasIds)));
+        return $unidadesDiretas
+            ->merge($subordinadasIds)
+            ->unique()
+            ->values()
+            ->all();
     }
 
     public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool
@@ -501,5 +503,21 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         }
 
         return $query->orderBy('nome')->get(['id', 'nome']);
+    }
+
+    /**
+     * @param string[] $unidadeIds
+     * @param string[] $atribuicoes
+     * @return Collection<int, Usuario>
+     */
+    public function findIntegrantesPorUnidades(array $unidadeIds, array $atribuicoes): Collection
+    {
+        return $this->model->newQuery()
+            ->whereHas('unidadesIntegrantes', fn ($q) => $q
+                ->whereIn('unidade_id', $unidadeIds)
+                ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', $atribuicoes))
+            )
+            ->whereNull('deleted_at')
+            ->get(['id', 'participa_pgd']);
     }
 }

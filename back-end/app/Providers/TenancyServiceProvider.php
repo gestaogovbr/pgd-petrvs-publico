@@ -112,7 +112,9 @@ class TenancyServiceProvider extends ServiceProvider
         Middleware\InitializeTenancyByRequestData::$queryParameter = 'entidade';
 
         RequestDataTenantResolver::$shouldCache = true;
-        RequestDataTenantResolver::$cacheStore = 'redis';
+        RequestDataTenantResolver::$cacheStore = app()->environment('testing')
+            ? config('cache.default')
+            : 'redis';
         RequestDataTenantResolver::$cacheTTL = 3600;
 
         $this->bootEvents();

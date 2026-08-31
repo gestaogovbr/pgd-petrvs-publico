@@ -28,7 +28,7 @@ class UsuarioUpdateAuthorizationValidator
      */
     public function validarEscopo(Usuario $editor, Usuario $alvo): Usuario
     {
-        if ($editor->id === $alvo->id) {
+        if ($editor->cpf === $alvo->cpf) {
             return $alvo;
         }
 
@@ -56,7 +56,7 @@ class UsuarioUpdateAuthorizationValidator
      */
     public function validarAlteracaoPerfil(Usuario $editor, Usuario $alvo, string $perfilId): void
     {
-        if ($editor->id === $alvo->id) {
+        if ($editor->cpf === $alvo->cpf) {
             throw new ForbiddenException('Não é permitido alterar o próprio perfil.');
         }
 

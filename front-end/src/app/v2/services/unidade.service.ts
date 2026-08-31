@@ -4,8 +4,14 @@ import { GlobalsService } from 'src/app/services/globals.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { map, Observable } from 'rxjs';
 import { Unidade } from 'src/app/models/unidade.model';
-import { UnidadeIntegrante } from 'src/app/models/unidade-integrante.model';
 
+export interface UnidadeIndexResponse {
+  data: Unidade[];
+  total: number;
+  current_page: number;
+  last_page: number;
+  per_page: number;
+}
 
 @Injectable()
 export class UnidadeService {
@@ -14,13 +20,23 @@ export class UnidadeService {
   private readonly auth = inject(AuthService);
   private readonly base = 'api/v2/unidade';
 
+  index(termo: string | null, page: number = 1, size: number = 20): Observable<UnidadeIndexResponse> {
+    const params: Record<string, string> = {
+      page: String(page),
+      size: String(size),
+    };
+    if (termo) {
+      params['filters[termo]'] = termo;
+    }
+
+    return this.http.get<any>(`${this.gb.servidorURL}/${this.base}`, { params })
+      .pipe(map((response: any) => response?.data as UnidadeIndexResponse));
+  }
 
   searchByNomeOuCodigo(term: string): Observable<Unidade[]> {
-    return this.http.get<any>(`${this.gb.servidorURL}/${this.base}`, { params: { nome_codigo: term } })  
-      .pipe(
-        map((response: any) => {
-          return (response?.data as Unidade[]) || [];
-        }));
+    return this.index(term, 1, 50).pipe(
+      map((response: UnidadeIndexResponse) => response.data)
+    );
   }
 
   getById(id: string): Observable<Unidade> {
@@ -40,8 +56,28 @@ export class UnidadeService {
     return !!id && !!area && gestores.includes(this.auth.usuario!.id);
   }
 
+  isGestorUnidadeSuperior(unidade: Unidade): boolean {
+    return this.isGestorUnidade(unidade.unidade_pai_id);
+  }
+
   isGestorHierarquia(unidadeId: string): Observable<boolean> {
     return this.http.get<any>(`${this.gb.servidorURL}/${this.base}/${unidadeId}/is-gestor-hierarquia`)
       .pipe(map((r: any) => !!r?.data));
   }
+
+  /**
+   * #2360 RN10/RN12: unidades onde o usuário logado possui atribuição ativa
+   * e, opcionalmente, suas subordinadas na cadeia hierárquica.
+   */
+  minhasUnidades(subordinadas: boolean): Observable<UnidadeResumo[]> {
+    return this.http.get<any>(`${this.gb.servidorURL}/${this.base}/minhas`, {
+      params: { subordinadas: subordinadas ? 'true' : 'false' },
+    }).pipe(map((r: any) => (r?.data as UnidadeResumo[]) ?? []));
+  }
+}
+
+export interface UnidadeResumo {
+  id: string;
+  sigla: string;
+  nome: string;
 }

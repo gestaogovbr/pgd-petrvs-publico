@@ -54,48 +54,12 @@ afterEach(function () {
 beforeEach(function () {
     Cache::flush();
     app()->singleton(CacheInvalidator::class, CacheInvalidatorE2E::class);
-    $codigos = [
-        '100',
-        '101',
-        '102',
-        '103',
-        '104',
-        '105',
-        '106',
-        '107',
-        '108',
-        '109',
-        '110',
-        '111',
-        '112',
-        '113',
-        '114',
-        '115',
-        '116',
-        '200',
-        '300',
-        '999',
-    ];
 
-    $unidadeIds = Unidade::withTrashed()
-        ->whereIn('codigo', $codigos)
-        ->pluck('id');
-    $integranteIds = UnidadeIntegrante::withTrashed()
-        ->whereIn('unidade_id', $unidadeIds->all())
-        ->pluck('id');
-
-    UnidadeIntegranteAtribuicao::withTrashed()
-        ->whereIn('unidade_integrante_id', $integranteIds->all())
-        ->forceDelete();
-    UnidadeIntegrante::withTrashed()
-        ->whereIn('id', $integranteIds->all())
-        ->forceDelete();
-    Unidade::withTrashed()
-        ->whereIn('id', $unidadeIds->all())
-        ->forceDelete();
-    SiapeBlacklistUnidade::withTrashed()
-        ->whereIn('codigo', $codigos)
-        ->forceDelete();
+    UnidadeIntegranteAtribuicao::withTrashed()->forceDelete();
+    UnidadeIntegrante::withTrashed()->forceDelete();
+    Unidade::withTrashed()->update(['unidade_pai_id' => null]);
+    Unidade::withTrashed()->forceDelete();
+    SiapeBlacklistUnidade::withTrashed()->forceDelete();
     SiapeListaUORGS::withTrashed()->forceDelete();
 });
 

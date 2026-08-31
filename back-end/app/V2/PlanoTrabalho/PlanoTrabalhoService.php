@@ -153,6 +153,7 @@ class PlanoTrabalhoService
 
     public function show(string $id): PlanoTrabalho
     {
+        /** @var \App\Models\PlanoTrabalho|null $plano */
         $plano = $this->readRepository->findByIdComRelacoes($id);
 
         if ($plano === null) {
