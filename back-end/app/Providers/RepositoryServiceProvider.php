@@ -507,7 +507,7 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             PlanoEntregaEntregaProgressoReadRepositoryContract::class,
             EloquentPlanoEntregaEntregaProgressoReadRepository::class,
-        )
+        );
 
         $this->app->bind(
             MuralAvisoReadRepositoryContract::class,
