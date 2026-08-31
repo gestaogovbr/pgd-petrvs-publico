@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\PlanoTrabalhoConsolidacao\Eloquent;
 
 use App\DTOs\PlanoTrabalho\PlanoTrabalhoConsolidacaoDataDTO;
+use App\Enums\Atribuicao;
 use App\Enums\StatusEnum;
 use App\Models\Afastamento;
 use App\Models\Atividade;
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\DB;
 
 final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloquentReadRepository implements PlanoTrabalhoConsolidacaoReadRepositoryContract
 {
+    private const DIAS_TOLERANCIA_CONSOLIDACAO_PADRAO = 10;
+
     public function __construct(PlanoTrabalhoConsolidacao $model)
     {
         $this->model = $model;
@@ -237,26 +240,38 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
     {
         $query->select(DB::raw(1))
             ->from('unidades_integrantes as ui_t')
-            ->join('unidades_integrantes_atribuicoes as uia_t', 'uia_t.unidade_integrante_id', '=', 'ui_t.id')
+            ->join('unidades_integrantes_atribuicoes as uia_t', function ($join) {
+                $join->on('uia_t.unidade_integrante_id', '=', 'ui_t.id')
+                    ->whereNull('uia_t.deleted_at');
+            })
             ->join('unidades_integrantes as ui_s', function ($join) use ($usuarioId) {
                 $join->on('ui_s.unidade_id', '=', 'ui_t.unidade_id')
-                    ->where('ui_s.usuario_id', '=', $usuarioId);
+                    ->where('ui_s.usuario_id', '=', $usuarioId)
+                    ->whereNull('ui_s.deleted_at');
             })
-            ->join('unidades_integrantes_atribuicoes as uia_s', 'uia_s.unidade_integrante_id', '=', 'ui_s.id')
-            ->where('uia_t.atribuicao', 'GESTOR')
-            ->where('uia_s.atribuicao', 'GESTOR_SUBSTITUTO')
+            ->join('unidades_integrantes_atribuicoes as uia_s', function ($join) {
+                $join->on('uia_s.unidade_integrante_id', '=', 'ui_s.id')
+                    ->whereNull('uia_s.deleted_at');
+            })
+            ->where('uia_t.atribuicao', Atribuicao::GESTOR->value)
+            ->where('uia_s.atribuicao', Atribuicao::GESTOR_SUBSTITUTO->value)
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
-            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id');
+            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
+            ->whereNull('ui_t.deleted_at');
     }
 
     private function subqueryPlanoEhDoGestorTitular(\Illuminate\Database\Query\Builder $query): void
     {
         $query->select(DB::raw(1))
             ->from('unidades_integrantes as ui_t')
-            ->join('unidades_integrantes_atribuicoes as uia_t', 'uia_t.unidade_integrante_id', '=', 'ui_t.id')
-            ->where('uia_t.atribuicao', 'GESTOR')
+            ->join('unidades_integrantes_atribuicoes as uia_t', function ($join) {
+                $join->on('uia_t.unidade_integrante_id', '=', 'ui_t.id')
+                    ->whereNull('uia_t.deleted_at');
+            })
+            ->where('uia_t.atribuicao', Atribuicao::GESTOR->value)
             ->whereColumn('ui_t.unidade_id', 'planos_trabalhos.unidade_id')
-            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id');
+            ->whereColumn('ui_t.usuario_id', 'planos_trabalhos.usuario_id')
+            ->whereNull('ui_t.deleted_at');
     }
 
     private function getAtividades(PlanoTrabalhoConsolidacao $consolidacao, bool $concluido): Collection
@@ -358,7 +373,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
                 DB::raw('EXISTS(SELECT 1 FROM avaliacoes av WHERE av.plano_trabalho_consolidacao_id = c.id AND av.recurso IS NOT NULL AND av.deleted_at IS NULL) as has_recurso'),
                 DB::raw("EXISTS(SELECT 1 FROM avaliacoes av2 WHERE av2.plano_trabalho_consolidacao_id = c.id AND av2.deleted_at IS NULL AND av2.data_avaliacao < DATE_SUB(NOW(), INTERVAL {$prazoDias} DAY)) as is_prazo_avaliacao_terminado"),
             ])
-            ->orderByRaw("FIELD(pt.status, 'CONCLUIDO', 'ATIVO')")
+            ->orderByRaw("FIELD(pt.status, ?, ?)", [StatusEnum::CONCLUIDO->value, StatusEnum::ATIVO->value])
             ->orderBy('c.data_inicio')
             ->get();
     }
@@ -370,6 +385,34 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->when($encerradoAt, fn ($q) => $q->where('data_inicio', '<=', $encerradoAt))
             ->orderBy('data_inicio')
             ->get();
+    }
+
+    public function countConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds): int
+    {
+        return $this->query()
+            ->where('status', StatusEnum::INCLUIDO->value)
+            ->whereHas('planoTrabalho', function ($query) use ($usuarioId, $unidadesIds) {
+                $query->where('usuario_id', $usuarioId)
+                    ->whereIn('status', [
+                        StatusEnum::ATIVO->value,
+                        StatusEnum::CONCLUIDO->value,
+                        StatusEnum::AVALIADO->value,
+                    ]);
+
+                if ($unidadesIds !== []) {
+                    $query->whereIn('unidade_id', $unidadesIds);
+                }
+            })
+            ->whereRaw(
+                'data_fim < DATE_SUB(NOW(), INTERVAL COALESCE(('
+                . 'SELECT p.dias_tolerancia_consolidacao FROM programas p '
+                . 'INNER JOIN planos_trabalhos pt ON pt.programa_id = p.id '
+                . 'WHERE pt.id = planos_trabalhos_consolidacoes.plano_trabalho_id'
+                . ' AND pt.deleted_at IS NULL'
+                . '), ?) DAY)',
+                [self::DIAS_TOLERANCIA_CONSOLIDACAO_PADRAO]
+            )
+            ->count();
     }
 
     /** @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoTrabalhoConsolidacao> */

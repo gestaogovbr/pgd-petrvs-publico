@@ -11,8 +11,10 @@ use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use App\V2\Unidade\DTOs\UnidadeIndexDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection as SupportCollection;
 
 /**
@@ -33,11 +35,14 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->exists();
     }
 
-    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool
+    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId, bool $incluirDelegado = true): bool
     {
+        $exclude = $incluirDelegado ? [] : ['delegado'];
+
         $unidadesGeridas = GestorHierarquiaCache::getUnidadesGeridas(
             $usuarioId,
-            fn () => $this->getUnidadesGerenciadas($usuarioId)->pluck('id')->all(),
+            fn () => $this->getUnidadesGerenciadas($usuarioId, $exclude)->pluck('id')->all(),
+            $incluirDelegado,
         );
 
         if (in_array($unidadeId, $unidadesGeridas, true)) {
@@ -47,7 +52,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         foreach ($unidadesGeridas as $unidadeGeridaId) {
             $subordinadas = GestorHierarquiaCache::getSubordinadas(
                 $unidadeGeridaId,
-                fn () => $this->getSubordinadasRecursivas([$unidadeGeridaId])->pluck('id')->all(),
+                fn () => $this->getSubordinadasRecursivasIds([$unidadeGeridaId]),
             );
 
             if (in_array($unidadeId, $subordinadas, true)) {
@@ -171,7 +176,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         $where = [];
         $prefix = empty($prefix) ? "" : $prefix . ".";
         $usuario = Usuario::find($usuarioId);
-        
+
         if (!$usuario) {
             return "false";
         }
@@ -225,10 +230,50 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $this->query()->whereIn('unidade_pai_id', $ids)->get();
     }
 
-    public function getSubordinadasRecursivas(array $ids): Collection
+    /** @return string[] */
+    public function getUnidadesComAtribuicaoIds(string $usuarioId): array
+    {
+        $rows = $this->model->getConnection()->select("
+            SELECT DISTINCT ui.unidade_id
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.usuario_id = ?
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", [$usuarioId]);
+
+        return array_map(fn ($row) => $row->unidade_id, $rows);
+    }
+
+    public function buscarResumoPorIds(array $ids): Collection
     {
         if (empty($ids)) {
             return $this->model->newCollection();
+        }
+
+        return $this->query()
+            ->select('id', 'sigla', 'nome')
+            ->whereIn('id', $ids)
+            ->orderBy('sigla')
+            ->get();
+    }
+
+    public function getSubordinadasRecursivas(array $ids): Collection
+    {
+        $resultIds = $this->getSubordinadasRecursivasIds($ids);
+
+        if (empty($resultIds)) {
+            return $this->model->newCollection();
+        }
+
+        return $this->query()->whereIn('id', $resultIds)->get();
+    }
+
+    /** @return string[] */
+    public function getSubordinadasRecursivasIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
         }
 
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
@@ -248,13 +293,20 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             SELECT id FROM subordinadas
         ", $ids);
 
-        $resultIds = array_map(fn($row) => $row->id, $subordinadaIds);
+        return array_map(fn ($row) => $row->id, $subordinadaIds);
+    }
 
-        if (empty($resultIds)) {
-            return $this->model->newCollection();
-        }
+    /** @return list<string> */
+    public function getGerenciadasComSubordinadasIds(string $usuarioId): array
+    {
+        $gerenciadasIds = $this->getUnidadesGerenciadas($usuarioId)->pluck('id');
+        $subordinadasIds = $this->getSubordinadasRecursivas($gerenciadasIds->all())->pluck('id');
 
-        return $this->query()->whereIn('id', $resultIds)->get();
+        return $gerenciadasIds
+            ->merge($subordinadasIds)
+            ->unique()
+            ->values()
+            ->all();
     }
 
     public function existsByCodigo(string $codigo): bool
@@ -296,6 +348,24 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $query->get();
     }
 
+    public function index(UnidadeIndexDTO $dto): LengthAwarePaginator
+    {
+        $query = $this->query()->select('id', 'nome', 'codigo', 'sigla');
+
+        if ($dto->termo) {
+            $termoLower = mb_strtolower($dto->termo);
+            $query->where(function ($q) use ($termoLower) {
+                $q->whereRaw('LOWER(nome) like ?', ["%{$termoLower}%"])
+                  ->orWhereRaw('LOWER(codigo) like ?', ["%{$termoLower}%"])
+                  ->orWhereRaw('LOWER(sigla) like ?', ["%{$termoLower}%"]);
+            });
+        }
+
+        $query->orderBy('sigla', 'asc');
+
+        return $query->paginate($dto->perPage, ['*'], 'page', $dto->page);
+    }
+
     public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade
     {
         /** @var Unidade|null $unidade */
@@ -326,6 +396,11 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return array_reverse(array_column($rows, 'id'));
     }
 
+    public function findAllWhere(array $criteria): SupportCollection
+    {
+        return parent::findAllWhere($criteria);
+    }
+
     /**
      * @inheritDoc
      */
@@ -338,5 +413,13 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->get()
             ->toBase()
             ->keyBy('id');
+    }
+
+    public function findRaiz(): ?Unidade
+    {
+        return $this->model->newQuery()
+            ->whereNull('unidade_pai_id')
+            ->whereNull('deleted_at')
+            ->first();
     }
 }

@@ -112,3 +112,102 @@ test('usuario deve retornar null para lotacao quando nao possui atribuicao LOTAD
 
     expect($usuario->lotacao)->toBeNull();
 });
+
+test('usuario nao aparece em areasTrabalho quando a unica atribuicao esta inativa (soft-deleted)', function () {
+    $entidade = Entidade::create([
+        'sigla' => 'ENT_TEST_3',
+        'nome' => 'Entidade de Teste 3',
+        'abrangencia' => 'NACIONAL',
+        'carga_horaria_padrao' => 8,
+        'gravar_historico_processo' => 0,
+        'layout_formulario_atividade' => 'COMPLETO',
+        'forma_contagem_carga_horaria' => 'DIA',
+    ]);
+
+    $usuario = new Usuario();
+    $usuario->id = \Illuminate\Support\Str::uuid();
+    $usuario->fill([
+        'email' => 'teste_atribuicao_inativa@petrvs.com',
+        'nome' => 'Usuário Teste Atribuição Inativa',
+        'cpf' => '77777777777',
+        'apelido' => 'TesteAtribInativa',
+        'modalidade_pgd' => 'presencial',
+    ]);
+    $usuario->save();
+
+    $unidade = Unidade::create([
+        'codigo' => 'UNIT_TEST_3',
+        'sigla' => 'UTEST3',
+        'nome' => 'Unidade de Teste 3',
+        'instituidora' => 1,
+        'atividades_arquivamento_automatico' => 0,
+        'entidade_id' => $entidade->id,
+    ]);
+
+    $integrante = UnidadeIntegrante::create([
+        'unidade_id' => $unidade->id,
+        'usuario_id' => $usuario->id,
+    ]);
+
+    $atribuicao = UnidadeIntegranteAtribuicao::create([
+        'unidade_integrante_id' => $integrante->id,
+        'atribuicao' => Atribuicao::COLABORADOR->value,
+    ]);
+    $atribuicao->delete(); // simula o vinculo "removido" que a hipotese do Sintoma 1 supoe
+
+    $usuario->refresh();
+
+    expect($usuario->areasTrabalho)->toHaveCount(0);
+});
+
+test('usuario com atribuicoes ativas em varias unidades aparece em todas em areasTrabalho', function () {
+    $entidade = Entidade::create([
+        'sigla' => 'ENT_TEST_4',
+        'nome' => 'Entidade de Teste 4',
+        'abrangencia' => 'NACIONAL',
+        'carga_horaria_padrao' => 8,
+        'gravar_historico_processo' => 0,
+        'layout_formulario_atividade' => 'COMPLETO',
+        'forma_contagem_carga_horaria' => 'DIA',
+    ]);
+
+    $usuario = new Usuario();
+    $usuario->id = \Illuminate\Support\Str::uuid();
+    $usuario->fill([
+        'email' => 'teste_multiplas_unidades@petrvs.com',
+        'nome' => 'Usuário Teste Múltiplas Unidades',
+        'cpf' => '66666666666',
+        'apelido' => 'TesteMultiUnid',
+        'modalidade_pgd' => 'presencial',
+    ]);
+    $usuario->save();
+
+    $unidadeIds = [];
+    foreach (['UNIT_TEST_4A', 'UNIT_TEST_4B'] as $codigo) {
+        $unidade = Unidade::create([
+            'codigo' => $codigo,
+            'sigla' => $codigo,
+            'nome' => "Unidade $codigo",
+            'instituidora' => 1,
+            'atividades_arquivamento_automatico' => 0,
+            'entidade_id' => $entidade->id,
+        ]);
+        $unidadeIds[] = $unidade->id;
+
+        $integrante = UnidadeIntegrante::create([
+            'unidade_id' => $unidade->id,
+            'usuario_id' => $usuario->id,
+        ]);
+
+        UnidadeIntegranteAtribuicao::create([
+            'unidade_integrante_id' => $integrante->id,
+            'atribuicao' => Atribuicao::COLABORADOR->value,
+        ]);
+    }
+
+    $usuario->refresh();
+
+    expect($usuario->areasTrabalho)->toHaveCount(2)
+        ->and($usuario->areasTrabalho->pluck('unidade_id')->sort()->values()->all())
+        ->toBe(collect($unidadeIds)->sort()->values()->all());
+});

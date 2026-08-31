@@ -9,4 +9,23 @@ enum Atribuicao: string
     case LOTADO = 'LOTADO';
     case GESTOR_SUBSTITUTO = 'GESTOR_SUBSTITUTO';
     case DELEGADO = 'GESTOR_DELEGADO';
+
+    /** @return string[] */
+    public static function chefia(): array
+    {
+        return [
+            self::GESTOR->value,
+            self::GESTOR_SUBSTITUTO->value,
+            self::DELEGADO->value,
+        ];
+    }
+
+    /** @return string[] */
+    public static function participante(): array
+    {
+        return [
+            self::LOTADO->value,
+            self::COLABORADOR->value,
+        ];
+    }
 }

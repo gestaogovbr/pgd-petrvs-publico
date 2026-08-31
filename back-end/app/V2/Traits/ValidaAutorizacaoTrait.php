@@ -4,40 +4,40 @@ declare(strict_types=1);
 
 namespace App\V2\Traits;
 
+use App\Contracts\HasOwnership;
 use App\Exceptions\ForbiddenException;
 use App\Repository\UnidadeRepository;
-use Illuminate\Database\Eloquent\Model;
 
 /**
- * Trait para validação de autorização em entidades vinculadas a um Plano de Trabalho.
+ * Trait para validação de autorização em entidades que implementam HasOwnership.
  *
  * @property-read UnidadeRepository $unidadeRepository
  */
 trait ValidaAutorizacaoTrait
 {
     protected function isDonoOuChefia(
-        Model $entity,
+        HasOwnership $entity,
         string $usuarioId,
         string $unidadeId,
         string|array $ownerColumns = 'usuario_id',
+        bool $incluirDelegado = true,
     ): bool {
-        foreach ((array) $ownerColumns as $column) {
-            if ($entity->{$column} === $usuarioId) {
-                return true;
-            }
+        if (in_array($usuarioId, $entity->getOwnerIds(), true)) {
+            return true;
         }
 
-        return $this->unidadeRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId);
+        return $this->unidadeRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId, $incluirDelegado);
     }
 
     protected function autorizarDonoOuChefia(
-        Model $entity,
+        HasOwnership $entity,
         string $usuarioId,
         string $unidadeId,
         string $mensagem = 'Usuário não tem permissão para realizar esta ação.',
         string|array $ownerColumns = 'usuario_id',
+        bool $incluirDelegado = true,
     ): void {
-        if ($this->isDonoOuChefia($entity, $usuarioId, $unidadeId, $ownerColumns)) {
+        if ($this->isDonoOuChefia($entity, $usuarioId, $unidadeId, $ownerColumns, $incluirDelegado)) {
             return;
         }
 

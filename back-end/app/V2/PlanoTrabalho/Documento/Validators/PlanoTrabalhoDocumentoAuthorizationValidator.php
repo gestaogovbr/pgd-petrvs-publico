@@ -19,9 +19,9 @@ class PlanoTrabalhoDocumentoAuthorizationValidator
         private readonly UnidadeRepository $unidadeRepository,
     ) {}
 
-
     public function validar(string $planoTrabalhoId, string $usuarioLogadoId): PlanoTrabalho
     {
+        /** @var \App\Models\PlanoTrabalho|null $plano */
         $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
 
         if ($plano === null) {
@@ -33,6 +33,29 @@ class PlanoTrabalhoDocumentoAuthorizationValidator
             $usuarioLogadoId,
             $plano->unidade_id,
             'Usuário não tem permissão para acessar o documento deste Plano de Trabalho.',
+        );
+
+        return $plano;
+    }
+
+    /**
+     * Autorização específica para assinatura de TCR.
+     * Delegados não possuem permissão para assinar TCR.
+     */
+    public function validarAssinatura(string $planoTrabalhoId, string $usuarioLogadoId): PlanoTrabalho
+    {
+        $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
+
+        if ($plano === null) {
+            throw new NotFoundException('Plano de Trabalho não encontrado.');
+        }
+
+        $this->autorizarDonoOuChefia(
+            $plano,
+            $usuarioLogadoId,
+            $plano->unidade_id,
+            'Usuário não tem permissão para assinar o documento deste Plano de Trabalho.',
+            incluirDelegado: false,
         );
 
         return $plano;

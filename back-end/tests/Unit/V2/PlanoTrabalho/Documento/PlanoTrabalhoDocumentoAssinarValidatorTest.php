@@ -219,4 +219,23 @@ describe('PlanoTrabalhoDocumentoAssinarValidator', function () {
         expect(true)->toBeTrue();
     });
 
+    test('delegado que é dono do PT pode assinar como participante', function () {
+        $plano = fakePlanoAssinar(StatusEnum::INCLUIDO->value);
+
+        $assinaturasRelation = Mockery::mock(HasMany::class);
+        $assinaturasRelation->shouldReceive('count')->andReturn(0);
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+        $documento->shouldReceive('assinaturas')->andReturn($assinaturasRelation);
+
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
+        $this->assinaturaRepo->shouldReceive('usuarioJaAssinou')->andReturn(false);
+
+        $result = $this->validator->validar($plano, 'user-1', '12345678901');
+
+        expect($result)->toBe($documento);
+    });
+
 });
