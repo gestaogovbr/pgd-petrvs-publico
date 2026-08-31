@@ -14,6 +14,11 @@ beforeEach(function () {
             ->name('__tests.v2.unidade.buscarPorNomeOuCodigo');
     }
 
+    if (!Route::has('__tests.v2.unidade.minhas')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/unidade/minhas', [UnidadeController::class, 'minhasUnidades'])
+            ->name('__tests.v2.unidade.minhas');
+    }
+
     $this->usuario = Usuario::factory()->create();
     $this->unidade = Unidade::factory()->create(['nome' => 'Coordenação Financeira', 'codigo' => '00123']);
 
@@ -128,6 +133,82 @@ describe('GET /api/v2/unidade (happy path)', function () {
         $this->actingAs($this->usuario, 'web');
 
         $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=XYZNONEXISTENT');
+
+        $response->assertStatus(200);
+
+        expect($response->json('data'))->toBeEmpty();
+    });
+});
+
+// ── minhas unidades ─────────────────────────────────────────────────
+
+describe('GET /api/v2/unidade/minhas', function () {
+
+    test('retorna a unidade onde o usuário possui atribuição', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->getJson('/api/__tests/v2/unidade/minhas');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('success', true);
+
+        $data = $response->json('data');
+
+        expect(collect($data)->pluck('id'))->toContain($this->unidade->id)
+            ->and($data[0])->toHaveKeys(['id', 'sigla', 'nome']);
+    });
+
+    test('inclui subordinadas quando subordinadas=true', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $subordinada = Unidade::factory()->create([
+            'nome' => 'Divisão Subordinada',
+            'unidade_pai_id' => $this->unidade->id,
+            'path' => '/' . $this->unidade->id,
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/unidade/minhas?subordinadas=true');
+
+        $response->assertStatus(200);
+
+        $ids = collect($response->json('data'))->pluck('id');
+
+        expect($ids)->toContain($this->unidade->id)
+            ->and($ids)->toContain($subordinada->id);
+    });
+
+    test('não inclui subordinadas quando subordinadas=false', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $subordinada = Unidade::factory()->create([
+            'nome' => 'Divisão Subordinada 2',
+            'unidade_pai_id' => $this->unidade->id,
+            'path' => '/' . $this->unidade->id,
+        ]);
+
+        $response = $this->getJson('/api/__tests/v2/unidade/minhas?subordinadas=false');
+
+        $response->assertStatus(200);
+
+        $ids = collect($response->json('data'))->pluck('id');
+
+        expect($ids)->toContain($this->unidade->id)
+            ->and($ids)->not->toContain($subordinada->id);
+    });
+
+    test('retorna 422 quando subordinadas não é booleano', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->getJson('/api/__tests/v2/unidade/minhas?subordinadas=abc');
+
+        $response->assertStatus(422);
+    });
+
+    test('retorna vazio quando usuário não possui atribuição', function () {
+        $usuarioSemAtribuicao = Usuario::factory()->create();
+        $this->actingAs($usuarioSemAtribuicao, 'web');
+
+        $response = $this->getJson('/api/__tests/v2/unidade/minhas');
 
         $response->assertStatus(200);
 
