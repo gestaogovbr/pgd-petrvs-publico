@@ -7,6 +7,7 @@ import { TenantDaoService } from "src/app/dao/tenant-dao.service";
 import { JobAgendado } from "src/app/models/job-agendado.model";
 import { Tenant } from "src/app/models/tenant.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
+import { formatJobScheduleDescription } from "./job-schedule-description";
 
 @Component({
     selector: 'panel-jobs-agendados-list',
@@ -105,21 +106,7 @@ export class PanelJobAgendadosListComponent extends PageListBase<JobAgendado, Jo
     return result;
   }
 
-  public expressaoText(row: JobAgendado) {
-    if (row.periodicidade == 'custom') {
-      return row.expressao_cron;
-    } else {
-      if (row.periodicidade == 'cada') {
-        return 'A cada ' + row.intervalo_qtde + ' ' +
-          this.lookup.getValue(this.lookup.AGENDAMENTO_INTERVALO_TIPOS, row.intervalo_tipo);
-      } else if (row.periodicidade == 'todos') {
-        return 'Todos os dias às ' + row.horario + 'h';
-      } else if (row.periodicidade == 'dia') {
-        return 'Todo dia às ' + row.dia + ' às ' + row.horario + 'h';
-      } else {
-        return this.lookup.getValue(this.lookup.AGENDAMENTO_PERIODICIDADES, row.periodicidade) +
-          ' às ' + row.horario + 'h';
-      }
-    }
+  public expressaoText(row: JobAgendado): string {
+    return formatJobScheduleDescription(row, this.lookup);
   }
 }
