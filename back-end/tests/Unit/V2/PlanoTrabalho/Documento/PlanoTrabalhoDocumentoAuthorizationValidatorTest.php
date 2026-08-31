@@ -53,7 +53,7 @@ describe('PlanoTrabalhoDocumentoAuthorizationValidator', function () {
         $plano = fakePlanoDocumento('user-dono', 'unidade-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
         $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
-            ->with('unidade-1', 'user-chefia')
+            ->with('unidade-1', 'user-chefia', true)
             ->andReturn(true);
 
         $result = $this->validator->validar('plano-1', 'user-chefia');
@@ -65,9 +65,65 @@ describe('PlanoTrabalhoDocumentoAuthorizationValidator', function () {
         $plano = fakePlanoDocumento('user-dono', 'unidade-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
         $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
-            ->with('unidade-1', 'user-estranho')
+            ->with('unidade-1', 'user-estranho', true)
             ->andReturn(false);
 
         $this->validator->validar('plano-1', 'user-estranho');
     })->throws(ForbiddenException::class, 'Usuário não tem permissão para acessar o documento deste Plano de Trabalho.');
+});
+
+describe('PlanoTrabalhoDocumentoAuthorizationValidator::validarAssinatura', function () {
+
+    test('lança NotFoundException quando plano não encontrado', function () {
+        $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn(null);
+
+        $this->validator->validarAssinatura('plano-1', 'user-1');
+    })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
+
+    test('permite quando usuário é dono do plano', function () {
+        $plano = fakePlanoDocumento('user-1', 'unidade-1');
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+        $this->unidadeRepo->shouldNotReceive('isUsuarioGestorRecursivo');
+
+        $result = $this->validator->validarAssinatura('plano-1', 'user-1');
+
+        expect($result)->toBe($plano);
+    });
+
+    test('permite quando usuário é chefia titular da unidade do plano', function () {
+        $plano = fakePlanoDocumento('user-dono', 'unidade-1');
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+
+        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('unidade-1', 'user-chefia', false)
+            ->andReturn(true);
+
+        $result = $this->validator->validarAssinatura('plano-1', 'user-chefia');
+
+        expect($result)->toBe($plano);
+    });
+
+    test('bloqueia delegado que não é titular nem substituto', function () {
+        $plano = fakePlanoDocumento('user-dono', 'unidade-1');
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+
+        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('unidade-1', 'user-delegado', false)
+            ->andReturn(false);
+
+        $this->validator->validarAssinatura('plano-1', 'user-delegado');
+    })->throws(ForbiddenException::class, 'Usuário não tem permissão para assinar o documento deste Plano de Trabalho.');
+
+    test('permite usuário que é delegado E titular na mesma unidade', function () {
+        $plano = fakePlanoDocumento('user-dono', 'unidade-1');
+        $this->planoRepo->shouldReceive('findById')->andReturn($plano);
+
+        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
+            ->with('unidade-1', 'user-titular-delegado', false)
+            ->andReturn(true);
+
+        $result = $this->validator->validarAssinatura('plano-1', 'user-titular-delegado');
+
+        expect($result)->toBe($plano);
+    });
 });

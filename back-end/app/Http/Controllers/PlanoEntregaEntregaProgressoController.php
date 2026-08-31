@@ -18,7 +18,9 @@ class PlanoEntregaEntregaProgressoController extends ControllerBase {
                 if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_PRO_EDT')) throw new ServerException("CapacidadeStore", "Edição não realizada");
                 break;
             case 'DESTROY':
-                if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_PRO_EXCL')) throw new ServerException("CapacidadeStore", "Exclusão não realizada");
+                if (!$usuario->hasPermissionTo('MOD_PENT_ENTR_PRO_EXCL')) {
+                    throw new ServerException("CapacidadeStore", "Exclusão não realizada");
+                }
                 break;
             case 'QUERY':
                 if (!$usuario->hasPermissionTo('MOD_PENT')) throw new ServerException("CapacidadeStore", "Consulta não realizada");

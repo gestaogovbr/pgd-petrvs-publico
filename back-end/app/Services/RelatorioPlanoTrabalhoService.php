@@ -46,7 +46,6 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
 
         $where[] = ['unidade_id', 'in', $unidadeIds];
 
-
         if (isset($somenteVigentes[2])) {
             $where[] = new RawWhere("(now() between dataInicio and dataFim)", []);
         }

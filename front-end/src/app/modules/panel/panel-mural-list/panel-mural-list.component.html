@@ -1,0 +1,38 @@
+<grid [dao]="dao"
+    [add]="add"
+    [title]="isModal ? '' : title"
+    [orderBy]="orderBy"
+    [join]="join"
+    [hasAdd]="true"
+    [hasEdit]="true"
+    labelAdd="Novo Aviso"
+>
+  <toolbar></toolbar>
+  <columns>
+    <column title="Título" field="titulo">
+      <ng-template let-row="row" #columnTitulo>
+        <span>{{row.titulo}}</span>
+      </ng-template>
+    </column>
+    <column title="Destinatário" [template]="columnDestinatario">
+      <ng-template let-row="row" #columnDestinatario>
+        <span>{{getDestinatarioLabel(row)}}</span>
+      </ng-template>
+    </column>
+    <column title="Data de Publicação" [template]="columnPublicacao">
+      <ng-template let-row="row" #columnPublicacao>
+        <span>{{dao!.getDateTimeFormatted(row.data_publicacao)}}</span>
+      </ng-template>
+    </column>
+    <column title="Data de Expiração" [template]="columnExpiracao">
+      <ng-template let-row="row" #columnExpiracao>
+        <span>{{dao!.getDateTimeFormatted(row.data_expiracao)}}</span>
+      </ng-template>
+    </column>
+    <column type="options"
+        [onEdit]="edit"
+        [dynamicButtons]="dynamicButtons.bind(this)"
+    ></column>
+  </columns>
+  <pagination [rows]="rowsLimit"></pagination>
+</grid>

@@ -53,6 +53,10 @@ class PlanoTrabalhoDocumentoAssinarValidator
             throw new ValidateException('Todas as assinaturas exigidas já foram realizadas.');
         }
 
+        if ($plano->usuario_id !== $usuarioId) {
+            $this->validarAssinaturaChefiaNaoRealizada($documento, $plano->usuario_id);
+        }
+
         return $documento;
     }
 
@@ -76,10 +80,12 @@ class PlanoTrabalhoDocumentoAssinarValidator
      * Valida se o assinante possui autoridade hierárquica para assinar o TCR de outro participante.
      *
      * Regra baseada no papel do participante NA UNIDADE DO PT:
-     * - Participante é apenas lotado → gestor da mesma unidade ou da unidade pai pode assinar
+     * - Participante é apenas lotado → gestor titular ou substituto da mesma unidade ou da unidade pai pode assinar
      * - Participante é GESTOR_SUBSTITUTO → GESTOR titular da mesma unidade pode assinar
      * - Participante é GESTOR_DELEGADO → GESTOR titular ou GESTOR_SUBSTITUTO da mesma unidade pode assinar
      * - Participante é GESTOR titular → gestor da unidade pai deve assinar
+     *
+     * Delegados são barrados pelo AuthorizationValidator (validarAssinatura → isChefiaSemDelegado).
      */
     private function validarChefiaHierarquica(PlanoTrabalho $plano, string $usuarioId): void
     {
@@ -89,10 +95,6 @@ class PlanoTrabalhoDocumentoAssinarValidator
 
         $unidade = $this->unidadeRepository->findById($plano->unidade_id);
 
-        // Unidade raiz (sem pai): não há hierarquia superior para exigir.
-        // Não verifica se o assinante é gestor porque o AuthorizationValidator
-        // (executado antes) já garante que apenas o dono do PT ou gestores da unidade
-        // chegam até aqui (via autorizarDonoOuChefia → isUsuarioGestorRecursivo).
         if ($unidade === null || $unidade->unidade_pai_id === null) {
             return;
         }
@@ -105,6 +107,20 @@ class PlanoTrabalhoDocumentoAssinarValidator
 
         if (!$this->unidadeRepository->isUsuarioGestorRecursivo($unidade->unidade_pai_id, $usuarioId)) {
             throw new ForbiddenException('O assinante deve ser gestor da mesma unidade do participante ou de uma unidade superior.');
+        }
+    }
+
+    /**
+     * Verifica se já existe uma assinatura de chefia (alguém que não é o participante do PT).
+     */
+    private function validarAssinaturaChefiaNaoRealizada(Documento $documento, string $participanteId): void
+    {
+        $existeAssinaturaChefia = $documento->assinaturas()
+            ->where('usuario_id', '!=', $participanteId)
+            ->exists();
+
+        if ($existeAssinaturaChefia) {
+            throw new ValidateException('A assinatura de chefia já foi realizada para este documento.');
         }
     }
 
