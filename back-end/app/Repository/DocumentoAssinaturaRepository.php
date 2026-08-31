@@ -83,4 +83,9 @@ class DocumentoAssinaturaRepository
     {
         return $this->readRepository->listarRevogadasPorPlanoTrabalho($planoTrabalhoId);
     }
+
+    public function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId, string $documentoIdColumn = 'planos_trabalhos.documento_id'): void
+    {
+        $this->readRepository->subqueryUsuarioJaAssinou($query, $usuarioId, $documentoIdColumn);
+    }
 }

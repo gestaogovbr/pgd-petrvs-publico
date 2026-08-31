@@ -5,6 +5,7 @@ use App\Enums\StatusEnum;
 use App\Exceptions\ValidateException;
 use App\Models\Afastamento;
 use App\Models\Avaliacao;
+use App\Models\Capacidade;
 use App\Models\Entrega;
 use App\Models\Perfil;
 use App\Models\PlanoEntrega;
@@ -16,6 +17,7 @@ use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
 use App\Models\ProgramaParticipante;
 use App\Models\TipoAvaliacaoNota;
+use App\Models\TipoCapacidade;
 use App\Models\TipoMotivoAfastamento;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -24,6 +26,7 @@ use App\V2\PlanoTrabalho\PlanoTrabalhoService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 
 
@@ -764,6 +767,18 @@ describe('GET /api/v2/plano-trabalho/statuses', function () {
 // ── PATCH cancelar ──────────────────────────────────────────────────
 
 describe('PATCH /api/v2/plano-trabalho/:id/cancelar', function () {
+
+    beforeEach(function () {
+        $tipoCapacidade = TipoCapacidade::firstOrCreate(
+            ['codigo' => 'MOD_PTR_CNC'],
+            ['id' => Str::uuid()->toString(), 'descricao' => 'Permite cancelar planos de trabalho']
+        );
+
+        Capacidade::firstOrCreate(
+            ['perfil_id' => $this->usuario->perfil_id, 'tipo_capacidade_id' => $tipoCapacidade->id],
+            ['id' => Str::uuid()->toString()]
+        );
+    });
 
     function criarPlanoAtivo($context): PlanoTrabalho
     {

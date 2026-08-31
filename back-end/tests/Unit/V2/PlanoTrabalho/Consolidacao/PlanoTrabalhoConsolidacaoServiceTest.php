@@ -117,7 +117,7 @@ describe('PlanoTrabalhoConsolidacaoService::index', function () {
             ->andReturn(new Collection([$consolidacao]));
 
         $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
-            ->with('u-1', 'estranho-1')->andReturn(false);
+            ->with('u-1', 'estranho-1', true)->andReturn(false);
 
         $this->service->index('plano-1');
     });

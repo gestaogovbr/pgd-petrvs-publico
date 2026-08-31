@@ -46,7 +46,7 @@ describe('AtividadeAuthorizationValidator', function () {
 
         $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn($plano);
         $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')
-            ->with('unidade-1', 'chefia-1')
+            ->with('unidade-1', 'chefia-1', true)
             ->andReturn(true);
 
         $result = $this->validator->validar('plano-1', 'chefia-1');

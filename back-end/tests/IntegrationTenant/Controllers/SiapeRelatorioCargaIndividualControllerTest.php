@@ -25,6 +25,10 @@ beforeEach(function () {
     }
 });
 
+afterEach(function () {
+    $this->withMiddleware(InitializeTenancyByRequestData::class);
+});
+
 test('endpoint retorna relatorio de carga individual por id para usuario autorizado', function () {
     $perfil = Perfil::factory()->create();
     $tipoCapacidade = TipoCapacidade::create([

@@ -92,6 +92,7 @@ class UsuarioConfig
  * @property-read \App\Models\Perfil|null $perfil
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $unidadesIntegrantes
  * @property-read \App\Models\PlanoTrabalho|null $ultimoPlanoTrabalho
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoTrabalho> $planosTrabalho
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Unidade[] $unidades
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $curadores
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $colaboracoes
@@ -336,7 +337,7 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
         return $this->hasMany(NotificacaoDestinatario::class);
     }
 
-    public function planosTrabalho()
+    public function planosTrabalho(): HasMany
     {
         return $this->hasMany(PlanoTrabalho::class);
     }

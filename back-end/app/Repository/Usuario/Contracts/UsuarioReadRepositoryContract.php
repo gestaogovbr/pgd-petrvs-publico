@@ -42,4 +42,11 @@ interface UsuarioReadRepositoryContract
      * @param list<string> $unidadeIds
      */
     public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection;
+
+    /**
+     * @param string[] $unidadeIds
+     * @param string[] $atribuicoes
+     * @return Collection<int, Usuario>
+     */
+    public function findIntegrantesPorUnidades(array $unidadeIds, array $atribuicoes): Collection;
 }

@@ -1,0 +1,13 @@
+.painel-card {
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: inset 5px -8px 9px #a5a5a554;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #1369f0;
+    outline-offset: 2px;
+  }
+}

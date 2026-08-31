@@ -360,4 +360,4 @@ Observacao: assim como no controller de blacklist de servidores, a rota esta em 
 - `app/Services/SiapeBlackListServidorService.php`
 - `app/Services/SiapeBlacklistUnidadeService.php`
 - `app/Services/LoginService.php`
-- `routes/api_tenant.php`
+- `routes/api_tenant/siape.php`

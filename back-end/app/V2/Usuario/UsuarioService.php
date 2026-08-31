@@ -137,14 +137,14 @@ class UsuarioService
 
     public function unidadesVinculadasPorCpf(string $cpf): Collection
     {
-        $alvo = $this->usuarioRepository->findByCpf($cpf);
+        $alvos = $this->usuarioRepository->findAllByCpf($cpf);
 
-        if ($alvo === null) {
+        if ($alvos->isEmpty()) {
             throw new NotFoundException('Usuário não encontrado para o CPF informado.');
         }
 
         $solicitante = $this->getUsuarioLogado();
-        $this->showAuthorizationValidator->validarEscopo($solicitante, $alvo);
+        $this->showAuthorizationValidator->validarEscopoParaAlgumAlvo($solicitante, $alvos);
 
         return $this->usuarioRepository->getUnidadesVinculadas($cpf);
     }

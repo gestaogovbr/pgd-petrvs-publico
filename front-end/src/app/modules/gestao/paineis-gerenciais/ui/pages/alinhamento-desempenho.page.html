@@ -1,0 +1,61 @@
+<app-breadcrumb></app-breadcrumb>
+
+<div class="container-fluid px-4 py-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <painel-filtros
+      [unidadeInicialId]="unidadeInicialId()"
+      [unidadeInicialSigla]="unidadeInicialSigla()"
+      [unidadeInicialNome]="unidadeInicialNome()"
+      tooltipDatas="Serão apresentados dados referentes a Entregas, Planos de Entregas e Planos de Trabalho vigentes no intervalo selecionado para a consulta."
+      (filtrosChange)="onFiltrosChange($event)"
+      (unidadeChange)="onUnidadeChange($event)"
+      class="flex-grow-1" />
+
+    <br-button emphasis="secondary" (click)="exportarPdf()" class="btn-exportar" [isLoading]="carregandoAlgum()" [disabled]="carregandoAlgum()">
+      <i class="fas fa-file-pdf mr-1" aria-hidden="true"></i>Exportar PDF
+    </br-button>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <indicador-barra-horizontal
+        [dados]="alinhamentoInstitucional()"
+        [carregando]="carregandoAlinhamento()"
+        [titulo]="textos.alinhamento.titulo"
+        [informacaoAdicional]="textos.alinhamento.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillAlinhamento()"
+        (unidadeClick)="onDrillDown(1, $event)"
+        (voltarClick)="onVoltarDrill(1)" />
+    </div>
+
+    <div class="col-md-6">
+      <indicador-barra-horizontal
+        [dados]="avaliacoesPlanoEntrega()"
+        [carregando]="carregandoAvaliacoesPE()"
+        [titulo]="textos.avaliacoesPE.titulo"
+        [informacaoAdicional]="textos.avaliacoesPE.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillAvaliacoesPE()"
+        (unidadeClick)="onDrillDown(2, $event)"
+        (voltarClick)="onVoltarDrill(2)" />
+    </div>
+
+    <div class="col-md-6 offset-md-3">
+      <indicador-barra-horizontal
+        [dados]="avaliacoesPlanoTrabalho()"
+        [carregando]="carregandoAvaliacoesPT()"
+        [titulo]="textos.avaliacoesPT.titulo"
+        [informacaoAdicional]="textos.avaliacoesPT.info"
+        [origemDados]="origemDados"
+        [siglaPai]="unidadeInicialSigla()"
+        [drillAtivo]="!!drillAvaliacoesPT()"
+        (unidadeClick)="onDrillDown(3, $event)"
+        (voltarClick)="onVoltarDrill(3)" />
+    </div>
+  </div>
+</div>
+
+<pdf-painel />

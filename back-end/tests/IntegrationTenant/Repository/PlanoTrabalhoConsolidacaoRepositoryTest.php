@@ -413,6 +413,74 @@ describe('PlanoTrabalhoConsolidacaoRepository', function () {
             expect($resultado->pluck('id')->contains('consolidacao-participante'))->toBeTrue();
         });
 
+        test('inclui consolidação do gestor titular para substituto quando atribuição de gestor foi soft-deleted', function () {
+            $unidade = Unidade::factory()->create(['id' => 'unidade-sd-1']);
+            $titular = Usuario::factory()->create(['id' => 'user-titular-sd']);
+            $substituto = Usuario::factory()->create(['id' => 'user-substituto-sd']);
+
+            $integranteTitular = UnidadeIntegrante::query()->create([
+                'id' => (string) Str::uuid(),
+                'unidade_id' => $unidade->id,
+                'usuario_id' => $titular->id,
+            ]);
+            $atribuicaoGestor = UnidadeIntegranteAtribuicao::query()->create([
+                'id' => (string) Str::uuid(),
+                'atribuicao' => 'GESTOR',
+                'unidade_integrante_id' => $integranteTitular->id,
+            ]);
+            $atribuicaoGestor->delete();
+
+            $integranteSubstituto = UnidadeIntegrante::query()->create([
+                'id' => (string) Str::uuid(),
+                'unidade_id' => $unidade->id,
+                'usuario_id' => $substituto->id,
+            ]);
+            UnidadeIntegranteAtribuicao::query()->create([
+                'id' => (string) Str::uuid(),
+                'atribuicao' => 'GESTOR_SUBSTITUTO',
+                'unidade_integrante_id' => $integranteSubstituto->id,
+            ]);
+
+            $planoTitular = PlanoTrabalho::factory()->create([
+                'id' => 'plano-titular-sd',
+                'numero' => 4001,
+                'usuario_id' => $titular->id,
+                'unidade_id' => $unidade->id,
+            ]);
+
+            PlanoTrabalhoConsolidacao::factory()->create([
+                'id' => 'consolidacao-titular-sd',
+                'plano_trabalho_id' => $planoTitular->id,
+                'data_inicio' => '2024-01-01',
+                'data_fim' => '2024-01-31',
+                'data_conclusao' => '2024-02-01 10:00:00',
+                'status' => StatusEnum::CONCLUIDO->value,
+            ]);
+
+            $createdAt = now()->subDays(10);
+            $statusTitular = new StatusJustificativa([
+                'id' => 'status-titular-sd-1',
+                'codigo' => StatusEnum::CONCLUIDO->value,
+                'justificativa' => 'ok',
+                'plano_trabalho_consolidacao_id' => 'consolidacao-titular-sd',
+                'usuario_id' => $titular->id,
+            ]);
+            $statusTitular->timestamps = false;
+            $statusTitular->created_at = $createdAt;
+            $statusTitular->updated_at = $createdAt;
+            $statusTitular->save();
+
+            $resultado = $this->repository->getPendentesAvaliacao(
+                [$unidade->id],
+                [],
+                $substituto->id,
+                now()->subDays(5),
+            );
+
+            expect($resultado)->toHaveCount(1)
+                ->and($resultado->first()->id)->toBe('consolidacao-titular-sd');
+        });
+
         test('inclui apenas gestor titular das unidades subordinadas imediatas', function () {
             $unidadeSuperior = Unidade::factory()->create(['id' => 'unidade-superior']);
             $unidadeSub = Unidade::factory()->create(['id' => 'unidade-sub', 'unidade_pai_id' => $unidadeSuperior->id]);

@@ -466,6 +466,9 @@ class LoginController extends Controller
     public function signInAzureRedirect(Request $request)
     {
         $entidade = $this->registrarEntidade($request);
+        if (!$entidade) {
+            return response()->json(['error' => 'Entidade não identificada'], 404);
+        }
         $url_dinamica_callback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
         $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
         return $this->azureProvider($config = $azure_select_tenancy)
@@ -476,6 +479,9 @@ class LoginController extends Controller
     public function signInAzureCallback(Request $request)
     {
         $entidade = $this->registrarEntidade($request);
+        if (!$entidade) {
+            return response()->json(['error' => 'Entidade não identificada'], 404);
+        }
         $url_dinamica_callback = config("app.url") . "/api/login-azure-callback/" . $entidade->sigla;
         $azure_select_tenancy = $this->getConfigAzure($url_dinamica_callback);
         $user = $this->azureProvider($config = $azure_select_tenancy)->user();

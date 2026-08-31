@@ -56,7 +56,7 @@ planos_trabalhos_consolidacoes
 
 ## Endpoints
 
-**Importante:** os endpoints serão implementados em `AfastamentoController` e `AfastamentoService`. No entanto, o apontamento do endpoint em `api_tenant.php` será para rotas de ocorrências.
+**Importante:** os endpoints serão implementados em `AfastamentoController` e `AfastamentoService`. No entanto, o apontamento do endpoint em `routes/api_tenant/v2/ocorrencia.php` será para rotas de ocorrências.
 
 ### `GET /api/v2/plano-trabalho/:id` (atualização)
 

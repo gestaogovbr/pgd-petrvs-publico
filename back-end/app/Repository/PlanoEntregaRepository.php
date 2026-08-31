@@ -108,4 +108,19 @@ class PlanoEntregaRepository implements EnvioRepositoryInterface
     {
         return $this->readRepository->findEntregaById($entregaId);
     }
+
+    public function countPlanosEntregaHomologacao(array $unidadesIds): int
+    {
+        return $this->readRepository->countPlanosEntregaHomologacao($unidadesIds);
+    }
+
+    public function countPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): int
+    {
+        return $this->readRepository->countPlanosEntregaAvaliacao($unidadesIds, $criadosApos);
+    }
+
+    public function countEntregasSemProgresso(array $unidadesIds, ?string $planoEntregaCriadoApos = null): int
+    {
+        return $this->readRepository->countEntregasSemProgresso($unidadesIds, $planoEntregaCriadoApos);
+    }
 }

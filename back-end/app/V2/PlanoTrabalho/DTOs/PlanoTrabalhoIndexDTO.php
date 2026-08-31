@@ -28,6 +28,8 @@ class PlanoTrabalhoIndexDTO
         public readonly ?string $orderBy = null,
         public readonly ?string $orderDir = null,
         public readonly bool $minhaEquipe = false,
+        public readonly bool $aguardandoMinhaAvaliacao = false,
+        public readonly bool $aguardandoMinhaAssinatura = false,
     ) {}
 
     public function withUnidadesId(array $unidadesId): self
@@ -52,6 +54,8 @@ class PlanoTrabalhoIndexDTO
             orderBy: $this->orderBy,
             orderDir: $this->orderDir,
             minhaEquipe: $this->minhaEquipe,
+            aguardandoMinhaAvaliacao: $this->aguardandoMinhaAvaliacao,
+            aguardandoMinhaAssinatura: $this->aguardandoMinhaAssinatura,
         );
     }
 
@@ -88,11 +92,13 @@ class PlanoTrabalhoIndexDTO
         $unidadeRegramento = $filters['unidade_regramento'] ?? null;
         $usuarioNome = $filters['usuario_nome'] ?? null;
         $minhaEquipe = (bool) ($filters['minha_equipe'] ?? false);
+        $aguardandoMinhaAvaliacao = (bool) ($filters['aguardando_minha_avaliacao'] ?? false);
+        $aguardandoMinhaAssinatura = (bool) ($filters['aguardando_minha_assinatura'] ?? false);
 
         $possuiFiltro = $dataInicio || $dataFim || $vigentes || $arquivados
             || $usuarioId || $numero || $modalidadePgd || $status
             || $unidadesId || $incluirSubordinadas || $unidadeRegramento
-            || $usuarioNome || $minhaEquipe;
+            || $usuarioNome || $minhaEquipe || $aguardandoMinhaAvaliacao || $aguardandoMinhaAssinatura;
 
         if (!$possuiFiltro) {
             throw new ValidateException("Informe ao menos um filtro para a busca.");
@@ -118,6 +124,8 @@ class PlanoTrabalhoIndexDTO
             orderBy: $filters['order_by'] ?? null,
             orderDir: $filters['order_dir'] ?? null,
             minhaEquipe: $minhaEquipe,
+            aguardandoMinhaAvaliacao: $aguardandoMinhaAvaliacao,
+            aguardandoMinhaAssinatura: $aguardandoMinhaAssinatura,
         );
     }
 }
