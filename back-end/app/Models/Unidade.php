@@ -17,6 +17,7 @@ use App\Models\UnidadeIntegrante;
 use App\Models\Cidade;
 use App\Models\Template;
 use App\Models\NotificacaoConfig;
+use App\Models\HistoricoExecutoraUnidade;
 use App\Models\HistoricoLotacao;
 use App\Models\HistoricoFuncao;
 use App\Models\CurriculumProfissional;
@@ -200,6 +201,11 @@ class Unidade extends ModelBase
     public function historicosLotacoes()
     {
         return $this->hasMany(HistoricoLotacao::class);
+    }
+
+    public function historicosExecutora()
+    {
+        return $this->hasMany(HistoricoExecutoraUnidade::class);
     }
 
     public function historicosFuncoes()

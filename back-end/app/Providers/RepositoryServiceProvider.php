@@ -7,6 +7,8 @@ namespace App\Providers;
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 
 use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
+use App\Repository\HistoricoExecutoraUnidade\Contracts\HistoricoExecutoraUnidadeWriteRepositoryContract;
+use App\Repository\HistoricoExecutoraUnidade\Eloquent\EloquentHistoricoExecutoraUnidadeWriteRepository;
 use App\Repository\Feriado\Contracts\FeriadoReadRepositoryContract;
 use App\Repository\Feriado\Eloquent\EloquentFeriadoReadRepository;
 
@@ -119,6 +121,7 @@ use App\Repository\Programa\Eloquent\EloquentProgramaReadRepository;
 use App\Repository\Programa\Eloquent\EloquentProgramaWriteRepository;
 
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
+use App\Repository\RelatorioPlanoEntregaLacuna\Contracts\RelatorioPlanoEntregaLacunaReadRepositoryContract;
 use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
 use App\Repository\EnvioUsuario\Eloquent\EloquentEnvioUsuarioReadRepository;
 use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryContract;
@@ -127,6 +130,7 @@ use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepository
 use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
 
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
+use App\Repository\RelatorioPlanoEntregaLacuna\Eloquent\EloquentRelatorioPlanoEntregaLacunaReadRepository;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioWriteRepositoryContract;
 use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioReadRepository;
@@ -421,6 +425,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            RelatorioPlanoEntregaLacunaReadRepositoryContract::class,
+            EloquentRelatorioPlanoEntregaLacunaReadRepository::class,
+        );
+
+        $this->app->bind(
             AfastamentoReadRepositoryContract::class,
             EloquentAfastamentoReadRepository::class,
         );
@@ -478,6 +487,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             FeriadoReadRepositoryContract::class,
             EloquentFeriadoReadRepository::class,
+        );
+
+        $this->app->bind(
+            HistoricoExecutoraUnidadeWriteRepositoryContract::class,
+            EloquentHistoricoExecutoraUnidadeWriteRepository::class,
         );
 
     }

@@ -4,6 +4,7 @@ import { AuthGuard } from "src/app/guards/auth.guard";
 import { ConfigResolver } from "src/app/resolvies/config.resolver";
 import { RelatorioAgenteComponent } from "./relatorio-agente/relatorio-agente.component";
 import { RelatorioPlanoEntregaComponent } from "./relatorio-plano-entrega/relatorio-plano-entrega.component";
+import { RelatorioPlanoEntregaHubComponent } from "./relatorio-plano-entrega-hub/relatorio-plano-entrega-hub.component";
 import { RelatorioPlanoTrabalhoComponent } from "./relatorio-plano-trabalho/relatorio-plano-trabalho.component";
 import { RelatorioUnidadeComponent } from "./relatorio-unidade/relatorio-unidade.component";
 import { IndicadorEquipeComponent } from "./indicadores-equipes/indicadores-equipes.component";
@@ -21,15 +22,35 @@ const routes: Routes = [
       title: "Relatório de Planos de Trabalho",
     }
   },
-   { path: 'planos-entrega',
+  {
+    path: 'planos-entrega/cadastrados',
     component: RelatorioPlanoEntregaComponent,
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
-    data: { 
+    data: {
       title: "Relatório de Planos de Entrega",
+      breadcrumb: "Planos de Entrega Cadastrados",
     }
-  }, {
+  },
+  {
+    path: 'planos-entrega/lacunas',
+    loadChildren: () => import('./relatorio-plano-entrega-lacuna/routes').then(m => m.routes),
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+  },
+  {
+    path: 'planos-entrega',
+    component: RelatorioPlanoEntregaHubComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: "Planos de Entrega",
+    }
+  },
+  {
    path: 'agentes',
     component: RelatorioAgenteComponent,
     canActivate: [AuthGuard],
