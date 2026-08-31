@@ -37,6 +37,15 @@
 - Literais são permitidos somente quando forem estruturalmente óbvios e não carregarem significado de domínio.
 - A revisão de código deve solicitar mudanças quando um novo valor mágico for introduzido.
 
+## Regra Obrigatória para Valores Nomeados
+
+- É proibido introduzir números mágicos, strings mágicas ou flags booleanas/inteiras sem nome no código de produção.
+- Valores que representem estados, papéis, status, atribuições, sentinelas, limites ou regras de domínio devem usar enum, constante nomeada ou configuração.
+- Antes de criar uma definição, procure e reutilize o enum, a constante ou a configuração já existente no domínio.
+- Use enums para conjuntos fechados de valores de domínio, constantes para valores estáveis e reutilizáveis e configuração para valores dependentes do ambiente.
+- Literais são permitidos somente quando forem estruturalmente óbvios e não carregarem significado de domínio.
+- A revisão de código deve solicitar mudanças quando um novo valor mágico for introduzido.
+
 ## Regras de Repository
 
 - Siga `docs/repository-pattern.md`.

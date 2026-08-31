@@ -132,7 +132,6 @@ class SiapeIndividualServidorService extends ServiceBase
 
             $this->atualizarVinculosUsuarios($cpfLimpo, $dadosFuncionais);
             $this->executarSincronizacaoFinal($cpfLimpo, $dadosFuncionais);
-            $this->executarSincronizacaoFinal($cpfLimpo, $dadosFuncionais);
 
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_SUCESSO);
 
@@ -738,14 +737,13 @@ class SiapeIndividualServidorService extends ServiceBase
         return $this->entidadeRepository->findAll();
     }
 
-    private function executarSincronizacaoFinal(string $cpf, array $dadosFuncionais): void
+    private function executarSincronizacaoFinal(string $cpf, array $dadosFuncionais = []): void
     {
         SiapeLog::info('Iniciando sincronização final', ['cpf' => $cpf]);
 
         try {
             $integracaoService = $this->instanciarIntegracaoService();
             $entidades = $this->buscarTodasEntidades();
-            $escopoServidor = $this->montarEscopoCargaIndividualServidor($cpf, $dadosFuncionais);
             $escopoServidor = $this->montarEscopoCargaIndividualServidor($cpf, $dadosFuncionais);
 
             SiapeLog::info('Processando entidades para sincronização', [
@@ -789,8 +787,8 @@ class SiapeIndividualServidorService extends ServiceBase
      */
     private function montarEscopoCargaIndividualServidor(string $cpf, array $dadosFuncionais): array
     {
-        $matriculas = collect($dadosFuncionais)
-            ->map(fn(array $dados): ?string => $this->normalizarMatriculaEscopo($dados['matriculaSiape'] ?? null))
+        $matriculas = collect(DadosFuncionaisSiapeDTO::listFromArray($dadosFuncionais))
+            ->map(fn(DadosFuncionaisSiapeDTO $dados): ?string => $dados->matriculaSiape())
             ->filter()
             ->unique()
             ->values()
@@ -801,17 +799,6 @@ class SiapeIndividualServidorService extends ServiceBase
             'cpf' => $cpf,
             'matriculas' => $matriculas,
         ];
-    }
-
-    private function normalizarMatriculaEscopo(mixed $matricula): ?string
-    {
-        if (!is_scalar($matricula)) {
-            return null;
-        }
-
-        $matricula = trim((string) $matricula);
-
-        return $matricula !== '' ? $matricula : null;
     }
 
     protected function gerarUsuariosResumo(string $cpf) {
