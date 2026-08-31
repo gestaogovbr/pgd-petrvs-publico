@@ -61,4 +61,8 @@ export class InputTextareaComponent extends InputBase implements OnInit {
     if(this.change) this.change.emit(event); 
   }
 
+  public override onEnterKeyDown(e: Event) {
+    // Permite quebra de linha no textarea (não avança para o próximo input)
+  }
+
 }

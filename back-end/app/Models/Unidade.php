@@ -58,6 +58,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Entidade $entidade
  * @property-read Cidade|null $cidade
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $integrantes
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoEntrega> $planosEntrega
  * @method static Builder<Unidade> naHierarquiaDe(array $unidadeIds)
  */
 class Unidade extends ModelBase
@@ -152,7 +153,7 @@ class Unidade extends ModelBase
         return $this->hasMany(PlanoTrabalho::class);
     }
 
-    public function planosEntrega()
+    public function planosEntrega(): HasMany
     {
         return $this->hasMany(PlanoEntrega::class);
     }

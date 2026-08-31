@@ -47,6 +47,7 @@ class PlanoTrabalhoConsolidacaoService
 
     public function index(string $planoTrabalhoId): Collection
     {
+        /** @var \App\Models\PlanoTrabalho|null $plano */
         $plano = $this->planoTrabalhoRepository->findById($planoTrabalhoId);
 
         if ($plano === null) {

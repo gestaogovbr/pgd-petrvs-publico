@@ -26,7 +26,7 @@ class UsuarioShowAuthorizationValidator
      */
     public function validarEscopo(Usuario $solicitante, Usuario $alvo): Usuario
     {
-        if ($solicitante->id === $alvo->id) {
+        if ($solicitante->cpf === $alvo->cpf) {
             return $alvo;
         }
 
@@ -41,6 +41,26 @@ class UsuarioShowAuthorizationValidator
         $this->validarEscopoHierarquico($solicitante, $alvo);
 
         return $alvo;
+    }
+
+    /**
+     * Valida se o solicitante pode visualizar ao menos um dos alvos (ex.: CPF compartilhado).
+     *
+     * @param  iterable<int, Usuario>  $alvos
+     */
+    public function validarEscopoParaAlgumAlvo(Usuario $solicitante, iterable $alvos): Usuario
+    {
+        $ultimaExcecao = null;
+
+        foreach ($alvos as $alvo) {
+            try {
+                return $this->validarEscopo($solicitante, $alvo);
+            } catch (ForbiddenException $exception) {
+                $ultimaExcecao = $exception;
+            }
+        }
+
+        throw $ultimaExcecao ?? new ForbiddenException('O usuário não está no seu escopo de atuação.');
     }
 
     private function validarEscopoHierarquico(Usuario $solicitante, Usuario $alvo): void
@@ -68,10 +88,10 @@ class UsuarioShowAuthorizationValidator
 
     private function alvoEstaNasUnidades(Usuario $alvo, array $unidadeIds): bool
     {
-        $alvo->loadMissing('lotacoes');
+        $alvo->loadMissing('areasTrabalho');
 
-        foreach ($alvo->lotacoes as $lotacao) {
-            if (in_array($lotacao->unidade_id, $unidadeIds, true)) {
+        foreach ($alvo->areasTrabalho as $integrante) {
+            if (in_array($integrante->unidade_id, $unidadeIds, true)) {
                 return true;
             }
         }

@@ -138,6 +138,7 @@ export class AssinarPlanoUseCase {
         this.onAfterAssinar?.();
         this.message.success('Assinatura realizada com sucesso.');
       },
+      error: () => {}
     });
   }
 
