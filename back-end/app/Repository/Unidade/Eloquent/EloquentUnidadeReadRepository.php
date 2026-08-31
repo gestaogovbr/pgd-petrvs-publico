@@ -225,6 +225,34 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $this->query()->whereIn('unidade_pai_id', $ids)->get();
     }
 
+    /** @return string[] */
+    public function getUnidadesComAtribuicaoIds(string $usuarioId): array
+    {
+        $rows = $this->model->getConnection()->select("
+            SELECT DISTINCT ui.unidade_id
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.usuario_id = ?
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", [$usuarioId]);
+
+        return array_map(fn ($row) => $row->unidade_id, $rows);
+    }
+
+    public function buscarResumoPorIds(array $ids): Collection
+    {
+        if (empty($ids)) {
+            return $this->model->newCollection();
+        }
+
+        return $this->query()
+            ->select('id', 'sigla', 'nome')
+            ->whereIn('id', $ids)
+            ->orderBy('sigla')
+            ->get();
+    }
+
     public function getSubordinadasRecursivas(array $ids): Collection
     {
         $resultIds = $this->getSubordinadasRecursivasIds($ids);

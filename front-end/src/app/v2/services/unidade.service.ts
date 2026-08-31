@@ -44,4 +44,20 @@ export class UnidadeService {
     return this.http.get<any>(`${this.gb.servidorURL}/${this.base}/${unidadeId}/is-gestor-hierarquia`)
       .pipe(map((r: any) => !!r?.data));
   }
+
+  /**
+   * #2360 RN10/RN12: unidades onde o usuário logado possui atribuição ativa
+   * e, opcionalmente, suas subordinadas na cadeia hierárquica.
+   */
+  minhasUnidades(subordinadas: boolean): Observable<UnidadeResumo[]> {
+    return this.http.get<any>(`${this.gb.servidorURL}/${this.base}/minhas`, {
+      params: { subordinadas: subordinadas ? 'true' : 'false' },
+    }).pipe(map((r: any) => (r?.data as UnidadeResumo[]) ?? []));
+  }
+}
+
+export interface UnidadeResumo {
+  id: string;
+  sigla: string;
+  nome: string;
 }

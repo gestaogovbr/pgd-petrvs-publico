@@ -17,4 +17,13 @@ class UnidadeRequestValidator
             'nome_codigo.min' => 'O termo de busca deve ter ao menos 3 caracteres.',
         ]);
     }
+
+    public static function minhasUnidades(Request $request): array
+    {
+        return $request->validate([
+            'subordinadas' => ['nullable', 'in:1,0,true,false'],
+        ], [
+            'subordinadas.in' => 'O parâmetro subordinadas deve ser booleano.',
+        ]);
+    }
 }
