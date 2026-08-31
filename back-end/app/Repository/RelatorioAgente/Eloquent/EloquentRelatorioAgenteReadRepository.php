@@ -241,6 +241,12 @@ TEXT;
             $params[] = $situacaoSiape[2];
         }
 
+        $participantePGD = $this->extractWhere($data, 'participantePGD');
+        if (isset($participantePGD[2])) {
+            $sql .= " and (CASE WHEN `u`.`participa_pgd` = 'sim' THEN 'Sim' ELSE 'Não' END) = ?";
+            $params[] = $participantePGD[2];
+        }
+
         $comparacaoSouGovPetrvs = $this->extractWhere($data, 'comparacaoSouGovPetrvs');
         if (isset($comparacaoSouGovPetrvs[2])) {
             $operacaoComparacao = $this->getComparacaoSouGov($comparacaoSouGovPetrvs[2]);

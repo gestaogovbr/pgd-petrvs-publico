@@ -1,3 +1,7 @@
+:host {
+    display: block;
+}
+
 input[type="text"]:read-only, 
 input[type="text"]:disabled {
     background-color: var(--bs-secondary-bg);
