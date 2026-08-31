@@ -3,9 +3,14 @@
   text-decoration: underline;
 }
 
-.br-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.unidade-sugestoes {
+  z-index: 1050;
+  max-height: 280px;
+  overflow: auto;
+}
+
+.br-switch {
   min-height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
 }

@@ -8,14 +8,33 @@
     <div class="br-card">
       <div class="card-content">
         <div class="row g-3 align-items-end">
-          <div class="col-12 col-md-5">
-            <input-search
-              [size]="12"
-              label="Unidade de Consulta"
-              [control]="filters.controls.unidade_id"
-              controlName="unidade_id"
-              [dao]="unidadeDao"
-            ></input-search>
+          <div class="col-12 col-md-5 position-relative">
+            <div class="d-flex align-items-end gap-2">
+              <div class="br-input w-100">
+                <label>Unidade de Consulta</label>
+                <input
+                  type="text"
+                  [formControl]="unidadeQuery"
+                  placeholder="Digite nome ou sigla (mín. 3)..."
+                  [disabled]="!!unidadeSelecionada()"
+                />
+              </div>
+              @if (unidadeSelecionada()) {
+              <br-button type="button" emphasis="secondary" (click)="limparUnidade()">Limpar</br-button>
+              }
+            </div>
+            @if (sugestoesUnidades().length > 0) {
+            <div class="br-card position-absolute w-100 unidade-sugestoes">
+              @for (u of sugestoesUnidades(); track u.id) {
+              <div class="d-flex justify-content-between align-items-center px-2 py-1 card-content">
+                <span>{{ u.codigo }} - {{ u.sigla }} - {{ u.nome }}</span>
+                <br-button type="button" emphasis="secondary" (click)="selecionarUnidade(u)"
+                  >Selecionar</br-button
+                >
+              </div>
+              }
+            </div>
+            }
           </div>
           <div class="col-12 col-sm-6 col-md-2">
             <div class="br-input w-100">
@@ -30,7 +49,7 @@
             </div>
           </div>
           <div class="col-12 col-sm-6 col-md-3">
-            <div class="br-checkbox">
+            <div class="br-switch icon small">
               <input
                 id="incluir_unidades_subordinadas"
                 type="checkbox"

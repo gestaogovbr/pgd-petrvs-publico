@@ -1,18 +1,27 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { finalize, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, take } from 'rxjs';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PaginationV2Component } from 'src/app/v2/components/pagination/pagination.component';
-import { SharedModule } from 'src/app/shared/shared.module';
-import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/v2/services/message.service';
 import { NavigateService } from 'src/app/services/navigate.service';
+import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { LacunaPlanoTrabalhoListFacade } from '../application/list.facade';
 import { ExportarLacunaPlanoTrabalho } from '../application/exportar-lacuna-plano-trabalho.usecase';
 import { LacunaPlanoTrabalhoListFilters, LacunaPlanoTrabalhoRow } from '../domain/types';
+
+type UnidadeSugestao = { id: string; codigo: string; sigla: string; nome: string };
 
 @Component({
   selector: 'app-lacuna-plano-trabalho-list-page',
@@ -24,21 +33,25 @@ import { LacunaPlanoTrabalhoListFilters, LacunaPlanoTrabalhoRow } from '../domai
     WebcomponentsAngularModule,
     BreadcrumbComponent,
     PaginationV2Component,
-    SharedModule,
   ],
   templateUrl: './list.page.html',
   styleUrls: ['./list.page.scss'],
 })
-export class LacunaPlanoTrabalhoListPage {
+export class LacunaPlanoTrabalhoListPage implements OnInit {
   readonly facade = inject(LacunaPlanoTrabalhoListFacade);
   private readonly exportar = inject(ExportarLacunaPlanoTrabalho);
   private readonly message = inject(MessageService);
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly unidadeService = inject(UnidadeService);
   readonly auth = inject(AuthService);
-  readonly unidadeDao = inject(UnidadeDaoService);
   readonly go = inject(NavigateService);
 
   readonly exporting = signal(false);
+  readonly sugestoesUnidades = signal<UnidadeSugestao[]>([]);
+  readonly unidadeSelecionada = signal<UnidadeSugestao | null>(null);
+  readonly unidadeQuery = this.fb.nonNullable.control('');
+
   readonly lacunaHint =
     'Período em que o agente público, esteve selecionado como Participante do PGD no Siape, mas não possui Plano de Trabalho em execução ou concluído.';
 
@@ -54,9 +67,7 @@ export class LacunaPlanoTrabalhoListPage {
     quantidade_dias: FormControl<string>;
     ocorrencias_texto: FormControl<string>;
   }> = this.fb.group({
-    unidade_id: this.fb.control<string | null>(this.auth.unidade?.id ?? null, {
-      validators: [Validators.required],
-    }),
+    unidade_id: this.fb.control<string | null>(null, { validators: [Validators.required] }),
     periodo_inicio: this.fb.control<string | null>(null, { validators: [Validators.required] }),
     periodo_fim: this.fb.control<string | null>(null, { validators: [Validators.required] }),
     incluir_unidades_subordinadas: this.fb.nonNullable.control(false),
@@ -68,8 +79,30 @@ export class LacunaPlanoTrabalhoListPage {
     ocorrencias_texto: this.fb.nonNullable.control(''),
   });
 
+  ngOnInit(): void {
+    this.preselecionarUnidadeAtual();
+
+    this.unidadeQuery.valueChanges
+      .pipe(debounceTime(250), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .subscribe((term) => this.buscarUnidades(term));
+  }
+
   hasConsulta(): boolean {
     return this.facade.filters() !== null;
+  }
+
+  selecionarUnidade(unidade: UnidadeSugestao): void {
+    this.unidadeSelecionada.set(unidade);
+    this.unidadeQuery.setValue(this.formatarUnidade(unidade), { emitEvent: false });
+    this.sugestoesUnidades.set([]);
+    this.filters.controls.unidade_id.setValue(unidade.id);
+  }
+
+  limparUnidade(): void {
+    this.unidadeSelecionada.set(null);
+    this.unidadeQuery.setValue('', { emitEvent: false });
+    this.sugestoesUnidades.set([]);
+    this.filters.controls.unidade_id.setValue(null);
   }
 
   onConsultar(): void {
@@ -86,7 +119,7 @@ export class LacunaPlanoTrabalhoListPage {
 
   limparFiltros(): void {
     this.filters.reset({
-      unidade_id: this.auth.unidade?.id ?? null,
+      unidade_id: null,
       periodo_inicio: null,
       periodo_fim: null,
       incluir_unidades_subordinadas: false,
@@ -97,6 +130,8 @@ export class LacunaPlanoTrabalhoListPage {
       quantidade_dias: '',
       ocorrencias_texto: '',
     });
+    this.limparUnidade();
+    this.preselecionarUnidadeAtual();
     this.facade.filters.set(null);
     this.facade.items.set([]);
     this.facade.total.set(0);
@@ -141,8 +176,46 @@ export class LacunaPlanoTrabalhoListPage {
     this.go.navigate({ route: ['configuracoes', 'usuario', row.usuario_id, 'edit'] });
   }
 
+  private preselecionarUnidadeAtual(): void {
+    const unidade = this.auth.unidade;
+    if (!unidade?.id) {
+      return;
+    }
+    this.selecionarUnidade({
+      id: unidade.id,
+      codigo: String(unidade.codigo ?? ''),
+      sigla: String(unidade.sigla ?? ''),
+      nome: String(unidade.nome ?? ''),
+    });
+  }
+
+  private buscarUnidades(term: string): void {
+    if (this.unidadeSelecionada()) {
+      return;
+    }
+    const query = term.trim();
+    if (query.length < 3) {
+      this.sugestoesUnidades.set([]);
+      return;
+    }
+    this.unidadeService.searchByNomeOuCodigo(query).subscribe((unidades) => {
+      this.sugestoesUnidades.set(
+        (unidades || []).map((u) => ({
+          id: u.id,
+          codigo: String(u.codigo ?? ''),
+          sigla: String(u.sigla ?? ''),
+          nome: String(u.nome ?? ''),
+        })),
+      );
+    });
+  }
+
+  private formatarUnidade(unidade: UnidadeSugestao): string {
+    return `${unidade.codigo} - ${unidade.sigla} - ${unidade.nome}`;
+  }
+
   private validarConsulta(): string | null {
-    const unidadeId = this.coerceUnidadeId(this.filters.controls.unidade_id.value);
+    const unidadeId = this.filters.controls.unidade_id.value?.trim() || null;
     const periodoInicio = this.normalizeDate(this.filters.controls.periodo_inicio.value);
     const periodoFim = this.normalizeDate(this.filters.controls.periodo_fim.value);
 
@@ -164,7 +237,7 @@ export class LacunaPlanoTrabalhoListPage {
   private buildFilters(): LacunaPlanoTrabalhoListFilters {
     const v = this.filters.getRawValue();
     const filters: LacunaPlanoTrabalhoListFilters = {
-      unidade_id: this.coerceUnidadeId(v.unidade_id)!,
+      unidade_id: String(v.unidade_id),
       periodo_inicio: this.normalizeDate(v.periodo_inicio)!,
       periodo_fim: this.normalizeDate(v.periodo_fim)!,
     };
@@ -178,19 +251,6 @@ export class LacunaPlanoTrabalhoListPage {
     if (v.quantidade_dias.trim() !== '') filters.quantidade_dias = v.quantidade_dias.trim();
     if (v.ocorrencias_texto.trim()) filters.ocorrencias_texto = v.ocorrencias_texto.trim();
     return filters;
-  }
-
-  private coerceUnidadeId(value: unknown): string | null {
-    if (value == null) return null;
-    if (typeof value === 'string') {
-      const trimmed = value.trim();
-      return trimmed === '' ? null : trimmed;
-    }
-    if (typeof value === 'object' && 'id' in value) {
-      const id = String((value as { id: unknown }).id).trim();
-      return id === '' ? null : id;
-    }
-    return null;
   }
 
   private normalizeDate(value: unknown): string | null {
