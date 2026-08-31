@@ -6,7 +6,6 @@ import { RelatorioAgenteComponent } from "./relatorio-agente/relatorio-agente.co
 import { RelatorioPlanoEntregaComponent } from "./relatorio-plano-entrega/relatorio-plano-entrega.component";
 import { RelatorioPlanoTrabalhoComponent } from "./relatorio-plano-trabalho/relatorio-plano-trabalho.component";
 import { RelatorioPlanoTrabalhoConsultaComponent } from "./relatorio-plano-trabalho-consulta/relatorio-plano-trabalho-consulta.component";
-import { RelatorioLacunaPlanoTrabalhoComponent } from "./relatorio-lacuna-plano-trabalho/relatorio-lacuna-plano-trabalho.component";
 import { RelatorioUnidadeComponent } from "./relatorio-unidade/relatorio-unidade.component";
 import { IndicadorEquipeComponent } from "./indicadores-equipes/indicadores-equipes.component";
 import { IndicadorGestaoComponent } from "./indicadores-gestao/indicadores-gestao.component";
@@ -27,13 +26,15 @@ const routes: Routes = [
   },
   {
     path: 'planos-trabalho/lacunas',
-    component: RelatorioLacunaPlanoTrabalhoComponent,
+    loadChildren: () => import('./lacuna-plano-trabalho/routes').then((m) => m.routes),
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
       title: "Lacunas de Planos de Trabalho",
-      permission: "MOD_RELATORIO_PT"
+      permission: "MOD_RELATORIO_PT",
+      breadcrumb: "Lacunas de Planos de Trabalho",
+      modal: false
     }
   },
   {

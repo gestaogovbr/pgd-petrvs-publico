@@ -1,0 +1,11 @@
+.link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.br-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+}

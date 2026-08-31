@@ -13,7 +13,6 @@ import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2
 import { IndicadorEntregaComponent } from './indicadores-entrega/indicadores-entrega.component';
 import { RelatorioCargaIndividualSiapeComponent } from './relatorio-carga-individual-siape/relatorio-carga-individual-siape.component';
 import { RelatorioPlanoTrabalhoConsultaComponent } from './relatorio-plano-trabalho-consulta/relatorio-plano-trabalho-consulta.component';
-import { RelatorioLacunaPlanoTrabalhoComponent } from './relatorio-lacuna-plano-trabalho/relatorio-lacuna-plano-trabalho.component';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
 
@@ -21,7 +20,6 @@ import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.s
   declarations: [
     RelatorioPlanoTrabalhoComponent,
     RelatorioPlanoTrabalhoConsultaComponent,
-    RelatorioLacunaPlanoTrabalhoComponent,
     RelatorioPlanoEntregaComponent,
     RelatorioAgenteComponent,
     RelatorioUnidadeComponent,

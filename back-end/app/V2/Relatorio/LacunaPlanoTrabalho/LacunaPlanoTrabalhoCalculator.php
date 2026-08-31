@@ -246,15 +246,15 @@ final class LacunaPlanoTrabalhoCalculator
         string $lacunaFim,
         array $ocorrencias,
     ): array {
-        $li = Carbon::parse($lacunaInicio)->startOfDay();
-        $lf = Carbon::parse($lacunaFim)->startOfDay();
+        $inicioLacuna = Carbon::parse($lacunaInicio)->startOfDay();
+        $fimLacuna = Carbon::parse($lacunaFim)->startOfDay();
         $result = [];
         foreach ($ocorrencias as $oc) {
-            $oi = Carbon::parse($oc['data_inicio'])->startOfDay();
-            $of = isset($oc['data_fim']) && $oc['data_fim'] !== null && $oc['data_fim'] !== ''
+            $inicioOcorrencia = Carbon::parse($oc['data_inicio'])->startOfDay();
+            $fimOcorrencia = isset($oc['data_fim']) && $oc['data_fim'] !== null && $oc['data_fim'] !== ''
                 ? Carbon::parse($oc['data_fim'])->startOfDay()
-                : $oi->copy();
-            if ($of->lt($li) || $oi->gt($lf)) {
+                : $inicioOcorrencia->copy();
+            if ($fimOcorrencia->lt($inicioLacuna) || $inicioOcorrencia->gt($fimLacuna)) {
                 continue;
             }
             $result[] = $oc;
