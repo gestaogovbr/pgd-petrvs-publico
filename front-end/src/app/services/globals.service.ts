@@ -67,7 +67,7 @@ export class GlobalsService {
   }
 
   public goHome() {
-    this.go.navigate({ route: this.initialRoute });
+    this.go.navigate({ route: this.homeRoute });
   }
 
   public is(entidade: string): boolean {
@@ -88,6 +88,11 @@ export class GlobalsService {
   public get isToolbar(): boolean {
     //@ts-ignore
     return false;
+  }
+
+  public get homeRoute(): string[] {
+    if (!this.auth.isUsuarioConsulta()) return ['home-v2'];
+    return ['home'];
   }
 
   public get initialRoute(): string[] {

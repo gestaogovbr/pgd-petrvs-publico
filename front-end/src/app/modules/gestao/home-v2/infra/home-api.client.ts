@@ -48,6 +48,11 @@ export interface EmFeriasItem {
   data_fim: string;
 }
 
+export interface MeusPlanosVigentesResponse {
+  plano_entregas_id: string | null;
+  plano_trabalho_id: string | null;
+}
+
 @Injectable()
 export class HomeApiClient extends TenantV2ResourceApiBase {
   protected readonly apiPath = '/api/v2/home';
