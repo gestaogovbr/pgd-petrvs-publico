@@ -24,6 +24,7 @@
   - Aniversariantes do dia e participantes em férias, obtidos do SIAPE e das ocorrências
   - Filtro de unidade conforme o perfil: participante vê apenas lotação/vinculação (padrão na lotação); demais perfis veem as unidades com atribuição e suas subordinadas (padrão na unidade mais alta da hierarquia)
 - Endpoint `GET /api/v2/unidade/minhas` que retorna as unidades do usuário logado e, opcionalmente, suas subordinadas na cadeia hierárquica, com cache
+- Usuário Alexandre Schlottgen adicionado ao seeder de usuários
 
 ### Modificado
 - Rota da API `GET /api/v2/unidade` alterada para suportar paginação e filtro por termo
