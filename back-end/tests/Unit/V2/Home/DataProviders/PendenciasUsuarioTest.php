@@ -15,6 +15,7 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 beforeEach(function () {
+    \Illuminate\Support\Facades\Cache::flush();
     $this->unidadeRepository = Mockery::mock(UnidadeRepository::class);
     $this->planoTrabalhoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->consolidacaoRepository = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
@@ -41,8 +42,8 @@ describe('PendenciasUsuario::getData', function () {
     test('retorna array com 6 contagens quando subordinadas está desabilitado', function () {
         $dto = HomeRequestDTO::fromArray(['unidade_id' => 'unidade-1', 'subordinadas' => false], 'user-1');
 
-        // Sem subordinadas, não chama getSubordinadasRecursivas
-        $this->unidadeRepository->shouldNotReceive('getSubordinadasRecursivas');
+        // Sem subordinadas, não chama getSubordinadasRecursivasIds
+        $this->unidadeRepository->shouldNotReceive('getSubordinadasRecursivasIds');
 
         // PE homologação: subordinadas vazio → 0
         $this->planoEntregaRepository
@@ -95,15 +96,10 @@ describe('PendenciasUsuario::getData', function () {
     test('retorna contagens com subordinadas quando habilitado', function () {
         $dto = HomeRequestDTO::fromArray(['unidade_id' => 'unidade-1', 'subordinadas' => true], 'user-1');
 
-        $subordinadas = new Collection([
-            (object) ['id' => 'sub-1'],
-            (object) ['id' => 'sub-2'],
-        ]);
-
         $this->unidadeRepository
-            ->shouldReceive('getSubordinadasRecursivas')
+            ->shouldReceive('getSubordinadasRecursivasIds')
             ->with(['unidade-1'])
-            ->andReturn($subordinadas);
+            ->andReturn(['sub-1', 'sub-2']);
 
         // PE homologação: subordinadas [sub-1, sub-2]
         $this->planoEntregaRepository
@@ -178,8 +174,7 @@ describe('PendenciasUsuario::getData', function () {
     test('registros_execucao_pe usa apenas a unidade raiz independente de subordinadas', function () {
         $dto = HomeRequestDTO::fromArray(['unidade_id' => 'unidade-1', 'subordinadas' => true], 'user-1');
 
-        $subordinadas = new Collection([(object) ['id' => 'sub-1']]);
-        $this->unidadeRepository->shouldReceive('getSubordinadasRecursivas')->andReturn($subordinadas);
+        $this->unidadeRepository->shouldReceive('getSubordinadasRecursivasIds')->andReturn(['sub-1']);
 
         $this->planoEntregaRepository->shouldReceive('countPlanosEntregaHomologacao')->andReturn(0);
         $this->planoTrabalhoRepository->shouldReceive('countPlanosTrabalhoAssinatura')->andReturn(0);
@@ -202,8 +197,7 @@ describe('PendenciasUsuario::getData', function () {
     test('registros_execucao_pt usa apenas a unidade raiz', function () {
         $dto = HomeRequestDTO::fromArray(['unidade_id' => 'unidade-1', 'subordinadas' => true], 'user-1');
 
-        $subordinadas = new Collection([(object) ['id' => 'sub-1']]);
-        $this->unidadeRepository->shouldReceive('getSubordinadasRecursivas')->andReturn($subordinadas);
+        $this->unidadeRepository->shouldReceive('getSubordinadasRecursivasIds')->andReturn(['sub-1']);
 
         $this->planoEntregaRepository->shouldReceive('countPlanosEntregaHomologacao')->andReturn(0);
         $this->planoTrabalhoRepository->shouldReceive('countPlanosTrabalhoAssinatura')->andReturn(0);

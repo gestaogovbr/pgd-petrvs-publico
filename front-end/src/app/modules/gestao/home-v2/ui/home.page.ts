@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { AuthService } from 'src/app/services/auth.service';
-import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
+import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { PendenciasUsuarioComponent } from './components/pendencias-usuario.component';
 import { PlanosVigentesComponent } from './components/planos-vigentes.component';
 import { AcoesGerenciaisComponent } from './components/acoes-gerenciais.component';
@@ -41,7 +41,7 @@ export interface SelectOption {
 })
 export class HomeV2Page implements OnInit {
   private readonly auth = inject(AuthService);
-  private readonly unidadeDao = inject(UnidadeDaoService);
+  private readonly unidadeService = inject(UnidadeService);
 
   readonly unidadeOptions = signal<SelectOption[]>([]);
   readonly selectedUnidadeId = signal<string>('');
@@ -111,31 +111,21 @@ export class HomeV2Page implements OnInit {
 
   /**
    * #2360 RN12/RN12.1: Demais perfis — unidades com atribuição ativa + todas as
-   * subordinadas na cadeia hierárquica; unidade padrão é a mais alta na
-   * hierarquia onde o usuário possua qualquer atribuição.
+   * subordinadas na cadeia hierárquica (resolvidas pelo endpoint V2, com cache
+   * no back-end); unidade padrão é a mais alta na hierarquia onde o usuário
+   * possua qualquer atribuição.
    */
-  private async carregarUnidadesComSubordinadas(): Promise<void> {
-    const areas = this.auth.usuario?.areas_trabalho ?? [];
-    const unidadesComAtribuicao = areas
+  private carregarUnidadesComSubordinadas(): void {
+    // #2360 RN12.1: unidade padrão = mais alta na hierarquia (menor profundidade de path)
+    const unidadesComAtribuicao = (this.auth.usuario?.areas_trabalho ?? [])
       .filter(a => a.unidade)
       .map(a => a.unidade!);
-
-    if (unidadesComAtribuicao.length === 0) return;
-
-    // #2360 RN12.1: unidade padrão = mais alta na hierarquia (menor profundidade de path)
     const defaultId = this.unidadeMaisAlta(unidadesComAtribuicao)?.id ?? '';
 
-    const unidadesMap = new Map<string, { id: string; sigla: string; nome: string }>();
-    for (const unidade of unidadesComAtribuicao) {
-      unidadesMap.set(unidade.id, { id: unidade.id, sigla: unidade.sigla, nome: unidade.nome });
-
-      const subordinadas = await this.unidadeDao.subordinadas(unidade.id);
-      for (const sub of subordinadas) {
-        unidadesMap.set(sub.id, { id: sub.id, sigla: sub.sigla, nome: sub.nome });
-      }
-    }
-
-    this.aplicarOpcoes([...unidadesMap.values()], defaultId);
+    this.unidadeService.minhasUnidades(true).subscribe({
+      next: (unidades) => this.aplicarOpcoes(unidades, defaultId),
+      error: () => this.aplicarOpcoes([], defaultId),
+    });
   }
 
   /**
@@ -146,7 +136,7 @@ export class HomeV2Page implements OnInit {
   }
 
   private profundidade(path?: string): number {
-    if (!path) return Number.MAX_SAFE_INTEGER;
+    if (path === undefined || path === null) return Number.MAX_SAFE_INTEGER;
     return path.split('/').filter(Boolean).length;
   }
 

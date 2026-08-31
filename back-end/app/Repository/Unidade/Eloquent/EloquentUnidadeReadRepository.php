@@ -53,7 +53,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         foreach ($unidadesGeridas as $unidadeGeridaId) {
             $subordinadas = GestorHierarquiaCache::getSubordinadas(
                 $unidadeGeridaId,
-                fn () => $this->getSubordinadasRecursivas([$unidadeGeridaId])->pluck('id')->all(),
+                fn () => $this->getSubordinadasRecursivasIds([$unidadeGeridaId]),
             );
 
             if (in_array($unidadeId, $subordinadas, true)) {
@@ -293,10 +293,50 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $this->query()->whereIn('unidade_pai_id', $ids)->get();
     }
 
-    public function getSubordinadasRecursivas(array $ids): Collection
+    /** @return string[] */
+    public function getUnidadesComAtribuicaoIds(string $usuarioId): array
+    {
+        $rows = $this->model->getConnection()->select("
+            SELECT DISTINCT ui.unidade_id
+            FROM unidades_integrantes ui
+            INNER JOIN unidades_integrantes_atribuicoes uia ON uia.unidade_integrante_id = ui.id
+            WHERE ui.usuario_id = ?
+              AND ui.deleted_at IS NULL
+              AND uia.deleted_at IS NULL
+        ", [$usuarioId]);
+
+        return array_map(fn ($row) => $row->unidade_id, $rows);
+    }
+
+    public function buscarResumoPorIds(array $ids): Collection
     {
         if (empty($ids)) {
             return $this->model->newCollection();
+        }
+
+        return $this->query()
+            ->select('id', 'sigla', 'nome')
+            ->whereIn('id', $ids)
+            ->orderBy('sigla')
+            ->get();
+    }
+
+    public function getSubordinadasRecursivas(array $ids): Collection
+    {
+        $resultIds = $this->getSubordinadasRecursivasIds($ids);
+
+        if (empty($resultIds)) {
+            return $this->model->newCollection();
+        }
+
+        return $this->query()->whereIn('id', $resultIds)->get();
+    }
+
+    /** @return string[] */
+    public function getSubordinadasRecursivasIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
         }
 
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
@@ -316,13 +356,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             SELECT id FROM subordinadas
         ", $ids);
 
-        $resultIds = array_map(fn($row) => $row->id, $subordinadaIds);
-
-        if (empty($resultIds)) {
-            return $this->model->newCollection();
-        }
-
-        return $this->query()->whereIn('id', $resultIds)->get();
+        return array_map(fn ($row) => $row->id, $subordinadaIds);
     }
 
     /** @return list<string> */
