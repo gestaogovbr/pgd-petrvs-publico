@@ -15,6 +15,8 @@ import { PanelChangePasswordComponent } from './panel-change-password/panel-chan
 import {PanelEnvComponent} from "./panel-env/panel-env.component";
 import { PanelJobAgendadosListComponent } from './panel-jobs-agendados-list/panel-jobs-agendados-list.component';
 import { PanelJobsAgendadosFormComponent } from './panel-jobs-agendados-form/panel-jobs-agendados-form.component';
+import { PanelMuralListComponent } from './panel-mural-list/panel-mural-list.component';
+import { PanelMuralFormComponent } from './panel-mural-form/panel-mural-form.component';
 
 const routes: Routes = [
   { path: '', 
@@ -36,6 +38,9 @@ const routes: Routes = [
       { path: 'admins/new', component: PanelAdminsFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Inclusão de usuários do painel", modal: true }, canActivate: [PanelAdminGuard] },
       { path: 'admins/:id/edit', component: PanelAdminsFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de usuários do painel", modal: true }, canActivate: [PanelAdminGuard] },
       { path: 'change-password', component: PanelChangePasswordComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Alterar minha senha", modal: true }, canActivate: [PanelAdminGuard] },  
+      { path: 'mural', component: PanelMuralListComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Mural de Avisos" } },
+      { path: 'mural/new', component: PanelMuralFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Novo Aviso", modal: true } },
+      { path: 'mural/:id/edit', component: PanelMuralFormComponent, resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Aviso", modal: true } },
       { path: '',   redirectTo: 'tenants', pathMatch: 'full' }
     ]
   }

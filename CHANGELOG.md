@@ -14,6 +14,7 @@
 - Seletor de unidade com busca e carregamento sob demanda
 - Botão "Saiba mais" nos gráficos com navegação para os relatórios correspondentes (Planos de Trabalho, Planos de Entrega, Agentes Públicos, Unidades) com filtros pré-aplicados ao contexto visualizado
 - Redirecionamento pós-login para Painéis Gerenciais para Adm Master, Adm Negocial e Chefias com atribuição em unidades autorizadoras ou instituidoras
+- **Mural de Avisos**: administradores podem publicar avisos (para todos os tenants ou um tenant específico) que são exibidos aos usuários em um modal após o login, com data de publicação e expiração, limite de 2.500 caracteres, pré-visualização e confirmação de leitura
 
 ### Modificado
 - Rota da API `GET /api/v2/unidade` alterada para suportar paginação e filtro por termo
