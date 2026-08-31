@@ -15,6 +15,15 @@
 - Botão "Saiba mais" nos gráficos com navegação para os relatórios correspondentes (Planos de Trabalho, Planos de Entrega, Agentes Públicos, Unidades) com filtros pré-aplicados ao contexto visualizado
 - Redirecionamento pós-login para Painéis Gerenciais para Adm Master, Adm Negocial e Chefias com atribuição em unidades autorizadoras ou instituidoras
 - **Mural de Avisos**: administradores podem publicar avisos (para todos os tenants ou um tenant específico) que são exibidos aos usuários em um modal após o login, com data de publicação e expiração, limite de 2.500 caracteres, pré-visualização e confirmação de leitura
+- **Nova Tela Home** apresentada como página inicial para os perfis elegíveis, composta por:
+  - Filtro de unidade e toggle "Unidades Subordinadas", com atualização automática dos componentes dependentes
+  - Pendências do usuário (assinaturas, registros de execução e avaliações de PE/PT) com atalhos para as telas correspondentes já filtradas
+  - Indicadores rápidos: Unidades Executoras com Plano de Entregas vigente e Participantes com Plano de Trabalho vigente
+  - Atalhos para Painel Gerencial, Meu Plano de Entregas Vigente e Meu Plano de Trabalho Vigente
+  - Indicadores da unidade: Participantes do PGD, Capacidade da Equipe e Contribuições dos Participantes
+  - Aniversariantes do dia e participantes em férias, obtidos do SIAPE e das ocorrências
+  - Filtro de unidade conforme o perfil: participante vê apenas lotação/vinculação (padrão na lotação); demais perfis veem as unidades com atribuição e suas subordinadas (padrão na unidade mais alta da hierarquia)
+- Endpoint `GET /api/v2/unidade/minhas` que retorna as unidades do usuário logado e, opcionalmente, suas subordinadas na cadeia hierárquica, com cache
 
 ### Modificado
 - Rota da API `GET /api/v2/unidade` alterada para suportar paginação e filtro por termo
