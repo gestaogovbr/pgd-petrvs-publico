@@ -13,7 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, first } from 'rxjs';
+import { filter } from 'rxjs';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { AuthService, UnidadeVinculada } from 'src/app/services/auth.service';
 import { DialogService } from 'src/app/services/dialog.service';
@@ -78,7 +78,6 @@ export class AppShellV2Component implements OnInit {
   private verificarMural(): void {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
-      first(),
     ).subscribe(() => this.tentarExibirMural());
   }
 

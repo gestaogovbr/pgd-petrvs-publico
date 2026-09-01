@@ -3,18 +3,8 @@
     <span class="br-loading small" role="progressbar"></span>
   </div>
 } @else {
-  <div class="row h-100">
-    <div class="col-6 mb-2">
-      <home-atalho-card icone="bi bi-journal-check" titulo="Meu Plano de Entregas Vigente" class="d-block h-100" (acao)="irParaPlanoEntregas()" />
-    </div>
-    <div class="col-6 mb-2">
-      <home-atalho-card icone="bi bi-person-check" titulo="Meu Plano de Trabalho Vigente" class="d-block h-100" (acao)="irParaPlanoTrabalho()" />
-    </div>
-    <div class="col-6">
-      <home-atalho-card icone="bi bi-bar-chart-line" titulo="Painel Gerencial" class="d-block h-100" (acao)="irParaPainelGerencial()" />
-    </div>
-    <div class="col-6">
-      <home-atalho-card icone="bi bi-clipboard-data" titulo="Acompanhamento Especial" class="d-block h-100" [desabilitado]="true" />
-    </div>
+  <div class="d-flex justify-content-around align-items-start h-100 gap-3">
+    <home-atalho-card icone="bi bi-person-check" titulo="Meu Plano de Trabalho Vigente" (acao)="irParaPlanoTrabalho()" />
+    <home-atalho-card icone="bi bi-eye" titulo="Meu Acompanhamento Especial de Entregas" [desabilitado]="true" />
   </div>
 }

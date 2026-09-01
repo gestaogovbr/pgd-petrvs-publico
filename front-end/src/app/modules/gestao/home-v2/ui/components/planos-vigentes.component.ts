@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeApiClient, PlanosVigentes } from '../../infra/home-api.client';
 import { HOME_ERRO_RECUPERAR_DADOS } from '../../home.constants';
@@ -20,6 +20,30 @@ export class PlanosVigentesComponent {
   readonly data = signal<PlanosVigentes | null>(null);
   readonly loading = signal(false);
   readonly erro = signal<string | null>(null);
+
+  readonly unidadesSemPE = computed(() => {
+    const d = this.data();
+    if (!d) return 0;
+    return Math.max(0, d.unidades_com_plano_entregas.total - d.unidades_com_plano_entregas.quantidade);
+  });
+
+  readonly percentualUnidadesSemPE = computed(() => {
+    const d = this.data();
+    if (!d || d.unidades_com_plano_entregas.total === 0) return 0;
+    return Math.round((this.unidadesSemPE() / d.unidades_com_plano_entregas.total) * 100);
+  });
+
+  readonly participantesSemPT = computed(() => {
+    const d = this.data();
+    if (!d) return 0;
+    return Math.max(0, d.participantes_com_plano_trabalho.total - d.participantes_com_plano_trabalho.quantidade);
+  });
+
+  readonly percentualParticipantesSemPT = computed(() => {
+    const d = this.data();
+    if (!d || d.participantes_com_plano_trabalho.total === 0) return 0;
+    return Math.round((this.participantesSemPT() / d.participantes_com_plano_trabalho.total) * 100);
+  });
 
   constructor() {
     effect(() => {

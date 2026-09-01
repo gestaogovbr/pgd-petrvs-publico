@@ -4,66 +4,102 @@
   <!-- Saudação -->
   <h2 class="fw-semibold mb-3">{{ saudacao() }}, {{ nomeUsuario() }}</h2>
 
-  <!-- Row 1: Pendências + Atalhos (2x2 grid) -->
-  <div class="row mb-3">
-    <div class="col-md-6 mb-3 mb-md-0">
-      <home-pendencias-usuario />
-    </div>
-    <div class="col-md-6">
-      @if (selectedUnidadeId()) {
-        <home-acoes-gerenciais [unidadeId]="selectedUnidadeId()" />
-      }
-    </div>
-  </div>
-
-  <!-- Row 2: Unidade + Toggle Subordinadas -->
-  <div class="row align-items-center mb-4">
-    <div class="col-md-4">
-      <br-select
-        label="Unidade"
-        [options]="unidadeOptions()"
-        (valueChange)="onUnidadeChange($event)"
-        class="w-100">
-      </br-select>
-    </div>
-    <div class="col-md-3 d-flex align-items-center mt-auto flex-fill justify-content-end">
-      @if (exibeToggleSubordinadas()) {
-        <div class="br-switch">
-          <input
-            id="subordinadas-toggle"
-            type="checkbox"
-            [checked]="subordinadas()"
-            (change)="onSubordinadasChange($any($event.target).checked)"
-          />
-          <label for="subordinadas-toggle">Unidades Subordinadas</label>
+  <div class="row">
+    <!-- ═══ Seção: Destaques do Usuário ═══ -->
+    <div class="col-lg-9 mb-4">
+      <section class="home-secao h-100">
+        <h4 class="home-secao__titulo fw-bold mb-3">Destaques do usuário</h4>
+        <div class="row align-items-center">
+          <div class="col-md-8 mb-3 mb-md-0">
+            <home-pendencias-usuario />
+          </div>
+          <div class="col-md-4">
+            @if (selectedUnidadeId()) {
+              <home-acoes-gerenciais [unidadeId]="selectedUnidadeId()" />
+            }
+          </div>
         </div>
-      }
+      </section>
+    </div>
+
+    <!-- ═══ Seção: Outros destaques ═══ -->
+    <div class="col-lg-3 mb-4">
+      <section class="home-secao h-100">
+        <h4 class="home-secao__titulo fw-bold mb-3 text-center">Outros destaques</h4>
+        <div class="d-flex flex-column align-items-center gap-3">
+          <home-atalho-card icone="bi bi-bar-chart-line" titulo="Painéis Gerenciais" (acao)="irParaPaineisGerenciais()" />
+          <home-atalho-card icone="bi bi-megaphone" titulo="Mural de Avisos" (acao)="irParaMuralAvisos()" />
+        </div>
+      </section>
     </div>
   </div>
 
-  <!-- Conteúdo dependente de unidade selecionada -->
-  @if (selectedUnidadeId()) {
-    <!-- Row 3: Indicadores vigentes + Férias + Aniversariantes -->
-    <div class="row mb-3">
-      <div class="col-md-6 mb-3 mb-md-0">
-        <home-planos-vigentes class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+  <!-- ═══ Seção: Destaques da Unidade ═══ -->
+  <section class="home-secao mb-4">
+    <h4 class="home-secao__titulo fw-bold mb-3">Destaques da Unidade</h4>
+
+    <!-- Seletor de Unidade + Toggle Subordinadas -->
+    <div class="row align-items-end mb-3">
+      <div class="col-md-4">
+        <br-select
+          label="Unidade"
+          [options]="unidadeOptions()"
+          (valueChange)="onUnidadeChange($event)"
+          class="w-100">
+        </br-select>
       </div>
-      <div class="col-md-3 mb-3 mb-md-0">
-        <home-em-ferias class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
-      </div>
-      <div class="col-md-3">
-        <home-aniversariantes class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+      <div class="col-md-4 d-flex align-items-center mb-2">
+        @if (exibeToggleSubordinadas()) {
+          <div class="br-switch">
+            <input
+              id="subordinadas-toggle"
+              type="checkbox"
+              [checked]="subordinadas()"
+              (change)="onSubordinadasChange($any($event.target).checked)"
+            />
+            <label for="subordinadas-toggle">Subordinadas</label>
+          </div>
+        }
       </div>
     </div>
 
-    <!-- Row 4: Participantes + Capacidade + Contribuições -->
-    <div class="row mb-3">
-      <div class="col-md-8 mb-3 mb-md-0">
-        <home-resumo-equipe [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+    @if (selectedUnidadeId()) {
+      <div class="row">
+        <!-- Coluna esquerda: indicadores da unidade -->
+        <div class="col-lg-8">
+          <!-- Único botão da seção: Planos de Entregas Vigentes -->
+          <div class="row mb-3">
+            <div class="col-12 d-flex justify-content-start">
+              <home-atalho-card icone="bi bi-journal-check" titulo="Planos de Entregas Vigentes"
+                (acao)="irParaPlanosEntregasVigentes()" />
+            </div>
+          </div>
+
+          <!-- Cards de lacuna: UE sem PE + Participante sem PT -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <home-planos-vigentes class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+            </div>
+          </div>
+
+          <!-- Unidades + Agentes Públicos + Capacidade da Equipe -->
+          <div class="row">
+            <div class="col-12">
+              <home-resumo-equipe [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna direita: De férias + Aniversariantes -->
+        <div class="col-lg-4">
+          <div class="mb-3">
+            <home-em-ferias class="d-block" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+          </div>
+          <div>
+            <home-aniversariantes class="d-block" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+          </div>
+        </div>
       </div>
-      <div class="col-md-4">
-        <home-contribuicoes [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
-      </div>
-    </div>
-  }
+    }
+  </section>
 </div>

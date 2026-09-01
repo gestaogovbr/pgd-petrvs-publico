@@ -36,8 +36,26 @@ class ResumoEquipe
         $unidadeIds = $this->resolverUnidades($dto);
 
         return [
+            'unidades' => $this->unidades($unidadeIds),
             'participantes_pgd' => $this->participantesPGD($unidadeIds),
             'capacidade_equipe_horas_mensais' => $this->capacidadeEquipe($unidadeIds),
+        ];
+    }
+
+    private function unidades(array $unidadeIds): array
+    {
+        $unidades = DB::table('unidades')
+            ->whereIn('id', $unidadeIds)
+            ->whereNull('deleted_at')
+            ->get(['executora']);
+
+        $total = $unidades->count();
+        $executoras = $unidades->filter(fn ($u) => (bool) $u->executora)->count();
+
+        return [
+            'quantidade' => $executoras,
+            'total' => $total,
+            'percentual' => $total > 0 ? round(($executoras / $total) * 100, 1) : 0,
         ];
     }
 

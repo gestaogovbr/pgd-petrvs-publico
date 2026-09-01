@@ -46,6 +46,66 @@
   }
 }
 
+/* ── Seções da home (fundo cinza claro conforme referência) ── */
+.home-secao {
+  background: #f0f0f0;
+  border-radius: 4px;
+  padding: 1.25rem;
+
+  &__titulo {
+    color: #333;
+  }
+}
+
+/* ── Atalho estilo SouGov: ícone em círculo com contorno azul, texto abaixo ── */
+.home-atalho-sougov {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: transform 0.2s;
+
+  &__circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #1351B4;
+
+    i {
+      font-size: 1.5rem;
+      color: #1351B4;
+    }
+  }
+
+  &__label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  &:hover, &:focus-visible {
+    transform: translateY(-2px);
+  }
+
+  &--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+
+    &:hover, &:focus-visible {
+      transform: none;
+    }
+  }
+}
+
 .home-card--atalho-disabled {
   opacity: 0.45;
   cursor: not-allowed;

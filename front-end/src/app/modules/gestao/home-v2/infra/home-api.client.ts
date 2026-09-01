@@ -23,6 +23,7 @@ export interface PlanosVigentes {
 }
 
 export interface ResumoEquipe {
+  unidades: IndicadorQuantitativo;
   participantes_pgd: IndicadorQuantitativo;
   capacidade_equipe_horas_mensais: number;
 }

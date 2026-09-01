@@ -1,17 +1,21 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
+import { NavigateService } from 'src/app/services/navigate.service';
+import { MuralAvisoTenantService } from 'src/app/services/mural-aviso-tenant.service';
+import { MessageService } from 'src/app/v2/services/message.service';
 import { PendenciasUsuarioComponent } from './components/pendencias-usuario.component';
 import { PlanosVigentesComponent } from './components/planos-vigentes.component';
 import { AcoesGerenciaisComponent } from './components/acoes-gerenciais.component';
 import { ResumoEquipeComponent } from './components/resumo-equipe.component';
-import { ContribuicoesComponent } from './components/contribuicoes.component';
 import { EmFeriasComponent } from './components/em-ferias.component';
 import { AniversariantesComponent } from './components/aniversariantes.component';
+import { AtalhoCardComponent } from './components/atalho-card.component';
 
 export interface SelectOption {
   value: string;
@@ -32,9 +36,9 @@ export interface SelectOption {
     PlanosVigentesComponent,
     AcoesGerenciaisComponent,
     ResumoEquipeComponent,
-    ContribuicoesComponent,
     EmFeriasComponent,
     AniversariantesComponent,
+    AtalhoCardComponent,
   ],
   templateUrl: './home.page.html',
   styleUrls: ['./home.styles.scss'],
@@ -42,6 +46,10 @@ export interface SelectOption {
 export class HomeV2Page implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly unidadeService = inject(UnidadeService);
+  private readonly router = inject(Router);
+  private readonly go = inject(NavigateService);
+  private readonly muralService = inject(MuralAvisoTenantService);
+  private readonly message = inject(MessageService);
 
   readonly unidadeOptions = signal<SelectOption[]>([]);
   readonly selectedUnidadeId = signal<string>('');
@@ -59,7 +67,7 @@ export class HomeV2Page implements OnInit {
 
   readonly nomeUsuario = computed(() => {
     const usuario = this.auth.usuario;
-    const nome = usuario?.apelido || usuario?.nome_exibicao || usuario?.nome || '';
+    const nome = usuario?.apelido || usuario?.nome_exibicao || usuario?.nome || ''; // TODO: usar apelidoOuNome(usuario)
     return nome.split(' ')[0];
   });
 
@@ -75,6 +83,56 @@ export class HomeV2Page implements OnInit {
 
   onSubordinadasChange(value: boolean): void {
     this.subordinadas.set(value);
+  }
+
+  irParaPaineisGerenciais(): void {
+    this.router.navigate(['gestao', 'paineis-gerenciais']);
+  }
+
+  irParaMuralAvisos(): void {
+    this.muralService.getPendentes().then(avisos => {
+      if (avisos.length === 0) {
+        this.message.info('Não há avisos no momento.');
+        return;
+      }
+      this.router.navigate([], {
+        queryParams: { mural: 1 },
+        queryParamsHandling: 'merge',
+      });
+    });
+  }
+
+  irParaRelatorioAgentes(): void {
+    this.go.navigate(
+      { route: ['relatorios', 'agentes'] },
+      { metadata: { unidade_id: this.selectedUnidadeId() } },
+    );
+  }
+
+  irParaRelatorioUnidades(): void {
+    this.go.navigate({
+      route: ['relatorios', 'unidades'],
+      params: {
+        filter: {
+          unidade_id: this.selectedUnidadeId(),
+          incluir_unidades_subordinadas: this.subordinadas(),
+        },
+      },
+    });
+  }
+
+  irParaPlanosEntregasVigentes(): void {
+    this.go.navigate({
+      route: ['gestao', 'plano-entrega'],
+      params: {
+        planejamento: true,
+        filter: {
+          unidade_id: this.selectedUnidadeId(),
+          subordinadas: this.subordinadas(),
+          somente_vigentes: true,
+        },
+      },
+    });
   }
 
   private carregarUnidades(): void {

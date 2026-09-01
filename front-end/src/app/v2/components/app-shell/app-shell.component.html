@@ -161,6 +161,18 @@
               </button>
             </div>
 
+            <span class="br-divider vertical mx-half" aria-hidden="true"></span>
+
+            <!-- Sair -->
+            <div class="header-functions">
+              <button class="br-button small" type="button"
+                aria-label="Sair"
+                (click)="logout()">
+                <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i>
+                <span class="d-none d-sm-inline" aria-hidden="true">Sair</span>
+              </button>
+            </div>
+
           </div>
 
         </div>
@@ -263,13 +275,6 @@
 
     </ul>
 
-    <div class="br-divider"></div>
-
-    <div class="px-3 py-2">
-      <br-button emphasis="secondary" class="w-100" (click)="logout()">
-        <i class="bi bi-arrow-bar-right me-1" aria-hidden="true"></i>Sair
-      </br-button>
-    </div>
   </div>
 }
 
