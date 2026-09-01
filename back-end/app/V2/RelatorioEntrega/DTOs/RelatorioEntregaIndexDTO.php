@@ -6,7 +6,7 @@ namespace App\V2\RelatorioEntrega\DTOs;
 
 final class RelatorioEntregaIndexDTO
 {
-    public const PAGE_SIZE = 50;
+    public const PAGE_SIZE = 15;
 
     /**
      * @param list<array{0: string, 1: string}> $orderBy

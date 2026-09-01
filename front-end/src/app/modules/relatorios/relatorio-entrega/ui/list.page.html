@@ -92,10 +92,10 @@
             <th scope="col" rowspan="2" class="sortable" (click)="onSort('entregaNome')">
               Entrega <i [class]="sortIcon('entregaNome')"></i>
             </th>
-            <th scope="col" rowspan="2" class="sortable" (click)="onSort('data_inicio')">
+            <th scope="col" rowspan="2" class="sortable text-center" (click)="onSort('data_inicio')">
               Data de início <i [class]="sortIcon('data_inicio')"></i>
             </th>
-            <th scope="col" rowspan="2" class="sortable" (click)="onSort('data_fim')">
+            <th scope="col" rowspan="2" class="sortable text-center" (click)="onSort('data_fim')">
               Data de fim <i [class]="sortIcon('data_fim')"></i>
             </th>
             <th scope="col" colspan="3" class="text-center group-header">Meta</th>
@@ -106,7 +106,7 @@
               Destinatário <i [class]="sortIcon('destinatario')"></i>
             </th>
             <th scope="col" colspan="2" class="text-center group-header">Vínculos</th>
-            <th scope="col" rowspan="2" class="sortable" (click)="onSort('situacao')">
+            <th scope="col" rowspan="2" class="sortable text-center" (click)="onSort('situacao')">
               Situação <i [class]="sortIcon('situacao')"></i>
             </th>
             <th scope="col" colspan="3" class="text-center group-header">Plano de Entregas</th>
@@ -154,8 +154,8 @@
             </td>
             <td data-th="Data de início" class="text-center">{{ row.data_inicio | date : 'dd/MM/yyyy' }}</td>
             <td data-th="Data de fim" class="text-center">{{ row.data_fim | date : 'dd/MM/yyyy' }}</td>
-            <td data-th="Planejado" class="text-center">{{ row.meta_planejado }}</td>
-            <td data-th="Alcançado" class="text-center">{{ row.meta_alcancado }}</td>
+            <td data-th="Planejado" class="text-center">{{ row.meta_planejado | number:'1.0-0' }}</td>
+            <td data-th="Alcançado" class="text-center">{{ row.meta_alcancado | number:'1.0-0' }}</td>
             <td data-th="Tipo de Meta" class="text-center">{{ row.meta_tipo }}</td>
             <td data-th="Demandante">{{ row.demandanteHierarquia }}</td>
             <td data-th="Destinatário">{{ row.destinatario || '-' }}</td>

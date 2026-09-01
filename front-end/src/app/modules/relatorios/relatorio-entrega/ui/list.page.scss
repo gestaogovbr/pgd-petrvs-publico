@@ -64,6 +64,7 @@
     color: #000 !important;
     background: #d9d9d9 !important;
     vertical-align: middle;
+    text-align: center;
   }
 
   tbody td {
@@ -94,6 +95,7 @@
   }
 
   td.text-center,
+  th.text-center,
   th.sub-header {
     text-align: center;
   }
@@ -104,6 +106,21 @@
   td[data-th='Destinatário'],
   td[data-th='Plano'] {
     text-align: left;
+  }
+
+  td[data-th='Data de início'],
+  td[data-th='Data de fim'],
+  td[data-th='Planejado'],
+  td[data-th='Alcançado'],
+  td[data-th='Tipo de Meta'],
+  td[data-th='Planejamento Institucional'],
+  td[data-th='Cadeia de Valor'],
+  td[data-th='Situação'],
+  td[data-th='ID do Plano'],
+  td[data-th='Status do Plano'],
+  td[data-th='Participantes envolvidos'],
+  td[data-th='Planos de Trabalho vinculados'] {
+    text-align: center;
   }
 
   .link {

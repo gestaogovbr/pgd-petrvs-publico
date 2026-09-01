@@ -17,6 +17,7 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithProperties;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
@@ -93,20 +94,38 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             $row->entregaNome,
             $this->dateValue($row->data_inicio),
             $this->dateValue($row->data_fim),
-            $row->meta_planejado,
-            $row->meta_alcancado,
+            $this->metaExportValue($row->meta_planejado),
+            $this->metaExportValue($row->meta_alcancado),
             $row->meta_tipo,
             $row->demandanteHierarquia,
             $row->destinatario !== '' ? $row->destinatario : '-',
-            $row->qtd_planejamento_institucional,
-            $row->qtd_cadeia_valor,
+            $this->intValue($row->qtd_planejamento_institucional),
+            $this->intValue($row->qtd_cadeia_valor),
             $row->situacao,
             $row->plano_rotulo,
             '#'.$row->plano_numero,
             $statusLabel,
-            $row->qtd_participantes,
-            $row->qtd_planos_trabalho,
+            $this->intValue($row->qtd_participantes),
+            $this->intValue($row->qtd_planos_trabalho),
         ];
+    }
+
+    private function intValue(mixed $value): int
+    {
+        if ($value === null || $value === '') {
+            return 0;
+        }
+
+        return (int) $value;
+    }
+
+    private function metaExportValue(mixed $value): int
+    {
+        if ($value === null || $value === '' || ! is_numeric($value)) {
+            return 0;
+        }
+
+        return (int) round((float) $value);
     }
 
     private function dateValue(mixed $value): mixed
@@ -123,6 +142,8 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
         return [
             'C' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'D' => NumberFormat::FORMAT_DATE_DDMMYYYY,
+            'E' => NumberFormat::FORMAT_NUMBER,
+            'F' => NumberFormat::FORMAT_NUMBER,
         ];
     }
 
@@ -153,17 +174,40 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             ],
             1 => [
                 'font' => ['bold' => true],
-                'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => [
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                ],
             ],
         ];
     }
 
     public static function afterSheet(AfterSheet $event): void
     {
-        $event->sheet->getDelegate()->getRowDimension(1)->setRowHeight(45);
-        $event->sheet->getDelegate()->getStyle('1')->getAlignment()->setWrapText(true);
+        $sheet = $event->sheet->getDelegate();
+        $sheet->getRowDimension(1)->setRowHeight(45);
+        $sheet->getStyle('1')->getAlignment()->setWrapText(true);
         $event->sheet->getStyle('A1:Q1')->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setARGB('fc9fc0');
+
+        $highestRow = $sheet->getHighestRow();
+        for ($row = 2; $row <= $highestRow; $row++) {
+            foreach (['E', 'F'] as $column) {
+                $coordinate = $column.$row;
+                $value = $sheet->getCell($coordinate)->getValue();
+                if ($value === null || $value === '') {
+                    $sheet->setCellValueExplicit($coordinate, 0, DataType::TYPE_NUMERIC);
+                }
+            }
+        }
+
+        $centerColumns = ['C', 'D', 'E', 'F', 'L', 'N', 'O', 'P', 'Q'];
+        foreach ($centerColumns as $column) {
+            $sheet->getStyle("{$column}2:{$column}{$highestRow}")
+                ->getAlignment()
+                ->setHorizontal(Alignment::HORIZONTAL_CENTER)
+                ->setVertical(Alignment::VERTICAL_CENTER);
+        }
     }
 }

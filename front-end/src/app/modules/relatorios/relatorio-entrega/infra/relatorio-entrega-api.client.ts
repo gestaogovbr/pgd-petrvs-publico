@@ -19,7 +19,7 @@ export class RelatorioEntregaApiClient extends TenantV2ResourceApiBase {
       orderDir: params.orderDir,
       filters: params.filters,
     });
-    return this.getCollectionPaged<RelatorioEntregaRow>(query, 50);
+    return this.getCollectionPaged<RelatorioEntregaRow>(query, 15);
   }
 
   unidadePadrao(): Observable<string | null> {
