@@ -1,3 +1,43 @@
+## 3.1.0 28/08/2026
+
+### Adicionado
+- **Módulo de Painéis Gerenciais** com quatro painéis de indicadores para acompanhamento da gestão:
+  - **Alinhamento e Avaliações**: indicadores de alinhamento institucional e desempenho das avaliações por unidade
+  - **Conformidade**: indicadores de conformidade dos Planos de Trabalho e Planos de Entrega com os status esperados
+  - **Modalidades**: distribuição de modalidades de trabalho por unidade com detalhamento hierárquico
+  - **Abrangência do PGD**: indicadores de adesão ao PGD com série histórica consolidada mensalmente
+- Navegação hierárquica (drill-down/drill-up) em todos os painéis, permitindo aprofundar nos dados das unidades subordinadas
+- Consulta histórica no painel Abrangência do PGD com seleção de período por unidade
+- Exportação em PDF dos painéis gerenciais
+- Dados consolidados recursivamente por hierarquia de unidades em todos os painéis
+- Job agendado (último dia do mês) para consolidação dos dados de adesão ao PGD
+- Seletor de unidade com busca e carregamento sob demanda
+- Botão "Saiba mais" nos gráficos com navegação para os relatórios correspondentes (Planos de Trabalho, Planos de Entrega, Agentes Públicos, Unidades) com filtros pré-aplicados ao contexto visualizado
+- Redirecionamento pós-login para Painéis Gerenciais para Adm Master, Adm Negocial e Chefias com atribuição em unidades autorizadoras ou instituidoras
+- **Mural de Avisos**: administradores podem publicar avisos (para todos os tenants ou um tenant específico) que são exibidos aos usuários em um modal após o login, com data de publicação e expiração, limite de 2.500 caracteres, pré-visualização e confirmação de leitura
+- **Nova Tela Home** apresentada como página inicial para os perfis elegíveis, composta por:
+  - Filtro de unidade e toggle "Unidades Subordinadas", com atualização automática dos componentes dependentes
+  - Pendências do usuário (assinaturas, registros de execução e avaliações de PE/PT) com atalhos para as telas correspondentes já filtradas
+  - Indicadores rápidos: Unidades Executoras com Plano de Entregas vigente e Participantes com Plano de Trabalho vigente
+  - Atalhos para Painel Gerencial, Meu Plano de Entregas Vigente e Meu Plano de Trabalho Vigente
+  - Indicadores da unidade: Participantes do PGD, Capacidade da Equipe e Contribuições dos Participantes
+  - Aniversariantes do dia e participantes em férias, obtidos do SIAPE e das ocorrências
+  - Filtro de unidade conforme o perfil: participante vê apenas lotação/vinculação (padrão na lotação); demais perfis veem as unidades com atribuição e suas subordinadas (padrão na unidade mais alta da hierarquia)
+- Endpoint `GET /api/v2/unidade/minhas` que retorna as unidades do usuário logado e, opcionalmente, suas subordinadas na cadeia hierárquica, com cache
+- Usuário Alexandre Schlottgen adicionado ao seeder de usuários
+
+### Modificado
+- Rota da API `GET /api/v2/unidade` alterada para suportar paginação e filtro por termo
+
+### Corrigido
+- Delegados conseguiam assinar TCR de Plano de Trabalho indevidamente
+- Delegados não conseguiam visualizar dados de usuários vinculados (colaboradores) na mesma unidade
+- Usuários com múltiplas matrículas SIAPE não conseguiam visualizar ou editar o próprio cadastro
+- Filtro "Meus subordinados" na listagem de Planos de Trabalho considerava vínculos já removidos
+- Telas de assinatura e avaliação de Planos de Trabalho consideravam vínculos de chefia já removidos como ativos
+- Chefias não conseguiam criar ocorrências para subordinados de unidades gerenciadas
+- Erro no login via Azure quando a entidade não existe
+
 ## 3.0.13 24/08/2026
 
 ### Adicionado
@@ -11,6 +51,7 @@
 - Falha na migração da versão 2 para a 3 em ambientes com charset legado ao unificar descrições de atividades
 - Relatório de Carga Individual do SIAPE era exibido sem conteúdo
 - Adm Master não conseguia visualizar todos os Planos de Trabalho na listagem
+- Exclusão de registros de execução do Plano de Entrega
 
 
 ## 3.0.12 14/08/2026
