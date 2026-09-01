@@ -10,7 +10,6 @@ use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
-use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use App\V2\Unidade\DTOs\UnidadeIndexDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
@@ -245,17 +244,23 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return array_map(fn ($row) => $row->unidade_id, $rows);
     }
 
+    /**
+     * @return Collection<int, Unidade>
+     */
     public function buscarResumoPorIds(array $ids): Collection
     {
         if (empty($ids)) {
             return $this->model->newCollection();
         }
 
-        return $this->query()
+        /** @var Collection<int, Unidade> $unidades */
+        $unidades = $this->query()
             ->select('id', 'sigla', 'nome')
             ->whereIn('id', $ids)
             ->orderBy('sigla')
             ->get();
+
+        return $unidades;
     }
 
     public function getSubordinadasRecursivas(array $ids): Collection
@@ -326,26 +331,6 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         /** @var Unidade|null $unidade */
         $unidade = $this->query()->find($id);
         return $unidade;
-    }
-
-    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection
-    {
-        $query = $this->query()->select('id', 'nome', 'codigo', 'sigla');
-
-        if ($dto->termo) {
-            $termoLower = mb_strtolower($dto->termo);
-            $query->where(function ($q) use ($termoLower) {
-                $q->whereRaw('LOWER(nome) like ?', ["%{$termoLower}%"])
-                  ->orWhereRaw('LOWER(codigo) like ?', ["%{$termoLower}%"])
-                  ->orWhereRaw('LOWER(sigla) like ?', ["%{$termoLower}%"]);
-            });
-        }
-
-        if (!$dto->todos) {
-            $query->limit(50);
-        }
-
-        return $query->get();
     }
 
     public function index(UnidadeIndexDTO $dto): LengthAwarePaginator
