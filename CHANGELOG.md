@@ -1,3 +1,8 @@
+## 3.1.1 01/09/2026
+
+### Corrigido
+- Corrigido o filtro de unidades que ficava carregando indefinidamente, causado por uma alteração no comportamento da busca de unidades após um merge
+
 ## 3.1.0 28/08/2026
 
 ### Adicionado
