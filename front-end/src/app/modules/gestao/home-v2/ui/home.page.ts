@@ -135,6 +135,26 @@ export class HomeV2Page implements OnInit {
     });
   }
 
+  irParaLacunasPE(): void {
+    this.go.navigate({
+      route: ['relatorios', 'unidades'],
+      params: {
+        filter: {
+          unidade_id: this.selectedUnidadeId(),
+          incluir_unidades_subordinadas: this.subordinadas(),
+          executora: 1,
+        },
+      },
+    });
+  }
+
+  irParaLacunasPT(): void {
+    this.go.navigate(
+      { route: ['relatorios', 'agentes'] },
+      { metadata: { unidade_id: this.selectedUnidadeId(), sem_plano_trabalho: 1 } },
+    );
+  }
+
   private carregarUnidades(): void {
     if (this.auth.isUsuarioParticipante()) {
       this.carregarUnidadesParticipante();

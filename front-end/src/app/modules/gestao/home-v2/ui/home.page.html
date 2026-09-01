@@ -67,18 +67,13 @@
       <div class="row">
         <!-- Coluna esquerda: indicadores da unidade -->
         <div class="col-lg-8">
-          <!-- Único botão da seção: Planos de Entregas Vigentes -->
-          <div class="row mb-3">
-            <div class="col-12 d-flex justify-content-start">
-              <home-atalho-card icone="bi bi-journal-check" titulo="Planos de Entregas Vigentes"
-                (acao)="irParaPlanosEntregasVigentes()" />
-            </div>
-          </div>
-
-          <!-- Cards de lacuna: UE sem PE + Participante sem PT -->
+          <!-- Row: Plano de Entregas Vigente + cards de lacuna (UE sem PE + Participante sem PT) -->
           <div class="row mb-3">
             <div class="col-md-12">
-              <home-planos-vigentes class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+              <home-planos-vigentes class="d-block h-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()"
+                (planoEntregasVigenteClick)="irParaPlanosEntregasVigentes()"
+                (unidadesSemPEClick)="irParaLacunasPE()"
+                (participantesSemPTClick)="irParaLacunasPT()" />
             </div>
           </div>
 

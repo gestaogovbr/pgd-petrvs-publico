@@ -1,50 +1,60 @@
-<div class="d-flex flex-column gap-3 h-100">
 @if (loading()) {
-  <div class="d-flex justify-content-center align-items-center flex-fill">
+  <div class="d-flex justify-content-center align-items-center py-3">
     <span class="br-loading small" role="progressbar"></span>
   </div>
 } @else if (data()) {
-  <!-- Unidades Executoras sem Plano de Entregas -->
-  <div class="br-card home-card--pill flex-fill">
-    <div class="card-content p-3 d-flex justify-content-between align-items-center h-100">
-      <span>
-        Unidades Executoras sem Plano de Entregas vigente hoje
-        <i class="fas fa-info-circle text-muted ml-1"
-           title="Quando a opção Unidades Subordinadas estiver habilitada, também serão considerados os dados das respectivas unidades subordinadas."
-           aria-label="Informação sobre o indicador de unidades executoras sem plano de entregas"
-           style="cursor: help;"></i>
-      </span>
+  <div class="row g-3 align-items-stretch">
+    <!-- Coluna 1: Atalho padrão (Plano de Entregas Vigente) -->
+    <div class="col-md-2 d-flex align-items-center justify-content-center">
+      <home-atalho-card icone="bi bi-file-earmark-text" titulo="Plano de Entregas Vigente"
+        (acao)="planoEntregasVigenteClick.emit()" />
+    </div>
+
+    <!-- Coluna 2: Unidade Executora sem Plano de Entregas -->
+    <div class="col-md-5">
       @if (unidadesSemPE() > 0) {
-        <strong>{{ unidadesSemPE() }}/{{ data()!.unidades_com_plano_entregas.total }} ({{ percentualUnidadesSemPE() }}%)</strong>
+        <div class="home-alerta-card d-flex align-items-center gap-2 h-100">
+          <i class="bi bi-exclamation-triangle-fill home-alerta-card__icon" aria-hidden="true"></i>
+          <span>
+            <strong>Unidade Executora sem Plano de Entregas hoje:</strong>
+            <a class="home-alerta-card__link" role="link" tabindex="0"
+              (click)="unidadesSemPEClick.emit()" (keydown.enter)="unidadesSemPEClick.emit()">
+              {{ unidadesSemPE() }} ({{ percentualUnidadesSemPE() }}%)
+            </a>
+          </span>
+        </div>
       } @else {
-        <span class="text-muted small">Não há unidades sem Plano de Entregas.</span>
+        <div class="home-alerta-card home-alerta-card--ok d-flex align-items-center gap-2 h-100">
+          <i class="bi bi-check home-alerta-card__icon-ok" aria-hidden="true"></i>
+          <span>Todas as Unidades Executoras possuem Plano de Entregas vigente.</span>
+        </div>
       }
     </div>
-  </div>
 
-  <!-- Participantes sem Plano de Trabalho -->
-  <div class="br-card home-card--pill flex-fill">
-    <div class="card-content p-3 d-flex justify-content-between align-items-center h-100">
-      <span>
-        Participantes sem Plano de Trabalho vigente hoje
-        <i class="fas fa-info-circle text-muted ml-1"
-           title="Quando a opção Unidades Subordinadas estiver habilitada, também serão considerados os dados das respectivas unidades subordinadas."
-           aria-label="Informação sobre o indicador de participantes sem plano de trabalho"
-           style="cursor: help;"></i>
-      </span>
+    <!-- Coluna 3: Participante do PGD sem Plano de Trabalho -->
+    <div class="col-md-5">
       @if (participantesSemPT() > 0) {
-        <strong>{{ participantesSemPT() }}/{{ data()!.participantes_com_plano_trabalho.total }} ({{ percentualParticipantesSemPT() }}%)</strong>
+        <div class="home-alerta-card d-flex align-items-center gap-2 h-100">
+          <i class="bi bi-exclamation-triangle-fill home-alerta-card__icon" aria-hidden="true"></i>
+          <span>
+            <strong>Participante do PGD sem Plano de Trabalho hoje:</strong>
+            <a class="home-alerta-card__link" role="link" tabindex="0"
+              (click)="participantesSemPTClick.emit()" (keydown.enter)="participantesSemPTClick.emit()">
+              {{ participantesSemPT() }} ({{ percentualParticipantesSemPT() }}%)
+            </a>
+          </span>
+        </div>
       } @else {
-        <span class="text-muted small">Não há participantes sem Plano de Trabalho.</span>
+        <div class="home-alerta-card home-alerta-card--ok d-flex align-items-center gap-2 h-100">
+          <i class="bi bi-check home-alerta-card__icon-ok" aria-hidden="true"></i>
+          <span>Todos os participantes do PGD possuem Plano de Trabalho vigente.</span>
+        </div>
       }
     </div>
   </div>
 } @else if (erro()) {
-  <div class="br-card home-card--pill flex-fill">
-    <div class="card-content p-3 text-center text-muted small">
-      <i class="fas fa-exclamation-triangle mb-2" aria-hidden="true"></i>
-      <p class="mb-0">{{ erro() }}</p>
-    </div>
+  <div class="home-alerta-card text-center text-muted small">
+    <i class="fas fa-exclamation-triangle mb-2" aria-hidden="true"></i>
+    <p class="mb-0">{{ erro() }}</p>
   </div>
 }
-</div>

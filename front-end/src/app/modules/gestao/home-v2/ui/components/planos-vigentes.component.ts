@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeApiClient, PlanosVigentes } from '../../infra/home-api.client';
 import { HOME_ERRO_RECUPERAR_DADOS } from '../../home.constants';
+import { AtalhoCardComponent } from './atalho-card.component';
 
 @Component({
   selector: 'home-planos-vigentes',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, AtalhoCardComponent],
   styleUrls: ['../home.styles.scss'],
   templateUrl: './planos-vigentes.component.html',
 })
@@ -16,6 +17,10 @@ export class PlanosVigentesComponent {
 
   readonly unidadeId = input.required<string>();
   readonly subordinadas = input.required<boolean>();
+
+  readonly planoEntregasVigenteClick = output<void>();
+  readonly unidadesSemPEClick = output<void>();
+  readonly participantesSemPTClick = output<void>();
 
   readonly data = signal<PlanosVigentes | null>(null);
   readonly loading = signal(false);

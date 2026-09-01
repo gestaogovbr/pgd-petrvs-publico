@@ -9,7 +9,7 @@
       <div class="br-card home-card h-100">
         <div class="card-content p-3">
           <h6 class="fw-bold text-start mb-2">
-            Unidades {{ data()!.unidades.total }}
+            Unidades: {{ data()!.unidades.total }}
           </h6>
           <p class="mb-0 small">
             Unidades Executoras: <strong>{{ data()!.unidades.quantidade }}</strong> ({{ data()!.unidades.percentual }}%)
@@ -23,7 +23,7 @@
       <div class="br-card home-card h-100">
         <div class="card-content p-3">
           <h6 class="fw-bold text-start mb-2">
-            Agentes Públicos {{ data()!.participantes_pgd.total }}
+            Agentes Públicos: {{ data()!.participantes_pgd.total }}
           </h6>
           <p class="mb-0 small">
             Participantes do PGD: <strong>{{ data()!.participantes_pgd.quantidade }}</strong> ({{ data()!.participantes_pgd.percentual }}%)
@@ -37,7 +37,7 @@
       <div class="br-card home-card h-100">
         <div class="card-content p-3">
           <h6 class="fw-bold text-start mb-2">
-            Capacidade da Equipe em PGD (horas mensais) {{ data()!.capacidade_equipe_horas_mensais }}
+            Capacidade da Equipe em PGD (horas mensais): {{ data()!.capacidade_equipe_horas_mensais }}
             <i class="fas fa-info-circle text-muted ml-1"
                title="Representa a distribuição do esforço da equipe considerando todo o histórico de Planos de Trabalho pactuados na unidade selecionada. Quando a opção Unidades Subordinadas estiver habilitada, também serão considerados os dados das respectivas unidades subordinadas."
                aria-label="Informação sobre capacidade e contribuições"
