@@ -2,6 +2,7 @@
 
 ### Corrigido
 - Corrigido o filtro de unidades que ficava carregando indefinidamente, causado por uma alteração no comportamento da busca de unidades após um merge
+- Mensagem "Documento não encontrado para este plano de trabalho" não é mais mostrada indevidamente em PTs com status rascunho
 
 ## 3.1.0 28/08/2026
 
