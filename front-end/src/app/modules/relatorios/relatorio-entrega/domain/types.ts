@@ -2,15 +2,19 @@ export interface RelatorioEntregaRow {
   id: string;
   unidade_id: string;
   unidadeHierarquia: string;
+  demandanteHierarquia: string;
+  destinatario: string;
   entregaNome: string;
   data_inicio: string | null;
   data_fim: string | null;
   meta_planejado: number;
   meta_alcancado: number;
+  meta_tipo: string;
   meta_percentual: number;
   qtd_planejamento_institucional: number;
   qtd_cadeia_valor: number;
   qtd_outras_entregas: number;
+  situacao: string;
   plano_id: string;
   plano_numero: string;
   plano_nome: string;
@@ -29,15 +33,19 @@ export interface RelatorioEntregaListFilters {
 
 export type RelatorioEntregaSortColumn =
   | 'unidadeHierarquia'
+  | 'demandanteHierarquia'
+  | 'destinatario'
   | 'entregaNome'
   | 'data_inicio'
   | 'data_fim'
   | 'meta_planejado'
   | 'meta_alcancado'
+  | 'meta_tipo'
   | 'meta_percentual'
   | 'qtd_planejamento_institucional'
   | 'qtd_cadeia_valor'
   | 'qtd_outras_entregas'
+  | 'situacao'
   | 'plano_nome'
   | 'plano_rotulo'
   | 'plano_numero'

@@ -49,6 +49,12 @@ final class RelatorioEntregaIndexFiltersDTO
         return ! $this->hasPeriodoCompleto() && ! $this->hasPeriodoParcial();
     }
 
+    /** Data de referência (DC) para cálculo da situação — sempre a data atual. */
+    public function resolveDataConsulta(): string
+    {
+        return now()->toDateString();
+    }
+
     private static function trimmedStringOrNull(mixed $value): ?string
     {
         if ($value === null) {

@@ -29,26 +29,26 @@ final class RelatorioEntregaMetaHelper
     }
 
     /**
-     * RN18 — Planejado = Meta * Parcela da entrega no plano / 100.
+     * Valor absoluto da meta/realizado do registro de execução mais recente.
      */
-    public static function valorPlanejado(mixed $metaJson, ?string $tipoIndicador, mixed $parcela): float
-    {
-        $meta = self::valorNumericoAbsoluto($metaJson, $tipoIndicador);
-        $parcelaPercentual = is_numeric($parcela) ? (float) $parcela : 0.0;
-
-        return $meta * $parcelaPercentual / 100.0;
-    }
-
-    /**
-     * RN19.1 — Alcançado = 0 quando não houver registro de execução da entrega.
-     */
-    public static function valorAlcancado(mixed $realizadoJson, ?string $tipoIndicador, bool $temRegistroExecucao): float
-    {
+    public static function valorAbsolutoRegistroExecucao(
+        mixed $jsonValue,
+        ?string $tipoIndicador,
+        bool $temRegistroExecucao,
+    ): float {
         if (! $temRegistroExecucao) {
             return 0.0;
         }
 
-        return self::valorNumericoAbsoluto($realizadoJson, $tipoIndicador);
+        return self::valorNumericoAbsoluto($jsonValue, $tipoIndicador);
+    }
+
+    /**
+     * Alcançado = valor absoluto do realizado no registro de execução; 0 sem registro.
+     */
+    public static function valorAlcancado(mixed $realizadoJson, ?string $tipoIndicador, bool $temRegistroExecucao): float
+    {
+        return self::valorAbsolutoRegistroExecucao($realizadoJson, $tipoIndicador, $temRegistroExecucao);
     }
 
     /**

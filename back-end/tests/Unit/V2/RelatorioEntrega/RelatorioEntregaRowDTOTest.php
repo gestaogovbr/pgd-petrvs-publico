@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaRowDTO;
+use App\V2\RelatorioEntrega\Support\RelatorioEntregaSituacaoHelper;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -10,11 +11,15 @@ uses(TestCase::class);
 test('monta linha do relatorio a partir do resultado da query', function () {
     $row = (object) [
         'id' => 'entrega-1',
-        'unidade_id' => 'unidade-1',
+        'unidade_id' => 'unidade-demandante',
+        'plano_unidade_id' => 'unidade-plano',
         'unidade_hierarquia' => 'Org / Unidade',
+        'demandante_hierarquia' => 'Org / Demandante',
+        'destinatario' => 'Cliente X',
         'entrega_nome' => 'Título da entrega',
         'data_inicio' => '2026-01-01',
         'data_fim' => '2026-01-31',
+        'tipo_indicador' => 'QUANTIDADE',
         'meta_planejado' => 10,
         'meta_alcancado' => 5,
         'meta_percentual' => 50,
@@ -31,9 +36,14 @@ test('monta linha do relatorio a partir do resultado da query', function () {
         'qtd_planos_trabalho' => 4,
     ];
 
-    $dto = RelatorioEntregaRowDTO::fromQueryRow($row);
+    $dto = RelatorioEntregaRowDTO::fromQueryRow($row, '2026-01-15');
 
     expect($dto->entregaNome)->toBe('Título da entrega')
+        ->and($dto->unidade_id)->toBe('unidade-plano')
+        ->and($dto->demandanteHierarquia)->toBe('Org / Demandante')
+        ->and($dto->destinatario)->toBe('Cliente X')
+        ->and($dto->meta_tipo)->toBe('Quantidade')
+        ->and($dto->situacao)->toBe(RelatorioEntregaSituacaoHelper::EM_ANDAMENTO)
         ->and($dto->qtd_outras_entregas)->toBe(3)
         ->and($dto->plano_rotulo)->toBe('Plano 2026 - 01/01/2026 - 31/12/2026')
         ->and($dto->jsonSerialize()['unidadeHierarquia'])->toBe('Org / Unidade')
@@ -45,6 +55,7 @@ test('rotulo do plano usa hifen quando nome vazio', function () {
         'id' => 'e1',
         'unidade_id' => 'u1',
         'unidade_hierarquia' => '',
+        'demandante_hierarquia' => '',
         'entrega_nome' => '',
         'plano_id' => 'p1',
         'plano_numero' => '1',
@@ -62,6 +73,7 @@ test('rotulo do plano omite fim quando igual ao inicio', function () {
         'id' => 'e1',
         'unidade_id' => 'u1',
         'unidade_hierarquia' => '',
+        'demandante_hierarquia' => '',
         'entrega_nome' => '',
         'plano_id' => 'p1',
         'plano_numero' => '1',
@@ -81,8 +93,9 @@ test('alcancado no fallback retorna zero sem registro de execucao', function () 
         'id' => 'e1',
         'unidade_id' => 'u1',
         'unidade_hierarquia' => '',
+        'demandante_hierarquia' => '',
         'entrega_nome' => '',
-        'realizado' => ['quantitativo' => 50],
+        'progresso_realizado' => ['quantitativo' => 50],
         'tipo_indicador' => 'QUANTIDADE',
         'qtd_registros_execucao' => 0,
         'plano_id' => 'p1',
@@ -96,13 +109,14 @@ test('alcancado no fallback retorna zero sem registro de execucao', function () 
     expect($dto->meta_alcancado)->toBe(0.0);
 });
 
-test('alcancado no fallback usa realizado quando ha registro de execucao', function () {
+test('alcancado no fallback usa realizado do registro de execucao', function () {
     $row = (object) [
         'id' => 'e1',
         'unidade_id' => 'u1',
         'unidade_hierarquia' => '',
+        'demandante_hierarquia' => '',
         'entrega_nome' => '',
-        'realizado' => ['quantitativo' => 50],
+        'progresso_realizado' => ['quantitativo' => 50],
         'tipo_indicador' => 'QUANTIDADE',
         'qtd_registros_execucao' => 2,
         'plano_id' => 'p1',
@@ -116,15 +130,16 @@ test('alcancado no fallback usa realizado quando ha registro de execucao', funct
     expect($dto->meta_alcancado)->toBe(50.0);
 });
 
-test('planejado no fallback aplica meta vezes parcela sobre 100', function () {
+test('planejado no fallback usa meta absoluta do registro de execucao', function () {
     $row = (object) [
         'id' => 'e1',
         'unidade_id' => 'u1',
         'unidade_hierarquia' => '',
+        'demandante_hierarquia' => '',
         'entrega_nome' => '',
-        'meta' => ['quantitativo' => 200],
+        'progresso_meta' => ['quantitativo' => 200],
         'tipo_indicador' => 'QUANTIDADE',
-        'progresso_esperado' => 50,
+        'qtd_registros_execucao' => 1,
         'plano_id' => 'p1',
         'plano_numero' => '1',
         'plano_nome' => 'Plano',
@@ -133,7 +148,7 @@ test('planejado no fallback aplica meta vezes parcela sobre 100', function () {
 
     $dto = RelatorioEntregaRowDTO::fromQueryRow($row);
 
-    expect($dto->meta_planejado)->toBe(100.0);
+    expect($dto->meta_planejado)->toBe(200.0);
 });
 
 test('percentual no fallback aplica planejado sobre realizado vezes 100', function () {
@@ -141,11 +156,11 @@ test('percentual no fallback aplica planejado sobre realizado vezes 100', functi
         'id' => 'e1',
         'unidade_id' => 'u1',
         'unidade_hierarquia' => '',
+        'demandante_hierarquia' => '',
         'entrega_nome' => '',
-        'meta' => ['quantitativo' => 100],
-        'realizado' => ['quantitativo' => 50],
+        'progresso_meta' => ['quantitativo' => 100],
+        'progresso_realizado' => ['quantitativo' => 50],
         'tipo_indicador' => 'QUANTIDADE',
-        'progresso_esperado' => 100,
         'qtd_registros_execucao' => 1,
         'plano_id' => 'p1',
         'plano_numero' => '1',

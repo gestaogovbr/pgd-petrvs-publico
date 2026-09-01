@@ -7,23 +7,22 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
-test('valor planejado aplica meta vezes parcela sobre 100', function () {
+test('valor absoluto do registro de execucao extrai meta conforme tipo', function () {
     $meta = ['quantitativo' => 200];
 
-    expect(RelatorioEntregaMetaHelper::valorPlanejado($meta, 'QUANTIDADE', 50))->toBe(100.0)
-        ->and(RelatorioEntregaMetaHelper::valorPlanejado($meta, 'QUANTIDADE', 100))->toBe(200.0)
-        ->and(RelatorioEntregaMetaHelper::valorPlanejado($meta, 'QUANTIDADE', 0))->toBe(0.0);
+    expect(RelatorioEntregaMetaHelper::valorAbsolutoRegistroExecucao($meta, 'QUANTIDADE', true))->toBe(200.0)
+        ->and(RelatorioEntregaMetaHelper::valorAbsolutoRegistroExecucao($meta, 'QUANTIDADE', false))->toBe(0.0);
 });
 
-test('valor planejado retorna zero quando parcela ausente', function () {
-    expect(RelatorioEntregaMetaHelper::valorPlanejado(['valor' => 80], 'VALOR', null))->toBe(0.0);
+test('valor absoluto retorna zero quando json ausente', function () {
+    expect(RelatorioEntregaMetaHelper::valorAbsolutoRegistroExecucao(null, 'VALOR', true))->toBe(0.0);
 });
 
 test('valor alcancado retorna zero sem registro de execucao', function () {
     expect(RelatorioEntregaMetaHelper::valorAlcancado(['quantitativo' => 80], 'QUANTIDADE', false))->toBe(0.0);
 });
 
-test('valor alcancado usa realizado quando ha registro de execucao', function () {
+test('valor alcancado usa realizado do registro de execucao', function () {
     expect(RelatorioEntregaMetaHelper::valorAlcancado(['quantitativo' => 80], 'QUANTIDADE', true))->toBe(80.0);
 });
 

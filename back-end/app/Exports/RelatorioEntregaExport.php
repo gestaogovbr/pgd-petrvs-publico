@@ -45,16 +45,18 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             'Data de início',
             'Data de fim',
             'Planejado',
-            'Realizado',
-            '% de alcance',
+            'Alcançado',
+            'Tipo de Meta',
+            'Demandante',
+            'Destinatário',
             'Planejamento Institucional',
             'Cadeia de Valor',
-            'Outras Entregas',
+            'Situação',
             'Plano',
-            '# ID',
+            'ID do Plano',
             'Status do Plano',
             'Participantes envolvidos',
-            'Planos de Trabalhos vinculados',
+            'Planos de Trabalho vinculados',
         ];
     }
 
@@ -67,15 +69,17 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             'D' => 14,
             'E' => 12,
             'F' => 12,
-            'G' => 12,
-            'H' => 12,
-            'I' => 12,
+            'G' => 14,
+            'H' => 35,
+            'I' => 25,
             'J' => 12,
-            'K' => 35,
-            'L' => 10,
-            'M' => 18,
-            'N' => 14,
-            'O' => 16,
+            'K' => 12,
+            'L' => 16,
+            'M' => 35,
+            'N' => 12,
+            'O' => 18,
+            'P' => 14,
+            'Q' => 16,
         ];
     }
 
@@ -83,7 +87,6 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
     public function map($row): array
     {
         $statusLabel = PlanoEntrega::STATUSES[$row->plano_status] ?? $row->plano_status;
-        $percentual = $row->meta_percentual;
 
         return [
             $row->unidadeHierarquia,
@@ -92,10 +95,12 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             $this->dateValue($row->data_fim),
             $row->meta_planejado,
             $row->meta_alcancado,
-            $percentual.'%',
+            $row->meta_tipo,
+            $row->demandanteHierarquia,
+            $row->destinatario !== '' ? $row->destinatario : '-',
             $row->qtd_planejamento_institucional,
             $row->qtd_cadeia_valor,
-            $row->qtd_outras_entregas,
+            $row->situacao,
             $row->plano_rotulo,
             '#'.$row->plano_numero,
             $statusLabel,
@@ -138,7 +143,7 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
         $lastRow = max(1, $this->rows->count()) + 1;
 
         return [
-            'A1:O'.$lastRow => [
+            'A1:Q'.$lastRow => [
                 'borders' => [
                     'outline' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -157,7 +162,7 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
     {
         $event->sheet->getDelegate()->getRowDimension(1)->setRowHeight(45);
         $event->sheet->getDelegate()->getStyle('1')->getAlignment()->setWrapText(true);
-        $event->sheet->getStyle('A1:O1')->getFill()
+        $event->sheet->getStyle('A1:Q1')->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setARGB('fc9fc0');
     }

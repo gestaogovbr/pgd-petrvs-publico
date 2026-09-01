@@ -168,14 +168,6 @@ export class RelatorioEntregaListPage implements OnInit {
     return this.lookup.getValue(this.lookup.PLANO_ENTREGA_STATUS, status) || status || '-';
   }
 
-  formatPercentual(value: number | null | undefined): string {
-    const n = Number(value ?? 0);
-    if (Number.isNaN(n)) {
-      return '0%';
-    }
-    return `${Number.isInteger(n) ? n : n.toFixed(2).replace(/\.?0+$/, '')}%`;
-  }
-
   abrirEntrega(row: RelatorioEntregaRow): void {
     this.go.navigate({ route: ['gestao', 'plano-entrega', 'entrega', row.id, 'consult'] }, { modal: true });
   }

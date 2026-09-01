@@ -99,7 +99,16 @@
               Data de fim <i [class]="sortIcon('data_fim')"></i>
             </th>
             <th scope="col" colspan="3" class="text-center group-header">Meta</th>
-            <th scope="col" colspan="3" class="text-center group-header">Vínculos</th>
+            <th scope="col" rowspan="2" class="sortable" (click)="onSort('demandanteHierarquia')">
+              Demandante <i [class]="sortIcon('demandanteHierarquia')"></i>
+            </th>
+            <th scope="col" rowspan="2" class="sortable" (click)="onSort('destinatario')">
+              Destinatário <i [class]="sortIcon('destinatario')"></i>
+            </th>
+            <th scope="col" colspan="2" class="text-center group-header">Vínculos</th>
+            <th scope="col" rowspan="2" class="sortable" (click)="onSort('situacao')">
+              Situação <i [class]="sortIcon('situacao')"></i>
+            </th>
             <th scope="col" colspan="3" class="text-center group-header">Plano de Entregas</th>
             <th scope="col" colspan="2" class="text-center group-header">Contribuição</th>
           </tr>
@@ -108,10 +117,10 @@
               Planejado <i [class]="sortIcon('meta_planejado')"></i>
             </th>
             <th scope="col" class="sortable sub-header" (click)="onSort('meta_alcancado')">
-              Realizado <i [class]="sortIcon('meta_alcancado')"></i>
+              Alcançado <i [class]="sortIcon('meta_alcancado')"></i>
             </th>
-            <th scope="col" class="sortable sub-header" (click)="onSort('meta_percentual')">
-              % de alcance <i [class]="sortIcon('meta_percentual')"></i>
+            <th scope="col" class="sortable sub-header" (click)="onSort('meta_tipo')">
+              Tipo de Meta <i [class]="sortIcon('meta_tipo')"></i>
             </th>
             <th scope="col" class="sortable sub-header" (click)="onSort('qtd_planejamento_institucional')">
               Planejamento<br />Institucional <i [class]="sortIcon('qtd_planejamento_institucional')"></i>
@@ -119,14 +128,11 @@
             <th scope="col" class="sortable sub-header" (click)="onSort('qtd_cadeia_valor')">
               Cadeia de<br />Valor <i [class]="sortIcon('qtd_cadeia_valor')"></i>
             </th>
-            <th scope="col" class="sortable sub-header" (click)="onSort('qtd_outras_entregas')">
-              Outras<br />Entregas <i [class]="sortIcon('qtd_outras_entregas')"></i>
-            </th>
             <th scope="col" class="sortable sub-header" (click)="onSort('plano_rotulo')">
               Plano <i [class]="sortIcon('plano_rotulo')"></i>
             </th>
             <th scope="col" class="sortable sub-header" (click)="onSort('plano_numero')">
-              # ID <i [class]="sortIcon('plano_numero')"></i>
+              ID do Plano <i [class]="sortIcon('plano_numero')"></i>
             </th>
             <th scope="col" class="sortable sub-header" (click)="onSort('plano_status')">
               Status do<br />Plano <i [class]="sortIcon('plano_status')"></i>
@@ -135,7 +141,7 @@
               Participantes<br />envolvidos <i [class]="sortIcon('qtd_participantes')"></i>
             </th>
             <th scope="col" class="sortable sub-header" (click)="onSort('qtd_planos_trabalho')">
-              Planos de Trabalhos<br />vinculados <i [class]="sortIcon('qtd_planos_trabalho')"></i>
+              Planos de Trabalho<br />vinculados <i [class]="sortIcon('qtd_planos_trabalho')"></i>
             </th>
           </tr>
         </thead>
@@ -149,13 +155,15 @@
             <td data-th="Data de início" class="text-center">{{ row.data_inicio | date : 'dd/MM/yyyy' }}</td>
             <td data-th="Data de fim" class="text-center">{{ row.data_fim | date : 'dd/MM/yyyy' }}</td>
             <td data-th="Planejado" class="text-center">{{ row.meta_planejado }}</td>
-            <td data-th="Realizado" class="text-center">{{ row.meta_alcancado }}</td>
-            <td data-th="% de alcance" class="text-center">{{ formatPercentual(row.meta_percentual) }}</td>
+            <td data-th="Alcançado" class="text-center">{{ row.meta_alcancado }}</td>
+            <td data-th="Tipo de Meta" class="text-center">{{ row.meta_tipo }}</td>
+            <td data-th="Demandante">{{ row.demandanteHierarquia }}</td>
+            <td data-th="Destinatário">{{ row.destinatario || '-' }}</td>
             <td data-th="Planejamento Institucional" class="text-center">{{ row.qtd_planejamento_institucional }}</td>
             <td data-th="Cadeia de Valor" class="text-center">{{ row.qtd_cadeia_valor }}</td>
-            <td data-th="Outras Entregas" class="text-center">{{ row.qtd_outras_entregas }}</td>
+            <td data-th="Situação" class="text-center">{{ row.situacao }}</td>
             <td data-th="Plano">{{ row.plano_rotulo }}</td>
-            <td data-th="# ID" class="text-center">
+            <td data-th="ID do Plano" class="text-center">
               <a class="link" role="button" (click)="abrirPlano(row)">{{ row.plano_numero }}</a>
             </td>
             <td data-th="Status do Plano" class="text-center">{{ statusLabel(row.plano_status) }}</td>
@@ -177,7 +185,7 @@
           }
           @if (facade.items().length === 0 && !facade.loading()) {
           <tr>
-            <td colspan="15" class="text-center p-3">Sem dados para exibir.</td>
+            <td colspan="17" class="text-center p-3">Sem dados para exibir.</td>
           </tr>
           }
         </tbody>
