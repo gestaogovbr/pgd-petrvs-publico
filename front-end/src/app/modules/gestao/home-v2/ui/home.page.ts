@@ -9,7 +9,6 @@ import { UtilService } from 'src/app/services/util.service';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { MuralAvisoTenantService } from 'src/app/services/mural-aviso-tenant.service';
-import { MessageService } from 'src/app/v2/services/message.service';
 import { PendenciasUsuarioComponent } from './components/pendencias-usuario.component';
 import { PlanosVigentesComponent } from './components/planos-vigentes.component';
 import { AcoesGerenciaisComponent } from './components/acoes-gerenciais.component';
@@ -51,7 +50,6 @@ export class HomeV2Page implements OnInit {
   private readonly router = inject(Router);
   private readonly go = inject(NavigateService);
   private readonly muralService = inject(MuralAvisoTenantService);
-  private readonly message = inject(MessageService);
 
   readonly unidadeOptions = signal<SelectOption[]>([]);
   readonly selectedUnidadeId = signal<string>('');
@@ -91,16 +89,7 @@ export class HomeV2Page implements OnInit {
   }
 
   irParaMuralAvisos(): void {
-    this.muralService.getPendentes().then(avisos => {
-      if (avisos.length === 0) {
-        this.message.info('Não há avisos no momento.');
-        return;
-      }
-      this.router.navigate([], {
-        queryParams: { mural: 1 },
-        queryParamsHandling: 'merge',
-      });
-    });
+    this.muralService.solicitarExibicao();
   }
 
   irParaRelatorioAgentes(): void {
