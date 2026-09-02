@@ -1,8 +1,8 @@
 <grid [dao]="dao" 
     [title]="title" 
     [orderBy]="orderBy"
-    [maxHeight]="450"
     [scrollable]="true"
+    [fillHeight]="true"
     [className]="'relatorio-pt'"
 >
     <toolbar *ngIf="!selectable"></toolbar>
@@ -86,10 +86,13 @@
             [template]="columnID" [titleTemplate]="titleID"
             [verticalAlign]="'bottom'"
             [align]="'center'"
-            [width]="100"
+            [width]="140"
+            [minWidth]="140"
         >
             <ng-template let-header="header" #titleID>
                 <input-text 
+                    [size]="0"
+                    hostClass="relatorio-pt-filter-input"
                     [control]="filter!.controls.id"
                     controlName="this.filter.id"
                     (blur)="onValueChange($event)"
@@ -157,18 +160,20 @@
             [template]="columnStatus"
             [titleTemplate]="titleStatus"
             [verticalAlign]="'bottom'" [align]="'center'"
-            [width]="120"
+            [width]="160"
         >
             <ng-template let-header="header" #titleStatus>
                 <input-select 
-                    [items]="lookup.PLANO_TRABALHO_STATUS" 
+                    [items]="statusPtItems" 
                     [control]="filter!.controls.status"
                     controlName="this.filter.status"
                     (change)="onValueChange($event)"
+                    itemTodos="- Todos -"
+                    [valueTodos]="null"
                 ></input-select> 
             </ng-template>
             <ng-template let-row="row" #columnStatus>
-               <span>{{lookup.getValue(lookup.PLANO_TRABALHO_STATUS, row.status)}}</span>
+               <span>{{lookup.getValue(statusPtItems, row.status)}}</span>
             </ng-template>
         </column>
 
@@ -182,7 +187,8 @@
                     [control]="filter!.controls.modalidade"
                     controlName="this.filter.modalidade"
                     (change)="onValueChange($event)"
-                    nullable
+                    itemTodos="- Todos -"
+                    [valueTodos]="null"
                 ></input-select>
             </ng-template>
             <ng-template let-row="row" #columnModalidade>
@@ -224,10 +230,13 @@
 
         <column title="Duração (dias)" [template]="columnDuracao" [titleTemplate]="titleDuracao"
             [verticalAlign]="'bottom'" [align]="'center'"
-            [width]="80"
+            [width]="140"
+            [minWidth]="140"
         >
             <ng-template let-header="header" #titleDuracao>
                 <input-text 
+                    [size]="0"
+                    hostClass="relatorio-pt-filter-input"
                     [control]="filter!.controls.duracao"
                     controlName="this.filter.duracao"
                     (blur)="onValueChange($event)"
