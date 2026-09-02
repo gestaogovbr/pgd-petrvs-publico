@@ -1,0 +1,16 @@
+:host {
+    display: block;
+}
+
+/*
+  A coluna do grid é o host (col-md-N). O input interno não deve agir como coluna aninhada.
+*/
+:host > * {
+    display: block;
+    width: 100% !important;
+    max-width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}

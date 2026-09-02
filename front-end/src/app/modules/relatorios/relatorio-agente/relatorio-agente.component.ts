@@ -126,6 +126,10 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
     if (this.metadata?.atribuicao) {
       result.push(["atribuicao", "==", this.metadata.atribuicao]);
     }
+
+    if (this.metadata?.plano_entrega_entrega_id) {
+      result.push(["plano_entrega_entrega_id", "==", this.metadata.plano_entrega_entrega_id]);
+    }
     
     return result;
   };

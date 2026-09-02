@@ -1,0 +1,202 @@
+<div class="br-mainpanel relatorio-entrega">
+  <app-breadcrumb />
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Entregas</h2>
+  </div>
+
+  <form [formGroup]="filters" class="mb-3">
+    <div class="br-card">
+      <div class="card-content">
+        <div class="row g-3 align-items-end relatorio-entrega-filters">
+          <div class="col-12 col-sm-6 col-md-4">
+            <div class="br-input w-100">
+              <label>Unidade</label>
+              @if (initialized()) {
+              <input-search
+                [size]="0"
+                hostClass=""
+                label=""
+                labelPosition="none"
+                [control]="filters.controls.unidade_id"
+                controlName="unidade_id"
+                [dao]="unidadeDao"
+                [where]="unidadesService.whereUnidade()">
+              </input-search>
+              } @else {
+              <input type="text" disabled value="Carregando..." />
+              }
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100">
+              <label>Período da consulta (início)</label>
+              <input type="date" formControlName="periodo_inicio" />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100">
+              <label>Período da consulta (fim)</label>
+              <input type="date" formControlName="periodo_fim" />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-3">
+            <input-switch
+              label="Unidades Subordinadas"
+              controlName="incluir_unidades_subordinadas"
+              [control]="filters.controls.incluir_unidades_subordinadas">
+            </input-switch>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end mt-3">
+          <br-button emphasis="secondary" type="button" (click)="onConsultar()">
+            <i class="fas fa-search mr-1"></i>Consultar
+          </br-button>
+          <br-button
+            emphasis="secondary"
+            type="button"
+            [disabled]="facade.exporting()"
+            (click)="onExportExcel()">
+            <i class="fas fa-file-excel mr-1"></i>Exportar Excel
+          </br-button>
+          <br-button emphasis="tertiary" type="button" (click)="limparFiltros()">
+            <i class="fas fa-times mr-1"></i>Limpar filtros
+          </br-button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  @if (facade.error()) {
+  <div class="alert alert-danger" role="alert">{{ facade.error() }}</div>
+  }
+
+  @if (facade.loading()) {
+  <div class="d-flex justify-content-center p-5">
+    <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+  </div>
+  }
+
+  @if (!facade.loading()) {
+  <p class="text-muted small mb-2" role="status">Total consultado: {{ facade.total() }}</p>
+  }
+
+  <div class="br-table relatorio-entrega-table">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" rowspan="2" class="sortable" (click)="onSort('unidadeHierarquia')">
+              Unidade <i [class]="sortIcon('unidadeHierarquia')"></i>
+            </th>
+            <th scope="col" rowspan="2" class="sortable" (click)="onSort('entregaNome')">
+              Entrega <i [class]="sortIcon('entregaNome')"></i>
+            </th>
+            <th scope="col" rowspan="2" class="sortable text-center" (click)="onSort('data_inicio')">
+              Data de início <i [class]="sortIcon('data_inicio')"></i>
+            </th>
+            <th scope="col" rowspan="2" class="sortable text-center" (click)="onSort('data_fim')">
+              Data de fim <i [class]="sortIcon('data_fim')"></i>
+            </th>
+            <th scope="col" colspan="3" class="text-center group-header">Meta</th>
+            <th scope="col" rowspan="2" class="sortable" (click)="onSort('demandanteHierarquia')">
+              Demandante <i [class]="sortIcon('demandanteHierarquia')"></i>
+            </th>
+            <th scope="col" rowspan="2" class="sortable" (click)="onSort('destinatario')">
+              Destinatário <i [class]="sortIcon('destinatario')"></i>
+            </th>
+            <th scope="col" colspan="2" class="text-center group-header">Vínculos</th>
+            <th scope="col" rowspan="2" class="sortable text-center" (click)="onSort('situacao')">
+              Situação <i [class]="sortIcon('situacao')"></i>
+            </th>
+            <th scope="col" colspan="3" class="text-center group-header">Plano de Entregas</th>
+            <th scope="col" colspan="2" class="text-center group-header">Contribuição</th>
+          </tr>
+          <tr>
+            <th scope="col" class="sortable sub-header" (click)="onSort('meta_planejado')">
+              Planejado <i [class]="sortIcon('meta_planejado')"></i>
+            </th>
+            <th scope="col" class="sortable sub-header" (click)="onSort('meta_alcancado')">
+              Alcançado <i [class]="sortIcon('meta_alcancado')"></i>
+            </th>
+            <th scope="col" class="sortable sub-header" (click)="onSort('meta_tipo')">
+              Tipo de Meta <i [class]="sortIcon('meta_tipo')"></i>
+            </th>
+            <th scope="col" class="sortable sub-header" (click)="onSort('qtd_planejamento_institucional')">
+              Planejamento<br />Institucional <i [class]="sortIcon('qtd_planejamento_institucional')"></i>
+            </th>
+            <th scope="col" class="sortable sub-header" (click)="onSort('qtd_cadeia_valor')">
+              Cadeia de<br />Valor <i [class]="sortIcon('qtd_cadeia_valor')"></i>
+            </th>
+            <th scope="col" class="sortable sub-header" (click)="onSort('plano_rotulo')">
+              Plano <i [class]="sortIcon('plano_rotulo')"></i>
+            </th>
+            <th scope="col" class="sortable sub-header" (click)="onSort('plano_numero')">
+              ID do Plano <i [class]="sortIcon('plano_numero')"></i>
+            </th>
+            <th scope="col" class="sortable sub-header" (click)="onSort('plano_status')">
+              Status do<br />Plano <i [class]="sortIcon('plano_status')"></i>
+            </th>
+            <th scope="col" class="sortable sub-header" (click)="onSort('qtd_participantes')">
+              Participantes<br />envolvidos <i [class]="sortIcon('qtd_participantes')"></i>
+            </th>
+            <th scope="col" class="sortable sub-header" (click)="onSort('qtd_planos_trabalho')">
+              Planos de Trabalho<br />vinculados <i [class]="sortIcon('qtd_planos_trabalho')"></i>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of facade.items(); track row.id) {
+          <tr>
+            <td data-th="Unidade">{{ row.unidadeHierarquia }}</td>
+            <td data-th="Entrega">
+              <a class="link" role="button" (click)="abrirEntrega(row)">{{ row.entregaNome }}</a>
+            </td>
+            <td data-th="Data de início" class="text-center">{{ row.data_inicio | date : 'dd/MM/yyyy' }}</td>
+            <td data-th="Data de fim" class="text-center">{{ row.data_fim | date : 'dd/MM/yyyy' }}</td>
+            <td data-th="Planejado" class="text-center">{{ row.meta_planejado | number:'1.0-0' }}</td>
+            <td data-th="Alcançado" class="text-center">{{ row.meta_alcancado | number:'1.0-0' }}</td>
+            <td data-th="Tipo de Meta" class="text-center">{{ row.meta_tipo }}</td>
+            <td data-th="Demandante">{{ row.demandanteHierarquia }}</td>
+            <td data-th="Destinatário">{{ row.destinatario || '-' }}</td>
+            <td data-th="Planejamento Institucional" class="text-center">{{ row.qtd_planejamento_institucional }}</td>
+            <td data-th="Cadeia de Valor" class="text-center">{{ row.qtd_cadeia_valor }}</td>
+            <td data-th="Situação" class="text-center">{{ row.situacao }}</td>
+            <td data-th="Plano">{{ row.plano_rotulo }}</td>
+            <td data-th="ID do Plano" class="text-center">
+              <a class="link" role="button" (click)="abrirPlano(row)">{{ row.plano_numero }}</a>
+            </td>
+            <td data-th="Status do Plano" class="text-center">{{ statusLabel(row.plano_status) }}</td>
+            <td data-th="Participantes envolvidos" class="text-center">
+              @if (row.qtd_participantes > 0) {
+              <a class="link" role="button" (click)="abrirParticipantes(row)">{{ row.qtd_participantes }}</a>
+              } @else {
+              0
+              }
+            </td>
+            <td data-th="Planos de Trabalho vinculados" class="text-center">
+              @if (row.qtd_planos_trabalho > 0) {
+              <a class="link" role="button" (click)="abrirPlanosTrabalho(row)">{{ row.qtd_planos_trabalho }}</a>
+              } @else {
+              0
+              }
+            </td>
+          </tr>
+          }
+          @if (facade.items().length === 0 && !facade.loading()) {
+          <tr>
+            <td colspan="17" class="text-center p-3">Sem dados para exibir.</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <app-v2-pagination
+    class="mt-3 d-block"
+    [page]="facade.page()"
+    [lastPage]="facade.lastPage()"
+    [total]="facade.total()"
+    (pageChange)="onPageChange($event)" />
+</div>

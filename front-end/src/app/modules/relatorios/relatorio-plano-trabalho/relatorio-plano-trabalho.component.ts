@@ -121,6 +121,10 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   public async ngOnInit() {
       super.ngOnInit();
 
+      if (this.metadata?.unidade_id) {
+        this.filter?.controls.unidade_id.setValue(this.metadata.unidade_id);
+      }
+
       this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
           .asPromise().then(notas => {
               const sanitizeNotas = notas.map(nota => ({
@@ -258,6 +262,10 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
       if (form.data_conclusao) {
         result.push(["data_conclusao", "==", form.data_conclusao.toISOString().slice(0,10)]);
       }
+    }
+
+    if (this.metadata?.plano_entrega_entrega_id) {
+      result.push(["plano_entrega_entrega_id", "==", this.metadata.plano_entrega_entrega_id]);
     }
     
     return result;
