@@ -3,9 +3,16 @@
 ### Adicionado
 - Adicionado Relatório de Entregas
 
+### Modificado
+- Relatórios: indicador de progresso durante a exportação para Excel, com mensagem de erro em caso de falha
+- Relatórios: altura do grid ajustada para melhor aproveitamento da tela
+- Relatórios: filtros por coluna com inputs dimensionados à largura de cada coluna
+
 ### Corrigido
 - Corrigido o filtro de unidades que ficava carregando indefinidamente, causado por uma alteração no comportamento da busca de unidades após um merge
 - Mensagem "Documento não encontrado para este plano de trabalho" não é mais mostrada indevidamente em PTs com status rascunho
+- Relatório de Planos de Trabalho: labels de status alinhados com a v2 (Rascunho, Execução), filtros de ID, Duração, Status e Modalidade, e situação de execução pendente na view detalhada
+- Relatório de Agentes Públicos: filtro por coluna "Participante do PGD"
 
 ## 3.1.0 28/08/2026
 
