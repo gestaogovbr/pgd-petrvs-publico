@@ -94,6 +94,8 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
                 'pee.data_fim',
                 'ultimo_prog.meta as progresso_meta',
                 'ultimo_prog.realizado as progresso_realizado',
+                'pee.meta as cadastro_meta',
+                'pee.realizado as cadastro_realizado',
                 'pe.unidade_id as plano_unidade_id',
                 DB::raw('fn_obter_unidade_hierarquia(pe.unidade_id) as unidade_hierarquia'),
                 DB::raw('fn_obter_unidade_hierarquia(pee.unidade_id) as demandante_hierarquia'),
@@ -119,11 +121,11 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
                 DB::raw('(SELECT COUNT(DISTINCT pte.plano_trabalho_id)
                     FROM planos_trabalhos_entregas pte
                     WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL) as qtd_planos_trabalho'),
-                DB::raw($this->metaAbsolutoRegistroExecucaoSql('ultimo_prog.meta', 'e.tipo_indicador').' as meta_planejado'),
-                DB::raw($this->metaAbsolutoRegistroExecucaoSql('ultimo_prog.realizado', 'e.tipo_indicador').' as meta_alcancado'),
+                DB::raw($this->metaRelatorioSql('ultimo_prog.meta', 'pee.meta', 'e.tipo_indicador').' as meta_planejado'),
+                DB::raw($this->metaRelatorioSql('ultimo_prog.realizado', 'pee.realizado', 'e.tipo_indicador').' as meta_alcancado'),
                 DB::raw($this->metaPercentualSql(
-                    $this->metaAbsolutoRegistroExecucaoSql('ultimo_prog.meta', 'e.tipo_indicador'),
-                    $this->metaAbsolutoRegistroExecucaoSql('ultimo_prog.realizado', 'e.tipo_indicador'),
+                    $this->metaRelatorioSql('ultimo_prog.meta', 'pee.meta', 'e.tipo_indicador'),
+                    $this->metaRelatorioSql('ultimo_prog.realizado', 'pee.realizado', 'e.tipo_indicador'),
                 ).' as meta_percentual'),
                 DB::raw('(SELECT COUNT(*) FROM planos_entregas_entregas_progressos p
                     WHERE p.plano_entrega_entrega_id = pee.id AND p.deleted_at IS NULL) as qtd_registros_execucao'),
@@ -131,22 +133,32 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
             ->whereNull('pee.deleted_at');
     }
 
+    private function jsonMetaNormalizadoSql(string $jsonColumn): string
+    {
+        return "CASE WHEN JSON_TYPE({$jsonColumn}) = 'STRING' THEN JSON_UNQUOTE({$jsonColumn}) ELSE {$jsonColumn} END";
+    }
+
     private function metaNumericoSql(string $jsonColumn, string $tipoColumn): string
     {
+        $normalized = $this->jsonMetaNormalizadoSql($jsonColumn);
+
         return "CASE {$tipoColumn}
-            WHEN 'PORCENTAGEM' THEN COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT({$jsonColumn}, '$.porcentagem')) AS DECIMAL(20,4)), 0)
-            WHEN 'QUANTIDADE' THEN COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT({$jsonColumn}, '$.quantitativo')) AS DECIMAL(20,4)), 0)
-            WHEN 'VALOR' THEN COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT({$jsonColumn}, '$.valor')) AS DECIMAL(20,4)), 0)
+            WHEN 'PORCENTAGEM' THEN COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT({$normalized}, '$.porcentagem')) AS DECIMAL(20,4)), 0)
+            WHEN 'QUANTIDADE' THEN COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT({$normalized}, '$.quantitativo')) AS DECIMAL(20,4)), 0)
+            WHEN 'VALOR' THEN COALESCE(CAST(JSON_UNQUOTE(JSON_EXTRACT({$normalized}, '$.valor')) AS DECIMAL(20,4)), 0)
             ELSE 0 END";
     }
 
-    /** Planejado/Alcançado = valor absoluto do registro de execução mais recente; 0 sem registro. */
-    private function metaAbsolutoRegistroExecucaoSql(string $jsonColumn, string $tipoColumn): string
+    /**
+     * Planejado/Alcançado: registro de execução mais recente; sem registro, usa meta do cadastro da entrega.
+     */
+    private function metaRelatorioSql(string $progressoJsonColumn, string $cadastroJsonColumn, string $tipoColumn): string
     {
-        $valor = $this->metaNumericoSql($jsonColumn, $tipoColumn);
+        $valorProgresso = $this->metaNumericoSql($progressoJsonColumn, $tipoColumn);
+        $valorCadastro = $this->metaNumericoSql($cadastroJsonColumn, $tipoColumn);
         $temRegistroExecucao = $this->temRegistroExecucaoSql();
 
-        return "CASE WHEN {$temRegistroExecucao} THEN ({$valor}) ELSE 0 END";
+        return "CASE WHEN {$temRegistroExecucao} THEN ({$valorProgresso}) ELSE ({$valorCadastro}) END";
     }
 
     private function temRegistroExecucaoSql(): string

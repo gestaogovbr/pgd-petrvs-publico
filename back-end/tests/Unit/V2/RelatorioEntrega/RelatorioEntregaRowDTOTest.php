@@ -151,6 +151,49 @@ test('planejado no fallback usa meta absoluta do registro de execucao', function
     expect($dto->meta_planejado)->toBe(200.0);
 });
 
+test('planejado no fallback usa meta do cadastro sem registro de execucao', function () {
+    $row = (object) [
+        'id' => 'e1',
+        'unidade_id' => 'u1',
+        'unidade_hierarquia' => '',
+        'demandante_hierarquia' => '',
+        'entrega_nome' => '',
+        'cadastro_meta' => ['porcentagem' => 80],
+        'tipo_indicador' => 'PORCENTAGEM',
+        'qtd_registros_execucao' => 0,
+        'plano_id' => 'p1',
+        'plano_numero' => '1',
+        'plano_nome' => 'Plano',
+        'plano_status' => 'ATIVO',
+    ];
+
+    $dto = RelatorioEntregaRowDTO::fromQueryRow($row);
+
+    expect($dto->meta_planejado)->toBe(80.0);
+});
+
+test('planejado no fallback interpreta json duplamente codificado no progresso', function () {
+    $row = (object) [
+        'id' => '0f01345e-f5a6-43e2-ba3b-385671c7ded2',
+        'unidade_id' => 'u1',
+        'unidade_hierarquia' => '',
+        'demandante_hierarquia' => '',
+        'entrega_nome' => '',
+        'progresso_meta' => json_encode(json_encode(['porcentagem' => 80])),
+        'cadastro_meta' => ['porcentagem' => 80],
+        'tipo_indicador' => 'PORCENTAGEM',
+        'qtd_registros_execucao' => 1,
+        'plano_id' => 'p1',
+        'plano_numero' => '1',
+        'plano_nome' => 'Plano',
+        'plano_status' => 'ATIVO',
+    ];
+
+    $dto = RelatorioEntregaRowDTO::fromQueryRow($row);
+
+    expect($dto->meta_planejado)->toBe(80.0);
+});
+
 test('percentual no fallback aplica planejado sobre realizado vezes 100', function () {
     $row = (object) [
         'id' => 'e1',

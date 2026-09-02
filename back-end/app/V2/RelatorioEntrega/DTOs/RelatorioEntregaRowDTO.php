@@ -40,14 +40,16 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
     {
         $tipoIndicador = $row->tipo_indicador ?? null;
         $temRegistroExecucao = ((int) ($row->qtd_registros_execucao ?? 0)) > 0;
-        $metaPlanejado = (float) ($row->meta_planejado ?? RelatorioEntregaMetaHelper::valorAbsolutoRegistroExecucao(
+        $metaPlanejado = (float) ($row->meta_planejado ?? RelatorioEntregaMetaHelper::valorMetaRelatorio(
             $row->progresso_meta ?? null,
-            $tipoIndicador,
+            $row->cadastro_meta ?? null,
+            is_string($tipoIndicador) ? $tipoIndicador : null,
             $temRegistroExecucao,
         ));
-        $metaAlcancado = (float) ($row->meta_alcancado ?? RelatorioEntregaMetaHelper::valorAbsolutoRegistroExecucao(
+        $metaAlcancado = (float) ($row->meta_alcancado ?? RelatorioEntregaMetaHelper::valorMetaRelatorio(
             $row->progresso_realizado ?? null,
-            $tipoIndicador,
+            $row->cadastro_realizado ?? null,
+            is_string($tipoIndicador) ? $tipoIndicador : null,
             $temRegistroExecucao,
         ));
         $consulta = $dataConsulta ?? now()->toDateString();
