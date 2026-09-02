@@ -235,6 +235,12 @@ TEXT;
             $params[] = $situacaoSiape[2];
         }
 
+        $participantePGD = $this->extractWhere($data, 'participantePGD');
+        if (isset($participantePGD[2])) {
+            $sql .= " and (CASE WHEN `u`.`participa_pgd` = 'sim' THEN 'Sim' ELSE 'Não' END) = ?";
+            $params[] = $participantePGD[2];
+        }
+
         $comparacaoSouGovPetrvs = $this->extractWhere($data, 'comparacaoSouGovPetrvs');
         if (isset($comparacaoSouGovPetrvs[2])) {
             $operacaoComparacao = $this->getComparacaoSouGov($comparacaoSouGovPetrvs[2]);
@@ -258,6 +264,17 @@ TEXT;
         if (isset($tipo_pedagio[2])) {
             $sql .= ' and `u`.`tipo_pedagio` = ?';
             $params[] = $tipo_pedagio[2];
+        }
+
+        $planoEntregaEntregaId = $this->extractWhere($data, 'plano_entrega_entrega_id');
+        if (isset($planoEntregaEntregaId[2])) {
+            $sql .= ' and `u`.`id` in (
+                select distinct `pt`.`usuario_id`
+                from `planos_trabalhos_entregas` `pte`
+                inner join `planos_trabalhos` `pt` on `pt`.`id` = `pte`.`plano_trabalho_id` and `pt`.`deleted_at` is null
+                where `pte`.`plano_entrega_entrega_id` = ? and `pte`.`deleted_at` is null
+            )';
+            $params[] = $planoEntregaEntregaId[2];
         }
 
         $data_inicial_pedagio = $this->extractWhere($data, 'data_inicial_pedagio');
