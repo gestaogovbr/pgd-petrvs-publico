@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { AuthService } from 'src/app/services/auth.service';
+import { UtilService } from 'src/app/services/util.service';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { MuralAvisoTenantService } from 'src/app/services/mural-aviso-tenant.service';
@@ -45,6 +46,7 @@ export interface SelectOption {
 })
 export class HomeV2Page implements OnInit {
   private readonly auth = inject(AuthService);
+  private readonly utils = inject(UtilService);
   private readonly unidadeService = inject(UnidadeService);
   private readonly router = inject(Router);
   private readonly go = inject(NavigateService);
@@ -66,8 +68,7 @@ export class HomeV2Page implements OnInit {
   });
 
   readonly nomeUsuario = computed(() => {
-    const usuario = this.auth.usuario;
-    const nome = usuario?.apelido || usuario?.nome_exibicao || usuario?.nome || ''; // TODO: usar apelidoOuNome(usuario)
+    const nome = this.utils.apelidoOuNome(this.auth.usuario) || '';
     return nome.split(' ')[0];
   });
 
