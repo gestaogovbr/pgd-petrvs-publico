@@ -643,10 +643,22 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     if (outraUnidadeId) {
       this.sugestoesOutrasUnidades.set([]);
       this.carregarPlanosOutraUnidade(outraUnidadeId, outraUnidadePlanoId);
-      this.unidadeService.getById(outraUnidadeId).subscribe(unidade => {
-        this.outraUnidadeSelecionada.set({ id: unidade.id, codigo: unidade.codigo, sigla: unidade.sigla, nome: unidade.nome });
-        this.outraUnidadeQuery.setValue(`${unidade.codigo} - ${unidade.sigla} - ${unidade.nome}`, { emitEvent: false });
-      });
+      const unidade = entrega.plano_entrega_entrega?.plano_entrega?.unidade;
+      if (unidade) {
+        this.outraUnidadeSelecionada.set({
+          id: unidade.id,
+          codigo: unidade.codigo,
+          sigla: unidade.sigla,
+          nome: unidade.nome
+        });
+        this.outraUnidadeQuery.setValue(
+          [unidade.codigo, unidade.sigla, unidade.nome].filter(Boolean).join(' - '),
+          { emitEvent: false }
+        );
+      } else {
+        this.outraUnidadeSelecionada.set(null);
+        this.outraUnidadeQuery.setValue('', { emitEvent: false });
+      }
     } else {
       this.outraUnidadeSelecionada.set(null);
       this.outraUnidadeQuery.setValue('', { emitEvent: false });
