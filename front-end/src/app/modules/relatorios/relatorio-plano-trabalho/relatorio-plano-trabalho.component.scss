@@ -2,3 +2,8 @@
     cursor: pointer;
     text-decoration: none;
 }
+
+:host ::ng-deep .relatorio-pt-filter-input {
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+}
