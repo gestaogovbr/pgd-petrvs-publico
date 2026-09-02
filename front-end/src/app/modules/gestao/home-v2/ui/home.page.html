@@ -40,7 +40,7 @@
 
     <!-- Seletor de Unidade + Toggle Subordinadas -->
     <div class="row align-items-end mb-3">
-      <div class="col-md-4">
+      <div class="col-md-6">
         <br-select
           label="Unidade"
           [options]="unidadeOptions()"
@@ -48,8 +48,8 @@
           class="w-100">
         </br-select>
       </div>
-      <div class="col-md-4 d-flex align-items-center mb-2">
-        @if (exibeToggleSubordinadas()) {
+      @if (exibeToggleSubordinadas()) {
+        <div class="col-md-auto mb-2">
           <div class="br-switch">
             <input
               id="subordinadas-toggle"
@@ -59,14 +59,14 @@
             />
             <label for="subordinadas-toggle">Subordinadas</label>
           </div>
-        }
-      </div>
+        </div>
+      }
     </div>
 
     @if (selectedUnidadeId()) {
       <div class="row">
         <!-- Coluna esquerda: indicadores da unidade -->
-        <div class="col-lg-8">
+        <div class="col-lg-8 mb-3 mb-lg-0">
           <!-- Row: Plano de Entregas Vigente + cards de lacuna (UE sem PE + Participante sem PT) -->
           <div class="row mb-3">
             <div class="col-md-12">
