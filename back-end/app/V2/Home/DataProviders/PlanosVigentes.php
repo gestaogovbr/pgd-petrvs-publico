@@ -16,8 +16,6 @@ class PlanosVigentes
 {
     use ResolveUnidades;
 
-    private const PARTICIPA_PGD = 'sim';
-
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
     ) {}
@@ -84,7 +82,6 @@ class PlanosVigentes
         $hoje = now()->toDateString();
 
         $total = Usuario::query()
-            ->where('participa_pgd', self::PARTICIPA_PGD)
             ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
                 $q->whereIn('unidade_id', $unidadesEscopo)
                     ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', Atribuicao::LOTADO->value));
@@ -96,7 +93,6 @@ class PlanosVigentes
         }
 
         $quantidade = Usuario::query()
-            ->where('participa_pgd', self::PARTICIPA_PGD)
             ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
                 $q->whereIn('unidade_id', $unidadesEscopo)
                     ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', Atribuicao::LOTADO->value));

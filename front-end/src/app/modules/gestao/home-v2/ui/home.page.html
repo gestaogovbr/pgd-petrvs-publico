@@ -38,35 +38,35 @@
   <section class="home-secao mb-4">
     <h4 class="home-secao__titulo fw-bold mb-3">Destaques da Unidade</h4>
 
-    <!-- Seletor de Unidade + Toggle Subordinadas -->
-    <div class="row align-items-end mb-3">
-      <div class="col-md-6">
-        <br-select
-          label="Unidade"
-          [options]="unidadeOptions()"
-          (valueChange)="onUnidadeChange($event)"
-          class="w-100">
-        </br-select>
-      </div>
-      @if (exibeToggleSubordinadas()) {
-        <div class="col-md-auto mb-2">
-          <div class="br-switch">
-            <input
-              id="subordinadas-toggle"
-              type="checkbox"
-              [checked]="subordinadas()"
-              (change)="onSubordinadasChange($any($event.target).checked)"
-            />
-            <label for="subordinadas-toggle">Subordinadas</label>
+    <div class="row">
+      <!-- Coluna esquerda: seletor + indicadores da unidade -->
+      <div class="col-lg-8 mb-3 mb-lg-0">
+        <!-- Seletor de Unidade + Toggle Subordinadas -->
+        <div class="row align-items-end mb-3">
+          <div class="col-md-8">
+            <br-select
+              label="Unidade"
+              [options]="unidadeOptions()"
+              (valueChange)="onUnidadeChange($event)"
+              class="w-100">
+            </br-select>
           </div>
+          @if (exibeToggleSubordinadas()) {
+            <div class="col-md-auto mb-2">
+              <div class="br-switch">
+                <input
+                  id="subordinadas-toggle"
+                  type="checkbox"
+                  [checked]="subordinadas()"
+                  (change)="onSubordinadasChange($any($event.target).checked)"
+                />
+                <label for="subordinadas-toggle">Subordinadas</label>
+              </div>
+            </div>
+          }
         </div>
-      }
-    </div>
 
-    @if (selectedUnidadeId()) {
-      <div class="row">
-        <!-- Coluna esquerda: indicadores da unidade -->
-        <div class="col-lg-8 mb-3 mb-lg-0">
+        @if (selectedUnidadeId()) {
           <!-- Row: Plano de Entregas Vigente + cards de lacuna (UE sem PE + Participante sem PT) -->
           <div class="row mb-3">
             <div class="col-md-12">
@@ -83,8 +83,10 @@
               <home-resumo-equipe [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
             </div>
           </div>
-        </div>
+        }
+      </div>
 
+      @if (selectedUnidadeId()) {
         <!-- Coluna direita: De férias + Aniversariantes -->
         <div class="col-lg-4">
           <div class="mb-3">
@@ -94,7 +96,7 @@
             <home-aniversariantes class="d-block" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
           </div>
         </div>
-      </div>
-    }
+      }
+    </div>
   </section>
 </div>
