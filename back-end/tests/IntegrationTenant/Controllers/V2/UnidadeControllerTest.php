@@ -9,9 +9,9 @@ use App\Models\UnidadeIntegranteAtribuicao;
 use Illuminate\Support\Facades\Route;
 
 beforeEach(function () {
-    if (!Route::has('__tests.v2.unidade.buscarPorNomeOuCodigo')) {
-        Route::middleware(['api'])->get('/api/__tests/v2/unidade', [UnidadeController::class, 'buscarPorNomeOuCodigo'])
-            ->name('__tests.v2.unidade.buscarPorNomeOuCodigo');
+    if (!Route::has('__tests.v2.unidade.index')) {
+        Route::middleware(['api'])->get('/api/__tests/v2/unidade', [UnidadeController::class, 'index'])
+            ->name('__tests.v2.unidade.index');
     }
 
     if (!Route::has('__tests.v2.unidade.minhas')) {
@@ -40,26 +40,31 @@ afterEach(function () {
 
 describe('GET /api/v2/unidade (validação)', function () {
 
-    test('retorna 422 quando termo tem menos de 3 caracteres', function () {
+    test('retorna 422 quando size excede o máximo permitido', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=ab');
+        $response = $this->getJson('/api/__tests/v2/unidade?size=999');
 
-        $response->assertStatus(422)
-            ->assertJson(fn ($json) =>
-                $json->where('error', fn ($error) => str_contains($error, '3 caracteres'))
-            );
+        $response->assertStatus(422);
+    });
+
+    test('retorna 422 quando page é menor que 1', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        $response = $this->getJson('/api/__tests/v2/unidade?page=0');
+
+        $response->assertStatus(422);
     });
 
     test('retorna 500 quando service lança exceção inesperada', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->mock(UnidadeService::class, function ($mock) {
-            $mock->shouldReceive('buscarPorNomeOuCodigo')
+            $mock->shouldReceive('index')
                 ->andThrow(new \RuntimeException('Erro inesperado'));
         });
 
-        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=Coord');
+        $response = $this->getJson('/api/__tests/v2/unidade?filters[termo]=Coord');
 
         $response->assertStatus(500)
             ->assertJsonPath('error', 'Ocorreu um erro inesperado.');
@@ -70,7 +75,7 @@ describe('GET /api/v2/unidade (validação)', function () {
 
 describe('GET /api/v2/unidade (happy path)', function () {
 
-    test('retorna 200 sem termo, listando unidades', function () {
+    test('retorna 200 sem termo, listando unidades paginadas', function () {
         $this->actingAs($this->usuario, 'web');
 
         $response = $this->getJson('/api/__tests/v2/unidade');
@@ -78,18 +83,19 @@ describe('GET /api/v2/unidade (happy path)', function () {
         $response->assertStatus(200)
             ->assertJsonPath('success', true);
 
-        expect($response->json('data'))->toBeArray();
+        expect($response->json('data.data'))->toBeArray()
+            ->and($response->json('data.total'))->toBeGreaterThanOrEqual(1);
     });
 
     test('retorna unidade ao buscar por nome', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=Financeira');
+        $response = $this->getJson('/api/__tests/v2/unidade?filters[termo]=Financeira');
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true);
 
-        $data = $response->json('data');
+        $data = $response->json('data.data');
 
         expect($data)->not->toBeEmpty()
             ->and(collect($data)->pluck('id'))->toContain($this->unidade->id);
@@ -98,11 +104,11 @@ describe('GET /api/v2/unidade (happy path)', function () {
     test('retorna unidade ao buscar por codigo', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=00123');
+        $response = $this->getJson('/api/__tests/v2/unidade?filters[termo]=00123');
 
         $response->assertStatus(200);
 
-        $data = $response->json('data');
+        $data = $response->json('data.data');
 
         expect(collect($data)->pluck('id'))->toContain($this->unidade->id);
     });
@@ -112,9 +118,9 @@ describe('GET /api/v2/unidade (happy path)', function () {
 
         $outraUnidade = Unidade::factory()->create(['nome' => 'Unidade Isolada', 'codigo' => '99999']);
 
-        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=Isolada');
+        $response = $this->getJson('/api/__tests/v2/unidade?filters[termo]=Isolada');
 
-        $data = $response->json('data');
+        $data = $response->json('data.data');
 
         expect(collect($data)->pluck('id'))->toContain($outraUnidade->id);
     });
@@ -124,19 +130,33 @@ describe('GET /api/v2/unidade (happy path)', function () {
 
         $response = $this->getJson('/api/__tests/v2/unidade');
 
-        $data = $response->json('data');
+        $data = $response->json('data.data');
 
         expect($data[0])->toHaveKeys(['id', 'nome', 'codigo', 'sigla']);
     });
 
-    test('retorna collection vazia quando termo não corresponde', function () {
+    test('retorna lista vazia quando termo não corresponde', function () {
         $this->actingAs($this->usuario, 'web');
 
-        $response = $this->getJson('/api/__tests/v2/unidade?nome_codigo=XYZNONEXISTENT');
+        $response = $this->getJson('/api/__tests/v2/unidade?filters[termo]=XYZNONEXISTENT');
 
         $response->assertStatus(200);
 
-        expect($response->json('data'))->toBeEmpty();
+        expect($response->json('data.data'))->toBeEmpty()
+            ->and($response->json('data.total'))->toBe(0);
+    });
+
+    test('respeita o parâmetro size na paginação', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        Unidade::factory()->count(3)->create();
+
+        $response = $this->getJson('/api/__tests/v2/unidade?size=1');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.per_page', 1);
+
+        expect($response->json('data.data'))->toHaveCount(1);
     });
 });
 

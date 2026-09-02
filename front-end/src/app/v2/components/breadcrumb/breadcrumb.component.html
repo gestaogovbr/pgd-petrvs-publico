@@ -8,7 +8,7 @@
     @for (item of service.crumbs(); track item.label) {
       <li class="crumb">
         <i class="icon fas fa-chevron-right" aria-hidden="true"></i>
-        @if (item.active) {
+        @if (item.active || !item.url) {
           <span>{{ item.label }}</span>
         } @else {
           <a [routerLink]="item.url">{{ item.label }}</a>

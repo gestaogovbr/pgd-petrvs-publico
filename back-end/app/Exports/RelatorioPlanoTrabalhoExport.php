@@ -53,14 +53,14 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
     public function columnWidths(): array
     {
         return [
-            'A' => 10,
+            'A' => 14,
             'B' => 30,
             'C' => 30,
             'D' => 12,
             'E' => 20,
             'F' => 15,
             'G' => 15,
-            'H' => 10,
+            'H' => 16,
             'I' => 10
         ];
     }
@@ -75,7 +75,7 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
             $row->participanteNome,
             $row->unidadeHierarquia,
             number_format((float) $row->chd, 2, ','),
-            PlanoTrabalho::STATUSES[$row->status],
+            PlanoTrabalho::STATUSES[$row->status] ?? $row->status,
             Date::stringToExcel($row->dataInicio),
             Date::stringToExcel($row->dataFim),
             $row->duracao,

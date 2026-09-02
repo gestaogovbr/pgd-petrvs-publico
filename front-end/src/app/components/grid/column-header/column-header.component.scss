@@ -1,3 +1,14 @@
 .grid-header {
     white-space: pre-line;
 }
+
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.grid-header-filter {
+    display: block;
+    min-width: 0;
+    text-align: left;
+}

@@ -22,6 +22,11 @@ interface PlanoTrabalhoEntregaReadRepositoryContract
 
     public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId, ?string $excludeId = null): bool;
 
+    /**
+     * @return list<string>
+     */
+    public function idsPlanosTrabalhoPorPlanoEntregaEntrega(string $planoEntregaEntregaId): array;
+
     public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO;
 
     public function somatoriosEsforcoProjetados(
