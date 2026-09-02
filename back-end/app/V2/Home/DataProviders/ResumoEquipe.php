@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\V2\Home\DataProviders;
 
-use App\Enums\Atribuicao;
 use App\Enums\StatusEnum;
 use App\Models\Usuario;
 use App\Repository\UnidadeRepository;
@@ -64,7 +63,7 @@ class ResumoEquipe
         $result = Usuario::query()
             ->whereHas('unidadesIntegrantes', fn ($q) => $q
                 ->whereIn('unidade_id', $unidadeIds)
-                ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', Atribuicao::participante()))
+                ->whereHas('atribuicoes')
             )
             ->get();
 

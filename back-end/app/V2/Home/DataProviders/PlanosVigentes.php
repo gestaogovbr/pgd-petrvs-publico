@@ -16,6 +16,15 @@ class PlanosVigentes
 {
     use ResolveUnidades;
 
+    private const PARTICIPA_PGD = 'sim';
+
+    /** @var string[] Atribuições consideradas como agente da unidade: lotado + chefia titular/substituta */
+    private const ATRIBUICOES_AGENTE = [
+        Atribuicao::LOTADO->value,
+        Atribuicao::GESTOR->value,
+        Atribuicao::GESTOR_SUBSTITUTO->value,
+    ];
+
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
     ) {}
@@ -46,20 +55,15 @@ class PlanosVigentes
      */
     private function indicadorUnidadesComPE(array $unidadesEscopo): array
     {
-        $hoje = now()->toDateString();
-
-        $total = Unidade::query()
-            ->where('executora', true)
-            ->whereIn('id', $unidadesEscopo)
-            ->count();
+        $total = $this->unidadesExecutorasQuery($unidadesEscopo)->count();
 
         if ($total === 0) {
             return ['quantidade' => 0, 'total' => 0, 'percentual' => 0.0];
         }
 
-        $quantidade = Unidade::query()
-            ->where('executora', true)
-            ->whereIn('id', $unidadesEscopo)
+        $hoje = now()->toDateString();
+
+        $quantidade = $this->unidadesExecutorasQuery($unidadesEscopo)
             ->whereHas('planosEntrega', function ($q) use ($hoje) {
                 $q->where('status', StatusEnum::ATIVO->value)
                     ->where('data_inicio', '<=', $hoje)
@@ -75,28 +79,33 @@ class PlanosVigentes
     }
 
     /**
+     * Unidades executoras dentro do escopo. Retorna um builder novo a cada chamada
+     * para que os filtros de "quantidade" não vazem para a contagem de "total".
+     *
+     * @param string[] $unidadesEscopo
+     * @return \Illuminate\Database\Eloquent\Builder<Unidade>
+     */
+    private function unidadesExecutorasQuery(array $unidadesEscopo): \Illuminate\Database\Eloquent\Builder
+    {
+        return Unidade::query()
+            ->where('executora', true)
+            ->whereIn('id', $unidadesEscopo);
+    }
+
+    /**
      * @return array{quantidade: int, total: int, percentual: float}
      */
     private function indicadorParticipantesComPT(array $unidadesEscopo): array
     {
-        $hoje = now()->toDateString();
-
-        $total = Usuario::query()
-            ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
-                $q->whereIn('unidade_id', $unidadesEscopo)
-                    ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', Atribuicao::LOTADO->value));
-            })
-            ->count();
+        $total = $this->agentesQuery($unidadesEscopo)->count();
 
         if ($total === 0) {
             return ['quantidade' => 0, 'total' => 0, 'percentual' => 0.0];
         }
 
-        $quantidade = Usuario::query()
-            ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
-                $q->whereIn('unidade_id', $unidadesEscopo)
-                    ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', Atribuicao::LOTADO->value));
-            })
+        $hoje = now()->toDateString();
+
+        $quantidade = $this->agentesQuery($unidadesEscopo)
             ->whereHas('planosTrabalho', function ($q) use ($hoje, $unidadesEscopo) {
                 $q->where('status', StatusEnum::ATIVO->value)
                     ->where('data_inicio', '<=', $hoje)
@@ -110,5 +119,23 @@ class PlanosVigentes
             'total' => $total,
             'percentual' => round(($quantidade / $total) * 100, 1),
         ];
+    }
+
+    /**
+     * Agentes do PGD (lotado + chefia titular/substituta) dentro do escopo.
+     * Retorna um builder novo a cada chamada para que os filtros de "quantidade"
+     * não vazem para a contagem de "total".
+     *
+     * @param string[] $unidadesEscopo
+     * @return \Illuminate\Database\Eloquent\Builder<Usuario>
+     */
+    private function agentesQuery(array $unidadesEscopo): \Illuminate\Database\Eloquent\Builder
+    {
+        return Usuario::query()
+            ->where('participa_pgd', self::PARTICIPA_PGD)
+            ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
+                $q->whereIn('unidade_id', $unidadesEscopo)
+                    ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', self::ATRIBUICOES_AGENTE));
+            });
     }
 }

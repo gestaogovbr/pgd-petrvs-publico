@@ -136,23 +136,11 @@ export class HomeV2Page implements OnInit {
   }
 
   irParaLacunasPE(): void {
-    this.go.navigate({
-      route: ['relatorios', 'unidades'],
-      params: {
-        filter: {
-          unidade_id: this.selectedUnidadeId(),
-          incluir_unidades_subordinadas: this.subordinadas(),
-          executora: 1,
-        },
-      },
-    });
+    this.router.navigate(['relatorios', 'planos-entrega', 'lacunas']);
   }
 
   irParaLacunasPT(): void {
-    this.go.navigate(
-      { route: ['relatorios', 'agentes'] },
-      { metadata: { unidade_id: this.selectedUnidadeId(), sem_plano_trabalho: 1 } },
-    );
+    this.router.navigate(['relatorios', 'planos-trabalho', 'lacunas']);
   }
 
   private carregarUnidades(): void {

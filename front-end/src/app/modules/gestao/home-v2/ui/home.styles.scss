@@ -103,6 +103,17 @@
   cursor: pointer;
   padding: 0.5rem;
   transition: transform 0.2s;
+  border-radius: 4px;
+
+  &:focus {
+    outline: none;
+  }
+
+  // Padrão gov.br DS: contorno tracejado amarelo no foco por teclado
+  &:focus-visible {
+    outline: var(--focus-width, 2px) dashed var(--focus-color, #FFCD07);
+    outline-offset: var(--focus-offset, 2px);
+  }
 
   &__circle {
     display: flex;
