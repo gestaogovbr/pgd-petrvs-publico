@@ -14,7 +14,10 @@ import { ModalidadePgdService } from "src/app/services/modalidade-pgd.service";
 @Component({
     selector: 'relatorio-agente',
     templateUrl: './relatorio-agente.component.html',
-    styleUrls: ['./relatorio-agente.component.scss'],
+    styleUrls: [
+        '../relatorio-base/relatorio-base.component.scss',
+        './relatorio-agente.component.scss'
+    ],
     standalone: false
 })
 export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAgente, RelatorioAgenteDaoService> {
@@ -37,6 +40,7 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
         unidadeNome: { default: "" },
         matricula: { default: "" },
         situacao: { default: "" },
+        participantePGD: { default: "" },
         selecao: { default: "" },
         modalidade: { default: "" },
         modalidadeSouGov: { default: "" },
@@ -95,6 +99,10 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
       result.push(["situacao", "==", form.situacao]);
     }
 
+    if (form.participantePGD?.length) {
+      result.push(["participantePGD", "==", form.participantePGD]);
+    }
+
     if (form.selecao?.length) {
       result.push(["programaNome", "like", "%" + form.selecao + "%"]);
     }
@@ -147,7 +155,6 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
     try {
       return this.dao!.exportarXls({
         where: queryOptions.where,
@@ -155,8 +162,6 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
       });
     } catch (error: any) {
       this.error(error);
-    } finally {
-      this.loading = false;
     }
 
     return of(null);

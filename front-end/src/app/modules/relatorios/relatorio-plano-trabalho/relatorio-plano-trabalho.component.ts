@@ -19,7 +19,10 @@ import { ModalidadePgdService } from "src/app/services/modalidade-pgd.service";
 @Component({
     selector: 'relatorio-plano-trabalho',
     templateUrl: './relatorio-plano-trabalho.component.html',
-    styleUrls: ['./relatorio-plano-trabalho.component.scss'],
+    styleUrls: [
+        '../relatorio-base/relatorio-base.component.scss',
+        './relatorio-plano-trabalho.component.scss'
+    ],
     standalone: false
 })
 export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService> {
@@ -33,12 +36,19 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   public resumido: boolean = true;
   public tiposModalidade: LookupItem[] = [];
   public tiposNotas: LookupItem[] = [];
+  public statusPtItems: LookupItem[] = [];
 
   constructor(public injector: Injector, dao: RelatorioPlanoTrabalhoDaoService) {
       super(injector, RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService);
       this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-      this.tiposModalidade = injector.get<ModalidadePgdService>(ModalidadePgdService).items;
+      this.tiposModalidade = injector.get<ModalidadePgdService>(ModalidadePgdService).items
+          .filter(item => item.key != null);
+      this.statusPtItems = this.lookup.PLANO_TRABALHO_STATUS.map(item => {
+          if (item.key === 'INCLUIDO') return { ...item, value: 'Rascunho' };
+          if (item.key === 'ATIVO') return { ...item, value: 'Execução' };
+          return { ...item };
+      });
       this.tipoAvaliacaoNotaDao = injector.get<TipoAvaliacaoNotaDaoService>(TipoAvaliacaoNotaDaoService);
       this.relatorioPlanoTrabalhoDao = injector.get<RelatorioPlanoTrabalhoDaoService>(RelatorioPlanoTrabalhoDaoService);
       this.relatorioPlanoTrabalhoDetalhadoDao = injector.get<RelatorioPlanoTrabalhoDetalhadoDaoService>(RelatorioPlanoTrabalhoDetalhadoDaoService);
@@ -58,8 +68,8 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
           participanteNome: { default: "" },
           unidadeNome: { default: "" },
           chd: { default: "" },
-          status: { default: "" },
-          modalidade: { default: ""},
+          status: { default: null },
+          modalidade: { default: null },
           duracao: { default: ""},
           qtdePeriodosAvaliativos: { default: ""},
           data_inicio_avaliativo: { default: ""},
@@ -307,7 +317,6 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
     try{
       return this.dao!.exportarXls(!form.incluir_periodos_avaliativos, {
         where: queryOptions.where,
@@ -315,8 +324,6 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
       });
     } catch (error: any) {
       this.error(error);
-    } finally {
-      this.loading = false;
     }
 
     return of(null);
