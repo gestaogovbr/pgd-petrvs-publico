@@ -5,8 +5,9 @@
 } @else if (data()) {
   <div class="row g-3 align-items-stretch">
     <!-- Coluna 1: Atalho padrão (Plano de Entregas Vigente) -->
-    <div class="col-md-2 d-flex align-items-center justify-content-center">
+    <div class="col-md-2 d-flex align-items-start justify-content-center">
       <home-atalho-card icone="bi bi-file-earmark-text" titulo="Plano de Entregas Vigente"
+        style="margin-top: 1.5rem;"
         (acao)="planoEntregasVigenteClick.emit()" />
     </div>
 

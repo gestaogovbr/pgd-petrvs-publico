@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\Home\DataProviders;
 
-use App\Enums\Atribuicao;
+use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -17,13 +17,6 @@ class PlanosVigentes
     use ResolveUnidades;
 
     private const PARTICIPA_PGD = 'sim';
-
-    /** @var string[] Atribuições consideradas como agente da unidade: lotado + chefia titular/substituta */
-    private const ATRIBUICOES_AGENTE = [
-        Atribuicao::LOTADO->value,
-        Atribuicao::GESTOR->value,
-        Atribuicao::GESTOR_SUBSTITUTO->value,
-    ];
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
@@ -122,7 +115,15 @@ class PlanosVigentes
     }
 
     /**
-     * Agentes do PGD (lotado + chefia titular/substituta) dentro do escopo.
+     * Participantes do PGD dentro do escopo, base para o indicador "sem PT".
+     *
+     * Alinhado ao indicador PARTICIPANTES do ResumoEquipe:
+     *   - usuário com qualquer atribuição na unidade/escopo;
+     *   - não pode ter perfil Consulta;
+     *   - deve ter indicação de participante no SIAPE (participa_pgd = 'sim');
+     *   - TODO(#2476): desconsiderar participantes com marcação de dispensa de PT
+     *     (a ser adicionada após o merge da branch #2476).
+     *
      * Retorna um builder novo a cada chamada para que os filtros de "quantidade"
      * não vazem para a contagem de "total".
      *
@@ -133,9 +134,10 @@ class PlanosVigentes
     {
         return Usuario::query()
             ->where('participa_pgd', self::PARTICIPA_PGD)
+            ->whereHas('perfil', fn ($p) => $p->where('nivel', '!=', PerfilEnum::CONSULTA->value))
             ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
                 $q->whereIn('unidade_id', $unidadesEscopo)
-                    ->whereHas('atribuicoes', fn ($a) => $a->whereIn('atribuicao', self::ATRIBUICOES_AGENTE));
+                    ->whereHas('atribuicoes');
             });
     }
 }

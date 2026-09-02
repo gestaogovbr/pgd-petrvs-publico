@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\Home\DataProviders;
 
+use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
 use App\Models\Usuario;
 use App\Repository\UnidadeRepository;
@@ -58,23 +59,50 @@ class ResumoEquipe
         ];
     }
 
+    /**
+     * Indicadores de Agentes Públicos e Participantes.
+     *
+     * UNIVERSO: todos os usuários com qualquer relação (atribuição) na unidade.
+     * AGENTES PÚBLICOS (total): do universo, desconsidera usuários com perfil Consulta.
+     * PARTICIPANTES (quantidade): dos agentes públicos, desconsidera:
+     *   - usuários sem indicação de participante no SIAPE (participa_pgd != 'sim');
+     *   - TODO(#2476): usuários com indicação de participante no SIAPE mas com
+     *     marcação de dispensa de PT. Essa marcação será adicionada após o merge
+     *     da branch #2476; enquanto isso, esses usuários ainda são contados como
+     *     participantes.
+     *
+     * @return array{quantidade: int, total: int, percentual: float}
+     */
     private function participantesPGD(array $unidadeIds): array
     {
-        $result = Usuario::query()
+        $universo = Usuario::query()
+            ->with('perfil')
             ->whereHas('unidadesIntegrantes', fn ($q) => $q
                 ->whereIn('unidade_id', $unidadeIds)
                 ->whereHas('atribuicoes')
             )
             ->get();
 
-        $participantes = $result->filter(fn ($u) => $u->participa_pgd === self::PARTICIPA_PGD)->count();
-        $total = $result->count();
+        $agentesPublicos = $universo->filter(fn ($u) => !$this->isPerfilConsulta($u));
+
+        // TODO(#2476): também desconsiderar participantes com dispensa de PT
+        // (marcação a ser adicionada após o merge da branch #2476).
+        $participantes = $agentesPublicos
+            ->filter(fn ($u) => $u->participa_pgd === self::PARTICIPA_PGD)
+            ->count();
+
+        $total = $agentesPublicos->count();
 
         return [
             'quantidade' => $participantes,
             'total' => $total,
             'percentual' => $total > 0 ? round(($participantes / $total) * 100, 1) : 0,
         ];
+    }
+
+    private function isPerfilConsulta(Usuario $usuario): bool
+    {
+        return $usuario->perfil?->nivel === PerfilEnum::CONSULTA->value;
     }
 
     private function capacidadeEquipe(array $unidadeIds): float
