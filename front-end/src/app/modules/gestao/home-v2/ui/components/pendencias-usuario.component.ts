@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HomeApiClient, PendenciasUsuario } from '../../infra/home-api.client';
@@ -25,6 +25,18 @@ export class PendenciasUsuarioComponent implements OnInit {
   readonly data = signal<PendenciasUsuario | null>(null);
   readonly loading = signal(false);
   readonly erro = signal<string | null>(null);
+
+  readonly totalPendenciasPE = computed(() => {
+    const d = this.data();
+    if (!d) return 0;
+    return d.assinaturas_pe_pendentes + d.registros_execucao_pe_atraso + d.avaliacoes_pe_pendentes;
+  });
+
+  readonly totalPendenciasPT = computed(() => {
+    const d = this.data();
+    if (!d) return 0;
+    return d.assinaturas_pt_pendentes + d.registros_execucao_pt_atraso + d.avaliacoes_pt_pendentes;
+  });
 
   ngOnInit(): void {
     this.loading.set(true);
