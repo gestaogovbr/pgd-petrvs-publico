@@ -6,6 +6,7 @@ use App\Models\Programa;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Models\PlanoTrabalho;
+use App\Enums\PeriodicidadeConsolidacao;
 use App\Services\ServiceBase;
 use App\Services\UnidadeService;
 use App\Services\StatusService;
@@ -29,12 +30,12 @@ class ProgramaService extends ServiceBase
 
     $dadosEscolhidos = !empty($vigentesUnidadeExecutora) ? $vigentesUnidadeExecutora : (!empty($todosUnidadeExecutora) ? $todosUnidadeExecutora : null);
     if ($dadosEscolhidos !== null) {
-      
+
         $unidadesComPrograma = $this->programaUnidadeSuperior($dadosEscolhidos[2]);
         if (!empty($unidadesComPrograma)) {
             $where[] = ['unidade_id', 'in', $unidadesComPrograma->pluck('id')->toArray()];
         }
-     
+
       if ($dadosEscolhidos === $vigentesUnidadeExecutora) {
         $where[] = ['data_inicio', '<=', now()];
         $where[] = ['data_fim', '>=', now()];
@@ -56,6 +57,28 @@ class ProgramaService extends ServiceBase
     if ($data['data_inicio'] == $data['data_fim']) {
       throw new ServerException("ValidatePrograma", "As datas de início e fim do regramento não podem ser iguais.");
     }
+    $this->validaPeriodicidadeConsolidacao($data, $action);
+  }
+
+  /**
+   * Impede a seleção de periodicidades de consolidação descontinuadas.
+   * Na edição, um regramento que já utiliza uma periodicidade descontinuada pode
+   * mantê-la; a validação só dispara quando o valor enviado é descontinuado E
+   * diferente do valor atualmente persistido.
+   */
+  private function validaPeriodicidadeConsolidacao($data, $action): void
+  {
+    $periodicidade = PeriodicidadeConsolidacao::tryFrom($data['periodicidade_consolidacao'] ?? '');
+    if (!$periodicidade?->isDescontinuada()) {
+      return;
+    }
+    if ($action === ServiceBase::ACTION_EDIT) {
+      $atual = Programa::find($data['id'] ?? null)?->periodicidade_consolidacao;
+      if ($periodicidade->value === $atual) {
+        return;
+      }
+    }
+    throw new ServerException("ValidatePrograma", "A periodicidade de consolidação selecionada foi descontinuada.");
   }
 
   public function programaVigente($programa)
