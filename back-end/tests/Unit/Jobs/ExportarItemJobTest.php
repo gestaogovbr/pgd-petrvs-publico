@@ -84,4 +84,25 @@ describe('ExportarItemJob', function () {
 
         Bus::assertNothingDispatched();
     });
+
+    it('insucesso registra falha e lança EnvioInsucessoException para interromper a cadeia', function () {
+        $model = new Usuario();
+        $model->id = 'item-1';
+
+        $repository = Mockery::mock(EnvioRepositoryInterface::class);
+        $repository->shouldReceive('findById')
+            ->once()
+            ->with('item-1')
+            ->andReturn($model);
+        $repository->shouldReceive('registrarInsucesso')
+            ->once()
+            ->with($model, 'falha de envio');
+
+        app()->instance(EnvioRepositoryInterface::class, $repository);
+
+        $job = new ExportarItemJobFake();
+
+        expect(fn () => $job->insucesso('falha de envio'))
+            ->toThrow(\App\Exceptions\EnvioInsucessoException::class, 'falha de envio');
+    });
 });

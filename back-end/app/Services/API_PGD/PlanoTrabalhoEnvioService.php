@@ -8,10 +8,7 @@ use App\Models\PlanoTrabalho;
 use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UsuarioRepository;
-use App\Services\API_PGD\Builder\PlanoEntregaEnvioJobBuilder;
 use App\Services\API_PGD\Builder\PlanoTrabalhoEnvioJobBuilder;
-use App\Services\API_PGD\Builder\UsuarioEnvioJobBuilder;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -21,61 +18,23 @@ class PlanoTrabalhoEnvioService
 {
     public static function processar($tenantId, PlanoTrabalho $planoTrabalho, string $origem = '')
     {
-        $jobChain = [];
-
-        try{
-            // FASE 1 - Envio do Participante do PT
-            $jobUsuario = UsuarioEnvioJobBuilder::make($tenantId, $planoTrabalho->usuario, $origem);
-            if ($jobUsuario !== null) {
-                $jobChain[] = $jobUsuario;
-            } else {
-                Log::info("{$planoTrabalho->identificacaoEnvio()} participante já enviado e sem alterações pendentes");
-            }
-
-            // FASE 2 - Envio dos Planos de Entrega, para devido envio das entregas vinculadas ao plano de trabalho
-            $planoTrabalho->loadMissing('entregas.planoEntregaEntrega.planoEntrega');
-
-            foreach ($planoTrabalho->entregas as $planoTrabalhoEntrega) {
-                if (!$planoTrabalhoEntrega->plano_entrega_entrega_id) {
-                    continue;
-                }
-
-                $planoEntrega = $planoTrabalhoEntrega->planoEntregaEntrega?->planoEntrega;
-                if ($planoEntrega === null) {
-                    Log::warning("{$planoTrabalho->identificacaoEnvio()} entrega #{$planoTrabalhoEntrega->id} com plano_entrega_entrega_id inválido ou excluído");
-                    continue;
-                }
-
-                $jobEntrega = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoEntrega, $origem);
-                if (!empty($jobEntrega)) {
-                    $jobChain[] = $jobEntrega;
-                }
-            }
-
-            // FASE 3 - Envio do Plano de Trabalho (agendado somente após dependências válidas)
-            $jobPlanoTrabalho = PlanoTrabalhoEnvioJobBuilder::make($tenantId, $planoTrabalho, $origem);
-
-            if (empty($jobPlanoTrabalho)) {
-                Log::info("{$planoTrabalho->identificacaoEnvio()} não necessita envio");
-                return false;
-            }
-
-            $jobChain[] = $jobPlanoTrabalho;
+        try {
+            $planoTrabalho->loadMissing(['usuario', 'entregas.planoEntregaEntrega.planoEntrega']);
 
             $planoTrabalhoId = (string) $planoTrabalho->id;
             $planoTrabalhoIdentificacao = $planoTrabalho->identificacaoEnvio();
 
-            Bus::chain($jobChain)
+            PlanoTrabalhoEnvioJobBuilder::make($tenantId, $planoTrabalho, $origem)
                 ->catch(function (Throwable $e) use ($tenantId, $planoTrabalhoId, $planoTrabalhoIdentificacao): void {
                     self::registrarFalhaDependenciaChain($tenantId, $planoTrabalhoId, $planoTrabalhoIdentificacao, $e);
                 })
                 ->dispatch();
 
-            Log::info("{$planoTrabalho->identificacaoEnvio()} agendado", [$origem]);
+            Log::info("{$planoTrabalhoIdentificacao} agendado", [$origem]);
 
             return true;
-        } catch(EnvioNaoAgendadoException $e) {
-            Log::info("Envio do {$planoTrabalho->identificacaoEnvio()} não agendado: " . $e->getMessage(), [$origem]);
+        } catch (EnvioNaoAgendadoException $e) {
+            Log::info("Envio do {$planoTrabalho->identificacaoEnvio()} não agendado: ".$e->getMessage(), [$origem]);
 
             if ($e->isErroDependencia()) {
                 self::registrarErroAgendamentoDependencia($planoTrabalho, self::montarMensagemErroDependencia($e));
@@ -135,7 +94,7 @@ class PlanoTrabalhoEnvioService
         return str_contains($e->getMessage(), ExportarPlanoTrabalhoJob::class);
     }
 
-    private static function registrarFalhaDependenciaChain(
+    public static function registrarFalhaDependenciaChain(
         string|int $tenantId,
         string $planoTrabalhoId,
         string $planoTrabalhoIdentificacao,

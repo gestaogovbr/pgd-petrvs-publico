@@ -37,11 +37,11 @@ class ParticipanteResource extends JsonResource
             throw new ExportPgdException("Usuário não possui data de assinatura", $this->id);
         }
 
-        if (empty($this->ultimoPlanoTrabalho->modalidade_pgd)){
+        if (empty($this->modalidade_pgd)){
             throw new ExportPgdException("Usuário não possui modalidade definida");
         }
 
-        $modalidade = new ModalidadeResource($this->ultimoPlanoTrabalho->modalidade_pgd);
+        $modalidade = new ModalidadeResource($this->modalidade_pgd);
 
         $result = [
             "id"                        => $this->id,
@@ -49,6 +49,7 @@ class ParticipanteResource extends JsonResource
             "origem_unidade"            => "SIAPE",
             'cod_unidade_instituidora'  => $this->ultimoPlanoTrabalho->programa->unidade->codigo ?? null,
             'cod_unidade_lotacao'       => $this->lotacao->unidade->codigo ?? null,
+            'cod_unidade_autorizadora'  => $this->cod_unidade_autorizadora,
             'matricula_siape'           => str_pad($this->matricula, self::TAMANHO_MATRICULAS, '0', STR_PAD_LEFT),
             'cpf'                       => $this->cpf,
             'situacao'                  => $this->getSituacao(),

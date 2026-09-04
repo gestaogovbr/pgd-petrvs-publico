@@ -2,11 +2,9 @@
 
 namespace App\Jobs\Envio;
 
+use App\Exceptions\EnvioInsucessoException;
 use App\Exceptions\ExportPgdException;
 use App\Exceptions\TokenPgdException;
-use App\Models\PlanoEntrega;
-use App\Models\PlanoTrabalho;
-use App\Models\Usuario;
 use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Services\API_PGD\PgdService;
 use Carbon\Carbon;
@@ -116,6 +114,8 @@ abstract class ExportarItemJob implements ShouldQueue
                 return;
             }
 
+            $this->getRepository()->garantirCodUnidadeAutorizadora($model, $this->tenantId);
+
             $resource = $this->getResource($model);
 
             $this->registrarTentativa($model);
@@ -127,16 +127,17 @@ abstract class ExportarItemJob implements ShouldQueue
             if ($success) {
                 $this->sucesso();
             } else {
-                $this->logError('Erro no envio!');
+                $this->insucesso('Erro no envio!');
             }
 
             unset($resource);
 
+        } catch (EnvioInsucessoException $e) {
+            throw $e;
         } catch(TokenPgdException $e) {
-            $this->insucesso($e->getmessage());
-            return;
+            $this->insucesso($e->getMessage());
         } catch(Throwable $exception) {
-            $this->logError($exception->getmessage());
+            $this->logError($exception->getMessage());
             throw $exception;
         }
     }
@@ -160,15 +161,21 @@ abstract class ExportarItemJob implements ShouldQueue
         $this->logInfo("SUCESSO");
     }
 
-    public function insucesso($message) {
+    /**
+     * Registra o insucesso e interrompe a cadeia de jobs relacionados.
+     *
+     * @throws EnvioInsucessoException
+     */
+    public function insucesso($message): void
+    {
         $this->logError($message);
 
         $model = $this->getModel() ?? $this->getRepository()->findById($this->id);
-        if ($model === null) {
-            return;
+        if ($model !== null) {
+            $this->getRepository()->registrarInsucesso($model, $message);
         }
 
-        $this->getRepository()->registrarInsucesso($model, $message);
+        throw new EnvioInsucessoException($message);
     }
 
     public function tags()
@@ -182,8 +189,16 @@ abstract class ExportarItemJob implements ShouldQueue
     public function failed(?Throwable $exception): void {
         $this->initializeTenantContext();
 
+        if ($exception instanceof EnvioInsucessoException) {
+            return;
+        }
+
         if ($exception instanceof TimeoutExceededException) {
-            $this->insucesso($exception->getMessage() ?: 'Tempo de envio excedido');
+            try {
+                $this->insucesso($exception->getMessage() ?: 'Tempo de envio excedido');
+            } catch (EnvioInsucessoException) {
+                // já registrado; apenas interrompe o fluxo do failed()
+            }
             return;
         }
 
@@ -196,7 +211,11 @@ abstract class ExportarItemJob implements ShouldQueue
             return;
         }
 
-        $this->insucesso($exception?->getMessage() ?? 'Falha desconhecida no envio');
+        try {
+            $this->insucesso($exception?->getMessage() ?? 'Falha desconhecida no envio');
+        } catch (EnvioInsucessoException) {
+            // já registrado; apenas interrompe o fluxo do failed()
+        }
     }
 
     protected function initializeTenantContext(): void

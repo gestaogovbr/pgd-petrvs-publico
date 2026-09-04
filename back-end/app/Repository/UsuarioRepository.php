@@ -230,6 +230,12 @@ class UsuarioRepository implements EnvioRepositoryInterface
         $this->writeRepository->registrarLog($usuario, $mensagem);
     }
 
+    public function garantirCodUnidadeAutorizadora(Model $usuario, string $tenantId): void
+    {
+        /** @var Usuario $usuario */
+        $this->writeRepository->garantirCodUnidadeAutorizadora($usuario, $tenantId);
+    }
+
     public function updateConfig(string $usuarioId, string $unidadeId): bool
     {
         return $this->writeRepository->updateConfig($usuarioId, $unidadeId);

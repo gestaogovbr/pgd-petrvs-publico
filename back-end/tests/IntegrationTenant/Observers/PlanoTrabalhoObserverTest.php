@@ -29,7 +29,6 @@ afterAll(function () {
 describe('PlanoTrabalhoObserver', function () {
 
     it('NÃO é chamado ao criar PT', function () {
-        // testa o ExportarParticipanteJob porque é o primeiro da cadeia de envio do PT, se ele não for chamado, os demais também não serão
         Queue::assertNotPushed(ExportarParticipanteJob::class);
     });
 
@@ -37,7 +36,6 @@ describe('PlanoTrabalhoObserver', function () {
         $this->planoTrabalho->status = StatusEnum::ATIVO->value;
         $this->planoTrabalho->save();
 
-        // testa o ExportarParticipanteJob porque é o primeiro da cadeia de envio do PT, se ele for chamado, os demais também serão
         Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
             return collect($job->chained)->filter(function ($payload) {
                 return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;
@@ -53,7 +51,6 @@ describe('PlanoTrabalhoObserver', function () {
 
         $this->planoTrabalhoService->ativar($data, null);
 
-        // testa o ExportarParticipanteJob porque é o primeiro da cadeia de envio do PT, se ele for chamado, os demais também serão
         Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
             return collect($job->chained)->filter(function ($payload) {
                 return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;
@@ -69,7 +66,6 @@ describe('PlanoTrabalhoObserver', function () {
 
         $this->planoTrabalhoService->reativar($data, null);
 
-        // testa o ExportarParticipanteJob porque é o primeiro da cadeia de envio do PT, se ele for chamado, os demais também serão
         Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
             return collect($job->chained)->filter(function ($payload) {
                 return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;

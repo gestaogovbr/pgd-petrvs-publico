@@ -87,6 +87,7 @@ class UsuarioConfig
  * @property Carbon|null $data_tentativa_envio
  * @property Carbon|null $data_conclusao_envio
  * @property string|null $log_envio
+ * @property string|null $cod_unidade_autorizadora
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
  * @property-read \App\Models\UnidadeIntegrante|null $lotacao
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes

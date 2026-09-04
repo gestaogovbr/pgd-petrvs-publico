@@ -37,6 +37,7 @@ class PlanoTrabalhoResource extends JsonResource
             "id_plano_trabalho"         => $this->id,
             "status"                    => $this->converteStatus($this->status),
             "cod_unidade_executora"     => $this->unidade->codigo ?? null,
+            "cod_unidade_autorizadora"  => $this->cod_unidade_autorizadora,
             "cpf_participante"          => $this->usuario->cpf ?? '',
             "matricula_siape"           => $this->usuario->matricula ? str_pad($this->usuario->matricula, self::TAMANHO_MATRICULAS, '0', STR_PAD_LEFT): '',
             "cod_unidade_lotacao_participante" => $this->usuario->lotacao?->unidade?->codigo,

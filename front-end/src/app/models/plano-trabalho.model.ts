@@ -112,6 +112,7 @@ export class PlanoTrabalho extends Base implements HasDocumentos, HasStatus {
     public data_tentativa_envio?: Date | null = null; /* Data da última tentativa de envio */
     public data_envio_api_pgd?: Date | null = null; /* Data do envio para a API do PGD */
     public log_envio: string | null = null; /* Log do envio do para a API do PGD */
+    public cod_unidade_autorizadora: string | null = null; /* Código da unidade autorizadora utilizado no envio para a API PGD */
 
     /** Permissões calculadas pelo back-end (index/show). */
     public acoes?: PlanoTrabalhoAcoes;

@@ -47,6 +47,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @property Carbon|null $data_tentativa_envio
  * @property Carbon|null $data_conclusao_envio
  * @property string|null $log_envio
+ * @property string|null $cod_unidade_autorizadora
  * @property-read Usuario $usuario
  * @property-read Programa $programa
  * @property-read Unidade $unidade

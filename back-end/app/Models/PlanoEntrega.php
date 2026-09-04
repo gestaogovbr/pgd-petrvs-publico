@@ -35,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Carbon|null $data_tentativa_envio
  * @property Carbon|null $data_conclusao_envio
  * @property string|null $log_envio
+ * @property string|null $cod_unidade_autorizadora
  * @property-read Unidade $unidade
  * @property-read Programa $programa
  * @property-read Usuario $criacaoUsuario
