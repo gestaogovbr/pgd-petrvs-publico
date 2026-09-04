@@ -3,6 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { ImpactoConsolidacoes, Ocorrencia, TipoMotivoAfastamento } from '../domain/types';
+import { PaginatedResponse } from 'src/app/v2/components/paginated-select/paginated-select.component';
+
+export interface AgenteOption {
+  id: string;
+  nome: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class OcorrenciaApiClient {
@@ -16,9 +22,17 @@ export class OcorrenciaApiClient {
       .pipe(map(r => r?.data));
   }
 
-  agentes(): Observable<{ id: string; nome: string }[]> {
-    return this.http.get<any>(`${this.gb.servidorURL}${this.base}/agentes`)
-      .pipe(map(r => r?.data ?? []));
+  agentes(termo: string | null, page = 1, size = 20): Observable<PaginatedResponse<AgenteOption>> {
+    const params: Record<string, string> = {
+      page: String(page),
+      size: String(size),
+    };
+    if (termo) {
+      params['filters[termo]'] = termo;
+    }
+    const httpParams = new HttpParams({ fromObject: params });
+    return this.http.get<any>(`${this.gb.servidorURL}${this.base}/agentes`, { params: httpParams })
+      .pipe(map(r => r?.data as PaginatedResponse<AgenteOption>));
   }
 
   criar(payload: any): Observable<Ocorrencia> {

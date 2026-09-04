@@ -1,22 +1,19 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   EventEmitter,
-  HostListener,
   inject,
   Input,
   OnChanges,
-  OnDestroy,
   Output,
   signal,
   SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
-import { Observable, Subject, Subscription, debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { UnidadeService, UnidadeIndexResponse } from 'src/app/v2/services/unidade.service';
 import { Unidade } from 'src/app/models/unidade.model';
+import { PaginatedSearchFn, PaginatedSelectComponent } from '../paginated-select/paginated-select.component';
 
 export interface UnidadeSelectEvent {
   id: string;
@@ -26,26 +23,20 @@ export interface UnidadeSelectEvent {
 
 export type UnidadeSearchFn = (termo: string | null, page: number, size: number) => Observable<UnidadeIndexResponse>;
 
-interface FetchCommand {
-  termo: string | null;
-  page: number;
-}
-
+/**
+ * Wrapper de domínio sobre `paginated-select` para seleção de unidades.
+ * Mantém a API pública consumida pelos componentes existentes.
+ */
 @Component({
   selector: 'unidade-select',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule],
+  imports: [CommonModule, PaginatedSelectComponent],
   templateUrl: './unidade-select.component.html',
   styleUrls: ['./unidade-select.component.scss'],
 })
-export class UnidadeSelectComponent implements OnChanges, OnDestroy {
+export class UnidadeSelectComponent implements OnChanges {
   private readonly unidadeService = inject(UnidadeService);
-  private readonly elementRef = inject(ElementRef);
-
-  private readonly searchSubject = new Subject<string>();
-  private readonly fetchSubject = new Subject<FetchCommand>();
-  private readonly subscription = new Subscription();
 
   @Input() unidadeId = '';
   @Input() unidadeSigla = '';
@@ -56,133 +47,34 @@ export class UnidadeSelectComponent implements OnChanges, OnDestroy {
 
   @Output() unidadeSelected = new EventEmitter<UnidadeSelectEvent>();
 
-  readonly items = signal<Unidade[]>([]);
-  readonly loading = signal(false);
-  readonly isOpen = signal(false);
   readonly displayValue = signal('');
-  readonly selectedId = signal('');
 
-  private page = 1;
-  private hasMore = true;
-  private currentTermo: string | null = null;
+  /** Evita que reemissões dos inputs sobrescrevam o texto após uma seleção interna. */
+  private selecionadoInternamente = false;
 
-  constructor() {
-    this.subscription.add(
-      this.searchSubject.pipe(
-        debounceTime(300),
-      ).subscribe(termo => {
-        this.currentTermo = termo || null;
-        this.page = 1;
-        this.hasMore = true;
-        this.items.set([]);
-        this.fetchSubject.next({ termo: this.currentTermo, page: 1 });
-      })
-    );
+  readonly search: PaginatedSearchFn<Unidade> = (termo, page, size) => this.fetchData(termo, page, size);
 
-    this.subscription.add(
-      this.fetchSubject.pipe(
-        tap(() => this.loading.set(true)),
-        switchMap(cmd => this.fetchData(cmd.termo, cmd.page, this.perPage)),
-      ).subscribe({
-        next: (response) => this.handleResponse(response),
-        error: () => this.loading.set(false),
-      })
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
+  readonly displayFn = (unidade: Unidade): string => `${unidade.sigla} - ${unidade.nome}`;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['unidadeId'] || changes['unidadeSigla'] || changes['unidadeNome']) {
-      if (this.unidadeId) {
-        if (!this.selectedId()) {
+      if (this.unidadeId && this.unidadeSigla && this.unidadeNome) {
+        if (!this.selecionadoInternamente) {
           this.displayValue.set(`${this.unidadeSigla} - ${this.unidadeNome}`);
-          this.selectedId.set(this.unidadeId);
         }
       } else {
+        this.selecionadoInternamente = false;
         this.displayValue.set('');
-        this.selectedId.set('');
-        this.unidadeSigla = '';
-        this.unidadeNome = '';
       }
     }
-
-    if (changes['searchFn']) {
-      this.items.set([]);
-      this.page = 1;
-      this.hasMore = true;
-      this.currentTermo = null;
-    }
   }
 
-  toggleDropdown(): void {
-    if (this.isOpen()) {
-      this.isOpen.set(false);
-      return;
-    }
-
-    this.isOpen.set(true);
-    this.displayValue.set(this.currentTermo ?? '');
-
-    if (this.items().length === 0 && !this.loading()) {
-      this.loadPage(1, null);
-    }
-  }
-
-  onBrInputChange(event: any): void {
-    const valor = event?.detail ?? event?.target?.value ?? event ?? '';
-
-    if (valor === this.displayValue()) return;
-
-    this.displayValue.set(valor);
-
-    if (!this.isOpen()) {
-      this.isOpen.set(true);
-    }
-
-    this.searchSubject.next(valor);
-  }
-
-  onScroll(event: Event): void {
-    if (!this.hasMore || this.loading()) return;
-
-    const el = event.target as HTMLElement;
-    const threshold = 50;
-
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight - threshold) {
-      this.loadNextPage();
-    }
-  }
-
-  onItemClick(item: Unidade): void {
-    this.selectItem(item);
-  }
-
-  selectItem(item: Unidade): void {
-    this.displayValue.set(`${item.sigla} - ${item.nome}`);
-    this.selectedId.set(item.id);
-    this.unidadeSigla = item.sigla;
-    this.unidadeNome = item.nome;
-    this.isOpen.set(false);
-    this.unidadeSelected.emit({ id: item.id, sigla: item.sigla, nome: item.nome });
-
-    if (this.currentTermo) {
-      this.currentTermo = null;
-      this.page = 1;
-      this.hasMore = true;
-      this.items.set([]);
-      this.loadPage(1, null);
-    }
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.isOpen.set(false);
-      this.displayValue.set(this.buildDisplay());
-    }
+  onSelected(unidade: Unidade): void {
+    this.selecionadoInternamente = true;
+    this.unidadeSigla = unidade.sigla;
+    this.unidadeNome = unidade.nome;
+    this.displayValue.set(`${unidade.sigla} - ${unidade.nome}`);
+    this.unidadeSelected.emit({ id: unidade.id, sigla: unidade.sigla, nome: unidade.nome });
   }
 
   private fetchData(termo: string | null, page: number, size: number): Observable<UnidadeIndexResponse> {
@@ -190,30 +82,5 @@ export class UnidadeSelectComponent implements OnChanges, OnDestroy {
       return this.searchFn(termo, page, size);
     }
     return this.unidadeService.index(termo, page, size);
-  }
-
-  private loadPage(page: number, termo: string | null): void {
-    this.page = page;
-    this.currentTermo = termo;
-    this.fetchSubject.next({ termo, page });
-  }
-
-  private loadNextPage(): void {
-    this.loadPage(this.page + 1, this.currentTermo);
-  }
-
-  private handleResponse(response: UnidadeIndexResponse): void {
-    const current = this.page === 1 ? [] : this.items();
-    this.items.set([...current, ...response.data]);
-    this.page = response.current_page;
-    this.hasMore = response.current_page < response.last_page;
-    this.loading.set(false);
-  }
-
-  private buildDisplay(): string {
-    if (this.unidadeSigla && this.unidadeNome) {
-      return `${this.unidadeSigla} - ${this.unidadeNome}`;
-    }
-    return '';
   }
 }

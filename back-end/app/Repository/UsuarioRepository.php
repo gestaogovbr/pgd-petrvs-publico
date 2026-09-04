@@ -222,10 +222,16 @@ class UsuarioRepository implements EnvioRepositoryInterface
 
     /**
      * @param list<string> $unidadeIds
+     * @return LengthAwarePaginator<Usuario>
      */
-    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection
-    {
-        return $this->readRepository->findAgentesVisiveis($usuarioId, $unidadeIds);
+    public function findAgentesVisiveis(
+        string $usuarioId,
+        array $unidadeIds,
+        ?string $termo = null,
+        int $page = 1,
+        int $perPage = 20
+    ): LengthAwarePaginator {
+        return $this->readRepository->findAgentesVisiveis($usuarioId, $unidadeIds, $termo, $page, $perPage);
     }
 
     /**

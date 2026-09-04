@@ -16,7 +16,6 @@ use App\V2\Ocorrencia\DTOs\OcorrenciaImpactoDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaOperacaoDTO;
 use App\V2\Ocorrencia\DTOs\OcorrenciaStoreDTO;
 use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -35,12 +34,12 @@ class OcorrenciaService
         private readonly UsuarioRepository $usuarioRepository,
     ) {}
 
-    public function agentes(): Collection
+    public function agentes(?string $termo = null, int $page = 1, int $perPage = 20): LengthAwarePaginator
     {
         $usuarioLogadoId = Auth::id();
         $unidadeIds = $this->unidadeRepository->getGerenciadasComSubordinadasIds($usuarioLogadoId);
 
-        return $this->usuarioRepository->findAgentesVisiveis($usuarioLogadoId, $unidadeIds);
+        return $this->usuarioRepository->findAgentesVisiveis($usuarioLogadoId, $unidadeIds, $termo, $page, $perPage);
     }
 
     public function index(array $data): LengthAwarePaginator

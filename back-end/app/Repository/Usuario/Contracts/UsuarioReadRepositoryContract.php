@@ -6,6 +6,7 @@ namespace App\Repository\Usuario\Contracts;
 
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface UsuarioReadRepositoryContract
 {
@@ -40,8 +41,15 @@ interface UsuarioReadRepositoryContract
 
     /**
      * @param list<string> $unidadeIds
+     * @return LengthAwarePaginator<Usuario>
      */
-    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection;
+    public function findAgentesVisiveis(
+        string $usuarioId,
+        array $unidadeIds,
+        ?string $termo = null,
+        int $page = 1,
+        int $perPage = 20
+    ): LengthAwarePaginator;
 
     /**
      * @param string[] $unidadeIds

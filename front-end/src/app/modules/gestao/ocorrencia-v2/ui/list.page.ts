@@ -2,13 +2,15 @@ import { ChangeDetectionStrategy, Component, OnInit, inject, signal, computed } 
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PaginationV2Component } from 'src/app/v2/components/pagination/pagination.component';
-import { OcorrenciaApiClient } from '../infra/ocorrencia-api.client';
-import { AuthService } from 'src/app/services/auth.service';
+import { OcorrenciaApiClient, AgenteOption } from '../infra/ocorrencia-api.client';
 import { Ocorrencia, TipoMotivoAfastamento } from '../domain/types';
 import { MessageService } from 'src/app/v2/services/message.service';
+import { AgentePublicoSearchFn, AgentePublicoSelectComponent } from './components/agente-publico-select.component';
+import { PaginatedResponse } from 'src/app/v2/components/paginated-select/paginated-select.component';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -16,7 +18,7 @@ export interface SelectOption { value: string; label: string; selected?: boolean
   selector: 'app-ocorrencia-v2-list-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent, PaginationV2Component],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent, PaginationV2Component, AgentePublicoSelectComponent],
   templateUrl: './list.page.html',
 })
 export class OcorrenciaV2ListPage implements OnInit {
@@ -27,7 +29,7 @@ export class OcorrenciaV2ListPage implements OnInit {
 
   readonly ocorrencias = signal<Ocorrencia[]>([]);
   readonly tipos = signal<TipoMotivoAfastamento[]>([]);
-  readonly agentes = signal<{ id: string; nome: string }[]>([]);
+  readonly agenteSelecionado = signal<AgenteOption | null>(null);
   readonly carregando = signal(true);
   readonly page = signal(1);
   readonly lastPage = signal(1);
@@ -38,10 +40,8 @@ export class OcorrenciaV2ListPage implements OnInit {
     ...this.tipos().map(t => ({ value: t.id, label: t.nome })),
   ]);
 
-  readonly agentesOptions = computed<SelectOption[]>(() => [
-    { value: '', label: 'Todos' },
-    ...this.agentes().map(a => ({ value: a.id, label: a.nome })),
-  ]);
+  readonly agentesSearchFn: AgentePublicoSearchFn = (termo, page, size): Observable<PaginatedResponse<AgenteOption>> =>
+    this.api.agentes(termo, page, size);
 
   readonly filtros = this.fb.nonNullable.group({
     usuario_id: [''],
@@ -52,7 +52,6 @@ export class OcorrenciaV2ListPage implements OnInit {
 
   ngOnInit(): void {
     this.api.tipos().subscribe(t => this.tipos.set(t));
-    this.api.agentes().subscribe(a => this.agentes.set(a));
     this.carregar();
   }
 
@@ -89,8 +88,15 @@ export class OcorrenciaV2ListPage implements OnInit {
     this.carregar();
   }
 
+  selecionarAgente(agente: AgenteOption): void {
+    this.agenteSelecionado.set(agente);
+    this.filtros.controls.usuario_id.setValue(agente.id);
+    this.aplicarFiltros();
+  }
+
   limparFiltros(): void {
     this.filtros.reset();
+    this.agenteSelecionado.set(null);
     this.page.set(1);
     this.carregar();
   }
