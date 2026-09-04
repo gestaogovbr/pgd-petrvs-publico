@@ -28,7 +28,7 @@
         <h4 class="home-secao__titulo fw-bold mb-3 text-center">Outros destaques</h4>
         <div class="d-flex flex-column align-items-center gap-3">
           <home-atalho-card icone="bi bi-bar-chart-line" titulo="Painéis Gerenciais" (acao)="irParaPaineisGerenciais()" />
-          <home-atalho-card icone="bi bi-megaphone" titulo="Mural de Avisos" (acao)="irParaMuralAvisos()" />
+          <home-atalho-card icone="bi bi-megaphone" titulo="Mural de Avisos" [desabilitado]="true" (acao)="irParaMuralAvisos()" />
         </div>
       </section>
     </div>
