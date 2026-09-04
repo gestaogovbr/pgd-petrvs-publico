@@ -18,7 +18,8 @@ const routes: Routes = [
   { path: 'documentos/:especie/:id/:action', component: DocumentosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Documentos", modal: true } },
   { path: 'documentos/:especie/:id/:action/:documentoId', component: DocumentosComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Documentos", modal: true } },
   { path: 'status', component: StatusFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Alteração de Status", modal: true } },
-  { path: 'notificacoes', component: NotificacoesComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Notificações", modal: true } },
+  // Rota de notificações ocultada em favor do Mural de Avisos
+  // { path: 'notificacoes', component: NotificacoesComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Notificações", modal: true } },
   { path: 'templates/:especie', component: TemplatesComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Templates", modal: true } }
 ];
 

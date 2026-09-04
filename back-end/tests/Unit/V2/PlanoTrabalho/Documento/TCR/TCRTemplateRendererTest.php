@@ -82,4 +82,49 @@ describe('TCRTemplateRenderer', function () {
 
         expect($result)->toBe('A;B;');
     });
+
+    test('variável que resolve para objeto renderiza (ERRO) sem lançar exceção', function () {
+        $result = $this->renderer->render(
+            '{{usuario}}',
+            (object) ['usuario' => (object) ['nome' => 'João', 'email' => 'joao@test.com']]
+        );
+
+        expect($result)->toBe('(ERRO)');
+    });
+
+    test('variável que resolve para array renderiza (ERRO) sem lançar exceção', function () {
+        $result = $this->renderer->render(
+            '{{itens}}',
+            (object) ['itens' => ['A', 'B', 'C']]
+        );
+
+        expect($result)->toBe('(ERRO)');
+    });
+
+    test('variável numérica renderiza como string', function () {
+        $result = $this->renderer->render(
+            '{{percentual}}%',
+            (object) ['percentual' => 75]
+        );
+
+        expect($result)->toBe('75%');
+    });
+
+    test('variável booleana renderiza como string', function () {
+        $result = $this->renderer->render(
+            '{{ativo}}',
+            (object) ['ativo' => true]
+        );
+
+        expect($result)->toBe('1');
+    });
+
+    test('variável null renderiza vazio', function () {
+        $result = $this->renderer->render(
+            '{{campo_nulo}}',
+            (object) ['campo_nulo' => null]
+        );
+
+        expect($result)->toBe('');
+    });
 });

@@ -226,7 +226,7 @@ describe('PlanoTrabalhoDocumentoService::show', function () {
 describe('PlanoTrabalhoDocumentoService::assinar', function () {
 
     test('registra assinatura e atualiza status para AGUARDANDO_ASSINATURA', function () {
-        $this->authValidator->shouldReceive('validar')->once()->andReturn($this->plano);
+        $this->authValidator->shouldReceive('validarAssinatura')->once()->andReturn($this->plano);
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->once()->with('plano-1')->andReturn(null);
 
         /** @var Documento $documento */
@@ -257,7 +257,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
     });
 
     test('atualiza status para ATIVO quando todas assinaturas realizadas', function () {
-        $this->authValidator->shouldReceive('validar')->once()->andReturn($this->plano);
+        $this->authValidator->shouldReceive('validarAssinatura')->once()->andReturn($this->plano);
         $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->once()->with('plano-1')->andReturn(null);
 
         /** @var Documento $documento */
@@ -285,7 +285,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
     });
 
     test('não registra assinatura quando autorização falha', function () {
-        $this->authValidator->shouldReceive('validar')
+        $this->authValidator->shouldReceive('validarAssinatura')
             ->andThrow(new ForbiddenException('Sem permissão.'));
 
         $this->assinarValidator->shouldNotReceive('validar');

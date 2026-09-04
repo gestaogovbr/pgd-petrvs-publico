@@ -10,6 +10,8 @@ use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use Carbon\CarbonInterface;
+use App\V2\Unidade\DTOs\UnidadeIndexDTO;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
@@ -26,9 +28,9 @@ class UnidadeRepository
         return $this->readRepository->hasUsuarioLotacao($unidadeId, $usuarioId, $subordinadas);
     }
 
-    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool
+    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId, bool $incluirDelegado = true): bool
     {
-        return $this->readRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId);
+        return $this->readRepository->isUsuarioGestorRecursivo($unidadeId, $usuarioId, $incluirDelegado);
     }
 
     public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool
@@ -139,6 +141,17 @@ class UnidadeRepository
         return $this->readRepository->getUnidadesGerenciadas($usuarioId, $exclude);
     }
 
+    /** @return string[] IDs das unidades onde o usuário possui qualquer atribuição ativa */
+    public function getUnidadesComAtribuicaoIds(string $usuarioId): array
+    {
+        return $this->readRepository->getUnidadesComAtribuicaoIds($usuarioId);
+    }
+
+    public function buscarResumoPorIds(array $ids): EloquentCollection
+    {
+        return $this->readRepository->buscarResumoPorIds($ids);
+    }
+
     public function getSubordinadas(array $ids): EloquentCollection
     {
         return $this->readRepository->getSubordinadas($ids);
@@ -147,6 +160,18 @@ class UnidadeRepository
     public function getSubordinadasRecursivas(array $ids): EloquentCollection
     {
         return $this->readRepository->getSubordinadasRecursivas($ids);
+    }
+
+    /** @return list<string> */
+    public function getGerenciadasComSubordinadasIds(string $usuarioId): array
+    {
+        return $this->readRepository->getGerenciadasComSubordinadasIds($usuarioId);
+    }
+
+    /** @return string[] */
+    public function getSubordinadasRecursivasIds(array $ids): array
+    {
+        return $this->readRepository->getSubordinadasRecursivasIds($ids);
     }
 
     public function findById(string $id): ?Unidade
@@ -169,10 +194,20 @@ class UnidadeRepository
         return $this->readRepository->buscarPorNomeOuCodigo($dto);
     }
 
+    public function index(UnidadeIndexDTO $dto): LengthAwarePaginator
+    {
+        return $this->readRepository->index($dto);
+    }
+
     /** @return string[] IDs das unidades na linha ascendente (da raiz até a unidade informada) */
     public function linhaAscendente(string $unidadeId): array
     {
         return $this->readRepository->linhaAscendente($unidadeId);
+    }
+
+    public function findAll(): EloquentCollection
+    {
+        return $this->readRepository->findAllWhere([]);
     }
 
     /**
@@ -182,5 +217,10 @@ class UnidadeRepository
     public function buscarComLocalidade(array $unidadeIds): Collection
     {
         return $this->readRepository->buscarComLocalidade($unidadeIds);
+    }
+
+    public function findRaiz(): ?Unidade
+    {
+        return $this->readRepository->findRaiz();
     }
 }

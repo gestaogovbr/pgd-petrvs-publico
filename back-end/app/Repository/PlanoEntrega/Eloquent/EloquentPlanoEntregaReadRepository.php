@@ -157,4 +157,58 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
     {
         return PlanoEntregaEntrega::find($entregaId);
     }
+
+    public function countPlanosEntregaHomologacao(array $unidadesIds): int
+    {
+        if ($unidadesIds === []) {
+            return 0;
+        }
+
+        return $this->query()
+            ->where('status', StatusEnum::HOMOLOGANDO->value)
+            ->whereIn('unidade_id', $unidadesIds)
+            ->count();
+    }
+
+    public function countPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): int
+    {
+        if ($unidadesIds === []) {
+            return 0;
+        }
+
+        $query = $this->query()
+            ->where('status', StatusEnum::CONCLUIDO->value)
+            ->whereIn('unidade_id', $unidadesIds);
+
+        if ($criadosApos !== null) {
+            $query->where('created_at', '>', $criadosApos);
+        }
+
+        return $query->count();
+    }
+
+    public function countEntregasSemProgresso(array $unidadesIds, ?string $planoEntregaCriadoApos = null): int
+    {
+        if ($unidadesIds === []) {
+            return 0;
+        }
+
+        return PlanoEntregaEntrega::query()
+            ->whereHas('planoEntrega', function ($query) use ($unidadesIds, $planoEntregaCriadoApos) {
+                $query
+                    ->whereIn('unidade_id', $unidadesIds)
+                    ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
+                    ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO));
+
+                if ($planoEntregaCriadoApos !== null) {
+                    $query->where('created_at', '>', $planoEntregaCriadoApos);
+                }
+            })
+            ->whereNotExists(function ($query) {
+                $query->selectRaw('1')
+                    ->from(self::PROGRESSOS_TABLE)
+                    ->whereColumn(self::PROGRESSO_FK_COLUMN, self::PLANO_ENTREGA_PK_COLUMN);
+            })
+            ->count();
+    }
 }

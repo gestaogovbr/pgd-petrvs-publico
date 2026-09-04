@@ -25,16 +25,17 @@ class UnidadeIntegranteAtribuicaoObserver
 
     private function invalidarCacheUsuario(UnidadeIntegranteAtribuicao $model): void
     {
-        if (!AtribuicaoEnum::isGestor($model->atribuicao)) {
-            return;
-        }
-
         $usuarioId = $model->vinculo?->usuario_id;
 
         if ($usuarioId === null) {
             return;
         }
 
-        GestorHierarquiaCache::forgetUsuario($usuarioId);
+        if (AtribuicaoEnum::isGestor($model->atribuicao)) {
+            GestorHierarquiaCache::forgetUsuario($usuarioId);
+            return;
+        }
+
+        GestorHierarquiaCache::forgetAtribuicoesUsuario($usuarioId);
     }
 }

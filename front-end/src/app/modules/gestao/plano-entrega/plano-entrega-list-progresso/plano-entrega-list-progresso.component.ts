@@ -33,7 +33,11 @@ export class PlanoEntregaListProgressoComponent extends PageListBase<PlanoEntreg
       data_inicial_progresso: {default: null},
       data_final_progresso: {default: null},
     });
-    this.addOption(Object.assign({ onClick: this.delete.bind(this) }, this.OPTION_EXCLUIR), "MOD_PENT_ENTR_PRO_EXCL");
+  }
+
+  public get canDeleteProgresso(): boolean {
+    return this.isPlanoAtivo
+      && this.auth.hasPermissionTo(["MOD_PENT_ENTR_PRO_EXCL"]);
   }
 
   public onGridLoad(rows?: Base[]) {

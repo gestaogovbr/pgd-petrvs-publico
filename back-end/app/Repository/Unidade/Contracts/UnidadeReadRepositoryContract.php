@@ -7,8 +7,10 @@ namespace App\Repository\Unidade\Contracts;
 use App\Models\Unidade;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
 use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
+use App\V2\Unidade\DTOs\UnidadeIndexDTO;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection as SupportCollection;
 
 /**
@@ -18,7 +20,7 @@ interface UnidadeReadRepositoryContract
 {
     public function hasUsuarioLotacao(string $unidadeId, string $usuarioId, bool $subordinadas = true): bool;
 
-    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId): bool;
+    public function isUsuarioGestorRecursivo(string $unidadeId, string $usuarioId, bool $incluirDelegado = true): bool;
 
     public function isUsuarioGestorDaUnidade(string $unidadeId, string $usuarioId): bool;
 
@@ -55,9 +57,21 @@ interface UnidadeReadRepositoryContract
 
     public function findAllPendentesInativacaoByCodigoOrgaoAte(string $codigoOrgao, CarbonInterface $dataLimite): Collection;
 
+    /** @return string[] IDs das unidades onde o usuário possui qualquer atribuição ativa */
+    public function getUnidadesComAtribuicaoIds(string $usuarioId): array;
+
+    /** @return Collection<int, Unidade> Unidades (id, sigla, nome) para os IDs informados */
+    public function buscarResumoPorIds(array $ids): Collection;
+
     public function getSubordinadas(array $ids): Collection;
 
     public function getSubordinadasRecursivas(array $ids): Collection;
+
+    /** @return list<string> IDs das unidades gerenciadas pelo usuário + suas subordinadas recursivas */
+    public function getGerenciadasComSubordinadasIds(string $usuarioId): array;
+
+    /** @return string[] */
+    public function getSubordinadasRecursivasIds(array $ids): array;
 
     public function findById(string|int $id): ?Unidade;
 
@@ -67,8 +81,12 @@ interface UnidadeReadRepositoryContract
 
     public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection;
 
+    public function index(UnidadeIndexDTO $dto): LengthAwarePaginator;
+
     /** @return string[] */
     public function linhaAscendente(string $unidadeId): array;
+
+    public function findAllWhere(array $criteria): SupportCollection;
 
     /**
      * Busca unidades com dados de localidade (entidade_id, cidade_id, uf).
@@ -77,4 +95,9 @@ interface UnidadeReadRepositoryContract
      * @return SupportCollection
      */
     public function buscarComLocalidade(array $unidadeIds): SupportCollection;
+
+    /**
+     * Retorna a unidade raiz da entidade (unidade sem pai).
+     */
+    public function findRaiz(): ?Unidade;
 }

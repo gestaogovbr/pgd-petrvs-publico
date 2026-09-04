@@ -27,16 +27,13 @@ class OcorrenciaStoreValidator
             return;
         }
 
-        $unidadesGerenciadas = $this->unidadeRepository->getUnidadesGerenciadas($usuarioLogadoId);
+        $unidadeIds = $this->unidadeRepository->getGerenciadasComSubordinadasIds($usuarioLogadoId);
 
-        if ($unidadesGerenciadas->isEmpty()) {
+        if (empty($unidadeIds)) {
             throw new ForbiddenException('Usuário não tem permissão para registrar ocorrências para terceiros.');
         }
 
-        $unidadeIds = $unidadesGerenciadas->pluck('id')->all();
-        $unidadesSubordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($unidadeIds)->pluck('id')->all();
-
-        $possuiVinculo = $this->afastamentoRepository->usuarioPossuiVinculoEmUnidades($usuarioAlvoId, $unidadesSubordinadasIds);
+        $possuiVinculo = $this->afastamentoRepository->usuarioPossuiVinculoEmUnidades($usuarioAlvoId, $unidadeIds);
 
         if (!$possuiVinculo) {
             throw new ForbiddenException('Usuário não tem permissão para registrar ocorrências para este servidor.');

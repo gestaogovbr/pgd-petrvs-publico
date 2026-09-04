@@ -108,7 +108,7 @@ describe('PlanoTrabalhoDestroyValidator - autorização', function () {
         $plano = fakePlano(StatusEnum::INCLUIDO->value, 'user-1', 'criador-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
         $this->planoRepo->shouldReceive('possuiAssinatura')->andReturn(false);
-        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('unidade-1', 'outro-user')->andReturn(false);
+        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('unidade-1', 'outro-user', true)->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('outro-user')->andReturn(fakeUsuario('outro-user', 1));
 
         $this->validator->validar('plano-1', 'outro-user');
@@ -120,7 +120,7 @@ describe('PlanoTrabalhoDestroyValidator - autorização', function () {
         $plano = fakePlano(StatusEnum::INCLUIDO->value, 'user-1', 'criador-1');
         $this->planoRepo->shouldReceive('findById')->andReturn($plano);
         $this->planoRepo->shouldReceive('possuiAssinatura')->andReturn(false);
-        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('unidade-1', 'intruso')->andReturn(false);
+        $this->unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->with('unidade-1', 'intruso', true)->andReturn(false);
         $this->usuarioRepo->shouldReceive('findById')->with('intruso')->andReturn(fakeUsuario('intruso', 5));
 
         $this->validator->validar('plano-1', 'intruso');

@@ -10,6 +10,8 @@ use App\V2\PlanoTrabalho\PlanoTrabalhoController as PlanoTrabalhoV2;
 use Illuminate\Support\Facades\Route;
 
 Route::get('plano-trabalho', [PlanoTrabalhoV2::class, 'index']);
+Route::get('plano-trabalho/aguardando-minha-assinatura', [PlanoTrabalhoV2::class, 'aguardandoMinhaAssinatura']);
+Route::get('plano-trabalho/aguardando-minha-avaliacao', [PlanoTrabalhoV2::class, 'aguardandoMinhaAvaliacao']);
 Route::get('plano-trabalho/statuses', [PlanoTrabalhoV2::class, 'statuses']);
 Route::get('plano-trabalho/{id}', [PlanoTrabalhoV2::class, 'show']);
 Route::post('plano-trabalho', [PlanoTrabalhoV2::class, 'store']);

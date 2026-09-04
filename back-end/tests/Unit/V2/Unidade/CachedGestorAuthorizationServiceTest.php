@@ -92,7 +92,7 @@ describe('EloquentUnidadeReadRepository::isUsuarioGestorRecursivo', function () 
         $repo = criarRepository();
         $repo->shouldReceive('getUnidadesGerenciadas')
             ->once()
-            ->with('user-1')
+            ->with('user-1', [])
             ->andReturn(mockCollection(['u-1']));
 
         $repo->isUsuarioGestorRecursivo('u-1', 'user-1');

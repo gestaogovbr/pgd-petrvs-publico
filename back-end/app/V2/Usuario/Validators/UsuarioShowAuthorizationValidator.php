@@ -26,7 +26,7 @@ class UsuarioShowAuthorizationValidator
      */
     public function validarEscopo(Usuario $solicitante, Usuario $alvo): Usuario
     {
-        if ($solicitante->id === $alvo->id) {
+        if ($solicitante->cpf === $alvo->cpf) {
             return $alvo;
         }
 
@@ -88,10 +88,10 @@ class UsuarioShowAuthorizationValidator
 
     private function alvoEstaNasUnidades(Usuario $alvo, array $unidadeIds): bool
     {
-        $alvo->loadMissing('lotacoes');
+        $alvo->loadMissing('areasTrabalho');
 
-        foreach ($alvo->lotacoes as $lotacao) {
-            if (in_array($lotacao->unidade_id, $unidadeIds, true)) {
+        foreach ($alvo->areasTrabalho as $integrante) {
+            if (in_array($integrante->unidade_id, $unidadeIds, true)) {
                 return true;
             }
         }
