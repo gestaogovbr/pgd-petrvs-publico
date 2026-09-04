@@ -10,7 +10,7 @@ import { TipoMotivoAfastamento } from '../domain/types';
 import { MessageService } from 'src/app/v2/services/message.service';
 import { forkJoin, Observable } from 'rxjs';
 import { AgentePublicoSearchFn, AgentePublicoSelectComponent } from './components/agente-publico-select.component';
-import { PaginatedResponse } from 'src/app/v2/components/paginated-select/paginated-select.component';
+import type { Page } from 'src/app/v2/domain/pagination';
 
 @Component({
   selector: 'app-ocorrencia-v2-form-page',
@@ -35,7 +35,7 @@ export class OcorrenciaV2FormPage implements OnInit {
 
   readonly tiposOptions = computed(() => this.tipos().map(t => ({ value: t.id, label: t.nome })));
 
-  readonly agentesSearchFn: AgentePublicoSearchFn = (termo, page, size): Observable<PaginatedResponse<AgenteOption>> =>
+  readonly agentesSearchFn: AgentePublicoSearchFn = (termo, page, size): Observable<Page<AgenteOption>> =>
     this.api.agentes(termo, page, size);
 
   readonly fg = this.fb.nonNullable.group({
@@ -63,7 +63,7 @@ export class OcorrenciaV2FormPage implements OnInit {
     }).subscribe({
       next: ({ tipos, agentes }) => {
         this.tipos.set(tipos);
-        this.permiteSelecionarAgente.set((agentes.total ?? agentes.data.length) > 1);
+        this.permiteSelecionarAgente.set((agentes.total ?? agentes.items.length) > 1);
 
         setTimeout(() => {
           this.fg.controls.usuario_id.setValue(this.auth.usuario?.id ?? '');

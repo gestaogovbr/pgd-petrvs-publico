@@ -10,7 +10,7 @@ import { OcorrenciaApiClient, AgenteOption } from '../infra/ocorrencia-api.clien
 import { Ocorrencia, TipoMotivoAfastamento } from '../domain/types';
 import { MessageService } from 'src/app/v2/services/message.service';
 import { AgentePublicoSearchFn, AgentePublicoSelectComponent } from './components/agente-publico-select.component';
-import { PaginatedResponse } from 'src/app/v2/components/paginated-select/paginated-select.component';
+import type { Page } from 'src/app/v2/domain/pagination';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
 
@@ -40,7 +40,7 @@ export class OcorrenciaV2ListPage implements OnInit {
     ...this.tipos().map(t => ({ value: t.id, label: t.nome })),
   ]);
 
-  readonly agentesSearchFn: AgentePublicoSearchFn = (termo, page, size): Observable<PaginatedResponse<AgenteOption>> =>
+  readonly agentesSearchFn: AgentePublicoSearchFn = (termo, page, size): Observable<Page<AgenteOption>> =>
     this.api.agentes(termo, page, size);
 
   readonly filtros = this.fb.nonNullable.group({

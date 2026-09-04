@@ -11,10 +11,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 import {
-  PaginatedResponse,
   PaginatedSearchFn,
   PaginatedSelectComponent,
 } from 'src/app/v2/components/paginated-select/paginated-select.component';
+import type { Page } from 'src/app/v2/domain/pagination';
 
 export interface AgentePublicoSelectEvent {
   id: string;
@@ -25,7 +25,7 @@ export type AgentePublicoSearchFn = (
   termo: string | null,
   page: number,
   size: number,
-) => Observable<PaginatedResponse<AgentePublicoSelectEvent>>;
+) => Observable<Page<AgentePublicoSelectEvent>>;
 
 /**
  * Wrapper de domínio sobre `paginated-select` para seleção de agente público.

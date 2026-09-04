@@ -11,9 +11,10 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
-import { UnidadeService, UnidadeIndexResponse } from 'src/app/v2/services/unidade.service';
+import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PaginatedSearchFn, PaginatedSelectComponent } from '../paginated-select/paginated-select.component';
+import type { Page } from 'src/app/v2/domain/pagination';
 
 export interface UnidadeSelectEvent {
   id: string;
@@ -21,7 +22,7 @@ export interface UnidadeSelectEvent {
   nome: string;
 }
 
-export type UnidadeSearchFn = (termo: string | null, page: number, size: number) => Observable<UnidadeIndexResponse>;
+export type UnidadeSearchFn = (termo: string | null, page: number, size: number) => Observable<Page<Unidade>>;
 
 /**
  * Wrapper de domínio sobre `paginated-select` para seleção de unidades.
@@ -77,7 +78,7 @@ export class UnidadeSelectComponent implements OnChanges {
     this.unidadeSelected.emit({ id: unidade.id, sigla: unidade.sigla, nome: unidade.nome });
   }
 
-  private fetchData(termo: string | null, page: number, size: number): Observable<UnidadeIndexResponse> {
+  private fetchData(termo: string | null, page: number, size: number): Observable<Page<Unidade>> {
     if (this.searchFn) {
       return this.searchFn(termo, page, size);
     }

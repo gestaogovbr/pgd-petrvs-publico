@@ -17,24 +17,13 @@ import {
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { Observable, Subject, Subscription, debounceTime, exhaustMap, switchMap, tap } from 'rxjs';
-
-/**
- * Resposta paginada esperada pelo componente. Espelha o formato dos endpoints
- * V2 (ex.: unidade/index, ocorrencia/agentes).
- */
-export interface PaginatedResponse<T> {
-  data: T[];
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-}
+import type { Page } from 'src/app/v2/domain/pagination';
 
 export type PaginatedSearchFn<T> = (
   termo: string | null,
   page: number,
   size: number,
-) => Observable<PaginatedResponse<T>>;
+) => Observable<Page<T>>;
 
 /**
  * Select paginado genérico com busca no servidor, debounce e scroll infinito.
@@ -215,11 +204,11 @@ export class PaginatedSelectComponent<T> implements OnChanges, OnDestroy {
     );
   }
 
-  private handleResponse(response: PaginatedResponse<T>): void {
-    const current = response.current_page === 1 ? [] : this.items();
-    this.items.set([...current, ...response.data]);
-    this.page = response.current_page;
-    this.hasMore = response.current_page < response.last_page;
+  private handleResponse(response: Page<T>): void {
+    const current = response.page === 1 ? [] : this.items();
+    this.items.set([...current, ...response.items]);
+    this.page = response.page;
+    this.hasMore = response.page < response.lastPage;
     this.loading.set(false);
   }
 }
