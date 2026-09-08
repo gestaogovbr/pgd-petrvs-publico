@@ -6,9 +6,7 @@ namespace App\Repository\Unidade\Contracts;
 
 use App\Models\Unidade;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
-use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use App\V2\Unidade\DTOs\UnidadeIndexDTO;
-use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection as SupportCollection;
@@ -36,26 +34,11 @@ interface UnidadeReadRepositoryContract
 
     public function getAreasTrabalhoWhereClause(string $usuarioId, bool $subordinadas, string $prefix = ""): string;
 
-    public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?Unidade;
-
-    /**
-     * @param list<string> $codigos
-     */
-    public function findAllByCodigoOrgaoCodigos(string $codigoOrgao, array $codigos): Collection;
+    public function findByCodigo(string $codigo): ?Unidade;
 
     public function findBySigla(string $sigla): ?Unidade;
 
     public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): Collection;
-
-    public function findByCodigoOrgaoWithPai(string $codigoOrgao, string $codigo): ?Unidade;
-
-    public function findByIdForUpdate(string|int $id): ?Unidade;
-
-    public function findAllAtivasComCodigoByCodigoOrgao(string $codigoOrgao): Collection;
-
-    public function findAllSemInicioInativacaoByCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): Collection;
-
-    public function findAllPendentesInativacaoByCodigoOrgaoAte(string $codigoOrgao, CarbonInterface $dataLimite): Collection;
 
     /** @return string[] IDs das unidades onde o usuário possui qualquer atribuição ativa */
     public function getUnidadesComAtribuicaoIds(string $usuarioId): array;
@@ -63,13 +46,15 @@ interface UnidadeReadRepositoryContract
     /** @return Collection<int, Unidade> Unidades (id, sigla, nome) para os IDs informados */
     public function buscarResumoPorIds(array $ids): Collection;
 
+    public function findByCodigoWithPai(string $codigo): ?Unidade;
+
     public function getSubordinadas(array $ids): Collection;
 
     public function getSubordinadasRecursivas(array $ids): Collection;
 
     /** @return list<string> IDs das unidades gerenciadas pelo usuário + suas subordinadas recursivas */
     public function getGerenciadasComSubordinadasIds(string $usuarioId): array;
-
+    
     /** @return string[] */
     public function getSubordinadasRecursivasIds(array $ids): array;
 
@@ -77,9 +62,7 @@ interface UnidadeReadRepositoryContract
 
     public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade;
 
-    public function existsByCodigoOrgao(string $codigoOrgao, string $codigo): bool;
-
-    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection;
+    public function existsByCodigo(string $codigo): bool;
 
     public function index(UnidadeIndexDTO $dto): LengthAwarePaginator;
 
@@ -87,7 +70,6 @@ interface UnidadeReadRepositoryContract
     public function linhaAscendente(string $unidadeId): array;
 
     public function findAllWhere(array $criteria): SupportCollection;
-
     /**
      * Busca unidades com dados de localidade (entidade_id, cidade_id, uf).
      *

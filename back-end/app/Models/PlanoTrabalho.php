@@ -18,6 +18,7 @@ use App\Models\StatusJustificativa;
 use App\Support\ModalidadePgd;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Traits\PreencheCodUnidadeAutorizadora;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -61,6 +62,8 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class PlanoTrabalho extends ModelBase implements HasStatusHistory, HasOwnership
 {
+    use PreencheCodUnidadeAutorizadora;
+
     public function getStatusFkColumn(): string
     {
         return 'plano_trabalho_id';
@@ -98,13 +101,14 @@ class PlanoTrabalho extends ModelBase implements HasStatusHistory, HasOwnership
         'justificativa', /* text; NULL; */ // Justificativa para carga horária diferente de 100%
         'justificativa_modalidade', /* varchar(500); NULL; */ // Justificativa para modalidade divergente do SIAPE
         'encerrado_at', /* date; NULL; */ // Data de encerramento antecipado do plano de trabalho
+        'cod_unidade_autorizadora',
     ];
 
   public const STATUSES = [
-    'INCLUIDO' => 'Incluído',
+    'INCLUIDO' => 'Rascunho',
     'AGUARDANDO_ASSINATURA' => 'Aguardando Assinatura',
-    'ATIVO' => 'Aprovado',
-    'CONCLUIDO' => 'Executado',
+    'ATIVO' => 'Execução',
+    'CONCLUIDO' => 'Concluído',
     'AVALIADO' => 'Avaliado',
     'SUSPENSO' => 'Suspenso',
     'CANCELADO' => 'Cancelado'

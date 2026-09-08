@@ -22,4 +22,6 @@ interface PlanoEntregaWriteRepositoryContract
     public function registrarLog(PlanoEntrega $planoEntrega, string $mensagem): void;
 
     public function garantirCodUnidadeAutorizadora(PlanoEntrega $planoEntrega, string $tenantId): void;
+
+    public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int;
 }

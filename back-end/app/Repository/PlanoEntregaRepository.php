@@ -100,6 +100,11 @@ class PlanoEntregaRepository implements EnvioRepositoryInterface
         $this->writeRepository->garantirCodUnidadeAutorizadora($planoEntrega, $tenantId);
     }
 
+    public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int
+    {
+        return $this->writeRepository->atualizarCodUnidadeAutorizadora($codUnidadeAutorizadora, $somenteSemCodigo);
+    }
+
     public function findAllByUnidadeId(string $unidadeId, ?string $dataInicio = null, ?string $dataFim = null): Collection
     {
         return $this->readRepository->findAllByUnidadeId($unidadeId, $dataInicio, $dataFim);

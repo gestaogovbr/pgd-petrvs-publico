@@ -122,6 +122,11 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
         $this->writeRepository->garantirCodUnidadeAutorizadora($planoTrabalho, $tenantId);
     }
 
+    public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int
+    {
+        return $this->writeRepository->atualizarCodUnidadeAutorizadora($codUnidadeAutorizadora, $somenteSemCodigo);
+    }
+
     public function buscarPlanosListagem(PlanoTrabalhoIndexDTO $filtro): LengthAwarePaginator
     {
         return $this->readRepository->buscarPlanosListagem($filtro);

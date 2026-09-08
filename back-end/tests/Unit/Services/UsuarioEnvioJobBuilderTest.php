@@ -71,4 +71,16 @@ describe('UsuarioEnvioJobBuilder', function () {
         expect(UsuarioEnvioJobBuilder::deveAgendarParticipante($usuario))->toBeTrue();
         expect(UsuarioEnvioJobBuilder::make('tenant-1', $usuario))->not->toBeNull();
     });
+
+    it('propaga o código de autorizadora do PT para o job do participante', function () {
+        $usuario = usuarioComPlanoTrabalho();
+        $usuario->matricula = '1234567';
+        $usuario->data_envio_api_pgd = null;
+        $usuario->updated_at = Carbon::parse('2026-06-01 10:00:00');
+
+        $job = UsuarioEnvioJobBuilder::make('tenant-1', $usuario, 'pt-envio', '32589478925114');
+
+        expect($job)->not->toBeNull();
+        expect($job?->getCodUnidadeAutorizadora())->toBe('32589478925114');
+    });
 });

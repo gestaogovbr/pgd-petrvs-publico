@@ -38,7 +38,7 @@ describe('PlanoTrabalhoConsolidacaoObserver', function () {
 
         $consolidacao->status = StatusEnum::CONCLUIDO->value;
         $consolidacao->save();
-
+        
         Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
             return collect($job->chained)->filter(function ($payload) {
                 return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;

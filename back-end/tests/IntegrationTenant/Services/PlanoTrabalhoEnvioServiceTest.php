@@ -36,11 +36,7 @@ describe('PlanoTrabalhoEnvioService', function () {
             'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
         ]);
 
-        $resultado = PlanoTrabalhoEnvioService::processar(
-            tenant('id'),
-            $planoTrabalho->fresh(['usuario', 'entregas.planoEntregaEntrega.planoEntrega']),
-            'teste'
-        );
+        $resultado = PlanoTrabalhoEnvioService::processar(tenant('id'), $planoTrabalho->fresh(), 'teste');
 
         expect($resultado)->toBeFalse();
 

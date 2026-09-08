@@ -50,7 +50,6 @@ export class PlanoEntrega extends Base implements HasStatus, HasAvaliacao {
   public cadeia_valor_id: string | null = null;
   public programa_id: string | null = null;
 	public has_progresso: boolean = false;
-  public cod_unidade_autorizadora: string | null = null; /* Código da unidade autorizadora utilizado no envio para a API PGD */
     
   public constructor(data?: any) { super(); this.initialization(data); }
 }

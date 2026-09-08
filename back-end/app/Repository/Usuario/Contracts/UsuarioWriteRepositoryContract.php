@@ -14,7 +14,6 @@ interface   UsuarioWriteRepositoryContract
     public function update(string|int $id, array $attributes): ?Usuario;
     public function delete(string|int $id): bool;
     public function updateFotoPerfil(string $usuarioId, string $tipo, string $url, string $downloadedUrl): bool;
-    public function limparEmail(string $usuarioId): bool;
     public function removerVinculos(string $usuarioId): void;
     public function restore(string|int $id): bool;
     public function agendarEnvio(Usuario $usuario, Carbon $dataAgendamento): void;
@@ -24,6 +23,8 @@ interface   UsuarioWriteRepositoryContract
     public function registrarConclusao(Usuario $usuario, string $mensagem): void;
     public function registrarLog(Usuario $usuario, string $mensagem): void;
     public function garantirCodUnidadeAutorizadora(Usuario $usuario, string $tenantId): void;
+
+    public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int;
 
     public function updateConfig(string $usuarioId, string $unidadeId): bool;
 }

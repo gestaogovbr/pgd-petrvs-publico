@@ -27,6 +27,7 @@ use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Cache;
 use App\Models\JobSchedule;
 use App\Events\CodigoOrgaoAlterado;
+use App\Events\UnidadeAutorizadoraAlteradaEvent;
 
 
 /**
@@ -90,10 +91,26 @@ class TenantService extends ServiceBase
             $codigoAnterior = CodigoOrgaoService::normalizar(
                 $tenantExistente?->integracao_siape_codorgao
             );
+            $autorizadoraAnterior = $tenantExistente?->api_cod_unidade_autorizadora;
             $tenant = parent::store($dataOrEntity, $unidade, false);
             $codigoNovo = CodigoOrgaoService::normalizar($tenant?->integracao_siape_codorgao);
             if ($codigoAnterior !== null && $codigoNovo !== null && $codigoAnterior !== $codigoNovo) {
                 event(new CodigoOrgaoAlterado((string) $tenant->id, $codigoAnterior, $codigoNovo));
+            }
+
+            $autorizadoraNova = $tenant?->api_cod_unidade_autorizadora;
+            if ($this->devePropagarAutorizadora($autorizadoraAnterior, $autorizadoraNova)) {
+                event(new UnidadeAutorizadoraAlteradaEvent(
+                    (string) $tenant->id,
+                    (string) $autorizadoraNova,
+                    false,
+                ));
+            } elseif ($this->devePropagarAutorizadoraAnterior($autorizadoraAnterior, $autorizadoraNova)) {
+                event(new UnidadeAutorizadoraAlteradaEvent(
+                    (string) $tenant->id,
+                    (string) $autorizadoraAnterior,
+                    true,
+                ));
             }
 
             if($tenant){
@@ -175,6 +192,20 @@ class TenantService extends ServiceBase
 
         tenancy()->end();
         Log::info('Finalização do cadastro de tenant');
+    }
+
+    public function devePropagarAutorizadora(?string $autorizadoraAnterior, ?string $autorizadoraNova): bool
+    {
+        return !filled($autorizadoraAnterior) && filled($autorizadoraNova);
+    }
+
+    public function devePropagarAutorizadoraAnterior(?string $autorizadoraAnterior, ?string $autorizadoraNova): bool
+    {
+        if (!filled($autorizadoraAnterior)) {
+            return false;
+        }
+
+        return (string) $autorizadoraAnterior !== (string) ($autorizadoraNova ?? '');
     }
 
     public function forcarSiape(string $tenantId)

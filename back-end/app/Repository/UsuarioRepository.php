@@ -134,21 +134,6 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findByEmail($email);
     }
 
-    public function findAllByEmailWithoutGlobalScopes(string $email, ?string $ignoreId = null): Collection
-    {
-        return $this->readRepository->findAllByEmailWithoutGlobalScopes($email, $ignoreId);
-    }
-
-    public function findAllExternosPresentesNaIntegracao(): Collection
-    {
-        return $this->readRepository->findAllExternosPresentesNaIntegracao();
-    }
-
-    public function limparEmail(string $usuarioId): bool
-    {
-        return $this->writeRepository->limparEmail($usuarioId);
-    }
-
     public function findActivesByCpf(string $cpf): Collection
     {
         return $this->readRepository->findActivesByCpf($cpf);
@@ -234,6 +219,11 @@ class UsuarioRepository implements EnvioRepositoryInterface
     {
         /** @var Usuario $usuario */
         $this->writeRepository->garantirCodUnidadeAutorizadora($usuario, $tenantId);
+    }
+
+    public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int
+    {
+        return $this->writeRepository->atualizarCodUnidadeAutorizadora($codUnidadeAutorizadora, $somenteSemCodigo);
     }
 
     public function updateConfig(string $usuarioId, string $unidadeId): bool

@@ -10,13 +10,23 @@ use Illuminate\Support\Facades\Log;
 // classe responsavel por construir o job de envio do usuario
 class UsuarioEnvioJobBuilder
 {
-    public static function make($tenantId, Usuario $usuario, string $origem = ''): ?ExportarParticipanteJob
-    {
+    public static function make(
+        $tenantId,
+        Usuario $usuario,
+        string $origem = '',
+        ?string $codUnidadeAutorizadora = null,
+    ): ?ExportarParticipanteJob {
         if (!self::deveAgendarParticipante($usuario)) {
             return null;
         }
 
-        return new ExportarParticipanteJob($tenantId, $usuario->id, $origem, $usuario->matricula);
+        return new ExportarParticipanteJob(
+            $tenantId,
+            $usuario->id,
+            $origem,
+            $usuario->matricula,
+            $codUnidadeAutorizadora,
+        );
     }
 
     public static function deveAgendarParticipante(Usuario $usuario): bool

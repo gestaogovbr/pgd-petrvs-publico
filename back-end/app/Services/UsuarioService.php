@@ -77,6 +77,11 @@ class UsuarioService extends ServiceBase
         $this->siapeBlackListServidorRepository = app(SiapeBlackListServidorRepository::class);
     }
 
+    public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int
+    {
+        return $this->usuarioRepository->atualizarCodUnidadeAutorizadora($codUnidadeAutorizadora, $somenteSemCodigo);
+    }
+
     private function normalizeModalidadePgd(array &$data): void
     {
         if (array_key_exists('tipo_modalidade_id', $data) && !array_key_exists('modalidade_pgd', $data)) {
@@ -90,6 +95,21 @@ class UsuarioService extends ServiceBase
         }
 
         $data['modalidade_pgd'] = ModalidadePgd::normalize($data['modalidade_pgd']);
+    }
+
+    private function normalizeDataNascimento(array &$data): void
+    {
+        if (!array_key_exists('data_nascimento', $data)) {
+            return;
+        }
+
+        if ($data['data_nascimento'] === null || $data['data_nascimento'] === '') {
+            $data['data_nascimento'] = null;
+
+            return;
+        }
+
+        $data['data_nascimento'] = Carbon::parse($data['data_nascimento'])->format('Y-m-d H:i:s');
     }
 
     private function parseUsuarioExterno(mixed $value): ?bool
@@ -391,6 +411,7 @@ class UsuarioService extends ServiceBase
                     $data['telefone'] = UtilService::onlyNumbers($data['telefone']);
                 }
                 $this->normalizeModalidadePgd($data);
+                $this->normalizeDataNascimento($data);
                 $updated = $this->usuarioRepository->update($restoredEntity->id, $data);
                 if (!$updated) {
                     throw new DBException("Falha ao reativar o usuário", 500);
@@ -637,6 +658,7 @@ class UsuarioService extends ServiceBase
         $data["with"] = [];
         $data['cpf'] = UtilService::onlyNumbers($data['cpf']);
         $this->normalizeModalidadePgd($data);
+        $this->normalizeDataNascimento($data);
         $this->removerEmailDaRequisicaoSeUsuarioInterno($data, $data['usuario_externo'] ?? null);
 
         unset($data['pedagio']);
@@ -657,6 +679,7 @@ class UsuarioService extends ServiceBase
         }
 
         $this->normalizeModalidadePgd($data);
+        $this->normalizeDataNascimento($data);
 
         if (array_key_exists('email', $data)) {
             $usuario = !empty($data['id'] ?? null) ? $this->usuarioRepository->findById($data['id']) : null;

@@ -6,6 +6,7 @@ namespace App\Repository\Usuario\Eloquent;
 
 use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
+use App\Repository\Eloquent\CodUnidadeAutorizadoraTrait;
 use App\Repository\Eloquent\EnvioTrait;
 use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
 
@@ -14,6 +15,7 @@ use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
  */
 class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository implements UsuarioWriteRepositoryContract
 {
+    use CodUnidadeAutorizadoraTrait;
     use EnvioTrait;
 
     public function __construct(Usuario $model)

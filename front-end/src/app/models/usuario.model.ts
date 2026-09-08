@@ -168,7 +168,6 @@ export class Usuario extends Base implements HasNotificacao {
     public data_tentativa_envio?: Date | null = null; /* Data da última tentativa de envio */
     public data_envio_api_pgd?: Date | null = null; /* Data do envio para a API do PGD */
     public log_envio: string | null = null; /* Log do envio do para a API do PGD */
-    public cod_unidade_autorizadora: string | null = null; /* Código da unidade autorizadora utilizado no envio para a API PGD */
 
     public constructor(data?: any) { super(); this.initialization(data); }
 }
