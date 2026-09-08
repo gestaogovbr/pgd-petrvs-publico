@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repository\RelatorioLacunaPlanoTrabalho\Eloquent;
 
+use App\Enums\Atribuicao;
+use App\Enums\PerfilEnum;
 use App\Repository\RelatorioLacunaPlanoTrabalho\Contracts\RelatorioLacunaPlanoTrabalhoReadRepositoryContract;
 use App\Services\UnidadeService;
 use App\V2\Relatorio\LacunaPlanoTrabalho\LacunaPlanoTrabalhoCalculator;
+use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -99,32 +104,75 @@ class EloquentRelatorioLacunaPlanoTrabalhoReadRepository implements RelatorioLac
      */
     private function buscarAgentesParticipantes(array $unidadeIds): array
     {
-        $placeholders = implode(',', array_fill(0, count($unidadeIds), '?'));
-        $sql = <<<SQL
-            SELECT DISTINCT
-                u.id,
-                u.nome,
-                COALESCE(u.nome_social, u.nome) AS nome_exibicao,
-                u.matricula,
-                uni_lotacao.id AS unidadeLotacao,
-                uni_lotacao.sigla AS unidadeNome,
-                fn_obter_unidade_hierarquia(uni_lotacao.id) AS unidadeHierarquia
-            FROM usuarios u
-            INNER JOIN unidades_integrantes ui
-                ON ui.usuario_id = u.id AND ui.deleted_at IS NULL
-            INNER JOIN unidades_integrantes_atribuicoes uia
-                ON uia.unidade_integrante_id = ui.id
-                AND uia.deleted_at IS NULL
-                AND uia.atribuicao = 'LOTADO'
-            INNER JOIN unidades uni_lotacao
-                ON uni_lotacao.id = ui.unidade_id AND uni_lotacao.deleted_at IS NULL
-            WHERE u.deleted_at IS NULL
-              AND u.participa_pgd = 'sim'
-              AND uni_lotacao.id IN ($placeholders)
-            ORDER BY unidadeHierarquia ASC, nome_exibicao ASC
-        SQL;
+        $query = DB::table('usuarios as u')
+            ->join('unidades_integrantes as ui', function (JoinClause $join): void {
+                $join->on('ui.usuario_id', '=', 'u.id')
+                    ->whereNull('ui.deleted_at');
+            })
+            ->join('unidades_integrantes_atribuicoes as uia', function (JoinClause $join): void {
+                $join->on('uia.unidade_integrante_id', '=', 'ui.id')
+                    ->whereNull('uia.deleted_at')
+                    ->where('uia.atribuicao', Atribuicao::LOTADO->value);
+            })
+            ->join('unidades as uni_lotacao', function (JoinClause $join): void {
+                $join->on('uni_lotacao.id', '=', 'ui.unidade_id')
+                    ->whereNull('uni_lotacao.deleted_at');
+            })
+            ->join('perfis as perfil', function (JoinClause $join): void {
+                $join->on('perfil.id', '=', 'u.perfil_id')
+                    ->whereNull('perfil.deleted_at')
+                    ->where('perfil.nivel', '<', PerfilEnum::COLABORADOR->value);
+            })
+            ->distinct()
+            ->select([
+                'u.id',
+                'u.nome',
+                DB::raw('COALESCE(u.nome_social, u.nome) AS nome_exibicao'),
+                'u.matricula',
+                'uni_lotacao.id as unidadeLotacao',
+                'uni_lotacao.sigla as unidadeNome',
+                DB::raw('fn_obter_unidade_hierarquia(uni_lotacao.id) AS unidadeHierarquia'),
+            ])
+            ->whereNull('u.deleted_at')
+            ->where('u.participa_pgd', 'sim')
+            ->whereIn('uni_lotacao.id', $unidadeIds);
 
-        return array_map(static fn ($row) => (array) $row, DB::select($sql, $unidadeIds));
+        $this->excluirChefiaComDispensa($query);
+
+        $rows = $query
+            ->orderBy('unidadeHierarquia')
+            ->orderBy('nome_exibicao')
+            ->get();
+
+        return array_map(static fn ($row) => (array) $row, $rows->all());
+    }
+
+    /**
+     * Chefia titular (GESTOR) ou substituta (GESTOR_SUBSTITUTO) de qualquer unidade
+     * que possua dispensa de Plano de Trabalho formalizada não é contabilizada como
+     * tendo lacunas, independentemente do período de vigência da dispensa.
+     */
+    private function excluirChefiaComDispensa(Builder $query): void
+    {
+        if (!Schema::hasTable('dispensas_plano_trabalho')) {
+            return;
+        }
+
+        $query->whereNotExists(function (Builder $sub): void {
+            $sub->selectRaw('1')
+                ->from('unidades_integrantes as ui_chefia')
+                ->join('unidades_integrantes_atribuicoes as uia_chefia', function (JoinClause $join): void {
+                    $join->on('uia_chefia.unidade_integrante_id', '=', 'ui_chefia.id')
+                        ->whereNull('uia_chefia.deleted_at')
+                        ->whereIn('uia_chefia.atribuicao', Atribuicao::chefiaTitularOuSubstituta());
+                })
+                ->join('dispensas_plano_trabalho as disp', function (JoinClause $join): void {
+                    $join->on('disp.usuario_id', '=', 'ui_chefia.usuario_id')
+                        ->whereNull('disp.deleted_at');
+                })
+                ->whereColumn('ui_chefia.usuario_id', 'u.id')
+                ->whereNull('ui_chefia.deleted_at');
+        });
     }
 
     /**
@@ -136,13 +184,11 @@ class EloquentRelatorioLacunaPlanoTrabalhoReadRepository implements RelatorioLac
         if ($usuarioIds === []) {
             return [];
         }
-        $placeholders = implode(',', array_fill(0, count($usuarioIds), '?'));
-        $rows = DB::select(<<<SQL
-            SELECT usuario_id, data_inicio, data_fim, status, encerrado_at
-            FROM planos_trabalhos
-            WHERE deleted_at IS NULL
-              AND usuario_id IN ($placeholders)
-        SQL, $usuarioIds);
+        $rows = DB::table('planos_trabalhos')
+            ->select(['usuario_id', 'data_inicio', 'data_fim', 'status', 'encerrado_at'])
+            ->whereNull('deleted_at')
+            ->whereIn('usuario_id', $usuarioIds)
+            ->get();
 
         $map = [];
         foreach ($rows as $row) {
@@ -166,13 +212,11 @@ class EloquentRelatorioLacunaPlanoTrabalhoReadRepository implements RelatorioLac
         if ($usuarioIds === [] || !Schema::hasTable('dispensas_plano_trabalho')) {
             return [];
         }
-        $placeholders = implode(',', array_fill(0, count($usuarioIds), '?'));
-        $rows = DB::select(<<<SQL
-            SELECT usuario_id, data_inicio, data_fim
-            FROM dispensas_plano_trabalho
-            WHERE deleted_at IS NULL
-              AND usuario_id IN ($placeholders)
-        SQL, $usuarioIds);
+        $rows = DB::table('dispensas_plano_trabalho')
+            ->select(['usuario_id', 'data_inicio', 'data_fim'])
+            ->whereNull('deleted_at')
+            ->whereIn('usuario_id', $usuarioIds)
+            ->get();
 
         $map = [];
         foreach ($rows as $row) {
@@ -194,27 +238,29 @@ class EloquentRelatorioLacunaPlanoTrabalhoReadRepository implements RelatorioLac
         if ($usuarioIds === []) {
             return [];
         }
-        $placeholders = implode(',', array_fill(0, count($usuarioIds), '?'));
         // Amplia busca para capturar ocorrências de lacunas estendidas
-        $rows = DB::select(<<<SQL
-            SELECT
-                a.usuario_id,
-                COALESCE(t.nome, 'Ocorrência') AS tipo,
-                a.data_inicio,
-                a.data_fim
-            FROM afastamentos a
-            LEFT JOIN tipos_motivos_afastamentos t
-                ON t.id = a.tipo_motivo_afastamento_id AND t.deleted_at IS NULL
-            WHERE a.deleted_at IS NULL
-              AND a.usuario_id IN ($placeholders)
-              AND a.data_inicio <= DATE_ADD(?, INTERVAL 1 YEAR)
-              AND (a.data_fim IS NULL OR a.data_fim >= DATE_SUB(?, INTERVAL 2 YEAR))
-        SQL, [...$usuarioIds, $periodoFim, $periodoInicio]);
+        $maxDataInicio = Carbon::parse($periodoFim)->addYear()->toDateString();
+        $minDataFim = Carbon::parse($periodoInicio)->subYears(2)->toDateString();
+
+        $rows = DB::table('afastamentos as a')
+            ->leftJoin('tipos_motivos_afastamentos as t', function (JoinClause $join): void {
+                $join->on('t.id', '=', 'a.tipo_motivo_afastamento_id')
+                    ->whereNull('t.deleted_at');
+            })
+            ->select(['a.usuario_id', 't.nome as tipo', 'a.data_inicio', 'a.data_fim'])
+            ->whereNull('a.deleted_at')
+            ->whereIn('a.usuario_id', $usuarioIds)
+            ->where('a.data_inicio', '<=', $maxDataInicio)
+            ->where(function (Builder $condicao) use ($minDataFim): void {
+                $condicao->whereNull('a.data_fim')
+                    ->orWhere('a.data_fim', '>=', $minDataFim);
+            })
+            ->get();
 
         $map = [];
         foreach ($rows as $row) {
             $map[$row->usuario_id][] = [
-                'tipo' => (string) $row->tipo,
+                'tipo' => $row->tipo !== null ? (string) $row->tipo : 'Ocorrência',
                 'data_inicio' => substr((string) $row->data_inicio, 0, 10),
                 'data_fim' => $row->data_fim !== null ? substr((string) $row->data_fim, 0, 10) : null,
             ];

@@ -36,6 +36,10 @@ A alteração da navegação não deverá modificar o funcionamento, os filtros 
 
 - [ ] RN04. A informação de dispensa deverá ser obtida do cadastro do agente público, conforme formalização realizada na funcionalidade específica de Dispensa de Plano de Trabalho. Card #2476.
 
+- [ ] RN04-A. Não deverão ser contabilizados como tendo lacunas os agentes públicos que sejam **chefia titular** (`GESTOR`) ou **chefia substituta** (`GESTOR_SUBSTITUTO`) de qualquer unidade e que possuam dispensa de Plano de Trabalho formalizada. A exclusão vale independentemente do período de vigência da dispensa, inclusive quando ela já estiver encerrada.
+
+- [ ] RN04-B. Não deverão ser contabilizados como tendo lacunas os agentes públicos com **Perfil Colaborador** ou **Perfil Consulta**, por não serem selecionáveis para o PGD.
+
 - [ ] RN05. Será considerada lacuna cada dia de segunda a sexta-feira em que o agente público constar como participante do PGD no SIAPE e:
 > - **não** possuir Plano de Trabalho; ou
 > - possuir Plano de Trabalho com status **Rascunho**, **Aguardando assinatura** ou **Cancelado**.
