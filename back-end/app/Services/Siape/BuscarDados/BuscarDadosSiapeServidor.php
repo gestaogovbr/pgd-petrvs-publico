@@ -88,16 +88,13 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             }
         }
 
-        if ($snapshotCompleto) {
-            $this->adicionarCandidatosAusentes(
-                $servidores,
-                array_fill_keys(array_keys($servidoresPorCpf), true),
-                $cpfsNaBlacklist,
-                array_fill_keys(array_keys($datasProcessadasPorCpf), true)
-            );
-        } else {
-            Log::warning('Reconciliação de servidores ausentes ignorada: snapshot da lista SIAPE incompleto ou inválido.');
-        }
+        $this->adicionarCandidatosAusentesSeSnapshotCompleto(
+            $snapshotCompleto,
+            $servidores,
+            array_fill_keys(array_keys($servidoresPorCpf), true),
+            $cpfsNaBlacklist,
+            array_fill_keys(array_keys($datasProcessadasPorCpf), true)
+        );
 
         Log::info("Servidores a serem processados: " . count($servidores));
 
@@ -152,6 +149,32 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         $dataModificacaoSiape = SiapeDate::dataUltimaTransacaoParaBancoOuFalha($servidor['dataUltimaTransacao']);
 
         return $this->asTimestamp($dataModificacaoSiape) > $this->asTimestamp($dataProcessada);
+    }
+
+    /**
+     * @param array<string, array<string, string>> $servidores
+     * @param array<string, bool> $cpfsRetornados
+     * @param array<string, bool> $cpfsNaBlacklist
+     * @param array<string, bool> $cpfsGerenciadosPeloSiape
+     */
+    private function adicionarCandidatosAusentesSeSnapshotCompleto(
+        bool $snapshotCompleto,
+        array &$servidores,
+        array $cpfsRetornados,
+        array $cpfsNaBlacklist,
+        array $cpfsGerenciadosPeloSiape
+    ): void {
+        if (!$snapshotCompleto) {
+            Log::warning('Reconciliação de servidores ausentes ignorada: snapshot da lista SIAPE incompleto ou inválido.');
+            return;
+        }
+
+        $this->adicionarCandidatosAusentes(
+            $servidores,
+            $cpfsRetornados,
+            $cpfsNaBlacklist,
+            $cpfsGerenciadosPeloSiape
+        );
     }
 
     /**

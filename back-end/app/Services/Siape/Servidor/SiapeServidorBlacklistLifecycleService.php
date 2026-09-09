@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 
 final class SiapeServidorBlacklistLifecycleService
 {
+    private const CPF_LOG_SUFFIX_LENGTH = 4;
+
     public function __construct(
         private readonly SiapeBlackListServidorReadRepositoryContract $blacklistReadRepository,
         private readonly SiapeBlackListServidorWriteRepositoryContract $blacklistWriteRepository,
@@ -165,7 +167,7 @@ final class SiapeServidorBlacklistLifecycleService
 
             if ($resultado['blacklists_criadas'] > 0 || $resultado['blacklists_removidas'] > 0 || $resultado['usuarios_reativados'] > 0) {
                 SiapeLog::info('Lifecycle SIAPE servidor reconciliado por dados funcionais', [
-                    'cpf_final' => substr($cpf, -4),
+                    'cpf_final' => substr($cpf, -self::CPF_LOG_SUFFIX_LENGTH),
                     ...$resultado,
                 ]);
             }
