@@ -25,6 +25,12 @@ interface PlanoEntregaReadRepositoryContract
 
     public function findAllByUnidadeId(string $unidadeId, ?string $dataInicio = null, ?string $dataFim = null): Collection;
 
+    public function countPlanosEntregaHomologacao(array $unidadesIds): int;
+
+    public function countPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): int;
+
+    public function countEntregasSemProgresso(array $unidadesIds, ?string $planoEntregaCriadoApos = null): int;
+
     public function findAllEntregasByPlanoId(string $planoEntregaId): Collection;
 
     /** @return \App\Models\PlanoEntregaEntrega|null */

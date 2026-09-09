@@ -86,7 +86,9 @@ export class AssinarPlanoUseCase {
     this.documento.set(null);
     this.jaAssinou.set(false);
     this.salvando.set(false);
-    this.recarregarDocumento(plano.id);
+    if (plano.documento_id) {
+      this.recarregarDocumento(plano.id);
+    }
   }
 
   private recarregarDocumento(planoId: string) {
@@ -138,6 +140,7 @@ export class AssinarPlanoUseCase {
         this.onAfterAssinar?.();
         this.message.success('Assinatura realizada com sucesso.');
       },
+      error: () => {}
     });
   }
 

@@ -2,14 +2,27 @@
 
 namespace App\Services;
 
+use App\Enums\StatusEnum;
 use App\Exceptions\ServerException;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoEntregaEntregaProgresso;
-use Illuminate\Database\Eloquent\Builder;
+use App\Repository\PlanoEntregaEntregaProgressoRepository;
+use App\Repository\PlanoEntregaEntregaRepository;
 
 class PlanoEntregaEntregaProgressoService extends ServiceBase
 {
-  private const STATUS_ATIVO = 'ATIVO';
+  protected PlanoEntregaEntregaRepository $entregaRepository;
+  protected PlanoEntregaEntregaProgressoRepository $progressoRepository;
+
+  public function __construct(
+    $collection = null,
+    ?PlanoEntregaEntregaRepository $entregaRepository = null,
+    ?PlanoEntregaEntregaProgressoRepository $progressoRepository = null
+  ) {
+    parent::__construct($collection);
+    $this->entregaRepository = $entregaRepository ?? app(PlanoEntregaEntregaRepository::class);
+    $this->progressoRepository = $progressoRepository ?? app(PlanoEntregaEntregaProgressoRepository::class);
+  }
 
   public function validateStore($data, $unidade, $action)
   {
@@ -34,35 +47,46 @@ class PlanoEntregaEntregaProgressoService extends ServiceBase
 
   private function validatePlanoEntregaAtivo(string $planoEntregaEntregaId): void
   {
-    $entrega = $this->findEntrega($planoEntregaEntregaId);
-    $status = $entrega?->planoEntrega?->status;
-    if ($status !== self::STATUS_ATIVO) {
+    $status = $this->statusPlanoEntrega($planoEntregaEntregaId);
+    if ($status !== StatusEnum::ATIVO->value) {
       throw new ServerException("ValidatePlanoEntrega", "O progresso só pode ser alterado quando o Plano de Entregas estiver com status ATIVO.");
     }
   }
 
-  protected function findEntrega(string $id): ?PlanoEntregaEntrega
+  private function statusPlanoEntrega(string $planoEntregaEntregaId): ?string
   {
-    return PlanoEntregaEntrega::find($id);
+    $entrega = $this->findEntrega($planoEntregaEntregaId);
+    return $entrega?->planoEntrega?->status;
   }
 
-  private function updateEntrega($data){
-    $entrega = PlanoEntregaEntrega::find($data["plano_entrega_entrega_id"]);
-    $progressos = PlanoEntregaEntregaProgresso::where("plano_entrega_entrega_id", $entrega->id)->orderBy('data_progresso', 'desc')->get();
-    
-    if ($progressos->isNotEmpty()) {
-      // Pega o último progresso lançado (mais recente)
-      $ultimoProgresso = $progressos->first();
-      
-      $entrega->update([
-        'progresso_esperado' => $ultimoProgresso->progresso_esperado,
-        'progresso_realizado' => $ultimoProgresso->progresso_realizado,
-        'data_inicio' =>  $ultimoProgresso->data_inicio,
-        'data_fim' =>  $ultimoProgresso->data_fim,
-        'meta' =>  $ultimoProgresso->meta,
-        'realizado' =>  $ultimoProgresso->realizado
-      ]);
+  protected function findEntrega(string $id): ?PlanoEntregaEntrega
+  {
+    return $this->entregaRepository->findById($id);
+  }
+
+  /** Período e expectativa do histórico; não inclui meta/realizado da tela principal. */
+  protected function dadosSincronizacaoEntrega(PlanoEntregaEntregaProgresso $progresso): array
+  {
+    return [
+      'progresso_esperado' => $progresso->progresso_esperado,
+      'data_inicio' => $progresso->data_inicio,
+      'data_fim' => $progresso->data_fim,
+    ];
+  }
+
+  protected function updateEntrega($data)
+  {
+    $entrega = $this->findEntrega($data["plano_entrega_entrega_id"]);
+    if ($entrega === null) {
+      return;
     }
+
+    $progresso = $this->progressoRepository->findLatestByEntregaId($entrega->id);
+    if ($progresso === null) {
+      return;
+    }
+
+    $this->entregaRepository->update($entrega->id, $this->dadosSincronizacaoEntrega($progresso));
   }
 
 }

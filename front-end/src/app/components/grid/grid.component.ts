@@ -56,7 +56,14 @@ declare var bootstrap: any;
 })
 export class GridComponent extends ComponentBase implements OnInit {
 	@HostBinding("class") get class(): string {
-		return this.isNoMargin ? "p-0 m-0" : "";
+		const classes: string[] = [];
+		if (this.isNoMargin) {
+			classes.push("p-0", "m-0");
+		}
+		if (this.fillHeight) {
+			classes.push("grid-fill-height");
+		}
+		return classes.join(" ");
 	}
 	@ContentChild(ColumnsComponent) columnsRef?: ColumnsComponent;
 	@ContentChild(FilterComponent) filterRef?: FilterComponent;
@@ -97,6 +104,7 @@ export class GridComponent extends ComponentBase implements OnInit {
 	@Input() editable?: string;
 	@Input() hasReport: boolean = false;
 	@Input() scrollable: boolean = false;
+	@Input() fillHeight: boolean = false;
 	@Input() controlName: string | null = null;
 	@Input() control?: AbstractControl = undefined;
 	@Input() expanded?: string;
@@ -969,8 +977,26 @@ export class GridComponent extends ComponentBase implements OnInit {
 				? "col-md-" +
 				  (12 - this.sidePanel.size) +
 				  (this.sidePanel.isFullSizeOnEdit && this.editing ? " d-none" : "")
-				: "col-md-12") + (this.isNoMargin ? " p-0 m-0" : "")
+				: "col-md-12") +
+			(this.isNoMargin ? " p-0 m-0" : "") +
+			(this.fillHeight ? " grid-fill-height-col" : "")
 		);
+	}
+
+	public get tableMinHeight(): string | null {
+		if (this.fillHeight) {
+			return "0px";
+		}
+		return this.minHeight + "px";
+	}
+
+	public get tableMaxHeight(): string | null {
+		if (this.fillHeight || this.maxHeight === "auto" || this.maxHeight === "") {
+			return null;
+		}
+		return typeof this.maxHeight === "number"
+			? this.maxHeight + "px"
+			: String(this.maxHeight);
 	}
 
 	public get classColPanel(): string {

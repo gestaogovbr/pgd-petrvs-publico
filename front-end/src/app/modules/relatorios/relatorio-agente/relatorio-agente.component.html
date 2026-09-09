@@ -1,8 +1,8 @@
 <grid [dao]="dao" 
     [title]="title" 
     [orderBy]="orderBy"
-    [maxHeight]="450"
     [scrollable]="true"
+    [fillHeight]="true"
     [className]="'relatorio-agente'"
 >
     <toolbar *ngIf="!selectable"></toolbar>
@@ -51,6 +51,7 @@
         >
             <ng-template let-header="header" #titleNome>
                 <input-text 
+                    [size]="0"
                     [control]="filter!.controls.nome"
                     controlName="this.filter.nome"
                     (blur)="onValueChange($event)"
@@ -69,6 +70,7 @@
         >
             <ng-template let-header="header" #titleMatricula>
                 <input-text 
+                    [size]="0"
                     [control]="filter!.controls.matricula"
                     controlName="this.filter.matricula"
                     (blur)="onValueChange($event)"
@@ -88,6 +90,7 @@
         >
             <ng-template let-header="header" #titleSituacao>
                 <input-select 
+                    [size]="0"
                     [items]="lookup.USUARIO_SITUACAO_SIAPE" 
                     [control]="filter!.controls.situacao"
                     controlName="this.filter.situacao"
@@ -108,6 +111,7 @@
         >
             <ng-template let-header="header" #titleSelecao>
                 <input-text 
+                    [size]="0"
                     [control]="filter!.controls.selecao"
                     controlName="this.filter.selecao"
                     (blur)="onValueChange($event)"
@@ -126,6 +130,7 @@
         >
             <ng-template let-header="header" #titleLotado>
                 <input-text 
+                    [size]="0"
                     [control]="filter!.controls.unidadeNome"
                     controlName="this.filter.unidadeNome"
                     (blur)="onValueChange($event)"
@@ -139,10 +144,22 @@
 
         <column title="Participante do PGD"
             [template]="columnParticipantePGD"
+            [titleTemplate]="titleParticipantePGD"
             [verticalAlign]="'bottom'"
             [width]="100"
             [align]="'center'"
         >
+            <ng-template let-header="header" #titleParticipantePGD>
+                <input-select 
+                    [size]="0"
+                    [items]="lookup.SIM_NAO" 
+                    [control]="filter!.controls.participantePGD"
+                    controlName="this.filter.participantePGD"
+                    (change)="onValueChange($event)"
+                    nullable
+                ></input-select>
+            </ng-template>
+
             <ng-template let-row="row" #columnParticipantePGD>
                 <span>{{row.participantePGD || '-'}}</span>
             </ng-template>
@@ -181,6 +198,7 @@
         >
             <ng-template let-header="header" #titleModalidadeSouGov>
                 <input-select 
+                    [size]="0"
                     [items]="tiposModalidade" 
                     [control]="filter!.controls.modalidadeSouGov"
                     controlName="this.filter.modalidadeSouGov"
@@ -201,6 +219,7 @@
         >
             <ng-template let-header="header" #titleModalidade>
                 <input-select 
+                    [size]="0"
                     [items]="tiposModalidade" 
                     [control]="filter!.controls.modalidade"
                     controlName="this.filter.modalidade"
@@ -221,6 +240,7 @@
         >
             <ng-template let-header="header" #titleComparacao>
                 <input-text 
+                    [size]="0"
                     [control]="filter!.controls.comparacaoSouGovPetrvs"
                     controlName="this.filter.comparacaoSouGovPetrvs"
                     (blur)="onValueChange($event)"
@@ -240,6 +260,7 @@
         >
             <ng-template let-header="header" #titleIndisponibilidadeTeletrabalho>
                 <input-select 
+                    [size]="0"
                     [items]="lookup.INDISPONIBILIDADE_TIPOS" 
                     [control]="filter!.controls.tipo_pedagio"
                     controlName="this.filter.tipo_pedagio"

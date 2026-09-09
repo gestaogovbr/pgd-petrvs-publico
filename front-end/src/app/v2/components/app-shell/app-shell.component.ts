@@ -7,23 +7,29 @@ import {
   inject,
   OnInit,
   signal,
+  TemplateRef,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, first } from 'rxjs';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { AuthService, UnidadeVinculada } from 'src/app/services/auth.service';
+import { DialogService } from 'src/app/services/dialog.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { NavigateService } from 'src/app/services/navigate.service';
+import { MuralAvisoTenantService } from 'src/app/services/mural-aviso-tenant.service';
 import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
 import { UtilService } from 'src/app/services/util.service';
 import { AppComponent } from 'src/app/app.component';
+import { MuralAvisoCardComponent } from '../mural-aviso-card/mural-aviso-card.component';
 
 @Component({
   selector: 'app-shell-v2',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule],
+  imports: [CommonModule, WebcomponentsAngularModule, MuralAvisoCardComponent],
   templateUrl: './app-shell.component.html',
   styleUrls: ['./app-shell.component.scss']
 })
@@ -34,9 +40,13 @@ export class AppShellV2Component implements OnInit {
   readonly notificacao = inject(NotificacaoService);
   readonly utils = inject(UtilService);
   readonly cdRef = inject(ChangeDetectorRef);
+  private readonly router = inject(Router);
+  private readonly dialog = inject(DialogService);
+  private readonly muralService = inject(MuralAvisoTenantService);
 
   @ViewChild('menuTrigger') menuTriggerRef?: ElementRef<HTMLButtonElement>;
   @ViewChild('menuClose')   menuCloseRef?:   ElementRef<HTMLButtonElement>;
+  @ViewChild('muralTemplate') muralTemplate!: TemplateRef<any>;
 
   readonly unidadeAberta = signal(false);
   readonly perfilAberto  = signal(false);
@@ -62,6 +72,50 @@ export class AppShellV2Component implements OnInit {
       }
     }
     this.auth.usuarioChanged$.subscribe(() => this.cdRef.markForCheck());
+    this.verificarMural();
+  }
+
+  private verificarMural(): void {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      first(),
+    ).subscribe(() => this.tentarExibirMural());
+  }
+
+  private tentarExibirMural(): void {
+    const urlTree = this.router.parseUrl(this.router.url);
+    if (urlTree.queryParams['mural'] !== '1') return;
+
+    // Remove o query param da URL sem recarregar
+    delete urlTree.queryParams['mural'];
+    this.router.navigateByUrl(urlTree, { replaceUrl: true });
+
+    this.muralService.getPendentes().then(avisos => {
+      if (avisos.length === 0) return;
+      this.exibirModalMural(avisos);
+    });
+  }
+
+  private exibirModalMural(avisos: { titulo: string; conteudo: string; remetente: string; data_publicacao: string }[]): void {
+    const avisosFormatados = avisos.map(aviso => {
+      const date = new Date(aviso.data_publicacao);
+      return {
+        ...aviso,
+        dataFormatada: date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+        horaFormatada: date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      };
+    });
+
+    const result = this.dialog.template(
+      { title: 'Mural de Avisos', modalWidth: 700 },
+      this.muralTemplate,
+      [{ label: 'Li e estou ciente', color: 'btn-primary', value: true }],
+      { avisos: avisosFormatados },
+    );
+    result.result.then(({ dialog: dlg }) => {
+      dlg.close();
+      this.muralService.confirmarLeitura();
+    });
   }
 
   // Fecha o overlay mais externo ao pressionar Escape

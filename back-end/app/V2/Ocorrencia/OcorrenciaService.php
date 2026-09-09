@@ -38,7 +38,7 @@ class OcorrenciaService
     public function agentes(): Collection
     {
         $usuarioLogadoId = Auth::id();
-        $unidadeIds = $this->getUnidadeIdsWithSubordinadas($usuarioLogadoId);
+        $unidadeIds = $this->unidadeRepository->getGerenciadasComSubordinadasIds($usuarioLogadoId);
 
         return $this->usuarioRepository->findAgentesVisiveis($usuarioLogadoId, $unidadeIds);
     }
@@ -46,7 +46,7 @@ class OcorrenciaService
     public function index(array $data): LengthAwarePaginator
     {
         $usuarioLogadoId = Auth::id();
-        $unidadeIds = $this->getUnidadeIdsWithSubordinadas($usuarioLogadoId);
+        $unidadeIds = $this->unidadeRepository->getGerenciadasComSubordinadasIds($usuarioLogadoId);
         $dto = OcorrenciaIndexDTO::fromRequest($data, $usuarioLogadoId, $unidadeIds);
 
         return $this->afastamentoRepository->buscarOcorrenciasListagem($dto);
@@ -87,16 +87,5 @@ class OcorrenciaService
         }
 
         return $this->impactoPolicy->calcularImpacto($dto);
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function getUnidadeIdsWithSubordinadas(string $usuarioId): array
-    {
-        $gerendciadasIds = $this->unidadeRepository->getUnidadesGerenciadas($usuarioId)->pluck('id')->all();
-        $subordinadasIds = $this->unidadeRepository->getSubordinadasRecursivas($gerendciadasIds)->pluck('id')->all();
-
-        return array_values(array_unique(array_merge($gerendciadasIds, $subordinadasIds)));
     }
 }

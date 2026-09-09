@@ -36,60 +36,25 @@ beforeEach(function () {
     Auth::shouldReceive('id')->andReturn('user-logado');
 });
 
-describe('getUnidadeIdsWithSubordinadas (via agentes)', function () {
+describe('getGerenciadasComSubordinadasIds (via agentes)', function () {
 
-    test('retorna unidades gerenciadas + subordinadas sem duplicatas', function () {
-        $gerenciadas = new Collection([
-            (object) ['id' => 'unidade-a'],
-            (object) ['id' => 'unidade-b'],
-        ]);
-        $subordinadas = new Collection([
-            (object) ['id' => 'unidade-b'], // duplicata
-            (object) ['id' => 'unidade-c'],
-        ]);
-
-        $this->unidadeRepo->shouldReceive('getUnidadesGerenciadas')
-            ->once()->with('user-logado')->andReturn($gerenciadas);
-
-        $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')
-            ->once()->with(['unidade-a', 'unidade-b'])->andReturn($subordinadas);
+    test('passa unidade IDs do repository para findAgentesVisiveis', function () {
+        $this->unidadeRepo->shouldReceive('getGerenciadasComSubordinadasIds')
+            ->once()->with('user-logado')
+            ->andReturn(['unidade-a', 'unidade-b', 'unidade-c']);
 
         $this->usuarioRepo->shouldReceive('findAgentesVisiveis')
             ->once()
-            ->with('user-logado', Mockery::on(function (array $ids) {
-                sort($ids);
-                return $ids === ['unidade-a', 'unidade-b', 'unidade-c'];
-            }))
-            ->andReturn(new Collection());
-
-        $this->service->agentes();
-    });
-
-    test('retorna apenas gerenciadas quando não há subordinadas', function () {
-        $gerenciadas = new Collection([
-            (object) ['id' => 'unidade-x'],
-        ]);
-
-        $this->unidadeRepo->shouldReceive('getUnidadesGerenciadas')
-            ->once()->with('user-logado')->andReturn($gerenciadas);
-
-        $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')
-            ->once()->with(['unidade-x'])->andReturn(new Collection());
-
-        $this->usuarioRepo->shouldReceive('findAgentesVisiveis')
-            ->once()
-            ->with('user-logado', ['unidade-x'])
+            ->with('user-logado', ['unidade-a', 'unidade-b', 'unidade-c'])
             ->andReturn(new Collection());
 
         $this->service->agentes();
     });
 
     test('retorna vazio quando usuário não gerencia nenhuma unidade', function () {
-        $this->unidadeRepo->shouldReceive('getUnidadesGerenciadas')
-            ->once()->with('user-logado')->andReturn(new Collection());
-
-        $this->unidadeRepo->shouldReceive('getSubordinadasRecursivas')
-            ->once()->with([])->andReturn(new Collection());
+        $this->unidadeRepo->shouldReceive('getGerenciadasComSubordinadasIds')
+            ->once()->with('user-logado')
+            ->andReturn([]);
 
         $this->usuarioRepo->shouldReceive('findAgentesVisiveis')
             ->once()

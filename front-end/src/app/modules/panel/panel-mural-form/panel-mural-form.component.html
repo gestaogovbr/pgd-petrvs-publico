@@ -1,0 +1,82 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="titulo" [buttons]="formButtons" (submit)="onSaveData()" (cancel)="onCancel()">
+  <div class="row">
+
+    <input-display *ngIf="!isNew && criadoPor"
+      [size]="12"
+      label="Criado por"
+      [value]="criadoPor"
+      icon="bi bi-person"
+    ></input-display>
+
+    <input-text
+      [size]="12"
+      label="Título"
+      controlName="titulo"
+      [control]="form!.controls.titulo"
+      [attr.maxlength]="255"
+      required
+    ></input-text>
+
+    <input-textarea
+      [size]="12"
+      label="Conteúdo"
+      controlName="conteudo"
+      [control]="form!.controls.conteudo"
+      [rows]="6"
+      required
+    ></input-textarea>
+    <div class="col-md-12 text-end">
+      <small [class]="(form!.controls.conteudo.value?.length || 0) > maxConteudo ? 'text-danger' : 'text-muted'">
+        {{ (form!.controls.conteudo.value?.length || 0).toLocaleString('pt-BR') }} / {{ maxConteudo.toLocaleString('pt-BR') }} caracteres
+      </small>
+    </div>
+
+    <input-datetime
+      [size]="6"
+      label="Data/Hora de Publicação"
+      labelInfo="Define a data e o horário exatos a partir dos quais o aviso ficará visível aos usuários."
+      controlName="data_publicacao"
+      [control]="form!.controls.data_publicacao"
+      required
+    ></input-datetime>
+
+    <input-datetime
+      [size]="6"
+      label="Data/Hora de Expiração"
+      labelInfo="Define a data e o horário limites para a exibição do aviso. Após este momento, a mensagem deixa de ser apresentada no login dos usuários."
+      controlName="data_expiracao"
+      [control]="form!.controls.data_expiracao"
+      required
+    ></input-datetime>
+
+    <input-select
+      [size]="6"
+      label="Destinatário"
+      controlName="destinatario"
+      [control]="form!.controls.destinatario"
+      [items]="destinatarioItems"
+      required
+    ></input-select>
+
+    <input-select *ngIf="isDestinatarioTenant"
+      [size]="6"
+      label="Tenant"
+      controlName="tenant_id"
+      [control]="form!.controls.tenant_id"
+      [items]="tenantItems"
+      required
+    ></input-select>
+  </div>
+</editable-form>
+
+<ng-template #previewTemplate let-aviso="aviso">
+  <div class="overflow-auto px-2 mural-aviso-container">
+    <mural-aviso-card
+      [titulo]="aviso.titulo"
+      [conteudo]="aviso.conteudo"
+      [remetente]="aviso.remetente"
+      [dataFormatada]="aviso.dataFormatada"
+      [horaFormatada]="aviso.horaFormatada"
+    ></mural-aviso-card>
+  </div>
+</ng-template>

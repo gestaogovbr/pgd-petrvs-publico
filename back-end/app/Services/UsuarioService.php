@@ -823,8 +823,6 @@ class UsuarioService extends ServiceBase
 
         if ($perfil->nivel < 6 && $usuarioExterno == 1) {
             throw new ServerException("ValidateUsuario", "Usuário externo não pode ter o nível de acesso: " . $perfil->nome);
-        } elseif ($perfil->nivel == 6 && $usuarioExterno == 0) {
-            throw new ServerException("ValidateUsuario", "Usuário não pode ter o nível de acesso: " . $perfil->nome);
         }
     }
 

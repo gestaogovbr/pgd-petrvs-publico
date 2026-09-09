@@ -476,6 +476,12 @@ export class AppComponent implements IAppComponent {
         route: ['relatorios', 'planos-entrega'],
         icon: this.entity.getIcon('PlanoEntrega'),
       },
+      RELATORIO_ENTREGAS: {
+        name: 'Entregas',
+        permition: 'MOD_RELATORIO_PE',
+        route: ['relatorios', 'entregas'],
+        icon: this.entity.getIcon('PlanoEntregaEntrega'),
+      },
       RELATORIO_USUARIOS: {
         name: this.lex.translate("Agentes Públicos"),
         permition: 'MOD_RELATORIO_USUARIO',
@@ -563,19 +569,17 @@ export class AppComponent implements IAppComponent {
         menu: [
           this.menuSchema.RELATORIO_PLANO_TRABALHO,
           this.menuSchema.RELATORIO_PLANO_ENTREGA,
+          this.menuSchema.RELATORIO_ENTREGAS,
           this.menuSchema.RELATORIO_USUARIOS,
           this.menuSchema.RELATORIO_UNIDADES,
           this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE,
         ],
       },
       {
-        name: this.lex.translate("Indicadores"),
-        id: "navbarDropdownIndicadores",
-        menu: [
-          this.menuSchema.INDICADORES_ENTREGAS,
-          this.menuSchema.INDICADORES_EQUIPES,
-          this.menuSchema.INDICADORES_GESTAO,
-        ],
+        name: this.lex.translate("Painéis Gerenciais"),
+        icon: 'bi bi-list',
+        route: ['gestao', 'paineis-gerenciais'],
+        permition: 'MOD_PAINEL_GER',
       },
     ];
 
@@ -590,13 +594,10 @@ export class AppComponent implements IAppComponent {
         name: this.lex.translate("Relatório de Agentes Públicos"),
       }),
       {
-        name: this.lex.translate("Indicadores"),
-        id: "navbarDropdownIndicadores",
-        menu: [
-          this.menuSchema.INDICADORES_ENTREGAS,
-          this.menuSchema.INDICADORES_EQUIPES,
-          this.menuSchema.INDICADORES_GESTAO,
-        ],
+        name: this.lex.translate("Painéis Gerenciais"),
+        icon: 'bi bi-list',
+        route: ['gestao', 'paineis-gerenciais'],
+        permition: 'MOD_PAINEL_GER',
       },
     ];
 
@@ -608,19 +609,17 @@ export class AppComponent implements IAppComponent {
         menu: [
           this.menuSchema.RELATORIO_PLANO_TRABALHO,
           this.menuSchema.RELATORIO_PLANO_ENTREGA,
+          this.menuSchema.RELATORIO_ENTREGAS,
           this.menuSchema.RELATORIO_USUARIOS,
           this.menuSchema.RELATORIO_UNIDADES,
           this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE,
         ],
       },
       {
-        name: this.lex.translate("Indicadores"),
-        id: "navbarDropdownIndicadores",
-        menu: [
-          this.menuSchema.INDICADORES_ENTREGAS,
-          this.menuSchema.INDICADORES_EQUIPES,
-          this.menuSchema.INDICADORES_GESTAO,
-        ],
+        name: this.lex.translate("Painéis Gerenciais"),
+        icon: 'bi bi-list',
+        route: ['gestao', 'paineis-gerenciais'],
+        permition: 'MOD_PAINEL_GER',
       },
     ];
 

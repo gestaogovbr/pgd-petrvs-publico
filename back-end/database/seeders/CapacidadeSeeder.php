@@ -83,6 +83,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_SOLUCOES_EDT"],
       ["codigo" => "MOD_SOLUCOES_EXCL"],
       ["codigo" => "MOD_UND"],
+      ["codigo" => "MOD_PAINEL_GER"],
     ];
 
 
@@ -189,6 +190,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_RELATORIO_UNIDADE"],
       ["codigo" => "MOD_RELATORIO_PT"],
       ["codigo" => "MOD_RELATORIO_PE"],
+      ["codigo" => "MOD_RELATORIO_ENTREGA"],
       ["codigo" => "MOD_TIPO_ATV"],
       ["codigo" => "MOD_TIPO_ATV_EDT_UND"],
       ["codigo" => "MOD_TIPO_ATV_INCL"],
@@ -212,7 +214,8 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_SOLUCOES"],
       ["codigo" => "MOD_SOLUCOES_INCL"],
       ["codigo" => "MOD_SOLUCOES_EDT"],
-      ["codigo" => "MOD_SOLUCOES_EXCL"]
+      ["codigo" => "MOD_SOLUCOES_EXCL"],
+      ["codigo" => "MOD_PAINEL_GER"],
     ];
 
     $capacidades_administrador_negocial = [
@@ -333,7 +336,9 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_RELATORIO_PT"],
       ["codigo" => "MOD_RELATORIO_PT_UNIDADES_VINCULADAS"],
       ["codigo" => "MOD_RELATORIO_PE"],
+      ["codigo" => "MOD_RELATORIO_ENTREGA"],
       ["codigo" => "MOD_RELATORIO_PE_UNIDADES_VINCULADAS"],
+      ["codigo" => "MOD_RELATORIO_ENTREGA_UNIDADES_VINCULADAS"],
       ["codigo" => "MOD_RELATORIO_USUARIO_UNIDADES_VINCULADAS"],
       ["codigo" => "MOD_RELATORIO_UNIDADE_UNIDADES_VINCULADAS"],
       ["codigo" => "MOD_TEMP"],
@@ -379,7 +384,8 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_TIPO_CLI"],
       ["codigo" => "MOD_TIPO_CLI_EDT"],
       ["codigo" => "MOD_TIPO_CLI_EXCL"],
-      ["codigo" => "MOD_TIPO_CLI_INCL"]
+      ["codigo" => "MOD_TIPO_CLI_INCL"],
+      ["codigo" => "MOD_PAINEL_GER"],
     ];
 
     $capacidades_administrador_geral = array_merge($capacidades_administrador_negocial, [
@@ -413,6 +419,7 @@ class CapacidadeSeeder extends Seeder
       ["codigo" => "MOD_PROD_EXCL"],
       ["codigo" => "MOD_RELATORIO_PT_TODAS_UNIDADES"],
       ["codigo" => "MOD_RELATORIO_PE_TODAS_UNIDADES"],
+      ["codigo" => "MOD_RELATORIO_ENTREGA_TODAS_UNIDADES"],
       ["codigo" => "MOD_RELATORIO_USUARIO_TODAS_UNIDADES"],
       ["codigo" => "MOD_RELATORIO_UNIDADE_TODAS_UNIDADES"],
       ["codigo" => "MOD_SIAPE_RELATORIO_CARGA"],

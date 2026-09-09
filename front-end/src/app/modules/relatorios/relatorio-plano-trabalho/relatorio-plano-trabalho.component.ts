@@ -19,7 +19,10 @@ import { ModalidadePgdService } from "src/app/services/modalidade-pgd.service";
 @Component({
     selector: 'relatorio-plano-trabalho',
     templateUrl: './relatorio-plano-trabalho.component.html',
-    styleUrls: ['./relatorio-plano-trabalho.component.scss'],
+    styleUrls: [
+        '../relatorio-base/relatorio-base.component.scss',
+        './relatorio-plano-trabalho.component.scss'
+    ],
     standalone: false
 })
 export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService> {
@@ -33,12 +36,19 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   public resumido: boolean = true;
   public tiposModalidade: LookupItem[] = [];
   public tiposNotas: LookupItem[] = [];
+  public statusPtItems: LookupItem[] = [];
 
   constructor(public injector: Injector, dao: RelatorioPlanoTrabalhoDaoService) {
       super(injector, RelatorioPlanoTrabalho, RelatorioPlanoTrabalhoDaoService);
       this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
-      this.tiposModalidade = injector.get<ModalidadePgdService>(ModalidadePgdService).items;
+      this.tiposModalidade = injector.get<ModalidadePgdService>(ModalidadePgdService).items
+          .filter(item => item.key != null);
+      this.statusPtItems = this.lookup.PLANO_TRABALHO_STATUS.map(item => {
+          if (item.key === 'INCLUIDO') return { ...item, value: 'Rascunho' };
+          if (item.key === 'ATIVO') return { ...item, value: 'Execução' };
+          return { ...item };
+      });
       this.tipoAvaliacaoNotaDao = injector.get<TipoAvaliacaoNotaDaoService>(TipoAvaliacaoNotaDaoService);
       this.relatorioPlanoTrabalhoDao = injector.get<RelatorioPlanoTrabalhoDaoService>(RelatorioPlanoTrabalhoDaoService);
       this.relatorioPlanoTrabalhoDetalhadoDao = injector.get<RelatorioPlanoTrabalhoDetalhadoDaoService>(RelatorioPlanoTrabalhoDetalhadoDaoService);
@@ -58,8 +68,8 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
           participanteNome: { default: "" },
           unidadeNome: { default: "" },
           chd: { default: "" },
-          status: { default: "" },
-          modalidade: { default: ""},
+          status: { default: null },
+          modalidade: { default: null },
           duracao: { default: ""},
           qtdePeriodosAvaliativos: { default: ""},
           data_inicio_avaliativo: { default: ""},
@@ -86,6 +96,28 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
       this.filter.get('data_fim')?.updateValueAndValidity();
 
       this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
+
+      this.loadFilterParams = (params: any, filter?: any) => {
+        const parsed = { ...params };
+        if (parsed.periodo_inicio && typeof parsed.periodo_inicio === 'string') {
+          parsed.periodo_inicio = new Date(parsed.periodo_inicio + 'T00:00:00');
+        }
+        if (parsed.periodo_fim && typeof parsed.periodo_fim === 'string') {
+          parsed.periodo_fim = new Date(parsed.periodo_fim + 'T00:00:00');
+        }
+        if (parsed.incluir_unidades_subordinadas === 'true' || parsed.incluir_unidades_subordinadas === '1') {
+          parsed.incluir_unidades_subordinadas = true;
+        }
+        if (parsed.incluir_periodos_avaliativos === 'true' || parsed.incluir_periodos_avaliativos === '1') {
+          parsed.incluir_periodos_avaliativos = true;
+          this.resumido = false;
+          this.dao!.collection = 'Relatorio/planos-trabalho-detalhado';
+        }
+        if (parsed.somente_vigentes === 'true' || parsed.somente_vigentes === '1') {
+          parsed.somente_vigentes = true;
+        }
+        filter?.patchValue(parsed, { emitEvent: true });
+      };
   }
   
   public periodoValidator(control: AbstractControl): ValidationErrors | null
@@ -98,6 +130,10 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
 
   public async ngOnInit() {
       super.ngOnInit();
+
+      if (this.metadata?.unidade_id) {
+        this.filter?.controls.unidade_id.setValue(this.metadata.unidade_id);
+      }
 
       this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
           .asPromise().then(notas => {
@@ -115,6 +151,14 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   public ngAfterViewInit(): void {
       super.ngAfterViewInit();
       this.loaded = true;
+  }
+
+  public onLoad() {
+    if (!this.resumido && this.grid) {
+      this.cdRef.detectChanges();
+      this.grid.loadColumns();
+    }
+    super.onLoad();
   }
 
   public filterWhere = (filter: FormGroup) => {
@@ -229,6 +273,10 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
         result.push(["data_conclusao", "==", form.data_conclusao.toISOString().slice(0,10)]);
       }
     }
+
+    if (this.metadata?.plano_entrega_entrega_id) {
+      result.push(["plano_entrega_entrega_id", "==", this.metadata.plano_entrega_entrega_id]);
+    }
     
     return result;
   };
@@ -269,7 +317,6 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
     try{
       return this.dao!.exportarXls(!form.incluir_periodos_avaliativos, {
         where: queryOptions.where,
@@ -277,8 +324,6 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
       });
     } catch (error: any) {
       this.error(error);
-    } finally {
-      this.loading = false;
     }
 
     return of(null);

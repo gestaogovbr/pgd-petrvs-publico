@@ -15,7 +15,10 @@ import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.compone
 @Component({
     selector: 'relatorio-plano-entrega',
     templateUrl: './relatorio-plano-entrega.component.html',
-    styleUrls: ['./relatorio-plano-entrega.component.scss'],
+    styleUrls: [
+        '../relatorio-base/relatorio-base.component.scss',
+        './relatorio-plano-entrega.component.scss'
+    ],
     standalone: false
 })
 export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<RelatorioPlanoEntrega, RelatorioPlanoEntregaDaoService> {
@@ -64,6 +67,23 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
       this.filter.get('unidade_id')?.updateValueAndValidity();
 
       this.orderBy = [['unidadeHierarquia', 'asc'], ['numero', 'asc']];
+
+      this.loadFilterParams = (params: any, filter?: any) => {
+        const parsed = { ...params };
+        if (parsed.periodo_inicio && typeof parsed.periodo_inicio === 'string') {
+          parsed.periodo_inicio = new Date(parsed.periodo_inicio + 'T00:00:00');
+        }
+        if (parsed.periodo_fim && typeof parsed.periodo_fim === 'string') {
+          parsed.periodo_fim = new Date(parsed.periodo_fim + 'T00:00:00');
+        }
+        if (parsed.incluir_unidades_subordinadas === 'true' || parsed.incluir_unidades_subordinadas === '1') {
+          parsed.incluir_unidades_subordinadas = true;
+        }
+        if (parsed.somente_vigentes === 'true' || parsed.somente_vigentes === '1') {
+          parsed.somente_vigentes = true;
+        }
+        filter?.patchValue(parsed, { emitEvent: true });
+      };
   }
 
   public async ngOnInit() {
@@ -177,7 +197,6 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
     try{
       return this.dao!.exportarXls({
         where: queryOptions.where,
@@ -185,8 +204,6 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
       });
     } catch (error: any) {
       this.error(error);
-    } finally {
-      this.loading = false;
     }
 
     return of(null);

@@ -185,6 +185,44 @@ test('retorna participantePGD Sim para quem participa_pgd é sim', function () {
     expect($row->participantePGD)->toBe('Sim');
 });
 
+test('filtro participantePGD Sim exclui quem não participa do PGD', function () {
+    $participante = ($this->criarUsuarioLotado)(['participa_pgd' => 'sim']);
+    $naoParticipante = ($this->criarUsuarioLotado)(['participa_pgd' => 'não']);
+
+    $result = $this->repository->query([
+        'where' => [
+            ['unidade_id', '==', $this->unidade->id],
+            ['participantePGD', '==', 'Sim'],
+        ],
+        'page' => 1,
+        'limit' => 10,
+    ]);
+
+    $ids = $result['rows']->pluck('id')->toArray();
+
+    expect($ids)->toContain($participante->id);
+    expect($ids)->not->toContain($naoParticipante->id);
+});
+
+test('filtro participantePGD Não exclui quem participa do PGD', function () {
+    $participante = ($this->criarUsuarioLotado)(['participa_pgd' => 'sim']);
+    $naoParticipante = ($this->criarUsuarioLotado)(['participa_pgd' => 'não']);
+
+    $result = $this->repository->query([
+        'where' => [
+            ['unidade_id', '==', $this->unidade->id],
+            ['participantePGD', '==', 'Não'],
+        ],
+        'page' => 1,
+        'limit' => 10,
+    ]);
+
+    $ids = $result['rows']->pluck('id')->toArray();
+
+    expect($ids)->toContain($naoParticipante->id);
+    expect($ids)->not->toContain($participante->id);
+});
+
 test('retorna participantePGD Não para quem participa_pgd é não', function () {
     $usuario = ($this->criarUsuarioLotado)(['participa_pgd' => 'não']);
 

@@ -6,7 +6,14 @@ import { Page, PlanoTrabalho, QueryParams } from '../domain/types';
 @Injectable()
 export class ListarPlanos {
   private readonly api = inject(PlanoApiClient);
+
   execute(params: QueryParams): Observable<Page<PlanoTrabalho>> {
+    if (params.filters?.['aguardando_minha_assinatura']) {
+      return this.api.queryAguardandoMinhaAssinatura(params.page, params.pageSize);
+    }
+    if (params.filters?.['aguardando_minha_avaliacao']) {
+      return this.api.queryAguardandoMinhaAvaliacao(params.page, params.pageSize);
+    }
     return this.api.query(params);
   }
 }

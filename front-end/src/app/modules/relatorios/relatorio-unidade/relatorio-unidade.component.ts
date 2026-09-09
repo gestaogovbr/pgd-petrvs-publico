@@ -12,7 +12,10 @@ import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.compone
 @Component({
     selector: 'relatorio-unidade',
     templateUrl: './relatorio-unidade.component.html',
-    styleUrls: ['./relatorio-unidade.component.scss'],
+    styleUrls: [
+        '../relatorio-base/relatorio-base.component.scss',
+        './relatorio-unidade.component.scss'
+    ],
     standalone: false
 })
 export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioUnidade, RelatorioUnidadeDaoService> {
@@ -45,6 +48,14 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
     this.filter.get('unidade_id')?.updateValueAndValidity();
 
     this.orderBy = [['unidadeHierarquia', 'asc'], ['sigla', 'asc']];
+
+    this.loadFilterParams = (params: any, filter?: any) => {
+      const parsed = { ...params };
+      if (parsed.incluir_unidades_subordinadas === 'true' || parsed.incluir_unidades_subordinadas === '1') {
+        parsed.incluir_unidades_subordinadas = true;
+      }
+      filter?.patchValue(parsed, { emitEvent: true });
+    };
   }
 
   public ngAfterViewInit(): void {
@@ -122,7 +133,6 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
     try{
       return this.dao!.exportarXls({
         where: queryOptions.where,
@@ -130,8 +140,6 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
       });
     } catch (error: any) {
       this.error(error);
-    } finally {
-      this.loading = false;
     }
 
     return of(null);

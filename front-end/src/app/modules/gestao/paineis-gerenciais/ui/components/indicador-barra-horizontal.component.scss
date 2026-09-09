@@ -1,0 +1,61 @@
+.indicador-barra {
+  &__voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-scale-half);
+    background: none;
+    border: none;
+    color: var(--interactive);
+    font-size: var(--font-size-scale-down-01);
+    font-weight: var(--font-weight-semi-bold);
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: var(--spacing-scale-base);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__chart {
+    position: relative;
+  }
+
+  &__legenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-scale-2x);
+    margin-top: var(--spacing-scale-2x);
+  }
+
+  &__legenda-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-scale-half);
+  }
+
+  &__legenda-cor {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  &__legenda-label {
+    font-size: var(--font-size-scale-down-01);
+  }
+
+  &__saiba-mais {
+    margin-top: var(--spacing-scale-base);
+    font-size: var(--font-size-scale-down-01);
+
+    a {
+      color: var(--interactive);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

@@ -34,6 +34,19 @@ const routes: Routes = [
     }
   },
   {
+    path: 'entregas',
+    loadChildren: () => import('./relatorio-entrega/routes').then((m) => m.routes),
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: 'Entregas',
+      breadcrumb: 'Entregas',
+      breadcrumbParents: [{ label: 'Relatórios' }],
+      permission: 'MOD_RELATORIO_PE',
+    },
+  },
+  {
     path: 'planos-entrega/lacunas',
     loadChildren: () => import('./relatorio-plano-entrega-lacuna/routes').then(m => m.routes),
     canActivate: [AuthGuard],

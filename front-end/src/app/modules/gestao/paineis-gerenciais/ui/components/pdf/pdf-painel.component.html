@@ -1,0 +1,66 @@
+@if (visivel()) {
+  <div [style.width]="larguraUtil" style="visibility: hidden; position: absolute; overflow: hidden; height: 0;">
+    <div #conteudo class="pdf-painel">
+      <table>
+        <thead>
+          <tr><td>
+            <h2 class="pdf-painel__titulo">Painel Gerencial: {{ cabecalho()!.painel }}</h2>
+
+            @if (cabecalho()!.tipoConsulta) {
+              <p class="pdf-painel__meta">
+                <strong>Tipo de Consulta:</strong> {{ cabecalho()!.tipoConsulta }}
+              </p>
+            }
+
+            <p class="pdf-painel__meta">
+              <strong>Unidade:</strong> {{ cabecalho()!.unidade }}
+            </p>
+
+            @if (cabecalho()!.periodo) {
+              <p class="pdf-painel__meta">
+                <strong>Período:</strong> {{ cabecalho()!.periodo }}
+              </p>
+            }
+
+            <p class="pdf-painel__meta">
+              <strong>Data/hora de geração:</strong> {{ dataGeracao }}
+            </p>
+          </td></tr>
+        </thead>
+        <tbody>
+          @for (indicador of indicadoresRender(); track indicador.titulo; let i = $index) {
+            <tr><td>
+              <div class="pdf-indicador">
+                <h3 class="pdf-indicador__titulo">{{ indicador.titulo }}</h3>
+                <p class="pdf-indicador__info">{{ indicador.informacaoAdicional }}</p>
+
+                @if (indicador.temGrafico) {
+                  <div class="pdf-indicador__grafico">
+                    <div [id]="'chart-' + i" class="pdf-indicador__chart-container">
+                      <canvas></canvas>
+                    </div>
+                  </div>
+
+                  @if (indicador.segmentos.length > 0) {
+                    <div class="pdf-indicador__legenda">
+                      @for (s of indicador.segmentos; track s.nome) {
+                        <span class="pdf-indicador__legenda-item">
+                          <span class="pdf-indicador__legenda-cor" [style.background-color]="s.cor"></span>
+                          <span class="pdf-indicador__legenda-nome">{{ s.nome }}</span>
+                        </span>
+                      }
+                    </div>
+                  }
+                } @else {
+                  <p class="pdf-indicador__sem-dados">Sem dados para exibir.</p>
+                }
+
+                <p class="pdf-indicador__origem">{{ indicador.origemDados }}</p>
+              </div>
+            </td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+}

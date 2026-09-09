@@ -131,6 +131,23 @@ describe('UnidadeIntegranteAtribuicaoObserver - invalidação de cache', functio
         expect(Cache::has($cacheKey))->toBeTrue('Atribuição COLABORADOR não deveria invalidar cache de gestor');
     });
 
+    test('observer invalida cache de atribuições ao criar atribuição não-gestor', function () {
+        $cacheKey = 'unidades-atribuicoes:' . $this->usuario->id;
+        Cache::put($cacheKey, [$this->unidade->id], 3600);
+
+        expect(Cache::has($cacheKey))->toBeTrue();
+
+        $colaborador = new UnidadeIntegranteAtribuicao();
+        $colaborador->setConnection('tenant');
+        $colaborador->forceFill([
+            'id' => Str::uuid()->toString(),
+            'unidade_integrante_id' => $this->integrante->id,
+            'atribuicao' => 'COLABORADOR',
+        ])->save();
+
+        expect(Cache::has($cacheKey))->toBeFalse('COLABORADOR deveria invalidar cache de unidades com atribuição');
+    });
+
     test('repository delete dispara observer e invalida cache', function () {
         $cacheKey = 'unidades-geridas:' . $this->usuario->id;
 
