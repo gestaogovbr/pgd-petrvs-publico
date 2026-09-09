@@ -34,41 +34,28 @@ final class RelatorioPlanoEntregaLacunaCalculator
             return [];
         }
 
-        $analiseInicio = $consultaInicio->copy();
-        $analiseFim = $consultaFim->copy();
-
-        foreach ($historicoExecutora as $periodo) {
-            if (! $periodo['executora']) {
-                continue;
-            }
-            $analiseInicio = $this->minDate($analiseInicio, Carbon::parse($periodo['data_inicio'])->startOfDay());
-            $fimPeriodo = $periodo['data_fim'] !== null
-                ? Carbon::parse($periodo['data_fim'])->endOfDay()
-                : Carbon::today()->endOfDay();
-            $analiseFim = $this->maxDate($analiseFim, $fimPeriodo);
-        }
-
-        foreach ($planosCobertura as $plano) {
-            $analiseInicio = $this->minDate($analiseInicio, Carbon::parse($plano['data_inicio'])->startOfDay());
-            $fimPlano = $plano['data_fim'] !== null
-                ? Carbon::parse($plano['data_fim'])->endOfDay()
-                : Carbon::parse($plano['data_inicio'])->endOfDay();
-            $analiseFim = $this->maxDate($analiseFim, $fimPlano);
-        }
+        $historico = $this->normalizarHistorico($historicoExecutora);
+        $planos = $this->normalizarPlanos($planosCobertura, $consultaFim);
+        [$limiteInicio, $limiteFim] = $this->resolverLimitesAnalise(
+            $historico,
+            $planos,
+            $consultaInicio,
+            $consultaFim,
+        );
 
         $diasLacuna = [];
-        $periodo = CarbonPeriod::create($analiseInicio->toDateString(), $analiseFim->toDateString());
+        $periodo = CarbonPeriod::create($consultaInicio->toDateString(), $consultaFim->toDateString());
 
         foreach ($periodo as $dia) {
             if (! $dia->isWeekday()) {
                 continue;
             }
 
-            if (! $this->isExecutoraNoDia($historicoExecutora, $dia)) {
+            if (! $this->isExecutoraNoDia($historico, $dia)) {
                 continue;
             }
 
-            if ($this->possuiCoberturaNoDia($planosCobertura, $dia)) {
+            if ($this->possuiCoberturaNoDia($planos, $dia)) {
                 continue;
             }
 
@@ -77,33 +64,146 @@ final class RelatorioPlanoEntregaLacunaCalculator
 
         $lacunas = $this->agruparDiasConsecutivos($diasLacuna);
 
-        return array_values(array_filter(
+        return array_map(
+            fn (array $lacuna): array => $this->expandirLacuna(
+                $lacuna,
+                $historico,
+                $planos,
+                $limiteInicio,
+                $limiteFim,
+            ),
             $lacunas,
-            static fn (array $lacuna): bool => self::possuiIntersecao(
-                $lacuna['data_inicio'],
-                $lacuna['data_fim'],
-                $consultaInicio->toDateString(),
-                $consultaFim->toDateString(),
-            )
-        ));
+        );
     }
 
     /**
      * @param list<array{executora: bool, data_inicio: string, data_fim: ?string}> $historicoExecutora
+     * @return list<array{executora: bool, inicio: Carbon, fim: ?Carbon}>
      */
-    private function isExecutoraNoDia(array $historicoExecutora, Carbon $dia): bool
+    private function normalizarHistorico(array $historicoExecutora): array
     {
+        $historico = [];
         foreach ($historicoExecutora as $periodo) {
+            $historico[] = [
+                'executora' => $periodo['executora'],
+                'inicio' => Carbon::parse($periodo['data_inicio'])->startOfDay(),
+                'fim' => $periodo['data_fim'] !== null
+                    ? Carbon::parse($periodo['data_fim'])->endOfDay()
+                    : null,
+            ];
+        }
+
+        return $historico;
+    }
+
+    /**
+     * @param list<array{data_inicio: string, data_fim: ?string}> $planosCobertura
+     * @return list<array{inicio: Carbon, fim: Carbon}>
+     */
+    private function normalizarPlanos(array $planosCobertura, Carbon $consultaFim): array
+    {
+        $planos = [];
+        foreach ($planosCobertura as $plano) {
+            $planos[] = [
+                'inicio' => Carbon::parse($plano['data_inicio'])->startOfDay(),
+                'fim' => $this->resolverFimCobertura($plano['data_fim'], $consultaFim),
+            ];
+        }
+
+        return $planos;
+    }
+
+    /**
+     * @param list<array{executora: bool, inicio: Carbon, fim: ?Carbon}> $historico
+     * @param list<array{inicio: Carbon, fim: Carbon}> $planos
+     * @return array{0: Carbon, 1: Carbon}
+     */
+    private function resolverLimitesAnalise(
+        array $historico,
+        array $planos,
+        Carbon $consultaInicio,
+        Carbon $consultaFim,
+    ): array {
+        $limiteInicio = $consultaInicio->copy();
+        $limiteFim = $consultaFim->copy();
+
+        foreach ($historico as $periodo) {
+            if (! $periodo['executora']) {
+                continue;
+            }
+            $limiteInicio = $this->minDate($limiteInicio, $periodo['inicio']);
+            $fimPeriodo = $periodo['fim'] ?? Carbon::today()->endOfDay();
+            $limiteFim = $this->maxDate($limiteFim, $fimPeriodo);
+        }
+
+        foreach ($planos as $plano) {
+            $limiteInicio = $this->minDate($limiteInicio, $plano['inicio']);
+            $limiteFim = $this->maxDate($limiteFim, $plano['fim']);
+        }
+
+        return [$limiteInicio, $limiteFim];
+    }
+
+    /**
+     * @param array{data_inicio: string, data_fim: string, quantidade_dias: int} $lacuna
+     * @param list<array{executora: bool, inicio: Carbon, fim: ?Carbon}> $historico
+     * @param list<array{inicio: Carbon, fim: Carbon}> $planos
+     * @return array{data_inicio: string, data_fim: string, quantidade_dias: int}
+     */
+    private function expandirLacuna(
+        array $lacuna,
+        array $historico,
+        array $planos,
+        Carbon $limiteInicio,
+        Carbon $limiteFim,
+    ): array {
+        $inicio = Carbon::parse($lacuna['data_inicio'])->startOfDay();
+        $fim = Carbon::parse($lacuna['data_fim'])->startOfDay();
+
+        $anterior = $this->diaUtilAnterior($inicio);
+        while (
+            $anterior->greaterThanOrEqualTo($limiteInicio)
+            && $this->isDiaDeLacuna($historico, $planos, $anterior)
+        ) {
+            $inicio = $anterior->copy();
+            $anterior = $this->diaUtilAnterior($inicio);
+        }
+
+        $proximo = $this->proximoDiaUtil($fim);
+        while (
+            $proximo->lessThanOrEqualTo($limiteFim)
+            && $this->isDiaDeLacuna($historico, $planos, $proximo)
+        ) {
+            $fim = $proximo->copy();
+            $proximo = $this->proximoDiaUtil($fim);
+        }
+
+        return $this->montarLacuna($inicio->toDateString(), $fim->toDateString());
+    }
+
+    /**
+     * @param list<array{executora: bool, inicio: Carbon, fim: ?Carbon}> $historico
+     * @param list<array{inicio: Carbon, fim: Carbon}> $planos
+     */
+    private function isDiaDeLacuna(array $historico, array $planos, Carbon $dia): bool
+    {
+        return $this->isExecutoraNoDia($historico, $dia)
+            && ! $this->possuiCoberturaNoDia($planos, $dia);
+    }
+
+    /**
+     * @param list<array{executora: bool, inicio: Carbon, fim: ?Carbon}> $historico
+     */
+    private function isExecutoraNoDia(array $historico, Carbon $dia): bool
+    {
+        foreach ($historico as $periodo) {
             if (! $periodo['executora']) {
                 continue;
             }
 
-            $inicio = Carbon::parse($periodo['data_inicio'])->startOfDay();
-            $fim = $periodo['data_fim'] !== null
-                ? Carbon::parse($periodo['data_fim'])->endOfDay()
-                : null;
-
-            if ($dia->greaterThanOrEqualTo($inicio) && ($fim === null || $dia->lessThanOrEqualTo($fim))) {
+            if ($dia->greaterThanOrEqualTo($periodo['inicio'])
+                && ($periodo['fim'] === null || $dia->lessThanOrEqualTo($periodo['fim']))
+            ) {
                 return true;
             }
         }
@@ -112,22 +212,29 @@ final class RelatorioPlanoEntregaLacunaCalculator
     }
 
     /**
-     * @param list<array{data_inicio: string, data_fim: ?string}> $planosCobertura
+     * @param list<array{inicio: Carbon, fim: Carbon}> $planos
      */
-    private function possuiCoberturaNoDia(array $planosCobertura, Carbon $dia): bool
+    private function possuiCoberturaNoDia(array $planos, Carbon $dia): bool
     {
-        foreach ($planosCobertura as $plano) {
-            $inicio = Carbon::parse($plano['data_inicio'])->startOfDay();
-            $fim = $plano['data_fim'] !== null
-                ? Carbon::parse($plano['data_fim'])->endOfDay()
-                : $inicio->copy()->endOfDay();
-
-            if ($dia->greaterThanOrEqualTo($inicio) && $dia->lessThanOrEqualTo($fim)) {
+        foreach ($planos as $plano) {
+            if ($dia->greaterThanOrEqualTo($plano['inicio']) && $dia->lessThanOrEqualTo($plano['fim'])) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Plano vigente sem data_fim cobre até o fim da consulta ou até hoje, o que for posterior.
+     */
+    private function resolverFimCobertura(?string $dataFim, Carbon $consultaFim): Carbon
+    {
+        if ($dataFim !== null) {
+            return Carbon::parse($dataFim)->endOfDay();
+        }
+
+        return $this->maxDate($consultaFim, Carbon::today()->endOfDay());
     }
 
     /**
@@ -159,6 +266,9 @@ final class RelatorioPlanoEntregaLacunaCalculator
         return $lacunas;
     }
 
+    /**
+     * @return array{data_inicio: string, data_fim: string, quantidade_dias: int}
+     */
     private function montarLacuna(string $inicio, string $fim): array
     {
         return [
@@ -191,13 +301,14 @@ final class RelatorioPlanoEntregaLacunaCalculator
         return $proximo;
     }
 
-    private static function possuiIntersecao(
-        string $lacunaInicio,
-        string $lacunaFim,
-        string $consultaInicio,
-        string $consultaFim,
-    ): bool {
-        return $lacunaInicio <= $consultaFim && $lacunaFim >= $consultaInicio;
+    private function diaUtilAnterior(Carbon $data): Carbon
+    {
+        $anterior = $data->copy()->subDay();
+        while (! $anterior->isWeekday()) {
+            $anterior->subDay();
+        }
+
+        return $anterior;
     }
 
     private function minDate(Carbon $a, Carbon $b): Carbon

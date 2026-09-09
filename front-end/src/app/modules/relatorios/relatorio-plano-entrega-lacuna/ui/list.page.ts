@@ -48,7 +48,7 @@ export class RelatorioPlanoEntregaLacunaListPage implements OnInit {
 
   private readonly FILTER_KEY = 'relatorio-plano-entrega-lacuna:filters';
   private readonly LACUNA_TOOLTIP =
-    'Período em que a unidade esteve sinalizada como Executora, mas não possui Plano de Entrega em execução ou concluído.';
+    'Período em que a unidade esteve sinalizada como Executora, mas não possui Plano de Entrega em execução, concluído ou avaliado.';
 
   readonly filters: FormGroup<{
     unidade_id: FormControl<string | null>;

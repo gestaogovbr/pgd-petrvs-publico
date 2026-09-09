@@ -59,6 +59,43 @@ describe('RelatorioPlanoEntregaLacunaCalculator', function () {
         expect($lacunas)->toBeEmpty();
     });
 
+    it('nao gera lacuna quando plano vigente nao possui data_fim', function () {
+        $calculator = new RelatorioPlanoEntregaLacunaCalculator();
+
+        $lacunas = $calculator->calcular(
+            historicoExecutora: [
+                ['executora' => true, 'data_inicio' => '2026-01-01', 'data_fim' => null],
+            ],
+            planosCobertura: [
+                ['data_inicio' => '2026-01-01', 'data_fim' => null],
+            ],
+            periodoConsultaInicio: '2026-01-05',
+            periodoConsultaFim: '2026-01-09',
+        );
+
+        expect($lacunas)->toBeEmpty();
+    });
+
+    it('mantem lacuna apenas nos dias anteriores ao inicio do plano vigente sem data_fim', function () {
+        $calculator = new RelatorioPlanoEntregaLacunaCalculator();
+
+        $lacunas = $calculator->calcular(
+            historicoExecutora: [
+                ['executora' => true, 'data_inicio' => '2026-01-01', 'data_fim' => null],
+            ],
+            planosCobertura: [
+                ['data_inicio' => '2026-01-07', 'data_fim' => null],
+            ],
+            periodoConsultaInicio: '2026-01-05',
+            periodoConsultaFim: '2026-01-09',
+        );
+
+        expect($lacunas)->toHaveCount(1)
+            ->and($lacunas[0]['data_inicio'])->toBe('2026-01-01')
+            ->and($lacunas[0]['data_fim'])->toBe('2026-01-06')
+            ->and($lacunas[0]['quantidade_dias'])->toBe(4);
+    });
+
     it('retorna periodo completo da lacuna quando apenas parte intersecta consulta', function () {
         $calculator = new RelatorioPlanoEntregaLacunaCalculator();
 
@@ -77,6 +114,24 @@ describe('RelatorioPlanoEntregaLacunaCalculator', function () {
         expect($lacunas)->toHaveCount(1)
             ->and($lacunas[0]['data_inicio'])->toBe('2026-01-05')
             ->and($lacunas[0]['data_fim'])->toBe('2026-01-09');
+    });
+
+    it('expande lacuna alem da consulta quando unidade executora permanece sem cobertura', function () {
+        $calculator = new RelatorioPlanoEntregaLacunaCalculator();
+
+        $lacunas = $calculator->calcular(
+            historicoExecutora: [
+                ['executora' => true, 'data_inicio' => '2026-01-01', 'data_fim' => '2026-01-31'],
+            ],
+            planosCobertura: [],
+            periodoConsultaInicio: '2026-01-08',
+            periodoConsultaFim: '2026-01-09',
+        );
+
+        expect($lacunas)->toHaveCount(1)
+            ->and($lacunas[0]['data_inicio'])->toBe('2026-01-01')
+            ->and($lacunas[0]['data_fim'])->toBe('2026-01-30')
+            ->and($lacunas[0]['quantidade_dias'])->toBe(22);
     });
 
     it('nao considera dias em que unidade nao era executora', function () {
