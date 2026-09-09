@@ -14,12 +14,17 @@ use Mockery;
 beforeEach(function () {
     Queue::fake();
 
+    tenant()->api_cod_unidade_autorizadora = '1234567890';
+    tenant()->save();
+
     $this->usuario = Usuario::factory()->create();
     $this->actingAs($this->usuario);
 
     $this->planoTrabalhoService = app(PlanoTrabalhoService::class);
 
-    $this->planoTrabalho = PlanoTrabalho::factory()->create();
+    $this->planoTrabalho = PlanoTrabalho::factory()->create([
+        'usuario_id' => $this->usuario->id,
+    ]);
 });
 
 afterAll(function () {

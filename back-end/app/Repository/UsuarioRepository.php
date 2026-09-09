@@ -104,6 +104,11 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->writeRepository->updateFotoPerfil($usuarioId, $tipo, $url, $downloadedUrl);
     }
 
+    public function limparEmail(string $usuarioId): bool
+    {
+        return $this->writeRepository->limparEmail($usuarioId);
+    }
+
     public function removerVinculos(string $usuarioId): void
     {
         $this->writeRepository->removerVinculos($usuarioId);
@@ -132,6 +137,16 @@ class UsuarioRepository implements EnvioRepositoryInterface
     public function findByEmail(string $email): ?Usuario
     {
         return $this->readRepository->findByEmail($email);
+    }
+
+    public function findAllByEmailWithoutGlobalScopes(string $email, ?string $ignoreId = null): Collection
+    {
+        return $this->readRepository->findAllByEmailWithoutGlobalScopes($email, $ignoreId);
+    }
+
+    public function findAllExternosPresentesNaIntegracao(): Collection
+    {
+        return $this->readRepository->findAllExternosPresentesNaIntegracao();
     }
 
     public function findActivesByCpf(string $cpf): Collection
