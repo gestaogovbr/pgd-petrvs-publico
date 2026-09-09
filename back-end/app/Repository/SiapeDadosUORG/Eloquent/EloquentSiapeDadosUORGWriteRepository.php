@@ -33,4 +33,9 @@ class EloquentSiapeDadosUORGWriteRepository extends AbstractEloquentWriteReposit
             ->where('processado', SiapeDadosUORG::PROCESSADO)
             ->forceDelete();
     }
+
+    public function markProcessado(string $id): bool
+    {
+        return $this->model->newQuery()->whereKey($id)->update(['processado' => true]) === 1;
+    }
 }

@@ -17,4 +17,15 @@ class EloquentSiapeDadosUORGReadRepository extends AbstractEloquentReadRepositor
     {
         $this->model = $model;
     }
+
+    /** @return \Illuminate\Database\Eloquent\Collection<int, SiapeDadosUORG> */
+    public function pendentes(string $codigoOrgao): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->model->newQuery()
+            ->where('codigo_orgao', $codigoOrgao)
+            ->where('processado', false)
+            ->whereNotNull('codigo')
+            ->orderByDesc('updated_at')
+            ->get();
+    }
 }

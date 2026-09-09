@@ -10,5 +10,6 @@ namespace App\Repository\SiapeBlackListServidor\Contracts;
 interface SiapeBlackListServidorWriteRepositoryContract
 {
     public function create(array $attributes): \App\Models\SiapeBlackListServidor;
+    public function firstOrCreate(string $cpf, ?string $matricula, string $response): \App\Models\SiapeBlackListServidor;
     public function forceDelete(string $id): bool;
 }

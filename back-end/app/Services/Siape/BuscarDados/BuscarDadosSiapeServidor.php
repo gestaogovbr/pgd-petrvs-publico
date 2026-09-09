@@ -2,98 +2,208 @@
 
 namespace App\Services\Siape\BuscarDados;
 
-use App\Models\IntegracaoServidor;
-use App\Models\SiapeBlackListServidor;
-use App\Models\SiapeConsultaDadosFuncionais;
-use App\Models\SiapeConsultaDadosPessoais;
 use App\Models\SiapeListaServidores;
+use App\Repository\IntegracaoServidor\Contracts\IntegracaoServidorReadRepositoryContract;
+use App\Repository\SiapeBlackListServidor\Contracts\SiapeBlackListServidorReadRepositoryContract;
+use App\Repository\SiapeConsultaDadosFuncionais\Contracts\SiapeConsultaDadosFuncionaisWriteRepositoryContract;
+use App\Repository\SiapeConsultaDadosPessoais\Contracts\SiapeConsultaDadosPessoaisWriteRepositoryContract;
+use App\Repository\SiapeListaServidores\Contracts\SiapeListaServidoresReadRepositoryContract;
+use App\Repository\SiapeListaServidores\Contracts\SiapeListaServidoresWriteRepositoryContract;
+use App\Repository\Usuario\Contracts\UsuarioReadRepositoryContract;
 use App\Support\SiapeDate;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use SimpleXMLElement;
 use Illuminate\Support\Str;
 use App\Services\CodigoOrgaoService;
-
+use SimpleXMLElement;
 
 class BuscarDadosSiapeServidor extends BuscarDadosSiape
 {
     const MAX_INSERT_DB = 1000;
+
+    public function __construct(
+        mixed $config,
+        private readonly ?SiapeListaServidoresReadRepositoryContract $listaServidoresReadRepository = null,
+        private readonly ?SiapeListaServidoresWriteRepositoryContract $listaServidoresWriteRepository = null,
+        private readonly ?IntegracaoServidorReadRepositoryContract $integracaoServidorReadRepository = null,
+        private readonly ?SiapeBlackListServidorReadRepositoryContract $blacklistReadRepository = null,
+        private readonly ?UsuarioReadRepositoryContract $usuarioReadRepository = null,
+        private readonly ?SiapeConsultaDadosPessoaisWriteRepositoryContract $dadosPessoaisWriteRepository = null,
+        private readonly ?SiapeConsultaDadosFuncionaisWriteRepositoryContract $dadosFuncionaisWriteRepository = null,
+    ) {
+        parent::__construct($config);
+    }
+
     private function processar(): void
     {
         Log::info("Iniciando processamento de servidor...");
 
         $this->limpaTabela();
         $codigoOrgao = CodigoOrgaoService::obrigatorio($this->getConfig()['codOrgao'] ?? null);
-        $servidoresJaProcessadas = IntegracaoServidor::where('codigo_orgao', $codigoOrgao)->get();
-        $blacklistServidores = SiapeBlackListServidor::all();
 
-        $response = SiapeListaServidores::where('processado', 0)
-            ->orderBy('updated_at', 'desc')->get();
+        $response = $this->listaServidoresRead()->pendentes();
 
-        if (!$response) {
+        if ($response->isEmpty()) {
             Log::info("Nenhum servidor a ser processado");
             return;
         }
 
-        $servidores = [];
+        $snapshotCompleto = true;
+        $servidoresPorCpf = [];
+
         foreach ($response as $siapeListaServidores) {
             $siapeListaServidoresArray = $this->getServidores($siapeListaServidores);
-            if(!$siapeListaServidoresArray){
+
+            if ($siapeListaServidoresArray === null) {
+                $snapshotCompleto = false;
                 continue;
             }
-            foreach ($siapeListaServidoresArray as $servidor) {
-                $servidores[$servidor['cpf'].".".$servidor['dataUltimaTransacao']] = $servidor;
 
+            foreach ($siapeListaServidoresArray as $servidor) {
+                if (!$this->servidorDaListaValido($servidor)) {
+                    $snapshotCompleto = false;
+                    continue;
+                }
+
+                $cpf = $servidor['cpf'];
+                $servidorAtual = $servidoresPorCpf[$cpf] ?? null;
+                if ($servidorAtual === null || $this->servidorMaisRecente($servidor, $servidorAtual)) {
+                    $servidoresPorCpf[$cpf] = $servidor;
+                }
             }
         }
 
-        $servidores = array_filter($servidores, function ($servidor) use ($servidoresJaProcessadas, $blacklistServidores) {
+        $cpfsBlacklistPendente = array_fill_keys($this->blacklistRead()->cpfsByProcessedStatus(false), true);
+        $cpfsBlacklistDefinitiva = array_fill_keys($this->blacklistRead()->cpfsByProcessedStatus(true), true);
+        $cpfsNaBlacklist = $cpfsBlacklistPendente + $cpfsBlacklistDefinitiva;
+        $datasProcessadasPorCpf = $this->datasProcessadasPorCpf($codigoOrgao);
+        $servidores = [];
 
-            $estaNaBlackList =  $blacklistServidores->firstWhere('cpf', $servidor['cpf']);
-            if ($estaNaBlackList) {
-                Log::alert("está na black list deverá ser ignorado: ".$servidor['cpf']);
-                return false;
+        foreach ($servidoresPorCpf as $cpf => $servidor) {
+            if (
+                isset($cpfsBlacklistPendente[$cpf])
+                || $this->servidorPrecisaAtualizacao($servidor, $datasProcessadasPorCpf[$cpf] ?? null)
+            ) {
+                $servidores[$cpf] = $servidor;
             }
-            $servidorProcessado =  $servidoresJaProcessadas->firstWhere('cpf', $servidor['cpf']);
+        }
 
-            if (!$servidorProcessado) {
-                return true;
-            }
+        if ($snapshotCompleto) {
+            $this->adicionarCandidatosAusentes(
+                $servidores,
+                array_fill_keys(array_keys($servidoresPorCpf), true),
+                $cpfsNaBlacklist,
+                array_fill_keys(array_keys($datasProcessadasPorCpf), true)
+            );
+        } else {
+            Log::warning('Reconciliação de servidores ausentes ignorada: snapshot da lista SIAPE incompleto ou inválido.');
+        }
 
-            if(is_null($servidorProcessado->data_modificacao)){
-                return true;
-            }
-            $dataModificacaoBD = $this->asTimestamp($servidorProcessado->data_modificacao);
-
-            $dataModificacaoSiape = SiapeDate::dataUltimaTransacaoParaBancoOuFalha($servidor['dataUltimaTransacao']);
-            $dataModificacaoSiape  = $this->asTimestamp($dataModificacaoSiape);
-
-            if ($dataModificacaoSiape > $dataModificacaoBD) {
-                return true;
-            }
-            return false;
-        });
-
-
-        Log::info("Servidores a serem processadas: " . count($servidores));
-
+        Log::info("Servidores a serem processados: " . count($servidores));
 
         $this->executarRequisicoes($servidores);
 
-        foreach ($response as $siapeListaServidores) {
-            $siapeListaServidores->processado = true;
-            $siapeListaServidores->save();
-        }
+        $this->listaServidoresWrite()->markProcessados($response->modelKeys());
 
         Log::info("Finalizando processamento de servidor");
+    }
 
+    /** @param array<string, string> $servidor */
+    private function servidorDaListaValido(array $servidor): bool
+    {
+        if (empty($servidor['cpf']) || empty($servidor['dataUltimaTransacao'])) {
+            return false;
+        }
+
+        try {
+            SiapeDate::dataUltimaTransacaoParaBancoOuFalha($servidor['dataUltimaTransacao']);
+        } catch (\Throwable) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param array<string, string> $servidor
+     * @param array<string, string> $servidorAtual
+     */
+    private function servidorMaisRecente(array $servidor, array $servidorAtual): bool
+    {
+        $data = SiapeDate::dataUltimaTransacaoParaBancoOuFalha($servidor['dataUltimaTransacao']);
+        $dataAtual = SiapeDate::dataUltimaTransacaoParaBancoOuFalha($servidorAtual['dataUltimaTransacao']);
+
+        return $this->asTimestamp($data) > $this->asTimestamp($dataAtual);
+    }
+
+    /** @return array<string, string|null> */
+    private function datasProcessadasPorCpf(string $codigoOrgao): array
+    {
+        return $this->integracaoServidorRead()->datasMaisRecentesPorCpf($codigoOrgao);
+    }
+
+    /** @param array<string, string> $servidor */
+    private function servidorPrecisaAtualizacao(array $servidor, ?string $dataProcessada): bool
+    {
+        if ($dataProcessada === null) {
+            return true;
+        }
+
+        $dataModificacaoSiape = SiapeDate::dataUltimaTransacaoParaBancoOuFalha($servidor['dataUltimaTransacao']);
+
+        return $this->asTimestamp($dataModificacaoSiape) > $this->asTimestamp($dataProcessada);
+    }
+
+    /**
+     * @param array<string, array<string, string>> $servidores
+     * @param array<string, bool> $cpfsRetornados
+     * @param array<string, bool> $cpfsNaBlacklist
+     * @param array<string, bool> $cpfsGerenciadosPeloSiape
+     */
+    private function adicionarCandidatosAusentes(
+        array &$servidores,
+        array $cpfsRetornados,
+        array $cpfsNaBlacklist,
+        array $cpfsGerenciadosPeloSiape
+    ): void {
+        $cpfsCandidatos = $this->usuarioRead()->cpfsAtivosGerenciadosPeloSiape();
+
+        $dataReconsulta = now()->format('dmY');
+        $candidatos = [];
+        foreach ($cpfsCandidatos as $cpf) {
+            if (
+                !isset($cpfsGerenciadosPeloSiape[$cpf])
+                || isset($cpfsRetornados[$cpf])
+                || isset($cpfsNaBlacklist[$cpf])
+            ) {
+                continue;
+            }
+
+            $candidatos[$cpf] = [
+                'cpf' => $cpf,
+                'dataUltimaTransacao' => $dataReconsulta,
+            ];
+        }
+
+        $quantidadeCandidatos = count($candidatos);
+        $limiteCandidatos = (int) config('integracao.siape.reconciliacao_servidores_max_candidatos');
+        if ($quantidadeCandidatos > $limiteCandidatos) {
+            Log::warning('Reconciliação de servidores ausentes interrompida pelo limite de segurança.', [
+                'candidatos' => $quantidadeCandidatos,
+                'limite' => $limiteCandidatos,
+            ]);
+            return;
+        }
+
+        $servidores = array_replace($servidores, $candidatos);
+
+        Log::info("Servidores ausentes candidatos à confirmação individual: {$quantidadeCandidatos}");
     }
 
     private function limpaTabela(): void
     {
-        DB::table('siape_consultaDadosPessoais')->truncate();
-        DB::table('siape_consultaDadosFuncionais')->truncate();
+        $this->dadosPessoaisWrite()->truncate();
+        $this->dadosFuncionaisWrite()->truncate();
     }
 
     private function executarRequisicoes(array $servidores): void
@@ -141,7 +251,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
 
         $lotesInserts = array_chunk($inserts, self::MAX_INSERT_DB, true);
         foreach($lotesInserts as $insert){
-            SiapeConsultaDadosFuncionais::insert($insert);
+            $this->dadosFuncionaisWrite()->insertMany($insert);
         }
     }
 
@@ -181,7 +291,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         }
         $lotesInserts = array_chunk($inserts, self::MAX_INSERT_DB, true);
         foreach($lotesInserts as $insert){
-            SiapeConsultaDadosPessoais::insert($insert);
+            $this->dadosPessoaisWrite()->insertMany($insert);
         }
     }
 
@@ -240,10 +350,10 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         foreach ($lotes as $i => $lote) {
             Log::info('Lote '.($i + 1).' de '.count($lotes));
             $resposta = $this->executaRequisicoes($lote);
-            Log::alert("resposta simples", $resposta);
+            Log::info('Lote SIAPE recebido.', ['respostas' => count($resposta)]);
             $respostas = $this->array_merge_recursive_distinct($respostas,  $resposta);
         }
-        Log::alert("Respostas mesclada::", $respostas);
+        Log::info('Respostas SIAPE consolidadas.', ['respostas' => count($respostas)]);
         $tempoFinal = microtime(true);
         $tempoTotal = $tempoFinal - $tempoInicial;
         Log::info("Dados funcionais: Tempo total de execução: " . $tempoTotal . " segundos");
@@ -263,6 +373,11 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
         $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
         $xmlResponse->registerXPathNamespace('ns2', 'http://entidade.wssiapenet');
+
+        if ($xmlResponse->xpath('//soap:Fault') || !$xmlResponse->xpath('//ns1:listaServidoresResponse')) {
+            Log::warning('Resposta inválida ao listar servidores no SIAPE.');
+            return null;
+        }
 
         $servidores = $xmlResponse->xpath('//ns2:Servidor');
 
@@ -290,4 +405,38 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         return $array1;
     }
 
+    private function listaServidoresRead(): SiapeListaServidoresReadRepositoryContract
+    {
+        return $this->listaServidoresReadRepository ?? app(SiapeListaServidoresReadRepositoryContract::class);
+    }
+
+    private function listaServidoresWrite(): SiapeListaServidoresWriteRepositoryContract
+    {
+        return $this->listaServidoresWriteRepository ?? app(SiapeListaServidoresWriteRepositoryContract::class);
+    }
+
+    private function integracaoServidorRead(): IntegracaoServidorReadRepositoryContract
+    {
+        return $this->integracaoServidorReadRepository ?? app(IntegracaoServidorReadRepositoryContract::class);
+    }
+
+    private function blacklistRead(): SiapeBlackListServidorReadRepositoryContract
+    {
+        return $this->blacklistReadRepository ?? app(SiapeBlackListServidorReadRepositoryContract::class);
+    }
+
+    private function usuarioRead(): UsuarioReadRepositoryContract
+    {
+        return $this->usuarioReadRepository ?? app(UsuarioReadRepositoryContract::class);
+    }
+
+    private function dadosPessoaisWrite(): SiapeConsultaDadosPessoaisWriteRepositoryContract
+    {
+        return $this->dadosPessoaisWriteRepository ?? app(SiapeConsultaDadosPessoaisWriteRepositoryContract::class);
+    }
+
+    private function dadosFuncionaisWrite(): SiapeConsultaDadosFuncionaisWriteRepositoryContract
+    {
+        return $this->dadosFuncionaisWriteRepository ?? app(SiapeConsultaDadosFuncionaisWriteRepositoryContract::class);
+    }
 }

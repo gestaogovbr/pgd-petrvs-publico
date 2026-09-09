@@ -556,4 +556,39 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             ->whereNull('deleted_at')
             ->get(['id', 'participa_pgd']);
     }
+
+    public function cpfsAtivosGerenciadosPeloSiape(): array
+    {
+        return $this->model->newQuery()
+            ->whereNotNull('cpf')
+            ->whereNotNull('matricula')
+            ->where('situacao_siape', \App\Enums\UsuarioSituacaoSiape::ATIVO->value)
+            ->distinct()
+            ->pluck('cpf')
+            ->map(static fn (mixed $cpf): string => (string) $cpf)
+            ->all();
+    }
+
+    public function findComMatriculaByCpf(string $cpf): Collection
+    {
+        return $this->model->newQuery()
+            ->where('cpf', $cpf)
+            ->whereNotNull('matricula')
+            ->get();
+    }
+
+    public function matriculasElegiveisParaBlacklistSiape(string $cpf): array
+    {
+        return $this->model->newQuery()
+            ->where('cpf', $cpf)
+            ->whereNotNull('matricula')
+            ->whereNotIn('situacao_siape', [
+                \App\Enums\UsuarioSituacaoSiape::INATIVO->value,
+                \App\Enums\UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value,
+            ])
+            ->distinct()
+            ->pluck('matricula')
+            ->map(static fn (mixed $matricula): string => (string) $matricula)
+            ->all();
+    }
 }

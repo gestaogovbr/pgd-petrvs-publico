@@ -29,4 +29,13 @@ class EloquentSiapeListaUORGSReadRepository extends AbstractEloquentReadReposito
             
         return $model;
     }
+
+    public function findLatestProcessed(string $codigoOrgao): ?SiapeListaUORGS
+    {
+        return $this->model->newQuery()
+            ->where('codigo_orgao', $codigoOrgao)
+            ->where('processado', true)
+            ->orderByDesc('updated_at')
+            ->first();
+    }
 }

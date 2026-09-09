@@ -59,4 +59,13 @@ interface UsuarioReadRepositoryContract
      * @return Collection<int, Usuario>
      */
     public function findIntegrantesPorUnidades(array $unidadeIds, array $atribuicoes): Collection;
+
+    /** @return list<string> */
+    public function cpfsAtivosGerenciadosPeloSiape(): array;
+
+    /** @return Collection<int, Usuario> */
+    public function findComMatriculaByCpf(string $cpf): Collection;
+
+    /** @return list<string> */
+    public function matriculasElegiveisParaBlacklistSiape(string $cpf): array;
 }
