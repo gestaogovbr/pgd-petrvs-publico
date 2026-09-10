@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Stancl\Tenancy\Database\Models\Domain;
@@ -41,11 +42,29 @@ class TenantConfigurationsService
         return $tenant;
     }
 
+    public function handleTenant(string $tenantId): ?Tenant
+    {
+        /** @var Tenant|null $tenant */
+        $tenant = Tenant::query()->find($tenantId);
+
+        if ($tenant) {
+            $this->loadSettings($tenant->toArray());
+        }
+
+        return $tenant;
+    }
+
     private function loadingConfigs($tenant) : void
     {
         # Pega os dados salvos no Panel
         $settings = json_decode($tenant['tenant'], true);
         // Log::info("Settings: " . json_encode($settings));
+
+        $this->loadSettings($settings);
+    }
+
+    private function loadSettings(array $settings): void
+    {
 
         # Obtém a URL do aplicativo do arquivo de configuração
         $appUrl = config('app.url');

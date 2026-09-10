@@ -90,7 +90,7 @@ class IntegracaoService extends ServiceBase
   {
     if (is_null($tenantId)) return;
     $tenantConfigurations = new TenantConfigurationsService();
-    $tenantConfigurations->handle($tenantId);
+    $tenantConfigurations->handleTenant($tenantId);
   }
 
   /**
