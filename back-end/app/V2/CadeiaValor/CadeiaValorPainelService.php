@@ -43,6 +43,7 @@ class CadeiaValorPainelService
         return new CadeiaValorPainelResumoDTO(
             processo_id: (string) $geral->processo_id,
             processo_nome: (string) $geral->processo_nome,
+            tipo_elemento_nome: (string) $geral->tipo_elemento_nome,
             nivel: (int) $geral->nivel,
             item: $this->painelAssembler->montarSecao($aggItem),
             consolidado: $this->painelAssembler->montarSecao($aggConsolidado),

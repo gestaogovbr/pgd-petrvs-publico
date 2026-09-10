@@ -53,6 +53,7 @@ describe('CadeiaValorArvoreAdapter', () => {
     return {
       processo_id: 'proc-1',
       processo_nome: 'Processo de atendimento',
+      tipo_elemento_nome: 'Macroprocesso',
       nivel: 2,
       item: {
         esforco: {
@@ -113,14 +114,16 @@ describe('CadeiaValorArvoreAdapter', () => {
       const apiResponse: ArvoreApiResponse = {
         focal_id: 'proc-1',
         nos: { 'proc-1': makeApiNode({ id: 'proc-1' }) },
-        metadata: { cadeia_valor_nome: 'Cadeia Principal' }
+        subtitulo: 'Cadeia Principal',
+        metadata: { cross_cadeia_map: {} }
       };
       apiSpy.getArvore.and.returnValue(of(apiResponse));
 
       adapter.carregarArvore({ cadeiaValorId: 'cv-1', processoId: 'proc-1' }).subscribe(data => {
         expect(apiSpy.getArvore).toHaveBeenCalledWith('cv-1', 'proc-1');
         expect(data.focalId).toBe('proc-1');
-        expect(data.metadata).toEqual({ cadeia_valor_nome: 'Cadeia Principal' });
+        expect(data.subtitulo).toBe('Cadeia Principal');
+        expect(data.metadata).toEqual({ cross_cadeia_map: {} });
         done();
       });
     });
@@ -142,6 +145,7 @@ describe('CadeiaValorArvoreAdapter', () => {
             planejado_percentual_disponivel: 80
           })
         },
+        subtitulo: null,
         metadata: {}
       };
       apiSpy.getArvore.and.returnValue(of(apiResponse));
@@ -181,6 +185,7 @@ describe('CadeiaValorArvoreAdapter', () => {
             planejado_percentual_disponivel: undefined as any
           }
         },
+        subtitulo: null,
         metadata: {}
       };
       apiSpy.getArvore.and.returnValue(of(apiResponse));
@@ -202,6 +207,7 @@ describe('CadeiaValorArvoreAdapter', () => {
       const apiResponse: ArvoreApiResponse = {
         focal_id: 'proc-1',
         nos: { 'proc-1': makeApiNode({ id: 'proc-1' }) },
+        subtitulo: null,
         metadata: {}
       };
       apiSpy.getArvore.and.returnValue(of(apiResponse));
@@ -225,6 +231,7 @@ describe('CadeiaValorArvoreAdapter', () => {
       const apiResponse: ArvoreApiResponse = {
         focal_id: 'proc-1',
         nos: { 'proc-1': makeApiNode({ id: 'proc-1' }) },
+        subtitulo: null,
         metadata: {}
       };
       apiSpy.getArvore.and.returnValue(of(apiResponse));
@@ -237,6 +244,7 @@ describe('CadeiaValorArvoreAdapter', () => {
 
       adapter.carregarResumo('proc-1').subscribe(data => {
         expect(data.informacoesGerais['processo_nome']).toBe('Processo de atendimento');
+        expect(data.informacoesGerais['tipo_elemento_nome']).toBe('Macroprocesso');
         expect(data.informacoesGerais['nivel']).toBe('2');
         expect(data.item).toEqual(resumoApi.item);
         expect(data.consolidado).toEqual(resumoApi.consolidado);
@@ -273,6 +281,7 @@ describe('CadeiaValorArvoreAdapter', () => {
       const apiResponse: ArvoreApiResponse = {
         focal_id: 'proc-1',
         nos: { 'proc-1': makeApiNode({ id: 'proc-1' }) },
+        subtitulo: null,
         metadata: {}
       };
       apiSpy.getArvore.and.returnValue(of(apiResponse));
@@ -356,6 +365,7 @@ describe('CadeiaValorArvoreAdapter', () => {
       const apiResponse: ArvoreApiResponse = {
         focal_id: 'proc-1',
         nos: { 'proc-1': makeApiNode({ id: 'proc-1' }) },
+        subtitulo: null,
         metadata: {}
       };
       apiSpy.getArvore.and.returnValue(of(apiResponse));
@@ -389,13 +399,14 @@ describe('CadeiaValorArvoreAdapter', () => {
       expect(CADEIA_VALOR_ARVORE_CONFIG.tooltips).toBeNull();
     });
 
-    it('deve ter subtituloMetadataKey configurado', () => {
-      expect(CADEIA_VALOR_ARVORE_CONFIG.subtituloMetadataKey).toBe('cadeia_valor_nome');
+    it('não deve mais ter subtituloMetadataKey (subtítulo vem tipado da resposta)', () => {
+      expect((CADEIA_VALOR_ARVORE_CONFIG as { subtituloMetadataKey?: string }).subtituloMetadataKey).toBeUndefined();
     });
 
     it('deve ter campos de informações gerais esperados', () => {
       const campos = CADEIA_VALOR_ARVORE_CONFIG.camposInfoGeral.map(c => c.campo);
       expect(campos).toContain('processo_nome');
+      expect(campos).toContain('tipo_elemento_nome');
       expect(campos).toContain('nivel');
     });
 

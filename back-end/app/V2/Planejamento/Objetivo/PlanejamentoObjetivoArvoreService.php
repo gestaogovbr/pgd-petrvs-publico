@@ -51,12 +51,14 @@ class PlanejamentoObjetivoArvoreService
 
         $ids = $this->repository->coletarIdsFechamento($objetivo->id);
         if ($ids === []) {
-            return ArvoreResponseDTO::fromMapa($objetivoId, [], ['cadeia_superior' => []]);
+            return ArvoreResponseDTO::fromMapa($objetivoId, []);
         }
 
         $mapa = $this->esforcoGraphDataProvider->carregarEsforcoAcumulado(PlanejamentoObjetivoNoConfig::get(), noIds: $ids);
-        $cadeiaSuperior = $this->arvoreVisualizacaoAssembler->montarCadeiaSuperior($objetivoId, $mapa);
+        $subtitulo = isset($mapa[$objetivoId]['container_nome'])
+            ? (string) $mapa[$objetivoId]['container_nome']
+            : null;
 
-        return ArvoreResponseDTO::fromMapa($objetivoId, $mapa, ['cadeia_superior' => $cadeiaSuperior]);
+        return ArvoreResponseDTO::fromMapa($objetivoId, $mapa, subtitulo: $subtitulo);
     }
 }

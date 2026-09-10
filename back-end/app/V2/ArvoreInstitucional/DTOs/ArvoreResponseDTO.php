@@ -12,11 +12,13 @@ final class ArvoreResponseDTO implements \JsonSerializable
 {
     /**
      * @param array<string, ArvoreNodeResponseDTO> $nos Mapa id → nó
-     * @param array<string, mixed> $metadata Dados específicos do domínio (ex: cadeia_superior, cadeia_valor_nome)
+     * @param string|null $subtitulo Subtítulo do domínio (ex: nome da cadeia de valor ou do planejamento)
+     * @param array<string, mixed> $metadata Dados específicos do domínio (ex: cross_cadeia_map da cadeia de valor)
      */
     public function __construct(
         public readonly string $focal_id,
         public readonly array $nos,
+        public readonly ?string $subtitulo = null,
         public readonly array $metadata = [],
     ) {}
 
@@ -26,7 +28,7 @@ final class ArvoreResponseDTO implements \JsonSerializable
      * @param array<string, array<string, mixed>> $mapaEsforco
      * @param array<string, mixed> $metadata
      */
-    public static function fromMapa(string $focalId, array $mapaEsforco, array $metadata = []): self
+    public static function fromMapa(string $focalId, array $mapaEsforco, ?string $subtitulo = null, array $metadata = []): self
     {
         $nos = [];
         foreach ($mapaEsforco as $id => $node) {
@@ -36,6 +38,7 @@ final class ArvoreResponseDTO implements \JsonSerializable
         return new self(
             focal_id: $focalId,
             nos: $nos,
+            subtitulo: $subtitulo,
             metadata: $metadata,
         );
     }
@@ -46,6 +49,7 @@ final class ArvoreResponseDTO implements \JsonSerializable
         return [
             'focal_id' => $this->focal_id,
             'nos' => $this->nos,
+            'subtitulo' => $this->subtitulo,
             'metadata' => $this->metadata,
         ];
     }

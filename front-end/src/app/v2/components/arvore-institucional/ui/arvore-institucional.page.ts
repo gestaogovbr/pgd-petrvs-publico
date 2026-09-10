@@ -64,14 +64,7 @@ export class ArvoreInstitucionalPage {
 
   readonly consultadoId = computed(() => this.dados()?.focalId ?? null);
 
-  readonly subtitulo = computed(() => {
-    const key = this.config.subtituloMetadataKey;
-    if (!key) {
-      return null;
-    }
-    const meta = this.dados()?.metadata;
-    return meta?.[key] as string | null ?? null;
-  });
+  readonly subtitulo = computed(() => this.dados()?.subtitulo ?? null);
 
   private readonly getDownLinks: GetDownLinksFn = (nodeId, nos) => {
     const n = nos[nodeId];

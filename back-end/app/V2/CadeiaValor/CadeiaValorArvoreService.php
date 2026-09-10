@@ -38,9 +38,7 @@ class CadeiaValorArvoreService
 
         $crossCadeiaMap = $this->injetarVinculosCrossCadeia($esforcoMap, $cadeiaValorId);
 
-        return ArvoreResponseDTO::fromMapa($processoId, $esforcoMap, [
-            'cadeia_valor_id' => $cadeiaValorId,
-            'cadeia_valor_nome' => $cadeiaValor->nome,
+        return ArvoreResponseDTO::fromMapa($processoId, $esforcoMap, subtitulo: $cadeiaValor->nome, metadata: [
             'cross_cadeia_map' => $crossCadeiaMap,
         ]);
     }

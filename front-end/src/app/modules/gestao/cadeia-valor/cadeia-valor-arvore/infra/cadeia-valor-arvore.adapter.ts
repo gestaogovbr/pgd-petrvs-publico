@@ -35,6 +35,7 @@ export class CadeiaValorArvoreAdapter implements ArvoreDataProvider {
         return {
           focalId: data.focal_id,
           nos: this.mapearNos(data.nos),
+          subtitulo: data.subtitulo ?? null,
           metadata: data.metadata ?? {}
         };
       })
@@ -46,6 +47,7 @@ export class CadeiaValorArvoreAdapter implements ArvoreDataProvider {
       map(data => ({
         informacoesGerais: {
           processo_nome: data.processo_nome,
+          tipo_elemento_nome: data.tipo_elemento_nome || '—',
           nivel: String(data.nivel),
         },
         item: data.item,
@@ -126,11 +128,11 @@ export const CADEIA_VALOR_ARVORE_CONFIG: ArvoreInstitucionalConfig = {
   ],
   camposInfoGeral: [
     { label: 'Nome', campo: 'processo_nome' },
+    { label: 'Tipo', campo: 'tipo_elemento_nome' },
     { label: 'Nível', campo: 'nivel' },
   ],
   tooltips: null,
   badgeFocal: 'central',
   labelCentralizar: 'Centralizar neste processo',
   labelNoOrigem: 'Processo de origem',
-  subtituloMetadataKey: 'cadeia_valor_nome',
 };

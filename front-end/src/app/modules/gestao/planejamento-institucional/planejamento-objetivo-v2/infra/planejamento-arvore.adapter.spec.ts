@@ -119,6 +119,7 @@ describe('PlanejamentoArvoreAdapter', () => {
           'obj-1': makeApiNode({ id: 'obj-1', filhos_ids: ['obj-2'] }),
           'obj-2': makeApiNode({ id: 'obj-2', parent_id: 'obj-1' })
         },
+        subtitulo: 'Planejamento ABC',
         metadata: { planejamento_id: 'plan-1' }
       };
       apiSpy.getArvoreVisualizacao.and.returnValue(of(apiResponse));
@@ -126,6 +127,7 @@ describe('PlanejamentoArvoreAdapter', () => {
       adapter.carregarArvore({ id: 'obj-1' }).subscribe(data => {
         expect(data.focalId).toBe('obj-1');
         expect(Object.keys(data.nos)).toEqual(['obj-1', 'obj-2']);
+        expect(data.subtitulo).toBe('Planejamento ABC');
         expect(data.metadata).toEqual({ planejamento_id: 'plan-1' });
         done();
       });
@@ -150,6 +152,7 @@ describe('PlanejamentoArvoreAdapter', () => {
             planejado_percentual_disponivel: 75.5
           })
         },
+        subtitulo: null,
         metadata: {}
       };
       apiSpy.getArvoreVisualizacao.and.returnValue(of(apiResponse));
@@ -191,6 +194,7 @@ describe('PlanejamentoArvoreAdapter', () => {
             planejado_percentual_disponivel: undefined as any
           }
         },
+        subtitulo: null,
         metadata: {}
       };
       apiSpy.getArvoreVisualizacao.and.returnValue(of(apiResponse));
@@ -214,6 +218,7 @@ describe('PlanejamentoArvoreAdapter', () => {
         nos: {
           'obj-1': makeApiNode({ id: 'obj-1', tipo_nome: '' as any })
         },
+        subtitulo: null,
         metadata: {}
       };
       apiSpy.getArvoreVisualizacao.and.returnValue(of(apiResponse));
@@ -228,6 +233,7 @@ describe('PlanejamentoArvoreAdapter', () => {
       const apiResponse: ArvoreApiResponse = {
         focal_id: '',
         nos: {},
+        subtitulo: null,
         metadata: {}
       };
       apiSpy.getArvoreVisualizacao.and.returnValue(of(apiResponse));
@@ -248,7 +254,7 @@ describe('PlanejamentoArvoreAdapter', () => {
 
       adapter.carregarResumo('obj-1').subscribe(data => {
         expect(data.informacoesGerais['nome']).toBe('Objetivo teste');
-        expect(data.informacoesGerais['planejamento_nome']).toBe('Planejamento ABC');
+        expect(data.informacoesGerais['planejamento_nome']).toBeUndefined();
         expect(data.informacoesGerais['tipo_objetivo_nome']).toBe('Estratégico');
         expect(data.informacoesGerais['eixo_tematico_nome']).toBe('Inovação');
         expect(data.item).toEqual(resumoApi.item);
@@ -354,7 +360,7 @@ describe('PlanejamentoArvoreAdapter', () => {
     it('deve ter campos de informações gerais esperados', () => {
       const campos = PLANEJAMENTO_ARVORE_CONFIG.camposInfoGeral.map(c => c.campo);
       expect(campos).toContain('nome');
-      expect(campos).toContain('planejamento_nome');
+      expect(campos).not.toContain('planejamento_nome');
       expect(campos).toContain('tipo_objetivo_nome');
       expect(campos).toContain('eixo_tematico_nome');
     });

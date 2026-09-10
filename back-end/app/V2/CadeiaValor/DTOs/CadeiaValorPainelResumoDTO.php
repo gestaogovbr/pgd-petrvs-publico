@@ -14,6 +14,7 @@ final class CadeiaValorPainelResumoDTO implements \JsonSerializable
     public function __construct(
         public readonly string $processo_id,
         public readonly string $processo_nome,
+        public readonly string $tipo_elemento_nome,
         public readonly int $nivel,
         public readonly SecaoResumoDTO $item,
         public readonly SecaoResumoDTO $consolidado,
@@ -26,6 +27,7 @@ final class CadeiaValorPainelResumoDTO implements \JsonSerializable
         return [
             'processo_id' => $this->processo_id,
             'processo_nome' => $this->processo_nome,
+            'tipo_elemento_nome' => $this->tipo_elemento_nome,
             'nivel' => $this->nivel,
             'item' => $this->item,
             'consolidado' => $this->consolidado,

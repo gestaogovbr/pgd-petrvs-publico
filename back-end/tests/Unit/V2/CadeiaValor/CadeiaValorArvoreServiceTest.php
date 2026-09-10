@@ -67,8 +67,8 @@ describe('CadeiaValorArvoreService::getArvore', function () {
 
         expect($result)->toBeInstanceOf(ArvoreResponseDTO::class);
         expect($result->focal_id)->toBe('p1');
-        expect($result->metadata['cadeia_valor_id'])->toBe('cv-1');
-        expect($result->metadata['cadeia_valor_nome'])->toBe('Cadeia Teste');
+        expect($result->subtitulo)->toBe('Cadeia Teste');
+        expect($result->metadata)->toBe(['cross_cadeia_map' => []]);
         expect($result->metadata['cross_cadeia_map'])->toBe([]);
         expect($result->nos)->toHaveCount(2);
         expect($result->nos['p1'])->toBeInstanceOf(ArvoreNodeResponseDTO::class);
@@ -170,14 +170,15 @@ describe('CadeiaValorArvoreService::getArvore', function () {
         $dto = new ArvoreResponseDTO(
             focal_id: 'pf-1',
             nos: [],
-            metadata: ['cadeia_valor_id' => 'cv-1', 'cadeia_valor_nome' => 'Cadeia Teste', 'cross_cadeia_map' => []],
+            subtitulo: 'Cadeia Teste',
+            metadata: ['cross_cadeia_map' => []],
         );
 
         $json = $dto->jsonSerialize();
 
         expect($json['focal_id'])->toBe('pf-1');
-        expect($json['metadata']['cadeia_valor_id'])->toBe('cv-1');
-        expect($json['metadata']['cadeia_valor_nome'])->toBe('Cadeia Teste');
+        expect($json['subtitulo'])->toBe('Cadeia Teste');
+        expect($json['metadata']['cross_cadeia_map'])->toBe([]);
         expect($json['nos'])->toBe([]);
     });
 });

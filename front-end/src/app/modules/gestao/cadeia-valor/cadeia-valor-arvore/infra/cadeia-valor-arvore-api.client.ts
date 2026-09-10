@@ -13,6 +13,7 @@ export type CadeiaValorArvoreApiResponse = ArvoreApiResponse;
 export type CadeiaValorResumoApi = {
   processo_id: string;
   processo_nome: string;
+  tipo_elemento_nome: string;
   nivel: number;
   item: SecaoResumo;
   consolidado: SecaoResumo;

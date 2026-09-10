@@ -67,6 +67,7 @@ describe('CadeiaValorPainelService::getResumo', function () {
         $repo->shouldReceive('buscarDadosGeraisPainel')->with('proc-1', 'cv-1')->andReturn((object) [
             'processo_id' => 'proc-1',
             'processo_nome' => 'Processo Teste',
+            'tipo_elemento_nome' => 'Macroprocesso',
             'nivel' => 2,
         ]);
         $repo->shouldReceive('coletarIdsFilhosRecursivo')
@@ -84,6 +85,7 @@ describe('CadeiaValorPainelService::getResumo', function () {
         expect($result)->toBeInstanceOf(CadeiaValorPainelResumoDTO::class)
             ->and($result->processo_id)->toBe('proc-1')
             ->and($result->processo_nome)->toBe('Processo Teste')
+            ->and($result->tipo_elemento_nome)->toBe('Macroprocesso')
             ->and($result->nivel)->toBe(2)
             ->and($result->item)->toBeInstanceOf(SecaoResumoDTO::class)
             ->and($result->item->esforco->planejado_horas)->toBe(800.0)
@@ -101,7 +103,7 @@ describe('CadeiaValorPainelService::getResumo', function () {
         $repo->shouldReceive('findCadeiaValor')->andReturn($cadeiaValor);
         $repo->shouldReceive('findProcesso')->andReturn($processo);
         $repo->shouldReceive('buscarDadosGeraisPainel')->andReturn((object) [
-            'processo_id' => 'proc-1', 'processo_nome' => 'P', 'nivel' => 1,
+            'processo_id' => 'proc-1', 'processo_nome' => 'P', 'tipo_elemento_nome' => '', 'nivel' => 1,
         ]);
         $repo->shouldReceive('coletarIdsFilhosRecursivo')->with('proc-1')->andReturn(['proc-1']);
 

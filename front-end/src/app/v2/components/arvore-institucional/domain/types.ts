@@ -23,6 +23,8 @@ export type ArvoreNodeApi = {
 export type ArvoreApiResponse = {
   focal_id: string;
   nos: Record<string, ArvoreNodeApi>;
+  /** Subtítulo do domínio (ex: nome da cadeia de valor ou do planejamento). */
+  subtitulo: string | null;
   metadata: Record<string, unknown>;
 };
 
@@ -72,8 +74,6 @@ export type ArvoreInstitucionalConfig = {
   labelCentralizar: string;
   /** Label exibido no detalhe expandido para o nó de origem (ex: "Item do planejamento", "Processo de origem"). */
   labelNoOrigem: string;
-  /** Subtítulo exibido no card-header da árvore (ex: nome da cadeia de valor). Extraído de metadata. */
-  subtituloMetadataKey?: string;
 };
 
 // ─── Dados da Árvore ───────────────────────────────────────────────────────────
@@ -112,7 +112,9 @@ export type ArvoreNodeData = {
 export type ArvoreData = {
   focalId: string;
   nos: Record<string, ArvoreNodeData>;
-  /** Metadados adicionais (ex: cadeia_valor_nome). */
+  /** Subtítulo do domínio exibido no card-header (ex: nome da cadeia de valor ou do planejamento). */
+  subtitulo?: string | null;
+  /** Metadados adicionais específicos do domínio (ex: cross_cadeia_map da cadeia de valor). */
   metadata?: Record<string, unknown>;
 };
 

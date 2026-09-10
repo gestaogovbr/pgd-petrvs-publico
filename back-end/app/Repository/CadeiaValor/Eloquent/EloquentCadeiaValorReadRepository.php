@@ -93,6 +93,7 @@ class EloquentCadeiaValorReadRepository implements CadeiaValorReadRepositoryCont
         return (object) [
             'processo_id' => $processoId,
             'processo_nome' => $processo?->nome ?? '',
+            'tipo_elemento_nome' => $processo?->tipoElemento?->nome ?? '',
             'nivel' => $nivel,
         ];
     }

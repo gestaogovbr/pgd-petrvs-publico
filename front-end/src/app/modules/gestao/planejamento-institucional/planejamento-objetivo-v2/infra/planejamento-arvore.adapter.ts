@@ -30,6 +30,7 @@ export class PlanejamentoArvoreAdapter implements ArvoreDataProvider {
       map(data => ({
         focalId: data.focal_id,
         nos: this.mapearNos(data.nos),
+        subtitulo: data.subtitulo ?? null,
         metadata: data.metadata ?? {}
       }))
     );
@@ -89,7 +90,6 @@ export class PlanejamentoArvoreAdapter implements ArvoreDataProvider {
     return {
       informacoesGerais: {
         nome: data.nome,
-        planejamento_nome: data.planejamento_nome,
         tipo_objetivo_nome: data.tipo_objetivo_nome || '—',
         eixo_tematico_nome: data.eixo_tematico_nome || '—',
       },
@@ -155,7 +155,7 @@ const TOOLTIPS_CONSOLIDADO: PainelSecaoTooltips = {
 };
 
 export const PLANEJAMENTO_ARVORE_CONFIG: ArvoreInstitucionalConfig = {
-  titulo: 'Árvore de objetivos',
+  titulo: 'Árvore do Planejamento Institucional',
   legendaPrimary: 'hierarquia no mesmo planejamento',
   legendaSecondary: 'vínculo entre planejamentos',
   breadcrumbParents: [
@@ -169,7 +169,6 @@ export const PLANEJAMENTO_ARVORE_CONFIG: ArvoreInstitucionalConfig = {
   ],
   camposInfoGeral: [
     { label: 'Nome', campo: 'nome' },
-    { label: 'Planejamento', campo: 'planejamento_nome' },
     { label: 'Tipo', campo: 'tipo_objetivo_nome' },
     { label: 'Eixo temático', campo: 'eixo_tematico_nome' },
   ],

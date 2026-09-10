@@ -30,9 +30,9 @@ interface CadeiaValorReadRepositoryContract
     public function contarVinculosPorProcesso(array $processoIds): array;
 
     /**
-     * Retorna dados gerais do processo para o painel: nome e nível.
+     * Retorna dados gerais do processo para o painel: nome, tipo de elemento e nível.
      *
-     * @return \stdClass{processo_id: string, processo_nome: string, nivel: int}
+     * @return \stdClass{processo_id: string, processo_nome: string, tipo_elemento_nome: string, nivel: int}
      */
     public function buscarDadosGeraisPainel(string $processoId, string $cadeiaValorId): \stdClass;
 

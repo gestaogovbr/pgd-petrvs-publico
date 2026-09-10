@@ -22,8 +22,7 @@ describe('ArvoreInstitucionalPage', () => {
     tooltips: null,
     badgeFocal: 'focal',
     labelCentralizar: 'Centralizar',
-    labelNoOrigem: 'Origem',
-    subtituloMetadataKey: 'subtitulo'
+    labelNoOrigem: 'Origem'
   };
 
   function makeNode(overrides: Partial<ArvoreNodeData> & { id: string }): ArvoreNodeData {
@@ -119,11 +118,11 @@ describe('ArvoreInstitucionalPage', () => {
       expect(component.subtitulo()).toBeNull();
     });
 
-    it('deve retornar valor da metadata key quando configurada', async () => {
+    it('deve retornar o subtitulo dos dados carregados', async () => {
       const data: ArvoreData = {
         focalId: 'obj-1',
         nos: { 'obj-1': makeNode({ id: 'obj-1' }) },
-        metadata: { subtitulo: 'Minha Cadeia' }
+        subtitulo: 'Minha Cadeia'
       };
       providerSpy.carregarArvore.and.returnValue(of(data));
 
@@ -132,11 +131,11 @@ describe('ArvoreInstitucionalPage', () => {
       expect(component.subtitulo()).toBe('Minha Cadeia');
     });
 
-    it('deve retornar null quando metadata não tem a key', async () => {
+    it('deve retornar null quando subtitulo dos dados é null', async () => {
       const data: ArvoreData = {
         focalId: 'obj-1',
         nos: { 'obj-1': makeNode({ id: 'obj-1' }) },
-        metadata: { outra_key: 'valor' }
+        subtitulo: null
       };
       providerSpy.carregarArvore.and.returnValue(of(data));
 

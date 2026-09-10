@@ -43,8 +43,8 @@ export const planejamentoObjetivoV2Routes: Routes = [
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
     data: {
-      title: 'Árvore de objetivos',
-      breadcrumb: 'Árvore de objetivos',
+      title: 'Árvore do Planejamento Institucional',
+      breadcrumb: 'Árvore do Planejamento Institucional',
       breadcrumbParents: [
         { label: 'Planejamentos Institucionais', url: '/gestao/planejamento' }
       ]
