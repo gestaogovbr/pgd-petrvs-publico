@@ -7,6 +7,7 @@ namespace App\Repository\SiapeDadosUORG\Eloquent;
 use App\Models\SiapeDadosUORG;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\SiapeDadosUORG\Contracts\SiapeDadosUORGReadRepositoryContract;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @extends AbstractEloquentReadRepository<SiapeDadosUORG>
@@ -18,8 +19,8 @@ class EloquentSiapeDadosUORGReadRepository extends AbstractEloquentReadRepositor
         $this->model = $model;
     }
 
-    /** @return \Illuminate\Database\Eloquent\Collection<int, SiapeDadosUORG> */
-    public function pendentes(string $codigoOrgao): \Illuminate\Database\Eloquent\Collection
+    /** @return Collection<int, SiapeDadosUORG> */
+    public function pendentes(string $codigoOrgao): Collection
     {
         return $this->model->newQuery()
             ->where('codigo_orgao', $codigoOrgao)

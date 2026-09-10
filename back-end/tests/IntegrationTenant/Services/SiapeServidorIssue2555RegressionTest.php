@@ -185,6 +185,37 @@ test('issue 2555 - carga automatica nao cria candidatos quando uma resposta da l
         ->and(SiapeBlackListServidor::query()->where('cpf', $cpf)->exists())->toBeFalse();
 });
 
+test('issue 2555 - data de transacao invalida nao interrompe o job nem cria candidato', function () {
+    $cpf = '25550000014';
+    $matricula = '2555099';
+
+    criarUsuarioIssue2555($cpf, $matricula);
+    criarIntegracaoServidorIssue2555($cpf, $matricula);
+
+    SiapeListaServidores::create([
+        'response' => listaServidoresComCpfIssue2555($cpf, '31022026'),
+        'processado' => false,
+    ]);
+
+    $buscarDados = new class(configuracaoSiapeIssue2555()) extends BuscarDadosSiapeServidor
+    {
+        public int $quantidadeRequisicoes = 0;
+
+        /** @param array<string, string> $xmlsData */
+        public function executaRequisicoes(array $xmlsData): array
+        {
+            $this->quantidadeRequisicoes += count($xmlsData);
+
+            return [];
+        }
+    };
+
+    $buscarDados->enviar();
+
+    expect($buscarDados->quantidadeRequisicoes)->toBe(0)
+        ->and(SiapeBlackListServidor::query()->where('cpf', $cpf)->exists())->toBeFalse();
+});
+
 test('issue 2555 - coleta parcial de UORGs preserva o snapshot anterior de servidores', function () {
     $snapshotAnterior = SiapeListaServidores::create([
         'response' => listaServidoresVaziaIssue2555(),
@@ -540,7 +571,7 @@ function listaServidoresVaziaIssue2555(): string
         XML;
 }
 
-function listaServidoresComCpfIssue2555(string $cpf): string
+function listaServidoresComCpfIssue2555(string $cpf, string $dataUltimaTransacao = '01092026'): string
 {
     return <<<XML
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -552,7 +583,7 @@ function listaServidoresComCpfIssue2555(string $cpf): string
                     <out>
                         <ns2:Servidor>
                             <cpf>{$cpf}</cpf>
-                            <dataUltimaTransacao>01092026</dataUltimaTransacao>
+                            <dataUltimaTransacao>{$dataUltimaTransacao}</dataUltimaTransacao>
                         </ns2:Servidor>
                     </out>
                 </ns1:listaServidoresResponse>

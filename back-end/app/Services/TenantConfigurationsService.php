@@ -3,14 +3,20 @@
 namespace App\Services;
 
 use App\Models\Tenant;
-use Illuminate\Support\Facades\Log;
+use App\Repository\Tenant\Contracts\TenantReadRepositoryContract;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Database\Models\Domain;
 
 class TenantConfigurationsService
 {
     private const DOMAIN_CACHE_TTL_SECONDS = 900;
     private const HTTPS_PORT = 443;
+
+    public function __construct(
+        private readonly ?TenantReadRepositoryContract $tenantReadRepository = null,
+    ) {
+    }
 
     public function handle(string $tenantId = null, $domain = null): ?Domain
     {
@@ -44,14 +50,18 @@ class TenantConfigurationsService
 
     public function handleTenant(string $tenantId): ?Tenant
     {
-        /** @var Tenant|null $tenant */
-        $tenant = Tenant::query()->find($tenantId);
+        $tenant = $this->tenantRead()->findById($tenantId);
 
         if ($tenant) {
             $this->loadSettings($tenant->toArray());
         }
 
         return $tenant;
+    }
+
+    private function tenantRead(): TenantReadRepositoryContract
+    {
+        return $this->tenantReadRepository ?? app(TenantReadRepositoryContract::class);
     }
 
     private function loadingConfigs($tenant) : void

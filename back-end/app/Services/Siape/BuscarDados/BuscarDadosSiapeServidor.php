@@ -112,13 +112,7 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
             return false;
         }
 
-        try {
-            SiapeDate::dataUltimaTransacaoParaBancoOuFalha($servidor['dataUltimaTransacao']);
-        } catch (\Throwable) {
-            return false;
-        }
-
-        return true;
+        return SiapeDate::dataUltimaTransacaoParaBanco($servidor['dataUltimaTransacao']) !== null;
     }
 
     /**

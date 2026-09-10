@@ -8,6 +8,7 @@ use App\DTOs\Siape\SiapeServidorPendenteDTO;
 use App\Models\SiapeConsultaDadosPessoais;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\SiapeConsultaDadosPessoais\Contracts\SiapeConsultaDadosPessoaisReadRepositoryContract;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -20,8 +21,8 @@ class EloquentSiapeConsultaDadosPessoaisReadRepository extends AbstractEloquentR
         $this->model = $model;
     }
 
-    /** @return \Illuminate\Support\Collection<int, SiapeServidorPendenteDTO> */
-    public function pendentesComDadosFuncionais(): \Illuminate\Support\Collection
+    /** @return Collection<int, SiapeServidorPendenteDTO> */
+    public function pendentesComDadosFuncionais(): Collection
     {
         return DB::table('siape_consultaDadosPessoais AS p')
             ->join('siape_consultaDadosFuncionais AS f', 'p.cpf', '=', 'f.cpf')
