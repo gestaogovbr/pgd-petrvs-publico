@@ -1,6 +1,6 @@
 {
   "name": "petrvs",
-  "version": "3.0.10",
+  "version": "3.1.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --configuration=dev --host 0.0.0.0 --disable-host-check --poll=1000",
