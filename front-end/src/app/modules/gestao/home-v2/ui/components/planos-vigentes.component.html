@@ -18,10 +18,12 @@
           <i class="bi bi-exclamation-triangle-fill home-alerta-card__icon" aria-hidden="true"></i>
           <span>
             <strong>Unidade Executora sem Plano de Entregas hoje:</strong>
-            <a class="home-alerta-card__link" role="link" tabindex="0"
+            <!-- TODO(#2474): reativar o link abaixo (remover o span) quando o Relatório de Lacunas de PE for mergeado -->
+            <!-- <a class="home-alerta-card__link" role="link" tabindex="0"
               (click)="unidadesSemPEClick.emit()" (keydown.enter)="unidadesSemPEClick.emit()">
               {{ unidadesSemPE() }} ({{ percentualUnidadesSemPE() }}%)
-            </a>
+            </a> -->
+            <span class="ms-2">{{ unidadesSemPE() }} ({{ percentualUnidadesSemPE() }}%)</span>
           </span>
         </div>
       } @else {
@@ -39,10 +41,12 @@
           <i class="bi bi-exclamation-triangle-fill home-alerta-card__icon" aria-hidden="true"></i>
           <span>
             <strong>Participante do PGD sem Plano de Trabalho hoje:</strong>
-            <a class="home-alerta-card__link" role="link" tabindex="0"
+            <!-- TODO(#2473): reativar o link abaixo (remover o span) quando o Relatório de Lacunas de PT for mergeado -->
+            <!-- <a class="home-alerta-card__link" role="link" tabindex="0"
               (click)="participantesSemPTClick.emit()" (keydown.enter)="participantesSemPTClick.emit()">
               {{ participantesSemPT() }} ({{ percentualParticipantesSemPT() }}%)
-            </a>
+            </a> -->
+            <span class="ms-2">{{ participantesSemPT() }} ({{ percentualParticipantesSemPT() }}%)</span>
           </span>
         </div>
       } @else {
