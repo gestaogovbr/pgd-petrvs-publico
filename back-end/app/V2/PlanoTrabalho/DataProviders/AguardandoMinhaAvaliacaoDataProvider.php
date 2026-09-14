@@ -46,6 +46,7 @@ class AguardandoMinhaAvaliacaoDataProvider
     private function baseQuery(string $usuarioId): \Illuminate\Database\Eloquent\Builder
     {
         $gerenciadas = $this->resolverGerenciadas($usuarioId);
+        $unidadesAvaliaveis = $this->resolverUnidadesAvaliaveis($gerenciadas);
 
         return PlanoTrabalho::query()
             ->whereIn('status', array_map(fn (StatusEnum $s) => $s->value, self::STATUS_AVALIAVEL))
@@ -58,7 +59,31 @@ class AguardandoMinhaAvaliacaoDataProvider
             ->whereNotExists(function ($sub) use ($usuarioId) {
                 $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($sub, $usuarioId);
             })
-            ->whereIn('unidade_id', $gerenciadas);
+            ->whereIn('unidade_id', $unidadesAvaliaveis);
+    }
+
+    /**
+     * Unidades cujos Planos de Trabalho o usuário pode avaliar: as unidades que ele chefia
+     * (avalia os PTs dos agentes lotados nela) MAIS as unidades imediatamente subordinadas
+     * (quando o participante é chefia da própria unidade, a avaliação sobe para a chefia
+     * da unidade superior — ver AvaliacaoAuthorizationValidator::podeAvaliar).
+     *
+     * @param string[] $gerenciadas
+     * @return string[]
+     */
+    private function resolverUnidadesAvaliaveis(array $gerenciadas): array
+    {
+        if ($gerenciadas === []) {
+            return [];
+        }
+
+        $filhas = DB::table('unidades')
+            ->whereIn('unidade_pai_id', $gerenciadas)
+            ->whereNull('deleted_at')
+            ->pluck('id')
+            ->toArray();
+
+        return array_values(array_unique(array_merge($gerenciadas, $filhas)));
     }
 
     /** @return string[] */
@@ -68,6 +93,8 @@ class AguardandoMinhaAvaliacaoDataProvider
             ->join('unidades_integrantes_atribuicoes as uia', 'uia.unidade_integrante_id', '=', 'ui.id')
             ->where('ui.usuario_id', $usuarioId)
             ->whereIn('uia.atribuicao', Atribuicao::chefia())
+            ->whereNull('ui.deleted_at')
+            ->whereNull('uia.deleted_at')
             ->pluck('ui.unidade_id')
             ->unique()
             ->values()
