@@ -146,7 +146,7 @@ export class AppComponent implements IAppComponent {
         icon: this.entity.getIcon('EixoTematico'),
       },
       ELEMENTOS_PLANEJAMENTO: {
-        name: this.lex.translate("Elementos do Planejamento"),
+        name: this.lex.translate("Elementos Institucionais"),
         permition: 'MOD_TIPO_OBJETIVO',
         route: ['cadastros', 'tipo-objetivo'],
         icon: this.entity.getIcon('TipoObjetivo'),

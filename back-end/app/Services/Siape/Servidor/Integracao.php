@@ -11,6 +11,7 @@ use App\Services\Siape\Contrato\InterfaceIntegracao;
 use App\Services\Siape\Imprimir;
 use App\Services\UtilService;
 use Ramsey\Uuid\Uuid;
+use App\Services\CodigoOrgaoService;
 
 class Integracao implements InterfaceIntegracao
 {
@@ -74,7 +75,11 @@ class Integracao implements InterfaceIntegracao
 
     private function salvaEntidade(entidade $entidade): void
     {
-        $registroDobanco = $this->repository->getServidor($entidade->cpf, $entidade->matriculasiape);
+        $registroDobanco = $this->repository->getServidor(
+            $entidade->cpf,
+            $entidade->matriculasiape,
+            $entidade->codigo_orgao
+        );
 
         if (!in_array($entidade->matriculasiape, $this->matriculasIntegracaoAlterados) && $registroDobanco == null) {
             $registro = $this->repository->save($entidade);
@@ -89,6 +94,7 @@ class Integracao implements InterfaceIntegracao
         if ($registroDobanco && !in_array($entidade->matriculasiape, $this->matriculasIntegracaoAlterados)) {
             
             $dadosAtualizados = $entidade->only([
+                'codigo_orgao',
                 'cpf_ativo', 'data_modificacao', 'nome', 'emailfuncional', 'sexo',
                 'municipio', 'uf', 'data_nascimento', 'telefone', 'vinculo_ativo', 
                 'codigo_cargo', 'coduorgexercicio', 'coduorglotacao',
@@ -100,7 +106,12 @@ class Integracao implements InterfaceIntegracao
 
             $dadosAtualizados['participa_pgd'] = $this->normalizeParticipaPGD($dadosAtualizados['participa_pgd']);
 
-            $registro =  $this->repository->update($entidade->cpf, $entidade->matriculasiape, $dadosAtualizados);
+            $registro = $this->repository->update(
+                $entidade->cpf,
+                $entidade->matriculasiape,
+                $dadosAtualizados,
+                $entidade->codigo_orgao
+            );
             
             array_push($this->matriculasIntegracaoAlterados, $entidade->cpf);
             
@@ -159,6 +170,10 @@ class Integracao implements InterfaceIntegracao
 
             $servidor = [
                 'id' => Uuid::uuid4(),
+                'codigo_orgao' => CodigoOrgaoService::obrigatorio(
+                    $this->integracaoConfig['siape']['codOrgao'] ?? null,
+                    'O Código do Órgão é obrigatório para processar servidores SIAPE.'
+                ),
                 'cpf_ativo' => UtilService::valueOrDefault($pessoal['cpf_ativo']),
                 'data_modificacao' => $this->getDataModificacao($pessoal, self::SISTEMA_ORIGEM),
                 'cpf' => UtilService::valueOrDefault(UtilService::onlyNumbers($pessoal['cpf']), null),

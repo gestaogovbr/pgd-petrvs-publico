@@ -23,12 +23,15 @@ use App\Enums\StatusEnum;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 beforeEach(function () {
+    DB::shouldReceive('transaction')->andReturnUsing(fn (callable $callback) => $callback());
+
     $this->documentoRepo = Mockery::mock(DocumentoRepository::class);
     $this->assinaturaRepo = Mockery::mock(DocumentoAssinaturaRepository::class);
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);

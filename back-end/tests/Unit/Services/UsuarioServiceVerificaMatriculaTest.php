@@ -20,11 +20,13 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 beforeEach(function () {
+    config()->set('integracao.siape.codOrgao', '20000');
     $this->usuarioRepository = Mockery::mock(UsuarioRepository::class);
     $this->blacklistRepository = Mockery::mock(SiapeBlackListServidorRepository::class);
     $this->integracaoServidorRepository = Mockery::mock(IntegracaoServidorRepository::class);
     $this->integracaoServidorRepository
         ->shouldReceive('getServidor')
+        ->withArgs(fn ($cpf, $matricula, $codigoOrgao) => $codigoOrgao === '20000')
         ->andReturnNull()
         ->byDefault();
 

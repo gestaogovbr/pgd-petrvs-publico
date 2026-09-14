@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\V2\Planejamento\Objetivo\DTOs;
 
+use App\V2\ArvoreInstitucional\DTOs\SecaoResumoDTO;
+
 final class ObjetivoPainelResumoDTO implements \JsonSerializable
 {
     public function __construct(
@@ -13,9 +15,9 @@ final class ObjetivoPainelResumoDTO implements \JsonSerializable
         public readonly string $tipo_objetivo_nome,
         public readonly string $eixo_tematico_nome,
         /** Seção "Item selecionado": somente o objetivo selecionado (RN02). */
-        public readonly ObjetivoPainelSecaoResumoDTO $item,
+        public readonly SecaoResumoDTO $item,
         /** Seção "Consolidado": objetivo selecionado + itens hierarquicamente subordinados (RN15). */
-        public readonly ObjetivoPainelSecaoResumoDTO $consolidado,
+        public readonly SecaoResumoDTO $consolidado,
         /** @var list<array{id: string, label: string}> */
         public readonly array $filtro_unidades = [],
     ) {}

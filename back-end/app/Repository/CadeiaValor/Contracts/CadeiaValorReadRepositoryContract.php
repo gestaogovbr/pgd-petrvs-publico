@@ -30,46 +30,17 @@ interface CadeiaValorReadRepositoryContract
     public function contarVinculosPorProcesso(array $processoIds): array;
 
     /**
-     * Retorna dados gerais do processo para o painel: nome e nível.
+     * Retorna dados gerais do processo para o painel: nome, tipo de elemento e nível.
      *
-     * @return \stdClass{processo_id: string, processo_nome: string, nivel: int}
+     * @return \stdClass{processo_id: string, processo_nome: string, tipo_elemento_nome: string, nivel: int}
      */
     public function buscarDadosGeraisPainel(string $processoId, string $cadeiaValorId): \stdClass;
 
     /**
-     * Agrega esforço, participantes e entregas numa única query.
+     * Retorna IDs do processo informado + todos os descendentes recursivamente.
      *
-     * @return \stdClass Campos: esforco_disponivel_horas, esforco_planejado_horas, esforco_executado_horas,
-     *                          tem_pt_pactuado, tem_pt_concluido, tem_pe_homologado,
-     *                          participantes_somente_unidade_propria, participantes_somente_outras_unidades,
-     *                          participantes_em_ambas, total_entregas, entregas_concluidas
+     * @return list<string>
      */
-    public function agregarPainelEsforcoPessoasEntregas(string $processoId, ?string $unidadeId = null): \stdClass;
+    public function coletarIdsFilhosRecursivo(string $processoId): array;
 
-    /**
-     * Lista as entregas inline com participantes, esforço e registro de execução para o detalhamento.
-     *
-     * @param array{unidade_id?: string|null, plano_entrega_entrega_id?: string|null, data_inicio?: string|null, data_fim?: string|null} $filtros
-     * @return list<\stdClass>
-     */
-    public function listarDetalhamentoEntregasPainel(string $processoId, array $filtros = []): array;
-
-    /**
-     * Retorna lista de unidades vinculadas ao processo para popular dropdown de filtro.
-     *
-     * @return list<array{id: string, label: string}>
-     */
-    public function listarFiltroUnidadesPainel(string $processoId): array;
-
-    /**
-     * Retorna lista de entregas vinculadas ao processo para popular dropdown de filtro.
-     *
-     * @return list<array{id: string, label: string}>
-     */
-    public function listarFiltroEntregasPainel(string $processoId): array;
-
-    /**
-     * @return \stdClass{esforco_disponivel: float, esforco_planejado: float, esforco_executado: float}
-     */
-    public function calcularEsforcoPorEntrega(string $entregaId): \stdClass;
 }

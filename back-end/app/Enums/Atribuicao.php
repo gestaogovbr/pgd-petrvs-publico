@@ -20,6 +20,19 @@ enum Atribuicao: string
         ];
     }
 
+    /**
+     * Chefia formal da unidade, sem incluir o gestor delegado.
+     *
+     * @return string[]
+     */
+    public static function chefiaTitularOuSubstituta(): array
+    {
+        return [
+            self::GESTOR->value,
+            self::GESTOR_SUBSTITUTO->value,
+        ];
+    }
+
     /** @return string[] */
     public static function participante(): array
     {

@@ -16,6 +16,10 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
+beforeEach(function () {
+    config()->set('integracao.siape.codOrgao', '20000');
+});
+
 describe('IntegracaoGestorService', function () {
 
     afterEach(function () {

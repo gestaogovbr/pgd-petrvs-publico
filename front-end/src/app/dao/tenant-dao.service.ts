@@ -62,6 +62,32 @@ export class TenantDaoService extends DaoBaseService<Tenant> {
       });
   }
 
+  public testarConexaoSipec(tenantId: string) {
+    return new Promise<{ message: string }>((resolve, reject) => {
+      this.server.post('config/' + this.collection + '/testar-sipec', { tenant_id: tenantId }).subscribe(response => {
+        if (response.error) {
+          reject(response.error);
+        } else {
+          resolve(response);
+        }
+      }, error => reject(error?.error?.message || error?.message || 'Erro desconhecido'));
+    });
+  }
+
+  public forcaSipec(item: TipoCapacidade) {
+      return new Promise<boolean>((resolve, reject) => {
+        this.server.post('config/' + this.collection + '/forcar-sipec', {
+          tenant_id: item.id,
+        }).subscribe(response => {
+          if (response.error) {
+            reject(response.error);
+          } else {
+            resolve(!!response?.success);
+          }
+        }, error => reject(error));
+      });
+  }
+
   public forcaEnvio(item: TipoCapacidade) {
     return new Promise<boolean>((resolve, reject) => {
       this.server.post('config/' + this.collection + '/forcar-envio', {

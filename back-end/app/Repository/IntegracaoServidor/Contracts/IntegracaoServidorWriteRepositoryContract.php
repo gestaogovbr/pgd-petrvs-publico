@@ -13,5 +13,5 @@ interface IntegracaoServidorWriteRepositoryContract
     /**
      * @param array<string, mixed> $data
      */
-    public function updateByCpfAndMatricula(string $cpf, string $matricula, array $data): bool;
+    public function updateByCpfAndMatricula(string $cpf, string $matricula, array $data, string $codigoOrgao): bool;
 }

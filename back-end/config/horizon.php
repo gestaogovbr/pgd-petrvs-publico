@@ -206,6 +206,14 @@ return [
                 'tries' => 1,
                 'timeout' => 60 * 60 * 24 * 2
             ],
+            'supervisor-sipec' => [
+                'connection' => 'redis',
+                'queue' => ['sipec_queue'],
+                'balance' => 'simple',
+                'processes' => 1,
+                'tries' => 1,
+                'timeout' => 60 * 60 * 24 * 2
+            ],
             'supervisor-pgd' => [
                 'connection' => 'rabbitmq',
                 'queue' => ['pgd_queue'],
@@ -231,6 +239,14 @@ return [
             'supervisor-siape' => [
                 'connection' => 'redis',
                 'queue' => ['siape_queue'],
+                'balance' => 'simple',
+                'processes' => 1,
+                'tries' => 1,
+                'timeout' => 60 * 60 * 24 * 2
+            ],
+            'supervisor-sipec' => [
+                'connection' => 'redis',
+                'queue' => ['sipec_queue'],
                 'balance' => 'simple',
                 'processes' => 1,
                 'tries' => 1,

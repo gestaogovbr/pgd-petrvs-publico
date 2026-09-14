@@ -1,21 +1,22 @@
 <?php
 
-use App\V2\Planejamento\Objetivo\EsforcoTotalGraphAssembler;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphAssembler;
+use App\V2\Planejamento\Objetivo\PlanejamentoEsforcoGraphAssembler;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->assembler = new EsforcoTotalGraphAssembler();
+    $this->assembler = new PlanejamentoEsforcoGraphAssembler(new ArvoreInstitucionalEsforcoGraphAssembler());
 });
 
 /**
  * @return stdClass{
- *     objetivo_id: string,
- *     objetivo_nome: string,
- *     objetivo_pai_id: ?string,
- *     objetivo_superior_id: ?string,
- *     planejamento_nome: string,
+ *     no_id: string,
+ *     no_nome: string,
+ *     no_pai_id: ?string,
+ *     no_pai_secundario_id: ?string,
+ *     container_nome: string,
  *     total_entregas: int,
  *     esforco_proprio: float
  * }
@@ -29,11 +30,12 @@ function linhaEsforcoObjetivo(
     int $totalEntregas = 0,
 ): stdClass {
     return (object) [
-        'objetivo_id' => $id,
-        'objetivo_nome' => $nome,
-        'objetivo_pai_id' => $paiId,
-        'objetivo_superior_id' => $superiorId,
-        'planejamento_nome' => 'Planejamento Teste',
+        'no_id' => $id,
+        'no_nome' => $nome,
+        'no_pai_id' => $paiId,
+        'no_pai_secundario_id' => $superiorId,
+        'container_nome' => 'Planejamento Teste',
+        'tipo_nome' => 'Tipo Teste',
         'total_entregas' => $totalEntregas,
         'esforco_proprio' => $esforcoProprio,
     ];

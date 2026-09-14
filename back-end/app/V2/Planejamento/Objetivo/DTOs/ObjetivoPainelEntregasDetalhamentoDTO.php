@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\V2\Planejamento\Objetivo\DTOs;
 
+use App\V2\ArvoreInstitucional\DTOs\EntregaDetalheLinhaDTO;
+
 /**
- * @param  list<ObjetivoPainelEntregaDetalheLinhaDTO>  $itens
+ * @param  list<EntregaDetalheLinhaDTO>  $itens
  * @param  list<array{id: string, label: string}>  $filtro_entregas
  * @param  list<array{id: string, label: string}>  $filtro_unidades
  */
 final class ObjetivoPainelEntregasDetalhamentoDTO implements \JsonSerializable
 {
     /**
-     * @param  list<ObjetivoPainelEntregaDetalheLinhaDTO>  $itens
+     * @param  list<EntregaDetalheLinhaDTO>  $itens
      * @param  list<array{id: string, label: string}>  $filtro_entregas
      * @param  list<array{id: string, label: string}>  $filtro_unidades
      */

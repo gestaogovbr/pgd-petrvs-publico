@@ -47,7 +47,10 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
         comparacaoSouGovPetrvs: { default: "" },
         tipo_pedagio: { default: "" },
         data_inicial_pedagio: { default: "" },
-        data_final_pedagio: { default: "" }
+        data_final_pedagio: { default: "" },
+        dispensa_plano_trabalho: { default: "" },
+        data_inicio_dispensa_pt: { default: "" },
+        data_fim_dispensa_pt: { default: "" }
       });
 
       this.filter!.get('unidade_id')?.setValidators(this.requiredValidator.bind(this));
@@ -129,6 +132,18 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
 
     if (form.data_final_pedagio) {
       result.push(["data_final_pedagio", "==", form.data_final_pedagio.toISOString().slice(0,10)]);
+    }
+
+    if (form.dispensa_plano_trabalho?.length) {
+      result.push(["dispensa_plano_trabalho", "==", form.dispensa_plano_trabalho]);
+    }
+
+    if (form.data_inicio_dispensa_pt) {
+      result.push(["data_inicio_dispensa_pt", "==", form.data_inicio_dispensa_pt.toISOString().slice(0,10)]);
+    }
+
+    if (form.data_fim_dispensa_pt) {
+      result.push(["data_fim_dispensa_pt", "==", form.data_fim_dispensa_pt.toISOString().slice(0,10)]);
     }
 
     if (this.metadata?.atribuicao) {

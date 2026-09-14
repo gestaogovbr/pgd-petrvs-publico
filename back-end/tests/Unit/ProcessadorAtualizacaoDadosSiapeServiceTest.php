@@ -15,6 +15,10 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
+beforeEach(function () {
+    config()->set('integracao.siape.codOrgao', '20000');
+});
+
 /*
  * Testes para o método processarDadosPessoais de IntegracaoService.
  *
@@ -236,6 +240,7 @@ describe('ProcessadorAtualizacaoDadosSiapeService - cadastrarUsuariosAusentes co
         // Arrange: 2 registros com mesmo CPF, mesma unidade, matriculas diferentes
         $dadosBase = [
             'cpf' => '12345678901',
+            'codigo_orgao' => '20000',
             'exercicio' => 'COD001',
             'nome' => 'Servidor A',
             'apelido' => 'A',
@@ -263,8 +268,9 @@ describe('ProcessadorAtualizacaoDadosSiapeService - cadastrarUsuariosAusentes co
         $unidadeObj = Mockery::mock(\App\Models\Unidade::class)->makePartial();
         $unidadeObj->id = 'unidade-uuid-1';
         $unidadeRepositoryMock = Mockery::mock(\App\Repository\UnidadeRepository::class);
-        $unidadeRepositoryMock->shouldReceive('findByCodigo')
-            ->with('COD001')
+        $unidadeRepositoryMock->shouldReceive('findByCodigoOrgao')
+            ->with('20000', 'COD001')
+            ->times(3)
             ->andReturn($unidadeObj);
 
         $usuarioServiceMock = Mockery::mock(UsuarioService::class);

@@ -26,6 +26,7 @@ use App\Support\SiapeDate;
 use Illuminate\Support\Str;
 use Exception;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Brazanation\Documents\Cpf;
@@ -221,27 +222,39 @@ class SiapeIndividualServidorService extends ServiceBase
             return;
         }
 
-        $usuariosPorMatricula = $this->usuarioRepository->findAllByCpfUnfiltered($cpf)
+        $usuariosPorCpf = $this->usuarioRepository->findAllByCpfUnfiltered($cpf);
+        $usuariosPorMatricula = $usuariosPorCpf
             ->keyBy(fn(Usuario $usuario): string => (string) $usuario->matricula);
 
         if ($usuariosPorMatricula->isEmpty()) {
             return;
         }
 
-        DB::transaction(function () use ($cpf, $dadosFuncionaisDtos, $usuariosPorMatricula): void {
+        DB::transaction(function () use ($cpf, $dadosFuncionaisDtos, $usuariosPorCpf, $usuariosPorMatricula): void {
+            $usuariosAtualizadosPorNovaMatricula = [];
+
             foreach ($dadosFuncionaisDtos as $dados) {
                 $matricula = $dados->matriculaSiape();
                 if ($matricula === null) {
                     continue;
                 }
 
-                /** @var Usuario|null $usuario */
-                $usuario = $usuariosPorMatricula->get($matricula);
+                $usuario = $this->resolverUsuarioParaAtualizacaoFuncionalParcial(
+                    $dados,
+                    $usuariosPorCpf,
+                    $usuariosPorMatricula,
+                    $usuariosAtualizadosPorNovaMatricula
+                );
                 if ($usuario === null) {
                     continue;
                 }
 
                 $attributes = $dados->atributosUsuarioParciais();
+                if ((string) $usuario->matricula !== $matricula) {
+                    $attributes['matricula'] = $matricula;
+                    $usuariosAtualizadosPorNovaMatricula[$usuario->id] = true;
+                }
+
                 if ($attributes === []) {
                     continue;
                 }
@@ -254,6 +267,71 @@ class SiapeIndividualServidorService extends ServiceBase
                 ]);
             }
         });
+    }
+
+    /**
+     * @param Collection<int, Usuario> $usuariosPorCpf
+     * @param Collection<string, Usuario> $usuariosPorMatricula
+     * @param array<string, bool> $usuariosAtualizadosPorNovaMatricula
+     */
+    private function resolverUsuarioParaAtualizacaoFuncionalParcial(
+        DadosFuncionaisSiapeDTO $dados,
+        Collection $usuariosPorCpf,
+        Collection $usuariosPorMatricula,
+        array $usuariosAtualizadosPorNovaMatricula
+    ): ?Usuario {
+        $matricula = $dados->matriculaSiape();
+        if ($matricula === null) {
+            return null;
+        }
+
+        /** @var Usuario|null $usuarioPorMatricula */
+        $usuarioPorMatricula = $usuariosPorMatricula->get($matricula);
+        if ($usuarioPorMatricula !== null) {
+            return $usuarioPorMatricula;
+        }
+
+        $codigosUnidade = collect($dados->codigosUnidadeCandidatos())
+            ->map(fn(mixed $codigo): ?string => $this->normalizarCodigoUnidade($codigo))
+            ->filter(fn(?string $codigo): bool => $codigo !== null)
+            ->unique()
+            ->values();
+
+        if ($codigosUnidade->isEmpty()) {
+            SiapeLog::warning('Carga parcial com nova matricula sem unidade para correlacao', [
+                'quantidade_usuarios_cpf' => $usuariosPorCpf->count(),
+            ]);
+
+            return null;
+        }
+
+        $usuariosDaUnidade = $usuariosPorCpf->filter(function (Usuario $usuario) use ($codigosUnidade): bool {
+            $codigoLotacao = $this->normalizarCodigoUnidade($usuario->lotacao?->unidade?->codigo);
+
+            return $codigoLotacao !== null && $codigosUnidade->contains($codigoLotacao);
+        });
+
+        if ($usuariosDaUnidade->count() !== 1) {
+            SiapeLog::warning('Carga parcial com nova matricula sem correlacao univoca', [
+                'codigos_unidade' => $codigosUnidade->all(),
+                'quantidade_usuarios_cpf' => $usuariosPorCpf->count(),
+                'quantidade_candidatos_unidade' => $usuariosDaUnidade->count(),
+            ]);
+
+            return null;
+        }
+
+        /** @var Usuario $usuario */
+        $usuario = $usuariosDaUnidade->first();
+        if (isset($usuariosAtualizadosPorNovaMatricula[$usuario->id])) {
+            SiapeLog::warning('Mais de uma nova matricula correlacionada ao mesmo usuario na carga parcial; atualizacao ignorada', [
+                'codigos_unidade' => $codigosUnidade->all(),
+            ]);
+
+            return null;
+        }
+
+        return $usuario;
     }
 
     /**
@@ -564,12 +642,12 @@ class SiapeIndividualServidorService extends ServiceBase
             'indice_dados' => $index,
             'dados_funcionais_keys' => $dados->keys()
         ]);
-        
+
         $codigoUnidade = $this->resolverCodigoUnidadeServidor($dados);
         if (!$this->validarUnidadeProcessada($cpf, $codigoUnidade, $dados)) {
             return;
         }
-        
+
         $this->sincronizarDadosUnidade($cpf, $codigoUnidade);
     }
 
@@ -611,7 +689,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function verificarExistenciaUnidade(string $codigoUnidade): bool
     {
-        return $this->unidadeRepository->existsByCodigo($codigoUnidade);
+        return $this->unidadeRepository->existsByCodigoOrgao(CodigoOrgaoService::atual(), $codigoUnidade);
     }
 
     private function validarUnidadeProcessada(string $cpf, string $codigoUnidade, DadosFuncionaisSiapeDTO $dados): bool
@@ -656,7 +734,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
     protected function buscarUorgNaoProcessada()
     {
-        return $this->siapeListaUORGSRepository->findUnprocessed();
+        return $this->siapeListaUORGSRepository->findUnprocessed(CodigoOrgaoService::atual());
     }
 
     private function buscarUnidadeNaLista(string $codigoUnidade): ?array
@@ -671,6 +749,7 @@ class SiapeIndividualServidorService extends ServiceBase
     {
         $this->siapeDadosUORGRepository->create([
             'id' => Str::uuid(),
+            'codigo_orgao' => CodigoOrgaoService::atual(),
             'data_modificacao' => SiapeDate::dataUltimaTransacaoParaBancoOuFalha($unidadeSiape['dataUltimaTransacao']),
             'response' => $responseXml,
             'created_at' => Carbon::now(),

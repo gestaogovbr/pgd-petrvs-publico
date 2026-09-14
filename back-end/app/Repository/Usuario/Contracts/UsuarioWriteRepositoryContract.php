@@ -14,6 +14,7 @@ interface   UsuarioWriteRepositoryContract
     public function update(string|int $id, array $attributes): ?Usuario;
     public function delete(string|int $id): bool;
     public function updateFotoPerfil(string $usuarioId, string $tipo, string $url, string $downloadedUrl): bool;
+    public function limparEmail(string $usuarioId): bool;
     public function removerVinculos(string $usuarioId): void;
     public function restore(string|int $id): bool;
     public function agendarEnvio(Usuario $usuario, Carbon $dataAgendamento): void;

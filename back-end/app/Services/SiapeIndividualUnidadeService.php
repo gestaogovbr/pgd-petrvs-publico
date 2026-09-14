@@ -82,7 +82,8 @@ class SiapeIndividualUnidadeService extends ServiceBase
         try {
             SiapeLog::info('Limpando tabelas de controle do SIAPE para a unidade');
 
-            $this->siapeDadosUORGRepository->forceDeleteProcessados();
+            $codigoOrgao = CodigoOrgaoService::atual();
+            $this->siapeDadosUORGRepository->forceDeleteProcessados($codigoOrgao);
 
             SiapeLog::info('Montando XML dos dados da unidade');
 
@@ -105,6 +106,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
         $this->siapeDadosUORGRepository->create([
             'id' => Str::uuid(),
+            'codigo_orgao' => $codigoOrgao,
             'data_modificacao' => today(),
             'codigo' => $codUorg,
             'response' => $dadosUnidadeResponseXml,
@@ -114,6 +116,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
             $this->siapeDadosUORGRepository->create([
                 'id' => Str::uuid(),
+                'codigo_orgao' => $codigoOrgao,
                 'data_modificacao' => today(),
                 'codigo' => $codUorg,
                 'response' => $dadosUnidadeResponseXml,
@@ -201,7 +204,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
     public function relatorioProcessamento(string $codigoUnidade): array
     {
         $codigoUnidade = $this->normalizarCodigoUnidade($codigoUnidade);
-        $unidade = $this->unidadeRepository->findByCodigo($codigoUnidade);
+        $unidade = $this->unidadeRepository->findByCodigoOrgao(CodigoOrgaoService::atual(), $codigoUnidade);
 
         if (!$unidade instanceof Unidade) {
             throw new Exception("Unidade {$codigoUnidade} não encontrada no Petrvs.");
@@ -299,7 +302,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
     {
         return $cpfs
             ->flatMap(fn (string $cpf) => $this->integracaoUnidadeRepository
-                ->getCodigosByCpfTitular($cpf, $codigoProcessado)
+                ->getCodigosByCpfTitular($cpf, CodigoOrgaoService::atual(), $codigoProcessado)
                 ->map(fn (string $codigo): array => [
                     'codigo' => $this->normalizarCodigoUnidade($codigo),
                     'cpf' => $cpf,
@@ -324,6 +327,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
             $this->siapeDadosUORGRepository->create([
                 'id' => Str::uuid(),
+                'codigo_orgao' => CodigoOrgaoService::atual(),
                 'data_modificacao' => today(),
                 'codigo' => $codigoRetornado,
                 'response' => $responseXml,
@@ -348,7 +352,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
      */
     private function capturarEstadoUnidade(string $codigoUnidade): ?array
     {
-        $unidade = $this->unidadeRepository->findByCodigo($codigoUnidade);
+        $unidade = $this->unidadeRepository->findByCodigoOrgao(CodigoOrgaoService::atual(), $codigoUnidade);
 
         return $unidade instanceof Unidade ? $this->snapshotUnidade($unidade) : null;
     }
@@ -444,7 +448,7 @@ class SiapeIndividualUnidadeService extends ServiceBase
 
     private function buscarChefeCpf(string $codigoUnidade): ?string
     {
-        $registro = $this->integracaoUnidadeRepository->findByCodigo($codigoUnidade);
+        $registro = $this->integracaoUnidadeRepository->findByCodigoOrgao(CodigoOrgaoService::atual(), $codigoUnidade);
 
         if (!$registro instanceof IntegracaoUnidade || empty($registro->cpf_titular_autoridade_uorg)) {
             return null;

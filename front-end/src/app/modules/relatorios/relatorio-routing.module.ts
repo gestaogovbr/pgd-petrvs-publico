@@ -5,6 +5,7 @@ import { ConfigResolver } from "src/app/resolvies/config.resolver";
 import { RelatorioAgenteComponent } from "./relatorio-agente/relatorio-agente.component";
 import { RelatorioPlanoEntregaComponent } from "./relatorio-plano-entrega/relatorio-plano-entrega.component";
 import { RelatorioPlanoTrabalhoComponent } from "./relatorio-plano-trabalho/relatorio-plano-trabalho.component";
+import { RelatorioPlanoTrabalhoConsultaComponent } from "./relatorio-plano-trabalho-consulta/relatorio-plano-trabalho-consulta.component";
 import { RelatorioUnidadeComponent } from "./relatorio-unidade/relatorio-unidade.component";
 import { IndicadorEquipeComponent } from "./indicadores-equipes/indicadores-equipes.component";
 import { IndicadorGestaoComponent } from "./indicadores-gestao/indicadores-gestao.component";
@@ -12,13 +13,39 @@ import { IndicadorEntregaComponent } from "./indicadores-entrega/indicadores-ent
 import { RelatorioCargaIndividualSiapeComponent } from "./relatorio-carga-individual-siape/relatorio-carga-individual-siape.component";
 
 const routes: Routes = [
-  { path: 'planos-trabalho',
+  {
+    path: 'planos-trabalho/cadastrados',
     component: RelatorioPlanoTrabalhoComponent,
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
-    data: { 
+    data: {
       title: "Relatório de Planos de Trabalho",
+      permission: "MOD_RELATORIO_PT"
+    }
+  },
+  {
+    path: 'planos-trabalho/lacunas',
+    loadChildren: () => import('./lacuna-plano-trabalho/routes').then((m) => m.routes),
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: "Lacunas de Planos de Trabalho",
+      permission: "MOD_RELATORIO_PT",
+      breadcrumb: "Lacunas de Planos de Trabalho",
+      modal: false
+    }
+  },
+  {
+    path: 'planos-trabalho',
+    component: RelatorioPlanoTrabalhoConsultaComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: "Relatórios de Planos de Trabalho",
+      permission: "MOD_RELATORIO_PT"
     }
   },
    { path: 'planos-entrega',

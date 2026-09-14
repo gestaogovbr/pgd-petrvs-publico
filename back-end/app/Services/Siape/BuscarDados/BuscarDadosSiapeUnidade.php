@@ -12,15 +12,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Illuminate\Support\Str;
+use App\Services\CodigoOrgaoService;
 
 class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 {
-    private function limpaTabela(): void
+    private function limpaTabela(string $codigoOrgao): void
     {
-        DB::table('siape_dadosUORG')->truncate();
+        DB::table('siape_dadosUORG')->where('codigo_orgao', $codigoOrgao)->delete();
     }
 
     private function insertDados($xmlResponse) {
+        $codigoOrgao = CodigoOrgaoService::obrigatorio($this->getConfig()['codOrgao'] ?? null);
 
         foreach ($xmlResponse as $dados => $xml) {
             $dados = explode(".", $dados);
@@ -28,6 +30,7 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 
             SiapeDadosUORG::insert([
                 'id' => Str::uuid(),
+                'codigo_orgao' => $codigoOrgao,
                 'codigo' => $dados[0],
                 'data_modificacao' => SiapeDate::dataUltimaTransacaoParaBancoOuFalha($dataultimaAtualizacao),
                 'response' => $xml,
@@ -118,9 +121,11 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
     {
         Log::info("Processamento de Unidade iniciado");
 
-        $this->limpaTabela();
-        
-        $uorgs = SiapeListaUORGS::where('processado', 0)
+        $codigoOrgao = CodigoOrgaoService::obrigatorio($this->getConfig()['codOrgao'] ?? null);
+        $this->limpaTabela($codigoOrgao);
+
+        $uorgs = SiapeListaUORGS::where('codigo_orgao', $codigoOrgao)
+                ->where('processado', 0)
                 ->orderBy('updated_at', 'desc')
                 ->first();
 
@@ -133,9 +138,9 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
 
         /** @var SiapeUnidadeLifecycleService $lifecycleService */
         $lifecycleService = app(SiapeUnidadeLifecycleService::class);
-        $lifecycleService->sincronizarBlacklistPelaListaUorgs($unidades);
+        $lifecycleService->sincronizarBlacklistPelaListaUorgs($unidades, $codigoOrgao);
 
-        $unidadesJaProcessadas = IntegracaoUnidade::all();
+        $unidadesJaProcessadas = IntegracaoUnidade::where('codigo_orgao', $codigoOrgao)->get();
 
         $unidades = array_filter($unidades, function ($unidade) use ($unidadesJaProcessadas) 
         {

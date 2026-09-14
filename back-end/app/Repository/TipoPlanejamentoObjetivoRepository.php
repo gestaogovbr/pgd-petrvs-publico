@@ -23,9 +23,9 @@ class TipoPlanejamentoObjetivoRepository
     }
 
     /** @return Collection<int, TipoPlanejamentoObjetivo> */
-    public function getAll(): Collection
+    public function getAll(?string $estrutura = null): Collection
     {
-        return $this->readRepository->getAll();
+        return $this->readRepository->getAll($estrutura);
     }
 
     public function create(array $attributes): TipoPlanejamentoObjetivo

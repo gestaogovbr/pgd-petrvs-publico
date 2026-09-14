@@ -19,7 +19,7 @@
             <input-text
                 controlName="cpf"
                 label="CPF"
-                labelInfo="Informe o CPF para busca no SIAPE"
+                labelInfo="Informe o CPF para busca"
                 [size]="4"
                 [attr.maxlength]=15
                 hostClass="inputCPF"
@@ -27,6 +27,11 @@
                 placeholder="Informe o CPF"
                 [maskFormat]="'000.000.000-00'"
             ></input-text>
+        </div>
+        <input-select [size]="4" label="Fonte" controlName="fonte" [items]="fontes" required></input-select>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-4">
             <button type="button" class="btn btn-outline-primary btn-block btn-cpf"
                 (click)="onClickCPF()" 
                 [disabled]="loading || !form.valid">

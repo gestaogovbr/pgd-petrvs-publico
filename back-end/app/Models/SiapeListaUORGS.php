@@ -9,10 +9,13 @@ class SiapeListaUORGS extends ModelBase
 {
     use HasFactory;
 
+    public const PROCESSADO = 1;
+
     protected $table = 'siape_listaUORG';
 
 
     protected $fillable = [
+        'codigo_orgao',
         'response',
          'processado'
     ];

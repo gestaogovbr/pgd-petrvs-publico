@@ -13,4 +13,14 @@ interface UnidadeIntegranteAtribuicaoWriteRepositoryContract
 {
     public function create(array $attributes): Model;
     public function delete(string $id): bool;
+
+    /**
+     * @param list<string> $unidadeIntegranteIds
+     */
+    public function deleteAtivasByUnidadeIntegranteIds(array $unidadeIntegranteIds): int;
+
+    /**
+     * Remove todas as atribuições GESTOR de um usuario em todas as unidades (exceto informais).
+     */
+    public function deleteGestorByUsuario(string $usuarioId, bool $ignorarInformais = true): int;
 }

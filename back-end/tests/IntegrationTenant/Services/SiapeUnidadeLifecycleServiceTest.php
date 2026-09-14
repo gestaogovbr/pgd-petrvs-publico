@@ -227,7 +227,7 @@ describe('SiapeUnidadeLifecycleService', function () {
 
         $blacklist->refresh();
 
-        // Lista vazia: todas as unidades ativas são tratadas; o total agregado depende do tenant (seed etc.).
+        // Lista vazia: todas as unidades ativas criadas no teste entram na blacklist.
         expect($resultado['blacklists_criadas'] + $resultado['blacklists_mantidas'])
             ->toBe($resultado['unidades_avaliadas']);
         expect($blacklist->deleted_at)->toBeNull();
@@ -513,7 +513,7 @@ describe('SiapeUnidadeLifecycleService', function () {
             'conectagov_chave' => 'chave',
             'conectagov_senha' => 'senha',
             'conectagov_qtd_max_requisicoes' => 10,
-            'codOrgao' => '1',
+            'codOrgao' => '20000',
             'siglaSistema' => 'SIGLA',
             'nomeSistema' => 'NOME',
             'senha' => 'SENHA',

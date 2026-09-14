@@ -1,0 +1,646 @@
+# Fluxo de Sincronização SIPEC
+
+## Visão Geral
+
+O fluxo SIPEC é uma alternativa ao fluxo SIAPE (SOAP/XML) para sincronização em massa de unidades e servidores. Consome a API REST do SIGEPE-Integra (OpenAPI) e segue a mesma estrutura de 3 fases do `SincronizarSiapeJob`, porém com uma **Fase 0** adicional de coleta via API.
+
+```
+SincronizarSipecJob
+│
+├─ FASE 0: Coleta resiliente da API SIPEC (REST)
+│    │
+│    ├─ SipecService::executarFase0($tenantId)
+│    │    ├─ Adquire Redis lock (TTL 600s) → impede overlap
+│    │    ├─ Lê/cria checkpoint (sipec_sync_checkpoints)
+│    │    │
+│    │    ├─ Etapa 'unidades': coletarUnidadesPaginado()
+│    │    │    └─ Retoma da última página salva no checkpoint
+│    │    │    └─ GET /api-sipec/v1/unidades?codOrgao=X&page=N (paginado)
+│    │    │    └─ updateOrCreate em sipec_unidades (by 'codigo')
+│    │    │    └─ Atualiza checkpoint.ultima_pagina após cada página
+│    │    │
+│    │    ├─ Etapa 'servidores': coletarServidoresPaginado()
+│    │    │    └─ Retoma da última página salva no checkpoint
+│    │    │    └─ GET /api-sipec/v1/servidores?codUorg=X&page=N (paginado)
+│    │    │    └─ updateOrCreate em sipec_servidores (by ['cpf','matricula'])
+│    │    │    └─ Atualiza checkpoint.ultima_pagina após cada página
+│    │    │
+│    │    ├─ Marca checkpoint.etapa = 'completo'
+│    │    └─ Libera Redis lock
+│    │
+│    └─ Retry adaptativo por tipo de erro (executarGetComRetry):
+│         ├─ 4XX → fail fast (não retryable)
+│         ├─ 5XX → backoff exponencial longo (5s, 15s, 45s)
+│         └─ cURL/rede → backoff exponencial curto (2s, 4s, 8s)
+│
+├─ FASE 1: IntegracaoSipecService::retornarUorgs()
+│    └─ Lê sipec_unidades (processado=false)
+│    └─ Parseia JSON → formato compatível com integracao_unidades
+│    └─ Popula/atualiza integracao_unidades
+│    └─ processaUnidadeRaiz()
+│    └─ deepReplaceUnidades() → INSERT/UPDATE unidades
+│    └─ Ativa unidades reativadas
+│
+├─ FASE 2: Processamento de Servidores (services dedicados SIPEC)
+│    ├─ SipecServidorIntegracaoService::processar()
+│    │    └─ Lê sipec_servidores (processado=false) em chunks de 100
+│    │    └─ Parseia JSON via ServidorSipecDTO::fromServidor()
+│    │    └─ Upsert em integracao_servidores (por CPF+matrícula)
+│    │    └─ Normaliza: email, participaPGD, modalidadePGD (via ModalidadePgd::normalize), funcoes (JSON)
+│    │    └─ Marca processado=true; try/catch por registro
+│    │
+│    └─ SipecServidorAtualizacaoService::processar()
+│         ├─ atualizarDadosPessoais() → compara integracao_servidores vs usuarios, UPDATE divergências
+│         ├─ atualizarLotacoes() → move lotações divergentes + insere ausentes
+│         └─ cadastrarNovos() → INSERT usuarios + lotação (com controle de batch para matrículas)
+│
+└─ FASE 3: IntegracaoGestorService::atualizarGestores()
+     └─ montarArrayChefias() → JOIN integracao_unidades + unidades + usuarios
+     └─ GestorIntegracao::processar() → UPDATE atribuições + perfis
+```
+
+## Arquitetura
+
+### Tabelas Intermediárias
+
+| Tabela | Descrição | Colunas principais |
+|--------|-----------|-------------------|
+| `sipec_unidades` | JSON bruto de cada unidade vinda da API | `id`, `codigo`, `response` (JSON), `processado`, `data_modificacao` |
+| `sipec_servidores` | JSON bruto de cada servidor vindo da API | `id`, `cpf`, `matricula`, `response` (JSON), `processado`, `data_modificacao` |
+| `sipec_sync_checkpoints` | Checkpoint de progresso da Fase 0 | `id`, `tenant_id` (unique), `etapa` (enum), `ultima_pagina`, `total_paginas` |
+
+### Classes
+
+| Classe | Responsabilidade |
+|--------|-----------------|
+| `App\Jobs\SincronizarSipecJob` | Orquestra o fluxo completo (Fase 0 + dispatch de sincronização) |
+| `App\Services\Sipec\SipecService` | Client HTTP autenticado (OAuth2 JWT) para API SIPEC + Fase 0 resiliente |
+| `App\Services\Sipec\IntegracaoSipecService` | Lê tabelas intermediárias e retorna no formato esperado pelo `IntegracaoService` (Fases 1 e 3) |
+| `App\Services\Sipec\Servidor\SipecServidorIntegracaoService` | Fase 2a: lê `sipec_servidores`, parseia via DTO, popula `integracao_servidores` |
+| `App\Services\Sipec\Servidor\SipecServidorAtualizacaoService` | Fase 2b: compara `integracao_servidores` vs `usuarios`, aplica diffs (dados pessoais, lotações, novos) |
+| `App\DTOs\Sipec\ServidorSipecDTO` | Parsing tipado do JSON de servidores da API SIPEC |
+| `App\DTOs\Sipec\AtualizacaoDadosPessoaisDTO` | Retorno tipado de `buscarAtualizacoesDados()` |
+| `App\DTOs\Sipec\AtualizacaoLotacaoDTO` | Retorno tipado de `getAtualizacoesLotacoes()` |
+| `App\DTOs\Sipec\ServidorNaoLotadoDTO` | Retorno tipado de `getServidoresInseridosNaoLotados()` |
+| `App\DTOs\Sipec\ServidorAusenteDTO` | Retorno tipado de `getUsuariosAusentes()` |
+| `App\Support\ModalidadePgd` | Normaliza modalidade PGD (texto e código numérico → valor interno) |
+| `App\Services\IntegracaoService` | Orquestrador de sincronização (fases 1 e 3), usa `integracaoServiceAdapter` |
+| `App\Models\SipecUnidade` | Model Eloquent para `sipec_unidades` |
+| `App\Models\SipecServidor` | Model Eloquent para `sipec_servidores` |
+| `App\Models\SipecSyncCheckpoint` | Model Eloquent para checkpoint de progresso da Fase 0 |
+| `App\Exceptions\SipecApiRetryableException` | Exception para erros retryable (5XX/timeout) após esgotar tentativas |
+
+### Repositories (Fase 0)
+
+| Repository | Responsabilidade |
+|---|---|
+| `App\Repository\SipecUnidadeRepository` | Persistência de unidades SIPEC (`updateOrCreateByCodigo`) |
+| `App\Repository\SipecServidorRepository` | Persistência de servidores SIPEC (`updateOrCreateByCpfAndMatricula`) |
+| `App\Repository\SipecSyncCheckpointRepository` | Gerenciamento do checkpoint (`firstOrCreateByTenantId`, `updateByTenantId`, `deleteByTenantId`) |
+
+O `SipecService` não acessa models diretamente para persistência — toda escrita/leitura é delegada aos repositories, tornando-o testável com mocks via DI.
+
+### Adapter Pattern (Fases 1 e 3)
+
+O `IntegracaoService` possui uma propriedade pública `integracaoServiceAdapter`. O método `getIntegracaoAdapter()` retorna:
+- O adapter injetado (quando vindo do `SincronizarSipecJob`)
+- Fallback para `$this->IntegracaoSiapeService` (fluxo SIAPE original)
+
+Isso permite que as Fases 1 e 3 sejam reutilizadas sem duplicação. A **Fase 2 foi desacoplada** e usa services dedicados (`SipecServidorIntegracaoService` + `SipecServidorAtualizacaoService`) com injeção explícita de dependências, sem herança de `ServiceBase`.
+
+## Configuração
+
+Variáveis de ambiente (`.env`):
+
+```env
+INTEGRACAO_SIPEC_URL=https://gateway.conectagov.estaleiro.serpro.gov.br
+INTEGRACAO_SIPEC_CONECTAGOV_CHAVE=<client_id>
+INTEGRACAO_SIPEC_CONECTAGOV_SENHA=<client_secret>
+INTEGRACAO_SIPEC_CPF=<cpf_usuario_servico>
+INTEGRACAO_SIPEC_CODUORG=<codigo_uorg_raiz>
+```
+
+Config: `config/integracao.php` → chave `sipec`.
+
+## Endpoints da API SIPEC consumidos
+
+| Endpoint | Método | Descrição |
+|----------|--------|-----------|
+| `/oauth2/jwt-token` | POST | Geração de token OAuth2 (client_credentials) |
+| `/api-sipec/v1/unidades` | GET | Lista paginada de `UnidadeDetalhadaDTO` |
+| `/api-sipec/v1/servidores` | GET | Lista paginada de `ServidorDetalhadoDTO` |
+
+### Paginação
+
+Ambos endpoints suportam `page` e `size` como query params. O `SipecService` pagina automaticamente até `totalPages` com checkpoint por página.
+
+### Autenticação
+
+- Header `Authorization: Bearer <jwt_token>`
+- Header `x-cpf-usuario: <cpf_configurado>`
+
+## Resiliência da Fase 0
+
+### Garantias
+
+| Garantia | Mecanismo |
+|----------|----------|
+| Sem overlap | Redis lock exclusivo por tenant (TTL 600s) |
+| Retomada do ponto de falha | Checkpoint persiste última página com sucesso em `sipec_sync_checkpoints` |
+| Idempotência | `updateOrCreate` por chave natural (`codigo` para unidades, `['cpf','matricula']` para servidores) |
+| Atomicidade | Checkpoint atualizado APÓS persistir dados da página |
+
+### Política de Retry (executarGetComRetry)
+
+| Tipo de erro | Comportamento | Delay entre tentativas |
+|---|---|---|
+| 4XX (client error) | Fail fast — não retenta | — |
+| 5XX (server error) | 3 tentativas, backoff exponencial longo | 5s → 15s → 45s |
+| cURL/timeout (rede) | 3 tentativas, backoff exponencial curto | 2s → 4s → 8s |
+
+O delay entre tentativas é executado via método `retrySleep(int $seconds)` (protected), permitindo override em testes unitários para eliminar espera real.
+
+Após esgotar tentativas, lança `SipecApiRetryableException`. O checkpoint preserva o progresso e a próxima execução do job retoma da página seguinte à última salva.
+
+### Fluxo de recuperação
+
+```
+1ª execução: páginas 0..5 OK, falha na página 6
+   → checkpoint: { etapa: 'unidades', ultima_pagina: 6 }
+
+2ª execução (retry do job ou disparo manual):
+   → Redis lock OK
+   → Lê checkpoint: retoma da página 6
+   → Continua até totalPages
+   → Avança para etapa 'servidores', ultima_pagina: 0
+   → Completa servidores
+   → checkpoint: { etapa: 'completo' }
+```
+
+### Reset de checkpoint
+
+Para forçar re-execução completa (re-coleta de todos os dados):
+
+```php
+$sipecService->resetarCheckpoint($tenantId);
+```
+
+Isso deleta o registro de checkpoint, fazendo a próxima execução iniciar da página 0 da etapa 'unidades'.
+
+## Disparo
+
+### Via Controller (manual)
+
+```
+POST /api/job-schedule/sincronizar-sipec
+Body: { "tenant_id": "opcional" }
+```
+
+### Via Queue (agendado)
+
+```php
+SincronizarSipecJob::dispatch($tenantId);
+```
+
+Queue: `sipec_queue`
+
+## Mapeamento de Dados
+
+### Unidades (API → integracao_unidades)
+
+#### Campos preenchidos via JSON `/unidades`
+
+| Campo API SIPEC (path no JSON) | Campo `integracao_unidades` | Observação |
+|-------------------------------|----------------------------|------------|
+| `codUorg` | `id_servo` | Identificador principal da UORG |
+| `codUorgPai` | `pai_servo` | Código da UORG pai |
+| `codUorgPai` | `pai_siape` | Mesmo valor de `pai_servo` — no fluxo SIAPE ambos vinham da mesma fonte |
+| `codUnidadeSiafi` | `codigo_siape` | Código SIAFI da unidade |
+| `codUorg` | `cod_unidade` | Mesmo valor de `id_servo` — identificador da UORG |
+| `dadoComplementar.codUorgPagadora` | `codupag` | Código da UORG pagadora |
+| `nomeUorg` | `nomeuorg` | Nome da unidade |
+| `siglaUorg` | `siglauorg` | Sigla da unidade |
+| `contato.numTelefoneUorg` | `telefone` | Pode conter múltiplos separados por `,` |
+| `contato.emailUorg` | `email` | Pode conter múltiplos separados por `,` |
+| `tipoUorg` | `tipo` | Ex: `"URG"` |
+| `endereco.logradouroUorg` | `logradouro` | Logradouro com número |
+| `endereco.bairroUorg` | `bairro` | Bairro |
+| `endereco.cepUorg` | `cep` | CEP (pode vir sem zeros à esquerda) |
+| `endereco.codMunicipio` | `municipio_ibge` | Código IBGE do município |
+| `municipio.nomeMunicipio` | `municipio_nome` | Pode vir vazio no JSON |
+| `endereco.ufUorg` | `municipio_uf` | UF (2 caracteres) |
+| `situacaoUorg` | `ativa` | Ex: `"ATV"` (ativa) |
+| `dadoComplementar.indicadorUorgRegimenta` | `regimental` | `1` = regimental |
+| `dataUltimaTransacao` | `data_modificacao` | Formato ISO 8601 |
+| `cnpjUpag` | `cnpjupag` | CNPJ da UPAG (sem formatação) |
+| `rh.cpfTitularAutoridadeUorg` | `cpf_titular_autoridade_uorg` | CPF do titular |
+| `rh.cpfSubstitutoAutoridadeUorg` | `cpf_substituto_autoridade_uorg` | Pode vir como objeto `{"0": "..."}` — usa primeiro valor |
+
+#### Campos mapeados para `UnidadeSipecDTO::toRelatorio()`
+
+| Chave retornada por `toRelatorio()` | Propriedade do DTO | Campo API SIPEC (path no JSON) |
+|-------------------------------------|--------------------|---------------------------------|
+| `codUorg` | `$this->idServo` | `codUorg` |
+| `codUorgPai` | `$this->paiServo` | `codUorgPai` |
+| `codOrgao` | `$this->codOrgao` | `codOrgao` |
+| `siglaUorg` | `$this->siglauorg` | `siglaUorg` |
+| `nomeUorg` | `$this->nomeuorg` | `nomeUorg` |
+| `nomeExtendido` | `$this->nomeextendido` | `nomeExtendido` |
+| `siglaOrgao` | `$this->siglaOrgao` | `siglaOrgao` |
+| `dataUltimaTransacao` | `$this->dataModificacao` | `dataUltimaTransacao` |
+| `dataCriacaoUorg` | `$this->dataCriacaoUorg` | `dataCriacaoUorg` |
+| `idUnidadePai` | `$this->paiServo` | `codUorgPai` (mesmo valor que `codUorgPai`) |
+| `emailUorg` | `$this->email` | `contato.emailUorg` |
+| `uf` | `$this->municipioUf` | `endereco.ufUorg` |
+| `cpfTitularAutoridadeUorg` | `$this->cpfTitularAutoridadeUorg` | `rh.cpfTitularAutoridadeUorg` |
+| `cpfSubstitutoAutoridadeUorg` | `$this->cpfSubstitutoAutoridadeUorg` | `rh.cpfSubstitutoAutoridadeUorg` |
+
+#### Campos do model SEM correspondência no JSON `/unidades`
+
+| Campo `integracao_unidades` | Situação |
+|-----------------------------|----------|
+| `natureza` | Não retornado pela API SIPEC |
+| `fronteira` | Não retornado pela API SIPEC |
+| `fuso_horario` | Não retornado pela API SIPEC |
+| `cod_uop` | Não retornado pela API SIPEC |
+| `tipo_desc` | Não retornado pela API SIPEC |
+| `na_rodovia` | Não retornado pela API SIPEC |
+| `ptn_ge_coordenada` | Não retornado pela API SIPEC |
+| `municipio_siafi_siape` | Não retornado pela API SIPEC |
+| `municipio_siscom` | Não retornado pela API SIPEC |
+| `und_nu_adicional` | Não retornado pela API SIPEC |
+
+#### Campos do JSON `/unidades` disponíveis mas não mapeados para o model
+
+| Campo SIPEC (path no JSON) | Descrição | Uso potencial |
+|----------------------------|-----------|---------------|
+| `codOrgao` | Código do órgão (ex: `17500`) | Filtro por órgão |
+| `codOrgaoUorg` | Código órgão-UORG | Relação órgão ↔ UORG |
+| `nomeOrgao` | Nome do órgão | Exibição |
+| `nomeUorgMaiusculo` | Nome abreviado maiúsculo | Exibição compacta |
+| `nomeExtendido` | Nome completo da UORG | Alternativa a `nomeUorg` |
+| `siglaUnidadeSiape` | Sigla SIAPE (diferente da sigla UORG) | Referência cruzada SIAPE |
+| `siglaOrgao` | Sigla do órgão (ex: `"MGI"`) | Exibição |
+| `dataCriacaoUorg` | Data de criação da UORG | Histórico |
+| `endereco.numeroUorg` | Número do endereço | Endereço completo |
+| `endereco.complementoUorg` | Complemento | Endereço completo |
+| `dadoComplementar.indicadorUorgUpag` | Flag UPAG | Identificar se é pagadora |
+| `dadoComplementar.indicadorUorgAdministrativa` | Flag administrativa | Classificação |
+| `areaAtuacao.codAreaAtuaUorg` | Código área de atuação | Classificação funcional |
+| `areaAtuacao.nomeAreaAtuaUorg` | Nome área de atuação | Exibição |
+| `contato.numFaxUorg` | Fax | Contato alternativo |
+| `atoLegal[].diplomaLegalCriacaoUorg` | Diploma legal de criação | Referência normativa |
+| `uorg.codUorgPessoal` | Código UORG pessoal | Relação RH |
+| `uorg.cnpjLocalizador` | CNPJ localizador | Identificação fiscal |
+
+### Servidores — Mapeamento completo (API SIPEC → DTO → integracao_servidores → usuarios)
+
+| Campo API SIPEC (path no JSON) | Propriedade `ServidorSipecDTO` | Campo `integracao_servidores` | Campo final `usuarios` |
+|-------------------------------|-------------------------------|------------------------------|------------------------|
+| `cpf` | `cpf` | `cpf` | `cpf` |
+| `nome` | `nome` | `nome` | `nome` |
+| `matriculaSiape` | `matriculaSiape` | `matriculasiape` | `matricula` |
+| `codOrgao` | `codOrgao` | — (usado em validação) | — |
+| `codUorgExercicio` | `codUorgExercicio` | `coduorgexercicio`, `codigo_servo_exercicio` | lotação via `unidades_integrantes` |
+| `codUorgLotacao` | `codUorgLotacao` | `coduorglotacao` | — (usado em processamento) |
+| `codSitFuncional` | `codSitFuncional` | `codigo_situacao_funcional` | — |
+| `situacaoServidor.nomeSitFuncional` | `nomeSitFuncional` | `situacao_funcional` (via enum + fallback) | `situacao_funcional` |
+| `codCargo` | `codCargo` | `codigo_cargo` | — |
+| `codAtivFun` | `codAtivFun` | `funcoes` (JSON) | — |
+| `codUpag` | `codUpag` | `codupag` | — |
+| `codJornada` | `codJornada` | `cod_jornada` | `cod_jornada` |
+| `jornadaTrabalho.nomeJornada` | `nomeJornada` | `nome_jornada` | `nome_jornada` |
+| `modalidadePGD` | `modalidadePGD` | `modalidade_pgd` | `modalidade_pgd` |
+| `participaPGD` | `participaPGD` | `participa_pgd` | `participa_pgd` |
+| `identUnica` | `identUnica` | `ident_unica` | `ident_unica` |
+| `dataOcorrIngressoOrgao` | `dataOcorrIngressoOrgao` | `dataexercicionoorgao` | — |
+| `dataOcorrExclusao` | `dataOcorrExclusao` | — (servidor ignorado se presente) | — |
+| `dataUltimaTransacao` | `dataUltimaTransacao` | `data_modificacao` | `data_modificacao` |
+| `servidorDisponivel.emailInstitucional` | `emailInstitucional` | `emailfuncional` | `email` |
+| `rh.cpfChefiaImediata` | `cpfChefiaImediata` | `cpf_chefia_imediata` | — |
+
+**Observações:**
+- `emailInstitucional`: o DTO filtra placeholder `naoinformado@`; o processador valida formato de email antes de gravar.
+- `situacao_funcional`: o processador `PreparaServidor::getSituacaoFuncional()` resolve via `SituacaoFuncionalEnum::fromCodigo($codSitFuncional)`. Se o enum retornar `'DESCONHECIDO'` (código não mapeado), usa `$dto->nomeSitFuncional` (ex: `"CEDIDO/REQUISITADO"`) como fallback. Isso garante que códigos novos ainda não cadastrados no enum sejam preenchidos com o texto descritivo vindo da API SIPEC.
+- `dataOcorrExclusao`: quando preenchido, o servidor é descartado (não entra em `integracao_servidores`).
+
+## Comparação SIAPE vs SIPEC
+
+| Aspecto | SIAPE | SIPEC |
+|---------|-------|-------|
+| Protocolo | SOAP/XML (WSO2) | REST/JSON (SIGEPE-Integra) |
+| Tabelas intermediárias | `siape_dadosUORG`, `siape_consultaDados*` | `sipec_unidades`, `sipec_servidores` |
+| Processamento XML | `ProcessaDadosSiapeBD` | N/A (JSON direto via DTO) |
+| Service de leitura | `IntegracaoSiapeService` | `IntegracaoSipecService` (Fases 1,3) |
+| Fase 2 — popular integracao | `Siape\Servidor\Integracao` (trait + array manual) | `SipecServidorIntegracaoService` (DTO tipado + upsert) |
+| Fase 2 — atualizar usuarios | `ProcessadorAtualizacaoDadosSiapeService` (ServiceBase, stdClass) | `SipecServidorAtualizacaoService` (DTOs tipados, 0 PHPStan) |
+| Tratamento de erros | Catch global, tudo-ou-nada | Try/catch por registro, continua processando |
+| Transactions | Monolítica (todo o batch) | Chunks de 50 com retry(3) |
+| Tipagem | `stdClass` genérico, 13+ erros PHPStan | DTOs readonly, 0 erros PHPStan |
+| Dependências | `ServiceBase` magic properties | Injeção explícita via construtor |
+| Job | `SincronizarSiapeJob` | `SincronizarSipecJob` |
+| Queue | `siape_queue` | `sipec_queue` |
+| Fases 1,3 | `IntegracaoService::sincronizacao()` | Mesmo (via adapter) |
+
+## Campos de `integracao_servidores` — Status de preenchimento via SIPEC
+
+### Campos preenchidos via `ServidorSipecDTO`
+
+| Campo `integracao_servidores` | Origem no DTO | Status |
+|-------------------------------|---------------|--------|
+| `cpf` | `$dto->cpf` | ✅ |
+| `nome` | `$dto->nome` | ✅ |
+| `emailfuncional` | `$dto->emailInstitucional` | ✅ (filtra `naoinformado@`) |
+| `matriculasiape` | `$dto->matriculaSiape` | ✅ |
+| `codigo_cargo` | `$dto->codCargo` | ✅ |
+| `coduorgexercicio` | `$dto->codUorgExercicio` | ✅ |
+| `coduorglotacao` | `$dto->codUorgLotacao` | ✅ |
+| `codigo_servo_exercicio` | `$dto->codUorgExercicio` | ✅ |
+| `codigo_situacao_funcional` | `$dto->codSitFuncional` | ✅ |
+| `situacao_funcional` | Derivado via `SituacaoFuncionalEnum` + fallback `$dto->nomeSitFuncional` | ✅ (auto) |
+| `codupag` | `$dto->codUpag` | ✅ |
+| `dataexercicionoorgao` | `$dto->dataOcorrIngressoOrgao` | ✅ |
+| `funcoes` | `$dto->codAtivFun` (se preenchido) | ✅ |
+| `ident_unica` | `$dto->identUnica` | ✅ |
+| `modalidade_pgd` | `$dto->modalidadePGD` | ✅ |
+| `participa_pgd` | `$dto->participaPGD` | ✅ |
+| `cod_jornada` | `$dto->codJornada` | ✅ |
+| `nome_jornada` | `$dto->nomeJornada` | ✅ |
+| `data_modificacao` | `$dto->dataUltimaTransacao` | ✅ |
+| `cpf_chefia_imediata` | `$dto->cpfChefiaImediata` | ✅ |
+| `cpf_ativo` | hardcoded `true` | ✅ |
+| `vinculo_ativo` | hardcoded `true` | ✅ |
+
+### Campos do model SEM correspondência no JSON SIPEC
+
+Estes campos **não possuem** equivalente no payload de servidores da API SIPEC:
+
+| Campo `integracao_servidores` | Situação |
+|-------------------------------|----------|
+| `sexo` | Não retornado pela API SIPEC |
+| `municipio` | Não retornado pela API SIPEC (dado pessoal do servidor) |
+| `uf` | Não retornado pela API SIPEC (dado pessoal do servidor) |
+| `data_nascimento` | Não retornado pela API SIPEC |
+| `telefone` | Não retornado pela API SIPEC |
+| `nomeguerra` | Não retornado pela API SIPEC (hardcoded `''`) |
+| `email_chefia_imediata` | Não retornado pela API SIPEC |
+
+### Campos SIPEC disponíveis mas não mapeados para nenhum campo do model
+
+Campos presentes no JSON que poderiam ser úteis futuramente mas não têm coluna em `integracao_servidores`:
+
+| Campo SIPEC | Descrição | Uso potencial |
+|-------------|-----------|---------------|
+| `vinculos[n].siglaRegimeJuridico` | Ex: `"EST"` (Estatutário) | Filtro/relatório por regime jurídico |
+| `vinculos[n].regimeJuridico.nomeRegimeJuridico` | Ex: `"ESTATUTARIO"` | Exibição do regime completo |
+| `vinculos[n].codOrgaoRequisitante` | Ex: `17500` | Identificar órgão requisitante em cessões |
+| `vinculos[n].doOrgaoOrigem` | Ex: `17400` | Órgão de origem (servidor cedido) |
+| `vinculos[n].codUorgLocalizacao` | Ex: `3439` | Localização física do servidor |
+| `vinculos[n].codClasse` | Ex: `"C"` | Classe na carreira |
+| `vinculos[n].classe.nomeClasse` | Ex: `"CLASSE C"` | Descrição da classe |
+| `vinculos[n].codPadrao` | Ex: `"I"` | Padrão/nível na classe |
+| `vinculos[n].cargo.nomeCargo` | Ex: `"OFICIAL SERVICOS DE APOIO"` | Nome do cargo efetivo |
+| `vinculos[n].servidorDisponivel.emailServidor` | Email pessoal do servidor | Contato alternativo |
+| `vinculos[n].dataOcorrIngressoServPublico` | Data ingresso no serviço público | Tempo de serviço |
+| `vinculos[n].dataOcupacaoCargo` | Data de ocupação do cargo | Histórico funcional |
+| `vinculos[n].codOcorrIngressoOrgao` | Código da ocorrência de ingresso | Tipo de ingresso (ex: 50 = redistribuição) |
+| `vinculos[n].dataObito` | Data de óbito | Controle de exclusão por falecimento |
+
+## Campos do SIAPE efetivamente usados vs dead storage
+
+Análise dos campos retornados pelas APIs SOAP do SIAPE (`consultaDadosFuncionais`, `consultaDadosPessoais`, `dadosUorg`) que são de fato consumidos pelo sistema após serem persistidos nas tabelas `integracao_servidores` e `integracao_unidades`. Campos classificados como "dead storage" são persistidos mas nenhuma query, validação ou regra de negócio os lê posteriormente.
+
+### `integracao_servidores` — Campos efetivamente usados
+
+| Campo | Destino / Uso |
+|-------|---------------|
+| `cpf` | `usuarios.cpf`, identificador em todas as buscas |
+| `nome` | `usuarios.nome` (atualização e cadastro) |
+| `emailfuncional` | `usuarios.email` (atualização e cadastro) |
+| `matriculasiape` | `usuarios.matricula`, JOIN principal entre tabelas |
+| `nomeguerra` | `usuarios.apelido` |
+| `codigo_servo_exercicio` | Define lotação do servidor (JOIN com `unidades.codigo`) |
+| `ident_unica` | `usuarios.ident_unica` |
+| `modalidade_pgd` | `usuarios.modalidade_pgd` — validações de PT, relatórios, envio API |
+| `participa_pgd` | `usuarios.participa_pgd` — validações de PT, indicadores, envio API |
+| `cod_jornada` | `usuarios.cod_jornada` |
+| `nome_jornada` | `usuarios.nome_jornada` |
+| `data_modificacao` | `usuarios.data_modificacao`, controle de necessidade de atualização |
+| `data_nascimento` | `usuarios.data_nascimento` |
+| `funcoes` | Processamento de chefias (`IntegracaoGestorService`) |
+| `cpf_chefia_imediata` | Processamento de chefias |
+| `situacao_funcional` | `usuarios.situacao_funcional` (apenas no cadastro de novos) |
+| `codigo_situacao_funcional` | Filtro de ativos, classificação, contrato temporário |
+| `coduorglotacao` | Fallback quando `codigo_servo_exercicio` é vazio (contrato temporário) |
+| `sexo` | `usuarios.sexo` (apenas no cadastro de novos) |
+| `uf` | `usuarios.uf` (apenas no cadastro de novos) |
+| `telefone` | `usuarios.telefone` (apenas no cadastro de novos) |
+
+### `integracao_servidores` — Dead storage (nunca lidos após persist)
+
+| Campo | Observação |
+|-------|------------|
+| `cpf_ativo` | Hardcoded `true`, nunca consultado |
+| `vinculo_ativo` | Hardcoded `true`, nunca consultado |
+| `codigo_cargo` | Armazenado, nenhuma query o lê |
+| `coduorgexercicio` | Redundante com `codigo_servo_exercicio` — este último é o usado |
+| `codupag` | Armazenado, nenhuma query o lê |
+| `dataexercicionoorgao` | Armazenado, nunca consultado downstream |
+| `email_chefia_imediata` | Armazenado, nunca consultado (apenas `cpf_chefia_imediata` é usado) |
+
+### `integracao_unidades` — Campos efetivamente usados
+
+| Campo | Destino / Uso |
+|-------|---------------|
+| `id_servo` | `unidades.codigo`, identificador principal |
+| `pai_servo` | Hierarquia de unidades (`unidades.unidade_pai_id` via código) |
+| `codigo_siape` | Usado em `getUnidadesComChefias()`, JOIN com `unidades.codigo` |
+| `nomeuorg` | `unidades.nome` |
+| `siglauorg` | `unidades.sigla` |
+| `municipio_ibge` | Busca `cidades.codigo_ibge` → `unidades.cidade_id` |
+| `cpf_titular_autoridade_uorg` | Define chefia titular (`IntegracaoGestorService::montarArrayChefias`) |
+| `cpf_substituto_autoridade_uorg` | Consulta de unidade no front-end (`UnidadeResource`) |
+| `ativa` | Controle de ativação/inativação de unidades |
+| `data_modificacao` | Controle de necessidade de atualização |
+| `telefone` | Armazenado na `integracao_unidades`, não vai para `unidades` mas é lido em relatórios |
+| `email` | Armazenado na `integracao_unidades`, não vai para `unidades` mas é lido em relatórios |
+| `municipio_uf` | Armazenado, uso em relatórios |
+| `municipio_nome` | Armazenado, uso em relatórios |
+| `codupag` | Armazenado, uso em relatórios |
+| `regimental` | Armazenado, uso em relatórios |
+| `cnpjupag` | Armazenado, uso em relatórios |
+| `pai_siape` | Redundante com `pai_servo`, usado em contextos legados |
+
+### `integracao_unidades` — Dead storage (nunca lidos após persist)
+
+| Campo | Observação |
+|-------|------------|
+| `natureza` | Persistido, nenhuma query o lê |
+| `fronteira` | Persistido, nenhuma query o lê |
+| `fuso_horario` | Persistido, nenhuma query o lê |
+| `cod_uop` | Persistido, nenhuma query o lê |
+| `cod_unidade` | Persistido, nenhuma query o lê |
+| `tipo` | Persistido, nenhuma query o lê |
+| `tipo_desc` | Persistido, nenhuma query o lê |
+| `na_rodovia` | Persistido, nenhuma query o lê |
+| `logradouro` | Persistido, nenhuma query o lê |
+| `bairro` | Persistido, nenhuma query o lê |
+| `cep` | Persistido, nenhuma query o lê |
+| `ptn_ge_coordenada` | Persistido, nenhuma query o lê |
+| `municipio_siafi_siape` | Persistido, nenhuma query o lê |
+| `municipio_siscom` | Persistido, nenhuma query o lê |
+| `und_nu_adicional` | Persistido, nenhuma query o lê |
+
+## Troubleshooting
+
+- **Token expirado**: O `SipecService` cacheia o token por 59 min. Se houver erro 401, chamar `SipecService::invalidateToken()`.
+- **Unidade sem endereço**: Campos de município ficarão vazios — unidade será criada/atualizada sem `cidade_id`.
+- **Servidor com `dataOcorrExclusao`**: Será ignorado (não processado).
+- **Tabelas intermediárias cheias**: Registros com `processado=true` podem ser purgados periodicamente.
+
+
+
+- **Digrama de sequencia SincronizarSiapeJob**
+
+sequenceDiagram
+    participant Laravel as Laravel schedule:run
+    participant Kernel as Kernel schedule
+    participant JobBase as JobBase
+    participant SyncJob as SincronizarSiapeJob
+    participant Service as IntegracaoService
+
+    Laravel->>Kernel: schedule:run
+
+    Kernel->>Kernel: JobSchedule::where(ativo,true)
+    Kernel->>Kernel: foreach → new JobBase
+    Kernel->>Kernel: $schedule->job(...)->cron(...)
+
+    Kernel->>JobBase: dispatch
+
+    JobBase->>JobBase: inicializeTenant()
+    JobBase->>JobBase: loadingTenantConfig()
+
+    JobBase->>SyncJob: dispatch(new SincronizarSiapeJob)
+
+    SyncJob->>Service: new IntegracaoService([], tenantId)
+
+    SyncJob->>SyncJob: Entidade::all()
+
+    loop Para cada entidade
+        SyncJob->>Service: sincronizar(inputs)
+
+        Service->>Service: sincronizacao(inputs)
+        Service->>Service: getToken()
+        Service->>Service: getIntegracaoAdapter()
+
+        Service->>Service: retornarUorgs()
+        Service->>Service: retornarServidores()
+
+        Service->>Service: atualizaUnidades
+        Service->>Service: atualizaServidores
+        Service->>Service: atualizaGestores
+
+        Service-->>SyncJob: resultado
+    end
+
+
+┌──────────────┐     ┌──────────┐       ┌─────────┐      ┌──────────────────────┐     ┌────────────────────┐
+│ Laravel      │     │ Kernel   │       │ JobBase │      │ SincronizarSiapeJob  │     │ IntegracaoService  │
+│ schedule:run │     │ schedule │       │ handle()│      │ handle()             │     │                    │
+└──────┬───────┘     └────┬─────┘       └────┬────┘      └──────────┬───────────┘     └─────────┬──────────┘
+       │                  │                  │                      │                           │
+       │ schedule:run     │                  │                      │                           │
+       │─────────────────►│                  │                      │                           │
+       │                  │                  │                      │                           │
+       │   JobSchedule::where(ativo,true)    │                      │                           │
+       │   foreach → new JobBase($jobEntity) │                      │                           │
+       │   $schedule->job($job)->cron(...)   │                      │                           │
+       │                  │                  │                      │                           │
+       │                  │  dispatch        │                      │                           │
+       │                  │─────────────────►│                      │                           │
+       │                  │                  │                      │                           │
+       │                  │                  │ inicializeTenant()   │                           │
+       │                  │                  │ loadingTenantConfig()│                           │
+       │                  │                  │ dispatch(new         │                           │
+       │                  │                  │  SincronizarSiapeJob │                           │
+       │                  │                  │  ($tenantId))        │                           │
+       │                  │                  │─────────────────────►│                           │
+       │                  │                  │                      │                           │
+       │                  │                  │                      │ new IntegracaoService(    │
+       │                  │                  │                      │   [], $tenantId)          │
+       │                  │                  │                      │──────────────────────────►│
+       │                  │                  │                      │                           │
+       │                  │                  │                      │ Entidade::all()           │
+       │                  │                  │                      │                           │
+       │                  │                  │                      │ foreach $entidade:        │
+       │                  │                  │                      │   sincronizar($inputs)    │
+       │                  │                  │                      │──────────────────────────►│
+       │                  │                  │                      │                           │
+       │                  │                  │                      │                           │ sincronizacao($inputs)
+       │                  │                  │                      │                           │   → getToken()
+       │                  │                  │                      │                           │   → getIntegracaoAdapter()
+       │                  │                  │                      │                           │       →retornarUorgs()
+       │                  │                  │                      │                           │       →retornarServidores()
+       │                  │                  │                      │                           │   → atualizaUnidades
+       │                  │                  │                      │                           │   → atualizaServidores
+       │                  │                  │                      │                           │   → atualizaGestores
+       │                  │                  │                      │                           │
+       │                  │                  │                      │                           │ store(resultado)
+       │                  │                  │                      │◄──────────────────────────│
+
+
+
+┌────────┐     ┌──────────────────────────┐     ┌──────────────────────┐
+│ Client │     │ JobScheduleController    │     │ SincronizarSiapeJob  │
+│ (HTTP) │     │ sincronizarSiape()       │     │                      │
+└───┬────┘     └───────────┬──────────────┘     └──────────┬───────────┘
+    │                      │                               │
+    │ POST /api/job-...    │                               │
+    │─────────────────────►│                               │
+    │                      │                               │
+    │                      │ SincronizarSiapeJob::dispatch │
+    │                      │  ($usuario_id)                │
+    │                      │──────────────────────────────►│
+    │                      │                               │
+    │  200 JSON            │                               │ (mesma lógica acima)
+    │◄─────────────────────│                               │
+
+
+
+
+dispatch(new SincronizarSiapeJob($tenantId))
+         │
+         │  O job declara $this->queue = 'siape_queue'
+         │
+         ▼
+┌─────────────────────────────┐
+│  Redis (driver: redis)      │
+│  Queue: "siape_queue"       │
+│  Serializa o job como JSON  │
+│  e publica na lista Redis   │
+└──────────────┬──────────────┘
+               │
+               │  Polling contínuo
+               ▼
+┌──────────────────────────────────────────────────┐
+│  Laravel Horizon                                 │
+│  Supervisor: "supervisor-siape"                  │
+│  ─────────────────────────────────────────────── │
+│  connection: redis                               │
+│  queue: ['siape_queue']                          │
+│  balance: simple                                 │
+│  processes: 1 (worker único, sem paralelismo)    │
+│  tries: 1 (sem retry)                            │
+│  timeout: 172800s (48h)                          │
+└──────────────┬───────────────────────────────────┘
+               │
+               │  Worker desserializa o job
+               │  e chama handle()
+               ▼
+┌──────────────────────────────────────────────────┐
+│  SincronizarSiapeJob::handle(IntegracaoService)  │
+│  → new IntegracaoService([], $tenantId)          │
+│  → foreach Entidade::all()                       │
+│      → $integracaoService->sincronizar($inputs)  │
+└──────────────────────────────────────────────────┘
+

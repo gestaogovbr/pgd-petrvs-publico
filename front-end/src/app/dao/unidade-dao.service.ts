@@ -10,7 +10,7 @@ import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { Usuario } from '../models/usuario.model';
 import { LookupItem } from '../services/lookup.service';
 import { Planejamento } from '../models/planejamento.model';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 
 
 export type UnidadeDashboard = {
@@ -163,6 +163,15 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
 
   public consultaUnidadeSIAPE(unidade: string) {
     return this.server.post('api/unidade/consultar-unidade-siape', { unidade });
+  }
+
+  public consultaUnidadeSIPEC(unidade: string) {
+    return this.server.post('api/unidade/consultar-sipec', { codUorg: unidade }).pipe(
+      map((result: any) => ({
+        success: true,
+        dados: result?.unidade ?? null,
+      }))
+    );
   }
   public exportarUnidadeSIAPE(unidade: string) {
     return this.server.postDownload('api/unidade/exportar-unidade-siape', { unidade });

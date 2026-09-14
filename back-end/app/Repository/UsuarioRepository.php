@@ -134,6 +134,21 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findByEmail($email);
     }
 
+    public function findAllByEmailWithoutGlobalScopes(string $email, ?string $ignoreId = null): Collection
+    {
+        return $this->readRepository->findAllByEmailWithoutGlobalScopes($email, $ignoreId);
+    }
+
+    public function findAllExternosPresentesNaIntegracao(): Collection
+    {
+        return $this->readRepository->findAllExternosPresentesNaIntegracao();
+    }
+
+    public function limparEmail(string $usuarioId): bool
+    {
+        return $this->writeRepository->limparEmail($usuarioId);
+    }
+
     public function findActivesByCpf(string $cpf): Collection
     {
         return $this->readRepository->findActivesByCpf($cpf);

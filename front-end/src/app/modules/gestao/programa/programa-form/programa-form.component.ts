@@ -132,6 +132,20 @@ export class ProgramaFormComponent extends PageFormBase<Programa, ProgramaDaoSer
     });
   }
 
+  /**
+   * Opções de periodicidade exibidas no select. Lista apenas as periodicidades
+   * ativas; injeta a opção legada correspondente quando o regramento em edição
+   * já utiliza uma periodicidade descontinuada (para preservar o rótulo e evitar
+   * o item vazio "UNKNOW" do input-select).
+   */
+  public get periodicidadeItems(): LookupItem[] {
+    const atual = this.form?.controls.periodicidade_consolidacao.value;
+    const legada = this.lookup.PERIODICIDADE_CONSOLIDACAO_LEGADAS.find(item => item.key == atual);
+    return legada
+      ? [...this.lookup.PERIODICIDADE_CONSOLIDACAO, legada]
+      : this.lookup.PERIODICIDADE_CONSOLIDACAO;
+  }
+
   public isTipoAvaliacao(tipo: string) {
     let selected = this.tipoAvaliacao?.selectedEntity as TipoAvaliacao;
     return selected?.tipo == tipo || (!selected && tipo == "QUANTITATIVO");

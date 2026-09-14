@@ -16,8 +16,8 @@ class SiapeListaUORGSRepository
     ) {
     }
 
-    public function findUnprocessed(): ?SiapeListaUORGS
+    public function findUnprocessed(string $codigoOrgao): ?SiapeListaUORGS
     {
-        return $this->readRepository->findUnprocessed();
+        return $this->readRepository->findUnprocessed($codigoOrgao);
     }
 }

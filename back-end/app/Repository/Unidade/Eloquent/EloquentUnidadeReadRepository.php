@@ -10,6 +10,7 @@ use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
+use Carbon\CarbonInterface;
 use App\V2\Unidade\DTOs\UnidadeIndexDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
@@ -193,7 +194,33 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
     {
         /** @var Unidade|null $unidade */
         $unidade = $this->query()->where('codigo', $codigo)->first();
+
         return $unidade;
+    }
+
+    public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()
+            ->where('codigo_orgao', $codigoOrgao)
+            ->where('codigo', $codigo)
+            ->first();
+
+        return $unidade;
+    }
+
+    public function findAllByCodigoOrgaoCodigos(string $codigoOrgao, array $codigos): Collection
+    {
+        $codigos = array_values(array_unique(array_filter($codigos, static fn (string $codigo): bool => $codigo !== '')));
+
+        if ($codigos === []) {
+            return $this->model->newCollection();
+        }
+
+        return $this->query()
+            ->where('codigo_orgao', $codigoOrgao)
+            ->whereIn('codigo', $codigos)
+            ->get();
     }
 
     public function findByCodigoWithPai(string $codigo): ?Unidade
@@ -205,6 +232,61 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->first();
 
         return $unidade;
+    }
+
+    public function findByCodigoOrgaoWithPai(string $codigoOrgao, string $codigo): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()
+            ->with('unidadePai')
+            ->where('codigo_orgao', $codigoOrgao)
+            ->where('codigo', $codigo)
+            ->first();
+
+        return $unidade;
+    }
+
+    public function findByIdForUpdate(string|int $id): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()
+            ->whereKey($id)
+            ->lockForUpdate()
+            ->first();
+
+        return $unidade;
+    }
+
+    public function findAllAtivasComCodigoByCodigoOrgao(string $codigoOrgao): Collection
+    {
+        return $this->query()
+            ->where('codigo_orgao', $codigoOrgao)
+            ->whereNotNull('codigo')
+            ->where('codigo', '<>', '')
+            ->whereNull('data_inativacao')
+            ->get();
+    }
+
+    public function findAllSemInicioInativacaoByCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): Collection
+    {
+        return $this->query()
+            ->where('codigo_orgao', $codigoOrgao)
+            ->where('codigo', $codigo)
+            ->whereNull('data_inicio_inativacao')
+            ->whereNull('data_inativacao')
+            ->get();
+    }
+
+    public function findAllPendentesInativacaoByCodigoOrgaoAte(string $codigoOrgao, CarbonInterface $dataLimite): Collection
+    {
+        return $this->query()
+            ->where('codigo_orgao', $codigoOrgao)
+            ->whereNotNull('data_inicio_inativacao')
+            ->where('data_inicio_inativacao', '<=', $dataLimite)
+            ->whereNotNull('codigo')
+            ->where('codigo', '<>', '')
+            ->whereNull('data_inativacao')
+            ->get();
     }
 
     public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): Collection
@@ -319,6 +401,14 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $this->query()->where('codigo', $codigo)->exists();
     }
 
+    public function existsByCodigoOrgao(string $codigoOrgao, string $codigo): bool
+    {
+        return $this->query()
+            ->where('codigo_orgao', $codigoOrgao)
+            ->where('codigo', $codigo)
+            ->exists();
+    }
+
     public function findBySigla(string $sigla): ?Unidade
     {
         /** @var Unidade|null $unidade */
@@ -406,5 +496,19 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->whereNull('unidade_pai_id')
             ->whereNull('deleted_at')
             ->first();
+    }
+
+    /**
+     * @return Collection<int, Unidade>
+     */
+    public function findAllComCodigo(): Collection
+    {
+        /** @var Collection<int, Unidade> */
+        return $this->query()
+            ->whereNotNull('codigo')
+            ->where('codigo', '!=', '')
+            ->without(['gestor', 'gestoresSubstitutos'])
+            ->select(['id', 'codigo', 'nome', 'sigla', 'path', 'unidade_pai_id', 'cidade_id', 'entidade_id'])
+            ->get();
     }
 }

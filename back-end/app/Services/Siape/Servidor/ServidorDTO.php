@@ -5,6 +5,7 @@ namespace App\Services\Siape\Servidor;
 class ServidorDTO
 {
     public string $id;
+    public string $codigo_orgao;
     public ?string $cpf_ativo;
     public ?string $data_modificacao;
     public string $cpf;

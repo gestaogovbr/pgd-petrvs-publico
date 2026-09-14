@@ -16,5 +16,5 @@ interface TipoPlanejamentoObjetivoReadRepositoryContract
     public function findById(string|int $id): ?Model;
 
     /** @return Collection<int, \App\Models\TipoPlanejamentoObjetivo> */
-    public function getAll(): Collection;
+    public function getAll(?string $estrutura = null): Collection;
 }
