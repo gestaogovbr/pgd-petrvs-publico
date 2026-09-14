@@ -15,6 +15,7 @@ export class CadeiaValorProcesso extends Base {
   public sequencia_completa: string = '';
   public cadeia_valor_id: string = ""; /* Unidade à qual está vinculado o plano de gestão/entregas */
   public processo_pai_id: string | null = null; /* Unidade à qual está vinculado o plano de gestão/entregas */
+  public tipo_elemento_id: string | null = null; /* Tipo de elemento da cadeia de valor */
 
   public constructor(data?: any) { super(); this.initialization(data); }
 }

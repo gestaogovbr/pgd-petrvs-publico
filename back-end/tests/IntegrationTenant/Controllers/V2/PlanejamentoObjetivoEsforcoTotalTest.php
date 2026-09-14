@@ -437,7 +437,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/entregas', function () {
         $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/entregas")
             ->assertStatus(200)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.objetivo_id', $obj->id)
+            ->assertJsonPath('data.node_id', $obj->id)
             ->assertJsonPath('data.total_entregas', 0);
     });
 
@@ -519,7 +519,7 @@ describe('GET /api/v2/planejamento/objetivo/{id}/equipes', function () {
         $this->getJson("/api/__tests/v2/planejamento/objetivo/{$obj->id}/equipes")
             ->assertStatus(200)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.objetivo_id', $obj->id)
+            ->assertJsonPath('data.node_id', $obj->id)
             ->assertJsonPath('data.itens', []);
     });
 

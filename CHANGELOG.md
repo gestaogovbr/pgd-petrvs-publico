@@ -1,3 +1,14 @@
+## 3.1.2 14/09/2026
+
+### Adicionado
+- **Cadeia de Valor nos Elementos de Planejamento**: novo campo "Estrutura" no cadastro (Planejamento Institucional / Cadeia de Valor), com os elementos agrupados por estrutura na listagem
+- Vínculo de tipo de elemento aos processos da Cadeia de Valor, com novo formulário de cadastro de processo e exibição do "Tipo" nas informações gerais da árvore
+
+### Modificado
+- Tela de tipos de objetivo renomeada para "Elementos Institucionais"
+- Árvores do Planejamento Institucional e da Cadeia de Valor unificadas em uma visualização compartilhada (mesma experiência de painel lateral, detalhamento de entregas e navegação)
+- Nome do planejamento e da cadeia passam a ser exibidos como subtítulo no cabeçalho do card da árvore
+
 ## 3.1.1 01/09/2026
 
 ### Adicionado

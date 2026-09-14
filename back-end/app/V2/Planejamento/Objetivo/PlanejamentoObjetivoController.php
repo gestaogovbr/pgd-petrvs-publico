@@ -14,13 +14,14 @@ use Throwable;
 class PlanejamentoObjetivoController extends Controller
 {
     public function __construct(
-        private readonly PlanejamentoObjetivoService $service,
+        private readonly PlanejamentoObjetivoArvoreService $arvoreService,
+        private readonly PlanejamentoObjetivoPainelService $painelService,
     ) {}
 
     public function esforcoTotal(string $id): JsonResponse
     {
         try {
-            $data = $this->service->getEsforcoTotal($id);
+            $data = $this->arvoreService->getEsforcoTotal($id);
 
             return response()->json(['success' => true, 'data' => $data]);
         } catch (IBaseException $e) {
@@ -34,7 +35,7 @@ class PlanejamentoObjetivoController extends Controller
     public function arvoreVisualizacao(string $id): JsonResponse
     {
         try {
-            $data = $this->service->getArvoreVisualizacao($id);
+            $data = $this->arvoreService->getArvoreVisualizacao($id);
 
             return response()->json(['success' => true, 'data' => $data]);
         } catch (IBaseException $e) {
@@ -48,7 +49,7 @@ class PlanejamentoObjetivoController extends Controller
     public function entregas(string $id): JsonResponse
     {
         try {
-            $data = $this->service->getEntregasComEsforco($id);
+            $data = $this->painelService->getEntregasPorNo($id);
 
             return response()->json(['success' => true, 'data' => $data]);
         } catch (IBaseException $e) {
@@ -62,7 +63,7 @@ class PlanejamentoObjetivoController extends Controller
     public function equipes(string $id): JsonResponse
     {
         try {
-            $data = $this->service->getEquipesComEsforco($id);
+            $data = $this->painelService->getEquipesPorNo($id);
 
             return response()->json(['success' => true, 'data' => $data]);
         } catch (IBaseException $e) {
@@ -79,7 +80,7 @@ class PlanejamentoObjetivoController extends Controller
             $unidadeId = $request->query('unidade_id');
             $unidadeId = is_string($unidadeId) && $unidadeId !== '' ? $unidadeId : null;
 
-            $data = $this->service->getPainelResumo($id, $unidadeId);
+            $data = $this->painelService->getResumo($id, $unidadeId);
 
             return response()->json(['success' => true, 'data' => $data]);
         } catch (IBaseException $e) {
@@ -93,7 +94,7 @@ class PlanejamentoObjetivoController extends Controller
     public function entregasDetalhamento(string $id, Request $request): JsonResponse
     {
         try {
-            $data = $this->service->getEntregasDetalhamentoPainel(
+            $data = $this->painelService->getEntregasDetalhamento(
                 $id,
                 $request->query('plano_entrega_entrega_id'),
                 $request->query('unidade_id'),
