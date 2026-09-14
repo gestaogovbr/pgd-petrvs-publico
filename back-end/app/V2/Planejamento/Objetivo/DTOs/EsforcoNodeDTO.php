@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\Planejamento\Objetivo\DTOs;
 
-use App\V2\Planejamento\Objetivo\ObjetivoPainelEsforcoSupport;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoSupport;
 
 class EsforcoNodeDTO implements \JsonSerializable
 {
@@ -58,7 +58,7 @@ class EsforcoNodeDTO implements \JsonSerializable
             esforco_disponivel_horas: $disponivel,
             esforco_proprio: $planejado,
             esforco_total_horas: (float) $node['esforco_total_horas'],
-            planejado_percentual_disponivel: ObjetivoPainelEsforcoSupport::percentual($planejado, $disponivel),
+            planejado_percentual_disponivel: ArvoreInstitucionalEsforcoSupport::percentual($planejado, $disponivel),
             filhos: array_values((array) ($node['filhos'] ?? [])),
             filhos_pai: array_values((array) ($node['filhos_pai'] ?? [])),
             filhos_superior: array_values((array) ($node['filhos_superior'] ?? [])),

@@ -2,14 +2,16 @@
   <app-breadcrumb />
 
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">Elementos do Planejamento</h2>
+    <h2 class="mb-0">Elementos Institucionais</h2>
     <br-button emphasis="primary" (click)="abrirNovo()">
       <i class="fas fa-plus mr-1"></i>Incluir novo elemento
     </br-button>
   </div>
 
   <p class="text-muted mb-3">
-    Os órgãos podem adotar diferentes metodologias de planejamento institucional. Nesta tela, são configurados os elementos que compõem essa metodologia (como objetivos, iniciativas e indicadores). Os elementos cadastrados ficarão disponíveis para uso na construção do planejamento no sistema.
+    Os órgãos podem adotar diferentes metodologias de planejamento institucional e cadeia de valor.
+    Nesta tela, são configurados os elementos que compõem essas estruturas.
+    Os elementos cadastrados ficarão disponíveis para uso na construção do planejamento e da cadeia de valor no sistema.
   </p>
 
   <div class="br-card mb-3">
@@ -30,7 +32,9 @@
       <div class="br-loading" role="progressbar" aria-label="carregando"></div>
     </div>
   } @else {
-    <div class="br-table">
+    <!-- Grupo: Planejamento Institucional -->
+    <h4 class="mt-4 mb-2">Planejamento Institucional</h4>
+    <div class="br-table mb-4">
       <div class="table-wrap">
         <table>
           <thead>
@@ -41,25 +45,64 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of itensFiltrados(); track item.id) {
+            @for (item of itensPlanejamento(); track item.id) {
               <tr>
                 <td data-th="Nome">{{ item.nome }}</td>
                 <td data-th="Descrição">{{ item.descricao || '-' }}</td>
                 <td data-th="Ações">
                   <div class="d-flex gap-1">
-                    <br-button shape="circle" (click)="abrirEdicao(item)" title="Editar" ariaLabel="Editar tipo de objetivo">
+                    <br-button shape="circle" (click)="abrirEdicao(item)" title="Editar" ariaLabel="Editar elemento">
                       <i class="fas fa-pen"></i>
                     </br-button>
-                    <br-button shape="circle" class="text-danger" (click)="abrirExclusao(item)" title="Excluir" ariaLabel="Excluir tipo de objetivo">
+                    <br-button shape="circle" class="text-danger" (click)="abrirExclusao(item)" title="Excluir" ariaLabel="Excluir elemento">
                       <i class="fas fa-trash"></i>
                     </br-button>
                   </div>
                 </td>
               </tr>
             }
-            @if (itensFiltrados().length === 0) {
+            @if (itensPlanejamento().length === 0) {
               <tr>
-                <td colspan="3" class="text-center p-3">Nenhum tipo de objetivo encontrado.</td>
+                <td colspan="3" class="text-center p-3">Nenhum elemento de planejamento institucional cadastrado.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Grupo: Cadeia de Valor -->
+    <h4 class="mt-4 mb-2">Cadeia de Valor</h4>
+    <div class="br-table mb-4">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Nome</th>
+              <th scope="col">Descrição</th>
+              <th scope="col">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of itensCadeiaValor(); track item.id) {
+              <tr>
+                <td data-th="Nome">{{ item.nome }}</td>
+                <td data-th="Descrição">{{ item.descricao || '-' }}</td>
+                <td data-th="Ações">
+                  <div class="d-flex gap-1">
+                    <br-button shape="circle" (click)="abrirEdicao(item)" title="Editar" ariaLabel="Editar elemento">
+                      <i class="fas fa-pen"></i>
+                    </br-button>
+                    <br-button shape="circle" class="text-danger" (click)="abrirExclusao(item)" title="Excluir" ariaLabel="Excluir elemento">
+                      <i class="fas fa-trash"></i>
+                    </br-button>
+                  </div>
+                </td>
+              </tr>
+            }
+            @if (itensCadeiaValor().length === 0) {
+              <tr>
+                <td colspan="3" class="text-center p-3">Nenhum elemento de cadeia de valor cadastrado.</td>
               </tr>
             }
           </tbody>
@@ -69,21 +112,40 @@
   }
 </div>
 
+<!-- Modal Formulário -->
 <br-scrim [isOpen]="modalFormularioAberto()" [disableCloseOnClick]="true">
   <br-modal [show]="modalFormularioAberto()"
             [titleText]="itemEmEdicao() ? 'Editar Elemento' : 'Novo Elemento'"
             size="medium"
             alignFooter="end"
             (brModalBeforeClose)="fecharModalFormulario()">
-    <form [formGroup]="form" class="d-flex flex-column gap-3">
-      <div class="br-input">
-        <label>Nome <span class="text-danger">*</span></label>
-        <input type="text" formControlName="nome" maxlength="250" />
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-12">
+        <br-select label="Estrutura *" formControlName="estrutura" placeholder="Selecione a estrutura" [options]="estruturaSelectOptions" />
+        @if (form.controls.estrutura.touched && form.controls.estrutura.hasError('required')) {
+          <span class="feedback danger mt-1" role="alert">
+            <i class="fas fa-times-circle" aria-hidden="true"></i> A estrutura é obrigatória.
+          </span>
+        }
       </div>
 
-      <div class="br-textarea">
-        <label>Descrição</label>
-        <textarea rows="4" formControlName="descricao" maxlength="1000"></textarea>
+      <div class="col-12">
+        <div class="br-input" [class.danger]="form.controls.nome.touched && form.controls.nome.hasError('required')">
+          <label for="input-nome">Nome <span class="text-danger">*</span></label>
+          <input id="input-nome" type="text" formControlName="nome" maxlength="250" placeholder="Informe o nome do elemento" />
+        </div>
+        @if (form.controls.nome.touched && form.controls.nome.hasError('required')) {
+          <span class="feedback danger mt-1" role="alert">
+            <i class="fas fa-times-circle" aria-hidden="true"></i> O nome é obrigatório.
+          </span>
+        }
+      </div>
+
+      <div class="col-12">
+        <div class="br-textarea">
+          <label for="textarea-descricao">Descrição</label>
+          <textarea id="textarea-descricao" rows="4" formControlName="descricao" maxlength="1000" placeholder="Descrição opcional do elemento"></textarea>
+        </div>
       </div>
     </form>
 
@@ -94,13 +156,14 @@
   </br-modal>
 </br-scrim>
 
+<!-- Modal Exclusão -->
 <br-scrim [isOpen]="!!itemParaExcluir()" [disableCloseOnClick]="true">
   <br-modal [show]="!!itemParaExcluir()"
-            titleText="Excluir tipo de objetivo"
+            titleText="Excluir elemento"
             size="small"
             alignFooter="end"
             (brModalBeforeClose)="cancelarExclusao()">
-    <p>Tem certeza que deseja excluir o tipo <strong>{{ itemParaExcluir()?.nome }}</strong>?</p>
+    <p>Tem certeza que deseja excluir o elemento <strong>{{ itemParaExcluir()?.nome }}</strong>?</p>
     <div slot="footer">
       <br-button emphasis="secondary" (click)="cancelarExclusao()">Cancelar</br-button>
       <br-button emphasis="primary" [disabled]="facade.saving()" (click)="confirmarExclusao()">Confirmar</br-button>

@@ -374,11 +374,14 @@ CREATE TABLE `cadeias_valores_processos` (
   `nome` varchar(256) NOT NULL COMMENT 'Nome do processo',
   `cadeia_valor_id` char(36) NOT NULL,
   `processo_pai_id` char(36) DEFAULT NULL,
+  `tipo_elemento_id` char(36) DEFAULT NULL COMMENT 'Tipo de elemento da cadeia de valor (opcional)',
   PRIMARY KEY (`id`),
   KEY `cadeias_valores_processos_cadeia_valor_id_foreign` (`cadeia_valor_id`),
   KEY `cadeias_valores_processos_processo_pai_id_foreign` (`processo_pai_id`),
+  KEY `fk_cv_proc_tipo_elemento_id` (`tipo_elemento_id`),
   CONSTRAINT `cadeias_valores_processos_cadeia_valor_id_foreign` FOREIGN KEY (`cadeia_valor_id`) REFERENCES `cadeias_valores` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `cadeias_valores_processos_processo_pai_id_foreign` FOREIGN KEY (`processo_pai_id`) REFERENCES `cadeias_valores_processos` (`id`) ON UPDATE CASCADE
+  CONSTRAINT `cadeias_valores_processos_processo_pai_id_foreign` FOREIGN KEY (`processo_pai_id`) REFERENCES `cadeias_valores_processos` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_cv_proc_tipo_elemento_id` FOREIGN KEY (`tipo_elemento_id`) REFERENCES `planejamentos_tipos_objetivos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1681,6 +1684,7 @@ CREATE TABLE `planejamentos_tipos_objetivos` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   `nome` varchar(255) NOT NULL COMMENT 'Nome do tipo de objetivo',
   `descricao` text DEFAULT NULL COMMENT 'Descrição do tipo de objetivo',
+  `estrutura` varchar(50) NOT NULL COMMENT 'Estrutura à qual pertence: planejamento_institucional ou cadeia_de_valor',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
