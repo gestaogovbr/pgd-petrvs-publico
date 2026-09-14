@@ -4,14 +4,11 @@ import { AuthGuard } from './guards/auth.guard';
 import { ConfigComponent } from './modules/config/config.component';
 import { LoginRetornoComponent } from './modules/login/login-retorno/login-retorno.component';
 import { LoginComponent } from './modules/login/login.component';
-
-
 import { ConfigResolver } from './resolvies/config.resolver';
 import { LoginUnicoComponent } from "./modules/login/login-unico/login-unico.component";
 import { PanelGuard } from "./guards/panel.guard";
 import { PanelLoginComponent } from "./modules/panel/panel-login/panel-login.component";
 import {TesteImpersonateComponent} from "./modules/teste/teste-impersonate/teste-impersonate.component";
-
 const routes: Routes = [
   { path: 'panel-login', component: PanelLoginComponent },
   { path: 'panel', loadChildren: () => import('./modules/panel/panel.module').then(m => m.PanelModule), canActivate: [PanelGuard] },
@@ -74,7 +71,6 @@ const routes: Routes = [
   { path: 'siape', loadChildren: () => import('./modules/siape/siape.module').then(m => m.SiapeModule), canActivate: [AuthGuard] },
   { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
-
 @NgModule({
   imports: [RouterModule.forRoot(routes, { useHash: false })],
   exports: [RouterModule]

@@ -13,6 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use App\Services\IntegracaoService;
+use App\Services\TenantConfigurationsService;
 
 
 class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
@@ -41,6 +42,12 @@ class SincronizarSiapeJob implements ShouldQueue, ContratoJobSchedule
         
         try {
             $integracaoService = new IntegracaoService([], $this->tenantId);
+
+            if (TenantConfigurationsService::tenantHasSipecConfigured()) {
+                Log::info("Job SincronizarSiapeJob Tenant {$this->tenantId}: ignorado pois SIPEC está configurado");
+                return;
+            }
+
             Log::info("Job SincronizarPetrvs START ");
             $entidades = Entidade::all();
             $inputs = [

@@ -1,3 +1,22 @@
+## 3.1.2 14/09/2026
+
+### Adicionado
+- **Cadeia de Valor nos Elementos de Planejamento**: novo campo "Estrutura" no cadastro (Planejamento Institucional / Cadeia de Valor), com os elementos agrupados por estrutura na listagem
+- Vínculo de tipo de elemento aos processos da Cadeia de Valor, com novo formulário de cadastro de processo e exibição do "Tipo" nas informações gerais da árvore
+- **Relatório de Lacunas de Planos de Trabalho**: consulta de períodos sem PT em execução/concluído para participantes do PGD (dias úteis), com filtros de unidade, período e subordinadas, colunas de lotação, quantidade de dias, dispensa de PT e ocorrências, filtros por coluna no padrão dos demais relatórios e exportação em Excel
+- **Dispensa de Plano de Trabalho** : formalização no cadastro do agente público (data de início obrigatória e data de fim opcional), com elegibilidade para chefia titular/substituta de unidade executora, histórico de operações, encerramento da dispensa, exibição no Relatório de Agentes Públicos e consideração dos períodos dispensados no Relatório de Lacunas
+
+### Modificado
+- Tela de tipos de objetivo renomeada para "Elementos Institucionais"
+- Árvores do Planejamento Institucional e da Cadeia de Valor unificadas em uma visualização compartilhada (mesma experiência de painel lateral, detalhamento de entregas e navegação)
+- Nome do planejamento e da cadeia passam a ser exibidos como subtítulo no cabeçalho do card da árvore
+- Periodicidades Bimestral, Trimestral e Semestral descontinuadas na configuração de consolidação dos regramentos
+- Atualizada versão do Design System do GovBR para 2.1.3
+- Navegação dos relatórios de Planos de Trabalho passa a oferecer a escolha entre Planos de Trabalho Cadastrados e Lacunas de Planos de Trabalho
+
+### Corrigido
+- Descrição dos agendamentos mensais no painel ajustada para exibir corretamente o dia do mês e o horário da execução
+
 ## 3.1.1 01/09/2026
 
 ### Adicionado

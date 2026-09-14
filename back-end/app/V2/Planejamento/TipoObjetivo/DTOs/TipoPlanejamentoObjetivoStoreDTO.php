@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\V2\Planejamento\TipoObjetivo\DTOs;
 
+use App\Enums\EstruturaElementoEnum;
+
 class TipoPlanejamentoObjetivoStoreDTO
 {
     public function __construct(
         public readonly string $nome,
         public readonly ?string $descricao,
+        public readonly EstruturaElementoEnum $estrutura,
     ) {}
 
     public static function fromArray(array $data): self
@@ -16,6 +19,7 @@ class TipoPlanejamentoObjetivoStoreDTO
         return new self(
             nome: $data['nome'],
             descricao: $data['descricao'] ?? null,
+            estrutura: EstruturaElementoEnum::from($data['estrutura']),
         );
     }
 
@@ -25,6 +29,7 @@ class TipoPlanejamentoObjetivoStoreDTO
         return [
             'nome' => $this->nome,
             'descricao' => $this->descricao,
+            'estrutura' => $this->estrutura->value,
         ];
     }
 }

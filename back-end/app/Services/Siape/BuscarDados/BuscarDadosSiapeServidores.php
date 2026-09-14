@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleXMLElement;
+use App\Services\CodigoOrgaoService;
 
 class BuscarDadosSiapeServidores extends BuscarDadosSiape{
 
@@ -18,7 +19,9 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
 
         $this->limpaTabela();
 
-        $response = SiapeListaUORGS::where('processado', 1)
+        $codigoOrgao = CodigoOrgaoService::obrigatorio($this->getConfig()['codOrgao'] ?? null);
+        $response = SiapeListaUORGS::where('codigo_orgao', $codigoOrgao)
+                ->where('processado', SiapeListaUORGS::PROCESSADO)
                 ->orderBy('updated_at', 'desc')
                 ->first();
                 

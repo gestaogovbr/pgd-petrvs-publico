@@ -1,0 +1,161 @@
+@if (!nodeId()) {
+  <div class="br-card detail-card detail-card--empty">
+    <div class="card-content p-3 text-muted">
+      Clique em um card da árvore para ver as informações.
+    </div>
+  </div>
+} @else if (loading()) {
+  <div class="br-card detail-card">
+    <div class="card-content p-3 d-flex align-items-center gap-2 text-muted">
+      <div class="br-loading" role="progressbar" aria-label="carregando painel"></div>
+      Carregando informações…
+    </div>
+  </div>
+} @else if (error() && !resumo()) {
+  <div class="br-card detail-card">
+    <div class="card-content p-3">
+      <div class="alert alert-warning mb-0" role="alert">{{ error() }}</div>
+    </div>
+  </div>
+} @else if (resumo(); as r) {
+  <div class="br-card detail-card">
+    <div class="card-content p-3 painel-lateral">
+      @if (nodeId() !== consultadoId()) {
+        <div class="mb-3">
+          <br-button emphasis="secondary" (click)="centralizar.emit(nodeId()!)">
+            {{ config.labelCentralizar }}
+          </br-button>
+        </div>
+      }
+
+      <section class="painel-lateral__section">
+        <h6 class="painel-lateral__section-title">Informações gerais</h6>
+        @for (campo of config.camposInfoGeral; track campo.campo) {
+          @if (r.informacoesGerais[campo.campo]; as valor) {
+            <p class="mb-1"><strong>{{ campo.label }}:</strong> {{ valor }}</p>
+          }
+        }
+      </section>
+
+      <div class="painel-lateral__metricas" [class.painel-lateral__metricas--loading]="atualizandoMetricas()">
+
+        @if (unidadesFiltro().length > 0) {
+          <section class="painel-lateral__section">
+            <h6 class="painel-lateral__section-title">Unidades</h6>
+            <p class="mb-1"><strong>Total de unidades envolvidas:</strong> {{ unidadesFiltro().length }}</p>
+            <div class="painel-lateral__filtro painel-lateral__section">
+              <label class="form-label small mb-1" for="painel-filtro-unidade">Filtrar por:</label>
+              <select
+                id="painel-filtro-unidade"
+                class="form-select form-select-sm"
+                [value]="filtroUnidadeId()"
+                [disabled]="atualizandoMetricas()"
+                (change)="onFiltroUnidadeChange($event)"
+              >
+                <option value="">Todas</option>
+                @for (op of unidadesFiltro(); track op.id) {
+                  <option [value]="op.id">{{ op.label }}</option>
+                }
+              </select>
+            </div>
+          </section>
+        }
+
+        @if (atualizandoMetricas()) {
+          <div class="painel-lateral__metricas-overlay d-flex align-items-center gap-2 text-muted">
+            <div class="br-loading" role="progressbar" aria-label="atualizando métricas"></div>
+            Atualizando…
+          </div>
+        }
+
+        @if (error()) {
+          <div class="alert alert-warning py-2 px-3 small mb-3" role="alert">{{ error() }}</div>
+        }
+
+        <section class="painel-lateral__section painel-lateral__secao">
+          <h6 class="painel-lateral__section-title">Item selecionado</h6>
+          <ng-container *ngTemplateOutlet="metricasSecao; context: { secao: r.item, tt: config.tooltips?.item }" />
+        </section>
+
+        <section class="painel-lateral__section painel-lateral__secao">
+          <h6 class="painel-lateral__section-title">Consolidado</h6>
+          <ng-container *ngTemplateOutlet="metricasSecao; context: { secao: r.consolidado, tt: config.tooltips?.consolidado }" />
+        </section>
+
+        <section class="painel-lateral__section">
+          <br-button emphasis="secondary" (click)="abrirDetalhamento()">
+            Detalhamento das entregas
+          </br-button>
+        </section>
+      </div>
+    </div>
+  </div>
+}
+
+<ng-template #metricasSecao let-secao="secao" let-tt="tt">
+  <div class="painel-lateral__grupo">
+    <h6 class="painel-lateral__grupo-title">Esforço</h6>
+    @if (secao.esforco.mostrar_disponivel) {
+      <p class="mb-1">
+        <strong>Esforço total disponível:</strong>
+        {{ fmt.formatHoras(secao.esforco.disponivel_horas) }} h
+        @if (tt?.esforcoDisponivel) {
+          <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.esforcoDisponivel"></i>
+        }
+      </p>
+    }
+    @if (secao.esforco.mostrar_planejado) {
+      <p class="mb-1">
+        <strong>Esforço total planejado:</strong>
+        {{ fmt.formatHoras(secao.esforco.planejado_horas) }} h
+        <span class="text-muted">({{ fmt.formatPercent(secao.esforco.planejado_percentual_disponivel) }} do disponível)</span>
+        @if (tt?.esforcoPlanejado) {
+          <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.esforcoPlanejado"></i>
+        }
+      </p>
+    }
+    @if (secao.esforco.mostrar_executado) {
+      <p class="mb-0">
+        <strong>Esforço total executado:</strong>
+        {{ fmt.formatHoras(secao.esforco.executado_horas) }} h
+        <span class="text-muted">({{ fmt.formatPercent(secao.esforco.executado_percentual_planejado) }} do planejado)</span>
+        @if (tt?.esforcoExecutado) {
+          <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.esforcoExecutado"></i>
+        }
+      </p>
+    }
+    @if (!secao.esforco.mostrar_planejado && !secao.esforco.mostrar_disponivel && !secao.esforco.mostrar_executado) {
+      <p class="mb-0 text-muted">Sem dados de esforço no período.</p>
+    }
+  </div>
+
+  <div class="painel-lateral__grupo">
+    <h6 class="painel-lateral__grupo-title">Pessoas</h6>
+    <p class="mb-0">
+      <strong>Total de participantes envolvidos:</strong>
+      {{ secao.pessoas.total_participantes }}
+      @if (tt?.participantes) {
+        <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.participantes"></i>
+      }
+    </p>
+  </div>
+
+  <div class="painel-lateral__grupo">
+    <h6 class="painel-lateral__grupo-title">Entregas</h6>
+    <p class="mb-1">
+      <strong>Total de entregas envolvidas:</strong>
+      {{ secao.entregas.total_entregas }}
+      @if (tt?.totalEntregas) {
+        <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.totalEntregas"></i>
+      }
+    </p>
+    <p class="mb-0">
+      <strong>Entregas concluídas:</strong>
+      {{ secao.entregas.entregas_concluidas }}
+      <span class="text-muted">({{ fmt.formatPercent(secao.entregas.percentual_concluidas) }})</span>
+      @if (tt?.entregasConcluidas) {
+        <i class="bi bi-info-circle painel-lateral__info" role="img" aria-label="Mais informações" [title]="tt.entregasConcluidas"></i>
+      }
+    </p>
+  </div>
+</ng-template>

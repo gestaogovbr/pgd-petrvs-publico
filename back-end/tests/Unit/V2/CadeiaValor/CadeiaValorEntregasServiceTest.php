@@ -4,10 +4,14 @@ use App\Enums\StatusEnum;
 use App\Models\CadeiaValor;
 use App\Models\CadeiaValorProcesso;
 use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
-use App\V2\CadeiaValor\CadeiaValorEntregasService;
-use App\V2\CadeiaValor\CadeiaValorPainelAssembler;
-use App\V2\CadeiaValor\DTOs\CadeiaValorPainelEntregaDetalheLinhaDTO;
+use App\Repository\UnidadeRepository;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangenciaPolicy;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelAssembler;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelDataProvider;
+use App\V2\ArvoreInstitucional\DTOs\EntregaDetalheLinhaDTO;
+use App\V2\CadeiaValor\CadeiaValorPainelService;
 use App\V2\CadeiaValor\DTOs\CadeiaValorPainelEntregasDetalhamentoDTO;
+use App\V2\CadeiaValor\Validators\CadeiaValorProcessoValidator;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -18,200 +22,130 @@ afterEach(function () {
 
 function criarEntregasService(
     ?CadeiaValorReadRepositoryContract $repo = null,
-    ?CadeiaValorPainelAssembler $assembler = null,
-): CadeiaValorEntregasService {
-    return new CadeiaValorEntregasService(
-        $repo ?? Mockery::mock(CadeiaValorReadRepositoryContract::class),
-        $assembler ?? new CadeiaValorPainelAssembler(),
+    ?ArvoreInstitucionalPainelDataProvider $painelDataProvider = null,
+): CadeiaValorPainelService {
+    $repo = $repo ?? Mockery::mock(CadeiaValorReadRepositoryContract::class);
+    $painelDataProvider = $painelDataProvider ?? Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
+    $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+
+    return new CadeiaValorPainelService(
+        $repo,
+        new ArvoreInstitucionalPainelAssembler(),
+        $painelDataProvider,
+        new CadeiaValorProcessoValidator($repo),
+        new ArvoreInstitucionalAbrangenciaPolicy($unidadeRepo),
     );
 }
 
-describe('CadeiaValorEntregasService', function () {
+function mockEntregaRow(array $overrides = []): \stdClass
+{
+    return (object) array_merge([
+        'plano_entrega_entrega_id' => 'pee-1',
+        'unidade_id' => 'u-1',
+        'unidade_sigla' => 'UA',
+        'unidade_nome' => 'Unidade A',
+        'plano_entrega_id' => 'pe-1',
+        'plano_entrega_nome' => 'Plano Entrega 1',
+        'plano_entrega_status' => StatusEnum::ATIVO->value,
+        'plano_entrega_data_inicio' => '2025-01-01',
+        'plano_entrega_data_fim' => '2025-12-31',
+        'entrega_titulo' => 'Entrega Teste',
+        'entrega_descricao' => 'Descrição da entrega',
+        'descricao_meta' => 'Meta descritiva',
+        'etiquetas' => null,
+        'progresso_esperado' => 50.0,
+        'progresso_realizado' => 30.0,
+        'meta' => '{"porcentagem": 100}',
+        'realizado' => '{"porcentagem": 40}',
+        'tipo_indicador' => 'PORCENTAGEM',
+        'lista_qualitativos' => null,
+        'registro_execucao' => 'Última atividade realizada',
+        'participantes_total' => 3,
+        'participantes_somente_unidade_propria' => 2,
+        'participantes_somente_outras_unidades' => 1,
+        'participantes_em_ambas' => 0,
+        'esforco_disponivel_horas' => 500.0,
+        'esforco_planejado_horas' => 400.0,
+        'esforco_executado_horas' => 200.0,
+        'tem_pt_pactuado' => true,
+        'tem_pt_concluido' => true,
+    ], $overrides);
+}
 
-    test('getEntregas retorna DTO de detalhamento com itens inline', function () {
+describe('CadeiaValorPainelService::getEntregasDetalhamento', function () {
+
+    test('getEntregasDetalhamento retorna DTO de detalhamento com itens', function () {
         $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
+        $painelDataProvider = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $cadeiaValor = Mockery::mock(CadeiaValor::class)->makePartial();
         $processo = Mockery::mock(CadeiaValorProcesso::class)->makePartial();
 
         $repo->shouldReceive('findCadeiaValor')->with('cv-1')->andReturn($cadeiaValor);
         $repo->shouldReceive('findProcesso')->with('proc-1', 'cv-1')->andReturn($processo);
-        $repo->shouldReceive('listarDetalhamentoEntregasPainel')
-            ->with('proc-1', [])
-            ->andReturn([
-                (object) [
-                    'plano_entrega_entrega_id' => 'pee-1',
-                    'unidade_id' => 'u-1',
-                    'unidade_sigla' => 'UA',
-                    'unidade_nome' => 'Unidade A',
-                    'plano_entrega_id' => 'pe-1',
-                    'plano_entrega_nome' => 'Plano Entrega 1',
-                    'plano_entrega_status' => StatusEnum::ATIVO->value,
-                    'plano_entrega_data_inicio' => '2025-01-01',
-                    'plano_entrega_data_fim' => '2025-12-31',
-                    'entrega_titulo' => 'Entrega Teste',
-                    'progresso_esperado' => 50.0,
-                    'progresso_realizado' => 30.0,
-                    'meta' => '{"porcentagem": 100}',
-                    'realizado' => '{"porcentagem": 40}',
-                    'tipo_indicador' => 'PORCENTAGEM',
-                    'lista_qualitativos' => null,
-                    'registro_execucao' => 'Última atividade realizada',
-                    'participantes_total' => 3,
-                    'participantes_somente_unidade_propria' => 2,
-                    'participantes_somente_outras_unidades' => 1,
-                    'participantes_em_ambas' => 0,
-                    'esforco_disponivel_horas' => 500.0,
-                    'esforco_planejado_horas' => 400.0,
-                    'esforco_executado_horas' => 200.0,
-                    'tem_pt_pactuado' => true,
-                    'tem_pt_concluido' => true,
-                ],
-            ]);
-        $repo->shouldReceive('listarFiltroUnidadesPainel')
-            ->with('proc-1')
-            ->andReturn([['id' => 'u-1', 'label' => 'UA — Unidade A']]);
-        $repo->shouldReceive('listarFiltroEntregasPainel')
-            ->with('proc-1')
-            ->andReturn([['id' => 'pee-1', 'label' => 'Entrega Teste']]);
+        $painelDataProvider->shouldReceive('listarDetalhamentoEntregas')
+            ->withAnyArgs()
+            ->andReturn([mockEntregaRow()]);
 
-        $service = criarEntregasService($repo);
-        $result = $service->getEntregas('cv-1', 'proc-1');
+        $service = criarEntregasService($repo, $painelDataProvider);
+        $result = $service->getEntregasDetalhamento('cv-1', 'proc-1');
 
-        expect($result)->toBeInstanceOf(CadeiaValorPainelEntregasDetalhamentoDTO::class);
-        expect($result->processo_id)->toBe('proc-1');
-        expect($result->itens)->toHaveCount(1);
-        expect($result->itens[0])->toBeInstanceOf(CadeiaValorPainelEntregaDetalheLinhaDTO::class);
-        expect($result->itens[0]->plano_entrega_entrega_id)->toBe('pee-1');
-        expect($result->itens[0]->registro_execucao)->toBe('Última atividade realizada');
-        expect($result->itens[0]->participantes_total)->toBe(3);
-        expect($result->itens[0]->esforco_planejado_horas)->toBe(400.0);
-        expect($result->itens[0]->mostrar_planejado)->toBeTrue();
-        expect($result->itens[0]->mostrar_executado)->toBeTrue();
-        expect($result->filtro_entregas)->toHaveCount(1);
-        expect($result->filtro_unidades)->toHaveCount(1);
+        expect($result)->toBeInstanceOf(CadeiaValorPainelEntregasDetalhamentoDTO::class)
+            ->and($result->processo_id)->toBe('proc-1')
+            ->and($result->itens)->toHaveCount(1)
+            ->and($result->itens[0])->toBeInstanceOf(EntregaDetalheLinhaDTO::class)
+            ->and($result->itens[0]->plano_entrega_entrega_id)->toBe('pee-1')
+            ->and($result->itens[0]->registro_execucao)->toBe('Última atividade realizada')
+            ->and($result->itens[0]->mostrar_planejado)->toBeTrue()
+            ->and($result->itens[0]->mostrar_executado)->toBeTrue()
+            ->and($result->filtro_entregas)->toHaveCount(1)
+            ->and($result->filtro_unidades)->toHaveCount(1);
     });
 
-    test('getEntregas propaga filtros ao repository', function () {
+    test('getEntregasDetalhamento com abrangência itens_subordinados busca filhos', function () {
         $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
+        $painelDataProvider = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $cadeiaValor = Mockery::mock(CadeiaValor::class)->makePartial();
         $processo = Mockery::mock(CadeiaValorProcesso::class)->makePartial();
 
-        $filtros = [
-            'unidade_id' => 'u-1',
-            'plano_entrega_entrega_id' => 'pee-1',
-            'data_inicio' => '2025-01-01',
-            'data_fim' => '2025-06-30',
-        ];
-
         $repo->shouldReceive('findCadeiaValor')->andReturn($cadeiaValor);
         $repo->shouldReceive('findProcesso')->andReturn($processo);
-        $repo->shouldReceive('listarDetalhamentoEntregasPainel')
-            ->with('proc-1', $filtros)
+        $repo->shouldReceive('coletarIdsFilhosRecursivo')
+            ->with('proc-1')
             ->once()
-            ->andReturn([]);
-        $repo->shouldReceive('listarFiltroUnidadesPainel')
-            ->with('proc-1')
-            ->andReturn([]);
-        $repo->shouldReceive('listarFiltroEntregasPainel')
-            ->with('proc-1')
+            ->andReturn(['proc-1', 'proc-2', 'proc-3']);
+        $painelDataProvider->shouldReceive('listarDetalhamentoEntregas')
+            ->withAnyArgs()
             ->andReturn([]);
 
-        $service = criarEntregasService($repo);
-        $result = $service->getEntregas('cv-1', 'proc-1', $filtros);
+        $service = criarEntregasService($repo, $painelDataProvider);
+        $result = $service->getEntregasDetalhamento('cv-1', 'proc-1', ['abrangencia' => 'itens_subordinados']);
 
         expect($result->itens)->toBe([]);
-        expect($result->filtro_entregas)->toBe([]);
-        expect($result->filtro_unidades)->toBe([]);
     });
 
-    test('getEntregas lança NotFoundException se cadeia de valor não existe', function () {
+    test('getEntregasDetalhamento lança NotFoundException se cadeia não existe', function () {
         $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
         $repo->shouldReceive('findCadeiaValor')->with('cv-inexistente')->andReturnNull();
 
         $service = criarEntregasService($repo);
-        $service->getEntregas('cv-inexistente', 'proc-1');
+        $service->getEntregasDetalhamento('cv-inexistente', 'proc-1');
     })->throws(\App\Exceptions\NotFoundException::class);
 
-    test('getEntregas lança NotFoundException se processo não existe', function () {
+    test('getEntregasDetalhamento lança NotFoundException se processo não existe', function () {
         $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
         $cadeiaValor = Mockery::mock(CadeiaValor::class)->makePartial();
         $repo->shouldReceive('findCadeiaValor')->andReturn($cadeiaValor);
         $repo->shouldReceive('findProcesso')->with('proc-inexistente', 'cv-1')->andReturnNull();
 
         $service = criarEntregasService($repo);
-        $service->getEntregas('cv-1', 'proc-inexistente');
+        $service->getEntregasDetalhamento('cv-1', 'proc-inexistente');
     })->throws(\App\Exceptions\NotFoundException::class);
-
-    test('getEntregas usa filtros do repository independentes dos dados filtrados', function () {
-        $repo = Mockery::mock(CadeiaValorReadRepositoryContract::class);
-        $cadeiaValor = Mockery::mock(CadeiaValor::class)->makePartial();
-        $processo = Mockery::mock(CadeiaValorProcesso::class)->makePartial();
-
-        $baseRow = [
-            'plano_entrega_id' => 'pe-1',
-            'plano_entrega_nome' => 'PE 1',
-            'plano_entrega_status' => StatusEnum::ATIVO->value,
-            'plano_entrega_data_inicio' => '2025-01-01',
-            'plano_entrega_data_fim' => '2025-12-31',
-            'progresso_esperado' => 50.0,
-            'progresso_realizado' => 30.0,
-            'meta' => null,
-            'realizado' => null,
-            'tipo_indicador' => null,
-            'lista_qualitativos' => null,
-            'registro_execucao' => null,
-            'participantes_total' => 0,
-            'participantes_somente_unidade_propria' => 0,
-            'participantes_somente_outras_unidades' => 0,
-            'participantes_em_ambas' => 0,
-            'esforco_disponivel_horas' => 0,
-            'esforco_planejado_horas' => 0,
-            'esforco_executado_horas' => 0,
-            'tem_pt_pactuado' => false,
-            'tem_pt_concluido' => false,
-        ];
-
-        $repo->shouldReceive('findCadeiaValor')->andReturn($cadeiaValor);
-        $repo->shouldReceive('findProcesso')->andReturn($processo);
-        $repo->shouldReceive('listarDetalhamentoEntregasPainel')->andReturn([
-            (object) array_merge($baseRow, [
-                'plano_entrega_entrega_id' => 'pee-1',
-                'unidade_id' => 'u-1',
-                'unidade_sigla' => 'UA',
-                'unidade_nome' => 'Unidade A',
-                'entrega_titulo' => 'Entrega 1',
-            ]),
-        ]);
-        $repo->shouldReceive('listarFiltroUnidadesPainel')
-            ->with('proc-1')
-            ->andReturn([
-                ['id' => 'u-1', 'label' => 'UA — Unidade A'],
-                ['id' => 'u-2', 'label' => 'UB — Unidade B'],
-            ]);
-        $repo->shouldReceive('listarFiltroEntregasPainel')
-            ->with('proc-1')
-            ->andReturn([
-                ['id' => 'pee-1', 'label' => 'Entrega 1'],
-                ['id' => 'pee-2', 'label' => 'Entrega 2'],
-            ]);
-
-        $service = criarEntregasService($repo);
-        $result = $service->getEntregas('cv-1', 'proc-1');
-
-        expect($result->itens)->toHaveCount(1);
-        expect($result->filtro_entregas)->toHaveCount(2);
-        expect($result->filtro_unidades)->toHaveCount(2);
-        expect($result->filtro_entregas[0]['id'])->toBe('pee-1');
-        expect($result->filtro_entregas[1]['id'])->toBe('pee-2');
-        expect($result->filtro_unidades[0]['id'])->toBe('u-1');
-        expect($result->filtro_unidades[1]['id'])->toBe('u-2');
-    });
 });
 
-describe('CadeiaValorPainelEntregaDetalheLinhaDTO', function () {
+describe('EntregaDetalheLinhaDTO', function () {
 
     test('serializa corretamente em JSON', function () {
-        $dto = new CadeiaValorPainelEntregaDetalheLinhaDTO(
+        $dto = new EntregaDetalheLinhaDTO(
             plano_entrega_entrega_id: 'pee-1',
             unidade_id: 'u-1',
             unidade_sigla: 'UA',
@@ -222,6 +156,9 @@ describe('CadeiaValorPainelEntregaDetalheLinhaDTO', function () {
             plano_entrega_vigencia_inicio: '2025-01-01',
             plano_entrega_vigencia_fim: '2025-12-31',
             entrega_titulo: 'Entrega Teste',
+            entrega_descricao: 'Descrição',
+            descricao_meta: 'Meta',
+            etiquetas: null,
             progresso_esperado: 75.0,
             progresso_realizado: 50.0,
             meta: null,
@@ -252,7 +189,7 @@ describe('CadeiaValorPainelEntregaDetalheLinhaDTO', function () {
     });
 
     test('registro_execucao pode ser null', function () {
-        $dto = new CadeiaValorPainelEntregaDetalheLinhaDTO(
+        $dto = new EntregaDetalheLinhaDTO(
             plano_entrega_entrega_id: 'pee-1',
             unidade_id: 'u-1',
             unidade_sigla: 'UA',
@@ -263,6 +200,9 @@ describe('CadeiaValorPainelEntregaDetalheLinhaDTO', function () {
             plano_entrega_vigencia_inicio: '2025-01-01',
             plano_entrega_vigencia_fim: null,
             entrega_titulo: 'Entrega',
+            entrega_descricao: '',
+            descricao_meta: '',
+            etiquetas: null,
             progresso_esperado: 0.0,
             progresso_realizado: 0.0,
             meta: null,

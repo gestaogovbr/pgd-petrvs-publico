@@ -100,6 +100,7 @@ export class GlobalsService {
     // TODO: descomentar quando o Painel Gerencial estiver implementado
     // if (this.isChefiaUnidadeAutorizadoraOuInstituidora()) return ['gestao', 'paineis-gerenciais'];
     if (!this.auth.isUsuarioConsulta()) return ['home-v2'];
+
     return ['home'];
   }
 

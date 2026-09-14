@@ -68,7 +68,7 @@ beforeEach(function () {
     };
 });
 
-describe('UnidadesExecutoras', function () {
+describe('UnidadesExecutorasDataProvider', function () {
 
     test('retorna distribuição de unidades executoras e não executoras', function () {
         $provider = app(UnidadesExecutorasDataProvider::class);
@@ -117,7 +117,7 @@ describe('UnidadesExecutoras', function () {
     });
 });
 
-describe('ParticipantesPGD', function () {
+describe('ParticipantesPGDDataProvider', function () {
 
     test('retorna distribuição de participantes e não participantes', function () {
         $participante = Usuario::factory()->create(['participa_pgd' => 'sim']);
@@ -168,7 +168,7 @@ describe('ParticipantesPGD', function () {
     });
 });
 
-describe('EvolucaoAdesaoUnidades', function () {
+describe('EvolucaoAdesaoUnidadesDataProvider', function () {
 
     test('retorna série histórica de unidades executoras', function () {
         ($this->inserirSerieUnidades)($this->unidadePai, '2026-01', 5, 2);
@@ -242,7 +242,7 @@ describe('EvolucaoAdesaoUnidades', function () {
     });
 });
 
-describe('EvolucaoAdesaoParticipantes', function () {
+describe('EvolucaoAdesaoParticipantesDataProvider', function () {
 
     test('retorna série histórica de participantes PGD', function () {
         ($this->inserirSerieParticipantes)($this->unidadePai, '2026-01', 10, 5);
