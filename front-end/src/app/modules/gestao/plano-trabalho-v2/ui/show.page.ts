@@ -20,6 +20,7 @@ import { MessageService } from "src/app/v2/services/message.service";
 import { AssinarPlanoUseCase } from "../application/assinar-plano.usecase";
 import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
 import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
+import { ContribuicaoFormComponent } from "./components/contribuicao-form.component";
 import { TextoColapsavelComponent } from "src/app/v2/components/texto-colapsavel/texto-colapsavel.component";
 import { BrTextareaResizeVerticalDirective } from "./br-textarea-resize-vertical.directive";
 
@@ -27,7 +28,7 @@ import { BrTextareaResizeVerticalDirective } from "./br-textarea-resize-vertical
   selector: 'app-plano-trabalho-v2-show-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent, TextoColapsavelComponent, BrTextareaResizeVerticalDirective],
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent, ContribuicaoFormComponent, TextoColapsavelComponent, BrTextareaResizeVerticalDirective],
   templateUrl: './show.page.html',
   styleUrl: './show.page.scss'
 })
@@ -55,6 +56,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly error = signal<string | null>(null);
   readonly encerrando = signal(false);
   readonly justificativaEncerramento = signal('');
+  readonly formContribuicaoConsolidacaoId = signal<string | null>(null);
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
@@ -192,6 +194,44 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   getPlanoEntregaInfo(e: PlanoTrabalhoEntrega): { plano: string; entrega: string } {
     return getPlanoEntregaInfo(e);
+  }
+
+  abrirFormContribuicao(consolidacao: Consolidacao): void {
+    this.formContribuicaoConsolidacaoId.set(consolidacao.id);
+  }
+
+  fecharFormContribuicao(): void {
+    this.formContribuicaoConsolidacaoId.set(null);
+  }
+
+  onContribuicaoSalva(entrega: PlanoTrabalhoEntrega): void {
+    this.planoTrabalho.update(plano => {
+      if (!plano) return plano;
+      plano.entregas = [...(plano.entregas ?? []), entrega];
+      return plano;
+    });
+    this.formContribuicaoConsolidacaoId.set(null);
+    this.message.success('Contribuição incluída com sucesso.');
+  }
+
+  excluirContribuicao(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): void {
+    const plano = this.planoTrabalho();
+    if (!plano || !entrega.id) return;
+    this.facade.confirmacaoPendente.set({
+      titulo: 'Excluir Contribuição',
+      mensagem: 'Deseja realmente excluir esta contribuição?',
+      onConfirmar: () => {
+        this.api.deleteEntrega(plano.id, entrega.id, consolidacao.id).subscribe(() => {
+          this.planoTrabalho.update(atual => {
+            if (!atual) return atual;
+            atual.entregas = (atual.entregas ?? []).filter(e => e.id !== entrega.id);
+            return atual;
+          });
+          this.facade.loadConsolidacoes();
+          this.message.success('Contribuição excluída com sucesso.');
+        });
+      }
+    });
   }
 
   // --- Navegação ---

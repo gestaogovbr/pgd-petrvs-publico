@@ -1,0 +1,121 @@
+<div class="p-3 mb-4 border rounded" style="background-color: var(--color-secondary-01);">
+  <h6 class="mb-3 text-weight-semi-bold">Nova Contribuição</h6>
+
+  <form [formGroup]="entregaForm">
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <br-select label="Origem" formControlName="origem" [options]="origemSelectOptions()" inputWidth="100%" />
+      </div>
+
+      @if (entregaForm.value.origem === 'OUTRA_UNIDADE') {
+        <div class="col-md-5 mb-3 position-relative">
+          <div class="d-flex align-items-end gap-2">
+            <div class="br-input w-100">
+              <label>Unidade</label>
+              <input type="text" [formControl]="outraUnidadeQuery" placeholder="Digite nome ou sigla (mín. 3)..." [disabled]="!!outraUnidadeSelecionada()" />
+            </div>
+            @if (outraUnidadeSelecionada()) {
+              <br-button type="button" emphasis="secondary" (click)="limparOutraUnidade()">Limpar</br-button>
+            }
+          </div>
+          @if (sugestoesOutrasUnidades().length > 0) {
+            <div class="br-card position-absolute w-100" style="z-index: 1050;">
+              @for (u of sugestoesOutrasUnidades(); track u.id) {
+                <div class="d-flex justify-content-between align-items-center px-2 py-1 card-content">
+                  <span>{{ u.codigo }} - {{ u.sigla }} - {{ u.nome }}</span>
+                  <br-button type="button" emphasis="secondary" (click)="selecionarOutraUnidade(u)">Selecionar</br-button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+        @if (entregaForm.value.outra_unidade_id) {
+          <div class="col-md-3 mb-3">
+            <br-select
+              label="Plano de Entrega"
+              formControlName="outra_unidade_plano_id"
+              [options]="planosOutraUnidadeOptions()"
+              placeholder="Selecione um plano..."
+              inputWidth="100%"
+            />
+          </div>
+        }
+      }
+
+      @if (entregaForm.value.origem === 'PROPRIA_UNIDADE') {
+        <div class="col-md-8 mb-3">
+          <br-select
+            label="Plano de Entrega"
+            formControlName="plano_entrega_id"
+            [options]="planosUnidadeOptions()"
+            placeholder="Selecione um plano..."
+            inputWidth="100%"
+          />
+        </div>
+      }
+
+      @if (entregaForm.value.origem === 'OUTRO_ORGAO') {
+        <div class="col-md-8 mb-3">
+          <div class="br-input">
+            <label>Órgão/Entidade</label>
+            <input type="text" formControlName="orgao" placeholder="Nome do Órgão" />
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (entregaForm.value.origem === 'PROPRIA_UNIDADE' && entregasDoPlanoOptions().length > 0) {
+      <div class="row">
+        <div class="col-12 mb-3">
+          <br-select
+            label="Entrega"
+            formControlName="plano_entrega_entrega_id"
+            [options]="entregasDoPlanoOptions()"
+            placeholder="Selecione uma entrega..."
+            inputWidth="100%"
+          />
+        </div>
+      </div>
+    }
+
+    @if (entregaForm.value.origem === 'OUTRA_UNIDADE' && entregasDoPlanoOutraUnidadeOptions().length > 0) {
+      <div class="row">
+        <div class="col-12 mb-3">
+          <br-select
+            label="Entrega"
+            formControlName="plano_entrega_entrega_id"
+            [options]="entregasDoPlanoOutraUnidadeOptions()"
+            placeholder="Selecione uma entrega..."
+            inputWidth="100%"
+          />
+        </div>
+      </div>
+    }
+
+    <div class="row row-descricao">
+      <div class="col-md-2 mb-3">
+        <div class="br-input">
+          <label>% CHD</label>
+          <input type="number" formControlName="forca_trabalho" placeholder="Ex: 100" />
+        </div>
+      </div>
+      <div class="col mb-3">
+        <br-textarea
+          label="Trabalho Planejado"
+          show-counter
+          [maxlength]="1000"
+          [value]="entregaForm.get('descricao')!.value || ''"
+          (input)="entregaForm.get('descricao')!.setValue($any($event.target).value)"
+          placeholder="Descreva o trabalho planejado..."
+        ></br-textarea>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-2">
+      <br-button emphasis="secondary" (click)="cancelar()">Cancelar</br-button>
+      <br-button emphasis="primary" (click)="salvar()" [disabled]="entregaForm.invalid || salvando()">
+        {{ salvando() ? 'Salvando...' : 'Salvar Contribuição' }}
+      </br-button>
+    </div>
+  </form>
+</div>

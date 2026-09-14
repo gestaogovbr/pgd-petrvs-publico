@@ -242,6 +242,29 @@ export class ConsolidacaoFacade {
     return value >= 0 && value <= 999.99;
   }
 
+  temAlteracao(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): boolean {
+    const atividade = this.getAtividade(consolidacao, entrega.id);
+    const textoAtual = this.getTexto(consolidacao.id, entrega.id).trim();
+    const textoBase = (atividade?.descricao ?? '').trim();
+    const esforcoAtual = this.getEsforcoExecutado(consolidacao.id, entrega);
+    const esforcoBase = Number(entrega.esforco_executado ?? entrega.forca_trabalho ?? 0);
+    return textoAtual !== textoBase || esforcoAtual !== esforcoBase;
+  }
+
+  podeConfirmar(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): boolean {
+    const key = `${consolidacao.id}-${entrega.id}`;
+    return this.temAlteracao(consolidacao, entrega)
+      && !!this.getTexto(consolidacao.id, entrega.id).trim()
+      && this.esforcoExecutadoValido(consolidacao.id, entrega)
+      && !this.salvando().has(key);
+  }
+
+  mostrarExcluirContribuicao(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): boolean {
+    return !this.estaEditando(consolidacao.id, entrega.id)
+      && !this.podeConfirmar(consolidacao, entrega)
+      && !this.salvando().has(`${consolidacao.id}-${entrega.id}`);
+  }
+
   iniciarEdicao(consolidacaoId: string, entregaId: string, textoAtual: string, esforcoAtual?: number): void {
     const key = `${consolidacaoId}-${entregaId}`;
     this.textos.update(t => ({ ...t, [key]: textoAtual }));
