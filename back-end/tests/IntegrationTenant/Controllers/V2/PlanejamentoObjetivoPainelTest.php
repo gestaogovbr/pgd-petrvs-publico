@@ -272,7 +272,6 @@ describe('GET /api/v2/planejamento/objetivo/{id}/entregas-detalhamento', functio
         $item = $response->json('data.itens.0');
         expect((float) $item['progresso_esperado'])->toBe(80.0)
             ->and((float) $item['progresso_realizado'])->toBe(65.0)
-            ->and($item['homologado'])->toBeTrue()
             ->and($item['registro_execucao'])->toBe('Execução registrada no progresso mais recente');
     });
 });

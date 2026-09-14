@@ -84,6 +84,17 @@
 - Use `lex.translate(...)` quando labels fizerem parte de nomenclatura de entidade/domínio que pode variar por entidade configurada.
 - Mantenha classes de Bootstrap Icons (`bi ...`) e Font Awesome consistentes com telas próximas.
 
+## GovBR-DS `br-select` (@govbr-ds/webcomponents 2.1.x) — Gotchas
+
+Comportamentos conhecidos do web component `br-select` que causam bugs sutis:
+
+- **Valor `''` não é selecionável**: uma option com `value: ''` (ex.: "Todos"/"Todas") é tratada internamente como "sem seleção" (`filter(Boolean)` descarta). Em toggles repetidos o estado dessincroniza e o select trava. Para filtros, use o valor sentinela `TODOS_SENTINEL` (`src/app/v2/domain/select-option.ts`) como value da opção "Todos", e aplique a directive `SelectTodosSentinelDirective` (`src/app/v2/domain/select-todos-sentinel.directive.ts`) no `br-select` para manter a opção sentinela e traduzir para "sem filtro" ao consultar.
+- **Options via `computed` que leem FormControl não reagem**: um `computed` só recalcula quando signals lidos mudam; `FormControl.value` não é signal. Para options que dependem do valor do control (marcar `selected`), use um **método** (reavaliado a cada CD) em vez de `computed`. Padrão de referência: `statusOptions` (getter) no `plano-trabalho-v2/list.page`.
+- **Marcar `selected` na option**: o `br-select` deriva a exibição das options; sempre marque `selected: valor === atual` nas options, senão o valor inicial não aparece ao trocar a lista.
+- **Valor setado antes das options existirem é descartado**: `setValue` programático antes de o `[options]` propagar ao componente faz o `br-select` descartar o valor (option inexistente). Solução: setar o valor no control **antes** de publicar as options no signal — o `handleOptionsChange` do componente re-casa o valor preservado. Ver `carregarUnidades` em `plano-trabalho-v2/new.page` e `edit.page`.
+- **`setValue` com `emitEvent: false` + validação async**: o `FormValidityValidator` (aplicado automaticamente a `br-select[formControlName]` na 2.1.x) valida de forma assíncrona. Setar valor com `emitEvent: false` suprime `statusChanges`, deixando signals derivados do status (ex.: `formStatus`) dessincronizados e botões travados. Prefira setar sem `emitEvent: false` quando precisar revalidar, ou sincronize o signal manualmente.
+- **`type="date"` não existe em `br-input`**: use `<input type="date">` nativo dentro de `<div class="br-input">`.
+
 ## Dados e API
 
 - Prefira DAOs e `ServerService` em vez de chamadas diretas com `HttpClient`. `ServerService` centraliza URLs base, credenciais, token XSRF, `X-PETRVS`, unidade selecionada, headers de entidade, batching e normalização de erros do back-end.

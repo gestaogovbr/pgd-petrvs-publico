@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Repository\UnidadeIntegrante\Eloquent;
 
+use App\Enums\Atribuicao;
 use App\Models\UnidadeIntegrante;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\UnidadeIntegrante\Contracts\UnidadeIntegranteReadRepositoryContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -106,7 +108,7 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
     public function findAllComAtribuicoesAtivasByUsuario(string $usuarioId): Collection
     {
         return $this->model->newQuery()
-            ->with('unidade:id,sigla')
+            ->with('unidade:id,sigla,unidade_antiga')
             ->where('usuario_id', $usuarioId)
             ->has('atribuicoes')
             ->get();
@@ -118,5 +120,39 @@ class EloquentUnidadeIntegranteReadRepository extends AbstractEloquentReadReposi
             ->where('unidade_id', $unidadeId)
             ->has('lotado')
             ->count();
+    }
+
+    public function countAtivosByUnidade(string $unidadeId): int
+    {
+        return $this->model->newQuery()
+            ->where('unidade_id', $unidadeId)
+            ->whereNull('deleted_at')
+            ->count();
+    }
+
+    public function findIdsAtivosByUnidade(string $unidadeId): array
+    {
+        return $this->model->newQuery()
+            ->where('unidade_id', $unidadeId)
+            ->whereNull('deleted_at')
+            ->pluck('id')
+            ->map(static fn ($id): string => (string) $id)
+            ->all();
+    }
+
+    public function usuarioEhChefiaDeUnidadeExecutora(string $usuarioId): bool
+    {
+        return $this->model->newQuery()
+            ->where('usuario_id', $usuarioId)
+            ->whereHas('unidade', function (Builder $query) {
+                $query->where('executora', true);
+            })
+            ->whereHas('atribuicoes', function (Builder $query) {
+                $query->whereIn('atribuicao', [
+                    Atribuicao::GESTOR->value,
+                    Atribuicao::GESTOR_SUBSTITUTO->value,
+                ]);
+            })
+            ->exists();
     }
 }

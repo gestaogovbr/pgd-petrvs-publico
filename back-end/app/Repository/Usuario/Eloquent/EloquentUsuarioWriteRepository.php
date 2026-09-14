@@ -74,6 +74,13 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
         return $usuario->save();
     }
 
+    public function limparEmail(string $usuarioId): bool
+    {
+        return Usuario::withoutGlobalScopes()
+            ->whereKey($usuarioId)
+            ->update(['email' => null]) > 0;
+    }
+
     public function updateConfig(string $usuarioId, string $unidadeId): bool
     {
         $usuario = $this->model->find($usuarioId);

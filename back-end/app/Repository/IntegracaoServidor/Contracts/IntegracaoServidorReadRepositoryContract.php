@@ -8,17 +8,17 @@ use App\Models\IntegracaoServidor;
 
 interface IntegracaoServidorReadRepositoryContract
 {
-    public function getServidor(string $cpf, string $matricula): ?IntegracaoServidor;
+    public function getServidor(string $cpf, string $matricula, string $codigoOrgao): ?IntegracaoServidor;
 
-    public function getMatriculaByCpf(string $cpf): ?string;
+    public function getMatriculaByCpf(string $cpf, string $codigoOrgao): ?string;
 
-    public function findByCpfAndCodigoExercicio(string $cpf, string $codigoExercicio): ?IntegracaoServidor;
+    public function findByCpfAndCodigoExercicio(string $cpf, string $codigoExercicio, string $codigoOrgao): ?IntegracaoServidor;
 
-    public function buscarAtualizacoesDados(?array $escopoServidor = null): array;
+    public function buscarAtualizacoesDados(string $codigoOrgao, ?array $escopoServidor = null): array;
 
-    public function getAtualizacoesLotacoes(?array $escopoServidor = null): array;
+    public function getAtualizacoesLotacoes(string $codigoOrgao, ?array $escopoServidor = null): array;
 
-    public function getServidoresInseridosNaoLotados(?array $escopoServidor = null): array;
+    public function getServidoresInseridosNaoLotados(string $codigoOrgao, ?array $escopoServidor = null): array;
 
-    public function getUsuariosAusentes(?array $escopoServidor = null): array;
+    public function getUsuariosAusentes(string $codigoOrgao, ?array $escopoServidor = null): array;
 }

@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Traits\AutoUuid;
 
+/**
+ * @property string $codigo_orgao
+ */
 class IntegracaoServidor extends ModelBase
 {
   use AutoUuid;
@@ -14,6 +17,7 @@ class IntegracaoServidor extends ModelBase
   protected $with = [];
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'codigo_orgao', /* varchar(20); NOT NULL; */
     'cpf_ativo', /* varchar(50); */
     'data_modificacao', /* datetime; */
     'cpf', /* varchar(50); */
@@ -42,6 +46,7 @@ class IntegracaoServidor extends ModelBase
     'cod_jornada', 
     'modalidade_pgd',/* varchar(50); */ // Modalidade de participação no PGD (SIAPE)
     'participa_pgd',/* enum('sim','não'); */ // Participação do servidor no PGD
+    'ident_unica', /* varchar(50); */ // Identificador único do servidor
     //'deleted_at', /* timestamp; */
   ];
 

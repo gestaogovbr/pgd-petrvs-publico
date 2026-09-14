@@ -20,9 +20,9 @@ class TipoPlanejamentoObjetivoService
     ) {}
 
     /** @return Collection<int, TipoPlanejamentoObjetivo> */
-    public function index(): Collection
+    public function index(?string $estrutura = null): Collection
     {
-        return $this->repository->getAll();
+        return $this->repository->getAll($estrutura);
     }
 
     public function store(TipoPlanejamentoObjetivoStoreDTO $dto): TipoPlanejamentoObjetivo

@@ -39,6 +39,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function initializeTenant()
     {
+        config()->set('integracao.siape.codOrgao', '20000');
         $this->tenant = Tenant::find($this->tenantId);
 
         if (!$this->tenant) {
@@ -57,13 +58,22 @@ abstract class TestCase extends BaseTestCase
             if ($dbExists) {
                 // Se o banco existe, cria o registro sem disparar eventos de criação de banco
                 $this->tenant = Tenant::withoutEvents(function () {
-                    return Tenant::create(['id' => $this->tenantId]);
+                    return Tenant::create([
+                        'id' => $this->tenantId,
+                        'integracao_siape_codorgao' => '20000',
+                    ]);
                 });
             } else {
                 $this->tenant = Tenant::create([
                     'id' => $this->tenantId,
+                    'integracao_siape_codorgao' => '20000',
                 ]);
             }
+        }
+
+        if ($this->tenant->integracao_siape_codorgao !== '20000') {
+            $this->tenant->integracao_siape_codorgao = '20000';
+            $this->tenant->save();
         }
 
         tenancy()->initialize($this->tenant);
