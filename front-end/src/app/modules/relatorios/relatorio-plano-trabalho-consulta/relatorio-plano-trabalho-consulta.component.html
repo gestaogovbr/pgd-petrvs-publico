@@ -1,0 +1,27 @@
+<div class="br-mainpanel">
+  <app-breadcrumb />
+
+  <p class="text-secondary">Consulta de relatórios de Planos de Trabalho. Escolha abaixo o tipo de relatório.</p>
+
+  <div class="row mt-4">
+    <div class="col-6 col-sm-4 mb-3">
+      <app-button-dashboard
+        [title]="'Planos de Trabalho Cadastrados'"
+        iconClass="bi bi-clipboard2-check"
+        textColor="#1369f0"
+        borderColor="#1369f0"
+        [route]="{ route: ['relatorios', 'planos-trabalho', 'cadastrados'] }"
+      ></app-button-dashboard>
+    </div>
+
+    <div class="col-6 col-sm-4 mb-3" *ngIf="auth.hasPermissionTo(permissao)">
+      <app-button-dashboard
+        [title]="'Lacunas de Planos de Trabalho'"
+        iconClass="bi bi-calendar-x"
+        textColor="#1369f0"
+        borderColor="#1369f0"
+        [route]="{ route: ['relatorios', 'planos-trabalho', 'lacunas'] }"
+      ></app-button-dashboard>
+    </div>
+  </div>
+</div>

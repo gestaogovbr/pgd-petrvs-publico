@@ -133,6 +133,7 @@ use App\Repository\Programa\Eloquent\EloquentProgramaReadRepository;
 use App\Repository\Programa\Eloquent\EloquentProgramaWriteRepository;
 
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
+use App\Repository\RelatorioLacunaPlanoTrabalho\Contracts\RelatorioLacunaPlanoTrabalhoReadRepositoryContract;
 use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
 use App\Repository\EnvioUsuario\Eloquent\EloquentEnvioUsuarioReadRepository;
 use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryContract;
@@ -166,6 +167,7 @@ use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteR
 use App\Repository\Sipec\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointReadRepository;
 use App\Repository\Sipec\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointWriteRepository;
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
+use App\Repository\RelatorioLacunaPlanoTrabalho\Eloquent\EloquentRelatorioLacunaPlanoTrabalhoReadRepository;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioWriteRepositoryContract;
 use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioReadRepository;
@@ -480,6 +482,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             RelatorioAgenteReadRepositoryContract::class,
             EloquentRelatorioAgenteReadRepository::class,
+        );
+
+        $this->app->bind(
+            RelatorioLacunaPlanoTrabalhoReadRepositoryContract::class,
+            EloquentRelatorioLacunaPlanoTrabalhoReadRepository::class,
         );
 
         $this->app->bind(
