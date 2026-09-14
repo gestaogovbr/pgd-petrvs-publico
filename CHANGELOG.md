@@ -10,6 +10,9 @@
 - Nome do planejamento e da cadeia passam a ser exibidos como subtítulo no cabeçalho do card da árvore
 - Periodicidades Bimestral, Trimestral e Semestral descontinuadas na configuração de consolidação dos regramentos
 
+### Corrigido
+- Descrição dos agendamentos mensais no painel ajustada para exibir corretamente o dia do mês e o horário da execução
+
 ## 3.1.1 01/09/2026
 
 ### Adicionado

@@ -251,12 +251,12 @@ test('issue 2209 - processamento e relatorio preservam tres matriculas em lotaco
     $relatorio->assertOk();
     $relatorio->assertJsonPath('success', true);
     $relatorio->assertJsonPath('relatorio.tipo', 'servidor');
-    $relatorio->assertJsonPath('relatorio.status', 'parcial');
+    $relatorio->assertJsonPath('relatorio.status', 'sucesso');
     $relatorio->assertJsonCount(3, 'relatorio.secoes');
 
     expect(collect($processamento->json('resumo'))->pluck('status')->unique()->all())
-        ->toContain('parcial')
-        ->and($processamento->json('relatorio_carga.status'))->toBe('parcial');
+        ->toBe(['sucesso'])
+        ->and($processamento->json('relatorio_carga.status'))->toBe('sucesso');
 
     $matriculasRelatorio = collect($relatorio->json('relatorio.secoes'))
         ->flatMap(fn(array $secao) => $secao['campos'])

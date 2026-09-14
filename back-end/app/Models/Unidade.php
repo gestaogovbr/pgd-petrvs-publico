@@ -20,6 +20,7 @@ use App\Models\NotificacaoConfig;
 use App\Models\HistoricoLotacao;
 use App\Models\HistoricoFuncao;
 use App\Models\CurriculumProfissional;
+use App\Services\CodigoOrgaoService;
 use App\Traits\AutoUuid;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -38,6 +39,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $texto_complementar_plano
  * @property \DateTime|null $data_inativacao
  * @property \DateTime|null $data_inicio_inativacao
+ * @property string $codigo_orgao
+ * @property bool $unidade_antiga
  * @property int $instituidora
  * @property bool $executora
  * @property int $informal
@@ -109,6 +112,7 @@ class Unidade extends ModelBase
     protected static function booted()
     {
         static::creating(function ($unidade) {
+            $unidade->codigo_orgao = CodigoOrgaoService::atual();
             $unidade->notificacoes = empty($unidade->notificacoes) ? json_decode('{}') : $unidade->notificacoes;
             $unidade->etiquetas = $unidade->etiquetas ?? [];
         });
@@ -123,6 +127,7 @@ class Unidade extends ModelBase
         'data_inativacao' => 'datetime',
         'data_inicio_inativacao' => 'datetime',
         'data_ativacao_temporaria' => 'datetime',
+        'unidade_antiga' => 'boolean',
     ];
 
     // Scopes

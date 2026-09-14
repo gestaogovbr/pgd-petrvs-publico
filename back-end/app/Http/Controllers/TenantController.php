@@ -122,6 +122,50 @@ class TenantController extends ControllerBase {
         }
     }
 
+    public function testarSipec(Request $request) {
+        try {
+            $data = $request->validate([
+                'tenant_id' => ['required', 'string'],
+            ]);
+
+            if (!$this->checkUserPermission($data['tenant_id'])) {
+                return response()->json(['error' => 'Sem permissão para este tenant.'], 403);
+            }
+
+            $this->service->testarSipec($data['tenant_id']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Conexão com SIPEC estabelecida com sucesso.',
+            ]);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => 'Falha ao conectar com SIPEC: ' . $e->getMessage()]);
+        }
+    }
+
+    public function forcarSipec(Request $request) {
+        try {
+            $data = $request->validate([
+                'tenant_id' => ['string'],
+            ]);
+            $this->service->forcarSipec($data['tenant_id']);
+            return response()->json([
+                'success' => true,
+            ]);
+        }  catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()]);
+        }
+        catch (Throwable $e) {
+            $dataError = throwableToArrayLog($e);
+            Log::error($dataError);
+            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."]);
+        }
+    }
+
     public function cidades(Request $request) {
         try {
             $data = $request->validate([
