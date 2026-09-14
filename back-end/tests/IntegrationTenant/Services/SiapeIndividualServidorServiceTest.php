@@ -1280,6 +1280,7 @@ test('issue 2313 - cadastro de usuario ausente com exercicio nulo nao deve abort
 
     $vinculoSemExercicio = (object) [
         'cpf' => $cpf,
+        'codigo_orgao' => '20000',
         'matricula' => $matricula,
         'exercicio' => null,
         'nome' => 'Servidor Issue 2313',

@@ -32,7 +32,7 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
     {
         return $this->query()
             ->where('documento_id', $documentoId)
-            ->whereHas('usuario', fn ($q) => $q->where('cpf', $cpf))
+            ->whereHas('usuario', fn($q) => $q->where('cpf', $cpf))
             ->exists();
     }
 
@@ -104,6 +104,15 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->exists();
     }
 
+    public function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId, string $documentoIdColumn = 'planos_trabalhos.documento_id'): void
+    {
+        $query->select(\Illuminate\Support\Facades\DB::raw(1))
+            ->from('documentos_assinaturas')
+            ->whereColumn('documentos_assinaturas.documento_id', $documentoIdColumn)
+            ->where('documentos_assinaturas.usuario_id', $usuarioId)
+            ->whereNull('documentos_assinaturas.deleted_at');
+    }
+
     public function existeAssinaturaDeNaoParticipante(string $documentoId, string $participanteId): bool
     {
         return $this->query()
@@ -125,14 +134,5 @@ class EloquentDocumentoAssinaturaReadRepository extends AbstractEloquentReadRepo
             ->with(['usuario:id,nome,nome_social'])
             ->orderByDesc('deleted_at')
             ->get();
-    }
-
-    public function subqueryUsuarioJaAssinou(\Illuminate\Database\Query\Builder $query, string $usuarioId, string $documentoIdColumn = 'planos_trabalhos.documento_id'): void
-    {
-        $query->select(\Illuminate\Support\Facades\DB::raw(1))
-            ->from('documentos_assinaturas')
-            ->whereColumn('documentos_assinaturas.documento_id', $documentoIdColumn)
-            ->where('documentos_assinaturas.usuario_id', $usuarioId)
-            ->whereNull('documentos_assinaturas.deleted_at');
     }
 }

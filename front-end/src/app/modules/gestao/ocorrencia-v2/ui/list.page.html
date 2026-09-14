@@ -10,11 +10,12 @@
   <form [formGroup]="filtros" class="mb-3">
     <div class="br-card">
       <div class="card-content">
-        <div class="row g-3 align-items-end mb-3">
+        <div class="row g-3 align-items-start mb-3">
 
           <div class="col-12 col-sm-6 col-md-4">
             <br-select
               label="Agente Público"
+              brTodosSentinel
               formControlName="usuario_id"
               [options]="agentesOptions()"
               (change)="aplicarFiltros()"
@@ -26,6 +27,7 @@
             <div class="w-100">
               <br-select
                 label="Motivo"
+                brTodosSentinel
                 formControlName="tipo_motivo_afastamento_id"
                 [options]="tiposOptions()"
                 (change)="aplicarFiltros()"

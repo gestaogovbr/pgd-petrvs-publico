@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { TipoObjetivo, TipoObjetivoPayload } from '../domain/types';
+import { TipoObjetivo, TipoObjetivoPayload, Estrutura } from '../domain/types';
 import { GlobalsService } from 'src/app/services/globals.service';
 
 type ApiResponse<T> = {
@@ -14,9 +14,14 @@ export class TipoObjetivoApiClient {
   private readonly base = '/api/v2/planejamento/tipo-objetivo';
   private readonly gb = inject(GlobalsService);
 
-  list(): Observable<TipoObjetivo[]> {
+  list(estrutura?: Estrutura): Observable<TipoObjetivo[]> {
+    let params = new HttpParams();
+    if (estrutura) {
+      params = params.set('estrutura', estrutura);
+    }
+
     return this.http
-      .get<ApiResponse<TipoObjetivo[]>>(`${this.gb.servidorURL}${this.base}`)
+      .get<ApiResponse<TipoObjetivo[]>>(`${this.gb.servidorURL}${this.base}`, { params })
       .pipe(map(response => (Array.isArray(response?.data) ? response.data : [])));
   }
 

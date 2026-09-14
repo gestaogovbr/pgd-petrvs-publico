@@ -1,0 +1,16 @@
+.link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.unidade-sugestoes {
+  z-index: 1050;
+  max-height: 280px;
+  overflow: auto;
+}
+
+.br-switch {
+  min-height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+}

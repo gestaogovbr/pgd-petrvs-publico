@@ -78,6 +78,13 @@ export class Tenant extends Base {
     public integracao_siape_conectagov_chave: string = "";
     public integracao_siape_conectagov_senha: string = "";
     public integracao_siape_conectagov_qtd_max_requisicoes: number = 10;
+    // SIPEC
+    public integracao_sipec_url: string = "";
+    public integracao_sipec_conectagov_chave: string = "";
+    public integracao_sipec_conectagov_senha: string = "";
+    public integracao_sipec_cpf: string = "";
+    public integracao_sipec_coduorg: string = "";
+    public integracao_sipec_codorgao: string = "";
     // SEI
     public modulo_sei_habilitado: boolean = false;
     public modulo_sei_private_key: string = "";

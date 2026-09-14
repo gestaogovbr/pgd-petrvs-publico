@@ -94,5 +94,56 @@ describe('GeradorPeriodosAvaliativos → calcularProximaData', function () {
             $result = invokeCalcProximaData($this->gerador, '2026-05-15', $programa);
             expect($result)->toBe('2026-06-15');
         });
+
+        // RN05: divisão consistente para meses de 28, 29, 30 e 31 dias.
+        // Com periodicidade_valor=31, o dia efetivo é min(diasNoMes, 31), ou seja, o último dia do mês.
+        test('fevereiro de ano não bissexto (28 dias) → último dia é 28', function () {
+            $programa = makePrograma('MENSAL', 31);
+            $result = invokeCalcProximaData($this->gerador, '2026-02-01', $programa);
+            expect($result)->toBe('2026-02-28');
+        });
+
+        test('fevereiro de ano bissexto (29 dias) → último dia é 29', function () {
+            $programa = makePrograma('MENSAL', 31);
+            $result = invokeCalcProximaData($this->gerador, '2028-02-01', $programa);
+            expect($result)->toBe('2028-02-29');
+        });
+
+        test('mês de 30 dias (abril) → último dia é 30', function () {
+            $programa = makePrograma('MENSAL', 31);
+            $result = invokeCalcProximaData($this->gerador, '2026-04-01', $programa);
+            expect($result)->toBe('2026-04-30');
+        });
+
+        test('mês de 31 dias (janeiro) → último dia é 31', function () {
+            $programa = makePrograma('MENSAL', 31);
+            $result = invokeCalcProximaData($this->gerador, '2026-01-01', $programa);
+            expect($result)->toBe('2026-01-31');
+        });
+    });
+
+    // RN03/RN04: as periodicidades descontinuadas continuam calculando corretamente
+    // para regramentos legados que ainda as utilizam. O cálculo não é alterado.
+    describe('periodicidades descontinuadas (legados) continuam calculando', function () {
+        test('BIMESTRAL avança 1 mês além do mês corrente', function () {
+            // base incMonth=1 → jan/2026 + 1 mês = fev/2026, valor=31 → último dia = 2026-02-28
+            $programa = makePrograma('BIMESTRAL', 31);
+            $result = invokeCalcProximaData($this->gerador, '2026-01-01', $programa);
+            expect($result)->toBe('2026-02-28');
+        });
+
+        test('TRIMESTRAL avança 2 meses além do mês corrente', function () {
+            // base incMonth=2 → jan/2026 + 2 meses = mar/2026, valor=31 → 2026-03-31
+            $programa = makePrograma('TRIMESTRAL', 31);
+            $result = invokeCalcProximaData($this->gerador, '2026-01-01', $programa);
+            expect($result)->toBe('2026-03-31');
+        });
+
+        test('SEMESTRAL avança 5 meses além do mês corrente', function () {
+            // base incMonth=5 → jan/2026 + 5 meses = jun/2026, valor=31 → 2026-06-30
+            $programa = makePrograma('SEMESTRAL', 31);
+            $result = invokeCalcProximaData($this->gerador, '2026-01-01', $programa);
+            expect($result)->toBe('2026-06-30');
+        });
     });
 });

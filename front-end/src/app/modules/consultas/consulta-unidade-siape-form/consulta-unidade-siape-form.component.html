@@ -17,15 +17,20 @@
             <input-text
                 controlName="unidade"
                 label="Unidade"
-                labelInfo="Informe o código da unidade para busca no SIAPE"
+                labelInfo="Informe o código da unidade para busca"
                 [size]="4"
                 [maskFormat]="'999999999'"
                 hostClass="inputUnidade"
                 relativeId="inputUnidade"
                 placeholder="Informe o código unidade"
             ></input-text>
+        </div>
+        <input-select [size]="4" label="Fonte" controlName="fonte" [items]="fontes" required></input-select>
+    </div>
+    <div class="row mt-2">
+        <div class="col-md-4">
             <button type="button" class="btn btn-outline-primary btn-block btn-unidade"
-                (click)="onClickUnidade()" 
+                (click)="onClickUnidade()"
                 [disabled]="loading || !form.valid">
                 Localizar
             </button>

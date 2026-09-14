@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string $codigo_orgao
+ */
 class SiapeBlacklistUnidade extends ModelBase
 {
     use HasFactory;
@@ -13,6 +16,7 @@ class SiapeBlacklistUnidade extends ModelBase
 
     protected $fillable = [
         'id',
+        'codigo_orgao',
         'codigo',
         'response',
         'inativado',

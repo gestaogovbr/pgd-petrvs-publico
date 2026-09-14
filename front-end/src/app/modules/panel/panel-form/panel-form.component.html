@@ -120,8 +120,14 @@
                 <!-- <input-switch [size]="2" labelPosition="top" label="Auto-incluir" controlName="integracao_auto_incluir"></input-switch> -->
                 <!-- <input-text [size]="6" label="Codigo unidade raiz" controlName="integracao_cod_unidade_raiz" [attr.maxlength]=250></input-text> -->
             </div>
-            <div *ngIf="form?.controls!.tipo_integracao.value == 'SIAPE'" class="row">
+            @if (form?.controls!.tipo_integracao.value == 'SIAPE') {
+            <div class="row">
                 <separator title="API Consulta SIAPE" labeInfo="As informações dessa tela são referentes às inseridas no cadastro do SIAPE"></separator>
+                <div class="row">
+                    <div class="col-12">
+                        <top-alert type="danger" [message]="'Atenção: alterar o Código do Órgão inicia uma nova estrutura organizacional. As unidades do código anterior serão marcadas como antigas e a próxima integração poderá criar novas unidades e alterar lotações. Confirme o código e planeje a execução antes de gravar.'"></top-alert>
+                    </div>
+                </div>
                 <div class="row">
                     <input-text [size]="6" label="URL" controlName="integracao_siape_url" [attr.maxlength]=250></input-text>
                     <input-text [size]="6" label="Sigla do Sistema" controlName="integracao_siape_sigla" [attr.maxlength]=250></input-text>
@@ -137,7 +143,7 @@
                     <input-text password [size]="4" label="Senha" controlName="integracao_siape_senha" [attr.maxlength]=250></input-text>
                 </div>
                 <div class="row">
-                    <input-text [size]="4" label="Codigo do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]=250></input-text>
+                    <input-text [size]="4" label="Código do Órgão" controlName="integracao_siape_codorgao" [attr.maxlength]="20"></input-text>
                     <input-select [size]="4" label="Existe Pagador" controlName="integracao_siape_existepag" [items]="lookup.EXISTE_PAGADOR"></input-select>
                     <input-select [size]="4" label="Tipo de Vínculo" controlName="integracao_siape_tipovinculo" [items]="lookup.TIPO_VINCULO"></input-select>
                 </div>
@@ -146,7 +152,42 @@
                     <input-text [size]="6" label="Perfil Usuário Chefe" controlName="integracao_usuario_chefe" [attr.maxlength]=250></input-text>
                 </div>
             </div>
-            <div *ngIf="form?.controls?.tipo_integracao?.value == 'WSO2'" class="row">
+            }
+            @if (form?.controls!.tipo_integracao.value == 'SIPEC') {
+            <div class="row">
+                <separator title="API Consulta SIPEC"></separator>
+                <div class="row">
+                    <input-text [size]="6" label="URL" controlName="integracao_sipec_url" [attr.maxlength]=250></input-text>
+                    <input-text [size]="6" label="CPF" controlName="integracao_sipec_cpf" [attr.maxlength]="15"></input-text>
+                </div>
+                <div class="row">
+                    <input-text [size]="4" label="Chave ConectaGov" controlName="integracao_sipec_conectagov_chave" [attr.maxlength]=250></input-text>
+                    <input-text password [size]="4" label="Senha ConectaGov" controlName="integracao_sipec_conectagov_senha" [attr.maxlength]=250></input-text>
+                    <input-text [size]="4" label="Código do Órgão" controlName="integracao_sipec_codorgao" [attr.maxlength]=250></input-text>
+                </div>
+                <div class="row">
+                    <input-text [size]="6" label="Código UORG" controlName="integracao_sipec_coduorg" [attr.maxlength]=250></input-text>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 d-flex justify-content-end align-items-center gap-2">
+                        <span id="sipec-teste-hint" role="tooltip" class="visually-hidden">{{sipecTesteHint}}</span>
+                        <action-button
+                            [label]="testandoSipec ? 'Testando...' : 'Testar Conexão SIPEC'"
+                            [hint]="sipecTesteHint"
+                            [disabled]="!sipecTesteHabilitado || testandoSipec"
+                            [running]="testandoSipec"
+                            [onClick]="testarConexaoSipec.bind(this)">
+                        </action-button>
+                        
+                        @if(!sipecTesteHabilitado){
+                        <i #sipecHintIcon class="bi bi-info-circle text-muted ms-1" data-bs-toggle="tooltip" data-bs-placement="top" [title]="sipecTesteHint" style="cursor:help; font-size:1.1rem"></i>
+                        }
+                    </div>
+                </div>
+            </div>
+            }
+            @if (form?.controls?.tipo_integracao?.value == 'WSO2') {
+            <div class="row">
                 <separator title="Siape-PRF"></separator>
                 <div class="row">
                     <input-text [size]="4" label="URL" controlName="integracao_wso2_url" [attr.maxlength]=250></input-text>
@@ -163,13 +204,17 @@
                     <input-text [size]="6" label="Token Password" controlName="integracao_wso2_token_password"></input-text>
                 </div>
             </div>
-            <div *ngIf="form?.controls!.tipo_integracao.value == 'API'" class="row">
+            }
+            @if (form?.controls!.tipo_integracao.value == 'API') {
+            <div class="row">
                 <input-text [size]="12" label="URL" controlName="api_url" [attr.maxlength]=250></input-text>
                 <input-text [size]="3" label="Código Unidade Autorizadora" controlName="api_cod_unidade_autorizadora" [attr.maxlength]=10></input-text>
                 <input-text [size]="6" label="Nome de Usuário" controlName="api_username" [attr.maxlength]=250></input-text>
                 <input-text password [size]="3" label="Senha" controlName="api_password" [placeholder]="apiPasswordPlaceholder"></input-text>
             </div>
-            <div *ngIf="form?.controls!.tipo_integracao.value == 'SMTP'" class="row">
+            }
+            @if (form?.controls!.tipo_integracao.value == 'SMTP') {
+            <div class="row">
                 <div class="col-md-12">
                     <separator title="E-mail"></separator>
                     <div class="row">
@@ -183,6 +228,7 @@
                     </div>
                 </div>
             </div>
+            }
         </tab>
         <!--<tab key="SEI" label="Módulo SEI">
             <div class="row">

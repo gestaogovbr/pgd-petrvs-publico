@@ -66,6 +66,7 @@ describe('AvaliacaoService::destroy', function () {
         $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
         $consolidacao->id = 'cons-1';
         $consolidacao->setRelation('avaliacoes', $avaliacoesCollection);
+        $consolidacao->setRelation('planoTrabalho', Mockery::mock(PlanoTrabalho::class)->makePartial());
         $consolidacao->shouldReceive('refresh')->once()->andReturnSelf();
         $consolidacao->shouldReceive('load')
             ->once()

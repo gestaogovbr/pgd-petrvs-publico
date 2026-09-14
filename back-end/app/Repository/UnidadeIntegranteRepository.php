@@ -71,4 +71,22 @@ class UnidadeIntegranteRepository
     {
         return $this->readRepository->countLotadosByUnidade($unidadeId);
     }
+
+    public function countAtivosByUnidade(string $unidadeId): int
+    {
+        return $this->readRepository->countAtivosByUnidade($unidadeId);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function findIdsAtivosByUnidade(string $unidadeId): array
+    {
+        return $this->readRepository->findIdsAtivosByUnidade($unidadeId);
+    }
+
+    public function usuarioEhChefiaDeUnidadeExecutora(string $usuarioId): bool
+    {
+        return $this->readRepository->usuarioEhChefiaDeUnidadeExecutora($usuarioId);
+    }
 }

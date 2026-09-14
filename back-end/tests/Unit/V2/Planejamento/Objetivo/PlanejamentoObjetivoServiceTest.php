@@ -3,10 +3,21 @@
 use App\Exceptions\NotFoundException;
 use App\Models\PlanejamentoObjetivo;
 use App\Repository\PlanejamentoObjetivo\Contracts\PlanejamentoObjetivoReadRepositoryContract;
+use App\Repository\UnidadeRepository;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalAbrangenciaPolicy;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphAssembler;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphDataProvider;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelAssembler;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelDataProvider;
+use App\V2\ArvoreInstitucional\DTOs\EntregasListagemDTO;
+use App\V2\ArvoreInstitucional\DTOs\EquipesListagemDTO;
 use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
-use App\V2\Planejamento\Objetivo\DTOs\ObjetivoEntregasListagemDTO;
-use App\V2\Planejamento\Objetivo\EsforcoTotalGraphAssembler;
-use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoService;
+use App\V2\Planejamento\Objetivo\ObjetivoArvoreVisualizacaoAssembler;
+use App\V2\Planejamento\Objetivo\ObjetivoPainelAssembler;
+use App\V2\Planejamento\Objetivo\PlanejamentoEsforcoGraphAssembler;
+use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoArvoreService;
+use App\V2\Planejamento\Objetivo\PlanejamentoObjetivoPainelService;
+use App\V2\Planejamento\Objetivo\Validators\PlanejamentoObjetivoValidator;
 use Illuminate\Database\Eloquent\Model;
 use Tests\TestCase;
 
@@ -16,17 +27,37 @@ afterEach(function () {
     Mockery::close();
 });
 
-function criarPlanejamentoObjetivoService(
+function criarArvoreService(
     ?PlanejamentoObjetivoReadRepositoryContract $repository = null,
-    ?EsforcoTotalGraphAssembler $assembler = null,
-    ?\App\V2\Planejamento\Objetivo\ObjetivoArvoreVisualizacaoAssembler $arvoreAssembler = null,
-    ?\App\V2\Planejamento\Objetivo\ObjetivoPainelAssembler $painelAssembler = null,
-): PlanejamentoObjetivoService {
-    return new PlanejamentoObjetivoService(
-        $repository ?? Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class),
-        $assembler ?? new EsforcoTotalGraphAssembler(),
-        $arvoreAssembler ?? new \App\V2\Planejamento\Objetivo\ObjetivoArvoreVisualizacaoAssembler(),
-        $painelAssembler ?? new \App\V2\Planejamento\Objetivo\ObjetivoPainelAssembler(),
+    ?ArvoreInstitucionalEsforcoGraphDataProvider $esforcoGraphDataProvider = null,
+): PlanejamentoObjetivoArvoreService {
+    $repo = $repository ?? Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+    $esforcoGraphDataProvider = $esforcoGraphDataProvider ?? Mockery::mock(ArvoreInstitucionalEsforcoGraphDataProvider::class);
+
+    return new PlanejamentoObjetivoArvoreService(
+        $repo,
+        new PlanejamentoEsforcoGraphAssembler(new ArvoreInstitucionalEsforcoGraphAssembler()),
+        new ObjetivoArvoreVisualizacaoAssembler(),
+        $esforcoGraphDataProvider,
+        new PlanejamentoObjetivoValidator($repo),
+    );
+}
+
+function criarPainelService(
+    ?PlanejamentoObjetivoReadRepositoryContract $repository = null,
+    ?ArvoreInstitucionalPainelDataProvider $painelDataProvider = null,
+    ?UnidadeRepository $unidadeRepo = null,
+): PlanejamentoObjetivoPainelService {
+    $repo = $repository ?? Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+    $painelDataProvider = $painelDataProvider ?? Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
+    $unidadeRepo = $unidadeRepo ?? Mockery::mock(UnidadeRepository::class);
+
+    return new PlanejamentoObjetivoPainelService(
+        $repo,
+        new ObjetivoPainelAssembler(new ArvoreInstitucionalPainelAssembler()),
+        $painelDataProvider,
+        new ArvoreInstitucionalAbrangenciaPolicy($unidadeRepo),
+        new PlanejamentoObjetivoValidator($repo),
     );
 }
 
@@ -40,19 +71,7 @@ function objetivoModel(string $id = 'obj-1'): PlanejamentoObjetivo
 }
 
 /**
- * @return stdClass{
- *     plano_entrega_entrega_id: string,
- *     entrega_titulo: string,
- *     entrega_catalogo_id: ?string,
- *     entrega_catalogo_nome: ?string,
- *     entrega_unidade_id: string,
- *     entrega_unidade_nome: string,
- *     entrega_unidade_sigla: string,
- *     progresso_esperado: float,
- *     progresso_realizado: float,
- *     homologado: int,
- *     esforco_horas_total: float
- * }
+ * @return stdClass
  */
 function linhaEntregaPlano(array $overrides = []): stdClass
 {
@@ -71,13 +90,15 @@ function linhaEntregaPlano(array $overrides = []): stdClass
     ], (array) $overrides);
 }
 
-describe('PlanejamentoObjetivoService::getEsforcoTotal', function () {
+// ─── Arvore Service ────────────────────────────────────────────────────────────
+
+describe('PlanejamentoObjetivoArvoreService::getEsforcoTotal', function () {
 
     test('lança NotFoundException quando objetivo não existe', function () {
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
         $repo->shouldReceive('find')->once()->with('inexistente')->andReturn(null);
 
-        $service = criarPlanejamentoObjetivoService(repository: $repo);
+        $service = criarArvoreService($repo);
         $service->getEsforcoTotal('inexistente');
     })->throws(NotFoundException::class, "Objetivo com id 'inexistente' não foi encontrado ou foi removido.");
 
@@ -85,7 +106,7 @@ describe('PlanejamentoObjetivoService::getEsforcoTotal', function () {
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
         $repo->shouldReceive('find')->once()->with('obj-x')->andReturn(Mockery::mock(Model::class));
 
-        $service = criarPlanejamentoObjetivoService(repository: $repo);
+        $service = criarArvoreService($repo);
         $service->getEsforcoTotal('obj-x');
     })->throws(NotFoundException::class);
 
@@ -93,11 +114,12 @@ describe('PlanejamentoObjetivoService::getEsforcoTotal', function () {
         $objetivo = objetivoModel('obj-1');
 
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $esforcoGraphDataProvider = Mockery::mock(ArvoreInstitucionalEsforcoGraphDataProvider::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
         $repo->shouldReceive('coletarIdsFechamento')->once()->with('obj-1')->andReturn([]);
-        $repo->shouldNotReceive('loadEsforcoPorIds');
+        $esforcoGraphDataProvider->shouldNotReceive('loadEsforcoPorNos');
 
-        $service = criarPlanejamentoObjetivoService(repository: $repo);
+        $service = criarArvoreService($repo, $esforcoGraphDataProvider);
 
         expect($service->getEsforcoTotal('obj-1'))->toBe([]);
     });
@@ -106,23 +128,25 @@ describe('PlanejamentoObjetivoService::getEsforcoTotal', function () {
         $objetivo = objetivoModel('obj-1');
         $rows = [
             (object) [
-                'objetivo_id' => 'obj-1',
-                'objetivo_nome' => 'Objetivo',
-                'objetivo_pai_id' => null,
-                'objetivo_superior_id' => null,
-                'planejamento_nome' => 'Plano',
+                'no_id' => 'obj-1',
+                'no_nome' => 'Objetivo',
+                'no_pai_id' => null,
+                'no_pai_secundario_id' => null,
+                'container_nome' => 'Plano',
+                'tipo_nome' => 'Tipo',
                 'total_entregas' => 0,
                 'esforco_proprio' => 10.0,
             ],
         ];
 
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $esforcoGraphDataProvider = Mockery::mock(ArvoreInstitucionalEsforcoGraphDataProvider::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
         $repo->shouldReceive('coletarIdsFechamento')->once()->with('obj-1')->andReturn(['obj-1']);
-        $repo->shouldReceive('loadEsforcoPorIds')->once()->with(['obj-1'])->andReturn($rows);
+        $esforcoGraphDataProvider->shouldReceive('loadEsforcoPorNos')->once()->withAnyArgs()->andReturn($rows);
         $repo->shouldReceive('lookupNomes')->andReturn([]);
 
-        $result = criarPlanejamentoObjetivoService(repository: $repo)->getEsforcoTotal('obj-1');
+        $result = criarArvoreService($repo, $esforcoGraphDataProvider)->getEsforcoTotal('obj-1');
 
         expect($result)->toHaveKey('obj-1')
             ->and($result['obj-1'])->toBeInstanceOf(EsforcoNodeDTO::class)
@@ -130,15 +154,16 @@ describe('PlanejamentoObjetivoService::getEsforcoTotal', function () {
     });
 });
 
-describe('PlanejamentoObjetivoService::getEntregasComEsforco', function () {
+// ─── Painel Service ────────────────────────────────────────────────────────────
+
+describe('PlanejamentoObjetivoPainelService::getEntregasPorNo', function () {
 
     test('lança NotFoundException quando objetivo não existe', function () {
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
         $repo->shouldReceive('find')->once()->with('inexistente')->andReturn(null);
-        $repo->shouldNotReceive('listarEntregasPlanoEntregaPorObjetivoId');
 
-        $service = criarPlanejamentoObjetivoService(repository: $repo);
-        $service->getEntregasComEsforco('inexistente');
+        $service = criarPainelService(repository: $repo);
+        $service->getEntregasPorNo('inexistente');
     })->throws(NotFoundException::class);
 
     test('monta DTO com entregas e esforço por unidade', function () {
@@ -152,17 +177,15 @@ describe('PlanejamentoObjetivoService::getEntregasComEsforco', function () {
         ];
 
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $painelRepo = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
-        $repo->shouldReceive('listarEntregasPlanoEntregaPorObjetivoId')->once()->with('obj-1')->andReturn([$rowEntrega]);
-        $repo->shouldReceive('listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId')
-            ->once()
-            ->with('obj-1')
-            ->andReturn([$rowUnidade]);
+        $painelRepo->shouldReceive('listarEntregasPorNo')->withAnyArgs()->andReturn([$rowEntrega]);
+        $painelRepo->shouldReceive('listarEsforcoPorUnidade')->withAnyArgs()->andReturn([$rowUnidade]);
 
-        $result = criarPlanejamentoObjetivoService(repository: $repo)->getEntregasComEsforco('obj-1');
+        $result = criarPainelService(repository: $repo, painelDataProvider: $painelRepo)->getEntregasPorNo('obj-1');
 
-        expect($result)->toBeInstanceOf(ObjetivoEntregasListagemDTO::class)
-            ->and($result->objetivo_id)->toBe('obj-1')
+        expect($result)->toBeInstanceOf(EntregasListagemDTO::class)
+            ->and($result->node_id)->toBe('obj-1')
             ->and($result->total_entregas)->toBe(1)
             ->and($result->itens)->toHaveCount(1)
             ->and($result->itens[0]->entrega_titulo)->toBe('Entrega A')
@@ -175,11 +198,12 @@ describe('PlanejamentoObjetivoService::getEntregasComEsforco', function () {
         $objetivo = objetivoModel('obj-vazio');
 
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $painelRepo = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $repo->shouldReceive('find')->once()->andReturn($objetivo);
-        $repo->shouldReceive('listarEntregasPlanoEntregaPorObjetivoId')->once()->andReturn([]);
-        $repo->shouldReceive('listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId')->once()->andReturn([]);
+        $painelRepo->shouldReceive('listarEntregasPorNo')->withAnyArgs()->andReturn([]);
+        $painelRepo->shouldReceive('listarEsforcoPorUnidade')->withAnyArgs()->andReturn([]);
 
-        $result = criarPlanejamentoObjetivoService(repository: $repo)->getEntregasComEsforco('obj-vazio');
+        $result = criarPainelService(repository: $repo, painelDataProvider: $painelRepo)->getEntregasPorNo('obj-vazio');
 
         expect($result->total_entregas)->toBe(0)
             ->and($result->itens)->toBe([])
@@ -187,15 +211,14 @@ describe('PlanejamentoObjetivoService::getEntregasComEsforco', function () {
     });
 });
 
-describe('PlanejamentoObjetivoService::getEquipesComEsforco', function () {
+describe('PlanejamentoObjetivoPainelService::getEquipesPorNo', function () {
 
     test('lança NotFoundException quando objetivo não existe', function () {
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
         $repo->shouldReceive('find')->once()->with('inexistente')->andReturn(null);
-        $repo->shouldNotReceive('listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId');
 
-        $service = criarPlanejamentoObjetivoService(repository: $repo);
-        $service->getEquipesComEsforco('inexistente');
+        $service = criarPainelService(repository: $repo);
+        $service->getEquipesPorNo('inexistente');
     })->throws(NotFoundException::class);
 
     test('monta DTO com unidades e esforço total', function () {
@@ -208,29 +231,27 @@ describe('PlanejamentoObjetivoService::getEquipesComEsforco', function () {
         ];
 
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $painelRepo = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
-        $repo->shouldReceive('listarEsforcoPorUnidadePlanoTrabalhoConcluidoPorObjetivoId')
-            ->once()
-            ->with('obj-1')
-            ->andReturn([$rowUnidade]);
-        $repo->shouldNotReceive('listarEntregasPlanoEntregaPorObjetivoId');
+        $painelRepo->shouldReceive('listarEsforcoPorUnidade')->withAnyArgs()->andReturn([$rowUnidade]);
 
-        $result = criarPlanejamentoObjetivoService(repository: $repo)->getEquipesComEsforco('obj-1');
+        $result = criarPainelService(repository: $repo, painelDataProvider: $painelRepo)->getEquipesPorNo('obj-1');
 
-        expect($result->objetivo_id)->toBe('obj-1')
+        expect($result)->toBeInstanceOf(EquipesListagemDTO::class)
+            ->and($result->node_id)->toBe('obj-1')
             ->and($result->itens)->toHaveCount(1)
             ->and($result->itens[0]->unidade_sigla)->toBe('UN')
             ->and($result->itens[0]->esforco_horas_total)->toEqual(56.0);
     });
 });
 
-describe('PlanejamentoObjetivoService::getPainelResumo', function () {
+describe('PlanejamentoObjetivoPainelService::getResumo', function () {
 
     test('lança NotFoundException quando objetivo não existe', function () {
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
         $repo->shouldReceive('find')->once()->with('inexistente')->andReturn(null);
 
-        criarPlanejamentoObjetivoService(repository: $repo)->getPainelResumo('inexistente');
+        criarPainelService($repo)->getResumo('inexistente');
     })->throws(NotFoundException::class);
 
     test('monta resumo do painel lateral com seções item e consolidado', function () {
@@ -272,14 +293,14 @@ describe('PlanejamentoObjetivoService::getPainelResumo', function () {
         ];
 
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $painelRepo = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
         $repo->shouldReceive('buscarDadosGeraisPainel')->once()->with('obj-1')->andReturn($geral);
-        $repo->shouldReceive('agregarPainelEsforcoPessoasEntregas')->once()->with(['obj-1'], null)->andReturn($aggItem);
         $repo->shouldReceive('coletarIdsSubordinados')->once()->with('obj-1')->andReturn(['obj-1', 'obj-2']);
-        $repo->shouldReceive('agregarPainelEsforcoPessoasEntregas')->once()->with(['obj-1', 'obj-2'], null)->andReturn($aggConsolidado);
-        $repo->shouldReceive('listarUnidadesPainelPorObjetivoId')->once()->with('obj-1')->andReturn([]);
+        $painelRepo->shouldReceive('agregarEsforcoPessoasEntregas')->withAnyArgs()->andReturn($aggItem, $aggConsolidado);
+        $painelRepo->shouldReceive('listarFiltroUnidades')->withAnyArgs()->andReturn([]);
 
-        $result = criarPlanejamentoObjetivoService(repository: $repo)->getPainelResumo('obj-1');
+        $result = criarPainelService(repository: $repo, painelDataProvider: $painelRepo)->getResumo('obj-1');
 
         expect($result->objetivo_id)->toBe('obj-1')
             ->and($result->nome)->toBe('Objetivo')
@@ -293,7 +314,7 @@ describe('PlanejamentoObjetivoService::getPainelResumo', function () {
     });
 });
 
-describe('PlanejamentoObjetivoService::getEntregasDetalhamentoPainel', function () {
+describe('PlanejamentoObjetivoPainelService::getEntregasDetalhamento', function () {
 
     test('delega listagem e monta detalhamento', function () {
         $objetivo = objetivoModel('obj-1');
@@ -324,13 +345,14 @@ describe('PlanejamentoObjetivoService::getEntregasDetalhamentoPainel', function 
         ];
 
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $painelRepo = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
-        $repo->shouldReceive('listarDetalhamentoEntregasPainel')
+        $painelRepo->shouldReceive('listarDetalhamentoEntregas')
             ->once()
-            ->with(['obj-1'], 'pee-1', ['un-1'], '2025-01-01', '2025-06-30')
+            ->withAnyArgs()
             ->andReturn([$row]);
 
-        $result = criarPlanejamentoObjetivoService(repository: $repo)->getEntregasDetalhamentoPainel(
+        $result = criarPainelService(repository: $repo, painelDataProvider: $painelRepo)->getEntregasDetalhamento(
             'obj-1',
             'pee-1',
             'un-1',
@@ -347,14 +369,14 @@ describe('PlanejamentoObjetivoService::getEntregasDetalhamentoPainel', function 
     test('abrangência item_e_subordinados consulta hierarquia completa', function () {
         $objetivo = objetivoModel('obj-1');
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $painelRepo = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
         $repo->shouldReceive('coletarIdsSubordinados')->once()->with('obj-1')->andReturn(['obj-1', 'obj-2']);
-        $repo->shouldReceive('listarDetalhamentoEntregasPainel')
+        $painelRepo->shouldReceive('listarDetalhamentoEntregas')
             ->once()
-            ->with(['obj-1', 'obj-2'], null, null, null, null)
             ->andReturn([]);
 
-        $result = criarPlanejamentoObjetivoService(repository: $repo)->getEntregasDetalhamentoPainel(
+        $result = criarPainelService(repository: $repo, painelDataProvider: $painelRepo)->getEntregasDetalhamento(
             'obj-1',
             abrangencia: 'item_e_subordinados',
         );
@@ -365,14 +387,14 @@ describe('PlanejamentoObjetivoService::getEntregasDetalhamentoPainel', function 
     test('abrangência itens_subordinados exclui o item selecionado', function () {
         $objetivo = objetivoModel('obj-1');
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $painelRepo = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
         $repo->shouldReceive('coletarIdsSubordinados')->once()->with('obj-1')->andReturn(['obj-1', 'obj-2']);
-        $repo->shouldReceive('listarDetalhamentoEntregasPainel')
+        $painelRepo->shouldReceive('listarDetalhamentoEntregas')
             ->once()
-            ->with(['obj-2'], null, null, null, null)
             ->andReturn([]);
 
-        criarPlanejamentoObjetivoService(repository: $repo)->getEntregasDetalhamentoPainel(
+        criarPainelService(repository: $repo, painelDataProvider: $painelRepo)->getEntregasDetalhamento(
             'obj-1',
             abrangencia: 'itens_subordinados',
         );
@@ -381,17 +403,23 @@ describe('PlanejamentoObjetivoService::getEntregasDetalhamentoPainel', function 
     test('abrangência unidade_e_subordinadas expande unidades a partir do filtro', function () {
         $objetivo = objetivoModel('obj-1');
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);
+        $painelRepo = Mockery::mock(ArvoreInstitucionalPainelDataProvider::class);
         $repo->shouldReceive('find')->once()->with('obj-1')->andReturn($objetivo);
-        $repo->shouldReceive('coletarIdsUnidadesComSubordinadas')
+        $painelRepo->shouldReceive('listarDetalhamentoEntregas')
             ->once()
-            ->with('un-1')
-            ->andReturn(['un-1', 'un-2']);
-        $repo->shouldReceive('listarDetalhamentoEntregasPainel')
-            ->once()
-            ->with(['obj-1'], null, ['un-1', 'un-2'], null, null)
+            ->withAnyArgs()
             ->andReturn([]);
 
-        criarPlanejamentoObjetivoService(repository: $repo)->getEntregasDetalhamentoPainel(
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+        $unidadeRepo->shouldReceive('getSubordinadasRecursivas')
+            ->once()
+            ->with(['un-1'])
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([
+                (object) ['id' => 'un-1'],
+                (object) ['id' => 'un-2'],
+            ]));
+
+        criarPainelService(repository: $repo, painelDataProvider: $painelRepo, unidadeRepo: $unidadeRepo)->getEntregasDetalhamento(
             'obj-1',
             unidadeId: 'un-1',
             abrangencia: 'unidade_e_subordinadas',

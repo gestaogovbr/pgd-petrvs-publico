@@ -28,4 +28,35 @@ class EloquentUnidadeIntegranteAtribuicaoWriteRepository extends AbstractEloquen
 
         return (bool) $model->delete();
     }
+
+    public function deleteAtivasByUnidadeIntegranteIds(array $unidadeIntegranteIds): int
+    {
+        if ($unidadeIntegranteIds === []) {
+            return 0;
+        }
+
+        return $this->model->newQuery()
+            ->whereIn('unidade_integrante_id', $unidadeIntegranteIds)
+            ->whereNull('deleted_at')
+            ->delete();
+    }
+
+    public function deleteGestorByUsuario(string $usuarioId, bool $ignorarInformais = true): int
+    {
+        $query = $this->model->newQuery()
+            ->where('atribuicao', 'GESTOR')
+            ->whereNull('deleted_at')
+            ->whereHas('vinculo', function ($q) use ($usuarioId, $ignorarInformais) {
+                $q->where('usuario_id', $usuarioId)
+                    ->whereNull('deleted_at');
+
+                if ($ignorarInformais) {
+                    $q->whereHas('unidade', function ($uq) {
+                        $uq->where('informal', 0)->orWhereNull('informal');
+                    });
+                }
+            });
+
+        return $query->update(['deleted_at' => now()]);
+    }
 }
