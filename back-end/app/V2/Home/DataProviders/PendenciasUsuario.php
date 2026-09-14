@@ -90,13 +90,18 @@ class PendenciasUsuario
             ];
         }
 
+        // Homologação e avaliação de PE competem à chefia da unidade-pai direta,
+        // portanto avaliam/homologam os PEs das unidades FILHAS das gerenciadas.
+        $unidadesFilhasIds = $this->unidadeRepository->getSubordinadas($unidadeIds)->pluck('id')->toArray();
+
         return [
-            'assinaturas_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaHomologacao($unidadeIds),
+            'assinaturas_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaHomologacao($unidadesFilhasIds),
             'assinaturas_pt_pendentes' => $this->aguardandoAssinatura->count($usuarioId),
+            // Registros de execução de PE competem ao gestor da própria unidade.
             'registros_execucao_pe_atraso' => $this->planoEntregaRepository->countEntregasSemProgresso($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
             'registros_execucao_pt_atraso' => $reAtrasadosProprios,
             'avaliacoes_pt_pendentes' => $this->aguardandoAvaliacao->count($usuarioId),
-            'avaliacoes_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaAvaliacao($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
+            'avaliacoes_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaAvaliacao($unidadesFilhasIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
         ];
     }
 }
