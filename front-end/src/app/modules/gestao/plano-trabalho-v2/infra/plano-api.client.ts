@@ -21,22 +21,29 @@ export class PlanoApiClient extends TenantV2ResourceApiBase {
     return this.getCollectionPaged<PlanoTrabalho>(normalizeQueryParams(params), 15);
   }
 
-  queryAguardandoMinhaAssinatura(page: number = 1, size: number = 15): Observable<Page<PlanoTrabalho>> {
+  queryAguardandoMinhaAssinatura(page: number = 1, size: number = 15, orderBy?: string, orderDir?: 'asc' | 'desc'): Observable<Page<PlanoTrabalho>> {
     return this.http
-      .get<unknown>(this.resourceUrl('/aguardando-minha-assinatura'), { params: { page: String(page), size: String(size) } })
+      .get<unknown>(this.resourceUrl('/aguardando-minha-assinatura'), { params: this.ordenacaoParams(page, size, orderBy, orderDir) })
       .pipe(map((response) => TenantV2ResourceApiBase.mapLaravelWrappedPage<PlanoTrabalho>(response, size)));
   }
 
-  queryAguardandoMinhaAvaliacao(page: number = 1, size: number = 15): Observable<Page<PlanoTrabalho>> {
+  queryAguardandoMinhaAvaliacao(page: number = 1, size: number = 15, orderBy?: string, orderDir?: 'asc' | 'desc'): Observable<Page<PlanoTrabalho>> {
     return this.http
-      .get<unknown>(this.resourceUrl('/aguardando-minha-avaliacao'), { params: { page: String(page), size: String(size) } })
+      .get<unknown>(this.resourceUrl('/aguardando-minha-avaliacao'), { params: this.ordenacaoParams(page, size, orderBy, orderDir) })
       .pipe(map((response) => TenantV2ResourceApiBase.mapLaravelWrappedPage<PlanoTrabalho>(response, size)));
   }
 
-  queryAguardandoMeuRegistroExecucao(page: number = 1, size: number = 15): Observable<Page<PlanoTrabalho>> {
+  queryAguardandoMeuRegistroExecucao(page: number = 1, size: number = 15, orderBy?: string, orderDir?: 'asc' | 'desc'): Observable<Page<PlanoTrabalho>> {
     return this.http
-      .get<unknown>(this.resourceUrl('/aguardando-meu-registro-execucao'), { params: { page: String(page), size: String(size) } })
+      .get<unknown>(this.resourceUrl('/aguardando-meu-registro-execucao'), { params: this.ordenacaoParams(page, size, orderBy, orderDir) })
       .pipe(map((response) => TenantV2ResourceApiBase.mapLaravelWrappedPage<PlanoTrabalho>(response, size)));
+  }
+
+  private ordenacaoParams(page: number, size: number, orderBy?: string, orderDir?: 'asc' | 'desc'): Record<string, string> {
+    const params: Record<string, string> = { page: String(page), size: String(size) };
+    if (orderBy) params['order_by'] = orderBy;
+    if (orderDir) params['order_dir'] = orderDir;
+    return params;
   }
 
   getById(id: PlanoTrabalhoId): Observable<PlanoTrabalho> {

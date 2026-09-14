@@ -18,9 +18,9 @@ class AguardandoMinhaAvaliacaoDataProvider
         StatusEnum::AVALIADO,
     ];
 
-    public function buscar(string $usuarioId, int $page = 1, int $perPage = 15): LengthAwarePaginator
+    public function buscar(string $usuarioId, int $page = 1, int $perPage = 15, ?string $orderBy = null, ?string $orderDir = null): LengthAwarePaginator
     {
-        return $this->baseQuery($usuarioId)
+        $query = $this->baseQuery($usuarioId)
             ->withCount(['consolidacoes as aguardando_avaliacao' => function ($q) {
                 $q->where('planos_trabalhos_consolidacoes.status', StatusEnum::CONCLUIDO->value)
                     ->whereDoesntHave('avaliacoes');
@@ -33,9 +33,32 @@ class AguardandoMinhaAvaliacaoDataProvider
                             ->orWhereNull('planos_trabalhos.encerrado_at');
                     });
             }])
-            ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome'])
-            ->orderByDesc('updated_at')
-            ->paginate(perPage: $perPage, page: $page);
+            ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome']);
+
+        $this->aplicarOrdenacao($query, $orderBy, $orderDir);
+
+        return $query->paginate(perPage: $perPage, page: $page);
+    }
+
+    /**
+     * Aplica ordenação por 'numero' ou 'usuario_nome'; caso contrário, ordena por updated_at desc.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<\App\Models\PlanoTrabalho> $query
+     */
+    private function aplicarOrdenacao(\Illuminate\Database\Eloquent\Builder $query, ?string $orderBy, ?string $orderDir): void
+    {
+        $dir = $orderDir === 'desc' ? 'desc' : 'asc';
+        if ($orderBy === 'numero') {
+            $query->orderBy('numero', $dir);
+            return;
+        }
+        if ($orderBy === 'usuario_nome') {
+            $query->join('usuarios', 'usuarios.id', '=', 'planos_trabalhos.usuario_id')
+                ->orderBy('usuarios.nome', $dir)
+                ->select('planos_trabalhos.*');
+            return;
+        }
+        $query->orderByDesc('updated_at');
     }
 
     public function count(string $usuarioId): int

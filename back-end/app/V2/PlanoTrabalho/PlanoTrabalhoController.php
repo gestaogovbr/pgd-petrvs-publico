@@ -186,8 +186,10 @@ class PlanoTrabalhoController extends Controller
         try {
             $page = (int) $request->input('page', 1);
             $perPage = (int) $request->input('size', 15);
+            $orderBy = $request->input('order_by');
+            $orderDir = $request->input('order_dir');
 
-            $result = $this->aguardandoAssinatura->buscar(Auth::id(), $page, $perPage);
+            $result = $this->aguardandoAssinatura->buscar(Auth::id(), $page, $perPage, $orderBy, $orderDir);
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (Throwable $e) {
@@ -202,8 +204,10 @@ class PlanoTrabalhoController extends Controller
         try {
             $page = (int) $request->input('page', 1);
             $perPage = (int) $request->input('size', 15);
+            $orderBy = $request->input('order_by');
+            $orderDir = $request->input('order_dir');
 
-            $result = $this->aguardandoAvaliacao->buscar(Auth::id(), $page, $perPage);
+            $result = $this->aguardandoAvaliacao->buscar(Auth::id(), $page, $perPage, $orderBy, $orderDir);
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (Throwable $e) {
@@ -218,8 +222,10 @@ class PlanoTrabalhoController extends Controller
         try {
             $page = (int) $request->input('page', 1);
             $perPage = (int) $request->input('size', 15);
+            $orderBy = $request->input('order_by');
+            $orderDir = $request->input('order_dir');
 
-            $result = $this->aguardandoRegistroExecucao->buscar(Auth::id(), $page, $perPage);
+            $result = $this->aguardandoRegistroExecucao->buscar(Auth::id(), $page, $perPage, [], $orderBy, $orderDir);
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (Throwable $e) {

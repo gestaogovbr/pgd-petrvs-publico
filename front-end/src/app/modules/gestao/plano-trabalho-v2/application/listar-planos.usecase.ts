@@ -9,13 +9,13 @@ export class ListarPlanos {
 
   execute(params: QueryParams): Observable<Page<PlanoTrabalho>> {
     if (params.filters?.['aguardando_minha_assinatura']) {
-      return this.api.queryAguardandoMinhaAssinatura(params.page, params.pageSize);
+      return this.api.queryAguardandoMinhaAssinatura(params.page, params.pageSize, params.orderBy, params.orderDir);
     }
     if (params.filters?.['aguardando_minha_avaliacao']) {
-      return this.api.queryAguardandoMinhaAvaliacao(params.page, params.pageSize);
+      return this.api.queryAguardandoMinhaAvaliacao(params.page, params.pageSize, params.orderBy, params.orderDir);
     }
     if (params.filters?.['registro_execucao_atraso']) {
-      return this.api.queryAguardandoMeuRegistroExecucao(params.page, params.pageSize);
+      return this.api.queryAguardandoMeuRegistroExecucao(params.page, params.pageSize, params.orderBy, params.orderDir);
     }
     return this.api.query(params);
   }

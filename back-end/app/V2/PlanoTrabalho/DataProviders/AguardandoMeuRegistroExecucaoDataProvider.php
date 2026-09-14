@@ -33,8 +33,8 @@ class AguardandoMeuRegistroExecucaoDataProvider
      * @param string[] $unidadesIds
      * @return LengthAwarePaginator<\App\Models\PlanoTrabalho>
      */
-    public function buscar(string $usuarioId, int $page = 1, int $perPage = 15, array $unidadesIds = []): LengthAwarePaginator
+    public function buscar(string $usuarioId, int $page = 1, int $perPage = 15, array $unidadesIds = [], ?string $orderBy = null, ?string $orderDir = null): LengthAwarePaginator
     {
-        return $this->consolidacaoRepository->buscarPlanosComConsolidacoesAtrasadas($usuarioId, $unidadesIds, $page, $perPage);
+        return $this->consolidacaoRepository->buscarPlanosComConsolidacoesAtrasadas($usuarioId, $unidadesIds, $page, $perPage, $orderBy, $orderDir);
     }
 }

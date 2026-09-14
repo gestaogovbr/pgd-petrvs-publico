@@ -404,18 +404,31 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
         string $usuarioId,
         array $unidadesIds,
         int $page = 1,
-        int $perPage = 15
+        int $perPage = 15,
+        ?string $orderBy = null,
+        ?string $orderDir = null
     ): \Illuminate\Contracts\Pagination\LengthAwarePaginator {
         $planoIds = $this->baseConsolidacoesAtrasadasQuery($usuarioId, $unidadesIds)
             ->select('plano_trabalho_id')
             ->distinct()
             ->pluck('plano_trabalho_id');
 
-        return \App\Models\PlanoTrabalho::query()
+        $query = \App\Models\PlanoTrabalho::query()
             ->whereIn('id', $planoIds)
-            ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome'])
-            ->orderByDesc('updated_at')
-            ->paginate(perPage: $perPage, page: $page);
+            ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome']);
+
+        $dir = $orderDir === 'desc' ? 'desc' : 'asc';
+        if ($orderBy === 'numero') {
+            $query->orderBy('numero', $dir);
+        } elseif ($orderBy === 'usuario_nome') {
+            $query->join('usuarios', 'usuarios.id', '=', 'planos_trabalhos.usuario_id')
+                ->orderBy('usuarios.nome', $dir)
+                ->select('planos_trabalhos.*');
+        } else {
+            $query->orderByDesc('updated_at');
+        }
+
+        return $query->paginate(perPage: $perPage, page: $page);
     }
 
     /**

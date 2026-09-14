@@ -41,7 +41,7 @@ interface PlanoTrabalhoConsolidacaoReadRepositoryContract
      * @param string[] $unidadesIds
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<\App\Models\PlanoTrabalho>
      */
-    public function buscarPlanosComConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds, int $page = 1, int $perPage = 15): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
+    public function buscarPlanosComConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds, int $page = 1, int $perPage = 15, ?string $orderBy = null, ?string $orderDir = null): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
     /** @return \Illuminate\Database\Eloquent\Collection<int, PlanoTrabalhoConsolidacao> */
     public function findFuturasIncluidas(string $planoTrabalhoId, string $dataEncerramento): \Illuminate\Database\Eloquent\Collection;
