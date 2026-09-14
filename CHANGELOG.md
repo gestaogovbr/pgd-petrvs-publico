@@ -8,6 +8,7 @@
 - Tela de tipos de objetivo renomeada para "Elementos Institucionais"
 - Árvores do Planejamento Institucional e da Cadeia de Valor unificadas em uma visualização compartilhada (mesma experiência de painel lateral, detalhamento de entregas e navegação)
 - Nome do planejamento e da cadeia passam a ser exibidos como subtítulo no cabeçalho do card da árvore
+- Periodicidades Bimestral, Trimestral e Semestral descontinuadas na configuração de consolidação dos regramentos
 
 ## 3.1.1 01/09/2026
 
