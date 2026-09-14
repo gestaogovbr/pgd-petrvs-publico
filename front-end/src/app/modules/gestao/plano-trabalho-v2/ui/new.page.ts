@@ -15,7 +15,7 @@ import { UsuarioService, UsuarioSearchItem } from 'src/app/v2/services/usuario.s
 import { ProgramaApiService } from 'src/app/v2/services/programa-api.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
-import { SelectOption } from './edit.page';
+import { SelectOption } from 'src/app/v2/domain/select-option';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { modalidadeDivergenteDoSiape, modalidadeSiapeNormalizada } from '../domain/modalidade-divergente';
 import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
@@ -104,10 +104,10 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
     return this.unidades().map(u => ({ value: `${u.id}`, label: u.sigla, selected: `${u.id}` === sel }));
   });
 
-  readonly modalidadesOptions = computed<SelectOption[]>(() => {
-    const sel = this.selectedModalidade();
+  modalidadesOptions(): SelectOption[] {
+    const sel = this.selectedModalidade() || this.form.controls.modalidade_pgd.value;
     return this.modalidades().map(m => ({ value: m.key, label: m.value, selected: m.key === sel }));
-  });
+  }
 
   readonly programaNome = computed(() => {
     const id = this.programaId();
@@ -366,21 +366,19 @@ export class PlanoTrabalhoV2NewPage implements OnInit {
       }
     }
 
-    this.modalidades.set(await this.tipoModalidadeApi.listar());
+    const modalidadesLista = await this.tipoModalidadeApi.listar();
     this.usuarioModalidadePgd.set(modalidadeSiapeNormalizada(this.modalidadePgdService, usuario.modalidade_pgd));
 
     const modalidadeSiape = this.usuarioModalidadePgd();
-    if (modalidadeSiape && this.modalidades().some(m => m.key === modalidadeSiape)) {
-      this.selectedModalidade.set(modalidadeSiape);
-      this.form.controls.modalidade_pgd.setValue(modalidadeSiape, { emitEvent: false });
-      return;
-    }
+    const modalidadeAlvo = (modalidadeSiape && modalidadesLista.some(m => m.key === modalidadeSiape))
+      ? modalidadeSiape
+      : (modalidadesLista.length > 0 ? modalidadesLista[0].key : '');
 
-    if (this.modalidades().length > 0) {
-      const firstKey = this.modalidades()[0].key;
-      this.selectedModalidade.set(firstKey);
-      this.form.controls.modalidade_pgd.setValue(firstKey, { emitEvent: false });
+    if (modalidadeAlvo) {
+      this.selectedModalidade.set(modalidadeAlvo);
+      this.form.controls.modalidade_pgd.setValue(modalidadeAlvo);
     }
+    this.modalidades.set(modalidadesLista);
   }
 
   private carregarDadosFonte(fonteId: string) {

@@ -9,6 +9,7 @@
 - Árvores do Planejamento Institucional e da Cadeia de Valor unificadas em uma visualização compartilhada (mesma experiência de painel lateral, detalhamento de entregas e navegação)
 - Nome do planejamento e da cadeia passam a ser exibidos como subtítulo no cabeçalho do card da árvore
 - Periodicidades Bimestral, Trimestral e Semestral descontinuadas na configuração de consolidação dos regramentos
+- Atualizada versão do Design System do GovBR para 2.1.3
 
 ## 3.1.1 01/09/2026
 
