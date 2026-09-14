@@ -119,7 +119,8 @@ export class HomeV2Page implements OnInit {
         filter: {
           unidade_id: this.selectedUnidadeId(),
           subordinadas: this.subordinadas(),
-          somente_vigentes: true,
+          status: 'ATIVO',
+          data_filtro: 'VIGENTE',
         },
       },
     });
