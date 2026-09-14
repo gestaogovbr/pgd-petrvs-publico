@@ -3,6 +3,7 @@
 namespace App\V2\PlanoTrabalho;
 
 use App\Http\Controllers\Controller;
+use App\V2\PlanoTrabalho\DataProviders\AguardandoMeuRegistroExecucaoDataProvider;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAssinaturaDataProvider;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAvaliacaoDataProvider;
 use App\V2\PlanoTrabalho\Validators\PlanoTrabalhoRequestValidator;
@@ -22,6 +23,7 @@ class PlanoTrabalhoController extends Controller
         private readonly PlanoTrabalhoService $service,
         private readonly AguardandoMinhaAssinaturaDataProvider $aguardandoAssinatura,
         private readonly AguardandoMinhaAvaliacaoDataProvider $aguardandoAvaliacao,
+        private readonly AguardandoMeuRegistroExecucaoDataProvider $aguardandoRegistroExecucao,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -202,6 +204,22 @@ class PlanoTrabalhoController extends Controller
             $perPage = (int) $request->input('size', 15);
 
             $result = $this->aguardandoAvaliacao->buscar(Auth::id(), $page, $perPage);
+
+            return response()->json(['success' => true, 'data' => $result]);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function aguardandoMeuRegistroExecucao(Request $request): JsonResponse
+    {
+        try {
+            $page = (int) $request->input('page', 1);
+            $perPage = (int) $request->input('size', 15);
+
+            $result = $this->aguardandoRegistroExecucao->buscar(Auth::id(), $page, $perPage);
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (Throwable $e) {

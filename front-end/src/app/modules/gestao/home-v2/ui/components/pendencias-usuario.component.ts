@@ -67,7 +67,7 @@ export class PendenciasUsuarioComponent implements OnInit {
   }
 
   irParaRegistrosExecucaoPT(): void {
-    this.salvarFiltrosPT({ meus_planos: true, vigentes: false, status: 'ATIVO' });
+    this.salvarFiltrosPT({ registro_execucao_atraso: true, meus_planos: true });
     this.router.navigate(['gestao', 'plano-trabalho-v2']);
   }
 

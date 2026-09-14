@@ -13,6 +13,7 @@ use App\V2\Home\DTOs\HomeRequestDTO;
 use App\V2\Home\Traits\ResolveUnidades;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAssinaturaDataProvider;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAvaliacaoDataProvider;
+use App\V2\PlanoTrabalho\DataProviders\AguardandoMeuRegistroExecucaoDataProvider;
 
 class PendenciasUsuario
 {
@@ -25,6 +26,7 @@ class PendenciasUsuario
         private readonly PlanoEntregaRepository $planoEntregaRepository,
         private readonly AguardandoMinhaAssinaturaDataProvider $aguardandoAssinatura,
         private readonly AguardandoMinhaAvaliacaoDataProvider $aguardandoAvaliacao,
+        private readonly AguardandoMeuRegistroExecucaoDataProvider $aguardandoRegistroExecucao,
     ) {}
 
     protected function getUnidadeRepository(): UnidadeRepository
@@ -75,7 +77,7 @@ class PendenciasUsuario
         $unidadesGerenciadas = $this->unidadeRepository->getUnidadesGerenciadas($usuarioId);
         $unidadeIds = $unidadesGerenciadas->pluck('id')->toArray();
 
-        $reAtrasadosProprios = $this->consolidacaoRepository->countConsolidacoesAtrasadas($usuarioId, []);
+        $reAtrasadosProprios = $this->aguardandoRegistroExecucao->count($usuarioId);
 
         if (empty($unidadeIds)) {
             return [

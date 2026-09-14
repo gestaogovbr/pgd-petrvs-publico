@@ -14,6 +14,9 @@ export class ListarPlanos {
     if (params.filters?.['aguardando_minha_avaliacao']) {
       return this.api.queryAguardandoMinhaAvaliacao(params.page, params.pageSize);
     }
+    if (params.filters?.['registro_execucao_atraso']) {
+      return this.api.queryAguardandoMeuRegistroExecucao(params.page, params.pageSize);
+    }
     return this.api.query(params);
   }
 }
