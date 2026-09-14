@@ -5,9 +5,12 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntregaProcesso;
+use App\Models\TipoPlanejamentoObjetivo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property CadeiaValorProcesso|null $processoPai
+ * @property TipoPlanejamentoObjetivo|null $tipoElemento
  */
 class CadeiaValorProcesso extends ModelBase
 {
@@ -21,6 +24,7 @@ class CadeiaValorProcesso extends ModelBase
     'nome', /* varchar(256); NOT NULL; */ // Nome do processo
     'cadeia_valor_id', /* char(36); NOT NULL; */
     'processo_pai_id', /* char(36); */
+    'tipo_elemento_id', /* char(36); */ // Tipo de elemento da cadeia de valor (opcional)
     //'deleted_at', /* timestamp; */
   ];
 
@@ -47,6 +51,10 @@ class CadeiaValorProcesso extends ModelBase
   {
       return $this->belongsTo(CadeiaValorProcesso::class, 'processo_pai_id');
   }    //nullable
+  public function tipoElemento(): BelongsTo
+  {
+      return $this->belongsTo(TipoPlanejamentoObjetivo::class, 'tipo_elemento_id');
+  }
     public function getSequenciaCompleta()
     {
         $sequencia = [];

@@ -8,7 +8,7 @@ import { TipoObjetivoFacade } from './application/tipo-objetivo.facade';
 export const routes: Routes = [
   {
     path: '',
-    data: { breadcrumb: 'Elementos do Planejamento' },
+    data: { breadcrumb: 'Elementos Institucionais' },
     providers: [
       provideHttpClient(withInterceptors([authTenantVersionInterceptor, errorInterceptor])),
       BreadcrumbService,

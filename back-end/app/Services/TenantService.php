@@ -4,7 +4,9 @@ namespace App\Services;
 
 
 use App\Jobs\BuscarDadosSiapeJob;
+use App\Jobs\BuscarDadosSipecJob;
 use App\Exceptions\NotFoundException;
+use App\Services\Sipec\SipecService;
 use App\Models\Cidade;
 use App\Models\Entidade;
 use App\Models\Perfil;
@@ -26,6 +28,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Cache;
 use App\Models\JobSchedule;
+use App\Events\CodigoOrgaoAlterado;
 
 
 /**
@@ -83,10 +86,22 @@ class TenantService extends ServiceBase
     {
         try {
             Log::info('Iniciando cadastro de tenant...');
+            $tenantExistente = !empty($dataOrEntity['id'])
+                ? $this->tenantRepository->findById($dataOrEntity['id'])
+                : null;
+            $codigoAnterior = CodigoOrgaoService::normalizar(
+                $tenantExistente?->integracao_siape_codorgao
+            );
             $tenant = parent::store($dataOrEntity, $unidade, false);
+            $codigoNovo = CodigoOrgaoService::normalizar($tenant?->integracao_siape_codorgao);
+            if ($codigoAnterior !== null && $codigoNovo !== null && $codigoAnterior !== $codigoNovo) {
+                event(new CodigoOrgaoAlterado((string) $tenant->id, $codigoAnterior, $codigoNovo));
+            }
+
             if($tenant){
                 $this->JobScheduleService->createJobsSiape($tenant->id);
             }
+
             return $tenant;
         } catch (\Exception $e) {
             throw $e;
@@ -96,6 +111,10 @@ class TenantService extends ServiceBase
 
     public function validateStore($dataOrEntity, $unidade, $action)
     {
+        $dataOrEntity['integracao_siape_codorgao'] = CodigoOrgaoService::obrigatorio(
+            $dataOrEntity['integracao_siape_codorgao'] ?? null
+        );
+
         $model = $this->getModel();
         $entity = UtilService::emptyEntry($dataOrEntity, "id") ? null : $model::find($dataOrEntity["id"]);
         $entity = isset($entity) ? $entity : new $model();
@@ -166,6 +185,37 @@ class TenantService extends ServiceBase
         $this->TenantConfigurationsService->handle($tenantId);
         $this->limpaTabelas();
         BuscarDadosSiapeJob::dispatch($tenantId);
+    }
+
+    public function testarSipec(string $tenantId): void
+    {
+        $tenant = $this->tenantRepository->findOrFail($tenantId);
+
+        if (empty($tenant->integracao_sipec_conectagov_chave) ||
+            empty($tenant->integracao_sipec_conectagov_senha) ||
+            empty($tenant->integracao_sipec_cpf) ||
+            empty($tenant->integracao_sipec_codorgao) ||
+            empty($tenant->integracao_sipec_url)) {
+            throw new ServerException('Tenant', 'Configurações SIPEC incompletas. Salve a integração antes de testar.');
+        }
+
+        $sipec = new SipecService([
+            'url'              => $tenant->integracao_sipec_url,
+            'conectagov_chave' => $tenant->integracao_sipec_conectagov_chave,
+            'conectagov_senha' => $tenant->integracao_sipec_conectagov_senha,
+            'cpf'              => $tenant->integracao_sipec_cpf,
+            'codOrgao'         => $tenant->integracao_sipec_codorgao,
+            'codUorg'          => $tenant->integracao_sipec_coduorg ?? '',
+        ]);
+
+        $sipec->requestToken();
+    }
+
+    public function forcarSipec(string $tenantId)
+    {
+        $this->inicializeTenant($tenantId);
+        $this->TenantConfigurationsService->handle($tenantId);
+        BuscarDadosSipecJob::dispatch($tenantId);
     }
 
     public function inicializeTenant($tenantId): void
@@ -347,6 +397,7 @@ class TenantService extends ServiceBase
                 "updated_at" => Carbon::now(),
                 "deleted_at" => NULL,
                 "codigo" => "1",
+                "codigo_orgao" => CodigoOrgaoService::obrigatorio($dataOrEntity->integracao_siape_codorgao),
                 "sigla" => $dataOrEntity->id,
                 "nome" => $dataOrEntity->nome_entidade,
                 "instituidora" => 1,

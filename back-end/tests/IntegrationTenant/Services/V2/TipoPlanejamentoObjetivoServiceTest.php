@@ -32,21 +32,32 @@ function criarTipoPlanejamentoObjetivoService(
 }
 
 describe('TipoPlanejamentoObjetivoService::index', function () {
-    test('retorna collection do repository', function () {
+    test('retorna collection do repository sem filtro', function () {
         $expected = new Collection([new TipoPlanejamentoObjetivo(['nome' => 'Tipo A'])]);
 
         $repo = Mockery::mock(TipoPlanejamentoObjetivoRepository::class);
-        $repo->shouldReceive('getAll')->once()->andReturn($expected);
+        $repo->shouldReceive('getAll')->once()->with(null)->andReturn($expected);
 
         $service = criarTipoPlanejamentoObjetivoService(repo: $repo);
 
         expect($service->index())->toBe($expected);
     });
+
+    test('passa estrutura ao repository quando informada', function () {
+        $expected = new Collection([new TipoPlanejamentoObjetivo(['nome' => 'Tipo PI'])]);
+
+        $repo = Mockery::mock(TipoPlanejamentoObjetivoRepository::class);
+        $repo->shouldReceive('getAll')->once()->with('planejamento_institucional')->andReturn($expected);
+
+        $service = criarTipoPlanejamentoObjetivoService(repo: $repo);
+
+        expect($service->index('planejamento_institucional'))->toBe($expected);
+    });
 });
 
 describe('TipoPlanejamentoObjetivoService::store', function () {
     test('valida autorização e delega criação ao repository', function () {
-        $dto = TipoPlanejamentoObjetivoStoreDTO::fromArray(['nome' => 'Novo Tipo', 'descricao' => 'Desc']);
+        $dto = TipoPlanejamentoObjetivoStoreDTO::fromArray(['nome' => 'Novo Tipo', 'descricao' => 'Desc', 'estrutura' => 'planejamento_institucional']);
         $created = Mockery::mock(TipoPlanejamentoObjetivo::class)->makePartial();
 
         Auth::shouldReceive('id')->andReturn('user-1');
@@ -66,7 +77,7 @@ describe('TipoPlanejamentoObjetivoService::store', function () {
     });
 
     test('lança ForbiddenException quando usuário não é ADM_MASTER', function () {
-        $dto = TipoPlanejamentoObjetivoStoreDTO::fromArray(['nome' => 'X']);
+        $dto = TipoPlanejamentoObjetivoStoreDTO::fromArray(['nome' => 'X', 'estrutura' => 'cadeia_de_valor']);
 
         Auth::shouldReceive('id')->andReturn('user-participante');
 

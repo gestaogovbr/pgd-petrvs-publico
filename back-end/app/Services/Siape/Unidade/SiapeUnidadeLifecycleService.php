@@ -6,10 +6,13 @@ use App\Cache\GestorHierarquiaCache;
 use App\Facades\SiapeLog;
 use App\Models\SiapeBlacklistUnidade;
 use App\Models\Unidade;
-use App\Models\UnidadeIntegrante;
-use App\Models\UnidadeIntegranteAtribuicao;
+use App\Repository\SiapeBlacklistUnidadeRepository;
+use App\Repository\UnidadeIntegranteAtribuicaoRepository;
+use App\Repository\UnidadeIntegranteRepository;
+use App\Repository\UnidadeRepository;
 use App\Services\Siape\BuscarDados\BuscarDadosSiapeUnidade;
 use App\Services\Siape\Erros;
+use App\Services\CodigoOrgaoService;
 use Closure;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -30,8 +33,9 @@ class SiapeUnidadeLifecycleService
      * @param array<int, array<string, mixed>|object> $uorgsAtivas
      * @return array<string, int>
      */
-    public function sincronizarBlacklistPelaListaUorgs(array $uorgsAtivas): array
+    public function sincronizarBlacklistPelaListaUorgs(array $uorgsAtivas, ?string $codigoOrgao = null): array
     {
+        $codigoOrgao = $this->codigoOrgao($codigoOrgao);
         $codigosAtivos = $this->normalizarCodigosListaUorgs($uorgsAtivas);
         $resultado = [
             'blacklists_criadas' => 0,
@@ -40,11 +44,7 @@ class SiapeUnidadeLifecycleService
             'unidades_avaliadas' => 0,
         ];
 
-        $unidades = Unidade::query()
-            ->whereNotNull('codigo')
-            ->where('codigo', '<>', '')
-            ->whereNull('data_inativacao')
-            ->get();
+        $unidades = $this->unidadeRepository()->findAllAtivasComCodigoByCodigoOrgao($codigoOrgao);
 
         foreach ($unidades as $unidade) {
             /** @var Unidade $unidade */
@@ -57,7 +57,7 @@ class SiapeUnidadeLifecycleService
             $resultado['unidades_avaliadas']++;
 
             if (isset($codigosAtivos[$codigoNormalizado])) {
-                $cancelamento = $this->cancelarPendenciaPorCodigo((string) $unidade->codigo);
+                $cancelamento = $this->cancelarPendenciaPorCodigo((string) $unidade->codigo, $codigoOrgao);
                 $resultado['pendencias_canceladas'] += $cancelamento['blacklists_removidas'] > 0
                     || $cancelamento['unidades_canceladas'] > 0
                     ? 1
@@ -65,7 +65,7 @@ class SiapeUnidadeLifecycleService
                 continue;
             }
 
-            $manutencao = $this->criarOuManterBlacklist((string) $unidade->codigo);
+            $manutencao = $this->criarOuManterBlacklist((string) $unidade->codigo, $codigoOrgao);
             $resultado[$manutencao]++;
         }
 
@@ -77,30 +77,26 @@ class SiapeUnidadeLifecycleService
     /**
      * @return array<string, int>
      */
-    public function cancelarPendenciaPorCodigo(string $codigo): array
+    public function cancelarPendenciaPorCodigo(string $codigo, ?string $codigoOrgao = null): array
     {
-        $registros = SiapeBlacklistUnidade::query()
-            ->where('codigo', $codigo)
-            ->get();
+        $codigoOrgao = $this->codigoOrgao($codigoOrgao);
+        $registros = $this->blacklistRepository()->findAllByCodigoOrgaoCodigo($codigoOrgao, $codigo);
 
         $blacklistsRemovidas = 0;
         foreach ($registros as $registro) {
             /** @var SiapeBlacklistUnidade $registro */
-            $registro->delete();
-            $blacklistsRemovidas++;
+            if ($this->blacklistRepository()->delete($registro->id)) {
+                $blacklistsRemovidas++;
+            }
         }
 
-        $unidadesCanceladas = Unidade::query()
-            ->where('codigo', $codigo)
-            ->whereNotNull('data_inicio_inativacao')
-            ->update([
-                'data_inicio_inativacao' => null,
-                'updated_at' => now(),
-            ]);
+        $unidadesCanceladas = $this->unidadeRepository()
+            ->cancelarInicioInativacaoPorCodigoOrgaoCodigo($codigoOrgao, $codigo);
 
         if ($blacklistsRemovidas > 0 || $unidadesCanceladas > 0) {
             SiapeLog::info('Lifecycle SIAPE unidade: pendencia de inativacao cancelada', [
                 'codigo' => $codigo,
+                'codigo_orgao' => $codigoOrgao,
                 'blacklists_removidas' => $blacklistsRemovidas,
                 'unidades_canceladas' => $unidadesCanceladas,
             ]);
@@ -115,25 +111,18 @@ class SiapeUnidadeLifecycleService
     /**
      * @return array<string, int>
      */
-    public function reativarUnidadeEncontradaNoSiape(string $codigo): array
+    public function reativarUnidadeEncontradaNoSiape(string $codigo, ?string $codigoOrgao = null): array
     {
-        $cancelamento = $this->cancelarPendenciaPorCodigo($codigo);
+        $codigoOrgao = $this->codigoOrgao($codigoOrgao);
+        $cancelamento = $this->cancelarPendenciaPorCodigo($codigo, $codigoOrgao);
 
-        $unidadesReativadas = Unidade::query()
-            ->where('codigo', $codigo)
-            ->where(function ($query): void {
-                $query->whereNotNull('data_inicio_inativacao')
-                    ->orWhereNotNull('data_inativacao');
-            })
-            ->update([
-                'data_inicio_inativacao' => null,
-                'data_inativacao' => null,
-                'updated_at' => now(),
-            ]);
+        $unidadesReativadas = $this->unidadeRepository()
+            ->reativarPorCodigoOrgaoCodigo($codigoOrgao, $codigo);
 
         if ($unidadesReativadas > 0) {
             SiapeLog::info('Lifecycle SIAPE unidade: unidade reativada por retorno em dadosUorg', [
                 'codigo' => $codigo,
+                'codigo_orgao' => $codigoOrgao,
                 'unidades_reativadas' => $unidadesReativadas,
             ]);
         }
@@ -150,6 +139,7 @@ class SiapeUnidadeLifecycleService
      */
     public function iniciarInativacoesComBlacklistVencida(): array
     {
+        $codigoOrgao = $this->codigoOrgao();
         $prazoDias = $this->prazoDias();
         $dataLimite = now()->subDays($prazoDias);
         $resultado = [
@@ -157,46 +147,30 @@ class SiapeUnidadeLifecycleService
             'blacklists_avaliadas' => 0,
         ];
 
-        $blacklists = SiapeBlacklistUnidade::query()
-            ->where('inativado', 0)
-            ->where('created_at', '<=', $dataLimite)
-            ->get();
+        $blacklists = $this->blacklistRepository()->findAllVencidasByCodigoOrgao($codigoOrgao, $dataLimite);
 
         foreach ($blacklists as $blacklist) {
             /** @var SiapeBlacklistUnidade $blacklist */
             $resultado['blacklists_avaliadas']++;
 
-            $unidades = Unidade::query()
-                ->where('codigo', $blacklist->codigo)
-                ->whereNull('data_inicio_inativacao')
-                ->whereNull('data_inativacao')
-                ->get();
+            $unidades = $this->unidadeRepository()
+                ->findAllSemInicioInativacaoByCodigoOrgaoCodigo($blacklist->codigo_orgao, $blacklist->codigo);
 
             foreach ($unidades as $unidade) {
                 /** @var Unidade $unidade */
                 DB::transaction(function () use ($unidade, $blacklist): void {
-                    $unidadeAtual = Unidade::query()
-                        ->whereKey($unidade->id)
-                        ->lockForUpdate()
-                        ->first();
+                    $unidadeAtual = $this->unidadeRepository()->findByIdForUpdate($unidade->id);
 
                     if (!$unidadeAtual instanceof Unidade || $unidadeAtual->data_inicio_inativacao !== null || $unidadeAtual->data_inativacao !== null) {
                         return;
                     }
 
-                    $unidadeAtual->data_inicio_inativacao = now();
-                    $unidadeAtual->save();
+                    $this->unidadeRepository()->iniciarInativacao($unidadeAtual->id);
 
-                    $blacklistAtual = SiapeBlacklistUnidade::query()
-                        ->whereKey($blacklist->id)
-                        ->lockForUpdate()
-                        ->first();
-
-                    if ($blacklistAtual instanceof SiapeBlacklistUnidade) {
-                        $blacklistAtual->inativado = 1;
-                        $blacklistAtual->updated_at = now();
-                        $blacklistAtual->save();
-                    }
+                    $this->blacklistRepository()->update($blacklist->id, [
+                        'inativado' => 1,
+                        'updated_at' => now(),
+                    ]);
                 });
 
                 $resultado['unidades_iniciadas']++;
@@ -213,6 +187,7 @@ class SiapeUnidadeLifecycleService
      */
     public function efetivarInativacoesPendentes(): array
     {
+        $codigoOrgao = $this->codigoOrgao();
         $prazoDias = $this->prazoDias();
         $dataLimite = now()->subDays($prazoDias);
         $resultado = [
@@ -224,13 +199,8 @@ class SiapeUnidadeLifecycleService
             'atribuicoes_removidas' => 0,
         ];
 
-        $unidades = Unidade::query()
-            ->whereNotNull('data_inicio_inativacao')
-            ->where('data_inicio_inativacao', '<=', $dataLimite)
-            ->whereNotNull('codigo')
-            ->where('codigo', '<>', '')
-            ->whereNull('data_inativacao')
-            ->get();
+        $unidades = $this->unidadeRepository()
+            ->findAllPendentesInativacaoByCodigoOrgaoAte($codigoOrgao, $dataLimite);
 
         foreach ($unidades as $unidade) {
             /** @var Unidade $unidade */
@@ -258,10 +228,7 @@ class SiapeUnidadeLifecycleService
             }
 
             $inativacao = DB::transaction(function () use ($unidade, $dataLimite): array {
-                $unidadeAtual = Unidade::query()
-                    ->whereKey($unidade->id)
-                    ->lockForUpdate()
-                    ->first();
+                $unidadeAtual = $this->unidadeRepository()->findByIdForUpdate($unidade->id);
 
                 if (
                     !$unidadeAtual instanceof Unidade
@@ -278,8 +245,13 @@ class SiapeUnidadeLifecycleService
 
                 $integrantesAfetados = $this->contarIntegrantesAtivosDaUnidade($unidadeAtual);
 
-                $unidadeAtual->data_inativacao = now();
-                $unidadeAtual->save();
+                if (!$this->unidadeRepository()->efetivarInativacao($unidadeAtual->id)) {
+                    return [
+                        'inativada' => 0,
+                        'integrantes_afetados' => 0,
+                        'atribuicoes_removidas' => 0,
+                    ];
+                }
 
                 return [
                     'inativada' => 1,
@@ -345,27 +317,19 @@ class SiapeUnidadeLifecycleService
 
     protected function removerAtribuicoesDaUnidade(Unidade $unidade): int
     {
-        $integranteIds = UnidadeIntegrante::query()
-            ->where('unidade_id', $unidade->id)
-            ->whereNull('deleted_at')
-            ->pluck('id');
+        $integranteIds = $this->unidadeIntegranteRepository()->findIdsAtivosByUnidade((string) $unidade->id);
 
-        if ($integranteIds->isEmpty()) {
+        if ($integranteIds === []) {
             return 0;
         }
 
-        return UnidadeIntegranteAtribuicao::query()
-            ->whereIn('unidade_integrante_id', $integranteIds->all())
-            ->whereNull('deleted_at')
-            ->delete();
+        return $this->unidadeIntegranteAtribuicaoRepository()
+            ->deleteAtivasByUnidadeIntegranteIds($integranteIds);
     }
 
     protected function contarIntegrantesAtivosDaUnidade(Unidade $unidade): int
     {
-        return UnidadeIntegrante::query()
-            ->where('unidade_id', $unidade->id)
-            ->whereNull('deleted_at')
-            ->count();
+        return $this->unidadeIntegranteRepository()->countAtivosByUnidade((string) $unidade->id);
     }
 
     protected function confirmarAusenciaEmDadosUorg(string $codigo): bool
@@ -437,39 +401,32 @@ class SiapeUnidadeLifecycleService
         return $codigo;
     }
 
-    private function criarOuManterBlacklist(string $codigo): string
+    private function criarOuManterBlacklist(string $codigo, string $codigoOrgao): string
     {
         $response = self::RESPONSE_AUSENTE_LISTA_UORGS . ' em ' . now()->toDateTimeString();
-        $blacklistAtiva = SiapeBlacklistUnidade::query()
-            ->where('codigo', $codigo)
-            ->first();
+        $blacklistAtiva = $this->blacklistRepository()->findActiveByCodigoOrgaoCodigo($codigoOrgao, $codigo);
 
         if ($blacklistAtiva instanceof SiapeBlacklistUnidade) {
-            $blacklistAtiva->response = $response;
-            $blacklistAtiva->updated_at = now();
-            $blacklistAtiva->save();
+            $this->blacklistRepository()->update($blacklistAtiva->id, [
+                'response' => $response,
+                'updated_at' => now(),
+            ]);
 
             return 'blacklists_mantidas';
         }
 
-        $blacklistRemovida = SiapeBlacklistUnidade::onlyTrashed()
-            ->where('codigo', $codigo)
-            ->orderByDesc('deleted_at')
-            ->first();
+        $blacklistRemovida = $this->blacklistRepository()
+            ->findLatestTrashedByCodigoOrgaoCodigo($codigoOrgao, $codigo);
 
         if ($blacklistRemovida instanceof SiapeBlacklistUnidade) {
-            $blacklistRemovida->restore();
-            $blacklistRemovida->inativado = 0;
-            $blacklistRemovida->response = $response;
-            $blacklistRemovida->created_at = now();
-            $blacklistRemovida->updated_at = now();
-            $blacklistRemovida->save();
+            $this->blacklistRepository()->restoreAsNovaPendencia($blacklistRemovida, $response);
 
             return 'blacklists_criadas';
         }
 
-        SiapeBlacklistUnidade::query()->create([
+        $this->blacklistRepository()->create([
             'id' => (string) Str::uuid(),
+            'codigo_orgao' => $codigoOrgao,
             'codigo' => $codigo,
             'response' => $response,
             'inativado' => 0,
@@ -506,5 +463,33 @@ class SiapeUnidadeLifecycleService
     private function prazoDias(): int
     {
         return max(1, (int) config('integracao.siape.inativacao_unidade_prazo_dias', 7));
+    }
+
+    private function codigoOrgao(?string $codigoOrgao = null): string
+    {
+        return CodigoOrgaoService::obrigatorio(
+            $codigoOrgao ?? config('integracao.siape.codOrgao'),
+            'O Código do Órgão é obrigatório para processar o lifecycle de unidades SIAPE.'
+        );
+    }
+
+    private function unidadeRepository(): UnidadeRepository
+    {
+        return app(UnidadeRepository::class);
+    }
+
+    private function blacklistRepository(): SiapeBlacklistUnidadeRepository
+    {
+        return app(SiapeBlacklistUnidadeRepository::class);
+    }
+
+    private function unidadeIntegranteRepository(): UnidadeIntegranteRepository
+    {
+        return app(UnidadeIntegranteRepository::class);
+    }
+
+    private function unidadeIntegranteAtribuicaoRepository(): UnidadeIntegranteAtribuicaoRepository
+    {
+        return app(UnidadeIntegranteAtribuicaoRepository::class);
     }
 }

@@ -303,7 +303,10 @@ test('anexarUnidadesVinculadasPorCpf ignora unidade sem atribuição ativa', fun
         'perfil_id' => $this->perfilId,
     ]);
 
-    $unidadeAtiva = Unidade::factory()->create(['sigla' => 'U-ATV']);
+    $unidadeAtiva = Unidade::factory()->create([
+        'sigla' => 'U-ATV',
+        'unidade_antiga' => true,
+    ]);
     $unidadeOrfa = Unidade::factory()->create(['sigla' => 'U-ORF']);
 
     $integranteAtivo = UnidadeIntegrante::query()->create([
@@ -338,6 +341,7 @@ test('anexarUnidadesVinculadasPorCpf ignora unidade sem atribuição ativa', fun
     expect($unidadesVinculadas)->toHaveCount(1)
         ->and($unidadesVinculadas[0]['id'])->toBe($unidadeAtiva->id)
         ->and($unidadesVinculadas[0]['sigla'])->toBe('U-ATV')
+        ->and($unidadesVinculadas[0]['unidade_antiga'])->toBeTrue()
         ->and($unidadesVinculadas[0]['matricula'])->toBe('MAT-ATIVA');
 });
 

@@ -753,3 +753,38 @@ body {
 .mural-aviso-container {
   max-height: 60vh;
 }
+/*
+ * Correção de largura do br-select (govbr-ds webcomponents 2.1.x).
+ * A partir da 2.1.x a classe interna .br-select tem `max-width: 400px`,
+ * fazendo o componente não preencher o container em formulários.
+ * Por padrão, forçamos o select a preencher o espaço disponível.
+ * Use a classe `select-auto` para manter o comportamento compacto
+ * (largura ajustada ao conteúdo), útil em toolbars, filtros e paginação.
+ */
+br-select {
+  display: block;
+  width: 100%;
+}
+
+br-select::part(container),
+br-select::part(input),
+br-select::part(input-container),
+br-select::part(input-group),
+br-select::part(input-field) {
+  max-width: none;
+  width: 100%;
+}
+
+br-select.select-auto {
+  display: inline-block;
+  width: auto;
+}
+
+br-select.select-auto::part(container),
+br-select.select-auto::part(input),
+br-select.select-auto::part(input-container),
+br-select.select-auto::part(input-group),
+br-select.select-auto::part(input-field) {
+  max-width: 400px;
+  width: auto;
+}

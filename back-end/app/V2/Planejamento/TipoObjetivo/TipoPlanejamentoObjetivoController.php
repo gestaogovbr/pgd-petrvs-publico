@@ -21,10 +21,14 @@ class TipoPlanejamentoObjetivoController extends Controller
         private readonly TipoPlanejamentoObjetivoService $service,
     ) {}
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            return response()->json(['success' => true, 'data' => $this->service->index()]);
+            $data = TipoPlanejamentoObjetivoRequestValidator::index($request);
+
+            return response()->json(['success' => true, 'data' => $this->service->index($data['estrutura'] ?? null)]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (Throwable $e) {
             report($e);
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);

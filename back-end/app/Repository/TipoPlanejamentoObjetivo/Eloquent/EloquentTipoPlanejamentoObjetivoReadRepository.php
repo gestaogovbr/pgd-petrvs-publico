@@ -20,9 +20,15 @@ class EloquentTipoPlanejamentoObjetivoReadRepository extends AbstractEloquentRea
     }
 
     /** @return Collection<int, TipoPlanejamentoObjetivo> */
-    public function getAll(): Collection
+    public function getAll(?string $estrutura = null): Collection
     {
+        $query = $this->query()->orderBy('nome');
+
+        if ($estrutura !== null) {
+            $query->where('estrutura', $estrutura);
+        }
+
         /** @var Collection<int, TipoPlanejamentoObjetivo> */
-        return $this->query()->orderBy('nome')->get();
+        return $query->get();
     }
 }
