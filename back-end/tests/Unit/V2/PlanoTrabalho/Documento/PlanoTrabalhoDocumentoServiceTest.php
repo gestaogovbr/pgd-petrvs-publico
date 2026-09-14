@@ -221,6 +221,36 @@ describe('PlanoTrabalhoDocumentoService::show', function () {
 
         $this->service->show('plano-1');
     })->throws(NotFoundException::class);
+
+    test('não quebra quando o usuário da assinatura está soft-deleted (relação null)', function () {
+        $this->authValidator->shouldReceive('validar')->once();
+
+        $assinatura = Mockery::mock(DocumentoAssinatura::class)->makePartial();
+        $assinatura->id = 'assinatura-1';
+        $assinatura->usuario_id = 'user-removido';
+        $assinatura->data_assinatura = '2026-05-22 11:33:00';
+        $assinatura->usuario = null; // usuário soft-deleted → relação retorna null
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->numero = 7;
+        $documento->titulo = 'TCR';
+        $documento->conteudo = '<html></html>';
+        $documento->shouldReceive('getAttribute')->with('assinaturas')
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([$assinatura]));
+
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
+        $this->assinaturaRepo->shouldReceive('listarRevogadasPorPlanoTrabalho')
+            ->once()
+            ->with('plano-1')
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
+        $result = $this->service->show('plano-1');
+
+        expect($result['assinaturas'])->toHaveCount(1);
+        expect($result['assinaturas'][0]['usuario_nome'])->toBe('');
+        expect($result['assinaturas'][0]['usuario_id'])->toBe('user-removido');
+    });
 });
 
 describe('PlanoTrabalhoDocumentoService::assinar', function () {
