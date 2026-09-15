@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\V2\PlanoEntrega\DataProviders;
+namespace App\V2\PlanoEntrega\Traits;
 
 use App\Cache\GestorHierarquiaCache;
 use App\Repository\UnidadeRepository;
@@ -14,7 +14,7 @@ use App\Repository\UnidadeRepository;
  * Cacheado em dois níveis: memoização por instância (mesma request) e
  * GestorHierarquiaCache::getUnidadesGeridas (entre requests).
  */
-trait ResolveUnidadesGeridas
+trait ResolveUnidadesGeridasTrait
 {
     /** @var array<string, string[]> memoização por usuário dentro da mesma instância/request */
     private array $unidadesGeridasMemo = [];

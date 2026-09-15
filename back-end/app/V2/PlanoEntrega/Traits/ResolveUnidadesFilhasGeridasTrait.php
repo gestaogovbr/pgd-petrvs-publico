@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\V2\PlanoEntrega\DataProviders;
+namespace App\V2\PlanoEntrega\Traits;
 
 use App\Cache\GestorHierarquiaCache;
 use App\Repository\UnidadeRepository;
@@ -17,7 +17,7 @@ use App\Repository\UnidadeRepository;
  *   - GestorHierarquiaCache::getSubordinadasDiretas para as filhas diretas de cada unidade
  *     gerida (chave própria, distinta das subordinadas recursivas, evitando colisão).
  */
-trait ResolveUnidadesFilhasGeridas
+trait ResolveUnidadesFilhasGeridasTrait
 {
     /** @var array<string, string[]> memoização por usuário dentro da mesma instância/request */
     private array $unidadesFilhasGeridasMemo = [];

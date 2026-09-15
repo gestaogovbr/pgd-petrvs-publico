@@ -8,6 +8,7 @@ use App\Models\PlanoEntrega;
 use App\Repository\PlanoEntregaRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoEntrega\DTOs\RegistroExecucaoAtrasoPEBuscaDTO;
+use App\V2\PlanoEntrega\Traits\ResolveUnidadesGeridasTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
@@ -24,7 +25,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  */
 class RegistroExecucaoAtrasoPEDataProvider
 {
-    use ResolveUnidadesGeridas;
+    use ResolveUnidadesGeridasTrait;
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,

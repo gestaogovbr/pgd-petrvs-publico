@@ -40,7 +40,7 @@ afterEach(function () {
     Mockery::close();
 });
 
-describe('ResolveUnidadesFilhasGeridas (cache)', function () {
+describe('ResolveUnidadesFilhasGeridasTrait (cache)', function () {
 
     test('memoiza a hierarquia na mesma instância: count() + buscar() consultam uma vez só', function () {
         // Geridas e subordinadas devem ser consultadas EXATAMENTE uma vez, mesmo com 2 chamadas.

@@ -8,6 +8,7 @@ use App\Models\PlanoEntrega;
 use App\Repository\PlanoEntregaRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\Traits\ResolveUnidadesFilhasGeridasTrait;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
@@ -22,7 +23,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  */
 class HomologacaoPendentePEDataProvider
 {
-    use ResolveUnidadesFilhasGeridas;
+    use ResolveUnidadesFilhasGeridasTrait;
 
     public function __construct(
         private readonly UnidadeRepository $unidadeRepository,
