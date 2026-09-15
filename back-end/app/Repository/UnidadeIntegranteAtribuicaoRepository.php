@@ -30,6 +30,11 @@ class UnidadeIntegranteAtribuicaoRepository
         return $this->writeRepository->delete($id);
     }
 
+    public function findOrCreateIncludingDeleted(string $unidadeIntegranteId, string $atribuicao): UnidadeIntegranteAtribuicao
+    {
+        return $this->writeRepository->findOrCreateIncludingDeleted($unidadeIntegranteId, $atribuicao);
+    }
+
     /**
      * @param list<string> $unidadeIntegranteIds
      */
