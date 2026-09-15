@@ -9,7 +9,9 @@ use App\Models\PlanoEntregaEntrega;
 use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
+use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
 use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -41,6 +43,11 @@ class PlanoEntregaRepository implements EnvioRepositoryInterface
     public function getPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): Collection
     {
         return $this->readRepository->getPlanosEntregaAvaliacao($unidadesIds, $criadosApos);
+    }
+
+    public function paginatePlanosEntregaAvaliacao(AvaliacaoPendentePEBuscaDTO $busca): LengthAwarePaginator
+    {
+        return $this->readRepository->paginatePlanosEntregaAvaliacao($busca);
     }
 
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection

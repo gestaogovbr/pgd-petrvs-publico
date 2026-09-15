@@ -9,7 +9,11 @@ use App\Models\PlanoEntregaEntrega;
 use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
+use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator as LengthAwarePaginatorConcrete;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 
@@ -66,6 +70,30 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
 
     public function getPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): Collection
     {
+        return $this->baseAvaliacaoQuery($unidadesIds, $criadosApos)->get();
+    }
+
+    /**
+     * Lista paginada de PEs em avaliação pendente — mesmo critério de
+     * countPlanosEntregaAvaliacao/getPlanosEntregaAvaliacao (consistência card x listagem).
+     */
+    public function paginatePlanosEntregaAvaliacao(AvaliacaoPendentePEBuscaDTO $busca): LengthAwarePaginator
+    {
+        if ($busca->unidadesIds === []) {
+            return new LengthAwarePaginatorConcrete([], 0, $busca->perPage, $busca->page);
+        }
+
+        return $this->baseAvaliacaoQuery($busca->unidadesIds, $busca->criadosApos)
+            ->with(['unidade:id,sigla,nome', 'programa:id,nome'])
+            ->orderBy('numero')
+            ->paginate(perPage: $busca->perPage, page: $busca->page);
+    }
+
+    /**
+     * @param string[] $unidadesIds
+     */
+    private function baseAvaliacaoQuery(array $unidadesIds, ?string $criadosApos): Builder
+    {
         $query = $this->query()
             ->where('status', StatusEnum::CONCLUIDO->value)
             ->whereIn('unidade_id', $unidadesIds)
@@ -75,7 +103,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             $query->where('created_at', '>', $criadosApos);
         }
 
-        return $query->get();
+        return $query;
     }
 
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection
@@ -176,15 +204,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             return 0;
         }
 
-        $query = $this->query()
-            ->where('status', StatusEnum::CONCLUIDO->value)
-            ->whereIn('unidade_id', $unidadesIds);
-
-        if ($criadosApos !== null) {
-            $query->where('created_at', '>', $criadosApos);
-        }
-
-        return $query->count();
+        return $this->baseAvaliacaoQuery($unidadesIds, $criadosApos)->count();
     }
 
     public function countEntregasSemProgresso(array $unidadesIds, ?string $planoEntregaCriadoApos = null): int

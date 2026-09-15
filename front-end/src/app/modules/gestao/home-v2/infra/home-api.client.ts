@@ -107,4 +107,11 @@ export class HomeApiClient extends TenantV2ResourceApiBase {
       map(r => r.data),
     );
   }
+
+  /** IDs dos Planos de Entrega em avaliação pendente (mesmo critério do card). */
+  getPlanosEntregaAvaliacaoPendenteIds(): Observable<string[]> {
+    return this.http
+      .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/avaliacao-pendente`, { params: { size: '200' } })
+      .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
+  }
 }

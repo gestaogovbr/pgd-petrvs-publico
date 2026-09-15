@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Repository\PlanoEntrega\Contracts;
 
 use App\Models\PlanoEntrega;
+use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 interface PlanoEntregaReadRepositoryContract
@@ -16,6 +18,8 @@ interface PlanoEntregaReadRepositoryContract
     public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
 
     public function getPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): Collection;
+
+    public function paginatePlanosEntregaAvaliacao(AvaliacaoPendentePEBuscaDTO $busca): LengthAwarePaginator;
 
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection;
 
