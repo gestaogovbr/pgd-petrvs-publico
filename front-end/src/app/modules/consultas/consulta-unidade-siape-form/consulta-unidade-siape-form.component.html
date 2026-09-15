@@ -13,19 +13,16 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-4">
-            <input-text
-                controlName="unidade"
-                label="Unidade"
-                labelInfo="Informe o código da unidade para busca"
-                [size]="4"
-                [maskFormat]="'999999999'"
-                hostClass="inputUnidade"
-                relativeId="inputUnidade"
-                placeholder="Informe o código unidade"
-            ></input-text>
-        </div>
-        <input-select [size]="4" label="Fonte" controlName="fonte" [items]="fontes" required></input-select>
+        <input-text
+            controlName="unidade"
+            label="Unidade"
+            labelInfo="Informe o código da unidade para busca"
+            [size]="4"
+            [maskFormat]="'999999999'"
+            hostClass="inputUnidade"
+            relativeId="inputUnidade"
+            placeholder="Informe o código unidade"
+        ></input-text>
     </div>
     <div class="row mt-2">
         <div class="col-md-4">

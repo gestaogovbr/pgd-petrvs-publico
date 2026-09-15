@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository\UnidadeIntegranteAtribuicao\Contracts;
 
+use App\Models\UnidadeIntegranteAtribuicao;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,6 +14,7 @@ interface UnidadeIntegranteAtribuicaoWriteRepositoryContract
 {
     public function create(array $attributes): Model;
     public function delete(string $id): bool;
+    public function findOrCreateIncludingDeleted(string $unidadeIntegranteId, string $atribuicao): UnidadeIntegranteAtribuicao;
 
     /**
      * @param list<string> $unidadeIntegranteIds
