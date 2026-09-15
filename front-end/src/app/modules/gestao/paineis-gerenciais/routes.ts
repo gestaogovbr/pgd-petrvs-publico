@@ -39,12 +39,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./ui/pages/modalidades.page').then(m => m.ModalidadesPage),
       },
-      {
-        path: 'gestao-pgd',
-        data: { breadcrumb: 'Abrangência do PGD' },
-        loadComponent: () =>
-          import('./ui/pages/gestao-pgd.page').then(m => m.GestaoPgdPage),
-      },
+      // {
+      //   path: 'gestao-pgd',
+      //   data: { breadcrumb: 'Abrangência do PGD' },
+      //   loadComponent: () =>
+      //     import('./ui/pages/gestao-pgd.page').then(m => m.GestaoPgdPage),
+      // },
     ],
   },
 ];

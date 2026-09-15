@@ -113,10 +113,10 @@ describe('EloquentUnidadeReadRepository::isUsuarioGestorRecursivo', function () 
             ->andReturnUsing(fn ($key, $ttl, $cb) => $cb());
 
         $repo = criarRepository();
-        $repo->shouldReceive('getSubordinadasRecursivas')
+        $repo->shouldReceive('getSubordinadasRecursivasIds')
             ->once()
             ->with(['u-pai'])
-            ->andReturn(mockCollection(['u-filho']));
+            ->andReturn(['u-filho']);
 
         $repo->isUsuarioGestorRecursivo('u-filho', 'user-1');
     });
