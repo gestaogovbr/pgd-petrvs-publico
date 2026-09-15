@@ -29,6 +29,33 @@ class EloquentUnidadeIntegranteAtribuicaoWriteRepository extends AbstractEloquen
         return (bool) $model->delete();
     }
 
+    public function findOrCreateIncludingDeleted(string $unidadeIntegranteId, string $atribuicao): UnidadeIntegranteAtribuicao
+    {
+        $query = $this->model->newQuery()
+            ->where('unidade_integrante_id', $unidadeIntegranteId)
+            ->where('atribuicao', $atribuicao);
+
+        /** @var UnidadeIntegranteAtribuicao|null $model */
+        $model = $query->first();
+
+        if ($model === null) {
+            /** @var UnidadeIntegranteAtribuicao|null $model */
+            $model = $query->withTrashed()->first();
+        }
+
+        if ($model === null) {
+            /** @var UnidadeIntegranteAtribuicao $model */
+            $model = $this->create([
+                'unidade_integrante_id' => $unidadeIntegranteId,
+                'atribuicao' => $atribuicao,
+            ]);
+        } elseif ($model->trashed()) {
+            $model->restore();
+        }
+
+        return $model;
+    }
+
     public function deleteAtivasByUnidadeIntegranteIds(array $unidadeIntegranteIds): int
     {
         if ($unidadeIntegranteIds === []) {

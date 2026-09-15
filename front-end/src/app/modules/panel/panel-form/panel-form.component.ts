@@ -1,6 +1,5 @@
 
-import { AfterViewChecked, Component, ElementRef, Injector, ViewChild } from '@angular/core';
-declare var bootstrap: any;
+import { Component, Injector, ViewChild } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { EditableFormComponent } from 'src/app/components/editable-form/editable-form.component';
 import { GridComponent } from 'src/app/components/grid/grid.component';
@@ -19,13 +18,10 @@ import { JobAgendadoDaoService } from 'src/app/dao/job-agendado-dao.service';
     styleUrls: ['./panel-form.component.scss'],
     standalone: false
 })
-export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> implements AfterViewChecked {
+export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
   @ViewChild(EditableFormComponent, { static: false }) public editableForm?: EditableFormComponent;
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   @ViewChild(TabsComponent, { static: false }) public tabs?: TabsComponent;
-  @ViewChild('sipecHintIcon') public sipecHintIcon?: ElementRef;
-
-  private _sipecTooltip: any = null;
 
   public formLogin: FormGroup;
   public seeders: string[] = [];
@@ -53,10 +49,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> i
     { Tipo: 'Login único', Web: '', API: '', Habilitado: true },
     { Tipo: 'Institucional', Web: '', API: '', Habilitado: true }
   ];
-
-  public testandoSipec = false;
-  public sipecTesteHabilitado = false;
-  public sipecTesteHint = '';
 
   constructor(public injector: Injector) {
     super(injector, Tenant, TenantDaoService);
@@ -236,7 +228,6 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> i
     form.patchValue(this.util.fillForm(formValue, entity));
     this.updateSubdomain();
     form.get('api_password')?.setValue("");
-    this.calcSipecTesteEstado(entity);
   }
 
   public async initializeData(form: FormGroup) {
@@ -274,50 +265,4 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> i
       : 'Informe para alterar a senha';
   }
 
-  ngAfterViewChecked() {
-    if (this.sipecHintIcon?.nativeElement && !this._sipecTooltip) {
-      this._sipecTooltip = new bootstrap.Tooltip(this.sipecHintIcon.nativeElement, { trigger: 'hover' });
-    } else if (!this.sipecHintIcon?.nativeElement && this._sipecTooltip) {
-      this._sipecTooltip.dispose();
-      this._sipecTooltip = null;
-    }
-  }
-
-  private calcSipecTesteEstado(entity: Tenant): void {
-    const campos: [keyof Tenant, string][] = [
-      ['integracao_sipec_url', 'URL'],
-      ['integracao_sipec_conectagov_chave', 'Chave ConectaGov'],
-      ['integracao_sipec_conectagov_senha', 'Senha ConectaGov'],
-      ['integracao_sipec_cpf', 'CPF'],
-      ['integracao_sipec_codorgao', 'Código do Órgão'],
-    ];
-
-    if (!entity?.id) {
-      this.sipecTesteHabilitado = false;
-      this.sipecTesteHint = 'Salve a integração antes de testar a conexão';
-      return;
-    }
-
-    const camposVazios = campos.filter(([key]) => !String(entity[key] ?? '').trim()).map(([, label]) => label);
-    if (camposVazios.length) {
-      this.sipecTesteHabilitado = false;
-      this.sipecTesteHint = `Salve os campos antes de testar: ${camposVazios.join(', ')}`;
-      return;
-    }
-
-    this.sipecTesteHabilitado = true;
-    this.sipecTesteHint = 'Testar conexão com as credenciais gravadas';
-  }
-
-  public async testarConexaoSipec() {
-    this.testandoSipec = true;
-    try {
-      const result = await this.dao!.testarConexaoSipec(this.entity!.id);
-      this.dialog.alert('Sucesso', result.message || 'Conexão estabelecida com sucesso.');
-    } catch (error: any) {
-      this.dialog.alert('Erro', typeof error === 'string' ? error : 'Falha ao conectar com SIPEC.');
-    } finally {
-      this.testandoSipec = false;
-    }
-  }
 }

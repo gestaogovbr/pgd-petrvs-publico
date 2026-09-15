@@ -1,3 +1,12 @@
+## 3.1.3 15/09/2026
+
+### Corrigido
+- A integração com o SIAPE preserva o vínculo com a unidade anterior como colaborador ao transferir a lotação do agente público
+- A migração da chave composta de unidades trata códigos duplicados, mantendo o código original da unidade ativa mais recente e diferenciando os demais com um sufixo
+
+### Modificado
+- Ocultado painel gerencial "Abrangência do PGD"
+
 ## 3.1.2 14/09/2026
 
 ### Adicionado

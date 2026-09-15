@@ -5,6 +5,7 @@ use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Services\UnidadeIntegranteService;
+use Illuminate\Support\Facades\DB;
 
 function criarVinculoComAtribuicoesParaPreservacao(Unidade $unidade, Usuario $usuario, array $atribuicoes): UnidadeIntegrante
 {
@@ -93,4 +94,58 @@ test('modo SIAPE preserva vinculado ao promover chefia substituta para titular',
         'GESTOR',
         'LOTADO',
     ]);
+});
+test('transfere lotação preservando a unidade anterior como colaborador', function () {
+    $usuario = Usuario::factory()->create(['modalidade_pgd' => 'presencial']);
+    $unidadeOrigem = Unidade::factory()->create([
+        'codigo_orgao' => '20000',
+        'unidade_antiga' => true,
+    ]);
+    $unidadeDestino = Unidade::factory()->create([
+        'codigo_orgao' => '30212',
+        'unidade_antiga' => false,
+    ]);
+    $vinculoOrigem = criarVinculoComAtribuicoesParaPreservacao($unidadeOrigem, $usuario, ['LOTADO']);
+
+    DB::transaction(function () use ($usuario, $unidadeDestino): void {
+        app(UnidadeIntegranteService::class)->salvarIntegrantes([[
+            'usuario_id' => $usuario->id,
+            'unidade_id' => $unidadeDestino->id,
+            'atribuicoes' => ['LOTADO'],
+        ]], false, true);
+    });
+
+    $vinculoDestino = UnidadeIntegrante::query()
+        ->where('usuario_id', $usuario->id)
+        ->where('unidade_id', $unidadeDestino->id)
+        ->firstOrFail();
+
+    expect(atribuicoesAtivasParaPreservacao($vinculoOrigem))->toBe(['COLABORADOR'])
+        ->and(atribuicoesAtivasParaPreservacao($vinculoDestino))->toBe(['LOTADO']);
+});
+
+test('desfaz toda a transferência quando a transação do servidor falha', function () {
+    $usuario = Usuario::factory()->create(['modalidade_pgd' => 'presencial']);
+    $unidadeOrigem = Unidade::factory()->create();
+    $unidadeDestino = Unidade::factory()->create();
+    $vinculoOrigem = criarVinculoComAtribuicoesParaPreservacao($unidadeOrigem, $usuario, ['LOTADO']);
+
+    $transferir = fn () => DB::transaction(
+        function () use ($usuario, $unidadeDestino): void {
+            app(UnidadeIntegranteService::class)->salvarIntegrantes([[
+                'usuario_id' => $usuario->id,
+                'unidade_id' => $unidadeDestino->id,
+                'atribuicoes' => ['LOTADO'],
+            ]], false, true);
+
+            throw new RuntimeException('Falha simulada após alterar a lotação');
+        }
+    );
+
+    expect($transferir)->toThrow(RuntimeException::class, 'Falha simulada após alterar a lotação')
+        ->and(atribuicoesAtivasParaPreservacao($vinculoOrigem))->toBe(['LOTADO'])
+        ->and(UnidadeIntegrante::query()
+            ->where('usuario_id', $usuario->id)
+            ->where('unidade_id', $unidadeDestino->id)
+            ->exists())->toBeFalse();
 });

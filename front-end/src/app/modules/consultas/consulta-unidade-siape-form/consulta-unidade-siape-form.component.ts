@@ -9,7 +9,6 @@ import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.
 import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 import { Unidade } from 'src/app/models/unidade.model';
 import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { FonteConsultaDados } from '../consulta-cpf-siape-form/consulta-cpf-siape-form.component';
 
 @Component({
     selector: 'consulta-unidade-siape-form',
@@ -24,11 +23,6 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
   public unidade?: Unidade|null;
   public integranteDao: UnidadeIntegranteDaoService;
 
-  public fontes = [
-    { key: FonteConsultaDados.SIAPE, value: FonteConsultaDados.SIAPE },
-    { key: FonteConsultaDados.SIPEC, value: FonteConsultaDados.SIPEC },
-  ];
-
   public form: FormGroup;
   public dados: any;
   public integrantes: IntegranteConsolidado[] = [];
@@ -38,7 +32,6 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.form = this.fh.FormBuilder({
       unidade: {default: ""},
-      fonte: {default: FonteConsultaDados.SIAPE},
     }, this.cdRef, this.validate);
   }
 
@@ -74,11 +67,7 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
           this.integrantes = integrantesList.integrantes.filter(integrante => integrante.atribuicoes?.length > 0);
         }
 
-        const fonte = this.form.get('fonte')?.value;
-        const consulta$ = fonte === FonteConsultaDados.SIPEC
-          ? this.dao!.consultaUnidadeSIPEC(codigoUnidade)
-          : this.dao!.consultaUnidadeSIAPE(codigoUnidade);
-        const result = await firstValueFrom(consulta$);
+        const result = await firstValueFrom(this.dao!.consultaUnidadeSIAPE(codigoUnidade));
         const status = Number(result?.status);
         const hasResponseStatus = Number.isInteger(status);
         const isSuccessStatus = !hasResponseStatus || [200, 201].includes(status);
@@ -96,7 +85,6 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
                 unidade: this.unidade,
                 dados: result.dados,
                 integrantes: this.integrantes,
-                fonte,
               }
             }
           );
