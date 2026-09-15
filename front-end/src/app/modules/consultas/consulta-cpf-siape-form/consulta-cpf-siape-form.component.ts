@@ -10,11 +10,6 @@ import { PageFormBase } from '../../base/page-form-base';
 import { UnidadeIntegranteDaoService } from 'src/app/dao/unidade-integrante-dao.service';
 import { IntegranteConsolidado } from 'src/app/models/unidade-integrante.model';
 
-export enum FonteConsultaDados {
-  SIPEC = 'SIPEC',
-  SIAPE = 'SIAPE'
-}
-
 @Component({
     selector: 'consulta-cpf-siape-form',
     templateUrl: './consulta-cpf-siape-form.component.html',
@@ -26,11 +21,6 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
   public usuarios: Usuario[] = [];
   public integranteDao: UnidadeIntegranteDaoService;
   
-  public fontes = [
-    { key: FonteConsultaDados.SIPEC, value: FonteConsultaDados.SIPEC },
-    { key: FonteConsultaDados.SIAPE, value: FonteConsultaDados.SIAPE }
-  ];
-
   public form: FormGroup;
   public erros: string = '';
   public dadosPessoais: any;
@@ -42,7 +32,6 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.form = this.fh.FormBuilder({
       cpf: {default: ""},
-      fonte: {default: FonteConsultaDados.SIAPE}, 
     }, this.cdRef, this.validate);
   }
 
@@ -84,9 +73,7 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
           resultado.integrantes.filter(integrante => integrante.atribuicoes?.length > 0)
         );
 
-        const fonte = this.form.get('fonte')?.value;
-        const consulta$ = fonte === FonteConsultaDados.SIPEC ? this.dao!.consultarSIPEC(cpf) : this.dao!.consultarSIAPE(cpf);
-        const result = await firstValueFrom(consulta$);
+        const result = await firstValueFrom(this.dao!.consultarSIAPE(cpf));
         const status = Number(result?.status);
         const hasResponseStatus = Number.isInteger(status);
         const isSuccessStatus = !hasResponseStatus || [200, 201].includes(status);
