@@ -6,6 +6,7 @@ namespace App\Repository\PlanoEntrega\Contracts;
 
 use App\Models\PlanoEntrega;
 use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -22,6 +23,8 @@ interface PlanoEntregaReadRepositoryContract
     public function paginatePlanosEntregaAvaliacao(AvaliacaoPendentePEBuscaDTO $busca): LengthAwarePaginator;
 
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection;
+
+    public function paginatePlanosEntregaHomologacao(HomologacaoPendentePEBuscaDTO $busca): LengthAwarePaginator;
 
     public function getEntregasPlanoEntregaHomologacao(array $unidadesIds): Collection;
 

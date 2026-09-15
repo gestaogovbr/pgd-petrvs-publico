@@ -4,6 +4,7 @@ namespace App\V2\PlanoEntrega;
 
 use App\Http\Controllers\Controller;
 use App\V2\PlanoEntrega\DataProviders\AvaliacaoPendentePEDataProvider;
+use App\V2\PlanoEntrega\DataProviders\HomologacaoPendentePEDataProvider;
 use App\V2\PlanoEntrega\DTOs\PlanoEntregaBuscaDTO;
 use App\V2\PlanoEntrega\DTOs\PlanoEntregaEntregaBuscaDTO;
 use App\V2\PlanoEntrega\Validators\PlanoEntregaRequestValidator;
@@ -27,6 +28,7 @@ class PlanoEntregaController extends Controller
     public function __construct(
         PlanoEntregaService $service,
         private readonly AvaliacaoPendentePEDataProvider $avaliacaoPendente,
+        private readonly HomologacaoPendentePEDataProvider $homologacaoPendente,
     ) {
         $this->service = $service;
     }
@@ -38,6 +40,22 @@ class PlanoEntregaController extends Controller
             $perPage = (int) $request->input('size', 15);
 
             $result = $this->avaliacaoPendente->buscar(Auth::id(), $page, $perPage);
+
+            return response()->json(['success' => true, 'data' => $result]);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function homologacaoPendente(Request $request): JsonResponse
+    {
+        try {
+            $page = (int) $request->input('page', 1);
+            $perPage = (int) $request->input('size', 15);
+
+            $result = $this->homologacaoPendente->buscar(Auth::id(), $page, $perPage);
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (Throwable $e) {

@@ -10,6 +10,7 @@ use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -108,11 +109,34 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
 
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection
     {
+        return $this->baseHomologacaoQuery($unidadesIds)->get();
+    }
+
+    /**
+     * Lista paginada de PEs aguardando homologação — mesmo critério de
+     * countPlanosEntregaHomologacao/getPlanosEntregaHomologacao (consistência card x listagem).
+     */
+    public function paginatePlanosEntregaHomologacao(HomologacaoPendentePEBuscaDTO $busca): LengthAwarePaginator
+    {
+        if ($busca->unidadesIds === []) {
+            return new LengthAwarePaginatorConcrete([], 0, $busca->perPage, $busca->page);
+        }
+
+        return $this->baseHomologacaoQuery($busca->unidadesIds)
+            ->with(['programa:id,nome'])
+            ->orderBy('numero')
+            ->paginate(perPage: $busca->perPage, page: $busca->page);
+    }
+
+    /**
+     * @param string[] $unidadesIds
+     */
+    private function baseHomologacaoQuery(array $unidadesIds): Builder
+    {
         return $this->query()
             ->where('status', StatusEnum::HOMOLOGANDO->value)
             ->whereIn('unidade_id', $unidadesIds)
-            ->with(['unidade:id,sigla,nome'])
-            ->get();
+            ->with(['unidade:id,sigla,nome']);
     }
 
     public function getEntregasPlanoEntregaHomologacao(array $unidadesIds): Collection
@@ -192,10 +216,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             return 0;
         }
 
-        return $this->query()
-            ->where('status', StatusEnum::HOMOLOGANDO->value)
-            ->whereIn('unidade_id', $unidadesIds)
-            ->count();
+        return $this->baseHomologacaoQuery($unidadesIds)->count();
     }
 
     public function countPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): int

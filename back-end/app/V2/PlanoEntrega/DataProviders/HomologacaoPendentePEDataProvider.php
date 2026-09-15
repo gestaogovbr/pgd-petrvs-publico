@@ -7,21 +7,20 @@ namespace App\V2\PlanoEntrega\DataProviders;
 use App\Models\PlanoEntrega;
 use App\Repository\PlanoEntregaRepository;
 use App\Repository\UnidadeRepository;
-use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /**
- * Planos de Entrega em avaliação pendente para o usuário.
+ * Planos de Entrega aguardando homologação para o usuário.
  *
- * A avaliação de um PE compete à chefia da unidade-pai, portanto considera os PEs das
- * unidades FILHAS diretas das unidades que o usuário chefia, com status CONCLUIDO e
- * criados após a mudança de regra (PlanoEntrega::DATA_MUDANCA_REGRA_PE).
+ * A homologação de um PE compete à chefia da unidade-pai, portanto considera os PEs das
+ * unidades FILHAS diretas das unidades que o usuário chefia, com status HOMOLOGANDO.
  *
  * Expõe duas finalidades sobre o mesmo critério (contador do card e listagem do hiperlink):
  *   - count(): quantidade;
  *   - buscar(): os PEs correspondentes, paginados.
  */
-class AvaliacaoPendentePEDataProvider
+class HomologacaoPendentePEDataProvider
 {
     use ResolveUnidadesFilhasGeridas;
 
@@ -37,9 +36,8 @@ class AvaliacaoPendentePEDataProvider
 
     public function count(string $usuarioId): int
     {
-        return $this->planoEntregaRepository->countPlanosEntregaAvaliacao(
+        return $this->planoEntregaRepository->countPlanosEntregaHomologacao(
             $this->resolverUnidadesFilhasGeridas($usuarioId),
-            PlanoEntrega::DATA_MUDANCA_REGRA_PE,
         );
     }
 
@@ -48,13 +46,12 @@ class AvaliacaoPendentePEDataProvider
      */
     public function buscar(string $usuarioId, int $page = 1, int $perPage = 15): LengthAwarePaginator
     {
-        $busca = new AvaliacaoPendentePEBuscaDTO(
+        $busca = new HomologacaoPendentePEBuscaDTO(
             unidadesIds: $this->resolverUnidadesFilhasGeridas($usuarioId),
-            criadosApos: PlanoEntrega::DATA_MUDANCA_REGRA_PE,
             page: $page,
             perPage: $perPage,
         );
 
-        return $this->planoEntregaRepository->paginatePlanosEntregaAvaliacao($busca);
+        return $this->planoEntregaRepository->paginatePlanosEntregaHomologacao($busca);
     }
 }

@@ -114,4 +114,11 @@ export class HomeApiClient extends TenantV2ResourceApiBase {
       .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/avaliacao-pendente`, { params: { size: '200' } })
       .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
   }
+
+  /** IDs dos Planos de Entrega aguardando homologação (mesmo critério do card). */
+  getPlanosEntregaHomologacaoPendenteIds(): Observable<string[]> {
+    return this.http
+      .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/homologacao-pendente`, { params: { size: '200' } })
+      .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
+  }
 }

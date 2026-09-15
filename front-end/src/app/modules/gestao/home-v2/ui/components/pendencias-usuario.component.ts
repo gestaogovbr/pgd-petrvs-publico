@@ -6,8 +6,6 @@ import { HOME_ERRO_RECUPERAR_DADOS } from '../../home.constants';
 import { AuthService } from 'src/app/services/auth.service';
 import { FilterStorageService } from 'src/app/v2/services/filter-storage.service';
 import { NavigateService } from 'src/app/services/navigate.service';
-import { UnidadeDaoService } from 'src/app/dao/unidade-dao.service';
-import { UnidadeService } from 'src/app/services/unidade.service';
 
 @Component({
   selector: 'home-pendencias-usuario',
@@ -23,8 +21,6 @@ export class PendenciasUsuarioComponent implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly filterStorage = inject(FilterStorageService);
   private readonly go = inject(NavigateService);
-  private readonly unidadeDao = inject(UnidadeDaoService);
-  private readonly unidadeService = inject(UnidadeService);
 
   readonly data = signal<PendenciasUsuario | null>(null);
   readonly loading = signal(false);
@@ -52,7 +48,17 @@ export class PendenciasUsuarioComponent implements OnInit {
   }
 
   irParaAssinaturasPE(): void {
-    this.navegarPEComFilhas({ status: 'HOMOLOGANDO', meus_planos: false });
+    // Usa o endpoint V2 (mesmo critério do card) para navegar exatamente aos PEs aguardando homologação.
+    this.homeApi.getPlanosEntregaHomologacaoPendenteIds().subscribe((ids) => {
+      const filter: Record<string, unknown> = { status: 'HOMOLOGANDO', meus_planos: false };
+      if (ids.length) {
+        filter['id'] = ids;
+      }
+      this.go.navigate({
+        route: ['gestao', 'plano-entrega'],
+        params: { filter },
+      });
+    });
   }
 
   irParaAssinaturasPT(): void {
@@ -91,37 +97,7 @@ export class PendenciasUsuarioComponent implements OnInit {
     });
   }
 
-  /**
-   * Navega para a lista de Planos de Entrega filtrando pelas unidades FILHAS diretas
-   * de todas as unidades que o usuário chefia (homologação/avaliação competem à chefia
-   * da unidade-pai). Se não houver filhas, mantém o filtro sem unidade.
-   */
-  private async navegarPEComFilhas(filtroBase: Record<string, unknown>): Promise<void> {
-    const gerenciadasIds = (this.auth.unidades ?? [])
-      .filter((u) => this.unidadeService.isGestorUnidade(u))
-      .map((u) => u.id);
 
-    const filhasIds = await this.resolverFilhasDiretas(gerenciadasIds);
-
-    const filter: Record<string, unknown> = { ...filtroBase };
-    if (filhasIds.length) {
-      filter['unidade_id'] = filhasIds;
-    }
-
-    this.go.navigate({
-      route: ['gestao', 'plano-entrega'],
-      params: { filter },
-    });
-  }
-
-  /** Resolve e deduplica as filhas diretas de um conjunto de unidades. */
-  private async resolverFilhasDiretas(unidadeIds: string[]): Promise<string[]> {
-    const listas = await Promise.all(
-      unidadeIds.map((id) => this.unidadeDao.unidadesFilhas(id).catch(() => [])),
-    );
-    const ids = listas.flat().map((u) => u.id);
-    return [...new Set(ids)];
-  }
 
   private salvarFiltrosPT(filtros: Record<string, unknown>): void {
     const userId = this.auth.usuario?.id;

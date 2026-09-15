@@ -10,6 +10,7 @@ use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
 use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -53,6 +54,11 @@ class PlanoEntregaRepository implements EnvioRepositoryInterface
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection
     {
         return $this->readRepository->getPlanosEntregaHomologacao($unidadesIds);
+    }
+
+    public function paginatePlanosEntregaHomologacao(HomologacaoPendentePEBuscaDTO $busca): LengthAwarePaginator
+    {
+        return $this->readRepository->paginatePlanosEntregaHomologacao($busca);
     }
 
     public function getEntregasPlanoEntregaHomologacao(array $unidadesIds): Collection

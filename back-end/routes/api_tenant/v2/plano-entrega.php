@@ -5,4 +5,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('plano-entrega', [PlanoEntregaV2::class, 'buscarPorUnidade']);
 Route::get('plano-entrega/avaliacao-pendente', [PlanoEntregaV2::class, 'avaliacaoPendente']);
+Route::get('plano-entrega/homologacao-pendente', [PlanoEntregaV2::class, 'homologacaoPendente']);
 Route::get('plano-entrega/{planoEntregaId}/entrega', [PlanoEntregaV2::class, 'buscarEntregasPorPlano'])->whereUuid('planoEntregaId');

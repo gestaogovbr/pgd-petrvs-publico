@@ -10,6 +10,7 @@ use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoEntrega\DataProviders\AvaliacaoPendentePEDataProvider;
+use App\V2\PlanoEntrega\DataProviders\HomologacaoPendentePEDataProvider;
 use App\V2\Home\DTOs\HomeRequestDTO;
 use App\V2\Home\Traits\ResolveUnidades;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAssinaturaDataProvider;
@@ -29,6 +30,7 @@ class PendenciasUsuario
         private readonly AguardandoMinhaAvaliacaoDataProvider $aguardandoAvaliacao,
         private readonly AguardandoMeuRegistroExecucaoDataProvider $aguardandoRegistroExecucao,
         private readonly AvaliacaoPendentePEDataProvider $avaliacaoPendentePE,
+        private readonly HomologacaoPendentePEDataProvider $homologacaoPendentePE,
     ) {}
 
     protected function getUnidadeRepository(): UnidadeRepository
@@ -92,12 +94,8 @@ class PendenciasUsuario
             ];
         }
 
-        // Homologação e avaliação de PE competem à chefia da unidade-pai direta,
-        // portanto avaliam/homologam os PEs das unidades FILHAS das gerenciadas.
-        $unidadesFilhasIds = $this->unidadeRepository->getSubordinadas($unidadeIds)->pluck('id')->toArray();
-
         return [
-            'assinaturas_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaHomologacao($unidadesFilhasIds),
+            'assinaturas_pe_pendentes' => $this->homologacaoPendentePE->count($usuarioId),
             'assinaturas_pt_pendentes' => $this->aguardandoAssinatura->count($usuarioId),
             // Registros de execução de PE competem ao gestor da própria unidade.
             'registros_execucao_pe_atraso' => $this->planoEntregaRepository->countEntregasSemProgresso($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
