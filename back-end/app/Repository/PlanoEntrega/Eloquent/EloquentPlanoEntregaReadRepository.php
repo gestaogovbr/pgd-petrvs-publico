@@ -11,6 +11,7 @@ use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
 use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\RegistroExecucaoAtrasoPEBuscaDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -234,6 +235,48 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             return 0;
         }
 
+        return $this->entregasSemProgressoAtrasadasQuery($unidadesIds, $planoEntregaCriadoApos)->count();
+    }
+
+    /**
+     * Lista paginada de PEs com pelo menos uma entrega/RE em atraso.
+     * O card conta as entregas (countEntregasSemProgresso); esta listagem mostra os PEs
+     * que as contêm, sobre o mesmo critério de atraso/sem-progresso.
+     */
+    public function paginatePlanosEntregaComRegistroAtraso(RegistroExecucaoAtrasoPEBuscaDTO $busca): LengthAwarePaginator
+    {
+        if ($busca->unidadesIds === []) {
+            return new LengthAwarePaginatorConcrete([], 0, $busca->perPage, $busca->page);
+        }
+
+        return $this->basePlanosEntregaComRegistroAtrasoQuery($busca)
+            ->with(['unidade:id,sigla,nome', 'programa:id,nome'])
+            ->orderBy('numero')
+            ->paginate(perPage: $busca->perPage, page: $busca->page);
+    }
+
+    /**
+     * Query base dos PEs (distintos) com ao menos uma entrega/RE em atraso.
+     * Fonte única de verdade para o contador do card e a listagem do hiperlink.
+     */
+    private function basePlanosEntregaComRegistroAtrasoQuery(RegistroExecucaoAtrasoPEBuscaDTO $busca)
+    {
+        return $this->query()
+            ->whereIn('unidade_id', $busca->unidadesIds)
+            ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
+            ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO))
+            ->when($busca->criadosApos !== null, fn ($query) => $query->where('created_at', '>', $busca->criadosApos))
+            ->whereHas('entregas', fn ($query) => $this->aplicarEntregaSemProgresso($query));
+    }
+
+    /**
+     * Query de entregas (planos_entregas_entregas) sem progresso cujo PE está atrasado.
+     *
+     * @param string[] $unidadesIds
+     * @return \Illuminate\Database\Eloquent\Builder<PlanoEntregaEntrega>
+     */
+    private function entregasSemProgressoAtrasadasQuery(array $unidadesIds, ?string $planoEntregaCriadoApos)
+    {
         return PlanoEntregaEntrega::query()
             ->whereHas('planoEntrega', function ($query) use ($unidadesIds, $planoEntregaCriadoApos) {
                 $query
@@ -245,11 +288,18 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
                     $query->where('created_at', '>', $planoEntregaCriadoApos);
                 }
             })
-            ->whereNotExists(function ($query) {
-                $query->selectRaw('1')
-                    ->from(self::PROGRESSOS_TABLE)
-                    ->whereColumn(self::PROGRESSO_FK_COLUMN, self::PLANO_ENTREGA_PK_COLUMN);
-            })
-            ->count();
+            ->tap(fn ($query) => $this->aplicarEntregaSemProgresso($query));
+    }
+
+    /**
+     * Aplica o filtro "entrega sem nenhum registro de progresso".
+     */
+    private function aplicarEntregaSemProgresso($query): void
+    {
+        $query->whereNotExists(function ($sub) {
+            $sub->selectRaw('1')
+                ->from(self::PROGRESSOS_TABLE)
+                ->whereColumn(self::PROGRESSO_FK_COLUMN, self::PLANO_ENTREGA_PK_COLUMN);
+        });
     }
 }

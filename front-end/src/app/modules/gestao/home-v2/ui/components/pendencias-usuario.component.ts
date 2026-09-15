@@ -67,9 +67,17 @@ export class PendenciasUsuarioComponent implements OnInit {
   }
 
   irParaRegistrosExecucaoPE(): void {
-    this.go.navigate({
-      route: ['execucao', 'plano-entrega'],
-      params: { execucao: true, filter: { meus_planos: false } },
+    // Usa o endpoint V2 (mesmo critério do card) para navegar aos PEs com RE em atraso de
+    // TODAS as unidades que o usuário chefia, não apenas uma.
+    this.homeApi.getPlanosEntregaRegistroExecucaoAtrasoIds().subscribe((ids) => {
+      const filter: Record<string, unknown> = { meus_planos: false };
+      if (ids.length) {
+        filter['id'] = ids;
+      }
+      this.go.navigate({
+        route: ['execucao', 'plano-entrega'],
+        params: { execucao: true, filter },
+      });
     });
   }
 

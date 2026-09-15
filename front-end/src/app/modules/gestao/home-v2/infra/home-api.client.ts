@@ -121,4 +121,11 @@ export class HomeApiClient extends TenantV2ResourceApiBase {
       .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/homologacao-pendente`, { params: { size: '200' } })
       .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
   }
+
+  /** IDs dos Planos de Entrega com Registro de Execução em atraso (mesmo critério do card). */
+  getPlanosEntregaRegistroExecucaoAtrasoIds(): Observable<string[]> {
+    return this.http
+      .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/registro-execucao-atraso`, { params: { size: '200' } })
+      .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
+  }
 }

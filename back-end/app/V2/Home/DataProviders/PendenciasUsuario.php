@@ -11,6 +11,7 @@ use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
 use App\V2\PlanoEntrega\DataProviders\AvaliacaoPendentePEDataProvider;
 use App\V2\PlanoEntrega\DataProviders\HomologacaoPendentePEDataProvider;
+use App\V2\PlanoEntrega\DataProviders\RegistroExecucaoAtrasoPEDataProvider;
 use App\V2\Home\DTOs\HomeRequestDTO;
 use App\V2\Home\Traits\ResolveUnidades;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAssinaturaDataProvider;
@@ -31,6 +32,7 @@ class PendenciasUsuario
         private readonly AguardandoMeuRegistroExecucaoDataProvider $aguardandoRegistroExecucao,
         private readonly AvaliacaoPendentePEDataProvider $avaliacaoPendentePE,
         private readonly HomologacaoPendentePEDataProvider $homologacaoPendentePE,
+        private readonly RegistroExecucaoAtrasoPEDataProvider $registroExecucaoAtrasoPE,
     ) {}
 
     protected function getUnidadeRepository(): UnidadeRepository
@@ -98,7 +100,7 @@ class PendenciasUsuario
             'assinaturas_pe_pendentes' => $this->homologacaoPendentePE->count($usuarioId),
             'assinaturas_pt_pendentes' => $this->aguardandoAssinatura->count($usuarioId),
             // Registros de execução de PE competem ao gestor da própria unidade.
-            'registros_execucao_pe_atraso' => $this->planoEntregaRepository->countEntregasSemProgresso($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
+            'registros_execucao_pe_atraso' => $this->registroExecucaoAtrasoPE->count($usuarioId),
             'registros_execucao_pt_atraso' => $reAtrasadosProprios,
             'avaliacoes_pt_pendentes' => $this->aguardandoAvaliacao->count($usuarioId),
             'avaliacoes_pe_pendentes' => $this->avaliacaoPendentePE->count($usuarioId),

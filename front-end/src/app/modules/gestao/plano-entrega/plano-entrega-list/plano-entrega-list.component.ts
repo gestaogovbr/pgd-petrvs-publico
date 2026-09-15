@@ -370,9 +370,13 @@ export class PlanoEntregaListComponent extends PageListBase<
 		});
 		if (this.execucao) {
 			this.title = this.title + " (Execução)";
-			this.filter!.controls.unidade_id.setValue(
-				this.auth.unidadeGestor()?.id || null
-			);
+			// Quando o atalho da home informa os PEs por id (todas as unidades geridas),
+			// não restringe a uma única unidade do gestor.
+			if (!filtroDeUnidadeNaNavegacao) {
+				this.filter!.controls.unidade_id.setValue(
+					this.auth.unidadeGestor()?.id || null
+				);
+			}
 			this.filter!.controls.principais.setValue(false);
 		}
 		if (this.avaliacao) {
@@ -554,7 +558,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 		if (Array.isArray(form.id) && form.id.length) {
 			result.push(["id", "in", form.id]);
 		}
-		if (!form.unidade_id) {
+		if (!form.unidade_id && !(Array.isArray(form.id) && form.id.length)) {
 			result.push(["unidades_vinculadas", "==", this.auth.unidade?.id]);
 		}
 		if (form.planejamento_id)

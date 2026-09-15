@@ -12,6 +12,7 @@ use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAvaliacaoDataProvider;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMeuRegistroExecucaoDataProvider;
 use App\V2\PlanoEntrega\DataProviders\AvaliacaoPendentePEDataProvider;
 use App\V2\PlanoEntrega\DataProviders\HomologacaoPendentePEDataProvider;
+use App\V2\PlanoEntrega\DataProviders\RegistroExecucaoAtrasoPEDataProvider;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
@@ -28,6 +29,7 @@ beforeEach(function () {
     $this->aguardandoRegistroExecucao = Mockery::mock(AguardandoMeuRegistroExecucaoDataProvider::class);
     $this->avaliacaoPendentePE = Mockery::mock(AvaliacaoPendentePEDataProvider::class);
     $this->homologacaoPendentePE = Mockery::mock(HomologacaoPendentePEDataProvider::class);
+    $this->registroExecucaoAtrasoPE = Mockery::mock(RegistroExecucaoAtrasoPEDataProvider::class);
 
     $this->provider = new PendenciasUsuario(
         $this->unidadeRepository,
@@ -39,6 +41,7 @@ beforeEach(function () {
         $this->aguardandoRegistroExecucao,
         $this->avaliacaoPendentePE,
         $this->homologacaoPendentePE,
+        $this->registroExecucaoAtrasoPE,
     );
 });
 
