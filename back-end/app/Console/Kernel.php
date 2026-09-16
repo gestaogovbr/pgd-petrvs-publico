@@ -82,7 +82,7 @@ class Kernel extends ConsoleKernel
                 /** @var Tenant $tenant */
                 ExpirarRelatorioGeracaoJob::dispatch($tenant->id);
             }
-        })->everyFifteenMinutes()->name('Expirar Exportação de Relatórios')->withoutOverlapping();
+        })->hourly()->name('Expirar Exportação de Relatórios')->withoutOverlapping();
 
         $schedule->call(function () {
             $tenants = Tenant::all();

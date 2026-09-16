@@ -5,17 +5,14 @@ declare(strict_types=1);
 namespace App\V2\RelatorioGeracao;
 
 use App\Enums\RelatorioGeracaoStatus;
-use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
-use App\Exports\RelatorioExcelPaginadoExport;
-use App\Exports\RelatorioExcelPaginadoWriter;
 use App\Jobs\ExcluirRelatorioGeracaoJob;
 use App\Jobs\ExpirarRelatorioGeracaoJob;
 use App\Jobs\GerarRelatorioExcelJob;
+use App\Models\RelatorioGeracao;
 use App\Models\Usuario;
 use App\Repository\RelatorioGeracaoRepository;
-use App\Services\RelatorioGeracao\RelatorioExcelGeradorFactory;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoIndexDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoRowDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStatusQueryDTO;
@@ -23,7 +20,6 @@ use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStoreDTO;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -31,8 +27,8 @@ class RelatorioGeracaoService
 {
     public function __construct(
         private readonly RelatorioGeracaoRepository $repository,
-        private readonly RelatorioExcelGeradorFactory $geradorFactory,
-        private readonly RelatorioExcelPaginadoWriter $excelWriter,
+        private readonly RelatorioGeracaoExcel $excel,
+        private readonly RelatorioGeracaoStorage $storage,
     ) {
     }
 
@@ -104,53 +100,18 @@ class RelatorioGeracaoService
             return;
         }
 
-        $path = null;
+        $path = $this->storage->caminho((string) $geracao->id);
 
         try {
-            $tipo = RelatorioGeracaoTipo::from((string) $geracao->tipo);
-            $gerador = $this->geradorFactory->make($tipo);
-            $path = 'relatorios/' . $geracao->id . '.xlsx';
-
-            Storage::disk('local')->makeDirectory('relatorios');
-
-            $export = new RelatorioExcelPaginadoExport(
-                $gerador->criarExport(),
-                fn (int $page, int $limit): array => $gerador->consultarPagina($geracao->parametros ?? [], $page, $limit),
-                $gerador->pageSize(),
+            $arquivo = $this->excel->gerar(
+                $geracao,
                 function (int $processadas, ?int $total) use ($geracao): void {
-                    $this->repository->update((string) $geracao->id, [
-                        'progresso_pagina' => $processadas,
-                        'progresso_total' => $total,
-                    ]);
-                }
+                    $this->atualizarProgresso((string) $geracao->id, $processadas, $total);
+                },
             );
-
-            $this->excelWriter->store($export, Storage::disk('local')->path($path));
-            unset($export);
-
-            $this->repository->update((string) $geracao->id, [
-                'status' => RelatorioGeracaoStatus::CONCLUIDA,
-                'arquivo_path' => $path,
-                'arquivo_nome' => $gerador->arquivoNome(),
-                'finalizado_em' => now(),
-                'erro_mensagem' => null,
-            ]);
+            $this->marcarRelatorioComoConcluido($geracao, $arquivo['path'], $arquivo['nome']);
         } catch (Throwable $e) {
-            if ($path !== null && Storage::disk('local')->exists($path)) {
-                Storage::disk('local')->delete($path);
-            }
-
-            $this->repository->update((string) $geracao->id, [
-                'status' => RelatorioGeracaoStatus::ERRO,
-                'finalizado_em' => now(),
-                'erro_mensagem' => GerarRelatorioExcelJob::mensagemErro($e),
-            ]);
-
-            Log::error('Erro ao gerar relatório Excel', [
-                'geracaoId' => $geracaoId,
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            $this->registrarFalha($geracao, $path, $e);
         }
     }
 
@@ -165,11 +126,11 @@ class RelatorioGeracaoService
             throw new ServerException('RelatorioGeracao', 'O relatório ainda não está disponível para download.');
         }
 
-        if (! Storage::disk('local')->exists($geracao->arquivo_path)) {
+        if (! $this->storage->existe($geracao->arquivo_path)) {
             throw new NotFoundException('Arquivo não encontrado.');
         }
 
-        return Storage::disk('local')->download(
+        return $this->storage->download(
             $geracao->arquivo_path,
             $geracao->arquivo_nome ?: 'relatorio.xlsx'
         );
@@ -194,7 +155,7 @@ class RelatorioGeracaoService
         $excluidas = 0;
 
         foreach ($geracoes as $geracao) {
-            $this->apagarArquivoGeracao((string) $geracao->id, $geracao->arquivo_path);
+            $this->storage->apagarGeracao((string) $geracao->id, $geracao->arquivo_path);
             $this->repository->forceDelete((string) $geracao->id);
             $excluidas++;
         }
@@ -202,18 +163,40 @@ class RelatorioGeracaoService
         return $excluidas;
     }
 
-    private function apagarArquivoGeracao(string $geracaoId, mixed $arquivoPath): void
+    private function atualizarProgresso(string $geracaoId, int $processadas, ?int $total): void
     {
-        $paths = array_unique(array_filter([
-            is_string($arquivoPath) && $arquivoPath !== '' ? $arquivoPath : null,
-            'relatorios/' . $geracaoId . '.xlsx',
-        ]));
+        $this->repository->update($geracaoId, [
+            'progresso_pagina' => $processadas,
+            'progresso_total' => $total,
+        ]);
+    }
 
-        foreach ($paths as $path) {
-            if (Storage::disk('local')->exists($path)) {
-                Storage::disk('local')->delete($path);
-            }
-        }
+    private function marcarRelatorioComoConcluido(RelatorioGeracao $geracao, string $path, string $arquivoNome): void
+    {
+        $this->repository->update((string) $geracao->id, [
+            'status' => RelatorioGeracaoStatus::CONCLUIDA,
+            'arquivo_path' => $path,
+            'arquivo_nome' => $arquivoNome,
+            'finalizado_em' => now(),
+            'erro_mensagem' => null,
+        ]);
+    }
+
+    private function registrarFalha(RelatorioGeracao $geracao, string $path, Throwable $e): void
+    {
+        $this->storage->apagar($path);
+
+        $this->repository->update((string) $geracao->id, [
+            'status' => RelatorioGeracaoStatus::ERRO,
+            'finalizado_em' => now(),
+            'erro_mensagem' => GerarRelatorioExcelJob::mensagemErro($e),
+        ]);
+
+        Log::error('Erro ao gerar relatório Excel', [
+            'geracaoId' => $geracao->id,
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
     }
 
     private function requireTenantId(): string

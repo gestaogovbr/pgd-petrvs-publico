@@ -3,24 +3,23 @@
 declare(strict_types=1);
 
 use App\Console\Kernel;
-use App\Contracts\RelatorioExcelGeradorContract;
 use App\Enums\RelatorioGeracaoStatus;
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
-use App\Exports\RelatorioExcelPaginadoWriter;
 use App\Jobs\ExcluirRelatorioGeracaoJob;
 use App\Jobs\ExpirarRelatorioGeracaoJob;
 use App\Jobs\GerarRelatorioExcelJob;
 use App\Models\RelatorioGeracao;
 use App\Models\Usuario;
 use App\Repository\RelatorioGeracaoRepository;
-use App\Services\RelatorioGeracao\RelatorioExcelGeradorFactory;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoIndexDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoRowDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStatusQueryDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStoreDTO;
+use App\V2\RelatorioGeracao\RelatorioGeracaoExcel;
 use App\V2\RelatorioGeracao\RelatorioGeracaoService;
+use App\V2\RelatorioGeracao\RelatorioGeracaoStorage;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -62,13 +61,13 @@ function makeRelatorioGeracao(array $overrides = []): RelatorioGeracao
 
 function makeRelatorioGeracaoService(
     RelatorioGeracaoRepository $repository,
-    ?RelatorioExcelGeradorFactory $factory = null,
-    ?RelatorioExcelPaginadoWriter $writer = null,
+    ?RelatorioGeracaoExcel $excel = null,
+    ?RelatorioGeracaoStorage $storage = null,
 ): RelatorioGeracaoService {
     return new RelatorioGeracaoService(
         $repository,
-        $factory ?? Mockery::mock(RelatorioExcelGeradorFactory::class),
-        $writer ?? Mockery::mock(RelatorioExcelPaginadoWriter::class),
+        $excel ?? Mockery::mock(RelatorioGeracaoExcel::class),
+        $storage ?? new RelatorioGeracaoStorage(),
     );
 }
 
@@ -204,19 +203,16 @@ test('processar não atualiza quando a geração não existe', function () {
 });
 
 test('processar grava o excel e marca a geração como concluída', function () {
-    Storage::fake('local');
-
     $geracao = makeRelatorioGeracao();
-    $gerador = Mockery::mock(RelatorioExcelGeradorContract::class);
-    $gerador->shouldReceive('criarExport')->once()->andReturn(new stdClass());
-    $gerador->shouldReceive('pageSize')->once()->andReturn(500);
-    $gerador->shouldReceive('arquivoNome')->once()->andReturn('relatorio-planos-trabalho.xlsx');
 
-    $factory = Mockery::mock(RelatorioExcelGeradorFactory::class);
-    $factory->shouldReceive('make')->once()->with(RelatorioGeracaoTipo::PLANO_TRABALHO)->andReturn($gerador);
-
-    $writer = Mockery::mock(RelatorioExcelPaginadoWriter::class);
-    $writer->shouldReceive('store')->once();
+    $excel = Mockery::mock(RelatorioGeracaoExcel::class);
+    $excel->shouldReceive('gerar')
+        ->once()
+        ->with($geracao, Mockery::type('callable'))
+        ->andReturn([
+            'path' => 'relatorios/geracao-1.xlsx',
+            'nome' => 'relatorio-planos-trabalho.xlsx',
+        ]);
 
     $repository = Mockery::mock(RelatorioGeracaoRepository::class);
     $repository->shouldReceive('find')->once()->with('geracao-1')->andReturn($geracao);
@@ -229,8 +225,32 @@ test('processar grava o excel e marca a geração como concluída', function () 
         }))
         ->andReturn($geracao);
 
-    $service = makeRelatorioGeracaoService($repository, $factory, $writer);
+    $service = makeRelatorioGeracaoService($repository, $excel);
     $service->processar('geracao-1');
+});
+
+test('processar marca erro e apaga o arquivo quando a geração falha', function () {
+    Storage::fake('local');
+    Storage::disk('local')->put('relatorios/geracao-1.xlsx', 'parcial');
+
+    $geracao = makeRelatorioGeracao();
+    $excel = Mockery::mock(RelatorioGeracaoExcel::class);
+    $excel->shouldReceive('gerar')->once()->andThrow(new RuntimeException('falha interna'));
+
+    $repository = Mockery::mock(RelatorioGeracaoRepository::class);
+    $repository->shouldReceive('find')->once()->with('geracao-1')->andReturn($geracao);
+    $repository->shouldReceive('update')
+        ->once()
+        ->with('geracao-1', Mockery::on(function (array $attributes): bool {
+            return $attributes['status'] === RelatorioGeracaoStatus::ERRO
+                && $attributes['erro_mensagem'] === 'falha interna';
+        }))
+        ->andReturn($geracao);
+
+    $service = makeRelatorioGeracaoService($repository, $excel);
+    $service->processar('geracao-1');
+
+    Storage::disk('local')->assertMissing('relatorios/geracao-1.xlsx');
 });
 
 test('marcarErro delega ao repositório', function () {
@@ -327,7 +347,7 @@ test('kernel agenda exclusão de exportação todos os dias à 1h', function () 
         ->and($event->expression)->toBe('0 1 * * *');
 });
 
-test('kernel agenda expiração de exportação a cada 15 minutos', function () {
+test('kernel agenda expiração de exportação a cada 1 hora', function () {
     $schedule = new Schedule();
     $kernel = app(Kernel::class);
     $method = new ReflectionMethod($kernel, 'schedule');
@@ -343,7 +363,7 @@ test('kernel agenda expiração de exportação a cada 15 minutos', function () 
         ->first(fn ($event): bool => ($event->description ?? null) === 'Expirar Exportação de Relatórios');
 
     expect($event)->not->toBeNull()
-        ->and($event->expression)->toBe('*/15 * * * *');
+        ->and($event->expression)->toBe('0 * * * *');
 });
 
 test('conexão relatorio_exportacao tem timeout de 30 minutos e retry_after maior que o timeout', function () {
