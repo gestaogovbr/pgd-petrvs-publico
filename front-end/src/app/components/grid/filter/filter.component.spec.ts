@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { FormGroup } from '@angular/forms';
 import { Subject, throwError } from 'rxjs';
 import { DialogService } from 'src/app/services/dialog.service';
+import { NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
 import { FilterComponent } from './filter.component';
 
@@ -10,20 +11,25 @@ describe('FilterComponent', () => {
   let component: FilterComponent;
   let fixture: ComponentFixture<FilterComponent>;
   let dialog: jasmine.SpyObj<DialogService>;
+  let go: jasmine.SpyObj<NavigateService>;
 
   beforeEach(async () => {
     dialog = jasmine.createSpyObj<DialogService>('DialogService', [
       'showSppinerOverlay',
       'closeSppinerOverlay',
-      'alert'
+      'alert',
+      'choose'
     ]);
     dialog.alert.and.resolveTo();
+    dialog.choose.and.resolveTo({ label: 'Fechar', value: 'close' });
+    go = jasmine.createSpyObj<NavigateService>('NavigateService', ['openNewTab', 'navigate']);
 
     await TestBed.configureTestingModule({
       declarations: [FilterComponent],
       providers: [
         { provide: 'ID_GENERATOR_BASE', useValue: 'test' },
         { provide: DialogService, useValue: dialog },
+        { provide: NavigateService, useValue: go },
         { provide: UtilService, useValue: { onlyAlphanumeric: (value: string) => value } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -82,4 +88,42 @@ describe('FilterComponent', () => {
 
     expect(exportExcel).toHaveBeenCalledTimes(1);
   });
+
+  it('na exportação em fila mostra aviso com link para a página de Exportação de Relatórios', fakeAsync(() => {
+    const exportSubject = new Subject<any>();
+    component.exportExcelQueued = true;
+    component.exportExcel = () => exportSubject.asObservable();
+
+    component.onButtonExcelClick();
+
+    expect(dialog.showSppinerOverlay).toHaveBeenCalledWith('Solicitando a geração do relatório...');
+
+    exportSubject.next({ success: true, data: { id: 'g1' } });
+    exportSubject.complete();
+    tick();
+
+    expect(dialog.closeSppinerOverlay).toHaveBeenCalled();
+    expect(dialog.choose).toHaveBeenCalledWith(
+      'Exportação de Relatório',
+      'A exportação do relatório foi iniciada e será processada em segundo plano. Acompanhe o andamento e faça o download na página de Exportação de Relatórios.',
+      jasmine.any(Array)
+    );
+    expect(go.openNewTab).not.toHaveBeenCalled();
+    expect(go.navigate).not.toHaveBeenCalled();
+  }));
+
+  it('abre a página de Exportação de Relatórios em nova aba', fakeAsync(() => {
+    const exportSubject = new Subject<any>();
+    component.exportExcelQueued = true;
+    component.exportExcel = () => exportSubject.asObservable();
+    dialog.choose.and.resolveTo({ label: 'Ir para Exportação de Relatórios', value: 'go' });
+
+    component.onButtonExcelClick();
+    exportSubject.next({ success: true, data: { id: 'g1' } });
+    exportSubject.complete();
+    tick();
+
+    expect(go.openNewTab).toHaveBeenCalledWith('/relatorios/exportacao');
+    expect(go.navigate).not.toHaveBeenCalled();
+  }));
 });

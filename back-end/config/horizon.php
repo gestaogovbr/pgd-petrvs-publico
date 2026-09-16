@@ -90,6 +90,7 @@ return [
 
     'waits' => [
         'redis:default' => 60,
+        'relatorio_exportacao:relatorio_exportacao' => 60,
     ],
 
     /*
@@ -206,6 +207,15 @@ return [
                 'tries' => 1,
                 'timeout' => 60 * 60 * 24 * 2
             ],
+            'supervisor-relatorio-exportacao' => [
+                'connection' => 'relatorio_exportacao',
+                'queue' => ['relatorio_exportacao'],
+                'balance' => 'simple',
+                'processes' => 1,
+                'tries' => 1,
+                'timeout' => 1800,
+                'memory' => 1024,
+            ],
             'supervisor-pgd' => [
                 'connection' => 'rabbitmq',
                 'queue' => ['pgd_queue'],
@@ -235,6 +245,15 @@ return [
                 'processes' => 1,
                 'tries' => 1,
                 'timeout' => 60 * 60 * 24 * 2
+            ],
+            'supervisor-relatorio-exportacao' => [
+                'connection' => 'relatorio_exportacao',
+                'queue' => ['relatorio_exportacao'],
+                'balance' => 'simple',
+                'processes' => 1,
+                'tries' => 1,
+                'timeout' => 1800,
+                'memory' => 1024,
             ],
             'supervisor-pgd' => [
                 'connection' => 'rabbitmq',

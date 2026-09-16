@@ -2,7 +2,6 @@
 namespace App\Exports;
 
 use App\Models\PlanoTrabalho;
-use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -24,10 +23,26 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
     use RegistersEventListeners;
 
     protected $rows;
+    protected ?int $totalRows = null;
 
     public function __construct($rows)
     {
         $this->rows = $rows;
+    }
+
+    public function setTotalRows(int $totalRows): self
+    {
+        $this->totalRows = $totalRows;
+        return $this;
+    }
+
+    protected function totalRows(): int
+    {
+        if ($this->totalRows !== null) {
+            return $this->totalRows;
+        }
+
+        return is_countable($this->rows) ? count($this->rows) : 0;
     }
 
     public function collection()
@@ -67,9 +82,6 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
 
     public function map($row): array
     {
-        $inicio = Carbon::createFromFormat('Y-m-d', $row->dataInicio);
-        $fim = Carbon::createFromFormat('Y-m-d', $row->dataFim);
-
         return [
             '#'.$row->numero,
             $row->participanteNome,
@@ -123,15 +135,6 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ]
             ],
-            // borda no conjunto inteiro + 1 linha de header
-            'A1:I'.(count($this->rows) + 1) => [
-                'borders' => [
-                    'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                        'color' => ['argb' => '000000'],
-                    ],
-                ]
-            ]
         ];
     }
 

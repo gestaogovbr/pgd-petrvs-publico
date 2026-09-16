@@ -2675,6 +2675,38 @@ CREATE TABLE `questionarios_preenchimentos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `relatorio_geracoes`
+--
+
+DROP TABLE IF EXISTS `relatorio_geracoes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `relatorio_geracoes` (
+  `id` char(36) NOT NULL,
+  `tipo` varchar(50) NOT NULL,
+  `nome` varchar(180) NOT NULL,
+  `status` enum('PROCESSANDO','CONCLUIDA','ERRO') NOT NULL,
+  `usuario_id` char(36) NOT NULL,
+  `parametros` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`parametros`)),
+  `arquivo_path` varchar(500) DEFAULT NULL,
+  `arquivo_nome` varchar(255) DEFAULT NULL,
+  `iniciado_em` datetime NOT NULL,
+  `finalizado_em` datetime DEFAULT NULL,
+  `erro_mensagem` text DEFAULT NULL,
+  `progresso_pagina` int(10) unsigned NOT NULL DEFAULT 0,
+  `progresso_total` int(10) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `relatorio_geracoes_usuario_id_index` (`usuario_id`),
+  KEY `relatorio_geracoes_status_index` (`status`),
+  KEY `relatorio_geracoes_iniciado_em_index` (`iniciado_em`),
+  KEY `relatorio_geracoes_usuario_id_iniciado_em_index` (`usuario_id`,`iniciado_em`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `reacoes`
 --
 

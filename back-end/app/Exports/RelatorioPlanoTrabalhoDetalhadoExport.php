@@ -122,7 +122,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ]
             ],
-            'I1:I'.(count($this->rows) + 2) => [
+            'I1:I2' => [
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ],
@@ -138,15 +138,6 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ]
             ],
-            // borda no conjunto inteiro + 2 linhas de header
-            'A1:R'.(count($this->rows) + 2) => [
-                'borders' => [
-                    'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                        'color' => ['argb' => '000000'],
-                    ],
-                ]
-            ]
         ];
     }
 

@@ -131,6 +131,10 @@ use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryCo
 use App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository;
 use App\Repository\RelatorioEntrega\Contracts\RelatorioEntregaReadRepositoryContract;
 use App\Repository\RelatorioEntrega\Eloquent\EloquentRelatorioEntregaReadRepository;
+use App\Repository\RelatorioGeracao\Contracts\RelatorioGeracaoReadRepositoryContract;
+use App\Repository\RelatorioGeracao\Contracts\RelatorioGeracaoWriteRepositoryContract;
+use App\Repository\RelatorioGeracao\Eloquent\EloquentRelatorioGeracaoReadRepository;
+use App\Repository\RelatorioGeracao\Eloquent\EloquentRelatorioGeracaoWriteRepository;
 use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
 use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
 use App\Repository\MuralAviso\Contracts\MuralAvisoReadRepositoryContract;
@@ -494,6 +498,16 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             RelatorioEntregaReadRepositoryContract::class,
             EloquentRelatorioEntregaReadRepository::class,
+        );
+
+        $this->app->bind(
+            RelatorioGeracaoReadRepositoryContract::class,
+            EloquentRelatorioGeracaoReadRepository::class,
+        );
+
+        $this->app->bind(
+            RelatorioGeracaoWriteRepositoryContract::class,
+            EloquentRelatorioGeracaoWriteRepository::class,
         );
 
         $this->app->bind(
