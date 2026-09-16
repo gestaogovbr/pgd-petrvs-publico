@@ -29,6 +29,7 @@ test('issue 2555 - carga automatica confirma ausencia e adiciona servidor local 
     ]);
 
     IntegracaoServidor::create([
+        'codigo_orgao' => codigoOrgaoIssue2555(),
         'cpf_ativo' => '1',
         'cpf' => $cpf,
         'nome' => 'Servidor Ausente Issue 2555',
@@ -148,6 +149,7 @@ test('issue 2555 - carga automatica nao cria candidatos quando uma resposta da l
     ]);
 
     IntegracaoServidor::create([
+        'codigo_orgao' => codigoOrgaoIssue2555(),
         'cpf_ativo' => '1',
         'cpf' => $cpf,
         'nome' => 'Servidor Protegido Issue 2555',
@@ -223,6 +225,7 @@ test('issue 2555 - coleta parcial de UORGs preserva o snapshot anterior de servi
     ]);
 
     SiapeListaUORGS::create([
+        'codigo_orgao' => codigoOrgaoIssue2555(),
         'response' => listaUorgsIssue2555(),
         'processado' => true,
     ]);
@@ -471,7 +474,11 @@ test('issue 2555 - coleta completa substitui o snapshot anterior de servidores',
         'response' => listaServidoresVaziaIssue2555(),
         'processado' => true,
     ]);
-    SiapeListaUORGS::create(['response' => listaUorgsIssue2555(), 'processado' => true]);
+    SiapeListaUORGS::create([
+        'codigo_orgao' => codigoOrgaoIssue2555(),
+        'response' => listaUorgsIssue2555(),
+        'processado' => true,
+    ]);
 
     $buscarLista = new class(configuracaoSiapeIssue2555()) extends BuscarDadosSiapeServidores
     {
@@ -524,6 +531,7 @@ function criarUsuarioIssue2555(
 function criarIntegracaoServidorIssue2555(string $cpf, string $matricula): IntegracaoServidor
 {
     return IntegracaoServidor::create([
+        'codigo_orgao' => codigoOrgaoIssue2555(),
         'cpf_ativo' => '1',
         'cpf' => $cpf,
         'nome' => 'Servidor Issue 2555',
@@ -553,6 +561,11 @@ function configuracaoSiapeIssue2555(): array
         'parmExistPag' => 'S',
         'parmTipoVinculo' => '1',
     ];
+}
+
+function codigoOrgaoIssue2555(): string
+{
+    return \App\Services\CodigoOrgaoService::obrigatorio(configuracaoSiapeIssue2555()['codOrgao']);
 }
 
 function listaServidoresVaziaIssue2555(): string
