@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Exports;
 
 use DateTimeInterface;
+use InvalidArgumentException;
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Common\Entity\Style\CellAlignment;
@@ -16,6 +17,7 @@ use OpenSpout\Writer\XLSX\Properties;
 use OpenSpout\Writer\XLSX\Writer;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use RuntimeException;
 
 class RelatorioExcelPaginadoWriter
 {
@@ -25,7 +27,7 @@ class RelatorioExcelPaginadoWriter
     {
         $directory = dirname($absolutePath);
         if (! is_dir($directory) && ! mkdir($directory, 0777, true) && ! is_dir($directory)) {
-            throw new \RuntimeException('Não foi possível criar o diretório do relatório.');
+            throw new RuntimeException('Não foi possível criar o diretório do relatório.');
         }
 
         $options = new Options();
@@ -181,7 +183,7 @@ class RelatorioExcelPaginadoWriter
     private function parseA1Range(string $range): array
     {
         if (! preg_match('/^([A-Z]+)(\d+):([A-Z]+)(\d+)$/i', $range, $matches)) {
-            throw new \InvalidArgumentException("Intervalo de células inválido: {$range}");
+            throw new InvalidArgumentException("Intervalo de células inválido: {$range}");
         }
 
         return [

@@ -4,6 +4,7 @@ use App\Enums\RelatorioGeracaoStatus;
 use App\Jobs\ExcluirRelatorioGeracaoJob;
 use App\Jobs\ExpirarRelatorioGeracaoJob;
 use App\Jobs\GerarRelatorioExcelJob;
+use Illuminate\Queue\TimeoutExceededException;
 
 test('status da geração possui os rótulos da listagem', function () {
     expect(RelatorioGeracaoStatus::PROCESSANDO->label())->toBe('Em processamento')
@@ -27,7 +28,7 @@ test('job de geração usa fila própria com timeout de 30 minutos', function ()
 });
 
 test('timeout da geração usa mensagem de erro amigável', function () {
-    expect(GerarRelatorioExcelJob::mensagemErro(new Illuminate\Queue\TimeoutExceededException('has timed out')))
+    expect(GerarRelatorioExcelJob::mensagemErro(new TimeoutExceededException('has timed out')))
         ->toBe(GerarRelatorioExcelJob::MENSAGEM_ERRO_TIMEOUT)
         ->and(GerarRelatorioExcelJob::mensagemErro(new RuntimeException('falha interna')))
         ->toBe('falha interna')

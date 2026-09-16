@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Console\Kernel;
 use App\Contracts\RelatorioExcelGeradorContract;
 use App\Enums\RelatorioGeracaoStatus;
 use App\Enums\RelatorioGeracaoTipo;
@@ -20,6 +21,7 @@ use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoRowDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStatusQueryDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStoreDTO;
 use App\V2\RelatorioGeracao\RelatorioGeracaoService;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Bus;
@@ -307,8 +309,8 @@ test('excluirGeracoesAntigas apaga o arquivo e o registro com mais de 24 horas',
 });
 
 test('kernel agenda exclusão de exportação todos os dias à 1h', function () {
-    $schedule = new Illuminate\Console\Scheduling\Schedule();
-    $kernel = app(App\Console\Kernel::class);
+    $schedule = new Schedule();
+    $kernel = app(Kernel::class);
     $method = new ReflectionMethod($kernel, 'schedule');
     $method->setAccessible(true);
 
@@ -326,8 +328,8 @@ test('kernel agenda exclusão de exportação todos os dias à 1h', function () 
 });
 
 test('kernel agenda expiração de exportação a cada 15 minutos', function () {
-    $schedule = new Illuminate\Console\Scheduling\Schedule();
-    $kernel = app(App\Console\Kernel::class);
+    $schedule = new Schedule();
+    $kernel = app(Kernel::class);
     $method = new ReflectionMethod($kernel, 'schedule');
     $method->setAccessible(true);
 

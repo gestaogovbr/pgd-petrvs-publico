@@ -14,6 +14,8 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -134,7 +136,7 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
                 ],
                 'borders' => [
                     'allBorders' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'borderStyle' => Border::BORDER_THIN,
                         'color' => ['argb' => '000000'],
                     ],
                 ]
@@ -152,7 +154,7 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
         $event->sheet->getDelegate()->getRowDimension('1')->setRowHeight(60);
         $event->sheet->getDelegate()->getStyle('1')->getAlignment()->setWrapText(true);
         $event->sheet->getStyle('A1:I1')->getFill()
-          ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+          ->setFillType(Fill::FILL_SOLID)
           ->getStartColor()->setARGB('fc9fc0');
     }
 }

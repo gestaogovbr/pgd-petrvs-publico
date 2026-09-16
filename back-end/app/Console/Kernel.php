@@ -2,12 +2,19 @@
 
 namespace App\Console;
 
+use App\Jobs\ConsolidarSerieAdesao;
+use App\Jobs\ExcluirRelatorioGeracaoJob;
+use App\Jobs\ExpirarRelatorioGeracaoJob;
+use App\Jobs\InativacaoUnidadesSiape;
+use App\Jobs\InativacaoUnidadesTemporarios;
+use App\Jobs\InativacaoUsuariosSiape;
+use App\Jobs\InativacaoUsuariosTemporarios;
 use App\Jobs\JobBase;
 use App\Jobs\JobWithoutTenant;
 use App\Models\JobSchedule;
+use App\Models\Tenant;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -37,61 +44,61 @@ class Kernel extends ConsoleKernel
         
         // Job para inativar usuários temporários às 03:00 diariamente
         $schedule->call(function () {
-            $tenants = \App\Models\Tenant::all();
+            $tenants = Tenant::all();
             foreach ($tenants as $tenant) {
-                /** @var \App\Models\Tenant $tenant */
-                \App\Jobs\InativacaoUsuariosTemporarios::dispatch($tenant->id);
+                /** @var Tenant $tenant */
+                InativacaoUsuariosTemporarios::dispatch($tenant->id);
             }
         })->dailyAt('03:00')->name('Inativação Usuários Temporários')->withoutOverlapping();
 
         $schedule->call(function () {
-            $tenants = \App\Models\Tenant::all();
+            $tenants = Tenant::all();
             foreach ($tenants as $tenant) {
-                /** @var \App\Models\Tenant $tenant */
-                \App\Jobs\InativacaoUsuariosSiape::dispatch($tenant->id);
+                /** @var Tenant $tenant */
+                InativacaoUsuariosSiape::dispatch($tenant->id);
             }
         })->dailyAt('00:05')->name('Inativação Usuários SIAPE')->withoutOverlapping();
         
         $schedule->call(function () {
-            $tenants = \App\Models\Tenant::all();
+            $tenants = Tenant::all();
             foreach ($tenants as $tenant) {
-                /** @var \App\Models\Tenant $tenant */
-                \App\Jobs\InativacaoUnidadesSiape::dispatch($tenant->id);
+                /** @var Tenant $tenant */
+                InativacaoUnidadesSiape::dispatch($tenant->id);
             }
         })->dailyAt('00:15')->name('Inativação Unidades SIAPE')->withoutOverlapping();
         
         // Job para inativar unidades temporárias às 00:30 diariamente
         $schedule->call(function () {
-            $tenants = \App\Models\Tenant::all();
+            $tenants = Tenant::all();
             foreach ($tenants as $tenant) {
-                /** @var \App\Models\Tenant $tenant */
-                \App\Jobs\InativacaoUnidadesTemporarios::dispatch($tenant->id);
+                /** @var Tenant $tenant */
+                InativacaoUnidadesTemporarios::dispatch($tenant->id);
             }
         })->dailyAt('00:30')->name('Inativação Unidades Temporários')->withoutOverlapping();
 
         $schedule->call(function () {
-            $tenants = \App\Models\Tenant::all();
+            $tenants = Tenant::all();
             foreach ($tenants as $tenant) {
-                /** @var \App\Models\Tenant $tenant */
-                \App\Jobs\ExpirarRelatorioGeracaoJob::dispatch($tenant->id);
+                /** @var Tenant $tenant */
+                ExpirarRelatorioGeracaoJob::dispatch($tenant->id);
             }
         })->everyFifteenMinutes()->name('Expirar Exportação de Relatórios')->withoutOverlapping();
 
         $schedule->call(function () {
-            $tenants = \App\Models\Tenant::all();
+            $tenants = Tenant::all();
             foreach ($tenants as $tenant) {
-                /** @var \App\Models\Tenant $tenant */
-                \App\Jobs\ExcluirRelatorioGeracaoJob::dispatch($tenant->id);
+                /** @var Tenant $tenant */
+                ExcluirRelatorioGeracaoJob::dispatch($tenant->id);
             }
         })->dailyAt('01:00')->name('Excluir Exportação de Relatórios')->withoutOverlapping();
 
         // Job para consolidar série histórica de adesão ao PGD no último de cada mês
         $schedule->call(function () {
             $periodo = now()->format('Y-m');
-            $tenants = \App\Models\Tenant::all();
+            $tenants = Tenant::all();
             foreach ($tenants as $tenant) {
-                /** @var \App\Models\Tenant $tenant */
-                \App\Jobs\ConsolidarSerieAdesao::dispatch($tenant->id, $periodo);
+                /** @var Tenant $tenant */
+                ConsolidarSerieAdesao::dispatch($tenant->id, $periodo);
             }
         })->lastDayOfMonth('23:00')->name('Consolidar Série Adesão PGD')->withoutOverlapping();
         

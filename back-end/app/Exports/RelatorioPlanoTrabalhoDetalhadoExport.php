@@ -1,10 +1,11 @@
 <?php
 namespace App\Exports;
 
-use App\Exports\RelatorioPlanoTrabalhoExport;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -98,14 +99,14 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
             1   => [
                 'borders' => [
                     'allBorders' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE
+                        'borderStyle' => Border::BORDER_NONE
                     ],
                 ]
             ],
             'I1:R1' => [
                 'borders' => [
                     'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'borderStyle' => Border::BORDER_THIN,
                         'color' => ['argb' => '000000'],
                     ],
                 ]
@@ -117,7 +118,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
                 ],
                 'borders' => [
                     'allBorders' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'borderStyle' => Border::BORDER_THIN,
                         'color' => ['argb' => '000000'],
                     ],
                 ]
@@ -133,7 +134,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
                 ],
                 'borders' => [
                     'left' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'borderStyle' => Border::BORDER_THIN,
                         'color' => ['argb' => '000000'],
                     ],
                 ]
@@ -152,7 +153,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
         $event->sheet->getDelegate()->getRowDimension('2')->setRowHeight(60);
         $event->sheet->getDelegate()->getStyle('2')->getAlignment()->setWrapText(true);
         $event->sheet->getStyle('A1:R2')->getFill()
-          ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+          ->setFillType(Fill::FILL_SOLID)
           ->getStartColor()->setARGB('fc9fc0');
     }
 }
