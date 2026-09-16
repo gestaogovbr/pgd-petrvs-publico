@@ -608,7 +608,7 @@ class UsuarioService extends ServiceBase
         if (!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
             $unidadeIds = $usuario->areasTrabalho->pluck('unidade_id')->all();
             $hierarquiaIds = $subordinadas
-                ? Unidade::naHierarquiaDe($unidadeIds)->pluck('id')
+                ? $this->unidadeRepository->idsNaHierarquiaDe($unidadeIds)
                 : $unidadeIds;
             $query->whereHas('lotacoes', function (Builder $q) use ($hierarquiaIds) {
                 $q->whereIn('unidade_id', $hierarquiaIds);

@@ -21,7 +21,6 @@ use App\Models\HistoricoLotacao;
 use App\Models\HistoricoFuncao;
 use App\Models\CurriculumProfissional;
 use App\Traits\AutoUuid;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -59,7 +58,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Cidade|null $cidade
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $integrantes
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoEntrega> $planosEntrega
- * @method static Builder<Unidade> naHierarquiaDe(array $unidadeIds)
  */
 class Unidade extends ModelBase
 {
@@ -124,23 +122,6 @@ class Unidade extends ModelBase
         'data_inicio_inativacao' => 'datetime',
         'data_ativacao_temporaria' => 'datetime',
     ];
-
-    // Scopes
-
-    /**
-     * @param Builder<Unidade> $query
-     * @param string[] $unidadeIds
-     * @return Builder<Unidade>
-     */
-    public function scopeNaHierarquiaDe(Builder $query, array $unidadeIds): Builder
-    {
-        return $query->where(function (Builder $inner) use ($unidadeIds) {
-            $inner->whereIn('unidades.id', $unidadeIds);
-            foreach ($unidadeIds as $unidadeId) {
-                $inner->orWhere('unidades.path', 'like', "%{$unidadeId}%");
-            }
-        });
-    }
 
     // Has
     public function atividades()

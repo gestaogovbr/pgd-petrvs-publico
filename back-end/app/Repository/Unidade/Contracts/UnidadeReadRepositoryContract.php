@@ -58,6 +58,14 @@ interface UnidadeReadRepositoryContract
     /** @return string[] */
     public function getSubordinadasRecursivasIds(array $ids): array;
 
+    /**
+     * IDs da(s) unidade(s) informada(s) e de todas as subordinadas via unidade_pai_id.
+     *
+     * @param string[] $ids
+     * @return list<string>
+     */
+    public function idsNaHierarquiaDe(array $ids): array;
+
     public function findById(string|int $id): ?Unidade;
 
     public function findWithPlanosTrabalhoAtividades(string|int $id): ?Unidade;

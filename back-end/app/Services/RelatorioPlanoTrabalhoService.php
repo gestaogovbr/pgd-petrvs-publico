@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Unidade;
 use App\Models\ViewRelatorioPlanoTrabalhoDetalhado;
 use App\Repository\PlanoTrabalhoEntregaRepository;
+use App\Repository\UnidadeRepository;
 use App\Services\ServiceBase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -176,13 +176,8 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
         }
 
         if (! isset($this->unidadeIdsCache[$unidadeId])) {
-            $this->unidadeIdsCache[$unidadeId] = Unidade::query()
-                ->where(function ($query) use ($unidadeId) {
-                    $query->where('id', $unidadeId)
-                        ->orWhere('path', 'like', '%' . $unidadeId . '%');
-                })
-                ->pluck('id')
-                ->all();
+            $this->unidadeIdsCache[$unidadeId] = app(UnidadeRepository::class)
+                ->idsNaHierarquiaDe([$unidadeId]);
         }
 
         return $this->unidadeIdsCache[$unidadeId];

@@ -119,6 +119,15 @@ class UnidadeRepository
         return $this->readRepository->getSubordinadasRecursivasIds($ids);
     }
 
+    /**
+     * @param string[] $ids
+     * @return list<string>
+     */
+    public function idsNaHierarquiaDe(array $ids): array
+    {
+        return $this->readRepository->idsNaHierarquiaDe($ids);
+    }
+
     public function findById(string $id): ?Unidade
     {
         return $this->readRepository->findById($id);

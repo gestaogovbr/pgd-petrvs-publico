@@ -400,7 +400,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                         $unidadeIds = $condition[1];
                         $subordinadas = $condition[2];
                         $hierarquiaIds = $subordinadas
-                            ? Unidade::naHierarquiaDe($unidadeIds)->pluck('id')
+                            ? $this->unidadeRepository->idsNaHierarquiaDe((array) $unidadeIds)
                             : $unidadeIds;
                         $query->whereHas('lotacoes', function (Builder $q) use ($hierarquiaIds) {
                             $q->whereIn('unidade_id', $hierarquiaIds);
