@@ -156,12 +156,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
     {
         return PlanoEntregaEntrega::query()
             ->whereHas('planoEntrega.unidade', fn ($query) => $query->whereIn('id', $unidadesIds))
-            ->whereNotExists(static function ($query): void {
-                $query
-                    ->selectRaw('1')
-                    ->from(self::PROGRESSOS_TABLE)
-                    ->whereColumn(self::PROGRESSO_FK_COLUMN, self::PLANO_ENTREGA_PK_COLUMN);
-            })
+            ->tap(fn ($query) => $this->aplicarEntregaSemProgresso($query))
             ->whereHas('planoEntrega', static function ($query) use ($planoEntregaCriadoApos): void {
                 $query
                     ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
@@ -293,13 +288,18 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
 
     /**
      * Aplica o filtro "entrega sem nenhum registro de progresso".
+     *
+     * A subquery é bruta (não passa pelo model), então o global scope de SoftDeletes
+     * não é aplicado — filtra-se `deleted_at` explicitamente para que progressos
+     * soft-deleted não sejam considerados progresso existente.
      */
     private function aplicarEntregaSemProgresso($query): void
     {
         $query->whereNotExists(function ($sub) {
             $sub->selectRaw('1')
                 ->from(self::PROGRESSOS_TABLE)
-                ->whereColumn(self::PROGRESSO_FK_COLUMN, self::PLANO_ENTREGA_PK_COLUMN);
+                ->whereColumn(self::PROGRESSO_FK_COLUMN, self::PLANO_ENTREGA_PK_COLUMN)
+                ->whereNull(self::PROGRESSOS_TABLE . '.deleted_at');
         });
     }
 }

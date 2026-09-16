@@ -45,6 +45,19 @@ function inserirProgresso(PlanoEntregaEntrega $entrega, string $usuarioId): void
     ]);
 }
 
+function inserirProgressoSoftDeleted(PlanoEntregaEntrega $entrega, string $usuarioId): void
+{
+    \DB::table('planos_entregas_entregas_progressos')->insert([
+        'id' => Str::uuid()->toString(),
+        'data_progresso' => now(),
+        'usuario_id' => $usuarioId,
+        'plano_entrega_entrega_id' => $entrega->id,
+        'created_at' => now(),
+        'updated_at' => now(),
+        'deleted_at' => now(),
+    ]);
+}
+
 beforeEach(function () {
     $this->provider = app(RegistroExecucaoAtrasoPEDataProvider::class);
 
@@ -74,6 +87,16 @@ describe('RegistroExecucaoAtrasoPEDataProvider', function () {
 
         expect($this->provider->count($this->chefe->id))->toBe(0);
         expect($this->provider->buscar($this->chefe->id)->total())->toBe(0);
+    });
+
+    test('CONTA quando o único progresso da entrega está soft-deleted', function () {
+        $pe = peAtrasado($this->unidadeGerida->id);
+        $entrega = entregaSemProgresso($pe);
+        // progresso soft-deleted não é progresso válido → a entrega segue "sem RE"
+        inserirProgressoSoftDeleted($entrega, $this->chefe->id);
+
+        expect($this->provider->count($this->chefe->id))->toBe(1);
+        expect($this->provider->buscar($this->chefe->id)->total())->toBe(1);
     });
 
     test('NÃO conta PE dentro do prazo (data_fim recente)', function () {
