@@ -9,6 +9,9 @@ use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Exports\RelatorioExcelPaginadoExport;
+use App\Exports\RelatorioExcelPaginadoWriter;
+use App\Jobs\ExcluirRelatorioGeracaoJob;
+use App\Jobs\ExpirarRelatorioGeracaoJob;
 use App\Jobs\GerarRelatorioExcelJob;
 use App\Models\Usuario;
 use App\Repository\RelatorioGeracaoRepository;
@@ -19,12 +22,8 @@ use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStatusQueryDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStoreDTO;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\Settings;
-use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
 
@@ -33,6 +32,7 @@ class RelatorioGeracaoService
     public function __construct(
         private readonly RelatorioGeracaoRepository $repository,
         private readonly RelatorioExcelGeradorFactory $geradorFactory,
+        private readonly RelatorioExcelPaginadoWriter $excelWriter,
     ) {
     }
 
@@ -113,22 +113,20 @@ class RelatorioGeracaoService
 
             Storage::disk('local')->makeDirectory('relatorios');
 
-            $this->usarCacheEmDiscoDuranteGeracao(function () use ($gerador, $geracao, $path): void {
-                $export = new RelatorioExcelPaginadoExport(
-                    $gerador->criarExport(),
-                    fn (int $page, int $limit): array => $gerador->consultarPagina($geracao->parametros ?? [], $page, $limit),
-                    $gerador->pageSize(),
-                    function (int $processadas, ?int $total) use ($geracao): void {
-                        $this->repository->update((string) $geracao->id, [
-                            'progresso_pagina' => $processadas,
-                            'progresso_total' => $total,
-                        ]);
-                    }
-                );
+            $export = new RelatorioExcelPaginadoExport(
+                $gerador->criarExport(),
+                fn (int $page, int $limit): array => $gerador->consultarPagina($geracao->parametros ?? [], $page, $limit),
+                $gerador->pageSize(),
+                function (int $processadas, ?int $total) use ($geracao): void {
+                    $this->repository->update((string) $geracao->id, [
+                        'progresso_pagina' => $processadas,
+                        'progresso_total' => $total,
+                    ]);
+                }
+            );
 
-                Excel::store($export, $path, 'local');
-                unset($export);
-            });
+            $this->excelWriter->store($export, Storage::disk('local')->path($path));
+            unset($export);
 
             $this->repository->update((string) $geracao->id, [
                 'status' => RelatorioGeracaoStatus::CONCLUIDA,
@@ -182,6 +180,42 @@ class RelatorioGeracaoService
         $this->repository->marcarErroSeProcessando($geracaoId, $mensagem);
     }
 
+    public function expirarGeracoesTravadas(): int
+    {
+        return $this->repository->marcarExpiradas(
+            ExpirarRelatorioGeracaoJob::LIMITE_MINUTOS,
+            ExpirarRelatorioGeracaoJob::MENSAGEM_ERRO,
+        );
+    }
+
+    public function excluirGeracoesAntigas(): int
+    {
+        $geracoes = $this->repository->findAntigas(ExcluirRelatorioGeracaoJob::RETENCAO_HORAS);
+        $excluidas = 0;
+
+        foreach ($geracoes as $geracao) {
+            $this->apagarArquivoGeracao((string) $geracao->id, $geracao->arquivo_path);
+            $this->repository->forceDelete((string) $geracao->id);
+            $excluidas++;
+        }
+
+        return $excluidas;
+    }
+
+    private function apagarArquivoGeracao(string $geracaoId, mixed $arquivoPath): void
+    {
+        $paths = array_unique(array_filter([
+            is_string($arquivoPath) && $arquivoPath !== '' ? $arquivoPath : null,
+            'relatorios/' . $geracaoId . '.xlsx',
+        ]));
+
+        foreach ($paths as $path) {
+            if (Storage::disk('local')->exists($path)) {
+                Storage::disk('local')->delete($path);
+            }
+        }
+    }
+
     private function requireTenantId(): string
     {
         $tenantId = (string) tenant('id');
@@ -190,29 +224,5 @@ class RelatorioGeracaoService
         }
 
         return $tenantId;
-    }
-
-    private function usarCacheEmDiscoDuranteGeracao(callable $callback): void
-    {
-        $cacheOriginal = method_exists(Settings::class, 'getCache') ? Settings::getCache() : null;
-
-        try {
-            $fileCache = Cache::store('file');
-            if ($fileCache instanceof CacheInterface) {
-                Settings::setCache($fileCache);
-            }
-        } catch (Throwable $e) {
-            Log::warning('Não foi possível ativar cache em disco do PhpSpreadsheet', [
-                'error' => $e->getMessage(),
-            ]);
-        }
-
-        try {
-            $callback();
-        } finally {
-            if ($cacheOriginal instanceof CacheInterface) {
-                Settings::setCache($cacheOriginal);
-            }
-        }
     }
 }

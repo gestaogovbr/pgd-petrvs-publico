@@ -10,6 +10,14 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
 {
+    /**
+     * @return list<string>
+     */
+    public function streamMergeRanges(): array
+    {
+        return ['I1:R1'];
+    }
+
     public function headings(): array
     {
         return [
@@ -40,10 +48,7 @@ class RelatorioPlanoTrabalhoDetalhadoExport extends RelatorioPlanoTrabalhoExport
 
     public function map($row): array
     {
-        $map = parent::map($row);
-        array_pop($map); //remove a colun de periodos avaliativos
-
-        return array_merge($map, [
+        return array_merge($this->mapPlanoTrabalho($row), [
             Date::stringToExcel($row->data_inicio_avaliativo),
             Date::stringToExcel($row->data_fim_avaliativo),
             Date::stringToExcel($row->data_conclusao),

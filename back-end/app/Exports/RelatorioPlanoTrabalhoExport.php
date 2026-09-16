@@ -82,16 +82,25 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
 
     public function map($row): array
     {
+        return array_merge($this->mapPlanoTrabalho($row), [
+            $row->qtdePeriodosAvaliativos ?? 0,
+        ]);
+    }
+
+    /**
+     * @return list<mixed>
+     */
+    protected function mapPlanoTrabalho($row): array
+    {
         return [
             '#'.$row->numero,
             $row->participanteNome,
             $row->unidadeHierarquia,
-            number_format((float) $row->chd, 2, ','),
+            number_format((float) ($row->chd ?? 0), 2, ','),
             PlanoTrabalho::STATUSES[$row->status] ?? $row->status,
             Date::stringToExcel($row->dataInicio),
             Date::stringToExcel($row->dataFim),
             $row->duracao,
-            $row->qtdePeriodosAvaliativos
         ];
     }
 

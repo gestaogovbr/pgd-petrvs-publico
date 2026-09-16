@@ -105,7 +105,7 @@ describe('FilterComponent', () => {
     expect(dialog.closeSppinerOverlay).toHaveBeenCalled();
     expect(dialog.choose).toHaveBeenCalledWith(
       'Exportação de Relatório',
-      'A exportação do relatório foi iniciada e será processada em segundo plano. Acompanhe o andamento e faça o download na página de Exportação de Relatórios.',
+      'A exportação do relatório foi iniciada e será processada em segundo plano. Acompanhe o andamento na página de Exportação de Relatórios. Você possui até 24 horas para efetuar o download.',
       jasmine.any(Array)
     );
     expect(go.openNewTab).not.toHaveBeenCalled();

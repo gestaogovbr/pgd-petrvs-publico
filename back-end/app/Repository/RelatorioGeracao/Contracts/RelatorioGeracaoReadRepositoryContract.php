@@ -25,4 +25,9 @@ interface RelatorioGeracaoReadRepositoryContract
      * @return LengthAwarePaginator<RelatorioGeracao>
      */
     public function paginateForUsuario(string $usuarioId, RelatorioGeracaoIndexDTO $dto): LengthAwarePaginator;
+
+    /**
+     * @return Collection<int, RelatorioGeracao>
+     */
+    public function findAntigas(int $horas): Collection;
 }

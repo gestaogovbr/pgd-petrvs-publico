@@ -144,4 +144,14 @@ class RelatorioExcelPaginadoExport implements
             },
         ];
     }
+
+    /**
+     * @return list<string>
+     */
+    public function streamMergeRanges(): array
+    {
+        return method_exists($this->export, 'streamMergeRanges')
+            ? $this->export->streamMergeRanges()
+            : [];
+    }
 }

@@ -39,4 +39,22 @@ class EloquentRelatorioGeracaoWriteRepository extends AbstractEloquentWriteRepos
                 'erro_mensagem' => $mensagem,
             ]) > 0;
     }
+
+    public function marcarExpiradas(int $minutosLimite, string $mensagem): int
+    {
+        return $this->model->newQuery()
+            ->where('status', RelatorioGeracaoStatus::PROCESSANDO)
+            ->whereNull('finalizado_em')
+            ->where('iniciado_em', '<=', now()->subMinutes($minutosLimite))
+            ->update([
+                'status' => RelatorioGeracaoStatus::ERRO,
+                'finalizado_em' => now(),
+                'erro_mensagem' => $mensagem,
+            ]);
+    }
+
+    public function forceDelete(string $id): bool
+    {
+        return $this->model->newQuery()->whereKey($id)->forceDelete() > 0;
+    }
 }

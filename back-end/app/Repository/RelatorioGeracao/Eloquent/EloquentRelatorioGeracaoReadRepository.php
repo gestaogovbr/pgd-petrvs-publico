@@ -96,4 +96,15 @@ class EloquentRelatorioGeracaoReadRepository extends AbstractEloquentReadReposit
             $query->where('iniciado_em', '<=', Carbon::parse($filters->geracaoFim)->endOfDay());
         }
     }
+
+    /**
+     * @return Collection<int, RelatorioGeracao>
+     */
+    public function findAntigas(int $horas): Collection
+    {
+        /** @var Collection<int, RelatorioGeracao> */
+        return $this->query()
+            ->where('iniciado_em', '<=', now()->subHours($horas))
+            ->get();
+    }
 }

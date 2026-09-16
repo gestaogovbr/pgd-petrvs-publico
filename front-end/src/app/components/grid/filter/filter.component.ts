@@ -161,7 +161,7 @@ export class FilterComponent extends ComponentBase implements OnInit, OnDestroy 
   private showQueuedExportDialog() {
     this.dialog.choose(
       'Exportação de Relatório',
-      'A exportação do relatório foi iniciada e será processada em segundo plano. Acompanhe o andamento e faça o download na página de Exportação de Relatórios.',
+      'A exportação do relatório foi iniciada e será processada em segundo plano. Acompanhe o andamento na página de Exportação de Relatórios. Você possui até 24 horas para efetuar o download.',
       [
         { label: 'Ir para Exportação de Relatórios', value: 'go', color: 'btn-success', icon: 'bi bi-box-arrow-up-right' },
         { label: 'Fechar', value: 'close', color: 'btn-outline-secondary' }

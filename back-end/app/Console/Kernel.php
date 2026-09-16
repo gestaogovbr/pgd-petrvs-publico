@@ -69,6 +69,22 @@ class Kernel extends ConsoleKernel
             }
         })->dailyAt('00:30')->name('Inativação Unidades Temporários')->withoutOverlapping();
 
+        $schedule->call(function () {
+            $tenants = \App\Models\Tenant::all();
+            foreach ($tenants as $tenant) {
+                /** @var \App\Models\Tenant $tenant */
+                \App\Jobs\ExpirarRelatorioGeracaoJob::dispatch($tenant->id);
+            }
+        })->everyFifteenMinutes()->name('Expirar Exportação de Relatórios')->withoutOverlapping();
+
+        $schedule->call(function () {
+            $tenants = \App\Models\Tenant::all();
+            foreach ($tenants as $tenant) {
+                /** @var \App\Models\Tenant $tenant */
+                \App\Jobs\ExcluirRelatorioGeracaoJob::dispatch($tenant->id);
+            }
+        })->dailyAt('01:00')->name('Excluir Exportação de Relatórios')->withoutOverlapping();
+
         // Job para consolidar série histórica de adesão ao PGD no último de cada mês
         $schedule->call(function () {
             $periodo = now()->format('Y-m');

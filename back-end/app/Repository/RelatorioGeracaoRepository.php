@@ -66,4 +66,22 @@ class RelatorioGeracaoRepository
     {
         return $this->writeRepository->marcarErroSeProcessando($id, $mensagem);
     }
+
+    public function marcarExpiradas(int $minutosLimite, string $mensagem): int
+    {
+        return $this->writeRepository->marcarExpiradas($minutosLimite, $mensagem);
+    }
+
+    /**
+     * @return Collection<int, RelatorioGeracao>
+     */
+    public function findAntigas(int $horas): Collection
+    {
+        return $this->readRepository->findAntigas($horas);
+    }
+
+    public function forceDelete(string $id): bool
+    {
+        return $this->writeRepository->forceDelete($id);
+    }
 }

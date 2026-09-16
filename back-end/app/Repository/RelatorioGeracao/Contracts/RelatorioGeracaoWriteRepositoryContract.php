@@ -19,4 +19,8 @@ interface RelatorioGeracaoWriteRepositoryContract
     public function update(string|int $id, array $attributes): ?RelatorioGeracao;
 
     public function marcarErroSeProcessando(string $id, ?string $mensagem): bool;
+
+    public function marcarExpiradas(int $minutosLimite, string $mensagem): int;
+
+    public function forceDelete(string $id): bool;
 }
