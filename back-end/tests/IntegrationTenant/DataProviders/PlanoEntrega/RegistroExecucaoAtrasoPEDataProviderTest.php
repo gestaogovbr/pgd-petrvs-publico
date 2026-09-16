@@ -10,7 +10,7 @@ use App\Models\Usuario;
 use App\V2\PlanoEntrega\DataProviders\RegistroExecucaoAtrasoPEDataProvider;
 use Illuminate\Support\Str;
 
-function peAtrasado(string $unidadeId, string $status = 'ATIVO'): PlanoEntrega
+function peAtrasado(string $unidadeId, string $status = 'CONCLUIDO'): PlanoEntrega
 {
     return PlanoEntrega::withoutEvents(fn () => PlanoEntrega::factory()->create([
         'unidade_id' => $unidadeId,
@@ -102,7 +102,7 @@ describe('RegistroExecucaoAtrasoPEDataProvider', function () {
     test('NÃO conta PE dentro do prazo (data_fim recente)', function () {
         $pe = PlanoEntrega::withoutEvents(fn () => PlanoEntrega::factory()->create([
             'unidade_id' => $this->unidadeGerida->id,
-            'status' => StatusEnum::ATIVO->value,
+            'status' => StatusEnum::CONCLUIDO->value,
             'data_fim' => now()->subDays(5),
             'created_at' => \Illuminate\Support\Carbon::parse(PlanoEntrega::DATA_MUDANCA_REGRA_PE)->addDay(),
         ]));
@@ -111,7 +111,9 @@ describe('RegistroExecucaoAtrasoPEDataProvider', function () {
         expect($this->provider->count($this->chefe->id))->toBe(0);
     });
 
-    test('NÃO conta PE SUSPENSO ou CANCELADO', function () {
+    test('NÃO conta PE que não está CONCLUIDO', function () {
+        // Só PEs CONCLUIDOS têm RE cobrável; ATIVO/HOMOLOGANDO/etc. não contam.
+        entregaSemProgresso(peAtrasado($this->unidadeGerida->id, StatusEnum::ATIVO->value));
         entregaSemProgresso(peAtrasado($this->unidadeGerida->id, StatusEnum::SUSPENSO->value));
         entregaSemProgresso(peAtrasado($this->unidadeGerida->id, StatusEnum::CANCELADO->value));
 

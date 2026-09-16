@@ -28,10 +28,6 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
     private const PROGRESSO_FK_COLUMN = 'planos_entregas_entregas_progressos.plano_entrega_entrega_id';
     private const TOTAL_SEM_PROGRESSO_ALIAS = 'total_sem_progresso';
     private const PLANO_ENTREGA_SELECT_FIELDS = ['id', 'numero', 'nome'];
-    private const STATUS_EXCLUIDOS_EXECUCAO = [
-        StatusEnum::SUSPENSO->value,
-        StatusEnum::CANCELADO->value,
-    ];
 
     public function __construct(PlanoEntrega $model)
     {
@@ -159,7 +155,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->tap(fn ($query) => $this->aplicarEntregaSemProgresso($query))
             ->whereHas('planoEntrega', static function ($query) use ($planoEntregaCriadoApos): void {
                 $query
-                    ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
+                    ->where('status', StatusEnum::CONCLUIDO->value)
                     ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO));
 
                 if ($planoEntregaCriadoApos !== null) {
@@ -258,7 +254,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
     {
         return $this->query()
             ->whereIn('unidade_id', $busca->unidadesIds)
-            ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
+            ->where('status', StatusEnum::CONCLUIDO->value)
             ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO))
             ->when($busca->criadosApos !== null, fn ($query) => $query->where('created_at', '>', $busca->criadosApos))
             ->whereHas('entregas', fn ($query) => $this->aplicarEntregaSemProgresso($query));
@@ -276,7 +272,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->whereHas('planoEntrega', function ($query) use ($unidadesIds, $planoEntregaCriadoApos) {
                 $query
                     ->whereIn('unidade_id', $unidadesIds)
-                    ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
+                    ->where('status', StatusEnum::CONCLUIDO->value)
                     ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO));
 
                 if ($planoEntregaCriadoApos !== null) {
