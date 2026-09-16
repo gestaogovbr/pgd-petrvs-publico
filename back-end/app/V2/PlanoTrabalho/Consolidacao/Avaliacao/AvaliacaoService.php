@@ -8,6 +8,7 @@ use App\Enums\StatusEnum;
 use App\Models\Avaliacao;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\AvaliacaoRepository;
+use App\Repository\PlanoTrabalhoRepository;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\DTOs\AvaliacaoStoreDTO;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoAuthorizationValidator;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\Validators\AvaliacaoDestroyValidator;
@@ -24,6 +25,7 @@ class AvaliacaoService
         private readonly AvaliacaoStoreValidator $storeValidator,
         private readonly AvaliacaoDestroyValidator $destroyValidator,
         private readonly AvaliacaoRepository $avaliacaoRepository,
+        private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
         private readonly StatusService $statusService,
         private readonly AvaliacaoPolicy $avaliacaoPolicy,
         private readonly PlanoTrabalhoAvaliacaoStatusPolicy $planoAvaliacaoStatusPolicy,
@@ -36,9 +38,12 @@ class AvaliacaoService
         $nota = $this->storeValidator->validarNota($plano, $dto);
         $dto = $dto->withNota($nota);
 
-        $isReavaliacao = $consolidacao->avaliacoes->isNotEmpty();
+        return DB::transaction(function () use ($dto, $plano, $consolidacao) {
+            $this->planoTrabalhoRepository->findByIdForUpdate($plano->id);
 
-        return DB::transaction(function () use ($dto, $consolidacao, $isReavaliacao) {
+            $consolidacao->load('avaliacoes');
+            $isReavaliacao = $consolidacao->avaliacoes->isNotEmpty();
+
             $avaliacao = $this->avaliacaoRepository->create($dto->toPersistArray());
 
             $justificativa = $isReavaliacao
@@ -69,7 +74,9 @@ class AvaliacaoService
         $avaliacao = $this->destroyValidator->validar($planoTrabalhoId, $consolidacaoId, $avaliacaoId, $usuarioLogadoId);
         $consolidacao = $avaliacao->planoTrabalhoConsolidacao;
 
-        return DB::transaction(function () use ($avaliacao, $consolidacao, $usuarioLogadoId) {
+        return DB::transaction(function () use ($planoTrabalhoId, $avaliacao, $consolidacao, $usuarioLogadoId) {
+            $this->planoTrabalhoRepository->findByIdForUpdate($planoTrabalhoId);
+
             $this->avaliacaoRepository->delete($avaliacao->id);
 
             $this->statusService->atualizaStatus(
