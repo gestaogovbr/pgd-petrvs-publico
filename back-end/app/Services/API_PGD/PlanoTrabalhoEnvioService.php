@@ -3,81 +3,38 @@
 namespace App\Services\API_PGD;
 
 use App\Exceptions\EnvioNaoAgendadoException;
+use App\Jobs\Envio\ExportarItemJob;
 use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
 use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UsuarioRepository;
-use App\Services\API_PGD\Builder\PlanoEntregaEnvioJobBuilder;
 use App\Services\API_PGD\Builder\PlanoTrabalhoEnvioJobBuilder;
-use App\Services\API_PGD\Builder\UsuarioEnvioJobBuilder;
+use Illuminate\Bus\Batch;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
 // classe responsavel por enviar o job de PT
-// encadeia no processo o Participante e os PE relacionados às entregas
 class PlanoTrabalhoEnvioService
 {
+    private const NOME_BATCH_ENVIO_PLANO_TRABALHO = 'envio-plano-trabalho';
+
     public static function processar($tenantId, PlanoTrabalho $planoTrabalho, string $origem = '')
     {
-        $jobChain = [];
-
         try{
-            // FASE 1 - Envio do Participante do PT (usa autorizadora do PT, não a do usuário)
-            $planoTrabalhoRepository = app()->make(PlanoTrabalhoRepository::class);
-            $planoTrabalhoRepository->garantirCodUnidadeAutorizadora($planoTrabalho, (string) $tenantId);
+            $jobs = PlanoTrabalhoEnvioJobBuilder::make($tenantId, $planoTrabalho, $origem);
 
-            $jobUsuario = UsuarioEnvioJobBuilder::make(
-                $tenantId,
-                $planoTrabalho->usuario,
-                $origem,
-                $planoTrabalho->cod_unidade_autorizadora,
-            );
-            if ($jobUsuario !== null) {
-                $jobChain[] = $jobUsuario;
-            } else {
-                Log::info("{$planoTrabalho->identificacaoEnvio()} participante já enviado e sem alterações pendentes");
-            }
-
-            // FASE 2 - Envio dos Planos de Entrega, para devido envio das entregas vinculadas ao plano de trabalho
-            $planoTrabalho->loadMissing('entregas.planoEntregaEntrega.planoEntrega');
-
-            foreach ($planoTrabalho->entregas as $planoTrabalhoEntrega) {
-                if (!$planoTrabalhoEntrega->plano_entrega_entrega_id) {
-                    continue;
-                }
-
-                $planoEntrega = $planoTrabalhoEntrega->planoEntregaEntrega?->planoEntrega;
-                if ($planoEntrega === null) {
-                    Log::warning("{$planoTrabalho->identificacaoEnvio()} entrega #{$planoTrabalhoEntrega->id} com plano_entrega_entrega_id inválido ou excluído");
-                    continue;
-                }
-
-                $jobEntrega = PlanoEntregaEnvioJobBuilder::make($tenantId, $planoEntrega, $origem);
-                if (!empty($jobEntrega)) {
-                    $jobChain[] = $jobEntrega;
-                }
-            }
-
-            // FASE 3 - Envio do Plano de Trabalho (agendado somente após dependências válidas)
-            $jobPlanoTrabalho = PlanoTrabalhoEnvioJobBuilder::make($tenantId, $planoTrabalho, $origem);
-
-            if (empty($jobPlanoTrabalho)) {
+            if (empty($jobs)) {
                 Log::info("{$planoTrabalho->identificacaoEnvio()} não necessita envio");
                 return false;
             }
 
-            $jobChain[] = $jobPlanoTrabalho;
-
             $planoTrabalhoId = (string) $planoTrabalho->id;
             $planoTrabalhoIdentificacao = $planoTrabalho->identificacaoEnvio();
 
-            Bus::chain($jobChain)
-                ->catch(function (Throwable $e) use ($tenantId, $planoTrabalhoId, $planoTrabalhoIdentificacao): void {
-                    self::registrarFalhaDependenciaChain($tenantId, $planoTrabalhoId, $planoTrabalhoIdentificacao, $e);
-                })
-                ->dispatch();
+            self::dispatchSequenciaEnvio($jobs, $tenantId, $planoTrabalhoId, $planoTrabalhoIdentificacao);
 
             Log::info("{$planoTrabalho->identificacaoEnvio()} agendado", [$origem]);
 
@@ -93,6 +50,45 @@ class PlanoTrabalhoEnvioService
         }
 
         return false;
+    }
+
+    /**
+     * Despacha um job por vez em batch. O próximo só entra no then, após sucesso do batch atual.
+     *
+     * @param array<int, ShouldQueue> $jobs
+     */
+    private static function dispatchSequenciaEnvio(
+        array $jobs,
+        string|int $tenantId,
+        string $planoTrabalhoId,
+        string $planoTrabalhoIdentificacao,
+    ): void {
+        if ($jobs === []) {
+            return;
+        }
+
+        $jobAtual = array_shift($jobs);
+
+        $pendingBatch = Bus::batch([$jobAtual])
+            ->name(self::nomeBatchEnvio($planoTrabalhoId, $jobAtual))
+            ->catch(function (Batch $batch, Throwable $e) use ($tenantId, $planoTrabalhoId, $planoTrabalhoIdentificacao): void {
+                self::registrarFalhaDependenciaChain($tenantId, $planoTrabalhoId, $planoTrabalhoIdentificacao, $e);
+            });
+
+        if ($jobs !== []) {
+            $pendingBatch->then(function () use ($jobs, $tenantId, $planoTrabalhoId, $planoTrabalhoIdentificacao): void {
+                self::dispatchSequenciaEnvio($jobs, $tenantId, $planoTrabalhoId, $planoTrabalhoIdentificacao);
+            });
+        }
+
+        $pendingBatch->dispatch();
+    }
+
+    private static function nomeBatchEnvio(string $planoTrabalhoId, object $job): string
+    {
+        $etapa = $job instanceof ExportarItemJob ? $job->tag() : class_basename($job);
+
+        return self::NOME_BATCH_ENVIO_PLANO_TRABALHO.' '.$planoTrabalhoId.' '.$etapa;
     }
 
     private static function montarMensagemErroDependencia(EnvioNaoAgendadoException $e): string
