@@ -547,7 +547,11 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
     private function aplicarConsolidacaoPendenteAvaliacao(\Illuminate\Database\Eloquent\Builder $q): void
     {
         $q->where('planos_trabalhos_consolidacoes.status', StatusEnum::CONCLUIDO->value)
-            ->whereDoesntHave('avaliacoes');
+            ->whereDoesntHave('avaliacoes')
+            ->where(function ($sub) {
+                $sub->whereColumn('planos_trabalhos_consolidacoes.data_inicio', '<=', 'planos_trabalhos.encerrado_at')
+                    ->orWhereNull('planos_trabalhos.encerrado_at');
+            });
     }
 
     /**

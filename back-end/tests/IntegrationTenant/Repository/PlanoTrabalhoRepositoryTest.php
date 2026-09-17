@@ -5,6 +5,7 @@ namespace Tests\IntegrationTenant\Repository;
 use App\Enums\StatusEnum;
 use App\Models\Perfil;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
 use App\Models\Unidade;
@@ -763,5 +764,84 @@ describe('PlanoTrabalhoRepository::findByIdComRelacoes', function () {
         $result = $this->repository->findByIdComRelacoes(fake()->uuid());
 
         expect($result)->toBeNull();
+    });
+});
+
+describe('PlanoTrabalhoRepository::buscarPlanosListagem - aguardando_avaliacao (vigência)', function () {
+
+    test('conta consolidação CONCLUIDO sem avaliação quando PT não foi encerrado', function () {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'status' => StatusEnum::ATIVO,
+            'encerrado_at' => null,
+        ]);
+
+        PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => StatusEnum::CONCLUIDO->value,
+            'data_inicio' => '2025-01-01',
+            'data_fim' => '2025-01-31',
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1)
+            ->and((int) $result->items()[0]->aguardando_avaliacao)->toBe(1);
+    });
+
+    test('não conta consolidação futura pós-encerramento antecipado', function () {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'status' => StatusEnum::CONCLUIDO,
+            'encerrado_at' => '2025-02-15',
+        ]);
+
+        // Período vigente (data_inicio <= encerrado_at): deve contar
+        PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => StatusEnum::CONCLUIDO->value,
+            'data_inicio' => '2025-02-01',
+            'data_fim' => '2025-02-15',
+        ]);
+
+        // Período futuro marcado como CONCLUIDO pela cascata de encerramento
+        // (data_inicio > encerrado_at): NÃO deve contar como pendência
+        PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => StatusEnum::CONCLUIDO->value,
+            'data_inicio' => '2025-03-01',
+            'data_fim' => '2025-03-31',
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1)
+            ->and((int) $result->items()[0]->aguardando_avaliacao)->toBe(1);
+    });
+
+    test('conta período iniciado exatamente na data de encerramento', function () {
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $this->unidade->id,
+            'status' => StatusEnum::CONCLUIDO,
+            'encerrado_at' => '2025-02-15',
+        ]);
+
+        PlanoTrabalhoConsolidacao::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'status' => StatusEnum::CONCLUIDO->value,
+            'data_inicio' => '2025-02-15',
+            'data_fim' => '2025-02-15',
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray(['usuario_id' => $this->usuario->id]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1)
+            ->and((int) $result->items()[0]->aguardando_avaliacao)->toBe(1);
     });
 });

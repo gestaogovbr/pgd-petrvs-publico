@@ -24,14 +24,12 @@ class AguardandoMinhaAvaliacaoDataProvider
             ->withCount(['consolidacoes as aguardando_avaliacao' => function ($q) {
                 $q->where('planos_trabalhos_consolidacoes.status', StatusEnum::CONCLUIDO->value)
                     ->whereDoesntHave('avaliacoes');
+                $this->aplicarFiltroVigencia($q);
             }])
             ->withCount(['consolidacoes as aguardando_reavaliacao' => function ($q) {
                 $q->where('status', StatusEnum::CONCLUIDO)
-                    ->whereHas('avaliacoes', fn ($a) => $a->whereNotNull('recurso'))
-                    ->where(function ($sub) {
-                        $sub->whereColumn('planos_trabalhos_consolidacoes.data_inicio', '<=', 'planos_trabalhos.encerrado_at')
-                            ->orWhereNull('planos_trabalhos.encerrado_at');
-                    });
+                    ->whereHas('avaliacoes', fn ($a) => $a->whereNotNull('recurso'));
+                $this->aplicarFiltroVigencia($q);
             }])
             ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome'])
             ->orderByDesc('updated_at')
@@ -54,6 +52,7 @@ class AguardandoMinhaAvaliacaoDataProvider
             ->whereHas('consolidacoes', function ($q) {
                 $q->where('planos_trabalhos_consolidacoes.status', StatusEnum::CONCLUIDO->value)
                     ->whereDoesntHave('avaliacoes');
+                $this->aplicarFiltroVigencia($q);
             })
             ->whereNotExists(function ($sub) use ($usuarioId) {
                 $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($sub, $usuarioId);
@@ -72,6 +71,20 @@ class AguardandoMinhaAvaliacaoDataProvider
             ->unique()
             ->values()
             ->toArray();
+    }
+
+    /**
+     * Restringe consolidações às vigentes: períodos cuja data_inicio é anterior
+     * ou igual ao encerramento antecipado do PT, ou PTs sem encerramento.
+     * Evita contar como pendência os períodos futuros marcados como CONCLUIDO
+     * pela cascata de encerramento antecipado.
+     */
+    private function aplicarFiltroVigencia(\Illuminate\Database\Eloquent\Builder $query): void
+    {
+        $query->where(function ($sub) {
+            $sub->whereColumn('planos_trabalhos_consolidacoes.data_inicio', '<=', 'planos_trabalhos.encerrado_at')
+                ->orWhereNull('planos_trabalhos.encerrado_at');
+        });
     }
 
     private function subqueryChefeSubstitutoNaoAssinaGestorTitular(\Illuminate\Database\Query\Builder $query, string $usuarioId): void
