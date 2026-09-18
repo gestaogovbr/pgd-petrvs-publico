@@ -11,6 +11,7 @@ import moment from 'moment';
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
 import { RelatorioPlanoTrabalhoDetalhadoDaoService } from "src/app/dao/relatorio-plano-trabalho-detalhado-dao.service";
+import { RelatorioGeracaoDaoService } from "src/app/dao/relatorio-geracao-dao.service";
 import { TipoAvaliacaoNotaDaoService } from "src/app/dao/tipo-avaliacao-nota-dao.service";
 import { of } from 'rxjs';
 import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.component";
@@ -32,6 +33,7 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   public tipoAvaliacaoNotaDao: TipoAvaliacaoNotaDaoService;
   public relatorioPlanoTrabalhoDao: RelatorioPlanoTrabalhoDaoService;
   public relatorioPlanoTrabalhoDetalhadoDao: RelatorioPlanoTrabalhoDetalhadoDaoService;
+  public relatorioGeracaoDao: RelatorioGeracaoDaoService;
   public botoes: ToolbarButton[] = [];
   public resumido: boolean = true;
   public tiposModalidade: LookupItem[] = [];
@@ -52,6 +54,7 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
       this.tipoAvaliacaoNotaDao = injector.get<TipoAvaliacaoNotaDaoService>(TipoAvaliacaoNotaDaoService);
       this.relatorioPlanoTrabalhoDao = injector.get<RelatorioPlanoTrabalhoDaoService>(RelatorioPlanoTrabalhoDaoService);
       this.relatorioPlanoTrabalhoDetalhadoDao = injector.get<RelatorioPlanoTrabalhoDetalhadoDaoService>(RelatorioPlanoTrabalhoDetalhadoDaoService);
+      this.relatorioGeracaoDao = injector.get<RelatorioGeracaoDaoService>(RelatorioGeracaoDaoService);
       this.title = "Relatório de Planos de Trabalho";
       this.filter = this.fh.FormBuilder({
           unidade_id: { default: this.auth.unidade?.id },
@@ -317,8 +320,11 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    try{
-      return this.dao!.exportarXls(!form.incluir_periodos_avaliativos, {
+    try {
+      const tipo = !form.incluir_periodos_avaliativos
+        ? 'plano_trabalho'
+        : 'plano_trabalho_detalhado';
+      return this.relatorioGeracaoDao.solicitar(tipo, {
         where: queryOptions.where,
         orderBy: queryOptions.orderBy
       });
