@@ -30,12 +30,16 @@ abstract class ExportarItemJob implements ShouldQueue
     use Batchable, Dispatchable, InteractsWithQueue, Queueable;
 
     protected $timestamp = null;
-    public int $timeout = 30;
+
+    private const TIMEOUT_SEGUNDOS = 30;
+
+    public int $timeout = self::TIMEOUT_SEGUNDOS;
     public int $tries = 1;
 
     protected ?PgdService $pgdService;
 
     private const MENSAGEM_ERRO_ENVIO = 'Erro no envio!';
+    private const MENSAGEM_TIMEOUT_ENVIO = 'Tempo de envio excedido';
 
     private bool $agendamentoPersistido = false;
 
@@ -203,7 +207,11 @@ abstract class ExportarItemJob implements ShouldQueue
         }
 
         if ($exception instanceof TimeoutExceededException) {
-            $this->insucesso($exception->getMessage() ?: 'Tempo de envio excedido');
+            if ($this->envioJaRegistradoNestaTentativa()) {
+                return;
+            }
+
+            $this->insucesso($exception->getMessage() ?: self::MENSAGEM_TIMEOUT_ENVIO);
             return;
         }
 
@@ -217,6 +225,27 @@ abstract class ExportarItemJob implements ShouldQueue
         }
 
         $this->insucesso($exception?->getMessage() ?? 'Falha desconhecida no envio');
+    }
+
+    private function envioJaRegistradoNestaTentativa(): bool
+    {
+        $model = $this->getModel() ?? $this->getRepository()->findById($this->id);
+        if ($model === null) {
+            return false;
+        }
+
+        $dataEnvio = $model->getAttribute('data_envio_api_pgd');
+        if ($dataEnvio === null) {
+            return false;
+        }
+
+        $dataEnvio = $dataEnvio instanceof Carbon ? $dataEnvio : Carbon::parse($dataEnvio);
+
+        if (!$this->timestamp instanceof Carbon) {
+            return true;
+        }
+
+        return $dataEnvio->greaterThanOrEqualTo($this->timestamp);
     }
 
     protected function initializeTenantContext(): void
