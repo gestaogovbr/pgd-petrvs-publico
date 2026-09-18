@@ -3,6 +3,10 @@
 ### Corrigido
 - Ao editar o planejamento de uma entrega vinculada a outra unidade no Plano de Trabalho, o vínculo com a unidade sumia da tela
 - Assinaturas simultâneas do mesmo Plano de Trabalho (lentidão do sistema + retentativa) geravam assinaturas e períodos avaliativos duplicados
+- A tela de Ocorrências não carregava e travava quando havia muitos agentes públicos
+
+### Modificado
+- O filtro de agente público passa a ser paginado com busca no servidor
 
 ## 3.1.3 15/09/2026
 

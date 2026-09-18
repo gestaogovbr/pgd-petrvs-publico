@@ -13,14 +13,13 @@
         <div class="row g-3 align-items-start mb-3">
 
           <div class="col-12 col-sm-6 col-md-4">
-            <br-select
+            <agente-publico-select
               label="Agente Público"
-              brTodosSentinel
-              formControlName="usuario_id"
-              [options]="agentesOptions()"
-              (change)="aplicarFiltros()"
-              class="w-100">
-            </br-select>
+              [searchFn]="agentesSearchFn"
+              [agenteId]="agenteSelecionado()?.id ?? ''"
+              [agenteNome]="agenteSelecionado()?.nome ?? ''"
+              (agenteSelected)="selecionarAgente($event)"
+            ></agente-publico-select>
           </div>
 
           <div class="col-12 col-sm-6 col-md-3">

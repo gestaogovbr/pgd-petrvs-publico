@@ -406,12 +406,12 @@ describe('GestaoPgdPage', () => {
       apiSpy.getUnidadesHistoricas.and.returnValue(of(unidades));
 
       component.unidadeSearchFn('ABC', 1, 10).subscribe(result => {
-        expect(result.data.length).toBe(1);
+        expect(result.items.length).toBe(1);
         expect(apiSpy.getUnidadesHistoricas).toHaveBeenCalledTimes(1);
 
         // Segunda chamada - deve usar cache
         component.unidadeSearchFn('DEF', 1, 10).subscribe(result2 => {
-          expect(result2.data.length).toBe(1);
+          expect(result2.items.length).toBe(1);
           expect(apiSpy.getUnidadesHistoricas).toHaveBeenCalledTimes(1); // Não chamou novamente
           done();
         });
@@ -427,10 +427,10 @@ describe('GestaoPgdPage', () => {
       apiSpy.getUnidadesHistoricas.and.returnValue(of(unidades));
 
       component.unidadeSearchFn(null, 1, 10).subscribe(result => {
-        expect(result.data.length).toBe(10);
+        expect(result.items.length).toBe(10);
         expect(result.total).toBe(25);
-        expect(result.last_page).toBe(3);
-        expect(result.current_page).toBe(1);
+        expect(result.lastPage).toBe(3);
+        expect(result.page).toBe(1);
         done();
       });
     });
