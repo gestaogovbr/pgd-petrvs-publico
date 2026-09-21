@@ -26,6 +26,23 @@ beforeEach(function () {
     $this->programa = Programa::factory()->create();
 });
 
+    test('findByIdForUpdate retorna o plano correto', function () {
+        $plano = PlanoTrabalho::factory()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $this->usuario->id,
+            'status' => StatusEnum::AGUARDANDO_ASSINATURA->value,
+        ]);
+
+        $result = $this->repository->findByIdForUpdate($plano->id);
+
+        expect($result)->not->toBeNull()
+            ->and($result->id)->toBe($plano->id);
+    });
+
+    test('findByIdForUpdate retorna null para id inexistente', function () {
+        expect($this->repository->findByIdForUpdate('00000000-0000-0000-0000-000000000000'))->toBeNull();
+    });
+
     test('retorna apenas planos de outros usuários aguardando assinatura', function () {
         $outroUsuario = Usuario::factory()->create([
             'perfil_id' => $this->perfilId,

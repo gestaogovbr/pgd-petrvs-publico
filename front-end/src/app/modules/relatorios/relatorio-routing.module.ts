@@ -14,6 +14,19 @@ import { RelatorioCargaIndividualSiapeComponent } from "./relatorio-carga-indivi
 
 const routes: Routes = [
   {
+    path: 'exportacao',
+    loadChildren: () => import('./relatorio-geracao/routes').then((m) => m.routes),
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: "Exportação de Relatórios",
+      breadcrumb: "Exportação de Relatórios",
+      breadcrumbParents: [{ label: 'Relatórios' }],
+      permission: "MOD_RELATORIOS"
+    }
+  },
+  {
     path: 'planos-trabalho/cadastrados',
     component: RelatorioPlanoTrabalhoComponent,
     canActivate: [AuthGuard],

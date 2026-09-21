@@ -47,6 +47,21 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         return $planoTrabalho instanceof PlanoTrabalho ? $planoTrabalho : null;
     }
 
+    public function findByIdForUpdate(string|int $id): ?PlanoTrabalho
+    {
+        if ($id === '' || $id === 0) {
+            return null;
+        }
+
+        /** @var PlanoTrabalho|null $planoTrabalho */
+        $planoTrabalho = $this->query()
+            ->whereKey($id)
+            ->lockForUpdate()
+            ->first();
+
+        return $planoTrabalho instanceof PlanoTrabalho ? $planoTrabalho : null;
+    }
+
     public function findOneParaEnvio(string|int $id): ?PlanoTrabalho
     {
         /** @var PlanoTrabalho|null */
@@ -391,7 +406,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             'consolidacoes.afastamentos.afastamento.tipoMotivoAfastamento:id,nome,horas',
             'documento.assinaturas.usuario',
             'entregas.planoEntregaEntrega.entrega',
-            'entregas.planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome'
+            'entregas.planoEntregaEntrega.planoEntrega.unidade:id,codigo,sigla,nome'
         ])->find($id);
 
         return $plano;

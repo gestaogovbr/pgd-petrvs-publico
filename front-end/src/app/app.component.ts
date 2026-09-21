@@ -464,6 +464,12 @@ export class AppComponent implements IAppComponent {
         icon: 'bi bi-building-dash',
       },
       /* RELATORIOS */
+      RELATORIO_GERACAO: {
+        name: "Exportação de Relatórios",
+        permition: 'MOD_RELATORIOS',
+        route: ['relatorios', 'exportacao'],
+        icon: 'bi bi-file-earmark-arrow-down',
+      },
       RELATORIO_PLANO_TRABALHO: {
         name: this.lex.translate("Planos de Trabalho"),
         permition: 'MOD_RELATORIO_PT',
@@ -573,6 +579,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.RELATORIO_USUARIOS,
           this.menuSchema.RELATORIO_UNIDADES,
           this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE,
+          this.menuSchema.RELATORIO_GERACAO,
         ],
       },
       {
@@ -613,6 +620,7 @@ export class AppComponent implements IAppComponent {
           this.menuSchema.RELATORIO_USUARIOS,
           this.menuSchema.RELATORIO_UNIDADES,
           this.menuSchema.RELATORIO_CARGA_INDIVIDUAL_SIAPE,
+          this.menuSchema.RELATORIO_GERACAO,
         ],
       },
       {

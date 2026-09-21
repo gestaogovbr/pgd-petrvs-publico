@@ -34,6 +34,7 @@ class ServerException extends Exception implements IBaseException
         "ProgramaUpdate" => "Usuário não tem permissão para alterar regramentos",
         "ProgramaDestroy" => "Usuário não tem permissão para excluir regramentos",
         "RelatorioCapacidade" => "Usuário não tem permissão para abrir este Relatório",
+        "RelatorioGeracao" => "Erro na geração de relatórios",
         "RelatorioEnvioParticipantes" => "Acesso negado ao relatório de envio de participantes.",
         "RelatorioEnvioPlanoTrabalho" => "Acesso negado ao relatório de envio de planos de trabalho.",
         "RelatorioEnvioPlanoEntrega" => "Acesso negado ao relatório de envio de planos de entrega.",
