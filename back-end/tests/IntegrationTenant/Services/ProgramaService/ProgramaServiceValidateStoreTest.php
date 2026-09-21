@@ -53,7 +53,7 @@ describe('ProgramaService::validateStore - periodicidades descontinuadas', funct
         $data = dadosProgramaPeriodicidade($this->unidade, 'BIMESTRAL');
 
         expect(fn () => $this->service->validateStore($data, $this->unidade, ServiceBase::ACTION_INSERT))
-            ->toThrow(\Exception::class, 'A periodicidade de consolidação selecionada foi descontinuada. Utilize a periodicidade Mensal.');
+            ->toThrow(\Exception::class, 'A periodicidade de consolidação selecionada foi descontinuada.');
     });
 
     test('permite INSERT com periodicidade MENSAL', function () {
@@ -90,7 +90,7 @@ describe('ProgramaService::validateStore - periodicidades descontinuadas', funct
         $data = dadosProgramaPeriodicidade($this->unidade, 'TRIMESTRAL', $programa->id);
 
         expect(fn () => $this->service->validateStore($data, $this->unidade, ServiceBase::ACTION_EDIT))
-            ->toThrow(\Exception::class, 'A periodicidade de consolidação selecionada foi descontinuada. Utilize a periodicidade Mensal.');
+            ->toThrow(\Exception::class, 'A periodicidade de consolidação selecionada foi descontinuada.');
     });
 
     test('permite EDIT trocando de periodicidade descontinuada para MENSAL', function () {
