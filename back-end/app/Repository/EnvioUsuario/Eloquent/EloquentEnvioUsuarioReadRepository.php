@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace App\Repository\EnvioUsuario\Eloquent;
 
-use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
+use App\Repository\UnidadeRepository;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class EloquentEnvioUsuarioReadRepository implements EnvioUsuarioReadRepositoryContract
 {
+    public function __construct(
+        private readonly UnidadeRepository $unidadeRepository,
+    ) {
+    }
+
     public function query(array $data, Usuario $requestUser): array
     {
         $query = $this->baseQuery($requestUser);
@@ -55,7 +60,7 @@ class EloquentEnvioUsuarioReadRepository implements EnvioUsuarioReadRepositoryCo
 
         if (!$requestUser->hasPermissionTo('MOD_USER_TUDO')) {
             $unidadeIds = $requestUser->areasTrabalho->pluck('unidade_id')->all();
-            $hierarquiaIds = Unidade::naHierarquiaDe($unidadeIds)->pluck('id');
+            $hierarquiaIds = $this->unidadeRepository->idsNaHierarquiaDe($unidadeIds);
 
             $query->whereExists(function (Builder $q) use ($hierarquiaIds): void {
                 $q->select(DB::raw(1))

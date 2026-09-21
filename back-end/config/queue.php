@@ -107,6 +107,16 @@ return [
             'timeout' => 172800
         ],
 
+        'relatorio_exportacao' => [
+            'driver' => 'redis',
+            'connection' => 'default',
+            'queue' => 'relatorio_exportacao',
+            'retry_after' => 2100,
+            'block_for' => null,
+            'after_commit' => false,
+            'timeout' => 1800,
+        ],
+
         'pgd_queue' => [
             'driver' => 'rabbitmq',
             'connection' => 'rabbitmq',

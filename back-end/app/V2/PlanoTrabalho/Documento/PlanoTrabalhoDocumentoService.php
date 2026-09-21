@@ -165,7 +165,14 @@ class PlanoTrabalhoDocumentoService
 
         $dto = TCRAssinaturaDTO::fromDocumento($documento, $usuarioId);
 
-        return DB::transaction(function () use ($plano, $documento, $dto, $usuarioId) {
+        return DB::transaction(function () use ($plano, $planoTrabalhoId, $documento, $dto, $usuarioId) {
+            $this->planoTrabalhoRepository->findByIdForUpdate($planoTrabalhoId);
+
+            $assinaturaExistente = $this->assinaturaRepository->findByDocumentoAndUsuario($documento->id, $usuarioId);
+            if ($assinaturaExistente !== null) {
+                return $assinaturaExistente;
+            }
+
             $this->assinarValidator->validarSlotGestorDisponivel($plano, $usuarioId, $documento);
 
             $assinatura = $this->assinaturaRepository->createFromTCR($dto);
@@ -194,7 +201,9 @@ class PlanoTrabalhoDocumentoService
         $plano = $this->authValidator->validar($planoTrabalhoId, $usuarioId);
         $documento = $this->cancelarAssinaturaValidator->validar($plano, $usuarioId, Auth::user()->cpf);
 
-        DB::transaction(function () use ($plano, $documento, $usuarioId) {
+        DB::transaction(function () use ($plano, $planoTrabalhoId, $documento, $usuarioId) {
+            $this->planoTrabalhoRepository->findByIdForUpdate($planoTrabalhoId);
+
             $this->assinaturaRepository->deleteAssinaturaUsuario($documento->id, $usuarioId);
 
             $status = $this->assinaturaRepository->existeAlgumaAssinatura($documento->id)

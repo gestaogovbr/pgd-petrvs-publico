@@ -1,0 +1,11 @@
+<paginated-select
+  [label]="label"
+  placeholder="Pesquise pelo nome"
+  emptyText="Nenhum agente encontrado"
+  [perPage]="perPage"
+  [minChars]="0"
+  [value]="displayValue()"
+  [searchFn]="search"
+  [displayFn]="displayFn"
+  (selected)="onSelected($event)"
+></paginated-select>

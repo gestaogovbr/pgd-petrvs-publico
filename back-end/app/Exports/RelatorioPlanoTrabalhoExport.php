@@ -2,7 +2,6 @@
 namespace App\Exports;
 
 use App\Models\PlanoTrabalho;
-use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\WithColumnFormatting;
@@ -15,6 +14,8 @@ use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
@@ -24,10 +25,26 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
     use RegistersEventListeners;
 
     protected $rows;
+    protected ?int $totalRows = null;
 
     public function __construct($rows)
     {
         $this->rows = $rows;
+    }
+
+    public function setTotalRows(int $totalRows): self
+    {
+        $this->totalRows = $totalRows;
+        return $this;
+    }
+
+    protected function totalRows(): int
+    {
+        if ($this->totalRows !== null) {
+            return $this->totalRows;
+        }
+
+        return is_countable($this->rows) ? count($this->rows) : 0;
     }
 
     public function collection()
@@ -67,19 +84,25 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
 
     public function map($row): array
     {
-        $inicio = Carbon::createFromFormat('Y-m-d', $row->dataInicio);
-        $fim = Carbon::createFromFormat('Y-m-d', $row->dataFim);
+        return array_merge($this->mapPlanoTrabalho($row), [
+            $row->qtdePeriodosAvaliativos ?? 0,
+        ]);
+    }
 
+    /**
+     * @return list<mixed>
+     */
+    protected function mapPlanoTrabalho($row): array
+    {
         return [
             '#'.$row->numero,
             $row->participanteNome,
             $row->unidadeHierarquia,
-            number_format((float) $row->chd, 2, ','),
+            number_format((float) ($row->chd ?? 0), 2, ','),
             PlanoTrabalho::STATUSES[$row->status] ?? $row->status,
             Date::stringToExcel($row->dataInicio),
             Date::stringToExcel($row->dataFim),
             $row->duracao,
-            $row->qtdePeriodosAvaliativos
         ];
     }
 
@@ -113,7 +136,7 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
                 ],
                 'borders' => [
                     'allBorders' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'borderStyle' => Border::BORDER_THIN,
                         'color' => ['argb' => '000000'],
                     ],
                 ]
@@ -123,15 +146,6 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                 ]
             ],
-            // borda no conjunto inteiro + 1 linha de header
-            'A1:I'.(count($this->rows) + 1) => [
-                'borders' => [
-                    'outline' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                        'color' => ['argb' => '000000'],
-                    ],
-                ]
-            ]
         ];
     }
 
@@ -140,7 +154,7 @@ class RelatorioPlanoTrabalhoExport implements FromCollection, WithMapping, WithH
         $event->sheet->getDelegate()->getRowDimension('1')->setRowHeight(60);
         $event->sheet->getDelegate()->getStyle('1')->getAlignment()->setWrapText(true);
         $event->sheet->getStyle('A1:I1')->getFill()
-          ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+          ->setFillType(Fill::FILL_SOLID)
           ->getStartColor()->setARGB('fc9fc0');
     }
 }
