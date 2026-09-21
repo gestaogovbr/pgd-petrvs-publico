@@ -383,6 +383,15 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return array_map(fn ($row) => $row->id, $subordinadaIds);
     }
 
+    /**
+     * @param string[] $ids
+     * @return list<string>
+     */
+    public function idsNaHierarquiaDe(array $ids): array
+    {
+        return array_values(array_unique(array_merge($ids, $this->getSubordinadasRecursivasIds($ids))));
+    }
+
     /** @return list<string> */
     public function getGerenciadasComSubordinadasIds(string $usuarioId): array
     {

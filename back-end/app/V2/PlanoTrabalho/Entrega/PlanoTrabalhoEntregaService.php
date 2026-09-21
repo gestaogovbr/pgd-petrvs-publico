@@ -51,7 +51,7 @@ class PlanoTrabalhoEntregaService
 
             $this->tcrInvalidador->invalidar($dto->planoTrabalhoId);
 
-            return $entrega->refresh();
+            return $entrega;
         });
     }
 

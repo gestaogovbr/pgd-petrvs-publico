@@ -30,6 +30,11 @@ class PlanoTrabalhoRepository implements EnvioRepositoryInterface
         return $this->readRepository->findById($id);
     }
 
+    public function findByIdForUpdate(string|int $id): ?PlanoTrabalho
+    {
+        return $this->readRepository->findByIdForUpdate($id);
+    }
+
     public function findOneParaEnvio(string|int $id): ?PlanoTrabalho
     {
         return $this->readRepository->findOneParaEnvio($id);

@@ -172,11 +172,43 @@ describe('GET /api/v2/ocorrencia/agentes', function () {
         $response = $this->getJson('/api/__tests/v2/ocorrencia/agentes');
 
         $response->assertStatus(200)
-            ->assertJsonPath('success', true);
+            ->assertJsonPath('success', true)
+            ->assertJsonStructure(['success', 'data' => ['data', 'current_page', 'last_page', 'per_page', 'total']]);
 
-        $agentes = $response->json('data');
+        $agentes = $response->json('data.data');
         expect($agentes)->not->toBeEmpty();
         expect(collect($agentes)->pluck('id')->toArray())->toContain($this->usuario->id);
+    });
+
+    test('filtra agentes por termo no nome', function () {
+        DB::connection('tenant')->table('usuarios')
+            ->where('id', $this->usuario->id)
+            ->update(['nome' => 'Zezinho Alvo Teste']);
+
+        $response = $this->getJson('/api/__tests/v2/ocorrencia/agentes?filters[termo]=Zezinho%20Alvo');
+
+        $response->assertStatus(200);
+        $ids = collect($response->json('data.data'))->pluck('id')->toArray();
+        expect($ids)->toContain($this->usuario->id);
+
+        $vazio = $this->getJson('/api/__tests/v2/ocorrencia/agentes?filters[termo]=NomeQueNaoExiste');
+        $vazio->assertStatus(200);
+        expect($vazio->json('data.data'))->toBeEmpty();
+    });
+
+    test('respeita o parâmetro de tamanho de página', function () {
+        $response = $this->getJson('/api/__tests/v2/ocorrencia/agentes?size=1&page=1');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.per_page', 1)
+            ->assertJsonPath('data.current_page', 1);
+        expect(count($response->json('data.data')))->toBeLessThanOrEqual(1);
+    });
+
+    test('retorna 422 quando size é inválido', function () {
+        $response = $this->getJson('/api/__tests/v2/ocorrencia/agentes?size=0');
+
+        $response->assertStatus(422);
     });
 });
 
@@ -216,7 +248,7 @@ describe('Hierarquia: gestor opera sobre usuários de unidades subordinadas', fu
 
         $response->assertStatus(200);
 
-        $ids = collect($response->json('data'))->pluck('id')->toArray();
+        $ids = collect($response->json('data.data'))->pluck('id')->toArray();
         expect($ids)->toContain($this->subordinado->id);
         expect($ids)->toContain($this->usuario->id);
         expect($ids)->not->toContain($this->unlistedSubordinado->id);

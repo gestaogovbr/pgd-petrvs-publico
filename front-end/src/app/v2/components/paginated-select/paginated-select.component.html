@@ -1,0 +1,49 @@
+<div class="paginated-select-wrapper">
+  <div class="paginated-select-trigger" (click)="toggleDropdown(); $event.stopPropagation()">
+    <br-input
+      [label]="label"
+      [value]="displayValue()"
+      [placeholder]="placeholder"
+      (valueChange)="onInputChange($event)"
+      actionLabel="Exibir lista de opções"
+      [actionTabIndex]="-1"
+    >
+      <br-icon slot="action" [attr.icon-name]="isOpen() ? 'fa-solid:angle-up' : 'fa-solid:angle-down'" height="16" aria-hidden="true"></br-icon>
+    </br-input>
+  </div>
+
+  <div
+    class="paginated-select-dropdown"
+    [hidden]="!isOpen()"
+    (scroll)="onScroll($event)"
+  >
+    <br-list>
+      @for (item of items(); track $index) {
+        <br-item
+          [isButton]="true"
+          density="small"
+          (brDidClick)="onItemClick(item)"
+        >
+          @if (itemTemplate) {
+            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: item }"></ng-container>
+          } @else {
+            {{ displayFn(item) }}
+          }
+        </br-item>
+      }
+    </br-list>
+
+    @if (loading()) {
+      <div class="paginated-select-loading">
+        <span class="spinner-border spinner-border-sm" role="status"></span>
+        <span>Carregando...</span>
+      </div>
+    }
+
+    @if (!loading() && items().length === 0 && isOpen()) {
+      <div class="paginated-select-empty">
+        {{ emptyText }}
+      </div>
+    }
+  </div>
+</div>

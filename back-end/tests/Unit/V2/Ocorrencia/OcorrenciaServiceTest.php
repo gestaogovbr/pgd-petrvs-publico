@@ -11,7 +11,7 @@ use App\V2\Ocorrencia\DTOs\OcorrenciaOperacaoDTO;
 use App\V2\Ocorrencia\OcorrenciaImpactoPolicy;
 use App\V2\Ocorrencia\OcorrenciaService;
 use App\V2\Ocorrencia\Validators\OcorrenciaStoreValidator;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 
 beforeEach(function () {
@@ -38,30 +38,34 @@ beforeEach(function () {
 
 describe('getGerenciadasComSubordinadasIds (via agentes)', function () {
 
-    test('passa unidade IDs do repository para findAgentesVisiveis', function () {
+    test('passa unidade IDs e paginação do repository para findAgentesVisiveis', function () {
         $this->unidadeRepo->shouldReceive('getGerenciadasComSubordinadasIds')
             ->once()->with('user-logado')
             ->andReturn(['unidade-a', 'unidade-b', 'unidade-c']);
 
+        $paginator = new LengthAwarePaginator([], 0, 20, 1);
+
         $this->usuarioRepo->shouldReceive('findAgentesVisiveis')
             ->once()
-            ->with('user-logado', ['unidade-a', 'unidade-b', 'unidade-c'])
-            ->andReturn(new Collection());
+            ->with('user-logado', ['unidade-a', 'unidade-b', 'unidade-c'], 'jo', 2, 20)
+            ->andReturn($paginator);
 
-        $this->service->agentes();
+        expect($this->service->agentes('jo', 2, 20))->toBe($paginator);
     });
 
-    test('retorna vazio quando usuário não gerencia nenhuma unidade', function () {
+    test('retorna paginação vazia quando usuário não gerencia nenhuma unidade', function () {
         $this->unidadeRepo->shouldReceive('getGerenciadasComSubordinadasIds')
             ->once()->with('user-logado')
             ->andReturn([]);
 
+        $paginator = new LengthAwarePaginator([], 0, 20, 1);
+
         $this->usuarioRepo->shouldReceive('findAgentesVisiveis')
             ->once()
-            ->with('user-logado', [])
-            ->andReturn(new Collection());
+            ->with('user-logado', [], null, 1, 20)
+            ->andReturn($paginator);
 
-        $this->service->agentes();
+        expect($this->service->agentes())->toBe($paginator);
     });
 });
 
