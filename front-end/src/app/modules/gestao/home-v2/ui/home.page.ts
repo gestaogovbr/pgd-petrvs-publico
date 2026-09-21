@@ -9,6 +9,7 @@ import { UtilService } from 'src/app/services/util.service';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { MuralAvisoTenantService } from 'src/app/services/mural-aviso-tenant.service';
+import { HomeApiClient } from '../infra/home-api.client';
 import { PendenciasUsuarioComponent } from './components/pendencias-usuario.component';
 import { PlanosVigentesComponent } from './components/planos-vigentes.component';
 import { AcoesGerenciaisComponent } from './components/acoes-gerenciais.component';
@@ -50,6 +51,7 @@ export class HomeV2Page implements OnInit {
   private readonly router = inject(Router);
   private readonly go = inject(NavigateService);
   private readonly muralService = inject(MuralAvisoTenantService);
+  private readonly homeApi = inject(HomeApiClient);
 
   readonly unidadeOptions = signal<SelectOption[]>([]);
   readonly selectedUnidadeId = signal<string>('');
@@ -112,17 +114,17 @@ export class HomeV2Page implements OnInit {
   }
 
   irParaPlanosEntregasVigentes(): void {
-    this.go.navigate({
-      route: ['gestao', 'plano-entrega'],
-      params: {
-        planejamento: true,
-        filter: {
-          unidade_id: this.selectedUnidadeId(),
-          subordinadas: this.subordinadas(),
-          status: 'ATIVO',
-          data_filtro: 'VIGENTE',
-        },
-      },
+    // Usa o endpoint V2 (mesmo critério do card) para navegar exatamente aos PEs vigentes
+    // das unidades onde o usuário possui atribuição direta.
+    this.homeApi.getPlanosEntregaVigentesIds().subscribe((ids) => {
+      const filter: Record<string, unknown> = { meus_planos: false, principais: false };
+      if (ids.length) {
+        filter['id'] = ids;
+      }
+      this.go.navigate({
+        route: ['gestao', 'plano-entrega'],
+        params: { planejamento: true, filter },
+      });
     });
   }
 

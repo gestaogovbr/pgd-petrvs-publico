@@ -128,4 +128,11 @@ export class HomeApiClient extends TenantV2ResourceApiBase {
       .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/registro-execucao-atraso`, { params: { size: '200' } })
       .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
   }
+
+  /** IDs dos Planos de Entrega vigentes nas unidades onde o usuário possui atribuição direta. */
+  getPlanosEntregaVigentesIds(): Observable<string[]> {
+    return this.http
+      .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/vigentes`, { params: { size: '200' } })
+      .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
+  }
 }

@@ -12,6 +12,7 @@ use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
 use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
 use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
 use App\V2\PlanoEntrega\DTOs\RegistroExecucaoAtrasoPEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\VigentesPEBuscaDTO;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -141,5 +142,10 @@ class PlanoEntregaRepository implements EnvioRepositoryInterface
     public function paginatePlanosEntregaComRegistroAtraso(RegistroExecucaoAtrasoPEBuscaDTO $busca): LengthAwarePaginator
     {
         return $this->readRepository->paginatePlanosEntregaComRegistroAtraso($busca);
+    }
+
+    public function paginatePlanosEntregaVigentes(VigentesPEBuscaDTO $busca): LengthAwarePaginator
+    {
+        return $this->readRepository->paginatePlanosEntregaVigentes($busca);
     }
 }

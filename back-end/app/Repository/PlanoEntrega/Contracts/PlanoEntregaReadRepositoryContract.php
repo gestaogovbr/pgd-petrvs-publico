@@ -8,6 +8,7 @@ use App\Models\PlanoEntrega;
 use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
 use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
 use App\V2\PlanoEntrega\DTOs\RegistroExecucaoAtrasoPEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\VigentesPEBuscaDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -40,6 +41,8 @@ interface PlanoEntregaReadRepositoryContract
     public function countEntregasSemProgresso(array $unidadesIds, ?string $planoEntregaCriadoApos = null): int;
 
     public function paginatePlanosEntregaComRegistroAtraso(RegistroExecucaoAtrasoPEBuscaDTO $busca): LengthAwarePaginator;
+
+    public function paginatePlanosEntregaVigentes(VigentesPEBuscaDTO $busca): LengthAwarePaginator;
 
     public function findAllEntregasByPlanoId(string $planoEntregaId): Collection;
 

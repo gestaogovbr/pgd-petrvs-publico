@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\V2\PlanoEntrega\DataProviders\AvaliacaoPendentePEDataProvider;
 use App\V2\PlanoEntrega\DataProviders\HomologacaoPendentePEDataProvider;
 use App\V2\PlanoEntrega\DataProviders\RegistroExecucaoAtrasoPEDataProvider;
+use App\V2\PlanoEntrega\DataProviders\VigentesPEDataProvider;
 use App\V2\PlanoEntrega\DTOs\PlanoEntregaBuscaDTO;
 use App\V2\PlanoEntrega\DTOs\PlanoEntregaEntregaBuscaDTO;
 use App\V2\PlanoEntrega\Validators\PlanoEntregaRequestValidator;
@@ -31,6 +32,7 @@ class PlanoEntregaController extends Controller
         private readonly AvaliacaoPendentePEDataProvider $avaliacaoPendente,
         private readonly HomologacaoPendentePEDataProvider $homologacaoPendente,
         private readonly RegistroExecucaoAtrasoPEDataProvider $registroExecucaoAtraso,
+        private readonly VigentesPEDataProvider $vigentes,
     ) {
         $this->service = $service;
     }
@@ -74,6 +76,22 @@ class PlanoEntregaController extends Controller
             $perPage = (int) $request->input('size', 15);
 
             $result = $this->registroExecucaoAtraso->buscar(Auth::id(), $page, $perPage);
+
+            return response()->json(['success' => true, 'data' => $result]);
+        } catch (Throwable $e) {
+            report($e);
+
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function vigentes(Request $request): JsonResponse
+    {
+        try {
+            $page = (int) $request->input('page', 1);
+            $perPage = (int) $request->input('size', 15);
+
+            $result = $this->vigentes->buscar(Auth::id(), $page, $perPage);
 
             return response()->json(['success' => true, 'data' => $result]);
         } catch (Throwable $e) {

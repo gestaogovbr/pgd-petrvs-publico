@@ -12,6 +12,7 @@ use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
 use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
 use App\V2\PlanoEntrega\DTOs\RegistroExecucaoAtrasoPEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\VigentesPEBuscaDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -244,6 +245,40 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             ->with(['unidade:id,sigla,nome', 'programa:id,nome'])
             ->orderBy('numero')
             ->paginate(perPage: $busca->perPage, page: $busca->page);
+    }
+
+    /**
+     * Lista paginada de PEs VIGENTES do usuário: status ATIVO e período (data_inicio..data_fim)
+     * contendo a data de hoje, nas unidades de atribuição direta informadas no DTO.
+     */
+    public function paginatePlanosEntregaVigentes(VigentesPEBuscaDTO $busca): LengthAwarePaginator
+    {
+        if ($busca->unidadesIds === []) {
+            return new LengthAwarePaginatorConcrete([], 0, $busca->perPage, $busca->page);
+        }
+
+        return $this->baseVigentesQuery($busca->unidadesIds)
+            ->with(['unidade:id,sigla,nome', 'programa:id,nome'])
+            ->orderBy('numero')
+            ->paginate(perPage: $busca->perPage, page: $busca->page);
+    }
+
+    /**
+     * Query base dos PEs vigentes: status ATIVO, período corrente e sem arquivamento.
+     *
+     * @param string[] $unidadesIds
+     * @return Builder<PlanoEntrega>
+     */
+    private function baseVigentesQuery(array $unidadesIds): Builder
+    {
+        $hoje = now();
+
+        return $this->query()
+            ->where('status', StatusEnum::ATIVO->value)
+            ->whereIn('unidade_id', $unidadesIds)
+            ->where('data_inicio', '<=', $hoje)
+            ->where('data_fim', '>=', $hoje)
+            ->whereNull('data_arquivamento');
     }
 
     /**
