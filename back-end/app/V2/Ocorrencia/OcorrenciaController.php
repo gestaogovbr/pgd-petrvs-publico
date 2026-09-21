@@ -21,10 +21,21 @@ class OcorrenciaController extends Controller
         private readonly OcorrenciaService $service,
     ) {}
 
-    public function agentes(): JsonResponse
+    public function agentes(Request $request): JsonResponse
     {
         try {
-            return response()->json(['success' => true, 'data' => $this->service->agentes()]);
+            $data = OcorrenciaRequestValidator::agentes($request);
+            $termo = $data['filters']['termo'] ?? null;
+            $page = (int) ($data['page'] ?? 1);
+            $perPage = (int) ($data['size'] ?? 20);
+
+            $result = $this->service->agentes($termo, $page, $perPage);
+
+            return response()->json(['success' => true, 'data' => $result]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
             report($e);
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
