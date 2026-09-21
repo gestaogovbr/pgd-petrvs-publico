@@ -1,45 +1,14 @@
-<div class="unidade-select-wrapper">
-  <div class="unidade-select-trigger" (click)="toggleDropdown(); $event.stopPropagation()">
-    <br-input
-      [label]="label"
-      [value]="displayValue()"
-      [placeholder]="'Pesquise por nome ou sigla'"
-      (valueChange)="onBrInputChange($event)"
-      actionLabel="Exibir lista de opções"
-      [actionTabIndex]="-1"
-    >
-      <br-icon slot="action" [attr.icon-name]="isOpen() ? 'fa-solid:angle-up' : 'fa-solid:angle-down'" height="16" aria-hidden="true"></br-icon>
-    </br-input>
-  </div>
-
-  <div
-    class="unidade-select-dropdown"
-    [hidden]="!isOpen()"
-    (scroll)="onScroll($event)"
-  >
-    <br-list>
-      @for (item of items(); track item.id; let idx = $index) {
-        <br-item
-          [isButton]="true"
-          density="small"
-          (brDidClick)="onItemClick(item)"
-        >
-          <strong>{{ item.sigla }}</strong> - {{ item.nome }}
-        </br-item>
-      }
-    </br-list>
-
-    @if (loading()) {
-      <div class="unidade-select-loading">
-        <span class="spinner-border spinner-border-sm" role="status"></span>
-        <span>Carregando...</span>
-      </div>
-    }
-
-    @if (!loading() && items().length === 0 && isOpen()) {
-      <div class="unidade-select-empty">
-        Nenhuma unidade encontrada
-      </div>
-    }
-  </div>
-</div>
+<paginated-select
+  [label]="label"
+  [placeholder]="'Pesquise por nome ou sigla'"
+  [emptyText]="'Nenhuma unidade encontrada'"
+  [perPage]="perPage"
+  [value]="displayValue()"
+  [searchFn]="search"
+  [displayFn]="displayFn"
+  (selected)="onSelected($event)"
+>
+  <ng-template #itemTemplate let-unidade>
+    <strong>{{ unidade.sigla }}</strong> - {{ unidade.nome }}
+  </ng-template>
+</paginated-select>

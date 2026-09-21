@@ -8,6 +8,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { ComponentBase } from '../../component-base';
 import { GridComponent } from '../grid.component';
 import { Observable, finalize } from 'rxjs';
+import { NavigateService } from 'src/app/services/navigate.service';
 
 @Component({
     selector: 'filter',
@@ -46,6 +47,7 @@ export class FilterComponent extends ComponentBase implements OnInit, OnDestroy 
   @Input() hidden?: string;
   @Input() exportExcel?: (form: any, queryOptions: QueryOptions) => Observable<any>;
   @Input() excelFileName: string = 'export.xlsx';
+  @Input() exportExcelQueued: boolean = false;
 
   public deletedControl: FormControl = new FormControl(false);
   public exportingExcel: boolean = false;
@@ -54,6 +56,10 @@ export class FilterComponent extends ComponentBase implements OnInit, OnDestroy 
   constructor(injector: Injector) {
     super(injector);
     this.dialog = injector.get<DialogService>(DialogService);
+  }
+
+  private get go(): NavigateService {
+    return this.injector.get<NavigateService>(NavigateService);
   }
 
   ngOnInit(): void {
@@ -121,6 +127,12 @@ export class FilterComponent extends ComponentBase implements OnInit, OnDestroy 
         finalize(() => this.stopExcelExportFeedback())
       ).subscribe({
         next: (res) => {
+          if (this.exportExcelQueued) {
+            if (res) {
+              this.showQueuedExportDialog();
+            }
+            return;
+          }
           if (res && res.body) {
             const blob = new Blob([res.body], {
               type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -135,10 +147,30 @@ export class FilterComponent extends ComponentBase implements OnInit, OnDestroy 
         },
         error: (error) => {
           console.log(error);
-          this.dialog.alert('Erro', 'Não foi possível gerar o arquivo Excel.');
+          this.dialog.alert(
+            'Erro',
+            this.exportExcelQueued
+              ? 'Não foi possível solicitar a geração do relatório.'
+              : 'Não foi possível gerar o arquivo Excel.'
+          );
         }
       });
     }
+  }
+
+  private showQueuedExportDialog() {
+    this.dialog.choose(
+      'Exportação de Relatório',
+      'A exportação do relatório foi iniciada e será processada em segundo plano. Acompanhe o andamento na página de Exportação de Relatórios. Você possui até 24 horas para efetuar o download.',
+      [
+        { label: 'Ir para Exportação de Relatórios', value: 'go', color: 'btn-success', icon: 'bi bi-box-arrow-up-right' },
+        { label: 'Fechar', value: 'close', color: 'btn-outline-secondary' }
+      ]
+    ).then((button) => {
+      if (button?.value === 'go') {
+        this.go.openNewTab('/relatorios/exportacao');
+      }
+    });
   }
 
   private startExcelExportFeedback() {
@@ -147,7 +179,9 @@ export class FilterComponent extends ComponentBase implements OnInit, OnDestroy 
       this.grid.loading = true;
     }
     this.dialog.showSppinerOverlay(
-      'O arquivo Excel está sendo gerado. Relatórios grandes podem levar alguns instantes.'
+      this.exportExcelQueued
+        ? 'Solicitando a geração do relatório...'
+        : 'O arquivo Excel está sendo gerado. Relatórios grandes podem levar alguns instantes.'
     );
     this.detectChanges();
   }

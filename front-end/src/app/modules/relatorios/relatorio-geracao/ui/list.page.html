@@ -1,0 +1,200 @@
+<div class="br-mainpanel relatorio-geracao">
+  <app-breadcrumb />
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Exportação de Relatórios</h2>
+  </div>
+
+  <div class="br-message info mb-3">
+    <div class="icon"><i class="fas fa-info-circle fa-lg" aria-hidden="true"></i></div>
+    <div class="content">
+      <span class="message-body">Os relatórios exportados ficam disponíveis para download por até 24 horas.</span>
+    </div>
+  </div>
+
+  <form [formGroup]="filters" class="mb-3" (ngSubmit)="onConsultar()">
+    <div class="br-card">
+      <div class="card-content">
+        <div class="relatorio-geracao-filters">
+          <div class="filter-field">
+            <span class="filter-label">Relatório</span>
+            <br-select
+              formControlName="tipo"
+              [options]="tipoOptions()"
+              [filterable]="false"
+              inputWidth="100%"
+              [attr.aria-label]="'Relatório'">
+            </br-select>
+          </div>
+          <div class="filter-field">
+            <label class="filter-label" for="filtro-geracao-inicio">Início da geração</label>
+            <div class="br-input">
+              <input id="filtro-geracao-inicio" type="date" formControlName="geracao_inicio" />
+            </div>
+          </div>
+          <div class="filter-field">
+            <label class="filter-label" for="filtro-geracao-fim">Fim da geração</label>
+            <div class="br-input">
+              <input id="filtro-geracao-fim" type="date" formControlName="geracao_fim" />
+            </div>
+          </div>
+          <div class="filter-field">
+            <span class="filter-label">Status</span>
+            <br-select
+              formControlName="status"
+              [options]="statusOptions()"
+              [filterable]="false"
+              inputWidth="100%"
+              [attr.aria-label]="'Status'">
+            </br-select>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end mt-3">
+          <br-button emphasis="secondary" type="button" (click)="onConsultar()">
+            <i class="fas fa-search mr-1"></i>Consultar
+          </br-button>
+          <br-button emphasis="tertiary" type="button" (click)="limparFiltros()">
+            <i class="fas fa-times mr-1"></i>Limpar filtros
+          </br-button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  @if (facade.error()) {
+  <div class="alert alert-danger" role="alert">{{ facade.error() }}</div>
+  }
+
+  @if (facade.loading() && facade.items().length === 0) {
+  <div class="d-flex justify-content-center p-5">
+    <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+  </div>
+  }
+
+  <div class="br-table">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th
+              scope="col"
+              style="cursor:pointer; white-space:nowrap"
+              tabindex="0"
+              (click)="onSort('nome')"
+              (keydown.enter)="onSort('nome')"
+              (keydown.space)="onSort('nome')"
+              [attr.aria-sort]="sortAria('nome')">
+              Relatório
+              <span aria-hidden="true" [style.opacity]="facade.orderBy() === 'nome' ? null : 0.35">{{ sortMark('nome') }}</span>
+            </th>
+            <th
+              scope="col"
+              style="cursor:pointer; white-space:nowrap"
+              tabindex="0"
+              (click)="onSort('iniciado_em')"
+              (keydown.enter)="onSort('iniciado_em')"
+              (keydown.space)="onSort('iniciado_em')"
+              [attr.aria-sort]="sortAria('iniciado_em')">
+              Início da geração
+              <span aria-hidden="true" [style.opacity]="facade.orderBy() === 'iniciado_em' ? null : 0.35">{{ sortMark('iniciado_em') }}</span>
+            </th>
+            <th
+              scope="col"
+              style="cursor:pointer; white-space:nowrap"
+              tabindex="0"
+              (click)="onSort('finalizado_em')"
+              (keydown.enter)="onSort('finalizado_em')"
+              (keydown.space)="onSort('finalizado_em')"
+              [attr.aria-sort]="sortAria('finalizado_em')">
+              Fim da geração
+              <span aria-hidden="true" [style.opacity]="facade.orderBy() === 'finalizado_em' ? null : 0.35">{{ sortMark('finalizado_em') }}</span>
+            </th>
+            <th
+              scope="col"
+              style="cursor:pointer; white-space:nowrap"
+              tabindex="0"
+              (click)="onSort('status')"
+              (keydown.enter)="onSort('status')"
+              (keydown.space)="onSort('status')"
+              [attr.aria-sort]="sortAria('status')">
+              Status
+              <span aria-hidden="true" [style.opacity]="facade.orderBy() === 'status' ? null : 0.35">{{ sortMark('status') }}</span>
+            </th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of facade.items(); track row.id) {
+          <tr>
+            <td data-th="Relatório">{{ nomeRelatorio(row) }}</td>
+            <td data-th="Início da geração">
+              {{ row.iniciado_em | date : 'dd/MM/yyyy HH:mm' }}
+            </td>
+            <td data-th="Fim da geração">
+              {{ row.finalizado_em ? (row.finalizado_em | date : 'dd/MM/yyyy HH:mm') : '-' }}
+            </td>
+            <td data-th="Status">
+              <br-tag
+                shape="rounded"
+                density="small"
+                [bgColor]="statusColor(row)"
+                [label]="row.status_label || row.status">
+              </br-tag>
+              @if (ehErro(row) && row.erro_mensagem) {
+              <div class="small text-danger mt-1">{{ row.erro_mensagem }}</div>
+              }
+            </td>
+            <td data-th="Ações">
+              <div class="d-flex gap-1 align-items-center">
+                @if (estaProcessando(row)) {
+                <span
+                  class="relatorio-geracao-progress"
+                  [title]="progressoTitulo(row)"
+                  role="status"
+                  [attr.aria-label]="progressoTitulo(row)">
+                  <span class="relatorio-geracao-pending" aria-hidden="true"></span>
+                  <span class="relatorio-geracao-progress-value">{{ progressoPercentual(row) }}%</span>
+                </span>
+                } @else if (estaConcluido(row)) {
+                @let baixando = facade.downloadingId() === row.id;
+                <br-button
+                  shape="circle"
+                  type="button"
+                  [loading]="false"
+                  [disabled]="baixando"
+                  (click)="download(row)"
+                  title="Download"
+                  ariaLabel="Download do relatório">
+                  <i class="fas fa-download" [attr.aria-hidden]="true"></i>
+                </br-button>
+                } @else {
+                -
+                }
+              </div>
+            </td>
+          </tr>
+          }
+          @if (facade.items().length === 0 && !facade.loading()) {
+          <tr>
+            <td colspan="5" class="text-center p-3">
+              <div class="br-message warning">
+                <div class="icon"><i class="fas fa-exclamation-triangle fa-lg" aria-hidden="true"></i></div>
+                <div class="content">
+                  <span class="message-title">Nenhuma exportação encontrada.</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <app-v2-pagination
+    class="mt-3 d-block"
+    [page]="facade.page()"
+    [lastPage]="facade.lastPage()"
+    [total]="facade.total()"
+    (pageChange)="onPageChange($event)" />
+</div>

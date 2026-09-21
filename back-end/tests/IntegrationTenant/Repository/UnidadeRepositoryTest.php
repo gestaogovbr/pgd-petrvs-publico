@@ -86,77 +86,101 @@ class UnidadeRepositoryTest extends DatabaseTenantTestCase
         $this->assertFalse($this->repository->isUsuarioGestorRecursivo($filho->id, $outro->id));
     }
 
-    public function test_scope_na_hierarquia_de_retorna_unidade_direta()
+    public function test_ids_na_hierarquia_de_retorna_unidade_direta()
     {
         $unidade = Unidade::factory()->create();
 
-        $result = Unidade::naHierarquiaDe([$unidade->id])->pluck('id')->all();
+        $result = $this->repository->idsNaHierarquiaDe([$unidade->id]);
 
         $this->assertContains($unidade->id, $result);
     }
 
-    public function test_scope_na_hierarquia_de_retorna_subordinada_via_path()
+    public function test_ids_na_hierarquia_de_retorna_subordinada_via_unidade_pai_id()
     {
-        $pai = Unidade::factory()->create();
+        $pai = Unidade::factory()->create(['path' => null]);
         $filha = Unidade::factory()->create([
             'unidade_pai_id' => $pai->id,
-            'path' => "/{$pai->id}/",
+            'path' => null,
         ]);
 
-        $result = Unidade::naHierarquiaDe([$pai->id])->pluck('id')->all();
+        $result = $this->repository->idsNaHierarquiaDe([$pai->id]);
 
         $this->assertContains($pai->id, $result);
         $this->assertContains($filha->id, $result);
     }
 
-    public function test_scope_na_hierarquia_de_retorna_neta_via_path()
+    public function test_ids_na_hierarquia_de_retorna_neta_via_unidade_pai_id()
     {
-        $avo = Unidade::factory()->create();
+        $avo = Unidade::factory()->create(['path' => null]);
         $pai = Unidade::factory()->create([
             'unidade_pai_id' => $avo->id,
-            'path' => "/{$avo->id}/",
+            'path' => null,
         ]);
         $neta = Unidade::factory()->create([
             'unidade_pai_id' => $pai->id,
-            'path' => "/{$avo->id}/{$pai->id}/",
+            'path' => null,
         ]);
 
-        $result = Unidade::naHierarquiaDe([$avo->id])->pluck('id')->all();
+        $result = $this->repository->idsNaHierarquiaDe([$avo->id]);
 
         $this->assertContains($avo->id, $result);
         $this->assertContains($pai->id, $result);
         $this->assertContains($neta->id, $result);
     }
 
-    public function test_scope_na_hierarquia_de_nao_retorna_unidades_fora()
+    public function test_ids_na_hierarquia_de_nao_retorna_unidades_fora()
     {
         $unidadeA = Unidade::factory()->create();
         $unidadeB = Unidade::factory()->create();
 
-        $result = Unidade::naHierarquiaDe([$unidadeA->id])->pluck('id')->all();
+        $result = $this->repository->idsNaHierarquiaDe([$unidadeA->id]);
 
         $this->assertContains($unidadeA->id, $result);
         $this->assertNotContains($unidadeB->id, $result);
     }
 
-    public function test_scope_na_hierarquia_de_com_multiplas_unidades()
+    public function test_ids_na_hierarquia_de_com_multiplas_unidades()
     {
         $unidadeA = Unidade::factory()->create();
         $unidadeB = Unidade::factory()->create();
         $filhaA = Unidade::factory()->create([
             'unidade_pai_id' => $unidadeA->id,
-            'path' => "/{$unidadeA->id}/",
+            'path' => null,
         ]);
         $filhaB = Unidade::factory()->create([
             'unidade_pai_id' => $unidadeB->id,
-            'path' => "/{$unidadeB->id}/",
+            'path' => null,
         ]);
 
-        $result = Unidade::naHierarquiaDe([$unidadeA->id, $unidadeB->id])->pluck('id')->all();
+        $result = $this->repository->idsNaHierarquiaDe([$unidadeA->id, $unidadeB->id]);
 
         $this->assertContains($unidadeA->id, $result);
         $this->assertContains($unidadeB->id, $result);
         $this->assertContains($filhaA->id, $result);
         $this->assertContains($filhaB->id, $result);
+    }
+
+    public function test_ids_na_hierarquia_de_usa_unidade_pai_id_e_ignora_path()
+    {
+        $pai = Unidade::factory()->create(['path' => null]);
+        $filha = Unidade::factory()->create([
+            'unidade_pai_id' => $pai->id,
+            'path' => null,
+        ]);
+        $neta = Unidade::factory()->create([
+            'unidade_pai_id' => $filha->id,
+            'path' => null,
+        ]);
+        $soPath = Unidade::factory()->create([
+            'unidade_pai_id' => null,
+            'path' => "/{$pai->id}/",
+        ]);
+
+        $result = $this->repository->idsNaHierarquiaDe([$pai->id]);
+
+        $this->assertContains($pai->id, $result);
+        $this->assertContains($filha->id, $result);
+        $this->assertContains($neta->id, $result);
+        $this->assertNotContains($soPath->id, $result);
     }
 }

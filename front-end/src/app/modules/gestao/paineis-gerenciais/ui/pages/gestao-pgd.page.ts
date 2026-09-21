@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { UnidadeSearchFn } from 'src/app/v2/components/unidade-select/unidade-select.component';
-import { UnidadeIndexResponse } from 'src/app/v2/services/unidade.service';
+import type { Page } from 'src/app/v2/domain/pagination';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PainelApiClient, FiltrosPainel, Indicador, SerieAdesao, UnidadeHistorica, DrillTarget } from '../../infra/painel-api.client';
 import { ORIGEM_DADOS, MESES_ABREVIADOS } from '../../infra/painel.constants';
@@ -313,7 +313,7 @@ export class GestaoPgdPage implements OnInit {
     }
   }
 
-  private paginateUnidades(unidades: UnidadeHistorica[], termo: string | null, page: number, size: number): UnidadeIndexResponse {
+  private paginateUnidades(unidades: UnidadeHistorica[], termo: string | null, page: number, size: number): Page<Unidade> {
     let filtered = unidades;
 
     if (termo) {
@@ -326,8 +326,8 @@ export class GestaoPgdPage implements OnInit {
     const total = filtered.length;
     const lastPage = Math.max(1, Math.ceil(total / size));
     const start = (page - 1) * size;
-    const data = filtered.slice(start, start + size).map(u => ({ id: u.id, sigla: u.sigla, nome: u.nome }) as unknown as Unidade);
+    const items = filtered.slice(start, start + size).map(u => ({ id: u.id, sigla: u.sigla, nome: u.nome }) as unknown as Unidade);
 
-    return { data, total, current_page: page, last_page: lastPage, per_page: size };
+    return { items, total, page, perPage: size, lastPage };
   }
 }
