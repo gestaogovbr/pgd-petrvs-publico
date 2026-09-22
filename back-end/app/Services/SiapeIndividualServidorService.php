@@ -42,6 +42,7 @@ class SiapeIndividualServidorService extends ServiceBase
     private const MSG_CONCLUIDO = 'Processamento concluído';
     private const TAMANHO_CPF = 11;
     private const MAX_PREVIEW_LOG = 200;
+    private const CAMPOS_PGD_ATUALIZACAO_FUNCIONAL = ['modalidade_pgd', 'participa_pgd'];
     private SiapeIndividualService $service;
     private ?array $resumo = null;
     private ?array $relatorioCarga = null;
@@ -213,13 +214,10 @@ class SiapeIndividualServidorService extends ServiceBase
      */
     private function atualizarDadosFuncionaisParciais(string $cpf, array $dadosFuncionais, array $dadosPessoais): void
     {
-        if ($dadosPessoais !== []) {
-            return;
-        }
-
         $dadosFuncionaisDtos = DadosFuncionaisSiapeDTO::listFromArray($dadosFuncionais);
+        $atualizarDadosComplementares = $dadosPessoais === [];
 
-        if (!$this->dadosFuncionaisPossuemAtributosParciais($dadosFuncionaisDtos)) {
+        if (!$this->dadosFuncionaisPossuemAtributosParciais($dadosFuncionaisDtos, $atualizarDadosComplementares)) {
             return;
         }
 
@@ -231,7 +229,7 @@ class SiapeIndividualServidorService extends ServiceBase
             return;
         }
 
-        DB::transaction(function () use ($cpf, $dadosFuncionaisDtos, $usuariosPorCpf, $usuariosPorMatricula): void {
+        DB::transaction(function () use ($cpf, $dadosFuncionaisDtos, $usuariosPorCpf, $usuariosPorMatricula, $atualizarDadosComplementares): void {
             $usuariosAtualizadosPorNovaMatricula = [];
 
             foreach ($dadosFuncionaisDtos as $dados) {
@@ -240,20 +238,24 @@ class SiapeIndividualServidorService extends ServiceBase
                     continue;
                 }
 
-                $usuario = $this->resolverUsuarioParaAtualizacaoFuncionalParcial(
-                    $dados,
-                    $usuariosPorCpf,
-                    $usuariosPorMatricula,
-                    $usuariosAtualizadosPorNovaMatricula
-                );
+                /** @var Usuario|null $usuario */
+                $usuario = $atualizarDadosComplementares
+                    ? $this->resolverUsuarioParaAtualizacaoFuncionalParcial(
+                        $dados,
+                        $usuariosPorCpf,
+                        $usuariosPorMatricula,
+                        $usuariosAtualizadosPorNovaMatricula
+                    )
+                    : $usuariosPorMatricula->get($matricula);
                 if ($usuario === null) {
                     continue;
                 }
 
-                $attributes = $dados->atributosUsuarioParciais();
-                if ((string) $usuario->matricula !== $matricula) {
-                    $attributes['matricula'] = $matricula;
+                $attributes = $this->atributosAtualizacaoFuncional($dados, $atualizarDadosComplementares);
+
+                if ($atualizarDadosComplementares && (string) $usuario->matricula !== $matricula) {
                     $usuariosAtualizadosPorNovaMatricula[$usuario->id] = true;
+                    $attributes['matricula'] = $matricula;
                 }
 
                 if ($attributes === []) {
@@ -338,15 +340,36 @@ class SiapeIndividualServidorService extends ServiceBase
     /**
      * @param array<int, DadosFuncionaisSiapeDTO> $dadosFuncionais
      */
-    private function dadosFuncionaisPossuemAtributosParciais(array $dadosFuncionais): bool
+    private function dadosFuncionaisPossuemAtributosParciais(
+        array $dadosFuncionais,
+        bool $atualizarDadosComplementares
+    ): bool
     {
         foreach ($dadosFuncionais as $dados) {
-            if ($dados->atributosUsuarioParciais() !== []) {
+            if ($this->atributosAtualizacaoFuncional($dados, $atualizarDadosComplementares) !== []) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function atributosAtualizacaoFuncional(
+        DadosFuncionaisSiapeDTO $dados,
+        bool $atualizarDadosComplementares
+    ): array
+    {
+        $attributes = $dados->atributosUsuarioParciais();
+
+        return $atualizarDadosComplementares
+            ? $attributes
+            : array_intersect_key(
+                $attributes,
+                array_fill_keys(self::CAMPOS_PGD_ATUALIZACAO_FUNCIONAL, true)
+            );
     }
 
     /**
