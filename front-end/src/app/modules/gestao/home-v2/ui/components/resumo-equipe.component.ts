@@ -10,6 +10,7 @@ import { HOME_ERRO_RECUPERAR_DADOS } from '../../home.constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
   styleUrls: ['../home.styles.scss'],
+  styles: [':host { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }'],
   templateUrl: './resumo-equipe.component.html',
 })
 export class ResumoEquipeComponent {

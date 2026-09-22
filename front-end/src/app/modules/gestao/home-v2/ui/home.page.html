@@ -38,9 +38,9 @@
   <section class="home-secao mb-4">
     <h4 class="home-secao__titulo fw-bold mb-3">Destaques da Unidade</h4>
 
-    <div class="row">
+    <div class="row align-items-stretch">
       <!-- Coluna esquerda: seletor + indicadores da unidade -->
-      <div class="col-lg-8 mb-3 mb-lg-0">
+      <div class="col-lg-8 mb-3 mb-lg-0 d-flex flex-column">
         <!-- Seletor de Unidade + Toggle Subordinadas -->
         <div class="row align-items-end mb-4">
           <div class="col-md-8">
@@ -78,9 +78,9 @@
           </div>
 
           <!-- Unidades + Agentes Públicos + Capacidade da Equipe -->
-          <div class="row">
-            <div class="col-12">
-              <home-resumo-equipe [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
+          <div class="row flex-grow-1">
+            <div class="col-12 d-flex flex-column mb-0">
+              <home-resumo-equipe class="w-100" [unidadeId]="selectedUnidadeId()" [subordinadas]="subordinadas()" />
             </div>
           </div>
         }
