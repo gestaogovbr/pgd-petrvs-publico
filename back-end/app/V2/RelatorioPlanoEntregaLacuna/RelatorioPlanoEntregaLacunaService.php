@@ -27,7 +27,7 @@ class RelatorioPlanoEntregaLacunaService
             $this->authorizationValidator->validar($usuario, $dto->filters);
         }
 
-        $result = $this->repository->query($dto->toQueryPayload());
+        $result = $this->repository->query($dto->toQuery(true));
         $total = (int) ($result['count'] ?? 0);
         $rows = $result['rows'] ?? collect();
 
@@ -48,7 +48,7 @@ class RelatorioPlanoEntregaLacunaService
             $this->authorizationValidator->validar($usuario, $dto->filters);
         }
 
-        $result = $this->repository->query($dto->toExportPayload());
+        $result = $this->repository->query($dto->toQuery(false));
 
         return [
             'count' => (int) ($result['count'] ?? 0),

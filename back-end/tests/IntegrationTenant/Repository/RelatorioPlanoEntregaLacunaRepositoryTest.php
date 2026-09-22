@@ -4,6 +4,8 @@ use App\Enums\StatusEnum;
 use App\Models\PlanoEntrega;
 use App\Models\Unidade;
 use App\Repository\RelatorioPlanoEntregaLacuna\Eloquent\EloquentRelatorioPlanoEntregaLacunaReadRepository;
+use App\V2\RelatorioPlanoEntregaLacuna\DTOs\RelatorioPlanoEntregaLacunaFiltersDTO;
+use App\V2\RelatorioPlanoEntregaLacuna\DTOs\RelatorioPlanoEntregaLacunaQueryDTO;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
@@ -32,21 +34,26 @@ function relatorioLacunaGarantirTabelaHistorico(): void
     });
 }
 
-function relatorioLacunaPayload(string $unidadeId, array $extra = []): array
+function relatorioLacunaQueryDto(string $unidadeId, array $extra = []): RelatorioPlanoEntregaLacunaQueryDTO
 {
-    return [
-        'page' => $extra['page'] ?? 1,
-        'limit' => $extra['limit'] ?? 50,
-        'orderBy' => $extra['orderBy'] ?? [
-            ['unidadeHierarquia', 'asc'],
-            ['data_inicio', 'asc'],
-        ],
-        'where' => array_merge([
-            ['unidade_id', '==', $unidadeId],
-            ['periodo_inicio', '>=', '2026-01-05'],
-            ['periodo_fim', '<=', '2026-01-09'],
-        ], $extra['where'] ?? []),
-    ];
+    $filtersExtra = $extra['filters'] ?? [];
+
+    return new RelatorioPlanoEntregaLacunaQueryDTO(
+        page: $extra['page'] ?? 1,
+        limit: $extra['limit'] ?? 50,
+        filters: new RelatorioPlanoEntregaLacunaFiltersDTO(
+            unidadeId: $unidadeId,
+            incluirUnidadesSubordinadas: (bool) ($filtersExtra['incluirUnidadesSubordinadas'] ?? false),
+            periodoInicio: $filtersExtra['periodoInicio'] ?? '2026-01-05',
+            periodoFim: $filtersExtra['periodoFim'] ?? '2026-01-09',
+            unidadeHierarquia: $filtersExtra['unidadeHierarquia'] ?? null,
+            nome: $filtersExtra['nome'] ?? null,
+            codigo: $filtersExtra['codigo'] ?? null,
+            lacuna: $filtersExtra['lacuna'] ?? null,
+            quantidadeDias: $filtersExtra['quantidadeDias'] ?? null,
+        ),
+        orderBy: $extra['orderBy'] ?? RelatorioPlanoEntregaLacunaQueryDTO::ORDEM_PADRAO,
+    );
 }
 
 function relatorioLacunaTornarExecutora(Unidade $unidade, string $inicio = '2026-01-01', ?string $fim = null): void
@@ -63,7 +70,7 @@ function relatorioLacunaTornarExecutora(Unidade $unidade, string $inicio = '2026
 test('ignora unidade que nao era executora no periodo consultado', function () {
     $unidade = Unidade::factory()->create(['executora' => false]);
 
-    $result = $this->repository->query(relatorioLacunaPayload($unidade->id));
+    $result = $this->repository->query(relatorioLacunaQueryDto($unidade->id));
 
     expect($result['count'])->toBe(0)
         ->and($result['rows'])->toHaveCount(0);
@@ -80,7 +87,7 @@ test('nao gera lacuna quando plano avaliado cobre o periodo', function () {
         'data_fim' => '2026-01-31',
     ]);
 
-    $result = $this->repository->query(relatorioLacunaPayload($unidade->id));
+    $result = $this->repository->query(relatorioLacunaQueryDto($unidade->id));
 
     expect($result['count'])->toBe(0)
         ->and($result['rows'])->toHaveCount(0);
@@ -103,19 +110,19 @@ test('paginacao incremental retorna so a pagina pedida e o total de lacunas', fu
         relatorioLacunaTornarExecutora($unidade, '2026-01-01', '2026-01-31');
     }
 
-    $pagina1 = $this->repository->query(relatorioLacunaPayload($pai->id, [
+    $pagina1 = $this->repository->query(relatorioLacunaQueryDto($pai->id, [
         'page' => 1,
         'limit' => 1,
-        'where' => [
-            ['incluir_unidades_subordinadas', '==', 1],
+        'filters' => [
+            'incluirUnidadesSubordinadas' => true,
         ],
     ]));
 
-    $pagina2 = $this->repository->query(relatorioLacunaPayload($pai->id, [
+    $pagina2 = $this->repository->query(relatorioLacunaQueryDto($pai->id, [
         'page' => 2,
         'limit' => 1,
-        'where' => [
-            ['incluir_unidades_subordinadas', '==', 1],
+        'filters' => [
+            'incluirUnidadesSubordinadas' => true,
         ],
     ]));
 
@@ -137,10 +144,10 @@ test('filtro por nome reduz unidades antes do calculo', function () {
     relatorioLacunaTornarExecutora($unidadeAlvo, '2026-01-01', '2026-01-31');
     relatorioLacunaTornarExecutora($outra, '2026-01-01', '2026-01-31');
 
-    $result = $this->repository->query(relatorioLacunaPayload($unidadeAlvo->id, [
-        'where' => [
-            ['incluir_unidades_subordinadas', '==', 1],
-            ['nome', 'like', '%Alvo Relatorio Lacuna%'],
+    $result = $this->repository->query(relatorioLacunaQueryDto($unidadeAlvo->id, [
+        'filters' => [
+            'incluirUnidadesSubordinadas' => true,
+            'nome' => 'Alvo Relatorio Lacuna',
         ],
     ]));
 

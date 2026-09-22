@@ -8,6 +8,8 @@ use App\Enums\StatusEnum;
 use App\Repository\RelatorioPlanoEntregaLacuna\Contracts\RelatorioPlanoEntregaLacunaReadRepositoryContract;
 use App\Services\UnidadeService;
 use App\Support\RelatorioPlanoEntregaLacunaCalculator;
+use App\V2\RelatorioPlanoEntregaLacuna\DTOs\RelatorioPlanoEntregaLacunaFiltersDTO;
+use App\V2\RelatorioPlanoEntregaLacuna\DTOs\RelatorioPlanoEntregaLacunaQueryDTO;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -25,48 +27,38 @@ class EloquentRelatorioPlanoEntregaLacunaReadRepository implements RelatorioPlan
 
     private const EXECUTORA = 1;
 
-    /** @var list<array{0: string, 1: string}> */
-    private const ORDEM_PADRAO = [
-        ['unidadeHierarquia', 'asc'],
-        ['data_inicio', 'asc'],
-    ];
-
     public function __construct(
         private readonly RelatorioPlanoEntregaLacunaCalculator $calculator,
         private readonly UnidadeService $unidadeService,
     ) {
     }
 
-    public function query(array $data): array
+    public function query(RelatorioPlanoEntregaLacunaQueryDTO $data): array
     {
-        $unidadeId = $this->extractWhere($data, 'unidade_id');
-        $subordinadas = $this->extractWhere($data, 'incluir_unidades_subordinadas');
-        $periodoInicio = $this->extractWhere($data, 'periodo_inicio');
-        $periodoFim = $this->extractWhere($data, 'periodo_fim');
+        $filters = $data->filters;
 
-        if (! isset($unidadeId[2]) || ! isset($periodoInicio[2]) || ! isset($periodoFim[2])) {
+        if ($filters->unidadeId === null || $filters->periodoInicio === null || $filters->periodoFim === null) {
             return ['count' => 0, 'rows' => collect()];
         }
 
-        $consultaInicio = (string) $periodoInicio[2];
-        $consultaFim = (string) $periodoFim[2];
+        $consultaInicio = $filters->periodoInicio;
+        $consultaFim = $filters->periodoFim;
 
-        $unidadeIds = $this->resolverUnidades((string) $unidadeId[2], isset($subordinadas[2]));
+        $unidadeIds = $this->resolverUnidades($filters->unidadeId, $filters->incluirUnidadesSubordinadas);
         if ($unidadeIds === []) {
             return ['count' => 0, 'rows' => collect()];
         }
 
-        $idsOrdenados = $this->buscarUnidadesCandidatas($unidadeIds, $consultaInicio, $consultaFim, $data);
+        $idsOrdenados = $this->buscarUnidadesCandidatas($unidadeIds, $consultaInicio, $consultaFim, $filters);
         if ($idsOrdenados === []) {
             return ['count' => 0, 'rows' => collect()];
         }
 
-        $filtrosLacuna = $this->extrairFiltrosLacuna($data);
-        $orderBy = $data['orderBy'] ?? self::ORDEM_PADRAO;
-        $paginacaoIncremental = $orderBy === self::ORDEM_PADRAO;
+        $orderBy = $data->orderBy !== [] ? $data->orderBy : RelatorioPlanoEntregaLacunaQueryDTO::ORDEM_PADRAO;
+        $paginacaoIncremental = $orderBy === RelatorioPlanoEntregaLacunaQueryDTO::ORDEM_PADRAO;
 
-        $limit = (int) ($data['limit'] ?? 0);
-        $page = max((int) ($data['page'] ?? 1), 1);
+        $limit = $data->limit;
+        $page = max($data->page, 1);
         $offset = $limit > 0 ? ($page - 1) * $limit : 0;
         $coletarTodas = $limit <= 0 || ! $paginacaoIncremental;
         $fimJanela = $coletarTodas ? PHP_INT_MAX : $offset + $limit;
@@ -76,7 +68,7 @@ class EloquentRelatorioPlanoEntregaLacunaReadRepository implements RelatorioPlan
 
         foreach (array_chunk($idsOrdenados, self::UNIDADES_POR_LOTE) as $loteIds) {
             foreach ($this->calcularLacunasDoLote($loteIds, $consultaInicio, $consultaFim) as $row) {
-                if (! $this->passaFiltrosDeLacuna($row, $filtrosLacuna)) {
+                if (! $this->passaFiltrosDeLacuna($row, $filters)) {
                     continue;
                 }
 
@@ -110,7 +102,7 @@ class EloquentRelatorioPlanoEntregaLacunaReadRepository implements RelatorioPlan
         array $unidadeIds,
         string $consultaInicio,
         string $consultaFim,
-        array &$data,
+        RelatorioPlanoEntregaLacunaFiltersDTO $filters,
     ): array {
         $query = DB::table('unidades as u')
             ->whereIn('u.id', $unidadeIds)
@@ -127,7 +119,7 @@ class EloquentRelatorioPlanoEntregaLacunaReadRepository implements RelatorioPlan
                     });
             });
 
-        $this->aplicarFiltrosUnidade($query, $data);
+        $this->aplicarFiltrosUnidade($query, $filters);
 
         return $query
             ->orderByRaw('fn_obter_unidade_hierarquia(u.id) asc')
@@ -137,53 +129,31 @@ class EloquentRelatorioPlanoEntregaLacunaReadRepository implements RelatorioPlan
             ->all();
     }
 
-    private function aplicarFiltrosUnidade(Builder $query, array &$data): void
+    private function aplicarFiltrosUnidade(Builder $query, RelatorioPlanoEntregaLacunaFiltersDTO $filters): void
     {
-        $unidadeHierarquia = $this->extractWhere($data, 'unidadeHierarquia');
-        if (isset($unidadeHierarquia[2])) {
-            $query->whereRaw('fn_obter_unidade_hierarquia(u.id) like ?', [(string) $unidadeHierarquia[2]]);
+        if ($filters->unidadeHierarquia !== null) {
+            $query->whereRaw('fn_obter_unidade_hierarquia(u.id) like ?', ['%' . $filters->unidadeHierarquia . '%']);
         }
 
-        $nome = $this->extractWhere($data, 'nome');
-        if (isset($nome[2])) {
-            $query->where('u.nome', 'like', (string) $nome[2]);
+        if ($filters->nome !== null) {
+            $query->where('u.nome', 'like', '%' . $filters->nome . '%');
         }
 
-        $codigo = $this->extractWhere($data, 'codigo');
-        if (isset($codigo[2])) {
-            $query->where('u.codigo', 'like', (string) $codigo[2]);
+        if ($filters->codigo !== null) {
+            $query->where('u.codigo', 'like', '%' . $filters->codigo . '%');
         }
     }
 
-    /**
-     * @return array{lacuna: ?string, quantidade_dias: ?string}
-     */
-    private function extrairFiltrosLacuna(array &$data): array
+    private function passaFiltrosDeLacuna(object $row, RelatorioPlanoEntregaLacunaFiltersDTO $filters): bool
     {
-        $lacuna = $this->extractWhere($data, 'lacuna');
-        $quantidadeDias = $this->extractWhere($data, 'quantidade_dias');
-
-        return [
-            'lacuna' => isset($lacuna[2]) ? mb_strtolower((string) $lacuna[2]) : null,
-            'quantidade_dias' => isset($quantidadeDias[2]) && $quantidadeDias[2] !== ''
-                ? (string) $quantidadeDias[2]
-                : null,
-        ];
-    }
-
-    /**
-     * @param array{lacuna: ?string, quantidade_dias: ?string} $filtros
-     */
-    private function passaFiltrosDeLacuna(object $row, array $filtros): bool
-    {
-        if ($filtros['lacuna'] !== null
-            && ! str_contains(mb_strtolower((string) $row->lacuna), $filtros['lacuna'])
+        if ($filters->lacuna !== null
+            && ! str_contains(mb_strtolower((string) $row->lacuna), mb_strtolower($filters->lacuna))
         ) {
             return false;
         }
 
-        if ($filtros['quantidade_dias'] !== null
-            && (string) $row->quantidade_dias !== $filtros['quantidade_dias']
+        if ($filters->quantidadeDias !== null
+            && (string) $row->quantidade_dias !== $filters->quantidadeDias
         ) {
             return false;
         }
@@ -331,7 +301,7 @@ class EloquentRelatorioPlanoEntregaLacunaReadRepository implements RelatorioPlan
     private function ordenar(Collection $rows, array $orderBy): Collection
     {
         if ($orderBy === []) {
-            $orderBy = self::ORDEM_PADRAO;
+            $orderBy = RelatorioPlanoEntregaLacunaQueryDTO::ORDEM_PADRAO;
         }
 
         return $rows->sort(function ($a, $b) use ($orderBy): int {
@@ -346,31 +316,5 @@ class EloquentRelatorioPlanoEntregaLacunaReadRepository implements RelatorioPlan
 
             return 0;
         })->values();
-    }
-
-    /**
-     * @param array{
-     *     where?: list<array{0: string, 1: string, 2: mixed}>
-     * } $data
-     * @return ?array{0: string, 1: string, 2: mixed}
-     */
-    private function extractWhere(array &$data, string $field): ?array
-    {
-        $result = null;
-        $where = [];
-
-        foreach ($data['where'] ?? [] as $condition) {
-            if (is_array($condition) && $condition[0] === $field) {
-                $result = $condition;
-            } else {
-                $where[] = $condition;
-            }
-        }
-
-        if ($result !== null) {
-            $data['where'] = $where;
-        }
-
-        return $result;
     }
 }

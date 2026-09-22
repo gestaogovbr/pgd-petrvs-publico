@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\V2\RelatorioPlanoEntregaLacuna;
 
 use App\Exceptions\Contracts\IBaseException;
-use App\Exceptions\ServerException;
 use App\Exports\RelatorioPlanoEntregaLacunaExport;
 use App\Http\Controllers\Controller;
-use App\Support\AuthenticatedUsuario;
+use App\V2\RelatorioPlanoEntregaLacuna\Validators\RelatorioPlanoEntregaLacunaAuthorizationValidator;
 use App\V2\RelatorioPlanoEntregaLacuna\Validators\RelatorioPlanoEntregaLacunaIndexRequestValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,17 +20,15 @@ use Throwable;
 class RelatorioPlanoEntregaLacunaController extends Controller
 {
     public function __construct(
-        private readonly RelatorioPlanoEntregaLacunaService $service
+        private readonly RelatorioPlanoEntregaLacunaService $service,
+        private readonly RelatorioPlanoEntregaLacunaAuthorizationValidator $authorizationValidator,
     ) {
     }
 
     public function index(Request $request): JsonResponse
     {
         try {
-            $usuario = AuthenticatedUsuario::withAreasDeTrabalho();
-            if ($usuario === null || ! $usuario->hasPermissionTo('MOD_RELATORIO_PE')) {
-                throw new ServerException('RelatorioPlanoEntregaLacuna');
-            }
+            $this->authorizationValidator->validarAcesso();
 
             $data = RelatorioPlanoEntregaLacunaIndexRequestValidator::index($request);
             $result = $this->service->index($data, $request);
@@ -51,10 +48,7 @@ class RelatorioPlanoEntregaLacunaController extends Controller
     public function export(Request $request)
     {
         try {
-            $usuario = AuthenticatedUsuario::withAreasDeTrabalho();
-            if ($usuario === null || ! $usuario->hasPermissionTo('MOD_RELATORIO_PE')) {
-                throw new ServerException('RelatorioPlanoEntregaLacuna');
-            }
+            $this->authorizationValidator->validarAcesso();
 
             $data = RelatorioPlanoEntregaLacunaIndexRequestValidator::index($request);
             $result = $this->service->export($data, $request);

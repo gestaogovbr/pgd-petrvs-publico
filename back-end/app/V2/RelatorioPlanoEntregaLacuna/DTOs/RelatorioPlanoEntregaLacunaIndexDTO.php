@@ -26,40 +26,11 @@ final class RelatorioPlanoEntregaLacunaIndexDTO
         );
     }
 
-    /**
-     * @return array{
-     *     page: int,
-     *     limit: int,
-     *     orderBy: list<array{0: string, 1: string}>,
-     *     where: list<array{0: string, 1: string, 2: mixed}>
-     * }
-     */
-    public function toQueryPayload(): array
+    public function toQuery(bool $paginate = true): RelatorioPlanoEntregaLacunaQueryDTO
     {
-        return [
-            'page' => $this->page,
-            'limit' => self::PAGE_SIZE,
-            'orderBy' => [
-                ['unidadeHierarquia', 'asc'],
-                ['data_inicio', 'asc'],
-            ],
-            'where' => $this->filters->toWhereArray(),
-        ];
-    }
-
-    /**
-     * @return array{
-     *     page: int,
-     *     limit: int,
-     *     orderBy: list<array{0: string, 1: string}>,
-     *     where: list<array{0: string, 1: string, 2: mixed}>
-     * }
-     */
-    public function toExportPayload(): array
-    {
-        $payload = $this->toQueryPayload();
-        $payload['limit'] = 0;
-
-        return $payload;
+        return RelatorioPlanoEntregaLacunaQueryDTO::fromIndexDto(
+            $this,
+            $paginate ? self::PAGE_SIZE : 0,
+        );
     }
 }

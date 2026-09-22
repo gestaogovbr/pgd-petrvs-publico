@@ -36,44 +36,6 @@ final class RelatorioPlanoEntregaLacunaFiltersDTO
         );
     }
 
-    /**
-     * @return list<array{0: string, 1: string, 2: mixed}>
-     */
-    public function toWhereArray(): array
-    {
-        $where = [];
-
-        if ($this->unidadeId !== null) {
-            $where[] = ['unidade_id', '==', $this->unidadeId];
-        }
-        if ($this->incluirUnidadesSubordinadas) {
-            $where[] = ['incluir_unidades_subordinadas', '==', 1];
-        }
-        if ($this->periodoInicio !== null) {
-            $where[] = ['periodo_inicio', '>=', $this->periodoInicio];
-        }
-        if ($this->periodoFim !== null) {
-            $where[] = ['periodo_fim', '<=', $this->periodoFim];
-        }
-        if ($this->unidadeHierarquia !== null) {
-            $where[] = ['unidadeHierarquia', 'like', '%' . $this->unidadeHierarquia . '%'];
-        }
-        if ($this->nome !== null) {
-            $where[] = ['nome', 'like', '%' . $this->nome . '%'];
-        }
-        if ($this->codigo !== null) {
-            $where[] = ['codigo', 'like', '%' . $this->codigo . '%'];
-        }
-        if ($this->lacuna !== null) {
-            $where[] = ['lacuna', 'like', '%' . $this->lacuna . '%'];
-        }
-        if ($this->quantidadeDias !== null) {
-            $where[] = ['quantidade_dias', '==', $this->quantidadeDias];
-        }
-
-        return $where;
-    }
-
     private static function nullableString(mixed $value): ?string
     {
         if ($value === null) {

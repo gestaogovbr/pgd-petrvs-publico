@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Unidade;
 use App\Services\UnidadeExecutoraHistoricoService;
+use Carbon\Carbon;
 
 class UnidadeObserver
 {
@@ -22,9 +23,14 @@ class UnidadeObserver
             return;
         }
 
+        $dataInicioNovo = Carbon::today()->toDateString();
+        $dataFimAnterior = Carbon::today()->subDay()->toDateString();
+
         app(UnidadeExecutoraHistoricoService::class)->registrarAlteracaoExecutora(
             $unidade,
-            (bool) $unidade->getOriginal('executora')
+            (bool) $unidade->getOriginal('executora'),
+            $dataInicioNovo,
+            $dataFimAnterior,
         );
     }
 }

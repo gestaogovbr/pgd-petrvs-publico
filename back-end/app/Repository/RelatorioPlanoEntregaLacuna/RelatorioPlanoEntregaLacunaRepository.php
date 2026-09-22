@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\RelatorioPlanoEntregaLacuna;
 
 use App\Repository\RelatorioPlanoEntregaLacuna\Contracts\RelatorioPlanoEntregaLacunaReadRepositoryContract;
+use App\V2\RelatorioPlanoEntregaLacuna\DTOs\RelatorioPlanoEntregaLacunaQueryDTO;
 
 class RelatorioPlanoEntregaLacunaRepository
 {
@@ -13,7 +14,7 @@ class RelatorioPlanoEntregaLacunaRepository
     ) {
     }
 
-    public function query(array $data): array
+    public function query(RelatorioPlanoEntregaLacunaQueryDTO $data): array
     {
         return $this->readRepository->query($data);
     }

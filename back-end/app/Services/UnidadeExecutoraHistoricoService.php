@@ -25,21 +25,22 @@ class UnidadeExecutoraHistoricoService
         ]);
     }
 
-    public function registrarAlteracaoExecutora(Unidade $unidade, bool $valorAnterior): void
-    {
+    public function registrarAlteracaoExecutora(
+        Unidade $unidade,
+        bool $valorAnterior,
+        string $dataInicioNovo,
+        string $dataFimAnterior,
+    ): void {
         if ((bool) $unidade->executora === $valorAnterior) {
             return;
         }
 
-        $inicioNovo = Carbon::today()->toDateString();
-        $fimAnterior = Carbon::today()->subDay()->toDateString();
-
-        $this->historicoExecutoraUnidadeRepository->encerrarPeriodoAberto($unidade->id, $fimAnterior);
+        $this->historicoExecutoraUnidadeRepository->encerrarPeriodoAberto($unidade->id, $dataFimAnterior);
 
         $this->historicoExecutoraUnidadeRepository->criar([
             'unidade_id' => $unidade->id,
             'executora' => (bool) $unidade->executora,
-            'data_inicio' => $inicioNovo,
+            'data_inicio' => $dataInicioNovo,
             'data_fim' => null,
         ]);
     }
