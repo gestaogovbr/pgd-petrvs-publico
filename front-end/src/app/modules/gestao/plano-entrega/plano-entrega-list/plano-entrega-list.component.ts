@@ -931,16 +931,13 @@ export class PlanoEntregaListComponent extends PageListBase<
 				/*
           (RN_PENT_AA) Para LIBERAR PARA HOMOLOGAÇÃO um plano de entregas:
           - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega (RN_PENT_D), e
-              - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
-              - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_LIB_HOMOL"
+              - o usuário logado precisa ser gestor titular ou substituto da Unidade do plano (Unidade B)
         */
 				return (
 					!this.execucao &&
 					this.planoEntregaService.situacaoPlano(planoEntrega) == "INCLUIDO" &&
 					planoEntrega.entregas.length > 0 &&
-					(this.unidadeService.isGestorUnidade(planoEntrega.unidade) ||
-						(this.auth.isLotacaoUsuario(planoEntrega.unidade) &&
-							this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL")))
+					this.unidadeService.isGestorUnidade(planoEntrega.unidade, false)
 				);
 			case this.BOTAO_LOGS:
 				/*
