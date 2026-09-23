@@ -249,7 +249,9 @@ class IntegracaoService extends ServiceBase
 
       $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, " .
         "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, data_modificacao = :data_modificacao WHERE id = :id";
-      DB::update($sql, $values);
+      $updateValues = $values;
+      unset($updateValues[':codigo_orgao']);
+      DB::update($sql, $updateValues);
 
       array_push($this->paisAlterados, $unidade);
 
@@ -272,7 +274,9 @@ class IntegracaoService extends ServiceBase
       $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
 
       $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id,  data_modificacao = :data_modificacao WHERE id = :id";
-      DB::update($sql, $values);
+      $updateValues = $values;
+      unset($updateValues[':codigo_orgao']);
+      DB::update($sql, $updateValues);
       array_push($this->unidadesAlteradas, $unidade);
       return ["unidade_id" => $values[':id'], "path" => $unidade->path_antigo];
     }
