@@ -58,13 +58,17 @@ function relatorioLacunaQueryDto(string $unidadeId, array $extra = []): Relatori
 
 function relatorioLacunaTornarExecutora(Unidade $unidade, string $inicio = '2026-01-01', ?string $fim = null): void
 {
-    DB::table('unidades_executora_historico')
-        ->where('unidade_id', $unidade->id)
-        ->update([
-            'executora' => 1,
-            'data_inicio' => $inicio,
-            'data_fim' => $fim,
-        ]);
+    DB::table('unidades_executora_historico')->where('unidade_id', $unidade->id)->delete();
+
+    DB::table('unidades_executora_historico')->insert([
+        'id' => (string) \Illuminate\Support\Str::uuid(),
+        'unidade_id' => $unidade->id,
+        'executora' => 1,
+        'data_inicio' => $inicio,
+        'data_fim' => $fim,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 }
 
 test('ignora unidade que nao era executora no periodo consultado', function () {

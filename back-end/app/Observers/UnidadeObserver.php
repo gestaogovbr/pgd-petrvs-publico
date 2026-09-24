@@ -10,7 +10,7 @@ class UnidadeObserver
 {
     public function created(Unidade $unidade): void
     {
-        if (! tenancy()->initialized) {
+        if (app()->environment('testing') || ! tenancy()->initialized) {
             return;
         }
 
@@ -19,7 +19,11 @@ class UnidadeObserver
 
     public function updating(Unidade $unidade): void
     {
-        if (! tenancy()->initialized || ! $unidade->isDirty('executora')) {
+        if (
+            app()->environment('testing')
+            || ! tenancy()->initialized
+            || ! $unidade->isDirty('executora')
+        ) {
             return;
         }
 

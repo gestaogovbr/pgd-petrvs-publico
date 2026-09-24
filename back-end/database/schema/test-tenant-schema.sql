@@ -3393,6 +3393,27 @@ CREATE TABLE `unidades` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `unidades_executora_historico`
+--
+
+DROP TABLE IF EXISTS `unidades_executora_historico`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `unidades_executora_historico` (
+  `id` char(36) NOT NULL,
+  `unidade_id` char(36) NOT NULL,
+  `executora` tinyint(1) NOT NULL,
+  `data_inicio` date NOT NULL,
+  `data_fim` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `unidades_executora_historico_unidade_id_data_inicio_index` (`unidade_id`,`data_inicio`),
+  CONSTRAINT `unidades_executora_historico_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `unidades_integrantes`
 --
 
