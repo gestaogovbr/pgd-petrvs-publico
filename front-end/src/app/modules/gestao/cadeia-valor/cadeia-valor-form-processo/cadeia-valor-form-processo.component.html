@@ -1,0 +1,6 @@
+<editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="nome" (submit)="onSaveData()" (cancel)="onCancel()">
+  <div class="row">
+    <input-select [size]="12" [items]="tiposElementos" label="Tipo de Elemento" icon="bi bi-diagram-3" controlName="tipo_elemento_id" [control]="form!.controls.tipo_elemento_id" [nullable]="'true'"></input-select>
+    <input-text [size]="12" icon="bi bi-textarea-t" label="Nome" controlName="nome" [control]="form!.controls.nome" [attr.maxlength]="256" required></input-text>
+  </div>
+</editable-form>

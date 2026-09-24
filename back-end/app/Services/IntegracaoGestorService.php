@@ -104,19 +104,26 @@ class IntegracaoGestorService extends ServiceBase
     {
         $chefias = [];
 
-        $unidadesIntegracao = $this->integracaoUnidadeRepository->getUnidadesComChefias();
+        $unidadesIntegracao = $this->integracaoUnidadeRepository->getUnidadesComChefias(
+            CodigoOrgaoService::atual()
+        );
 
         foreach ($unidadesIntegracao as $unidade) {
             $idUnidade = $unidade->id_unidade;
             $cpfChefe = $unidade->cpf_chefe;
             $codigoUnidade = $unidade->codigo_unidade;
+            $codigoOrgao = $unidade->codigo_orgao;
 
             if (empty($cpfChefe)) {
                 $chefias[] = ['id_unidade' => $idUnidade, 'id_chefe' => null];
                 continue;
             }
 
-            $servidorIntegracao = $this->integracaoServidorRepository->findByCpfAndCodigoExercicio($cpfChefe, $codigoUnidade);
+            $servidorIntegracao = $this->integracaoServidorRepository->findByCpfAndCodigoExercicio(
+                $cpfChefe,
+                $codigoUnidade,
+                $codigoOrgao
+            );
 
             if (!$servidorIntegracao) {
                 SiapeLog::warning("Servidor com CPF {$cpfChefe} não encontrado na tabela integracao_servidores vinculado à unidade {$codigoUnidade}. Chefia ignorada para evitar retorno indevido por dado stale.");

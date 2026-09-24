@@ -37,6 +37,8 @@ export class Unidade extends Base implements HasNotificacao {
     public integrantes?: UnidadeIntegrante[]; /* Lista de vínculos unidade-integrante */
 
     public codigo: string = ""; //Código da unidade
+    public codigo_orgao: string = ""; //Código do órgão ao qual a unidade pertence
+    public unidade_antiga: boolean = false; //Unidade vinculada à estrutura anterior do órgão
     public sigla: string = ""; //Sigla da unidade
     public nome: string = ""; //Nome da unidade
     public path: string = ""; //Path dos nós pais separados por /

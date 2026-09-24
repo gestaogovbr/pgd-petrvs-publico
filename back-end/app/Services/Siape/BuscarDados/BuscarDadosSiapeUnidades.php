@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Illuminate\Support\Facades\DB;
+use App\Services\CodigoOrgaoService;
 
 class BuscarDadosSiapeUnidades extends BuscarDadosSiape
 {
@@ -19,7 +20,8 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
     ): void {
         Log::info("Busca das Unidades iniciada");
         
-        $this->limpaTabela();
+        $codigoOrgao = CodigoOrgaoService::obrigatorio($siapeCodOrgao);
+        $this->limpaTabela($codigoOrgao);
 
         $xml = new SimpleXMLElement('<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://servico.wssiapenet"/>');
         $body = $xml->addChild('soapenv:Body');
@@ -34,15 +36,18 @@ class BuscarDadosSiapeUnidades extends BuscarDadosSiape
         $xmlData = $xml->asXML();
 
         $xmlResponse =  $this->buscaSincrona($xmlData);
-        $entidade = SiapeListaUORGS::create(['response' => $xmlResponse]);
+        $entidade = SiapeListaUORGS::create([
+            'codigo_orgao' => $codigoOrgao,
+            'response' => $xmlResponse,
+        ]);
         $entidade->save();
 
         Log::info("Busca das unidades finalizada");
     }
 
-    private function limpaTabela(): void
+    private function limpaTabela(string $codigoOrgao): void
     {
-        DB::table('siape_listaUORG')->truncate();
+        DB::table('siape_listaUORG')->where('codigo_orgao', $codigoOrgao)->delete();
     }
 
     

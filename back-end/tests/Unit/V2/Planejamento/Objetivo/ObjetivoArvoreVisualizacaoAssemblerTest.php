@@ -1,6 +1,5 @@
 <?php
 
-use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
 use App\V2\Planejamento\Objetivo\ObjetivoArvoreVisualizacaoAssembler;
 
 function esforcoNode(
@@ -10,24 +9,23 @@ function esforcoNode(
     ?string $paiId = null,
     ?string $superiorId = null,
     array $filhosPai = [],
-): EsforcoNodeDTO {
-    return new EsforcoNodeDTO(
-        objetivo_id: $id,
-        objetivo_nome: $nome,
-        objetivo_pai_id: $paiId,
-        objetivo_superior_id: $superiorId,
-        planejamento_nome: $planejamento,
-        tipo_objetivo_nome: 'Objetivo',
-        total_entregas: 0,
-        total_vinculos: count($filhosPai),
-        esforco_disponivel_horas: 20.0,
-        esforco_proprio: 10.0,
-        esforco_total_horas: 10.0,
-        planejado_percentual_disponivel: 50.0,
-        filhos: $filhosPai,
-        filhos_pai: $filhosPai,
-        filhos_superior: [],
-    );
+): array {
+    return [
+        'no_pai_id' => $paiId,
+        'no_pai_secundario_id' => $superiorId,
+        'no_nome' => $nome,
+        'container_nome' => $planejamento,
+        'tipo_nome' => 'Objetivo',
+        'total_entregas' => 0,
+        'esforco_disponivel_horas' => 20.0,
+        'esforco_proprio' => 10.0,
+        'esforco_total_horas' => 10.0,
+        'planejado_percentual_disponivel' => 50.0,
+        'filhos' => $filhosPai,
+        'filhos_pai' => $filhosPai,
+        'filhos_secundario' => [],
+        'total_vinculos' => count($filhosPai),
+    ];
 }
 
 describe('ObjetivoArvoreVisualizacaoAssembler', function () {
@@ -44,18 +42,17 @@ describe('ObjetivoArvoreVisualizacaoAssembler', function () {
             'sup-1-pai' => esforcoNode('sup-1-pai', 'Pai regional', 'PI Regional'),
         ];
 
-        $dto = $assembler->assemble('raiz', $nos);
+        $cadeia = $assembler->montarCadeiaSuperior('raiz', $nos);
 
-        expect($dto->objetivo_raiz_id)->toBe('raiz');
-        expect($dto->cadeia_superior)->toHaveCount(2);
+        expect($cadeia)->toHaveCount(2);
 
-        expect($dto->cadeia_superior[0]->objetivo_id)->toBe('sup-1');
-        expect($dto->cadeia_superior[0]->nivel_superior)->toBe(1);
-        expect($dto->cadeia_superior[0]->hierarquia_linhas)->toBe(['Pai regional', 'Superior imediato']);
+        expect($cadeia[0]->objetivo_id)->toBe('sup-1');
+        expect($cadeia[0]->nivel_superior)->toBe(1);
+        expect($cadeia[0]->hierarquia_linhas)->toBe(['Pai regional', 'Superior imediato']);
 
-        expect($dto->cadeia_superior[1]->objetivo_id)->toBe('sup-2');
-        expect($dto->cadeia_superior[1]->nivel_superior)->toBe(2);
-        expect($dto->cadeia_superior[1]->hierarquia_linhas)->toBe(['Raiz nacional', 'Superior distante']);
+        expect($cadeia[1]->objetivo_id)->toBe('sup-2');
+        expect($cadeia[1]->nivel_superior)->toBe(2);
+        expect($cadeia[1]->hierarquia_linhas)->toBe(['Raiz nacional', 'Superior distante']);
     });
 
     test('retorna cadeia vazia quando não há superior no mapa', function () {
@@ -64,8 +61,16 @@ describe('ObjetivoArvoreVisualizacaoAssembler', function () {
             'raiz' => esforcoNode('raiz', 'Sem superior'),
         ];
 
-        $dto = $assembler->assemble('raiz', $nos);
+        $cadeia = $assembler->montarCadeiaSuperior('raiz', $nos);
 
-        expect($dto->cadeia_superior)->toBe([]);
+        expect($cadeia)->toBe([]);
+    });
+
+    test('retorna cadeia vazia quando nó de partida não existe no mapa', function () {
+        $assembler = new ObjetivoArvoreVisualizacaoAssembler();
+
+        $cadeia = $assembler->montarCadeiaSuperior('inexistente', []);
+
+        expect($cadeia)->toBe([]);
     });
 });

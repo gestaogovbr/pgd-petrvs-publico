@@ -27,7 +27,7 @@ class PlanoTrabalhoEntregaRepository
             'planoEntregaEntrega:id,descricao,entrega_id,plano_entrega_id',
             'planoEntregaEntrega.entrega:id,nome',
             'planoEntregaEntrega.planoEntrega:id,nome,unidade_id',
-            'planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome',
+            'planoEntregaEntrega.planoEntrega.unidade:id,codigo,sigla,nome',
         ]);
 
         return $entrega;
@@ -46,7 +46,7 @@ class PlanoTrabalhoEntregaRepository
             'planoEntregaEntrega:id,descricao,entrega_id,plano_entrega_id',
             'planoEntregaEntrega.entrega:id,nome',
             'planoEntregaEntrega.planoEntrega:id,nome,unidade_id',
-            'planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome',
+            'planoEntregaEntrega.planoEntrega.unidade:id,codigo,sigla,nome',
         ]);
 
         return $entrega;

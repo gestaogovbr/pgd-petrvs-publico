@@ -5,6 +5,7 @@ import { ConfigResolver } from 'src/app/resolvies/config.resolver';
 import { UsuarioFormComponent } from './usuario-form/usuario-form.component';
 import { UsuarioListComponent } from './usuario-list/usuario-list.component';
 import { UsuarioIntegranteComponent } from './usuario-integrante/usuario-integrante.component';
+import { DispensaPlanoTrabalhoFormComponent } from './dispensa-plano-trabalho/dispensa-plano-trabalho-form.component';
 
 const routes: Routes = [
   { path: '', component: UsuarioListComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Usuários" } },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: ':id/edit', component: UsuarioFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Edição de Usuário", modal: true, canEditAtribuicoes: true } },
   { path: ':id/consult', component: UsuarioFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Consulta a Usuário", modal: true } },
   { path: ':id/integrante', component: UsuarioIntegranteComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Atribuições do Usuário", modal: true } },
+  { path: ':id/dispensa-plano-trabalho', component: DispensaPlanoTrabalhoFormComponent, canActivate: [AuthGuard], resolve: { config: ConfigResolver }, runGuardsAndResolvers: 'always', data: { title: "Dispensa de Plano de Trabalho", modal: true } },
 ];
 
 @NgModule({

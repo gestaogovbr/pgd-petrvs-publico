@@ -15,10 +15,14 @@ import { IndicadorEntregaComponent } from './indicadores-entrega/indicadores-ent
 import { RelatorioCargaIndividualSiapeComponent } from './relatorio-carga-individual-siape/relatorio-carga-individual-siape.component';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
+import { RelatorioPlanoTrabalhoConsultaComponent } from './relatorio-plano-trabalho-consulta/relatorio-plano-trabalho-consulta.component';
+import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
+import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
 
 @NgModule({
   declarations: [
     RelatorioPlanoTrabalhoComponent,
+    RelatorioPlanoTrabalhoConsultaComponent,
     RelatorioPlanoEntregaComponent,
     RelatorioPlanoEntregaHubComponent,
     RelatorioAgenteComponent,
@@ -34,7 +38,8 @@ import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.s
     BaseChartDirective,
     BreadcrumbComponent,
     ReactiveFormsModule,
-    RelatorioRoutingModule
+    RelatorioRoutingModule,
+    BreadcrumbComponent
   ],
   providers: [
     provideCharts(withDefaultRegisterables()),

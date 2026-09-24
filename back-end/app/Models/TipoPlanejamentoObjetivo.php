@@ -13,6 +13,7 @@ class TipoPlanejamentoObjetivo extends ModelBase
     protected $fillable = [
         'nome',
         'descricao',
+        'estrutura',
     ];
 
     public $delete_cascade = [];

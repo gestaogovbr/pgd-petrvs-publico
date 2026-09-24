@@ -211,3 +211,17 @@ header.br-header {
   width: 260px;
   z-index: 1050;
 }
+
+.unidade-antiga,
+.unidade-antiga-legenda {
+  color: #9c4f00;
+}
+
+.unidade-antiga {
+  font-weight: 600;
+}
+
+.unidade-antiga-legenda {
+  display: block;
+  margin-top: 0.5rem;
+}

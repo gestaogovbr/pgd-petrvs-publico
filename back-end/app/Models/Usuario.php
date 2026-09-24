@@ -35,6 +35,7 @@ use App\Models\QuestionarioPreenchimento;
 use App\Models\StatusJustificativa;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
+use App\Services\CodigoOrgaoService;
 use App\Services\UtilService;
 use App\Support\ModalidadePgd;
 use App\Contracts\HasStatusHistory;
@@ -92,6 +93,7 @@ class UsuarioConfig
  * @property-read \App\Models\Perfil|null $perfil
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $unidadesIntegrantes
  * @property-read \App\Models\PlanoTrabalho|null $ultimoPlanoTrabalho
+ * @property-read \App\Models\DispensaPlanoTrabalho|null $dispensaPlanoTrabalho
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoTrabalho> $planosTrabalho
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Unidade[] $unidades
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $curadores
@@ -101,6 +103,8 @@ class UsuarioConfig
  */
 class Usuario extends Authenticatable implements AuditableContract, HasStatusHistory
 {
+    public const USUARIO_EXTERNO = 1;
+
     public function getStatusFkColumn(): string
     {
         return 'usuario_id';
@@ -113,7 +117,7 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
     protected $table = "usuarios";
 
     protected $with = ['perfil'];
-    protected $appends = ['pedagio', 'modalidade_pgd_label', 'nome_exibicao'];
+    protected $appends = ['pedagio', 'modalidade_pgd_label', 'nome_exibicao', 'dispensa_pt_vigente'];
     public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
         'nome', /* varchar(256); NOT NULL; */ // Nome do usuário
         'email', /* varchar(100); NULL; */ // E-mail do usuário
@@ -511,7 +515,8 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
 
     public function integracaoServidor()
     {
-        return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf');
+        return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf')
+            ->where('codigo_orgao', CodigoOrgaoService::atual());
     }
 
    /**
@@ -534,6 +539,32 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
             return Carbon::parse($this->data_final_pedagio)->isFuture();
         }
         return false;
+    }
+
+    public function dispensaPlanoTrabalho()
+    {
+        return $this->hasOne(DispensaPlanoTrabalho::class, 'usuario_id');
+    }
+
+    public function getDispensaPtVigenteAttribute(): bool
+    {
+        // Evita N+1: só avalia quando a relação foi eager-loaded (ex.: listagem de usuários).
+        if (!$this->relationLoaded('dispensaPlanoTrabalho')) {
+            return false;
+        }
+
+        $dispensa = $this->dispensaPlanoTrabalho;
+
+        return $dispensa instanceof DispensaPlanoTrabalho && $dispensa->isVigente();
+    }
+
+    public function getDispensaPtElegivelAttribute(): bool
+    {
+        if (!array_key_exists('dispensa_pt_elegivel', $this->attributes)) {
+            return false;
+        }
+
+        return (bool) $this->attributes['dispensa_pt_elegivel'];
     }
 
     public function getConfigAttribute($value)

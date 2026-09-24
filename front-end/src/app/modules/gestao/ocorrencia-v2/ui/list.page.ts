@@ -1,22 +1,24 @@
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PaginationV2Component } from 'src/app/v2/components/pagination/pagination.component';
-import { OcorrenciaApiClient } from '../infra/ocorrencia-api.client';
-import { AuthService } from 'src/app/services/auth.service';
+import { OcorrenciaApiClient, AgenteOption } from '../infra/ocorrencia-api.client';
 import { Ocorrencia, TipoMotivoAfastamento } from '../domain/types';
 import { MessageService } from 'src/app/v2/services/message.service';
-
-export interface SelectOption { value: string; label: string; selected?: boolean; }
+import { SelectOption, TODOS_SENTINEL } from 'src/app/v2/domain/select-option';
+import { SelectTodosSentinelDirective } from 'src/app/v2/domain/select-todos-sentinel.directive';
+import { AgentePublicoSearchFn, AgentePublicoSelectComponent } from './components/agente-publico-select.component';
+import { Page } from 'src/app/v2/domain/pagination';
 
 @Component({
   selector: 'app-ocorrencia-v2-list-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent, PaginationV2Component],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent, PaginationV2Component, SelectTodosSentinelDirective, AgentePublicoSelectComponent],
   templateUrl: './list.page.html',
 })
 export class OcorrenciaV2ListPage implements OnInit {
@@ -27,32 +29,32 @@ export class OcorrenciaV2ListPage implements OnInit {
 
   readonly ocorrencias = signal<Ocorrencia[]>([]);
   readonly tipos = signal<TipoMotivoAfastamento[]>([]);
-  readonly agentes = signal<{ id: string; nome: string }[]>([]);
+  readonly agenteSelecionado = signal<AgenteOption | null>(null);
   readonly carregando = signal(true);
   readonly page = signal(1);
   readonly lastPage = signal(1);
   readonly total = signal(0);
 
-  readonly tiposOptions = computed<SelectOption[]>(() => [
-    { value: '', label: 'Todos' },
-    ...this.tipos().map(t => ({ value: t.id, label: t.nome })),
-  ]);
+  tiposOptions(): SelectOption[] {
+    const atual = this.filtros.controls.tipo_motivo_afastamento_id.value;
+    return [
+      { value: TODOS_SENTINEL, label: 'Todos' },
+      ...this.tipos().map(t => ({ value: t.id, label: t.nome })),
+    ].map(o => ({ ...o, selected: o.value === atual }));
+  }
 
-  readonly agentesOptions = computed<SelectOption[]>(() => [
-    { value: '', label: 'Todos' },
-    ...this.agentes().map(a => ({ value: a.id, label: a.nome })),
-  ]);
+  readonly agentesSearchFn: AgentePublicoSearchFn = (termo, page, size): Observable<Page<AgenteOption>> =>
+    this.api.agentes(termo, page, size);
 
   readonly filtros = this.fb.nonNullable.group({
-    usuario_id: [''],
-    tipo_motivo_afastamento_id: [''],
+    usuario_id: [TODOS_SENTINEL],
+    tipo_motivo_afastamento_id: [TODOS_SENTINEL],
     data_inicio: [''],
     data_fim: [''],
   });
 
   ngOnInit(): void {
     this.api.tipos().subscribe(t => this.tipos.set(t));
-    this.api.agentes().subscribe(a => this.agentes.set(a));
     this.carregar();
   }
 
@@ -64,8 +66,8 @@ export class OcorrenciaV2ListPage implements OnInit {
       size: 15,
     };
 
-    if (filtros.usuario_id) params['usuario_id'] = filtros.usuario_id;
-    if (filtros.tipo_motivo_afastamento_id) params['tipo_motivo_afastamento_id'] = filtros.tipo_motivo_afastamento_id;
+    if (filtros.usuario_id && filtros.usuario_id !== TODOS_SENTINEL) params['usuario_id'] = filtros.usuario_id;
+    if (filtros.tipo_motivo_afastamento_id && filtros.tipo_motivo_afastamento_id !== TODOS_SENTINEL) params['tipo_motivo_afastamento_id'] = filtros.tipo_motivo_afastamento_id;
     if (filtros.data_inicio) params['data_inicio'] = filtros.data_inicio;
     if (filtros.data_fim) params['data_fim'] = filtros.data_fim;
 
@@ -89,8 +91,15 @@ export class OcorrenciaV2ListPage implements OnInit {
     this.carregar();
   }
 
+  selecionarAgente(agente: AgenteOption): void {
+    this.agenteSelecionado.set(agente);
+    this.filtros.controls.usuario_id.setValue(agente.id);
+    this.aplicarFiltros();
+  }
+
   limparFiltros(): void {
     this.filtros.reset();
+    this.agenteSelecionado.set(null);
     this.page.set(1);
     this.carregar();
   }

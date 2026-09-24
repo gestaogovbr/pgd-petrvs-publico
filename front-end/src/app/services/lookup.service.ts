@@ -593,7 +593,11 @@ export class LookupService implements IIndexable {
     { key: "DIAS", value: "Dias" },
     { key: "SEMANAL", value: "Semanal" },
     { key: "QUINZENAL", value: "Quinzenal" },
-    { key: "MENSAL", value: "Mensal" },
+    { key: "MENSAL", value: "Mensal" }
+  ];
+
+  /* Periodicidades descontinuadas: mantidas apenas para exibir o rótulo de regramentos legados que ainda as utilizam. Não devem ser selecionáveis em novos regramentos. */
+  public PERIODICIDADE_CONSOLIDACAO_LEGADAS: LookupItem[] = [
     { key: "BIMESTRAL", value: "Bimestral" },
     { key: "TRIMESTRAL", value: "Trimestral" },
     { key: "SEMESTRAL", value: "Semestral" }

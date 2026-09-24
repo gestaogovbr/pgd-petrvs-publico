@@ -8,23 +8,21 @@ use App\Exceptions\NotFoundException;
 use App\Models\CadeiaValor;
 use App\Models\CadeiaValorProcesso;
 use App\Repository\CadeiaValor\Contracts\CadeiaValorReadRepositoryContract;
-use App\V2\CadeiaValor\DTOs\CadeiaValorArvoreDTO;
-use App\V2\CadeiaValor\DTOs\CadeiaValorProcessoNodeDTO;
-use App\V2\CadeiaValor\DTOs\CadeiaValorVinculoCrossCadeiaDTO;
-use Illuminate\Support\Collection;
+use App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoGraphDataProvider;
+use App\V2\ArvoreInstitucional\DTOs\ArvoreResponseDTO;
 
 class CadeiaValorArvoreService
 {
     public function __construct(
         private readonly CadeiaValorReadRepositoryContract $repository,
+        private readonly ArvoreInstitucionalEsforcoGraphDataProvider $esforcoGraphDataProvider,
     ) {}
 
     /**
-     * Retorna todos os processos da cadeia de valor como mapa de nós,
-     * com vínculos cross-cadeia e contagem de vínculos.
-     * O front-end controla a janela de visualização (levelsAbove/Below).
+     * Retorna todos os processos da cadeia de valor como mapa de nós genérico (ArvoreResponseDTO).
+     * Inclui nós cross-cadeia (processos de outras cadeias vinculados via entregas compartilhadas).
      */
-    public function getArvore(string $cadeiaValorId, string $processoId): CadeiaValorArvoreDTO
+    public function getArvore(string $cadeiaValorId, string $processoId): ArvoreResponseDTO
     {
         $cadeiaValor = $this->repository->findCadeiaValor($cadeiaValorId);
         if (!$cadeiaValor instanceof CadeiaValor) {
@@ -36,156 +34,79 @@ class CadeiaValorArvoreService
             throw new NotFoundException("Processo com id '{$processoId}' não encontrado na cadeia de valor.");
         }
 
-        $todosProcessos = $this->repository->listarProcessosPorCadeia($cadeiaValorId);
+        $esforcoMap = $this->esforcoGraphDataProvider->carregarEsforcoAcumulado(CadeiaValorNoConfig::get(), containerId: $cadeiaValorId);
 
-        $todosIds = $todosProcessos->pluck('id')->all();
+        $crossCadeiaMap = $this->injetarVinculosCrossCadeia($esforcoMap, $cadeiaValorId);
 
-        $vinculosCrossCadeia = $this->mapearVinculosCrossCadeia(
-            $this->repository->buscarVinculosCrossCadeia($todosIds, $cadeiaValorId)
-        );
-
-        $contagemVinculos = $this->repository->contarVinculosPorProcesso($todosIds);
-
-        $nos = $this->montarNos($todosProcessos, $todosProcessos, $cadeiaValor, $vinculosCrossCadeia, $contagemVinculos);
-
-        $raizIds = $todosProcessos
-            ->whereNull('processo_pai_id')
-            ->sortBy('sequencia')
-            ->pluck('id')
-            ->values()
-            ->all();
-
-        $ancestraisIds = $this->coletarTodosAncestrais($processoFocal, $todosProcessos);
-        $nivelMaximo = $this->calcularNivelMaximo($processoFocal, $todosProcessos);
-
-        return new CadeiaValorArvoreDTO(
-            processo_focal_id: $processoId,
-            cadeia_valor_id: $cadeiaValorId,
-            cadeia_valor_nome: $cadeiaValor->nome,
-            nos: $nos,
-            ancestrais_ids: $ancestraisIds,
-            raiz_ids: $raizIds,
-            nivel_maximo: $nivelMaximo,
-        );
+        return ArvoreResponseDTO::fromMapa($processoId, $esforcoMap, subtitulo: $cadeiaValor->nome, metadata: [
+            'cross_cadeia_map' => $crossCadeiaMap,
+        ]);
     }
 
     /**
-     * Coleta todos os ancestrais do processo focal (do mais próximo ao mais distante).
+     * Busca processos de outras cadeias vinculados via entregas compartilhadas e os injeta no mapa.
      *
-     * @return list<string>
+     * Para cada vínculo encontrado:
+     * - Adiciona o processo cross-cadeia como nó no mapa (com container_nome = nome da outra cadeia)
+     * - Popula filhos_secundario no processo de origem
+     * - Popula no_pai_secundario_id no nó cross-cadeia apontando para o processo de origem
+     *
+     * @param array<string, array<string, mixed>> $mapa
+     * @return array<string, string> Mapa processo_id → cadeia_valor_id (para navegação no front-end)
      */
-    private function coletarTodosAncestrais(CadeiaValorProcesso $processo, Collection $todosProcessos): array
+    private function injetarVinculosCrossCadeia(array &$mapa, string $cadeiaValorIdAtual): array
     {
-        $ancestrais = [];
-        $atual = $processo;
+        $processoIds = array_keys($mapa);
+        if ($processoIds === []) {
+            return [];
+        }
 
-        while ($atual->processo_pai_id !== null) {
-            $pai = $todosProcessos->firstWhere('id', $atual->processo_pai_id);
-            if (!$pai instanceof CadeiaValorProcesso) {
-                break;
+        $vinculos = $this->repository->buscarVinculosCrossCadeia($processoIds, $cadeiaValorIdAtual);
+        if ($vinculos === []) {
+            return [];
+        }
+
+        foreach ($mapa as &$node) {
+            if (!isset($node['filhos_secundario'])) {
+                $node['filhos_secundario'] = [];
+            }
+        }
+        unset($node);
+
+        $crossCadeiaMap = [];
+
+        foreach ($vinculos as $vinculo) {
+            $origemId = (string) $vinculo->processo_origem_id;
+            $crossId = (string) $vinculo->processo_id;
+
+            if (!isset($mapa[$origemId])) {
+                continue;
             }
 
-            $ancestrais[] = $pai->id;
-            $atual = $pai;
-        }
-
-        return $ancestrais;
-    }
-
-    /**
-     * @param list<\stdClass> $rows
-     * @return array<string, list<CadeiaValorVinculoCrossCadeiaDTO>>
-     */
-    private function mapearVinculosCrossCadeia(array $rows): array
-    {
-        $mapa = [];
-        foreach ($rows as $row) {
-            $mapa[$row->processo_origem_id][] = CadeiaValorVinculoCrossCadeiaDTO::fromArray([
-                'processo_id' => $row->processo_id,
-                'processo_nome' => $row->processo_nome,
-                'cadeia_valor_id' => $row->cadeia_valor_id,
-                'cadeia_valor_nome' => $row->cadeia_valor_nome,
-            ]);
-        }
-
-        return $mapa;
-    }
-
-    /**
-     * @return array<string, CadeiaValorProcessoNodeDTO>
-     */
-    private function montarNos(
-        Collection $processos,
-        Collection $todosProcessos,
-        CadeiaValor $cadeiaValor,
-        array $vinculosCrossCadeia,
-        array $contagemVinculos,
-    ): array {
-        $nos = [];
-        foreach ($processos as $processo) {
-            $filhosIds = $todosProcessos
-                ->where('processo_pai_id', $processo->id)
-                ->sortBy('sequencia')
-                ->pluck('id')
-                ->values()
-                ->all();
-
-            $nivel = $this->calcularNivel($processo, $todosProcessos);
-
-            $nos[$processo->id] = CadeiaValorProcessoNodeDTO::fromArray([
-                'processo_id' => $processo->id,
-                'nome' => $processo->nome,
-                'sequencia' => $processo->sequencia,
-                'processo_pai_id' => $processo->processo_pai_id,
-                'cadeia_valor_id' => $cadeiaValor->id,
-                'cadeia_valor_nome' => $cadeiaValor->nome,
-                'nivel' => $nivel,
-                'total_vinculos' => $contagemVinculos[$processo->id] ?? 0,
-                'etiquetas' => null,
-                'filhos_ids' => $filhosIds,
-                'vinculos_cross_cadeia' => $vinculosCrossCadeia[$processo->id] ?? [],
-            ]);
-        }
-
-        return $nos;
-    }
-
-    private function calcularNivel(CadeiaValorProcesso $processo, Collection $todosProcessos): int
-    {
-        $nivel = 1;
-        $atual = $processo;
-
-        while ($atual->processo_pai_id !== null) {
-            $pai = $todosProcessos->firstWhere('id', $atual->processo_pai_id);
-            if (!$pai instanceof CadeiaValorProcesso) {
-                break;
+            if (!isset($crossCadeiaMap[$crossId])) {
+                $mapa[$crossId] = [
+                    'no_nome' => (string) $vinculo->processo_nome,
+                    'no_pai_id' => null,
+                    'no_pai_secundario_id' => $origemId,
+                    'container_nome' => (string) $vinculo->cadeia_valor_nome,
+                    'tipo_nome' => null,
+                    'total_entregas' => 0,
+                    'esforco_disponivel_horas' => 0,
+                    'esforco_proprio' => 0,
+                    'esforco_total_horas' => 0,
+                    'planejado_percentual_disponivel' => 0,
+                    'filhos_pai' => [],
+                    'filhos_secundario' => [],
+                    'filhos' => [],
+                ];
+                $crossCadeiaMap[$crossId] = (string) $vinculo->cadeia_valor_id;
             }
-            $nivel++;
-            $atual = $pai;
+
+            if (!in_array($crossId, $mapa[$origemId]['filhos_secundario'], true)) {
+                $mapa[$origemId]['filhos_secundario'][] = $crossId;
+            }
         }
 
-        return $nivel;
-    }
-
-    private function calcularNivelMaximo(CadeiaValorProcesso $processoFocal, Collection $todosProcessos): int
-    {
-        $maxNivel = 0;
-        $this->calcularProfundidadeRecursiva($todosProcessos, null, 1, $maxNivel);
-
-        return $maxNivel;
-    }
-
-    private function calcularProfundidadeRecursiva(Collection $todosProcessos, ?string $paiId, int $nivelAtual, int &$maxNivel): void
-    {
-        $filhos = $todosProcessos->where('processo_pai_id', $paiId);
-
-        if ($filhos->isEmpty()) {
-            $maxNivel = max($maxNivel, $nivelAtual - 1);
-            return;
-        }
-
-        foreach ($filhos as $filho) {
-            $this->calcularProfundidadeRecursiva($todosProcessos, $filho->id, $nivelAtual + 1, $maxNivel);
-        }
+        return $crossCadeiaMap;
     }
 }

@@ -14,6 +14,7 @@ test('montaEntidadeServidor não descarta servidor quando e-mail funcional está
     $repository = \Mockery::mock(IntegracaoServidorRepository::class);
 
     $service = \Mockery::mock(Integracao::class, [$repository])->makePartial();
+    $service->setIntegracaoConfig(['siape' => ['codOrgao' => '20000']]);
     $service->shouldReceive('getEmail')->andReturn(null);
 
     $servidor = [

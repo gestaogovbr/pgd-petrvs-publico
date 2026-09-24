@@ -14,6 +14,7 @@ class IntegracaoUnidade extends ModelBase
   protected $with = [];
 
   public $fillable = [ /* TYPE; NULL?; DEFAULT?; */ // COMMENT
+    'codigo_orgao', /* varchar(20); NOT NULL; */
     'id_servo', /* varchar(50); */
     'pai_servo', /* varchar(50); */
     'codigo_siape', /* varchar(50); */

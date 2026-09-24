@@ -43,8 +43,8 @@ describe('GET /api/v2/planejamento/tipo-objetivo', function () {
     });
 
     test('retorna tipos cadastrados ordenados por nome', function () {
-        TipoPlanejamentoObjetivo::create(['nome' => 'Zebra', 'descricao' => null]);
-        TipoPlanejamentoObjetivo::create(['nome' => 'Alpha', 'descricao' => null]);
+        TipoPlanejamentoObjetivo::create(['nome' => 'Zebra', 'descricao' => null, 'estrutura' => 'planejamento_institucional']);
+        TipoPlanejamentoObjetivo::create(['nome' => 'Alpha', 'descricao' => null, 'estrutura' => 'cadeia_de_valor']);
 
         $this->actingAs($this->participante, 'web');
 
@@ -52,6 +52,36 @@ describe('GET /api/v2/planejamento/tipo-objetivo', function () {
 
         expect($data[0]['nome'])->toBe('Alpha')
             ->and($data[1]['nome'])->toBe('Zebra');
+    });
+
+    test('retorna apenas tipos da estrutura filtrada', function () {
+        TipoPlanejamentoObjetivo::create(['nome' => 'PI Item', 'descricao' => null, 'estrutura' => 'planejamento_institucional']);
+        TipoPlanejamentoObjetivo::create(['nome' => 'CV Item', 'descricao' => null, 'estrutura' => 'cadeia_de_valor']);
+
+        $this->actingAs($this->participante, 'web');
+
+        $data = $this->getJson('/api/__tests/v2/planejamento/tipo-objetivo?estrutura=cadeia_de_valor')->json('data');
+
+        expect($data)->toHaveCount(1)
+            ->and($data[0]['nome'])->toBe('CV Item');
+    });
+
+    test('retorna todos os tipos quando estrutura não é informada', function () {
+        TipoPlanejamentoObjetivo::create(['nome' => 'PI', 'descricao' => null, 'estrutura' => 'planejamento_institucional']);
+        TipoPlanejamentoObjetivo::create(['nome' => 'CV', 'descricao' => null, 'estrutura' => 'cadeia_de_valor']);
+
+        $this->actingAs($this->participante, 'web');
+
+        $data = $this->getJson('/api/__tests/v2/planejamento/tipo-objetivo')->json('data');
+
+        expect($data)->toHaveCount(2);
+    });
+
+    test('retorna 422 quando estrutura é inválida', function () {
+        $this->actingAs($this->participante, 'web');
+
+        $this->getJson('/api/__tests/v2/planejamento/tipo-objetivo?estrutura=invalida')
+            ->assertStatus(422);
     });
 });
 
@@ -64,26 +94,42 @@ describe('POST /api/v2/planejamento/tipo-objetivo', function () {
         $response = $this->postJson('/api/__tests/v2/planejamento/tipo-objetivo', [
             'nome' => 'Estratégico',
             'descricao' => 'Objetivo estratégico',
+            'estrutura' => 'planejamento_institucional',
         ]);
 
         $response->assertStatus(201)
             ->assertJsonPath('success', true)
-            ->assertJsonPath('data.nome', 'Estratégico');
+            ->assertJsonPath('data.nome', 'Estratégico')
+            ->assertJsonPath('data.estrutura', 'planejamento_institucional');
 
-        $this->assertDatabaseHas('planejamentos_tipos_objetivos', ['nome' => 'Estratégico']);
+        $this->assertDatabaseHas('planejamentos_tipos_objetivos', ['nome' => 'Estratégico', 'estrutura' => 'planejamento_institucional']);
     });
 
     test('retorna 422 quando nome ausente', function () {
         $this->actingAs($this->admMaster, 'web');
 
-        $this->postJson('/api/__tests/v2/planejamento/tipo-objetivo', [])
+        $this->postJson('/api/__tests/v2/planejamento/tipo-objetivo', ['estrutura' => 'planejamento_institucional'])
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando estrutura ausente', function () {
+        $this->actingAs($this->admMaster, 'web');
+
+        $this->postJson('/api/__tests/v2/planejamento/tipo-objetivo', ['nome' => 'Teste'])
+            ->assertStatus(422);
+    });
+
+    test('retorna 422 quando estrutura inválida', function () {
+        $this->actingAs($this->admMaster, 'web');
+
+        $this->postJson('/api/__tests/v2/planejamento/tipo-objetivo', ['nome' => 'Teste', 'estrutura' => 'invalida'])
             ->assertStatus(422);
     });
 
     test('participante recebe 403', function () {
         $this->actingAs($this->participante, 'web');
 
-        $this->postJson('/api/__tests/v2/planejamento/tipo-objetivo', ['nome' => 'X'])
+        $this->postJson('/api/__tests/v2/planejamento/tipo-objetivo', ['nome' => 'X', 'estrutura' => 'planejamento_institucional'])
             ->assertStatus(403);
     });
 });
@@ -92,7 +138,7 @@ describe('POST /api/v2/planejamento/tipo-objetivo', function () {
 
 describe('PUT /api/v2/planejamento/tipo-objetivo/:id', function () {
     test('ADM_MASTER atualiza tipo', function () {
-        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Original', 'descricao' => null]);
+        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Original', 'descricao' => null, 'estrutura' => 'planejamento_institucional']);
 
         $this->actingAs($this->admMaster, 'web');
 
@@ -111,7 +157,7 @@ describe('PUT /api/v2/planejamento/tipo-objetivo/:id', function () {
     });
 
     test('participante recebe 403', function () {
-        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Original', 'descricao' => null]);
+        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Original', 'descricao' => null, 'estrutura' => 'planejamento_institucional']);
 
         $this->actingAs($this->participante, 'web');
 
@@ -124,7 +170,7 @@ describe('PUT /api/v2/planejamento/tipo-objetivo/:id', function () {
 
 describe('DELETE /api/v2/planejamento/tipo-objetivo/:id', function () {
     test('ADM_MASTER deleta tipo', function () {
-        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Para deletar', 'descricao' => null]);
+        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Para deletar', 'descricao' => null, 'estrutura' => 'cadeia_de_valor']);
 
         $this->actingAs($this->admMaster, 'web');
 
@@ -142,7 +188,7 @@ describe('DELETE /api/v2/planejamento/tipo-objetivo/:id', function () {
     });
 
     test('participante recebe 403', function () {
-        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Protegido', 'descricao' => null]);
+        $tipo = TipoPlanejamentoObjetivo::create(['nome' => 'Protegido', 'descricao' => null, 'estrutura' => 'planejamento_institucional']);
 
         $this->actingAs($this->participante, 'web');
 

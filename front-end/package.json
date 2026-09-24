@@ -1,6 +1,6 @@
 {
   "name": "petrvs",
-  "version": "3.0.10",
+  "version": "3.1.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --configuration=dev --host 0.0.0.0 --disable-host-check --poll=1000",
@@ -31,8 +31,8 @@
     "@fullcalendar/daygrid": "^6.1.8",
     "@fullcalendar/interaction": "^6.1.8",
     "@govbr-ds/core": "^3.7.0",
-    "@govbr-ds/webcomponents": "2.0.0-next.66",
-    "@govbr-ds/webcomponents-angular": "2.0.0-next.66",
+    "@govbr-ds/webcomponents": "^2.1.1",
+    "@govbr-ds/webcomponents-angular": "^2.1.1",
     "@tinymce/tinymce-angular": "^9.1.1",
     "@types/bootstrap": "^5.2.6",
     "@types/chrome": "^0.0.159",

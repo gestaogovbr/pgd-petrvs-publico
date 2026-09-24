@@ -160,6 +160,9 @@ export class Usuario extends Base implements HasNotificacao {
     public data_inicial_pedagio: Date | null = null; /* Data Inicial do Pedágio */
     public data_final_pedagio: Date | null = null; /* Data Final do Pedágio */
     public pedagio: boolean = false;
+    public dispensa_pt_vigente: boolean = false;
+    public dispensa_pt_elegivel: boolean = false;
+    public dispensa_plano_trabalho?: any;
     public modalidade_pgd: string | null = null; /* Modalidade PGD */
     public modalidade_pgd_label: string = "Não definida";
     public participa_pgd: string = 'sim'; /* Participa PGD */

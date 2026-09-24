@@ -23,11 +23,12 @@ final class EloquentIntegracaoServidorWriteRepository extends AbstractEloquentWr
     /**
      * @param array<string, mixed> $data
      */
-    public function updateByCpfAndMatricula(string $cpf, string $matricula, array $data): bool
+    public function updateByCpfAndMatricula(string $cpf, string $matricula, array $data, string $codigoOrgao): bool
     {
         return (bool) $this->model
             ->where('cpf', $cpf)
             ->where('matriculasiape', $matricula)
+            ->where('codigo_orgao', $codigoOrgao)
             ->update($data);
     }
 }

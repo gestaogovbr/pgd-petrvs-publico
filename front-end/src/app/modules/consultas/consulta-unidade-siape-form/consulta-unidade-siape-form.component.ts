@@ -84,7 +84,7 @@ export class ConsultaUnidadeSiapeFormComponent extends PageFormBase<Unidade, Uni
                 codigoUnidade: this.form.get('unidade')?.value,
                 unidade: this.unidade,
                 dados: result.dados,
-                integrantes: this.integrantes
+                integrantes: this.integrantes,
               }
             }
           );

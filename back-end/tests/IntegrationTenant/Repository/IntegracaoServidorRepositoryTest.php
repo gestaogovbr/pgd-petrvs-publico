@@ -30,7 +30,7 @@ test('getServidor retorna registro mais recente por cpf e matricula', function (
 
     $repo = new EloquentIntegracaoServidorReadRepository(new IntegracaoServidor());
 
-    $result = $repo->getServidor($cpf, $matricula);
+    $result = $repo->getServidor($cpf, $matricula, '20000');
 
     expect($result)->not->toBeNull()
         ->and($result->cpf)->toBe($cpf)
@@ -77,7 +77,7 @@ test('update atualiza registro existente por cpf e matricula', function () {
 
     $updated = $repo->updateByCpfAndMatricula($cpf, $matricula, [
         'nome' => 'Nome Atualizado',
-    ]);
+    ], '20000');
 
     expect($updated)->toBeTrue();
 
@@ -94,7 +94,7 @@ test('getUsuariosAusentes respeita escopo da carga individual por cpf e matricul
 
     $repo = new EloquentIntegracaoServidorReadRepository(new IntegracaoServidor());
 
-    $result = $repo->getUsuariosAusentes([
+    $result = $repo->getUsuariosAusentes('20000', [
         'origem' => 'carga_individual_servidor',
         'cpf' => '11122233344',
         'matriculas' => ['2326001'],
@@ -113,7 +113,7 @@ test('buscarAtualizacoesDados respeita escopo da carga individual e nao atualiza
 
     $repo = new EloquentIntegracaoServidorReadRepository(new IntegracaoServidor());
 
-    $result = $repo->buscarAtualizacoesDados([
+    $result = $repo->buscarAtualizacoesDados('20000', [
         'origem' => 'carga_individual_servidor',
         'cpf' => '11122233344',
         'matriculas' => ['2326011'],
@@ -130,7 +130,7 @@ test('getUsuariosAusentes em escopo compara cpf quando existe matricula igual em
 
     $repo = new EloquentIntegracaoServidorReadRepository(new IntegracaoServidor());
 
-    $result = $repo->getUsuariosAusentes([
+    $result = $repo->getUsuariosAusentes('20000', [
         'origem' => 'carga_individual_servidor',
         'cpf' => '11122233344',
         'matriculas' => ['2326021'],

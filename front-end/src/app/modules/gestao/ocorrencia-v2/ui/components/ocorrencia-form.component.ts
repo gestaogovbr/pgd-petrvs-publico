@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { OcorrenciaFormValue, TipoMotivoAfastamento } from '../../../plano-trabalho-v2/domain/types';
-import { SelectOption } from '../../../plano-trabalho-v2/ui/edit.page';
+import { SelectOption } from 'src/app/v2/domain/select-option';
 
 @Component({
   selector: 'app-ocorrencia-form',
@@ -37,14 +37,11 @@ export class OcorrenciaFormComponent implements OnChanges {
   }
 
   get tiposOptions(): SelectOption[] {
-    return [
-      { value: '', label: 'Selecione...', selected: !this.fg.value.tipo_motivo_afastamento_id },
-      ...this.tiposMotivo.map(t => ({
-        value: t.id,
-        label: t.nome,
-        selected: t.id === this.fg.value.tipo_motivo_afastamento_id,
-      })),
-    ];
+    return this.tiposMotivo.map(t => ({
+      value: t.id,
+      label: t.nome,
+      selected: t.id === this.fg.value.tipo_motivo_afastamento_id,
+    }));
   }
 
   ngOnChanges(): void {

@@ -8,6 +8,16 @@ use Illuminate\Http\Request;
 
 class OcorrenciaRequestValidator
 {
+    public static function agentes(Request $request): array
+    {
+        return $request->validate([
+            'size' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'page' => ['sometimes', 'integer', 'min:1'],
+            'filters' => ['sometimes', 'array'],
+            'filters.termo' => ['sometimes', 'nullable', 'string'],
+        ]);
+    }
+
     public static function store(Request $request): array
     {
         return $request->validate([

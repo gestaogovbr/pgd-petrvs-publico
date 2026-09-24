@@ -263,6 +263,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
                 [
                     'id' => 'unidade-1',
                     'sigla' => 'U1',
+                    'unidade_antiga' => false,
                     'situacao_funcional' => 'ATIVO',
                     'matricula' => '0001',
                     'emProcessoDeInativacao' => false,
@@ -270,6 +271,7 @@ describe('UsuarioService - Repository/Facades (Unit)', function () {
                 [
                     'id' => 'unidade-1',
                     'sigla' => 'U1',
+                    'unidade_antiga' => false,
                     'situacao_funcional' => 'INATIVO',
                     'matricula' => '0002',
                     'emProcessoDeInativacao' => true,

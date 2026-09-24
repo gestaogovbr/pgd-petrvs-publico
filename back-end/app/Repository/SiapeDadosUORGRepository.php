@@ -23,8 +23,8 @@ class SiapeDadosUORGRepository
         return $this->writeRepository->create($attributes);
     }
 
-    public function forceDeleteProcessados(): void
+    public function forceDeleteProcessados(string $codigoOrgao): void
     {
-        $this->writeRepository->forceDeleteProcessados();
+        $this->writeRepository->forceDeleteProcessados($codigoOrgao);
     }
 }

@@ -12,6 +12,10 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
+beforeEach(function () {
+    config()->set('integracao.siape.codOrgao', '20000');
+});
+
 afterEach(function () {
     Mockery::close();
 });
@@ -58,6 +62,7 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
         $unidade = (object) [
             'id_unidade' => 10,
             'codigo_unidade' => '001',
+            'codigo_orgao' => '20000',
             'cpf_chefe' => null,
         ];
 
@@ -80,6 +85,7 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
         $unidade = (object) [
             'id_unidade' => 10,
             'codigo_unidade' => '001',
+            'codigo_orgao' => '20000',
             'cpf_chefe' => '12345678901',
         ];
 
@@ -90,7 +96,7 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
 
         $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
         $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
-            ->with('12345678901', '001')
+            ->with('12345678901', '001', '20000')
             ->andReturn(null);
 
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
@@ -107,6 +113,7 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
         $unidade = (object) [
             'id_unidade' => 10,
             'codigo_unidade' => '001',
+            'codigo_orgao' => '20000',
             'cpf_chefe' => '12345678901',
         ];
 
@@ -120,7 +127,7 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
 
         $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
         $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
-            ->with('12345678901', '001')
+            ->with('12345678901', '001', '20000')
             ->andReturn(mockServidorIntegracaoComMatricula('MAT-001'));
 
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
@@ -143,6 +150,7 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
         $unidade = (object) [
             'id_unidade' => 10,
             'codigo_unidade' => '001',
+            'codigo_orgao' => '20000',
             'cpf_chefe' => '12345678901',
         ];
 
@@ -156,7 +164,7 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
 
         $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
         $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
-            ->with('12345678901', '001')
+            ->with('12345678901', '001', '20000')
             ->andReturn(mockServidorIntegracaoComMatricula('MAT-001'));
 
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
@@ -181,6 +189,7 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
         $unidade = (object) [
             'id_unidade' => 10,
             'codigo_unidade' => '001',
+            'codigo_orgao' => '20000',
             'cpf_chefe' => '99988877766',
         ];
 
@@ -194,7 +203,7 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
 
         $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
         $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
-            ->with('99988877766', '001')
+            ->with('99988877766', '001', '20000')
             ->andReturn(null);
 
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
@@ -209,9 +218,9 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
         setupSiapeLogMockChefias();
 
         $unidades = collect([
-            (object) ['id_unidade' => 1, 'codigo_unidade' => '001', 'cpf_chefe' => null],
-            (object) ['id_unidade' => 2, 'codigo_unidade' => '002', 'cpf_chefe' => '11122233344'],
-            (object) ['id_unidade' => 3, 'codigo_unidade' => '003', 'cpf_chefe' => '55566677788'],
+            (object) ['id_unidade' => 1, 'codigo_unidade' => '001', 'codigo_orgao' => '20000', 'cpf_chefe' => null],
+            (object) ['id_unidade' => 2, 'codigo_unidade' => '002', 'codigo_orgao' => '20000', 'cpf_chefe' => '11122233344'],
+            (object) ['id_unidade' => 3, 'codigo_unidade' => '003', 'codigo_orgao' => '20000', 'cpf_chefe' => '55566677788'],
         ]);
 
         $mockUsuario2 = Mockery::mock(Usuario::class)->makePartial();
@@ -226,10 +235,10 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
 
         $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
         $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
-            ->with('11122233344', '002')
+            ->with('11122233344', '002', '20000')
             ->andReturn(mockServidorIntegracaoComMatricula('MAT-002'));
         $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
-            ->with('55566677788', '003')
+            ->with('55566677788', '003', '20000')
             ->andReturn(mockServidorIntegracaoComMatricula('MAT-003'));
 
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);
@@ -262,8 +271,8 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
 
         $cpf = '02559875108';
         $unidades = collect([
-            (object) ['id_unidade' => 10, 'codigo_unidade' => '100', 'cpf_chefe' => $cpf],
-            (object) ['id_unidade' => 20, 'codigo_unidade' => '200', 'cpf_chefe' => $cpf],
+            (object) ['id_unidade' => 10, 'codigo_unidade' => '100', 'codigo_orgao' => '20000', 'cpf_chefe' => $cpf],
+            (object) ['id_unidade' => 20, 'codigo_unidade' => '200', 'codigo_orgao' => '20000', 'cpf_chefe' => $cpf],
         ]);
 
         $mockUsuario = Mockery::mock(Usuario::class)->makePartial();
@@ -276,10 +285,10 @@ describe('IntegracaoGestorService - montarArrayChefias', function () {
 
         $integracaoServidorRepo = Mockery::mock(IntegracaoServidorRepository::class);
         $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
-            ->with($cpf, '100')
+            ->with($cpf, '100', '20000')
             ->andReturn(null);
         $integracaoServidorRepo->shouldReceive('findByCpfAndCodigoExercicio')
-            ->with($cpf, '200')
+            ->with($cpf, '200', '20000')
             ->andReturn(mockServidorIntegracaoComMatricula('MAT-200'));
 
         $usuarioRepo = Mockery::mock(UsuarioRepository::class);

@@ -133,6 +133,13 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       integracao_siape_conectagov_chave: { default: "" },
       integracao_siape_conectagov_senha: { default: "" },
       integracao_siape_conectagov_qtd_max_requisicoes: { default: 10 },
+      // SIPEC
+      integracao_sipec_url: { default: "" },
+      integracao_sipec_conectagov_chave: { default: "" },
+      integracao_sipec_conectagov_senha: { default: "" },
+      integracao_sipec_cpf: { default: "" },
+      integracao_sipec_coduorg: { default: "" },
+      integracao_sipec_codorgao: { default: "" },
       // SEI
       modulo_sei_habilitado: { default: false },
       modulo_sei_private_key: { default: "" },
@@ -199,7 +206,7 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
 
   public validate = (control: AbstractControl, controlName: string) => {
     let result = null;
-    if (['id',  'nome_entidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido'].indexOf(controlName) >= 0 && !control.value?.length) {
+    if (['id', 'nome_entidade', 'abrangencia', 'email', 'cpf', 'nome_usuario', 'apelido', 'integracao_siape_codorgao'].indexOf(controlName) >= 0 && !control.value?.length) {
       result = "Obrigatório";
     } else if (controlName == "codigo_cidade" && !control.value) {
       result = "Obrigatório";
@@ -257,4 +264,5 @@ export class PanelFormComponent extends PageFormBase<Tenant, TenantDaoService> {
       ? 'Informe a senha da API'
       : 'Informe para alterar a senha';
   }
+
 }

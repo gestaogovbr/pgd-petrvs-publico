@@ -14,12 +14,11 @@ beforeEach(function () {
 describe('EloquentEnvioUsuarioReadRepository - baseQuery hierarquia (Integration)', function () {
 
     test('gestor sem MOD_USER_TUDO vê apenas lotados na sua hierarquia', function () {
-        $repository = new EloquentEnvioUsuarioReadRepository();
+        $repository = app(EloquentEnvioUsuarioReadRepository::class);
 
         $unidadePai = Unidade::factory()->create();
         $unidadeFilha = Unidade::factory()->create([
             'unidade_pai_id' => $unidadePai->id,
-            'path' => "/{$unidadePai->id}/",
         ]);
         $unidadeOutra = Unidade::factory()->create();
 
@@ -48,7 +47,7 @@ describe('EloquentEnvioUsuarioReadRepository - baseQuery hierarquia (Integration
     });
 
     test('não vê usuarios sem atribuicao LOTADO', function () {
-        $repository = new EloquentEnvioUsuarioReadRepository();
+        $repository = app(EloquentEnvioUsuarioReadRepository::class);
 
         $unidade = Unidade::factory()->create();
 
@@ -67,7 +66,7 @@ describe('EloquentEnvioUsuarioReadRepository - baseQuery hierarquia (Integration
     });
 
     test('admin com MOD_USER_TUDO vê todos os usuarios', function () {
-        $repository = new EloquentEnvioUsuarioReadRepository();
+        $repository = app(EloquentEnvioUsuarioReadRepository::class);
 
         $unidadeA = Unidade::factory()->create();
         $unidadeB = Unidade::factory()->create();

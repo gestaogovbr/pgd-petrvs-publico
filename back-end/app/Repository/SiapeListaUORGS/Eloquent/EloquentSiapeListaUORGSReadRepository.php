@@ -18,10 +18,11 @@ class EloquentSiapeListaUORGSReadRepository extends AbstractEloquentReadReposito
         $this->model = $model;
     }
 
-    public function findUnprocessed(): ?SiapeListaUORGS
+    public function findUnprocessed(string $codigoOrgao): ?SiapeListaUORGS
     {
         /** @var SiapeListaUORGS|null $model */
         $model = $this->model->newQuery()
+            ->where('codigo_orgao', $codigoOrgao)
             ->where('processado', 0)
             ->orderBy('updated_at', 'desc')
             ->first();

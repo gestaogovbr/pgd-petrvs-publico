@@ -40,8 +40,16 @@
     document.addEventListener("DOMContentLoaded", function() {
       const host = window.location.hostname;
 
-      // não indexa o petrvs se não for produção
-      if (host.includes("dsv") || host.includes("hmg") || host.includes("localhost")) {
+      // não indexa ambientes não produtivos nem o domínio oficial do PGD Petrvs
+      const bloquearIndexacao =
+        host === "pgdpetrvs.gestao.gov.br" ||
+        host.includes("dsv") ||
+        host.includes("hmg") ||
+        host.includes("localhost") ||
+        host.includes("127.0.0.1") ||
+        host.includes("teste");
+
+      if (bloquearIndexacao) {
         const meta = document.createElement("meta");
         meta.name = "robots";
         meta.content = "noindex, nofollow";

@@ -4,8 +4,10 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { TipoObjetivoFacade } from '../application/tipo-objetivo.facade';
-import { TipoObjetivo } from '../domain/types';
+import { TipoObjetivo, Estrutura } from '../domain/types';
 import { MessageService } from 'src/app/v2/services/message.service';
+
+interface SelectOption { value: string; label: string; }
 
 @Component({
   selector: 'app-tipo-objetivo-v2-list-page',
@@ -24,15 +26,29 @@ export class TipoObjetivoV2ListPage implements OnInit {
   readonly itemParaExcluir = signal<TipoObjetivo | null>(null);
   readonly modalFormularioAberto = signal(false);
 
+  readonly estruturaSelectOptions: SelectOption[] = [
+    { value: 'planejamento_institucional', label: 'Planejamento Institucional' },
+    { value: 'cadeia_de_valor', label: 'Cadeia de Valor' }
+  ];
+
   readonly form = this.fb.nonNullable.group({
+    estrutura: ['', [Validators.required]],
     nome: ['', [Validators.required, Validators.maxLength(250)]],
     descricao: ['', [Validators.maxLength(1000)]]
   });
 
-  readonly itensFiltrados = computed(() => {
+  readonly itensPlanejamento = computed(() => {
     const termo = this.filtroNome().trim().toLowerCase();
-    if (!termo.length) return this.facade.items();
-    return this.facade.items().filter(item => item.nome.toLowerCase().includes(termo));
+    return this.facade.items()
+      .filter(item => item.estrutura === 'planejamento_institucional')
+      .filter(item => !termo.length || item.nome.toLowerCase().includes(termo));
+  });
+
+  readonly itensCadeiaValor = computed(() => {
+    const termo = this.filtroNome().trim().toLowerCase();
+    return this.facade.items()
+      .filter(item => item.estrutura === 'cadeia_de_valor')
+      .filter(item => !termo.length || item.nome.toLowerCase().includes(termo));
   });
 
   ngOnInit(): void {
@@ -45,13 +61,14 @@ export class TipoObjetivoV2ListPage implements OnInit {
 
   abrirNovo() {
     this.itemEmEdicao.set(null);
-    this.form.reset({ nome: '', descricao: '' });
+    this.form.reset({ estrutura: '', nome: '', descricao: '' });
     this.modalFormularioAberto.set(true);
   }
 
   abrirEdicao(item: TipoObjetivo) {
     this.itemEmEdicao.set(item);
     this.form.reset({
+      estrutura: item.estrutura,
       nome: item.nome,
       descricao: item.descricao ?? ''
     });
@@ -61,7 +78,7 @@ export class TipoObjetivoV2ListPage implements OnInit {
   fecharModalFormulario() {
     this.modalFormularioAberto.set(false);
     this.itemEmEdicao.set(null);
-    this.form.reset({ nome: '', descricao: '' });
+    this.form.reset({ estrutura: '', nome: '', descricao: '' });
   }
 
   salvar() {
@@ -72,6 +89,7 @@ export class TipoObjetivoV2ListPage implements OnInit {
 
     const item = this.itemEmEdicao();
     const payload = {
+      estrutura: this.form.controls.estrutura.value as Estrutura,
       nome: this.form.controls.nome.value.trim(),
       descricao: this.form.controls.descricao.value.trim() || null
     };
@@ -83,14 +101,14 @@ export class TipoObjetivoV2ListPage implements OnInit {
 
     if (item) {
       this.facade.update(item.id, payload, () => {
-        this.message.success('Tipo de objetivo atualizado com sucesso.');
+        this.message.success('Elemento atualizado com sucesso.');
         this.fecharModalFormulario();
       });
       return;
     }
 
     this.facade.create(payload, () => {
-      this.message.success('Tipo de objetivo cadastrado com sucesso.');
+      this.message.success('Elemento cadastrado com sucesso.');
       this.fecharModalFormulario();
     });
   }
@@ -108,7 +126,7 @@ export class TipoObjetivoV2ListPage implements OnInit {
     if (!item) return;
 
     this.facade.remove(item.id, () => {
-      this.message.success('Tipo de objetivo removido com sucesso.');
+      this.message.success('Elemento removido com sucesso.');
       this.itemParaExcluir.set(null);
     });
   }

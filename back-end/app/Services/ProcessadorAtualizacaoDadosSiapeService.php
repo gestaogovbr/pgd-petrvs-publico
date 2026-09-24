@@ -78,15 +78,19 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 
     private function buscarAtualizacoesDados(): array
     {
-        return $this->integracaoServidorRepository->buscarAtualizacoesDados($this->escopoServidor);
+        return $this->integracaoServidorRepository->buscarAtualizacoesDados(
+            CodigoOrgaoService::atual(),
+            $this->escopoServidor
+        );
     }
 
     private function processarLotacoes(): void
     {
-        $atualizacoesLotacoes = $this->integracaoServidorRepository->getAtualizacoesLotacoes($this->escopoServidor);
+        $codigoOrgao = CodigoOrgaoService::atual();
+        $atualizacoesLotacoes = $this->integracaoServidorRepository->getAtualizacoesLotacoes($codigoOrgao, $this->escopoServidor);
 
 
-        $sqlServidoresInseridosNaoLotados = $this->integracaoServidorRepository->getServidoresInseridosNaoLotados($this->escopoServidor);
+        $sqlServidoresInseridosNaoLotados = $this->integracaoServidorRepository->getServidoresInseridosNaoLotados($codigoOrgao, $this->escopoServidor);
         
         $atualizacoesLotacoesResult = [];
         
@@ -167,7 +171,10 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 
     private function cadastrarUsuariosAusentes()
     {
-        $vinculos_isr = $this->integracaoServidorRepository->getUsuariosAusentes($this->escopoServidor);
+        $vinculos_isr = $this->integracaoServidorRepository->getUsuariosAusentes(
+            CodigoOrgaoService::atual(),
+            $this->escopoServidor
+        );
 
         $perfilParticipante = $this->nivelAcessoService->getPerfilParticipante();
         $perfilParticipanteId = null;
@@ -188,7 +195,10 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
             $matriculaNova = UtilService::valueOrDefault($v_isr['matricula']);
             $codigoExercicio = UtilService::valueOrDefault($v_isr['exercicio'] ?? null);
             $unidadeExercicio = !empty($codigoExercicio)
-                ? $this->unidadeRepository->findByCodigo($codigoExercicio)
+                ? $this->unidadeRepository->findByCodigoOrgao(
+                    CodigoOrgaoService::obrigatorio($v_isr['codigo_orgao'] ?? null),
+                    $codigoExercicio
+                )
                 : null;
             $unidadeExercicioIdCheck = isset($unidadeExercicio->id) ? $unidadeExercicio->id : null;
 
@@ -220,7 +230,10 @@ class ProcessadorAtualizacaoDadosSiapeService extends ServiceBase
 
             $unidadeExercicioId = null;
             $unidadeExercicioObj = !empty($codigoExercicio)
-                ? $this->unidadeRepository->findByCodigo($codigoExercicio)
+                ? $this->unidadeRepository->findByCodigoOrgao(
+                    CodigoOrgaoService::obrigatorio($v_isr['codigo_orgao'] ?? null),
+                    $codigoExercicio
+                )
                 : null;
             $unidadeExercicioId = $unidadeExercicioObj ? $unidadeExercicioObj->id : null;
 

@@ -22,6 +22,11 @@ export interface PlanosVigentes {
   participantes_com_plano_trabalho: IndicadorQuantitativo;
 }
 
+export interface MeusPlanosVigentesResponse {
+  plano_entregas_id: string | null;
+  plano_trabalho_id: string | null;
+}
+
 export interface ResumoEquipe {
   participantes_pgd: IndicadorQuantitativo;
   capacidade_equipe_horas_mensais: number;

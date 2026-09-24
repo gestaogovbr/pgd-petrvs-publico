@@ -8,6 +8,7 @@ use App\Models\Unidade;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
+use Carbon\CarbonInterface;
 use App\V2\Unidade\DTOs\UnidadeIndexDTO;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -71,6 +72,19 @@ class UnidadeRepository
         return $this->readRepository->findByCodigo($codigo);
     }
 
+    public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?Unidade
+    {
+        return $this->readRepository->findByCodigoOrgao($codigoOrgao, $codigo);
+    }
+
+    /**
+     * @param list<string> $codigos
+     */
+    public function findAllByCodigoOrgaoCodigos(string $codigoOrgao, array $codigos): EloquentCollection
+    {
+        return $this->readRepository->findAllByCodigoOrgaoCodigos($codigoOrgao, $codigos);
+    }
+
     public function findBySigla(string $sigla): ?Unidade
     {
         return $this->readRepository->findBySigla($sigla);
@@ -79,6 +93,56 @@ class UnidadeRepository
     public function findByCodigoWithPai(string $codigo): ?Unidade
     {
         return $this->readRepository->findByCodigoWithPai($codigo);
+    }
+
+    public function findByCodigoOrgaoWithPai(string $codigoOrgao, string $codigo): ?Unidade
+    {
+        return $this->readRepository->findByCodigoOrgaoWithPai($codigoOrgao, $codigo);
+    }
+
+    public function findByIdForUpdate(string|int $id): ?Unidade
+    {
+        return $this->readRepository->findByIdForUpdate($id);
+    }
+
+    public function findAllAtivasComCodigoByCodigoOrgao(string $codigoOrgao): EloquentCollection
+    {
+        return $this->readRepository->findAllAtivasComCodigoByCodigoOrgao($codigoOrgao);
+    }
+
+    public function findAllSemInicioInativacaoByCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): EloquentCollection
+    {
+        return $this->readRepository->findAllSemInicioInativacaoByCodigoOrgaoCodigo($codigoOrgao, $codigo);
+    }
+
+    public function findAllPendentesInativacaoByCodigoOrgaoAte(string $codigoOrgao, CarbonInterface $dataLimite): EloquentCollection
+    {
+        return $this->readRepository->findAllPendentesInativacaoByCodigoOrgaoAte($codigoOrgao, $dataLimite);
+    }
+
+    public function cancelarInicioInativacaoPorCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): int
+    {
+        return $this->writeRepository->cancelarInicioInativacaoPorCodigoOrgaoCodigo($codigoOrgao, $codigo);
+    }
+
+    public function reativarPorCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): int
+    {
+        return $this->writeRepository->reativarPorCodigoOrgaoCodigo($codigoOrgao, $codigo);
+    }
+
+    public function marcarAntigasPorCodigoOrgao(string $codigoOrgao): int
+    {
+        return $this->writeRepository->marcarAntigasPorCodigoOrgao($codigoOrgao);
+    }
+
+    public function iniciarInativacao(string|int $id): bool
+    {
+        return $this->writeRepository->iniciarInativacao($id);
+    }
+
+    public function efetivarInativacao(string|int $id): bool
+    {
+        return $this->writeRepository->efetivarInativacao($id);
     }
 
     public function getUnidadesGerenciadas(string $usuarioId, array $exclude = []): EloquentCollection
@@ -119,6 +183,15 @@ class UnidadeRepository
         return $this->readRepository->getSubordinadasRecursivasIds($ids);
     }
 
+    /**
+     * @param string[] $ids
+     * @return list<string>
+     */
+    public function idsNaHierarquiaDe(array $ids): array
+    {
+        return $this->readRepository->idsNaHierarquiaDe($ids);
+    }
+
     public function findById(string $id): ?Unidade
     {
         return $this->readRepository->findById($id);
@@ -134,6 +207,11 @@ class UnidadeRepository
         return $this->readRepository->existsByCodigo($codigo);
     }
 
+    public function existsByCodigoOrgao(string $codigoOrgao, string $codigo): bool
+    {
+        return $this->readRepository->existsByCodigoOrgao($codigoOrgao, $codigo);
+    }
+
     public function index(UnidadeIndexDTO $dto): LengthAwarePaginator
     {
         return $this->readRepository->index($dto);
@@ -143,14 +221,6 @@ class UnidadeRepository
     public function linhaAscendente(string $unidadeId): array
     {
         return $this->readRepository->linhaAscendente($unidadeId);
-    }
-
-    /**
-     * @return Collection<int, Unidade>
-     */
-    public function findAll(): Collection
-    {
-        return $this->readRepository->findAllWhere([]);
     }
 
     /**
@@ -165,5 +235,46 @@ class UnidadeRepository
     public function findRaiz(): ?Unidade
     {
         return $this->readRepository->findRaiz();
+    }
+
+    public function findAll(): Collection
+    {
+        return $this->readRepository->findAllWhere([]);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function create(array $attributes): Unidade
+    {
+        /** @var Unidade */
+        return $this->writeRepository->create($attributes);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function update(string $id, array $attributes): ?Unidade
+    {
+        /** @var Unidade|null */
+        return $this->writeRepository->update($id, $attributes);
+    }
+
+    /**
+     * @return EloquentCollection<int, Unidade>
+     */
+    public function findAllComCodigo(): EloquentCollection
+    {
+        return $this->readRepository->findAllComCodigo();
+    }
+
+    public function recalcularPaths(string $pathAntigo, string $pathNovo): int
+    {
+        return $this->writeRepository->recalcularPaths($pathAntigo, $pathNovo);
+    }
+
+    public function reativarPorIntegracao(): int
+    {
+        return $this->writeRepository->reativarPorIntegracao();
     }
 }

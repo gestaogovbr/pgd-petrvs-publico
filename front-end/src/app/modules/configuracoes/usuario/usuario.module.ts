@@ -7,13 +7,14 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { UsuarioFormComponent } from './usuario-form/usuario-form.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UsuarioIntegranteComponent } from './usuario-integrante/usuario-integrante.component';
-
+import { DispensaPlanoTrabalhoFormComponent } from './dispensa-plano-trabalho/dispensa-plano-trabalho-form.component';
 
 @NgModule({
   declarations: [
     UsuarioListComponent,
     UsuarioFormComponent,
-    UsuarioIntegranteComponent
+    UsuarioIntegranteComponent,
+    DispensaPlanoTrabalhoFormComponent
   ],
   imports: [
     CommonModule,
