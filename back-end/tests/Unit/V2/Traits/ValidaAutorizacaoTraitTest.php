@@ -165,4 +165,14 @@ describe('ValidaAutorizacaoTrait::autorizarDonoOuChefia', function () {
         $trait->autorizarDonoOuChefia($entity, 'delegado-1', 'u-1', 'Sem permissão.', incluirDelegado: false);
         expect(true)->toBeTrue();
     });
+
+    test('usa mensagem padrão quando não informada', function () {
+        $unidadeRepo = Mockery::mock(UnidadeRepository::class);
+        $unidadeRepo->shouldReceive('isUsuarioGestorRecursivo')->andReturn(false);
+        $trait = criarClasseComTrait($unidadeRepo);
+
+        $entity = criarEntity(['outro']);
+
+        $trait->autorizarDonoOuChefia($entity, 'x', 'u-1');
+    })->throws(ForbiddenException::class, 'Usuário não tem permissão para realizar esta ação.');
 });

@@ -4,17 +4,19 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
-import { OcorrenciaApiClient } from '../infra/ocorrencia-api.client';
+import { OcorrenciaApiClient, AgenteOption } from '../infra/ocorrencia-api.client';
 import { AuthService } from 'src/app/services/auth.service';
 import { TipoMotivoAfastamento } from '../domain/types';
 import { MessageService } from 'src/app/v2/services/message.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
+import { AgentePublicoSearchFn, AgentePublicoSelectComponent } from './components/agente-publico-select.component';
+import type { Page } from 'src/app/v2/domain/pagination';
 
 @Component({
   selector: 'app-ocorrencia-v2-form-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent],
+  imports: [CommonModule, ReactiveFormsModule, WebcomponentsAngularModule, BreadcrumbComponent, AgentePublicoSelectComponent],
   templateUrl: './form.page.html',
 })
 export class OcorrenciaV2FormPage implements OnInit {
@@ -25,12 +27,16 @@ export class OcorrenciaV2FormPage implements OnInit {
   private readonly message = inject(MessageService);
 
   readonly tipos = signal<TipoMotivoAfastamento[]>([]);
-  readonly agentes = signal<{ id: string; nome: string }[]>([]);
+  readonly agenteSelecionado = signal<AgenteOption | null>(null);
+  /** Indica se há mais de um agente disponível (exibe o seletor). */
+  readonly permiteSelecionarAgente = signal(false);
   readonly salvando = signal(false);
   readonly carregando = signal(false);
 
   readonly tiposOptions = computed(() => this.tipos().map(t => ({ value: t.id, label: t.nome })));
-  readonly agentesOptions = computed(() => this.agentes().map(a => ({ value: a.id, label: a.nome })));
+
+  readonly agentesSearchFn: AgentePublicoSearchFn = (termo, page, size): Observable<Page<AgenteOption>> =>
+    this.api.agentes(termo, page, size);
 
   readonly fg = this.fb.nonNullable.group({
     usuario_id: ['', Validators.required],
@@ -52,11 +58,12 @@ export class OcorrenciaV2FormPage implements OnInit {
 
     forkJoin({
       tipos: this.api.tipos(),
-      agentes: this.api.agentes(),
+      // size 1: só precisamos do `total` para saber se há mais de um agente disponível
+      agentes: this.api.agentes(null, 1, 1),
     }).subscribe({
       next: ({ tipos, agentes }) => {
         this.tipos.set(tipos);
-        this.agentes.set(agentes);
+        this.permiteSelecionarAgente.set((agentes.total ?? agentes.items.length) > 1);
 
         setTimeout(() => {
           this.fg.controls.usuario_id.setValue(this.auth.usuario?.id ?? '');
@@ -69,6 +76,11 @@ export class OcorrenciaV2FormPage implements OnInit {
         this.message.error('Erro ao carregar dados do formulário.');
       },
     });
+  }
+
+  selecionarAgente(agente: AgenteOption): void {
+    this.agenteSelecionado.set(agente);
+    this.fg.controls.usuario_id.setValue(agente.id);
   }
 
   readonly modal = signal<{ titulo: string; mensagem: string } | null>(null);

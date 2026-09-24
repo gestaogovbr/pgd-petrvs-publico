@@ -19,21 +19,55 @@ class IntegracaoUnidadeRepository
     /**
      * @return \Illuminate\Support\Collection
      */
-    public function getUnidadesComChefias(): \Illuminate\Support\Collection
+    public function getUnidadesComChefias(string $codigoOrgao): \Illuminate\Support\Collection
     {
-        return $this->readRepository->getUnidadesComChefias();
+        return $this->readRepository->getUnidadesComChefias($codigoOrgao);
     }
 
-    public function findByCodigo(string $codigo): ?IntegracaoUnidade
+    public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?IntegracaoUnidade
     {
-        return $this->readRepository->findByCodigo($codigo);
+        return $this->readRepository->findByCodigoOrgao($codigoOrgao, $codigo);
     }
 
     /**
      * @return \Illuminate\Support\Collection<int, non-falsy-string>
      */
-    public function getCodigosByCpfTitular(string $cpf, ?string $codigoExcluido = null): \Illuminate\Support\Collection
+    public function getCodigosByCpfTitular(string $cpf, string $codigoOrgao, ?string $codigoExcluido = null): \Illuminate\Support\Collection
     {
-        return $this->readRepository->getCodigosByCpfTitular($cpf, $codigoExcluido);
+        return $this->readRepository->getCodigosByCpfTitular($cpf, $codigoOrgao, $codigoExcluido);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\IntegracaoUnidade>
+     */
+    public function findAllAtivas(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->readRepository->findAllAtivas();
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getUnidadesComChefiasCompleto(): \Illuminate\Support\Collection
+    {
+        return $this->readRepository->getUnidadesComChefiasCompleto();
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     * @return \App\Models\IntegracaoUnidade
+     */
+    public function create(array $attributes): \App\Models\IntegracaoUnidade
+    {
+        /** @var \App\Models\IntegracaoUnidade */
+        return $this->writeRepository->create($attributes);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function updateByIdServo(string $idServo, array $attributes): bool
+    {
+        return $this->writeRepository->updateByIdServo($idServo, $attributes);
     }
 }

@@ -134,6 +134,21 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findByEmail($email);
     }
 
+    public function findAllByEmailWithoutGlobalScopes(string $email, ?string $ignoreId = null): Collection
+    {
+        return $this->readRepository->findAllByEmailWithoutGlobalScopes($email, $ignoreId);
+    }
+
+    public function findAllExternosPresentesNaIntegracao(): Collection
+    {
+        return $this->readRepository->findAllExternosPresentesNaIntegracao();
+    }
+
+    public function limparEmail(string $usuarioId): bool
+    {
+        return $this->writeRepository->limparEmail($usuarioId);
+    }
+
     public function findActivesByCpf(string $cpf): Collection
     {
         return $this->readRepository->findActivesByCpf($cpf);
@@ -222,10 +237,16 @@ class UsuarioRepository implements EnvioRepositoryInterface
 
     /**
      * @param list<string> $unidadeIds
+     * @return LengthAwarePaginator<Usuario>
      */
-    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection
-    {
-        return $this->readRepository->findAgentesVisiveis($usuarioId, $unidadeIds);
+    public function findAgentesVisiveis(
+        string $usuarioId,
+        array $unidadeIds,
+        ?string $termo = null,
+        int $page = 1,
+        int $perPage = 20
+    ): LengthAwarePaginator {
+        return $this->readRepository->findAgentesVisiveis($usuarioId, $unidadeIds, $termo, $page, $perPage);
     }
 
     /**

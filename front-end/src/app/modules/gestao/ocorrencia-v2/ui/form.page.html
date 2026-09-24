@@ -10,14 +10,15 @@
   } @else {
     <div class="br-card p-3" [formGroup]="fg">
       <div class="row g-3">
-        @if (agentesOptions().length > 1) {
+        @if (permiteSelecionarAgente()) {
           <div class="col-md-6">
-            <br-select
+            <agente-publico-select
               label="Agente Público *"
-              formControlName="usuario_id"
-              [options]="agentesOptions()"
-              class="w-100">
-            </br-select>
+              [searchFn]="agentesSearchFn"
+              [agenteId]="agenteSelecionado()?.id ?? ''"
+              [agenteNome]="agenteSelecionado()?.nome ?? ''"
+              (agenteSelected)="selecionarAgente($event)"
+            ></agente-publico-select>
           </div>
         }
         <div class="col-md-6">

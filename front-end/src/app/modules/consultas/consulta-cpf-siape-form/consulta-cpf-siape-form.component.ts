@@ -31,7 +31,7 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
     super(injector, Usuario, UsuarioDaoService);
     this.integranteDao = injector.get<UnidadeIntegranteDaoService>(UnidadeIntegranteDaoService);
     this.form = this.fh.FormBuilder({
-      cpf: {default: ""}, 
+      cpf: {default: ""},
     }, this.cdRef, this.validate);
   }
 
@@ -99,10 +99,10 @@ export class ConsultaCpfSiapeFormComponent extends PageFormBase<Usuario, Usuario
           return;
         }
 
-        this.error("Erro ao consultar CPF no SIAPE: " + this.getSiapeErrorMessage(result));
+        this.error("Erro ao consultar CPF: " + this.getSiapeErrorMessage(result));
       } catch (error: any) {
         console.log(error);
-        this.error("Erro ao consultar CPF no SIAPE: " + this.getSiapeErrorMessage(error));
+        this.error("Erro ao consultar CPF: " + this.getSiapeErrorMessage(error));
       } finally {
         this.loading = false;
         this.detectChangesIfActive();

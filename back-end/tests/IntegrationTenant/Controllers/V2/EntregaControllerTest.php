@@ -208,7 +208,37 @@ describe('POST /api/v2/plano-trabalho/:id/entrega (happy path)', function () {
         $data = $response->json('data');
 
         expect($data['plano_entrega_entrega'])->toHaveKeys(['id', 'descricao', 'plano_entrega']);
-        expect($data['plano_entrega_entrega']['plano_entrega']['unidade'])->toHaveKeys(['id', 'sigla', 'nome']);
+        expect($data['plano_entrega_entrega']['plano_entrega']['unidade'])->toHaveKeys(['id', 'codigo', 'sigla', 'nome']);
+    });
+
+    test('retorno do update inclui plano_entrega_entrega com unidade', function () {
+        $this->actingAs($this->usuario, 'web');
+
+        // Cria a entrega que será atualizada
+        $criacao = $this->postJson("/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega", [
+            'origem' => 'PROPRIA_UNIDADE',
+            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+            'forca_trabalho' => 25,
+            'descricao' => 'Antes do update',
+        ])->assertStatus(201);
+
+        $entregaId = $criacao->json('data.id');
+
+        $response = $this->putJson(
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega/{$entregaId}",
+            [
+                'origem' => 'PROPRIA_UNIDADE',
+                'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
+                'forca_trabalho' => 40,
+                'descricao' => 'Depois do update',
+            ]
+        )->assertStatus(200);
+
+        $data = $response->json('data');
+
+        // Regressão: o update não deve descartar as relações aninhadas
+        expect($data['plano_entrega_entrega'])->toHaveKeys(['id', 'descricao', 'plano_entrega']);
+        expect($data['plano_entrega_entrega']['plano_entrega']['unidade'])->toHaveKeys(['id', 'codigo', 'sigla', 'nome']);
     });
 
     test('aceita forca_trabalho acima de 100', function () {

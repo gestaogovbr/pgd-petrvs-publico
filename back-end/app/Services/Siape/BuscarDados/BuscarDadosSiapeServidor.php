@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
 use Illuminate\Support\Str;
+use App\Services\CodigoOrgaoService;
 
 
 class BuscarDadosSiapeServidor extends BuscarDadosSiape
@@ -23,7 +24,8 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
         Log::info("Iniciando processamento de servidor...");
 
         $this->limpaTabela();
-        $servidoresJaProcessadas = IntegracaoServidor::all();
+        $codigoOrgao = CodigoOrgaoService::obrigatorio($this->getConfig()['codOrgao'] ?? null);
+        $servidoresJaProcessadas = IntegracaoServidor::where('codigo_orgao', $codigoOrgao)->get();
         $blacklistServidores = SiapeBlackListServidor::all();
 
         $response = SiapeListaServidores::where('processado', 0)
@@ -289,4 +291,3 @@ class BuscarDadosSiapeServidor extends BuscarDadosSiape
     }
 
 }
-

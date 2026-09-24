@@ -63,6 +63,13 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 			label: "Forçar SIAPE",
 			onClick: this.forcarSiape.bind(this),
 		});
+		if (this.currentUser && this.currentUser.nivel === 1) {
+			this.options.push({
+				icon: "bi bi-trash",
+				label: "Excluir",
+				onClick: this.deleteTenant.bind(this),
+			});
+		}
 		
 		this.options.push({
 			icon: "bi bi-database-fill-gear",

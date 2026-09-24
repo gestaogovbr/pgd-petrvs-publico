@@ -125,7 +125,9 @@ describe('PlanoTrabalhoEntregaService::update', function () {
         $this->storeValidator->shouldReceive('validarUpdate')->once()->with($dto);
 
         $entrega = Mockery::mock(PlanoTrabalhoEntrega::class)->makePartial();
-        $entrega->shouldReceive('refresh')->once()->andReturnSelf();
+        // Não deve chamar refresh(): isso descartaria as relações aninhadas
+        // (planoEntregaEntrega.planoEntrega.unidade) carregadas pelo repositório.
+        $entrega->shouldNotReceive('refresh');
         $this->repository->shouldReceive('update')->once()->with('entrega-1', $dto->toArray())->andReturn($entrega);
         $this->tcrInvalidador->shouldReceive('invalidar')->once()->with('plano-1');
 

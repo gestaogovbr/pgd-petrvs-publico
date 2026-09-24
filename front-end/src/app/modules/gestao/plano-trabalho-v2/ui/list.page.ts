@@ -22,8 +22,9 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { PaginationV2Component } from 'src/app/v2/components/pagination/pagination.component';
 import { PlanoTrabalhoLogsModalComponent } from './components/plano-trabalho-logs-modal.component';
-import { TipoModalidadeService } from 'src/app/v2/services/tipo-modalidade.service';
-import { SelectOption } from './edit.page';
+import { TipoModalidadeService, ModalidadePgdOption } from 'src/app/v2/services/tipo-modalidade.service';
+import { SelectOption, TODOS_SENTINEL } from 'src/app/v2/domain/select-option';
+import { SelectTodosSentinelDirective } from 'src/app/v2/domain/select-todos-sentinel.directive';
 import { MessageService } from 'src/app/v2/services/message.service';
 
 @Component({
@@ -36,6 +37,7 @@ import { MessageService } from 'src/app/v2/services/message.service';
     WebcomponentsAngularModule,
     BreadcrumbComponent,
     PaginationV2Component,
+    SelectTodosSentinelDirective,
   ],
   templateUrl: './list.page.html'
 })
@@ -79,12 +81,20 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
   /** Confirmação genérica (clonar / excluir) */
   readonly confirmacaoPendente = signal<{ titulo: string; mensagem: string; onConfirm: () => void } | null>(null);
 
-  readonly modalidadeOptions = signal<SelectOption[]>([{ value: '', label: 'Todas', selected: true }]);
+  readonly modalidades = signal<ModalidadePgdOption[]>([]);
+
+  modalidadeOptions(): SelectOption[] {
+    const current = this.filters.controls.tipo_modalidade_id.value;
+    return [
+      { value: TODOS_SENTINEL, label: 'Todas' },
+      ...this.modalidades().map(m => ({ value: m.key, label: m.value })),
+    ].map(o => ({ ...o, selected: o.value === current }));
+  }
 
   get statusOptions(): SelectOption[] {
     const current = this.filters.controls.status.value;
     return [
-      { value: '', label: 'Todos' },
+      { value: TODOS_SENTINEL, label: 'Todos' },
       { value: PlanoTrabalhoStatus.INCLUIDO, label: 'Rascunho' },
       { value: PlanoTrabalhoStatus.AGUARDANDO_ASSINATURA, label: 'Aguardando assinatura' },
       { value: PlanoTrabalhoStatus.ATIVO, label: 'Em execução' },
@@ -124,8 +134,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     numero: this.fb.nonNullable.control(''),
     usuario: this.fb.nonNullable.control(''),
     unidade_regramento: this.fb.nonNullable.control(''),
-    tipo_modalidade_id: this.fb.nonNullable.control(''),
-    status: this.fb.nonNullable.control(''),
+    tipo_modalidade_id: this.fb.nonNullable.control(TODOS_SENTINEL),
+    status: this.fb.nonNullable.control(TODOS_SENTINEL),
     aguardando_minha_avaliacao: this.fb.nonNullable.control(false),
     aguardando_minha_assinatura: this.fb.nonNullable.control(false),
     unidade_id: this.fb.nonNullable.control(''),
@@ -167,11 +177,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     this.setupSubscriptions();
 
     this.tipoModalidadeApi.listar().then(modalidades => {
-      const current = this.filters.controls.tipo_modalidade_id.value;
-      this.modalidadeOptions.set([
-        { value: '', label: 'Todas', selected: current === '' },
-        ...modalidades.map(m => ({ value: m.key, label: m.value, selected: m.key === current }))
-      ]);
+      this.modalidades.set(modalidades);
     });
   }
 
@@ -203,8 +209,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
       numero: '',
       usuario: '',
       unidade_regramento: '',
-      tipo_modalidade_id: '',
-      status: ''
+      tipo_modalidade_id: TODOS_SENTINEL,
+      status: TODOS_SENTINEL
     }, { emitEvent: false });
     if (this.isChefia) {
       this.filters.controls.incluir_subordinadas.disable({ emitEvent: false });
@@ -305,8 +311,8 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
     const numero = String(raw.numero ?? '').trim();
     if (numero.length) result['numero'] = numero;
-    if (raw.tipo_modalidade_id.length) result['modalidade_pgd'] = raw.tipo_modalidade_id;
-    if (raw.status.length) result['status'] = raw.status;
+    if (raw.tipo_modalidade_id.length && raw.tipo_modalidade_id !== TODOS_SENTINEL) result['modalidade_pgd'] = raw.tipo_modalidade_id;
+    if (raw.status.length && raw.status !== TODOS_SENTINEL) result['status'] = raw.status;
     const usuario = String(raw.usuario ?? '').trim();
     if (usuario.length) result['usuario_nome'] = usuario;
     const unidadeRegramento = String(raw.unidade_regramento ?? '').trim();

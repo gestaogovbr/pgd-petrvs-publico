@@ -25,8 +25,7 @@ import { AssinarPlanoUseCase } from '../application/assinar-plano.usecase';
 import { PlanoTrabalho, getPlanoEntregaInfo, planoTrabalhoStatusLabel } from '../domain/types';
 import { modalidadeDivergenteDoSiape, modalidadeSiapeNormalizada } from '../domain/modalidade-divergente';
 import { ModalidadePgdService } from 'src/app/services/modalidade-pgd.service';
-
-export interface SelectOption { value: string; label: string; selected?: boolean; }
+import type { SelectOption } from 'src/app/v2/domain/select-option';
 
 @Component({
   selector: 'app-plano-trabalho-v2-edit-page',
@@ -192,10 +191,10 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     return this.unidades().map(u => ({ value: `${u.id}`, label: u.sigla, selected: `${u.id}` === sel }));
   });
 
-  readonly modalidadesOptions = computed<SelectOption[]>(() => {
-    const sel = this.selectedModalidadeId();
+  modalidadesOptions(): SelectOption[] {
+    const sel = this.selectedModalidadeId() || this.form.controls.modalidade_pgd.value;
     return this.modalidades().map(m => ({ value: m.key, label: m.value, selected: m.key === sel }));
-  });
+  }
 
   readonly programaNome = computed(() => {
     const id = this.programaId();
@@ -643,10 +642,22 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     if (outraUnidadeId) {
       this.sugestoesOutrasUnidades.set([]);
       this.carregarPlanosOutraUnidade(outraUnidadeId, outraUnidadePlanoId);
-      this.unidadeService.getById(outraUnidadeId).subscribe(unidade => {
-        this.outraUnidadeSelecionada.set({ id: unidade.id, codigo: unidade.codigo, sigla: unidade.sigla, nome: unidade.nome });
-        this.outraUnidadeQuery.setValue(`${unidade.codigo} - ${unidade.sigla} - ${unidade.nome}`, { emitEvent: false });
-      });
+      const unidade = entrega.plano_entrega_entrega?.plano_entrega?.unidade;
+      if (unidade) {
+        this.outraUnidadeSelecionada.set({
+          id: unidade.id,
+          codigo: unidade.codigo,
+          sigla: unidade.sigla,
+          nome: unidade.nome
+        });
+        this.outraUnidadeQuery.setValue(
+          [unidade.codigo, unidade.sigla, unidade.nome].filter(Boolean).join(' - '),
+          { emitEvent: false }
+        );
+      } else {
+        this.outraUnidadeSelecionada.set(null);
+        this.outraUnidadeQuery.setValue('', { emitEvent: false });
+      }
     } else {
       this.outraUnidadeSelecionada.set(null);
       this.outraUnidadeQuery.setValue('', { emitEvent: false });
@@ -791,11 +802,7 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
     try {
       const programas = await this.programaApi.buscarPorUnidadeExecutora(unidadeId, this.joinPrograma);
       this.programas.set(programas);
-      const atual = this.programaId();
-      const atualNaLista = atual && programas.some(p => p.id === atual);
-      if (!atualNaLista) {
-        this.selecionarProgramaPorPeriodo();
-      }
+      this.selecionarProgramaPorPeriodo();
     } finally {
       this.carregandoRegramento.set(false);
     }
@@ -890,24 +897,23 @@ export class PlanoTrabalhoV2EditPage implements OnInit {
       }
     }
 
-    this.modalidades.set(await this.tipoModalidadeApi.listar());
+    const modalidadesLista = await this.tipoModalidadeApi.listar();
     this.usuarioModalidadePgd.set(modalidadeSiapeNormalizada(this.modalidadePgdService, usuario.modalidade_pgd));
 
     if (!preencherModalidadePadrao) {
+      this.modalidades.set(modalidadesLista);
       return;
     }
 
     const modalidadeSiape = this.usuarioModalidadePgd();
-    if (modalidadeSiape && this.modalidades().some(m => m.key === modalidadeSiape)) {
-      this.selectedModalidadeId.set(modalidadeSiape);
-      this.form.controls.modalidade_pgd.setValue(modalidadeSiape, { emitEvent: false });
-      return;
-    }
+    const modalidadeAlvo = (modalidadeSiape && modalidadesLista.some(m => m.key === modalidadeSiape))
+      ? modalidadeSiape
+      : (modalidadesLista.length > 0 ? modalidadesLista[0].key : '');
 
-    if (this.modalidades().length > 0) {
-      const firstKey = this.modalidades()[0].key;
-      this.selectedModalidadeId.set(firstKey);
-      this.form.controls.modalidade_pgd.setValue(firstKey, { emitEvent: false });
+    if (modalidadeAlvo) {
+      this.selectedModalidadeId.set(modalidadeAlvo);
+      this.form.controls.modalidade_pgd.setValue(modalidadeAlvo);
     }
+    this.modalidades.set(modalidadesLista);
   }
 }

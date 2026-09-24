@@ -6,6 +6,7 @@ namespace App\Repository\Usuario\Contracts;
 
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface UsuarioReadRepositoryContract
 {
@@ -28,6 +29,8 @@ interface UsuarioReadRepositoryContract
     public function findAgentesPublicosNoEscopoCadastrante(string $nomeMatricula, string $cadastranteId, int $limite = 50): Collection;
     public function agenteEstaLotadoOuVinculadoNaUnidade(string $agenteId, string $unidadeId): bool;
     public function findByEmail(string $email): ?Usuario;
+    public function findAllByEmailWithoutGlobalScopes(string $email, ?string $ignoreId = null): Collection;
+    public function findAllExternosPresentesNaIntegracao(): Collection;
     public function findActivesByCpf(string $cpf): Collection;
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario;
     public function findWithAreaTrabalho(string $userId, string $unidadeId): ?Usuario;
@@ -40,8 +43,15 @@ interface UsuarioReadRepositoryContract
 
     /**
      * @param list<string> $unidadeIds
+     * @return LengthAwarePaginator<Usuario>
      */
-    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection;
+    public function findAgentesVisiveis(
+        string $usuarioId,
+        array $unidadeIds,
+        ?string $termo = null,
+        int $page = 1,
+        int $perPage = 20
+    ): LengthAwarePaginator;
 
     /**
      * @param string[] $unidadeIds

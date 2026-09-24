@@ -17,14 +17,15 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
         $this->model = $model;
     }
 
-    public function getMatriculaByCpf(string $cpf): ?string
+    public function getMatriculaByCpf(string $cpf, string $codigoOrgao): ?string
     {
         return $this->model->newQuery()
+            ->where('codigo_orgao', $codigoOrgao)
             ->where('cpf', $cpf)
             ->value('matriculasiape');
     }
 
-    public function findByCpfAndCodigoExercicio(string $cpf, string $codigoExercicio): ?IntegracaoServidor
+    public function findByCpfAndCodigoExercicio(string $cpf, string $codigoExercicio, string $codigoOrgao): ?IntegracaoServidor
     {
         $cpf = UtilService::onlyNumbers($cpf);
         $codigoExercicio = ltrim(preg_replace('/[^0-9]/', '', $codigoExercicio) ?? $codigoExercicio, '0') ?: $codigoExercicio;
@@ -34,20 +35,22 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
         return $this->query()
             ->whereRaw($cpfNormalizadoSql . ' = ?', [$cpf])
             ->where('codigo_servo_exercicio', $codigoExercicio)
+            ->where('codigo_orgao', $codigoOrgao)
             ->first();
     }
 
-    public function getServidor(string $cpf, string $matricula): ?IntegracaoServidor
+    public function getServidor(string $cpf, string $matricula, string $codigoOrgao): ?IntegracaoServidor
     {
         /** @var IntegracaoServidor|null */
         return $this->query()
             ->where('cpf', $cpf)
             ->where('matriculasiape', $matricula)
+            ->where('codigo_orgao', $codigoOrgao)
             ->orderBy('created_at', 'desc')
             ->first();
     }
 
-    public function buscarAtualizacoesDados(?array $escopoServidor = null): array
+    public function buscarAtualizacoesDados(string $codigoOrgao, ?array $escopoServidor = null): array
     {
         [$escopoSql, $bindings] = $this->escopoServidorSql($escopoServidor, 'isr.cpf', 'isr.matriculasiape', 'u.cpf');
 
@@ -90,12 +93,13 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
                 (isr.participa_pgd != u.participa_pgd OR isr.participa_pgd IS NOT NULL AND u.participa_pgd IS NULL) OR
                 (isr.data_modificacao > u.data_modificacao OR isr.data_modificacao IS NOT NULL AND u.data_nascimento IS NULL))
             AND u.id IS NOT NULL
+            AND isr.codigo_orgao = ?
             {$escopoSql}",
-            $bindings
+            array_merge([$codigoOrgao], $bindings)
         );
     }
 
-    public function getAtualizacoesLotacoes(?array $escopoServidor = null): array
+    public function getAtualizacoesLotacoes(string $codigoOrgao, ?array $escopoServidor = null): array
     {
         [$escopoSql, $bindings] = $this->escopoServidorSql($escopoServidor, 'isr.cpf', 'isr.matriculasiape', 'usuario.cpf');
 
@@ -107,7 +111,7 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
 
             "(SELECT u2.id " .
             "FROM unidades AS u2 " .
-            "WHERE isr.codigo_servo_exercicio = u2.codigo LIMIT 1) AS exercicio_atual_id, " .
+            "WHERE isr.codigo_servo_exercicio = u2.codigo AND isr.codigo_orgao = u2.codigo_orgao LIMIT 1) AS exercicio_atual_id, " .
 
             " uia.atribuicao AS atribuicao " .
 
@@ -116,15 +120,15 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             "JOIN unidades AS u ON ui.unidade_id = u.id " .
             "JOIN usuarios AS usuario ON ui.usuario_id = usuario.id " .
             "JOIN integracao_servidores AS isr ON isr.matriculasiape = usuario.matricula " .
-            "WHERE uia.atribuicao = 'LOTADO' AND u.codigo <> isr.codigo_servo_exercicio and ui.deleted_at IS NULL " .
-            "AND uia.deleted_at IS NULL " .
+            "WHERE uia.atribuicao = 'LOTADO' AND (u.codigo <> isr.codigo_servo_exercicio OR u.codigo_orgao <> isr.codigo_orgao) and ui.deleted_at IS NULL " .
+            "AND uia.deleted_at IS NULL AND isr.codigo_orgao = ? " .
             $escopoSql . " " .
             "ORDER BY exercicio_antigo ASC",
-            $bindings
+            array_merge([$codigoOrgao], $bindings)
         );
     }
 
-    public function getServidoresInseridosNaoLotados(?array $escopoServidor = null): array
+    public function getServidoresInseridosNaoLotados(string $codigoOrgao, ?array $escopoServidor = null): array
     {
         [$escopoSql, $bindings] = $this->escopoServidorSql($escopoServidor, 'ius.cpf', 'ius.matriculasiape', 'u.cpf');
 
@@ -132,22 +136,23 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             "SELECT u.id AS usuario_id, un.id AS unidade_id , u.matricula
             FROM usuarios AS u
             INNER JOIN integracao_servidores AS ius ON u.matricula = ius.matriculasiape
-            INNER JOIN unidades AS un ON un.codigo = ius.codigo_servo_exercicio
-            WHERE u.id NOT IN
+            INNER JOIN unidades AS un ON un.codigo = ius.codigo_servo_exercicio AND un.codigo_orgao = ius.codigo_orgao
+            WHERE ius.codigo_orgao = ? AND u.id NOT IN
                 (SELECT u.id
                 FROM usuarios AS u
                 INNER JOIN integracao_servidores AS ius ON u.matricula = ius.matriculasiape
                 INNER JOIN unidades_integrantes AS ui ON u.id = ui.usuario_id
                 INNER  JOIN unidades_integrantes_atribuicoes AS uia ON ui.id = uia.unidade_integrante_id
-                WHERE uia.atribuicao = 'LOTADO'
+                WHERE ius.codigo_orgao = ?
+                  AND uia.atribuicao = 'LOTADO'
                   AND uia.deleted_at IS NULL
                 GROUP BY u.id)
             {$escopoSql}",
-            $bindings
+            array_merge([$codigoOrgao, $codigoOrgao], $bindings)
         );
     }
 
-    public function getUsuariosAusentes(?array $escopoServidor = null): array
+    public function getUsuariosAusentes(string $codigoOrgao, ?array $escopoServidor = null): array
     {
         [$escopoSql, $bindings] = $this->escopoServidorSql($escopoServidor, 'isr.cpf', 'isr.matriculasiape');
         $joinCpfEscopado = $this->escopoAtivo($escopoServidor)
@@ -165,6 +170,7 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             "isr.telefone as telefone, " .
             "isr.nomeguerra as apelido, " .
             "isr.codigo_servo_exercicio as exercicio, " .
+            "isr.codigo_orgao as codigo_orgao, " .
             "isr.situacao_funcional as situacao_funcional, " .
             "isr.data_modificacao as data_modificacao, " .
             "isr.ident_unica as ident_unica, " .
@@ -172,8 +178,9 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             "isr.funcoes as gestor " .
             "FROM integracao_servidores as isr " .
             "LEFT JOIN usuarios u on u.matricula = isr.matriculasiape {$joinCpfEscopado} " .
-            "WHERE u.matricula is NULL {$escopoSql}",
-            $bindings
+            "WHERE u.matricula is NULL AND isr.codigo_orgao = ? {$escopoSql} " .
+            "ORDER BY isr.cpf, isr.matriculasiape",
+            array_merge([$codigoOrgao], $bindings)
         );
     }
 

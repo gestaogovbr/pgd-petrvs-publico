@@ -44,6 +44,14 @@ use App\Repository\Documento\Eloquent\EloquentDocumentoReadRepository;
 
 use App\Repository\Documento\Eloquent\EloquentDocumentoWriteRepository;
 
+use App\Repository\DispensaPlanoTrabalho\Contracts\DispensaPlanoTrabalhoReadRepositoryContract;
+
+use App\Repository\DispensaPlanoTrabalho\Contracts\DispensaPlanoTrabalhoWriteRepositoryContract;
+
+use App\Repository\DispensaPlanoTrabalho\Eloquent\EloquentDispensaPlanoTrabalhoReadRepository;
+
+use App\Repository\DispensaPlanoTrabalho\Eloquent\EloquentDispensaPlanoTrabalhoWriteRepository;
+
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaReadRepositoryContract;
 
 use App\Repository\DocumentoAssinatura\Contracts\DocumentoAssinaturaWriteRepositoryContract;
@@ -125,12 +133,17 @@ use App\Repository\Programa\Eloquent\EloquentProgramaReadRepository;
 use App\Repository\Programa\Eloquent\EloquentProgramaWriteRepository;
 
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
+use App\Repository\RelatorioLacunaPlanoTrabalho\Contracts\RelatorioLacunaPlanoTrabalhoReadRepositoryContract;
 use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
 use App\Repository\EnvioUsuario\Eloquent\EloquentEnvioUsuarioReadRepository;
 use App\Repository\EnvioPlanoEntrega\Contracts\EnvioPlanoEntregaReadRepositoryContract;
 use App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository;
 use App\Repository\RelatorioEntrega\Contracts\RelatorioEntregaReadRepositoryContract;
 use App\Repository\RelatorioEntrega\Eloquent\EloquentRelatorioEntregaReadRepository;
+use App\Repository\RelatorioGeracao\Contracts\RelatorioGeracaoReadRepositoryContract;
+use App\Repository\RelatorioGeracao\Contracts\RelatorioGeracaoWriteRepositoryContract;
+use App\Repository\RelatorioGeracao\Eloquent\EloquentRelatorioGeracaoReadRepository;
+use App\Repository\RelatorioGeracao\Eloquent\EloquentRelatorioGeracaoWriteRepository;
 use App\Repository\EnvioPlanoTrabalho\Contracts\EnvioPlanoTrabalhoReadRepositoryContract;
 use App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository;
 use App\Repository\MuralAviso\Contracts\MuralAvisoReadRepositoryContract;
@@ -141,8 +154,24 @@ use App\Repository\MuralAvisoLeitura\Contracts\MuralAvisoLeituraReadRepositoryCo
 use App\Repository\MuralAvisoLeitura\Contracts\MuralAvisoLeituraWriteRepositoryContract;
 use App\Repository\MuralAvisoLeitura\Eloquent\EloquentMuralAvisoLeituraReadRepository;
 use App\Repository\MuralAvisoLeitura\Eloquent\EloquentMuralAvisoLeituraWriteRepository;
-
+use App\Repository\Sipec\SipecUnidade\Contracts\SipecUnidadeReadRepositoryContract;
+use App\Repository\Sipec\SipecUnidade\Contracts\SipecUnidadeWriteRepositoryContract;
+use App\Repository\Sipec\SipecUnidade\Eloquent\EloquentSipecUnidadeReadRepository;
+use App\Repository\Sipec\SipecUnidade\Eloquent\EloquentSipecUnidadeWriteRepository;
+use App\Repository\Sipec\SipecServidor\Contracts\SipecServidorReadRepositoryContract;
+use App\Repository\Sipec\SipecServidor\Contracts\SipecServidorWriteRepositoryContract;
+use App\Repository\Sipec\SipecServidor\Eloquent\EloquentSipecServidorReadRepository;
+use App\Repository\Sipec\SipecServidor\Eloquent\EloquentSipecServidorWriteRepository;
+use App\Repository\Sipec\SipecBuscaHistorico\Contracts\SipecBuscaHistoricoReadRepositoryContract;
+use App\Repository\Sipec\SipecBuscaHistorico\Contracts\SipecBuscaHistoricoWriteRepositoryContract;
+use App\Repository\Sipec\SipecBuscaHistorico\Eloquent\EloquentSipecBuscaHistoricoReadRepository;
+use App\Repository\Sipec\SipecBuscaHistorico\Eloquent\EloquentSipecBuscaHistoricoWriteRepository;
+use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointReadRepositoryContract;
+use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteRepositoryContract;
+use App\Repository\Sipec\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointReadRepository;
+use App\Repository\Sipec\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointWriteRepository;
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
+use App\Repository\RelatorioLacunaPlanoTrabalho\Eloquent\EloquentRelatorioLacunaPlanoTrabalhoReadRepository;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioWriteRepositoryContract;
 use App\Repository\CargaIndividualSiapeRelatorio\Eloquent\EloquentCargaIndividualSiapeRelatorioReadRepository;
@@ -155,6 +184,10 @@ use App\Repository\SiapeBlackListServidor\Contracts\SiapeBlackListServidorWriteR
 
 use App\Repository\SiapeBlackListServidor\Eloquent\EloquentSiapeBlackListServidorReadRepository;
 use App\Repository\SiapeBlackListServidor\Eloquent\EloquentSiapeBlackListServidorWriteRepository;
+use App\Repository\SiapeBlacklistUnidade\Contracts\SiapeBlacklistUnidadeReadRepositoryContract;
+use App\Repository\SiapeBlacklistUnidade\Contracts\SiapeBlacklistUnidadeWriteRepositoryContract;
+use App\Repository\SiapeBlacklistUnidade\Eloquent\EloquentSiapeBlacklistUnidadeReadRepository;
+use App\Repository\SiapeBlacklistUnidade\Eloquent\EloquentSiapeBlacklistUnidadeWriteRepository;
 use App\Repository\SiapeConsultaDadosFuncionais\Contracts\SiapeConsultaDadosFuncionaisReadRepositoryContract;
 use App\Repository\SiapeConsultaDadosFuncionais\Contracts\SiapeConsultaDadosFuncionaisWriteRepositoryContract;
 use App\Repository\SiapeConsultaDadosFuncionais\Eloquent\EloquentSiapeConsultaDadosFuncionaisReadRepository;
@@ -250,6 +283,16 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             IntegracaoUnidadeWriteRepositoryContract::class,
             EloquentIntegracaoUnidadeWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeBlacklistUnidadeReadRepositoryContract::class,
+            EloquentSiapeBlacklistUnidadeReadRepository::class,
+        );
+
+        $this->app->bind(
+            SiapeBlacklistUnidadeWriteRepositoryContract::class,
+            EloquentSiapeBlacklistUnidadeWriteRepository::class,
         );
 
         $this->app->bind(
@@ -395,6 +438,15 @@ final class RepositoryServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            DispensaPlanoTrabalhoReadRepositoryContract::class,
+            EloquentDispensaPlanoTrabalhoReadRepository::class,
+        );
+        $this->app->bind(
+            DispensaPlanoTrabalhoWriteRepositoryContract::class,
+            EloquentDispensaPlanoTrabalhoWriteRepository::class,
+        );
+
+        $this->app->bind(
             DocumentoAssinaturaReadRepositoryContract::class,
             EloquentDocumentoAssinaturaReadRepository::class,
         );
@@ -434,6 +486,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             RelatorioAgenteReadRepositoryContract::class,
             EloquentRelatorioAgenteReadRepository::class,
+        );
+
+        $this->app->bind(
+            RelatorioLacunaPlanoTrabalhoReadRepositoryContract::class,
+            EloquentRelatorioLacunaPlanoTrabalhoReadRepository::class,
         );
 
         $this->app->bind(
@@ -497,6 +554,52 @@ final class RepositoryServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            SipecUnidadeReadRepositoryContract::class,
+            EloquentSipecUnidadeReadRepository::class,
+        );
+        $this->app->bind(
+            SipecUnidadeWriteRepositoryContract::class,
+            EloquentSipecUnidadeWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SipecServidorReadRepositoryContract::class,
+            EloquentSipecServidorReadRepository::class,
+        );
+        $this->app->bind(
+            SipecServidorWriteRepositoryContract::class,
+            EloquentSipecServidorWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SipecSyncCheckpointReadRepositoryContract::class,
+            EloquentSipecSyncCheckpointReadRepository::class,
+        );
+        $this->app->bind(
+            SipecSyncCheckpointWriteRepositoryContract::class,
+            EloquentSipecSyncCheckpointWriteRepository::class,
+        );
+
+        $this->app->bind(
+            SipecBuscaHistoricoReadRepositoryContract::class,
+            EloquentSipecBuscaHistoricoReadRepository::class,
+        );
+        $this->app->bind(
+            SipecBuscaHistoricoWriteRepositoryContract::class,
+            EloquentSipecBuscaHistoricoWriteRepository::class,
+        );
+
+        $this->app->bind(
+            RelatorioGeracaoReadRepositoryContract::class,
+            EloquentRelatorioGeracaoReadRepository::class,
+        );
+
+        $this->app->bind(
+            RelatorioGeracaoWriteRepositoryContract::class,
+            EloquentRelatorioGeracaoWriteRepository::class,
+        );
+
+        $this->app->bind(
             FeriadoReadRepositoryContract::class,
             EloquentFeriadoReadRepository::class,
         );
@@ -510,7 +613,6 @@ final class RepositoryServiceProvider extends ServiceProvider
             PlanoEntregaEntregaWriteRepositoryContract::class,
             EloquentPlanoEntregaEntregaWriteRepository::class,
         );
-
         $this->app->bind(
             PlanoEntregaEntregaProgressoReadRepositoryContract::class,
             EloquentPlanoEntregaEntregaProgressoReadRepository::class,
@@ -524,7 +626,6 @@ final class RepositoryServiceProvider extends ServiceProvider
             MuralAvisoWriteRepositoryContract::class,
             EloquentMuralAvisoWriteRepository::class,
         );
-
         $this->app->bind(
             MuralAvisoLeituraReadRepositoryContract::class,
             EloquentMuralAvisoLeituraReadRepository::class,

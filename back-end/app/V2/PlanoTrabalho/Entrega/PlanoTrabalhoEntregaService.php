@@ -55,7 +55,7 @@ class PlanoTrabalhoEntregaService
 
             $this->invalidarTcrSePlanejamento($plano);
 
-            return $entrega->refresh();
+            return $entrega;
         });
     }
 

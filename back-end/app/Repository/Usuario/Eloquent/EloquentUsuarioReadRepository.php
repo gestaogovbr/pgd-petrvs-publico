@@ -300,6 +300,25 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
+    public function findAllByEmailWithoutGlobalScopes(string $email, ?string $ignoreId = null): Collection
+    {
+        return Usuario::withoutGlobalScopes()
+            ->where('email', $email)
+            ->when($ignoreId, function ($query) use ($ignoreId) {
+                return $query->where('id', '!=', $ignoreId);
+            })
+            ->get();
+    }
+
+    public function findAllExternosPresentesNaIntegracao(): Collection
+    {
+        return $this->query()
+            ->select('usuarios.*')
+            ->join('integracao_servidores as ise', 'usuarios.matricula', '=', 'ise.matriculasiape')
+            ->where('usuarios.usuario_externo', Usuario::USUARIO_EXTERNO)
+            ->get();
+    }
+
     public function findActivesByCpf(string $cpf): Collection
     {
         /** @var Collection $usuarios */
@@ -400,7 +419,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                         $unidadeIds = $condition[1];
                         $subordinadas = $condition[2];
                         $hierarquiaIds = $subordinadas
-                            ? Unidade::naHierarquiaDe($unidadeIds)->pluck('id')
+                            ? $this->unidadeRepository->idsNaHierarquiaDe((array) $unidadeIds)
                             : $unidadeIds;
                         $query->whereHas('lotacoes', function (Builder $q) use ($hierarquiaIds) {
                             $q->whereIn('unidade_id', $hierarquiaIds);
@@ -487,22 +506,39 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             });
     }
 
-    /** @param list<string> $unidadeIds */
-    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection
+    /**
+     * @param list<string> $unidadeIds
+     * @return LengthAwarePaginator<Usuario>
+     */
+    public function findAgentesVisiveis(
+        string $usuarioId,
+        array $unidadeIds,
+        ?string $termo = null,
+        int $page = 1,
+        int $perPage = 20
+    ): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
 
         if (empty($unidadeIds)) {
             $query->where('id', $usuarioId);
         } else {
-            $query->where('id', $usuarioId)
-                ->orWhereHas('unidadesIntegrantes', fn ($q) => $q
+            $query->where(fn ($q) => $q
+                ->where('id', $usuarioId)
+                ->orWhereHas('unidadesIntegrantes', fn ($sub) => $sub
                     ->whereIn('unidade_id', $unidadeIds)
                     ->has('atribuicoes')
-                );
+                )
+            );
         }
 
-        return $query->orderBy('nome')->get(['id', 'nome']);
+        if ($termo !== null && $termo !== '') {
+            $query->where('nome', 'like', '%' . $termo . '%');
+        }
+
+        return $query
+            ->orderBy('nome')
+            ->paginate($perPage, ['id', 'nome'], 'page', $page);
     }
 
     /**

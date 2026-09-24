@@ -20,8 +20,8 @@ use App\Models\NotificacaoConfig;
 use App\Models\HistoricoLotacao;
 use App\Models\HistoricoFuncao;
 use App\Models\CurriculumProfissional;
+use App\Services\CodigoOrgaoService;
 use App\Traits\AutoUuid;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -38,6 +38,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $texto_complementar_plano
  * @property \DateTime|null $data_inativacao
  * @property \DateTime|null $data_inicio_inativacao
+ * @property string $codigo_orgao
+ * @property bool $unidade_antiga
  * @property int $instituidora
  * @property bool $executora
  * @property int $informal
@@ -59,7 +61,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Cidade|null $cidade
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $integrantes
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoEntrega> $planosEntrega
- * @method static Builder<Unidade> naHierarquiaDe(array $unidadeIds)
  */
 class Unidade extends ModelBase
 {
@@ -109,6 +110,7 @@ class Unidade extends ModelBase
     protected static function booted()
     {
         static::creating(function ($unidade) {
+            $unidade->codigo_orgao = CodigoOrgaoService::atual();
             $unidade->notificacoes = empty($unidade->notificacoes) ? json_decode('{}') : $unidade->notificacoes;
             $unidade->etiquetas = $unidade->etiquetas ?? [];
         });
@@ -123,24 +125,8 @@ class Unidade extends ModelBase
         'data_inativacao' => 'datetime',
         'data_inicio_inativacao' => 'datetime',
         'data_ativacao_temporaria' => 'datetime',
+        'unidade_antiga' => 'boolean',
     ];
-
-    // Scopes
-
-    /**
-     * @param Builder<Unidade> $query
-     * @param string[] $unidadeIds
-     * @return Builder<Unidade>
-     */
-    public function scopeNaHierarquiaDe(Builder $query, array $unidadeIds): Builder
-    {
-        return $query->where(function (Builder $inner) use ($unidadeIds) {
-            $inner->whereIn('unidades.id', $unidadeIds);
-            foreach ($unidadeIds as $unidadeId) {
-                $inner->orWhere('unidades.path', 'like', "%{$unidadeId}%");
-            }
-        });
-    }
 
     // Has
     public function atividades()

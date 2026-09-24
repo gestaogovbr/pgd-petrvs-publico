@@ -1,3 +1,42 @@
+## 3.1.4 21/09/2026
+
+### Corrigido
+- Ao editar o planejamento de uma entrega vinculada a outra unidade no Plano de Trabalho, o vínculo com a unidade sumia da tela
+- Assinaturas simultâneas do mesmo Plano de Trabalho (lentidão do sistema + retentativa) geravam assinaturas e períodos avaliativos duplicados
+- A tela de Ocorrências não carregava e travava quando havia muitos agentes públicos
+- Relatório de Planos de Trabalho permite a exportação de unidades com muitos planos de trabalho.
+
+### Modificado
+- O filtro de agente público passa a ser paginado com busca no servidor
+
+## 3.1.3 15/09/2026
+
+### Corrigido
+- A integração com o SIAPE preserva o vínculo com a unidade anterior como colaborador ao transferir a lotação do agente público
+- A migração da chave composta de unidades trata códigos duplicados, mantendo o código original da unidade ativa mais recente e diferenciando os demais com um sufixo
+
+### Modificado
+- Ocultado painel gerencial "Abrangência do PGD"
+
+## 3.1.2 14/09/2026
+
+### Adicionado
+- **Cadeia de Valor nos Elementos de Planejamento**: novo campo "Estrutura" no cadastro (Planejamento Institucional / Cadeia de Valor), com os elementos agrupados por estrutura na listagem
+- Vínculo de tipo de elemento aos processos da Cadeia de Valor, com novo formulário de cadastro de processo e exibição do "Tipo" nas informações gerais da árvore
+- **Relatório de Lacunas de Planos de Trabalho**: consulta de períodos sem PT em execução/concluído para participantes do PGD (dias úteis), com filtros de unidade, período e subordinadas, colunas de lotação, quantidade de dias, dispensa de PT e ocorrências, filtros por coluna no padrão dos demais relatórios e exportação em Excel
+- **Dispensa de Plano de Trabalho** : formalização no cadastro do agente público (data de início obrigatória e data de fim opcional), com elegibilidade para chefia titular/substituta de unidade executora, histórico de operações, encerramento da dispensa, exibição no Relatório de Agentes Públicos e consideração dos períodos dispensados no Relatório de Lacunas
+
+### Modificado
+- Tela de tipos de objetivo renomeada para "Elementos Institucionais"
+- Árvores do Planejamento Institucional e da Cadeia de Valor unificadas em uma visualização compartilhada (mesma experiência de painel lateral, detalhamento de entregas e navegação)
+- Nome do planejamento e da cadeia passam a ser exibidos como subtítulo no cabeçalho do card da árvore
+- Periodicidades Bimestral, Trimestral e Semestral descontinuadas na configuração de consolidação dos regramentos
+- Atualizada versão do Design System do GovBR para 2.1.3
+- Navegação dos relatórios de Planos de Trabalho passa a oferecer a escolha entre Planos de Trabalho Cadastrados e Lacunas de Planos de Trabalho
+
+### Corrigido
+- Descrição dos agendamentos mensais no painel ajustada para exibir corretamente o dia do mês e o horário da execução
+
 ## 3.1.1 01/09/2026
 
 ### Adicionado
