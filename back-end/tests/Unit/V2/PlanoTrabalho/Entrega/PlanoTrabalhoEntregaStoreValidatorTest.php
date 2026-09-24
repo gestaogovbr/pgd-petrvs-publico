@@ -1,6 +1,8 @@
 <?php
 
 use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaStoreValidator;
+use App\V2\PlanoTrabalho\Entrega\Validators\CargaHorariaJustificativaValidator;
+use App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO;
 use App\V2\PlanoTrabalho\Entrega\DTOs\PlanoTrabalhoEntregaStoreDTO;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\PlanoEntregaRepository;
@@ -30,6 +32,7 @@ beforeEach(function () {
         $this->ptEntregaRepo,
         $this->consolidacaoRepo,
         $this->atividadeRepo,
+        new CargaHorariaJustificativaValidator(),
     );
 });
 
@@ -120,6 +123,8 @@ describe('PlanoTrabalhoEntregaStoreValidator::validar', function () {
             ->andReturn(mockConsolidacao(StatusEnum::INCLUIDO->value));
         $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(mockEntregaPE('2025-02-01', '2025-05-31'));
         $this->ptEntregaRepo->shouldReceive('existeVinculo')->andReturn(false);
+        $this->ptEntregaRepo->shouldReceive('somatoriosEsforcoProjetados')
+            ->andReturn(new SomatoriosEsforcoDTO(100.0, 100.0));
 
         $this->validator->validar(dtoPlanoEntrega(consolidacaoId: 'cons-1'));
 
@@ -278,6 +283,45 @@ describe('PlanoTrabalhoEntregaStoreValidator::validar', function () {
             'forca_trabalho' => 60,
             'esforco_executado' => 40,
         ], 'plano-1', 'entrega-1');
+
+        $this->validator->validar($dto);
+
+        expect(true)->toBeTrue();
+    });
+
+    test('exige justificativa ao incluir contribuição com carga diferente de 100%', function () {
+        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
+            ->with('cons-1')
+            ->andReturn(mockConsolidacao(StatusEnum::INCLUIDO->value));
+        $this->ptEntregaRepo->shouldReceive('somatoriosEsforcoProjetados')
+            ->andReturn(new SomatoriosEsforcoDTO(180.0, 180.0));
+
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
+            'origem' => 'SEM_ENTREGA',
+            'forca_trabalho' => 100,
+            'consolidacao_id' => 'cons-1',
+            'descricao' => 'Contribuição extra',
+        ], 'plano-1');
+
+        $this->validator->validar($dto);
+    })->throws(ValidateException::class, CargaHorariaJustificativaValidator::MENSAGEM);
+
+    test('permite contribuição com carga diferente de 100% quando há justificativa', function () {
+        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
+            ->with('cons-1')
+            ->andReturn(mockConsolidacao(StatusEnum::INCLUIDO->value));
+        $this->ptEntregaRepo->shouldReceive('somatoriosEsforcoProjetados')
+            ->andReturn(new SomatoriosEsforcoDTO(180.0, 180.0));
+
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
+            'origem' => 'SEM_ENTREGA',
+            'forca_trabalho' => 100,
+            'consolidacao_id' => 'cons-1',
+            'descricao' => 'Contribuição extra',
+            'justificativa' => 'Demanda extraordinária no período.',
+        ], 'plano-1');
 
         $this->validator->validar($dto);
 

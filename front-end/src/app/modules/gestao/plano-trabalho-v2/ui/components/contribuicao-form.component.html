@@ -111,9 +111,23 @@
       </div>
     </div>
 
+    @if (exigeJustificativa()) {
+      <p class="mb-2">A carga horária total é de {{ totalProjetado() }}%. Informe a justificativa para prosseguir.</p>
+      <br-textarea
+        class="w-100 mb-3"
+        label="Justificativa *"
+        show-counter
+        [maxlength]="500"
+        [rows]="3"
+        placeholder="Descreva a justificativa..."
+        [value]="justificativa()"
+        (input)="justificativa.set($any($event.target).value)"
+      ></br-textarea>
+    }
+
     <div class="d-flex justify-content-end gap-2 mt-2">
       <br-button emphasis="secondary" (click)="cancelar()">Cancelar</br-button>
-      <br-button emphasis="primary" (click)="salvar()" [disabled]="entregaForm.invalid || salvando()">
+      <br-button emphasis="primary" (click)="salvar()" [disabled]="entregaForm.invalid || salvando() || !podeSalvar()">
         {{ salvando() ? 'Salvando...' : 'Salvar Contribuição' }}
       </br-button>
     </div>

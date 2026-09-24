@@ -10,6 +10,7 @@ use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\AtividadeRepository;
 use App\Repository\PlanoTrabalhoEntregaRepository;
+use App\Repository\PlanoTrabalhoRepository;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
 use App\V2\PlanoTrabalho\Entrega\DTOs\PlanoTrabalhoEntregaStoreDTO;
 use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaAuthorizationValidator;
@@ -25,6 +26,7 @@ class PlanoTrabalhoEntregaService
         private readonly PlanoTrabalhoEntregaAuthorizationValidator $authorizationValidator,
         private readonly TCRInvalidador $tcrInvalidador,
         private readonly AtividadeRepository $atividadeRepository,
+        private readonly PlanoTrabalhoRepository $planoTrabalhoRepository,
     ) {}
 
     public function store(PlanoTrabalhoEntregaStoreDTO $dto): PlanoTrabalhoEntrega
@@ -35,6 +37,7 @@ class PlanoTrabalhoEntregaService
         return DB::transaction(function () use ($dto, $plano) {
             $entrega = $this->repository->create($dto->toArray());
 
+            $this->persistirJustificativa($dto);
             $this->invalidarTcrSePlanejamento($plano);
 
             return $entrega;
@@ -74,6 +77,17 @@ class PlanoTrabalhoEntregaService
 
             $this->invalidarTcrSePlanejamento($plano);
         });
+    }
+
+    private function persistirJustificativa(PlanoTrabalhoEntregaStoreDTO $dto): void
+    {
+        if ($dto->justificativa === null || $dto->justificativa === '') {
+            return;
+        }
+
+        $this->planoTrabalhoRepository->update($dto->planoTrabalhoId, [
+            'justificativa' => $dto->justificativa,
+        ]);
     }
 
     private function invalidarTcrSePlanejamento(PlanoTrabalho $plano): void

@@ -291,7 +291,7 @@ export class ConsolidacaoFacade {
     this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
   }
 
-  confirmarAtividade(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): void {
+  confirmarAtividade(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega, justificativa?: string): void {
     const key = `${consolidacao.id}-${entrega.id}`;
     const descricao = this.textos()[key]?.trim();
     const esforcoExecutado = this.getEsforcoExecutado(consolidacao.id, entrega);
@@ -300,7 +300,11 @@ export class ConsolidacaoFacade {
     const atividade = this.getAtividade(consolidacao, entrega.id);
     this.salvando.update(s => new Set([...s, key]));
 
-    const payload = { descricao, esforco_executado: esforcoExecutado };
+    const payload = {
+      descricao,
+      esforco_executado: esforcoExecutado,
+      ...(justificativa ? { justificativa } : {}),
+    };
     const obs = atividade
       ? this.api.updateAtividade(this.planoId, consolidacao.id, atividade.id, payload)
       : this.api.createAtividade(this.planoId, consolidacao.id, {

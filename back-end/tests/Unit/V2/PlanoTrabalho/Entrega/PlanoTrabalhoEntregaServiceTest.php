@@ -7,6 +7,7 @@ use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaStoreValidator;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
 use App\Repository\AtividadeRepository;
 use App\Repository\PlanoTrabalhoEntregaRepository;
+use App\Repository\PlanoTrabalhoRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Enums\StatusEnum;
@@ -22,6 +23,7 @@ beforeEach(function () {
     $this->authValidator = Mockery::mock(PlanoTrabalhoEntregaAuthorizationValidator::class);
     $this->tcrInvalidador = Mockery::mock(TCRInvalidador::class);
     $this->atividadeRepository = Mockery::mock(AtividadeRepository::class);
+    $this->planoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
 
     $this->service = new PlanoTrabalhoEntregaService(
         $this->repository,
@@ -29,6 +31,7 @@ beforeEach(function () {
         $this->authValidator,
         $this->tcrInvalidador,
         $this->atividadeRepository,
+        $this->planoRepository,
     );
 });
 

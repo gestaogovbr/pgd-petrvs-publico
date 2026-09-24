@@ -35,6 +35,7 @@ class PlanoTrabalhoEntregaStoreValidator
         private readonly PlanoTrabalhoEntregaRepository $planoTrabalhoEntregaRepository,
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly AtividadeRepository $atividadeRepository,
+        private readonly CargaHorariaJustificativaValidator $cargaHorariaJustificativaValidator,
     ) {}
 
     public function validar(PlanoTrabalhoEntregaStoreDTO $dto): void
@@ -42,6 +43,7 @@ class PlanoTrabalhoEntregaStoreValidator
         $plano = $this->findPlanoOrFail($dto->planoTrabalhoId);
         $this->validarStatusInclusao($plano, $dto->consolidacaoId);
         $this->validarVinculoSeAplicavel($plano, $dto);
+        $this->validarJustificativaCargaHoraria($dto);
     }
 
     public function validarUpdate(PlanoTrabalhoEntregaStoreDTO $dto): void
@@ -197,6 +199,22 @@ class PlanoTrabalhoEntregaStoreValidator
         if ($semIntersecao) {
             throw new ValidateException('O período da entrega do plano de entregas não possui interseção com o período do plano de trabalho.');
         }
+    }
+
+    private function validarJustificativaCargaHoraria(PlanoTrabalhoEntregaStoreDTO $dto): void
+    {
+        if ($dto->consolidacaoId === null) {
+            return;
+        }
+
+        $somatorios = $this->planoTrabalhoEntregaRepository->somatoriosEsforcoProjetados(
+            $dto->planoTrabalhoId,
+            null,
+            $dto->forcaTrabalho,
+            $dto->esforcoExecutado,
+        );
+
+        $this->cargaHorariaJustificativaValidator->validar($somatorios, $dto->justificativa);
     }
 
     private function validarSomatorioEsforcoExecutado(PlanoTrabalhoEntregaStoreDTO $dto): void

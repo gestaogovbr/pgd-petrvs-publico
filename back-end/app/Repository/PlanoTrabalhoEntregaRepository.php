@@ -52,6 +52,13 @@ class PlanoTrabalhoEntregaRepository
         return $entrega;
     }
 
+    public function findById(string $id): ?PlanoTrabalhoEntrega
+    {
+        $entrega = $this->readRepository->findById($id);
+
+        return $entrega instanceof PlanoTrabalhoEntrega ? $entrega : null;
+    }
+
     public function delete(string $id): bool
     {
         return $this->writeRepository->delete($id);
