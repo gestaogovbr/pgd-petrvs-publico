@@ -51,4 +51,17 @@ class AtividadeRepository
     {
         return $this->readRepository->findWithPlanoTrabalho($id);
     }
+
+    public function possuiEmPeriodosFechados(string $planoTrabalhoEntregaId): bool
+    {
+        return $this->readRepository->possuiEmPeriodosFechados($planoTrabalhoEntregaId);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function idsPorEntregaEmPeriodosIncluidos(string $planoTrabalhoEntregaId): array
+    {
+        return $this->readRepository->idsPorEntregaEmPeriodosIncluidos($planoTrabalhoEntregaId);
+    }
 }

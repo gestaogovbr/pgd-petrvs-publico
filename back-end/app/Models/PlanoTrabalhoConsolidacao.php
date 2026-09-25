@@ -94,7 +94,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
   // Verificar se há a possibilidade de fazer um relacionamento utilizando a chave da entrega e pela data
   public function atividades(): HasMany
   {
-    return $this->hasMany(Atividade::class);
+    return $this->hasMany(Atividade::class, 'plano_trabalho_consolidacao_id');
   }
 
   // Relação com as atividades consolidadas (snapshots)

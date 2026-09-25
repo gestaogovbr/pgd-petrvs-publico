@@ -7,8 +7,12 @@ use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeAuthorizatio
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeWriteValidator;
 use App\Repository\AtividadeRepository;
 use App\Repository\PlanoTrabalhoEntregaRepository;
+use App\Repository\PlanoTrabalhoRepository;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Atividade;
+use App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO;
+use App\V2\PlanoTrabalho\Entrega\Validators\CargaHorariaJustificativaValidator;
 use App\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -20,18 +24,33 @@ beforeEach(function () {
     $this->entregaRepo = Mockery::mock(PlanoTrabalhoEntregaRepository::class);
     $this->authValidator = Mockery::mock(AtividadeAuthorizationValidator::class);
     $this->writeValidator = Mockery::mock(AtividadeWriteValidator::class);
+    $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
 
     $this->service = new AtividadeService(
         $this->atividadeRepo,
         $this->entregaRepo,
         $this->authValidator,
         $this->writeValidator,
+        new CargaHorariaJustificativaValidator(),
+        $this->planoRepo,
     );
 
     DB::shouldReceive('transaction')->andReturnUsing(fn ($cb) => $cb());
 });
 
 afterEach(fn () => Mockery::close());
+
+function mockCargaHorariaCompleta(string $entregaId): void
+{
+    /** @var PlanoTrabalhoEntrega $entrega */
+    $entrega = Mockery::mock(PlanoTrabalhoEntrega::class)->makePartial();
+    $entrega->id = $entregaId;
+    $entrega->forca_trabalho = 100;
+
+    test()->entregaRepo->shouldReceive('findById')->with($entregaId)->andReturn($entrega);
+    test()->entregaRepo->shouldReceive('somatoriosEsforcoProjetados')
+        ->andReturn(new SomatoriosEsforcoDTO(100.0, 100.0));
+}
 
 describe('AtividadeService::store', function () {
 
@@ -54,6 +73,7 @@ describe('AtividadeService::store', function () {
             ->with('plano-1', 'usuario-1')->andReturn($plano);
         $this->writeValidator->shouldReceive('validar')
             ->with($plano, $dto);
+        mockCargaHorariaCompleta('entrega-1');
 
         /** @var Atividade $atividade */
         $atividade = Mockery::mock(Atividade::class)->makePartial();
@@ -92,6 +112,7 @@ describe('AtividadeService::update', function () {
         $atividade->plano_trabalho_entrega_id = 'entrega-1';
 
         $this->writeValidator->shouldReceive('validarExistencia')->with($dto)->andReturn($atividade);
+        mockCargaHorariaCompleta('entrega-1');
 
         /** @var Atividade $atividadeAtualizada */
         $atividadeAtualizada = Mockery::mock(Atividade::class)->makePartial();

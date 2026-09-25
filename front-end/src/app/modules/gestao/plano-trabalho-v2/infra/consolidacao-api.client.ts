@@ -60,12 +60,12 @@ export class ConsolidacaoApiClient {
       .pipe(map((r: any) => r?.data ?? []));
   }
 
-  createAtividade(planoId: string, consolidacaoId: string, payload: { plano_trabalho_entrega_id: string; descricao: string; esforco_executado: number }): Observable<AtividadeConsolidacao> {
+  createAtividade(planoId: string, consolidacaoId: string, payload: { plano_trabalho_entrega_id: string; descricao: string; esforco_executado: number; justificativa?: string }): Observable<AtividadeConsolidacao> {
     return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/atividade`, payload)
       .pipe(map((r: any) => r?.data ?? r));
   }
 
-  updateAtividade(planoId: string, consolidacaoId: string, atividadeId: string, payload: { descricao: string; esforco_executado: number }): Observable<AtividadeConsolidacao> {
+  updateAtividade(planoId: string, consolidacaoId: string, atividadeId: string, payload: { descricao: string; esforco_executado: number; justificativa?: string }): Observable<AtividadeConsolidacao> {
     return this.http.put<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/atividade/${atividadeId}`, payload)
       .pipe(map((r: any) => r?.data ?? r));
   }
