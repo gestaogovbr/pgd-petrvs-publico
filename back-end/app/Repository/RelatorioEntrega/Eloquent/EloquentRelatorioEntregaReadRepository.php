@@ -150,7 +150,7 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
                 $subordinadasIds = $unidadeService->subordinadas($filters->unidadeId)->pluck('id')->toArray();
                 $unidadeIds = array_values(array_unique(array_merge($unidadeIds, $subordinadasIds)));
             }
-            $query->whereIn('pe.unidade_id', $unidadeIds);
+            $query->whereIn('pee.unidade_id', $unidadeIds);
         }
 
         if ($filters->hasPeriodoCompleto()) {

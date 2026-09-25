@@ -2,6 +2,7 @@
 
 ### Corrigido
 - Relatório de Entregas: coluna "Alcançado" passa a refletir o valor consolidado da entrega, corrigindo casos em que aparecia zerada ou defasada; indicadores qualitativos deixam de exibir 0 e os valores preservam as casas decimais
+- Base de cálculo de entregas alinhada entre o painel "Alinhamento Institucional" e o Relatório de Entregas: o relatório passa a considerar a unidade demandante da entrega, e o painel deixa de contar entregas de planos excluídos e passa a usar interseção de períodos
 
 ## 3.1.4 21/09/2026
 
