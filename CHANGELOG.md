@@ -2,6 +2,7 @@
 
 ### Corrigido
 - Relatório de Entregas: coluna "Alcançado" passa a refletir o valor consolidado da entrega, corrigindo casos em que aparecia zerada ou defasada; indicadores qualitativos deixam de exibir 0 e os valores preservam as casas decimais
+- Corrigida falha na sincronização individual do SIAPE que podia impedir a atualização das unidades e manter lotações desatualizadas
 
 ## 3.1.4 21/09/2026
 
