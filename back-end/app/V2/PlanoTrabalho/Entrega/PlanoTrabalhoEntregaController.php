@@ -57,10 +57,15 @@ class PlanoTrabalhoEntregaController extends Controller
         }
     }
 
-    public function destroy(string $planoTrabalhoId, string $entregaId): JsonResponse
+    public function destroy(Request $request, string $planoTrabalhoId, string $entregaId): JsonResponse
     {
         try {
-            $this->service->destroy($planoTrabalhoId, $entregaId);
+            $consolidacaoId = $request->query('consolidacao_id');
+            $this->service->destroy(
+                $planoTrabalhoId,
+                $entregaId,
+                is_string($consolidacaoId) && $consolidacaoId !== '' ? $consolidacaoId : null,
+            );
 
             return response()->json(['success' => true], Response::HTTP_NO_CONTENT);
         } catch (IBaseException $e) {

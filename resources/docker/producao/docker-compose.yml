@@ -3,6 +3,9 @@ x-security-defaults: &security_defaults
     - no-new-privileges:true
     - seccomp:../security/seccomp-cve-2026-31431.json
 
+x-petrvs-storage: &petrvs_storage
+  ../../../back-end/storage:/var/www/storage
+
 services:
 
   petrvs_db_producao:
@@ -47,6 +50,35 @@ services:
       - RABBITMQ_HOST=petrvs_rabbitmq
     volumes:
       - ../../../back-end:/var/www
+      - *petrvs_storage
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
+
+  petrvs_queue:
+    <<: *security_defaults
+    build:
+      context: .
+      dockerfile: Dockerfile-php
+      args:
+        ELASTIC_APM_ENABLED: ${ELASTIC_APM_ENABLED:-false}
+    container_name: petrvs_queue
+    working_dir: /var/www
+    command: ["/bin/bash", "-c", "mkdir -p /var/www/storage/logs && chown -R www-data:www-data /var/www/storage && chmod -R 775 /var/www/storage && supervisord -c /etc/supervisor/conf.d/horizon.conf"]
+    env_file:
+      - ../../../back-end/.env
+    environment:
+      - TZ=America/Bahia
+      - APP_CONTEXT=queue
+      - RABBITMQ_HOST=petrvs_rabbitmq
+    volumes:
+      - ../../../back-end:/var/www
+      - *petrvs_storage
+    depends_on:
+      - petrvs_db_producao
+      - petrvs_rabbitmq
     deploy:
       resources:
         limits:
