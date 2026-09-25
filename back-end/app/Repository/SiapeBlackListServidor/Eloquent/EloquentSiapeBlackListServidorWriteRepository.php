@@ -7,6 +7,7 @@ namespace App\Repository\SiapeBlackListServidor\Eloquent;
 use App\Models\SiapeBlackListServidor;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
 use App\Repository\SiapeBlackListServidor\Contracts\SiapeBlackListServidorWriteRepositoryContract;
+use Illuminate\Support\Str;
 
 /**
  * @extends AbstractEloquentWriteRepository<SiapeBlackListServidor>
@@ -28,5 +29,13 @@ class EloquentSiapeBlackListServidorWriteRepository extends AbstractEloquentWrit
     public function forceDelete(string $id): bool
     {
         return $this->model->newQuery()->withTrashed()->whereKey($id)->forceDelete() >= self::MINIMUM_DELETED_ROWS;
+    }
+
+    public function firstOrCreate(string $cpf, ?string $matricula, string $response): SiapeBlackListServidor
+    {
+        return $this->model->newQuery()->firstOrCreate(
+            ['cpf' => $cpf, 'matricula' => $matricula],
+            ['id' => (string) Str::uuid(), 'response' => $response]
+        );
     }
 }

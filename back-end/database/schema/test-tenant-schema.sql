@@ -1323,7 +1323,8 @@ CREATE TABLE `integracao_servidores` (
   `participa_pgd` enum('sim','não') NOT NULL COMMENT 'Indica se o usuário participa do PGD.',
   `ident_unica` varchar(50) DEFAULT NULL COMMENT 'Identificador único do servidor',
   PRIMARY KEY (`id`),
-  KEY `integracao_servidores_codigo_orgao_index` (`codigo_orgao`)
+  KEY `integracao_servidores_codigo_orgao_index` (`codigo_orgao`),
+  KEY `idx_integracao_servidor_cpf_data` (`cpf`,`deleted_at`,`data_modificacao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2834,7 +2835,8 @@ CREATE TABLE `siape_blacklist_servidores` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `matricula` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_siape_blacklist_cpf_matricula` (`cpf`,`matricula`,`inativado`,`deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3535,6 +3537,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `usuarios_matricula_unique` (`matricula`),
   KEY `usuarios_perfil_id_foreign` (`perfil_id`),
   KEY `usuarios_data_agendamento_envio_index` (`data_agendamento_envio`),
+  KEY `idx_usuario_siape_reconciliacao` (`cpf`,`deleted_at`,`situacao_siape`,`matricula`),
   CONSTRAINT `usuarios_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfis` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
