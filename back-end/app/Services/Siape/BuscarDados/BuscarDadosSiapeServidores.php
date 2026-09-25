@@ -1,10 +1,10 @@
 <?php
 namespace App\Services\Siape\BuscarDados;
 
-use App\Models\SiapeListaServidores;
 use App\Models\SiapeListaUORGS;
+use App\Repository\SiapeListaServidores\Contracts\SiapeListaServidoresWriteRepositoryContract;
+use App\Repository\SiapeListaUORGS\Contracts\SiapeListaUORGSReadRepositoryContract;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use SimpleXMLElement;
@@ -13,17 +13,21 @@ use App\Services\CodigoOrgaoService;
 class BuscarDadosSiapeServidores extends BuscarDadosSiape{
 
     const MAX_INSERT_DB = 1000;
+
+    public function __construct(
+        mixed $config,
+        private readonly ?SiapeListaUORGSReadRepositoryContract $listaUorgsReadRepository = null,
+        private readonly ?SiapeListaServidoresWriteRepositoryContract $listaServidoresWriteRepository = null,
+    ) {
+        parent::__construct($config);
+    }
+
     public function buscaServidores(): void
     {
         Log::info("Iniciando busca de servidores...");
 
-        $this->limpaTabela();
-
         $codigoOrgao = CodigoOrgaoService::obrigatorio($this->getConfig()['codOrgao'] ?? null);
-        $response = SiapeListaUORGS::where('codigo_orgao', $codigoOrgao)
-                ->where('processado', SiapeListaUORGS::PROCESSADO)
-                ->orderBy('updated_at', 'desc')
-                ->first();
+        $response = $this->listaUorgsRead()->findLatestProcessed($codigoOrgao);
                 
         if(!$response){
             Log::info("Nenhuma unidade encontrada.");
@@ -54,6 +58,14 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
         }
 
         $xmlResponse =  $this->BuscaSiape($xmlsUnidades);
+        if (count($xmlResponse) !== count($xmlsUnidades)) {
+            Log::warning('Lista de servidores não substituída: nem todas as UORGs responderam ao SIAPE.', [
+                'requisicoes' => count($xmlsUnidades),
+                'respostas' => count($xmlResponse),
+            ]);
+            return;
+        }
+
         $inserts = [];
         foreach ($xmlResponse as $xml) {
             array_push($inserts, [
@@ -64,17 +76,15 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
             ]);
         }
 
-        $lotesInserts = array_chunk($inserts, self::MAX_INSERT_DB, true);
-        foreach($lotesInserts as $insert){
-            SiapeListaServidores::insert($insert);
-        }
+        $this->substituirSnapshot($inserts);
 
         Log::info("Busca de servidores finalizada.");
     }
 
-    private function limpaTabela(): void
+    /** @param array<int, array<string, mixed>> $inserts */
+    private function substituirSnapshot(array $inserts): void
     {
-        DB::table('siape_listaServidores')->truncate();
+        $this->listaServidoresWrite()->replaceSnapshot($inserts, self::MAX_INSERT_DB);
     }
 
     public function listaServidores(
@@ -132,4 +142,13 @@ class BuscarDadosSiapeServidores extends BuscarDadosSiape{
         return array_map([$this, 'simpleXmlElementToArray'], $uorgs);
     }
 
+    private function listaUorgsRead(): SiapeListaUORGSReadRepositoryContract
+    {
+        return $this->listaUorgsReadRepository ?? app(SiapeListaUORGSReadRepositoryContract::class);
+    }
+
+    private function listaServidoresWrite(): SiapeListaServidoresWriteRepositoryContract
+    {
+        return $this->listaServidoresWriteRepository ?? app(SiapeListaServidoresWriteRepositoryContract::class);
+    }
 }

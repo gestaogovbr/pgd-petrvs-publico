@@ -7,72 +7,40 @@ namespace App\V2\RelatorioEntrega\Support;
 final class RelatorioEntregaMetaHelper
 {
     /**
-     * Extrai valor numérico absoluto da meta ou realizado conforme tipo de indicador.
+     * Extrai o valor numérico absoluto da meta/realizado conforme o tipo de indicador.
+     * Retorna null para indicadores sem representação numérica (qualitativo/desconhecido).
      */
-    public static function valorNumericoAbsoluto(mixed $jsonValue, ?string $tipoIndicador): float
+    public static function valorNumericoAbsoluto(mixed $jsonValue, ?string $tipoIndicador): ?float
     {
         $data = self::normalizarJsonMeta($jsonValue);
         if ($data === null) {
-            return 0.0;
+            return self::suportaValorNumerico($tipoIndicador) ? 0.0 : null;
         }
 
         return match ($tipoIndicador) {
             'PORCENTAGEM' => (float) ($data['porcentagem'] ?? 0),
             'QUANTIDADE' => (float) ($data['quantitativo'] ?? 0),
             'VALOR' => (float) ($data['valor'] ?? 0),
-            default => 0.0,
+            default => null,
         };
     }
 
     /**
-     * Valor absoluto da meta/realizado do registro de execução mais recente.
-     */
-    public static function valorAbsolutoRegistroExecucao(
-        mixed $jsonValue,
-        ?string $tipoIndicador,
-        bool $temRegistroExecucao,
-    ): float {
-        if (! $temRegistroExecucao) {
-            return 0.0;
-        }
-
-        return self::valorNumericoAbsoluto($jsonValue, $tipoIndicador);
-    }
-
-    /**
-     * Planejado/Alcançado do relatório: progresso mais recente; sem registro, meta do cadastro.
-     */
-    public static function valorMetaRelatorio(
-        mixed $progressoJson,
-        mixed $cadastroJson,
-        ?string $tipoIndicador,
-        bool $temRegistroExecucao,
-    ): float {
-        if ($temRegistroExecucao) {
-            return self::valorNumericoAbsoluto($progressoJson, $tipoIndicador);
-        }
-
-        return self::valorNumericoAbsoluto($cadastroJson, $tipoIndicador);
-    }
-
-    /**
-     * Alcançado = valor absoluto do realizado no registro de execução; 0 sem registro.
-     */
-    public static function valorAlcancado(mixed $realizadoJson, ?string $tipoIndicador, bool $temRegistroExecucao): float
-    {
-        return self::valorAbsolutoRegistroExecucao($realizadoJson, $tipoIndicador, $temRegistroExecucao);
-    }
-
-    /**
      * RN19.2 — Percentual de Alcance = (Valor Planejado / Valor Realizado) x 100.
+     * Retorna null quando não há valores numéricos (ex.: qualitativo) ou realizado <= 0.
      */
-    public static function valorPercentualAlcance(float $planejado, float $realizado): float
+    public static function valorPercentualAlcance(?float $planejado, ?float $realizado): ?float
     {
-        if ($realizado <= 0.0) {
-            return 0.0;
+        if ($planejado === null || $realizado === null || $realizado <= 0.0) {
+            return null;
         }
 
         return round($planejado / $realizado * 100.0, 2);
+    }
+
+    private static function suportaValorNumerico(?string $tipoIndicador): bool
+    {
+        return in_array($tipoIndicador, ['PORCENTAGEM', 'QUANTIDADE', 'VALOR'], true);
     }
 
     /** @return array<string, mixed>|null */

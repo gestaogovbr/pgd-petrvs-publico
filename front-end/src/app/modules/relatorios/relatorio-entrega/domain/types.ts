@@ -7,10 +7,10 @@ export interface RelatorioEntregaRow {
   entregaNome: string;
   data_inicio: string | null;
   data_fim: string | null;
-  meta_planejado: number;
-  meta_alcancado: number;
+  meta_planejado: number | null;
+  meta_alcancado: number | null;
   meta_tipo: string;
-  meta_percentual: number;
+  meta_percentual: number | null;
   qtd_planejamento_institucional: number;
   qtd_cadeia_valor: number;
   qtd_outras_entregas: number;

@@ -14,6 +14,7 @@ class AtividadeUpdateDTO implements IAtividadeWriteDTO
         public readonly ?string $descricao,
         public readonly ?string $planoTrabalhoEntregaId,
         public readonly ?float $esforcoExecutado,
+        public readonly ?string $justificativa = null,
     ) {}
 
     public static function fromArray(array $data, string $planoTrabalhoId, string $consolidacaoId, string $atividadeId, string $usuarioId): self
@@ -28,6 +29,7 @@ class AtividadeUpdateDTO implements IAtividadeWriteDTO
             esforcoExecutado: array_key_exists('esforco_executado', $data)
                 ? (float) $data['esforco_executado']
                 : null,
+            justificativa: isset($data['justificativa']) ? trim((string) $data['justificativa']) : null,
         );
     }
 

@@ -62,6 +62,11 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->possuiConsolidacaoFinalizadaPorPlano($planoTrabalhoId);
     }
 
+    public function possuiPeriodoAberto(string $planoTrabalhoId): bool
+    {
+        return $this->readRepository->possuiPeriodoAberto($planoTrabalhoId);
+    }
+
     public function findAvaliadasComPrazoRecurso(string $usuarioId, int $prazoDias): Collection
     {
         return $this->readRepository->findAvaliadasComPrazoRecurso($usuarioId, $prazoDias);
