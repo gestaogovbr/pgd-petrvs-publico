@@ -61,6 +61,6 @@ class ExecutaSiape extends Command
     private function loadingTenantConfigurationMiddleware(string $tenantId): void
     {
         $tenantConfigurations = new TenantConfigurationsService();
-        $tenantConfigurations->handle($tenantId);
+        $tenantConfigurations->handleTenant($tenantId);
     }
 }

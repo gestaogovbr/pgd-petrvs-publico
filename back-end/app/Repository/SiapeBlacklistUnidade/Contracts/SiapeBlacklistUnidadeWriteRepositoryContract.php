@@ -18,4 +18,6 @@ interface SiapeBlacklistUnidadeWriteRepositoryContract
     public function delete(string|int $id): bool;
 
     public function restoreAsNovaPendencia(SiapeBlacklistUnidade $blacklist, string $response): SiapeBlacklistUnidade;
+
+    public function firstOrCreate(string $codigoOrgao, string $codigo, string $response): SiapeBlacklistUnidade;
 }

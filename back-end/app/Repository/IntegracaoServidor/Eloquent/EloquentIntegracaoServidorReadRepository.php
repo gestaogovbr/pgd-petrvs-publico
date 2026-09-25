@@ -50,6 +50,18 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             ->first();
     }
 
+    public function datasMaisRecentesPorCpf(string $codigoOrgao): array
+    {
+        return $this->query()
+            ->where('codigo_orgao', $codigoOrgao)
+            ->whereNotNull('cpf')
+            ->select('cpf')
+            ->selectRaw('MAX(data_modificacao) AS data_modificacao')
+            ->groupBy('cpf')
+            ->pluck('data_modificacao', 'cpf')
+            ->all();
+    }
+
     public function buscarAtualizacoesDados(string $codigoOrgao, ?array $escopoServidor = null): array
     {
         [$escopoSql, $bindings] = $this->escopoServidorSql($escopoServidor, 'isr.cpf', 'isr.matriculasiape', 'u.cpf');

@@ -2,14 +2,21 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
+use App\Models\Tenant;
+use App\Repository\Tenant\Contracts\TenantReadRepositoryContract;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Database\Models\Domain;
 
 class TenantConfigurationsService
 {
     private const DOMAIN_CACHE_TTL_SECONDS = 900;
     private const HTTPS_PORT = 443;
+
+    public function __construct(
+        private readonly ?TenantReadRepositoryContract $tenantReadRepository = null,
+    ) {
+    }
 
     public function handle(string $tenantId = null, $domain = null): ?Domain
     {
@@ -41,11 +48,33 @@ class TenantConfigurationsService
         return $tenant;
     }
 
+    public function handleTenant(string $tenantId): ?Tenant
+    {
+        $tenant = $this->tenantRead()->findById($tenantId);
+
+        if ($tenant) {
+            $this->loadSettings($tenant->toArray());
+        }
+
+        return $tenant;
+    }
+
+    private function tenantRead(): TenantReadRepositoryContract
+    {
+        return $this->tenantReadRepository ?? app(TenantReadRepositoryContract::class);
+    }
+
     private function loadingConfigs($tenant) : void
     {
         # Pega os dados salvos no Panel
         $settings = json_decode($tenant['tenant'], true);
         // Log::info("Settings: " . json_encode($settings));
+
+        $this->loadSettings($settings);
+    }
+
+    private function loadSettings(array $settings): void
+    {
 
         # Obtém a URL do aplicativo do arquivo de configuração
         $appUrl = config('app.url');

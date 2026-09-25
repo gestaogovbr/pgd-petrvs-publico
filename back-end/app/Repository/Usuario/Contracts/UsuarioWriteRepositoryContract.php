@@ -25,4 +25,7 @@ interface   UsuarioWriteRepositoryContract
     public function registrarLog(Usuario $usuario, string $mensagem): void;
 
     public function updateConfig(string $usuarioId, string $unidadeId): bool;
+
+    /** @param list<string> $matriculas */
+    public function reativarPorCpfEMatriculas(string $cpf, array $matriculas, ?string $perfilConsultaId, ?string $perfilParticipanteId): int;
 }
