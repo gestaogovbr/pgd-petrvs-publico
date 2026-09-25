@@ -7,11 +7,13 @@
 - A carga automática do SIAPE passa a confirmar individualmente servidores que deixaram de aparecer na listagem e inicia o prazo de 30 dias somente quando a ausência é confirmada
 - O ciclo de inativação e reativação passa a considerar CPF e matrícula, preservando vínculos válidos de usuários com mais de uma matrícula e removendo pendências quando o vínculo volta a ser informado pelo SIAPE
 - A atualização de servidores pelo SIAPE ficou mais segura: se a carga vier incompleta, o sistema mantém os dados válidos anteriores e evita um volume excessivo de consultas
+- Permitida inclusão e exclusão de registro de contribuição após início da execução. 
 
 ### Corrigido
-- Relatório de Entregas: coluna "Alcançado" passa a refletir o valor consolidado da entrega, corrigindo casos em que aparecia zerada ou defasada; indicadores qualitativos deixam de exibir 0 e os valores preservam as casas decimais
+git - Relatório de Entregas: coluna "Alcançado" passa a refletir o valor consolidado da entrega, corrigindo casos em que aparecia zerada ou defasada; indicadores qualitativos deixam de exibir 0 e os valores preservam as casas decimais
 - Corrigida falha na sincronização individual do SIAPE que podia impedir a atualização das unidades e manter lotações desatualizadas
 - A integração SIAPE passa a carregar as configurações diretamente pelo tenant, evitando falhas em execuções agendadas ou via linha de comando sem contexto de domínio
+- Correção de erro que não permitia baixar relatórios de PT;
 
 ## 3.1.4 21/09/2026
 
