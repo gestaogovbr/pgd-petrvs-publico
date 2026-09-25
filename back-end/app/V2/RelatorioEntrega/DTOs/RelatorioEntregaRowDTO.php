@@ -19,10 +19,10 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
         public readonly string $entregaNome,
         public readonly ?string $data_inicio,
         public readonly ?string $data_fim,
-        public readonly float $meta_planejado,
-        public readonly float $meta_alcancado,
+        public readonly ?float $meta_planejado,
+        public readonly ?float $meta_alcancado,
         public readonly string $meta_tipo,
-        public readonly float $meta_percentual,
+        public readonly ?float $meta_percentual,
         public readonly int $qtd_planejamento_institucional,
         public readonly int $qtd_cadeia_valor,
         public readonly int $qtd_outras_entregas,
@@ -39,19 +39,16 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
     public static function fromQueryRow(object $row, ?string $dataConsulta = null): self
     {
         $tipoIndicador = $row->tipo_indicador ?? null;
-        $temRegistroExecucao = ((int) ($row->qtd_registros_execucao ?? 0)) > 0;
-        $metaPlanejado = (float) ($row->meta_planejado ?? RelatorioEntregaMetaHelper::valorMetaRelatorio(
-            $row->progresso_meta ?? null,
-            $row->cadastro_meta ?? null,
-            is_string($tipoIndicador) ? $tipoIndicador : null,
-            $temRegistroExecucao,
-        ));
-        $metaAlcancado = (float) ($row->meta_alcancado ?? RelatorioEntregaMetaHelper::valorMetaRelatorio(
-            $row->progresso_realizado ?? null,
-            $row->cadastro_realizado ?? null,
-            is_string($tipoIndicador) ? $tipoIndicador : null,
-            $temRegistroExecucao,
-        ));
+        $tipo = is_string($tipoIndicador) ? $tipoIndicador : null;
+        $metaPlanejado = array_key_exists('meta_planejado', (array) $row)
+            ? self::nullableFloat($row->meta_planejado)
+            : RelatorioEntregaMetaHelper::valorNumericoAbsoluto($row->cadastro_meta ?? null, $tipo);
+        $metaAlcancado = array_key_exists('meta_alcancado', (array) $row)
+            ? self::nullableFloat($row->meta_alcancado)
+            : RelatorioEntregaMetaHelper::valorNumericoAbsoluto($row->cadastro_realizado ?? null, $tipo);
+        $metaPercentual = array_key_exists('meta_percentual', (array) $row)
+            ? self::nullableFloat($row->meta_percentual)
+            : RelatorioEntregaMetaHelper::valorPercentualAlcance($metaPlanejado, $metaAlcancado);
         $consulta = $dataConsulta ?? now()->toDateString();
 
         return new self(
@@ -65,11 +62,8 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
             data_fim: self::nullableString($row->data_fim ?? null),
             meta_planejado: $metaPlanejado,
             meta_alcancado: $metaAlcancado,
-            meta_tipo: RelatorioEntregaTipoMetaHelper::label(is_string($tipoIndicador) ? $tipoIndicador : null),
-            meta_percentual: (float) ($row->meta_percentual ?? RelatorioEntregaMetaHelper::valorPercentualAlcance(
-                $metaPlanejado,
-                $metaAlcancado,
-            )),
+            meta_tipo: RelatorioEntregaTipoMetaHelper::label($tipo),
+            meta_percentual: $metaPercentual,
             qtd_planejamento_institucional: (int) ($row->qtd_planejamento_institucional ?? 0),
             qtd_cadeia_valor: (int) ($row->qtd_cadeia_valor ?? 0),
             qtd_outras_entregas: (int) ($row->qtd_outras_entregas ?? 0),
@@ -161,5 +155,14 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
         }
 
         return (string) $value;
+    }
+
+    private static function nullableFloat(mixed $value): ?float
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return (float) $value;
     }
 }
