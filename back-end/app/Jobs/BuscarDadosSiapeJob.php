@@ -69,6 +69,6 @@ class BuscarDadosSiapeJob implements ShouldQueue, ContratoJobSchedule
     private function loadingTenantConfigurationMiddleware(string $tenantId): void
     {
         $tenantConfigurations = new TenantConfigurationsService();
-        $tenantConfigurations->handle($tenantId);
+        $tenantConfigurations->handleTenant($tenantId);
     }
 }

@@ -23,4 +23,11 @@ interface AtividadeReadRepositoryContract
      */
     public function entregaIdsComAtividade(string $consolidacaoId): Collection;
     public function findWithPlanoTrabalho(string|int $id): ?Atividade;
+
+    public function possuiEmPeriodosFechados(string $planoTrabalhoEntregaId): bool;
+
+    /**
+     * @return list<string>
+     */
+    public function idsPorEntregaEmPeriodosIncluidos(string $planoTrabalhoEntregaId): array;
 }

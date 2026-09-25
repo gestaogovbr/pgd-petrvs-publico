@@ -204,6 +204,10 @@ use App\Repository\SiapeListaUORGS\Contracts\SiapeListaUORGSReadRepositoryContra
 use App\Repository\SiapeListaUORGS\Contracts\SiapeListaUORGSWriteRepositoryContract;
 use App\Repository\SiapeListaUORGS\Eloquent\EloquentSiapeListaUORGSReadRepository;
 use App\Repository\SiapeListaUORGS\Eloquent\EloquentSiapeListaUORGSWriteRepository;
+use App\Repository\SiapeListaServidores\Contracts\SiapeListaServidoresReadRepositoryContract;
+use App\Repository\SiapeListaServidores\Contracts\SiapeListaServidoresWriteRepositoryContract;
+use App\Repository\SiapeListaServidores\Eloquent\EloquentSiapeListaServidoresReadRepository;
+use App\Repository\SiapeListaServidores\Eloquent\EloquentSiapeListaServidoresWriteRepository;
 use App\Repository\StatusJustificativa\Contracts\StatusJustificativaReadRepositoryContract;
 use App\Repository\StatusJustificativa\Contracts\StatusJustificativaWriteRepositoryContract;
 use App\Repository\StatusJustificativa\Eloquent\EloquentStatusJustificativaReadRepository;
@@ -366,6 +370,15 @@ final class RepositoryServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            SiapeListaServidoresReadRepositoryContract::class,
+            EloquentSiapeListaServidoresReadRepository::class,
+        );
+        $this->app->bind(
+            SiapeListaServidoresWriteRepositoryContract::class,
+            EloquentSiapeListaServidoresWriteRepository::class,
+        );
+
+        $this->app->bind(
             SiapeDadosUORGReadRepositoryContract::class,
             EloquentSiapeDadosUORGReadRepository::class,
         );
@@ -382,7 +395,6 @@ final class RepositoryServiceProvider extends ServiceProvider
             SiapeBlackListServidorWriteRepositoryContract::class,
             EloquentSiapeBlackListServidorWriteRepository::class,
         );
-
         $this->app->bind(
             UnidadeIntegranteReadRepositoryContract::class,
             EloquentUnidadeIntegranteReadRepository::class,

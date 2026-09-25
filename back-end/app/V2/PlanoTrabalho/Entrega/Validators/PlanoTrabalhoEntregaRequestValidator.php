@@ -27,6 +27,8 @@ class PlanoTrabalhoEntregaRequestValidator
             'forca_trabalho' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:999.99'],
             'esforco_executado' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:999.99'],
             'descricao' => ['sometimes', 'nullable', 'string', 'max:1000'],
+            'consolidacao_id' => ['sometimes', 'nullable', 'uuid'],
+            'justificativa' => ['sometimes', 'nullable', 'string', 'max:500'],
         ], [
             'origem.required' => 'A origem da entrega é obrigatório.',
             'origem.in' => 'A origem da entrega deve ser PROPRIA_UNIDADE, OUTRA_UNIDADE, OUTRO_ORGAO ou SEM_ENTREGA.',
@@ -37,6 +39,7 @@ class PlanoTrabalhoEntregaRequestValidator
             'forca_trabalho.min' => 'A força de trabalho não pode ser negativa.',
             'esforco_executado.min' => 'O esforço executado não pode ser negativo.',
             'descricao.max' => 'A descrição não pode exceder 1000 caracteres.',
+            'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
         ]);
     }
 }

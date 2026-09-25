@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository\Usuario\Eloquent;
 
+use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
 use App\Repository\Eloquent\EnvioTrait;
@@ -117,5 +118,39 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
             }
             // fresh() is called in service, but here we just return void.
         }
+    }
+
+    public function reativarPorCpfEMatriculas(string $cpf, array $matriculas, ?string $perfilConsultaId, ?string $perfilParticipanteId): int
+    {
+        if ($matriculas === []) {
+            return 0;
+        }
+
+        $usuarios = $this->model->newQuery()
+            ->where('cpf', $cpf)
+            ->whereIn('matricula', $matriculas)
+            ->get();
+
+        $atualizados = 0;
+        foreach ($usuarios as $usuario) {
+            $attributes = [
+                'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
+                'data_ativacao_temporaria' => null,
+                'justicativa_ativacao_temporaria' => null,
+            ];
+
+            if (
+                $perfilConsultaId !== null
+                && $perfilParticipanteId !== null
+                && $usuario->perfil_id === $perfilConsultaId
+                && in_array($usuario->situacao_siape, [UsuarioSituacaoSiape::INATIVO->value, UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value], true)
+            ) {
+                $attributes['perfil_id'] = $perfilParticipanteId;
+            }
+
+            $atualizados += $this->model->newQuery()->whereKey($usuario->id)->update($attributes);
+        }
+
+        return $atualizados;
     }
 }
