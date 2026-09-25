@@ -17,7 +17,6 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithProperties;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Events\AfterSheet;
-use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
@@ -119,13 +118,13 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
         return (int) $value;
     }
 
-    private function metaExportValue(mixed $value): int
+    private function metaExportValue(mixed $value): mixed
     {
         if ($value === null || $value === '' || ! is_numeric($value)) {
-            return 0;
+            return null;
         }
 
-        return (int) round((float) $value);
+        return (float) $value;
     }
 
     private function dateValue(mixed $value): mixed
@@ -142,8 +141,8 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
         return [
             'C' => NumberFormat::FORMAT_DATE_DDMMYYYY,
             'D' => NumberFormat::FORMAT_DATE_DDMMYYYY,
-            'E' => NumberFormat::FORMAT_NUMBER,
-            'F' => NumberFormat::FORMAT_NUMBER,
+            'E' => NumberFormat::FORMAT_GENERAL,
+            'F' => NumberFormat::FORMAT_GENERAL,
         ];
     }
 
@@ -192,15 +191,6 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             ->getStartColor()->setARGB('fc9fc0');
 
         $highestRow = $sheet->getHighestRow();
-        for ($row = 2; $row <= $highestRow; $row++) {
-            foreach (['E', 'F'] as $column) {
-                $coordinate = $column.$row;
-                $value = $sheet->getCell($coordinate)->getValue();
-                if ($value === null || $value === '') {
-                    $sheet->setCellValueExplicit($coordinate, 0, DataType::TYPE_NUMERIC);
-                }
-            }
-        }
 
         $centerColumns = ['C', 'D', 'E', 'F', 'L', 'N', 'O', 'P', 'Q'];
         foreach ($centerColumns as $column) {

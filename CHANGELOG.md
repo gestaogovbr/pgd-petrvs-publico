@@ -1,3 +1,8 @@
+## 3.1.5 25/09/2026
+
+### Corrigido
+- Relatório de Entregas: coluna "Alcançado" passa a refletir o valor consolidado da entrega, corrigindo casos em que aparecia zerada ou defasada; indicadores qualitativos deixam de exibir 0 e os valores preservam as casas decimais
+
 ## 3.1.4 21/09/2026
 
 ### Corrigido
