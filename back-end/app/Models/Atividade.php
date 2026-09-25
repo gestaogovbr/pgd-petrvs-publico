@@ -117,7 +117,7 @@ class Atividade extends ModelBase implements HasStatusHistory
   }
   public function consolidacao(): BelongsTo
   {
-    return $this->belongsTo(PlanoTrabalhoConsolidacao::class);
+    return $this->belongsTo(PlanoTrabalhoConsolidacao::class, 'plano_trabalho_consolidacao_id');
   }
   public function reacoes(): HasMany
   {

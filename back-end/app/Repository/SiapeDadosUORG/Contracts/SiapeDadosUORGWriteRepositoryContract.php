@@ -11,4 +11,6 @@ interface SiapeDadosUORGWriteRepositoryContract
 {
     public function create(array $attributes): \App\Models\SiapeDadosUORG;
     public function forceDeleteProcessados(string $codigoOrgao): void;
+
+    public function markProcessado(string $id): bool;
 }

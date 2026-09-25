@@ -3,6 +3,10 @@
 # Script para parar containers, puxar novas imagens e reiniciar containers
 # Use --deploy-seed para executar o DeployPRODSeeder
 
+if [ -f .env ] && ! grep -q '^INTEGRACAO_SIAPE_RECONCILIACAO_MAX_CANDIDATOS=' .env; then
+    printf '\nINTEGRACAO_SIAPE_RECONCILIACAO_MAX_CANDIDATOS=200\n' >> .env
+fi
+
 echo "Parando containers..."
 # Parar containers
 docker-compose down

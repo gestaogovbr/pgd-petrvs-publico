@@ -12,4 +12,6 @@ use App\Models\SiapeListaUORGS;
 interface SiapeListaUORGSReadRepositoryContract
 {
     public function findUnprocessed(string $codigoOrgao): ?SiapeListaUORGS;
+
+    public function findLatestProcessed(string $codigoOrgao): ?SiapeListaUORGS;
 }

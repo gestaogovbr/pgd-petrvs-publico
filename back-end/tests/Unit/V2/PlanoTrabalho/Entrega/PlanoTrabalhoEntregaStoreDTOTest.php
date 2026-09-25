@@ -69,6 +69,16 @@ describe('PlanoTrabalhoEntregaStoreDTO', function () {
         ]);
     });
 
+    test('consolidacao_id é opcional e não entra na persistência', function () {
+        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
+            'origem' => 'SEM_ENTREGA',
+            'consolidacao_id' => 'cons-1',
+        ], 'plano-1');
+
+        expect($dto->consolidacaoId)->toBe('cons-1')
+            ->and($dto->toArray())->not->toHaveKey('consolidacao_id');
+    });
+
     test('esforco executado segue planejado quando não informado', function () {
         $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
             'origem' => 'PROPRIA_UNIDADE',

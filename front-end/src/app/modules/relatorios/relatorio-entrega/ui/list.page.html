@@ -154,8 +154,8 @@
             </td>
             <td data-th="Data de início" class="text-center">{{ row.data_inicio | date : 'dd/MM/yyyy' }}</td>
             <td data-th="Data de fim" class="text-center">{{ row.data_fim | date : 'dd/MM/yyyy' }}</td>
-            <td data-th="Planejado" class="text-center">{{ row.meta_planejado | number:'1.0-0' }}</td>
-            <td data-th="Alcançado" class="text-center">{{ row.meta_alcancado | number:'1.0-0' }}</td>
+            <td data-th="Planejado" class="text-center">{{ row.meta_planejado != null ? (row.meta_planejado | number:'1.0-2') : '-' }}</td>
+            <td data-th="Alcançado" class="text-center">{{ row.meta_alcancado != null ? (row.meta_alcancado | number:'1.0-2') : '-' }}</td>
             <td data-th="Tipo de Meta" class="text-center">{{ row.meta_tipo }}</td>
             <td data-th="Demandante">{{ row.demandanteHierarquia }}</td>
             <td data-th="Destinatário">{{ row.destinatario || '-' }}</td>

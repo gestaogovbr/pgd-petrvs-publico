@@ -2,36 +2,42 @@
 
 namespace App\Services\Siape;
 
-use App\Enums\UsuarioSituacaoSiape;
+use App\DTOs\Siape\SiapeServidorPendenteDTO;
 use App\Exceptions\ErrorDataSiapeException;
 use App\Exceptions\ErrorDataSiapeFaultCodeException;
 use App\Exceptions\RequestConectaGovException;
 use App\Facades\SiapeLog;
-use App\Models\SiapeBlackListServidor;
-use App\Models\SiapeBlacklistUnidade;
-use App\Models\SiapeConsultaDadosFuncionais;
-use App\Models\SiapeConsultaDadosPessoais;
-use App\Models\SiapeDadosUORG;
-use App\Models\Usuario;
+use App\Repository\SiapeBlacklistUnidade\Contracts\SiapeBlacklistUnidadeWriteRepositoryContract;
+use App\Repository\SiapeConsultaDadosFuncionais\Contracts\SiapeConsultaDadosFuncionaisWriteRepositoryContract;
+use App\Repository\SiapeConsultaDadosPessoais\Contracts\SiapeConsultaDadosPessoaisReadRepositoryContract;
+use App\Repository\SiapeConsultaDadosPessoais\Contracts\SiapeConsultaDadosPessoaisWriteRepositoryContract;
+use App\Repository\SiapeDadosUORG\Contracts\SiapeDadosUORGReadRepositoryContract;
+use App\Repository\SiapeDadosUORG\Contracts\SiapeDadosUORGWriteRepositoryContract;
 use App\Services\CodigoOrgaoService;
-use App\Services\NivelAcessoService;
+use App\Services\Siape\Servidor\SiapeServidorBlacklistLifecycleService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use SimpleXMLElement;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use App\Services\Siape\Unidade\SiapeUnidadeLifecycleService;
 
 class ProcessaDadosSiapeBD
 {
+    private const DATA_MODIFICACAO_PADRAO = '1970-01-01 00:00:00';
+
+    public function __construct(
+        private readonly ?SiapeConsultaDadosPessoaisReadRepositoryContract $dadosPessoaisReadRepository = null,
+        private readonly ?SiapeConsultaDadosPessoaisWriteRepositoryContract $dadosPessoaisWriteRepository = null,
+        private readonly ?SiapeConsultaDadosFuncionaisWriteRepositoryContract $dadosFuncionaisWriteRepository = null,
+        private readonly ?SiapeDadosUORGReadRepositoryContract $dadosUorgReadRepository = null,
+        private readonly ?SiapeDadosUORGWriteRepositoryContract $dadosUorgWriteRepository = null,
+        private readonly ?SiapeServidorBlacklistLifecycleService $servidorLifecycleService = null,
+        private readonly ?SiapeBlacklistUnidadeWriteRepositoryContract $blacklistUnidadeWriteRepository = null,
+    ) {
+    }
 
     public function dadosServidor(): array
     {
-        $results = DB::table('siape_consultaDadosPessoais AS p')
-            ->join('siape_consultaDadosFuncionais AS f', 'p.cpf', '=', 'f.cpf')
-            ->select('p.cpf', 'p.response AS responseDadosPessoais', 'f.response AS responseDadosFuncionais', 'p.data_modificacao')
-            ->where('p.processado', 0)
-            ->get();
+        $results = $this->dadosPessoaisRead()->pendentesComDadosFuncionais();
 
         if ($results->isEmpty()) {
             return [];
@@ -43,16 +49,13 @@ class ProcessaDadosSiapeBD
 
         foreach ($results as $servidor) {
             try {
-                if ($this->cpfNaBlackList($servidor->cpf)) {
-                    SiapeLog::info('Servidor na blacklist: ' . $servidor->cpf);
-                    continue;
-                }
-
+                $dadosFuncionais = $this->processaDadosFuncionais($servidor->cpf, $servidor->responseDadosFuncionais);
+                $dadosPessoais = $this->processaDadosPessoais($servidor->cpf, $servidor->responseDadosPessoais);
                 $dadosServidorArray[] = [
                     'cpf' => $servidor->cpf,
                     'data_modificacao' => $this->previneDataNula($servidor),
-                    'dadosPessoais' => $this->processaDadosPessoais($servidor->cpf, (string) $servidor->responseDadosPessoais),
-                    'dadosFuncionais' => $this->processaDadosFuncionais($servidor->cpf, (string) $servidor->responseDadosFuncionais),
+                    'dadosPessoais' => $dadosPessoais,
+                    'dadosFuncionais' => $dadosFuncionais,
                 ];
                 $cpfsProcessados[] = $servidor->cpf;
             } catch (ErrorDataSiapeException $e) {
@@ -60,21 +63,24 @@ class ProcessaDadosSiapeBD
                 continue;
             } catch (Exception $e) {
                 report($e);
-                SiapeLog::error('Erro ao processar servidor #' . $servidor->cpf, [$e]);
+                SiapeLog::error('Erro ao processar servidor SIAPE.', [
+                    'cpf_final' => substr((string) $servidor->cpf, -4),
+                    'exception' => $e::class,
+                ]);
                 continue;
             }
         }
 
         if (!empty($cpfsProcessados)) {
-            SiapeConsultaDadosPessoais::query()->whereIn('cpf', $cpfsProcessados)->update(['processado' => 1]);
-            SiapeConsultaDadosFuncionais::query()->whereIn('cpf', $cpfsProcessados)->update(['processado' => 1]);
+            $this->dadosPessoaisWrite()->markProcessados($cpfsProcessados);
+            $this->dadosFuncionaisWrite()->markProcessados($cpfsProcessados);
         }
         return $dadosServidorArray;
     }
 
-    private function previneDataNula($servidor): string
+    private function previneDataNula(SiapeServidorPendenteDTO $servidor): string
     {
-        return $servidor->data_modificacao ?? '1970-01-01 00:00:00';
+        return $servidor->dataModificacao ?? self::DATA_MODIFICACAO_PADRAO;
     }
 
     public function processaDadosPessoais(
@@ -82,7 +88,7 @@ class ProcessaDadosSiapeBD
         string $dadosPessoais
     ): array {
         try {
-            $xmlResponse = $this->prepareResponseServidorXml($cpf, $dadosPessoais);
+            $xmlResponse = $this->prepareResponseServidorXml($cpf, $dadosPessoais, TipoDadoServidorSiape::PESSOAL);
 
             $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
             $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
@@ -98,7 +104,7 @@ class ProcessaDadosSiapeBD
             return $dadosPessoaisArray;
         } catch (Exception $e) {
             report($e);
-            SiapeLog::error(sprintf("CPF:#%s Falha nos dados pessoais:", $cpf), [$dadosPessoais]);
+            SiapeLog::error('Falha nos dados pessoais SIAPE.', ['cpf_final' => substr($cpf, -4)]);
             $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
             throw new ErrorDataSiapeException("Falha ao tratar dados pessoais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape_{$tenantId}.log");
         }
@@ -110,20 +116,23 @@ class ProcessaDadosSiapeBD
     ): array {
         try {
             $dadosFuncionaisOrigem = $dadosFuncionais;
-            $xmlResponse = $this->prepareResponseServidorXml($cpf, $dadosFuncionais);
+            $xmlResponse = $this->prepareResponseServidorXml($cpf, $dadosFuncionais, TipoDadoServidorSiape::FUNCIONAL);
             $xmlResponse->registerXPathNamespace('soap', 'http://schemas.xmlsoap.org/soap/envelope/');
             $xmlResponse->registerXPathNamespace('ns1', 'http://servico.wssiapenet');
             $xmlResponse->registerXPathNamespace('tipo', 'http://tipo.servico.wssiapenet');
 
             $dadosFuncionais = $xmlResponse->xpath('//tipo:DadosFuncionais');
             $dadosFuncionaisArray = $this->decideDadosFuncionais($dadosFuncionais);
-            $this->processaMultiplasMatriculasInativas($cpf, $dadosFuncionaisArray, $dadosFuncionaisOrigem);
-            $this->reativarServidoresEncontradosNoSiape($cpf, $dadosFuncionaisArray);
+            $this->servidorLifecycle()->reconciliarRetornoFuncional(
+                $cpf,
+                $this->obterMatriculasAtivas($dadosFuncionaisArray),
+                $dadosFuncionaisOrigem,
+            );
 
             return $dadosFuncionaisArray;
         } catch (Exception $e) {
             report($e);
-            SiapeLog::error(sprintf("CPF:#%s Falha nos dados funcionais:", $cpf), [$dadosFuncionais]);
+            SiapeLog::error('Falha nos dados funcionais SIAPE.', ['cpf_final' => substr($cpf, -4)]);
             $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
             throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape_{$tenantId}.log");
         }
@@ -147,7 +156,7 @@ class ProcessaDadosSiapeBD
             );
         } catch (Exception $e) {
             report($e);
-            SiapeLog::error(sprintf("CPF:#%s Falha nos dados funcionais para relatorio:", $cpf), [$dadosFuncionais]);
+            SiapeLog::error('Falha nos dados funcionais SIAPE para relatório.', ['cpf_final' => substr($cpf, -4)]);
             $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
             throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape para relatorio, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape_{$tenantId}.log");
         }
@@ -169,45 +178,6 @@ class ProcessaDadosSiapeBD
         return $retorno;
     }
 
-    private function processaMultiplasMatriculasInativas(string $cpf, array $dadosFuncionaisArray, string $dadosFuncionais): void
-    {
-        $usuarios = Usuario::whereNull('deleted_at')
-            ->whereIn('cpf', function ($query) use ($cpf) {
-                $query->select('cpf')
-                    ->from('usuarios')
-                    ->whereNull('deleted_at')
-                    ->whereNotNull('matricula')
-                    ->where('cpf', $cpf)
-                    ->groupBy('cpf')
-                    ->havingRaw('COUNT(DISTINCT matricula) > 1');
-            })
-            ->get();
-
-        if ($usuarios->count() <= 1) {
-            return;
-        }
-
-        SiapeLog::info(sprintf("CPF:#%s possui %d matrículas ativas e inativas:", $cpf, $usuarios->count()));
-
-        $activeMatriculas = $this->obterMatriculasAtivas($dadosFuncionaisArray);
-
-        SiapeLog::info(sprintf("CPF:#%s Matrículas ativas: %s", $cpf, json_encode($activeMatriculas)));
-
-        DB::transaction(function () use ($usuarios, $activeMatriculas, $cpf, $dadosFuncionais) {
-            foreach ($usuarios as $usuario) {
-                $matricula = $usuario->matricula;
-                if (empty($matricula)) {
-                    continue;
-                }
-                if (in_array($matricula, $activeMatriculas, true)) {
-                    $this->ativarMatricula($usuario);
-                    continue;
-                }
-                $this->adicionarBlacklistSeElegivel($cpf, $usuario, $dadosFuncionais);
-            }
-        });
-    }
-
     private function obterMatriculasAtivas(array $dadosFuncionaisArray): array
     {
         return collect($dadosFuncionaisArray)
@@ -223,113 +193,6 @@ class ProcessaDadosSiapeBD
             ->all();
     }
 
-    private function ativarMatricula(Usuario $usuario): void
-    {
-        SiapeBlackListServidor::where('cpf', $usuario->cpf)
-            ->where('matricula', $usuario->matricula)
-            ->forceDelete();
-        $usuario->update([
-            'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
-            'data_ativacao_temporaria' => null,
-            'justicativa_ativacao_temporaria' => null,
-        ]);
-
-        $perfilParticipanteId = $this->obterPerfilParticipanteParaUsuarioReativado($usuario);
-        $atributos = [];
-        if (!empty($perfilParticipanteId)) {
-            $atributos['perfil_id'] = $perfilParticipanteId;
-        }
-
-        $usuario->update($atributos);
-    }
-
-    private function reativarServidoresEncontradosNoSiape(string $cpf, array $dadosFuncionaisArray): void
-    {
-        $matriculasAtivas = $this->obterMatriculasAtivas($dadosFuncionaisArray);
-
-        SiapeBlackListServidor::where('cpf', $cpf)
-            ->whereNull('matricula')
-            ->forceDelete();
-
-        if (empty($matriculasAtivas)) {
-            return;
-        }
-
-        $blacklistsRemovidas = SiapeBlackListServidor::where('cpf', $cpf)
-            ->whereIn('matricula', $matriculasAtivas)
-            ->forceDelete();
-
-        $perfisAtualizados = $this->atualizarPerfilConsultaParaParticipante($cpf, $matriculasAtivas);
-
-        $usuariosReativados = Usuario::where('cpf', $cpf)
-            ->whereIn('matricula', $matriculasAtivas)
-            ->update([
-                'situacao_siape' => UsuarioSituacaoSiape::ATIVO->value,
-                'data_ativacao_temporaria' => null,
-                'justicativa_ativacao_temporaria' => null,
-            ]);
-
-        if ($blacklistsRemovidas > 0 || $usuariosReativados > 0) {
-            SiapeLog::info(sprintf("CPF:#%s reativado por retorno em dados funcionais:", $cpf), [
-                'matriculas_ativas' => $matriculasAtivas,
-                'blacklists_removidas' => $blacklistsRemovidas,
-                'usuarios_reativados' => $usuariosReativados,
-                'perfis_atualizados' => $perfisAtualizados,
-            ]);
-        }
-    }
-
-    private function atualizarPerfilConsultaParaParticipante(string $cpf, array $matriculasAtivas): int
-    {
-        $perfilConsulta = NivelAcessoService::getPerfilConsulta();
-        $perfilParticipante = NivelAcessoService::getPerfilParticipante();
-
-        if (empty($perfilConsulta) || empty($perfilParticipante)) {
-            return 0;
-        }
-
-        return Usuario::where('cpf', $cpf)
-            ->whereIn('matricula', $matriculasAtivas)
-            ->where('perfil_id', $perfilConsulta->id)
-            ->whereIn('situacao_siape', [
-                UsuarioSituacaoSiape::INATIVO->value,
-                UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value,
-            ])
-            ->update(['perfil_id' => $perfilParticipante->id]);
-    }
-
-    private function obterPerfilParticipanteParaUsuarioReativado(Usuario $usuario): ?string
-    {
-        if (!in_array($usuario->situacao_siape, [
-            UsuarioSituacaoSiape::INATIVO->value,
-            UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value,
-        ], true)) {
-            return null;
-        }
-
-        $perfilConsulta = NivelAcessoService::getPerfilConsulta();
-        $perfilParticipante = NivelAcessoService::getPerfilParticipante();
-
-        if (empty($perfilConsulta) || empty($perfilParticipante) || $usuario->perfil_id !== $perfilConsulta->id) {
-            return null;
-        }
-
-        return $perfilParticipante->id;
-    }
-
-    private function adicionarBlacklistSeElegivel(string $cpf, Usuario $usuario, $dadosFuncionais): void
-    {
-        if (in_array($usuario->situacao_siape, [UsuarioSituacaoSiape::INATIVO->value, UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value], true)) {
-            return;
-        }
-        SiapeBlackListServidor::firstOrCreate([
-            'matricula' => $usuario->matricula,
-            'response' => $dadosFuncionais,
-            'cpf' => $cpf,
-        ]);
-        SiapeLog::info(sprintf("CPF:#%s Matrícula:#%s adicionada na lista de matrículas inativas:", $cpf, $usuario->matricula));
-    }
-
     function simpleXmlElementToArray(SimpleXMLElement $element): array
     {
         $array = [];
@@ -341,10 +204,7 @@ class ProcessaDadosSiapeBD
 
     public function dadosUorg(): array
     {
-        $response = SiapeDadosUORG::where('codigo_orgao', CodigoOrgaoService::atual())
-            ->where('processado', 0)
-            ->whereNotNull('codigo')
-            ->orderBy('updated_at', 'desc')->get();
+        $response = $this->dadosUorgRead()->pendentes(CodigoOrgaoService::atual());
 
         if ($response->isEmpty()) {
             return [];
@@ -355,12 +215,12 @@ class ProcessaDadosSiapeBD
                 $dadosUorg = $this->processaDadosUorg($dadosUnidades->codigo, (string) $dadosUnidades->response);
             } catch (Exception $e) {
                 report($e);
-                SiapeLog::error('Erro ao processar XML da Unidade: ' . $e->getMessage(), [$dadosUnidades->response]);
+                SiapeLog::error('Erro ao processar XML da Unidade.', ['exception' => $e::class]);
                 continue;
             }
 
             if (is_null($dadosUorg)) {
-                SiapeLog::error('Retorno nulo do array: ', [$dadosUnidades->response]);
+                SiapeLog::error('Retorno nulo ao processar XML da Unidade.');
                 continue;
             }
 
@@ -374,8 +234,7 @@ class ProcessaDadosSiapeBD
                 'dados' => $this->simpleXmlElementToArray($dadosUorg)
             ];
 
-            $dadosUnidades->processado = true;
-            $dadosUnidades->save();
+            $this->dadosUorgWrite()->markProcessado((string) $dadosUnidades->id);
         }
 
         return $dadosUorgArray;
@@ -412,28 +271,21 @@ class ProcessaDadosSiapeBD
     }
 
 
-    private function prepareResponseServidorXml(string $cpf, string $response): SimpleXMLElement
+    private function prepareResponseServidorXml(
+        string $cpf,
+        string $response,
+        TipoDadoServidorSiape $tipoDado = TipoDadoServidorSiape::FUNCIONAL,
+    ): SimpleXMLElement
     {
         $responseXml = $this->prepareResponseXml($response);
+        (new SiapeServidorFaultProcessor(
+            $responseXml,
+            $cpf,
+            $response,
+            $tipoDado->name,
+            $tipoDado === TipoDadoServidorSiape::FUNCIONAL,
+        ))->process();
 
-        $fault = $responseXml->xpath('//soap:Fault');
-        if (
-            $fault && isset($fault[0]->faultcode) && (string) $fault[0]->faultcode === Erros::faultcode
-            && isset($fault[0]->faultstring)
-            && (function () use ($fault) {
-                $faultString = trim((string) $fault[0]->faultstring);
-                $faultStrings = Erros::getFaultStringNaoExistemDados();
-                return in_array($faultString, $faultStrings, true)
-                    || in_array(html_entity_decode($faultString, ENT_QUOTES | ENT_HTML5, 'UTF-8'), $faultStrings, true);
-            })()
-        ) {
-            SiapeBlackListServidor::firstOrCreate(
-                ['cpf' => $cpf],
-                ['id' => (string) Str::uuid(), 'response' => $response]
-            );
-
-            throw new ErrorDataSiapeFaultCodeException(sprintf('faultcode #%s: ', (string) $fault[0]->faultcode) . (string) $fault[0]->faultstring);
-        }
         return $responseXml;
     }
 
@@ -454,11 +306,7 @@ class ProcessaDadosSiapeBD
             })()
         ) {
             $codigoOrgao = CodigoOrgaoService::atual();
-            $test = SiapeBlacklistUnidade::firstOrCreate(
-                ['codigo_orgao' => $codigoOrgao, 'codigo' => $codigo],
-                ['id' => (string) Str::uuid(), 'response' => $response]
-            );
-            Log::info("Unidade $codigo adicionada à blacklist", [$test]);
+            $this->blacklistUnidadeWrite()->firstOrCreate($codigoOrgao, $codigo, $response);
 
             throw new ErrorDataSiapeFaultCodeException(sprintf('faultcode #%s: ', (string) $fault[0]->faultcode) . (string) $fault[0]->faultstring);
         }
@@ -486,10 +334,38 @@ class ProcessaDadosSiapeBD
         return $responseXml;
     }
 
-    private function cpfNaBlackList(string $cpf): bool
+    private function dadosPessoaisRead(): SiapeConsultaDadosPessoaisReadRepositoryContract
     {
-        return SiapeBlackListServidor::where('cpf', $cpf)
-            ->whereNull('matricula')
-            ->exists();
+        return $this->dadosPessoaisReadRepository ?? app(SiapeConsultaDadosPessoaisReadRepositoryContract::class);
+    }
+
+    private function dadosPessoaisWrite(): SiapeConsultaDadosPessoaisWriteRepositoryContract
+    {
+        return $this->dadosPessoaisWriteRepository ?? app(SiapeConsultaDadosPessoaisWriteRepositoryContract::class);
+    }
+
+    private function dadosFuncionaisWrite(): SiapeConsultaDadosFuncionaisWriteRepositoryContract
+    {
+        return $this->dadosFuncionaisWriteRepository ?? app(SiapeConsultaDadosFuncionaisWriteRepositoryContract::class);
+    }
+
+    private function dadosUorgRead(): SiapeDadosUORGReadRepositoryContract
+    {
+        return $this->dadosUorgReadRepository ?? app(SiapeDadosUORGReadRepositoryContract::class);
+    }
+
+    private function dadosUorgWrite(): SiapeDadosUORGWriteRepositoryContract
+    {
+        return $this->dadosUorgWriteRepository ?? app(SiapeDadosUORGWriteRepositoryContract::class);
+    }
+
+    private function servidorLifecycle(): SiapeServidorBlacklistLifecycleService
+    {
+        return $this->servidorLifecycleService ?? app(SiapeServidorBlacklistLifecycleService::class);
+    }
+
+    private function blacklistUnidadeWrite(): SiapeBlacklistUnidadeWriteRepositoryContract
+    {
+        return $this->blacklistUnidadeWriteRepository ?? app(SiapeBlacklistUnidadeWriteRepositoryContract::class);
     }
 }

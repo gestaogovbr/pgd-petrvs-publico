@@ -206,6 +206,14 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->exists();
     }
 
+    public function possuiPeriodoAberto(string $planoTrabalhoId): bool
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->where('status', StatusEnum::INCLUIDO->value)
+            ->exists();
+    }
+
     public function findAvaliadasComPrazoRecurso(string $usuarioId, int $prazoDias): Collection
     {
         return $this->query()

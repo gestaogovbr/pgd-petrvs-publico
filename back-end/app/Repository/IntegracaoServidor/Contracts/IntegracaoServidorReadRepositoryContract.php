@@ -21,4 +21,7 @@ interface IntegracaoServidorReadRepositoryContract
     public function getServidoresInseridosNaoLotados(string $codigoOrgao, ?array $escopoServidor = null): array;
 
     public function getUsuariosAusentes(string $codigoOrgao, ?array $escopoServidor = null): array;
+
+    /** @return array<string, string|null> */
+    public function datasMaisRecentesPorCpf(string $codigoOrgao): array;
 }

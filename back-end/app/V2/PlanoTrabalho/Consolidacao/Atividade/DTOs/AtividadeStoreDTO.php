@@ -13,6 +13,7 @@ class AtividadeStoreDTO implements IAtividadeWriteDTO
         public readonly string $planoTrabalhoEntregaId,
         public readonly string $descricao,
         public readonly float $esforcoExecutado,
+        public readonly ?string $justificativa = null,
     ) {}
 
     public static function fromArray(array $data, string $planoTrabalhoId, string $consolidacaoId, string $usuarioId): self
@@ -24,6 +25,7 @@ class AtividadeStoreDTO implements IAtividadeWriteDTO
             planoTrabalhoEntregaId: $data['plano_trabalho_entrega_id'],
             descricao: $data['descricao'],
             esforcoExecutado: (float) $data['esforco_executado'],
+            justificativa: isset($data['justificativa']) ? trim((string) $data['justificativa']) : null,
         );
     }
 

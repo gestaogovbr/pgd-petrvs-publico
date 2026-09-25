@@ -175,19 +175,37 @@ class AlinhamentoInstitucionalDataProvider
     {
         $query = PlanoEntregaEntrega::query()
             ->whereIn('unidade_id', $unidadeIds)
-            ->whereNull('deleted_at');
+            ->whereNull('deleted_at')
+            ->whereHas('planoEntrega');
 
         if ($filtros->isSituacaoAtual()) {
             $hoje = now()->toDateString();
-            $query->where('data_inicio', '<=', $hoje)
-                ->where('data_fim', '>=', $hoje);
+            $this->aplicarIntersecaoPeriodo($query, $hoje, $hoje);
         }
 
         if ($filtros->isHistorico()) {
-            $query->where('data_inicio', '<=', $filtros->dataFim)
-                ->where('data_fim', '>=', $filtros->dataInicio);
+            $this->aplicarIntersecaoPeriodo($query, $filtros->dataInicio, $filtros->dataFim);
         }
 
         return $query;
+    }
+
+    /**
+     * Aplica interseção entre o período da entrega e [$inicio, $fim].
+     *
+     * Entregas sem data_fim são tratadas como pontuais (data_fim = data_inicio),
+     * via COALESCE, mantendo o mesmo comportamento do relatório de entregas.
+     */
+    private function aplicarIntersecaoPeriodo(Builder $query, string $inicio, string $fim): void
+    {
+        $query->whereRaw(
+            '(
+                (? between DATE(data_inicio) and DATE(COALESCE(data_fim, data_inicio)))
+                or (? between DATE(data_inicio) and DATE(COALESCE(data_fim, data_inicio)))
+                or (DATE(data_inicio) between ? and ?)
+                or (DATE(COALESCE(data_fim, data_inicio)) between ? and ?)
+            )',
+            [$inicio, $fim, $inicio, $fim, $inicio, $fim]
+        );
     }
 }

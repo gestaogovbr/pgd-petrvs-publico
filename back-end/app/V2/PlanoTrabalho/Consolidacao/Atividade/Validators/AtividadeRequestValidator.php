@@ -16,12 +16,14 @@ class AtividadeRequestValidator
             'plano_trabalho_entrega_id' => ['required', 'uuid'],
             'descricao' => ['required', 'string', 'max:' . self::MAX_DESCRICAO_LENGTH],
             'esforco_executado' => ['required', 'numeric', 'min:0', 'max:999.99'],
+            'justificativa' => ['sometimes', 'nullable', 'string', 'max:500'],
         ], [
             'plano_trabalho_entrega_id.required' => 'A entrega é obrigatória.',
             'descricao.required' => 'A descrição do trabalho executado é obrigatória.',
             'descricao.max' => 'A descrição não pode exceder ' . self::MAX_DESCRICAO_LENGTH . ' caracteres.',
             'esforco_executado.required' => 'O esforço executado é obrigatório.',
             'esforco_executado.min' => 'O esforço executado não pode ser negativo.',
+            'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
         ]);
     }
 
@@ -31,9 +33,11 @@ class AtividadeRequestValidator
             'plano_trabalho_entrega_id' => ['sometimes', 'uuid'],
             'descricao' => ['sometimes', 'string', 'max:' . self::MAX_DESCRICAO_LENGTH],
             'esforco_executado' => ['sometimes', 'numeric', 'min:0', 'max:999.99'],
+            'justificativa' => ['sometimes', 'nullable', 'string', 'max:500'],
         ], [
             'descricao.max' => 'A descrição não pode exceder ' . self::MAX_DESCRICAO_LENGTH . ' caracteres.',
             'esforco_executado.min' => 'O esforço executado não pode ser negativo.',
+            'justificativa.max' => 'A justificativa não pode exceder 500 caracteres.',
         ]);
     }
 }
