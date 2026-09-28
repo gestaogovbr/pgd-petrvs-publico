@@ -5,6 +5,12 @@ namespace App\Models;
 use App\Traits\AutoUuid;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property string|null $tenant_id
+ * @property string $etapa
+ * @property int $ultima_pagina
+ * @property int|null $total_paginas
+ */
 class SipecSyncCheckpoint extends Model
 {
     use AutoUuid;

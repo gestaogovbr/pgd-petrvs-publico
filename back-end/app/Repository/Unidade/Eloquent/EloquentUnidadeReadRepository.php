@@ -50,7 +50,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         }
 
         foreach ($unidadesGeridas as $unidadeGeridaId) {
-            $subordinadas = GestorHierarquiaCache::getSubordinadas(
+            $subordinadas = GestorHierarquiaCache::getSubordinadasRecursivas(
                 $unidadeGeridaId,
                 fn () => $this->getSubordinadasRecursivasIds([$unidadeGeridaId]),
             );

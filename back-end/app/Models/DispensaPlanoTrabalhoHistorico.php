@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \DateTimeInterface $data_inicio
  * @property \DateTimeInterface|null $data_fim
  * @property string $operacao
- * @property \DateTimeInterface $ciencia_em
+ * @property \Illuminate\Support\Carbon|null $ciencia_em
  * @property string $responsavel_id
  * @property-read Usuario $usuario
  * @property-read Usuario $responsavel

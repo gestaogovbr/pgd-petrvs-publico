@@ -68,7 +68,7 @@ class UnidadeService
         foreach ($unidadeIds as $unidadeId) {
             $subordinadas = array_merge(
                 $subordinadas,
-                GestorHierarquiaCache::getSubordinadas(
+                GestorHierarquiaCache::getSubordinadasRecursivas(
                     $unidadeId,
                     fn () => $this->unidadeRepository->getSubordinadasRecursivasIds([$unidadeId]),
                 ),

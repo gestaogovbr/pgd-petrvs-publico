@@ -61,7 +61,13 @@ class BuscarDadosSiapeUnidade extends BuscarDadosSiape
        return $xmlUnidades;
     }
 
-    public function getUnidades(SiapeListaUORGS $listaUorgs) : ?array {
+    public function getUnidades(?SiapeListaUORGS $listaUorgs): ?array
+    {
+        if ($listaUorgs === null) {
+            Log::info('Lista de UORGs não encontrada para montar as unidades.');
+            return null;
+        }
+
         try {
             $xmlResponse = $this->prepareResponseXml($listaUorgs->response);
         } catch (\Exception $e) {

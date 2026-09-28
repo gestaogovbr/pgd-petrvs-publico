@@ -9,7 +9,14 @@ use App\Models\PlanoEntregaEntrega;
 use App\Enums\StatusEnum;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
+use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\RegistroExecucaoAtrasoPEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\VigentesPEBuscaDTO;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator as LengthAwarePaginatorConcrete;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 
@@ -22,10 +29,6 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
     private const PROGRESSO_FK_COLUMN = 'planos_entregas_entregas_progressos.plano_entrega_entrega_id';
     private const TOTAL_SEM_PROGRESSO_ALIAS = 'total_sem_progresso';
     private const PLANO_ENTREGA_SELECT_FIELDS = ['id', 'numero', 'nome'];
-    private const STATUS_EXCLUIDOS_EXECUCAO = [
-        StatusEnum::SUSPENSO->value,
-        StatusEnum::CANCELADO->value,
-    ];
 
     public function __construct(PlanoEntrega $model)
     {
@@ -66,6 +69,30 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
 
     public function getPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): Collection
     {
+        return $this->baseAvaliacaoQuery($unidadesIds, $criadosApos)->get();
+    }
+
+    /**
+     * Lista paginada de PEs em avaliação pendente — mesmo critério de
+     * countPlanosEntregaAvaliacao/getPlanosEntregaAvaliacao (consistência card x listagem).
+     */
+    public function paginatePlanosEntregaAvaliacao(AvaliacaoPendentePEBuscaDTO $busca): LengthAwarePaginator
+    {
+        if ($busca->unidadesIds === []) {
+            return new LengthAwarePaginatorConcrete([], 0, $busca->perPage, $busca->page);
+        }
+
+        return $this->baseAvaliacaoQuery($busca->unidadesIds, $busca->criadosApos)
+            ->with(['unidade:id,sigla,nome', 'programa:id,nome'])
+            ->orderBy('numero')
+            ->paginate(perPage: $busca->perPage, page: $busca->page);
+    }
+
+    /**
+     * @param string[] $unidadesIds
+     */
+    private function baseAvaliacaoQuery(array $unidadesIds, ?string $criadosApos): Builder
+    {
         $query = $this->query()
             ->where('status', StatusEnum::CONCLUIDO->value)
             ->whereIn('unidade_id', $unidadesIds)
@@ -75,16 +102,39 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             $query->where('created_at', '>', $criadosApos);
         }
 
-        return $query->get();
+        return $query;
     }
 
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection
     {
+        return $this->baseHomologacaoQuery($unidadesIds)->get();
+    }
+
+    /**
+     * Lista paginada de PEs aguardando homologação — mesmo critério de
+     * countPlanosEntregaHomologacao/getPlanosEntregaHomologacao (consistência card x listagem).
+     */
+    public function paginatePlanosEntregaHomologacao(HomologacaoPendentePEBuscaDTO $busca): LengthAwarePaginator
+    {
+        if ($busca->unidadesIds === []) {
+            return new LengthAwarePaginatorConcrete([], 0, $busca->perPage, $busca->page);
+        }
+
+        return $this->baseHomologacaoQuery($busca->unidadesIds)
+            ->with(['programa:id,nome'])
+            ->orderBy('numero')
+            ->paginate(perPage: $busca->perPage, page: $busca->page);
+    }
+
+    /**
+     * @param string[] $unidadesIds
+     */
+    private function baseHomologacaoQuery(array $unidadesIds): Builder
+    {
         return $this->query()
             ->where('status', StatusEnum::HOMOLOGANDO->value)
             ->whereIn('unidade_id', $unidadesIds)
-            ->with(['unidade:id,sigla,nome'])
-            ->get();
+            ->with(['unidade:id,sigla,nome']);
     }
 
     public function getEntregasPlanoEntregaHomologacao(array $unidadesIds): Collection
@@ -103,15 +153,10 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
     {
         return PlanoEntregaEntrega::query()
             ->whereHas('planoEntrega.unidade', fn ($query) => $query->whereIn('id', $unidadesIds))
-            ->whereNotExists(static function ($query): void {
-                $query
-                    ->selectRaw('1')
-                    ->from(self::PROGRESSOS_TABLE)
-                    ->whereColumn(self::PROGRESSO_FK_COLUMN, self::PLANO_ENTREGA_PK_COLUMN);
-            })
+            ->tap(fn ($query) => $this->aplicarEntregaSemProgresso($query))
             ->whereHas('planoEntrega', static function ($query) use ($planoEntregaCriadoApos): void {
                 $query
-                    ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
+                    ->where('status', StatusEnum::CONCLUIDO->value)
                     ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO));
 
                 if ($planoEntregaCriadoApos !== null) {
@@ -164,10 +209,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             return 0;
         }
 
-        return $this->query()
-            ->where('status', StatusEnum::HOMOLOGANDO->value)
-            ->whereIn('unidade_id', $unidadesIds)
-            ->count();
+        return $this->baseHomologacaoQuery($unidadesIds)->count();
     }
 
     public function countPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): int
@@ -176,15 +218,7 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             return 0;
         }
 
-        $query = $this->query()
-            ->where('status', StatusEnum::CONCLUIDO->value)
-            ->whereIn('unidade_id', $unidadesIds);
-
-        if ($criadosApos !== null) {
-            $query->where('created_at', '>', $criadosApos);
-        }
-
-        return $query->count();
+        return $this->baseAvaliacaoQuery($unidadesIds, $criadosApos)->count();
     }
 
     public function countEntregasSemProgresso(array $unidadesIds, ?string $planoEntregaCriadoApos = null): int
@@ -193,22 +227,110 @@ class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository 
             return 0;
         }
 
+        return $this->entregasSemProgressoAtrasadasQuery($unidadesIds, $planoEntregaCriadoApos)->count();
+    }
+
+    /**
+     * Lista paginada de PEs com pelo menos uma entrega/RE em atraso.
+     * O card conta as entregas (countEntregasSemProgresso); esta listagem mostra os PEs
+     * que as contêm, sobre o mesmo critério de atraso/sem-progresso.
+     */
+    public function paginatePlanosEntregaComRegistroAtraso(RegistroExecucaoAtrasoPEBuscaDTO $busca): LengthAwarePaginator
+    {
+        if ($busca->unidadesIds === []) {
+            return new LengthAwarePaginatorConcrete([], 0, $busca->perPage, $busca->page);
+        }
+
+        return $this->basePlanosEntregaComRegistroAtrasoQuery($busca)
+            ->with(['unidade:id,sigla,nome', 'programa:id,nome'])
+            ->orderBy('numero')
+            ->paginate(perPage: $busca->perPage, page: $busca->page);
+    }
+
+    /**
+     * Lista paginada de PEs VIGENTES do usuário: status ATIVO e período (data_inicio..data_fim)
+     * contendo a data de hoje, nas unidades de atribuição direta informadas no DTO.
+     */
+    public function paginatePlanosEntregaVigentes(VigentesPEBuscaDTO $busca): LengthAwarePaginator
+    {
+        if ($busca->unidadesIds === []) {
+            return new LengthAwarePaginatorConcrete([], 0, $busca->perPage, $busca->page);
+        }
+
+        return $this->baseVigentesQuery($busca->unidadesIds)
+            ->with(['unidade:id,sigla,nome', 'programa:id,nome'])
+            ->orderBy('numero')
+            ->paginate(perPage: $busca->perPage, page: $busca->page);
+    }
+
+    /**
+     * Query base dos PEs vigentes: status ATIVO, período corrente e sem arquivamento.
+     *
+     * @param string[] $unidadesIds
+     * @return Builder<PlanoEntrega>
+     */
+    private function baseVigentesQuery(array $unidadesIds): Builder
+    {
+        $hoje = now();
+
+        return $this->query()
+            ->where('status', StatusEnum::ATIVO->value)
+            ->whereIn('unidade_id', $unidadesIds)
+            ->where('data_inicio', '<=', $hoje)
+            ->where('data_fim', '>=', $hoje)
+            ->whereNull('data_arquivamento');
+    }
+
+    /**
+     * Query base dos PEs (distintos) com ao menos uma entrega/RE em atraso.
+     * Fonte única de verdade para o contador do card e a listagem do hiperlink.
+     */
+    private function basePlanosEntregaComRegistroAtrasoQuery(RegistroExecucaoAtrasoPEBuscaDTO $busca)
+    {
+        return $this->query()
+            ->whereIn('unidade_id', $busca->unidadesIds)
+            ->where('status', StatusEnum::CONCLUIDO->value)
+            ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO))
+            ->when($busca->criadosApos !== null, fn ($query) => $query->where('created_at', '>', $busca->criadosApos))
+            ->whereHas('entregas', fn ($query) => $this->aplicarEntregaSemProgresso($query));
+    }
+
+    /**
+     * Query de entregas (planos_entregas_entregas) sem progresso cujo PE está atrasado.
+     *
+     * @param string[] $unidadesIds
+     * @return \Illuminate\Database\Eloquent\Builder<PlanoEntregaEntrega>
+     */
+    private function entregasSemProgressoAtrasadasQuery(array $unidadesIds, ?string $planoEntregaCriadoApos)
+    {
         return PlanoEntregaEntrega::query()
             ->whereHas('planoEntrega', function ($query) use ($unidadesIds, $planoEntregaCriadoApos) {
                 $query
                     ->whereIn('unidade_id', $unidadesIds)
-                    ->whereNotIn('status', self::STATUS_EXCLUIDOS_EXECUCAO)
+                    ->where('status', StatusEnum::CONCLUIDO->value)
                     ->where('data_fim', '<=', now()->subDays(self::DIAS_PENDENCIA_PROGRESSO));
 
                 if ($planoEntregaCriadoApos !== null) {
                     $query->where('created_at', '>', $planoEntregaCriadoApos);
                 }
             })
-            ->whereNotExists(function ($query) {
-                $query->selectRaw('1')
-                    ->from(self::PROGRESSOS_TABLE)
-                    ->whereColumn(self::PROGRESSO_FK_COLUMN, self::PLANO_ENTREGA_PK_COLUMN);
-            })
-            ->count();
+            ->tap(fn ($query) => $this->aplicarEntregaSemProgresso($query));
+    }
+
+    /**
+     * Aplica o filtro "entrega sem nenhum registro de progresso".
+     *
+     * A subquery é bruta (não passa pelo model), então o global scope de SoftDeletes
+     * não é aplicado — filtra-se `deleted_at` explicitamente para que progressos
+     * soft-deleted não sejam considerados progresso existente.
+     */
+    private function aplicarEntregaSemProgresso($query): void
+    {
+        $query->whereNotExists(function ($sub) {
+            $sub->selectRaw('1')
+                ->from(self::PROGRESSOS_TABLE)
+                ->whereColumn(self::PROGRESSO_FK_COLUMN, self::PLANO_ENTREGA_PK_COLUMN)
+                ->whereNull(self::PROGRESSOS_TABLE . '.deleted_at');
+        });
     }
 }

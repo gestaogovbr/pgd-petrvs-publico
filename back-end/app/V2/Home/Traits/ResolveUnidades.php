@@ -18,7 +18,7 @@ trait ResolveUnidades
         $unidadeIds = [$dto->unidadeId];
 
         if ($dto->subordinadas) {
-            $subordinadas = GestorHierarquiaCache::getSubordinadas(
+            $subordinadas = GestorHierarquiaCache::getSubordinadasRecursivas(
                 $dto->unidadeId,
                 fn () => $this->getUnidadeRepository()
                     ->getSubordinadasRecursivasIds([$dto->unidadeId]),

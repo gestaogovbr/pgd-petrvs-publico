@@ -169,11 +169,17 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->readRepository->findByCpf($cpf);
     }
 
+    /**
+     * @return Collection<int, Usuario>
+     */
     public function findAllByCpfWithLotacao(string $cpf): Collection
     {
         return $this->readRepository->findAllByCpfWithLotacao($cpf);
     }
 
+    /**
+     * @return Collection<int, Usuario>
+     */
     public function findAllByCpfUnfiltered(string $cpf): Collection
     {
         return $this->readRepository->findAllByCpfUnfiltered($cpf);

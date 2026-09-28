@@ -1,0 +1,15 @@
+<?php
+
+namespace Stancl\Tenancy\Database\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Domain extends Model
+{
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\Illuminate\Database\Eloquent\Model, \Illuminate\Database\Eloquent\Model>
+     */
+    public function tenant()
+    {
+    }
+}
