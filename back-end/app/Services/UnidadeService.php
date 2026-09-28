@@ -373,7 +373,6 @@ class UnidadeService extends ServiceBase
     {
         /** @phpstan-ignore-next-line */
         $unidade = Unidade::where("id", $unidade_id)->with(["planos_entrega"])->get()->first();
-        /** @phpstan-ignore-next-line */
         return array_filter($unidade->planosEntrega, fn($x) => $this->planoEntrega->emCurso($x));
     }
 
@@ -639,7 +638,7 @@ class UnidadeService extends ServiceBase
     public function unidadesEmPgd(): array
     {
         // (RN_PENT_G) Uma vez homologado um Plano de Entregas, a Unidade do plano está em PGD;
-        return Unidade::with(['planosEntrega' => function ($query) { /** @phpstan-ignore-line */
+        return Unidade::with(['planosEntrega' => function ($query) {
             $query->where('status', 'ATIVO');
         }])->whereHas('planosEntrega')->get()->map(fn($u) => $u->id)->toArray();
     }

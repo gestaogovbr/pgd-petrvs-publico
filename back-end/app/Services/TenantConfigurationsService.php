@@ -23,13 +23,11 @@ class TenantConfigurationsService
         $tenant = null;
         if ($tenantId) {
             $tenant = Cache::remember('domain:tenant_id:'.$tenantId, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($tenantId) {
-                /** @phpstan-ignore-next-line */
                 return Domain::where('tenant_id', $tenantId)->with('tenant')->first();
             });
         }
         if (!$tenant && $domain) {
             $tenant = Cache::remember('domain:domain:'.$domain, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($domain) {
-                /** @phpstan-ignore-next-line */
                 return Domain::where('domain', $domain)->with('tenant')->first();
             });
         }
@@ -37,7 +35,6 @@ class TenantConfigurationsService
         if (!$tenant) {
             $entidade = env('PETRVS_ENTIDADE');
             $tenant = Cache::remember('domain:tenant_id:'.$entidade, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($entidade) {
-                /** @phpstan-ignore-next-line */
                 return Domain::where('tenant_id', $entidade)->with('tenant')->first();
             });
         }

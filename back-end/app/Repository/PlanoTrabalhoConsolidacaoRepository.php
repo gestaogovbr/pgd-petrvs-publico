@@ -87,6 +87,15 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->countConsolidacoesAtrasadas($usuarioId, $unidadesIds);
     }
 
+    /**
+     * @param string[] $unidadesIds
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<\App\Models\PlanoTrabalho>
+     */
+    public function buscarPlanosComConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds, int $page = 1, int $perPage = 15, ?string $orderBy = null, ?string $orderDir = null): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->readRepository->buscarPlanosComConsolidacoesAtrasadas($usuarioId, $unidadesIds, $page, $perPage, $orderBy, $orderDir);
+    }
+
     public function create(array $attributes): PlanoTrabalhoConsolidacao
     {
         /** @var PlanoTrabalhoConsolidacao */
