@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository\Sipec\SipecSyncCheckpoint\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\SipecSyncCheckpoint;
 
 interface SipecSyncCheckpointReadRepositoryContract
 {
-    /**
-     * @return Model|null
-     */
-    public function findByTenantId(?string $tenantId): ?Model;
+    public function findByTenantId(?string $tenantId): ?SipecSyncCheckpoint;
 }

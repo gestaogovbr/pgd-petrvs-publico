@@ -7,8 +7,10 @@ namespace App\Repository\Sipec\SipecSyncCheckpoint\Eloquent;
 use App\Models\SipecSyncCheckpoint;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
 use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteRepositoryContract;
-use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @extends AbstractEloquentWriteRepository<SipecSyncCheckpoint>
+ */
 final class EloquentSipecSyncCheckpointWriteRepository extends AbstractEloquentWriteRepository implements SipecSyncCheckpointWriteRepositoryContract
 {
     public function __construct(SipecSyncCheckpoint $model)
@@ -16,22 +18,20 @@ final class EloquentSipecSyncCheckpointWriteRepository extends AbstractEloquentW
         $this->model = $model;
     }
 
-    /**
-     * @return SipecSyncCheckpoint
-     */
-    public function firstOrCreateByTenantId(?string $tenantId, string $etapa, int $ultimaPagina): Model
+    public function firstOrCreateByTenantId(?string $tenantId, string $etapa, int $ultimaPagina): SipecSyncCheckpoint
     {
-        return $this->model->newQuery()->firstOrCreate(
+        /** @var SipecSyncCheckpoint $checkpoint */
+        $checkpoint = $this->model->newQuery()->firstOrCreate(
             ['tenant_id' => $tenantId],
             ['etapa' => $etapa, 'ultima_pagina' => $ultimaPagina]
         );
+
+        return $checkpoint;
     }
 
-    /**
-     * @return SipecSyncCheckpoint|null
-     */
-    public function updateByTenantId(?string $tenantId, string $etapa, int $ultimaPagina, ?int $totalPaginas): ?Model
+    public function updateByTenantId(?string $tenantId, string $etapa, int $ultimaPagina, ?int $totalPaginas): ?SipecSyncCheckpoint
     {
+        /** @var SipecSyncCheckpoint|null $checkpoint */
         $checkpoint = $this->model->newQuery()->where('tenant_id', $tenantId)->first();
 
         if ($checkpoint === null) {

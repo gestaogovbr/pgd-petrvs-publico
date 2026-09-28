@@ -112,7 +112,7 @@ class SipecIndividualUnidadeService extends ServiceBase
                 throw new Exception("SIPEC: Nenhum servidor encontrado para a UORG {$codUorg}.");
             }
 
-            SiapeLog::info("SIPEC: {$codUorg} — {count($servidores)} servidor(es) recebido(s)");
+            SiapeLog::info("SIPEC: {$codUorg} — " . count($servidores) . " servidor(es) recebido(s)");
 
             $dtos           = $this->parsearServidores($servidores);
             $dadosRelatorio = $this->montarDadosRelatorio($codUorg, $dtos, $resposta);
