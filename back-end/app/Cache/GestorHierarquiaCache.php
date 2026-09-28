@@ -11,6 +11,7 @@ class GestorHierarquiaCache
 {
     private const TTL_SECONDS = 3600;
     private const PREFIX_HIERARQUIA = 'unidade-hierarquia:';
+    private const PREFIX_FILHAS_DIRETAS = 'unidade-filhas-diretas:';
     private const PREFIX_GERIDAS = 'unidades-geridas:';
     private const PREFIX_ATRIBUICOES = 'unidades-atribuicoes:';
 
@@ -34,11 +35,31 @@ class GestorHierarquiaCache
         );
     }
 
-    /** @return string[] */
-    public static function getSubordinadas(string $unidadeId, Closure $loader): array
+    /**
+     * IDs de TODAS as subordinadas recursivas (descendentes em qualquer nível) da unidade.
+     * Chave distinta das filhas diretas para evitar colisão entre casos de uso.
+     *
+     * @return string[]
+     */
+    public static function getSubordinadasRecursivas(string $unidadeId, Closure $loader): array
     {
         return Cache::remember(
             self::PREFIX_HIERARQUIA . $unidadeId,
+            self::TTL_SECONDS,
+            $loader,
+        );
+    }
+
+    /**
+     * IDs das filhas DIRETAS (um único nível abaixo) da unidade.
+     * Chave distinta das subordinadas recursivas para evitar colisão entre casos de uso.
+     *
+     * @return string[]
+     */
+    public static function getSubordinadasDiretas(string $unidadeId, Closure $loader): array
+    {
+        return Cache::remember(
+            self::PREFIX_FILHAS_DIRETAS . $unidadeId,
             self::TTL_SECONDS,
             $loader,
         );
@@ -66,6 +87,7 @@ class GestorHierarquiaCache
         $invalidator = app(CacheInvalidator::class);
         $invalidator->invalidateByPrefix([
             self::PREFIX_HIERARQUIA,
+            self::PREFIX_FILHAS_DIRETAS,
             self::PREFIX_GERIDAS,
             self::PREFIX_ATRIBUICOES,
         ]);
