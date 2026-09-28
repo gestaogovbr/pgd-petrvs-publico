@@ -35,7 +35,14 @@ interface UsuarioReadRepositoryContract
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario;
     public function findWithAreaTrabalho(string $userId, string $unidadeId): ?Usuario;
     public function findByCpf(string $cpf): ?Usuario;
+    /**
+     * @return Collection<int, Usuario>
+     */
     public function findAllByCpfWithLotacao(string $cpf): Collection;
+
+    /**
+     * @return Collection<int, Usuario>
+     */
     public function findAllByCpfUnfiltered(string $cpf): Collection;
     public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
 

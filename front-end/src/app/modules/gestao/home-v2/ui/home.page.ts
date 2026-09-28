@@ -1,17 +1,22 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { AuthService } from 'src/app/services/auth.service';
+import { UtilService } from 'src/app/services/util.service';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
+import { NavigateService } from 'src/app/services/navigate.service';
+import { MuralAvisoTenantService } from 'src/app/services/mural-aviso-tenant.service';
+import { HomeApiClient } from '../infra/home-api.client';
 import { PendenciasUsuarioComponent } from './components/pendencias-usuario.component';
 import { PlanosVigentesComponent } from './components/planos-vigentes.component';
 import { AcoesGerenciaisComponent } from './components/acoes-gerenciais.component';
 import { ResumoEquipeComponent } from './components/resumo-equipe.component';
-import { ContribuicoesComponent } from './components/contribuicoes.component';
 import { EmFeriasComponent } from './components/em-ferias.component';
 import { AniversariantesComponent } from './components/aniversariantes.component';
+import { AtalhoCardComponent } from './components/atalho-card.component';
 
 export interface SelectOption {
   value: string;
@@ -32,16 +37,21 @@ export interface SelectOption {
     PlanosVigentesComponent,
     AcoesGerenciaisComponent,
     ResumoEquipeComponent,
-    ContribuicoesComponent,
     EmFeriasComponent,
     AniversariantesComponent,
+    AtalhoCardComponent,
   ],
   templateUrl: './home.page.html',
   styleUrls: ['./home.styles.scss'],
 })
 export class HomeV2Page implements OnInit {
   private readonly auth = inject(AuthService);
+  private readonly utils = inject(UtilService);
   private readonly unidadeService = inject(UnidadeService);
+  private readonly router = inject(Router);
+  private readonly go = inject(NavigateService);
+  private readonly muralService = inject(MuralAvisoTenantService);
+  private readonly homeApi = inject(HomeApiClient);
 
   readonly unidadeOptions = signal<SelectOption[]>([]);
   readonly selectedUnidadeId = signal<string>('');
@@ -58,8 +68,7 @@ export class HomeV2Page implements OnInit {
   });
 
   readonly nomeUsuario = computed(() => {
-    const usuario = this.auth.usuario;
-    const nome = usuario?.apelido || usuario?.nome_exibicao || usuario?.nome || '';
+    const nome = this.utils.apelidoOuNome(this.auth.usuario) || '';
     return nome.split(' ')[0];
   });
 
@@ -75,6 +84,56 @@ export class HomeV2Page implements OnInit {
 
   onSubordinadasChange(value: boolean): void {
     this.subordinadas.set(value);
+  }
+
+  irParaPaineisGerenciais(): void {
+    this.router.navigate(['gestao', 'paineis-gerenciais']);
+  }
+
+  irParaMuralAvisos(): void {
+    this.muralService.solicitarExibicao();
+  }
+
+  irParaRelatorioAgentes(): void {
+    this.go.navigate(
+      { route: ['relatorios', 'agentes'] },
+      { metadata: { unidade_id: this.selectedUnidadeId() } },
+    );
+  }
+
+  irParaRelatorioUnidades(): void {
+    this.go.navigate({
+      route: ['relatorios', 'unidades'],
+      params: {
+        filter: {
+          unidade_id: this.selectedUnidadeId(),
+          incluir_unidades_subordinadas: this.subordinadas(),
+        },
+      },
+    });
+  }
+
+  irParaPlanosEntregasVigentes(): void {
+    // Usa o endpoint V2 (mesmo critério do card) para navegar exatamente aos PEs vigentes
+    // das unidades onde o usuário possui atribuição direta.
+    this.homeApi.getPlanosEntregaVigentesIds().subscribe((ids) => {
+      const filter: Record<string, unknown> = { meus_planos: false, principais: false };
+      if (ids.length) {
+        filter['id'] = ids;
+      }
+      this.go.navigate({
+        route: ['gestao', 'plano-entrega'],
+        params: { planejamento: true, filter },
+      });
+    });
+  }
+
+  irParaLacunasPE(): void {
+    this.router.navigate(['relatorios', 'planos-entrega', 'lacunas']);
+  }
+
+  irParaLacunasPT(): void {
+    this.router.navigate(['relatorios', 'planos-trabalho', 'lacunas']);
   }
 
   private carregarUnidades(): void {
