@@ -87,7 +87,7 @@ class PlanoTrabalhoDocumentoService
         return [
             'id' => $assinatura->id,
             'usuario_id' => $assinatura->usuario_id,
-            'usuario_nome' => $assinatura->usuario->nome_social ?? $assinatura->usuario->nome,
+            'usuario_nome' => $assinatura->usuario?->nome_social ?? $assinatura->usuario?->nome ?? '',
             'data_assinatura' => $assinatura->data_assinatura,
         ];
     }
@@ -98,7 +98,7 @@ class PlanoTrabalhoDocumentoService
         return [
             'id' => $assinatura->id,
             'usuario_id' => $assinatura->usuario_id,
-            'usuario_nome' => $assinatura->usuario->nome_social ?? $assinatura->usuario->nome,
+            'usuario_nome' => $assinatura->usuario?->nome_social ?? $assinatura->usuario?->nome ?? '',
             'data_assinatura' => $assinatura->data_assinatura,
             'data_revogacao' => $assinatura->deleted_at,
         ];

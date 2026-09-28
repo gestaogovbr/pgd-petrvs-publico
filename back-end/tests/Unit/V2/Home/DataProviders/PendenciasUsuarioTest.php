@@ -9,6 +9,10 @@ use App\V2\Home\DataProviders\PendenciasUsuario;
 use App\V2\Home\DTOs\HomeRequestDTO;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAssinaturaDataProvider;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAvaliacaoDataProvider;
+use App\V2\PlanoTrabalho\DataProviders\AguardandoMeuRegistroExecucaoDataProvider;
+use App\V2\PlanoEntrega\DataProviders\AvaliacaoPendentePEDataProvider;
+use App\V2\PlanoEntrega\DataProviders\HomologacaoPendentePEDataProvider;
+use App\V2\PlanoEntrega\DataProviders\RegistroExecucaoAtrasoPEDataProvider;
 use Illuminate\Database\Eloquent\Collection;
 use Tests\TestCase;
 
@@ -22,6 +26,10 @@ beforeEach(function () {
     $this->planoEntregaRepository = Mockery::mock(PlanoEntregaRepository::class);
     $this->aguardandoAssinatura = Mockery::mock(AguardandoMinhaAssinaturaDataProvider::class);
     $this->aguardandoAvaliacao = Mockery::mock(AguardandoMinhaAvaliacaoDataProvider::class);
+    $this->aguardandoRegistroExecucao = Mockery::mock(AguardandoMeuRegistroExecucaoDataProvider::class);
+    $this->avaliacaoPendentePE = Mockery::mock(AvaliacaoPendentePEDataProvider::class);
+    $this->homologacaoPendentePE = Mockery::mock(HomologacaoPendentePEDataProvider::class);
+    $this->registroExecucaoAtrasoPE = Mockery::mock(RegistroExecucaoAtrasoPEDataProvider::class);
 
     $this->provider = new PendenciasUsuario(
         $this->unidadeRepository,
@@ -30,6 +38,10 @@ beforeEach(function () {
         $this->planoEntregaRepository,
         $this->aguardandoAssinatura,
         $this->aguardandoAvaliacao,
+        $this->aguardandoRegistroExecucao,
+        $this->avaliacaoPendentePE,
+        $this->homologacaoPendentePE,
+        $this->registroExecucaoAtrasoPE,
     );
 });
 

@@ -9,7 +9,12 @@ use App\Models\PlanoEntregaEntrega;
 use App\Repository\Interfaces\EnvioRepositoryInterface;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaReadRepositoryContract;
 use App\Repository\PlanoEntrega\Contracts\PlanoEntregaWriteRepositoryContract;
+use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\RegistroExecucaoAtrasoPEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\VigentesPEBuscaDTO;
 use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -43,9 +48,19 @@ class PlanoEntregaRepository implements EnvioRepositoryInterface
         return $this->readRepository->getPlanosEntregaAvaliacao($unidadesIds, $criadosApos);
     }
 
+    public function paginatePlanosEntregaAvaliacao(AvaliacaoPendentePEBuscaDTO $busca): LengthAwarePaginator
+    {
+        return $this->readRepository->paginatePlanosEntregaAvaliacao($busca);
+    }
+
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection
     {
         return $this->readRepository->getPlanosEntregaHomologacao($unidadesIds);
+    }
+
+    public function paginatePlanosEntregaHomologacao(HomologacaoPendentePEBuscaDTO $busca): LengthAwarePaginator
+    {
+        return $this->readRepository->paginatePlanosEntregaHomologacao($busca);
     }
 
     public function getEntregasPlanoEntregaHomologacao(array $unidadesIds): Collection
@@ -122,5 +137,15 @@ class PlanoEntregaRepository implements EnvioRepositoryInterface
     public function countEntregasSemProgresso(array $unidadesIds, ?string $planoEntregaCriadoApos = null): int
     {
         return $this->readRepository->countEntregasSemProgresso($unidadesIds, $planoEntregaCriadoApos);
+    }
+
+    public function paginatePlanosEntregaComRegistroAtraso(RegistroExecucaoAtrasoPEBuscaDTO $busca): LengthAwarePaginator
+    {
+        return $this->readRepository->paginatePlanosEntregaComRegistroAtraso($busca);
+    }
+
+    public function paginatePlanosEntregaVigentes(VigentesPEBuscaDTO $busca): LengthAwarePaginator
+    {
+        return $this->readRepository->paginatePlanosEntregaVigentes($busca);
     }
 }
