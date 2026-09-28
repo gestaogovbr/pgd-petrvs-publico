@@ -1,3 +1,14 @@
+## 3.1.6 28/09/2026
+
+### Adicionado
+- **Melhorias na Tela Inicial (Home)**: novo visual no padrão gov.br organizado em Destaques do Usuário, da Unidade e Outros, com pendências separadas por Planos de Entregas e de Trabalho, indicadores da unidade, cartões de lacuna, aniversariantes e participantes em férias
+
+### Modificado
+- Contadores dos cartões da Home e os atalhos correspondentes passam a usar o mesmo critério, mantendo consistência entre o número exibido e a listagem aberta pelo hiperlink
+
+### Corrigido
+- O filtro "Unidades Subordinadas" deixou de retornar erro de permissão nos painéis de indicadores para usuários com atribuição na unidade selecionada que não fossem seus gestores
+
 ## 3.1.5 25/09/2026
 
 ### Adicionado
