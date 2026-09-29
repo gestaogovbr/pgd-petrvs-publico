@@ -51,20 +51,15 @@ export class RelatorioGeracaoListPage implements OnInit {
 
   private readonly FILTER_KEY = 'relatorio-exportacao:filters';
   private readonly filtroTodos = 'Todos';
-  private readonly PERIODO_INVALIDO_MSG = 'A data de fim não pode ser anterior à data de início.';
 
   readonly tipoOptions = signal<SelectOption[]>(this.buildTipoOptions());
   readonly statusOptions = signal<SelectOption[]>(this.buildStatusOptions());
 
   readonly filters: FormGroup<{
     tipo: FormControl<string>;
-    geracao_inicio: FormControl<string | null>;
-    geracao_fim: FormControl<string | null>;
     status: FormControl<string>;
   }> = this.fb.group({
     tipo: this.fb.nonNullable.control(this.filtroTodos),
-    geracao_inicio: this.fb.control<string | null>(null),
-    geracao_fim: this.fb.control<string | null>(null),
     status: this.fb.nonNullable.control(this.filtroTodos),
   });
 
@@ -89,9 +84,7 @@ export class RelatorioGeracaoListPage implements OnInit {
   }
 
   onConsultar(): void {
-    if (!this.podeExecutarConsulta()) {
-      return;
-    }
+    this.facade.error.set(null);
     this.facade.page.set(1);
     this.saveFilters();
     this.facade.filters.set(this.buildFilters());
@@ -101,26 +94,18 @@ export class RelatorioGeracaoListPage implements OnInit {
   limparFiltros(): void {
     this.filters.reset({
       tipo: this.filtroTodos,
-      geracao_inicio: null,
-      geracao_fim: null,
       status: this.filtroTodos,
     });
     this.onConsultar();
   }
 
   onPageChange(page: number): void {
-    if (!this.podeExecutarConsulta()) {
-      return;
-    }
     this.facade.page.set(page);
     this.facade.filters.set(this.buildFilters());
     this.facade.load();
   }
 
   onSort(column: RelatorioGeracaoSortColumn): void {
-    if (!this.podeExecutarConsulta()) {
-      return;
-    }
     this.facade.filters.set(this.buildFilters());
     this.facade.toggleSort(column);
   }
@@ -184,16 +169,6 @@ export class RelatorioGeracaoListPage implements OnInit {
     this.facade.download(row);
   }
 
-  private podeExecutarConsulta(): boolean {
-    const { geracao_inicio, geracao_fim } = this.filters.getRawValue();
-    if (geracao_inicio && geracao_fim && geracao_fim < geracao_inicio) {
-      this.facade.error.set(this.PERIODO_INVALIDO_MSG);
-      return false;
-    }
-    this.facade.error.set(null);
-    return true;
-  }
-
   private buildFilters(): RelatorioGeracaoListFilters {
     const raw = this.filters.getRawValue();
     const out: RelatorioGeracaoListFilters = {};
@@ -204,12 +179,6 @@ export class RelatorioGeracaoListPage implements OnInit {
     const status = String(raw.status ?? '').trim();
     if (status.length && status !== this.filtroTodos) {
       out.status = status;
-    }
-    if (raw.geracao_inicio) {
-      out.geracao_inicio = raw.geracao_inicio;
-    }
-    if (raw.geracao_fim) {
-      out.geracao_fim = raw.geracao_fim;
     }
     return out;
   }
@@ -222,8 +191,6 @@ export class RelatorioGeracaoListPage implements OnInit {
     const parsed = this.filterStorage.load<Partial<{
       tipo?: string;
       status?: string;
-      geracao_inicio?: string | null;
-      geracao_fim?: string | null;
     }>>(this.FILTER_KEY);
     if (!parsed) {
       return;
@@ -232,8 +199,6 @@ export class RelatorioGeracaoListPage implements OnInit {
       {
         tipo: grupoRelatorio(parsed.tipo) ?? this.filtroTodos,
         status: parsed.status?.trim() || this.filtroTodos,
-        geracao_inicio: parsed.geracao_inicio ?? null,
-        geracao_fim: parsed.geracao_fim ?? null,
       },
       { emitEvent: false },
     );
