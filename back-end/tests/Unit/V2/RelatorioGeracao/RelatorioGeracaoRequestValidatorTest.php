@@ -167,6 +167,32 @@ test('index normaliza tipo interno de PE para o grupo da listagem', function () 
         ->and($dto->filters->tipos())->toBe([RelatorioGeracaoTipo::PLANO_ENTREGA->value]);
 });
 
+test('store aceita tipo de agentes públicos e filtros', function () {
+    $request = Request::create('/api/v2/relatorio-exportacao', 'POST', [
+        'tipo' => RelatorioGeracaoTipo::AGENTE->value,
+        'where' => [['unidade_id', '==', 'u-1']],
+        'orderBy' => [['nome', 'asc']],
+    ]);
+
+    $dto = RelatorioGeracaoRequestValidator::store($request);
+
+    expect($dto)->toBeInstanceOf(RelatorioGeracaoStoreDTO::class)
+        ->and($dto->tipo)->toBe(RelatorioGeracaoTipo::AGENTE)
+        ->and($dto->where)->toBe([['unidade_id', '==', 'u-1']])
+        ->and($dto->orderBy)->toBe([['nome', 'asc']]);
+});
+
+test('index normaliza tipo interno de Agentes para o grupo da listagem', function () {
+    $request = Request::create('/api/v2/relatorio-exportacao', 'GET', [
+        'filters' => ['tipo' => RelatorioGeracaoTipo::AGENTE->value],
+    ]);
+
+    $dto = RelatorioGeracaoRequestValidator::index($request);
+
+    expect($dto->filters->tipo)->toBe('agentes')
+        ->and($dto->filters->tipos())->toBe([RelatorioGeracaoTipo::AGENTE->value]);
+});
+
 test('status rejeita lista de ids vazia', function () {
     $request = Request::create('/api/v2/relatorio-exportacao/status', 'GET', [
         'ids' => [],

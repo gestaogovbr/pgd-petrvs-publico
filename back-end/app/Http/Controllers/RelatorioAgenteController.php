@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\PerfilEnum;
 use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\ServerException;
 use App\Exports\RelatorioAgenteExport;
 use App\Http\Controllers\ControllerBase;
 use App\Services\RelatorioAgenteService;
-use App\Support\AuthenticatedUsuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -74,14 +72,8 @@ class RelatorioAgenteController extends ControllerBase
      */
     private function applyFiltroParticipante(array $data, $usuario): array
     {
-        $nivelPerfil = (int) ($usuario->perfil->nivel ?? PerfilEnum::PARTICIPANTE->value);
-
-        if ($nivelPerfil >= PerfilEnum::PARTICIPANTE->value) {
-            $data['where'] = array_filter($data['where'] ?? [], function ($condition) {
-                return !is_array($condition) || !in_array($condition[0], ['unidade_id', 'incluir_unidades_subordinadas']);
-            });
-            $data['where'][] = ['usuario_id', '==', $usuario->id];
-        }
+        $service = new RelatorioAgenteService();
+        $data['where'] = $service->aplicarFiltroParticipanteWhere($data['where'] ?? [], $usuario);
 
         return $data;
     }

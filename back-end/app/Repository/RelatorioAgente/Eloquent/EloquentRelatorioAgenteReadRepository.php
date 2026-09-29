@@ -180,7 +180,9 @@ TEXT;
         $sql .= ' ORDER BY u.nome ASC';
 
         if (!empty($data['limit'])) {
-            $sql .= ' LIMIT 10 OFFSET ' . (max($data['page'] - 1, 0) * 10);
+            $limit = max(1, (int) $data['limit']);
+            $page = max(1, (int) ($data['page'] ?? 1));
+            $sql .= ' LIMIT ' . $limit . ' OFFSET ' . (($page - 1) * $limit);
         }
 
         $rows = DB::select($sql, $params);

@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Enums\Atribuicao;
+use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
 use App\Models\Usuario;
 use App\Repository\RelatorioAgenteRepository;
 use App\Services\ServiceBase;
+use Illuminate\Support\Collection;
 
 class RelatorioAgenteService extends ServiceBase
 {
@@ -19,6 +21,28 @@ class RelatorioAgenteService extends ServiceBase
         $this->relatorioAgenteRepository = app(RelatorioAgenteRepository::class);
     }
 
+    /**
+     * Consulta paginada para a geração do Excel em segundo plano.
+     *
+     * @param array{page?: int, limit?: int, where?: array, orderBy?: array} $data
+     * @return array{count: int, rows: Collection, extra?: mixed}
+     */
+    public function queryForExport(array $data, ?int $knownCount = null): array
+    {
+        $result = $this->query([
+            'page' => max(1, (int) ($data['page'] ?? 1)),
+            'limit' => max(1, (int) ($data['limit'] ?? 1000)),
+            'where' => $data['where'] ?? [],
+            'orderBy' => $data['orderBy'] ?? [],
+        ]);
+
+        if ($knownCount !== null) {
+            $result['count'] = $knownCount;
+        }
+
+        return $result;
+    }
+
     public function query($data)
     {
         $result = $this->relatorioAgenteRepository->query($data);
@@ -27,6 +51,26 @@ class RelatorioAgenteService extends ServiceBase
         $this->proxyRows($rows);
 
         return $result;
+    }
+
+    /**
+     * Perfil participante vê apenas seus próprios dados.
+     *
+     * @param array<int, mixed> $where
+     * @return array<int, mixed>
+     */
+    public function aplicarFiltroParticipanteWhere(array $where, Usuario $usuario): array
+    {
+        $nivelPerfil = (int) ($usuario->perfil->nivel ?? PerfilEnum::PARTICIPANTE->value);
+
+        if ($nivelPerfil >= PerfilEnum::PARTICIPANTE->value) {
+            $where = array_values(array_filter($where, function ($condition) {
+                return ! is_array($condition) || ! in_array($condition[0], ['unidade_id', 'incluir_unidades_subordinadas'], true);
+            }));
+            $where[] = ['usuario_id', '==', $usuario->id];
+        }
+
+        return $where;
     }
 
     public function proxyQuery($query, &$data)

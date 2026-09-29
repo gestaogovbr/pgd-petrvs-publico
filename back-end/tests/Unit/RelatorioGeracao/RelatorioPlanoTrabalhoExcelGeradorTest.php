@@ -1,8 +1,10 @@
 <?php
 
 use App\Enums\RelatorioGeracaoTipo;
+use App\Services\RelatorioGeracao\RelatorioAgenteExcelGerador;
 use App\Services\RelatorioGeracao\RelatorioPlanoEntregaExcelGerador;
 use App\Services\RelatorioGeracao\RelatorioPlanoTrabalhoExcelGerador;
+use App\Services\RelatorioAgenteService;
 use App\Services\RelatorioPlanoEntregaService;
 use App\Services\RelatorioPlanoTrabalhoService;
 
@@ -20,7 +22,12 @@ test('tipos de geração conhecidos expõem nome, arquivo e capacidade', functio
         ->and(RelatorioGeracaoTipo::PLANO_ENTREGA->nomeExibicao())->toBe('Planos de Entrega')
         ->and(RelatorioGeracaoTipo::PLANO_ENTREGA->grupo())->toBe('planos_entrega')
         ->and(RelatorioGeracaoTipo::PLANO_ENTREGA->arquivoNome())->toBe('relatorio-planos-entrega.xlsx')
-        ->and(RelatorioGeracaoTipo::PLANO_ENTREGA->capacidade())->toBe('MOD_RELATORIO_PE');
+        ->and(RelatorioGeracaoTipo::PLANO_ENTREGA->capacidade())->toBe('MOD_RELATORIO_PE')
+        ->and(RelatorioGeracaoTipo::AGENTE->nome())->toBe('Relatório de Agentes Públicos')
+        ->and(RelatorioGeracaoTipo::AGENTE->nomeExibicao())->toBe('Agentes Públicos')
+        ->and(RelatorioGeracaoTipo::AGENTE->grupo())->toBe('agentes')
+        ->and(RelatorioGeracaoTipo::AGENTE->arquivoNome())->toBe('relatorio-agentes.xlsx')
+        ->and(RelatorioGeracaoTipo::AGENTE->capacidade())->toBe('MOD_RELATORIO_USUARIO');
 });
 
 test('gerador de PT consulta o serviço de exportação com página e limite', function () {
@@ -128,4 +135,32 @@ test('gerador de PE reutiliza o total já conhecido nas páginas seguintes', fun
     $segunda = $gerador->consultarPagina(['where' => [], 'orderBy' => []], 2, 1000);
 
     expect($segunda['count'])->toBe(1500);
+});
+
+test('gerador de Agentes consulta o serviço de exportação com página e limite', function () {
+    $service = Mockery::mock(RelatorioAgenteService::class);
+    $service->shouldReceive('queryForExport')
+        ->once()
+        ->with(Mockery::on(function (array $data) {
+            return $data['page'] === 1
+                && $data['limit'] === 1000
+                && $data['where'] === [['unidade_id', '==', 'u1']]
+                && $data['orderBy'] === [['nome', 'asc']];
+        }), null)
+        ->andReturn([
+            'count' => 300,
+            'rows' => collect([(object) ['id' => 'ag-1']]),
+            'extra' => null,
+        ]);
+
+    $gerador = new RelatorioAgenteExcelGerador($service);
+    $result = $gerador->consultarPagina([
+        'where' => [['unidade_id', '==', 'u1']],
+        'orderBy' => [['nome', 'asc']],
+    ], 1, 1000);
+
+    expect($gerador->pageSize())->toBe(1000)
+        ->and($gerador->arquivoNome())->toBe('relatorio-agentes.xlsx')
+        ->and($result['count'])->toBe(300)
+        ->and($result['rows'])->toHaveCount(1);
 });

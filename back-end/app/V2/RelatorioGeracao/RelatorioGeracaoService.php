@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\RelatorioGeracao;
 
 use App\Enums\RelatorioGeracaoStatus;
+use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Jobs\ExcluirRelatorioGeracaoJob;
@@ -13,6 +14,7 @@ use App\Jobs\GerarRelatorioExcelJob;
 use App\Models\RelatorioGeracao;
 use App\Models\Usuario;
 use App\Repository\RelatorioGeracaoRepository;
+use App\Services\RelatorioAgenteService;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoIndexDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoRowDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStatusQueryDTO;
@@ -72,6 +74,11 @@ class RelatorioGeracaoService
     {
         $tenantId = $this->requireTenantId();
         $parametros = $dto->toParametros();
+
+        if ($dto->tipo === RelatorioGeracaoTipo::AGENTE) {
+            $parametros['where'] = app(RelatorioAgenteService::class)
+                ->aplicarFiltroParticipanteWhere($parametros['where'], $usuario);
+        }
 
         $geracao = $this->repository->create([
             'tipo' => $dto->tipo->value,

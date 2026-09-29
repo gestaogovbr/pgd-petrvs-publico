@@ -4,6 +4,7 @@ namespace App\Services\RelatorioGeracao;
 
 use App\Contracts\RelatorioExcelGeradorContract;
 use App\Enums\RelatorioGeracaoTipo;
+use App\Services\RelatorioAgenteService;
 use App\Services\RelatorioPlanoEntregaService;
 use App\Services\RelatorioPlanoTrabalhoDetalhadoService;
 use App\Services\RelatorioPlanoTrabalhoService;
@@ -21,6 +22,9 @@ class RelatorioExcelGeradorFactory
             ),
             RelatorioGeracaoTipo::PLANO_ENTREGA => new RelatorioPlanoEntregaExcelGerador(
                 app(RelatorioPlanoEntregaService::class)
+            ),
+            RelatorioGeracaoTipo::AGENTE => new RelatorioAgenteExcelGerador(
+                app(RelatorioAgenteService::class)
             ),
         };
     }

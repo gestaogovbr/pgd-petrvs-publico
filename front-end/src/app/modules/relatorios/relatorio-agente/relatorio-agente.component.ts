@@ -3,6 +3,7 @@ import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioAgenteDaoService } from "src/app/dao/relatorio-agente-dao.service";
+import { RelatorioGeracaoDaoService } from "src/app/dao/relatorio-geracao-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { RelatorioAgente } from "src/app/models/relatorio-agente.model";
 import { LookupItem } from "src/app/services/lookup.service";
@@ -24,12 +25,14 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public permissao: string = 'MOD_RELATORIO_USUARIO';
+  public relatorioGeracaoDao: RelatorioGeracaoDaoService;
   public botoes: ToolbarButton[] = [];
   public tiposModalidade: LookupItem[] = [];
 
   constructor(public injector: Injector, dao: RelatorioAgenteDaoService) {
       super(injector, RelatorioAgente, RelatorioAgenteDaoService);
       this.tiposModalidade = injector.get<ModalidadePgdService>(ModalidadePgdService).items;
+      this.relatorioGeracaoDao = injector.get<RelatorioGeracaoDaoService>(RelatorioGeracaoDaoService);
 
       this.filter = this.fh.FormBuilder({
         unidade_id: { default: this.auth.unidade?.id },
@@ -171,7 +174,7 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
     try {
-      return this.dao!.exportarXls({
+      return this.relatorioGeracaoDao.solicitar('agente', {
         where: queryOptions.where,
         orderBy: queryOptions.orderBy
       });
