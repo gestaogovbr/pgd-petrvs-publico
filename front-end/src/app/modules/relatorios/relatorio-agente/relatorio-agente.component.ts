@@ -67,6 +67,10 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
         this.filter?.controls.unidade_id.setValue(this.metadata?.unidade_id);
         this.saveUsuarioConfig();
       }
+
+      if(this.metadata?.incluir_unidades_subordinadas) {
+        this.filter?.controls.incluir_unidades_subordinadas?.setValue(true);
+      }
   }
 
   public ngAfterViewInit(): void {

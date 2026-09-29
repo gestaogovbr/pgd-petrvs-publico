@@ -138,6 +138,10 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
         this.filter?.controls.unidade_id.setValue(this.metadata.unidade_id);
       }
 
+      if (this.metadata?.incluir_unidades_subordinadas) {
+        this.filter?.controls.incluir_unidades_subordinadas?.setValue(true);
+      }
+
       this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
           .asPromise().then(notas => {
               const sanitizeNotas = notas.map(nota => ({

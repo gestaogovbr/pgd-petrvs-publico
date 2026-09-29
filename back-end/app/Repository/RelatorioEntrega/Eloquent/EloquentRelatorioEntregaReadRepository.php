@@ -101,13 +101,14 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
                 DB::raw('(SELECT COUNT(*) FROM planos_entregas_entregas oe
                     WHERE oe.deleted_at IS NULL
                     AND (oe.entrega_pai_id = pee.id OR oe.id = pee.entrega_pai_id)) as qtd_outras_entregas'),
-                DB::raw('(SELECT COUNT(DISTINCT pt.usuario_id)
+                DB::raw("(SELECT COUNT(DISTINCT pt.usuario_id)
                     FROM planos_trabalhos_entregas pte
-                    INNER JOIN planos_trabalhos pt ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL
-                    WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL) as qtd_participantes'),
-                DB::raw('(SELECT COUNT(DISTINCT pte.plano_trabalho_id)
+                    INNER JOIN planos_trabalhos pt ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL AND pt.status <> 'CANCELADO'
+                    WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL) as qtd_participantes"),
+                DB::raw("(SELECT COUNT(DISTINCT pte.plano_trabalho_id)
                     FROM planos_trabalhos_entregas pte
-                    WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL) as qtd_planos_trabalho'),
+                    INNER JOIN planos_trabalhos pt ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL AND pt.status <> 'CANCELADO'
+                    WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL) as qtd_planos_trabalho"),
                 DB::raw($this->metaNumericoSql('pee.meta', 'e.tipo_indicador').' as meta_planejado'),
                 DB::raw($this->metaNumericoSql('pee.realizado', 'e.tipo_indicador').' as meta_alcancado'),
                 DB::raw($this->metaPercentualSql(

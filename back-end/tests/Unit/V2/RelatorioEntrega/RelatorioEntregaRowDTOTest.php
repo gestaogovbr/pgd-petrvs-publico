@@ -39,7 +39,7 @@ test('monta linha do relatorio a partir do resultado da query', function () {
     $dto = RelatorioEntregaRowDTO::fromQueryRow($row, '2026-01-15');
 
     expect($dto->entregaNome)->toBe('Título da entrega')
-        ->and($dto->unidade_id)->toBe('unidade-plano')
+        ->and($dto->unidade_id)->toBe('unidade-demandante')
         ->and($dto->demandanteHierarquia)->toBe('Org / Demandante')
         ->and($dto->destinatario)->toBe('Cliente X')
         ->and($dto->meta_tipo)->toBe('Quantidade')
