@@ -4,9 +4,11 @@ use App\Enums\RelatorioGeracaoTipo;
 use App\Services\RelatorioGeracao\RelatorioAgenteExcelGerador;
 use App\Services\RelatorioGeracao\RelatorioPlanoEntregaExcelGerador;
 use App\Services\RelatorioGeracao\RelatorioPlanoTrabalhoExcelGerador;
+use App\Services\RelatorioGeracao\RelatorioUnidadeExcelGerador;
 use App\Services\RelatorioAgenteService;
 use App\Services\RelatorioPlanoEntregaService;
 use App\Services\RelatorioPlanoTrabalhoService;
+use App\Services\RelatorioUnidadeService;
 
 test('tipos de geração conhecidos expõem nome, arquivo e capacidade', function () {
     expect(RelatorioGeracaoTipo::PLANO_TRABALHO->nome())->toBe('Relatório de Planos de Trabalho')
@@ -27,7 +29,12 @@ test('tipos de geração conhecidos expõem nome, arquivo e capacidade', functio
         ->and(RelatorioGeracaoTipo::AGENTE->nomeExibicao())->toBe('Agentes Públicos')
         ->and(RelatorioGeracaoTipo::AGENTE->grupo())->toBe('agentes')
         ->and(RelatorioGeracaoTipo::AGENTE->arquivoNome())->toBe('relatorio-agentes.xlsx')
-        ->and(RelatorioGeracaoTipo::AGENTE->capacidade())->toBe('MOD_RELATORIO_USUARIO');
+        ->and(RelatorioGeracaoTipo::AGENTE->capacidade())->toBe('MOD_RELATORIO_USUARIO')
+        ->and(RelatorioGeracaoTipo::UNIDADE->nome())->toBe('Relatório de Unidades')
+        ->and(RelatorioGeracaoTipo::UNIDADE->nomeExibicao())->toBe('Unidades')
+        ->and(RelatorioGeracaoTipo::UNIDADE->grupo())->toBe('unidades')
+        ->and(RelatorioGeracaoTipo::UNIDADE->arquivoNome())->toBe('relatorio-unidades.xlsx')
+        ->and(RelatorioGeracaoTipo::UNIDADE->capacidade())->toBe('MOD_RELATORIO_UNIDADE');
 });
 
 test('gerador de PT consulta o serviço de exportação com página e limite', function () {
@@ -162,5 +169,33 @@ test('gerador de Agentes consulta o serviço de exportação com página e limit
     expect($gerador->pageSize())->toBe(1000)
         ->and($gerador->arquivoNome())->toBe('relatorio-agentes.xlsx')
         ->and($result['count'])->toBe(300)
+        ->and($result['rows'])->toHaveCount(1);
+});
+
+test('gerador de Unidades consulta o serviço de exportação com página e limite', function () {
+    $service = Mockery::mock(RelatorioUnidadeService::class);
+    $service->shouldReceive('queryForExport')
+        ->once()
+        ->with(Mockery::on(function (array $data) {
+            return $data['page'] === 1
+                && $data['limit'] === 1000
+                && $data['where'] === [['unidade_id', '==', 'u1']]
+                && $data['orderBy'] === [['sigla', 'asc']];
+        }), null)
+        ->andReturn([
+            'count' => 50,
+            'rows' => collect([(object) ['id' => 'un-1']]),
+            'extra' => null,
+        ]);
+
+    $gerador = new RelatorioUnidadeExcelGerador($service);
+    $result = $gerador->consultarPagina([
+        'where' => [['unidade_id', '==', 'u1']],
+        'orderBy' => [['sigla', 'asc']],
+    ], 1, 1000);
+
+    expect($gerador->pageSize())->toBe(1000)
+        ->and($gerador->arquivoNome())->toBe('relatorio-unidades.xlsx')
+        ->and($result['count'])->toBe(50)
         ->and($result['rows'])->toHaveCount(1);
 });

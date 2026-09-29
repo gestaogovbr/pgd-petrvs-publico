@@ -3,6 +3,7 @@ import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioUnidadeDaoService } from "src/app/dao/relatorio-unidade-dao.service";
+import { RelatorioGeracaoDaoService } from "src/app/dao/relatorio-geracao-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { RelatorioUnidade } from "src/app/models/relatorio-unidade.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
@@ -22,10 +23,12 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public permissao: string = 'MOD_RELATORIO_UNIDADE';
+  public relatorioGeracaoDao: RelatorioGeracaoDaoService;
   public botoes: ToolbarButton[] = [];
 
   constructor(public injector: Injector) {
     super(injector, RelatorioUnidade, RelatorioUnidadeDaoService);
+    this.relatorioGeracaoDao = injector.get<RelatorioGeracaoDaoService>(RelatorioGeracaoDaoService);
 
     this.filter = this.fh.FormBuilder({
       unidade_id: { default: this.auth.unidade?.id },
@@ -133,8 +136,8 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    try{
-      return this.dao!.exportarXls({
+    try {
+      return this.relatorioGeracaoDao.solicitar('unidade', {
         where: queryOptions.where,
         orderBy: queryOptions.orderBy
       });

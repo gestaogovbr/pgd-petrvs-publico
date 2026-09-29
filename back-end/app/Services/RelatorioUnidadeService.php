@@ -2,15 +2,36 @@
 
 namespace App\Services;
 
-use App\Models\Usuario;
 use App\Services\ServiceBase;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class RelatorioUnidadeService extends ServiceBase
 {
     public function __construct()
     {
         parent::__construct("App\Models\ViewRelatorioUnidade");
+    }
+
+    /**
+     * Consulta paginada para a geração do Excel em segundo plano.
+     *
+     * @param array{page?: int, limit?: int, where?: array, orderBy?: array} $data
+     * @return array{count: int, rows: Collection, extra: mixed}
+     */
+    public function queryForExport(array $data, ?int $knownCount = null): array
+    {
+        $result = $this->query([
+            'page' => max(1, (int) ($data['page'] ?? 1)),
+            'limit' => max(1, (int) ($data['limit'] ?? 1000)),
+            'where' => $data['where'] ?? [],
+            'orderBy' => $data['orderBy'] ?? [],
+        ]);
+
+        if ($knownCount !== null) {
+            $result['count'] = $knownCount;
+        }
+
+        return $result;
     }
 
     public function proxyQuery($query, &$data)
