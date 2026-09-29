@@ -71,3 +71,21 @@ test('row dto exibe Planos de Trabalho também para o tipo detalhado', function 
     expect($dto->tipo)->toBe(RelatorioGeracaoTipo::PLANO_TRABALHO_DETALHADO->value)
         ->and($dto->nome)->toBe('Planos de Trabalho');
 });
+
+test('row dto exibe Planos de Entrega para o tipo plano_entrega', function () {
+    $geracao = new RelatorioGeracao();
+    $geracao->id = 'geracao-pe';
+    $geracao->tipo = RelatorioGeracaoTipo::PLANO_ENTREGA->value;
+    $geracao->nome = 'Relatório de Planos de Entrega';
+    $geracao->status = RelatorioGeracaoStatus::CONCLUIDA;
+    $geracao->arquivo_path = 'relatorios/secreto.xlsx';
+    $geracao->arquivo_nome = 'relatorio-planos-entrega.xlsx';
+    $geracao->iniciado_em = now();
+    $geracao->finalizado_em = now();
+    $geracao->erro_mensagem = null;
+
+    $dto = RelatorioGeracaoRowDTO::fromModel($geracao);
+
+    expect($dto->tipo)->toBe(RelatorioGeracaoTipo::PLANO_ENTREGA->value)
+        ->and($dto->nome)->toBe('Planos de Entrega');
+});

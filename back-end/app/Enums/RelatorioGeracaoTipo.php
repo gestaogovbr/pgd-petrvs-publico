@@ -6,12 +6,14 @@ enum RelatorioGeracaoTipo: string
 {
     case PLANO_TRABALHO = 'plano_trabalho';
     case PLANO_TRABALHO_DETALHADO = 'plano_trabalho_detalhado';
+    case PLANO_ENTREGA = 'plano_entrega';
 
     public function nome(): string
     {
         return match ($this) {
             self::PLANO_TRABALHO => 'Relatório de Planos de Trabalho',
             self::PLANO_TRABALHO_DETALHADO => 'Relatório de Planos de Trabalho (Períodos Avaliativos)',
+            self::PLANO_ENTREGA => 'Relatório de Planos de Entrega',
         };
     }
 
@@ -19,6 +21,7 @@ enum RelatorioGeracaoTipo: string
     {
         return match ($this) {
             self::PLANO_TRABALHO, self::PLANO_TRABALHO_DETALHADO => 'Planos de Trabalho',
+            self::PLANO_ENTREGA => 'Planos de Entrega',
         };
     }
 
@@ -26,6 +29,7 @@ enum RelatorioGeracaoTipo: string
     {
         return match ($this) {
             self::PLANO_TRABALHO, self::PLANO_TRABALHO_DETALHADO => 'planos_trabalho',
+            self::PLANO_ENTREGA => 'planos_entrega',
         };
     }
 
@@ -68,6 +72,7 @@ enum RelatorioGeracaoTipo: string
         return match ($this) {
             self::PLANO_TRABALHO => 'relatorio-planos-trabalho.xlsx',
             self::PLANO_TRABALHO_DETALHADO => 'relatorio-planos-trabalho-detalhado.xlsx',
+            self::PLANO_ENTREGA => 'relatorio-planos-entrega.xlsx',
         };
     }
 
@@ -75,6 +80,7 @@ enum RelatorioGeracaoTipo: string
     {
         return match ($this) {
             self::PLANO_TRABALHO, self::PLANO_TRABALHO_DETALHADO => 'MOD_RELATORIO_PT',
+            self::PLANO_ENTREGA => 'MOD_RELATORIO_PE',
         };
     }
 }

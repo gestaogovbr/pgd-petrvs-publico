@@ -3,6 +3,7 @@ import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioPlanoEntregaDaoService } from "src/app/dao/relatorio-plano-entrega-dao.service";
+import { RelatorioGeracaoDaoService } from "src/app/dao/relatorio-geracao-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 import { RelatorioPlanoEntrega } from "src/app/models/relatorio-plano-entrega.model";
@@ -24,6 +25,7 @@ import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.compone
 export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<RelatorioPlanoEntrega, RelatorioPlanoEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   public tipoAvaliacaoNotaDao: TipoAvaliacaoNotaDaoService;
+  public relatorioGeracaoDao: RelatorioGeracaoDaoService;
   public botoes: ToolbarButton[] = [];
   public tiposNotas: LookupItem[] = [];
   public permissao: string = 'MOD_RELATORIO_PE';
@@ -33,6 +35,7 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
       this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
       this.tipoAvaliacaoNotaDao = injector.get<TipoAvaliacaoNotaDaoService>(TipoAvaliacaoNotaDaoService);
+      this.relatorioGeracaoDao = injector.get<RelatorioGeracaoDaoService>(RelatorioGeracaoDaoService);
       this.title = "Relatório de Planos de Entrega";
       this.filter = this.fh.FormBuilder({
           unidade_id: { default: this.auth.unidade?.id },
@@ -197,8 +200,8 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    try{
-      return this.dao!.exportarXls({
+    try {
+      return this.relatorioGeracaoDao.solicitar('plano_entrega', {
         where: queryOptions.where,
         orderBy: queryOptions.orderBy
       });

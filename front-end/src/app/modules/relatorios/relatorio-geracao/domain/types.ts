@@ -11,21 +11,25 @@ export enum RelatorioGeracaoStatus {
 export enum RelatorioGeracaoTipo {
   PLANO_TRABALHO = 'plano_trabalho',
   PLANO_TRABALHO_DETALHADO = 'plano_trabalho_detalhado',
+  PLANO_ENTREGA = 'plano_entrega',
 }
 
 export const RELATORIO_GERACAO_GRUPO = {
   PLANOS_TRABALHO: 'planos_trabalho',
+  PLANOS_ENTREGA: 'planos_entrega',
 } as const;
 
 export type RelatorioGeracaoGrupo = (typeof RELATORIO_GERACAO_GRUPO)[keyof typeof RELATORIO_GERACAO_GRUPO];
 
 export const RELATORIO_GERACAO_GRUPO_LABEL: Record<RelatorioGeracaoGrupo, string> = {
   [RELATORIO_GERACAO_GRUPO.PLANOS_TRABALHO]: 'Planos de Trabalho',
+  [RELATORIO_GERACAO_GRUPO.PLANOS_ENTREGA]: 'Planos de Entrega',
 };
 
 export const RELATORIO_GERACAO_TIPO_GRUPO: Record<RelatorioGeracaoTipo, RelatorioGeracaoGrupo> = {
   [RelatorioGeracaoTipo.PLANO_TRABALHO]: RELATORIO_GERACAO_GRUPO.PLANOS_TRABALHO,
   [RelatorioGeracaoTipo.PLANO_TRABALHO_DETALHADO]: RELATORIO_GERACAO_GRUPO.PLANOS_TRABALHO,
+  [RelatorioGeracaoTipo.PLANO_ENTREGA]: RELATORIO_GERACAO_GRUPO.PLANOS_ENTREGA,
 };
 
 export function grupoRelatorio(tipo: string | null | undefined): RelatorioGeracaoGrupo | null {
@@ -35,7 +39,14 @@ export function grupoRelatorio(tipo: string | null | undefined): RelatorioGeraca
   if (tipo === RELATORIO_GERACAO_GRUPO.PLANOS_TRABALHO) {
     return RELATORIO_GERACAO_GRUPO.PLANOS_TRABALHO;
   }
-  if (tipo === RelatorioGeracaoTipo.PLANO_TRABALHO || tipo === RelatorioGeracaoTipo.PLANO_TRABALHO_DETALHADO) {
+  if (tipo === RELATORIO_GERACAO_GRUPO.PLANOS_ENTREGA) {
+    return RELATORIO_GERACAO_GRUPO.PLANOS_ENTREGA;
+  }
+  if (
+    tipo === RelatorioGeracaoTipo.PLANO_TRABALHO
+    || tipo === RelatorioGeracaoTipo.PLANO_TRABALHO_DETALHADO
+    || tipo === RelatorioGeracaoTipo.PLANO_ENTREGA
+  ) {
     return RELATORIO_GERACAO_TIPO_GRUPO[tipo];
   }
   return null;
