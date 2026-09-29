@@ -135,6 +135,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
             $this->atualizarVinculosUsuarios($cpfLimpo, $dadosFuncionais);
             $this->executarSincronizacaoFinal($cpfLimpo, $dadosFuncionais);
+            $this->persistirDadosPgdAposSincronizacaoFinal($cpfLimpo, $dadosFuncionais);
 
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_SUCESSO);
 
@@ -267,6 +268,79 @@ class SiapeIndividualServidorService extends ServiceBase
                     'cpf' => $cpf,
                     'matricula' => $matricula,
                     'campos' => array_keys($attributes),
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Reaplica os dados PGD do SIAPE depois da sincronização geral, que pode sobrescrevê-los.
+     * A correspondência exata da matrícula impede que dados de um vínculo sejam aplicados a outro.
+     *
+     * @param array<int, array<string, mixed>> $dadosFuncionais
+     */
+    private function persistirDadosPgdAposSincronizacaoFinal(string $cpf, array $dadosFuncionais): void
+    {
+        $atualizacoesPorMatricula = [];
+        $matriculasAmbiguas = [];
+
+        foreach (DadosFuncionaisSiapeDTO::listFromArray($dadosFuncionais) as $dados) {
+            $matricula = $dados->matriculaSiape();
+            $atributosPgd = array_intersect_key(
+                $dados->atributosUsuarioParciais(),
+                array_fill_keys(self::CAMPOS_PGD_ATUALIZACAO_FUNCIONAL, true)
+            );
+
+            if ($matricula === null || $atributosPgd === []) {
+                continue;
+            }
+
+            if (array_key_exists($matricula, $atualizacoesPorMatricula)) {
+                $matriculasAmbiguas[$matricula] = true;
+                unset($atualizacoesPorMatricula[$matricula]);
+                continue;
+            }
+
+            if (!isset($matriculasAmbiguas[$matricula])) {
+                $atualizacoesPorMatricula[$matricula] = $atributosPgd;
+            }
+        }
+
+        if ($atualizacoesPorMatricula === []) {
+            return;
+        }
+
+        $cpfMascarado = substr($cpf, 0, 3) . '***' . substr($cpf, -2);
+        $usuarios = $this->usuarioRepository->findAllByCpfUnfiltered($cpf);
+
+        DB::transaction(function () use ($atualizacoesPorMatricula, $usuarios, $cpfMascarado): void {
+            foreach ($atualizacoesPorMatricula as $matricula => $atributosPgd) {
+                $usuariosDaMatricula = $usuarios->filter(
+                    fn (Usuario $usuario): bool => (string) $usuario->matricula === (string) $matricula
+                );
+
+                if ($usuariosDaMatricula->count() !== 1) {
+                    SiapeLog::warning('Dados PGD da carga individual sem usuário com matrícula única', [
+                        'cpf_mascarado' => $cpfMascarado,
+                        'quantidade_usuarios' => $usuariosDaMatricula->count(),
+                    ]);
+                    continue;
+                }
+
+                /** @var Usuario $usuario */
+                $usuario = $usuariosDaMatricula->first();
+                $usuarioAtualizado = $this->usuarioRepository->update($usuario->id, $atributosPgd);
+
+                if ($usuarioAtualizado === null) {
+                    SiapeLog::warning('Dados PGD da carga individual não persistidos após sincronização', [
+                        'cpf_mascarado' => $cpfMascarado,
+                    ]);
+                    continue;
+                }
+
+                SiapeLog::info('Dados PGD da carga individual persistidos após sincronização', [
+                    'cpf_mascarado' => $cpfMascarado,
+                    'campos' => array_keys($atributosPgd),
                 ]);
             }
         });

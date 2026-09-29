@@ -2,6 +2,7 @@
 
 namespace Tests\IntegrationTenant\Services;
 
+use App\Models\CargaIndividualSiapeRelatorio;
 use App\Models\Perfil;
 use App\Models\SiapeListaUORGS;
 use App\Models\Unidade;
@@ -39,7 +40,7 @@ afterEach(function () {
     Mockery::close();
 });
 
-test('issue 2423 - carga deve persistir dados PGD quando a sincronizacao final nao os aplica', function () {
+test('issue 2423 - carga deve persistir e relatar dados PGD mesmo quando a sincronizacao final os sobrescreve', function () {
     $cpf = '52998224725';
     $matricula = '2423101';
     $codigoUnidade = '24231';
@@ -171,7 +172,18 @@ test('issue 2423 - carga deve persistir dados PGD quando a sincronizacao final n
     $buscarDadosUnidades->shouldReceive('listaUorgs')->andReturnNull();
 
     $integracaoService = Mockery::mock(IntegracaoService::class);
-    $integracaoService->shouldReceive('sincronizar')->zeroOrMoreTimes()->andReturn([]);
+    $sincronizacoesExecutadas = 0;
+    $integracaoService->shouldReceive('sincronizar')
+        ->zeroOrMoreTimes()
+        ->andReturnUsing(function () use ($usuario, &$sincronizacoesExecutadas): array {
+            $sincronizacoesExecutadas++;
+            $usuario->forceFill([
+                'modalidade_pgd' => null,
+                'participa_pgd' => 'não',
+            ])->save();
+
+            return [];
+        });
 
     $integracaoServiceFactory = Mockery::mock(IntegracaoServiceFactory::class);
     $integracaoServiceFactory->shouldReceive('make')->andReturn($integracaoService);
@@ -201,13 +213,19 @@ test('issue 2423 - carga deve persistir dados PGD quando a sincronizacao final n
     $response->assertOk();
     $response->assertJsonPath('success', true);
     $response->assertJsonPath('relatorio_carga.status', 'parcial');
+    expect($sincronizacoesExecutadas)->toBeGreaterThan(0);
 
     $usuario->refresh();
+
+    $relatorio = CargaIndividualSiapeRelatorio::findOrFail($response->json('relatorio_carga.id'));
+    $camposRelatorio = collect($relatorio->secoes[0]['campos'])->keyBy('campo');
 
     expect($usuario->matricula)->toBe($matricula)
         ->and($usuario->modalidade_pgd)->toBe('integral')
         ->and($usuario->participa_pgd)->toBe('sim')
-        ->and($usuario->email)->toBe($emailAnterior);
+        ->and($usuario->email)->toBe($emailAnterior)
+        ->and($camposRelatorio->get('modalidadePGD')['status'])->toBe('confirmado')
+        ->and($camposRelatorio->get('participaPGD')['status'])->toBe('confirmado');
 });
 
 test('issue 2423 - dados pessoais validos nao devem aplicar PGD de nova matricula no vinculo antigo', function () {
