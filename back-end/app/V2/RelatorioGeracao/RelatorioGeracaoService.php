@@ -17,7 +17,7 @@ use App\Jobs\GerarRelatorioExcelJob;
 use App\Models\RelatorioGeracao;
 use App\Models\Usuario;
 use App\Repository\RelatorioGeracaoRepository;
-use App\Services\RelatorioAgenteService;
+use App\Services\RelatorioAgenteAuthorization;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoIndexDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoRowDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStatusQueryDTO;
@@ -34,6 +34,7 @@ class RelatorioGeracaoService
         private readonly RelatorioGeracaoRepository $repository,
         private readonly RelatorioGeracaoExcel $excel,
         private readonly RelatorioGeracaoStorage $storage,
+        private readonly RelatorioAgenteAuthorization $relatorioAgenteAuthorization,
     ) {
     }
 
@@ -79,7 +80,7 @@ class RelatorioGeracaoService
         $parametros = $dto->toParametros();
 
         if ($dto->tipo === RelatorioGeracaoTipo::AGENTE) {
-            $queryDto = app(RelatorioAgenteService::class)->aplicarFiltroParticipanteWhere(
+            $queryDto = $this->relatorioAgenteAuthorization->aplicarFiltroParticipante(
                 new RelatorioAgenteQueryDTO(
                     filters: RelatorioAgenteFiltersDTO::fromArray($dto->filters),
                     orderBy: $dto->orderBy,

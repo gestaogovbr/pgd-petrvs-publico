@@ -13,6 +13,7 @@ use App\Jobs\GerarRelatorioExcelJob;
 use App\Models\RelatorioGeracao;
 use App\Models\Usuario;
 use App\Repository\RelatorioGeracaoRepository;
+use App\Services\RelatorioAgenteAuthorization;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoIndexDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoRowDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStatusQueryDTO;
@@ -63,11 +64,13 @@ function makeRelatorioGeracaoService(
     RelatorioGeracaoRepository $repository,
     ?RelatorioGeracaoExcel $excel = null,
     ?RelatorioGeracaoStorage $storage = null,
+    ?RelatorioAgenteAuthorization $relatorioAgenteAuthorization = null,
 ): RelatorioGeracaoService {
     return new RelatorioGeracaoService(
         $repository,
         $excel ?? Mockery::mock(RelatorioGeracaoExcel::class),
         $storage ?? new RelatorioGeracaoStorage(),
+        $relatorioAgenteAuthorization ?? Mockery::mock(RelatorioAgenteAuthorization::class),
     );
 }
 

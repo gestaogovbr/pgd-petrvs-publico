@@ -7,7 +7,7 @@ use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\ServerException;
 use App\Exports\RelatorioAgenteExport;
 use App\Http\Controllers\ControllerBase;
-use App\Models\Usuario;
+use App\Services\RelatorioAgenteAuthorization;
 use App\Services\RelatorioAgenteService;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -28,10 +28,8 @@ class RelatorioAgenteController extends ControllerBase
     public function query(Request $request)
     {
         $usuario = $this->getUsuario($request);
-
-        if (!$usuario->hasPermissionTo('MOD_RELATORIO_USUARIO')) {
-            throw new ServerException("RelatorioAgente", "Acesso negado ao relatório de Agentes.");
-        }
+        $authorization = app(RelatorioAgenteAuthorization::class);
+        $authorization->assertPodeConsultar($usuario);
 
         try {
             $validated = $request->validate([
@@ -63,13 +61,12 @@ class RelatorioAgenteController extends ControllerBase
                 'filters.somente_vigentes' => ['nullable', 'boolean'],
             ]);
 
-            $queryDto = $this->applyFiltroParticipante(
+            $queryDto = $authorization->aplicarFiltroParticipante(
                 RelatorioAgenteQueryDTO::fromValidatedRequest($validated),
                 $usuario,
             );
 
-            $service = new RelatorioAgenteService();
-            $result = $service->query($queryDto->toQueryArray());
+            $result = app(RelatorioAgenteService::class)->query($queryDto->toQueryArray());
 
             if ($request->is('*/xls')) {
                 return Excel::download(
@@ -90,13 +87,5 @@ class RelatorioAgenteController extends ControllerBase
             report($e);
             return response()->json(['error' => "Ocorreu um erro inesperado."], 500);
         }
-    }
-
-    /**
-     * Perfil participante vê apenas seus próprios dados.
-     */
-    private function applyFiltroParticipante(RelatorioAgenteQueryDTO $dto, Usuario $usuario): RelatorioAgenteQueryDTO
-    {
-        return (new RelatorioAgenteService())->aplicarFiltroParticipanteWhere($dto, $usuario);
     }
 }
