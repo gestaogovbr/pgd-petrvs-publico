@@ -34,25 +34,6 @@ final class RelatorioAgenteQueryDTO
         );
     }
 
-    /**
-     * @param array{filters?: array<string, mixed>, where?: array<int, mixed>, orderBy?: array<int, mixed>} $parametros
-     */
-    public static function fromParametros(array $parametros): self
-    {
-        $filters = is_array($parametros['filters'] ?? null)
-            ? RelatorioAgenteFiltersDTO::fromArray($parametros['filters'])
-            : RelatorioAgenteFiltersDTO::fromArray(
-                self::filtersFromLegacyWhere(
-                    is_array($parametros['where'] ?? null) ? $parametros['where'] : []
-                )
-            );
-
-        return new self(
-            filters: $filters,
-            orderBy: is_array($parametros['orderBy'] ?? null) ? $parametros['orderBy'] : [],
-        );
-    }
-
     public function withFilters(RelatorioAgenteFiltersDTO $filters): self
     {
         return new self(
@@ -76,30 +57,5 @@ final class RelatorioAgenteQueryDTO
             'limit' => $this->limit,
             'deleted' => $this->deleted,
         ];
-    }
-
-    /**
-     * Compatibilidade com gerações antigas que persistiram apenas `where`.
-     *
-     * @param array<int, mixed> $where
-     * @return array<string, mixed>
-     */
-    private static function filtersFromLegacyWhere(array $where): array
-    {
-        $filters = [];
-        foreach ($where as $condition) {
-            if (! is_array($condition) || ! isset($condition[0])) {
-                continue;
-            }
-            $field = (string) $condition[0];
-            $value = $condition[2] ?? null;
-            match ($field) {
-                'incluir_unidades_subordinadas' => $filters[$field] = true,
-                'somente_vigentes' => $filters[$field] = $value,
-                default => $filters[$field] = $value,
-            };
-        }
-
-        return $filters;
     }
 }

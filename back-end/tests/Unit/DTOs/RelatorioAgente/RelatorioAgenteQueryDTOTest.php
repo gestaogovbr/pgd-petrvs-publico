@@ -134,16 +134,3 @@ test('query dto withFilters preserva paginação e ordenação', function () {
         ->and($atualizado->page)->toBe(1)
         ->and($atualizado->limit)->toBe(10);
 });
-
-test('query dto aceita where legado em parametros antigos', function () {
-    $dto = RelatorioAgenteQueryDTO::fromParametros([
-        'where' => [
-            ['unidade_id', '==', 'u-1'],
-            ['nome', 'like', '%Ana%'],
-        ],
-        'orderBy' => [['nome', 'asc']],
-    ]);
-
-    expect($dto->filters->unidadeId)->toBe('u-1')
-        ->and($dto->filters->nome)->toBe('Ana');
-});

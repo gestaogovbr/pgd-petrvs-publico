@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\RelatorioGeracao;
 
+use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
 use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
 use App\Enums\RelatorioGeracaoStatus;
 use App\Enums\RelatorioGeracaoTipo;
@@ -78,7 +79,10 @@ class RelatorioGeracaoService
 
         if ($dto->tipo === RelatorioGeracaoTipo::AGENTE) {
             $queryDto = app(RelatorioAgenteService::class)->aplicarFiltroParticipanteWhere(
-                RelatorioAgenteQueryDTO::fromParametros($parametros),
+                new RelatorioAgenteQueryDTO(
+                    filters: RelatorioAgenteFiltersDTO::fromArray($dto->filters),
+                    orderBy: $dto->orderBy,
+                ),
                 $usuario,
             );
             $parametros = [
