@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
 use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\ServerException;
 use App\Exports\RelatorioAgenteExport;
 use App\Http\Controllers\ControllerBase;
+use App\Models\Usuario;
 use App\Services\RelatorioAgenteService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Throwable;
 
@@ -33,7 +34,7 @@ class RelatorioAgenteController extends ControllerBase
         }
 
         try {
-            $data = $request->validate([
+            $validated = $request->validate([
                 'page' => ['nullable'],
                 'limit' => ['nullable'],
                 'orderBy' => ['array'],
@@ -41,10 +42,13 @@ class RelatorioAgenteController extends ControllerBase
                 'where' => ['array'],
             ]);
 
-            $data = $this->applyFiltroParticipante($data, $usuario);
+            $queryDto = $this->applyFiltroParticipante(
+                RelatorioAgenteQueryDTO::fromValidatedRequest($validated),
+                $usuario,
+            );
 
             $service = new RelatorioAgenteService();
-            $result = $service->query($data);
+            $result = $service->query($queryDto->toQueryArray());
 
             if ($request->is('*/xls')) {
                 return Excel::download(
@@ -70,11 +74,8 @@ class RelatorioAgenteController extends ControllerBase
     /**
      * Perfil participante vê apenas seus próprios dados.
      */
-    private function applyFiltroParticipante(array $data, $usuario): array
+    private function applyFiltroParticipante(RelatorioAgenteQueryDTO $dto, Usuario $usuario): RelatorioAgenteQueryDTO
     {
-        $service = new RelatorioAgenteService();
-        $data['where'] = $service->aplicarFiltroParticipanteWhere($data['where'] ?? [], $usuario);
-
-        return $data;
+        return (new RelatorioAgenteService())->aplicarFiltroParticipanteWhere($dto, $usuario);
     }
 }

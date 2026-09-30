@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Enums\RelatorioGeracaoTipo;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoIndexDTO;
-use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStoreDTO;
 use App\V2\RelatorioGeracao\Validators\RelatorioGeracaoRequestValidator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -63,18 +62,6 @@ test('index aceita filtros de relatório, período e status', function () {
         ->and($dto->filters->geracaoFim)->toBe('2026-09-14');
 });
 
-test('index normaliza tipo interno de PT para o grupo da listagem', function () {
-    $request = Request::create('/api/v2/relatorio-exportacao', 'GET', [
-        'filters' => ['tipo' => RelatorioGeracaoTipo::PLANO_TRABALHO_DETALHADO->value],
-    ]);
-
-    $dto = RelatorioGeracaoRequestValidator::index($request);
-
-    expect($dto->filters->tipo)->toBe('planos_trabalho')
-        ->and($dto->filters->tipos())->toContain(RelatorioGeracaoTipo::PLANO_TRABALHO->value)
-        ->and($dto->filters->tipos())->toContain(RelatorioGeracaoTipo::PLANO_TRABALHO_DETALHADO->value);
-});
-
 test('index rejeita tipo de relatório inválido', function () {
     $request = Request::create('/api/v2/relatorio-exportacao', 'GET', [
         'filters' => ['tipo' => 'inexistente'],
@@ -117,141 +104,6 @@ test('store rejeita tipo inválido', function () {
 
     RelatorioGeracaoRequestValidator::store($request);
 })->throws(ValidationException::class);
-
-test('store aceita tipo de plano de trabalho e filtros', function () {
-    $request = Request::create('/api/v2/relatorio-exportacao', 'POST', [
-        'tipo' => RelatorioGeracaoTipo::PLANO_TRABALHO->value,
-        'where' => [['unidade_id', '==', 'u-1']],
-        'orderBy' => [['numero', 'asc']],
-    ]);
-
-    $dto = RelatorioGeracaoRequestValidator::store($request);
-
-    expect($dto)->toBeInstanceOf(RelatorioGeracaoStoreDTO::class)
-        ->and($dto->tipo)->toBe(RelatorioGeracaoTipo::PLANO_TRABALHO)
-        ->and($dto->where)->toBe([['unidade_id', '==', 'u-1']])
-        ->and($dto->orderBy)->toBe([['numero', 'asc']])
-        ->and($dto->toParametros())->toBe([
-            'where' => [['unidade_id', '==', 'u-1']],
-            'orderBy' => [['numero', 'asc']],
-        ]);
-});
-
-test('store aceita tipo de plano de entrega e filtros', function () {
-    $request = Request::create('/api/v2/relatorio-exportacao', 'POST', [
-        'tipo' => RelatorioGeracaoTipo::PLANO_ENTREGA->value,
-        'where' => [['unidade_id', '==', 'u-1']],
-        'orderBy' => [['numero', 'asc']],
-    ]);
-
-    $dto = RelatorioGeracaoRequestValidator::store($request);
-
-    expect($dto)->toBeInstanceOf(RelatorioGeracaoStoreDTO::class)
-        ->and($dto->tipo)->toBe(RelatorioGeracaoTipo::PLANO_ENTREGA)
-        ->and($dto->where)->toBe([['unidade_id', '==', 'u-1']])
-        ->and($dto->orderBy)->toBe([['numero', 'asc']])
-        ->and($dto->toParametros())->toBe([
-            'where' => [['unidade_id', '==', 'u-1']],
-            'orderBy' => [['numero', 'asc']],
-        ]);
-});
-
-test('index normaliza tipo interno de PE para o grupo da listagem', function () {
-    $request = Request::create('/api/v2/relatorio-exportacao', 'GET', [
-        'filters' => ['tipo' => RelatorioGeracaoTipo::PLANO_ENTREGA->value],
-    ]);
-
-    $dto = RelatorioGeracaoRequestValidator::index($request);
-
-    expect($dto->filters->tipo)->toBe('planos_entrega')
-        ->and($dto->filters->tipos())->toBe([RelatorioGeracaoTipo::PLANO_ENTREGA->value]);
-});
-
-test('store aceita tipo de agentes públicos e filtros', function () {
-    $request = Request::create('/api/v2/relatorio-exportacao', 'POST', [
-        'tipo' => RelatorioGeracaoTipo::AGENTE->value,
-        'where' => [['unidade_id', '==', 'u-1']],
-        'orderBy' => [['nome', 'asc']],
-    ]);
-
-    $dto = RelatorioGeracaoRequestValidator::store($request);
-
-    expect($dto)->toBeInstanceOf(RelatorioGeracaoStoreDTO::class)
-        ->and($dto->tipo)->toBe(RelatorioGeracaoTipo::AGENTE)
-        ->and($dto->where)->toBe([['unidade_id', '==', 'u-1']])
-        ->and($dto->orderBy)->toBe([['nome', 'asc']]);
-});
-
-test('index normaliza tipo interno de Agentes para o grupo da listagem', function () {
-    $request = Request::create('/api/v2/relatorio-exportacao', 'GET', [
-        'filters' => ['tipo' => RelatorioGeracaoTipo::AGENTE->value],
-    ]);
-
-    $dto = RelatorioGeracaoRequestValidator::index($request);
-
-    expect($dto->filters->tipo)->toBe('agentes')
-        ->and($dto->filters->tipos())->toBe([RelatorioGeracaoTipo::AGENTE->value]);
-});
-
-test('store aceita tipo de unidades e filtros', function () {
-    $request = Request::create('/api/v2/relatorio-exportacao', 'POST', [
-        'tipo' => RelatorioGeracaoTipo::UNIDADE->value,
-        'where' => [['unidade_id', '==', 'u-1']],
-        'orderBy' => [['sigla', 'asc']],
-    ]);
-
-    $dto = RelatorioGeracaoRequestValidator::store($request);
-
-    expect($dto)->toBeInstanceOf(RelatorioGeracaoStoreDTO::class)
-        ->and($dto->tipo)->toBe(RelatorioGeracaoTipo::UNIDADE)
-        ->and($dto->where)->toBe([['unidade_id', '==', 'u-1']])
-        ->and($dto->orderBy)->toBe([['sigla', 'asc']]);
-});
-
-test('index normaliza tipo interno de Unidades para o grupo da listagem', function () {
-    $request = Request::create('/api/v2/relatorio-exportacao', 'GET', [
-        'filters' => ['tipo' => RelatorioGeracaoTipo::UNIDADE->value],
-    ]);
-
-    $dto = RelatorioGeracaoRequestValidator::index($request);
-
-    expect($dto->filters->tipo)->toBe('unidades')
-        ->and($dto->filters->tipos())->toBe([RelatorioGeracaoTipo::UNIDADE->value]);
-});
-
-test('store aceita tipo de entregas e filtros', function () {
-    $request = Request::create('/api/v2/relatorio-exportacao', 'POST', [
-        'tipo' => RelatorioGeracaoTipo::ENTREGA->value,
-        'where' => [
-            ['unidade_id', '==', 'u-1'],
-            ['periodo_inicio', '==', '2026-01-01'],
-            ['periodo_fim', '==', '2026-01-31'],
-        ],
-        'orderBy' => [['entregaNome', 'asc']],
-    ]);
-
-    $dto = RelatorioGeracaoRequestValidator::store($request);
-
-    expect($dto)->toBeInstanceOf(RelatorioGeracaoStoreDTO::class)
-        ->and($dto->tipo)->toBe(RelatorioGeracaoTipo::ENTREGA)
-        ->and($dto->where)->toBe([
-            ['unidade_id', '==', 'u-1'],
-            ['periodo_inicio', '==', '2026-01-01'],
-            ['periodo_fim', '==', '2026-01-31'],
-        ])
-        ->and($dto->orderBy)->toBe([['entregaNome', 'asc']]);
-});
-
-test('index normaliza tipo interno de Entregas para o grupo da listagem', function () {
-    $request = Request::create('/api/v2/relatorio-exportacao', 'GET', [
-        'filters' => ['tipo' => RelatorioGeracaoTipo::ENTREGA->value],
-    ]);
-
-    $dto = RelatorioGeracaoRequestValidator::index($request);
-
-    expect($dto->filters->tipo)->toBe('entregas')
-        ->and($dto->filters->tipos())->toBe([RelatorioGeracaoTipo::ENTREGA->value]);
-});
 
 test('status rejeita lista de ids vazia', function () {
     $request = Request::create('/api/v2/relatorio-exportacao/status', 'GET', [

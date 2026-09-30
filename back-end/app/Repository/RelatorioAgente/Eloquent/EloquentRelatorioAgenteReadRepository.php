@@ -178,12 +178,7 @@ TEXT;
         $count = $total[0]->total;
 
         $sql .= ' ORDER BY u.nome ASC';
-
-        if (!empty($data['limit'])) {
-            $limit = max(1, (int) $data['limit']);
-            $page = max(1, (int) ($data['page'] ?? 1));
-            $sql .= ' LIMIT ' . $limit . ' OFFSET ' . (($page - 1) * $limit);
-        }
+        $this->applyPaginacao($sql, $data);
 
         $rows = DB::select($sql, $params);
 
@@ -191,6 +186,35 @@ TEXT;
             'count' => $count,
             'rows' => collect($rows),
         ];
+    }
+
+    /**
+     * @param array{page?: mixed, limit?: mixed} $data
+     */
+    private function applyPaginacao(string &$sql, array $data): void
+    {
+        if (empty($data['limit'])) {
+            return;
+        }
+
+        $limit = $this->resolverLimit($data['limit']);
+        $offset = $this->resolverOffset($data['page'] ?? 1, $limit);
+        $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
+    }
+
+    private function resolverLimit(mixed $limit): int
+    {
+        return max(1, (int) $limit);
+    }
+
+    private function resolverPage(mixed $page): int
+    {
+        return max(1, (int) $page);
+    }
+
+    private function resolverOffset(mixed $page, int $limit): int
+    {
+        return ($this->resolverPage($page) - 1) * $limit;
     }
 
     private function applyFiltros(array &$data, string &$sql, array &$params): void

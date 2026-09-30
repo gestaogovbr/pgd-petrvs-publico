@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\RelatorioGeracao;
 
+use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
 use App\Enums\RelatorioGeracaoStatus;
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\NotFoundException;
@@ -76,8 +77,11 @@ class RelatorioGeracaoService
         $parametros = $dto->toParametros();
 
         if ($dto->tipo === RelatorioGeracaoTipo::AGENTE) {
-            $parametros['where'] = app(RelatorioAgenteService::class)
-                ->aplicarFiltroParticipanteWhere($parametros['where'], $usuario);
+            $queryDto = app(RelatorioAgenteService::class)->aplicarFiltroParticipanteWhere(
+                new RelatorioAgenteQueryDTO(where: $parametros['where'], orderBy: $parametros['orderBy']),
+                $usuario,
+            );
+            $parametros['where'] = $queryDto->where;
         }
 
         $geracao = $this->repository->create([

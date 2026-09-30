@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Contracts\RelatorioExcelGeradorContract;
+use App\DTOs\RelatorioGeracao\RelatorioExcelConsultaPaginaDTO;
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exports\RelatorioExcelPaginadoExport;
 use App\Exports\RelatorioExcelPaginadoWriter;
@@ -90,7 +91,12 @@ test('gerar consulta a página com os parâmetros da geração e reporta progres
     $gerador->shouldReceive('arquivoNome')->once()->andReturn('relatorio-planos-trabalho.xlsx');
     $gerador->shouldReceive('consultarPagina')
         ->once()
-        ->with($geracao->parametros, 1, 250)
+        ->with(Mockery::on(function (RelatorioExcelConsultaPaginaDTO $consulta) use ($geracao): bool {
+            return $consulta->where === $geracao->parametros['where']
+                && $consulta->orderBy === $geracao->parametros['orderBy']
+                && $consulta->page === 1
+                && $consulta->limit === 250;
+        }))
         ->andReturn(['count' => 0, 'rows' => []]);
 
     $excel = makeRelatorioGeracaoExcelSut(
@@ -118,7 +124,12 @@ test('gerar usa lista vazia quando a geração não tem parâmetros', function (
     $gerador->shouldReceive('arquivoNome')->once()->andReturn('relatorio-planos-trabalho.xlsx');
     $gerador->shouldReceive('consultarPagina')
         ->once()
-        ->with([], 1, 500)
+        ->with(Mockery::on(function (RelatorioExcelConsultaPaginaDTO $consulta): bool {
+            return $consulta->where === []
+                && $consulta->orderBy === []
+                && $consulta->page === 1
+                && $consulta->limit === 500;
+        }))
         ->andReturn(['count' => 0, 'rows' => []]);
 
     $excel = makeRelatorioGeracaoExcelSut(

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\RelatorioGeracao;
 
 use App\Contracts\RelatorioExcelGeradorContract;
+use App\DTOs\RelatorioGeracao\RelatorioExcelConsultaPaginaDTO;
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exports\RelatorioExcelPaginadoExport;
 use App\Exports\RelatorioExcelPaginadoWriter;
@@ -31,7 +32,13 @@ class RelatorioGeracaoExcel
 
         $export = new RelatorioExcelPaginadoExport(
             $gerador->criarExport(),
-            fn (int $page, int $limit): array => $gerador->consultarPagina($geracao->parametros ?? [], $page, $limit),
+            fn (int $page, int $limit): array => $gerador->consultarPagina(
+                RelatorioExcelConsultaPaginaDTO::fromParametros(
+                    is_array($geracao->parametros) ? $geracao->parametros : null,
+                    $page,
+                    $limit,
+                )
+            ),
             $gerador->pageSize(),
             $onProgress,
         );

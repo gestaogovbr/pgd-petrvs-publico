@@ -3,6 +3,7 @@
 namespace App\Services\RelatorioGeracao;
 
 use App\Contracts\RelatorioExcelGeradorContract;
+use App\DTOs\RelatorioGeracao\RelatorioExcelConsultaPaginaDTO;
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exports\RelatorioEntregaExport;
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaIndexFiltersDTO;
@@ -36,10 +37,10 @@ class RelatorioEntregaExcelGerador implements RelatorioExcelGeradorContract
         return new RelatorioEntregaExport(new Collection());
     }
 
-    public function consultarPagina(array $parametros, int $page, int $limit): array
+    public function consultarPagina(RelatorioExcelConsultaPaginaDTO $consulta): array
     {
         $result = $this->service->queryForExport(
-            $this->parametrosParaQuery($parametros, $page, $limit),
+            $this->consultaParaQuery($consulta),
             $this->totalCount,
         );
 
@@ -48,13 +49,10 @@ class RelatorioEntregaExcelGerador implements RelatorioExcelGeradorContract
         return $result;
     }
 
-    /**
-     * @param array{where?: array, orderBy?: array} $parametros
-     */
-    private function parametrosParaQuery(array $parametros, int $page, int $limit): RelatorioEntregaQueryDTO
+    private function consultaParaQuery(RelatorioExcelConsultaPaginaDTO $consulta): RelatorioEntregaQueryDTO
     {
         $filters = [];
-        foreach ($parametros['where'] ?? [] as $condition) {
+        foreach ($consulta->where as $condition) {
             if (! is_array($condition) || ! isset($condition[0])) {
                 continue;
             }
@@ -71,14 +69,14 @@ class RelatorioEntregaExcelGerador implements RelatorioExcelGeradorContract
             };
         }
 
-        $orderBy = $parametros['orderBy'] ?? [];
+        $orderBy = $consulta->orderBy;
         if ($orderBy === []) {
             $orderBy = [['unidadeHierarquia', 'asc'], ['entregaNome', 'asc']];
         }
 
         return new RelatorioEntregaQueryDTO(
-            page: max(1, $page),
-            limit: max(1, $limit),
+            page: $consulta->page,
+            limit: $consulta->limit,
             filters: RelatorioEntregaIndexFiltersDTO::fromArray($filters),
             orderBy: $orderBy,
         );

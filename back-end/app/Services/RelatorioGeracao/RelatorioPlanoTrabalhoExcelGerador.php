@@ -3,6 +3,7 @@
 namespace App\Services\RelatorioGeracao;
 
 use App\Contracts\RelatorioExcelGeradorContract;
+use App\DTOs\RelatorioGeracao\RelatorioExcelConsultaPaginaDTO;
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exports\RelatorioPlanoTrabalhoExport;
 use App\Services\RelatorioPlanoTrabalhoService;
@@ -34,13 +35,13 @@ class RelatorioPlanoTrabalhoExcelGerador implements RelatorioExcelGeradorContrac
         return new RelatorioPlanoTrabalhoExport(new Collection());
     }
 
-    public function consultarPagina(array $parametros, int $page, int $limit): array
+    public function consultarPagina(RelatorioExcelConsultaPaginaDTO $consulta): array
     {
         $result = $this->service->queryForExport([
-            'page' => $page,
-            'limit' => $limit,
-            'where' => $parametros['where'] ?? [],
-            'orderBy' => $parametros['orderBy'] ?? [],
+            'page' => $consulta->page,
+            'limit' => $consulta->limit,
+            'where' => $consulta->where,
+            'orderBy' => $consulta->orderBy,
         ], $this->totalCount);
 
         $this->totalCount = (int) $result['count'];
