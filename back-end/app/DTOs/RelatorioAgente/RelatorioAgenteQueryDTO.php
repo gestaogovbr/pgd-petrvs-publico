@@ -51,7 +51,7 @@ final class RelatorioAgenteQueryDTO
     public function toQueryArray(): array
     {
         return [
-            'where' => $this->filters->toWhereArray(),
+            'where' => RelatorioAgenteWhereMapper::map($this->filters),
             'orderBy' => $this->orderBy,
             'page' => $this->page,
             'limit' => $this->limit,

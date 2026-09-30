@@ -6,6 +6,7 @@ namespace App\V2\RelatorioGeracao;
 
 use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
 use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
+use App\DTOs\RelatorioAgente\RelatorioAgenteWhereMapper;
 use App\Enums\RelatorioGeracaoStatus;
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\NotFoundException;
@@ -87,7 +88,7 @@ class RelatorioGeracaoService
             );
             $parametros = [
                 'filters' => $queryDto->filters->toArray(),
-                'where' => $queryDto->filters->toWhereArray(),
+                'where' => RelatorioAgenteWhereMapper::map($queryDto->filters),
                 'orderBy' => $queryDto->orderBy,
             ];
         }

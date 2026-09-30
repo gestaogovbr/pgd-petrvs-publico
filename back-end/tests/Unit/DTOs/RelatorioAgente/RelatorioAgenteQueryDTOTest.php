@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
 use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
+use App\DTOs\RelatorioAgente\RelatorioAgenteWhereMapper;
 
 test('filters dto mapeia objeto tipado da interface', function () {
     $filters = RelatorioAgenteFiltersDTO::fromArray([
@@ -51,7 +52,7 @@ test('filters dto mapeia objeto tipado da interface', function () {
         ->and($filters->somenteVigentes)->toBeTrue();
 });
 
-test('filters dto reconverte campos tipados para where legado', function () {
+test('where mapper converte filtros tipados para where legado', function () {
     $filters = new RelatorioAgenteFiltersDTO(
         unidadeId: 'u-1',
         incluirUnidadesSubordinadas: true,
@@ -60,7 +61,7 @@ test('filters dto reconverte campos tipados para where legado', function () {
         situacao: 'ATIVO',
     );
 
-    expect($filters->toWhereArray())->toBe([
+    expect(RelatorioAgenteWhereMapper::map($filters))->toBe([
         ['unidade_id', '==', 'u-1'],
         ['incluir_unidades_subordinadas', '==', 1],
         ['nome', 'like', '%Ana%'],
@@ -82,7 +83,7 @@ test('filters dto restringe ao usuário removendo filtros de unidade', function 
         ->and($restrito->incluirUnidadesSubordinadas)->toBeFalse()
         ->and($restrito->usuarioId)->toBe('user-9')
         ->and($restrito->nome)->toBe('Ana')
-        ->and($restrito->toWhereArray())->toBe([
+        ->and(RelatorioAgenteWhereMapper::map($restrito))->toBe([
             ['usuario_id', '==', 'user-9'],
             ['nome', 'like', '%Ana%'],
         ]);
