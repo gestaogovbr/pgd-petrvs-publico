@@ -8,9 +8,39 @@ use App\Enums\PerfilEnum;
 use App\Exceptions\ServerException;
 use App\Models\Usuario;
 use App\Services\RelatorioAgenteAuthorization;
+use App\Support\AuthenticatedUsuario;
 
 beforeEach(function () {
     $this->authorization = new RelatorioAgenteAuthorization();
+});
+
+afterEach(function () {
+    Mockery::close();
+});
+
+test('usuarioAutorizado devolve o usuário com capacidade MOD_RELATORIO_USUARIO', function () {
+    $usuario = Mockery::mock(Usuario::class);
+    $usuario->shouldReceive('hasPermissionTo')
+        ->once()
+        ->with(RelatorioAgenteAuthorization::CAPACIDADE)
+        ->andReturn(true);
+
+    Mockery::mock('alias:' . AuthenticatedUsuario::class)
+        ->shouldReceive('withAreasDeTrabalho')
+        ->once()
+        ->andReturn($usuario);
+
+    expect($this->authorization->usuarioAutorizado())->toBe($usuario);
+});
+
+test('usuarioAutorizado lança quando não há usuário autenticado', function () {
+    Mockery::mock('alias:' . AuthenticatedUsuario::class)
+        ->shouldReceive('withAreasDeTrabalho')
+        ->once()
+        ->andReturn(null);
+
+    expect(fn () => $this->authorization->usuarioAutorizado())
+        ->toThrow(ServerException::class, RelatorioAgenteAuthorization::MSG_ACESSO_NEGADO);
 });
 
 test('assertPodeConsultar libera usuário com capacidade MOD_RELATORIO_USUARIO', function () {

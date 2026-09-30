@@ -1,37 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
 use App\Exceptions\Contracts\IBaseException;
-use App\Exceptions\ServerException;
 use App\Exports\RelatorioAgenteExport;
-use App\Http\Controllers\ControllerBase;
 use App\Services\RelatorioAgenteAuthorization;
 use App\Services\RelatorioAgenteService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class RelatorioAgenteController extends ControllerBase
+class RelatorioAgenteController extends Controller
 {
-    protected function checkPermissions($action, $request, $service, $unidade, $usuario)
-    {
-        return true;
+    public function __construct(
+        private readonly RelatorioAgenteService $service,
+        private readonly RelatorioAgenteAuthorization $authorization,
+    ) {
     }
 
-    /**
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @throws ServerException
-     */
-    public function query(Request $request)
+    public function query(Request $request): JsonResponse|BinaryFileResponse
     {
-        $usuario = $this->getUsuario($request);
-        $authorization = app(RelatorioAgenteAuthorization::class);
-        $authorization->assertPodeConsultar($usuario);
-
         try {
+            $usuario = $this->authorization->usuarioAutorizado();
+
             $validated = $request->validate([
                 'page' => ['nullable'],
                 'limit' => ['nullable'],
@@ -61,12 +60,12 @@ class RelatorioAgenteController extends ControllerBase
                 'filters.somente_vigentes' => ['nullable', 'boolean'],
             ]);
 
-            $queryDto = $authorization->aplicarFiltroParticipante(
+            $queryDto = $this->authorization->aplicarFiltroParticipante(
                 RelatorioAgenteQueryDTO::fromValidatedRequest($validated),
                 $usuario,
             );
 
-            $result = app(RelatorioAgenteService::class)->query($queryDto->toQueryArray());
+            $result = $this->service->query($queryDto->toQueryArray());
 
             if ($request->is('*/xls')) {
                 return Excel::download(
@@ -81,11 +80,26 @@ class RelatorioAgenteController extends ControllerBase
                 'rows' => $result['rows'],
                 'extra' => [],
             ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'error' => collect($e->errors())->flatten()->first() ?? $e->getMessage(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            return response()->json(['error' => $e->getMessage()], $this->statusFromException($e));
         } catch (Throwable $e) {
-            report($e);
-            return response()->json(['error' => "Ocorreu um erro inesperado."], 500);
+            Log::error(throwableToArrayLog($e));
+
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private function statusFromException(IBaseException $e): int
+    {
+        $code = (int) $e->getCode();
+        if ($code >= 400 && $code < 600) {
+            return $code;
+        }
+
+        return Response::HTTP_BAD_REQUEST;
     }
 }
