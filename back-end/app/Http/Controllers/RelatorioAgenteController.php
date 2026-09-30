@@ -85,21 +85,11 @@ class RelatorioAgenteController extends Controller
                 'error' => collect($e->errors())->flatten()->first() ?? $e->getMessage(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], $this->statusFromException($e));
+            return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
 
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private function statusFromException(IBaseException $e): int
-    {
-        $code = (int) $e->getCode();
-        if ($code >= 400 && $code < 600) {
-            return $code;
-        }
-
-        return Response::HTTP_BAD_REQUEST;
     }
 }

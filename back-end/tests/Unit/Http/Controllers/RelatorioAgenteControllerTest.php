@@ -93,7 +93,7 @@ test('query rejeita acesso sem autorização', function () {
     )->query(Request::create('/api/RelatorioAgente/query', 'POST', []));
 
     expect($response)->toBeInstanceOf(JsonResponse::class)
-        ->and($response->getStatusCode())->toBe(Response::HTTP_BAD_REQUEST)
+        ->and($response->getStatusCode())->toBe(Response::HTTP_FORBIDDEN)
         ->and($response->getData(true)['error'])->toContain(RelatorioAgenteAuthorization::MSG_ACESSO_NEGADO);
 });
 

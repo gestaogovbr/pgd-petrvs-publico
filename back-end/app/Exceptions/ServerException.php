@@ -81,6 +81,7 @@ class ServerException extends Exception implements IBaseException
     private function httpStatusForExceptionCode(string $code): int
     {
         return match ($code) {
+            'RelatorioAgente' => Response::HTTP_FORBIDDEN,
             'RelatorioEnvioParticipantes' => Response::HTTP_FORBIDDEN,
             'RelatorioEnvioPlanoTrabalho' => Response::HTTP_FORBIDDEN,
             'RelatorioEnvioPlanoEntrega' => Response::HTTP_FORBIDDEN,
