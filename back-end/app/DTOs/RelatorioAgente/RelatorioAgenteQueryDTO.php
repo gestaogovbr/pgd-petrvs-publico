@@ -7,11 +7,10 @@ namespace App\DTOs\RelatorioAgente;
 final class RelatorioAgenteQueryDTO
 {
     /**
-     * @param array<int, mixed> $where
-     * @param array<int, mixed> $orderBy
+     * @param list<array{0: string, 1: string}>|array<int, mixed> $orderBy
      */
     public function __construct(
-        public readonly array $where = [],
+        public readonly RelatorioAgenteFiltersDTO $filters = new RelatorioAgenteFiltersDTO(),
         public readonly array $orderBy = [],
         public readonly mixed $page = null,
         public readonly mixed $limit = null,
@@ -24,8 +23,10 @@ final class RelatorioAgenteQueryDTO
      */
     public static function fromValidatedRequest(array $validated): self
     {
+        $where = is_array($validated['where'] ?? null) ? $validated['where'] : [];
+
         return new self(
-            where: is_array($validated['where'] ?? null) ? $validated['where'] : [],
+            filters: RelatorioAgenteFiltersDTO::fromWhere($where),
             orderBy: is_array($validated['orderBy'] ?? null) ? $validated['orderBy'] : [],
             page: $validated['page'] ?? null,
             limit: $validated['limit'] ?? null,
@@ -34,12 +35,22 @@ final class RelatorioAgenteQueryDTO
     }
 
     /**
-     * @param array<int, mixed> $where
+     * @param array{where?: array<int, mixed>, orderBy?: array<int, mixed>} $parametros
      */
-    public function withWhere(array $where): self
+    public static function fromParametros(array $parametros): self
     {
         return new self(
-            where: $where,
+            filters: RelatorioAgenteFiltersDTO::fromWhere(
+                is_array($parametros['where'] ?? null) ? $parametros['where'] : []
+            ),
+            orderBy: is_array($parametros['orderBy'] ?? null) ? $parametros['orderBy'] : [],
+        );
+    }
+
+    public function withFilters(RelatorioAgenteFiltersDTO $filters): self
+    {
+        return new self(
+            filters: $filters,
             orderBy: $this->orderBy,
             page: $this->page,
             limit: $this->limit,
@@ -48,12 +59,12 @@ final class RelatorioAgenteQueryDTO
     }
 
     /**
-     * @return array{where: array<int, mixed>, orderBy: array<int, mixed>, page: mixed, limit: mixed, deleted: mixed}
+     * @return array{where: list<array{0: string, 1: string, 2: mixed}>, orderBy: array<int, mixed>, page: mixed, limit: mixed, deleted: mixed}
      */
     public function toQueryArray(): array
     {
         return [
-            'where' => $this->where,
+            'where' => $this->filters->toWhereArray(),
             'orderBy' => $this->orderBy,
             'page' => $this->page,
             'limit' => $this->limit,

@@ -73,8 +73,8 @@ class RelatorioAgenteService extends ServiceBase
             return $dto;
         }
 
-        return $dto->withWhere(
-            $this->whereRestritoAoUsuario($dto->where, (string) $usuario->id)
+        return $dto->withFilters(
+            $dto->filters->restritoAoUsuario((string) $usuario->id)
         );
     }
 
@@ -83,39 +83,6 @@ class RelatorioAgenteService extends ServiceBase
         $nivelPerfil = (int) ($usuario->perfil->nivel ?? PerfilEnum::PARTICIPANTE->value);
 
         return $nivelPerfil >= PerfilEnum::PARTICIPANTE->value;
-    }
-
-    /**
-     * @param array<int, mixed> $where
-     * @return array<int, mixed>
-     */
-    private function whereRestritoAoUsuario(array $where, string $usuarioId): array
-    {
-        $where = $this->removerFiltrosDeUnidade($where);
-        $where[] = $this->condicaoUsuarioId($usuarioId);
-
-        return $where;
-    }
-
-    /**
-     * @param array<int, mixed> $where
-     * @return array<int, mixed>
-     */
-    private function removerFiltrosDeUnidade(array $where): array
-    {
-        $camposRemovidos = ['unidade_id', 'incluir_unidades_subordinadas'];
-
-        return array_values(array_filter($where, function ($condition) use ($camposRemovidos) {
-            return ! is_array($condition) || ! in_array($condition[0], $camposRemovidos, true);
-        }));
-    }
-
-    /**
-     * @return array{0: string, 1: string, 2: string}
-     */
-    private function condicaoUsuarioId(string $usuarioId): array
-    {
-        return ['usuario_id', '==', $usuarioId];
     }
 
     public function proxyQuery($query, &$data)

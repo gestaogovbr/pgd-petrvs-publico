@@ -78,10 +78,10 @@ class RelatorioGeracaoService
 
         if ($dto->tipo === RelatorioGeracaoTipo::AGENTE) {
             $queryDto = app(RelatorioAgenteService::class)->aplicarFiltroParticipanteWhere(
-                new RelatorioAgenteQueryDTO(where: $parametros['where'], orderBy: $parametros['orderBy']),
+                RelatorioAgenteQueryDTO::fromParametros($parametros),
                 $usuario,
             );
-            $parametros['where'] = $queryDto->where;
+            $parametros['where'] = $queryDto->filters->toWhereArray();
         }
 
         $geracao = $this->repository->create([
