@@ -6,10 +6,12 @@ namespace App\V2\RelatorioEntrega;
 
 use App\Repository\RelatorioEntregaRepository;
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaIndexDTO;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaQueryDTO;
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaRowDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as ConcretePaginator;
+use Illuminate\Support\Collection;
 
 class RelatorioEntregaService
 {
@@ -32,13 +34,29 @@ class RelatorioEntregaService
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, RelatorioEntregaRowDTO>
+     * @return Collection<int, RelatorioEntregaRowDTO>
      */
-    public function exportRows(RelatorioEntregaIndexDTO $dto): \Illuminate\Support\Collection
+    public function exportRows(RelatorioEntregaIndexDTO $dto): Collection
     {
         $result = $this->relatorioEntregaRepository->query($dto->toQuery(false));
 
         return collect($result['rows'] ?? []);
+    }
+
+    /**
+     * Consulta paginada para a geração do Excel em segundo plano.
+     *
+     * @return array{count: int, rows: Collection<int, RelatorioEntregaRowDTO>}
+     */
+    public function queryForExport(RelatorioEntregaQueryDTO $query, ?int $knownCount = null): array
+    {
+        $result = $this->relatorioEntregaRepository->query($query);
+
+        if ($knownCount !== null) {
+            $result['count'] = $knownCount;
+        }
+
+        return $result;
     }
 
     private function buildPaginator(

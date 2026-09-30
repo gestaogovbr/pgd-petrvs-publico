@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\RelatorioGeracao;
 
+use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\Contracts\IBaseException;
 use App\Exceptions\ServerException;
 use App\Http\Controllers\Controller;
@@ -65,7 +66,7 @@ class RelatorioGeracaoController extends Controller
     {
         try {
             $dto = RelatorioGeracaoRequestValidator::store($request);
-            $usuario = $this->usuarioAutorizado($dto->tipo->capacidade(), 'Acesso negado à exportação deste relatório.');
+            $usuario = $this->usuarioAutorizadoParaTipo($dto->tipo, 'Acesso negado à exportação deste relatório.');
 
             return response()->json(['success' => true, 'data' => $this->service->store($dto, $usuario)]);
         } catch (ValidationException $e) {
@@ -92,6 +93,22 @@ class RelatorioGeracaoController extends Controller
 
             return response()->json(['error' => 'Ocorreu um erro inesperado ao baixar o relatório.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private function usuarioAutorizadoParaTipo(RelatorioGeracaoTipo $tipo, string $mensagem): Usuario
+    {
+        $usuario = AuthenticatedUsuario::withAreasDeTrabalho();
+        if ($usuario === null) {
+            throw new ServerException('RelatorioCapacidade', $mensagem);
+        }
+
+        foreach ($tipo->capacidades() as $capacidade) {
+            if ($usuario->hasPermissionTo($capacidade)) {
+                return $usuario;
+            }
+        }
+
+        throw new ServerException('RelatorioCapacidade', $mensagem);
     }
 
     private function usuarioAutorizado(string $capacidade, string $mensagem): Usuario

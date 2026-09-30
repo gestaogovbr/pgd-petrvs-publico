@@ -14,6 +14,7 @@ export enum RelatorioGeracaoTipo {
   PLANO_ENTREGA = 'plano_entrega',
   AGENTE = 'agente',
   UNIDADE = 'unidade',
+  ENTREGA = 'entrega',
 }
 
 export const RELATORIO_GERACAO_GRUPO = {
@@ -21,6 +22,7 @@ export const RELATORIO_GERACAO_GRUPO = {
   PLANOS_ENTREGA: 'planos_entrega',
   AGENTES: 'agentes',
   UNIDADES: 'unidades',
+  ENTREGAS: 'entregas',
 } as const;
 
 export type RelatorioGeracaoGrupo = (typeof RELATORIO_GERACAO_GRUPO)[keyof typeof RELATORIO_GERACAO_GRUPO];
@@ -30,6 +32,7 @@ export const RELATORIO_GERACAO_GRUPO_LABEL: Record<RelatorioGeracaoGrupo, string
   [RELATORIO_GERACAO_GRUPO.PLANOS_ENTREGA]: 'Planos de Entrega',
   [RELATORIO_GERACAO_GRUPO.AGENTES]: 'Agentes Públicos',
   [RELATORIO_GERACAO_GRUPO.UNIDADES]: 'Unidades',
+  [RELATORIO_GERACAO_GRUPO.ENTREGAS]: 'Entregas',
 };
 
 export const RELATORIO_GERACAO_TIPO_GRUPO: Record<RelatorioGeracaoTipo, RelatorioGeracaoGrupo> = {
@@ -38,6 +41,7 @@ export const RELATORIO_GERACAO_TIPO_GRUPO: Record<RelatorioGeracaoTipo, Relatori
   [RelatorioGeracaoTipo.PLANO_ENTREGA]: RELATORIO_GERACAO_GRUPO.PLANOS_ENTREGA,
   [RelatorioGeracaoTipo.AGENTE]: RELATORIO_GERACAO_GRUPO.AGENTES,
   [RelatorioGeracaoTipo.UNIDADE]: RELATORIO_GERACAO_GRUPO.UNIDADES,
+  [RelatorioGeracaoTipo.ENTREGA]: RELATORIO_GERACAO_GRUPO.ENTREGAS,
 };
 
 export function grupoRelatorio(tipo: string | null | undefined): RelatorioGeracaoGrupo | null {
@@ -56,12 +60,16 @@ export function grupoRelatorio(tipo: string | null | undefined): RelatorioGeraca
   if (tipo === RELATORIO_GERACAO_GRUPO.UNIDADES) {
     return RELATORIO_GERACAO_GRUPO.UNIDADES;
   }
+  if (tipo === RELATORIO_GERACAO_GRUPO.ENTREGAS) {
+    return RELATORIO_GERACAO_GRUPO.ENTREGAS;
+  }
   if (
     tipo === RelatorioGeracaoTipo.PLANO_TRABALHO
     || tipo === RelatorioGeracaoTipo.PLANO_TRABALHO_DETALHADO
     || tipo === RelatorioGeracaoTipo.PLANO_ENTREGA
     || tipo === RelatorioGeracaoTipo.AGENTE
     || tipo === RelatorioGeracaoTipo.UNIDADE
+    || tipo === RelatorioGeracaoTipo.ENTREGA
   ) {
     return RELATORIO_GERACAO_TIPO_GRUPO[tipo];
   }

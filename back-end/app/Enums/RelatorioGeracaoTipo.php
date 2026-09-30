@@ -9,6 +9,7 @@ enum RelatorioGeracaoTipo: string
     case PLANO_ENTREGA = 'plano_entrega';
     case AGENTE = 'agente';
     case UNIDADE = 'unidade';
+    case ENTREGA = 'entrega';
 
     public function nome(): string
     {
@@ -18,6 +19,7 @@ enum RelatorioGeracaoTipo: string
             self::PLANO_ENTREGA => 'Relatório de Planos de Entrega',
             self::AGENTE => 'Relatório de Agentes Públicos',
             self::UNIDADE => 'Relatório de Unidades',
+            self::ENTREGA => 'Relatório de Entregas',
         };
     }
 
@@ -28,6 +30,7 @@ enum RelatorioGeracaoTipo: string
             self::PLANO_ENTREGA => 'Planos de Entrega',
             self::AGENTE => 'Agentes Públicos',
             self::UNIDADE => 'Unidades',
+            self::ENTREGA => 'Entregas',
         };
     }
 
@@ -38,6 +41,7 @@ enum RelatorioGeracaoTipo: string
             self::PLANO_ENTREGA => 'planos_entrega',
             self::AGENTE => 'agentes',
             self::UNIDADE => 'unidades',
+            self::ENTREGA => 'entregas',
         };
     }
 
@@ -83,6 +87,7 @@ enum RelatorioGeracaoTipo: string
             self::PLANO_ENTREGA => 'relatorio-planos-entrega.xlsx',
             self::AGENTE => 'relatorio-agentes.xlsx',
             self::UNIDADE => 'relatorio-unidades.xlsx',
+            self::ENTREGA => 'relatorio_entregas.xlsx',
         };
     }
 
@@ -93,6 +98,18 @@ enum RelatorioGeracaoTipo: string
             self::PLANO_ENTREGA => 'MOD_RELATORIO_PE',
             self::AGENTE => 'MOD_RELATORIO_USUARIO',
             self::UNIDADE => 'MOD_RELATORIO_UNIDADE',
+            self::ENTREGA => 'MOD_RELATORIO_PE',
+        };
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function capacidades(): array
+    {
+        return match ($this) {
+            self::ENTREGA => ['MOD_RELATORIO_PE', 'MOD_RELATORIO_ENTREGA'],
+            default => [$this->capacidade()],
         };
     }
 }

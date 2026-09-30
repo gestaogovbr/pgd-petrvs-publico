@@ -125,3 +125,21 @@ test('row dto exibe Unidades para o tipo unidade', function () {
     expect($dto->tipo)->toBe(RelatorioGeracaoTipo::UNIDADE->value)
         ->and($dto->nome)->toBe('Unidades');
 });
+
+test('row dto exibe Entregas para o tipo entrega', function () {
+    $geracao = new RelatorioGeracao();
+    $geracao->id = 'geracao-ent';
+    $geracao->tipo = RelatorioGeracaoTipo::ENTREGA->value;
+    $geracao->nome = 'Relatório de Entregas';
+    $geracao->status = RelatorioGeracaoStatus::CONCLUIDA;
+    $geracao->arquivo_path = 'relatorios/secreto.xlsx';
+    $geracao->arquivo_nome = 'relatorio_entregas.xlsx';
+    $geracao->iniciado_em = now();
+    $geracao->finalizado_em = now();
+    $geracao->erro_mensagem = null;
+
+    $dto = RelatorioGeracaoRowDTO::fromModel($geracao);
+
+    expect($dto->tipo)->toBe(RelatorioGeracaoTipo::ENTREGA->value)
+        ->and($dto->nome)->toBe('Entregas');
+});

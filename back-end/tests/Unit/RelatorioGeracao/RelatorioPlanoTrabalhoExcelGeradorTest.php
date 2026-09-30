@@ -2,6 +2,7 @@
 
 use App\Enums\RelatorioGeracaoTipo;
 use App\Services\RelatorioGeracao\RelatorioAgenteExcelGerador;
+use App\Services\RelatorioGeracao\RelatorioEntregaExcelGerador;
 use App\Services\RelatorioGeracao\RelatorioPlanoEntregaExcelGerador;
 use App\Services\RelatorioGeracao\RelatorioPlanoTrabalhoExcelGerador;
 use App\Services\RelatorioGeracao\RelatorioUnidadeExcelGerador;
@@ -9,6 +10,8 @@ use App\Services\RelatorioAgenteService;
 use App\Services\RelatorioPlanoEntregaService;
 use App\Services\RelatorioPlanoTrabalhoService;
 use App\Services\RelatorioUnidadeService;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaQueryDTO;
+use App\V2\RelatorioEntrega\RelatorioEntregaService;
 
 test('tipos de geração conhecidos expõem nome, arquivo e capacidade', function () {
     expect(RelatorioGeracaoTipo::PLANO_TRABALHO->nome())->toBe('Relatório de Planos de Trabalho')
@@ -34,7 +37,13 @@ test('tipos de geração conhecidos expõem nome, arquivo e capacidade', functio
         ->and(RelatorioGeracaoTipo::UNIDADE->nomeExibicao())->toBe('Unidades')
         ->and(RelatorioGeracaoTipo::UNIDADE->grupo())->toBe('unidades')
         ->and(RelatorioGeracaoTipo::UNIDADE->arquivoNome())->toBe('relatorio-unidades.xlsx')
-        ->and(RelatorioGeracaoTipo::UNIDADE->capacidade())->toBe('MOD_RELATORIO_UNIDADE');
+        ->and(RelatorioGeracaoTipo::UNIDADE->capacidade())->toBe('MOD_RELATORIO_UNIDADE')
+        ->and(RelatorioGeracaoTipo::ENTREGA->nome())->toBe('Relatório de Entregas')
+        ->and(RelatorioGeracaoTipo::ENTREGA->nomeExibicao())->toBe('Entregas')
+        ->and(RelatorioGeracaoTipo::ENTREGA->grupo())->toBe('entregas')
+        ->and(RelatorioGeracaoTipo::ENTREGA->arquivoNome())->toBe('relatorio_entregas.xlsx')
+        ->and(RelatorioGeracaoTipo::ENTREGA->capacidade())->toBe('MOD_RELATORIO_PE')
+        ->and(RelatorioGeracaoTipo::ENTREGA->capacidades())->toBe(['MOD_RELATORIO_PE', 'MOD_RELATORIO_ENTREGA']);
 });
 
 test('gerador de PT consulta o serviço de exportação com página e limite', function () {
@@ -197,5 +206,40 @@ test('gerador de Unidades consulta o serviço de exportação com página e limi
     expect($gerador->pageSize())->toBe(1000)
         ->and($gerador->arquivoNome())->toBe('relatorio-unidades.xlsx')
         ->and($result['count'])->toBe(50)
+        ->and($result['rows'])->toHaveCount(1);
+});
+
+test('gerador de Entregas reconstrói filtros tipados e consulta o serviço', function () {
+    $service = Mockery::mock(RelatorioEntregaService::class);
+    $service->shouldReceive('queryForExport')
+        ->once()
+        ->with(Mockery::on(function (RelatorioEntregaQueryDTO $query): bool {
+            return $query->page === 1
+                && $query->limit === 1000
+                && $query->filters->unidadeId === 'u1'
+                && $query->filters->incluirUnidadesSubordinadas === true
+                && $query->filters->periodoInicio === '2026-01-01'
+                && $query->filters->periodoFim === '2026-01-31'
+                && $query->orderBy === [['entregaNome', 'asc']];
+        }), null)
+        ->andReturn([
+            'count' => 120,
+            'rows' => collect([(object) ['id' => 'ent-1']]),
+        ]);
+
+    $gerador = new RelatorioEntregaExcelGerador($service);
+    $result = $gerador->consultarPagina([
+        'where' => [
+            ['unidade_id', '==', 'u1'],
+            ['incluir_unidades_subordinadas', '==', 1],
+            ['periodo_inicio', '==', '2026-01-01'],
+            ['periodo_fim', '==', '2026-01-31'],
+        ],
+        'orderBy' => [['entregaNome', 'asc']],
+    ], 1, 1000);
+
+    expect($gerador->pageSize())->toBe(1000)
+        ->and($gerador->arquivoNome())->toBe('relatorio_entregas.xlsx')
+        ->and($result['count'])->toBe(120)
         ->and($result['rows'])->toHaveCount(1);
 });

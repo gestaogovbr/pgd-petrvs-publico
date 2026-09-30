@@ -9,6 +9,7 @@ use App\Services\RelatorioPlanoEntregaService;
 use App\Services\RelatorioPlanoTrabalhoDetalhadoService;
 use App\Services\RelatorioPlanoTrabalhoService;
 use App\Services\RelatorioUnidadeService;
+use App\V2\RelatorioEntrega\RelatorioEntregaService;
 
 class RelatorioExcelGeradorFactory
 {
@@ -29,6 +30,9 @@ class RelatorioExcelGeradorFactory
             ),
             RelatorioGeracaoTipo::UNIDADE => new RelatorioUnidadeExcelGerador(
                 app(RelatorioUnidadeService::class)
+            ),
+            RelatorioGeracaoTipo::ENTREGA => new RelatorioEntregaExcelGerador(
+                app(RelatorioEntregaService::class)
             ),
         };
     }
