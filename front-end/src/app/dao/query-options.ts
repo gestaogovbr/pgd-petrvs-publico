@@ -2,6 +2,7 @@ import { QueryOrderBy } from "./dao-base.service";
 
 export class QueryOptions {
     public where?: any;
+    public filters?: Record<string, unknown>;
     public orderBy?: QueryOrderBy[];
     public limit?: number;
     public deleted?: boolean;

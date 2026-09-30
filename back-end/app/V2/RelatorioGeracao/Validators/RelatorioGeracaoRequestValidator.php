@@ -38,6 +38,7 @@ class RelatorioGeracaoRequestValidator
     {
         $validated = $request->validate([
             'tipo' => ['required', 'string', Rule::in(self::tipoValues())],
+            'filters' => ['sometimes', 'array'],
             'where' => ['sometimes', 'array'],
             'orderBy' => ['sometimes', 'array'],
         ]);

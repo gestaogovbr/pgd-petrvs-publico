@@ -8,7 +8,6 @@
     <toolbar *ngIf="!selectable"></toolbar>
     <filter 
         [form]="filter" 
-        [where]="filterWhere" 
         [submit]="filterSubmit.bind(this)" 
         [filter]="onButtonFilterClick"
         filterLabel="Consultar"

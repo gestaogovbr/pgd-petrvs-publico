@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\DTOs\RelatorioAgente;
 
+use App\DTOs\AbstractFiltersDTO;
+
 /**
  * Filtros tipados do relatório de agentes públicos (interface de consulta).
  */
-final class RelatorioAgenteFiltersDTO
+final class RelatorioAgenteFiltersDTO extends AbstractFiltersDTO
 {
     public function __construct(
         public readonly ?string $unidadeId = null,
@@ -32,49 +34,6 @@ final class RelatorioAgenteFiltersDTO
         public readonly ?string $planoEntregaEntregaId = null,
         public readonly ?bool $somenteVigentes = null,
     ) {
-    }
-
-    /**
-     * @param array<int, mixed> $where
-     */
-    public static function fromWhere(array $where): self
-    {
-        $filters = [];
-        foreach ($where as $condition) {
-            if (! is_array($condition) || ! isset($condition[0])) {
-                continue;
-            }
-
-            $field = (string) $condition[0];
-            $value = $condition[2] ?? null;
-
-            match ($field) {
-                'unidade_id' => $filters['unidade_id'] = $value,
-                'incluir_unidades_subordinadas' => $filters['incluir_unidades_subordinadas'] = true,
-                'usuario_id' => $filters['usuario_id'] = $value,
-                'nome' => $filters['nome'] = $value,
-                'unidadeHierarquia' => $filters['unidadeHierarquia'] = $value,
-                'matricula' => $filters['matricula'] = $value,
-                'situacao' => $filters['situacao'] = $value,
-                'participantePGD' => $filters['participantePGD'] = $value,
-                'programaNome' => $filters['programaNome'] = $value,
-                'modalidade_pgd' => $filters['modalidade_pgd'] = $value,
-                'modalidadeSouGov' => $filters['modalidadeSouGov'] = $value,
-                'comparacaoSouGovPetrvs' => $filters['comparacaoSouGovPetrvs'] = $value,
-                'tipo_pedagio' => $filters['tipo_pedagio'] = $value,
-                'data_inicial_pedagio' => $filters['data_inicial_pedagio'] = $value,
-                'data_final_pedagio' => $filters['data_final_pedagio'] = $value,
-                'dispensa_plano_trabalho' => $filters['dispensa_plano_trabalho'] = $value,
-                'data_inicio_dispensa_pt' => $filters['data_inicio_dispensa_pt'] = $value,
-                'data_fim_dispensa_pt' => $filters['data_fim_dispensa_pt'] = $value,
-                'atribuicao' => $filters['atribuicao'] = $value,
-                'plano_entrega_entrega_id' => $filters['plano_entrega_entrega_id'] = $value,
-                'somente_vigentes' => $filters['somente_vigentes'] = $value,
-                default => null,
-            };
-        }
-
-        return self::fromArray($filters);
     }
 
     /**
@@ -215,43 +174,77 @@ final class RelatorioAgenteFiltersDTO
         return $where;
     }
 
-    private static function toBool(mixed $value): bool
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
     {
-        if (is_bool($value)) {
-            return $value;
+        $filters = [];
+
+        if ($this->unidadeId !== null) {
+            $filters['unidade_id'] = $this->unidadeId;
+        }
+        if ($this->incluirUnidadesSubordinadas) {
+            $filters['incluir_unidades_subordinadas'] = true;
+        }
+        if ($this->usuarioId !== null) {
+            $filters['usuario_id'] = $this->usuarioId;
+        }
+        if ($this->nome !== null) {
+            $filters['nome'] = $this->nome;
+        }
+        if ($this->unidadeHierarquia !== null) {
+            $filters['unidadeHierarquia'] = $this->unidadeHierarquia;
+        }
+        if ($this->matricula !== null) {
+            $filters['matricula'] = $this->matricula;
+        }
+        if ($this->situacao !== null) {
+            $filters['situacao'] = $this->situacao;
+        }
+        if ($this->participantePgd !== null) {
+            $filters['participantePGD'] = $this->participantePgd;
+        }
+        if ($this->programaNome !== null) {
+            $filters['programaNome'] = $this->programaNome;
+        }
+        if ($this->modalidadePgd !== null) {
+            $filters['modalidade_pgd'] = $this->modalidadePgd;
+        }
+        if ($this->modalidadeSouGov !== null) {
+            $filters['modalidadeSouGov'] = $this->modalidadeSouGov;
+        }
+        if ($this->comparacaoSouGovPetrvs !== null) {
+            $filters['comparacaoSouGovPetrvs'] = $this->comparacaoSouGovPetrvs;
+        }
+        if ($this->tipoPedagio !== null) {
+            $filters['tipo_pedagio'] = $this->tipoPedagio;
+        }
+        if ($this->dataInicialPedagio !== null) {
+            $filters['data_inicial_pedagio'] = $this->dataInicialPedagio;
+        }
+        if ($this->dataFinalPedagio !== null) {
+            $filters['data_final_pedagio'] = $this->dataFinalPedagio;
+        }
+        if ($this->dispensaPlanoTrabalho !== null) {
+            $filters['dispensa_plano_trabalho'] = $this->dispensaPlanoTrabalho;
+        }
+        if ($this->dataInicioDispensaPt !== null) {
+            $filters['data_inicio_dispensa_pt'] = $this->dataInicioDispensaPt;
+        }
+        if ($this->dataFimDispensaPt !== null) {
+            $filters['data_fim_dispensa_pt'] = $this->dataFimDispensaPt;
+        }
+        if ($this->atribuicao !== null) {
+            $filters['atribuicao'] = $this->atribuicao;
+        }
+        if ($this->planoEntregaEntregaId !== null) {
+            $filters['plano_entrega_entrega_id'] = $this->planoEntregaEntregaId;
+        }
+        if ($this->somenteVigentes !== null) {
+            $filters['somente_vigentes'] = $this->somenteVigentes;
         }
 
-        return in_array((string) $value, ['1', 'true', 'on', 'yes'], true);
-    }
-
-    private static function trimmedStringOrNull(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-        $s = trim((string) $value);
-
-        return $s === '' ? null : $s;
-    }
-
-    private static function likeValueOrNull(mixed $value): ?string
-    {
-        $s = self::trimmedStringOrNull($value);
-        if ($s === null) {
-            return null;
-        }
-
-        $stripped = trim($s, '%');
-
-        return $stripped === '' ? null : $stripped;
-    }
-
-    private static function dateStringOrNull(mixed $value): ?string
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return substr((string) $value, 0, 10);
+        return $filters;
     }
 }

@@ -81,7 +81,11 @@ class RelatorioGeracaoService
                 RelatorioAgenteQueryDTO::fromParametros($parametros),
                 $usuario,
             );
-            $parametros['where'] = $queryDto->filters->toWhereArray();
+            $parametros = [
+                'filters' => $queryDto->filters->toArray(),
+                'where' => $queryDto->filters->toWhereArray(),
+                'orderBy' => $queryDto->orderBy,
+            ];
         }
 
         $geracao = $this->repository->create([
@@ -90,8 +94,9 @@ class RelatorioGeracaoService
             'status' => RelatorioGeracaoStatus::PROCESSANDO,
             'usuario_id' => $usuario->id,
             'parametros' => [
-                'where' => $parametros['where'],
-                'orderBy' => $parametros['orderBy'],
+                'filters' => $parametros['filters'] ?? [],
+                'where' => $parametros['where'] ?? [],
+                'orderBy' => $parametros['orderBy'] ?? [],
             ],
             'iniciado_em' => now(),
             'progresso_pagina' => 0,

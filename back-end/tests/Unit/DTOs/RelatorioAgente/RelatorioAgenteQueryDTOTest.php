@@ -5,28 +5,28 @@ declare(strict_types=1);
 use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
 use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
 
-test('filters dto mapeia where da interface para campos tipados', function () {
-    $filters = RelatorioAgenteFiltersDTO::fromWhere([
-        ['unidade_id', '==', 'u-1'],
-        ['incluir_unidades_subordinadas', '==', 1],
-        ['nome', 'like', '%Ana%'],
-        ['unidadeHierarquia', 'like', '%DG%'],
-        ['matricula', 'like', '%123%'],
-        ['situacao', '==', 'ATIVO'],
-        ['participantePGD', '==', 'SIM'],
-        ['programaNome', 'like', '%PGD%'],
-        ['modalidade_pgd', '==', 'TELETRABALHO'],
-        ['modalidadeSouGov', '==', 'PRESENCIAL'],
-        ['comparacaoSouGovPetrvs', '==', 'IGUAL'],
-        ['tipo_pedagio', '==', '1'],
-        ['data_inicial_pedagio', '==', '2026-01-01'],
-        ['data_final_pedagio', '==', '2026-01-31'],
-        ['dispensa_plano_trabalho', '==', 'SIM'],
-        ['data_inicio_dispensa_pt', '==', '2026-02-01'],
-        ['data_fim_dispensa_pt', '==', '2026-02-28'],
-        ['atribuicao', '==', 'LOTADO'],
-        ['plano_entrega_entrega_id', '==', 'pe-1'],
-        ['somente_vigentes', '==', 1],
+test('filters dto mapeia objeto tipado da interface', function () {
+    $filters = RelatorioAgenteFiltersDTO::fromArray([
+        'unidade_id' => 'u-1',
+        'incluir_unidades_subordinadas' => true,
+        'nome' => 'Ana',
+        'unidadeHierarquia' => 'DG',
+        'matricula' => '123',
+        'situacao' => 'ATIVO',
+        'participantePGD' => 'SIM',
+        'programaNome' => 'PGD',
+        'modalidade_pgd' => 'TELETRABALHO',
+        'modalidadeSouGov' => 'PRESENCIAL',
+        'comparacaoSouGovPetrvs' => 'IGUAL',
+        'tipo_pedagio' => '1',
+        'data_inicial_pedagio' => '2026-01-01',
+        'data_final_pedagio' => '2026-01-31',
+        'dispensa_plano_trabalho' => 'SIM',
+        'data_inicio_dispensa_pt' => '2026-02-01',
+        'data_fim_dispensa_pt' => '2026-02-28',
+        'atribuicao' => 'LOTADO',
+        'plano_entrega_entrega_id' => 'pe-1',
+        'somente_vigentes' => true,
     ]);
 
     expect($filters->unidadeId)->toBe('u-1')
@@ -88,11 +88,11 @@ test('filters dto restringe ao usuário removendo filtros de unidade', function 
         ]);
 });
 
-test('query dto não expõe where genérico e monta query array tipado', function () {
+test('query dto monta a partir de filters tipados', function () {
     $dto = RelatorioAgenteQueryDTO::fromValidatedRequest([
-        'where' => [
-            ['unidade_id', '==', 'u-1'],
-            ['nome', 'like', '%Ana%'],
+        'filters' => [
+            'unidade_id' => 'u-1',
+            'nome' => 'Ana',
         ],
         'orderBy' => [['nome', 'asc']],
         'page' => 2,
@@ -133,4 +133,17 @@ test('query dto withFilters preserva paginação e ordenação', function () {
         ->and($atualizado->orderBy)->toBe([['nome', 'asc']])
         ->and($atualizado->page)->toBe(1)
         ->and($atualizado->limit)->toBe(10);
+});
+
+test('query dto aceita where legado em parametros antigos', function () {
+    $dto = RelatorioAgenteQueryDTO::fromParametros([
+        'where' => [
+            ['unidade_id', '==', 'u-1'],
+            ['nome', 'like', '%Ana%'],
+        ],
+        'orderBy' => [['nome', 'asc']],
+    ]);
+
+    expect($dto->filters->unidadeId)->toBe('u-1')
+        ->and($dto->filters->nome)->toBe('Ana');
 });

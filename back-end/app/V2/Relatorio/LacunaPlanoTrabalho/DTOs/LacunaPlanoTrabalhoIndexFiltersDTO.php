@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\V2\Relatorio\LacunaPlanoTrabalho\DTOs;
 
+use App\DTOs\AbstractFiltersDTO;
+
 /**
  * Filtros da listagem de lacunas de Plano de Trabalho (API v2).
  */
-final class LacunaPlanoTrabalhoIndexFiltersDTO
+final class LacunaPlanoTrabalhoIndexFiltersDTO extends AbstractFiltersDTO
 {
     public function __construct(
         public readonly string $unidadeId,
@@ -29,8 +31,8 @@ final class LacunaPlanoTrabalhoIndexFiltersDTO
     {
         return new self(
             unidadeId: (string) ($filters['unidade_id'] ?? ''),
-            periodoInicio: self::dateString((string) ($filters['periodo_inicio'] ?? '')),
-            periodoFim: self::dateString((string) ($filters['periodo_fim'] ?? '')),
+            periodoInicio: self::dateString($filters['periodo_inicio'] ?? ''),
+            periodoFim: self::dateString($filters['periodo_fim'] ?? ''),
             incluirUnidadesSubordinadas: self::toBool($filters['incluir_unidades_subordinadas'] ?? false),
             nome: self::trimmedStringOrNull($filters['nome'] ?? null),
             matricula: self::trimmedStringOrNull($filters['matricula'] ?? null),
@@ -78,38 +80,5 @@ final class LacunaPlanoTrabalhoIndexFiltersDTO
         }
 
         return $where;
-    }
-
-    private static function toBool(mixed $value): bool
-    {
-        if (is_bool($value)) {
-            return $value;
-        }
-
-        return in_array((string) $value, ['1', 'true', 'on', 'yes'], true);
-    }
-
-    private static function trimmedStringOrNull(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-        $s = trim((string) $value);
-
-        return $s === '' ? null : $s;
-    }
-
-    private static function intOrNull(mixed $value): ?int
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return (int) $value;
-    }
-
-    private static function dateString(string $value): string
-    {
-        return substr($value, 0, 10);
     }
 }

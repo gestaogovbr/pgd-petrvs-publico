@@ -10,10 +10,13 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
-test('store aceita tipo de agentes públicos e filtros', function () {
+test('store aceita tipo de agentes públicos e filtros tipados', function () {
     $request = Request::create('/api/v2/relatorio-exportacao', 'POST', [
         'tipo' => RelatorioGeracaoTipo::AGENTE->value,
-        'where' => [['unidade_id', '==', 'u-1']],
+        'filters' => [
+            'unidade_id' => 'u-1',
+            'nome' => 'Ana',
+        ],
         'orderBy' => [['nome', 'asc']],
     ]);
 
@@ -21,7 +24,10 @@ test('store aceita tipo de agentes públicos e filtros', function () {
 
     expect($dto)->toBeInstanceOf(RelatorioGeracaoStoreDTO::class)
         ->and($dto->tipo)->toBe(RelatorioGeracaoTipo::AGENTE)
-        ->and($dto->where)->toBe([['unidade_id', '==', 'u-1']])
+        ->and($dto->filters)->toBe([
+            'unidade_id' => 'u-1',
+            'nome' => 'Ana',
+        ])
         ->and($dto->orderBy)->toBe([['nome', 'asc']]);
 });
 

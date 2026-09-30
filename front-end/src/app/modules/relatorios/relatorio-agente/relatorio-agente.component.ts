@@ -4,7 +4,6 @@ import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioAgenteDaoService } from "src/app/dao/relatorio-agente-dao.service";
 import { RelatorioGeracaoDaoService } from "src/app/dao/relatorio-geracao-dao.service";
-import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { RelatorioAgente } from "src/app/models/relatorio-agente.model";
 import { LookupItem } from "src/app/services/lookup.service";
 import { QueryOptions } from "src/app/dao/query-options";
@@ -77,106 +76,96 @@ export class RelatorioAgenteComponent extends RelatorioBaseComponent<RelatorioAg
       this.loaded = true;
   }
 
-  public filterWhere = (filter: FormGroup) => {
-    let result: any[] = [];
-    let form: any = filter.value;
+  public buildFilters(filter: FormGroup): Record<string, unknown> {
+    const form: any = filter.value;
+    const filters: Record<string, unknown> = {};
 
     if (form.unidade_id?.length) {
-      result.push(["unidade_id", "==", form.unidade_id]);
+      filters['unidade_id'] = form.unidade_id;
     }
-
     if (form.incluir_unidades_subordinadas) {
-      result.push(["incluir_unidades_subordinadas", "==", 1]);
+      filters['incluir_unidades_subordinadas'] = true;
     }
-
     if (form.nome) {
-      result.push(["nome", "like", "%" + form.nome + "%"]);
+      filters['nome'] = form.nome;
     }
-
     if (form.unidadeNome) {
-      result.push(["unidadeHierarquia", "like", "%" + form.unidadeNome + "%"]);
+      filters['unidadeHierarquia'] = form.unidadeNome;
     }
-
     if (form.matricula?.length) {
-      result.push(["matricula", "like", "%" + form.matricula + "%"]);
+      filters['matricula'] = form.matricula;
     }
-
     if (form.situacao?.length) {
-      result.push(["situacao", "==", form.situacao]);
+      filters['situacao'] = form.situacao;
     }
-
     if (form.participantePGD?.length) {
-      result.push(["participantePGD", "==", form.participantePGD]);
+      filters['participantePGD'] = form.participantePGD;
     }
-
     if (form.selecao?.length) {
-      result.push(["programaNome", "like", "%" + form.selecao + "%"]);
+      filters['programaNome'] = form.selecao;
     }
-
     if (form.modalidade?.length) {
-      result.push(["modalidade_pgd", "==", form.modalidade]);
+      filters['modalidade_pgd'] = form.modalidade;
     }
-
     if (form.modalidadeSouGov?.length) {
-      result.push(["modalidadeSouGov", "==", form.modalidadeSouGov]);
+      filters['modalidadeSouGov'] = form.modalidadeSouGov;
     }
-
     if (form.comparacaoSouGovPetrvs?.length) {
-      result.push(["comparacaoSouGovPetrvs", "==", form.comparacaoSouGovPetrvs]);
+      filters['comparacaoSouGovPetrvs'] = form.comparacaoSouGovPetrvs;
     }
-
     if (form.tipo_pedagio?.length) {
-      result.push(["tipo_pedagio", "==", form.tipo_pedagio]);
+      filters['tipo_pedagio'] = form.tipo_pedagio;
     }
-
     if (form.data_inicial_pedagio) {
-      result.push(["data_inicial_pedagio", "==", form.data_inicial_pedagio.toISOString().slice(0,10)]);
+      filters['data_inicial_pedagio'] = form.data_inicial_pedagio.toISOString().slice(0, 10);
     }
-
     if (form.data_final_pedagio) {
-      result.push(["data_final_pedagio", "==", form.data_final_pedagio.toISOString().slice(0,10)]);
+      filters['data_final_pedagio'] = form.data_final_pedagio.toISOString().slice(0, 10);
     }
-
     if (form.dispensa_plano_trabalho?.length) {
-      result.push(["dispensa_plano_trabalho", "==", form.dispensa_plano_trabalho]);
+      filters['dispensa_plano_trabalho'] = form.dispensa_plano_trabalho;
     }
-
     if (form.data_inicio_dispensa_pt) {
-      result.push(["data_inicio_dispensa_pt", "==", form.data_inicio_dispensa_pt.toISOString().slice(0,10)]);
+      filters['data_inicio_dispensa_pt'] = form.data_inicio_dispensa_pt.toISOString().slice(0, 10);
     }
-
     if (form.data_fim_dispensa_pt) {
-      result.push(["data_fim_dispensa_pt", "==", form.data_fim_dispensa_pt.toISOString().slice(0,10)]);
+      filters['data_fim_dispensa_pt'] = form.data_fim_dispensa_pt.toISOString().slice(0, 10);
     }
-
     if (this.metadata?.atribuicao) {
-      result.push(["atribuicao", "==", this.metadata.atribuicao]);
+      filters['atribuicao'] = this.metadata.atribuicao;
+    }
+    if (this.metadata?.plano_entrega_entrega_id) {
+      filters['plano_entrega_entrega_id'] = this.metadata.plano_entrega_entrega_id;
     }
 
-    if (this.metadata?.plano_entrega_entrega_id) {
-      result.push(["plano_entrega_entrega_id", "==", this.metadata.plano_entrega_entrega_id]);
-    }
-    
-    return result;
-  };
+    return filters;
+  }
+
+  public buildQueryOptions(filter: FormGroup): QueryOptions {
+    return {
+      filters: this.buildFilters(filter),
+      where: [],
+      orderBy: this.orderBy,
+      limit: this.rowsLimit,
+    };
+  }
 
   public onButtonFilterClick = (filter: FormGroup) => {
     if (this.filter!.valid) {
       if (this.grid && this.grid.query) {
         this.loaded = true;
       }
-      let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
-      this.grid?.query?.reload(queryOptions);
+      this.grid?.query?.reload(this.buildQueryOptions(filter));
     } else {
-      this.filter!.markAllAsTouched(); 
+      this.filter!.markAllAsTouched();
     }
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
     try {
       return this.relatorioGeracaoDao.solicitar('agente', {
-        where: queryOptions.where,
-        orderBy: queryOptions.orderBy
+        filters: this.buildFilters(this.filter!),
+        orderBy: queryOptions.orderBy || this.orderBy,
       });
     } catch (error: any) {
       this.error(error);

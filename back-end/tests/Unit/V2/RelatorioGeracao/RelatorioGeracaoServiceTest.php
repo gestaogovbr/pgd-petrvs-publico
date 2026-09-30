@@ -104,7 +104,7 @@ test('store recusa geração sem tenant identificado', function () {
     $service = makeRelatorioGeracaoService(Mockery::mock(RelatorioGeracaoRepository::class));
 
     $service->store(
-        new RelatorioGeracaoStoreDTO(RelatorioGeracaoTipo::PLANO_TRABALHO, [], []),
+        new RelatorioGeracaoStoreDTO(RelatorioGeracaoTipo::PLANO_TRABALHO, [], [], []),
         makeRelatorioGeracaoUsuario(),
     );
 })->throws(ServerException::class, 'Tenant não identificado para a geração do relatório.');
@@ -116,6 +116,7 @@ test('store cria a geração e despacha o job quando há tenant', function () {
     $usuario = makeRelatorioGeracaoUsuario();
     $storeDto = new RelatorioGeracaoStoreDTO(
         RelatorioGeracaoTipo::PLANO_TRABALHO,
+        [],
         [['unidade_id', '==', 'u-1']],
         [],
     );
@@ -128,6 +129,7 @@ test('store cria a geração e despacha o job quando há tenant', function () {
                 && $attributes['status'] === RelatorioGeracaoStatus::PROCESSANDO
                 && $attributes['usuario_id'] === $usuario->id
                 && $attributes['parametros'] === [
+                    'filters' => [],
                     'where' => [['unidade_id', '==', 'u-1']],
                     'orderBy' => [],
                 ];

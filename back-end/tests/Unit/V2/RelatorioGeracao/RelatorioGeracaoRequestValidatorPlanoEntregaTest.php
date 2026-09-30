@@ -24,6 +24,7 @@ test('store aceita tipo de plano de entrega e filtros', function () {
         ->and($dto->where)->toBe([['unidade_id', '==', 'u-1']])
         ->and($dto->orderBy)->toBe([['numero', 'asc']])
         ->and($dto->toParametros())->toBe([
+            'filters' => [],
             'where' => [['unidade_id', '==', 'u-1']],
             'orderBy' => [['numero', 'asc']],
         ]);
