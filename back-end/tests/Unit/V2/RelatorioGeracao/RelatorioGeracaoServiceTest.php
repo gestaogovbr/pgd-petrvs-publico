@@ -13,10 +13,6 @@ use App\Jobs\GerarRelatorioExcelJob;
 use App\Models\RelatorioGeracao;
 use App\Models\Usuario;
 use App\Repository\RelatorioGeracaoRepository;
-use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
-use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
-use App\DTOs\RelatorioAgente\RelatorioAgenteWhereMapper;
-use App\Services\RelatorioAgenteAuthorization;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoIndexDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoRowDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStatusQueryDTO;
@@ -67,13 +63,11 @@ function makeRelatorioGeracaoService(
     RelatorioGeracaoRepository $repository,
     ?RelatorioGeracaoExcel $excel = null,
     ?RelatorioGeracaoStorage $storage = null,
-    ?RelatorioAgenteAuthorization $relatorioAgenteAuthorization = null,
 ): RelatorioGeracaoService {
     return new RelatorioGeracaoService(
         $repository,
         $excel ?? Mockery::mock(RelatorioGeracaoExcel::class),
         $storage ?? new RelatorioGeracaoStorage(),
-        $relatorioAgenteAuthorization ?? Mockery::mock(RelatorioAgenteAuthorization::class),
     );
 }
 
@@ -110,7 +104,7 @@ test('store recusa geração sem tenant identificado', function () {
     $service = makeRelatorioGeracaoService(Mockery::mock(RelatorioGeracaoRepository::class));
 
     $service->store(
-        new RelatorioGeracaoStoreDTO(RelatorioGeracaoTipo::PLANO_TRABALHO, [], [], []),
+        new RelatorioGeracaoStoreDTO(RelatorioGeracaoTipo::PLANO_TRABALHO, [], []),
         makeRelatorioGeracaoUsuario(),
     );
 })->throws(ServerException::class, 'Tenant não identificado para a geração do relatório.');
@@ -122,8 +116,7 @@ test('store cria a geração e despacha o job quando há tenant', function () {
     $usuario = makeRelatorioGeracaoUsuario();
     $storeDto = new RelatorioGeracaoStoreDTO(
         RelatorioGeracaoTipo::PLANO_TRABALHO,
-        [],
-        [['unidade_id', '==', 'u-1']],
+        ['unidade_id' => 'u-1'],
         [],
     );
 
@@ -135,8 +128,7 @@ test('store cria a geração e despacha o job quando há tenant', function () {
                 && $attributes['status'] === RelatorioGeracaoStatus::PROCESSANDO
                 && $attributes['usuario_id'] === $usuario->id
                 && $attributes['parametros'] === [
-                    'filters' => [],
-                    'where' => [['unidade_id', '==', 'u-1']],
+                    'filters' => ['unidade_id' => 'u-1'],
                     'orderBy' => [],
                 ];
         }))
@@ -161,7 +153,7 @@ test('store cria a geração e despacha o job quando há tenant', function () {
     });
 });
 
-test('store de agentes aplica filtro de participante via authorization', function () {
+test('store de agentes persiste filters sem aplicar restrição de participante', function () {
     Bus::fake();
 
     $geracao = makeRelatorioGeracao([
@@ -174,33 +166,18 @@ test('store de agentes aplica filtro de participante via authorization', functio
     $storeDto = new RelatorioGeracaoStoreDTO(
         RelatorioGeracaoTipo::AGENTE,
         ['unidade_id' => 'u-1', 'nome' => 'Ana'],
-        [],
         [['nome', 'asc']],
     );
-
-    $queryDtoRestrito = (new RelatorioAgenteQueryDTO(
-        filters: RelatorioAgenteFiltersDTO::fromArray(['unidade_id' => 'u-1', 'nome' => 'Ana']),
-        orderBy: [['nome', 'asc']],
-    ))->withFilters(
-        RelatorioAgenteFiltersDTO::fromArray(['unidade_id' => 'u-1', 'nome' => 'Ana'])->restritoAoUsuario('usuario-1')
-    );
-
-    $authorization = Mockery::mock(RelatorioAgenteAuthorization::class);
-    $authorization->shouldReceive('aplicarFiltroParticipante')
-        ->once()
-        ->with(Mockery::type(RelatorioAgenteQueryDTO::class), $usuario)
-        ->andReturn($queryDtoRestrito);
 
     $repository = Mockery::mock(RelatorioGeracaoRepository::class);
     $repository->shouldReceive('create')
         ->once()
-        ->with(Mockery::on(function (array $attributes) use ($usuario, $queryDtoRestrito): bool {
+        ->with(Mockery::on(function (array $attributes) use ($usuario): bool {
             return $attributes['tipo'] === RelatorioGeracaoTipo::AGENTE->value
                 && $attributes['usuario_id'] === $usuario->id
                 && $attributes['parametros'] === [
-                    'filters' => $queryDtoRestrito->filters->toArray(),
-                    'where' => RelatorioAgenteWhereMapper::map($queryDtoRestrito->filters),
-                    'orderBy' => $queryDtoRestrito->orderBy,
+                    'filters' => ['unidade_id' => 'u-1', 'nome' => 'Ana'],
+                    'orderBy' => [['nome', 'asc']],
                 ];
         }))
         ->andReturn($geracao);
@@ -209,7 +186,7 @@ test('store de agentes aplica filtro de participante via authorization', functio
     $tenant->shouldReceive('getAttribute')->with('id')->andReturn('tenant-1');
     app()->instance(TenantContract::class, $tenant);
 
-    $service = makeRelatorioGeracaoService($repository, null, null, $authorization);
+    $service = makeRelatorioGeracaoService($repository);
     $row = $service->store($storeDto, $usuario);
 
     expect($row->id)->toBe('geracao-agente')

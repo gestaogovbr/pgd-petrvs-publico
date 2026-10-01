@@ -24,10 +24,10 @@ test('relatorio de PT com subordinadas usa unidade_pai_id e ignora path', functi
     $ptNeta = PlanoTrabalho::factory()->create(['unidade_id' => $neta->id]);
     $ptSoPath = PlanoTrabalho::factory()->create(['unidade_id' => $soPath->id]);
 
-    $resultado = (new RelatorioPlanoTrabalhoService())->queryForExport([
-        'where' => [
-            ['unidade_id', '==', $pai->id],
-            ['incluir_unidades_subordinadas', '==', 1],
+    $resultado = app(RelatorioPlanoTrabalhoService::class)->queryForExport([
+        'filters' => [
+            'unidade_id' => $pai->id,
+            'incluir_unidades_subordinadas' => true,
         ],
         'page' => 1,
         'limit' => 50,
@@ -48,9 +48,9 @@ test('relatorio de PT sem subordinadas retorna apenas a unidade informada', func
     $ptPai = PlanoTrabalho::factory()->create(['unidade_id' => $pai->id]);
     $ptFilha = PlanoTrabalho::factory()->create(['unidade_id' => $filha->id]);
 
-    $resultado = (new RelatorioPlanoTrabalhoService())->queryForExport([
-        'where' => [
-            ['unidade_id', '==', $pai->id],
+    $resultado = app(RelatorioPlanoTrabalhoService::class)->queryForExport([
+        'filters' => [
+            'unidade_id' => $pai->id,
         ],
         'page' => 1,
         'limit' => 50,

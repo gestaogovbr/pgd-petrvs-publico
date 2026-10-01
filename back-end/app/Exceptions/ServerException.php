@@ -4,7 +4,6 @@ namespace App\Exceptions;
 
 use App\Exceptions\Contracts\IBaseException;
 use Exception;
-use Symfony\Component\HttpFoundation\Response;
 
 class ServerException extends Exception implements IBaseException
 {
@@ -35,6 +34,8 @@ class ServerException extends Exception implements IBaseException
         "ProgramaDestroy" => "Usuário não tem permissão para excluir regramentos",
         "RelatorioCapacidade" => "Usuário não tem permissão para abrir este Relatório",
         "RelatorioGeracao" => "Erro na geração de relatórios",
+        "RelatorioAgente" => "Acesso negado ao relatório de Agentes.",
+        "RelatorioPlanoTrabalho" => "Acesso negado ao relatório de Planos de Trabalho.",
         "RelatorioEnvioParticipantes" => "Acesso negado ao relatório de envio de participantes.",
         "RelatorioEnvioPlanoTrabalho" => "Acesso negado ao relatório de envio de planos de trabalho.",
         "RelatorioEnvioPlanoEntrega" => "Acesso negado ao relatório de envio de planos de entrega.",
@@ -69,28 +70,10 @@ class ServerException extends Exception implements IBaseException
     ];
 
     function __construct(string $code, string $extra = "", string $separator = " : ") {
-        $message  = [$this->getMessageException($code)];
-        if(!empty($extra)) {
+        $message = [$this->exceptions[$code] ?? "Erro desconhecido"];
+        if (! empty($extra)) {
             $message[] = $extra;
         }
-        $fullMessage = implode($separator, $message);
-        $httpCode = $this->httpStatusForExceptionCode($code);
-        parent::__construct($fullMessage, $httpCode);
-    }
-
-    private function httpStatusForExceptionCode(string $code): int
-    {
-        return match ($code) {
-            'RelatorioAgente' => Response::HTTP_FORBIDDEN,
-            'RelatorioEnvioParticipantes' => Response::HTTP_FORBIDDEN,
-            'RelatorioEnvioPlanoTrabalho' => Response::HTTP_FORBIDDEN,
-            'RelatorioEnvioPlanoEntrega' => Response::HTTP_FORBIDDEN,
-            default => 0,
-        };
-    }
-
-    private function getMessageException(string $code) : string
-    {
-        return array_key_exists($code, $this->exceptions) ? $this->exceptions[$code] : "Erro desconhecido";
+        parent::__construct(implode($separator, $message));
     }
 }

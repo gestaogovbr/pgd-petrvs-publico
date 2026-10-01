@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\RelatorioGeracao;
 
 use App\Contracts\RelatorioExcelGeradorContract;
@@ -37,12 +39,7 @@ class RelatorioPlanoTrabalhoDetalhadoExcelGerador implements RelatorioExcelGerad
 
     public function consultarPagina(RelatorioExcelConsultaPaginaDTO $consulta): array
     {
-        $result = $this->service->queryForExport([
-            'page' => $consulta->page,
-            'limit' => $consulta->limit,
-            'where' => $consulta->where,
-            'orderBy' => $consulta->orderBy,
-        ], $this->totalCount);
+        $result = $this->service->queryForExport($consulta->toQueryArray(), $this->totalCount);
 
         $this->totalCount = (int) $result['count'];
 

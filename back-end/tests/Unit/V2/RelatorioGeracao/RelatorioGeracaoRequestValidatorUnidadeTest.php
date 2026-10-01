@@ -10,10 +10,10 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
-test('store aceita tipo de unidades e filtros', function () {
+test('store aceita tipo de unidades com filters', function () {
     $request = Request::create('/api/v2/relatorio-exportacao', 'POST', [
         'tipo' => RelatorioGeracaoTipo::UNIDADE->value,
-        'where' => [['unidade_id', '==', 'u-1']],
+        'filters' => ['unidade_id' => 'u-1'],
         'orderBy' => [['sigla', 'asc']],
     ]);
 
@@ -21,7 +21,7 @@ test('store aceita tipo de unidades e filtros', function () {
 
     expect($dto)->toBeInstanceOf(RelatorioGeracaoStoreDTO::class)
         ->and($dto->tipo)->toBe(RelatorioGeracaoTipo::UNIDADE)
-        ->and($dto->where)->toBe([['unidade_id', '==', 'u-1']])
+        ->and($dto->filters)->toBe(['unidade_id' => 'u-1'])
         ->and($dto->orderBy)->toBe([['sigla', 'asc']]);
 });
 

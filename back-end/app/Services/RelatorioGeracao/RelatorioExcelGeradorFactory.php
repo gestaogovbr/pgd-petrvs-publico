@@ -4,6 +4,8 @@ namespace App\Services\RelatorioGeracao;
 
 use App\Contracts\RelatorioExcelGeradorContract;
 use App\Enums\RelatorioGeracaoTipo;
+use App\Models\RelatorioGeracao;
+use App\Services\RelatorioAgenteAuthorization;
 use App\Services\RelatorioAgenteService;
 use App\Services\RelatorioPlanoEntregaService;
 use App\Services\RelatorioPlanoTrabalhoDetalhadoService;
@@ -13,7 +15,7 @@ use App\V2\RelatorioEntrega\RelatorioEntregaService;
 
 class RelatorioExcelGeradorFactory
 {
-    public function make(RelatorioGeracaoTipo $tipo): RelatorioExcelGeradorContract
+    public function make(RelatorioGeracaoTipo $tipo, RelatorioGeracao $geracao): RelatorioExcelGeradorContract
     {
         return match ($tipo) {
             RelatorioGeracaoTipo::PLANO_TRABALHO => new RelatorioPlanoTrabalhoExcelGerador(
@@ -26,7 +28,9 @@ class RelatorioExcelGeradorFactory
                 app(RelatorioPlanoEntregaService::class)
             ),
             RelatorioGeracaoTipo::AGENTE => new RelatorioAgenteExcelGerador(
-                app(RelatorioAgenteService::class)
+                app(RelatorioAgenteService::class),
+                app(RelatorioAgenteAuthorization::class),
+                $geracao,
             ),
             RelatorioGeracaoTipo::UNIDADE => new RelatorioUnidadeExcelGerador(
                 app(RelatorioUnidadeService::class)

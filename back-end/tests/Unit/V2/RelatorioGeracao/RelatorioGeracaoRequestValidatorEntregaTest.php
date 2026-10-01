@@ -10,13 +10,13 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
-test('store aceita tipo de entregas e filtros', function () {
+test('store aceita tipo de entregas com filters', function () {
     $request = Request::create('/api/v2/relatorio-exportacao', 'POST', [
         'tipo' => RelatorioGeracaoTipo::ENTREGA->value,
-        'where' => [
-            ['unidade_id', '==', 'u-1'],
-            ['periodo_inicio', '==', '2026-01-01'],
-            ['periodo_fim', '==', '2026-01-31'],
+        'filters' => [
+            'unidade_id' => 'u-1',
+            'periodo_inicio' => '2026-01-01',
+            'periodo_fim' => '2026-01-31',
         ],
         'orderBy' => [['entregaNome', 'asc']],
     ]);
@@ -25,10 +25,10 @@ test('store aceita tipo de entregas e filtros', function () {
 
     expect($dto)->toBeInstanceOf(RelatorioGeracaoStoreDTO::class)
         ->and($dto->tipo)->toBe(RelatorioGeracaoTipo::ENTREGA)
-        ->and($dto->where)->toBe([
-            ['unidade_id', '==', 'u-1'],
-            ['periodo_inicio', '==', '2026-01-01'],
-            ['periodo_fim', '==', '2026-01-31'],
+        ->and($dto->filters)->toBe([
+            'unidade_id' => 'u-1',
+            'periodo_inicio' => '2026-01-01',
+            'periodo_fim' => '2026-01-31',
         ])
         ->and($dto->orderBy)->toBe([['entregaNome', 'asc']]);
 });

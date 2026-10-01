@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\V2\RelatorioGeracao;
 
-use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
-use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
-use App\DTOs\RelatorioAgente\RelatorioAgenteWhereMapper;
 use App\Enums\RelatorioGeracaoStatus;
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\NotFoundException;
@@ -17,7 +14,6 @@ use App\Jobs\GerarRelatorioExcelJob;
 use App\Models\RelatorioGeracao;
 use App\Models\Usuario;
 use App\Repository\RelatorioGeracaoRepository;
-use App\Services\RelatorioAgenteAuthorization;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoIndexDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoRowDTO;
 use App\V2\RelatorioGeracao\DTOs\RelatorioGeracaoStatusQueryDTO;
@@ -34,7 +30,6 @@ class RelatorioGeracaoService
         private readonly RelatorioGeracaoRepository $repository,
         private readonly RelatorioGeracaoExcel $excel,
         private readonly RelatorioGeracaoStorage $storage,
-        private readonly RelatorioAgenteAuthorization $relatorioAgenteAuthorization,
     ) {
     }
 
@@ -77,22 +72,6 @@ class RelatorioGeracaoService
     public function store(RelatorioGeracaoStoreDTO $dto, Usuario $usuario): RelatorioGeracaoRowDTO
     {
         $tenantId = $this->requireTenantId();
-        $parametros = $dto->toParametros();
-
-        if ($dto->tipo === RelatorioGeracaoTipo::AGENTE) {
-            $queryDto = $this->relatorioAgenteAuthorization->aplicarFiltroParticipante(
-                new RelatorioAgenteQueryDTO(
-                    filters: RelatorioAgenteFiltersDTO::fromArray($dto->filters),
-                    orderBy: $dto->orderBy,
-                ),
-                $usuario,
-            );
-            $parametros = [
-                'filters' => $queryDto->filters->toArray(),
-                'where' => RelatorioAgenteWhereMapper::map($queryDto->filters),
-                'orderBy' => $queryDto->orderBy,
-            ];
-        }
 
         $geracao = $this->repository->create([
             'tipo' => $dto->tipo->value,
@@ -100,9 +79,8 @@ class RelatorioGeracaoService
             'status' => RelatorioGeracaoStatus::PROCESSANDO,
             'usuario_id' => $usuario->id,
             'parametros' => [
-                'filters' => $parametros['filters'] ?? [],
-                'where' => $parametros['where'] ?? [],
-                'orderBy' => $parametros['orderBy'] ?? [],
+                'filters' => $dto->filters,
+                'orderBy' => $dto->orderBy,
             ],
             'iniciado_em' => now(),
             'progresso_pagina' => 0,

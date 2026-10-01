@@ -14,17 +14,10 @@ export class RelatorioGeracaoDaoService extends DaoBaseService<RelatorioGeracao>
   }
 
   public solicitar(tipo: string, queryOptions: QueryOptions): Observable<any> {
-    const payload: Record<string, unknown> = {
+    return this.server.post('api/v2/relatorio-exportacao', {
       tipo,
+      filters: queryOptions.filters || {},
       orderBy: queryOptions.orderBy || [],
-    };
-
-    if (queryOptions.filters && Object.keys(queryOptions.filters).length > 0) {
-      payload['filters'] = queryOptions.filters;
-    } else {
-      payload['where'] = queryOptions.where || [];
-    }
-
-    return this.server.post('api/v2/relatorio-exportacao', payload);
+    });
   }
 }
