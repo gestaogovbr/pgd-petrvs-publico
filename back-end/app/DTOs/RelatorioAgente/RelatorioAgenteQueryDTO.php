@@ -44,18 +44,4 @@ final class RelatorioAgenteQueryDTO
             deleted: $this->deleted,
         );
     }
-
-    /**
-     * @return array{where: list<array{0: string, 1: string, 2: mixed}>, orderBy: array<int, mixed>, page: mixed, limit: mixed, deleted: mixed}
-     */
-    public function toQueryArray(): array
-    {
-        return [
-            'where' => RelatorioAgenteWhereMapper::map($this->filters),
-            'orderBy' => $this->orderBy,
-            'page' => $this->page,
-            'limit' => $this->limit,
-            'deleted' => $this->deleted,
-        ];
-    }
 }

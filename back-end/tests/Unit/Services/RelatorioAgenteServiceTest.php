@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
+use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
 use App\Enums\StatusEnum;
 use App\Models\Usuario;
 use App\Repository\RelatorioAgenteRepository;
@@ -18,27 +20,28 @@ test('query consulta o repositório e enriquece as linhas', function () {
         'plano_trabalho_status' => StatusEnum::ATIVO->value,
     ];
 
+    $dto = new RelatorioAgenteQueryDTO(
+        filters: RelatorioAgenteFiltersDTO::fromArray(['unidade_id' => 'u-1']),
+        orderBy: [['nome', 'asc']],
+        page: 1,
+        limit: 10,
+    );
+
     $repository = Mockery::mock(RelatorioAgenteRepository::class);
     $repository->shouldReceive('query')
         ->once()
-        ->with([
-            'page' => 1,
-            'limit' => 10,
-            'where' => [['unidade_id', '==', 'u-1']],
-            'orderBy' => [['nome', 'asc']],
-        ])
+        ->with(Mockery::on(function (RelatorioAgenteQueryDTO $received) use ($dto): bool {
+            return $received->filters->unidadeId === $dto->filters->unidadeId
+                && $received->page === 1
+                && $received->limit === 10;
+        }))
         ->andReturn([
             'count' => 1,
             'rows' => collect([$row]),
         ]);
 
     $service = new RelatorioAgenteService($repository);
-    $result = $service->query([
-        'page' => 1,
-        'limit' => 10,
-        'where' => [['unidade_id', '==', 'u-1']],
-        'orderBy' => [['nome', 'asc']],
-    ]);
+    $result = $service->query($dto);
 
     expect($result['count'])->toBe(1)
         ->and($result['rows'])->toHaveCount(1)
@@ -51,12 +54,11 @@ test('queryForExport normaliza página e limite e reutiliza o total conhecido', 
     $repository = Mockery::mock(RelatorioAgenteRepository::class);
     $repository->shouldReceive('query')
         ->once()
-        ->with([
-            'page' => 1,
-            'limit' => 1000,
-            'where' => [['nome', 'like', '%Ana%']],
-            'orderBy' => [],
-        ])
+        ->with(Mockery::on(function (RelatorioAgenteQueryDTO $dto): bool {
+            return $dto->filters->nome === 'Ana'
+                && $dto->page === 1
+                && $dto->limit === 1000;
+        }))
         ->andReturn([
             'count' => 50,
             'rows' => collect([
@@ -71,7 +73,7 @@ test('queryForExport normaliza página e limite e reutiliza o total conhecido', 
     $service = new RelatorioAgenteService($repository);
     $result = $service->queryForExport([
         'page' => 0,
-        'where' => [['nome', 'like', '%Ana%']],
+        'filters' => ['nome' => 'Ana'],
     ], 999);
 
     expect($result['count'])->toBe(999)
@@ -85,12 +87,11 @@ test('queryForExport preserva o count do repositório quando knownCount é nulo'
     $repository = Mockery::mock(RelatorioAgenteRepository::class);
     $repository->shouldReceive('query')
         ->once()
-        ->with([
-            'page' => 2,
-            'limit' => 100,
-            'where' => [],
-            'orderBy' => [['nome', 'asc']],
-        ])
+        ->with(Mockery::on(function (RelatorioAgenteQueryDTO $dto): bool {
+            return $dto->page === 2
+                && $dto->limit === 100
+                && $dto->orderBy === [['nome', 'asc']];
+        }))
         ->andReturn([
             'count' => 42,
             'rows' => collect([]),

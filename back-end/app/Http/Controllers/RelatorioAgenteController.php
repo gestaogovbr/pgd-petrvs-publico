@@ -65,7 +65,7 @@ class RelatorioAgenteController extends Controller
                 $usuario,
             );
 
-            $result = $this->service->query($queryDto->toQueryArray());
+            $result = $this->service->query($queryDto);
 
             if ($request->is('*/xls')) {
                 return Excel::download(
@@ -85,7 +85,7 @@ class RelatorioAgenteController extends Controller
                 'error' => collect($e->errors())->flatten()->first() ?? $e->getMessage(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_FORBIDDEN);
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
 

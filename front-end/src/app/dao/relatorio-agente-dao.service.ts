@@ -1,6 +1,7 @@
 import { QueryOptions } from 'src/app/dao/query-options';
 import { Injectable, Injector } from '@angular/core';
-import { DaoBaseService, QueryContext } from './dao-base.service';
+import { DaoBaseService } from './dao-base.service';
+import { QueryContext } from './query-context';
 import { RelatorioAgente } from '../models/relatorio-agente.model';
 import { Observable } from 'rxjs';
 
@@ -46,7 +47,7 @@ export class RelatorioAgenteDaoService extends DaoBaseService<RelatorioAgente> {
           context.subject.error(response.error);
         } else {
           context.rows = !context.cumulate || !context.rows?.length ? [] : context.rows;
-          context.rows.push(...this.getRows(response).filter((x) => !context.rows.find((y) => y.id == x.id)));
+          context.rows.push(...this.getRows(response).filter((x: RelatorioAgente) => !context.rows.find((y: RelatorioAgente) => y.id == x.id)));
           context.extra = this.iso8601ToDate(response.extra);
           context.enablePrior = context.page > 1;
           context.enableNext = !!context.options.limit && response.count > (context.page - 1) * context.options.limit + response.rows.length;

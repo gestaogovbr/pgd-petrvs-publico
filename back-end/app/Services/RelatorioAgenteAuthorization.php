@@ -20,7 +20,7 @@ class RelatorioAgenteAuthorization
     {
         $usuario = AuthenticatedUsuario::withAreasDeTrabalho();
         if ($usuario === null) {
-            throw new ServerException('RelatorioAgente', self::MSG_ACESSO_NEGADO);
+            throw new ServerException('RelatorioAgente');
         }
 
         $this->assertPodeConsultar($usuario);
@@ -31,7 +31,7 @@ class RelatorioAgenteAuthorization
     public function assertPodeConsultar(Usuario $usuario): void
     {
         if (! $usuario->hasPermissionTo(self::CAPACIDADE)) {
-            throw new ServerException('RelatorioAgente', self::MSG_ACESSO_NEGADO);
+            throw new ServerException('RelatorioAgente');
         }
     }
 

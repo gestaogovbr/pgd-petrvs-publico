@@ -7,6 +7,8 @@ use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
 use App\Models\Usuario;
 use App\Enums\StatusEnum;
+use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
+use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
 use Illuminate\Support\Facades\Bus;
 
@@ -40,18 +42,20 @@ beforeEach(function () {
     };
 });
 
+function queryAgente(array $filters, int $page = 1, int $limit = 10): array
+{
+    return test()->repository->query(new RelatorioAgenteQueryDTO(
+        filters: RelatorioAgenteFiltersDTO::fromArray($filters),
+        page: $page,
+        limit: $limit,
+    ));
+}
+
 test('filtro situacao ATIVO exclui usuários com participa_pgd não', function () {
     $ativo = ($this->criarUsuarioLotado)(['participa_pgd' => 'sim', 'situacao_siape' => 'ATIVO']);
     $inativo = ($this->criarUsuarioLotado)(['participa_pgd' => 'não', 'situacao_siape' => 'ATIVO']);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-            ['situacao', '==', 'ATIVO'],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id, 'situacao' => 'ATIVO']);
 
     $ids = $result['rows']->pluck('id')->toArray();
 
@@ -63,14 +67,7 @@ test('filtro situacao INATIVO retorna usuários com participa_pgd não', functio
     $ativo = ($this->criarUsuarioLotado)(['participa_pgd' => 'sim', 'situacao_siape' => 'ATIVO']);
     $inativo = ($this->criarUsuarioLotado)(['participa_pgd' => 'não', 'situacao_siape' => 'ATIVO']);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-            ['situacao', '==', 'INATIVO'],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id, 'situacao' => 'INATIVO']);
 
     $ids = $result['rows']->pluck('id')->toArray();
 
@@ -84,13 +81,7 @@ test('retorna nome_exibicao com nome social quando disponível', function () {
         'nome_social' => 'Maria Silva',
     ]);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id]);
 
     $row = $result['rows']->firstWhere('id', $usuario->id);
 
@@ -103,13 +94,7 @@ test('retorna nome_exibicao com nome quando não há nome social', function () {
         'nome_social' => null,
     ]);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id]);
 
     $row = $result['rows']->firstWhere('id', $usuario->id);
 
@@ -129,13 +114,7 @@ test('retorna plano de trabalho do dia quando vigência inclui data atual', func
         'data_fim' => now()->addMonth()->toDateString(),
     ]);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id]);
 
     $row = $result['rows']->firstWhere('id', $usuario->id);
 
@@ -156,13 +135,7 @@ test('não retorna plano de trabalho quando vigência não inclui data atual', f
         'data_fim' => '2024-06-30',
     ]);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id]);
 
     $row = $result['rows']->firstWhere('id', $usuario->id);
 
@@ -172,13 +145,7 @@ test('não retorna plano de trabalho quando vigência não inclui data atual', f
 test('retorna participantePGD Sim para quem participa_pgd é sim', function () {
     $usuario = ($this->criarUsuarioLotado)(['participa_pgd' => 'sim']);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id]);
 
     $row = $result['rows']->firstWhere('id', $usuario->id);
 
@@ -189,14 +156,7 @@ test('filtro participantePGD Sim exclui quem não participa do PGD', function ()
     $participante = ($this->criarUsuarioLotado)(['participa_pgd' => 'sim']);
     $naoParticipante = ($this->criarUsuarioLotado)(['participa_pgd' => 'não']);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-            ['participantePGD', '==', 'Sim'],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id, 'participantePGD' => 'Sim']);
 
     $ids = $result['rows']->pluck('id')->toArray();
 
@@ -208,14 +168,7 @@ test('filtro participantePGD Não exclui quem participa do PGD', function () {
     $participante = ($this->criarUsuarioLotado)(['participa_pgd' => 'sim']);
     $naoParticipante = ($this->criarUsuarioLotado)(['participa_pgd' => 'não']);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-            ['participantePGD', '==', 'Não'],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id, 'participantePGD' => 'Não']);
 
     $ids = $result['rows']->pluck('id')->toArray();
 
@@ -226,13 +179,7 @@ test('filtro participantePGD Não exclui quem participa do PGD', function () {
 test('retorna participantePGD Não para quem participa_pgd é não', function () {
     $usuario = ($this->criarUsuarioLotado)(['participa_pgd' => 'não']);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id]);
 
     $row = $result['rows']->firstWhere('id', $usuario->id);
 
@@ -255,13 +202,7 @@ test('compara modalidade SouGov e Petrvs por valor normalizado usando PT do dia'
         'data_fim' => now()->addMonth()->toDateString(),
     ]);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id]);
 
     $row = $result['rows']->firstWhere('id', $usuario->id);
 
@@ -273,14 +214,7 @@ test('filtro por usuario_id retorna apenas o usuário especificado', function ()
     $usuario1 = ($this->criarUsuarioLotado)();
     $usuario2 = ($this->criarUsuarioLotado)();
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-            ['usuario_id', '==', $usuario1->id],
-        ],
-        'page' => 1,
-        'limit' => 10,
-    ]);
+    $result = queryAgente(['unidade_id' => $this->unidade->id, 'usuario_id' => $usuario1->id]);
 
     $ids = $result['rows']->pluck('id')->toArray();
 

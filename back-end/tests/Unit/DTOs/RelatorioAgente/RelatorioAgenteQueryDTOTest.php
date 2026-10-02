@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
 use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
-use App\DTOs\RelatorioAgente\RelatorioAgenteWhereMapper;
 
 test('filters dto mapeia objeto tipado da interface', function () {
     $filters = RelatorioAgenteFiltersDTO::fromArray([
@@ -52,24 +51,6 @@ test('filters dto mapeia objeto tipado da interface', function () {
         ->and($filters->somenteVigentes)->toBeTrue();
 });
 
-test('where mapper converte filtros tipados para where legado', function () {
-    $filters = new RelatorioAgenteFiltersDTO(
-        unidadeId: 'u-1',
-        incluirUnidadesSubordinadas: true,
-        nome: 'Ana',
-        matricula: '123',
-        situacao: 'ATIVO',
-    );
-
-    expect(RelatorioAgenteWhereMapper::map($filters))->toBe([
-        ['unidade_id', '==', 'u-1'],
-        ['incluir_unidades_subordinadas', '==', 1],
-        ['nome', 'like', '%Ana%'],
-        ['matricula', 'like', '%123%'],
-        ['situacao', '==', 'ATIVO'],
-    ]);
-});
-
 test('filters dto restringe ao usuário removendo filtros de unidade', function () {
     $filters = new RelatorioAgenteFiltersDTO(
         unidadeId: 'u-1',
@@ -82,11 +63,7 @@ test('filters dto restringe ao usuário removendo filtros de unidade', function 
     expect($restrito->unidadeId)->toBeNull()
         ->and($restrito->incluirUnidadesSubordinadas)->toBeFalse()
         ->and($restrito->usuarioId)->toBe('user-9')
-        ->and($restrito->nome)->toBe('Ana')
-        ->and(RelatorioAgenteWhereMapper::map($restrito))->toBe([
-            ['usuario_id', '==', 'user-9'],
-            ['nome', 'like', '%Ana%'],
-        ]);
+        ->and($restrito->nome)->toBe('Ana');
 });
 
 test('query dto monta a partir de filters tipados', function () {
@@ -104,17 +81,7 @@ test('query dto monta a partir de filters tipados', function () {
         ->and($dto->filters->nome)->toBe('Ana')
         ->and($dto->orderBy)->toBe([['nome', 'asc']])
         ->and($dto->page)->toBe(2)
-        ->and($dto->limit)->toBe(50)
-        ->and($dto->toQueryArray())->toBe([
-            'where' => [
-                ['unidade_id', '==', 'u-1'],
-                ['nome', 'like', '%Ana%'],
-            ],
-            'orderBy' => [['nome', 'asc']],
-            'page' => 2,
-            'limit' => 50,
-            'deleted' => null,
-        ]);
+        ->and($dto->limit)->toBe(50);
 });
 
 test('query dto withFilters preserva paginação e ordenação', function () {

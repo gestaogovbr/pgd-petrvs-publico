@@ -57,7 +57,11 @@ test('query retorna json com linhas quando autorizado', function () {
     $service = Mockery::mock(RelatorioAgenteService::class);
     $service->shouldReceive('query')
         ->once()
-        ->with($queryDto->toQueryArray())
+        ->with(Mockery::on(function (RelatorioAgenteQueryDTO $dto): bool {
+            return $dto->filters->unidadeId === 'u-1'
+                && $dto->page === 1
+                && $dto->limit === 10;
+        }))
         ->andReturn([
             'count' => 1,
             'rows' => collect([(object) ['id' => 'ag-1', 'nome' => 'Ana']]),
@@ -85,7 +89,7 @@ test('query rejeita acesso sem autorização', function () {
     $authorization = Mockery::mock(RelatorioAgenteAuthorization::class);
     $authorization->shouldReceive('usuarioAutorizado')
         ->once()
-        ->andThrow(new ServerException('RelatorioAgente', RelatorioAgenteAuthorization::MSG_ACESSO_NEGADO));
+        ->andThrow(new ServerException('RelatorioAgente'));
 
     $response = makeRelatorioAgenteController(
         Mockery::mock(RelatorioAgenteService::class),
