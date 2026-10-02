@@ -2,6 +2,7 @@
 
 ### Corrigido
 - Planos de Trabalho encerrados antecipadamente deixam de gerar pendências falsas de avaliação para a chefia: períodos avaliativos posteriores à data de encerramento não são mais contabilizados como aguardando avaliação
+- Tela do Plano de Trabalho passa a exibir todas as ocorrências do período avaliativo, incluindo afastamentos de recesso/compensação que antes ficavam ocultos
 
 ## 3.1.6 28/09/2026
 
