@@ -1,3 +1,8 @@
+## 3.2.0 02/10/2026
+
+### Corrigido
+- Planos de Trabalho encerrados antecipadamente deixam de gerar pendências falsas de avaliação para a chefia: períodos avaliativos posteriores à data de encerramento não são mais contabilizados como aguardando avaliação
+
 ## 3.1.6 28/09/2026
 
 ### Adicionado
