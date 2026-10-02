@@ -6,6 +6,7 @@ namespace App\Repository\RelatorioAgente\Eloquent;
 
 use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
 use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
+use App\Enums\Atribuicao;
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
 use App\Services\UnidadeService;
 use App\Support\ModalidadePgd;
@@ -20,6 +21,8 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
         $modalidadeUsuarioNormalizada = ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`');
         $modalidadePlanoNormalizada = ModalidadePgd::sqlNormalizeExpression('`pt_do_dia`.`modalidade_pgd`');
 
+        $atribuicaoLotado = Atribuicao::LOTADO->value;
+
         $sql = <<<TEXT
         with lotacoes as (
             select
@@ -32,7 +35,7 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
                     and `uia`.`deleted_at` is null))
             where
                 `ui`.`deleted_at` is null
-                and `uia`.`atribuicao` = 'LOTADO'
+                and `uia`.`atribuicao` = '{$atribuicaoLotado}'
             order by
                 `ui`.`usuario_id`
         ),
@@ -184,7 +187,8 @@ TEXT;
         }
 
         if ($filters->atribuicao === null) {
-            $sql .= " and uia.atribuicao = 'LOTADO'";
+            $sql .= ' and uia.atribuicao = ?';
+            $params[] = Atribuicao::LOTADO->value;
         } else {
             $sql .= ' and uia.atribuicao = ?';
             $params[] = $filters->atribuicao;
