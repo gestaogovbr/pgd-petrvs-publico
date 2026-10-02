@@ -37,6 +37,7 @@ class ServerException extends Exception implements IBaseException
         "RelatorioAgente" => "Acesso negado ao relatório de Agentes.",
         "RelatorioPlanoTrabalho" => "Acesso negado ao relatório de Planos de Trabalho.",
         "RelatorioPlanoEntrega" => "Acesso negado ao relatório de Planos de Entrega.",
+        "RelatorioUnidade" => "Acesso negado ao relatório de Unidades.",
         "RelatorioEnvioParticipantes" => "Acesso negado ao relatório de envio de participantes.",
         "RelatorioEnvioPlanoTrabalho" => "Acesso negado ao relatório de envio de planos de trabalho.",
         "RelatorioEnvioPlanoEntrega" => "Acesso negado ao relatório de envio de planos de entrega.",

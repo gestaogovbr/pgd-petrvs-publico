@@ -121,6 +121,50 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
     return result;
   };
 
+  public buildFilters(filter: FormGroup): Record<string, unknown> {
+    const form: any = filter.value;
+    const filters: Record<string, unknown> = {};
+
+    if (form.unidade_id) {
+      filters['unidade_id'] = form.unidade_id;
+    }
+    if (form.incluir_unidades_subordinadas) {
+      filters['incluir_unidades_subordinadas'] = true;
+    }
+    if (form.nome) {
+      filters['nome'] = form.nome;
+    }
+    if (form.unidadeNome) {
+      filters['unidadeHierarquia'] = form.unidadeNome;
+    }
+    if (form.uorg?.length) {
+      filters['codigo'] = form.uorg;
+    }
+    if (form.instituidora?.length) {
+      filters['instituidora'] = form.instituidora;
+    }
+    if (form.executora?.length) {
+      filters['executora'] = form.executora;
+    }
+    if (form.peVigenteNome?.length) {
+      filters['peVigenteNome'] = form.peVigenteNome;
+    }
+    if (form.chefiaNome?.length) {
+      filters['chefiaNome'] = form.chefiaNome;
+    }
+    if (form.totalVinculados?.length) {
+      filters['totalVinculados'] = form.totalVinculados;
+    }
+    if (form.totalSubstitutos?.length) {
+      filters['totalSubstitutos'] = form.totalSubstitutos;
+    }
+    if (form.totalDelegados?.length) {
+      filters['totalDelegados'] = form.totalDelegados;
+    }
+
+    return filters;
+  }
+
   public onButtonFilterClick = (filter: FormGroup) => {
     let form: any = filter.value;
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
@@ -138,7 +182,7 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
     try {
       return this.relatorioGeracaoDao.solicitar('unidade', {
-        where: queryOptions.where,
+        filters: this.buildFilters(this.filter!),
         orderBy: queryOptions.orderBy
       });
     } catch (error: any) {

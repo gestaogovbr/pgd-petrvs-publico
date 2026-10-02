@@ -1,42 +1,57 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Exceptions\Contracts\IBaseException;
-use App\Exceptions\ServerException;
 use App\Exports\RelatorioUnidadeExport;
-use App\Http\Controllers\ControllerBase;
+use App\Services\RelatorioUnidadeAuthorization;
 use App\Services\RelatorioUnidadeService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
-class RelatorioUnidadeController extends ControllerBase {
-
-    protected function checkPermissions($action, $request, $service, $unidade, $usuario) {
-        return true;
+class RelatorioUnidadeController extends Controller
+{
+    public function __construct(
+        private readonly RelatorioUnidadeService $service,
+        private readonly RelatorioUnidadeAuthorization $authorization,
+    ) {
     }
 
-    /**
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Illuminate\Http\JsonResponse
-     */
-    public function query(Request $request) {
-        if (!$this->getUsuario($request)->hasPermissionTo('MOD_RELATORIO_UNIDADE')){
-            throw new ServerException("RelatorioCapacidade", "Acesso negado ao relatório de Unidades.");
-        }
-
+    public function query(Request $request): JsonResponse|BinaryFileResponse
+    {
         try {
+            $this->authorization->usuarioAutorizado();
+
             $data = $request->validate([
                 'page' => ['nullable'],
                 'limit' => ['nullable'],
                 'orderBy' => ['array'],
                 'deleted' => ['nullable'],
-                'where' => ['array']
+                'filters' => ['array'],
+                'filters.unidade_id' => ['nullable', 'string'],
+                'filters.incluir_unidades_subordinadas' => ['nullable', 'boolean'],
+                'filters.nome' => ['nullable', 'string'],
+                'filters.unidadeHierarquia' => ['nullable', 'string'],
+                'filters.codigo' => ['nullable', 'string'],
+                'filters.instituidora' => ['nullable', 'string'],
+                'filters.executora' => ['nullable', 'string'],
+                'filters.peVigenteNome' => ['nullable', 'string'],
+                'filters.chefiaNome' => ['nullable', 'string'],
+                'filters.totalVinculados' => ['nullable', 'string'],
+                'filters.totalSubstitutos' => ['nullable', 'string'],
+                'filters.totalDelegados' => ['nullable', 'string'],
+                'where' => ['array'],
             ]);
 
-            $service = new RelatorioUnidadeService();
-            $result = $service->query($data);
-
+            $result = $this->service->query($data);
 
             if ($request->is('*/xls')) {
                 return Excel::download(
@@ -49,16 +64,18 @@ class RelatorioUnidadeController extends ControllerBase {
                 'success' => true,
                 'count' => $result['count'],
                 'rows' => $result['rows'],
-                'extra' => $result['extra']
+                'extra' => $result['extra'],
             ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'error' => collect($e->errors())->flatten()->first() ?? $e->getMessage(),
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (IBaseException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_FORBIDDEN);
+        } catch (Throwable $e) {
+            Log::error(throwableToArrayLog($e));
 
-        }  catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-        catch (Throwable $e) {
-            $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado."], 500);
+            return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 }
