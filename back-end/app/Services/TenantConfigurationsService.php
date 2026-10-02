@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
+use App\Models\Tenant;
+use App\Repository\Tenant\Contracts\TenantReadRepositoryContract;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Stancl\Tenancy\Database\Models\Domain;
 
 class TenantConfigurationsService
@@ -11,18 +13,21 @@ class TenantConfigurationsService
     private const DOMAIN_CACHE_TTL_SECONDS = 900;
     private const HTTPS_PORT = 443;
 
+    public function __construct(
+        private readonly ?TenantReadRepositoryContract $tenantReadRepository = null,
+    ) {
+    }
+
     public function handle(string $tenantId = null, $domain = null): ?Domain
     {
         $tenant = null;
         if ($tenantId) {
             $tenant = Cache::remember('domain:tenant_id:'.$tenantId, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($tenantId) {
-                /** @phpstan-ignore-next-line */
                 return Domain::where('tenant_id', $tenantId)->with('tenant')->first();
             });
         }
         if (!$tenant && $domain) {
             $tenant = Cache::remember('domain:domain:'.$domain, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($domain) {
-                /** @phpstan-ignore-next-line */
                 return Domain::where('domain', $domain)->with('tenant')->first();
             });
         }
@@ -30,7 +35,6 @@ class TenantConfigurationsService
         if (!$tenant) {
             $entidade = env('PETRVS_ENTIDADE');
             $tenant = Cache::remember('domain:tenant_id:'.$entidade, self::DOMAIN_CACHE_TTL_SECONDS, function () use ($entidade) {
-                /** @phpstan-ignore-next-line */
                 return Domain::where('tenant_id', $entidade)->with('tenant')->first();
             });
         }
@@ -41,11 +45,33 @@ class TenantConfigurationsService
         return $tenant;
     }
 
+    public function handleTenant(string $tenantId): ?Tenant
+    {
+        $tenant = $this->tenantRead()->findById($tenantId);
+
+        if ($tenant) {
+            $this->loadSettings($tenant->toArray());
+        }
+
+        return $tenant;
+    }
+
+    private function tenantRead(): TenantReadRepositoryContract
+    {
+        return $this->tenantReadRepository ?? app(TenantReadRepositoryContract::class);
+    }
+
     private function loadingConfigs($tenant) : void
     {
         # Pega os dados salvos no Panel
         $settings = json_decode($tenant['tenant'], true);
         // Log::info("Settings: " . json_encode($settings));
+
+        $this->loadSettings($settings);
+    }
+
+    private function loadSettings(array $settings): void
+    {
 
         # Obtém a URL do aplicativo do arquivo de configuração
         $appUrl = config('app.url');
@@ -96,11 +122,30 @@ class TenantConfigurationsService
         config(['integracao.siape.conectagov_senha'     => $settings['integracao_siape_conectagov_senha']       ?? env('INTEGRACAO_SIAPE_CONECTAGOV_SENHA')]);
         config(['integracao.siape.conectagov_qtd_max_requisicoes'     => $settings['integracao_siape_conectagov_qtd_max_requisicoes']       ?? env('INTEGRACAO_SIAPE_CONECTAGOV_QTD_MAX_REQUISICOES')]);
 
+        # SIPEC
+        config(['integracao.sipec.url'                  => $settings['integracao_sipec_url']                    ?? env('INTEGRACAO_SIPEC_URL')]);
+        config(['integracao.sipec.conectagov_chave'     => $settings['integracao_sipec_conectagov_chave']       ?? env('INTEGRACAO_SIPEC_CONECTAGOV_CHAVE')]);
+        config(['integracao.sipec.conectagov_senha'     => $settings['integracao_sipec_conectagov_senha']       ?? env('INTEGRACAO_SIPEC_CONECTAGOV_SENHA')]);
+        config(['integracao.sipec.cpf'                  => $settings['integracao_sipec_cpf']                    ?? env('INTEGRACAO_SIPEC_CPF')]);
+        config(['integracao.sipec.codUorg'              => $settings['integracao_sipec_coduorg']                ?? env('INTEGRACAO_SIPEC_CODUORG')]);
+        config(['integracao.sipec.codOrgao'             => $settings['integracao_sipec_codorgao']               ?? env('INTEGRACAO_SIPEC_CODORGAO')]);
+
         config(['integracao.perfilComum'          => $settings['integracao_usuario_comum']            ?? env('INTEGRACAO_USUARIO_COMUM')]);
         config(['integracao.perfilChefe'          => $settings['integracao_usuario_chefe']            ?? env('INTEGRACAO_USUARIO_CHEFE')]);
 
         config(['petrvs.dias-avaliacao-registro-execucao' => $settings['dias_avaliacao_registro_execucao'] ?? config('petrvs.dias-avaliacao-registro-execucao')]);
 
         // Log::info("Configs carregadas: " . json_encode(config('integracao')));
+    }
+
+    public static function tenantHasSipecConfigured(): bool
+    {
+        $sipec = config('integracao.sipec', []);
+        foreach (['url', 'conectagov_chave', 'conectagov_senha', 'cpf', 'codUorg', 'codOrgao'] as $field) {
+            if (!empty(trim($sipec[$field] ?? ''))) {
+                return true;
+            }
+        }
+        return false;
     }
 }

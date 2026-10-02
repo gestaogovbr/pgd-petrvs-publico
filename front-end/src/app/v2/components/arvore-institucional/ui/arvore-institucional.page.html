@@ -1,0 +1,139 @@
+<div class="br-mainpanel">
+  <app-breadcrumb />
+
+  <h2 class="mb-3">{{ config.titulo }}</h2>
+
+  @if (loadError()) {
+    <div class="alert alert-warning" role="alert">{{ loadError() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="d-flex justify-content-center p-5">
+      <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+    </div>
+  } @else if (dados() && !loadError()) {
+    <div class="arvore-wrap">
+      <div class="br-card mt-2">
+        <div class="card-header">
+          <div class="p-2">
+            <h4 class="mb-1">Hierarquia centrada no item consultado</h4>
+            @if (subtitulo()) {
+              <small class="text-muted">{{ subtitulo() }}</small>
+            }
+          </div>
+        </div>
+
+        <div class="card-content">
+          <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+            <span class="zoom-controls" aria-label="Controles de zoom">
+              <br-button emphasis="tertiary" (click)="panZoom.zoomOut()">Afastar</br-button>
+              <span class="zoom-controls__value">{{ panZoom.zoom() * 100 | number:'1.0-0' }}%</span>
+              <br-button emphasis="tertiary" (click)="panZoom.zoomIn()">Aproximar</br-button>
+              <br-button emphasis="tertiary" (click)="panZoom.reset()">100%</br-button>
+            </span>
+
+            <span class="arvore-expand-controls" aria-label="Expandir níveis">
+              <br-button emphasis="secondary" [disabled]="!canExpandUp()" (click)="expandUp()">
+                Expandir acima
+              </br-button>
+              <br-button emphasis="secondary" [disabled]="!canExpandDown()" (click)="expandDown()">
+                Expandir abaixo
+              </br-button>
+            </span>
+
+            <span class="legend-hint">
+              <strong>Linha contínua</strong> = {{ config.legendaPrimary }} ·
+              <strong>Linha tracejada</strong> = {{ config.legendaSecondary }}
+            </span>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-12 col-lg-8">
+              <svg
+                #svgRef
+                class="arvore-surface"
+                [attr.viewBox]="viewBoxString()"
+                (pointerdown)="onPanDown($event)"
+              >
+                <defs>
+                  <marker id="arrowPrimary" viewBox="0 0 10 6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#636363"></path>
+                  </marker>
+                  <marker id="arrowSecondary" viewBox="0 0 10 6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                    <path d="M0,0 L0,6 L8,3 z" fill="#1351b4"></path>
+                  </marker>
+                </defs>
+
+                @for (edge of edges(); track edge.key) {
+                  <path
+                    [attr.d]="edge.path"
+                    fill="none"
+                    [attr.stroke]="edge.type === 'PRIMARY' ? '#636363' : '#1351b4'"
+                    [attr.stroke-width]="edge.type === 'PRIMARY' ? '2' : '1.6'"
+                    [attr.stroke-dasharray]="edge.type === 'SECONDARY' ? '7 6' : null"
+                    [attr.marker-end]="edge.type === 'PRIMARY' ? 'url(#arrowPrimary)' : 'url(#arrowSecondary)'"
+                    [attr.opacity]="edge.type === 'SECONDARY' ? '0.85' : '1'"
+                  ></path>
+                }
+
+                @for (node of treeNodes(); track node.id) {
+                  <g
+                    class="tree-node"
+                    [class.tree-node--consultado]="node.isFocal"
+                    [class.tree-node--selected]="selectedNodeId() === node.id"
+                    [attr.transform]="'translate(' + node.x + ',' + node.y + ')'"
+                    (click)="onNodeClick(node.id, $event)"
+                  >
+                    <rect
+                      class="tree-node__rect"
+                      [attr.x]="-nodeHalfW"
+                      [attr.y]="-nodeHalfH"
+                      [attr.width]="nodeW"
+                      [attr.height]="nodeH"
+                      rx="8"
+                      [attr.fill]="node.isFocal ? '#fff9e6' : '#ffffff'"
+                    ></rect>
+                    <foreignObject
+                      [attr.x]="-nodeHalfW"
+                      [attr.y]="-nodeHalfH"
+                      [attr.width]="nodeW"
+                      [attr.height]="nodeH"
+                      pointer-events="none"
+                    >
+                      <div xmlns="http://www.w3.org/1999/xhtml" class="node-card" lang="pt-BR">
+                        @if (node.isFocal) {
+                          <span class="node-card__badge">{{ config.badgeFocal }}</span>
+                        }
+                        <p class="node-card__title">{{ node.nome }}</p>
+                        <p class="node-card__plan">{{ node.containerNome }}</p>
+                        <p class="node-card__tipo">{{ node.tipoNome || '—' }}</p>
+                        @if (node.percentualDoPai === null) {
+                          <p class="node-card__esforco" title="Esforço planejado em relação ao disponível">
+                            Esforço planejado: {{ layoutService.formatPercent(node.planejadoPercentualDisponivel) }} do disponível
+                          </p>
+                        } @else {
+                          <p class="node-card__esforco" title="Participação no esforço planejado acumulado do nó pai">
+                            Esforço planejado: {{ layoutService.formatPercent(node.percentualDoPai) }} do pai
+                          </p>
+                        }
+                        <span class="node-card__vinculos-tag">{{ node.totalVinculos }} vínculos</span>
+                      </div>
+                    </foreignObject>
+                  </g>
+                }
+              </svg>
+            </div>
+
+            <div class="col-12 col-lg-4 detail-col">
+              <app-arvore-institucional-painel-lateral
+                [nodeId]="selectedNodeId()"
+                [consultadoId]="consultadoId()"
+                (centralizar)="onCentralizar($event)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

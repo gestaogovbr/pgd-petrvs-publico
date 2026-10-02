@@ -395,6 +395,7 @@ class TipoCapacidadeService extends ServiceBase
         ["MOD_USER_ATRIB", "Permite gerenciar atribuições de usuário"],
         ["MOD_USER_REATIVAR", "Permite reativar usuário"],
         ["MOD_USER_LIST_ALL", "Permite listar todos os usuários"],
+        ["MOD_USER_DISPENSA_PT", "Permite formalizar e alterar dispensa de Plano de Trabalho"],
       ]
     ], [
       "codigo" => "MOD_AUDIT",
@@ -456,6 +457,17 @@ class TipoCapacidadeService extends ServiceBase
     [
         "codigo" => "MOD_RELATORIO_PE_TODAS_UNIDADES",
         "descricao" => "Relatório de Planos de Entrega - Listar todas as unidades",
+    ],
+    [
+        "codigo" => "MOD_RELATORIO_ENTREGA",
+        "descricao" => "Relatório de Entregas",
+        "capacidades" => [
+            ["MOD_RELATORIO_ENTREGA_UNIDADES_VINCULADAS", "Relatório de Entregas - Permite usuário filtrar por todas as unidades vinculadas"],
+        ],
+    ],
+    [
+        "codigo" => "MOD_RELATORIO_ENTREGA_TODAS_UNIDADES",
+        "descricao" => "Relatório de Entregas - Listar todas as unidades",
     ],
     [
         "codigo" => "MOD_RELATORIO_USUARIO",

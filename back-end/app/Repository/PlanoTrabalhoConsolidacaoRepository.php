@@ -62,6 +62,11 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->possuiConsolidacaoFinalizadaPorPlano($planoTrabalhoId);
     }
 
+    public function possuiPeriodoAberto(string $planoTrabalhoId): bool
+    {
+        return $this->readRepository->possuiPeriodoAberto($planoTrabalhoId);
+    }
+
     public function findAvaliadasComPrazoRecurso(string $usuarioId, int $prazoDias): Collection
     {
         return $this->readRepository->findAvaliadasComPrazoRecurso($usuarioId, $prazoDias);
@@ -80,6 +85,15 @@ class PlanoTrabalhoConsolidacaoRepository
     public function countConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds): int
     {
         return $this->readRepository->countConsolidacoesAtrasadas($usuarioId, $unidadesIds);
+    }
+
+    /**
+     * @param string[] $unidadesIds
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<\App\Models\PlanoTrabalho>
+     */
+    public function buscarPlanosComConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds, int $page = 1, int $perPage = 15, ?string $orderBy = null, ?string $orderDir = null): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return $this->readRepository->buscarPlanosComConsolidacoesAtrasadas($usuarioId, $unidadesIds, $page, $perPage, $orderBy, $orderDir);
     }
 
     public function create(array $attributes): PlanoTrabalhoConsolidacao

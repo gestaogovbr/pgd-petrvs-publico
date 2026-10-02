@@ -374,11 +374,14 @@ CREATE TABLE `cadeias_valores_processos` (
   `nome` varchar(256) NOT NULL COMMENT 'Nome do processo',
   `cadeia_valor_id` char(36) NOT NULL,
   `processo_pai_id` char(36) DEFAULT NULL,
+  `tipo_elemento_id` char(36) DEFAULT NULL COMMENT 'Tipo de elemento da cadeia de valor (opcional)',
   PRIMARY KEY (`id`),
   KEY `cadeias_valores_processos_cadeia_valor_id_foreign` (`cadeia_valor_id`),
   KEY `cadeias_valores_processos_processo_pai_id_foreign` (`processo_pai_id`),
+  KEY `fk_cv_proc_tipo_elemento_id` (`tipo_elemento_id`),
   CONSTRAINT `cadeias_valores_processos_cadeia_valor_id_foreign` FOREIGN KEY (`cadeia_valor_id`) REFERENCES `cadeias_valores` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `cadeias_valores_processos_processo_pai_id_foreign` FOREIGN KEY (`processo_pai_id`) REFERENCES `cadeias_valores_processos` (`id`) ON UPDATE CASCADE
+  CONSTRAINT `cadeias_valores_processos_processo_pai_id_foreign` FOREIGN KEY (`processo_pai_id`) REFERENCES `cadeias_valores_processos` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_cv_proc_tipo_elemento_id` FOREIGN KEY (`tipo_elemento_id`) REFERENCES `planejamentos_tipos_objetivos` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -765,6 +768,58 @@ CREATE TABLE `disciplinas` (
   `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Curso ativo ou inativo',
   `sigla` varchar(20) DEFAULT NULL COMMENT 'Sigla da disciplina.',
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `dispensas_plano_trabalho`
+--
+
+DROP TABLE IF EXISTS `dispensas_plano_trabalho`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dispensas_plano_trabalho` (
+  `id` char(36) NOT NULL,
+  `usuario_id` char(36) NOT NULL,
+  `data_inicio` date NOT NULL COMMENT 'Início da dispensa de Plano de Trabalho',
+  `data_fim` date DEFAULT NULL COMMENT 'Fim da dispensa; null = vigente até encerramento',
+  `ciencia_em` datetime NOT NULL COMMENT 'Momento em que a ciência foi fornecida',
+  `responsavel_id` char(36) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `dispensas_plano_trabalho_usuario_id_unique` (`usuario_id`),
+  KEY `dispensas_plano_trabalho_responsavel_id_foreign` (`responsavel_id`),
+  CONSTRAINT `dispensas_plano_trabalho_responsavel_id_foreign` FOREIGN KEY (`responsavel_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `dispensas_plano_trabalho_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `dispensas_plano_trabalho_historico`
+--
+
+DROP TABLE IF EXISTS `dispensas_plano_trabalho_historico`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dispensas_plano_trabalho_historico` (
+  `id` char(36) NOT NULL,
+  `dispensa_id` char(36) NOT NULL,
+  `usuario_id` char(36) NOT NULL,
+  `data_inicio` date NOT NULL,
+  `data_fim` date DEFAULT NULL,
+  `operacao` enum('FORMALIZAR','ALTERAR','ENCERRAR') NOT NULL,
+  `ciencia_em` datetime NOT NULL,
+  `responsavel_id` char(36) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `dispensas_plano_trabalho_historico_dispensa_id_foreign` (`dispensa_id`),
+  KEY `dispensas_plano_trabalho_historico_usuario_id_foreign` (`usuario_id`),
+  KEY `dispensas_plano_trabalho_historico_responsavel_id_foreign` (`responsavel_id`),
+  CONSTRAINT `dispensas_plano_trabalho_historico_dispensa_id_foreign` FOREIGN KEY (`dispensa_id`) REFERENCES `dispensas_plano_trabalho` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `dispensas_plano_trabalho_historico_responsavel_id_foreign` FOREIGN KEY (`responsavel_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `dispensas_plano_trabalho_historico_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1268,7 +1323,8 @@ CREATE TABLE `integracao_servidores` (
   `participa_pgd` enum('sim','não') NOT NULL COMMENT 'Indica se o usuário participa do PGD.',
   `ident_unica` varchar(50) DEFAULT NULL COMMENT 'Identificador único do servidor',
   PRIMARY KEY (`id`),
-  KEY `integracao_servidores_codigo_orgao_index` (`codigo_orgao`)
+  KEY `integracao_servidores_codigo_orgao_index` (`codigo_orgao`),
+  KEY `idx_integracao_servidor_cpf_data` (`cpf`,`deleted_at`,`data_modificacao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1685,6 +1741,7 @@ CREATE TABLE `planejamentos_tipos_objetivos` (
   `deleted_at` timestamp NULL DEFAULT NULL,
   `nome` varchar(255) NOT NULL COMMENT 'Nome do tipo de objetivo',
   `descricao` text DEFAULT NULL COMMENT 'Descrição do tipo de objetivo',
+  `estrutura` varchar(50) NOT NULL COMMENT 'Estrutura à qual pertence: planejamento_institucional ou cadeia_de_valor',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2681,6 +2738,38 @@ CREATE TABLE `questionarios_preenchimentos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `relatorio_geracoes`
+--
+
+DROP TABLE IF EXISTS `relatorio_geracoes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `relatorio_geracoes` (
+  `id` char(36) NOT NULL,
+  `tipo` varchar(50) NOT NULL,
+  `nome` varchar(180) NOT NULL,
+  `status` enum('PROCESSANDO','CONCLUIDA','ERRO') NOT NULL,
+  `usuario_id` char(36) NOT NULL,
+  `parametros` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`parametros`)),
+  `arquivo_path` varchar(500) DEFAULT NULL,
+  `arquivo_nome` varchar(255) DEFAULT NULL,
+  `iniciado_em` datetime NOT NULL,
+  `finalizado_em` datetime DEFAULT NULL,
+  `erro_mensagem` text DEFAULT NULL,
+  `progresso_pagina` int(10) unsigned NOT NULL DEFAULT 0,
+  `progresso_total` int(10) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `relatorio_geracoes_usuario_id_index` (`usuario_id`),
+  KEY `relatorio_geracoes_status_index` (`status`),
+  KEY `relatorio_geracoes_iniciado_em_index` (`iniciado_em`),
+  KEY `relatorio_geracoes_usuario_id_iniciado_em_index` (`usuario_id`,`iniciado_em`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `reacoes`
 --
 
@@ -2748,7 +2837,8 @@ CREATE TABLE `siape_blacklist_servidores` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `matricula` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `idx_siape_blacklist_cpf_matricula` (`cpf`,`matricula`,`inativado`,`deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3450,6 +3540,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `usuarios_matricula_unique` (`matricula`),
   KEY `usuarios_perfil_id_foreign` (`perfil_id`),
   KEY `usuarios_data_agendamento_envio_index` (`data_agendamento_envio`),
+  KEY `idx_usuario_siape_reconciliacao` (`cpf`,`deleted_at`,`situacao_siape`,`matricula`),
   CONSTRAINT `usuarios_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfis` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

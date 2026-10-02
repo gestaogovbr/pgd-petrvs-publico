@@ -2,6 +2,15 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { GlobalsService } from 'src/app/services/globals.service';
+import type {
+  ArvoreApiResponse,
+  EntregaDetalheLinha,
+  EntregasDetalhamentoFiltros,
+  FiltroOpcao,
+  SecaoResumo
+} from 'src/app/v2/components/arvore-institucional/domain/types';
+
+// ─── Tipos específicos do Planejamento (endpoints de árvore/gráfico) ───────────
 
 export type EsforcoObjetivoNodeApi = {
   objetivo_id: string;
@@ -12,31 +21,29 @@ export type EsforcoObjetivoNodeApi = {
   tipo_objetivo_nome?: string;
   total_entregas: number;
   total_vinculos?: number;
-  /** Horas disponíveis do próprio nó (mesma regra do painel). */
   esforco_disponivel_horas?: number;
-  /** Horas planejadas só do próprio nó. */
   esforco_proprio?: number;
-  /** Horas planejadas próprias + descendentes na árvore do esforço. */
   esforco_total_horas: number;
-  /** Planejado / disponível do próprio nó (igual ao painel). */
   planejado_percentual_disponivel?: number;
-  /** União de filhos_pai e filhos_superior — mantido por compatibilidade. */
   filhos?: string[];
-  /** Descendentes ligados por objetivo_pai_id (mesmo planejamento). */
   filhos_pai?: string[];
-  /** Descendentes ligados por objetivo_superior_id (planejamento superior). */
   filhos_superior?: string[];
   objetivo_pai?: { id: string; nome: string } | null;
   objetivo_superior?: { id: string; nome: string } | null;
 };
 
-type EsforcoTotalResponse = {
-  success?: boolean;
-  data?: Record<string, EsforcoObjetivoNodeApi>;
-  error?: string;
+export type ObjetivoArvoreSuperiorResumoApi = {
+  objetivo_id: string;
+  objetivo_nome: string;
+  planejamento_nome: string;
+  hierarquia_linhas: string[];
+  nivel_superior: number;
+  objetivo_superior_id: string | null;
 };
 
-/** Entrega do plano de entregas (PE) com progresso; `esforco_horas_total` vem só de PTs concluídos. */
+export type ObjetivoArvoreVisualizacaoApi = ArvoreApiResponse;
+
+/** Entrega do plano de entregas (PE) com progresso; usado no gráfico antigo. */
 export type ObjetivoEntregaPlanoItemApi = {
   plano_entrega_entrega_id: string;
   entrega_titulo: string;
@@ -70,76 +77,7 @@ export type ObjetivoEquipesListagemApi = {
   itens: ObjetivoEsforcoPorUnidadeApi[];
 };
 
-export type ObjetivoArvoreSuperiorResumoApi = {
-  objetivo_id: string;
-  objetivo_nome: string;
-  planejamento_nome: string;
-  hierarquia_linhas: string[];
-  nivel_superior: number;
-  objetivo_superior_id: string | null;
-};
-
-export type ObjetivoArvoreVisualizacaoApi = {
-  objetivo_raiz_id: string;
-  nos: Record<string, EsforcoObjetivoNodeApi>;
-  cadeia_superior: ObjetivoArvoreSuperiorResumoApi[];
-};
-
-type ArvoreVisualizacaoResponse = {
-  success?: boolean;
-  data?: ObjetivoArvoreVisualizacaoApi;
-  error?: string;
-};
-
-type EntregasResponse = {
-  success?: boolean;
-  data?: ObjetivoEntregasListagemApi;
-  error?: string;
-};
-
-type EquipesResponse = {
-  success?: boolean;
-  data?: ObjetivoEquipesListagemApi;
-  error?: string;
-};
-
-export type ObjetivoPainelEsforcoResumoApi = {
-  disponivel_horas: number;
-  planejado_horas: number;
-  executado_horas: number;
-  planejado_percentual_disponivel: number;
-  executado_percentual_planejado: number;
-  mostrar_disponivel: boolean;
-  mostrar_planejado: boolean;
-  mostrar_executado: boolean;
-};
-
-export type ObjetivoPainelFiltroOpcaoApi = { id: string; label: string };
-
-export type ObjetivoPainelPessoasResumoApi = {
-  total_participantes: number;
-  participantes_somente_unidade_propria: number;
-  participantes_somente_outras_unidades: number;
-  participantes_em_ambas: number;
-  percentual_somente_unidade_propria: number;
-  percentual_somente_outras_unidades: number;
-  percentual_em_ambas: number;
-};
-
-export type ObjetivoPainelEntregasResumoApi = {
-  total_entregas: number;
-  /** Entregas em Planos de Entregas AVALIADOS — base do percentual de concluídas. */
-  total_entregas_avaliadas: number;
-  entregas_concluidas: number;
-  percentual_concluidas: number;
-};
-
-/** Agrupamentos de uma seção do painel ("Item selecionado" ou "Consolidado"). */
-export type ObjetivoPainelSecaoResumoApi = {
-  esforco: ObjetivoPainelEsforcoResumoApi;
-  pessoas: ObjetivoPainelPessoasResumoApi;
-  entregas: ObjetivoPainelEntregasResumoApi;
-};
+// ─── Tipos do Painel (usam tipos centrais) ─────────────────────────────────────
 
 export type ObjetivoPainelResumoApi = {
   objetivo_id: string;
@@ -147,90 +85,28 @@ export type ObjetivoPainelResumoApi = {
   planejamento_nome: string;
   tipo_objetivo_nome: string;
   eixo_tematico_nome: string;
-  /** Seção "Item selecionado": somente o objetivo selecionado (RN02). */
-  item: ObjetivoPainelSecaoResumoApi;
-  /** Seção "Consolidado": item selecionado + subordinados (RN15). */
-  consolidado: ObjetivoPainelSecaoResumoApi;
-  filtro_unidades: ObjetivoPainelFiltroOpcaoApi[];
-};
-
-export type ObjetivoPainelEntregaEtiquetaApi = {
-  key: string;
-  value: string;
-  icon?: string | null;
-  color?: string | null;
-};
-
-/** Escopos do filtro Abrangência no detalhamento de entregas (RN33–RN39). */
-export type ObjetivoEntregasAbrangencia =
-  | 'item_selecionado'
-  | 'itens_subordinados'
-  | 'item_e_subordinados'
-  | 'unidade_selecionada'
-  | 'unidade_e_subordinadas';
-
-export type ObjetivoPainelEntregaDetalheLinhaApi = {
-  plano_entrega_entrega_id: string;
-  planejamento_objetivo_id: string;
-  planejamento_objetivo_nome: string;
-  unidade_id: string;
-  unidade_sigla: string;
-  unidade_nome: string;
-  plano_entrega_id: string;
-  plano_entrega_nome: string;
-  plano_entrega_status: string;
-  plano_entrega_vigencia_inicio: string;
-  plano_entrega_vigencia_fim: string | null;
-  entrega_titulo: string;
-  entrega_descricao: string;
-  descricao_meta: string;
-  etiquetas: ObjetivoPainelEntregaEtiquetaApi[];
-  progresso_esperado: number;
-  progresso_realizado: number;
-  homologado: boolean;
-  registro_execucao: string | null;
-  participantes_total: number;
-  participantes_somente_unidade_propria: number;
-  participantes_somente_outras_unidades: number;
-  participantes_em_ambas: number;
-  esforco_disponivel_horas: number;
-  esforco_planejado_horas: number;
-  esforco_executado_horas: number;
-  mostrar_disponivel: boolean;
-  mostrar_planejado: boolean;
-  mostrar_executado: boolean;
+  item: SecaoResumo;
+  consolidado: SecaoResumo;
+  filtro_unidades: FiltroOpcao[];
 };
 
 export type ObjetivoPainelEntregasDetalhamentoApi = {
   objetivo_id: string;
-  itens: ObjetivoPainelEntregaDetalheLinhaApi[];
-  filtro_entregas: ObjetivoPainelFiltroOpcaoApi[];
-  filtro_unidades: ObjetivoPainelFiltroOpcaoApi[];
+  itens: EntregaDetalheLinha[];
+  filtro_entregas: FiltroOpcao[];
+  filtro_unidades: FiltroOpcao[];
 };
 
-export type ObjetivoPainelResumoFiltros = {
-  unidade_id?: string;
-};
+// ─── Tipos internos de response ────────────────────────────────────────────────
 
-type PainelResumoResponse = {
-  success?: boolean;
-  data?: ObjetivoPainelResumoApi;
-  error?: string;
-};
+type EsforcoTotalResponse = { success?: boolean; data?: Record<string, EsforcoObjetivoNodeApi>; error?: string };
+type ArvoreVisualizacaoResponse = { success?: boolean; data?: ObjetivoArvoreVisualizacaoApi; error?: string };
+type EntregasResponse = { success?: boolean; data?: ObjetivoEntregasListagemApi; error?: string };
+type EquipesResponse = { success?: boolean; data?: ObjetivoEquipesListagemApi; error?: string };
+type PainelResumoResponse = { success?: boolean; data?: ObjetivoPainelResumoApi; error?: string };
+type EntregasDetalhamentoResponse = { success?: boolean; data?: ObjetivoPainelEntregasDetalhamentoApi; error?: string };
 
-type EntregasDetalhamentoResponse = {
-  success?: boolean;
-  data?: ObjetivoPainelEntregasDetalhamentoApi;
-  error?: string;
-};
-
-export type ObjetivoEntregasDetalhamentoFiltros = {
-  plano_entrega_entrega_id?: string;
-  unidade_id?: string;
-  data_inicio?: string;
-  data_fim?: string;
-  abrangencia?: ObjetivoEntregasAbrangencia;
-};
+// ─── Service ───────────────────────────────────────────────────────────────────
 
 @Injectable()
 export class PlanejamentoObjetivoEsforcoApiClient {
@@ -298,7 +174,7 @@ export class PlanejamentoObjetivoEsforcoApiClient {
     );
   }
 
-  getPainelResumo(objetivoId: string, filtros: ObjetivoPainelResumoFiltros = {}): Observable<ObjetivoPainelResumoApi> {
+  getPainelResumo(objetivoId: string, filtros: { unidade_id?: string } = {}): Observable<ObjetivoPainelResumoApi> {
     const params = new URLSearchParams();
     if (filtros.unidade_id) {
       params.set('unidade_id', filtros.unidade_id);
@@ -320,7 +196,7 @@ export class PlanejamentoObjetivoEsforcoApiClient {
 
   getEntregasDetalhamento(
     objetivoId: string,
-    filtros: ObjetivoEntregasDetalhamentoFiltros = {}
+    filtros: EntregasDetalhamentoFiltros = {}
   ): Observable<ObjetivoPainelEntregasDetalhamentoApi> {
     const params = new URLSearchParams();
     if (filtros.plano_entrega_entrega_id) {

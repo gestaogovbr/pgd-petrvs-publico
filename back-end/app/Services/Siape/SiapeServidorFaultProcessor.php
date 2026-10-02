@@ -3,26 +3,8 @@
 namespace App\Services\Siape;
 
 use App\Exceptions\ErrorDataSiapeFaultCodeException;
-use App\Models\SiapeBlackListServidor;
-use App\Services\Siape\Erros;
-use Illuminate\Support\Str;
+use App\Services\Siape\Servidor\SiapeServidorBlacklistLifecycleService;
 use SimpleXMLElement;
-
-enum TipoDadoServidorSiape: string
-{
-    case FUNCIONAL = 'Dados Funcionais';
-    case PESSOAL = 'Dados Pessoais';
-
-
-    static function getTipoDadoValue(string $tipoDado): string
-    {
-        return match (strtoupper($tipoDado)) {
-            'FUNCIONAL' => TipoDadoServidorSiape::FUNCIONAL->value,
-            'PESSOAL' => TipoDadoServidorSiape::PESSOAL->value,
-            default => 'Dados'
-        };
-    }
-}
 
 class SiapeServidorFaultProcessor
 {
@@ -30,23 +12,31 @@ class SiapeServidorFaultProcessor
     private string $cpf;
     private string $responseString;
     private string $tipoDado;
+    private bool $gerenciarBlacklist;
 
-    public function __construct(SimpleXMLElement $responseXml, string $cpf, string $responseString, string $tipoDado)
+    public function __construct(
+        SimpleXMLElement $responseXml,
+        string $cpf,
+        string $responseString,
+        string $tipoDado,
+        bool $gerenciarBlacklist = true,
+    )
     {
         $this->responseXml = $responseXml;
         $this->cpf = $cpf;
         $this->responseString = $responseString;
-        $this->tipoDado = TipoDadoServidorSiape::getTipoDadoValue($tipoDado);
+        $this->tipoDado = TipoDadoServidorSiape::descricao($tipoDado);
+        $this->gerenciarBlacklist = $gerenciarBlacklist;
     }
 
-    public function process()
+    public function process(): void
     {
         $fault = $this->responseXml->xpath('//soap:Fault');
         if ($this->isFaultProcessavel($fault)) {
-            SiapeBlackListServidor::firstOrCreate(
-                ['cpf' => $this->cpf],
-                ['id' => (string) Str::uuid(), 'response' => $this->responseString]
-            );
+            if ($this->gerenciarBlacklist) {
+                app(SiapeServidorBlacklistLifecycleService::class)
+                    ->registrarAusenciaFuncional($this->cpf, $this->responseString);
+            }
 
             throw new ErrorDataSiapeFaultCodeException($this->errorMessage());
         }

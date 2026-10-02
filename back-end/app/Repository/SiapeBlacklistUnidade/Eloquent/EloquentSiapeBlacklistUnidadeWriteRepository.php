@@ -7,6 +7,7 @@ namespace App\Repository\SiapeBlacklistUnidade\Eloquent;
 use App\Models\SiapeBlacklistUnidade;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
 use App\Repository\SiapeBlacklistUnidade\Contracts\SiapeBlacklistUnidadeWriteRepositoryContract;
+use Illuminate\Support\Str;
 
 /**
  * @extends AbstractEloquentWriteRepository<SiapeBlacklistUnidade>
@@ -44,5 +45,13 @@ class EloquentSiapeBlacklistUnidadeWriteRepository extends AbstractEloquentWrite
         $blacklist->save();
 
         return $blacklist;
+    }
+
+    public function firstOrCreate(string $codigoOrgao, string $codigo, string $response): SiapeBlacklistUnidade
+    {
+        return $this->model->newQuery()->firstOrCreate(
+            ['codigo_orgao' => $codigoOrgao, 'codigo' => $codigo],
+            ['id' => (string) Str::uuid(), 'response' => $response]
+        );
     }
 }

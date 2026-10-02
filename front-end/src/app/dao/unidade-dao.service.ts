@@ -164,6 +164,7 @@ export class UnidadeDaoService extends DaoBaseService<Unidade> {
   public consultaUnidadeSIAPE(unidade: string) {
     return this.server.post('api/unidade/consultar-unidade-siape', { unidade });
   }
+
   public exportarUnidadeSIAPE(unidade: string) {
     return this.server.postDownload('api/unidade/exportar-unidade-siape', { unidade });
   }

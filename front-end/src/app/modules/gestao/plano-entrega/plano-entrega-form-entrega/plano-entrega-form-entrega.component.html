@@ -1,17 +1,11 @@
 <editable-form [form]="form!" [disabled]="formDisabled" [title]="isModal ? '' : title" initialFocus="descricao" (submit)="onSaveEntrega()" (cancel)="onCancel()">
   <tabs #tabs display right [title]="!isModal ? title : ''">
     <tab key="ENTREGAS" label="Entregas">
-      <div class="row">
+      <div class="row gy-3">
         <separator [title]="'Informações gerais da ' + lex.translate('entrega')" collapse [collapsed]="false">
-          <div class="row">
-            <input-text [size]="12" label="Título" controlName="descricao" [placeholder]="'Título da ' + lex.translate('entrega')" [attr.maxlength]=250 required></input-text>
-          </div>
-          <div class="row">
-            <input-textarea [size]="12" [label]="'Descrição da ' + lex.translate('entrega')" controlName="descricao_entrega" [placeholder]="'Descreva a ' + lex.translate('entrega')"></input-textarea>
-          </div>
-          <div class="row">
-            <input-search [size]="12" [label]="'Vínculo com ' + lex.translate('entrega') + ' de ' + lex.translate('plano de entrega') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entrega-list']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
-          </div>
+          <input-text [size]="12" label="Título" controlName="descricao" [placeholder]="'Título da ' + lex.translate('entrega')" [attr.maxlength]=250 required></input-text>
+          <input-textarea [size]="12" [label]="'Descrição da ' + lex.translate('entrega')" controlName="descricao_entrega" [placeholder]="'Descreva a ' + lex.translate('entrega')"></input-textarea>
+          <input-search [size]="12" [label]="'Vínculo com ' + lex.translate('entrega') + ' de ' + lex.translate('plano de entrega') + ' superior'" controlName="entrega_pai_id" [dao]="planoEntregaEntregaDao" [where]="['plano_entrega.unidade_id', 'in', idsUnidadesAscendentes]" [selectRoute]="{route: ['gestao', 'plano-entrega', 'entrega-list']}" [metadata]="{'idsUnidadesAscendentes': idsUnidadesAscendentes}"></input-search>
           <separator [title]="'Etapas da ' + lex.translate('entrega')" collapse [collapsed]="true">
             <div class="row mt-4">
               <!--div class="col-md-6"-->
@@ -28,42 +22,32 @@
           </separator>
         </separator>
         <separator [title]="'Especificações da ' + lex.translate('entrega')" collapse [collapsed]="false">
-          <div class="row">
-            <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
-            <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
-          </div>
-          <div class="row">
-            <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao" required ></input-search>
-            <input-text [size]="6" label="Destinatário" controlName="destinatario" [attr.maxlength]=250 required></input-text>
-          </div>
+          <input-datetime date [size]="6" label="Início" controlName="data_inicio" [labelInfo]="'Início ' + lex.translate('Plano de Entregas')" required></input-datetime>
+          <input-datetime date [size]="6" label="Fim" controlName="data_fim" [labelInfo]="'Fim ' + lex.translate('Plano de Entregas') + '(Estimativa Inicial)'" required></input-datetime>
+          <input-search [size]="6" #unidade label="Demandante" controlName="unidade_id" [dao]="unidadeDao" required ></input-search>
+          <input-text [size]="6" label="Destinatário" controlName="destinatario" [attr.maxlength]=250 required></input-text>
         </separator>
         <separator title="Planejamento"></separator>
-        <div class="row">
-          <input-search #entrega [size]="12" [label]="lex.translate('Tipo de Meta')" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma meta do catálogo usando a lupa" required></input-search>
-        </div>
-        <div class="row">
-          <input-textarea [size]="12" label="Descrição da meta" controlName="descricao_meta" placeholder="Descreva a meta"></input-textarea>
-        </div>
-        <div *ngIf="this.entrega?.selectedEntity; else naoSelecionou" class="row">
-          <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.meta" label="Meta" labelInfo="Onde quero chegar ao final da entrega. Evolução total da entrega, podendo ultrapassar o período do plano de entregas"></plano-entrega-valor-meta-input>
-          <input-number [size]="6" label="Parcela da entrega no plano" controlName="progresso_esperado" sufix="%" labelInfo="Quanto vou caminhar nesse plano de entregas. Percentual do total da entrega que será realizado durante a vigência desse plano"></input-number>
-          <div class="row">
-            <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.realizado" label="Progresso ao início do plano" [change]="onRealizadoChange.bind(this)" labelInfo="De onde estou saindo nesse plano. Valor correspondente ao progresso verificado no planejamento do plano de entregas"></plano-entrega-valor-meta-input>
-            <input-number [size]="6" label="Progresso já realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled labelInfo="Quanto caminhei no plano atual Evolução já realizada para a meta. No ato da criação do plano, é o percentual de progresso ao início do plano em relação à meta"></input-number>
+        <input-search #entrega [size]="12" [label]="lex.translate('Tipo de Meta')" controlName="entrega_id" [dao]="entregaDao" (change)="onEntregaChange($event)" placeholder="Selecione ou cadastre uma meta do catálogo usando a lupa" required></input-search>
+        <input-textarea [size]="12" label="Descrição da meta" controlName="descricao_meta" placeholder="Descreva a meta"></input-textarea>
+        <ng-container *ngIf="this.entrega?.selectedEntity; else naoSelecionou">
+          <div class="col-md-12">
+            <div class="row g-3">
+              <plano-entrega-valor-meta-input icon="bi bi-graph-up-arrow" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.meta" label="Meta" labelInfo="Onde quero chegar ao final da entrega. Evolução total da entrega, podendo ultrapassar o período do plano de entregas"></plano-entrega-valor-meta-input>
+              <input-number [size]="6" label="Parcela da entrega no plano" controlName="progresso_esperado" sufix="%" labelInfo="Quanto vou caminhar nesse plano de entregas. Percentual do total da entrega que será realizado durante a vigência desse plano"></input-number>
+              <plano-entrega-valor-meta-input icon="bi bi-check-lg" [entrega]="entrega?.selectedEntity" [size]="6" [control]="form!.controls.realizado" label="Progresso ao início do plano" [change]="onRealizadoChange.bind(this)" labelInfo="De onde estou saindo nesse plano. Valor correspondente ao progresso verificado no planejamento do plano de entregas"></plano-entrega-valor-meta-input>
+              <input-number [size]="6" label="Progresso já realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled labelInfo="Quanto caminhei no plano atual Evolução já realizada para a meta. No ato da criação do plano, é o percentual de progresso ao início do plano em relação à meta"></input-number>
+            </div>
           </div>
-        </div>
+        </ng-container>
         <ng-template #naoSelecionou>
-          <div class="row">
-            <input-number [size]="6" label="Parcela da entrega no plano" controlName="progresso_esperado" sufix="%" labelInfo="Quanto vou caminhar nesse plano de entregas. Percentual do total da entrega que será realizado durante a vigência desse plano"></input-number>
-            <input-number [size]="6" label="Progresso já realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled labelInfo="Quanto caminhei no plano atual Evolução já realizada para a meta. No ato da criação do plano, é o percentual de progresso ao início do plano em relação à meta"></input-number>
-          </div>
+          <input-number [size]="6" label="Parcela da entrega no plano" controlName="progresso_esperado" sufix="%" labelInfo="Quanto vou caminhar nesse plano de entregas. Percentual do total da entrega que será realizado durante a vigência desse plano"></input-number>
+          <input-number [size]="6" label="Progresso já realizado" [stepValue]="0.01" controlName="progresso_realizado" sufix="%" disabled labelInfo="Quanto caminhei no plano atual Evolução já realizada para a meta. No ato da criação do plano, é o percentual de progresso ao início do plano em relação à meta"></input-number>
         </ng-template>
         <separator [title]="'Caracterização da ' +  lex.translate('entrega')" collapse [collapsed]="false">
-          <div class="row">
-            <input-multiselect label="Etiquetas" controlName="etiquetas" [size]="12" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
-              <input-select [size]="12" #etiqueta controlName="etiqueta" [control]="form!.controls.etiqueta" [items]="etiquetas"></input-select>
-            </input-multiselect>
-          </div>
+          <input-multiselect noBox label="Etiquetas" controlName="etiquetas" [size]="12" [control]="form!.controls.etiquetas" [addItemHandle]="addItemHandleEtiquetas.bind(this)">
+            <input-select #etiqueta controlName="etiqueta" [control]="form!.controls.etiqueta" [items]="etiquetas"></input-select>
+          </input-multiselect>
         </separator>
       </div>
     </tab>

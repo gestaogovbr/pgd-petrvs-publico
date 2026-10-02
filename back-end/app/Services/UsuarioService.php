@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\Atribuicao;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Exceptions\DBException;
 use App\Exceptions\NotFoundException;
@@ -24,6 +25,8 @@ use App\Repository\SiapeBlackListServidorRepository;
 use App\Services\IntegracaoService;
 use App\Services\ServiceBase;
 use App\Services\Siape\DadosExternosSiape;
+use App\Services\Sipec\SipecService;
+use App\DTOs\Sipec\ServidorSipecDTO;
 use App\Services\UnidadeService;
 use App\Services\UtilService;
 use App\Support\ModalidadePgd;
@@ -597,6 +600,11 @@ class UsuarioService extends ServiceBase
         $usuario = parent::loggedUser();
         $where = [];
         $subordinadas = true;
+
+        if ($this->querySolicitaDispensaPlanoTrabalho($data)) {
+            $this->aplicarSelectElegivelDispensaPt($data);
+        }
+
         foreach ($data["where"] as $condition) {
             if (is_array($condition) && $condition[0] == "lotacao") {
                 $lotacao = $condition;
@@ -622,6 +630,27 @@ class UsuarioService extends ServiceBase
                 $query->whereHas('unidadesIntegranteAtribuicoes', function (Builder $query) use ($condition) {
                     $query->whereIn('atribuicao', $condition[2]);
                 });
+            } else if (is_array($condition) && $condition[0] == "situacao") {
+                $query->where('situacao_siape', $condition[2]);
+            } else if (is_array($condition) && $condition[0] == "dispensa_pt") {
+                $hoje = Carbon::today()->toDateString();
+                if ($condition[2] === 'Sim') {
+                    $query->whereHas('dispensaPlanoTrabalho', function (Builder $q) use ($hoje) {
+                        $q->whereDate('data_inicio', '<=', $hoje)
+                            ->where(function (Builder $q2) use ($hoje) {
+                                $q2->whereNull('data_fim')
+                                    ->orWhereDate('data_fim', '>=', $hoje);
+                            });
+                    });
+                } elseif ($condition[2] === 'Não') {
+                    $query->whereDoesntHave('dispensaPlanoTrabalho', function (Builder $q) use ($hoje) {
+                        $q->whereDate('data_inicio', '<=', $hoje)
+                            ->where(function (Builder $q2) use ($hoje) {
+                                $q2->whereNull('data_fim')
+                                    ->orWhereDate('data_fim', '>=', $hoje);
+                            });
+                    });
+                }
             } else if (is_array($condition) && $condition[0] == "programa_id") {
                 if ($condition[2]) {
                     $query->whereHas('participacoesProgramas', function (Builder $query) use ($condition) {
@@ -636,7 +665,7 @@ class UsuarioService extends ServiceBase
         if (!$usuario->hasPermissionTo("MOD_USER_TUDO")) {
             $unidadeIds = $usuario->areasTrabalho->pluck('unidade_id')->all();
             $hierarquiaIds = $subordinadas
-                ? Unidade::naHierarquiaDe($unidadeIds)->pluck('id')
+                ? $this->unidadeRepository->idsNaHierarquiaDe($unidadeIds)
                 : $unidadeIds;
             $query->whereHas('lotacoes', function (Builder $q) use ($hierarquiaIds) {
                 $q->whereIn('unidade_id', $hierarquiaIds);
@@ -645,6 +674,44 @@ class UsuarioService extends ServiceBase
         $data["where"] = $where;
 
         return $data;
+    }
+
+    /**
+     * Inclui EXISTS de elegibilidade (chefia titular/substituta em unidade executora)
+     * apenas quando a listagem solicita a relação de dispensa.
+     */
+    private function querySolicitaDispensaPlanoTrabalho(array $data): bool
+    {
+        foreach ($data['with'] ?? [] as $with) {
+            $relation = is_string($with) ? explode(':', $with, 2)[0] : '';
+            if ($relation === 'dispensaPlanoTrabalho' || $relation === 'dispensa_plano_trabalho') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function aplicarSelectElegivelDispensaPt(array &$data): void
+    {
+        $gestor = Atribuicao::GESTOR->value;
+        $substituto = Atribuicao::GESTOR_SUBSTITUTO->value;
+
+        $data['select'] = $data['select'] ?? ['usuarios.*'];
+        $data['select'][] = DB::raw(
+            "EXISTS (
+                SELECT 1
+                FROM unidades_integrantes ui
+                INNER JOIN unidades_integrantes_atribuicoes uia
+                    ON uia.unidade_integrante_id = ui.id AND uia.deleted_at IS NULL
+                INNER JOIN unidades u
+                    ON u.id = ui.unidade_id AND u.deleted_at IS NULL
+                WHERE ui.usuario_id = usuarios.id
+                  AND ui.deleted_at IS NULL
+                  AND u.executora = 1
+                  AND uia.atribuicao IN ('{$gestor}', '{$substituto}')
+            ) AS dispensa_pt_elegivel"
+        );
     }
 
     public function proxySearch($query, &$data, &$text)
@@ -1030,6 +1097,31 @@ class UsuarioService extends ServiceBase
         return [
             'pessoais'    => $dadosPessoaisArray,
             'funcionais'  => $dadosFuncionaisArray,
+        ];
+    }
+
+    public function consultaCPFSipec(string $cpf): array
+    {
+        $sipecService = new SipecService();
+        $servidorRaw = $sipecService->buscarServidorPorCpf($cpf);
+
+        if (!$servidorRaw) {
+            throw new \Exception("Servidor com CPF {$cpf} não encontrado no SIPEC.");
+        }
+
+        $dto = ServidorSipecDTO::fromServidor($servidorRaw);
+        $dadosPessoais = $dto['dadosPessoais'];
+
+        $vinculos = array_map(function($vinculo) {
+            $item = $vinculo->toDadosFuncionais();
+            $unidade = $this->unidadeRepository->findByCodigo($item['codUorgExercicio'] ?? '');
+            $item['unidadeSigla'] = $unidade?->sigla;
+            return $item;
+        }, $dto['vinculos']);
+
+        return [
+            'pessoais'    => $dadosPessoais,
+            'funcionais'  => $vinculos,
         ];
     }
 

@@ -206,6 +206,14 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->exists();
     }
 
+    public function possuiPeriodoAberto(string $planoTrabalhoId): bool
+    {
+        return $this->query()
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->where('status', StatusEnum::INCLUIDO->value)
+            ->exists();
+    }
+
     public function findAvaliadasComPrazoRecurso(string $usuarioId, int $prazoDias): Collection
     {
         return $this->query()
@@ -389,6 +397,56 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
 
     public function countConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds): int
     {
+        return $this->baseConsolidacoesAtrasadasQuery($usuarioId, $unidadesIds)->count();
+    }
+
+    /**
+     * Retorna, paginados, os Planos de Trabalho que possuem consolidações (registros de
+     * execução) em atraso — mesmo critério de countConsolidacoesAtrasadas, garantindo
+     * consistência entre o contador e a listagem.
+     *
+     * @param string[] $unidadesIds
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<\App\Models\PlanoTrabalho>
+     */
+    public function buscarPlanosComConsolidacoesAtrasadas(
+        string $usuarioId,
+        array $unidadesIds,
+        int $page = 1,
+        int $perPage = 15,
+        ?string $orderBy = null,
+        ?string $orderDir = null
+    ): \Illuminate\Contracts\Pagination\LengthAwarePaginator {
+        $planoIds = $this->baseConsolidacoesAtrasadasQuery($usuarioId, $unidadesIds)
+            ->select('plano_trabalho_id')
+            ->distinct()
+            ->pluck('plano_trabalho_id');
+
+        $query = \App\Models\PlanoTrabalho::query()
+            ->whereIn('id', $planoIds)
+            ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome']);
+
+        $dir = $orderDir === 'desc' ? 'desc' : 'asc';
+        if ($orderBy === 'numero') {
+            $query->orderBy('numero', $dir);
+        } elseif ($orderBy === 'usuario_nome') {
+            $query->join('usuarios', 'usuarios.id', '=', 'planos_trabalhos.usuario_id')
+                ->orderBy('usuarios.nome', $dir)
+                ->select('planos_trabalhos.*');
+        } else {
+            $query->orderByDesc('updated_at');
+        }
+
+        return $query->paginate(perPage: $perPage, page: $page);
+    }
+
+    /**
+     * Query base das consolidações em atraso: status INCLUIDO, do PT do usuário (ATIVO/
+     * CONCLUIDO/AVALIADO), com data_fim vencida além da tolerância do programa.
+     *
+     * @param string[] $unidadesIds
+     */
+    private function baseConsolidacoesAtrasadasQuery(string $usuarioId, array $unidadesIds): \Illuminate\Database\Eloquent\Builder
+    {
         return $this->query()
             ->where('status', StatusEnum::INCLUIDO->value)
             ->whereHas('planoTrabalho', function ($query) use ($usuarioId, $unidadesIds) {
@@ -411,8 +469,7 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
                 . ' AND pt.deleted_at IS NULL'
                 . '), ?) DAY)',
                 [self::DIAS_TOLERANCIA_CONSOLIDACAO_PADRAO]
-            )
-            ->count();
+            );
     }
 
     /** @return \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoTrabalhoConsolidacao> */

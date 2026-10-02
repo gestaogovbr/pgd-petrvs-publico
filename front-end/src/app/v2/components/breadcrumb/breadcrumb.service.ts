@@ -76,20 +76,30 @@ export class BreadcrumbService {
   }
 
   private readBreadcrumbParents(leaf: ActivatedRouteSnapshot): BreadcrumbCrumb[] {
-    const raw = leaf.routeConfig?.data?.['breadcrumbParents'];
-    if (!Array.isArray(raw)) {
-      return [];
+    let current: ActivatedRouteSnapshot | null = leaf;
+    while (current) {
+      const raw = current.routeConfig?.data?.['breadcrumbParents'];
+      if (Array.isArray(raw) && raw.length) {
+        return this.parseBreadcrumbParents(raw);
+      }
+      current = current.parent;
     }
 
+    return [];
+  }
+
+  private parseBreadcrumbParents(raw: unknown[]): BreadcrumbCrumb[] {
     return raw
-      .filter((item): item is { label: string; url: string } => {
-        return !!item
-          && typeof item === 'object'
-          && typeof item.label === 'string'
-          && item.label.length > 0
-          && typeof item.url === 'string'
-          && item.url.length > 0;
+      .filter((item): item is { label: string; url?: string } => {
+        if (!item || typeof item !== 'object') {
+          return false;
+        }
+        const candidate = item as { label?: unknown; url?: unknown };
+        return typeof candidate.label === 'string' && candidate.label.length > 0;
       })
-      .map(item => ({ label: item.label, url: item.url }));
+      .map(item => ({
+        label: item.label,
+        ...(typeof item.url === 'string' && item.url.length > 0 ? { url: item.url } : {}),
+      }));
   }
 }

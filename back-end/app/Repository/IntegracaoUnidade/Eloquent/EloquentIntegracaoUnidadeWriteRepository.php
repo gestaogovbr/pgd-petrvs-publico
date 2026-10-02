@@ -17,4 +17,14 @@ class EloquentIntegracaoUnidadeWriteRepository extends AbstractEloquentWriteRepo
     {
         $this->model = $model;
     }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function updateByIdServo(string $idServo, array $attributes): bool
+    {
+        return (bool) $this->model->newQuery()
+            ->where('id_servo', $idServo)
+            ->update($attributes);
+    }
 }

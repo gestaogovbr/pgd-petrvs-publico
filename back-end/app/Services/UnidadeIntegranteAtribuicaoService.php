@@ -6,17 +6,19 @@ use App\Services\ServiceBase;
 use App\Models\Usuario;
 use App\Models\UnidadeIntegrante;
 use App\Exceptions\ServerException;
+use App\Services\Siape\Unidade\Enum\Atribuicao;
 
 class UnidadeIntegranteAtribuicaoService extends ServiceBase
 {
 
   public function proxyStore($data, $unidade, $action)
   {
-    if ($action == ServiceBase::ACTION_INSERT && $data["atribuicao"] == "LOTADO") {
+    if ($action == ServiceBase::ACTION_INSERT && $data["atribuicao"] == Atribuicao::LOTADO->value) {
       $vinculo = UnidadeIntegrante::find($data["unidade_integrante_id"]);
-      $unidadeLotacao = $vinculo->usuario->lotacao->unidade;
-      if (!empty($unidadeLotacao) && $unidadeLotacao->id != $unidade->id) {
-        $vinculo->usuario->lotacao->lotado->delete();
+      $lotacaoAtual = $vinculo?->usuario?->lotacao;
+
+      if (!empty($lotacaoAtual) && $lotacaoAtual->unidade_id != $vinculo->unidade_id) {
+        app(UnidadeAtribuicaoService::class)->removerLotacoesAnterioresPreservandoVinculo($vinculo->usuario, $vinculo);
       }
     }
     return $data;

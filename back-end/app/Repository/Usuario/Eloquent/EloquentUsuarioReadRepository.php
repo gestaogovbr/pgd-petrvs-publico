@@ -6,6 +6,7 @@ namespace App\Repository\Usuario\Eloquent;
 
 use App\Enums\Atribuicao;
 use App\Enums\PerfilEnum;
+use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Usuario;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegranteAtribuicao;
@@ -159,7 +160,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $this->query()
             ->with('unidades')
             ->where('cpf', $cpf)
-            ->where('situacao_siape', '!=', \App\Enums\UsuarioSituacaoSiape::INATIVO->value)
+            ->where('situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
             ->get();
     }
 
@@ -170,7 +171,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             ->join('usuarios as us', 'us.id', '=', 'ui.usuario_id')
             ->join('unidades_integrantes_atribuicoes as uia', 'ui.id', '=', 'uia.unidade_integrante_id')
             ->where('us.cpf', $cpf)
-            ->where('us.situacao_siape', '!=', \App\Enums\UsuarioSituacaoSiape::INATIVO->value)
+            ->where('us.situacao_siape', '!=', UsuarioSituacaoSiape::INATIVO->value)
             ->whereNull('uia.deleted_at')
             ->distinct()
             ->get();
@@ -324,7 +325,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         /** @var Collection $usuarios */
         $usuarios = $this->query()
             ->where('cpf', $cpf)
-            ->whereIn('situacao_siape', \App\Enums\UsuarioSituacaoSiape::ativos())
+            ->whereIn('situacao_siape', UsuarioSituacaoSiape::ativos())
             ->get();
         return $usuarios;
     }
@@ -368,20 +369,32 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
+    /**
+     * @return Collection<int, Usuario>
+     */
     public function findAllByCpfWithLotacao(string $cpf): Collection
     {
-        return $this->model->newQuery()
+        /** @var Collection<int, Usuario> $usuarios */
+        $usuarios = $this->model->newQuery()
             ->with(['lotacao.unidade'])
             ->where('cpf', $cpf)
             ->get();
+
+        return $usuarios;
     }
 
+    /**
+     * @return Collection<int, Usuario>
+     */
     public function findAllByCpfUnfiltered(string $cpf): Collection
     {
-        return $this->model->newQuery()
+        /** @var Collection<int, Usuario> $usuarios */
+        $usuarios = $this->model->newQuery()
             ->with(['lotacao.unidade'])
             ->where('cpf', $cpf)
             ->get();
+
+        return $usuarios;
     }
 
     /**
@@ -419,7 +432,7 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
                         $unidadeIds = $condition[1];
                         $subordinadas = $condition[2];
                         $hierarquiaIds = $subordinadas
-                            ? Unidade::naHierarquiaDe($unidadeIds)->pluck('id')
+                            ? $this->unidadeRepository->idsNaHierarquiaDe((array) $unidadeIds)
                             : $unidadeIds;
                         $query->whereHas('lotacoes', function (Builder $q) use ($hierarquiaIds) {
                             $q->whereIn('unidade_id', $hierarquiaIds);
@@ -506,22 +519,39 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             });
     }
 
-    /** @param list<string> $unidadeIds */
-    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection
+    /**
+     * @param list<string> $unidadeIds
+     * @return LengthAwarePaginator<Usuario>
+     */
+    public function findAgentesVisiveis(
+        string $usuarioId,
+        array $unidadeIds,
+        ?string $termo = null,
+        int $page = 1,
+        int $perPage = 20
+    ): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
 
         if (empty($unidadeIds)) {
             $query->where('id', $usuarioId);
         } else {
-            $query->where('id', $usuarioId)
-                ->orWhereHas('unidadesIntegrantes', fn ($q) => $q
+            $query->where(fn ($q) => $q
+                ->where('id', $usuarioId)
+                ->orWhereHas('unidadesIntegrantes', fn ($sub) => $sub
                     ->whereIn('unidade_id', $unidadeIds)
                     ->has('atribuicoes')
-                );
+                )
+            );
         }
 
-        return $query->orderBy('nome')->get(['id', 'nome']);
+        if ($termo !== null && $termo !== '') {
+            $query->where('nome', 'like', '%' . $termo . '%');
+        }
+
+        return $query
+            ->orderBy('nome')
+            ->paginate($perPage, ['id', 'nome'], 'page', $page);
     }
 
     /**
@@ -538,5 +568,40 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
             )
             ->whereNull('deleted_at')
             ->get(['id', 'participa_pgd']);
+    }
+
+    public function cpfsAtivosGerenciadosPeloSiape(): array
+    {
+        return $this->model->newQuery()
+            ->whereNotNull('cpf')
+            ->whereNotNull('matricula')
+            ->where('situacao_siape', UsuarioSituacaoSiape::ATIVO->value)
+            ->distinct()
+            ->pluck('cpf')
+            ->map(static fn (mixed $cpf): string => (string) $cpf)
+            ->all();
+    }
+
+    public function findComMatriculaByCpf(string $cpf): Collection
+    {
+        return $this->model->newQuery()
+            ->where('cpf', $cpf)
+            ->whereNotNull('matricula')
+            ->get();
+    }
+
+    public function matriculasElegiveisParaBlacklistSiape(string $cpf): array
+    {
+        return $this->model->newQuery()
+            ->where('cpf', $cpf)
+            ->whereNotNull('matricula')
+            ->whereNotIn('situacao_siape', [
+                UsuarioSituacaoSiape::INATIVO->value,
+                UsuarioSituacaoSiape::ATIVO_TEMPORARIO->value,
+            ])
+            ->distinct()
+            ->pluck('matricula')
+            ->map(static fn (mixed $matricula): string => (string) $matricula)
+            ->all();
     }
 }

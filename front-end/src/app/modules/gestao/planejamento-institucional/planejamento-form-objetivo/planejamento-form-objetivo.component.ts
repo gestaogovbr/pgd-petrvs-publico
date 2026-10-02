@@ -95,7 +95,7 @@ export class PlanejamentoFormObjetivoComponent extends PageFormBase<Planejamento
 
     (async () => {
       const tiposObjetivos = this.tipoObjetivoApiClient
-        ? await firstValueFrom(this.tipoObjetivoApiClient.list())
+        ? await firstValueFrom(this.tipoObjetivoApiClient.list('planejamento_institucional'))
         : [];
 
       if (Array.isArray(tiposObjetivos)) {

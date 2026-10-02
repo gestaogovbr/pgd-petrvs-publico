@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+br-select,
+br-textarea,
+.br-input {
+  display: block !important;
+  width: 100%;
+  max-width: 100%;
+}
+
+br-select::part(container),
+br-select::part(input),
+br-select::part(input-container),
+br-select::part(input-group) {
+  max-width: none;
+  width: 100%;
+}
+
+.br-input input {
+  width: 100%;
+}
+
+.row-descricao {
+  align-items: flex-start;
+}

@@ -14,6 +14,7 @@
                 <button type="button"
                     *ngIf="hasExportExcel"
                     class="btn  btn-outline-success"
+                    [disabled]="exportingExcel"
                     (click)="onButtonExcelClick()"
                 >
                     <i class="bi bi-file-excel"></i> Exportar para Excel

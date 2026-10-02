@@ -1,0 +1,108 @@
+<div class="dispensa-pt-form p-3">
+  <h4 class="mb-3">{{ title }}</h4>
+
+  @if (loading) {
+    <div class="d-flex align-items-center gap-2 text-muted py-3">
+      <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+      Carregando…
+    </div>
+  } @else if (loadError) {
+    <div class="alert alert-warning" role="alert">{{ loadError }}</div>
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">Fechar</button>
+    </div>
+  } @else if (resumo) {
+    <p class="mb-3">
+      <strong>Agente público:</strong> {{ resumo.usuario_nome }}
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="row g-2">
+        <div class="col-md-6">
+          <input-datetime
+            date
+            [size]="12"
+            label="Data de início da dispensa"
+            icon="bi bi-calendar-date"
+            controlName="data_inicio"
+            [control]="form.controls.data_inicio"
+            required
+          ></input-datetime>
+        </div>
+        <div class="col-md-6">
+          <input-datetime
+            date
+            [size]="12"
+            label="Data de fim da dispensa"
+            icon="bi bi-calendar-date"
+            controlName="data_fim"
+            [control]="form.controls.data_fim"
+          ></input-datetime>
+        </div>
+        <div class="col-12">
+          <input-switch
+            [size]="12"
+            scale="small"
+            labelPosition="right"
+            controlName="ciencia"
+            [control]="form.controls.ciencia"
+            [label]="cienciaTexto"
+          ></input-switch>
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 justify-content-end mt-3">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="saving">Cancelar</button>
+        @if (resumo.pode_encerrar) {
+          <button type="button" class="btn btn-outline-danger" (click)="onEncerrar()" [disabled]="saving">
+            Encerrar dispensa
+          </button>
+        }
+        <button type="submit" class="btn btn-primary" [disabled]="saving || !resumo.pode_formalizar">
+          {{ resumo.dispensa_id ? 'Salvar alteração' : 'Formalizar dispensa' }}
+        </button>
+      </div>
+    </form>
+
+    <footer class="dispensa-pt-form__footer mt-4 pt-3 border-top">
+      @if (resumo.responsavel_nome) {
+        <small class="text-muted d-block">
+          Última operação por <strong>{{ resumo.responsavel_nome }}</strong>
+          em {{ formatDateTime(resumo.atualizado_em || resumo.ciencia_em) }}
+        </small>
+      } @else {
+        <small class="text-muted d-block">Nenhuma dispensa formalizada até o momento.</small>
+      }
+    </footer>
+
+    @if (resumo.historico?.length) {
+      <section class="mt-4">
+        <h5 class="h6">Histórico</h5>
+        <div class="table-responsive">
+          <table class="table table-sm table-bordered mb-0">
+            <thead>
+              <tr>
+                <th>Operação</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Responsável</th>
+                <th>Data/Hora</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (h of resumo.historico; track h.id) {
+                <tr>
+                  <td>{{ operacaoLabel(h.operacao) }}</td>
+                  <td>{{ formatDateOnly(h.data_inicio) }}</td>
+                  <td>{{ formatDateOnly(h.data_fim) }}</td>
+                  <td>{{ h.responsavel_nome }}</td>
+                  <td>{{ formatDateTime(h.created_at) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  }
+</div>

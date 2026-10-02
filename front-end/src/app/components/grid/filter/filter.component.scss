@@ -2,3 +2,28 @@
   border-bottom: 1px solid var(--petrvs-navbar-vertical-border-color);
   padding-bottom: 10px;
 }
+
+/* Espaço entre linhas de filtro (Nome × Planejamento / Cadeia de Valor) */
+:host ::ng-deep form > .row + .row {
+  margin-top: 0.5rem;
+}
+
+/*
+  Alinha altura Unidade (search) × Status (select) e evita o
+  `.d-flex { margin: auto }` global deslocar labels.
+*/
+:host ::ng-deep {
+  label.d-flex {
+    margin: 0;
+  }
+
+  input-search .form-control,
+  input-search .input-group > .btn,
+  input-select .btn.dropdown-toggle {
+    min-height: calc(1.5em + 0.75rem + 2px);
+  }
+
+  input-select .d-flex {
+    margin: 0;
+  }
+}

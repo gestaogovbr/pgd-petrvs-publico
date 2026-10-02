@@ -15,7 +15,10 @@ import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.compone
 @Component({
     selector: 'relatorio-plano-entrega',
     templateUrl: './relatorio-plano-entrega.component.html',
-    styleUrls: ['./relatorio-plano-entrega.component.scss'],
+    styleUrls: [
+        '../relatorio-base/relatorio-base.component.scss',
+        './relatorio-plano-entrega.component.scss'
+    ],
     standalone: false
 })
 export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<RelatorioPlanoEntrega, RelatorioPlanoEntregaDaoService> {
@@ -194,7 +197,6 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    this.loading = true;
     try{
       return this.dao!.exportarXls({
         where: queryOptions.where,
@@ -202,8 +204,6 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
       });
     } catch (error: any) {
       this.error(error);
-    } finally {
-      this.loading = false;
     }
 
     return of(null);

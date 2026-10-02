@@ -29,6 +29,8 @@ interface PlanoTrabalhoConsolidacaoReadRepositoryContract
 
     public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool;
 
+    public function possuiPeriodoAberto(string $planoTrabalhoId): bool;
+
     public function findAvaliadasComPrazoRecurso(string $usuarioId, int $prazoDias): \Illuminate\Database\Eloquent\Collection;
 
     public function findConsolidacoesParaImpactoDispensa(string $usuarioId, string $dataInicio, string $dataFim): \Illuminate\Support\Collection;
@@ -36,6 +38,12 @@ interface PlanoTrabalhoConsolidacaoReadRepositoryContract
     public function findConsolidacoesVigentes(string $planoTrabalhoId, ?string $encerradoAt): \Illuminate\Database\Eloquent\Collection;
 
     public function countConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds): int;
+
+    /**
+     * @param string[] $unidadesIds
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<\App\Models\PlanoTrabalho>
+     */
+    public function buscarPlanosComConsolidacoesAtrasadas(string $usuarioId, array $unidadesIds, int $page = 1, int $perPage = 15, ?string $orderBy = null, ?string $orderDir = null): \Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
     /** @return \Illuminate\Database\Eloquent\Collection<int, PlanoTrabalhoConsolidacao> */
     public function findFuturasIncluidas(string $planoTrabalhoId, string $dataEncerramento): \Illuminate\Database\Eloquent\Collection;

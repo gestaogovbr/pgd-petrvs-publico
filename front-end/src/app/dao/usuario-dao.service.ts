@@ -10,6 +10,9 @@ import { PlanoTrabalho } from '../models/plano-trabalho.model';
 import { TemplateDataset } from '../modules/uteis/templates/template.service';
 import { PlanoTrabalhoEntrega } from '../models/plano-trabalho-entrega.model';
 import { firstValueFrom } from 'rxjs';
+import {
+  DispensaPlanoTrabalhoResumo
+} from '../modules/configuracoes/usuario/dispensa-plano-trabalho/dispensa-plano-trabalho.types';
 
 @Injectable({
   providedIn: 'root'
@@ -109,5 +112,53 @@ export class UsuarioDaoService extends DaoBaseService<Usuario> {
 
   public getPendenciasChefe(): Promise<any[]> {
     return firstValueFrom(this.server.post('api/Usuario/pendencias-chefe', {}));
+  }
+
+  public getDispensaPlanoTrabalho(usuarioId: string): Promise<DispensaPlanoTrabalhoResumo> {
+    return firstValueFrom(
+      this.server.get(`api/v2/usuario/${usuarioId}/dispensa-plano-trabalho`)
+    ).then((response: any) => {
+      if (response?.error) {
+        throw new Error(response.error);
+      }
+      if (!response?.data) {
+        throw new Error('Resposta inválida do servidor.');
+      }
+      return response.data as DispensaPlanoTrabalhoResumo;
+    });
+  }
+
+  public salvarDispensaPlanoTrabalho(
+    usuarioId: string,
+    data: { data_inicio: string; data_fim: string | null; ciencia: boolean }
+  ): Promise<DispensaPlanoTrabalhoResumo> {
+    return firstValueFrom(
+      this.server.post(`api/v2/usuario/${usuarioId}/dispensa-plano-trabalho`, data)
+    ).then((response: any) => {
+      if (response?.error) {
+        throw new Error(response.error);
+      }
+      if (!response?.data) {
+        throw new Error('Resposta inválida do servidor.');
+      }
+      return response.data as DispensaPlanoTrabalhoResumo;
+    });
+  }
+
+  public encerrarDispensaPlanoTrabalho(
+    usuarioId: string,
+    ciencia: boolean
+  ): Promise<DispensaPlanoTrabalhoResumo> {
+    return firstValueFrom(
+      this.server.post(`api/v2/usuario/${usuarioId}/dispensa-plano-trabalho/encerrar`, { ciencia })
+    ).then((response: any) => {
+      if (response?.error) {
+        throw new Error(response.error);
+      }
+      if (!response?.data) {
+        throw new Error('Resposta inválida do servidor.');
+      }
+      return response.data as DispensaPlanoTrabalhoResumo;
+    });
   }
 }

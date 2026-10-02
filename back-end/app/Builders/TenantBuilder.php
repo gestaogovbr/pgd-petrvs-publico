@@ -2,6 +2,7 @@
 
 namespace App\Builders;
 
+use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Stancl\Tenancy\Resolvers\RequestDataTenantResolver;
@@ -14,7 +15,10 @@ class TenantBuilder extends Builder
         return parent::where($column, $operator, $value, $boolean);
     }
 
-    public function first($columns = ['*'])
+    /**
+     * @param array<int, string>|string $columns
+     */
+    public function first($columns = ['*']): ?Tenant
     {
         $wheres = $this->getQuery()->wheres;
 
@@ -22,27 +26,37 @@ class TenantBuilder extends Builder
             $tenantId = $wheres[0]['value'];
             $cached   = $this->getFromCache((string) $tenantId);
 
-            if ($cached !== null) {
+            if ($cached instanceof Tenant) {
                 return $cached;
             }
 
             $tenant = parent::first($columns);
 
-            if ($tenant !== null) {
+            if ($tenant instanceof Tenant) {
                 $this->putInCache((string) $tenantId, $tenant);
+
+                return $tenant;
             }
 
-            return $tenant;
+            return null;
         }
 
-        return parent::first($columns);
+        $tenant = parent::first($columns);
+
+        return $tenant instanceof Tenant ? $tenant : null;
     }
 
     private function isTenantKeyWhere(array $where): bool
     {
-        $key = $this->getModel()->getTenantKeyName();
+        $model = $this->getModel();
+        if (!$model instanceof Tenant) {
+            return false;
+        }
+
+        $key = $model->getTenantKeyName();
+
         return ($where['type'] ?? '') === 'Basic'
-            && (($where['column'] ?? '') === $key || ($where['column'] ?? '') === $this->getModel()->getTable() . '.' . $key)
+            && (($where['column'] ?? '') === $key || ($where['column'] ?? '') === $model->getTable() . '.' . $key)
             && ($where['operator'] ?? '') === '=';
     }
 

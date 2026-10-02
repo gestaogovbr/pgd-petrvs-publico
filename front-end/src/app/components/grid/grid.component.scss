@@ -49,6 +49,47 @@
     position: relative;
 }
 
+:host.grid-fill-height {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    height: 100%;
+    width: 100%;
+}
+
+:host.grid-fill-height .grid-fill-height-root,
+:host.grid-fill-height .grid-list-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    height: 100%;
+}
+
+:host.grid-fill-height .grid-list-container > .row {
+    flex: 1 1 0;
+    min-height: 0;
+    height: 100%;
+}
+
+:host.grid-fill-height .grid-fill-height-col {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    height: 100%;
+}
+
+:host.grid-fill-height .grid-fill-height-col > *:not(.table-responsive) {
+    flex-shrink: 0;
+}
+
+:host.grid-fill-height .grid-scroll-container {
+    flex: 1 1 0;
+    min-height: 0;
+}
+
 .grid-scroll-container table {
     min-width: 100%;
     width: max-content;

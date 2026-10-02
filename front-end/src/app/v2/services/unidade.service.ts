@@ -1,26 +1,17 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { GlobalsService } from 'src/app/services/globals.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { map, Observable } from 'rxjs';
 import { Unidade } from 'src/app/models/unidade.model';
-
-export interface UnidadeIndexResponse {
-  data: Unidade[];
-  total: number;
-  current_page: number;
-  last_page: number;
-  per_page: number;
-}
+import { TenantV2ResourceApiBase } from 'src/app/v2/infra/tenant-v2-resource-api.base';
+import type { Page } from 'src/app/v2/domain/pagination';
 
 @Injectable()
-export class UnidadeService {
-  private readonly http = inject(HttpClient);
-  private readonly gb = inject(GlobalsService);
-  private readonly auth = inject(AuthService);
-  private readonly base = 'api/v2/unidade';
+export class UnidadeService extends TenantV2ResourceApiBase {
+  protected readonly apiPath = '/api/v2/unidade';
 
-  index(termo: string | null, page: number = 1, size: number = 20): Observable<UnidadeIndexResponse> {
+  private readonly auth = inject(AuthService);
+
+  index(termo: string | null, page: number = 1, size: number = 20): Observable<Page<Unidade>> {
     const params: Record<string, string> = {
       page: String(page),
       size: String(size),
@@ -29,19 +20,18 @@ export class UnidadeService {
       params['filters[termo]'] = termo;
     }
 
-    return this.http.get<any>(`${this.gb.servidorURL}/${this.base}`, { params })
-      .pipe(map((response: any) => response?.data as UnidadeIndexResponse));
+    return this.getCollectionPaged<Unidade>(params, size);
   }
 
   searchByNomeOuCodigo(term: string): Observable<Unidade[]> {
     return this.index(term, 1, 50).pipe(
-      map((response: UnidadeIndexResponse) => response.data)
+      map((page: Page<Unidade>) => page.items)
     );
   }
 
   getById(id: string): Observable<Unidade> {
     return this.http
-        .get<any>(`${this.gb.servidorURL}/${this.base}/${id}`)
+        .get<any>(this.resourceUrl(`/${id}`))
         .pipe(map((response: any) => (response?.data as Unidade)));
   }
 
@@ -61,7 +51,7 @@ export class UnidadeService {
   }
 
   isGestorHierarquia(unidadeId: string): Observable<boolean> {
-    return this.http.get<any>(`${this.gb.servidorURL}/${this.base}/${unidadeId}/is-gestor-hierarquia`)
+    return this.http.get<any>(this.resourceUrl(`/${unidadeId}/is-gestor-hierarquia`))
       .pipe(map((r: any) => !!r?.data));
   }
 
@@ -70,7 +60,7 @@ export class UnidadeService {
    * e, opcionalmente, suas subordinadas na cadeia hierárquica.
    */
   minhasUnidades(subordinadas: boolean): Observable<UnidadeResumo[]> {
-    return this.http.get<any>(`${this.gb.servidorURL}/${this.base}/minhas`, {
+    return this.http.get<any>(this.resourceUrl('/minhas'), {
       params: { subordinadas: subordinadas ? 'true' : 'false' },
     }).pipe(map((r: any) => (r?.data as UnidadeResumo[]) ?? []));
   }

@@ -27,7 +27,7 @@ class PlanoTrabalhoEntregaRepository
             'planoEntregaEntrega:id,descricao,entrega_id,plano_entrega_id',
             'planoEntregaEntrega.entrega:id,nome',
             'planoEntregaEntrega.planoEntrega:id,nome,unidade_id',
-            'planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome',
+            'planoEntregaEntrega.planoEntrega.unidade:id,codigo,sigla,nome',
         ]);
 
         return $entrega;
@@ -46,10 +46,17 @@ class PlanoTrabalhoEntregaRepository
             'planoEntregaEntrega:id,descricao,entrega_id,plano_entrega_id',
             'planoEntregaEntrega.entrega:id,nome',
             'planoEntregaEntrega.planoEntrega:id,nome,unidade_id',
-            'planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome',
+            'planoEntregaEntrega.planoEntrega.unidade:id,codigo,sigla,nome',
         ]);
 
         return $entrega;
+    }
+
+    public function findById(string $id): ?PlanoTrabalhoEntrega
+    {
+        $entrega = $this->readRepository->findById($id);
+
+        return $entrega instanceof PlanoTrabalhoEntrega ? $entrega : null;
     }
 
     public function delete(string $id): bool
@@ -60,6 +67,14 @@ class PlanoTrabalhoEntregaRepository
     public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId, ?string $excludeId = null): bool
     {
         return $this->readRepository->existeVinculo($planoTrabalhoId, $planoEntregaEntregaId, $excludeId);
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function idsPlanosTrabalhoPorPlanoEntregaEntrega(string $planoEntregaEntregaId): array
+    {
+        return $this->readRepository->idsPlanosTrabalhoPorPlanoEntregaEntrega($planoEntregaEntregaId);
     }
 
     public function resumoForcaTrabalhoPorPlano(string $planoTrabalhoId): ResumoForcaTrabalhoDTO

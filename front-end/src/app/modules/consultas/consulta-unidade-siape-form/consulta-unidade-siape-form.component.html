@@ -13,19 +13,21 @@
         </div>
     </div>
     <div class="row">
+        <input-text
+            controlName="unidade"
+            label="Unidade"
+            labelInfo="Informe o código da unidade para busca"
+            [size]="4"
+            [maskFormat]="'999999999'"
+            hostClass="inputUnidade"
+            relativeId="inputUnidade"
+            placeholder="Informe o código unidade"
+        ></input-text>
+    </div>
+    <div class="row mt-2">
         <div class="col-md-4">
-            <input-text
-                controlName="unidade"
-                label="Unidade"
-                labelInfo="Informe o código da unidade para busca no SIAPE"
-                [size]="4"
-                [maskFormat]="'999999999'"
-                hostClass="inputUnidade"
-                relativeId="inputUnidade"
-                placeholder="Informe o código unidade"
-            ></input-text>
             <button type="button" class="btn btn-outline-primary btn-block btn-unidade"
-                (click)="onClickUnidade()" 
+                (click)="onClickUnidade()"
                 [disabled]="loading || !form.valid">
                 Localizar
             </button>

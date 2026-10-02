@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep {
+  /* Global `.d-flex { margin: auto }` desloca labels dos campos */
+  label.d-flex {
+    margin: 0;
+  }
+
+  input-select .d-flex,
+  input-multiselect .d-flex {
+    margin: 0;
+  }
+
+  /*
+    Separator já é uma .row. Rows internas (quando existirem) puxam
+    o conteúdo para a esquerda por causa da margem negativa do grid.
+  */
+  separator .row > .row {
+    --bs-gutter-x: 1.5rem;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Grid 2×2 de planejamento: host já é a coluna */
+  plano-entrega-valor-meta-input {
+    display: block;
+  }
+
+  plano-entrega-valor-meta-input > * {
+    display: block;
+    width: 100% !important;
+    max-width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Etiquetas: lista e select alinhados à largura do formulário */
+  input-multiselect {
+    display: block;
+    width: 100%;
+  }
+
+  input-multiselect .multiselect-list {
+    width: 100%;
+  }
+
+  input-multiselect .multiselect-item.multiselect-item-row {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  input-multiselect .multiselect-container {
+    width: 100%;
+  }
+
+  input-multiselect .multiselect-container > .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  input-multiselect .multiselect-container > .row > * {
+    padding-left: 0 !important;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  input-search .form-control,
+  input-search .input-group > .btn,
+  input-select .btn.dropdown-toggle,
+  input-number .form-control,
+  input-text .form-control {
+    min-height: calc(1.5em + 0.75rem + 2px);
+  }
+}

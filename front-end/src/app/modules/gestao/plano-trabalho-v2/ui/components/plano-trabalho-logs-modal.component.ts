@@ -18,11 +18,11 @@ import { UtilService } from 'src/app/services/util.service';
 import { PlanoApiClient } from '../../infra/plano-api.client';
 import { PlanoTrabalho, PlanoTrabalhoAuditLog, PlanoTrabalhoLogModelOption } from '../../domain/types';
 import { Subject, Subscription, debounceTime, distinctUntilChanged, of, switchMap } from 'rxjs';
-
-type SelectOption = { value: string; label: string; selected?: boolean };
+import { SelectOption, TODOS_SENTINEL } from 'src/app/v2/domain/select-option';
+import { SelectTodosSentinelDirective } from 'src/app/v2/domain/select-todos-sentinel.directive';
 
 const EVENTO_OPCOES: SelectOption[] = [
-  { value: '', label: 'Todos' },
+  { value: TODOS_SENTINEL, label: 'Todos' },
   { value: 'created', label: 'CRIADO' },
   { value: 'updated', label: 'ALTERADO' },
   { value: 'deleted', label: 'EXCLUÍDO' },
@@ -38,6 +38,7 @@ const EVENTO_OPCOES: SelectOption[] = [
     WebcomponentsAngularModule,
     SharedModule,
     PaginationV2Component,
+    SelectTodosSentinelDirective,
   ],
   templateUrl: './plano-trabalho-logs-modal.component.html',
   styleUrl: './plano-trabalho-logs-modal.component.scss',
@@ -55,7 +56,7 @@ export class PlanoTrabalhoLogsModalComponent implements OnDestroy {
   readonly consultaFinalizada = signal(false);
   readonly logs = signal<PlanoTrabalhoAuditLog[]>([]);
   readonly modelos = signal<PlanoTrabalhoLogModelOption[]>([]);
-  readonly modeloSelectOptions = signal<SelectOption[]>([{ value: '', label: '(Todos)' }]);
+  readonly modeloSelectOptions = signal<SelectOption[]>([{ value: TODOS_SENTINEL, label: '(Todos)' }]);
   readonly page = signal(1);
   readonly lastPage = signal(1);
   readonly total = signal(0);
@@ -68,9 +69,9 @@ export class PlanoTrabalhoLogsModalComponent implements OnDestroy {
   readonly filters = this.fb.nonNullable.group({
     data_inicio: '',
     data_fim: '',
-    event: '',
+    event: TODOS_SENTINEL,
     search: '',
-    modelo: '',
+    modelo: TODOS_SENTINEL,
   });
 
   readonly acaoSelectOptions = EVENTO_OPCOES;
@@ -166,9 +167,9 @@ export class PlanoTrabalhoLogsModalComponent implements OnDestroy {
     this.filters.reset({
       data_inicio: '',
       data_fim: '',
-      event: '',
+      event: TODOS_SENTINEL,
       search: '',
-      modelo: '',
+      modelo: TODOS_SENTINEL,
     });
     this.limparUsuario();
     this.page.set(1);
@@ -256,7 +257,7 @@ export class PlanoTrabalhoLogsModalComponent implements OnDestroy {
     this.api.listLogModelos(plano.id).subscribe(modelos => {
       this.modelos.set(modelos);
       this.modeloSelectOptions.set([
-        { value: '', label: '(Todos)' },
+        { value: TODOS_SENTINEL, label: '(Todos)' },
         ...modelos.map(m => ({ value: m.key, label: m.value })),
       ]);
     });
@@ -267,9 +268,9 @@ export class PlanoTrabalhoLogsModalComponent implements OnDestroy {
     this.filters.reset({
       data_inicio: '',
       data_fim: '',
-      event: '',
+      event: TODOS_SENTINEL,
       search: '',
-      modelo: '',
+      modelo: TODOS_SENTINEL,
     });
     this.limparUsuario();
     this.logs.set([]);
@@ -278,7 +279,7 @@ export class PlanoTrabalhoLogsModalComponent implements OnDestroy {
     this.total.set(0);
     this.consultaFinalizada.set(false);
     this.expandedIds.set(new Set());
-    this.modeloSelectOptions.set([{ value: '', label: '(Todos)' }]);
+    this.modeloSelectOptions.set([{ value: TODOS_SENTINEL, label: '(Todos)' }]);
     this.acaoSelectAberto.set(false);
     this.modeloSelectAberto.set(false);
   }
@@ -304,9 +305,9 @@ export class PlanoTrabalhoLogsModalComponent implements OnDestroy {
             : {}),
         ...(raw.data_inicio ? { data_inicio: raw.data_inicio } : {}),
         ...(raw.data_fim ? { data_fim: raw.data_fim } : {}),
-        ...(raw.event ? { event: raw.event } : {}),
+        ...(raw.event && raw.event !== TODOS_SENTINEL ? { event: raw.event } : {}),
         ...(raw.search.trim() ? { search: raw.search.trim() } : {}),
-        ...(raw.modelo ? { modelo: raw.modelo } : {}),
+        ...(raw.modelo && raw.modelo !== TODOS_SENTINEL ? { modelo: raw.modelo } : {}),
       },
     }).subscribe({
       next: result => {

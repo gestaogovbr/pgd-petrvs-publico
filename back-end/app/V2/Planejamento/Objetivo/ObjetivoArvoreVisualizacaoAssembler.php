@@ -4,51 +4,31 @@ declare(strict_types=1);
 
 namespace App\V2\Planejamento\Objetivo;
 
-use App\V2\Planejamento\Objetivo\DTOs\EsforcoNodeDTO;
 use App\V2\Planejamento\Objetivo\DTOs\ObjetivoArvoreSuperiorResumoDTO;
-use App\V2\Planejamento\Objetivo\DTOs\ObjetivoArvoreVisualizacaoDTO;
 
 /**
- * Monta a visualização em árvore a partir do mapa de esforço (fechamento bidirecional).
+ * Monta a cadeia de superiores a partir do mapa de esforço genérico (carregarEsforcoAcumulado).
  */
 final class ObjetivoArvoreVisualizacaoAssembler
 {
     /**
-     * @param  array<string, EsforcoNodeDTO>  $nos
-     */
-    public function assemble(string $objetivoRaizId, array $nos): ObjetivoArvoreVisualizacaoDTO
-    {
-        if (!isset($nos[$objetivoRaizId])) {
-            return new ObjetivoArvoreVisualizacaoDTO(
-                objetivo_raiz_id: $objetivoRaizId,
-                nos: $nos,
-                cadeia_superior: [],
-            );
-        }
-
-        return new ObjetivoArvoreVisualizacaoDTO(
-            objetivo_raiz_id: $objetivoRaizId,
-            nos: $nos,
-            cadeia_superior: $this->montarCadeiaSuperior($objetivoRaizId, $nos),
-        );
-    }
-
-    /**
-     * Sobe por objetivo_superior_id a partir do nó consultado.
-     * Ordem da lista: imediato (nivel 1) → mais distante (maior nivel).
-     * A UI exibe do mais distante para o imediato (topo → consultado).
+     * Sobe por no_pai_secundario_id (objetivo_superior_id) a partir do nó consultado.
      *
-     * @param  array<string, EsforcoNodeDTO>  $nos
+     * @param array<string, array<string, mixed>> $nos Mapa genérico do carregarEsforcoAcumulado
      * @return list<ObjetivoArvoreSuperiorResumoDTO>
      */
-    private function montarCadeiaSuperior(string $partidaId, array $nos): array
+    public function montarCadeiaSuperior(string $partidaId, array $nos): array
     {
+        if (!isset($nos[$partidaId])) {
+            return [];
+        }
+
         $cadeia = [];
         $atualId = $partidaId;
         $nivel = 0;
 
         while (isset($nos[$atualId])) {
-            $superiorId = $nos[$atualId]->objetivo_superior_id;
+            $superiorId = $nos[$atualId]['no_pai_secundario_id'] ?? null;
             if (!is_string($superiorId) || $superiorId === '' || !isset($nos[$superiorId])) {
                 break;
             }
@@ -57,12 +37,12 @@ final class ObjetivoArvoreVisualizacaoAssembler
             $nivel++;
 
             $cadeia[] = new ObjetivoArvoreSuperiorResumoDTO(
-                objetivo_id: $superior->objetivo_id,
-                objetivo_nome: $superior->objetivo_nome,
-                planejamento_nome: $superior->planejamento_nome,
+                objetivo_id: $superiorId,
+                objetivo_nome: (string) ($superior['no_nome'] ?? ''),
+                planejamento_nome: (string) ($superior['container_nome'] ?? ''),
                 hierarquia_linhas: $this->montarHierarquiaInterna($superiorId, $nos),
                 nivel_superior: $nivel,
-                objetivo_superior_id: $superior->objetivo_superior_id,
+                objetivo_superior_id: $superior['no_pai_secundario_id'] ?? null,
             );
 
             $atualId = $superiorId;
@@ -72,9 +52,9 @@ final class ObjetivoArvoreVisualizacaoAssembler
     }
 
     /**
-     * Caminho de objetivo_pai_id dentro do mesmo planejamento (raiz → nó).
+     * Caminho de no_pai_id (objetivo_pai_id) dentro do mesmo planejamento (raiz → nó).
      *
-     * @param  array<string, EsforcoNodeDTO>  $nos
+     * @param array<string, array<string, mixed>> $nos
      * @return list<string>
      */
     private function montarHierarquiaInterna(string $objetivoId, array $nos): array
@@ -85,8 +65,8 @@ final class ObjetivoArvoreVisualizacaoAssembler
 
         while (isset($nos[$atualId]) && !isset($visitados[$atualId])) {
             $visitados[$atualId] = true;
-            $nomes[] = $nos[$atualId]->objetivo_nome;
-            $paiId = $nos[$atualId]->objetivo_pai_id;
+            $nomes[] = (string) ($nos[$atualId]['no_nome'] ?? '');
+            $paiId = $nos[$atualId]['no_pai_id'] ?? null;
             if (!is_string($paiId) || $paiId === '' || !isset($nos[$paiId])) {
                 break;
             }

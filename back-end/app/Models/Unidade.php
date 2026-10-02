@@ -22,7 +22,7 @@ use App\Models\HistoricoFuncao;
 use App\Models\CurriculumProfissional;
 use App\Services\CodigoOrgaoService;
 use App\Traits\AutoUuid;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -62,7 +62,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Cidade|null $cidade
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $integrantes
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\PlanoEntrega> $planosEntrega
- * @method static Builder<Unidade> naHierarquiaDe(array $unidadeIds)
  */
 class Unidade extends ModelBase
 {
@@ -130,30 +129,13 @@ class Unidade extends ModelBase
         'unidade_antiga' => 'boolean',
     ];
 
-    // Scopes
-
-    /**
-     * @param Builder<Unidade> $query
-     * @param string[] $unidadeIds
-     * @return Builder<Unidade>
-     */
-    public function scopeNaHierarquiaDe(Builder $query, array $unidadeIds): Builder
-    {
-        return $query->where(function (Builder $inner) use ($unidadeIds) {
-            $inner->whereIn('unidades.id', $unidadeIds);
-            foreach ($unidadeIds as $unidadeId) {
-                $inner->orWhere('unidades.path', 'like', "%{$unidadeId}%");
-            }
-        });
-    }
-
     // Has
     public function atividades()
     {
         return $this->hasMany(Atividade::class);
     }
 
-    public function planosTrabalho()
+    public function planosTrabalho(): HasMany
     {
         return $this->hasMany(PlanoTrabalho::class);
     }
@@ -229,10 +211,10 @@ class Unidade extends ModelBase
         return $this->belongsTo(Cidade::class);
     }  //nullable
 
-    public function unidadePai()
+    public function unidadePai(): BelongsTo
     {
         return $this->belongsTo(Unidade::class, 'unidade_pai_id');
-    }    //nullable
+    }
 
     public function subordinadas()
     {

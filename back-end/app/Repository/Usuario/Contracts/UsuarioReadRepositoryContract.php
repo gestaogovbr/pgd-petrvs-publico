@@ -6,6 +6,7 @@ namespace App\Repository\Usuario\Contracts;
 
 use App\Models\Usuario;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface UsuarioReadRepositoryContract
 {
@@ -34,7 +35,14 @@ interface UsuarioReadRepositoryContract
     public function loadUserWithRelations(string $userId, string $entidadeId): ?Usuario;
     public function findWithAreaTrabalho(string $userId, string $unidadeId): ?Usuario;
     public function findByCpf(string $cpf): ?Usuario;
+    /**
+     * @return Collection<int, Usuario>
+     */
     public function findAllByCpfWithLotacao(string $cpf): Collection;
+
+    /**
+     * @return Collection<int, Usuario>
+     */
     public function findAllByCpfUnfiltered(string $cpf): Collection;
     public function findAllParaEnvio(int $chunkSize, callable $onChunk): void;
 
@@ -42,8 +50,15 @@ interface UsuarioReadRepositoryContract
 
     /**
      * @param list<string> $unidadeIds
+     * @return LengthAwarePaginator<Usuario>
      */
-    public function findAgentesVisiveis(string $usuarioId, array $unidadeIds): Collection;
+    public function findAgentesVisiveis(
+        string $usuarioId,
+        array $unidadeIds,
+        ?string $termo = null,
+        int $page = 1,
+        int $perPage = 20
+    ): LengthAwarePaginator;
 
     /**
      * @param string[] $unidadeIds
@@ -51,4 +66,13 @@ interface UsuarioReadRepositoryContract
      * @return Collection<int, Usuario>
      */
     public function findIntegrantesPorUnidades(array $unidadeIds, array $atribuicoes): Collection;
+
+    /** @return list<string> */
+    public function cpfsAtivosGerenciadosPeloSiape(): array;
+
+    /** @return Collection<int, Usuario> */
+    public function findComMatriculaByCpf(string $cpf): Collection;
+
+    /** @return list<string> */
+    public function matriculasElegiveisParaBlacklistSiape(string $cpf): array;
 }

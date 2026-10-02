@@ -544,6 +544,94 @@
     height: 100%;
   }
 
+  /*
+    Filtros no cabeçalho da grade: width:100% (col-md-*) não resolve
+    dentro de td/th com table-layout:auto — o campo fica no tamanho intrínseco.
+    Hosts em bloco com width:auto preenchem a célula; só então o 100% interno vale.
+  */
+  .grid-scroll-container thead th {
+    column-header,
+    .grid-header-filter,
+    input-text,
+    input-select,
+    input-search,
+    input-text input-container,
+    input-select input-container {
+      display: block !important;
+      width: auto !important;
+      max-width: none !important;
+      min-width: 0 !important;
+      flex: none !important;
+      float: none !important;
+      box-sizing: border-box !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    .grid-header-filter {
+      text-align: left;
+    }
+
+    input-text [class*="col-md-"],
+    input-select [class*="col-md-"] {
+      width: auto !important;
+      max-width: none !important;
+      flex: none !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    input-text .input-group,
+    input-text .d-flex,
+    input-select .input-group,
+    input-select .dropdown,
+    input-select .d-flex {
+      display: flex !important;
+      width: 100% !important;
+      max-width: none !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    input-text .form-control,
+    input-select .form-control,
+    input-select .btn.dropdown-toggle {
+      width: 100% !important;
+      max-width: none !important;
+      box-sizing: border-box !important;
+    }
+
+    input-datetime,
+    input-datetime input-container,
+    input-datetime [class*="col-md-"] {
+      display: inline-block !important;
+      width: max-content !important;
+      max-width: max-content !important;
+      flex: none !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+
+    input-datetime .input-group,
+    input-datetime .d-flex {
+      display: flex !important;
+      width: max-content !important;
+      max-width: max-content !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+
+    input-datetime .form-control {
+      width: auto !important;
+      max-width: none !important;
+    }
+  }
+
   .buttons-home path {
     fill: var(--bs-body-color);
   }
@@ -664,4 +752,39 @@ body {
 /* Mural de Avisos */
 .mural-aviso-container {
   max-height: 60vh;
+}
+/*
+ * Correção de largura do br-select (govbr-ds webcomponents 2.1.x).
+ * A partir da 2.1.x a classe interna .br-select tem `max-width: 400px`,
+ * fazendo o componente não preencher o container em formulários.
+ * Por padrão, forçamos o select a preencher o espaço disponível.
+ * Use a classe `select-auto` para manter o comportamento compacto
+ * (largura ajustada ao conteúdo), útil em toolbars, filtros e paginação.
+ */
+br-select {
+  display: block;
+  width: 100%;
+}
+
+br-select::part(container),
+br-select::part(input),
+br-select::part(input-container),
+br-select::part(input-group),
+br-select::part(input-field) {
+  max-width: none;
+  width: 100%;
+}
+
+br-select.select-auto {
+  display: inline-block;
+  width: auto;
+}
+
+br-select.select-auto::part(container),
+br-select.select-auto::part(input),
+br-select.select-auto::part(input-container),
+br-select.select-auto::part(input-group),
+br-select.select-auto::part(input-field) {
+  max-width: 400px;
+  width: auto;
 }

@@ -38,6 +38,12 @@ class BuscarDadosSiapeJob implements ShouldQueue, ContratoJobSchedule
         Log::info("Job BuscarDadosSiapeJob - Tenant {$this->tenantId}: START");
         
         $this->loadingTenantConfigurationMiddleware($this->tenantId);
+
+        if (TenantConfigurationsService::tenantHasSipecConfigured()) {
+            Log::info("Job BuscarDadosSiapeJob Tenant {$this->tenantId}: ignorado pois SIPEC está configurado");
+            return;
+        }
+
         $config = config("integracao")["siape"];
         
         if(empty(trim($config["conectagov_chave"]))){
@@ -63,6 +69,6 @@ class BuscarDadosSiapeJob implements ShouldQueue, ContratoJobSchedule
     private function loadingTenantConfigurationMiddleware(string $tenantId): void
     {
         $tenantConfigurations = new TenantConfigurationsService();
-        $tenantConfigurations->handle($tenantId);
+        $tenantConfigurations->handleTenant($tenantId);
     }
 }

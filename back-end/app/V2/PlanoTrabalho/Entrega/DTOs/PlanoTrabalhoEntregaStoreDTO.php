@@ -16,6 +16,8 @@ class PlanoTrabalhoEntregaStoreDTO
         public readonly bool $informouEsforcoExecutado,
         public readonly string $descricao,
         public readonly ?string $entregaId = null,
+        public readonly ?string $consolidacaoId = null,
+        public readonly ?string $justificativa = null,
     ) {}
 
     public static function fromArray(array $data, string $planoTrabalhoId, ?string $entregaId = null): self
@@ -37,6 +39,8 @@ class PlanoTrabalhoEntregaStoreDTO
             informouEsforcoExecutado: $informouEsforcoExecutado,
             descricao: $data['descricao'] ?? '',
             entregaId: $entregaId,
+            consolidacaoId: $data['consolidacao_id'] ?? null,
+            justificativa: isset($data['justificativa']) ? trim((string) $data['justificativa']) : null,
         );
     }
 

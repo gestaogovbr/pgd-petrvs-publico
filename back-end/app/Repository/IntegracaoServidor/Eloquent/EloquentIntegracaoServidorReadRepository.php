@@ -50,6 +50,18 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             ->first();
     }
 
+    public function datasMaisRecentesPorCpf(string $codigoOrgao): array
+    {
+        return $this->query()
+            ->where('codigo_orgao', $codigoOrgao)
+            ->whereNotNull('cpf')
+            ->select('cpf')
+            ->selectRaw('MAX(data_modificacao) AS data_modificacao')
+            ->groupBy('cpf')
+            ->pluck('data_modificacao', 'cpf')
+            ->all();
+    }
+
     public function buscarAtualizacoesDados(string $codigoOrgao, ?array $escopoServidor = null): array
     {
         [$escopoSql, $bindings] = $this->escopoServidorSql($escopoServidor, 'isr.cpf', 'isr.matriculasiape', 'u.cpf');
@@ -178,7 +190,8 @@ final class EloquentIntegracaoServidorReadRepository extends AbstractEloquentRea
             "isr.funcoes as gestor " .
             "FROM integracao_servidores as isr " .
             "LEFT JOIN usuarios u on u.matricula = isr.matriculasiape {$joinCpfEscopado} " .
-            "WHERE u.matricula is NULL AND isr.codigo_orgao = ? {$escopoSql}",
+            "WHERE u.matricula is NULL AND isr.codigo_orgao = ? {$escopoSql} " .
+            "ORDER BY isr.cpf, isr.matriculasiape",
             array_merge([$codigoOrgao], $bindings)
         );
     }

@@ -28,11 +28,21 @@ return [
         'conectagov_chave' => env('INTEGRACAO_SIAPE_CONECTAGOV_CHAVE', ""),
         'conectagov_senha' => env('INTEGRACAO_SIAPE_CONECTAGOV_SENHA', ""),
         'conectagov_qtd_max_requisicoes' => (int) env('INTEGRACAO_SIAPE_CONECTAGOV_QTD_MAX_REQUISICOES', 10),
+        'reconciliacao_servidores_max_candidatos' => (int) env('INTEGRACAO_SIAPE_RECONCILIACAO_MAX_CANDIDATOS', 200),
         'codOrgao' => env('INTEGRACAO_SIAPE_CODORGAO', ""),
         'codUorg' => env('INTEGRACAO_SIAPE_CODUORG', ""),
         'inativacao_unidade_prazo_dias' => (int) env('SIAPE_INATIVACAO_UNIDADE_PRAZO_DIAS', 7),
         'parmExistPag' => env('INTEGRACAO_SIAPE_PARMEXISTPAG', ""),
         'parmTipoVinculo' => env('INTEGRACAO_SIAPE_PARMTIPOVINCULO', "")
+    ],
+    'sipec' => [
+        'url' => env('INTEGRACAO_SIPEC_URL', ''),
+        'conectagov_chave' => env('INTEGRACAO_SIPEC_CONECTAGOV_CHAVE', ''),
+        'conectagov_senha' => env('INTEGRACAO_SIPEC_CONECTAGOV_SENHA', ''),
+        'cpf' => env('INTEGRACAO_SIPEC_CPF', ''),
+        'codUorg' => env('INTEGRACAO_SIPEC_CODUORG', ''),
+        'codOrgao' => env('INTEGRACAO_SIPEC_CODORGAO', ''),
+        'token' => env('TOKEN_SIPEC', ''),
     ],
     'siape_relatorio_carga_individual' => [
         'retencao_dias' => (int) env('SIAPE_RELATORIO_CARGA_INDIVIDUAL_RETENCAO_DIAS', 30),

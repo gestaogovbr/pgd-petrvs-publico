@@ -13,6 +13,7 @@ use App\Repository\UnidadeRepository;
 use App\Repository\UnidadeIntegranteRepository;
 use App\Repository\UnidadeIntegranteAtribuicaoRepository;
 use App\Repository\UsuarioRepository;
+use App\Services\UnidadeAtribuicaoService;
 use App\Services\Siape\Unidade\Enum\Atribuicao as EnumAtribuicao;
 
 trait Atribuicao
@@ -153,9 +154,8 @@ trait Atribuicao
             $this->removeUsuarioDaGestaoAtual($usuario);
         }
 
-        $this->removeLotacao($usuario);
         $this->alteracoes = ['lotacao' => sprintf('Lotando o servidor %s na Unidade %s', $usuario->id, $unidadeDestino->id)];
-        $this->lotaServidor(EnumAtribuicao::LOTADO, $integranteNovoOuExistente);
+        $this->unidadeAtribuicaoService()->transferirLotacao($usuario, $integranteNovoOuExistente);
     }
 
     private function processaGestor(Unidade $unidadeDestino, Usuario $usuario, UnidadeIntegrante $integranteNovoOuExistente): void
@@ -258,31 +258,20 @@ trait Atribuicao
 
     private function lotaServidor(EnumAtribuicao $atribuicao, UnidadeIntegrante $unidadeIntegrante)
     {
-
-        $created = $this->getUnidadeIntegranteAtribuicaoRepository()->create([
-            "atribuicao" => $atribuicao->value,
-            "unidade_integrante_id" => $unidadeIntegrante->id
-        ]);
-        $saved = $created->save();
+        $created = $this->unidadeAtribuicaoService()->garantirAtribuicao($unidadeIntegrante, $atribuicao);
         
         SiapeLog::info("Retorno ao criar atribuição em unidades_integrantes_atribuicoes", [
             'id' => $created->getKey(),
             'exists' => $created->exists,
-            'saved' => $saved,
+            'saved' => true,
             'atribuicao' => $created->getAttribute('atribuicao'),
             'unidade_integrante_id' => $created->getAttribute('unidade_integrante_id'),
         ]);
     }
 
-    protected function removeLotacao(Usuario $usuario): void
+    private function unidadeAtribuicaoService(): UnidadeAtribuicaoService
     {
-        $lotacoes = $this->getUnidadeIntegranteRepository()->findAllLotacoesByUsuario($usuario->id);
-        foreach ($lotacoes as $lotacao) {
-            /** @var UnidadeIntegrante $lotacao */
-            if ($lotacao->lotado->atribuicao == EnumAtribuicao::LOTADO->value) {
-                $this->getUnidadeIntegranteAtribuicaoRepository()->delete($lotacao->lotado->id);
-            }
-        }
+        return app(UnidadeAtribuicaoService::class);
     }
 
     private function LimparAtribuicoes(UnidadeIntegrante $integranteNovoOuExistente, bool $removerLotado = false): void

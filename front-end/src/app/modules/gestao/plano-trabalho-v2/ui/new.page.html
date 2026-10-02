@@ -69,7 +69,7 @@
           <div class="row mt-2">
             <div class="col-md-6 mb-3">
               <div class="br-input">
-                <br-select label="Regramento de Instituição PGD" [options]="programasOptions()" (valueChange)="selecionarPrograma($event)" />
+                <br-select class="w-100" inputWidth="300px" label="Regramento de Instituição PGD" [options]="programasOptions()" (valueChange)="selecionarPrograma($event)" />
               </div>
               @if (erroRegramento()) {
                 <span class="feedback warning" role="alert">

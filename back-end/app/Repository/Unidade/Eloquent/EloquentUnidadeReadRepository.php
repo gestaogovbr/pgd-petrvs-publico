@@ -51,7 +51,7 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         }
 
         foreach ($unidadesGeridas as $unidadeGeridaId) {
-            $subordinadas = GestorHierarquiaCache::getSubordinadas(
+            $subordinadas = GestorHierarquiaCache::getSubordinadasRecursivas(
                 $unidadeGeridaId,
                 fn () => $this->getSubordinadasRecursivasIds([$unidadeGeridaId]),
             );
@@ -234,6 +234,17 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->get();
     }
 
+    public function findByCodigoWithPai(string $codigo): ?Unidade
+    {
+        /** @var Unidade|null $unidade */
+        $unidade = $this->query()
+            ->with('unidadePai')
+            ->where('codigo', $codigo)
+            ->first();
+
+        return $unidade;
+    }
+
     public function findByCodigoOrgaoWithPai(string $codigoOrgao, string $codigo): ?Unidade
     {
         /** @var Unidade|null $unidade */
@@ -383,6 +394,15 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return array_map(fn ($row) => $row->id, $subordinadaIds);
     }
 
+    /**
+     * @param string[] $ids
+     * @return list<string>
+     */
+    public function idsNaHierarquiaDe(array $ids): array
+    {
+        return array_values(array_unique(array_merge($ids, $this->getSubordinadasRecursivasIds($ids))));
+    }
+
     /** @return list<string> */
     public function getGerenciadasComSubordinadasIds(string $usuarioId): array
     {
@@ -421,26 +441,6 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         /** @var Unidade|null $unidade */
         $unidade = $this->query()->find($id);
         return $unidade;
-    }
-
-    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): Collection
-    {
-        $query = $this->query()->select('id', 'nome', 'codigo', 'sigla');
-
-        if ($dto->termo) {
-            $termoLower = mb_strtolower($dto->termo);
-            $query->where(function ($q) use ($termoLower) {
-                $q->whereRaw('LOWER(nome) like ?', ["%{$termoLower}%"])
-                  ->orWhereRaw('LOWER(codigo) like ?', ["%{$termoLower}%"])
-                  ->orWhereRaw('LOWER(sigla) like ?', ["%{$termoLower}%"]);
-            });
-        }
-
-        if (!$dto->todos) {
-            $query->limit(50);
-        }
-
-        return $query->get();
     }
 
     public function index(UnidadeIndexDTO $dto): LengthAwarePaginator
@@ -516,5 +516,19 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
             ->whereNull('unidade_pai_id')
             ->whereNull('deleted_at')
             ->first();
+    }
+
+    /**
+     * @return Collection<int, Unidade>
+     */
+    public function findAllComCodigo(): Collection
+    {
+        /** @var Collection<int, Unidade> */
+        return $this->query()
+            ->whereNotNull('codigo')
+            ->where('codigo', '!=', '')
+            ->without(['gestor', 'gestoresSubstitutos'])
+            ->select(['id', 'codigo', 'nome', 'sigla', 'path', 'unidade_pai_id', 'cidade_id', 'entidade_id'])
+            ->get();
     }
 }

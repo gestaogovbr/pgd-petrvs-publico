@@ -29,4 +29,19 @@ class EloquentSiapeConsultaDadosPessoaisWriteRepository extends AbstractEloquent
     {
         $this->model->newQuery()->withTrashed()->where('cpf', $cpf)->forceDelete();
     }
+
+    public function markProcessados(array $cpfs): int
+    {
+        return $this->model->newQuery()->whereIn('cpf', $cpfs)->update(['processado' => true]);
+    }
+
+    public function truncate(): void
+    {
+        $this->model->newQuery()->truncate();
+    }
+
+    public function insertMany(array $rows): void
+    {
+        $this->model->newQuery()->insert($rows);
+    }
 }

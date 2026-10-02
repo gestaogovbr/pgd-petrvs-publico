@@ -5,6 +5,11 @@ import { ToolbarButton } from 'src/app/components/toolbar/toolbar-types';
 import { PageListBase } from 'src/app/modules/base/page-list-base';
 import { SiapeBlacklistServidor } from 'src/app/models/siape-blacklist-servidor.model';
 import { SiapeBlacklistServidorDaoService } from 'src/app/dao/siape-blacklist-servidor-dao.service';
+import {
+  calcularPrazoInativacaoServidor,
+  PrazoInativacaoServidor,
+  recarregarGridBlacklistServidor
+} from './blacklist-servidor-prazo';
 
 @Component({
     selector: 'app-blacklist-servidor-list',
@@ -22,8 +27,8 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
     /* Inicializações */
     this.title = this.lex.translate('CPFs indisponíveis');
     this.code = "MOD_SIAPE_BLACKLIST";
-    this.fields = [ "usuarios.matricula", "usuarios.nome", "siape_blacklist_servidores.*" ];
-    this.leftJoin = [["usuarios", "siape_blacklist_servidores.cpf", "usuarios.cpf"]];
+    this.fields = ["usuarios.nome", "siape_blacklist_servidores.*"];
+    this.leftJoin = [];
     this.filter = this.fh.FormBuilder({
       cpf: { default: '' },
       inativado: { default: null }
@@ -36,6 +41,21 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
       color: "btn-outline-danger",
       onClick: (row: any) => this.removerCpf(row.cpf)
     });
+    this.toolbarButtons.push({
+      icon: 'bi bi-arrow-clockwise',
+      label: 'Recarregar lista',
+      hint: 'Consultar novamente a situação após a execução da rotina diária',
+      color: 'btn-outline-primary',
+      onClick: () => this.recarregarLista()
+    });
+  }
+
+  public prazoInativacao(row: SiapeBlacklistServidor): PrazoInativacaoServidor {
+    return calcularPrazoInativacaoServidor(row.created_at, row.inativado);
+  }
+
+  public recarregarLista(): void {
+    recarregarGridBlacklistServidor(this.grid);
   }
 
   public async removerCpf(cpf: string): Promise<void> {
@@ -76,8 +96,9 @@ export class BlacklistServidorListComponent extends PageListBase<SiapeBlacklistS
   }
 
   protected topAlertMessages = () : string[] => {
-    return ['- O usuário cujo CPF está com STATUS 1 está INATIVO no sistema.',
-    '- O usuário cujo CPF está com STATUS VAZIO não foi encontrado na consulta ao Siape. Se este CPF não for retirado da lista em até 30 dias, a partir da primeira consulta ao Siape na qual não foi encontrado, ele entrará no STATUS 1.',
+    return ['- O usuário com situação INATIVADO já passou pelo processamento diário.',
+    '- O prazo mostra quantos dias restam desde a primeira ausência confirmada no SIAPE até a inativação automática.',
+    '- Se o prazo estiver vencido, recarregue a lista. Se permanecer assim após a rotina diária, verifique o scheduler e a fila SIAPE.',
     '- Ao retirar um CPF da lista, o usuário voltará a estar ATIVO no sistema, por isso, certifique-se de que realmente precisa realizar esta ação.',
     '- Ao retirar um CPF da lista, recomenda-se realizar a carga individual deste no Siape.'];
   }

@@ -23,12 +23,15 @@ use App\Enums\StatusEnum;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 beforeEach(function () {
+    DB::shouldReceive('transaction')->andReturnUsing(fn (callable $callback) => $callback());
+
     $this->documentoRepo = Mockery::mock(DocumentoRepository::class);
     $this->assinaturaRepo = Mockery::mock(DocumentoAssinaturaRepository::class);
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
@@ -221,6 +224,36 @@ describe('PlanoTrabalhoDocumentoService::show', function () {
 
         $this->service->show('plano-1');
     })->throws(NotFoundException::class);
+
+    test('não quebra quando o usuário da assinatura está soft-deleted (relação null)', function () {
+        $this->authValidator->shouldReceive('validar')->once();
+
+        $assinatura = Mockery::mock(DocumentoAssinatura::class)->makePartial();
+        $assinatura->id = 'assinatura-1';
+        $assinatura->usuario_id = 'user-removido';
+        $assinatura->data_assinatura = '2026-05-22 11:33:00';
+        $assinatura->usuario = null; // usuário soft-deleted → relação retorna null
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->numero = 7;
+        $documento->titulo = 'TCR';
+        $documento->conteudo = '<html></html>';
+        $documento->shouldReceive('getAttribute')->with('assinaturas')
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection([$assinatura]));
+
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->andReturn($documento);
+        $this->assinaturaRepo->shouldReceive('listarRevogadasPorPlanoTrabalho')
+            ->once()
+            ->with('plano-1')
+            ->andReturn(new \Illuminate\Database\Eloquent\Collection());
+
+        $result = $this->service->show('plano-1');
+
+        expect($result['assinaturas'])->toHaveCount(1);
+        expect($result['assinaturas'][0]['usuario_nome'])->toBe('');
+        expect($result['assinaturas'][0]['usuario_id'])->toBe('user-removido');
+    });
 });
 
 describe('PlanoTrabalhoDocumentoService::assinar', function () {
@@ -235,6 +268,8 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
         $documento->conteudo = '<html>TCR</html>';
 
         $this->assinarValidator->shouldReceive('validar')->once()->andReturn($documento);
+        $this->planoRepo->shouldReceive('findByIdForUpdate')->once()->with('plano-1')->andReturn($this->plano);
+        $this->assinaturaRepo->shouldReceive('findByDocumentoAndUsuario')->once()->with('doc-1', 'user-1')->andReturn(null);
         $this->assinarValidator->shouldReceive('validarSlotGestorDisponivel')->once();
 
         $assinatura = Mockery::mock(DocumentoAssinatura::class)->makePartial();
@@ -266,6 +301,8 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
         $documento->conteudo = '<html>TCR</html>';
 
         $this->assinarValidator->shouldReceive('validar')->once()->andReturn($documento);
+        $this->planoRepo->shouldReceive('findByIdForUpdate')->once()->with('plano-1')->andReturn($this->plano);
+        $this->assinaturaRepo->shouldReceive('findByDocumentoAndUsuario')->once()->with('doc-1', 'user-1')->andReturn(null);
         $this->assinarValidator->shouldReceive('validarSlotGestorDisponivel')->once();
 
         $assinatura = Mockery::mock(DocumentoAssinatura::class)->makePartial();
@@ -282,6 +319,51 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
         $this->geradorPeriodos->shouldReceive('gerar')->once()->with($this->plano);
 
         expect($this->service->assinar('plano-1'))->toBe($assinatura);
+    });
+
+    test('retorna assinatura existente sem reprocessar quando usuário já assinou (early-return)', function () {
+        $this->authValidator->shouldReceive('validarAssinatura')->once()->andReturn($this->plano);
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+
+        $assinaturaExistente = Mockery::mock(DocumentoAssinatura::class)->makePartial();
+
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->once()->with('plano-1')->andReturn($documento);
+        $this->assinaturaRepo->shouldReceive('findByDocumentoAndUsuario')->once()->with('doc-1', 'user-1')->andReturn($assinaturaExistente);
+
+        $this->assinarValidator->shouldNotReceive('validar');
+        $this->planoRepo->shouldNotReceive('findByIdForUpdate');
+        $this->assinaturaRepo->shouldNotReceive('createFromTCR');
+        $this->geradorPeriodos->shouldNotReceive('gerar');
+
+        expect($this->service->assinar('plano-1'))->toBe($assinaturaExistente);
+    });
+
+    test('sob lock, se assinatura foi criada por requisição concorrente, retorna a existente sem duplicar', function () {
+        $this->authValidator->shouldReceive('validarAssinatura')->once()->andReturn($this->plano);
+
+        /** @var Documento $documento */
+        $documento = Mockery::mock(Documento::class)->makePartial();
+        $documento->id = 'doc-1';
+        $documento->conteudo = '<html>TCR</html>';
+
+        $this->assinarValidator->shouldReceive('validar')->once()->andReturn($documento);
+
+        $assinaturaConcorrente = Mockery::mock(DocumentoAssinatura::class)->makePartial();
+
+        /* Primeira verificação (fora da transação) não encontra; sob o lock, encontra a criada pela requisição concorrente. */
+        $this->documentoRepo->shouldReceive('findTcrByPlanoTrabalhoId')->once()->with('plano-1')->andReturn(null);
+        $this->planoRepo->shouldReceive('findByIdForUpdate')->once()->with('plano-1')->andReturn($this->plano);
+        $this->assinaturaRepo->shouldReceive('findByDocumentoAndUsuario')->once()->with('doc-1', 'user-1')->andReturn($assinaturaConcorrente);
+
+        $this->assinarValidator->shouldNotReceive('validarSlotGestorDisponivel');
+        $this->assinaturaRepo->shouldNotReceive('createFromTCR');
+        $this->statusService->shouldNotReceive('atualizaStatus');
+        $this->geradorPeriodos->shouldNotReceive('gerar');
+
+        expect($this->service->assinar('plano-1'))->toBe($assinaturaConcorrente);
     });
 
     test('não registra assinatura quando autorização falha', function () {
@@ -305,6 +387,7 @@ describe('PlanoTrabalhoDocumentoService::cancelarAssinatura', function () {
         $documento->id = 'doc-1';
 
         $this->cancelarAssinaturaValidator->shouldReceive('validar')->once()->andReturn($documento);
+        $this->planoRepo->shouldReceive('findByIdForUpdate')->once()->with('plano-1')->andReturn($this->plano);
         $this->assinaturaRepo->shouldReceive('deleteAssinaturaUsuario')->once()->with('doc-1', 'user-1')->andReturn(true);
         $this->assinaturaRepo->shouldReceive('existeAlgumaAssinatura')->with('doc-1')->andReturn(false);
 
@@ -323,6 +406,7 @@ describe('PlanoTrabalhoDocumentoService::cancelarAssinatura', function () {
         $documento->id = 'doc-1';
 
         $this->cancelarAssinaturaValidator->shouldReceive('validar')->once()->andReturn($documento);
+        $this->planoRepo->shouldReceive('findByIdForUpdate')->once()->with('plano-1')->andReturn($this->plano);
         $this->assinaturaRepo->shouldReceive('deleteAssinaturaUsuario')->once()->andReturn(true);
         $this->assinaturaRepo->shouldReceive('existeAlgumaAssinatura')->with('doc-1')->andReturn(true);
 

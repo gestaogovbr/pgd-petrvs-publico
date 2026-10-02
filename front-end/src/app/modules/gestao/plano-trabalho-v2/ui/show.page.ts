@@ -20,6 +20,7 @@ import { MessageService } from "src/app/v2/services/message.service";
 import { AssinarPlanoUseCase } from "../application/assinar-plano.usecase";
 import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
 import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
+import { ContribuicaoFormComponent, ContribuicaoSalva } from "./components/contribuicao-form.component";
 import { TextoColapsavelComponent } from "src/app/v2/components/texto-colapsavel/texto-colapsavel.component";
 import { BrTextareaResizeVerticalDirective } from "./br-textarea-resize-vertical.directive";
 
@@ -27,7 +28,7 @@ import { BrTextareaResizeVerticalDirective } from "./br-textarea-resize-vertical
   selector: 'app-plano-trabalho-v2-show-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent, TextoColapsavelComponent, BrTextareaResizeVerticalDirective],
+  imports: [CommonModule, WebcomponentsAngularModule, BreadcrumbComponent, ConsolidacaoAvaliacoesComponent, ConsolidacaoOcorrenciasComponent, ContribuicaoFormComponent, TextoColapsavelComponent, BrTextareaResizeVerticalDirective],
   templateUrl: './show.page.html',
   styleUrl: './show.page.scss'
 })
@@ -55,6 +56,12 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly error = signal<string | null>(null);
   readonly encerrando = signal(false);
   readonly justificativaEncerramento = signal('');
+  readonly formContribuicaoConsolidacaoId = signal<string | null>(null);
+  readonly justificativaEsforco = signal('');
+  readonly justificativaEsforcoPendente = signal<{ consolidacao: Consolidacao; entrega: PlanoTrabalhoEntrega } | null>(null);
+
+  private readonly cargaHorariaCompleta = 100;
+  private readonly toleranciaCargaHoraria = 0.01;
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
@@ -136,6 +143,14 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     return entregas.every(e => this.facade.getAtividade(consolidacao, e.id) !== null);
   }
 
+  mostrarRodapeRegistro(consolidacao: Consolidacao): boolean {
+    const plano = this.planoTrabalho();
+    if (!plano) return false;
+    const podeAdicionar = this.consolidacaoPolicy.podeGerenciarContribuicoes(plano, consolidacao)
+      && this.formContribuicaoConsolidacaoId() !== consolidacao.id;
+    return podeAdicionar || this.podeConcluirConsolidacao(consolidacao);
+  }
+
   podeConcluirConsolidacao(consolidacao: Consolidacao): boolean {
     const plano = this.planoTrabalho();
     if (!plano) return false;
@@ -192,6 +207,99 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
 
   getPlanoEntregaInfo(e: PlanoTrabalhoEntrega): { plano: string; entrega: string } {
     return getPlanoEntregaInfo(e);
+  }
+
+  abrirFormContribuicao(consolidacao: Consolidacao): void {
+    this.formContribuicaoConsolidacaoId.set(consolidacao.id);
+  }
+
+  fecharFormContribuicao(): void {
+    this.formContribuicaoConsolidacaoId.set(null);
+  }
+
+  onContribuicaoSalva(resultado: ContribuicaoSalva): void {
+    const { entrega, justificativa } = resultado;
+    this.planoTrabalho.update(plano => {
+      if (!plano) return plano;
+      plano.entregas = [...(plano.entregas ?? []), entrega];
+      if (justificativa) {
+        plano.justificativa = justificativa;
+      }
+      return plano;
+    });
+    this.formContribuicaoConsolidacaoId.set(null);
+    this.message.success('Contribuição incluída com sucesso.');
+  }
+
+  solicitarConfirmacaoAtividade(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): void {
+    const total = this.totalEsforcoProjetado(consolidacao, entrega);
+    const forca = this.totalForcaTrabalho();
+    const diverge = Math.abs(total - this.cargaHorariaCompleta) >= this.toleranciaCargaHoraria
+      || Math.abs(forca - this.cargaHorariaCompleta) >= this.toleranciaCargaHoraria;
+    if (!diverge) {
+      this.facade.confirmarAtividade(consolidacao, entrega);
+      return;
+    }
+    this.justificativaEsforco.set(this.planoTrabalho()?.justificativa ?? '');
+    this.justificativaEsforcoPendente.set({ consolidacao, entrega });
+  }
+
+  totalEsforcoJustificativa(): number {
+    const pendente = this.justificativaEsforcoPendente();
+    if (!pendente) return this.cargaHorariaCompleta;
+    const executado = this.totalEsforcoProjetado(pendente.consolidacao, pendente.entrega);
+    if (Math.abs(executado - this.cargaHorariaCompleta) >= this.toleranciaCargaHoraria) {
+      return executado;
+    }
+    return this.totalForcaTrabalho();
+  }
+
+  cancelarJustificativaEsforco(): void {
+    this.justificativaEsforcoPendente.set(null);
+    this.justificativaEsforco.set('');
+  }
+
+  confirmarJustificativaEsforco(): void {
+    const pendente = this.justificativaEsforcoPendente();
+    const justificativa = this.justificativaEsforco().trim();
+    if (!pendente || !justificativa) return;
+    this.facade.confirmarAtividade(pendente.consolidacao, pendente.entrega, justificativa);
+    this.planoTrabalho.update(plano => {
+      if (!plano) return plano;
+      plano.justificativa = justificativa;
+      return plano;
+    });
+    this.cancelarJustificativaEsforco();
+  }
+
+  private totalEsforcoProjetado(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): number {
+    const entregas = this.planoTrabalho()?.entregas ?? [];
+    return entregas.reduce((sum, item) => {
+      if (item.id === entrega.id) {
+        return sum + this.facade.getEsforcoExecutado(consolidacao.id, entrega);
+      }
+      return sum + (Number(this.facade.getEsforcoExecutado(consolidacao.id, item)) || 0);
+    }, 0);
+  }
+
+  excluirContribuicao(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): void {
+    const plano = this.planoTrabalho();
+    if (!plano || !entrega.id) return;
+    this.facade.confirmacaoPendente.set({
+      titulo: 'Excluir Contribuição',
+      mensagem: 'Deseja realmente excluir esta contribuição?',
+      onConfirmar: () => {
+        this.api.deleteEntrega(plano.id, entrega.id, consolidacao.id).subscribe(() => {
+          this.planoTrabalho.update(atual => {
+            if (!atual) return atual;
+            atual.entregas = (atual.entregas ?? []).filter(e => e.id !== entrega.id);
+            return atual;
+          });
+          this.facade.loadConsolidacoes();
+          this.message.success('Contribuição excluída com sucesso.');
+        });
+      }
+    });
   }
 
   // --- Navegação ---

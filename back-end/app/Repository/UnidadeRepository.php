@@ -68,6 +68,11 @@ class UnidadeRepository
         return $this->readRepository->getAreasTrabalhoWhereClause($usuarioId, $subordinadas, $prefix);
     }
 
+    public function findByCodigo(string $codigo): ?Unidade
+    {
+        return $this->readRepository->findByCodigo($codigo);
+    }
+
     public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?Unidade
     {
         return $this->readRepository->findByCodigoOrgao($codigoOrgao, $codigo);
@@ -84,6 +89,11 @@ class UnidadeRepository
     public function findBySigla(string $sigla): ?Unidade
     {
         return $this->readRepository->findBySigla($sigla);
+    }
+
+    public function findByCodigoWithPai(string $codigo): ?Unidade
+    {
+        return $this->readRepository->findByCodigoWithPai($codigo);
     }
 
     public function findByCodigoOrgaoWithPai(string $codigoOrgao, string $codigo): ?Unidade
@@ -174,6 +184,15 @@ class UnidadeRepository
         return $this->readRepository->getSubordinadasRecursivasIds($ids);
     }
 
+    /**
+     * @param string[] $ids
+     * @return list<string>
+     */
+    public function idsNaHierarquiaDe(array $ids): array
+    {
+        return $this->readRepository->idsNaHierarquiaDe($ids);
+    }
+
     public function findById(string $id): ?Unidade
     {
         return $this->readRepository->findById($id);
@@ -184,14 +203,14 @@ class UnidadeRepository
         return $this->readRepository->findWithPlanosTrabalhoAtividades($id);
     }
 
+    public function existsByCodigo(string $codigo): bool
+    {
+        return $this->readRepository->existsByCodigo($codigo);
+    }
+
     public function existsByCodigoOrgao(string $codigoOrgao, string $codigo): bool
     {
         return $this->readRepository->existsByCodigoOrgao($codigoOrgao, $codigo);
-    }
-
-    public function buscarPorNomeOuCodigo(UnidadeBuscaDTO $dto): EloquentCollection
-    {
-        return $this->readRepository->buscarPorNomeOuCodigo($dto);
     }
 
     public function index(UnidadeIndexDTO $dto): LengthAwarePaginator
@@ -203,11 +222,6 @@ class UnidadeRepository
     public function linhaAscendente(string $unidadeId): array
     {
         return $this->readRepository->linhaAscendente($unidadeId);
-    }
-
-    public function findAll(): EloquentCollection
-    {
-        return $this->readRepository->findAllWhere([]);
     }
 
     /**
@@ -222,5 +236,46 @@ class UnidadeRepository
     public function findRaiz(): ?Unidade
     {
         return $this->readRepository->findRaiz();
+    }
+
+    public function findAll(): Collection
+    {
+        return $this->readRepository->findAllWhere([]);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function create(array $attributes): Unidade
+    {
+        /** @var Unidade */
+        return $this->writeRepository->create($attributes);
+    }
+
+    /**
+     * @param array<string, mixed> $attributes
+     */
+    public function update(string $id, array $attributes): ?Unidade
+    {
+        /** @var Unidade|null */
+        return $this->writeRepository->update($id, $attributes);
+    }
+
+    /**
+     * @return EloquentCollection<int, Unidade>
+     */
+    public function findAllComCodigo(): EloquentCollection
+    {
+        return $this->readRepository->findAllComCodigo();
+    }
+
+    public function recalcularPaths(string $pathAntigo, string $pathNovo): int
+    {
+        return $this->writeRepository->recalcularPaths($pathAntigo, $pathNovo);
+    }
+
+    public function reativarPorIntegracao(): int
+    {
+        return $this->writeRepository->reativarPorIntegracao();
     }
 }

@@ -84,4 +84,9 @@ class UnidadeIntegranteRepository
     {
         return $this->readRepository->findIdsAtivosByUnidade($unidadeId);
     }
+
+    public function usuarioEhChefiaDeUnidadeExecutora(string $usuarioId): bool
+    {
+        return $this->readRepository->usuarioEhChefiaDeUnidadeExecutora($usuarioId);
+    }
 }

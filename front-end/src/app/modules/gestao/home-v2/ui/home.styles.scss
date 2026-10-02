@@ -46,6 +46,120 @@
   }
 }
 
+/* ── Seções da home (fundo cinza claro conforme referência) ── */
+.home-secao {
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 1.25rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+
+  &__titulo {
+    color: #333;
+  }
+}
+
+/* ── Alerta Card (com sombra): ícone de aviso + texto inline ── */
+.home-alerta-card {
+  background: #fff;
+  padding: 1.25rem 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  min-height: 150px;
+
+  &__icon {
+    font-size: 1.5rem;
+    color: #E0A800;
+    flex-shrink: 0;
+  }
+
+  &__icon-ok {
+    font-size: 2rem;
+    color: #1351B4;
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+  }
+
+  &--ok {
+    color: #555;
+  }
+
+  &__link {
+    font-weight: 700;
+    text-decoration: underline;
+    color: #1351B4;
+    cursor: pointer;
+    margin-left: 0.25rem;
+
+    &:hover {
+      color: #0c3d8c;
+    }
+  }
+}
+
+/* ── Cards do resumo (Unidades / Agentes / Capacidade): altura maior ── */
+.home-resumo-card {
+  min-height: 150px;
+}
+
+/* ── Atalho estilo SouGov: ícone em círculo com contorno azul, texto abaixo ── */
+.home-atalho-sougov {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: transform 0.2s;
+  border-radius: 4px;
+
+  &:focus {
+    outline: none;
+  }
+
+  // Padrão gov.br DS: contorno tracejado amarelo no foco por teclado
+  &:focus-visible {
+    outline: var(--focus-width, 2px) dashed var(--focus-color, #FFCD07);
+    outline-offset: var(--focus-offset, 2px);
+  }
+
+  &__circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #1351B4;
+
+    i {
+      font-size: 1.5rem;
+      color: #1351B4;
+    }
+  }
+
+  &__label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  &:hover, &:focus-visible {
+    transform: translateY(-2px);
+  }
+
+  &--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+
+    &:hover, &:focus-visible {
+      transform: none;
+    }
+  }
+}
+
 .home-card--atalho-disabled {
   opacity: 0.45;
   cursor: not-allowed;

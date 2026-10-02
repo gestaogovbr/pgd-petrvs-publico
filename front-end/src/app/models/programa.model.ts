@@ -5,6 +5,8 @@ import { TipoAvaliacao } from './tipo-avaliacao.model';
 import { TipoDocumento } from './tipo-documento.model';
 import { Unidade } from './unidade.model';
 
+/* BIMESTRAL, TRIMESTRAL e SEMESTRAL são periodicidades descontinuadas (somente-leitura):
+   mantidas no tipo para representar regramentos legados, mas não selecionáveis em novos regramentos. */
 export type ProgramaPeriodicidadeConsolidacao = 'DIAS' | 'SEMANAL' | 'QUINZENAL' | 'MENSAL' | 'BIMESTRAL' | 'TRIMESTRAL' | 'SEMESTRAL';
 
 export class Programa extends Base {

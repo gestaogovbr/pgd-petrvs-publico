@@ -82,7 +82,10 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
             `pt_do_dia`.`plano_trabalho_status` AS `plano_trabalho_status`,
             `u`.`data_inicial_pedagio` AS `data_inicial_pedagio`,
             `u`.`data_final_pedagio` AS `data_final_pedagio`,
-            `u`.`tipo_pedagio` AS `tipo_pedagio`
+            `u`.`tipo_pedagio` AS `tipo_pedagio`,
+            CASE WHEN `dpt`.`id` IS NOT NULL THEN 'Sim' ELSE 'Não' END AS `dispensa_plano_trabalho`,
+            `dpt`.`data_inicio` AS `data_inicio_dispensa_pt`,
+            `dpt`.`data_fim` AS `data_fim_dispensa_pt`
         from
             `usuarios` `u`
         left join (
@@ -125,6 +128,9 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
             (`uni_lotacao`.`id` = `lotacoes`.`unidade_id`)
         left join `perfis` `p` on
             (`p`.`id` = `u`.`perfil_id`)
+        left join `dispensas_plano_trabalho` `dpt` on
+            (`dpt`.`usuario_id` = `u`.`id`
+                and `dpt`.`deleted_at` is null)
         where
             `u`.`deleted_at` is null
             and `uia`.`atribuicao` is not null
@@ -235,6 +241,12 @@ TEXT;
             $params[] = $situacaoSiape[2];
         }
 
+        $participantePGD = $this->extractWhere($data, 'participantePGD');
+        if (isset($participantePGD[2])) {
+            $sql .= " and (CASE WHEN `u`.`participa_pgd` = 'sim' THEN 'Sim' ELSE 'Não' END) = ?";
+            $params[] = $participantePGD[2];
+        }
+
         $comparacaoSouGovPetrvs = $this->extractWhere($data, 'comparacaoSouGovPetrvs');
         if (isset($comparacaoSouGovPetrvs[2])) {
             $operacaoComparacao = $this->getComparacaoSouGov($comparacaoSouGovPetrvs[2]);
@@ -260,6 +272,17 @@ TEXT;
             $params[] = $tipo_pedagio[2];
         }
 
+        $planoEntregaEntregaId = $this->extractWhere($data, 'plano_entrega_entrega_id');
+        if (isset($planoEntregaEntregaId[2])) {
+            $sql .= ' and `u`.`id` in (
+                select distinct `pt`.`usuario_id`
+                from `planos_trabalhos_entregas` `pte`
+                inner join `planos_trabalhos` `pt` on `pt`.`id` = `pte`.`plano_trabalho_id` and `pt`.`deleted_at` is null
+                where `pte`.`plano_entrega_entrega_id` = ? and `pte`.`deleted_at` is null
+            )';
+            $params[] = $planoEntregaEntregaId[2];
+        }
+
         $data_inicial_pedagio = $this->extractWhere($data, 'data_inicial_pedagio');
         if (isset($data_inicial_pedagio[2])) {
             $sql .= ' and `u`.`data_inicial_pedagio` = ?';
@@ -270,6 +293,27 @@ TEXT;
         if (isset($data_final_pedagio[2])) {
             $sql .= ' and `u`.`data_final_pedagio` = ?';
             $params[] = $data_final_pedagio[2];
+        }
+
+        $dispensaPt = $this->extractWhere($data, 'dispensa_plano_trabalho');
+        if (isset($dispensaPt[2])) {
+            if ($dispensaPt[2] === 'Sim') {
+                $sql .= ' and `dpt`.`id` is not null';
+            } elseif ($dispensaPt[2] === 'Não') {
+                $sql .= ' and `dpt`.`id` is null';
+            }
+        }
+
+        $dataInicioDispensa = $this->extractWhere($data, 'data_inicio_dispensa_pt');
+        if (isset($dataInicioDispensa[2])) {
+            $sql .= ' and `dpt`.`data_inicio` = ?';
+            $params[] = $dataInicioDispensa[2];
+        }
+
+        $dataFimDispensa = $this->extractWhere($data, 'data_fim_dispensa_pt');
+        if (isset($dataFimDispensa[2])) {
+            $sql .= ' and `dpt`.`data_fim` = ?';
+            $params[] = $dataFimDispensa[2];
         }
     }
 

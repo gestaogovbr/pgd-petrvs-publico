@@ -47,6 +47,21 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         return $planoTrabalho instanceof PlanoTrabalho ? $planoTrabalho : null;
     }
 
+    public function findByIdForUpdate(string|int $id): ?PlanoTrabalho
+    {
+        if ($id === '' || $id === 0) {
+            return null;
+        }
+
+        /** @var PlanoTrabalho|null $planoTrabalho */
+        $planoTrabalho = $this->query()
+            ->whereKey($id)
+            ->lockForUpdate()
+            ->first();
+
+        return $planoTrabalho instanceof PlanoTrabalho ? $planoTrabalho : null;
+    }
+
     public function findOneParaEnvio(string|int $id): ?PlanoTrabalho
     {
         /** @var PlanoTrabalho|null */
@@ -131,6 +146,9 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         return $this->query()
             ->where('status', StatusEnum::AGUARDANDO_ASSINATURA->value)
             ->whereNull('data_arquivamento')
+            ->whereNotExists(function ($query) {
+                $this->subqueryJaPossuiAssinaturaDeGestor($query);
+            })
             ->with(['usuario:id,nome,apelido,nome_social,url_foto']);
     }
 
@@ -247,28 +265,28 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         $queryBase = PlanoTrabalho::query();
 
         $query = $queryBase->select('planos_trabalhos.id', 'planos_trabalhos.numero', 'planos_trabalhos.usuario_id', 'planos_trabalhos.criacao_usuario_id', 'planos_trabalhos.unidade_id', 'planos_trabalhos.programa_id', 'planos_trabalhos.modalidade_pgd', 'planos_trabalhos.data_inicio', 'planos_trabalhos.data_fim', 'planos_trabalhos.data_arquivamento', 'planos_trabalhos.status', 'planos_trabalhos.encerrado_at', 'planos_trabalhos.documento_id', 'planos_trabalhos.avaliado_at')
-              ->addSelect(DB::raw('(SELECT COALESCE(SUM(e.forca_trabalho), 0) FROM planos_trabalhos_entregas e WHERE e.plano_trabalho_id = planos_trabalhos.id AND e.deleted_at IS NULL) AS carga_trabalho_total'))
-              ->withCount(['consolidacoes as aguardando_avaliacao' => function ($q) {
-                  $this->aplicarConsolidacaoPendenteAvaliacao($q);
-              }])
-              ->withCount(['consolidacoes as aguardando_reavaliacao' => function ($q) {
-                  $q->where('status', StatusEnum::CONCLUIDO)
-                    ->whereHas('avaliacoes', fn ($a) => $a->whereNotNull('recurso'))
+            ->addSelect(DB::raw('(SELECT COALESCE(SUM(e.forca_trabalho), 0) FROM planos_trabalhos_entregas e WHERE e.plano_trabalho_id = planos_trabalhos.id AND e.deleted_at IS NULL) AS carga_trabalho_total'))
+            ->withCount(['consolidacoes as aguardando_avaliacao' => function ($q) {
+                $this->aplicarConsolidacaoPendenteAvaliacao($q);
+            }])
+            ->withCount(['consolidacoes as aguardando_reavaliacao' => function ($q) {
+                $q->where('status', StatusEnum::CONCLUIDO)
+                    ->whereHas('avaliacoes', fn($a) => $a->whereNotNull('recurso'))
                     ->where(function ($sub) {
                         $sub->whereColumn('planos_trabalhos_consolidacoes.data_inicio', '<=', 'planos_trabalhos.encerrado_at')
                             ->orWhereNull('planos_trabalhos.encerrado_at');
                     });
-              }])
-              ->withCount(['consolidacoes as reavaliado' => function ($q) {
-                  $q->where('status', StatusEnum::AVALIADO)
+            }])
+            ->withCount(['consolidacoes as reavaliado' => function ($q) {
+                $q->where('status', StatusEnum::AVALIADO)
                     ->has('avaliacoes', '>', self::MINIMO_AVALIACOES_REAVALIACAO);
-              }])
-              ->withCount(['consolidacoes as has_consolidacao_concluida' => function ($q) {
-                  $q->whereIn('status', StatusEnum::consolidacaoFinalizada());
-              }])
-              ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome']);
+            }])
+            ->withCount(['consolidacoes as has_consolidacao_concluida' => function ($q) {
+                $q->whereIn('status', StatusEnum::consolidacaoFinalizada());
+            }])
+            ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome']);
 
-        if($filtro->hierarquia){
+        if ($filtro->hierarquia) {
             $queryHierarquia = '`fn_obter_unidade_hierarquia`(`unidade_id`)';
 
             $query->addSelect(DB::raw("$queryHierarquia AS hierarquia"));
@@ -277,9 +295,9 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             }
         }
 
-        if($filtro->arquivados){
+        if ($filtro->arquivados) {
             $query->whereNotNull('data_arquivamento');
-        }else{
+        } else {
             $query->whereNull('data_arquivamento');
         }
 
@@ -330,16 +348,16 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         if ($filtro->vigentes) {
             $today = today();
             $query->where('data_inicio', '<=', $today)
-                  ->where('data_fim', '>=', $today);
+                ->where('data_fim', '>=', $today);
         }
 
         if ($filtro->usuarioNome !== null && $filtro->usuarioNome !== '') {
-            $query->whereHas('usuario', fn ($q) => $q->where('nome', 'like', '%' . $filtro->usuarioNome . '%'));
+            $query->whereHas('usuario', fn($q) => $q->where('nome', 'like', '%' . $filtro->usuarioNome . '%'));
         }
 
         if ($filtro->unidadeRegramento !== null && $filtro->unidadeRegramento !== '') {
             $termo = '%' . strtolower($filtro->unidadeRegramento) . '%';
-            $query->whereHas('unidade', fn ($q) => $q->whereRaw('LOWER(sigla) like ?', [$termo])
+            $query->whereHas('unidade', fn($q) => $q->whereRaw('LOWER(sigla) like ?', [$termo])
                 ->orWhereRaw('LOWER(nome) like ?', [$termo]));
         }
 
@@ -347,7 +365,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             $query->orderBy('numero', $filtro->orderDir ?? 'asc');
         } elseif ($filtro->orderBy === 'usuario_nome') {
             $query->join('usuarios', 'usuarios.id', '=', 'planos_trabalhos.usuario_id')
-                  ->orderBy('usuarios.nome', $filtro->orderDir ?? 'asc');
+                ->orderBy('usuarios.nome', $filtro->orderDir ?? 'asc');
         }
 
         return $query->paginate(perPage: $filtro->perPage, page: $filtro->page);
@@ -388,7 +406,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
             'consolidacoes.afastamentos.afastamento.tipoMotivoAfastamento:id,nome,horas',
             'documento.assinaturas.usuario',
             'entregas.planoEntregaEntrega.entrega',
-            'entregas.planoEntregaEntrega.planoEntrega.unidade:id,sigla,nome'
+            'entregas.planoEntregaEntrega.planoEntrega.unidade:id,codigo,sigla,nome'
         ])->find($id);
 
         return $plano;

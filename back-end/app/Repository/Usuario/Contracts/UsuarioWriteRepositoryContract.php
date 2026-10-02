@@ -30,4 +30,7 @@ interface   UsuarioWriteRepositoryContract
     public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int;
 
     public function updateConfig(string $usuarioId, string $unidadeId): bool;
+
+    /** @param list<string> $matriculas */
+    public function reativarPorCpfEMatriculas(string $cpf, array $matriculas, ?string $perfilConsultaId, ?string $perfilParticipanteId): int;
 }

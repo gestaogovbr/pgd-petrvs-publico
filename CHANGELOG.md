@@ -1,3 +1,87 @@
+## 3.1.6 28/09/2026
+
+### Adicionado
+- **Melhorias na Tela Inicial (Home)**: novo visual no padrão gov.br organizado em Destaques do Usuário, da Unidade e Outros, com pendências separadas por Planos de Entregas e de Trabalho, indicadores da unidade, cartões de lacuna, aniversariantes e participantes em férias
+
+### Modificado
+- Contadores dos cartões da Home e os atalhos correspondentes passam a usar o mesmo critério, mantendo consistência entre o número exibido e a listagem aberta pelo hiperlink
+
+### Corrigido
+- O filtro "Unidades Subordinadas" deixou de retornar erro de permissão nos painéis de indicadores para usuários com atribuição na unidade selecionada que não fossem seus gestores
+
+## 3.1.5 25/09/2026
+
+### Adicionado
+- A tela de CPFs indisponíveis passa a exibir quantos dias faltam para a inativação, com alertas visuais para os últimos cinco dias e para prazos vencidos
+
+### Modificado
+- A carga automática do SIAPE passa a confirmar individualmente servidores que deixaram de aparecer na listagem e inicia o prazo de 30 dias somente quando a ausência é confirmada
+- O ciclo de inativação e reativação passa a considerar CPF e matrícula, preservando vínculos válidos de usuários com mais de uma matrícula e removendo pendências quando o vínculo volta a ser informado pelo SIAPE
+- A atualização de servidores pelo SIAPE ficou mais segura: se a carga vier incompleta, o sistema mantém os dados válidos anteriores e evita um volume excessivo de consultas
+- Permitida inclusão e exclusão de registro de contribuição após início da execução. 
+
+### Corrigido
+- Relatório de Entregas: coluna "Alcançado" passa a refletir o valor consolidado da entrega, corrigindo casos em que aparecia zerada ou defasada; indicadores qualitativos deixam de exibir 0 e os valores preservam as casas decimais
+- Base de cálculo de entregas alinhada entre o painel "Alinhamento Institucional" e o Relatório de Entregas: o relatório passa a considerar a unidade demandante da entrega, e o painel deixa de contar entregas de planos excluídos e passa a usar interseção de períodos
+- Corrigida falha na sincronização individual do SIAPE que podia impedir a atualização das unidades e manter lotações desatualizadas
+- A integração SIAPE passa a carregar as configurações diretamente pelo tenant, evitando falhas em execuções agendadas ou via linha de comando sem contexto de domínio
+- Correção de erro que não permitia baixar relatórios de PT;
+
+## 3.1.4 21/09/2026
+
+### Corrigido
+- Ao editar o planejamento de uma entrega vinculada a outra unidade no Plano de Trabalho, o vínculo com a unidade sumia da tela
+- Assinaturas simultâneas do mesmo Plano de Trabalho (lentidão do sistema + retentativa) geravam assinaturas e períodos avaliativos duplicados
+- A tela de Ocorrências não carregava e travava quando havia muitos agentes públicos
+- Relatório de Planos de Trabalho permite a exportação de unidades com muitos planos de trabalho.
+
+### Modificado
+- O filtro de agente público passa a ser paginado com busca no servidor
+
+## 3.1.3 15/09/2026
+
+### Corrigido
+- A integração com o SIAPE preserva o vínculo com a unidade anterior como colaborador ao transferir a lotação do agente público
+- A migração da chave composta de unidades trata códigos duplicados, mantendo o código original da unidade ativa mais recente e diferenciando os demais com um sufixo
+
+### Modificado
+- Ocultado painel gerencial "Abrangência do PGD"
+
+## 3.1.2 14/09/2026
+
+### Adicionado
+- **Cadeia de Valor nos Elementos de Planejamento**: novo campo "Estrutura" no cadastro (Planejamento Institucional / Cadeia de Valor), com os elementos agrupados por estrutura na listagem
+- Vínculo de tipo de elemento aos processos da Cadeia de Valor, com novo formulário de cadastro de processo e exibição do "Tipo" nas informações gerais da árvore
+- **Relatório de Lacunas de Planos de Trabalho**: consulta de períodos sem PT em execução/concluído para participantes do PGD (dias úteis), com filtros de unidade, período e subordinadas, colunas de lotação, quantidade de dias, dispensa de PT e ocorrências, filtros por coluna no padrão dos demais relatórios e exportação em Excel
+- **Dispensa de Plano de Trabalho** : formalização no cadastro do agente público (data de início obrigatória e data de fim opcional), com elegibilidade para chefia titular/substituta de unidade executora, histórico de operações, encerramento da dispensa, exibição no Relatório de Agentes Públicos e consideração dos períodos dispensados no Relatório de Lacunas
+
+### Modificado
+- Tela de tipos de objetivo renomeada para "Elementos Institucionais"
+- Árvores do Planejamento Institucional e da Cadeia de Valor unificadas em uma visualização compartilhada (mesma experiência de painel lateral, detalhamento de entregas e navegação)
+- Nome do planejamento e da cadeia passam a ser exibidos como subtítulo no cabeçalho do card da árvore
+- Periodicidades Bimestral, Trimestral e Semestral descontinuadas na configuração de consolidação dos regramentos
+- Atualizada versão do Design System do GovBR para 2.1.3
+- Navegação dos relatórios de Planos de Trabalho passa a oferecer a escolha entre Planos de Trabalho Cadastrados e Lacunas de Planos de Trabalho
+
+### Corrigido
+- Descrição dos agendamentos mensais no painel ajustada para exibir corretamente o dia do mês e o horário da execução
+
+## 3.1.1 01/09/2026
+
+### Adicionado
+- Adicionado Relatório de Entregas
+
+### Modificado
+- Relatórios: indicador de progresso durante a exportação para Excel, com mensagem de erro em caso de falha
+- Relatórios: altura do grid ajustada para melhor aproveitamento da tela
+- Relatórios: filtros por coluna com inputs dimensionados à largura de cada coluna
+
+### Corrigido
+- Corrigido o filtro de unidades que ficava carregando indefinidamente, causado por uma alteração no comportamento da busca de unidades após um merge
+- Mensagem "Documento não encontrado para este plano de trabalho" não é mais mostrada indevidamente em PTs com status rascunho
+- Relatório de Planos de Trabalho: labels de status alinhados com a v2 (Rascunho, Execução), filtros de ID, Duração, Status e Modalidade, e situação de execução pendente na view detalhada
+- Relatório de Agentes Públicos: filtro por coluna "Participante do PGD"
+
 ## 3.1.0 28/08/2026
 
 ### Adicionado
