@@ -1,5 +1,8 @@
 ## 3.2.0 02/10/2026
 
+### Modificado
+- Liberação de Plano de Entregas para homologação restrita ao gestor titular ou substituto da unidade do plano; agentes apenas lotados na unidade não podem mais executar essa ação
+
 ### Corrigido
 - Planos de Trabalho encerrados antecipadamente deixam de gerar pendências falsas de avaliação para a chefia: períodos avaliativos posteriores à data de encerramento não são mais contabilizados como aguardando avaliação
 
