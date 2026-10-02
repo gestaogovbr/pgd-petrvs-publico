@@ -3,7 +3,11 @@
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\ServerException;
 use App\Models\Usuario;
+use App\Services\RelatorioAgenteAuthorization;
+use App\Services\RelatorioPlanoEntregaAuthorization;
+use App\Services\RelatorioPlanoTrabalhoAuthorization;
 use App\Support\AuthenticatedUsuario;
+use App\V2\RelatorioEntrega\RelatorioEntregaAuthorization;
 use App\V2\RelatorioGeracao\RelatorioGeracaoAuthorization;
 
 beforeEach(function () {
@@ -18,7 +22,7 @@ test('usuarioAutorizadoParaTipo devolve o usuário quando possui uma das capacid
     $usuario = Mockery::mock(Usuario::class);
     $usuario->shouldReceive('hasPermissionTo')
         ->once()
-        ->with('MOD_RELATORIO_PE')
+        ->with(RelatorioPlanoEntregaAuthorization::CAPACIDADE)
         ->andReturn(true);
 
     Mockery::mock('alias:' . AuthenticatedUsuario::class)
@@ -38,11 +42,11 @@ test('usuarioAutorizadoParaTipo aceita capacidade alternativa de entrega', funct
     $usuario = Mockery::mock(Usuario::class);
     $usuario->shouldReceive('hasPermissionTo')
         ->once()
-        ->with('MOD_RELATORIO_PE')
+        ->with(RelatorioPlanoEntregaAuthorization::CAPACIDADE)
         ->andReturn(false);
     $usuario->shouldReceive('hasPermissionTo')
         ->once()
-        ->with('MOD_RELATORIO_ENTREGA')
+        ->with(RelatorioEntregaAuthorization::CAPACIDADE)
         ->andReturn(true);
 
     Mockery::mock('alias:' . AuthenticatedUsuario::class)
@@ -62,7 +66,7 @@ test('usuarioAutorizadoParaTipo lança quando o usuário não possui nenhuma cap
     $usuario = Mockery::mock(Usuario::class);
     $usuario->shouldReceive('hasPermissionTo')
         ->once()
-        ->with('MOD_RELATORIO_PT')
+        ->with(RelatorioPlanoTrabalhoAuthorization::CAPACIDADE)
         ->andReturn(false);
 
     Mockery::mock('alias:' . AuthenticatedUsuario::class)
@@ -119,4 +123,12 @@ test('usuarioAutorizado lança quando o usuário não possui a capacidade', func
 
     expect(fn () => $this->authorization->usuarioAutorizado('MOD_RELATORIOS', 'Acesso negado.'))
         ->toThrow(ServerException::class, 'Acesso negado.');
+});
+
+test('capacidades de entrega vêm das authorization classes', function () {
+    expect(RelatorioEntregaAuthorization::CAPACIDADES)->toBe([
+        RelatorioPlanoEntregaAuthorization::CAPACIDADE,
+        RelatorioEntregaAuthorization::CAPACIDADE,
+    ])
+        ->and(RelatorioAgenteAuthorization::CAPACIDADE)->toBe('MOD_RELATORIO_USUARIO');
 });

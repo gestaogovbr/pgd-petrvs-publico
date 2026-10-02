@@ -90,26 +90,4 @@ enum RelatorioGeracaoTipo: string
             self::ENTREGA => 'relatorio_entregas.xlsx',
         };
     }
-
-    public function capacidade(): string
-    {
-        return match ($this) {
-            self::PLANO_TRABALHO, self::PLANO_TRABALHO_DETALHADO => 'MOD_RELATORIO_PT',
-            self::PLANO_ENTREGA => 'MOD_RELATORIO_PE',
-            self::AGENTE => 'MOD_RELATORIO_USUARIO',
-            self::UNIDADE => 'MOD_RELATORIO_UNIDADE',
-            self::ENTREGA => 'MOD_RELATORIO_PE',
-        };
-    }
-
-    /**
-     * @return list<string>
-     */
-    public function capacidades(): array
-    {
-        return match ($this) {
-            self::ENTREGA => ['MOD_RELATORIO_PE', 'MOD_RELATORIO_ENTREGA'],
-            default => [$this->capacidade()],
-        };
-    }
 }
