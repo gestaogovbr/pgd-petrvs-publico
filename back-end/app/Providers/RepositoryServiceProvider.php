@@ -119,6 +119,10 @@ use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaWriteRepos
 use App\Repository\PlanoTrabalhoEntrega\Eloquent\EloquentPlanoTrabalhoEntregaReadRepository;
 
 use App\Repository\PlanoTrabalhoEntrega\Eloquent\EloquentPlanoTrabalhoEntregaWriteRepository;
+use App\Repository\Sequence\Contracts\SequenceReadRepositoryContract;
+use App\Repository\Sequence\Contracts\SequenceWriteRepositoryContract;
+use App\Repository\Sequence\Eloquent\EloquentSequenceReadRepository;
+use App\Repository\Sequence\Eloquent\EloquentSequenceWriteRepository;
 use App\Repository\Tenant\Contracts\TenantReadRepositoryContract;
 use App\Repository\Tenant\Contracts\TenantWriteRepositoryContract;
 use App\Repository\Tenant\Eloquent\EloquentTenantReadRepository;
@@ -255,6 +259,9 @@ final class RepositoryServiceProvider extends ServiceProvider
             IntegracaoServidorWriteRepositoryContract::class,
             EloquentIntegracaoServidorWriteRepository::class,
         );
+
+        $this->app->bind(SequenceReadRepositoryContract::class, EloquentSequenceReadRepository::class);
+        $this->app->bind(SequenceWriteRepositoryContract::class, EloquentSequenceWriteRepository::class);
 
         $this->app->bind(
             PlanoTrabalhoConsolidacaoReadRepositoryContract::class,

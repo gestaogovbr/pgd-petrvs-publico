@@ -9,6 +9,7 @@
 - Liberação de Plano de Entregas para homologação restrita ao gestor titular ou substituto da unidade do plano; agentes apenas lotados na unidade não podem mais executar essa ação
 
 ### Corrigido
+- Corrigida falha que podia impedir a criação de novos registros quando as sequências numéricas do tenant estavam ausentes, recompondo os contadores a partir dos dados existentes
 - A carga individual do SIAPE passa a atualizar corretamente a modalidade e a participação no PGD quando há mudança de matrícula, associando os dados ao vínculo correspondente do agente público
 - A modalidade e a participação no PGD continuam atualizadas quando o SIAPE retorna dados pessoais válidos e após a sincronização final, evitando divergências entre o Petrvs e o SouGov Líder
 - Planos de Trabalho encerrados antecipadamente deixam de gerar pendências falsas de avaliação para a chefia: períodos avaliativos posteriores à data de encerramento não são mais contabilizados como aguardando avaliação
