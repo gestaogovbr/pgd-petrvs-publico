@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace App\Repository\PlanoEntrega\Contracts;
 
 use App\Models\PlanoEntrega;
+use App\V2\PlanoEntrega\DTOs\AvaliacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\HomologacaoPendentePEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\RegistroExecucaoAtrasoPEBuscaDTO;
+use App\V2\PlanoEntrega\DTOs\VigentesPEBuscaDTO;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
 interface PlanoEntregaReadRepositoryContract
@@ -17,7 +22,11 @@ interface PlanoEntregaReadRepositoryContract
 
     public function getPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): Collection;
 
+    public function paginatePlanosEntregaAvaliacao(AvaliacaoPendentePEBuscaDTO $busca): LengthAwarePaginator;
+
     public function getPlanosEntregaHomologacao(array $unidadesIds): Collection;
+
+    public function paginatePlanosEntregaHomologacao(HomologacaoPendentePEBuscaDTO $busca): LengthAwarePaginator;
 
     public function getEntregasPlanoEntregaHomologacao(array $unidadesIds): Collection;
 
@@ -30,6 +39,10 @@ interface PlanoEntregaReadRepositoryContract
     public function countPlanosEntregaAvaliacao(array $unidadesIds, ?string $criadosApos = null): int;
 
     public function countEntregasSemProgresso(array $unidadesIds, ?string $planoEntregaCriadoApos = null): int;
+
+    public function paginatePlanosEntregaComRegistroAtraso(RegistroExecucaoAtrasoPEBuscaDTO $busca): LengthAwarePaginator;
+
+    public function paginatePlanosEntregaVigentes(VigentesPEBuscaDTO $busca): LengthAwarePaginator;
 
     public function findAllEntregasByPlanoId(string $planoEntregaId): Collection;
 

@@ -24,6 +24,11 @@ class IntegracaoUnidadeRepository
         return $this->readRepository->getUnidadesComChefias($codigoOrgao);
     }
 
+    public function findByCodigo(string $codigo): ?IntegracaoUnidade
+    {
+        return $this->readRepository->findByCodigo($codigo);
+    }
+
     public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?IntegracaoUnidade
     {
         return $this->readRepository->findByCodigoOrgao($codigoOrgao, $codigo);

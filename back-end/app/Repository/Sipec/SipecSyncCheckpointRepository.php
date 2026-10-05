@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository\Sipec;
 
+use App\Models\SipecSyncCheckpoint;
 use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointReadRepositoryContract;
 use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteRepositoryContract;
-use Illuminate\Database\Eloquent\Model;
 
 class SipecSyncCheckpointRepository
 {
@@ -16,26 +16,17 @@ class SipecSyncCheckpointRepository
     ) {
     }
 
-    /**
-     * @return Model|null
-     */
-    public function findByTenantId(?string $tenantId): ?Model
+    public function findByTenantId(?string $tenantId): ?SipecSyncCheckpoint
     {
         return $this->readRepository->findByTenantId($tenantId);
     }
 
-    /**
-     * @return Model
-     */
-    public function firstOrCreateByTenantId(?string $tenantId, string $etapa = 'unidades', int $ultimaPagina = 0): Model
+    public function firstOrCreateByTenantId(?string $tenantId, string $etapa = 'unidades', int $ultimaPagina = 0): SipecSyncCheckpoint
     {
         return $this->writeRepository->firstOrCreateByTenantId($tenantId, $etapa, $ultimaPagina);
     }
 
-    /**
-     * @return Model|null
-     */
-    public function updateByTenantId(?string $tenantId, string $etapa, int $ultimaPagina, ?int $totalPaginas = null): ?Model
+    public function updateByTenantId(?string $tenantId, string $etapa, int $ultimaPagina, ?int $totalPaginas = null): ?SipecSyncCheckpoint
     {
         return $this->writeRepository->updateByTenantId($tenantId, $etapa, $ultimaPagina, $totalPaginas);
     }

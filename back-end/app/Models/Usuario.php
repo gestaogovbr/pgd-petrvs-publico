@@ -425,7 +425,7 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
         return $this->belongsTo(Perfil::class);
     }
 
-    public function unidades()
+    public function unidades(): BelongsToMany
     {
         return $this->belongsToMany(Unidade::class, 'unidades_integrantes', 'usuario_id', 'unidade_id');
     }

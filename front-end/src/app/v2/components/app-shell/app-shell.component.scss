@@ -28,11 +28,30 @@ header.br-header {
   position: sticky;
   top: 0;
   z-index: 1030;
+  background-color: #1351B4;
+  color: #fff;
 
   .header-row {
     display: flex;
     align-items: center;
     padding: 0.25rem 0;
+  }
+
+  .header-title,
+  .header-subtitle {
+    color: #fff;
+  }
+
+  .br-button {
+    color: #fff;
+
+    i {
+      color: #fff;
+    }
+  }
+
+  .br-divider.vertical {
+    border-color: rgba(255, 255, 255, 0.4);
   }
 }
 
@@ -44,6 +63,7 @@ header.br-header {
   display: flex;
   flex-direction: column;
   overflow: auto;
+  background-color: #fff;
 }
 
 /* ── br-menu: drawer fixo lateral ────────────────────────── */

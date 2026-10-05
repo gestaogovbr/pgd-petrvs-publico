@@ -8,6 +8,7 @@ use App\Facades\SiapeLog;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Entidade;
 use App\Models\SiapeBlackListServidor;
+use App\Models\SiapeListaUORGS;
 use App\Models\Usuario;
 use App\Repository\EntidadeRepository;
 use App\Repository\SiapeBlackListServidorRepository;
@@ -715,14 +716,15 @@ class SiapeIndividualServidorService extends ServiceBase
         $xmlUnidade = $this->montaXmlUnidade($codigoUnidade);
         $respUnidade = $this->service->getBuscarDadosSiapeUnidade()->executaRequisicao($xmlUnidade);
 
-        $this->atualizarListaUorgs($codigoUnidade);
+        $this->atualizarListaUorgs();
         $unidadeSiape = $this->buscarUnidadeNaLista($codigoUnidade);
 
         $this->salvarHistoricoUnidade($respUnidade, $unidadeSiape);
     }
 
-    private function atualizarListaUorgs(string $codOrgao): void
+    private function atualizarListaUorgs(): void
     {
+        $codOrgao = CodigoOrgaoService::atual();
         $this->service->getBuscarDadosSiapeUnidades()->listaUorgs(
             $this->service->config['siglaSistema'],
             $this->service->config['nomeSistema'],
@@ -732,7 +734,7 @@ class SiapeIndividualServidorService extends ServiceBase
         );
     }
 
-    protected function buscarUorgNaoProcessada()
+    protected function buscarUorgNaoProcessada(): ?SiapeListaUORGS
     {
         return $this->siapeListaUORGSRepository->findUnprocessed(CodigoOrgaoService::atual());
     }
@@ -740,8 +742,12 @@ class SiapeIndividualServidorService extends ServiceBase
     private function buscarUnidadeNaLista(string $codigoUnidade): ?array
     {
         $uorgs = $this->buscarUorgNaoProcessada();
-
         $listaUorgs = $this->service->getBuscarDadosSiapeUnidade()->getUnidades($uorgs);
+
+        if ($listaUorgs === null) {
+            return null;
+        }
+
         return collect($listaUorgs)->firstWhere('codigo', $codigoUnidade);
     }
 

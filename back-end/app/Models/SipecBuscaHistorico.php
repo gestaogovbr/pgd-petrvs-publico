@@ -4,6 +4,10 @@ namespace App\Models;
 
 use App\Models\ModelBase;
 
+/**
+ * @property \Illuminate\Support\Carbon|null $data_execucao
+ * @property string $resultado
+ */
 class SipecBuscaHistorico extends ModelBase
 {
     protected $table = 'sipec_busca_historicos';

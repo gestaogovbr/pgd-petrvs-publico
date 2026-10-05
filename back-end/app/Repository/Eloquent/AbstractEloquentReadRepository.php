@@ -20,6 +20,9 @@ abstract class AbstractEloquentReadRepository
      */
     protected Model $model;
 
+    /**
+     * @return Builder<TModel>
+     */
     protected function query(): Builder
     {
         return $this->model->newQuery();

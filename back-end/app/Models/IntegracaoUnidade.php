@@ -5,6 +5,12 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Traits\AutoUuid;
 
+/**
+ * @property string|null $id_servo
+ * @property string|null $pai_servo
+ * @property string|null $nomeuorg
+ * @property string|null $siglauorg
+ */
 class IntegracaoUnidade extends ModelBase
 {
   use AutoUuid;

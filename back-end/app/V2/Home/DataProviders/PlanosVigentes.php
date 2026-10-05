@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\Home\DataProviders;
 
-use App\Enums\Atribuicao;
+use App\Enums\PerfilEnum;
 use App\Enums\StatusEnum;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -48,20 +48,15 @@ class PlanosVigentes
      */
     private function indicadorUnidadesComPE(array $unidadesEscopo): array
     {
-        $hoje = now()->toDateString();
-
-        $total = Unidade::query()
-            ->where('executora', true)
-            ->whereIn('id', $unidadesEscopo)
-            ->count();
+        $total = $this->unidadesExecutorasQuery($unidadesEscopo)->count();
 
         if ($total === 0) {
             return ['quantidade' => 0, 'total' => 0, 'percentual' => 0.0];
         }
 
-        $quantidade = Unidade::query()
-            ->where('executora', true)
-            ->whereIn('id', $unidadesEscopo)
+        $hoje = now()->toDateString();
+
+        $quantidade = $this->unidadesExecutorasQuery($unidadesEscopo)
             ->whereHas('planosEntrega', function ($q) use ($hoje) {
                 $q->where('status', StatusEnum::ATIVO->value)
                     ->where('data_inicio', '<=', $hoje)
@@ -77,30 +72,33 @@ class PlanosVigentes
     }
 
     /**
+     * Unidades executoras dentro do escopo. Retorna um builder novo a cada chamada
+     * para que os filtros de "quantidade" não vazem para a contagem de "total".
+     *
+     * @param string[] $unidadesEscopo
+     * @return \Illuminate\Database\Eloquent\Builder<Unidade>
+     */
+    private function unidadesExecutorasQuery(array $unidadesEscopo): \Illuminate\Database\Eloquent\Builder
+    {
+        return Unidade::query()
+            ->where('executora', true)
+            ->whereIn('id', $unidadesEscopo);
+    }
+
+    /**
      * @return array{quantidade: int, total: int, percentual: float}
      */
     private function indicadorParticipantesComPT(array $unidadesEscopo): array
     {
-        $hoje = now()->toDateString();
-
-        $total = Usuario::query()
-            ->where('participa_pgd', self::PARTICIPA_PGD)
-            ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
-                $q->whereIn('unidade_id', $unidadesEscopo)
-                    ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', Atribuicao::LOTADO->value));
-            })
-            ->count();
+        $total = $this->agentesQuery($unidadesEscopo)->count();
 
         if ($total === 0) {
             return ['quantidade' => 0, 'total' => 0, 'percentual' => 0.0];
         }
 
-        $quantidade = Usuario::query()
-            ->where('participa_pgd', self::PARTICIPA_PGD)
-            ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
-                $q->whereIn('unidade_id', $unidadesEscopo)
-                    ->whereHas('atribuicoes', fn ($a) => $a->where('atribuicao', Atribuicao::LOTADO->value));
-            })
+        $hoje = now()->toDateString();
+
+        $quantidade = $this->agentesQuery($unidadesEscopo)
             ->whereHas('planosTrabalho', function ($q) use ($hoje, $unidadesEscopo) {
                 $q->where('status', StatusEnum::ATIVO->value)
                     ->where('data_inicio', '<=', $hoje)
@@ -114,5 +112,32 @@ class PlanosVigentes
             'total' => $total,
             'percentual' => round(($quantidade / $total) * 100, 1),
         ];
+    }
+
+    /**
+     * Participantes do PGD dentro do escopo, base para o indicador "sem PT".
+     *
+     * Alinhado ao indicador PARTICIPANTES do ResumoEquipe:
+     *   - usuário com qualquer atribuição na unidade/escopo;
+     *   - não pode ter perfil Consulta;
+     *   - deve ter indicação de participante no SIAPE (participa_pgd = 'sim');
+     *   - TODO(#2476): desconsiderar participantes com marcação de dispensa de PT
+     *     (a ser adicionada após o merge da branch #2476).
+     *
+     * Retorna um builder novo a cada chamada para que os filtros de "quantidade"
+     * não vazem para a contagem de "total".
+     *
+     * @param string[] $unidadesEscopo
+     * @return \Illuminate\Database\Eloquent\Builder<Usuario>
+     */
+    private function agentesQuery(array $unidadesEscopo): \Illuminate\Database\Eloquent\Builder
+    {
+        return Usuario::query()
+            ->where('participa_pgd', self::PARTICIPA_PGD)
+            ->whereHas('perfil', fn ($p) => $p->where('nivel', '!=', PerfilEnum::CONSULTA->value))
+            ->whereHas('unidadesIntegrantes', function ($q) use ($unidadesEscopo) {
+                $q->whereIn('unidade_id', $unidadesEscopo)
+                    ->whereHas('atribuicoes');
+            });
     }
 }

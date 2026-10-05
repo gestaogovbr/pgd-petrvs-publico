@@ -15,7 +15,11 @@ class AuthenticationService
 {
     public function authenticate(string $tenantId)
     {
-        $tenant = Tenant::find($tenantId);
+        $found = Tenant::find($tenantId);
+        if (!$found instanceof Tenant) {
+            throw new ExportPgdException('Tenant '.$tenantId.' não encontrado');
+        }
+        $tenant = $found;
 
         if (!$tenant['api_url']) {
             $errorMsg = 'Endereço URL da API PGD não definidos no Tenant '.$tenantId;

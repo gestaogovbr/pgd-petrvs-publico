@@ -4,19 +4,13 @@ declare(strict_types=1);
 
 namespace App\Repository\Sipec\SipecSyncCheckpoint\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\SipecSyncCheckpoint;
 
 interface SipecSyncCheckpointWriteRepositoryContract
 {
-    /**
-     * @return Model
-     */
-    public function firstOrCreateByTenantId(?string $tenantId, string $etapa, int $ultimaPagina): Model;
+    public function firstOrCreateByTenantId(?string $tenantId, string $etapa, int $ultimaPagina): SipecSyncCheckpoint;
 
-    /**
-     * @return Model|null
-     */
-    public function updateByTenantId(?string $tenantId, string $etapa, int $ultimaPagina, ?int $totalPaginas): ?Model;
+    public function updateByTenantId(?string $tenantId, string $etapa, int $ultimaPagina, ?int $totalPaginas): ?SipecSyncCheckpoint;
 
     public function deleteByTenantId(?string $tenantId): bool;
 }

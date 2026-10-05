@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository\Sipec\SipecBuscaHistorico\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\SipecBuscaHistorico;
 
 interface SipecBuscaHistoricoWriteRepositoryContract
 {
-    /**
-     * @return Model
-     */
-    public function registrar(string $resultado): Model;
+    public function registrar(string $resultado): SipecBuscaHistorico;
 }

@@ -13,13 +13,14 @@ import {
 import { CommonModule } from '@angular/common';
 import { SafeUrl } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, first } from 'rxjs';
+import { filter, map, distinctUntilChanged, debounceTime } from 'rxjs';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { AuthService, UnidadeVinculada } from 'src/app/services/auth.service';
 import { DialogService } from 'src/app/services/dialog.service';
 import { GlobalsService } from 'src/app/services/globals.service';
 import { NavigateService } from 'src/app/services/navigate.service';
 import { MuralAvisoTenantService } from 'src/app/services/mural-aviso-tenant.service';
+import { MessageService } from 'src/app/v2/services/message.service';
 import { NotificacaoService } from 'src/app/modules/uteis/notificacoes/notificacao.service';
 import { UtilService } from 'src/app/services/util.service';
 import { AppComponent } from 'src/app/app.component';
@@ -43,6 +44,7 @@ export class AppShellV2Component implements OnInit {
   private readonly router = inject(Router);
   private readonly dialog = inject(DialogService);
   private readonly muralService = inject(MuralAvisoTenantService);
+  private readonly message = inject(MessageService);
 
   @ViewChild('menuTrigger') menuTriggerRef?: ElementRef<HTMLButtonElement>;
   @ViewChild('menuClose')   menuCloseRef?:   ElementRef<HTMLButtonElement>;
@@ -78,8 +80,14 @@ export class AppShellV2Component implements OnInit {
   private verificarMural(): void {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
-      first(),
+      map(() => this.router.parseUrl(this.router.url).queryParams['mural'] === '1'),
+      debounceTime(150),
+      filter(temParamMural => temParamMural),
+      distinctUntilChanged(),
     ).subscribe(() => this.tentarExibirMural());
+
+    // Solicitação direta (ex: botão Mural de Avisos na Home): mostra toast se não houver avisos
+    this.muralService.exibicaoSolicitada$.subscribe(() => this.exibirMural(true));
   }
 
   private tentarExibirMural(): void {
@@ -90,8 +98,16 @@ export class AppShellV2Component implements OnInit {
     delete urlTree.queryParams['mural'];
     this.router.navigateByUrl(urlTree, { replaceUrl: true });
 
+    // Abertura automática (login): silenciosa quando não há avisos
+    this.exibirMural(false);
+  }
+
+  private exibirMural(mostrarToastVazio: boolean): void {
     this.muralService.getPendentes().then(avisos => {
-      if (avisos.length === 0) return;
+      if (avisos.length === 0) {
+        if (mostrarToastVazio) this.message.info('Não há avisos no momento.');
+        return;
+      }
       this.exibirModalMural(avisos);
     });
   }

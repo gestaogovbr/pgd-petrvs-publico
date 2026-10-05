@@ -44,7 +44,14 @@ use App\Builders\TenantBuilder;
  * @property string|null $integracao_siape_codorgao
  * @property string|null $api_cod_unidade_autorizadora
  * @property string|null $api_url
+ * @property string|null $api_username
+ * @property string|null $api_password
  * @property string|null $version
+ * @property string|null $smtp_host
+ * @property string|null $smtp_port
+ * @property string|null $smtp_user
+ * @property string|null $smtp_password
+ * @property string|null $smtp_encryption
  */
 class Tenant extends BaseTenant implements TenantWithDatabase
 {

@@ -369,20 +369,32 @@ class EloquentUsuarioReadRepository extends AbstractEloquentReadRepository imple
         return $usuario;
     }
 
+    /**
+     * @return Collection<int, Usuario>
+     */
     public function findAllByCpfWithLotacao(string $cpf): Collection
     {
-        return $this->model->newQuery()
+        /** @var Collection<int, Usuario> $usuarios */
+        $usuarios = $this->model->newQuery()
             ->with(['lotacao.unidade'])
             ->where('cpf', $cpf)
             ->get();
+
+        return $usuarios;
     }
 
+    /**
+     * @return Collection<int, Usuario>
+     */
     public function findAllByCpfUnfiltered(string $cpf): Collection
     {
-        return $this->model->newQuery()
+        /** @var Collection<int, Usuario> $usuarios */
+        $usuarios = $this->model->newQuery()
             ->with(['lotacao.unidade'])
             ->where('cpf', $cpf)
             ->get();
+
+        return $usuarios;
     }
 
     /**

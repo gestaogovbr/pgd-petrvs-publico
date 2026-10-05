@@ -22,11 +22,12 @@ class RelatoController extends ControllerBase
 {
     public function checkPermissions($action, $request, $service, $unidade, $usuario){}
 
-    private function getTenant($request) {
+    private function getTenant($request): Tenant {
         $tenantId = $request->headers->get('X-ENTIDADE');
-        $tenant = Tenant::find($tenantId);
+        $found = is_string($tenantId) ? Tenant::find($tenantId) : null;
+        $tenant = $found instanceof Tenant ? $found : null;
 
-        if (!$tenant->smtp_host) {
+        if ($tenant === null || !$tenant->smtp_host) {
            abort(400, 'SMTP não configurado');
         }
 

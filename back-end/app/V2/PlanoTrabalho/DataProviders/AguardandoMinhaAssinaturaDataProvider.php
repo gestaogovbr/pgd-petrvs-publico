@@ -19,11 +19,11 @@ class AguardandoMinhaAssinaturaDataProvider
         private readonly DocumentoAssinaturaRepository $documentoAssinaturaRepository,
     ) {}
 
-    public function buscar(string $usuarioId, int $page = 1, int $perPage = 15): LengthAwarePaginator
+    public function buscar(string $usuarioId, int $page = 1, int $perPage = 15, ?string $orderBy = null, ?string $orderDir = null): LengthAwarePaginator
     {
         $gerenciadas = $this->resolverGerenciadas($usuarioId);
 
-        return PlanoTrabalho::query()
+        $query = PlanoTrabalho::query()
             ->where('status', StatusEnum::AGUARDANDO_ASSINATURA->value)
             ->whereNotNull('documento_id')
             ->whereNotExists(function ($sub) use ($usuarioId) {
@@ -47,9 +47,20 @@ class AguardandoMinhaAssinaturaDataProvider
                     });
                 }
             })
-            ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome'])
-            ->orderByDesc('updated_at')
-            ->paginate(perPage: $perPage, page: $page);
+            ->with(['usuario:id,nome,nome_social', 'unidade:id,nome,sigla,unidade_pai_id', 'programa:id,nome']);
+
+        $dir = $orderDir === 'desc' ? 'desc' : 'asc';
+        if ($orderBy === 'numero') {
+            $query->orderBy('numero', $dir);
+        } elseif ($orderBy === 'usuario_nome') {
+            $query->join('usuarios', 'usuarios.id', '=', 'planos_trabalhos.usuario_id')
+                ->orderBy('usuarios.nome', $dir)
+                ->select('planos_trabalhos.*');
+        } else {
+            $query->orderByDesc('updated_at');
+        }
+
+        return $query->paginate(perPage: $perPage, page: $page);
     }
 
     public function count(string $usuarioId): int

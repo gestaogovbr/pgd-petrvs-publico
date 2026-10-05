@@ -9,10 +9,14 @@ use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\UnidadeRepository;
+use App\V2\PlanoEntrega\DataProviders\AvaliacaoPendentePEDataProvider;
+use App\V2\PlanoEntrega\DataProviders\HomologacaoPendentePEDataProvider;
+use App\V2\PlanoEntrega\DataProviders\RegistroExecucaoAtrasoPEDataProvider;
 use App\V2\Home\DTOs\HomeRequestDTO;
 use App\V2\Home\Traits\ResolveUnidades;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAssinaturaDataProvider;
 use App\V2\PlanoTrabalho\DataProviders\AguardandoMinhaAvaliacaoDataProvider;
+use App\V2\PlanoTrabalho\DataProviders\AguardandoMeuRegistroExecucaoDataProvider;
 
 class PendenciasUsuario
 {
@@ -25,6 +29,10 @@ class PendenciasUsuario
         private readonly PlanoEntregaRepository $planoEntregaRepository,
         private readonly AguardandoMinhaAssinaturaDataProvider $aguardandoAssinatura,
         private readonly AguardandoMinhaAvaliacaoDataProvider $aguardandoAvaliacao,
+        private readonly AguardandoMeuRegistroExecucaoDataProvider $aguardandoRegistroExecucao,
+        private readonly AvaliacaoPendentePEDataProvider $avaliacaoPendentePE,
+        private readonly HomologacaoPendentePEDataProvider $homologacaoPendentePE,
+        private readonly RegistroExecucaoAtrasoPEDataProvider $registroExecucaoAtrasoPE,
     ) {}
 
     protected function getUnidadeRepository(): UnidadeRepository
@@ -75,7 +83,7 @@ class PendenciasUsuario
         $unidadesGerenciadas = $this->unidadeRepository->getUnidadesGerenciadas($usuarioId);
         $unidadeIds = $unidadesGerenciadas->pluck('id')->toArray();
 
-        $reAtrasadosProprios = $this->consolidacaoRepository->countConsolidacoesAtrasadas($usuarioId, []);
+        $reAtrasadosProprios = $this->aguardandoRegistroExecucao->count($usuarioId);
 
         if (empty($unidadeIds)) {
             return [
@@ -89,12 +97,13 @@ class PendenciasUsuario
         }
 
         return [
-            'assinaturas_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaHomologacao($unidadeIds),
+            'assinaturas_pe_pendentes' => $this->homologacaoPendentePE->count($usuarioId),
             'assinaturas_pt_pendentes' => $this->aguardandoAssinatura->count($usuarioId),
-            'registros_execucao_pe_atraso' => $this->planoEntregaRepository->countEntregasSemProgresso($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
+            // Registros de execução de PE competem ao gestor da própria unidade.
+            'registros_execucao_pe_atraso' => $this->registroExecucaoAtrasoPE->count($usuarioId),
             'registros_execucao_pt_atraso' => $reAtrasadosProprios,
             'avaliacoes_pt_pendentes' => $this->aguardandoAvaliacao->count($usuarioId),
-            'avaliacoes_pe_pendentes' => $this->planoEntregaRepository->countPlanosEntregaAvaliacao($unidadeIds, PlanoEntrega::DATA_MUDANCA_REGRA_PE),
+            'avaliacoes_pe_pendentes' => $this->avaliacaoPendentePE->count($usuarioId),
         ];
     }
 }

@@ -1,39 +1,65 @@
-<div class="d-flex flex-column gap-3 h-100">
 @if (loading()) {
-  <div class="d-flex justify-content-center align-items-center flex-fill">
+  <div class="d-flex justify-content-center align-items-center py-3">
     <span class="br-loading small" role="progressbar"></span>
   </div>
 } @else if (data()) {
-  <div class="br-card home-card--pill flex-fill">
-    <div class="card-content p-3 d-flex justify-content-between align-items-center h-100">
-      <span>
-        Unidades Executoras com Plano de Entregas vigente hoje
-        <i class="fas fa-info-circle text-muted ml-1"
-           title="Quando a opção Unidades Subordinadas estiver habilitada, também serão considerados os dados das respectivas unidades subordinadas."
-           aria-label="Informação sobre o indicador de unidades executoras"
-           style="cursor: help;"></i>
-      </span>
-      <strong>{{ data()!.unidades_com_plano_entregas.quantidade }}/{{ data()!.unidades_com_plano_entregas.total }} ({{ data()!.unidades_com_plano_entregas.percentual }}%)</strong>
+  <div class="row g-3 align-items-stretch">
+    <!-- Coluna 1: Atalho padrão (Plano de Entregas Vigente) -->
+    <div class="col-md-2 d-flex align-items-start justify-content-center">
+      <home-atalho-card icone="bi bi-file-earmark-text" titulo="Plano de Entregas Vigente"
+        style="margin-top: 1.5rem;"
+        (acao)="planoEntregasVigenteClick.emit()" />
     </div>
-  </div>
-  <div class="br-card home-card--pill flex-fill">
-    <div class="card-content p-3 d-flex justify-content-between align-items-center h-100">
-      <span>
-        Participantes com Plano de Trabalho vigente hoje
-        <i class="fas fa-info-circle text-muted ml-1"
-           title="Quando a opção Unidades Subordinadas estiver habilitada, também serão considerados os dados das respectivas unidades subordinadas."
-           aria-label="Informação sobre o indicador de participantes"
-           style="cursor: help;"></i>
-      </span>
-      <strong>{{ data()!.participantes_com_plano_trabalho.quantidade }}/{{ data()!.participantes_com_plano_trabalho.total }} ({{ data()!.participantes_com_plano_trabalho.percentual }}%)</strong>
+
+    <!-- Coluna 2: Unidade Executora sem Plano de Entregas -->
+    <div class="col-md-5">
+      @if (unidadesSemPE() > 0) {
+        <div class="home-alerta-card d-flex align-items-center gap-2 h-100">
+          <i class="bi bi-exclamation-triangle-fill home-alerta-card__icon" aria-hidden="true"></i>
+          <span>
+            <strong>Unidades Executoras sem Planos de Entregas vigente hoje:</strong>
+            <!-- TODO(#2474): reativar o link abaixo (remover o span) quando o Relatório de Lacunas de PE for mergeado -->
+            <!-- <a class="home-alerta-card__link" role="link" tabindex="0"
+              (click)="unidadesSemPEClick.emit()" (keydown.enter)="unidadesSemPEClick.emit()">
+              {{ unidadesSemPE() }} ({{ percentualUnidadesSemPE() }}%)
+            </a> -->
+            <span class="ms-2">{{ unidadesSemPE() }} ({{ percentualUnidadesSemPE() }}%)</span>
+          </span>
+        </div>
+      } @else {
+        <div class="home-alerta-card home-alerta-card--ok d-flex align-items-center gap-2 h-100">
+          <i class="bi bi-calendar-check home-alerta-card__icon-ok" aria-hidden="true"></i>
+          <span>Todas as Unidades Executoras com Planos de Entregas vigentes hoje</span>
+        </div>
+      }
+    </div>
+
+    <!-- Coluna 3: Participante do PGD sem Plano de Trabalho -->
+    <div class="col-md-5">
+      @if (participantesSemPT() > 0) {
+        <div class="home-alerta-card d-flex align-items-center gap-2 h-100">
+          <i class="bi bi-exclamation-triangle-fill home-alerta-card__icon" aria-hidden="true"></i>
+          <span>
+            <strong>Participantes do PGD sem Plano de Trabalho vigente hoje:</strong>
+            <!-- TODO(#2473): reativar o link abaixo (remover o span) quando o Relatório de Lacunas de PT for mergeado -->
+            <!-- <a class="home-alerta-card__link" role="link" tabindex="0"
+              (click)="participantesSemPTClick.emit()" (keydown.enter)="participantesSemPTClick.emit()">
+              {{ participantesSemPT() }} ({{ percentualParticipantesSemPT() }}%)
+            </a> -->
+            <span class="ms-2">{{ participantesSemPT() }} ({{ percentualParticipantesSemPT() }}%)</span>
+          </span>
+        </div>
+      } @else {
+        <div class="home-alerta-card home-alerta-card--ok d-flex align-items-center gap-2 h-100">
+          <i class="bi bi-calendar-check home-alerta-card__icon-ok" aria-hidden="true"></i>
+          <span>Todos os Participantes do PGD com Planos de Trabalho vigentes hoje</span>
+        </div>
+      }
     </div>
   </div>
 } @else if (erro()) {
-  <div class="br-card home-card--pill flex-fill">
-    <div class="card-content p-3 text-center text-muted small">
-      <i class="fas fa-exclamation-triangle mb-2" aria-hidden="true"></i>
-      <p class="mb-0">{{ erro() }}</p>
-    </div>
+  <div class="home-alerta-card text-center text-muted small">
+    <i class="fas fa-exclamation-triangle mb-2" aria-hidden="true"></i>
+    <p class="mb-0">{{ erro() }}</p>
   </div>
 }
-</div>

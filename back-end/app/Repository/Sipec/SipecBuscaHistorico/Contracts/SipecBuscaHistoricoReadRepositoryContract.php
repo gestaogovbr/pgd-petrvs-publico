@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository\Sipec\SipecBuscaHistorico\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\SipecBuscaHistorico;
 
 interface SipecBuscaHistoricoReadRepositoryContract
 {
-    /**
-     * @return Model|null
-     */
-    public function findMaisRecente(): ?Model;
+    public function findMaisRecente(): ?SipecBuscaHistorico;
 }

@@ -9,6 +9,8 @@ parameters:
     treatPhpDocTypesAsCertain: false
     bootstrapFiles:
         - vendor/autoload.php
+    stubFiles:
+        - stubs/stancl-domain.stub
     parallel:
         maximumNumberOfProcesses: 1
         processTimeout: 1800.0

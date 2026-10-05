@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HomeApiClient, PendenciasUsuario } from '../../infra/home-api.client';
@@ -26,6 +26,18 @@ export class PendenciasUsuarioComponent implements OnInit {
   readonly loading = signal(false);
   readonly erro = signal<string | null>(null);
 
+  readonly totalPendenciasPE = computed(() => {
+    const d = this.data();
+    if (!d) return 0;
+    return d.assinaturas_pe_pendentes + d.registros_execucao_pe_atraso + d.avaliacoes_pe_pendentes;
+  });
+
+  readonly totalPendenciasPT = computed(() => {
+    const d = this.data();
+    if (!d) return 0;
+    return d.assinaturas_pt_pendentes + d.registros_execucao_pt_atraso + d.avaliacoes_pt_pendentes;
+  });
+
   ngOnInit(): void {
     this.loading.set(true);
     this.erro.set(null);
@@ -36,9 +48,16 @@ export class PendenciasUsuarioComponent implements OnInit {
   }
 
   irParaAssinaturasPE(): void {
-    this.go.navigate({
-      route: ['gestao', 'plano-entrega'],
-      params: { filter: { status: 'HOMOLOGANDO', meus_planos: false } },
+    // Usa o endpoint V2 (mesmo critério do card) para navegar exatamente aos PEs aguardando homologação.
+    this.homeApi.getPlanosEntregaHomologacaoPendenteIds().subscribe((ids) => {
+      const filter: Record<string, unknown> = { status: 'HOMOLOGANDO', meus_planos: false };
+      if (ids.length) {
+        filter['id'] = ids;
+      }
+      this.go.navigate({
+        route: ['gestao', 'plano-entrega'],
+        params: { filter },
+      });
     });
   }
 
@@ -48,14 +67,22 @@ export class PendenciasUsuarioComponent implements OnInit {
   }
 
   irParaRegistrosExecucaoPE(): void {
-    this.go.navigate({
-      route: ['execucao', 'plano-entrega'],
-      params: { execucao: true, filter: { meus_planos: false } },
+    // Usa o endpoint V2 (mesmo critério do card) para navegar aos PEs com RE em atraso de
+    // TODAS as unidades que o usuário chefia, não apenas uma.
+    this.homeApi.getPlanosEntregaRegistroExecucaoAtrasoIds().subscribe((ids) => {
+      const filter: Record<string, unknown> = { meus_planos: false };
+      if (ids.length) {
+        filter['id'] = ids;
+      }
+      this.go.navigate({
+        route: ['execucao', 'plano-entrega'],
+        params: { execucao: true, filter },
+      });
     });
   }
 
   irParaRegistrosExecucaoPT(): void {
-    this.salvarFiltrosPT({ meus_planos: true, vigentes: false, status: 'ATIVO' });
+    this.salvarFiltrosPT({ registro_execucao_atraso: true, meus_planos: true });
     this.router.navigate(['gestao', 'plano-trabalho-v2']);
   }
 
@@ -65,11 +92,20 @@ export class PendenciasUsuarioComponent implements OnInit {
   }
 
   irParaAvaliacoesPE(): void {
-    this.go.navigate({
-      route: ['gestao', 'plano-entrega'],
-      params: { avaliacao: true, filter: { status: 'CONCLUIDO', meus_planos: false } },
+    // Usa o endpoint V2 (mesmo critério do card) para navegar exatamente aos PEs em avaliação pendente.
+    this.homeApi.getPlanosEntregaAvaliacaoPendenteIds().subscribe((ids) => {
+      const filter: Record<string, unknown> = { status: 'CONCLUIDO', meus_planos: false };
+      if (ids.length) {
+        filter['id'] = ids;
+      }
+      this.go.navigate({
+        route: ['gestao', 'plano-entrega'],
+        params: { avaliacao: true, filter },
+      });
     });
   }
+
+
 
   private salvarFiltrosPT(filtros: Record<string, unknown>): void {
     const userId = this.auth.usuario?.id;

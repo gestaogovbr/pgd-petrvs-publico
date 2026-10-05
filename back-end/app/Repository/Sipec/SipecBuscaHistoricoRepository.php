@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository\Sipec;
 
+use App\Models\SipecBuscaHistorico;
 use App\Repository\Sipec\SipecBuscaHistorico\Contracts\SipecBuscaHistoricoReadRepositoryContract;
 use App\Repository\Sipec\SipecBuscaHistorico\Contracts\SipecBuscaHistoricoWriteRepositoryContract;
-use Illuminate\Database\Eloquent\Model;
 
 class SipecBuscaHistoricoRepository
 {
@@ -16,18 +16,12 @@ class SipecBuscaHistoricoRepository
     ) {
     }
 
-    /**
-     * @return Model|null
-     */
-    public function findMaisRecente(): ?Model
+    public function findMaisRecente(): ?SipecBuscaHistorico
     {
         return $this->readRepository->findMaisRecente();
     }
 
-    /**
-     * @return Model
-     */
-    public function registrar(string $resultado): Model
+    public function registrar(string $resultado): SipecBuscaHistorico
     {
         return $this->writeRepository->registrar($resultado);
     }

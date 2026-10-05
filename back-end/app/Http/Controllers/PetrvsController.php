@@ -43,7 +43,6 @@ class PetrvsController extends ControllerBase
 
     if ($domain == "petrvs_php") $domain = "localhost";
 
-    /** @phpstan-ignore-next-line */
     $tenant = Cache::remember('domain:domain:'.$domain, 900, fn() =>
       Domain::where('domain', $domain)->with('tenant')->first()
     );

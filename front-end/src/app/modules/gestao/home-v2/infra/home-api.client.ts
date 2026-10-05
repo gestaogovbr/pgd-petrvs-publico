@@ -28,6 +28,7 @@ export interface MeusPlanosVigentesResponse {
 }
 
 export interface ResumoEquipe {
+  unidades: IndicadorQuantitativo;
   participantes_pgd: IndicadorQuantitativo;
   capacidade_equipe_horas_mensais: number;
 }
@@ -110,5 +111,33 @@ export class HomeApiClient extends TenantV2ResourceApiBase {
     return this.http.get<{ data: MeusPlanosVigentesResponse }>(this.resourceUrl('/meus-planos-vigentes'), { params: { unidade_id: unidadeId } }).pipe(
       map(r => r.data),
     );
+  }
+
+  /** IDs dos Planos de Entrega em avaliação pendente (mesmo critério do card). */
+  getPlanosEntregaAvaliacaoPendenteIds(): Observable<string[]> {
+    return this.http
+      .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/avaliacao-pendente`, { params: { size: '200' } })
+      .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
+  }
+
+  /** IDs dos Planos de Entrega aguardando homologação (mesmo critério do card). */
+  getPlanosEntregaHomologacaoPendenteIds(): Observable<string[]> {
+    return this.http
+      .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/homologacao-pendente`, { params: { size: '200' } })
+      .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
+  }
+
+  /** IDs dos Planos de Entrega com Registro de Execução em atraso (mesmo critério do card). */
+  getPlanosEntregaRegistroExecucaoAtrasoIds(): Observable<string[]> {
+    return this.http
+      .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/registro-execucao-atraso`, { params: { size: '200' } })
+      .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
+  }
+
+  /** IDs dos Planos de Entrega vigentes nas unidades onde o usuário possui atribuição direta. */
+  getPlanosEntregaVigentesIds(): Observable<string[]> {
+    return this.http
+      .get<{ data: { data?: { id: string }[] } }>(`${this.gb.servidorURL}/api/v2/plano-entrega/vigentes`, { params: { size: '200' } })
+      .pipe(map(r => (r?.data?.data ?? []).map(pe => pe.id)));
   }
 }
