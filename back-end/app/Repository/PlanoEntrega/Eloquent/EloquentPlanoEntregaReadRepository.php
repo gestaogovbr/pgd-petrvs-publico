@@ -20,6 +20,9 @@ use Illuminate\Pagination\LengthAwarePaginator as LengthAwarePaginatorConcrete;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @extends AbstractEloquentReadRepository<PlanoEntrega>
+ */
 class EloquentPlanoEntregaReadRepository extends AbstractEloquentReadRepository implements PlanoEntregaReadRepositoryContract
 {
     private const DIAS_PENDENCIA_PROGRESSO = 31;

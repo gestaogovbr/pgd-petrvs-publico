@@ -3,6 +3,7 @@
 namespace Tests\IntegrationTenant\Services;
 
 use App\Jobs\Envio\ExportarParticipanteJob;
+use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Repository\UsuarioRepository;
 use App\Services\Envio\AgendarEnvioParticipantesService;
@@ -26,6 +27,10 @@ describe('AgendarEnvioParticipantesService', function () {
         $usuario->matricula = '12345';
         $usuario->data_envio_api_pgd = null;
         $usuario->updated_at = now();
+        $usuario->setRelation('ultimoPlanoTrabalho', new PlanoTrabalho([
+            'id' => "plano-{$id}",
+            'usuario_id' => (string) $id,
+        ]));
 
         return $usuario;
     }

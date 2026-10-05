@@ -25,6 +25,7 @@ use App\Services\StatusService;
 use App\Services\UnidadeService;
 use App\Services\UsuarioService;
 use App\Repository\UsuarioRepository;
+use App\Repository\PlanoEntregaRepository;
 use Illuminate\Support\Carbon;
 use Throwable;
 
@@ -41,10 +42,17 @@ use Throwable;
 class PlanoEntregaService extends ServiceBase
 {
     protected UsuarioRepository $usuarioRepository;
+    protected PlanoEntregaRepository $planoEntregaRepository;
 
     public function __construct() {
         parent::__construct();
         $this->usuarioRepository = app(UsuarioRepository::class);
+        $this->planoEntregaRepository = app(PlanoEntregaRepository::class);
+    }
+
+    public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int
+    {
+        return $this->planoEntregaRepository->atualizarCodUnidadeAutorizadora($codUnidadeAutorizadora, $somenteSemCodigo);
     }
 
     public $unidades = []; /* Buffer de unidades para funções que fazem consulta frequentes em unidades */

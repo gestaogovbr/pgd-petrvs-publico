@@ -21,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\CodigoOrgaoAlterado::class => [
             \App\Listeners\EnfileirarMarcacaoUnidadesAntigas::class,
         ],
+        \App\Events\UnidadeAutorizadoraAlteradaEvent::class => [
+            \App\Listeners\EnfileirarMudancaUnidadeAutorizadora::class,
+        ],
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
                 \SocialiteProviders\GovBR\GovBRExtendSocialite::class.'@handle',
                 \SocialiteProviders\Azure\AzureExtendSocialite::class.'@handle',

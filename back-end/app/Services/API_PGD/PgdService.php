@@ -185,9 +185,9 @@ class PgdService
     {
         $tenant = $this->getTenant($tenantId);
         $body = (object) json_decode($participante->toJson(), true);
-        $body->cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
+        $body->cod_unidade_autorizadora = $this->codUnidadeAutorizadoraParaEnvio($body, $tenant);
 
-        $url = "/organizacao/SIAPE/{$tenant->api_cod_unidade_autorizadora}/{$body->cod_unidade_lotacao}/participante/{$body->matricula_siape}";
+        $url = "/organizacao/SIAPE/{$body->cod_unidade_autorizadora}/{$body->cod_unidade_lotacao}/participante/{$body->matricula_siape}";
 
         return $this->enviarDados($tenantId, $url, $body);
     }
@@ -196,9 +196,9 @@ class PgdService
     {
         $tenant = $this->getTenant($tenantId);
         $body = (object) json_decode($planoEntrega->toJson(), true);
-        $body->cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
+        $body->cod_unidade_autorizadora = $this->codUnidadeAutorizadoraParaEnvio($body, $tenant);
 
-        $url = "/organizacao/SIAPE/{$tenant->api_cod_unidade_autorizadora}/plano_entregas/{$planoEntrega->id}";
+        $url = "/organizacao/SIAPE/{$body->cod_unidade_autorizadora}/plano_entregas/{$planoEntrega->id}";
 
         return $this->enviarDados($tenantId, $url, $body);
     }
@@ -207,11 +207,22 @@ class PgdService
     {
         $tenant = $this->getTenant($tenantId);
         $body = (object) json_decode($planoTrabalho->toJson(), true);
-        $body->cod_unidade_autorizadora = $tenant->api_cod_unidade_autorizadora;
+        $body->cod_unidade_autorizadora = $this->codUnidadeAutorizadoraParaEnvio($body, $tenant);
 
-        $url = "/organizacao/SIAPE/{$tenant->api_cod_unidade_autorizadora}/plano_trabalho/{$planoTrabalho->id}";
+        $url = "/organizacao/SIAPE/{$body->cod_unidade_autorizadora}/plano_trabalho/{$planoTrabalho->id}";
 
         return $this->enviarDados($tenantId, $url, $body);
+    }
+
+    private function codUnidadeAutorizadoraParaEnvio(object $body, Tenant $tenant): string
+    {
+        $codUnidadeAutorizadora = $body->cod_unidade_autorizadora ?? null;
+
+        if (filled($codUnidadeAutorizadora)) {
+            return (string) $codUnidadeAutorizadora;
+        }
+
+        return (string) $tenant->api_cod_unidade_autorizadora;
     }
 
     public function getTenant($tenantId) {

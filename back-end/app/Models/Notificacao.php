@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Models\ModelBase;
 use App\Models\NotificacaoDestinatario;
 use App\Models\Usuario;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\NotificacaoDestinatario[] $destinatarios
@@ -28,7 +27,7 @@ class Notificacao extends ModelBase
   protected static function booted()
   {
     static::creating(function ($atividade) {
-      $atividade->numero = DB::select("CALL sequence_notificacao_numero()")[0]->number;
+      $atividade->numero = app(\App\Services\TenantSequenceService::class)->nextNumber(\App\Enums\SequenceType::NOTIFICACAO);
     });
   }
 

@@ -17,7 +17,6 @@ use App\Models\TipoDocumento;
 use App\Models\TipoProcesso;
 use App\Models\Entidade;
 use App\Models\Usuario;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @property AtividadeTarefa|null $atividade_tarefa
@@ -56,7 +55,7 @@ class Documento extends ModelBase
   protected static function booted()
   {
     static::creating(function ($documento) {
-      $documento->numero = DB::select("CALL sequence_documento_numero()")[0]->number;
+      $documento->numero = app(\App\Services\TenantSequenceService::class)->nextNumber(\App\Enums\SequenceType::DOCUMENTO);
     });
   }
 
