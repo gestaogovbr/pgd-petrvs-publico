@@ -3,6 +3,7 @@
 ### Adicionado
 - Ao alterar o código do órgão no tenant, a integração com o SIAPE permite formar a nova estrutura organizacional no mesmo ambiente, preservando as unidades e o histórico da estrutura anterior mesmo quando os códigos das unidades se repetem
 - Unidades da estrutura anterior passam a ser identificadas na seleção de unidades, facilitando a distinção entre os vínculos antigos e os da nova estrutura
+- Novas opções de motivo de ocorrência (afastamento): prestação de serviço ao TRE como mesário; alistamento ou recadastramento eleitoral; júri e outros serviços obrigatórios por lei; acidente em serviço ou doença profissional; participação em competição desportiva nacional; e convocação para integrar representação desportiva nacional
 
 ### Modificado
 - Liberação de Plano de Entregas para homologação restrita ao gestor titular ou substituto da unidade do plano; agentes apenas lotados na unidade não podem mais executar essa ação
