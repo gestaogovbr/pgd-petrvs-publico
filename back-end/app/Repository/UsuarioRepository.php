@@ -104,6 +104,11 @@ class UsuarioRepository implements EnvioRepositoryInterface
         return $this->writeRepository->updateFotoPerfil($usuarioId, $tipo, $url, $downloadedUrl);
     }
 
+    public function limparEmail(string $usuarioId): bool
+    {
+        return $this->writeRepository->limparEmail($usuarioId);
+    }
+
     public function removerVinculos(string $usuarioId): void
     {
         $this->writeRepository->removerVinculos($usuarioId);
@@ -142,11 +147,6 @@ class UsuarioRepository implements EnvioRepositoryInterface
     public function findAllExternosPresentesNaIntegracao(): Collection
     {
         return $this->readRepository->findAllExternosPresentesNaIntegracao();
-    }
-
-    public function limparEmail(string $usuarioId): bool
-    {
-        return $this->writeRepository->limparEmail($usuarioId);
     }
 
     public function findActivesByCpf(string $cpf): Collection
@@ -234,6 +234,17 @@ class UsuarioRepository implements EnvioRepositoryInterface
     {
         /** @var Usuario $usuario */
         $this->writeRepository->registrarLog($usuario, $mensagem);
+    }
+
+    public function garantirCodUnidadeAutorizadora(Model $usuario, string $tenantId): void
+    {
+        /** @var Usuario $usuario */
+        $this->writeRepository->garantirCodUnidadeAutorizadora($usuario, $tenantId);
+    }
+
+    public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int
+    {
+        return $this->writeRepository->atualizarCodUnidadeAutorizadora($codUnidadeAutorizadora, $somenteSemCodigo);
     }
 
     public function updateConfig(string $usuarioId, string $unidadeId): bool

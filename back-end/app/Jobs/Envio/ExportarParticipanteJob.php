@@ -14,14 +14,20 @@ class ExportarParticipanteJob extends ExportarItemJob
 {
     protected ?string $matriculaParticipante = null;
 
+    protected ?string $codUnidadeAutorizadora = null;
+
     public function __construct(
         string $tenantId,
         string $id,
         string $origem = '',
         ?string $matriculaParticipante = null,
+        ?string $codUnidadeAutorizadora = null,
     ) {
         $this->matriculaParticipante = $matriculaParticipante !== null && $matriculaParticipante !== ''
             ? $matriculaParticipante
+            : null;
+        $this->codUnidadeAutorizadora = filled($codUnidadeAutorizadora)
+            ? (string) $codUnidadeAutorizadora
             : null;
         parent::__construct($tenantId, $id, $origem);
     }
@@ -53,7 +59,7 @@ class ExportarParticipanteJob extends ExportarItemJob
 
     public function getResource($model): ParticipanteResource
     {
-        return new ParticipanteResource($model);
+        return new ParticipanteResource($model, $this->codUnidadeAutorizadora);
     }
 
     public function enviar(JsonResource $resource): bool {
@@ -95,5 +101,9 @@ class ExportarParticipanteJob extends ExportarItemJob
 
         return $tags;
     }
-}
 
+    public function getCodUnidadeAutorizadora(): ?string
+    {
+        return $this->codUnidadeAutorizadora;
+    }
+}

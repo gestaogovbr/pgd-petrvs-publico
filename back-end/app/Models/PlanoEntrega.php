@@ -12,6 +12,8 @@ use App\Models\Programa;
 use App\Models\Planejamento;
 use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntrega;
+use App\Traits\PreencheCodUnidadeAutorizadora;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,6 +36,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Carbon|null $data_tentativa_envio
  * @property Carbon|null $data_conclusao_envio
  * @property string|null $log_envio
+ * @property string|null $cod_unidade_autorizadora
  * @property-read Unidade $unidade
  * @property-read Programa $programa
  * @property-read Usuario $criacaoUsuario
@@ -43,6 +46,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  */
 class PlanoEntrega extends ModelBase implements HasStatusHistory
 {
+    use PreencheCodUnidadeAutorizadora;
+
     public function getStatusFkColumn(): string
     {
         return 'plano_entrega_id';
@@ -67,6 +72,7 @@ class PlanoEntrega extends ModelBase implements HasStatusHistory
         //'avaliacao_id',
         //'deleted_at', /* timestamp; */
         //'numero', /* int; NOT NULL; */// Número do plano de entrega (Gerado pelo sistema)
+        'cod_unidade_autorizadora',
     ];
 
     public const STATUSES = [

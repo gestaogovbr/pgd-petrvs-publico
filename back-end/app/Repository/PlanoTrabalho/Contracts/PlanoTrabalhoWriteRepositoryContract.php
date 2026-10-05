@@ -22,6 +22,10 @@ interface PlanoTrabalhoWriteRepositoryContract
 
     public function registrarLog(PlanoTrabalho $planoTrabalho, string $mensagem): void;
 
+    public function garantirCodUnidadeAutorizadora(PlanoTrabalho $planoTrabalho, string $tenantId): void;
+
+    public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int;
+
     /** @return PlanoTrabalho */
     public function create(array $attributes): Model;
 
