@@ -3,9 +3,10 @@
 namespace App\Observers;
 
 use App\Models\PlanoTrabalhoEntrega;
+use App\Exceptions\EnvioNaoAgendadoException;
 use App\Services\API_PGD\PlanoTrabalhoEnvioService;
 use Illuminate\Support\Facades\Log;
-use App\Exceptions\EnvioNaoAgendadoException;
+use Throwable;
 class PlanoTrabalhoEntregaObserver
 {
     public $afterCommit = true;
@@ -39,10 +40,12 @@ class PlanoTrabalhoEntregaObserver
             return;
         }
 
-        try{
+        try {
             PlanoTrabalhoEnvioService::processar(tenant('id'), $planoTrabalhoEntrega->planoTrabalho, 'PlanoTrabalhoEntrega');
-        }catch(EnvioNaoAgendadoException $e) {
+        } catch (EnvioNaoAgendadoException $e) {
             Log::info("Envio do {$planoTrabalhoEntrega->planoTrabalho->identificacaoEnvio()} não agendado: " . $e->getMessage());
+        } catch (Throwable $e) {
+            Log::warning("Falha ao agendar envio do {$planoTrabalhoEntrega->planoTrabalho->identificacaoEnvio()}: " . $e->getMessage());
         }
     }
 }

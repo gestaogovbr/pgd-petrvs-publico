@@ -61,18 +61,31 @@ abstract class TestCase extends BaseTestCase
                     return Tenant::create([
                         'id' => $this->tenantId,
                         'integracao_siape_codorgao' => '20000',
+                        'api_cod_unidade_autorizadora' => '1234567890',
                     ]);
                 });
             } else {
                 $this->tenant = Tenant::create([
                     'id' => $this->tenantId,
                     'integracao_siape_codorgao' => '20000',
+                    'api_cod_unidade_autorizadora' => '1234567890',
                 ]);
             }
         }
 
+        $tenantDirty = false;
+
         if ($this->tenant->integracao_siape_codorgao !== '20000') {
             $this->tenant->integracao_siape_codorgao = '20000';
+            $tenantDirty = true;
+        }
+
+        if (!filled($this->tenant->api_cod_unidade_autorizadora)) {
+            $this->tenant->api_cod_unidade_autorizadora = '1234567890';
+            $tenantDirty = true;
+        }
+
+        if ($tenantDirty) {
             $this->tenant->save();
         }
 

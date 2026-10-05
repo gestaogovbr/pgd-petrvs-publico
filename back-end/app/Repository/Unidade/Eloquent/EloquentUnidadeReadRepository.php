@@ -10,8 +10,9 @@ use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
-use Carbon\CarbonInterface;
+use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use App\V2\Unidade\DTOs\UnidadeIndexDTO;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -194,9 +195,9 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
     {
         /** @var Unidade|null $unidade */
         $unidade = $this->query()->where('codigo', $codigo)->first();
-
         return $unidade;
     }
+
 
     public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?Unidade
     {

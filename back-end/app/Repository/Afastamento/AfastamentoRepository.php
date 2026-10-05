@@ -68,6 +68,11 @@ class AfastamentoRepository
         return $this->readRepository->findAfastamentosParaDispensa($usuarioId, $vigencia);
     }
 
+    public function findAfastamentosNoPeriodo(string $usuarioId, CarbonPeriod $vigencia): Collection
+    {
+        return $this->readRepository->findAfastamentosNoPeriodo($usuarioId, $vigencia);
+    }
+
     public function buscarOcorrenciasListagem(OcorrenciaIndexDTO $dto): LengthAwarePaginator
     {
         return $this->readRepository->buscarOcorrenciasListagem($dto);
