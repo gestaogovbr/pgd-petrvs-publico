@@ -10,6 +10,7 @@ enum RelatorioGeracaoTipo: string
     case AGENTE = 'agente';
     case UNIDADE = 'unidade';
     case ENTREGA = 'entrega';
+    case LACUNA_PLANO_TRABALHO = 'lacuna_plano_trabalho';
 
     public function nome(): string
     {
@@ -20,6 +21,7 @@ enum RelatorioGeracaoTipo: string
             self::AGENTE => 'Relatório de Agentes Públicos',
             self::UNIDADE => 'Relatório de Unidades',
             self::ENTREGA => 'Relatório de Entregas',
+            self::LACUNA_PLANO_TRABALHO => 'Relatório de Lacunas de Planos de Trabalho',
         };
     }
 
@@ -31,6 +33,7 @@ enum RelatorioGeracaoTipo: string
             self::AGENTE => 'Agentes Públicos',
             self::UNIDADE => 'Unidades',
             self::ENTREGA => 'Entregas',
+            self::LACUNA_PLANO_TRABALHO => 'Lacunas de Planos de Trabalho',
         };
     }
 
@@ -42,6 +45,7 @@ enum RelatorioGeracaoTipo: string
             self::AGENTE => 'agentes',
             self::UNIDADE => 'unidades',
             self::ENTREGA => 'entregas',
+            self::LACUNA_PLANO_TRABALHO => 'lacunas_plano_trabalho',
         };
     }
 
@@ -88,6 +92,7 @@ enum RelatorioGeracaoTipo: string
             self::AGENTE => 'relatorio-agentes.xlsx',
             self::UNIDADE => 'relatorio-unidades.xlsx',
             self::ENTREGA => 'relatorio_entregas.xlsx',
+            self::LACUNA_PLANO_TRABALHO => 'relatorio-lacunas-plano-trabalho.xlsx',
         };
     }
 }

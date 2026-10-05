@@ -15,6 +15,7 @@ export enum RelatorioGeracaoTipo {
   AGENTE = 'agente',
   UNIDADE = 'unidade',
   ENTREGA = 'entrega',
+  LACUNA_PLANO_TRABALHO = 'lacuna_plano_trabalho',
 }
 
 export const RELATORIO_GERACAO_GRUPO = {
@@ -23,6 +24,7 @@ export const RELATORIO_GERACAO_GRUPO = {
   AGENTES: 'agentes',
   UNIDADES: 'unidades',
   ENTREGAS: 'entregas',
+  LACUNAS_PLANO_TRABALHO: 'lacunas_plano_trabalho',
 } as const;
 
 export type RelatorioGeracaoGrupo = (typeof RELATORIO_GERACAO_GRUPO)[keyof typeof RELATORIO_GERACAO_GRUPO];
@@ -33,6 +35,7 @@ export const RELATORIO_GERACAO_GRUPO_LABEL: Record<RelatorioGeracaoGrupo, string
   [RELATORIO_GERACAO_GRUPO.AGENTES]: 'Agentes Públicos',
   [RELATORIO_GERACAO_GRUPO.UNIDADES]: 'Unidades',
   [RELATORIO_GERACAO_GRUPO.ENTREGAS]: 'Entregas',
+  [RELATORIO_GERACAO_GRUPO.LACUNAS_PLANO_TRABALHO]: 'Lacunas de Planos de Trabalho',
 };
 
 export const RELATORIO_GERACAO_TIPO_GRUPO: Record<RelatorioGeracaoTipo, RelatorioGeracaoGrupo> = {
@@ -42,6 +45,7 @@ export const RELATORIO_GERACAO_TIPO_GRUPO: Record<RelatorioGeracaoTipo, Relatori
   [RelatorioGeracaoTipo.AGENTE]: RELATORIO_GERACAO_GRUPO.AGENTES,
   [RelatorioGeracaoTipo.UNIDADE]: RELATORIO_GERACAO_GRUPO.UNIDADES,
   [RelatorioGeracaoTipo.ENTREGA]: RELATORIO_GERACAO_GRUPO.ENTREGAS,
+  [RelatorioGeracaoTipo.LACUNA_PLANO_TRABALHO]: RELATORIO_GERACAO_GRUPO.LACUNAS_PLANO_TRABALHO,
 };
 
 export function grupoRelatorio(tipo: string | null | undefined): RelatorioGeracaoGrupo | null {
@@ -63,6 +67,9 @@ export function grupoRelatorio(tipo: string | null | undefined): RelatorioGeraca
   if (tipo === RELATORIO_GERACAO_GRUPO.ENTREGAS) {
     return RELATORIO_GERACAO_GRUPO.ENTREGAS;
   }
+  if (tipo === RELATORIO_GERACAO_GRUPO.LACUNAS_PLANO_TRABALHO) {
+    return RELATORIO_GERACAO_GRUPO.LACUNAS_PLANO_TRABALHO;
+  }
   if (
     tipo === RelatorioGeracaoTipo.PLANO_TRABALHO
     || tipo === RelatorioGeracaoTipo.PLANO_TRABALHO_DETALHADO
@@ -70,6 +77,7 @@ export function grupoRelatorio(tipo: string | null | undefined): RelatorioGeraca
     || tipo === RelatorioGeracaoTipo.AGENTE
     || tipo === RelatorioGeracaoTipo.UNIDADE
     || tipo === RelatorioGeracaoTipo.ENTREGA
+    || tipo === RelatorioGeracaoTipo.LACUNA_PLANO_TRABALHO
   ) {
     return RELATORIO_GERACAO_TIPO_GRUPO[tipo];
   }

@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\V2\Relatorio\LacunaPlanoTrabalho;
 
 use App\Exceptions\Contracts\IBaseException;
-use App\Exceptions\ServerException;
 use App\Http\Controllers\Controller;
-use App\Support\AuthenticatedUsuario;
+use App\Services\RelatorioLacunaPlanoTrabalhoAuthorization;
 use App\V2\Relatorio\LacunaPlanoTrabalho\Validators\LacunaPlanoTrabalhoIndexRequestValidator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,12 +20,13 @@ class LacunaPlanoTrabalhoController extends Controller
 {
     public function __construct(
         private readonly LacunaPlanoTrabalhoService $service,
+        private readonly RelatorioLacunaPlanoTrabalhoAuthorization $authorization,
     ) {}
 
     public function index(Request $request): JsonResponse
     {
         try {
-            $this->assertPermission();
+            $this->authorization->usuarioAutorizado();
             $data = LacunaPlanoTrabalhoIndexRequestValidator::index($request);
             $result = $this->service->index($data, $request);
 
@@ -34,7 +34,7 @@ class LacunaPlanoTrabalhoController extends Controller
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_FORBIDDEN);
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
 
@@ -45,29 +45,18 @@ class LacunaPlanoTrabalhoController extends Controller
     public function export(Request $request): BinaryFileResponse|JsonResponse
     {
         try {
-            $this->assertPermission();
+            $this->authorization->usuarioAutorizado();
             $data = LacunaPlanoTrabalhoIndexRequestValidator::export($request);
 
             return $this->service->export($data);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
-            return response()->json(['error' => $e->getMessage()], $e->getCode());
+            return response()->json(['error' => $e->getMessage()], $e->getCode() ?: Response::HTTP_FORBIDDEN);
         } catch (Throwable $e) {
             Log::error(throwableToArrayLog($e));
 
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private function assertPermission(): void
-    {
-        $usuario = AuthenticatedUsuario::withAreasDeTrabalho();
-        if ($usuario === null || ! $usuario->hasPermissionTo('MOD_RELATORIO_PT')) {
-            throw new ServerException(
-                'RelatorioLacunaPlanoTrabalho',
-                'Acesso negado ao relatório de Lacunas de Planos de Trabalho.'
-            );
         }
     }
 }

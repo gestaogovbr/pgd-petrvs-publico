@@ -44,41 +44,34 @@ final class LacunaPlanoTrabalhoIndexFiltersDTO extends AbstractFiltersDTO
     }
 
     /**
-     * Formato `where` esperado por {@see \App\Repository\RelatorioLacunaPlanoTrabalho\Contracts\RelatorioLacunaPlanoTrabalhoReadRepositoryContract}.
+     * Payload de filtros no formato esperado pelo repositório.
      *
-     * @return list<array{0: string, 1: string, 2: mixed}>
+     * @return array{
+     *     unidade_id: string,
+     *     periodo_inicio: string,
+     *     periodo_fim: string,
+     *     incluir_unidades_subordinadas: bool,
+     *     nome: ?string,
+     *     matricula: ?string,
+     *     unidadeHierarquia: ?string,
+     *     lacuna: ?string,
+     *     quantidade_dias: ?int,
+     *     ocorrencias_texto: ?string
+     * }
      */
-    public function toWhereArray(): array
+    public function toArray(): array
     {
-        $where = [
-            ['unidade_id', '==', $this->unidadeId],
-            ['periodo_inicio', '==', $this->periodoInicio],
-            ['periodo_fim', '==', $this->periodoFim],
+        return [
+            'unidade_id' => $this->unidadeId,
+            'periodo_inicio' => $this->periodoInicio,
+            'periodo_fim' => $this->periodoFim,
+            'incluir_unidades_subordinadas' => $this->incluirUnidadesSubordinadas,
+            'nome' => $this->nome,
+            'matricula' => $this->matricula,
+            'unidadeHierarquia' => $this->unidadeHierarquia,
+            'lacuna' => $this->lacuna,
+            'quantidade_dias' => $this->quantidadeDias,
+            'ocorrencias_texto' => $this->ocorrenciasTexto,
         ];
-
-        if ($this->incluirUnidadesSubordinadas) {
-            $where[] = ['incluir_unidades_subordinadas', '==', 1];
-        }
-
-        if ($this->nome !== null) {
-            $where[] = ['nome', 'like', '%' . $this->nome . '%'];
-        }
-        if ($this->matricula !== null) {
-            $where[] = ['matricula', 'like', '%' . $this->matricula . '%'];
-        }
-        if ($this->unidadeHierarquia !== null) {
-            $where[] = ['unidadeHierarquia', 'like', '%' . $this->unidadeHierarquia . '%'];
-        }
-        if ($this->lacuna !== null) {
-            $where[] = ['lacuna', 'like', '%' . $this->lacuna . '%'];
-        }
-        if ($this->quantidadeDias !== null) {
-            $where[] = ['quantidade_dias', '==', $this->quantidadeDias];
-        }
-        if ($this->ocorrenciasTexto !== null) {
-            $where[] = ['ocorrencias_texto', 'like', '%' . $this->ocorrenciasTexto . '%'];
-        }
-
-        return $where;
     }
 }

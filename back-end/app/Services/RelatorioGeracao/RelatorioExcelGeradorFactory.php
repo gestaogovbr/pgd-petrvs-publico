@@ -11,6 +11,7 @@ use App\Services\RelatorioPlanoEntregaService;
 use App\Services\RelatorioPlanoTrabalhoDetalhadoService;
 use App\Services\RelatorioPlanoTrabalhoService;
 use App\Services\RelatorioUnidadeService;
+use App\V2\Relatorio\LacunaPlanoTrabalho\LacunaPlanoTrabalhoService;
 use App\V2\RelatorioEntrega\RelatorioEntregaService;
 
 class RelatorioExcelGeradorFactory
@@ -37,6 +38,9 @@ class RelatorioExcelGeradorFactory
             ),
             RelatorioGeracaoTipo::ENTREGA => new RelatorioEntregaExcelGerador(
                 app(RelatorioEntregaService::class)
+            ),
+            RelatorioGeracaoTipo::LACUNA_PLANO_TRABALHO => new RelatorioLacunaPlanoTrabalhoExcelGerador(
+                app(LacunaPlanoTrabalhoService::class)
             ),
         };
     }

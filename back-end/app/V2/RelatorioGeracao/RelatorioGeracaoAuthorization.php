@@ -8,6 +8,7 @@ use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\ServerException;
 use App\Models\Usuario;
 use App\Services\RelatorioAgenteAuthorization;
+use App\Services\RelatorioLacunaPlanoTrabalhoAuthorization;
 use App\Services\RelatorioPlanoEntregaAuthorization;
 use App\Services\RelatorioPlanoTrabalhoAuthorization;
 use App\Services\RelatorioUnidadeAuthorization;
@@ -54,6 +55,7 @@ class RelatorioGeracaoAuthorization
             RelatorioGeracaoTipo::AGENTE => [RelatorioAgenteAuthorization::CAPACIDADE],
             RelatorioGeracaoTipo::UNIDADE => [RelatorioUnidadeAuthorization::CAPACIDADE],
             RelatorioGeracaoTipo::ENTREGA => RelatorioEntregaAuthorization::CAPACIDADES,
+            RelatorioGeracaoTipo::LACUNA_PLANO_TRABALHO => [RelatorioLacunaPlanoTrabalhoAuthorization::CAPACIDADE],
         };
     }
 }
