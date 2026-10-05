@@ -13,6 +13,8 @@ use App\Repository\PlanoEntregaEntregaProgresso\Eloquent\EloquentPlanoEntregaEnt
 use App\Repository\Afastamento\Contracts\AfastamentoReadRepositoryContract;
 
 use App\Repository\Afastamento\Contracts\AfastamentoWriteRepositoryContract;
+use App\Repository\HistoricoExecutoraUnidade\Contracts\HistoricoExecutoraUnidadeWriteRepositoryContract;
+use App\Repository\HistoricoExecutoraUnidade\Eloquent\EloquentHistoricoExecutoraUnidadeWriteRepository;
 use App\Repository\Feriado\Contracts\FeriadoReadRepositoryContract;
 use App\Repository\Feriado\Eloquent\EloquentFeriadoReadRepository;
 
@@ -137,6 +139,7 @@ use App\Repository\Programa\Eloquent\EloquentProgramaReadRepository;
 use App\Repository\Programa\Eloquent\EloquentProgramaWriteRepository;
 
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
+use App\Repository\RelatorioPlanoEntregaLacuna\Contracts\RelatorioPlanoEntregaLacunaReadRepositoryContract;
 use App\Repository\RelatorioLacunaPlanoTrabalho\Contracts\RelatorioLacunaPlanoTrabalhoReadRepositoryContract;
 use App\Repository\EnvioUsuario\Contracts\EnvioUsuarioReadRepositoryContract;
 use App\Repository\EnvioUsuario\Eloquent\EloquentEnvioUsuarioReadRepository;
@@ -175,6 +178,7 @@ use App\Repository\Sipec\SipecSyncCheckpoint\Contracts\SipecSyncCheckpointWriteR
 use App\Repository\Sipec\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointReadRepository;
 use App\Repository\Sipec\SipecSyncCheckpoint\Eloquent\EloquentSipecSyncCheckpointWriteRepository;
 use App\Repository\RelatorioAgente\Eloquent\EloquentRelatorioAgenteReadRepository;
+use App\Repository\RelatorioPlanoEntregaLacuna\Eloquent\EloquentRelatorioPlanoEntregaLacunaReadRepository;
 use App\Repository\RelatorioLacunaPlanoTrabalho\Eloquent\EloquentRelatorioLacunaPlanoTrabalhoReadRepository;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioReadRepositoryContract;
 use App\Repository\CargaIndividualSiapeRelatorio\Contracts\CargaIndividualSiapeRelatorioWriteRepositoryContract;
@@ -508,6 +512,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
+            RelatorioPlanoEntregaLacunaReadRepositoryContract::class,
+            EloquentRelatorioPlanoEntregaLacunaReadRepository::class,
+        );
+
+        $this->app->bind(
             RelatorioLacunaPlanoTrabalhoReadRepositoryContract::class,
             EloquentRelatorioLacunaPlanoTrabalhoReadRepository::class,
         );
@@ -621,6 +630,11 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             FeriadoReadRepositoryContract::class,
             EloquentFeriadoReadRepository::class,
+        );
+
+        $this->app->bind(
+            HistoricoExecutoraUnidadeWriteRepositoryContract::class,
+            EloquentHistoricoExecutoraUnidadeWriteRepository::class,
         );
 
 
