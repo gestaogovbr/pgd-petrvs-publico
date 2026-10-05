@@ -18,7 +18,6 @@ use App\Models\StatusJustificativa;
 use App\Support\ModalidadePgd;
 use App\Models\Unidade;
 use App\Models\Usuario;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -124,7 +123,7 @@ class PlanoTrabalho extends ModelBase implements HasStatusHistory, HasOwnership
     protected static function booted()
     {
         static::creating(function ($planoTrabalho) {
-            $planoTrabalho->numero = DB::select("CALL sequence_plano_trabalho_numero()")[0]->number;
+            $planoTrabalho->numero = app(\App\Services\TenantSequenceService::class)->nextNumber(\App\Enums\SequenceType::PLANO_TRABALHO);
         });
     }
 

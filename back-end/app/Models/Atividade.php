@@ -11,7 +11,6 @@ use App\Models\TipoAtividade;
 use App\Models\Comentario;
 use App\Models\Documento;
 use App\Models\Reacao;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -70,7 +69,7 @@ class Atividade extends ModelBase implements HasStatusHistory
   protected static function booted()
   {
     static::creating(function (Atividade $atividade) {
-      $atividade->numero = DB::select("CALL sequence_atividade_numero()")[0]->number;
+      $atividade->numero = app(\App\Services\TenantSequenceService::class)->nextNumber(\App\Enums\SequenceType::ATIVIDADE);
     });
   }
 

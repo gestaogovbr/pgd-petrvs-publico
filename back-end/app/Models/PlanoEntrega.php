@@ -12,7 +12,6 @@ use App\Models\Programa;
 use App\Models\Planejamento;
 use App\Models\CadeiaValor;
 use App\Models\PlanoEntregaEntrega;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -99,7 +98,7 @@ class PlanoEntrega extends ModelBase implements HasStatusHistory
     protected static function booted()
     {
         static::creating(function ($planoEntrega) {
-            $planoEntrega->numero = DB::select("CALL sequence_plano_entrega_numero()")[0]->number;
+            $planoEntrega->numero = app(\App\Services\TenantSequenceService::class)->nextNumber(\App\Enums\SequenceType::PLANO_ENTREGA);
         });
 
         static::updating(function (PlanoEntrega $planoEntrega) {
