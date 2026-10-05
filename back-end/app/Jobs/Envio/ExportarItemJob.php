@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Envio;
 
+use App\Exceptions\EnvioInsucessoException;
 use App\Exceptions\ExportPgdException;
 use App\Exceptions\TokenPgdException;
 use App\Models\PlanoEntrega;
@@ -29,10 +30,16 @@ abstract class ExportarItemJob implements ShouldQueue
     use Batchable, Dispatchable, InteractsWithQueue, Queueable;
 
     protected $timestamp = null;
-    public int $timeout = 30;
+
+    private const TIMEOUT_SEGUNDOS = 30;
+
+    public int $timeout = self::TIMEOUT_SEGUNDOS;
     public int $tries = 1;
 
     protected ?PgdService $pgdService;
+
+    private const MENSAGEM_ERRO_ENVIO = 'Erro no envio!';
+    private const MENSAGEM_TIMEOUT_ENVIO = 'Tempo de envio excedido';
 
     private bool $agendamentoPersistido = false;
 
@@ -116,6 +123,8 @@ abstract class ExportarItemJob implements ShouldQueue
                 return;
             }
 
+            $this->getRepository()->garantirCodUnidadeAutorizadora($model, $this->tenantId);
+
             $resource = $this->getResource($model);
 
             $this->registrarTentativa($model);
@@ -127,14 +136,15 @@ abstract class ExportarItemJob implements ShouldQueue
             if ($success) {
                 $this->sucesso();
             } else {
-                $this->logError('Erro no envio!');
+                $this->falharEnvio(self::MENSAGEM_ERRO_ENVIO);
             }
 
             unset($resource);
 
+        } catch (EnvioInsucessoException $e) {
+            throw $e;
         } catch(TokenPgdException $e) {
-            $this->insucesso($e->getmessage());
-            return;
+            $this->falharEnvio($e->getMessage(), $e);
         } catch(Throwable $exception) {
             $this->logError($exception->getmessage());
             throw $exception;
@@ -171,6 +181,16 @@ abstract class ExportarItemJob implements ShouldQueue
         $this->getRepository()->registrarInsucesso($model, $message);
     }
 
+    /**
+     * Interrompe a cadeia de envio após registrar o insucesso, para o próximo job não ser despachado.
+     */
+    private function falharEnvio(string $mensagem, ?Throwable $previous = null): never
+    {
+        $this->insucesso($mensagem);
+
+        throw new EnvioInsucessoException($mensagem, 0, $previous);
+    }
+
     public function tags()
     {
         return [
@@ -182,8 +202,16 @@ abstract class ExportarItemJob implements ShouldQueue
     public function failed(?Throwable $exception): void {
         $this->initializeTenantContext();
 
+        if ($exception instanceof EnvioInsucessoException) {
+            return;
+        }
+
         if ($exception instanceof TimeoutExceededException) {
-            $this->insucesso($exception->getMessage() ?: 'Tempo de envio excedido');
+            if ($this->envioJaRegistradoNestaTentativa()) {
+                return;
+            }
+
+            $this->insucesso($exception->getMessage() ?: self::MENSAGEM_TIMEOUT_ENVIO);
             return;
         }
 
@@ -197,6 +225,27 @@ abstract class ExportarItemJob implements ShouldQueue
         }
 
         $this->insucesso($exception?->getMessage() ?? 'Falha desconhecida no envio');
+    }
+
+    private function envioJaRegistradoNestaTentativa(): bool
+    {
+        $model = $this->getModel() ?? $this->getRepository()->findById($this->id);
+        if ($model === null) {
+            return false;
+        }
+
+        $dataEnvio = $model->getAttribute('data_envio_api_pgd');
+        if ($dataEnvio === null) {
+            return false;
+        }
+
+        $dataEnvio = $dataEnvio instanceof Carbon ? $dataEnvio : Carbon::parse($dataEnvio);
+
+        if (!$this->timestamp instanceof Carbon) {
+            return true;
+        }
+
+        return $dataEnvio->greaterThanOrEqualTo($this->timestamp);
     }
 
     protected function initializeTenantContext(): void

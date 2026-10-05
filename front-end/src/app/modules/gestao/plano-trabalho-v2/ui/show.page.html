@@ -285,7 +285,7 @@
                                           emphasis="secondary"
                                           density="small"
                                           (click)="facade.iniciarEdicao(consolidacao.id, entrega.id, atividade?.descricao ?? '', facade.getEsforcoExecutado(consolidacao.id, entrega))"
-                                        >Editar</br-button>
+                                        >Registrar</br-button>
                                         @if (!consolidacaoPolicy.podeGerenciarContribuicoes(planoTrabalho()!, consolidacao) && atividade) {
                                           <br-button
                                             class="text-danger"

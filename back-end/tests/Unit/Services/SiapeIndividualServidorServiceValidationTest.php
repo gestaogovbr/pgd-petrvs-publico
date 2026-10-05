@@ -31,6 +31,8 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 beforeEach(function () {
+    config()->set('integracao.siape.codOrgao', '12345');
+
     Log::shouldReceive('channel')->andReturnSelf();
     Log::shouldReceive('info');
     Log::shouldReceive('error');

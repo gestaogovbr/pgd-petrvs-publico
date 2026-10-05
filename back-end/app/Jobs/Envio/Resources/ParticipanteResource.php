@@ -15,6 +15,11 @@ class ParticipanteResource extends JsonResource
 {
     const TAMANHO_MATRICULAS = 7;
 
+    public function __construct($resource, private readonly ?string $codUnidadeAutorizadoraOverride = null)
+    {
+        parent::__construct($resource);
+    }
+
     public function toArray(Request $request)
     {
         if (!$this->matricula){
@@ -49,6 +54,7 @@ class ParticipanteResource extends JsonResource
             "origem_unidade"            => "SIAPE",
             'cod_unidade_instituidora'  => $this->ultimoPlanoTrabalho->programa->unidade->codigo ?? null,
             'cod_unidade_lotacao'       => $this->lotacao->unidade->codigo ?? null,
+            'cod_unidade_autorizadora'  => $this->codUnidadeAutorizadoraOverride ?? $this->cod_unidade_autorizadora,
             'matricula_siape'           => str_pad($this->matricula, self::TAMANHO_MATRICULAS, '0', STR_PAD_LEFT),
             'cpf'                       => $this->cpf,
             'situacao'                  => $this->getSituacao(),

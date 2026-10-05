@@ -8,6 +8,7 @@ use App\Models\Unidade;
 use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\Repository\Unidade\Contracts\UnidadeWriteRepositoryContract;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
+use App\V2\Unidade\DTOs\UnidadeBuscaDTO;
 use Carbon\CarbonInterface;
 use App\V2\Unidade\DTOs\UnidadeIndexDTO;
 use Illuminate\Pagination\LengthAwarePaginator;

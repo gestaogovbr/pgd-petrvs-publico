@@ -17,11 +17,13 @@ use App\Models\UnidadeIntegrante;
 use App\Models\Cidade;
 use App\Models\Template;
 use App\Models\NotificacaoConfig;
+use App\Models\HistoricoExecutoraUnidade;
 use App\Models\HistoricoLotacao;
 use App\Models\HistoricoFuncao;
 use App\Models\CurriculumProfissional;
 use App\Services\CodigoOrgaoService;
 use App\Traits\AutoUuid;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -134,7 +136,7 @@ class Unidade extends ModelBase
         return $this->hasMany(Atividade::class);
     }
 
-    public function planosTrabalho()
+    public function planosTrabalho(): HasMany
     {
         return $this->hasMany(PlanoTrabalho::class);
     }
@@ -189,6 +191,11 @@ class Unidade extends ModelBase
         return $this->hasMany(HistoricoLotacao::class);
     }
 
+    public function historicosExecutora()
+    {
+        return $this->hasMany(HistoricoExecutoraUnidade::class);
+    }
+
     public function historicosFuncoes()
     {
         return $this->hasMany(HistoricoFuncao::class);
@@ -210,10 +217,10 @@ class Unidade extends ModelBase
         return $this->belongsTo(Cidade::class);
     }  //nullable
 
-    public function unidadePai()
+    public function unidadePai(): BelongsTo
     {
         return $this->belongsTo(Unidade::class, 'unidade_pai_id');
-    }    //nullable
+    }
 
     public function subordinadas()
     {
