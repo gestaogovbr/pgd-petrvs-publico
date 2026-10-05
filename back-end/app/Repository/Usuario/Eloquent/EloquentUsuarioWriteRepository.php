@@ -7,6 +7,7 @@ namespace App\Repository\Usuario\Eloquent;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Usuario;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
+use App\Repository\Eloquent\CodUnidadeAutorizadoraTrait;
 use App\Repository\Eloquent\EnvioTrait;
 use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
 
@@ -15,6 +16,7 @@ use App\Repository\Usuario\Contracts\UsuarioWriteRepositoryContract;
  */
 class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository implements UsuarioWriteRepositoryContract
 {
+    use CodUnidadeAutorizadoraTrait;
     use EnvioTrait;
 
     public function __construct(Usuario $model)
@@ -43,7 +45,10 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
 
     public function restore(string|int $id): bool
     {
-        return $this->model->withTrashed()->find($id)->restore();
+        /** @var Usuario|null $usuario */
+        $usuario = Usuario::withTrashed()->find($id);
+
+        return $usuario !== null && (bool) $usuario->restore();
     }
 
     public function delete(string|int $id): bool
@@ -53,6 +58,7 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
 
     public function updateFotoPerfil(string $usuarioId, string $tipo, string $url, string $downloadedUrl): bool
     {
+        /** @var Usuario|null $usuario */
         $usuario = $this->model->find($usuarioId);
         if (!$usuario) {
             return false;
@@ -84,6 +90,7 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
 
     public function updateConfig(string $usuarioId, string $unidadeId): bool
     {
+        /** @var Usuario|null $usuario */
         $usuario = $this->model->find($usuarioId);
         if (!$usuario) {
             return false;
@@ -102,21 +109,16 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
 
     public function removerVinculos(string $usuarioId): void
     {
+        /** @var Usuario|null $usuario */
         $usuario = $this->model->find($usuarioId);
         if ($usuario) {
             foreach ($usuario->unidadesIntegrantes as $vinculo) {
-                // Assuming deleteCascade is a method on the model or relation
-                // If not, we might need to implement the logic here.
-                // Looking at UsuarioService: $vinculo->deleteCascade();
-                // If UnidadeIntegrante has deleteCascade, we call it.
-                // Otherwise we delete.
                 if (method_exists($vinculo, 'deleteCascade')) {
                     $vinculo->deleteCascade();
                 } else {
                     $vinculo->delete();
                 }
             }
-            // fresh() is called in service, but here we just return void.
         }
     }
 
@@ -126,6 +128,7 @@ class EloquentUsuarioWriteRepository extends AbstractEloquentWriteRepository imp
             return 0;
         }
 
+        /** @var \Illuminate\Database\Eloquent\Collection<int, Usuario> $usuarios */
         $usuarios = $this->model->newQuery()
             ->where('cpf', $cpf)
             ->whereIn('matricula', $matriculas)

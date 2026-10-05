@@ -8,6 +8,7 @@ use App\Facades\SiapeLog;
 use App\Enums\UsuarioSituacaoSiape;
 use App\Models\Entidade;
 use App\Models\SiapeBlackListServidor;
+use App\Models\SiapeListaUORGS;
 use App\Models\Usuario;
 use App\Repository\EntidadeRepository;
 use App\Repository\SiapeBlackListServidorRepository;
@@ -41,6 +42,7 @@ class SiapeIndividualServidorService extends ServiceBase
     private const MSG_CONCLUIDO = 'Processamento concluído';
     private const TAMANHO_CPF = 11;
     private const MAX_PREVIEW_LOG = 200;
+    private const CAMPOS_PGD_ATUALIZACAO_FUNCIONAL = ['modalidade_pgd', 'participa_pgd'];
     private SiapeIndividualService $service;
     private ?array $resumo = null;
     private ?array $relatorioCarga = null;
@@ -133,6 +135,7 @@ class SiapeIndividualServidorService extends ServiceBase
 
             $this->atualizarVinculosUsuarios($cpfLimpo, $dadosFuncionais);
             $this->executarSincronizacaoFinal($cpfLimpo, $dadosFuncionais);
+            $this->persistirDadosPgdAposSincronizacaoFinal($cpfLimpo, $dadosFuncionais);
 
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_SUCESSO);
 
@@ -212,13 +215,10 @@ class SiapeIndividualServidorService extends ServiceBase
      */
     private function atualizarDadosFuncionaisParciais(string $cpf, array $dadosFuncionais, array $dadosPessoais): void
     {
-        if ($dadosPessoais !== []) {
-            return;
-        }
-
         $dadosFuncionaisDtos = DadosFuncionaisSiapeDTO::listFromArray($dadosFuncionais);
+        $atualizarDadosComplementares = $dadosPessoais === [];
 
-        if (!$this->dadosFuncionaisPossuemAtributosParciais($dadosFuncionaisDtos)) {
+        if (!$this->dadosFuncionaisPossuemAtributosParciais($dadosFuncionaisDtos, $atualizarDadosComplementares)) {
             return;
         }
 
@@ -230,7 +230,7 @@ class SiapeIndividualServidorService extends ServiceBase
             return;
         }
 
-        DB::transaction(function () use ($cpf, $dadosFuncionaisDtos, $usuariosPorCpf, $usuariosPorMatricula): void {
+        DB::transaction(function () use ($cpf, $dadosFuncionaisDtos, $usuariosPorCpf, $usuariosPorMatricula, $atualizarDadosComplementares): void {
             $usuariosAtualizadosPorNovaMatricula = [];
 
             foreach ($dadosFuncionaisDtos as $dados) {
@@ -239,20 +239,24 @@ class SiapeIndividualServidorService extends ServiceBase
                     continue;
                 }
 
-                $usuario = $this->resolverUsuarioParaAtualizacaoFuncionalParcial(
-                    $dados,
-                    $usuariosPorCpf,
-                    $usuariosPorMatricula,
-                    $usuariosAtualizadosPorNovaMatricula
-                );
+                /** @var Usuario|null $usuario */
+                $usuario = $atualizarDadosComplementares
+                    ? $this->resolverUsuarioParaAtualizacaoFuncionalParcial(
+                        $dados,
+                        $usuariosPorCpf,
+                        $usuariosPorMatricula,
+                        $usuariosAtualizadosPorNovaMatricula
+                    )
+                    : $usuariosPorMatricula->get($matricula);
                 if ($usuario === null) {
                     continue;
                 }
 
-                $attributes = $dados->atributosUsuarioParciais();
-                if ((string) $usuario->matricula !== $matricula) {
-                    $attributes['matricula'] = $matricula;
+                $attributes = $this->atributosAtualizacaoFuncional($dados, $atualizarDadosComplementares);
+
+                if ($atualizarDadosComplementares && (string) $usuario->matricula !== $matricula) {
                     $usuariosAtualizadosPorNovaMatricula[$usuario->id] = true;
+                    $attributes['matricula'] = $matricula;
                 }
 
                 if ($attributes === []) {
@@ -264,6 +268,79 @@ class SiapeIndividualServidorService extends ServiceBase
                     'cpf' => $cpf,
                     'matricula' => $matricula,
                     'campos' => array_keys($attributes),
+                ]);
+            }
+        });
+    }
+
+    /**
+     * Reaplica os dados PGD do SIAPE depois da sincronização geral, que pode sobrescrevê-los.
+     * A correspondência exata da matrícula impede que dados de um vínculo sejam aplicados a outro.
+     *
+     * @param array<int, array<string, mixed>> $dadosFuncionais
+     */
+    private function persistirDadosPgdAposSincronizacaoFinal(string $cpf, array $dadosFuncionais): void
+    {
+        $atualizacoesPorMatricula = [];
+        $matriculasAmbiguas = [];
+
+        foreach (DadosFuncionaisSiapeDTO::listFromArray($dadosFuncionais) as $dados) {
+            $matricula = $dados->matriculaSiape();
+            $atributosPgd = array_intersect_key(
+                $dados->atributosUsuarioParciais(),
+                array_fill_keys(self::CAMPOS_PGD_ATUALIZACAO_FUNCIONAL, true)
+            );
+
+            if ($matricula === null || $atributosPgd === []) {
+                continue;
+            }
+
+            if (array_key_exists($matricula, $atualizacoesPorMatricula)) {
+                $matriculasAmbiguas[$matricula] = true;
+                unset($atualizacoesPorMatricula[$matricula]);
+                continue;
+            }
+
+            if (!isset($matriculasAmbiguas[$matricula])) {
+                $atualizacoesPorMatricula[$matricula] = $atributosPgd;
+            }
+        }
+
+        if ($atualizacoesPorMatricula === []) {
+            return;
+        }
+
+        $cpfMascarado = substr($cpf, 0, 3) . '***' . substr($cpf, -2);
+        $usuarios = $this->usuarioRepository->findAllByCpfUnfiltered($cpf);
+
+        DB::transaction(function () use ($atualizacoesPorMatricula, $usuarios, $cpfMascarado): void {
+            foreach ($atualizacoesPorMatricula as $matricula => $atributosPgd) {
+                $usuariosDaMatricula = $usuarios->filter(
+                    fn (Usuario $usuario): bool => (string) $usuario->matricula === (string) $matricula
+                );
+
+                if ($usuariosDaMatricula->count() !== 1) {
+                    SiapeLog::warning('Dados PGD da carga individual sem usuário com matrícula única', [
+                        'cpf_mascarado' => $cpfMascarado,
+                        'quantidade_usuarios' => $usuariosDaMatricula->count(),
+                    ]);
+                    continue;
+                }
+
+                /** @var Usuario $usuario */
+                $usuario = $usuariosDaMatricula->first();
+                $usuarioAtualizado = $this->usuarioRepository->update($usuario->id, $atributosPgd);
+
+                if ($usuarioAtualizado === null) {
+                    SiapeLog::warning('Dados PGD da carga individual não persistidos após sincronização', [
+                        'cpf_mascarado' => $cpfMascarado,
+                    ]);
+                    continue;
+                }
+
+                SiapeLog::info('Dados PGD da carga individual persistidos após sincronização', [
+                    'cpf_mascarado' => $cpfMascarado,
+                    'campos' => array_keys($atributosPgd),
                 ]);
             }
         });
@@ -337,15 +414,36 @@ class SiapeIndividualServidorService extends ServiceBase
     /**
      * @param array<int, DadosFuncionaisSiapeDTO> $dadosFuncionais
      */
-    private function dadosFuncionaisPossuemAtributosParciais(array $dadosFuncionais): bool
+    private function dadosFuncionaisPossuemAtributosParciais(
+        array $dadosFuncionais,
+        bool $atualizarDadosComplementares
+    ): bool
     {
         foreach ($dadosFuncionais as $dados) {
-            if ($dados->atributosUsuarioParciais() !== []) {
+            if ($this->atributosAtualizacaoFuncional($dados, $atualizarDadosComplementares) !== []) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function atributosAtualizacaoFuncional(
+        DadosFuncionaisSiapeDTO $dados,
+        bool $atualizarDadosComplementares
+    ): array
+    {
+        $attributes = $dados->atributosUsuarioParciais();
+
+        return $atualizarDadosComplementares
+            ? $attributes
+            : array_intersect_key(
+                $attributes,
+                array_fill_keys(self::CAMPOS_PGD_ATUALIZACAO_FUNCIONAL, true)
+            );
     }
 
     /**
@@ -715,14 +813,15 @@ class SiapeIndividualServidorService extends ServiceBase
         $xmlUnidade = $this->montaXmlUnidade($codigoUnidade);
         $respUnidade = $this->service->getBuscarDadosSiapeUnidade()->executaRequisicao($xmlUnidade);
 
-        $this->atualizarListaUorgs($codigoUnidade);
+        $this->atualizarListaUorgs();
         $unidadeSiape = $this->buscarUnidadeNaLista($codigoUnidade);
 
         $this->salvarHistoricoUnidade($respUnidade, $unidadeSiape);
     }
 
-    private function atualizarListaUorgs(string $codOrgao): void
+    private function atualizarListaUorgs(): void
     {
+        $codOrgao = CodigoOrgaoService::atual();
         $this->service->getBuscarDadosSiapeUnidades()->listaUorgs(
             $this->service->config['siglaSistema'],
             $this->service->config['nomeSistema'],
@@ -732,7 +831,7 @@ class SiapeIndividualServidorService extends ServiceBase
         );
     }
 
-    protected function buscarUorgNaoProcessada()
+    protected function buscarUorgNaoProcessada(): ?SiapeListaUORGS
     {
         return $this->siapeListaUORGSRepository->findUnprocessed(CodigoOrgaoService::atual());
     }
@@ -740,8 +839,12 @@ class SiapeIndividualServidorService extends ServiceBase
     private function buscarUnidadeNaLista(string $codigoUnidade): ?array
     {
         $uorgs = $this->buscarUorgNaoProcessada();
-
         $listaUorgs = $this->service->getBuscarDadosSiapeUnidade()->getUnidades($uorgs);
+
+        if ($listaUorgs === null) {
+            return null;
+        }
+
         return collect($listaUorgs)->firstWhere('codigo', $codigoUnidade);
     }
 

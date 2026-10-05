@@ -1,3 +1,37 @@
+## 3.2.0 02/10/2026
+
+### Adicionado
+- Adição do Relatório de Lacunas de Planos de Entrega
+- Ao alterar o código do órgão no tenant, a integração com o SIAPE permite formar a nova estrutura organizacional no mesmo ambiente, preservando as unidades e o histórico da estrutura anterior mesmo quando os códigos das unidades se repetem
+- Unidades da estrutura anterior passam a ser identificadas na seleção de unidades, facilitando a distinção entre os vínculos antigos e os da nova estrutura
+- Ao alterar a unidade autorizadora no tenant, planos de trabalho, planos de entrega e agentes públicos passam a receber o novo código; registros novos já nascem com o código vigente
+- Os envios à API do PGD passam a gravar e utilizar o código da unidade autorizadora de cada registro
+- Novas opções de motivo de ocorrência (afastamento): prestação de serviço ao TRE como mesário; alistamento ou recadastramento eleitoral; júri e outros serviços obrigatórios por lei; acidente em serviço ou doença profissional; participação em competição desportiva nacional; e convocação para integrar representação desportiva nacional
+
+### Modificado
+- Liberação de Plano de Entregas para homologação restrita ao gestor titular ou substituto da unidade do plano; agentes apenas lotados na unidade não podem mais executar essa ação
+- O envio de planos de trabalho à API do PGD fica mais estável, concluindo as etapas na ordem correta (participante, planos de entrega vinculados e o próprio plano)
+
+### Corrigido
+- Corrigida falha que podia impedir a criação de novos registros quando as sequências numéricas do tenant estavam ausentes, recompondo os contadores a partir dos dados existentes
+- A carga individual do SIAPE passa a atualizar corretamente a modalidade e a participação no PGD quando há mudança de matrícula, associando os dados ao vínculo correspondente do agente público
+- A modalidade e a participação no PGD continuam atualizadas quando o SIAPE retorna dados pessoais válidos e após a sincronização final, evitando divergências entre o Petrvs e o SouGov Líder
+- Planos de Trabalho encerrados antecipadamente deixam de gerar pendências falsas de avaliação para a chefia: períodos avaliativos posteriores à data de encerramento não são mais contabilizados como aguardando avaliação
+- Tela do Plano de Trabalho passa a exibir todas as ocorrências do período avaliativo, incluindo afastamentos de recesso/compensação que antes ficavam ocultos
+- Carga horária fracionada do Plano de Trabalho passa a ser enviada corretamente à API do PGD
+- Mensagem de timeout deixa de aparecer indevidamente quando o envio à API do PGD já havia sido concluído com sucesso
+
+## 3.1.6 28/09/2026
+
+### Adicionado
+- **Melhorias na Tela Inicial (Home)**: novo visual no padrão gov.br organizado em Destaques do Usuário, da Unidade e Outros, com pendências separadas por Planos de Entregas e de Trabalho, indicadores da unidade, cartões de lacuna, aniversariantes e participantes em férias
+
+### Modificado
+- Contadores dos cartões da Home e os atalhos correspondentes passam a usar o mesmo critério, mantendo consistência entre o número exibido e a listagem aberta pelo hiperlink
+
+### Corrigido
+- O filtro "Unidades Subordinadas" deixou de retornar erro de permissão nos painéis de indicadores para usuários com atribuição na unidade selecionada que não fossem seus gestores
+
 ## 3.1.5 25/09/2026
 
 ### Adicionado

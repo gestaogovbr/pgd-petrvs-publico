@@ -102,6 +102,7 @@ export class PlanoEntregaListComponent extends PageListBase<
 				data_filtro_fim: {default: new Date()},
 				status: {default: ""},
 				unidade_id: {default: null},
+				id: {default: null},
 				unidades_filhas: {default: false},
 				planejamento_id: {default: null},
 				cadeia_valor_id: {default: null},
@@ -355,25 +356,37 @@ export class PlanoEntregaListComponent extends PageListBase<
 		if (this.metadata?.minha_unidade) {
 			this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
 		}
+		const unidadeIdDaNavegacao = this.queryParams?.filter?.unidade_id;
+		const idsDaNavegacao = this.queryParams?.filter?.id;
+		const filtroDeUnidadeNaNavegacao = !!unidadeIdDaNavegacao || !!idsDaNavegacao;
 		this.route.queryParams.subscribe((p) => {
-			this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+			// Não sobrescreve quando a navegação já informou unidade(s)/id(s) no filtro (ex: atalhos da home).
+			if (!filtroDeUnidadeNaNavegacao) {
+				this.filter?.controls.unidade_id.setValue(this.auth.unidade?.id);
+			}
 			if (p["context"] == "EXECUCAO" && this.filter) {
 				this.filter?.controls.usuario.setValue(this.auth.usuario?.nome);
 			}
 		});
 		if (this.execucao) {
 			this.title = this.title + " (Execução)";
-			this.filter!.controls.unidade_id.setValue(
-				this.auth.unidadeGestor()?.id || null
-			);
+			// Quando o atalho da home informa os PEs por id (todas as unidades geridas),
+			// não restringe a uma única unidade do gestor.
+			if (!filtroDeUnidadeNaNavegacao) {
+				this.filter!.controls.unidade_id.setValue(
+					this.auth.unidadeGestor()?.id || null
+				);
+			}
 			this.filter!.controls.principais.setValue(false);
 		}
 		if (this.avaliacao) {
 			this.title = this.title + " (Avaliação)";
-			this.filter!.controls.unidade_id.setValue(
-				this.auth.unidadeGestor()?.id || null
-			);
-			this.filter!.controls.unidades_filhas.setValue(true);
+			if (!filtroDeUnidadeNaNavegacao) {
+				this.filter!.controls.unidade_id.setValue(
+					this.auth.unidadeGestor()?.id || null
+				);
+				this.filter!.controls.unidades_filhas.setValue(true);
+			}
 			this.filter!.controls.principais.setValue(false);
 		}
 		this.checaBotaoAderirToolbar();
@@ -535,8 +548,17 @@ export class PlanoEntregaListComponent extends PageListBase<
 			result.push(["data_filtro_inicio", "==", form.data_filtro_inicio]);
 			result.push(["data_filtro_fim", "==", form.data_filtro_fim]);
 		}
-		if (form.unidade_id) result.push(["unidade_id", "==", form.unidade_id]);
-		if (!form.unidade_id) {
+		if (form.unidade_id) {
+			result.push(
+				Array.isArray(form.unidade_id)
+					? ["unidade_id", "in", form.unidade_id]
+					: ["unidade_id", "==", form.unidade_id]
+			);
+		}
+		if (Array.isArray(form.id) && form.id.length) {
+			result.push(["id", "in", form.id]);
+		}
+		if (!form.unidade_id && !(Array.isArray(form.id) && form.id.length)) {
 			result.push(["unidades_vinculadas", "==", this.auth.unidade?.id]);
 		}
 		if (form.planejamento_id)
@@ -931,16 +953,13 @@ export class PlanoEntregaListComponent extends PageListBase<
 				/*
           (RN_PENT_AA) Para LIBERAR PARA HOMOLOGAÇÃO um plano de entregas:
           - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega (RN_PENT_D), e
-              - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
-              - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_LIB_HOMOL"
+              - o usuário logado precisa ser gestor titular ou substituto da Unidade do plano (Unidade B)
         */
 				return (
 					!this.execucao &&
 					this.planoEntregaService.situacaoPlano(planoEntrega) == "INCLUIDO" &&
 					planoEntrega.entregas.length > 0 &&
-					(this.unidadeService.isGestorUnidade(planoEntrega.unidade) ||
-						(this.auth.isLotacaoUsuario(planoEntrega.unidade) &&
-							this.auth.hasPermissionTo("MOD_PENT_LIB_HOMOL")))
+					this.unidadeService.isGestorUnidade(planoEntrega.unidade, false)
 				);
 			case this.BOTAO_LOGS:
 				/*

@@ -122,6 +122,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     status: FormControl<string>;
     aguardando_minha_avaliacao: FormControl<boolean>;
     aguardando_minha_assinatura: FormControl<boolean>;
+    registro_execucao_atraso: FormControl<boolean>;
     unidade_id: FormControl<string>;
   }> = this.fb.group({
     periodo_inicio: this.fb.control<string | null>(null),
@@ -138,6 +139,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     status: this.fb.nonNullable.control(TODOS_SENTINEL),
     aguardando_minha_avaliacao: this.fb.nonNullable.control(false),
     aguardando_minha_assinatura: this.fb.nonNullable.control(false),
+    registro_execucao_atraso: this.fb.nonNullable.control(false),
     unidade_id: this.fb.nonNullable.control(''),
   });
 
@@ -319,6 +321,7 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
     if (unidadeRegramento.length) result['unidade_regramento'] = unidadeRegramento;
     if (raw.aguardando_minha_avaliacao) result['aguardando_minha_avaliacao'] = true;
     if (raw.aguardando_minha_assinatura) result['aguardando_minha_assinatura'] = true;
+    if (raw.registro_execucao_atraso) result['registro_execucao_atraso'] = true;
 
     return result;
   }

@@ -1,0 +1,174 @@
+<div class="br-mainpanel">
+  <app-breadcrumb />
+  <form [formGroup]="filters">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Lacunas de Planos de Entrega</h2>
+    <br-button
+      emphasis="secondary"
+      type="button"
+      [disabled]="filters.invalid || exporting()"
+      (click)="exportarExcel()">
+      <i class="fas fa-file-excel mr-1"></i>Exportar Excel
+    </br-button>
+  </div>
+
+  <div class="br-card mb-3">
+      <div class="card-content">
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-md-5">
+            <input-search
+              [size]="12"
+              label="Unidade de Consulta"
+              [control]="filters.controls.unidade_id"
+              controlName="unidade_id"
+              [dao]="unidadeDao"
+              [where]="unidadeWhere()">
+            </input-search>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100" [class.is-invalid]="filters.controls.periodo_inicio.invalid && filters.controls.periodo_inicio.touched">
+              <label>Período da consulta: início *</label>
+              <input type="date" formControlName="periodo_inicio" />
+            </div>
+          </div>
+          <div class="col-12 col-sm-6 col-md-2">
+            <div class="br-input w-100" [class.is-invalid]="filters.controls.periodo_fim.invalid && filters.controls.periodo_fim.touched">
+              <label>Período da consulta: fim *</label>
+              <input type="date" formControlName="periodo_fim" />
+            </div>
+          </div>
+          <div class="col-12 col-md-3">
+            <input-switch
+              [size]="12"
+              label="Unidades Subordinadas"
+              controlName="incluir_unidades_subordinadas"
+              [control]="filters.controls.incluir_unidades_subordinadas">
+            </input-switch>
+          </div>
+        </div>
+
+        <div class="d-flex flex-column flex-sm-row gap-2 justify-content-end mt-3">
+          <br-button emphasis="secondary" type="button" (click)="onConsultar()">
+            <i class="fas fa-search mr-1"></i>Consultar
+          </br-button>
+          <br-button emphasis="tertiary" type="button" (click)="limparFiltros()">
+            <i class="fas fa-times mr-1"></i>Limpar filtros
+          </br-button>
+        </div>
+      </div>
+    </div>
+
+  @if (facade.loading()) {
+  <div class="d-flex justify-content-center p-5">
+    <div class="br-loading" role="progressbar" aria-label="carregando"></div>
+  </div>
+  }
+
+  @if (facade.error()) {
+  <div class="alert alert-danger" role="alert">{{ facade.error() }}</div>
+  }
+
+  @if (!facade.loading() && filters.valid) {
+  <p class="text-muted small mb-2" role="status">Total consultado: {{ facade.total() }}</p>
+  }
+
+  <div class="br-table">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">
+              <div>Sigla</div>
+              <input
+                type="text"
+                class="form-control form-control-sm mt-1"
+                formControlName="unidadeHierarquia"
+                placeholder="Filtrar..."
+                (blur)="onColumnFilterBlur()" />
+            </th>
+            <th scope="col">
+              <div>Unidade</div>
+              <input
+                type="text"
+                class="form-control form-control-sm mt-1"
+                formControlName="nome"
+                placeholder="Filtrar..."
+                (blur)="onColumnFilterBlur()" />
+            </th>
+            <th scope="col">
+              <div>UORG</div>
+              <input
+                type="text"
+                class="form-control form-control-sm mt-1"
+                formControlName="codigo"
+                placeholder="Filtrar..."
+                (blur)="onColumnFilterBlur()" />
+            </th>
+            <th scope="col">
+              <div>
+                Lacuna
+                <i
+                  class="bi bi-info-circle label-info text-muted ms-1"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  [attr.title]="lacunaTooltip"></i>
+              </div>
+              <input
+                type="text"
+                class="form-control form-control-sm mt-1"
+                formControlName="lacuna"
+                placeholder="Filtrar..."
+                (blur)="onColumnFilterBlur()" />
+            </th>
+            <th scope="col">
+              <div>Quantidade de Dias</div>
+              <input
+                type="text"
+                class="form-control form-control-sm mt-1"
+                formControlName="quantidade_dias"
+                placeholder="Filtrar..."
+                (blur)="onColumnFilterBlur()" />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of facade.items(); track row.id) {
+          <tr>
+            <td data-th="Sigla">{{ row.unidadeHierarquia || '-' }}</td>
+            <td data-th="Unidade">{{ row.nome }}</td>
+            <td data-th="UORG">{{ row.codigo }}</td>
+            <td
+              data-th="Lacuna"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              [attr.title]="lacunaTooltip">
+              {{ formatarLacuna(row.data_inicio, row.data_fim) }}
+            </td>
+            <td data-th="Quantidade de Dias">{{ row.quantidade_dias }}</td>
+          </tr>
+          }
+          @if (facade.items().length === 0 && !facade.loading()) {
+          <tr>
+            <td colspan="5" class="text-center p-3">
+              @if (filters.invalid) {
+              Informe unidade e período da consulta e clique em Consultar.
+              } @else {
+              Nenhuma lacuna encontrada para os filtros informados.
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <app-v2-pagination
+    class="mt-3 d-block"
+    [class.d-none]="filters.invalid"
+    [page]="facade.page()"
+    [lastPage]="facade.lastPage()"
+    [total]="facade.total()"
+    (pageChange)="onPageChange($event)" />
+  </form>
+</div>
