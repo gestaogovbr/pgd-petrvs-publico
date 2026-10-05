@@ -1,10 +1,17 @@
 ## 3.2.0 02/10/2026
 
+### Adicionado
+- Ao alterar o código do órgão no tenant, a integração com o SIAPE permite formar a nova estrutura organizacional no mesmo ambiente, preservando as unidades e o histórico da estrutura anterior mesmo quando os códigos das unidades se repetem
+- Unidades da estrutura anterior passam a ser identificadas na seleção de unidades, facilitando a distinção entre os vínculos antigos e os da nova estrutura
+
 ### Modificado
 - Liberação de Plano de Entregas para homologação restrita ao gestor titular ou substituto da unidade do plano; agentes apenas lotados na unidade não podem mais executar essa ação
 
 ### Corrigido
+- A carga individual do SIAPE passa a atualizar corretamente a modalidade e a participação no PGD quando há mudança de matrícula, associando os dados ao vínculo correspondente do agente público
+- A modalidade e a participação no PGD continuam atualizadas quando o SIAPE retorna dados pessoais válidos e após a sincronização final, evitando divergências entre o Petrvs e o SouGov Líder
 - Planos de Trabalho encerrados antecipadamente deixam de gerar pendências falsas de avaliação para a chefia: períodos avaliativos posteriores à data de encerramento não são mais contabilizados como aguardando avaliação
+- Tela do Plano de Trabalho passa a exibir todas as ocorrências do período avaliativo, incluindo afastamentos de recesso/compensação que antes ficavam ocultos
 
 ## 3.1.6 28/09/2026
 

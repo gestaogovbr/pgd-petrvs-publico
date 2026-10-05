@@ -155,7 +155,7 @@ return new class extends Migration
                 PRIMARY KEY (`id`),
                 KEY `idx_grupo_rn` (`plano_trabalho_consolidacao_id`, `entrega_id_key`, `rn`),
                 KEY `idx_grupo_dup` (`plano_trabalho_consolidacao_id`, `entrega_id_key`, `grp_cnt`)
-            ) ENGINE=InnoDB
+            ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
         SQL);
 
         DB::statement(<<<SQL
@@ -166,7 +166,7 @@ return new class extends Migration
                 `keeper_id` CHAR(36) NOT NULL,
                 PRIMARY KEY (`plano_trabalho_consolidacao_id`, `entrega_id_key`),
                 KEY `idx_keeper` (`keeper_id`)
-            ) ENGINE=InnoDB
+            ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
         SQL);
 
         DB::statement(<<<SQL
@@ -174,7 +174,7 @@ return new class extends Migration
                 `duplicate_id` CHAR(36) NOT NULL PRIMARY KEY,
                 `keeper_id` CHAR(36) NOT NULL,
                 KEY `idx_keeper` (`keeper_id`)
-            ) ENGINE=InnoDB
+            ) ENGINE=InnoDB DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
         SQL);
     }
 
