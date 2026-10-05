@@ -4,15 +4,14 @@ namespace Tests\IntegrationTenant\Observers;
 
 use App\Enums\StatusEnum;
 use App\Jobs\Envio\ExportarParticipanteJob;
-use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Services\PlanoTrabalhoService;
-use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Bus;
 use Mockery;
 
 beforeEach(function () {
-    Queue::fake();
+    Bus::fake();
 
     tenant()->api_cod_unidade_autorizadora = '1234567890';
     tenant()->save();
@@ -34,19 +33,17 @@ afterAll(function () {
 describe('PlanoTrabalhoObserver', function () {
 
     it('NÃO é chamado ao criar PT', function () {
-        // testa o ExportarParticipanteJob porque é o primeiro da cadeia de envio do PT, se ele não for chamado, os demais também não serão
-        Queue::assertNotPushed(ExportarParticipanteJob::class);
+        // O primeiro batch do envio contém o participante; se não há batch, a cadeia não iniciou.
+        Bus::assertNothingBatched();
     });
 
     it('É chamado ao alterar PT ATIVO', function () {
         $this->planoTrabalho->status = StatusEnum::ATIVO->value;
         $this->planoTrabalho->save();
 
-        // testa o ExportarParticipanteJob porque é o primeiro da cadeia de envio do PT, se ele for chamado, os demais também serão
-        Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
-            return collect($job->chained)->filter(function ($payload) {
-                return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;
-            })->isNotEmpty();
+        Bus::assertBatched(function ($batch) {
+            return $batch->jobs->count() === 1
+                && $batch->jobs->first() instanceof ExportarParticipanteJob;
         });
     });
 
@@ -58,11 +55,9 @@ describe('PlanoTrabalhoObserver', function () {
 
         $this->planoTrabalhoService->ativar($data, null);
 
-        // testa o ExportarParticipanteJob porque é o primeiro da cadeia de envio do PT, se ele for chamado, os demais também serão
-        Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
-            return collect($job->chained)->filter(function ($payload) {
-                return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;
-            })->isNotEmpty();
+        Bus::assertBatched(function ($batch) {
+            return $batch->jobs->count() === 1
+                && $batch->jobs->first() instanceof ExportarParticipanteJob;
         });
     });
 
@@ -74,11 +69,9 @@ describe('PlanoTrabalhoObserver', function () {
 
         $this->planoTrabalhoService->reativar($data, null);
 
-        // testa o ExportarParticipanteJob porque é o primeiro da cadeia de envio do PT, se ele for chamado, os demais também serão
-        Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
-            return collect($job->chained)->filter(function ($payload) {
-                return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;
-            })->isNotEmpty();
+        Bus::assertBatched(function ($batch) {
+            return $batch->jobs->count() === 1
+                && $batch->jobs->first() instanceof ExportarParticipanteJob;
         });
     });
 
@@ -86,10 +79,9 @@ describe('PlanoTrabalhoObserver', function () {
         $this->planoTrabalho->status = StatusEnum::AVALIADO->value;
         $this->planoTrabalho->save();
 
-        Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
-            return collect($job->chained)->filter(function ($payload) {
-                return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;
-            })->isNotEmpty();
+        Bus::assertBatched(function ($batch) {
+            return $batch->jobs->count() === 1
+                && $batch->jobs->first() instanceof ExportarParticipanteJob;
         });
     });
 
@@ -97,10 +89,9 @@ describe('PlanoTrabalhoObserver', function () {
         $this->planoTrabalho->status = StatusEnum::CONCLUIDO->value;
         $this->planoTrabalho->save();
 
-        Queue::assertPushed(ExportarParticipanteJob::class, function ($job) {
-            return collect($job->chained)->filter(function ($payload) {
-                return strpos($payload, ExportarPlanoTrabalhoJob::class) !== false;
-            })->isNotEmpty();
+        Bus::assertBatched(function ($batch) {
+            return $batch->jobs->count() === 1
+                && $batch->jobs->first() instanceof ExportarParticipanteJob;
         });
     });
 
@@ -110,7 +101,7 @@ describe('PlanoTrabalhoObserver', function () {
             'justificativa' => 'Cancelamento do plano de trabalho',
         ], $this->planoTrabalho->unidade_id);
 
-        Queue::assertNotPushed(ExportarParticipanteJob::class);
+        Bus::assertNothingBatched();
     });
 
 });

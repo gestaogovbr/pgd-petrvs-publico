@@ -198,16 +198,6 @@ class EloquentUnidadeReadRepository extends AbstractEloquentReadRepository imple
         return $unidade;
     }
 
-    public function findByCodigoWithPai(string $codigo): ?Unidade
-    {
-        /** @var Unidade|null $unidade */
-        $unidade = $this->query()
-            ->with('unidadePai')
-            ->where('codigo', $codigo)
-            ->first();
-
-        return $unidade;
-    }
 
     public function findByCodigoOrgao(string $codigoOrgao, string $codigo): ?Unidade
     {
