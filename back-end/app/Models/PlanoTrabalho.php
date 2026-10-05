@@ -18,6 +18,7 @@ use App\Models\StatusJustificativa;
 use App\Support\ModalidadePgd;
 use App\Models\Unidade;
 use App\Models\Usuario;
+use App\Traits\PreencheCodUnidadeAutorizadora;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -47,6 +48,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @property Carbon|null $data_tentativa_envio
  * @property Carbon|null $data_conclusao_envio
  * @property string|null $log_envio
+ * @property string|null $cod_unidade_autorizadora
  * @property-read Usuario $usuario
  * @property-read Programa $programa
  * @property-read Unidade $unidade
@@ -60,6 +62,8 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class PlanoTrabalho extends ModelBase implements HasStatusHistory, HasOwnership
 {
+    use PreencheCodUnidadeAutorizadora;
+
     public function getStatusFkColumn(): string
     {
         return 'plano_trabalho_id';
@@ -97,6 +101,7 @@ class PlanoTrabalho extends ModelBase implements HasStatusHistory, HasOwnership
         'justificativa', /* text; NULL; */ // Justificativa para carga horária diferente de 100%
         'justificativa_modalidade', /* varchar(500); NULL; */ // Justificativa para modalidade divergente do SIAPE
         'encerrado_at', /* date; NULL; */ // Data de encerramento antecipado do plano de trabalho
+        'cod_unidade_autorizadora',
     ];
 
   public const STATUSES = [
@@ -124,7 +129,7 @@ class PlanoTrabalho extends ModelBase implements HasStatusHistory, HasOwnership
     protected static function booted()
     {
         static::creating(function ($planoTrabalho) {
-            $planoTrabalho->numero = DB::select("CALL sequence_plano_trabalho_numero()")[0]->number;
+            $planoTrabalho->numero = app(\App\Services\TenantSequenceService::class)->nextNumber(\App\Enums\SequenceType::PLANO_TRABALHO);
         });
     }
 

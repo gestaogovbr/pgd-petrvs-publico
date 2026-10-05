@@ -27,6 +27,8 @@ interface AfastamentoReadRepositoryContract
 
     public function findAfastamentosParaDispensa(string $usuarioId, CarbonPeriod $vigencia): Collection;
 
+    public function findAfastamentosNoPeriodo(string $usuarioId, CarbonPeriod $vigencia): Collection;
+
 
     public function buscarOcorrenciasListagem(OcorrenciaIndexDTO $dto): LengthAwarePaginator;
 

@@ -41,4 +41,9 @@ interface EnvioWriteRepositoryInterface
      * @param T $model
      */
     public function registrarLog(Model $model, string $mensagem): void;
+
+    /**
+     * @param T $model
+     */
+    public function garantirCodUnidadeAutorizadora(Model $model, string $tenantId): void;
 }
