@@ -16,8 +16,6 @@ import { RelatorioCargaIndividualSiapeComponent } from './relatorio-carga-indivi
 import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
 import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
 import { RelatorioPlanoTrabalhoConsultaComponent } from './relatorio-plano-trabalho-consulta/relatorio-plano-trabalho-consulta.component';
-import { BreadcrumbComponent } from 'src/app/v2/components/breadcrumb/breadcrumb.component';
-import { BreadcrumbService } from 'src/app/v2/components/breadcrumb/breadcrumb.service';
 
 @NgModule({
   declarations: [
