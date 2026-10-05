@@ -10,6 +10,8 @@ use App\Models\PlanoTrabalho;
 use App\Models\Usuario;
 use App\Repository\TenantRepository;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 /**
  * @property Model $model
@@ -43,9 +45,11 @@ trait CodUnidadeAutorizadoraTrait
 
     public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int
     {
-        $query = method_exists($this->model, 'withTrashed')
-            ? $this->model->newQuery()->withTrashed()
-            : $this->model->newQuery();
+        $query = $this->model->newQuery();
+
+        if (in_array(SoftDeletes::class, class_uses_recursive($this->model::class), true)) {
+            $query->withoutGlobalScope(SoftDeletingScope::class);
+        }
 
         if ($somenteSemCodigo) {
             $query->where(function ($builder): void {

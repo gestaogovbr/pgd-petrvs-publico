@@ -55,7 +55,7 @@ class UsuarioService extends ServiceBase
     const LOGIN_GOOGLE = "GOOGLE";
     const LOGIN_MICROSOFT = "AZURE";
     const LOGIN_FIREBASE = "FIREBASE";
-    private const USUARIO_EXTERNO = 1;
+    private const USUARIO_EXTERNO = Usuario::USUARIO_EXTERNO;
 
     protected UsuarioRepository $usuarioRepository;
     protected UnidadeRepository $unidadeRepository;
