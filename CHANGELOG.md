@@ -1,3 +1,8 @@
+## 3.2.0 05/10/2026
+
+### Corrigido
+- Corrigida falha que podia impedir a criação de novos registros quando as sequências numéricas do tenant estavam ausentes, recompondo os contadores a partir dos dados existentes
+
 ## 3.2.0 02/10/2026
 
 ### Adicionado
