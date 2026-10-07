@@ -15,6 +15,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    AuthenticatedUsuario::clearFakes();
     Mockery::close();
 });
 
@@ -25,19 +26,13 @@ test('usuarioAutorizado devolve o usuário com capacidade MOD_RELATORIO_USUARIO'
         ->with(RelatorioAgenteAuthorization::CAPACIDADE)
         ->andReturn(true);
 
-    Mockery::mock('alias:' . AuthenticatedUsuario::class)
-        ->shouldReceive('withAreasDeTrabalho')
-        ->once()
-        ->andReturn($usuario);
+    AuthenticatedUsuario::fakeWithAreasDeTrabalho(fn () => $usuario);
 
     expect($this->authorization->usuarioAutorizado())->toBe($usuario);
 });
 
 test('usuarioAutorizado lança quando não há usuário autenticado', function () {
-    Mockery::mock('alias:' . AuthenticatedUsuario::class)
-        ->shouldReceive('withAreasDeTrabalho')
-        ->once()
-        ->andReturn(null);
+    AuthenticatedUsuario::fakeWithAreasDeTrabalho(fn () => null);
 
     expect(fn () => $this->authorization->usuarioAutorizado())
         ->toThrow(ServerException::class, RelatorioAgenteAuthorization::MSG_ACESSO_NEGADO);

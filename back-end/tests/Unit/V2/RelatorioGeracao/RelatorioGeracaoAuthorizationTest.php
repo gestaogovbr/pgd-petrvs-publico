@@ -15,6 +15,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    AuthenticatedUsuario::clearFakes();
     Mockery::close();
 });
 
@@ -25,10 +26,7 @@ test('usuarioAutorizadoParaTipo devolve o usuário quando possui uma das capacid
         ->with(RelatorioPlanoEntregaAuthorization::CAPACIDADE)
         ->andReturn(true);
 
-    Mockery::mock('alias:' . AuthenticatedUsuario::class)
-        ->shouldReceive('withAreasDeTrabalho')
-        ->once()
-        ->andReturn($usuario);
+    AuthenticatedUsuario::fakeWithAreasDeTrabalho(fn () => $usuario);
 
     $result = $this->authorization->usuarioAutorizadoParaTipo(
         RelatorioGeracaoTipo::ENTREGA,
@@ -49,10 +47,7 @@ test('usuarioAutorizadoParaTipo aceita capacidade alternativa de entrega', funct
         ->with(RelatorioEntregaAuthorization::CAPACIDADE)
         ->andReturn(true);
 
-    Mockery::mock('alias:' . AuthenticatedUsuario::class)
-        ->shouldReceive('withAreasDeTrabalho')
-        ->once()
-        ->andReturn($usuario);
+    AuthenticatedUsuario::fakeWithAreasDeTrabalho(fn () => $usuario);
 
     $result = $this->authorization->usuarioAutorizadoParaTipo(
         RelatorioGeracaoTipo::ENTREGA,
@@ -69,10 +64,7 @@ test('usuarioAutorizadoParaTipo lança quando o usuário não possui nenhuma cap
         ->with(RelatorioPlanoTrabalhoAuthorization::CAPACIDADE)
         ->andReturn(false);
 
-    Mockery::mock('alias:' . AuthenticatedUsuario::class)
-        ->shouldReceive('withAreasDeTrabalho')
-        ->once()
-        ->andReturn($usuario);
+    AuthenticatedUsuario::fakeWithAreasDeTrabalho(fn () => $usuario);
 
     expect(fn () => $this->authorization->usuarioAutorizadoParaTipo(
         RelatorioGeracaoTipo::PLANO_TRABALHO,
@@ -81,10 +73,7 @@ test('usuarioAutorizadoParaTipo lança quando o usuário não possui nenhuma cap
 });
 
 test('usuarioAutorizadoParaTipo lança quando não há usuário autenticado', function () {
-    Mockery::mock('alias:' . AuthenticatedUsuario::class)
-        ->shouldReceive('withAreasDeTrabalho')
-        ->once()
-        ->andReturn(null);
+    AuthenticatedUsuario::fakeWithAreasDeTrabalho(fn () => null);
 
     expect(fn () => $this->authorization->usuarioAutorizadoParaTipo(
         RelatorioGeracaoTipo::AGENTE,
@@ -99,10 +88,7 @@ test('usuarioAutorizado devolve o usuário com a capacidade requerida', function
         ->with('MOD_RELATORIOS')
         ->andReturn(true);
 
-    Mockery::mock('alias:' . AuthenticatedUsuario::class)
-        ->shouldReceive('withAreasDeTrabalho')
-        ->once()
-        ->andReturn($usuario);
+    AuthenticatedUsuario::fakeWithAreasDeTrabalho(fn () => $usuario);
 
     $result = $this->authorization->usuarioAutorizado('MOD_RELATORIOS', 'Acesso negado.');
 
@@ -116,10 +102,7 @@ test('usuarioAutorizado lança quando o usuário não possui a capacidade', func
         ->with('MOD_RELATORIOS')
         ->andReturn(false);
 
-    Mockery::mock('alias:' . AuthenticatedUsuario::class)
-        ->shouldReceive('withAreasDeTrabalho')
-        ->once()
-        ->andReturn($usuario);
+    AuthenticatedUsuario::fakeWithAreasDeTrabalho(fn () => $usuario);
 
     expect(fn () => $this->authorization->usuarioAutorizado('MOD_RELATORIOS', 'Acesso negado.'))
         ->toThrow(ServerException::class, 'Acesso negado.');
