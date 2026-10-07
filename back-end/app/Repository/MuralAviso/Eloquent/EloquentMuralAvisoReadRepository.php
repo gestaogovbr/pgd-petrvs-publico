@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository\MuralAviso\Eloquent;
 
 use App\Enums\MuralAvisoDestinatario;
+use App\Enums\MuralAvisoRemetenteTipo;
 use App\Models\MuralAviso;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\MuralAviso\Contracts\MuralAvisoReadRepositoryContract;
@@ -45,21 +46,45 @@ class EloquentMuralAvisoReadRepository extends AbstractEloquentReadRepository im
     /**
      * @return list<array<string, mixed>>
      */
-    public function findPendentes(string $tenantId, ?\DateTimeInterface $dataConfirmacao): array
+    public function findVigentes(string $tenantId): array
     {
-        $query = $this->query()
+        return $this->query()
             ->where(function ($q) use ($tenantId) {
                 $q->where('destinatario', MuralAvisoDestinatario::TODOS->value)
                   ->orWhere('tenant_id', $tenantId);
             })
             ->where('data_publicacao', '<=', now())
             ->where('data_expiracao', '>=', now())
-            ->orderBy('data_publicacao', 'desc');
+            ->orderByRaw("remetente_tipo = ? desc", [MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value])
+            ->orderBy('data_publicacao', 'desc')
+            ->get()
+            ->toArray();
+    }
 
-        if ($dataConfirmacao !== null) {
-            $query->where('data_publicacao', '>', $dataConfirmacao);
+    public function countByEmissorNoMes(
+        string $remetenteTipo,
+        ?string $remetenteTenantId,
+        int $ano,
+        int $mes,
+        ?string $ignorarAvisoId = null,
+    ): int {
+        $query = $this->query()
+            ->where('remetente_tipo', $remetenteTipo)
+            ->whereYear('data_publicacao', $ano)
+            ->whereMonth('data_publicacao', $mes);
+
+        if ($remetenteTenantId === null) {
+            $query->whereNull('remetente_tenant_id');
         }
 
-        return $query->get()->toArray();
+        if ($remetenteTenantId !== null) {
+            $query->where('remetente_tenant_id', $remetenteTenantId);
+        }
+
+        if ($ignorarAvisoId !== null) {
+            $query->where('id', '!=', $ignorarAvisoId);
+        }
+
+        return $query->count();
     }
 }

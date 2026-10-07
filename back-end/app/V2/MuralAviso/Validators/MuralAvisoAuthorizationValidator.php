@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\MuralAviso\Validators;
 
 use App\Enums\MuralAvisoDestinatario;
+use App\Enums\PainelUsuarioNivel;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Models\MuralAviso;
@@ -12,8 +13,6 @@ use App\Repository\MuralAviso\MuralAvisoRepository;
 
 class MuralAvisoAuthorizationValidator
 {
-    private const NIVEL_ORGAO_CENTRAL = 1;
-
     public function __construct(
         private readonly MuralAvisoRepository $repository,
     ) {}
@@ -32,7 +31,7 @@ class MuralAvisoAuthorizationValidator
             throw new NotFoundException('Aviso não encontrado.');
         }
 
-        if ($nivelUsuario === self::NIVEL_ORGAO_CENTRAL) {
+        if ($nivelUsuario === PainelUsuarioNivel::ORGAO_CENTRAL->value) {
             return $aviso;
         }
 
