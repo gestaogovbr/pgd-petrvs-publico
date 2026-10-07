@@ -4,7 +4,6 @@ namespace Tests\IntegrationTenant\Services;
 
 use App\Enums\StatusEnum;
 use App\Jobs\Envio\ExportarParticipanteJob;
-use App\Jobs\Envio\ExportarPlanoTrabalhoJob;
 use App\Models\PlanoTrabalho;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Services\Envio\AgendarEnvioPlanosTrabalhosService;
@@ -36,10 +35,11 @@ describe('AgendarEnvioPlanosTrabalhosService', function () {
         $service = new AgendarEnvioPlanosTrabalhosService($planoRepo);
         $service->executarAgendamentoNoTenant(tenant());
 
-        Bus::assertChained([
-            ExportarParticipanteJob::class,
-            ExportarPlanoTrabalhoJob::class,
-        ]);
+        // O envio despacha o primeiro job em batch; PT e demais etapas entram no then após sucesso.
+        Bus::assertBatched(function ($batch) {
+            return $batch->jobs->count() === 1
+                && $batch->jobs->first() instanceof ExportarParticipanteJob;
+        });
     });
 
     it('invoca o callback do repositório uma vez por chunk emitido', function () {

@@ -1778,6 +1778,7 @@ CREATE TABLE `planos_entregas` (
   `data_tentativa_envio` timestamp NULL DEFAULT NULL COMMENT 'Data da Ultima Tentativa de Envio',
   `log_envio` text DEFAULT NULL,
   `data_conclusao_envio` timestamp NULL DEFAULT NULL COMMENT 'Data em que o envio foi concluído com sucesso na API PGD',
+  `cod_unidade_autorizadora` varchar(20) DEFAULT NULL COMMENT 'Código da unidade autorizadora utilizado no envio para a API PGD',
   PRIMARY KEY (`id`),
   UNIQUE KEY `planos_entregas_numero_unique` (`numero`),
   KEY `planos_entregas_planejamento_id_foreign` (`planejamento_id`),
@@ -1996,6 +1997,7 @@ CREATE TABLE `planos_trabalhos` (
   `data_tentativa_envio` timestamp NULL DEFAULT NULL COMMENT 'Data da Ultima Tentativa de Envio',
   `log_envio` text DEFAULT NULL,
   `data_conclusao_envio` timestamp NULL DEFAULT NULL COMMENT 'Data em que o envio foi concluído com sucesso na API PGD',
+  `cod_unidade_autorizadora` varchar(20) DEFAULT NULL COMMENT 'Código da unidade autorizadora utilizado no envio para a API PGD',
   PRIMARY KEY (`id`),
   UNIQUE KEY `planos_trabalhos_numero_unique` (`numero`),
   KEY `planos_trabalhos_programa_id_foreign` (`programa_id`),
@@ -3395,6 +3397,27 @@ CREATE TABLE `unidades` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `unidades_executora_historico`
+--
+
+DROP TABLE IF EXISTS `unidades_executora_historico`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `unidades_executora_historico` (
+  `id` char(36) NOT NULL,
+  `unidade_id` char(36) NOT NULL,
+  `executora` tinyint(1) NOT NULL,
+  `data_inicio` date NOT NULL,
+  `data_fim` date DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `unidades_executora_historico_unidade_id_data_inicio_index` (`unidade_id`,`data_inicio`),
+  CONSTRAINT `unidades_executora_historico_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `unidades_integrantes`
 --
 
@@ -3532,6 +3555,7 @@ CREATE TABLE `usuarios` (
   `data_tentativa_envio` timestamp NULL DEFAULT NULL COMMENT 'Data da Ultima Tentativa de Envio',
   `log_envio` text DEFAULT NULL,
   `data_conclusao_envio` timestamp NULL DEFAULT NULL COMMENT 'Data em que o envio foi concluído com sucesso na API PGD',
+  `cod_unidade_autorizadora` varchar(20) DEFAULT NULL COMMENT 'Código da unidade autorizadora utilizado no envio para a API PGD',
   PRIMARY KEY (`id`),
   UNIQUE KEY `usuarios_email_unique` (`email`),
   UNIQUE KEY `usuarios_matricula_unique` (`matricula`),
@@ -4188,6 +4212,25 @@ DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sequence_projeto_numero` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_uca1400_ai_ci */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `sequence_projeto_numero`()
+BEGIN
+    UPDATE sequences SET projeto_numero = GREATEST(IFNULL((SELECT MAX(numero) FROM projetos), 1), projeto_numero + 1);
+    SELECT projeto_numero AS number FROM sequences;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;

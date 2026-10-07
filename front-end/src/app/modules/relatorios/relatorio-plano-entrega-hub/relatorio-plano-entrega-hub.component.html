@@ -1,0 +1,27 @@
+<div class="br-mainpanel">
+  <app-breadcrumb />
+
+  <p class="text-secondary">Escolha abaixo o relatório de Planos de Entrega que deseja consultar.</p>
+
+  <div class="row mt-4">
+    <div class="col-6 col-sm-4 mb-3">
+      <app-button-dashboard
+        [title]="'Planos de Entrega Cadastrados'"
+        iconClass="bi bi-box-seam"
+        textColor="#1369f0"
+        borderColor="#1369f0"
+        [route]="{ route: ['relatorios', 'planos-entrega', 'cadastrados'] }"
+      ></app-button-dashboard>
+    </div>
+
+    <div class="col-6 col-sm-4 mb-3">
+      <app-button-dashboard
+        [title]="'Lacunas de Planos de Entrega'"
+        iconClass="bi bi-calendar-x"
+        textColor="#1369f0"
+        borderColor="#1369f0"
+        [route]="{ route: ['relatorios', 'planos-entrega', 'lacunas'] }"
+      ></app-button-dashboard>
+    </div>
+  </div>
+</div>

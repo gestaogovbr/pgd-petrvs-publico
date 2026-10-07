@@ -205,3 +205,54 @@ describe('PlanoTrabalhoConsolidacaoService::reabrir', function () {
         expect($this->service->reabrir('plano-1', 'consolidacao-1', 'Motivo da reabertura'))->toBe($consolidacao);
     });
 });
+
+
+describe('PlanoTrabalhoConsolidacaoService::ocorrencias', function () {
+
+    test('retorna todas as ocorrências do período da consolidação, incluindo ACRESCIMO', function () {
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->plano_trabalho_id = 'plano-1';
+        $consolidacao->data_inicio = '2026-06-12';
+        $consolidacao->data_fim = '2026-06-30';
+
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->usuario_id = 'dono-1';
+
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
+            ->with('consolidacao-1')->andReturn($consolidacao);
+        $this->planoRepo->shouldReceive('findById')->with('plano-1')->andReturn($plano);
+
+        $afastamentos = Mockery::mock(Collection::class);
+        $afastamentos->shouldReceive('load')
+            ->with('tipoMotivoAfastamento:id,nome,sigla,horas')->andReturnSelf();
+
+        $this->afastamentoRepo->shouldReceive('findAfastamentosNoPeriodo')
+            ->with('dono-1', Mockery::type(\Carbon\CarbonPeriod::class))
+            ->andReturn($afastamentos);
+        $this->afastamentoRepo->shouldNotReceive('findAfastamentosParaDispensa');
+
+        expect($this->service->ocorrencias('consolidacao-1'))->toBe($afastamentos);
+    });
+
+    test('lança exceção quando consolidação não encontrada', function () {
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
+            ->with('consolidacao-x')->andReturn(null);
+        $this->afastamentoRepo->shouldNotReceive('findAfastamentosNoPeriodo');
+
+        $this->service->ocorrencias('consolidacao-x');
+    })->throws(NotFoundException::class, 'Período avaliativo não encontrado.');
+
+    test('lança exceção quando plano não encontrado', function () {
+        $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
+        $consolidacao->plano_trabalho_id = 'plano-x';
+        $consolidacao->data_inicio = '2026-06-12';
+        $consolidacao->data_fim = '2026-06-30';
+
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
+            ->with('consolidacao-1')->andReturn($consolidacao);
+        $this->planoRepo->shouldReceive('findById')->with('plano-x')->andReturn(null);
+        $this->afastamentoRepo->shouldNotReceive('findAfastamentosNoPeriodo');
+
+        $this->service->ocorrencias('consolidacao-1');
+    })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
+});

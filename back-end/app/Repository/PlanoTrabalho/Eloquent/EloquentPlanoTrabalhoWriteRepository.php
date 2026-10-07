@@ -6,6 +6,7 @@ namespace App\Repository\PlanoTrabalho\Eloquent;
 
 use App\Models\PlanoTrabalho;
 use App\Repository\Eloquent\AbstractEloquentWriteRepository;
+use App\Repository\Eloquent\CodUnidadeAutorizadoraTrait;
 use App\Repository\Eloquent\EnvioTrait;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
 
@@ -14,6 +15,7 @@ use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoWriteRepositoryContract;
  */
 class EloquentPlanoTrabalhoWriteRepository extends AbstractEloquentWriteRepository implements PlanoTrabalhoWriteRepositoryContract
 {
+    use CodUnidadeAutorizadoraTrait;
     use EnvioTrait;
 
     public function __construct(PlanoTrabalho $model)

@@ -35,13 +35,13 @@ use App\Models\QuestionarioPreenchimento;
 use App\Models\StatusJustificativa;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
-use App\Services\CodigoOrgaoService;
 use App\Services\UtilService;
 use App\Support\ModalidadePgd;
 use App\Contracts\HasStatusHistory;
 use App\Traits\AutoUuid;
 use App\Traits\HasPermissions;
 use App\Traits\MergeRelations;
+use App\Traits\PreencheCodUnidadeAutorizadora;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -87,6 +87,7 @@ class UsuarioConfig
  * @property Carbon|null $data_tentativa_envio
  * @property Carbon|null $data_conclusao_envio
  * @property string|null $log_envio
+ * @property string|null $cod_unidade_autorizadora
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\UnidadeIntegrante> $areasTrabalho
  * @property-read \App\Models\UnidadeIntegrante|null $lotacao
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\UnidadeIntegrante[] $lotacoes
@@ -110,7 +111,7 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
         return 'usuario_id';
     }
 
-    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable,Impersonate;
+    use HasPermissions, HasApiTokens, HasFactory, Notifiable, AutoUuid, MergeRelations, SoftDeletes, Auditable, Impersonate, PreencheCodUnidadeAutorizadora;
 
     // protected $areasTrabalho; // dynamic property
 
@@ -159,7 +160,8 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
         'data_inicial_pedagio',
         'data_final_pedagio',
         'tipo_pedagio',
-        'data_ativacao_temporaria' /* date; */
+        'data_ativacao_temporaria', /* date; */
+        'cod_unidade_autorizadora',
     ];
 
     public function proxyFill($dataOrEntity, $unidade, $action)
@@ -197,6 +199,7 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'data_nascimento' => 'datetime',
         'data_agendamento_envio' => 'datetime',
         'data_tentativa_envio' => 'datetime',
         'data_envio_api_pgd' => 'datetime',
@@ -515,8 +518,7 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
 
     public function integracaoServidor()
     {
-        return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf')
-            ->where('codigo_orgao', CodigoOrgaoService::atual());
+        return $this->hasOne(IntegracaoServidor::class, 'cpf', 'cpf');
     }
 
    /**

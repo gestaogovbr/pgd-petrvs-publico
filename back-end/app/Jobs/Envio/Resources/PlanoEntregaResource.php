@@ -21,6 +21,7 @@ class PlanoEntregaResource extends JsonResource
             "origem_unidade"              => "SIAPE",
             "cod_unidade_instituidora"    => $this->programa->unidade->codigo,
             "cod_unidade_executora"       => $this->unidade->codigo,
+            "cod_unidade_autorizadora"    => $this->cod_unidade_autorizadora,
             "data_inicio"                 => Carbon::parse($this->data_inicio)->format('Y-m-d'),
             "data_termino"                => Carbon::parse($this->data_fim)->format('Y-m-d'),
             "status"                      => $this->converteStatus($this->status),

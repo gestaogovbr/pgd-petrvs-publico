@@ -27,7 +27,7 @@
     <div class="indicador-barra__legenda">
       @for (segmento of dados.segmentos; track segmento) {
         <div class="indicador-barra__legenda-item">
-          <span class="indicador-barra__legenda-cor" [style.background-color]="cores[$index] ?? '#ccc'"></span>
+          <span class="indicador-barra__legenda-cor" [style.background-color]="cores[$index]"></span>
           <span class="indicador-barra__legenda-label">{{ segmento }}</span>
         </div>
       }

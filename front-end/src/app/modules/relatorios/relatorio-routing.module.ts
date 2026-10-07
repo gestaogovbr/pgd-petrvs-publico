@@ -4,6 +4,7 @@ import { AuthGuard } from "src/app/guards/auth.guard";
 import { ConfigResolver } from "src/app/resolvies/config.resolver";
 import { RelatorioAgenteComponent } from "./relatorio-agente/relatorio-agente.component";
 import { RelatorioPlanoEntregaComponent } from "./relatorio-plano-entrega/relatorio-plano-entrega.component";
+import { RelatorioPlanoEntregaHubComponent } from "./relatorio-plano-entrega-hub/relatorio-plano-entrega-hub.component";
 import { RelatorioPlanoTrabalhoComponent } from "./relatorio-plano-trabalho/relatorio-plano-trabalho.component";
 import { RelatorioPlanoTrabalhoConsultaComponent } from "./relatorio-plano-trabalho-consulta/relatorio-plano-trabalho-consulta.component";
 import { RelatorioUnidadeComponent } from "./relatorio-unidade/relatorio-unidade.component";
@@ -61,13 +62,15 @@ const routes: Routes = [
       permission: "MOD_RELATORIO_PT"
     }
   },
-   { path: 'planos-entrega',
+  {
+    path: 'planos-entrega/cadastrados',
     component: RelatorioPlanoEntregaComponent,
     canActivate: [AuthGuard],
     resolve: { config: ConfigResolver },
     runGuardsAndResolvers: 'always',
-    data: { 
+    data: {
       title: "Relatório de Planos de Entrega",
+      breadcrumb: "Planos de Entrega Cadastrados",
     }
   },
   {
@@ -82,7 +85,25 @@ const routes: Routes = [
       breadcrumbParents: [{ label: 'Relatórios' }],
       permission: 'MOD_RELATORIO_PE',
     },
-  }, {
+  },
+  {
+    path: 'planos-entrega/lacunas',
+    loadChildren: () => import('./relatorio-plano-entrega-lacuna/routes').then(m => m.routes),
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+  },
+  {
+    path: 'planos-entrega',
+    component: RelatorioPlanoEntregaHubComponent,
+    canActivate: [AuthGuard],
+    resolve: { config: ConfigResolver },
+    runGuardsAndResolvers: 'always',
+    data: {
+      title: "Planos de Entrega",
+    }
+  },
+  {
    path: 'agentes',
     component: RelatorioAgenteComponent,
     canActivate: [AuthGuard],

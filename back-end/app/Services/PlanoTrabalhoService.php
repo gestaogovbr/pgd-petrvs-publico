@@ -49,6 +49,11 @@ class PlanoTrabalhoService extends ServiceBase
         $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
     }
 
+    public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int
+    {
+        return $this->planoTrabalhoRepository->atualizarCodUnidadeAutorizadora($codUnidadeAutorizadora, $somenteSemCodigo);
+    }
+
     /**
      * Retorna todos os Planos de Trabalho de um determinado usuário, que ainda se encontram dentro da vigência
      *

@@ -13,7 +13,6 @@ use App\Models\ProjetoRecurso;
 use App\Models\ProjetoHistorico;
 use App\Models\Comentario;
 use App\Models\ProjetoFase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Projeto extends ModelBase
@@ -63,7 +62,7 @@ class Projeto extends ModelBase
   protected static function booted()
   {
     static::creating(function ($projeto) {
-      $projeto->numero = DB::select("CALL sequence_projeto_numero()")[0]->number;
+      $projeto->numero = app(\App\Services\TenantSequenceService::class)->nextNumber(\App\Enums\SequenceType::PROJETO);
     });
   }
 

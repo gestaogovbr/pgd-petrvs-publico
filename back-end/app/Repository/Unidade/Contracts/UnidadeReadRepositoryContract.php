@@ -6,8 +6,8 @@ namespace App\Repository\Unidade\Contracts;
 
 use App\Models\Unidade;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\AssinaturaHierarquiaDTO;
-use Carbon\CarbonInterface;
 use App\V2\Unidade\DTOs\UnidadeIndexDTO;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection as SupportCollection;

@@ -12,6 +12,14 @@ use App\Services\Siape\ProcessaDadosSiapeBD;
 use App\Services\SiapeBlackListServidorService;
 use Illuminate\Support\Facades\Config;
 
+beforeEach(function () {
+    // O schema tenant de teste não isola dados entre casos; limpa fixtures da issue 2555.
+    SiapeBlackListServidor::withTrashed()->forceDelete();
+    SiapeListaServidores::query()->delete();
+    IntegracaoServidor::query()->where('cpf', 'like', '2555%')->delete();
+    Usuario::withTrashed()->where('cpf', 'like', '2555%')->forceDelete();
+});
+
 test('issue 2555 - carga automatica confirma ausencia e adiciona servidor local na blacklist', function () {
     $cpf = '25550000001';
     $matricula = '2555001';
@@ -584,8 +592,11 @@ function listaServidoresVaziaIssue2555(): string
         XML;
 }
 
-function listaServidoresComCpfIssue2555(string $cpf, string $dataUltimaTransacao = '01092026'): string
+function listaServidoresComCpfIssue2555(string $cpf, ?string $dataUltimaTransacao = null): string
 {
+    // Precisa ser mais recente que data_modificacao da integração (now()->subMonth()).
+    $dataUltimaTransacao ??= now()->format('dmY');
+
     return <<<XML
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
             <soap:Body>

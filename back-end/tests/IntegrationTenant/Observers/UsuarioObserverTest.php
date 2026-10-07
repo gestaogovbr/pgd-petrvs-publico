@@ -3,14 +3,21 @@
 namespace Tests\IntegrationTenant\Observers;
 
 use App\Jobs\Envio\ExportarParticipanteJob;
+use App\Models\PlanoTrabalho;
 use App\Models\Unidade;
 use App\Models\Usuario;
 use App\Repository\UsuarioRepository;
 use App\Services\UsuarioService;
-
 use Illuminate\Support\Facades\Bus;
 use Mockery;
 
+function criarUsuarioComPlanoTrabalho(array $usuarioAttributes = []): Usuario
+{
+    $usuario = Usuario::factory()->create($usuarioAttributes);
+    PlanoTrabalho::factory()->create(['usuario_id' => $usuario->id]);
+
+    return $usuario;
+}
 
 beforeEach(function () {
     Bus::fake();
@@ -23,8 +30,8 @@ afterAll(function () {
 describe('UsuarioObserver', function () {
 
     test('Chamado ao atualizar usuário', function () {
-        $usuario = Usuario::factory()->create([
-            'nome' => 'Usuario Teste'
+        $usuario = criarUsuarioComPlanoTrabalho([
+            'nome' => 'Usuario Teste',
         ]);
 
         $usuario->update([
@@ -35,7 +42,7 @@ describe('UsuarioObserver', function () {
     });
 
     test('Ao executar pelo Update do UsuarioService', function () {
-        $usuario = Usuario::factory()->create();
+        $usuario = criarUsuarioComPlanoTrabalho();
         $this->actingAs($usuario);
 
         $unidade = Unidade::factory()->create();
@@ -63,8 +70,8 @@ describe('UsuarioObserver', function () {
 
 
     test('Ao executar atualizarServidor', function () {
-        $usuario = Usuario::factory()->create([
-            'nome' => 'Usuario Teste'
+        $usuario = criarUsuarioComPlanoTrabalho([
+            'nome' => 'Usuario Teste',
         ]);
 
         $usuarioService = app(UsuarioService::class);
@@ -90,9 +97,8 @@ describe('UsuarioObserver', function () {
     });
 
     test('Ao atualizar pelo UsuarioRepository', function () {
-
-        $usuario = Usuario::factory()->create([
-            'nome' => 'Usuario Teste'
+        $usuario = criarUsuarioComPlanoTrabalho([
+            'nome' => 'Usuario Teste',
         ]);
 
         $matriculaSiape = fake()->numerify('########');

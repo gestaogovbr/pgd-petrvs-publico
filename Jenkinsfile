@@ -147,8 +147,8 @@ pipeline {
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs'
                 DOCKER_HUB_TAG_LATEST = 'latest'
-                DOCKER_HUB_TAG_NEW = '3.1.6'
-                DOCKER_HUB_TAG_OLD = '3.1.5'
+                DOCKER_HUB_TAG_NEW = '3.2.0'
+                DOCKER_HUB_TAG_OLD = '3.1.6'
             }
             steps {
                 withCredentials([

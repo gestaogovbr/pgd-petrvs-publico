@@ -3,16 +3,17 @@
 namespace Tests\Unit\Jobs;
 
 use App\Jobs\Envio\ExportarItemJob;
-use App\Models\Usuario;
 use App\Repository\Interfaces\EnvioRepositoryInterface;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Queue\TimeoutExceededException;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 use Mockery;
-use Tests\TenantTestCase;
+use Tests\TestCase;
 
-uses(TenantTestCase::class);
+uses(TestCase::class);
 
 afterEach(function () {
     Mockery::close();
@@ -59,18 +60,76 @@ class ExportarItemJobFake extends ExportarItemJob
     {
         return true;
     }
+
+    protected function initializeTenantContext(): void
+    {
+    }
 }
 
 describe('ExportarItemJob', function () {
     it('registra insucesso e não reagenda quando o job expira por timeout', function () {
         Bus::fake();
+        Log::shouldReceive('error')->withAnyArgs();
 
-        $model = new Usuario();
-        $model->id = 'item-1';
+        $model = Mockery::mock(Model::class);
+        $model->shouldReceive('getAttribute')
+            ->with('data_envio_api_pgd')
+            ->andReturn(null);
+
+        $repository = Mockery::mock(EnvioRepositoryInterface::class);
+        $repository->shouldReceive('findById')
+            ->twice()
+            ->with('item-1')
+            ->andReturn($model);
+        $repository->shouldReceive('registrarInsucesso')
+            ->once()
+            ->with($model, Mockery::type('string'));
+
+        app()->instance(EnvioRepositoryInterface::class, $repository);
+
+        $job = new ExportarItemJobFake();
+        $job->failed(new TimeoutExceededException('App\Jobs\Envio\ExportarItemJobFake has timed out.'));
+
+        Bus::assertNothingDispatched();
+    });
+
+    it('não sobrescreve o log quando o timeout chega após sucesso desta tentativa', function () {
+        Bus::fake();
+        Log::shouldReceive('info')->never();
+        Log::shouldReceive('error')->never();
+
+        $model = Mockery::mock(Model::class);
+        $model->shouldReceive('getAttribute')
+            ->with('data_envio_api_pgd')
+            ->andReturn(Carbon::now()->addSeconds(31));
 
         $repository = Mockery::mock(EnvioRepositoryInterface::class);
         $repository->shouldReceive('findById')
             ->once()
+            ->with('item-1')
+            ->andReturn($model);
+        $repository->shouldReceive('registrarInsucesso')->never();
+
+        app()->instance(EnvioRepositoryInterface::class, $repository);
+
+        $job = new ExportarItemJobFake();
+        $job->failed(new TimeoutExceededException('App\Jobs\Envio\ExportarItemJobFake has timed out.'));
+
+        Bus::assertNothingDispatched();
+    });
+
+    it('registra insucesso de timeout quando o envio da API é de tentativa anterior', function () {
+        Bus::fake();
+        Log::shouldReceive('error')->withAnyArgs();
+
+        $model = Mockery::mock(Model::class);
+        $model->shouldReceive('getAttribute')
+            ->with('data_envio_api_pgd')
+            ->andReturn(Carbon::now()->subMinutes(5));
+
+        $repository = Mockery::mock(EnvioRepositoryInterface::class);
+        $repository->shouldReceive('findById')
+            ->twice()
             ->with('item-1')
             ->andReturn($model);
         $repository->shouldReceive('registrarInsucesso')

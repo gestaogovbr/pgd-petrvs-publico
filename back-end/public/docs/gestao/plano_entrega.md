@@ -222,8 +222,7 @@ Ação: LIBERAR PARA HOMOLOGAÇÃO -> o plano adquire o status de 'HOMOLOGANDO';
 
 - (RN_PENT_AA) Condições para que um Plano de Entregas possa ser liberado para homologação:
   - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega [RN_PENT_D], e
-    - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
-    - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_LIB_HOMOL"
+    - o usuário logado precisa ser gestor titular ou substituto da Unidade do plano (Unidade B)
 
 Ação: RETIRAR DE HOMOLOGAÇÃO -> o plano retorna ao status de 'INCLUIDO';
 

@@ -358,3 +358,137 @@ describe('PlanoEntregaService::buscaCondicoes - gestorDelegadoUnidadePlano', fun
             ->and($condicoes['gestorUnidadePlano'])->toBeFalse();
     });
 });
+
+/**
+ * Monta um cenário mínimo (entidade, unidade, programa, usuário com a atribuição
+ * indicada na unidade do plano e um plano INCLUIDO) e devolve as condições
+ * calculadas por PlanoEntregaService::buscaCondicoes.
+ *
+ * @param string $atribuicao Atribuição do usuário na unidade do plano
+ * @param bool   $comLotacao Se true, também cria a atribuição LOTADO na mesma unidade
+ * @return array<string,mixed>
+ */
+function condicoesLiberarHomologacao(string $atribuicao, bool $comLotacao = false): array
+{
+    $sufixo = Str::random(6);
+
+    $tipoAvaliacao = new TipoAvaliacao();
+    $tipoAvaliacao->id = Str::uuid();
+    $tipoAvaliacao->fill(['nome' => "Aval $sufixo", 'tipo' => 'QUALITATIVO']);
+    $tipoAvaliacao->save();
+
+    $tipoJustificativa = new TipoJustificativa();
+    $tipoJustificativa->id = Str::uuid();
+    $tipoJustificativa->fill(['nome' => "Just $sufixo"]);
+    $tipoJustificativa->save();
+
+    $entidade = new Entidade();
+    $entidade->id = Str::uuid();
+    $entidade->fill([
+        'sigla' => "ENT_$sufixo", 'nome' => "Ent $sufixo", 'abrangencia' => 'NACIONAL',
+        'carga_horaria_padrao' => 8, 'gravar_historico_processo' => 0,
+        'layout_formulario_atividade' => 'COMPLETO', 'forma_contagem_carga_horaria' => 'DIA',
+    ]);
+    $entidade->save();
+
+    $unidade = new Unidade();
+    $unidade->id = Str::uuid();
+    $unidade->fill([
+        'sigla' => "UNI_$sufixo", 'nome' => "Uni $sufixo", 'entidade_id' => $entidade->id,
+        'codigo' => (string) random_int(10000, 99999), 'instituidora' => 1,
+    ]);
+    $unidade->save();
+
+    $programa = new Programa();
+    $programa->id = Str::uuid();
+    $programa->fill([
+        'nome' => "Programa $sufixo", 'normativa' => 'Normativa',
+        'config_plano_entrega' => '{"tipo_entrega": "POR_ENTREGA"}',
+        'unidade_id' => $unidade->id, 'data_inicio' => now(), 'data_fim' => now()->addYear(),
+        'prazo_max_plano_entrega' => 30, 'termo_obrigatorio' => 0,
+        'tipo_avaliacao_plano_entrega_id' => $tipoAvaliacao->id,
+        'tipo_avaliacao_plano_trabalho_id' => $tipoAvaliacao->id,
+        'tipo_justificativa_id' => $tipoJustificativa->id,
+    ]);
+    $programa->save();
+
+    $usuario = new Usuario();
+    $usuario->id = Str::uuid();
+    $usuario->forceFill([
+        'email' => "user-$sufixo@petrvs.com", 'nome' => "User $sufixo",
+        'cpf' => (string) random_int(10000000000, 99999999999),
+        'apelido' => 'User', 'matricula' => (string) random_int(1000000, 9999999),
+        'sexo' => 'MASCULINO', 'modalidade_pgd' => 'presencial',
+    ]);
+    $usuario->save();
+
+    $integrante = new UnidadeIntegrante();
+    $integrante->id = Str::uuid();
+    $integrante->forceFill(['unidade_id' => $unidade->id, 'usuario_id' => $usuario->id]);
+    $integrante->save();
+
+    $atrib = new UnidadeIntegranteAtribuicao();
+    $atrib->id = Str::uuid();
+    $atrib->forceFill(['unidade_integrante_id' => $integrante->id, 'atribuicao' => $atribuicao]);
+    $atrib->save();
+
+    if ($comLotacao) {
+        $lotacao = new UnidadeIntegranteAtribuicao();
+        $lotacao->id = Str::uuid();
+        $lotacao->forceFill(['unidade_integrante_id' => $integrante->id, 'atribuicao' => 'LOTADO']);
+        $lotacao->save();
+    }
+
+    $usuario->refresh();
+    test()->actingAs($usuario);
+
+    $planoEntrega = PlanoEntrega::withoutEvents(function () use ($unidade, $programa, $usuario) {
+        $pe = new PlanoEntrega();
+        $pe->id = Str::uuid();
+        $pe->fill([
+            'unidade_id' => $unidade->id, 'programa_id' => $programa->id, 'status' => 'INCLUIDO',
+            'criacao_usuario_id' => $usuario->id, 'nome' => 'PE Liberar Homolog',
+            'data_inicio' => now(), 'data_fim' => now()->addMonth(), 'numero' => random_int(1000, 9999),
+        ]);
+        $pe->save();
+
+        return $pe;
+    });
+
+    return (new PlanoEntregaService())->buscaCondicoes(['id' => $planoEntrega->id]);
+}
+
+describe('PlanoEntregaService - Liberar para Homologação (RN_PENT_AA)', function () {
+
+    test('gestor titular da unidade do plano pode liberar (gestorUnidadePlano = true)', function () {
+        Bus::fake();
+        $condicoes = condicoesLiberarHomologacao('GESTOR');
+
+        expect($condicoes['planoIncluido'])->toBeTrue()
+            ->and($condicoes['gestorUnidadePlano'])->toBeTrue();
+    });
+
+    test('gestor substituto da unidade do plano pode liberar (gestorUnidadePlano = true)', function () {
+        Bus::fake();
+        $condicoes = condicoesLiberarHomologacao('GESTOR_SUBSTITUTO');
+
+        expect($condicoes['gestorUnidadePlano'])->toBeTrue();
+    });
+
+    test('lotado não-gestor NÃO libera (gestorUnidadePlano = false, mesmo lotado)', function () {
+        Bus::fake();
+        $condicoes = condicoesLiberarHomologacao('LOTADO');
+
+        // Após remover a via de lotação, apenas gestorUnidadePlano autoriza.
+        expect($condicoes['gestorUnidadePlano'])->toBeFalse()
+            ->and($condicoes['unidadePlanoEhLotacao'])->toBeTrue();
+    });
+
+    test('gestor delegado NÃO libera (gestorUnidadePlano = false)', function () {
+        Bus::fake();
+        $condicoes = condicoesLiberarHomologacao('GESTOR_DELEGADO', comLotacao: true);
+
+        // Delegado é excluído (incluiDelegado: false); a lotação já não autoriza.
+        expect($condicoes['gestorUnidadePlano'])->toBeFalse();
+    });
+});

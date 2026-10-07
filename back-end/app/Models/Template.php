@@ -8,7 +8,6 @@ use App\Models\Unidade;
 use App\Models\Programa;
 use App\Models\Documento;
 use App\Models\Entidade;
-use Illuminate\Support\Facades\DB;
 
 class Template extends ModelBase
 {
@@ -19,13 +18,7 @@ class Template extends ModelBase
   protected static function booted()
   {
     static::creating(function ($template) {
-      $number = 1;
-      $results = DB::select("CALL sequence_template_numero()");
-      if (!empty($results)) {
-        $number = $results[0]->number;
-      }
-
-      $template->numero = $number;
+      $template->numero = app(\App\Services\TenantSequenceService::class)->nextNumber(\App\Enums\SequenceType::TEMPLATE);
     });
   }
 

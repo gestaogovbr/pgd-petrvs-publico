@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Exceptions\ExportPgdException;
 use App\Models\Perfil;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalho;
@@ -117,6 +118,52 @@ describe('UsuarioRepository — escrita de envio PGD', function () {
 
         expect($usuario->fresh()->data_agendamento_envio->equalTo($quando))->toBeTrue();
     });
+
+    it('garantirCodUnidadeAutorizadora: quando o registro tem unidade autorizadora, preserva o valor', function () {
+        tenant()->api_cod_unidade_autorizadora = '9999999999';
+        tenant()->save();
+
+        $usuario = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+        ]);
+        $usuario->setAttribute('cod_unidade_autorizadora', '1111111111');
+        $usuario->saveQuietly();
+
+        $this->repository->garantirCodUnidadeAutorizadora($usuario, (string) tenant('id'));
+
+        expect($usuario->fresh()->cod_unidade_autorizadora)->toBe('1111111111');
+    });
+
+    it('garantirCodUnidadeAutorizadora: quando o registro não tem unidade autorizadora, preenche a partir do tenant', function () {
+        tenant()->api_cod_unidade_autorizadora = '1234567890';
+        tenant()->save();
+
+        $usuario = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+        ]);
+        $usuario->setAttribute('cod_unidade_autorizadora', null);
+        $usuario->saveQuietly();
+
+        $this->repository->garantirCodUnidadeAutorizadora($usuario, (string) tenant('id'));
+
+        expect($usuario->fresh()->cod_unidade_autorizadora)->toBe('1234567890');
+    });
+
+    it('garantirCodUnidadeAutorizadora: quando o registro e o tenant não têm unidade autorizadora, lança exceção', function () {
+        tenant()->api_cod_unidade_autorizadora = null;
+        tenant()->save();
+
+        $usuario = Usuario::factory()->create([
+            'perfil_id' => $this->perfilId,
+        ]);
+        $usuario->setAttribute('cod_unidade_autorizadora', null);
+        $usuario->saveQuietly();
+
+        expect(fn () => $this->repository->garantirCodUnidadeAutorizadora($usuario, (string) tenant('id')))
+            ->toThrow(ExportPgdException::class, 'Unidade Autorizadora não definida no Tenant');
+
+        expect($usuario->fresh()->cod_unidade_autorizadora)->toBeNull();
+    });
 });
 
 describe('PlanoEntregaRepository — escrita de envio PGD', function () {
@@ -200,6 +247,52 @@ describe('PlanoEntregaRepository — escrita de envio PGD', function () {
         $this->repository->agendarEnvio($plano, $quando);
 
         expect($plano->fresh()->data_agendamento_envio->equalTo($quando))->toBeTrue();
+    });
+
+    it('garantirCodUnidadeAutorizadora: quando o registro tem unidade autorizadora, preserva o valor', function () {
+        tenant()->api_cod_unidade_autorizadora = '9999999999';
+        tenant()->save();
+
+        $plano = PlanoEntrega::factory()->create([
+            'data_agendamento_envio' => null,
+        ]);
+        $plano->setAttribute('cod_unidade_autorizadora', '1111111111');
+        $plano->saveQuietly();
+
+        $this->repository->garantirCodUnidadeAutorizadora($plano, (string) tenant('id'));
+
+        expect($plano->fresh()->cod_unidade_autorizadora)->toBe('1111111111');
+    });
+
+    it('garantirCodUnidadeAutorizadora: quando o registro não tem unidade autorizadora, preenche a partir do tenant', function () {
+        tenant()->api_cod_unidade_autorizadora = '1234567890';
+        tenant()->save();
+
+        $plano = PlanoEntrega::factory()->create([
+            'data_agendamento_envio' => null,
+        ]);
+        $plano->setAttribute('cod_unidade_autorizadora', null);
+        $plano->saveQuietly();
+
+        $this->repository->garantirCodUnidadeAutorizadora($plano, (string) tenant('id'));
+
+        expect($plano->fresh()->cod_unidade_autorizadora)->toBe('1234567890');
+    });
+
+    it('garantirCodUnidadeAutorizadora: quando o registro e o tenant não têm unidade autorizadora, lança exceção', function () {
+        tenant()->api_cod_unidade_autorizadora = null;
+        tenant()->save();
+
+        $plano = PlanoEntrega::factory()->create([
+            'data_agendamento_envio' => null,
+        ]);
+        $plano->setAttribute('cod_unidade_autorizadora', null);
+        $plano->saveQuietly();
+
+        expect(fn () => $this->repository->garantirCodUnidadeAutorizadora($plano, (string) tenant('id')))
+            ->toThrow(ExportPgdException::class, 'Unidade Autorizadora não definida no Tenant');
+
+        expect($plano->fresh()->cod_unidade_autorizadora)->toBeNull();
     });
 });
 
@@ -297,5 +390,51 @@ describe('PlanoTrabalhoRepository — escrita de envio PGD', function () {
         $this->repository->agendarEnvio($plano, $quando);
 
         expect($plano->fresh()->data_agendamento_envio->equalTo($quando))->toBeTrue();
+    });
+
+    it('garantirCodUnidadeAutorizadora: quando o registro tem unidade autorizadora, preserva o valor', function () {
+        tenant()->api_cod_unidade_autorizadora = '9999999999';
+        tenant()->save();
+
+        $plano = PlanoTrabalho::factory()->ativo()->create([
+            'data_agendamento_envio' => null,
+        ]);
+        $plano->setAttribute('cod_unidade_autorizadora', '1111111111');
+        $plano->saveQuietly();
+
+        $this->repository->garantirCodUnidadeAutorizadora($plano, (string) tenant('id'));
+
+        expect($plano->fresh()->cod_unidade_autorizadora)->toBe('1111111111');
+    });
+
+    it('garantirCodUnidadeAutorizadora: quando o registro não tem unidade autorizadora, preenche a partir do tenant', function () {
+        tenant()->api_cod_unidade_autorizadora = '1234567890';
+        tenant()->save();
+
+        $plano = PlanoTrabalho::factory()->ativo()->create([
+            'data_agendamento_envio' => null,
+        ]);
+        $plano->setAttribute('cod_unidade_autorizadora', null);
+        $plano->saveQuietly();
+
+        $this->repository->garantirCodUnidadeAutorizadora($plano, (string) tenant('id'));
+
+        expect($plano->fresh()->cod_unidade_autorizadora)->toBe('1234567890');
+    });
+
+    it('garantirCodUnidadeAutorizadora: quando o registro e o tenant não têm unidade autorizadora, lança exceção', function () {
+        tenant()->api_cod_unidade_autorizadora = null;
+        tenant()->save();
+
+        $plano = PlanoTrabalho::factory()->ativo()->create([
+            'data_agendamento_envio' => null,
+        ]);
+        $plano->setAttribute('cod_unidade_autorizadora', null);
+        $plano->saveQuietly();
+
+        expect(fn () => $this->repository->garantirCodUnidadeAutorizadora($plano, (string) tenant('id')))
+            ->toThrow(ExportPgdException::class, 'Unidade Autorizadora não definida no Tenant');
+
+        expect($plano->fresh()->cod_unidade_autorizadora)->toBeNull();
     });
 });

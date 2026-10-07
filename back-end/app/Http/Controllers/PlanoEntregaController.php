@@ -391,20 +391,16 @@ class PlanoEntregaController extends ControllerBase
                 /*
                 (RN_PENT_AA) LIBERAR PARA HOMOLOGAÇÃO
                 - o plano precisa estar com o status INCLUIDO, conter ao menos uma entrega (RN_PENT_D), e
-                    - o usuário logado precisa ser gestor da Unidade do plano (Unidade B); ou
-                    - a Unidade do plano (Unidade B) precisa ser a Unidade de lotação do usuário logado, e este possuir a capacidade "MOD_PENT_LIB_HOMOL"
+                    - o usuário logado precisa ser gestor titular ou substituto da Unidade do plano (Unidade B)
                 */
                 $data = $request->validate(['id' => ['required']]);
                 $condicoes = $service->buscaCondicoes(['id' => $data['id']]);
                 $condition1 = $condicoes['planoIncluido'];
                 $condition2 = $condicoes['nrEntregas'] > 0;
                 $condition3 = $condicoes['gestorUnidadePlano'];
-                $condition4 = $condicoes['unidadePlanoEhLotacao'] && $usuario->hasPermissionTo("MOD_PENT_LIB_HOMOL");
                 if (!$condition1) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não pode ser liberado para homologação porque não se encontra no status INCLUIDO.\n[ver RN_PENT_AA]");
                 if (!$condition2) throw new ServerException("ValidatePlanoEntrega", "O plano de entregas não pode ser liberado para homologação porque ainda não possui nenhuma entrega.\n[ver RN_PENT_AA]");
-                if (!($condition3 || $condition4)) throw new ServerException("ValidateUsuario", "Não é possível liberar o plano de entregas para homologação porque nenhuma das condições abaixo é atendida:\n" .
-                    "1. o usuário logado precisa ser um dos gestores da unidade executora do plano, ou\n" .
-                    "2. o usuário logado precisa ser lotado na unidade executora do plano e possuir a capacidade MOD_PENT_LIB_HOMOL.\n[ver RN_PENT_AA]");
+                if (!$condition3) throw new ServerException("ValidateUsuario", "Não é possível liberar o plano de entregas para homologação porque o usuário logado não é um dos gestores (titular ou substituto) da unidade executora do plano.\n[ver RN_PENT_AA]");
                 break;
             case 'REATIVAR':
                 /*

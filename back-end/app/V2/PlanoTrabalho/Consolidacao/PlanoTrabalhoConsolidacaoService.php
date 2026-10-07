@@ -153,7 +153,22 @@ class PlanoTrabalhoConsolidacaoService
         );
     }
 
+    /**
+     * Retorna todas as ocorrências (afastamentos) do período da consolidação,
+     * incluindo tipos de motivo com cálculo ACRESCIMO.
+     */
     public function ocorrencias(string $consolidacaoId): Collection
+    {
+        ['usuarioId' => $usuarioId, 'vigencia' => $vigencia] = $this->resolverVigenciaOcorrencias($consolidacaoId);
+
+        return $this->afastamentoRepository->findAfastamentosNoPeriodo($usuarioId, $vigencia)
+            ->load('tipoMotivoAfastamento:id,nome,sigla,horas');
+    }
+
+    /**
+     * @return array{usuarioId: string, vigencia: CarbonPeriod}
+     */
+    private function resolverVigenciaOcorrencias(string $consolidacaoId): array
     {
         $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($consolidacaoId);
 
@@ -163,13 +178,16 @@ class PlanoTrabalhoConsolidacaoService
 
         $plano = $this->planoTrabalhoRepository->findById($consolidacao->plano_trabalho_id);
 
+        if ($plano === null) {
+            throw new NotFoundException('Plano de Trabalho não encontrado.');
+        }
+
         $vigencia = CarbonPeriod::create(
             Carbon::parse($consolidacao->data_inicio)->startOfDay(),
             Carbon::parse($consolidacao->data_fim)->startOfDay(),
         );
 
-        return $this->afastamentoRepository->findAfastamentosParaDispensa($plano->usuario_id, $vigencia)
-            ->load('tipoMotivoAfastamento:id,nome,sigla,horas');
+        return ['usuarioId' => (string) $plano->usuario_id, 'vigencia' => $vigencia];
     }
 
     public function notasAvaliacao(string $planoTrabalhoId): Collection

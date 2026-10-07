@@ -104,6 +104,16 @@ class EloquentAfastamentoReadRepository implements AfastamentoReadRepositoryCont
             ->get();
     }
 
+    public function findAfastamentosNoPeriodo(string $usuarioId, CarbonPeriod $vigencia): Collection
+    {
+        return $this->afastamento->newQuery()
+            ->where('usuario_id', $usuarioId)
+            ->where('data_fim', '>=', $vigencia->start)
+            ->where('data_inicio', '<=', $vigencia->end)
+            ->orderBy('data_inicio')
+            ->get();
+    }
+
     public function buscarOcorrenciasListagem(OcorrenciaIndexDTO $dto): LengthAwarePaginator
     {
         $query = $this->afastamento->newQuery()
