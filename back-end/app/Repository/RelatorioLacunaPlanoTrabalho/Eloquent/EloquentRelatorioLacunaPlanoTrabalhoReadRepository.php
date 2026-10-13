@@ -7,7 +7,7 @@ namespace App\Repository\RelatorioLacunaPlanoTrabalho\Eloquent;
 use App\Enums\Atribuicao;
 use App\Enums\PerfilEnum;
 use App\Repository\RelatorioLacunaPlanoTrabalho\Contracts\RelatorioLacunaPlanoTrabalhoReadRepositoryContract;
-use App\Services\UnidadeService;
+use App\Repository\Unidade\Contracts\UnidadeReadRepositoryContract;
 use App\V2\Relatorio\LacunaPlanoTrabalho\LacunaPlanoTrabalhoCalculator;
 use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
@@ -19,25 +19,30 @@ class EloquentRelatorioLacunaPlanoTrabalhoReadRepository implements RelatorioLac
 {
     public function __construct(
         private readonly LacunaPlanoTrabalhoCalculator $calculator,
+        private readonly UnidadeReadRepositoryContract $unidadeRepository,
     ) {}
 
     public function query(array $data): array
     {
-        $where = $data['where'] ?? [];
-        $periodoInicio = $this->extractValue($where, 'periodo_inicio');
-        $periodoFim = $this->extractValue($where, 'periodo_fim');
-        $unidadeId = $this->extractValue($where, 'unidade_id');
-        $incluirSubordinadas = (bool) $this->extractValue($where, 'incluir_unidades_subordinadas');
+        $filters = is_array($data['filters'] ?? null) ? $data['filters'] : [];
+        $periodoInicio = isset($filters['periodo_inicio']) && $filters['periodo_inicio'] !== ''
+            ? (string) $filters['periodo_inicio']
+            : null;
+        $periodoFim = isset($filters['periodo_fim']) && $filters['periodo_fim'] !== ''
+            ? (string) $filters['periodo_fim']
+            : null;
+        $unidadeId = isset($filters['unidade_id']) && $filters['unidade_id'] !== ''
+            ? (string) $filters['unidade_id']
+            : null;
+        $incluirSubordinadas = ! empty($filters['incluir_unidades_subordinadas']);
 
-        if (!$periodoInicio || !$periodoFim || !$unidadeId) {
+        if (! $periodoInicio || ! $periodoFim || ! $unidadeId) {
             return ['count' => 0, 'rows' => []];
         }
 
-        $unidadeIds = [$unidadeId];
-        if ($incluirSubordinadas) {
-            $subordinadasIds = app(UnidadeService::class)->subordinadas($unidadeId)->pluck('id')->all();
-            $unidadeIds = array_values(array_unique(array_merge($unidadeIds, $subordinadasIds)));
-        }
+        $unidadeIds = $incluirSubordinadas
+            ? $this->unidadeRepository->idsNaHierarquiaDe([$unidadeId])
+            : [$unidadeId];
 
         $agentes = $this->buscarAgentesParticipantes($unidadeIds);
         if ($agentes === []) {
@@ -85,7 +90,7 @@ class EloquentRelatorioLacunaPlanoTrabalhoReadRepository implements RelatorioLac
             }
         }
 
-        $rows = $this->aplicarFiltrosTabela($rows, $where);
+        $rows = $this->aplicarFiltrosTabela($rows, $filters);
         $rows = $this->aplicarOrdenacao($rows, $data['orderBy'] ?? []);
 
         $count = count($rows);
@@ -302,37 +307,38 @@ class EloquentRelatorioLacunaPlanoTrabalhoReadRepository implements RelatorioLac
 
     /**
      * @param  list<object>  $rows
-     * @param  array<int, mixed>  $where
+     * @param  array<string, mixed>  $filters
      * @return list<object>
      */
-    private function aplicarFiltrosTabela(array $rows, array $where): array
+    private function aplicarFiltrosTabela(array $rows, array $filters): array
     {
-        $nome = $this->extractValue($where, 'nome');
-        $matricula = $this->extractValue($where, 'matricula');
-        $unidadeNome = $this->extractValue($where, 'unidadeHierarquia')
-            ?? $this->extractValue($where, 'unidadeNome');
-        $qtde = $this->extractValue($where, 'quantidade_dias');
-        $lacuna = $this->extractValue($where, 'lacuna');
-        $ocorrencias = $this->extractValue($where, 'ocorrencias_texto');
+        $nome = $this->filtroTexto($filters, 'nome');
+        $matricula = $this->filtroTexto($filters, 'matricula');
+        $unidadeNome = $this->filtroTexto($filters, 'unidadeHierarquia')
+            ?? $this->filtroTexto($filters, 'unidadeNome');
+        $qtde = $filters['quantidade_dias'] ?? null;
+        $lacuna = $this->filtroTexto($filters, 'lacuna');
+        $ocorrencias = $this->filtroTexto($filters, 'ocorrencias_texto');
 
         return array_values(array_filter($rows, function ($row) use ($nome, $matricula, $unidadeNome, $qtde, $lacuna, $ocorrencias) {
-            if ($nome && stripos((string) $row->nome_exibicao, trim($nome, '%')) === false
-                && stripos((string) $row->nome, trim($nome, '%')) === false) {
+            if ($nome !== null
+                && stripos((string) $row->nome_exibicao, $nome) === false
+                && stripos((string) $row->nome, $nome) === false) {
                 return false;
             }
-            if ($matricula && stripos((string) ($row->matricula ?? ''), trim($matricula, '%')) === false) {
+            if ($matricula !== null && stripos((string) ($row->matricula ?? ''), $matricula) === false) {
                 return false;
             }
-            if ($unidadeNome && stripos((string) ($row->unidadeHierarquia ?? ''), trim($unidadeNome, '%')) === false) {
+            if ($unidadeNome !== null && stripos((string) ($row->unidadeHierarquia ?? ''), $unidadeNome) === false) {
                 return false;
             }
             if ($qtde !== null && $qtde !== '' && (int) $row->quantidade_dias !== (int) $qtde) {
                 return false;
             }
-            if ($lacuna && stripos((string) ($row->lacuna ?? ''), trim($lacuna, '%')) === false) {
+            if ($lacuna !== null && stripos((string) ($row->lacuna ?? ''), $lacuna) === false) {
                 return false;
             }
-            if ($ocorrencias && stripos((string) ($row->ocorrencias_texto ?? ''), trim($ocorrencias, '%')) === false) {
+            if ($ocorrencias !== null && stripos((string) ($row->ocorrencias_texto ?? ''), $ocorrencias) === false) {
                 return false;
             }
 
@@ -377,19 +383,18 @@ class EloquentRelatorioLacunaPlanoTrabalhoReadRepository implements RelatorioLac
     }
 
     /**
-     * @param  array<int, mixed>  $where
+     * @param  array<string, mixed>  $filters
      */
-    private function extractValue(array &$where, string $field): mixed
+    private function filtroTexto(array $filters, string $field): ?string
     {
-        foreach ($where as $i => $condition) {
-            if (is_array($condition) && ($condition[0] ?? null) === $field) {
-                unset($where[$i]);
-
-                return $condition[2] ?? null;
-            }
+        $valor = $filters[$field] ?? null;
+        if ($valor === null || $valor === '') {
+            return null;
         }
 
-        return null;
+        $texto = trim((string) $valor, " \t\n\r\0\x0B%");
+
+        return $texto === '' ? null : $texto;
     }
 }
 

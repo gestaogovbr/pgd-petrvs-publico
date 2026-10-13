@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository\PlanoTrabalhoEntrega\Eloquent;
 
+use App\Enums\StatusEnum;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalhoEntrega\Contracts\PlanoTrabalhoEntregaReadRepositoryContract;
@@ -42,6 +43,9 @@ class EloquentPlanoTrabalhoEntregaReadRepository extends AbstractEloquentReadRep
     {
         return $this->query()
             ->where('plano_entrega_entrega_id', $planoEntregaEntregaId)
+            ->whereHas('planoTrabalho', function ($query): void {
+                $query->where('status', '<>', StatusEnum::CANCELADO->value);
+            })
             ->distinct()
             ->pluck('plano_trabalho_id')
             ->all();

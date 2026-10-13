@@ -20,11 +20,12 @@ import {
   BarElement,
   Tooltip,
 } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { IndicadorTeletrabalho } from '../../infra/painel-api.client';
 import { IndicadorCardComponent } from './indicador-card.component';
 import { CHART_COLORS } from 'src/app/services/chart';
 
-Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip);
+Chart.register(CategoryScale, LinearScale, BarController, BarElement, Tooltip, ChartDataLabels);
 
 @Component({
   selector: 'indicador-barra-vertical',
@@ -77,6 +78,9 @@ export class IndicadorBarraVerticalComponent {
     return {
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: { top: 24 },
+      },
       interaction: {
         mode: 'index',
         intersect: false,
@@ -100,14 +104,21 @@ export class IndicadorBarraVerticalComponent {
               const dados = this._dados();
               if (!dados) return '';
               const valor = context.raw as number;
+              const valorFmt = valor.toLocaleString('pt-BR');
               if (context.dataIndex === 0) {
-                return `${valor}% (${dados.participantes_modalidade} de ${dados.total_participantes})`;
+                return `${valorFmt}% (${dados.participantes_modalidade} de ${dados.total_participantes})`;
               }
-              return `${valor}%`;
+              return `${valorFmt}%`;
             },
           },
         },
-        datalabels: { display: false },
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          color: (context: any) => this.CORES[context.dataIndex] ?? '#333',
+          font: { weight: 'bold' },
+          formatter: (value: number) => `${value.toLocaleString('pt-BR')}%`,
+        },
       },
     } as any;
   });

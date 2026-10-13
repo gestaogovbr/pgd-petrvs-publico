@@ -58,6 +58,33 @@ describe('AlinhamentoInstitucionalDataProvider - plano soft-deleted', function (
     });
 });
 
+describe('AlinhamentoInstitucionalDataProvider - unidade executora do plano', function () {
+
+    test('conta a entrega na unidade do plano e não na unidade demandante', function () {
+        $unidadeDemandante = Unidade::factory()->create();
+        $plano = PlanoEntrega::factory()->create(['unidade_id' => $this->unidadePai->id]);
+
+        PlanoEntregaEntrega::factory()->forPlanoEntrega($plano)->create([
+            'unidade_id' => $unidadeDemandante->id,
+            'data_inicio' => now()->subDay(),
+            'data_fim' => now()->addDay(),
+        ]);
+
+        $resultadoPlano = $this->provider->getData($this->filtros);
+        expect($resultadoPlano->distribuicoes[0]->total)->toBe(1);
+
+        $filtrosDemandante = new FiltrosPainelDTO(
+            tipoConsulta: 'situacao_atual',
+            unidadeId: $unidadeDemandante->id,
+            dataInicio: null,
+            dataFim: null,
+        );
+        $resultadoDemandante = $this->provider->getData($filtrosDemandante);
+
+        expect($resultadoDemandante->distribuicoes[0]->total)->toBe(0);
+    });
+});
+
 describe('AlinhamentoInstitucionalDataProvider - interseção de datas', function () {
 
     test('situacao_atual conta entrega vigente hoje', function () {

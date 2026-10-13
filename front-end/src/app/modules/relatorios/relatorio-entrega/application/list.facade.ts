@@ -10,11 +10,13 @@ import {
   RelatorioEntregaRow,
   RelatorioEntregaSortColumn,
 } from '../domain/types';
+import { MessageService } from 'src/app/v2/services/message.service';
 
 @Injectable()
 export class RelatorioEntregaListFacade {
   private readonly listar = inject(ListarRelatorioEntrega);
   private readonly exportar = inject(ExportarRelatorioEntrega);
+  private readonly message = inject(MessageService);
 
   readonly page = signal(1);
   readonly filters = signal<RelatorioEntregaListFilters>({});
@@ -71,16 +73,17 @@ export class RelatorioEntregaListFacade {
       })
       .pipe(finalize(() => this.exporting.set(false)))
       .subscribe({
-        next: (blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const anchor = document.createElement('a');
-          anchor.href = url;
-          anchor.download = 'relatorio_entregas.xlsx';
-          anchor.click();
-          window.URL.revokeObjectURL(url);
+        next: (res) => {
+          if (res) {
+            this.message.success(
+              'Seu relatório está sendo gerado! Acompanhe o progresso e faça o <a href="/relatorios/exportacao" target="_blank" rel="noopener noreferrer">download</a> na tela Exportação de Relatórios. O arquivo ficará disponível por 24 horas.',
+              'Sucesso!',
+              { html: true },
+            );
+          }
         },
         error: (err) => {
-          const msg = err?.error?.error ?? 'Não foi possível exportar o relatório.';
+          const msg = err?.error?.error ?? 'Não foi possível solicitar a geração do relatório.';
           this.error.set(typeof msg === 'string' ? msg : String(msg));
         },
       });

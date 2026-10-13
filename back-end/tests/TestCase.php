@@ -17,6 +17,8 @@ abstract class TestCase extends BaseTestCase
 
     protected function setUp(): void
     {
+        \App\Support\AuthenticatedUsuario::clearFakes();
+
         parent::setUp();
 
         static::disableRabbitMQ();
@@ -143,6 +145,8 @@ abstract class TestCase extends BaseTestCase
 
     protected function tearDown(): void
     {
+        \App\Support\AuthenticatedUsuario::clearFakes();
+
         if ($this->tenancy) {
             tenancy()->end();
         }

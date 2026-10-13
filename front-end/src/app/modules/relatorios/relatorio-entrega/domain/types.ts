@@ -13,6 +13,9 @@ export interface RelatorioEntregaRow {
   meta_percentual: number | null;
   qtd_planejamento_institucional: number;
   qtd_cadeia_valor: number;
+  planejamento_institucional: string;
+  cadeia_valor: string;
+  linha: number;
   qtd_outras_entregas: number;
   situacao: string;
   plano_id: string;
