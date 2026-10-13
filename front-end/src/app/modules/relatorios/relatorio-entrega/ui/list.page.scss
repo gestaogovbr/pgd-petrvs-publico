@@ -50,7 +50,7 @@
 
   table {
     width: 100%;
-    min-width: 1400px;
+    min-width: 1680px;
     border-collapse: collapse;
     border: 1px solid #000;
     background: #fff;
@@ -108,13 +108,25 @@
     text-align: left;
   }
 
+  th.sub-header.sortable.vinculo-col {
+    min-width: 14rem;
+    max-width: 22rem;
+  }
+
+  td[data-th='Planejamento Institucional'],
+  td[data-th='Cadeia de Valor'] {
+    text-align: left;
+    white-space: normal;
+    word-break: break-word;
+    min-width: 14rem;
+    max-width: 22rem;
+  }
+
   td[data-th='Data de início'],
   td[data-th='Data de fim'],
   td[data-th='Planejado'],
   td[data-th='Alcançado'],
   td[data-th='Tipo de Meta'],
-  td[data-th='Planejamento Institucional'],
-  td[data-th='Cadeia de Valor'],
   td[data-th='Situação'],
   td[data-th='ID do Plano'],
   td[data-th='Status do Plano'],

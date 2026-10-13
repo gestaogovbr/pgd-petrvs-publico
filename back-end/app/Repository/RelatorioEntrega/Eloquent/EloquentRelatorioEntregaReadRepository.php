@@ -9,7 +9,9 @@ use App\Services\UnidadeService;
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaIndexFiltersDTO;
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaQueryDTO;
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaRowDTO;
+use App\V2\RelatorioEntrega\Support\RelatorioEntregaVinculosLinhas;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepositoryContract
@@ -38,6 +40,20 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
         'qtd_planos_trabalho' => 'qtd_planos_trabalho',
     ];
 
+    private const TABELA_VINCULO_OBJETIVO = 'planos_entregas_entregas_objetivos';
+
+    private const TABELA_OBJETIVO = 'planejamentos_objetivos';
+
+    private const COLUNA_OBJETIVO = 'planejamento_objetivo_id';
+
+    private const TABELA_VINCULO_PROCESSO = 'planos_entregas_entregas_processos';
+
+    private const TABELA_PROCESSO = 'cadeias_valores_processos';
+
+    private const COLUNA_PROCESSO = 'cadeia_processo_id';
+
+    private const CHUNK_IDS_VINCULOS = 500;
+
     public function query(RelatorioEntregaQueryDTO $data): array
     {
         $query = $this->baseQuery();
@@ -52,11 +68,9 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
             $query->forPage($page, $limit);
         }
 
-        $rows = collect($query->get())->map(
-            fn ($row) => RelatorioEntregaRowDTO::fromQueryRow(
-                $row,
-                $data->filters->resolveDataConsulta(),
-            )
+        $rows = $this->expandirVinculos(
+            collect($query->get()),
+            $data->filters->resolveDataConsulta(),
         );
 
         return [
@@ -94,20 +108,25 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
                 'pe.data_inicio as plano_data_inicio',
                 'pe.data_fim as plano_data_fim',
                 'pe.status as plano_status',
-                DB::raw('(SELECT COUNT(*) FROM planos_entregas_entregas_objetivos o
+                DB::raw('(SELECT COUNT(*) FROM '.self::TABELA_VINCULO_OBJETIVO.' o
+                    INNER JOIN '.self::TABELA_OBJETIVO.' item
+                        ON item.id = o.'.self::COLUNA_OBJETIVO.' AND item.deleted_at IS NULL
                     WHERE o.entrega_id = pee.id AND o.deleted_at IS NULL) as qtd_planejamento_institucional'),
-                DB::raw('(SELECT COUNT(*) FROM planos_entregas_entregas_processos p
+                DB::raw('(SELECT COUNT(*) FROM '.self::TABELA_VINCULO_PROCESSO.' p
+                    INNER JOIN '.self::TABELA_PROCESSO.' item
+                        ON item.id = p.'.self::COLUNA_PROCESSO.' AND item.deleted_at IS NULL
                     WHERE p.entrega_id = pee.id AND p.deleted_at IS NULL) as qtd_cadeia_valor'),
                 DB::raw('(SELECT COUNT(*) FROM planos_entregas_entregas oe
                     WHERE oe.deleted_at IS NULL
                     AND (oe.entrega_pai_id = pee.id OR oe.id = pee.entrega_pai_id)) as qtd_outras_entregas'),
-                DB::raw('(SELECT COUNT(DISTINCT pt.usuario_id)
+                DB::raw("(SELECT COUNT(DISTINCT pt.usuario_id)
                     FROM planos_trabalhos_entregas pte
-                    INNER JOIN planos_trabalhos pt ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL
-                    WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL) as qtd_participantes'),
-                DB::raw('(SELECT COUNT(DISTINCT pte.plano_trabalho_id)
+                    INNER JOIN planos_trabalhos pt ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL AND pt.status <> 'CANCELADO'
+                    WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL) as qtd_participantes"),
+                DB::raw("(SELECT COUNT(DISTINCT pte.plano_trabalho_id)
                     FROM planos_trabalhos_entregas pte
-                    WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL) as qtd_planos_trabalho'),
+                    INNER JOIN planos_trabalhos pt ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL AND pt.status <> 'CANCELADO'
+                    WHERE pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL) as qtd_planos_trabalho"),
                 DB::raw($this->metaNumericoSql('pee.meta', 'e.tipo_indicador').' as meta_planejado'),
                 DB::raw($this->metaNumericoSql('pee.realizado', 'e.tipo_indicador').' as meta_alcancado'),
                 DB::raw($this->metaPercentualSql(
@@ -140,6 +159,93 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
         return "CASE WHEN ({$alcancadoExpr}) > 0 THEN ROUND(({$planejadoExpr}) / ({$alcancadoExpr}) * 100, 2) ELSE NULL END";
     }
 
+    /**
+     * @param Collection<int, \stdClass> $rows
+     * @return Collection<int, RelatorioEntregaRowDTO>
+     */
+    private function expandirVinculos(Collection $rows, string $dataConsulta): Collection
+    {
+        $ids = [];
+        foreach ($rows as $row) {
+            $id = (string) ($row->id ?? '');
+            if ($id !== '') {
+                $ids[] = $id;
+            }
+        }
+        $ids = array_values(array_unique($ids));
+
+        $objetivos = $this->nomesVinculadosPorEntrega(
+            $ids,
+            self::TABELA_VINCULO_OBJETIVO,
+            self::TABELA_OBJETIVO,
+            self::COLUNA_OBJETIVO,
+        );
+        $processos = $this->nomesVinculadosPorEntrega(
+            $ids,
+            self::TABELA_VINCULO_PROCESSO,
+            self::TABELA_PROCESSO,
+            self::COLUNA_PROCESSO,
+        );
+
+        $expandidas = collect();
+        foreach ($rows as $row) {
+            $dto = RelatorioEntregaRowDTO::fromQueryRow($row, $dataConsulta);
+            $id = (string) ($row->id ?? '');
+            $linhas = RelatorioEntregaVinculosLinhas::montar(
+                $objetivos[$id] ?? [],
+                $processos[$id] ?? [],
+            );
+            foreach ($linhas as $indice => $linha) {
+                $expandidas->push($dto->comLinhaVinculo(
+                    $linha['planejamento_institucional'],
+                    $linha['cadeia_valor'],
+                    $indice + RelatorioEntregaVinculosLinhas::LINHA_INICIAL,
+                ));
+            }
+        }
+
+        return $expandidas;
+    }
+
+    /**
+     * @param list<string> $entregaIds
+     * @return array<string, list<string>>
+     */
+    private function nomesVinculadosPorEntrega(
+        array $entregaIds,
+        string $tabelaVinculo,
+        string $tabelaItem,
+        string $colunaItemId,
+    ): array {
+        if ($entregaIds === []) {
+            return [];
+        }
+
+        $agrupado = [];
+        foreach (array_chunk($entregaIds, self::CHUNK_IDS_VINCULOS) as $chunk) {
+            $registros = DB::table($tabelaVinculo.' as vinculo')
+                ->join($tabelaItem.' as item', function ($join) use ($colunaItemId): void {
+                    $join->on('item.id', '=', 'vinculo.'.$colunaItemId)
+                        ->whereNull('item.deleted_at');
+                })
+                ->whereIn('vinculo.entrega_id', $chunk)
+                ->whereNull('vinculo.deleted_at')
+                ->orderBy('item.nome')
+                ->orderBy('vinculo.id')
+                ->get(['vinculo.entrega_id', 'item.nome']);
+
+            foreach ($registros as $registro) {
+                $nome = trim((string) $registro->nome);
+                if ($nome === '') {
+                    continue;
+                }
+                $agrupado[(string) $registro->entrega_id][] = $nome;
+            }
+        }
+
+        return $agrupado;
+    }
+
     private function applyFiltros(Builder $query, RelatorioEntregaIndexFiltersDTO $filters): void
     {
         if ($filters->unidadeId !== null && $filters->unidadeId !== '') {
@@ -150,7 +256,8 @@ class EloquentRelatorioEntregaReadRepository implements RelatorioEntregaReadRepo
                 $subordinadasIds = $unidadeService->subordinadas($filters->unidadeId)->pluck('id')->toArray();
                 $unidadeIds = array_values(array_unique(array_merge($unidadeIds, $subordinadasIds)));
             }
-            $query->whereIn('pee.unidade_id', $unidadeIds);
+            // Unidade executora do Plano de Entrega (unidade do plano), não a unidade demandante da entrega.
+            $query->whereIn('pe.unidade_id', $unidadeIds);
         }
 
         if ($filters->hasPeriodoCompleto()) {

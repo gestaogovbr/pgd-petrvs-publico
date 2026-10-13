@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\V2\RelatorioGeracao\DTOs;
 
+use App\DTOs\AbstractFiltersDTO;
 use App\Enums\RelatorioGeracaoTipo;
 
 /**
  * Filtros da listagem de exportação de relatórios (API v2).
  */
-final class RelatorioGeracaoIndexFiltersDTO
+final class RelatorioGeracaoIndexFiltersDTO extends AbstractFiltersDTO
 {
     public function __construct(
         public readonly ?string $tipo = null,
@@ -51,24 +52,5 @@ final class RelatorioGeracaoIndexFiltersDTO
     public function hasPeriodoCompleto(): bool
     {
         return $this->geracaoInicio !== null && $this->geracaoFim !== null;
-    }
-
-    private static function trimmedStringOrNull(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-        $s = trim((string) $value);
-
-        return $s === '' ? null : $s;
-    }
-
-    private static function dateStringOrNull(mixed $value): ?string
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return (string) $value;
     }
 }

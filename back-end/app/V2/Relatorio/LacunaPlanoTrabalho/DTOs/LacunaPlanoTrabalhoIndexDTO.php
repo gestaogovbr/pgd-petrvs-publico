@@ -33,14 +33,14 @@ final class LacunaPlanoTrabalhoIndexDTO
     }
 
     /**
-     * @return array{page: int, limit: int, where: list<array{0: string, 1: string, 2: mixed}>}
+     * @return array{page: int, limit: int, filters: array<string, mixed>}
      */
     public function toQueryPayload(): array
     {
         return [
             'page' => $this->paginate ? $this->page : 1,
             'limit' => $this->paginate ? self::PAGE_SIZE : 0,
-            'where' => $this->filters->toWhereArray(),
+            'filters' => $this->filters->toArray(),
         ];
     }
 }

@@ -645,6 +645,9 @@ echo "Copiando o .env para o container..."
 docker cp .env petrvs_php:/var/www/.env
 
 # Storage
+echo "Preparando diretórios do storage..."
+docker exec -it petrvs_php bash -c 'mkdir -p /var/www/storage/app/public /var/www/storage/framework/cache/data /var/www/storage/framework/cache/laravel-excel /var/www/storage/framework/sessions /var/www/storage/framework/views /var/www/storage/logs /var/www/storage/fonts'
+docker exec -it petrvs_php bash -c 'php artisan storage:link'
 echo "Permissão storage/logs..."
 docker exec -it petrvs_php bash -c 'chmod -R 777 /var/www/storage/logs/'
 docker exec -it petrvs_php bash -c 'chmod -R 777 /var/www/storage/'

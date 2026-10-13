@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\V2\RelatorioEntrega\DTOs;
 
+use App\DTOs\AbstractFiltersDTO;
+
 /**
  * Filtros do relatório de entregas (API v2).
  */
-final class RelatorioEntregaIndexFiltersDTO
+final class RelatorioEntregaIndexFiltersDTO extends AbstractFiltersDTO
 {
     public function __construct(
         public readonly ?string $unidadeId,
@@ -53,24 +55,5 @@ final class RelatorioEntregaIndexFiltersDTO
     public function resolveDataConsulta(): string
     {
         return now()->toDateString();
-    }
-
-    private static function trimmedStringOrNull(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-        $s = trim((string) $value);
-
-        return $s === '' ? null : $s;
-    }
-
-    private static function dateStringOrNull(mixed $value): ?string
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return (string) $value;
     }
 }

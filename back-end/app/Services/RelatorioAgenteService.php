@@ -1,78 +1,69 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
-use App\Enums\Atribuicao;
+use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
+use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
 use App\Enums\StatusEnum;
 use App\Models\Usuario;
 use App\Repository\RelatorioAgenteRepository;
-use App\Services\ServiceBase;
+use Illuminate\Support\Collection;
 
-class RelatorioAgenteService extends ServiceBase
+class RelatorioAgenteService
 {
-
-    private RelatorioAgenteRepository $relatorioAgenteRepository;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->relatorioAgenteRepository = app(RelatorioAgenteRepository::class);
+    public function __construct(
+        private readonly RelatorioAgenteRepository $relatorioAgenteRepository,
+    ) {
     }
 
-    public function query($data)
+    /**
+     * Consulta paginada para a geração do Excel em segundo plano.
+     *
+     * @param array{page?: int, limit?: int, filters?: array<string, mixed>, orderBy?: array} $data
+     * @return array{count: int, rows: Collection, extra?: mixed}
+     */
+    public function queryForExport(array $data, ?int $knownCount = null): array
     {
-        $result = $this->relatorioAgenteRepository->query($data);
-        $rows = $result['rows'];
+        $result = $this->query(new RelatorioAgenteQueryDTO(
+            filters: RelatorioAgenteFiltersDTO::fromArray(
+                is_array($data['filters'] ?? null) ? $data['filters'] : []
+            ),
+            orderBy: is_array($data['orderBy'] ?? null) ? $data['orderBy'] : [],
+            page: $this->resolverPage($data['page'] ?? 1),
+            limit: $this->resolverLimit($data['limit'] ?? 1000),
+        ));
 
-        $this->proxyRows($rows);
+        if ($knownCount !== null) {
+            $result['count'] = $knownCount;
+        }
 
         return $result;
     }
 
-    public function proxyQuery($query, &$data)
+    /**
+     * @return array{count: int, rows: Collection, extra?: mixed}
+     */
+    public function query(RelatorioAgenteQueryDTO $dto): array
     {
-        $where = $data["where"] ?? [];
+        $result = $this->relatorioAgenteRepository->query($dto);
+        $this->aplicarProxyRows($result['rows']);
 
-        $where = array_values(array_filter($where, function ($item) {
-            return ($item[0] !== 'somente_vigentes')
-                && ($item[0] !== 'incluir_unidades_subordinadas')
-                && ($item[0] !== 'unidade_id');
-        }));
-
-        $somenteVigentes = $this->extractWhere($data, "somente_vigentes");
-        $subordinadas = $this->extractWhere($data, "incluir_unidades_subordinadas");
-        $unidadeId = $this->extractWhere($data, "unidade_id");
-        $atribuicao = $this->extractWhere($data, "atribuicao");
-
-        $unidadeIds = [];
-        if (isset($unidadeId[2])) {
-            $unidadeIds = [$unidadeId[2]];
-        }
-
-        if (isset($unidadeId[2]) && isset($subordinadas[2])) {
-            $unidadeService = app(UnidadeService::class);
-            $subordinadasIds = $unidadeService->subordinadas($unidadeId[2])->pluck('id')->toArray();
-            $unidadeIds = array_merge($unidadeIds, $subordinadasIds);
-        }
-
-        if (!isset($atribuicao[2])) {
-            $where[] = ['atribuicao', '==', Atribuicao::LOTADO->value];
-        } else {
-            $where[] = ['atribuicao', '==', $atribuicao[2]];
-        }
-
-        if (count($unidadeIds) > 0) {
-            if (isset($atribuicao[2])) {
-                $where[] = ['unidade_id', 'in', $unidadeIds];
-            } else {
-                $where[] = ['unidadeLotacao', 'in', $unidadeIds];
-            }
-        }
-
-        $data["where"] = $where;
+        return $result;
     }
 
-    public function proxyRows(&$rows)
+    private function resolverPage(mixed $page): int
+    {
+        return max(1, (int) $page);
+    }
+
+    private function resolverLimit(mixed $limit): int
+    {
+        return max(1, (int) $limit);
+    }
+
+    private function aplicarProxyRows(Collection $rows): Collection
     {
         $tipos = Usuario::getTiposIndisponibilidades();
 

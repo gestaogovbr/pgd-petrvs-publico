@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\V2\RelatorioEntrega;
 
 use App\Exceptions\Contracts\IBaseException;
-use App\Exceptions\ServerException;
 use App\Exports\RelatorioEntregaExport;
 use App\Http\Controllers\Controller;
-use App\Support\AuthenticatedUsuario;
 use App\V2\RelatorioEntrega\Support\RelatorioEntregaUnidadeDefaultResolver;
 use App\V2\RelatorioEntrega\Validators\RelatorioEntregaIndexRequestValidator;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +22,7 @@ class RelatorioEntregaController extends Controller
     public function __construct(
         private readonly RelatorioEntregaService $service,
         private readonly RelatorioEntregaUnidadeDefaultResolver $unidadeDefaultResolver,
+        private readonly RelatorioEntregaAuthorization $authorization,
     ) {
     }
 
@@ -31,7 +30,7 @@ class RelatorioEntregaController extends Controller
     {
         try {
             $dto = RelatorioEntregaIndexRequestValidator::index($request);
-            $this->authorizeRelatorio();
+            $this->authorization->usuarioAutorizado();
 
             $result = $this->service->index($dto, $request);
 
@@ -51,7 +50,7 @@ class RelatorioEntregaController extends Controller
     {
         try {
             $dto = RelatorioEntregaIndexRequestValidator::index($request);
-            $this->authorizeRelatorio();
+            $this->authorization->usuarioAutorizado();
 
             $rows = $this->service->exportRows($dto);
 
@@ -73,8 +72,7 @@ class RelatorioEntregaController extends Controller
     public function unidadePadrao(): JsonResponse
     {
         try {
-            $usuario = AuthenticatedUsuario::withAreasDeTrabalho();
-            $this->authorizeRelatorio();
+            $usuario = $this->authorization->usuarioAutorizado();
 
             $unidadeId = $this->unidadeDefaultResolver->resolve($usuario);
 
@@ -88,17 +86,6 @@ class RelatorioEntregaController extends Controller
             Log::error(throwableToArrayLog($e));
 
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    private function authorizeRelatorio(): void
-    {
-        $usuario = AuthenticatedUsuario::withAreasDeTrabalho();
-        if ($usuario === null || (
-            ! $usuario->hasPermissionTo('MOD_RELATORIO_PE')
-            && ! $usuario->hasPermissionTo('MOD_RELATORIO_ENTREGA')
-        )) {
-            throw new ServerException('RelatorioCapacidade', 'Acesso negado ao relatório de Entregas.');
         }
     }
 }

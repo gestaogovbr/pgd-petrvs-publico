@@ -10,8 +10,11 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, ChartData } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { PRINT_SCRIPT } from './pdf-print.script';
 import { A4_MARGEM_MM, A4_LARGURA_UTIL_MM } from './pdf.constants';
+
+Chart.register(ChartDataLabels);
 
 export interface GraficoExportavel {
   getChartExportData(): { type: string; data: ChartData; options: ChartConfiguration['options']; width: number; height: number } | null;

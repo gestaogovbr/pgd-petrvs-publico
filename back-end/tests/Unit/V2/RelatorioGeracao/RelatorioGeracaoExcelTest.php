@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Contracts\RelatorioExcelGeradorContract;
+use App\DTOs\RelatorioGeracao\RelatorioExcelConsultaPaginaDTO;
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exports\RelatorioExcelPaginadoExport;
 use App\Exports\RelatorioExcelPaginadoWriter;
@@ -23,9 +24,10 @@ function makeRelatorioGeracaoExcelModel(array $overrides = []): RelatorioGeracao
     $geracao = new RelatorioGeracao();
     $geracao->id = $overrides['id'] ?? 'geracao-1';
     $geracao->tipo = $overrides['tipo'] ?? RelatorioGeracaoTipo::PLANO_TRABALHO->value;
+    $geracao->usuario_id = $overrides['usuario_id'] ?? 'usuario-1';
     $geracao->parametros = array_key_exists('parametros', $overrides)
         ? $overrides['parametros']
-        : ['where' => [['unidade_id', '==', 'u-1']], 'orderBy' => []];
+        : ['filters' => ['unidade_id' => 'u-1'], 'orderBy' => []];
 
     return $geracao;
 }
@@ -39,7 +41,10 @@ function makeRelatorioGeracaoExcelSut(
     ?callable $onStore = null,
 ): RelatorioGeracaoExcel {
     $factory = Mockery::mock(RelatorioExcelGeradorFactory::class);
-    $factory->shouldReceive('make')->once()->with($tipo)->andReturn($gerador);
+    $factory->shouldReceive('make')
+        ->once()
+        ->with($tipo, Mockery::type(RelatorioGeracao::class))
+        ->andReturn($gerador);
 
     $storage = Mockery::mock(RelatorioGeracaoStorage::class);
     $storage->shouldReceive('caminho')->once()->with('geracao-1')->andReturn('relatorios/geracao-1.xlsx');
@@ -63,7 +68,11 @@ function makeRelatorioGeracaoExcelSut(
             '/tmp/relatorios/geracao-1.xlsx',
         );
 
-    return new RelatorioGeracaoExcel($factory, $writer, $storage);
+    return new RelatorioGeracaoExcel(
+        $factory,
+        $writer,
+        $storage,
+    );
 }
 
 test('gerar persiste o excel paginado e devolve o caminho e o nome do arquivo', function () {
@@ -90,7 +99,12 @@ test('gerar consulta a página com os parâmetros da geração e reporta progres
     $gerador->shouldReceive('arquivoNome')->once()->andReturn('relatorio-planos-trabalho.xlsx');
     $gerador->shouldReceive('consultarPagina')
         ->once()
-        ->with($geracao->parametros, 1, 250)
+        ->with(Mockery::on(function (RelatorioExcelConsultaPaginaDTO $consulta) use ($geracao): bool {
+            return $consulta->filters === ['unidade_id' => 'u-1']
+                && $consulta->orderBy === $geracao->parametros['orderBy']
+                && $consulta->page === 1
+                && $consulta->limit === 250;
+        }))
         ->andReturn(['count' => 0, 'rows' => []]);
 
     $excel = makeRelatorioGeracaoExcelSut(
@@ -118,7 +132,12 @@ test('gerar usa lista vazia quando a geração não tem parâmetros', function (
     $gerador->shouldReceive('arquivoNome')->once()->andReturn('relatorio-planos-trabalho.xlsx');
     $gerador->shouldReceive('consultarPagina')
         ->once()
-        ->with([], 1, 500)
+        ->with(Mockery::on(function (RelatorioExcelConsultaPaginaDTO $consulta): bool {
+            return $consulta->filters === []
+                && $consulta->orderBy === []
+                && $consulta->page === 1
+                && $consulta->limit === 500;
+        }))
         ->andReturn(['count' => 0, 'rows' => []]);
 
     $excel = makeRelatorioGeracaoExcelSut(

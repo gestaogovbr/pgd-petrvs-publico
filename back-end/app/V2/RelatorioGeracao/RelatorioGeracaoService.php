@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\RelatorioGeracao;
 
 use App\Enums\RelatorioGeracaoStatus;
+use App\Enums\RelatorioGeracaoTipo;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ServerException;
 use App\Jobs\ExcluirRelatorioGeracaoJob;
@@ -71,7 +72,6 @@ class RelatorioGeracaoService
     public function store(RelatorioGeracaoStoreDTO $dto, Usuario $usuario): RelatorioGeracaoRowDTO
     {
         $tenantId = $this->requireTenantId();
-        $parametros = $dto->toParametros();
 
         $geracao = $this->repository->create([
             'tipo' => $dto->tipo->value,
@@ -79,8 +79,8 @@ class RelatorioGeracaoService
             'status' => RelatorioGeracaoStatus::PROCESSANDO,
             'usuario_id' => $usuario->id,
             'parametros' => [
-                'where' => $parametros['where'],
-                'orderBy' => $parametros['orderBy'],
+                'filters' => $dto->filters,
+                'orderBy' => $dto->orderBy,
             ],
             'iniciado_em' => now(),
             'progresso_pagina' => 0,
