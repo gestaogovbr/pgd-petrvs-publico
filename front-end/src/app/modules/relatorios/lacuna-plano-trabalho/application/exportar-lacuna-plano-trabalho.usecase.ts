@@ -1,13 +1,21 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LacunaPlanoTrabalhoApiClient } from '../infra/lacuna-plano-trabalho-api.client';
+import { RelatorioGeracaoDaoService } from 'src/app/dao/relatorio-geracao-dao.service';
+import { QueryOptions } from 'src/app/dao/query-options';
 import { LacunaPlanoTrabalhoQueryParams } from '../domain/types';
 
 @Injectable()
 export class ExportarLacunaPlanoTrabalho {
-  private readonly api = inject(LacunaPlanoTrabalhoApiClient);
+  private readonly relatorioGeracaoDao = inject(RelatorioGeracaoDaoService);
 
-  execute(params: LacunaPlanoTrabalhoQueryParams): Observable<Blob> {
-    return this.api.exportXls(params);
+  execute(params: LacunaPlanoTrabalhoQueryParams): Observable<unknown> {
+    return this.relatorioGeracaoDao.solicitar('lacuna_plano_trabalho', this.toQueryOptions(params));
+  }
+
+  private toQueryOptions(params: LacunaPlanoTrabalhoQueryParams): QueryOptions {
+    return {
+      filters: { ...(params.filters ?? {}) },
+      orderBy: [],
+    };
   }
 }

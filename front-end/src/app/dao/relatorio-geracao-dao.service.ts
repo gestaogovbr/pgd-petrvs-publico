@@ -16,8 +16,8 @@ export class RelatorioGeracaoDaoService extends DaoBaseService<RelatorioGeracao>
   public solicitar(tipo: string, queryOptions: QueryOptions): Observable<any> {
     return this.server.post('api/v2/relatorio-exportacao', {
       tipo,
-      where: queryOptions.where || [],
-      orderBy: queryOptions.orderBy || []
+      filters: queryOptions.filters || {},
+      orderBy: queryOptions.orderBy || [],
     });
   }
 }

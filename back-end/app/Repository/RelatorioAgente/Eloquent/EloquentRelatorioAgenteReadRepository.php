@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Repository\RelatorioAgente\Eloquent;
 
+use App\DTOs\RelatorioAgente\RelatorioAgenteFiltersDTO;
+use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
+use App\Enums\Atribuicao;
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
 use App\Services\UnidadeService;
 use App\Support\ModalidadePgd;
@@ -11,12 +14,14 @@ use Illuminate\Support\Facades\DB;
 
 class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadRepositoryContract
 {
-    public function query(array $data): array
+    public function query(RelatorioAgenteQueryDTO $dto): array
     {
         $modalidadeUsuario = ModalidadePgd::sqlLabelExpression('`u`.`modalidade_pgd`');
         $modalidadePlano = ModalidadePgd::sqlLabelExpression('`pt_do_dia`.`modalidade_pgd`');
         $modalidadeUsuarioNormalizada = ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`');
         $modalidadePlanoNormalizada = ModalidadePgd::sqlNormalizeExpression('`pt_do_dia`.`modalidade_pgd`');
+
+        $atribuicaoLotado = Atribuicao::LOTADO->value;
 
         $sql = <<<TEXT
         with lotacoes as (
@@ -30,7 +35,7 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
                     and `uia`.`deleted_at` is null))
             where
                 `ui`.`deleted_at` is null
-                and `uia`.`atribuicao` = 'LOTADO'
+                and `uia`.`atribuicao` = '{$atribuicaoLotado}'
             order by
                 `ui`.`usuario_id`
         ),
@@ -136,52 +141,17 @@ class EloquentRelatorioAgenteReadRepository implements RelatorioAgenteReadReposi
             and `uia`.`atribuicao` is not null
 TEXT;
 
-        $unidadeId = $this->extractWhere($data, 'unidade_id');
-        $atribuicao = $this->extractWhere($data, 'atribuicao');
-        $subordinadas = $this->extractWhere($data, 'incluir_unidades_subordinadas');
-
+        $filters = $dto->filters;
         $params = [];
 
-        if (isset($unidadeId[2])) {
-            $unidadeIds = [$unidadeId[2]];
-
-            if (isset($subordinadas[2])) {
-                $unidadeService = app(UnidadeService::class);
-                $subordinadasIds = $unidadeService->subordinadas($unidadeId[2])->pluck('id')->toArray();
-                $unidadeIds = array_merge($unidadeIds, $subordinadasIds);
-            }
-
-            $unidadeIds = implode(
-                ',',
-                array_map(static function ($item) {
-                    return "'" . $item . "'";
-                }, $unidadeIds)
-            );
-
-            if (isset($atribuicao[2])) {
-                $sql .= " and ui.unidade_id in ($unidadeIds)";
-            } else {
-                $sql .= " and `uni_lotacao`.`id` in ($unidadeIds)";
-            }
-        }
-
-        if (!isset($atribuicao[2])) {
-            $sql .= " and uia.atribuicao = 'LOTADO'";
-        } else {
-            $sql .= ' and uia.atribuicao = ?';
-            $params[] = $atribuicao[2];
-        }
-
-        $this->applyFiltros($data, $sql, $params);
+        $this->aplicarFiltroUnidade($filters, $sql, $params);
+        $this->aplicarFiltros($filters, $sql, $params);
 
         $total = DB::select("SELECT count(*) as total from ($sql) z", $params);
         $count = $total[0]->total;
 
         $sql .= ' ORDER BY u.nome ASC';
-
-        if (!empty($data['limit'])) {
-            $sql .= ' LIMIT 10 OFFSET ' . (max($data['page'] - 1, 0) * 10);
-        }
+        $this->applyPaginacao($sql, $dto);
 
         $rows = DB::select($sql, $params);
 
@@ -191,65 +161,115 @@ TEXT;
         ];
     }
 
-    private function applyFiltros(array &$data, string &$sql, array &$params): void
+    private function aplicarFiltroUnidade(RelatorioAgenteFiltersDTO $filters, string &$sql, array &$params): void
     {
-        $usuarioId = $this->extractWhere($data, 'usuario_id');
-        if (isset($usuarioId[2])) {
+        if ($filters->unidadeId !== null) {
+            $unidadeIds = [$filters->unidadeId];
+
+            if ($filters->incluirUnidadesSubordinadas) {
+                $unidadeService = app(UnidadeService::class);
+                $subordinadasIds = $unidadeService->subordinadas($filters->unidadeId)->pluck('id')->toArray();
+                $unidadeIds = array_merge($unidadeIds, $subordinadasIds);
+            }
+
+            $unidadeIdsSql = implode(
+                ',',
+                array_map(static function ($item) {
+                    return "'" . $item . "'";
+                }, $unidadeIds)
+            );
+
+            if ($filters->atribuicao !== null) {
+                $sql .= " and ui.unidade_id in ($unidadeIdsSql)";
+            } else {
+                $sql .= " and `uni_lotacao`.`id` in ($unidadeIdsSql)";
+            }
+        }
+
+        if ($filters->atribuicao === null) {
+            $sql .= ' and uia.atribuicao = ?';
+            $params[] = Atribuicao::LOTADO->value;
+        } else {
+            $sql .= ' and uia.atribuicao = ?';
+            $params[] = $filters->atribuicao;
+        }
+    }
+
+    private function applyPaginacao(string &$sql, RelatorioAgenteQueryDTO $dto): void
+    {
+        if ($dto->limit === null || $dto->limit === '') {
+            return;
+        }
+
+        $limit = $this->resolverLimit($dto->limit);
+        $offset = $this->resolverOffset($dto->page ?? 1, $limit);
+        $sql .= ' LIMIT ' . $limit . ' OFFSET ' . $offset;
+    }
+
+    private function resolverLimit(mixed $limit): int
+    {
+        return max(1, (int) $limit);
+    }
+
+    private function resolverPage(mixed $page): int
+    {
+        return max(1, (int) $page);
+    }
+
+    private function resolverOffset(mixed $page, int $limit): int
+    {
+        return ($this->resolverPage($page) - 1) * $limit;
+    }
+
+    private function aplicarFiltros(RelatorioAgenteFiltersDTO $filters, string &$sql, array &$params): void
+    {
+        if ($filters->usuarioId !== null) {
             $sql .= ' and u.id = ?';
-            $params[] = $usuarioId[2];
+            $params[] = $filters->usuarioId;
         }
 
-        $nome = $this->extractWhere($data, 'nome');
-        if (isset($nome[2])) {
+        if ($filters->nome !== null) {
             $sql .= ' and COALESCE(`u`.`nome_social`, `u`.`nome`) like ?';
-            $params[] = $nome[2];
+            $params[] = $this->like($filters->nome);
         }
 
-        $unidadeHierarquia = $this->extractWhere($data, 'unidadeHierarquia');
-        if (isset($unidadeHierarquia[2])) {
+        if ($filters->unidadeHierarquia !== null) {
             $sql .= ' and fn_obter_unidade_hierarquia(`uni_lotacao`.`id`) like ?';
-            $params[] = $unidadeHierarquia[2];
+            $params[] = $this->like($filters->unidadeHierarquia);
         }
 
-        $matricula = $this->extractWhere($data, 'matricula');
-        if (isset($matricula[2])) {
+        if ($filters->matricula !== null) {
             $sql .= ' and u.matricula like ?';
-            $params[] = $matricula[2];
+            $params[] = $this->like($filters->matricula);
         }
 
-        $programaNome = $this->extractWhere($data, 'programaNome');
-        if (isset($programaNome[2])) {
+        if ($filters->programaNome !== null) {
             $sql .= ' and `programa_ultimo`.`programanome` like ?';
-            $params[] = $programaNome[2];
+            $params[] = $this->like($filters->programaNome);
         }
 
-        $modalidade = $this->extractWhere($data, 'modalidadeSouGov');
-        if (isset($modalidade[2])) {
+        if ($filters->modalidadeSouGov !== null) {
             $sql .= ' and ' . ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`') . ' = ?';
-            $params[] = ModalidadePgd::normalize($modalidade[2]);
+            $params[] = ModalidadePgd::normalize($filters->modalidadeSouGov);
         }
 
-        $modalidadePgd = $this->extractWhere($data, 'modalidade_pgd');
-        if (isset($modalidadePgd[2])) {
+        if ($filters->modalidadePgd !== null) {
             $sql .= ' and ' . ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`') . ' = ?';
-            $params[] = ModalidadePgd::normalize($modalidadePgd[2]);
+            $params[] = ModalidadePgd::normalize($filters->modalidadePgd);
         }
 
-        $situacaoSiape = $this->extractWhere($data, 'situacao');
-        if (isset($situacaoSiape[2])) {
+        if ($filters->situacao !== null) {
             $sql .= " and (CASE WHEN `u`.`participa_pgd` = 'não' THEN 'INATIVO' ELSE `u`.`situacao_siape` END) = ?";
-            $params[] = $situacaoSiape[2];
+            $params[] = $filters->situacao;
         }
 
-        $participantePGD = $this->extractWhere($data, 'participantePGD');
-        if (isset($participantePGD[2])) {
+        if ($filters->participantePgd !== null) {
             $sql .= " and (CASE WHEN `u`.`participa_pgd` = 'sim' THEN 'Sim' ELSE 'Não' END) = ?";
-            $params[] = $participantePGD[2];
+            $params[] = $filters->participantePgd;
         }
 
-        $comparacaoSouGovPetrvs = $this->extractWhere($data, 'comparacaoSouGovPetrvs');
-        if (isset($comparacaoSouGovPetrvs[2])) {
-            $operacaoComparacao = $this->getComparacaoSouGov($comparacaoSouGovPetrvs[2]);
+        if ($filters->comparacaoSouGovPetrvs !== null) {
+            $operacaoComparacao = $this->getComparacaoSouGov($filters->comparacaoSouGovPetrvs);
 
             if ($operacaoComparacao == '-') {
                 $sql .= " and ( `u`.`situacao_siape` = 'INATIVO' OR `pt_do_dia`.`modalidade_pgd` IS NULL OR `u`.`participa_pgd` = 'não' ) ";
@@ -260,94 +280,71 @@ TEXT;
             }
         }
 
-        $tipo_modalidade_id = $this->extractWhere($data, 'tipo_modalidade_id');
-        if (isset($tipo_modalidade_id[2])) {
-            $sql .= ' and ' . ModalidadePgd::sqlNormalizeExpression('`u`.`modalidade_pgd`') . ' = ?';
-            $params[] = ModalidadePgd::normalize($tipo_modalidade_id[2]);
-        }
-
-        $tipo_pedagio = $this->extractWhere($data, 'tipo_pedagio');
-        if (isset($tipo_pedagio[2])) {
+        if ($filters->tipoPedagio !== null) {
             $sql .= ' and `u`.`tipo_pedagio` = ?';
-            $params[] = $tipo_pedagio[2];
+            $params[] = $filters->tipoPedagio;
         }
 
-        $planoEntregaEntregaId = $this->extractWhere($data, 'plano_entrega_entrega_id');
-        if (isset($planoEntregaEntregaId[2])) {
+        if ($filters->planoEntregaEntregaId !== null) {
             $sql .= ' and `u`.`id` in (
                 select distinct `pt`.`usuario_id`
                 from `planos_trabalhos_entregas` `pte`
-                inner join `planos_trabalhos` `pt` on `pt`.`id` = `pte`.`plano_trabalho_id` and `pt`.`deleted_at` is null
+                inner join `planos_trabalhos` `pt` on `pt`.`id` = `pte`.`plano_trabalho_id` and `pt`.`deleted_at` is null and `pt`.`status` <> \'CANCELADO\'
                 where `pte`.`plano_entrega_entrega_id` = ? and `pte`.`deleted_at` is null
             )';
-            $params[] = $planoEntregaEntregaId[2];
+            $params[] = $filters->planoEntregaEntregaId;
         }
 
-        $data_inicial_pedagio = $this->extractWhere($data, 'data_inicial_pedagio');
-        if (isset($data_inicial_pedagio[2])) {
+        if ($filters->dataInicialPedagio !== null) {
             $sql .= ' and `u`.`data_inicial_pedagio` = ?';
-            $params[] = $data_inicial_pedagio[2];
+            $params[] = $filters->dataInicialPedagio;
         }
 
-        $data_final_pedagio = $this->extractWhere($data, 'data_final_pedagio');
-        if (isset($data_final_pedagio[2])) {
+        if ($filters->dataFinalPedagio !== null) {
             $sql .= ' and `u`.`data_final_pedagio` = ?';
-            $params[] = $data_final_pedagio[2];
+            $params[] = $filters->dataFinalPedagio;
         }
 
-        $dispensaPt = $this->extractWhere($data, 'dispensa_plano_trabalho');
-        if (isset($dispensaPt[2])) {
-            if ($dispensaPt[2] === 'Sim') {
+        if ($filters->dispensaPlanoTrabalho !== null) {
+            if ($filters->dispensaPlanoTrabalho === 'Sim') {
                 $sql .= ' and `dpt`.`id` is not null';
-            } elseif ($dispensaPt[2] === 'Não') {
+            } elseif ($filters->dispensaPlanoTrabalho === 'Não') {
                 $sql .= ' and `dpt`.`id` is null';
             }
         }
 
-        $dataInicioDispensa = $this->extractWhere($data, 'data_inicio_dispensa_pt');
-        if (isset($dataInicioDispensa[2])) {
+        if ($filters->dataInicioDispensaPt !== null) {
             $sql .= ' and `dpt`.`data_inicio` = ?';
-            $params[] = $dataInicioDispensa[2];
+            $params[] = $filters->dataInicioDispensaPt;
         }
 
-        $dataFimDispensa = $this->extractWhere($data, 'data_fim_dispensa_pt');
-        if (isset($dataFimDispensa[2])) {
+        if ($filters->dataFimDispensaPt !== null) {
             $sql .= ' and `dpt`.`data_fim` = ?';
-            $params[] = $dataFimDispensa[2];
+            $params[] = $filters->dataFimDispensaPt;
         }
     }
 
-    private function extractWhere(array &$data, string $field): ?array
+    private function like(string $value): string
     {
-        $result = null;
-        $where = [];
-
-        foreach ($data['where'] as $condition) {
-            if (is_array($condition) && $condition[0] == $field) {
-                $result = $condition;
-            } else {
-                $where[] = $condition;
-            }
+        if (str_contains($value, '%')) {
+            return $value;
         }
 
-        if (!empty($result)) {
-            $data['where'] = $where;
-        }
-
-        return $result;
+        return '%' . $value . '%';
     }
 
     private function getComparacaoSouGov(string $comparacaoSouGovPetrvs): string
     {
-        $operacaoComparacao = '';
         if ($comparacaoSouGovPetrvs == 'IGUAL') {
-            $operacaoComparacao = '=';
-        } elseif ($comparacaoSouGovPetrvs == 'DIFERENTE') {
-            $operacaoComparacao = '!=';
-        } elseif ($comparacaoSouGovPetrvs == '-') {
-            $operacaoComparacao = '-';
+            return '=';
+        }
+        if ($comparacaoSouGovPetrvs == 'DIFERENTE') {
+            return '!=';
+        }
+        if ($comparacaoSouGovPetrvs == '-') {
+            return '-';
         }
 
-        return $operacaoComparacao;
+        return '';
     }
 }
