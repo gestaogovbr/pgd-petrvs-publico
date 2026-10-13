@@ -2,6 +2,11 @@
 
 ### Modificado
 - Painel de Modalidades: valores percentuais passam a ser exibidos acima de cada barra (rótulos de dados), com formatação no padrão brasileiro, tanto na tela quanto na exportação em PDF
+- Relatórios passam a exportar em segundo plano.
+- Relatório de Entregas: a coluna "Planejamento Institucional" passa a apresentar expressamente o item do Planejamento Institucional vinculado à entrega
+- Relatório de Entregas: a coluna "Cadeia de Valor" passa a apresentar expressamente o processo da Cadeia de Valor vinculado à entrega
+- Relatório de Entregas: quando uma entrega possui mais de um vínculo de Planejamento Institucional e/ou de Cadeia de Valor, os vínculos adicionais são apresentados em linhas subsequentes, mantendo a identificação da entrega em cada linha
+- Relatório de Entregas: a quantidade de linhas de uma entrega corresponde à maior quantidade de vínculos entre Planejamento Institucional e Cadeia de Valor; em cada linha é apresentado o vínculo correspondente de cada coluna e, quando uma coluna tem menos vínculos que a outra, a célula exibe "Idem", indicando a manutenção do vínculo já apresentado
 
 ### Corrigido
 - Relatório de Entregas: colunas "Participantes envolvidos" e "Planos de Trabalho vinculados" deixam de contabilizar Planos de Trabalho cancelados
