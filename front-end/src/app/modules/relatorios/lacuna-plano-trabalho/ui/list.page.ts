@@ -160,15 +160,19 @@ export class LacunaPlanoTrabalhoListPage implements OnInit {
         finalize(() => this.exporting.set(false)),
       )
       .subscribe({
-        next: (blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = 'relatorio-lacunas-plano-trabalho.xlsx';
-          link.click();
-          window.URL.revokeObjectURL(url);
+        next: (res) => {
+          if (res) {
+            this.message.success(
+              'Seu relatório está sendo gerado! Acompanhe o progresso e faça o <a href="/relatorios/exportacao" target="_blank" rel="noopener noreferrer">download</a> na tela Exportação de Relatórios. O arquivo ficará disponível por 24 horas.',
+              'Sucesso!',
+              { html: true },
+            );
+          }
         },
-        error: () => this.message.error('Não foi possível exportar o relatório.'),
+        error: (err) => {
+          const msg = err?.error?.error ?? 'Não foi possível solicitar a geração do relatório.';
+          this.message.error(typeof msg === 'string' ? msg : String(msg));
+        },
       });
   }
 

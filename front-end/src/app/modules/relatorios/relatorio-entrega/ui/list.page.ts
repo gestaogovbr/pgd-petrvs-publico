@@ -176,28 +176,48 @@ export class RelatorioEntregaListPage implements OnInit {
     this.go.navigate({ route: ['gestao', 'plano-entrega', row.plano_id, 'consult'] }, { modal: true });
   }
 
-  abrirParticipantes(row: RelatorioEntregaRow): void {
+  async abrirParticipantes(row: RelatorioEntregaRow): Promise<void> {
+    const unidadeRaizId = await this.resolverUnidadeRaiz(row.unidade_id);
     this.go.navigate(
       { route: ['relatorios', 'agentes'] },
       {
         metadata: {
-          unidade_id: row.unidade_id,
+          unidade_id: unidadeRaizId,
+          incluir_unidades_subordinadas: true,
           plano_entrega_entrega_id: row.id,
         },
       },
     );
   }
 
-  abrirPlanosTrabalho(row: RelatorioEntregaRow): void {
+  async abrirPlanosTrabalho(row: RelatorioEntregaRow): Promise<void> {
+    const unidadeRaizId = await this.resolverUnidadeRaiz(row.unidade_id);
     this.go.navigate(
-      { route: ['relatorios', 'planos-trabalho'] },
+      { route: ['relatorios', 'planos-trabalho', 'cadastrados'] },
       {
         metadata: {
-          unidade_id: row.unidade_id,
+          unidade_id: unidadeRaizId,
+          incluir_unidades_subordinadas: true,
           plano_entrega_entrega_id: row.id,
         },
       },
     );
+  }
+
+  /**
+   * Resolve a unidade raiz absoluta a partir de uma unidade da entrega.
+   * O path tem o formato `/raizId/filhoId/.../`; o primeiro segmento é a raiz.
+   * Em caso de falha, retorna a própria unidade recebida.
+   */
+  private async resolverUnidadeRaiz(unidadeId: string): Promise<string> {
+    if (!unidadeId) return unidadeId;
+    try {
+      const unidade = await this.unidadeDao.getById(unidadeId);
+      const raizId = (unidade?.path ?? '').split('/').filter((s) => s.length > 0)[0];
+      return raizId || unidadeId;
+    } catch {
+      return unidadeId;
+    }
   }
 
   private async resolveUnidadePadrao(): Promise<string | null> {

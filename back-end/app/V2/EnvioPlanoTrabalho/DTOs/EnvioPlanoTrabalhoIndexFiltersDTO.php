@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\V2\EnvioPlanoTrabalho\DTOs;
 
+use App\DTOs\AbstractFiltersDTO;
+
 /**
  * Filtros da listagem de envios de plano de trabalho (API v2).
  *
  * @see \App\Repository\EnvioPlanoTrabalho\Eloquent\EloquentEnvioPlanoTrabalhoReadRepository
  */
-final class EnvioPlanoTrabalhoIndexFiltersDTO
+final class EnvioPlanoTrabalhoIndexFiltersDTO extends AbstractFiltersDTO
 {
     public function __construct(
         public readonly ?string $numero,
@@ -97,24 +99,5 @@ final class EnvioPlanoTrabalhoIndexFiltersDTO
         if ($field !== null) {
             $where[] = [$field, true];
         }
-    }
-
-    private static function trimmedStringOrNull(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-        $s = trim((string) $value);
-
-        return $s === '' ? null : $s;
-    }
-
-    private static function dateStringOrNull(mixed $value): ?string
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return (string) $value;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Contracts;
 
+use App\DTOs\RelatorioGeracao\RelatorioExcelConsultaPaginaDTO;
+
 interface RelatorioExcelGeradorContract
 {
     public function pageSize(): int;
@@ -11,8 +13,7 @@ interface RelatorioExcelGeradorContract
     public function criarExport(): object;
 
     /**
-     * @param array{where?: array, orderBy?: array} $parametros
      * @return array{count: int, rows: mixed, extra?: mixed}
      */
-    public function consultarPagina(array $parametros, int $page, int $limit): array;
+    public function consultarPagina(RelatorioExcelConsultaPaginaDTO $consulta): array;
 }

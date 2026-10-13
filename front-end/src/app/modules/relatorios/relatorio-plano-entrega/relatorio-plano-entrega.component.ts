@@ -1,8 +1,9 @@
 import { Component, Injector, ViewChild } from "@angular/core";
-import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
+import { FormGroup } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioPlanoEntregaDaoService } from "src/app/dao/relatorio-plano-entrega-dao.service";
+import { RelatorioGeracaoDaoService } from "src/app/dao/relatorio-geracao-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { UsuarioDaoService } from "src/app/dao/usuario-dao.service";
 import { RelatorioPlanoEntrega } from "src/app/models/relatorio-plano-entrega.model";
@@ -24,6 +25,7 @@ import { RelatorioBaseComponent } from "../relatorio-base/relatorio-base.compone
 export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<RelatorioPlanoEntrega, RelatorioPlanoEntregaDaoService> {
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
   public tipoAvaliacaoNotaDao: TipoAvaliacaoNotaDaoService;
+  public relatorioGeracaoDao: RelatorioGeracaoDaoService;
   public botoes: ToolbarButton[] = [];
   public tiposNotas: LookupItem[] = [];
   public permissao: string = 'MOD_RELATORIO_PE';
@@ -33,6 +35,7 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
       this.usuarioDao = injector.get<UsuarioDaoService>(UsuarioDaoService);
       this.unidadeDao = injector.get<UnidadeDaoService>(UnidadeDaoService);
       this.tipoAvaliacaoNotaDao = injector.get<TipoAvaliacaoNotaDaoService>(TipoAvaliacaoNotaDaoService);
+      this.relatorioGeracaoDao = injector.get<RelatorioGeracaoDaoService>(RelatorioGeracaoDaoService);
       this.title = "Relatório de Planos de Entrega";
       this.filter = this.fh.FormBuilder({
           unidade_id: { default: this.auth.unidade?.id },
@@ -107,100 +110,90 @@ export class RelatorioPlanoEntregaComponent extends RelatorioBaseComponent<Relat
       this.loaded = true;
   }
 
-  public filterWhere = (filter: FormGroup) => {
-    let result: any[] = [];
-    let form: any = filter.value;
+  public buildFilters(filter: FormGroup): Record<string, unknown> {
+    const form: any = filter.value;
+    const filters: Record<string, unknown> = {};
 
     if (form.unidade_id?.length) {
-      result.push(["unidade_id", "==", form.unidade_id]);
+      filters['unidade_id'] = form.unidade_id;
     }
-
     if (form.data_inicio) {
-      result.push(["dataInicio", ">=", form.data_inicio.toISOString().slice(0,10)]);
+      filters['dataInicio'] = form.data_inicio.toISOString().slice(0, 10);
     }
-
     if (form.data_fim) {
-      result.push(["dataFim", "<=", form.data_fim.toISOString().slice(0,10)]);
+      filters['dataFim'] = form.data_fim.toISOString().slice(0, 10);
     }
-
     if (form.periodo_inicio) {
-      result.push(["periodoInicio", ">=", form.periodo_inicio.toISOString().slice(0,10)]);
+      filters['periodoInicio'] = form.periodo_inicio.toISOString().slice(0, 10);
     }
-
     if (form.periodo_fim) {
-      result.push(["periodoFim", "<=", form.periodo_fim.toISOString().slice(0,10)]);
+      filters['periodoFim'] = form.periodo_fim.toISOString().slice(0, 10);
     }
-
     if (form.somente_vigentes) {
-      result.push(["somente_vigentes", "==", 1]);
+      filters['somente_vigentes'] = true;
     }
-
     if (form.incluir_unidades_subordinadas) {
-      result.push(["incluir_unidades_subordinadas", "==", 1]);
+      filters['incluir_unidades_subordinadas'] = true;
     }
-
     if (form.id) {
-      result.push(["numero", "like", "%" + form.id + "%"]);
+      filters['numero'] = form.id;
     }
-
     if (form.entregaNome) {
-      result.push(["entregaNome", "like", "%" + form.entregaNome + "%"]);
+      filters['entregaNome'] = form.entregaNome;
     }
-
     if (form.unidadeNome) {
-      result.push(["unidadeHierarquia", "like", "%" + form.unidadeNome + "%"]);
+      filters['unidadeHierarquia'] = form.unidadeNome;
     }
-
     if (form.status) {
-      result.push(["status", "==", form.status]);
+      filters['status'] = form.status;
     }
-
     if (form.nota) {
-      result.push(["nota", "==", form.nota]);
+      filters['nota'] = form.nota;
     }
-
     if (form.duracao) {
-      result.push(["duracao", "==", form.duracao]);
+      filters['duracao'] = form.duracao;
     }
-
     if (form.situacao_avaliacao) {
-      result.push(["situacao_avaliacao", "==", form.situacao_avaliacao]);
+      filters['situacao_avaliacao'] = form.situacao_avaliacao;
     }
-
     if (form.situacao_conclusao) {
-      result.push(["situacao_conclusao", "==", form.situacao_conclusao]);
+      filters['situacao_conclusao'] = form.situacao_conclusao;
     }
-
     if (form.data_avaliacao) {
-      result.push(["data_avaliacao", "==", form.data_avaliacao.toISOString().slice(0,10)]);
+      filters['data_avaliacao'] = form.data_avaliacao.toISOString().slice(0, 10);
+    }
+    if (form.data_conclusao) {
+      filters['data_conclusao'] = form.data_conclusao.toISOString().slice(0, 10);
     }
 
-     if (form.data_conclusao) {
-      result.push(["data_conclusao", "==", form.data_conclusao.toISOString().slice(0,10)]);
-    }
-    
-    return result;
-  };
+    return filters;
+  }
+
+  public buildQueryOptions(filter: FormGroup): QueryOptions {
+    return {
+      filters: this.buildFilters(filter),
+      where: [],
+      orderBy: this.orderBy,
+      limit: this.rowsLimit,
+    };
+  }
 
   public onButtonFilterClick = (filter: FormGroup) => {
-    let form: any = filter.value;
-    let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
-
     if (this.filter!.valid) {
       if (this.grid && this.grid.query) {
         this.loaded = true;
       }
-      this.grid?.query?.reload(queryOptions);
+      this.grid?.query?.reload(this.buildQueryOptions(filter));
     } else {
-      this.filter!.markAllAsTouched(); 
+      this.filter!.markAllAsTouched();
     }
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    try{
-      return this.dao!.exportarXls({
-        where: queryOptions.where,
-        orderBy: queryOptions.orderBy
+    try {
+      return this.relatorioGeracaoDao.solicitar('plano_entrega', {
+        filters: this.buildFilters(this.filter!),
+        orderBy: queryOptions.orderBy || this.orderBy,
       });
     } catch (error: any) {
       this.error(error);

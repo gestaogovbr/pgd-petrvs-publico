@@ -72,8 +72,8 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             'G' => 14,
             'H' => 35,
             'I' => 25,
-            'J' => 12,
-            'K' => 12,
+            'J' => 40,
+            'K' => 40,
             'L' => 16,
             'M' => 35,
             'N' => 12,
@@ -98,8 +98,8 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
             $row->meta_tipo,
             $row->demandanteHierarquia,
             $row->destinatario !== '' ? $row->destinatario : '-',
-            $this->intValue($row->qtd_planejamento_institucional),
-            $this->intValue($row->qtd_cadeia_valor),
+            $row->planejamento_institucional,
+            $row->cadeia_valor,
             $row->situacao,
             $row->plano_rotulo,
             '#'.$row->plano_numero,
@@ -198,6 +198,14 @@ class RelatorioEntregaExport implements FromCollection, WithMapping, WithHeading
                 ->getAlignment()
                 ->setHorizontal(Alignment::HORIZONTAL_CENTER)
                 ->setVertical(Alignment::VERTICAL_CENTER);
+        }
+
+        foreach (['J', 'K'] as $column) {
+            $sheet->getStyle("{$column}2:{$column}{$highestRow}")
+                ->getAlignment()
+                ->setHorizontal(Alignment::HORIZONTAL_LEFT)
+                ->setVertical(Alignment::VERTICAL_CENTER)
+                ->setWrapText(true);
         }
     }
 }

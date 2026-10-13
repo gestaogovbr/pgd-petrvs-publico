@@ -174,9 +174,11 @@ class AlinhamentoInstitucionalDataProvider
     private function buildBaseQuery(array $unidadeIds, FiltrosPainelDTO $filtros): Builder
     {
         $query = PlanoEntregaEntrega::query()
-            ->whereIn('unidade_id', $unidadeIds)
             ->whereNull('deleted_at')
-            ->whereHas('planoEntrega');
+            ->whereHas('planoEntrega', function (Builder $plano) use ($unidadeIds): void {
+                // Unidade executora do Plano de Entrega (unidade do plano), não a unidade demandante da entrega.
+                $plano->whereIn('unidade_id', $unidadeIds);
+            });
 
         if ($filtros->isSituacaoAtual()) {
             $hoje = now()->toDateString();

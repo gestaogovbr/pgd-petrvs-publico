@@ -83,7 +83,6 @@ export const PRINT_SCRIPT = `
         animation: false,
         plugins: Object.assign({}, cfg.options ? cfg.options.plugins : {}, {
           tooltip: { enabled: false },
-          datalabels: { display: false },
         }),
       });
 
