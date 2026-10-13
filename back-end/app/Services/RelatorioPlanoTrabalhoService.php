@@ -1,143 +1,418 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
+use App\Models\ViewRelatorioPlanoTrabalho;
 use App\Models\ViewRelatorioPlanoTrabalhoDetalhado;
 use App\Repository\PlanoTrabalhoEntregaRepository;
 use App\Repository\UnidadeRepository;
-use App\Services\ServiceBase;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
-class RelatorioPlanoTrabalhoService extends ServiceBase
+class RelatorioPlanoTrabalhoService
 {
     /** @var array<string, list<string>> */
     private array $unidadeIdsCache = [];
 
-    /** @var array<string, string> */
-    private array $hierarquiaCache = [];
-
-    public function __construct()
-    {
-        parent::__construct("App\Models\ViewRelatorioPlanoTrabalho");
-    }
-
-    public function proxyQuery($query, &$data)
-    {
-        $filtros = $this->extrairFiltrosRelatorioPt($data);
-        $data['where'] = $this->whereDaView($filtros);
+    public function __construct(
+        private readonly UnidadeRepository $unidadeRepository,
+        private readonly PlanoTrabalhoEntregaRepository $planoTrabalhoEntregaRepository,
+        private readonly bool $detalhado = false,
+    ) {
     }
 
     /**
-     * Consulta paginada para a geração do Excel, sem a view pesada nem COUNT a cada página.
+     * Consulta paginada da grid (view resumida ou detalhada).
      *
-     * @param array{page?: int, limit?: int, where?: array, orderBy?: array} $data
+     * @param array{page?: mixed, limit?: mixed, filters?: array<string, mixed>, where?: array<int, mixed>, orderBy?: array<int, mixed>} $data
+     * @return array{count: int, rows: Collection, extra: null}
+     */
+    public function query(array $data): array
+    {
+        $filters = $this->resolverFilters($data);
+        $contexto = $this->contextoFiltros($filters);
+
+        $query = $this->novoQueryView();
+        $this->aplicarFiltrosEspeciaisNaView($query, $contexto);
+        $this->aplicarFiltrosSimples($query, $contexto['filters_restantes']);
+        $this->aplicarOrdemNaView($query, is_array($data['orderBy'] ?? null) ? $data['orderBy'] : []);
+
+        $count = (clone $query)->count();
+        $this->aplicarPaginacao($query, $data);
+
+        $rows = $query->get();
+        $this->proxyRows($rows);
+
+        return [
+            'count' => $count,
+            'rows' => $rows,
+            'extra' => null,
+        ];
+    }
+
+    /**
+     * Consulta paginada para a geração do Excel.
+     *
+     * @param array{page?: int, limit?: int, filters?: array<string, mixed>, orderBy?: array} $data
      * @return array{count: int, rows: Collection, extra: null}
      */
     public function queryForExport(array $data, ?int $knownCount = null): array
     {
         $page = max(1, (int) ($data['page'] ?? 1));
-        $limit = max(1, (int) ($data['limit'] ?? 500));
         if ($page === 1) {
             $this->unidadeIdsCache = [];
-            $this->hierarquiaCache = [];
         }
 
-        $filtros = $this->extrairFiltrosRelatorioPt($data);
-        $whereRestante = $filtros['data']['where'] ?? [];
-        if ($this->ehConsultaDetalhada()) {
-            return $this->queryForExportDetalhado($filtros, $whereRestante, $data['orderBy'] ?? [], $page, $limit, $knownCount);
+        $result = $this->query([
+            'page' => $page,
+            'limit' => max(1, (int) ($data['limit'] ?? 500)),
+            'filters' => is_array($data['filters'] ?? null) ? $data['filters'] : [],
+            'orderBy' => is_array($data['orderBy'] ?? null) ? $data['orderBy'] : [],
+        ]);
+
+        if ($knownCount !== null) {
+            $result['count'] = $knownCount;
         }
 
-        return $this->queryForExportResumido($filtros, $whereRestante, $data['orderBy'] ?? [], $page, $limit, $knownCount);
+        return $result;
     }
 
-    public function proxyRows(&$rows)
+    /**
+     * @param Collection<int, mixed> $rows
+     * @return Collection<int, mixed>
+     */
+    private function proxyRows(Collection $rows): Collection
     {
         foreach ($rows as $row) {
-            $row['nota'] = str_replace('"', '', json_decode($row['nota']));
-            $row['nota_reavaliacao'] = str_replace('"', '', json_decode($row['nota_reavaliacao']));
+            $row['nota'] = $this->limparNota($row['nota'] ?? null);
+            $row['nota_reavaliacao'] = $this->limparNota($row['nota_reavaliacao'] ?? null);
         }
 
         return $rows;
     }
 
+    private function limparNota(mixed $valor): string
+    {
+        if ($valor === null || $valor === '') {
+            return '';
+        }
+
+        $decoded = is_string($valor) ? json_decode($valor) : $valor;
+
+        return str_replace('"', '', (string) ($decoded ?? ''));
+    }
+
     /**
-     * @param array<string, mixed> $data
+     * @param array{page?: mixed, limit?: mixed, filters?: array<string, mixed>, where?: array<int, mixed>} $data
+     * @return array<string, mixed>
+     */
+    private function resolverFilters(array $data): array
+    {
+        if (is_array($data['filters'] ?? null) && $data['filters'] !== []) {
+            return $data['filters'];
+        }
+
+        return $this->filtersFromWhere(is_array($data['where'] ?? null) ? $data['where'] : []);
+    }
+
+    /**
+     * Compatibilidade com a grid legada que ainda envia triplas where.
+     *
+     * @param array<int, mixed> $where
+     * @return array<string, mixed>
+     */
+    private function filtersFromWhere(array $where): array
+    {
+        $filters = [];
+
+        $unidadeId = $this->valorWhere($where, 'unidade_id');
+        if ($unidadeId !== null && $unidadeId !== '') {
+            $filters['unidade_id'] = $unidadeId;
+        }
+
+        if ($this->temWhere($where, 'incluir_unidades_subordinadas')) {
+            $filters['incluir_unidades_subordinadas'] = (bool) $this->valorWhere($where, 'incluir_unidades_subordinadas');
+        }
+
+        if ($this->temWhere($where, 'somente_vigentes')) {
+            $filters['somente_vigentes'] = (bool) $this->valorWhere($where, 'somente_vigentes');
+        }
+
+        if ($this->temWhere($where, 'incluir_periodos_avaliativos')) {
+            $filters['incluir_periodos_avaliativos'] = (bool) $this->valorWhere($where, 'incluir_periodos_avaliativos');
+        }
+
+        $periodoInicio = $this->valorWhere($where, 'periodoInicio');
+        if ($periodoInicio !== null && $periodoInicio !== '') {
+            $filters['periodoInicio'] = $periodoInicio;
+        }
+
+        $periodoFim = $this->valorWhere($where, 'periodoFim');
+        if ($periodoFim !== null && $periodoFim !== '') {
+            $filters['periodoFim'] = $periodoFim;
+        }
+
+        $planoEntregaEntregaId = $this->valorWhere($where, 'plano_entrega_entrega_id');
+        if ($planoEntregaEntregaId !== null && $planoEntregaEntregaId !== '') {
+            $filters['plano_entrega_entrega_id'] = $planoEntregaEntregaId;
+        }
+
+        $dataInicio = $this->valorWhere($where, 'dataInicio');
+        if ($dataInicio !== null && $dataInicio !== '') {
+            $filters['dataInicio'] = $dataInicio;
+        }
+
+        $dataFim = $this->valorWhere($where, 'dataFim');
+        if ($dataFim !== null && $dataFim !== '') {
+            $filters['dataFim'] = $dataFim;
+        }
+
+        $numero = $this->likeWhere($where, 'numero');
+        if ($numero !== null) {
+            $filters['numero'] = $numero;
+        }
+
+        $participanteNome = $this->likeWhere($where, 'participanteNome');
+        if ($participanteNome !== null) {
+            $filters['participanteNome'] = $participanteNome;
+        }
+
+        $unidadeHierarquia = $this->likeWhere($where, 'unidadeHierarquia');
+        if ($unidadeHierarquia !== null) {
+            $filters['unidadeHierarquia'] = $unidadeHierarquia;
+        }
+
+        $chd = $this->valorWhere($where, 'chd');
+        if ($chd !== null && $chd !== '') {
+            $filters['chd'] = $chd;
+        }
+
+        $status = $this->valorWhere($where, 'status');
+        if ($status !== null && $status !== '') {
+            $filters['status'] = $status;
+        }
+
+        $modalidadePgd = $this->valorWhere($where, 'modalidade_pgd');
+        if ($modalidadePgd !== null && $modalidadePgd !== '') {
+            $filters['modalidade_pgd'] = $modalidadePgd;
+        }
+
+        $nota = $this->valorWhere($where, 'nota');
+        if ($nota !== null && $nota !== '') {
+            $filters['nota'] = $nota;
+        }
+
+        $duracao = $this->valorWhere($where, 'duracao');
+        if ($duracao !== null && $duracao !== '') {
+            $filters['duracao'] = $duracao;
+        }
+
+        $qtdePeriodosAvaliativos = $this->valorWhere($where, 'qtdePeriodosAvaliativos');
+        if ($qtdePeriodosAvaliativos !== null && $qtdePeriodosAvaliativos !== '') {
+            $filters['qtdePeriodosAvaliativos'] = $qtdePeriodosAvaliativos;
+        }
+
+        $notaReavaliacao = $this->valorWhere($where, 'nota_reavaliacao');
+        if ($notaReavaliacao !== null && $notaReavaliacao !== '') {
+            $filters['nota_reavaliacao'] = $notaReavaliacao;
+        }
+
+        $situacaoAvaliacao = $this->valorWhere($where, 'situacao_avaliacao');
+        if ($situacaoAvaliacao !== null && $situacaoAvaliacao !== '') {
+            $filters['situacao_avaliacao'] = $situacaoAvaliacao;
+        }
+
+        $situacaoExecucao = $this->valorWhere($where, 'situacao_execucao');
+        if ($situacaoExecucao !== null && $situacaoExecucao !== '') {
+            $filters['situacao_execucao'] = $situacaoExecucao;
+        }
+
+        $dataInicioAvaliativo = $this->valorWhere($where, 'data_inicio_avaliativo');
+        if ($dataInicioAvaliativo !== null && $dataInicioAvaliativo !== '') {
+            $filters['data_inicio_avaliativo'] = $dataInicioAvaliativo;
+        }
+
+        $dataFimAvaliativo = $this->valorWhere($where, 'data_fim_avaliativo');
+        if ($dataFimAvaliativo !== null && $dataFimAvaliativo !== '') {
+            $filters['data_fim_avaliativo'] = $dataFimAvaliativo;
+        }
+
+        $dataRecurso = $this->valorWhere($where, 'data_recurso');
+        if ($dataRecurso !== null && $dataRecurso !== '') {
+            $filters['data_recurso'] = $dataRecurso;
+        }
+
+        $dataAvaliacao = $this->valorWhere($where, 'data_avaliacao');
+        if ($dataAvaliacao !== null && $dataAvaliacao !== '') {
+            $filters['data_avaliacao'] = $dataAvaliacao;
+        }
+
+        $dataReavaliacao = $this->valorWhere($where, 'data_reavaliacao');
+        if ($dataReavaliacao !== null && $dataReavaliacao !== '') {
+            $filters['data_reavaliacao'] = $dataReavaliacao;
+        }
+
+        $dataConclusao = $this->valorWhere($where, 'data_conclusao');
+        if ($dataConclusao !== null && $dataConclusao !== '') {
+            $filters['data_conclusao'] = $dataConclusao;
+        }
+
+        return $filters;
+    }
+
+    /**
+     * @param array<int, mixed> $where
+     */
+    private function valorWhere(array $where, string $campo): mixed
+    {
+        foreach ($where as $condition) {
+            if (! is_array($condition) || ! isset($condition[0])) {
+                continue;
+            }
+
+            if ((string) $condition[0] === $campo) {
+                return $condition[2] ?? null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<int, mixed> $where
+     */
+    private function temWhere(array $where, string $campo): bool
+    {
+        foreach ($where as $condition) {
+            if (! is_array($condition) || ! isset($condition[0])) {
+                continue;
+            }
+
+            if ((string) $condition[0] === $campo) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param array<int, mixed> $where
+     */
+    private function likeWhere(array $where, string $campo): ?string
+    {
+        $value = $this->valorWhere($where, $campo);
+        if (! is_string($value)) {
+            return null;
+        }
+
+        $stripped = trim($value, '%');
+
+        return $stripped === '' ? null : $stripped;
+    }
+
+    /**
+     * @param array<string, mixed> $filters
      * @return array{
-     *     data: array<string, mixed>,
+     *     unidade_ids: list<string>,
+     *     somente_vigentes: bool,
+     *     periodo_inicio: mixed,
+     *     periodo_fim: mixed,
+     *     plano_trabalho_ids: list<string>|null,
+     *     filters_restantes: array<string, mixed>
+     * }
+     */
+    private function contextoFiltros(array $filters): array
+    {
+        $unidadeId = isset($filters['unidade_id']) && $filters['unidade_id'] !== ''
+            ? (string) $filters['unidade_id']
+            : null;
+        $incluirSubordinadas = ! empty($filters['incluir_unidades_subordinadas']);
+        $planoEntregaEntregaId = isset($filters['plano_entrega_entrega_id']) && $filters['plano_entrega_entrega_id'] !== ''
+            ? (string) $filters['plano_entrega_entrega_id']
+            : null;
+
+        $planoTrabalhoIds = null;
+        if ($planoEntregaEntregaId !== null) {
+            $planoTrabalhoIds = $this->planoTrabalhoEntregaRepository
+                ->idsPlanosTrabalhoPorPlanoEntregaEntrega($planoEntregaEntregaId);
+        }
+
+        $especiais = [
+            'unidade_id',
+            'incluir_unidades_subordinadas',
+            'somente_vigentes',
+            'incluir_periodos_avaliativos',
+            'periodoInicio',
+            'periodoFim',
+            'plano_entrega_entrega_id',
+        ];
+
+        return [
+            'unidade_ids' => $this->idsUnidadesDoRelatorio($unidadeId, $incluirSubordinadas),
+            'somente_vigentes' => ! empty($filters['somente_vigentes']),
+            'periodo_inicio' => $filters['periodoInicio'] ?? null,
+            'periodo_fim' => $filters['periodoFim'] ?? null,
+            'plano_trabalho_ids' => $planoTrabalhoIds,
+            'filters_restantes' => array_diff_key($filters, array_flip($especiais)),
+        ];
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function idsUnidadesDoRelatorio(?string $unidadeId, bool $incluirSubordinadas): array
+    {
+        if ($unidadeId === null || $unidadeId === '') {
+            return [];
+        }
+        if (! $incluirSubordinadas) {
+            return [$unidadeId];
+        }
+
+        if (! isset($this->unidadeIdsCache[$unidadeId])) {
+            $this->unidadeIdsCache[$unidadeId] = $this->unidadeRepository->idsNaHierarquiaDe([$unidadeId]);
+        }
+
+        return $this->unidadeIdsCache[$unidadeId];
+    }
+
+    private function novoQueryView(): Builder
+    {
+        if ($this->detalhado) {
+            return ViewRelatorioPlanoTrabalhoDetalhado::query();
+        }
+
+        return ViewRelatorioPlanoTrabalho::query();
+    }
+
+    /**
+     * @param array{
      *     unidade_ids: list<string>,
      *     somente_vigentes: bool,
      *     periodo_inicio: mixed,
      *     periodo_fim: mixed,
      *     plano_trabalho_ids: list<string>|null
-     * }
+     * } $contexto
      */
-    protected function extrairFiltrosRelatorioPt(array $data): array
+    private function aplicarFiltrosEspeciaisNaView(Builder $query, array $contexto): void
     {
-        $where = $data['where'] ?? [];
-        $where = array_values(array_filter($where, function ($item) {
-            return ! is_array($item)
-                || ! isset($item[0])
-                || ! in_array($item[0], [
-                    'somente_vigentes',
-                    'incluir_unidades_subordinadas',
-                    'incluir_periodos_avaliativos',
-                    'periodoInicio',
-                    'periodoFim',
-                    'unidade_id',
-                    'plano_entrega_entrega_id',
-                ], true);
-        }));
-
-        $somenteVigentes = $this->extractWhere($data, 'somente_vigentes');
-        $subordinadas = $this->extractWhere($data, 'incluir_unidades_subordinadas');
-        $unidadeId = $this->extractWhere($data, 'unidade_id');
-        $periodoInicio = $this->extractWhere($data, 'periodoInicio');
-        $periodoFim = $this->extractWhere($data, 'periodoFim');
-        $planoEntregaEntregaId = $this->extractWhere($data, 'plano_entrega_entrega_id');
-        $this->extractWhere($data, 'incluir_periodos_avaliativos');
-
-        $unidadeIds = $this->idsUnidadesDoRelatorio(
-            isset($unidadeId[2]) ? (string) $unidadeId[2] : null,
-            isset($subordinadas[2]),
-        );
-
-        $planoTrabalhoIds = null;
-        if (isset($planoEntregaEntregaId[2])) {
-            $planoTrabalhoIds = app(PlanoTrabalhoEntregaRepository::class)
-                ->idsPlanosTrabalhoPorPlanoEntregaEntrega($planoEntregaEntregaId[2]);
+        if ($contexto['unidade_ids'] === []) {
+            $query->whereRaw('0 = 1');
+        } else {
+            $query->whereIn('unidade_id', $contexto['unidade_ids']);
         }
 
-        $data['where'] = $where;
-
-        return [
-            'data' => $data,
-            'unidade_ids' => $unidadeIds,
-            'somente_vigentes' => isset($somenteVigentes[2]),
-            'periodo_inicio' => $periodoInicio[2] ?? null,
-            'periodo_fim' => $periodoFim[2] ?? null,
-            'plano_trabalho_ids' => $planoTrabalhoIds,
-        ];
-    }
-
-    /**
-     * @param array<string, mixed> $filtros
-     * @return list<mixed>
-     */
-    protected function whereDaView(array $filtros): array
-    {
-        $where = $filtros['data']['where'] ?? [];
-        $where[] = ['unidade_id', 'in', $filtros['unidade_ids']];
-
-        if ($filtros['somente_vigentes']) {
-            $where[] = new RawWhere('(now() between dataInicio and dataFim)', []);
+        if ($contexto['somente_vigentes']) {
+            $query->whereRaw('(now() between dataInicio and dataFim)');
         }
 
-        $periodoInicio = $filtros['periodo_inicio'];
-        $periodoFim = $filtros['periodo_fim'];
+        $periodoInicio = $contexto['periodo_inicio'];
+        $periodoFim = $contexto['periodo_fim'];
         if ($periodoInicio && $periodoFim) {
-            $where[] = new RawWhere(
+            $query->whereRaw(
                 '(
                     (? between dataInicio and dataFim)
                     or (? between dataInicio and dataFim)
@@ -151,320 +426,184 @@ class RelatorioPlanoTrabalhoService extends ServiceBase
                 ]
             );
         } elseif ($periodoInicio) {
-            $where[] = new RawWhere('(? between dataInicio and dataFim)', [$periodoInicio]);
+            $query->whereRaw('(? between dataInicio and dataFim)', [$periodoInicio]);
         } elseif ($periodoFim) {
-            $where[] = new RawWhere('(? between dataInicio and dataFim)', [$periodoFim]);
+            $query->whereRaw('(? between dataInicio and dataFim)', [$periodoFim]);
         }
 
-        if (is_array($filtros['plano_trabalho_ids'])) {
-            $where[] = ['id', 'in', $filtros['plano_trabalho_ids']];
+        if (is_array($contexto['plano_trabalho_ids'])) {
+            $query->whereIn('id', $contexto['plano_trabalho_ids'] ?: [null]);
         }
-
-        return $where;
     }
 
     /**
-     * @return list<string>
+     * @param array<string, mixed> $filters
      */
-    protected function idsUnidadesDoRelatorio(?string $unidadeId, bool $incluirSubordinadas): array
+    private function aplicarFiltrosSimples(Builder $query, array $filters): void
     {
-        if ($unidadeId === null || $unidadeId === '') {
-            return [];
-        }
-        if (! $incluirSubordinadas) {
-            return [$unidadeId];
+        if (($filters['numero'] ?? null) !== null && $filters['numero'] !== '') {
+            $query->where('numero', 'like', $this->likeValor((string) $filters['numero']));
         }
 
-        if (! isset($this->unidadeIdsCache[$unidadeId])) {
-            $this->unidadeIdsCache[$unidadeId] = app(UnidadeRepository::class)
-                ->idsNaHierarquiaDe([$unidadeId]);
+        if (($filters['participanteNome'] ?? null) !== null && $filters['participanteNome'] !== '') {
+            $query->where('participanteNome', 'like', $this->likeValor((string) $filters['participanteNome']));
         }
 
-        return $this->unidadeIdsCache[$unidadeId];
+        if (($filters['unidadeHierarquia'] ?? null) !== null && $filters['unidadeHierarquia'] !== '') {
+            $query->where('unidadeHierarquia', 'like', $this->likeValor((string) $filters['unidadeHierarquia']));
+        }
+
+        if (($filters['dataInicio'] ?? null) !== null && $filters['dataInicio'] !== '') {
+            $query->where('dataInicio', '>=', $filters['dataInicio']);
+        }
+
+        if (($filters['dataFim'] ?? null) !== null && $filters['dataFim'] !== '') {
+            $query->where('dataFim', '<=', $filters['dataFim']);
+        }
+
+        if (($filters['status'] ?? null) !== null && $filters['status'] !== '') {
+            $query->where('status', '=', $filters['status']);
+        }
+
+        if (($filters['modalidade_pgd'] ?? null) !== null && $filters['modalidade_pgd'] !== '') {
+            $query->where('modalidade_pgd', '=', $filters['modalidade_pgd']);
+        }
+
+        if (($filters['chd'] ?? null) !== null && $filters['chd'] !== '') {
+            $query->where('chd', '=', $filters['chd']);
+        }
+
+        if (($filters['duracao'] ?? null) !== null && $filters['duracao'] !== '') {
+            $query->where('duracao', '=', $filters['duracao']);
+        }
+
+        if (($filters['qtdePeriodosAvaliativos'] ?? null) !== null && $filters['qtdePeriodosAvaliativos'] !== '') {
+            $query->where('qtdePeriodosAvaliativos', '=', $filters['qtdePeriodosAvaliativos']);
+        }
+
+        if (($filters['data_inicio_avaliativo'] ?? null) !== null && $filters['data_inicio_avaliativo'] !== '') {
+            $query->where('data_inicio_avaliativo', '>=', $filters['data_inicio_avaliativo']);
+        }
+
+        if (($filters['data_fim_avaliativo'] ?? null) !== null && $filters['data_fim_avaliativo'] !== '') {
+            $query->where('data_fim_avaliativo', '<=', $filters['data_fim_avaliativo']);
+        }
+
+        if (($filters['nota'] ?? null) !== null && $filters['nota'] !== '') {
+            $query->where('nota', '=', $filters['nota']);
+        }
+
+        if (($filters['nota_reavaliacao'] ?? null) !== null && $filters['nota_reavaliacao'] !== '') {
+            $query->where('nota_reavaliacao', '=', $filters['nota_reavaliacao']);
+        }
+
+        if (($filters['situacao_avaliacao'] ?? null) !== null && $filters['situacao_avaliacao'] !== '') {
+            $query->where('situacao_avaliacao', '=', $filters['situacao_avaliacao']);
+        }
+
+        if (($filters['situacao_execucao'] ?? null) !== null && $filters['situacao_execucao'] !== '') {
+            $query->where('situacao_execucao', '=', $filters['situacao_execucao']);
+        }
+
+        if (($filters['data_recurso'] ?? null) !== null && $filters['data_recurso'] !== '') {
+            $query->where('data_recurso', '=', $filters['data_recurso']);
+        }
+
+        if (($filters['data_avaliacao'] ?? null) !== null && $filters['data_avaliacao'] !== '') {
+            $query->where('data_avaliacao', '=', $filters['data_avaliacao']);
+        }
+
+        if (($filters['data_reavaliacao'] ?? null) !== null && $filters['data_reavaliacao'] !== '') {
+            $query->where('data_reavaliacao', '=', $filters['data_reavaliacao']);
+        }
+
+        if (($filters['data_conclusao'] ?? null) !== null && $filters['data_conclusao'] !== '') {
+            $query->where('data_conclusao', '=', $filters['data_conclusao']);
+        }
+    }
+
+    private function likeValor(string $value): string
+    {
+        if (str_contains($value, '%')) {
+            return $value;
+        }
+
+        return '%' . $value . '%';
     }
 
     /**
-     * @param array<string, mixed> $filtros
-     * @param list<mixed> $whereRestante
-     * @param list<array{0: string, 1: string}> $orderBy
-     * @return array{count: int, rows: Collection, extra: null}
+     * @param array<int, mixed> $orderBy
      */
-    private function queryForExportResumido(array $filtros, array $whereRestante, array $orderBy, int $page, int $limit, ?int $knownCount): array
+    private function aplicarOrdemNaView(Builder $query, array $orderBy): void
     {
-        $idsQuery = $this->novoQueryPlanosExportacao($filtros, $whereRestante);
-        $this->aplicarOrdemExportacao($idsQuery, $orderBy);
+        $aplicou = $this->aplicarCampoOrdemNaView($query, $orderBy[0] ?? null);
+        $this->aplicarCampoOrdemNaView($query, $orderBy[1] ?? null);
 
-        $count = $knownCount ?? (int) (clone $idsQuery)->reorder()->count('pt.id');
-        $ids = $idsQuery
-            ->skip(($page - 1) * $limit)
-            ->take($limit)
-            ->pluck('pt.id');
+        if (! $aplicou) {
+            $query->orderBy('unidadeHierarquia')->orderBy('numero');
+        }
+    }
 
-        if ($ids->isEmpty()) {
-            return ['count' => $count, 'rows' => collect(), 'extra' => null];
+    private function aplicarCampoOrdemNaView(Builder $query, mixed $order): bool
+    {
+        if (! is_array($order) || ! isset($order[0]) || ! is_string($order[0])) {
+            return false;
         }
 
-        $idList = $ids->all();
-        $chdPorPlano = DB::table('planos_trabalhos_entregas')
-            ->select('plano_trabalho_id', DB::raw('SUM(COALESCE(forca_trabalho, 0)) as chd'))
-            ->whereIn('plano_trabalho_id', $idList)
-            ->whereNull('deleted_at')
-            ->groupBy('plano_trabalho_id')
-            ->pluck('chd', 'plano_trabalho_id');
-        $periodosPorPlano = DB::table('planos_trabalhos_consolidacoes')
-            ->select('plano_trabalho_id', DB::raw('COUNT(*) as qtde'))
-            ->whereIn('plano_trabalho_id', $idList)
-            ->whereNull('deleted_at')
-            ->groupBy('plano_trabalho_id')
-            ->pluck('qtde', 'plano_trabalho_id');
+        $campo = $order[0];
+        $direcao = strtolower((string) ($order[1] ?? 'asc')) === 'desc' ? 'desc' : 'asc';
 
-        $rows = DB::table('planos_trabalhos as pt')
-            ->join('usuarios as usu', 'usu.id', '=', 'pt.usuario_id')
-            ->join('unidades as uni', 'uni.id', '=', 'pt.unidade_id')
-            ->whereIn('pt.id', $idList)
-            ->get([
-                'pt.id',
-                'pt.numero',
-                'pt.status',
-                'pt.unidade_id',
-                'pt.data_inicio as dataInicio',
-                'pt.data_fim as dataFim',
-                'usu.nome as participanteNome',
-                DB::raw('DATEDIFF(pt.data_fim, pt.data_inicio) + 1 as duracao'),
-            ]);
+        if ($campo === 'unidadeHierarquia') {
+            $query->orderBy('unidadeHierarquia', $direcao);
 
-        $ordem = array_flip($idList);
-        $rows = $rows
-            ->map(function ($row) use ($chdPorPlano, $periodosPorPlano) {
-                $row->chd = (float) ($chdPorPlano[$row->id] ?? 0);
-                $row->qtdePeriodosAvaliativos = (int) ($periodosPorPlano[$row->id] ?? 0);
-                return $row;
-            })
-            ->sortBy(fn ($row) => $ordem[$row->id] ?? PHP_INT_MAX)
-            ->values();
+            return true;
+        }
 
-        $this->preencherHierarquia($rows);
+        if ($campo === 'numero') {
+            $query->orderBy('numero', $direcao);
 
-        return ['count' => $count, 'rows' => $rows, 'extra' => null];
+            return true;
+        }
+
+        if ($campo === 'participanteNome') {
+            $query->orderBy('participanteNome', $direcao);
+
+            return true;
+        }
+
+        if ($campo === 'status') {
+            $query->orderBy('status', $direcao);
+
+            return true;
+        }
+
+        if ($campo === 'dataInicio') {
+            $query->orderBy('dataInicio', $direcao);
+
+            return true;
+        }
+
+        if ($campo === 'dataFim') {
+            $query->orderBy('dataFim', $direcao);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
-     * @param array<string, mixed> $filtros
-     * @param list<mixed> $whereRestante
-     * @param list<array{0: string, 1: string}> $orderBy
-     * @return array{count: int, rows: Collection, extra: null}
+     * @param array{page?: mixed, limit?: mixed} $data
      */
-    private function queryForExportDetalhado(array $filtros, array $whereRestante, array $orderBy, int $page, int $limit, ?int $knownCount): array
+    private function aplicarPaginacao(Builder $query, array $data): void
     {
-        $idsQuery = $this->novoQueryPlanosExportacao($filtros, $whereRestante)
-            ->leftJoin('planos_trabalhos_consolidacoes as ptc', function ($join) {
-                $join->on('ptc.plano_trabalho_id', '=', 'pt.id')
-                    ->whereNull('ptc.deleted_at');
-            })
-            ->select('pt.id as plano_trabalho_id', 'ptc.id as consolidacao_id');
-        $this->aplicarOrdemExportacao($idsQuery, $orderBy);
-        $idsQuery->orderBy('ptc.data_inicio');
-
-        $count = $knownCount ?? (int) (clone $idsQuery)->reorder()->count('pt.id');
-        $pagina = $idsQuery
-            ->skip(($page - 1) * $limit)
-            ->take($limit)
-            ->get();
-
-        if ($pagina->isEmpty()) {
-            return ['count' => $count, 'rows' => collect(), 'extra' => null];
-        }
-
-        $consolidacaoIds = $pagina->pluck('consolidacao_id')->filter()->values()->all();
-        $planosSemConsolidacao = $pagina->whereNull('consolidacao_id')->pluck('plano_trabalho_id')->all();
-
-        $viewQuery = DB::table('view_relatorio_plano_trabalho_detalhado');
-        $viewQuery->where(function ($query) use ($consolidacaoIds, $planosSemConsolidacao) {
-            if ($consolidacaoIds !== []) {
-                $query->whereIn('id', $consolidacaoIds);
-            }
-            if ($planosSemConsolidacao !== []) {
-                $query->orWhere(function ($orphans) use ($planosSemConsolidacao) {
-                    $orphans->whereIn('plano_trabalho_id', $planosSemConsolidacao)
-                        ->whereNull('data_inicio_avaliativo');
-                });
-            }
-        });
-
-        $rows = $viewQuery->get();
-        $ordem = [];
-        foreach ($pagina as $index => $item) {
-            $chave = $item->consolidacao_id ?: ('pt:' . $item->plano_trabalho_id);
-            $ordem[$chave] = $index;
-        }
-        $rows = $rows
-            ->sortBy(function ($row) use ($ordem) {
-                $chave = $row->id ?: ('pt:' . $row->plano_trabalho_id);
-                return $ordem[$chave] ?? PHP_INT_MAX;
-            })
-            ->values();
-
-        return ['count' => $count, 'rows' => $rows, 'extra' => null];
-    }
-
-    /**
-     * @param array<string, mixed> $filtros
-     * @param list<mixed> $whereRestante
-     */
-    private function novoQueryPlanosExportacao(array $filtros, array $whereRestante)
-    {
-        $query = DB::table('planos_trabalhos as pt')
-            ->join('usuarios as usu', 'usu.id', '=', 'pt.usuario_id')
-            ->join('unidades as uni', 'uni.id', '=', 'pt.unidade_id')
-            ->whereNull('pt.deleted_at');
-
-        if ($filtros['unidade_ids'] === []) {
-            $query->whereRaw('0 = 1');
-        } else {
-            $query->whereIn('pt.unidade_id', $filtros['unidade_ids']);
-        }
-
-        if ($filtros['somente_vigentes']) {
-            $query->whereRaw('(now() between pt.data_inicio and pt.data_fim)');
-        }
-
-        $periodoInicio = $filtros['periodo_inicio'];
-        $periodoFim = $filtros['periodo_fim'];
-        if ($periodoInicio && $periodoFim) {
-            $query->whereRaw(
-                '(
-                    (? between pt.data_inicio and pt.data_fim)
-                    or (? between pt.data_inicio and pt.data_fim)
-                    or (pt.data_inicio between ? and ?)
-                    or (pt.data_fim between ? and ?)
-                )',
-                [
-                    $periodoInicio, $periodoFim,
-                    $periodoInicio, $periodoFim,
-                    $periodoInicio, $periodoFim,
-                ]
-            );
-        } elseif ($periodoInicio) {
-            $query->whereRaw('(? between pt.data_inicio and pt.data_fim)', [$periodoInicio]);
-        } elseif ($periodoFim) {
-            $query->whereRaw('(? between pt.data_inicio and pt.data_fim)', [$periodoFim]);
-        }
-
-        if (is_array($filtros['plano_trabalho_ids'])) {
-            $query->whereIn('pt.id', $filtros['plano_trabalho_ids'] ?: [null]);
-        }
-
-        $this->aplicarWhereExportacao($query, $whereRestante);
-
-        return $query;
-    }
-
-    /**
-     * @param list<mixed> $where
-     */
-    private function aplicarWhereExportacao($query, array $where): void
-    {
-        foreach ($where as $condicao) {
-            if (! is_array($condicao) || count($condicao) < 3 || ! is_string($condicao[0] ?? null)) {
-                continue;
-            }
-            [$campo, $operador, $valor] = $condicao;
-            $coluna = $this->colunaExportacao($campo);
-            if ($coluna === null) {
-                continue;
-            }
-            if ($operador === 'in') {
-                $query->whereIn($coluna, (array) $valor);
-                continue;
-            }
-            if ($operador === 'not in') {
-                $query->whereNotIn($coluna, (array) $valor);
-                continue;
-            }
-            $query->where($coluna, $this->convertOperator($operador), $valor);
-        }
-    }
-
-    private function colunaExportacao(string $campo): mixed
-    {
-        return match ($campo) {
-            'numero', 'id' => 'pt.' . ($campo === 'id' ? 'id' : 'numero'),
-            'status' => 'pt.status',
-            'modalidade_pgd', 'tipo_modalidade_id' => 'pt.modalidade_pgd',
-            'participanteNome' => 'usu.nome',
-            'dataInicio' => 'pt.data_inicio',
-            'dataFim' => 'pt.data_fim',
-            'unidadeHierarquia' => DB::raw('fn_obter_unidade_hierarquia(pt.unidade_id)'),
-            'chd' => DB::raw('(SELECT COALESCE(SUM(COALESCE(forca_trabalho, 0)), 0) FROM planos_trabalhos_entregas pte WHERE pte.plano_trabalho_id = pt.id AND pte.deleted_at IS NULL)'),
-            'duracao' => DB::raw('(DATEDIFF(pt.data_fim, pt.data_inicio) + 1)'),
-            'qtdePeriodosAvaliativos' => DB::raw('(SELECT COUNT(*) FROM planos_trabalhos_consolidacoes ptc2 WHERE ptc2.plano_trabalho_id = pt.id AND ptc2.deleted_at IS NULL)'),
-            default => null,
-        };
-    }
-
-    /**
-     * @param list<array{0: string, 1: string}> $orderBy
-     */
-    private function aplicarOrdemExportacao($query, array $orderBy): void
-    {
-        if ($orderBy === []) {
-            $query->orderBy('uni.path')->orderBy('pt.numero');
+        $limit = $data['limit'] ?? null;
+        if ($limit === null || $limit === '' || (int) $limit <= 0) {
             return;
         }
 
-        $aplicou = false;
-        foreach ($orderBy as $order) {
-            if (! is_array($order) || ! isset($order[0])) {
-                continue;
-            }
-            $campo = (string) $order[0];
-            $direcao = strtolower((string) ($order[1] ?? 'asc')) === 'desc' ? 'desc' : 'asc';
-            $coluna = match ($campo) {
-                'unidadeHierarquia' => 'uni.path',
-                'numero' => 'pt.numero',
-                'participanteNome' => 'usu.nome',
-                'status' => 'pt.status',
-                'dataInicio' => 'pt.data_inicio',
-                'dataFim' => 'pt.data_fim',
-                default => null,
-            };
-            if ($coluna === null) {
-                continue;
-            }
-            $query->orderBy($coluna, $direcao);
-            $aplicou = true;
-        }
-
-        if (! $aplicou) {
-            $query->orderBy('uni.path')->orderBy('pt.numero');
-        }
-    }
-
-    private function preencherHierarquia(Collection $rows): void
-    {
-        $unidadeIds = $rows->pluck('unidade_id')->unique()->filter()->values()->all();
-        $faltantes = array_values(array_diff($unidadeIds, array_keys($this->hierarquiaCache)));
-        if ($faltantes !== []) {
-            $placeholders = implode(',', array_fill(0, count($faltantes), '?'));
-            $encontrados = DB::select(
-                "SELECT id, fn_obter_unidade_hierarquia(id) AS h FROM unidades WHERE id IN ($placeholders)",
-                $faltantes
-            );
-            foreach ($encontrados as $unidade) {
-                $this->hierarquiaCache[$unidade->id] = (string) $unidade->h;
-            }
-        }
-
-        foreach ($rows as $row) {
-            $row->unidadeHierarquia = $this->hierarquiaCache[$row->unidade_id] ?? '';
-        }
-    }
-
-    private function ehConsultaDetalhada(): bool
-    {
-        $model = $this->getModel();
-
-        return $model instanceof ViewRelatorioPlanoTrabalhoDetalhado
-            || ($model !== null && $model->getTable() === 'view_relatorio_plano_trabalho_detalhado');
+        $page = max(1, (int) ($data['page'] ?? 1));
+        $limit = max(1, (int) $limit);
+        $query->skip(($page - 1) * $limit)->take($limit);
     }
 }

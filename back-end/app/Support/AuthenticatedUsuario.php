@@ -14,6 +14,26 @@ use Illuminate\Support\Facades\Auth;
  */
 final class AuthenticatedUsuario
 {
+    /** @var null|callable(): (?Usuario) */
+    private static $withAreasDeTrabalhoFake = null;
+
+    /**
+     * Substitui {@see self::withAreasDeTrabalho()} apenas no teste corrente.
+     * Alias do Mockery troca a classe no processo inteiro e, após Mockery::close(),
+     * as chamadas seguintes falham com "Call to a member function __call() on null".
+     *
+     * @param callable(): (?Usuario) $resolver
+     */
+    public static function fakeWithAreasDeTrabalho(callable $resolver): void
+    {
+        self::$withAreasDeTrabalhoFake = $resolver;
+    }
+
+    public static function clearFakes(): void
+    {
+        self::$withAreasDeTrabalhoFake = null;
+    }
+
     /** Utilizador da sessão/guard atual, ou null se não autenticado ou tipo inesperado. */
     public static function logged(): ?Usuario
     {
@@ -28,6 +48,10 @@ final class AuthenticatedUsuario
      */
     public static function withAreasDeTrabalho(): ?Usuario
     {
+        if (self::$withAreasDeTrabalhoFake !== null) {
+            return (self::$withAreasDeTrabalhoFake)();
+        }
+
         $logged = self::logged();
         if ($logged === null) {
             return null;

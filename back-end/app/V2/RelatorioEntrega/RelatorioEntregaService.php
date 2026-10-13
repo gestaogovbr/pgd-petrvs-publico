@@ -6,10 +6,13 @@ namespace App\V2\RelatorioEntrega;
 
 use App\Repository\RelatorioEntregaRepository;
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaIndexDTO;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaIndexFiltersDTO;
+use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaQueryDTO;
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaRowDTO;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as ConcretePaginator;
+use Illuminate\Support\Collection;
 
 class RelatorioEntregaService
 {
@@ -32,13 +35,44 @@ class RelatorioEntregaService
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, RelatorioEntregaRowDTO>
+     * @return Collection<int, RelatorioEntregaRowDTO>
      */
-    public function exportRows(RelatorioEntregaIndexDTO $dto): \Illuminate\Support\Collection
+    public function exportRows(RelatorioEntregaIndexDTO $dto): Collection
     {
         $result = $this->relatorioEntregaRepository->query($dto->toQuery(false));
 
         return collect($result['rows'] ?? []);
+    }
+
+    /**
+     * Consulta paginada para a geração do Excel em segundo plano.
+     *
+     * @param array{page?: int, limit?: int, filters?: array<string, mixed>, orderBy?: array<int, mixed>} $data
+     * @return array{count: int, rows: Collection<int, RelatorioEntregaRowDTO>}
+     */
+    public function queryForExport(array $data, ?int $knownCount = null): array
+    {
+        $orderBy = is_array($data['orderBy'] ?? null) ? $data['orderBy'] : [];
+        if ($orderBy === []) {
+            $orderBy = [['unidadeHierarquia', 'asc'], ['entregaNome', 'asc']];
+        }
+
+        $query = new RelatorioEntregaQueryDTO(
+            page: max(1, (int) ($data['page'] ?? 1)),
+            limit: max(1, (int) ($data['limit'] ?? 1000)),
+            filters: RelatorioEntregaIndexFiltersDTO::fromArray(
+                is_array($data['filters'] ?? null) ? $data['filters'] : []
+            ),
+            orderBy: $orderBy,
+        );
+
+        $result = $this->relatorioEntregaRepository->query($query);
+
+        if ($knownCount !== null) {
+            $result['count'] = $knownCount;
+        }
+
+        return $result;
     }
 
     private function buildPaginator(

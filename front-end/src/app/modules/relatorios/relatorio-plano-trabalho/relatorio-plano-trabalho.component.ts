@@ -138,6 +138,10 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
         this.filter?.controls.unidade_id.setValue(this.metadata.unidade_id);
       }
 
+      if (this.metadata?.incluir_unidades_subordinadas) {
+        this.filter?.controls.incluir_unidades_subordinadas?.setValue(true);
+      }
+
       this.tipoAvaliacaoNotaDao.query({ orderBy: [['sequencia', 'asc']] })
           .asPromise().then(notas => {
               const sanitizeNotas = notas.map(nota => ({
@@ -284,6 +288,98 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
     return result;
   };
 
+  public buildFilters(filter: FormGroup): Record<string, unknown> {
+    const form: any = filter.value;
+    const filters: Record<string, unknown> = {};
+    const resumido = !form.incluir_periodos_avaliativos;
+
+    if (form.unidade_id?.length) {
+      filters['unidade_id'] = form.unidade_id;
+    }
+    if (form.data_inicio) {
+      filters['dataInicio'] = form.data_inicio.toISOString().slice(0, 10);
+    }
+    if (form.data_fim) {
+      filters['dataFim'] = form.data_fim.toISOString().slice(0, 10);
+    }
+    if (form.periodo_inicio) {
+      filters['periodoInicio'] = form.periodo_inicio.toISOString().slice(0, 10);
+    }
+    if (form.periodo_fim) {
+      filters['periodoFim'] = form.periodo_fim.toISOString().slice(0, 10);
+    }
+    if (form.somente_vigentes) {
+      filters['somente_vigentes'] = true;
+    }
+    if (form.incluir_periodos_avaliativos) {
+      filters['incluir_periodos_avaliativos'] = true;
+    }
+    if (form.incluir_unidades_subordinadas) {
+      filters['incluir_unidades_subordinadas'] = true;
+    }
+    if (form.id) {
+      filters['numero'] = form.id;
+    }
+    if (form.participanteNome) {
+      filters['participanteNome'] = form.participanteNome;
+    }
+    if (form.unidadeNome) {
+      filters['unidadeHierarquia'] = form.unidadeNome;
+    }
+    if (form.chd) {
+      filters['chd'] = form.chd;
+    }
+    if (form.status) {
+      filters['status'] = form.status;
+    }
+    if (form.modalidade) {
+      filters['modalidade_pgd'] = form.modalidade;
+    }
+    if (form.nota) {
+      filters['nota'] = form.nota;
+    }
+    if (form.duracao) {
+      filters['duracao'] = form.duracao;
+    }
+    if (resumido && form.qtdePeriodosAvaliativos) {
+      filters['qtdePeriodosAvaliativos'] = form.qtdePeriodosAvaliativos;
+    }
+    if (!resumido) {
+      if (form.nota_reavaliacao) {
+        filters['nota_reavaliacao'] = form.nota_reavaliacao;
+      }
+      if (form.situacao_avaliacao) {
+        filters['situacao_avaliacao'] = form.situacao_avaliacao;
+      }
+      if (form.situacao_execucao) {
+        filters['situacao_execucao'] = form.situacao_execucao;
+      }
+      if (form.data_inicio_avaliativo) {
+        filters['data_inicio_avaliativo'] = form.data_inicio_avaliativo.toISOString().slice(0, 10);
+      }
+      if (form.data_fim_avaliativo) {
+        filters['data_fim_avaliativo'] = form.data_fim_avaliativo.toISOString().slice(0, 10);
+      }
+      if (form.data_recurso) {
+        filters['data_recurso'] = form.data_recurso.toISOString().slice(0, 10);
+      }
+      if (form.data_avaliacao) {
+        filters['data_avaliacao'] = form.data_avaliacao.toISOString().slice(0, 10);
+      }
+      if (form.data_reavaliacao) {
+        filters['data_reavaliacao'] = form.data_reavaliacao.toISOString().slice(0, 10);
+      }
+      if (form.data_conclusao) {
+        filters['data_conclusao'] = form.data_conclusao.toISOString().slice(0, 10);
+      }
+    }
+    if (this.metadata?.plano_entrega_entrega_id) {
+      filters['plano_entrega_entrega_id'] = this.metadata.plano_entrega_entrega_id;
+    }
+
+    return filters;
+  }
+
   public getDuracao(row: RelatorioPlanoTrabalho): number {
     if (row.dataInicio && row.dataFim) {
       const start = moment(row.dataInicio, 'YYYY-MM-DD');
@@ -325,7 +421,7 @@ export class RelatorioPlanoTrabalhoComponent extends RelatorioBaseComponent<Rela
         ? 'plano_trabalho'
         : 'plano_trabalho_detalhado';
       return this.relatorioGeracaoDao.solicitar(tipo, {
-        where: queryOptions.where,
+        filters: this.buildFilters(this.filter!),
         orderBy: queryOptions.orderBy
       });
     } catch (error: any) {

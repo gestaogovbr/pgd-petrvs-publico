@@ -3,6 +3,7 @@ import { AbstractControl, FormGroup, ValidationErrors } from "@angular/forms";
 import { GridComponent } from "src/app/components/grid/grid.component";
 import { ToolbarButton } from "src/app/components/toolbar/toolbar-types";
 import { RelatorioUnidadeDaoService } from "src/app/dao/relatorio-unidade-dao.service";
+import { RelatorioGeracaoDaoService } from "src/app/dao/relatorio-geracao-dao.service";
 import { UnidadeDaoService } from "src/app/dao/unidade-dao.service";
 import { RelatorioUnidade } from "src/app/models/relatorio-unidade.model";
 import { PageListBase } from "src/app/modules/base/page-list-base";
@@ -22,10 +23,12 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
   @ViewChild(GridComponent, { static: false }) public grid?: GridComponent;
 
   public permissao: string = 'MOD_RELATORIO_UNIDADE';
+  public relatorioGeracaoDao: RelatorioGeracaoDaoService;
   public botoes: ToolbarButton[] = [];
 
   constructor(public injector: Injector) {
     super(injector, RelatorioUnidade, RelatorioUnidadeDaoService);
+    this.relatorioGeracaoDao = injector.get<RelatorioGeracaoDaoService>(RelatorioGeracaoDaoService);
 
     this.filter = this.fh.FormBuilder({
       unidade_id: { default: this.auth.unidade?.id },
@@ -118,6 +121,50 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
     return result;
   };
 
+  public buildFilters(filter: FormGroup): Record<string, unknown> {
+    const form: any = filter.value;
+    const filters: Record<string, unknown> = {};
+
+    if (form.unidade_id) {
+      filters['unidade_id'] = form.unidade_id;
+    }
+    if (form.incluir_unidades_subordinadas) {
+      filters['incluir_unidades_subordinadas'] = true;
+    }
+    if (form.nome) {
+      filters['nome'] = form.nome;
+    }
+    if (form.unidadeNome) {
+      filters['unidadeHierarquia'] = form.unidadeNome;
+    }
+    if (form.uorg?.length) {
+      filters['codigo'] = form.uorg;
+    }
+    if (form.instituidora?.length) {
+      filters['instituidora'] = form.instituidora;
+    }
+    if (form.executora?.length) {
+      filters['executora'] = form.executora;
+    }
+    if (form.peVigenteNome?.length) {
+      filters['peVigenteNome'] = form.peVigenteNome;
+    }
+    if (form.chefiaNome?.length) {
+      filters['chefiaNome'] = form.chefiaNome;
+    }
+    if (form.totalVinculados?.length) {
+      filters['totalVinculados'] = form.totalVinculados;
+    }
+    if (form.totalSubstitutos?.length) {
+      filters['totalSubstitutos'] = form.totalSubstitutos;
+    }
+    if (form.totalDelegados?.length) {
+      filters['totalDelegados'] = form.totalDelegados;
+    }
+
+    return filters;
+  }
+
   public onButtonFilterClick = (filter: FormGroup) => {
     let form: any = filter.value;
     let queryOptions = this.grid?.queryOptions || this.queryOptions || {};
@@ -133,9 +180,9 @@ export class RelatorioUnidadeComponent extends RelatorioBaseComponent<RelatorioU
   }
 
   public exportExcel = (form: any, queryOptions: QueryOptions) => {
-    try{
-      return this.dao!.exportarXls({
-        where: queryOptions.where,
+    try {
+      return this.relatorioGeracaoDao.solicitar('unidade', {
+        filters: this.buildFilters(this.filter!),
         orderBy: queryOptions.orderBy
       });
     } catch (error: any) {
