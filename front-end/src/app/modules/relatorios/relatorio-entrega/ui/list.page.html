@@ -138,10 +138,24 @@
               Status do<br />Plano <i [class]="sortIcon('plano_status')"></i>
             </th>
             <th scope="col" class="sortable sub-header" (click)="onSort('qtd_participantes')">
-              Participantes<br />envolvidos <i [class]="sortIcon('qtd_participantes')"></i>
+              Participantes<br />envolvidos
+              <i
+                class="bi bi-info-circle text-muted ms-1"
+                role="img"
+                (click)="$event.stopPropagation()"
+                title="quantidade de participantes do PGD que contribuíram para a entrega, contabilizado uma única vez por entrega, independentemente da quantidade de Planos de Trabalho por meio dos quais tenha contribuído."
+                aria-label="quantidade de participantes do PGD que contribuíram para a entrega, contabilizado uma única vez por entrega, independentemente da quantidade de Planos de Trabalho por meio dos quais tenha contribuído."></i>
+              <i [class]="sortIcon('qtd_participantes')"></i>
             </th>
             <th scope="col" class="sortable sub-header" (click)="onSort('qtd_planos_trabalho')">
-              Planos de Trabalho<br />vinculados <i [class]="sortIcon('qtd_planos_trabalho')"></i>
+              Planos de Trabalho<br />vinculados
+              <i
+                class="bi bi-info-circle text-muted ms-1"
+                role="img"
+                (click)="$event.stopPropagation()"
+                title="quantidade de Planos de Trabalho em que houve contribuição para a entrega, contabilizado uma única vez por entrega."
+                aria-label="quantidade de Planos de Trabalho em que houve contribuição para a entrega, contabilizado uma única vez por entrega."></i>
+              <i [class]="sortIcon('qtd_planos_trabalho')"></i>
             </th>
           </tr>
         </thead>

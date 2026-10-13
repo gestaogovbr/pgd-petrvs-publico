@@ -53,7 +53,7 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
 
         return new self(
             id: (string) ($row->id ?? ''),
-            unidade_id: (string) ($row->plano_unidade_id ?? $row->unidade_id ?? ''),
+            unidade_id: (string) ($row->unidade_id ?? $row->plano_unidade_id ?? ''),
             unidadeHierarquia: (string) ($row->unidade_hierarquia ?? ''),
             demandanteHierarquia: (string) ($row->demandante_hierarquia ?? ''),
             destinatario: (string) ($row->destinatario ?? ''),

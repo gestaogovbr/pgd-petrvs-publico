@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\Perfil;
+use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Unidade;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
@@ -286,4 +288,44 @@ test('filtro por usuario_id retorna apenas o usuário especificado', function ()
 
     expect($ids)->toContain($usuario1->id)
         ->and($ids)->not->toContain($usuario2->id);
+});
+
+test('filtro por plano_entrega_entrega_id exclui participante cujo único PT está CANCELADO', function () {
+    $usuarioAtivo = ($this->criarUsuarioLotado)();
+    $usuarioCancelado = ($this->criarUsuarioLotado)();
+
+    $entrega = PlanoEntregaEntrega::factory()->create(['unidade_id' => $this->unidade->id]);
+
+    $planoAtivo = PlanoTrabalho::factory()->ativo()->create([
+        'usuario_id' => $usuarioAtivo->id,
+        'unidade_id' => $this->unidade->id,
+    ]);
+    $planoCancelado = PlanoTrabalho::factory()->create([
+        'usuario_id' => $usuarioCancelado->id,
+        'unidade_id' => $this->unidade->id,
+        'status' => StatusEnum::CANCELADO->value,
+    ]);
+
+    PlanoTrabalhoEntrega::factory()->create([
+        'plano_trabalho_id' => $planoAtivo->id,
+        'plano_entrega_entrega_id' => $entrega->id,
+    ]);
+    PlanoTrabalhoEntrega::factory()->create([
+        'plano_trabalho_id' => $planoCancelado->id,
+        'plano_entrega_entrega_id' => $entrega->id,
+    ]);
+
+    $result = $this->repository->query([
+        'where' => [
+            ['unidade_id', '==', $this->unidade->id],
+            ['plano_entrega_entrega_id', '==', $entrega->id],
+        ],
+        'page' => 1,
+        'limit' => 10,
+    ]);
+
+    $ids = $result['rows']->pluck('id')->toArray();
+
+    expect($ids)->toContain($usuarioAtivo->id)
+        ->and($ids)->not->toContain($usuarioCancelado->id);
 });

@@ -74,6 +74,9 @@ export class NavigateService {
       modalClose: metadata?.modalClose
     });
     if(route.root) this.clearRoutes();
+    // Remove entrada anterior com o mesmo idroute para evitar metadata obsoleto
+    // quando a mesma transição (origem->destino) é navegada novamente.
+    this.routes = this.routes.filter(x => x.id != route.id);
     this.routes.push(route);
     return this.ngZone.run(() => this.router.navigate(destination.route, { queryParams: destination.params }));
   }

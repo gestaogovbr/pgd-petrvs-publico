@@ -277,7 +277,7 @@ TEXT;
             $sql .= ' and `u`.`id` in (
                 select distinct `pt`.`usuario_id`
                 from `planos_trabalhos_entregas` `pte`
-                inner join `planos_trabalhos` `pt` on `pt`.`id` = `pte`.`plano_trabalho_id` and `pt`.`deleted_at` is null
+                inner join `planos_trabalhos` `pt` on `pt`.`id` = `pte`.`plano_trabalho_id` and `pt`.`deleted_at` is null and `pt`.`status` <> \'CANCELADO\'
                 where `pte`.`plano_entrega_entrega_id` = ? and `pte`.`deleted_at` is null
             )';
             $params[] = $planoEntregaEntregaId[2];
