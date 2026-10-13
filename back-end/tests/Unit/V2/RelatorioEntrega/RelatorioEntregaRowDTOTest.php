@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Exports\RelatorioEntregaExport;
 use App\V2\RelatorioEntrega\DTOs\RelatorioEntregaRowDTO;
 use App\V2\RelatorioEntrega\Support\RelatorioEntregaSituacaoHelper;
+use App\V2\RelatorioEntrega\Support\RelatorioEntregaVinculosLinhas;
+use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -47,7 +50,51 @@ test('monta linha do relatorio a partir do resultado da query', function () {
         ->and($dto->qtd_outras_entregas)->toBe(3)
         ->and($dto->plano_rotulo)->toBe('Plano 2026 - 01/01/2026 - 31/12/2026')
         ->and($dto->jsonSerialize()['unidadeHierarquia'])->toBe('Org / Unidade')
-        ->and($dto->jsonSerialize()['qtd_outras_entregas'])->toBe(3);
+        ->and($dto->jsonSerialize()['qtd_outras_entregas'])->toBe(3)
+        ->and($dto->planejamento_institucional)->toBe(RelatorioEntregaVinculosLinhas::SEM_VINCULO)
+        ->and($dto->cadeia_valor)->toBe(RelatorioEntregaVinculosLinhas::SEM_VINCULO)
+        ->and($dto->linha)->toBe(RelatorioEntregaVinculosLinhas::LINHA_INICIAL);
+});
+
+test('linha de vinculo preserva a entrega e grava o texto exportavel', function () {
+    $row = (object) [
+        'id' => 'entrega-1',
+        'unidade_id' => 'unidade-plano',
+        'unidade_hierarquia' => 'Org / Unidade',
+        'demandante_hierarquia' => 'Org / Demandante',
+        'destinatario' => 'Cliente X',
+        'entrega_nome' => 'Entrega A',
+        'data_inicio' => '2026-01-01',
+        'data_fim' => '2026-01-31',
+        'tipo_indicador' => 'QUANTIDADE',
+        'meta_planejado' => 10,
+        'meta_alcancado' => 5,
+        'meta_percentual' => 50,
+        'qtd_planejamento_institucional' => 3,
+        'qtd_cadeia_valor' => 2,
+        'plano_id' => 'plano-1',
+        'plano_numero' => '42',
+        'plano_nome' => 'Plano 2026',
+        'plano_status' => 'ATIVO',
+        'qtd_participantes' => 3,
+        'qtd_planos_trabalho' => 4,
+    ];
+
+    $dto = RelatorioEntregaRowDTO::fromQueryRow($row, '2026-01-15')->comLinhaVinculo(
+        'Objetivo 3',
+        RelatorioEntregaVinculosLinhas::IDEM,
+        3,
+    );
+
+    $exportada = (new RelatorioEntregaExport(new Collection([$dto])))->map($dto);
+
+    expect($dto->entregaNome)->toBe('Entrega A')
+        ->and($dto->jsonSerialize()['planejamento_institucional'])->toBe('Objetivo 3')
+        ->and($dto->jsonSerialize()['cadeia_valor'])->toBe(RelatorioEntregaVinculosLinhas::IDEM)
+        ->and($dto->linha)->toBe(3)
+        ->and($exportada[1])->toBe('Entrega A')
+        ->and($exportada[9])->toBe('Objetivo 3')
+        ->and($exportada[10])->toBe(RelatorioEntregaVinculosLinhas::IDEM);
 });
 
 test('rotulo do plano usa hifen quando nome vazio', function () {
