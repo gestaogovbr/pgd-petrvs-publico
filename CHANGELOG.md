@@ -1,3 +1,14 @@
+## 3.2.1 13/10/2026
+
+### Modificado
+- Painel de Modalidades: valores percentuais passam a ser exibidos acima de cada barra (rótulos de dados), com formatação no padrão brasileiro, tanto na tela quanto na exportação em PDF
+
+### Corrigido
+- Relatório de Entregas: colunas "Participantes envolvidos" e "Planos de Trabalho vinculados" deixam de contabilizar Planos de Trabalho cancelados
+- Relatório de Entregas: adicionados ícones informativos nas colunas "Participantes envolvidos" e "Planos de Trabalho vinculados" explicando o critério de contagem (uma única vez por entrega)
+- Relatório de Entregas: ao abrir os relatórios de Agentes Públicos e de Planos de Trabalho pelos hiperlinks das colunas, a unidade raiz é selecionada automaticamente com a opção "Unidades Subordinadas" marcada, exibindo todos os registros vinculados à entrega
+- Relatório de Entregas: corrigida a base de unidade considerada para a entrega, evitando metadados obsoletos ao reabrir a navegação entre relatórios
+
 ## 3.2.0 02/10/2026
 
 ### Adicionado
