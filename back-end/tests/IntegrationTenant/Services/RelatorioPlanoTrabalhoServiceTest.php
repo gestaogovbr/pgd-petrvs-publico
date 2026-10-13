@@ -84,10 +84,10 @@ test('relatorio de PT filtrado por entrega exclui PT cancelado', function () {
         'plano_entrega_entrega_id' => $entrega->id,
     ]);
 
-    $resultado = (new RelatorioPlanoTrabalhoService())->queryForExport([
-        'where' => [
-            ['unidade_id', '==', $unidade->id],
-            ['plano_entrega_entrega_id', '==', $entrega->id],
+    $resultado = app(RelatorioPlanoTrabalhoService::class)->queryForExport([
+        'filters' => [
+            'unidade_id' => $unidade->id,
+            'plano_entrega_entrega_id' => $entrega->id,
         ],
         'page' => 1,
         'limit' => 50,
