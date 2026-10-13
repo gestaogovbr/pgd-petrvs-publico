@@ -3,15 +3,15 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { FormGroup } from '@angular/forms';
 import { Subject, throwError } from 'rxjs';
 import { DialogService } from 'src/app/services/dialog.service';
-import { NavigateService } from 'src/app/services/navigate.service';
 import { UtilService } from 'src/app/services/util.service';
+import { MessageService } from 'src/app/v2/services/message.service';
 import { FilterComponent } from './filter.component';
 
 describe('FilterComponent', () => {
   let component: FilterComponent;
   let fixture: ComponentFixture<FilterComponent>;
   let dialog: jasmine.SpyObj<DialogService>;
-  let go: jasmine.SpyObj<NavigateService>;
+  let message: jasmine.SpyObj<MessageService>;
 
   beforeEach(async () => {
     dialog = jasmine.createSpyObj<DialogService>('DialogService', [
@@ -22,14 +22,14 @@ describe('FilterComponent', () => {
     ]);
     dialog.alert.and.resolveTo();
     dialog.choose.and.resolveTo({ label: 'Fechar', value: 'close' });
-    go = jasmine.createSpyObj<NavigateService>('NavigateService', ['openNewTab', 'navigate']);
+    message = jasmine.createSpyObj<MessageService>('MessageService', ['success', 'error', 'warning', 'info', 'show']);
 
     await TestBed.configureTestingModule({
       declarations: [FilterComponent],
       providers: [
         { provide: 'ID_GENERATOR_BASE', useValue: 'test' },
         { provide: DialogService, useValue: dialog },
-        { provide: NavigateService, useValue: go },
+        { provide: MessageService, useValue: message },
         { provide: UtilService, useValue: { onlyAlphanumeric: (value: string) => value } }
       ],
       schemas: [NO_ERRORS_SCHEMA]
@@ -89,7 +89,7 @@ describe('FilterComponent', () => {
     expect(exportExcel).toHaveBeenCalledTimes(1);
   });
 
-  it('na exportação em fila mostra aviso com link para a página de Exportação de Relatórios', fakeAsync(() => {
+  it('na exportação em fila mostra mensagem govBR de sucesso', fakeAsync(() => {
     const exportSubject = new Subject<any>();
     component.exportExcelQueued = true;
     component.exportExcel = () => exportSubject.asObservable();
@@ -103,27 +103,11 @@ describe('FilterComponent', () => {
     tick();
 
     expect(dialog.closeSppinerOverlay).toHaveBeenCalled();
-    expect(dialog.choose).toHaveBeenCalledWith(
-      'Exportação de Relatório',
-      'A exportação do relatório foi iniciada e será processada em segundo plano. Acompanhe o andamento na página de Exportação de Relatórios. Você possui até 24 horas para efetuar o download.',
-      jasmine.any(Array)
+    expect(message.success).toHaveBeenCalledWith(
+      'Seu relatório está sendo gerado! Acompanhe o progresso e faça o <a href="/relatorios/exportacao" target="_blank" rel="noopener noreferrer">download</a> na tela Exportação de Relatórios. O arquivo ficará disponível por 24 horas.',
+      'Sucesso!',
+      { html: true }
     );
-    expect(go.openNewTab).not.toHaveBeenCalled();
-    expect(go.navigate).not.toHaveBeenCalled();
-  }));
-
-  it('abre a página de Exportação de Relatórios em nova aba', fakeAsync(() => {
-    const exportSubject = new Subject<any>();
-    component.exportExcelQueued = true;
-    component.exportExcel = () => exportSubject.asObservable();
-    dialog.choose.and.resolveTo({ label: 'Ir para Exportação de Relatórios', value: 'go' });
-
-    component.onButtonExcelClick();
-    exportSubject.next({ success: true, data: { id: 'g1' } });
-    exportSubject.complete();
-    tick();
-
-    expect(go.openNewTab).toHaveBeenCalledWith('/relatorios/exportacao');
-    expect(go.navigate).not.toHaveBeenCalled();
+    expect(dialog.choose).not.toHaveBeenCalled();
   }));
 });

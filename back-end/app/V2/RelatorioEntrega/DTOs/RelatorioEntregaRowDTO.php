@@ -7,6 +7,7 @@ namespace App\V2\RelatorioEntrega\DTOs;
 use App\V2\RelatorioEntrega\Support\RelatorioEntregaMetaHelper;
 use App\V2\RelatorioEntrega\Support\RelatorioEntregaSituacaoHelper;
 use App\V2\RelatorioEntrega\Support\RelatorioEntregaTipoMetaHelper;
+use App\V2\RelatorioEntrega\Support\RelatorioEntregaVinculosLinhas;
 
 final class RelatorioEntregaRowDTO implements \JsonSerializable
 {
@@ -25,6 +26,9 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
         public readonly ?float $meta_percentual,
         public readonly int $qtd_planejamento_institucional,
         public readonly int $qtd_cadeia_valor,
+        public readonly string $planejamento_institucional,
+        public readonly string $cadeia_valor,
+        public readonly int $linha,
         public readonly int $qtd_outras_entregas,
         public readonly string $situacao,
         public readonly string $plano_id,
@@ -66,6 +70,9 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
             meta_percentual: $metaPercentual,
             qtd_planejamento_institucional: (int) ($row->qtd_planejamento_institucional ?? 0),
             qtd_cadeia_valor: (int) ($row->qtd_cadeia_valor ?? 0),
+            planejamento_institucional: RelatorioEntregaVinculosLinhas::SEM_VINCULO,
+            cadeia_valor: RelatorioEntregaVinculosLinhas::SEM_VINCULO,
+            linha: RelatorioEntregaVinculosLinhas::LINHA_INICIAL,
             qtd_outras_entregas: (int) ($row->qtd_outras_entregas ?? 0),
             situacao: RelatorioEntregaSituacaoHelper::calcular(
                 self::nullableString($row->data_inicio ?? null),
@@ -83,6 +90,38 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
             plano_status: (string) ($row->plano_status ?? ''),
             qtd_participantes: (int) ($row->qtd_participantes ?? 0),
             qtd_planos_trabalho: (int) ($row->qtd_planos_trabalho ?? 0),
+        );
+    }
+
+    public function comLinhaVinculo(string $planejamentoInstitucional, string $cadeiaValor, int $linha): self
+    {
+        return new self(
+            id: $this->id,
+            unidade_id: $this->unidade_id,
+            unidadeHierarquia: $this->unidadeHierarquia,
+            demandanteHierarquia: $this->demandanteHierarquia,
+            destinatario: $this->destinatario,
+            entregaNome: $this->entregaNome,
+            data_inicio: $this->data_inicio,
+            data_fim: $this->data_fim,
+            meta_planejado: $this->meta_planejado,
+            meta_alcancado: $this->meta_alcancado,
+            meta_tipo: $this->meta_tipo,
+            meta_percentual: $this->meta_percentual,
+            qtd_planejamento_institucional: $this->qtd_planejamento_institucional,
+            qtd_cadeia_valor: $this->qtd_cadeia_valor,
+            planejamento_institucional: $planejamentoInstitucional,
+            cadeia_valor: $cadeiaValor,
+            linha: $linha,
+            qtd_outras_entregas: $this->qtd_outras_entregas,
+            situacao: $this->situacao,
+            plano_id: $this->plano_id,
+            plano_numero: $this->plano_numero,
+            plano_nome: $this->plano_nome,
+            plano_rotulo: $this->plano_rotulo,
+            plano_status: $this->plano_status,
+            qtd_participantes: $this->qtd_participantes,
+            qtd_planos_trabalho: $this->qtd_planos_trabalho,
         );
     }
 
@@ -104,6 +143,9 @@ final class RelatorioEntregaRowDTO implements \JsonSerializable
             'meta_percentual' => $this->meta_percentual,
             'qtd_planejamento_institucional' => $this->qtd_planejamento_institucional,
             'qtd_cadeia_valor' => $this->qtd_cadeia_valor,
+            'planejamento_institucional' => $this->planejamento_institucional,
+            'cadeia_valor' => $this->cadeia_valor,
+            'linha' => $this->linha,
             'qtd_outras_entregas' => $this->qtd_outras_entregas,
             'situacao' => $this->situacao,
             'plano_id' => $this->plano_id,

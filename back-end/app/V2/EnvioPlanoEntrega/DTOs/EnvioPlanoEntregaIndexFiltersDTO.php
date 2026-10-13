@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\EnvioPlanoEntrega\DTOs;
 
+use App\DTOs\AbstractFiltersDTO;
 use Illuminate\Support\Carbon;
 
 /**
@@ -11,7 +12,7 @@ use Illuminate\Support\Carbon;
  *
  * @see \App\Repository\EnvioPlanoEntrega\Eloquent\EloquentEnvioPlanoEntregaReadRepository
  */
-final class EnvioPlanoEntregaIndexFiltersDTO
+final class EnvioPlanoEntregaIndexFiltersDTO extends AbstractFiltersDTO
 {
     public function __construct(
         public readonly ?string $numero,
@@ -118,24 +119,5 @@ final class EnvioPlanoEntregaIndexFiltersDTO
         if ($triplet !== null) {
             $where[] = $triplet;
         }
-    }
-
-    private static function trimmedStringOrNull(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-        $s = trim((string) $value);
-
-        return $s === '' ? null : $s;
-    }
-
-    private static function dateStringOrNull(mixed $value): ?string
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return (string) $value;
     }
 }

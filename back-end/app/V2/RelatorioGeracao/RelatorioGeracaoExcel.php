@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\RelatorioGeracao;
 
 use App\Contracts\RelatorioExcelGeradorContract;
+use App\DTOs\RelatorioGeracao\RelatorioExcelConsultaPaginaDTO;
 use App\Enums\RelatorioGeracaoTipo;
 use App\Exports\RelatorioExcelPaginadoExport;
 use App\Exports\RelatorioExcelPaginadoWriter;
@@ -28,10 +29,13 @@ class RelatorioGeracaoExcel
     {
         $gerador = $this->resolverRelatorioGerador($geracao);
         $path = $this->storage->caminho((string) $geracao->id);
+        $parametros = $this->resolverParametrosConsulta($geracao);
 
         $export = new RelatorioExcelPaginadoExport(
             $gerador->criarExport(),
-            fn (int $page, int $limit): array => $gerador->consultarPagina($geracao->parametros ?? [], $page, $limit),
+            fn (int $page, int $limit): array => $gerador->consultarPagina(
+                RelatorioExcelConsultaPaginaDTO::fromParametros($parametros, $page, $limit)
+            ),
             $gerador->pageSize(),
             $onProgress,
         );
@@ -45,10 +49,23 @@ class RelatorioGeracaoExcel
         ];
     }
 
+    /**
+     * @return array{filters: array<string, mixed>, orderBy: array<int, mixed>}
+     */
+    private function resolverParametrosConsulta(RelatorioGeracao $geracao): array
+    {
+        $parametros = is_array($geracao->parametros) ? $geracao->parametros : [];
+
+        return [
+            'filters' => is_array($parametros['filters'] ?? null) ? $parametros['filters'] : [],
+            'orderBy' => is_array($parametros['orderBy'] ?? null) ? $parametros['orderBy'] : [],
+        ];
+    }
+
     private function resolverRelatorioGerador(RelatorioGeracao $geracao): RelatorioExcelGeradorContract
     {
         $tipo = RelatorioGeracaoTipo::from((string) $geracao->tipo);
 
-        return $this->geradorFactory->make($tipo);
+        return $this->geradorFactory->make($tipo, $geracao);
     }
 }

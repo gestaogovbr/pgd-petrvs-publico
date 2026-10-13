@@ -116,7 +116,7 @@ test('store cria a geração e despacha o job quando há tenant', function () {
     $usuario = makeRelatorioGeracaoUsuario();
     $storeDto = new RelatorioGeracaoStoreDTO(
         RelatorioGeracaoTipo::PLANO_TRABALHO,
-        [['unidade_id', '==', 'u-1']],
+        ['unidade_id' => 'u-1'],
         [],
     );
 
@@ -128,7 +128,7 @@ test('store cria a geração e despacha o job quando há tenant', function () {
                 && $attributes['status'] === RelatorioGeracaoStatus::PROCESSANDO
                 && $attributes['usuario_id'] === $usuario->id
                 && $attributes['parametros'] === [
-                    'where' => [['unidade_id', '==', 'u-1']],
+                    'filters' => ['unidade_id' => 'u-1'],
                     'orderBy' => [],
                 ];
         }))
@@ -150,6 +150,50 @@ test('store cria a geração e despacha o job quando há tenant', function () {
             && $job->tenantId === 'tenant-1'
             && $job->queue === GerarRelatorioExcelJob::QUEUE
             && $job->connection === GerarRelatorioExcelJob::CONNECTION;
+    });
+});
+
+test('store de agentes persiste filters sem aplicar restrição de participante', function () {
+    Bus::fake();
+
+    $geracao = makeRelatorioGeracao([
+        'id' => 'geracao-agente',
+        'tipo' => RelatorioGeracaoTipo::AGENTE->value,
+        'nome' => 'Relatório de Agentes Públicos',
+        'arquivo_nome' => 'relatorio-agentes.xlsx',
+    ]);
+    $usuario = makeRelatorioGeracaoUsuario();
+    $storeDto = new RelatorioGeracaoStoreDTO(
+        RelatorioGeracaoTipo::AGENTE,
+        ['unidade_id' => 'u-1', 'nome' => 'Ana'],
+        [['nome', 'asc']],
+    );
+
+    $repository = Mockery::mock(RelatorioGeracaoRepository::class);
+    $repository->shouldReceive('create')
+        ->once()
+        ->with(Mockery::on(function (array $attributes) use ($usuario): bool {
+            return $attributes['tipo'] === RelatorioGeracaoTipo::AGENTE->value
+                && $attributes['usuario_id'] === $usuario->id
+                && $attributes['parametros'] === [
+                    'filters' => ['unidade_id' => 'u-1', 'nome' => 'Ana'],
+                    'orderBy' => [['nome', 'asc']],
+                ];
+        }))
+        ->andReturn($geracao);
+
+    $tenant = Mockery::mock(TenantContract::class);
+    $tenant->shouldReceive('getAttribute')->with('id')->andReturn('tenant-1');
+    app()->instance(TenantContract::class, $tenant);
+
+    $service = makeRelatorioGeracaoService($repository);
+    $row = $service->store($storeDto, $usuario);
+
+    expect($row->id)->toBe('geracao-agente')
+        ->and($row->tipo)->toBe(RelatorioGeracaoTipo::AGENTE->value);
+
+    Bus::assertDispatched(GerarRelatorioExcelJob::class, function (GerarRelatorioExcelJob $job): bool {
+        return $job->geracaoId === 'geracao-agente' && $job->tenantId === 'tenant-1';
     });
 });
 

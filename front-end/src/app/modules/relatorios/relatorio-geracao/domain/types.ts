@@ -11,21 +11,41 @@ export enum RelatorioGeracaoStatus {
 export enum RelatorioGeracaoTipo {
   PLANO_TRABALHO = 'plano_trabalho',
   PLANO_TRABALHO_DETALHADO = 'plano_trabalho_detalhado',
+  PLANO_ENTREGA = 'plano_entrega',
+  AGENTE = 'agente',
+  UNIDADE = 'unidade',
+  ENTREGA = 'entrega',
+  LACUNA_PLANO_TRABALHO = 'lacuna_plano_trabalho',
 }
 
 export const RELATORIO_GERACAO_GRUPO = {
   PLANOS_TRABALHO: 'planos_trabalho',
+  PLANOS_ENTREGA: 'planos_entrega',
+  AGENTES: 'agentes',
+  UNIDADES: 'unidades',
+  ENTREGAS: 'entregas',
+  LACUNAS_PLANO_TRABALHO: 'lacunas_plano_trabalho',
 } as const;
 
 export type RelatorioGeracaoGrupo = (typeof RELATORIO_GERACAO_GRUPO)[keyof typeof RELATORIO_GERACAO_GRUPO];
 
 export const RELATORIO_GERACAO_GRUPO_LABEL: Record<RelatorioGeracaoGrupo, string> = {
   [RELATORIO_GERACAO_GRUPO.PLANOS_TRABALHO]: 'Planos de Trabalho',
+  [RELATORIO_GERACAO_GRUPO.PLANOS_ENTREGA]: 'Planos de Entrega',
+  [RELATORIO_GERACAO_GRUPO.AGENTES]: 'Agentes Públicos',
+  [RELATORIO_GERACAO_GRUPO.UNIDADES]: 'Unidades',
+  [RELATORIO_GERACAO_GRUPO.ENTREGAS]: 'Entregas',
+  [RELATORIO_GERACAO_GRUPO.LACUNAS_PLANO_TRABALHO]: 'Lacunas de Planos de Trabalho',
 };
 
 export const RELATORIO_GERACAO_TIPO_GRUPO: Record<RelatorioGeracaoTipo, RelatorioGeracaoGrupo> = {
   [RelatorioGeracaoTipo.PLANO_TRABALHO]: RELATORIO_GERACAO_GRUPO.PLANOS_TRABALHO,
   [RelatorioGeracaoTipo.PLANO_TRABALHO_DETALHADO]: RELATORIO_GERACAO_GRUPO.PLANOS_TRABALHO,
+  [RelatorioGeracaoTipo.PLANO_ENTREGA]: RELATORIO_GERACAO_GRUPO.PLANOS_ENTREGA,
+  [RelatorioGeracaoTipo.AGENTE]: RELATORIO_GERACAO_GRUPO.AGENTES,
+  [RelatorioGeracaoTipo.UNIDADE]: RELATORIO_GERACAO_GRUPO.UNIDADES,
+  [RelatorioGeracaoTipo.ENTREGA]: RELATORIO_GERACAO_GRUPO.ENTREGAS,
+  [RelatorioGeracaoTipo.LACUNA_PLANO_TRABALHO]: RELATORIO_GERACAO_GRUPO.LACUNAS_PLANO_TRABALHO,
 };
 
 export function grupoRelatorio(tipo: string | null | undefined): RelatorioGeracaoGrupo | null {
@@ -35,7 +55,30 @@ export function grupoRelatorio(tipo: string | null | undefined): RelatorioGeraca
   if (tipo === RELATORIO_GERACAO_GRUPO.PLANOS_TRABALHO) {
     return RELATORIO_GERACAO_GRUPO.PLANOS_TRABALHO;
   }
-  if (tipo === RelatorioGeracaoTipo.PLANO_TRABALHO || tipo === RelatorioGeracaoTipo.PLANO_TRABALHO_DETALHADO) {
+  if (tipo === RELATORIO_GERACAO_GRUPO.PLANOS_ENTREGA) {
+    return RELATORIO_GERACAO_GRUPO.PLANOS_ENTREGA;
+  }
+  if (tipo === RELATORIO_GERACAO_GRUPO.AGENTES) {
+    return RELATORIO_GERACAO_GRUPO.AGENTES;
+  }
+  if (tipo === RELATORIO_GERACAO_GRUPO.UNIDADES) {
+    return RELATORIO_GERACAO_GRUPO.UNIDADES;
+  }
+  if (tipo === RELATORIO_GERACAO_GRUPO.ENTREGAS) {
+    return RELATORIO_GERACAO_GRUPO.ENTREGAS;
+  }
+  if (tipo === RELATORIO_GERACAO_GRUPO.LACUNAS_PLANO_TRABALHO) {
+    return RELATORIO_GERACAO_GRUPO.LACUNAS_PLANO_TRABALHO;
+  }
+  if (
+    tipo === RelatorioGeracaoTipo.PLANO_TRABALHO
+    || tipo === RelatorioGeracaoTipo.PLANO_TRABALHO_DETALHADO
+    || tipo === RelatorioGeracaoTipo.PLANO_ENTREGA
+    || tipo === RelatorioGeracaoTipo.AGENTE
+    || tipo === RelatorioGeracaoTipo.UNIDADE
+    || tipo === RelatorioGeracaoTipo.ENTREGA
+    || tipo === RelatorioGeracaoTipo.LACUNA_PLANO_TRABALHO
+  ) {
     return RELATORIO_GERACAO_TIPO_GRUPO[tipo];
   }
   return null;

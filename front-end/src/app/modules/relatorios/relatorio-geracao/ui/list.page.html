@@ -7,7 +7,7 @@
   <div class="br-message info mb-3">
     <div class="icon"><i class="fas fa-info-circle fa-lg" aria-hidden="true"></i></div>
     <div class="content">
-      <span class="message-body">Os relatórios exportados ficam disponíveis para download por até 24 horas.</span>
+      <span class="message-body">Nesta tela, você pode consultar e baixar seus relatórios exportados. Os arquivos ficam disponíveis para download por 24 horas. Para emitir um novo relatório, acesse a tela correspondente do relatório desejado.</span>
     </div>
   </div>
 
@@ -26,25 +26,13 @@
             </br-select>
           </div>
           <div class="filter-field">
-            <label class="filter-label" for="filtro-geracao-inicio">Início da geração</label>
-            <div class="br-input">
-              <input id="filtro-geracao-inicio" type="date" formControlName="geracao_inicio" />
-            </div>
-          </div>
-          <div class="filter-field">
-            <label class="filter-label" for="filtro-geracao-fim">Fim da geração</label>
-            <div class="br-input">
-              <input id="filtro-geracao-fim" type="date" formControlName="geracao_fim" />
-            </div>
-          </div>
-          <div class="filter-field">
-            <span class="filter-label">Status</span>
+            <span class="filter-label">Status da Exportação</span>
             <br-select
               formControlName="status"
               [options]="statusOptions()"
               [filterable]="false"
               inputWidth="100%"
-              [attr.aria-label]="'Status'">
+              [attr.aria-label]="'Status da Exportação'">
             </br-select>
           </div>
         </div>
@@ -120,7 +108,7 @@
               Status
               <span aria-hidden="true" [style.opacity]="facade.orderBy() === 'status' ? null : 0.35">{{ sortMark('status') }}</span>
             </th>
-            <th scope="col">Ações</th>
+            <th scope="col">Download</th>
           </tr>
         </thead>
         <tbody>
@@ -144,7 +132,7 @@
               <div class="small text-danger mt-1">{{ row.erro_mensagem }}</div>
               }
             </td>
-            <td data-th="Ações">
+            <td data-th="Download">
               <div class="d-flex gap-1 align-items-center">
                 @if (estaProcessando(row)) {
                 <span

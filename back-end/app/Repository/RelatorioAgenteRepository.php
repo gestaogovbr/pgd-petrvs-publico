@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\DTOs\RelatorioAgente\RelatorioAgenteQueryDTO;
 use App\Repository\RelatorioAgente\Contracts\RelatorioAgenteReadRepositoryContract;
 
 class RelatorioAgenteRepository
@@ -13,8 +14,8 @@ class RelatorioAgenteRepository
     ) {
     }
 
-    public function query(array $data): array
+    public function query(RelatorioAgenteQueryDTO $dto): array
     {
-        return $this->readRepository->query($data);
+        return $this->readRepository->query($dto);
     }
 }

@@ -78,7 +78,7 @@
   }
 
   @if (!facade.loading()) {
-  <p class="text-muted small mb-2" role="status">Total consultado: {{ facade.total() }}</p>
+  <p class="text-muted small mb-2" role="status">Total de entregas: {{ facade.total() }}</p>
   }
 
   <div class="br-table relatorio-entrega-table">
@@ -122,10 +122,10 @@
             <th scope="col" class="sortable sub-header" (click)="onSort('meta_tipo')">
               Tipo de Meta <i [class]="sortIcon('meta_tipo')"></i>
             </th>
-            <th scope="col" class="sortable sub-header" (click)="onSort('qtd_planejamento_institucional')">
+            <th scope="col" class="sortable sub-header vinculo-col" (click)="onSort('qtd_planejamento_institucional')">
               Planejamento<br />Institucional <i [class]="sortIcon('qtd_planejamento_institucional')"></i>
             </th>
-            <th scope="col" class="sortable sub-header" (click)="onSort('qtd_cadeia_valor')">
+            <th scope="col" class="sortable sub-header vinculo-col" (click)="onSort('qtd_cadeia_valor')">
               Cadeia de<br />Valor <i [class]="sortIcon('qtd_cadeia_valor')"></i>
             </th>
             <th scope="col" class="sortable sub-header" (click)="onSort('plano_rotulo')">
@@ -160,7 +160,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (row of facade.items(); track row.id) {
+          @for (row of facade.items(); track row.id + '-' + row.linha) {
           <tr>
             <td data-th="Unidade">{{ row.unidadeHierarquia }}</td>
             <td data-th="Entrega">
@@ -173,8 +173,8 @@
             <td data-th="Tipo de Meta" class="text-center">{{ row.meta_tipo }}</td>
             <td data-th="Demandante">{{ row.demandanteHierarquia }}</td>
             <td data-th="Destinatário">{{ row.destinatario || '-' }}</td>
-            <td data-th="Planejamento Institucional" class="text-center">{{ row.qtd_planejamento_institucional }}</td>
-            <td data-th="Cadeia de Valor" class="text-center">{{ row.qtd_cadeia_valor }}</td>
+            <td data-th="Planejamento Institucional">{{ row.planejamento_institucional }}</td>
+            <td data-th="Cadeia de Valor">{{ row.cadeia_valor }}</td>
             <td data-th="Situação" class="text-center">{{ row.situacao }}</td>
             <td data-th="Plano">{{ row.plano_rotulo }}</td>
             <td data-th="ID do Plano" class="text-center">

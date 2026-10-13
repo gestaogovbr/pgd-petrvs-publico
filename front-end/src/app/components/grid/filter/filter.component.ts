@@ -8,7 +8,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { ComponentBase } from '../../component-base';
 import { GridComponent } from '../grid.component';
 import { Observable, finalize } from 'rxjs';
-import { NavigateService } from 'src/app/services/navigate.service';
+import { MessageService } from 'src/app/v2/services/message.service';
 
 @Component({
     selector: 'filter',
@@ -52,14 +52,12 @@ export class FilterComponent extends ComponentBase implements OnInit, OnDestroy 
   public deletedControl: FormControl = new FormControl(false);
   public exportingExcel: boolean = false;
   public dialog: DialogService;
+  private message: MessageService;
 
   constructor(injector: Injector) {
     super(injector);
     this.dialog = injector.get<DialogService>(DialogService);
-  }
-
-  private get go(): NavigateService {
-    return this.injector.get<NavigateService>(NavigateService);
+    this.message = injector.get<MessageService>(MessageService);
   }
 
   ngOnInit(): void {
@@ -129,7 +127,7 @@ export class FilterComponent extends ComponentBase implements OnInit, OnDestroy 
         next: (res) => {
           if (this.exportExcelQueued) {
             if (res) {
-              this.showQueuedExportDialog();
+              this.showQueuedExportMessage();
             }
             return;
           }
@@ -158,19 +156,12 @@ export class FilterComponent extends ComponentBase implements OnInit, OnDestroy 
     }
   }
 
-  private showQueuedExportDialog() {
-    this.dialog.choose(
-      'Exportação de Relatório',
-      'A exportação do relatório foi iniciada e será processada em segundo plano. Acompanhe o andamento na página de Exportação de Relatórios. Você possui até 24 horas para efetuar o download.',
-      [
-        { label: 'Ir para Exportação de Relatórios', value: 'go', color: 'btn-success', icon: 'bi bi-box-arrow-up-right' },
-        { label: 'Fechar', value: 'close', color: 'btn-outline-secondary' }
-      ]
-    ).then((button) => {
-      if (button?.value === 'go') {
-        this.go.openNewTab('/relatorios/exportacao');
-      }
-    });
+  private showQueuedExportMessage() {
+    this.message.success(
+      'Seu relatório está sendo gerado! Acompanhe o progresso e faça o <a href="/relatorios/exportacao" target="_blank" rel="noopener noreferrer">download</a> na tela Exportação de Relatórios. O arquivo ficará disponível por 24 horas.',
+      'Sucesso!',
+      { html: true }
+    );
   }
 
   private startExcelExportFeedback() {

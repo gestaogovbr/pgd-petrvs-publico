@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\V2\Relatorio\LacunaPlanoTrabalho\DTOs;
 
+use App\DTOs\AbstractFiltersDTO;
+
 /**
  * Filtros da listagem de lacunas de Plano de Trabalho (API v2).
  */
-final class LacunaPlanoTrabalhoIndexFiltersDTO
+final class LacunaPlanoTrabalhoIndexFiltersDTO extends AbstractFiltersDTO
 {
     public function __construct(
         public readonly string $unidadeId,
@@ -29,8 +31,8 @@ final class LacunaPlanoTrabalhoIndexFiltersDTO
     {
         return new self(
             unidadeId: (string) ($filters['unidade_id'] ?? ''),
-            periodoInicio: self::dateString((string) ($filters['periodo_inicio'] ?? '')),
-            periodoFim: self::dateString((string) ($filters['periodo_fim'] ?? '')),
+            periodoInicio: self::dateString($filters['periodo_inicio'] ?? ''),
+            periodoFim: self::dateString($filters['periodo_fim'] ?? ''),
             incluirUnidadesSubordinadas: self::toBool($filters['incluir_unidades_subordinadas'] ?? false),
             nome: self::trimmedStringOrNull($filters['nome'] ?? null),
             matricula: self::trimmedStringOrNull($filters['matricula'] ?? null),
@@ -42,74 +44,34 @@ final class LacunaPlanoTrabalhoIndexFiltersDTO
     }
 
     /**
-     * Formato `where` esperado por {@see \App\Repository\RelatorioLacunaPlanoTrabalho\Contracts\RelatorioLacunaPlanoTrabalhoReadRepositoryContract}.
+     * Payload de filtros no formato esperado pelo repositório.
      *
-     * @return list<array{0: string, 1: string, 2: mixed}>
+     * @return array{
+     *     unidade_id: string,
+     *     periodo_inicio: string,
+     *     periodo_fim: string,
+     *     incluir_unidades_subordinadas: bool,
+     *     nome: ?string,
+     *     matricula: ?string,
+     *     unidadeHierarquia: ?string,
+     *     lacuna: ?string,
+     *     quantidade_dias: ?int,
+     *     ocorrencias_texto: ?string
+     * }
      */
-    public function toWhereArray(): array
+    public function toArray(): array
     {
-        $where = [
-            ['unidade_id', '==', $this->unidadeId],
-            ['periodo_inicio', '==', $this->periodoInicio],
-            ['periodo_fim', '==', $this->periodoFim],
+        return [
+            'unidade_id' => $this->unidadeId,
+            'periodo_inicio' => $this->periodoInicio,
+            'periodo_fim' => $this->periodoFim,
+            'incluir_unidades_subordinadas' => $this->incluirUnidadesSubordinadas,
+            'nome' => $this->nome,
+            'matricula' => $this->matricula,
+            'unidadeHierarquia' => $this->unidadeHierarquia,
+            'lacuna' => $this->lacuna,
+            'quantidade_dias' => $this->quantidadeDias,
+            'ocorrencias_texto' => $this->ocorrenciasTexto,
         ];
-
-        if ($this->incluirUnidadesSubordinadas) {
-            $where[] = ['incluir_unidades_subordinadas', '==', 1];
-        }
-
-        if ($this->nome !== null) {
-            $where[] = ['nome', 'like', '%' . $this->nome . '%'];
-        }
-        if ($this->matricula !== null) {
-            $where[] = ['matricula', 'like', '%' . $this->matricula . '%'];
-        }
-        if ($this->unidadeHierarquia !== null) {
-            $where[] = ['unidadeHierarquia', 'like', '%' . $this->unidadeHierarquia . '%'];
-        }
-        if ($this->lacuna !== null) {
-            $where[] = ['lacuna', 'like', '%' . $this->lacuna . '%'];
-        }
-        if ($this->quantidadeDias !== null) {
-            $where[] = ['quantidade_dias', '==', $this->quantidadeDias];
-        }
-        if ($this->ocorrenciasTexto !== null) {
-            $where[] = ['ocorrencias_texto', 'like', '%' . $this->ocorrenciasTexto . '%'];
-        }
-
-        return $where;
-    }
-
-    private static function toBool(mixed $value): bool
-    {
-        if (is_bool($value)) {
-            return $value;
-        }
-
-        return in_array((string) $value, ['1', 'true', 'on', 'yes'], true);
-    }
-
-    private static function trimmedStringOrNull(mixed $value): ?string
-    {
-        if ($value === null) {
-            return null;
-        }
-        $s = trim((string) $value);
-
-        return $s === '' ? null : $s;
-    }
-
-    private static function intOrNull(mixed $value): ?int
-    {
-        if ($value === null || $value === '') {
-            return null;
-        }
-
-        return (int) $value;
-    }
-
-    private static function dateString(string $value): string
-    {
-        return substr($value, 0, 10);
     }
 }
