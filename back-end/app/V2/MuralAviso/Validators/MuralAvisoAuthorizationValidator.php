@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\MuralAviso\Validators;
 
 use App\Enums\MuralAvisoDestinatario;
+use App\Enums\MuralAvisoRemetenteTipo;
 use App\Enums\PainelUsuarioNivel;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
@@ -36,9 +37,10 @@ class MuralAvisoAuthorizationValidator
         }
 
         $isAvisoGlobal = $aviso->destinatario === MuralAvisoDestinatario::TODOS->value;
+        $isDoOrgaoCentral = $aviso->remetente_tipo === MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value;
         $isDoTenantDoUsuario = in_array($aviso->tenant_id, $tenantIdsDoUsuario, true);
 
-        if ($isAvisoGlobal || !$isDoTenantDoUsuario) {
+        if ($isAvisoGlobal || $isDoOrgaoCentral || !$isDoTenantDoUsuario) {
             throw new ForbiddenException('Você não tem permissão para alterar este aviso.');
         }
 

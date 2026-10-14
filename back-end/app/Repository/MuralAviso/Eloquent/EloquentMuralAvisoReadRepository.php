@@ -34,10 +34,8 @@ class EloquentMuralAvisoReadRepository extends AbstractEloquentReadRepository im
             ->orderBy('data_publicacao', 'desc');
 
         if ($tenantIds !== []) {
-            $query->where(function ($q) use ($tenantIds) {
-                $q->whereIn('tenant_id', $tenantIds)
-                  ->orWhere('destinatario', MuralAvisoDestinatario::TODOS->value);
-            });
+            $query->whereIn('tenant_id', $tenantIds)
+                  ->where('remetente_tipo', MuralAvisoRemetenteTipo::TENANT->value);
         }
 
         return $query->paginate($perPage);
