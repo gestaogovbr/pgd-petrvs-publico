@@ -338,7 +338,7 @@ export class EntityService {
         dao: injector.get<PlanoTrabalhoDaoService>(PlanoTrabalhoDaoService),
         label: "Plano de Trabalho",
         selectRoute: {
-          route: ['gestao', 'plano-trabalho'],
+          route: ['gestao', 'plano-trabalho-v2'],
         },
       },
       {
