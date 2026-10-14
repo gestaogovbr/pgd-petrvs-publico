@@ -157,6 +157,8 @@ class ArvoreInstitucionalPainelDataProvider
         $ptPlanejadoIn = ArvoreInstitucionalEsforcoSupport::ptStatusPlanejadoIn();
         $ptExecutadoIn = ArvoreInstitucionalEsforcoSupport::ptStatusExecutadoIn();
         $diasPeriodo = ArvoreInstitucionalEsforcoSupport::diasPeriodoPtSql();
+        $esforcoExecutado = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoPteSql();
+        $esforcoExecutadoJoin = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoPteJoinSql();
 
         $from = $this->buildEntregaFrom($config);
         $where = $this->buildEntregaWhere($config, $noIds);
@@ -268,7 +270,7 @@ class ArvoreInstitucionalPainelDataProvider
                     WHEN pt.status IN ({$ptExecutadoIn}) THEN
                         {$chd}
                         * {$diasPeriodo}
-                        * (COALESCE(pte.esforco_executado, pte.forca_trabalho) / 100.0)
+                        * ({$esforcoExecutado} / 100.0)
                 END), 0), 2) AS esforco_executado_horas,
                 MAX(CASE WHEN pt.status IN ({$ptPlanejadoIn}) THEN 1 ELSE 0 END) AS tem_pt_pactuado,
                 MAX(CASE WHEN pt.status IN ({$ptExecutadoIn}) THEN 1 ELSE 0 END) AS tem_pt_concluido
@@ -288,6 +290,7 @@ class ArvoreInstitucionalPainelDataProvider
                 )
             LEFT JOIN planos_trabalhos_entregas pte
                 ON pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL
+            {$esforcoExecutadoJoin}
             LEFT JOIN planos_trabalhos pt
                 ON pt.id = pte.plano_trabalho_id
                 AND pt.deleted_at IS NULL

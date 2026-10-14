@@ -52,3 +52,23 @@ describe('ArvoreInstitucionalEsforcoSupport::percentual', function () {
             ->and(ArvoreInstitucionalEsforcoSupport::percentual(10, -5))->toBe(0.0);
     });
 });
+
+describe('ArvoreInstitucionalEsforcoSupport::esforcoExecutado (nova origem por período)', function () {
+
+    test('esforcoExecutadoPteSql usa o join agregado com fallback para a força planejada', function () {
+        $sql = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoPteSql();
+
+        expect($sql)->toBe('COALESCE(pte_exec.media_executado, pte.forca_trabalho)');
+    });
+
+    test('esforcoExecutadoPteJoinSql agrega da nova tabela só contribuições registradas e não excluídas', function () {
+        $join = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoPteJoinSql();
+
+        expect($join)->toContain('planos_trabalhos_consolidacoes_contribuicoes')
+            ->and($join)->toContain('AVG(ptcc.esforco_executado)')
+            ->and($join)->toContain('ptcc.registrado_at IS NOT NULL')
+            ->and($join)->toContain('ptcc.deleted_at IS NULL')
+            ->and($join)->toContain('GROUP BY ptcc.plano_trabalho_entrega_id')
+            ->and($join)->toContain('pte_exec');
+    });
+});

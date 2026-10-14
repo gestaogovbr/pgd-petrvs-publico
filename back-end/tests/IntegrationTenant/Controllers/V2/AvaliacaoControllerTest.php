@@ -4,6 +4,7 @@ namespace Tests\IntegrationTenant\Controllers\V2;
 
 use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController;
+use App\V2\PlanoTrabalho\Consolidacao\Contribuicao\ContribuicaoExecucaoController;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoController;
 use App\V2\PlanoTrabalho\Documento\DocumentoController;
 use App\Models\Entrega;
@@ -47,6 +48,11 @@ beforeEach(function () {
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/concluir',
             [PlanoTrabalhoConsolidacaoController::class, 'concluir']
         )->name('__tests.v2.avaliacao.consolidacao.concluir');
+
+        Route::middleware(['api'])->put(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/contribuicao/{contribuicaoId}',
+            [ContribuicaoExecucaoController::class, 'update']
+        )->name('__tests.v2.avaliacao.contribuicao.update');
 
         Route::middleware(['api'])->post(
             '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/avaliacao',
@@ -182,10 +188,21 @@ function prepararConsolidacaoConcluida($context): string
     $consolidacaoId = $context->getJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao")
         ->json('data.0.id');
 
-    $context->postJson(
-        "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/atividade",
-        ['plano_trabalho_entrega_id' => $context->entrega->id, 'descricao' => 'Trabalho executado', 'esforco_executado' => 100]
-    );
+    $contribuicoes = \App\Models\PlanoTrabalhoConsolidacaoContribuicao::query()
+        ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
+        ->get();
+
+    foreach ($contribuicoes as $contribuicao) {
+        $context->putJson(
+            "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/contribuicao/{$contribuicao->id}",
+            [
+                'origem' => 'PROPRIA_UNIDADE',
+                'plano_entrega_entrega_id' => $contribuicao->plano_entrega_entrega_id,
+                'descricao' => 'Trabalho executado',
+                'esforco_executado' => $contribuicao->esforco_executado,
+            ]
+        );
+    }
 
     $context->patchJson(
         "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/concluir"
@@ -609,10 +626,21 @@ describe('avaliado_at transitions via booted()', function () {
         $consolidacaoId = $context->getJson("/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao")
             ->json('data.0.id');
 
-        $context->postJson(
-            "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/atividade",
-            ['plano_trabalho_entrega_id' => $context->entrega->id, 'descricao' => 'Trabalho', 'esforco_executado' => 100]
-        );
+        $contribuicoes = \App\Models\PlanoTrabalhoConsolidacaoContribuicao::query()
+            ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
+            ->get();
+
+        foreach ($contribuicoes as $contribuicao) {
+            $context->putJson(
+                "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/contribuicao/{$contribuicao->id}",
+                [
+                    'origem' => 'PROPRIA_UNIDADE',
+                    'plano_entrega_entrega_id' => $contribuicao->plano_entrega_entrega_id,
+                    'descricao' => 'Trabalho',
+                    'esforco_executado' => $contribuicao->esforco_executado,
+                ]
+            );
+        }
 
         $context->patchJson(
             "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/concluir"

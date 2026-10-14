@@ -5,12 +5,8 @@ use App\V2\PlanoTrabalho\Entrega\DTOs\PlanoTrabalhoEntregaStoreDTO;
 use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaAuthorizationValidator;
 use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaStoreValidator;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRInvalidador;
-use App\Repository\AtividadeRepository;
 use App\Repository\PlanoTrabalhoEntregaRepository;
-use App\Repository\PlanoTrabalhoRepository;
-use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoEntrega;
-use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
@@ -22,36 +18,22 @@ beforeEach(function () {
     $this->storeValidator = Mockery::mock(PlanoTrabalhoEntregaStoreValidator::class);
     $this->authValidator = Mockery::mock(PlanoTrabalhoEntregaAuthorizationValidator::class);
     $this->tcrInvalidador = Mockery::mock(TCRInvalidador::class);
-    $this->atividadeRepository = Mockery::mock(AtividadeRepository::class);
-    $this->planoRepository = Mockery::mock(PlanoTrabalhoRepository::class);
 
     $this->service = new PlanoTrabalhoEntregaService(
         $this->repository,
         $this->storeValidator,
         $this->authValidator,
         $this->tcrInvalidador,
-        $this->atividadeRepository,
-        $this->planoRepository,
     );
 });
 
 afterEach(fn () => Mockery::close());
 
-function mockPlanoService(string $status = 'INCLUIDO'): PlanoTrabalho
-{
-    /** @var PlanoTrabalho $plano */
-    $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
-    $plano->id = 'plano-1';
-    $plano->status = $status;
-    return $plano;
-}
-
 describe('PlanoTrabalhoEntregaService::store', function () {
 
-    test('valida, persiste e invalida TCR no planejamento', function () {
+    test('valida, persiste e invalida TCR', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
-        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1')
-            ->andReturn(mockPlanoService(StatusEnum::INCLUIDO->value));
+        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1');
 
         $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
             'origem' => 'PROPRIA_UNIDADE',
@@ -70,32 +52,9 @@ describe('PlanoTrabalhoEntregaService::store', function () {
         expect($result)->toBe($entrega);
     });
 
-    test('persiste em execução sem invalidar TCR', function () {
-        Auth::shouldReceive('id')->andReturn('user-1');
-        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1')
-            ->andReturn(mockPlanoService(StatusEnum::ATIVO->value));
-
-        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'SEM_ENTREGA',
-            'descricao' => 'Nova contribuição',
-            'consolidacao_id' => 'cons-1',
-        ], 'plano-1');
-
-        $this->storeValidator->shouldReceive('validar')->once()->with($dto);
-
-        $entrega = Mockery::mock(PlanoTrabalhoEntrega::class);
-        $this->repository->shouldReceive('create')->once()->andReturn($entrega);
-        $this->tcrInvalidador->shouldNotReceive('invalidar');
-
-        $result = $this->service->store($dto);
-
-        expect($result)->toBe($entrega);
-    });
-
     test('não persiste quando validação lança exceção', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
-        $this->authValidator->shouldReceive('validar')->once()
-            ->andReturn(mockPlanoService());
+        $this->authValidator->shouldReceive('validar')->once();
 
         $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
             'origem' => 'PROPRIA_UNIDADE',
@@ -116,8 +75,7 @@ describe('PlanoTrabalhoEntregaService::update', function () {
 
     test('valida, atualiza e invalida TCR', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
-        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1')
-            ->andReturn(mockPlanoService());
+        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1');
 
         $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
             'origem' => 'PROPRIA_UNIDADE',
@@ -128,8 +86,6 @@ describe('PlanoTrabalhoEntregaService::update', function () {
         $this->storeValidator->shouldReceive('validarUpdate')->once()->with($dto);
 
         $entrega = Mockery::mock(PlanoTrabalhoEntrega::class)->makePartial();
-        // Não deve chamar refresh(): isso descartaria as relações aninhadas
-        // (planoEntregaEntrega.planoEntrega.unidade) carregadas pelo repositório.
         $entrega->shouldNotReceive('refresh');
         $this->repository->shouldReceive('update')->once()->with('entrega-1', $dto->toArray())->andReturn($entrega);
         $this->tcrInvalidador->shouldReceive('invalidar')->once()->with('plano-1');
@@ -141,8 +97,7 @@ describe('PlanoTrabalhoEntregaService::update', function () {
 
     test('lança NotFoundException quando entrega não existe', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
-        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1')
-            ->andReturn(mockPlanoService());
+        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1');
 
         $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
             'origem' => 'PROPRIA_UNIDADE',
@@ -160,33 +115,14 @@ describe('PlanoTrabalhoEntregaService::update', function () {
 
 describe('PlanoTrabalhoEntregaService::destroy', function () {
 
-    test('valida, remove e invalida TCR no planejamento', function () {
+    test('valida, remove e invalida TCR', function () {
         Auth::shouldReceive('id')->andReturn('user-1');
-        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1')
-            ->andReturn(mockPlanoService());
-        $this->storeValidator->shouldReceive('validarDestroy')->once()->with('plano-1', 'entrega-1', null);
-        $this->atividadeRepository->shouldNotReceive('idsPorEntregaEmPeriodosIncluidos');
+        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1');
+        $this->storeValidator->shouldReceive('validarDestroy')->once()->with('plano-1');
         $this->repository->shouldReceive('delete')->once()->with('entrega-1')->andReturn(true);
         $this->tcrInvalidador->shouldReceive('invalidar')->once()->with('plano-1');
 
         $this->service->destroy('plano-1', 'entrega-1');
-    });
-
-    test('remove atividades de períodos abertos e não invalida TCR em execução', function () {
-        Auth::shouldReceive('id')->andReturn('user-1');
-        $this->authValidator->shouldReceive('validar')->once()->with('plano-1', 'user-1')
-            ->andReturn(mockPlanoService(StatusEnum::ATIVO->value));
-        $this->storeValidator->shouldReceive('validarDestroy')->once()->with('plano-1', 'entrega-1', 'cons-1');
-        $this->atividadeRepository->shouldReceive('idsPorEntregaEmPeriodosIncluidos')
-            ->once()
-            ->with('entrega-1')
-            ->andReturn(['atv-1', 'atv-2']);
-        $this->atividadeRepository->shouldReceive('delete')->once()->with('atv-1')->andReturn(true);
-        $this->atividadeRepository->shouldReceive('delete')->once()->with('atv-2')->andReturn(true);
-        $this->repository->shouldReceive('delete')->once()->with('entrega-1')->andReturn(true);
-        $this->tcrInvalidador->shouldNotReceive('invalidar');
-
-        $this->service->destroy('plano-1', 'entrega-1', 'cons-1');
     });
 });
 

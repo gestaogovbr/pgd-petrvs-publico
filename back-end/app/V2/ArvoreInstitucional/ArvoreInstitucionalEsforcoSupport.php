@@ -66,6 +66,36 @@ final class ArvoreInstitucionalEsforcoSupport
         return "COALESCE(NULLIF(pt.carga_horaria, 0), {$fallback})";
     }
 
+    /**
+     * Percentual de esforço executado de uma entrega planejada (pte), por período.
+     * A execução passou a viver em planos_trabalhos_consolidacoes_contribuicoes
+     * (uma linha por período avaliativo). Usa a média das contribuições registradas
+     * da entrega (via join agregado `pte_exec`); na ausência de registros, cai para
+     * a força de trabalho planejada.
+     */
+    public static function esforcoExecutadoPteSql(): string
+    {
+        return 'COALESCE(pte_exec.media_executado, pte.forca_trabalho)';
+    }
+
+    /**
+     * JOIN agregado que calcula a média do esforço executado por entrega planejada,
+     * considerando apenas contribuições registradas e períodos não excluídos.
+     * Expõe o alias `pte_exec` com a coluna `media_executado`.
+     */
+    public static function esforcoExecutadoPteJoinSql(): string
+    {
+        return "LEFT JOIN (
+            SELECT ptcc.plano_trabalho_entrega_id, AVG(ptcc.esforco_executado) AS media_executado
+            FROM planos_trabalhos_consolidacoes_contribuicoes ptcc
+            INNER JOIN planos_trabalhos_consolidacoes ptc
+                ON ptc.id = ptcc.plano_trabalho_consolidacao_id AND ptc.deleted_at IS NULL
+            WHERE ptcc.deleted_at IS NULL
+              AND ptcc.registrado_at IS NOT NULL
+            GROUP BY ptcc.plano_trabalho_entrega_id
+        ) pte_exec ON pte_exec.plano_trabalho_entrega_id = pte.id";
+    }
+
     public static function ptStatusPlanejadoIn(): string
     {
         return self::enumListToSqlIn(self::PT_STATUS_PLANEJADO);
