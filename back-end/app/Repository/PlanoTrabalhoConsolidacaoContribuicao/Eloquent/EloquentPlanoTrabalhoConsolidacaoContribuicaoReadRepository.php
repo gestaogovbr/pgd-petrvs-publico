@@ -58,12 +58,17 @@ class EloquentPlanoTrabalhoConsolidacaoContribuicaoReadRepository extends Abstra
             ->all();
     }
 
-    public function existePorConsolidacaoEEntrega(string $consolidacaoId, string $planoEntregaEntregaId): bool
+    public function existePorConsolidacaoEEntrega(string $consolidacaoId, string $planoEntregaEntregaId, ?string $excludeId = null): bool
     {
-        return $this->query()
+        $query = $this->query()
             ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
-            ->where('plano_entrega_entrega_id', $planoEntregaEntregaId)
-            ->exists();
+            ->where('plano_entrega_entrega_id', $planoEntregaEntregaId);
+
+        if ($excludeId !== null) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->exists();
     }
 
     public function possuiContribuicoes(string $consolidacaoId): bool

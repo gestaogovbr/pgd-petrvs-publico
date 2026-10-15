@@ -105,6 +105,8 @@ beforeEach(function () {
         'plano_entrega_id' => $planoEntrega->id,
         'entrega_id' => $entregaCatalogo->id,
         'unidade_id' => $this->unidade->id,
+        'data_inicio' => '2025-01-01',
+        'data_fim' => '2025-06-30',
     ]);
 
     PlanoTrabalhoEntrega::factory()->create([

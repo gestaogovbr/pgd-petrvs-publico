@@ -32,7 +32,7 @@ interface PlanoTrabalhoConsolidacaoContribuicaoReadRepositoryContract
      */
     public function totaisPorConsolidacoes(array $consolidacaoIds): array;
 
-    public function existePorConsolidacaoEEntrega(string $consolidacaoId, string $planoEntregaEntregaId): bool;
+    public function existePorConsolidacaoEEntrega(string $consolidacaoId, string $planoEntregaEntregaId, ?string $excludeId = null): bool;
 
     public function possuiContribuicoes(string $consolidacaoId): bool;
 

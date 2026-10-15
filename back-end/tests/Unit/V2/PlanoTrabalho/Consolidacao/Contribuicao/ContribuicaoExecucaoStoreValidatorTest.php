@@ -35,8 +35,21 @@ function planoAtivoStore(string $id = 'plano-1'): PlanoTrabalho
     $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
     $plano->id = $id;
     $plano->status = 'ATIVO';
+    $plano->data_inicio = '2025-01-01';
+    $plano->data_fim = '2025-06-30';
 
     return $plano;
+}
+
+function peeStore(string $dataInicio = '2025-02-01', ?string $dataFim = '2025-05-31'): PlanoEntregaEntrega
+{
+    /** @var PlanoEntregaEntrega $pee */
+    $pee = Mockery::mock(PlanoEntregaEntrega::class)->makePartial();
+    $pee->id = 'pee-1';
+    $pee->data_inicio = $dataInicio;
+    $pee->data_fim = $dataFim;
+
+    return $pee;
 }
 
 function consolidacaoStore(string $status = 'INCLUIDO', string $planoId = 'plano-1'): PlanoTrabalhoConsolidacao
@@ -69,12 +82,33 @@ describe('ContribuicaoExecucaoStoreValidator', function () {
         $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
             ->with('consolidacao-1')->andReturn($consolidacao);
         $this->planoEntregaRepo->shouldReceive('findEntregaById')
-            ->with('pee-1')->andReturn(Mockery::mock(PlanoEntregaEntrega::class));
+            ->with('pee-1')->andReturn(peeStore());
+        $this->contribuicaoRepo->shouldReceive('existePorConsolidacaoEEntrega')
+            ->with('consolidacao-1', 'pee-1', null)->andReturn(false);
 
         $result = $this->validator->validarStore($plano, dtoStore());
 
         expect($result)->toBe($consolidacao);
     });
+
+    test('bloqueia quando a entrega já está vinculada a uma contribuição do período', function () {
+        $plano = planoAtivoStore();
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn(consolidacaoStore());
+        $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(peeStore());
+        $this->contribuicaoRepo->shouldReceive('existePorConsolidacaoEEntrega')
+            ->with('consolidacao-1', 'pee-1', null)->andReturn(true);
+
+        $this->validator->validarStore($plano, dtoStore());
+    })->throws(ValidateException::class, 'Esta entrega já está vinculada a uma contribuição deste período avaliativo.');
+
+    test('bloqueia quando a entrega não tem interseção com o período do PT', function () {
+        $plano = planoAtivoStore();
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn(consolidacaoStore());
+        $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(peeStore('2025-07-01', '2025-12-31'));
+        $this->contribuicaoRepo->shouldReceive('existePorConsolidacaoEEntrega')->andReturn(false);
+
+        $this->validator->validarStore($plano, dtoStore());
+    })->throws(ValidateException::class, 'O período da entrega do plano de entregas não possui interseção com o período do plano de trabalho.');
 
     test('bloqueia quando PT não está em execução', function () {
         /** @var PlanoTrabalho $plano */

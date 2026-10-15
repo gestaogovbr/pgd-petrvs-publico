@@ -23,7 +23,7 @@ describe('ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco', function () {
             ->and($vis['mostrar_executado'])->toBeFalse();
     });
 
-    test('PE em execução com PT concluído exibe executado', function () {
+    test('PE em execução com execução registrada em período avaliativo exibe executado', function () {
         $vis = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco('ATIVO', true, true);
 
         expect($vis['mostrar_disponivel'])->toBeTrue()
@@ -53,22 +53,25 @@ describe('ArvoreInstitucionalEsforcoSupport::percentual', function () {
     });
 });
 
-describe('ArvoreInstitucionalEsforcoSupport::esforcoExecutado (nova origem por período)', function () {
+describe('ArvoreInstitucionalEsforcoSupport::esforcoExecutado (por período avaliativo)', function () {
 
-    test('esforcoExecutadoPteSql usa o join agregado com fallback para a força planejada', function () {
-        $sql = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoPteSql();
+    test('esforcoExecutadoHorasSql multiplica a CH diária pelo fator de horas do join', function () {
+        $sql = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoHorasSql();
 
-        expect($sql)->toBe('COALESCE(pte_exec.media_executado, pte.forca_trabalho)');
+        expect($sql)->toContain('pte_exec.fator_horas')
+            ->and($sql)->toContain('pt.carga_horaria');
     });
 
-    test('esforcoExecutadoPteJoinSql agrega da nova tabela só contribuições registradas e não excluídas', function () {
+    test('esforcoExecutadoPteJoinSql soma esforco × dias úteis do PA, só de PAs a partir de Aguardando Avaliação', function () {
         $join = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoPteJoinSql();
 
         expect($join)->toContain('planos_trabalhos_consolidacoes_contribuicoes')
-            ->and($join)->toContain('AVG(ptcc.esforco_executado)')
+            ->and($join)->toContain('planos_trabalhos_consolidacoes')
+            ->and($join)->toContain('SUM((ptcc.esforco_executado / 100.0)')
             ->and($join)->toContain('ptcc.registrado_at IS NOT NULL')
             ->and($join)->toContain('ptcc.deleted_at IS NULL')
+            ->and($join)->toContain("ptc.status IN ('CONCLUIDO','AVALIADO')")
             ->and($join)->toContain('GROUP BY ptcc.plano_trabalho_entrega_id')
-            ->and($join)->toContain('pte_exec');
+            ->and($join)->toContain('fator_horas');
     });
 });

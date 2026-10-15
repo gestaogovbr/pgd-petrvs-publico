@@ -7,6 +7,7 @@ namespace App\V2\PlanoTrabalho\Consolidacao\Contribuicao\Validators;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
+use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Models\PlanoTrabalhoConsolidacaoContribuicao;
@@ -34,7 +35,7 @@ class ContribuicaoExecucaoStoreValidator
     public function validarStore(PlanoTrabalho $plano, ContribuicaoExecucaoStoreDTO $dto): PlanoTrabalhoConsolidacao
     {
         $consolidacao = $this->resolverPeriodoLiberado($plano, $dto->consolidacaoId);
-        $this->validarVinculoEntrega($dto);
+        $this->validarVinculoEntrega($plano, $dto);
 
         return $consolidacao;
     }
@@ -42,7 +43,7 @@ class ContribuicaoExecucaoStoreValidator
     public function validarUpdate(PlanoTrabalho $plano, ContribuicaoExecucaoStoreDTO $dto): PlanoTrabalhoConsolidacaoContribuicao
     {
         $this->resolverPeriodoLiberado($plano, $dto->consolidacaoId);
-        $this->validarVinculoEntrega($dto);
+        $this->validarVinculoEntrega($plano, $dto);
 
         return $this->resolverContribuicao($dto->consolidacaoId, $dto->contribuicaoId);
     }
@@ -84,7 +85,7 @@ class ContribuicaoExecucaoStoreValidator
         return in_array($consolidacao->status, $bloqueados, true);
     }
 
-    private function validarVinculoEntrega(ContribuicaoExecucaoStoreDTO $dto): void
+    private function validarVinculoEntrega(PlanoTrabalho $plano, ContribuicaoExecucaoStoreDTO $dto): void
     {
         if (!$dto->isVinculadaAEntrega()) {
             return;
@@ -94,8 +95,30 @@ class ContribuicaoExecucaoStoreValidator
             throw new ValidateException('O vínculo com a entrega do plano de entregas é obrigatório para este tipo.');
         }
 
-        if ($this->planoEntregaRepository->findEntregaById($dto->planoEntregaEntregaId) === null) {
+        $entrega = $this->planoEntregaRepository->findEntregaById($dto->planoEntregaEntregaId);
+
+        if ($entrega === null) {
             throw new NotFoundException('A entrega do plano de entregas não foi encontrada.');
+        }
+
+        $this->validarUnicidade($dto->consolidacaoId, $entrega->id, $dto->contribuicaoId);
+        $this->validarIntersecaoPeriodo($plano, $entrega);
+    }
+
+    private function validarUnicidade(string $consolidacaoId, string $planoEntregaEntregaId, ?string $contribuicaoId): void
+    {
+        if ($this->contribuicaoRepository->existePorConsolidacaoEEntrega($consolidacaoId, $planoEntregaEntregaId, $contribuicaoId)) {
+            throw new ValidateException('Esta entrega já está vinculada a uma contribuição deste período avaliativo.');
+        }
+    }
+
+    private function validarIntersecaoPeriodo(PlanoTrabalho $plano, PlanoEntregaEntrega $entrega): void
+    {
+        $semIntersecao = $entrega->data_inicio > $plano->data_fim
+            || ($entrega->data_fim !== null && $entrega->data_fim < $plano->data_inicio);
+
+        if ($semIntersecao) {
+            throw new ValidateException('O período da entrega do plano de entregas não possui interseção com o período do plano de trabalho.');
         }
     }
 

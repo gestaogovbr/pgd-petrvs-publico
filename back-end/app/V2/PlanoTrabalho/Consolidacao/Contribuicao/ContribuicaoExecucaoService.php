@@ -31,7 +31,10 @@ class ContribuicaoExecucaoService
             $contribuicao = $this->repository->create($dto->toPersistArray());
             $this->repository->marcarRegistrado($contribuicao->id, Carbon::now());
 
-            return $contribuicao->refresh();
+            /** @var PlanoTrabalhoConsolidacaoContribuicao $registrada */
+            $registrada = $this->repository->findById($contribuicao->id);
+
+            return $registrada;
         });
     }
 

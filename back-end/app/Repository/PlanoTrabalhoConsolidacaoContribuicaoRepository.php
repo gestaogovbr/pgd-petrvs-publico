@@ -46,9 +46,9 @@ class PlanoTrabalhoConsolidacaoContribuicaoRepository
         return $this->readRepository->totaisPorConsolidacoes($consolidacaoIds);
     }
 
-    public function existePorConsolidacaoEEntrega(string $consolidacaoId, string $planoEntregaEntregaId): bool
+    public function existePorConsolidacaoEEntrega(string $consolidacaoId, string $planoEntregaEntregaId, ?string $excludeId = null): bool
     {
-        return $this->readRepository->existePorConsolidacaoEEntrega($consolidacaoId, $planoEntregaEntregaId);
+        return $this->readRepository->existePorConsolidacaoEEntrega($consolidacaoId, $planoEntregaEntregaId, $excludeId);
     }
 
     public function possuiContribuicoes(string $consolidacaoId): bool

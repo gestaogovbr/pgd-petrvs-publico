@@ -53,12 +53,12 @@ describe('ContribuicaoExecucaoService', function () {
         /** @var PlanoTrabalhoConsolidacaoContribuicao $contribuicao */
         $contribuicao = Mockery::mock(PlanoTrabalhoConsolidacaoContribuicao::class)->makePartial();
         $contribuicao->id = 'contribuicao-1';
-        $contribuicao->shouldReceive('refresh')->once()->andReturnSelf();
 
         $this->repo->shouldReceive('create')->once()->andReturn($contribuicao);
         $this->repo->shouldReceive('marcarRegistrado')
             ->once()
             ->with('contribuicao-1', Mockery::type(DateTimeInterface::class));
+        $this->repo->shouldReceive('findById')->once()->with('contribuicao-1')->andReturn($contribuicao);
 
         expect($this->service->store(dtoServico()))->toBe($contribuicao);
     });

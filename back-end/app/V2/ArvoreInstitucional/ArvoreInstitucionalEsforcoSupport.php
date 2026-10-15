@@ -23,9 +23,13 @@ final class ArvoreInstitucionalEsforcoSupport
         StatusEnum::AVALIADO,
     ];
 
-    /** PTs que contam para esforço executado. */
-    private const PT_STATUS_EXECUTADO = [
+    /**
+     * Períodos avaliativos (consolidações) cujo esforço executado é contabilizado:
+     * a partir de "Aguardando Avaliação" (status CONCLUIDO ou AVALIADO).
+     */
+    private const PA_STATUS_EXECUCAO_CONTABILIZADA = [
         StatusEnum::CONCLUIDO,
+        StatusEnum::AVALIADO,
     ];
 
     /** PEs aguardando homologação (não exibem esforço planejado/executado). */
@@ -53,7 +57,15 @@ final class ArvoreInstitucionalEsforcoSupport
      */
     public static function diasPeriodoPtSql(): string
     {
-        return "(5 * (DATEDIFF(pt.data_fim, pt.data_inicio) DIV 7) + SUBSTRING('1234555512344445123333451222234511112345001234550', 7 * WEEKDAY(pt.data_inicio) + WEEKDAY(pt.data_fim) + 1, 1))";
+        return self::diasPeriodoSql('pt.data_fim', 'pt.data_inicio');
+    }
+
+    /**
+     * Expressão SQL de dias úteis (segunda a sexta, sem feriados) entre duas colunas de data.
+     */
+    public static function diasPeriodoSql(string $dataFim, string $dataInicio): string
+    {
+        return "(5 * (DATEDIFF({$dataFim}, {$dataInicio}) DIV 7) + SUBSTRING('1234555512344445123333451222234511112345001234550', 7 * WEEKDAY({$dataInicio}) + WEEKDAY({$dataFim}) + 1, 1))";
     }
 
     /**
@@ -67,31 +79,42 @@ final class ArvoreInstitucionalEsforcoSupport
     }
 
     /**
-     * Percentual de esforço executado de uma entrega planejada (pte), por período.
-     * A execução passou a viver em planos_trabalhos_consolidacoes_contribuicoes
-     * (uma linha por período avaliativo). Usa a média das contribuições registradas
-     * da entrega (via join agregado `pte_exec`); na ausência de registros, cai para
-     * a força de trabalho planejada.
+     * Horas de esforço executado de uma entrega planejada (pte), somadas por período
+     * avaliativo (PA) totalmente preenchido:
+     *   Σ_PA ( esforco_executado% / 100 × dias úteis do PA ) × CH diária do PT.
+     *
+     * O fator por PA (sem CH) vem do join `pte_exec`; a CH é multiplicada aqui pois é
+     * constante por PT. Entregas sem execução registrada contribuem com 0.
      */
-    public static function esforcoExecutadoPteSql(): string
+    public static function esforcoExecutadoHorasSql(): string
     {
-        return 'COALESCE(pte_exec.media_executado, pte.forca_trabalho)';
+        return '(' . self::chdPtSql() . ' * COALESCE(pte_exec.fator_horas, 0))';
     }
 
     /**
-     * JOIN agregado que calcula a média do esforço executado por entrega planejada,
-     * considerando apenas contribuições registradas e períodos não excluídos.
-     * Expõe o alias `pte_exec` com a coluna `media_executado`.
+     * JOIN agregado do esforço executado por entrega planejada. Considera apenas PAs
+     * (consolidações) a partir de "Aguardando Avaliação" — status CONCLUIDO ou AVALIADO.
+     * O filtro por registrado_at é redundante nesse estado (a conclusão do PA exige
+     * todas as contribuições registradas), mantido como salvaguarda.
+     * Para cada PA elegível, soma esforco_executado% × dias úteis do PA; multiplicar
+     * por CH diária (feito fora) resulta nas horas executadas.
+     * Expõe o alias `pte_exec` com a coluna `fator_horas`.
      */
     public static function esforcoExecutadoPteJoinSql(): string
     {
+        $diasPeriodoPa = self::diasPeriodoSql('ptc.data_fim', 'ptc.data_inicio');
+        $statusElegivel = self::enumListToSqlIn(self::PA_STATUS_EXECUCAO_CONTABILIZADA);
+
         return "LEFT JOIN (
-            SELECT ptcc.plano_trabalho_entrega_id, AVG(ptcc.esforco_executado) AS media_executado
+            SELECT
+                ptcc.plano_trabalho_entrega_id,
+                SUM((ptcc.esforco_executado / 100.0) * {$diasPeriodoPa}) AS fator_horas
             FROM planos_trabalhos_consolidacoes_contribuicoes ptcc
             INNER JOIN planos_trabalhos_consolidacoes ptc
                 ON ptc.id = ptcc.plano_trabalho_consolidacao_id AND ptc.deleted_at IS NULL
             WHERE ptcc.deleted_at IS NULL
               AND ptcc.registrado_at IS NOT NULL
+              AND ptc.status IN ({$statusElegivel})
             GROUP BY ptcc.plano_trabalho_entrega_id
         ) pte_exec ON pte_exec.plano_trabalho_entrega_id = pte.id";
     }
@@ -101,15 +124,10 @@ final class ArvoreInstitucionalEsforcoSupport
         return self::enumListToSqlIn(self::PT_STATUS_PLANEJADO);
     }
 
-    public static function ptStatusExecutadoIn(): string
-    {
-        return self::enumListToSqlIn(self::PT_STATUS_EXECUTADO);
-    }
-
     /**
      * @return array{mostrar_disponivel: bool, mostrar_planejado: bool, mostrar_executado: bool}
      */
-    public static function visibilidadeEsforco(string $peStatus, bool $temPtPactuado, bool $temPtConcluido): array
+    public static function visibilidadeEsforco(string $peStatus, bool $temPtPactuado, bool $temExecucaoRegistrada): array
     {
         $aguardandoHomologacao = self::statusIn($peStatus, self::PE_STATUS_AGUARDANDO_HOMOLOGACAO);
         $emExecucao = self::statusIn($peStatus, self::PE_STATUS_EM_EXECUCAO);
@@ -118,7 +136,7 @@ final class ArvoreInstitucionalEsforcoSupport
         return [
             'mostrar_disponivel' => true,
             'mostrar_planejado' => !$aguardandoHomologacao && $emExecucao && $temPtPactuado,
-            'mostrar_executado' => !$aguardandoHomologacao && ($peConcluido || ($emExecucao && $temPtConcluido)),
+            'mostrar_executado' => !$aguardandoHomologacao && ($peConcluido || $temExecucaoRegistrada),
         ];
     }
 

@@ -55,6 +55,8 @@ return new class extends Migration
             ->all();
         $jaMaterializadas = array_flip($existentes);
 
+        $atividadesPorEntrega = $this->atividadesPorEntrega($consolidacao->id);
+
         $linhas = [];
 
         foreach ($entregas as $entrega) {
@@ -62,12 +64,7 @@ return new class extends Migration
                 continue;
             }
 
-            $atividade = DB::table('atividades')
-                ->where('plano_trabalho_consolidacao_id', $consolidacao->id)
-                ->where('plano_trabalho_entrega_id', $entrega->id)
-                ->whereNull('deleted_at')
-                ->orderBy('created_at')
-                ->first();
+            $atividade = $atividadesPorEntrega[$entrega->id] ?? null;
 
             $linhas[] = [
                 'id' => (string) Uuid::uuid4(),
@@ -86,6 +83,32 @@ return new class extends Migration
         if ($linhas !== []) {
             DB::table('planos_trabalhos_consolidacoes_contribuicoes')->insert($linhas);
         }
+    }
+
+    /**
+     * Carrega, em uma única consulta, a atividade mais antiga de cada entrega no período,
+     * indexada por plano_trabalho_entrega_id. Evita N+1 (uma consulta por entrega).
+     *
+     * @return array<string, object>
+     */
+    private function atividadesPorEntrega(string $consolidacaoId): array
+    {
+        $atividades = DB::table('atividades')
+            ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
+            ->whereNull('deleted_at')
+            ->whereNotNull('plano_trabalho_entrega_id')
+            ->orderBy('created_at')
+            ->get(['plano_trabalho_entrega_id', 'descricao', 'created_at']);
+
+        $porEntrega = [];
+        foreach ($atividades as $atividade) {
+            // orderBy created_at asc + primeira ocorrência preservada = a mais antiga
+            if (!isset($porEntrega[$atividade->plano_trabalho_entrega_id])) {
+                $porEntrega[$atividade->plano_trabalho_entrega_id] = $atividade;
+            }
+        }
+
+        return $porEntrega;
     }
 
     public function down(): void
