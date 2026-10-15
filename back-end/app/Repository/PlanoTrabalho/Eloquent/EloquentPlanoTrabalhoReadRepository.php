@@ -62,6 +62,22 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
         return $planoTrabalho instanceof PlanoTrabalho ? $planoTrabalho : null;
     }
 
+    public function findByIdForUpdateComPrograma(string|int $id): ?PlanoTrabalho
+    {
+        if ($id === '' || $id === 0) {
+            return null;
+        }
+
+        /** @var PlanoTrabalho|null $planoTrabalho */
+        $planoTrabalho = $this->query()
+            ->with('programa')
+            ->whereKey($id)
+            ->lockForUpdate()
+            ->first();
+
+        return $planoTrabalho;
+    }
+
     public function findOneParaEnvio(string|int $id): ?PlanoTrabalho
     {
         /** @var PlanoTrabalho|null */

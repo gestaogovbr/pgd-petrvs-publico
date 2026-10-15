@@ -102,6 +102,19 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->get();
     }
 
+    /** @return Collection<int, PlanoTrabalhoConsolidacao> */
+    public function findPeriodosByPlanoTrabalhoId(string $planoTrabalhoId): Collection
+    {
+        /** @var Collection<int, PlanoTrabalhoConsolidacao> $periodos */
+        $periodos = $this->query()
+            ->select(['id', 'plano_trabalho_id', 'data_inicio', 'data_fim'])
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->orderBy('data_inicio')
+            ->get();
+
+        return $periodos;
+    }
+
     public function findAllByPlanoTrabalhoIdAndPeriodo(string $planoTrabalhoId, string $dataInicio, string $dataFim): \Illuminate\Database\Eloquent\Collection
     {
         return $this->query()
