@@ -25,7 +25,7 @@ interface PlanoTrabalhoEntregaReadRepositoryContract
     /**
      * @return Collection<int, \App\Models\PlanoTrabalhoEntrega>
      */
-    public function findByPlanoTrabalho(string $planoTrabalhoId): Collection;
+    public function findAllByPlanoTrabalho(string $planoTrabalhoId): Collection;
 
     /**
      * @return list<string>

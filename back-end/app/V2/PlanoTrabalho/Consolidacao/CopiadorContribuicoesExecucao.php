@@ -36,7 +36,7 @@ class CopiadorContribuicoesExecucao
             return;
         }
 
-        $entregas = $this->entregaRepository->findByPlanoTrabalho($plano->id);
+        $entregas = $this->entregaRepository->findAllByPlanoTrabalho($plano->id);
 
         if ($entregas->isEmpty()) {
             return;

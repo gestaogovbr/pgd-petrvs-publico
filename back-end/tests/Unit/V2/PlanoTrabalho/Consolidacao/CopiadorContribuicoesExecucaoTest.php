@@ -65,7 +65,7 @@ describe('CopiadorContribuicoesExecucao', function () {
 
         $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')
             ->with('plano-1')->andReturn(new Collection([$consolidacao]));
-        $this->entregaRepo->shouldReceive('findByPlanoTrabalho')
+        $this->entregaRepo->shouldReceive('findAllByPlanoTrabalho')
             ->with('plano-1')->andReturn(new Collection([$entrega]));
         $this->contribuicaoRepo->shouldReceive('findByConsolidacao')
             ->with('c-1')->andReturn(new Collection());
@@ -93,7 +93,7 @@ describe('CopiadorContribuicoesExecucao', function () {
 
         $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')
             ->andReturn(new Collection([$consolidacao]));
-        $this->entregaRepo->shouldReceive('findByPlanoTrabalho')
+        $this->entregaRepo->shouldReceive('findAllByPlanoTrabalho')
             ->andReturn(new Collection([$entrega]));
         $this->contribuicaoRepo->shouldReceive('findByConsolidacao')
             ->with('c-1')->andReturn(new Collection([Mockery::mock(\App\Models\PlanoTrabalhoConsolidacaoContribuicao::class)]));
@@ -107,7 +107,7 @@ describe('CopiadorContribuicoesExecucao', function () {
         $plano = planoCopia();
 
         $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')->andReturn(new Collection());
-        $this->entregaRepo->shouldNotReceive('findByPlanoTrabalho');
+        $this->entregaRepo->shouldNotReceive('findAllByPlanoTrabalho');
         $this->contribuicaoRepo->shouldNotReceive('inserirEmLote');
 
         $this->copiador->copiar($plano);
@@ -118,7 +118,7 @@ describe('CopiadorContribuicoesExecucao', function () {
 
         $this->consolidacaoRepo->shouldReceive('findAllByPlanoTrabalhoId')
             ->andReturn(new Collection([consolidacaoCopia('c-1')]));
-        $this->entregaRepo->shouldReceive('findByPlanoTrabalho')->andReturn(new Collection());
+        $this->entregaRepo->shouldReceive('findAllByPlanoTrabalho')->andReturn(new Collection());
         $this->contribuicaoRepo->shouldNotReceive('inserirEmLote');
 
         $this->copiador->copiar($plano);

@@ -38,7 +38,7 @@ class EloquentPlanoTrabalhoEntregaReadRepository extends AbstractEloquentReadRep
     /**
      * @return Collection<int, PlanoTrabalhoEntrega>
      */
-    public function findByPlanoTrabalho(string $planoTrabalhoId): Collection
+    public function findAllByPlanoTrabalho(string $planoTrabalhoId): Collection
     {
         /** @var Collection<int, PlanoTrabalhoEntrega> $result */
         $result = $this->query()
