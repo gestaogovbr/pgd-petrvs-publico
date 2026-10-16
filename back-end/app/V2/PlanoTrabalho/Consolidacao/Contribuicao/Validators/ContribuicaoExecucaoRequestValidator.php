@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\PlanoTrabalho\Consolidacao\Contribuicao\Validators;
 
+use App\Enums\ContribuicaoExecucaoOrigem;
 use Illuminate\Http\Request;
 
 class ContribuicaoExecucaoRequestValidator
@@ -32,10 +33,12 @@ class ContribuicaoExecucaoRequestValidator
      */
     private static function validate(Request $request): array
     {
+        $origensPermitidas = implode(',', ContribuicaoExecucaoOrigem::values());
+
         return $request->validate([
-            'origem' => ['required', 'string', 'in:PROPRIA_UNIDADE,OUTRA_UNIDADE,OUTRO_ORGAO,SEM_ENTREGA'],
-            'plano_entrega_entrega_id' => ['required_if:origem,PROPRIA_UNIDADE', 'required_if:origem,OUTRA_UNIDADE', 'nullable', 'uuid'],
-            'orgao' => ['required_if:origem,OUTRO_ORGAO', 'nullable', 'string', 'max:256'],
+            'origem' => ['required', 'string', 'in:' . $origensPermitidas],
+            'plano_entrega_entrega_id' => ['required_if:origem,' . ContribuicaoExecucaoOrigem::PROPRIA_UNIDADE->value, 'required_if:origem,' . ContribuicaoExecucaoOrigem::OUTRA_UNIDADE->value, 'nullable', 'uuid'],
+            'orgao' => ['required_if:origem,' . ContribuicaoExecucaoOrigem::OUTRO_ORGAO->value, 'nullable', 'string', 'max:256'],
             'descricao' => ['required', 'string', 'max:' . self::MAX_DESCRICAO_LENGTH],
             'esforco_executado' => ['required', 'numeric', 'min:0', 'max:' . self::MAX_ESFORCO],
         ], [
