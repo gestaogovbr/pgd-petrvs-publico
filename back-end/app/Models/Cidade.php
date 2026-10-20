@@ -35,8 +35,4 @@ class Cidade extends ModelBase
   {
     return $this->hasMany(Feriado::class);
   }
-  public function curriculuns()
-  {
-    return $this->hasMany(Curriculum::class);
-  }
 }

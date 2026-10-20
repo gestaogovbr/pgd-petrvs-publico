@@ -39,10 +39,8 @@ import { CadeiaValorProcessoDaoService } from '../dao/cadeia-valor-processo-dao.
 import { ChangeDaoService } from '../dao/change-dao.service';
 import { ErrorDaoService } from '../dao/error-dao.service';
 import { TrafficDaoService } from '../dao/traffic-dao.service';
-import { FuncaoDaoService } from '../dao/funcao-dao.service';
 import { PlanoEntregaEntregaObjetivoDaoService } from '../dao/plano-entrega-entrega-objetivo-dao.service';
 import { PlanoEntregaEntregaProcessoDaoService } from '../dao/plano-entrega-entrega-processo-dao.service';
-import { CapacidadeTecnicaDaoService } from '../dao/capacidade-tecnica-dao.service';
 import { AtividadeDaoService } from '../dao/atividade-dao.service';
 import { PlanoTrabalhoConsolidacaoDaoService } from '../dao/plano-trabalho-consolidacao-dao.service';
 import { OcorrenciaDaoService } from '../dao/ocorrencia-dao.service';
@@ -138,18 +136,6 @@ export class EntityService {
         icon: '',
         dao: injector.get<CapacidadeDaoService>(CapacidadeDaoService),
         label: "Capacidade",
-      },
-      {
-        collection: 'CapacidadeTecnica',
-        codigo: 'MOD_RX_CURR',
-        table: 'capacidades_tecnicas',
-        campo: 'nome',
-        icon: 'bi bi-arrows-angle-contract',
-        dao: injector.get<CapacidadeTecnicaDaoService>(CapacidadeTecnicaDaoService),
-        label: "Capacidade Técnica",
-        selectRoute: {
-          route: ['raiox', 'cadastros', 'capacidade-tecnica'],
-        },
       },
       {
         collection: 'Cliente',
@@ -260,18 +246,6 @@ export class EntityService {
         label: "Feriado",
         selectRoute: {
           route: ['cadastros', 'feriado'],
-        },
-      },
-      {
-        collection: 'Funcao',
-        codigo: 'MOD_RX_CURR',
-        table: 'funcoes',
-        campo: 'nome',
-        icon: 'bi bi-check-circle-fill',
-        dao: injector.get<FuncaoDaoService>(FuncaoDaoService),
-        label: "Função",
-        selectRoute: {
-          route: ['raiox', 'cadastros', 'funcao'],
         },
       },
       {

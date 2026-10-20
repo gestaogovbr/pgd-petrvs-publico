@@ -21,7 +21,6 @@ class DeployTreinaSeeder extends Seeder
       TipoCapacidadeSeeder::class,
       CapacidadeSeeder::class,
       In24_TreinaSeeder::class,
-      FuncaoSeeder::class,      
       NomenclaturaSeeder::class,
     ]);
   }
