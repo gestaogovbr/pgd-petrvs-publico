@@ -5,7 +5,7 @@
     "keywords": ["pdg", "petrvs", "mgi"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
+        "php": "^8.4",
         "ext-json": "*",
         "barryvdh/laravel-dompdf": "^2.0",
         "brazanation/documents": "2.1.*",
@@ -23,7 +23,7 @@
         "lawondyss/moment-php": "dev-master",
         "league/commonmark": "^2.8",
         "maatwebsite/excel": "^3.1",
-        "openspout/openspout": "~4.28.5",
+        "openspout/openspout": "^4.32",
         "owen-it/laravel-auditing": "^13.6",
         "phpoffice/common": "^1.0",
         "phpoffice/phpspreadsheet": "^1.30.4",
@@ -95,7 +95,7 @@
             "pestphp/pest-plugin-laravel": true
         },
         "platform": {
-            "php": "8.2.30"
+            "php": "8.4.27"
         },
         "audit": {
             "block-insecure": false

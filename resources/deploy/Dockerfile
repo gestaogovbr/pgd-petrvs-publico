@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM php:8.2-apache
+FROM php:8.4.27-apache
 # instala recursos adicionais
 RUN apt-get update && apt-get install -y --no-install-recommends \
     sed \
