@@ -1,3 +1,11 @@
+## 3.2.2 21/10/2026
+
+### Corrigido
+- Ambiente de execução atualizado para PHP 8.4.27, fechando as vulnerabilidades críticas de execução remota de código CVE-2026-109618 e CVE-2026-109619
+
+### Modificado
+- Bibliotecas de planilha atualizadas para acompanhar o PHP 8.4.27: OpenSpout 4.32.0, PhpSpreadsheet 1.30.7 e Laravel Excel 3.1.70
+
 ## 3.2.1 13/10/2026
 
 ### Modificado

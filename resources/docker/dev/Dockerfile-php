@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM php:8.2-apache
+FROM php:8.4.27-apache
 
 # instala recursos adicionais
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -52,7 +52,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
 
 # habilita o modulo rewrite
 RUN a2enmod rewrite headers
-RUN pecl install xdebug-3.3.2 && docker-php-ext-enable xdebug
+RUN pecl install xdebug-3.5.3 && docker-php-ext-enable xdebug
 RUN echo "xdebug.mode=off" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.start_with_request=yes" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
     echo "xdebug.client_host=host.docker.internal" | tee -a /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini > /dev/null && \
