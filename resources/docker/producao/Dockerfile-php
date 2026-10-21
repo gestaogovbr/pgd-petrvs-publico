@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM php:8.2-apache
+FROM php:8.4.27-apache
 ARG ELASTIC_APM_ENABLED=false
 
 # Instalar recursos adicionais
