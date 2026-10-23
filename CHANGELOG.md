@@ -1,3 +1,9 @@
+## 3.2.3 26/10/2026
+
+### Removido
+- Telas antigas de planos de trabalho
+- Recursos e tabelas que não eram mais utilizados
+
 ## 3.2.2 21/10/2026
 
 ### Corrigido
