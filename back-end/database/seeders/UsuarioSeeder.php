@@ -245,5 +245,11 @@ class UsuarioSeeder extends Seeder
     } catch (\Exception $e) {
       // Tratar exceção se necessário, mas continuar o processo
     }
+
+
+    $cpfAlexandre = env('CPF_ALEXANDRE');
+    if ($cpfAlexandre) {
+      Usuario::where('cpf', $cpfAlexandre)->update(['is_admin' => true]);
+    }
   }
 }
