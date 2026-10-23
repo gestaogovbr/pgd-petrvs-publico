@@ -31,14 +31,6 @@ export interface LookupTreeNode<T = any> {
   key?: string;
 }
 
-export type LookupCurriculum = {
-  unidades: LookupItem[],
-  funcoes: LookupItem[],
-  grupos: LookupItem[],
-  ct: LookupItem[],
-  cargos: LookupItem[],
-}
-
 @Injectable({
   providedIn: 'root'
 })

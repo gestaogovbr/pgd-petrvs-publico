@@ -33,6 +33,12 @@ class PlanoTrabalhoConsolidacaoRepository
         return $this->readRepository->findAllByPlanoTrabalhoId($planoTrabalhoId);
     }
 
+    /** @return Collection<int, PlanoTrabalhoConsolidacao> */
+    public function findPeriodosByPlanoTrabalhoId(string $planoTrabalhoId): Collection
+    {
+        return $this->readRepository->findPeriodosByPlanoTrabalhoId($planoTrabalhoId);
+    }
+
     public function findAllByPlanoTrabalhoIdAndPeriodo(string $planoTrabalhoId, string $dataInicio, string $dataFim): Collection
     {
         return $this->readRepository->findAllByPlanoTrabalhoIdAndPeriodo($planoTrabalhoId, $dataInicio, $dataFim);
