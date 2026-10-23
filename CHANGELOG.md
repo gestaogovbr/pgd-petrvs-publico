@@ -1,5 +1,8 @@
 ## 3.2.3 26/10/2026
 
+### Corrigido
+- Criação de Plano de Trabalho deixa de falhar no navegador com a resposta cortada pelo proxy de produção: o Apache volta a enviar o tamanho da resposta, e o plano gravado deixa de aparecer como erro
+
 ### Removido
 - Telas antigas de planos de trabalho
 - Recursos e tabelas que não eram mais utilizados
