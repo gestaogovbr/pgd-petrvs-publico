@@ -169,22 +169,28 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
     }
 
 
-    public function resumoParaArquivamento(string $planoTrabalhoId, \DateTimeInterface $limiteRecurso): ResumoConsolidacoesDTO
-    {
-        $result = $this->query()
+    public function resumoParaArquivamento(
+        string $planoTrabalhoId,
+        \DateTimeInterface $limiteRecurso,
+        ?string $encerradoAt = null
+    ): ResumoConsolidacoesDTO {
+        // Períodos iniciados após o encerramento antecipado são concluídos pelo próprio encerramento
+        // e não podem ser avaliados, portanto não devem contar como pendência para o arquivamento.
+        $somentePeriodosVigentes = fn ($query) => $query
             ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->when($encerradoAt, fn ($q) => $q->where('data_inicio', '<=', $encerradoAt));
+
+        $result = $somentePeriodosVigentes($this->query())
             ->selectRaw('COUNT(CASE WHEN status != ? THEN 1 END) = 0 AS todos_avaliados', [StatusEnum::AVALIADO->value])
             ->selectRaw('COUNT(CASE WHEN status IN (?, ?) THEN 1 END) > 0 AS possui_pendencias', [StatusEnum::INCLUIDO->value, StatusEnum::CONCLUIDO->value])
             ->toBase()
             ->first();
 
-        $avaliacaoRecente = $this->query()
-            ->where('plano_trabalho_id', $planoTrabalhoId)
+        $avaliacaoRecente = $somentePeriodosVigentes($this->query())
             ->whereHas('avaliacoes', fn ($q) => $q->where('data_avaliacao', '>', $limiteRecurso))
             ->exists();
 
-        $isAguardandoReavaliacao = $this->query()
-            ->where('plano_trabalho_id', $planoTrabalhoId)
+        $isAguardandoReavaliacao = $somentePeriodosVigentes($this->query())
             ->where('status', StatusEnum::CONCLUIDO->value)
             ->whereHas('avaliacoes', fn ($q) => $q->whereNotNull('recurso'))
             ->has('avaliacoes', '=', 1)
