@@ -1,5 +1,8 @@
-<div class="border-bottom py-3">
-  <h5 class="mb-1">{{ titulo }}</h5>
+<div class="border-bottom py-3" [class.opacity-75]="lido">
+  <h5 class="mb-1" [class.fw-normal]="lido">
+    {{ titulo }}
+    <span *ngIf="lido" class="badge bg-secondary ms-2 fw-normal align-middle">Lido</span>
+  </h5>
   <small class="text-muted">Enviado por {{ remetente }} em {{ dataFormatada }} às {{ horaFormatada }}</small>
   <p class="mt-2 text-break white-space">{{ conteudo }}</p>
 </div>

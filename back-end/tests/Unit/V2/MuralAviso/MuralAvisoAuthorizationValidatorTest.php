@@ -3,6 +3,7 @@
 namespace Tests\Unit\V2\MuralAviso;
 
 use App\Enums\MuralAvisoDestinatario;
+use App\Enums\MuralAvisoRemetenteTipo;
 use App\Exceptions\ForbiddenException;
 use App\Exceptions\NotFoundException;
 use App\Models\MuralAviso;
@@ -55,6 +56,7 @@ describe('MuralAvisoAuthorizationValidator::validar', function () {
         $aviso->id = 'aviso-1';
         $aviso->destinatario = 'TENANT_ESPECIFICO';
         $aviso->tenant_id = 'tenant-1';
+        $aviso->remetente_tipo = MuralAvisoRemetenteTipo::TENANT->value;
 
         $repo = Mockery::mock(MuralAvisoRepository::class);
         $repo->shouldReceive('findById')->with('aviso-1')->andReturn($aviso);
@@ -65,6 +67,21 @@ describe('MuralAvisoAuthorizationValidator::validar', function () {
 
         expect($result->id)->toBe('aviso-1');
     });
+
+    test('rejeita usuário não-central ao alterar aviso emitido pelo Órgão Central', function () {
+        $aviso = Mockery::mock(MuralAviso::class)->makePartial();
+        $aviso->id = 'aviso-1';
+        $aviso->destinatario = 'TENANT_ESPECIFICO';
+        $aviso->tenant_id = 'tenant-1';
+        $aviso->remetente_tipo = MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value;
+
+        $repo = Mockery::mock(MuralAvisoRepository::class);
+        $repo->shouldReceive('findById')->with('aviso-1')->andReturn($aviso);
+
+        $validator = criarAuthValidator($repo);
+
+        $validator->validar('aviso-1', 2, ['tenant-1']);
+    })->throws(ForbiddenException::class, 'Você não tem permissão para alterar este aviso.');
 
     test('rejeita usuário não-central ao tentar alterar aviso TODOS', function () {
         $aviso = Mockery::mock(MuralAviso::class)->makePartial();
