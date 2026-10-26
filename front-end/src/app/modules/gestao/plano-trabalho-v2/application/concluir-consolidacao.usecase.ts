@@ -7,7 +7,7 @@ import { Consolidacao } from '../domain/types';
 export class ConcluirConsolidacaoUseCase {
   private readonly api = inject(ConsolidacaoApiClient);
 
-  execute(planoId: string, consolidacaoId: string): Observable<Consolidacao> {
-    return this.api.concluirConsolidacao(planoId, consolidacaoId);
+  execute(planoId: string, consolidacaoId: string, justificativaCargaHoraria?: string | null): Observable<Consolidacao> {
+    return this.api.concluirConsolidacao(planoId, consolidacaoId, justificativaCargaHoraria);
   }
 }

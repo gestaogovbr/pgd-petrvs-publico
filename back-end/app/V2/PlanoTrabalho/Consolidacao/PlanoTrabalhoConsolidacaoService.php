@@ -65,14 +65,15 @@ class PlanoTrabalhoConsolidacaoService
         return $consolidacoes;
     }
 
-    public function concluir(string $planoTrabalhoId, string $consolidacaoId): PlanoTrabalhoConsolidacao
+    public function concluir(string $planoTrabalhoId, string $consolidacaoId, ?string $justificativaCargaHoraria = null): PlanoTrabalhoConsolidacao
     {
         $plano = $this->authValidator->validar($planoTrabalhoId, Auth::id());
-        $consolidacao = $this->concluirValidator->validar($plano, $consolidacaoId);
+        $consolidacao = $this->concluirValidator->validar($plano, $consolidacaoId, $justificativaCargaHoraria);
 
-        return DB::transaction(function () use ($consolidacao) {
+        return DB::transaction(function () use ($consolidacao, $justificativaCargaHoraria) {
             $this->consolidacaoRepository->update($consolidacao->id, [
                 'data_conclusao' => now(),
+                'justificativa_carga_horaria' => $justificativaCargaHoraria,
             ]);
 
             $this->statusService->atualizaStatus(

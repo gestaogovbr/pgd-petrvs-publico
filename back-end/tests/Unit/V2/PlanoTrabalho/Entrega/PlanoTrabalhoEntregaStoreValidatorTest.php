@@ -1,17 +1,12 @@
 <?php
 
 use App\V2\PlanoTrabalho\Entrega\Validators\PlanoTrabalhoEntregaStoreValidator;
-use App\V2\PlanoTrabalho\Entrega\Validators\CargaHorariaJustificativaValidator;
-use App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO;
 use App\V2\PlanoTrabalho\Entrega\DTOs\PlanoTrabalhoEntregaStoreDTO;
 use App\Repository\PlanoTrabalhoRepository;
 use App\Repository\PlanoEntregaRepository;
 use App\Repository\PlanoTrabalhoEntregaRepository;
-use App\Repository\PlanoTrabalhoConsolidacaoRepository;
-use App\Repository\AtividadeRepository;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoEntregaEntrega;
-use App\Models\PlanoTrabalhoConsolidacao;
 use App\Enums\StatusEnum;
 use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
@@ -23,16 +18,11 @@ beforeEach(function () {
     $this->planoRepo = Mockery::mock(PlanoTrabalhoRepository::class);
     $this->planoEntregaRepo = Mockery::mock(PlanoEntregaRepository::class);
     $this->ptEntregaRepo = Mockery::mock(PlanoTrabalhoEntregaRepository::class);
-    $this->consolidacaoRepo = Mockery::mock(PlanoTrabalhoConsolidacaoRepository::class);
-    $this->atividadeRepo = Mockery::mock(AtividadeRepository::class);
 
     $this->validator = new PlanoTrabalhoEntregaStoreValidator(
         $this->planoRepo,
         $this->planoEntregaRepo,
         $this->ptEntregaRepo,
-        $this->consolidacaoRepo,
-        $this->atividadeRepo,
-        new CargaHorariaJustificativaValidator(),
     );
 });
 
@@ -59,28 +49,12 @@ function mockEntregaPE(string $dataInicio, ?string $dataFim): PlanoEntregaEntreg
     return $entrega;
 }
 
-function mockConsolidacao(string $status, string $planoTrabalhoId = 'plano-1'): PlanoTrabalhoConsolidacao
+function dtoPlanoEntrega(string $planoTrabalhoId = 'plano-1', string $peeId = 'pee-1'): PlanoTrabalhoEntregaStoreDTO
 {
-    /** @var PlanoTrabalhoConsolidacao $consolidacao */
-    $consolidacao = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
-    $consolidacao->id = 'cons-1';
-    $consolidacao->status = $status;
-    $consolidacao->plano_trabalho_id = $planoTrabalhoId;
-    return $consolidacao;
-}
-
-function dtoPlanoEntrega(string $planoTrabalhoId = 'plano-1', string $peeId = 'pee-1', ?string $consolidacaoId = null): PlanoTrabalhoEntregaStoreDTO
-{
-    $data = [
+    return PlanoTrabalhoEntregaStoreDTO::fromArray([
         'origem' => 'PROPRIA_UNIDADE',
         'plano_entrega_entrega_id' => $peeId,
-    ];
-
-    if ($consolidacaoId !== null) {
-        $data['consolidacao_id'] = $consolidacaoId;
-    }
-
-    return PlanoTrabalhoEntregaStoreDTO::fromArray($data, $planoTrabalhoId);
+    ], $planoTrabalhoId);
 }
 
 function dtoOutroOrgao(string $planoTrabalhoId = 'plano-1'): PlanoTrabalhoEntregaStoreDTO
@@ -91,15 +65,9 @@ function dtoOutroOrgao(string $planoTrabalhoId = 'plano-1'): PlanoTrabalhoEntreg
     ], $planoTrabalhoId);
 }
 
-function dtoNaoVinculado(string $planoTrabalhoId = 'plano-1', ?string $consolidacaoId = null): PlanoTrabalhoEntregaStoreDTO
+function dtoNaoVinculado(string $planoTrabalhoId = 'plano-1'): PlanoTrabalhoEntregaStoreDTO
 {
-    $data = ['origem' => 'SEM_ENTREGA'];
-
-    if ($consolidacaoId !== null) {
-        $data['consolidacao_id'] = $consolidacaoId;
-    }
-
-    return PlanoTrabalhoEntregaStoreDTO::fromArray($data, $planoTrabalhoId);
+    return PlanoTrabalhoEntregaStoreDTO::fromArray(['origem' => 'SEM_ENTREGA'], $planoTrabalhoId);
 }
 
 describe('PlanoTrabalhoEntregaStoreValidator::validar', function () {
@@ -110,60 +78,37 @@ describe('PlanoTrabalhoEntregaStoreValidator::validar', function () {
         $this->validator->validar(dtoPlanoEntrega());
     })->throws(NotFoundException::class, 'Plano de Trabalho não encontrado.');
 
-    test('lança exceção quando status do plano não permitido', function () {
+    test('lança exceção quando o plano está em execução', function () {
+        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
+
+        $this->validator->validar(dtoNaoVinculado());
+    })->throws(ValidateException::class, 'Entregas só podem ser adicionadas quando o Plano de Trabalho é um rascunho ou está aguardando assinatura.');
+
+    test('lança exceção quando o plano está concluído', function () {
         $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::CONCLUIDO->value));
 
-        $this->validator->validar(dtoPlanoEntrega());
-    })->throws(ValidateException::class, 'Contribuições só podem ser incluídas ou excluídas quando o Plano de Trabalho está em rascunho, aguardando assinatura ou em execução.');
+        $this->validator->validar(dtoNaoVinculado());
+    })->throws(ValidateException::class, 'Entregas só podem ser adicionadas quando o Plano de Trabalho é um rascunho ou está aguardando assinatura.');
 
-    test('permite inclusão em execução quando período avaliativo está aberto', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
-        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
-            ->with('cons-1')
-            ->andReturn(mockConsolidacao(StatusEnum::INCLUIDO->value));
+    test('permite inclusão quando status INCLUIDO', function () {
+        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::INCLUIDO->value));
         $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(mockEntregaPE('2025-02-01', '2025-05-31'));
         $this->ptEntregaRepo->shouldReceive('existeVinculo')->andReturn(false);
-        $this->ptEntregaRepo->shouldReceive('somatoriosEsforcoProjetados')
-            ->andReturn(new SomatoriosEsforcoDTO(100.0, 100.0));
 
-        $this->validator->validar(dtoPlanoEntrega(consolidacaoId: 'cons-1'));
+        $this->validator->validar(dtoPlanoEntrega());
 
         expect(true)->toBeTrue();
     });
 
-    test('lança exceção em execução quando período está aguardando avaliação', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
-        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
-            ->with('cons-1')
-            ->andReturn(mockConsolidacao(StatusEnum::CONCLUIDO->value));
+    test('permite inclusão quando status AGUARDANDO_ASSINATURA', function () {
+        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::AGUARDANDO_ASSINATURA->value));
+        $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(mockEntregaPE('2025-02-01', '2025-05-31'));
+        $this->ptEntregaRepo->shouldReceive('existeVinculo')->andReturn(false);
 
-        $this->validator->validar(dtoNaoVinculado('plano-1', 'cons-1'));
-    })->throws(ValidateException::class, 'Não é possível incluir ou excluir contribuições quando o período avaliativo está Aguardando Avaliação ou Avaliado.');
+        $this->validator->validar(dtoPlanoEntrega());
 
-    test('lança exceção em execução quando período está avaliado', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
-        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
-            ->with('cons-1')
-            ->andReturn(mockConsolidacao(StatusEnum::AVALIADO->value));
-
-        $this->validator->validar(dtoNaoVinculado('plano-1', 'cons-1'));
-    })->throws(ValidateException::class, 'Não é possível incluir ou excluir contribuições quando o período avaliativo está Aguardando Avaliação ou Avaliado.');
-
-    test('lança exceção quando o período avaliativo não pertence ao plano', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
-        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
-            ->with('cons-1')
-            ->andReturn(mockConsolidacao(StatusEnum::INCLUIDO->value, 'outro-plano'));
-
-        $this->validator->validar(dtoNaoVinculado('plano-1', 'cons-1'));
-    })->throws(ValidateException::class, 'O período avaliativo não pertence a este Plano de Trabalho.');
-
-    test('lança exceção em execução quando não há período aberto', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
-        $this->consolidacaoRepo->shouldReceive('possuiPeriodoAberto')->with('plano-1')->andReturn(false);
-
-        $this->validator->validar(dtoNaoVinculado());
-    })->throws(ValidateException::class, 'Não é possível incluir ou excluir contribuições quando o período avaliativo está Aguardando Avaliação ou Avaliado.');
+        expect(true)->toBeTrue();
+    });
 
     test('lança exceção quando entrega PE não encontrada', function () {
         $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::INCLUIDO->value));
@@ -248,85 +193,6 @@ describe('PlanoTrabalhoEntregaStoreValidator::validar', function () {
 
         expect(true)->toBeTrue();
     });
-
-    test('lança exceção quando somatório executado difere do planejado', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::INCLUIDO->value));
-        $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(mockEntregaPE('2025-02-01', '2025-05-31'));
-        $this->ptEntregaRepo->shouldReceive('existeVinculo')->andReturn(false);
-        $this->ptEntregaRepo->shouldReceive('somatoriosEsforcoProjetados')
-            ->once()
-            ->with('plano-1', 'entrega-1', 60.0, 30.0)
-            ->andReturn(new \App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO(100.0, 70.0));
-
-        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'PROPRIA_UNIDADE',
-            'plano_entrega_entrega_id' => 'pee-1',
-            'forca_trabalho' => 60,
-            'esforco_executado' => 30,
-        ], 'plano-1', 'entrega-1');
-
-        $this->validator->validar($dto);
-    })->throws(ValidateException::class, 'O somatório do esforço executado deve ser igual ao somatório do esforço planejado no Plano de Trabalho.');
-
-    test('permite esforço executado quando somatórios permanecem iguais', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::INCLUIDO->value));
-        $this->planoEntregaRepo->shouldReceive('findEntregaById')->andReturn(mockEntregaPE('2025-02-01', '2025-05-31'));
-        $this->ptEntregaRepo->shouldReceive('existeVinculo')->andReturn(false);
-        $this->ptEntregaRepo->shouldReceive('somatoriosEsforcoProjetados')
-            ->once()
-            ->with('plano-1', 'entrega-1', 60.0, 40.0)
-            ->andReturn(new \App\V2\PlanoTrabalho\Entrega\DTOs\SomatoriosEsforcoDTO(100.0, 100.0));
-
-        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'PROPRIA_UNIDADE',
-            'plano_entrega_entrega_id' => 'pee-1',
-            'forca_trabalho' => 60,
-            'esforco_executado' => 40,
-        ], 'plano-1', 'entrega-1');
-
-        $this->validator->validar($dto);
-
-        expect(true)->toBeTrue();
-    });
-
-    test('exige justificativa ao incluir contribuição com carga diferente de 100%', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
-        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
-            ->with('cons-1')
-            ->andReturn(mockConsolidacao(StatusEnum::INCLUIDO->value));
-        $this->ptEntregaRepo->shouldReceive('somatoriosEsforcoProjetados')
-            ->andReturn(new SomatoriosEsforcoDTO(180.0, 180.0));
-
-        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'SEM_ENTREGA',
-            'forca_trabalho' => 100,
-            'consolidacao_id' => 'cons-1',
-            'descricao' => 'Contribuição extra',
-        ], 'plano-1');
-
-        $this->validator->validar($dto);
-    })->throws(ValidateException::class, CargaHorariaJustificativaValidator::MENSAGEM);
-
-    test('permite contribuição com carga diferente de 100% quando há justificativa', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
-        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
-            ->with('cons-1')
-            ->andReturn(mockConsolidacao(StatusEnum::INCLUIDO->value));
-        $this->ptEntregaRepo->shouldReceive('somatoriosEsforcoProjetados')
-            ->andReturn(new SomatoriosEsforcoDTO(180.0, 180.0));
-
-        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'SEM_ENTREGA',
-            'forca_trabalho' => 100,
-            'consolidacao_id' => 'cons-1',
-            'descricao' => 'Contribuição extra',
-            'justificativa' => 'Demanda extraordinária no período.',
-        ], 'plano-1');
-
-        $this->validator->validar($dto);
-
-        expect(true)->toBeTrue();
-    });
 });
 
 describe('PlanoTrabalhoEntregaStoreValidator::validarUpdate', function () {
@@ -348,34 +214,9 @@ describe('PlanoTrabalhoEntregaStoreValidator::validarDestroy', function () {
         expect(true)->toBeTrue();
     });
 
-    test('permite exclusão em execução quando período avaliativo está aberto', function () {
+    test('bloqueia exclusão quando o plano está em execução', function () {
         $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
-        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
-            ->with('cons-1')
-            ->andReturn(mockConsolidacao(StatusEnum::INCLUIDO->value));
-        $this->atividadeRepo->shouldReceive('possuiEmPeriodosFechados')->with('entrega-1')->andReturn(false);
 
-        $this->validator->validarDestroy('plano-1', 'entrega-1', 'cons-1');
-
-        expect(true)->toBeTrue();
-    });
-
-    test('lança exceção na exclusão em execução quando período está avaliado', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
-        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
-            ->with('cons-1')
-            ->andReturn(mockConsolidacao(StatusEnum::AVALIADO->value));
-
-        $this->validator->validarDestroy('plano-1', 'entrega-1', 'cons-1');
-    })->throws(ValidateException::class, 'Não é possível incluir ou excluir contribuições quando o período avaliativo está Aguardando Avaliação ou Avaliado.');
-
-    test('lança exceção na exclusão quando há registro em período fechado', function () {
-        $this->planoRepo->shouldReceive('findById')->andReturn(mockPlano(StatusEnum::ATIVO->value));
-        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
-            ->with('cons-1')
-            ->andReturn(mockConsolidacao(StatusEnum::INCLUIDO->value));
-        $this->atividadeRepo->shouldReceive('possuiEmPeriodosFechados')->with('entrega-1')->andReturn(true);
-
-        $this->validator->validarDestroy('plano-1', 'entrega-1', 'cons-1');
-    })->throws(ValidateException::class, 'Não é possível incluir ou excluir contribuições quando o período avaliativo está Aguardando Avaliação ou Avaliado.');
+        $this->validator->validarDestroy('plano-1');
+    })->throws(ValidateException::class, 'Entregas só podem ser adicionadas quando o Plano de Trabalho é um rascunho ou está aguardando assinatura.');
 });

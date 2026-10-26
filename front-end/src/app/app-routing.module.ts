@@ -40,8 +40,13 @@ const routes: Routes = [
   { path: 'gestao/cadeia-valor', loadChildren: () => import('./modules/gestao/cadeia-valor/cadeia-valor.module').then(m => m.CadeiaValorModule), canActivate: [AuthGuard] },
   { path: 'gestao/atividade', loadChildren: () => import('./modules/gestao/atividade/atividade.module').then(m => m.AtividadeModule), canActivate: [AuthGuard] },
   { path: 'gestao/planejamento', loadChildren: () => import('./modules/gestao/planejamento-institucional/planejamento.module').then(m => m.PlanejamentoModule), canActivate: [AuthGuard] },
-  { path: 'gestao/plano-trabalho', loadChildren: () => import('./modules/gestao/plano-trabalho/plano-trabalho.module').then(m => m.PlanoTrabalhoModule), canActivate: [AuthGuard] },
+  /** @deprecated */
+  /** Rotas antigas de Plano de Trabalho, serão removidas em breve */
+  { path: 'gestao/plano-trabalho', loadChildren: () => import('./modules/gestao/plano-trabalho-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
+  { path: 'avaliacao/plano-trabalho', loadChildren: () => import('./modules/gestao/plano-trabalho-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
+  /** @deprecated */
   { path: 'gestao/plano-trabalho-v2', loadChildren: () => import('./modules/gestao/plano-trabalho-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
+
   { path: 'home-v2', loadChildren: () => import('./modules/gestao/home-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
   { path: 'gestao/ocorrencia-v2', loadChildren: () => import('./modules/gestao/ocorrencia-v2/routes').then(m => m.routes), canActivate: [AuthGuard] },
   { path: 'gestao/paineis-gerenciais', loadChildren: () => import('./modules/gestao/paineis-gerenciais/routes').then(m => m.routes), canActivate: [AuthGuard], data: { permission: 'MOD_PAINEL_GER' } },
@@ -51,7 +56,6 @@ const routes: Routes = [
   { path: 'gestao/solucao', loadChildren: () => import('./modules/gestao/solucoes/solucao.module').then(m => m.SolucaoModule), canActivate: [AuthGuard] },
   { path: 'execucao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
   { path: 'avaliacao/plano-entrega', loadChildren: () => import('./modules/gestao/plano-entrega/plano-entrega.module').then(m => m.PlanoEntregaModule), canActivate: [AuthGuard] },
-  { path: 'avaliacao/plano-trabalho', loadChildren: () => import('./modules/gestao/plano-trabalho/plano-trabalho.module').then(m => m.PlanoTrabalhoModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/preferencia', loadChildren: () => import('./modules/configuracoes/preferencia/preferencia.module').then(m => m.PreferenciaModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/entidade', loadChildren: () => import('./modules/configuracoes/entidade/entidade.module').then(m => m.EntidadeModule), canActivate: [AuthGuard] },
   { path: 'configuracoes/perfil', loadChildren: () => import('./modules/configuracoes/perfil/perfil.module').then(m => m.PerfilModule), canActivate: [AuthGuard] },

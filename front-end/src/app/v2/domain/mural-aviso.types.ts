@@ -17,4 +17,5 @@ export type MuralAvisoPendente = {
   conteudo: string;
   remetente: string;
   data_publicacao: string;
+  lido: boolean;
 };

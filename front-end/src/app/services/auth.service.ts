@@ -141,15 +141,17 @@ export class AuthService {
     return dataHora;
   }
 
-  public registerPopupLoginResultListener() {
-    window.addEventListener("message", (event) => {
+  public registerPopupLoginResultListener(getRedirectTo?: () => FullRoute | undefined): () => void {
+    const listener = (event: MessageEvent) => {
       if (event?.data == "COMPLETAR_LOGIN") {
         this.dialogs.closeSppinerOverlay();
         this.authSession().then(success => {
-          if (success) this.success!(this.usuario!);
+          if (success) this.success!(this.usuario!, getRedirectTo?.());
         });
       }
-    }, false);
+    };
+    window.addEventListener("message", listener, false);
+    return () => window.removeEventListener("message", listener, false);
   }
 
   public updateUsuarioConfig(usuarioId: string, value: IIndexable) {

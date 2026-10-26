@@ -15,6 +15,7 @@ use App\Repository\DocumentoRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\V2\StatusService;
 use App\V2\PlanoTrabalho\Consolidacao\GeradorPeriodosAvaliativos;
+use App\V2\PlanoTrabalho\Consolidacao\CopiadorContribuicoesExecucao;
 use App\V2\PlanoTrabalho\Documento\TCR\DTOs\TCRAssinaturaDTO;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRAssinaturaPolicy;
 use App\V2\PlanoTrabalho\Documento\TCR\TCRDatasourceBuilder;
@@ -43,6 +44,7 @@ class PlanoTrabalhoDocumentoService
         private readonly TCRTemplateRenderer $renderer,
         private readonly StatusService $statusService,
         private readonly GeradorPeriodosAvaliativos $geradorPeriodos,
+        private readonly CopiadorContribuicoesExecucao $copiadorContribuicoes,
     ) {}
 
     public function show(string $planoTrabalhoId): array
@@ -189,6 +191,7 @@ class PlanoTrabalhoDocumentoService
 
             if ($status === StatusEnum::ATIVO->value) {
                 $this->geradorPeriodos->gerar($plano);
+                $this->copiadorContribuicoes->copiar($plano);
             }
 
             return $assinatura;

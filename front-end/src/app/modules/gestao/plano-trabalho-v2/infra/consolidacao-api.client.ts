@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { AvaliacaoConsolidacao, AtividadeConsolidacao, Consolidacao, NotaAvaliacao, Ocorrencia, PlanoTrabalhoId } from '../domain/types';
+import { AvaliacaoConsolidacao, AtividadeConsolidacao, Consolidacao, ContribuicaoExecucao, NotaAvaliacao, Ocorrencia, PlanoTrabalhoId } from '../domain/types';
 import { GlobalsService } from 'src/app/services/globals.service';
 
 @Injectable()
@@ -30,8 +30,9 @@ export class ConsolidacaoApiClient {
       .pipe(map((r: any) => r?.data ?? []));
   }
 
-  concluirConsolidacao(planoId: string, consolidacaoId: string): Observable<Consolidacao> {
-    return this.http.patch<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/concluir`, {})
+  concluirConsolidacao(planoId: string, consolidacaoId: string, justificativaCargaHoraria?: string | null): Observable<Consolidacao> {
+    const body = justificativaCargaHoraria ? { justificativa_carga_horaria: justificativaCargaHoraria } : {};
+    return this.http.patch<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/concluir`, body)
       .pipe(map((r: any) => r?.data ?? r));
   }
 
@@ -72,6 +73,34 @@ export class ConsolidacaoApiClient {
 
   deleteAtividade(planoId: string, consolidacaoId: string, atividadeId: string): Observable<void> {
     return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/atividade/${atividadeId}`);
+  }
+
+  // --- Contribuições de execução ---
+
+  createContribuicao(planoId: string, consolidacaoId: string, payload: {
+    origem: string;
+    plano_entrega_entrega_id?: string | null;
+    orgao?: string | null;
+    descricao: string;
+    esforco_executado: number;
+  }): Observable<ContribuicaoExecucao> {
+    return this.http.post<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/contribuicao`, payload)
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  updateContribuicao(planoId: string, consolidacaoId: string, contribuicaoId: string, payload: {
+    origem: string;
+    plano_entrega_entrega_id?: string | null;
+    orgao?: string | null;
+    descricao: string;
+    esforco_executado: number;
+  }): Observable<ContribuicaoExecucao> {
+    return this.http.put<any>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/contribuicao/${contribuicaoId}`, payload)
+      .pipe(map((r: any) => r?.data ?? r));
+  }
+
+  deleteContribuicao(planoId: string, consolidacaoId: string, contribuicaoId: string): Observable<void> {
+    return this.http.delete<void>(`${this.gb.servidorURL}${this.base}/${planoId}/consolidacao/${consolidacaoId}/contribuicao/${contribuicaoId}`);
   }
 
   // --- Ocorrências ---

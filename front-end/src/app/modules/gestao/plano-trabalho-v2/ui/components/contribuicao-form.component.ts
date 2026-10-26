@@ -7,18 +7,10 @@ import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { Unidade } from 'src/app/models/unidade.model';
 import { PlanoEntregaApiService, PlanoEntregaItem } from 'src/app/v2/services/plano-entrega-api.service';
 import { UnidadeService } from 'src/app/v2/services/unidade.service';
-import { PlanoApiClient } from '../../infra/plano-api.client';
-import { PlanoTrabalho, PlanoTrabalhoEntrega } from '../../domain/types';
+import { ConsolidacaoApiClient } from '../../infra/consolidacao-api.client';
+import { PlanoTrabalho } from '../../domain/types';
 
 export interface SelectOption { value: string; label: string; selected?: boolean; }
-
-export interface ContribuicaoSalva {
-  entrega: PlanoTrabalhoEntrega;
-  justificativa: string | null;
-}
-
-const CARGA_HORARIA_COMPLETA = 100;
-const TOLERANCIA_CARGA_HORARIA = 0.01;
 
 @Component({
   selector: 'app-contribuicao-form',
@@ -31,13 +23,11 @@ const TOLERANCIA_CARGA_HORARIA = 0.01;
 export class ContribuicaoFormComponent implements OnInit {
   @Input({ required: true }) plano!: PlanoTrabalho;
   @Input({ required: true }) consolidacaoId!: string;
-  @Input() totalForcaAtual = 0;
-  @Input() totalExecutadoAtual = 0;
-  @Output() readonly saved = new EventEmitter<ContribuicaoSalva>();
+  @Output() readonly saved = new EventEmitter<void>();
   @Output() readonly cancelled = new EventEmitter<void>();
 
   private readonly fb = inject(FormBuilder);
-  private readonly api = inject(PlanoApiClient);
+  private readonly api = inject(ConsolidacaoApiClient);
   private readonly planoEntregaApi = inject(PlanoEntregaApiService);
   private readonly unidadeService = inject(UnidadeService);
   private readonly destroyRef = inject(DestroyRef);
@@ -48,8 +38,6 @@ export class ContribuicaoFormComponent implements OnInit {
   private readonly selectedEntregaEntregaId = signal('');
 
   readonly salvando = signal(false);
-  readonly forcaAtual = signal(100);
-  readonly justificativa = signal('');
   readonly planosUnidade = signal<PlanoEntregaItem[]>([]);
   readonly planosOutraUnidade = signal<PlanoEntregaItem[]>([]);
   readonly entregasDoPlano = signal<SelectOption[]>([]);
@@ -99,32 +87,10 @@ export class ContribuicaoFormComponent implements OnInit {
     return this.entregasDoPlanoOutraUnidade().map(o => ({ ...o, selected: o.value === sel }));
   });
 
-  readonly totalProjetado = computed(() => {
-    const executado = this.totalExecutadoAtual + this.forcaAtual();
-    const forca = this.totalForcaAtual + this.forcaAtual();
-    if (Math.abs(executado - CARGA_HORARIA_COMPLETA) >= TOLERANCIA_CARGA_HORARIA) {
-      return executado;
-    }
-    return forca;
-  });
-
-  readonly exigeJustificativa = computed(() => {
-    const forca = this.totalForcaAtual + this.forcaAtual();
-    const executado = this.totalProjetado();
-    return Math.abs(forca - CARGA_HORARIA_COMPLETA) >= TOLERANCIA_CARGA_HORARIA
-      || Math.abs(executado - CARGA_HORARIA_COMPLETA) >= TOLERANCIA_CARGA_HORARIA;
-  });
-
   ngOnInit(): void {
-    this.justificativa.set(this.plano.justificativa ?? '');
-
     if (this.plano.unidade_id) {
       this.carregarPlanosUnidade(this.plano.unidade_id);
     }
-
-    this.entregaForm.controls.forca_trabalho.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(valor => this.forcaAtual.set(Number(valor) || 0));
 
     this.entregaForm.controls.origem.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
@@ -180,21 +146,22 @@ export class ContribuicaoFormComponent implements OnInit {
   }
 
   podeSalvar(): boolean {
-    return !this.exigeJustificativa() || !!this.justificativa().trim();
+    return this.entregaForm.valid;
   }
 
   salvar(): void {
     if (this.entregaForm.invalid || this.salvando() || !this.podeSalvar()) return;
-    const { plano_entrega_id: _planoEntregaId, outra_unidade_plano_id: _outraUnidadePlanoId, ...payload } = this.entregaForm.value;
-    const justificativa = this.exigeJustificativa() ? this.justificativa().trim() : null;
+    const v = this.entregaForm.value;
     this.salvando.set(true);
-    this.api.createEntrega(this.plano.id, {
-      ...payload,
-      consolidacao_id: this.consolidacaoId,
-      ...(justificativa ? { justificativa } : {}),
+    this.api.createContribuicao(this.plano.id, this.consolidacaoId, {
+      origem: v.origem ?? 'PROPRIA_UNIDADE',
+      plano_entrega_entrega_id: v.plano_entrega_entrega_id || null,
+      orgao: v.orgao || null,
+      descricao: v.descricao ?? '',
+      esforco_executado: Number(v.forca_trabalho) || 0,
     })
       .pipe(finalize(() => this.salvando.set(false)))
-      .subscribe(entrega => this.saved.emit({ entrega, justificativa }));
+      .subscribe(() => this.saved.emit());
   }
 
   selecionarOutraUnidade(u: { id: string; codigo: string; sigla: string; nome: string }): void {

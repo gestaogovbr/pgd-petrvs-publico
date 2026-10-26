@@ -3,7 +3,6 @@
 use App\Models\CadeiaValor;
 use App\Models\Comparecimento;
 use App\Models\Entrega;
-use App\Models\HistoricoLotacao;
 use App\Models\Planejamento;
 use App\Models\PlanoEntrega;
 use App\Models\PlanoEntregaEntrega;
@@ -83,9 +82,11 @@ return new class extends Migration
             ->whereIn('unidade_id', $idsInstituidoraFalse->toArray())
             ->update(['unidade_id' => $idInstituidora]);
 
-        HistoricoLotacao::withTrashed()
-            ->whereIn('unidade_id', $idsInstituidoraFalse->toArray())
-            ->update(['unidade_id' => $idInstituidora]);
+        if (Schema::hasTable('historicos_lotacoes')) {
+            DB::table('historicos_lotacoes')
+                ->whereIn('unidade_id', $idsInstituidoraFalse->toArray())
+                ->update(['unidade_id' => $idInstituidora]);
+        }
 
         ProjetoRecurso::withTrashed()
             ->whereIn('unidade_id', $idsInstituidoraFalse->toArray())

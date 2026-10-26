@@ -28,6 +28,9 @@ class SiapeIndividualUnidadeService extends ServiceBase
     private const STATUS_ERRO = 'erro';
     private const STATUS_PARCIAL = 'parcial';
     private const MSG_CONCLUIDO = 'Processamento da unidade concluído';
+    private const MSG_HIERARQUIA_DIVERGENTE = 'Processamento concluído, mas a hierarquia está divergente do SIAPE.';
+    private const MSG_INTEGRACAO_COM_PENDENCIAS = 'Processamento concluído com pendências na sincronização SIAPE.';
+    private const MSG_SEM_DADOS = 'Não existem dados para consulta';
 
     private SiapeIndividualService $service;
 
@@ -145,29 +148,43 @@ class SiapeIndividualUnidadeService extends ServiceBase
                 'gestores' => true,
             ];
             $retorno = [];
+            $integracaoComPendencias = false;
             foreach ($entidades as $entidade) {
                 /** @var Entidade $entidade */
                 $inputs['entidade'] = (string) $entidade->id;
                 $retorno = $integracaoService->sincronizar($inputs);
+                $integracaoComPendencias = $this->resultadoIntegracaoComPendencias($retorno)
+                    || $integracaoComPendencias;
             }
 
+            $unidadeDepois = $this->capturarEstadoUnidade($codigoProcessado);
+            $hierarquiaDivergente = $entradaValida && $this->hierarquiaDivergente($dadosRelatorio, $unidadeDepois);
+            $statusResumo = !$entradaValida
+                ? self::STATUS_ERRO
+                : (($integracaoComPendencias || $hierarquiaDivergente) ? self::STATUS_PARCIAL : self::STATUS_SUCESSO);
+            $mensagemResumo = !$entradaValida
+                ? self::MSG_SEM_DADOS
+                : ($hierarquiaDivergente ? self::MSG_HIERARQUIA_DIVERGENTE
+                    : ($integracaoComPendencias ? self::MSG_INTEGRACAO_COM_PENDENCIAS : self::MSG_CONCLUIDO));
             $this->resumo = [
                 $this->montarItemResumo(
                     $codigoProcessado,
                     $unidadeAntes,
-                    $this->capturarEstadoUnidade($codigoProcessado),
-                    self::STATUS_SUCESSO,
-                    self::MSG_CONCLUIDO
+                    $unidadeDepois,
+                    $statusResumo,
+                    $mensagemResumo
                 )
             ];
+
+            $statusResumo = $this->resumo[0]['status'];
 
             $this->registrarRelatorioCarga(
                 $processamentoId,
                 $codigoProcessado,
-                $entradaValida ? CargaIndividualSiapeProcessamentoDTO::STATUS_SUCESSO : CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO,
+                $statusResumo,
                 $entradaValida,
                 $dadosRelatorio,
-                $entradaValida ? null : 'Não existem dados para consulta'
+                $entradaValida ? null : self::MSG_SEM_DADOS
             );
 
             return $retorno;
@@ -252,6 +269,45 @@ class SiapeIndividualUnidadeService extends ServiceBase
     private function normalizarCodigoUnidade(string $codigoUnidade): string
     {
         return preg_replace('/[^0-9]/', '', $codigoUnidade) ?? '';
+    }
+
+    /**
+     * @param array<string, mixed> $dadosSiape
+     * @param array<string, mixed>|null $unidadeDepois
+     */
+    private function hierarquiaDivergente(array $dadosSiape, ?array $unidadeDepois): bool
+    {
+        $codigoPai = $dadosSiape['codUorgPai'] ?? null;
+        if (!is_scalar($codigoPai) || trim((string) $codigoPai) === '') {
+            return false;
+        }
+
+        $paiSiape = CodigoOrgaoService::normalizar($codigoPai);
+        if ($paiSiape === (string) IntegracaoService::CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI) {
+            return !($unidadeDepois['unidade_raiz'] ?? false);
+        }
+
+        return $paiSiape !== CodigoOrgaoService::normalizar($unidadeDepois['unidade_pai_codigo'] ?? null);
+    }
+
+    private function resultadoIntegracaoComPendencias(mixed $resultado): bool
+    {
+        if (is_string($resultado)) {
+            $resultado = json_decode($resultado, true);
+        }
+
+        if (!is_array($resultado)) {
+            return true;
+        }
+
+        foreach (IntegracaoService::ETAPAS_RESULTADO as $etapa) {
+            $status = $resultado[$etapa]['Resultado'] ?? null;
+            if ($status !== null && $status !== IntegracaoService::RESULTADO_ETAPA_SUCESSO) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function normalizarCpf(mixed $cpf): ?string

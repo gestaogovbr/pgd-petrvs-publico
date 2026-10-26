@@ -24,8 +24,9 @@ class ArvoreInstitucionalPainelDataProvider
     {
         $chdSql = ArvoreInstitucionalEsforcoSupport::chdPtSql();
         $statusPlanejado = ArvoreInstitucionalEsforcoSupport::ptStatusPlanejadoIn();
-        $statusExecutado = ArvoreInstitucionalEsforcoSupport::ptStatusExecutadoIn();
         $diasPeriodo = ArvoreInstitucionalEsforcoSupport::diasPeriodoPtSql();
+        $esforcoExecutadoHoras = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoHorasSql();
+        $esforcoExecutadoJoin = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoPteJoinSql();
 
         $from = $this->buildEntregaFrom($config);
         $where = $this->buildEntregaWhere($config, $noIds);
@@ -56,16 +57,11 @@ class ArvoreInstitucionalPainelDataProvider
                 ), 0), 2) AS esforco_planejado_horas,
 
                 ROUND(COALESCE(SUM(
-                    CASE WHEN pt.status IN ({$statusExecutado})
-                    THEN
-                        ({$chdSql})
-                        * {$diasPeriodo}
-                        * (pte.forca_trabalho / 100.0)
-                    ELSE 0 END
+                    {$esforcoExecutadoHoras}
                 ), 0), 2) AS esforco_executado_horas,
 
                 CASE WHEN COUNT(CASE WHEN pt.status IN ({$statusPlanejado}) THEN 1 END) > 0 THEN 1 ELSE 0 END AS tem_pt_pactuado,
-                CASE WHEN COUNT(CASE WHEN pt.status IN ({$statusExecutado}) THEN 1 END) > 0 THEN 1 ELSE 0 END AS tem_pt_concluido,
+                MAX(CASE WHEN pte_exec.plano_trabalho_entrega_id IS NOT NULL THEN 1 ELSE 0 END) AS tem_execucao_registrada,
                 CASE WHEN COUNT(CASE WHEN pe.status IN ('ATIVO', 'CONCLUIDO', 'AVALIADO') THEN 1 END) > 0 THEN 1 ELSE 0 END AS tem_pe_homologado
 
             {$from}
@@ -73,6 +69,7 @@ class ArvoreInstitucionalPainelDataProvider
                 ON pe.id = pee.plano_entrega_id AND pe.deleted_at IS NULL
             LEFT JOIN planos_trabalhos_entregas pte
                 ON pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL
+            {$esforcoExecutadoJoin}
             LEFT JOIN planos_trabalhos pt
                 ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL
                 AND pt.status IN ({$statusPlanejado})
@@ -85,7 +82,7 @@ class ArvoreInstitucionalPainelDataProvider
             'esforco_planejado_horas' => (float) ($row->esforco_planejado_horas ?? 0),
             'esforco_executado_horas' => (float) ($row->esforco_executado_horas ?? 0),
             'tem_pt_pactuado' => (bool) ($row->tem_pt_pactuado ?? false),
-            'tem_pt_concluido' => (bool) ($row->tem_pt_concluido ?? false),
+            'tem_execucao_registrada' => (bool) ($row->tem_execucao_registrada ?? false),
             'tem_pe_homologado' => (bool) ($row->tem_pe_homologado ?? false),
             'participantes_somente_unidade_propria' => $participantes['somente_propria'],
             'participantes_somente_outras_unidades' => $participantes['somente_outras'],
@@ -155,8 +152,9 @@ class ArvoreInstitucionalPainelDataProvider
     {
         $chd = ArvoreInstitucionalEsforcoSupport::chdPtSql();
         $ptPlanejadoIn = ArvoreInstitucionalEsforcoSupport::ptStatusPlanejadoIn();
-        $ptExecutadoIn = ArvoreInstitucionalEsforcoSupport::ptStatusExecutadoIn();
         $diasPeriodo = ArvoreInstitucionalEsforcoSupport::diasPeriodoPtSql();
+        $esforcoExecutadoHoras = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoHorasSql();
+        $esforcoExecutadoJoin = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoPteJoinSql();
 
         $from = $this->buildEntregaFrom($config);
         $where = $this->buildEntregaWhere($config, $noIds);
@@ -264,14 +262,11 @@ class ArvoreInstitucionalPainelDataProvider
                         * {$diasPeriodo}
                         * (pte.forca_trabalho / 100.0)
                 END), 0), 2) AS esforco_planejado_horas,
-                ROUND(COALESCE(SUM(CASE
-                    WHEN pt.status IN ({$ptExecutadoIn}) THEN
-                        {$chd}
-                        * {$diasPeriodo}
-                        * (COALESCE(pte.esforco_executado, pte.forca_trabalho) / 100.0)
-                END), 0), 2) AS esforco_executado_horas,
+                ROUND(COALESCE(SUM(
+                    {$esforcoExecutadoHoras}
+                ), 0), 2) AS esforco_executado_horas,
                 MAX(CASE WHEN pt.status IN ({$ptPlanejadoIn}) THEN 1 ELSE 0 END) AS tem_pt_pactuado,
-                MAX(CASE WHEN pt.status IN ({$ptExecutadoIn}) THEN 1 ELSE 0 END) AS tem_pt_concluido
+                MAX(CASE WHEN pte_exec.plano_trabalho_entrega_id IS NOT NULL THEN 1 ELSE 0 END) AS tem_execucao_registrada
             {$from}
             {$noOrigemJoin}
             INNER JOIN unidades u ON u.id = pee.unidade_id AND u.deleted_at IS NULL
@@ -288,6 +283,7 @@ class ArvoreInstitucionalPainelDataProvider
                 )
             LEFT JOIN planos_trabalhos_entregas pte
                 ON pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL
+            {$esforcoExecutadoJoin}
             LEFT JOIN planos_trabalhos pt
                 ON pt.id = pte.plano_trabalho_id
                 AND pt.deleted_at IS NULL
@@ -326,7 +322,8 @@ class ArvoreInstitucionalPainelDataProvider
     public function listarEntregasPorNo(NoOrigemQueryConfig $config, array $noIds): array
     {
         $chd = ArvoreInstitucionalEsforcoSupport::chdPtSql();
-        $diasPeriodo = ArvoreInstitucionalEsforcoSupport::diasPeriodoPtSql();
+        $esforcoExecutadoHoras = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoHorasSql();
+        $esforcoExecutadoJoin = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoPteJoinSql();
 
         $from = $this->buildEntregaFrom($config);
         $where = $this->buildEntregaWhere($config, $noIds);
@@ -347,9 +344,7 @@ class ArvoreInstitucionalPainelDataProvider
                 ROUND(
                     COALESCE(
                         SUM(
-                            {$chd}
-                            * {$diasPeriodo}
-                            * (pte.forca_trabalho / 100.0)
+                            {$esforcoExecutadoHoras}
                         ),
                         0
                     ),
@@ -360,8 +355,9 @@ class ArvoreInstitucionalPainelDataProvider
             INNER JOIN unidades u ON u.id = pee.unidade_id AND u.deleted_at IS NULL
             LEFT JOIN planos_trabalhos_entregas pte
                 ON pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL
+            {$esforcoExecutadoJoin}
             LEFT JOIN planos_trabalhos pt
-                ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL AND pt.status IN ('CONCLUIDO')
+                ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL
             WHERE {$where}
             GROUP BY
                 pee.id, pee.descricao_entrega, pee.descricao,
@@ -378,8 +374,8 @@ class ArvoreInstitucionalPainelDataProvider
      */
     public function listarEsforcoPorUnidade(NoOrigemQueryConfig $config, array $noIds): array
     {
-        $chd = ArvoreInstitucionalEsforcoSupport::chdPtSql();
-        $diasPeriodo = ArvoreInstitucionalEsforcoSupport::diasPeriodoPtSql();
+        $esforcoExecutadoHoras = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoHorasSql();
+        $esforcoExecutadoJoin = ArvoreInstitucionalEsforcoSupport::esforcoExecutadoPteJoinSql();
 
         $from = $this->buildEntregaFrom($config);
         $where = $this->buildEntregaWhere($config, $noIds);
@@ -393,9 +389,7 @@ class ArvoreInstitucionalPainelDataProvider
                 ROUND(
                     COALESCE(
                         SUM(
-                            {$chd}
-                            * {$diasPeriodo}
-                            * (pte.forca_trabalho / 100.0)
+                            {$esforcoExecutadoHoras}
                         ),
                         0
                     ),
@@ -405,8 +399,9 @@ class ArvoreInstitucionalPainelDataProvider
             INNER JOIN unidades u ON u.id = pee.unidade_id AND u.deleted_at IS NULL
             LEFT JOIN planos_trabalhos_entregas pte
                 ON pte.plano_entrega_entrega_id = pee.id AND pte.deleted_at IS NULL
+            {$esforcoExecutadoJoin}
             LEFT JOIN planos_trabalhos pt
-                ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL AND pt.status IN ('CONCLUIDO')
+                ON pt.id = pte.plano_trabalho_id AND pt.deleted_at IS NULL
             WHERE {$where}
             GROUP BY u.id, u.nome, u.sigla
             ORDER BY u.nome

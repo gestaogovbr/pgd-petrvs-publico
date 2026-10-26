@@ -11,7 +11,6 @@ use App\Models\AtividadeTarefa;
 use App\Models\Avaliacao;
 use App\Models\Change;
 use App\Models\Comentario;
-use App\Models\Curriculum;
 use App\Models\Documento;
 use App\Models\DocumentoAssinatura;
 use App\Models\Entidade;
@@ -31,7 +30,6 @@ use App\Models\Projeto;
 use App\Models\ProjetoHistorico;
 use App\Models\ProjetoRecurso;
 use App\Models\ProjetoTarefa;
-use App\Models\QuestionarioPreenchimento;
 use App\Models\StatusJustificativa;
 use App\Models\UnidadeIntegrante;
 use App\Models\UnidadeIntegranteAtribuicao;
@@ -224,7 +222,6 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
         'planosEntregaCriados',
         'planosTrabalho',
         'planosTrabalhoCriados',
-        'preenchimentos',
         'projetos',
         'recursosProjeto',
         'statusHistorico',
@@ -246,11 +243,6 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
     public function gerenciaSubstitutaEntidade()
     {
         return $this->hasOne(Entidade::class, 'gestor_substituto_id');
-    }
-
-    public function curriculum()
-    {
-        return $this->hasOne(Curriculum::class);
     }
 
     // hasMany
@@ -415,11 +407,6 @@ class Usuario extends Authenticatable implements AuditableContract, HasStatusHis
     public function documentos()
     {
         return $this->hasMany(Documento::class);
-    }
-
-    public function preenchimentos()
-    {
-        return $this->hasMany(QuestionarioPreenchimento::class, "usuario_id");
     }
 
     // belongsTo
