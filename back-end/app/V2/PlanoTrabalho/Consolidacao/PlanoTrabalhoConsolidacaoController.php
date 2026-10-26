@@ -80,12 +80,20 @@ class PlanoTrabalhoConsolidacaoController extends Controller
         }
     }
 
-    public function concluir(string $planoTrabalhoId, string $consolidacaoId): JsonResponse
+    public function concluir(Request $request, string $planoTrabalhoId, string $consolidacaoId): JsonResponse
     {
         try {
-            $consolidacao = $this->service->concluir($planoTrabalhoId, $consolidacaoId);
+            $data = PlanoTrabalhoConsolidacaoRequestValidator::concluir($request);
+
+            $consolidacao = $this->service->concluir(
+                $planoTrabalhoId,
+                $consolidacaoId,
+                $data['justificativa_carga_horaria'] ?? null,
+            );
 
             return response()->json(['success' => true, 'data' => $consolidacao]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (IBaseException $e) {
             return response()->json(['error' => $e->getMessage()], $e->getCode());
         } catch (Throwable $e) {

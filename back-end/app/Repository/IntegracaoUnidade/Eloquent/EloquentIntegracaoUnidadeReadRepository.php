@@ -21,6 +21,32 @@ class EloquentIntegracaoUnidadeReadRepository extends AbstractEloquentReadReposi
         $this->model = $model;
     }
 
+    /** @return array<int, object> */
+    public function selecionarPendentesSincronizacao(string $codigoOrgao, string $paiNaoInformado, int $codigoRaiz): array
+    {
+        $sql = "SELECT iu.id_servo, u.codigo as codigo_antigo, " .
+            "iu.nomeuorg, u.nome as nome_antigo, iu.siglauorg, " .
+            "u.sigla as sigla_antiga, iu.pai_servo, " .
+            "un_atual_pai.id as id_pai_antigo, u.id, u.path as path_antigo, " .
+            "c.id AS cidade_id, u.cidade_id as cidade_antiga, " .
+            "und.id AS unidade_pai_id, un_atual_pai.codigo AS codigo_pai_antigo, " .
+            "und.path AS path_pai, " .
+            "iu.data_modificacao as data_modificacao_siape, " .
+            "u.data_modificacao as data_modificacao_und " .
+            "FROM integracao_unidades iu " .
+            "LEFT JOIN unidades u ON (iu.id_servo = u.codigo AND iu.codigo_orgao = u.codigo_orgao) " .
+            "LEFT JOIN unidades un_atual_pai ON (un_atual_pai.id = u.unidade_pai_id) " .
+            "LEFT JOIN unidades und ON (iu.pai_servo = und.codigo AND iu.codigo_orgao = und.codigo_orgao) " .
+            "LEFT JOIN cidades c ON (iu.municipio_ibge = c.codigo_ibge) " .
+            "LEFT JOIN cidades c2 ON u.cidade_id = c2.id " .
+            "WHERE (u.id is null OR c2.id != c.id OR iu.nomeuorg != u.nome " .
+            "OR iu.siglauorg != u.sigla " .
+            "OR NOT (NULLIF(NULLIF(iu.pai_servo, ?), ?) <=> un_atual_pai.codigo)" .
+            ") AND iu.ativa = 'true' AND iu.deleted_at is NULL AND iu.codigo_orgao = ?";
+
+        return DB::select($sql, [$paiNaoInformado, $codigoRaiz, $codigoOrgao]);
+    }
+
     public function getUnidadesComChefias(string $codigoOrgao): Collection
     {
         return DB::table('integracao_unidades as iu')

@@ -70,4 +70,14 @@ class MuralAvisoRequestValidator
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ]);
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function pendentes(Request $request): array
+    {
+        return $request->validate([
+            'incluir_lidos' => ['nullable', 'boolean'],
+        ]);
+    }
 }

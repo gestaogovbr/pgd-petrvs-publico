@@ -268,7 +268,7 @@ describe('PlanejamentoObjetivoPainelService::getResumo', function () {
             'esforco_planejado_horas' => 5,
             'esforco_executado_horas' => 2,
             'tem_pt_pactuado' => 1,
-            'tem_pt_concluido' => 0,
+            'tem_execucao_registrada' => 0,
             'tem_pe_homologado' => 1,
             'participantes_somente_unidade_propria' => 1,
             'participantes_somente_outras_unidades' => 0,
@@ -282,7 +282,7 @@ describe('PlanejamentoObjetivoPainelService::getResumo', function () {
             'esforco_planejado_horas' => 15,
             'esforco_executado_horas' => 6,
             'tem_pt_pactuado' => 1,
-            'tem_pt_concluido' => 0,
+            'tem_execucao_registrada' => 0,
             'tem_pe_homologado' => 1,
             'participantes_somente_unidade_propria' => 3,
             'participantes_somente_outras_unidades' => 0,
@@ -341,7 +341,7 @@ describe('PlanejamentoObjetivoPainelService::getEntregasDetalhamento', function 
             'esforco_planejado_horas' => 20,
             'esforco_executado_horas' => 10,
             'tem_pt_pactuado' => 1,
-            'tem_pt_concluido' => 1,
+            'tem_execucao_registrada' => 1,
         ];
 
         $repo = Mockery::mock(PlanejamentoObjetivoReadRepositoryContract::class);

@@ -137,6 +137,23 @@ export type AtividadeConsolidacao = {
   updated_at?: string;
 };
 
+export type ContribuicaoExecucao = {
+  id: string;
+  plano_trabalho_consolidacao_id: string;
+  plano_trabalho_entrega_id: string | null;
+  plano_entrega_entrega_id: string | null;
+  orgao: string | null;
+  descricao: string | null;
+  esforco_executado: number;
+  registrado_at: string | null;
+  plano_trabalho_entrega?: { id: string; forca_trabalho: number; descricao: string | null } | null;
+  plano_entrega_entrega?: {
+    id: string;
+    descricao: string;
+    plano_entrega?: { id: string; nome: string; unidade_id: string };
+  } | null;
+};
+
 export type ConsolidacaoStatus = 'INCLUIDO' | 'CONCLUIDO' | 'AVALIADO';
 
 export const ConsolidacaoStatus = {
@@ -166,6 +183,7 @@ export type Consolidacao = {
   data_inicio: string;
   data_fim: string;
   atividades: AtividadeConsolidacao[];
+  contribuicoes: ContribuicaoExecucao[];
   avaliacoes: AvaliacaoConsolidacao[];
   avaliacao_id: string | null;
   ocorrencias: Ocorrencia[];

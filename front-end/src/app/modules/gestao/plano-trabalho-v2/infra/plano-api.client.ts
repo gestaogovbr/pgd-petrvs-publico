@@ -77,9 +77,8 @@ export class PlanoApiClient extends TenantV2ResourceApiBase {
       .pipe(map((r: any) => r?.data ?? r));
   }
 
-  deleteEntrega(planoTrabalhoId: string, entregaId: string, consolidacaoId?: string): Observable<void> {
-    const params = consolidacaoId ? { consolidacao_id: consolidacaoId } : undefined;
-    return this.http.delete<void>(this.resourceUrl(`/${planoTrabalhoId}/entrega/${entregaId}`), { params });
+  deleteEntrega(planoTrabalhoId: string, entregaId: string): Observable<void> {
+    return this.http.delete<void>(this.resourceUrl(`/${planoTrabalhoId}/entrega/${entregaId}`));
   }
 
   cancel(id: PlanoTrabalhoId, justificativa: string): Observable<PlanoTrabalho> {

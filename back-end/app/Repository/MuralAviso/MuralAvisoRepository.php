@@ -32,9 +32,19 @@ class MuralAvisoRepository
     /**
      * @return list<array<string, mixed>>
      */
-    public function findPendentes(string $tenantId, ?\DateTimeInterface $dataConfirmacao): array
+    public function findVigentes(string $tenantId): array
     {
-        return $this->readRepository->findPendentes($tenantId, $dataConfirmacao);
+        return $this->readRepository->findVigentes($tenantId);
+    }
+
+    public function countByEmissorNoMes(
+        string $remetenteTipo,
+        ?string $remetenteTenantId,
+        int $ano,
+        int $mes,
+        ?string $ignorarAvisoId = null,
+    ): int {
+        return $this->readRepository->countByEmissorNoMes($remetenteTipo, $remetenteTenantId, $ano, $mes, $ignorarAvisoId);
     }
 
     /**

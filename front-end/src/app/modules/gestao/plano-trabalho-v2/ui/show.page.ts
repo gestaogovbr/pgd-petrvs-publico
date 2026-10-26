@@ -8,7 +8,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { PlanoApiClient } from "../infra/plano-api.client";
 import { ArquivarPlanoUseCase } from "../application/arquivar-plano.usecase";
 import { EncerrarPlanoUseCase } from "../application/encerrar-plano.usecase";
-import { Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo, planoTrabalhoStatusLabel } from "../domain/types";
+import { Consolidacao, ConsolidacaoStatus, ConsolidacaoStatusGroups, ContribuicaoExecucao, PlanoTrabalho, PlanoTrabalhoEntrega, getPlanoEntregaInfo, planoTrabalhoStatusLabel } from "../domain/types";
 import { PlanoTrabalhoStatus, PlanoTrabalhoStatusGroups } from "src/app/models/plano-trabalho.model";
 import { AuthService } from "src/app/services/auth.service";
 import { UnidadeService } from "src/app/v2/services/unidade.service";
@@ -20,7 +20,7 @@ import { MessageService } from "src/app/v2/services/message.service";
 import { AssinarPlanoUseCase } from "../application/assinar-plano.usecase";
 import { ConsolidacaoAvaliacoesComponent } from "./components/consolidacao-avaliacoes.component";
 import { ConsolidacaoOcorrenciasComponent } from "./components/consolidacao-ocorrencias.component";
-import { ContribuicaoFormComponent, ContribuicaoSalva } from "./components/contribuicao-form.component";
+import { ContribuicaoFormComponent } from "./components/contribuicao-form.component";
 import { TextoColapsavelComponent } from "src/app/v2/components/texto-colapsavel/texto-colapsavel.component";
 import { BrTextareaResizeVerticalDirective } from "./br-textarea-resize-vertical.directive";
 
@@ -57,11 +57,6 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   readonly encerrando = signal(false);
   readonly justificativaEncerramento = signal('');
   readonly formContribuicaoConsolidacaoId = signal<string | null>(null);
-  readonly justificativaEsforco = signal('');
-  readonly justificativaEsforcoPendente = signal<{ consolidacao: Consolidacao; entrega: PlanoTrabalhoEntrega } | null>(null);
-
-  private readonly cargaHorariaCompleta = 100;
-  private readonly toleranciaCargaHoraria = 0.01;
 
   readonly PlanoStatus = PlanoTrabalhoStatus;
   readonly ConsolidacaoStatus = ConsolidacaoStatus;
@@ -71,15 +66,22 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
   );
 
   totalEsforcoExecutado(consolidacao: Consolidacao): number {
-    const entregas = this.planoTrabalho()?.entregas ?? [];
-    return entregas.reduce(
-      (sum, e) => sum + (Number(this.facade.getEsforcoExecutado(consolidacao.id, e)) || 0),
+    return (consolidacao.contribuicoes ?? []).reduce(
+      (sum, c) => sum + (Number(this.facade.getEsforcoExecutado(consolidacao.id, c)) || 0),
       0,
     );
   }
 
   esforcoExecutadoDiverge(consolidacao: Consolidacao): boolean {
     return this.totalEsforcoExecutado(consolidacao) !== this.totalForcaTrabalho();
+  }
+
+  solicitarConclusao(consolidacao: Consolidacao): void {
+    if (this.esforcoExecutadoDiverge(consolidacao)) {
+      this.facade.iniciarJustificativaCargaHoraria(consolidacao, this.totalEsforcoExecutado(consolidacao));
+      return;
+    }
+    this.facade.concluirConsolidacao(consolidacao);
   }
   ngOnInit(): void {
     this.route.paramMap.pipe(
@@ -93,16 +95,6 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
           this.planoTrabalho.set(plano);
           this.breadcrumb.setLastLabel(`Plano nº ${plano.numero}`);
           this.loading.set(false);
-          this.facade.registerEntregaEsforcoAtualizado((entregaId, esforco) => {
-            this.planoTrabalho.update(p => {
-              const entrega = p?.entregas?.find(e => e.id === entregaId);
-              if (!entrega) {
-                return p;
-              }
-              entrega.esforco_executado = esforco;
-              return p;
-            });
-          });
           this.assinatura.init(plano, plano.entregas || []);
           const atualizarPlanoNaTela = () => {
             this.api.getById(plano.id).subscribe(updated => {
@@ -137,10 +129,10 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     return PlanoTrabalhoStatusGroups.comExecucaoVisivel.includes(status);
   }
 
-  todasEntregasComAtividade(consolidacao: Consolidacao): boolean {
-    const entregas = this.planoTrabalho()?.entregas ?? [];
-    if (!entregas.length) return false;
-    return entregas.every(e => this.facade.getAtividade(consolidacao, e.id) !== null);
+  todasContribuicoesRegistradas(consolidacao: Consolidacao): boolean {
+    const contribuicoes = consolidacao.contribuicoes ?? [];
+    if (!contribuicoes.length) return false;
+    return contribuicoes.every(c => c.registrado_at !== null);
   }
 
   mostrarRodapeRegistro(consolidacao: Consolidacao): boolean {
@@ -156,7 +148,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     if (!plano) return false;
     return this.consolidacaoPolicy.podeRegistrar(plano, consolidacao)
       && consolidacao.status === ConsolidacaoStatus.INCLUIDO
-      && this.todasEntregasComAtividade(consolidacao);
+      && this.todasContribuicoesRegistradas(consolidacao);
   }
 
   podeReabrirConsolidacao(consolidacao: Consolidacao): boolean {
@@ -193,7 +185,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     if (plano?.encerrado_at && new Date(consolidacao.data_inicio) > new Date(plano.encerrado_at)) {
       return 'Encerrado antecipadamente';
     }
-    if (consolidacao.status === ConsolidacaoStatus.INCLUIDO && this.todasEntregasComAtividade(consolidacao)) {
+    if (consolidacao.status === ConsolidacaoStatus.INCLUIDO && this.todasContribuicoesRegistradas(consolidacao)) {
       return 'Registro incluído';
     }
     if (consolidacao.status === ConsolidacaoStatus.CONCLUIDO && consolidacao.avaliacoes?.length === 1 && consolidacao.avaliacoes[0].recurso) {
@@ -205,7 +197,7 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     return this.statusConsolidacaoLabel(consolidacao.status);
   }
 
-  getPlanoEntregaInfo(e: PlanoTrabalhoEntrega): { plano: string; entrega: string } {
+  getPlanoEntregaInfo(e: PlanoTrabalhoEntrega | ContribuicaoExecucao): { plano: string; entrega: string } {
     return getPlanoEntregaInfo(e);
   }
 
@@ -217,89 +209,10 @@ export class PlanoTrabalhoV2ShowPage implements OnInit {
     this.formContribuicaoConsolidacaoId.set(null);
   }
 
-  onContribuicaoSalva(resultado: ContribuicaoSalva): void {
-    const { entrega, justificativa } = resultado;
-    this.planoTrabalho.update(plano => {
-      if (!plano) return plano;
-      plano.entregas = [...(plano.entregas ?? []), entrega];
-      if (justificativa) {
-        plano.justificativa = justificativa;
-      }
-      return plano;
-    });
+  onContribuicaoSalva(): void {
     this.formContribuicaoConsolidacaoId.set(null);
+    this.facade.loadConsolidacoes();
     this.message.success('Contribuição incluída com sucesso.');
-  }
-
-  solicitarConfirmacaoAtividade(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): void {
-    const total = this.totalEsforcoProjetado(consolidacao, entrega);
-    const forca = this.totalForcaTrabalho();
-    const diverge = Math.abs(total - this.cargaHorariaCompleta) >= this.toleranciaCargaHoraria
-      || Math.abs(forca - this.cargaHorariaCompleta) >= this.toleranciaCargaHoraria;
-    if (!diverge) {
-      this.facade.confirmarAtividade(consolidacao, entrega);
-      return;
-    }
-    this.justificativaEsforco.set(this.planoTrabalho()?.justificativa ?? '');
-    this.justificativaEsforcoPendente.set({ consolidacao, entrega });
-  }
-
-  totalEsforcoJustificativa(): number {
-    const pendente = this.justificativaEsforcoPendente();
-    if (!pendente) return this.cargaHorariaCompleta;
-    const executado = this.totalEsforcoProjetado(pendente.consolidacao, pendente.entrega);
-    if (Math.abs(executado - this.cargaHorariaCompleta) >= this.toleranciaCargaHoraria) {
-      return executado;
-    }
-    return this.totalForcaTrabalho();
-  }
-
-  cancelarJustificativaEsforco(): void {
-    this.justificativaEsforcoPendente.set(null);
-    this.justificativaEsforco.set('');
-  }
-
-  confirmarJustificativaEsforco(): void {
-    const pendente = this.justificativaEsforcoPendente();
-    const justificativa = this.justificativaEsforco().trim();
-    if (!pendente || !justificativa) return;
-    this.facade.confirmarAtividade(pendente.consolidacao, pendente.entrega, justificativa);
-    this.planoTrabalho.update(plano => {
-      if (!plano) return plano;
-      plano.justificativa = justificativa;
-      return plano;
-    });
-    this.cancelarJustificativaEsforco();
-  }
-
-  private totalEsforcoProjetado(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): number {
-    const entregas = this.planoTrabalho()?.entregas ?? [];
-    return entregas.reduce((sum, item) => {
-      if (item.id === entrega.id) {
-        return sum + this.facade.getEsforcoExecutado(consolidacao.id, entrega);
-      }
-      return sum + (Number(this.facade.getEsforcoExecutado(consolidacao.id, item)) || 0);
-    }, 0);
-  }
-
-  excluirContribuicao(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): void {
-    const plano = this.planoTrabalho();
-    if (!plano || !entrega.id) return;
-    this.facade.confirmacaoPendente.set({
-      titulo: 'Excluir Contribuição',
-      mensagem: 'Deseja realmente excluir esta contribuição?',
-      onConfirmar: () => {
-        this.api.deleteEntrega(plano.id, entrega.id, consolidacao.id).subscribe(() => {
-          this.planoTrabalho.update(atual => {
-            if (!atual) return atual;
-            atual.entregas = (atual.entregas ?? []).filter(e => e.id !== entrega.id);
-            return atual;
-          });
-          this.facade.loadConsolidacoes();
-          this.message.success('Contribuição excluída com sucesso.');
-        });
-      }
-    });
   }
 
   // --- Navegação ---

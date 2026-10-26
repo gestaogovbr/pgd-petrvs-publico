@@ -18,10 +18,11 @@ export class MuralAvisoTenantService {
     this.exibicaoSolicitada.next();
   }
 
-  getPendentes(): Promise<MuralAvisoPendente[]> {
+  getPendentes(incluirLidos = false): Promise<MuralAvisoPendente[]> {
+    const params = incluirLidos ? '?incluir_lidos=1' : '';
     return firstValueFrom(
       this.http
-        .get<{ success: boolean; data: MuralAvisoPendente[] }>(`${this.gb.servidorURL}${this.base}/pendentes`)
+        .get<{ success: boolean; data: MuralAvisoPendente[] }>(`${this.gb.servidorURL}${this.base}/pendentes${params}`)
         .pipe(map(response => response?.data || []))
     ).catch(() => []);
   }

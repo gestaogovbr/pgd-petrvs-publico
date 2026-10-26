@@ -19,6 +19,18 @@ class EloquentUnidadeWriteRepository extends AbstractEloquentWriteRepository imp
         $this->model = $model;
     }
 
+    /** @param array<string, mixed> $attributes */
+    public function inserirDaIntegracao(array $attributes): void
+    {
+        DB::table('unidades')->insert($attributes);
+    }
+
+    /** @param array<string, mixed> $attributes */
+    public function atualizarDaIntegracao(string $id, array $attributes): int
+    {
+        return DB::table('unidades')->where('id', $id)->update($attributes);
+    }
+
     public function cancelarInicioInativacaoPorCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): int
     {
         return $this->model->newQuery()

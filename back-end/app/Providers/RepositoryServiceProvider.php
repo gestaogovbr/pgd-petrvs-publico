@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Repository\PlanoTrabalhoConsolidacaoContribuicao\Eloquent\EloquentPlanoTrabalhoConsolidacaoContribuicaoWriteRepository;
+
+use App\Repository\PlanoTrabalhoConsolidacaoContribuicao\Contracts\PlanoTrabalhoConsolidacaoContribuicaoWriteRepositoryContract;
+
+use App\Repository\PlanoTrabalhoConsolidacaoContribuicao\Eloquent\EloquentPlanoTrabalhoConsolidacaoContribuicaoReadRepository;
+
+use App\Repository\PlanoTrabalhoConsolidacaoContribuicao\Contracts\PlanoTrabalhoConsolidacaoContribuicaoReadRepositoryContract;
+
 use App\Repository\PlanoEntregaEntrega\Contracts\PlanoEntregaEntregaReadRepositoryContract;
 use App\Repository\PlanoEntregaEntrega\Contracts\PlanoEntregaEntregaWriteRepositoryContract;
 use App\Repository\PlanoEntregaEntrega\Eloquent\EloquentPlanoEntregaEntregaReadRepository;
@@ -666,6 +674,15 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             MuralAvisoLeituraWriteRepositoryContract::class,
             EloquentMuralAvisoLeituraWriteRepository::class,
+        );
+
+        $this->app->bind(
+            PlanoTrabalhoConsolidacaoContribuicaoReadRepositoryContract::class,
+            EloquentPlanoTrabalhoConsolidacaoContribuicaoReadRepository::class,
+        );
+        $this->app->bind(
+            PlanoTrabalhoConsolidacaoContribuicaoWriteRepositoryContract::class,
+            EloquentPlanoTrabalhoConsolidacaoContribuicaoWriteRepository::class,
         );
     }
 

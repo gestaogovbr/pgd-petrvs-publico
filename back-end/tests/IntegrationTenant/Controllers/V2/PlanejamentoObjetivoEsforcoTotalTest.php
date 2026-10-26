@@ -8,6 +8,8 @@ use App\Models\PlanoEntrega;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoEntregaEntregaObjetivo;
 use App\Models\PlanoTrabalho;
+use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\PlanoTrabalhoConsolidacaoContribuicao;
 use App\Models\PlanoTrabalhoEntrega;
 use App\Models\PlanejamentoObjetivo;
 use App\Models\Planejamento;
@@ -139,11 +141,30 @@ function vincularEntregaComEsforco(
         'data_fim' => now()->parse('2024-01-01')->addDays($diasCalendario - 1)->format('Y-m-d'),
     ]);
 
-    PlanoTrabalhoEntrega::factory()->create([
+    $planoTrabalhoEntrega = PlanoTrabalhoEntrega::factory()->create([
         'plano_trabalho_id' => $planoTrabalho->id,
         'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
         'forca_trabalho' => $forcaTrabalho,
         'esforco_executado' => $forcaTrabalho,
+    ]);
+
+    // Período avaliativo (PA) concluído com contribuição de execução registrada,
+    // cobrindo todo o período do PT, para que o esforço executado seja contabilizado.
+    $consolidacao = \App\Models\PlanoTrabalhoConsolidacao::create([
+        'plano_trabalho_id' => $planoTrabalho->id,
+        'data_inicio' => $planoTrabalho->data_inicio,
+        'data_fim' => $planoTrabalho->data_fim,
+        'status' => 'CONCLUIDO',
+    ]);
+
+    \App\Models\PlanoTrabalhoConsolidacaoContribuicao::create([
+        'id' => Str::uuid()->toString(),
+        'plano_trabalho_consolidacao_id' => $consolidacao->id,
+        'plano_trabalho_entrega_id' => $planoTrabalhoEntrega->id,
+        'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
+        'descricao' => 'Trabalho executado',
+        'esforco_executado' => $forcaTrabalho,
+        'registrado_at' => now(),
     ]);
 }
 
@@ -576,5 +597,147 @@ describe('GET /api/v2/planejamento/objetivo/{id}/equipes', function () {
         expect($itens)->toHaveCount(1);
         expect($itens[0])->toHaveKeys(['unidade_id', 'unidade_nome', 'unidade_sigla', 'esforco_horas_total']);
         expect((float) $itens[0]['esforco_horas_total'])->toBeGreaterThan(0);
+    });
+});
+
+describe('Esforço executado por período avaliativo (regra negocial)', function () {
+
+    test('executado soma % de cada PA preenchido sobre a CH do próprio PA', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Objetivo exemplo negocial');
+
+        $planoEntregaEntrega = PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $base['planoEntrega']->id,
+            'entrega_id' => $base['entrega']->id,
+            'unidade_id' => $base['unidade']->id,
+        ]);
+        PlanoEntregaEntregaObjetivo::create([
+            'id' => Str::uuid()->toString(),
+            'planejamento_objetivo_id' => $obj->id,
+            'entrega_id' => $planoEntregaEntrega->id,
+        ]);
+
+        // PT com CH diária 8h (jornada 40) e 3 PAs mensais em 2025.
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $base['unidade']->id,
+            'programa_id' => $base['programa']->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'status' => 'ATIVO',
+            'carga_horaria' => 8,
+            'data_inicio' => '2025-08-01',
+            'data_fim' => '2025-10-31',
+        ]);
+
+        $entrega = PlanoTrabalhoEntrega::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
+            'forca_trabalho' => 30,
+            'esforco_executado' => 30,
+        ]);
+
+        // Agosto: 21 dias úteis, 25% preenchido (CONCLUIDO) → 42h
+        $paAgosto = PlanoTrabalhoConsolidacao::create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => '2025-08-01', 'data_fim' => '2025-08-31', 'status' => 'CONCLUIDO',
+        ]);
+        PlanoTrabalhoConsolidacaoContribuicao::create([
+            'id' => Str::uuid()->toString(),
+            'plano_trabalho_consolidacao_id' => $paAgosto->id,
+            'plano_trabalho_entrega_id' => $entrega->id,
+            'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
+            'descricao' => 'Agosto', 'esforco_executado' => 25, 'registrado_at' => now(),
+        ]);
+
+        // Setembro: 22 dias úteis, 50% preenchido (CONCLUIDO) → 88h
+        $paSetembro = PlanoTrabalhoConsolidacao::create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => '2025-09-01', 'data_fim' => '2025-09-30', 'status' => 'CONCLUIDO',
+        ]);
+        PlanoTrabalhoConsolidacaoContribuicao::create([
+            'id' => Str::uuid()->toString(),
+            'plano_trabalho_consolidacao_id' => $paSetembro->id,
+            'plano_trabalho_entrega_id' => $entrega->id,
+            'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
+            'descricao' => 'Setembro', 'esforco_executado' => 50, 'registrado_at' => now(),
+        ]);
+
+        // Outubro: ainda não preenchido (INCLUIDO) → não conta
+        PlanoTrabalhoConsolidacao::create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => '2025-10-01', 'data_fim' => '2025-10-31', 'status' => 'INCLUIDO',
+        ]);
+
+        $agg = app(\App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelDataProvider::class)
+            ->agregarEsforcoPessoasEntregas(\App\V2\Planejamento\Objetivo\PlanejamentoObjetivoNoConfig::get(), [$obj->id]);
+
+        // Disponível = dias úteis do PT (ago+set+out) × 8h = (21+22+23) × 8 = 528h
+        // (23 dias úteis em outubro/2025; o exemplo usou 22 como aproximação)
+        expect($agg->esforco_disponivel_horas)->toBeGreaterThan(500.0);
+        // Planejado = 30% do disponível
+        expect(round($agg->esforco_planejado_horas, 2))->toBe(round($agg->esforco_disponivel_horas * 0.30, 2));
+        // Executado = 25%×168 (ago) + 50%×176 (set) = 42 + 88 = 130h; outubro não conta
+        expect($agg->esforco_executado_horas)->toBe(130.0);
+
+        // Mesmo com o PT ainda ATIVO (não concluído), há execução registrada em PA
+        // concluído → o painel deve exibir o esforço executado.
+        expect((bool) $agg->tem_execucao_registrada)->toBeTrue();
+        $vis = \App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco(
+            'ATIVO',
+            (bool) $agg->tem_pt_pactuado,
+            (bool) $agg->tem_execucao_registrada,
+        );
+        expect($vis['mostrar_executado'])->toBeTrue();
+    });
+
+    test('não exibe executado quando o PT ativo não tem PA preenchido', function () {
+        $base = criarEstruturaBase();
+        $obj = criarObjetivo($base['planejamento']->id, $base['eixo']->id, 'Sem execução registrada');
+
+        $planoEntregaEntrega = PlanoEntregaEntrega::factory()->create([
+            'plano_entrega_id' => $base['planoEntrega']->id,
+            'entrega_id' => $base['entrega']->id,
+            'unidade_id' => $base['unidade']->id,
+        ]);
+        PlanoEntregaEntregaObjetivo::create([
+            'id' => Str::uuid()->toString(),
+            'planejamento_objetivo_id' => $obj->id,
+            'entrega_id' => $planoEntregaEntrega->id,
+        ]);
+
+        $plano = PlanoTrabalho::factory()->create([
+            'usuario_id' => $this->usuario->id,
+            'unidade_id' => $base['unidade']->id,
+            'programa_id' => $base['programa']->id,
+            'criacao_usuario_id' => $this->usuario->id,
+            'status' => 'ATIVO',
+            'carga_horaria' => 8,
+            'data_inicio' => '2025-08-01',
+            'data_fim' => '2025-10-31',
+        ]);
+        PlanoTrabalhoEntrega::factory()->create([
+            'plano_trabalho_id' => $plano->id,
+            'plano_entrega_entrega_id' => $planoEntregaEntrega->id,
+            'forca_trabalho' => 30,
+            'esforco_executado' => 30,
+        ]);
+        // PA apenas INCLUIDO (nada registrado)
+        PlanoTrabalhoConsolidacao::create([
+            'plano_trabalho_id' => $plano->id,
+            'data_inicio' => '2025-08-01', 'data_fim' => '2025-08-31', 'status' => 'INCLUIDO',
+        ]);
+
+        $agg = app(\App\V2\ArvoreInstitucional\ArvoreInstitucionalPainelDataProvider::class)
+            ->agregarEsforcoPessoasEntregas(\App\V2\Planejamento\Objetivo\PlanejamentoObjetivoNoConfig::get(), [$obj->id]);
+
+        expect($agg->esforco_executado_horas)->toBe(0.0)
+            ->and((bool) $agg->tem_execucao_registrada)->toBeFalse();
+
+        $vis = \App\V2\ArvoreInstitucional\ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco(
+            'ATIVO',
+            (bool) $agg->tem_pt_pactuado,
+            (bool) $agg->tem_execucao_registrada,
+        );
+        expect($vis['mostrar_executado'])->toBeFalse();
     });
 });

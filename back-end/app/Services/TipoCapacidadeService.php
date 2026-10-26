@@ -29,11 +29,6 @@ class TipoCapacidadeService extends ServiceBase
         ["MENU_GESTAO_ACESSO", "Permite acessar os menus Planejamento, Execução e Avaliação"],
         ["MENU_DEV_ACESSO", "Permite acessar os menus Manutenção, Logs e Auditorias e Testes"],
         ["MENU_DEV_CONSULTAS", "Permite acessar menus de consultas do Desenvolvedor"],
-        ["MENU_RX_CURRICULUM_ACESSO", "Permite acessar o menu Curriculum"],
-        ["MENU_RX_OPORTUNIDADES_ACESSO", "Permite acessar o menu Oportunidades"],
-        ["MENU_RX_PESQUISAS_ACESSO", "Permite acessar o menu Pesquisas"],
-        ["MENU_RX_QUEST_DINAMICOS_ACESSO", "Permite acessar o menu Questionários Dinâmicos"],
-        ["MENU_RX_CADASTROS_ACESSO", "Permite acessar o menu Cadastros (RaioX)"],
         ["MENU_RELATORIOS", "Permite acessar o menu Relatórios"],
       ]
     ], [
@@ -562,10 +557,4 @@ navDev            Manutenção                MENU_DEV_ACESSO
 navPonto
 navProjeto        Cadastros                 MENU_CAD_ACESSO
                   Gerencial                 MENU_CAD_ACESSO
-
-navRaioX          Curriculum                MENU_RX_CURRICULUM_ACESSO
-                  Oportunidades             MENU_RX_OPORTUNIDADES_ACESSO
-                  Pesquisas                 MENU_RX_PESQUISAS_ACESSO
-                  Questionários Dinâmicos   MENU_RX_QUEST_DINAMICOS_ACESSO
-                  Cadastros                 MENU_RX_CADASTROS_ACESSO
 */

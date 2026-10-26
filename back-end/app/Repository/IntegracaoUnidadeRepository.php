@@ -16,6 +16,12 @@ class IntegracaoUnidadeRepository
     ) {
     }
 
+    /** @return array<int, object> */
+    public function selecionarPendentesSincronizacao(string $codigoOrgao, string $paiNaoInformado, int $codigoRaiz): array
+    {
+        return $this->readRepository->selecionarPendentesSincronizacao($codigoOrgao, $paiNaoInformado, $codigoRaiz);
+    }
+
     /**
      * @return \Illuminate\Support\Collection
      */

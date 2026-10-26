@@ -400,7 +400,7 @@ describe('DELETE /api/v2/plano-trabalho/:id/entrega/:eid (invalidação TCR)', f
 
 describe('DELETE /api/v2/plano-trabalho/:id/entrega/:eid (execução)', function () {
 
-    test('remove contribuição em execução quando o período avaliativo está aberto', function () {
+    test('bloqueia exclusão de entrega pela rota de planejamento quando o PT está em execução', function () {
         $this->actingAs($this->usuario, 'web');
 
         $this->plano->status = 'ATIVO';
@@ -410,63 +410,12 @@ describe('DELETE /api/v2/plano-trabalho/:id/entrega/:eid (execução)', function
             'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
             'origem' => 'PROPRIA_UNIDADE',
             'forca_trabalho' => 50,
-            'descricao' => 'Contribuição em execução',
-        ]);
-
-        $consolidacao = PlanoTrabalhoConsolidacao::factory()->create([
-            'plano_trabalho_id' => $this->plano->id,
-            'status' => 'INCLUIDO',
-        ]);
-
-        Atividade::factory()->create([
-            'plano_trabalho_id' => $this->plano->id,
-            'plano_trabalho_entrega_id' => $entrega->id,
-            'plano_trabalho_consolidacao_id' => $consolidacao->id,
+            'descricao' => 'Entrega planejada',
         ]);
 
         $this->deleteJson(
-            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega/{$entrega->id}?consolidacao_id={$consolidacao->id}"
-        )->assertStatus(204);
-
-        $this->assertSoftDeleted('planos_trabalhos_entregas', ['id' => $entrega->id]);
-    });
-
-    test('bloqueia exclusão quando há registro em período avaliativo fechado', function () {
-        $this->actingAs($this->usuario, 'web');
-
-        $this->plano->status = 'ATIVO';
-        $this->plano->save();
-
-        $entrega = $this->plano->entregas()->create([
-            'plano_entrega_entrega_id' => $this->planoEntregaEntrega->id,
-            'origem' => 'PROPRIA_UNIDADE',
-            'forca_trabalho' => 50,
-            'descricao' => 'Contribuição com período fechado',
-        ]);
-
-        $consolidacaoAberta = PlanoTrabalhoConsolidacao::factory()->create([
-            'plano_trabalho_id' => $this->plano->id,
-            'status' => 'INCLUIDO',
-        ]);
-
-        $consolidacaoFechada = PlanoTrabalhoConsolidacao::factory()->create([
-            'plano_trabalho_id' => $this->plano->id,
-            'status' => 'CONCLUIDO',
-        ]);
-
-        Atividade::factory()->create([
-            'plano_trabalho_id' => $this->plano->id,
-            'plano_trabalho_entrega_id' => $entrega->id,
-            'plano_trabalho_consolidacao_id' => $consolidacaoFechada->id,
-        ]);
-
-        $this->deleteJson(
-            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega/{$entrega->id}?consolidacao_id={$consolidacaoAberta->id}"
-        )->assertStatus(422)
-            ->assertJsonPath(
-                'error',
-                'Não é possível incluir ou excluir contribuições quando o período avaliativo está Aguardando Avaliação ou Avaliado.'
-            );
+            "/api/__tests/v2/plano-trabalho/{$this->plano->id}/entrega/{$entrega->id}"
+        )->assertStatus(422);
 
         $this->assertDatabaseHas('planos_trabalhos_entregas', [
             'id' => $entrega->id,

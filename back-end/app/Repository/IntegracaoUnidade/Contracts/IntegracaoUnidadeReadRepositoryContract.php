@@ -9,6 +9,9 @@ namespace App\Repository\IntegracaoUnidade\Contracts;
  */
 interface IntegracaoUnidadeReadRepositoryContract
 {
+    /** @return array<int, object> */
+    public function selecionarPendentesSincronizacao(string $codigoOrgao, string $paiNaoInformado, int $codigoRaiz): array;
+
     /**
      * @return \Illuminate\Support\Collection
      */

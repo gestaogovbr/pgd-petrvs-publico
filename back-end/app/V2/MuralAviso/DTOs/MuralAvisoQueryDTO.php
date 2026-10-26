@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\V2\MuralAviso\DTOs;
 
+use App\Enums\PainelUsuarioNivel;
+
 class MuralAvisoQueryDTO
 {
-    private const NIVEL_ORGAO_CENTRAL = 1;
-
     /**
      * @param list<string> $tenantIds
      */
@@ -19,7 +19,7 @@ class MuralAvisoQueryDTO
 
     public function isOrgaoCentral(): bool
     {
-        return $this->nivelUsuario === self::NIVEL_ORGAO_CENTRAL;
+        return $this->nivelUsuario === PainelUsuarioNivel::ORGAO_CENTRAL->value;
     }
 
     /**

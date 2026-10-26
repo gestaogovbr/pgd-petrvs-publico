@@ -3,7 +3,7 @@ import { ConsolidacaoApiClient } from '../infra/consolidacao-api.client';
 import { ConcluirConsolidacaoUseCase } from './concluir-consolidacao.usecase';
 import { AvaliarConsolidacaoUseCase } from './avaliar-consolidacao.usecase';
 import { SolicitarRecursoUseCase } from './solicitar-recurso.usecase';
-import { AtividadeConsolidacao, Consolidacao, NotaAvaliacao, Ocorrencia, OcorrenciaFormValue, PlanoTrabalhoEntrega, TipoMotivoAfastamento } from '../domain/types';
+import { Consolidacao, ContribuicaoExecucao, NotaAvaliacao, Ocorrencia, OcorrenciaFormValue, TipoMotivoAfastamento } from '../domain/types';
 import { TipoMotivoAfastamentoService } from 'src/app/v2/services/tipo-motivo-afastamento.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { MessageService } from 'src/app/v2/services/message.service';
@@ -35,12 +35,15 @@ export class ConsolidacaoFacade {
   readonly esforcosExecutados = signal<Record<string, number>>({});
   readonly editando = signal<Set<string>>(new Set());
   readonly salvando = signal<Set<string>>(new Set());
-  private entregaEsforcoAtualizado?: (entregaId: string, esforco: number) => void;
 
   // --- Estado de reabertura ---
   readonly reabrindoId = signal<string | null>(null);
   readonly justificativaReabrir = signal<string>('');
   readonly processandoAcaoId = signal<string | null>(null);
+
+  // --- Estado de justificativa de carga horária (conclusão com divergência) ---
+  readonly justificativaCargaHorariaPendente = signal<{ consolidacao: Consolidacao; total: number } | null>(null);
+  readonly justificativaCargaHoraria = signal<string>('');
   // --- Estado de avaliação ---
   readonly notasSelecionadas = signal<Record<string, string>>({});
   readonly justificativasAvaliacao = signal<Record<string, string>>({});
@@ -70,10 +73,6 @@ export class ConsolidacaoFacade {
     this.loadNotas();
     this.loadTiposMotivo();
     this.loadDispensas();
-  }
-
-  registerEntregaEsforcoAtualizado(callback: (entregaId: string, esforco: number) => void): void {
-    this.entregaEsforcoAtualizado = callback;
   }
 
   loadConsolidacoes(): void {
@@ -202,120 +201,97 @@ export class ConsolidacaoFacade {
     });
   }
 
-  // --- Atividades ---
+  // --- Contribuições de execução (por período) ---
 
-  getAtividade(consolidacao: Consolidacao, entregaId: string): AtividadeConsolidacao | null {
-    return (consolidacao.atividades ?? []).find(a => a.plano_trabalho_entrega_id === entregaId) ?? null;
+  getContribuicoes(consolidacao: Consolidacao): ContribuicaoExecucao[] {
+    return consolidacao.contribuicoes ?? [];
   }
 
-  estaEditando(consolidacaoId: string, entregaId: string): boolean {
-    return this.editando().has(`${consolidacaoId}-${entregaId}`);
+  estaEditando(consolidacaoId: string, contribuicaoId: string): boolean {
+    return this.editando().has(`${consolidacaoId}-${contribuicaoId}`);
   }
 
-  getTexto(consolidacaoId: string, entregaId: string): string {
-    return this.textos()[`${consolidacaoId}-${entregaId}`] ?? '';
+  getTexto(consolidacaoId: string, contribuicao: ContribuicaoExecucao): string {
+    const key = `${consolidacaoId}-${contribuicao.id}`;
+    return this.textos()[key] ?? contribuicao.descricao ?? '';
   }
 
-  setTexto(consolidacaoId: string, entregaId: string, valor: string): void {
-    this.textos.update(t => ({ ...t, [`${consolidacaoId}-${entregaId}`]: valor }));
+  setTexto(consolidacaoId: string, contribuicaoId: string, valor: string): void {
+    this.textos.update(t => ({ ...t, [`${consolidacaoId}-${contribuicaoId}`]: valor }));
   }
 
-  getEsforcoExecutado(consolidacaoId: string, entrega: PlanoTrabalhoEntrega): number {
-    const key = `${consolidacaoId}-${entrega.id}`;
+  getEsforcoExecutado(consolidacaoId: string, contribuicao: ContribuicaoExecucao): number {
+    const key = `${consolidacaoId}-${contribuicao.id}`;
     const custom = this.esforcosExecutados()[key];
     if (custom !== undefined) {
       return custom;
     }
-    return Number(entrega.esforco_executado ?? entrega.forca_trabalho ?? 0);
+    return Number(contribuicao.esforco_executado ?? 0);
   }
 
-  setEsforcoExecutado(consolidacaoId: string, entregaId: string, valor: string): void {
+  setEsforcoExecutado(consolidacaoId: string, contribuicaoId: string, valor: string): void {
     const parsed = Number(valor);
     this.esforcosExecutados.update(mapa => ({
       ...mapa,
-      [`${consolidacaoId}-${entregaId}`]: Number.isFinite(parsed) ? parsed : 0,
+      [`${consolidacaoId}-${contribuicaoId}`]: Number.isFinite(parsed) ? parsed : 0,
     }));
   }
 
-  esforcoExecutadoValido(consolidacaoId: string, entrega: PlanoTrabalhoEntrega): boolean {
-    const value = this.getEsforcoExecutado(consolidacaoId, entrega);
+  esforcoExecutadoValido(consolidacaoId: string, contribuicao: ContribuicaoExecucao): boolean {
+    const value = this.getEsforcoExecutado(consolidacaoId, contribuicao);
     return value >= 0 && value <= 999.99;
   }
 
-  temAlteracao(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): boolean {
-    const atividade = this.getAtividade(consolidacao, entrega.id);
-    const textoAtual = this.getTexto(consolidacao.id, entrega.id).trim();
-    const textoBase = (atividade?.descricao ?? '').trim();
-    const esforcoAtual = this.getEsforcoExecutado(consolidacao.id, entrega);
-    const esforcoBase = Number(entrega.esforco_executado ?? entrega.forca_trabalho ?? 0);
+  estaRegistrada(contribuicao: ContribuicaoExecucao): boolean {
+    return contribuicao.registrado_at !== null;
+  }
+
+  temAlteracao(consolidacao: Consolidacao, contribuicao: ContribuicaoExecucao): boolean {
+    const textoAtual = this.getTexto(consolidacao.id, contribuicao).trim();
+    const textoBase = (contribuicao.descricao ?? '').trim();
+    const esforcoAtual = this.getEsforcoExecutado(consolidacao.id, contribuicao);
+    const esforcoBase = Number(contribuicao.esforco_executado ?? 0);
     return textoAtual !== textoBase || esforcoAtual !== esforcoBase;
   }
 
-  podeConfirmar(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): boolean {
-    const key = `${consolidacao.id}-${entrega.id}`;
-    return this.temAlteracao(consolidacao, entrega)
-      && !!this.getTexto(consolidacao.id, entrega.id).trim()
-      && this.esforcoExecutadoValido(consolidacao.id, entrega)
+  podeConfirmar(consolidacao: Consolidacao, contribuicao: ContribuicaoExecucao): boolean {
+    const key = `${consolidacao.id}-${contribuicao.id}`;
+    return !!this.getTexto(consolidacao.id, contribuicao).trim()
+      && this.esforcoExecutadoValido(consolidacao.id, contribuicao)
       && !this.salvando().has(key);
   }
 
-  mostrarExcluirContribuicao(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): boolean {
-    return !this.estaEditando(consolidacao.id, entrega.id)
-      && !this.podeConfirmar(consolidacao, entrega)
-      && !this.salvando().has(`${consolidacao.id}-${entrega.id}`);
-  }
-
-  iniciarEdicao(consolidacaoId: string, entregaId: string, textoAtual: string, esforcoAtual?: number): void {
-    const key = `${consolidacaoId}-${entregaId}`;
-    this.textos.update(t => ({ ...t, [key]: textoAtual }));
-    if (esforcoAtual !== undefined) {
-      this.esforcosExecutados.update(m => ({ ...m, [key]: esforcoAtual }));
-    }
+  iniciarEdicao(consolidacaoId: string, contribuicao: ContribuicaoExecucao): void {
+    const key = `${consolidacaoId}-${contribuicao.id}`;
+    this.textos.update(t => ({ ...t, [key]: contribuicao.descricao ?? '' }));
+    this.esforcosExecutados.update(m => ({ ...m, [key]: Number(contribuicao.esforco_executado ?? 0) }));
     this.editando.update(s => new Set([...s, key]));
   }
 
-  cancelarEdicao(
-    consolidacaoId: string,
-    entregaId: string,
-    atividade: AtividadeConsolidacao | null,
-    entrega?: PlanoTrabalhoEntrega,
-  ): void {
-    const key = `${consolidacaoId}-${entregaId}`;
-    this.textos.update(t => ({ ...t, [key]: atividade?.descricao ?? '' }));
-    if (entrega) {
-      this.esforcosExecutados.update(m => ({
-        ...m,
-        [key]: Number(entrega.esforco_executado ?? entrega.forca_trabalho ?? 0),
-      }));
-    }
+  cancelarEdicao(consolidacaoId: string, contribuicao: ContribuicaoExecucao): void {
+    const key = `${consolidacaoId}-${contribuicao.id}`;
+    this.textos.update(t => ({ ...t, [key]: contribuicao.descricao ?? '' }));
+    this.esforcosExecutados.update(m => ({ ...m, [key]: Number(contribuicao.esforco_executado ?? 0) }));
     this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
   }
 
-  confirmarAtividade(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega, justificativa?: string): void {
-    const key = `${consolidacao.id}-${entrega.id}`;
-    const descricao = this.textos()[key]?.trim();
-    const esforcoExecutado = this.getEsforcoExecutado(consolidacao.id, entrega);
-    if (!descricao || !this.esforcoExecutadoValido(consolidacao.id, entrega)) return;
+  confirmarContribuicao(consolidacao: Consolidacao, contribuicao: ContribuicaoExecucao): void {
+    const key = `${consolidacao.id}-${contribuicao.id}`;
+    const descricao = this.getTexto(consolidacao.id, contribuicao).trim();
+    const esforcoExecutado = this.getEsforcoExecutado(consolidacao.id, contribuicao);
+    if (!descricao || !this.esforcoExecutadoValido(consolidacao.id, contribuicao)) return;
 
-    const atividade = this.getAtividade(consolidacao, entrega.id);
     this.salvando.update(s => new Set([...s, key]));
 
-    const payload = {
+    this.api.updateContribuicao(this.planoId, consolidacao.id, contribuicao.id, {
+      origem: this.resolverOrigem(contribuicao),
+      plano_entrega_entrega_id: contribuicao.plano_entrega_entrega_id,
+      orgao: contribuicao.orgao,
       descricao,
       esforco_executado: esforcoExecutado,
-      ...(justificativa ? { justificativa } : {}),
-    };
-    const obs = atividade
-      ? this.api.updateAtividade(this.planoId, consolidacao.id, atividade.id, payload)
-      : this.api.createAtividade(this.planoId, consolidacao.id, {
-          plano_trabalho_entrega_id: entrega.id,
-          ...payload,
-        });
-
-    obs.subscribe({
-      next: (atividadeSalva) => {
-        this.atualizarAtividadeNaConsolidacao(consolidacao.id, entrega.id, atividadeSalva);
-        this.entregaEsforcoAtualizado?.(entrega.id, esforcoExecutado);
+    }).subscribe({
+      next: (salva) => {
+        this.atualizarContribuicaoNaConsolidacao(consolidacao.id, salva);
         this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
         this.salvando.update(s => { const n = new Set(s); n.delete(key); return n; });
       },
@@ -325,43 +301,79 @@ export class ConsolidacaoFacade {
     });
   }
 
-  excluirAtividade(consolidacao: Consolidacao, entrega: PlanoTrabalhoEntrega): void {
-    const atividade = this.getAtividade(consolidacao, entrega.id);
-    if (!atividade) return;
-
+  excluirContribuicao(consolidacao: Consolidacao, contribuicao: ContribuicaoExecucao): void {
     this.confirmacaoPendente.set({
-      titulo: 'Excluir Registro de Execução',
-      mensagem: 'Deseja realmente excluir este registro de execução?',
+      titulo: 'Excluir Contribuição',
+      mensagem: 'Deseja realmente excluir esta contribuição?',
       onConfirmar: () => {
-        this.api.deleteAtividade(this.planoId, consolidacao.id, atividade.id).subscribe(() => {
-          this.atualizarAtividadeNaConsolidacao(consolidacao.id, entrega.id, null);
-          this.entregaEsforcoAtualizado?.(entrega.id, Number(entrega.forca_trabalho ?? 0));
-          const key = `${consolidacao.id}-${entrega.id}`;
-          this.textos.update(t => ({ ...t, [key]: '' }));
-          this.editando.update(s => { const n = new Set(s); n.delete(key); return n; });
+        this.api.deleteContribuicao(this.planoId, consolidacao.id, contribuicao.id).subscribe(() => {
+          this.consolidacoes.update(lista => lista.map(c => {
+            if (c.id !== consolidacao.id) return c;
+            return { ...c, contribuicoes: (c.contribuicoes ?? []).filter(x => x.id !== contribuicao.id) };
+          }));
+          this.message.success('Contribuição excluída com sucesso.');
         });
       }
     });
   }
 
+  private resolverOrigem(contribuicao: ContribuicaoExecucao): string {
+    if (contribuicao.plano_entrega_entrega_id) return 'PROPRIA_UNIDADE';
+    if (contribuicao.orgao) return 'OUTRO_ORGAO';
+    return 'SEM_ENTREGA';
+  }
+
+  private atualizarContribuicaoNaConsolidacao(consolidacaoId: string, contribuicao: ContribuicaoExecucao): void {
+    this.consolidacoes.update(lista => lista.map(c => {
+      if (c.id !== consolidacaoId) return c;
+      const contribuicoes = (c.contribuicoes ?? []).map(x => x.id === contribuicao.id ? contribuicao : x);
+      return { ...c, contribuicoes };
+    }));
+  }
+
   // --- Consolidação ---
 
-  concluirConsolidacao(consolidacao: Consolidacao): void {
+  concluirConsolidacao(consolidacao: Consolidacao, justificativaCargaHoraria?: string | null): void {
     this.confirmacaoPendente.set({
       titulo: 'Finalizar Registro',
       mensagem: 'Ao finalizar este registro, a execução do Plano de Trabalho referente a este período será encaminhada para avaliação da chefia. Deseja confirmar?',
-      onConfirmar: () => {
-        this.processandoAcaoId.set(consolidacao.id);
-        this.concluirUC.execute(this.planoId, consolidacao.id)
-          .pipe(finalize(() => this.processandoAcaoId.set(null)))
-          .subscribe((atualizado) => {
-            this.consolidacoes.update(lista =>
-              lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
-            );
-            this.message.success('Registro concluído com sucesso.');
-          });
-      }
+      onConfirmar: () => this.executarConclusao(consolidacao, justificativaCargaHoraria),
     });
+  }
+
+  /**
+   * Abre o modal de justificativa quando a carga horária executada do período
+   * diverge da planejada. `total` é o percentual executado exibido ao usuário.
+   */
+  iniciarJustificativaCargaHoraria(consolidacao: Consolidacao, total: number): void {
+    this.justificativaCargaHoraria.set('');
+    this.justificativaCargaHorariaPendente.set({ consolidacao, total });
+  }
+
+  cancelarJustificativaCargaHoraria(): void {
+    this.justificativaCargaHorariaPendente.set(null);
+    this.justificativaCargaHoraria.set('');
+  }
+
+  confirmarJustificativaCargaHoraria(): void {
+    const pendente = this.justificativaCargaHorariaPendente();
+    const justificativa = this.justificativaCargaHoraria().trim();
+    if (!pendente || !justificativa) return;
+    const consolidacao = pendente.consolidacao;
+    this.cancelarJustificativaCargaHoraria();
+    this.executarConclusao(consolidacao, justificativa);
+  }
+
+  private executarConclusao(consolidacao: Consolidacao, justificativaCargaHoraria?: string | null): void {
+    this.processandoAcaoId.set(consolidacao.id);
+    this.concluirUC.execute(this.planoId, consolidacao.id, justificativaCargaHoraria)
+      .pipe(finalize(() => this.processandoAcaoId.set(null)))
+      .subscribe((atualizado) => {
+        this.consolidacoes.update(lista =>
+          lista.map(c => c.id === consolidacao.id ? { ...c, ...atualizado } : c)
+        );
+        this.message.success('Registro concluído com sucesso.');
+      });
   }
 
   iniciarReabertura(consolidacao: Consolidacao): void {
@@ -530,19 +542,10 @@ export class ConsolidacaoFacade {
   private inicializarTextos(consolidacoes: Consolidacao[]): void {
     const mapa: Record<string, string> = {};
     for (const c of consolidacoes) {
-      for (const a of (c.atividades ?? [])) {
-        mapa[`${c.id}-${a.plano_trabalho_entrega_id}`] = a.descricao ?? '';
+      for (const contribuicao of (c.contribuicoes ?? [])) {
+        mapa[`${c.id}-${contribuicao.id}`] = contribuicao.descricao ?? '';
       }
     }
     this.textos.set(mapa);
-  }
-
-  private atualizarAtividadeNaConsolidacao(consolidacaoId: string, entregaId: string, atividade: AtividadeConsolidacao | null): void {
-    this.consolidacoes.update(lista => lista.map(c => {
-      if (c.id !== consolidacaoId) return c;
-      const atividades = (c.atividades ?? []).filter(a => a.plano_trabalho_entrega_id !== entregaId);
-      if (atividade) atividades.push(atividade);
-      return { ...c, atividades };
-    }));
   }
 }

@@ -142,13 +142,17 @@ class MuralAvisoController extends Controller
     public function pendentes(Request $request): JsonResponse
     {
         try {
+            $data = MuralAvisoRequestValidator::pendentes($request);
             $usuarioId = (string) $request->user()->id;
             $tenantId = tenant('id');
+            $incluirLidos = (bool) ($data['incluir_lidos'] ?? false);
 
-            $avisos = $this->service->pendentes($usuarioId, $tenantId);
+            $avisos = $this->service->vigentes($usuarioId, $tenantId, $incluirLidos);
             $data = array_map(fn ($dto) => $dto->toArray(), $avisos);
 
             return response()->json(['success' => true, 'data' => $data]);
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->getMessage()], $e->status);
         } catch (Throwable $e) {
             report($e);
             return response()->json(['error' => 'Ocorreu um erro inesperado.'], Response::HTTP_INTERNAL_SERVER_ERROR);

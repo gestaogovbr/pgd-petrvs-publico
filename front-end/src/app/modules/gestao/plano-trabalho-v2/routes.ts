@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { RedirectFunction, Router, Routes } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authTenantVersionInterceptor, errorInterceptor } from 'src/app/v2/infra/http/interceptors';
 import { UsuarioService } from 'src/app/v2/services/usuario.service';
@@ -23,6 +24,11 @@ import { AssinarPlanoUseCase } from './application/assinar-plano.usecase';
 import { PlanoTrabalhoListFacade } from './application/list.facade';
 import { ConsolidacaoFacade } from './application/consolidacao.facade';
 import { ExcluirPlanoUseCase } from './application/excluir-plano.usecase';
+
+const redirectClone: RedirectFunction = ({ params, queryParams }) => inject(Router).createUrlTree(
+  ['/gestao/plano-trabalho-v2/novo'],
+  { queryParams: { ...queryParams, clone_de: params['id'] } }
+);
 
 export const routes: Routes = [
   {
@@ -87,7 +93,19 @@ export const routes: Routes = [
         data: { breadcrumb: 'TCR' },
         loadComponent: () =>
           import('./ui/tcr.page').then(m => m.PlanoTrabalhoV2TcrPage)
-      }
+      },
+      { path: 'new', redirectTo: '/gestao/plano-trabalho-v2/novo' },
+      { path: 'termo', redirectTo: '/gestao/plano-trabalho-v2' },
+      { path: 'entrega-list', redirectTo: '/gestao/plano-trabalho-v2' },
+      { path: 'consolidacao/:consolidacaoId/avaliar', redirectTo: '/gestao/plano-trabalho-v2' },
+      { path: 'consolidacao/:consolidacaoId/verAvaliacoes', redirectTo: '/gestao/plano-trabalho-v2' },
+      { path: 'consolidacao/avaliacao', redirectTo: '/gestao/plano-trabalho-v2' },
+      { path: 'consolidacao/:usuarioId/:planoTrabalhoId', redirectTo: '/gestao/plano-trabalho-v2/consultar/:planoTrabalhoId' },
+      { path: 'consolidacao', redirectTo: '/gestao/plano-trabalho-v2' },
+      { path: 'avaliacao/:avaliacaoId/recurso', redirectTo: '/gestao/plano-trabalho-v2' },
+      { path: ':id/edit', redirectTo: '/gestao/plano-trabalho-v2/editar/:id' },
+      { path: ':id/clone', redirectTo: redirectClone },
+      { path: ':id/consult', redirectTo: '/gestao/plano-trabalho-v2/consultar/:id' }
     ]
   }
 ];

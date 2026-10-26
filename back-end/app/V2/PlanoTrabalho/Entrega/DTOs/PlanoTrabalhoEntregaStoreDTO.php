@@ -13,21 +13,14 @@ class PlanoTrabalhoEntregaStoreDTO
         public readonly ?string $orgao,
         public readonly float $forcaTrabalho,
         public readonly float $esforcoExecutado,
-        public readonly bool $informouEsforcoExecutado,
         public readonly string $descricao,
         public readonly ?string $entregaId = null,
-        public readonly ?string $consolidacaoId = null,
-        public readonly ?string $justificativa = null,
     ) {}
 
     public static function fromArray(array $data, string $planoTrabalhoId, ?string $entregaId = null): self
     {
         $origem = $data['origem'];
         $forcaTrabalho = (float) ($data['forca_trabalho'] ?? 0);
-        $informouEsforcoExecutado = array_key_exists('esforco_executado', $data);
-        $esforcoExecutado = $informouEsforcoExecutado
-            ? (float) $data['esforco_executado']
-            : $forcaTrabalho;
 
         return new self(
             planoTrabalhoId: $planoTrabalhoId,
@@ -35,12 +28,9 @@ class PlanoTrabalhoEntregaStoreDTO
             planoEntregaEntregaId: in_array($origem, ['PROPRIA_UNIDADE', 'OUTRA_UNIDADE']) ? $data['plano_entrega_entrega_id'] : null,
             orgao: $origem === 'OUTRO_ORGAO' ? $data['orgao'] : null,
             forcaTrabalho: $forcaTrabalho,
-            esforcoExecutado: $esforcoExecutado,
-            informouEsforcoExecutado: $informouEsforcoExecutado,
+            esforcoExecutado: $forcaTrabalho,
             descricao: $data['descricao'] ?? '',
             entregaId: $entregaId,
-            consolidacaoId: $data['consolidacao_id'] ?? null,
-            justificativa: isset($data['justificativa']) ? trim((string) $data['justificativa']) : null,
         );
     }
 

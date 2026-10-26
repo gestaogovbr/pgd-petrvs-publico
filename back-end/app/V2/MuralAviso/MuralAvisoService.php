@@ -51,16 +51,13 @@ class MuralAvisoService
     {
         $this->storeValidator->validar($dto);
 
-        $remetenteTipo = $dto->isOrgaoCentral() ? MuralAvisoRemetenteTipo::ORGAO_CENTRAL : MuralAvisoRemetenteTipo::TENANT;
-        $remetenteTenantId = $dto->isOrgaoCentral() ? null : $dto->tenantId;
-
         return $this->repository->create([
             'titulo' => $dto->titulo,
             'conteudo' => $dto->conteudo,
             'destinatario' => $dto->destinatario,
             'tenant_id' => $dto->destinatario === MuralAvisoDestinatario::TODOS->value ? null : $dto->tenantId,
-            'remetente_tipo' => $remetenteTipo->value,
-            'remetente_tenant_id' => $remetenteTenantId,
+            'remetente_tipo' => $dto->remetenteTipo()->value,
+            'remetente_tenant_id' => $dto->remetenteTenantId(),
             'publicado_por_user_panel_id' => $dto->usuarioId,
             'data_publicacao' => $dto->dataPublicacao,
             'data_expiracao' => $dto->dataExpiracao,
@@ -71,10 +68,7 @@ class MuralAvisoService
     {
         $this->authorizationValidator->validar($id, $dto->nivelUsuario, $dto->tenantIds);
 
-        $this->storeValidator->validar($dto);
-
-        $remetenteTipo = $dto->isOrgaoCentral() ? MuralAvisoRemetenteTipo::ORGAO_CENTRAL : MuralAvisoRemetenteTipo::TENANT;
-        $remetenteTenantId = $dto->isOrgaoCentral() ? null : $dto->tenantId;
+        $this->storeValidator->validar($dto, $id);
 
         /** @var MuralAviso */
         return $this->repository->update($id, [
@@ -82,8 +76,8 @@ class MuralAvisoService
             'conteudo' => $dto->conteudo,
             'destinatario' => $dto->destinatario,
             'tenant_id' => $dto->destinatario === MuralAvisoDestinatario::TODOS->value ? null : $dto->tenantId,
-            'remetente_tipo' => $remetenteTipo->value,
-            'remetente_tenant_id' => $remetenteTenantId,
+            'remetente_tipo' => $dto->remetenteTipo()->value,
+            'remetente_tenant_id' => $dto->remetenteTenantId(),
             'data_publicacao' => $dto->dataPublicacao,
             'data_expiracao' => $dto->dataExpiracao,
         ]);
@@ -97,25 +91,52 @@ class MuralAvisoService
     }
 
     /**
+     * Retorna os avisos vigentes do usuário. Cada aviso recebe a flag `lido`
+     * calculada por `data_publicacao <= data_confirmacao`. Quando
+     * `$incluirLidos` for falso, os avisos já lidos são omitidos.
+     *
      * @return list<MuralAvisoPendenteDTO>
      */
-    public function pendentes(string $usuarioId, string $tenantId): array
+    public function vigentes(string $usuarioId, string $tenantId, bool $incluirLidos): array
     {
         $leitura = $this->leituraRepository->findByUsuarioId($usuarioId);
         $dataConfirmacao = $leitura?->data_confirmacao;
 
-        $avisos = $this->repository->findPendentes($tenantId, $dataConfirmacao);
+        $avisos = $this->repository->findVigentes($tenantId);
 
-        return array_map(
-            fn (array $aviso) => MuralAvisoPendenteDTO::fromArray([
+        $dtos = [];
+
+        foreach ($avisos as $aviso) {
+            $lido = $this->isLido($aviso['data_publicacao'], $dataConfirmacao);
+
+            if (!$incluirLidos && $lido) {
+                continue;
+            }
+
+            $dtos[] = MuralAvisoPendenteDTO::fromArray([
                 'id' => $aviso['id'],
                 'titulo' => $aviso['titulo'],
                 'conteudo' => $aviso['conteudo'],
                 'remetente' => $this->resolveRemetente($aviso),
                 'data_publicacao' => $aviso['data_publicacao'],
-            ]),
-            $avisos,
-        );
+                'lido' => $lido,
+            ]);
+        }
+
+        // Mantém a ordem por origem/data vinda do repositório e empurra os lidos
+        // para o final (ordenação estável a partir do PHP 8.0).
+        usort($dtos, fn (MuralAvisoPendenteDTO $a, MuralAvisoPendenteDTO $b) => $a->lido <=> $b->lido);
+
+        return $dtos;
+    }
+
+    private function isLido(string $dataPublicacao, ?\DateTimeInterface $dataConfirmacao): bool
+    {
+        if ($dataConfirmacao === null) {
+            return false;
+        }
+
+        return new \DateTimeImmutable($dataPublicacao) <= $dataConfirmacao;
     }
 
     public function confirmarLeitura(string $usuarioId): void

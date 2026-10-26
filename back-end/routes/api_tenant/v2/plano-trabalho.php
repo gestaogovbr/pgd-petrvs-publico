@@ -1,6 +1,7 @@
 <?php
 
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController as AtividadeV2;
+use App\V2\PlanoTrabalho\Consolidacao\Contribuicao\ContribuicaoExecucaoController as ContribuicaoExecucaoV2;
 use App\V2\PlanoTrabalho\Consolidacao\Avaliacao\AvaliacaoController as AvaliacaoV2;
 use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController as PlanoTrabalhoConsolidacaoV2;
 use App\V2\PlanoTrabalho\Documento\DocumentoController as DocumentoV2;
@@ -49,3 +50,7 @@ Route::delete('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/av
 Route::post('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade', [AtividadeV2::class, 'store']);
 Route::put('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}', [AtividadeV2::class, 'update']);
 Route::delete('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/atividade/{atividadeId}', [AtividadeV2::class, 'destroy']);
+
+Route::post('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/contribuicao', [ContribuicaoExecucaoV2::class, 'store']);
+Route::put('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/contribuicao/{contribuicaoId}', [ContribuicaoExecucaoV2::class, 'update']);
+Route::delete('plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/contribuicao/{contribuicaoId}', [ContribuicaoExecucaoV2::class, 'destroy']);

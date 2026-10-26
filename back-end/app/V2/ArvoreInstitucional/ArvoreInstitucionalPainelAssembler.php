@@ -25,10 +25,10 @@ final class ArvoreInstitucionalPainelAssembler
         $planejado = (float) ($agg->esforco_planejado_horas ?? 0);
         $executado = (float) ($agg->esforco_executado_horas ?? 0);
         $temPtPactuado = (bool) ($agg->tem_pt_pactuado ?? false);
-        $temPtConcluido = (bool) ($agg->tem_pt_concluido ?? false);
+        $temExecucaoRegistrada = (bool) ($agg->tem_execucao_registrada ?? false);
         $peStatus = ($agg->tem_pe_homologado ?? false) ? 'ATIVO' : 'HOMOLOGANDO';
 
-        $visibilidade = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco($peStatus, $temPtPactuado, $temPtConcluido);
+        $visibilidade = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco($peStatus, $temPtPactuado, $temExecucaoRegistrada);
 
         $somentePropria = (int) ($agg->participantes_somente_unidade_propria ?? 0);
         $somenteOutras = (int) ($agg->participantes_somente_outras_unidades ?? 0);
@@ -160,8 +160,8 @@ final class ArvoreInstitucionalPainelAssembler
         foreach ($rows as $row) {
             $peStatus = (string) $row->plano_entrega_status;
             $temPtPactuado = (bool) ($row->tem_pt_pactuado ?? false);
-            $temPtConcluido = (bool) ($row->tem_pt_concluido ?? false);
-            $vis = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco($peStatus, $temPtPactuado, $temPtConcluido);
+            $temExecucaoRegistrada = (bool) ($row->tem_execucao_registrada ?? false);
+            $vis = ArvoreInstitucionalEsforcoSupport::visibilidadeEsforco($peStatus, $temPtPactuado, $temExecucaoRegistrada);
 
             $itens[] = $this->montarLinha($row, $vis);
         }

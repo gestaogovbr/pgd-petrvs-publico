@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, PRIMARY_OUTLET, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { IIndexable } from '../models/base.model';
 import { AuthService } from '../services/auth.service';
@@ -38,12 +38,13 @@ export class AuthGuard  {
             } else {
               if(!this.gb.isToolbar) {
                 let redirectUrl = this.router.parseUrl('/login');
-                const qParams = Object.entries(route.queryParams || {}).reduce((acumulador, valorAtual) => {
+                const requestedUrl = this.router.parseUrl(state.url);
+                const qParams = Object.entries(requestedUrl.queryParams).reduce((acumulador, valorAtual) => {
                   if(valorAtual[0] != "idroute") acumulador[valorAtual[0]] = valorAtual[1];
                   return acumulador;
                 }, {} as IIndexable);
                 let redirectTo: FullRoute = {
-                  route: route.url.map(x => x.path),
+                  route: requestedUrl.root.children[PRIMARY_OUTLET]?.segments.map(x => x.path) || [],
                   params: qParams
                 };
                 redirectUrl.queryParams = { redirectTo: JSON.stringify(redirectTo), noSession: true };

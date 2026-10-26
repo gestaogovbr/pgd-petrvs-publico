@@ -55,6 +55,7 @@
       controlName="destinatario"
       [control]="form!.controls.destinatario"
       [items]="destinatarioItems"
+      [disabled]="isConfigurador ? 'true' : undefined"
       required
     ></input-select>
 

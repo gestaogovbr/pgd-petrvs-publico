@@ -18,9 +18,6 @@ use App\Models\Cidade;
 use App\Models\Template;
 use App\Models\NotificacaoConfig;
 use App\Models\HistoricoExecutoraUnidade;
-use App\Models\HistoricoLotacao;
-use App\Models\HistoricoFuncao;
-use App\Models\CurriculumProfissional;
 use App\Services\CodigoOrgaoService;
 use App\Traits\AutoUuid;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -186,24 +183,9 @@ class Unidade extends ModelBase
         return $this->hasMany(UnidadeIntegrante::class);
     }
 
-    public function historicosLotacoes()
-    {
-        return $this->hasMany(HistoricoLotacao::class);
-    }
-
     public function historicosExecutora()
     {
         return $this->hasMany(HistoricoExecutoraUnidade::class);
-    }
-
-    public function historicosFuncoes()
-    {
-        return $this->hasMany(HistoricoFuncao::class);
-    }
-
-    public function curriculunsProfissionais()
-    {
-        return $this->hasMany(CurriculumProfissional::class, 'lotacao_atual');
     }
 
     // Belongs

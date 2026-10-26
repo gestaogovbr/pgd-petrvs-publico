@@ -13,4 +13,5 @@ export class MuralAvisoCardComponent {
   @Input() remetente: string = '';
   @Input() dataFormatada: string = '';
   @Input() horaFormatada: string = '';
+  @Input() lido: boolean = false;
 }

@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\V2\MuralAviso\DTOs;
 
+use App\Enums\MuralAvisoRemetenteTipo;
+use App\Enums\PainelUsuarioNivel;
+
 class MuralAvisoStoreDTO
 {
-    private const NIVEL_ORGAO_CENTRAL = 1;
-
     /**
      * @param list<string> $tenantIds
      */
@@ -25,7 +26,17 @@ class MuralAvisoStoreDTO
 
     public function isOrgaoCentral(): bool
     {
-        return $this->nivelUsuario === self::NIVEL_ORGAO_CENTRAL;
+        return $this->nivelUsuario === PainelUsuarioNivel::ORGAO_CENTRAL->value;
+    }
+
+    public function remetenteTipo(): MuralAvisoRemetenteTipo
+    {
+        return $this->isOrgaoCentral() ? MuralAvisoRemetenteTipo::ORGAO_CENTRAL : MuralAvisoRemetenteTipo::TENANT;
+    }
+
+    public function remetenteTenantId(): ?string
+    {
+        return $this->isOrgaoCentral() ? null : $this->tenantId;
     }
 
     /**

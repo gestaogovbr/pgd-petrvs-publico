@@ -90,6 +90,12 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
         return $this->query()
             ->with([
                 'atividades:id,plano_trabalho_consolidacao_id,plano_trabalho_entrega_id,descricao,created_at,updated_at',
+                'contribuicoes',
+                'contribuicoes.planoTrabalhoEntrega:id,forca_trabalho,descricao',
+                'contribuicoes.planoEntregaEntrega:id,descricao,entrega_id,plano_entrega_id',
+                'contribuicoes.planoEntregaEntrega.entrega:id,nome',
+                'contribuicoes.planoEntregaEntrega.planoEntrega:id,nome,unidade_id',
+                'contribuicoes.planoEntregaEntrega.planoEntrega.unidade:id,codigo,sigla,nome',
                 'avaliacoes:id,plano_trabalho_consolidacao_id,avaliador_id,data_avaliacao,nota,justificativa,recurso,data_recurso,tipo_avaliacao_nota_id',
                 'avaliacoes.avaliador:id,nome',
                 'avaliacoes.tipoAvaliacaoNota:id,aprova',
@@ -100,6 +106,19 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
             ->where('plano_trabalho_id', $planoTrabalhoId)
             ->orderBy('data_inicio')
             ->get();
+    }
+
+    /** @return Collection<int, PlanoTrabalhoConsolidacao> */
+    public function findPeriodosByPlanoTrabalhoId(string $planoTrabalhoId): Collection
+    {
+        /** @var Collection<int, PlanoTrabalhoConsolidacao> $periodos */
+        $periodos = $this->query()
+            ->select(['id', 'plano_trabalho_id', 'data_inicio', 'data_fim'])
+            ->where('plano_trabalho_id', $planoTrabalhoId)
+            ->orderBy('data_inicio')
+            ->get();
+
+        return $periodos;
     }
 
     public function findAllByPlanoTrabalhoIdAndPeriodo(string $planoTrabalhoId, string $dataInicio, string $dataFim): \Illuminate\Database\Eloquent\Collection

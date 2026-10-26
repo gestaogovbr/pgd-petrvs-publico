@@ -69,36 +69,13 @@ describe('PlanoTrabalhoEntregaStoreDTO', function () {
         ]);
     });
 
-    test('consolidacao_id é opcional e não entra na persistência', function () {
-        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'SEM_ENTREGA',
-            'consolidacao_id' => 'cons-1',
-        ], 'plano-1');
-
-        expect($dto->consolidacaoId)->toBe('cons-1')
-            ->and($dto->toArray())->not->toHaveKey('consolidacao_id');
-    });
-
-    test('esforco executado segue planejado quando não informado', function () {
+    test('esforco executado espelha o planejado', function () {
         $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
             'origem' => 'PROPRIA_UNIDADE',
             'plano_entrega_entrega_id' => 'pee-1',
             'forca_trabalho' => 40,
         ], 'plano-1');
 
-        expect($dto->esforcoExecutado)->toBe(40.0)
-            ->and($dto->informouEsforcoExecutado)->toBeFalse();
-    });
-
-    test('esforco executado pode divergir do planejado quando informado', function () {
-        $dto = PlanoTrabalhoEntregaStoreDTO::fromArray([
-            'origem' => 'PROPRIA_UNIDADE',
-            'plano_entrega_entrega_id' => 'pee-1',
-            'forca_trabalho' => 60,
-            'esforco_executado' => 35,
-        ], 'plano-1');
-
-        expect($dto->esforcoExecutado)->toBe(35.0)
-            ->and($dto->informouEsforcoExecutado)->toBeTrue();
+        expect($dto->esforcoExecutado)->toBe(40.0);
     });
 });

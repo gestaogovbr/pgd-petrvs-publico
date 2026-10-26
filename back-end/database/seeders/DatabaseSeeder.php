@@ -21,7 +21,6 @@ class DatabaseSeeder extends Seeder
         PerfilSeeder::class,
         TipoCapacidadeSeeder::class,
         CapacidadeSeeder::class,
-        FuncaoSeeder::class,
         TipoMotivoAfastamentoSeeder::class,
         JobScheduleSeeder::class,
       ]);
@@ -35,7 +34,6 @@ class DatabaseSeeder extends Seeder
         EntidadeSeeder::class,
         UnidadeSeeder::class,
         UsuarioSeeder::class,
-        FuncaoSeeder::class,
         In24_2023Seeder::class,
         TemplateSeeder::class,
         TipoMotivoAfastamentoSeeder::class,

@@ -71,60 +71,6 @@ CREATE TABLE `anexos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `areas_atividades_externas`
---
-
-DROP TABLE IF EXISTS `areas_atividades_externas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `areas_atividades_externas` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome da área',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'area ativo ou inativo',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `areas_conhecimentos`
---
-
-DROP TABLE IF EXISTS `areas_conhecimentos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `areas_conhecimentos` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome da área da graduação',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Área ativa ou inativa',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `areas_tematicas`
---
-
-DROP TABLE IF EXISTS `areas_tematicas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `areas_tematicas` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome da área temática',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Área ativa ou inativa',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `atividades`
 --
 
@@ -408,27 +354,6 @@ CREATE TABLE `capacidades` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `capacidades_tecnicas`
---
-
-DROP TABLE IF EXISTS `capacidades_tecnicas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `capacidades_tecnicas` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome da capacidade técnica',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'capacidade ativo ou inativo',
-  `area_tematica_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `capacidades_tecnicas_area_tematica_id_foreign` (`area_tematica_id`),
-  CONSTRAINT `capacidades_tecnicas_area_tematica_id_foreign` FOREIGN KEY (`area_tematica_id`) REFERENCES `areas_tematicas` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `cargas_individuais_siape_relatorios`
 --
 
@@ -461,29 +386,6 @@ CREATE TABLE `cargas_individuais_siape_relatorios` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `cargos`
---
-
-DROP TABLE IF EXISTS `cargos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `cargos` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome do Cargo',
-  `nivel` varchar(256) DEFAULT NULL COMMENT 'Nível do Cargo',
-  `descricao` varchar(256) DEFAULT NULL COMMENT 'Descrição do Cargo',
-  `siape` varchar(256) DEFAULT NULL COMMENT 'código SIAPE do Cargo',
-  `cbo` varchar(256) DEFAULT NULL COMMENT 'código CBO do Cargo',
-  `efetivo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Cargo efetivo ou comissionado',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Cargo ativo ou inativo',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `catalogo_produtos_servicos`
 --
 
@@ -505,24 +407,6 @@ CREATE TABLE `catalogo_produtos_servicos` (
   KEY `catalogo_produtos_servicos_curador_responsavel_id_foreign` (`curador_responsavel_id`),
   CONSTRAINT `catalogo_produtos_servicos_curador_responsavel_id_foreign` FOREIGN KEY (`curador_responsavel_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
   CONSTRAINT `catalogo_produtos_servicos_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `centros_treinamentos`
---
-
-DROP TABLE IF EXISTS `centros_treinamentos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `centros_treinamentos` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome do centro de treinamento',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Curso ativo ou inativo',
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -635,139 +519,6 @@ CREATE TABLE `comparecimentos` (
   KEY `comparecimentos_unidade_id_foreign` (`unidade_id`),
   CONSTRAINT `comparecimentos_plano_trabalho_consolidacao_id_foreign` FOREIGN KEY (`plano_trabalho_consolidacao_id`) REFERENCES `planos_trabalhos_consolidacoes` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `comparecimentos_unidade_id_foreign` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `curriculuns`
---
-
-DROP TABLE IF EXISTS `curriculuns`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `curriculuns` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `apresentacao` longtext NOT NULL COMMENT 'Apresentação',
-  `telefone` varchar(64) NOT NULL COMMENT 'Telefone',
-  `idiomas` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Idiomas que fala' CHECK (json_valid(`idiomas`)),
-  `estado_civil` varchar(64) DEFAULT NULL COMMENT 'Estado Civil',
-  `quantidade_filhos` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Qtde de filhos',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Curriculum ativa ou inativa',
-  `usuario_id` char(36) NOT NULL,
-  `cidade_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `curriculums_usuario_id_foreign` (`usuario_id`),
-  KEY `curriculums_cidade_id_foreign` (`cidade_id`),
-  CONSTRAINT `curriculums_cidade_id_foreign` FOREIGN KEY (`cidade_id`) REFERENCES `cidades` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `curriculums_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `curriculuns_graduacoes`
---
-
-DROP TABLE IF EXISTS `curriculuns_graduacoes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `curriculuns_graduacoes` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `pretensao` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Pretende fazer o curso',
-  `curriculum_id` char(36) NOT NULL,
-  `curso_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `curriculums_graduacoes_curriculum_id_foreign` (`curriculum_id`),
-  KEY `curriculums_graduacoes_curso_id_foreign` (`curso_id`),
-  CONSTRAINT `curriculums_graduacoes_curriculum_id_foreign` FOREIGN KEY (`curriculum_id`) REFERENCES `curriculuns` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `curriculums_graduacoes_curso_id_foreign` FOREIGN KEY (`curso_id`) REFERENCES `cursos` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `curriculuns_profissionais`
---
-
-DROP TABLE IF EXISTS `curriculuns_profissionais`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `curriculuns_profissionais` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `ano_ingresso` int(11) NOT NULL DEFAULT 0 COMMENT 'Ano de ingresso',
-  `lotacao_atual` varchar(255) DEFAULT NULL COMMENT 'Lotação atual',
-  `especifique_habilidades` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Especifique suas habilidades: (Ex: Desenvolvo em JavaScript)' CHECK (json_valid(`especifique_habilidades`)),
-  `viagem_nacional` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Já fez viagem nacional a trabalho',
-  `viagem_internacional` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Já fez viagem internacional a trabalho',
-  `interesse_bnt` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Você tem interesse na participação do Banco Nacional de Talentos',
-  `pgd_inserido` varchar(255) DEFAULT NULL COMMENT 'Você está inserido no programa de gestão da Instituição',
-  `pgd_interesse` varchar(255) DEFAULT NULL COMMENT 'Você tem interesse em participar do programa de gestão da Instituição',
-  `telefone` varchar(64) DEFAULT NULL COMMENT 'Telefone do chefe imediato',
-  `remocao` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Você tem interesse em remoção',
-  `curriculum_id` char(36) NOT NULL,
-  `centro_treinamento_id` char(36) DEFAULT NULL COMMENT '(DC2Type:guid)',
-  `cargo_id` char(36) NOT NULL,
-  `grupo_especializado_id` char(36) DEFAULT NULL COMMENT '(DC2Type:guid)',
-  PRIMARY KEY (`id`),
-  KEY `curriculums_profissionais_curriculum_id_foreign` (`curriculum_id`),
-  KEY `curriculums_profissionais_centro_treinamento_id_foreign` (`centro_treinamento_id`),
-  KEY `curriculums_profissionais_cargo_id_foreign` (`cargo_id`),
-  KEY `curriculums_profissionais_grupo_especializado_id_foreign` (`grupo_especializado_id`),
-  CONSTRAINT `curriculums_profissionais_cargo_id_foreign` FOREIGN KEY (`cargo_id`) REFERENCES `cargos` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `curriculums_profissionais_centro_treinamento_id_foreign` FOREIGN KEY (`centro_treinamento_id`) REFERENCES `centros_treinamentos` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `curriculums_profissionais_curriculum_id_foreign` FOREIGN KEY (`curriculum_id`) REFERENCES `curriculuns` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `curriculums_profissionais_grupo_especializado_id_foreign` FOREIGN KEY (`grupo_especializado_id`) REFERENCES `grupos_especializados` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `cursos`
---
-
-DROP TABLE IF EXISTS `cursos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `cursos` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome do curso',
-  `titulo` varchar(64) NOT NULL COMMENT 'Titulação do curso->Graduação, Pos, etc',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Curso ativo ou inativo',
-  `area_id` char(36) NOT NULL,
-  `tipo_curso_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `cursos_area_id_foreign` (`area_id`),
-  KEY `cursos_tipo_curso_id_foreign` (`tipo_curso_id`),
-  CONSTRAINT `cursos_area_id_foreign` FOREIGN KEY (`area_id`) REFERENCES `areas_conhecimentos` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `cursos_tipo_curso_id_foreign` FOREIGN KEY (`tipo_curso_id`) REFERENCES `tipos_cursos` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `disciplinas`
---
-
-DROP TABLE IF EXISTS `disciplinas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `disciplinas` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome do curso',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Curso ativo ou inativo',
-  `sigla` varchar(20) DEFAULT NULL COMMENT 'Sigla da disciplina.',
-  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1056,227 +807,6 @@ CREATE TABLE `feriados` (
   KEY `idx_feriados_data` (`ano`,`mes`,`dia`),
   CONSTRAINT `feriados_cidade_id_foreign` FOREIGN KEY (`cidade_id`) REFERENCES `cidades` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `feriados_entidade_id_foreign` FOREIGN KEY (`entidade_id`) REFERENCES `entidades` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `funcoes`
---
-
-DROP TABLE IF EXISTS `funcoes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `funcoes` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome da Função',
-  `nivel` varchar(256) DEFAULT NULL COMMENT 'Nível da Função',
-  `descricao` varchar(256) DEFAULT NULL COMMENT 'Descrição da Função',
-  `siape` varchar(256) DEFAULT NULL COMMENT 'código SIAPE da Função',
-  `cbo` varchar(256) DEFAULT NULL COMMENT 'código CBO da Função',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Função ativo ou inativo',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `grupos_especializados`
---
-
-DROP TABLE IF EXISTS `grupos_especializados`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `grupos_especializados` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome do grupo especializado',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Nome ativo ou inativo',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `historicos_atividades_externas`
---
-
-DROP TABLE IF EXISTS `historicos_atividades_externas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `historicos_atividades_externas` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `curriculum_profissional_id` char(36) NOT NULL,
-  `area_atividade_externa_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_hist_ativ_ext_id_curriculum_prof_id` (`curriculum_profissional_id`),
-  KEY `fk_hist_ativ_ext_id_area_ativ_ext_id` (`area_atividade_externa_id`),
-  CONSTRAINT `fk_hist_ativ_ext_id_area_ativ_ext_id` FOREIGN KEY (`area_atividade_externa_id`) REFERENCES `areas_atividades_externas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_hist_ativ_ext_id_curriculum_prof_id` FOREIGN KEY (`curriculum_profissional_id`) REFERENCES `curriculuns_profissionais` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `historicos_atividades_internas`
---
-
-DROP TABLE IF EXISTS `historicos_atividades_internas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `historicos_atividades_internas` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `curriculum_profissional_id` char(36) NOT NULL,
-  `capacidade_tecnica_id` char(36) NOT NULL,
-  `atividade_desempenhada` varchar(256) DEFAULT NULL COMMENT 'Atividade desempenhada na instituição',
-  PRIMARY KEY (`id`),
-  KEY `fk_hist_ativ_int_id_curriculum_prof_id` (`curriculum_profissional_id`),
-  KEY `fk_capac_tec_id_curriculum_prof_id` (`capacidade_tecnica_id`),
-  CONSTRAINT `fk_capac_tec_id_curriculum_prof_id` FOREIGN KEY (`capacidade_tecnica_id`) REFERENCES `capacidades_tecnicas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_hist_ativ_int_id_curriculum_prof_id` FOREIGN KEY (`curriculum_profissional_id`) REFERENCES `curriculuns_profissionais` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `historicos_cursos_externos`
---
-
-DROP TABLE IF EXISTS `historicos_cursos_externos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `historicos_cursos_externos` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(128) NOT NULL COMMENT 'Nome do curso externo',
-  `pretensao` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Pretende ou não fazer o curso',
-  `curriculum_profissional_id` char(36) NOT NULL,
-  `area_atividade_externa_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_hist_cur_ext_id_curriculum_prof_id` (`curriculum_profissional_id`),
-  KEY `fk_hist_cur_ext_id_area_ativ_id` (`area_atividade_externa_id`),
-  CONSTRAINT `fk_hist_cur_ext_id_area_ativ_id` FOREIGN KEY (`area_atividade_externa_id`) REFERENCES `areas_atividades_externas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_hist_cur_ext_id_curriculum_prof_id` FOREIGN KEY (`curriculum_profissional_id`) REFERENCES `curriculuns_profissionais` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `historicos_cursos_internos`
---
-
-DROP TABLE IF EXISTS `historicos_cursos_internos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `historicos_cursos_internos` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `pretensao` tinyint(4) NOT NULL DEFAULT 0 COMMENT 'Pretende ou não fazer o curso',
-  `curriculum_profissional_id` char(36) NOT NULL,
-  `curso_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_hist_cur_int_id_curriculum_prof_id` (`curriculum_profissional_id`),
-  KEY `fk_hist_cur_int_id_curso_id` (`curso_id`),
-  CONSTRAINT `fk_hist_cur_int_id_curriculum_prof_id` FOREIGN KEY (`curriculum_profissional_id`) REFERENCES `curriculuns_profissionais` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_hist_cur_int_id_curso_id` FOREIGN KEY (`curso_id`) REFERENCES `cursos` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `historicos_docencias_externas`
---
-
-DROP TABLE IF EXISTS `historicos_docencias_externas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `historicos_docencias_externas` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `curriculum_profissional_id` char(36) NOT NULL,
-  `area_atividade_externa_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_hist_docen_ext_id_curriculum_prof_id` (`curriculum_profissional_id`),
-  KEY `fk_hist_docen_ext_id_area_ativ_ext_id` (`area_atividade_externa_id`),
-  CONSTRAINT `fk_hist_docen_ext_id_area_ativ_ext_id` FOREIGN KEY (`area_atividade_externa_id`) REFERENCES `areas_atividades_externas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_hist_docen_ext_id_curriculum_prof_id` FOREIGN KEY (`curriculum_profissional_id`) REFERENCES `curriculuns_profissionais` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `historicos_docencias_internas`
---
-
-DROP TABLE IF EXISTS `historicos_docencias_internas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `historicos_docencias_internas` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `curriculum_profissional_id` char(36) NOT NULL,
-  `disciplina_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_hist_docen_int_id_curriculum_prof_id` (`curriculum_profissional_id`),
-  KEY `historicos_docencias_internas_disciplina_id_foreign` (`disciplina_id`),
-  CONSTRAINT `fk_hist_docen_int_id_curriculum_prof_id` FOREIGN KEY (`curriculum_profissional_id`) REFERENCES `curriculuns_profissionais` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `historicos_docencias_internas_disciplina_id_foreign` FOREIGN KEY (`disciplina_id`) REFERENCES `disciplinas` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `historicos_funcoes`
---
-
-DROP TABLE IF EXISTS `historicos_funcoes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `historicos_funcoes` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `curriculum_profissional_id` char(36) NOT NULL,
-  `funcao_id` char(36) NOT NULL,
-  `unidade_id` text DEFAULT NULL COMMENT 'Unidade em que foi chefe',
-  PRIMARY KEY (`id`),
-  KEY `fk_hist_func_id_curriculum_prof_id` (`curriculum_profissional_id`),
-  KEY `fk_hist_func_id_funcao_id` (`funcao_id`),
-  CONSTRAINT `fk_hist_func_id_curriculum_prof_id` FOREIGN KEY (`curriculum_profissional_id`) REFERENCES `curriculuns_profissionais` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_hist_func_id_funcao_id` FOREIGN KEY (`funcao_id`) REFERENCES `funcoes` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `historicos_lotacoes`
---
-
-DROP TABLE IF EXISTS `historicos_lotacoes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `historicos_lotacoes` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `curriculum_profissional_id` char(36) NOT NULL,
-  `unidade_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_hist_lot_id_curriculum_prof_id` (`curriculum_profissional_id`),
-  KEY `fk_hist_lot_id_unidade_id` (`unidade_id`),
-  CONSTRAINT `fk_hist_lot_id_curriculum_prof_id` FOREIGN KEY (`curriculum_profissional_id`) REFERENCES `curriculuns_profissionais` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_hist_lot_id_unidade_id` FOREIGN KEY (`unidade_id`) REFERENCES `unidades` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2033,6 +1563,7 @@ CREATE TABLE `planos_trabalhos_consolidacoes` (
   `plano_trabalho_id` char(36) NOT NULL,
   `avaliacao_id` char(36) DEFAULT NULL,
   `justificativa_conclusao` text DEFAULT NULL,
+  `justificativa_carga_horaria` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `planos_trabalhos_consolidacoes_plano_trabalho_id_foreign` (`plano_trabalho_id`),
   KEY `planos_trabalhos_consolidacoes_avaliacao_id_foreign` (`avaliacao_id`),
@@ -2640,104 +2171,6 @@ CREATE TABLE `projetos_tarefas_dependencias` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `questionarios`
---
-
-DROP TABLE IF EXISTS `questionarios`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `questionarios` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `tipo` varchar(256) NOT NULL COMMENT 'Tipo interno | personalizado | anonimo',
-  `nome` varchar(256) NOT NULL COMMENT 'Nome do questionário',
-  `codigo` varchar(256) NOT NULL COMMENT 'Código do questionario',
-  `versao` int(11) NOT NULL DEFAULT 1 COMMENT 'Versao do questionario',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `questionarios_perguntas`
---
-
-DROP TABLE IF EXISTS `questionarios_perguntas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `questionarios_perguntas` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `sequencia` tinyint(4) NOT NULL COMMENT 'Sequequencia dos numeros da pergunta no questionario',
-  `pergunta` text NOT NULL COMMENT 'A pergunta do questionario',
-  `tipo` enum('EMOJI','SELECT','MULTI_SELECT','TEXT','TEXT_AREA','TIMER','DATE_TIME','NUMBER','RATE','SWITCH','RADIO','RADIO_INLINE','RADIO_BUTTON','CHECK','SEARCH') DEFAULT NULL,
-  `criado_versao` int(11) NOT NULL COMMENT 'Versão do Questionario que foi criada a pergunta',
-  `deletado_versao` int(11) DEFAULT NULL COMMENT 'Versão do Questionario que foi deletada a pergunta',
-  `respostas_possiveis` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Respostas possiveis para a pergunta' CHECK (json_valid(`respostas_possiveis`)),
-  `questionario_id` char(36) NOT NULL,
-  `origem_id` char(36) DEFAULT NULL,
-  `codigo` text DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `questionarios_perguntas_questionario_id_foreign` (`questionario_id`),
-  KEY `questionarios_perguntas_origem_id_foreign` (`origem_id`),
-  CONSTRAINT `questionarios_perguntas_origem_id_foreign` FOREIGN KEY (`origem_id`) REFERENCES `questionarios_perguntas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `questionarios_perguntas_questionario_id_foreign` FOREIGN KEY (`questionario_id`) REFERENCES `questionarios` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `questionarios_perguntas_respostas`
---
-
-DROP TABLE IF EXISTS `questionarios_perguntas_respostas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `questionarios_perguntas_respostas` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `resposta` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Resposta do questionário' CHECK (json_valid(`resposta`)),
-  `questionario_pergunta_id` char(36) NOT NULL,
-  `questionario_preenchimento_id` char(36) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_questionario_perg_id` (`questionario_pergunta_id`),
-  KEY `fk_questionario_preenchimento_id` (`questionario_preenchimento_id`),
-  CONSTRAINT `fk_questionario_perg_id` FOREIGN KEY (`questionario_pergunta_id`) REFERENCES `questionarios_perguntas` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `fk_questionario_preenchimento_id` FOREIGN KEY (`questionario_preenchimento_id`) REFERENCES `questionarios_preenchimentos` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `questionarios_preenchimentos`
---
-
-DROP TABLE IF EXISTS `questionarios_preenchimentos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `questionarios_preenchimentos` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `data_preenchimento` datetime NOT NULL COMMENT 'Data e hora das respostas',
-  `editavel` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Possibilidade de editar as respostas',
-  `versao` int(11) NOT NULL COMMENT 'Versao do questionario',
-  `questionario_id` char(36) NOT NULL,
-  `usuario_id` char(36) NOT NULL,
-  `resumo_resposta` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'Resumo da resposta do questionario' CHECK (json_valid(`resumo_resposta`)),
-  PRIMARY KEY (`id`),
-  KEY `questionarios_respostas_questionario_id_foreign` (`questionario_id`),
-  KEY `questionarios_respostas_usuario_id_foreign` (`usuario_id`),
-  CONSTRAINT `questionarios_respostas_questionario_id_foreign` FOREIGN KEY (`questionario_id`) REFERENCES `questionarios` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `questionarios_respostas_usuario_id_foreign` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `relatorio_geracoes`
 --
 
@@ -3201,24 +2634,6 @@ CREATE TABLE `tipos_clientes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `tipos_cursos`
---
-
-DROP TABLE IF EXISTS `tipos_cursos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tipos_cursos` (
-  `id` char(36) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL,
-  `nome` varchar(256) NOT NULL COMMENT 'Nome do tipo do curso',
-  `ativo` tinyint(4) NOT NULL DEFAULT 1 COMMENT 'Nome ativo ou inativo',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `tipos_documentos`
 --
 
@@ -3563,6 +2978,35 @@ CREATE TABLE `usuarios` (
   KEY `usuarios_data_agendamento_envio_index` (`data_agendamento_envio`),
   KEY `idx_usuario_siape_reconciliacao` (`cpf`,`deleted_at`,`situacao_siape`,`matricula`),
   CONSTRAINT `usuarios_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfis` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `planos_trabalhos_consolidacoes_contribuicoes`
+--
+
+DROP TABLE IF EXISTS `planos_trabalhos_consolidacoes_contribuicoes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `planos_trabalhos_consolidacoes_contribuicoes` (
+  `id` char(36) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `orgao` varchar(256) DEFAULT NULL,
+  `descricao` text DEFAULT NULL,
+  `esforco_executado` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `registrado_at` datetime DEFAULT NULL,
+  `plano_trabalho_consolidacao_id` char(36) NOT NULL,
+  `plano_trabalho_entrega_id` char(36) DEFAULT NULL,
+  `plano_entrega_entrega_id` char(36) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_ptcc_consolidacao_id` (`plano_trabalho_consolidacao_id`),
+  KEY `fk_ptcc_entrega_id` (`plano_trabalho_entrega_id`),
+  KEY `fk_ptcc_plano_entrega_entrega_id` (`plano_entrega_entrega_id`),
+  CONSTRAINT `fk_ptcc_consolidacao_id` FOREIGN KEY (`plano_trabalho_consolidacao_id`) REFERENCES `planos_trabalhos_consolidacoes` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_ptcc_entrega_id` FOREIGN KEY (`plano_trabalho_entrega_id`) REFERENCES `planos_trabalhos_entregas` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_ptcc_plano_entrega_entrega_id` FOREIGN KEY (`plano_entrega_entrega_id`) REFERENCES `planos_entregas_entregas` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

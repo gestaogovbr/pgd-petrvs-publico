@@ -68,7 +68,7 @@ function mockEntregaRow(array $overrides = []): \stdClass
         'esforco_planejado_horas' => 400.0,
         'esforco_executado_horas' => 200.0,
         'tem_pt_pactuado' => true,
-        'tem_pt_concluido' => true,
+        'tem_execucao_registrada' => true,
     ], $overrides);
 }
 

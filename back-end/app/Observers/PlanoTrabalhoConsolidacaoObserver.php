@@ -5,7 +5,7 @@ namespace App\Observers;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Services\API_PGD\PlanoTrabalhoEnvioService;
 use Illuminate\Support\Facades\Log;
-use App\Exceptions\EnvioNaoAgendadoException;
+use Throwable;
 
 class PlanoTrabalhoConsolidacaoObserver
 {
@@ -29,10 +29,23 @@ class PlanoTrabalhoConsolidacaoObserver
             return;
         }
 
-        try{
+        try {
             PlanoTrabalhoEnvioService::processar(tenant('id'), $model->planoTrabalho, 'PlanoTrabalhoConsolidacao');
-        }catch(EnvioNaoAgendadoException $e) {
-            Log::info("Envio do {$model->planoTrabalho->identificacaoEnvio()} não agendado: " . $e->getMessage());
+        } catch (Throwable $e) {
+            // afterCommit: a mudança de status já foi persistida. Falha no agendamento
+            // de envio à API PGD não deve propagar erro para a requisição do usuário.
+            self::logSeguro(
+                "Falha ao agendar envio do {$model->planoTrabalho?->identificacaoEnvio()}: " . $e->getMessage()
+            );
+        }
+    }
+
+    private static function logSeguro(string $mensagem): void
+    {
+        try {
+            Log::info($mensagem);
+        } catch (Throwable) {
+            error_log($mensagem);
         }
     }
 }

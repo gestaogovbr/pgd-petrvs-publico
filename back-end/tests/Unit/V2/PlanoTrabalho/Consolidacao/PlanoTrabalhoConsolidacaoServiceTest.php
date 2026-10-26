@@ -161,10 +161,11 @@ describe('PlanoTrabalhoConsolidacaoService::concluir', function () {
         $consolidacao->shouldReceive('refresh')->once()->andReturnSelf();
 
         $this->concluirValidator->shouldReceive('validar')
-            ->with($plano, 'consolidacao-1')->andReturn($consolidacao);
+            ->with($plano, 'consolidacao-1', null)->andReturn($consolidacao);
 
         $this->consolidacaoRepo->shouldReceive('update')
-            ->with('consolidacao-1', Mockery::on(fn (array $attrs) => isset($attrs['data_conclusao'])))
+            ->with('consolidacao-1', Mockery::on(fn (array $attrs) => array_key_exists('data_conclusao', $attrs)
+                && array_key_exists('justificativa_carga_horaria', $attrs)))
             ->once();
 
         $this->statusService->shouldReceive('atualizaStatus')

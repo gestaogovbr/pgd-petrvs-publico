@@ -167,7 +167,7 @@ describe('MuralAvisoService::update', function () {
 
         $this->storeValidator->shouldReceive('validar')
             ->once()
-            ->with($dto);
+            ->with($dto, 'aviso-1');
 
         $avisoAtualizado = Mockery::mock(MuralAviso::class)->makePartial();
         $avisoAtualizado->id = 'aviso-1';
@@ -216,17 +216,17 @@ describe('MuralAvisoService::destroy', function () {
     });
 });
 
-describe('MuralAvisoService::pendentes', function () {
+describe('MuralAvisoService::vigentes', function () {
 
-    test('retorna DTOs de avisos pendentes quando usuário nunca confirmou', function () {
+    test('retorna avisos vigentes com lido=false quando usuário nunca confirmou', function () {
         $this->leituraRepository->shouldReceive('findByUsuarioId')
             ->once()
             ->with('user-1')
             ->andReturn(null);
 
-        $this->repository->shouldReceive('findPendentes')
+        $this->repository->shouldReceive('findVigentes')
             ->once()
-            ->with('tenant-1', null)
+            ->with('tenant-1')
             ->andReturn([
                 [
                     'id' => 'aviso-1',
@@ -238,36 +238,147 @@ describe('MuralAvisoService::pendentes', function () {
                 ],
             ]);
 
-        $result = $this->service->pendentes('user-1', 'tenant-1');
+        $result = $this->service->vigentes('user-1', 'tenant-1', true);
 
         expect($result)->toHaveCount(1);
         expect($result[0])->toBeInstanceOf(MuralAvisoPendenteDTO::class);
         expect($result[0]->remetente)->toBe('Órgão Central');
+        expect($result[0]->lido)->toBeFalse();
     });
 
-    test('usa data_confirmacao quando leitura existe', function () {
+    test('marca lido=true quando data_publicacao <= data_confirmacao', function () {
         $leitura = Mockery::mock(MuralAvisoLeitura::class)->makePartial();
-        $leitura->data_confirmacao = now()->subDay();
+        $leitura->data_confirmacao = new \DateTimeImmutable('2026-01-02 00:00:00');
 
         $this->leituraRepository->shouldReceive('findByUsuarioId')
             ->once()
             ->with('user-1')
             ->andReturn($leitura);
 
-        $this->repository->shouldReceive('findPendentes')
+        $this->repository->shouldReceive('findVigentes')
             ->once()
-            ->with('tenant-1', Mockery::type(\DateTimeInterface::class))
-            ->andReturn([]);
+            ->with('tenant-1')
+            ->andReturn([
+                [
+                    'id' => 'aviso-1',
+                    'titulo' => 'Lido',
+                    'conteudo' => 'Conteúdo',
+                    'remetente_tipo' => MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value,
+                    'remetente_tenant_id' => null,
+                    'data_publicacao' => '2026-01-01 10:00:00',
+                ],
+                [
+                    'id' => 'aviso-2',
+                    'titulo' => 'Não lido',
+                    'conteudo' => 'Conteúdo',
+                    'remetente_tipo' => MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value,
+                    'remetente_tenant_id' => null,
+                    'data_publicacao' => '2026-01-03 10:00:00',
+                ],
+            ]);
 
-        $result = $this->service->pendentes('user-1', 'tenant-1');
+        $result = $this->service->vigentes('user-1', 'tenant-1', true);
 
-        expect($result)->toBeEmpty();
+        expect($result)->toHaveCount(2);
+        // Lidos vão para o final: o não lido (aviso-2) vem primeiro.
+        expect($result[0]->id)->toBe('aviso-2');
+        expect($result[0]->lido)->toBeFalse();
+        expect($result[1]->id)->toBe('aviso-1');
+        expect($result[1]->lido)->toBeTrue();
     });
 
-    test('resolve remetente como nome do tenant quando tipo TENANT', function () {
+    test('mantém ordem dos não lidos e empurra lidos para o final', function () {
+        $leitura = Mockery::mock(MuralAvisoLeitura::class)->makePartial();
+        $leitura->data_confirmacao = new \DateTimeImmutable('2026-01-05 00:00:00');
+
+        $this->leituraRepository->shouldReceive('findByUsuarioId')
+            ->once()
+            ->with('user-1')
+            ->andReturn($leitura);
+
+        // Ordem já vinda do repositório (Órgão Central primeiro, depois data desc).
+        $this->repository->shouldReceive('findVigentes')
+            ->once()
+            ->with('tenant-1')
+            ->andReturn([
+                [
+                    'id' => 'oc-lido',
+                    'titulo' => 'OC lido',
+                    'conteudo' => 'c',
+                    'remetente_tipo' => MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value,
+                    'remetente_tenant_id' => null,
+                    'data_publicacao' => '2026-01-01 10:00:00',
+                ],
+                [
+                    'id' => 'oc-nao-lido',
+                    'titulo' => 'OC não lido',
+                    'conteudo' => 'c',
+                    'remetente_tipo' => MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value,
+                    'remetente_tenant_id' => null,
+                    'data_publicacao' => '2026-01-10 10:00:00',
+                ],
+                [
+                    'id' => 'tenant-nao-lido',
+                    'titulo' => 'Tenant não lido',
+                    'conteudo' => 'c',
+                    'remetente_tipo' => MuralAvisoRemetenteTipo::TENANT->value,
+                    'remetente_tenant_id' => 'tenant-1',
+                    'data_publicacao' => '2026-01-08 10:00:00',
+                ],
+            ]);
+
+        $this->tenantRepository->shouldReceive('findById')->andReturn(null);
+
+        $result = $this->service->vigentes('user-1', 'tenant-1', true);
+
+        $ids = array_map(fn ($dto) => $dto->id, $result);
+
+        // Não lidos preservam a ordem original; o lido (oc-lido) vai para o fim.
+        expect($ids)->toBe(['oc-nao-lido', 'tenant-nao-lido', 'oc-lido']);
+    });
+
+    test('omite avisos lidos quando incluirLidos é falso', function () {
+        $leitura = Mockery::mock(MuralAvisoLeitura::class)->makePartial();
+        $leitura->data_confirmacao = new \DateTimeImmutable('2026-01-02 00:00:00');
+
+        $this->leituraRepository->shouldReceive('findByUsuarioId')
+            ->once()
+            ->with('user-1')
+            ->andReturn($leitura);
+
+        $this->repository->shouldReceive('findVigentes')
+            ->once()
+            ->with('tenant-1')
+            ->andReturn([
+                [
+                    'id' => 'aviso-1',
+                    'titulo' => 'Lido',
+                    'conteudo' => 'Conteúdo',
+                    'remetente_tipo' => MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value,
+                    'remetente_tenant_id' => null,
+                    'data_publicacao' => '2026-01-01 10:00:00',
+                ],
+                [
+                    'id' => 'aviso-2',
+                    'titulo' => 'Não lido',
+                    'conteudo' => 'Conteúdo',
+                    'remetente_tipo' => MuralAvisoRemetenteTipo::ORGAO_CENTRAL->value,
+                    'remetente_tenant_id' => null,
+                    'data_publicacao' => '2026-01-03 10:00:00',
+                ],
+            ]);
+
+        $result = $this->service->vigentes('user-1', 'tenant-1', false);
+
+        expect($result)->toHaveCount(1);
+        expect($result[0]->id)->toBe('aviso-2');
+        expect($result[0]->lido)->toBeFalse();
+    });
+
+    test('resolve remetente como id do tenant quando tipo TENANT', function () {
         $this->leituraRepository->shouldReceive('findByUsuarioId')->andReturn(null);
 
-        $this->repository->shouldReceive('findPendentes')
+        $this->repository->shouldReceive('findVigentes')
             ->andReturn([
                 [
                     'id' => 'aviso-1',
@@ -286,7 +397,7 @@ describe('MuralAvisoService::pendentes', function () {
             ->with('tenant-x')
             ->andReturn($tenant);
 
-        $result = $this->service->pendentes('user-1', 'tenant-1');
+        $result = $this->service->vigentes('user-1', 'tenant-1', true);
 
         expect($result[0]->remetente)->toBe('tenant-x');
     });
