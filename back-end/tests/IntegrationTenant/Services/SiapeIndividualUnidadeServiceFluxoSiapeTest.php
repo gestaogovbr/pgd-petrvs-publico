@@ -226,6 +226,53 @@ describe('SiapeIndividualUnidadeService::fluxoSiape', function () {
         expect($resumo[0]['chefe_cpf'])->toBe('00000000000');
     });
 
+    test('issue 2689 - resumo sinaliza hierarquia divergente apos carga individual', function () {
+        $pai = Unidade::factory()->create(['codigo' => '74001']);
+        $filha = Unidade::factory()->create([
+            'codigo' => '74002',
+            'unidade_pai_id' => null,
+        ]);
+
+        $this->mockIntegracaoService->shouldReceive('sincronizar')
+            ->times(Entidade::query()->count())
+            ->andReturn([]);
+        $this->mockBuscarUnidade->shouldReceive('executaRequisicao')
+            ->andReturn(xmlUnidadeResponse($filha->codigo, null, $pai->codigo));
+
+        $service = app(SiapeIndividualUnidadeService::class);
+        $service->fluxoSiape($filha->codigo, $this->mockSiapeService);
+
+        $resumo = $service->getResumo();
+
+        expect($resumo[0]['status'])->toBe('parcial');
+        expect($resumo[0]['unidade_pai_id'])->toBeNull();
+        expect($resumo[0]['mensagem'])->toContain('hierarquia');
+    });
+
+    test('issue 2689 - falha na etapa :dataset nao gera resumo de sucesso com pai correto', function (string $etapa) {
+        $pai = Unidade::factory()->create(['codigo' => '74101']);
+        $filha = Unidade::factory()->create([
+            'codigo' => '74102',
+            'unidade_pai_id' => $pai->id,
+        ]);
+
+        $resultado = array_fill_keys(IntegracaoService::ETAPAS_RESULTADO, ['Resultado' => IntegracaoService::RESULTADO_ETAPA_SUCESSO]);
+        $resultado[$etapa]['Resultado'] = 'ERRO: falha na atualização';
+
+        $this->mockIntegracaoService->shouldReceive('sincronizar')
+            ->times(Entidade::query()->count())
+            ->andReturn(json_encode($resultado));
+        $this->mockBuscarUnidade->shouldReceive('executaRequisicao')
+            ->andReturn(xmlUnidadeResponse($filha->codigo, null, $pai->codigo));
+
+        $service = app(SiapeIndividualUnidadeService::class);
+        $service->fluxoSiape($filha->codigo, $this->mockSiapeService);
+
+        expect($service->getResumo()[0]['status'])->toBe('parcial');
+        expect($service->getResumo()[0]['mensagem'])->toContain('pendências');
+        expect($service->getRelatorioCarga()['status'])->toBe('parcial');
+    })->with(IntegracaoService::ETAPAS_RESULTADO);
+
     test('resumo identifica unidade nova criada durante sincronizacao', function () {
         $base = fake()->numberBetween(100000, 800000);
         $codigoPai = (string) $base;
@@ -597,12 +644,15 @@ describe('POST /api/unidade/relatorio-processamento-siape', function () {
     });
 });
 
-function xmlUnidadeResponse(string $codigo, ?string $cpfTitular = null): string
+function xmlUnidadeResponse(string $codigo, ?string $cpfTitular = null, ?string $codigoPai = null): string
 {
     $codUorg = str_pad($codigo, 6, '0', STR_PAD_LEFT);
     $cpfTitularXml = $cpfTitular === null
         ? ''
         : "<cpfTitularAutoridadeUorg xmlns=\"http://entidade.wssiapenet\">$cpfTitular</cpfTitularAutoridadeUorg>";
+    $codigoPaiXml = $codigoPai === null
+        ? ''
+        : "<codUorgPai xmlns=\"http://entidade.wssiapenet\">$codigoPai</codUorgPai>";
 
     return <<<XML
     <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
@@ -610,6 +660,7 @@ function xmlUnidadeResponse(string $codigo, ?string $cpfTitular = null): string
             <ns1:dadosUorgResponse xmlns:ns1="http://servico.wssiapenet">
                 <out xmlns="">
                     <codUorg xmlns="http://entidade.wssiapenet">$codUorg</codUorg>
+                    $codigoPaiXml
                     $cpfTitularXml
                 </out>
             </ns1:dadosUorgResponse>

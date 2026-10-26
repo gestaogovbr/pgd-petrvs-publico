@@ -44,6 +44,8 @@ interface PlanoTrabalhoReadRepositoryContract
 
     public function findByIdForUpdate(string|int $id): ?PlanoTrabalho;
 
+    public function findByIdForUpdateComPrograma(string|int $id): ?PlanoTrabalho;
+
     public function possuiAssinatura(string $planoId): bool;
 
     public function loadRelacoesClonar(PlanoTrabalho $plano): PlanoTrabalho;

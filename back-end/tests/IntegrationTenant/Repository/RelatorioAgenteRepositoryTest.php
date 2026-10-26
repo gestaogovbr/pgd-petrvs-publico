@@ -249,13 +249,9 @@ test('filtro por plano_entrega_entrega_id exclui participante cujo único PT est
         'plano_entrega_entrega_id' => $entrega->id,
     ]);
 
-    $result = $this->repository->query([
-        'where' => [
-            ['unidade_id', '==', $this->unidade->id],
-            ['plano_entrega_entrega_id', '==', $entrega->id],
-        ],
-        'page' => 1,
-        'limit' => 10,
+    $result = queryAgente([
+        'unidade_id' => $this->unidade->id,
+        'plano_entrega_entrega_id' => $entrega->id,
     ]);
 
     $ids = $result['rows']->pluck('id')->toArray();

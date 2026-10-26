@@ -9,6 +9,12 @@ namespace App\Repository\Unidade\Contracts;
  */
 interface UnidadeWriteRepositoryContract
 {
+    /** @param array<string, mixed> $attributes */
+    public function inserirDaIntegracao(array $attributes): void;
+
+    /** @param array<string, mixed> $attributes */
+    public function atualizarDaIntegracao(string $id, array $attributes): int;
+
     public function cancelarInicioInativacaoPorCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): int;
 
     public function reativarPorCodigoOrgaoCodigo(string $codigoOrgao, string $codigo): int;

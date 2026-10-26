@@ -29,9 +29,6 @@ class UpdateModelCommand extends Command
   protected $ignoreFiles = [
     "ModelBase.php",
     "DocumentoLink.php",
-    "HistoricoAtividadeExterna.php",
-    "HistoricoFuncao.php",
-    "HistoricoLotacao.php",
     "NotificacaoConfig.php"
   ];
 

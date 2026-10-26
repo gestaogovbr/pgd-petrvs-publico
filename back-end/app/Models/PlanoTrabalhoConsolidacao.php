@@ -54,6 +54,7 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
     'plano_trabalho_id', /* char(36); NOT NULL; */
     'data_conclusao', /* date; NULL; */
     'status', /* enum('INCLUIDO','CONCLUIDO','AVALIADO'); */// Status atual da consolidação
+    'justificativa_carga_horaria', /* text; NULL; */ // Justificativa quando a carga horária executada diverge da planejada
     //'avaliacao_id', /* char(36); */
     //'deleted_at', /* timestamp; */
   ];
@@ -101,6 +102,12 @@ class PlanoTrabalhoConsolidacao extends ModelBase implements HasStatusHistory
   public function atividadesConsolidadas(): HasMany
   {
     return $this->hasMany(PlanoTrabalhoConsolidacaoAtividade::class, 'plano_trabalho_consolidacao_id');
+  }
+
+  // Contribuições de execução registradas neste período avaliativo
+  public function contribuicoes(): HasMany
+  {
+    return $this->hasMany(PlanoTrabalhoConsolidacaoContribuicao::class, 'plano_trabalho_consolidacao_id');
   }
 
   // Belongs

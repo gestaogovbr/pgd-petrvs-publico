@@ -23,6 +23,18 @@ class UnidadeRepository
     ) {
     }
 
+    /** @param array<string, mixed> $attributes */
+    public function inserirDaIntegracao(array $attributes): void
+    {
+        $this->writeRepository->inserirDaIntegracao($attributes);
+    }
+
+    /** @param array<string, mixed> $attributes */
+    public function atualizarDaIntegracao(string $id, array $attributes): int
+    {
+        return $this->writeRepository->atualizarDaIntegracao($id, $attributes);
+    }
+
     public function hasUsuarioLotacao(string $unidadeId, string $usuarioId, bool $subordinadas = true): bool
     {
         return $this->readRepository->hasUsuarioLotacao($unidadeId, $usuarioId, $subordinadas);

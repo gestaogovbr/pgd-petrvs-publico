@@ -15,6 +15,7 @@ use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\PlanoTrabalhoRepository;
 use App\V2\StatusService;
 use App\V2\PlanoTrabalho\Consolidacao\GeradorPeriodosAvaliativos;
+use App\V2\PlanoTrabalho\Consolidacao\CopiadorContribuicoesExecucao;
 use App\Models\Documento;
 use App\Models\DocumentoAssinatura;
 use App\Models\PlanoTrabalho;
@@ -44,6 +45,7 @@ beforeEach(function () {
     $this->renderer = Mockery::mock(TCRTemplateRenderer::class);
     $this->statusService = Mockery::mock(StatusService::class);
     $this->geradorPeriodos = Mockery::mock(GeradorPeriodosAvaliativos::class);
+    $this->copiadorContribuicoes = Mockery::mock(CopiadorContribuicoesExecucao::class);
 
     $this->service = new PlanoTrabalhoDocumentoService(
         $this->documentoRepo,
@@ -58,6 +60,7 @@ beforeEach(function () {
         $this->renderer,
         $this->statusService,
         $this->geradorPeriodos,
+        $this->copiadorContribuicoes,
     );
 
     /** @var PlanoTrabalho $plano */
@@ -287,6 +290,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
             ->with($this->plano, StatusEnum::AGUARDANDO_ASSINATURA->value, Mockery::type('string'));
 
         $this->geradorPeriodos->shouldNotReceive('gerar');
+        $this->copiadorContribuicoes->shouldNotReceive('copiar');
 
         expect($this->service->assinar('plano-1'))->toBe($assinatura);
     });
@@ -317,6 +321,7 @@ describe('PlanoTrabalhoDocumentoService::assinar', function () {
             ->with($this->plano, StatusEnum::ATIVO->value, Mockery::type('string'));
 
         $this->geradorPeriodos->shouldReceive('gerar')->once()->with($this->plano);
+        $this->copiadorContribuicoes->shouldReceive('copiar')->once()->with($this->plano);
 
         expect($this->service->assinar('plano-1'))->toBe($assinatura);
     });

@@ -4,6 +4,7 @@ namespace Tests\IntegrationTenant\Controllers\V2;
 
 use App\V2\PlanoTrabalho\Consolidacao\PlanoTrabalhoConsolidacaoController;
 use App\V2\PlanoTrabalho\Consolidacao\Atividade\AtividadeController;
+use App\V2\PlanoTrabalho\Consolidacao\Contribuicao\ContribuicaoExecucaoController;
 use App\V2\PlanoTrabalho\Documento\DocumentoController;
 use App\Models\Entrega;
 use App\Models\Perfil;
@@ -63,6 +64,13 @@ beforeEach(function () {
         )->name('__tests.v2.atividade.store');
     }
 
+    if (!Route::has('__tests.v2.contribuicao.update')) {
+        Route::middleware(['api'])->put(
+            '/api/__tests/v2/plano-trabalho/{planoTrabalhoId}/consolidacao/{consolidacaoId}/contribuicao/{contribuicaoId}',
+            [ContribuicaoExecucaoController::class, 'update']
+        )->name('__tests.v2.contribuicao.update');
+    }
+
     $perfil = Perfil::factory()->create(['nivel' => 3]);
     $this->unidade = Unidade::factory()->create();
     $this->usuario = Usuario::factory()->create([
@@ -97,6 +105,8 @@ beforeEach(function () {
         'plano_entrega_id' => $planoEntrega->id,
         'entrega_id' => $entregaCatalogo->id,
         'unidade_id' => $this->unidade->id,
+        'data_inicio' => '2025-01-01',
+        'data_fim' => '2025-06-30',
     ]);
 
     PlanoTrabalhoEntrega::factory()->create([
@@ -126,13 +136,29 @@ function ativarEObterConsolidacao($context): string
 
 function concluirConsolidacao($context, string $consolidacaoId): void
 {
-    $context->postJson(
-        "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/atividade",
-        ['plano_trabalho_entrega_id' => $context->entrega->id, 'descricao' => 'Trabalho executado', 'esforco_executado' => 100]
-    )->assertSuccessful();
+    registrarContribuicoes($context, $consolidacaoId);
     $context->patchJson(
         "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/concluir"
     )->assertSuccessful();
+}
+
+function registrarContribuicoes($context, string $consolidacaoId): void
+{
+    $contribuicoes = \App\Models\PlanoTrabalhoConsolidacaoContribuicao::query()
+        ->where('plano_trabalho_consolidacao_id', $consolidacaoId)
+        ->get();
+
+    foreach ($contribuicoes as $contribuicao) {
+        $context->putJson(
+            "/api/__tests/v2/plano-trabalho/{$context->plano->id}/consolidacao/{$consolidacaoId}/contribuicao/{$contribuicao->id}",
+            [
+                'origem' => 'PROPRIA_UNIDADE',
+                'plano_entrega_entrega_id' => $contribuicao->plano_entrega_entrega_id,
+                'descricao' => 'Trabalho executado',
+                'esforco_executado' => $contribuicao->esforco_executado,
+            ]
+        )->assertSuccessful();
+    }
 }
 
 // ── GET consolidacao ────────────────────────────────────────────────
