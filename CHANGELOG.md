@@ -1,6 +1,19 @@
 ## 3.2.3 26/10/2026
 
+### Adicionado
+- Plano de Trabalho: a execução deixa de ficar presa ao planejamento. Cada período avaliativo passa a ter as suas próprias contribuições, copiadas do planejamento quando o plano entra em execução, e o participante pode incluir, alterar e excluir contribuições durante o período
+- Mural de Avisos: o botão de acesso volta a ficar disponível na Home
+
+### Modificado
+- Trabalho Executado passa a ser contabilizado por período avaliativo, e não mais pelo total do plano; o painel da árvore institucional passa a somar os períodos a partir de "Aguardando Avaliação", considerando o percentual sobre a carga horária de cada período
+- A conclusão do período passa a exigir que todas as contribuições tenham o trabalho executado registrado e solicita justificativa própria quando a carga horária executada divergir da planejada
+- Publicação de avisos no mural fica limitada a 3 avisos por mês por emissor (Órgão Central e tenant), na criação e na edição
+- Avisos vigentes passam a ser ordenados com os do Órgão Central primeiro e os mais recentes no topo; os já lidos vão para o final e são destacados visualmente
+- Gestão de avisos do mural passa a ser restrita ao configurador: avisos globais e avisos emitidos pelo Órgão Central não aparecem para gestão nem podem ser alterados ou excluídos pelo tenant
+
 ### Corrigido
+- Planejamento volta a ser imutável após a ativação do Plano de Trabalho
+- Conclusão do período avaliativo deixa de falhar por erro no agendamento de envio à API do PGD
 - Criação de Plano de Trabalho deixa de falhar no navegador com a resposta cortada pelo proxy de produção: o Apache volta a enviar o tamanho da resposta, e o plano gravado deixa de aparecer como erro
 
 ### Removido
