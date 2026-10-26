@@ -1,5 +1,11 @@
 ## 3.2.3 26/10/2026
 
+### Corrigido
+- A carga individual do SIAPE passa a atualizar a hierarquia de unidades já cadastradas como raiz quando o SIAPE informa uma unidade superior
+- Quando a unidade superior não é encontrada, a carga registra a pendência e continua a processar as demais unidades
+
+## 3.2.3 26/10/2026
+
 ### Adicionado
 - Plano de Trabalho: a execução deixa de ficar presa ao planejamento. Cada período avaliativo passa a ter as suas próprias contribuições, copiadas do planejamento quando o plano entra em execução, e o participante pode incluir, alterar e excluir contribuições durante o período
 - Mural de Avisos: o botão de acesso volta a ficar disponível na Home

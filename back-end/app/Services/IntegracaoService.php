@@ -22,6 +22,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\UnidadeIntegrante;
 use App\Repository\IntegracaoServidorRepository;
+use App\Repository\IntegracaoUnidadeRepository;
+use App\Repository\UnidadeRepository;
 use App\Repository\UnidadeIntegranteAtribuicaoRepository;
 use App\Repository\UsuarioRepository;
 use App\Services\Siape\Gestor\Integracao as GestorIntegracao;
@@ -43,6 +45,14 @@ class IntegracaoService extends ServiceBase
   use LogTrait;
 
   const CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI = 999999;
+  private const CODIGO_SIAPE_PAI_NAO_INFORMADO = '';
+  public const RESULTADO_ETAPA_SUCESSO = 'Sucesso';
+  public const RESULTADO_UNIDADES_PARCIAL = 'Parcial';
+  public const RESULTADO_UNIDADES_ERRO_PREFIXO = 'ERRO: ';
+  public const ETAPAS_RESULTADO = ['unidades', 'servidores', 'gestores'];
+
+  private IntegracaoUnidadeRepository $integracaoUnidadeRepository;
+  private UnidadeRepository $unidadeRepository;
 
   public $unidadesInseridas = [];
   public $unidadesSelecionadas = [];
@@ -84,6 +94,8 @@ class IntegracaoService extends ServiceBase
       'O Código do Órgão da API Consulta SIAPE é obrigatório para executar a integração.'
     );
     $this->nivelAcessoService = new NivelAcessoService();
+    $this->integracaoUnidadeRepository = app(IntegracaoUnidadeRepository::class);
+    $this->unidadeRepository = app(UnidadeRepository::class);
   }
 
   private function loadingTenantConfigurationMiddleware($tenantId): void
@@ -150,7 +162,7 @@ class IntegracaoService extends ServiceBase
    */
   public function buscaOuInserePai($unidade, $entidade_id)
   {
-    if (empty($unidade->pai_servo)) {
+    if ($this->codigoPaiSiapeEfetivo($unidade->pai_servo) === null) {
       return ["unidade_id" => null, "path" => ""];
     } else if (!empty($unidade->unidade_pai_id)) {
       return ["unidade_id" => $unidade->unidade_pai_id, "path" => $unidade->path_pai];
@@ -159,6 +171,17 @@ class IntegracaoService extends ServiceBase
     } else if ($pai = current(array_filter($this->unidadesSelecionadas, fn($element) => $element->id_servo == $unidade->pai_servo))) {
       return $this->deepReplaceUnidades($pai, $entidade_id);
     }
+
+    throw new BadGatewayException(sprintf("Unidade pai %s não encontrada para a unidade %s", $unidade->pai_servo, $unidade->id_servo));
+  }
+
+  private function codigoPaiSiapeEfetivo(?string $codigoPai): ?string
+  {
+    if ($codigoPai === null || $codigoPai === self::CODIGO_SIAPE_PAI_NAO_INFORMADO || $codigoPai === (string) self::CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI) {
+      return null;
+    }
+
+    return $codigoPai;
   }
 
   /**
@@ -187,7 +210,6 @@ class IntegracaoService extends ServiceBase
     // Prepara os principais atributos da Unidade.
     $values = [
       ':codigo' => $unidade->id_servo,
-      ':codigo_orgao' => $this->codigoOrgao,
       ':nome' => $unidade->nomeuorg,
       ':sigla' => $unidade->siglauorg,
       ':cidade_id' => $unidade->cidade_id
@@ -200,19 +222,15 @@ class IntegracaoService extends ServiceBase
         $values[':id'] = Uuid::uuid4();
         $values[':path'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["path"] . "/" . $dados_path_pai["unidade_id"] : "";
         $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
-        $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
-        $unidadeJaExisteNoBanco = Unidade::where('codigo_orgao', $this->codigoOrgao)
-          ->where("codigo", $unidade->id_servo)
-          ->first();
+        $unidadeJaExisteNoBanco = $this->unidadeRepository->findByCodigoOrgao($this->codigoOrgao, $unidade->id_servo);
         if ($unidadeJaExisteNoBanco) {
           throw new BadGatewayException(sprintf("Já existe uma unidade para o código %s", $unidade->id_servo));
         }
-        try {
-          $id = Unidade::insertGetId([
+        $this->unidadeRepository->inserirDaIntegracao([
             'id' => $values[':id'],
             'path' => $values[':path'],
             'codigo' => $values[':codigo'],
-            'codigo_orgao' => $values[':codigo_orgao'],
+            'codigo_orgao' => $this->codigoOrgao,
             'unidade_antiga' => false,
             'nome' => $values[':nome'],
             'sigla' => $values[':sigla'],
@@ -231,15 +249,12 @@ class IntegracaoService extends ServiceBase
             'created_at' => $timenow,
             'updated_at' => $timenow,
             'data_modificacao' => $values[':data_modificacao'],
-          ]);
-        } catch (Throwable $e) {
-          Log::error(sprintf("Erro ao inserir Unidade %s: %s", $values[':codigo'], $e->getMessage()), throwableToArray($e));
-          LogError::newWarn("Erro ao inserir Unidade", $values);
-        }
+        ]);
+        $this->unidadesInseridas[$unidade->id_servo] = ["unidade_id" => $values[':id'], "path" => $values[':path']];
         return $this->unidadesInseridas[$unidade->id_servo];
       }
     } // Só entra aqui se a Unidade já existir e ocorreu mudança no Pai. Nesse caso, muda o pai da Unidade e atualiza Nome e Sigla.
-    else if (($unidade->pai_servo != $unidade->codigo_pai_antigo) && ($unidade->id != $unidade->id_pai_antigo)) {
+    else if (($this->codigoPaiSiapeEfetivo($unidade->pai_servo) != $unidade->codigo_pai_antigo) && ($unidade->id != $unidade->id_pai_antigo)) {
       $values[':id'] = $unidade->id;
       // Prepara apenas os atributos que precisam ser atualizados.
       $dados_path_pai = $this->buscaOuInserePai($unidade, $entidade_id);
@@ -247,36 +262,34 @@ class IntegracaoService extends ServiceBase
       $values[':unidade_id'] = !empty($dados_path_pai["unidade_id"]) ? $dados_path_pai["unidade_id"] : null;
       $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
 
-      $sql = "UPDATE unidades SET path = :path, unidade_pai_id = :unidade_id, codigo = :codigo, " .
-        "nome = :nome, sigla = :sigla, cidade_id = :cidade_id, data_modificacao = :data_modificacao WHERE id = :id";
-      $updateValues = $values;
-      unset($updateValues[':codigo_orgao']);
-      DB::update($sql, $updateValues);
+      $this->unidadeRepository->atualizarDaIntegracao((string) $values[':id'], [
+        'path' => $values[':path'],
+        'unidade_pai_id' => $values[':unidade_id'],
+        'codigo' => $values[':codigo'],
+        'nome' => $values[':nome'],
+        'sigla' => $values[':sigla'],
+        'cidade_id' => $values[':cidade_id'],
+        'data_modificacao' => $values[':data_modificacao'],
+      ]);
 
       array_push($this->paisAlterados, $unidade);
 
       // Atualiza os paths dos filhos.
       $antes = $unidade->path_antigo . "/" . $unidade->id;
-      if (!empty(DB::select("select count(*) from unidades where path = '" . $antes . "'"))) {
-        $depois = $values[':path'] . "/" . $unidade->id;
-        $like = $antes . "%";
-
-        $n = DB::update('UPDATE unidades SET path = REPLACE(path, :antes, :depois) WHERE path LIKE :like', [
-          ':antes' => $antes,
-          ':depois' => $depois,
-          ':like' => $like
-        ]);
-        $this->filhasAlteradas += $n;
-      }
+      $depois = $values[':path'] . "/" . $unidade->id;
+      $this->filhasAlteradas += $this->unidadeRepository->recalcularPaths($antes, $depois);
       return ["unidade_id" => $values[':id'], "path" => $values[':path']];
     } else { // Só entra aqui se a Unidade já existir e não tiver mudado o Pai. Nesse caso, atualiza apenas os outros dados (Nome, Sigla).
       $values[':id'] = $unidade->id;
       $values[':data_modificacao'] = UtilService::asDateTime($unidade->data_modificacao_siape);
 
-      $sql = "UPDATE unidades SET codigo = :codigo, nome = :nome, sigla = :sigla, cidade_id = :cidade_id,  data_modificacao = :data_modificacao WHERE id = :id";
-      $updateValues = $values;
-      unset($updateValues[':codigo_orgao']);
-      DB::update($sql, $updateValues);
+      $this->unidadeRepository->atualizarDaIntegracao((string) $values[':id'], [
+        'codigo' => $values[':codigo'],
+        'nome' => $values[':nome'],
+        'sigla' => $values[':sigla'],
+        'cidade_id' => $values[':cidade_id'],
+        'data_modificacao' => $values[':data_modificacao'],
+      ]);
       array_push($this->unidadesAlteradas, $unidade);
       return ["unidade_id" => $values[':id'], "path" => $unidade->path_antigo];
     }
@@ -549,43 +562,26 @@ class IntegracaoService extends ServiceBase
          * todas as Unidades do SIAPE, de todas as agências que usarão o sistema. O ideal é essa consulta_sql utilizar um parâmetro de
          * identificação da entidade, presente no arquivo de configuração.
          */
-        $this->unidadesSelecionadas = [];
-        $consulta_sql = "" .
-          "SELECT iu.id_servo, u.codigo as codigo_antigo, " .
-          "iu.nomeuorg, u.nome as nome_antigo, iu.siglauorg, " .
-          "u.sigla as sigla_antiga, iu.pai_servo, " .
-          "un_atual_pai.id as id_pai_antigo, u.id, u.path as path_antigo, " .
-          "c.id AS cidade_id, u.cidade_id as cidade_antiga, " .
-          "und.id AS unidade_pai_id, un_atual_pai.codigo AS codigo_pai_antigo, " .
-          "und.path AS path_pai, " .
-          "iu.data_modificacao as data_modificacao_siape, " .
-          "u.data_modificacao as data_modificacao_und " .
-          "" .
-          "FROM integracao_unidades iu " .
-          "" .
-          "LEFT JOIN unidades u ON (iu.id_servo = u.codigo AND iu.codigo_orgao = u.codigo_orgao) " .
-          "LEFT JOIN unidades un_atual_pai ON (un_atual_pai.id = u.unidade_pai_id) " .
-          "LEFT JOIN unidades und ON (iu.pai_servo = und.codigo AND iu.codigo_orgao = und.codigo_orgao) " .
-          "LEFT JOIN cidades c ON (iu.municipio_ibge = c.codigo_ibge) " .
-          "LEFT JOIN cidades c2 ON u.cidade_id = c2.id " .
-          "" .
-          "WHERE (u.id is null OR c2.id != c.id OR iu.nomeuorg != u.nome " .
-          "OR iu.siglauorg != u.sigla " .
-          "OR iu.pai_servo != " .
-          "(SELECT codigo as cod_unidade_pai FROM unidades u2 " .
-          "WHERE id = u.unidade_pai_id)" .
-          ") AND iu.ativa = 'true' AND iu.deleted_at is NULL AND iu.codigo_orgao = ?";
-
-        $this->unidadesSelecionadas = DB::select($consulta_sql, [$this->codigoOrgao]);
+        $this->unidadesSelecionadas = $this->integracaoUnidadeRepository->selecionarPendentesSincronizacao(
+          $this->codigoOrgao,
+          self::CODIGO_SIAPE_PAI_NAO_INFORMADO,
+          self::CODIGO_SIAPE_UNIDADE_RAIZ_PELO_PAI,
+        );
+        $falhasUnidades = [];
+        $unidadesAtualizadas = 0;
         // Executa atualizações das unidades caso necessário.
         if (!empty($this->unidadesSelecionadas)) {
           SiapeLog::info("Iniciando atualização de unidades selecionadas", ['count' => count($this->unidadesSelecionadas)]);
-          DB::transaction(function () use (&$self, $entidade_id) {
-            foreach ($self->unidadesSelecionadas as $unidade) {
-              SiapeLog::info("Iniciando atualização de unidade", (array) $unidade);
-              $db_result = $self->deepReplaceUnidades($unidade, $entidade_id);
+          foreach ($this->unidadesSelecionadas as $unidade) {
+            SiapeLog::info("Iniciando atualização de unidade", (array) $unidade);
+            try {
+              DB::transaction(fn() => $this->deepReplaceUnidades($unidade, $entidade_id));
+              $unidadesAtualizadas++;
+            } catch (BadGatewayException $e) {
+              $falhasUnidades[] = $e->getMessage();
+              SiapeLog::error($e->getMessage());
             }
-          });
+          }
         }
 
         # (RN_UND_E) Quando utilizando integração com o SIAPE, as unidades serão inativadas quando não constarem na lista de unidades vindas do SIAPE, exceto as que se enquadrarem na regra RN_UND_F.
@@ -602,7 +598,10 @@ class IntegracaoService extends ServiceBase
           [$this->codigoOrgao]
         );
 
-        $this->result['unidades']['Resultado'] = 'Sucesso';
+        $this->result['unidades']['Resultado'] = $falhasUnidades === []
+          ? self::RESULTADO_ETAPA_SUCESSO
+          : ($unidadesAtualizadas > 0 ? self::RESULTADO_UNIDADES_PARCIAL : self::RESULTADO_UNIDADES_ERRO_PREFIXO . $falhasUnidades[0]);
+        $this->result['unidades']['Falhas'] = $falhasUnidades;
         array_push($this->result['unidades']['Observações'], 'Na tabela Unidades do Petrvs constam agora ' . DB::table('unidades')->count() . ' unidades!');
         $this->result['unidades']['Observações'] = [...$this->result['unidades']['Observações'], ...array_filter([
           count($this->unidadesInseridas) . (count($this->unidadesInseridas) == 1 ? ' unidade nova informada pelo SIAPE foi inserida no Petrvs!' : ' unidades novas informadas pelo SIAPE foram inseridas no Petrvs!'),
