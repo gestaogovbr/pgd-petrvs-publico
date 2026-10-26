@@ -122,7 +122,12 @@
                 <tr>
                   <th scope="col">Plano de Entrega</th>
                   <th scope="col">Entrega</th>
-                  <th scope="col">% CH Planejada<br-tag class="count">{{ totalForcaTrabalho() }}%</br-tag></th>
+                  <th scope="col">
+                    <span class="d-inline-flex align-items-center gap-2">
+                      <span>% CH Planejada</span>
+                      <br-tag class="count">{{ totalForcaTrabalho() }}%</br-tag>
+                    </span>
+                  </th>
                   <th scope="col">Trabalho Planejado</th>
                 </tr>
               </thead>
@@ -186,77 +191,82 @@
                           <thead>
                             <tr>
                               <th scope="col">Entrega</th>
-                              <th scope="col">Trabalho Planejado</th>
+                              <th scope="col" class="pe-2">Trabalho Planejado</th>
                               <th scope="col">
-                                Trabalho Executado
-                                <br-tag
-                                  class="count"
-                                  [class.count--divergente]="esforcoExecutadoDiverge(consolidacao)"
-                                  [bgColor]="esforcoExecutadoDiverge(consolidacao) ? '#f39c12' : ''"
-                                  [attr.title]="esforcoExecutadoDiverge(consolidacao)
-                                    ? 'Diferente do planejado (' + totalForcaTrabalho() + '%)'
-                                    : null"
-                                >{{ totalEsforcoExecutado(consolidacao) }}%</br-tag>
+                                <span class="d-inline-flex align-items-center gap-2">
+                                  <span>Trabalho Executado</span>
+                                  <br-tag
+                                    class="count"
+                                    [class.count--divergente]="esforcoExecutadoDiverge(consolidacao)"
+                                    [bgColor]="esforcoExecutadoDiverge(consolidacao) ? '#f39c12' : ''"
+                                    [attr.title]="esforcoExecutadoDiverge(consolidacao)
+                                      ? 'Diferente do planejado (' + totalForcaTrabalho() + '%)'
+                                      : null"
+                                  >{{ totalEsforcoExecutado(consolidacao) }}%</br-tag>
+                                </span>
                               </th>
                               @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) { <th scope="col"></th> }
                             </tr>
                           </thead>
                           <tbody>
-                            @for (entrega of planoTrabalho()?.entregas; track entrega.id) {
-                              @let atividade = facade.getAtividade(consolidacao, entrega.id);
-                              @let editando = facade.estaEditando(consolidacao.id, entrega.id);
+                            @for (contribuicao of facade.getContribuicoes(consolidacao); track contribuicao.id) {
+                              @let editando = facade.estaEditando(consolidacao.id, contribuicao.id);
                               <tr>
                                 <td>
-                                  {{ getPlanoEntregaInfo(entrega).entrega }}
+                                  {{ getPlanoEntregaInfo(contribuicao).entrega }}
                                   <br />
-                                  <small class="text-muted">{{ getPlanoEntregaInfo(entrega).plano }}</small>
+                                  <small class="text-muted">{{ getPlanoEntregaInfo(contribuicao).plano }}</small>
                                 </td>
-                                <td><span class="white-space">{{ entrega.descricao || '-' }}</span></td>
+                                <td>
+                                  <span class="white-space">{{ contribuicao.plano_trabalho_entrega?.descricao || '-' }}</span>
+                                </td>
                                 <td class="execucao-trabalho-cell">
                                   @if (consolidacaoPolicy.podeRegistrar(planoTrabalho()!, consolidacao)) {
                                     @if (editando) {
                                       <div class="execucao-esforco-field mb-2">
-                                        <label class="form-label small mb-1" [attr.for]="'esforco-' + consolidacao.id + '-' + entrega.id">
+                                        <label class="form-label small mb-1" [attr.for]="'esforco-' + consolidacao.id + '-' + contribuicao.id">
                                           % CHD executado
                                         </label>
                                         <input
-                                          [id]="'esforco-' + consolidacao.id + '-' + entrega.id"
+                                          [id]="'esforco-' + consolidacao.id + '-' + contribuicao.id"
                                           type="number"
                                           class="form-control form-control-sm execucao-esforco-input"
                                           min="0"
                                           max="999.99"
                                           step="0.01"
-                                          [value]="facade.getEsforcoExecutado(consolidacao.id, entrega)"
-                                          (input)="facade.setEsforcoExecutado(consolidacao.id, entrega.id, $any($event.target).value)"
+                                          [value]="facade.getEsforcoExecutado(consolidacao.id, contribuicao)"
+                                          (input)="facade.setEsforcoExecutado(consolidacao.id, contribuicao.id, $any($event.target).value)"
                                         />
-                                        <small class="text-muted">Planejado: {{ entrega.forca_trabalho }}%</small>
+                                        @if (contribuicao.plano_trabalho_entrega) {
+                                          <small class="text-muted">Planejado: {{ contribuicao.plano_trabalho_entrega.forca_trabalho }}%</small>
+                                        }
                                       </div>
                                       <div class="execucao-trabalho-textarea">
                                         <br-textarea
                                           resizeVertical
                                           show-counter
-                                          [maxlength]="10000"
-                                          [value]="facade.getTexto(consolidacao.id, entrega.id)"
-                                          (input)="facade.setTexto(consolidacao.id, entrega.id, $any($event.target).value)"
+                                          [maxlength]="1000"
+                                          [value]="facade.getTexto(consolidacao.id, contribuicao)"
+                                          (input)="facade.setTexto(consolidacao.id, contribuicao.id, $any($event.target).value)"
                                           placeholder="Descreva o trabalho executado..."
                                         ></br-textarea>
                                       </div>
-                                    } @else if (atividade) {
+                                    } @else if (facade.estaRegistrada(contribuicao)) {
                                       <p class="small text-muted mb-2">
                                         <strong>% CHD executado:</strong>
-                                        {{ facade.getEsforcoExecutado(consolidacao.id, entrega) }}%
+                                        {{ facade.getEsforcoExecutado(consolidacao.id, contribuicao) }}%
                                       </p>
-                                      <app-texto-colapsavel [texto]="atividade.descricao" />
+                                      <app-texto-colapsavel [texto]="contribuicao.descricao || '-'" />
                                     } @else {
                                       <span>-</span>
                                     }
                                   } @else {
-                                    @if (atividade?.descricao) {
+                                    @if (facade.estaRegistrada(contribuicao)) {
                                       <p class="small text-muted mb-2">
                                         <strong>% CHD executado:</strong>
-                                        {{ facade.getEsforcoExecutado(consolidacao.id, entrega) }}%
+                                        {{ facade.getEsforcoExecutado(consolidacao.id, contribuicao) }}%
                                       </p>
-                                      <app-texto-colapsavel [texto]="atividade!.descricao" />
+                                      <app-texto-colapsavel [texto]="contribuicao.descricao || '-'" />
                                     } @else {
                                       <span>-</span>
                                     }
@@ -266,42 +276,32 @@
                                   <td class="execucao-acoes-cell">
                                     <div class="execucao-acoes">
                                       @if (editando) {
-                                        @if (facade.temAlteracao(consolidacao, entrega)) {
-                                          <br-button
-                                            emphasis="primary"
-                                            density="small"
-                                            (click)="solicitarConfirmacaoAtividade(consolidacao, entrega)"
-                                            [disabled]="!facade.podeConfirmar(consolidacao, entrega)"
-                                          >{{ facade.salvando().has(consolidacao.id + '-' + entrega.id) ? 'Salvando...' : 'Confirmar' }}</br-button>
-                                        }
+                                        <br-button
+                                          emphasis="primary"
+                                          density="small"
+                                          (click)="facade.confirmarContribuicao(consolidacao, contribuicao)"
+                                          [disabled]="!facade.podeConfirmar(consolidacao, contribuicao)"
+                                        >{{ facade.salvando().has(consolidacao.id + '-' + contribuicao.id) ? 'Salvando...' : 'Confirmar' }}</br-button>
                                         <br-button
                                           emphasis="secondary"
                                           density="small"
-                                          (click)="facade.cancelarEdicao(consolidacao.id, entrega.id, atividade, entrega)"
-                                          [disabled]="facade.salvando().has(consolidacao.id + '-' + entrega.id)"
+                                          (click)="facade.cancelarEdicao(consolidacao.id, contribuicao)"
+                                          [disabled]="facade.salvando().has(consolidacao.id + '-' + contribuicao.id)"
                                         >Cancelar</br-button>
                                       } @else {
                                         <br-button
                                           emphasis="secondary"
                                           density="small"
-                                          (click)="facade.iniciarEdicao(consolidacao.id, entrega.id, atividade?.descricao ?? '', facade.getEsforcoExecutado(consolidacao.id, entrega))"
+                                          (click)="facade.iniciarEdicao(consolidacao.id, contribuicao)"
                                         >Registrar</br-button>
-                                        @if (!consolidacaoPolicy.podeGerenciarContribuicoes(planoTrabalho()!, consolidacao) && atividade) {
+                                        @if (consolidacaoPolicy.podeGerenciarContribuicoes(planoTrabalho()!, consolidacao)) {
                                           <br-button
                                             class="text-danger"
                                             emphasis="secondary"
                                             density="small"
-                                            (click)="facade.excluirAtividade(consolidacao, entrega)"
+                                            (click)="facade.excluirContribuicao(consolidacao, contribuicao)"
                                           >Excluir</br-button>
                                         }
-                                      }
-                                      @if (consolidacaoPolicy.podeGerenciarContribuicoes(planoTrabalho()!, consolidacao) && facade.mostrarExcluirContribuicao(consolidacao, entrega)) {
-                                        <br-button
-                                          class="text-danger"
-                                          emphasis="secondary"
-                                          density="small"
-                                          (click)="excluirContribuicao(consolidacao, entrega)"
-                                        >Excluir</br-button>
                                       }
                                     </div>
                                   </td>
@@ -320,9 +320,7 @@
                     <app-contribuicao-form
                       [plano]="planoTrabalho()!"
                       [consolidacaoId]="consolidacao.id"
-                      [totalForcaAtual]="totalForcaTrabalho()"
-                      [totalExecutadoAtual]="totalEsforcoExecutado(consolidacao)"
-                      (saved)="onContribuicaoSalva($event)"
+                      (saved)="onContribuicaoSalva()"
                       (cancelled)="fecharFormContribuicao()"
                     />
                   }
@@ -343,7 +341,7 @@
                       </br-button>
                     }
                     @if (podeConcluirConsolidacao(consolidacao)) {
-                      <br-button emphasis="primary" (click)="facade.concluirConsolidacao(consolidacao)" [disabled]="!!facade.processandoAcaoId()">
+                      <br-button emphasis="primary" (click)="solicitarConclusao(consolidacao)" [disabled]="!!facade.processandoAcaoId()">
                         Finalizar Registro
                       </br-button>
                     }
@@ -470,10 +468,10 @@
   }
 </div>
 
-<br-scrim [isOpen]="!!justificativaEsforcoPendente()" [disableCloseOnClick]="true">
-  <br-modal [show]="!!justificativaEsforcoPendente()" titleText="Justificativa Carga Horária" size="medium" alignFooter="end" (brModalBeforeClose)="cancelarJustificativaEsforco()">
+<br-scrim [isOpen]="!!facade.justificativaCargaHorariaPendente()" [disableCloseOnClick]="true">
+  <br-modal [show]="!!facade.justificativaCargaHorariaPendente()" titleText="Justificativa Carga Horária" size="medium" alignFooter="end" (brModalBeforeClose)="facade.cancelarJustificativaCargaHoraria()">
     <div class="p-3">
-      <p>A carga horária total é de {{ totalEsforcoJustificativa() }}%. Informe a justificativa para prosseguir.</p>
+      <p>A carga horária executada ({{ facade.justificativaCargaHorariaPendente()?.total }}%) diverge da planejada ({{ totalForcaTrabalho() }}%). Informe a justificativa para finalizar o registro.</p>
       <br-textarea
         class="mt-3 w-100"
         label="Justificativa *"
@@ -481,13 +479,13 @@
         [maxlength]="500"
         [rows]="3"
         placeholder="Descreva a justificativa..."
-        [value]="justificativaEsforco()"
-        (input)="justificativaEsforco.set($any($event.target).value)"
+        [value]="facade.justificativaCargaHoraria()"
+        (input)="facade.justificativaCargaHoraria.set($any($event.target).value)"
       ></br-textarea>
     </div>
     <div slot="footer">
-      <br-button class="mx-1" emphasis="secondary" (click)="cancelarJustificativaEsforco()">Cancelar</br-button>
-      <br-button class="mx-1" emphasis="primary" (click)="confirmarJustificativaEsforco()" [disabled]="!justificativaEsforco().trim()">Confirmar</br-button>
+      <br-button class="mx-1" emphasis="secondary" (click)="facade.cancelarJustificativaCargaHoraria()">Cancelar</br-button>
+      <br-button class="mx-1" emphasis="primary" (click)="facade.confirmarJustificativaCargaHoraria()" [disabled]="!facade.justificativaCargaHoraria().trim()">Confirmar</br-button>
     </div>
   </br-modal>
 </br-scrim>

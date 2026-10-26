@@ -23,6 +23,11 @@ interface PlanoTrabalhoEntregaReadRepositoryContract
     public function existeVinculo(string $planoTrabalhoId, string $planoEntregaEntregaId, ?string $excludeId = null): bool;
 
     /**
+     * @return Collection<int, \App\Models\PlanoTrabalhoEntrega>
+     */
+    public function findAllByPlanoTrabalho(string $planoTrabalhoId): Collection;
+
+    /**
      * @return list<string>
      */
     public function idsPlanosTrabalhoPorPlanoEntregaEntrega(string $planoEntregaEntregaId): array;

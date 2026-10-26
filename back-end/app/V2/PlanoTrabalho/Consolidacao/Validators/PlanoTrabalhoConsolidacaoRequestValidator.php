@@ -16,6 +16,21 @@ class PlanoTrabalhoConsolidacaoRequestValidator
         )->validate();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public static function concluir(Request $request): array
+    {
+        return $request->validate([
+            'justificativa_carga_horaria' => ['sometimes', 'nullable', 'string', 'max:500'],
+        ], [
+            'justificativa_carga_horaria.max' => 'A justificativa não pode exceder 500 caracteres.',
+        ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     public static function reabrir(Request $request): array
     {
         return $request->validate([
@@ -26,6 +41,9 @@ class PlanoTrabalhoConsolidacaoRequestValidator
         ]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function recurso(Request $request): array
     {
         return $request->validate([

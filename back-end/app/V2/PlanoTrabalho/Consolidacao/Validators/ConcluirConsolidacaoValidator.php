@@ -9,20 +9,25 @@ use App\Exceptions\NotFoundException;
 use App\Exceptions\ValidateException;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
-use App\Repository\AtividadeRepository;
+use App\Repository\PlanoTrabalhoConsolidacaoContribuicaoRepository;
 use App\Repository\PlanoTrabalhoConsolidacaoRepository;
-use App\V2\PlanoTrabalho\Consolidacao\Atividade\Validators\AtividadeEsforcoExecutadoValidator;
+use App\Repository\PlanoTrabalhoEntregaRepository;
 
 class ConcluirConsolidacaoValidator
 {
+    private const TOLERANCIA_CARGA_HORARIA = 0.01;
+
     public function __construct(
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
-        private readonly AtividadeRepository $atividadeRepository,
-        private readonly AtividadeEsforcoExecutadoValidator $esforcoExecutadoValidator,
+        private readonly PlanoTrabalhoEntregaRepository $entregaRepository,
+        private readonly PlanoTrabalhoConsolidacaoContribuicaoRepository $contribuicaoRepository,
     ) {}
 
-    public function validar(PlanoTrabalho $plano, string $consolidacaoId): PlanoTrabalhoConsolidacao
-    {
+    public function validar(
+        PlanoTrabalho $plano,
+        string $consolidacaoId,
+        ?string $justificativaCargaHoraria = null,
+    ): PlanoTrabalhoConsolidacao {
         if (($plano->status !== StatusEnum::ATIVO->value && $plano->encerrado_at === null) ||
             ($plano->status !== StatusEnum::CONCLUIDO->value && $plano->encerrado_at !== null)) {
             throw new ValidateException('O Plano de Trabalho precisa estar com status ATIVO.');
@@ -42,29 +47,39 @@ class ConcluirConsolidacaoValidator
             throw new ValidateException('O período avaliativo precisa estar com status INCLUIDO para ser concluído.');
         }
 
-        $this->validarEntregasPreenchidas($plano, $consolidacaoId);
-        $this->esforcoExecutadoValidator->validarSomatorioPlano($plano->id);
+        $this->validarContribuicoesRegistradas($consolidacaoId);
+        $this->validarCargaHoraria($plano->id, $consolidacaoId, $justificativaCargaHoraria);
 
         return $consolidacao;
     }
 
-    private function validarEntregasPreenchidas(PlanoTrabalho $plano, string $consolidacaoId): void
+    private function validarContribuicoesRegistradas(string $consolidacaoId): void
     {
-        $entregas = $plano->relationLoaded('entregas')
-            ? $plano->entregas
-            : $plano->load('entregas')->entregas;
-
-        if ($entregas->isEmpty()) {
-            throw new ValidateException('O Plano de Trabalho não possui entregas cadastradas.');
+        if (!$this->contribuicaoRepository->possuiContribuicoes($consolidacaoId)) {
+            throw new ValidateException('O período avaliativo não possui contribuições para registrar.');
         }
 
-        $entregaIdsDoPlano = $entregas->pluck('id');
-        $entregaIdsComAtividade = $this->atividadeRepository->entregaIdsComAtividade($consolidacaoId);
-
-        $entregasSemAtividade = $entregaIdsDoPlano->diff($entregaIdsComAtividade);
-
-        if ($entregasSemAtividade->isNotEmpty()) {
-            throw new ValidateException('Todas as entregas devem ter trabalho executado registrado para concluir o período.');
+        if ($this->contribuicaoRepository->possuiNaoRegistrada($consolidacaoId)) {
+            throw new ValidateException('Todas as contribuições devem ter trabalho executado registrado para concluir o período.');
         }
+    }
+
+    private function validarCargaHoraria(string $planoTrabalhoId, string $consolidacaoId, ?string $justificativaCargaHoraria): void
+    {
+        if (!$this->cargaHorariaDiverge($planoTrabalhoId, $consolidacaoId)) {
+            return;
+        }
+
+        if (trim((string) $justificativaCargaHoraria) === '') {
+            throw new ValidateException('A justificativa é obrigatória quando a carga horária executada diverge da planejada.');
+        }
+    }
+
+    private function cargaHorariaDiverge(string $planoTrabalhoId, string $consolidacaoId): bool
+    {
+        $planejado = $this->entregaRepository->resumoForcaTrabalhoPorPlano($planoTrabalhoId)->somatorioForcaTrabalho;
+        $executado = $this->contribuicaoRepository->totalEsforcoExecutadoPorConsolidacao($consolidacaoId);
+
+        return abs($planejado - $executado) >= self::TOLERANCIA_CARGA_HORARIA;
     }
 }

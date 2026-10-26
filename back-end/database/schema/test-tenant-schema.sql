@@ -1563,6 +1563,7 @@ CREATE TABLE `planos_trabalhos_consolidacoes` (
   `plano_trabalho_id` char(36) NOT NULL,
   `avaliacao_id` char(36) DEFAULT NULL,
   `justificativa_conclusao` text DEFAULT NULL,
+  `justificativa_carga_horaria` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `planos_trabalhos_consolidacoes_plano_trabalho_id_foreign` (`plano_trabalho_id`),
   KEY `planos_trabalhos_consolidacoes_avaliacao_id_foreign` (`avaliacao_id`),
@@ -2977,6 +2978,35 @@ CREATE TABLE `usuarios` (
   KEY `usuarios_data_agendamento_envio_index` (`data_agendamento_envio`),
   KEY `idx_usuario_siape_reconciliacao` (`cpf`,`deleted_at`,`situacao_siape`,`matricula`),
   CONSTRAINT `usuarios_perfil_id_foreign` FOREIGN KEY (`perfil_id`) REFERENCES `perfis` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `planos_trabalhos_consolidacoes_contribuicoes`
+--
+
+DROP TABLE IF EXISTS `planos_trabalhos_consolidacoes_contribuicoes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `planos_trabalhos_consolidacoes_contribuicoes` (
+  `id` char(36) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `orgao` varchar(256) DEFAULT NULL,
+  `descricao` text DEFAULT NULL,
+  `esforco_executado` decimal(5,2) NOT NULL DEFAULT 0.00,
+  `registrado_at` datetime DEFAULT NULL,
+  `plano_trabalho_consolidacao_id` char(36) NOT NULL,
+  `plano_trabalho_entrega_id` char(36) DEFAULT NULL,
+  `plano_entrega_entrega_id` char(36) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_ptcc_consolidacao_id` (`plano_trabalho_consolidacao_id`),
+  KEY `fk_ptcc_entrega_id` (`plano_trabalho_entrega_id`),
+  KEY `fk_ptcc_plano_entrega_entrega_id` (`plano_entrega_entrega_id`),
+  CONSTRAINT `fk_ptcc_consolidacao_id` FOREIGN KEY (`plano_trabalho_consolidacao_id`) REFERENCES `planos_trabalhos_consolidacoes` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_ptcc_entrega_id` FOREIGN KEY (`plano_trabalho_entrega_id`) REFERENCES `planos_trabalhos_entregas` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `fk_ptcc_plano_entrega_entrega_id` FOREIGN KEY (`plano_entrega_entrega_id`) REFERENCES `planos_entregas_entregas` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
