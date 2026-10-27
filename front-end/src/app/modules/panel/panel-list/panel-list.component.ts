@@ -255,14 +255,17 @@ export class PanelListComponent extends PageListBase<Tenant, TenantDaoService> {
 		const self = this;
 		this.dialog
 			.confirm(
-				"Forçar Siape?",
-				"Deseja realmente limpar os dados do SIAPE e fazer uma nova carga completa?"
+				"Iniciar nova busca SIAPE?",
+				"Esta ação limpa os dados de integração e solicita uma nova busca ao SIAPE. A atualização de lotações e chefias depende da sincronização agendada. Deseja continuar?"
 			)
 			.then((confirm) => {
 				if (confirm) {
 					this.dao!.forcaSiape(row)
-						.then(function () {
-							self.dialog.alert("Sucesso", "Limpeza dos dados efetuadao com sucesso, aguarde a carga completa!");
+						.then(function (solicitada) {
+							if (!solicitada) {
+								throw new Error("A busca SIAPE não foi solicitada.");
+							}
+							self.dialog.alert("Busca solicitada", "A busca SIAPE foi solicitada. Isso ainda não atualiza lotações e chefias. Confira se o job Sincronizar SIAPE está agendado e acompanhe a conclusão das duas etapas.");
 						})
 						.catch(function (error) {
 							let messageError = error?.message ? error?.message : error;
