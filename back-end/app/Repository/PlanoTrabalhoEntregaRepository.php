@@ -70,6 +70,14 @@ class PlanoTrabalhoEntregaRepository
     }
 
     /**
+     * @return Collection<int, PlanoTrabalhoEntrega>
+     */
+    public function findAllByPlanoTrabalho(string $planoTrabalhoId): Collection
+    {
+        return $this->readRepository->findAllByPlanoTrabalho($planoTrabalhoId);
+    }
+
+    /**
      * @return list<string>
      */
     public function idsPlanosTrabalhoPorPlanoEntregaEntrega(string $planoEntregaEntregaId): array

@@ -14,6 +14,8 @@ use App\Services\CalendarioService;
 use App\Services\UtilService;
 use App\Repository\UsuarioRepository;
 use App\Repository\PlanoTrabalhoRepository;
+use App\Repository\PlanoTrabalhoConsolidacaoRepository;
+use App\V2\PlanoTrabalho\Consolidacao\GeradorPeriodosAvaliativos;
 use App\Exceptions\ServerException;
 use App\Models\Documento;
 use Illuminate\Support\Facades\DB;
@@ -41,12 +43,16 @@ class PlanoTrabalhoService extends ServiceBase
     public $documentoId;
     protected UsuarioRepository $usuarioRepository;
     protected PlanoTrabalhoRepository $planoTrabalhoRepository;
+    protected PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository;
+    protected GeradorPeriodosAvaliativos $geradorPeriodosAvaliativos;
 
     public function __construct()
     {
         parent::__construct();
         $this->usuarioRepository = app(UsuarioRepository::class);
         $this->planoTrabalhoRepository = app(PlanoTrabalhoRepository::class);
+        $this->consolidacaoRepository = app(PlanoTrabalhoConsolidacaoRepository::class);
+        $this->geradorPeriodosAvaliativos = app(GeradorPeriodosAvaliativos::class);
     }
 
     public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int
@@ -1086,8 +1092,12 @@ class PlanoTrabalhoService extends ServiceBase
     {
         try {
             DB::beginTransaction();
-            $planoTrabalho = PlanoTrabalho::find($data["id"]);
-            $this->statusService->atualizaStatus($planoTrabalho, 'ATIVO', $data["justificativa"]);
+            $planoTrabalho = $this->planoTrabalhoRepository->findByIdForUpdateComPrograma($data["id"]);
+            if ($planoTrabalho === null) {
+                throw new ServerException('ValidatePlanoTrabalho', 'Plano de Trabalho não encontrado!');
+            }
+            $this->garantirConsolidacoesParaAtivacao($planoTrabalho);
+            $this->statusService->atualizaStatus($planoTrabalho, StatusEnum::ATIVO->value, $data["justificativa"]);
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
@@ -1158,14 +1168,46 @@ class PlanoTrabalhoService extends ServiceBase
     {
         try {
             DB::beginTransaction();
-            $planoTrabalho = PlanoTrabalho::find($data["id"]);
-            $this->statusService->atualizaStatus($planoTrabalho, 'ATIVO', $data["justificativa"]);
+            $planoTrabalho = $this->planoTrabalhoRepository->findByIdForUpdateComPrograma($data["id"]);
+            if ($planoTrabalho === null) {
+                throw new ServerException('ValidatePlanoTrabalho', 'Plano de Trabalho não encontrado!');
+            }
+            $this->garantirConsolidacoesParaAtivacao($planoTrabalho);
+            $this->statusService->atualizaStatus($planoTrabalho, StatusEnum::ATIVO->value, $data["justificativa"]);
             DB::commit();
         } catch (Throwable $e) {
             DB::rollback();
             throw $e;
         }
         return true;
+    }
+
+    private function garantirConsolidacoesParaAtivacao(PlanoTrabalho $planoTrabalho): void
+    {
+        $periodos = $this->consolidacaoRepository->findPeriodosByPlanoTrabalhoId($planoTrabalho->id);
+        if ($periodos->isEmpty()) {
+            $this->geradorPeriodosAvaliativos->gerar($planoTrabalho);
+            $periodos = $this->consolidacaoRepository->findPeriodosByPlanoTrabalhoId($planoTrabalho->id);
+        }
+
+        $proximaData = Carbon::parse($planoTrabalho->data_inicio)->toDateString();
+        $dataFim = Carbon::parse($planoTrabalho->data_fim)->toDateString();
+
+        foreach ($periodos as $periodo) {
+            if ($periodo->data_inicio > $proximaData || $periodo->data_fim < $periodo->data_inicio) {
+                break;
+            }
+            if ($periodo->data_fim >= $proximaData) {
+                $proximaData = Carbon::parse($periodo->data_fim)->addDay()->toDateString();
+            }
+            if ($proximaData > $dataFim) {
+                return;
+            }
+        }
+
+        if ($proximaData <= $dataFim) {
+            throw new ServerException('ValidatePlanoTrabalho', 'O Plano de Trabalho não possui períodos avaliativos para ativação.');
+        }
     }
 
     public function suspender($data, $unidade)

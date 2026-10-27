@@ -12,6 +12,7 @@ class MuralAvisoPendenteDTO
         public readonly string $conteudo,
         public readonly string $remetente,
         public readonly string $dataPublicacao,
+        public readonly bool $lido,
     ) {}
 
     public static function fromArray(array $data): self
@@ -22,6 +23,7 @@ class MuralAvisoPendenteDTO
             conteudo: $data['conteudo'],
             remetente: $data['remetente'],
             dataPublicacao: $data['data_publicacao'],
+            lido: $data['lido'],
         );
     }
 
@@ -36,6 +38,7 @@ class MuralAvisoPendenteDTO
             'conteudo' => $this->conteudo,
             'remetente' => $this->remetente,
             'data_publicacao' => $this->dataPublicacao,
+            'lido' => $this->lido,
         ];
     }
 }

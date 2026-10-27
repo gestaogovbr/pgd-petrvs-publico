@@ -13,6 +13,7 @@ import { DialogService } from 'src/app/services/dialog.service';
 import { DOCUMENT } from '@angular/common';
 import { environment } from 'src/environments/environment';
 import { BuildInfoService } from 'src/app/services/build.service';
+import { parseLoginRedirect } from './login-redirect';
 
 @Component({
     selector: 'app-login',
@@ -34,6 +35,7 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
   public modalWidth: number = 400;
   public noSession: boolean = false;
   public titleSubscriber: Subject<string> = new Subject<string>();
+  private unregisterPopupLoginResultListener?: () => void;
 
   constructor(
     public globals: GlobalsService,
@@ -90,14 +92,11 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
     this.titleSubscriber.next("Login Petrvs");
     this.route.queryParams.subscribe(params => {
       this.error = params['error'] ? params['error'] : "";
-      if (params["redirectTo"]) {
-        let routerTo = JSON.parse(params["redirectTo"]);
-        this.redirectTo = routerTo.route[0] == "login" ? routerTo : undefined;
-      }
+      this.redirectTo = parseLoginRedirect(params['redirectTo']);
       this.noSession = !!params["noSession"];
     });
     /* Registra listner para logins com popup que necessitam de retorno */
-    this.auth.registerPopupLoginResultListener();
+    this.unregisterPopupLoginResultListener = this.auth.registerPopupLoginResultListener(() => this.redirectTo);
     /* Verifica se o usuário não já está logado (login-session), e caso não esteja verifica tambem se algum dos login (Google, Microsoft, etc), estão com sessão ativas e tenta logar com essa sessão */
     (async () => {
       // Inicializa Google Auth e cria o botão na tela
@@ -118,7 +117,7 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
           try {
             socialUser = await this.googleApi.getLoginStatus();
           } catch (error) { }
-          if (socialUser?.idToken) this.auth.authGoogle(socialUser?.idToken);
+          if (socialUser?.idToken) this.auth.authGoogle(socialUser?.idToken, this.redirectTo);
         }
         if (this.globals.hasAzureLogin) {
           // TODO: Implementa login automático
@@ -171,6 +170,7 @@ export class LoginComponent implements OnInit, ModalPage, OnDestroy {
   }
 
   ngOnDestroy(){
+    this.unregisterPopupLoginResultListener?.();
     this.document.body.classList.remove('login');
   }
 

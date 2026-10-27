@@ -86,8 +86,8 @@ export class AppShellV2Component implements OnInit {
       distinctUntilChanged(),
     ).subscribe(() => this.tentarExibirMural());
 
-    // Solicitação direta (ex: botão Mural de Avisos na Home): mostra toast se não houver avisos
-    this.muralService.exibicaoSolicitada$.subscribe(() => this.exibirMural(true));
+    // Solicitação direta (ex: botão Mural de Avisos na Home): exibe também os já lidos (RN06/RN07)
+    this.muralService.exibicaoSolicitada$.subscribe(() => this.exibirMural(true, true));
   }
 
   private tentarExibirMural(): void {
@@ -98,12 +98,12 @@ export class AppShellV2Component implements OnInit {
     delete urlTree.queryParams['mural'];
     this.router.navigateByUrl(urlTree, { replaceUrl: true });
 
-    // Abertura automática (login): silenciosa quando não há avisos
-    this.exibirMural(false);
+    // Abertura automática (login): silenciosa quando não há avisos; apenas não lidos
+    this.exibirMural(false, false);
   }
 
-  private exibirMural(mostrarToastVazio: boolean): void {
-    this.muralService.getPendentes().then(avisos => {
+  private exibirMural(mostrarToastVazio: boolean, incluirLidos: boolean): void {
+    this.muralService.getPendentes(incluirLidos).then(avisos => {
       if (avisos.length === 0) {
         if (mostrarToastVazio) this.message.info('Não há avisos no momento.');
         return;
@@ -112,7 +112,7 @@ export class AppShellV2Component implements OnInit {
     });
   }
 
-  private exibirModalMural(avisos: { titulo: string; conteudo: string; remetente: string; data_publicacao: string }[]): void {
+  private exibirModalMural(avisos: { titulo: string; conteudo: string; remetente: string; data_publicacao: string; lido: boolean }[]): void {
     const avisosFormatados = avisos.map(aviso => {
       const date = new Date(aviso.data_publicacao);
       return {

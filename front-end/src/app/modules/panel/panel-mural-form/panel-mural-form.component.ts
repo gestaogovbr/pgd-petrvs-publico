@@ -55,14 +55,26 @@ export class PanelMuralFormComponent extends PageFormBase<MuralAviso, MuralAviso
     this.currentUser = await this.authPanel.detailUser();
     await this.loadTenants();
 
-    if (this.currentUser?.nivel != 1) {
+    if (this.isConfigurador) {
       this.form!.controls['destinatario'].setValue('TENANT_ESPECIFICO');
-      this.form!.controls['destinatario'].disable();
+      this.preSelecionarPrimeiroTenant();
     }
 
     this.form!.controls['destinatario'].valueChanges.subscribe(() => {
       this.form!.controls['tenant_id'].updateValueAndValidity();
     });
+  }
+
+  public get isConfigurador(): boolean {
+    return this.currentUser?.nivel != 1;
+  }
+
+  private preSelecionarPrimeiroTenant(): void {
+    if (!this.isNew) return;
+    if (this.form!.controls['tenant_id'].value) return;
+
+    const primeiro = this.tenantItems[0];
+    if (primeiro) this.form!.controls['tenant_id'].setValue(primeiro.key);
   }
 
   public validate = (control: AbstractControl, controlName: string) => {
@@ -146,6 +158,11 @@ export class PanelMuralFormComponent extends PageFormBase<MuralAviso, MuralAviso
     try {
       const tenants = await this.tenantsDao.query().asPromise();
       this.tenantItems = tenants.map((t: any) => ({ key: t.id, value: t.nome_entidade || t.id }));
+
+      if (this.isConfigurador) {
+        const meusTenants: string[] = this.currentUser?.tenants ?? [];
+        this.tenantItems = this.tenantItems.filter(t => meusTenants.includes(t.key));
+      }
     } catch (error) {
       console.error("Erro ao carregar tenants:", error);
     }
