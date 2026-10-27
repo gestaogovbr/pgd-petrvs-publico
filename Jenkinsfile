@@ -241,8 +241,8 @@ pipeline {
                             set -eu
 
                             echo "Iniciando a construção e implantação do DSV..."
-                            echo "Construindo a imagem Docker..."
-                            docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
+                            echo "Construindo a imagem Docker (sem cache, com pull da base)..."
+                            docker build --pull --no-cache -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
 
                             echo "Construção da imagem concluída. Enviando para o Docker Hub..."
                             echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
