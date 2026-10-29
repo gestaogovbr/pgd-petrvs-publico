@@ -245,7 +245,7 @@
                                         <br-textarea
                                           resizeVertical
                                           show-counter
-                                          [maxlength]="1000"
+                                          [maxlength]="10000"
                                           [value]="facade.getTexto(consolidacao.id, contribuicao)"
                                           (input)="facade.setTexto(consolidacao.id, contribuicao.id, $any($event.target).value)"
                                           placeholder="Descreva o trabalho executado..."
