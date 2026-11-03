@@ -1,3 +1,12 @@
+## 3.2.4 03/11/2026
+
+### Corrigido
+- Plano de Entregas: o cadastro deixa de falhar com erro inesperado quando a unidade organizacional selecionada não existe ou foi removida, exibindo uma mensagem clara sobre o problema
+- A validação de datas de início em ocorrências, planos de trabalho e painéis deixa de gerar avisos de PHP (E_WARNING DateTime::modify) nos logs
+
+### Modificado
+- Em caso de erro inesperado durante um cadastro, a mensagem exibida ao usuário deixa de conter detalhes técnicos do erro e passa a incluir um código de referência para acompanhamento do suporte
+
 ## 3.2.3 26/10/2026
 
 ### Corrigido
