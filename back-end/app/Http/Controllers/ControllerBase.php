@@ -15,6 +15,7 @@ use App\Exceptions\DBException;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -75,6 +76,45 @@ abstract class ControllerBase extends Controller
         }
 
         return Response::HTTP_BAD_REQUEST;
+    }
+
+    /**
+     * Loga um erro inesperado (Throwable não tratado) com contexto suficiente
+     * para diagnóstico e retorna um identificador de correlação estável que
+     * pode ser exibido ao usuário e cruzado com a entrada de log.
+     *
+     * Registra: classe da exceção, cadeia de exceções anteriores (ex.: o erro
+     * real do PDO por trás de uma QueryException), stack trace, rota, método,
+     * unidade e usuário logado. A própria rotina de logging é defensiva: nunca
+     * lança exceção, evitando mascarar o erro original.
+     *
+     * @return string Identificador de correlação (UUID) da ocorrência.
+     */
+    protected function logUnexpectedError(Throwable $e, Request $request, string $action): string
+    {
+        $correlationId = (string) Str::uuid();
+
+        try {
+            $contexto = [
+                'correlation_id' => $correlationId,
+                'action' => $action,
+                'controller' => static::class,
+                'method' => $request->method(),
+                'path' => $request->path(),
+                'unidade_id' => $this->getPetrvsHeader($request)['unidade_id'] ?? null,
+                'usuario_id' => self::loggedUser()?->id,
+                'erro' => throwableToArrayLog($e),
+            ];
+
+            // report() respeita o Handler da aplicação (canais, Sentry, etc.)
+            report($e);
+            Log::error("Erro inesperado [{$action}]", $contexto);
+        } catch (Throwable $falhaLog) {
+            // Fallback mínimo: nunca deixar o logging mascarar o erro original.
+            Log::error("Falha ao registrar erro inesperado [{$action}]: " . $e->getMessage());
+        }
+
+        return $correlationId;
     }
 
     /**
@@ -470,9 +510,10 @@ abstract class ControllerBase extends Controller
             return response()->json(['error' => $e->getMessage()], $this->statusFromIBaseException($e));
         }
         catch (Throwable $e) {
-            $dataError = throwableToArrayLog($e);
-            Log::error($dataError);
-            return response()->json(['error' => "Codigo ".$dataError['code'].": Ocorreu um erro inesperado.".$e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+            $correlationId = $this->logUnexpectedError($e, $request, "STORE");
+            return response()->json([
+                'error' => "Ocorreu um erro inesperado. Código de referência: {$correlationId}",
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
