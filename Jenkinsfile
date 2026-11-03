@@ -147,8 +147,8 @@ pipeline {
             environment {
                 DOCKER_HUB_IMAGE = 'segescginf/pgdpetrvs'
                 DOCKER_HUB_TAG_LATEST = 'latest'
-                DOCKER_HUB_TAG_NEW = '3.2.3'
-                DOCKER_HUB_TAG_OLD = '3.2.2'
+                DOCKER_HUB_TAG_NEW = '3.2.4'
+                DOCKER_HUB_TAG_OLD = '3.2.3'
             }
             steps {
                 withCredentials([
@@ -241,8 +241,8 @@ pipeline {
                             set -eu
 
                             echo "Iniciando a construção e implantação do DSV..."
-                            echo "Construindo a imagem Docker..."
-                            docker build -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
+                            echo "Construindo a imagem Docker (sem cache, com pull da base)..."
+                            docker build --pull --no-cache -t "$DOCKER_HUB_IMAGE:$DOCKER_HUB_TAG" -f ./resources/deploy/Dockerfile .
 
                             echo "Construção da imagem concluída. Enviando para o Docker Hub..."
                             echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
@@ -445,8 +445,8 @@ pipeline {
                             sleep 10
 
                             echo "Build do Front-end...."
-                            docker exec petrvs_node npm install -g @angular/cli
-                            docker exec petrvs_node npm install --include=dev --legacy-peer-deps
+                            docker exec -u root petrvs_node npm install -g @angular/cli
+                            docker exec -u root petrvs_node npm install --include=dev --legacy-peer-deps
                             docker exec petrvs_node npm run build
                             
                             echo "Instalando Dependências do PHP...";
