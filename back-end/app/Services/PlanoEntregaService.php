@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Enums\PlanoEntregaStatus;
 use App\Models\Unidade;
 use App\Models\PlanoEntrega;
-use App\Models\Usuario;
 use App\Models\StatusJustificativa;
 use App\Exceptions\ServerException;
 use App\Exceptions\ValidateException;
@@ -26,6 +25,8 @@ use App\Services\UnidadeService;
 use App\Services\UsuarioService;
 use App\Repository\UsuarioRepository;
 use App\Repository\PlanoEntregaRepository;
+use App\Repository\ProgramaRepository;
+use App\Repository\UnidadeRepository;
 use Illuminate\Support\Carbon;
 use Throwable;
 
@@ -43,11 +44,15 @@ class PlanoEntregaService extends ServiceBase
 {
     protected UsuarioRepository $usuarioRepository;
     protected PlanoEntregaRepository $planoEntregaRepository;
+    protected ProgramaRepository $programaRepository;
+    protected UnidadeRepository $unidadeRepository;
 
     public function __construct() {
         parent::__construct();
         $this->usuarioRepository = app(UsuarioRepository::class);
         $this->planoEntregaRepository = app(PlanoEntregaRepository::class);
+        $this->programaRepository = app(ProgramaRepository::class);
+        $this->unidadeRepository = app(UnidadeRepository::class);
     }
 
     public function atualizarCodUnidadeAutorizadora(string $codUnidadeAutorizadora, bool $somenteSemCodigo = false): int
@@ -620,7 +625,12 @@ class PlanoEntregaService extends ServiceBase
             - o usuário logado precisa ser gestor da Unidade do plano (Unidade B), ou gestor da sua Unidade-pai (Unidade A)(RN_PENT_B); ou
             - o usuário precisa possuir também a capacidade "MOD_PENT_QQR_UND" (independente de qualquer outra condição);
         */
-        $dataOrEntity['unidade'] = Unidade::find($dataOrEntity['unidade_id'])->toArray();
+        $unidadeId = UtilService::valueOrNull($dataOrEntity, 'unidade_id');
+        $unidade = $unidadeId ? $this->unidadeRepository->findById((string) $unidadeId) : null;
+        if (is_null($unidade)) {
+            throw new ServerException("ValidatePlanoEntrega", "A unidade do plano de entregas não existe ou foi removida.");
+        }
+        $dataOrEntity['unidade'] = $unidade->toArray();
         $condition1 = $this->usuario->isGestorUnidade($dataOrEntity['unidade_id'], incluiDelegado: true) ||
             (!empty($dataOrEntity['unidade']['unidade_pai_id']) && $this->usuario->isGestorUnidade($dataOrEntity['unidade']['unidade_pai_id'], incluiDelegado: false));
         $condition2 = $usuario->hasPermissionTo('MOD_PENT_QQR_UND');
@@ -641,10 +651,11 @@ class PlanoEntregaService extends ServiceBase
      */
     public function validateStore($dataOrEntity, $unidade, $action)
     {
-        $usuario = Usuario::find(parent::loggedUser()->id);
-        $programa = Programa::find($dataOrEntity["programa_id"]);
+        $usuario = $this->usuarioRepository->findById(parent::loggedUser()->id);
+        $programaId = UtilService::valueOrNull($dataOrEntity, 'programa_id');
+        $programa = $programaId ? $this->programaRepository->findById((string) $programaId) : null;
         $this->validaPermissaoIncluir($dataOrEntity, $usuario);
-        $unidade = Unidade::find($dataOrEntity["unidade_id"]);
+        $unidade = $this->unidadeRepository->findById((string) $dataOrEntity["unidade_id"]);
         if(!is_null($unidade?->data_inativacao)){
             throw new ServerException("ValidatePlanoEntrega", "A unidade está inativa.");
         }

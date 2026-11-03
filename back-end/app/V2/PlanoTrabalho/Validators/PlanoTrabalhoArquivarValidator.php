@@ -76,6 +76,7 @@ class PlanoTrabalhoArquivarValidator
         $resumo = $this->consolidacaoRepository->resumoParaArquivamento(
             $plano->id,
             Carbon::now()->subDays(self::PRAZO_RECURSO_DIAS),
+            $plano->encerrado_at,
         );
 
         if ($resumo->isAguardandoReavaliacao || $resumo->avaliacaoRecente) {

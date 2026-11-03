@@ -58,9 +58,12 @@ class PlanoTrabalhoConsolidacaoRepository
         );
     }
 
-    public function resumoParaArquivamento(string $planoTrabalhoId, \DateTimeInterface $limiteRecurso): ResumoConsolidacoesDTO
-    {
-        return $this->readRepository->resumoParaArquivamento($planoTrabalhoId, $limiteRecurso);
+    public function resumoParaArquivamento(
+        string $planoTrabalhoId,
+        \DateTimeInterface $limiteRecurso,
+        ?string $encerradoAt = null
+    ): ResumoConsolidacoesDTO {
+        return $this->readRepository->resumoParaArquivamento($planoTrabalhoId, $limiteRecurso, $encerradoAt);
     }
 
     public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool

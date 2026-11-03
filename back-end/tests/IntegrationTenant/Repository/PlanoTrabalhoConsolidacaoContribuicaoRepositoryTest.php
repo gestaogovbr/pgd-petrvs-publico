@@ -7,6 +7,7 @@ use App\Models\PlanoEntrega;
 use App\Models\PlanoEntregaEntrega;
 use App\Models\PlanoTrabalho;
 use App\Models\PlanoTrabalhoConsolidacao;
+use App\Models\PlanoTrabalhoEntrega;
 use App\Models\Programa;
 use App\Models\Unidade;
 use App\Models\Usuario;
@@ -115,6 +116,36 @@ test('marcarRegistrado não sobrescreve registrado_at já definido', function ()
     $atual = $repo->findById($contribuicao->id);
 
     expect($atual->registrado_at->format('Y-m-d H:i:s'))->toBe('2025-02-01 10:00:00');
+});
+
+test('findById carrega as relações de entrega usadas pela tela do plano de trabalho', function () {
+    $repo = app(PlanoTrabalhoConsolidacaoContribuicaoRepository::class);
+    $consolidacao = criarConsolidacao();
+    $pee = criarEntregaPE();
+
+    $entrega = PlanoTrabalhoEntrega::factory()->create([
+        'plano_trabalho_id' => $consolidacao->plano_trabalho_id,
+        'plano_entrega_entrega_id' => $pee->id,
+        'descricao' => 'Trabalho planejado do período',
+        'forca_trabalho' => 70,
+    ]);
+
+    $criada = $repo->create([
+        'plano_trabalho_consolidacao_id' => $consolidacao->id,
+        'plano_trabalho_entrega_id' => $entrega->id,
+        'plano_entrega_entrega_id' => $pee->id,
+        'descricao' => 'Trabalho executado',
+        'esforco_executado' => 70,
+    ]);
+
+    $atual = $repo->findById($criada->id);
+
+    expect($atual->relationLoaded('planoTrabalhoEntrega'))->toBeTrue();
+    expect($atual->relationLoaded('planoEntregaEntrega'))->toBeTrue();
+    expect($atual->planoTrabalhoEntrega->descricao)->toBe('Trabalho planejado do período');
+    expect((float) $atual->planoTrabalhoEntrega->forca_trabalho)->toBe(70.0);
+    expect($atual->planoEntregaEntrega)->not->toBeNull();
+    expect($atual->planoEntregaEntrega->relationLoaded('planoEntrega'))->toBeTrue();
 });
 
 test('inserirEmLote insere múltiplas linhas sem eventos', function () {

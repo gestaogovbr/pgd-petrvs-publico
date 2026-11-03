@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Repository\PlanoTrabalhoConsolidacaoContribuicao\Contracts;
 
 use App\Models\PlanoTrabalhoConsolidacaoContribuicao;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 /**
@@ -14,10 +13,13 @@ use Illuminate\Support\Collection;
 interface PlanoTrabalhoConsolidacaoContribuicaoReadRepositoryContract
 {
     /**
+     * Retorna a contribuição com as relações de entrega carregadas
+     * (planoTrabalhoEntrega e planoEntregaEntrega), como na listagem do período.
+     *
      * @param string|int $id
      * @return PlanoTrabalhoConsolidacaoContribuicao|null
      */
-    public function findById(string|int $id): ?Model;
+    public function findById(string|int $id): ?PlanoTrabalhoConsolidacaoContribuicao;
 
     /**
      * @return Collection<int, PlanoTrabalhoConsolidacaoContribuicao>
