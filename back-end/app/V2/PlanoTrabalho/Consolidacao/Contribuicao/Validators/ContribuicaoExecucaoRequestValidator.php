@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 
 class ContribuicaoExecucaoRequestValidator
 {
-    private const MAX_DESCRICAO_LENGTH = 1000;
+    private const MAX_DESCRICAO_LENGTH = 10000;
     private const MAX_ESFORCO = 999.99;
 
     /**

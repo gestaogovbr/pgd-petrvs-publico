@@ -103,7 +103,7 @@
         <br-textarea
           label="Trabalho Executado"
           show-counter
-          [maxlength]="1000"
+          [maxlength]="10000"
           [value]="entregaForm.get('descricao')!.value || ''"
           (input)="entregaForm.get('descricao')!.setValue($any($event.target).value)"
           placeholder="Descreva o trabalho executado..."

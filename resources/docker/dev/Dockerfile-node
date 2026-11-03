@@ -12,7 +12,9 @@ RUN apk add --no-cache \
         ln -sf /usr/bin/chromium /usr/bin/google-chrome; \
     fi
 ENV CHROME_BIN=/usr/bin/google-chrome
-RUN mkdir -p /usr/src/app && chown -R node:node /usr/src/app
+RUN mkdir -p /usr/src/app /usr/src/back-end/public /usr/src/back-end/resources \
+    && chown -R node:node /usr/src/app /usr/src/back-end/public /usr/src/back-end/resources \
+    && chmod -R 775 /usr/src/app /usr/src/back-end/public /usr/src/back-end/resources
 WORKDIR /usr/src/app
 VOLUME /usr/src/app
 EXPOSE 4200
