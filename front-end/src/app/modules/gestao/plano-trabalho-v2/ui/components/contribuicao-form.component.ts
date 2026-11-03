@@ -53,7 +53,7 @@ export class ContribuicaoFormComponent implements OnInit {
     outra_unidade_plano_id: this.fb.control(''),
     plano_entrega_id: this.fb.control(''),
     plano_entrega_entrega_id: this.fb.control('', Validators.required),
-    descricao: this.fb.control('', [Validators.required, Validators.maxLength(1000)]),
+    descricao: this.fb.control('', [Validators.required, Validators.maxLength(10000)]),
     forca_trabalho: this.fb.control<number>(100, [Validators.required, Validators.min(1)]),
   });
 

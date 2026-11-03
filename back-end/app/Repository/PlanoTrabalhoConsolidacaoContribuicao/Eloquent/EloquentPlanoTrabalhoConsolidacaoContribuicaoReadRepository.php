@@ -20,6 +20,36 @@ class EloquentPlanoTrabalhoConsolidacaoContribuicaoReadRepository extends Abstra
     }
 
     /**
+     * Relações que o front-end consome na listagem de contribuições
+     * (ver findAllByPlanoTrabalhoId). Carregadas também no retorno de
+     * store/update para que a resposta não omita o trabalho planejado.
+     *
+     * @var array<int, string>
+     */
+    private const RELACOES_CONTRIBUICAO = [
+        'planoTrabalhoEntrega:id,forca_trabalho,descricao',
+        'planoEntregaEntrega:id,descricao,entrega_id,plano_entrega_id',
+        'planoEntregaEntrega.entrega:id,nome',
+        'planoEntregaEntrega.planoEntrega:id,nome,unidade_id',
+        'planoEntregaEntrega.planoEntrega.unidade:id,codigo,sigla,nome',
+    ];
+
+    /**
+     * Sobrescreve o findById genérico do repositório abstrato para incluir as
+     * relações da contribuição, evitando que a resposta de store/update
+     * degrade a linha exibida na tela do Plano de Trabalho.
+     */
+    public function findById(string|int $id): ?PlanoTrabalhoConsolidacaoContribuicao
+    {
+        /** @var PlanoTrabalhoConsolidacaoContribuicao|null $contribuicao */
+        $contribuicao = $this->query()
+            ->with(self::RELACOES_CONTRIBUICAO)
+            ->find($id);
+
+        return $contribuicao;
+    }
+
+    /**
      * @return Collection<int, PlanoTrabalhoConsolidacaoContribuicao>
      */
     public function findByConsolidacao(string $consolidacaoId): Collection

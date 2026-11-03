@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\PlanoTrabalho\Validators;
 
 use App\Models\PlanoTrabalho;
+use App\Rules\AfterOrEqualField;
 use App\Support\ModalidadePgd;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -45,7 +46,7 @@ class PlanoTrabalhoRequestValidator
             'unidade_id' => ['required', 'uuid'],
             'programa_id' => ['required', 'uuid'],
             'data_inicio' => ['required', 'date'],
-            'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
+            'data_fim' => ['required', 'date', new AfterOrEqualField('data_inicio', 'A data de fim deve ser igual ou posterior à data de início.')],
             'modalidade_pgd' => ['required', 'string', Rule::in(ModalidadePgd::keys())],
             'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
             'clone_de' => ['nullable', 'uuid'],
@@ -58,7 +59,6 @@ class PlanoTrabalhoRequestValidator
             'programa_id.uuid' => 'O valor informado para o regramento é inválido.',
             'data_inicio.required' => 'A data de início é obrigatória.',
             'data_fim.required' => 'A data de fim é obrigatória.',
-            'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
             'modalidade_pgd.required' => 'A modalidade é obrigatória.',
             'modalidade_pgd.in' => 'A modalidade informada não é válida.',
             'justificativa_modalidade.max' => 'A justificativa da modalidade não pode exceder 500 caracteres.',
@@ -72,7 +72,7 @@ class PlanoTrabalhoRequestValidator
             'unidade_id' => ['required', 'uuid'],
             'programa_id' => ['required', 'uuid'],
             'data_inicio' => ['required', 'date'],
-            'data_fim' => ['required', 'date', 'after_or_equal:data_inicio'],
+            'data_fim' => ['required', 'date', new AfterOrEqualField('data_inicio', 'A data de fim deve ser igual ou posterior à data de início.')],
             'modalidade_pgd' => ['required', 'string', Rule::in(ModalidadePgd::keys())],
             'justificativa_modalidade' => ['nullable', 'string', 'max:500'],
         ], [
@@ -84,7 +84,6 @@ class PlanoTrabalhoRequestValidator
             'programa_id.uuid' => 'O valor informado para o regramento é inválido.',
             'data_inicio.required' => 'A data de início é obrigatória.',
             'data_fim.required' => 'A data de fim é obrigatória.',
-            'data_fim.after_or_equal' => 'A data de fim deve ser igual ou posterior à data de início.',
             'modalidade_pgd.required' => 'A modalidade é obrigatória.',
             'modalidade_pgd.in' => 'A modalidade informada não é válida.',
             'justificativa_modalidade.max' => 'A justificativa da modalidade não pode exceder 500 caracteres.',
