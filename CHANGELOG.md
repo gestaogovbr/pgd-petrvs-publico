@@ -8,6 +8,7 @@
 
 ### Modificado
 - Em caso de erro inesperado durante um cadastro, a mensagem exibida ao usuário deixa de conter detalhes técnicos do erro e passa a incluir um código de referência para acompanhamento do suporte
+- Aumenta o limite da descrição dos REs para 10 mil caracteres
 
 ## 3.2.3 26/10/2026
 
