@@ -3,6 +3,8 @@
 ### Corrigido
 - Plano de Entregas: o cadastro deixa de falhar com erro inesperado quando a unidade organizacional selecionada não existe ou foi removida, exibindo uma mensagem clara sobre o problema
 - A validação de datas de início em ocorrências, planos de trabalho e painéis deixa de gerar avisos de PHP (E_WARNING DateTime::modify) nos logs
+- Plano de Trabalho encerrado antecipadamente volta a poder ser arquivado: os períodos avaliativos posteriores ao encerramento deixam de ser contabilizados como pendência de avaliação
+- Plano de Trabalho: ao salvar uma contribuição de execução, a resposta passa a trazer as relações de entrega (entrega do plano de trabalho e entrega do plano de entregas) e a linha editada deixa de aparecer incompleta na tela
 
 ### Modificado
 - Em caso de erro inesperado durante um cadastro, a mensagem exibida ao usuário deixa de conter detalhes técnicos do erro e passa a incluir um código de referência para acompanhamento do suporte
