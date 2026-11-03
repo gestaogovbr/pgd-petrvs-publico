@@ -28,7 +28,11 @@ interface PlanoTrabalhoConsolidacaoReadRepositoryContract
         \DateTimeInterface $dataCorte
     ): \Illuminate\Database\Eloquent\Collection;
 
-    public function resumoParaArquivamento(string $planoTrabalhoId, \DateTimeInterface $limiteRecurso): ResumoConsolidacoesDTO;
+    public function resumoParaArquivamento(
+        string $planoTrabalhoId,
+        \DateTimeInterface $limiteRecurso,
+        ?string $encerradoAt = null
+    ): ResumoConsolidacoesDTO;
 
     public function possuiConsolidacaoFinalizadaPorPlano(string $planoTrabalhoId): bool;
 
