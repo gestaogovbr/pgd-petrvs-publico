@@ -235,8 +235,8 @@ class UsuarioController extends ControllerBase
             $data = $request->input('data');
             $validated = validator($data, [
                 'usuario_id' => ['required', 'uuid'],
-                'data_inicial_pedagio' => ['required', 'date', new BeforeOrEqualField('data_final_pedagio', 'A data inicial de pedagio deve ser igual ou anterior à data final de pedagio.')],
-                'data_final_pedagio' => ['required', 'date', new AfterOrEqualField('data_inicial_pedagio', 'A data final de pedagio deve ser igual ou posterior à data inicial de pedagio.')],
+                'data_inicial_pedagio' => ['required', 'date', new BeforeOrEqualField('data_final_pedagio', 'A data inicial de pedágio deve ser igual ou anterior à data final de pedágio.')],
+                'data_final_pedagio' => ['required', 'date', new AfterOrEqualField('data_inicial_pedagio', 'A data final de pedágio deve ser igual ou posterior à data inicial de pedágio.')],
                 'tipo_pedagio' => ['required', 'integer', 'in:1,2'],
             ])->validate();
             return response()->json([
