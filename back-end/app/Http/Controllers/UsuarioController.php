@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\Contracts\IBaseException;
+use App\Rules\AfterOrEqualField;
+use App\Rules\BeforeOrEqualField;
 use App\Services\CalendarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ControllerBase;
@@ -233,8 +235,8 @@ class UsuarioController extends ControllerBase
             $data = $request->input('data');
             $validated = validator($data, [
                 'usuario_id' => ['required', 'uuid'],
-                'data_inicial_pedagio' => ['required', 'date', 'before_or_equal:data_final_pedagio'],
-                'data_final_pedagio' => ['required', 'date', 'after_or_equal:data_inicial_pedagio'],
+                'data_inicial_pedagio' => ['required', 'date', new BeforeOrEqualField('data_final_pedagio', 'A data inicial de pedágio deve ser igual ou anterior à data final de pedágio.')],
+                'data_final_pedagio' => ['required', 'date', new AfterOrEqualField('data_inicial_pedagio', 'A data final de pedágio deve ser igual ou posterior à data inicial de pedágio.')],
                 'tipo_pedagio' => ['required', 'integer', 'in:1,2'],
             ])->validate();
             return response()->json([
