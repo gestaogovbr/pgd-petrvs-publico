@@ -90,3 +90,54 @@ test('não emite warning de DateTime::modify ao referenciar o nome do campo', fu
 
     expect($temWarningDateTime)->toBeFalse();
 });
+
+/**
+ * Reproduz a validação de filtros aninhados (ex.: relatórios com filters.*),
+ * capturando qualquer warning/notice do PHP.
+ *
+ * @param  array<string, mixed>  $filters
+ * @return array{fails: bool, first: string|null, warnings: list<string>}
+ */
+function runAfterOrEqualFieldNestedValidation(array $filters): array
+{
+    $warnings = [];
+    set_error_handler(function (int $errno, string $errstr) use (&$warnings): bool {
+        $warnings[] = $errstr;
+        return true;
+    });
+
+    try {
+        $validator = Validator::make(['filters' => $filters], [
+            'filters.periodo_inicio' => ['required', 'date'],
+            'filters.periodo_fim' => ['required', 'date', new AfterOrEqualField('filters.periodo_inicio', 'fim >= inicio')],
+        ]);
+
+        $fails = $validator->fails();
+        $first = $validator->errors()->first('filters.periodo_fim') ?: null;
+    } finally {
+        restore_error_handler();
+    }
+
+    return ['fails' => $fails, 'first' => $first, 'warnings' => $warnings];
+}
+
+test('compara campos aninhados (filters.*) quando o período é válido', function () {
+    $result = runAfterOrEqualFieldNestedValidation([
+        'periodo_inicio' => '2026-03-01',
+        'periodo_fim' => '2026-03-31',
+    ]);
+
+    expect($result['fails'])->toBeFalse()
+        ->and($result['warnings'])->toBeEmpty();
+});
+
+test('rejeita filters.periodo_fim anterior a filters.periodo_inicio', function () {
+    $result = runAfterOrEqualFieldNestedValidation([
+        'periodo_inicio' => '2026-03-01',
+        'periodo_fim' => '2026-02-01',
+    ]);
+
+    expect($result['fails'])->toBeTrue()
+        ->and($result['first'])->toBe('fim >= inicio')
+        ->and($result['warnings'])->toBeEmpty();
+});

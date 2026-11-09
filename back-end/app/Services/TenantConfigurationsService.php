@@ -18,7 +18,7 @@ class TenantConfigurationsService
     ) {
     }
 
-    public function handle(string $tenantId = null, $domain = null): ?Domain
+    public function handle(?string $tenantId = null, $domain = null): ?Domain
     {
         $tenant = null;
         if ($tenantId) {
