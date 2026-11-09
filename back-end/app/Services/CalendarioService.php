@@ -215,7 +215,7 @@ class CalendarioService
     return $result ? $listaFeriados[date("0000-m-d", $timestamp)] : null;
   }
 
-  public static function easter(int $ano = null)
+  public static function easter(?int $ano = null)
   {
     $year = $ano ?? getdate()['year'];
     $G = $year % 19;
@@ -494,7 +494,7 @@ class CalendarioService
    * @param  DateTime|null $inicio: parâmetro opcional
    * @return float: retorna a duração do expediente em horas. Se a $unidade não for informada, retorna 24.
    */
-  public static function expediente(Unidade $unidade = null, DateTime $inicio = null)
+  public static function expediente(?Unidade $unidade = null, ?DateTime $inicio = null)
   {
     return is_null($unidade) ? 24 : max(UtilService::getStrTimeHours($unidade->horario_trabalho_fim) -
       ($inicio ? UtilService::getTimeHours($inicio) : UtilService::getStrTimeHours($unidade->horario_trabalho_inicio)) -
@@ -514,7 +514,7 @@ class CalendarioService
     return $resultado;
   }
 
-  public static function calculaDataTempoUnidade($inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, array $pausas = null, array $afastamentos = null): Efemerides
+  public static function calculaDataTempoUnidade($inicio, $fimOuTempo, int $cargaHoraria, Unidade $unidade, string $tipo, ?array $pausas = null, ?array $afastamentos = null): Efemerides
   {
     $feriados = static::feriadosCadastrados($unidade->id) ?? [];
     $forma = in_array($tipo, ['HORAS_UTEIS', 'HORAS_CORRIDAS', 'DIAS_UTEIS', 'DIAS_CORRIDOS']) ? $tipo : ($tipo == 'DISTRIBUICAO' ? $unidade->distribuicao_forma_contagem_prazos : $unidade->entrega_forma_contagem_prazos);
@@ -565,7 +565,7 @@ class CalendarioService
   @param  array | null     $afastamentos  Lista dos afastamentos do usuário, a partir da data $inicio, quando aplicável
   @return Efemerides                      Retorna todas as informações do cálculo com as horas ou a data fim calculados
   */
-  public static function calculaDataTempo(DateTime $inicio, $fimOuTempo, string $forma, int $cargaHoraria = null, Expediente $expediente, array $feriados = null, array $pausas = null, array $afastamentos = null): Efemerides
+  public static function calculaDataTempo(DateTime $inicio, $fimOuTempo, string $forma, ?int $cargaHoraria = null, Expediente $expediente, ?array $feriados = null, ?array $pausas = null, ?array $afastamentos = null): Efemerides
   {
     if (!defined('INICIO_PERIODO'))
       define('INICIO_PERIODO', $inicio->format(DateTime::ATOM));
@@ -630,7 +630,7 @@ class CalendarioService
     $dDiaAtual = $inicio; /* Variável que irá percorrer todas as datas (do inicio ao fim ou a quantidade de horas) */
 
     /* Calculo do expediente (inicio, fim, e intervalos. Considerando os especiais). Caso expediente seja undefined então será 24h, e caso não tenha expediente no dia será undefined */
-    $expedienteDia = function (string $sInicio = null, string $sFim = null) use (&$dDiaAtual, &$expediente, &$result): ExpedienteDia {
+    $expedienteDia = function (?string $sInicio = null, ?string $sFim = null) use (&$dDiaAtual, &$expediente, &$result): ExpedienteDia {
       $diaSemana = LookupService::getCode(LookupService::LOOKUPS['DIA_SEMANA'], date('w', UtilService::asTimestamp($dDiaAtual)));
       $diaLiteral = LookupService::getValue(LookupService::LOOKUPS['DIA_SEMANA'], date('w', UtilService::asTimestamp($dDiaAtual)));
       $tLimiteInicio = UtilService::asTimestamp(UtilService::setStrTime($dDiaAtual, $sInicio ?? "00:00"));

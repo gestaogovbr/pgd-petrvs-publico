@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\V2\Relatorio\LacunaPlanoTrabalho\Validators;
 
+use App\Rules\AfterOrEqualField;
 use Illuminate\Http\Request;
 
 class LacunaPlanoTrabalhoIndexRequestValidator
@@ -16,7 +17,7 @@ class LacunaPlanoTrabalhoIndexRequestValidator
             'filters' => ['sometimes', 'array'],
             'filters.unidade_id' => ['required', 'uuid'],
             'filters.periodo_inicio' => ['required', 'date'],
-            'filters.periodo_fim' => ['required', 'date', 'after_or_equal:filters.periodo_inicio'],
+            'filters.periodo_fim' => ['required', 'date', new AfterOrEqualField('filters.periodo_inicio', 'O período final deve ser igual ou posterior ao período inicial.')],
             'filters.incluir_unidades_subordinadas' => ['sometimes', 'nullable'],
             'filters.nome' => ['sometimes', 'nullable', 'string', 'max:255'],
             'filters.matricula' => ['sometimes', 'nullable', 'string', 'max:64'],

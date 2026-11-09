@@ -37,7 +37,7 @@ function criarConsolidacao(): PlanoTrabalhoConsolidacao
     ]);
 }
 
-function criarEntregaPE(Unidade $unidade = null): PlanoEntregaEntrega
+function criarEntregaPE(?Unidade $unidade = null): PlanoEntregaEntrega
 {
     $unidade = $unidade ?? Unidade::factory()->create();
     $entregaCatalogo = Entrega::factory()->create(['unidade_id' => $unidade->id]);

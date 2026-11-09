@@ -77,7 +77,7 @@ class IntegracaoService extends ServiceBase
   public $nivelAcessoService;
   public ?object $integracaoServiceAdapter = null;
 
-  function __construct($config = null, string $tenantId = null)
+  function __construct($config = null, ?string $tenantId = null)
   {
     parent::__construct();
     ini_set('max_execution_time', 1800); /* 30 minutos */

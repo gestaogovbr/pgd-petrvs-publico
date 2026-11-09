@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\V2\MuralAviso\Validators;
 
 use App\Enums\MuralAvisoDestinatario;
+use App\Rules\AfterOrEqualField;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -24,7 +25,6 @@ class MuralAvisoRequestValidator
         'data_publicacao.after_or_equal' => 'A data de publicação deve ser a partir do momento atual.',
         'data_expiracao.required' => 'A data de expiração é obrigatória.',
         'data_expiracao.date' => 'A data de expiração deve ser uma data válida.',
-        'data_expiracao.after_or_equal' => 'A data de expiração deve ser igual ou posterior à data de publicação.',
     ];
 
     /**
@@ -40,7 +40,7 @@ class MuralAvisoRequestValidator
             'destinatario' => ['required', 'string', Rule::in(array_column(MuralAvisoDestinatario::cases(), 'value'))],
             'tenant_id' => ['nullable', 'string'],
             'data_publicacao' => ['required', 'date', "after_or_equal:{$limitePublicacao}"],
-            'data_expiracao' => ['required', 'date', 'after_or_equal:data_publicacao'],
+            'data_expiracao' => ['required', 'date', new AfterOrEqualField('data_publicacao', 'A data de expiração deve ser igual ou posterior à data de publicação.')],
         ], self::MESSAGES);
     }
 
@@ -57,7 +57,7 @@ class MuralAvisoRequestValidator
             'destinatario' => ['required', 'string', Rule::in(array_column(MuralAvisoDestinatario::cases(), 'value'))],
             'tenant_id' => ['nullable', 'string'],
             'data_publicacao' => ['required', 'date', "after_or_equal:{$limitePublicacao}"],
-            'data_expiracao' => ['required', 'date', 'after_or_equal:data_publicacao'],
+            'data_expiracao' => ['required', 'date', new AfterOrEqualField('data_publicacao', 'A data de expiração deve ser igual ou posterior à data de publicação.')],
         ], self::MESSAGES);
     }
 

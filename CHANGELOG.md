@@ -1,3 +1,10 @@
+## 3.2.5 09/11/2026
+
+### Corrigido
+- Campo de meta dos PEs agora está sendo exibido corretamente
+- Obeservabilidade: alterações na tipagem e nas regras de autenticação de request para evitar logs E_DEPRECATED e E_WARNING
+- Model `HistoricoExecutoraUnidade` não deriva mais de `ModelBase`, pois não tem tabela `deleted_at`, que causava o erro de SQL 42S22
+
 ## 3.2.4 03/11/2026
 
 ### Corrigido
