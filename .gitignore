@@ -91,3 +91,7 @@ docs/*
 scripts/release/*
 AGENTS.md
 .agents/skills/*
+
+# Documentacao local de issues: nunca versionar (inclusive anexos).
+/docs/issue/
+/docs/issues/

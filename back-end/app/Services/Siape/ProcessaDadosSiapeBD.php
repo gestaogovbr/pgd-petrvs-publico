@@ -134,7 +134,7 @@ class ProcessaDadosSiapeBD
             report($e);
             SiapeLog::error('Falha nos dados funcionais SIAPE.', ['cpf_final' => substr($cpf, -4)]);
             $tenantId = function_exists('tenant') ? (tenant('id') ?? 'central') : 'central';
-            throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape_{$tenantId}.log");
+            throw new ErrorDataSiapeException("Falha ao tratar dados funcionais do Siape, para informações detalhadas verificar storage/logs/laravel.log ou storage/logs/siape_{$tenantId}.log", 0, $e);
         }
     }
 
