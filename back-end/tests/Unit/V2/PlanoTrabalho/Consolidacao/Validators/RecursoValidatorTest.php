@@ -23,7 +23,7 @@ beforeEach(function () {
 
 afterEach(fn () => Mockery::close());
 
-function mockAvaliacaoComNota(bool $aprova, string $dataAvaliacao = null): Avaliacao
+function mockAvaliacaoComNota(bool $aprova, ?string $dataAvaliacao = null): Avaliacao
 {
     $nota = Mockery::mock(TipoAvaliacaoNota::class)->makePartial();
     $nota->aprova = $aprova ? 1 : 0;
