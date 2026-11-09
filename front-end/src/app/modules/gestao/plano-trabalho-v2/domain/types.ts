@@ -102,9 +102,26 @@ const PLANO_TRABALHO_STATUS_LABELS: Record<PlanoTrabalhoStatus, string> = {
   AVALIADO: 'Avaliado',
 };
 
+function dataInicioEhFutura(dataInicio: Date | string | null | undefined): boolean {
+  if (!dataInicio) return false;
+
+  const iso = dataInicio instanceof Date
+    ? `${dataInicio.getFullYear()}-${String(dataInicio.getMonth() + 1).padStart(2, '0')}-${String(dataInicio.getDate()).padStart(2, '0')}`
+    : String(dataInicio).slice(0, 10);
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+
+  const hoje = new Date();
+  const hojeIso = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
+
+  return iso > hojeIso;
+}
+
 export function planoTrabalhoStatusLabel(status: PlanoTrabalhoStatus | undefined, plano?: PlanoTrabalho): string {
   if (!status) return '-';
   if (status === 'CONCLUIDO' && plano?.encerrado_at) return 'Encerrado antecipadamente';
+  // #2740 (Melhoria 1): plano ATIVO com início futuro ainda não está em execução.
+  if (status === 'ATIVO' && dataInicioEhFutura(plano?.data_inicio)) return 'Pronto para Execução';
   return PLANO_TRABALHO_STATUS_LABELS[status] ?? status;
 }
 
