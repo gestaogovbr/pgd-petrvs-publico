@@ -13,8 +13,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { WebcomponentsAngularModule } from '@govbr-ds/webcomponents-angular';
 import { UnidadeSelectComponent, UnidadeSelectEvent, UnidadeSearchFn } from 'src/app/v2/components/unidade-select/unidade-select.component';
-import { FiltrosPainel, PainelApiClient } from '../../infra/painel-api.client';
+import { FiltrosPainel, IntervaloDatas, PainelApiClient } from '../../infra/painel-api.client';
 import { MESES_ABREVIADOS } from '../../infra/painel.constants';
+import { lerIntervaloDoPicker, ultimoDiaDoMes } from '../utils/datas';
+import { BrDatetimePickerCustomEvent, BrSelectCustomEvent, DatetimePickerChangeDetail } from '@govbr-ds/webcomponents';
 
 interface SelectOption {
   value: string;
@@ -64,8 +66,7 @@ export class PainelFiltrosComponent implements OnChanges {
 
   readonly tipoConsulta = signal<'situacao_atual' | 'historico'>('situacao_atual');
   readonly unidadeSelecionada = signal<UnidadeOption | null>(null);
-  readonly dataInicio = signal('');
-  readonly dataFim = signal('');
+  readonly intervalo = signal<IntervaloDatas | null>(null);
   readonly periodos = signal<string[]>([]);
   readonly periodoSelecionado = signal('');
   readonly anoSelecionado = signal('');
@@ -94,15 +95,6 @@ export class PainelFiltrosComponent implements OnChanges {
       .sort((a, b) => +a.value - +b.value);
   });
 
-  readonly periodosOptions = computed<SelectOption[]>(() => {
-    const sel = this.periodoSelecionado();
-    return this.periodos().map(p => ({
-      value: p,
-      label: this.formatarPeriodo(p),
-      selected: p === sel,
-    }));
-  });
-
   readonly mostrarPeriodo = computed(() =>
     this.modoData === 'referencia' && this.tipoConsulta() === 'historico' && !!this.unidadeSelecionada()
   );
@@ -124,14 +116,15 @@ export class PainelFiltrosComponent implements OnChanges {
     }
   }
 
-  onTipoConsultaChange(event: any): void {
-    const value = event?.target?.value ?? event?.detail ?? event;
+  onTipoConsultaChange(event: BrSelectCustomEvent<string>): void {
+    const value = event.detail;
     if ((value === 'situacao_atual' || value === 'historico') && value !== this.tipoConsulta()) {
       this.tipoConsulta.set(value);
       this.periodoSelecionado.set('');
       this.anoSelecionado.set('');
       this.mesSelecionado.set('');
       this.periodos.set([]);
+      this.intervalo.set(null);
 
       if (this.modoData === 'referencia') {
         this.unidadeSelecionada.set(null);
@@ -152,35 +145,25 @@ export class PainelFiltrosComponent implements OnChanges {
     this.emitirFiltros();
   }
 
-  onDataInicioChange(event: Event): void {
-    const valor = (event.target as HTMLInputElement).value;
-    this.dataInicio.set(valor);
-    this.emitirFiltros();
+  onIntervaloChange(event: BrDatetimePickerCustomEvent<DatetimePickerChangeDetail>): void {
+    const intervalo = lerIntervaloDoPicker(event.detail);
+
+    this.intervalo.set(intervalo);
+    if (intervalo) {
+      this.emitirFiltros();
+    }
   }
 
-  onDataFimChange(event: Event): void {
-    const valor = (event.target as HTMLInputElement).value;
-    this.dataFim.set(valor);
-    this.emitirFiltros();
-  }
-
-  onPeriodoChange(event: any): void {
-    const value = event?.target?.value ?? event?.detail ?? event;
-    if (!value) return;
-    this.periodoSelecionado.set(value);
-    this.emitirFiltros();
-  }
-
-  onAnoChange(event: any): void {
-    const value = event?.target?.value ?? event?.detail ?? event;
+  onAnoChange(event: BrSelectCustomEvent<string>): void {
+    const value = event.detail;
     if (!value || value === this.anoSelecionado()) return;
     this.anoSelecionado.set(value);
     this.mesSelecionado.set('');
     this.periodoSelecionado.set('');
   }
 
-  onMesChange(event: any): void {
-    const value = event?.target?.value ?? event?.detail ?? event;
+  onMesChange(event: BrSelectCustomEvent<string>): void {
+    const value = event.detail;
     if (!value) return;
     this.mesSelecionado.set(value);
     const ano = this.anoSelecionado();
@@ -204,47 +187,26 @@ export class PainelFiltrosComponent implements OnChanges {
     const unidade = this.unidadeSelecionada();
     if (!unidade) return;
 
-    if (this.modoData === 'range') {
-      if (this.tipoConsulta() === 'historico' && (!this.dataInicio() || !this.dataFim())) return;
-
-      const filtros: FiltrosPainel = {
-        tipo_consulta: this.tipoConsulta(),
-        unidade_id: unidade.id,
-      };
-
-      if (this.tipoConsulta() === 'historico') {
-        filtros.data_inicio = this.dataInicio();
-        filtros.data_fim = this.dataFim();
-      }
-
-      this.filtrosChange.emit(filtros);
-      return;
-    }
-
-    // modoData === 'referencia'
-    if (this.tipoConsulta() === 'situacao_atual') {
-      this.filtrosChange.emit({
-        tipo_consulta: 'situacao_atual',
-        unidade_id: unidade.id,
-      });
-      return;
-    }
-
-    if (!this.periodoSelecionado()) return;
-
-    const [ano, mes] = this.periodoSelecionado().split('-').map(Number);
-    const ultimoDiaMes = new Date(ano, mes, 0);
-
-    this.filtrosChange.emit({
-      tipo_consulta: 'historico',
+    const filtros: FiltrosPainel = {
+      tipo_consulta: this.tipoConsulta(),
       unidade_id: unidade.id,
-      data_inicio: `${ano}-01-01`,
-      data_fim: ultimoDiaMes.toISOString().split('T')[0],
-    });
-  }
+    };
 
-  private formatarPeriodo(periodo: string): string {
-    const [ano, mes] = periodo.split('-');
-    return `${MESES_ABREVIADOS[+mes - 1]}/${ano}`;
+    if (filtros.tipo_consulta === 'historico') {
+      if (this.modoData === 'range') {
+        filtros.intervalo = this.intervalo() ?? undefined;
+      } else if (this.periodoSelecionado()) {
+        const [ano, mes] = this.periodoSelecionado().split('-').map(Number);
+        filtros.intervalo = {
+          inicio: `${ano}-01-01`,
+          fim: ultimoDiaDoMes(ano, mes),
+        };
+      }
+      if (!filtros.intervalo) {
+        return;
+      }
+    }
+
+    this.filtrosChange.emit(filtros);
   }
 }
