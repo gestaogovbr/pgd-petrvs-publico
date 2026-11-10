@@ -11,6 +11,7 @@ use App\Enums\StatusEnum;
 use App\Repository\DocumentoAssinaturaRepository;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalho\Contracts\PlanoTrabalhoReadRepositoryContract;
+use App\V2\PlanoTrabalho\Consolidacao\PeriodoAvaliativoDispensadoSql;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
@@ -575,7 +576,7 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
 
     /**
      * Aplica critério de consolidação pendente de avaliação sobre um builder de consolidação.
-     * Consolidação CONCLUIDO sem nenhuma avaliação registrada.
+     * Consolidação CONCLUIDO sem nenhuma avaliação registrada e não dispensada por ocorrência.
      * Usado pelo withCount (tag) e pelas queries de avaliação pendente.
      */
     private function aplicarConsolidacaoPendenteAvaliacao(\Illuminate\Database\Eloquent\Builder $q): void
@@ -586,6 +587,8 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                 $sub->whereColumn('planos_trabalhos_consolidacoes.data_inicio', '<=', 'planos_trabalhos.encerrado_at')
                     ->orWhereNull('planos_trabalhos.encerrado_at');
             });
+
+        PeriodoAvaliativoDispensadoSql::excluirDispensados($q);
     }
 
     /**
