@@ -26,6 +26,12 @@ class ContribuicaoExecucaoStoreValidator
     private const MENSAGEM_PERIODO_BLOQUEADO =
         'Não é possível incluir ou excluir contribuições quando o período avaliativo está Aguardando Avaliação ou Avaliado.';
 
+    private const MENSAGEM_PLANO_INDISPONIVEL =
+        'Contribuições de execução só podem ser gerenciadas quando o Plano de Trabalho está em execução.';
+
+    private const MENSAGEM_PERIODO_POSTERIOR_AO_ENCERRAMENTO =
+        'Não é possível gerenciar contribuições de um período avaliativo posterior ao encerramento do plano.';
+
     public function __construct(
         private readonly PlanoTrabalhoConsolidacaoRepository $consolidacaoRepository,
         private readonly PlanoTrabalhoConsolidacaoContribuicaoRepository $contribuicaoRepository,
@@ -57,8 +63,11 @@ class ContribuicaoExecucaoStoreValidator
 
     private function resolverPeriodoLiberado(PlanoTrabalho $plano, string $consolidacaoId): PlanoTrabalhoConsolidacao
     {
-        if ($plano->status !== StatusEnum::ATIVO->value) {
-            throw new ValidateException('Contribuições de execução só podem ser gerenciadas quando o Plano de Trabalho está em execução.');
+        $planoEncerradoAntecipadamente = $plano->status === StatusEnum::CONCLUIDO->value && $plano->encerrado_at !== null;
+        $planoEmExecucao = $plano->status === StatusEnum::ATIVO->value && $plano->encerrado_at === null;
+
+        if (!$planoEmExecucao && !$planoEncerradoAntecipadamente) {
+            throw new ValidateException(self::MENSAGEM_PLANO_INDISPONIVEL);
         }
 
         $consolidacao = $this->consolidacaoRepository->findConsolidacaoById($consolidacaoId);
@@ -69,6 +78,10 @@ class ContribuicaoExecucaoStoreValidator
 
         if ($consolidacao->plano_trabalho_id !== $plano->id) {
             throw new ValidateException('O período avaliativo não pertence a este Plano de Trabalho.');
+        }
+
+        if ($plano->encerrado_at !== null && $consolidacao->data_inicio > $plano->encerrado_at) {
+            throw new ValidateException(self::MENSAGEM_PERIODO_POSTERIOR_AO_ENCERRAMENTO);
         }
 
         if ($this->periodoEstaBloqueado($consolidacao)) {
