@@ -41,6 +41,7 @@ class BuscarDadosSiapeJob implements ShouldQueue, ContratoJobSchedule
 
         if (TenantConfigurationsService::tenantHasSipecConfigured()) {
             Log::info("Job BuscarDadosSiapeJob Tenant {$this->tenantId}: ignorado pois SIPEC está configurado");
+            $this->falharSeEncadeado('Busca SIAPE ignorada: SIPEC está configurado para o tenant.');
             return;
         }
 
@@ -48,6 +49,7 @@ class BuscarDadosSiapeJob implements ShouldQueue, ContratoJobSchedule
         
         if(empty(trim($config["conectagov_chave"]))){
             Log::error("Job BuscarDadosSiapeJob Tenant {$this->tenantId}: Chave do ConectaGOV não informada");
+            $this->falharSeEncadeado('Busca SIAPE não executada: chave do ConectaGOV não informada.');
             return;
         }
 
@@ -66,9 +68,18 @@ class BuscarDadosSiapeJob implements ShouldQueue, ContratoJobSchedule
         Log::info("Job BuscarDadosSiapeJob Tenant {$this->tenantId} - END");
     }
 
+    private function falharSeEncadeado(string $motivo): void
+    {
+        if ($this->chained !== []) {
+            throw new \RuntimeException($motivo);
+        }
+    }
+
     private function loadingTenantConfigurationMiddleware(string $tenantId): void
     {
         $tenantConfigurations = new TenantConfigurationsService();
-        $tenantConfigurations->handleTenant($tenantId);
+        if ($tenantConfigurations->handleTenant($tenantId) === null) {
+            throw new \RuntimeException("Tenant não encontrado para busca SIAPE: {$tenantId}");
+        }
     }
 }

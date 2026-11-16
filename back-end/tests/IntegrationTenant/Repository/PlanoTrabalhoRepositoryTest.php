@@ -684,6 +684,116 @@ describe('PlanoTrabalhoRepository::buscarPlanosListagem - minha_equipe', functio
             ->and($result->items()[0]->usuario_id)->toBe($participante->id);
     });
 
+    test('inclui integrante vinculado (COLABORADOR) na unidade', function () {
+        $participante = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
+
+        $integrante = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $participante->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'COLABORADOR',
+            'unidade_integrante_id' => $integrante->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $participante->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'minha_equipe' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1)
+            ->and($result->items()[0]->usuario_id)->toBe($participante->id);
+    });
+
+    test('não inclui integrante que possui apenas delegação na unidade', function () {
+        $delegado = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
+
+        $integrante = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $delegado->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'GESTOR_DELEGADO',
+            'unidade_integrante_id' => $integrante->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $delegado->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'minha_equipe' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(0);
+    });
+
+    test('não inclui integrante que possui apenas atribuição de gestor na unidade', function () {
+        $gestor = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
+
+        $integrante = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $gestor->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'GESTOR',
+            'unidade_integrante_id' => $integrante->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $gestor->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'minha_equipe' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(0);
+    });
+
+    test('inclui integrante lotado mesmo quando também possui delegação', function () {
+        $participante = Usuario::factory()->create(['perfil_id' => $this->perfilId]);
+
+        $integrante = UnidadeIntegrante::query()->create([
+            'unidade_id' => $this->unidade->id,
+            'usuario_id' => $participante->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'LOTADO',
+            'unidade_integrante_id' => $integrante->id,
+        ]);
+        UnidadeIntegranteAtribuicao::query()->create([
+            'atribuicao' => 'GESTOR_DELEGADO',
+            'unidade_integrante_id' => $integrante->id,
+        ]);
+
+        PlanoTrabalho::factory()->create([
+            'usuario_id' => $participante->id,
+            'unidade_id' => $this->unidade->id,
+        ]);
+
+        $filtro = PlanoTrabalhoIndexDTO::fromArray([
+            'minha_equipe' => true,
+            'unidade_id' => [$this->unidade->id],
+        ]);
+        $result = $this->repository->buscarPlanosListagem($filtro);
+
+        expect($result->total())->toBe(1)
+            ->and($result->items()[0]->usuario_id)->toBe($participante->id);
+    });
+
     test('inclui PT de outra unidade quando integrante tem atribuição ativa na unidade gerenciada', function () {
         $outraUnidade = Unidade::factory()->create();
         $participante = Usuario::factory()->create(['perfil_id' => $this->perfilId]);

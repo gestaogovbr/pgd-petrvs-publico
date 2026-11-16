@@ -78,8 +78,8 @@ export class AlinhamentoDesempenhoPage implements OnInit {
 
   readonly periodoLabel = computed(() => {
     const filtros = this.filtrosAtuais();
-    if (!filtros?.data_inicio || !filtros?.data_fim) return '';
-    return `${filtros.data_inicio} a ${filtros.data_fim}`;
+    if (!filtros?.intervalo) return '';
+    return `${filtros.intervalo.inicio} a ${filtros.intervalo.fim}`;
   });
 
   ngOnInit(): void {

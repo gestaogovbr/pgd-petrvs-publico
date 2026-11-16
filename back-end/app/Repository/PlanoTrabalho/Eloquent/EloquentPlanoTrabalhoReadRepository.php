@@ -324,6 +324,10 @@ class EloquentPlanoTrabalhoReadRepository extends AbstractEloquentReadRepository
                         ->from('unidades_integrantes as ui')
                         ->join('unidades_integrantes_atribuicoes as uia', function ($join) {
                             $join->on('uia.unidade_integrante_id', '=', 'ui.id')
+                                ->whereIn('uia.atribuicao', [
+                                    Atribuicao::LOTADO->value,
+                                    Atribuicao::COLABORADOR->value,
+                                ])
                                 ->whereNull('uia.deleted_at');
                         })
                         ->whereIn('ui.unidade_id', $filtro->unidadesId)

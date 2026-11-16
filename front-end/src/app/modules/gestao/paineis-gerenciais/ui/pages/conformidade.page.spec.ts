@@ -213,7 +213,7 @@ describe('ConformidadePage', () => {
     it('deve limpar todos os dados anteriores ao trocar filtro', () => {
       resetApiSubjects();
 
-      component.onFiltrosChange({ tipo_consulta: 'historico', unidade_id: 'u2', data_inicio: '2024-01-01', data_fim: '2024-06-30' });
+      component.onFiltrosChange({ tipo_consulta: 'historico', unidade_id: 'u2', intervalo: { inicio: '2024-01-01', fim: '2024-06-30' } });
 
       expect(component.registroExecucaoPE()).toBeNull();
       expect(component.avaliacaoPE()).toBeNull();
@@ -258,7 +258,7 @@ describe('ConformidadePage', () => {
       apiSpy.getConformidadeAvaliacaoPT.calls.reset();
       apiSpy.getConformidadeUnidadesExecutorasPE.calls.reset();
 
-      const novosFiltros: FiltrosPainel = { tipo_consulta: 'historico', unidade_id: 'u3', data_inicio: '2024-01-01', data_fim: '2024-12-31' };
+      const novosFiltros: FiltrosPainel = { tipo_consulta: 'historico', unidade_id: 'u3', intervalo: { inicio: '2024-01-01', fim: '2024-12-31' } };
       component.onFiltrosChange(novosFiltros);
 
       expect(apiSpy.getConformidadeRegistroExecucaoPE).toHaveBeenCalledWith(novosFiltros);
@@ -373,7 +373,7 @@ describe('ConformidadePage', () => {
 
   describe('Computed tipoConsultaLabel e periodoLabel', () => {
     it('tipoConsultaLabel deve refletir os filtros atuais', () => {
-      component['filtrosAtuais'].set({ tipo_consulta: 'historico', unidade_id: 'u1', data_inicio: '2024-01-01', data_fim: '2024-06-30' });
+      component['filtrosAtuais'].set({ tipo_consulta: 'historico', unidade_id: 'u1', intervalo: { inicio: '2024-01-01', fim: '2024-06-30' } });
       expect(component.tipoConsultaLabel()).toBe('Histórico');
     });
 
@@ -383,7 +383,7 @@ describe('ConformidadePage', () => {
     });
 
     it('periodoLabel deve mostrar intervalo quando filtros têm datas', () => {
-      component['filtrosAtuais'].set({ tipo_consulta: 'historico', unidade_id: 'u1', data_inicio: '2024-01-01', data_fim: '2024-06-30' });
+      component['filtrosAtuais'].set({ tipo_consulta: 'historico', unidade_id: 'u1', intervalo: { inicio: '2024-01-01', fim: '2024-06-30' } });
       expect(component.periodoLabel()).toBe('2024-01-01 a 2024-06-30');
     });
 
