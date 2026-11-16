@@ -272,7 +272,11 @@ export class PlanoTrabalhoV2ListPage implements OnInit, OnDestroy {
 
   private saveFilters() {
     const raw = this.filters.getRawValue();
-    const { unidade_id, aguardando_minha_avaliacao, aguardando_minha_assinatura, ...persistable } = raw;
+    // #2740 Erro 2: mantém todos os filtros (inclusive os de pendência vindos da home —
+    // aguardando_minha_*, registro_execucao_atraso) durante a navegação interna do módulo,
+    // para que o retorno da tela de detalhe preserve a seleção. Só `unidade_id` é descartado
+    // por ser derivado em tempo de montagem do payload.
+    const { unidade_id, ...persistable } = raw;
     this.filterStorage.save(this.filterStorageKey, { ...persistable, advanced: this.advanced() });
   }
 

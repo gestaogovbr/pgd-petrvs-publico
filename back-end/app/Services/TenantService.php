@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Jobs\BuscarDadosSiapeJob;
 use App\Jobs\BuscarDadosSipecJob;
+use App\Jobs\SincronizarSiapeJob;
 use App\Exceptions\NotFoundException;
 use App\Services\Sipec\SipecService;
 use App\Models\Cidade;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Storage;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Bus;
 use App\Exceptions\ServerException;
 use Illuminate\Support\Facades\Cache;
 use App\Models\JobSchedule;
@@ -212,10 +214,18 @@ class TenantService extends ServiceBase
 
     public function forcarSiape(string $tenantId)
     {
-        $this->inicializeTenant($tenantId);
+        $tenant = tenancy()->find($tenantId);
+        if (!$tenant) {
+            throw new NotFoundException("Tenant não encontrado para ID: {$tenantId}");
+        }
+
+        tenancy()->initialize($tenant);
         $this->TenantConfigurationsService->handle($tenantId);
         $this->limpaTabelas();
-        BuscarDadosSiapeJob::dispatch($tenantId);
+        Bus::chain([
+            new BuscarDadosSiapeJob($tenantId),
+            new SincronizarSiapeJob($tenantId),
+        ])->dispatch();
     }
 
     public function testarSipec(string $tenantId): void

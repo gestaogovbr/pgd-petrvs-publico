@@ -788,3 +788,18 @@ br-select.select-auto::part(input-field) {
   max-width: 400px;
   width: auto;
 }
+
+/*
+ * Painel flutuante do calendário. O web component 2.1.x não posiciona o painel
+ * (fica no fluxo); ancoramos sobre o campo, como fazia o flatpickr do core
+ * legado. A largura fixa mantém as proporções nativas do calendário,
+ * independente da largura do campo.
+ */
+br-datetime-picker::part(panel) {
+  position: absolute;
+  top: calc(100% + 2px);
+  right: 0;
+  width: 304px;
+  max-width: 304px;
+  z-index: var(--z-index-layer-2, 2000);
+}

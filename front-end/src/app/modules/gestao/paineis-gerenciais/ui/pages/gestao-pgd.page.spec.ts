@@ -247,7 +247,7 @@ describe('GestaoPgdPage', () => {
       apiSpy.getEvolucaoParticipantes.and.returnValue(evolucaoPart$.asObservable());
 
       // Troca de filtro
-      component.onFiltrosChange({ tipo_consulta: 'historico', unidade_id: 'u2', data_inicio: '2024-01-01', data_fim: '2024-06-30' });
+      component.onFiltrosChange({ tipo_consulta: 'historico', unidade_id: 'u2', intervalo: { inicio: '2024-01-01', fim: '2024-06-30' } });
 
       // Dados devem ter sido limpos
       expect(component.unidadesExecutoras()).toBeNull();
