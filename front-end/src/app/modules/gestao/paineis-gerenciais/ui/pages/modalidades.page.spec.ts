@@ -218,7 +218,7 @@ describe('ModalidadesPage', () => {
 
     it('deve limpar dados de modalidades ao trocar filtro', () => {
       resetApiSubjects();
-      component.onFiltrosChange({ tipo_consulta: 'historico', unidade_id: 'u2', data_inicio: '2024-01-01', data_fim: '2024-06-30' });
+      component.onFiltrosChange({ tipo_consulta: 'historico', unidade_id: 'u2', intervalo: { inicio: '2024-01-01', fim: '2024-06-30' } });
 
       expect(component.modalidadesPorUnidade()).toBeNull();
     });
@@ -254,7 +254,7 @@ describe('ModalidadesPage', () => {
       resetApiSubjects();
       apiSpy.getModalidadesPorUnidade.calls.reset();
 
-      const novosFiltros: FiltrosPainel = { tipo_consulta: 'historico', unidade_id: 'u3', data_inicio: '2024-01-01', data_fim: '2024-12-31' };
+      const novosFiltros: FiltrosPainel = { tipo_consulta: 'historico', unidade_id: 'u3', intervalo: { inicio: '2024-01-01', fim: '2024-12-31' } };
       component.onFiltrosChange(novosFiltros);
 
       expect(apiSpy.getModalidadesPorUnidade).toHaveBeenCalledWith(novosFiltros);

@@ -1,3 +1,12 @@
+## 3.2.6 16/11/2026
+
+### Corrigido
+- Painéis Gerenciais: os campos de data de início e fim passam a ser selecionados em um único campo através de um intervalo
+- Painéis Gerenciais: o filtro de período deixa de apresentar datas incorretas em alguns meses, causadas por diferença de fuso horário do navegador
+
+### Modificado
+- Atualizada versão do Design System do GovBR para 2.6.0
+
 ## 3.2.5 09/11/2026
 
 ### Corrigido

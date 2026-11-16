@@ -4,6 +4,7 @@ import { of, Subject } from 'rxjs';
 import { PainelFiltrosComponent, UnidadeOption } from './painel-filtros.component';
 import { PainelApiClient, FiltrosPainel } from '../../infra/painel-api.client';
 import { UnidadeSelectEvent, UnidadeSelectComponent } from 'src/app/v2/components/unidade-select/unidade-select.component';
+import { BrSelectCustomEvent, BrDatetimePickerCustomEvent, DatetimePickerChangeDetail } from '@govbr-ds/webcomponents';
 
 @Component({ selector: 'unidade-select', standalone: true, template: '' })
 class MockUnidadeSelectComponent {}
@@ -47,24 +48,24 @@ describe('PainelFiltrosComponent', () => {
     });
 
     it('deve alterar para historico ao chamar onTipoConsultaChange', () => {
-      component.onTipoConsultaChange({ target: { value: 'historico' } });
+      component.onTipoConsultaChange({ detail: 'historico' } as BrSelectCustomEvent<string>);
       expect(component.tipoConsulta()).toBe('historico');
     });
 
     it('deve limpar periodos e periodoSelecionado ao trocar tipo de consulta', () => {
-      component.onTipoConsultaChange({ target: { value: 'historico' } });
+      component.onTipoConsultaChange({ detail: 'historico' } as BrSelectCustomEvent<string>);
       expect(component.periodos()).toEqual([]);
       expect(component.periodoSelecionado()).toBe('');
     });
 
     it('não deve alterar se o valor for o mesmo', () => {
       spyOn(component.filtrosChange, 'emit');
-      component.onTipoConsultaChange({ target: { value: 'situacao_atual' } });
+      component.onTipoConsultaChange({ detail: 'situacao_atual' } as BrSelectCustomEvent<string>);
       expect(component.filtrosChange.emit).not.toHaveBeenCalled();
     });
 
     it('não deve alterar para valores inválidos', () => {
-      component.onTipoConsultaChange({ target: { value: 'invalido' } });
+      component.onTipoConsultaChange({ detail: 'invalido' } as BrSelectCustomEvent<string>);
       expect(component.tipoConsulta()).toBe('situacao_atual');
     });
 
@@ -73,7 +74,7 @@ describe('PainelFiltrosComponent', () => {
       const unidade: UnidadeOption = { id: 'u1', sigla: 'SIG', nome: 'Nome' };
       component['unidadeSelecionada'].set(unidade);
 
-      component.onTipoConsultaChange({ target: { value: 'historico' } });
+      component.onTipoConsultaChange({ detail: 'historico' } as BrSelectCustomEvent<string>);
       expect(component['unidadeSelecionada']()).toBeNull();
     });
 
@@ -82,17 +83,12 @@ describe('PainelFiltrosComponent', () => {
       const unidade: UnidadeOption = { id: 'u1', sigla: 'SIG', nome: 'Nome' };
       component['unidadeSelecionada'].set(unidade);
 
-      component.onTipoConsultaChange({ target: { value: 'historico' } });
+      component.onTipoConsultaChange({ detail: 'historico' } as BrSelectCustomEvent<string>);
       expect(component['unidadeSelecionada']()).toEqual(unidade);
     });
 
     it('deve aceitar event.detail como fonte do valor (web components)', () => {
-      component.onTipoConsultaChange({ detail: 'historico' });
-      expect(component.tipoConsulta()).toBe('historico');
-    });
-
-    it('deve aceitar valor direto como string', () => {
-      component.onTipoConsultaChange('historico');
+      component.onTipoConsultaChange({ detail: 'historico' } as BrSelectCustomEvent<string>);
       expect(component.tipoConsulta()).toBe('historico');
     });
   });
@@ -135,7 +131,7 @@ describe('PainelFiltrosComponent', () => {
   describe('Emissão de filtros', () => {
     it('não deve emitir filtros se nenhuma unidade estiver selecionada', () => {
       spyOn(component.filtrosChange, 'emit');
-      component.onTipoConsultaChange({ target: { value: 'historico' } });
+      component.onTipoConsultaChange({ detail: 'historico' } as BrSelectCustomEvent<string>);
       expect(component.filtrosChange.emit).not.toHaveBeenCalled();
     });
 
@@ -156,25 +152,82 @@ describe('PainelFiltrosComponent', () => {
       component['unidadeSelecionada'].set({ id: 'u1', sigla: 'S', nome: 'N' });
       spyOn(component.filtrosChange, 'emit');
 
-      component.onTipoConsultaChange({ target: { value: 'historico' } });
+      component.onTipoConsultaChange({ detail: 'historico' } as BrSelectCustomEvent<string>);
       expect(component.filtrosChange.emit).not.toHaveBeenCalled();
     });
 
-    it('deve emitir filtros de historico com datas preenchidas (modoData=range)', () => {
+    it('deve emitir filtros de historico com intervalo completo (modoData=range)', () => {
       component.modoData = 'range';
       component['unidadeSelecionada'].set({ id: 'u1', sigla: 'S', nome: 'N' });
       component['tipoConsulta'].set('historico');
-      component['dataInicio'].set('2024-01-01');
       spyOn(component.filtrosChange, 'emit');
 
-      component.onDataFimChange({ target: { value: '2024-06-30' } } as any);
+      component.onIntervaloChange({
+        detail: {
+          mode: 'date',
+          selectionMode: 'range',
+          value: { start: '2024-01-01', end: '2024-06-30' },
+          serializedValue: '2024-01-01/2024-06-30',
+          complete: true,
+        },
+      } as BrDatetimePickerCustomEvent<DatetimePickerChangeDetail>);
 
       expect(component.filtrosChange.emit).toHaveBeenCalledWith({
         tipo_consulta: 'historico',
         unidade_id: 'u1',
-        data_inicio: '2024-01-01',
-        data_fim: '2024-06-30',
+        intervalo: { inicio: '2024-01-01', fim: '2024-06-30' },
       });
+      expect(component.intervalo()).toEqual({ inicio: '2024-01-01', fim: '2024-06-30' });
+    });
+
+    it('não deve emitir filtros com intervalo incompleto (modoData=range)', () => {
+      component.modoData = 'range';
+      component['unidadeSelecionada'].set({ id: 'u1', sigla: 'S', nome: 'N' });
+      component['tipoConsulta'].set('historico');
+      spyOn(component.filtrosChange, 'emit');
+
+      component.onIntervaloChange({
+        detail: {
+          mode: 'date',
+          selectionMode: 'range',
+          value: { start: '2024-01-01', end: null },
+          serializedValue: '2024-01-01/',
+          complete: false,
+        },
+      } as BrDatetimePickerCustomEvent<DatetimePickerChangeDetail>);
+
+      expect(component.filtrosChange.emit).not.toHaveBeenCalled();
+      expect(component.intervalo()).toBeNull();
+    });
+
+    it('deve zerar o intervalo ao limpar o campo, sem emitir (modoData=range)', () => {
+      component.modoData = 'range';
+      component['unidadeSelecionada'].set({ id: 'u1', sigla: 'S', nome: 'N' });
+      component['tipoConsulta'].set('historico');
+      component['intervalo'].set({ inicio: '2024-01-01', fim: '2024-06-30' });
+      spyOn(component.filtrosChange, 'emit');
+
+      component.onIntervaloChange({
+        detail: {
+          mode: 'date',
+          selectionMode: 'range',
+          value: { start: null, end: null },
+          serializedValue: '',
+          complete: false,
+        },
+      } as BrDatetimePickerCustomEvent<DatetimePickerChangeDetail>);
+
+      expect(component.intervalo()).toBeNull();
+      expect(component.filtrosChange.emit).not.toHaveBeenCalled();
+    });
+
+    it('deve zerar o intervalo ao trocar o tipo de consulta (modoData=range)', () => {
+      component.modoData = 'range';
+      component['intervalo'].set({ inicio: '2024-01-01', fim: '2024-06-30' });
+
+      component.onTipoConsultaChange({ detail: 'historico' } as BrSelectCustomEvent<string>);
+
+      expect(component.intervalo()).toBeNull();
     });
 
     it('deve emitir filtros de situacao_atual em modoData=referencia', () => {
@@ -206,13 +259,13 @@ describe('PainelFiltrosComponent', () => {
       component['unidadeSelecionada'].set({ id: 'u1', sigla: 'S', nome: 'N' });
       spyOn(component.filtrosChange, 'emit');
 
-      component.onPeriodoChange({ target: { value: '2024-03' } });
+      component.onAnoChange({ detail: '2024' } as BrSelectCustomEvent<string>);
+      component.onMesChange({ detail: '03' } as BrSelectCustomEvent<string>);
 
       expect(component.filtrosChange.emit).toHaveBeenCalledWith(jasmine.objectContaining({
         tipo_consulta: 'historico',
         unidade_id: 'u1',
-        data_inicio: '2024-01-01',
-        data_fim: '2024-03-31',
+        intervalo: { inicio: '2024-01-01', fim: '2024-03-31' },
       }));
     });
   });
@@ -291,7 +344,7 @@ describe('PainelFiltrosComponent', () => {
     });
 
     it('deve filtrar meses disponíveis pelo ano selecionado', () => {
-      component.onAnoChange({ target: { value: '2024' } });
+      component.onAnoChange({ detail: '2024' } as BrSelectCustomEvent<string>);
       const meses = component.mesOptions();
       expect(meses.map(m => m.value)).toEqual(['01', '02', '03']);
       expect(meses.map(m => m.label)).toEqual(['Jan', 'Fev', 'Mar']);
@@ -299,34 +352,33 @@ describe('PainelFiltrosComponent', () => {
 
     it('deve limpar mês ao trocar ano', () => {
       component['mesSelecionado'].set('01');
-      component.onAnoChange({ target: { value: '2025' } });
+      component.onAnoChange({ detail: '2025' } as BrSelectCustomEvent<string>);
       expect(component.mesSelecionado()).toBe('');
     });
 
     it('deve emitir filtros ao selecionar mês com ano já definido', () => {
-      component.onAnoChange({ target: { value: '2024' } });
+      component.onAnoChange({ detail: '2024' } as BrSelectCustomEvent<string>);
       spyOn(component.filtrosChange, 'emit');
 
-      component.onMesChange({ target: { value: '03' } });
+      component.onMesChange({ detail: '03' } as BrSelectCustomEvent<string>);
 
       expect(component.filtrosChange.emit).toHaveBeenCalledWith(jasmine.objectContaining({
         tipo_consulta: 'historico',
         unidade_id: 'u1',
-        data_inicio: '2024-01-01',
-        data_fim: '2024-03-31',
+        intervalo: { inicio: '2024-01-01', fim: '2024-03-31' },
       }));
     });
 
     it('não deve emitir filtros ao selecionar apenas ano sem mês', () => {
       spyOn(component.filtrosChange, 'emit');
-      component.onAnoChange({ target: { value: '2024' } });
+      component.onAnoChange({ detail: '2024' } as BrSelectCustomEvent<string>);
       expect(component.filtrosChange.emit).not.toHaveBeenCalled();
     });
 
     it('deve limpar ano e mês ao trocar tipo de consulta', () => {
       component['anoSelecionado'].set('2024');
       component['mesSelecionado'].set('01');
-      component.onTipoConsultaChange({ target: { value: 'situacao_atual' } });
+      component.onTipoConsultaChange({ detail: 'situacao_atual' } as BrSelectCustomEvent<string>);
       expect(component.anoSelecionado()).toBe('');
       expect(component.mesSelecionado()).toBe('');
     });
