@@ -24,6 +24,7 @@ import { AssinarPlanoUseCase } from './application/assinar-plano.usecase';
 import { PlanoTrabalhoListFacade } from './application/list.facade';
 import { ConsolidacaoFacade } from './application/consolidacao.facade';
 import { ExcluirPlanoUseCase } from './application/excluir-plano.usecase';
+import { clearPlanoTrabalhoFiltersOnExit } from './application/clear-filters-on-exit.guard';
 
 const redirectClone: RedirectFunction = ({ params, queryParams }) => inject(Router).createUrlTree(
   ['/gestao/plano-trabalho-v2/novo'],
@@ -67,6 +68,7 @@ export const routes: Routes = [
     children: [
       {
         path: '',
+        canDeactivate: [clearPlanoTrabalhoFiltersOnExit],
         loadComponent: () =>
           import('./ui/list.page').then(m => m.PlanoTrabalhoV2ListPage)
       },

@@ -191,8 +191,8 @@ export class GestaoPgdPage implements OnInit {
     this.filtrosAtuais.set(filtros);
     this.unidadeAtualLabel.set(`${this.unidadeInicialSigla()} - ${this.unidadeInicialNome()}`);
 
-    if (filtros.data_fim) {
-      const [ano, mesStr] = filtros.data_fim.split('-');
+    if (filtros.intervalo?.fim) {
+      const [ano, mesStr] = filtros.intervalo.fim.split('-');
       this.periodoAtualLabel.set(`${MESES_ABREVIADOS[+mesStr - 1]}/${ano}`);
     } else {
       const now = new Date();

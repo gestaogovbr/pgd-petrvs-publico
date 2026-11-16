@@ -6,6 +6,7 @@ namespace App\Services\Siape\CargaIndividual;
 
 use App\DTOs\Siape\CargaIndividualSiapeProcessamentoDTO;
 use App\Models\CargaIndividualSiapeRelatorio;
+use App\Services\Siape\MensagemConsultaServidorSiape;
 use App\Repository\CargaIndividualSiapeRelatorioRepository;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -37,7 +38,7 @@ class CargaIndividualSiapeRelatorioService
                 : $this->statusFinal($secoes, $contexto->status),
             'entrada_valida' => $contexto->entradaValida,
             'mensagem_usuario' => $this->mensagemUsuario($contexto),
-            'orientacoes' => $this->orientacoes($contexto->status),
+            'orientacoes' => $this->orientacoes($contexto->status, $contexto->mensagemErro),
             'secoes' => $secoes,
             'solicitante_id' => $contexto->solicitanteId,
             'processado_em' => $processadoEm,
@@ -148,6 +149,14 @@ class CargaIndividualSiapeRelatorioService
             return 'Carga individual concluida. Confira os dados recebidos do SIAPE e registrados no Petrvs.';
         }
 
+        if (in_array($contexto->mensagemErro, [
+            MensagemConsultaServidorSiape::DADOS_FUNCIONAIS_AUSENTES,
+            MensagemConsultaServidorSiape::FALHA_CONSULTA,
+            MensagemConsultaServidorSiape::DADOS_FUNCIONAIS_INVALIDOS,
+        ], true)) {
+            return $contexto->mensagemErro;
+        }
+
         if ($this->erroSemDados($contexto->mensagemErro)) {
             return 'O SIAPE informou que não há dados disponíveis para esta consulta. Tente executar novamente. Se o problema continuar, abra chamado no portal de atendimento.';
         }
@@ -158,8 +167,16 @@ class CargaIndividualSiapeRelatorioService
     /**
      * @return array<int, string>
      */
-    private function orientacoes(string $status): array
+    private function orientacoes(string $status, ?string $mensagemErro = null): array
     {
+        if ($status === CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO && $mensagemErro === MensagemConsultaServidorSiape::DADOS_FUNCIONAIS_AUSENTES) {
+            return [
+                'Confira o CPF informado.',
+                'Peça à gestão de pessoas que verifique o vínculo do servidor no SIAPE para este órgão.',
+                'Depois da regularização, faça uma nova busca.',
+            ];
+        }
+
         if ($status === CargaIndividualSiapeProcessamentoDTO::STATUS_ERRO) {
             return [
                 'Tente executar a carga novamente.',

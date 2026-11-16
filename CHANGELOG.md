@@ -1,3 +1,19 @@
+## 3.2.6 16/11/2026
+
+### Adicionado
+- Listagem de PTs: status **Pronto para Execução** nos PTs homologados com data de início maior que o dia de hoje.
+
+### Corrigido
+- SIAPE: ao forçar a carga geral, a sincronização dos servidores e das unidades passa a ser executada após o término da busca dos dados, com mensagens que informam as etapas e o tempo de processamento.
+- Listagem de PTs: chefia vê apenas os colaboradores/lotados nas suas respectivas unidades chefiadas; filtros são persistidos.
+- Painéis Gerenciais: os campos de data de início e fim passam a ser selecionados em um único campo através de um intervalo
+- Painéis Gerenciais: o filtro de período deixa de apresentar datas incorretas em alguns meses, causadas por diferença de fuso horário do navegador
+
+### Modificado
+- Consulta individual ao SIAPE: as mensagens passam a distinguir ausência de dados funcionais, falhas na consulta e problemas na leitura do retorno, com orientações para cada situação e avisos por matrícula quando faltam informações de participação ou modalidade PGD.
+- Atualizada versão do Design System do GovBR para 2.6.0
+
+
 ## 3.2.5 09/11/2026
 
 ### Corrigido

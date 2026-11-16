@@ -89,14 +89,14 @@ export class ConformidadePage implements OnInit {
   readonly unidadeLabel = computed(() => this.unidadeAtualLabel());
   readonly periodoLabel = computed(() => {
     const f = this.filtrosAtuais();
-    return f?.data_inicio && f?.data_fim ? `${f.data_inicio} a ${f.data_fim}` : '';
+    return f?.intervalo ? `${f.intervalo.inicio} a ${f.intervalo.fim}` : '';
   });
 
-  readonly saibaMaisRegistroExecucaoPE = computed(() => this.buildSaibaMaisParams({situacao_conclusao: 'Pendente'}, this.drillRegistroExecucaoPE()) as Record<string, string>);
-  readonly saibaMaisAvaliacaoPE = computed(() => this.buildSaibaMaisParams({situacao_avaliacao: 'Aguardando', status: 'CONCLUIDO'}, this.drillAvaliacaoPE()) as Record<string, string>);
-  readonly saibaMaisRegistroExecucaoPT = computed(() => this.buildSaibaMaisParams({incluir_periodos_avaliativos: 'true', situacao_execucao: 'Aguardando'}, this.drillRegistroExecucaoPT()) as Record<string, string>);
-  readonly saibaMaisAvaliacaoPT = computed(() => this.buildSaibaMaisParams({incluir_periodos_avaliativos: 'true', situacao_avaliacao: 'Aguardando'}, this.drillAvaliacaoPT()) as Record<string, string>);
-  readonly saibaMaisUnidadesExecutoras = computed(() => this.buildSaibaMaisParams({executora: 'Sim'}, this.drillUnidadesExecutorasPE()) as Record<string, string>);
+  readonly saibaMaisRegistroExecucaoPE = computed(() => this.buildSaibaMaisParams({ situacao_conclusao: 'Pendente' }, this.drillRegistroExecucaoPE()) as Record<string, string>);
+  readonly saibaMaisAvaliacaoPE = computed(() => this.buildSaibaMaisParams({ situacao_avaliacao: 'Aguardando', status: 'CONCLUIDO' }, this.drillAvaliacaoPE()) as Record<string, string>);
+  readonly saibaMaisRegistroExecucaoPT = computed(() => this.buildSaibaMaisParams({ incluir_periodos_avaliativos: 'true', situacao_execucao: 'Aguardando' }, this.drillRegistroExecucaoPT()) as Record<string, string>);
+  readonly saibaMaisAvaliacaoPT = computed(() => this.buildSaibaMaisParams({ incluir_periodos_avaliativos: 'true', situacao_avaliacao: 'Aguardando' }, this.drillAvaliacaoPT()) as Record<string, string>);
+  readonly saibaMaisUnidadesExecutoras = computed(() => this.buildSaibaMaisParams({ executora: 'Sim' }, this.drillUnidadesExecutorasPE()) as Record<string, string>);
 
   ngOnInit(): void {
     this.api.getUnidadeInicial().subscribe(unidade => {
@@ -161,8 +161,10 @@ export class ConformidadePage implements OnInit {
     const unidadeId = drill?.unidade_id ?? filtros?.unidade_id;
     if (unidadeId) params['unidade_id'] = unidadeId;
     if (filtros?.tipo_consulta === 'historico') {
-      if (filtros?.data_inicio) params['periodo_inicio'] = filtros.data_inicio;
-      if (filtros?.data_fim) params['periodo_fim'] = filtros.data_fim;
+      if (filtros?.intervalo) {
+        params['periodo_inicio'] = filtros.intervalo.inicio;
+        params['periodo_fim'] = filtros.intervalo.fim;
+      }
     } else {
       params['somente_vigentes'] = 'true';
     }

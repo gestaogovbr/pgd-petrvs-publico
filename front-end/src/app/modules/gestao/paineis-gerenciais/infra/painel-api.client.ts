@@ -2,6 +2,12 @@ import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { TenantV2ResourceApiBase } from 'src/app/v2/infra/tenant-v2-resource-api.base';
 
+/** Intervalo de datas do painel, com limites no formato `YYYY-MM-DD`. */
+export interface IntervaloDatas {
+  inicio: string;
+  fim: string;
+}
+
 export interface DistribuicaoUnidade {
   unidade_id: string;
   unidade_sigla: string;
@@ -37,8 +43,7 @@ export interface UnidadeInicial {
 export interface FiltrosPainel {
   tipo_consulta: 'situacao_atual' | 'historico';
   unidade_id: string;
-  data_inicio?: string;
-  data_fim?: string;
+  intervalo?: IntervaloDatas;
 }
 
 export interface SerieAdesaoItem {
@@ -68,8 +73,10 @@ export class PainelApiClient extends TenantV2ResourceApiBase {
       tipo_consulta: filtros.tipo_consulta,
       unidade_id: filtros.unidade_id,
     };
-    if (filtros.data_inicio) params['data_inicio'] = filtros.data_inicio;
-    if (filtros.data_fim) params['data_fim'] = filtros.data_fim;
+    if (filtros.intervalo) {
+      params['data_inicio'] = filtros.intervalo.inicio;
+      params['data_fim'] = filtros.intervalo.fim;
+    }
     return params;
   }
 

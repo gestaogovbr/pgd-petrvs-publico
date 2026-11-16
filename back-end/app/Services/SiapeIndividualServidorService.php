@@ -6,6 +6,9 @@ use App\DTOs\Siape\CargaIndividualSiapeProcessamentoDTO;
 use App\DTOs\Siape\DadosFuncionaisSiapeDTO;
 use App\Facades\SiapeLog;
 use App\Enums\UsuarioSituacaoSiape;
+use App\Enums\ParticipaPgd;
+use App\Exceptions\ErrorDataSiapeException;
+use App\Services\Siape\MensagemConsultaServidorSiape;
 use App\Models\Entidade;
 use App\Models\SiapeBlackListServidor;
 use App\Models\SiapeListaUORGS;
@@ -159,6 +162,8 @@ class SiapeIndividualServidorService extends ServiceBase
                 ];
             }
 
+            $this->orientarDadosPgdAusentes($dadosFuncionais);
+
             $this->registrarRelatorioCarga(
                 $processamentoId,
                 $cpfLimpo,
@@ -173,7 +178,9 @@ class SiapeIndividualServidorService extends ServiceBase
             return $this->resumo;
 
         } catch (\Throwable $e) {
-            $msgErro = 'Houve uma falha na comunicação com o SIAPE ao processar este CPF. Por favor, tente novamente mais tarde.';
+            $msgErro = $e instanceof ErrorDataSiapeException
+                ? $e->getMessage()
+                : MensagemConsultaServidorSiape::FALHA_CONSULTA;
             SiapeLog::error('Erro ao processar servidor no SIAPE: ' . $cpfLimpo . ' - ' . $e->getMessage());
 
             $this->resumo = $this->gerarResumo($usuariosAntes, $cpfLimpo, self::STATUS_ERRO, $msgErro);
@@ -493,6 +500,27 @@ class SiapeIndividualServidorService extends ServiceBase
         return CargaIndividualSiapeProcessamentoDTO::STATUS_SUCESSO;
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $dadosFuncionais
+     */
+    private function orientarDadosPgdAusentes(array $dadosFuncionais): void
+    {
+        $porMatricula = collect(DadosFuncionaisSiapeDTO::listFromArray($dadosFuncionais))
+            ->keyBy(fn (DadosFuncionaisSiapeDTO $dados) => $dados->matriculaSiape());
+
+        foreach ($this->resumo ?? [] as $indice => $item) {
+            $dados = $porMatricula->get((string) ($item['matricula'] ?? ''));
+            if (!$dados instanceof DadosFuncionaisSiapeDTO) {
+                continue;
+            }
+
+            $participaPgd = $dados->participaPgdNormalizado();
+            if ($participaPgd === null || ($participaPgd === ParticipaPgd::SIM->value && $dados->modalidadePgdNormalizada() === null)) {
+                $this->resumo[$indice]['mensagem'] .= ' ' . MensagemConsultaServidorSiape::DADOS_PGD_AUSENTES;
+            }
+        }
+    }
+
     private function sincronizarResumoComRelatorioCarga(): void
     {
         if ($this->resumo === null || $this->relatorioCargaDetalhada === null) {
@@ -658,7 +686,7 @@ class SiapeIndividualServidorService extends ServiceBase
             return [$respFuncionais, $respPessoais];
         } catch (Exception $e) {
             report($e);
-            throw new Exception("Houve uma falha na comunicação com o SIAPE ao processar este CPF. Por favor, tente novamente mais tarde.");
+            throw new ErrorDataSiapeException(MensagemConsultaServidorSiape::FALHA_CONSULTA, 0, $e);
         }
     }
 
@@ -693,7 +721,7 @@ class SiapeIndividualServidorService extends ServiceBase
             return $this->normalizarDadosFuncionais($cpf, $dadosArray);
         } catch (Exception $e) {
             report($e);
-            throw new Exception("Erro ao processar dados funcionais do SIAPE: " . $e->getMessage());
+            throw new ErrorDataSiapeException(MensagemConsultaServidorSiape::falhaFuncional($e), 0, $e);
         }
     }
 
