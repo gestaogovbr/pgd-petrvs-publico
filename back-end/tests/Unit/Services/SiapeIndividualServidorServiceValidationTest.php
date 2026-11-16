@@ -261,7 +261,7 @@ describe('SiapeIndividualServidorService - Fluxo Principal', function () {
         $this->siapeService->shouldReceive('getBuscarDadosSiapeServidor')->andReturn($buscarDadosServidor);
 
         expect(fn() => $this->service->fluxoSiape($validCpf, $this->siapeService))
-            ->toThrow(Exception::class, 'Houve uma falha na comunicação com o SIAPE ao processar este CPF. Por favor, tente novamente mais tarde.');
+            ->toThrow(Exception::class, \App\Services\Siape\MensagemConsultaServidorSiape::FALHA_CONSULTA);
     });
 
     it('deve lidar com dados funcionais vazios', function () {
