@@ -3453,6 +3453,81 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 DROP FUNCTION IF EXISTS `fn_periodo_avaliativo_dispensado` */;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `fn_periodo_avaliativo_dispensado`(
+    p_usuario_id CHAR(36),
+    p_data_inicio DATETIME,
+    p_data_fim DATETIME
+) RETURNS tinyint(4)
+    DETERMINISTIC
+    READS SQL DATA
+BEGIN
+    DECLARE v_inicio DATE;
+    DECLARE v_fim DATE;
+    DECLARE v_cobre_inicio TINYINT DEFAULT 0;
+    DECLARE v_lacuna TINYINT DEFAULT 0;
+
+    IF p_usuario_id IS NULL OR p_data_inicio IS NULL OR p_data_fim IS NULL THEN
+        RETURN 0;
+    END IF;
+
+    SET v_inicio = DATE(p_data_inicio);
+    SET v_fim = DATE(p_data_fim);
+
+    SELECT EXISTS (
+        SELECT 1
+        FROM afastamentos af
+        INNER JOIN tipos_motivos_afastamentos tma
+            ON tma.id = af.tipo_motivo_afastamento_id
+            AND tma.deleted_at IS NULL
+        WHERE af.usuario_id = p_usuario_id
+          AND af.deleted_at IS NULL
+          AND tma.calculo <> 'ACRESCIMO'
+          AND DATE(af.data_inicio) <= v_inicio
+          AND DATE(af.data_fim) >= v_inicio
+    ) INTO v_cobre_inicio;
+
+    IF v_cobre_inicio = 0 THEN
+        RETURN 0;
+    END IF;
+
+    SELECT EXISTS (
+        SELECT 1
+        FROM afastamentos af
+        INNER JOIN tipos_motivos_afastamentos tma
+            ON tma.id = af.tipo_motivo_afastamento_id
+            AND tma.deleted_at IS NULL
+        WHERE af.usuario_id = p_usuario_id
+          AND af.deleted_at IS NULL
+          AND tma.calculo <> 'ACRESCIMO'
+          AND DATE(af.data_fim) >= v_inicio
+          AND DATE(af.data_inicio) <= v_fim
+          AND DATE(af.data_fim) < v_fim
+          AND NOT EXISTS (
+              SELECT 1
+              FROM afastamentos af2
+              INNER JOIN tipos_motivos_afastamentos tma2
+                  ON tma2.id = af2.tipo_motivo_afastamento_id
+                  AND tma2.deleted_at IS NULL
+              WHERE af2.usuario_id = p_usuario_id
+                AND af2.deleted_at IS NULL
+                AND tma2.calculo <> 'ACRESCIMO'
+                AND DATE(af2.data_inicio) <= DATE_ADD(DATE(af.data_fim), INTERVAL 1 DAY)
+                AND DATE(af2.data_fim) > DATE(af.data_fim)
+          )
+    ) INTO v_lacuna;
+
+    IF v_lacuna = 1 THEN
+        RETURN 0;
+    END IF;
+
+    RETURN 1;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 /*!50003 DROP FUNCTION IF EXISTS `fn_obter_unidade_hierarquia` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -3772,7 +3847,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8mb4_unicode_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `view_relatorio_plano_trabalho_detalhado` AS select `ptc`.`id` collate utf8mb4_unicode_ci AS `id`,`pt`.`id` collate utf8mb4_unicode_ci AS `plano_trabalho_id`,`pt`.`numero` collate utf8mb4_unicode_ci AS `numero`,`pt`.`status` collate utf8mb4_unicode_ci AS `status`,cast(`pt`.`data_inicio` as date) AS `dataInicio`,cast(`pt`.`data_fim` as date) AS `dataFim`,`pt`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`usu`.`nome` collate utf8mb4_unicode_ci AS `participanteNome`,`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `modalidade_pgd`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `tipo_modalidade_id`,case when `pt`.`modalidade_pgd` is null or `pt`.`modalidade_pgd` = '' then 'Não definida' when lcase(`pt`.`modalidade_pgd`) = 'presencial' then 'Presencial' when lcase(`pt`.`modalidade_pgd`) = 'parcial' then 'Teletrabalho (Parcial)' when lcase(`pt`.`modalidade_pgd`) = 'integral' then 'Teletrabalho (Integral)' when lcase(`pt`.`modalidade_pgd`) = 'no exterior substituicao' then 'Teletrabalho no exterior (substituição)' when lcase(`pt`.`modalidade_pgd`) = 'no exterior' then 'Teletrabalho no exterior' else `pt`.`modalidade_pgd` end collate utf8mb4_unicode_ci AS `tipoModalidadeNome`,to_days(`pt`.`data_fim`) - to_days(`pt`.`data_inicio`) + 1 AS `duracao`,ifnull((select sum(ifnull(`pte`.`forca_trabalho`,0) * 1) from `planos_trabalhos_entregas` `pte` where `pte`.`plano_trabalho_id` = `pt`.`id` and `pte`.`deleted_at` is null),0) AS `chd`,cast(`ptc`.`data_inicio` as date) AS `data_inicio_avaliativo`,cast(`ptc`.`data_fim` as date) AS `data_fim_avaliativo`,cast(`ptc`.`data_conclusao` as date) AS `data_conclusao`,cast(`aval_antiga`.`data_avaliacao` as date) AS `data_avaliacao`,json_unquote(`aval_antiga`.`nota`) AS `nota`,`aval_antiga`.`data_recurso` AS `data_recurso`,case when `a`.`id` = `aval_antiga`.`id` then NULL else cast(`a`.`data_avaliacao` as date) end AS `data_reavaliacao`,case when `a`.`id` = `aval_antiga`.`id` then NULL else json_unquote(`a`.`nota`) end AS `nota_reavaliacao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `ptc`.`data_conclusao` is null then case when curdate() <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Aguardando' else 'Atrasado' end else case when cast(`ptc`.`data_conclusao` as date) <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_execucao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `a`.`data_avaliacao` is null then case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Aguardando' else 'Atrasado' end else case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_avaliacao` from (((((`planos_trabalhos` `pt` join `usuarios` `usu` on(`usu`.`id` = `pt`.`usuario_id`)) join `unidades` `uni` on(`uni`.`id` = `pt`.`unidade_id`)) left join `planos_trabalhos_consolidacoes` `ptc` on(`ptc`.`plano_trabalho_id` = `pt`.`id` and `ptc`.`deleted_at` is null)) left join `avaliacoes` `a` on(`a`.`id` = `ptc`.`avaliacao_id` and `a`.`deleted_at` is null)) left join (select `a1`.`id` AS `id`,`a1`.`data_avaliacao` AS `data_avaliacao`,`a1`.`nota` AS `nota`,`a1`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,`a1`.`data_recurso` AS `data_recurso`,`a1`.`rn` AS `rn` from (select `avaliacoes`.`id` AS `id`,`avaliacoes`.`data_avaliacao` AS `data_avaliacao`,`avaliacoes`.`nota` AS `nota`,`avaliacoes`.`data_recurso` AS `data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,row_number() over ( partition by `avaliacoes`.`plano_trabalho_consolidacao_id` order by `avaliacoes`.`data_avaliacao`) AS `rn` from `avaliacoes` where `avaliacoes`.`deleted_at` is null group by `avaliacoes`.`id`,`avaliacoes`.`data_avaliacao`,`avaliacoes`.`nota`,`avaliacoes`.`data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id`) `a1` where `a1`.`rn` = 1) `aval_antiga` on(`aval_antiga`.`plano_trabalho_consolidacao_id` = `ptc`.`id`)) where `pt`.`deleted_at` is null */;
+/*!50001 VIEW `view_relatorio_plano_trabalho_detalhado` AS select `ptc`.`id` collate utf8mb4_unicode_ci AS `id`,`pt`.`id` collate utf8mb4_unicode_ci AS `plano_trabalho_id`,`pt`.`numero` collate utf8mb4_unicode_ci AS `numero`,`pt`.`status` collate utf8mb4_unicode_ci AS `status`,cast(`pt`.`data_inicio` as date) AS `dataInicio`,cast(`pt`.`data_fim` as date) AS `dataFim`,`pt`.`unidade_id` collate utf8mb4_unicode_ci AS `unidade_id`,`usu`.`nome` collate utf8mb4_unicode_ci AS `participanteNome`,`fn_obter_unidade_hierarquia`(`pt`.`unidade_id`) collate utf8mb4_unicode_ci AS `unidadeHierarquia`,`uni`.`sigla` collate utf8mb4_unicode_ci AS `unidadeSigla`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `modalidade_pgd`,`pt`.`modalidade_pgd` collate utf8mb4_unicode_ci AS `tipo_modalidade_id`,case when `pt`.`modalidade_pgd` is null or `pt`.`modalidade_pgd` = '' then 'Não definida' when lcase(`pt`.`modalidade_pgd`) = 'presencial' then 'Presencial' when lcase(`pt`.`modalidade_pgd`) = 'parcial' then 'Teletrabalho (Parcial)' when lcase(`pt`.`modalidade_pgd`) = 'integral' then 'Teletrabalho (Integral)' when lcase(`pt`.`modalidade_pgd`) = 'no exterior substituicao' then 'Teletrabalho no exterior (substituição)' when lcase(`pt`.`modalidade_pgd`) = 'no exterior' then 'Teletrabalho no exterior' else `pt`.`modalidade_pgd` end collate utf8mb4_unicode_ci AS `tipoModalidadeNome`,to_days(`pt`.`data_fim`) - to_days(`pt`.`data_inicio`) + 1 AS `duracao`,ifnull((select sum(ifnull(`pte`.`forca_trabalho`,0) * 1) from `planos_trabalhos_entregas` `pte` where `pte`.`plano_trabalho_id` = `pt`.`id` and `pte`.`deleted_at` is null),0) AS `chd`,cast(`ptc`.`data_inicio` as date) AS `data_inicio_avaliativo`,cast(`ptc`.`data_fim` as date) AS `data_fim_avaliativo`,cast(`ptc`.`data_conclusao` as date) AS `data_conclusao`,cast(`aval_antiga`.`data_avaliacao` as date) AS `data_avaliacao`,json_unquote(`aval_antiga`.`nota`) AS `nota`,`aval_antiga`.`data_recurso` AS `data_recurso`,case when `a`.`id` = `aval_antiga`.`id` then NULL else cast(`a`.`data_avaliacao` as date) end AS `data_reavaliacao`,case when `a`.`id` = `aval_antiga`.`id` then NULL else json_unquote(`a`.`nota`) end AS `nota_reavaliacao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `ptc`.`data_conclusao` is null then case when curdate() <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Aguardando' else 'Atrasado' end else case when cast(`ptc`.`data_conclusao` as date) <= cast(`ptc`.`data_fim` as date) + interval 10 day then 'Registrado no período' else 'Registrado com atraso' end end end collate utf8mb4_unicode_ci AS `situacao_execucao`,case when `pt`.`status` = 'CANCELADO' then NULL else case when `ptc`.`id` is not null and `a`.`data_avaliacao` is null and `fn_periodo_avaliativo_dispensado`(`pt`.`usuario_id`,`ptc`.`data_inicio`,`ptc`.`data_fim`) = 1 then 'Dispensado' else case when `a`.`data_avaliacao` is null then case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Aguardando' else 'Atrasado' end else case when `a`.`data_avaliacao` <= cast(`ptc`.`data_conclusao` as date) + interval 20 day then 'Registrado no período' else 'Registrado com atraso' end end end end collate utf8mb4_unicode_ci AS `situacao_avaliacao` from (((((`planos_trabalhos` `pt` join `usuarios` `usu` on(`usu`.`id` = `pt`.`usuario_id`)) join `unidades` `uni` on(`uni`.`id` = `pt`.`unidade_id`)) left join `planos_trabalhos_consolidacoes` `ptc` on(`ptc`.`plano_trabalho_id` = `pt`.`id` and `ptc`.`deleted_at` is null)) left join `avaliacoes` `a` on(`a`.`id` = `ptc`.`avaliacao_id` and `a`.`deleted_at` is null)) left join (select `a1`.`id` AS `id`,`a1`.`data_avaliacao` AS `data_avaliacao`,`a1`.`nota` AS `nota`,`a1`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,`a1`.`data_recurso` AS `data_recurso`,`a1`.`rn` AS `rn` from (select `avaliacoes`.`id` AS `id`,`avaliacoes`.`data_avaliacao` AS `data_avaliacao`,`avaliacoes`.`nota` AS `nota`,`avaliacoes`.`data_recurso` AS `data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id` AS `plano_trabalho_consolidacao_id`,row_number() over ( partition by `avaliacoes`.`plano_trabalho_consolidacao_id` order by `avaliacoes`.`data_avaliacao`) AS `rn` from `avaliacoes` where `avaliacoes`.`deleted_at` is null group by `avaliacoes`.`id`,`avaliacoes`.`data_avaliacao`,`avaliacoes`.`nota`,`avaliacoes`.`data_recurso`,`avaliacoes`.`plano_trabalho_consolidacao_id`) `a1` where `a1`.`rn` = 1) `aval_antiga` on(`aval_antiga`.`plano_trabalho_consolidacao_id` = `ptc`.`id`)) where `pt`.`deleted_at` is null */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
