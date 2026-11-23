@@ -19,8 +19,8 @@ export class ConsolidacaoPolicy {
   }
 
   podeGerenciarContribuicoes(planoTrabalho: PlanoTrabalho, consolidacao: Consolidacao): boolean {
-    return planoTrabalho.status === PlanoTrabalhoStatus.ATIVO
-      && consolidacao.status === ConsolidacaoStatus.INCLUIDO
+    if (planoTrabalho.encerrado_at && new Date(consolidacao.data_inicio) > new Date(planoTrabalho.encerrado_at)) return false;
+    return consolidacao.status === ConsolidacaoStatus.INCLUIDO
       && this.podeRegistrar(planoTrabalho, consolidacao);
   }
 

@@ -76,7 +76,7 @@ class DatabaseTuningServiceProvider extends ServiceProvider
             return;
         }
         try {
-            DB::statement('SET SESSION log_queries_not_using_indexes = 1');
+            DB::statement('SET GLOBAL log_queries_not_using_indexes = 1');
         } catch (\Throwable $e) {
             Log::warning('Falha ao setar log_queries_not_using_indexes', ['error' => $e->getMessage()]);
         }

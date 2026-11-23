@@ -2,6 +2,7 @@
 
 ### Corrigido
 - Ambiente de execução atualizado para PHP 8.4.28, aplicando as correções críticas de segurança da versão de 19/11/2026 (incluindo CVE-2026-115560, CVE-2026-126714 e CVE-2026-129289)
+- Plano de Trabalho encerrado antecipadamente volta a permitir o registro de execução nos períodos avaliativos anteriores à data de encerramento; contribuições de períodos posteriores ao encerramento continuam bloqueadas
 
 ## 3.2.6 16/11/2026
 
