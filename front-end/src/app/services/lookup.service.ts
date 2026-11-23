@@ -976,6 +976,7 @@ export class LookupService implements IIndexable {
     { key: 'Atrasado', value: "Atrasado" },
     { key: 'Registrado no período', value: "Registrado no período" },
     { key: 'Registrado com atraso', value: "Registrado com atraso" },
+    { key: 'Dispensado', value: "Dispensado" },
   ];
 
   public RELATORIO_PE_SITUACOES_AVALIACAO: LookupItem[] = [

@@ -1,3 +1,13 @@
+## 3.2.7 23/11/2026
+
+### Adicionado
+- Relatório de Planos de Trabalho detalhado: nova situação de avaliação **Dispensado** para os períodos avaliativos sem avaliação que foram dispensados por ocorrência, disponível também como opção de filtro
+
+### Corrigido
+- Ambiente de execução atualizado para PHP 8.4.28, aplicando as correções críticas de segurança da versão de 19/11/2026 (incluindo CVE-2026-115560, CVE-2026-126714 e CVE-2026-129289)
+- Plano de Trabalho encerrado antecipadamente volta a permitir o registro de execução nos períodos avaliativos anteriores à data de encerramento; contribuições de períodos posteriores ao encerramento continuam bloqueadas
+- Avaliação de Plano de Trabalho: períodos avaliativos dispensados de avaliação por ocorrência deixam de ser contabilizados como pendência de avaliação e de aparecer em "Aguardando minha avaliação" e nas consultas de consolidações a avaliar
+
 ## 3.2.6 16/11/2026
 
 ### Adicionado
