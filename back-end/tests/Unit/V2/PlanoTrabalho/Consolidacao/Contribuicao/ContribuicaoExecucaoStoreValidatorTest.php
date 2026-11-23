@@ -52,15 +52,29 @@ function peeStore(string $dataInicio = '2025-02-01', ?string $dataFim = '2025-05
     return $pee;
 }
 
-function consolidacaoStore(string $status = 'INCLUIDO', string $planoId = 'plano-1'): PlanoTrabalhoConsolidacao
+function consolidacaoStore(string $status = 'INCLUIDO', string $planoId = 'plano-1', ?string $dataInicio = null): PlanoTrabalhoConsolidacao
 {
     /** @var PlanoTrabalhoConsolidacao $c */
     $c = Mockery::mock(PlanoTrabalhoConsolidacao::class)->makePartial();
     $c->id = 'consolidacao-1';
     $c->plano_trabalho_id = $planoId;
     $c->status = $status;
+    $c->data_inicio = $dataInicio;
 
     return $c;
+}
+
+function planoEncerradoAntecipadamenteStore(string $encerradoAt = '2025-09-30'): PlanoTrabalho
+{
+    /** @var PlanoTrabalho $plano */
+    $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+    $plano->id = 'plano-1';
+    $plano->status = 'CONCLUIDO';
+    $plano->data_inicio = '2025-08-01';
+    $plano->data_fim = '2025-09-30';
+    $plano->encerrado_at = $encerradoAt;
+
+    return $plano;
 }
 
 function dtoStore(string $origem = 'PROPRIA_UNIDADE'): ContribuicaoExecucaoStoreDTO
@@ -115,6 +129,41 @@ describe('ContribuicaoExecucaoStoreValidator', function () {
         $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
         $plano->id = 'plano-1';
         $plano->status = 'INCLUIDO';
+
+        $this->validator->validarStore($plano, dtoStore());
+    })->throws(ValidateException::class, 'Contribuições de execução só podem ser gerenciadas quando o Plano de Trabalho está em execução.');
+
+    test('permite store quando o PT foi encerrado antecipadamente e o período é anterior ao encerramento', function () {
+        $plano = planoEncerradoAntecipadamenteStore();
+        $consolidacao = consolidacaoStore('INCLUIDO', 'plano-1', '2025-08-01');
+
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')
+            ->with('consolidacao-1')->andReturn($consolidacao);
+        $this->planoEntregaRepo->shouldReceive('findEntregaById')
+            ->with('pee-1')->andReturn(peeStore('2025-08-01', '2025-09-30'));
+        $this->contribuicaoRepo->shouldReceive('existePorConsolidacaoEEntrega')
+            ->with('consolidacao-1', 'pee-1', null)->andReturn(false);
+
+        $result = $this->validator->validarStore($plano, dtoStore());
+
+        expect($result)->toBe($consolidacao);
+    });
+
+    test('bloqueia período posterior ao encerramento antecipado do PT', function () {
+        $plano = planoEncerradoAntecipadamenteStore();
+        $consolidacao = consolidacaoStore('INCLUIDO', 'plano-1', '2025-10-01');
+
+        $this->consolidacaoRepo->shouldReceive('findConsolidacaoById')->andReturn($consolidacao);
+
+        $this->validator->validarStore($plano, dtoStore());
+    })->throws(ValidateException::class, 'Não é possível gerenciar contribuições de um período avaliativo posterior ao encerramento do plano.');
+
+    test('bloqueia quando PT está CONCLUIDO sem encerramento antecipado', function () {
+        /** @var PlanoTrabalho $plano */
+        $plano = Mockery::mock(PlanoTrabalho::class)->makePartial();
+        $plano->id = 'plano-1';
+        $plano->status = 'CONCLUIDO';
+        $plano->encerrado_at = null;
 
         $this->validator->validarStore($plano, dtoStore());
     })->throws(ValidateException::class, 'Contribuições de execução só podem ser gerenciadas quando o Plano de Trabalho está em execução.');

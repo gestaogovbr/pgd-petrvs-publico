@@ -14,6 +14,7 @@ use App\Models\PlanoEntrega;
 use App\Models\PlanoTrabalhoConsolidacao;
 use App\Repository\Eloquent\AbstractEloquentReadRepository;
 use App\Repository\PlanoTrabalhoConsolidacao\Contracts\PlanoTrabalhoConsolidacaoReadRepositoryContract;
+use App\V2\PlanoTrabalho\Consolidacao\PeriodoAvaliativoDispensadoSql;
 use App\V2\PlanoTrabalho\DTOs\ResumoConsolidacoesDTO;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -260,13 +261,17 @@ final class EloquentPlanoTrabalhoConsolidacaoReadRepository extends AbstractEloq
 
     private function basePendentesAvaliacaoQuery(\DateTimeInterface $dataCorte): \Illuminate\Database\Eloquent\Builder
     {
-        return $this->query()
+        $query = $this->query()
             ->with(['planoTrabalho:id,unidade_id,usuario_id,numero', 'planoTrabalho.usuario:id,nome,apelido,nome_social,url_foto'])
             ->where('status', StatusEnum::CONCLUIDO->value)
             ->whereHas('latestStatus', function ($q) use ($dataCorte) {
                 $q->where('codigo', StatusEnum::CONCLUIDO->value)
                     ->where('created_at', '<', $dataCorte);
             });
+
+        PeriodoAvaliativoDispensadoSql::excluirDispensados($query);
+
+        return $query;
     }
 
     private function subqueryChefeSubstitutoNaoAvaliaGestorTitular(\Illuminate\Database\Query\Builder $query, string $usuarioId): void
