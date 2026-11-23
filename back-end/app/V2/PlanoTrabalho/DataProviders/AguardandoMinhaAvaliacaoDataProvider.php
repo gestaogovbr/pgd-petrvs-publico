@@ -7,6 +7,7 @@ namespace App\V2\PlanoTrabalho\DataProviders;
 use App\Enums\Atribuicao;
 use App\Enums\StatusEnum;
 use App\Models\PlanoTrabalho;
+use App\V2\PlanoTrabalho\Consolidacao\PeriodoAvaliativoDispensadoSql;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
@@ -22,9 +23,7 @@ class AguardandoMinhaAvaliacaoDataProvider
     {
         $query = $this->baseQuery($usuarioId)
             ->withCount(['consolidacoes as aguardando_avaliacao' => function ($q) {
-                $q->where('planos_trabalhos_consolidacoes.status', StatusEnum::CONCLUIDO->value)
-                    ->whereDoesntHave('avaliacoes');
-                $this->aplicarFiltroVigencia($q);
+                $this->aplicarConsolidacaoAguardandoAvaliacao($q);
             }])
             ->withCount(['consolidacoes as aguardando_reavaliacao' => function ($q) {
                 $q->where('status', StatusEnum::CONCLUIDO)
@@ -74,9 +73,7 @@ class AguardandoMinhaAvaliacaoDataProvider
             ->whereNull('data_arquivamento')
             ->where('usuario_id', '!=', $usuarioId)
             ->whereHas('consolidacoes', function ($q) {
-                $q->where('planos_trabalhos_consolidacoes.status', StatusEnum::CONCLUIDO->value)
-                    ->whereDoesntHave('avaliacoes');
-                $this->aplicarFiltroVigencia($q);
+                $this->aplicarConsolidacaoAguardandoAvaliacao($q);
             })
             ->whereNotExists(function ($sub) use ($usuarioId) {
                 $this->subqueryChefeSubstitutoNaoAssinaGestorTitular($sub, $usuarioId);
@@ -121,6 +118,19 @@ class AguardandoMinhaAvaliacaoDataProvider
             ->unique()
             ->values()
             ->toArray();
+    }
+
+    /**
+     * Consolidação concluída, sem avaliação, vigente e não dispensada por ocorrência.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<\App\Models\PlanoTrabalhoConsolidacao> $query
+     */
+    private function aplicarConsolidacaoAguardandoAvaliacao(\Illuminate\Database\Eloquent\Builder $query): void
+    {
+        $query->where('planos_trabalhos_consolidacoes.status', StatusEnum::CONCLUIDO->value)
+            ->whereDoesntHave('avaliacoes');
+        $this->aplicarFiltroVigencia($query);
+        PeriodoAvaliativoDispensadoSql::excluirDispensados($query);
     }
 
     /**
