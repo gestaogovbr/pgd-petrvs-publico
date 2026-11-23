@@ -1,3 +1,8 @@
+## 3.2.7 23/11/2026
+
+### Corrigido
+- Ambiente de execução atualizado para PHP 8.4.28, aplicando as correções críticas de segurança da versão de 19/11/2026 (incluindo CVE-2026-115560, CVE-2026-126714 e CVE-2026-129289)
+
 ## 3.2.6 16/11/2026
 
 ### Adicionado

@@ -95,7 +95,7 @@
             "pestphp/pest-plugin-laravel": true
         },
         "platform": {
-            "php": "8.4.27"
+            "php": "8.4.28"
         },
         "audit": {
             "block-insecure": false
